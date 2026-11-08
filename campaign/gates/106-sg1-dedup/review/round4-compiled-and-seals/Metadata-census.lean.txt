@@ -1,0 +1,63 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import Lean
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology,
+    `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag,
+    `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic,
+    `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+    `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+  let requested : List (String × Name) :=
+    [("sat_pt_mapSnd", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair", `TCSlib.Complexity.ClassNP.SAT),
+     ("sat_pt_append", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair_input", `TCSlib.Complexity.ClassNP.SAT),
+     ("sat_pt_unaryLength", `TCSlib.Complexity.ClassNP.SAT),
+     ("clNative_map", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_pair", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clNative_append", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_unary", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clNative_linear", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_const", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5_pt_cond", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_and", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5Pair_sizes", `TCSlib.Complexity.CookLevin.Hardness), ("clA5Le_native", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5Drop_native", `TCSlib.Complexity.CookLevin.Hardness)]
+  let owned := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let owner := env.header.moduleNames[i.toNat]!
+      if owners.contains owner then some (n, ci, owner) else none
+    | none => none
+  let roots := owned.filterMap fun (n, _, owner) =>
+    match n with
+    | .str _ base => if requested.contains (base, owner) then some n else none
+    | _ => none
+  unless roots.length == 16 do throwError "root count mismatch {roots.length}"
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | .opaqueInfo _ => "opaque"
+    | .axiomInfo _ => "axiom" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  for n in roots.toArray.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  for (n, ci, owner) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    logInfo m!"CONSTANT {n} module={owner} kind={kind ci} private={isPrivateName n} internal={n.isInternalDetail}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"ALLAX|{n}|{(ax.qsort Name.lt).toList}"
+    if !isPrivateName n then logInfo m!"PUBLICAX|{n}|{(ax.qsort Name.lt).toList}"
+    if roots.any (fun r => r.isPrefixOf n) then
+      logInfo m!"PROOFAX|{n}|kind={kind ci}|{(ax.qsort Name.lt).toList}"
+  logInfo m!"COMPLETE|constants={owned.length}|roots={roots.length}"
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for n in [`Turing.MultiTapeTM.runFrom_state_ne_none_of_le,
+      `Turing.MultiTapeTM.exists_first_entry_of_fixed, `Turing.pairDiagTM_spaceUsed,
+      `Turing.FinTM.incFixedTM_spaceUsed, `Turing.FinTM.redirectTM_spaceUsedByTape] do
+    unless env.contains n do throwError "missing current context contract {n}"
+    logInfo m!"CONTEXT_PRESENT|{n}"

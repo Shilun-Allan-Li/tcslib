@@ -1,0 +1,22 @@
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.ClassNP.Reductions
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.List.MinMax
+import Lean
+set_option maxHeartbeats 0
+open Turing
+namespace Complexity
+section F4Forwarder
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+/-- Live endpoints force earlier module states to be live by
+`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+    (ht : (tm.runFrom c t).state ≠ none) :
+    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+
+#print axioms sat_live_prefix
+end F4Forwarder
+end Complexity

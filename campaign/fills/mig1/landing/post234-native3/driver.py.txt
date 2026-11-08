@@ -1,0 +1,34 @@
+from pathlib import Path
+import datetime,hashlib,json,os,re,shutil,subprocess,sys,time
+s=Path(os.environ['TCSLIB_SCRATCH']);wt=s/'wt-epad';r=(s/'wt-hk').resolve();d=r/'campaign/fills/mig1/landing/post234-native3';out=s/'oleans-mig-post234-native3';inp=s/'oleans-mac5'
+def git(*a):return subprocess.check_output(['git','-C',str(wt),*a],text=True).strip()
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(n,o):(d/n).write_text(json.dumps(o,indent=2)+'\n')
+def objects(p):return {str(f.relative_to(p)):{'bytes':f.stat().st_size,'sha256':sha(f)} for f in sorted(p.rglob('*.olean'))}
+head=git('rev-parse','HEAD');assert head==sys.argv[1]==git('rev-parse','origin/lean/mig1-mega-landing');subprocess.run(['git','-C',str(wt),'cat-file','-e',head+'^{commit}'],check=True);assert not git('status','--porcelain','--untracked-files=no')
+order=(r/'campaign/fills/mig1/landing/post234-native2/owner-order.txt').read_text().splitlines();changed=git('diff','--name-only','bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c',head,'--','*.lean').splitlines();assert set(order)==set(changed) and len(order)==12
+assert not d.exists() and not out.exists();d.mkdir();(d/'driver.py.txt').write_bytes(Path(__file__).read_bytes());(d/'owner-order.txt').write_text('\n'.join(order)+'\n');helper=r/'devtools/seyoon/leanelab-o.sh';(d/'leanelab-o.sh.txt').write_bytes(helper.read_bytes());assert 'lean -j4' in helper.read_text()
+env=os.environ.copy();env['PATH']=str(s/'replay-j4/bin')+':'+env['PATH'];env['TCSLIB_REPLAY_REAL_LEAN']='/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean';env['TCSLIB_REPLAY_LAUNCH_LOG']=str(d/'launches.log')
+original=objects(inp);assert len(original)==895;save('preparation.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source':head,'whole_input':str(inp),'input_objects':len(original),'output':str(out),'order':order,'status':'running, no pass yet','budget':'local3/machine5; each -j4/nice10/slot locks'})
+subprocess.run(['cp','-cR',str(inp),str(out)],check=True);assert objects(out)==original
+results=[]
+for i,f in enumerate(order,1):
+ assert git('rev-parse','HEAD')==head and not git('status','--porcelain','--untracked-files=no');before=sha(wt/f);dest=out/f[:-5]
+ for ext in ['.olean','.ilean','.c','.trace']:
+  p=Path(str(dest)+ext)
+  if p.exists():p.unlink()
+ logfile=d/(f'{i:02d}-'+Path(f).stem+'.out');t=time.monotonic()
+ with logfile.open('wb') as fd:proc=subprocess.run(['bash',str(helper),str(wt),str(out),f,str(out)],stdout=fd,stderr=subprocess.STDOUT,env=env)
+ raw=logfile.read_text();row={'file':f,'seconds':time.monotonic()-t,'exit':proc.returncode,'errors':len(re.findall(r'\berror(?:\(|:)',raw)),'sorries':raw.count("declaration uses 'sorry'"),'log':logfile.name,'bytes':logfile.stat().st_size,'sha256':sha(logfile),'source_sha256':before,'fresh_olean':Path(str(dest)+'.olean').exists()};results.append(row);save('module-results.json',results)
+ print(json.dumps({k:row[k] for k in ['file','seconds','exit','errors','sorries']}),flush=True)
+ assert sha(wt/f)==before
+ if proc.returncode or row['errors']:
+  save('receipt.json',{'result':'FAIL','head':head,'rows':results,'failed_snapshot':'invalid and must be discarded','no_pass':True});shutil.rmtree(out);print(raw[-5000:],flush=True);raise SystemExit(1)
+assert sum(x['sorries'] for x in results)==3 and next(x for x in results if x['file'].endswith('/WordSize.lean'))['sorries']==3
+final=objects(out);assert len(final)==895 and final.keys()==original.keys() and objects(inp)==original
+changedobjects=[p for p in final if final[p]!=original[p]];assert set(changedobjects)<={x[:-5]+'.olean' for x in order}
+launches=(d/'launches.log').read_text().splitlines();assert len(launches)==12 and all(' -j4 ' in x for x in launches)
+save('snapshot-objects.json',{'input':original,'output':final,'changed':changedobjects,'input_unchanged':True,'all_outside_owner_scope_exact':True})
+save('receipt.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'result':'PASS','head':head,'modules':12,'errors':0,'sorries':3,'unchanged_RAM_admissions':True,'snapshot':str(out),'objects':895,'whole_MAC5_input':True,'input_unchanged':True,'all_outside_owner_scope_exact':True,'effective_j4_launches':12,'tracked_clean':not git('status','--porcelain','--untracked-files=no'),'rows':results,'not_full_replay':True})
+(d/'README.md').write_text('# Actual post-234 native3 owner chain\n\nPASS12 actual changed owner modules at the final pushed source, from a complete whole895-objectMAC5 clone. Only3unchangedRAM admissions remain in this order. Full-module legacy warnings are preserved, not declared zero. All895 input/output objects are hashed, only12 owner objects may change, and input remains unchanged. This is an owner dependency chain, not the full downstream replay.\n')
+files=[p for p in sorted(d.rglob('*')) if p.is_file()];save('MANIFEST.json',[{'path':str(p.relative_to(d)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]);print('NATIVE3 PASS12; final immutable whole snapshot ready',head,flush=True)

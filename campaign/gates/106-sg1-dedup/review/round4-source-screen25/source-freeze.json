@@ -1,0 +1,707 @@
+{
+  "base": "750987d674899d97db3c73c7278c891fa8772b40",
+  "head": "078263a74fe90b92aa6228cf20e43726138afbe6",
+  "all25_source_checks_pass": true,
+  "public_names_visibility_order_and_all_common_headers_preserved": true,
+  "all_terms_instances_data_attributes_identical": true,
+  "private_bridge_replacements_same_as_R3": true,
+  "original17_round3_repair_chunks_byte_identical": true,
+  "original17_names": [
+    "Complexity.clA5Drop_native",
+    "Complexity.clA5Le_native",
+    "Complexity.clA5Pair_sizes",
+    "Complexity.clA5_pt_and",
+    "Complexity.clA5_pt_cond",
+    "Complexity.clA5_pt_const",
+    "Complexity.clNative_append",
+    "Complexity.clNative_linear",
+    "Complexity.clNative_map",
+    "Complexity.clNative_pair",
+    "Complexity.clNative_unary",
+    "Complexity.sat_pt_append",
+    "Complexity.sat_pt_mapSnd",
+    "Complexity.sat_pt_pair",
+    "Complexity.sat_pt_pair_input",
+    "Complexity.sat_pt_unaryLength",
+    "Complexity.taut_comp_on_image"
+  ],
+  "F4_private_bodies_docs_only": true,
+  "proof_specific_header_controls": 10,
+  "header_method": "Changed proof headers split by binder/result-let balancing and indented by-value skipping; absolute bars never terminate a proof header. Unchanged complete code chunks establish every other header. Source-only, no general Lean AST/compiled census claim.",
+  "files": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "base_source_declarations": 2,
+      "head_source_declarations": 2,
+      "base_public": 2,
+      "head_public": 2,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "base_source_declarations": 6,
+      "head_source_declarations": 6,
+      "base_public": 5,
+      "head_public": 5,
+      "base_private": 1,
+      "head_private": 1,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "base_source_declarations": 51,
+      "head_source_declarations": 51,
+      "base_public": 40,
+      "head_public": 40,
+      "base_private": 11,
+      "head_private": 11,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "base_source_declarations": 26,
+      "head_source_declarations": 26,
+      "base_public": 24,
+      "head_public": 24,
+      "base_private": 2,
+      "head_private": 2,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "base_source_declarations": 16,
+      "head_source_declarations": 16,
+      "base_public": 4,
+      "head_public": 4,
+      "base_private": 12,
+      "head_private": 12,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "base_source_declarations": 270,
+      "head_source_declarations": 270,
+      "base_public": 5,
+      "head_public": 5,
+      "base_private": 265,
+      "head_private": 265,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [
+        "Complexity.sat_guard_add",
+        "Complexity.sat_live_prefix",
+        "Complexity.sat_pt_append",
+        "Complexity.sat_pt_mapSnd",
+        "Complexity.sat_pt_pair",
+        "Complexity.sat_pt_pair_input",
+        "Complexity.sat_pt_unaryLength"
+      ],
+      "changed_proof_complete_headers": [
+        {
+          "name": "Complexity.sat_guard_add",
+          "raw_complete_header": "private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)\n    (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)\n    (he : tm.runFrom c a = d)\n    (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :\n    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor:=",
+          "header_sha256": "f02e4e2e122ef0ad78c68177fccc381eb1fae7b3c783138d5d6807f198c9dafb"
+        },
+        {
+          "name": "Complexity.sat_live_prefix",
+          "raw_complete_header": "private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none:=",
+          "header_sha256": "658630eeb5441ab499925680c8e267a22fcfb5522027b08827403a5cb860b06b"
+        },
+        {
+          "name": "Complexity.sat_pt_append",
+          "raw_complete_header": "private lemma sat_pt_append {f g : List Bool → List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x):=",
+          "header_sha256": "8b30a91f13237f93268697f13f5d528adfb5d856654b4069c7653616f5f42522"
+        },
+        {
+          "name": "Complexity.sat_pt_mapSnd",
+          "raw_complete_header": "private lemma sat_pt_mapSnd {g : List Bool → List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []):=",
+          "header_sha256": "02b5e3f3d67e956e32d2fcd219ca226c82ec568a73b040bdd8d46dddfd57f263"
+        },
+        {
+          "name": "Complexity.sat_pt_pair",
+          "raw_complete_header": "private lemma sat_pt_pair {f g : List Bool → List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x)):=",
+          "header_sha256": "08120760d63b0ef2ad39e4fce29e263f44bf15bd07d199db0ce85fe961fd6e59"
+        },
+        {
+          "name": "Complexity.sat_pt_pair_input",
+          "raw_complete_header": "private lemma sat_pt_pair_input {f : List Bool → List Bool} (hf : PolyTimeComputable f) :\n    PolyTimeComputable (fun x => pairEncode (f x) x):=",
+          "header_sha256": "317626097daff4a86e72362b7202946708e5a21d4b1b2465420a83fa8a15e0ac"
+        },
+        {
+          "name": "Complexity.sat_pt_unaryLength",
+          "raw_complete_header": "private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true):=",
+          "header_sha256": "b9ff5a880405432839b3f0e20ddf83d84fb121aa5624a69a5c5a5497e69ccc8c"
+        }
+      ],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "base_source_declarations": 93,
+      "head_source_declarations": 93,
+      "base_public": 5,
+      "head_public": 5,
+      "base_private": 88,
+      "head_private": 88,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [
+        "Complexity.tautDual_copy",
+        "Complexity.tautDual_invalid",
+        "Complexity.tautDual_rewind",
+        "Complexity.tautDual_scan",
+        "Complexity.tautDual_segment_one",
+        "Complexity.tautDual_segment_zero",
+        "Complexity.tautDual_valid",
+        "Complexity.taut_comp_on_image"
+      ],
+      "changed_proof_complete_headers": [
+        {
+          "name": "Complexity.tautDual_copy",
+          "raw_complete_header": "private lemma tautDual_copy (r : List Bool) :\n    ∀ (x pre out : List Bool) (q : TautSyntax) (hx : x = pre ++ r),\n    tautDualSegment\n      (tautDualCfg x (.copy q) ⟨pre.length+1, by simp [hx]; omega⟩ out)\n      (tautDualCfg x (.copy (r.foldl tautSyntaxStep q)) ⟨x.length+1, by omega⟩\n        (out ++ tautDualScan q r)) r.length:=",
+          "header_sha256": "340705e13dc5bf5f46cd19b2b32b9ac78c3a2cf2e486d4b9f509d62fc07dbac2"
+        },
+        {
+          "name": "Complexity.tautDual_invalid",
+          "raw_complete_header": "private lemma tautDual_invalid (x : List Bool)\n    (hx : x.foldl tautSyntaxStep .formula ≠ .done) :\n    tautDualSegment\n      (tautDualCfg x (.scan .formula) 1 [])\n      (tautDualCfg x .anchor 1 [false]) (2*x.length+2):=",
+          "header_sha256": "84f695963893d29a1755878fa0672a283ebfd3e6ead5e2f5b91a495030d79889"
+        },
+        {
+          "name": "Complexity.tautDual_rewind",
+          "raw_complete_header": "private lemma tautDual_rewind (x out : List Bool) (finish : Bool) :\n    ∀ p (hp : p ≤ x.length), tautDualSegment\n      (tautDualCfg x (.rewind finish) ⟨p, by omega⟩ out)\n      (tautDualCfg x (if finish then .anchor else .copy .formula) 1 out) (p+1):=",
+          "header_sha256": "303d7d0fa034436fd28b772d60ddb0ca9e21e9432f5c1ebb0d14e8dbdf01f2ef"
+        },
+        {
+          "name": "Complexity.tautDual_scan",
+          "raw_complete_header": "private lemma tautDual_scan (r : List Bool) :\n    ∀ (x pre out : List Bool) (q : TautSyntax) (hx : x = pre ++ r),\n    tautDualSegment\n      (tautDualCfg x (.scan q) ⟨pre.length+1, by simp [hx]; omega⟩ out)\n      (tautDualCfg x (.scan (r.foldl tautSyntaxStep q)) ⟨x.length+1, by omega⟩ out)\n      r.length:=",
+          "header_sha256": "59de2bbe79feceddc0df1cf40b1088aa4bd98d6527db0187f280f37619340d99"
+        },
+        {
+          "name": "Complexity.tautDual_segment_one",
+          "raw_complete_header": "private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)\n    (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :\n    tautDualSegment c d 1:=",
+          "header_sha256": "fc197ab8e5e26e5842fb25117b5de4400a145cc8a3517afaa072f32068a9d00c"
+        },
+        {
+          "name": "Complexity.tautDual_segment_zero",
+          "raw_complete_header": "private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :\n    tautDualSegment c c 0:=",
+          "header_sha256": "de7ca93c8888fe042b75a8d2a41de9f90fa3851d7178b54f626f154d6c812de9"
+        },
+        {
+          "name": "Complexity.tautDual_valid",
+          "raw_complete_header": "private lemma tautDual_valid (x : List Bool)\n    (hx : x.foldl tautSyntaxStep .formula = .done) :\n    tautDualSegment\n      (tautDualCfg x (.scan .formula) 1 [])\n      (tautDualCfg x .anchor 1 (tautDualScan .formula x)) (4*x.length+4):=",
+          "header_sha256": "5ac2c88929dcb91b897e6b0185789966b95d35abc131d8175930116198fb7ef8"
+        },
+        {
+          "name": "Complexity.taut_comp_on_image",
+          "raw_complete_header": "private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)\n    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)\n    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :\n    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2):=",
+          "header_sha256": "16bbbbb6fcf95c4f5cb308169f4c5f19655560a7ca3ade326f37563cb8c20fc9"
+        }
+      ],
+      "private_added": [
+        "Complexity.tautDualSegment_iff_segment"
+      ],
+      "private_removed": [
+        "Complexity.tautDual_segment_add"
+      ],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+      "base_source_declarations": 12,
+      "head_source_declarations": 12,
+      "base_public": 12,
+      "head_public": 12,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "base_source_declarations": 544,
+      "head_source_declarations": 544,
+      "base_public": 5,
+      "head_public": 5,
+      "base_private": 539,
+      "head_private": 539,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [
+        "Complexity.clA5Drop_native",
+        "Complexity.clA5Le_native",
+        "Complexity.clA5Pair_sizes",
+        "Complexity.clA5_guard_add",
+        "Complexity.clA5_live_prefix",
+        "Complexity.clA5_pt_and",
+        "Complexity.clA5_pt_cond",
+        "Complexity.clA5_pt_const",
+        "Complexity.clNative_append",
+        "Complexity.clNative_linear",
+        "Complexity.clNative_map",
+        "Complexity.clNative_pair",
+        "Complexity.clNative_unary"
+      ],
+      "changed_proof_complete_headers": [
+        {
+          "name": "Complexity.clA5Drop_native",
+          "raw_complete_header": "private lemma clA5Drop_native {s u : List Bool → List Bool}\n    (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :\n    PolyTimeComputable (fun x => (s x).drop (u x).length):=",
+          "header_sha256": "32226fe3ea48661ec1db4e9a2e436dad76b669752b65d52506872669f462ca49"
+        },
+        {
+          "name": "Complexity.clA5Le_native",
+          "raw_complete_header": "private lemma clA5Le_native {f g : List Bool → ℕ}\n    (hf : PolyTimeComputable (fun x => List.replicate (f x) true))\n    (hg : PolyTimeComputable (fun x => List.replicate (g x) true)) :\n    PolyTimeComputable (fun x => [decide (f x ≤ g x)]):=",
+          "header_sha256": "16bbe0f61104bb6bbdd384d1727789b7e9debc756707cc110f9a3bafcf14d88d"
+        },
+        {
+          "name": "Complexity.clA5Pair_sizes",
+          "raw_complete_header": "private lemma clA5Pair_sizes (w : List Bool) :\n    (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length:=",
+          "header_sha256": "67fe8c71b9e50da8f62b285a0e352e6eef2cabaa92b634629d2dbdc39cbd280e"
+        },
+        {
+          "name": "Complexity.clA5_guard_add",
+          "raw_complete_header": "private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)\n    (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)\n    (he : tm.runFrom c a = d)\n    (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :\n    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor:=",
+          "header_sha256": "fc91cc07537b841ccabe82de353a9c334646f324284dc6648b9f3afc15241f06"
+        },
+        {
+          "name": "Complexity.clA5_live_prefix",
+          "raw_complete_header": "private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none:=",
+          "header_sha256": "b8fe01b6f009dde092db150a155a895867f2087a88ffdbe846e0c67e17336f51"
+        },
+        {
+          "name": "Complexity.clA5_pt_and",
+          "raw_complete_header": "private lemma clA5_pt_and {p q : List Bool → Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hq : PolyTimeComputable (fun x => [q x])) :\n    PolyTimeComputable (fun x => [p x && q x]):=",
+          "header_sha256": "6fc04fb63a8fe5783ac9aba23d569b8a44d98347e2b64c84d7effc1bdc473560"
+        },
+        {
+          "name": "Complexity.clA5_pt_cond",
+          "raw_complete_header": "private lemma clA5_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => if p x then f x else g x):=",
+          "header_sha256": "166164ce0a76e19bf297ed2d821f943e17d1fea2d1412cc924d6136760fe4f99"
+        },
+        {
+          "name": "Complexity.clA5_pt_const",
+          "raw_complete_header": "private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w):=",
+          "header_sha256": "be8b8772cdec5e3135ba60bfe448512e482c1fbd2a6d447f6fb5527593075446"
+        },
+        {
+          "name": "Complexity.clNative_append",
+          "raw_complete_header": "private lemma clNative_append {f g : List Bool → List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x):=",
+          "header_sha256": "880b5e37208f86c6216feaf870ec3263db17561fbff4fa8dc4b902f75b747106"
+        },
+        {
+          "name": "Complexity.clNative_linear",
+          "raw_complete_header": "private lemma clNative_linear (f : List Bool → List Bool)\n    (h : ∃ (M : FinTM Bool) (a : ℕ),\n      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f:=",
+          "header_sha256": "fa095b20ccd6fffe43de89ec64a7ad0201462922fd376b01a9821b8e17a90db2"
+        },
+        {
+          "name": "Complexity.clNative_map",
+          "raw_complete_header": "private lemma clNative_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []):=",
+          "header_sha256": "cda281f7a2a2628a11927ff88ef3289a0cd091288b230d36652b473d32a16149"
+        },
+        {
+          "name": "Complexity.clNative_pair",
+          "raw_complete_header": "private lemma clNative_pair {f g : List Bool → List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x)):=",
+          "header_sha256": "61db50f9f3108e3ac860ca22c315785fe300b07ade1c1b376c950c8594626912"
+        },
+        {
+          "name": "Complexity.clNative_unary",
+          "raw_complete_header": "private lemma clNative_unary (C e : ℕ) :\n    PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true):=",
+          "header_sha256": "01edf68bc86ac3cd17f1149b4c2c21f4cf2f1db63c895daf7935973872863b6d"
+        }
+      ],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+      "base_source_declarations": 15,
+      "head_source_declarations": 15,
+      "base_public": 15,
+      "head_public": 15,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "base_source_declarations": 504,
+      "head_source_declarations": 504,
+      "base_public": 112,
+      "head_public": 112,
+      "base_private": 392,
+      "head_private": 392,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+      "base_source_declarations": 93,
+      "head_source_declarations": 93,
+      "base_public": 92,
+      "head_public": 92,
+      "base_private": 1,
+      "head_private": 1,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "base_source_declarations": 79,
+      "head_source_declarations": 79,
+      "base_public": 59,
+      "head_public": 59,
+      "base_private": 20,
+      "head_private": 20,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [
+        "Turing.RoundContract.counterLoopDone_traj",
+        "Turing.RoundContract.counterLoopEscape_traj",
+        "Turing.counterLoopTMVia_done_witness",
+        "Turing.counterLoopTMVia_escape_witness",
+        "Turing.counterLoopTMVia_run_done",
+        "Turing.counter_rounds"
+      ],
+      "changed_proof_complete_headers": [
+        {
+          "name": "Turing.RoundContract.counterLoopDone_traj",
+          "raw_complete_header": "theorem RoundContract.counterLoopDone_traj {S : Type} [DecidableEq S] [DecidableEq Γ]\n    (e : Bool ↪ Γ) {M : MultiTapeTM k Γ S} {a : S} {exit : Option S} {ι : Type} {x : List Γ}\n    (R : RoundContract M a {exit} ι x) :\n    (R.counterLoopDone e).Traj fun p d q => ∃ r u,\n      ((r < counterValue p.2 ∧\n          u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r)) ∨\n        (r = counterValue p.2 ∧ u = 0)) ∧\n      ∀ j : Fin k, q j.castSucc =\n        (M.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j:=",
+          "header_sha256": "23b5a839e9e1b0d4d556bbbf9ace108b1be7da8d6963a4fbdaca25a2e4e8e313"
+        },
+        {
+          "name": "Turing.RoundContract.counterLoopEscape_traj",
+          "raw_complete_header": "theorem RoundContract.counterLoopEscape_traj {S : Type} [DecidableEq S] [DecidableEq Γ]\n    (e : Bool ↪ Γ) {M : MultiTapeTM k Γ S} {a ex : S} (hea : ex ≠ a) {ι : Type} {x : List Γ}\n    (R : RoundContract M a {some ex} ι x) :\n    (R.counterLoopEscape e hea).Traj fun p d q => ∃ r u,\n      ((r ≤ p.2.2 ∧ u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r)) ∨\n        (r = p.2.2 + 1 ∧ u = 0)) ∧\n      ∀ j : Fin k, q j.castSucc =\n        (M.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j:=",
+          "header_sha256": "3c710732535fe40b2fbf8857a684c7bc93f553d47524ddb27b6f12266de611a6"
+        },
+        {
+          "name": "Turing.counterLoopTMVia_done_witness",
+          "raw_complete_header": "theorem counterLoopTMVia_done_witness {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}\n    (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (a : S) (exit : Option S) (τ : Cfg k Γ S x → ℕ)\n    (c : Cfg k Γ S x) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)\n    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p)\n    (d : ℕ) (hd : Nat.ofDigits 2 (w.map Bool.toNat) = d) {P : (Fin k → ℤ) → Prop}\n    (hround : ∀ r < d, Round M a {exit} P (roundOrbit M τ c r) (roundOrbit M τ c (r + 1))\n      (τ (roundOrbit M τ c r)) ∧ (roundOrbit M τ c (r + 1)).state = some a) :\n    Segment (counterLoopTMVia e M a exit) {none, some .done, some .escape}\n      (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) ∧\n        ∃ r u, ((r < d ∧ u ≤ τ (roundOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧\n          ∀ j : Fin k, p j.castSucc = (M.runFrom (roundOrbit M τ c r) u).workTapePos j)\n      (counterLoopCfg (some (.dec .run)) c ct cp)\n      (counterLoopCfg (some .done) (roundOrbit M τ c d)\n        (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp)\n      (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1)):=",
+          "header_sha256": "4f8241df6d3974604cbe1452f6b1ae3122b65661fbe0833b2f9f7008af25af05"
+        },
+        {
+          "name": "Turing.counterLoopTMVia_escape_witness",
+          "raw_complete_header": "theorem counterLoopTMVia_escape_witness {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}\n    (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (a ex : S) (hea : ex ≠ a) (τ : Cfg k Γ S x → ℕ)\n    (c : Cfg k Γ S x) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)\n    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p)\n    (r₀ : ℕ) (hr₀ : r₀ < Nat.ofDigits 2 (w.map Bool.toNat)) {P : (Fin k → ℤ) → Prop}\n    (hround : ∀ r ≤ r₀, Round M a {some ex} P (roundOrbit M τ c r) (roundOrbit M τ c (r + 1))\n      (τ (roundOrbit M τ c r)))\n    (hexit : (roundOrbit M τ c (r₀ + 1)).state = some ex) :\n    Segment (counterLoopTMVia e M a (some ex)) {none, some .done, some .escape}\n      (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) ∧\n        ∃ r u, ((r ≤ r₀ ∧ u ≤ τ (roundOrbit M τ c r)) ∨ (r = r₀ + 1 ∧ u = 0)) ∧\n          ∀ j : Fin k, p j.castSucc = (M.runFrom (roundOrbit M τ c r) u).workTapePos j)\n      (counterLoopCfg (some (.dec .run)) c ct cp)\n      (counterLoopCfg (some .escape) (roundOrbit M τ c (r₀ + 1))\n        (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)\n          then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q) cp)\n      (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1)):=",
+          "header_sha256": "7a19e5e46430a7f2fd675984a248404960ffd3b7789663f72ca7d7321f6f76ca"
+        },
+        {
+          "name": "Turing.counterLoopTMVia_run_done",
+          "raw_complete_header": "theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq Γ]\n    {x : List Γ} (e : Bool ↪ Γ)\n    (M : MultiTapeTM k Γ S) (a : S) (exit : Option S)\n    (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x)\n    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)\n    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p)\n    (d : ℕ) (hd : Nat.ofDigits 2 (w.map Bool.toNat) = d)\n    (hround : ∀ r < d,\n      (counterLoopOrbit M τ c r).state = some a ∧\n      0 < τ (counterLoopOrbit M τ c r) ∧\n      (∀ u, 0 < u → u < τ (counterLoopOrbit M τ c r) →\n        ∃ s, (M.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧\n          s ≠ a ∧ exit ≠ some s) ∧\n      (counterLoopOrbit M τ c (r + 1)).state = some a)\n    (T : ℕ)\n    (hT : T = ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) +\n      counterOverhead w (d + 1)) :\n    (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) T =\n        counterLoopCfg (some .done) (counterLoopOrbit M τ c d)\n          (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp ∧\n      (∀ t < T,\n        ((counterLoopTMVia e M a exit).runFrom\n            (counterLoopCfg (some (.dec .run)) c ct cp) t).state ≠ some .done ∧\n        ((counterLoopTMVia e M a exit).runFrom\n            (counterLoopCfg (some (.dec .run)) c ct cp) t).state ≠ some .escape) ∧\n      (∀ t ≤ T,\n        ((counterLoopTMVia e M a exit).runFrom\n            (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos (Fin.last k) ∈\n          Finset.Icc (cp - 1) (cp + (w.length : ℤ))) ∧\n      (∀ t ≤ T, ∃ r u,\n        ((r < d ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧\n        ∀ j : Fin k,\n          ((counterLoopTMVia e M a exit).runFrom\n              (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos j.castSucc =\n            (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j):=",
+          "header_sha256": "4706c393c0d97c0c95aa3009224eb2ae2ddc8f31bb19c17b9c4e7636015f5df1"
+        },
+        {
+          "name": "Turing.counter_rounds",
+          "raw_complete_header": "private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}\n    (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (a : S) (exit : Option S)\n    (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x)\n    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)\n    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p)\n    (n : ℕ) (hn : n ≤ Nat.ofDigits 2 (w.map Bool.toNat))\n    (hround : ∀ r < n, (counterLoopOrbit M τ c r).state = some a ∧\n      0 < τ (counterLoopOrbit M τ c r) ∧\n      (∀ u, 0 < u → u < τ (counterLoopOrbit M τ c r) →\n        ∃ s, (M.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧\n          s ≠ a ∧ exit ≠ some s)) :\n    let elapsed := ∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r) + counterOverhead w n\n    (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) elapsed =\n      counterLoopCfg (if n = 0 then some (.dec .run) else\n        (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit))\n        (counterLoopOrbit M τ c n) (counterPatch ct cp ((counterWord w n).map e)) cp ∧\n    counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)\n      elapsed cp w.length (fun p => ∃ r u,\n        ((r < n ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = n ∧ u = 0)) ∧\n        ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j):=",
+          "header_sha256": "5927e7c4a5e0396f55be1a6a52825515aabad4e671b898272dec15ba442883e5"
+        }
+      ],
+      "private_added": [
+        "Turing.counterSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.counter_span_append"
+      ],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "base_source_declarations": 204,
+      "head_source_declarations": 204,
+      "base_public": 21,
+      "head_public": 21,
+      "base_private": 183,
+      "head_private": 183,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_source_declarations": 288,
+      "head_source_declarations": 288,
+      "base_public": 52,
+      "head_public": 52,
+      "base_private": 236,
+      "head_private": 236,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "base_source_declarations": 28,
+      "head_source_declarations": 28,
+      "base_public": 21,
+      "head_public": 21,
+      "base_private": 7,
+      "head_private": 7,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "base_source_declarations": 21,
+      "head_source_declarations": 21,
+      "base_public": 21,
+      "head_public": 21,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "base_source_declarations": 28,
+      "head_source_declarations": 28,
+      "base_public": 28,
+      "head_public": 28,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "base_source_declarations": 5,
+      "head_source_declarations": 5,
+      "base_public": 5,
+      "head_public": 5,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "base_source_declarations": 35,
+      "head_source_declarations": 35,
+      "base_public": 35,
+      "head_public": 35,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "base_source_declarations": 42,
+      "head_source_declarations": 42,
+      "base_public": 42,
+      "head_public": 42,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_source_declarations": 65,
+      "head_source_declarations": 65,
+      "base_public": 56,
+      "head_public": 56,
+      "base_private": 9,
+      "head_private": 9,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "base_source_declarations": 27,
+      "head_source_declarations": 27,
+      "base_public": 27,
+      "head_public": 27,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "base_source_declarations": 100,
+      "head_source_declarations": 100,
+      "base_public": 4,
+      "head_public": 4,
+      "base_private": 96,
+      "head_private": 96,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [
+        "Turing.FinTM.dgSpan_mono",
+        "Turing.FinTM.dgSpan_one",
+        "Turing.FinTM.dg_collect",
+        "Turing.FinTM.dg_end_with_growth",
+        "Turing.FinTM.dg_init",
+        "Turing.FinTM.dg_simulate",
+        "Turing.FinTM.dg_step",
+        "Turing.FinTM.dg_turn_with_growth"
+      ],
+      "changed_proof_complete_headers": [
+        {
+          "name": "Turing.FinTM.dgSpan_mono",
+          "raw_complete_header": "private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}\n    {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}\n    (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :\n    DGSpan tm c d t lo' hi':=",
+          "header_sha256": "6ed9c95d04f46d559d0cd73394fd43fbd20fa4a89b55374bee6714795cbb5d81"
+        },
+        {
+          "name": "Turing.FinTM.dgSpan_one",
+          "raw_complete_header": "private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}\n    {c d : Cfg 1 A Q x} {lo hi : ℤ} (h : tm.step c = d)\n    (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)\n    (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :\n    DGSpan tm c d 1 lo hi:=",
+          "header_sha256": "0d21c31d7211481f5d21bd2acfebb57d7add94b61154ef2e4dc8373aef477a20"
+        },
+        {
+          "name": "Turing.FinTM.dg_collect",
+          "raw_complete_header": "private lemma dg_collect {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}\n    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))\n    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)\n    (hp : ∀ i, a ≤ c.workTapePos i) :\n    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)\n      (sweepCfg (some (.inl (.read q (readState c (a + n)))))\n        (dgPos a₀ c.inputPos) (z + 1 + n * M.k)\n        (((tapeZone (fun j => tapeRow c j true) a n).map\n          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])\n        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))\n      (1 + n * M.k) z (z + 1 + n * M.k):=",
+          "header_sha256": "0711b353d7cd7312d2e9328195cdcfcfa0e546556f9626a830ca814b00668fdc"
+        },
+        {
+          "name": "Turing.FinTM.dg_end_with_growth",
+          "raw_complete_header": "private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (q : M.State) (inp : Option Γ)\n    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)\n    (hc : dgCross (M.tm.tr q inp reads) right .neg = true)\n    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))\n    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)\n    (l : List (Option (SweepAlphabet Γ M.k))) :\n    DGSpan (dgTM M a₀).tm\n      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)\n      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))\n        p (z - M.k)\n        ((dgLeftRow (fun i => right i && decide (((M.tm.tr q inp reads).workTapes i).2 = .neg))).map\n          (fun b => some (sweepSymbol b)) ++ l) [some sweepBoundary] out)\n      (M.k + 2) (z - M.k) z:=",
+          "header_sha256": "149aaa62cd7f3cf18727bd31405f32a9df468c8c66939519833c812dcf572e52"
+        },
+        {
+          "name": "Turing.FinTM.dg_init",
+          "raw_complete_header": "private lemma dg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k)) :\n    DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)\n      (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1))\n      (2 * M.k + 2) (-1) M.k:=",
+          "header_sha256": "bf1ef671c61f681263cb1d3efc64f3ca10b36531060d215d41902929d3e81db6"
+        },
+        {
+          "name": "Turing.FinTM.dg_simulate",
+          "raw_complete_header": "private lemma dg_simulate {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k))\n    (τ : ℕ) (hlive : ∀ t < τ,\n      (M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t).state ≠ none) :\n    ∀ t ≤ τ, ∃ (a : ℤ) (n u : ℕ),\n      DGWindow M (x.map (dgRetract a₀)) t a n ∧ u ≤ sweepTime M.k t ∧\n      DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)\n        (dgStart M a₀ (M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t)\n          a n (a * M.k - 1)) u (a * M.k - 1) ((a + n) * M.k):=",
+          "header_sha256": "b5f4c1631e52faed9fe39ebe500888834d901fc378d6ecd762ef72b1f1ecbde8"
+        },
+        {
+          "name": "Turing.FinTM.dg_step",
+          "raw_complete_header": "private lemma dg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}\n    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))\n    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)\n    (hp : ∀ i, a ≤ c.workTapePos i ∧ c.workTapePos i < a + n)\n    (hl : ∀ i, c.workTapes i (a - 1) = none)\n    (hr : ∀ i, c.workTapes i (a + n) = none)\n    (left right : Bool)\n    (hleft : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)\n      (fun i => headAt c i a) .neg = left)\n    (hright : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)\n      (fun i => headAt c i (a + n - 1)) .pos = right) :\n    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)\n      (dgStart M a₀ (M.tm.step c) (a - left.toNat) (n + right.toNat + left.toNat)\n        (z - left.toNat * M.k))\n      (dgCost M.k n left right) (z - left.toNat * M.k)\n        (z + 1 + (n + right.toNat) * M.k):=",
+          "header_sha256": "8dc4b4389913f88f6b91cca8338b5f595e8d8490511a5fea5f37558141133d7d"
+        },
+        {
+          "name": "Turing.FinTM.dg_turn_with_growth",
+          "raw_complete_header": "private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}\n    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)\n    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)\n    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = true)\n    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :\n    DGSpan (dgTM M a₀).tm\n      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l\n        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))\n      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))\n        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z + M.k - 1)\n        [some sweepBoundary]\n        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)\n        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))\n      (M.k + 2) (z - 1) (z + M.k):=",
+          "header_sha256": "6c8db478c3fb3cdd116589d10e522c9d66d001de539d428ea2e669de39d64c94"
+        }
+      ],
+      "private_added": [
+        "Turing.FinTM.dgSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.FinTM.dgSpan_add"
+      ],
+      "terms_instances_data_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "base_source_declarations": 8,
+      "head_source_declarations": 8,
+      "base_public": 8,
+      "head_public": 8,
+      "base_private": 0,
+      "head_private": 0,
+      "public_names_privacy_order_identical": true,
+      "common_proof_headers_identical": true,
+      "changed_common_code_chunks": [],
+      "changed_proof_complete_headers": [],
+      "private_added": [],
+      "private_removed": [],
+      "terms_instances_data_attributes_identical": true
+    }
+  ]
+}

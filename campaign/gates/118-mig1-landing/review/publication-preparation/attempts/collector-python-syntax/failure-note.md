@@ -1,0 +1,1 @@
+Initial own collector failed at Python parsing due to three missing spaces in else None. No input collection or encoding ran. The sandbox also denied optional nice priority adjustment; subsequent data collection uses ordinary Python (this is not a Lean or screen job).

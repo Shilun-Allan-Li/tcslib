@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "source": "theorem t (c : Cfg (input := x)) : c = c := by rfl",
+      "complete_header": "theorem t (c : Cfg (input := x)) : c = c",
+      "body": "by rfl",
+      "passed": true
+    },
+    {
+      "source": "theorem t : let x := 0; x=x := by rfl",
+      "complete_header": "theorem t : let x := 0; x=x",
+      "body": "by rfl",
+      "passed": true
+    },
+    {
+      "source": "theorem t : let a := let b := 0; b; a=a := by rfl",
+      "complete_header": "theorem t : let a := let b := 0; b; a=a",
+      "body": "by rfl",
+      "passed": true
+    },
+    {
+      "source": "theorem t :\n  let hp : True := by\n    have := True.intro\n    assumption\n  True := by\n  exact hp",
+      "complete_header": "theorem t :\n  let hp : True := by\n    have := True.intro\n    assumption\n  True",
+      "body": "by\n  exact hp",
+      "passed": true
+    },
+    {
+      "source": "theorem t :\n  let hp : True := by\n    have h : True := by\n      have q := True.intro\n      exact q\n    exact h\n  True := by\n  exact hp",
+      "complete_header": "theorem t :\n  let hp : True := by\n    have h : True := by\n      have q := True.intro\n      exact q\n    exact h\n  True",
+      "body": "by\n  exact hp",
+      "passed": true
+    },
+    {
+      "source": "theorem t :\n  letI : Inhabited Nat := by\n    have x := 0\n    exact ⟨x⟩\n  True := by\n  trivial",
+      "complete_header": "theorem t :\n  letI : Inhabited Nat := by\n    have x := 0\n    exact ⟨x⟩\n  True",
+      "body": "by\n  trivial",
+      "passed": true
+    },
+    {
+      "source": "theorem t :\n  let hp : True := by have h := True.intro; exact h\n  True := by\n  exact hp",
+      "complete_header": "theorem t :\n  let hp : True := by have h := True.intro; exact h\n  True",
+      "body": "by\n  exact hp",
+      "passed": true
+    },
+    {
+      "source": "/-- := false -/\ntheorem t : True := by trivial",
+      "complete_header": "/-- := false -/\ntheorem t : True",
+      "body": "by trivial",
+      "passed": true
+    },
+    {
+      "source": "theorem t : ∀ x : ℤ,\n  |x| ≤ |x| := by intro x; exact le_rfl",
+      "complete_header": "theorem t : ∀ x : ℤ,\n  |x| ≤ |x|",
+      "body": "by intro x; exact le_rfl",
+      "passed": true
+    },
+    {
+      "source": "theorem t (h : P (x := y)) :\n  let a := 0\n  ∀ x : ℤ, |x| ≤ |x| := by intros; exact le_rfl",
+      "complete_header": "theorem t (h : P (x := y)) :\n  let a := 0\n  ∀ x : ℤ, |x| ≤ |x|",
+      "body": "by intros; exact le_rfl",
+      "passed": true
+    }
+  ],
+  "method": "Proof headers ignore leading absolute-value bars and balance named assignments/result-local lets, including nested by-valued let/letI. Data equations/where use the previous inspected generic delimiter; scores are unaffected."
+}

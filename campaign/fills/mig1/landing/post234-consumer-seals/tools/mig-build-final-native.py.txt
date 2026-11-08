@@ -1,0 +1,83 @@
+"""Build exact final native probes, guard-frontier metadata, and body-only variants."""
+from pathlib import Path
+import hashlib,json,re
+V=Path('/private/tmp/mig-post234-consumer-validation')
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+M=json.loads((R/'campaign/fills/mig1/landing/post234-integration-preparation/API-BINDINGS.json').read_text())['consumer_mappings']
+P=json.loads((V/'guard-plan.json').read_text())
+jobs=[];body=V/'body-only-v7';body.mkdir(exist_ok=False)
+def head(s,name):
+    m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(name)+r'\b',s);assert m
+    return m.start(),s.index(':= by',m.end())
+for home,plan in P['by_home'].items():
+    rel=home.replace('.','/')+'.lean';short=home.split('.')[-1]
+    source=(V/'proposed-v7'/(rel+'.txt')).read_text()
+    actual=(V/'source-f631'/(rel+'.txt')).read_text()
+    bodyonly=source
+    targets=[t['name'].split('.')[-1] for t in M if t['file']==rel]
+    for name in targets:
+        a,b=head(source,name);oa,ob=head(actual,name)
+        if source[a:b]!=actual[oa:ob]:
+            assert name in ['timed_start','condTM_start']
+            assert bodyonly.count(source[a:b])==1
+            bodyonly=bodyonly.replace(source[a:b],actual[oa:ob],1)
+    q=body/(rel+'.txt');q.parent.mkdir(parents=True,exist_ok=True);q.write_text(bodyonly)
+    if source==actual:continue
+    appendix='''
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let shorts : List String := [SHORTS]
+  let guards : List Name := [GUARDS]
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  for short in shorts do
+    let found := env.constants.toList.filter fun (n, _) =>
+      (env.getModuleIdxFor? n).isNone && n.toString.endsWith ("." ++ short)
+    unless found.length == 1 do throwError "local multiplicity {short}: {found.length}"
+    let root := found.head!.1
+    logInfo m!"FINAL_ROOT|{short}|{root}"
+    for (n,ci) in env.constants.toList do
+      unless root.isPrefixOf n do continue
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      let ax := Json.mkObj [("short",toJson short),("name",toJson n.toString),
+        ("axioms",toJson ((axs.qsort Name.lt).toList.map Name.toString))]
+      logInfo m!"FINAL_AX|{ax.compress}"
+      let mut todo := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      let mut seen : Array Name := #[]
+      while !todo.isEmpty do
+        let d := todo.back!
+        todo := todo.pop
+        if seen.contains d then continue
+        seen := seen.push d
+        let owner := homeOf d
+        match env.find? d with
+        | some (.thmInfo ti) =>
+          if (`TCSlib).isPrefixOf owner || owner.isAnonymous then
+            todo := todo ++ ti.type.getUsedConstants
+        | some (.defnInfo di) =>
+          if owner.isAnonymous then
+            todo := todo ++ di.type.getUsedConstants ++ di.value.getUsedConstants
+          else if (`TCSlib).isPrefixOf owner then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            unless hint == "abbrev" || guards.contains d do
+              throwError "new unguarded ordinary foreign definition {short}: {d} from {owner}"
+            let row := Json.mkObj [("short",toJson short),("selected",toJson n.toString),
+              ("definition",toJson d.toString),("definitionHome",toJson owner.toString),
+              ("kernelHint",toJson hint),("covered",toJson (guards.contains d)),
+              ("reducibility",toJson (reprStr (getReducibilityStatusCore env d)))]
+            logInfo m!"FINAL_FOREIGN|{row.compress}"
+        | _ => pure ()
+  logInfo "FINAL_COMPLETE|HOME|COUNT"
+'''.replace('SHORTS',', '.join(json.dumps(t) for t in targets)).replace('GUARDS',', '.join('`'+d for d in plan['guards'])).replace('HOME',home).replace('COUNT',str(len(targets)))
+    filename='FinalNative_'+short+'_v7.lean';q=V/'project'/filename;assert not q.exists();q.write_text(source+appendix)
+    jobs.append(dict(label='FinalNative-'+short+'-v7',filename=filename,owner=home,targets=len(targets),
+                     candidate_source_sha256=hashlib.sha256(source.encode()).hexdigest(),metadata=True))
+    if source!=bodyonly:
+        filename='BodyOnlyNative_'+short+'_v7.lean';q=V/'project'/filename;assert not q.exists();q.write_text(bodyonly)
+        jobs.append(dict(label='BodyOnlyNative-'+short+'-v7',filename=filename,owner=home,targets=len(targets),
+                         candidate_source_sha256=hashlib.sha256(bodyonly.encode()).hexdigest(),metadata=False))
+(V/'final-native-jobs-v7.json').write_text(json.dumps(jobs,indent=2)+'\n')
+print(json.dumps(dict(owners_changed=4,native_jobs=len(jobs),complete_captures=6,body_only_headers_exact=True)))

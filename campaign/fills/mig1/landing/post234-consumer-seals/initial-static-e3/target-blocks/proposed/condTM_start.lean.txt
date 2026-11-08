@@ -1,0 +1,38 @@
+private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
+    (hD : ∃ t, D.ComputesInTime x [b] t) :
+    ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
+  classical
+  obtain ⟨tD, hDc⟩ := hD
+  have hspec := (computesInTime_iff D x [b] tD).mp hDc
+  obtain ⟨t, _ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
+  let cf := D.tm.runFrom (D.tm.initCfg x) t
+  have hstop : cf.state = none := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have hout : cf.output = [b] := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
+    rw [heq]
+    exact hspec.2
+  have hi : (condTM D M₁ M₂).tm.initCfg x = controlCfg D M₁ M₂ (D.tm.initCfg x) := by
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
+    · funext i
+      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
+  have hrun : (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+      controlCfg D M₁ M₂ cf := by
+    rw [hi]
+    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t hlive
+  obtain ⟨r, hr⟩ := rewind_from_any (condTM D M₁ M₂).tm
+    (.inl (none, some b)) (.inr (.inl (some b)))
+    (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    (controlCfg D M₁ M₂ cf) (by simp [controlCfg, hstop, hout])
+  refine ⟨t + r, cf.workTapes, cf.workTapePos, ?_⟩
+  rw [MultiTapeTM.runFrom_add, hrun, hr]
+  rfl
+

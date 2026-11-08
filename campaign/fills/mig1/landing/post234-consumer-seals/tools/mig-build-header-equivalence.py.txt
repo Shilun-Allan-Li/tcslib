@@ -1,0 +1,35 @@
+"""Prove exact old/new private statement equality in the unsealed prior context."""
+from pathlib import Path
+import json,re,hashlib,sys
+V=Path('/private/tmp/mig-post234-consumer-validation');version=sys.argv[1]
+sha=lambda s:hashlib.sha256(s.encode()).hexdigest()
+def header(s,name):
+    m=re.search(r'(?m)^private lemma '+re.escape(name)+r'\b',s);assert m
+    en=s.index(':= by',m.end());h=s[m.end():en].strip()
+    depth=0
+    for i,c in enumerate(h):
+        if c in '({[':depth+=1
+        elif c in ')}]':depth-=1
+        elif c==':' and depth==0:return h,h[:i].strip(),h[i+1:].strip()
+    raise AssertionError('missing outer statement colon')
+jobs=[]
+for short,name in [('Wrappers','timed_start'),('Composition','condTM_start')]:
+    rel='TCSlib/Complexity/TuringMachine/'+('Build/' if short=='Wrappers' else '')+short+'.lean'
+    old=(V/'source-f631'/(rel+'.txt')).read_text()
+    new=(V/('proposed-'+version)/(rel+'.txt')).read_text()
+    oh,ob,op=header(old,name);nh,nb,np=header(new,name);assert ob==nb and oh!=nh
+    identifier='MIGPost234_'+name+'_statement_eq'
+    appendix='\nnamespace Turing.FinTM\n'
+    appendix+='private theorem '+identifier+' :\n  (∀ '+ob+',\n    '+op+') =\n  (∀ '+nb+',\n    '+np+') := rfl\n'
+    appendix+='#print axioms '+identifier+'\nend Turing.FinTM\n'
+    fn='HeaderEquivalence_'+short+'_'+version+'.lean'
+    p=V/'project'/fn;assert not p.exists();p.write_text(old+appendix)
+    jobs.append(dict(filename=fn,label='HeaderEquivalence-'+short+'-'+version,file=rel,
+                     theorem=name,old_header=oh,new_header=nh,
+                     old_header_sha256=sha(oh),new_header_sha256=sha(nh),
+                     exact_binders=True,probe_sha256=sha(old+appendix),
+                     native_prior_source_sha256=sha(old),
+                     identity='equality of complete forall theorem types by kernel-checked rfl',
+                     new_public_API=False))
+(V/('header-equivalence-'+version+'.json')).write_text(json.dumps(jobs,indent=2)+'\n')
+print(json.dumps(dict(generation=version,equalities=len(jobs),kind='complete forall type equality')))

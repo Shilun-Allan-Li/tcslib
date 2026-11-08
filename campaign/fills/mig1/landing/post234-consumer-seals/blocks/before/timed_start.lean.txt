@@ -1,0 +1,43 @@
+/-- A singleton-output decider reaches the selected branch's genuine
+initial configuration in at most twice its budget plus five steps.
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt within
+budget and its exact completed singleton output. Capture until that halt, read the singleton in
+two steps, and rewind in at most the current input position plus two. Charge this rewind to the
+decider's elapsed steps using the head-position bound. -/
+private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)
+    (hD : D.ComputesInTime x [b] T) :
+    ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+      (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
+        timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b := by
+  classical
+  have hspec := (computesInTime_iff D x [b] T).mp hD
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
+  let c := D.tm.runFrom (D.tm.initCfg x) t
+  have hs : c.state = none := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have ho : c.output = [b] := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
+    rw [heq]
+    exact hspec.2
+  have hcap : (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) t =
+      timedControlCfg D M₁ M₂ c := by
+    rw [timed_control_init]
+    exact timed_capture D M₁ M₂ _ t hlive
+  obtain ⟨r, hrle, hr⟩ := timed_rewind (timedCondTM D M₁ M₂).tm
+    (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
+    (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    (timedReadyCfg D M₁ M₂ c b) rfl
+  refine ⟨t + 2 + r, ?_, c.workTapes, c.workTapePos, ?_⟩
+  · have hp : c.inputPos.val ≤ 1 + t := by
+      simpa only [MultiTapeTM.initCfg, Cfg.init, Fin.val_one] using
+        MultiTapeTM.timed_input_bound (tm := D.tm) (D.tm.initCfg x) t
+    change r ≤ c.inputPos.val + 2 at hrle
+    omega
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
+      timed_read D M₁ M₂ c b hs ho, hr]
+    rfl
+

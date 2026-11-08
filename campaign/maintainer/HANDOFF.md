@@ -9,6 +9,36 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST: Clear to merge #235; SG1R4 and MIG118 publication next.**
+
+- **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PR235 is verified non-draft/open at073; readiness complete. Seyoonmerges. No new ruling/sourcefix.
+- **Not yet clear to merge: #215.** Current078 fullMSG8PASS329/static0/66,25screens/compiled/seals complete. FrozenR4publicationdraft173files/1628sections~73.5MB; root canonicaladoption/stage/rebind/publish remain. Codexselected.
+- **Not yet clear to merge: #233.** SourceEAecd currentMMIG3ACTUALPASS394/0/static0/60 from wholeMAC5, all12owner binaries identicalnative3; full895maps frozen. SourceQA93/screen153/HEADaccounting135 allcomplete,388selectedStd and5authoredpublictype transports kernelvalidated. Codexgate118two-partpacketdraft preparing; rootpublication next.
+
+If Seyoonmerges#235 now: adopt entire passedMF63→MAC6 only after exactall1003Lean equality. KeepcurrentMSG8/MMIG3actualpins; mergecurrentcampaign into eachPR and, if needed, run the two-moduleHierarchy/SpaceComplexity tail from each wholepassed snapshot (never splice). Owner12/SG1fivefiles/25populations remain exact if verified; preserve oldexecutions and explicitcontext-validity arguments. Nextfree121. Earliercheckpoint text below remains historical.
+
+
+**Current checkpoint: F6 dispatched; SG1R4 evidence finishing; MIG final native3 passes.**
+
+- **Dispatched by Seyoon: Codex gate120 for #235.** Verified1762-section F6 packet published at exchange`0eb0d599d7b28882280de09ae85a819b21338afc`; exact source073/recordse819/SHA/prompt saved in gate120/publication.json and prompt.md, issued in chat. User confirmed dispatch; Codex nowreturnedPASS0/0/0/20. Verbatimfindings/rootcurrentmerge+replaychecks saved; independentclosure reviewrunning. Fresh25/currentmetadata/seals/MF63 are complete. **Not yet clear to merge: #235 — gate120 open.**
+- SG1pushed078 directly fixes both R3F4 backward-liveness copies;26notes dispositioned. ActualwholeMAC5MSG8 PASS329/static0/66 and freshfull25BASE/HEAD2019→1991 are frozen. Freshcurrent9owner metadata7101→7063 preserves1351nonprivate types/metadata/AX and168simprules; scopedF4 controls/selectedAX are finishing. CodexR4selected. **Not yet clear to merge: #215.** OldR3packet/report immutable.
+- MIGfinalpushed`eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` applies the reviewed six reader bodies, Seyoon-approved2kernel-equivalent private transports, and a separately checked final CoreOption.map argument repair. ActualwholeMAC5native3 PASS12/0errors/3unchangedRAM admissions, complete895objectmaps. Recorded14whole-header/body seals/232pairedcontrols pass; the final Loop version separately passes3-targetseal/40freshcontrols. FreshwholeMAC5MMIG3 full394replay and25HEAD comparison run; BASE25frozen1702. CurrentHEAD compiled accounting/AX/sourceQA follow. **Not yet clear to merge: #233.** Codexgate118selected, not ready.
+
+All3local prospective merges vs records952 are clean/Leanexact (no actualmerge); source campaign remains Seyoon-merged#234/bf64. Complete895-objectMAC5 current. Main checkout safely FF952, untracked3sumexample unchanged. Local3Lean/machine5, onesharedscreen. No decision pending. Nextfree121. Earlier checkpoints below keep their historical pins and are superseded by this checkpoint.
+
+**Current checkpoint:** F6allcurrent073/bf64 validation is complete, including fresh25
+1385→1396/1454→1455, MF63PASS2,138→193/stdAX/19scopes/72controls/witness. Full1762-section
+Codexgate120pack is adopted; final rendering/publication next, not yetdispatched/#235notclear.
+
+SG1source078 fixes both confirmedF4backward-liveness copies. All26R3notesaccepted; CodexR4
+selected. CurrentMSG8full329running; fresh25BASEcompleted2019pairs,HEADrunning, scoped/CI
+refresh remains. #215notclear. Originalf37R3packet/findings unchanged.
+
+MIGsourcef631 passesall12owner checks (3unchangedRAMsorries). Six consumerproof reader
+repairs and2equivalentprivateheadertransport proposals are understrongseal/nativepreflight;
+actualsourceunchangedpending reviewedpatch/ruling. ExistingpublicAPIs suffice sofar. Full
+currentMIGBASE5701+59/census/CI/AX is checkpointed; HEAD/full394/gate118remain. #233notclear.
+
 **Latest user steering/current state:** Seyoon merged#234 at
 `bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c` and dispatched gate106r3. Gate119 is CLOSED
 PASS0/0/0/17 and MERGED. Its exactF1Lean permits wholeMFup2→mac5 adoption (401/static0/77,

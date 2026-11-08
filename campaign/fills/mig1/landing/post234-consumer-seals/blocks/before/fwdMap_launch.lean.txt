@@ -1,0 +1,46 @@
+/-- Choose the first payload entry, then transfer every prefix to the
+operational host. The stationary setup seam identifies this first entry
+with the complete validating/buffering/emission endpoint, so no payload
+work is hidden in the administrative time bound.
+
+**Proof sketch.** The existing stationary-setup contract at one step proves that every
+virtual-payload stop configuration is fixed. Apply
+`Turing.MultiTapeTM.exists_first_entry_of_fixed` to that stop predicate and the bounded setup
+endpoint. Guarded setup agreement then identifies every operational prefix through the returned
+first entry, with the same complete endpoint and linear bound. -/
+private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
+    (hd : pairDecode x = some (a, b)) :
+    ∃ u ≤ 5 * (x.length + 1),
+      (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u =
+        fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) ∧
+      ∀ v ≤ u, (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) v =
+        (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v := by
+  classical
+  obtain ⟨t, ht, he⟩ := fwdMap_setup M x
+  simp only [hd] at he
+  let stop : FwdMapState M.State → Prop := fun r => ∃ q tag, r = .run q tag
+  have hfix : ∀ z : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x,
+      (∃ r, z.state = some r ∧ stop r) → (fwdMapTM M false).tm.step z = z := by
+    rintro z ⟨r, hr, q, tag, hq⟩
+    have hentered : fwdMapEntered M z := ⟨q, tag, by rw [hr, hq]⟩
+    have hs := fwdMapSetup_stationary M z hentered 1
+    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
+  have hdstop : ∃ r,
+      (fwdMapVirtual M (x := x) (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+        (pairEncode a [])).state = some r ∧ stop r := by
+    refine ⟨.run M.tm.q₀ true, ?_, M.tm.q₀, true, rfl⟩
+    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+  obtain ⟨u, hu, hcut, hefirst⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (fwdMapTM M false).tm stop ((fwdMapTM M false).tm.initCfg x)
+    (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+      (pairEncode a [])) t hfix hdstop he
+  have hg : ∀ v < u, ¬fwdMapEntered M
+      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) := by
+    rintro v hv ⟨q, tag, hq⟩
+    exact hcut v hv ⟨.run q tag, hq, q, tag, rfl⟩
+  have hprefix (v : ℕ) (hv : v ≤ u) := fwdMapSetup_run M x v
+    (fun w hw => hg w (by omega))
+  refine ⟨u, hu.trans ht, ?_, hprefix⟩
+  rw [hprefix u (le_refl _)]
+  exact hefirst
+

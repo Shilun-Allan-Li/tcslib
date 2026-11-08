@@ -1,0 +1,38 @@
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Finite
+import Lean
+/-! Export exactly three ordinary generated matcher definitions as structured metadata.
+No theorem or opaque proof value is read/rendered. This permits a fresh kernel comparison of
+five public type expressions containing these old generated matcher references. -/
+set_option maxHeartbeats 0
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let requests : List String := ["_private.TCSlib.Complexity.TuringMachine.Build.Catalog.0.Turing.FinTM.f2_extract_run.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Catalog.0.Turing.FinTM.f2_loop_find_run.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Catalog.0.Turing.FinTM.f2_strip_linear.match_1"]
+  for requestedName in requests do
+    let found := env.constants.toList.filter fun (n, _) => n.toString == requestedName
+    unless found.length == 1 do throwError "ordinary matcher count {requestedName}: {found.length}"
+    let (n, ci) := found.head!
+    let .defnInfo di := ci | throwError "refuse non-definition value {n}"
+    unless di.safety == .safe do throwError "refuse unsafe/partial definition {n}"
+    let some i := env.getModuleIdxFor? n | throwError "no owner {n}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"ORDINARY_MATCHER|{(Json.mkObj [("name", toJson n.toString),
+      ("nameExpr", toJson (reprStr n)), ("owner", toJson env.header.moduleNames[i.toNat]!.toString),
+      ("levelParamsExpr", toJson (reprStr di.levelParams)), ("typeExpr", toJson (reprStr di.type)),
+      ("valueExpr", toJson (reprStr di.value)), ("hintsExpr", toJson (match di.hints with
+        | .abbrev => "Lean.ReducibilityHints.abbrev" | .opaque => "Lean.ReducibilityHints.opaque"
+        | .regular height => s!"Lean.ReducibilityHints.regular {height}")),
+      ("safety", toJson (reprStr di.safety)), ("axioms", toJson ((ax.qsort Name.lt).toList.map Name.toString))]).compress}"
+  logInfo "MATCHER_COMPLETE|3|only_ordinary_safe_definition_values"

@@ -1,0 +1,124 @@
+from pathlib import Path
+from collections import Counter
+import datetime,difflib,hashlib,json,re,shutil
+W=Path('/private/tmp/mig-post234-core-reader-repair')
+P=Path('/private/tmp/mig-post234-core-reader-repair-final')
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+OLD=R/'campaign/fills/mig1/landing/post234-consumer-seals'
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def write(rel,data):
+ p=P/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data.encode() if isinstance(data,str) else data)
+def jw(rel,x):write(rel,json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+def run(label):
+ x=json.loads((W/'runs'/(label+'-run.json')).read_text());raw=(W/'runs'/(label+'.out')).read_bytes();b=Path(x['argv'][-1]).read_bytes()
+ assert sha(raw)==x['output_sha256'] and sha(b)==x['input_sha256'];return x,raw.decode()
+for label in ['Loop-native-v1','Loop-sealed-v1','Core-argument-kinds-v1','Controls-Loop-native']:
+ x,s=run(label);assert x['exit']==x['errors']==x['sorry_warnings']==0
+negative,neg=run('Controls-Loop-sealed');assert negative['exit']==1 and negative['errors']==40 and negative['sorry_warnings']==0
+plan=json.loads((OLD/'evidence/guard-plan.json').read_text())['by_home']['TCSlib.Complexity.TuringMachine.Build.Loop'];guards=plan['guards'];assert len(guards)==20
+positive,pos=run('Controls-Loop-native');expected=[(g,m) for g in guards for m in ['point','abstract']]
+pm=re.findall(r'^CONTROL\|([^|]+)\|(point|abstract)\|PASS\|kernelChecked=([^\n]+)$',pos,re.M)
+assert [(a,b) for a,b,_ in pm]==expected
+assert all(k==f'MIGPost234_Loop_{i}_{m}' for i,(_,m,k) in enumerate(pm,1))
+assert re.findall(r'^CONTROL\|([^|]+)\|(point|abstract)\|FAIL$',neg,re.M)==expected
+errs=re.findall(r'^.*?:\d+:\d+: error: ([^\n]*)$',neg,re.M)
+assert errs==[f'RFL_CONTROL|{n}|{m}|Tactic `rfl` failed: equality lhs' for n,m in expected]
+np=(W/'project/Controls_Loop_native.lean').read_text();sp=(W/'project/Controls_Loop_sealed.lean').read_text();attr='attribute [local irreducible] '+' '.join(guards)+'\n';assert sp.count(attr)==1 and sp.replace(attr,'',1)==np
+for mode in ['native','sealed']:assert (W/'project'/('Controls_Loop_'+mode+'.lean')).read_bytes()==(OLD/'evidence/project'/('Controls_Loop_'+mode+'.lean.txt')).read_bytes()
+
+inventory=json.loads((W/'argument-source-inventory.json').read_text());_,raw=run('Core-argument-kinds-v1')
+kinds=[json.loads(l.split('|',1)[1]) for l in raw.splitlines() if l.startswith('ARG_KIND|')]
+unresolved=[l.split('|',1)[1] for l in raw.splitlines() if l.startswith('ARG_UNRESOLVED|')]
+assert len(kinds)==66 and len(unresolved)==40 and len(inventory['heads'])==106
+assert [x['name'] for x in kinds if x['kind']=='definition']==['Option.map']
+assert all(x['kind'] in ['definition','theorem'] for x in kinds)
+lookup={x['spelling']:x for x in kinds};classified=[]
+allowed_local={'branchInit','branchStart','c','hT','hagree','hback','hbranchInit','hcT','hcap','hd','he','heq','hi','hin','hinit','hout','hp','hprefix','hq','hr',"hr'",'hrun','hs','hstop','hw','hz','ih','ready','ret'}
+for row in inventory['rows']:
+ row=row.copy();h=row['head']
+ if not h or h=='show':row['classification']='explicit local equality/proof term or builtin syntax'
+ elif h in lookup:
+  info=lookup[h];row['compiled']=info
+  row['classification']='published theorem' if info['kind']=='theorem' else 'FORBIDDEN ordinary definition'
+ else:
+  source=(W/'actual-ea1c51'/(row['file']+'.txt')).read_text()
+  m=re.search(r'(?m)^(?:private )?(?:noncomputable )?(def|abbrev|theorem|lemma)\s+'+re.escape(h)+r'\b',source)
+  if m:row.update(classification='same-home '+m.group(1),declaration_line=source[:m.start()].count('\n')+1)
+  else:
+   assert h in allowed_local,(h,row)
+   row['classification']='local let/hypothesis/induction binder'
+ classified.append(row)
+beforebad=[x for x in classified if x['generation']=='actual-ea1c51' and x['classification']=='FORBIDDEN ordinary definition']
+afterbad=[x for x in classified if x['generation']=='proposed' and x['classification']=='FORBIDDEN ordinary definition']
+assert len(beforebad)==1 and beforebad[0]['head']=='Option.map' and not afterbad
+assert len({x['target'] for x in classified if x['changed_target']})==6
+
+LOOP='TCSlib/Complexity/TuringMachine/Build/Loop.lean'
+before=(W/'actual-ea1c51'/(LOOP+'.txt')).read_text();after=(W/'project/CoreRepair_Loop_native_v1.lean').read_text()
+old='''    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs]
+    simp [Option.map]''';new='''    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs]
+    intro h
+    cases h'''
+assert before.count(old)==1 and after==before.replace(old,new,1) and after.count(new)==1 and before==after.replace(new,old,1)
+patch=''.join(difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/'+LOOP,tofile='b/'+LOOP))
+sr,sealraw=run('Loop-sealed-v1');sealed=(W/'project/CoreRepair_Loop_sealed_v1.lean').read_text()
+receipts=json.loads((OLD/'evidence/seal-build-v2/roundtrip-receipts.json').read_text());receipt=next(x for x in receipts if x['owner'].endswith('.Loop'))
+recovered=sealed.removesuffix(receipt['metadata_appendix'])
+for m in receipt['masks']:
+ assert recovered.count(m['prefix'])==recovered.count(m['suffix'])==1
+ recovered=recovered.replace(m['prefix'],'',1).replace(m['suffix'],'',1)
+assert recovered==after
+assert Counter(re.findall(r'^SEAL_ACTIVE\|([^|]+)\|(\d+)$',sealraw,re.M))==Counter((n,'20') for n in ['emCall_eval_first','emCall_first_entry','emCall_right_endpoint'])
+axes=[json.loads(l.split('|',1)[1]) for l in sealraw.splitlines() if l.startswith('LOCAL_AX|')];assert len(axes)==6 and all(set(x['axioms'])<={'propext','Classical.choice','Quot.sound'} for x in axes)
+# Every warning is outside the complete guarded target blocks, in both native and sealed sources.
+for label,source in [('Loop-native-v1',after),('Loop-sealed-v1',sealed)]:
+ rr,out=run(label)
+ for n in ['emCall_eval_first','emCall_first_entry','emCall_right_endpoint']:
+  m=re.search(r'(?m)^private lemma '+n+r'\b',source);e=re.search(r'(?m)^/--|^end MIGPost234Seal_',source[m.end():]);end=m.end()+e.start()
+  lo=source[:m.start()].count('\n')+1;hi=source[:end].count('\n')+1
+  assert not [l for l in out.splitlines() if (p:=re.search(r':(\d+):\d+: warning:',l)) and lo<=int(p.group(1))<=hi]
+
+ctx=json.loads((OLD/'evidence/native2-context-before.json').read_text());root=Path(ctx['context']);now=[]
+for p in sorted(root.rglob('*.olean')):
+ b=p.read_bytes();now.append(dict(path=p.relative_to(root).as_posix(),bytes=len(b),sha256=sha(b)))
+assert now==ctx['objects'] and len(now)==895
+P.mkdir(exist_ok=False)
+write('core-option-reader.patch',patch);write('Loop.before-ea1c51.lean.txt',before);write('Loop.proposed.lean.txt',after)
+jw('QA.json',dict(result='PASS',baseline='ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533',new_Loop_sha256=sha(after.encode()),patch_sha256=sha(patch.encode()),
+ changed_targets=1,headers_imports_definitions_and_all_other_bytes_exact=True,forward_reverse_exact=True,
+ native=run('Loop-native-v1')[0],whole_header_body_seal=sr,guard_profiles=20,paired_controls=40,control_source_inputs_exact=True,
+ selected_roots=3,selected_roots_and_descendants=6,axioms=axes,changed_region_warnings=0,all_895_context_objects_unchanged=True,
+ explicit_argument_heads=106,compiled_global_heads=66,compiled_theorems=65,compiled_definition_before='Option.map / Init.Prelude',
+ proposed_forbidden_Core_Mathlib_TCS_other_file_arguments=0,all_six_changed_targets_and_all14_consumers_reviewed=True,
+ no_new_API_import_statement_debt=True,user_approved_private_headers_unchanged=True,source_Git_cache_mutation=False,
+ merge_status='Not yet clear to merge: #233; actual integration/native3/gate118 pending root'))
+jw('EXPLICIT-ARGUMENT-REVIEW-CORRECTED.json',dict(result='PASS after one-line repair',rows=classified,compiled=kinds,
+ unresolved_local_or_samehome=unresolved,violations_before=beforebad,violations_after=afterbad,
+ correction='WORKFLOW2 permits Core/Mathlib delta reduction by rfl/decide/show, but forbids explicit simp/rw/unfold definition arguments; prior report exception was wrong'))
+jw('CONTEXT-AFTER.json',dict(context=ctx['context'],source=ctx['source'],objects=now))
+for p in sorted(W.rglob('*')):
+ if p.is_file() and not p.is_symlink() and '.lake' not in p.relative_to(W).parts:
+  write('evidence/'+p.relative_to(W).as_posix()+('.txt' if p.suffix=='.lean' else ''),p.read_bytes())
+for p in [Path('/private/tmp/mig-core-reader-prepare.py'),Path('/private/tmp/mig-core-reader-run.py'),Path('/private/tmp/mig-core-argument-audit-prepare.py'),Path('/private/tmp/mig-core-reader-freeze.py')]:write('tools/'+p.name+'.txt',p.read_bytes())
+write('tools/leanelab.sh.txt',(R/'devtools/seyoon/leanelab.sh').read_bytes())
+write('approved-private-headers.json',(R/'campaign/fills/mig1/landing/post234-reader-repairs-applied/approval.json').read_bytes())
+write('README.md',f'''# MIG Core reader correction — frozen mechanical proposal
+
+Replace exactly `simp [Option.map]` in `emCall_eval_first` with `intro h; cases h`. No source was edited by this agent. The baseline is actual pushed `ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533`; all six actual owner files were read from the actual checkout and matched the approved combined proposal byte for byte. The two private headers are already user-approved and remain unchanged.
+
+The previous frozen packet’s allowance for explicit Core `Option.map` unfolding was wrong under maintainer WORKFLOW §2. This supplement supersedes that explicit-argument clearance and its non-TCS exception; the earlier source/control/seal records remain immutable historical evidence. Core constructor reduction is permitted. The repaired proof uses the same published TCS field equations, then eliminates the impossible constructor equality.
+
+Native Loop PASS {run('Loop-native-v1')[0]['seconds']:.2f}s; full-source Loop with all three complete doc/header/body spans sealed PASS {sr['seconds']:.2f}s. Both have zero errors/sorry and no changed-region warnings; the same61 legacy full-file warnings remain. All20 guards and all40 paired controls are unchanged. Fresh exact controls pass unsealed and fail sealed with exactly40 matching rfl errors and ordered kernel identities. All3 selected roots plus3 descendants have only standard axioms. Removing the seal envelope recovers the exact proposed complete source. All895 immutable native2 context objects remain byte/hash-identical; root explicitly authorized that complete context for these proof-only repairs.
+
+The corrected independent explicit-argument audit covers all14 consumer declarations, including all6 repaired bodies and both approved private headers. It resolves106 distinct heads against the compiled environment:65 global theorems and exactly one prior global definition, `Option.map` in `Init.Prelude`. The other40 heads are bound to same-home declarations or actual local lets/hypotheses. After repair, zero forbidden Core/Mathlib definitions or other-file TCS definitions remain in explicit rewrite/unfold arguments. Full source rows, compiled kinds/homes, local classifications and raw output are included; no theorem proof value is rendered.
+
+`core-option-reader.patch` has an exact forward/reverse source roundtrip. New complete Loop SHA256: `{sha(after.encode())}`. Old packet and canonical records were not changed. No new API/import/statement/debt or user decision is needed for this mechanical correction. Root owns actual application/push, complete native3, fresh metadata/screens/replay and gate118. **Not yet clear to merge: #233.**
+''')
+files=[]
+for p in sorted(P.rglob('*')):
+ if p.is_file():
+  b=p.read_bytes();b.decode('utf-8');files.append(dict(path=p.relative_to(P).as_posix(),bytes=len(b),sha256=sha(b)))
+jw('MANIFEST.json',dict(files=files,payload_files=len(files),payload_bytes=sum(x['bytes'] for x in files),source='ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533'))
+files.append(dict(path='MANIFEST.json',sha256=sha((P/'MANIFEST.json').read_bytes())))
+write('MANIFEST.sha256',''.join(x['sha256']+'  '+x['path']+'\n' for x in sorted(files,key=lambda x:x['path'])))
+print(json.dumps(dict(packet=str(P),files=len(files)+1,new_Loop_sha256=sha(after.encode()),patch_sha256=sha(patch.encode()),manifest_sha256=sha((P/'MANIFEST.sha256').read_bytes()),result='PASS')))

@@ -1,0 +1,26 @@
+lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
+    (h₁ : M₁.ComputesInTime x y t₁) :
+    ∃ (a : ℕ) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+      (heads : Fin M₁.k → ℤ), a ≤ t₁ + y.length + 2 ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom ((bufferedCompTM M₁ M₂).tm.initCfg x) a =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
+  classical
+  have hspec := (computesInTime_iff M₁ x y t₁).mp h₁
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M₁.tm (M₁.tm.initCfg x) hspec.1
+  let c := M₁.tm.runFrom (M₁.tm.initCfg x) t
+  have hs : c.state = none := by
+    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have ho : c.output = y := by
+    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).output = y
+    rw [heq]
+    exact hspec.2
+  refine ⟨t + (y.length + 2), c.inputPos, c.workTapes, c.workTapePos, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+    bufferedFirstCfg_run M₁ M₂ _ t hlive]
+  have hf := bufferedFirstCfg_rewind M₁ M₂ c hs
+  cases ho
+  exact hf
+

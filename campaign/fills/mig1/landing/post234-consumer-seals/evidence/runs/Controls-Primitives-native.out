@@ -1,0 +1,90 @@
+CONTROL|Turing.Action.apply|point|PASS|kernelChecked=MIGPost234_Primitives_1_point
+CONTROL|Turing.Action.apply|abstract|PASS|kernelChecked=MIGPost234_Primitives_2_abstract
+CONTROL|Turing.Action.mapState|point|PASS|kernelChecked=MIGPost234_Primitives_3_point
+CONTROL|Turing.Action.mapState|abstract|PASS|kernelChecked=MIGPost234_Primitives_4_abstract
+CONTROL|Turing.Cfg.init|point|PASS|kernelChecked=MIGPost234_Primitives_5_point
+CONTROL|Turing.Cfg.init|abstract|PASS|kernelChecked=MIGPost234_Primitives_6_abstract
+CONTROL|Turing.Cfg.inputSymbol|point|PASS|kernelChecked=MIGPost234_Primitives_7_point
+CONTROL|Turing.Cfg.inputSymbol|abstract|PASS|kernelChecked=MIGPost234_Primitives_8_abstract
+CONTROL|Turing.Cfg.mapState|point|PASS|kernelChecked=MIGPost234_Primitives_9_point
+CONTROL|Turing.Cfg.mapState|abstract|PASS|kernelChecked=MIGPost234_Primitives_10_abstract
+CONTROL|Turing.Cfg.workTapeSymbols|point|PASS|kernelChecked=MIGPost234_Primitives_11_point
+CONTROL|Turing.Cfg.workTapeSymbols|abstract|PASS|kernelChecked=MIGPost234_Primitives_12_abstract
+CONTROL|Turing.FinTM.Computes|point|PASS|kernelChecked=MIGPost234_Primitives_13_point
+CONTROL|Turing.FinTM.Computes|abstract|PASS|kernelChecked=MIGPost234_Primitives_14_abstract
+CONTROL|Turing.FinTM.ComputesFunInTime|point|PASS|kernelChecked=MIGPost234_Primitives_15_point
+CONTROL|Turing.FinTM.ComputesFunInTime|abstract|PASS|kernelChecked=MIGPost234_Primitives_16_abstract
+CONTROL|Turing.FinTM.ComputesInTime|point|PASS|kernelChecked=MIGPost234_Primitives_17_point
+CONTROL|Turing.FinTM.ComputesInTime|abstract|PASS|kernelChecked=MIGPost234_Primitives_18_abstract
+CONTROL|Turing.FinTM.bufferTape|point|PASS|kernelChecked=MIGPost234_Primitives_19_point
+CONTROL|Turing.FinTM.bufferTape|abstract|PASS|kernelChecked=MIGPost234_Primitives_20_abstract
+CONTROL|Turing.FinTM.controlAction|point|PASS|kernelChecked=MIGPost234_Primitives_21_point
+CONTROL|Turing.FinTM.controlAction|abstract|PASS|kernelChecked=MIGPost234_Primitives_22_abstract
+CONTROL|Turing.FinTM.tapeBlocks|point|PASS|kernelChecked=MIGPost234_Primitives_23_point
+CONTROL|Turing.FinTM.tapeBlocks|abstract|PASS|kernelChecked=MIGPost234_Primitives_24_abstract
+CONTROL|Turing.FinTM.virtualMove|point|PASS|kernelChecked=MIGPost234_Primitives_25_point
+CONTROL|Turing.FinTM.virtualMove|abstract|PASS|kernelChecked=MIGPost234_Primitives_26_abstract
+CONTROL|Turing.FinTM.virtualNextTag|point|PASS|kernelChecked=MIGPost234_Primitives_27_point
+CONTROL|Turing.FinTM.virtualNextTag|abstract|PASS|kernelChecked=MIGPost234_Primitives_28_abstract
+CONTROL|Turing.MultiTapeTM.initCfg|point|PASS|kernelChecked=MIGPost234_Primitives_29_point
+CONTROL|Turing.MultiTapeTM.initCfg|abstract|PASS|kernelChecked=MIGPost234_Primitives_30_abstract
+CONTROL|Turing.MultiTapeTM.runFrom|point|PASS|kernelChecked=MIGPost234_Primitives_31_point
+CONTROL|Turing.MultiTapeTM.runFrom|abstract|PASS|kernelChecked=MIGPost234_Primitives_32_abstract
+CONTROL|Turing.MultiTapeTM.spaceUsed|point|PASS|kernelChecked=MIGPost234_Primitives_33_point
+CONTROL|Turing.MultiTapeTM.spaceUsed|abstract|PASS|kernelChecked=MIGPost234_Primitives_34_abstract
+CONTROL|Turing.MultiTapeTM.spaceUsedByTape|point|PASS|kernelChecked=MIGPost234_Primitives_35_point
+CONTROL|Turing.MultiTapeTM.spaceUsedByTape|abstract|PASS|kernelChecked=MIGPost234_Primitives_36_abstract
+CONTROL|Turing.MultiTapeTM.step|point|PASS|kernelChecked=MIGPost234_Primitives_37_point
+CONTROL|Turing.MultiTapeTM.step|abstract|PASS|kernelChecked=MIGPost234_Primitives_38_abstract
+CONTROL|Turing.MultiTapeTM.visitedByTapeHead|point|PASS|kernelChecked=MIGPost234_Primitives_39_point
+CONTROL|Turing.MultiTapeTM.visitedByTapeHead|abstract|PASS|kernelChecked=MIGPost234_Primitives_40_abstract
+CONTROL|Turing.captureAction|point|PASS|kernelChecked=MIGPost234_Primitives_41_point
+CONTROL|Turing.captureAction|abstract|PASS|kernelChecked=MIGPost234_Primitives_42_abstract
+CONTROL|Turing.captureCfg|point|PASS|kernelChecked=MIGPost234_Primitives_43_point
+CONTROL|Turing.captureCfg|abstract|PASS|kernelChecked=MIGPost234_Primitives_44_abstract
+CONTROL|Turing.moveInputPos|point|PASS|kernelChecked=MIGPost234_Primitives_45_point
+CONTROL|Turing.moveInputPos|abstract|PASS|kernelChecked=MIGPost234_Primitives_46_abstract
+CONTROL|Turing.pairDecode|point|FAIL
+/private/tmp/mig-post234-consumer-validation/project/Controls_Primitives_native.lean:95:0: error: RFL_CONTROL|Turing.pairDecode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode a✝
+is not definitionally equal to rhs
+  List.brecOn a✝ fun x f =>
+    (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+      | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+      | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+      | false :: true :: rest => fun x => some ([], rest)
+      | x => fun x => none)
+      f
+
+a✝ : List Bool
+⊢ Turing.pairDecode a✝ =
+    List.brecOn a✝ fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f
+CONTROL|Turing.pairDecode|abstract|FAIL
+/private/tmp/mig-post234-consumer-validation/project/Controls_Primitives_native.lean:95:0: error: RFL_CONTROL|Turing.pairDecode|abstract|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode
+is not definitionally equal to rhs
+  fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f
+
+⊢ Turing.pairDecode = fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f
+CONTROL|Turing.pairEncode|point|PASS|kernelChecked=MIGPost234_Primitives_49_point
+CONTROL|Turing.pairEncode|abstract|PASS|kernelChecked=MIGPost234_Primitives_50_abstract

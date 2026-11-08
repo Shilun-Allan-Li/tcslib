@@ -1,0 +1,30 @@
+from pathlib import Path
+import hashlib,json,re,shutil
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+OLD=R/'campaign/fills/mig1/landing/post234-consumer-seals'
+ACT=Path('/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4')
+W=Path('/private/tmp/mig-post234-core-reader-repair');W.mkdir(exist_ok=False)
+V=Path('/private/tmp/mig-post234-consumer-validation')
+(W/'project/.lake').mkdir(parents=True);(W/'project/.lake/packages').symlink_to(V/'project/.lake/packages',target_is_directory=True)
+(W/'project/lean-toolchain').write_bytes((V/'project/lean-toolchain').read_bytes())
+sha=lambda b:hashlib.sha256(b).hexdigest()
+mapping=json.loads((OLD/'API-BINDINGS-INPUT.json').read_text())['consumer_mappings']
+actual={};rows=[]
+for f in sorted({x['file'] for x in mapping}):
+    data=(ACT/f).read_bytes();assert data==(OLD/'captures/combined-proposal'/(f+'.txt')).read_bytes(),f
+    actual[f]=data.decode();p=W/'actual-ea1c51'/ (f+'.txt');p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+    rows.append(dict(path=f,actual_checkout=str(ACT/f),source='ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533',bytes=len(data),sha256=sha(data),exact_approved_combined_source=True))
+LOOP='TCSlib/Complexity/TuringMachine/Build/Loop.lean'
+source=actual[LOOP];bad='    simp [Option.map]';fix='    intro h\n    cases h';assert source.count(bad)==1
+proposed=source.replace(bad,fix,1)
+(W/'project/CoreRepair_Loop_native_v1.lean').write_text(proposed)
+# The full original seal envelope is unchanged, including all20 guards and 3 model-simp removals.
+sealed=(OLD/'evidence/project/Sealed_Loop_v2.lean.txt').read_text();assert sealed.count(bad)==1;sealed=sealed.replace(bad,fix,1)
+(W/'project/CoreRepair_Loop_sealed_v1.lean').write_text(sealed)
+for mode in ['native','sealed']:
+    (W/'project'/('Controls_Loop_'+mode+'.lean')).write_bytes((OLD/'evidence/project'/('Controls_Loop_'+mode+'.lean.txt')).read_bytes())
+(W/'SOURCE-BINDINGS.json').write_text(json.dumps(rows,indent=2)+'\n')
+(W/'CONTEXT-AUTHORITY.json').write_text(json.dumps(dict(source='ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533',
+ context_source='f631647190998272127fcd37b7a5d1e61fac4f3f',context=str(Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig-post234-native2')),
+ root_explicitly_authorized_same_immutable_native2_context=True,objects=895,source_or_Git_mutation=False),indent=2)+'\n')
+print(json.dumps(dict(work=str(W),actual_six_owners_exact=True,repair_target='emCall_eval_first',native_probe_sha256=sha(proposed.encode()))))

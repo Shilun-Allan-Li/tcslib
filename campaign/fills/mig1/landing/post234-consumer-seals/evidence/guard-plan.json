@@ -1,0 +1,486 @@
+{
+  "source": "f631647190998272127fcd37b7a5d1e61fac4f3f",
+  "by_home": {
+    "TCSlib.Complexity.TuringMachine.Build.Catalog": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.incFixedTM",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.incFixed",
+        "Turing.moveInputPos",
+        "Turing.pairDiagTM",
+        "Turing.pairEncode"
+      ],
+      "excluded_abbrev": [
+        "Turing.FinTM.State",
+        "Turing.FinTM.k",
+        "Turing.FinTM.tm"
+      ],
+      "original_TCS_imports": [
+        "import Mathlib.Data.Nat.Size",
+        "import Mathlib.Tactic.DeriveFintype",
+        "import TCSlib.Complexity.TuringMachine.Build.Loop",
+        "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "import TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "regular_frontier": [
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.incFixedTM",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.incFixed",
+        "Turing.pairDiagTM",
+        "Turing.pairEncode"
+      ]
+    },
+    "TCSlib.Complexity.TuringMachine.Build.Loop": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.VirtualTag",
+        "Turing.FinTM.bufferedCompTM",
+        "Turing.FinTM.bufferedSecondCfg",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.captureAction",
+        "Turing.captureCfg",
+        "Turing.moveInputPos"
+      ],
+      "excluded_abbrev": [
+        "Turing.Action.inputTape",
+        "Turing.Action.output",
+        "Turing.Action.state",
+        "Turing.Action.workTapes",
+        "Turing.Cfg.Halted",
+        "Turing.Cfg.inputPos",
+        "Turing.Cfg.output",
+        "Turing.Cfg.state",
+        "Turing.Cfg.workTapePos",
+        "Turing.Cfg.workTapes",
+        "Turing.FinTM.State",
+        "Turing.FinTM.decEqState",
+        "Turing.FinTM.fintypeState",
+        "Turing.FinTM.k",
+        "Turing.FinTM.tm",
+        "Turing.MultiTapeTM.q\u2080",
+        "Turing.MultiTapeTM.tr"
+      ],
+      "original_TCS_imports": [
+        "import Mathlib.Data.Nat.Bits",
+        "import Mathlib.Tactic.FinCases",
+        "import TCSlib.Complexity.TuringMachine.Build.Convention",
+        "import TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "import TCSlib.Complexity.TuringMachine.Build.Embed",
+        "import TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "regular_frontier": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.VirtualTag",
+        "Turing.FinTM.bufferedCompTM",
+        "Turing.FinTM.bufferedSecondCfg",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.captureAction",
+        "Turing.captureCfg"
+      ]
+    },
+    "TCSlib.Complexity.TuringMachine.Build.Primitives": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Action.mapState",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.mapState",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.tapeBlocks",
+        "Turing.FinTM.virtualMove",
+        "Turing.FinTM.virtualNextTag",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.captureAction",
+        "Turing.captureCfg",
+        "Turing.moveInputPos",
+        "Turing.pairDecode",
+        "Turing.pairEncode"
+      ],
+      "excluded_abbrev": [
+        "Turing.Action.apply.match_1",
+        "Turing.Action.inputTape",
+        "Turing.Action.output",
+        "Turing.Action.state",
+        "Turing.Action.workTapes",
+        "Turing.Cfg.Halted",
+        "Turing.Cfg.inputPos",
+        "Turing.Cfg.output",
+        "Turing.Cfg.state",
+        "Turing.Cfg.workTapePos",
+        "Turing.Cfg.workTapes",
+        "Turing.FinTM.State",
+        "Turing.FinTM.decEqState",
+        "Turing.FinTM.fintypeState",
+        "Turing.FinTM.k",
+        "Turing.FinTM.rewind_scan.match_1",
+        "Turing.FinTM.tm",
+        "Turing.MultiTapeTM.q\u2080",
+        "Turing.MultiTapeTM.step.match_1",
+        "Turing.MultiTapeTM.tr"
+      ],
+      "original_TCS_imports": [
+        "import Mathlib.Data.List.Induction",
+        "import Mathlib.Data.Nat.Bits",
+        "import Mathlib.Tactic.DeriveFintype",
+        "import Mathlib.Tactic.FinCases",
+        "import Mathlib.Tactic.Ring",
+        "import TCSlib.Complexity.ClassP.TimeConstructible",
+        "import TCSlib.Complexity.TuringMachine.Build.Convention",
+        "import TCSlib.Complexity.TuringMachine.Build.Loop",
+        "import TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "import TCSlib.Complexity.TuringMachine.Composition",
+        "import TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "regular_frontier": [
+        "Turing.Action.apply",
+        "Turing.Action.mapState",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.mapState",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.tapeBlocks",
+        "Turing.FinTM.virtualMove",
+        "Turing.FinTM.virtualNextTag",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.captureAction",
+        "Turing.captureCfg",
+        "Turing.moveInputPos",
+        "Turing.pairDecode",
+        "Turing.pairEncode"
+      ]
+    },
+    "TCSlib.Complexity.TuringMachine.Build.Wrappers": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.branchTM",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.leftAction",
+        "Turing.FinTM.leftCfg",
+        "Turing.FinTM.rightAction",
+        "Turing.FinTM.rightCfg",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.moveInputPos"
+      ],
+      "excluded_abbrev": [
+        "Turing.Action.inputTape",
+        "Turing.Action.output",
+        "Turing.Action.state",
+        "Turing.Action.workTapes",
+        "Turing.Cfg.Halted",
+        "Turing.Cfg.inputPos",
+        "Turing.Cfg.output",
+        "Turing.Cfg.state",
+        "Turing.Cfg.workTapePos",
+        "Turing.Cfg.workTapes",
+        "Turing.FinTM.State",
+        "Turing.FinTM.decEqState",
+        "Turing.FinTM.fintypeState",
+        "Turing.FinTM.k",
+        "Turing.FinTM.rewind_scan.match_1",
+        "Turing.FinTM.tm",
+        "Turing.MultiTapeTM.q\u2080",
+        "Turing.MultiTapeTM.tr"
+      ],
+      "original_TCS_imports": [
+        "import TCSlib.Complexity.TuringMachine.Build.Convention",
+        "import TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "regular_frontier": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.branchTM",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.leftAction",
+        "Turing.FinTM.leftCfg",
+        "Turing.FinTM.rightAction",
+        "Turing.FinTM.rightCfg",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom"
+      ]
+    },
+    "TCSlib.Complexity.TuringMachine.Composition": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.branchTM",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.rightAction",
+        "Turing.FinTM.rightCfg",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.moveInputPos"
+      ],
+      "excluded_abbrev": [
+        "Turing.Action.inputTape",
+        "Turing.Action.output",
+        "Turing.Action.state",
+        "Turing.Action.workTapes",
+        "Turing.Cfg.Halted",
+        "Turing.Cfg.inputPos",
+        "Turing.Cfg.output",
+        "Turing.Cfg.state",
+        "Turing.Cfg.workTapePos",
+        "Turing.Cfg.workTapes",
+        "Turing.FinTM.State",
+        "Turing.FinTM.decEqState",
+        "Turing.FinTM.fintypeState",
+        "Turing.FinTM.k",
+        "Turing.FinTM.rewind_scan.match_1",
+        "Turing.FinTM.tm",
+        "Turing.MultiTapeTM.q\u2080",
+        "Turing.MultiTapeTM.tr"
+      ],
+      "original_TCS_imports": [
+        "import Mathlib.Order.Monotone.Defs",
+        "import Mathlib.Data.Fintype.Sum",
+        "import Mathlib.Data.Fintype.Prod",
+        "import Mathlib.Data.Fintype.Option",
+        "import TCSlib.Complexity.TuringMachine.Simulation"
+      ],
+      "regular_frontier": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.branchTM",
+        "Turing.FinTM.controlAction",
+        "Turing.FinTM.rightAction",
+        "Turing.FinTM.rightCfg",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom"
+      ]
+    },
+    "TCSlib.Complexity.TuringMachine.Simulation": {
+      "guards": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.Computes",
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.spaceUsedByTape",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.moveInputPos"
+      ],
+      "excluded_abbrev": [
+        "Turing.Action.inputTape",
+        "Turing.Action.output",
+        "Turing.Action.state",
+        "Turing.Action.workTapes",
+        "Turing.Cfg.Halted",
+        "Turing.Cfg.inputPos",
+        "Turing.Cfg.output",
+        "Turing.Cfg.state",
+        "Turing.Cfg.workTapePos",
+        "Turing.Cfg.workTapes",
+        "Turing.FinTM.State",
+        "Turing.FinTM.decEqState",
+        "Turing.FinTM.fintypeState",
+        "Turing.FinTM.k",
+        "Turing.FinTM.tm",
+        "Turing.MultiTapeTM.q\u2080",
+        "Turing.MultiTapeTM.tr"
+      ],
+      "original_TCS_imports": [
+        "import Mathlib.Algebra.BigOperators.Fin",
+        "import Mathlib.Data.Fintype.Sum",
+        "import Mathlib.Data.Fintype.Prod",
+        "import Mathlib.Data.Fintype.Option",
+        "import TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "regular_frontier": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom"
+      ]
+    }
+  },
+  "control_runs": [
+    {
+      "label": "Controls-Catalog-native-casecalibrated",
+      "filename": "Controls_Catalog_native_casecalibrated.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "definitions": 18
+    },
+    {
+      "label": "Controls-Catalog-sealed-casecalibrated",
+      "filename": "Controls_Catalog_sealed_casecalibrated.lean",
+      "expected_exit": 1,
+      "expected_errors": 36,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "definitions": 18
+    },
+    {
+      "label": "Controls-Loop-native",
+      "filename": "Controls_Loop_native.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "definitions": 20
+    },
+    {
+      "label": "Controls-Loop-sealed",
+      "filename": "Controls_Loop_sealed.lean",
+      "expected_exit": 1,
+      "expected_errors": 40,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "definitions": 20
+    },
+    {
+      "label": "Controls-Primitives-native-casecalibrated",
+      "filename": "Controls_Primitives_native_casecalibrated.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "definitions": 25
+    },
+    {
+      "label": "Controls-Primitives-sealed-casecalibrated",
+      "filename": "Controls_Primitives_sealed_casecalibrated.lean",
+      "expected_exit": 1,
+      "expected_errors": 50,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "definitions": 25
+    },
+    {
+      "label": "Controls-Wrappers-native",
+      "filename": "Controls_Wrappers_native.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "definitions": 21
+    },
+    {
+      "label": "Controls-Wrappers-sealed",
+      "filename": "Controls_Wrappers_sealed.lean",
+      "expected_exit": 1,
+      "expected_errors": 42,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "definitions": 21
+    },
+    {
+      "label": "Controls-Composition-native",
+      "filename": "Controls_Composition_native.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Composition",
+      "definitions": 18
+    },
+    {
+      "label": "Controls-Composition-sealed",
+      "filename": "Controls_Composition_sealed.lean",
+      "expected_exit": 1,
+      "expected_errors": 36,
+      "owner": "TCSlib.Complexity.TuringMachine.Composition",
+      "definitions": 18
+    },
+    {
+      "label": "Controls-Simulation-native",
+      "filename": "Controls_Simulation_native.lean",
+      "expected_exit": 0,
+      "expected_errors": 0,
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "definitions": 14
+    },
+    {
+      "label": "Controls-Simulation-sealed",
+      "filename": "Controls_Simulation_sealed.lean",
+      "expected_exit": 1,
+      "expected_errors": 28,
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "definitions": 14
+    }
+  ],
+  "model_default_simps_disabled": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "all_guard_controls_must_be_effective": true,
+  "no_unsafe_reducibility_override": true,
+  "special_recursive_definition_controls": {
+    "Turing.incFixed": {
+      "point": "incFixed [] = none",
+      "abstract": "(fun tail => incFixed (false :: tail)) = (fun tail => some (true :: tail))",
+      "default_MetaM_refl": true,
+      "unsafe_or_transparency_override": false,
+      "reason": "Generic raw recursor-body identities failed native; use two distinct kernel identities that directly test the same ordinary head opacity"
+    },
+    "Turing.pairDecode": {
+      "point": "pairDecode [] = none",
+      "abstract": "(fun tail => pairDecode (false :: true :: tail)) = (fun tail => some ([], tail))",
+      "default_MetaM_refl": true,
+      "unsafe_or_transparency_override": false,
+      "reason": "Generic raw course-of-values body identities failed native; two distinct exact constructor identities calibrate the same ordinary head guard"
+    }
+  }
+}

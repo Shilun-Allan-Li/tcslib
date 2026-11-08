@@ -1,0 +1,29 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import Lean
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology,
+    `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag,
+    `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic,
+    `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+    `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+  let owned := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let owner := env.header.moduleNames[i.toNat]!
+      if owners.contains owner then some (n, ci, owner) else none
+    | none => none
+  for (n, ci, _) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    logInfo m!"TYPE_REPR|{n}|{reprStr ci.type}"
+  logInfo m!"TYPECOMPLETE|constants={owned.length}"

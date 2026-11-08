@@ -1,0 +1,90 @@
+from pathlib import Path
+import json,hashlib
+P=Path('/private/tmp/g106-r4-compiled-and-seals');ctx=json.loads((P/'context.json').read_text());requests=json.loads((P/'current-source-root-requests.json').read_text())['requests'];imports=''.join('import '+m+'\n'for m in ctx['owners'])+'import Lean\n';r='[\n'+',\n'.join('    ('+json.dumps(x['owner'])+', '+json.dumps(x['name'])+', '+str(x['private']).lower()+')'for x in requests)+'\n  ]'
+s=imports+'''/-! Read-only current45 root/descendant/AX/citation coverage and actual two-forwarder
+ordinary-definition inventory. Imported theorem values are never traversed or rendered. -/
+set_option maxHeartbeats 0
+open Lean Elab Command Meta
+private def rootKind (ci : ConstantInfo) : String := match ci with
+  | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | .opaqueInfo _ => "opaque"
+  | .axiomInfo _ => "axiom" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+run_cmd do
+  let env ← getEnv
+  let requested : List (String × String × Bool) := '''+r+'''
+  for (owner, sourceName, priv) in requested do
+    let rootMatches := env.constants.toList.filter fun (n, _) =>
+      isPrivateName n == priv && (n.toString == sourceName || n.toString.endsWith ("." ++ sourceName)) &&
+      match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString == owner
+      | none => false
+    unless rootMatches.length == 1 do throwError "root mismatch {owner}/{sourceName}: {rootMatches.length}"
+    let (root, ci) := rootMatches.head!
+    unless rootKind ci == "theorem" do throwError "not a theorem root {root}"
+    logInfo m!"ROOTMAP|{(Json.mkObj [("source_name", toJson sourceName),
+      ("compiled_name", toJson root.toString), ("owner", toJson owner),
+      ("private", toJson priv), ("kind", toJson (rootKind ci))]).compress}"
+    let descendants := env.constants.toList.filter fun (n, _) => root.isPrefixOf n
+    for (n, d) in descendants.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+      let some idx := env.getModuleIdxFor? n | throwError "missing root descendant owner {n}"
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"ROOTDESC|{(Json.mkObj [("root", toJson root.toString),
+        ("name", toJson n.toString), ("owner", toJson env.header.moduleNames[idx.toNat]!.toString),
+        ("kind", toJson (rootKind d)), ("private", toJson (isPrivateName n)),
+        ("internal", toJson n.isInternalDetail),
+        ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+      for (part, expr) in [("type", d.type)] ++ (d.value?.map (fun e => [("value", e)])).getD [] do
+        for c in expr.getUsedConstants.qsort Name.lt do
+          let some i := env.getModuleIdxFor? c | continue
+          let home := env.header.moduleNames[i.toNat]!
+          unless (`TCSlib).isPrefixOf home do continue
+          let some info := env.find? c | throwError "missing reference {c}"
+          logInfo m!"CITED|{(Json.mkObj [("root", toJson root.toString),
+            ("descendant", toJson n.toString), ("part", toJson part),
+            ("name", toJson c.toString), ("owner", toJson home.toString),
+            ("kind", toJson (rootKind info)), ("private", toJson (isPrivateName c))]).compress}"
+  logInfo m!"ROOTCOMPLETE|{requested.length}"
+run_cmd do
+  let env ← getEnv
+  let mut guardUnion : Array Name := #[]
+  for suffix in ["Complexity.sat_live_prefix", "Complexity.clA5_live_prefix"] do
+    let rootMatches := env.constants.toList.filter fun (n, _) =>
+      isPrivateName n && n.toString.endsWith ("." ++ suffix)
+    unless rootMatches.length == 1 do throwError "F4 private root mismatch {suffix}"
+    let (root, ci) := rootMatches.head!
+    let mut pending := ci.type.getUsedConstants ++ ci.value?.map Expr.getUsedConstants |>.getD #[]
+    let mut visited : Array Name := #[]
+    let mut index := 0
+    while index < pending.size do
+      let n := pending[index]!
+      index := index + 1
+      if visited.contains n then continue
+      visited := visited.push n
+      let some idx := env.getModuleIdxFor? n | continue
+      let home := env.header.moduleNames[idx.toNat]!
+      unless (`TCSlib).isPrefixOf home do continue
+      let some info := env.find? n | throwError "missing reachable name {n}"
+      match info with
+      | .defnInfo d =>
+        let projection := (Lean.getProjectionFnInfo? env n).isSome
+        let isAbbrev := match d.hints with | .abbrev => true | _ => false
+        let ordinary := !projection && !isAbbrev
+        if ordinary && !guardUnion.contains n then guardUnion := guardUnion.push n
+        logInfo m!"F4DEF|{(Json.mkObj [("root", toJson root.toString), ("name", toJson n.toString),
+          ("owner", toJson home.toString), ("private", toJson (isPrivateName n)),
+          ("projection", toJson projection), ("kernel_abbrev", toJson isAbbrev),
+          ("reducibility", toJson (reprStr (getReducibilityStatusCore env n))),
+          ("ordinary_guard_required", toJson ordinary)]).compress}"
+        pending := pending ++ d.type.getUsedConstants ++ d.value.getUsedConstants
+      | .thmInfo _ =>
+        logInfo m!"F4THEOREM_BOUNDARY|{(Json.mkObj [("root", toJson root.toString),
+          ("name", toJson n.toString), ("owner", toJson home.toString),
+          ("value_not_traversed", toJson true)]).compress}"
+        pending := pending ++ info.type.getUsedConstants
+      | _ => pure ()
+  logInfo m!"F4_GUARD_UNION|{(toJson ((guardUnion.qsort Name.lt).toList.map Name.toString)).compress}"
+'''
+# Parentheses make the Option/Array union precedence explicit before any execution.
+s=s.replace('let mut pending := ci.type.getUsedConstants ++ ci.value?.map Expr.getUsedConstants |>.getD #[]','let mut pending := ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[])')
+assert 'reprStr ci.value'not in s and 'VALUE_REPR'not in s
+(P/'CurrentRoots-and-F4-inventory.lean.txt').write_text(s);(Path(ctx['project'])/'Head-roots.lean').write_text(s);(P/'root-job.json').write_text(json.dumps([{'name':'Head-roots','side':'Head','project_file':'Head-roots.lean','evidence_file':'CurrentRoots-and-F4-inventory.lean.txt'}],indent=2)+'\n');print('prepared45-root and F4 inventory probe',len(s.encode()),hashlib.sha256(s.encode()).hexdigest())

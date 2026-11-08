@@ -1,0 +1,29 @@
+/-- Counted evaluation reaches its first source halt; every prefix remains
+in a count or check state and therefore cannot revisit the round anchor.
+**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_halt` to the arbitrary source bank, then
+compose its complete endpoint equality with the supplied counted-run endpoint. Apply the counted
+correspondence to every prefix through that halt; its control image is disjoint from the anchor,
+including the return state. -/
+private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Bool)
+    (out : List Bool) (T : ℕ)
+    (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t ≤ T, (splitBodyTM M start).tm.runFrom
+      (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s none out) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t := by
+  classical
+  let c := splitBank M s (some start) []
+  let d := splitBank M s none out
+  have hhalt : (M.tm.runFrom c T).state = none := by rw [hT]; rfl
+  obtain ⟨t, ht, hlive, heq⟩ := MultiTapeTM.exists_first_halt M.tm c hhalt
+  have he : M.tm.runFrom c t = d := heq.trans hT
+  have hp (j : ℕ) (hj : j ≤ t) := splitCount_run M.tm (splitBodyTM M start).tm
+    SplitBodyState.count SplitBodyState.check (fun _ _ _ _ => rfl) w s c j
+    (fun l hl => hlive l (by omega))
+  refine ⟨t, ht, ?_, ?_⟩
+  · rw [hp t (le_refl _), he]
+  · intro j hj
+    rw [hp j hj]
+    cases hq : (M.tm.runFrom c j).state <;> simp [splitCountCfg, hq]
+

@@ -1,0 +1,1 @@
+The exact Name constructor fix parsed, but unparenthesized multiline Expr repr fixtures crossed Lean do-layout boundaries, yielding56 preparation elaboration errors. No equality was run. v3 parenthesizes and indents every trusted metadata literal, preserving exact reprStr identity checks and all original raw sources/receipts.

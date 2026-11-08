@@ -1,0 +1,520 @@
+{
+  "utc": "2026-11-08T03:47:50.564290+00:00",
+  "patches": [
+    {
+      "patch": "000-reference-campaign-api-merge.patch",
+      "changed_files": [
+        "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/Encoding.lean",
+        "TCSlib/Complexity/TuringMachine/Finite.lean"
+      ],
+      "forward_exact": true,
+      "reverse_exact": true,
+      "sha256": "67ddb639d27338c5d08a7186f8ccf620e2a758686dc76c5b0ee0eb937f987fb6"
+    },
+    {
+      "patch": "001-post-merge-consumer-bodies.patch",
+      "changed_files": [
+        "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/Composition.lean",
+        "TCSlib/Complexity/TuringMachine/Simulation.lean"
+      ],
+      "forward_exact": true,
+      "reverse_exact": true,
+      "sha256": "72819b77702faae6dfb19c6c5d383c7ed4fa799d805d0b97f4fcca0f9cf626e2"
+    },
+    {
+      "patch": "002-approved-sketch-synchronization.patch",
+      "changed_files": [
+        "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/Composition.lean",
+        "TCSlib/Complexity/TuringMachine/Simulation.lean"
+      ],
+      "forward_exact": true,
+      "reverse_exact": true,
+      "sha256": "dff4867aff7547bf97cb2a94a5629866f82898e3eb10201879b90238ff47ebf9"
+    },
+    {
+      "patch": "all-integration-from-B1-reference.patch",
+      "changed_files": [
+        "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/Composition.lean",
+        "TCSlib/Complexity/TuringMachine/Encoding.lean",
+        "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "TCSlib/Complexity/TuringMachine/Simulation.lean"
+      ],
+      "forward_exact": true,
+      "reverse_exact": true,
+      "sha256": "ab137ab4b5a6b62bb06f4c35e1927e75898371162f4187105e8f43c365926d81"
+    }
+  ],
+  "actual_postmerge_14_scoped_bodies": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+      "private": false,
+      "before": {
+        "bytes": 448,
+        "sha256": "fbc8903f3d224c3ef270cb0c633013b08ac7782f998846bcbeed0bb9f87d1377"
+      },
+      "after": {
+        "bytes": 420,
+        "sha256": "d0df824766171b6002fe5f7bdf3224e1fd918f0abd63959d64cd190ba8a997d1"
+      },
+      "exact_surviving_header": {
+        "bytes": 256,
+        "sha256": "6fdd62354b4c2153cc56b15b8a202e92f6f23cb3b6b7ff06a87d785d9210d9a6"
+      },
+      "canonical_API": "Turing.pairDiagTM_spaceUsed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+      "private": false,
+      "before": {
+        "bytes": 422,
+        "sha256": "9f766153b8e92beea69ad379bc82addc1bd169c6d691885a90b8aa9ccbf1e288"
+      },
+      "after": {
+        "bytes": 394,
+        "sha256": "794f3c29c291cfb7d5f9a23399353a7c2d6f22268dbd5cfbf83c23f81b614da4"
+      },
+      "exact_surviving_header": {
+        "bytes": 263,
+        "sha256": "6ec2724162b4ae2a45f7c98f8b5cbe77bb2e3d4dec2a1d68fc96faa89c9c9119"
+      },
+      "canonical_API": "Turing.FinTM.incFixedTM_spaceUsed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_right_endpoint",
+      "private": true,
+      "before": {
+        "bytes": 1376,
+        "sha256": "003cef421a849752f5040ea5c55b38b980bbc5b7c44e2ff50fe8a31a57961b97"
+      },
+      "after": {
+        "bytes": 1264,
+        "sha256": "7a862c86a219ed628685a2498260af11b0da8c15b0a9c60add938fd1c05be742"
+      },
+      "exact_surviving_header": {
+        "bytes": 312,
+        "sha256": "26ec8f8f54518e7a71cac64ffeb445ab134991c4603f588e47b35bbbdf90c868"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_first_entry",
+      "private": true,
+      "before": {
+        "bytes": 1018,
+        "sha256": "6d962a1aa22e4b7cd58baff184c306f3ad5f78da0ffc513693653bdb2f0dae3a"
+      },
+      "after": {
+        "bytes": 537,
+        "sha256": "1348e5c7c7465794b55125a35b12c6e4c4637bc7e23d97d01f5f0a2725219f6d"
+      },
+      "exact_surviving_header": {
+        "bytes": 459,
+        "sha256": "9c2a3b8e086b860a0d79dfa413a5d465c33eebff28ff2c3a6489032e8a8bb669"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_eval_first",
+      "private": true,
+      "before": {
+        "bytes": 1825,
+        "sha256": "6bc4e9354c1fce536a5c54fb9a9aa06541714495864bad5fc1ed32db6b45c062"
+      },
+      "after": {
+        "bytes": 1631,
+        "sha256": "9e4656aa3da76f11e5fe1621ca67976722c937de728d0e1c57ca81cdcba54738"
+      },
+      "exact_surviving_header": {
+        "bytes": 634,
+        "sha256": "78ccb84607c59c157285dd895ce8d9a5012c02c3e56bc1462c26d30ec7e0b459"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitEmbed_cut",
+      "private": true,
+      "before": {
+        "bytes": 2071,
+        "sha256": "4354f3aa588087ae77b9087139ec0b800eea5764c0add31510fb3decb576bd24"
+      },
+      "after": {
+        "bytes": 1690,
+        "sha256": "fb1070a8a5a2e47c51bc1b1bf49ed693d2234fed01b73b813e2987369d5d45f7"
+      },
+      "exact_surviving_header": {
+        "bytes": 678,
+        "sha256": "ce3335a1537d2db9380010c8080e96f5f92e34b7cbd798b87d147f6b59ad9141"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitBody_count",
+      "private": true,
+      "before": {
+        "bytes": 1402,
+        "sha256": "7efc7aba5a63a6eebf7fe8b2bd7b5471e38b1f4e37be190fb3f17be2ecb8a945"
+      },
+      "after": {
+        "bytes": 1247,
+        "sha256": "0c5d5547b5f83d5cb3058daade5724528d456c4f35ad6cebe7a1d93a3baa49a7"
+      },
+      "exact_surviving_header": {
+        "bytes": 604,
+        "sha256": "47fb0803121292a4420ceb0c7b76e55c8e80ce53c53f5de6ac77fdf7aabb3c0c"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitter_first_entry",
+      "private": true,
+      "before": {
+        "bytes": 1019,
+        "sha256": "4bb2a06322518dd83ad93851b3cbfa0427f189a802bbf1a18810c41ef8d50105"
+      },
+      "after": {
+        "bytes": 538,
+        "sha256": "c9cea7b74fd63d5b7a847b28b1c8457c1053fed7900739ea318df3340d9abd4e"
+      },
+      "exact_surviving_header": {
+        "bytes": 460,
+        "sha256": "4b2ba598e345f860d243d617e9e5092918bc45519146ebe8271c4e16de4c9409"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenStart",
+      "private": true,
+      "before": {
+        "bytes": 2539,
+        "sha256": "88e33782bcc0c91452f5ac0df988f6f3c3bbdc167ea8223962fa0591a8d91ff6"
+      },
+      "after": {
+        "bytes": 2491,
+        "sha256": "cfeb5d0cfe51b6bfc04da694dffe1a7d32336aabc3e81032c02a3a6edfd92bde"
+      },
+      "exact_surviving_header": {
+        "bytes": 335,
+        "sha256": "1436b0d7eebfd98db6bce280c94928776e9130eb6946d4a499134421a3242f62"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_launch",
+      "private": true,
+      "before": {
+        "bytes": 1663,
+        "sha256": "176c35cb3a949dd3f75934f26cbf12b83854d4707dc89a9b29a6d1c726fab752"
+      },
+      "after": {
+        "bytes": 2003,
+        "sha256": "714979dec7d4eb243f07c6ac9583783ddc70aec4e462ca48dd687695cf0c96a6"
+      },
+      "exact_surviving_header": {
+        "bytes": 471,
+        "sha256": "14e03b5463012639964c1c03d8d3080c12fb8800e86190b3f618625041a787d3"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogFirstEntry",
+      "private": true,
+      "before": {
+        "bytes": 870,
+        "sha256": "95fcdc78164aeb319ed9134832e86095f48d6cdb17f5a616ff027eb90ba554b5"
+      },
+      "after": {
+        "bytes": 644,
+        "sha256": "77e8e3e0b0e6a5ce1ba6284926c56cf35411f754998fbb9f37f987c67ccd11c6"
+      },
+      "exact_surviving_header": {
+        "bytes": 359,
+        "sha256": "a274d1d2b498a29fb37e13383187d12750ef9e1ec8b4628cb3203ee1ef54bc58"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_start",
+      "private": true,
+      "before": {
+        "bytes": 1831,
+        "sha256": "6cef709f3742231a8ec2ffc331532f3a8472735f4fc321126ea88a2ed2004b0f"
+      },
+      "after": {
+        "bytes": 1787,
+        "sha256": "1e5cb88a55df8dad3d0607152f56a9c4b984345274bc8fcf72b20ca5e0176089"
+      },
+      "exact_surviving_header": {
+        "bytes": 403,
+        "sha256": "592fc5f2f401d42a4596a07927f0d2f36fb4121c0f518faf7dd44033bcd0c906"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "name": "Turing.FinTM.condTM_start",
+      "private": true,
+      "before": {
+        "bytes": 1757,
+        "sha256": "efce4ebef6fd50202c433f9bac4291825fd54a8eac7d9866982b124c521cfa77"
+      },
+      "after": {
+        "bytes": 1775,
+        "sha256": "d106b2747b4eefb13503e85c0a2a57a14fb2821aebe4b2fa450c5e154da85d39"
+      },
+      "exact_surviving_header": {
+        "bytes": 385,
+        "sha256": "238a12b7ada51d567f7fac43680cbdf9e042fe26592e5043a1c9f6a1c3c618d3"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "name": "Turing.FinTM.bufferedComp_start",
+      "private": false,
+      "before": {
+        "bytes": 2132,
+        "sha256": "22f7f80cc3abae17338dafaa8f3b2554d212942a3735dd7c15d25ead4ab5a440"
+      },
+      "after": {
+        "bytes": 2075,
+        "sha256": "321863d1f2106e95d7842389bdd4a1ea5785c3e4bc038b8065e073fd0bd6198d"
+      },
+      "exact_surviving_header": {
+        "bytes": 446,
+        "sha256": "c13fb30d9b76f5756356ce36376cd8b99cd53938669ec16fc26ba45630e3be1f"
+      },
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "source_only": true
+    }
+  ],
+  "approved_comment_hunks": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "original_hunk": "@@ -2998,10 +2998,10 @@",
+      "old": {
+        "bytes": 604,
+        "sha256": "37745c843f188be32d3be4233484216eac00f4c917c3f4be3490b95bfbf1c646"
+      },
+      "new": {
+        "bytes": 646,
+        "sha256": "86130217610f572eaa6eb6dae544cb6b823a7de29be46d90d011ce2f85b13b8d"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "original_hunk": "@@ -3614,9 +3614,9 @@",
+      "old": {
+        "bytes": 546,
+        "sha256": "030742892e5dd456fbf315b88b075722cdb0b93cb5b16faf966e29dc71e16085"
+      },
+      "new": {
+        "bytes": 548,
+        "sha256": "52d8a552ce5114ebc8d0dce7b796a9c63bd1e4c4a58ceae191b7887ded5569b2"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "original_hunk": "@@ -3789,10 +3789,10 @@",
+      "old": {
+        "bytes": 677,
+        "sha256": "3d17b3a04113b273870622acc99d23cd62ebf0427e195f719ffdb0d44dd4fd29"
+      },
+      "new": {
+        "bytes": 715,
+        "sha256": "bde085eaf3f731555fc7e0e6a967a5ed5d3a7f5a0ba820efddd5347e743ec9db"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -1817,9 +1817,10 @@",
+      "old": {
+        "bytes": 542,
+        "sha256": "b9b093c98e3ebf7e5e5d5e01b2159b99ae1634a3360a2217d9bafa367c86fe25"
+      },
+      "new": {
+        "bytes": 652,
+        "sha256": "1871d237b1ca8867ce7b6c3cdd9a012698cae910f02f2b6171c75ef4cac45dfc"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -3436,10 +3437,11 @@",
+      "old": {
+        "bytes": 571,
+        "sha256": "9b4d3d640f72ca3c9da40e841a0030d39efefb7795aa68223df8df2f1697a220"
+      },
+      "new": {
+        "bytes": 655,
+        "sha256": "620eb213fba5c348fb5a8574af311f259d20db0c519dab30d5113cd0391d514e"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -4469,8 +4471,8 @@",
+      "old": {
+        "bytes": 515,
+        "sha256": "32591d160d5c243187c827efb53644c5b83d85f39d53f492dfc3d224ea68a628"
+      },
+      "new": {
+        "bytes": 557,
+        "sha256": "27a5ce3370f88fc8a54379db90213672bd09dc38a62856e1ef1b6bda6731150a"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -4672,10 +4674,10 @@",
+      "old": {
+        "bytes": 616,
+        "sha256": "75b399dcd68397448525c4d20fc63cf37ba4e78966b29f0a9f7a6875ffd95ace"
+      },
+      "new": {
+        "bytes": 661,
+        "sha256": "eb237452decb83b8bda653e8359b2a7deb22b6d4f3d1bbf33333d26673e0f3f8"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -4883,9 +4885,10 @@",
+      "old": {
+        "bytes": 581,
+        "sha256": "8fd0fc5cec6e81d4013c750aca5829cc43a7abf4ced67338273b0b3429d759e4"
+      },
+      "new": {
+        "bytes": 672,
+        "sha256": "bc9504541c5d70c2a0d67438abbfef1d16777ff8c6acffbfdb36b7778f0e2d4f"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "original_hunk": "@@ -5868,9 +5871,9 @@",
+      "old": {
+        "bytes": 547,
+        "sha256": "1d04795d5e5699b2e264ee797cfba3f97c7d620cbc19cfbe79b3b9731f3d1a7e"
+      },
+      "new": {
+        "bytes": 549,
+        "sha256": "d5522f8fce9a8c897bdad25beb17d696a16015737862a8674f3a01e3454762f2"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "original_hunk": "@@ -694,10 +694,10 @@",
+      "old": {
+        "bytes": 666,
+        "sha256": "648e2781b1ab7ae7c304724cfa8bd88e670c9164f723bc9e37506d52d67216af"
+      },
+      "new": {
+        "bytes": 707,
+        "sha256": "397776339f55dbbec5cb380c868b598c068861680cbaf8dd0782c9af23a747e6"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "original_hunk": "@@ -672,10 +672,10 @@",
+      "old": {
+        "bytes": 665,
+        "sha256": "af02a0f9965d974e3d914b261e41f440a31410c63b706815d422a0e8022e3844"
+      },
+      "new": {
+        "bytes": 658,
+        "sha256": "8f83bbf17e9434de774e2acdc2e0e031cd6be83d2dc7b7ef7bd4bc3faf37a4f2"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "original_hunk": "@@ -1192,10 +1192,10 @@",
+      "old": {
+        "bytes": 653,
+        "sha256": "f4a2060e711f817b1995bce88b564c38acffc60c3f05f1a049289f0ea80a1ba7"
+      },
+      "new": {
+        "bytes": 684,
+        "sha256": "a86b6a14005cdc4a2973d7befab435423b44c3cbefeaae3de91ec2be3821bdd0"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "original_hunk": "@@ -119,7 +119,7 @@",
+      "old": {
+        "bytes": 354,
+        "sha256": "39c9fd459eefbb3820264dd361dab31d89406c70ad49e45dbf500de9ead4025b"
+      },
+      "new": {
+        "bytes": 386,
+        "sha256": "e281787870478715321e1a0035aca030325b06c0dd847ba334fe59c45aed03d3"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "original_hunk": "@@ -2227,8 +2227,9 @@",
+      "old": {
+        "bytes": 387,
+        "sha256": "8a23fa6fff9b703b6ee8ae4eb338160ed3085acc66dfd10c8daeb29e32854062"
+      },
+      "new": {
+        "bytes": 475,
+        "sha256": "863d75af0ce3d59d28978ac9ecaedf2e37a9690e7632035a6e8756dc6c0e748f"
+      }
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "original_hunk": "@@ -2328,8 +2329,9 @@",
+      "old": {
+        "bytes": 382,
+        "sha256": "6eca1b08e3d3b821c6ef0f478a33a45ef111c7b3001dfd18466a0ab91741156f"
+      },
+      "new": {
+        "bytes": 491,
+        "sha256": "6b3c00eb25bbd23f9278902789516b3e56fab3ea3c8298c21fe0a1d3cf880486"
+      }
+    }
+  ],
+  "all14_headers_exact": true,
+  "all_non_target_code_preserved": true,
+  "no_import_runtime_machine_or_instance_edits": true,
+  "three_RAM_source_residuals_byte_unchanged": true,
+  "canonical_Wrappers1043_exact": true,
+  "Catalog_duplicate_removed": true,
+  "no_Lean_native_AX_seal_replay_screen_run": true,
+  "validation_limit": "Only source construction/roundtrips. Existing generation1 small3forwarders+2spaceleaves native evidence remains separately scoped; all integrated modules and9later rewrites require actual root validation."
+}
