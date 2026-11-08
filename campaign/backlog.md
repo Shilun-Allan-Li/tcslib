@@ -1068,25 +1068,25 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 ## 2. Campaign work queued or on hold
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230 are merged; mac4 remains the current
-campaign snapshot. #215's final-Hardness MSG6 chain passed26/0/static0; one additional exact
-raw-on-image repoint in Tautology is being validated before fresh replay/screen/compiled
-accounting and the selected Codex round3. Its seven distinct debt kinds remain scheduled.
-**Not yet clear to merge: #215.**
+`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230/#234/#235 are merged; complete
+MAC6 is current. Gate106round4 for #215 is CLOSED PASS0/0/0/27; gate118 for #233 is
+CLOSED PASS0/0/0/18. Root and independent return reviews accept every note within scope,
+with no new source repair or decision. Both source heads remain audited b129/55df.
 
-Gate119 for #234 returned HOLD0/1/0/16; its one major is now explicitly acknowledged as
-FE-LIVE-1 above, with implementation still scheduled. Source/API unchanged at `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`;
-its passed401/static0/77 replay remains separately pinned. Codex follow-up audit selected,
-not yet dispatched. **Not yet clear to merge: #234.** #233's15-change mechanical proposal
-remains inert until #234 merges, then integrated checks and Codex gate118 are required.
-**Not yet clear to merge: #233.**
+The separate replay chains remain valid at their actual pins. Their import contexts interact,
+so a fresh actual combined394-module replay from wholeMAC6 is running at local prospective
+source11b09440347ca8274562d58b5f90a11cfce56e29. No combined result is claimed yet.
+**Not yet clear to merge: #215 — final closure/interactions in progress.**
+**Not yet clear to merge: #233 — combined replay pending.** Recommended order is #215 then
+#233 after readiness; Seyoon merges. Full audit closures, independent dependency paths and
+actual replay preparation/maps are in status/2026-11-08-audit-closures/.
 
-The Claude F6 final delivery is reviewed as a COMPLETE proof candidate, imported with original
-authorship into draft#235 at `f72a807e2376a2b986675c992745d6affc23b96f`. Native Hierarchy passes with no errors/sorries;
-full229 replay and fresh accounting/seals/23-file comparison are underway. Codex gate120
-selected, not issued. **Not yet clear to merge: #235.** No fill remains running for F6.
+The F6 proof is merged and no F6 fill remains running. After active MIG-1 lands, the next12.2c
+consolidation must address the seven retained SG1 kinds and wider FE-LIVE-1 before further
+SAT/Hardness fills, preserving each ruling's limits and shared-host design/gating needs.
 Ladner still needs its statement phase. Records remain direct; every Lean change requires
-PR, gate/replay and Seyoon's merge. Next free gate121.
+PR, gate/replay and Seyoon's merge. No new dispatch/ruling is needed for these returns.
+Next free gate121.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

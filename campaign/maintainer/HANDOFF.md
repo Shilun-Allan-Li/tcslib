@@ -9,6 +9,18 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST — BOTH RETURNED AUDITS CLOSED; combined interaction replay RUNNING.**
+
+Gate106round4 returned PASS0/0/0/27 and gate118 PASS0/0/0/18. Verbatim local-inbox reports/receipts and all27/18 scoped resolutions are retained; root and two independent return reviews found no source fix or new ruling. Complete review manifests are root-verified. Current source heads remain SG1b129 and MIG55df; both merge cleanly into records8f14 with exact audited Lean trees. #235 remains merged/MAC6 current.
+
+The independent all1003-source merge-order review found real import-context interaction: four MIG owners newly reach Contract.Basic after SG1, so existing separate MSG9/MMIG4 runs cannot automatically clear their combination. Root started actual **mjoint1 full394** at local validation-only combined source11b09440347ca8274562d58b5f90a11cfce56e29 from a whole895-objectMAC6 clone. It holds one shared slot, j4/nice10; session2021. No final result yet. Evidence/preparation and complete source/objects maps: campaign/status/2026-11-08-audit-closures/. Do not relabel old329/394/two-module executions.
+
+**Not yet clear to merge: #215 — final closure-record and combined-interaction checks in progress.**
+**Not yet clear to merge: #233 — combined replay pending.**
+
+Recommended order after readiness: #215 then #233; Seyoon alone merges. Do not retire candidate implementations before actual merge. Seven SG1 retention kinds and wider FE-LIVE-1 keep their exact existing next12.2c owner/window, after activeMIG-1 and before further SAT/Hardness fills. No new audit/fill dispatch or user decision is needed for these passing returns. Nextfree121. Older relocation/open-gate checkpoints below are historical.
+
+
 **RELOCATION CHECKPOINT — Seyoon confirmed dispatch of BOTH Codex audits and is closing this chat. Resume only when he returns.**
 
 Gate106round4 (#215) and gate118 (#233) are DISPATCHED, awaiting findings Markdown. Exact immutable input/source/records/exchange pins and issued prompts are in each gate's publication/dispatch/prompt files. No new source, replay, screen, fill or background work is started for relocation. All own agents/checks finished; all source, evidence and audit inputs are pushed. #235 remains merged/MAC6 current. #215/#233 are NOT yet clear to merge while their external audits are open. On return, inspect the inbox, review incoming reports with subagents in parallel, and preserve the existing current-context/replay pins. Nextfree121.

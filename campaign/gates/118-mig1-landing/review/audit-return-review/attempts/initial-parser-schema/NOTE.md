@@ -1,0 +1,1 @@
+Initial review checker missed nine same-line @[simp] declarations and compared native {bytes,sha256} objects directly against replay SHA strings. These were checker schema errors, not source/evidence defects. Initial outputs and checker retained here; final checker accepts inline attributes and compares SHA values. No supplied tool was executed.

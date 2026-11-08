@@ -1,5 +1,5 @@
-# Gate106 round4 — Dispatched by Seyoon
+# Gate106 round4 — CLOSED PASS0/0/0/27
 
-**Dispatched by Seyoon: Codex gate106 round4.** Published verified1696-section/79,398,827-byte packet at exchange81676b42e758176389c19bcf470c6c5dcfd2a228. Exactsourceb129/records331/SHA379675 and issuedprompt are in publication-r4.json/prompt-r4.md. ActualMSG9 PASS2/static0/0 and exact prior context reuse bind mergedF6; full329 remainsat078/MAC5. Seyoon confirmed dispatch in chat; await findings Markdown.
+All27 returned notes are accepted after root and independent review; no source change or new ruling is required. Verbatim report, receipt, per-finding resolutions and full independent review are retained. Issued packet and actual MSG8→MSG9 pins are unchanged.
 
-**Not yet clear to merge: #215 — round4 audit open.**
+**Not yet clear to merge: #215 — final closure-record adoption and combined interaction validation are in progress.** Root recommends #215 first; this first prospective merge is clean and Lean-identical to the audited/currently replayed source.

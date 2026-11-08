@@ -1,0 +1,366 @@
+{
+  "SG1": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "base_imports": [
+        "TCSlib.Complexity.Formulas.CNFEncoding",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassNP.Reductions",
+        "Mathlib.Tactic.FinCases",
+        "Mathlib.Data.List.MinMax"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.Formulas.CNFEncoding",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassNP.Reductions",
+        "Mathlib.Tactic.FinCases",
+        "Mathlib.Data.List.MinMax"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "base_imports": [
+        "TCSlib.Complexity.Formulas.DNF",
+        "TCSlib.Complexity.Formulas.CNFEncoding",
+        "TCSlib.Complexity.ClassNP.CoNP",
+        "TCSlib.Complexity.ClassNP.Reductions",
+        "TCSlib.Complexity.CookLevin.Hardness",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "Mathlib.Data.Sigma.Basic"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.Formulas.DNF",
+        "TCSlib.Complexity.Formulas.CNFEncoding",
+        "TCSlib.Complexity.ClassNP.CoNP",
+        "TCSlib.Complexity.ClassNP.Reductions",
+        "TCSlib.Complexity.CookLevin.Hardness",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "Mathlib.Data.Sigma.Basic"
+      ],
+      "added_imports": [
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+      ],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "base_imports": [
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.TMSAT",
+        "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+        "TCSlib.Complexity.CookLevin.Snapshot",
+        "TCSlib.Complexity.TuringMachine.Build.Seam"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+        "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.TMSAT",
+        "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+        "TCSlib.Complexity.CookLevin.Snapshot",
+        "TCSlib.Complexity.TuringMachine.Build.Seam"
+      ],
+      "added_imports": [
+        "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+        "TCSlib.Complexity.ClassNP.PolyTimePrefix"
+      ],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "base_imports": [
+        "Mathlib.Data.Nat.Digits.Defs",
+        "Mathlib.Logic.Equiv.Bool",
+        "TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "TCSlib.Complexity.TuringMachine.Build.Scan",
+        "TCSlib.Complexity.TuringMachine.SymbolLift",
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "TCSlib.Complexity.TuringMachine.CodeParser"
+      ],
+      "head_imports": [
+        "Mathlib.Data.Nat.Digits.Defs",
+        "Mathlib.Logic.Equiv.Bool",
+        "TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "TCSlib.Complexity.TuringMachine.Build.Scan",
+        "TCSlib.Complexity.TuringMachine.SymbolLift",
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "TCSlib.Complexity.TuringMachine.CodeParser"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "base_imports": [
+        "Mathlib.Tactic.Ring",
+        "Mathlib.Tactic.DeriveFintype",
+        "Mathlib.Data.Fintype.Option",
+        "Mathlib.Data.Fintype.Pi",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.List.FinRange",
+        "Mathlib.Data.Sigma.Basic",
+        "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.StateRenaming"
+      ],
+      "head_imports": [
+        "Mathlib.Tactic.Ring",
+        "Mathlib.Tactic.DeriveFintype",
+        "Mathlib.Data.Fintype.Option",
+        "Mathlib.Data.Fintype.Pi",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.List.FinRange",
+        "Mathlib.Data.Sigma.Basic",
+        "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+      ],
+      "added_imports": [
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+      ],
+      "removed_imports": []
+    }
+  ],
+  "MIG": [
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "base_imports": [
+        "Mathlib.Data.Nat.Bits",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "head_imports": [
+        "Mathlib.Data.Nat.Bits",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+      "base_imports": [
+        "TCSlib.Complexity.SpaceComplexity.Constructible"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.SpaceComplexity.Constructible"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "base_imports": [
+        "Mathlib.Data.Nat.Size",
+        "Mathlib.Tactic.DeriveFintype",
+        "TCSlib.Complexity.TuringMachine.Build.Loop",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "head_imports": [
+        "Mathlib.Data.Nat.Size",
+        "Mathlib.Tactic.DeriveFintype",
+        "TCSlib.Complexity.TuringMachine.Build.Loop",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "added_imports": [
+        "TCSlib.Complexity.TuringMachine.Build.Primitives"
+      ],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CertShell.lean",
+      "base_imports": [
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+        "TCSlib.Complexity.TuringMachine.Build.Seam",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "TCSlib.Complexity.TuringMachine.Build.InputCall",
+        "TCSlib.Complexity.TuringMachine.ChoiceWords"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+        "TCSlib.Complexity.TuringMachine.Build.Seam",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "TCSlib.Complexity.TuringMachine.Build.InputCall",
+        "TCSlib.Complexity.TuringMachine.ChoiceWords"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "base_imports": [
+        "Mathlib.Data.Nat.Bits",
+        "Mathlib.Tactic.FinCases",
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "TCSlib.Complexity.TuringMachine.Build.Embed",
+        "TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "head_imports": [
+        "Mathlib.Data.Nat.Bits",
+        "Mathlib.Tactic.FinCases",
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "TCSlib.Complexity.TuringMachine.Build.Embed",
+        "TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_imports": [
+        "Mathlib.Data.List.Induction",
+        "Mathlib.Data.Nat.Bits",
+        "Mathlib.Tactic.DeriveFintype",
+        "Mathlib.Tactic.FinCases",
+        "Mathlib.Tactic.Ring",
+        "TCSlib.Complexity.ClassP.TimeConstructible",
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Build.Loop",
+        "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "TCSlib.Complexity.TuringMachine.Composition",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "head_imports": [
+        "Mathlib.Data.List.Induction",
+        "Mathlib.Data.Nat.Bits",
+        "Mathlib.Tactic.DeriveFintype",
+        "Mathlib.Tactic.FinCases",
+        "Mathlib.Tactic.Ring",
+        "TCSlib.Complexity.ClassP.TimeConstructible",
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Build.Loop",
+        "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+        "TCSlib.Complexity.TuringMachine.Composition",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean",
+      "base_imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Build.Embed"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Build.Embed"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "base_imports": [
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.TuringMachine.Build.Convention",
+        "TCSlib.Complexity.TuringMachine.Composition"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "base_imports": [
+        "TCSlib.Complexity.TuringMachine.CodeFormat",
+        "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+        "TCSlib.Complexity.TuringMachine.Build.Seam",
+        "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+        "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+        "TCSlib.Complexity.TuringMachine.Build.StepBlockLoop",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Build.InputCall",
+        "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+        "TCSlib.Complexity.TuringMachine.Nondeterministic",
+        "TCSlib.Complexity.TuringMachine.Build.InterpreterStartup"
+      ],
+      "head_imports": [
+        "TCSlib.Complexity.TuringMachine.CodeFormat",
+        "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+        "TCSlib.Complexity.TuringMachine.Build.Seam",
+        "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+        "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+        "TCSlib.Complexity.TuringMachine.Build.StepBlockLoop",
+        "TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "TCSlib.Complexity.TuringMachine.Build.InputCall",
+        "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+        "TCSlib.Complexity.TuringMachine.Nondeterministic",
+        "TCSlib.Complexity.TuringMachine.Build.InterpreterStartup"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "base_imports": [
+        "Mathlib.Order.Monotone.Defs",
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ],
+      "head_imports": [
+        "Mathlib.Order.Monotone.Defs",
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_imports": [
+        "Mathlib.Data.Fintype.EquivFin",
+        "Mathlib.Data.List.FinRange",
+        "Mathlib.Data.Nat.Bits",
+        "TCSlib.Complexity.TuringMachine.NatBits",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"
+      ],
+      "head_imports": [
+        "Mathlib.Data.Fintype.EquivFin",
+        "Mathlib.Data.List.FinRange",
+        "Mathlib.Data.Nat.Bits",
+        "TCSlib.Complexity.TuringMachine.NatBits",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"
+      ],
+      "added_imports": [],
+      "removed_imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "base_imports": [
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "head_imports": [
+        "Mathlib.Algebra.BigOperators.Fin",
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "added_imports": [
+        "Mathlib.Algebra.BigOperators.Fin"
+      ],
+      "removed_imports": []
+    }
+  ]
+}

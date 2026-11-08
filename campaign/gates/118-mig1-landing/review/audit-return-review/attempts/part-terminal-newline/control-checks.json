@@ -1,0 +1,150 @@
+{
+  "recorded_owner_context_guards": 116,
+  "recorded_unique_ordinary_definitions": 36,
+  "paired_rows_independently_reconciled": 232,
+  "rows": [
+    {
+      "owner": "Catalog",
+      "expected": 36,
+      "native_PASS_kernel_identities": 36,
+      "sealed_FAIL_identities": 36,
+      "matching_rfl_diagnostics": 36,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    },
+    {
+      "owner": "Loop",
+      "expected": 40,
+      "native_PASS_kernel_identities": 40,
+      "sealed_FAIL_identities": 40,
+      "matching_rfl_diagnostics": 40,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    },
+    {
+      "owner": "Primitives",
+      "expected": 50,
+      "native_PASS_kernel_identities": 50,
+      "sealed_FAIL_identities": 50,
+      "matching_rfl_diagnostics": 50,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    },
+    {
+      "owner": "Wrappers",
+      "expected": 42,
+      "native_PASS_kernel_identities": 42,
+      "sealed_FAIL_identities": 42,
+      "matching_rfl_diagnostics": 42,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    },
+    {
+      "owner": "Composition",
+      "expected": 36,
+      "native_PASS_kernel_identities": 36,
+      "sealed_FAIL_identities": 36,
+      "matching_rfl_diagnostics": 36,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    },
+    {
+      "owner": "Simulation",
+      "expected": 28,
+      "native_PASS_kernel_identities": 28,
+      "sealed_FAIL_identities": 28,
+      "matching_rfl_diagnostics": 28,
+      "ordered_pairs_exact": true,
+      "all_kernel_names_unique": true,
+      "only_guard_line_differs": true,
+      "recorded_native_exit": 0,
+      "recorded_sealed_exit": 1,
+      "native_rawhash_exact": true,
+      "sealed_rawhash_exact": true
+    }
+  ],
+  "corruption_tests_retained": [
+    {
+      "corruption": "missing positive identity",
+      "rejected": true,
+      "reason": "native marker count"
+    },
+    {
+      "corruption": "duplicate identity preserving marker count",
+      "rejected": true,
+      "reason": "native identity multiplicity"
+    },
+    {
+      "corruption": "wrong kernel name",
+      "rejected": true,
+      "reason": "kernel identity"
+    },
+    {
+      "corruption": "sealed PASS masquerading as failure",
+      "rejected": true,
+      "reason": "sealed status/kernel"
+    },
+    {
+      "corruption": "same-count non-rfl diagnostic",
+      "rejected": true,
+      "reason": "non-rfl or incorrectly paired error"
+    },
+    {
+      "corruption": "wrong sealed process exit",
+      "rejected": true,
+      "reason": "sealed run status"
+    },
+    {
+      "corruption": "native error status",
+      "rejected": true,
+      "reason": "native run status"
+    },
+    {
+      "corruption": "changed paired goal input",
+      "rejected": true,
+      "reason": "nonidentical paired goal sources"
+    },
+    {
+      "corruption": "missing effective irreducible guard in input",
+      "rejected": true,
+      "reason": "nonidentical paired goal sources"
+    }
+  ],
+  "final_Core_Loop_controls": {
+    "native": 40,
+    "sealed": 40,
+    "rfl_diagnostics": 40,
+    "all_ordered_pairs_exact": true,
+    "QA_guards": 20,
+    "actual_Loop_source_matches_proposal": true
+  },
+  "problems": [
+    "part 1",
+    "part 2"
+  ]
+}
