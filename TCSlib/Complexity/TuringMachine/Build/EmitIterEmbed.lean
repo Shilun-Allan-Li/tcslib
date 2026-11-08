@@ -70,39 +70,40 @@ def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
 
 /-- The empty run is safe. -/
 theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
-    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
-  ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩
+    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by
+  have hs : Segment H {some avoid} (fun _ => True) c c 0 := Segment.zero True.intro
+  have hp := (segment_iff H {some avoid} (fun _ => True) c c 0).mp hs
+  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩
 
 /-- Prepend one non-avoided step to a safe run. -/
 theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}
     {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)
     (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
     SafeRun H avoid c (t + 1) c' := by
-  have hone : H.runFrom c 1 = c₁ := by
-    simp [runFrom, hstep]
+  have hs : Segment H {some avoid} (fun _ => True) c₁ c' t :=
+    (segment_iff H {some avoid} (fun _ => True) c₁ c' t).mpr
+      ⟨h.1, fun j hj hq => h.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩
+  have hg := Segment.cons hstep
+    (by simpa only [Set.mem_singleton_iff] using hc) True.intro hs
+  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (1 + t)).mp hg
   refine ⟨?_, ?_⟩
-  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]
-    exact h.1
-  · intro t' ht'
-    cases t' with
-    | zero => simpa using hc
-    | succ u =>
-      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]
-      exact h.2 u (by omega)
+  · simpa only [Nat.add_comm 1 t] using hp.1
+  · intro j hj hq
+    exact hp.2.1 j (by omega) (Set.mem_singleton_iff.mpr hq)
 
 /-- Concatenate safe runs. -/
 theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}
     {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)
     (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by
-  refine ⟨?_, ?_⟩
-  · rw [runFrom_add, h₁.1]
-    exact h₂.1
-  · intro t' ht'
-    by_cases hlt : t' < t₁
-    · exact h₁.2 t' hlt
-    · obtain ⟨u, rfl⟩ : ∃ u, t' = t₁ + u := ⟨t' - t₁, by omega⟩
-      rw [runFrom_add, h₁.1]
-      exact h₂.2 u (by omega)
+  have hs₁ : Segment H {some avoid} (fun _ => True) c c₁ t₁ :=
+    (segment_iff H {some avoid} (fun _ => True) c c₁ t₁).mpr
+      ⟨h₁.1, fun j hj hq => h₁.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩
+  have hs₂ : Segment H {some avoid} (fun _ => True) c₁ c' t₂ :=
+    (segment_iff H {some avoid} (fun _ => True) c₁ c' t₂).mpr
+      ⟨h₂.1, fun j hj hq => h₂.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩
+  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (t₁ + t₂)).mp
+    (Segment.trans hs₁ hs₂)
+  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩
 
 /-! ### Output-prefix commutation
 
