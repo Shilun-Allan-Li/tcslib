@@ -25,7 +25,7 @@ non-time-constructible function `Complexity.exists_not_timeConstructible`
 [Coo72], decision CH34-Q8).
 
 The delayed diagonalization construction also states Ladner's intermediate-language
-theorem and its explicit padded SAT witness [AB09, §3.3].
+result and its explicit padded SAT witness [AB09, §3.3].
 
 ## Contents
 
