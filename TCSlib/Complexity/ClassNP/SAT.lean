@@ -687,15 +687,11 @@ private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)
     ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧
       (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
       (M.tm.runFrom (M.tm.initCfg x) t).output = y := by
-  classical
   have hh := (FinTM.computesInTime_iff _ _ _ _).mp h
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hh.1⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex hh.1
-  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex
-  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)
-  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he
-  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩
+  obtain ⟨t, ht, hg, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hh.1
+  refine ⟨t, ht, hg, ?_, ?_⟩
+  · rw [he]; exact hh.1
+  · rw [he]; exact hh.2
 
 /-- Capture and both rewinds establish the evaluator's empty-output seam.
 
@@ -3746,25 +3742,22 @@ private lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     exact ih (by omega)
 
-/-- A padded halting run can be cut at its first halt without changing any
-endpoint field. This is the local instance of the engine's minimal-halt
-argument: use `Nat.find` and the absorbing-halt law. -/
+/-- A padded halting run can be cut at its first positive halt without changing
+any endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live
+initial state excludes time zero. -/
 private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
     (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
     ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
       tm.runFrom cfg u = tm.runFrom cfg t := by
-  classical
-  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
-  have hu := Nat.find_spec h
-  have hle := Nat.find_min' h hhalt
-  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
-  · by_contra hn
-    have hz : Nat.find h = 0 := by omega
-    rw [hz, MultiTapeTM.runFrom_zero] at hu
-    exact hstart hu
-  · symm
-    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
+  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
+  have hp : 0 < u := by
+    by_contra hn
+    have hz : u = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
+    exact hstart hs
+  exact ⟨u, hp, hu, hg, he⟩
 
 /-- The appender has a full clean return, in linear time in the native input
 and existing word. Both input and work heads return to their canonical origins.
