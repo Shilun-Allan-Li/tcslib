@@ -1,6 +1,6 @@
 # Dispatch cleanup part 2 to Claude
 
-**Claude final-PARTIAL delivery received.** Checkpoints0and1 and delivery `0c4d4f60203021f3a3b93f88eaf7c9085c6ab885` are archived; the issued prompt below is retained for provenance. User requested30-minute monitoring for the upcoming partial delivery on2026-11-08 PST.
+**Claude final-PARTIAL delivery received.** The reviewed candidate and checked bounded repairs are published as [draft PR #248](https://github.com/Shilun-Allan-Li/tcslib/pull/248); full acceptance remains open. Checkpoints0and1 and delivery `0c4d4f60203021f3a3b93f88eaf7c9085c6ab885` are archived; the issued prompt below is retained for provenance. User requested30-minute monitoring for the upcoming partial delivery on2026-11-08 PST.
 
 ```text
 You are the external Claude fill worker for cleanup-part2 of the Pass–shelat formalization in https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0, pinned Mathlib).

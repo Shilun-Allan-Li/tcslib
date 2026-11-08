@@ -28,6 +28,7 @@ separate checked local commit; it is not implicitly in this worker payload.
 
 The later [checked maintainer repairs](checked-repairs-r1/README.md) are separate
 from this immutable intake. Their124-module closure and ten selected axiom checks
-pass; full cleanup and seal acceptance remain open.
+pass; [draft PR #248](draft-pr-r1/README.md) is published for review. Full
+cleanup and seal acceptance remain open.
 
 **Not yet clear to merge — partial delivery reviewed and local repairs checked; full acceptance remains open.**

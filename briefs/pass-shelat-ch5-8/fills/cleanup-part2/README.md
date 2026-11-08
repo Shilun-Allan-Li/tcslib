@@ -18,8 +18,11 @@ the final delivery resolves the old ledger denominator gap for its measured vari
 The [123-owner request plan](checkpoints/partial-r1/corrected-seal-plan-r1/README.md)
 is unrun received-source DATA. [Three provider proof proposals](checkpoints/partial-r1/provider-proposals-r1/README.md)
 remain unapplied. Continuation worker choice and provider scope ruling are pending;
-no new job or worker permission is inferred. Publication of a draft source PR is
-the next maintainer step; full cleanup acceptance is not granted by these checks.
+no new job or worker permission is inferred. [Draft PR #248](https://github.com/Shilun-Allan-Li/tcslib/pull/248)
+is published at the checked head; its [publication receipt](checkpoints/partial-r1/draft-pr-r1/README.md)
+binds the exact description and live draft/head/base verification. Full cleanup
+acceptance is not granted by these checks. The expected partial delivery has
+arrived; no future background watch is claimed.
 
 The immutable [issued brief](issued-r1/brief.md) and public exceptions bind source
 `1aa5506f58f77c215e56d24311ec33bd931cacf1`. The complete payload is staged at
