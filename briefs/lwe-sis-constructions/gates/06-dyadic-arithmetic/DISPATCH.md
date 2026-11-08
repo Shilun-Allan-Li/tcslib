@@ -1,4 +1,13 @@
-# Dyadic arithmetic statement audit: ready for reviewer selection
+# Dyadic arithmetic statement audit: dispatched and passed
+
+The user supplied the completed external report: PASS 0/0/0/3. GitHub verifies
+draft PR #239 at `659770d616160be594eb1d6eff6fc78807992a26`, central target,
+and exact exchange input `1ac4e2e45df94d0b5f20259218d067843458c770`.
+The frozen source, records and bundle identities below are unchanged. See the
+new findings/resolutions and `fills/03-dyadic-arithmetic/intake-r1.json`.
+No native rerun, external dispatch, push or merge is performed by intake.
+
+## Historical prepared handoff
 
 The user freshly selects Codex or Claude for this new job. No reviewer, remote
 PR, publication or dispatch is claimed by this preparation.

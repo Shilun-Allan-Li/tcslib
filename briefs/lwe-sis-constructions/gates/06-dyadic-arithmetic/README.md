@@ -1,5 +1,12 @@
 # Dyadic scalar arithmetic statement gate
 
+The returned audit now passes 0/0/0/3. Draft PR #239 and published exchange input
+`1ac4e2e45df94d0b5f20259218d067843458c770` are verified; published draft head
+is `659770d616160be594eb1d6eff6fc78807992a26`. The full report is preserved
+under audits/, with separate dispositions and an intake receipt under
+`fills/03-dyadic-arithmetic/`. No statement correction is needed. The issued
+pack/bundle/evidence remain fixed; only the twelve audited proof bodies enter fill.
+
 Own worktree: `tcslib-lwe-sis-dyadic-arithmetic`.
 Draft branch: `cryptography/lwe-sis-dyadic-arithmetic`.
 Central PR target: `cryptography/lwe-sis-constructions`.
@@ -34,5 +41,5 @@ rebasing the private publisher. No new remote PR or dispatch is claimed until
 client publication succeeds. Six earlier scoped gates pass; source-policy and
 relevant landing checks remain open.
 
-**Not yet clear to merge — the new statement gate and proof fill, source-policy
+**Not yet clear to merge — the statement gate passes; proof fill/review, source-policy
 work, relevant landing checks and user approval remain.**

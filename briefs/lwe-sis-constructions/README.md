@@ -10,9 +10,12 @@ The active next statement draft is `cryptography/lwe-sis-dyadic-arithmetic` in
 `dbacd91218c19f0df106d316ce4ff0e22b869e66`: scalar addition, multiplication and
 modular subtraction, 18 declarations / 12 admitted obligations. A fresh 94-module
 sweep, 302-constant inventory and sixteen backing-contract probes pass. Its own
-statement audit is not yet selected or dispatched; see `gates/06-dyadic-arithmetic/`.
+statement audit passes 0/0/0/3 at exchange
+`1ac4e2e45df94d0b5f20259218d067843458c770`. It is draft PR #239; the twelve
+audited obligations now enter fill. See `fills/03-dyadic-arithmetic/` and the
+historical statement records under `gates/06-dyadic-arithmetic/`.
 
-All six scoped gates pass 0/0/0/3, including the construction-core proof
+All seven scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.
@@ -43,7 +46,7 @@ Lean changes go through PRs into that branch for the user's approval and merge.
 The active draft is `cryptography/lwe-sis-dyadic-arithmetic` in the separate
 `tcslib-lwe-sis-dyadic-arithmetic` worktree. Its audited dependencies are
 #236/#237/#238. The only new existing-file overlap is the Encoding facade import;
-it is isolated in its own export commit. No new remote PR is claimed yet.
+it is isolated in its own export commit. Its published draft PR is #239.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations with all 31 former admissions filled: sample schedules, modular
@@ -128,6 +131,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — all six scoped gates pass. Source ingestion/matching
-and relevant integration checks remain open.
+**Not yet clear to merge — all seven scoped gates pass. Scalar proof fill/review,
+source ingestion/matching and relevant integration checks remain open.
 The user approves and merges PRs.**

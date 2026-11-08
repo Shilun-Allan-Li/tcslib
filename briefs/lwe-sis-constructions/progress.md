@@ -1,6 +1,6 @@
 # Campaign pulse
 
-Checkpoint: six scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
+Checkpoint: seven scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
 notes each. The construction-core proof gate closes all 31 core obligations;
 all 263 constants in that audited core have only standard axioms. The latest
 adapter statement gate approves its 20-declaration surface. All 14 adapter proof
@@ -24,12 +24,13 @@ implementation slice is scalar modular arithmetic using these adapters and
 the existing public arithmetic machines. Its isolated statement draft now
 typechecks at `dbacd91218c19f0df106d316ce4ff0e22b869e66`: eighteen declarations,
 twelve admissions, 94 fresh modules and sixteen axiom-clean backing contracts.
-This new branch has no published PR or dispatched statement audit yet.
+This branch is published as draft PR #239; the returned scalar statement audit
+passes 0/0/0/3. Its twelve audited obligations now enter proof fill.
 The statements and their proof fill are kept separate from the audited #237 code.
 
 ## PRs and user action
 
-GitHub currently has three open draft PRs, all targeting
+The four campaign draft PRs target
 `cryptography/lwe-sis-constructions`:
 
 * [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236): representation proofs.
@@ -38,8 +39,10 @@ GitHub currently has three open draft PRs, all targeting
 * [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238): binary representation
   adapter proofs; both Codex statement and proof audits pass, with all 14
   obligations discharged.
+* [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic;
+  its statement audit passes, with twelve proof obligations entering fill.
 
-All three have passing scoped audits, but none is marked clear to merge: source
+All four have passing scoped statement audits, but none is marked clear to merge: source
 validation/ingestion/matching and applicable landing checks remain. No merge
 action is requested now. The user alone approves and merges. The adapter's exact
 published proof-review exchange input is `228c265d642013da76afa6cec976eaf11a8eb1b9`;
@@ -55,4 +58,4 @@ shared probability-reader and source-registry diffs remain unapplied.
 
 **Not yet clear to merge — scoped audits pass; source-policy work, landing checks
 and user approval remain. The adapter proof gate is closed; the new scalar
-statement gate and its proof fill remain open.**
+proof fill and its separate audit remain open.**
