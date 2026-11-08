@@ -1,5 +1,3 @@
-# Gate120 — returned PASS; independent closure review pending
+# Gate120 — CLOSED PASS0/0/0/20
 
-Codex returned **PASS0blockers/0majors/0minors/20notes**. Verbatim findings.md and findings-receipt.json preserve its15759bytes/SHA7e65fa941f53316066ce3fbda7a841b5c8c97203e18ae800872fa1b19e917f2d. The delivered Markdown was locally untracked in the shared inbox, not a Git-bound report. All20 rows and the current clean prospective merge/replay validity pass root checks; independent parallel review runs.
-
-**Not yet clear to merge: #235 — closure review pending.** Source073 remains unchanged; actualMF63 PASS2/static0/0 remains valid because the latest campaign differs from MAC5 only in records and the prospective merged Lean tree is exactly073. No new elaboration or currentfull229 claim.
+**Clear to merge: #235 — Seyoon merges.** Codex returned zero blockers/majors/minors and20notes. All20 are accepted after root and independent review. No source fix or new ruling is required. Source073 is unchanged; the current clean prospective merged Lean tree is exactly the passedMF63 source. ActualMF63 PASS2/static0/0 and complete895-object context remain valid. Exact findings, resolutions and closure evidence are retained. Opacity/book/producer/history/debt limits remain explicit; no new elaboration or full229 claim.

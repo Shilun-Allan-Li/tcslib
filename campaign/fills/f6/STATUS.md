@@ -1,3 +1,7 @@
+# F6 — gate120 CLOSED PASS0/0/0/20
+
+**Clear to merge: #235 — Seyoon merges.** All20 notes accepted after root and independent audit-return review; no fix or new ruling. Source073 remains unchanged. Current clean prospective merged Lean equals the actually passedMF63 source; PASS2/static0/0 remains valid. Limits and provenance remain in gate120/resolutions.md/closure.json; no new elaboration or currentfull229 claim. Earlier checkpoints below are historical.
+
 # F6 — gate120 returned PASS; closure review pending
 
 Codex gate120 returned **PASS0/0/0/20**, preserved verbatim in findings.md. Root current merge/replay checks pass; independent parallel audit-return review runs. **Not yet clear to merge: #235 — closure review pending.** The issued1762-section packet remains immutable. Earlier currentvalidation, publication and dispatch details follow.

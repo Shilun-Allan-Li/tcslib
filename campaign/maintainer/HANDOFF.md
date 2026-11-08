@@ -9,6 +9,15 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST: Clear to merge #235; SG1R4 and MIG118 publication next.**
+
+- **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PRreadiness transition in progress; Seyoonmerges. No new ruling/sourcefix.
+- **Not yet clear to merge: #215.** Current078 fullMSG8PASS329/static0/66,25screens/compiled/seals complete. FrozenR4publicationdraft173files/1628sections~73.5MB; root canonicaladoption/stage/rebind/publish remain. Codexselected.
+- **Not yet clear to merge: #233.** SourceEAecd currentMMIG3ACTUALPASS394/0/static0/60 from wholeMAC5, all12owner binaries identicalnative3; full895maps frozen. SourceQA93/screen153/HEADaccounting135 allcomplete,388selectedStd and5authoredpublictype transports kernelvalidated. Codexgate118two-partpacketdraft preparing; rootpublication next.
+
+If Seyoonmerges#235 now: adopt entire passedMF63→MAC6 only after exactall1003Lean equality. KeepcurrentMSG8/MMIG3actualpins; mergecurrentcampaign into eachPR and, if needed, run the two-moduleHierarchy/SpaceComplexity tail from each wholepassed snapshot (never splice). Owner12/SG1fivefiles/25populations remain exact if verified; preserve oldexecutions and explicitcontext-validity arguments. Nextfree121. Earliercheckpoint text below remains historical.
+
+
 **Current checkpoint: F6 dispatched; SG1R4 evidence finishing; MIG final native3 passes.**
 
 - **Dispatched by Seyoon: Codex gate120 for #235.** Verified1762-section F6 packet published at exchange`0eb0d599d7b28882280de09ae85a819b21338afc`; exact source073/recordse819/SHA/prompt saved in gate120/publication.json and prompt.md, issued in chat. User confirmed dispatch; Codex nowreturnedPASS0/0/0/20. Verbatimfindings/rootcurrentmerge+replaychecks saved; independentclosure reviewrunning. Fresh25/currentmetadata/seals/MF63 are complete. **Not yet clear to merge: #235 — gate120 open.**
