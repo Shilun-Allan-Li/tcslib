@@ -6,8 +6,8 @@ with zero owned admissions and seventeen inherited warnings. All 302 owned
 constants and sixteen backing contracts use only standard axioms; no compiler
 auxiliary is added. The exact twelve-body freeze and scoped style checks pass.
 See REPORT.md and evidence/. The separate proof-audit pack is
-`audits/lwe-sis-dyadic-arithmetic-proofs-pack.md`; fresh reviewer selection and
-user dispatch remain pending.
+`audits/lwe-sis-dyadic-arithmetic-proofs-pack.md`. The user freshly selected
+Codex; client publication and user dispatch remain pending.
 
 ## Authorized fill scope and execution method
 

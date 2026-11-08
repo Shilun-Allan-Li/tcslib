@@ -12,7 +12,7 @@ scalar obligations with the same eighteen declarations. A fresh 94-module sweep
 passes; all 302 owned constants and sixteen backing contracts use only standard
 axioms. Its statement audit passes 0/0/0/3 at exchange
 `1ac4e2e45df94d0b5f20259218d067843458c770`. The separate proof audit is prepared
-next, with fresh reviewer selection, publication and user dispatch pending. See
+with Codex selected; publication and user dispatch remain pending. See
 `fills/03-dyadic-arithmetic/` and historical `gates/06-dyadic-arithmetic/`.
 
 All seven scoped gates pass 0/0/0/3, including the construction-core proof

@@ -25,7 +25,7 @@ the existing public arithmetic machines. Its isolated statement draft now
 typechecks at `dbacd91218c19f0df106d316ce4ff0e22b869e66`: eighteen declarations,
 twelve admissions, 94 fresh modules and sixteen axiom-clean backing contracts.
 This branch is published as draft PR #239; the returned scalar statement audit
-passes 0/0/0/3. Its twelve audited obligations now enter proof fill.
+passes 0/0/0/3. Its twelve audited obligations are now filled and locally checked.
 The statements and their proof fill are kept separate from the audited #237 code.
 
 ## PRs and user action
@@ -60,7 +60,8 @@ shared probability-reader and source-registry diffs remain unapplied.
 The current scalar proof source is `ec72ed773a690c17ac253707350935cc9e0acb34`: a
 fresh 94-module sweep has zero owned admissions and seventeen inherited warnings;
 all 302 owned constants and sixteen backing contracts have only standard axioms.
-No proof-update publication, proof-audit dispatch or merge is claimed yet.
+The user freshly selected Codex for the separate scalar proof audit.
+Proof-update publication and user dispatch remain pending.
 
 **Not yet clear to merge — scoped audits pass; source-policy work, landing checks
 and user approval remain. The adapter proof gate is closed; the scalar

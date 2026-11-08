@@ -1,7 +1,7 @@
-# Dyadic scalar proof audit: prepared, not dispatched
+# Dyadic scalar proof audit: Codex selected, not dispatched
 
-This is a separate job requiring a fresh Codex/Claude choice and user dispatch.
-No new reviewer or remote proof-update publication is claimed yet.
+The user freshly selected Codex for this separate proof audit. Client
+publication and user dispatch remain pending.
 
 | Item | Prepared identity |
 |---|---|
@@ -24,7 +24,7 @@ superseded: the client helper checked 102 files but printed a static 101. Its
 status count is now dynamic. The Lean source and native evidence did not change.
 This prepared local exchange pin is not a remote-publication attestation.
 
-After choosing the reviewer, run --worker codex or --worker claude as selected:
+Publish the fixed inputs for the selected Codex reviewer:
 
 ```sh
 python3 -I /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic/briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/publish_review.py --worker codex
@@ -38,5 +38,5 @@ checkout/index used. Read GitHub directly; return
 lwe-sis-dyadic-arithmetic-proofs-findings.md as Markdown in chat. No ZIP needed.
 Keep source/root/pin bytes fixed while proof review is pending.
 
-**Not yet clear to merge — proof-audit selection/publication/dispatch,
+**Not yet clear to merge — proof-audit publication/dispatch,
 source-policy work, applicable landing checks and user approval remain.**
