@@ -2,6 +2,8 @@
 
 **Current factual supplement (2026-11-08):** F6 is proved/merged#235; book-form T31 is proved/merged#223 at `72fcfbef3c1deb331aedc95d4a158a9ed4c56524` (gate113). Their planning/old line-number sections below are historical; do not repeat them. Ladner remains the independent statement front. The accepted LD1–7 choices and §(f) rulings stay unchanged. Current campaign after#233 is `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/MAC8.
 
+**Ladner statement preparation (2026-11-08):** draft [#249](https://github.com/Shilun-Allan-Li/tcslib/pull/249), gate128, at `1096e50b4e105392737ec52939b1db0cdbd9316d` implements the already approved LD1–LD7 surface and planned facade layout. Four definitions/six readings are proved; exactly6 mathematical targets remain admitted, and the existential packaging inherits one. Current exact2-module replay passes with6 intended admissions/896 objects; selected17 AX, whole9-head/18-pair boundary and6 private edge checks pass. Full49-source comparison/publication is pending; the PR is **Not yet clear to merge**. No mathematical fill was dispatched. The sharp SAT verifier reader is a separate pending API decision for the fill route. Detailed source fidelity, quantitative host premises and current state are `campaign/items/ladner/LADNER-design.md`, its source-check and HANDOFF§0. Earlier planning/status/line-number text below remains historical; §(f) rulings are unchanged. Next free gate129.
+
 **Status:** read-only planning (sub-agent, 2026-11-06). No tracked file was edited, and Lean was not run.
 **Base:** campaign `complexity/arora-barak-ch3-4` at `508781aa` (Lean as at #209/#191/#207's merges).
 Line numbers are at this base unless marked otherwise. **The user's ruling** (HANDOFF §3 item 4, 2026-11-06)

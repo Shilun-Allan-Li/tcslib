@@ -1067,20 +1067,25 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 
 ## 2. Campaign work queued or on hold
 
-**Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** #233 merged at
-`9b5dcf46408db681bcbc721930ef2203fa6bc47d`; exact wholeMJOINT1→MAC8 adoption is recorded in
-status/2026-11-08-mig1-merge/. All related gates are closed, with actual combined394/0/static0/59.
-Scoped MIG implementation retirements now apply. Wider FE-LIVE-1 and seven retained SG1
-kinds still need next12.2c consolidation before further SAT/Hardness fills.
+**Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** #233 is merged at
+`9b5dcf46408db681bcbc721930ef2203fa6bc47d`/whole MAC8. F6/T31/deepening and SG1/MIG are merged; their exact
+adoptions and scoped implementation retirements are recorded. Wider retained debt keeps its
+existing next12.2c owner/window, before further SAT/Hardness fills.
 
-Seyoon sleeps; continue approved mechanical/statement preparation, leave mathematical
-proof holes for fills, prepare morning Codex audits. Use small separate family PRs; new
-API/header/name/import/home/route/debt decisions pause their own front. No self-dispatched fill.
-Current26 existing-API candidate roots are being partitioned; no cleanup PR is open yet.
-RO1 genericCfgFacts API and every-site replacement are already ruled; SAT's newBlockLoop
-import remains pending with concrete tested proposal. Structural seven-kind proposals and
-Ladner source/host worksheet remain distinct from approved source changes. T31/F6/deepening
-are already landed. Details/current progress in HANDOFF §0. Nextfree121.
+Eight separate draft source PRs are now open: #241–#247 for mechanical families and #249 for
+the approved Ladner statement skeleton (6 mathematical holes retained). Gates121–128 are
+reserved; nextfree129. Four Codex audits123/124/125/126 are published and their prompts issued;
+none is confirmed dispatched. All8PRs remain **Not yet clear to merge**. Other copy comparisons,
+mandatory #242 backwards-live companion repairs and final packets continue. A whole prospective
+chain passed257+23+2 actual modules without snapshot composition; any new source repair needs
+its own current tail. Use HANDOFF§0, queue.json and DISPATCH.md for exact pins/current status.
+
+Seyoon sleeps; keep approved mechanical/statement work moving and mathematical holes for
+external fills. No self-dispatched fill. New API/header/name/import/home/route/debt questions
+pause their own fronts. Current paused decisions are SAT's BlockLoop import, the exact sharp
+SAT verifier reader, and RO1's same-name home revision to Deterministic after the CfgFacts
+cycle/8 held imports were demonstrated. RO1's generic API/all-sites scope was already ruled;
+neither unapproved home revision/import set is adopted. Details/proposals are in HANDOFF§0.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 
@@ -3810,18 +3815,18 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     lemma — phase-4 round 1, note 6.
 * **Chapter-2 blueprint increment** — at campaign closure (E5), per the
   Chapter-1 precedent (dep-graph merge, writer agents, validator).
-* **P3.4 — Ladner's theorem (queued; user decision 2026-10-08: CH34-Q6
-  core-late, moved to backlog at the P3.3 draft).** The last undrafted
-  statement phase of the chapters-3-4 campaign
-  (`AroraBarakChapters3-4Plan.md` §4): `Diagonalization/Ladner.lean` with
-  `SAT_H` (SAT padded by the diagonal gaps of `H`), Ex 3.6(a) (`H`
-  computable in polynomial time), the Claim of [AB09, Theorem 3.3]'s proof,
-  Ex 3.6(b), and Theorem 3.3 itself (`P ≠ NP` gives an `NP`-intermediate
-  language), ~6 sorried statements. Draft when the live rounds settle (the
-  `Diagonalization.lean` facade unfreezes at the P3.2 close); it consumes
-  the closed chapter-2 `SAT` surface and the received `polyTimeComputable`
-  layer, and is independent of P3.3's code layer. *Origin:
-  `AroraBarakChapters3-4Plan.md` §4 (P3.4 row), decision CH34-Q6.*
+* **P3.4 — Ladner's theorem (statement draft #249/gate128).** The approved new
+  `Diagonalization/Ladner.lean` and facade wiring have17 declarations:4 definitions,
+  6 proved own-definition readings,6 admitted mathematical targets and1 dependent
+  existential packaging theorem. The bounded-acceptance/uniform-code/literal-padding
+  choices and stronger NPHard premise follow the user's LD1–LD7 rulings. Source citations
+  use the approved Theorem3.3/proof fallback; exact2009 Exercise3.6 parts remain unpinned.
+  Current native/replay/AX/reader-boundary checks pass; full comparison/publication and
+  external statement audit remain pending. The sharp SAT-reader proposal and concrete
+  quantitative memo/simulator/SAT-search obligations remain separate fill-route work.
+  No mathematical proof fill is dispatched; all6 holes stay for external agents. See
+  `campaign/items/ladner/LADNER-design.md`, roadmap3/PLAN§(f) and HANDOFF§0. *Origin:
+  `AroraBarakChapters3-4Plan.md`§4(P3.4), CH34-Q6.*
 * **ARM extensions + colleague sync (moved to backlog 2026-10-09; user
   decision — outreach to Hydroxyi/Jason Dong initiated the same day).**
   The three proposed extensions to the co-owned `LogProg` tree
