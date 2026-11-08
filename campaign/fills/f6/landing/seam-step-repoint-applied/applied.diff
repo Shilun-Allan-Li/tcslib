@@ -1,0 +1,28 @@
+diff --git a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+index 7ee1f78a5..b9a716284 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+@@ -101,8 +101,8 @@ private theorem f6_full_embed {m : ℕ} {Q : Type} {z : List Bool} (c : Cfg m Bo
+   · intro j hj
+     exact False.elim (hj ⟨j, rfl⟩)
+ 
+-/-- One seam of the prefix: `Turing.seamCompTM_run_ofCfg` and
+-`Turing.seamCompTM_firstReturn_ofCfg` together, with the composite's exit control. -/
++/-- One seam of the prefix: the public `Turing.seamCompTM_step` supplies the run, endpoint
++control and first-return cut. -/
+ private theorem f6_seam {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
+     (M₁ : MultiTapeTM k Bool S₁) (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry q₂ : S₂)
+     {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+@@ -115,10 +115,8 @@ private theorem f6_seam {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : Lis
+       (c₃.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr q₂) ∧
+       ∀ t < T₁ + 1 + T₂,
+         ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+-          some (Sum.inr q₂) :=
+-  ⟨seamCompTM_run_ofCfg M₁ exit M₂ entry h₁ hexit hcut h₂,
+-    by rw [Cfg.mapState_state, hq, Option.map_some],
+-    seamCompTM_firstReturn_ofCfg M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂⟩
++          some (Sum.inr q₂) := by
++  exact seamCompTM_step M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂
+ 
+ /-- The startup of `Turing.exists_selfStartupTM`, seamed at its exit to a one-step stationary
+ silent halt leaf, first halts at `T + 2` on `⟨α, w⟩` for every suffix `w`, with the startup's

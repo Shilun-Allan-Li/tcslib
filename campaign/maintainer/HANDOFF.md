@@ -9,6 +9,15 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**Current F6/SG1 validation supplement:** F6 source is now `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
+An additional exact seam reconstruction now cites public seamCompTM_step; native owner
+passes and MF62 current2-module tail PASS0/static0/0 from whole passedMF61. Full229 at
+priorf72 remains separately pinned. Fresh current compiler accounting/seals and final23HEAD
+comparison are finishing; old193counts/f72screens remain historical. #235 **Not yet clear
+to merge**, selected Codex gate120 not issued. SG1 final79 full25 comparison/current7101→7063
+accounting/replaychain pass; peerQA found one missing transitive graph.py helper, being added
+to its final supplement before selected Codex round3 publication. #215 **Not yet clear to merge**.
+
 **Gate119closure update:** CodexR2 PASS0/0/0/17 independently verified; allnotes accepted,
 no source repair/new ruling. Currentclean prospective merge equals passedF1Lean;401/static77
 replay valid. **Clear to merge: #234.** Non-draft/readiness update verified complete. Await Seyoon's merge,

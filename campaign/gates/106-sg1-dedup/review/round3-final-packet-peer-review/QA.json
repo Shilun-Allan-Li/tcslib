@@ -1,0 +1,635 @@
+{
+  "utc": "2026-11-08T02:46:41.083852+00:00",
+  "result": "PASS bounded independent frozen-data QA; one concrete dependency inclusion required in final publication",
+  "candidate_manifest_sha256": "3bf0f54a07d9a4c96abc3a92fdbd007c593ab6788611e23fe26cd0cc438d5fed",
+  "execution_limits": "Own standard-library checker only. No delivered code execution, Lean, screen, snapshot/cache access, Git mutation, commit, push, dispatch, or source/canonical/frozen write.",
+  "inventory": {
+    "candidate_manifest_payloads": 48,
+    "original_inputs": 1519,
+    "original_input_bytes": 184807590,
+    "initial_original_input_drift": [],
+    "current_publication_context_drift": [
+      {
+        "path": "campaign/gates/106-sg1-dedup/STATUS.md",
+        "frozen_bytes": 1502,
+        "frozen_sha256": "8ea066f4e16f1e685509b54d19972c38e769a87e76d3b154758ad40ce69a775f",
+        "current_bytes": 1872,
+        "current_sha256": "40d74150ea9c49af3440d0c293c69d8fbe0c4729d4a780595d7bfa45298736bb"
+      },
+      {
+        "path": "campaign/maintainer/HANDOFF.md",
+        "frozen_bytes": 44042,
+        "frozen_sha256": "8edb5152d30ce6a3219d5f7ec16962a24005cd4e27140954f71a9e443482a2f3",
+        "current_bytes": 44748,
+        "current_sha256": "c917aa56e32cdc974f00c3184bad6739c5f39c3eaae4f7421b6aac2bbe2586c3"
+      }
+    ],
+    "sections": 1539,
+    "all_sections_UTF8": true,
+    "frozen_payload_bytes": 98855551,
+    "live_payload_bytes_at_check": 98856627,
+    "original_aliases": 40,
+    "distinct_encoded_sections": 31,
+    "binary_equivalents": 3,
+    "original_representations_omitted": [],
+    "additional_candidate_and_supplemental_sections": 29,
+    "entire_gate106_files_except_candidate": 1398,
+    "coverage_exception": "Unissued canonical pack-r3.md was exactly preserved by unissued-pack-r3-before.md at initial check; candidate pack replaces its role.",
+    "canonical_pack_still_unissued": true
+  },
+  "frozen_evidence": [
+    {
+      "folder": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79",
+      "manifest_sha256": "b4a5de6e0a0ebc9debfd194bbb3682a04992951e99572f7db0bb114d34ee666a",
+      "manifest_payloads": 131,
+      "full_folder_files": 132
+    },
+    {
+      "folder": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final",
+      "manifest_sha256": "43b179e6b7abc5cca8cbca07c93e05f8a5d543d24627f521c2d20a3b1cd4f4ec",
+      "manifest_payloads": 123,
+      "full_folder_files": 124
+    },
+    {
+      "folder": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25",
+      "manifest_sha256": "e1570fd0d551aaa512e6563fba2a28e34624caac00a45dc31fe1bc66cffa3f91",
+      "manifest_payloads": 101,
+      "full_folder_files": 102
+    },
+    {
+      "folder": "campaign/gates/106-sg1-dedup/review/round3-final-compiled",
+      "manifest_sha256": "7c15f893f532957f50b59b15dcc7531c709af20d368055402ba1b69ed900a5d2",
+      "manifest_payloads": 84,
+      "full_folder_files": 85
+    }
+  ],
+  "source": {
+    "worktree": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-sg1",
+    "head": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+    "base": "3023dc1408c3d216fc07a7cbba9ae30135b861ed",
+    "source_clean": true,
+    "base_is_ancestor": true,
+    "changed_Lean_files": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+    ],
+    "all50_current_captures_equal_git_and_archive": true,
+    "all50_captures_plaintext": true,
+    "added_Hardness_imports": [
+      "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+      "TCSlib.Complexity.ClassNP.PolyTimePrefix"
+    ],
+    "first_live_API_absent_from_SG1": true,
+    "raw_Tautology_direct_repoint_present": true,
+    "complete50_input_pins": [
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+        "bytes": 3393,
+        "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+        "git_blob": "7117a80f248fe398a083aec691912a96674c261a"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+        "bytes": 7972,
+        "sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+        "git_blob": "901ff371f49202d89c47799037c2b713bef34c2c"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+        "bytes": 39696,
+        "sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+        "git_blob": "a97834f9872607e59aaaeee9c7ec023b5bddea3d"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+        "bytes": 16251,
+        "sha256": "31a44bda2c205dfd92903417e636112cf9947222c5d87ab122870f4881cd1c82",
+        "git_blob": "9b908c6fe0a6e1b7c96aa72876265139bf937fb3"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+        "bytes": 17598,
+        "sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+        "git_blob": "73d6b8adebeb72fd105fe0bb4a54e95b31159c2c"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+        "bytes": 236791,
+        "sha256": "61148b38017f2f86efccba6a93dd6bb671e0a6b4ff2627594f93dce44b0607c5",
+        "git_blob": "f110ca6d58b1af4ae0e30c13dd5f715b81d99b1c"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+        "bytes": 80160,
+        "sha256": "407fd18445e063da036b90ca0a36515aff3cb93b65725094c93727c91f157be0",
+        "git_blob": "9afa11c62e7027349c4b9102833373c846a0ab8a"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+        "bytes": 10996,
+        "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+        "git_blob": "5a429d87809b39bb92bcb471e568b69b1f6c37aa"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "bytes": 468790,
+        "sha256": "ea688c4da547ea6b47de7fcccbaf435e65e10c52b21b39e14395f66ab27be40a",
+        "git_blob": "0998d738c6edf27a53c70f4d412decc2c8dc5dbe"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+        "bytes": 21471,
+        "sha256": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7",
+        "git_blob": "ef8863adb3120d5053d2ccdef4a35a2f6ec3fee0"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "bytes": 681898,
+        "sha256": "8b98a78623f46e32582c4858a9ed6c8504cd99a59d81dc94e4079d4519fb6317",
+        "git_blob": "d900b690eb6b87595c42bf68b5992d2522da8360"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+        "bytes": 83047,
+        "sha256": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+        "git_blob": "43fce3e259817816fb7a3e3132980d69b994341e"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+        "bytes": 121411,
+        "sha256": "213cd5ed497d025f5a7d1e2131d0103bacb2c89d588bbad121a4dcfa0f8908e7",
+        "git_blob": "aa6a9f59160c2adb4ef29ffc702ee4fdf3e29567"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "bytes": 287958,
+        "sha256": "443022d58ff904a4397b95279f125917795ac56f4d7940c84921183ff4ceaf77",
+        "git_blob": "ba37b2207459885eb94b4ad2c80cb1dc7a400aec"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "bytes": 372145,
+        "sha256": "7355f9634c35fbea36156620405efada8e38abfc54a7c8f7425bf7d3e764468f",
+        "git_blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+        "bytes": 46638,
+        "sha256": "64bf3d4a8c7e0ee4e748b1fb9cdee939d30c500b518894a82f5be9a3dbd3b14f",
+        "git_blob": "13b5591983b46d64925ce88c7a586fceaf362f7a"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+        "bytes": 12934,
+        "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+        "git_blob": "a9f14a780c7702a5262aea9cb37ca0e19b6f8810"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+        "bytes": 25046,
+        "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+        "git_blob": "d84b88dc7af20ecb6791ed71c8b506654ef30514"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+        "bytes": 3519,
+        "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+        "git_blob": "1f4b743692f6cdbe2c2ef8ea4aebd52f228414c1"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+        "bytes": 20237,
+        "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+        "git_blob": "22105221c459270d471abc9a7a51e95d9def7279"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "bytes": 25824,
+        "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+        "git_blob": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+        "bytes": 41130,
+        "sha256": "7b67bbcb06ff8acf1c8f6c97b1a468898000747136120dd6420d881115661fe7",
+        "git_blob": "c1d171e6fa550e6f9dce58f96021552307dbd8c0"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "bytes": 25023,
+        "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+        "git_blob": "86af3005951710522d919c1edbdd42834ae6ed4d"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "bytes": 123875,
+        "sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+        "git_blob": "c808c107a4f2451dd53b438b2dcd0f71c3bb0f63"
+      },
+      {
+        "side": "base",
+        "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+        "bytes": 3017,
+        "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+        "git_blob": "7b877560790265f285fbaabf3a0f2c67ea03ed02"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+        "bytes": 3393,
+        "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+        "git_blob": "7117a80f248fe398a083aec691912a96674c261a"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+        "bytes": 7972,
+        "sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+        "git_blob": "901ff371f49202d89c47799037c2b713bef34c2c"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+        "bytes": 39696,
+        "sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+        "git_blob": "a97834f9872607e59aaaeee9c7ec023b5bddea3d"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+        "bytes": 16251,
+        "sha256": "31a44bda2c205dfd92903417e636112cf9947222c5d87ab122870f4881cd1c82",
+        "git_blob": "9b908c6fe0a6e1b7c96aa72876265139bf937fb3"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+        "bytes": 17598,
+        "sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+        "git_blob": "73d6b8adebeb72fd105fe0bb4a54e95b31159c2c"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+        "bytes": 235620,
+        "sha256": "682df0cd83abed16dac1e44768bee40a1691030eaeab1cf56373fa0677dbc6ba",
+        "git_blob": "00701cefd55eb3cfdcde9adf9d2d8b7f9001bc8c"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+        "bytes": 79808,
+        "sha256": "59ee3b71fb6b9a2cfb90d6ffd239a0858f683c1daca4c2c0167db9877ed9b8a8",
+        "git_blob": "43f4b62bf7603c4c046cc23990494bc95ee72c5c"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+        "bytes": 10996,
+        "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+        "git_blob": "5a429d87809b39bb92bcb471e568b69b1f6c37aa"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "bytes": 465312,
+        "sha256": "3c41a6aca1ed4e24b08330b7819a4d36ce0e695be4a71b11382c346e39499952",
+        "git_blob": "04828f7da0a93ca047dc40f4e7998c8ec54ec856"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+        "bytes": 21471,
+        "sha256": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7",
+        "git_blob": "ef8863adb3120d5053d2ccdef4a35a2f6ec3fee0"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+        "bytes": 681898,
+        "sha256": "8b98a78623f46e32582c4858a9ed6c8504cd99a59d81dc94e4079d4519fb6317",
+        "git_blob": "d900b690eb6b87595c42bf68b5992d2522da8360"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+        "bytes": 83047,
+        "sha256": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+        "git_blob": "43fce3e259817816fb7a3e3132980d69b994341e"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+        "bytes": 122089,
+        "sha256": "e6fecd8feb2eeb2ad8271630ed5c259e7f1f25b4cf8b3d6fd4437be18a10e2f0",
+        "git_blob": "b2beab0b25899e955adc0117b87abf4fe9fe8f85"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "bytes": 287958,
+        "sha256": "443022d58ff904a4397b95279f125917795ac56f4d7940c84921183ff4ceaf77",
+        "git_blob": "ba37b2207459885eb94b4ad2c80cb1dc7a400aec"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "bytes": 372145,
+        "sha256": "7355f9634c35fbea36156620405efada8e38abfc54a7c8f7425bf7d3e764468f",
+        "git_blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+        "bytes": 46638,
+        "sha256": "64bf3d4a8c7e0ee4e748b1fb9cdee939d30c500b518894a82f5be9a3dbd3b14f",
+        "git_blob": "13b5591983b46d64925ce88c7a586fceaf362f7a"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+        "bytes": 12934,
+        "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+        "git_blob": "a9f14a780c7702a5262aea9cb37ca0e19b6f8810"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+        "bytes": 25046,
+        "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+        "git_blob": "d84b88dc7af20ecb6791ed71c8b506654ef30514"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+        "bytes": 3519,
+        "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+        "git_blob": "1f4b743692f6cdbe2c2ef8ea4aebd52f228414c1"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+        "bytes": 20237,
+        "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+        "git_blob": "22105221c459270d471abc9a7a51e95d9def7279"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "bytes": 25824,
+        "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+        "git_blob": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+        "bytes": 41130,
+        "sha256": "7b67bbcb06ff8acf1c8f6c97b1a468898000747136120dd6420d881115661fe7",
+        "git_blob": "c1d171e6fa550e6f9dce58f96021552307dbd8c0"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "bytes": 25023,
+        "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+        "git_blob": "86af3005951710522d919c1edbdd42834ae6ed4d"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "bytes": 124325,
+        "sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+        "git_blob": "560e6cb050ee97872beafd80c417a98eb296f600"
+      },
+      {
+        "side": "head",
+        "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+        "bytes": 3017,
+        "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+        "git_blob": "7b877560790265f285fbaabf3a0f2c67ea03ed02"
+      }
+    ]
+  },
+  "screen": {
+    "base": {
+      "declarations": 1956,
+      "candidates": 2013,
+      "reproduced_chars": 646340
+    },
+    "head": {
+      "declarations": 1947,
+      "candidates": 1995,
+      "reproduced_chars": 645729
+    },
+    "new": 2,
+    "gone": 20,
+    "changed": 13,
+    "all35_dispositions_exact": true,
+    "identical_term_spans": 435,
+    "identical_term_candidates": 259,
+    "previous63_only_four_Tautology_directed_rows_gone": true,
+    "BASE_adopted_not_reexecuted": true
+  },
+  "compiled": {
+    "raw_six_stages_independently_reparsed": true,
+    "base_constants": 7101,
+    "head_constants": 7063,
+    "base_private": 5750,
+    "head_private": 5712,
+    "exact_nonprivate": 1351,
+    "effective_owned_simp_rules": 168,
+    "private_added": 6,
+    "private_removed": 44,
+    "common_private_type_changes": 10,
+    "common_AXIOM_changes": [
+      "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5Pair_sizes"
+    ],
+    "retained_Primitives_nonstandard_names": [
+      "Turing.FinTM.appendBitTM_computes",
+      "Turing.FinTM.polyBitsTM_computes",
+      "Turing.FinTM.polyUnaryTM_spaceUsed",
+      "Turing.FinTM.splitSolveTM_computes",
+      "Turing.FinTM.splitSolveTM_spaceUsed",
+      "Turing.FinTM.splitSolveWithTM_computes",
+      "Turing.FinTM.stripLastTM_computes",
+      "Turing.FinTM.unaryTokenTM_computes",
+      "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.split_fuel"
+    ],
+    "current_standard_roots": 43,
+    "current_standard_descendants": 93,
+    "distinct_standard_selected": 136,
+    "source_declarations_per_side": 1986,
+    "source_public_per_side": 349,
+    "source_private_per_side": 1637
+  },
+  "replay": {
+    "sequence": [
+      {
+        "generation": "msg5",
+        "source": "d0c4a292e781b55617e05b33fdd423bb059fd735",
+        "modules": 329,
+        "failures": 0,
+        "static_mismatches": 0,
+        "admissions": 66,
+        "per_module_enforced_j4": 329,
+        "whole_clone_driver_inspected": true
+      },
+      {
+        "generation": "msg6",
+        "source": "63a3ce018e96c8c114b9c82f8d5fce6021c7d03c",
+        "modules": 26,
+        "failures": 0,
+        "static_mismatches": 0,
+        "admissions": 0,
+        "per_module_enforced_j4": 26,
+        "whole_clone_driver_inspected": true
+      },
+      {
+        "generation": "msg7",
+        "source": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+        "modules": 2,
+        "failures": 0,
+        "static_mismatches": 0,
+        "admissions": 0,
+        "per_module_enforced_j4": 2,
+        "whole_clone_driver_inspected": true
+      }
+    ],
+    "limits": "Reparsed completed evidence, not reexecuted. No snapshot read or reconstruction. MSG6/7 scope admissions0 do not erase campaign admissions66; no fictional final329 run.",
+    "independent_full_source_import_closures": [
+      {
+        "generation": "msg5",
+        "previous": "3023dc1408c3d216fc07a7cbba9ae30135b861ed",
+        "source": "d0c4a292e781b55617e05b33fdd423bb059fd735",
+        "source_Lean_modules": 929,
+        "changed_files": [
+          "TCSlib/Complexity/ClassNP/SAT.lean",
+          "TCSlib/Complexity/ClassNP/Tautology.lean",
+          "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+          "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+        ],
+        "independently_reconstructed_downstream_count": 329,
+        "complete_order_exact": true
+      },
+      {
+        "generation": "msg6",
+        "previous": "d0c4a292e781b55617e05b33fdd423bb059fd735",
+        "source": "63a3ce018e96c8c114b9c82f8d5fce6021c7d03c",
+        "source_Lean_modules": 929,
+        "changed_files": [
+          "TCSlib/Complexity/CookLevin/Hardness.lean"
+        ],
+        "independently_reconstructed_downstream_count": 26,
+        "complete_order_exact": true
+      },
+      {
+        "generation": "msg7",
+        "previous": "63a3ce018e96c8c114b9c82f8d5fce6021c7d03c",
+        "source": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+        "source_Lean_modules": 929,
+        "changed_files": [
+          "TCSlib/Complexity/ClassNP/Tautology.lean"
+        ],
+        "independently_reconstructed_downstream_count": 2,
+        "complete_order_exact": true
+      }
+    ]
+  },
+  "debt_scope": {
+    "seven_SG1_kinds_and_FE_LIVE_separate": true,
+    "prior_named_affected": 49,
+    "live_members": 5,
+    "intersection": 0,
+    "union_named_affected": 54,
+    "denominator": 544,
+    "five_current_live_proof_chunks_byte_exact_in_both_Git_captures": true,
+    "interpretation": "Named affected union only; not54copies, full census, or one-fifth clearance. FE-LIVE excludes None-halt/future copies. clNative_image remains bounded/unacknowledged, distinct from exact raw Tautology composition repoint."
+  },
+  "checker_dependencies": {
+    "required_tools_and_standards": [
+      "scripts/copy-text-screen-v3.py",
+      "devtools/seyoon/declfreeze.py",
+      "devtools/seyoon/pairdiff.py",
+      "scripts/campaign_style_lint.py",
+      "scripts/style_lint.py",
+      "devtools/seyoon/mkdownmulti.py",
+      "devtools/seyoon/graph.py",
+      "policy.md",
+      "workflow.md",
+      "campaign/standards/TEMPLATE.md",
+      "campaign/maintainer/WORKFLOW.md"
+    ],
+    "missing_from_frozen_candidate": [
+      "devtools/seyoon/graph.py"
+    ],
+    "fix": "Add exact graph.py generation dependency with provenance to root-owned final publication supplement/list; frozen candidate remains immutable.",
+    "full_historical63_and_D0_folder_dependencies_present": true,
+    "statically_read_final79_checkers": [
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/analyze-screens.py",
+        "sha256": "9efcce4485b7b64af651d07367bfe7a6a9457373dc7deec5218942dc727461a7",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/freeze79.py",
+        "sha256": "822fccbf5feae45e839ed10d255ff339e749280b0adef4b2eaa1955eac45d142",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/index-sources.py",
+        "sha256": "a4a4c28d8fe4c5138580c1d81dcfe7cc34387c732e71610c908e9a136f734cbc",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/prepare.py",
+        "sha256": "27ea3a8139fd30f1c67a40ef938628a3fca51227709ea86d8a9333f3c24e5b34",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/review-complete-headers.py",
+        "sha256": "d04d46756f4fc1bd630ea75ed6e9f4addeceb58dc31e0ebb1909672292441ad6",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/review-lints-data.py",
+        "sha256": "e1f3901d9692d2043d03c609c2fd7ff4a08d93a8b32999610e557e52d57ad10e",
+        "ast_parsed_only": true
+      },
+      {
+        "path": "campaign/gates/106-sg1-dedup/review/round3-current-source-screen25-final79/run-head.py",
+        "sha256": "9212db0cdfda87eeea846340984936a0f9e4205079f096f10e202f5524a969b0",
+        "ast_parsed_only": true
+      }
+    ],
+    "delivered_code_executed": false
+  },
+  "publication_pending": "Root must finalize mutable canonical chronology/status, records pin, rendered bundle prologue/hash/sections, exchange commit/path and prompt. The frozen candidate does not self-pin its own future commit."
+}

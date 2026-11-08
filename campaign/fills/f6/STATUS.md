@@ -1,3 +1,16 @@
+# F6 — current seam citation passes; final audit evidence finishing
+
+**Not yet clear to merge: #235.** Current clean pushed source `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
+The additional exact seam reconstruction now cites existing public seamCompTM_step without
+API/import/statement changes. Native owner PASS0errors/0sorries; current MF62 two-module tail
+PASS0failures/static0/0 uses one whole895-object clone of passedMF61. All outside-scope object
+hashes match; current owner matches native2. The full229 pass remains at priorf72, with21
+inherited imported admissions. Current unfiltered compiler accounting/scoped checks and
+final23-source HEAD comparison are finishing; no old193count is assumed for this generation.
+Codex gate120 selected, not issued. Earlier execution/packet generations below are historical.
+
+## Prior f72 landing validation and immutable dispatch history
+
 # F6 — complete delivery reviewed; draft #235 validating
 
 **Not yet clear to merge: #235.** Final ZIP received/tracked exchange bytes match; independent

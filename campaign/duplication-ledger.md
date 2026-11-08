@@ -717,6 +717,21 @@ onefifth; it is a bounded lower bound, not an exhaustive count or accepted reten
 The remaining two repairs use Encoding's public inverse/length facts and PolyTimePrefix's
 published prefix remover. Existing serialized pairMapSnd.eq_1/drop.eq_1 suffice.
 Seyoon approved only the latter's single new import; no new API or debt extension.
+
+**Generation chronology/current scope (2026-11-08 UTC).** The preceding description belongs
+to the initial16-site repair generation. Final pair-size proof at `63a3ce018e96c8c114b9c82f8d5fce6021c7d03c`
+uses the existing stronger `Complexity.length_pair_components_le` from PolyTimeBlockLoop,
+through Encoding's inverse and public pair projections, including malformed inputs. Seyoon
+separately approved that exact additional import; both PolyTimePrefix and PolyTimeBlockLoop
+imports are authorized. Final source `79e7c63a6bfa5f002663924f5c7d4e72db705026`
+adds the seventeenth repair, `taut_comp_on_image`→`FinTM.exists_comp_on_image`, under the
+separate IMG-COMP-1 disposition below. No original execution is relabeled as this final
+generation. Complete source/current compiler/seals/25-file screen and the MSG5→MSG6→MSG7
+chain are in gate106's final review evidence. FE-LIVE-1 is a separate acknowledged kind,
+not an eighth SG1 adapter/host ruling. Its five Hardness names are disjoint from the
+previous49 named affected declarations, giving54/544 as a bounded named set union only;
+not54 confirmed copies, exhaustive accounting or clearance of class-level image closure.
+
 Actual final native/scoped-seal evidence is in gate106/review; current replay and Codex
 round3 remain pending. These implementations retire only when #215 merges.
 
@@ -1682,3 +1697,25 @@ not charged or silently discharged here. Full candidate blocks/dispositions are 
 final screen sweep and round3-image-repoint evidence. Native/sealed14definitions/28paired
 controls and finalMSG7dependent replay pass. Retired only when #215 merges; this bounded
 candidate enumeration does not claim no further instance anywhere in TCSlib.
+
+
+## F6-REUSE-1 — visited-set monotonicity and live seam composition (proposed retirement in #235)
+
+Two mechanical reuse kinds are repaired in the new space-universal proof, without new
+public API, import, machine, statement or debt permission.
+
+- Visited-head-set monotonicity: `MultiTapeTM.visitedByTapeHead_mono` (ConfigCount) replaces
+  the explicit existential-witness subset construction inside `Complexity.f6_loop` at
+  `f72a807e2376a2b986675c992745d6affc23b96f`. Its local header and application remain unchanged.
+- Live seam composition: `Turing.seamCompTM_step` (InterpreterStartup) replaces the entire
+  private `Complexity.f6_seam` reconstruction at `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
+  Its complete private header and budget remain unchanged; the proof now directly cites the
+  existing theorem through the already imported closure. Same-kind review covers all19 new
+  proof chunks, inline/rewrite closings and supplied published comparisons.
+
+The initial fill review missed these exact re-derivations. Actual corrected native/scoped
+checks and current chained replay receipts are preserved separately from producer/earlier
+maintainer evidence. See fills/f6/landing/seam-step-repoint-preflight,
+seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Each kind is proposed
+retired only on #235 merge. This bounded enumeration/inspection is not whole-library absence
+or a generic duplication exception; inherited source candidates retain their own dispositions.

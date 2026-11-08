@@ -1,0 +1,51 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+attribute [local irreducible] Complexity.TimeHierarchy.code Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.CodeTM.toFinTM Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.StepBlock.forwardLoopCfg Turing.embedEmitCfg Turing.embedEmitRetTM Turing.embedEmitTM Turing.headerRulerTM Turing.headerScanCfg Turing.headerScanTM Turing.instDecidableEqRewindPhase Turing.instDecidableEqSeekPhase Turing.moveInputPos Turing.pairEncode Turing.rewindTM Turing.rulerHostCfg Turing.seamCompTM Turing.skipTM Turing.startupLoopTM Turing.tableBitsK Turing.unaryFin Turing.walkTM Nat.bits
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+open Lean Elab Command Meta in
+elab "#landing_f6_controls" : command => do
+  let names : List Name := [`Complexity.TimeHierarchy.code, `Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.CodeTM.toFinTM, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.StepBlock.forwardLoopCfg, `Turing.embedEmitCfg, `Turing.embedEmitRetTM, `Turing.embedEmitTM, `Turing.headerRulerTM, `Turing.headerScanCfg, `Turing.headerScanTM, `Turing.instDecidableEqRewindPhase, `Turing.instDecidableEqSeekPhase, `Turing.moveInputPos, `Turing.pairEncode, `Turing.rewindTM, `Turing.rulerHostCfg, `Turing.seamCompTM, `Turing.skipTM, `Turing.startupLoopTM, `Turing.tableBitsK, `Turing.unaryFin, `Turing.walkTM, `Nat.bits]
+  let mut index := 0
+  for n in names do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let type ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar type
+          try
+            goal.mvarId!.refl
+            let value ← instantiateMVars goal
+            pure (some (type, value))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs resultType => do
+            let mut lhs := mkAppN head xs
+            let mut rhs := (mkAppN di.value xs).headBeta
+            let fn := resultType.getAppFn
+            if fn.isConst then
+              let env ← getEnv
+              if isStructure env fn.constName! then
+                lhs := mkProj fn.constName! 0 lhs
+                rhs := mkProj fn.constName! 0 rhs
+            match ← solve lhs rhs with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let proofName := Name.mkSimple s!"F6LandingControl_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := proofName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={proofName}"
+
+#landing_f6_controls

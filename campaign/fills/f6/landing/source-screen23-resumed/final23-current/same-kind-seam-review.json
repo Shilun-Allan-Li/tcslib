@@ -1,0 +1,281 @@
+{
+  "head": "0d0950caeb39300b5cc9bf41e5f07392fb26d3e5",
+  "source_sha256": "550c59f38193d19156d215c6e7d6ef5f005a11a5bd3182c6cc443ba25790b8a3",
+  "all18_new_plus_target_full_read_verified_by_exact_lineage": true,
+  "all19_complete_headers_inspected": true,
+  "all32_inline_and_rewrite_hits_inspected": true,
+  "only_changed_chunk_vs_f72": [
+    "Complexity.f6_seam"
+  ],
+  "matching_public_contract_now_directly_cited": "Turing.seamCompTM_step",
+  "statement_and_inline_assessments": {
+    "Complexity.f6_seam": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied.",
+    "Complexity.f6_native_halt": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion.",
+    "Complexity.f6_hosted": "The first source halt and strict None-liveness are supplied to public embedEmitRetTM_run. The local work is the concrete header-literal/host-presentation field bridge and E1 identity-embedding application, not a local general returning/seam contract proof.",
+    "Complexity.f6_prefix": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains.",
+    "Complexity.f6_loop": "The public StepBlock.forwardLoop_forward supplies source first halt and later halted endpoint. This is neither local absorbing-live first entry nor seam packaging reconstruction; included in full19 review although no narrow seam token matches.",
+    "Complexity.f6_final_seam": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search.",
+    "Complexity.space_universal": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+  },
+  "all_hits": [
+    {
+      "name": "Complexity.f6_seam",
+      "line": 104,
+      "text": "/-- One seam of the prefix: the public `Turing.seamCompTM_step` supplies the run, endpoint",
+      "assessment": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied."
+    },
+    {
+      "name": "Complexity.f6_seam",
+      "line": 106,
+      "text": "private theorem f6_seam {k : \u2115} {S\u2081 S\u2082 : Type} [DecidableEq S\u2081] {x : List Bool}",
+      "assessment": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied."
+    },
+    {
+      "name": "Complexity.f6_seam",
+      "line": 113,
+      "text": "    (seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl) (T\u2081 + 1 + T\u2082) =",
+      "assessment": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied."
+    },
+    {
+      "name": "Complexity.f6_seam",
+      "line": 117,
+      "text": "        ((seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl) t).state \u2260",
+      "assessment": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied."
+    },
+    {
+      "name": "Complexity.f6_seam",
+      "line": 119,
+      "text": "  exact seamCompTM_step M\u2081 exit M\u2082 entry q\u2082 h\u2081 hexit hcut h\u2082 hq hcut\u2082",
+      "assessment": "Statement exactly equals the public combined seam contract after parameter renaming. Current body directly applies seamCompTM_step; all run/state/cut premises map literally. Required re-point is applied."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 129,
+      "text": "the leaf's live control (`Turing.seamCompTM_runFrom_right`), so the composite is live at every",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 149,
+      "text": "    {seamCompTM R exit leaf () with q\u2080 := Sum.inl R.q\u2080}",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 153,
+      "text": "      A.runFrom d t = (seamCompTM R exit leaf ()).runFrom d t :=",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 178,
+      "text": "    exact seamCompTM_run_ofCfg R exit leaf () hr' hd hcut (hleaf _ hs)",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 187,
+      "text": "  \u00b7 have hdispatch := seamCompTM_runFrom_right R exit leaf () hr' hd hcut 0",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_native_halt",
+      "line": 188,
+      "text": "    have hdispatch' : (seamCompTM R exit leaf ()).runFrom",
+      "assessment": "The final endpoint has state none and the cut is none-liveness, so the live-second-exit premise c\u2083.state=some q\u2082 of seamCompTM_step does not hold. It consumes public run_ofCfg, runFrom_right at t=0, and runFrom_state_ne_none_of_le; it does not reconstruct the packaged live-exit conclusion."
+    },
+    {
+      "name": "Complexity.f6_hosted",
+      "line": 309,
+      "text": "  obtain \u27e8_, hret, hcut\u27e9 := embedEmitRetTM_run (Fin.castLEEmb (le_refl (K + 4))) H",
+      "assessment": "The first source halt and strict None-liveness are supplied to public embedEmitRetTM_run. The local work is the concrete header-literal/host-presentation field bridge and E1 identity-embedding application, not a local general returning/seam contract proof."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 575,
+      "text": "  let S2 := seamCompTM (headerRulerTM r) (Sum.inr RewindPhase.done) P2",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 577,
+      "text": "  let S3 := seamCompTM S2 (Sum.inr (Sum.inr ())) (skipTM (Symbol := Bool) (K + 4) r)",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 579,
+      "text": "  let S4 := seamCompTM S3 (Sum.inr SeekPhase.done)",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 581,
+      "text": "  let S5 := seamCompTM S4 (Sum.inr SeekPhase.done) (headerScanTM r) (0 : Fin 4)",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 582,
+      "text": "  let S6 := seamCompTM S5 (Sum.inr (3 : Fin 4)) (rewindTM (Symbol := Bool) (K + 4) r)",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 601,
+      "text": "  obtain \u27e8s2, _, c2\u27e9 := f6_seam (headerRulerTM r) _ P2 _ (Sum.inr ()) h1 rfl k1 h2 rfl k2",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 608,
+      "text": "  obtain \u27e8s3, _, c3\u27e9 := f6_seam S2 _ (skipTM (Symbol := Bool) (K + 4) r) _ SeekPhase.done",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 611,
+      "text": "  obtain \u27e8s4, _, c4\u27e9 := f6_seam S3 _ (walkTM (Symbol := Bool) (K + 4) r (\u00b7 = r) .neg) _",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 618,
+      "text": "  obtain \u27e8s5, _, c5\u27e9 := f6_seam S4 _ (headerScanTM r) _ (3 : Fin 4) s4 rfl c4 h5 rfl k5",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_prefix",
+      "line": 620,
+      "text": "  obtain \u27e8s6, _, c6\u27e9 := f6_seam S5 _ (rewindTM (Symbol := Bool) (K + 4) r) _ RewindPhase.done",
+      "assessment": "All five seams invoke f6_seam, now a direct public seamCompTM_step forwarder. Subsequent f6_mapState_mk/initial-state rewrites normalize literal endpoints; no inline three-part public seam proof remains."
+    },
+    {
+      "name": "Complexity.f6_final_seam",
+      "line": 842,
+      "text": "`K + 4 = 0 + ((K + 2) + 2)` by equality induction; apply `startupLoopTM_runFrom` and",
+      "assessment": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search."
+    },
+    {
+      "name": "Complexity.f6_final_seam",
+      "line": 843,
+      "text": "`startupLoopTM_spaceUsed_le`; transport back ([AB09, Exercise 4.1]). -/",
+      "assessment": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search."
+    },
+    {
+      "name": "Complexity.f6_final_seam",
+      "line": 872,
+      "text": "      let U0 := startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)",
+      "assessment": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search."
+    },
+    {
+      "name": "Complexity.f6_final_seam",
+      "line": 908,
+      "text": "  have hr := startupLoopTM_runFrom (k := K + 2) (K := 0)",
+      "assessment": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search."
+    },
+    {
+      "name": "Complexity.f6_final_seam",
+      "line": 910,
+      "text": "  have hs := startupLoopTM_spaceUsed_le (k := K + 2) (K := 0)",
+      "assessment": "The concrete last-ruler/zero-outer tape-count adapter applies public startupLoopTM_runFrom and startupLoopTM_spaceUsed_le directly. Additional work is the approved concrete layout and equality transport. No already-published combined concrete adapter was identified in this bounded search."
+    },
+    {
+      "name": "Complexity.space_universal",
+      "line": 963,
+      "text": "forwarding loop, glued by `Turing.startupLoopTM`. (i) **Prefix.** Six phases glued by",
+      "assessment": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+    },
+    {
+      "name": "Complexity.space_universal",
+      "line": 964,
+      "text": "`Turing.seamCompTM`, each seam with its dispatch step and its first-return cut: the header ruler",
+      "assessment": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+    },
+    {
+      "name": "Complexity.space_universal",
+      "line": 982,
+      "text": "host halts with the same output, and `Turing.startupLoopTM_runFrom` gives `SU`'s halt with it.",
+      "assessment": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+    },
+    {
+      "name": "Complexity.space_universal",
+      "line": 983,
+      "text": "(iii) **Space.** `Turing.startupLoopTM_spaceUsed_le`, tape by tape: the mirrored tape visits only",
+      "assessment": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+    },
+    {
+      "name": "Complexity.space_universal",
+      "line": 1005,
+      "text": "    startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)",
+      "assessment": "Constructs startupLoopTM on the transported fixed prefix/host, then consumes f6_final_seam for the concrete endpoint. There is no local general seam run/cut proof; halt/output are public field rewrites of the obtained run equality."
+    }
+  ],
+  "compared_public_contracts": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean",
+      "name": "Turing.seamCompTM_step",
+      "start_line": 57,
+      "chunk_sha256": "c0be1fe988686a89453404f2843d7b7d368200f9d7fa34853d659724bd1bd417",
+      "complete_raw_chunk": "/-- **One seam step.** Composing a verified segment with a verified next phase through the seam\n`Turing.seamCompTM`: the endpoint and its control state, reached after the two runs and one\nadditional dispatch transition (at time `T\u2081 + 1 + T\u2082`), and the inherited first return of the\nphase's exit. [AB09, \u00a71.4.1]\n\n**Proof sketch.** The general-configuration seam run and its inherited first-return cut,\nwith the endpoint state projected through the state renaming. -/\ntheorem seamCompTM_step {k : \u2115} {S\u2081 S\u2082 : Type} [DecidableEq S\u2081] {x : List Bool}\n    (A : MultiTapeTM k Bool S\u2081) (exit\u2081 : S\u2081) (B : MultiTapeTM k Bool S\u2082)\n    (entry\u2082 exit\u2082 : S\u2082)\n    {c\u2080 c\u2081 : Cfg k Bool S\u2081 x} {c\u2082 : Cfg k Bool S\u2082 x} {T\u2081 T\u2082 : \u2115}\n    (h\u2081 : A.runFrom c\u2080 T\u2081 = c\u2081) (hx\u2081 : c\u2081.state = some exit\u2081)\n    (hcut\u2081 : \u2200 t < T\u2081, (A.runFrom c\u2080 t).state \u2260 some exit\u2081)\n    (h\u2082 : B.runFrom (c\u2081.mapState fun _ => entry\u2082) T\u2082 = c\u2082)\n    (hx\u2082 : c\u2082.state = some exit\u2082)\n    (hcut\u2082 : \u2200 t < T\u2082,\n      (B.runFrom (c\u2081.mapState fun _ => entry\u2082) t).state \u2260 some exit\u2082) :\n    (seamCompTM A exit\u2081 B entry\u2082).runFrom (c\u2080.mapState Sum.inl) (T\u2081 + 1 + T\u2082) =\n        c\u2082.mapState (Sum.inr : S\u2082 \u2192 S\u2081 \u2295 S\u2082) \u2227\n      (c\u2082.mapState (Sum.inr : S\u2082 \u2192 S\u2081 \u2295 S\u2082)).state = some (Sum.inr exit\u2082) \u2227\n      \u2200 t < T\u2081 + 1 + T\u2082,\n        ((seamCompTM A exit\u2081 B entry\u2082).runFrom (c\u2080.mapState Sum.inl) t).state \u2260\n          some (Sum.inr exit\u2082) := by\n  refine \u27e8seamCompTM_run_ofCfg A exit\u2081 B entry\u2082 h\u2081 hx\u2081 hcut\u2081 h\u2082, ?_,\n    seamCompTM_firstReturn_ofCfg A exit\u2081 B entry\u2082 exit\u2082 h\u2081 hx\u2081 hcut\u2081 h\u2082 hx\u2082\n      hcut\u2082\u27e9\n  rw [Cfg.mapState_state, hx\u2082, Option.map_some]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+      "name": "Turing.seamCompTM_run_ofCfg",
+      "start_line": 529,
+      "chunk_sha256": "09845856478c9cda7b6b50f8ad3c9e185b04a0ca74cb081359b1f4793de7f47c",
+      "complete_raw_chunk": "/-- **R2\u2032, general-configuration seam-to-seam composition** (spec, fill\npending \u2014 round-1 repair R2): the `Cfg.ofWords` restriction of\n`Turing.seamCompTM_run` is lifted. If `M\u2081` carries an arbitrary\nconfiguration `c\u2080` to `c\u2081` in exactly `T\u2081` steps, first reaching the anchor\n`exit` there, and `M\u2082` carries `c\u2081` **with only the control state replaced\nby `entry`** to `c\u2083` in `T\u2082` steps, then the composite carries the\n`Sum.inl`-mapped `c\u2080` to the `Sum.inr`-mapped `c\u2083` in exactly\n`T\u2081 + 1 + T\u2082` steps: the dispatch step is stationary, silent, and\nwrite-free, so displaced inactive heads, noncanonical tape contents, the\ninput position, and **accumulated output** all cross it intact \u2014 exactly\nthe seams the round-1 audit exhibited (`emitterP2_relocate_run`'s arbitrary\nframes, `exists_emitCallTM`'s nonempty output) that no `Cfg.ofWords`\nendpoint can describe. The canonical `seamCompTM_run` is the\n`Cfg.ofWords` instance.\n\n**Proof sketch.** Identical three-segment decomposition to\n`seamCompTM_run` \u2014 phase-one `Sum.inl` lockstep under the cut, one\ndispatch step, phase-two `Sum.inr` lockstep via `Cfg.mapState_apply` \u2014\nwith the single new observation that a stationary write-free action fixes\n**every** field of an arbitrary configuration, not only a canonical one\n(`Turing.Action.apply` componentwise). Fill obligations, named: the two\nlockstep inductions over `Cfg.mapState`, the dispatch-step field check,\nand the `ofWords` specialization recovering the canonical theorem. -/\ntheorem seamCompTM_run_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S\u2081] (M\u2081 : MultiTapeTM k Symbol S\u2081)\n    (exit : S\u2081) (M\u2082 : MultiTapeTM k Symbol S\u2082) (entry : S\u2082)\n    {c\u2080 c\u2081 : Cfg k Symbol S\u2081 x} {c\u2083 : Cfg k Symbol S\u2082 x} {T\u2081 T\u2082 : \u2115}\n    (h\u2081 : M\u2081.runFrom c\u2080 T\u2081 = c\u2081) (hexit : c\u2081.state = some exit)\n    (hcut : \u2200 t < T\u2081, (M\u2081.runFrom c\u2080 t).state \u2260 some exit)\n    (h\u2082 : M\u2082.runFrom (c\u2081.mapState fun _ => entry) T\u2082 = c\u2083) :\n    (seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl)\n        (T\u2081 + 1 + T\u2082) =\n      c\u2083.mapState Sum.inr := by\n  exact seamComp_run_general M\u2081 exit M\u2082 entry h\u2081 hexit hcut h\u2082"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+      "name": "Turing.seamCompTM_firstReturn_ofCfg",
+      "start_line": 563,
+      "chunk_sha256": "df15091795162b26fe6be17933bd3325bae67bd81b378f983f648717e7a7b3bd",
+      "complete_raw_chunk": "/-- **R2\u2032, the general inherited first-return cut**\n(round-1 repair R2): under the hypotheses of\n`Turing.seamCompTM_run_ofCfg`, if `M\u2082` first reaches `q\u2082` at `T\u2082`, the\ncomposite first reaches `Sum.inr q\u2082` at `T\u2081 + 1 + T\u2082`.\n\n**Proof sketch.** As `seamCompTM_firstReturn`, over the general lockstep\nsegments: left times produce `Sum.inl` states, right times the\n`Sum.inr`-mapped `M\u2082` states at shifted time, and injectivity of the\nconstructors transports the cuts. -/\ntheorem seamCompTM_firstReturn_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S\u2081]\n    (M\u2081 : MultiTapeTM k Symbol S\u2081) (exit : S\u2081)\n    (M\u2082 : MultiTapeTM k Symbol S\u2082) (entry : S\u2082) (q\u2082 : S\u2082)\n    {c\u2080 c\u2081 : Cfg k Symbol S\u2081 x} {c\u2083 : Cfg k Symbol S\u2082 x} {T\u2081 T\u2082 : \u2115}\n    (h\u2081 : M\u2081.runFrom c\u2080 T\u2081 = c\u2081) (hexit : c\u2081.state = some exit)\n    (hcut : \u2200 t < T\u2081, (M\u2081.runFrom c\u2080 t).state \u2260 some exit)\n    (h\u2082 : M\u2082.runFrom (c\u2081.mapState fun _ => entry) T\u2082 = c\u2083)\n    (hq : c\u2083.state = some q\u2082)\n    (hcut\u2082 : \u2200 t < T\u2082,\n      (M\u2082.runFrom (c\u2081.mapState fun _ => entry) t).state \u2260 some q\u2082) :\n    \u2200 t < T\u2081 + 1 + T\u2082,\n      ((seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl) t).state \u2260\n        some (Sum.inr q\u2082) := by\n  exact seamComp_firstReturn_general M\u2081 exit M\u2082 entry q\u2082 h\u2081 hexit hcut hcut\u2082"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+      "name": "Turing.seamCompTM_runFrom_right",
+      "start_line": 221,
+      "chunk_sha256": "79ec5e5f76bccb8137bf08d8d56542f022dc6654153fd5ff17ae8a17f820b9ba",
+      "complete_raw_chunk": "/-- **The seam's right segment** (promoted from the private `seamComp_right` at MIG-0b, with its\nuniverses and its proof; MIG-0a's export of the same name, over `Type`, is this statement's\ninstance): after the dispatch step, the composite runs the second machine in lockstep, for any\nnumber of steps, from the first machine's endpoint with its state replaced by the second entry.\nSet-valued exits need it.\n\n**Proof sketch.** Split the run at the dispatch, use left lockstep and\nthe exit equation, then iterate the unconditional right-step identity. -/\ntheorem seamCompTM_runFrom_right {Symbol : Type*} {x : List Symbol} [DecidableEq S\u2081]\n    (M\u2081 : MultiTapeTM k Symbol S\u2081) (exit : S\u2081)\n    (M\u2082 : MultiTapeTM k Symbol S\u2082) (entry : S\u2082)\n    {c\u2080 c\u2081 : Cfg k Symbol S\u2081 x} {T\u2081 : \u2115}\n    (h\u2081 : M\u2081.runFrom c\u2080 T\u2081 = c\u2081) (hexit : c\u2081.state = some exit)\n    (hcut : \u2200 t < T\u2081, (M\u2081.runFrom c\u2080 t).state \u2260 some exit) (t : \u2115) :\n    (seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl)\n        (T\u2081 + 1 + t) =\n      (M\u2082.runFrom (c\u2081.mapState fun _ => entry) t).mapState Sum.inr := by\n  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step',\n    seamCompTM_runFrom_left M\u2081 exit M\u2082 entry hcut T\u2081 le_rfl, h\u2081,\n    seamComp_dispatch M\u2081 exit M\u2082 entry c\u2081 hexit]\n  exact MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)\n    (seamComp_step_right M\u2081 exit M\u2082 entry) _ t"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "name": "Turing.startupLoopTM",
+      "start_line": 321,
+      "chunk_sha256": "2f06f1c4154fc06eda8412a72d442b35b92b5eadff56605000ec3b0fedfd9afc",
+      "complete_raw_chunk": "/-- **The startup\u2013loop seam machine**: a startup `R` on `K + (k + 2)` work tapes, followed at\nits exit control `exit` by the loop `L` on the first `k + 2` of them, entered at `entry`\n(`Turing.seamCompTM` of `R` and the emitting embedding `Turing.embedEmitTM` of `L` along\n`Fin.castLEEmb`, the other tapes untouched), started in `R`'s initial control. Read through\n`Turing.startupLoopTM_initCfg`, `_live_of_le`, `_runFrom` and `_spaceUsed_le`. [AB09, \u00a71.4.1,\nthe proof of Theorem 1.9: the universal machine first prepares its work tapes, then simulates]\n-/\nnoncomputable def startupLoopTM {k K : \u2115} {P Q : Type} [DecidableEq P]\n    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)\n    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) :\n    MultiTapeTM (K + (k + 2)) Bool (P \u2295 Q) :=\n  { seamCompTM R exit\n      (embedEmitTM (Fin.castLEEmb (by omega : k + 2 \u2264 K + (k + 2))) L) entry with\n    q\u2080 := Sum.inl R.q\u2080 }"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "name": "Turing.startupLoopTM_runFrom",
+      "start_line": 361,
+      "chunk_sha256": "9438e972eacf2862c4d6b772911d48f8914c0cdb5afbb5593425f73b283461f2",
+      "complete_raw_chunk": "/-- **The seam machine after the seam, from any seam endpoint**: suppose the startup `R`\nreaches the configuration `d` on `x` at exactly time `T`, at the control `exit`, and not\nearlier, and that `d` with its control replaced by `entry` is the embedding of a loop\nconfiguration `c` in the first `k + 2` tapes (the others blank with their heads at `0`, no\nprior output). Then for every `t`, `Turing.startupLoopTM R exit L entry` at time `T + 1 + t` is\nthe embedding of `L`'s run from `c` for `t` steps, with its control relabelled by `Sum.inr`. The\nloop may be the native forwarding loop (`c` its encoding, `d` the startup's native endpoint,\n`Turing.embedEmitCfg_forwardLoop_init`) or its suffix host (`c` the ruler host's presentation,\n`d` the suffix-ruler layout, `Turing.suffixRulerCfg_embed`). [AB09, \u00a71.4.1] -/\ntheorem startupLoopTM_runFrom {k K : \u2115} {P Q : Type} [DecidableEq P]\n    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)\n    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) {x : List Bool}\n    (c : Cfg (k + 2) Bool Q x) (d : Cfg (K + (k + 2)) Bool P x) (T : \u2115)\n    (hrun : R.runFrom (R.initCfg x) T = d) (hexit : d.state = some exit)\n    (hcut : \u2200 u < T, (R.runFrom (R.initCfg x) u).state \u2260 some exit)\n    (hcfg : d.mapState (fun _ => entry) =\n      embedEmitCfg (Fin.castLEEmb (by omega : k + 2 \u2264 K + (k + 2)))\n        (fun _ _ => none) (fun _ => 0) [] c) (t : \u2115) :\n    (startupLoopTM R exit L entry).runFrom ((startupLoopTM R exit L entry).initCfg x)\n        (T + 1 + t) =\n      (embedEmitCfg (Fin.castLEEmb (by omega : k + 2 \u2264 K + (k + 2)))\n        (fun _ _ => none) (fun _ => 0) [] (L.runFrom c t)).mapState Sum.inr := by\n  rw [startupLoopTM_initCfg, startupLoopTM, MultiTapeTM.runFrom_with_q\u2080,\n    seamCompTM_runFrom_right R exit _ entry hrun hexit hcut t, hcfg, embedEmitTM_runFrom]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "name": "Turing.startupLoopTM_spaceUsed_le",
+      "start_line": 386,
+      "chunk_sha256": "878a3e8828d71c62fd9032b3809cc63115ff12faceb913cdbfdb2972adfa7093",
+      "complete_raw_chunk": "/-- **The seam machine's space ledger, from any seam endpoint**: under the seam hypotheses of\n`Turing.startupLoopTM_runFrom` (the startup `R` reaches `d` on `x` at exactly `T`, at `exit`,\nnot earlier, and `d` relabelled at `entry` is the embedding of the loop configuration `c`), if\nthe startup uses at most `B` cells by `T` and the loop `L`, run from `c`, uses at most `S \u2265 1`\ncells on each of its tapes by `t`, then `Turing.startupLoopTM R exit L entry` uses at most\n`B + (K + (k + 2)) \u00b7 S` cells on `x` by time `T + 1 + t`. [AB09, Exercise 4.1: the universal\nmachine's space is the simulated machine's up to a factor depending on the code]\n\n*Generalization.* The private form fixed the native endpoint (`d` the startup's layout at input\nposition `1`, `c` the encoding of `M`'s initial configuration). It read that endpoint only\nthrough its exit control and the embedding identity, now the hypotheses `hexit` and `hcfg`; at\nthe native endpoint they are `rfl` and `Turing.embedEmitCfg_forwardLoop_init`, which is the old\nstatement. At `(K, k + 1)`, `d` the suffix-ruler layout and `c` the ruler host's presentation\n(`Turing.suffixRulerCfg_embed`) it is the ledger of the suffix layout.\n\n**Proof sketch.** The seam's visited-set theorem bounds each tape by the union\nof its startup and loop visits. A selected loop tape has the source loop's\nvisited set; an unselected tape visits just its initial cell. Count each union\nand sum over the host's tapes, using the public space equations. -/\ntheorem startupLoopTM_spaceUsed_le {k K : \u2115} {P Q : Type} [DecidableEq P]\n    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)\n    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) {x : List Bool}\n    (c : Cfg (k + 2) Bool Q x) (d : Cfg (K + (k + 2)) Bool P x) (T : \u2115)\n    (hrun : R.runFrom (R.initCfg x) T = d) (hexit : d.state = some exit)\n    (hcut : \u2200 u < T, (R.runFrom (R.initCfg x) u).state \u2260 some exit)\n    (hcfg : d.mapState (fun _ => entry) =\n      embedEmitCfg (Fin.castLEEmb (by omega : k + 2 \u2264 K + (k + 2)))\n        (fun _ _ => none) (fun _ => 0) [] c)\n    (t B S : \u2115) (hB : R.spaceUsed (R.initCfg x) T \u2264 B) (hS : 1 \u2264 S)\n    (hloop : \u2200 i, L.spaceUsedByTape c t i \u2264 S) :\n    (startupLoopTM R exit L entry).spaceUsed ((startupLoopTM R exit L entry).initCfg x)\n        (T + 1 + t) \u2264 B + (K + (k + 2)) * S := by\n  classical\n  let \u03c3 := Fin.castLEEmb (by omega : k + 2 \u2264 K + (k + 2))\n  let A := embedEmitTM \u03c3 L\n  let e := embedEmitCfg \u03c3 (fun _ _ => none) (fun _ => 0) [] c\n  have he : d.mapState (fun _ => entry) = e := hcfg\n  have hA : \u2200 j, A.spaceUsedByTape e t j \u2264 S := by\n    intro j\n    by_cases hj : j \u2208 Set.range \u03c3\n    \u00b7 obtain \u27e8i, rfl\u27e9 := hj\n      rw [(embedEmitTM_visitedByTapeHead \u03c3 L _ _ [] c t i).2]\n      exact hloop i\n    \u00b7 rw [(embedEmitTM_visitedByTapeHead_frame \u03c3 L _ _ [] c t j hj).2]\n      exact hS\n  have htape (j : Fin (K + (k + 2))) :\n      (startupLoopTM R exit L entry).spaceUsedByTape\n          ((startupLoopTM R exit L entry).initCfg x) (T + 1 + t) j \u2264\n        R.spaceUsedByTape (R.initCfg x) T j + S := by\n    rw [MultiTapeTM.spaceUsedByTape_eq_card]\n    have hsub := seamCompTM_visitedByTapeHead_ofCfg R exit A entry\n      (c\u2081 := d) (T\u2082 := t) hrun hexit hcut j\n    rw [he] at hsub\n    have hown : (startupLoopTM R exit L entry).visitedByTapeHead\n        ((startupLoopTM R exit L entry).initCfg x) (T + 1 + t) j \u2286\n        (seamCompTM R exit A entry).visitedByTapeHead\n          ((R.initCfg x).mapState Sum.inl) (T + 1 + t) j := by\n      intro p hp\n      rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp \u22a2\n      obtain \u27e8u, hu, hp\u27e9 := hp\n      refine \u27e8u, hu, ?_\u27e9\n      rw [startupLoopTM_initCfg, startupLoopTM, MultiTapeTM.runFrom_with_q\u2080] at hp\n      exact hp\n    calc\n      _ \u2264 (R.visitedByTapeHead (R.initCfg x) T j \u222a A.visitedByTapeHead e t j).card :=\n        Finset.card_le_card (hown.trans hsub)\n      _ \u2264 (R.visitedByTapeHead (R.initCfg x) T j).card +\n          (A.visitedByTapeHead e t j).card := Finset.card_union_le _ _\n      _ = R.spaceUsedByTape (R.initCfg x) T j + A.spaceUsedByTape e t j := by\n        rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]\n      _ \u2264 _ := Nat.add_le_add_left (hA j) _\n  rw [MultiTapeTM.spaceUsed_eq_sum]\n  calc\n    _ \u2264 \u2211 j, (R.spaceUsedByTape (R.initCfg x) T j + S) :=\n      Finset.sum_le_sum fun j _ => htape j\n    _ = R.spaceUsed (R.initCfg x) T + (K + (k + 2)) * S := by\n      rw [Finset.sum_add_distrib, \u2190 MultiTapeTM.spaceUsed_eq_sum, Finset.sum_const,\n        Finset.card_univ, Fintype.card_fin, smul_eq_mul]\n    _ \u2264 _ := Nat.add_le_add_right hB _"
+    }
+  ],
+  "other12_chunk_names": [
+    "Complexity.f6_full_embed",
+    "Complexity.f6_header",
+    "Complexity.f6_mapState_mk",
+    "Complexity.f6_ruler_moves",
+    "Complexity.f6_scan",
+    "Complexity.f6_last_ruler_layout",
+    "Complexity.f6_cast_init_run",
+    "Complexity.f6_cast_init_space",
+    "Complexity.f6_cast_cfg_state",
+    "Complexity.f6_cast_cfg_mapState",
+    "Complexity.f6_cast_cfg_embedding",
+    "Complexity.f6_cast_back_embedding"
+  ],
+  "no_additional_exact_seam_repoint_identified": true,
+  "limits": "Bounded candidate enumeration plus full-source inspection, not global absence or optimality. Prior E1 consumer-equation and E3 one-step-action assessments remain scoped; inherited candidate clusters separately disclosed. No new API/import/debt acceptance."
+}

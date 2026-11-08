@@ -159,7 +159,7 @@ returned HOLD; its round2 Codex audit returned HOLD0/1/0/15; mechanical closure 
 (#229, the Hierarchy consumer) is closed and merged. Gate **117** is reserved for the
 23 approved reading/resource APIs, CLOSED PASS0/0/0/14 and merged as #230; mac4 is current. Gate118 is reserved
 for draft #233’s MIG-1 landing (Codex selected), awaiting prerequisite#234. Gate119
-round1 HOLD0/1/0/16 has its debt ruling recorded; Codex follow-up is preparing on unchanged
-source with passed401/static0/77. F6 COMPLETE candidate is draft#235, native owner PASS;
+round2 is CLOSED PASS0/0/0/17 after independent review; #234 is non-draft and Clear to merge
+with the still-current passed401/static0/77 replay. Its acknowledged cleanup remains scheduled. F6 COMPLETE candidate is draft#235, native owner PASS;
 full validation and selected Codex gate120 preparation continue. Next free: **121**.
 **The current state is HANDOFF §0.**

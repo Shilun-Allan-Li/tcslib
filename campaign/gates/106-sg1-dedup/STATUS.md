@@ -1,3 +1,15 @@
+# Gate106 round3 — final inputs adopted, rendering/publication underway
+
+**Not yet clear to merge: #215.** Final79 source, compiled7101→7063 and full25source screen
+checks pass; MSG5→MSG6→MSG7 whole-snapshot chain passes329/26/2. Independent peer review
+is complete; its missing graph.py input is added with exact provenance. Root final mixed-pin
+QA corrected5root-source section bindings and preserves all BASE/HEAD captures. Canonical
+pack and complete1614-section list are adopted. Final rebuild/archive/section verification
+and exchange publication remain before Ready to dispatch. Codex selected, not yet dispatched.
+External round3 audit remains open. Prior source/check chronology follows.
+
+## Prior validation history
+
 # Gate106 — round2 HOLD; final source checks for Codex round3
 
 **Not yet clear to merge: #215.** Current pushed clean source `79e7c63a6bfa5f002663924f5c7d4e72db705026` includes16

@@ -1,0 +1,311 @@
+{
+  "base": "3023dc1408c3d216fc07a7cbba9ae30135b861ed",
+  "head": "f72a807e2376a2b986675c992745d6affc23b96f",
+  "method": "Canonical qualified declaration chunks, pure reviewed comment-preserving clean and balanced split_header, with indented proof-valued statement-let skip and nine targeted controls. Source-only; no Lean AST/generated census/macro claim.",
+  "all23_common_headers_and_public_names_visibility_order_preserved": true,
+  "only_existing_code_change": "Complexity.space_universal",
+  "new_private_helpers": 18,
+  "all23_source_terms_imports_attributes_preserved": true,
+  "proof_valued_new_header_corrections": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "side": "head",
+      "name": "Complexity.f6_hosted",
+      "old_truncated_or_different_header": "private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM (K + 3) Bool S) : ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (K + 4) Bool Q) (inj : S → Bool → Q) (C : ℕ), ∀ (u y : List Bool) (bank : Fin (K + 3) → ℤ → Option Bool) (T : ℕ) {R : Type} (q : R), M.runFrom (M.initCfg y) T = ⟨none, 1, bank, fun _ => 0, []⟩ → (∀ v < T, (M.runFrom (M.initCfg y) v).state ≠ none) → let ℓ := 2 * u.length + 2 let hp : ℓ + 1 < (pairEncode u y).length + 2 := by have :=",
+      "corrected_complete_header": "private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM (K + 3) Bool S) : ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (K + 4) Bool Q) (inj : S → Bool → Q) (C : ℕ), ∀ (u y : List Bool) (bank : Fin (K + 3) → ℤ → Option Bool) (T : ℕ) {R : Type} (q : R), M.runFrom (M.initCfg y) T = ⟨none, 1, bank, fun _ => 0, []⟩ → (∀ v < T, (M.runFrom (M.initCfg y) v).state ≠ none) → let ℓ := 2 * u.length + 2 let hp : ℓ + 1 < (pairEncode u y).length + 2 := by have := length_pairEncode u y; omega let e₁ : Cfg (K + 4) Bool R (pairEncode u y) := ⟨some q, ⟨ℓ + 1, hp⟩, Function.update (fun _ _ => none) (Fin.last (K + 3)) (FinTM.bufferTape (List.replicate ℓ true)), fun _ => 0, []⟩ let e₂ : Cfg (K + 4) Bool (Q ⊕ Unit) (pairEncode u y) := ⟨some (Sum.inr ()), ⟨ℓ + 1, hp⟩, Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank, fun _ => 0, []⟩ ∃ t', t' ≤ C * (ℓ + 1) * T ∧ (embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H).runFrom (e₁.mapState fun _ => Sum.inl (inj M.q₀ false)) t' = e₂ ∧ ∀ v < t', ((embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H).runFrom (e₁.mapState fun _ => Sum.inl (inj M.q₀ false)) v).state ≠ some (Sum.inr ()) :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "side": "head",
+      "name": "Complexity.f6_scan",
+      "old_truncated_or_different_header": "private theorem f6_scan {K : ℕ} {z : List Bool} {S : Type} (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ) (hp : ℓ + 1 < z.length + 2) (q : S) (u v : List Bool) (hz : z.drop ℓ = pairEncode u v) : let ℓ₂ := 2 * u.length + 2 let r : Fin (K + 4) := Fin.last (K + 3) let hp' : ℓ + ℓ₂ + 1 < z.length + 2 := by have h :=",
+      "corrected_complete_header": "private theorem f6_scan {K : ℕ} {z : List Bool} {S : Type} (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ) (hp : ℓ + 1 < z.length + 2) (q : S) (u v : List Bool) (hz : z.drop ℓ = pairEncode u v) : let ℓ₂ := 2 * u.length + 2 let r : Fin (K + 4) := Fin.last (K + 3) let hp' : ℓ + ℓ₂ + 1 < z.length + 2 := by have h := congrArg List.length hz rw [List.length_drop, length_pairEncode] at h omega let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩, Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank, Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ), []⟩ let f : Cfg (K + 4) Bool (Fin 4) z := ⟨some 3, ⟨ℓ + ℓ₂ + 1, hp'⟩, Fin.lastCases (FinTM.bufferTape (List.replicate (ℓ + ℓ₂) true)) bank, Function.update (fun _ => (0 : ℤ)) r ((ℓ + ℓ₂ : ℕ) : ℤ), []⟩ (headerScanTM r).runFrom (e.mapState fun _ => 0) ℓ₂ = f ∧ ∀ t < ℓ₂, ((headerScanTM r).runFrom (e.mapState fun _ => 0) t).state ≠ some 3 :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "side": "head",
+      "name": "Complexity.f6_prefix",
+      "old_truncated_or_different_header": "private theorem f6_prefix (c : EffectiveMachineCode) : ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P) (A : MultiTapeTM (K + 4) Bool P) (finish : P) (C : ℕ), ∀ α : List Bool, ∃ T₀ : ℕ, ∀ u x : List Bool, let ℓ := (2 * u.length + 2) + (2 * α.length + 2) let z := pairEncode u (pairEncode α x) let hp : ℓ + 1 < z.length + 2 := by show (2 * u.length + 2) + (2 * α.length + 2) + 1 < (pairEncode u (pairEncode α x)).length + 2 have h1 :=",
+      "corrected_complete_header": "private theorem f6_prefix (c : EffectiveMachineCode) : ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P) (A : MultiTapeTM (K + 4) Bool P) (finish : P) (C : ℕ), ∀ α : List Bool, ∃ T₀ : ℕ, ∀ u x : List Bool, let ℓ := (2 * u.length + 2) + (2 * α.length + 2) let z := pairEncode u (pairEncode α x) let hp : ℓ + 1 < z.length + 2 := by show (2 * u.length + 2) + (2 * α.length + 2) + 1 < (pairEncode u (pairEncode α x)).length + 2 have h1 := length_pairEncode u (pairEncode α x) have h2 := length_pairEncode α x omega ∃ T : ℕ, T ≤ C * (ℓ + 1) * (T₀ + 2) + 4 * ℓ + 11 ∧ A.runFrom (A.initCfg z) T = ⟨some finish, ⟨ℓ + 1, hp⟩, Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) (fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr) else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun _ => none), fun _ => 0, []⟩ ∧ ∀ v < T, (A.runFrom (A.initCfg z) v).state ≠ some finish :="
+    }
+  ],
+  "other_header_representation_corrections": 440,
+  "old_inventory_preserved_as_data": true,
+  "raw_screen_untouched": true,
+  "files": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "base_source_declarations": 47,
+      "head_source_declarations": 65,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [
+        "Complexity.f6_full_embed",
+        "Complexity.f6_seam",
+        "Complexity.f6_native_halt",
+        "Complexity.f6_header",
+        "Complexity.f6_mapState_mk",
+        "Complexity.f6_hosted",
+        "Complexity.f6_ruler_moves",
+        "Complexity.f6_scan",
+        "Complexity.f6_prefix",
+        "Complexity.f6_loop",
+        "Complexity.f6_last_ruler_layout",
+        "Complexity.f6_cast_init_run",
+        "Complexity.f6_cast_init_space",
+        "Complexity.f6_cast_cfg_state",
+        "Complexity.f6_cast_cfg_mapState",
+        "Complexity.f6_cast_cfg_embedding",
+        "Complexity.f6_cast_back_embedding",
+        "Complexity.f6_final_seam"
+      ],
+      "removed": [],
+      "changed_common_code_chunks": [
+        "Complexity.space_universal"
+      ],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TimeHierarchy/Diagonal.lean",
+      "base_source_declarations": 41,
+      "head_source_declarations": 41,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "base_source_declarations": 505,
+      "head_source_declarations": 505,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "base_source_declarations": 48,
+      "head_source_declarations": 48,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean",
+      "base_source_declarations": 57,
+      "head_source_declarations": 57,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean",
+      "base_source_declarations": 9,
+      "head_source_declarations": 9,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Rewind.lean",
+      "base_source_declarations": 5,
+      "head_source_declarations": 5,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Seam.lean",
+      "base_source_declarations": 34,
+      "head_source_declarations": 34,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+      "base_source_declarations": 135,
+      "head_source_declarations": 135,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean",
+      "base_source_declarations": 22,
+      "head_source_declarations": 22,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "base_source_declarations": 27,
+      "head_source_declarations": 27,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "base_source_declarations": 21,
+      "head_source_declarations": 21,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "base_source_declarations": 42,
+      "head_source_declarations": 42,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_source_declarations": 64,
+      "head_source_declarations": 64,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "base_source_declarations": 26,
+      "head_source_declarations": 26,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/NatBits.lean",
+      "base_source_declarations": 10,
+      "head_source_declarations": 10,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/SelfUniversal.lean",
+      "base_source_declarations": 2,
+      "head_source_declarations": 2,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "base_source_declarations": 65,
+      "head_source_declarations": 65,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "base_source_declarations": 9,
+      "head_source_declarations": 9,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "base_source_declarations": 133,
+      "head_source_declarations": 133,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+      "base_source_declarations": 53,
+      "head_source_declarations": 53,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+      "base_source_declarations": 74,
+      "head_source_declarations": 74,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "base_source_declarations": 24,
+      "head_source_declarations": 24,
+      "all_common_complete_headers_visibility_and_relative_order_identical": true,
+      "public_order_names_identical": true,
+      "private_added": [],
+      "removed": [],
+      "changed_common_code_chunks": [],
+      "source_terms_imports_attributes_identical": true
+    }
+  ]
+}
