@@ -69,8 +69,9 @@ theorem polyLenExpr_eq (a k : ℕ) :
 /-- **A verifier of `main`'s polynomial-time model, with hard-wired inputs, is a non-uniform
 machine** (the S3c bridge, lemma 1). Let `M` be an efficient Boolean verifier
 (`polyTimeModel.Eff (boolVerifier M)`: its true-set and false-set on `⟨x, r⟩` are in `P`), and
-`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs`, no coins,
-that at parameter `n` on the string `y` outputs `[M (xs n) y]`.
+`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs` whose
+output at parameter `n` on `y` is `[M (xs n) y]` for every coin tape. The conclusion exposes
+coin-independent behavior; the proof chooses a witness with zero coin schedule.
 
 **Proof sketch.** The true-set `V₁` of `M` is in `P`, so its indicator is polynomial-time
 (`mem_P_iff_polyTimeComputable`). Compose it with the projection

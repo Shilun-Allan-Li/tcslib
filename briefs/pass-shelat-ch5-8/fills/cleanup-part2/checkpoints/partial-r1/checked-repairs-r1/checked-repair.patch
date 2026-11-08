@@ -1,0 +1,241 @@
+From 32b827c017bc321ea40577bc8f27131df2c35e1a Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 8 Nov 2026 05:06:58 -0800
+Subject: [PATCH] Use operational and polynomial-time contracts in cleanup
+ proofs
+
+Remove the unreleased whole-NUPPT equality alias and use its existing output
+contract in three consumers. Derive four unary products through the existing
+BinArith multiplication, unary-length and congruence contracts, preserving all
+public statements, algorithms, costs and admissions.
+
+Latest native checks pass for all 124 prerequisite/consumer modules in the
+fresh same-phase tree. Ten selected actual axiom sets are standard-only;
+local repository/campaign style comparisons add no findings. Two failed
+development attempts and their exact logs remain retained. Full cleanup,
+seal coverage and landing-source acceptance are still incomplete.
+---
+ TCSlib/Complexity/Randomized/PPT.lean         |  6 ------
+ .../Cryptography/Asymptotic/GGMReduction.lean | 16 +++++++--------
+ TCSlib/Cryptography/Asymptotic/HardCore.lean  |  3 +--
+ .../Asymptotic/HardCoreCollection.lean        |  2 +-
+ .../Asymptotic/HardCoreLemmas.lean            |  2 +-
+ .../Cryptography/Asymptotic/OneWayLemmas.lean | 19 ++++++------------
+ .../ZeroKnowledge/EncodingMachines.lean       | 19 +++++++++---------
+ .../GraphIsomorphism/EfficiencyRep.lean       | 20 +++++++++++++++----
+ 8 files changed, 41 insertions(+), 46 deletions(-)
+
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index b1daacc77..dd437f164 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -399,12 +399,6 @@ noncomputable def ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTime
+     (coins : PolyExpr) : NUPPT :=
+   ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)
+ 
+-/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins
+-(.const 0) (fun _ => []) (fun _ => by simp)`. -/
+-theorem ofPolyTimeUniform_def {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) :
+-    (ofPolyTimeUniform hf coins : NUPPT) =
+-      (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)) := rfl
+-
+ /-- `ofPolyTimeUniform hf coins` is uniform. -/
+ theorem ofPolyTimeUniform_uniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+     (coins : PolyExpr) : (ofPolyTimeUniform hf coins).Uniform := fun _ => rfl
+diff --git a/TCSlib/Cryptography/Asymptotic/GGMReduction.lean b/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
+index b5d187bdd..7e14368a3 100644
+--- a/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
++++ b/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Complexity.ClassP.BinaryArith.Loops
+ import TCSlib.Cryptography.Asymptotic.PRFLemmas
+ 
+ set_option maxHeartbeats 0
+@@ -910,18 +911,15 @@ theorem rawFun_def :
+ 
+ /-! ### Polynomial time -/
+ 
+-/-- Unary multiplication of two polynomial-time unary lengths
+-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
++/-- Unary multiplication of two polynomial-time word lengths: pair the words,
++apply `BinArith.mulU`, and normalize by the unary length map (`BinArith.length_mulU`). -/
+ theorem unaryMul_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+     (hg : PolyTimeComputable g) :
+     PolyTimeComputable fun w => List.replicate ((f w).length * (g w).length) true := by
+-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
+-  have hmul : PolyTimeComputable (fun z => match pairDecode z with
+-      | some (u, v) => List.replicate (u.length * v.length) true
+-      | none => []) := ⟨M, c, 2, hM⟩
+-  convert hmul.comp (hf.pairEncode hg) using 1
+-  funext w
+-  simp [pairDecode_pairEncode]
++  have h := polyTimeComputable_unary.comp
++    (BinArith.polyTimeComputable_mulU.comp (hf.pairEncode hg))
++  refine h.congr fun w => ?_
++  simp only [Function.comp_apply, BinArith.length_mulU]
+ 
+ /-- The retained input of the state word is polynomial-time. -/
+ theorem inX_poly : PolyTimeComputable inX := polyTimeComputable_pairFstD
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCore.lean b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+index 3284c2c31..5913a355f 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCore.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+@@ -263,8 +263,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
+       ⟨(fun _ => false, fun _ => false)⟩
+     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
+     simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+-        NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def,
+-      NUPPT.output_ofPolyTime]
++        NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
+     cases b <;> simp
+   obtain ⟨n₀, hn₀⟩ := (negligible_iff ε).1 hε 1
+   have h1 := h (max n₀ 2)
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+index 0af98108c..9e0339e89 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+@@ -173,7 +173,7 @@ theorem glPad_sample_runAtL (m : PolyExpr)
+     (n : ℕ) (i r : List Bool) :
+     (F.glPad m henc).sample.runAtL n i r =
+       pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
+-  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
++  simp only [glPad, NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform,
+     glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+     NUPPT.coinLen_eq]
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+index 1709fe9a8..8f2b76f9b 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+@@ -1020,7 +1020,7 @@ theorem glPadSample_runAt (m : PolyExpr) (n : ℕ) (i : List Bool)
+     (NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)).runAt n i s =
+       pairEncode (F.sample.runAtL n i ((List.ofFn s).take (F.sample.coinLen n)))
+         ((List.ofFn s).drop (F.sample.coinLen n)) := by
+-  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
++  simp only [NUPPT.runAt_eq, NUPPT.output_ofPolyTimeUniform,
+     glPadSampleFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+     NUPPT.coinLen_eq, NUPPT.runAtL_eq]
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean b/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
+index f820b9171..96ad2a9cc 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Complexity.ClassP.BinaryArith.Loops
+ import TCSlib.Complexity.Randomized.Closure
+ import TCSlib.Complexity.Randomized.Repetition
+ import TCSlib.Cryptography.Asymptotic.Adversary
+@@ -324,19 +325,11 @@ theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ
+ projections, so `[]` on malformed words). -/
+ theorem polyTimeComputable_unaryMulPair :
+     PolyTimeComputable fun z => List.replicate ((pairFstD z).length * (pairSndD z).length) true := by
+-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
+-  have h : PolyTimeComputable (fun z => match pairDecode z with
+-      | some (u, v) => List.replicate (u.length * v.length) true
+-      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
+-  convert h using 1
+-  funext z
+-  cases hz : pairDecode z with
+-  | none => simp [pairFstD_eq, pairSndD_eq, hz]
+-  | some p =>
+-    obtain ⟨u, v⟩ := p
+-    have := eq_pairEncode_of_pairDecode z u v hz
+-    subst this
+-    simp
++  have h := polyTimeComputable_unary.comp
++    (BinArith.polyTimeComputable_mulU.comp
++      (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD))
++  refine h.congr fun z => ?_
++  simp only [Function.comp_apply, BinArith.length_mulU]
+ 
+ /-! ### The blockwise evaluator -/
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean b/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+index ce2c21a81..2e01fd24c 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Complexity.Randomized.Closure
+ import TCSlib.Complexity.Randomized.Repetition
++import TCSlib.Complexity.ClassP.BinaryArith.Loops
+ import Mathlib.Data.Nat.Sqrt
+ import Mathlib.Data.Nat.Find
+ 
+@@ -82,20 +84,17 @@ theorem unaryAdd_poly {f g : List Bool → ℕ}
+     PolyTimeComputable fun x => List.replicate (f x + g x) true := by
+   simpa only [List.replicate_add] using hf.append hg
+ 
+-/-- The product of two unary functions is a unary function: pair the two unary strings and
+-apply the unary-multiplication machine `Turing.FinTM.computesFunInTime_unaryMul` (a copy of the
+-private `Complexity.polyTimeComputable_unaryMulFun` of `Randomized/Primitives.lean`). -/
++/-- The product of two unary functions is unary: pair the strings and apply
++`BinArith.mulU`, then normalize its output by the unary length map. The public
++`BinArith.length_mulU` equation gives output length `f x * g x`. -/
+ theorem unaryMul_poly {f g : List Bool → ℕ}
+     (hf : PolyTimeComputable fun x => List.replicate (f x) true)
+     (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
+     PolyTimeComputable fun x => List.replicate (f x * g x) true := by
+-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
+-  have hmul : PolyTimeComputable (fun z => match pairDecode z with
+-      | some (u, v) => List.replicate (u.length * v.length) true
+-      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
+-  convert hmul.comp (hf.pairEncode hg) using 1
+-  funext x
+-  simp [pairDecode_pairEncode]
++  have h := polyTimeComputable_unary.comp
++    (BinArith.polyTimeComputable_mulU.comp (hf.pairEncode hg))
++  refine h.congr fun x => ?_
++  simp only [Function.comp_apply, BinArith.length_mulU, List.length_replicate]
+ 
+ /-- The truncated difference of two unary functions is a unary function: drop `g x` tokens
+ from `1^{f x}` (`Complexity.polyTimeComputable_pairDropPoly` at the variable length,
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+index f77554fb9..80ecede21 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
++import TCSlib.Complexity.ClassP.BinaryArith.Loops
+ import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
+ 
+ set_option maxHeartbeats 0
+@@ -344,13 +345,24 @@ theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps
+ 
+ /-! ### Unary multiplication and coin blocks -/
+ 
+-/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time
+-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
++/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time.
++Pair the total projections, apply `BinArith.mulU`, and normalize by unary length
++(`BinArith.length_mulU`); public projection equations give `[]` on malformed words. -/
+ theorem unaryMul_poly : PolyTimeComputable fun z => match pairDecode z with
+     | some (u, v) => List.replicate (u.length * v.length) true
+     | none => [] := by
+-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
+-  exact ⟨M, c, 2, hM⟩
++  have h := polyTimeComputable_unary.comp
++    (BinArith.polyTimeComputable_mulU.comp
++      (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD))
++  refine h.congr fun z => ?_
++  cases hz : pairDecode z with
++  | none =>
++    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
++      Option.map_none, Option.getD_none, List.length_nil, Nat.zero_mul, List.replicate_zero]
++  | some ab =>
++    rcases ab with ⟨a, b⟩
++    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
++      Option.map_some, Option.getD_some]
+ 
+ /-- The product of two unary counts given by polynomial-time maps. -/
+ theorem unaryMul_comp {f g : List Bool → ℕ} (hf : PolyTimeComputable fun w => List.replicate (f w) true)

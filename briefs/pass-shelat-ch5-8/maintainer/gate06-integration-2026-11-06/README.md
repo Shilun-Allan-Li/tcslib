@@ -1,6 +1,20 @@
 # Gate 06 integration checkpoint, 2026-11-06/07 PST
 
-## Current checkpoint (2026-11-07 PST)
+## Current final verification (2026-11-07 PST)
+
+Frozen source `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`, checked ancestor
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`, draft PR232. Common verification is reconciled;
+[FINAL-EVIDENCE.md](FINAL-EVIDENCE.md) is the current evidence index and states all retained
+failures, admissions and limits. All54 full-seal harnesses and11 controls validate; source
+results are37 passes/17 failures, with138 diagnostics in110 unchanged blocks. No new/touched
+read is identified by the layered checks. The four selected Codex packs are being finalized
+for parallel user dispatch; none has closed. S2 remains separate PR231, clear to merge.
+
+Everything below is historical checkpoint data, not the current work queue or audit pin.
+
+**Not yet clear to merge — external Gates06A–D remain.**
+
+## Historical e9 checkpoint (superseded)
 
 Integration head **`e9d64158461bfe24ddc88ab885bc4017899b4c16`**, pushed on
 `cryptography/pass-shelat-ch5-8-integration`. No PR is open and no Gate 06 pack is issued.

@@ -372,23 +372,39 @@ variable {π : Protocol} {R : List Bool → List Bool → Prop}
 zero-knowledge protocol with a bounded prover is zero-knowledge.
 
 **Proof sketch** ([Gol01, §4.3.4], with the hybrids made explicit).
-1. Given an efficient `V_Q*`, let `V*` be the verifier of one run of `π` whose auxiliary input
-   is `⟨z, r, m̄₁, …, m̄_i⟩`: it runs `V_Q*` on the random tape `r`, feeds it the messages
-   `m̄₁, …, m̄_i` of the first `i` phases (fillers `[]` included), and plays phase `i + 1` as
-   `V_Q*` does. It is efficient, and it reads `i` from its auxiliary input. Let `S` be its
-   simulator (`ZK π R`).
-2. `S_Q(x, z)`: pick `r`; for `i = 0, …, Q − 1` run `S(x, ⟨z, r, m̄₁, …, m̄_i⟩)` and take the
-   prover's messages of its output as `m̄_{i+1}`. Messages longer than `B(|x|)` are truncated;
-   real ones never are (`ProverBounded`). Output `V_Q*`'s view `(x, z, r, m̄₁ … m̄_Q)`. The
-   auxiliary inputs stay below `|z| + |r| + Q · k · (2B + 2)`, a polynomial `Lz'` in `|x|`, so
-   `S_Q` is a strict PPT.
-3. Hybrid `H_i`: the first `i` phases real, the rest simulated as in `S_Q`. `H_Q` is the real
-   view, and `H_0` is `S_Q`'s output. A distinguisher between `H_i` and `H_{i+1}` gives one
-   between the real and the simulated phase `i + 1`, with the first `i` real phases as auxiliary
-   input (of length at most `Lz'`). It reads `i` and those phases from the sample, and completes
-   phases `i + 2, …` with `S`. So it does not need the possibly inefficient prover.
-4. By `ZK π R` at the bound `Lz'` the advantage is at most `Q(|x|) · ε(|x|)`, which is
-   negligible. -/
+1. Put `n = |x|`, `k = π.rounds.eval n` and `p = proverMoves π.verifierFirst k`. Each padded
+   phase contributes `p` real prover messages and `k - p` empty prover fillers to the
+   verifier's received history. If `k = 0` or `Q(n) = 0`, sample the cheating verifier's tape
+   and output its exact empty-history view directly.
+2. Given an efficient `V_Q*`, use one deterministic efficient wrapped verifier `V*` for a
+   run of `π`. Its auxiliary input contains the original `z`, the global verifier tape `r`,
+   the phase index and the bounded received-prover prefix of earlier padded phases. It runs
+   `V_Q*` on `r` with that prefix followed by this phase's real prover messages. Its own tape
+   is empty. Only the honest prover's fillers are fixed to `[]`; no restriction is imposed
+   on a cheating verifier's filler replies. Let `S` be the simulator supplied by `ZK π R`.
+3. `S_Q(x, z)` samples `r` once and calls `S` with fresh coins for each phase. Normalize each
+   output before extending the prefix: syntactically parse its view and message-list
+   encoding, take at most `p` real prover messages, truncate each to `B(n)` bits, and pad
+   missing real messages with `[]`. Use the known phase input/auxiliary data and empty
+   wrapper tape as the view fields. A bad/noncanonical encoding or unexpected view fields
+   maps to that canonical phase view with `p` empty real messages. Append the `k - p`
+   honest-prover fillers, all `[]`, and retain only these `k` prover-message slots.
+   Every real phase view is fixed by this normalization: its count is exactly `p`, its
+   metadata is the known phase data, and every real prover message is bounded by `hB`.
+   No assumption that simulated outputs already have a valid shape is made.
+4. On every simulator tape, the accumulated prefix has at most `Q(n) * k` messages of at
+   most `B(n)` bits. Its message-list encoding has length at most `Q(n) * k * (2B(n) + 2)`.
+   Including the original auxiliary input, verifier tape, phase index and fixed pairing
+   overhead gives a polynomial bound in `n + |z|`; for `|z| ≤ Lz(n)` choose a polynomial
+   `Lz'` bounding the phase auxiliary inputs. Thus the same `S_Q` is a uniform strict PPT.
+   Its final output is the canonical view with fields `(x, z, r)` and the accumulated prefix.
+5. In hybrid `H_i`, the first `i` phases are real and the rest use these normalized simulated
+   phases. Normalization fixes real phases, so `H_Q` is the real view and `H_0` is `S_Q`.
+   Apply the same normalization and simulated-suffix computation on both sides of each
+   phase comparison. A nonuniform reduction may fix a maximizing phase and bounded prefix,
+   together with `x`, `z` and `r`, as polynomial-length advice; it needs neither the witness
+   nor an efficient honest prover, and need not trust metadata in an arbitrary simulator
+   output. By `ZK π R` at `Lz'`, summing the `Q(n)` gaps gives `Q(n) * ε(n)`, negligible. -/
 theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr) :
     ZK (π.seqRep Q) R := by
   sorry
@@ -396,11 +412,16 @@ theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : 
 /-- **Theorem 175.1, statistical case**: statistical error `δ` composes to `Q · δ`, under the
 same prover bound.
 
-**Proof sketch.** As for `ZK.seqRep`, with statistical distance instead of a distinguisher.
-Each hybrid step changes one phase from real to simulated for a fixed auxiliary input, at
-distance at most `δ(|x|)` (`StatZK π R δ` holds for every auxiliary input). The common
-post-processing, which completes the later phases and truncates the messages, does not increase
-the distance. Summing the `Q(|x|)` steps by the triangle inequality gives `Q(|x|) · δ(|x|)`. -/
+**Proof sketch.** Use the same phase-shape normalization as `ZK.seqRep`: exactly
+`proverMoves π.verifierFirst k` bounded real prover messages, the canonical empty prover
+fillers giving `k` received slots per padded phase, and the fixed canonical fallback for a
+malformed simulated view. This fixes every real phase view and bounds every simulated
+prefix, so it also gives a strict-PPT simulator without an output-shape premise.
+For a fixed earlier prefix, change one phase from real to simulated at distance at most
+`δ(|x|)` (`StatZK π R δ` holds for every auxiliary input). The common normalization and
+simulated-suffix computation do not increase statistical distance. Average over prefixes
+and sum the `Q(|x|)` gaps by the triangle inequality, giving exactly `Q(|x|) · δ(|x|)`.
+The empty-history construction handles `k = 0` or `Q(|x|) = 0` directly. -/
 theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
     (hB : π.ProverBounded R B) (Q : PolyExpr) :
     StatZK (π.seqRep Q) R (fun n => Q.eval n * δ n) := by

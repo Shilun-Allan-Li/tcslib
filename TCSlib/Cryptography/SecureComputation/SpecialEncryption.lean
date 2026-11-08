@@ -31,8 +31,11 @@ Yao's protocol nests two encryptions (`GarblingSpecial.lean`), so the string-lev
 - `x` for `m`: a source typo, read as `m`.
 - `(0^n ‖ m) ⊕ p` is computed as `p_{<n} ‖ (m ⊕ p_{≥n})` for the pad `p = f_k(r)`. The test
   "`m₀ = 0^n`" is computed as `c₂,_{<n} = p_{<n}`. Both are equalities of strings.
-- `Dec` refuses malformed ciphertexts and keys (length checks first). The evaluator `E` agrees
-  with `f` only on `n`-bit keys and inputs, the lesson of Algorithm 99.1's guard.
+- `Dec` checks the key, nonce-component and body-component lengths before evaluating `E`,
+  then checks the pad prefix. It uses total pair projections and does not separately require
+  successful pair parsing. At `n = ℓ = 0`, the malformed empty ciphertext with an empty key
+  therefore returns `some []`. The length checks protect the stated `n`-bit evaluator domain;
+  universal malformed-input rejection is not claimed.
 - `⊥` of the machine `Dec` is the `(n + 1)`-bit string `1^{n+1}`, which decodes to no message.
 
 ## Main definitions
@@ -73,7 +76,9 @@ theorem spEncStr_eq (E : List Bool → List Bool) (k m r : List Bool) :
 
 /-- **`Dec_k(c)`** [PS10, Algorithm 157.2] at parameter `n` for `ℓ`-bit messages: `none` (`⊥`)
 unless `k` and `r` have `n` bits and `c₂` has `n + ℓ`; then, with the pad `p = E(⟨k, r⟩)`, the
-message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise. -/
+message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise.
+Here `r` and `c₂` are the total pair projections; successful parsing is not an additional
+test. In particular `n = ℓ = 0`, `k = c = []` returns `some []`. -/
 def spDecStr (E : List Bool → List Bool) (n ℓ : ℕ) (k c : List Bool) : Option (List Bool) :=
   if k.length = n ∧ (pairFstD c).length = n ∧ (pairSndD c).length = n + ℓ then
     if (pairSndD c).take n = (E (pairEncode k (pairFstD c))).take n then

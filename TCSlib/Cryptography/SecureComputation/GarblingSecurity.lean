@@ -73,7 +73,8 @@ include hGE₁ hGE₂ in
 row will evaluate to `⊥`"]: with the nested special encryption from two PRFs, there is a
 negligible `δ` such that, for every parameter `n` and every fan-in-two circuit, a uniformly
 random garbling is good, and so evaluates correctly (`garbledOutput_eq`), except with
-probability at most `12 · |gates| · δ(n)`. -/
+probability at most `12 · |gates| · δ(n)`. Goodness here concerns the first successful opening
+for every assignment; the stronger source assertion of unique opening is not this conclusion. -/
 theorem garbling_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
     (hG₂ : PRFOut (.add .var innerLen) G₂) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ (n m : ℕ) (Cc : DAGCircuit m), Cc.IsFaninTwo →

@@ -1,8 +1,13 @@
+**Historical design draft — superseded by [issued r1](issued-r1/brief.md), prepared for one Claude session.**
+
 # Worker brief (DRAFT, not issued): gate 03 clean-up, part 2 (ch. 2–4)
 
-**Status: draft, not issued; refreshed 2026-11-06 PST.** Part 1 is #203 (merged). Gate 04
-is closed and #195 is merged. Under Q2 (A), S1 (#227) and S2 must also merge before this work
-is issued. Ask the user Codex or Claude before preparing the issued fill.
+**Status: preparation draft, not issued; refreshed 2026-11-07 PST.** Part 1/#203, #195,
+S1/#227 and S2/#231 are merged. Post-S2 source prerequisite: `1aa5506f58f77c215e56d24311ec33bd931cacf1`.
+**Worker selected by the user: Claude**, checkpoint/final payloads pushed only to the assigned
+exchange subtree; campaign changes land through a PR the user merges. Reconciliation,
+pre-ship probes and internal brief review remain before issue. Gate 06 audits stay frozen on
+their separate pre-S2 source; this fill must not edit their branch or rely on unmerged APIs.
 
 **Before issue:**
 - the base is the branch head after #195, S1 (#227) and S2 have merged;
@@ -148,11 +153,16 @@ only where an item says so.
 - G13 (with DL-9), G14, G22 (with DL-11), G23, G25, and optionally G12 (after #195), and G18
   (`uexp_le_of_statClose`, deferred by Q5).
 - The 764 untouched rule-10 rows recorded by #210 (`gates/07-eqlemmas/evidence-r2/r6c/cleanup-b*.tsv`),
-  plus the 95 unchanged-declaration observations from the full Gate 06 survey
-  (`maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/inherited-full-survey/`
-  and its linked initial fifteen witnesses): 60 match historical keys; 35 are newly
-  observed inherited keys. Deduplicate at the post-S2 issue base; do not add 35
-  blindly to the historical 764-row count or treat inventory additions as repairs;
+  plus the final Gate 06 source-failure observations in
+  `maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/failure-disposition-r1/`:
+  110 unchanged blocks / 138 diagnostics, 62 exact historical keys and 48 additional
+  observation keys (the initial 35 plus 13 PolyTimeModel keys). Both newly scoped Encoding
+  keys are historical; exact `_root_` normalization corrects the immutable witness
+  proposal's 61/49 split. Preserve all original failures and prior surveys. The three C3
+  pairs, 134 inherited TCSlib explicit candidates (three exact notation exceptions) and
+  18 non-TCS explicit hits have separate retained records; these units overlap and must not
+  be added as counts. Deduplicate at the post-S2 issue base; do not add 48 blindly to the
+  historical 764-row count or treat inventory additions as repairs;
   and the base reads the fill reviews named: `primesPairEquiv_apply_val`, `exists_fullLengthExcept`,
   `rabinCollection_index`, `rabinBlumTrapdoor_index`.
 - **Item M (DL-21)** runs after S2's landing, so that the two do not edit the same `Candidates`

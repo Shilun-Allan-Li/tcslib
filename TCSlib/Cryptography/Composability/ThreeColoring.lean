@@ -116,7 +116,12 @@ uses the filler scheduling of `Protocol.seqRep`, not `colProtocolRep`.
 explicit one-run soundness error. The preceding estimate makes the repeated error negligible,
 so the error-parametric proof gives an interactive proof. The original proof's bounded honest
 prover messages supply the hypothesis of zero-knowledge composition, which applies to
-`col_zk`. The generic repetition statements remain the campaign's admitted fill targets. -/
+`col_zk`. Here the prover-first base protocol has three moves: each padded six-move phase
+contributes two real prover messages and one empty prover filler to the verifier's view.
+The composition sketch normalizes simulated phases to that prescribed shape and message
+bound, with a canonical fallback for malformed phase views; it assumes no new simulator
+output guarantee. The generic repetition statements remain the campaign's admitted fill
+targets. -/
 theorem colSeq_efficientProverProof_zk {Com : List Bool → List Bool} {ℓ : PolyExpr}
     (hC : Commitment Com ℓ) :
     EfficientProverProof ((colProtocol Com ℓ).seqRep (.normal 2 2)) L3COL R3COL ∧

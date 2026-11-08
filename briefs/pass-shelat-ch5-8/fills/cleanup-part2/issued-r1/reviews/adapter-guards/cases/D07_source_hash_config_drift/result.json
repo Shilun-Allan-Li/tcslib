@@ -1,0 +1,24 @@
+{
+  "case": "D07_source_hash_config_drift",
+  "argv": [
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/cases/P01_allowed_prepare/runtime/bin/lean",
+    ".lake/packages/PFR/PFR/Mathlib/Data/Set/Basic.lean",
+    "-o",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/cases/P01_allowed_prepare/tree/.lake/packages/PFR/PFR/Mathlib/Data/Set/Basic.olean"
+  ],
+  "cwd": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4",
+  "rc": 1,
+  "expected_rc_zero": false,
+  "expected_guard_fragment": "Pinned PFR source drift",
+  "expectation_met": true,
+  "capture_exists": false,
+  "config_sha256_before": "57f549241ca7faead83d298bb037fb90396841854653c83f9b87e9a6eb3ed9fc",
+  "config_sha256_after": "57f549241ca7faead83d298bb037fb90396841854653c83f9b87e9a6eb3ed9fc",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "1fdfa5b36d838dcb7829d1e667456d066d7536b00fe3f6c663776119f74095d1",
+  "portable_tool_sha256": {
+    "prepare_pfr.py": "650edf1d270d5e130a926a5840fead75ba9888e12684f2f38451af91ad769b8f",
+    "pfr_lean.py": "41fda9565be3f77462fe6f2f7b55b798c5bf34fbbc400a648f77e000eb36636d"
+  },
+  "notes": "Expected source hash changed in own config; package source never edited."
+}

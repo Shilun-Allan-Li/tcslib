@@ -1,0 +1,15 @@
+# Gate06 round 1 document proposal notes
+
+These ignored proposals update six records documents only. They are ready for root review and exact-input-guarded application; they have not been applied, staged, dispatched, or used to close an external gate. No library, main records, evidence, or Git files were changed by this preparation.
+
+The four packs retain their exact Scope, prior findings, auditor brief, specific questions, and findings-format instructions. PLAN retains the exact statement-phase findings. The primary-source retrieval, version, pagination, licensing, and Goldreich/PSV qualifications remain unchanged. Final review changed only the DL6/DL7 wording to say that landing is subject to the external gates, while cleanup retains its post-S2 order; it introduces no Gate06-to-S2 merge dependency.
+
+Completed common evidence replaces draft and pending attestations: 37 passing and 17 failing sealed modules, 138 diagnostics in the same 110 raw failing blocks, 62 historical and 48 additional exact observation keys, 11 controls, 2,881 axiom identities with 46 admitted dependencies, and retained C1/C2/C3 findings. The C1 raw 142 observations and ten named-open supplement remain explicit; C2 is 10 and C3 is three legacy references. New or touched findings and unresolved items remain zero. All 54 math modules and seven facade/option-only files remain in scope; the root facade was not elaborated, and S2 is not incorporated. No whole-source-pass, zero-C3, dispatch, or merge-clearance claim is made.
+
+The four separate JSON source manifests are exact projections of the verified source-only bundle manifest. Their seven keys are `head`, `base`, `primary_modules`, `module_import_edges`, `files`, `source_bundle_filename`, and `source_bundle_sha256`. Every raw source row retains its path, revision, bytes, and SHA-256. Each pack embeds its corresponding manifest SHA-256 and names its exchange source bundle. Records commit, records/common bundle, archive, and final-index hashes are external exchange README/dispatch pins, avoiding a self-reference cycle. Receiving auditors must verify access to the provided exact PS10 copy and official Goldreich/PSV versions, and report unavailable comparisons; recovered third-party PDFs are not redistributed.
+
+`proposal-manifest.json` records the exact current-main input guards, output identities, four source-manifest targets, and unified patch SHA-256. The patch changes the six Markdown documents; the four JSON files are separate copy proposals. A data-only final check verified all guarded main inputs, protected sections, all document hashes, the seven-key schema, exact closure/file projections, source-bundle hashes, and manifest hashes embedded in the packs. No Lean, native checks, external delivery, or other received program was run.
+
+The four audits run in parallel after common preparation and user dispatch. Each prong's proof fills follow that prong's external closure.
+
+**Not yet clear to merge: external gates and their resolutions remain open.**

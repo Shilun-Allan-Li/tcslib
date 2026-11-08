@@ -27,10 +27,10 @@ See the theorem statements and correctness results in the constituent modules.
 
 ## Contents
 
-* `Extraction` — unbiased extraction from a biased source.
-* `Learning` — the Occam bound in the PAC layer.
+* `Extraction` — no efficient one-bit extractor for the stated efficient-source class.
+* `Learning` — PRFs give a hard-to-predict concept class.
 * `BPPBridge` — the public bridge from BPP computations to distinguishers.
-* `Derandomization` — learning and derandomization statements.
+* `Derandomization` — PRGs give the BPP deterministic-time inclusion.
 
 ## References
 

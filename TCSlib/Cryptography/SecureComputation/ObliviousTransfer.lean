@@ -23,9 +23,11 @@ predicate `h`,
 [PS10, Proposition 161.5]: the protocol is an honest-but-curious one-out-of-two oblivious transfer
 (Definition 155.1 for `otFunctionality`).
 
-**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it:
-`Gen`, the domain sampler, the evaluator `eval`, and the trapdoor inverter run on the all-`true`
-coin string. The hard-core predicate is evaluated by a polynomial-time `H`, specified by
+**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it.
+`Gen` uses Alice's fresh generator coins, and the two domain samples use separate fresh blocks
+of Bob's tape. The evaluator `eval` is deterministic. Only the trapdoor inverter uses a fixed
+all-`true` tape, justified by its correctness on every inverter tape. The hard-core predicate
+is evaluated by a polynomial-time `H`, specified by
 `H ⟨i, encD i x⟩ = [h i x]` on canonical encodings. Canonical decoding extends this specification
 to every string decoding to `x` (`Collection.apply_of_decD`). The evaluator and its polynomial
 cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
@@ -48,8 +50,9 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
   `a_{1−b}`; the hard-core property of [PS10] (from `⟨i, f_i(u)⟩` alone) does not exclude this,
   and the proposition is not provable under it. Proposition 161.5 therefore assumes that `h` is
   **enhanced** hard-core (`EnhancedHardCore`): unpredictable on the preimage of a sampled element
-  even given the sampler's coins. This is the standard repair of this protocol (enhanced trapdoor
-  permutations, [Gol04, Appendix C.1]).
+  even given the sampler's coins. Enhanced inversion is motivated in [Gol04, Appendix C.1];
+  the predicate and OT argument are in [Gol04, §7.3.2]. The Boolean prediction experiment here
+  is an explicit hypothesis, not a literal transcription of the inversion condition C.1.1.
 
 ## Main definitions
 
@@ -77,7 +80,10 @@ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §6.2.4, Protocol 160.4 and Proposition 161.5 (book pp. 160–162).
 * [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2*, Cambridge University Press,
-  2004, Appendix C.1 (enhanced trapdoor permutations).
+  2004, Appendix C.1 (enhanced inversion) and §7.3.2 (enhanced predicates and OT). The audit
+  consulted the author drafts: Appendix revised third version, 15 June 2003; Chapter 7
+  version 3.2, 2 July 2003, draft pp. 639–641 for the predicate/OT argument. No text/page
+  identity with the published edition is asserted.
 -/
 
 namespace TCSlib.Cryptography.SecureComputation
@@ -213,8 +219,11 @@ theorem SamplerCanonical :
       T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x :=
   T.toCollection.sample_eq_encD
 
-/-- **An enhanced hard-core predicate** [Gol04, Appendix C.1] (a declared strengthening of
-[PS10, Proposition 161.5]'s hypothesis; see the module docstring): for every non-uniform PPT `A`,
+/-- **An enhanced hard-core predicate**, the explicit Boolean prediction hypothesis used for
+the OT argument of [Gol04, §7.3.2] (a declared strengthening of [PS10, Proposition 161.5]'s
+hypothesis; see the module docstring). Appendix C.1 motivates enhanced inversion; its
+Definition C.1.1 is an inversion condition, not this prediction definition. For every
+non-uniform PPT `A`,
 predicting `h(f_i⁻¹(y))` for a sampled element `y`, given the index `i` and **the sampler's
 coins** that produced `y`, succeeds with probability at most `½` plus a negligible amount, on
 average over the generated indices. The element `y` is read through the decoder (a sampled
@@ -612,8 +621,9 @@ advantage, uniformly over the inputs.
      `exists_pkPredictor` of Algorithm 104.3).
    - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
      sampler's coins, which the plain hard-core property would not allow).
-   - The predictor depends on `(b, a_{1−b})`, four cases, so the bound is uniform over the
-     inputs: take the maximum of the four negligible functions.
+   - Building the selected mask also uses `a_b`, so take all eight triples `(b,a₀,a₁)`.
+     The maximum of their eight negligible bounds is negligible and uniform over the inputs;
+     fixing only the choice and unselected sender bit would not specify the complete view.
 4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
    composition (`NUPPT.exists_comp`).
 

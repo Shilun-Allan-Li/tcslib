@@ -1,0 +1,1464 @@
+{
+  "schema": "gate06-polytimemodel-final-static-witness/v1",
+  "status": "ALL_16_SOURCE_DIAGNOSTICS_RETAINED_ROOT_REVIEW_REQUIRED",
+  "base": "eee107e92a7db11f1f8c98a5c2867304f57ddc54",
+  "head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+  "source": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+  "classification_file": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/native-seal-runs/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.classification.json",
+  "classification_sha256": "362524af3155fa17f7a81251e0360498eb9c68665912f54ef7ad89c6c4f7545e",
+  "reproducer_sha256": "d15d0ece4d3fd2c2488cba735245fe375705a4f0a6c7055c1401881f2e231538",
+  "native_log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/native-seal-runs/probes/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.log",
+  "native_log_sha256": "6ab0386fc020cd195c3e71606b9beef35d2af4cbfb24f02f9f623b6644e1b3ac",
+  "native_result_sha256": "9d38b18a7f661c0d00334be9519d6c0e4d16205521ec4d8ec584f9f3821edc49",
+  "base_file_sha256": "e3cffbe20e78537fdc411197241a42ff0546913b019701c6c816d51e88f35ee4",
+  "head_file_sha256": "e3085eef1a3b51d03fb1442ce8b6206d4b0332a86e40e44734c6020bed6cf04c",
+  "probe_sha256": "c913a50fc421fa79dba479aff06f4a584007b655f6f0224c0fb566908e55ca16",
+  "probe_recovers_exact_head_source": true,
+  "native_seal_checks": {
+    "requested": 1568,
+    "active": 1550,
+    "already_irreducible": 18,
+    "exact_actual_name_home_status_rows_verified": 1568,
+    "install_and_EOF_present": true
+  },
+  "counts": {
+    "failing_declarations": 13,
+    "source_diagnostics": 16,
+    "new_or_changed_failing_header_body_blocks": 0,
+    "exact_historical_inventory_keys": 0,
+    "new_observation_keys_for_root_review": 13,
+    "diagnostics_on_new_polyTimeModel_eff_iff": 0
+  },
+  "declarations": [
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeComputable_takePrefixByLen",
+      "full_source_name": "Randomized.polyTimeComputable_takePrefixByLen",
+      "base_range": [
+        115,
+        117
+      ],
+      "head_range": [
+        124,
+        126
+      ],
+      "raw_header_body_sha256": "edd8aa8afcb1a12f5490d5e7b77bf409a5cc71a9ea42004b2679fa9a36a8c842",
+      "raw_header_body": "theorem polyTimeComputable_takePrefixByLen : PolyTimeComputable takePrefixByLen := by\n  simpa only [takePrefixByLen, Complexity.PrefixByLength.take] using\n    Complexity.polyTimeComputable_takePrefixByLength\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 175,
+          "probe_column": 2,
+          "error_code": null,
+          "message": "Type mismatch: After simplification, term",
+          "log_line": 1572,
+          "source_line": 125,
+          "declaration_start": 124,
+          "kind": "theorem",
+          "source_name": "polyTimeComputable_takePrefixByLen",
+          "qualified_source_name": "Randomized.polyTimeComputable_takePrefixByLen",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeComputable_dropPrefixByLen",
+      "full_source_name": "Randomized.polyTimeComputable_dropPrefixByLen",
+      "base_range": [
+        123,
+        125
+      ],
+      "head_range": [
+        132,
+        134
+      ],
+      "raw_header_body_sha256": "514bbd5dd695e8a11f12014051acee21416591b8022116eea8e12f96f389eeb8",
+      "raw_header_body": "theorem polyTimeComputable_dropPrefixByLen : PolyTimeComputable dropPrefixByLen := by\n  simpa only [dropPrefixByLen, Complexity.PrefixByLength.drop] using\n    Complexity.polyTimeComputable_dropPrefixByLength\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 183,
+          "probe_column": 2,
+          "error_code": null,
+          "message": "Type mismatch: After simplification, term",
+          "log_line": 1578,
+          "source_line": 133,
+          "declaration_start": 132,
+          "kind": "theorem",
+          "source_name": "polyTimeComputable_dropPrefixByLen",
+          "qualified_source_name": "Randomized.polyTimeComputable_dropPrefixByLen",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeComputable_sliceTake",
+      "full_source_name": "Randomized.polyTimeComputable_sliceTake",
+      "base_range": [
+        132,
+        150
+      ],
+      "head_range": [
+        141,
+        159
+      ],
+      "raw_header_body_sha256": "dc9888333eecd1b8b924775cc88beccf04f0af2d62ba2daa3fd7ef8ceff74931",
+      "raw_header_body": "theorem polyTimeComputable_sliceTake (a k : ℕ) :\n    PolyTimeComputable (sliceTake a k) := by\n  have hu : PolyTimeComputable\n      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=\n    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD\n  have henc : PolyTimeComputable (fun z => Turing.pairEncode\n      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=\n    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD\n  have hg : PolyTimeComputable\n      (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) := by\n    have heq : (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) =\n        takePrefixByLen ∘ (fun z => Turing.pairEncode\n          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by\n      funext z\n      simp only [Function.comp, takePrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,\n        List.length_replicate]\n    rw [heq]\n    exact polyTimeComputable_takePrefixByLen.comp henc\n  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 195,
+          "probe_column": 4,
+          "error_code": null,
+          "message": "Type mismatch",
+          "log_line": 1584,
+          "source_line": 145,
+          "declaration_start": 141,
+          "kind": "theorem",
+          "source_name": "polyTimeComputable_sliceTake",
+          "qualified_source_name": "Randomized.polyTimeComputable_sliceTake",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeComputable_sliceDrop",
+      "full_source_name": "Randomized.polyTimeComputable_sliceDrop",
+      "base_range": [
+        155,
+        173
+      ],
+      "head_range": [
+        164,
+        182
+      ],
+      "raw_header_body_sha256": "163e5f4d6de92ca8d9109beed338488bfbaa3cecd9b9c07b47178b5359c9ac3a",
+      "raw_header_body": "theorem polyTimeComputable_sliceDrop (a k : ℕ) :\n    PolyTimeComputable (sliceDrop a k) := by\n  have hu : PolyTimeComputable\n      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=\n    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD\n  have henc : PolyTimeComputable (fun z => Turing.pairEncode\n      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=\n    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD\n  have hg : PolyTimeComputable\n      (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) := by\n    have heq : (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) =\n        dropPrefixByLen ∘ (fun z => Turing.pairEncode\n          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by\n      funext z\n      simp only [Function.comp, dropPrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,\n        List.length_replicate]\n    rw [heq]\n    exact polyTimeComputable_dropPrefixByLen.comp henc\n  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 218,
+          "probe_column": 4,
+          "error_code": null,
+          "message": "Type mismatch",
+          "log_line": 1590,
+          "source_line": 168,
+          "declaration_start": 164,
+          "kind": "theorem",
+          "source_name": "polyTimeComputable_sliceDrop",
+          "qualified_source_name": "Randomized.polyTimeComputable_sliceDrop",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderRace",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderRace",
+      "base_range": [
+        184,
+        212
+      ],
+      "head_range": [
+        193,
+        221
+      ],
+      "raw_header_body_sha256": "1c7debf105b33b5e9fe20f19167362c7fa11b36491553c1689e09d06f23f2efa",
+      "raw_header_body": "theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by\n  rintro M₁ M₂ a k ⟨V₁, _, hV₁, _, hM₁⟩ ⟨V₂, _, hV₂, _, hM₂⟩\n  refine ⟨sliceTake a k ⁻¹' V₁,\n    {z | z ∈ (sliceTake a k ⁻¹' V₁)ᶜ ∧ z ∈ sliceDrop a k ⁻¹' V₂},\n    preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k),\n    inter_mem_P (compl_mem_P (preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k)))\n      (preimage_mem_P hV₂ (polyTimeComputable_sliceDrop a k)),\n    fun x r => ?_⟩\n  have hv1 : (Turing.pairEncode x r ∈ sliceTake a k ⁻¹' V₁) ↔\n      M₁ x (r.take (polyLen a k x.length)) = true := by\n    simp only [Set.mem_preimage, sliceTake, pairFstD_pairEncode, pairSndD_pairEncode]\n    have h := (hM₁ x (r.take (polyLen a k x.length))).1\n    simp only [boolVerifier, Option.some.injEq] at h\n    exact h.symm\n  have hv2 : (Turing.pairEncode x r ∈ sliceDrop a k ⁻¹' V₂) ↔\n      M₂ x (r.drop (polyLen a k x.length)) = true := by\n    simp only [Set.mem_preimage, sliceDrop, pairFstD_pairEncode, pairSndD_pairEncode]\n    have h := (hM₂ x (r.drop (polyLen a k x.length))).1\n    simp only [boolVerifier, Option.some.injEq] at h\n    exact h.symm\n  refine ⟨?_, ?_⟩\n  · rw [hv1]\n    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>\n      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>\n      simp [raceVerifier, h1, h2]\n  · rw [Set.mem_setOf_eq, Set.mem_compl_iff, hv1, hv2]\n    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>\n      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>\n      simp [raceVerifier, h1, h2]\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 244,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1596,
+          "source_line": 194,
+          "declaration_start": 193,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderRace",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderRace",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderAnswerIs",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderAnswerIs",
+      "base_range": [
+        218,
+        241
+      ],
+      "head_range": [
+        227,
+        250
+      ],
+      "raw_header_body_sha256": "1430e55d2115f5dd0240e157ad0ff45b9dacdb2c23b23db4cd805d27873bee71",
+      "raw_header_body": "theorem polyTimeModel_closedUnderAnswerIs :\n    ClosedUnderAnswerIs polyTimeModel := by\n  rintro M b ⟨V₁, V₀, hV₁, hV₀, hM⟩\n  cases b\n  · refine ⟨V₀, V₀ᶜ, hV₀, compl_mem_P hV₀, fun x r => ?_⟩\n    have h := (hM x r).2\n    constructor\n    · show some (decide (M x r = some false)) = some true ↔ _\n      simp only [Option.some.injEq, decide_eq_true_eq]\n      exact h\n    · show some (decide (M x r = some false)) = some false ↔ _\n      simp only [Option.some.injEq, decide_eq_false_iff_not]\n      rw [h]\n      exact Iff.rfl\n  · refine ⟨V₁, V₁ᶜ, hV₁, compl_mem_P hV₁, fun x r => ?_⟩\n    have h := (hM x r).1\n    constructor\n    · show some (decide (M x r = some true)) = some true ↔ _\n      simp only [Option.some.injEq, decide_eq_true_eq]\n      exact h\n    · show some (decide (M x r = some true)) = some false ↔ _\n      simp only [Option.some.injEq, decide_eq_false_iff_not]\n      rw [h]\n      exact Iff.rfl\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 279,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1599,
+          "source_line": 229,
+          "declaration_start": 227,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderAnswerIs",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderAnswerIs",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderMajority",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderMajority",
+      "base_range": [
+        250,
+        300
+      ],
+      "head_range": [
+        259,
+        309
+      ],
+      "raw_header_body_sha256": "0c05b3c48406ba63a258c2bb5bf48c4c6db89b24c7e324684a12d7b1b6416d52",
+      "raw_header_body": "theorem polyTimeModel_closedUnderMajority :\n    ClosedUnderMajority polyTimeModel := by\n  classical\n  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩\n  have hblock := mem_P_of_blockMajority hV₁ a k a' k'\n  refine ⟨_, _, hblock, compl_mem_P hblock, fun x r => ?_⟩\n  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by\n    intro s\n    have h := (hM x s).1\n    simpa only [boolVerifier, Option.some.injEq] using h\n  have hcount : ∀ l : List ℕ,\n      l.countP (fun i => Turing.MultiTapeTM.indicator V₁\n          (Turing.pairEncode x ((r.drop (i * (a * (x.length + 1) ^ k))).take\n            (a * (x.length + 1) ^ k)))) =\n        l.countP (fun i => M x ((r.drop (i * (a * (x.length + 1) ^ k))).take\n          (a * (x.length + 1) ^ k))) := by\n    intro l\n    apply List.countP_congr\n    intro i _\n    have hi := hMt ((r.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))\n    by_cases hb : M x ((r.drop (i * (a * (x.length + 1) ^ k))).take\n        (a * (x.length + 1) ^ k)) = true\n    · simp [Turing.MultiTapeTM.indicator, hi.mp hb, hb]\n    · have hnot : Turing.pairEncode x ((r.drop (i * (a * (x.length + 1) ^ k))).take\n          (a * (x.length + 1) ^ k)) ∉ V₁ := fun hc => hb (hi.mpr hc)\n      simp [Turing.MultiTapeTM.indicator, hnot, Bool.eq_false_iff.mpr hb]\n  have hmem : Turing.pairEncode x r ∈\n      {z : List Bool | a' * ((pairFstD z).length + 1) ^ k' <\n        2 * (List.range (a' * ((pairFstD z).length + 1) ^ k')).countP\n          (fun i => Turing.MultiTapeTM.indicator V₁\n            (Turing.pairEncode (pairFstD z) (blockAt a k z i)))} ↔\n      majorityVerifier M (polyLen a k) (polyLen a' k') x r = true := by\n    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,\n      majorityVerifier, polyLen, blockAt, decide_eq_true_eq]\n    rw [hcount]\n  constructor\n  · constructor\n    · intro h\n      exact hmem.mpr (by simpa only [boolVerifier, Option.some.injEq] using h)\n    · intro hw\n      exact congrArg some (hmem.mp hw)\n  · constructor\n    · intro h hw\n      have ht := hmem.mp hw\n      have hf : majorityVerifier M (polyLen a k) (polyLen a' k') x r = false := by\n        simpa only [boolVerifier, Option.some.injEq] using h\n      exact absurd (ht.symm.trans hf) (by decide)\n    · intro hc\n      cases hb : majorityVerifier M (polyLen a k) (polyLen a' k') x r with\n      | false => exact congrArg some hb\n      | true => exact absurd (hmem.mpr hb) (fun hw => hc hw)\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 312,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1602,
+          "source_line": 262,
+          "declaration_start": 259,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderMajority",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderMajority",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderAny",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderAny",
+      "base_range": [
+        307,
+        342
+      ],
+      "head_range": [
+        316,
+        351
+      ],
+      "raw_header_body_sha256": "3030eea052b4483ae78a7a348243e05ec307cad6231a3affa6bc64648f142305",
+      "raw_header_body": "theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by\n  classical\n  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩\n  have hblock := mem_P_of_blockAny hV₁ a k a' k'\n  refine ⟨_, _, hblock, compl_mem_P hblock, fun x r => ?_⟩\n  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by\n    intro s\n    have h := (hM x s).1\n    simpa only [boolVerifier, Option.some.injEq] using h\n  have hmem : Turing.pairEncode x r ∈\n      {z : List Bool | ∃ i < a' * ((pairFstD z).length + 1) ^ k',\n        Turing.pairEncode (pairFstD z) (blockAt a k z i) ∈ V₁} ↔\n      anyVerifier M (polyLen a k) (polyLen a' k') x r = true := by\n    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,\n      anyVerifier, polyLen, blockAt, List.any_eq_true, List.mem_range]\n    constructor\n    · rintro ⟨i, hi, hv⟩\n      exact ⟨i, hi, (hMt _).mpr hv⟩\n    · rintro ⟨i, hi, hv⟩\n      exact ⟨i, hi, (hMt _).mp hv⟩\n  constructor\n  · constructor\n    · intro h\n      exact hmem.mpr (by simpa only [boolVerifier, Option.some.injEq] using h)\n    · intro hw\n      exact congrArg some (hmem.mp hw)\n  · constructor\n    · intro h hw\n      have ht := hmem.mp hw\n      have hf : anyVerifier M (polyLen a k) (polyLen a' k') x r = false := by\n        simpa only [boolVerifier, Option.some.injEq] using h\n      exact absurd (ht.symm.trans hf) (by decide)\n    · intro hc\n      cases hb : anyVerifier M (polyLen a k) (polyLen a' k') x r with\n      | false => exact congrArg some hb\n      | true => exact absurd (hmem.mpr hb) (fun hw => hc hw)\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 368,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1605,
+          "source_line": 318,
+          "declaration_start": 316,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderAny",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderAny",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderNot",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderNot",
+      "base_range": [
+        346,
+        352
+      ],
+      "head_range": [
+        355,
+        361
+      ],
+      "raw_header_body_sha256": "14696ecfb2dc80d3e069ae8b4c43e80d7bc50a573e889dc6f48016855c9dd30c",
+      "raw_header_body": "theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by\n  rintro M ⟨V₁, V₀, hV₁, hV₀, hM⟩\n  refine ⟨V₀, V₁, hV₀, hV₁, fun x r => ?_⟩\n  have h := hM x r\n  simp only [boolVerifier, Option.some.injEq] at h ⊢\n  rw [Bool.not_eq_true', Bool.not_eq_false']\n  exact ⟨h.2, h.1⟩\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 406,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1608,
+          "source_line": 356,
+          "declaration_start": 355,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderNot",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderNot",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_closedUnderShiftOr",
+      "full_source_name": "Randomized.polyTimeModel_closedUnderShiftOr",
+      "base_range": [
+        364,
+        392
+      ],
+      "head_range": [
+        373,
+        401
+      ],
+      "raw_header_body_sha256": "a08a15274938c01219711d598833f9412b133918487fbff52f7fa99a6aa5a21f",
+      "raw_header_body": "theorem polyTimeModel_closedUnderShiftOr :\n    ClosedUnderShiftOr polyTimeModel := by\n  classical\n  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩\n  have hblock := mem_P_of_blockXorAny hV₁ a k a' k'\n  refine ⟨_, hblock, fun x u v => ?_⟩\n  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by\n    intro s\n    have h := (hM x s).1\n    simpa only [boolVerifier, Option.some.injEq] using h\n  have hbridge : Turing.pairEncode (Turing.pairEncode x u) v ∈\n      {w : List Bool | ∃ i < a' * ((pairFstD (pairFstD w)).length + 1) ^ k',\n        Turing.pairEncode (pairFstD (pairFstD w))\n          (List.zipWith xor (pairSndD w) (blockAt a k (pairFstD w) i)) ∈ V₁} ↔\n      ∃ i < a' * (x.length + 1) ^ k',\n        Turing.pairEncode x (List.zipWith xor v\n          ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))) ∈ V₁ := by\n    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode, blockAt]\n  have hleft : shiftOrVerifier M (polyLen a k) (polyLen a' k') x u v = true ↔\n      ∃ i < a' * (x.length + 1) ^ k',\n        Turing.pairEncode x (List.zipWith xor v\n          ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))) ∈ V₁ := by\n    simp only [shiftOrVerifier, polyLen, List.any_eq_true, List.mem_range]\n    constructor\n    · rintro ⟨i, hi, hv⟩\n      exact ⟨i, hi, (hMt _).mp hv⟩\n    · rintro ⟨i, hi, hv⟩\n      exact ⟨i, hi, (hMt _).mpr hv⟩\n  exact hleft.trans hbridge.symm\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 426,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+          "log_line": 1611,
+          "source_line": 376,
+          "declaration_start": 373,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_closedUnderShiftOr",
+          "qualified_source_name": "Randomized.polyTimeModel_closedUnderShiftOr",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "polyTimeModel_verifierHasCircuits",
+      "full_source_name": "Randomized.polyTimeModel_verifierHasCircuits",
+      "base_range": [
+        409,
+        471
+      ],
+      "head_range": [
+        418,
+        480
+      ],
+      "raw_header_body_sha256": "53c3c46424fd5a2e583e508dacdf79cf70532f2bd61f85a6940399e8ef441172",
+      "raw_header_body": "theorem polyTimeModel_verifierHasCircuits :\n    ∀ M a k, polyTimeModel.Eff (boolVerifier M) →\n      VerifierHasCircuits M (polyLen a k) := by\n  classical\n  rintro M a k ⟨V₁, V₀, hV₁, hV₀, hM⟩\n  have hPoly : V₁.InPPoly := Complexity.P_subset_PPoly hV₁\n  obtain ⟨b, j, F, hF, hSize, hLanguage⟩ := hPoly\n  refine ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩\n  let ell := 2 * n + 2 + r.length\n  let C := F.circuit ell\n  let D : BoolCircuit.DAGCircuit n := BoolCircuit.DAGCircuit.pairEncode r C\n  have hD : D.IsFaninTwo :=\n    BoolCircuit.DAGCircuit.pairEncode_isFaninTwo r C (hF ell)\n  refine ⟨D, hD.1, hD, ?_, fun v => ?_⟩\n  · -- The paired length is polynomial in n, uniformly in the chosen random string.\n    have hN : 0 < n + 1 := Nat.succ_pos n\n    have hnPow : n + 1 ≤ (n + 1) ^ (k + 1) :=\n      Nat.le_self_pow (Nat.succ_ne_zero k) (n + 1)\n    have hkPow : (n + 1) ^ k ≤ (n + 1) ^ (k + 1) :=\n      Nat.pow_le_pow_right hN (Nat.le_succ k)\n    have hLen : ell + 1 ≤ (a + 3) * (n + 1) ^ (k + 1) := by\n      dsimp only [ell]\n      rw [hr]\n      unfold polyLen\n      nlinarith [Nat.mul_le_mul_left a hkPow]\n    have hCircuit : C.size ≤\n        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by\n      calc\n        C.size ≤ b * (ell + 1) ^ j := hSize ell\n        _ ≤ b * ((a + 3) * (n + 1) ^ (k + 1)) ^ j :=\n          Nat.mul_le_mul_left b (Nat.pow_le_pow_left hLen j)\n        _ = b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by\n          rw [mul_pow, ← pow_mul]\n          ring\n    have hExponent : (k + 1) * j ≤ (k + 1) * (j + 1) :=\n      Nat.mul_le_mul_left (k + 1) (Nat.le_succ j)\n    have hCircuit' : C.size ≤\n        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=\n      hCircuit.trans (Nat.mul_le_mul_left (b * (a + 3) ^ j)\n        (Nat.pow_le_pow_right hN hExponent))\n    have hPositive : 0 < (k + 1) * (j + 1) :=\n      Nat.mul_pos (Nat.succ_pos k) (Nat.succ_pos j)\n    have hnSize : n ≤ (n + 1) ^ ((k + 1) * (j + 1)) :=\n      (Nat.le_succ n).trans\n        (Nat.le_self_pow (Nat.ne_of_gt hPositive) (n + 1))\n    calc\n      D.size = n + C.size := BoolCircuit.DAGCircuit.pairEncode_size r C\n      _ ≤ (n + 1) ^ ((k + 1) * (j + 1)) +\n          b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=\n        Nat.add_le_add hnSize hCircuit'\n      _ = (b * (a + 3) ^ j + 1) *\n          (n + 1) ^ ((k + 1) * (j + 1)) := by ring\n  · -- The buffer feeds the old circuit exactly the encoded pair (x,r).\n    rw [BoolCircuit.DAGCircuit.pairEncode_eval r C v]\n    have hAccept : C.eval (BoolCircuit.pairEncodeInput r v) = true ↔\n        Turing.pairEncode (List.ofFn v) r ∈ V₁ := by\n      rw [← hLanguage]\n      exact BoolCircuit.DAGCircuitFamily.pairEncode_eval_eq_true_iff F r v\n    have hVerifier := (hM (List.ofFn v) r).1\n    simp only [boolVerifier, Option.some.injEq] at hVerifier\n    have hCorrect := hAccept.trans hVerifier.symm\n    cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>\n      cases hV : M (List.ofFn v) r <;> simp_all\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 2,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 473,
+          "probe_column": 29,
+          "error_code": null,
+          "message": "Type mismatch",
+          "log_line": 1614,
+          "source_line": 423,
+          "declaration_start": 418,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_verifierHasCircuits",
+          "qualified_source_name": "Randomized.polyTimeModel_verifierHasCircuits",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        },
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 474,
+          "probe_column": 9,
+          "error_code": null,
+          "message": "Tactic `rcases` failed: `hPoly : V₁.InPPoly` is not an inductive datatype",
+          "log_line": 1620,
+          "source_line": 424,
+          "declaration_start": 418,
+          "kind": "theorem",
+          "source_name": "polyTimeModel_verifierHasCircuits",
+          "qualified_source_name": "Randomized.polyTimeModel_verifierHasCircuits",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "inSigma2_polyTimeModel_iff",
+      "full_source_name": "Randomized.inSigma2_polyTimeModel_iff",
+      "base_range": [
+        488,
+        534
+      ],
+      "head_range": [
+        497,
+        543
+      ],
+      "raw_header_body_sha256": "2e515b46cfd951c85cb12300abfbb07b35d082e781e62e0710b1d2331b34608c",
+      "raw_header_body": "theorem inSigma2_polyTimeModel_iff (L : Language Bool) :\n    InSigma2 polyTimeModel L ↔ L ∈ SigmaP 2 := by\n  classical\n  constructor\n  · rintro ⟨N, a₁, k₁, a₂, k₂, ⟨V, hV, hN⟩, hiff⟩\n    have h₁ : PolyHierarchy.UnaryPT\n        (fun y : List Bool => polyLen a₁ k₁ y.length) := by\n      have h := PolyHierarchy.unaryPT_poly a₁ k₁ polyTimeComputable_id\n      simpa [polyLen] using h\n    have h₂ : PolyHierarchy.UnaryPT\n        (fun y : List Bool => polyLen a₂ k₂ y.length) := by\n      have h := PolyHierarchy.unaryPT_poly a₂ k₂ polyTimeComputable_id\n      simpa [polyLen] using h\n    have hmem := PolyHierarchy.mem_altClass_of_normal (b := true) (i := 1)\n      hV polyTimeComputable_id h₁ h₂\n    have hkey : L = {y | qStep true (polyLen a₁ k₁ y.length)\n        fun U => altQuant V (polyLen a₂ k₂ y.length) false 1\n          (id (Turing.pairEncode y U))} := by\n      ext y\n      rw [Set.mem_setOf_eq, hiff y]\n      constructor\n      · rintro ⟨u, hu, hall⟩\n        refine ⟨u, hu, fun v hv => ?_⟩\n        show Turing.pairEncode (Turing.pairEncode y u) v ∈ V\n        exact (hN y u v).mp (hall v hv)\n      · rintro ⟨u, hu, hall⟩\n        refine ⟨u, hu, fun v hv => ?_⟩\n        exact (hN y u v).mpr (hall v hv)\n    rw [hkey]\n    exact hmem\n  · intro hL\n    obtain ⟨C, c, V, hV, hiff⟩ := mem_SigmaP_two_iff_exists_forall.mp hL\n    refine ⟨fun x u v =>\n        decide (Turing.pairEncode (Turing.pairEncode x u) v ∈ V),\n      C, c, C, c,\n      ⟨V, hV, fun x u v => by rw [decide_eq_true_eq]⟩, fun x => ?_⟩\n    rw [hiff x]\n    constructor\n    · rintro ⟨u, hu, hall⟩\n      refine ⟨u, hu, fun v hv => ?_⟩\n      rw [decide_eq_true_eq]\n      exact hall v hv\n    · rintro ⟨u, hu, hall⟩\n      refine ⟨u, hu, fun v hv => ?_⟩\n      have h := hall v hv\n      rw [decide_eq_true_eq] at h\n      exact h\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 3,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 551,
+          "probe_column": 11,
+          "error_code": null,
+          "message": "Tactic `rcases` failed: `a✝ : InSigma2 polyTimeModel L` is not an inductive datatype",
+          "log_line": 1621,
+          "source_line": 501,
+          "declaration_start": 497,
+          "kind": "theorem",
+          "source_name": "inSigma2_polyTimeModel_iff",
+          "qualified_source_name": "Randomized.inSigma2_polyTimeModel_iff",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        },
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 579,
+          "probe_column": 11,
+          "error_code": null,
+          "message": "Invalid `⟨...⟩` notation: The expected type `InSigma2 polyTimeModel L` is not an inductive type",
+          "log_line": 1622,
+          "source_line": 529,
+          "declaration_start": 497,
+          "kind": "theorem",
+          "source_name": "inSigma2_polyTimeModel_iff",
+          "qualified_source_name": "Randomized.inSigma2_polyTimeModel_iff",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        },
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 583,
+          "probe_column": 8,
+          "error_code": null,
+          "message": "No goals to be solved",
+          "log_line": 1625,
+          "source_line": 533,
+          "declaration_start": 497,
+          "kind": "theorem",
+          "source_name": "inSigma2_polyTimeModel_iff",
+          "qualified_source_name": "Randomized.inSigma2_polyTimeModel_iff",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyTimeModel",
+      "file": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "name": "sipser_gacs_polyTime",
+      "full_source_name": "Randomized.sipser_gacs_polyTime",
+      "base_range": [
+        552,
+        559
+      ],
+      "head_range": [
+        561,
+        568
+      ],
+      "raw_header_body_sha256": "4adc9fafd7dbefb43901fe9e6f536a127def8c81433a3e681a5e52e10ce85321",
+      "raw_header_body": "theorem sipser_gacs_polyTime {L : Language Bool}\n    (hL : InBPP polyTimeModel L) :\n    L ∈ SigmaP 2 ∧ L ∈ PiP 2 := by\n  obtain ⟨h1, h2⟩ := sipser_gacs polyTimeModel\n    polyTimeModel_closedUnderMajority polyTimeModel_closedUnderNot\n    polyTimeModel_closedUnderShiftOr hL\n  exact ⟨(inSigma2_polyTimeModel_iff L).mp h1,\n    (inSigma2_polyTimeModel_iff Lᶜ).mp h2⟩\n",
+      "raw_header_body_identical": true,
+      "diagnostics": 1,
+      "errors": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_004_TCSlib_Complexity_Randomized_PolyTimeModel.lean",
+          "probe_line": 618,
+          "probe_column": 39,
+          "error_code": null,
+          "message": "Application type mismatch: The argument",
+          "log_line": 1626,
+          "source_line": 568,
+          "declaration_start": 561,
+          "kind": "theorem",
+          "source_name": "sipser_gacs_polyTime",
+          "qualified_source_name": "Randomized.sipser_gacs_polyTime",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [],
+      "historical_same_name_other_files": [],
+      "inventory_key_status": "NO_EXACT_KEY_IN_FROZEN_764_INVENTORY",
+      "source_observation_recommendation": "New inherited source-identity witness for root review; failure retained",
+      "failure_retained": true,
+      "waiver": false,
+      "source_base_native_seal_replay": false
+    }
+  ],
+  "same_file_and_changed_imports_insertions": {
+    "TCSlib/Complexity/Randomized/PolyTimeModel.lean": {
+      "base_sha256": "e3cffbe20e78537fdc411197241a42ff0546913b019701c6c816d51e88f35ee4",
+      "head_sha256": "e3085eef1a3b51d03fb1442ce8b6206d4b0332a86e40e44734c6020bed6cf04c",
+      "base_lines": 561,
+      "head_lines": 570,
+      "only_insertions": true,
+      "removing_insertions_reproduces_entire_base": true,
+      "insertions": [
+        {
+          "head_range": [
+            83,
+            91
+          ],
+          "raw_sha256": "6125c85b241b272e129ec3bcfd90fb6b1cd199c9aa56ed1071e6bf3f3298c117",
+          "raw": "\n/-- A verifier is efficient in the polynomial-time model exactly when its `some true` and\n`some false` sets, on encoded input/random-string pairs, are languages in `P`. -/\ntheorem polyTimeModel_eff_iff (M : List Bool → List Bool → Option Bool) :\n    polyTimeModel.Eff M ↔\n      ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧\n        ∀ x r : List Bool,\n          (M x r = some true ↔ Turing.pairEncode x r ∈ V₁) ∧\n          (M x r = some false ↔ Turing.pairEncode x r ∈ V₀) := Iff.rfl\n",
+          "theorem_source_names": [
+            "polyTimeModel_eff_iff"
+          ]
+        }
+      ]
+    },
+    "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean": {
+      "base_sha256": "212175e3d2cb4bbaf5be2f7d5f265b738d0cadff256ebd6f60444d7805c5f735",
+      "head_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+      "base_lines": 608,
+      "head_lines": 627,
+      "only_insertions": true,
+      "removing_insertions_reproduces_entire_base": true,
+      "insertions": [
+        {
+          "head_range": [
+            123,
+            130
+          ],
+          "raw_sha256": "80e68084e59c286ed938638bbe8b17f0526f1f7c17f024a94bf382c4a12b0cac",
+          "raw": "\n/-- A gate evaluates its argument values by conjunction, disjunction, or negated\nconjunction according to its kind. -/\ntheorem eval_eq (g : DAGGate) (vals : List Bool) :\n    eval g vals = match g.kind with\n      | .and => g.args.all fun a => vals.getD a false\n      | .or => g.args.any fun a => vals.getD a false\n      | .not => !(g.args.all fun a => vals.getD a false) := rfl\n",
+          "theorem_source_names": [
+            "eval_eq"
+          ]
+        },
+        {
+          "head_range": [
+            472,
+            475
+          ],
+          "raw_sha256": "f330e2f2abe2f8b778114c86fea935e7bcbd46d5b577feebf2217e093c3e96c3",
+          "raw": "/-- The vertex-value equation [AB09, Def 6.1]: `C.values x` runs the gates from `List.ofFn x`. -/\ntheorem values_eq (x : Fin n → Bool) :\n    C.values x = runWith DAGGate.eval C.gates (List.ofFn x) := rfl\n\n",
+          "theorem_source_names": [
+            "values_eq"
+          ]
+        },
+        {
+          "head_range": [
+            479,
+            482
+          ],
+          "raw_sha256": "ef766c4d4289ca49208782b2c265af6caef918bb93882227e4d1fc01dacffe97",
+          "raw": "\n/-- The output equation [AB09, Def 6.1]: `C.eval x = (C.values x).getD C.output false`. -/\ntheorem eval_eq (x : Fin n → Bool) :\n    C.eval x = (C.values x).getD C.output false := rfl\n",
+          "theorem_source_names": [
+            "eval_eq"
+          ]
+        },
+        {
+          "head_range": [
+            498,
+            500
+          ],
+          "raw_sha256": "a63ec8ebdebbaa1e5aa2497d420d69204bbe285d1a894baf27bd8531cd2f65bc",
+          "raw": "\n/-- The size equation [AB09, Def 6.1]: `C.size = n + C.gates.length`. -/\ntheorem size_eq : C.size = n + C.gates.length := rfl\n",
+          "theorem_source_names": [
+            "size_eq"
+          ]
+        }
+      ]
+    },
+    "TCSlib/Complexity/Randomized/Classes.lean": {
+      "base_sha256": "072d89a0918f0e0ff125bd6927ff8941fda9b4096e552b091b32e2c7ab4e0d04",
+      "head_sha256": "73be2cdc0bd5f5b25619038158f5c0da7b9f8a575640c1408b1f3069033ff12e",
+      "base_lines": 1328,
+      "head_lines": 1341,
+      "only_insertions": true,
+      "removing_insertions_reproduces_entire_base": true,
+      "insertions": [
+        {
+          "head_range": [
+            112,
+            117
+          ],
+          "raw_sha256": "2c2f53cd7d9050ba5f54bd5d21329cd52d361e25b4f0fec8075ce55d5ddd397c",
+          "raw": "\n/-- The probability of an event is the cardinality of its accepted bit tuples divided\nby the number `2 ^ m` of all length-`m` bit tuples. -/\ntheorem randProb_eq (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :\n    randProb m A =\n      ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m := rfl\n",
+          "theorem_source_names": [
+            "randProb_eq"
+          ]
+        },
+        {
+          "head_range": [
+            256,
+            258
+          ],
+          "raw_sha256": "39f74b11ed403dc1ec621c548938b0eb63042abcd5bd384bcce717bb825c94f3",
+          "raw": "/-- The canonical polynomial length schedule at `n` is `a * (n + 1) ^ k`. -/\ntheorem polyLen_eq (a k n : ℕ) : polyLen a k n = a * (n + 1) ^ k := rfl\n\n",
+          "theorem_source_names": [
+            "polyLen_eq"
+          ]
+        },
+        {
+          "head_range": [
+            277,
+            280
+          ],
+          "raw_sha256": "aab16c395e22bdc81f94b4e92afc8950747d44f53d5f50745d7fbbd55b830213",
+          "raw": "\n/-- The Boolean verifier viewed as an optional verifier returns `some (M x r)`. -/\ntheorem boolVerifier_apply (M : List Bool → List Bool → Bool) (x r : List Bool) :\n    boolVerifier M x r = some (M x r) := rfl\n",
+          "theorem_source_names": [
+            "boolVerifier_apply"
+          ]
+        }
+      ]
+    }
+  },
+  "namespace_binding_context": {
+    "same_namespace": "Randomized",
+    "same_open": "Complexity",
+    "direct_imports_options_module_prose_and_binding_commands_unchanged": true,
+    "all_preexisting_declarations_docs_and_bodies_in_changed_context_files_unchanged": true,
+    "insertions_are_plain_theorems_without_simp_or_instance_attributes": true,
+    "new_reader_names_are_not_referenced_by_failing_proofs": true,
+    "interpretation": "Source contracts and operative definitions are unchanged; only unused public reading equations were added."
+  },
+  "import_closure": [
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.Basic",
+      "file": "TCSlib/Complexity/CircuitComplexity/Basic.lean",
+      "base_sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+      "head_sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGCircuit",
+      "file": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      "base_sha256": "212175e3d2cb4bbaf5be2f7d5f265b738d0cadff256ebd6f60444d7805c5f735",
+      "head_sha256": "3cee08a85212761d81b14a6e09a4b4b298fb62096af418c284e8658a704ffaaa",
+      "raw_identical": false
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGFanin",
+      "file": "TCSlib/Complexity/CircuitComplexity/DAGFanin.lean",
+      "base_sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+      "head_sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.DAGTransform",
+      "file": "TCSlib/Complexity/CircuitComplexity/DAGTransform.lean",
+      "base_sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+      "head_sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.HardWire",
+      "file": "TCSlib/Complexity/CircuitComplexity/HardWire.lean",
+      "base_sha256": "ec6c96deb82bc44ca52be9e908dd378912f8e61582898d9c7a160f295e66db91",
+      "head_sha256": "ec6c96deb82bc44ca52be9e908dd378912f8e61582898d9c7a160f295e66db91",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredCircuit",
+      "file": "TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean",
+      "base_sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+      "head_sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredDAG",
+      "file": "TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean",
+      "base_sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+      "head_sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.LayeredPPoly",
+      "file": "TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean",
+      "base_sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+      "head_sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PPoly",
+      "file": "TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+      "base_sha256": "41b4471a828c99c2db4163725f005e309aa01f6825f33d8507196439435f2bff",
+      "head_sha256": "41b4471a828c99c2db4163725f005e309aa01f6825f33d8507196439435f2bff",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PSubsetPPoly",
+      "file": "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly.lean",
+      "base_sha256": "7f5119d1d5f26bd15f81241c1a78b35f6070239de9ea4438a178d8e7d70baa69",
+      "head_sha256": "7f5119d1d5f26bd15f81241c1a78b35f6070239de9ea4438a178d8e7d70baa69",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PSubsetPPolyGadget",
+      "file": "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget.lean",
+      "base_sha256": "026c15285acefc2bb2a3b587545af32b3e62fca8dd2837bf63f2339bb894b2a6",
+      "head_sha256": "026c15285acefc2bb2a3b587545af32b3e62fca8dd2837bf63f2339bb894b2a6",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PSubsetPPolyTableau",
+      "file": "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau.lean",
+      "base_sha256": "b862a6ce61f786a2d097f5d4353a9ca40e2618dbd688775c0094cb4ac2feb92b",
+      "head_sha256": "b862a6ce61f786a2d097f5d4353a9ca40e2618dbd688775c0094cb4ac2feb92b",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PSubsetPPolyTableauCorrect",
+      "file": "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean",
+      "base_sha256": "465e871b2e48a1eda2c2254b118648fb9cbb14c5f0507ae05dabe100bb66b5c4",
+      "head_sha256": "465e871b2e48a1eda2c2254b118648fb9cbb14c5f0507ae05dabe100bb66b5c4",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.PairEncode",
+      "file": "TCSlib/Complexity/CircuitComplexity/PairEncode.lean",
+      "base_sha256": "a86d91a56c7e8e912d6aabc542c816a4e22814df8ade00925a32f2032c98d185",
+      "head_sha256": "a86d91a56c7e8e912d6aabc542c816a4e22814df8ade00925a32f2032c98d185",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.SizeClasses",
+      "file": "TCSlib/Complexity/CircuitComplexity/SizeClasses.lean",
+      "base_sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+      "head_sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.TreeDAG",
+      "file": "TCSlib/Complexity/CircuitComplexity/TreeDAG.lean",
+      "base_sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+      "head_sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.UHaltMachine",
+      "file": "TCSlib/Complexity/CircuitComplexity/UHaltMachine.lean",
+      "base_sha256": "3574cce44d26360b60b7e6f55d3210c9696c5a45e60b7d52cab8ab3b366c0fb7",
+      "head_sha256": "3574cce44d26360b60b7e6f55d3210c9696c5a45e60b7d52cab8ab3b366c0fb7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.UnaryLanguages",
+      "file": "TCSlib/Complexity/CircuitComplexity/UnaryLanguages.lean",
+      "base_sha256": "6676f72e349eac6f1cd39fdc08c83f03fb96ae13ed682362c6a084d8e9efa69b",
+      "head_sha256": "6676f72e349eac6f1cd39fdc08c83f03fb96ae13ed682362c6a084d8e9efa69b",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CircuitComplexity.Universal",
+      "file": "TCSlib/Complexity/CircuitComplexity/Universal.lean",
+      "base_sha256": "d77eb4a84a980bf5a003cfc363b5420ede887056dc2d1a32c1be5c90b1796691",
+      "head_sha256": "d77eb4a84a980bf5a003cfc363b5420ede887056dc2d1a32c1be5c90b1796691",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.CoNP",
+      "file": "TCSlib/Complexity/ClassNP/CoNP.lean",
+      "base_sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "head_sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.CounterProgPolyTime",
+      "file": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "base_sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "head_sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.EXP",
+      "file": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "base_sha256": "9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17",
+      "head_sha256": "9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.NP",
+      "file": "TCSlib/Complexity/ClassNP/NP.lean",
+      "base_sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "head_sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PClosure",
+      "file": "TCSlib/Complexity/ClassNP/PClosure.lean",
+      "base_sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "head_sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTime",
+      "file": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "base_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "head_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "base_sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+      "head_sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockMajority",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean",
+      "base_sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "head_sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimeBlockTests",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+      "base_sha256": "c5d091944b891adcf4cae2ffadd532e39a84e5deffb0c7045ab10afa6a829def",
+      "head_sha256": "c5d091944b891adcf4cae2ffadd532e39a84e5deffb0c7045ab10afa6a829def",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "base_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "head_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "base_sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+      "head_sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.Reductions",
+      "file": "TCSlib/Complexity/ClassNP/Reductions.lean",
+      "base_sha256": "71b52fc82ecce4cdba174e3a7461c784e1e7478103001ab067500a5775b8e04d",
+      "head_sha256": "71b52fc82ecce4cdba174e3a7461c784e1e7478103001ab067500a5775b8e04d",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.TMSAT",
+      "file": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "base_sha256": "bd8479b97086e76e9af841a0acc08e7b4ce4a936a8c888fe1ebbf16e1c983b47",
+      "head_sha256": "bd8479b97086e76e9af841a0acc08e7b4ce4a936a8c888fe1ebbf16e1c983b47",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.DTIME",
+      "file": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "base_sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "head_sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.P",
+      "file": "TCSlib/Complexity/ClassP/P.lean",
+      "base_sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7",
+      "head_sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.TimeConstructible",
+      "file": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "base_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "head_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.CookLevin.Snapshot",
+      "file": "TCSlib/Complexity/CookLevin/Snapshot.lean",
+      "base_sha256": "d30d4ef5746e14dd011e038906baed120b1dcd71f5bd6e8f2e6ef8bf3ef8bc77",
+      "head_sha256": "d30d4ef5746e14dd011e038906baed120b1dcd71f5bd6e8f2e6ef8bf3ef8bc77",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Collapse",
+      "file": "TCSlib/Complexity/PolyHierarchy/Collapse.lean",
+      "base_sha256": "9f0323064dd7811ec30a41557ec6941c3fc7c347374e2367b31bd844cb3c9e05",
+      "head_sha256": "9f0323064dd7811ec30a41557ec6941c3fc7c347374e2367b31bd844cb3c9e05",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Defs",
+      "file": "TCSlib/Complexity/PolyHierarchy/Defs.lean",
+      "base_sha256": "9d2c158d26d7fae6d102a95070cb4a83cfaa748c8eea9320ccb26fd5121eff38",
+      "head_sha256": "9d2c158d26d7fae6d102a95070cb4a83cfaa748c8eea9320ccb26fd5121eff38",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Levels",
+      "file": "TCSlib/Complexity/PolyHierarchy/Levels.lean",
+      "base_sha256": "c8a915ae847bf40bc4a9d63943868104ec74fee4f769d246cbe6b9d13ad0f62c",
+      "head_sha256": "c8a915ae847bf40bc4a9d63943868104ec74fee4f769d246cbe6b9d13ad0f62c",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Normalize",
+      "file": "TCSlib/Complexity/PolyHierarchy/Normalize.lean",
+      "base_sha256": "dc5d7f4b73531d6ebfbc2886865a0ec24b4280cba1f23e113a5ff4eb6b12550f",
+      "head_sha256": "dc5d7f4b73531d6ebfbc2886865a0ec24b4280cba1f23e113a5ff4eb6b12550f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.PolyHierarchy.Padding",
+      "file": "TCSlib/Complexity/PolyHierarchy/Padding.lean",
+      "base_sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+      "head_sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Adleman",
+      "file": "TCSlib/Complexity/Randomized/Adleman.lean",
+      "base_sha256": "d2687f64e5f6f9690006967bc9dcca9be79fc5ded8d7fd229460dcb68b7549c4",
+      "head_sha256": "d2687f64e5f6f9690006967bc9dcca9be79fc5ded8d7fd229460dcb68b7549c4",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Classes",
+      "file": "TCSlib/Complexity/Randomized/Classes.lean",
+      "base_sha256": "072d89a0918f0e0ff125bd6927ff8941fda9b4096e552b091b32e2c7ab4e0d04",
+      "head_sha256": "73be2cdc0bd5f5b25619038158f5c0da7b9f8a575640c1408b1f3069033ff12e",
+      "raw_identical": false
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.SipserGacs",
+      "file": "TCSlib/Complexity/Randomized/SipserGacs.lean",
+      "base_sha256": "bd7ac2ecf6e7d9be559bb54c2ff31fe69e939a14d823ba7f9d4676a0de51a30b",
+      "head_sha256": "bd7ac2ecf6e7d9be559bb54c2ff31fe69e939a14d823ba7f9d4676a0de51a30b",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "base_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "head_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "base_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "head_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.EmitIterBody",
+      "file": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+      "base_sha256": "bc35c3485cad1755dcfdb43d2c77c3a21af390c4201db1d15c2ccfe77e3bd3fe",
+      "head_sha256": "bc35c3485cad1755dcfdb43d2c77c3a21af390c4201db1d15c2ccfe77e3bd3fe",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed",
+      "file": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "base_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "head_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "base_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "head_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "head_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.WordTests",
+      "file": "TCSlib/Complexity/TuringMachine/Build/WordTests.lean",
+      "base_sha256": "c875f3d15f82d03086bcf6e38b972ef5d906710b94920c56e27b698f784b5483",
+      "head_sha256": "c875f3d15f82d03086bcf6e38b972ef5d906710b94920c56e27b698f784b5483",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "base_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "head_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CodeFormat",
+      "file": "TCSlib/Complexity/TuringMachine/CodeFormat.lean",
+      "base_sha256": "c06162f6b6db292188f9f1f255c44e1d4d52ebb5058b6a30d0e3266ce9b4ccaa",
+      "head_sha256": "c06162f6b6db292188f9f1f255c44e1d4d52ebb5058b6a30d0e3266ce9b4ccaa",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CodeParser",
+      "file": "TCSlib/Complexity/TuringMachine/CodeParser.lean",
+      "base_sha256": "0c70f014c22bc45d3ac78143f7f12a183d62af7d2ce0843560a6a85873c21652",
+      "head_sha256": "0c70f014c22bc45d3ac78143f7f12a183d62af7d2ce0843560a6a85873c21652",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Composition",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "base_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "head_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Configuration",
+      "file": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "base_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "head_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProg",
+      "file": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "base_sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "head_sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProgInput",
+      "file": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "base_sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "head_sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.CounterProgRun",
+      "file": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "base_sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "head_sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "file": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "base_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "head_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Encoding",
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "head_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Finite",
+      "file": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "base_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "head_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.MathlibBridge",
+      "file": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "base_sha256": "433d442df96ee718aa123c881e07aecfbd39faf5c983841da0dafc78b705a531",
+      "head_sha256": "433d442df96ee718aa123c881e07aecfbd39faf5c983841da0dafc78b705a531",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "base_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "head_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean",
+      "base_sha256": "4dd19cb547a78ca15f39fc72f88c03d050ed88f087494c824c965e63f210166e",
+      "head_sha256": "4dd19cb547a78ca15f39fc72f88c03d050ed88f087494c824c965e63f210166e",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "base_sha256": "f0e69ed8fa9fbd5c73068694a5e8a162e77cffd671742b5e156e764cd4a6f771",
+      "head_sha256": "f0e69ed8fa9fbd5c73068694a5e8a162e77cffd671742b5e156e764cd4a6f771",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean",
+      "base_sha256": "88847a586b0b8656e57c4be0f927838cd636040410d838293c4a2afb9ae92649",
+      "head_sha256": "88847a586b0b8656e57c4be0f927838cd636040410d838293c4a2afb9ae92649",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "base_sha256": "357c9d98f62a574b487abb6833cb33f2602e6f75a3b1d95a11fec5212b79fd67",
+      "head_sha256": "357c9d98f62a574b487abb6833cb33f2602e6f75a3b1d95a11fec5212b79fd67",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "base_sha256": "924bf2ef064c12636cacb42babdf4e06b44c6ea298e256aeb44aa2b7e6fa3110",
+      "head_sha256": "924bf2ef064c12636cacb42babdf4e06b44c6ea298e256aeb44aa2b7e6fa3110",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "base_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "head_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Simulation",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "base_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "head_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "file": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "base_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "head_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Sweep",
+      "file": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "base_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "head_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.UnaryTape",
+      "file": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "base_sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "head_sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Universal",
+      "file": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "base_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "head_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.UniversalBlock",
+      "file": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "base_sha256": "d5daaa75eb962584b03dc958421a4d07d0a529441e1a28afd5015552882e627d",
+      "head_sha256": "d5daaa75eb962584b03dc958421a4d07d0a529441e1a28afd5015552882e627d",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.UniversalInterpreter",
+      "file": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "base_sha256": "5c510df8f730907665319e6bc9b82e5c8b0423a37008e97cae02c1d02368b19f",
+      "head_sha256": "5c510df8f730907665319e6bc9b82e5c8b0423a37008e97cae02c1d02368b19f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.UniversalStartup",
+      "file": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "base_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "head_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Uncomputability.Computable",
+      "file": "TCSlib/Complexity/Uncomputability/Computable.lean",
+      "base_sha256": "1ad827bd15a8a492e11de0f2cd1a5167e358be927f274aedb6c0a0ed35aecaf6",
+      "head_sha256": "1ad827bd15a8a492e11de0f2cd1a5167e358be927f274aedb6c0a0ed35aecaf6",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Uncomputability.Diagonalization",
+      "file": "TCSlib/Complexity/Uncomputability/Diagonalization.lean",
+      "base_sha256": "089dffc34eb4477569053134279c111541af2c3c0daa10ffa3da78cc06497473",
+      "head_sha256": "089dffc34eb4477569053134279c111541af2c3c0daa10ffa3da78cc06497473",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Uncomputability.Halting",
+      "file": "TCSlib/Complexity/Uncomputability/Halting.lean",
+      "base_sha256": "f1e7985f40ca01e0871fedda45e1b3a31eef220192a44ea80ee9ec7acf222581",
+      "head_sha256": "f1e7985f40ca01e0871fedda45e1b3a31eef220192a44ea80ee9ec7acf222581",
+      "raw_identical": true
+    }
+  ],
+  "operative_foreign_definition_rows": [
+    {
+      "spelling": "Complexity.PrefixByLength.take",
+      "home": "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2408
+    },
+    {
+      "spelling": "Complexity.PrefixByLength.drop",
+      "home": "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2403
+    },
+    {
+      "spelling": "Complexity.PolyTimeComputable",
+      "home": "TCSlib.Complexity.ClassNP.PolyTime",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2401
+    },
+    {
+      "spelling": "Randomized.polyLen",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2555
+    },
+    {
+      "spelling": "Randomized.ClosedUnderRace",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2538
+    },
+    {
+      "spelling": "Randomized.ClosedUnderAnswerIs",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2534
+    },
+    {
+      "spelling": "Randomized.ClosedUnderMajority",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2536
+    },
+    {
+      "spelling": "Randomized.ClosedUnderAny",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2535
+    },
+    {
+      "spelling": "Randomized.ClosedUnderNot",
+      "home": "TCSlib.Complexity.Randomized.Classes",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2537
+    },
+    {
+      "spelling": "Randomized.ClosedUnderShiftOr",
+      "home": "TCSlib.Complexity.Randomized.SipserGacs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2539
+    },
+    {
+      "spelling": "Randomized.VerifierHasCircuits",
+      "home": "TCSlib.Complexity.Randomized.Adleman",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2548
+    },
+    {
+      "spelling": "Language.InPPoly",
+      "home": "TCSlib.Complexity.CircuitComplexity.PPoly",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2530
+    },
+    {
+      "spelling": "Randomized.InSigma2",
+      "home": "TCSlib.Complexity.Randomized.SipserGacs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2546
+    },
+    {
+      "spelling": "Randomized.InPi2",
+      "home": "TCSlib.Complexity.Randomized.SipserGacs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 2544
+    }
+  ],
+  "compiler_source_configuration": {
+    "lean-toolchain": {
+      "base_sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925",
+      "head_sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925",
+      "raw_identical": true
+    },
+    "lake-manifest.json": {
+      "base_sha256": "cad7de215c4cc216d03acb77cb1abfbe9f3b4062a8988b29459504f932015100",
+      "head_sha256": "cad7de215c4cc216d03acb77cb1abfbe9f3b4062a8988b29459504f932015100",
+      "raw_identical": true
+    }
+  },
+  "historical_inventory_sha256": {
+    "cleanup-b-decls.tsv": "371988e791191772c9c74b6d86879b2b688cba731dbd0f3dc4c5decc3411f6fb",
+    "cleanup-b.tsv": "32d88f9f3ff992ba4b46033d8800e199b48fd5f7416a59e1d6aa1dee088cac92"
+  },
+  "initial_review_sha256": "a62cef848378623bb19825112c65d067eb574561a51bc8690daa11ae5d171053",
+  "initial_review_covers_this_module": false,
+  "limits": [
+    "Static Git/source witness only; no independently executed native check or base-source seal replay.",
+    "This is an inherited source-observation recommendation, never a pass/exclusion/waiver.",
+    "Root must review and record new observation keys with exact hashes and historical dedup results.",
+    "Other final modules and the complete 54-module reconciliation are outside this module review."
+  ]
+}

@@ -21,8 +21,8 @@ compresses by one bit.
 **The construction on the ch. 2–4 layer.** The group comes from an instance generator
 `G : ExpGroupGen V` through the collection's generator `expGen` (indices `⟨p, ⟨m, g⟩⟩`, valid at
 every parameter, D10). `y = g^w` for `w` drawn by the collection's domain sampler
-(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`), so `y` is uniform in `⟨g⟩`; with
-`m = p − 1` (hypothesis `hV` of the theorem) that is `Z_p^*`. Arithmetic is through the bundle
+(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`). Consequently `y` is within `2^{-n}`
+of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem), on `Z_p^*`. Arithmetic is through the bundle
 `ArithmeticFP` (D11), as for every ch. 2–4 candidate.
 
 **Source notes.**

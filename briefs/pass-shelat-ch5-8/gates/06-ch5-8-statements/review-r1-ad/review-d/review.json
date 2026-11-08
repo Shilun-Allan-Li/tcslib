@@ -1,0 +1,299 @@
+{
+  "status": "INTERNAL_READ_ONLY_GATE06D_INTAKE_REVIEW",
+  "recommendation": "accept reported D closure at issued threshold; track4 minor prose resolutions; no overall merge/proof-completion clearance",
+  "review_time_utc": "2026-11-07T20:42:31.299936+00:00",
+  "source": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "records": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+  "exchange": "5928e06c02b382b63b9b384db89d0458b520f351",
+  "report_sha256": "a13979aa9fafcad2ab77a5b33d59fdd034c5a7969fd346f44e3a70385297bcfc",
+  "independent_severity_counts": {
+    "hidden_blockers": 0,
+    "hidden_majors": 0,
+    "additional_minors": 0
+  },
+  "reported_severity_counts": {
+    "blockers": 0,
+    "majors": 0,
+    "minors": 4
+  },
+  "mathematical_assessment": {
+    "integer_root_schedule": "sound and computable with fixed integer d; epsilon need not be computable",
+    "syntactic_output_envelope": "a(s^d+1)^k+s+1 expands and covers verifier randomness",
+    "nonuniform_advice": "choose one bad input per bad seed length, length≤s^d; default empty; permitted by PRG security",
+    "reindexing": "finite-to-one in input lengths, yielding unbounded bad seed lengths",
+    "strict_majority": "1/12 gap gives≥7/12 correctness;1/6 can also use dyadic strictness",
+    "finite_exceptions": "fixed finite table; positive target bound and global DTIME constant absorb costs",
+    "PAC_confidence": "delta<gamma≤1/2 required; no full KV94 weak-learning/amplification construction is supplied",
+    "pointwise_extractor_limit": "n-local sampler witness is not one all-length uniform adversarial family; finite table observation remains semantic limit"
+  },
+  "minor_resolutions": [
+    {
+      "id": "G06D-01",
+      "status": "proposed unapplied D hunks accepted",
+      "change": "integer-root executable schedule, syntactic envelope, advice/reindexing,1/12 majority and finite exceptions; statement unchanged"
+    },
+    {
+      "id": "G06D-02",
+      "status": "proposed unapplied D hunk accepted",
+      "change": "summary confidence gap and unconstructed amplification/resource bridge"
+    },
+    {
+      "id": "G06D-03",
+      "status": "proposed unapplied D hunk accepted",
+      "change": "correct facade contents"
+    },
+    {
+      "id": "G06D-04",
+      "status": "proposed unapplied D hunk accepted",
+      "change": "coin-independent public behavior and zero-coin proof witness; no theorem strengthening"
+    }
+  ],
+  "proposal_patch_sha256": "157964e06e8cd6da8f48ca0be44a47f5eeceebfaa412dad2b4a7ef453653bf0d",
+  "patch_status": "UNAPPLIED",
+  "independent_in_memory_patch_check": {
+    "method": "Independent exact unified-hunk reconstruction against frozen Git blobs entirely in memory; nested block/line comment stripping preserving code and ordinary string bytes; no apply/native run",
+    "source": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+    "patch_sha256": "157964e06e8cd6da8f48ca0be44a47f5eeceebfaa412dad2b4a7ef453653bf0d",
+    "files": [
+      {
+        "path": "TCSlib/Cryptography/Authentication/DLHash.lean",
+        "hunks": 1,
+        "frozen_sha256": "b4e84dd6b5d662c2d8d4123dfef93c08ccd189a9abf2a4b1c84840cc8aacd4e6",
+        "proposed_sha256": "c1df149e6a978d3491314108665349dd93747d86fe980f0f36e4f41da4303bf7",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "cc988f40edeb4104b91e791a358f206d0ffd2c755346a8466ebac17c415d38ad"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/Lamport.lean",
+        "hunks": 1,
+        "frozen_sha256": "ea4425be89a8e557c24f77380f6f3de8ad1dfecddcce533cc531117c858c2d38",
+        "proposed_sha256": "c6247aff788bf8ea0de00f0e0b016e3929e702c60edb574ebea11ff497f13bd2",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "762d25ac7bf46e79f8c86ba80cc6962d00eb07234e3b2f7872c4d42d7826ed0e"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness.lean",
+        "hunks": 1,
+        "frozen_sha256": "40f9df4f13e9c6547e6babb5ab1bcfa3661945a5ebe3ce94a9110c7ec5f66c3c",
+        "proposed_sha256": "535cf88826609a97259f2f29fa15ffa9ec2020df8f23436e7d3e8c0098ad2e49",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "f50870e6c1aa44c3c89c556bdb9b7988664799520d50b6f8bf61081331c44d12"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness/BPPBridge.lean",
+        "hunks": 1,
+        "frozen_sha256": "c9f0bfe49a39ca2d2c13a3678dd105709874ff762e2c92a99ce50e9a712ac333",
+        "proposed_sha256": "4788084d7723384f530d0ee6547b64bcd11d6023c102633ba3b4e0185357cbc7",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "531aa83a1578d9549aff540428fe38a712b2478df02fa3e5ab3d63b1eff077ca"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness/Derandomization.lean",
+        "hunks": 2,
+        "frozen_sha256": "f895bd3b5d56c076d551090f621cf07141806a7f8fb243df118193940f9ebd54",
+        "proposed_sha256": "661d1d254d28cbc2c3c9358a42384581dbd4404914732520cc7fead44d5907e3",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "c097da3d34bb0862f2639e5bd9a54dabc56991deabbd55f7940f8e6e67a02d44"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness/Learning.lean",
+        "hunks": 1,
+        "frozen_sha256": "2243c82c7f547ac2406c5c29edc765c86920659238214f73f757932c96c3ae0b",
+        "proposed_sha256": "01d3d20215f712da2a8b5208e5f9705e80e58cf32029c2ab2ea03d13bd031748",
+        "noncomment_bytes_equal": true,
+        "noncomment_sha256": "679e7d5477063f4c8a9a278a82c86ffe3d50346863c8c9affad85b3134b28fa4"
+      }
+    ]
+  },
+  "primary_modules_native_record_assessment": [
+    {
+      "module": "TCSlib.Cryptography.Randomness.BPPBridge",
+      "valid_harness": true,
+      "launcher_returncode": 0,
+      "recorded_errors": 0
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Derandomization",
+      "valid_harness": true,
+      "launcher_returncode": 0,
+      "recorded_errors": 0
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Extraction",
+      "valid_harness": true,
+      "launcher_returncode": 0,
+      "recorded_errors": 0
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "valid_harness": true,
+      "launcher_returncode": 0,
+      "recorded_errors": 0
+    }
+  ],
+  "admitted_dependent_Randomness_records": [
+    {
+      "module": "TCSlib.Cryptography.Randomness.Derandomization",
+      "actual_name": "TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp",
+      "display": "TCSlib.Cryptography.Randomness.bpp_subset_dtime_subexp",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext",
+        "sorryAx"
+      ]
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Extraction",
+      "actual_name": "TCSlib.Cryptography.Randomness.not_isExtractor_effSources",
+      "display": "TCSlib.Cryptography.Randomness.not_isExtractor_effSources",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext",
+        "sorryAx"
+      ]
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "actual_name": "TCSlib.Cryptography.Randomness.not_weakLearnsUnder_prfConcept",
+      "display": "TCSlib.Cryptography.Randomness.not_weakLearnsUnder_prfConcept",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext",
+        "sorryAx"
+      ]
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "actual_name": "TCSlib.Cryptography.Randomness.predictAdv_prfConcept_negligible",
+      "display": "TCSlib.Cryptography.Randomness.predictAdv_prfConcept_negligible",
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext",
+        "sorryAx"
+      ]
+    }
+  ],
+  "inputs": {
+    "local-inbox/gate06D-findings.md": {
+      "bytes": 34608,
+      "sha256": "a13979aa9fafcad2ab77a5b33d59fdd034c5a7969fd346f44e3a70385297bcfc",
+      "pin": "root-provided local intake bytes; no worker push inferred"
+    },
+    "TCSlib/Cryptography/Randomness.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 1183,
+      "sha256": "40f9df4f13e9c6547e6babb5ab1bcfa3661945a5ebe3ce94a9110c7ec5f66c3c"
+    },
+    "TCSlib/Cryptography/Randomness/Derandomization.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 4862,
+      "sha256": "f895bd3b5d56c076d551090f621cf07141806a7f8fb243df118193940f9ebd54"
+    },
+    "TCSlib/Cryptography/Randomness/BPPBridge.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 6176,
+      "sha256": "c9f0bfe49a39ca2d2c13a3678dd105709874ff762e2c92a99ce50e9a712ac333"
+    },
+    "TCSlib/Cryptography/Randomness/Learning.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 7975,
+      "sha256": "2243c82c7f547ac2406c5c29edc765c86920659238214f73f757932c96c3ae0b"
+    },
+    "TCSlib/Cryptography/Randomness/Extraction.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 6709,
+      "sha256": "85ab413e88db94ab06c761070ebf33c3cd387b91e82563d14745089ca231f2c9"
+    },
+    "TCSlib/Complexity/Randomized/Classes.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 63754,
+      "sha256": "73be2cdc0bd5f5b25619038158f5c0da7b9f8a575640c1408b1f3069033ff12e"
+    },
+    "TCSlib/Complexity/ClassP/DTIME.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 5670,
+      "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84"
+    },
+    "TCSlib/Cryptography/Asymptotic/Pseudorandom.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 11244,
+      "sha256": "6e6e855fe0bc1beb8b56fbc9d4b3335c15047df41c3780f5aa475b5534a5ca19"
+    },
+    "TCSlib/Cryptography/Asymptotic/PRF.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 50689,
+      "sha256": "5c51d36722d20ce625d9a7af65ae3225d8e9e5b74f903dc7a1490bf3c21ab5a4"
+    },
+    "TCSlib/Cryptography/Asymptotic/PRFLemmas.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 23721,
+      "sha256": "b85ab443b742a21d3fa8936af0d7ec63d4f864984fd2229b0db85dad6d03a4f9"
+    },
+    "TCSlib/Cryptography/Asymptotic/HardCore.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 57935,
+      "sha256": "6aa85b4e12665e386b59261368f161ca9b66140958f7904962309ec74bb9cb26"
+    },
+    "TCSlib/Complexity/Randomized/PolyExpr.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 10125,
+      "sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903"
+    },
+    "TCSlib/LearningTheory/PAC/Prediction.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 13767,
+      "sha256": "3b7381e8a55c0db86a3efc9bcd83ca4750f9e724bdfb50e9166b9ef7e6ff916a"
+    },
+    "TCSlib/InformationTheory/Entropy.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 10061,
+      "sha256": "7bc4054d47022caa7c39314345e7e72e80b2498176c365efc643045f48200037"
+    },
+    "TCSlib/InformationTheory/Extractors.lean": {
+      "revision": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+      "bytes": 11898,
+      "sha256": "7dba3fa41e65a9ee0d901d9b5070559bd04f1b51a7033e75216b078de6461eff"
+    },
+    "briefs/pass-shelat-ch5-8/gates/06-ch5-8-statements/06D-pack.md": {
+      "revision": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+      "bytes": 11054,
+      "sha256": "16d641ef3ce4d31d67c61f012661f8fbd892da66e31f2cedbd0283608c67cd2e"
+    },
+    "briefs/pass-shelat-ch5-8/gates/05-pac/resolutions-r3.md": {
+      "revision": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+      "bytes": 1165,
+      "sha256": "9c14f9f033cf851a098d4c55cb278a0a93390165237c5ecac9c4d314f30694e6"
+    },
+    "briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md": {
+      "revision": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+      "bytes": 9335,
+      "sha256": "0e011edc90d469d1b3dd1156a74f6f7856f756e15e085343486a232ea24aa73b"
+    },
+    "briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/axioms-full.json": {
+      "revision": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+      "bytes": 844883,
+      "sha256": "81441d20992a14945e7fc8815118e667f1ce7a8e70f6cc4044e2ecfe693dd13d"
+    },
+    "briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/native-seal-runs/summary.json": {
+      "revision": "c81baa7712ab1b43357276ef5df138d02616c9d0",
+      "bytes": 236330,
+      "sha256": "db6e32c1034056134b373cf9ad3867e8764725c0d5e207c53aab3be32c21ce5d"
+    },
+    "ignored-corrections/minor-prose-corrections.patch": {
+      "sha256": "157964e06e8cd6da8f48ca0be44a47f5eeceebfaa412dad2b4a7ef453653bf0d",
+      "bytes": 11188,
+      "status": "UNAPPLIED root proposal"
+    }
+  },
+  "limits": [
+    "No native/Lean/cache/apps, Git/index/library/main-record/exchange mutation, supplied-helper execution or patch application.",
+    "No fresh source-PDF/book access verification or full common-archive replay; issued source-access limitations remain.",
+    "Auditor finite Python assertions were not rerun or relabeled native evidence.",
+    "Code preservation is independently checked for all6 patch files, but mathematical A findings remain outside this D review.",
+    "Three substantive D statements remain direct admissions; (c) remains admitted-dependent. D closure is statement/sketch approval only."
+  ]
+}

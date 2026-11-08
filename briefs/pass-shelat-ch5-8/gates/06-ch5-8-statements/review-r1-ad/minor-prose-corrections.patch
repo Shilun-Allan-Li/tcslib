@@ -1,0 +1,159 @@
+--- a/TCSlib/Cryptography/Authentication/DLHash.lean
++++ b/TCSlib/Cryptography/Authentication/DLHash.lean
+@@ -21,8 +21,8 @@
+ **The construction on the ch. 2–4 layer.** The group comes from an instance generator
+ `G : ExpGroupGen V` through the collection's generator `expGen` (indices `⟨p, ⟨m, g⟩⟩`, valid at
+ every parameter, D10). `y = g^w` for `w` drawn by the collection's domain sampler
+-(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`), so `y` is uniform in `⟨g⟩`; with
+-`m = p − 1` (hypothesis `hV` of the theorem) that is `Z_p^*`. Arithmetic is through the bundle
++(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`). Consequently `y` is within `2^{-n}`
++of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem), on `Z_p^*`. Arithmetic is through the bundle
+ `ArithmeticFP` (D11), as for every ch. 2–4 candidate.
+ 
+ **Source notes.**
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -549,22 +549,30 @@
+ /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
+ (strong) one-way function.
+ 
+-**Proof sketch** (the source's).
+-1. Fix a forger `A` with one signing query, and let `ε(n)` be its forgery probability. The
+-   inverter `B` gets `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
+-2. `B` picks `i ← [n]` and `c ← {0, 1}`, generates a key pair, and replaces `f(x_i^c)` by `y`.
+-   It runs `A` on the public key. It answers `A`'s query `m` when `m_i = 1 − c`, and aborts
+-   otherwise (it does not know `f^{-1}(y)`).
+-3. If `A` outputs a valid `(m', σ')` with `m'_i = c`, then `f(σ'_i) = y`, and `B` outputs `σ'_i`.
+-4. The planted `y` is distributed as every other entry of the public key, so `(i, c)` is
+-   independent of `A`'s view. The query avoids the abort with probability `1/2`. A forgery
+-   differs from the query in some position, which is `i` with probability at least `1/n`.
+-   Altogether `B` inverts with probability at least `ε(n)/(2n)`.
+-5. `f` is one-way, so `ε(n)/(2n)` is negligible, and so is `ε`. `B` is a machine by T1
+-   (`Games.exists_handlerMachine`): `advIn` builds the public key from `y = z` and the seed,
+-   the handler answers or aborts, and `out` returns the planted signature component `σ′_i`.
+-
+-If `A` makes no query, the abort never happens and the bound improves to `ε(n)/(2n)` as well. -/
++**Proof sketch** (the source's reduction, with its probability coupling explicit).
++1. Fix a forger `A` making at most one signing query, and let `ε(n)` be its forgery probability.
++   Work at `n ≥ 1`; the zero parameter is a finite exception for negligibility. The inverter
++   `B` receives `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
++2. For the averaging argument, choose `i ← [n]` and a fair bit `c`, generate the other key
++   entries, and put `y` at position `(i,c)`. Answer query `m` only when `m_i ≠ c`; otherwise
++   abort, since the planted preimage is unknown. A valid forgery with `m'_i = c` reveals
++   `σ'_i` with `f(σ'_i) = y`.
++3. Couple this experiment to an honest execution, choosing `(i,c)` independently of that
++   honest execution. The reduction agrees with it whenever it avoids revealing the planted
++   preimage. For a successful honest run with query `m` and fresh forged message `m'`, the
++   jointly favorable pairs satisfy `m_i ≠ c = m'_i`. Their fraction is
++   `#{i : m_i ≠ m'_i}/(2n) ≥ 1/(2n)`. With no query, their fraction is exactly `1/2`.
++   This counts the joint event without asserting independence after conditioning on non-abort.
++4. Averaging over successful honest runs gives inversion probability at least `ε(n)/(2n)`.
++   A best position at each length is at least as good as the uniform-position average; supply
++   it as `O(log n)` bits of non-uniform advice and sample only the fair bit `c`. Thus the
++   machine need not sample an exactly uniform element of `[n]` from a fixed finite coin tape.
++5. `f` is one-way, so this lower bound is negligible, and polynomial-factor closure makes `ε`
++   negligible. Apply T1 (`Games.exists_handlerMachine`) to the extended input `⟨y,i(n)⟩`, then
++   `NUPPT.exists_withAdvice` supplies the bounded advised position. `advIn` builds the public
++   key from that input and the seed, the handler answers or aborts, and `out` extracts `σ′_i`.
++
++For zero-query successful runs the extraction fraction is `1/2`, rather than just `1/(2n)`. -/
+ theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :
+     (lamport L f E hE hfE).OneTimeSecure := by
+   sorry
+--- a/TCSlib/Cryptography/Randomness.lean
++++ b/TCSlib/Cryptography/Randomness.lean
+@@ -27,10 +27,10 @@
+ 
+ ## Contents
+ 
+-* `Extraction` — unbiased extraction from a biased source.
+-* `Learning` — the Occam bound in the PAC layer.
++* `Extraction` — no efficient one-bit extractor for the stated efficient-source class.
++* `Learning` — PRFs give a hard-to-predict concept class.
+ * `BPPBridge` — the public bridge from BPP computations to distinguishers.
+-* `Derandomization` — learning and derandomization statements.
++* `Derandomization` — PRGs give the BPP deterministic-time inclusion.
+ 
+ ## References
+ 
+--- a/TCSlib/Cryptography/Randomness/BPPBridge.lean
++++ b/TCSlib/Cryptography/Randomness/BPPBridge.lean
+@@ -69,8 +69,9 @@
+ /-- **A verifier of `main`'s polynomial-time model, with hard-wired inputs, is a non-uniform
+ machine** (the S3c bridge, lemma 1). Let `M` be an efficient Boolean verifier
+ (`polyTimeModel.Eff (boolVerifier M)`: its true-set and false-set on `⟨x, r⟩` are in `P`), and
+-`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs`, no coins,
+-that at parameter `n` on the string `y` outputs `[M (xs n) y]`.
++`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs` whose
++output at parameter `n` on `y` is `[M (xs n) y]` for every coin tape. The conclusion exposes
++coin-independent behavior; the proof chooses a witness with zero coin schedule.
+ 
+ **Proof sketch.** The true-set `V₁` of `M` is in `P`, so its indicator is polynomial-time
+ (`mem_P_iff_polyTimeComputable`). Compose it with the projection
+--- a/TCSlib/Cryptography/Randomness/Derandomization.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization.lean
+@@ -29,7 +29,8 @@
+ - **"PRGs exist"** is `∃ G : PRG, G.Secure`, the ch. 2–4 layer's [PS10, Definition 77.1], secure
+   against non-uniform distinguishers. A PRG of any stretch `ℓ(n) > n` gives one with any polynomial
+   stretch by the ch. 2–4 expansion theorems (`PRG.Secure.truncate`, `prg_expand`), which the proof
+-  needs (seed length `n^{ε/2}`, output length `polyLen a k n`).
++  needs with a computable integer-root seed schedule and a syntactic polynomial output
++  envelope, as specified in the proof sketch below.
+ 
+ ## Main definitions
+ 
+@@ -69,21 +70,26 @@
+ `DTIME(2^{n^ε})` for every `ε > 0`.
+ 
+ **Proof sketch** (the source's, with the steps it leaves implicit; route note S3c).
+-1. Let `L ∈ BPP` with verifier `M` and randomness `m(n) = polyLen a k n`. Fix `ε' = ε/2`. By the
+-   expansion theorems, there is a secure PRG `G` with seed length `s` and output length at least
+-   `a (s^{1/ε'} + 1)^k` (a polynomial in `s`, `ε` being fixed). Let `ℓ(n) = ⌈n^{ε'}⌉`.
+-2. Let `M'(x; s) = M(x; G(s)↾m(|x|))` use `ℓ(|x|)` random bits. Suppose that for infinitely many
+-   `n` some input `x` of length `n` has `|Pr_r[M(x; r) = 1] − Pr_s[M'(x; s) = 1]| > 1/6`. With `x`
+-   hard-wired as advice at seed length `ℓ(n)`, the machine of `verifier_toNUPPT` (composed with
+-   the truncation of `G`'s output) distinguishes `G` with advantage `> 1/6` at infinitely many seed
+-   lengths. The two probabilities are compared through `randProb_eq_uprob`. It runs in time
+-   polynomial in `n`, which is polynomial in `ℓ(n)`. That contradicts the security of `G`.
+-3. So for all `n ≥ n₀`, `M'` decides `L` with error `< 1/2` on every input of length `n`, and the
+-   majority over all `2^{ℓ(n)}` seeds is correct. The finitely many inputs of length `< n₀` are
+-   decided by a finite table.
+-4. The machine-level obligation: a deterministic multi-tape machine that enumerates the seeds,
+-   runs `G` and `M`, and counts, in time `2^{ℓ(n)} · poly(n) ≤ c · 2^{n^ε}` for a constant `c`, on
+-   `main`'s TM library (`DTIME`). It is the largest single construction of prong D. -/
++1. Let `L ∈ BPP` have verifier `M` and randomness `m(n) = a(n+1)^k`. Fix an integer `d ≥ 2`
++   with `1/d < min(ε,1)`. Compute `ℓ(n)` as the least natural `t` with `n ≤ t^d`, using integer
++   comparisons and powers. Then `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^{1/d}+1`. No computation of an
++   arbitrary real exponent is required. Expand the PRG to the syntactic polynomial envelope
++   `P(s) = a(s^d+1)^k+s+1`, which exceeds `s` and covers `m(n)` whenever `s = ℓ(n)`.
++2. Let `M'(x; u) = M(x; G(u)↾m(|x|))`, with seed length `ℓ(|x|)`. If infinitely many lengths
++   have an input with acceptance-probability gap `> 1/12`, choose one corresponding bad input
++   at each bad seed length. Its advice length is at most `s^d`. The verifier bridge, composed
++   with prefix truncation, is therefore a distinguisher polynomial in `s`; the probabilities
++   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
++   input lengths, so infinitely many bad input lengths give infinitely many bad seed lengths,
++   contradicting PRG security. The fixed `1/12` threshold leaves an explicit majority margin.
++3. Eventually every input has probability gap at most `1/12`. Since `M` is correct with
++   probability at least `2/3`, `M'` is correct with probability at least `7/12 > 1/2`.
++   The majority over all seeds is correct. A finite table handles the remaining input lengths.
++4. Construct a deterministic multi-tape machine enumerating the seeds, running `G` and `M`,
++   and counting, using the shared TM construction layer. For some constants `C,C'`, its time
++   is at most `2^{ℓ(n)} · poly(n) ≤ 2^{n^{1/d}+1+C log₂(n+1)+C'}`. Since `1/d < ε`, this is
++   eventually at most `2^{n^ε}`; a constant factor absorbs the finite exceptions. This machine
++   construction is the substantive remaining fill obligation, not supplied by the sketch. -/
+ theorem bpp_subset_dtime_subexp (hPRG : ∃ G : PRG, G.Secure) (ε : ℝ) (hε : 0 < ε) :
+     {L | Randomized.InBPP Randomized.polyTimeModel L} ⊆ DTIME (subexpBound ε) := by
+   sorry
+--- a/TCSlib/Cryptography/Randomness/Learning.lean
++++ b/TCSlib/Cryptography/Randomness/Learning.lean
+@@ -38,7 +38,9 @@
+   source's sketch): every efficient learner's prediction advantage is negligible.
+ * `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
+   layer's bridge): no efficient learner weakly PAC-learns the class under the uniform distribution
+-  with a constant edge.
++  with a constant edge `γ` at fixed failure probability `δ < γ`. Amplifying a KV94-style
++  weak learner changes the learner and its resources; that amplification and its resource
++  bridge are additional results, not a construction already supplied by part (c).
+ 
+ ## References
+ 

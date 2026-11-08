@@ -29,7 +29,8 @@ constant `ε > 0`.
 - **"PRGs exist"** is `∃ G : PRG, G.Secure`, the ch. 2–4 layer's [PS10, Definition 77.1], secure
   against non-uniform distinguishers. A PRG of any stretch `ℓ(n) > n` gives one with any polynomial
   stretch by the ch. 2–4 expansion theorems (`PRG.Secure.truncate`, `prg_expand`), which the proof
-  needs (seed length `n^{ε/2}`, output length `polyLen a k n`).
+  needs with a computable integer-root seed schedule and a syntactic polynomial output
+  envelope, as specified in the proof sketch below.
 
 ## Main definitions
 
@@ -69,21 +70,26 @@ theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
 `DTIME(2^{n^ε})` for every `ε > 0`.
 
 **Proof sketch** (the source's, with the steps it leaves implicit; route note S3c).
-1. Let `L ∈ BPP` with verifier `M` and randomness `m(n) = polyLen a k n`. Fix `ε' = ε/2`. By the
-   expansion theorems, there is a secure PRG `G` with seed length `s` and output length at least
-   `a (s^{1/ε'} + 1)^k` (a polynomial in `s`, `ε` being fixed). Let `ℓ(n) = ⌈n^{ε'}⌉`.
-2. Let `M'(x; s) = M(x; G(s)↾m(|x|))` use `ℓ(|x|)` random bits. Suppose that for infinitely many
-   `n` some input `x` of length `n` has `|Pr_r[M(x; r) = 1] − Pr_s[M'(x; s) = 1]| > 1/6`. With `x`
-   hard-wired as advice at seed length `ℓ(n)`, the machine of `verifier_toNUPPT` (composed with
-   the truncation of `G`'s output) distinguishes `G` with advantage `> 1/6` at infinitely many seed
-   lengths. The two probabilities are compared through `randProb_eq_uprob`. It runs in time
-   polynomial in `n`, which is polynomial in `ℓ(n)`. That contradicts the security of `G`.
-3. So for all `n ≥ n₀`, `M'` decides `L` with error `< 1/2` on every input of length `n`, and the
-   majority over all `2^{ℓ(n)}` seeds is correct. The finitely many inputs of length `< n₀` are
-   decided by a finite table.
-4. The machine-level obligation: a deterministic multi-tape machine that enumerates the seeds,
-   runs `G` and `M`, and counts, in time `2^{ℓ(n)} · poly(n) ≤ c · 2^{n^ε}` for a constant `c`, on
-   `main`'s TM library (`DTIME`). It is the largest single construction of prong D. -/
+1. Let `L ∈ BPP` have verifier `M` and randomness `m(n) = a(n+1)^k`. Fix an integer `d ≥ 2`
+   with `1/d < min(ε,1)`. Compute `ℓ(n)` as the least natural `t` with `n ≤ t^d`, using integer
+   comparisons and powers. Then `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^{1/d}+1`. No computation of an
+   arbitrary real exponent is required. Expand the PRG to the syntactic polynomial envelope
+   `P(s) = a(s^d+1)^k+s+1`, which exceeds `s` and covers `m(n)` whenever `s = ℓ(n)`.
+2. Let `M'(x; u) = M(x; G(u)↾m(|x|))`, with seed length `ℓ(|x|)`. If infinitely many lengths
+   have an input with acceptance-probability gap `> 1/12`, choose one corresponding bad input
+   at each bad seed length. Its advice length is at most `s^d`. The verifier bridge, composed
+   with prefix truncation, is therefore a distinguisher polynomial in `s`; the probabilities
+   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
+   input lengths, so infinitely many bad input lengths give infinitely many bad seed lengths,
+   contradicting PRG security. The fixed `1/12` threshold leaves an explicit majority margin.
+3. Eventually every input has probability gap at most `1/12`. Since `M` is correct with
+   probability at least `2/3`, `M'` is correct with probability at least `7/12 > 1/2`.
+   The majority over all seeds is correct. A finite table handles the remaining input lengths.
+4. Construct a deterministic multi-tape machine enumerating the seeds, running `G` and `M`,
+   and counting, using the shared TM construction layer. For some constants `C,C'`, its time
+   is at most `2^{ℓ(n)} · poly(n) ≤ 2^{n^{1/d}+1+C log₂(n+1)+C'}`. Since `1/d < ε`, this is
+   eventually at most `2^{n^ε}`; a constant factor absorbs the finite exceptions. This machine
+   construction is the substantive remaining fill obligation, not supplied by the sketch. -/
 theorem bpp_subset_dtime_subexp (hPRG : ∃ G : PRG, G.Secure) (ε : ℝ) (hε : 0 < ε) :
     {L | Randomized.InBPP Randomized.polyTimeModel L} ⊆ DTIME (subexpBound ε) := by
   sorry

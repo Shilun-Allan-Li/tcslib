@@ -1,0 +1,562 @@
+{
+  "schema": "gate06-encoding-final-static-witness/v1",
+  "status": "BOTH_FAILURES_RETAINED_EXISTING_HISTORICAL_KEYS_FOR_ROOT_REVIEW",
+  "base": "eee107e92a7db11f1f8c98a5c2867304f57ddc54",
+  "head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "module": "TCSlib.Cryptography.ZeroKnowledge.Encoding",
+  "source": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+  "classification_sha256": "7965c6aa158f0f2df58f8685e7e23eaea2040f64074ecb087b5e7704b63ba042",
+  "native_log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/native-seal-runs/probes/G06Seal_039_TCSlib_Cryptography_ZeroKnowledge_Encoding/G06Seal_039_TCSlib_Cryptography_ZeroKnowledge_Encoding.log",
+  "native_log_sha256": "888fc4c2a874cede10bf25b5ad346a1ce02ff126f38988b76593cbcb64825440",
+  "native_result_sha256": "a222a5964ff92006a6e63217a2777e89cfdda2ce9d9eee848cea24b3e04327c8",
+  "base_source_sha256": "ee5b3a7fc84e24346c0a71a99b1b724746d8c653e986b866cde4b4f9e0177db7",
+  "head_source_sha256": "a2a354fd0a89b117022922f416b431a26393b207dbf65e72c4f9a6e3c4247ddc",
+  "probe_sha256": "2bb10755d8b6aa8d32ab7c450bbe67717465ae0ab95a1f297b386dc6393843a5",
+  "probe_recovers_exact_head": true,
+  "counts": {
+    "failing_declarations": 2,
+    "diagnostics": 2,
+    "raw_changed_failing_blocks": 0,
+    "known_historical_keys": 2,
+    "new_keys": 0,
+    "added_decGraph_reader_diagnostics": 0
+  },
+  "declarations": [
+    {
+      "name": "two_pow_size_le_two_mul_succ",
+      "canonical": "TCSlib.Cryptography.two_pow_size_le_two_mul_succ",
+      "base_range": [
+        492,
+        495
+      ],
+      "head_range": [
+        500,
+        503
+      ],
+      "raw_header_body_sha256": "09805ae0b121deb5126f803b3f0732df20b5b8664a97a32118cf5dbdbf709c27",
+      "raw_header_body": "theorem two_pow_size_le_two_mul_succ (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by\n  rcases Nat.eq_zero_or_pos n with rfl | hn\n  · simp\n  · exact (two_pow_permBits_le hn).trans (Nat.le_succ _)\n",
+      "raw_identical": true,
+      "diagnostics": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_039_TCSlib_Cryptography_ZeroKnowledge_Encoding.lean",
+          "probe_line": 553,
+          "probe_column": 4,
+          "error_code": null,
+          "message": "Type mismatch",
+          "log_line": 688,
+          "source_line": 503,
+          "declaration_start": 500,
+          "kind": "theorem",
+          "source_name": "two_pow_size_le_two_mul_succ",
+          "qualified_source_name": "TCSlib.Cryptography.two_pow_size_le_two_mul_succ",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [
+        {
+          "inventory": "cleanup-b-decls.tsv",
+          "line": 314,
+          "file": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+          "name": "two_pow_size_le_two_mul_succ",
+          "raw_fields": [
+            "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+            "two_pow_size_le_two_mul_succ"
+          ]
+        },
+        {
+          "inventory": "cleanup-b.tsv",
+          "line": 157,
+          "file": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+          "name": "two_pow_size_le_two_mul_succ",
+          "raw_fields": [
+            "b",
+            "seal",
+            "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+            "theorem two_pow_size_le_two_mul_succ",
+            "lines 495"
+          ]
+        }
+      ],
+      "new_observation_key": false,
+      "failure_retained": true,
+      "waiver": false
+    },
+    {
+      "name": "polyTimeComputable_encPermFromCoins",
+      "canonical": "TCSlib.Cryptography.polyTimeComputable_encPermFromCoins",
+      "base_range": [
+        631,
+        688
+      ],
+      "head_range": [
+        639,
+        696
+      ],
+      "raw_header_body_sha256": "f50e9c1a0566c0c523b2d95eb9b29b251e46df7d28c58bb7438e5a563985e41f",
+      "raw_header_body": "theorem polyTimeComputable_encPermFromCoins :\n    PolyTimeComputable fun z =>\n      encPerm ((permFromCoins (decGraph (pairFstD z)).1 (permBits (decGraph (pairFstD z)).1)\n        (permTrials (decGraph (pairFstD z)).1)\n        (coinTable (decGraph (pairFstD z)).1 (permTrials (decGraph (pairFstD z)).1)\n          (permBits (decGraph (pairFstD z)).1) (pairSndD z))).getD 1) := by\n  open EncodingMachines in\n  have hN : PolyTimeComputable fun z => List.replicate (Nat.sqrt (pairFstD z).length) true :=\n    unarySqrt_poly (unaryLength_poly polyTimeComputable_pairFstD)\n  have hlen : PolyTimeComputable fun z => List.replicate\n      (encPerm ((permFromCoins (decGraph (pairFstD z)).1 (permBits (decGraph (pairFstD z)).1)\n        (permTrials (decGraph (pairFstD z)).1)\n        (coinTable (decGraph (pairFstD z)).1 (permTrials (decGraph (pairFstD z)).1)\n          (permBits (decGraph (pairFstD z)).1) (pairSndD z))).getD 1)).length true := by\n    simpa only [length_encPerm] using unaryMul_poly hN hN\n  refine polyTimeComputable_of_getD ?_ hlen\n  have hN' : PolyTimeComputable fun w =>\n      List.replicate (Nat.sqrt (pairFstD (pairSndD w)).length) true :=\n    unaryComp_poly hN polyTimeComputable_pairSndD\n  have hm : PolyTimeComputable fun w => List.replicate (pairFstD w).length true :=\n    unaryLength_poly polyTimeComputable_pairFstD\n  have hr : PolyTimeComputable fun w => pairSndD (pairSndD w) :=\n    polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD\n  have hK := unarySize_poly hN'\n  have hT := unaryMul_poly (unaryMul_poly (unaryConst_poly 2) hN') hN'\n  have hM := unaryAdd_poly (unaryMul_poly (unaryConst_poly 2) hN') (unaryConst_poly 1)\n  have hX := unaryMin_poly (divNum_poly hm hN') hN'\n  have hval := permFromCoinsNum_poly hN' hK hT hr hX hM\n    (fun w => two_pow_size_le_two_mul_succ _) (fun w => min_le_right _ _)\n  have hbit := polyTimeComputable_ite (ltTest_poly hm (unaryMul_poly hN' hN'))\n    (eqTest_poly hval (modNum_poly hm hN')) (polyTimeComputable_const [false])\n  convert hbit using 1\n  funext w\n  simp only [decide_eq_true_eq, divNum_eq, modNum_eq]\n  show [(encPerm ((permFromCoins (Nat.sqrt (pairFstD (pairSndD w)).length)\n      (permBits (Nat.sqrt (pairFstD (pairSndD w)).length))\n      (permTrials (Nat.sqrt (pairFstD (pairSndD w)).length))\n      (coinTable (Nat.sqrt (pairFstD (pairSndD w)).length)\n        (permTrials (Nat.sqrt (pairFstD (pairSndD w)).length))\n        (permBits (Nat.sqrt (pairFstD (pairSndD w)).length)) (pairSndD (pairSndD w)))).getD 1)).getD\n    (pairFstD w).length false] = _\n  set n := Nat.sqrt (pairFstD (pairSndD w)).length with hn\n  set m := (pairFstD w).length with hm_def\n  split_ifs with hlt\n  · have hn0 : 0 < n := Nat.pos_of_ne_zero (by rintro h; rw [h] at hlt; simp at hlt)\n    have hu' : m / n < n := (Nat.div_lt_iff_lt_mul hn0).2 hlt\n    have hv' : m % n < n := Nat.mod_lt _ hn0\n    have hidx : m = (⟨m % n, hv'⟩ : Fin n) + n * (⟨m / n, hu'⟩ : Fin n) :=\n      (Nat.mod_add_div m n).symm\n    rw [min_eq_left hu'.le]\n    conv_lhs => rw [hidx]\n    rw [encPerm_getD_nat]\n    congr 1\n    rw [decide_eq_decide, Fin.ext_iff,\n      permFromCoins_getD_val (r := pairSndD (pairSndD w))\n        (b := coinTable n (permTrials n) (permBits n) (pairSndD (pairSndD w))) (fun _ _ _ => rfl)]\n    rfl\n  · rw [encPerm_getD_of_le _ (not_lt.1 hlt)]\n",
+      "raw_identical": true,
+      "diagnostics": [
+        {
+          "path": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_039_TCSlib_Cryptography_ZeroKnowledge_Encoding.lean",
+          "probe_line": 745,
+          "probe_column": 4,
+          "error_code": null,
+          "message": "Tactic `rfl` failed: The left-hand side",
+          "log_line": 694,
+          "source_line": 695,
+          "declaration_start": 639,
+          "kind": "theorem",
+          "source_name": "polyTimeComputable_encPermFromCoins",
+          "qualified_source_name": "TCSlib.Cryptography.polyTimeComputable_encPermFromCoins",
+          "private": false,
+          "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name",
+          "classification": "SOURCE_FAILURE_REQUIRES_REVIEW"
+        }
+      ],
+      "historical_exact_rows": [
+        {
+          "inventory": "cleanup-b-decls.tsv",
+          "line": 313,
+          "file": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+          "name": "polyTimeComputable_encPermFromCoins",
+          "raw_fields": [
+            "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+            "polyTimeComputable_encPermFromCoins"
+          ]
+        },
+        {
+          "inventory": "cleanup-b.tsv",
+          "line": 158,
+          "file": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+          "name": "polyTimeComputable_encPermFromCoins",
+          "raw_fields": [
+            "b",
+            "seal",
+            "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+            "theorem polyTimeComputable_encPermFromCoins",
+            "lines 687"
+          ]
+        }
+      ],
+      "new_observation_key": false,
+      "failure_retained": true,
+      "waiver": false
+    }
+  ],
+  "context": {
+    "namespace": "TCSlib.Cryptography",
+    "opens": [
+      "Complexity",
+      "Turing"
+    ],
+    "direct_imports_options_preexisting_bindings_and_formal_prose_unchanged": true,
+    "whole_file_equal_after_removing_decGraph_reader_insertion": true,
+    "head_reader_insert_range": [
+      134,
+      141
+    ],
+    "import_closure_files": 38,
+    "fully_identical_import_files": 37,
+    "only_changed_import": {
+      "module": "TCSlib.InformationTheory.FinDist",
+      "file": "TCSlib/InformationTheory/FinDist.lean",
+      "base_sha256": "868c2211ee852e556e2b828a5edfd8d01817f6f82cbbfef3b271e903be9136a9",
+      "head_sha256": "2a1733831fe855bdd7ff00aa5974a0310a965675e2a2626fe2c514579353d874",
+      "raw_identical": false
+    },
+    "FinDist_existing_source_recovered_by_removing_insertions": true,
+    "FinDist_insertions": [
+      {
+        "head_range": [
+          29,
+          29
+        ],
+        "raw": "* `FinDist.probTrue p D`: the probability that the test `D` accepts a sample of `p`.\n",
+        "raw_sha256": "0ab9fa32f1b9ed9fc65fd637f61e4c5143e48a68daa347c10179288f6c9f2cca"
+      },
+      {
+        "head_range": [
+          63,
+          64
+        ],
+        "raw": "/-- The distribution built from weights `f` gives each outcome its weight:\n`⟨f, h₁, h₂⟩ a = f a`. -/\n",
+        "raw_sha256": "c1768ffb7fbd24ab8dc373bd2dfa0d3398c33dfd555bb6cf332b45b92dabbf27"
+      },
+      {
+        "head_range": [
+          68,
+          68
+        ],
+        "raw": "/-- Two distributions are equal when they give every outcome the same probability. -/\n",
+        "raw_sha256": "840a2329c05526d4159f5bd7e4b87cc73c460c10477025d191f380c80e6f875b"
+      },
+      {
+        "head_range": [
+          72,
+          72
+        ],
+        "raw": "/-- Every outcome has probability at most `1`. -/\n",
+        "raw_sha256": "9d5fa50118f8bad8d54d1ca903b3fe5d70f3f62bd3226d91df96349f0ff6d7be"
+      },
+      {
+        "head_range": [
+          77,
+          77
+        ],
+        "raw": "/-- A finite type that carries a distribution has positive cardinality. -/\n",
+        "raw_sha256": "251fb32ee27aa22ed482223353b42cee51e989da8da20c8522c23010e099bb50"
+      },
+      {
+        "head_range": [
+          97,
+          97
+        ],
+        "raw": "/-- The uniform distribution gives every outcome probability `|α|⁻¹`. -/\n",
+        "raw_sha256": "673bf1b362261b5faf5361072aac550c311c9b474bd0242fbce34ee53494eb55"
+      },
+      {
+        "head_range": [
+          109,
+          110
+        ],
+        "raw": "/-- The pushforward of `p` along `f` gives `b` the total probability of its preimage:\n`map f p b = ∑_{a : f a = b} p a`. -/\n",
+        "raw_sha256": "546287dae5f3281680f8aca1c15bb8dcaed04756d2a4ee7ee22192f320be34e6"
+      },
+      {
+        "head_range": [
+          122,
+          123
+        ],
+        "raw": "/-- The product distribution gives a pair the product of its coordinates' probabilities:\n`prod p q (a, b) = p a · q b`. -/\n",
+        "raw_sha256": "a5d08bdca92066ceb1af9bddbdacd2a3ac6f56dcb87026f3bf593f0410a2ec31"
+      },
+      {
+        "head_range": [
+          131,
+          131
+        ],
+        "raw": "/-- The collision probability is nonnegative. -/\n",
+        "raw_sha256": "e1f706bf89885a4291d4e844c2370d64c2cc532a249bad3e370e4e2b77ba8c5e"
+      },
+      {
+        "head_range": [
+          135,
+          135
+        ],
+        "raw": "/-- The uniform distribution has collision probability `|α|⁻¹`. -/\n",
+        "raw_sha256": "a1cd777adae9c2c0e7ee237afd43b22fcd352cd55852f4a8beb4a024720a8efb"
+      },
+      {
+        "head_range": [
+          170,
+          189
+        ],
+        "raw": "/-! ### Acceptance probability of a test -/\n\nvariable {α : Type*} [Fintype α]\n\n/-- The probability that the test `D` outputs `1` (`true`) on a sample of `p`:\n`Pr[x ← p : D(x) = 1]`. -/\nnoncomputable def FinDist.probTrue (p : FinDist α) (D : α → Bool) : ℝ :=\n  ∑ a ∈ univ.filter (fun a => D a = true), p a\n\n/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the\nsum of the probability differences `p a - q a` over the points `D` accepts. -/\ntheorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :\n    p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by\n  simp only [FinDist.probTrue, sum_sub_distrib]\n\n/-- `probTrue p D` is the total probability of the points that `D` accepts. -/\ntheorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :\n    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=\n  rfl\n\n",
+        "raw_sha256": "db337beb6a90566b3a31da5efcd699e1353cd34f16db815b6d8d106c0923f719"
+      }
+    ],
+    "interpretation": "FinDist adds documentation and acceptance-probability API, with no change to existing definitions/bodies; neither failing proof refers to those additions."
+  },
+  "operative_dependency_homes": [
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Permutations",
+      "file": "TCSlib/Cryptography/Asymptotic/Permutations.lean",
+      "base_sha256": "66ce9e28bacfdbcf0ca7b5581ff9e68695588fe0fbd70002c912d96a6fb7ae4c",
+      "head_sha256": "66ce9e28bacfdbcf0ca7b5581ff9e68695588fe0fbd70002c912d96a6fb7ae4c",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.EncodingMachines",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+      "base_sha256": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+      "head_sha256": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean",
+      "base_sha256": "8410906070059c3e087cc2a01f35e2271e9dfa9a52061dabd2e6ba27f628d40a",
+      "head_sha256": "8410906070059c3e087cc2a01f35e2271e9dfa9a52061dabd2e6ba27f628d40a",
+      "raw_identical": true
+    }
+  ],
+  "import_context_fingerprints": [
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTime",
+      "file": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "base_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "head_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+      "file": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "base_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "head_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.ClassP.TimeConstructible",
+      "file": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "base_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "head_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.IterateFind",
+      "file": "TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+      "base_sha256": "81e21a15b6ee3da6d1a788ecdab5213aca7ec853d9a8b3ec5dc4cf22da00a7b7",
+      "head_sha256": "81e21a15b6ee3da6d1a788ecdab5213aca7ec853d9a8b3ec5dc4cf22da00a7b7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.IterateFindHost",
+      "file": "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+      "base_sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "head_sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.PairSplit",
+      "file": "TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+      "base_sha256": "c7fcf877294a8a11a88bcd5803059b88aea71033a359f6c00e0a0334bbe59cf7",
+      "head_sha256": "c7fcf877294a8a11a88bcd5803059b88aea71033a359f6c00e0a0334bbe59cf7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.StateLoop",
+      "file": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+      "base_sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+      "head_sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.StringLoops",
+      "file": "TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+      "base_sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+      "head_sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Build.UnaryMul",
+      "file": "TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+      "base_sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "head_sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.PolyExpr",
+      "file": "TCSlib/Complexity/Randomized/PolyExpr.lean",
+      "base_sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903",
+      "head_sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Primitives",
+      "file": "TCSlib/Complexity/Randomized/Primitives.lean",
+      "base_sha256": "806389a7b0492af8836938156f0424b0a374791fd576cca6bf6018c00534823b",
+      "head_sha256": "806389a7b0492af8836938156f0424b0a374791fd576cca6bf6018c00534823b",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.Randomized.Repetition",
+      "file": "TCSlib/Complexity/Randomized/Repetition.lean",
+      "base_sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+      "head_sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "base_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "head_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "base_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "head_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "base_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "head_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.ModuleHost",
+      "file": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+      "base_sha256": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502",
+      "head_sha256": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "head_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "base_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "head_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Composition",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "base_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "head_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Configuration",
+      "file": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "base_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "head_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "file": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "base_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "head_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Encoding",
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "head_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Finite",
+      "file": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "base_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "head_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "base_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "head_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "file": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "base_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "head_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Simulation",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "base_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "head_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "file": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "base_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "head_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Sweep",
+      "file": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "base_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "head_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Permutations",
+      "file": "TCSlib/Cryptography/Asymptotic/Permutations.lean",
+      "base_sha256": "66ce9e28bacfdbcf0ca7b5581ff9e68695588fe0fbd70002c912d96a6fb7ae4c",
+      "head_sha256": "66ce9e28bacfdbcf0ca7b5581ff9e68695588fe0fbd70002c912d96a6fb7ae4c",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.Sampling",
+      "file": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+      "base_sha256": "9860769695ceada5454be8b9012183d015083cd2e5a1c916b3f9f6b68a4f50f3",
+      "head_sha256": "9860769695ceada5454be8b9012183d015083cd2e5a1c916b3f9f6b68a4f50f3",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.Experiments",
+      "file": "TCSlib/Cryptography/Foundations/Experiments.lean",
+      "base_sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "head_sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.Foundations.Probability",
+      "file": "TCSlib/Cryptography/Foundations/Probability.lean",
+      "base_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "head_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.HardcoreBit.Basic",
+      "file": "TCSlib/Cryptography/HardcoreBit/Basic.lean",
+      "base_sha256": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688",
+      "head_sha256": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.OneWayFunctions.Basic",
+      "file": "TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+      "base_sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "head_sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.EncodingMachines",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+      "base_sha256": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+      "head_sha256": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations.lean",
+      "base_sha256": "8410906070059c3e087cc2a01f35e2271e9dfa9a52061dabd2e6ba27f628d40a",
+      "head_sha256": "8410906070059c3e087cc2a01f35e2271e9dfa9a52061dabd2e6ba27f628d40a",
+      "raw_identical": true
+    },
+    {
+      "module": "TCSlib.InformationTheory.FinDist",
+      "file": "TCSlib/InformationTheory/FinDist.lean",
+      "base_sha256": "868c2211ee852e556e2b828a5edfd8d01817f6f82cbbfef3b271e903be9136a9",
+      "head_sha256": "2a1733831fe855bdd7ff00aa5974a0310a965675e2a2626fe2c514579353d874",
+      "raw_identical": false
+    },
+    {
+      "module": "TCSlib.InformationTheory.StatisticalDistance",
+      "file": "TCSlib/InformationTheory/StatisticalDistance.lean",
+      "base_sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739",
+      "head_sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739",
+      "raw_identical": true
+    }
+  ],
+  "historical_inventory_sha256": {
+    "cleanup-b-decls.tsv": "371988e791191772c9c74b6d86879b2b688cba731dbd0f3dc4c5decc3411f6fb",
+    "cleanup-b.tsv": "32d88f9f3ff992ba4b46033d8800e199b48fd5f7416a59e1d6aa1dee088cac92"
+  },
+  "limits": [
+    "Own static Git/text analysis; no repository helper or native process executed.",
+    "No source-base native seal replay or acceptance/pass/exclusion/waiver claim.",
+    "Both historic inventory links are exact file/name keys; retain fresh observation witnesses rather than adding duplicate debt keys."
+  ]
+}

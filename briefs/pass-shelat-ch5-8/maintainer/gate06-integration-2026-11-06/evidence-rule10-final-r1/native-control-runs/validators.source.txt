@@ -1,0 +1,615 @@
+"""Prepare S2 base seals, or run the reviewed native seals/controls serially.
+
+Review this driver before running it. Nothing runs merely by importing it.
+Commands (all paths/defaults are pinned below):
+  python3 -I /absolute/path/s2_native_seal_driver.py prepare-base
+  python3 -I /absolute/path/s2_native_seal_driver.py run-seals --run-id r1
+  python3 -I /absolute/path/s2_native_seal_driver.py run-controls --run-id r1
+
+prepare-base invokes read-only Git and the hash-pinned maintainer builders only.
+The two run commands invoke check_probe_s2.py with cwd=S2_ROOT, one probe at a
+time. RC 1 is retained/classified, never passed to subprocess check=True.
+No existing manifest, probe, attempt, or evidence file is overwritten.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import datetime as dt
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+from types import SimpleNamespace
+
+
+S2_ROOT = Path("/Users/seyoonr/.codex/worktrees/ps-gate08-repair/tcslib-pass-shelat-ch2-4")
+G06 = Path("/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06")
+EVIDENCE = Path("/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/final/maintainer-rule10")
+HEAD = "d8c4cfed793f04062e7e79b78344e5b593ff3ddc"
+SCRATCH = S2_ROOT / ".lake/ps-maintainer/gate06/rule10"
+CHECK_TOOL = G06 / "check_probe_s2.py"
+CHECK_SHA = "3d66d1429cc502f68baf64a4fc9c6cd145fef67578fcba5a92b8725e6342d8d6"
+TOOL_SHA = {
+    "build_seals.py": "fae07000e8c3fda22225632ded45208e2651bab827d827639f48d46e2005347a",
+    "build_controls.py": "484009543d095685b50fea244427adf4907de11bd5ef6a9e17e76fe08c60cf89",
+    "request_payload_adapter.py": "ae79f1ec66e93c8bc7749a53e12e3d383feda020ad2978520a0cfa24b12eb5de",
+}
+OWNED = {"TCSlib.Cryptography.Candidates." + n for n in
+         ("Concrete", "DiscreteLog", "ElGamal", "RSA", "Rabin")}
+NEGATIVES = {"InArg", "AdvInput", "Uexp", "AnonymousOnly", "Matcher"}
+ERROR_RE = re.compile(r"(?m)^([^\n]*?\.lean):(\d+):(\d+): error(?:\(([^\n)]*)\))?:([^\n]*)")
+WARNING_RE = re.compile(r"(?m)^([^\n]*?\.lean):(\d+):(\d+): warning(?:\(([^\n)]*)\))?:([^\n]*)")
+DECL_RE = re.compile(r"^(?:@\[[^\]]*\]\s*)?((?:(?:private|protected|noncomputable|nonrec)\s+)*)"
+                     r"(theorem|lemma|def|instance|structure|inductive|abbrev|class|opaque|axiom|example)\b(.*)")
+COMMAND_RE = re.compile(r"^(?:import|prelude|open|export|attribute|variable|include|omit|set_option|"
+                        r"run_cmd|syntax|macro|elab|initialize|builtin_initialize|#\w+)\b")
+
+
+class DriverError(RuntimeError):
+    pass
+
+
+def require(ok: bool, message: str) -> None:
+    if not ok:
+        raise DriverError(message)
+
+
+def sha(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+def now() -> str:
+    return dt.datetime.now(dt.timezone.utc).isoformat()
+
+
+def json_bytes(value) -> bytes:
+    return (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode()
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        require(key not in result, f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def read_json(path: Path):
+    value = json.loads(path.read_bytes(), object_pairs_hook=unique_object)
+    require(isinstance(value, dict), f"expected JSON object: {path}")
+    return value
+
+
+def write_new(path: Path, raw: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("xb") as handle:
+        handle.write(raw)
+
+
+def load_pinned(path: Path, expected: str, name: str):
+    require(path.is_file() and not path.is_symlink(), f"non-ordinary tool: {path}")
+    require(sha(path.read_bytes()) == expected, f"reviewed tool changed: {path}")
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location(name, path)
+    require(spec is not None and spec.loader is not None, f"cannot load maintainer tool: {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def capture(ctx, path: Path) -> bytes:
+    raw = path.read_bytes()
+    digest = sha(raw)
+    require(str(path) not in ctx.inputs or ctx.inputs[str(path)] == digest, f"input changed while being captured: {path}")
+    ctx.inputs[str(path)] = digest
+    return raw
+
+
+def verify_axiom_rows(log: str) -> dict:
+    # AXIOMSID lists are pretty-printed across continuation lines.
+    pattern = re.compile(r"AXIOMSID (TCSlib[\w.]*) \| ([^|\n]+) \| display=([^|]+) \| \[(.*?)\]", re.S)
+    counts = {m: 0 for m in OWNED}
+    allowed = {"propext", "Classical.choice", "Quot.sound"}
+    for match in pattern.finditer(log):
+        module, _, _, display = match.groups()
+        require(module in counts, f"unexpected own axiom module: {module}")
+        axes = [] if not display.strip() else [s.strip() for s in display.split(",")]
+        require(all(a in allowed for a in axes), f"nonstandard/malformed own axioms: {match.group(0)}")
+        counts[module] += 1
+    require(sum(counts.values()) == 1292, "collector does not contain 1292 complete standard-only AXIOMSID rows")
+    return counts
+
+
+def load_context():
+    ctx = SimpleNamespace(inputs={})
+    for name in ("pins.json", "seal-manifest.json", "controls-manifest.json", "tool-adapter.json",
+                 "modules.json", "closures.json", "source-fingerprints.json", "touched.json"):
+        capture(ctx, EVIDENCE / name)
+    ctx.pins, ctx.head, ctx.controls, adapter = (read_json(EVIDENCE / name) for name in
+        ("pins.json", "seal-manifest.json", "controls-manifest.json", "tool-adapter.json"))
+    require(ctx.pins["head"] == HEAD, "pins do not name the frozen S2 head")
+    require(ctx.head["root"] == ctx.controls["root"] == str(S2_ROOT), "prepared root differs from S2 root")
+    require(ctx.head["evidence_directory"] == ctx.controls["evidence_directory"] == str(EVIDENCE), "evidence path differs")
+    require(ctx.head["status"] == ctx.controls["status"] == "PREPARED_NOT_RUN", "unexpected preparation status")
+    require(len(ctx.head["probes"]) == 5 and {p["module"] for p in ctx.head["probes"]} == OWNED,
+            "head manifest must cover exactly the five S2 modules")
+    require(adapter == ctx.head["preparation_adapter"] == ctx.controls["preparation_adapter"], "adapter records differ")
+    require(adapter["tool_input_sha256"] == TOOL_SHA and adapter["expected_math_modules"] == 5 and
+            adapter["request_encoding"] == "constant-AST newline/tab String parsed at runtime" and
+            adapter["proof_budgets_changed"] is False and adapter["coverage_exclusions_added"] is False,
+            "S2 preparation configuration changed")
+    raw_adapter = capture(ctx, EVIDENCE / "prepare_s2_seals.py")
+    require(sha(raw_adapter) == adapter["source_sha256"], "saved S2 preparation adapter changed")
+    require(ctx.controls["seal_manifest_sha256"] == sha((EVIDENCE / "seal-manifest.json").read_bytes()),
+            "controls are not bound to this head manifest")
+    for manifest in (ctx.head, ctx.controls):
+        for name, digest in manifest["input_sha256"].items():
+            require(Path(name).name == name, "unsafe input filename")
+            require(sha(capture(ctx, EVIDENCE / name)) == digest, f"prepared input changed: {name}")
+    tools = {}
+    for filename, digest in TOOL_SHA.items():
+        path = S2_ROOT / ".lake/ps-maintainer/gate06" / filename
+        raw = capture(ctx, path)
+        require(sha(raw) == digest and capture(ctx, EVIDENCE / "tool-inputs" / filename) == raw,
+                f"S2 configured tool differs: {filename}")
+        tools[filename] = load_pinned(path, digest, "s2_native_" + filename.replace(".", "_"))
+    ctx.bs, ctx.cb, payload = (tools[n] for n in TOOL_SHA)
+    ctx.bs.EXPECTED_MODULES = 5
+    payload.configure_builders(ctx.bs, ctx.cb)
+    ctx.library, snapshot = ctx.bs.library_snapshot(S2_ROOT, ctx.pins)  # read-only Git
+    require(snapshot == ctx.head["library_verification"] == ctx.controls["library_verification"], "library snapshot differs")
+    ctx.snapshot = snapshot
+    metadata = {name: read_json(EVIDENCE / name) for name in
+                ("modules.json", "closures.json", "source-fingerprints.json", "touched.json")}
+    ctx.bs.validate_metadata(S2_ROOT, ctx.pins, metadata["modules.json"], metadata["closures.json"],
+                             metadata["source-fingerprints.json"], metadata["touched.json"], ctx.library)
+    captured = {}
+    log, completion, warnings = ctx.bs.completed_collector(S2_ROOT, EVIDENCE, captured,
+                                        metadata["modules.json"], metadata["closures.json"])
+    require(completion == ctx.head["collector_result"] and warnings == ctx.head["warnings"], "collector completion differs")
+    for name, raw in captured.items():
+        require(capture(ctx, EVIDENCE / name) == raw, f"collector input changed: {name}")
+    _, closure_rows, _ = ctx.bs.collector_rows(log, metadata["modules.json"], metadata["closures.json"])
+    ctx.axiom_counts = verify_axiom_rows(log)
+    ctx.by_module = {p["module"]: p for p in ctx.head["probes"]}
+    for p in ctx.head["probes"]:
+        expected = [closure_rows[p["module"]][n] for n in sorted(closure_rows[p["module"]])]
+        require(p["requested_names"] == expected, f"not the full collected head closure: {p['module']}")
+        verify_whole(ctx, p, ctx.library[p["source"]])
+    require(sha(capture(ctx, CHECK_TOOL)) == CHECK_SHA, "native generic check tool changed")
+    verify_controls(ctx)
+    assert_frozen(ctx)
+    return ctx
+
+
+def assert_frozen(ctx) -> None:
+    require(ctx.bs.git(S2_ROOT, "rev-parse", "HEAD").decode().strip() == HEAD, "S2 HEAD changed")
+    paths = {p.relative_to(S2_ROOT).as_posix() for p in (S2_ROOT / "TCSlib").rglob("*.lean")} | {"TCSlib.lean"}
+    require(paths == set(ctx.library), "library source set changed")
+    for rel, raw in ctx.library.items():
+        path = S2_ROOT / rel
+        require(path.is_file() and not path.is_symlink() and path.read_bytes() == raw, f"library changed: {rel}")
+    for path, digest in ctx.inputs.items():
+        require(sha(Path(path).read_bytes()) == digest, f"consumed input/tool changed: {path}")
+
+
+def probe_path(record) -> Path:
+    path = Path(record["probe_path"])
+    require(path.is_absolute() and path.resolve().is_relative_to(SCRATCH.resolve()) and
+            path == S2_ROOT / (record["probe_module"] + ".lean") and not path.is_symlink(), "unsafe probe path/module")
+    return path
+
+
+def saved_path(record, key="saved_source") -> Path:
+    path = Path(record[key])
+    require(path.is_absolute() and path.resolve().is_relative_to(EVIDENCE.resolve()) and
+            path.is_file() and not path.is_symlink(), f"unsafe/missing evidence copy: {path}")
+    return path
+
+
+def verify_whole(ctx, p: dict, raw: bytes) -> None:
+    require(sha(raw) == p["source_sha256"], f"raw source differs: {p['label']}")
+    rows = p["requested_names"]
+    require(len(rows) == p["requested_count"] and len({r["spelling"] for r in rows}) == len(rows), "request count/identity differs")
+    require(sum(r["collector_reducibility"] == "irreducible" for r in rows) == p["collector_irreducible_count"] and
+            sum(r["collector_reducibility"] != "irreducible" for r in rows) == p["collector_active_candidate_count"], "request status counts differ")
+    generated, additions, mapping = ctx.bs.instrument(raw, ctx.bs.header(raw), p["label"], rows)
+    require(generated == capture(ctx, probe_path(p)) == capture(ctx, saved_path(p)), f"prepared probe differs: {p['label']}")
+    require(sha(generated) == p["probe_sha256"] and additions == p["insertions"] and
+            mapping == p["source_to_probe_lines"], f"probe hashes/insertion maps differ: {p['label']}")
+    require(len({r["probe_line"] for r in mapping}) == len(mapping), "ambiguous source-line map")
+
+
+def expected_control_body(ctx, p):
+    if p["case"] == "PublishedReaders":
+        return ctx.cb.POSITIVE_BODY.encode()
+    if p["case"] == "Matcher":
+        raw = capture(ctx, S2_ROOT / ctx.cb.MATCHER_SOURCE)
+        body = raw[raw.index(b"-- C10 "):raw.index(b"-- C11 ")]
+        require(sha(body) == ctx.cb.MATCHER_SHA256 == ctx.controls["matcher_control_sha256"], "matcher body changed")
+        return body
+    return ctx.cb.NEGATIVE_BODIES[p["case"]][1].encode()
+
+
+def verify_controls(ctx) -> None:
+    m = ctx.controls
+    rsa = ctx.by_module["TCSlib.Cryptography.Candidates.RSA"]
+    require(m["requested_names"] == rsa["requested_names"] and m["requested_count"] == rsa["requested_count"], "control closure is not full head RSA closure")
+    require(all(m[k] == rsa[k] for k in ("collector_active_candidate_count", "collector_irreducible_count")), "control status counts differ from head RSA")
+    require(m["positive_readers"] == ctx.cb.READERS and len(ctx.cb.READERS) == 3, "positive reader catalog differs")
+    for name, (home, matcher) in ctx.cb.REQUIRED.items():
+        row = next((r for r in m["requested_names"] if r["spelling"] == name), None)
+        require(row is not None and row["home"] == home and row["matcher"] is matcher and
+                row["collector_reducibility"] != "irreducible" and m["required_negative_targets"][name] == row,
+                f"invalid sensitivity target: {name}")
+    probes = m["probes"]
+    expected_cases = {(case, mode) for case in NEGATIVES for mode in ("Unsealed", "Sealed")} | {("PublishedReaders", "Sealed")}
+    require(len(probes) == 11 == m["expected_totals"]["probes"] and
+            {(p["case"], p["mode"]) for p in probes} == expected_cases and len({p["label"] for p in probes}) == 11,
+            "control set must be the five negative pairs and one sealed reader control")
+    for p in probes:
+        sealed = p["mode"] == "Sealed"
+        expected_errors = 1 if sealed and p["case"] in NEGATIVES else 0
+        require(p["full_closure_sealed"] is sealed and p["requested_count"] == m["requested_count"] and
+                p["expected_error_diagnostics"] == expected_errors and p["expected_harness_errors"] == 0 and
+                p["fresh_nonempty_object_required"] is (expected_errors == 0) and
+                p["expected_exit"] == ("nonzero" if expected_errors else 0) and
+                p["proof_count"] == (3 if p["case"] == "PublishedReaders" else 1), "control expectation metadata differs")
+        if p["case"] == "PublishedReaders":
+            require(set(p["readers"]) == set(ctx.cb.READERS), "positive control reader set differs")
+        else:
+            expected_target = ("Complexity.polyTimeComputable_iterateFind.match_1" if p["case"] == "Matcher" else
+                               ctx.cb.NEGATIVE_BODIES[p["case"]][0])
+            require(p["target"] == expected_target and p["anonymous_only"] is (p["case"] == "AnonymousOnly"), "negative control target/anonymous flag differs")
+        raw = capture(ctx, probe_path(p))
+        require(raw == capture(ctx, saved_path(p)) and sha(raw) == p["source_sha256"], f"control source changed: {p['label']}")
+        body = expected_control_body(ctx, p)
+        region = p["proof_region"]
+        extracted = b"".join(raw.splitlines(keepends=True)[region["start"] - 1:region["end"]])
+        require(extracted == body and ("body_sha256" not in p or sha(body) == p["body_sha256"]), f"control body/region differs: {p['label']}")
+        generated, proof_region = ctx.cb.assemble(ctx.bs, p["label"], m["audited_module"], m["requested_names"], body,
+                                               sealed=p["full_closure_sealed"])
+        require(generated == raw and proof_region == region, f"control not reproduced by configured V3 builder: {p['label']}")
+
+
+def prepare_base(ctx) -> None:
+    planned, records = [], []
+    head_hash = sha((EVIDENCE / "seal-manifest.json").read_bytes())
+    for head in ctx.head["probes"]:
+        raw = ctx.bs.git(S2_ROOT, "show", ctx.pins["base"] + ":" + head["source"])
+        require(ctx.bs.header(raw)["imports"] == head["source_imports"], f"base import list differs: {head['module']}")
+        label = "S2BaseSeal_" + f"{head['ordinal']:03d}_" + head["module"].replace(".", "_")
+        probe, additions, mapping = ctx.bs.instrument(raw, ctx.bs.header(raw), label, head["requested_names"])
+        path, saved = SCRATCH / "base-seals" / (label + ".lean"), EVIDENCE / "base-seals" / (label + ".source.txt")
+        original = saved.with_name(label + ".original.source.txt")
+        p = copy.deepcopy(head)
+        p.update({"label": label, "head_label": head["label"], "status": "PREPARED_NOT_RUN",
+                  "source_revision": ctx.pins["base"], "source_sha256": sha(raw),
+                  "source_git_blob_sha1": hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest(),
+                  "source_snapshot": str(original), "head_source_sha256": head["source_sha256"],
+                  "probe_sha256": sha(probe), "probe_path": str(path),
+                  "probe_module": path.relative_to(S2_ROOT).with_suffix("").as_posix(), "saved_source": str(saved),
+                  "insertions": additions, "source_to_probe_lines": mapping,
+                  "preamble_lines": next({"start": a["probe_start_line"], "end": a["probe_end_line"]} for a in additions if a["kind"] == "seal_preamble"),
+                  "eof_verifier_lines": next({"start": a["probe_start_line"], "end": a["probe_end_line"]} for a in additions if a["kind"] == "seal_eof_verifier"),
+                  "same_full_foreign_name_set_as_head": True, "same_imports_as_head": True,
+                  "imported_environment_revision": HEAD, "base_olean_tree_rebuilt": False})
+        records.append(p)
+        planned += [(path, probe), (saved, probe), (original, raw), (saved.with_suffix(".json"), json_bytes(p))]
+    manifest = {"status": "PREPARED_NOT_RUN", "created_utc": now(), "root": str(S2_ROOT),
+                "head": HEAD, "base": ctx.pins["base"], "library_verification": ctx.snapshot,
+                "head_manifest_sha256": head_hash, "driver_sha256": sha(Path(__file__).read_bytes()),
+                "configured_tool_sha256": TOOL_SHA, "request_encoding": "constant-AST newline/tab payload (V3)",
+                "imported_environment_revision": HEAD, "base_olean_tree_rebuilt": False,
+                "limit": "Base source only; all imported objects are the head environment, not a rebuilt base tree. Exact raw-block identity remains unchecked.",
+                "probes": records, "lean_processes_started": 0}
+    planned += [(EVIDENCE / "base-seal-manifest.json", json_bytes(manifest)),
+                (EVIDENCE / "base-seals" / "driver.source.txt", Path(__file__).read_bytes())]
+    require(len({p for p, _ in planned}) == len(planned), "duplicate base output path")
+    for path, _ in planned:
+        require(not path.exists(), f"refusing to overwrite base preparation: {path}")
+    assert_frozen(ctx)
+    for path, raw in planned:
+        write_new(path, raw)
+    print(json.dumps({"status": "PREPARED_NOT_RUN", "base_probes": 5, "base": ctx.pins["base"], "imported_environment": HEAD, "lean_processes_started": 0}), flush=True)
+
+
+def load_base(ctx):
+    path = EVIDENCE / "base-seal-manifest.json"
+    capture(ctx, path)
+    m = read_json(path)
+    require(m["status"] == "PREPARED_NOT_RUN" and m["head"] == HEAD and m["base"] == ctx.pins["base"] and
+            m["head_manifest_sha256"] == sha((EVIDENCE / "seal-manifest.json").read_bytes()) and
+            m["library_verification"] == ctx.snapshot and m["configured_tool_sha256"] == TOOL_SHA and
+            m["imported_environment_revision"] == HEAD and m["base_olean_tree_rebuilt"] is False,
+            "base manifest is not bound to these head sources/tools")
+    require(m["driver_sha256"] == sha(Path(__file__).read_bytes()) ==
+            sha(capture(ctx, EVIDENCE / "base-seals" / "driver.source.txt")), "base preparation used a different driver version")
+    require(len(m["probes"]) == 5 and {p["module"] for p in m["probes"]} == OWNED, "base probes incomplete")
+    for p in m["probes"]:
+        head = ctx.by_module[p["module"]]
+        for key in ("source", "requested_names", "requested_count", "term_names", "collector_active_candidate_count", "collector_irreducible_count"):
+            require(p[key] == head[key], f"base/head closure differs: {p['module']} {key}")
+        require(p["source_revision"] == ctx.pins["base"] and p["head_label"] == head["label"] and
+                p["head_source_sha256"] == head["source_sha256"], "base/head revision metadata differs")
+        raw = capture(ctx, saved_path(p, "source_snapshot"))
+        require(raw == ctx.bs.git(S2_ROOT, "show", ctx.pins["base"] + ":" + p["source"]), "base raw bytes differ from Git")
+        require(p["source_git_blob_sha1"] == hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest(), "base blob identity differs")
+        verify_whole(ctx, p, raw)
+    return m
+
+
+def markers(text: str, prefix: str):
+    result = []
+    for number, raw in enumerate(text.splitlines(), 1):
+        line = raw.strip()
+        info = re.fullmatch(r"[^\n]+\.lean:\d+:\d+: info: (G06-[^\n]+)", line)
+        if info:
+            line = info[1]
+        if line.startswith(prefix):
+            result.append((number, line))
+    return result
+
+
+def exact_marker(text: str, prefix: str, expected: str) -> int:
+    found = markers(text, prefix)
+    require(len(found) == 1 and found[0][1] == expected, f"invalid/missing/duplicate marker: {expected}; found={found}")
+    return found[0][0]
+
+
+def check_installation(text: str, label: str, p: dict) -> tuple[int, int]:
+    n, active, already = (p[k] for k in ("requested_count", "collector_active_candidate_count", "collector_irreducible_count"))
+    first = exact_marker(text, "G06-SEAL label=", f"G06-SEAL label={label} requested={n} active={active} already_irreducible={already} verified={n}")
+    last = exact_marker(text, "G06-SEAL-END label=", f"G06-SEAL-END label={label} requested={n} verified={n}")
+    require(first < last, "EOF marker precedes installation")
+    actual = {}
+    for line_no, line in markers(text, "G06-NAME label="):
+        match = re.fullmatch(r"G06-NAME label=(\S+) spelling=(.*?) actual=(.*?) home=(\S+) before=Lean\.ReducibilityStatus\.(\w+) installed=Lean\.ReducibilityStatus\.(\w+)", line)
+        require(match is not None, f"malformed installed-name row: {line}")
+        lab, spelling, identity, home, before, status = match.groups()
+        require(lab == label and spelling == identity and spelling not in actual and status == "irreducible" and line_no < first,
+                f"invalid/duplicate actual-name row: {line}")
+        actual[spelling] = (home, before)
+    expected = {r["spelling"]: (r["home"], r["collector_reducibility"]) for r in p["requested_names"]}
+    require(actual == expected, "installed actual-name rows do not cover the exact full head name set")
+    return first, last
+
+
+def diagnostics(text: str, pattern=ERROR_RE):
+    return [{"path": m[1].strip(), "probe_line": int(m[2]), "probe_column": int(m[3]),
+             "error_code": m[4] or None, "message": m[5].strip(), "log_line": text.count("\n", 0, m.start()) + 1}
+            for m in pattern.finditer(text)]
+
+
+def source_commands(ctx, raw: bytes):
+    prefix, frames, commands = [], [], []
+    for line_no, line in enumerate(ctx.bs.blank_comments_strings(raw.decode()).splitlines(), 1):
+        if not line or line[0].isspace():
+            continue
+        namespace = re.fullmatch(r"namespace\s+(\S+)\s*", line)
+        section = re.fullmatch(r"(?:noncomputable\s+)?section(?:\s+\S+)?\s*", line)
+        end = re.fullmatch(r"end(?:\s+\S+)?\s*", line)
+        match = DECL_RE.match(line)
+        if namespace:
+            frames.append(prefix.copy())
+            name = namespace[1]
+            prefix = name.removeprefix("_root_.").split(".") if name.startswith("_root_.") else prefix + name.split(".")
+        elif section:
+            frames.append(prefix.copy())
+        elif end and frames:
+            prefix = frames.pop()
+        if match:
+            mods, kind, rest = match.groups()
+            named = re.match(r"\s+([^\s(:{\[]+)", rest)
+            name = named[1] if named else f"<anonymous {kind} @{line_no}>"
+            qualified = name.removeprefix("_root_.") if name.startswith("_root_.") else ".".join(prefix + [name])
+            commands.append({"declaration_start": line_no, "kind": kind, "source_name": name,
+                             "qualified_source_name": qualified, "private": "private" in mods.split(),
+                             "name_identity_limit": "source spelling, not an elaborated/generated Lean.Name"})
+        elif namespace or section or end or COMMAND_RE.match(line):
+            commands.append({"declaration_start": line_no, "kind": "source-command", "source_name": line.split()[0],
+                             "qualified_source_name": None, "private": False})
+    return commands
+
+
+def source_location(commands, line: int):
+    return next((c for c in reversed(commands) if c["declaration_start"] <= line),
+                {"declaration_start": 0, "kind": "unknown", "source_name": "unknown", "qualified_source_name": None})
+
+
+def invoke(ctx, p: dict, out: Path):
+    assert_frozen(ctx)
+    path = probe_path(p)
+    expected_sha = p.get("probe_sha256", p.get("source_sha256"))
+    raw = path.read_bytes()
+    require(sha(raw) == expected_sha and raw == Path(p["saved_source"]).read_bytes(), "probe changed before native check")
+    attempt = out / "attempts" / p["label"]
+    attempt.mkdir(parents=True, exist_ok=False)
+    print(f"S2 NATIVE START {p['label']}", flush=True)
+    proc = subprocess.run([sys.executable, "-I", str(CHECK_TOOL), str(attempt), p["probe_module"], p["label"]],
+                          cwd=S2_ROOT, capture_output=True, text=True, check=False)
+    write_new(attempt / "launcher.log", (proc.stdout + proc.stderr).encode())
+    assert_frozen(ctx)
+    log_path, result_path = attempt / (p["label"] + ".log"), attempt / (p["label"] + ".json")
+    base = {"label": p["label"], "attempt_log": str(log_path), "attempt_result": str(result_path),
+            "head_before_and_after": HEAD, "launcher_returncode": proc.returncode, "warnings": []}
+    try:
+        result_raw, log_raw = result_path.read_bytes(), log_path.read_bytes()
+        result = json.loads(result_raw, object_pairs_hook=unique_object)
+        require(isinstance(result, dict), "generic checker result is not an object")
+        text = log_raw.decode()
+        base.update({"result": result, "errors": diagnostics(text), "warnings": diagnostics(text, WARNING_RE),
+                     "result_json_sha256": sha(result_raw), "log_sha256": sha(log_raw), "captured_probe_sha256": sha(raw)})
+        require(result["module"] == p["probe_module"] and result["label"] == p["label"] and
+                result["source_sha256"] == expected_sha and result["source_unchanged"] is True and
+                proc.returncode == result["rc"] and result["rc"] in (0, 1), "generic checker result/exit/source differs")
+        require((attempt / (p["label"] + ".source.txt")).read_bytes() == raw == path.read_bytes(), "captured/current probe differs")
+        require(re.findall(r"(?m)^START (\S+)\s*$", text) == [result["start"]] and
+                re.findall(r"(?m)^SOURCE_SHA256 ([0-9a-f]{64})\s*$", text) == [expected_sha] and
+                re.findall(r"(?m)^END (\S+) RC (-?\d+)\s*$", text) == [(result["end"], str(result["rc"]))] and
+                text.rstrip().endswith("RC " + str(result["rc"])), "completion/footer/source markers differ")
+        require(len(base["errors"]) == result["error_diagnostics"], "coded/ordinary diagnostic counts differ")
+        require("G06-HARNESS " not in text and "G06-CONTROL-HARNESS " not in text, "explicit harness failure in log")
+        for error in base["errors"]:
+            require((S2_ROOT / error["path"]).resolve() == path.resolve(), "diagnostic belongs to a dependency/other file")
+        if result["rc"] == 0:
+            require(not base["errors"] and result["fresh_nonempty_object"] is True, "rc0 lacks a fresh error-free result")
+            oleans = Path("/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/oleans-s2-final")
+            obj = oleans / (p["probe_module"] + ".olean")
+            started = dt.datetime.fromisoformat(result["start"]).timestamp()
+            require(obj.is_file() and obj.stat().st_size > 0 and sha(obj.read_bytes()) == result["object_sha256"] and
+                    obj.stat().st_mtime >= started, "native object is missing, stale, or changed")
+        else:
+            require(base["errors"] and result["fresh_nonempty_object"] is False and result["object_sha256"] is None,
+                    "rc1 is not a located Lean failure")
+        return base, text
+    except (DriverError, OSError, KeyError, ValueError) as error:
+        base.update({"valid_harness": False, "classification": "HARNESS_OR_SETUP_FAILURE", "harness_reason": str(error)})
+        return base, None
+
+
+def fresh_run(ctx, kind: str, run_id: str) -> Path:
+    require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", run_id) is not None, "unsafe run id")
+    out = EVIDENCE / kind / run_id
+    require(not out.exists(), f"never overwrite an attempt/run directory: {out}")
+    assert_frozen(ctx)
+    out.mkdir(parents=True)
+    write_new(out / "driver.source.txt", Path(__file__).read_bytes())
+    write_new(out / "input-pins.json", json_bytes({"head": HEAD, "base": ctx.pins["base"], "inputs": ctx.inputs,
+              "library_verification": ctx.snapshot, "axiom_rows_standard_only": ctx.axiom_counts,
+              "check_tool_sha256": CHECK_SHA, "created_utc": now()}))
+    return out
+
+
+def run_seals(ctx, run_id: str) -> None:
+    base_manifest = load_base(ctx)
+    out = fresh_run(ctx, "native-seal-runs", run_id)
+    records = []
+    for role, probes in (("Head", ctx.head["probes"]), ("Base", base_manifest["probes"])):
+        for p in probes:
+            raw = ctx.library[p["source"]] if role == "Head" else Path(p["source_snapshot"]).read_bytes()
+            verify_whole(ctx, p, raw)
+            raw_save = out / "original-sources" / (p["label"] + ".source.txt")
+            write_new(raw_save, raw)
+            record, text = invoke(ctx, p, out)
+            record.update({"role": role, "module": p["module"], "source_sha256": sha(raw), "raw_source": str(raw_save),
+                           "imported_environment_revision": HEAD, "base_olean_tree_rebuilt": False,
+                           "raw_block_identity": "NOT_CHECKED"})
+            if text is not None:
+                try:
+                    check_installation(text, p["label"], p)
+                    inverse = {r["probe_line"]: r["source_line"] for r in p["source_to_probe_lines"]}
+                    starts = source_commands(ctx, raw)
+                    for error in record["errors"]:
+                        require(error["probe_line"] in inverse, "error is in inserted harness, not original source")
+                        line = inverse[error["probe_line"]]
+                        error.update({"source_line": line, **source_location(starts, line),
+                                      "classification": "SOURCE_FAILURE_REQUIRES_SOURCE_AND_BASE_REVIEW"})
+                    record.update({"valid_harness": True, "source_failure": bool(record["errors"]),
+                                   "classification": "SOURCE_FAILURE_REQUIRES_REVIEW" if record["errors"] else "SEALED_SOURCE_ELABORATED"})
+                except DriverError as error:
+                    record.update({"valid_harness": False, "classification": "HARNESS_OR_SETUP_FAILURE", "harness_reason": str(error)})
+            records.append(record)
+            write_new(out / (p["label"] + ".classification.json"), json_bytes(record))
+            print(f"S2 SEAL {role} {p['module']} {record['classification']}", flush=True)
+    comparisons = []
+    for module in sorted(OWNED):
+        pair = {r["role"]: r for r in records if r["module"] == module}
+        names = lambda role: sorted({(e.get("kind", "unknown"), e.get("qualified_source_name") or e.get("source_name", "unknown"))
+                                     for e in pair[role].get("errors", []) if "source_line" in e})
+        head_names, base_names = set(names("Head")), set(names("Base"))
+        both_valid = pair["Head"]["valid_harness"] and pair["Base"]["valid_harness"]
+        comparisons.append({"module": module, "head_valid_harness": pair["Head"]["valid_harness"],
+                            "base_valid_harness": pair["Base"]["valid_harness"],
+                            "head_failure_spellings": sorted(head_names), "base_failure_spellings": sorted(base_names),
+                            "both": sorted(head_names & base_names), "head_only": sorted(head_names - base_names),
+                            "base_only": sorted(base_names - head_names), "raw_block_identity": "NOT_CHECKED",
+                            "comparison_valid": both_valid,
+                            "classification": "SPELLING_COMPARISON_ONLY_NO_FAILURE_IS_EXEMPT" if both_valid else
+                                              "INVALID_HARNESS_NO_BASELINE_COMPARISON"})
+    all_harnesses_valid = all(r["valid_harness"] for r in records)
+    write_new(out / "summary.json", json_bytes({"head": HEAD, "base": ctx.pins["base"], "results": records,
+              "status": "COMPLETED_VALID_HARNESSES_SOURCE_REVIEW_PENDING" if all_harnesses_valid else "COMPLETED_WITH_HARNESS_FAILURES",
+              "comparisons": comparisons, "valid_harnesses": sum(r["valid_harness"] for r in records),
+              "harness_failures": sum(not r["valid_harness"] for r in records),
+              "source_error_diagnostics": sum(len(r.get("errors", [])) for r in records if r["valid_harness"]),
+              "raw_block_identity_checked": False, "touched_failure_attestation": "NOT_YET_RECONCILED",
+              "imported_environment_revision": HEAD, "base_olean_tree_rebuilt": False,
+              "limit": "Every source failure requires review; source-name overlap is not proof of identical raw blocks or an exemption. No merge clearance."}))
+    require(all_harnesses_valid, f"native seal run retained harness failures; see {out / 'summary.json'}")
+
+
+def run_controls(ctx, run_id: str) -> None:
+    out = fresh_run(ctx, "native-control-runs", run_id)
+    records, m = [], ctx.controls
+    for p in m["probes"]:
+        record, text = invoke(ctx, p, out)
+        record.update({"case": p["case"], "mode": p["mode"], "expected_outcome": False})
+        if text is not None:
+            try:
+                n, readers = m["requested_count"], len(m["positive_readers"])
+                before = exact_marker(text, "G06-CONTROL-CATALOG label=", f"G06-CONTROL-CATALOG label={p['label']} phase=before requested={n} verified={n} readers={readers}") if p["full_closure_sealed"] else None
+                if not p["full_closure_sealed"]:
+                    catalog = markers(text, "G06-CONTROL-CATALOG label=")
+                    require([line for _, line in catalog] == [f"G06-CONTROL-CATALOG label={p['label']} phase={phase} requested={n} verified={n} readers={readers}" for phase in ("before", "after")], "unsealed before/after catalogs differ")
+                    before, after = catalog[0][0], catalog[1][0]
+                    require(not markers(text, "G06-SEAL label=") and not markers(text, "G06-SEAL-END label=") and not markers(text, "G06-NAME label="), "unsealed control unexpectedly installs a seal")
+                else:
+                    installed, after = check_installation(text, p["label"], m)
+                    require(before < installed, "seal precedes catalog")
+                begin = exact_marker(text, "G06-CONTROL-BODY-BEGIN ", "G06-CONTROL-BODY-BEGIN " + p["label"])
+                end = exact_marker(text, "G06-CONTROL-BODY-END ", "G06-CONTROL-BODY-END " + p["label"])
+                require(before < begin < end < after, "catalog/body/end marker ordering differs")
+                if p["full_closure_sealed"]:
+                    require(installed < begin, "control body precedes complete seal installation")
+                expected = 1 if p["case"] in NEGATIVES and p["mode"] == "Sealed" else 0
+                require(p["expected_error_diagnostics"] == expected and len(record["errors"]) == expected, "control diagnostic count differs")
+                if expected:
+                    require(record["result"]["rc"] == 1 and len(record["errors"]) == 1 and
+                            record["errors"][0]["probe_line"] in p["proof_region"]["rfl_lines"] and
+                            begin < record["errors"][0]["log_line"] < end, "negative failure is not its sole body proof error")
+                else:
+                    require(record["result"]["rc"] == 0 and record["result"]["fresh_nonempty_object"], "unsealed/reader positive did not pass")
+                record.update({"valid_harness": True, "expected_outcome": True, "classification": "CONTROL_VERIFIED"})
+            except DriverError as error:
+                record.update({"valid_harness": False, "classification": "HARNESS_OR_CONTROL_FAILURE", "harness_reason": str(error)})
+        records.append(record)
+        write_new(out / (p["label"] + ".classification.json"), json_bytes(record))
+        print(f"S2 CONTROL {p['label']} {record['classification']}", flush=True)
+    valid = len(records) == 11 and all(r["valid_harness"] and r["expected_outcome"] for r in records)
+    write_new(out / "summary.json", json_bytes({"head": HEAD, "controls": records, "all_controls_verified": valid,
+              "status": "ALL_CONTROLS_VERIFIED" if valid else "CONTROLS_NOT_VERIFIED",
+              "anonymous_sensitivity_verified": valid, "matcher_sensitivity_verified": valid, "published_readers_verified": valid,
+              "harness_or_control_failures": sum(not r["valid_harness"] for r in records),
+              "unsealed_negative_passes": sum(r["expected_outcome"] and r["case"] in NEGATIVES and r["mode"] == "Unsealed" for r in records),
+              "sealed_negative_failures": sum(r["expected_outcome"] and r["case"] in NEGATIVES and r["mode"] == "Sealed" for r in records),
+              "sealed_positive_passes": sum(r["expected_outcome"] and r["case"] == "PublishedReaders" for r in records),
+              "limit": "Sensitivity of this exact full closure only; harness failures never count as proof sensitivity or a library pass."}))
+    require(valid, f"control run retained invalid/unexpected results; see {out / 'summary.json'}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("prepare-base", "run-seals", "run-controls"))
+    parser.add_argument("--run-id", default="r1", help="fresh output directory name; existing attempts are never overwritten")
+    args = parser.parse_args()
+    ctx = load_context()
+    if args.command == "prepare-base":
+        prepare_base(ctx)
+    elif args.command == "run-seals":
+        run_seals(ctx, args.run_id)
+    else:
+        run_controls(ctx, args.run_id)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (DriverError, OSError, KeyError, ValueError, subprocess.CalledProcessError) as error:
+        print(f"S2-SEAL-DRIVER-FAIL: {error}", file=sys.stderr, flush=True)
+        sys.exit(1)

@@ -1,0 +1,111 @@
+{
+  "status": "INITIAL_R1_REVIEW_FROZEN",
+  "severity_counts": {
+    "blockers": 0,
+    "majors": 0,
+    "minors": 2
+  },
+  "verdict": "Correct two namespace wording minors before release; no other material release defect identified.",
+  "findings": [
+    {
+      "id": "R1-01",
+      "severity": "minor",
+      "path": "brief.md",
+      "line": 91,
+      "text": "Sampling.two_pow_size_le_two_mul should use exact TCSlib.Cryptography.two_pow_size_le_two_mul plus file label."
+    },
+    {
+      "id": "R1-02",
+      "severity": "minor",
+      "path": "brief.md",
+      "line": 101,
+      "text": "Sampling.abs_uexp_sub_le should use exact TCSlib.Cryptography.abs_uexp_sub_le plus file label."
+    }
+  ],
+  "source_ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "pack": {
+    "manifest_sha256": "f5fcea533fa3e11688c4f9944b9912dfc4e5a1ae0e1491454f0d253bb42ec70d",
+    "sha256sums_sha256": "a289a58e622137c77554ba529424f5a9290f73658189402a348b544b1c9624c1",
+    "files": 299,
+    "bytes": 17732120,
+    "manifest_leaves": 297,
+    "checksum_rows": 298,
+    "safe_unique_contained_paths": true,
+    "no_symlinks": true,
+    "all_hashes_match": true
+  },
+  "key_files": {
+    "ANCESTOR.txt": {
+      "bytes": 41,
+      "sha256": "084d2a7916c4c6edfe65c377b88d0884bc07d38b16bf0f9fe7441f991c47fb3a"
+    },
+    "README.md": {
+      "bytes": 2139,
+      "sha256": "3b979e816c40d40976bdf326850ecd705240bc6275ff879ed740e55131c7e69e"
+    },
+    "brief.md": {
+      "bytes": 39322,
+      "sha256": "a2bed382bde21bcc42894e8cb7836dc0509d6ee1590ec3fc0e5b7a4e5d7d54d5"
+    },
+    "public-exceptions.md": {
+      "bytes": 19350,
+      "sha256": "595375a2d0b5446e5332bbc0f08d2e6769383cef273dc3b61f8b19c7245e2583"
+    },
+    "fill-environment-addendum.md": {
+      "bytes": 10814,
+      "sha256": "5f422c46898bc2cce618720448b2e9352f1f4a4f8f512a84b0237ed007d5c577"
+    },
+    "inputs/DELIVERY-MANIFEST.json": {
+      "bytes": 9223,
+      "sha256": "994c8dc040cee2d4af24f20bcbe92b371e8a716ae041ccefe0f225980f51e168"
+    },
+    "inputs/INPUTS-MANIFEST.json": {
+      "bytes": 11253,
+      "sha256": "31252c0581393430bac7114751383e22ddab0cc63cbdba1af3da09b648218fb5"
+    },
+    "environment-tools/MANIFEST.json": {
+      "bytes": 984,
+      "sha256": "400064239a21121755fa5791c6d66c9776be5d13abeb2c7f99a4d327e01e6cf8"
+    },
+    "environment-tools/RUNBOOK.md": {
+      "bytes": 7368,
+      "sha256": "4102e174171f787bbc56ec497140b6a3272937ff1fc0ad23a25f5c2783fc6f55"
+    },
+    "environment-tools/prepare_pfr.py": {
+      "bytes": 6172,
+      "sha256": "650edf1d270d5e130a926a5840fead75ba9888e12684f2f38451af91ad769b8f"
+    },
+    "environment-tools/pfr_lean.py": {
+      "bytes": 2404,
+      "sha256": "41fda9565be3f77462fe6f2f7b55b798c5bf34fbbc400a648f77e000eb36636d"
+    },
+    "environment-tools/PFRIdentityProbe.source.txt": {
+      "bytes": 2918,
+      "sha256": "8b539d107e9ac09cb86825f1411e8942dd8e0386ff4d2bfc6353f74d379ae575"
+    },
+    "external-bootstrap-r1/DELIVERY-MANIFEST.json": {
+      "bytes": 2956,
+      "sha256": "70dd1a408a2c0c46af7ab2da50ff50520b26b2983e298492935008debb1a2cbd"
+    },
+    "preship/pfr/STATUS.json": {
+      "bytes": 1305,
+      "sha256": "135fb3a945855067cc756c7a63a603f3592c2a858cb0bd2a0898966d26d0115b"
+    },
+    "preship/interface/MANIFEST.json": {
+      "bytes": 2076,
+      "sha256": "b606703745fee368f53b1aa552d2bbd8ed7834e6d363c69566482123d2e6ccc3"
+    },
+    "reviews/adapter-guards/SUMMARY.json": {
+      "bytes": 12062,
+      "sha256": "e6aac623b7f664328172cfa4506ea307cdbda15772c1fc6650126299baf44862"
+    }
+  },
+  "PFR_native_status": "NOT_RUN/host-deferred; worker checkpoint0 required",
+  "validation_sha256_pending": "external review checksums bind final outputs",
+  "limitations": [
+    "No supplied program, Lean/native/cache/build/app executed. Own file/hash/data checks only.",
+    "Frozen26-group source/input validation was not rerun; exact immutable input bytes and prior review pins preserved.",
+    "Control fixtures contain intentional invalid manifests as data; operative manifests verified separately.",
+    "No source/pack/main/exchange/Git mutation."
+  ]
+}

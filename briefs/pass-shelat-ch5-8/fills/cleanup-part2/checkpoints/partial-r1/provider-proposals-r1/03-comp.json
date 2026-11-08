@@ -1,0 +1,61 @@
+{
+  "status": "MAINTAINER_PROPOSAL_ONLY_UNAPPLIED_UNCOMPILED",
+  "not_worker_scope_expansion_or_ruling": true,
+  "independent_patch_against_immutable_partial_source": true,
+  "does_not_include_previous_provider_patches": true,
+  "source_ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "reported_worker_head": "03ead73ab38e74621800367c072f6fd3f0f70991",
+  "source_path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-review-2026-11-08/partial-r1/payload/src/TCSlib/Complexity/ClassNP/PolyTime.lean",
+  "repository_path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+  "declaration": "Complexity.PolyTimeComputable.comp",
+  "source_line": 161,
+  "source_sha256": "1e79bd74264f41adfdec3c624da06e84fb78aefb72d52f7e7670e64a1e25a50f",
+  "proposed_result_sha256": "548f76d530ba879d0ba1ebf0a09f2077fa8ec80a51f385a03518add2b980a445",
+  "patch_sha256": "856e84a01911fd3d1bbf0c4fc9f98f339cf6ba0368b37c096be7f472141ce1a0",
+  "header_sha256": "f09b93270ac29c4926b3c95067e074a9f8246c1011364f1214c5b2aa10e93501",
+  "old_block_sha256": "9ad0eb2feecdbc94b86e5171c084d3cca149671abae8e04e64794d4c4c4d01cb",
+  "new_block_sha256": "81c1085145c2cfb32e88b4b52a2d2173455eee3bd7129921c52a0912ca02733c",
+  "declaration_doc_context_sha256": "e14a6b84d12cb3549e8bc826bdf65a80c431bb3c6b6ce340747d1a6b9a5e2cf0",
+  "quantitative_witness_source": "M, a * (C + C' * (C + 1) ^ c' + 1), max c (c * c')",
+  "arithmetic_bound_source": "  exact comp_time_bound a C c C' c' x.length",
+  "reader": {
+    "name": "Turing.FinTM.computesFunInTime_iff",
+    "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-review-2026-11-08/partial-r1/payload/src/TCSlib/Complexity/TuringMachine/Finite.lean",
+    "source_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+    "lines": [
+      289,
+      292
+    ]
+  },
+  "worker_permission_boundary": {
+    "role": "PROVIDER_ONLY",
+    "exact_role_wording": "Solely add public equation/iff/field/run reader lemmas beside existing owned definitions, with formula docstrings; no existing definition, theorem statement, proof or algorithm changes.",
+    "role_manifest_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/fills/cleanup-part2/issued-r1/inputs/role-manifest.json",
+    "role_manifest_sha256": "6e9a80b270fe3459f54f38a2a2412c3e29fe64a7bf0a4ca64951e3e3157736a2",
+    "public_exceptions_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/fills/cleanup-part2/issued-r1/public-exceptions.md",
+    "public_exceptions_sha256": "595375a2d0b5446e5332bbc0f08d2e6769383cef273dc3b61f8b19c7245e2583",
+    "rule": "X12 permits only new ordinary readers in provider-only files, freezing every existing theorem proof/header/data algorithm. No enumerated exception authorizes this provider proof edit for the worker.",
+    "consequence": "This is separate maintainer reviewable proposal data, not a worker role expansion or application authorization; the immutable delivery and local consumer/API fixes remain unchanged."
+  },
+  "change": "Construct the result ComputesFunInTime using iff.mpr and read hM using iff.mp before its unchanged pointwise monotonicity bound. Passing hf/hg as intact computation contracts to the existing composition theorem is retained; no hypothesis is applied as a function without a reader.",
+  "scope_checks": {
+    "exactly_one_existing_tactic_block_modified": true,
+    "no_new_tactic_block": true,
+    "complete_header_unchanged": true,
+    "witnesses_and_quantitative_coefficient_exponent_unchanged": true,
+    "arithmetic_bound_proof_unchanged": true,
+    "all_other_source_and_proof_bytes_unchanged": true,
+    "imports_and_data_algorithms_unchanged": true,
+    "direct_admissions_unchanged_no_new_sorry_admit_axiom": true,
+    "payload_unchanged": true,
+    "previous_proposals_unchanged": true,
+    "frozen_reviews_unchanged": true,
+    "worker_permission_not_expanded": true
+  },
+  "validation_limits": [
+    "No Lean/native/cache/build/apps command or supplied program execution.",
+    "No source/payload/main/exchange/Git mutation.",
+    "No compiled/sealed/axiom-census result asserted.",
+    "Exactly this existing proof block is proposed; old hmono tactic block is unchanged."
+  ]
+}

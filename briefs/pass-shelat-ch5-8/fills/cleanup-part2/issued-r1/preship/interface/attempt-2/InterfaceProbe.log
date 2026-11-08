@@ -1,0 +1,42 @@
+@PolyTimeComputable.comp' : ∀ {g f : List Bool → List Bool},
+  PolyTimeComputable g → PolyTimeComputable f → PolyTimeComputable fun x => g (f x)
+@PolyTimeComputable.congr : ∀ {f g : List Bool → List Bool},
+  PolyTimeComputable f → (∀ (x : List Bool), f x = g x) → PolyTimeComputable g
+NUPPT.coinLen_eq : ∀ (A : NUPPT) (n : ℕ), A.coinLen n = A.coins.eval n
+NUPPT.advInput_eq : ∀ (n : ℕ) (y : List Bool), NUPPT.advInput n y = Turing.pairEncode (List.replicate n true) y
+NUPPT.runAtL_eq : ∀ (A : NUPPT) (n : ℕ) (y r : List Bool),
+  A.runAtL n y r = A.output (Turing.pairEncode (Turing.pairEncode (NUPPT.advInput n y) (A.advice n)) r)
+StateLoop.orbit_zero : ∀ (start step : List Bool → List Bool) (x : List Bool), StateLoop.orbit start step x 0 = start x
+polyTimeComputable_headD : PolyTimeComputable fun w => [w.headD false]
+polyTimeComputable_tail : PolyTimeComputable fun w => List.drop 1 w
+polyTimeComputable_isNil : PolyTimeComputable fun w => [decide (w = [])]
+@polyTimeComputable_not : ∀ {p : List Bool → Bool},
+  (PolyTimeComputable fun x => [p x]) → PolyTimeComputable fun x => [!p x]
+@polyTimeComputable_or : ∀ {p q : List Bool → Bool},
+  (PolyTimeComputable fun x => [p x]) → (PolyTimeComputable fun x => [q x]) → PolyTimeComputable fun x => [p x || q x]
+@polyTimeComputable_stateFind : ∀ {start step : List Bool → List Bool} {acc : List Bool → Bool}
+  {out : List Bool → List Bool},
+  PolyTimeComputable start →
+    PolyTimeComputable step →
+      (PolyTimeComputable fun w => [acc w]) →
+        PolyTimeComputable out →
+          ∀ (R B : PolyExpr) (N : List Bool → ℕ),
+            (∀ (x : List Bool), N x ≤ R.eval x.length) →
+              (∀ (x : List Bool), ∀ i ≤ N x, (StateLoop.orbit start step x i).length ≤ B.eval x.length) →
+                (∀ (x : List Bool), ∀ i < N x, acc (Turing.pairEncode x (StateLoop.orbit start step x i)) = false) →
+                  (∀ (x : List Bool), acc (Turing.pairEncode x (StateLoop.orbit start step x (N x))) = true) →
+                    PolyTimeComputable fun x => out (Turing.pairEncode x (StateLoop.orbit start step x (N x)))
+@HardcoreBit.pushesUniform_restrict : ∀ {I : Type u_1} {J : Type u_2} {O : Type u_3} [inst : Fintype I]
+  [inst_1 : DecidableEq I] [inst_2 : Fintype J] [inst_3 : DecidableEq J] [inst_4 : Fintype O] [Nonempty O] {r : J → I},
+  Function.Injective r → HardcoreBit.PushesUniform fun R j => R (r j)
+decodeOracleMove_pairEncode_false : ∀ (ℓ₁ : ℕ) (x : List Bool),
+  decodeOracleMove ℓ₁ (Turing.pairEncode [false] x) =
+    match decodeFin ℓ₁ x with
+    | some y => OracleMove.query y
+    | none => OracleMove.ret false
+decodeOracleMove_true_two : ∀ (ℓ₁ : ℕ) (b : Bool), decodeOracleMove ℓ₁ [true, b] = OracleMove.ret b
+@Function.comp_apply : ∀ {β : Sort u_1} {δ : Sort u_2} {α : Sort u_3} {f : β → δ} {g : α → β} {x : α},
+  (f ∘ g) x = f (g x)
+@List.drop_one : ∀ {α : Type u_1} {l : List α}, List.drop 1 l = l.tail
+'CleanupPart2Probe.coinLengthReader' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CleanupPart2Probe.orbitZeroReader' does not depend on any axioms

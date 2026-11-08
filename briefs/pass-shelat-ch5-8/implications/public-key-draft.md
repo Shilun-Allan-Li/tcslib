@@ -83,7 +83,7 @@ Sources: `Asymptotic/HardCoreCollection.lean:92`, `:489`, `:498` and
 `Asymptotic/PublicKey.lean:1059`; [PS10, Theorems 87.3 and 104.4]. This is a useful generic
 API on its actual domain, not an RSA instantiation.
 
-## Exact CPA bridge: waiting on Gate 06C
+## Exact CPA bridge: statement-gated, proof still missing
 
 `BitPublicKeyScheme.exists_padBound` supplies L, its ciphertext padding bound and
 `1 ≤ L.eval n`; then `hS.padded_cpa L hL hmsg` supplies the CPA claim for
@@ -92,7 +92,7 @@ route. These remain supporting APIs; the catalog theorem should start from its a
 set and end at the chosen primitive.
 
 `BitPublicKeyScheme.SingleBitSecure.padded_cpa` is an admission on the integration branch.
-Its statement gate and fill precede any claim of a completed exact CPA implication. The
+Gate06C is now closed at the frozen statement source; its admitted bridge still needs a fill before any claim of a completed exact CPA implication. The
 many-message endpoint still needs its precise game and a checked lifting in that model.
 
 ## Concrete assumptions: index their actual current endpoints
@@ -111,9 +111,10 @@ parameterized. The documented per-index-width/bounded-length version is not form
 
 A smaller proposed normalization route is now in `normalization-design.md`: run RSA at n+2
 and Blum Rabin at n+3, so their widths become exact polynomials. Existing machine-level
-parameter-change APIs are available, but collection construction, one-wayness transport,
-negligible-shift closure and candidate-home width readers are not yet proved. This is a
-source-level design, not a completed bridge or a new catalog tier.
+parameter-change APIs and the existing `Negligible.comp_of_le` closure theorem are available.
+Collection construction, one-wayness transport and candidate-home width readers remain missing;
+the general negligibility theorem needs relocation to Foundations for the lower-layer use.
+This is a source-level design, not a completed bridge or a new catalog tier.
 
 **Do not declare a candidate-level theorem by adding that impossible premise.** A future
 normalization or generalized padding construction must have a real public contract and proof.

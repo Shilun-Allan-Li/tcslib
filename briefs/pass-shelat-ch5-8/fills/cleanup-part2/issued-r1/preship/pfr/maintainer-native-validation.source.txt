@@ -1,0 +1,190 @@
+"""Local maintainer runner; all native module checks use lean_check_tree.sh.
+
+Usage: python3 -I native_validation.py cache|cache-probe|bootstrap [rN]
+The external delivery uses prepare_pfr.py/pfr_lean.py portably; this runner also
+records this Mac's measurements and prior same-chat-tree provenance separately.
+"""
+from pathlib import Path
+import datetime
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+
+CLONE = Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4')
+PREP = Path(__file__).resolve().parent.parent
+SUPPLEMENT = PREP / 'external-bootstrap-r1'
+ATTEMPT = sys.argv[2] if len(sys.argv) == 3 else 'r1'
+assert len(sys.argv) in [2, 3] and re.fullmatch(r'r[1-9][0-9]*', ATTEMPT)
+OUT = CLONE / ('.lake/ps-maintainer/cleanup-part2-prep/pfr-native-' + ATTEMPT)
+TREE = CLONE / '.lake/ps-maintainer/oleans-s2-final'
+TOOLS = Path(__file__).resolve().parent
+
+
+def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def dump(path, obj): path.write_text(json.dumps(obj, indent=2) + '\n')
+
+
+def bindings():
+    paths = [CLONE/'lean-toolchain', CLONE/'lake-manifest.json', CLONE/'scripts/lean_check_tree.sh',
+             *(TOOLS/n for n in ['prepare_pfr.py', 'pfr_lean.py', 'native_validation.py', 'PFRIdentityProbe.source.txt']),
+             *(SUPPLEMENT/n for n in ['DELIVERY-MANIFEST.json', 'ordered-modules.json', 'bootstrap-order.txt',
+                 'package-bindings.json', 'mathlib-direct-roots.txt', 'mathlib-full-union-roots.txt'])]
+    return [{'path': str(p), 'bytes': p.stat().st_size, 'sha256': sha(p)} for p in paths]
+
+
+def ensure_idle():
+    found = {}
+    for name in ['lean', 'lake']:
+        r = subprocess.run(['pgrep', '-x', name], capture_output=True, text=True)
+        assert r.returncode in [0, 1], (name, r.stderr)
+        if r.returncode == 0: found[name] = r.stdout.split()
+    if found:
+        print(json.dumps({'status': 'DEFER_NATIVE_HOST_BUSY', 'process_ids': found}), flush=True)
+        raise SystemExit(75)
+
+
+def env():
+    e = dict(os.environ)
+    e['PATH'] = str(Path.home() / '.elan/bin') + ':' + e['PATH']
+    e['TCSLIB_OLEANS'] = str(TREE)
+    return e
+
+
+def run(label, command, environment):
+    log_path = OUT / (label + '.log')
+    assert not log_path.exists(), 'Keep all attempts; choose a new label for retry'
+    start = now(); begin = time.monotonic()
+    with log_path.open('wb') as log:
+        p = subprocess.Popen(command, cwd=CLONE, env=environment, stdin=subprocess.DEVNULL,
+                             stdout=log, stderr=subprocess.STDOUT)
+        (OUT / (label + '.pid')).write_text(str(p.pid) + '\n')
+        rc = p.wait()
+    raw = log_path.read_text()
+    result = {'label': label, 'start_utc': start, 'end_utc': now(), 'elapsed_seconds': time.monotonic()-begin,
+              'return_code': rc, 'command': command, 'cwd': str(CLONE), 'log_sha256': sha(log_path),
+              'error_diagnostics': len(re.findall(r'\berror(?:\([^)]*\))?:', raw))}
+    matches = re.findall(r'^\s*(\d+)\s+maximum resident set size\s*$', raw, re.M)
+    result['peak_rss_bytes'] = int(matches[-1]) if matches else None
+    dump(OUT / (label + '.json'), result)
+    print(json.dumps({k: result[k] for k in ['label', 'return_code', 'elapsed_seconds', 'error_diagnostics']}), flush=True)
+    if rc != 0 or result['error_diagnostics']:
+        print(raw[-12000:], flush=True)
+        raise SystemExit(rc or 1)
+    return result
+
+
+def cache():
+    ensure_idle()
+    e = env()
+    # Configuration validates every present package before any Lake command.
+    real = Path.home() / '.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean'
+    subprocess.run(['python3', '-I', str(TOOLS/'prepare_pfr.py'), str(CLONE), str(TREE),
+                    str(SUPPLEMENT), str(OUT/'runtime'), str(real)], check=True)
+    cfg = json.loads((OUT/'runtime/config.json').read_text())
+    snapshot = bindings()
+    dump(OUT/'binding-snapshot.json', snapshot)
+    pressure = subprocess.check_output(['memory_pressure', '-Q'], text=True)
+    total = int(subprocess.check_output(['sysctl', '-n', 'hw.memsize'], text=True))
+    fraction = int(re.search(r'free percentage:\s*(\d+)%', pressure).group(1))
+    proxy = total * fraction // 100
+    fs = os.statvfs(CLONE)
+    free = fs.f_frsize * fs.f_bavail
+    store = Path(os.environ.get('XDG_CACHE_HOME', str(Path.home()/'.cache'))) / 'mathlib'
+    cache_files = [p for p in store.rglob('*') if p.is_file()] if store.is_dir() else []
+    dump(OUT/'preflight.json', {'time_utc': now(), 'cpu_count': os.cpu_count(), 'memory_total_bytes': total,
+        'macos_memory_pressure_query': pressure, 'macos_free_percentage_proxy_bytes': proxy,
+        'memory_limit': 'macOS proxy, not Linux MemAvailable or cgroup accounting',
+        'vm_stat': subprocess.check_output(['vm_stat'], text=True), 'filesystem_free_bytes': free,
+        'cache_store': str(store), 'cache_store_files': len(cache_files),
+        'cache_store_bytes': sum(p.stat().st_size for p in cache_files),
+        'cache_store_origin': 'Existing host cache store; not downloaded by this validation',
+        'package_bindings': cfg['package_bindings'], 'host_native_idle_at_start': True})
+    assert free >= 12 * 1024**3 and proxy >= 4 * 1024**3, 'E-RES: recorded resource floor failed'
+    roots = (SUPPLEMENT/'mathlib-direct-roots.txt').read_text().splitlines()
+    assert len(roots)==30 and all(re.fullmatch(r'Mathlib(?:\.[A-Za-z0-9_]+)+', r) for r in roots)
+    e['TAR_OPTIONS'] = '--no-same-owner'
+    result = run('cache-direct30', ['lake','exe','cache','get',*roots], e)
+    raw = (OUT/'cache-direct30.log').read_text()
+    assert not re.search(r'\b[1-9][0-9]* download(?:s|\(s\))? failed\b|failed to download|HTTP[^\n]*403', raw, re.I), 'Failed cache download'
+    empty = [str(p) for p in (CLONE/'.lake/packages').rglob('*.olean') if p.stat().st_size == 0]
+    assert not empty, empty[:5]
+    dump(OUT/'cache-fetch.json', {'roots': roots, 'zero_length_package_oleans': empty,
+          'cache_get_rc_zero': True, 'receipt': result,
+          'limit': 'Narrow external-boundary fetch; importing probe and bootstrap still pending'})
+
+
+def cache_probe():
+    fetch = json.loads((OUT/'cache-fetch.json').read_text())
+    assert fetch['cache_get_rc_zero']
+    assert json.loads((OUT/'binding-snapshot.json').read_text()) == bindings(), 'Input/tool drift; retain this attempt and start a new one'
+    ensure_idle()
+    module = f'.lake/ps-maintainer/cleanup-part2-prep/pfr-native-{ATTEMPT}/MathlibCacheProbe'
+    path = CLONE/(module+'.lean')
+    path.write_text('import ' + fetch['roots'][0] + '\n')
+    result = run('cache-probe', ['/usr/bin/time','-l','bash','scripts/lean_check_tree.sh',module], env())
+    obj = TREE/(module+'.olean')
+    assert obj.is_file() and obj.stat().st_size > 0
+    dump(OUT/'cache-validation.json', {'roots': fetch['roots'], 'cache_get_rc_zero': True,
+          'zero_length_package_oleans': [], 'fresh_root_import_probe': result,
+          'probe_source_sha256': sha(path), 'probe_object_sha256': sha(obj),
+          'limit': 'Narrow external-boundary fetch and one importing probe; no PFR bootstrap pass inferred'})
+
+
+def bootstrap():
+    assert json.loads((OUT/'cache-validation.json').read_text())['cache_get_rc_zero']
+    snapshot = json.loads((OUT/'binding-snapshot.json').read_text())
+    assert snapshot == bindings(), 'Input/tool drift; retain this attempt and start a new one'
+    ensure_idle()
+    e = env(); normal = dict(e)
+    cfg_path = OUT/'runtime/config.json'
+    cfg = json.loads(cfg_path.read_text())
+    e['PFR_BOOTSTRAP_CONFIG'] = str(cfg_path)
+    e['PATH'] = str(OUT/'runtime/bin') + ':' + e['PATH']
+    rows = json.loads((SUPPLEMENT/'ordered-modules.json').read_text())
+    completed = []
+    for ordinal, row in enumerate(rows, 1):
+        rel = '.lake/packages/PFR/' + row['package_relative_source'].removesuffix('.lean')
+        source = CLONE / (rel+'.lean')
+        assert sha(source) == row['source_sha256']
+        deps = []
+        for imp in row['imports']:
+            name = imp['module']; path = Path(name.replace('.','/')+'.olean')
+            obj = TREE/path if name.startswith('PFR.') else CLONE/'.lake/packages/mathlib/.lake/build/lib/lean'/path
+            assert obj.is_file() and obj.stat().st_size > 0, ('Missing prerequisite', name)
+            dep_source = CLONE/'.lake/packages'/('PFR' if name.startswith('PFR.') else 'mathlib')/Path(name.replace('.','/')+'.lean')
+            assert dep_source.is_file()
+            deps.append({'module': name, 'source_sha256': sha(dep_source), 'object_sha256': sha(obj)})
+        result = run(f'module-{ordinal:02d}', ['/usr/bin/time','-l','bash','scripts/lean_check_tree.sh',rel], e)
+        obj = TREE/Path(rel+'.olean')
+        assert obj.is_file() and obj.stat().st_size > 0 and sha(source)==row['source_sha256']
+        result.update({'module': row['module'], 'source_sha256': sha(source), 'object_sha256': sha(obj),
+                       'fresh_nonempty_object': True, 'direct_prerequisites': deps})
+        dump(OUT/f'module-{ordinal:02d}.json', result)
+        completed.append(result)
+    probe = (TOOLS/'PFRIdentityProbe.source.txt').read_text()
+    assert all('`'+r['module'] in probe for r in rows)
+    module = f'.lake/ps-maintainer/cleanup-part2-prep/pfr-native-{ATTEMPT}/PFRIdentityProbe'
+    path = CLONE/(module+'.lean')
+    path.write_text(probe)
+    # No PFR wrapper remains in PATH for the independent consumer/import probe.
+    result = run('identity-probe', ['/usr/bin/time','-l','bash','scripts/lean_check_tree.sh',module], normal)
+    raw = (OUT/'identity-probe.log').read_text()
+    assert 'PFR-MODULES 31;' in raw and 'EOF' in raw
+    assert len(re.findall(r'^PFR-MODULE ', raw, re.M)) == 31
+    assert all('PFR-OWNER '+n in raw for n in ['KLDiv','ProbabilityTheory.entropy','ProbabilityTheory.uniformOn_apply_singleton_of_mem'])
+    dump(OUT/'FINAL.json', {'modules': len(completed), 'all_fresh_rc_zero': True,
+        'module_receipts': completed, 'identity_probe': result, 'identity_probe_sha256': sha(path),
+        'runtime_config_sha256': sha(cfg_path), 'input_tool_checker_bindings': snapshot,
+        'normal_path_for_identity_probe': True, 'source_aliases_created': False,
+        'limit': 'Native external prerequisite route only, not full TCSlib root/cleanup replay or worker proof completion'})
+    print('PFR native bootstrap and actual owner identity verified', flush=True)
+
+
+if __name__ == '__main__':
+    OUT.mkdir(parents=True, exist_ok=True)
+    {'cache': cache, 'cache-probe': cache_probe, 'bootstrap': bootstrap}[sys.argv[1]]()

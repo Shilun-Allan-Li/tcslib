@@ -1,0 +1,68 @@
+{
+  "status": "STATIC_DESIGN_VALID_NATIVE_IDENTITY_PROBE_REQUIRED",
+  "package_revision": "e1095d58b7c6f10734988816f7764f2103b9bf29",
+  "source_aliases_used": false,
+  "checker_unchanged": true,
+  "checker_rel_prefix": ".lake/packages/PFR/PFR/",
+  "wrapper_dispatch": "Only PFR source inputs with this exact prefix receive package-root and the four package flags. All other checker invocations pass through unchanged.",
+  "module_root": "<clone>/.lake/packages/PFR (physical source package root after realPath)",
+  "options": [
+    {
+      "option": "autoImplicit",
+      "value": false,
+      "lean_cli_flag": "-DautoImplicit=false",
+      "registered_type": "Bool",
+      "primary_source": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/AutoBound.lean",
+      "source_line": 17,
+      "source_sha256": "5a192e7edbc0caef16a53fe2682c8e66e59291fac545242d7ab765e529fae8ce"
+    },
+    {
+      "option": "relaxedAutoImplicit",
+      "value": false,
+      "lean_cli_flag": "-DrelaxedAutoImplicit=false",
+      "registered_type": "Bool",
+      "primary_source": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/AutoBound.lean",
+      "source_line": 22,
+      "source_sha256": "5a192e7edbc0caef16a53fe2682c8e66e59291fac545242d7ab765e529fae8ce"
+    },
+    {
+      "option": "pp.unicode.fun",
+      "value": true,
+      "lean_cli_flag": "-Dpp.unicode.fun=true",
+      "registered_type": "Bool",
+      "primary_source": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/PrettyPrinter/Delaborator/Options.lean",
+      "source_line": 41,
+      "source_sha256": "b9b4a0d002d9182d55a4ad64f23149d989550f9e0e61f9f0b9c689f4c097987c"
+    },
+    {
+      "option": "pp.proofs.withType",
+      "value": false,
+      "lean_cli_flag": "-Dpp.proofs.withType=false",
+      "registered_type": "Bool",
+      "primary_source": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/PrettyPrinter/Delaborator/Options.lean",
+      "source_line": 212,
+      "source_sha256": "b9b4a0d002d9182d55a4ad64f23149d989550f9e0e61f9f0b9c689f4c097987c"
+    }
+  ],
+  "all_package_lean_options_accounted_for": true,
+  "physical_output_prefix": "<same-tree>/.lake/packages/PFR/PFR/",
+  "object_namespace_alias": {
+    "path": "<same-tree>/PFR",
+    "relative_target": ".lake/packages/PFR/PFR",
+    "target_within_same_tree": true,
+    "created": false
+  },
+  "validation": {
+    "all_source_paths_match_pinned_raw_git_blobs": true,
+    "every_realpath_minus_package_root_matches_expected_module": true,
+    "all_alias_import_lookups_equal_physical_outputs": true,
+    "all_ordered_imports_come_before_consumers": true
+  },
+  "remaining_native_checks": [
+    "Root runs the reviewed wrapper through unchanged scripts/lean_check_tree.sh, serially, using one checkout and one output tree.",
+    "Verify that an imported object reports the true PFR module owner/constant identity; successful import alone does not prove this.",
+    "Verify native fresh objects, return codes and full diagnostics; static mapping does not validate ABI/object freshness.",
+    "Preserve the old source-alias-only review as an inapplicable/rejected design, not current instructions."
+  ],
+  "no_locator_source_root_or_dependency_copy": "All source filenames stay in the existing manifest-pinned package directory. Only the olean tree contains the reviewed namespace alias; no source alias, source/config edit, dependency copy, extra checkout or LEAN_PATH joining is introduced."
+}

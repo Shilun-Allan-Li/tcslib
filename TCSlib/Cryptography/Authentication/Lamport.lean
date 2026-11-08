@@ -549,22 +549,30 @@ theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
 /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
 (strong) one-way function.
 
-**Proof sketch** (the source's).
-1. Fix a forger `A` with one signing query, and let `ε(n)` be its forgery probability. The
-   inverter `B` gets `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
-2. `B` picks `i ← [n]` and `c ← {0, 1}`, generates a key pair, and replaces `f(x_i^c)` by `y`.
-   It runs `A` on the public key. It answers `A`'s query `m` when `m_i = 1 − c`, and aborts
-   otherwise (it does not know `f^{-1}(y)`).
-3. If `A` outputs a valid `(m', σ')` with `m'_i = c`, then `f(σ'_i) = y`, and `B` outputs `σ'_i`.
-4. The planted `y` is distributed as every other entry of the public key, so `(i, c)` is
-   independent of `A`'s view. The query avoids the abort with probability `1/2`. A forgery
-   differs from the query in some position, which is `i` with probability at least `1/n`.
-   Altogether `B` inverts with probability at least `ε(n)/(2n)`.
-5. `f` is one-way, so `ε(n)/(2n)` is negligible, and so is `ε`. `B` is a machine by T1
-   (`Games.exists_handlerMachine`): `advIn` builds the public key from `y = z` and the seed,
-   the handler answers or aborts, and `out` returns the planted signature component `σ′_i`.
+**Proof sketch** (the source's reduction, with its probability coupling explicit).
+1. Fix a forger `A` making at most one signing query, and let `ε(n)` be its forgery probability.
+   Work at `n ≥ 1`; the zero parameter is a finite exception for negligibility. The inverter
+   `B` receives `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
+2. For the averaging argument, choose `i ← [n]` and a fair bit `c`, generate the other key
+   entries, and put `y` at position `(i,c)`. Answer query `m` only when `m_i ≠ c`; otherwise
+   abort, since the planted preimage is unknown. A valid forgery with `m'_i = c` reveals
+   `σ'_i` with `f(σ'_i) = y`.
+3. Couple this experiment to an honest execution, choosing `(i,c)` independently of that
+   honest execution. The reduction agrees with it whenever it avoids revealing the planted
+   preimage. For a successful honest run with query `m` and fresh forged message `m'`, the
+   jointly favorable pairs satisfy `m_i ≠ c = m'_i`. Their fraction is
+   `#{i : m_i ≠ m'_i}/(2n) ≥ 1/(2n)`. With no query, their fraction is exactly `1/2`.
+   This counts the joint event without asserting independence after conditioning on non-abort.
+4. Averaging over successful honest runs gives inversion probability at least `ε(n)/(2n)`.
+   A best position at each length is at least as good as the uniform-position average; supply
+   it as `O(log n)` bits of non-uniform advice and sample only the fair bit `c`. Thus the
+   machine need not sample an exactly uniform element of `[n]` from a fixed finite coin tape.
+5. `f` is one-way, so this lower bound is negligible, and polynomial-factor closure makes `ε`
+   negligible. Apply T1 (`Games.exists_handlerMachine`) to the extended input `⟨y,i(n)⟩`, then
+   `NUPPT.exists_withAdvice` supplies the bounded advised position. `advIn` builds the public
+   key from that input and the seed, the handler answers or aborts, and `out` extracts `σ′_i`.
 
-If `A` makes no query, the abort never happens and the bound improves to `ε(n)/(2n)` as well. -/
+For zero-query successful runs the extraction fraction is `1/2`, rather than just `1/(2n)`. -/
 theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :
     (lamport L f E hE hfE).OneTimeSecure := by
   sorry

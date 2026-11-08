@@ -38,7 +38,9 @@ notions are those of the information-theoretic layer `TCSlib.LearningTheory.PAC`
   source's sketch): every efficient learner's prediction advantage is negligible.
 * `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
   layer's bridge): no efficient learner weakly PAC-learns the class under the uniform distribution
-  with a constant edge.
+  with a constant edge `γ` at fixed failure probability `δ < γ`. Amplifying a KV94-style
+  weak learner changes the learner and its resources; that amplification and its resource
+  bridge are additional results, not a construction already supplied by part (c).
 
 ## References
 

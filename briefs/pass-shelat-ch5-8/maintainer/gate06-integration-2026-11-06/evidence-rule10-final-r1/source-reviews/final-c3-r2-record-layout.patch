@@ -1,0 +1,20 @@
+--- a/final-c3-supplement.source.txt
++++ b/final-c3-supplement-r2.source.txt
+@@ -102,11 +102,13 @@
+         ((ci.value? (allowOpaque := true)).map (·.getUsedConstants)).getD #[]
+       else ci.type.getUsedConstants
+     if value then
+-      (names, { cache with values := cache.values.insert ci.name names,
+-        valueExtractions := cache.valueExtractions + 1 })
++      (names, { cache with
++          values := cache.values.insert ci.name names
++          valueExtractions := cache.valueExtractions + 1 })
+     else
+-      (names, { cache with types := cache.types.insert ci.name names,
+-        typeExtractions := cache.typeExtractions + 1 })
++      (names, { cache with
++          types := cache.types.insert ci.name names
++          typeExtractions := cache.typeExtractions + 1 })
+ 
+ structure Scan where
+   hits : Array (Name × Name × Name × Name) := #[] -- reference, parent, parent home, reference home

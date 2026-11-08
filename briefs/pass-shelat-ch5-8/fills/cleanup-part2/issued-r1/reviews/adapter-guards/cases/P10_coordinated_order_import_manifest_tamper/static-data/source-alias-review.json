@@ -1,0 +1,40 @@
+{
+  "checker": {
+    "path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/scripts/lean_check_tree.sh",
+    "sha256": "366dab40e8e8f0f13e14118e14c3d6be1bc1b36604e6c9ccdebb03bc96cdf335",
+    "source_root": "checkout current directory; no --root/setup argument",
+    "output_rule": "$TCSLIB_OLEANS/$rel.olean"
+  },
+  "primary_lean_sources": [
+    {
+      "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Util/Path.lean",
+      "sha256": "6daff4e0b693e9a99bc2721550d6611ec2953c2e81a76f29d8d9e1da2849739b",
+      "supporting_lines": [
+        139,
+        154
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Shell.lean",
+      "sha256": "1b908796eb411462a207947d123d83ac4918bee6320723d37f86894ed900fc50",
+      "supporting_lines": [
+        267,
+        280
+      ]
+    }
+  ],
+  "aliases": [
+    {
+      "logical_namespace_directory": "PFR",
+      "proposed_checkout_alias": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/PFR",
+      "physical_source_target": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/packages/PFR/PFR",
+      "relative_target_from_checkout": ".lake/packages/PFR/PFR",
+      "alias_created": false,
+      "root_module_file_alias_needed": false,
+      "module_identity_review": "Directory alias supplies logical source filenames and desired output suffixes, but default checker realPath inference uses the physical package path. Correct module-root or explicit setup-name handling requires root review/native validation."
+    }
+  ],
+  "LeanAPAP_alias_needed_for_this_closure": false,
+  "status": "ALIAS_ONLY_NOT_CORRECT_MODULE_IDENTITY_UNDER_DEFAULT_CHECKER",
+  "required_follow_up": "Root-owned native probe/correct explicit module root or setup handling before serial bootstrap. No source copies, locator root, script change, symlink or native execution performed here."
+}

@@ -38,8 +38,10 @@ Required results:
    running A at m-c. At m=n+c this recovers n exactly. The larger coin schedule of B leaves
    a uniform suffix unread; prove the inversion-probability equality by averaging that
    suffix. The initial finite parameter range does not change negligibility.
-4. A public constant-shift closure lemma for negligible functions serves both the sampler
-   error and inversion bound. Prove it once rather than copy it in the two transports.
+4. Reuse the existing `Negligible.comp_of_le` for the sampler error and inversion bound:
+   specialize it to `fun n => n + c` with `Nat.le_add_right`. Its current home is
+   `ZeroKnowledge/NP.lean`; relocate the same general theorem to Foundations before a
+   low-level collection transport needs it, rather than duplicate the proof.
 5. If generated domains of T have width 2 max(n,c), generated domains of U have the exact
    width 2(n+c), including n=0. Candidate-home width lemmas must certify every generated
    index and every generator tape, including fallback behavior.
@@ -59,8 +61,16 @@ Machine-level reparameterization alone is not a hardness theorem.
 | Collection.sample_eq_encD, TrapdoorCollection.inv_eq_encD | Cryptography/Asymptotic/Collections.lean | Canonical sampler/inverter outputs, to be consumed through public APIs. |
 
 No Collection/TrapdoorCollection parameter-shift constructor or one-wayness transport was
-found, nor a constant-shift negligibility lemma. The candidate encoding/index equations are
-available, but generated-domain width readers are still needed beside the candidate definitions.
+found. The existing public `Negligible.comp_of_le` in `ZeroKnowledge/NP.lean:288` already
+supplies constant right-shift closure; the exact specialization is
+`hμ.comp_of_le (fun n => n + c) (fun n => Nat.le_add_right n c)`. This was found by an
+additional source/API review at `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; its application
+term now passes the separate native probe `negligible-shift-review/native-r1/FixedShift`
+(rc0, no diagnostics; only propext/Classical.choice/Quot.sound), checked against that exact
+frozen source. This verifies the existing-API specialization, not the collection constructor
+or one-wayness transport. The theorem should be available from Foundations for the intended
+lower layer; an unchanged-name relocation is proposed, not implemented. The candidate encoding/index equations are available, but generated-domain
+width readers are still needed beside the candidate definitions.
 The evaluator is a polynomial-time function independent of the activation parameter; it can
 stay unchanged. The three parameterized NUPPT machines must shift together.
 

@@ -1,0 +1,226 @@
+{
+  "schema": "gate06-final-c3-static-review/v1",
+  "verdict": "NO_BLOCKERS_OR_MAJORS_FOUND_STATIC_ONLY",
+  "findings": [],
+  "counts": {
+    "blockers": 0,
+    "majors": 0,
+    "minors": 0
+  },
+  "base": "eee107e92a7db11f1f8c98a5c2867304f57ddc54",
+  "head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "reviewed_inputs": {
+    "final-c3-supplement.source.txt": "4708dbb41f710acaf373e0eff6bf5631969f6f515a293fa20f629fff7b4175fd",
+    "final-c3-supplement-manifest.json": "41bc9d3e1a672faba56df70bbed76c7e44b6411bb72c3e97c7f6b97a0b673942",
+    "final-c3-supplement-notes.md": "c1f49d7d71ea3e6d1e8f8e40154d8f889c4873a454c722d965877d1f9b81fb18"
+  },
+  "primary_input_hashes_verified": {
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/gates/08-shared/evidence/tools/collect_body.lean": "751aa8f8385a05690a0a0097acaff6d93e7349067b5e16a5a59662db0cafb57b",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Util/FoldConsts.lean": "9319f5ac63baf302f7d166983c69d8e4f935427a1a4504a8fb39189d8453f1a3",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Declaration.lean": "6f38b33ecc52172eba02e6b5e3abed2579a27148aa2a0839399e5d712977aa9e",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Environment.lean": "c134f410e5cae9b4a62d398ae767f5f237f3ec75d1fec14b2e38504549ce2ba9",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Setup.lean": "a8554ddd026489d562f936015ea8d5e6869cd7ae724f309ee2303d9ea6d9e354",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Meta/Eqns.lean": "ff5d2e241a8d9e7cfde80d20ec1122f0b379b930d040561692a220e79757c85f",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Data/NameMap/Basic.lean": "7ba5fec9aa2b1d370f07ebae82e28230853c352284356d6e53f1dbc1437e488c",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/TCSlib/Complexity/CircuitComplexity/Basic.lean": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Message.lean": "53c424fbb84e3399df02b2a0bd61efb94017074d86a368855d6f92221a5e1631",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Data/Format.lean": "066ac963805c738aae1e0546ed17c03857a8ab6feefb30c46395c23e5af069e1"
+  },
+  "coverage_review": {
+    "source_lines": 250,
+    "source_imports_equal_fresh_54_math_modules": true,
+    "all_owned_types_and_available_values_seeded": true,
+    "opaque_seed_values_enabled": true,
+    "private_generated_equation_roots_not_filtered": true,
+    "referenced_TCS_types_followed": true,
+    "unknown_home_types_followed": true,
+    "same_owner_defnInfo_values_followed": true,
+    "foreign_values_not_followed_per_stated_contract": true,
+    "cache_is_extraction_only": true,
+    "per_root_visited_sets_preserve_each_root_reference_pair": true,
+    "private_parent_checked_before_public_fallback": true,
+    "no_reducibility_instance_matcher_notation_exclusion": true,
+    "equation_getters_not_called": true,
+    "pruning_guard_sound_for_well_formed_imported_types": true,
+    "incomplete_or_nonTCS_to_TCS_graph_fails_closed": true,
+    "controls_are_actual_imported_references_checked_before_alias_elaboration": true
+  },
+  "API_evidence": [
+    {
+      "file": "Lean/Declaration.lean",
+      "lines": [
+        470,
+        475
+      ],
+      "claim": "value? includes theorem/definition values and opaque values when allowOpaque=true"
+    },
+    {
+      "file": "Lean/Declaration.lean",
+      "lines": [
+        507,
+        509
+      ],
+      "claim": "isDefinition is exactly defnInfo, matching the recursive-value contract"
+    },
+    {
+      "file": "Lean/Util/FoldConsts.lean",
+      "lines": [
+        24,
+        55
+      ],
+      "claim": "getUsedConstants visits constants throughout semantic Expr binder/application/let/projection subterms"
+    },
+    {
+      "file": "Lean/Environment.lean",
+      "lines": [
+        122,
+        139
+      ],
+      "claim": "ModuleData carries direct imports, stored constants and extra name metadata"
+    },
+    {
+      "file": "Lean/Environment.lean",
+      "lines": [
+        159,
+        196
+      ],
+      "claim": "moduleData/moduleNames describe the imported graph indexed by ModuleIdx"
+    },
+    {
+      "file": "Lean/Environment.lean",
+      "lines": [
+        838,
+        841
+      ],
+      "claim": "find? retrieves fully available ConstantInfo"
+    },
+    {
+      "file": "Lean/Environment.lean",
+      "lines": [
+        1160,
+        1176
+      ],
+      "claim": "actual constant homes and imported module indexes are available"
+    },
+    {
+      "file": "Lean/Meta/Eqns.lean",
+      "lines": [
+        63,
+        115
+      ],
+      "claim": "compiler equation suffixes and private-parent fallback correspond to the conservative detector"
+    },
+    {
+      "file": "Lean/PrivateName.lean",
+      "lines": [
+        56,
+        65
+      ],
+      "claim": "privateToUserName? removes only the actual private prefix"
+    },
+    {
+      "file": "Lean/Data/NameMap/Basic.lean",
+      "lines": [
+        18,
+        82
+      ],
+      "claim": "NameMap/find?/NameSet/ofArray APIs exist"
+    },
+    {
+      "file": "Lean/Message.lean",
+      "lines": [
+        233,
+        233
+      ],
+      "claim": "ofName uses format n; ToMessageData Name delegates to it at713"
+    },
+    {
+      "file": "Lean/Data/Format.lean",
+      "lines": [
+        52,
+        53
+      ],
+      "claim": "Name formatter emits n.toString, preserving actual private names"
+    }
+  ],
+  "fresh_expected_root_census": {
+    "modules": 54,
+    "unique_actual_module_name_pairs": 2881,
+    "collector_result_sha256": "7e671fcd21f64a57e8f60fce2dbbf50365121c61e622bc63b4679c4a199fb508",
+    "collector_log_sha256": "f8b1311c6e47f5168dc292fc54ef86835867144c10d0be8ea2da9aa66358285b",
+    "canonical_sorted_tab_newline_rootset_sha256": "2cca5fe890d669856c1b4a829b04f38d12c99b1f6bed317503a3aebb794c876e",
+    "per_module_counts": {
+      "TCSlib.Complexity.CircuitComplexity.DAGCircuit": 198,
+      "TCSlib.Complexity.ClassP.BinaryArith.Loops": 99,
+      "TCSlib.Complexity.Randomized.Classes": 112,
+      "TCSlib.Complexity.Randomized.PolyTimeModel": 37,
+      "TCSlib.Cryptography.Asymptotic.Adversary": 32,
+      "TCSlib.Cryptography.Asymptotic.BlockEncryptor": 54,
+      "TCSlib.Cryptography.Asymptotic.MultiMessage": 64,
+      "TCSlib.Cryptography.Authentication.DLHash": 27,
+      "TCSlib.Cryptography.Authentication.Defs": 124,
+      "TCSlib.Cryptography.Authentication.HashAndSign": 40,
+      "TCSlib.Cryptography.Authentication.Lamport": 70,
+      "TCSlib.Cryptography.Authentication.PRFMAC": 17,
+      "TCSlib.Cryptography.Composability.CCA2Scheme": 45,
+      "TCSlib.Cryptography.Composability.Defs": 110,
+      "TCSlib.Cryptography.Composability.NonMalleable": 19,
+      "TCSlib.Cryptography.Composability.PRFScheme": 14,
+      "TCSlib.Cryptography.Composability.PublicKey": 129,
+      "TCSlib.Cryptography.Composability.SequentialZK": 66,
+      "TCSlib.Cryptography.Composability.SimNonMalleable": 88,
+      "TCSlib.Cryptography.Composability.ThreeColoring": 3,
+      "TCSlib.Cryptography.Randomness.BPPBridge": 5,
+      "TCSlib.Cryptography.Randomness.Derandomization": 5,
+      "TCSlib.Cryptography.Randomness.Extraction": 10,
+      "TCSlib.Cryptography.Randomness.Learning": 11,
+      "TCSlib.Cryptography.SecureComputation.Compose": 52,
+      "TCSlib.Cryptography.SecureComputation.ComposePhases": 55,
+      "TCSlib.Cryptography.SecureComputation.ComposeSecurity": 18,
+      "TCSlib.Cryptography.SecureComputation.Defs": 42,
+      "TCSlib.Cryptography.SecureComputation.Garbling": 71,
+      "TCSlib.Cryptography.SecureComputation.GarblingSecurity": 2,
+      "TCSlib.Cryptography.SecureComputation.GarblingSpecial": 9,
+      "TCSlib.Cryptography.SecureComputation.Hybrid": 43,
+      "TCSlib.Cryptography.SecureComputation.ObliviousTransfer": 66,
+      "TCSlib.Cryptography.SecureComputation.SpecialEncryption": 25,
+      "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity": 19,
+      "TCSlib.Cryptography.SecureComputation.Yao": 124,
+      "TCSlib.Cryptography.SecureComputation.YaoReal": 6,
+      "TCSlib.Cryptography.ZeroKnowledge.Defs": 42,
+      "TCSlib.Cryptography.ZeroKnowledge.Encoding": 57,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism": 103,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency": 88,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep": 97,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRepGI": 31,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs": 117,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep": 39,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI": 98,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK": 53,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Closeness": 65,
+      "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator": 50,
+      "TCSlib.InformationTheory.Extractors": 19,
+      "TCSlib.InformationTheory.FinDist": 53,
+      "TCSlib.InformationTheory.Samples": 17,
+      "TCSlib.LearningTheory.PAC.Defs": 24,
+      "TCSlib.LearningTheory.PAC.Prediction": 17
+    },
+    "comparison_must_use": "AXIOMSID actual Name field, not display/user-stripped names; exact per-module sets plus counts and uniqueness"
+  },
+  "module_list_hash_provenance": {
+    "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/final-explicit-files.txt",
+    "sha256": "e027117c0810eabb2cf743e19517ab36ce57ca171a700a510547aaeb966d8d35",
+    "meaning": "54 repository-relative source paths with final newlines; imprecise manifest key is not JSON/dotted Names",
+    "agrees_exactly_with_fresh_modules_json_source_paths": true
+  },
+  "future_runtime_requirements": [
+    "Source/HEAD/full-library/checker/setup pins stable; rc0/error0, START/END/source hash and fresh hashed object",
+    "One successful pruning guard and both metadata controls before one global BEGIN",
+    "Exactly54 unique module BEGIN/END pairs and exactly2881 unique ROOT rows equal fresh AXIOMSID actual-name sets",
+    "REF identity key=(owner module, root constant, referenced equation theorem); parent/home/ref-home payload consistent",
+    "Every root hit count, module pair total and global pair total equals raw REF rows; controls are separate",
+    "Retain all nonzero findings, including inherited and notation/matcher/instance cases; no C3 clearance from rc0 alone"
+  ],
+  "limit": "No Lean/native execution, no runtime collection or clearance claim; review scope is this C3 source/manifest/notes and pinned API/expected-root data."
+}

@@ -1,0 +1,12 @@
+--- a/TCSlib/Complexity/ClassNP/PolyTime.lean
++++ b/TCSlib/Complexity/ClassNP/PolyTime.lean
+@@ -105,7 +105,8 @@
+     ∃ C c : ℕ, ∀ x : List Bool, (f x).length ≤ C * (x.length + 1) ^ c := by
+   obtain ⟨M, C, c, hM⟩ := h
+   refine ⟨C, c, fun x => ?_⟩
+-  have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
++  have hout := ((FinTM.computesInTime_iff _ _ _ _).mp
++    ((FinTM.computesFunInTime_iff _ _ _).1 hM x)).2
+   simpa only [hout] using M.tm.output_length_le x (C * (x.length + 1) ^ c)
+ 
+ /-- The timed-composition budget is bounded by a polynomial of degree

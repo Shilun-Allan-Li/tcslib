@@ -1,0 +1,246 @@
+from pathlib import Path
+import collections, hashlib, io, json, re, subprocess, tarfile, datetime
+MAIN=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4')
+INTEGRATION=Path('/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4')
+B=INTEGRATION/'.lake/ps-maintainer/cleanup-part2-prep/issue-inputs-r1'
+OUT=Path('/private/tmp/cleanup-part2-final-review-r1')
+REV='1aa5506f58f77c215e56d24311ec33bd931cacf1'
+checks=[]
+def sha(b):return hashlib.sha256(b).hexdigest()
+def ck(name,condition,detail):
+ if not condition:raise AssertionError((name,detail))
+ checks.append({'check':name,'passed':True,'detail':detail})
+def j(rel):return json.loads((B/rel).read_bytes())
+def git(*args):return subprocess.run(['git',*args],cwd=MAIN,check=True,stdout=subprocess.PIPE).stdout
+# Independently authored scanner. Mask nested comments and string contents while keeping line/column positions.
+def mask(s):
+ out=list(s);i=0;depth=0
+ while i<len(s):
+  if depth:
+   if s[i:i+2]=='/-':out[i:i+2]='  ';depth+=1;i+=2
+   elif s[i:i+2]=='-/':out[i:i+2]='  ';depth-=1;i+=2
+   else:
+    if s[i]!='\n':out[i]=' '
+    i+=1
+  elif s[i:i+2]=='/-':out[i:i+2]='  ';depth=1;i+=2
+  elif s[i:i+2]=='--':
+   while i<len(s) and s[i]!='\n':out[i]=' ';i+=1
+  else:
+   raw=re.compile(r'r(#+)"').match(s,i) if s[i]=='r' else None
+   if raw:
+    stop='"'+raw[1];end=s.find(stop,i+len(raw[0]));assert end>=0
+    for q in range(i,end+len(stop)):
+     if s[q]!='\n':out[q]=' '
+    i=end+len(stop)
+   elif s[i]=='"':
+    out[i]=' ';i+=1
+    while i<len(s):
+     c=s[i]
+     if c!='\n':out[i]=' '
+     i+=1
+     if c=='\\' and i<len(s):
+      if s[i]!='\n':out[i]=' '
+      i+=1
+     elif c=='"':break
+   else:i+=1
+ assert depth==0
+ return ''.join(out)
+D=j('DELIVERY-MANIFEST.json');I=j('INPUTS-MANIFEST.json');S=j('SUMMARY.json')
+ck('delivery_manifest_pin',sha((B/'DELIVERY-MANIFEST.json').read_bytes())=='994c8dc040cee2d4af24f20bcbe92b371e8a716ae041ccefe0f225980f51e168',len(D['files']))
+ck('core_manifest_pin',sha((B/'INPUTS-MANIFEST.json').read_bytes())==D['core_manifest_sha256']=='31252c0581393430bac7114751383e22ddab0cc63cbdba1af3da09b648218fb5',len(I['outputs']))
+for group,rows,root in [('delivery',D['files'],B),('core-output',I['outputs'],B)]:
+ seen=set()
+ for x in rows:
+  p=Path(x['path']);assert not p.is_absolute() and '..' not in p.parts and str(p) not in seen;seen.add(str(p));b=(root/p).read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],(group,p)
+ ck(group+'_file_hashes',True,len(rows))
+for p,x in I['input_files'].items():
+ b=Path(p).read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],p
+ck('core_input_file_hashes',True,len(I['input_files']))
+ck('preparation_code_pin',sha((B/'prepare_inputs.py').read_bytes())==I['tool_sha256'],I['tool_sha256'])
+actual_tree=git('rev-parse',REV+':TCSlib').decode().strip()
+ck('manifest_ancestor_and_library_tree_bindings',all(z['ancestor']==REV and z['library_git_tree']==actual_tree for z in [D,I,S]),{'ancestor':REV,'TCSlib_tree':actual_tree})
+# Read immutable source Git objects through tar in memory. No extraction or supplied program execution.
+archive=git('archive',REV,'TCSlib','TCSlib.lean','audits/pass-shelat/Checks.lean')
+src={}
+with tarfile.open(fileobj=io.BytesIO(archive)) as t:
+ for x in t:
+  if x.isfile() and x.name.endswith('.lean'):src[x.name]=t.extractfile(x).read()
+tree={}
+for x in git('ls-tree','-r','-z',REV,'--','TCSlib','TCSlib.lean','audits/pass-shelat/Checks.lean').split(b'\0'):
+ if x:
+  m,p=x.split(b'\t',1);p=p.decode()
+  if p.endswith('.lean'):tree[p]=m.decode().split()[2]
+ck('source_archive_complete_git_tree',set(src)==set(tree) and len(src)==1071,{'sources':len(src)})
+fps=j('source-import-fingerprints.json');by_path={x['path']:x for x in fps};ck('source_manifest_path_uniqueness',len(fps)==len(by_path)==1071 and set(by_path)==set(src),1071)
+by_module={x['module']:x for x in fps};assert len(by_module)==1071
+imports={};graph={};textmask={};occ=[];source_counts={}
+for p,b in src.items():
+ f=by_path[p];blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest();assert blob==tree[p]==f['git_blob'];assert len(b)==f['bytes'] and sha(b)==f['sha256'];assert (MAIN/p).read_bytes()==b,p
+ s=b.decode();ms=mask(s);textmask[p]=ms;m=f['module'];im=[]
+ for no,line in enumerate(ms.splitlines(),1):
+  mt=re.fullmatch(r'\s*(?:public\s+)?import\s+(.+?)\s*',line)
+  if mt:
+   for q in mt[1].split():
+    assert re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*',q),(p,no,q)
+    im.append({'line':no,'module':q,'local':q in by_module})
+ assert im==f['imports'],(p,'import-list mismatch')
+ assert sha((json.dumps(im,separators=(',',':'))+'\n').encode())==f['imports_sha256']
+ imports[m]=im;graph[m]=set(x['module'] for x in im if x['local'])
+ for no,line in enumerate(ms.splitlines(),1):
+  for mt in re.finditer(r'(?<![\w\u2080-\u209f])(?:sorryAx|sorry|admit|axiom)(?![\w\u2080-\u209f])',line):occ.append((p,m,no,mt.start()+1,mt[0]))
+ck('all_1071_git_blob_sha256_live_bytes_and_import_lists',True,1071)
+G=j('local-import-graph.json');ck('independent_import_graph_equal',graph=={m:set(ds) for m,ds in G['edges'].items()}, {'modules':len(graph),'edges':sum(map(len,graph.values()))})
+missing={x['module'] for im in imports.values() for x in im if x['module'].startswith('TCSlib') and not x['local']};assert not missing
+# Iterative graph traversal / fresh DFS cycle test.
+seen=set();active=set()
+def visit(m):
+ assert m not in active,('cycle',m)
+ if m in seen:return
+ active.add(m)
+ for q in graph[m]:visit(q)
+ active.remove(m);seen.add(m)
+for m in graph:visit(m)
+ck('local_graph_no_missing_or_cycles',len(seen)==1071 and not G['cycles'] and not G['missing_local_imports'],1071)
+def up(ms):
+ result=set(ms);todo=list(result)
+ while todo:
+  for q in graph[todo.pop()]:
+   if q not in result:result.add(q);todo.append(q)
+ return result
+reverse={m:set() for m in graph}
+for m,ds in graph.items():
+ for q in ds:reverse[q].add(m)
+def down(ms):
+ result=set(ms);todo=list(result)
+ while todo:
+  for q in reverse[todo.pop()]:
+   if q not in result:result.add(q);todo.append(q)
+ return result
+roles=j('role-manifest.json')['roles'];rolemap={x['module']:x for x in roles};cs={x['module'] for x in roles if x['role']=='CONSUMER'};ps={x['module'] for x in roles if x['role']=='PROVIDER_ONLY'};co={x['module'] for x in roles if x['role']=='CHECK_ONLY'};explicit={x['module'] for x in roles if x['explicit_shared_provider']};primary=cs|explicit;editable=cs|ps
+ck('roles_exact_union',len(rolemap)==len(roles)==223 and len(cs)==97 and len(ps)==124 and not cs&ps and len(editable)==221 and co=={'TCSlib','audits.pass-shelat.Checks'} and len(explicit)==13 and len(explicit-cs)==4 and len(primary)==101 and up(primary)==editable,{'consumer':97,'provider_only':124,'editable':221,'check_only':sorted(co),'explicit_providers':13,'primary_union':101})
+for x in roles:
+ f=by_module[x['module']];assert x['path']==f['path'] and x['source_sha256']==f['sha256'] and x['source_bytes']==f['bytes']
+for fn,ms in [('consumer-files.txt',cs),('provider-only-files.txt',ps),('owned-files.txt',editable),('primary-owner-files.txt',primary),('check-only-files.txt',co)]:
+ lines=(B/fn).read_text().splitlines();assert len(lines)==len(set(lines)) and set(lines)=={by_module[m]['path'] for m in ms},fn
+ck('all_role_lists_and_source_bindings',True,223)
+affected=down(editable);prereq=up(affected)-affected
+expected={'consumer-owner-order':cs,'primary-owner-order':primary,'provider-upstream-order':ps,'editable-union-order':editable,'planned-affected-downstream-order':down(primary),'affected-downstream-order':affected,'affected-prerequisites-order':prereq,'root-prerequisites-order':up({'TCSlib'})-{'TCSlib'},'checks-prerequisites-order':up({'audits.pass-shelat.Checks'})-{'audits.pass-shelat.Checks'}}
+om=j('order-manifest.json');orders={}
+for name,ms in expected.items():
+ vals=(B/'orders'/f'{name}.txt').read_text().splitlines();paths=[v+'.lean' for v in vals];modules=[p[:-5].replace('/','.') for p in paths];assert len(modules)==len(set(modules)) and set(modules)==ms,(name,'set')
+ positions={m:i for i,m in enumerate(modules)}
+ for m in modules:
+  assert all(q not in ms or positions[q]<positions[m] for q in graph[m]),(name,m,'order')
+ ex=sorted({q for m in ms for q in graph[m]-ms});meta=om[name];assert meta['modules']==len(ms) and meta['source_paths']==paths and meta['local_prerequisites_outside_order']==ex,(name,'metadata')
+ orders[name]=modules
+combo=orders['affected-prerequisites-order']+orders['affected-downstream-order'];pos={m:i for i,m in enumerate(combo)};assert len(pos)==len(combo) and all(q in pos and pos[q]<pos[m] for m in combo for q in graph[m])
+ck('all_nine_order_sets_topology_metadata_and_concatenation',True,{n:len(v) for n,v in orders.items()})
+scopes={'primary-union':primary,'editable-union':editable,'affected-downstream':affected,'root-prerequisites':up({'TCSlib'}),'checks-prerequisites':up({'audits.pass-shelat.Checks'})};allmath=set()
+for name,ms in scopes.items():
+ actual={x['module'] for m in ms for x in imports[m] if x['module'].startswith('Mathlib')};lines=(B/'mathlib'/f'{name}-roots.txt').read_text().splitlines();assert lines==sorted(actual) and 'Mathlib' not in actual,(name,'Mathlib roots');allmath|=actual
+assert (B/'mathlib/all-needed-union-roots.txt').read_text().splitlines()==sorted(allmath) and len(allmath)==375
+ck('all_narrowed_mathlib_lists',True,{'all_needed_union':len(allmath),'scope_counts':{n:len({x['module'] for m in ms for x in imports[m] if x['module'].startswith('Mathlib')}) for n,ms in scopes.items()}})
+# Verify every original historical row, including multiplicity and original spelling, is retained.
+histpath='briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/'
+for n in ['cleanup-b.tsv','cleanup-b-decls.tsv']:assert (B/'historical'/n).read_bytes()==git('show',REV+':'+histpath+n)
+rows=j('historical/row-dispositions.json');assert len(rows)==764
+orig=(B/'historical/cleanup-b.tsv').read_text().splitlines();assert len(orig)==764
+for no,(raw,row) in enumerate(zip(orig,rows),1):
+ vals=raw.replace('\\t','\t').split('\t');spelling=re.sub(r'^(?:(?:private|noncomputable|protected)\s+)*(?:theorem|lemma|def|abbrev|instance|opaque)\s+','',vals[3]) if vals[1]=='seal' else vals[3];assert row['inventory']=='cleanup-b.tsv' and row['row']==no and (row['channel'],row['path'],row['source_spelling'],row['detail'])==(vals[1],vals[2],spelling,vals[4]),no
+ck('original_764_rows_exact_bytes_order_fields_and_multiplicity',True,764)
+copy_map={'scope/scope-review.json':'review-scope/scope-review.json','scope/scope-review.md':'review-scope/scope-review.md','scope/N-deferred-groups.json':'review-inventory/N-deferred-groups.json','historical/row-dispositions.json':'review-inventory/final-historical-row-dispositions.json','observations/canonical-work-units.json':'review-inventory/final-canonical-work-units.json','observations/ownership-union.tsv':'review-inventory/ownership-union.tsv','observations/bounded-summary.json':'review-inventory/final-bounded-summary.json','observations/separate-source-gap-observations.json':'review-inventory/source-gap-observations.json'}
+for dest,origin in copy_map.items():assert (B/dest).read_bytes()==(B.parent/origin).read_bytes(),dest
+ck('copied_inventory_scope_observation_parent_bytes',True,len(copy_map))
+works=j('observations/canonical-work-units.json');assert len(works)==509 and len({(w['path'],w['canonical']) for w in works})==509
+for w in works:
+ ls=src[w['path']].splitlines(keepends=True);a=w['current_start'];z=w['current_end'];assert 1<=a<=z<=len(ls);raw=b''.join(ls[a-1:z]);assert sha(raw)==w['current_raw_sha256'],(w['path'],w['canonical'],'range hash');assert by_path[w['path']]['module'] in cs
+ # Independently check the range starts at a source declaration and its suffix contains no additional noncomment code before the next top-level command.
+ start=textmask[w['path']].splitlines()[a-1].lstrip()
+ while start.startswith('@['):
+  depth=0;finish=None
+  for at,c in enumerate(start[1:],1):
+   depth+=(c=='[')-(c==']')
+   if depth==0:finish=at+1;break
+  assert finish is not None;start=start[finish:].lstrip()
+ assert re.match(r'\s*(?:(?:private|protected|noncomputable|unsafe|partial)\s+)*(?:theorem|lemma|def|abbrev|instance|structure|class|inductive)\b',start),(w['canonical'],'start',start)
+ck('all_509_current_source_ranges_raw_hashes_decl_starts_and_consumer_roles',True,509)
+# Separate range-completeness/namespace sanity check; no producer declaration parser is reused.
+byfile=collections.defaultdict(list)
+for w in works:byfile[w['path']].append(w)
+context_issues=[]
+command=re.compile(r'^(?:(?:private|protected|noncomputable|unsafe|partial)\s+)*(?:theorem|lemma|def|abbrev|opaque|instance|structure|class|inductive|namespace|end|section|open|export|variable|variables|include|omit|attribute|set_option|universe|universes|syntax|macro|elab|initialize|notation|infixl?|prefix|postfix|local|scoped|mutual)\b|^@\[|^#(?:print|check|eval|reduce|synth|guard|check_failure|count_heartbeats|help|lint)\b')
+for path,ws in byfile.items():
+ ls=textmask[path].splitlines();namespace='';stack=[];atns={}
+ for no,line in enumerate(ls,1):
+  atns[no]=namespace;line=line.strip()
+  mt=re.fullmatch(r'namespace\s+(\S+)',line)
+  if mt:
+   q=mt[1];stack.append(('namespace',namespace));namespace=q[7:] if q.startswith('_root_.') else '.'.join(q for q in [namespace,q] if q)
+  elif re.fullmatch(r'(?:noncomputable\s+)?section(?:\s+\S+)?',line):stack.append(('section',namespace))
+  elif re.fullmatch(r'end(?:\s+\S+)?',line):
+   if stack:_,namespace=stack.pop()
+ for w in ws:
+  a=w['current_start'];z=w['current_end'];following=next(((no+1,line) for no,line in enumerate(ls[z:],z) if line.strip()),None)
+  if following and not command.match(following[1].lstrip()):context_issues.append({'path':path,'canonical':w['canonical'],'issue':'unexpected code after declared range','next':following})
+  line=ls[a-1].lstrip()
+  while line.startswith('@['):
+   dep=0
+   for n,c in enumerate(line[1:],1):
+    dep+=(c=='[')-(c==']')
+    if not dep:line=line[n+1:].lstrip();break
+  mt=re.match(r'(?:(?:private|protected|noncomputable|unsafe|partial)\s+)*(?:theorem|lemma|def)\s+(\S+)',line)
+  if not mt:context_issues.append({'path':path,'canonical':w['canonical'],'issue':'unrecognized header spelling','line':line});continue
+  name=mt[1];canonical=name[7:] if name.startswith('_root_.') else '.'.join(q for q in [atns[a],name] if q)
+  if canonical!=w['canonical']:context_issues.append({'path':path,'canonical':w['canonical'],'issue':'namespace/source-name difference','independent':canonical})
+ck('all_509_range_terminations_and_namespace_source_names',not context_issues,context_issues or {'ranges':509,'files':len(byfile),'issues':0})
+# All 26,131 attribution rows also bind their exact raw source slices; this does not certify generated Lean Names.
+decs=j('lexical-admissions-by-declaration.json');dec_by_key={}
+for d in decs:
+ ls=src[d['path']].splitlines(keepends=True);a=d['start'];z=d['end'];assert sha(b''.join(ls[a-1:z]))==d['raw_sha256'],(d['path'],d['canonical'],'declaration slice');dec_by_key[(d['path'],a)]=d
+for w in works:
+ d=dec_by_key[(w['path'],w['current_start'])];assert (d['canonical'],d['end'],d['raw_sha256'])==(w['canonical'],w['current_end'],w['current_raw_sha256'])
+recorded=j('lexical-admission-occurrences.json');assert collections.Counter(occ)==collections.Counter((x['path'],x['module'],x['line'],x['column'],x['token']) for x in recorded)
+for x in recorded:
+ d=dec_by_key[(x['path'],x['source_declaration_start'])];assert d['canonical']==x['source_declaration'] and d['start']<=x['line']<=d['end']
+counts=collections.Counter(x[-1] for x in occ);assert counts=={'sorry':510,'sorryAx':1}
+meta=[x for x in recorded if x['token']=='sorryAx'];assert len(meta)==1 and meta[0]['path']=='TCSlib/Tactics/Haves.lean' and meta[0]['line']==458
+assert 'let hasSorry := mentions ``sorryAx' in src[meta[0]['path']].decode().splitlines()[457]
+ck('independent_lexical_tokens_and_attribution',True,{'counts':dict(counts),'all_attributed':len(recorded),'declaration_raw_slices_checked':len(decs),'quoted_Name_site':'Haves.analyze:458; metadata, not a proof admission'})
+for d in decs:
+ c=collections.Counter(x['token'] for x in recorded if x['path']==d['path'] and x['source_declaration_start']==d['start']);assert d['lexical_counts']==dict(c)
+for f in j('lexical-admissions-by-source.json'):
+ c=collections.Counter(x['token'] for x in recorded if x['path']==f['path']);assert f['counts']==dict(c) and f['unassigned_occurrences']==0
+ck('lexical_per_source_and_declaration_totals',True,1071)
+# Three precise public-def exception fingerprints.
+freeze=j('public-definition-freeze.json');assert len(freeze)==3
+for f in freeze:
+ raw=b''.join(src[f['path']].splitlines(keepends=True)[f['start']-1:f['end']]);assert raw.decode()==f['raw_source'] and sha(raw)==f['raw_sha256'];assert sha(f['header'].encode())==f['header_sha256'] and sha(f['body'].encode())==f['body_sha256'];sep='where' if ' where\n' in f['raw_source'] else ':=';assert f['raw_source']==f['header']+sep+f['body']
+for f in freeze:
+ if f['field_rhs_baseline'] is not None:
+  actual={m[1]:m[2] for m in re.finditer(r'^  ([A-Za-z_][A-Za-z0-9_]*) := (.*)$',f['body'],re.M)};assert actual==f['field_rhs_baseline'] and len(actual)==8
+ assert by_path[f['path']]['module'] in cs and by_path[f['permitted_destination']]['module'] in cs
+ck('three_public_def_frozen_baselines_and_eight_field_rhs',True,[f['canonical'] for f in freeze])
+named=j('scope/named-targets.json');assert len(named['baseline_named_targets'])==89
+for t in named['baseline_named_targets']:
+ d=dec_by_key[(t['path'],t['start'])];assert (t['canonical'],t['end'],t['raw_sha256'])==(d['canonical'],d['end'],d['raw_sha256']),t['canonical'];assert by_path[t['path']]['module'] in cs
+for t in named['future_move_or_promote_targets']:
+ a,z=t['baseline_source_range'];raw=b''.join(src[t['source_path']].splitlines(keepends=True)[a-1:z]).decode();assert sha(t['baseline_raw_header'].encode())==t['baseline_raw_header_sha256'];assert raw.split(':=',1)[0].rstrip()==t['baseline_raw_header'].rstrip(),t['old_fullname'];assert by_path[t['source_path']]['module'] in cs and by_path[t['destination_path']]['module'] in cs
+ck('named_89_baseline_targets_and_four_future_header_role_bindings',True,{'baseline_target_rows':89,'future_contracts':4})
+hcb='TCSlib.Cryptography.HardcoreBit.Basic';adv='TCSlib.Cryptography.Asymptotic.Adversary'
+ck('DL14_existing_reader_import_route_acyclic',hcb in editable and adv not in up({hcb}),{'new_importer':adv,'existing_reader_home':hcb})
+# Direct external-source rows and currently present package HEADs; no installed-object validation.
+external=G['external_direct_source_imports'];assert len(external)==450 and len({z['module'] for z in external})==450
+extsites={}
+for m,im in imports.items():
+ for z in im:
+  if not z['local']:extsites.setdefault(z['module'],[]).append({'module':m,'path':by_module[m]['path'],'line':z['line']})
+assert set(extsites)=={z['module'] for z in external}
+for z in external:
+ b=Path(z['path']).read_bytes();assert len(b)==z['bytes'] and sha(b)==z['sha256'];assert sorted(z['sites'],key=lambda q:(q['module'],q['line']))==sorted(extsites[z['module']],key=lambda q:(q['module'],q['line']))
+packages=j('external-package-bindings.json');manifest=json.loads(git('show',REV+':lake-manifest.json'));pins={z['name']:z['rev'] for z in manifest['packages']}
+for z in packages['packages']:
+ p=MAIN/'.lake/packages'/z['package'];actual=subprocess.run(['git','-C',str(p),'rev-parse','HEAD'],check=True,stdout=subprocess.PIPE,text=True).stdout.strip();assert actual==pins[z['package']]==z['actual_git_head']==z['tracked_manifest_revision']
+assert git('show',REV+':lean-toolchain').decode().strip()==packages['toolchain']
+ck('direct_external_source_hash_sites_and_present_package_pins',True,{'direct_sources':450,'packages':[z['package'] for z in packages['packages']],'toolchain':packages['toolchain'],'native_objects_checked':False})
+result={'status':'INDEPENDENT_STATIC_INPUT_VALIDATION_PASS_NO_NATIVE_CLEARANCE','ancestor':REV,'delivery_manifest_sha256':sha((B/'DELIVERY-MANIFEST.json').read_bytes()),'inputs_manifest_sha256':sha((B/'INPUTS-MANIFEST.json').read_bytes()),'checks':checks,'validated_at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'limitations':['No provided generator/parser/helper imported or executed. Independently authored scanner/validator; Git reads only.','Source ranges/hashes/declaration starts, complete next-command boundaries, namespace/source names and attribution cross-links are checked statically, not elaborated actual Names or new native failures.','Direct external source files and package HEADs checked; no package object/build/full dirty-tree validation.','No native/Lean/cache/apps, library/main/exchange writes or Git mutations.']}
+OUT.mkdir(exist_ok=True);(OUT/'validation.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'status':result['status'],'checks':len(checks),'counts':S['counts']},indent=2))

@@ -44,7 +44,11 @@ The special encryption scheme of Algorithm 157.2 gives both, nested (`GarblingSp
   constant gates included); [PS10] describes the two-input case.
 - **The row order.** A table lists its rows in a fixed enumeration of the assignments, composed
   with the gate's random permutation.
-- **The evaluator** opens the first row that decrypts (`List.findSome?`).
+- **The evaluator** opens the first row that decrypts (`List.findSome?`). The formal `Good`
+  invariant and the probability theorems below assert correctness of that first opening for
+  every assignment. They do not assert the source's stronger unique-opening conclusion.
+  Several rows may open to the same correct label, for example when wire labels coincide.
+  The cross-opening union-bound sketch proves a sufficient stronger event for this target.
 
 ## Main definitions
 
@@ -52,7 +56,8 @@ The special encryption scheme of Algorithm 157.2 gives both, nested (`GarblingSp
 * `SecureComputation.gateOut`: a gate's output on an assignment of its argument positions.
 * `SecureComputation.GarbleSeed`, `garbledTable`, `inputKeys`, `garbledValues`,
   `garbledOutput`: Construction 158.a and its evaluation.
-* `SecureComputation.Good`: every table opens, under every assignment's keys, to the right key.
+* `SecureComputation.Good`: every table's first successful opening, under every assignment's
+  keys, gives the right key; uniqueness is not part of this invariant.
 
 ## Main results
 
@@ -332,7 +337,8 @@ theorem garbledOutput_eq_getD (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) :
       (garbledValues M Cc s (inputKeys Cc s x)).getD Cc.output default := rfl
 
 /-- **A good garbling**: at every gate, under the keys of every assignment of its arguments, the
-first row of the table that decrypts gives the key of the gate's output on that assignment. -/
+first row of the table that decrypts gives the key of the gate's output on that assignment.
+This is first-success correctness, not uniqueness of the row that can decrypt. -/
 def Good (s : GarbleSeed Cc K ρ) : Prop :=
   ∀ (i : Fin Cc.gates.length) (a : Fin (Cc.gates[i]).args.length → Bool),
     (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
@@ -400,7 +406,8 @@ theorem garbledOutput_eq (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin
 /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
 "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
 that is correct and has the wrong-key property with error `δ`, a uniformly random garbling fails
-to be good with probability at most `12 · |gates| · δ`.
+to be good with probability at most `12 · |gates| · δ`. The formal conclusion bounds failure
+of first-success correctness; it does not state the source's stronger unique-opening claim.
 
 **Proof sketch.** Fix a gate `i` and an assignment `a`.
 1. By correctness, the row of `a` decrypts under `a`'s keys to the right key. So `Good` can fail

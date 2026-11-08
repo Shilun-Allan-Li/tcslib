@@ -1,0 +1,128 @@
+{
+  "kind": "internal_partial_checkpoint_workflow_review",
+  "verdict": "PARTIAL_ONLY_NO_ACCEPTANCE",
+  "delivery_commit": "8b133945c3ba4aa7abb3b896bec38441535959b2",
+  "report_sha256": "9268a2db072f183db8a1b9eaca67dfaa6485f7eadeac212ceb49e78a33c62119",
+  "base": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "head": "51c245389deed467d75bcb1625627d8a4f97c4f8",
+  "findings": [
+    {
+      "id": "W1",
+      "severity": "major",
+      "title": "The head variant omits two unapproved ordinary helpers",
+      "evidence": [
+        "REPORT.md:198-211",
+        "evidence/tools/sealwt.py:15",
+        "evidence/tools/chain_cp1.sh:21-22",
+        "evidence/tools/mkseal.py:13-23"
+      ],
+      "detail": "The head excludes PolyExpr.eval.match_1 and eval._sunfold in addition to approved eval;77 probes omit each extra,154 missing requests. Both extras are semireducible definitions and the first is a matcher.",
+      "fix": "Relabel CP1 as an auxiliary variant. Restore both helper requests and run matched base/head variants; approved exact-notation head count for the same98 probes is95331, with no source-pass count inferred."
+    },
+    {
+      "id": "W2",
+      "severity": "major",
+      "title": "All30 failed dev records point to overwritten later logs",
+      "evidence": [
+        "evidence/tools/chk.py:19-20",
+        "evidence/tools/chk.py:70",
+        "REPORT.md:167-178"
+      ],
+      "detail": "918 dev records include30 FAIL; none of the30 referenced raw logs retain its START timestamp; all now hold later RC0 checks. This exceeds the disclosed first-segment console loss.",
+      "fix": "Use unique attempt log paths, exclusive creation and source/log hashes. Preserve existing metadata and disclose unavailable historical raw diagnostics; do not reconstruct or relabel them. Future frozen acceptance replay must retain all attempts."
+    },
+    {
+      "id": "W3",
+      "severity": "major",
+      "title": "The advertised complete old/new map is truncated and not at final source",
+      "evidence": [
+        "REPORT.md:36-42",
+        "evidence/tools/surface_diff.py:91-113",
+        "evidence/tools/surface_map.py:15-27",
+        "evidence/maps/old-new-map-checkpoint1.md:1-5"
+      ],
+      "detail": "The JSON truncates definition bodies to400 chars, renderer truncates headers to300/600 chars and omits theorem bodies. NUPPT.ofPolyTime new body is cut midexpression. Map and lexical-admission report identify2cff020c813bf3544c27a74c7d0f9cb069953fdf, while final source is51c245389deed467d75bcb1625627d8a4f97c4f8.",
+      "fix": "Call this a normalized surface summary. Produce complete raw old/new header/body/attribute/ambient-binding and actual-name/home/dependency mappings at final source; refresh metadata pins. The last proof-only patch does not invalidate matched current seals/census."
+    },
+    {
+      "id": "W4",
+      "severity": "minor",
+      "title": "The work-key failure count and denominator are unreconciled",
+      "evidence": [
+        "REPORT.md:203-207",
+        "REPORT.md:354-355",
+        "issued-r1/brief.md:99",
+        "issued-r1/brief.md:177-184"
+      ],
+      "detail": "294+65+3=362, while raw diagnostics identify365 distinct blocks. Independent lexical namespace join gives297 issued-key blocks plus65 extra consumers plus3 providers.509 issued keys become506 in prose without a ledger; the3 notation-containing keys all currently pass and also contain other observations.",
+      "fix": "Supply all509 key/764 original-row dispositions with exact moves/coalescing/removal/status evidence; correct the partition after root verification. Do not exclude a complete key merely because one observation is notation."
+    }
+  ],
+  "counts": {
+    "blockers": 0,
+    "majors": 3,
+    "minors": 1
+  },
+  "acceptance_open": {
+    "changed_providers": 21,
+    "sealed_changed_providers": 1,
+    "changed_providers_not_sealed": 20,
+    "minimum_final_scope_for_cp1": 118,
+    "controls_done": false,
+    "C3_metadata_controls_done": false,
+    "lints_done": false,
+    "per_key_ledger_supplied": false,
+    "final_uninterrupted_replay_done": false
+  },
+  "reviewed_input_sha256": {
+    "REPORT.md": "9268a2db072f183db8a1b9eaca67dfaa6485f7eadeac212ceb49e78a33c62119",
+    "evidence/tools/chk.py": "9a3eeed9068b00ec9cd5e26642311b9c2988a1916d2a0f6d5711d64db158bc24",
+    "evidence/tools/mkseal.py": "0b42985ed18f9d1e695bd45b9b49571ee496406f4ec3e3ee7e0e31ba90a0208a",
+    "evidence/tools/sealrun.py": "852d559658eb92f12723c66b22fce11e7ab281aa1de7d08bdedfb83f3b87b760",
+    "evidence/tools/sealwt.py": "717ab750abfdceb65c883d13a344e13d809280ede1c4bd1e978794d9f6b656e7",
+    "evidence/tools/lean/CensusCore.lean.txt": "5f54f2e03a7ecb9e4cd4975daffecacdf9128ecc05c8791f11ff7188335e1058",
+    "evidence/tools/lean/NameDump.lean.txt": "f6066bbe4dfcc81de9d5b119c8e181608dbd6172083d71d969e7b1e126f15317",
+    "evidence/tools/gen_census.py": "3c052dc0a8be7f9ea9d738622afa01d914a50708315c8f8f26940f5d1898ad55",
+    "evidence/tools/explicit_scan.py": "0fd60f5fd9134020cf28d4b29d5f1dc09c3bbd1210ec952b5af533057bc0295d",
+    "evidence/tools/surface_diff.py": "802256e2876e32c8c1c344aad91be908dd083c6ba5b3515bc4121b21a15b893a",
+    "evidence/tools/surface_map.py": "102044d779a1275b5d25de1b57502dee5482794ed7335df4060bcc87308a2d13",
+    "evidence/tools/admissions.py": "a7c8056076435ecdd2f01272e4fdd590a02b5747916697937f81a9537fe9ce5f"
+  },
+  "issued_brief_sha256": "143dd9500fc79bc00ed6d5adbbcffe1cc009ae9064ecf2664bd73b182e4bc61d",
+  "validation_sha256": "9b8be6410e840a13f7f1ee1511bb6bf9ab3b9232d9ccb25c6085b0d896973dd3",
+  "validator_sha256": "105581911a6bf38131bba57024e550b3613f952acd7d493939fedfcb7bda7dba",
+  "review_md_sha256": "42cee1bd5caae6d24779af76ca563838125c8f27843d2202ef0d7d0ba2fc2e18",
+  "native_checks_by_reviewer": false,
+  "incoming_tools_executed_or_imported": false,
+  "source_or_git_mutations": false,
+  "limits": [
+    "No incoming program imported/executed",
+    "No native/Lean/cache/build/apps/Git mutation",
+    "Records and supplied object hashes reconciled as data; objects not delivered or independently checked natively",
+    "No acceptance or full Rule10 clearance; source-freeze semantic review assigned separately"
+  ],
+  "inherited_instance_filter_limit": {
+    "classification": "coverage limit inherited from reviewed Gate06 method; not scored as a new CP1 deviation",
+    "semireducible_pairs": 4741,
+    "distinct_definitions": 118,
+    "affected_probes": 96,
+    "reducible_pairs": 274,
+    "includes_ordinary_data_definitions": true,
+    "prior_exact_sources": [
+      "evidence-rule10-r2/SUMMARY.md:13",
+      "evidence-rule10-final-r1/Collect.source.txt:111,157",
+      "evidence-rule10-final-r1/tool-inputs/collect_body.lean.source.txt:54",
+      "evidence-rule10-final-r1/tool-inputs/prepare_audit.py:90"
+    ],
+    "binding_text": "issued-r1/brief.md:170 ordinary foreign definitions; no excluded declarations",
+    "separate_issued_collector_executable_found": false,
+    "next": "Record provenance and clarify application; any stricter comparator separately labeled. W1 only scores the additional two eval helpers."
+  },
+  "instance_exclusions_sha256": "66af4e881368cf8939632e3158ece26df4b4157489eca75694d4d161f9f5f488",
+  "methodology_source_sha256": {
+    "evidence-rule10-r2/SUMMARY.md": "7b84af926afd367ba96929b6f68f87f96afee15249d78ac35b2a67f1e9df803d",
+    "evidence-rule10-final-r1/Collect.source.txt": "c7464c1475f9e50848f47b40660bd366bf9f189a6c63fe2b198f2691eb5573f1",
+    "evidence-rule10-final-r1/tool-inputs/collect_body.lean.source.txt": "751aa8f8385a05690a0a0097acaff6d93e7349067b5e16a5a59662db0cafb57b",
+    "evidence-rule10-final-r1/tool-inputs/prepare_audit.py": "055e652d9769044d757960586a94f4feffe78a942ca2d9555f02db9dccfa258f"
+  }
+}

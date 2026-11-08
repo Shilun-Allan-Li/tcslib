@@ -1,0 +1,109 @@
+import Lean
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.Randomized.Classes
+import TCSlib.Complexity.Randomized.PolyTimeModel
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.BlockEncryptor
+import TCSlib.Cryptography.Asymptotic.MultiMessage
+import TCSlib.Cryptography.Authentication.DLHash
+import TCSlib.Cryptography.Authentication.Defs
+import TCSlib.Cryptography.Authentication.HashAndSign
+import TCSlib.Cryptography.Authentication.Lamport
+import TCSlib.Cryptography.Authentication.PRFMAC
+import TCSlib.Cryptography.Composability.CCA2Scheme
+import TCSlib.Cryptography.Composability.Defs
+import TCSlib.Cryptography.Composability.NonMalleable
+import TCSlib.Cryptography.Composability.PRFScheme
+import TCSlib.Cryptography.Composability.PublicKey
+import TCSlib.Cryptography.Composability.SequentialZK
+import TCSlib.Cryptography.Composability.SimNonMalleable
+import TCSlib.Cryptography.Composability.ThreeColoring
+import TCSlib.Cryptography.Randomness.BPPBridge
+import TCSlib.Cryptography.Randomness.Derandomization
+import TCSlib.Cryptography.Randomness.Extraction
+import TCSlib.Cryptography.Randomness.Learning
+import TCSlib.Cryptography.SecureComputation.Compose
+import TCSlib.Cryptography.SecureComputation.ComposePhases
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity
+import TCSlib.Cryptography.SecureComputation.Defs
+import TCSlib.Cryptography.SecureComputation.Garbling
+import TCSlib.Cryptography.SecureComputation.GarblingSecurity
+import TCSlib.Cryptography.SecureComputation.GarblingSpecial
+import TCSlib.Cryptography.SecureComputation.Hybrid
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer
+import TCSlib.Cryptography.SecureComputation.SpecialEncryption
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.Yao
+import TCSlib.Cryptography.SecureComputation.YaoReal
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.ZeroKnowledge.Encoding
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRepGI
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Closeness
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator
+import TCSlib.InformationTheory.Extractors
+import TCSlib.InformationTheory.FinDist
+import TCSlib.InformationTheory.Samples
+import TCSlib.LearningTheory.PAC.Defs
+import TCSlib.LearningTheory.PAC.Prediction
+
+open Lean Meta Elab Command
+namespace G06FinalExplicitKinds
+def numSuffix (s pre : String) : Bool :=
+  s.startsWith pre && (s.drop pre.length).length > 0 && (s.drop pre.length).all Char.isDigit
+
+def isGenEqnStr (s : String) : Bool := numSuffix s "eq_" || s == "eq_def" || s == "eq_unfold"
+
+def genEqnParent? : Name → Option Name
+  | .str p s => if isGenEqnStr s then some p else none
+  | _ => none
+
+def isAuxComp (s : String) : Bool :=
+  s.startsWith "_" || numSuffix s "match_" || numSuffix s "proof_" || isGenEqnStr s
+
+def isAuxName : Name → Bool
+  | .str p s => isAuxComp s || isAuxName p
+  | .num _ _ => true
+  | .anonymous => false
+
+def kindOf (env : Environment) (n : Name) : String :=
+  match env.find? n with
+  | some (.defnInfo _) =>
+    if isPrivateName n && !isAuxName ((privateToUserName? n).getD n) then "def-private"
+    else if isAuxName n || isMatcherCore env n || isAuxRecursor env n || isNoConfusion env n then "def-aux"
+    else if env.isProjectionFn n then "def-proj"
+    else if isInstanceCore env n then "def-instance"
+    else if getReducibilityStatusCore env n == .reducible then "def-reducible"
+    else if isPrivateName n then "def-private"
+    else if getReducibilityStatusCore env n == .irreducible then "def-irreducible"
+    else "def"
+  | some (.thmInfo _) => "thm"
+  | some (.axiomInfo _) => "axiom"
+  | some (.opaqueInfo _) => "opaque"
+  | some (.quotInfo _) => "quot"
+  | some (.inductInfo _) => "inductive"
+  | some (.ctorInfo _) => "ctor"
+  | some (.recInfo _) => "rec"
+  | none => "none"
+
+
+end G06FinalExplicitKinds
+
+set_option maxHeartbeats 0
+run_cmd do
+  let env ← getEnv
+  let mut rows : Array String := #[]
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    let home := env.header.moduleNames[mi.toNat]!
+    rows := rows.push s!"G06-EXPLICIT-KIND\t{n}\t{G06FinalExplicitKinds.kindOf env n}\t{home}"
+  logInfo m!"G06-EXPLICIT-CATALOG-BEGIN base=eee107e92a7db11f1f8c98a5c2867304f57ddc54 head=3f6db40e1688c4a0bb922c9575dd3bd2157a650b modules=54 rows={rows.size}"
+  for row in rows.qsort (· < ·) do logInfo m!"{row}"
+  logInfo m!"G06-EXPLICIT-CATALOG-END base=eee107e92a7db11f1f8c98a5c2867304f57ddc54 head=3f6db40e1688c4a0bb922c9575dd3bd2157a650b modules=54 rows={rows.size}"
