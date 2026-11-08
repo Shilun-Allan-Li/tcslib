@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encoding.Modular
+import TCSlib.Cryptography.Encoding.ModularDecode
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -15,6 +16,7 @@ set_option autoImplicit false
 
 * `Modular`: fixed-width modular vector and row-major matrix encodings, their
   defining equations, and their proved length/injectivity guarantees.
+* `ModularDecode`: canonical parsers, rejection equations and statement-phase round trips.
 
 ## References
 

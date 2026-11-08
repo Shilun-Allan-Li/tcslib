@@ -7,6 +7,8 @@ import TCSlib.Cryptography.LWE.Basic
 import TCSlib.Cryptography.LWE.Experiments
 import TCSlib.Cryptography.LWE.Encoding
 import TCSlib.Cryptography.LWE.Assumption
+import TCSlib.Cryptography.LWE.SampleSchedules
+import TCSlib.Cryptography.LWE.BitEncoding
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -22,6 +24,8 @@ set_option autoImplicit false
 * `Experiments`: the concrete decisional distinguishing experiment.
 * `Encoding`: canonical fixed-width challenges with proved length and injectivity.
 * `Assumption`: polynomial representation budgets and fixed-sample hardness against `NUPPT`.
+* `SampleSchedules`: explicit sample-count substitution and multi-message row accounting.
+* `BitEncoding`: bit codepoints, exact tie conventions and bounded-error decoding statements.
 
 ## References
 
