@@ -1,6 +1,6 @@
 # Cleanup part 2
 
-The single Claude job is active. The issued [prompt](dispatch.md) is retained for provenance; [CP0](checkpoints/cp0/README.md) and [CP1](checkpoints/cp1/README.md) are received, with independent CP1 reviews underway. The user requested30-minute checks for the next partial delivery.
+The single Claude job is active. The issued [prompt](dispatch.md) is retained for provenance; [CP0](checkpoints/cp0/README.md) and [CP1](checkpoints/cp1/README.md) are received. [Independent CP1 review](checkpoints/cp1/review-r1/README.md) records four unique majors and one minor; the isolated API repair awaits native checks. The user requested30-minute checks for the next partial delivery.
 The immutable [issued brief](issued-r1/brief.md) and public exceptions bind source
 `1aa5506f58f77c215e56d24311ec33bd931cacf1`. The complete payload is staged at
 `outbox/fills/cleanup-part2/` on exchange/pass-shelat-ch5-8.

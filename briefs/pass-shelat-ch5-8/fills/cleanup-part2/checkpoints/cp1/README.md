@@ -12,9 +12,9 @@ not a worker-uploaded archive. files.json binds every raw Git blob, mode, size a
 - All221 owned source snapshots are present; no outside-owned source snapshot.
 
 Intake does not execute received programs, apply source, reproduce native work or
-accept worker verification claims. Reviews follow separately. CP0's whole-file seal
+accept worker verification claims. Independent bounded reviews are now in [review-r1](review-r1/README.md). CP0's whole-file seal
 is now disclosed by CP1 as a strict variant including PolyExpr.eval; it is not the
 approved-standard comparator. CP1 remains an intermediate delivery with unresolved
 inherited reads and incomplete final evidence. No merge clearance.
 
-**Not yet clear to merge — immutable delivery intake only; independent reviews remain.**
+**Not yet clear to merge — CP1 is partial; independent review has four unique majors and one minor.**
