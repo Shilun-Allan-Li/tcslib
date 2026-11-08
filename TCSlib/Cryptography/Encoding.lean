@@ -6,6 +6,9 @@ import TCSlib.Cryptography.Encoding.Modular
 import TCSlib.Cryptography.Encoding.ModularDecode
 import TCSlib.Cryptography.Encoding.BinaryArith
 import TCSlib.Cryptography.Encoding.DyadicArithmetic
+import TCSlib.Cryptography.Encoding.DyadicUniform
+import TCSlib.Cryptography.Encoding.DyadicLinearAlgebra
+import TCSlib.Cryptography.Encoding.BooleanVector
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -21,6 +24,9 @@ set_option autoImplicit false
 * `ModularDecode`: canonical parsers, rejection equations and statement-phase round trips.
 * `BinaryArith`: endian and polynomial-width adapter statements for existing binary machines.
 * `DyadicArithmetic`: scalar modular addition, multiplication and subtraction statements.
+* `DyadicUniform`: exact fair-bit residue, vector and matrix sampling laws.
+* `DyadicLinearAlgebra`: counted-loop encoded dot products and matrix-vector multiplication.
+* `BooleanVector`: false-padded binary domain words as encoded modular vectors.
 
 ## References
 
