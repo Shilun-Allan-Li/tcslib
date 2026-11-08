@@ -1,12 +1,16 @@
 # Gate 06: four external statement audits of ch. 5–8 (S4; round 1)
 
-**Current status, 2026-11-07 PST:** all four Codex audits were dispatched by the user.
-**06A CLOSED (0B/0M/2 minors), 06B CLOSED (0B/0M/5 minors), 06D CLOSED (0B/0M/4 minors)**; 06C findings remain pending.
-See the separate `resolutions-06A-r1.md`, `resolutions-06B-r1.md`, `resolutions-06D-r1.md`
-and `review-r1-ad/`, `review-r1-b/` for accepted scope/limits and two unapplied comment patches (ten files). The preparation account below is the issued
-round-1 snapshot, preserved at records c81baa7712ab1b43357276ef5df138d02616c9d0. Current target
-includes merged S2/#231; the frozen source/common evidence does not. No combined-source
-verification or PR #232 merge clearance is inferred.
+**Current status,2026-11-08 PST:** all four user-dispatched Codex statement audits are CLOSED:
+06A0B/0M/2m,06B0B/0M/5m,06C0B/0M/4m,06D0B/0M/4m. Verbatim findings and
+separate resolutions-06A/B/C/D-r1.md preserve their pins and evidence limits.
+The combined unapplied comment proposal in review-r1-c/ covers15 minors/13 files,
+jointly applies and preserves exact noncomment bytes. No proof is completed.
+PR #232 remains draft at3f6db40e1688c4a0bb922c9575dd3bd2157a650b; accepted S2 is
+absent from that head. A clean merge-tree preview is not a combined-source check.
+Final comment application/current-source verification remain before landing.
+Under the user's cautious full221-path cleanup screen, all39 direct crypto proof
+targets are currently blocked; no new fill or proof branch is prepared. The issued
+round1 account below is historical and unchanged in the pinned Git snapshot.
 
 **Round 1: common preparation complete; ready for staging (2026-11-07).**
 Audit source: `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
@@ -224,4 +228,4 @@ unavailable comparisons in their Markdown findings. Goldreich/PSV PDFs, extracte
 rendered pages are not redistributed. Draft-to-publisher equivalence and deferred proofs remain
 explicit audit subjects. S2 PR #231 is not part of this source or this attestation.
 
-**Not yet clear to merge — external statement audits and their resolutions remain.**
+**Not yet clear to merge — all statement gates close; comment application and combined-source verification remain.**

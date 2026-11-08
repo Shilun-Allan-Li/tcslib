@@ -83,7 +83,7 @@ Sources: `Asymptotic/HardCoreCollection.lean:92`, `:489`, `:498` and
 `Asymptotic/PublicKey.lean:1059`; [PS10, Theorems 87.3 and 104.4]. This is a useful generic
 API on its actual domain, not an RSA instantiation.
 
-## Exact CPA bridge: waiting on Gate 06C
+## Exact CPA bridge: statement-gated, proof still missing
 
 `BitPublicKeyScheme.exists_padBound` supplies L, its ciphertext padding bound and
 `1 ≤ L.eval n`; then `hS.padded_cpa L hL hmsg` supplies the CPA claim for
@@ -92,7 +92,7 @@ route. These remain supporting APIs; the catalog theorem should start from its a
 set and end at the chosen primitive.
 
 `BitPublicKeyScheme.SingleBitSecure.padded_cpa` is an admission on the integration branch.
-Its statement gate and fill precede any claim of a completed exact CPA implication. The
+Gate06C is now closed at the frozen statement source; its admitted bridge still needs a fill before any claim of a completed exact CPA implication. The
 many-message endpoint still needs its precise game and a checked lifting in that model.
 
 ## Concrete assumptions: index their actual current endpoints

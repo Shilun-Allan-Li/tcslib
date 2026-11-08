@@ -76,4 +76,16 @@ Garbling's finite failure bound is the preferred contained proof candidate if th
 user elects further fills. Extraction remains possible with more integration risk.
 No fill is prepared or commissioned by this comparison.
 
-**Not yet clear to merge — independent narrow work is available; cleanup acceptance and Gate06 landing remain open.**
+## Latest cautious screen and branch policy
+
+The user authorizes only proof work avoiding cleanup-targeted dependencies, erring
+on caution. The full221-file screen in [the recorded inventory](proof-dependency-screen-2026-11-08/README.md)
+supersedes the earlier122-changed-path recommendation:0eligible of39 direct crypto
+proof targets, including garbling and all four Games/Efficiency targets. No new
+proof/fill/branch is started. This file-level overapproximation is not a claim
+that every possible proof would break. All Gate06 statement audits now close;
+their comment application and combined-source checks remain separate maintainer work.
+Accepted proof PRs target cryptography/pass-shelat-ch2-4; temporary branches retire
+after the user's merge. Cleanup continuation stays deferred until user resumption.
+
+**Not yet clear to merge — no proof passes the cautious screen; existing PR integration checks remain.**
