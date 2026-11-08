@@ -1,0 +1,311 @@
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching.lean.txt:1753:  have hspec := Nat.find_spec hexists
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching.lean.txt:1912:    apply Nat.find_le
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching.lean.txt:1913:    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching.lean.txt:1921:    apply Nat.find_le
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching.lean.txt:1922:    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = (fun x => !(f x)) x)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/GraphTheory/Core/VertexColourings.lean.txt:905:   `{f j | j < i ∧ G.Adj (σ j) (σ i)}` (`Nat.find` over a finite blocked set).
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Programs/Light/Lib/Logs.lean.txt:165:def cbrtLeast (n : ℕ) : ℕ := Nat.find (exists_le_cube n)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Programs/Light/Lib/Logs.lean.txt:167:theorem le_cbrtLeast_pow (n : ℕ) : n ≤ cbrtLeast n ^ 3 := Nat.find_spec (exists_le_cube n)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Programs/Light/Lib/Logs.lean.txt:170:  not_le.1 (Nat.find_min (exists_le_cube n) h)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Programs/Light/Lib/Logs.lean.txt:173:  Nat.find_min' (exists_le_cube n) h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching/Restriction.lean.txt:101:  exact Nat.find_min' _ ⟨T, hd, heval⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean.txt:717:  exact Nat.find_min' _ ⟨T, le_refl _, heval⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/LMN/RestrictionMonotonicity.lean.txt:60:  obtain ⟨T, hTd, hTe⟩ := Nat.find_spec
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/LMN/RestrictionMonotonicity.lean.txt:70:  exact Nat.find_min' _ ⟨T', hT'd, hT'e⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/LMN/CircuitLayerReduction.lean.txt:248:        simp +decide [ Nat.find_le_iff ];
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/LMN/DecisionTreeFourier.lean.txt:391:  exact Nat.find_spec
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/DecisionTree.lean.txt:41:[OD14] admits.  `dtDepth` is `Nat.find` on "some tree of depth at most `d`
+/private/tmp/ab34-overnight-fe1/source/TCSlib/BooleanAnalysis/DecisionTree.lean.txt:181:  exact Nat.find (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:258:    obtain ⟨hjlt, hjx⟩ := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:259:    set j := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:262:      have := Nat.find_min hex hi
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:756:  have hpos : 0 < Nat.find hex := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:757:    rcases Nat.eq_zero_or_pos (Nat.find hex) with h | h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:758:    · have := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:762:  refine ⟨Nat.find hex - 1, ?_, Nat.find_min hex (by omega)⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/Relativization.lean.txt:764:  exact Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine.lean.txt:197:  time, its first arrival at the park, and its unchanged work tapes, heads and output; and the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean.txt:517:  let t := Nat.find hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean.txt:519:  have hs : c.state = none := Nat.find_spec hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean.txt:520:  have ht : t ≤ tK := Nat.find_min' hh ((computesInTime_iff K x s tK).mp hK).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean.txt:536:      kCfg_run K W _ t (fun s hs => Nat.find_min hh hs), kCfg_rewind K W c hs, hrun, ← ho]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:693:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:694:  have ht : t ≤ T := Nat.find_min' hex hh.1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:695:  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:698:  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:3751:argument: use `Nat.find` and the absorbing-halt law. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:3759:  have hu := Nat.find_spec h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:3760:  have hle := Nat.find_min' h hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:3761:  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:3763:    have hz : Nat.find h = 0 := by omega
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/SAT.lean.txt:4080:  obtain ⟨u, hu, hut, hguard, hend⟩ := sat_call_first_halt (satStopTM C entry exit).tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:243:/-- Every nonempty branch display first stops the controller exactly at its end.
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:247:private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ []) :
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:288:/-- A stream that first stops the controller consists of a positive number of complete
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:293:since a true flag there would contradict the first-stop hypothesis. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:294:private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:2822:/-- **A stream that first stops the controller is a stream of records**: `n ≥ 1` records of width
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:2825:**Proof sketch.** The first-stop criterion gives the length `(2k + 4)n` and the flags. Cut the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:2833:  obtain ⟨n, hn, hlen, hfl⟩ := nf_firstStop_records k s hlive hstop
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:2865:/-- **The backward lemma's obligation `hV`.** For every stream that first stops the controller at
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3060:  set t₀ := Nat.find hex with ht₀
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3061:  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3063:    fun r hr => Nat.find_min hex hr
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3064:  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3085:  obtain ⟨hslive, hsstop⟩ := nf_display_firstStop N x w₀ hw₀ne
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt:3141:**Proof sketch.** The host's backward acceptance lemma, with `hV`, gives a stream that first stops
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:819:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:820:  have ht : t ≤ T := Nat.find_min' hex hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:821:  refine ⟨t, ht, fun j hj => Nat.find_min hex hj, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:823:  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2027:/-- The first visit to a stopped anchor transfers to the active machine with
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2039:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2040:  have ht : t ≤ T := Nat.find_min' hex hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2041:  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2042:  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/EXP.lean.txt:2115:the anchor. Rejection uses the first stopped-anchor visit; acceptance never
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:1439:  refine ⟨fun n => Nat.find (hex n), fun x => ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:1440:  have hh := Nat.find_spec (hex x.length)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:1441:  have ht := Nat.find_min' (hex x.length)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:1446:      (Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:1451:  exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:2087:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:2089:  have ht : t ≤ T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:2090:  have hc : c.state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt:2097:    (fun s hs => Nat.find_min hex (show s < t from hp ▸ hs))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:55:the branch from `initCfg`, translated), and the first arrival at a stationary anchor (the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:149:  refine ⟨Nat.find hex, ?_, Nat.find_min' hex hT, Nat.find_spec hex,
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:150:    fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:151:      (Nat.find_min' hex hT)⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:152:  rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:153:  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:249:/-! #### The first arrival at a stationary anchor -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:269:/-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:272:private theorem xr_firstArrival {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:279:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:280:  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:281:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:282:  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:290:host's guard comes from `xr_firstArrival`. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1587:/-- **The first arrival at a stationary anchor, over a family of anchors.** If every state in `A`
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1590:private theorem xr_firstArrival' {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1600:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1601:    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1602:  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1603:  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:1604:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2173:    set τ := Nat.find hex with hτdef
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2174:    have hτ : τ ≤ s.length := Nat.find_min' hex (by rw [List.take_length]; exact hb)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2175:    have hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2177:      fun u hu => Nat.find_min hex hu
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2225:  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_testTM (N.k + 2 + 2) (xr_cap N.k))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2250:  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_rewindTM (N.k + 2 + 2) (xr_choice N.k))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2272:  obtain ⟨T', hT', hrun, hguard⟩ := xr_firstArrival' (xr_inRewindTM (N.k + 2 + 2))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2386:  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_passTM (N.k + 2 + 2) (xr_work N.k j)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2861:  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_extendTM (N.k + 2 + 2) (xr_choice N.k))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:2887:  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_extendTM (N.k + 2 + 2) (xr_dep N.k))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt:3208:    obtain ⟨T₁, hT₁, hrun₁, hcut⟩ := xr_firstArrival' (xr_host C)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:144:def stage (f : ℕ → ℕ) (n : ℕ) : ℕ := Nat.find (exists_le_ladder_succ f n)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:148:**Proof sketch.** The upper bound is `Nat.find_spec`. For the lower bound, stage `0` has
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:149:`ℓ₀ = 2 < n`; a positive stage `i` has `n > ℓᵢ` by `Nat.find_min` at `i - 1`. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:152:  refine ⟨?_, Nat.find_spec (exists_le_ladder_succ f n)⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:154:  rcases h : Nat.find (exists_le_ladder_succ f n) with _ | i
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:156:  · have hmin := Nat.find_min (exists_le_ladder_succ f n) (m := i) (by omega)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:161:**Proof sketch.** `Nat.find` is at most `i` by the upper bound, and a smaller stage `i'` would
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:165:  have hle : stage f n ≤ i := Nat.find_min' (exists_le_ladder_succ f n) hhi
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:168:    have hs := Nat.find_spec (exists_le_ladder_succ f n)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:181:  (Nat.find_eq_zero (exists_le_ladder_succ f n)).2 (le_trans (by omega) (le_ladder f 1))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:628:**Proof sketch.** `Turing.copyMapTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:662:**Proof sketch.** `Turing.copyMapTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:741:**Proof sketch.** `Turing.clearTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:772:**Proof sketch.** `Turing.writeConstTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:1504:entry, started at the fresh state and stopped at `Sum.inr exit`, first stops exactly at the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:1512:private theorem qy_release_first_stop (C : FinTM Bool) (entry exit : C.State)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:1566:/-- **The clocked, released install call** (the first-arrival cut). Clock the release adapter of
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:1577:(`qy_ones_val`). The released call first stops at `t` (`qy_release_first_stop`). If
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:1623:  obtain ⟨hstop, hfirst, hend⟩ := qy_release_first_stop C entry exit x arg out t hpos hcut hrun
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:5569:* if `M` first stops at `τ ≤ d`, the host reaches `fin` of `M`'s state at `τ` (tagged) within
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:5792:      (fun u hu h => hfirst u hu ((hstopV u).mp h))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt:8035:configuration (`dz_initCfg`): its run gives the exit and its avoided set the first arrival. The
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1261:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1262:  have ht := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1265:    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1730:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1731:  have ht := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:1742:    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:2157:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:2158:  have ht := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:2171:    have := Nat.find_min' hex (show j ≤ B ∧
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3005:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3006:  have ht := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3029:    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3292:  let t := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3293:  have ht := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3303:    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:3832:/-- Strictly positive first arrival at the genuine retained-input seam. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6116:argument: use `Nat.find` and the absorbing-halt law. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6124:  have hu := Nat.find_spec h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6125:  have hle := Nat.find_min' h hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6126:  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6128:    have hz : Nat.find h = 0 := by omega
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/CookLevin/Hardness.lean.txt:6404:  obtain ⟨u, hu, hut, hguard, hend⟩ := clA5_call_first_halt (clA5StopTM C entry exit).tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/Randomized/DirectedWalk.lean.txt:46:* `hitProb` is defined by the first-step recursion of the walk (stop on `t`, else average
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:565:  obtain ⟨v, hv, hvhalt, hvout, window⟩ := Nat.find_spec exists_good
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:573:    have shorter : u.length < Nat.find exists_good := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:585:    exact (Nat.not_le_of_lt shorter) (Nat.find_min' exists_good u_good)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:588:      (Finset.range (Nat.find exists_good + 1)) := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:596:  have count := count_windowed_vertices N x s (Nat.find exists_good)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:598:  exact (show N.AcceptsWithin x (Nat.find exists_good) from ⟨v, hv, hvhalt, hvout⟩).mono
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean.txt:340:    fun i => if h : ∃ j, j < 2 * s + 1 ∧ ((f j).2 i).2 = true then (Nat.find h : ℤ) - s else 0,
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean.txt:349:head of each tape is placed at its unique flagged cell (`Nat.find`), so the head flags agree,
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean.txt:363:    refine ⟨Nat.find h, (Nat.find_spec h).1, (Nat.find_spec h).2, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:170:    (List.range (Nat.find h)).filterMap fun n => cfg.workTapes (queryTapeIdx k) (n : ℤ)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:399:(`Nat.find_le`); filtering the preceding range cannot increase its length. -/
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:406:  simpa using (Nat.find_le (h := ⟨n, h⟩) h)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:423:  have hfind : Nat.find hex = w.length := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:424:    apply le_antisymm (Nat.find_min' hex hb)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Oracle.lean.txt:427:    have := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean.txt:369:  set T := Nat.find hex with hTdef
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean.txt:370:  have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean.txt:371:  have hTt : T ≤ t := Nat.find_min' hex hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean.txt:373:    fun t' ht' => Nat.find_min hex ht'
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:215:**Proof sketch.** Take `u` least with a halted configuration (`Nat.find`). Minimality
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:224:  have hle : Nat.find hex ≤ t := Nat.find_min' hex h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:225:  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:227:    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:229:/-- A run ending in a designated live stop state first enters the stop states by its deadline,
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:230:and that first entry is already the final configuration, provided every stop configuration is
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:233:**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:236:theorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:247:  let t := Nat.find hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:248:  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:249:  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Finite.lean.txt:255:  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/OracleAgreement.lean.txt:362:lands here; flagged for promotion), then the `Nat.find` bound exactly as in
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Universal.lean.txt:2520:  let t := Nat.find hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Universal.lean.txt:2521:  have ht : t ≤ T := Nat.find_min' hh h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Universal.lean.txt:2522:  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Universal.lean.txt:2528:    timedCapture_run M clock _ t (fun s hs => Nat.find_min hh hs),
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean.txt:853:  let τ := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean.txt:855:    Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean.txt:856:  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean.txt:858:      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean.txt:1291:  -- The final seam: the embedded hosted loop, its verdict, and its first arrival.
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/UniversalStartup.lean.txt:599:  let t := Nat.find hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/UniversalStartup.lean.txt:600:  have ht : t ≤ T := Nat.find_min' hh h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/UniversalStartup.lean.txt:601:  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/UniversalStartup.lean.txt:607:    universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:936:    let τ := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:937:    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:938:    have ht : τ ≤ T x.length := Nat.find_min' hex hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:940:      fun _ h => Nat.find_min hex h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:2130:  let τ := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:2131:  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:2132:  have htime : τ ≤ T y.length := Nat.find_min' hex hhalt
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean.txt:2134:    fun _ h => Nat.find_min hex h
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean.txt:292:host tapes and wrapped in the release adapter, so that its first re-arrival at the installed seam
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean.txt:298:seams; the release adapter's positive lockstep makes the first arrival at the exit control
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepClock.lean.txt:1061:* If the body first stops (halts, or reaches a stop state) at time `τ ≤ d`, the host reaches
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InputRewind.lean.txt:31:* `Turing.inputRewindTM_run` — the exact time, the first arrival at the last state, the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean.txt:97:  Nat.find (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean.txt:101:  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).2
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean.txt:105:  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean.txt:110:  Nat.find_min (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1)) h2 ⟨h1, hq⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean.txt:116:  exact (Nat.find_min' _ ⟨h1, hp⟩).trans (by rw [pow_succ]; omega)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:2729:stationary live seam, used only to certify its first arrival. In forwarding
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:3469:`Turing.MultiTapeTM.exists_first_entry_of_fixed` to that stop predicate and the bounded setup
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:3494:  obtain ⟨u, hu, hcut, hefirst⟩ := MultiTapeTM.exists_first_entry_of_fixed
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:4501:**Proof sketch.** Specialize `Turing.MultiTapeTM.exists_first_entry_of_fixed` to equality with the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:4508:  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:4704:**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_entry_of_fixed` with the supplied stop
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:4721:    MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:5919:**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:5922:private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:5929:  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:5942:  obtain ⟨t, ht, hfirst, hr⟩ := emitter_first_entry emitterCompareTM.tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:6111:  obtain ⟨t, ht, hf, hr⟩ := emitter_first_entry emitterP2EraseTM.tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt:6427:  obtain ⟨t, ht, hf, he⟩ := emitter_first_entry emitterP2PrepareTM.tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean.txt:3487:may define its round-time function by choice or by `Nat.find` without ambiguity (design note
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt:2560:  · let r₀ := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt:2561:    have hr₀ : r₀ < d := (Nat.find_spec hex).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt:2563:      have hm : x ++ word r₀ ∈ V := (Nat.find_spec hex).2
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt:2568:        exact Nat.find_min hex hr ⟨by omega, hm⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt:2630:      ⟨word r₀, Meyer.length_enumWord Q r₀, (Nat.find_spec hex).2⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Catalog.lean.txt:2995:every head in `moved` one cell in direction `dir`; at the first blank move them once more and stop
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1133:  -- A first physical stop is one of the semantic stops. A later live endpoint excludes
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1135:  have first (r : ℕ) (hs : (L.runFrom d' r).Stopped stopAt)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1220:  · let r := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1221:    have hr : r ≤ budget := (Nat.find_spec hex).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1222:    have hs : (L.runFrom d' r).Stopped stopAt := (Nat.find_spec hex).2
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean.txt:1225:      exact Nat.find_min hex hu ⟨by omega, hsu⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:402:  obtain ⟨hj, hu⟩ := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:403:  refine ⟨Nat.find hex, hj, ?_, by omega⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:404:  by_cases hz : Nat.find hex = 0
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:407:  · have hprev : Nat.find hex - 1 < fs.length := by omega
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:408:    have hmin := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by omega)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:409:    have hnot : ¬p ≤ (fieldOffset fs (Nat.find hex - 1) : ℤ) +
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:410:        (fs[Nat.find hex - 1].length : ℤ) := fun h => hmin ⟨hprev, h⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:411:    have hstep := fieldOffset_succ fs (Nat.find hex - 1) hprev
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:412:    rw [Nat.sub_add_cancel (show 1 ≤ Nat.find hex by omega)] at hstep
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:1794:  then Nat.find h else 1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt:1811:  apply (Nat.find_eq_iff _).mpr
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:313:  have htS : Nat.find hex ≤ T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:314:  obtain ⟨cS, hcSdef⟩ : ∃ c, c = S.tm.runFrom (S.tm.initCfg x) (Nat.find hex) := ⟨_, rfl⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:315:  have hcS : cS.state = none := hcSdef ▸ Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:318:    exact ((FinTM.computesInTime_iff _ _ _ _).mpr ⟨Nat.find_spec hex, rfl⟩).output_unique hS
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:319:  refine ⟨Nat.find hex + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:320:  have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:321:  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take (Nat.find hex))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:322:    (fun t h => Nat.find_min hex (by omega))
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:324:  rw [initCfg_eq_bootCfg, ← List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean.txt:328:  rw [hb, rewind_run m _ _ _ _ _ (w.drop (Nat.find hex)) (by simp; omega),
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:452:/-- Up to the first halt or anchor return, the stop wrapper simulates the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:1559:/-- A genuine first halt returns to phase 7 with the true stop flag and the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:2076:first-halt lemmas identify the first stop; W1 preserves its full payload.
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:3618:**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:3621:private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:3628:  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:3648:  obtain ⟨a, ha, hfirst, he⟩ := emCall_first_entry emCallClearTM.tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt:4876:  obtain ⟨t, ht, hfirst, hr⟩ := emCall_first_entry (callTM M emit).tm
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean.txt:51:  first positive return of the block to either exit, defined by `Nat.find` (formerly
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean.txt:124:      some (exit k b) then Nat.find h else 0
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean.txt:182:  have least : Nat.find existsExit = T := by
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean.txt:183:    rw [first (Nat.find existsExit) (Nat.find_spec existsExit)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean.txt:184:      (fun u hu hlt h => Nat.find_min existsExit hlt ⟨hu, h⟩)]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt:364:the skip `Turing.skipTM` from the ruler's first cell stops one cell past the ruler (third
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InputLength.lean.txt:533:  let first := Nat.find exits
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InputLength.lean.txt:535:    Nat.find_spec exits
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InputLength.lean.txt:536:  have firstLe : first ≤ t + 1 + r := Nat.find_min' exits (congrArg Cfg.state finish)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/InputLength.lean.txt:549:    exact Nat.find_min exits hu
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/Seam.lean.txt:706:the *first re-arrival* at `Sum.inr anchor` is a genuine positive-time
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:376:/-- **The writer's first stop.** If along the word `w` the writer first stops after `m` written
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:383:private theorem wr_run_first_stop {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:438:  have hfirst := wr_run_first_stop j () (fun _ _ => ()) (fun _ => false) true c () hc w m (by omega)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:464:on any tape `j`. Let a choice word `w` first stop the controller after `m` written bits: the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:489:  wr_run_first_stop j q₀ δ stop false c q hc w m hm (fun i hi => by simp [hlive i hi])
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1694:* `Turing.guessCtlRunTM_runWith_handoff`: a word whose stream first stops the controller after
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1749:let the stream `s` of length `m` first stop the controller at its end, and let the run `V` from
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1799:the choice word `w`, then the bits of `w` after its first `TP + 1` first stop the controller after
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1804:bits (by strong induction, each such `i` would be a first stop). If `w` has at most `TP` bits, the
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1943:let the stream `s` first stop the controller at its end, and let the run `V` from
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1978:    hPfirst hblank hleft s.length s rfl hslive hsstop TQ (Or.inl hacc) hfirst w hws
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/NDHost.lean.txt:1990:first stops the controller at its end. If some choice word halts the host with output exactly
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt:1758:`u`'s first cell, and stops at the anchor or at the home exit after `|u| + 9` steps. Strictly in
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt:1848:  if h : ∃ i, (zoneStart (i + 1) : ℤ) = p then zoneCapacity (Nat.find h) else 1
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt:1855:  rw [Nat.find_eq_iff]
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean.txt:225:  set T₀ := Nat.find hex with hT₀
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean.txt:226:  have hT0 : (run T₀).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean.txt:227:  have hT0T : T₀ ≤ T := Nat.find_min' hex hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean.txt:228:  have hmin : ∀ t < T₀, (run t).state ≠ none := fun t ht => Nat.find_min hex ht
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean.txt:269:  let n := Nat.find hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean.txt:278:    | none => exact False.elim (Nat.find_min hex hn hc)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean.txt:282:    exact Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean.txt:2364:      (List.range (Nat.find h)).filterMap fun n => f (n : ℤ)
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt:178:  set T0 := Nat.find hex with hT0def
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt:179:  have hT0 : (D.runFrom dc0 T0).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt:180:  have hT0le : T0 ≤ T := Nat.find_min' hex hTh
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt:181:  have hlive : ∀ t < T0, (D.runFrom dc0 t).state ≠ none := fun t ht => Nat.find_min hex ht
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean.txt:329:  set T0 := Nat.find hex with hT0def
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean.txt:330:  have hT0 : (M.runFrom (Cfg.init q V) T0).state = none := Nat.find_spec hex
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean.txt:331:  have hT0le : T0 ≤ T := Nat.find_min' hex hT
+/private/tmp/ab34-overnight-fe1/source/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean.txt:333:    fun t ht => Nat.find_min hex ht

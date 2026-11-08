@@ -1,0 +1,280 @@
+private theorem b2b_search_contract (Q e cV cI : ℕ) (V : Language Bool)
+    (MV MI MP : FinTM Bool)
+    (hV : ∀ y : List Bool,
+      LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+        (LogProg.CleanSt.init MV.tm.q₀) y
+        (MultiTapeTM.indicator (V : Set (List Bool)) y) (cV * (y.length ^ e + 1)))
+    (hI : MI.ComputesFunInTime id (fun n => cI * (n + 1)))
+    (hIs : ∀ (x : List Bool) (t : ℕ), MI.tm.spaceUsed (MI.tm.initCfg x) t ≤ cI)
+    (x : List Bool) :
+    let H := (b2b_host MV MI MP).tm
+    let d := b2b_setupCfg MV MI MP (⟨B2bHostPhase.loop, CounterLoopState.dec .run⟩ :
+      Σ j, b2b_hostState MV MI MP j) (x := x) 1 (List.replicate Q false) (List.replicate Q true)
+    ∃ t : ℕ, (H.runFrom d t).state = none ∧
+      (H.runFrom d t).output =
+        [MultiTapeTM.indicator {z : List Bool | ∃ u, u.length = Q ∧ z ++ u ∈ V} x] ∧
+      ∀ u ≤ t, ∀ j, |(H.runFrom d u).workTapePos j| ≤
+        (x.length + Q + cV * ((x.length + Q) ^ e + 1) + cI + 1 : ℕ) := by
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let H := (b2b_host MV MI MP).tm
+  let B := b2b_bodyTM MV MI MP
+  let a : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.anchor, ()⟩⟩
+  let e' : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.verdict, B2bVerdictState.done true⟩⟩
+  let G (u : List Bool) := b2b_trialCfg MV MI MP a (x := x) 1 u [] [] 0 0
+  let A (u : List Bool) := b2b_trialCfg MV MI MP e' (x := x) 1 u (x ++ u) [] 0 0
+  let word (r : ℕ) := enumWord Q r
+  let yes (r : ℕ) := MultiTapeTM.indicator (V : Set (List Bool)) (x ++ word r)
+  let d := 2 ^ Q - 1
+  let sv := cV * ((x.length + Q) ^ e + 1)
+  let W := x.length + Q + sv + cI + 1
+  let init := G (List.replicate Q false)
+  let w := List.replicate Q true
+  let dc := counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) init (FinTM.bufferTape w) 0
+  have hpow : 1 ≤ 2 ^ Q := Nat.one_le_two_pow
+  have hclean (r : ℕ) : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ word r) (yes r) sv := by
+    simpa only [yes, word, List.length_append, Meyer.length_enumWord] using hV (x ++ enumWord Q r)
+  have hround (r : ℕ) (hr : r < d) : ∃ T : ℕ, 0 < T ∧
+      B.runFrom (G (word r)) T = (if yes r then A (word r) else G (word (r + 1))) ∧
+      (∀ t, 0 < t → t < T → ∃ q,
+        (B.runFrom (G (word r)) t).state = some q ∧ q ≠ a ∧ q ≠ e') ∧
+      ∀ t ≤ T, ∀ j, |(B.runFrom (G (word r)) t).workTapePos j| ≤ (W : ℤ) := by
+    have hinc := Meyer.incFixed_enumWord Q r (by dsimp [d] at hr; omega)
+    have hh := b2b_round_run MV MI MP x (word r) (word (r + 1)) (yes r)
+      (cI * (x.length + 1)) cI sv (hI x) (hIs x _) (hclean r) hinc
+      (by simp [word])
+    simpa only [B, G, A, a, e', W, word, Meyer.length_enumWord] using hh
+  let duration (r : Fin d) : ℕ := Classical.choose (hround r r.isLt)
+  have duration_spec (r : Fin d) := Classical.choose_spec (hround r r.isLt)
+  have index_inj {r s : Fin d} (hc : G (word r) = G (word s)) : r = s := by
+    have hw : word r = word s := by
+      apply List.ext_getElem?
+      intro n
+      have he := congrFun (congrFun (congrArg Cfg.workTapes hc)
+        (b2b_wordTape MV.k MI.k MP.k 0)) (n : ℤ)
+      simpa [G, b2b_trialCfg, b2b_wordTape, FinTM.bufferTape] using he
+    apply Fin.ext
+    have hn := congrArg TimeHierarchy.ctrVal hw
+    rw [Meyer.ctrVal_enumWord Q r (by have := r.isLt; dsimp [d] at this; omega),
+      Meyer.ctrVal_enumWord Q s (by have := s.isLt; dsimp [d] at this; omega)] at hn
+    exact hn
+  let τ (c : Cfg K Bool (Σ j, b2b_bodyState MV MI j) x) : ℕ :=
+    if h : ∃ r : Fin d, c = G (word r) then duration (Classical.choose h) else 0
+  have τ_eq (r : Fin d) : τ (G (word r)) = duration r := by
+    have hx : ∃ s : Fin d, G (word r) = G (word s) := ⟨r, rfl⟩
+    dsimp only [τ]
+    rw [dif_pos hx]
+    exact congrArg duration (index_inj (Classical.choose_spec hx)).symm
+  have round_spec (r : ℕ) (hr : r < d) :
+      0 < τ (G (word r)) ∧
+      B.runFrom (G (word r)) (τ (G (word r))) =
+        (if yes r then A (word r) else G (word (r + 1))) ∧
+      (∀ t, 0 < t → t < τ (G (word r)) → ∃ q,
+        (B.runFrom (G (word r)) t).state = some q ∧ q ≠ a ∧ q ≠ e') ∧
+      ∀ t ≤ τ (G (word r)), ∀ j,
+        |(B.runFrom (G (word r)) t).workTapePos j| ≤ (W : ℤ) := by
+    have hh := duration_spec ⟨r, hr⟩
+    have he := τ_eq ⟨r, hr⟩
+    simpa only [he] using hh
+  have orbit (r : ℕ) (hr : r ≤ d) (hn : ∀ s < r, yes s = false) :
+      counterLoopOrbit B τ init r = G (word r) := by
+    induction r with
+    | zero =>
+      have hz := b2b_certificate_orbit Q 0 (by omega)
+      simpa only [counterLoopOrbit, Function.iterate_zero_apply, init, word] using congrArg G hz
+    | succ r ih =>
+      have hrd : r < d := by omega
+      change (fun c => B.runFrom c (τ c))^[r + 1] init = _
+      rw [Function.iterate_succ_apply']
+      change B.runFrom (counterLoopOrbit B τ init r) (τ (counterLoopOrbit B τ init r)) = _
+      rw [ih (by omega) (fun s hs => hn s (by omega)), (round_spec r hrd).2.1,
+        hn r (by omega)]
+      rfl
+  have hstart : b2b_setupCfg MV MI MP
+      (⟨B2bHostPhase.loop, CounterLoopState.dec FlagPhase.run⟩ : Σ j, b2b_hostState MV MI MP j)
+      (x := x) 1 (List.replicate Q false) w = dc.mapState (Sigma.mk B2bHostPhase.loop) := by
+    dsimp only [dc]
+    rw [counter_cfg_eq]
+    apply Cfg.ext <;> try rfl
+    · funext j z
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · simp [Cfg.mapState, b2b_setupCfg, G, init, b2b_trialCfg, Ne.symm (Fin.castSucc_ne_last _)]
+      · simp [Cfg.mapState, b2b_setupCfg, G, init, b2b_trialCfg, Fin.castSucc_inj, Fin.castSucc_ne_last]
+    · funext j
+      refine Fin.lastCases ?_ (fun i => ?_) j <;> simp [Cfg.mapState, G, init, b2b_trialCfg, b2b_setupCfg, Cfg.init]
+  rw [hstart]
+  change ∃ t, (H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t).state = none ∧
+    (H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t).output =
+      [MultiTapeTM.indicator {z : List Bool | ∃ u, u.length = Q ∧ z ++ u ∈ V} x] ∧
+    ∀ u ≤ t, ∀ j, |(H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) u).workTapePos j| ≤ (W : ℤ)
+  by_cases hex : ∃ r < d, x ++ word r ∈ V
+  · let r₀ := Nat.find hex
+    have hr₀ : r₀ < d := (Nat.find_spec hex).1
+    have hy₀ : yes r₀ = true := by
+      have hm : x ++ word r₀ ∈ V := (Nat.find_spec hex).2
+      simp [yes, MultiTapeTM.indicator, hm]
+    have hbefore (r : ℕ) (hr : r < r₀) : yes r = false := by
+      have hn : x ++ word r ∉ V := by
+        intro hm
+        exact Nat.find_min hex hr ⟨by omega, hm⟩
+      simp [yes, MultiTapeTM.indicator, hn]
+    have horbit (r : ℕ) (hr : r ≤ r₀) : counterLoopOrbit B τ init r = G (word r) :=
+      orbit r (by omega) (fun s hs => hbefore s (by omega))
+    have hend : counterLoopOrbit B τ init (r₀ + 1) = A (word r₀) := by
+      change (fun c => B.runFrom c (τ c))^[r₀ + 1] init = _
+      rw [Function.iterate_succ_apply']
+      change B.runFrom (counterLoopOrbit B τ init r₀) (τ (counterLoopOrbit B τ init r₀)) = _
+      rw [horbit r₀ le_rfl, (round_spec r₀ hr₀).2.1, hy₀]
+      rfl
+    let T := (∑ r ∈ Finset.range (r₀ + 1), τ (counterLoopOrbit B τ init r)) +
+      counterOverhead w (r₀ + 1)
+    have hl := counterLoopTM_run_escape B a e' (by simp [a, e']; intro hh; cases hh) τ init
+      w (FinTM.bufferTape w) 0 (by intros; simp) r₀
+      (by simpa only [w, b2b_counter_value] using hr₀) (by
+        intro r hr
+        rw [horbit r hr]
+        exact ⟨rfl, (round_spec r (by omega)).1, (round_spec r (by omega)).2.2.1⟩)
+      (by rw [hend]; rfl) T rfl
+    let L := counterLoopTM B a (some e')
+    let ct := fun q => if (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      then FinTM.bufferTape (counterWord w (r₀ + 1)) (q - 0) else FinTM.bufferTape w q
+    let c' := counterLoopCfg (some CounterLoopState.escape) (A (word r₀)) ct 0
+    have he : L.runFrom dc T = c' := by
+      simpa only [hend] using hl.1
+    have hb (t : ℕ) (ht : t ≤ T) (j : Fin (K + 1)) :
+        |(L.runFrom dc t).workTapePos j| ≤ (W : ℤ) := by
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · have hh : (L.runFrom dc t).workTapePos (Fin.last K) ∈ Finset.Icc (-1) (Q : ℤ) := by
+          simpa only [w, List.length_replicate, zero_sub, zero_add] using hl.2.2.1 t ht
+        obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hh
+        exact abs_le.mpr ⟨by dsimp [W]; omega, by dsimp [W]; omega⟩
+      · obtain ⟨r, u, hr, hpos⟩ := hl.2.2.2 t ht
+        change |((counterLoopTM B a (some e')).runFrom dc t).workTapePos i.castSucc| ≤ _
+        rw [hpos i]
+        rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+        · rw [horbit r hr] at hu ⊢
+          exact (round_spec r (by omega)).2.2.2 u hu i
+        · rw [hend]
+          simp only [MultiTapeTM.runFrom_zero, A, b2b_trialCfg]
+          simp only [ite_self, abs_zero]
+          positivity
+    have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .loop dc c' T he
+      CounterLoopState.escape rfl ⟨.answer true, (0 : Fin 2)⟩ rfl (by
+        intro t ht q hq
+        cases q with
+        | dec q => rfl
+        | body q => rfl
+        | done => exact False.elim ((hl.2.1 t ht).1 hq)
+        | escape => exact False.elim ((hl.2.1 t ht).2 hq))
+    let ans := c'.mapState (fun _ => (0 : Fin 2))
+    have hans := b2b_finish_answer MV MI MP true ans rfl
+    have hfinal : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) ((T + 1) + 2) =
+        H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer true))) 2 := by
+      rw [MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+      rfl
+    have hbEnd (j : Fin (K + 1)) : |ans.workTapePos j| ≤ (W : ℤ) := by
+      have hh := hb T le_rfl j
+      rw [he] at hh
+      exact hh
+    have hm : ∃ u, u.length = Q ∧ x ++ u ∈ V :=
+      ⟨word r₀, Meyer.length_enumWord Q r₀, (Nat.find_spec hex).2⟩
+    refine ⟨(T + 1) + 2, ?_, ?_, ?_⟩
+    · rw [hfinal]
+      exact hans.1
+    · rw [hfinal, hans.2.1]
+      simp [ans, c', counter_cfg_eq, A, b2b_trialCfg, Cfg.mapState,
+        MultiTapeTM.indicator, hm]
+    · intro t ht j
+      by_cases hpre : t ≤ T
+      · rw [hp.1 t hpre]
+        exact hb t hpre j
+      · have htEq : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t =
+            H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer true))) (t - (T + 1)) := by
+          conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+            MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+          rfl
+        rw [htEq, hans.2.2 _ (by omega)]
+        exact hbEnd j
+  · have hno (r : ℕ) (hr : r < d) : yes r = false := by
+      have hn : x ++ word r ∉ V := fun hm => hex ⟨r, hr, hm⟩
+      simp [yes, MultiTapeTM.indicator, hn]
+    have horbit (r : ℕ) (hr : r ≤ d) : counterLoopOrbit B τ init r = G (word r) :=
+      orbit r hr (fun s hs => hno s (by omega))
+    let T := (∑ r ∈ Finset.range d, τ (counterLoopOrbit B τ init r)) + counterOverhead w (d + 1)
+    have hl := counterLoopTM_run_done B a (some e') τ init w (FinTM.bufferTape w) 0
+      (by intros; simp) d (b2b_counter_value Q) (by
+        intro r hr
+        rw [horbit r (by omega), horbit (r + 1) (by omega)]
+        refine ⟨rfl, (round_spec r hr).1, ?_, rfl⟩
+        intro u hu hut
+        obtain ⟨s, hs, hsa, hse⟩ := (round_spec r hr).2.2.1 u hu hut
+        exact ⟨s, hs, hsa, fun hh => hse (Option.some.inj hh).symm⟩) T rfl
+    let L := counterLoopTM B a (some e')
+    let ct := fun q => if (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      then some true else FinTM.bufferTape w q
+    let c' := counterLoopCfg (some CounterLoopState.done) (G (word d)) ct 0
+    have he : L.runFrom dc T = c' := by
+      simpa only [horbit d le_rfl] using hl.1
+    have hb (t : ℕ) (ht : t ≤ T) (j : Fin (K + 1)) :
+        |(L.runFrom dc t).workTapePos j| ≤ (W : ℤ) := by
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · have hh : (L.runFrom dc t).workTapePos (Fin.last K) ∈ Finset.Icc (-1) (Q : ℤ) := by
+          simpa only [w, List.length_replicate, zero_sub, zero_add] using hl.2.2.1 t ht
+        obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hh
+        exact abs_le.mpr ⟨by dsimp [W]; omega, by dsimp [W]; omega⟩
+      · obtain ⟨r, u, hr, hpos⟩ := hl.2.2.2 t ht
+        change |((counterLoopTM B a (some e')).runFrom dc t).workTapePos i.castSucc| ≤ _
+        rw [hpos i]
+        rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+        · rw [horbit r (by omega)] at hu ⊢
+          exact (round_spec r hr).2.2.2 u hu i
+        · rw [horbit d le_rfl]
+          simp only [MultiTapeTM.runFrom_zero, G, b2b_trialCfg]
+          simp only [ite_self, abs_zero]
+          positivity
+    have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .loop dc c' T he
+      CounterLoopState.done rfl ⟨.last, ⟨.anchor, ()⟩⟩ rfl (by
+        intro t ht q hq
+        cases q with
+        | dec q => rfl
+        | body q => rfl
+        | done => exact False.elim ((hl.2.1 t ht).1 hq)
+        | escape => exact False.elim ((hl.2.1 t ht).2 hq))
+    obtain ⟨Tlast, hhalt, hout, hheads⟩ := b2b_finish_last MV MI MP x (word d) ct (yes d)
+      (cI * (x.length + 1)) cI sv (hI x) (hIs x _) (hclean d)
+    let last := c'.mapState (fun _ =>
+      (⟨B2bHostPhase.last, ⟨B2bTestPhase.anchor, ()⟩⟩ : Σ j, b2b_hostState MV MI MP j))
+    have hfinal : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) ((T + 1) + Tlast) =
+        H.runFrom last Tlast := by
+      rw [MultiTapeTM.runFrom_add, hp.2]
+      rfl
+    have hiff : (∃ u, u.length = Q ∧ x ++ u ∈ V) ↔ x ++ word d ∈ V := by
+      constructor
+      · intro hm
+        obtain ⟨r, hr, hv⟩ := (b2b_verifies_iff x V Q).mpr hm
+        have heq : r = d := by
+          by_contra hne
+          exact hex ⟨r, by dsimp [d]; omega, hv⟩
+        simpa only [heq] using hv
+      · intro hm
+        exact (b2b_verifies_iff x V Q).mp ⟨d, le_rfl, hm⟩
+    refine ⟨(T + 1) + Tlast, ?_, ?_, ?_⟩
+    · rw [hfinal]
+      exact hhalt
+    · rw [hfinal, hout]
+      simp only [yes, MultiTapeTM.indicator, Set.mem_setOf_eq, hiff]
+    · intro t ht j
+      by_cases hpre : t ≤ T
+      · rw [hp.1 t hpre]
+        exact hb t hpre j
+      · have htEq : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t =
+            H.runFrom last (t - (T + 1)) := by
+          conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+            MultiTapeTM.runFrom_add, hp.2]
+          rfl
+        rw [htEq]
+        simpa only [word, Meyer.length_enumWord, W] using hheads (t - (T + 1)) (by omega) j

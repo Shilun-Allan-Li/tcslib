@@ -1,0 +1,7 @@
+private theorem xr_runFrom_fixed {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (d : Cfg k Bool S x) (hd : tm.step d = d) (n : ℕ) : tm.runFrom d n = d := by
+  induction n with
+  | zero => exact MultiTapeTM.runFrom_zero
+  | succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]
+
+open MultiTapeTM in

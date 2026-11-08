@@ -156,7 +156,7 @@ stated).
 
 Gate106R4/#215 and gate118/#233 are closed and merged, as are114/#222,115/#228,
 116/#229,117/#230,119/#234,120/#235 and113/#223. Current campaign snapshot is
-wholeMAC8 after exact1003-source/895-objectMJOINT1 adoption. Nextfree121.
+wholeMAC8 after exact1003-source/895-objectMJOINT1 adoption. Nextfree123; gates121/122 reserved for the separate overnight FE-LIVE and first-halt cleanups.
 Overnight next12.2c mechanical family work is active; all morning auditors Codex per
 Seyoon's current batch instruction. No unapproved API/import/route decision is implied.
 The authoritative current state, pins and next steps are HANDOFF §0.

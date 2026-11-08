@@ -1,0 +1,223 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Rewinding a work-tape head to the start of a word
+
+`Turing.rewindTM k i` returns the head of work tape `i` to the first cell of a word it stands in
+or just past: one unconditional step left, then left over the word's cells, and one step right at
+the blank before the word. It reads only tape `i` and writes nothing.
+
+`Turing.skipBackTM` takes two unconditional left steps before the same left pass, where the
+rewind takes one. Its framed run, with `pos` the head of tape `i`, is for a word `u`, possibly
+empty, that ends one blank before the head: `u` starts at `pos − |u| − 1`. The rewind's word
+starts at `pos − n` for any `n ≤ |u|`, so its head may stand on any cell of the word or on the
+cell just past its end. In both, the head's own cell is arbitrary. Hence the rewind returns the
+head of a tape holding `bufferTape u`, with the head at any `n ≤ |u|`, to cell `0`, in
+particular after a row that writes or crosses `u` and leaves its head at `|u|`. There
+`Turing.skipBackTM_run_ofCfg` does not apply, and from cell `0` skip back stops at cell `-1`.
+
+## Main definitions
+
+* `Turing.RewindPhase` — the rewind's states.
+* `Turing.rewindTM` — the rewind.
+
+## Main results
+
+* `Turing.rewindTM_run_ofCfg` — its framed run: `done` at exactly `n + 2` and not earlier, the
+  head of tape `i` back `n` cells, nothing else changed, and that head within
+  `[pos − n − 1, pos]`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: Turing machines with work tapes.)
+-/
+
+namespace Turing
+
+/-- The rewind's phases: the first step, the left pass over the word, and the exit. -/
+inductive RewindPhase where
+  /-- the entry: one unconditional step left -/
+  | start
+  /-- the left pass over the word's cells -/
+  | back
+  /-- the live exit anchor -/
+  | done
+  deriving DecidableEq, Fintype
+
+/-- **Rewind a work-tape head to the start of a word.** From `start`, step the head of tape `i`
+left once; in `back`, keep stepping left while the head reads a symbol; at the first blank, step
+right into `done`. Nothing is written, the input head and every other tape are untouched, and
+`done` is a stationary live anchor. -/
+def rewindTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol RewindPhase where
+  q₀ := .start
+  tr := fun q _ w =>
+    match q with
+    | .start => tapeAction i 0 none .neg .back
+    | .back =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .back
+      | none => tapeAction i 0 none .pos .done
+    | .done => inputMoveAction 0 .done
+
+/-- The rewind's configuration in phase `q`, with the head of tape `i` moved by `z`. -/
+private def rw_cfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (d : Cfg k Symbol RewindPhase x) (q : RewindPhase) (z : ℤ) : Cfg k Symbol RewindPhase x :=
+  { d with
+    state := some q
+    workTapePos := Function.update d.workTapePos i (d.workTapePos i + z) }
+
+/-- One rewind step that moves the head of tape `i` by `m` and enters `q'`.
+
+**Proof sketch.** The public one-tape step lemma, with the input move `0`. -/
+private theorem rw_step {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (d : Cfg k Symbol RewindPhase x) (q q' : RewindPhase) (z : ℤ) (m : SignType)
+    (htr : (rewindTM k i).tr q (rw_cfg i d q z).inputSymbol (rw_cfg i d q z).workTapeSymbols =
+      tapeAction i 0 none m q') :
+    (rewindTM k i).step (rw_cfg i d q z) = rw_cfg i d q' (z + m) := by
+  rw [step_of_tapeAction_move (rewindTM k i) (rw_cfg i d q z) i 0 m rfl htr]
+  apply Cfg.ext
+  · rfl
+  · simp only [rw_cfg, moveInputPos_zero]
+  · rfl
+  · funext j
+    by_cases hj : j = i
+    · subst hj
+      simp only [rw_cfg, Function.update_self]
+      ring
+    · simp only [rw_cfg, Function.update_of_ne hj]
+  · rfl
+
+/-- **The rewind, framed.** Let the word `u` start `n ≤ |u|` cells left of the head of tape `i`:
+the cells from one left of the word's start up to the head read `bufferTape u` (the blank at
+relative position `-1`, then `u`'s first `n` symbols). Then the rewind reaches `done` at exactly
+`n + 2` and not earlier, with the head of tape `i` at the word's start and nothing else changed.
+Up to the exit the head of tape `i` stays within `[pos − n − 1, pos]`, and every other head is
+fixed. The head's own cell and every cell right of it are arbitrary; at `n = |u|` the head is
+just past the word, and `u = []` is allowed.
+
+**Proof sketch.** One step left from `start`. Then `n` steps left in `back`, each reading one of
+`u`'s first `n` symbols, reach the blank at relative position `-1`, and one step right enters
+`done` at the word's start: `n + 2` steps. Before that the state is `start` or `back`, and the
+head is between `pos − n − 1` and `pos`. -/
+theorem rewindTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (u : List Symbol) (n : ℕ) (hn : n ≤ u.length) (d : Cfg k Symbol RewindPhase x)
+    (hstate : d.state = some .start)
+    (hu : ∀ p : ℤ, -1 ≤ p → p < (n : ℤ) →
+      d.workTapes i (d.workTapePos i - n + p) = FinTM.bufferTape u p) :
+    (rewindTM k i).runFrom d (n + 2) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i (d.workTapePos i - n) } ∧
+      (∀ t < n + 2, ((rewindTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ n + 2 →
+        if j = i then
+          ((rewindTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - n - 1) (d.workTapePos j)
+        else ((rewindTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  let F : ℕ → Cfg k Symbol RewindPhase x := fun r =>
+    rw_cfg i d (if r = 0 then .start else .back) (-(r : ℤ))
+  let D : Cfg k Symbol RewindPhase x := rw_cfg i d .done (-(n : ℤ))
+  have hD_eq : D = { d with
+      state := some .done
+      workTapePos := Function.update d.workTapePos i (d.workTapePos i - n) } := by
+    simp only [D, rw_cfg, sub_eq_add_neg]
+  have h0 : F 0 = d := by
+    apply Cfg.ext
+    · simp only [F, rw_cfg, ↓reduceIte, hstate]
+    · rfl
+    · rfl
+    · simp only [F, rw_cfg, Nat.cast_zero, neg_zero, add_zero, Function.update_eq_self]
+    · rfl
+  -- The head of tape `i` at `F r` reads relative position `n - r` of the word.
+  have hread : ∀ r : ℕ, 1 ≤ r → r ≤ n + 1 →
+      (F r).workTapeSymbols i = FinTM.bufferTape u ((n : ℤ) - r) := by
+    intro r hr1 hr2
+    have h := hu ((n : ℤ) - r) (by omega) (by omega)
+    rw [show d.workTapePos i - n + ((n : ℤ) - r) = d.workTapePos i + -(r : ℤ) by ring] at h
+    rw [Cfg.workTapeSymbols_eq]
+    simp only [F, rw_cfg, Function.update_self]
+    exact h
+  have hF : ∀ r : ℕ, r ≤ n → (rewindTM k i).step (F r) = F (r + 1) := by
+    intro r hr
+    rcases r with _ | r
+    · have h := rw_step i d .start .back (-((0 : ℕ) : ℤ)) .neg rfl
+      have hz : -((0 : ℕ) : ℤ) + (SignType.neg : ℤ) = -((0 + 1 : ℕ) : ℤ) := by
+        simp only [SignType.cast]
+        omega
+      rw [hz] at h
+      simpa only [F, if_pos rfl, if_neg (Nat.succ_ne_zero 0)] using h
+    · obtain ⟨s, hs⟩ : ∃ s, FinTM.bufferTape u ((n : ℤ) - (r + 1 : ℕ)) = some s := by
+        have hlt : n - (r + 1) < u.length := by omega
+        refine ⟨u[n - (r + 1)], ?_⟩
+        rw [show (n : ℤ) - (r + 1 : ℕ) = ((n - (r + 1) : ℕ) : ℤ) by omega,
+          FinTM.bufferTape_nat, List.getElem?_eq_getElem hlt]
+      have hrd := hread (r + 1) (by omega) (by omega)
+      rw [hs] at hrd
+      have htr : (rewindTM k i).tr .back (F (r + 1)).inputSymbol (F (r + 1)).workTapeSymbols =
+          tapeAction i 0 none .neg .back := by
+        simp only [rewindTM, hrd]
+      have h := rw_step i d .back .back (-((r + 1 : ℕ) : ℤ)) .neg
+        (by simpa only [F, if_neg (Nat.succ_ne_zero r)] using htr)
+      have hz : -((r + 1 : ℕ) : ℤ) + (SignType.neg : ℤ) = -((r + 1 + 1 : ℕ) : ℤ) := by
+        simp only [SignType.cast]
+        omega
+      rw [hz] at h
+      simpa only [F, if_neg (Nat.succ_ne_zero r), if_neg (Nat.succ_ne_zero (r + 1))] using h
+  have hexit : (rewindTM k i).step (F (n + 1)) = D := by
+    have hrd := hread (n + 1) (by omega) (by omega)
+    rw [show (n : ℤ) - (n + 1 : ℕ) = -1 by push_cast; ring, FinTM.bufferTape_left] at hrd
+    have htr : (rewindTM k i).tr .back (F (n + 1)).inputSymbol (F (n + 1)).workTapeSymbols =
+        tapeAction i 0 none .pos .done := by
+      simp only [rewindTM, hrd]
+    have h := rw_step i d .back .done (-((n + 1 : ℕ) : ℤ)) .pos
+      (by simpa only [F, if_neg (Nat.succ_ne_zero n)] using htr)
+    have hz : -((n + 1 : ℕ) : ℤ) + (SignType.pos : ℤ) = -(n : ℤ) := by
+      simp only [SignType.cast]
+      omega
+    rw [hz] at h
+    simpa only [F, if_neg (Nat.succ_ne_zero n), D] using h
+  -- The run follows the trace.
+  have htrace : ∀ t : ℕ, t ≤ n + 1 → (rewindTM k i).runFrom d t = F t := by
+    intro t ht
+    induction t with
+    | zero => rw [MultiTapeTM.runFrom_zero, h0]
+    | succ t ih =>
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), hF t (by omega)]
+  have hend : (rewindTM k i).runFrom d (n + 2) = D := by
+    rw [show n + 2 = (n + 1) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      htrace (n + 1) le_rfl, hexit]
+  refine ⟨hend.trans hD_eq, ?_, ?_⟩
+  · intro t ht
+    rw [htrace t (by omega)]
+    simp only [F, rw_cfg]
+    split_ifs <;> simp
+  · intro j t ht
+    have hpos : ∃ z : ℤ, -(n : ℤ) - 1 ≤ z ∧ z ≤ 0 ∧
+        ((rewindTM k i).runFrom d t).workTapePos =
+          Function.update d.workTapePos i (d.workTapePos i + z) := by
+      rcases Nat.lt_or_ge t (n + 2) with hlt | hge
+      · refine ⟨-(t : ℤ), by omega, by omega, ?_⟩
+        rw [htrace t (by omega)]
+        simp only [F, rw_cfg]
+      · refine ⟨-(n : ℤ), by omega, by omega, ?_⟩
+        rw [show t = n + 2 by omega, hend]
+        simp only [D, rw_cfg]
+    obtain ⟨z, hz1, hz2, hz⟩ := hpos
+    rw [hz]
+    split_ifs with hj
+    · subst hj
+      simp only [Function.update_self, Finset.mem_Icc]
+      constructor <;> omega
+    · simp only [Function.update_of_ne hj]
+
+end Turing

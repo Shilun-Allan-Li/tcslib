@@ -1,0 +1,46 @@
+private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
+    (hN : N.AcceptsWithin x t) :
+    ∃ w : List Bool, w.length = nf_C N.k * (t + 1) ∧
+      ((nf_host N).runWith w ((nf_host N).initCfg x)).state = none ∧
+      ((nf_host N).runWith w ((nf_host N).initCfg x)).output = [true] := by
+  obtain ⟨w, hw, hh, ho⟩ := FinNDTM.acceptsWithin_iff.mp hN
+  -- the first halting time
+  have hex : ∃ r, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state = none :=
+    ⟨t, by rw [← hw, List.take_length]; exact hh⟩
+  classical
+  set t₀ := Nat.find hex with ht₀
+  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
+  have hmin : ∀ r < t₀, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none :=
+    fun r hr => Nat.find_min hex hr
+  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+  have hpos : 0 < t₀ := by
+    refine Nat.pos_of_ne_zero fun h00 => NDTM.not_haltsWithin_zero N.tm x
+      (NDTM.haltsWithin_iff.mpr fun v hv => ?_)
+    rw [List.length_eq_zero_iff.mp hv]
+    rwa [h00, List.take_zero] at hspec
+  set w₀ := w.take t₀ with hw₀
+  have hw₀len : w₀.length = t₀ := List.length_take_of_le (by omega)
+  have hw₀ne : w₀ ≠ [] := List.ne_nil_of_length_pos (by omega)
+  have hlive : ∀ r < w₀.length, (N.tm.runWith (w₀.take r) (N.tm.initCfg x)).state ≠ none := by
+    intro r hr
+    rw [hw₀len] at hr
+    rw [hw₀, List.take_take, Nat.min_eq_left hr.le]
+    exact hmin r hr
+  have hout : (N.tm.runWith w₀ (N.tm.initCfg x)).output = [true] := by
+    have hsplit := NDTM.runWith_append (tm := N.tm) w₀ (w.drop t₀) (N.tm.initCfg x)
+    rw [hw₀, List.take_append_drop, NDTM.runWith_of_halt _ hspec] at hsplit
+    rw [hw₀, ← hsplit]
+    exact ho
+  -- the verifier on the branch's display
+  obtain ⟨TQ, hacc, hfirst, hnil, hTQ⟩ := nf_V_display N x w₀ hw₀ne hlive hspec hout
+  obtain ⟨hslive, hsstop⟩ := nf_display_firstStop N x w₀ hw₀ne
+  obtain ⟨h0, hst, hfi, hbl, hlf⟩ := nf_setup nf_P x 0
+  have hB : 0 + 2 * (nf_display N x w₀).length + TQ + 11 ≤ nf_C N.k * (t + 1) := by
+    refine nf_ledger N.k t₀ t _ TQ hle (by rw [nf_display_length, hw₀len]) ?_
+    rw [hw₀len] at hTQ
+    exact hTQ
+  rw [← nf_entry nf_P x (nf_display N x w₀)] at hacc hfirst hnil
+  exact guessCtlRunTM_accepts_of nf_P nf_P.q₀ 0 ((0 : Fin (2 * N.k + 4)), false)
+    (nf_ctlStep N.k) (nf_ctlStop N.k) (nf_V N (nf_leaf N) (nf_leafExit N))
+    ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩ ⟨.park, false⟩ 0 (nf_P.initCfg x)
+    h0 hst hfi hbl hlf (nf_display N x w₀) hslive hsstop TQ hacc hfirst hnil _ hB

@@ -1,0 +1,30 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+variable {k : ℕ} {Symbol State : Type} {input : List Symbol}
+variable (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) (n : ℕ)
+theorem FE1_Hardness_run_point : tm.runFrom cfg n = tm.step^[n] cfg := by rfl
+#check FE1_Hardness_run_point
+theorem FE1_Hardness_run_abstract :
+    (tm.runFrom : Cfg k Symbol State input → ℕ → Cfg k Symbol State input) =
+      fun cfg n => tm.step^[n] cfg := by rfl
+#check FE1_Hardness_run_abstract
+theorem FE1_Hardness_step_point : tm.step cfg =
+    (match cfg.state with
+      | none => cfg
+      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg) := by rfl
+#check FE1_Hardness_step_point
+theorem FE1_Hardness_step_abstract :
+    (tm.step : Cfg k Symbol State input → Cfg k Symbol State input) =
+      fun cfg => match cfg.state with
+        | none => cfg
+        | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by rfl
+#check FE1_Hardness_step_abstract

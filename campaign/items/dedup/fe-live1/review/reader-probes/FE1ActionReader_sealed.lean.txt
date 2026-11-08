@@ -1,0 +1,22 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.workTapeSymbols Turing.moveInputPos
+example {k : ℕ} {State : Type} {input : List Bool}
+    (cfg : Cfg k Bool State input) (b : Bool) (hout : cfg.output = []) :
+    (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply cfg =
+      {cfg with state := none, output := [b]} := by
+  apply Cfg.ext
+  · rw [Action.apply_state]
+  · rw [Action.apply_inputPos, moveInputPos_zero]
+  · funext i
+    rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+  · funext i
+    rw [Action.apply_workTapePos]
+    change cfg.workTapePos i + (0 : ℤ) = cfg.workTapePos i
+    exact add_zero _
+  · rw [Action.apply_output, hout]
+    rfl

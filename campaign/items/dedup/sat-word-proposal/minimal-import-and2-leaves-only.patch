@@ -1,0 +1,50 @@
+--- a/TCSlib/Complexity/ClassNP/SAT.lean
++++ b/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -3,6 +3,7 @@
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+ import TCSlib.Complexity.Formulas.CNFEncoding
+ import TCSlib.Complexity.ClassNP.NP
+ import TCSlib.Complexity.ClassNP.Reductions
+@@ -2820,33 +2821,15 @@
+ private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
+   exact polyTimeComputable_unary
+ 
+-/-- Removing the first bit is a two-state finite transduction. -/
++/-- Removing the first bit is polynomial-time by the public tail closure. -/
+ private lemma sat_pt_tail : PolyTimeComputable List.tail := by
+-  let emit (q b : Bool) : Option Bool := if q then some b else none
+-  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
+-  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by
+-    induction x with
+-    | nil => rfl
+-    | cons b r ih => simp [satMapWord, emit, ih]
+-  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by
+-    cases x <;> simp [satMapWord, emit, hc]
+-  convert h using 1
++  convert polyTimeComputable_tail using 1
+   funext x
+-  exact (he x).symm
+-
+-/-- Extracting at most the first bit is also a two-state finite transduction. -/
++  cases x <;> rfl
++
++/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
+ private lemma sat_pt_head : PolyTimeComputable (fun x => x.take 1) := by
+-  let emit (q b : Bool) : Option Bool := if q then none else some b
+-  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
+-  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by
+-    induction x with
+-    | nil => rfl
+-    | cons b r ih => simp [satMapWord, emit, ih]
+-  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by
+-    cases x <;> simp [satMapWord, emit, hc]
+-  convert h using 1
+-  funext x
+-  exact (he x).symm
++  exact polyTimeComputable_take1
+ 
+ /-- Equality to a fixed control word is decided by the public finite-word
+ comparison constructor, after any polynomial field computation. -/

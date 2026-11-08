@@ -1,0 +1,5 @@
+lemma depth_ge_dtDepth {n : ℕ} {f : (Fin n → Bool) → Bool}
+    (T : DecisionTree n) (heval : ∀ x, T.eval x = f x) :
+    T.depth ≥ dtDepth f := by
+  unfold dtDepth
+  exact Nat.find_min' _ ⟨T, le_refl _, heval⟩

@@ -1,0 +1,11 @@
+private lemma dtDepth_witness {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    ∃ T : DecisionTree n, T.depth ≤ dtDepth f ∧ ∀ x, T.eval x = f x := by
+  classical
+  let p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x
+  have hexists : ∃ d, p d := ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+    DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+    fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+  have hspec := Nat.find_spec hexists
+  show p (dtDepth f)
+  unfold dtDepth
+  convert hspec using 1
