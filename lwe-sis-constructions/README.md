@@ -1,17 +1,17 @@
 # LWE/SIS construction campaign exchange
 
-The user dispatches external jobs and preselected Codex for morning audits.
-Read immutable GitHub inputs and return Markdown in chat. Never merge this
-orphan exchange into code; other namespaces remain outside scope. Central PR
-target: cryptography/lwe-sis-constructions. The user approves all merges.
+Only the user dispatches jobs and approves code merges. Codex is preselected for
+the morning reviews. Other exchange namespaces are outside scope; never merge
+this orphan exchange into code. Central target: cryptography/lwe-sis-constructions.
 
-Eight earlier scoped audits pass. The combined statement gate also passes
-0/0/1/4, with its one documentation minor corrected and checked. Its source,
-issued packet and readiness holds remain recorded. Next prepared input:
-outbox/gates/09-independent-construction-proofs-r1/README.md.
+Ten scoped audits pass. The combined statement and independent 31-proof reviews
+each returned one documentation minor; both are corrected and checked separately.
+Seventy #250 construction obligations and all source/landing/readiness notes
+remain. Original gate packets are preserved.
 
-Filled source `f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, bundled records `ebb0422cd08c44494b3b0c76020de18492cb8ff7`. The independent fill
-contains 31 proofs in seven modules; seventy owned admissions remain. The
-shared reader/loop catalogue requests are unapplied and affected fills paused.
-No proof-gate verdict, publication, dispatch or merge follows from preparation.
-Source-policy work, landing checks and final primitive bridges remain open.
+Next prepared job: outbox/source-policy/01-earlier-stack-r1/README.md.
+It targets the earlier #236–#239 source-policy work: 161 declarations/20 modules,
+Pei16 and Wu24, 196 pages. Lean source `ec72ed773a690c17ac253707350935cc9e0acb34`, records `e88f9ecc36033e468f8c345f2d1088b59ba50e08`.
+The user dispatches Codex to return proposed reference pairs/matching in a ZIP
+plus a Markdown report in chat. Preparation is not dispatch/publication, approved
+matching, registry integration, source-policy closure or merge approval.
