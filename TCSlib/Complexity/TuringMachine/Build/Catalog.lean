@@ -10467,29 +10467,6 @@ private lemma catalog_redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bo
     (M.tm.initCfg x) t
 
 
-/-- **W2 space row** (design §12 R3, decision 12.3;
-annotates `Turing.FinTM.redirectTM` beside its
-`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
-no space, per tape and exactly: the redirected machine's tape actions are
-the source's verbatim, before and after the source halt.
-
-**Proof sketch.** `redirect_run`'s configuration correspondence preserves
-work tapes and heads at every time (the live loop is stationary and the
-simulation phase copies the source's tape actions), so the two head
-trajectories coincide pointwise and the visited images agree. -/
-theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
-    (x : List Bool) (t : ℕ) (i : Fin M.k) :
-    (redirectTM M haltOn).tm.spaceUsedByTape
-        ((redirectTM M haltOn).tm.initCfg x) t i
-      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
-  unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
-  congr 1
-  apply Finset.image_congr
-  intro u _
-  dsimp only
-  rw [catalog_redirect_run]
-  rfl
-
 /-- Pad the decider with the fresh branch tapes. The added tapes are idle,
 so the public left-block simulation supplies its complete run invariant. -/
 private def f2_timedPadTM (D : FinTM Bool) (r : ℕ) : MultiTapeTM (D.k + r) Bool D.State where
