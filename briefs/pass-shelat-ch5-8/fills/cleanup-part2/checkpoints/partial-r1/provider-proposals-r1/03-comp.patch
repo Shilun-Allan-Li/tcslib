@@ -1,0 +1,12 @@
+--- a/TCSlib/Complexity/ClassNP/PolyTime.lean
++++ b/TCSlib/Complexity/ClassNP/PolyTime.lean
+@@ -168,7 +168,8 @@
+     exact Nat.mul_le_mul_left C' (Nat.pow_le_pow_left (Nat.add_le_add_right hmn 1) c')
+   obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_comp hf hg hmono
+   refine ⟨M, a * (C + C' * (C + 1) ^ c' + 1), max c (c * c'),
+-    fun x => (hM x).mono ?_⟩
++    (FinTM.computesFunInTime_iff _ _ _).2
++    fun x => ((FinTM.computesFunInTime_iff _ _ _).1 hM x).mono ?_⟩
+   exact comp_time_bound a C c C' c' x.length
+ 
+ end Complexity
