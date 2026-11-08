@@ -22,10 +22,10 @@ set_option autoImplicit false
 
 ## Main results
 
-Canonical writer equations, exact output widths, ring readings and polynomial-time
-contracts are statement-phase obligations. Only the three complete defining equations
-are proved here. These scalar interfaces do not yet implement a matrix algorithm,
-an actual-law sampler or a cryptographic primitive-security endpoint.
+Canonical writer equations, exact output widths, ring readings and all three
+polynomial-time contracts are proved. They handle arbitrary templates, overlong
+operands and zero width. Matrix algorithms, actual-law samplers and cryptographic
+primitive-security endpoints remain separate consumer obligations.
 
 ## References
 
@@ -87,7 +87,9 @@ canonical pair. Read the outer writer with `fromLEPoly_pairEncode` and
 theorem addPoly_pairEncode (p : PolyExpr) (u a b : List Bool) :
     addPoly p (pairEncode u (pairEncode a b)) =
       Candidates.natToList (p.eval u.length) (listToNat a + listToNat b) := by
-  sorry
+  simp only [addPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    toLE_eq_natBits, BinArith.add_pairEncode,
+    fromLEPoly_pairEncode, LogProg.bitsVal_bits]
 
 /-- Addition produces exactly the requested width on every raw input, including
 malformed outer or inner pairs.
@@ -96,7 +98,7 @@ malformed outer or inner pairs.
 projection of the reconstructed pair. -/
 theorem addPoly_length (p : PolyExpr) (z : List Bool) :
     (addPoly p z).length = p.eval (pairFstD z).length := by
-  sorry
+  rw [addPoly_eq, fromLEPoly_length, pairFstD_pairEncode]
 
 /-- The addition output represents the sum of the input values in the residue ring
 modulo `2^(p.eval u.length)`, without a fit premise on either operand.
@@ -109,7 +111,8 @@ theorem addPoly_natCast_pairEncode (p : PolyExpr) (u a b : List Bool) :
         ZMod (2 ^ (p.eval u.length))) =
       (listToNat a : ZMod (2 ^ (p.eval u.length))) +
         (listToNat b : ZMod (2 ^ (p.eval u.length))) := by
-  sorry
+  rw [addPoly_pairEncode, Candidates.listToNat_natToList_eq_mod,
+    ZMod.natCast_mod, Nat.cast_add]
 
 /-- Scalar addition at any fixed syntactic polynomial width is polynomial-time.
 
@@ -117,7 +120,25 @@ theorem addPoly_natCast_pairEncode (p : PolyExpr) (u a b : List Bool) :
 `BinArith.polyTimeComputable_add`, and `polyTimeComputable_fromLEPoly`. Read
 `addPoly_eq` to identify the resulting function. No new machine or host is needed. -/
 theorem polyTimeComputable_addPoly (p : PolyExpr) : PolyTimeComputable (addPoly p) := by
-  sorry
+  have ha : PolyTimeComputable
+      (fun z => toLE (pairFstD (pairSndD z))) :=
+    polyTimeComputable_toLE.comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+  have hb : PolyTimeComputable
+      (fun z => toLE (pairSndD (pairSndD z))) :=
+    polyTimeComputable_toLE.comp
+      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+  have h : PolyTimeComputable (fun z =>
+      fromLEPoly p
+        (pairEncode (pairFstD z)
+          (BinArith.add
+            (pairEncode
+              (toLE (pairFstD (pairSndD z)))
+              (toLE (pairSndD (pairSndD z))))))) :=
+    (polyTimeComputable_fromLEPoly p).comp
+      (polyTimeComputable_pairFstD.pairEncode
+        (BinArith.polyTimeComputable_add.comp (ha.pairEncode hb)))
+  exact (funext (addPoly_eq p)).symm ▸ h
 
 /-- Multiply the two inner MSB operands and write their product at the polynomial
 width determined by the outer template [PS10, Section 2.1, repository adaptation].
@@ -150,7 +171,9 @@ at width `p.eval u.length`, allowing arbitrary operand lengths.
 theorem mulPoly_pairEncode (p : PolyExpr) (u a b : List Bool) :
     mulPoly p (pairEncode u (pairEncode a b)) =
       Candidates.natToList (p.eval u.length) (listToNat a * listToNat b) := by
-  sorry
+  simp only [mulPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    toLE_eq_natBits, BinArith.mul_pairEncode,
+    fromLEPoly_pairEncode, LogProg.bitsVal_bits]
 
 /-- Multiplication produces exactly the requested width on every raw input.
 
@@ -158,7 +181,7 @@ theorem mulPoly_pairEncode (p : PolyExpr) (u a b : List Bool) :
 projection of the reconstructed pair. -/
 theorem mulPoly_length (p : PolyExpr) (z : List Bool) :
     (mulPoly p z).length = p.eval (pairFstD z).length := by
-  sorry
+  rw [mulPoly_eq, fromLEPoly_length, pairFstD_pairEncode]
 
 /-- The multiplication output represents the product in the residue ring modulo
 `2^(p.eval u.length)`, without an operand-fit premise.
@@ -171,7 +194,8 @@ theorem mulPoly_natCast_pairEncode (p : PolyExpr) (u a b : List Bool) :
         ZMod (2 ^ (p.eval u.length))) =
       (listToNat a : ZMod (2 ^ (p.eval u.length))) *
         (listToNat b : ZMod (2 ^ (p.eval u.length))) := by
-  sorry
+  rw [mulPoly_pairEncode, Candidates.listToNat_natToList_eq_mod,
+    ZMod.natCast_mod, Nat.cast_mul]
 
 /-- Scalar multiplication at any fixed syntactic polynomial width is polynomial-time.
 
@@ -179,7 +203,25 @@ theorem mulPoly_natCast_pairEncode (p : PolyExpr) (u a b : List Bool) :
 `BinArith.polyTimeComputable_mul`, then the existing width writer. Read `mulPoly_eq`
 for functional agreement; reuse the registered multiplication machinery. -/
 theorem polyTimeComputable_mulPoly (p : PolyExpr) : PolyTimeComputable (mulPoly p) := by
-  sorry
+  have ha : PolyTimeComputable
+      (fun z => toLE (pairFstD (pairSndD z))) :=
+    polyTimeComputable_toLE.comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+  have hb : PolyTimeComputable
+      (fun z => toLE (pairSndD (pairSndD z))) :=
+    polyTimeComputable_toLE.comp
+      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+  have h : PolyTimeComputable (fun z =>
+      fromLEPoly p
+        (pairEncode (pairFstD z)
+          (BinArith.mul
+            (pairEncode
+              (toLE (pairFstD (pairSndD z)))
+              (toLE (pairSndD (pairSndD z))))))) :=
+    (polyTimeComputable_fromLEPoly p).comp
+      (polyTimeComputable_pairFstD.pairEncode
+        (BinArith.polyTimeComputable_mul.comp (ha.pairEncode hb)))
+  exact (funext (mulPoly_eq p)).symm ▸ h
 
 /-- Subtract the right inner operand modulo the power of two specified by the outer
 template [PS10, Section 2.1, repository adaptation]. Reduce the right operand first
@@ -229,7 +271,17 @@ theorem subPoly_pairEncode (p : PolyExpr) (u a b : List Bool) :
       Candidates.natToList (p.eval u.length)
         (listToNat a + 2 ^ (p.eval u.length) -
           (listToNat b % 2 ^ (p.eval u.length))) := by
-  sorry
+  have hmodulus :
+      listToNat ([true] ++ List.replicate (p.eval u.length) false) =
+        2 ^ (p.eval u.length) := by
+    rw [NumberTheory.listToNat_append, NumberTheory.listToNat_singleton_true,
+      List.length_replicate, Candidates.listToNat_replicate_false,
+      Nat.one_mul, Nat.add_zero]
+  simp only [subPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    normalizeWidthPoly_pairEncode, toLE_eq_natBits,
+    Candidates.listToNat_natToList_eq_mod, hmodulus,
+    BinArith.add_pairEncode, BinArith.sub_pairEncode,
+    fromLEPoly_pairEncode, LogProg.bitsVal_bits]
 
 /-- Modular subtraction produces exactly the requested width on every raw input.
 
@@ -237,7 +289,7 @@ theorem subPoly_pairEncode (p : PolyExpr) (u a b : List Bool) :
 projection of the reconstructed pair. Zero width requires no special premise. -/
 theorem subPoly_length (p : PolyExpr) (z : List Bool) :
     (subPoly p z).length = p.eval (pairFstD z).length := by
-  sorry
+  rw [subPoly_eq, fromLEPoly_length, pairFstD_pairEncode]
 
 /-- The subtraction output represents the ring difference modulo `2^(p.eval u.length)`
 for arbitrary operands, including overlong words and width zero.
@@ -252,7 +304,13 @@ theorem subPoly_natCast_pairEncode (p : PolyExpr) (u a b : List Bool) :
         ZMod (2 ^ (p.eval u.length))) =
       (listToNat a : ZMod (2 ^ (p.eval u.length))) -
         (listToNat b : ZMod (2 ^ (p.eval u.length))) := by
-  sorry
+  have hbound :
+      listToNat b % 2 ^ (p.eval u.length) ≤
+        listToNat a + 2 ^ (p.eval u.length) :=
+    (Nat.mod_lt _ (Nat.two_pow_pos _)).le.trans (Nat.le_add_left _ _)
+  rw [subPoly_pairEncode, Candidates.listToNat_natToList_eq_mod,
+    ZMod.natCast_mod, Nat.cast_sub hbound, Nat.cast_add,
+    ZMod.natCast_self, ZMod.natCast_mod, add_zero]
 
 /-- Modular subtraction at any fixed syntactic polynomial width is polynomial-time.
 
@@ -262,6 +320,43 @@ Compose conversions, pairing, the proved right normalizer and the existing arith
 machines with the width writer. Read `subPoly_eq`. The modulus has polynomial bit
 length; no unary modulus, runtime polynomial evaluator or new host is introduced. -/
 theorem polyTimeComputable_subPoly (p : PolyExpr) : PolyTimeComputable (subPoly p) := by
-  sorry
+  have hzeros : PolyTimeComputable
+      (fun z => List.replicate (p.eval (pairFstD z).length) false) :=
+    EnsembleLemmas.polyTimeComputable_zeros p polyTimeComputable_pairFstD
+  have hq : PolyTimeComputable
+      (fun z => toLE
+        ([true] ++ List.replicate (p.eval (pairFstD z).length) false)) :=
+    polyTimeComputable_toLE.comp
+      ((polyTimeComputable_const [true]).append hzeros)
+  have ha : PolyTimeComputable
+      (fun z => toLE (pairFstD (pairSndD z))) :=
+    polyTimeComputable_toLE.comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+  have hb : PolyTimeComputable
+      (fun z => toLE
+        (normalizeWidthPoly p
+          (pairEncode (pairFstD z) (pairSndD (pairSndD z))))) :=
+    polyTimeComputable_toLE.comp
+      ((polyTimeComputable_normalizeWidthPoly p).comp
+        (polyTimeComputable_pairFstD.pairEncode
+          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)))
+  have hcalc := BinArith.polyTimeComputable_sub.comp
+    ((BinArith.polyTimeComputable_add.comp (ha.pairEncode hq)).pairEncode hb)
+  have h : PolyTimeComputable (fun z =>
+      fromLEPoly p
+        (pairEncode (pairFstD z)
+          (BinArith.sub
+            (pairEncode
+              (BinArith.add
+                (pairEncode
+                  (toLE (pairFstD (pairSndD z)))
+                  (toLE
+                    ([true] ++ List.replicate (p.eval (pairFstD z).length) false))))
+              (toLE
+                (normalizeWidthPoly p
+                  (pairEncode (pairFstD z) (pairSndD (pairSndD z))))))))) :=
+    (polyTimeComputable_fromLEPoly p).comp
+      (polyTimeComputable_pairFstD.pairEncode hcalc)
+  exact (funext (subPoly_eq p)).symm ▸ h
 
 end TCSlib.Cryptography.Encoding.DyadicArithmetic
