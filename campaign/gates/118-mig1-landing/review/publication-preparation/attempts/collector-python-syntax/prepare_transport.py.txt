@@ -1,0 +1,73 @@
+from pathlib import Path
+import json,hashlib,gzip,base64,collections,datetime,os
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');P=Path('/private/tmp/gate118-publication-preparation');REL='campaign/gates/118-mig1-landing/review/publication-preparation';S=R/'campaign/gates/118-mig1-landing/review/input-preparation-static';L=R/'campaign/fills/mig1/landing';C=L/'post234-source-screen';ctx=json.loads((L/'post234-compiled-accounting/head-current/context.json').read_text());head=ctx['source'];base=ctx['base']
+def sha(b):return hashlib.sha256(b).hexdigest()
+def save(n,d):(P/n).write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+def jsonl(n,rows):(P/n).write_text(''.join(json.dumps(r,separators=(',',':'),ensure_ascii=False)+'\n'for r in rows))
+static=json.loads((S/'input-original-bindings.json').read_text());assert len(static)==13438 and len({r['original']for r in static})==13438;old={r['original']:r for r in static};original324=(R/'campaign/fills/mig1/BUNDLE-FILES.txt').read_text().splitlines();assert len(original324)==324 and original324==[r['original']for r in static[:324]]
+logical=[r['original']for r in static];seen=set(logical);folders=['campaign/fills/mig1','campaign/gates/117-reading-api','campaign/gates/119-mig1-followup-api'];folderfiles={}
+for folder in folders:
+ ps=sorted(str(q.relative_to(R))for q in(R/folder).rglob('*')if q.is_file());folderfiles[folder]=ps
+ for p in ps:
+  if p not in seen:logical.append(p);seen.add(p)
+for p in ['campaign/gates/118-mig1-landing/STATUS.md','campaign/gates/118-mig1-landing/pack.DRAFT.md','campaign/status/2026-11-08-followup119-merge/MANIFEST.json','campaign/status/2026-11-08-followup119-merge/receipt.json','campaign/status/2026-11-08-followup119-merge/snapshot-objects.json']:
+ if p not in seen:assert(R/p).is_file(),p;logical.append(p);seen.add(p)
+# Read every current source through the final frozen50 captures, never records-worktree Lean.
+cap={side:json.loads((C/(side+'-capture.json')).read_text())for side in ['base','head']};sourcepins=[];forced=set();resolve={}
+for side in ['base','head']:
+ files=cap[side]['files'];files=list(files.values())if isinstance(files,dict)else files
+ for r in files:
+  path=r.get('path',r.get('file'));assert path and path.startswith('TCSlib/'),r
+  capture='campaign/fills/mig1/landing/post234-source-screen/inputs/'+side+'/'+path+'.txt';q=R/capture;b=q.read_bytes();assert len(b)==r.get('bytes',len(b))and sha(b)==r.get('sha256',sha(b));forced.add(capture);resolve[capture]=q
+  if capture not in seen:logical.append(capture);seen.add(capture)
+  row={'capture':capture,'path':path,'side':side,'source':cap[side]['commit'],'bytes':len(b),'sha256':sha(b),'capture_git_binding':r}
+  if side=='head':
+   assert cap[side]['commit']==head;resolve[path]=q;forced.add(path)
+  sourcepins.append(row)
+assert len(sourcepins)==50 and len(forced)==75
+# Verify all frozen current folder manifests, without executing any supplied artifact.
+frozen={
+'post234-source-QA-final':'5ce146529d1c3128f6ced9001ca53c757a26800ac18d7eef12ea3e28fb7763e0',
+'post234-source-screen':'70908028d3fcfaf4003d7a980ddc161650f0dc29241564e8d73c8bf660d9373b',
+'post234-native3':'c41b9a7636785a40a4fbce7934c85b203abc0cf75e42aa21e483396216f077fa',
+'post234-consumer-seals':'4e0bfd850af295afa7705002c94870d646f75135dd537ee4ee157d6465dbbcb1',
+'post234-core-reader-repair':'75808eaa8a67010f6a98312a2bb30789480e3ebe611c20d85cbf650a5b65cabd',
+'post234-compiled-accounting/head-current':'dbd6029fd9ea8b3c306666f1c8d3ea6f1a5ca44d5cb9e242fc83f563a942228a',
+'post234-compiled-accounting/baseline-current':'3c1a508ba5f2d62d8f45a27b86bcfa285bf748b0fdaf725a256994506f23f84f'}
+frozenrows=[]
+for folder,expected in frozen.items():
+ d=L/folder;mf=d/('BASELINE-MANIFEST.json'if folder.endswith('baseline-current')else'MANIFEST.json');mb=mf.read_bytes();assert sha(mb)==expected;mm=json.loads(mb);rs=mm if isinstance(mm,list)else mm['files']
+ # Some older strong-seal manifests use relative path dictionaries or entry lists.
+ if isinstance(rs,dict):rs=[{'path':k,**v}for k,v in rs.items()]
+ for r in rs:
+  path=r.get('path',r.get('file'));q=d/path;b=q.read_bytes();assert sha(b)==r['sha256']and len(b)==r.get('bytes',r.get('size',len(b))),(folder,path)
+ frozenrows.append({'folder':str(d.relative_to(R)),'manifest':str(mf.relative_to(R)),'manifest_sha256':sha(mb),'manifest_entries':len(rs),'physical_files':len([q for q in d.rglob('*')if q.is_file()]),'all_entries_verified':True})
+# Original static aliases are data; record their full identity without importing unused encodings.
+save('static-preparation-context.json',{'source_summary':json.loads((S/'summary.json').read_text()),'static_bindings_sha256':sha((S/'input-original-bindings.json').read_bytes()),'static_aliases_sha256':sha((S/'aliases.json').read_bytes()),'static_dedup_preview_sha256':sha((S/'dedup-preview.json').read_bytes()),'all13438_original_paths_retained':True,'original324_logical_prefix_exact':True,'unused_static_encodings_not_added':True,'records_candidate_requires_final_root_Git_rebind':True})
+logicalrows=[];groups=collections.OrderedDict();deltas=[]
+for p in logical:
+ q=resolve.get(p,R/p);assert q.is_file(),p;b=q.read_bytes();h=sha(b)
+ try:b.decode('utf8');utf=True
+ except UnicodeDecodeError:utf=False
+ r={'logical':p,'bytes':len(b),'sha256':h,'utf8':utf,'input_kind':'TCSlib Git-source capture'if p.startswith('TCSlib/')else'records candidate','pin':head if p.startswith('TCSlib/')else'ROOT_FINAL_RECORDS_REBIND','source_capture':str(q.relative_to(R))if p.startswith('TCSlib/')elseNone,'original_static_pin':old[p]['pin']if p in old elseNone,'original_static_blob':old[p]['blob']if p in old elseNone};logicalrows.append(r);groups.setdefault((h,len(b)),[]).append(r)
+ if p in old and(len(b),h)!=(old[p]['bytes'],old[p]['sha256']):deltas.append({'path':p,'old_bytes':old[p]['bytes'],'old_sha256':old[p]['sha256'],'current_bytes':len(b),'current_sha256':h,'reason':'records candidate chronology; final root rebind required'})
+physical=[];aliases=[];mapping=[];dedup=[];enc=P/'encodings';enc.mkdir(exist_ok=True);alias_cache={}
+for (h,size),rs in groups.items():
+ primary=next((r for r in rs if r['logical']in forced),rs[0]);p=primary['logical'];q=resolve.get(p,R/p);b=q.read_bytes();assert(len(b),sha(b))==(size,h);mode='identity';payloadpath=p;payload=b
+ if p not in forced and(size>=16384 or not primary['utf8']):
+  z=gzip.compress(b,compresslevel=9,mtime=0);coded=base64.encodebytes(z)
+  if not primary['utf8']or len(coded)+512<size:
+   mode='gzip+base64';payloadpath=REL+'/encodings/'+h+'.gz.base64.txt';payload=coded;(enc/(h+'.gz.base64.txt')).write_bytes(coded);assert gzip.decompress(base64.decodebytes(coded))==b;aliases.append({'payload':payloadpath,'payload_bytes':len(coded),'payload_sha256':sha(coded),'decoded_bytes':size,'decoded_sha256':h,'encoding':'gzip(mtime=0)+base64','all_logical_paths':[r['logical']for r in rs]})
+ payload.decode('utf8');physical.append({'path':payloadpath,'bytes':len(payload),'sha256':sha(payload),'primary_logical':p,'mode':mode,'content_source':str(q),'force_plaintext':p in forced})
+ for r in rs:
+  # Every current source capture remains its own literal physical section.
+  chosen=payloadpath;chosenmode=mode
+  if r['logical']in forced and r['logical']!=p:
+   chosen=r['logical'];chosenmode='identity';physical.append({'path':chosen,'bytes':size,'sha256':h,'primary_logical':chosen,'mode':'identity','content_source':str(resolve.get(chosen,R/chosen)),'force_plaintext':True})
+  mr=r|{'physical':chosen,'decode':chosenmode};mapping.append(mr)
+  if chosen!=r['logical']:dedup.append({'logical':r['logical'],'physical':chosen,'decode':chosenmode,'bytes':size,'sha256':h})
+assert len(mapping)==len(logical)and len({r['path']for r in physical})==len(physical)and sum(r['force_plaintext']for r in physical)==75
+# Keep physical order tied to first logical occurrence, while originals324 retain logical order.
+order={p:i for i,p in enumerate(logical)};physical.sort(key=lambda r:order[r['primary_logical']]);mapping.sort(key=lambda r:order[r['logical']])
+jsonl('logical-to-physical.jsonl',mapping);jsonl('physical-payloads.jsonl',physical);save('aliases.json',aliases);jsonl('exact-dedup-map.jsonl',dedup);save('source-bindings.json',sourcepins);save('frozen-current-input-verification.json',frozenrows);save('static-to-candidate-delta.json',deltas);save('declared-folder-coverage.json',{'folders':folderfiles,'no_folder_caps':True,'current_MMIG3_receipt_pending_and_future_archive_must_be_appended':True});(P/'ORIGINAL324-LOGICAL.txt').write_text('\n'.join(original324)+'\n');(P/'LOGICAL-INPUTS.txt').write_text('\n'.join(logical)+'\n');(P/'BUNDLE-FILES.txt').write_text('\n'.join(r['path']for r in physical)+'\n')
+context={'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source':head,'compiled_BASE':base,'BASE_screen_records_source':cap['base']['commit'],'selected_auditor':'Codex','findings_filename':'gate118-mig1-landing-findings.md','records_pin':'ROOT_FINAL_RECORDS_REBIND','logical_inputs':len(logical),'static_logical_inputs':13438,'new_logical_inputs':len(logical)-13438,'original324_exact_logical_prefix':True,'raw_logical_bytes':sum(r['bytes']for r in logicalrows),'unique_raw_groups':len(groups),'physical_payloads':len(physical),'physical_payload_bytes':sum(r['bytes']for r in physical),'selected_encoding_payloads':len(aliases),'forced_plaintext_source_payloads':75,'all50_current_source_captures_plaintext':True,'all25_source_ROOT_bindings_HEAD':True,'no_unused_alias_payloads':True,'current_MMIG3':'PENDING root relay; no success inferred','no_Git_Lean_screens_or_canonical_mutations':True};save('transport-preparation.json',context);print(json.dumps(context,indent=2),flush=True)

@@ -11,7 +11,7 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 **LATEST: Clear to merge #235; SG1R4 and MIG118 publication next.**
 
-- **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PRreadiness transition in progress; Seyoonmerges. No new ruling/sourcefix.
+- **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PR235 is verified non-draft/open at073; readiness complete. Seyoonmerges. No new ruling/sourcefix.
 - **Not yet clear to merge: #215.** Current078 fullMSG8PASS329/static0/66,25screens/compiled/seals complete. FrozenR4publicationdraft173files/1628sections~73.5MB; root canonicaladoption/stage/rebind/publish remain. Codexselected.
 - **Not yet clear to merge: #233.** SourceEAecd currentMMIG3ACTUALPASS394/0/static0/60 from wholeMAC5, all12owner binaries identicalnative3; full895maps frozen. SourceQA93/screen153/HEADaccounting135 allcomplete,388selectedStd and5authoredpublictype transports kernelvalidated. Codexgate118two-partpacketdraft preparing; rootpublication next.
 
