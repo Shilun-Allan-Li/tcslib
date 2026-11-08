@@ -53,18 +53,17 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import re
-import shutil
 import sys
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 from scripts import dataset_projects as dp
+from scripts.dataset_shards import refresh_mirrors
 
-from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
+from proofmatch.dataset_io import jsonl_path, open_dataset, resolve_dataset  # noqa: E402
 
 DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 DEP_GRAPH = BASE / "dep_graph.json"
@@ -94,19 +93,15 @@ def load_patch(path: Path) -> dict[str, dict]:
 
 
 def write_dataset(records: list[dict], out_path: Path) -> Path:
-    """Write the .jsonl and refresh its .gz twin, as build_dataset.py does."""
+    """Write JSONL and refresh its mirrors and, for shipped data, its shards."""
+    out_path = jsonl_path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = out_path.with_suffix(out_path.suffix + ".tmp")
     with open(tmp, "w", encoding="utf-8") as handle:
         for record in records:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
     tmp.replace(out_path)
-    gz_path = out_path.with_suffix(out_path.suffix + ".gz")
-    gz_tmp = gz_path.with_suffix(gz_path.suffix + ".tmp")
-    with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
-        shutil.copyfileobj(src, dst)
-    gz_tmp.replace(gz_path)
-    return gz_path
+    return refresh_mirrors(out_path)
 
 
 PRIVATE_RE = re.compile(r"^_private\..*?\.\d+\.")   # build_dataset.normalize_name

@@ -42,10 +42,8 @@ reported -- rebuild it with build_dataset.py.
 from __future__ import annotations
 
 import argparse
-import gzip
 import json
 import re
-import shutil
 import sys
 from collections import Counter
 from pathlib import Path
@@ -55,7 +53,8 @@ BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from proofmatch.blueprint import ENV_RE, parse_proof_sources  # noqa: E402
-from proofmatch.dataset_io import dataset_exists, read_dataset_text  # noqa: E402
+from proofmatch.dataset_io import dataset_exists, jsonl_path, read_dataset_text  # noqa: E402
+from scripts.dataset_shards import refresh_mirrors  # noqa: E402
 
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 REFERENCES_DIR = BASE / "blueprint" / "src" / "references"
@@ -439,19 +438,13 @@ def main() -> int:
         print("\n--dry-run: nothing written.")
         return 0
 
-    out_path = (args.out or args.dataset).resolve()
+    out_path = jsonl_path(args.out or args.dataset).resolve()
     with out_path.open("w", encoding="utf-8") as handle:
         for record in updated:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
     print(f"\nWrote {len(updated)} records -> {_display(out_path)}")
 
-    # The theorems viewer fetches the gzipped copy in preference to the .jsonl, so
-    # rewriting only the .jsonl would leave the site serving the old columns.
-    gz_path = out_path.with_suffix(out_path.suffix + ".gz")
-    gz_tmp = gz_path.with_suffix(gz_path.suffix + ".tmp")
-    with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
-        shutil.copyfileobj(src, dst)
-    gz_tmp.replace(gz_path)
+    gz_path = refresh_mirrors(out_path)
     print(f"Refreshed gzip copy -> {_display(gz_path)}")
     return 0
 

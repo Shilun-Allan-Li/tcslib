@@ -6,13 +6,22 @@ import json
 from pathlib import Path
 
 
+def jsonl_path(path: Path) -> Path:
+    """Logical writable JSONL path for any supported dataset representation."""
+    path = Path(path)
+    if path.name.endswith('.manifest.json'):
+        return path.with_name(path.name.removesuffix('.manifest.json') + '.jsonl')
+    return Path(str(path)[:-3]) if path.suffix == '.gz' else path
+
+
 def resolve_dataset(path: Path) -> Path:
     """Pick the newest available mirror; explicit existing representations win."""
     path = Path(path)
     if (path.suffix == '.gz' or path.name.endswith('.manifest.json')) and path.exists():
         return path
-    logical = Path(str(path)[:-3]) if path.suffix == '.gz' else path
-    candidates = [logical, Path(str(logical) + '.gz'), logical.with_suffix('.manifest.json')]
+    logical = jsonl_path(path)
+    candidates = [logical, Path(str(logical) + '.gz'), logical.with_suffix('.manifest.json'),
+                  logical.parent / 'local' / (logical.name + '.gz')]
     existing = [p for p in candidates if p.exists()]
     return max(existing, key=lambda p: p.stat().st_mtime_ns) if existing else path
 

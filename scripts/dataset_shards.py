@@ -1,12 +1,37 @@
 """Package a JSONL dataset into size-bounded, checksum-verified gzip shards."""
 from __future__ import annotations
 import argparse
+import gzip
 import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import zlib
+
+SHIPPED_DATASET = Path(__file__).resolve().parent.parent / 'dataset' / 'tcslib_theorems.jsonl'
+
+
+def refresh_mirrors(source: Path) -> Path:
+    """Refresh gzip mirrors; also publish shards for the repository dataset.
+
+    Intermediate exports retain their adjacent gzip. The shipped dataset keeps
+    its complete gzip in ignored local storage and publishes a manifest instead.
+    """
+    shipped = source.resolve() == SHIPPED_DATASET.resolve()
+    target = source.with_suffix(source.suffix + '.gz')
+    if shipped:
+        target = source.parent / 'local' / target.name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temp = target.with_suffix(target.suffix + '.tmp')
+    with source.open('rb') as src, gzip.open(temp, 'wb', compresslevel=9) as dst:
+        shutil.copyfileobj(src, dst)
+    temp.replace(target)
+    manifest = source.with_suffix('.manifest.json')
+    if shipped or manifest.exists():
+        package(source, manifest)
+    return target
 
 
 def package(source: Path, manifest: Path, max_bytes: int = 80 * 1024**2) -> dict:
@@ -46,7 +71,8 @@ def package(source: Path, manifest: Path, max_bytes: int = 80 * 1024**2) -> dict
         handle = None
 
     try:
-        with source.open('rb') as src:
+        opener = gzip.open if source.suffix == '.gz' else open
+        with opener(source, 'rb') as src:
             for line in src:
                 if not line.strip():
                     raise ValueError('Blank lines are not valid dataset records')
@@ -88,7 +114,6 @@ def package(source: Path, manifest: Path, max_bytes: int = 80 * 1024**2) -> dict
 
 
 def verify(manifest: Path) -> dict:
-    import gzip
     data = json.loads(manifest.read_text())
     digest = hashlib.sha256()
     rows = 0
@@ -114,10 +139,14 @@ def verify(manifest: Path) -> dict:
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('source', type=Path)
+    ap.add_argument('source', type=Path, nargs='?', help='JSONL or gzip JSONL input')
     ap.add_argument('--manifest', type=Path, default=Path('dataset/tcslib_theorems.manifest.json'))
     ap.add_argument('--max-mib', type=int, default=80)
+    ap.add_argument('--verify', action='store_true', help='verify the manifest without repackaging')
     args = ap.parse_args()
-    package(args.source, args.manifest, args.max_mib * 1024**2)
+    if not args.verify:
+        if args.source is None:
+            ap.error('source is required unless --verify is used')
+        package(args.source, args.manifest, args.max_mib * 1024**2)
     result = verify(args.manifest)
     print(f"Verified {result['rows']} rows in {len(result['shards'])} shards")

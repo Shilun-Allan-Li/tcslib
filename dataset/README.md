@@ -1,14 +1,50 @@
 # The TCSlib theorem dataset
 
-`tcslib_theorems.jsonl.gz` pairs every blueprint-bound theorem and lemma of the library
-with an informal statement and an informal proof (each the cited passage of the text it was formalized from, or
-prose written from the Lean when no text cites it), a self-contained formal statement,
-and a flattened compiling proof file.  Only the `.gz` is tracked; the plain `.jsonl`
-is regenerated locally and git-ignored.  Every reader goes through
-`proofmatch/dataset_io.py`, which falls back to the `.gz` transparently.
+`tcslib_theorems.manifest.json` describes the merged TCSlib and FABL dataset.
+Records pair blueprint-bound theorems and lemmas with informal statements and proof
+accounts, extracted formal statements, and flattened Lean proofs. Generated prose
+is used when no matched reference passage covers a statement or proof.
+
+The repository stores gzip shards under `shards/`, each at most 80 MiB. The manifest
+records shard sizes, SHA-256 checksums, row counts, and the complete uncompressed
+checksum. Complete local mirrors remain at `tcslib_theorems.jsonl` and
+`local/tcslib_theorems.jsonl.gz` (both ignored). Readers using
+`proofmatch/dataset_io.py` transparently support plain JSONL, gzip, and manifests.
+Verify packaged data with `python3 scripts/dataset_shards.py --verify`.
+To package an existing complete gzip, run
+`python3 scripts/dataset_shards.py dataset/local/tcslib_theorems.jsonl.gz`.
+
+Flattening is extraction, not kernel validation. `proof_complete` means that the
+flattened text contains no `sorry`; it does not certify compilation. Each project's
+provenance records its own Lean toolchain and dependency manifest.
 
 `INSTRUCTIONS.md` is the two-step guide for contributors; `DESIGN.md` records the
 intent, the rules the pipeline keeps, and the known gaps.
+
+## Attribution and third-party licenses
+
+This dataset includes formalizations extracted from
+[FABL: Formal Analysis of Boolean Functions in Lean](https://github.com/Polarnova/FABL),
+by Asher Yan. FABL source files credit “Authors: Asher Yan with Codex” and carry
+the notice “Copyright (c) 2026 Asher Yan. All rights reserved.” FABL formalizes
+Ryan O'Donnell's *Analysis of Boolean Functions*.
+
+The included FABL material comes from revision
+[`164f830312946ccac6e7fdc7bb9493f0149e820d`](https://github.com/Polarnova/FABL/tree/164f830312946ccac6e7fdc7bb9493f0149e820d)
+and is distributed under the [Apache License, Version 2.0](licenses/FABL.txt).
+FABL-derived records retain upstream source headers, repository and revision
+information, source hashes, and license information in their `provenance` fields.
+
+**Changes made by the TCSlib dataset pipeline:** extraction and flattening of Lean
+statements and proofs, repackaging into dataset records, and addition of generated
+metadata, informal statements, and proof accounts where applicable. These changes
+and annotations are downstream dataset work; the original FABL formalizations are
+credited to their upstream authors. Inclusion does not imply upstream endorsement.
+FABL's intermediate dataset metadata is excluded from TCSlib's published blueprint.
+
+The Apache license for FABL applies to its licensed material. Textbook passages
+and other third-party reference material retain their own attribution and license
+conditions.
 
 ## Building it
 
@@ -61,7 +97,7 @@ interrupted run is resumed by running the same command again (or `--from <stage>
 | `graph` | no | `lake build` (with `--build`) and the declaration dependency graph. Reports modules imported from `TCSlib.lean` that the graph predates (run `--build`), modules on disk that nothing imports (add the import, then `--build`), graph modules whose source moved, and the records of the current dataset a merge will carry over. | `build_dep_graph.py` |
 | `references` | yes | Every text under `blueprint/src/references/` without a validated `<name>.md` (a PDF dropped there, or one given as `--source TAG=PATH`) is OCR'd and cleaned into one (block-anchored, so citations can point into it); a `--source` tag is registered in `references/sources.json`. | `proofmatch.py extract`, `reference_coverage.py --register` |
 | `blueprint` | no | Every documentable declaration without a blueprint entry gets one, with the binding `\lean{}`, `\leanok`, `\uses{}` and a marked placeholder body (an estimate only counts them). | `blueprint_enumerate.py`, `blueprint_stub.py`, `blueprint_assemble.py`, `blueprint_validate.py` |
-| `citations` | yes | Statement-only pass-1 build, then the coverage report (below), then every reference document the blueprint does not cite yet (new texts, and older ones never matched) is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`; the tag registry is re-derived from the citations. `--rematch` redoes matched documents too. A `\statementsource` is the record's informal statement and a `\proofsource` its informal proof, so it runs before anything is generated. | `reference_coverage.py`, `proofmatch.py match` |
+| `citations` | yes | Proof-enabled pass-1 build, then the coverage report (below), then every reference document the blueprint does not cite yet (new texts, and older ones never matched) is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`; the tag registry is re-derived from the citations. `--rematch` redoes matched documents too. A `\statementsource` is the record's informal statement and a `\proofsource` its informal proof, so it runs before anything is generated. | `reference_coverage.py`, `proofmatch.py match` |
 | `statements` | yes | Pass 1 again, then the informal statement of every record whose *statement* nothing cites (and every stub definition) whose prose is not cached is written from the *formal* statement to handout standard, rubric-gated, cached under `references/statements/`, and applied into the blueprint. Statement-cited records are skipped: nothing is generated where a text can be quoted. | `build_dataset.py --no-proof`, `build_informal_statements.py`, `blueprint_restate.py --apply-only` |
 | `difficulty` | yes | Unrated proofs get an intrinsic, tactic-only 1-7 rating written as `\difficulty{N}`. | `blueprint_difficulty_plan.py`, `rate_difficulty.py`, `blueprint_difficulty_apply.py` |
 | `informalize` | yes | Every sorry-free proof that nothing cites and that has no note gets a prose account of its Lean proof under `references/informalized/<name>.md`, which becomes its `informal_proof` at build time. An account that is a tactic transcript (mostly code naming tactics) is rejected and retried once; notes parked under `informalized/rejected/` are ignored. Stops first if a *new* theorem cites a text nobody attached (below). | `reference_coverage.py --strict`, `informalize_proofs.py` |
@@ -190,7 +226,8 @@ no-LLM stages (the merge as a dry run) and reports the rest.
    `--source TAG=<text>`), then `python3 scripts/dataset_pipeline.py --build --yes`, or
    `--modules <the new module>` to touch nothing else.  (`python3 scripts/sources.py`
    before and after shows what the text covered and what is still waiting.)
-3. Read `dataset/.pipeline/check.json` and `merge.json`; commit `dataset/tcslib_theorems.jsonl.gz`,
+3. Read `dataset/.pipeline/check.json` and `merge.json`; commit `dataset/tcslib_theorems.manifest.json`,
+   its files under `dataset/shards/`,
    the blueprint chapters, and the new files under `blueprint/src/references/`.
 
 To repair a few records by hand without the pipeline (for example after a flattener fix):
@@ -207,6 +244,7 @@ One JSON object per line, in this column order.
 | Column | Type | Meaning |
 |---|---|---|
 | `id`, `lean_name` | string | Fully-qualified Lean name (identical). |
+| `provenance` | object (new builds) | Upstream project, commit and repository; pinned Lean toolchain; dependency-manifest and license hashes; license identifier; source-file hash and original copyright/author header. External checkouts are registered in `projects.json`; their license notices accompany the dataset under `licenses/`. |
 | `informal_statement` | string | The result in prose. When the blueprint entry cites the passage that states it (`\statementsource`), that passage verbatim from `references/<doc>.md`. Otherwise prose written from the Lean: a "Definitions:" block rendering `definitions`, then `Statement: <the claim>` (handout standard, LaTeX math); or the bare claim when it uses no library definition. |
 | `statement_source` | string | `citation` or `lean`: which of the two the above is. |
 | `informal_proof` | string | The proof in prose. When the entry cites the passage that proves it (`\proofsource`), that passage verbatim. Otherwise the informalized account of the Lean proof from `references/informalized/<name>.md` when one exists, else empty. |
@@ -238,3 +276,11 @@ improvement therefore never invalidates the prose; editing the declaration or a 
 it uses does.  `build_informal_statements.py --rekey OLD.jsonl ...` revalidates entries
 written against an earlier build (the pipeline does this automatically against the
 previous dataset), and `--trust-unknown` keeps entries whose key matches no known build.
+
+### External-project blueprint metadata
+
+`blueprint/src/chapter/FABL/` contains intermediate dataset metadata for upstream
+FABL declarations. These files remain readable by dataset generators, but
+`blueprint_assemble.py` excludes all registered external projects from the published
+`chapter/main.tex` and removes any older generated inputs for them. FABL data retains
+its upstream attribution and license; it is not a TCSlib blueprint chapter.

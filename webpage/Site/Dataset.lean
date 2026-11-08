@@ -59,16 +59,34 @@ By area in the deployed build: %%by\_area%%.
 The numbers on this page are computed from the dataset file this site serves, each time
 the site is deployed.
 
+# Attribution
+
+The dataset includes formalizations from
+[FABL: Formal Analysis of Boolean Functions in Lean](https://github.com/Polarnova/FABL),
+by Asher Yan, formalizing Ryan O'Donnell's *Analysis of Boolean Functions*.
+Upstream source files credit “Asher Yan with Codex” and retain their original
+copyright notices. The included revision is
+[`164f830312946ccac6e7fdc7bb9493f0149e820d`](https://github.com/Polarnova/FABL/tree/164f830312946ccac6e7fdc7bb9493f0149e820d).
+
+FABL material is distributed under
+[Apache License 2.0](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/licenses/FABL.txt).
+The TCSlib dataset pipeline extracts, flattens, and repackages the formalizations
+and adds generated metadata and prose where applicable. Records preserve upstream
+provenance. Inclusion does not imply upstream endorsement. See the
+[dataset attribution and license notes](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/README.md#attribution-and-third-party-licenses)
+for details. FABL's intermediate metadata is excluded from TCSlib's published blueprint.
+Textbook passages and other reference material have separate license conditions.
+
 # How to download it
 
-The dataset is one gzipped JSON Lines file, about %%size\_mb%% MB, one JSON object per line.
+The dataset is packaged as gzip JSON Lines shards, about %%size\_mb%% MB in total, with a checksum manifest. Each shard contains complete records.
 
 :::::htmlDiv (class := "download-buttons")
 
-::::html a (class := "hero-btn primary") (href := "/tcslib/theorems/tcslib_theorems.jsonl.gz") (download := "tcslib_theorems.jsonl.gz")
+::::html a (class := "hero-btn primary") (href := "/tcslib/theorems/tcslib_theorems.manifest.json") (download := "tcslib_theorems.manifest.json")
 :::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
 :::
-Download tcslib\_theorems.jsonl.gz
+Download the dataset manifest
 ::::
 
 ::::html a (class := "hero-btn secondary") (href := "https://huggingface.co/datasets/Hydroxyi/TCSlib")
@@ -77,9 +95,9 @@ Hugging Face
 
 :::::
 
-The button serves the build that is deployed with this site. The same file is also:
+Download the manifest and the shards it lists from the deployed site or repository:
 
-* [`dataset/tcslib_theorems.jsonl.gz`](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/tcslib_theorems.jsonl.gz)
+* [`dataset/tcslib_theorems.manifest.json`](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/tcslib_theorems.manifest.json)
   in the repository, where every build is a commit;
 * [`Hydroxyi/TCSlib`](https://huggingface.co/datasets/Hydroxyi/TCSlib) on Hugging Face,
   for `datasets.load_dataset`.
@@ -87,9 +105,12 @@ The button serves the build that is deployed with this site. The same file is al
 In Python:
 
 ```
-import gzip, json
+import json
+from pathlib import Path
+from proofmatch.dataset_io import open_dataset
 
-with gzip.open("tcslib_theorems.jsonl.gz", "rt") as f:
+# In a clone containing the manifest and its shards:
+with open_dataset(Path("dataset/tcslib_theorems.jsonl")) as f:
     records = [json.loads(line) for line in f]
 
 complete = [r for r in records if r["proof_complete"]]
@@ -97,10 +118,9 @@ cited = [r for r in records if r["statement_source"] == "citation"]
 with_proof = [r for r in records if r["proof_source"] != "none"]
 ```
 
-The `proof` column of a complete record compiles in a project that depends on the same
-Mathlib version as the library (`lake-manifest.json` in the repository pins it). The
-`formal_statement` column reproduces the declaration's environment as faithfully as a
-flattener can; the builder measures the compile rate of a sample on every run.
+The `proof_complete` flag checks the flattened text for `sorry`. It does not
+certify compilation. Use the toolchain and dependency manifest in each record's
+provenance when checking its formal statement or proof.
 
 # Columns
 

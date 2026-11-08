@@ -1,5 +1,5 @@
 r"""One harness for the whole dataset build: from Lean sources (+ reference texts) to
-dataset/tcslib_theorems.jsonl.gz with every column populated -- incrementally.
+dataset/tcslib_theorems.manifest.json and shards with every column populated -- incrementally.
 
 The dataset is never rebuilt from nothing.  Every LLM product is cached per declaration
 (statement prose under references/statements/, ratings and citations in the blueprint
@@ -49,7 +49,7 @@ subset with --stages):
                          statement from its \statementsource else the Lean prose, its
                          informal proof from its \proofsource else the note --
                          informal_sources.py) -> dataset_splice --merge into
-                         dataset/tcslib_theorems.jsonl + .gz.
+                         dataset/tcslib_theorems.manifest.json and gzip shards.
   verify       [no LLM]  dataset_check --strict (schema, leaks, stubs, row loss, carried-over
                          rows, optional sampled Lean compile), dataset_hygiene,
                          statement_quality, blueprint_validate --strict.
@@ -126,7 +126,6 @@ from proofmatch.model_policy import (  # noqa: E402
 
 SCRIPTS = BASE / "scripts"
 DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
-DATASET_GZ = BASE / "dataset" / "tcslib_theorems.jsonl.gz"
 DEP_GRAPH = BASE / "dep_graph.json"
 REFERENCES = BASE / "blueprint" / "src" / "references"
 WORK_ROOT = BASE / ".proofmatch-work"
@@ -694,10 +693,8 @@ def stage_dataset(r: Runner) -> None:
         argv.append("--dry-run")
     r.py("dataset", "dataset_splice.py", *argv)
     if not r.args.estimate and not r.args.dry_run:
-        r.py("dataset", "dataset_shards.py", str(DATASET))
-        local = DATASET.parent / "local" / DATASET_GZ.name
-        local.parent.mkdir(exist_ok=True)
-        os.replace(DATASET_GZ, local)
+        # dataset_splice refreshes the shards and the ignored local gzip mirror.
+        r.py("dataset", "dataset_shards.py", "--verify")
     r.mark("dataset", "estimated" if r.args.estimate else "ok", selected=r.selected)
 
 

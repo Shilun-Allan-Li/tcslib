@@ -1,13 +1,94 @@
+import gzip
 import hashlib
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 from proofmatch.dataset_io import open_dataset, resolve_dataset
-from scripts.dataset_shards import package, verify
+from scripts import dataset_shards
+from scripts.dataset_shards import package, refresh_mirrors, verify
 
 
 class ShardTests(unittest.TestCase):
+    def test_gzip_input_and_shipped_writer_refresh(self):
+        from scripts.dataset_splice import write_dataset
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / 'tcslib_theorems.jsonl'
+            compressed = root / 'tcslib_theorems.jsonl.gz'
+            raw = '{"id": "old"}\n'
+            with gzip.open(compressed, 'wt') as handle:
+                handle.write(raw)
+            manifest = source.with_suffix('.manifest.json')
+            self.assertEqual(package(compressed, manifest)['rows'], 1)
+            compressed.unlink()
+            with patch.object(dataset_shards, 'SHIPPED_DATASET', source):
+                mirror = write_dataset([{'id': 'new'}, {'id': 'second'}], manifest)
+            self.assertEqual(mirror, root / 'local' / compressed.name)
+            self.assertFalse(compressed.exists())
+            self.assertEqual(verify(manifest)['rows'], 2)
+            source.unlink()
+            with open_dataset(compressed) as handle:
+                self.assertEqual([json.loads(line)['id'] for line in handle], ['new', 'second'])
+            manifest.unlink()
+            self.assertEqual(resolve_dataset(source), mirror)
+            with open_dataset(source) as handle:
+                self.assertEqual(len(list(handle)), 2)
+
+    def test_intermediate_exports_keep_adjacent_gzip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / 'pass1.jsonl'
+            source.write_text('{"id":"test"}\n')
+            mirror = refresh_mirrors(source)
+            self.assertEqual(mirror, Path(str(source) + '.gz'))
+            with gzip.open(mirror, 'rt') as handle:
+                self.assertEqual(handle.read(), source.read_text())
+
+    @unittest.skipUnless(shutil.which('node'), 'Node.js is needed to test the web viewer')
+    def test_web_viewer_reads_shards_and_rejects_bad_checksum(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / 'data.jsonl'
+            source.write_text(''.join(json.dumps({'id': str(i), 'text': hashlib.sha256(str(i).encode()).hexdigest()}) + '\n'
+                                      for i in range(30)))
+            manifest = root / 'data.manifest.json'
+            package(source, manifest, max_bytes=700)
+            viewer = (Path(__file__).resolve().parents[1] / 'webpage/theorems/index.html').read_text()
+            functions = viewer[viewer.index('function parseJsonl('):viewer.index('function ingest(')]
+            harness = """
+const fs = require('node:fs');
+const {fileURLToPath} = require('node:url');
+globalThis.crypto = require('node:crypto').webcrypto;
+globalThis.fetch = async url => {
+  const response = new Response(fs.readFileSync(fileURLToPath(url)));
+  Object.defineProperty(response, 'url', {value: String(url)});
+  return response;
+};
+""" + functions + """
+(async () => {
+  const url = process.argv[2];
+  const rows = await loadFromUrl([url]);
+  if (rows.length !== 30 || rows[29].id !== '29') throw Error('Wrong rows');
+  const manifest = JSON.parse(fs.readFileSync(fileURLToPath(url)));
+  manifest.shards[0].sha256 = '0'.repeat(64);
+  fs.writeFileSync(fileURLToPath(url), JSON.stringify(manifest));
+  try { await loadFromUrl([url]); }
+  catch (error) {
+    if (error.message === 'Shard checksum mismatch') return;
+    throw error;
+  }
+  throw Error('Corrupt shard accepted');
+})().catch(error => { console.error(error); process.exitCode = 1; });
+"""
+            script = root / 'viewer-test.cjs'
+            script.write_text(harness)
+            result = subprocess.run(['node', str(script), manifest.as_uri()],
+                                    capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_round_trip_limits_and_chunked_reads(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

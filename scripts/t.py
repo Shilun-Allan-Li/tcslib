@@ -1,13 +1,14 @@
 python3 - <<'PY'
 import json
 from pathlib import Path
+from proofmatch.dataset_io import open_dataset
 
 marker = ("Statement pending regeneration", "dataset-pipeline: stub")
 def is_stub(text):
     return any(m in text for m in marker)
 
 ids = set()
-with open("dataset/tcslib_theorems.jsonl", encoding="utf-8") as f:
+with open_dataset(Path("dataset/tcslib_theorems.jsonl")) as f:
     for line in f:
         r = json.loads(line)
         s = r.get("informal_statement", "")

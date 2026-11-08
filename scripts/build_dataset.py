@@ -57,17 +57,16 @@ Usage:
 """
 
 import argparse
-import gzip
 import importlib.util
 import json
 import re
-import shutil
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 import sys
 sys.path.insert(0, str(BASE))
 from scripts import dataset_projects as dp
+from scripts.dataset_shards import refresh_mirrors
 
 DEP_GRAPH = BASE / "dep_graph.json"
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
@@ -2011,15 +2010,8 @@ def main():
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             n_written += 1
 
-    # The theorems web viewer (webpage/theorems/index.html) fetches the gzipped
-    # copy in preference to the .jsonl, so the .gz must be refreshed in the same
-    # run or the viewer silently serves a stale dataset. Written via a temp file
-    # so an interrupted run can't leave a truncated .gz behind.
-    gz_path = out_path.with_suffix(out_path.suffix + ".gz")
-    gz_tmp = gz_path.with_suffix(gz_path.suffix + ".tmp")
-    with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
-        shutil.copyfileobj(src, dst)
-    gz_tmp.replace(gz_path)
+    # Keep published shards in sync, including when run outside the pipeline.
+    gz_path = refresh_mirrors(out_path)
 
     print()
     print(f"Wrote {n_written} records -> {display_output_path(out_path)}")
