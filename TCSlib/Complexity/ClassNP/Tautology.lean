@@ -9,6 +9,7 @@ import TCSlib.Complexity.ClassNP.CoNP
 import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.CookLevin.Hardness
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 import Mathlib.Data.Sigma.Basic
 
 set_option maxHeartbeats 0
@@ -1044,31 +1045,15 @@ private lemma taut_machine_split (z : List Bool) :
     omega
 
 /-- Quantitative buffered composition with a second-stage contract only on
-the actual first-stage image (the proved epoch-2 TMSAT precedent).
+the actual first-stage image.
 
-**Proof sketch.** Capture the first stage's complete output, rewind it, and
-relocate the second run through the public simulation contract. At most one
-bit is captured per first-stage step. The second budget remains a function
-of the original input, exactly as supplied by its image contract. -/
+**Proof sketch.** Apply the public image-composition theorem with the two
+given machine contracts and their original-input time budgets. -/
 private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
     (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
     (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
     ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by
-  refine ⟨FinTM.bufferedCompTM M U, ?_⟩
-  intro x
-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
-    FinTM.bufferedComp_start M U x (f x) (T₁ x.length) (hM x)
-  have hlen : (f x).length ≤ T₁ x.length := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
-  obtain ⟨b, _, hr⟩ := FinTM.bufferedSecondCfg_run M U (U.tm.initCfg (f x)) true
-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ x.length)
-  have hu := (FinTM.computesInTime_iff _ _ _ _).mp (hU x)
-  have hbase : (FinTM.bufferedCompTM M U).ComputesInTime x (g x) (a+T₂ x.length) := by
-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
-    rw [MultiTapeTM.runFrom_add, hstart, hr]
-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
-  exact hbase.mono (by dsimp only; omega)
+  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
 
 /-- The verifier is polynomial-time: P10's cubic split followed by the
 linear syntax/evaluation machine, combined with buffered output.
@@ -1284,33 +1269,31 @@ private def tautDualSegment {x : List Bool}
   tautDualTM.tm.runFrom c t = d ∧
     ∀ j < t, (tautDualTM.tm.runFrom c j).state ≠ some .anchor
 
+/-- `tautDualSegment` is the segment layer at the transducer's parameters: the segment
+(`Turing.Segment`) of `tautDualTM.tm` with the anchor forbidden and no head relation.
+Consecutive segments compose, without hiding an earlier anchor visit, by
+`Turing.Segment.trans` through this bridge. -/
+private lemma tautDualSegment_iff_segment {x : List Bool}
+    (c d : Cfg 0 Bool TautDualControl x) (t : ℕ) :
+    tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
+
 /-- A zero-length segment has no strict prefix. -/
 private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
     tautDualSegment c c 0 := by
-  exact ⟨rfl, by intro j hj; omega⟩
+  rw [tautDualSegment_iff_segment]
+  exact Segment.zero trivial
 
 /-- A single non-anchor transition is a first-return segment. -/
 private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
     (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
     tautDualSegment c d 1 := by
-  refine ⟨h, ?_⟩
-  intro j hj
-  have : j = 0 := by omega
-  subst j
-  exact hq
-
-/-- Consecutive exact segments compose without hiding an earlier anchor visit. -/
-private lemma tautDual_segment_add {x : List Bool}
-    {c d e : Cfg 0 Bool TautDualControl x} {a b : ℕ}
-    (h : tautDualSegment c d a) (h' : tautDualSegment d e b) :
-    tautDualSegment c e (a+b) := by
-  refine ⟨by rw [MultiTapeTM.runFrom_add, h.1, h'.1], ?_⟩
-  intro j hj
-  by_cases ha : j < a
-  · exact h.2 j ha
-  · have he : j = a + (j-a) := by omega
-    rw [he, MultiTapeTM.runFrom_add, h.1]
-    exact h'.2 (j-a) (by omega)
+  rw [tautDualSegment_iff_segment]
+  have hseg := Segment.one (M := tautDualTM.tm) (F := {some .anchor})
+    (P := fun _ => True) (a := c)
+    (by simpa only [Set.mem_singleton_iff] using hq) trivial trivial
+  simpa only [h] using hseg
 
 /-- A silent syntax pass consumes exactly the suffix length and preserves
 physical output. Its endpoint records the complete inherited scanner state.
@@ -1348,9 +1331,11 @@ private lemma tautDual_scan (r : List Bool) :
       simpa using moveInputPos_pos_of_ne_right
         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
         (by simp [hx])
-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+    have h1 := (tautDualSegment_iff_segment ..).1
+      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm] using
-      tautDual_segment_add h1 (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')
+      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
+        (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')))
 
 /-- The emitting pass copies one native bit per transition, using exactly
 `tautDualScan`; the arbitrary output prefix is preserved in chronological order.
@@ -1388,11 +1373,12 @@ private lemma tautDual_copy (r : List Bool) :
       simpa using moveInputPos_pos_of_ne_right
         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
         (by simp [hx])
-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+    have h1 := (tautDualSegment_iff_segment ..).1
+      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm, tautDualScan,
       List.append_assoc, List.singleton_append] using
-      tautDual_segment_add h1
-        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')
+      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
+        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')))
 
 /-- A left scan starts inside the native input, reaches the actual left blank,
 and returns to position one. It stays silent and never returns early.
@@ -1432,8 +1418,11 @@ private lemma tautDual_rewind (x out : List Bool) (finish : Bool) :
       congr 1
       simpa using moveInputPos_neg_of_ne_left
         (⟨p+1, by omega⟩ : Fin (x.length+2)) (by simp)
-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
-    simpa only [Nat.add_comm] using tautDual_segment_add h1 (ih (by omega))
+    have h1 := (tautDualSegment_iff_segment ..).1
+      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
+    simpa only [Nat.add_comm] using
+      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
+        (ih (by omega))))
 
 /-- The post-copy right-blank transition begins a silent final rewind. -/
 private lemma tautDual_copy_end (x out : List Bool) (q : TautSyntax) :
@@ -1479,8 +1468,8 @@ private lemma tautDual_valid (x : List Bool)
   have hclose := tautDual_copy_end x (tautDualScan .formula x)
     (x.foldl tautSyntaxStep .formula)
   have hreturn := tautDual_rewind x (tautDualScan .formula x) true x.length (by omega)
-  have h := tautDual_segment_add (tautDual_segment_add (tautDual_segment_add
-    (tautDual_segment_add (tautDual_segment_add hscan hend) hback) hcopy) hclose) hreturn
+  rw [tautDualSegment_iff_segment] at hscan hend hback hcopy hclose hreturn ⊢
+  have h := ((((hscan.trans hend).trans hback).trans hcopy).trans hclose).trans hreturn
   convert h using 1
   omega
 
@@ -1509,7 +1498,8 @@ private lemma tautDual_invalid (x : List Bool)
         (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
     · simp [tautDualCfg]
   have hreturn := tautDual_rewind x [false] true x.length (by omega)
-  have h := tautDual_segment_add (tautDual_segment_add hscan hend) hreturn
+  rw [tautDualSegment_iff_segment] at hscan hend hreturn ⊢
+  have h := (hscan.trans hend).trans hreturn
   convert h using 1
   omega
 

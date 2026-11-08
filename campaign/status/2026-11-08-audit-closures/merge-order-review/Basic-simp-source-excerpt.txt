@@ -1,0 +1,14 @@
+335:   ∀ i d, d.state = some entry → C.pre i d → Cfg.SameOutside (fp i d) d (C.post i d)
+336: 
+337: /-- A contract frames `fp` exactly when, for every index `i` and every admissible start `d`,
+338: every cell `q` of every work tape `j` outside `fp i d j` holds at the endpoint what it held at
+339: the start. This is the definition unfolded, as a `@[simp]` lemma, so that `simp` and `rw` see
+340: the footprint. -/
+341: @[simp] theorem frames_iff (C : Contract M entry exits ι x)
+342:     (fp : ι → Cfg k Γ S x → Fin k → Set ℤ) :
+343:     C.Frames fp ↔ ∀ i d, d.state = some entry → C.pre i d →
+344:       ∀ j q, q ∉ fp i d j → (C.post i d).workTapes j q = d.workTapes j q :=
+345:   Iff.rfl
+346: 
+347: end Contract
+348: 

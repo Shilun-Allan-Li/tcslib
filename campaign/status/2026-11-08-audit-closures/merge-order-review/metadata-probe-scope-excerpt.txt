@@ -1,0 +1,48 @@
+1: import TCSlib.Complexity.ClassNP.SAT
+2: import TCSlib.Complexity.ClassNP.Tautology
+3: import TCSlib.Complexity.CookLevin.Hardness
+4: import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+5: import TCSlib.Complexity.TuringMachine.Build.Catalog
+6: import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+7: import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+8: import TCSlib.Complexity.TuringMachine.Build.Primitives
+9: import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+10: import Lean
+11: 
+12: set_option maxHeartbeats 0
+45:   let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology,
+46:     `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag,
+47:     `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic,
+48:     `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+49:     `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+50:   let owned := env.constants.toList.filterMap fun (n, ci) =>
+51:     match env.getModuleIdxFor? n with
+52:     | some i =>
+53:       let owner := env.header.moduleNames[i.toNat]!
+54:       if owners.contains owner then some (n, ci, owner) else none
+55:     | none => none
+56:   for (n, ci, _) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+57:     let info := Json.mkObj [("levelParams", metadataNames ci.levelParams), ("unsafe", toJson ci.isUnsafe),
+58:       ("partial", toJson ci.isPartial), ("specific", metadataSpecific ci)]
+59:     let instancePrio ← liftCoreM <| getInstancePriority? n
+73:   let simp ← liftTermElabM getSimpTheorems
+74:   let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology,
+75:     `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag,
+76:     `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic,
+77:     `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+78:     `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+79:   let rules : Array SimpTheorem :=
+80:     (simp.pre.foldValues (fun (a : Array SimpTheorem) s => a.push s) #[]) ++
+81:     (simp.post.foldValues (fun (a : Array SimpTheorem) s => a.push s) #[])
+82:   for s in rules do
+83:     if let .decl n phase inv := s.origin then
+84:       if let some idx := env.getModuleIdxFor? n then
+85:         if owners.contains env.header.moduleNames[idx.toNat]! then
+86:           let .const proofName proofLevels := s.proof
+87:             | throwError "effective simp proof is not a declaration reference; no value is printed: {n}"
+88:           let row := Json.mkObj [("phase", toJson phase), ("inverse", toJson inv), ("priority", toJson s.priority),
+89:             ("post", toJson s.post), ("perm", toJson s.perm), ("rfl", toJson s.rfl),
+90:             ("levelParams", metadataNames s.levelParams.toList),
+91:             ("proof_constant", toJson proofName.toString), ("proof_level_repr", toJson (reprStr proofLevels))]
+92:           logInfo m!"SIMP_RULE|{n}|{row.compress}"
+93:   logInfo "SIMPCOMPLETE"

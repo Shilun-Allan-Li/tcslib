@@ -9,6 +9,45 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST — BOTH RETURNED AUDITS CLOSED; combined interaction replay RUNNING.**
+
+Gate106round4 returned PASS0/0/0/27 and gate118 PASS0/0/0/18. Verbatim local-inbox reports/receipts and all27/18 scoped resolutions are retained; root and two independent return reviews found no source fix or new ruling. Complete review manifests are root-verified. Current source heads remain SG1b129 and MIG55df; both merge cleanly into records8f14 with exact audited Lean trees. #235 remains merged/MAC6 current.
+
+The independent all1003-source merge-order review found real import-context interaction: four MIG owners newly reach Contract.Basic after SG1, so existing separate MSG9/MMIG4 runs cannot automatically clear their combination. Root started actual **mjoint1 full394** at local validation-only combined source11b09440347ca8274562d58b5f90a11cfce56e29 from a whole895-objectMAC6 clone. It holds one shared slot, j4/nice10; session2021. No final result yet. Evidence/preparation and complete source/objects maps: campaign/status/2026-11-08-audit-closures/. Do not relabel old329/394/two-module executions.
+
+**Clear to merge: #215 first — Seyoon merges.** Gate106R4 closed; current clean prospective merge and MSG8→MSG9 remain valid. PR open/non-draft, exactb129 head and updated readiness description verified.
+**Not yet clear to merge: #233 — combined replay pending.**
+
+Recommended order after readiness: #215 then #233; Seyoon alone merges. Do not retire candidate implementations before actual merge. Seven SG1 retention kinds and wider FE-LIVE-1 keep their exact existing next12.2c owner/window, after activeMIG-1 and before further SAT/Hardness fills. No new audit/fill dispatch or user decision is needed for these passing returns. Nextfree121. Older relocation/open-gate checkpoints below are historical.
+
+
+**RELOCATION CHECKPOINT — Seyoon confirmed dispatch of BOTH Codex audits and is closing this chat. Resume only when he returns.**
+
+Gate106round4 (#215) and gate118 (#233) are DISPATCHED, awaiting findings Markdown. Exact immutable input/source/records/exchange pins and issued prompts are in each gate's publication/dispatch/prompt files. No new source, replay, screen, fill or background work is started for relocation. All own agents/checks finished; all source, evidence and audit inputs are pushed. #235 remains merged/MAC6 current. #215/#233 are NOT yet clear to merge while their external audits are open. On return, inspect the inbox, review incoming reports with subagents in parallel, and preserve the existing current-context/replay pins. Nextfree121.
+
+Earlier readiness wording below is historical; explicit user dispatch confirmation above supersedes it.
+
+
+**LATEST relocation checkpoint: both Codex audit prompts published/issued; no own Lean/screen jobs remain.**
+
+- #235 is MERGED atdf4341236e04a861e65e29d58b35a713f14c819c. Gate120CLOSED PASS0/0/0/20; exact wholeMF63→MAC6 adoption895 objects, no newelaboration/splice.
+- **Ready to dispatch: Codex gate106 round4 for #215.** Sourceb12902832c67210acd737d87d2d0c761bd5b35eb, records331e68b99c4287232394920e74eed222151f7280, exchange81676b42e758176389c19bcf470c6c5dcfd2a228. Published1696sections/79,398,827bytes/SHA3796750f950d279b92f6ab522b6f75b0b6c622f4a14ac015f85a74c252cf60a7. Exactprompt-r4.md/publication-r4.json/dispatch-r4.json saved; userdispatch notyetconfirmed. ActualMSG9PASS2/static0/0 wholeMSG8tail; priorfull329/static66 retains078/MAC5. **Not yet clear to merge: #215 — auditopen.**
+- **Ready to dispatch: Codex gate118 for #233.** Source55df52da9754f04b0c71646df29f83f33ec3aa52, same records331, exchange15dde3b91c9e6cbfefba6e11ea44545a42125068. Publishedtwo parts3296+2710sections (6006total),96,671,506/87,986,691bytes; exactSHAs inpublication.json andprompt.md. All1316JSON parsed, everyphysicalsectionGit-bound; bothrebuild/archivePASS0problems. ActualMMIG4PASS2/static0/0 wholeMMIG3tail; priorfull394/static60 retainsEAecd/MAC5. Exactsource/importcontexts preserved. **Not yet clear to merge: #233 — gate118open.**
+
+BothPRs remainatpushedcurrentheads; sourcePRmerges onlybySeyoon. All code/snapshots/inputs/peerreviews/promptrecords are checkpointed. Next: recorduserdispatchconfirmation, await/findingsMD, reviewincomingauditswithsubagentsinparallel, handlefindingsandcurrentmerged-treevalidity. No newdecisionpending. Nextfree121. Earlier checkpoints below are historical and must not override this one.
+
+
+**LATEST: #235 merged; MAC6 adopted. Final current audit publication running.**
+
+Seyoon merged#235 atdf4341236e04a861e65e29d58b35a713f14c819c, all1003Leanblobs exactly073; wholeMF63 renamedMAC6/895hashes preserved, no newelaboration/splice. Gate120CLOSED PASS0/0/0/20.
+
+**Not yet clear to merge: #215.** Pushedb12902832c67210acd737d87d2d0c761bd5b35eb; actualMSG9PASS2/static0/0 wholeMSG8tail, full329/0/static66 remainsactual078/MAC5. CodexR4canonical/completeinputlist adopted, allpeer/context checksPASS; finalstage/push/prompt next.
+
+**Not yet clear to merge: #233.** Pushed55df52da9754f04b0c71646df29f83f33ec3aa52; actualMMIG4PASS2/static0/0 wholeMMIG3tail, full394/0/static60 remainsactualEAecd/MAC5. Codex118canonical/two-partlists adopted; peer scope-label minor corrected; allsource/type/AX/screen/context checksPASS. Finalstage/push/prompt next.
+
+Contextvalidity14files verifies100unchanged endpointblobs and unchangedownerimportclosures excludingHierarchy. No ownLean/screen jobsremain. Finalrecords/exchangepins notyetissued. Nextfree121. All older checkpoints below are historical.
+
+
 **LATEST: Clear to merge #235; SG1R4 and MIG118 publication next.**
 
 - **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PR235 is verified non-draft/open at073; readiness complete. Seyoonmerges. No new ruling/sourcefix.

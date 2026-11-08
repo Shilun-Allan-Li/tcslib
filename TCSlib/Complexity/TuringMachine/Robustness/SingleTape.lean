@@ -13,6 +13,7 @@ import Mathlib.Data.Sigma.Basic
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -1184,20 +1185,15 @@ private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
   tm.runFrom c t = d ∧ ∀ u ≤ t,
     lo ≤ (tm.runFrom c u).workTapePos 0 ∧ (tm.runFrom c u).workTapePos 0 ≤ hi
 
-/-- Concatenating contained runs preserves containment at every physical time.
-**Proof sketch.** A prefix ends either in the first run or at a uniquely
-specified offset in the second; the equality at the join handles the latter. -/
-private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
-    {c d e : Cfg 1 A Q x} {s t : ℕ} {lo hi : ℤ}
-    (h₁ : DGSpan tm c d s lo hi) (h₂ : DGSpan tm d e t lo hi) :
-    DGSpan tm c e (s + t) lo hi := by
-  refine ⟨by rw [MultiTapeTM.runFrom_add, h₁.1, h₂.1], ?_⟩
-  intro u hu
-  by_cases h : u ≤ s
-  · exact h₁.2 u h
-  · have he : u = s + (u - s) := by omega
-    rw [he, MultiTapeTM.runFrom_add, h₁.1]
-    exact h₂.2 (u - s) (by omega)
+/-- `DGSpan` is the segment layer with nothing forbidden: the segment (`Turing.Segment`) of
+`tm` whose head relation keeps the one work head in `[lo, hi]`. Concatenating contained runs,
+which preserves containment at every physical time, is `Turing.Segment.trans` through this
+bridge. -/
+private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
+    (c d : Cfg 1 A Q x) (t : ℕ) (lo hi : ℤ) :
+    DGSpan tm c d t lo hi ↔ Segment tm ∅ (fun p => lo ≤ p 0 ∧ p 0 ≤ hi) c d t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun h => ⟨h.1, fun _ _ hm => hm, h.2⟩, fun h => ⟨h.1, h.2.2⟩⟩
 
 /-- A single transition has only its two endpoints as prefixes. -/
 private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
@@ -1205,14 +1201,11 @@ private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
     (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)
     (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :
     DGSpan tm c d 1 lo hi := by
-  have hr : tm.runFrom c 1 = d := by simpa using h
-  refine ⟨hr, ?_⟩
-  intro u hu
-  have he : u = 0 ∨ u = 1 := by omega
-  rcases he with rfl | rfl
-  · simpa using hc
-  · rw [hr]
-    exact hd
+  rw [dgSpan_iff_segment]
+  have hseg := Segment.one (M := tm) (F := ∅)
+    (P := fun p => lo ≤ p 0 ∧ p 0 ≤ hi) (a := c)
+    (fun hmem => hmem) hc (by rw [h]; exact hd)
+  simpa only [h] using hseg
 
 /-- The canonical boundary configuration uses the received interleaved zone,
 with the source read position interpreted on the native, unretracted input. -/
@@ -1286,8 +1279,9 @@ private lemma dgSpan_generate_left {A Q : Type} {x : List A}
 private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
     {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}
     (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :
-    DGSpan tm c d t lo' hi' :=
-  ⟨h.1, fun u hu => ⟨hl.trans (h.2 u hu).1, (h.2 u hu).2.trans hr⟩⟩
+    DGSpan tm c d t lo' hi' := by
+  rw [dgSpan_iff_segment] at h ⊢
+  exact h.mono subset_rfl fun p hp => ⟨hl.trans hp.1, hp.2.trans hr⟩
 
 /-- Initialization on every native input stays in the origin block and its
 two boundary cells. It uses the generic writer and reverse-sweep APIs.
@@ -1374,7 +1368,8 @@ private lemma dg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (show (-1 : ℤ) ≤ (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ∧
       (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ≤ M.k by
         dsimp [dgStart, sweepRevCfg]; omega)
-  have h := dgSpan_add (dgSpan_add (dgSpan_add hgen hturn) hback) hlast
+  rw [dgSpan_iff_segment] at hgen hturn hback hlast
+  have h := (dgSpan_iff_segment ..).2 (((hgen.trans hturn).trans hback).trans hlast)
   simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h
 
 /-- The delegated right-row writer has the exact generic prefix ledger. -/
@@ -1490,7 +1485,8 @@ private lemma dg_collect {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     rw [h]
     have hu' : (u : ℤ) ≤ (n : ℤ) * M.k := by exact_mod_cast hu
     constructor <;> omega
-  exact dgSpan_add first scan
+  exact (dgSpan_iff_segment ..).2
+    (((dgSpan_iff_segment ..).1 first).trans ((dgSpan_iff_segment ..).1 scan))
 
 /-- The delegated right-boundary turn performs precisely one native source
 input/output action. Retraction is used for the scanned symbol only.
@@ -1626,7 +1622,8 @@ private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
   have h₃ := dgSpan_one ht
     (show z - 1 ≤ z + (M.k : ℤ) ∧ z + (M.k : ℤ) ≤ z + M.k by omega)
     (show z - 1 ≤ z + (M.k : ℤ) - 1 ∧ z + (M.k : ℤ) - 1 ≤ z + M.k by omega)
-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
+  rw [dgSpan_iff_segment] at h₁ h₂ h₃
+  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
   simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h
 
 /-- The received stationary write identity also permits a halted successor.
@@ -1717,7 +1714,8 @@ private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
   have h₃ := dgSpan_one last
     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
+  rw [dgSpan_iff_segment] at h₁ h₂ h₃
+  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
   simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h
 
 /-- The demand-grown left row is precisely the next source row. Its payloads
@@ -1889,7 +1887,9 @@ private lemma dg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
       simpa only [written, dgStart, Bool.toNat_true, Nat.one_mul, Int.natCast_one,
         one_mul, tapeZone, show a - 1 + 1 = a by omega, List.map_append,
         List.append_assoc, V, put, act, show 1 + (M.k + 1) = M.k + 2 by omega] using h
-  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
+  rw [dgSpan_iff_segment] at hcollect hdispatch hwrite hfinish
+  have h := (dgSpan_iff_segment ..).2
+    (((hcollect.trans hdispatch).trans hwrite).trans hfinish)
   simpa only [dgCost, MultiTapeTM.step, hs, act] using h
 
 /-- The represented coordinate interval contains the source heads and support,
@@ -2105,7 +2105,8 @@ private lemma dg_simulate {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     refine ⟨a - left.toNat, n + right.toNat + left.toNat,
       u + dgCost M.k n left right, w', ?_, ?_⟩
     · exact Nat.add_le_add htime (dgCost_le M.k t n hk w.size left right)
-    · exact dgSpan_add (dgSpan_mono hspan hlower hupper) hcycle
+    · exact (dgSpan_iff_segment ..).2 (((dgSpan_iff_segment ..).1
+        (dgSpan_mono hspan hlower hupper)).trans ((dgSpan_iff_segment ..).1 hcycle))
 
 /-- The demand-grown witness computes on every native word after finite-control
 retraction, with both resource bounds at that word's unchanged length.

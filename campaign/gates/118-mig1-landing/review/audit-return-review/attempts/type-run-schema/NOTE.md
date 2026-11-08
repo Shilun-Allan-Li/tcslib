@@ -1,0 +1,1 @@
+Report assembly first used output_sha256 instead of the type-probe receipt's raw_sha256 field. It stopped before writing any review result. The retained receipt uses raw_sha256, and the corrected check agrees with the decompressed raw output.

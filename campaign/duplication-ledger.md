@@ -1708,7 +1708,7 @@ controls and finalMSG7dependent replay pass. Retired only when #215 merges; this
 candidate enumeration does not claim no further instance anywhere in TCSlib.
 
 
-## F6-REUSE-1 — visited-set monotonicity and live seam composition (proposed retirement in #235)
+## F6-REUSE-1 — visited-set monotonicity and live seam composition (retired in merged #235)
 
 Two mechanical reuse kinds are repaired in the new space-universal proof, without new
 public API, import, machine, statement or debt permission.
@@ -1725,8 +1725,7 @@ public API, import, machine, statement or debt permission.
 The initial fill review missed these exact re-derivations. Actual corrected native/scoped
 checks and current chained replay receipts are preserved separately from producer/earlier
 maintainer evidence. See fills/f6/landing/seam-step-repoint-preflight,
-seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Each kind is proposed
-retired only on #235 merge. This bounded enumeration/inspection is not whole-library absence
+seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Both enumerated implementation kinds retired on Seyoon's #235 merge at `df4341236e04a861e65e29d58b35a713f14c819c`; the exact wholeMF63→MAC6 adoption is recorded in status/2026-11-08-f6-merge/. No new elaboration or snapshot splicing is claimed. This bounded enumeration/inspection is not whole-library absence
 or a generic duplication exception; inherited source candidates retain their own dispositions.
 
 
@@ -1747,3 +1746,15 @@ Full source chunks/line/hash/dispositions: gate106/review/round3-return-review/.
 Retired only on #215merge. These names are already in the affected-name unions; no new member
 or threshold crossing is added. Other watches stay unacknowledged. This is bounded mechanical
 reuse, not global absence, exhaustive accounting or retention permission.
+
+
+## Passing return checkpoint — gate106 R4 and gate118
+
+Gate106R4 PASS0/0/0/27 and gate118 PASS0/0/0/18 are closed after root and independent review.
+All exact existing debt scopes, owners/windows, affected-name versus retained-copy distinctions,
+residual watches and admission limits are retained in their resolutions. No new retention,
+API/import/statement permission or future-copy exception follows. #215 and #233 have not
+merged at this checkpoint: their candidate implementation retirements remain proposed.
+The seven SG1 kinds and wider FE-LIVE-1 stay scheduled for next12.2c after activeMIG-1 and
+before further SAT/Hardness fills. The actual combined394-module replay is running;
+its result and merge readiness are root-owned, not supplied by either passing report.

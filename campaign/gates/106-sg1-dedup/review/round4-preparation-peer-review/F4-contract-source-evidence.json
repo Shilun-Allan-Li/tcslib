@@ -1,0 +1,9 @@
+{
+  "public_path": "campaign/gates/106-sg1-dedup/review/round4-source-screen25/inputs/head/TCSlib/Complexity/TuringMachine/Finite.lean.txt",
+  "public_file_sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+  "public_start_line": 201,
+  "public_declaration_excerpt": "theorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)\n    (cfg : Cfg k Symbol State input) (t : ℕ) (ht : (tm.runFrom cfg t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom cfg u).state ≠ none := by\n  intro u hu hh\n  have he : tm.runFrom cfg t = tm.runFrom cfg u := by\n    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]\n  exact ht (by rw [he]; exact hh)",
+  "private_sat_complete_chunk": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by\n  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n",
+  "private_hardness_complete_chunk": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by\n  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n",
+  "current_source": "078263a74fe90b92aa6228cf20e43726138afbe6"
+}

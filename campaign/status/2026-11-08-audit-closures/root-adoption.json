@@ -1,0 +1,78 @@
+{
+  "utc": "2026-11-08T08:18:43.153440+00:00",
+  "result": "Both pinned audits CLOSED PASS; SG1 clear first; combined MIG replay RUNNING",
+  "gates": {
+    "106-r4": {
+      "blockers": 0,
+      "majors": 0,
+      "minors": 0,
+      "notes": 27
+    },
+    "118": {
+      "blockers": 0,
+      "majors": 0,
+      "minors": 0,
+      "notes": 18
+    }
+  },
+  "new_source_repairs": [],
+  "new_rulings": [],
+  "independent_reviews": [
+    {
+      "path": "campaign/gates/106-sg1-dedup/review/round4-return-review",
+      "manifest_sha256": "8c79e2c8ee95ce8434843add125e09bc064989d9a4814b9480003c82e54d0319",
+      "payloads": 29,
+      "root_payload_hash_check": "PASS",
+      "root_read_review": true
+    },
+    {
+      "path": "campaign/gates/118-mig1-landing/review/audit-return-review",
+      "manifest_sha256": "5370027587b6fbe9b69eaa0f4a375a9b78d3233e4a748e78cab37bad4d43d3c9",
+      "payloads": 41,
+      "root_payload_hash_check": "PASS",
+      "root_read_review": true
+    },
+    {
+      "path": "campaign/status/2026-11-08-audit-closures/merge-order-review",
+      "manifest_sha256": "e4f10ba556c69d73e7ece169d37455112ef5011ba2779c3ca7835ed46330e346",
+      "payloads": 16,
+      "root_payload_hash_check": "PASS",
+      "root_read_review": true
+    }
+  ],
+  "root_current_prospective_merges": [
+    {
+      "pr": 215,
+      "head": "b12902832c67210acd737d87d2d0c761bd5b35eb",
+      "campaign": "8f14c7f1f67ccfb1c03613531abd91fea40c4d46",
+      "merge_exit": 0,
+      "tree": "dcc7c82f6059c0677e5a9addb1e01a22eeea9a8c",
+      "Lean_diff_to_audited_head": []
+    },
+    {
+      "pr": 233,
+      "head": "55df52da9754f04b0c71646df29f83f33ec3aa52",
+      "campaign": "8f14c7f1f67ccfb1c03613531abd91fea40c4d46",
+      "merge_exit": 0,
+      "tree": "d6302ee8fae0107812f745115a5cfecd302943cd",
+      "Lean_diff_to_audited_head": []
+    }
+  ],
+  "combined_replay": {
+    "name": "mjoint1",
+    "source": "11b09440347ca8274562d58b5f90a11cfce56e29",
+    "modules": 394,
+    "input": "whole MAC6/895 objects",
+    "session": 2021,
+    "status": "RUNNING; no final result claimed"
+  },
+  "recommended_merge_order": [
+    215,
+    233
+  ],
+  "retirement": "Only after actual user merges; seven SG1 schedules and wider FE-LIVE-1 remain scheduled",
+  "PR_readiness": {
+    "215": "CLEAR FIRST: closedgate/currentcleanmerge/currentvalidMSG8\u2192MSG9/open/non-draft/exacthead; Seyoon merges",
+    "233": "NOT YET: gateclosed; combined394 replay running; draft retained"
+  }
+}

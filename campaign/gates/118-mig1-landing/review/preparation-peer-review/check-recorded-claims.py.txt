@@ -1,0 +1,136 @@
+"""Data-only peer accounting check. No delivered code is executed; no Lean/Git calls."""
+from pathlib import Path
+from collections import Counter
+import base64,gzip,hashlib,json,re
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+L=R/'campaign/fills/mig1/landing';P=R/'campaign/gates/118-mig1-landing/review/publication-preparation'
+W=Path('/private/tmp/gate118-preparation-peer-review')
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def j(p):return json.loads(p.read_text())
+def save(n,x):(W/n).write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+H=L/'post234-compiled-accounting/head-current';B=L/'post234-compiled-accounting/baseline-current'
+manifest_payloads=[]
+for f in j(P/'frozen-current-input-verification.json'):
+ manifest=R/f['manifest'];assert sha(manifest.read_bytes())==f['manifest_sha256']
+ data=j(manifest);entries=data['files'] if isinstance(data,dict) else data;folder=R/f['folder']
+ for row in entries:
+  b=(folder/row['path']).read_bytes();assert len(b)==row['bytes'] and sha(b)==row['sha256'],(str(folder),row['path'])
+ actual={x.relative_to(folder).as_posix() for x in folder.rglob('*') if x.is_file()}
+ assert len(actual)==f['physical_files'] and len(entries)==f['manifest_entries']
+ manifest_payloads.append(dict(folder=f['folder'],manifest_sha256=f['manifest_sha256'],payloads=len(entries),physical=len(actual),all_hashes_exact=True))
+save('current-frozen-manifest-checks.json',manifest_payloads)
+bm=j(B/'map-base-complete.json');hm=j(H/'map-head-complete.json')
+baseax=j(B/'allax-base.json')
+for name,row in bm.items():row['axioms']=baseax[name]['axioms']
+finite='TCSlib.Complexity.TuringMachine.Finite'
+bp={n:x for n,x in bm.items() if x['owner']!=finite};hp={n:x for n,x in hm.items() if x['owner']!=finite}
+bf={n:x for n,x in bm.items() if x['owner']==finite};hf={n:x for n,x in hm.items() if x['owner']==finite}
+assert len(bp)==5701 and len(hp)==4416 and len(bf)==len(hf)==59 and set(bf)==set(hf) and all({k:v for k,v in bf[n].items() if k!='typeExprArchive'}=={k:v for k,v in hf[n].items() if k!='typeExprArchive'} for n in bf)
+assert sum(x['private'] for x in bp.values())==4405 and sum(x['private'] for x in hp.values())==3171
+shared=set(bm)&set(hm);added=set(hm)-set(bm);removed=set(bm)-set(hm)
+assert (len(shared),len(added),len(removed))==(4076,399,1684)
+assert len(set(bp)&set(hp))==4017
+changed_types=[n for n in sorted(shared) if bm[n]['typeExprSHA256']!=hm[n]['typeExprSHA256']]
+assert len(changed_types)==94
+classified=j(H/'classified-census-head.json')
+cats=Counter(('private' if hm[n]['private'] else 'nonprivate',classified[n]['category'].startswith('authored')) for n in changed_types)
+assert cats==Counter({('nonprivate',True):5,('nonprivate',False):31,('private',True):8,('private',False):50}),cats
+nonstd={n:x['axioms'] for n,x in hm.items() if not set(x['axioms'])<={'propext','Classical.choice','Quot.sound'}}
+assert len(nonstd)==3 and all(n.startswith('WordRAM.') and a==bm[n]['axioms'] for n,a in nonstd.items())
+changed_owners=[n for n in shared if bm[n]['owner']!=hm[n]['owner']]
+assert changed_owners==['Turing.splitAtLastTrue.eq_1']
+roots=[];desc=[]
+for line in gzip.decompress((H/'Head-roots.out.gz').read_bytes()).decode().splitlines():
+ if line.startswith('ROOTMAP|'):roots.append(json.loads(line.split('|',1)[1]))
+ if line.startswith('ROOTDESC|'):desc.append(json.loads(line.split('|',1)[1]))
+rootnames={x['compiled_name'] for x in roots};descby={x['name']:x for x in desc}
+assert len(roots)==len(rootnames)==154 and len(descby)==388 and rootnames<=set(descby)
+dist=Counter(','.join(x['axioms']) for x in descby.values())
+assert dist==Counter({'propext,Classical.choice,Quot.sound':209,'propext,Quot.sound':160,'propext':14,'':5})
+targets=j(R/'campaign/fills/mig1/inputs/target-admissions.json')
+assert len(targets)==17 and {x['name'] for x in targets}<={x['source_name'] for x in roots}
+selected=j(H/'current-selected-source-roots.json')
+assert (selected['actual_current_changed_roots'],selected['current_changed_public'],selected['current_changed_private'],selected['approved_private_header_exceptions'])==(153,66,87,5)
+transport_raw=gzip.decompress((H/'Head-type-transport-kernel-v4.out.gz').read_bytes()).decode()
+assert len(re.findall(r'^TYPE_EQUALITY\|matcher_\d\|PASS\|kernelChecked=',transport_raw,re.M))==3
+assert len(re.findall(r'^TYPE_EQUALITY\|public_\d\|PASS\|kernelChecked=',transport_raw,re.M))==5
+probe=(H/'TypeTransport-HeadKernel-v4.lean.txt').read_text()
+assert 'addDecl' in probe and 'mkEqRefl' in probe
+assert not any(s in probe for s in ['withTransparency','setTransparency','setReducibilityStatus','unsafe := true'])
+archives=[]
+for d in [B,H]:
+ for p in sorted(d.rglob('*.out.gz')):
+  mate=p.with_name(p.name+'.base64.txt');assert mate.exists(),str(p)
+  b=p.read_bytes();assert base64.b64decode(mate.read_bytes())==b
+  raw=gzip.decompress(b);archives.append(dict(path=p.relative_to(R).as_posix(),gzip_bytes=len(b),gzip_sha256=sha(b),raw_bytes=len(raw),raw_sha256=sha(raw),CRC_and_Base64_exact=True))
+save('compiled-claim-checks.json',dict(primary12=[len(bp),len(hp)],primary12_shared=4017,combined13=[len(bm),len(hm)],combined13_shared=len(shared),Finite59_exact=True,added=len(added),removed=len(removed),all94_categories=[dict(private=k[0],authored=k[1],count=v) for k,v in sorted(cats.items())],inherited_nonstandard=nonstd,sole_owner_change=changed_owners,actual_source153=[66,87],selected_roots=len(roots),generated_descendants=len(descby)-len(roots),selected_AXIOM_distribution=dict(dist),all17_original_targets=True,kernel_transport_matcher_equalities=3,kernel_transport_public_equalities=5,successful_probe_no_unsafe_or_transparency_override=True,raw_archives=archives))
+
+# Read control results and exact kernel identities from raw output, not producer totals.
+C=L/'post234-consumer-seals';index=j(C/'RUN-INDEX.json');final=j(C/'FINAL-CHECKS.json')
+control_checks=[]
+for item in final['strict_controls']['checks']:
+ short=item['owner'].split('.')[-1]
+ runs=[x for x in index if x['role']=='CURRENT_CONTROL' and x['label'].startswith('Controls-'+short+'-')]
+ assert len(runs)==2
+ pos=next(x for x in runs if '-native' in x['label']);neg=next(x for x in runs if '-sealed' in x['label'])
+ positive=(C/pos['raw']).read_text();negative=(C/neg['raw']).read_text()
+ identities=re.findall(r'^CONTROL\|([^|]+)\|([^|]+)\|PASS\|kernelChecked=(\S+)$',positive,re.M)
+ failed=re.findall(r'^CONTROL\|([^|]+)\|([^|]+)\|FAIL$',negative,re.M)
+ rfl=re.findall(r'error: RFL_CONTROL\|([^|]+)\|([^|]+)\|Tactic `rfl` failed',negative)
+ assert [x[2] for x in identities]==item['native_kernel_identities']
+ assert [(x[0],x[1]) for x in identities]==failed==rfl
+ assert len(identities)==2*item['guards']==item['paired_identities']
+ pr=j(C/pos['result']);nr=j(C/neg['result'])
+ assert pr['exit']==0 and pr['errors']==0 and nr['exit']==1 and nr['errors']==len(identities)
+ control_checks.append(dict(owner=item['owner'],guards=item['guards'],positive=len(identities),exact_negative=len(failed),raw_kernel_identity_order_exact=True))
+assert sum(x['guards'] for x in control_checks)==116 and sum(x['positive'] for x in control_checks)==232
+assert len(final['strict_controls']['corruption_tests'])==9 and all(x['rejected'] for x in final['strict_controls']['corruption_tests'])
+assert sum(len(x['targets']) for x in final['full_seals'])==14 and all(x['whole_header_and_body'] and x['source_removal_roundtrip_exact'] for x in final['full_seals'])
+K=L/'post234-core-reader-repair';qa=j(K/'QA.json')
+pos=(K/'evidence/runs/Controls-Loop-native.out').read_text();neg=(K/'evidence/runs/Controls-Loop-sealed.out').read_text()
+pi=re.findall(r'^CONTROL\|([^|]+)\|([^|]+)\|PASS\|kernelChecked=(\S+)$',pos,re.M)
+nf=re.findall(r'^CONTROL\|([^|]+)\|([^|]+)\|FAIL$',neg,re.M)
+rf=re.findall(r'error: RFL_CONTROL\|([^|]+)\|([^|]+)\|Tactic `rfl` failed',neg)
+assert len(pi)==40 and [(x[0],x[1]) for x in pi]==nf==rf
+assert qa['guard_profiles']==20 and qa['paired_controls']==40 and qa['proposed_forbidden_Core_Mathlib_TCS_other_file_arguments']==0
+assert sha((K/'Loop.proposed.lean.txt').read_bytes())==qa['new_Loop_sha256']
+corrected=j(K/'EXPLICIT-ARGUMENT-REVIEW-CORRECTED.json')
+assert not corrected['violations_after'] and len({x['target'] for x in corrected['rows']})<=14
+argument_inventory=j(K/'evidence/argument-source-inventory.json')
+assert 'all14 consumer declarations' in argument_inventory['scope']
+assert len(argument_inventory['heads'])==106
+full_targets={x for seal in final['full_seals'] for x in seal['targets']}
+assert {x['target'].split('.')[-1] for x in corrected['rows']}<=full_targets and len(full_targets)==14
+save('seal-control-claim-checks.json',dict(whole_header_body_roots=14,proposal_context_guards=116,original_paired_positive=232,original_exact_negative=232,checks=control_checks,nine_strict_corruptions_retained=True,fresh_final_Loop_guards=20,fresh_final_Loop_positive=40,fresh_final_Loop_exact_negative=40,all14_corrected_explicit_arguments=True,contexts_keep_their_original_native2_pin=True))
+
+# Native3 and MMIG3 are different immutable generations; compare only recorded maps.
+N=L/'post234-native3';F=L/'replay-post234-final'
+nr=j(N/'receipt.json');fr=j(F/'receipt.json');nm=j(N/'snapshot-objects.json');fm=j(F/'snapshot-objects.json')
+order=(F/'order-mmig3.txt').read_text().splitlines()
+log=(F/'replay-mmig3.log').read_text()
+rows=re.findall(r'^(TCSlib/\S+) exit=(\d+) errors=(\d+) sorry=(\d+)$',log,re.M)
+assert len(order)==len(set(order))==len(rows)==394 and [x[0] for x in rows]==order and all(x[1]=='0' and x[2]=='0' for x in rows)
+launch=(F/'replay-mmig3-launches.log').read_text().splitlines()
+assert len(launch)==394 and all('-j4' in x for x in launch)
+assert (F/'replay-mmig3-static.txt').read_text().strip()=='modules 394, mismatches 0, static total 60'
+assert len(fm['input_MAC5'])==len(fm['output_MMIG3'])==895 and set(fm['input_MAC5'])==set(fm['output_MMIG3'])
+changed={p for p in fm['input_MAC5'] if fm['input_MAC5'][p]!=fm['output_MMIG3'][p]}
+assert len(changed)==118 and changed<={m+'.olean' for m in order}
+assert len(nm['input'])==len(nm['output'])==895
+assert {p:x['sha256'] for p,x in nm['input'].items()}==fm['input_MAC5']
+sourceheads={x['path']:x for x in j(P/'source-bindings.json') if x['side']=='head'}
+assert len(nr['rows'])==12 and all(x['exit']==0 and x['errors']==0 for x in nr['rows'])
+ownerchecks=[]
+for row in nr['rows']:
+ p=row['file'].removesuffix('.lean')+'.olean'
+ assert nm['output'][p]['sha256']==fm['output_MMIG3'][p]
+ assert row['source_sha256']==sourceheads[row['file']]['sha256']
+ raw=(N/'logs'/row['log'])
+ if not raw.exists():raw=N/row['log']
+ assert raw.exists(),str(raw)
+ b=raw.read_bytes();assert len(b)==row['bytes'] and sha(b)==row['sha256']
+ ownerchecks.append(dict(path=p,Native3_MMIG3_olean_SHA256=nm['output'][p]['sha256'],source_sha256=row['source_sha256']))
+assert sum(x['sorries'] for x in nr['rows'])==3 and all(x['sorries']==0 or x['file'].endswith('/WordSize.lean') for x in nr['rows'])
+assert nr['head']==fr['head']=='eaecd6b2afd992ead0844fa5f351eaf143fd1d1c'
+save('native-replay-claim-checks.json',dict(source=nr['head'],Native3_owners=12,MMIG3_modules=394,MMIG3_failed=0,static=[0,60],effective_j4_launches=394,complete_input_output_maps=895,changes_inside_replay_scope=118,all12_owner_objects_exact=ownerchecks,only3_unchanged_WordSize_native_admissions=True,no_mutable_snapshots_read=True))
+print(json.dumps(dict(result='PASS recorded claims',primary12_shared=4017,combined13_shared=4076,raw_archives=len(archives),roots=154,AX=388,proposal_controls=232,final_Loop_controls=40,native=12,replay=394)))

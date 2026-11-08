@@ -1,0 +1,129 @@
+"""Independent peer data checker. Never imports/runs any packet script."""
+from pathlib import Path
+from collections import Counter
+import base64,gzip,hashlib,json,re
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+REL='campaign/gates/118-mig1-landing/review/publication-preparation';P=R/REL
+W=Path('/private/tmp/gate118-preparation-peer-review');W.mkdir(exist_ok=True)
+sha=lambda b:hashlib.sha256(b).hexdigest()
+blob=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+def loadl(name):return [json.loads(l) for l in (P/name).read_text().splitlines()]
+def jw(name,x):(W/name).write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+m=json.loads((P/'MANIFEST.json').read_text());assert sha((P/'MANIFEST.json').read_bytes())=='2e6acf92aadd2d73066f54372e9913e3d368be3d99368b36f82ef0394a867e1f'
+for x in m['files']:
+ b=(P/x['path']).read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],x['path'];b.decode('utf-8')
+actual={p.relative_to(P).as_posix() for p in P.rglob('*') if p.is_file()}
+assert actual=={x['path'] for x in m['files']}|{'MANIFEST.json','SHA256SUMS.txt'}
+for line in (P/'SHA256SUMS.txt').read_text().splitlines():
+ h,name=line.split('  ',1);assert sha((P/name).read_bytes())==h,name
+logical=(P/'LOGICAL-INPUTS.txt').read_text().splitlines();original=(P/'ORIGINAL324-LOGICAL.txt').read_text().splitlines()
+assert len(logical)==13833 and len(set(logical))==13833 and len(original)==324 and logical[:324]==original
+canonical_original=(R/'campaign/fills/mig1/BUNDLE-FILES.txt').read_text().splitlines();assert canonical_original==original
+rows=loadl('logical-to-physical.jsonl');assert [x['logical'] for x in rows]==logical
+phys=loadl('physical-payloads.jsonl');assert len(phys)==5892 and len({x['path'] for x in phys})==5892
+assert (P/'BUNDLE-FILES.txt').read_text().splitlines()==[x['path'] for x in phys]
+byphys={x['path']:x for x in phys};bylogical={x['logical']:x for x in rows}
+assert {x['physical'] for x in rows}==set(byphys)
+def physical_bytes(row):
+ path=row['path']
+ if path.startswith(REL+'/'):p=P/path[len(REL)+1:]
+ elif path.startswith('TCSlib/'):p=Path(row['content_source'])
+ else:p=R/path
+ b=p.read_bytes();assert len(b)==row['bytes'] and sha(b)==row['sha256'],path;b.decode('utf-8');return b
+inverse={};physical_checks=[]
+for x in phys:
+ b=physical_bytes(x);modes={r['decode'] for r in rows if r['physical']==x['path']};assert len(modes)==1
+ mode=next(iter(modes));raw=b if mode=='identity' else gzip.decompress(base64.b64decode(b,validate=False))
+ assert mode in ['identity','gzip+base64'];inverse[x['path']]=dict(bytes=len(raw),sha256=sha(raw))
+ physical_checks.append(dict(path=x['path'],bytes=len(b),sha256=sha(b),decode=mode,decoded_bytes=len(raw),decoded_sha256=sha(raw),inverse_complete=True))
+with (W/'logical-input-checks.jsonl').open('w') as f:
+ for x in rows:
+  d=inverse[x['physical']];assert d['bytes']==x['bytes'] and d['sha256']==x['sha256'],x['logical']
+  f.write(json.dumps(dict(logical=x['logical'],bytes=x['bytes'],sha256=x['sha256'],physical=x['physical'],decode=x['decode'],PASS=True),separators=(',',':'))+'\n')
+aliases=json.loads((P/'aliases.json').read_text());assert len(aliases)==1059
+for a in aliases:
+ x=byphys[a['payload']];assert x['bytes']==a['payload_bytes'] and x['sha256']==a['payload_sha256']
+ d=inverse[a['payload']];assert d['bytes']==a['decoded_bytes'] and d['sha256']==a['decoded_sha256']
+ assert Counter(a['all_logical_paths'])==Counter(r['logical'] for r in rows if r['physical']==a['payload'])
+assert {REL+'/encodings/'+p.name for p in (P/'encodings').iterdir()}=={a['payload'] for a in aliases}
+jw('physical-input-checks.json',physical_checks)
+
+sources=json.loads((P/'source-bindings.json').read_text());assert len(sources)==50
+source_checks=[]
+for x in sources:
+ row=bylogical[x['capture']];assert row['decode']=='identity' and row['physical']==x['capture']
+ b=physical_bytes(byphys[row['physical']]);assert len(b)==x['bytes'] and sha(b)==x['sha256'] and blob(b)==x['capture_git_binding']['blob']
+ assert x['source']==('eaecd6b2afd992ead0844fa5f351eaf143fd1d1c' if x['side']=='head' else 'e8196b1020b6be7c1b0894ecd92d8352f951dbb9')
+ source_checks.append(dict(capture=x['capture'],path=x['path'],side=x['side'],source=x['source'],bytes=len(b),sha256=sha(b),Git_blob=blob(b),plaintext=True))
+heads={x['path']:x for x in sources if x['side']=='head'}
+rootrows=[x for x in rows if x['logical'].startswith('TCSlib/')];assert len(rootrows)==25
+for row in rootrows:
+ x=heads[row['logical']];assert row['pin']==x['source'] and row['source_capture']==x['capture'] and row['decode']=='identity' and row['physical']==row['logical']
+ assert row['bytes']==x['bytes'] and row['sha256']==x['sha256'] and row['original_static_blob']==x['capture_git_binding']['blob']
+jw('source-binding-checks.json',dict(captures=source_checks,root_sources=25,all50_plaintext=True,all_Git_blob_hashes_computed_without_Git=True))
+
+# Complete declared trees, independently enumerated from the frozen folder, not its counters.
+coverage=json.loads((P/'declared-folder-coverage.json').read_text())['folders'];folder_checks=[];late=[]
+for folder,names in coverage.items():
+ assert set(names)<=set(logical),(folder,'declared file lost')
+ current={p.relative_to(R).as_posix() for p in (R/folder).rglob('*') if p.is_file()}
+ missing=current-set(names);removed=set(names)-current
+ assert not removed,(folder,'missing current file',removed)
+ late.extend(sorted(missing));folder_checks.append(dict(folder=folder,declared=len(names),actual=len(current),unlisted_current_files=sorted(missing),all_declared_represented=True))
+required=['policy.md','workflow.md','campaign/standards/TEMPLATE.md','campaign/standards/fill-environment-addendum.md',
+ 'campaign/maintainer/START-HERE.md','campaign/maintainer/WORKFLOW.md','campaign/duplication-ledger.md',
+ 'campaign/fills/mig1/landing/factoring-dispositions-post234.md','campaign/fills/mig1/inputs/target-admissions.json']
+assert all(p in bylogical for p in required),[p for p in required if p not in bylogical]
+jw('coverage-checks.json',dict(folders=folder_checks,required_standards_factoring_target_inputs=required,new_files_after_frozen_collection=late))
+
+# Verify both private preview outputs by exact byte offsets, independent segment reconstruction.
+preview=json.loads((P/'render-preview.json').read_text());assert len(preview['parts'])==2
+combined=loadl('combined-physical-payloads.jsonl');assert len(combined)==5920 and len({x['path'] for x in combined})==5920
+combined_by={x['path']:x for x in combined};allpaths=[];partchecks=[]
+for info in preview['parts']:
+ part=info['part'];paths=(P/f'BUNDLE-FILES-part{part}.txt').read_text().splitlines();assert paths==[s['path'] for s in info['segments']]
+ data=Path(info['private_preview_path']).read_bytes();assert len(data)==info['bytes'] and sha(data)==info['sha256'] and len(data)<100*1024*1024
+ rebuilt=hashlib.sha256();count=0
+ for i,s in enumerate(info['segments']):
+  row=combined_by[s['path']]
+  if row['path'].startswith(REL+'/'):b=(P/row['path'][len(REL)+1:]).read_bytes()
+  else:b=physical_bytes(row)
+  assert len(b)==s['payload_bytes'] and sha(b)==s['payload_sha256']
+  prefix=('## ===== '+s['path']+' =====\n\n').encode();fence=b'```\n' if s['path'].endswith(('.lean','.py')) else b''
+  seg=prefix+fence+b+(b'' if b.endswith(b'\n') else b'\n')+fence
+  assert len(seg)==s['segment_bytes'] and sha(seg)==s['segment_sha256'] and data[s['segment_start']:s['segment_start']+len(seg)]==seg
+  assert s['payload_start']==s['segment_start']+len(prefix)+len(fence)
+  if i:rebuilt.update(b'\n');count+=1
+  rebuilt.update(seg);count+=len(seg)
+ assert rebuilt.hexdigest()==info['sha256'] and count==info['bytes']
+ allpaths+=paths;partchecks.append(dict(part=part,sections=len(paths),bytes=count,sha256=rebuilt.hexdigest(),all_segments_exact=True))
+assert len(allpaths)==len(set(allpaths))==5920 and set(allpaths)==set(combined_by)
+excluded=sorted(actual-{p[len(REL)+1:] for p in allpaths if p.startswith(REL+'/')})
+jw('preview-checks.json',dict(parts=partchecks,combined_sections=5920,all_payload_offsets_and_fences_exact=True,
+ finalization_files_not_yet_in_previews=excluded))
+
+# Bind all named current manifests, while leaving root's later records publication explicit.
+pack=(P/'pack.candidate.md').read_text();manifest_refs=[]
+refs=[('campaign/fills/mig1/landing/post234-source-QA-final','5ce146529d1c3128f6ced9001ca53c757a26800ac18d7eef12ea3e28fb7763e0'),
+ ('campaign/fills/mig1/landing/post234-consumer-seals','4e0bfd850af295afa7705002c94870d646f75135dd537ee4ee157d6465dbbcb1'),
+ ('campaign/fills/mig1/landing/post234-core-reader-repair','75808eaa8a67010f6a98312a2bb30789480e3ebe611c20d85cbf650a5b65cabd'),
+ ('campaign/fills/mig1/landing/post234-compiled-accounting/baseline-current','3c1a508ba5f2d62d8f45a27b86bcfa285bf748b0fdaf725a256994506f23f84f'),
+ ('campaign/fills/mig1/landing/post234-compiled-accounting/head-current','dbd6029fd9ea8b3c306666f1c8d3ea6f1a5ca44d5cb9e242fc83f563a942228a'),
+ ('campaign/fills/mig1/landing/post234-native3','c41b9a7636785a40a4fbce7934c85b203abc0cf75e42aa21e483396216f077fa'),
+ ('campaign/fills/mig1/landing/replay-post234-final','7cf21b03b18f5eb5222303028f8dc7f9bfdae1571ee653cdf6b37f8722519148'),
+ ('campaign/fills/mig1/landing/post234-source-screen','70908028d3fcfaf4003d7a980ddc161650f0dc29241564e8d73c8bf660d9373b')]
+for folder,h in refs:
+ manifest_name='BASELINE-MANIFEST.json' if folder.endswith('/baseline-current') else 'MANIFEST.json'
+ b=(R/folder/manifest_name).read_bytes();assert sha(b)==h and folder+'/'+manifest_name in bylogical,folder
+ manifest_refs.append(dict(folder=folder,manifest_sha256=h,logical_complete=True))
+assert pack.rstrip().endswith('and also paste its content in your reply.')
+assert 'No blanket nonprivate rawtype equality' in pack and 'No global opacity' in pack and 'historical generated rewind matcher opacity control is ineffective' in pack
+jw('named-evidence-checks.json',manifest_refs)
+jw('SUMMARY.json',dict(result='PASS transport/source/scope checks; prose scope clarification reviewed separately',
+ source=m['source'],compiled_BASE=m['compiled_BASE'],manifest_sha256=sha((P/'MANIFEST.json').read_bytes()),
+ frozen_files=len(actual),logical_inputs=13833,physical_evidence=5892,selected_aliases=1059,
+ raw_logical_bytes=sum(x['bytes'] for x in rows),all_inverse_hashes_exact=True,original324_prefix_exact=True,
+ all50_plaintext_plus25root_sources=True,parts=partchecks,required_inputs_present=True,
+ folder_checks=folder_checks,late_files=late,finalization_extra_files=excluded,
+ no_Git_Lean_screens_or_packet_script_execution=True))
+print(json.dumps(dict(result='PASS',logical=13833,physical=5892,preview=5920,aliases=1059,parts=partchecks,late_files=len(late),finalization_extras=len(excluded))))
