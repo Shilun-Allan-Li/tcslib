@@ -26,8 +26,11 @@ must include eligible semireducible instances and sensitivity controls. Only the
 exact approved eval/notation exceptions apply; eval helpers remain candidates.
 
 The previous467-module/common evidence and all four closed audits are pinned to
-3f6 and remain history, not current-source native attestations. Fresh Lean module checks remain pending; the narrowed54-root cache operation
-passed and all146 historical direct Mathlib-object hashes match after it. The preflight observed12 CPUs/18GiB physical memory,
+3f6 and remain history, not current-source native attestations. Fresh Lean checks began: the383-root Mathlib import probe and first PFR module
+pass. The second PFR check was stopped when another native host job began;
+its retained rc-15/zero-diagnostic/no-object attempt is not a completed check.
+The narrowed54-root cache operation passed, and all146 historical direct
+Mathlib-object hashes match after it. The preflight observed12 CPUs/18GiB physical memory,
 ample disk and no active Lean/cache process; package/source/object provenance
 and fresh invocation guards still precede native work. No library lake build or
 unfiltered Mathlib cache command is authorized.
@@ -39,7 +42,11 @@ The437 selected baseline objects are copied/hash-verified but still await three
 fresh byte reproductions. The native plan covers1075 root/Checks prerequisites
 with638 fresh local checks, plus31 PFR checks. The instance-inclusive59-owner
 collector,13 controls and expanded C3/actual-axiom reconciliation are prepared;
-none is reported as a native pass. Bootstrap is queued under the one-host rule.
+none is reported as a native pass. Bootstrap attempt01 stopped safely under the one-host rule; its21 raw files
+are backed up in [bootstrap-interruption-checkpoint-r1/](bootstrap-interruption-checkpoint-r1/README.md).
+A separate verified continuation is being prepared; the old failed phase stays
+immutable and has no successful RESULT. The two unexecuted probe guard versions
+and their reviews are retained with explicit prerequisites/limits.
 The root publication snapshot separately records actual state at backup.
 
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.

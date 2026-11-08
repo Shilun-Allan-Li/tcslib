@@ -1,0 +1,62 @@
+{
+  "status": "FROZEN_BOUNDED_R2_HOST_GUARD_STATIC_REVIEW_NOT_NATIVE_ACCEPTANCE",
+  "source_head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "reviewed_source": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06-combined-20261108/guard_native_command_r2.py",
+  "reviewed_sha256": "a1138227d39f2068bdfc75923e80537c577c50c445f998c050189c46f6900ed3",
+  "source_bytes": 8104,
+  "source_lines": 152,
+  "R1_sha256": "b48a00179b04a0bc52a4e04995d50cd0c15505117c2b3dc1928d5da9719b5123",
+  "R1_prior_report_sha256": "5f9f09129fc5e7f4e05b387931321f707b31c3d6ab3b9cb5cfe2642359dc56b4",
+  "checkpoint_published_record_supplied_by_parent": "efaebb8cdb628a1d3f49cca3f2dd2c55028c495b",
+  "dependency_sha256": {
+    "native_helper": "64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95",
+    "generic_checker": "c685d6aa01b1b7e44115e88781d1634b3b3cdda512acc702eeba5e810f767179",
+    "final_native_driver": "0a8b5ebc13d5b2cd4f613fbecb83a357daad285ef84e29774180378f3430a52b"
+  },
+  "verdict": {
+    "new_blockers": 0,
+    "new_majors": 0,
+    "new_minors": 0,
+    "R1_G01": "RESOLVED_BY_SIGNAL_LIFECYCLE_AND_OWN_GROUP_CLEANUP",
+    "R1_G02": "RESOLVED_BY_REPEATED_POSTWAIT_PRELAUNCH_POSTCHILD_PINS",
+    "execution_condition": "Only after same-source bootstrap RESULT exists and passed; guard itself enforces this before lease/native launch.",
+    "native_acceptance": false,
+    "merge_clearance": false
+  },
+  "evidence": [
+    {
+      "R1_id": "G-01",
+      "lines": [
+        91,
+        93,
+        127,
+        145
+      ],
+      "reason": "SIGTERM/HUP raise through the protected lifecycle; acquired-lease ownership is tracked; own-child cleanup is present in inner and outer failure paths; previous handlers restore in finally."
+    },
+    {
+      "R1_id": "G-02",
+      "lines": [
+        81,
+        97,
+        133,
+        114
+      ],
+      "reason": "The complete quick_pins runs before waiting, twice after waiting including immediately pre-Popen, and after child completion. It checks tool/helper/self bytes, pinned1109 source inventory, immutable bootstrap receipt and live HEAD/clean/source identities."
+    }
+  ],
+  "bounded_positive_checks": [
+    "Pinned import disables bytecode writes and does not run native helper main.",
+    "Native/checker/final-driver hashes match reviewed bytes.",
+    "Nested allowed commands inherit guard child PGID. Signals target only its separately sessioned child group; imported cleanup needs no self fields.",
+    "Expected source/control rc1 is preserved; guard outcome_interpreted remains false.",
+    "No cache operation, source edit, package/object copy, retry or resume is introduced."
+  ],
+  "limits": [
+    "Whole guard source read and static/data checks only. No proposed module imported/executed.",
+    "Runtime signal delivery/cleanup/process visibility, Lean outcomes, and final Rule10 coverage are not tested or certified.",
+    "Host guard/source pinning does not replace underlying driver source-object/Name/marker/evidence validation.",
+    "R1 checkpoint and R1 review remain unchanged; this report is separate."
+  ],
+  "user_ruling_required": false
+}
