@@ -13,6 +13,10 @@ Seyoon alone merges source PRs, dispatches external audits/fills and rules on de
 
 Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` /wholeMAC8:1003 tracked Lean blobs/895 objects. Later campaign commits are records only. Source#215/#222/#223/#228/#229/#230/#233/#234/#235 is merged. Complete prior dispatch/return/disposition/current replay records remain in `campaign/status/2026-11-08-overnight/` and each gate. Current six-clear validity is `current-replay-validity/RESULT.json`; prospective NJ1→NJ2→NJ4 and all-eight NJ1→NJ2→NJ3→NJ5 are historical whole-overlay validations, never silently adopted as the campaign.
 
+### Relocation checkpoint (2026-11-08T21:57:48.001396+00:00; supersedes running labels below)
+
+All own jobs/subagents stopped. Read `campaign/status/2026-11-08-relocation-2154/RESUME.md` first on return.335 reader replay passes;403 interrupted snapshot invalid; successfulBASE53 retained,HEAD53 incomplete. Approved grouped Seam/home reader source is#253 at`86e52739282233aa992c36ca961d82d0657ff142`. Two new129 mechanical proof repairs are certified privately, unadopted. Next source/screen/compatibility steps and exact paths are in the checkpoint. No new dispatch prompt issued; no source merge.
+
 ### Active source and checks
 
 | PR | Gate | Current pushed source | State |

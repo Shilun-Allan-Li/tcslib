@@ -1,0 +1,84 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let roots : List Name := [`Turing.exists_inputLengthTM]
+  let mut union : List Name := []
+  for root in roots do
+    let some ci := env.find? root | throwError "MISSING_CONSUMER|{root}"
+    let owner := homeOf root
+    let ax ← liftTermElabM <| collectAxioms root
+    let typ ← liftTermElabM <| ppExpr ci.type
+    let directType := ci.type.getUsedConstants.toList
+    let some rootValue := ci.value? true | throwError "MISSING_FULL_CONSUMER_PROOF|{root}"
+    let directBody := rootValue.getUsedConstants.toList
+    let mut todo := directType ++ directBody
+    let mut seen : List Name := [root]
+    let mut foreign : List Json := []
+    let mut helpers : List Json := []
+    let mut stopped : List Json := []
+    let mut generatedProofs : List Json := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      todo := info.type.getUsedConstants.toList ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        let regular := match di.hints with | .abbrev => false | _ => true
+        let ordinary := regular && !(env.isProjectionFn n)
+        let status := match getReducibilityStatusCore env n with
+          | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible"
+        let entry := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString),
+          ("ordinary",toJson ordinary),("projection",toJson (env.isProjectionFn n)),
+          ("kernel_hints",toJson (if regular then "non-abbrev" else "abbrev")),
+          ("reducibility",toJson status),("type_Expr",toJson (reprStr di.type)),
+          ("value_Expr",toJson (reprStr di.value)),("universes",toJson (di.levelParams.map Name.toString)),
+          ("type_mentions",toJson (di.type.getUsedConstants.toList.map Name.toString)),
+          ("value_mentions",toJson (di.value.getUsedConstants.toList.map Name.toString)),
+          ("simp",toJson (st.isLemma (.decl n))),("unfold",toJson (st.toUnfold.contains n))]
+        if home == owner then
+          helpers := entry :: helpers
+          todo := di.value.getUsedConstants.toList ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          foreign := entry :: foreign
+          if ordinary && !union.contains n then union := n :: union
+      | .thmInfo _ =>
+        if home == owner && n.toString.startsWith (root.toString ++ ".") then
+          let some value := info.value? true | throwError "MISSING_SELECTED_GENERATED_PROOF|{n}"
+          todo := value.getUsedConstants.toList ++ todo
+          generatedProofs := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString),
+            ("type_Expr",toJson (reprStr info.type)),("value_Expr",toJson (reprStr value)),
+            ("universes",toJson (info.levelParams.map Name.toString)),("proof_value_traversed",toJson true)] :: generatedProofs
+        else
+          stopped := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString),
+            ("same_owner",toJson (home == owner)),("type_Expr",toJson (reprStr info.type)),
+            ("universes",toJson (info.levelParams.map Name.toString)),("proof_value_traversed",toJson false)] :: stopped
+      | _ => pure ()
+    logInfo m!"CONSUMER_METADATA|{(Json.mkObj [("name",toJson root.toString),
+      ("owner",toJson owner.toString),("type_Expr",toJson (reprStr ci.type)),
+      ("proof_value_Expr",toJson (reprStr rootValue)),("universes",toJson (ci.levelParams.map Name.toString)),
+      ("type_pretty",toJson typ.pretty),("axioms",toJson (ax.toList.map Name.toString)),
+      ("direct_type_mentions",toJson (directType.map Name.toString)),
+      ("direct_body_mentions",toJson (directBody.map Name.toString)),
+      ("simp",toJson (st.isLemma (.decl root))),("unfold",toJson (st.toUnfold.contains root)),
+      ("simp_unfold_thms",toJson ((st.toUnfoldThms.find? root).map (fun ns => ns.toList.map Name.toString))),
+      ("foreign_definitions",Json.arr foreign.reverse.toArray),
+      ("own_definition_helpers",Json.arr helpers.reverse.toArray),
+      ("selected_generated_proofs_traversed",Json.arr generatedProofs.reverse.toArray),
+      ("other_theorems_stopped_at_type",Json.arr stopped.reverse.toArray),
+      ("other_theorem_proof_values_traversed",toJson false),
+      ("foreign_definition_values_recorded_but_not_traversed",toJson true)]).compress}"
+  logInfo m!"CONSUMER_COMPLETE|{roots.length}|{union.length}"

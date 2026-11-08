@@ -1,0 +1,86 @@
+from pathlib import Path
+import json,hashlib,subprocess,datetime,os
+O=Path(__file__).parent;W=Path('/Users/seyoonr/.codex/worktrees/ab34-followup-api/tcslib-arora-barak-ch3-4');P=Path('/Users/seyoonr/.codex/worktrees/ab34-input-readers/tcslib-arora-barak-ch3-4');R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');N5=Path('/private/tmp/ab34-nread5-provider-refresh');PROP=R/'campaign/items/dedup/inputlength-reader-proposal/2026-11-08';ALIGN=Path('/private/tmp/ab34-gate129-preflight/hypothetical-alignment')
+rel='TCSlib/Complexity/TuringMachine/Build/InputLength.lean';root='Turing.exists_inputLengthTM'
+def sha(b):return hashlib.sha256(b).hexdigest()
+def git(w,*a):return subprocess.check_output(['git','-C',str(w),*a])
+def write(n,d):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+def capture(src,dest):dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(src.read_bytes())
+head=git(W,'rev-parse','HEAD').decode().strip();provider=git(P,'rev-parse','HEAD').decode().strip();base=git(W,'rev-parse','9b5dcf46408db681bcbc721930ef2203fa6bc47d^{commit}').decode().strip()
+for w,h in [(W,head),(P,provider),(W,base)]:git(w,'cat-file','-e',h+'^{commit}')
+assert head.startswith('993') and provider==json.loads((N5/'RESULT.json').read_text())['head'];assert not git(W,'status','--porcelain','--untracked-files=no').strip()
+sources={}
+for row in git(W,'ls-tree','-rz','--full-tree',head).split(b'\0'):
+ if not row:continue
+ meta,name=row.split(b'\t',1);name=name.decode();mode,kind,blob=meta.decode().split()
+ if not name.endswith('.lean'):continue
+ b=(W/name).read_bytes();assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==blob
+ sources[name]={'mode':mode,'git_blob':blob,'sha256':sha(b),'bytes':len(b)}
+assert len(sources)==1003;write('CURRENT241-SOURCE1003.json',sources)
+current=(W/rel).read_text();old=(PROP/'source/CANDIDATE'/str(rel+'.txt')).read_text();candidate=(ALIGN/'InputLength.hypothetical-renamed.lean.txt').read_text();complete=(PROP/'COMPLETE-INPUTLENGTH-CONSUMER.lean.txt').read_text()
+assert old.count('FinTM.controlAction_eq')==1 and old.replace('FinTM.controlAction_eq','FinTM.controlAction_def')==candidate
+marker='/-- **R8.5c, the input length**';assert current.count(marker)==candidate.count(marker)==1
+cs=current.index(marker);ns=candidate.index(marker);assert current[:cs]==candidate[:ns]
+end='\nend Turing\n';assert current.endswith(end) and candidate.endswith(end)
+a=current[cs:-len(end)];b=candidate[ns:-len(end)];assert a.split(':= by',1)[0]==b.split(':= by',1)[0]
+assert old[old.index(marker):-len(end)].strip()==complete.strip()
+assert current==git(W,'show',head+':'+rel).decode()==git(P,'show',provider+':'+rel).decode()
+for side,text in [('BASE',current),('CANDIDATE',candidate)]:
+ f=O/'source'/side/str(rel+'.txt');f.parent.mkdir(parents=True,exist_ok=True);f.write_text(text)
+write('TARGET.json',{'name':root,'owner':'TCSlib.Complexity.TuringMachine.Build.InputLength','path':rel,'source241_head':head,'provider251_head':provider,'BASE_full_literal_chunk':a,'CANDIDATE_full_literal_chunk':b,'literal_doc_header':a.split(':= by',1)[0],'same_full_doc_statement_header':True,'all_source_bytes_outside_selected_body_exact':True,'BASE_owner_sha256':sha(current.encode()),'CANDIDATE_owner_sha256':sha(candidate.encode()),'canonical_name_alignment_exact_one_occurrence':True,'prefix_bytes':cs})
+# Comment-aware header import closure; no source file is executed by this preparation.
+def imports(text):
+ out=[];i=0;depth=0;quote=False
+ while i<len(text):
+  if depth:
+   if text.startswith('/-',i):depth+=1;i+=2
+   elif text.startswith('-/',i):depth-=1;i+=2
+   else:out.append('\n' if text[i]=='\n' else ' ');i+=1
+  elif quote:
+   out.append(text[i])
+   if text[i]=='\\' and i+1<len(text):i+=1;out.append(text[i])
+   elif text[i]=='"':quote=False
+   i+=1
+  elif text.startswith('/-',i):depth=1;i+=2
+  elif text.startswith('--',i):
+   j=text.find('\n',i);i=len(text) if j<0 else j
+  else:out.append(text[i]);quote=text[i]=='"';i+=1
+ result=[]
+ for line in ''.join(out).splitlines():
+  if not line.strip():continue
+  if not line.startswith('import '):break
+  result.extend(line[7:].split())
+ return result
+closure={};todo=[rel[:-5].replace('/','.')]
+while todo:
+ m=todo.pop()
+ if m in closure:continue
+ f=W/(m.replace('.','/')+'.lean');ims=imports(f.read_text());closure[m]=ims;todo.extend(x for x in ims if x.startswith('TCSlib.'))
+changes=git(W,'diff','--name-only',base,head,'--','*.lean').decode().splitlines();needed=[n for n in changes if n[:-5].replace('/','.') in closure and n!=rel];assert not needed and len(closure)==24
+provider_paths=json.loads((N5/'REQUEST.json').read_text())['compile_files_in_order'];different=[]
+for m in closure:
+ n=m.replace('.','/')+'.lean'
+ if git(W,'show',head+':'+n)!=git(P,'show',provider+':'+n):different.append(n)
+assert sorted(different)==sorted(provider_paths)
+write('IMPORT-CONTEXT.json',{'current241_head':head,'provider251_head':provider,'current241_changed_Lean_paths':changes,'consumer_import_closure_count':len(closure),'consumer_import_graph':closure,'changed_current241_predecessors_needed':needed,'no_current241_predecessor_requires_compilation':True,'only_source_differences_in_consumer_closure_between241_and251':different,'three251_provider_owners_intentionally_retained':True,'all_other21_closure_sources_literal_exact_between241_and251':True,'no_snapshot_composition_or_335_source_context_claim':True})
+for f in [PROP/'COMPLETE-INPUTLENGTH-CONSUMER.lean.txt',ALIGN/'InputLength.hypothetical-renamed.lean.txt',ALIGN/'RECEIPT.json',ALIGN/'hypothetical-consumer-name-only.patch']:
+ capture(f,O/'input-data'/f.name)
+write('INPUT-READ-DISPOSITIONS.json',{'current_full_InputLength_owner_read':True,'original_full_selected_proposal_proof_read':True,'all_candidate_prefix_bytes_equal_fully_read_current_owner':True,'candidate_proof_only_one_approved_name_alignment_from_read_proposal':True,'all_input_Lean_compiled_here_has_been_inspected_as_data_first':True,'current_InputCall_source_also_read_but_not_imported_or_compiled':True,'old_hypothetical_receipt_is_historical_source_data_not_current_execution':True})
+original=Path(json.loads((N5/'REQUEST.json').read_text())['output_snapshot']);B=O/'runtime/oleans-BASE';C=O/'runtime/oleans-CANDIDATE'
+def objects(p):return {str(f.relative_to(p)):sha(f.read_bytes()) for f in sorted(p.rglob('*.olean'))}
+input_map=objects(original);assert len(input_map)==895 and input_map==json.loads((N5/'output.json').read_text())
+write('INPUT895-actual-nread5-before.json',input_map);subprocess.run(['cp','-cR',str(original),str(B)],check=True);assert objects(B)==input_map
+for side,text in [('BASE',current),('CANDIDATE',candidate)]:
+ project=O/'runtime'/('native-'+side);(project/'.lake').mkdir(parents=True);(project/'.lake/packages').symlink_to(W/'.lake/packages',target_is_directory=True);(project/'lean-toolchain').write_bytes((W/'lean-toolchain').read_bytes());f=project/rel;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(text)
+for name in ['lean-toolchain','lake-manifest.json']:
+ data=(W/name).read_bytes();assert data==(P/name).read_bytes()==git(W,'show',head+':'+name)==git(P,'show',provider+':'+name);capture(W/name,O/'helpers'/name)
+assert (W/'.lake/packages').resolve()==(P/'.lake/packages').resolve()
+for name in ['leanelab.sh','leanelab-o.sh']:
+ assert (W/'devtools/seyoon'/name).read_bytes()==(P/'devtools/seyoon'/name).read_bytes();capture(W/'devtools/seyoon'/name,O/'helpers'/str(name+'.txt'))
+for n in provider_paths:
+ data=git(P,'show',provider+':'+n);assert data==(P/n).read_bytes();f=O/'provider251-source'/str(n+'.txt');f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes(data)
+for name in ['REQUEST.json','RESULT.json','output.json','module-results.json']:capture(N5/name,O/'provider251-native-receipts'/name)
+cert=Path('/private/tmp/ab34-reader-context-validity/EXPORT/MANIFEST.json');assert sha(cert.read_bytes())=='d8cf5331e6076c69444aae3b73d717bc9db00edc76252e39ea48c0c9bdaa59f5'
+write('PROVIDER251-BINDING.json',{'provider_source':provider,'actual_whole_snapshot':str(original),'actual_native3_result':'provider251-native-receipts/RESULT.json','all895_physical_objects_equal_actual_nread5_output':True,'compiled_compatibility_certificate_manifest':str(cert),'compiled_compatibility_certificate_SHA256':sha(cert.read_bytes()),'actual_old394_is0201_not_relabelled':True,'no_new_provider3_or_full394_execution_claim':True,'three_source_owners':{n:{'sha256':sha((P/n).read_bytes()),'bytes':(P/n).stat().st_size,'object_sha256':input_map[n[:-5]+'.olean']} for n in provider_paths}})
+write('PIN.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'current241_worktree':str(W),'source_context241_head':head,'provider251_worktree':str(P),'provider251_head':provider,'base_MAC8_source':base,'selected_root':root,'selected_owner':rel,'whole_original_nread5':str(original),'whole_BASE_snapshot':str(B),'whole_CANDIDATE_snapshot':str(C),'compile_current241_predecessors':needed,'BASE_source_sha256':sha(current.encode()),'CANDIDATE_source_sha256':sha(candidate.encode()),'localcap':int(os.environ.get('TCSLIB_LEAN_SLOTS','3')),'machinecap':5,'one_own_Lean_at_a_time':True,'nice10_j4':True,'private_prospective_consumer_only':True,'no_source_adoption_Git_records_exchange_status_or_merge_decision':True})
+print('PREPARED_CURRENT241_993_PRIVATE_INPUTLENGTH_ON_ACTUAL251_FINAL895_NO_PREDECESSORS',flush=True)
