@@ -1,0 +1,22 @@
+START 2026-11-07T22:55:54.985896+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Finite
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Complexity/TuringMachine/Finite.lean sha256=454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8
+TCSlib/Complexity/TuringMachine/Finite.lean:178:37: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi̵,̵ ̵h̵w]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Finite.lean:178:41: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi,̵ ̵h̵w̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T22:55:56.500541+00:00 RC 0 elapsed=1.5s pid=14936 maxrss=1752812KiB

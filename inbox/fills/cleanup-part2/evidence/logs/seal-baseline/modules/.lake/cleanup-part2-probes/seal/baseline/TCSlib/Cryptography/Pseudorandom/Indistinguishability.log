@@ -1,0 +1,25 @@
+START 2026-11-08T01:18:04.797058+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean sha256=b9ba23ddbcddf6136294d1a53280349b9dc754115fc1f70e66cda0cad1f143a5
+CP2-SEAL chunk=0 requested=14 active=14 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:132:2: error: Type mismatch
+  uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun x => Iff.rfl
+has type
+  (uprob fun x => ?m.28 ((Equiv.prodAssoc σ κ ρ).symm x)) = uprob ?m.28
+but is expected to have type
+  (acceptProb X fun z c => D (P z c.1) c.2) = acceptProb (fun s => P (X s.1) s.2) D
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:179:2: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  (distAdv X Y fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Indistinguishability): no fresh .olean produced
+
+END 2026-11-08T01:18:07.388313+00:00 RC 1 elapsed=2.6s pid=11240 maxrss=2505644KiB

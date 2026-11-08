@@ -1,0 +1,53 @@
+START 2026-11-08T01:25:11.494790+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean sha256=dc30ada4709a668b4d8b028714ddc467eb9abb2cb1b6ec33a7b4b0d9f3f08bdb
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=95 active=95 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1405:2: error: Tactic `rfl` failed: The left-hand side
+  decGraph w
+is not definitionally equal to the right-hand side
+  ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+
+w : List Bool
+⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1438:2: error: Invalid `⟨...⟩` notation: The expected type `S.Efficient` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1451:67: warning: This simp argument is unused:
+  moverIsV
+
+Hint: Omit it from the simp argument list.
+  simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec,̵ ̵m̵o̵v̵e̵r̵I̵s̵V̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1460:66: warning: This simp argument is unused:
+  moverIsV
+
+Hint: Omit it from the simp argument list.
+  simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec,̵ ̵m̵o̵v̵e̵r̵I̵s̵V̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1680:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+n c : ℕ
+h : permCoinLen n ≤ c
+this : StatClose (fun ω => samplePerm n (List.ofFn fun i => ω (Fin.castLE h i))) id (permFailBound n)
+⊢ StatClose (fun t => samplePerm n (List.ofFn t)) id (permFailBound n)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:1687:55: error: Type mismatch
+  rfl
+has type
+  ?m.77 = ?m.77
+but is expected to have type
+  permCoinLen n = n * (2 * n * n) * permBits n
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs): no fresh .olean produced
+
+END 2026-11-08T01:25:25.231786+00:00 RC 1 elapsed=13.7s pid=12679 maxrss=2695276KiB

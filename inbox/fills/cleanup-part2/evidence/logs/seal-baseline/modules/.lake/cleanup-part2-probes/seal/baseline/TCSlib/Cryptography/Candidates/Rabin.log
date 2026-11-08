@@ -1,0 +1,125 @@
+START 2026-11-08T01:17:27.033291+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean sha256=8de849f00bee3b7e0f1c1a9ffed4638b4c116113c7490bae0330331c16bc7599
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=61 active=61 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean:2034:4: error: Tactic `rfl` failed: The left-hand side
+  natToList (max (NUPPT.inParam z).length 3)
+    ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+          (rabinTrials.eval (max (NUPPT.inParam z).length 3))
+          (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z))).getD
+      (dflt (NUPPT.inParam z).length).z.p)
+is not definitionally equal to the right-hand side
+  natToList (max (NUPPT.inParam z).length 3)
+    ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+          (4 * max (NUPPT.inParam z).length 3 ^ 2)
+          (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z))).getD
+      (dflt (NUPPT.inParam z).length).z.p)
+
+P : ℕ → Prop
+inst✝ : DecidablePred P
+dflt : (m : ℕ) → RabinParams P (max m 3)
+acc0 : List Bool → Bool
+hspec : ∀ (w : List Bool), acc0 w = decide (Nat.Prime (listToNat w) ∧ P (listToNat w))
+ds1 ds2 : List Bool
+h1 : ∀ (m : ℕ), (dflt m).z.p = listToNat ds1
+h2 : ∀ (m : ℕ), (dflt m).z.q = listToNat ds2
+hl1 : ds1.length ≤ 3
+hl2 : ds2.length ≤ 3
+z : List Bool
+hUl : (rabin_gU z).length = max (NUPPT.inParam z).length 3
+hl1' : ds1.length ≤ (rabin_gU z).length
+hl2' : ds2.length ≤ (rabin_gU z).length
+⊢ natToList (max (NUPPT.inParam z).length 3)
+      ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+            (rabinTrials.eval (max (NUPPT.inParam z).length 3))
+            (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z))).getD
+        (dflt (NUPPT.inParam z).length).z.p) =
+    natToList (max (NUPPT.inParam z).length 3)
+      ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+            (4 * max (NUPPT.inParam z).length 3 ^ 2)
+            (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z))).getD
+        (dflt (NUPPT.inParam z).length).z.p)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean:2041:4: error: Tactic `rfl` failed: The left-hand side
+  natToList (max (NUPPT.inParam z).length 3)
+    ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+          (rabinTrials.eval (max (NUPPT.inParam z).length 3))
+          (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))
+            (List.drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z)))).getD
+      (dflt (NUPPT.inParam z).length).z.q)
+is not definitionally equal to the right-hand side
+  natToList (max (NUPPT.inParam z).length 3)
+    ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+          (4 * max (NUPPT.inParam z).length 3 ^ 2)
+          (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))
+            (List.drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z)))).getD
+      (dflt (NUPPT.inParam z).length).z.q)
+
+P : ℕ → Prop
+inst✝ : DecidablePred P
+dflt : (m : ℕ) → RabinParams P (max m 3)
+acc0 : List Bool → Bool
+hspec : ∀ (w : List Bool), acc0 w = decide (Nat.Prime (listToNat w) ∧ P (listToNat w))
+ds1 ds2 : List Bool
+h1 : ∀ (m : ℕ), (dflt m).z.p = listToNat ds1
+h2 : ∀ (m : ℕ), (dflt m).z.q = listToNat ds2
+hl1 : ds1.length ≤ 3
+hl2 : ds2.length ≤ 3
+z : List Bool
+hUl : (rabin_gU z).length = max (NUPPT.inParam z).length 3
+hl1' : ds1.length ≤ (rabin_gU z).length
+hl2' : ds2.length ≤ (rabin_gU z).length
+hP :
+  rabin_gP acc0 ds1 z =
+    samplePrimePL P (max (NUPPT.inParam z).length 3) (dflt (NUPPT.inParam z).length).z.p
+      (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z))
+⊢ natToList (max (NUPPT.inParam z).length 3)
+      ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+            (rabinTrials.eval (max (NUPPT.inParam z).length 3))
+            (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))
+              (List.drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z)))).getD
+        (dflt (NUPPT.inParam z).length).z.q) =
+    natToList (max (NUPPT.inParam z).length 3)
+      ((rejectBlocksL (fun v => Nat.Prime v ∧ P v) (max (NUPPT.inParam z).length 3) (max (NUPPT.inParam z).length 3)
+            (4 * max (NUPPT.inParam z).length 3 ^ 2)
+            (List.take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))
+              (List.drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3)) (NUPPT.inCoins z)))).getD
+        (dflt (NUPPT.inParam z).length).z.q)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean:2408:2: error: 'show' tactic failed, pattern
+  pairFstD ((oddGen H).runAt n [] r) = ?m.14
+is not definitionally equal to target
+  (rabinCollection H).index n r = rabinIndexOf (max n 3) (rabinGenParams (fun x => x ≠ 2) oddDefault n (List.ofFn r))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean:3213:75: error: Tactic `rfl` failed: The left-hand side
+  rabinPrimeCoins.eval n
+is not definitionally equal to the right-hand side
+  4 * n ^ 2 * n
+
+P : ℕ → Prop
+inst✝ : DecidablePred P
+dflt : (m : ℕ) → RabinParams P (max m 3)
+n : ℕ
+hn : 3 ≤ n
+z0 : DistinctPrimes n
+h1 : z0.p = (dflt n).z.p
+h2 : z0.q = (dflt n).z.q
+s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool)
+hmx : max n 3 = n
+⊢ rabinPrimeCoins.eval n = 4 * n ^ 2 * n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin.lean:4135:2: error: 'show' tactic failed, pattern
+  pairFstD ((blumGen H).runAt n [] r) = ?m.20
+is not definitionally equal to target
+  (rabinBlumTrapdoor H).index n r =
+    rabinIndexOf (max n 3) (rabinGenParams (fun x => x % 4 = 3) blumDefault n (List.ofFn r))
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Rabin): no fresh .olean produced
+
+END 2026-11-08T01:17:48.932698+00:00 RC 1 elapsed=21.9s pid=11158 maxrss=3091812KiB

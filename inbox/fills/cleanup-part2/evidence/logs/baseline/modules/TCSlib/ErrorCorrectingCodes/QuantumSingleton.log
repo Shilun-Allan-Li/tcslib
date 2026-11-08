@@ -1,0 +1,17 @@
+START 2026-11-07T23:43:15.509903+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/ErrorCorrectingCodes/QuantumSingleton
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean sha256=2460452c6c4eebec2ccff40da9ed14dd2181f9e01a7aec759cab8178799297d2
+FiniteDimensional.finiteDimensional_submodule (V_sub ∅)
+FiniteDimensional.instSubtypeMemSubmoduleMapLinearMapId (F p) (r_E ∅) ⊤
+E_c {n : ℕ} (E : Finset (Fin n)) : Finset (Fin n)
+S_M {n p : ℕ} [Fact (Nat.Prime p)] (S : Submodule (F p) (V n p)) (M : Finset (Fin n)) : Submodule (F p) (V n p)
+S_perp_M {n p : ℕ} [Fact (Nat.Prime p)] (S : Submodule (F p) (V n p)) (M : Finset (Fin n)) : Submodule (F p) (V n p)
+cleaning_dimension_identity {n p : ℕ} [Fact (Nat.Prime p)] (S : Submodule (F p) (V n p)) (hS : IsIsotropic S)
+  (M : Finset (Fin n)) : g S M + g S (E_c M) = 2 * n - 2 * Module.finrank (F p) ↥S
+g_complement_correctable {n p : ℕ} [Fact (Nat.Prime p)] (S : Submodule (F p) (V n p)) (hS : IsIsotropic S)
+  (M : Finset (Fin n)) (h : correctable S M) : g S (E_c M) = 2 * n - 2 * Module.finrank (F p) ↥S
+
+END 2026-11-07T23:43:35.904869+00:00 RC 0 elapsed=20.4s pid=27607 maxrss=3003964KiB

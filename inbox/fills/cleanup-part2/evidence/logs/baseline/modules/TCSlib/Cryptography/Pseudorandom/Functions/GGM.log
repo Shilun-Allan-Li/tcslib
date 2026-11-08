@@ -1,0 +1,16 @@
+START 2026-11-07T23:47:27.809253+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/GGM
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean sha256=193bbe7a5553286c999c79c951bf8a2a482da70b57b610342487cd243e67666e
+TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean:199:56: warning: This simp argument is unused:
+  comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [oracleDist_apply, levelAdv, eval_simulate, c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵randomFunction_apply, e,
+  ̵  ̵ ̵ ̵Equiv.coe_fn_mk]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T23:47:30.114695+00:00 RC 0 elapsed=2.3s pid=29074 maxrss=2654260KiB

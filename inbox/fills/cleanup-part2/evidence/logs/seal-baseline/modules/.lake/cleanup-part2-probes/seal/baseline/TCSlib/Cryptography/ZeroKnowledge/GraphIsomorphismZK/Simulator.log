@@ -1,0 +1,60 @@
+START 2026-11-08T01:27:01.830509+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean sha256=d47f623828c020eced5cc3b4c59fd5397db2752cbbe911f57f0a86793f50fa0e
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=54 active=54 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1274:29: warning: This simp argument is unused:
+  PolyExpr.eval
+
+Hint: Omit it from the simp argument list.
+  simp [blockPoly, blockLen, PolyExpr.e̵v̵a̵l̵,̵ ̵P̵o̵l̵y̵E̵x̵p̵r̵.̵normal, Strategy.coinLen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1282:28: warning: This simp argument is unused:
+  PolyExpr.eval
+
+Hint: Omit it from the simp argument list.
+  simp [simCoins, blockLen, PolyExpr.e̵v̵a̵l̵,̵ ̵P̵o̵l̵y̵E̵x̵p̵r̵.̵normal, Strategy.coinLen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1350:34: error: Type mismatch
+  getD_padSq n w (finProdFinEquiv (u, v)).isLt
+has type
+  (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+but is expected to have type
+  decGraphAt n (padSq n w) u v = decGraphAt n w u v
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1369:2: error: Tactic `rfl` failed: The left-hand side
+  decGraph w
+is not definitionally equal to the right-hand side
+  ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+
+w : List Bool
+⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1440:9: error: Tactic `rcases` failed: `hV' : V'.Efficient` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1623:4: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD simX_poly))
+has type
+  PolyTimeComputable fun x => List.replicate ((pairFstD ∘ simX) x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1642:89: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform hF (simCoins V')).coins = simCoins V'
+in the application
+  And.intro rfl
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): no fresh .olean produced
+
+END 2026-11-08T01:27:16.073755+00:00 RC 1 elapsed=14.2s pid=13032 maxrss=2676860KiB

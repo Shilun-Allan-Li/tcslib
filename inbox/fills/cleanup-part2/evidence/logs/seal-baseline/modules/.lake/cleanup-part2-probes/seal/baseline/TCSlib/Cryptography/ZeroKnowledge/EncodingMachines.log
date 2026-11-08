@@ -1,0 +1,33 @@
+START 2026-11-08T01:12:32.913327+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean sha256=a768ba07cbd00fc6ae2f2704a0879a2596898d43deb54c4be3dfe35607b5d5c1
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=14 active=14 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:796:23: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun z =>
+    match pairDecode z with
+    | some (u, v) => List.replicate (u.length * v.length) true
+    | none => []
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean:1273:12: error: Tactic `rfl` failed: The left-hand side
+  orbit (start init) (step upd) x 0
+is not definitionally equal to the right-hand side
+  pairEncode (List.replicate 0 true) (loopState upd init x 0)
+
+case zero
+upd init : List Bool → List Bool
+x : List Bool
+⊢ orbit (start init) (step upd) x 0 = pairEncode (List.replicate 0 true) (loopState upd init x 0)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines): no fresh .olean produced
+
+END 2026-11-08T01:12:43.874155+00:00 RC 1 elapsed=11.0s pid=10220 maxrss=1879844KiB

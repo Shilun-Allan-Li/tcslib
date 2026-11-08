@@ -1,0 +1,31 @@
+START 2026-11-08T01:18:18.733355+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators.lean sha256=5411736985d6520aa49d4acb33ad7592cb861e82a2357afc711ce916bf15db7d
+CP2-SEAL chunk=0 requested=21 active=21 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators.lean:132:2: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb.{u_3, u_2, u_5} (fun s => e (G s)) D - acceptProb (fun s => id (e s)) D|
+is not definitionally equal to the right-hand side
+  |(acceptProb.{u_3, u_2, u_4} G fun z r => D (e z) r) - acceptProb id fun z r => D (e z) r|
+
+σ : Type u_2
+ρ : Type u_3
+γ : Type u_4
+δ : Type u_5
+inst✝³ : Fintype σ
+inst✝² : Fintype ρ
+inst✝¹ : Fintype γ
+inst✝ : Fintype δ
+e : γ ≃ δ
+G : σ → γ
+D : δ → ρ → Bool
+⊢ |acceptProb (fun s => e (G s)) D - acceptProb (fun s => id (e s)) D| =
+    |(acceptProb G fun z r => D (e z) r) - acceptProb id fun z r => D (e z) r|
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Pseudorandom/Generators): no fresh .olean produced
+
+END 2026-11-08T01:18:21.123116+00:00 RC 1 elapsed=2.4s pid=11298 maxrss=2503940KiB

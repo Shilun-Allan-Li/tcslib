@@ -1,0 +1,21 @@
+START 2026-11-07T22:48:59.527323+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.lean sha256=3ad18d981fc8a749eb05f6840a5fc82d86fd4c69d1e4990438dc2f5ba04aaa33
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.lean:178:32: warning: This simp argument is unused:
+  Set.indicator_apply
+
+Hint: Omit it from the simp argument list.
+  simp [S̵e̵t̵.̵i̵n̵d̵i̵c̵a̵t̵o̵r̵_̵a̵p̵p̵l̵y̵,̵ ̵hx]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.lean:198:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.lean:199:64: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+
+END 2026-11-07T22:49:02.923675+00:00 RC 0 elapsed=3.4s pid=11751 maxrss=3442004KiB

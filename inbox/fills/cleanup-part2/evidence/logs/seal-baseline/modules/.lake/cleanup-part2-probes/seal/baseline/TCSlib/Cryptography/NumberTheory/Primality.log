@@ -1,0 +1,44 @@
+START 2026-11-08T01:13:47.725309+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality.lean sha256=84b06d84e851e354a3e4bbdaa2baacd1a83e5190a129cb4bde0481ffff8fd49e
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=62 active=62 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality.lean:1423:2: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  bitsToNat b = listToNat (List.ofFn b)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality.lean:1450:83: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  samplePrimeCoins.eval n = 2 * n ^ 2 * n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality.lean:1691:2: error: Type mismatch
+  spFind_eq n r
+has type
+  (match
+      List.find? (fun i => spAcc (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r))))
+        (List.range (PolyExpr.var.eval (pairEncode (List.replicate n true) (List.ofFn r)).length + 1)) with
+    | some i => spOut (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r)))
+    | none => []) =
+    (Option.map List.ofFn (samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r))).getD []
+but is expected to have type
+  (match
+      List.find? (fun i => spAcc (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r))))
+        (List.range (PolyExpr.var.eval (pairEncode (List.replicate n true) (List.ofFn r)).length + 1)) with
+    | some i => spOut (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r)))
+    | none => []) =
+    (Option.map List.ofFn (samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r))).getD []
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/NumberTheory/Primality): no fresh .olean produced
+
+END 2026-11-08T01:14:00.485341+00:00 RC 1 elapsed=12.8s pid=10549 maxrss=2875272KiB

@@ -1,0 +1,95 @@
+START 2026-11-08T01:22:29.008420+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean sha256=cd96a5efda1879ba7ac2ebc56096798cf139bb42e2e64fb829514a9c70d3edcd
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=199 already=1
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=183 active=183 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2180:65: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2187:61: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2188:20: error: Application type mismatch: The argument
+  D.toOracleAdversary n n n q
+has type
+  OracleAdversary (D.Coins n) (Fin n → Bool) (Fin n → Bool)
+but is expected to have type
+  OracleAdversary ?m.14 (Fin (PolyExpr.var.eval n) → Bool) (Fin (PolyExpr.var.eval n) → Bool)
+in the application
+  oracleDist (D.toOracleAdversary n n n q)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2199:46: error(lean.unknownIdentifier): Unknown identifier `prfAdv_toOracleAdversary`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2209:7: error: Type mismatch
+  G
+has type
+  (n : ℕ) → (Fin n → Bool) → Fin (2 * n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2232:2: error: Type mismatch
+  (Ensemble.pseudorandom_iff_prgAdv (doublingEnsemble G)).mp hG.pseudorandom D
+has type
+  Negligible fun n =>
+    prgAdv ((doublingEnsemble G).X n) (D.distinguisher n (((PolyExpr.const 2).mul PolyExpr.var).eval n))
+but is expected to have type
+  Negligible fun n => prgAdv (G n) (D.distinguisher n (2 * n))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2287:29: error: Type mismatch
+  hEs n s
+has type
+  E (List.ofFn s) = List.ofFn fun i => P.G n s (Fin.castLE ⋯ i)
+but is expected to have type
+  E (List.ofFn s) = List.ofFn (P.truncate n s)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2288:4: error: Type mismatch
+  truncateTo_negligible hP (PolyExpr.var.add (PolyExpr.const 1)) hm D
+has type
+  Negligible fun n =>
+    prgAdv (fun s i => P.G n s (Fin.castLE ⋯ i)) (D.distinguisher n ((PolyExpr.var.add (PolyExpr.const 1)).eval n))
+but is expected to have type
+  Negligible fun n => prgAdv (P.truncate n) (D.distinguisher n (n + 1))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2315:29: error: Type mismatch
+  hEs n s
+has type
+  E (List.ofFn s) =
+    List.ofFn fun i =>
+      (expand P.truncate (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 1)) two_mul_add_one_expands).G n s
+        (Fin.castLE ⋯ i)
+but is expected to have type
+  E (List.ofFn s) = List.ofFn (P.doubling n s)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2316:4: error: Type mismatch
+  truncateTo_negligible hQ ((PolyExpr.const 2).mul PolyExpr.var) hm D
+has type
+  Negligible fun n =>
+    prgAdv
+      (fun s i =>
+        (expand P.truncate (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 1)) two_mul_add_one_expands).G n s
+          (Fin.castLE ⋯ i))
+      (D.distinguisher n (((PolyExpr.const 2).mul PolyExpr.var).eval n))
+but is expected to have type
+  Negligible fun n =>
+    prgAdv ((doublingEnsemble P.doubling).X n) (D.distinguisher n (((PolyExpr.const 2).mul PolyExpr.var).eval n))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2366:8: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.47
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF.lean:2561:42: error(lean.unknownIdentifier): Unknown identifier `prfAdv_toOracleAdversary`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/PRF): no fresh .olean produced
+
+END 2026-11-08T01:22:47.678282+00:00 RC 1 elapsed=18.7s pid=12294 maxrss=2783364KiB

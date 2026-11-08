@@ -1,0 +1,166 @@
+/-! cleanup-part2 census harness (evidence probe; not library source).
+
+* `#cp2axioms [modules]` — for every stored constant whose home is one of the modules (private,
+  generated, matcher, opaque and axiom-free rows included), its kernel axiom dependencies,
+  computed by a memoised traversal of types and values (Lean's `collectAxioms` traversal, shared
+  cache; a constant met while its own traversal is in progress is recomputed exactly with
+  `collectAxioms`). Output: `AXIOMS\t<module>\t<name>\t<sorted axioms>`, one record per constant.
+* `#cp2c3 [modules]` — C3: for every such root, the generated equation theorems
+  (`*.eq_<n>`, `*.eq_def`, `*.eq_unfold`) referenced from its type and value whose parent
+  definition is foreign (home ≠ the root's module), following the types of reached TCSlib or
+  unknown-home constants and the values of same-owner definitions.
+  Output: `C3\t<root module>\t<root>\t<reference>\t<reference home>\t<parent>\t<parent home>`.
+* `#cp2closure M [deps]` — the conservative seal list of `M`: every definition (instances and
+  reducible non-matchers excluded; matchers included) homed in a TCSlib module of `M`'s import
+  closure, printed with its exact Name components for constant-AST requests.
+  Output: `CLOSURE\t<M>\t<name>\t<home>\t<kind>\t<status>\t<components>`. -/
+open Lean Meta Elab Command
+
+def cp2Home (env : Environment) (n : Name) : Name :=
+  match env.getModuleIdxFor? n with
+  | some i => env.header.moduleNames[i.toNat]!
+  | none => `_current
+
+def cp2Children (ci : ConstantInfo) : Array Name :=
+  let ts := ci.type.getUsedConstants
+  match ci.value? (allowOpaque := true) with
+  | some v => ts ++ v.getUsedConstants
+  | none => ts
+
+/-- Memoised axiom sets. -/
+partial def cp2Ax (env : Environment) (cache : IO.Ref (Std.HashMap Name NameSet))
+    (busy : IO.Ref NameSet) (n : Name) : CoreM NameSet := do
+  if let some s := (← cache.get)[n]? then return s
+  if (← busy.get).contains n then return {}
+  busy.modify (·.insert n)
+  let some ci := env.find? n | do busy.modify (·.erase n); return {}
+  let mut s : NameSet := {}
+  if ci matches .axiomInfo _ then s := s.insert n
+  let mut cyclic := false
+  for c in cp2Children ci do
+    if (← busy.get).contains c && !(← cache.get).contains c then cyclic := true
+    for a in (← cp2Ax env cache busy c) do s := s.insert a
+  busy.modify (·.erase n)
+  if cyclic then
+    -- exact recomputation for members of a reference cycle
+    let exact ← collectAxioms n
+    s := exact.foldl (·.insert ·) {}
+  else
+    cache.modify (·.insert n s)
+  return s
+
+syntax (name := cp2axiomsCmd) "#cp2axioms " "[" ident,* "]" : command
+@[command_elab cp2axiomsCmd] def cp2axioms : CommandElab := fun stx => do
+  let mods := stx[2].getSepArgs.map Syntax.getId
+  let env ← getEnv
+  for m in mods do
+    unless (env.getModuleIdx? m).isSome do throwError "missing module {m}"
+  let cache ← IO.mkRef ({} : Std.HashMap Name NameSet)
+  let busy ← IO.mkRef ({} : NameSet)
+  let mut rows : Array String := #[]
+  for (n, _) in env.constants.map₁.toList do
+    let h := cp2Home env n
+    unless mods.contains h do continue
+    let s ← liftCoreM <| cp2Ax env cache busy n
+    let l := (s.toArray.qsort Name.lt).toList
+    rows := rows.push s!"AXIOMS\t{h}\t{n}\t{l}"
+  IO.FS.writeFile (cp2OutDir ++ "/axioms.tsv") (String.intercalate "\n" (rows.qsort (· < ·)).toList ++ "\n")
+  logInfo m!"AXIOMS-COUNT {rows.size}"
+
+def cp2IsEqn (n : Name) : Option Name :=
+  match n with
+  | .str p s =>
+    if s == "eq_def" || s == "eq_unfold" || (s.startsWith "eq_" && (s.drop 3).all Char.isDigit && s.length > 3)
+    then some p else none
+  | _ => none
+
+syntax (name := cp2c3Cmd) "#cp2c3 " "[" ident,* "]" : command
+@[command_elab cp2c3Cmd] def cp2c3 : CommandElab := fun stx => do
+  let mods := stx[2].getSepArgs.map Syntax.getId
+  let env ← getEnv
+  let mut rows : Array String := #[]
+  let mut roots := 0
+  for (n, _) in env.constants.map₁.toList do
+    let h := cp2Home env n
+    unless mods.contains h do continue
+    roots := roots + 1
+    let mut seen : NameSet := {}
+    let mut stack : Array Name := #[n]
+    let mut first := true
+    while !stack.isEmpty do
+      let c := stack.back!
+      stack := stack.pop
+      if seen.contains c then continue
+      seen := seen.insert c
+      let some ci := env.find? c | continue
+      let ch := cp2Home env c
+      let followType := first || (`TCSlib).isPrefixOf ch || ch == `_current
+      let followValue := first || (ch == h && ci.isDefinition)
+      first := false
+      let mut kids : Array Name := #[]
+      if followType then kids := kids ++ ci.type.getUsedConstants
+      if followValue then
+        if let some v := ci.value? (allowOpaque := true) then kids := kids ++ v.getUsedConstants
+      for k in kids do
+        if let some p := cp2IsEqn k then
+          let ph := cp2Home env p
+          if ph != h && (env.find? p).isSome then
+            rows := rows.push s!"C3\t{h}\t{n}\t{k}\t{cp2Home env k}\t{p}\t{ph}"
+        stack := stack.push k
+  let sorted := rows.qsort (· < ·)
+  let mut uniq : Array String := #[]
+  for r in sorted do
+    if uniq.back? != some r then uniq := uniq.push r
+  IO.FS.writeFile (cp2OutDir ++ "/c3.tsv") (String.intercalate "\n" uniq.toList ++ "\n")
+  logInfo m!"C3-ROOTS {roots} C3-PAIRS {uniq.size}"
+
+def cp2Components : Name → List String
+  | .anonymous => []
+  | .str p s => cp2Components p ++ [s!"s:{s}"]
+  | .num p k => cp2Components p ++ [s!"n:{k}"]
+
+syntax (name := cp2closuresCmd) "#cp2closures " "[" ident,* "]" : command
+/-- One pass over the environment: for every audited module `M` (the listed modules), the rows of
+the definitions homed in TCSlib modules of `M`'s import closure (instances and reducible
+non-matchers excluded; matchers included), written to `closure.tsv`. The closure of `M` is read
+from the environment's own import table (`env.header.moduleData`), transitively. -/
+@[command_elab cp2closuresCmd] def cp2closures : CommandElab := fun stx => do
+  let mods := stx[2].getSepArgs.map Syntax.getId
+  let env ← getEnv
+  -- rows per home module
+  let mut byHome : Std.HashMap Name (Array String) := {}
+  for (n, ci) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    let home := env.header.moduleNames[mi.toNat]!
+    unless (`TCSlib).isPrefixOf home do continue
+    unless ci.isDefinition do continue
+    if isInstanceCore env n then continue
+    let matcher := (Match.Extension.getMatcherInfo? env n).isSome
+    let status ← liftCoreM <| getReducibilityStatus n
+    if !matcher && status == .reducible then continue
+    let kind := match ci with | .defnInfo _ => "def" | .opaqueInfo _ => "opaque" | _ => "other"
+    let row := s!"{n}\t{home}\t{kind}{if matcher then "/matcher" else ""}\t{repr status}\t{cp2Components n}"
+    byHome := byHome.insert home (((byHome[home]?).getD #[]).push row)
+  -- direct imports per module
+  let mut imps : Std.HashMap Name (Array Name) := {}
+  for i in [0:env.header.moduleNames.size] do
+    imps := imps.insert env.header.moduleNames[i]! (env.header.moduleData[i]!.imports.map (·.module))
+  let h ← IO.FS.Handle.mk (cp2OutDir ++ "/closure.tsv") .write
+  for m in mods do
+    let mut seen : NameSet := {}
+    let mut stack : Array Name := (imps[m]?).getD #[]
+    while !stack.isEmpty do
+      let x := stack.back!
+      stack := stack.pop
+      if seen.contains x then continue
+      seen := seen.insert x
+      stack := stack ++ ((imps[x]?).getD #[])
+    let deps := seen.toArray.filter fun d => (`TCSlib).isPrefixOf d && d != m
+    let mut rows : Array String := #[]
+    for d in deps do
+      for r in (byHome[d]?).getD #[] do rows := rows.push s!"CLOSURE\t{m}\t{r}"
+    for r in rows.qsort (· < ·) do h.putStrLn r
+    h.putStrLn s!"CLOSURE-DEPS\t{m}\t{(deps.qsort Name.lt).toList}"
+    h.putStrLn s!"CLOSURE-COUNT\t{m}\t{rows.size}"
+  h.flush
+  logInfo m!"CLOSURES {mods.size}"

@@ -1,0 +1,51 @@
+START 2026-11-08T01:18:51.451486+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean sha256=c483788c1c5a3ab344f90c39f049cac80ece4afb113a30c8f4323e249361b063
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=35 active=35 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1227:11: error: Tactic `rfl` failed: The left-hand side
+  encodeList []
+is not definitionally equal to the right-hand side
+  List.flatMap (fun c => pairEncode c []) []
+
+case nil
+⊢ encodeList [] = List.flatMap (fun c => pairEncode c []) []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1289:51: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairFstD [] = []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1292:51: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairSndD [] = []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1422:2: error: Type mismatch
+  h
+has type
+  PolyTimeComputable fun x =>
+    List.flatMap (fun i => blockEmit E L B ((blockStep L B)^[i] x)) (List.range (PolyExpr.var.eval x.length + 1))
+but is expected to have type
+  PolyTimeComputable (blockEncFun E L B)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1516:2: error: Type mismatch
+  h
+has type
+  PolyTimeComputable fun x =>
+    List.flatMap (fun i => decListEmit Dc (decListStep^[i] x)) (List.range (PolyExpr.var.eval x.length + 1))
+but is expected to have type
+  PolyTimeComputable (decListFun Dc)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/BlockEncryptor): no fresh .olean produced
+
+END 2026-11-08T01:19:05.077457+00:00 RC 1 elapsed=13.6s pid=11418 maxrss=2707532KiB

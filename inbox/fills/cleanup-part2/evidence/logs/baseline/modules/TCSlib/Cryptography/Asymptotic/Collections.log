@@ -1,0 +1,16 @@
+START 2026-11-07T23:46:03.733322+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/Collections
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Asymptotic/Collections.lean sha256=a8bd04f2ec336aa48aa0de3914e53760ae6b3ab2edc18961e6d0e80262e4eb92
+TCSlib/Cryptography/Asymptotic/Collections.lean:1050:6: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T23:46:05.922220+00:00 RC 0 elapsed=2.2s pid=28550 maxrss=2731988KiB

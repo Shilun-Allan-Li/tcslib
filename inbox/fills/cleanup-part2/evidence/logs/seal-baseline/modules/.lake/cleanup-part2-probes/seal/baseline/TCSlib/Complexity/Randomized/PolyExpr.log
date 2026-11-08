@@ -1,0 +1,21 @@
+START 2026-11-08T01:10:37.740927+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr.lean sha256=c246907fd99f2a77ccb3e8ff9a66720d4cf2bfce3d0edb847f35f7973785a130
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=101 active=101 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr.lean:754:60: error: Type mismatch
+  eval_le p
+has type
+  ∃ C c, ∀ (n : ℕ), p.eval n ≤ C * (n + 1) ^ c
+but is expected to have type
+  PolyBound p.eval
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyExpr): no fresh .olean produced
+
+END 2026-11-08T01:10:46.861620+00:00 RC 1 elapsed=9.1s pid=9677 maxrss=1840168KiB

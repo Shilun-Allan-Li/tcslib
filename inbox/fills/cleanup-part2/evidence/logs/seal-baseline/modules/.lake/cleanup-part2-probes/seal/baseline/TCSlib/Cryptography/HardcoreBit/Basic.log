@@ -1,0 +1,19 @@
+START 2026-11-08T01:12:28.229132+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic.lean sha256=1a90799288af76ee4c1768287c4cda5e9ec647215b027bfc25909158f4e3f29b
+CP2-SEAL chunk=0 requested=2 active=2 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic.lean:110:2: error: Type mismatch
+  div_le_div_of_nonneg_right (sum_le_sum fun ω x => h ω) (Nat.cast_nonneg ?m.31)
+has type
+  (∑ i ∈ ?m.23, f i) / ↑?m.31 ≤ (∑ i ∈ ?m.23, g i) / ↑?m.31
+but is expected to have type
+  uexp f ≤ uexp g
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/Basic): no fresh .olean produced
+
+END 2026-11-08T01:12:30.325286+00:00 RC 1 elapsed=2.1s pid=10172 maxrss=1910812KiB

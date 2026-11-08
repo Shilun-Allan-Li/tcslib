@@ -1,0 +1,121 @@
+START 2026-11-08T01:19:53.488838+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean sha256=0863d0f817e79c74873cfd9815d5be5a0c5fdaf5057fffa4e694c6283dfd653b
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=122 active=122 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:1840:61: error: Type mismatch
+  rfl
+has type
+  ?m.367 = ?m.367
+but is expected to have type
+  pairEncode (pairEncode (List.replicate m true) (List.ofFn (betaOf ⟨t, ht'⟩.modNat))) (blocksStr s) =
+    SelXor.input m (betaOf ⟨t, ht'⟩.modNat) s
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:1931:2: error: Type mismatch
+  polyTimeComputable_blockMap PolyExpr.var polyTimeComputable_majority
+has type
+  PolyTimeComputable fun z =>
+    List.flatMap
+      (fun i =>
+        [decide
+            ((List.take (PolyExpr.var.eval (pairFstD z).length)
+                  (List.drop (i * PolyExpr.var.eval (pairFstD z).length) (pairSndD z))).length <
+              2 *
+                List.count true
+                  (List.take (PolyExpr.var.eval (pairFstD z).length)
+                    (List.drop (i * PolyExpr.var.eval (pairFstD z).length) (pairSndD z))))])
+      (List.range ((pairSndD z).length / PolyExpr.var.eval (pairFstD z).length))
+but is expected to have type
+  PolyTimeComputable glMajFun
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:1960:8: error: Invalid `⟨...⟩` notation: The expected type `PolyTimeComputable unaryMulFun` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:2224:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.take (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex)
+in the target expression
+  glMajFun
+      (pairEncode (List.replicate (2 ^ k n - 1) true)
+        (glVotesFun A
+          (GLLoop.input
+            (GLLoop.fixed (List.replicate n true) Y (A.advice n) (List.replicate (mP.eval n) true)
+              (List.replicate (k n) true) (List.replicate (A.coins.eval n) true)
+              (List.take (k n * mP.eval n) (List.ofFn r)) (List.take (k n) (List.drop (k n * mP.eval n) (List.ofFn r))))
+            (GLLoop.glTable (mP.eval n) (k n)) (List.drop (k n) (List.drop (k n * mP.eval n) (List.ofFn r)))))) =
+    List.ofFn fun i =>
+      HardcoreBit.majority fun j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j))
+
+A : NUPPT
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+n : ℕ
+Y : List Bool
+s : Fin (k n) → Fin (mP.eval n) → Bool
+b : Fin (k n) → Bool
+cs : Fin (mP.eval n * (2 ^ k n - 1)) → Fin (A.coinLen n) → Bool
+ex : List Bool
+r : (glMachine A mP K k hk).Coins n
+hr : List.ofFn r = blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex
+hM : 0 < 2 ^ k n - 1 ∨ mP.eval n = 0
+h1 : List.take (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex) = blocksStr s
+h2 :
+  List.drop (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex) = List.ofFn b ++ (blocksStr cs ++ ex)
+⊢ glMajFun
+      (pairEncode (List.replicate (2 ^ k n - 1) true)
+        (glVotesFun A
+          (GLLoop.input
+            (GLLoop.fixed (List.replicate n true) Y (A.advice n) (List.replicate (mP.eval n) true)
+              (List.replicate (k n) true) (List.replicate (A.coins.eval n) true)
+              (List.take (k n * mP.eval n) (List.ofFn r)) (List.take (k n) (List.drop (k n * mP.eval n) (List.ofFn r))))
+            (GLLoop.glTable (mP.eval n) (k n)) (List.drop (k n) (List.drop (k n * mP.eval n) (List.ofFn r)))))) =
+    List.ofFn fun i =>
+      HardcoreBit.majority fun j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:2216:51: warning: This simp argument is unused:
+  hr
+
+Hint: Omit it from the simp argument list.
+  simp only [GLRaw.uM, GLRaw.adv, GLRaw.α, GLRaw.uk, GLRaw.tbl, GLRaw.um, GLRaw.ur, GLRaw.ukm,
+      GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+      NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
+      List.length_replicate, unaryMulFun_pairEncode,̵ ̵h̵r̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:2320:2: error: Tactic `rfl` failed: The left-hand side
+  List.ofFn ((blocksEquiv k m).symm s) ++
+    (List.ofFn b ++
+      (List.ofFn
+          ((blocksEquiv (m * (2 ^ k - 1)) (A.coinLen n)).symm
+            ((blocksEquivX m (2 ^ k - 1) (A.Coins n)).symm
+              (((Equiv.refl (Fin m)).arrowCongr ((nesubsetEquiv k).arrowCongr (Equiv.refl (A.Coins n)))) c))) ++
+        List.ofFn ex))
+is not definitionally equal to the right-hand side
+  blocksStr s ++ (List.ofFn b ++ (blocksStr (glBlocks A n m k c) ++ List.ofFn ex))
+
+A : NUPPT
+n m k Q : ℕ
+hQ : k * m + (k + m * (2 ^ k - 1) * A.coinLen n) ≤ Q
+ex : Fin (Q - (k * m + (k + m * (2 ^ k - 1) * A.coinLen n))) → Bool
+s : Fin k → Fin m → Bool
+b : Fin k → Bool
+c : Fin m → HardcoreBit.NESubset k → A.Coins n
+⊢ List.ofFn ((blocksEquiv k m).symm s) ++
+      (List.ofFn b ++
+        (List.ofFn
+            ((blocksEquiv (m * (2 ^ k - 1)) (A.coinLen n)).symm
+              ((blocksEquivX m (2 ^ k - 1) (A.Coins n)).symm
+                (((Equiv.refl (Fin m)).arrowCongr ((nesubsetEquiv k).arrowCongr (Equiv.refl (A.Coins n)))) c))) ++
+          List.ofFn ex)) =
+    blocksStr s ++ (List.ofFn b ++ (blocksStr (glBlocks A n m k c) ++ List.ofFn ex))
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/HardCoreGL): no fresh .olean produced
+
+END 2026-11-08T01:20:09.383724+00:00 RC 1 elapsed=15.9s pid=11570 maxrss=2762504KiB

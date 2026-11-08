@@ -1,0 +1,203 @@
+START 2026-11-08T01:16:52.396261+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean sha256=0821f3d3b0f3f28a99739066bb8ccffe1c9e6dbb57c4d17bcb7a201948e3205f
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=160 active=160 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1220:47: error: Application type mismatch: The argument
+  x
+has type
+  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1220:86: error: Application type mismatch: The argument
+  x
+has type
+  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1223:68: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  fmult.inLen.eval n = 2 * n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1226:70: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  fmult.outLen.eval n = 2 * n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1230:14: error: Application type mismatch: The argument
+  x
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1230:18: error: Type mismatch
+  natToBits (2 * n) (fmultNat (bitsToNat ((FunFamily.blocks 2 n) x 0)) (bitsToNat ((FunFamily.blocks 2 n) x 1)))
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1245:63: error: Application type mismatch: The argument
+  x'
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n x'
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1245:68: error: Type mismatch
+  natToBits (2 * n) (p * q)
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1319:39: error: Application type mismatch: The argument
+  x
+has type
+  Fin (fmult.inLen.eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  fac_ofFn_halves n x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1323:49: error: Application type mismatch: The argument
+  x
+has type
+  Fin (fmult.inLen.eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1323:88: error: Application type mismatch: The argument
+  x
+has type
+  Fin (fmult.inLen.eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1321:27: warning: This simp argument is unused:
+  h0
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate, h0̵,̵ ̵h̵1, mulStr_pairEncode, List.length_ofFn]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1321:31: warning: This simp argument is unused:
+  h1
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate, h0, h̵1̵,̵ ̵mulStr_pairEncode, List.length_ofFn]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1321:54: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate, h0, h1, mulStr_pairEncode,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1570:63: error: Application type mismatch: The argument
+  z.1
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n z.1
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1571:16: error: Application type mismatch: The argument
+  x'
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n x'
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1571:31: error: Application type mismatch: The argument
+  z.1
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n z.1
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1572:61: error: Type mismatch
+  h
+has type
+  1 - 1 / ↑(8 * (n + 1) ^ 2) <
+    uprob fun z => ∃ x', A.runAt n (List.ofFn (fmult.f n z.1)) z.2 = List.ofFn x' ∧ fmult.f n x' = fmult.f n z.1
+but is expected to have type
+  1 - 1 / ↑(8 * (n + 1) ^ 2) < uprob S
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1608:24: error: Application type mismatch: The argument
+  ↑a
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n ↑a
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1608:30: error: Type mismatch
+  natToBits (2 * n) (bitsToNat ((FunFamily.blocks 2 n) (↑a) 0) * bitsToNat ((FunFamily.blocks 2 n) (↑a) 1))
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1704:77: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  fmultBlocks.eval n = 4 * n ^ 3
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1753:38: error: Application type mismatch: The argument
+  fmult.f n
+has type
+  (Fin (fmult.inLen.eval n) → Bool) → Fin (fmult.outLen.eval n) → Bool
+but is expected to have type
+  (Fin (2 * n) → Bool) → Fin (2 * n) → Bool
+in the application
+  OneWay.yaoTry (fmult.f n)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1781:82: error: Application type mismatch: The argument
+  Y
+has type
+  Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmultBlocks.eval n) → Fin (fmult.outLen.eval n) → Bool
+in the application
+  OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1868:86: error: Application type mismatch: The argument
+  S (ce r)
+has type
+  Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) × (Fin (A.coinLen n) → Bool)
+but is expected to have type
+  Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool) × ?m.270 N r
+in the application
+  plantFactor ?m.263 N (S (ce r))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring.lean:1982:6: error: Type mismatch
+  prodInverter A n
+has type
+  (Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool) → A.Coins n → Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool
+but is expected to have type
+  (Fin (fmultBlocks.eval n) → Fin (fmult.outLen.eval n) → Bool) →
+    A.Coins n → Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/Factoring): no fresh .olean produced
+
+END 2026-11-08T01:17:09.783748+00:00 RC 1 elapsed=17.4s pid=11081 maxrss=2935444KiB

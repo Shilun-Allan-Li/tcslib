@@ -1,0 +1,29 @@
+START 2026-11-08T01:11:36.972397+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure.lean sha256=36586ac291b36ac767c6741b835355238e879a909b1935001970b991678efdd2
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=170 active=170 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure.lean:842:4: error: Tactic `rfl` failed: The left-hand side
+  pairFstD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairFstD [] = []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure.lean:850:4: error: Tactic `rfl` failed: The left-hand side
+  pairSndD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairSndD [] = []
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/Closure): no fresh .olean produced
+
+END 2026-11-08T01:11:46.796269+00:00 RC 1 elapsed=9.8s pid=9946 maxrss=1850800KiB

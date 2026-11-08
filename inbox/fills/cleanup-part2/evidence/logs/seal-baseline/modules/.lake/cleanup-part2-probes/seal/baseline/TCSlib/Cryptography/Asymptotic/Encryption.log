@@ -1,0 +1,112 @@
+START 2026-11-08T01:18:37.748659+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean sha256=5902ac6b512be56ae206172cd7965b39fe32029ce044aff7259268d097eca216
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=16 active=16 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1426:42: error: unsolved goals
+S : PrivateKeyScheme
+h : S.MultiMessageSecure
+D B : NUPPT
+hBc : B.coins = D.coins
+hB : ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = id (D.runAtL n (pairFstD y) r)
+ε : ℕ → ℝ
+hε : Negligible ε
+hD :
+  ∀ (n : ℕ) (m m' : Fin ((PolyExpr.const 0).eval n + 1) → Fin n → Bool),
+    distAdv (S.multiEncDist n ((PolyExpr.const 0).eval n) m) (S.multiEncDist n ((PolyExpr.const 0).eval n) m')
+        (B.distinguisherL n) ≤
+      ε n
+n : ℕ
+m₀ m₁ m : Fin n → Bool
+r : S.gen.Coins n × (Fin ((PolyExpr.const 0).eval n + 1) → S.enc.Coins n)
+c : List Bool
+⊢ S.enc.runAt n (pairEncode (S.gen.runAt n [] r.1) (List.ofFn m)) (r.2 0) =
+    S.enc.runAt n (pairEncode (S.gen.runAt n [] r.1) (List.ofFn m)) (r.2 0)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1434:10: error: Application type mismatch: The argument
+  inferInstanceAs (Unique (Fin 1))
+has type
+  Unique (Fin 1)
+but is expected to have type
+  Unique (Fin ((PolyExpr.const 0).eval n + 1))
+in the application
+  @Equiv.funUnique (Fin ((PolyExpr.const 0).eval n + 1)) (S.enc.Coins n) (inferInstanceAs (Unique (Fin 1)))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1503:2: error: 'change' tactic failed, pattern
+  |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun s => padXor h m₁ (G s)) D| ≤
+    |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun p => padXor h m₀ p) D| +
+      |acceptProb (fun s => padXor h m₁ (G s)) D - acceptProb (fun p => padXor h m₁ p) D|
+is not definitionally equal to target
+  distAdv (fun s => padXor h m₀ (G s)) (fun s => padXor h m₁ (G s)) D ≤
+    (prgAdv G fun t r => D (padXor h m₀ t) r) + prgAdv G fun t r => D (padXor h m₁ t) r
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1577:4: error: Type mismatch
+  LT.lt.le (P.expands n)
+has type
+  n ≤ P.stretch.eval n
+but is expected to have type
+  n ≤ P.stretch.eval (PolyExpr.var.eval n)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1584:2: error: Type mismatch
+  NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n
+has type
+  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n ≃ (Fin (PolyExpr.var.eval n) → Bool)
+but is expected to have type
+  (prgScheme P F hF hG).gen.Coins n ≃ (Fin n → Bool)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1591:2: error: Type mismatch
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn polyTimeComputable_pairSndD PolyExpr.var n r
+has type
+  List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var n) r) = List.ofFn r
+but is expected to have type
+  List.ofFn ((prgScheme_genCoinsEquiv P F hF hG n) r) = List.ofFn r
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1598:2: error: Type mismatch
+  NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ (PolyExpr.const 0) n
+has type
+  (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.const 0)).Coins n ≃ (Fin ((PolyExpr.const 0).eval n) → Bool)
+but is expected to have type
+  (prgScheme P F hF hG).enc.Coins n ≃ (Fin 0 → Bool)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1605:2: error: Type mismatch
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (polyTimeComputable_prgPadFun hF) (PolyExpr.const 0) n r
+has type
+  List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ (PolyExpr.const 0) n) r) = List.ofFn r
+but is expected to have type
+  List.ofFn ((prgScheme_encCoinsEquiv P F hF hG n) r) = List.ofFn r
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1658:68: error: Type mismatch
+  rfl
+has type
+  ?m.50 = ?m.50
+but is expected to have type
+  acceptProb G (B.distinguisher n L) = acceptProb (fun s => List.ofFn (G s)) (B.distinguisherL n)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1726:61: error: Invalid projection: Expected a value whose type is a structure
+  hP
+has type
+  P.Secure
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1734:2: error: Type mismatch
+  distAdv_padXor_le (LT.lt.le (P.expands n)) (P.G n) (μ n).1 (μ n).2 fun t r => D.distinguisherL n (List.ofFn t) r
+has type
+  (distAdv (fun s => padXor ⋯ (μ n).1 (P.G n s)) (fun s => padXor ⋯ (μ n).2 (P.G n s)) fun t r =>
+      D.distinguisherL n (List.ofFn t) r) ≤
+    (prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).1 t)) r) +
+      prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).2 t)) r
+but is expected to have type
+  |(acceptProb (fun s => padXor ⋯ (μ n).1 (P.G n s)) fun t r => D.distinguisherL n (List.ofFn t) r) -
+        acceptProb (fun s => padXor ⋯ (μ n).2 (P.G n s)) fun t r => D.distinguisherL n (List.ofFn t) r| ≤
+    (prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).1 t)) r) +
+      prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).2 t)) r
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1791:22: error: Function expected at
+  hε
+but this term has type
+  Negligible ε
+
+Note: Expected a function because this term is being applied to the argument
+  1
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption.lean:1791:9: error: Tactic `rcases` failed: `x✝ : ?m.27` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/Encryption): no fresh .olean produced
+
+END 2026-11-08T01:18:51.274891+00:00 RC 1 elapsed=13.5s pid=11380 maxrss=2681140KiB

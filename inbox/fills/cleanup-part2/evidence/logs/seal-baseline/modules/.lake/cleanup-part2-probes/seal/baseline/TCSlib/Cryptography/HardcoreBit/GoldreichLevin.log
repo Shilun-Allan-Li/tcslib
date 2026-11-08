@@ -1,0 +1,22 @@
+START 2026-11-08T01:13:32.276681+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean sha256=66b1405303e742223d48c21e06012a7815d5b5ed451b5a030d2cae56ebab6c4d
+CP2-SEAL chunk=0 requested=29 active=29 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:213:2: error: Type mismatch
+  PushesUniform.uprob_eq (PushesUniform.prodMap (pushesUniform_xor (Pi.single i true)) pushesUniform_id) fun z =>
+    A (f x, z.1) z.2 = ip x z.1
+has type
+  (uprob fun ω =>
+      A (f x, (ω.1 + Pi.single i true, ω.2).1) (ω.1 + Pi.single i true, ω.2).2 = ip x (ω.1 + Pi.single i true, ω.2).1) =
+    uprob fun z => A (f x, z.1) z.2 = ip x z.1
+but is expected to have type
+  (uprob fun z => A (f x, z.1 + Pi.single i true) z.2 = ip x (z.1 + Pi.single i true)) = secProb f A x
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/GoldreichLevin): no fresh .olean produced
+
+END 2026-11-08T01:13:36.156873+00:00 RC 1 elapsed=3.9s pid=10449 maxrss=2548216KiB

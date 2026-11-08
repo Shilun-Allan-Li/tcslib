@@ -1,0 +1,52 @@
+START 2026-11-08T01:28:39.168384+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean sha256=34436e0b7afa5639614a0fd19f08ac27f2f7d0b4cbbcb82af218fe28df71e3ab
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=195 active=195 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:1842:2: error: Type mismatch
+  LE.le.trans (length_pairFstD_le (pairFstD (pairSndD (pairFstD (pairFstD ?m.29)))))
+    (LE.le.trans (length_pairFstD_le (pairSndD (pairFstD (pairFstD ?m.29))))
+      (LE.le.trans (length_pairSndD_le (pairFstD (pairFstD ?m.29)))
+        (LE.le.trans (length_pairFstD_le (pairFstD ?m.29)) (length_pairFstD_le ?m.29))))
+has type
+  (pairFstD (pairFstD (pairSndD (pairFstD (pairFstD ?m.29))))).length ≤ List.length ?m.29
+but is expected to have type
+  (argX w).length ≤ w.length
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:1961:73: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [proverStr, decide_eq_true_eq,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:2133:4: error: Type mismatch
+  unaryPolyOf_poly ((PolyExpr.var.add (PolyExpr.const 1)).pow 2)
+    (unaryLength_poly (PolyTimeComputable.comp argX_poly polyTimeComputable_pairSndD))
+has type
+  PolyTimeComputable fun x =>
+    List.replicate (((PolyExpr.var.add (PolyExpr.const 1)).pow 2).eval ((argX ∘ pairSndD) x).length) true
+but is expected to have type
+  PolyTimeComputable fun v => List.replicate (((argX (pairSndD v)).length + 1) ^ 2) true
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:2222:2: error: Tactic `rfl` failed: The left-hand side
+  x.length.sqrt
+is not definitionally equal to the right-hand side
+  (decGraph x).fst
+
+x z r : List Bool
+hist : List (List Bool)
+⊢ x.length.sqrt = (decGraph x).fst
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties): no fresh .olean produced
+
+END 2026-11-08T01:28:56.657270+00:00 RC 1 elapsed=17.5s pid=13259 maxrss=2778792KiB

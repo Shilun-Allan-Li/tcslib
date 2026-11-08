@@ -1,0 +1,24 @@
+/-! cleanup-part2 name table (evidence probe; not library source): every constant of the
+environment with its kind, reducibility, home module and (for definitions) whether it is an
+instance, a matcher, or a generated equation/auxiliary. Output: `NAME\t<name>\t<kind>\t<status>\t<home>\t<flags>`. -/
+open Lean Meta Elab Command
+
+syntax (name := cp2dumpCmd) "#cp2dump" : command
+@[command_elab cp2dumpCmd] def cp2dump : CommandElab := fun _ => do
+  let env ← getEnv
+  let mut rows : Array String := #[]
+  for (c, ci) in env.constants.map₁.toList do
+    let home := match env.getModuleIdxFor? c with
+      | some i => env.header.moduleNames[i.toNat]!.toString | none => "_current"
+    let kind := match ci with
+      | .thmInfo _ => "thm" | .defnInfo _ => "def" | .axiomInfo _ => "axiom"
+      | .opaqueInfo _ => "opaque" | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+      | .inductInfo _ => "ind" | .quotInfo _ => "quot"
+    let st ← liftCoreM <| getReducibilityStatus c
+    let inst := isInstanceCore env c
+    let matcher := (Match.Extension.getMatcherInfo? env c).isSome
+    let proj := (env.getProjectionFnInfo? c).isSome
+    let flags := s!"{if inst then "instance," else ""}{if matcher then "matcher," else ""}{if proj then "projection," else ""}"
+    rows := rows.push s!"NAME\t{c}\t{kind}\t{repr st}\t{home}\t{flags}"
+  IO.FS.writeFile (cp2OutDir ++ "/names.tsv") (String.intercalate "\n" rows.toList ++ "\n")
+  logInfo m!"NAME-COUNT {rows.size}"

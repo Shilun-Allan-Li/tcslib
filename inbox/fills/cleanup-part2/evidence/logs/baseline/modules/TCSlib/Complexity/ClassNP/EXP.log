@@ -1,0 +1,36 @@
+START 2026-11-07T23:07:00.102147+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Complexity/ClassNP/EXP
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Complexity/ClassNP/EXP.lean sha256=9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17
+TCSlib/Complexity/ClassNP/EXP.lean:2734:66: warning: This simp argument is unused:
+  bufferTape
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg, Cfg.init, a3LoadCfg,̵ ̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2760:88: warning: This simp argument is unused:
+  bufferTape
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, Cfg.ofWords, stateWord, b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵,̵ ̵hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2778:66: warning: This simp argument is unused:
+  a3LoadCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, a̵3̵L̵o̵a̵d̵C̵f̵g̵,̵ ̵hz]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassNP/EXP.lean:2779:66: warning: This simp argument is unused:
+  a3LoadCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, a̵3̵L̵o̵a̵d̵C̵f̵g̵,̵ ̵hz, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T23:07:15.611435+00:00 RC 0 elapsed=15.5s pid=21333 maxrss=2297284KiB

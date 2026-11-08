@@ -1,0 +1,237 @@
+START 2026-11-08T01:22:10.783153+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean sha256=a58e6042d7fc377d7a1a876d379f40d53adddb8ef7541a3cf9fbd05d228a8aae
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=199 already=1
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=159 active=159 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:1831:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val => false
+    | none => verdictOf (next s.1)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:1831:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some val✝ with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some val✝ with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+val✝ : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some val✝ with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some val✝ with
+    | some val => false
+    | none => verdictOf (next s.1)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:1842:12: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match none with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match none with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match none with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match none with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:1843:14: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some x with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some x with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match some x with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match some x with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+x : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some x with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some x with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match some x with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match some x with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2021:71: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  start (rawInput d) = encState d ([], []) 0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2111:2: error: Tactic `rfl` failed: The left-hand side
+  D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r))
+is not definitionally equal to the right-hand side
+  nextQ d s.1
+
+D : NUPPT
+q : PolyExpr
+n : ℕ
+d : Data D q n
+s : PureState n (Fin d.i → Bool)
+t : ℕ
+⊢ D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r)) = nextQ d s.1
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2271:2: error: Type mismatch
+  start_rawInput d
+has type
+  start (rawInput d) = encState d ([], []) 0
+but is expected to have type
+  StateLoop.orbit start (step E D q) (rawInput d) 0 = encState d (pureAt d hi 0) 0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2421:2: error: Tactic `rfl` failed: The left-hand side
+  ((q.mul PolyExpr.var).add ((q.mul ((PolyExpr.const 2).mul PolyExpr.var)).add D.coins)).eval n
+is not definitionally equal to the right-hand side
+  q.eval n * n + (q.eval n * (2 * n) + D.coins.eval n)
+
+D : NUPPT
+q : PolyExpr
+n : ℕ
+⊢ ((q.mul PolyExpr.var).add ((q.mul ((PolyExpr.const 2).mul PolyExpr.var)).add D.coins)).eval n =
+    q.eval n * n + (q.eval n * (2 * n) + D.coins.eval n)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2482:2: error: Tactic `rfl` failed: The left-hand side
+  rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c))
+is not definitionally equal to the right-hand side
+  rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+D : NUPPT
+q : PolyExpr
+i j : ℕ → ℕ
+n : ℕ
+y : List Bool
+c : (ggmRedMachine hE D q i j).Coins n
+⊢ rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c)) =
+    rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:2514:87: error: Type mismatch
+  rfl
+has type
+  ?m.209 = ?m.209
+but is expected to have type
+  ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r) (q.eval n) []) (q.eval n) ⟨i n, hi⟩
+      ⟨j n, hj⟩ z (W, r) =
+    concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/GGMReductionEval): no fresh .olean produced
+
+END 2026-11-08T01:22:28.800581+00:00 RC 1 elapsed=18.0s pid=12236 maxrss=2775964KiB

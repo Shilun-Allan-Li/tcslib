@@ -1,0 +1,35 @@
+START 2026-11-08T01:24:57.924381+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean sha256=5a84ba5cbf7eb1f8a0e72b37ca712874a3ecdc3fcb814af426ce361cbf1269f3
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=35 active=35 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1280:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+S : PrivateKeyScheme
+Sim : NUPPT
+hSim :
+  ∀ (D : NUPPT),
+    ∃ ε,
+      Negligible ε ∧ ∀ (n : ℕ) (m : Fin n → Bool), distAdv (S.encDist n m) (Sim.runAt n []) (D.distinguisherL n) ≤ ε n
+⊢ S.SingleMessageSecure
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1448:24: error: Function expected at
+  h
+but this term has type
+  S.SingleMessageSecure
+
+Note: Expected a function because this term is being applied to the argument
+  D
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1448:9: error: Tactic `rcases` failed: `x✝ : ?m.13` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/Encryption): no fresh .olean produced
+
+END 2026-11-08T01:25:11.287314+00:00 RC 1 elapsed=13.4s pid=12642 maxrss=2663812KiB

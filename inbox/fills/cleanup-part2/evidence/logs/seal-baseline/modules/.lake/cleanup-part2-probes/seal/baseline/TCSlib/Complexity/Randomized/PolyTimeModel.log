@@ -1,0 +1,82 @@
+START 2026-11-08T01:12:09.223135+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean sha256=c252af1bd36ff5a878a64ee78a5737ea0a6da582660abc1c2da2d6866aad8afd
+CP2-SEAL chunk=0 requested=200 active=183 already=17
+CP2-SEAL chunk=1 requested=200 active=199 already=1
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=168 active=168 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1855:2: error: Type mismatch: After simplification, term
+  polyTimeComputable_takePrefixByLength
+ has type
+  PolyTimeComputable PrefixByLength.take
+but is expected to have type
+  PolyTimeComputable takePrefixByLen
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1863:2: error: Type mismatch: After simplification, term
+  polyTimeComputable_dropPrefixByLength
+ has type
+  PolyTimeComputable PrefixByLength.drop
+but is expected to have type
+  PolyTimeComputable dropPrefixByLen
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1875:4: error: Type mismatch
+  PolyTimeComputable.comp (polyTimeComputable_polyUnary a k) polyTimeComputable_pairFstD
+has type
+  PolyTimeComputable ((fun x => List.replicate (a * (x.length + 1) ^ k) true) ∘ pairFstD)
+but is expected to have type
+  PolyTimeComputable fun z => List.replicate (polyLen a k (pairFstD z).length) true
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1898:4: error: Type mismatch
+  PolyTimeComputable.comp (polyTimeComputable_polyUnary a k) polyTimeComputable_pairFstD
+has type
+  PolyTimeComputable ((fun x => List.replicate (a * (x.length + 1) ^ k) true) ∘ pairFstD)
+but is expected to have type
+  PolyTimeComputable fun z => List.replicate (polyLen a k (pairFstD z).length) true
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1924:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderRace polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1959:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderAnswerIs polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1992:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderMajority polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2048:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderAny polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2086:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderNot polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2106:9: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ ClosedUnderShiftOr polyTimeModel
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2153:29: error: Type mismatch
+  P_subset_PPoly hV₁
+has type
+  V₁ ∈ BoolCircuit.PPoly
+but is expected to have type
+  V₁.InPPoly
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2154:9: error: Tactic `rcases` failed: `hPoly : V₁.InPPoly` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2231:11: error: Tactic `rcases` failed: `a✝ : InSigma2 polyTimeModel L` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2259:11: error: Invalid `⟨...⟩` notation: The expected type `InSigma2 polyTimeModel L` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2263:8: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2298:39: error: Application type mismatch: The argument
+  h2
+has type
+  InPi2 polyTimeModel L
+but is expected to have type
+  InSigma2 polyTimeModel Lᶜ
+in the application
+  (inSigma2_polyTimeModel_iff Lᶜ).mp h2
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PolyTimeModel): no fresh .olean produced
+
+END 2026-11-08T01:12:28.045689+00:00 RC 1 elapsed=18.8s pid=10133 maxrss=2088884KiB

@@ -1,0 +1,15 @@
+START 2026-11-07T22:50:41.445506+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications.lean sha256=9b34f9b704b506b4037794465327739777c9fae796229b81132dc0e46886f782
+TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications.lean:539:14: warning: This simp argument is unused:
+  Finset.sum_ite
+
+Hint: Omit it from the simp argument list.
+  simp [̵F̵i̵n̵s̵e̵t̵.̵s̵u̵m̵_̵i̵t̵e̵,̵ ̵n̵s̵m̵u̵l̵_̵e̵q̵_̵m̵u̵l̵,̵[̲n̲s̲m̲u̲l̲_̲e̲q̲_̲m̲u̲l̲,̲ mul_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T22:50:46.395777+00:00 RC 0 elapsed=5.0s pid=12016 maxrss=3491540KiB

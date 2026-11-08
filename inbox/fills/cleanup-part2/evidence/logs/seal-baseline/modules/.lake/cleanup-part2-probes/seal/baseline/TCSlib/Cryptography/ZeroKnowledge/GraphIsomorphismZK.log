@@ -1,0 +1,73 @@
+START 2026-11-08T01:27:30.489312+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean sha256=6d6097a854d3af6f87df1390c1f53c82c2175dad62a072bfc7d3cf16f97ccaf2
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=73 active=73 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1345:84: error: Type mismatch
+  fun T => ?m.14
+has type
+  (T : ?m.12) → ?m.15 T
+but is expected to have type
+  StatClose (giHonestView G₀ σ) (giHVSim G₀ G₁) 0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1346:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob fun w => T (giHonestView G₀ σ w)
+in the target expression
+  ?m.15 T
+
+n : ℕ
+G₀ G₁ : Graph n
+σ : Equiv.Perm (Fin n)
+hσ : permGraph G₀ σ = G₁
+T : Bool × Graph n × Equiv.Perm (Fin n) → Prop
+⊢ ?m.15 T
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1674:2: error: Type mismatch
+  fun T => abs_uprob_giSimTrunc_sub_le hσ V N T
+has type
+  ∀ (T : Option (ρ × Graph n × Equiv.Perm (Fin n)) → Prop),
+    |(uprob fun c => T (giSimTrunc G₀ G₁ V N c)) - uprob fun w => T (some (giRealView G₀ σ V w))| ≤ 2⁻¹ ^ N
+but is expected to have type
+  StatClose (giSimTrunc G₀ G₁ V N) (fun w => some (giRealView G₀ σ V w)) (2⁻¹ ^ N)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1689:35: warning: This simp argument is unused:
+  PolyExpr.eval
+
+Hint: Omit it from the simp argument list.
+  simp [giSimCoins, giSimBlockLen, PolyExpr.e̵v̵a̵l̵,̵ ̵P̵o̵l̵y̵E̵x̵p̵r̵.̵normal, Strategy.coinLen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1733:2: error: Type mismatch
+  GIZK.exists_simulator V' hV'
+has type
+  ∃ S,
+    S.Uniform ∧
+      S.coins = GIZK.simCoins V' ∧
+        ∀ (x z : List Bool) (r : S.Coins x.length), S.simulate x z r = GIZK.sim V' x z (List.ofFn r)
+but is expected to have type
+  ∃ S,
+    S.Uniform ∧
+      S.coins = giSimCoins V' ∧
+        ∀ (x z : List Bool) (r : S.Coins x.length), S.simulate x z r = giSim V' x z (List.ofFn r)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1766:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+⊢ StatZK giProtocol Riso fun N =>
+    2⁻¹ ^ instanceVertices N + (↑(instanceVertices N) + 1) * permFailBound (instanceVertices N)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:1794:18: error: Application type mismatch: The argument
+  giVerifier_efficient
+has type
+  giVerifier.Efficient
+but is expected to have type
+  giProtocol.V.Efficient
+in the application
+  StatZK.hvzk hδ giVerifier_efficient
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK): no fresh .olean produced
+
+END 2026-11-08T01:27:46.931062+00:00 RC 1 elapsed=16.4s pid=13105 maxrss=2724284KiB

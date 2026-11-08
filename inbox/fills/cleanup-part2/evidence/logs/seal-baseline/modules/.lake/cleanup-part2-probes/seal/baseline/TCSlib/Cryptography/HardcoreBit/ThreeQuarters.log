@@ -1,0 +1,30 @@
+START 2026-11-08T01:13:36.277204+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean sha256=b8d213058055e45657853eb3ab03261d909e6c0786aa243aeee5c748a23664ca
+CP2-SEAL chunk=0 requested=29 active=29 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:145:4: error: Type mismatch
+  PushesUniform.uprob_eq (PushesUniform.prodMap pushesUniform_id pushesUniform_fst) fun z => A (f x, z.1) z.2 = ip x z.1
+has type
+  (uprob fun ω => A (f x, (ω.1, ω.2.1).1) (ω.1, ω.2.1).2 = ip x (ω.1, ω.2.1).1) =
+    uprob fun z => A (f x, z.1) z.2 = ip x z.1
+but is expected to have type
+  (uprob fun w => A (f x, w.1) w.2.1 = ip x w.1) = secProb f A x
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:151:4: error: Type mismatch
+  PushesUniform.uprob_eq (PushesUniform.prodMap (pushesUniform_xor (Pi.single i true)) pushesUniform_snd) fun z =>
+    A (f x, z.1) z.2 = ip x z.1
+has type
+  (uprob fun ω =>
+      A (f x, (ω.1 + Pi.single i true, ω.2.2).1) (ω.1 + Pi.single i true, ω.2.2).2 =
+        ip x (ω.1 + Pi.single i true, ω.2.2).1) =
+    uprob fun z => A (f x, z.1) z.2 = ip x z.1
+but is expected to have type
+  (uprob fun w => A (f x, w.1 + Pi.single i true) w.2.2 = ip x (w.1 + Pi.single i true)) = secProb f A x
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/HardcoreBit/ThreeQuarters): no fresh .olean produced
+
+END 2026-11-08T01:13:39.480015+00:00 RC 1 elapsed=3.2s pid=10474 maxrss=2534764KiB

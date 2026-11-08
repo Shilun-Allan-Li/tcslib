@@ -1,0 +1,167 @@
+START 2026-11-08T01:10:47.013722+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean sha256=58fa7fd45703021e60d1c1124dac92415abd8bcee60ab55a890aed8ddc8a4dff
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=121 active=121 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:769:2: error: Type mismatch
+  fun z => output_spec A z
+has type
+  ∀ (z : List Bool), A.M.ComputesInTime z (A.output z) (A.timeBound z.length)
+but is expected to have type
+  A.M.ComputesFunInTime A.output A.timeBound
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:774:2: error: Invalid `⟨...⟩` notation: The expected type `PolyTimeComputable A.output` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:911:24: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.6 x
+in the application
+  Classical.choose hf
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:912:48: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.10 x
+in the application
+  Classical.choose_spec hf
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:913:71: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.17 x
+in the application
+  Classical.choose_spec hf
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:918:94: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.28 x
+in the application
+  Classical.choose_spec hf
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:918:26: error: Function expected at
+  Classical.choose_spec ?m.30
+but this term has type
+  ?m.24 (Classical.choose ?m.30)
+
+Note: Expected a function because this term is being applied to the argument
+  z
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:918:48: error: Application type mismatch: The argument
+  Classical.choose_spec ?m.29
+has type
+  ?m.26 (Classical.choose ?m.29)
+but is expected to have type
+  ∃ x, ?m.24 x
+in the application
+  Classical.choose_spec (Classical.choose_spec ?m.29)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:926:73: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.24 x
+in the application
+  Classical.choose_spec hf
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:926:5: error: Function expected at
+  Classical.choose_spec ?m.26
+but this term has type
+  ?m.20 (Classical.choose ?m.26)
+
+Note: Expected a function because this term is being applied to the argument
+  z
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:926:27: error: Application type mismatch: The argument
+  Classical.choose_spec ?m.25
+has type
+  ?m.22 (Classical.choose ?m.25)
+but is expected to have type
+  ∃ x, ?m.20 x
+in the application
+  Classical.choose_spec (Classical.choose_spec ?m.25)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:928:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).coins
+is not definitionally equal to the right-hand side
+  coins
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:931:57: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).coins = coins
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:947:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).adv
+is not definitionally equal to the right-hand side
+  adv
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:950:53: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).adv = adv
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:952:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).advice
+is not definitionally equal to the right-hand side
+  advice
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:955:59: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).advice = advice
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:972:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (ofPolyTimeUniform hf coins).advice x✝ = []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:979:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTimeUniform hf coins).coins
+is not definitionally equal to the right-hand side
+  coins
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:981:71: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (ofPolyTimeUniform hf coins).coins = coins
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:1000:57: error: unsolved goals
+f : List Bool → List Bool
+hf : PolyTimeComputable f
+coins : PolyExpr
+n : ℕ
+y r : List Bool
+⊢ (ofPolyTime hf coins (PolyExpr.const 0) (fun x => []) ofPolyTimeUniform._proof_1).output
+      (pairEncode
+        (pairEncode (advInput n y)
+          ((ofPolyTime hf coins (PolyExpr.const 0) (fun x => []) ofPolyTimeUniform._proof_1).advice n))
+        r) =
+    f (pairEncode (pairEncode (advInput n y) []) r)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:1001:35: warning: This simp argument is unused:
+  output_ofPolyTime
+
+Hint: Omit it from the simp argument list.
+  simp [runAtL, ofPolyTimeUniform,̵ ̵o̵u̵t̵p̵u̵t̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT.lean:1012:74: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (ofPolyTimeUniform hF coins).coins = coins
+in the application
+  And.intro rfl
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Complexity/Randomized/PPT): no fresh .olean produced
+
+END 2026-11-08T01:10:55.933082+00:00 RC 1 elapsed=8.9s pid=9709 maxrss=1826244KiB

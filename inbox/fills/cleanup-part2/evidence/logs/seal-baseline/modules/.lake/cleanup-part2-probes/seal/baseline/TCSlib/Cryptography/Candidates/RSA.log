@@ -1,0 +1,41 @@
+START 2026-11-08T01:17:09.968602+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA.lean sha256=f3e916477c373d10c94abb1364d1bde751c83e600269daf13772a2101d12d0e2
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=185 active=185 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA.lean:1443:65: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  rsaBlock.eval n = 2 * (n + 2)
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA.lean:1451:71: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  rsaTrials.eval n = (4 * n + 8) * n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA.lean:1458:2: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA.lean:3122:2: error: Type mismatch
+  rsaCollection_oneWay H hR
+has type
+  (rsaCollection H).OneWay
+but is expected to have type
+  (rsaTrapdoor H).OneWay
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Candidates/RSA): no fresh .olean produced
+
+END 2026-11-08T01:17:26.833652+00:00 RC 1 elapsed=16.9s pid=11119 maxrss=2970256KiB

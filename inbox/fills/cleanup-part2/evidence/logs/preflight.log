@@ -1,0 +1,36 @@
+== preflight 2026-11-07T22:15:42Z
+nproc: 4
+-- cgroup
+tmpfs on /sys/fs/cgroup type tmpfs (rw,relatime,mode=755)
+cgroup on /sys/fs/cgroup/cpu type cgroup (rw,relatime,cpu)
+cgroup on /sys/fs/cgroup/cpuacct type cgroup (rw,relatime,cpuacct)
+memory.limit_in_bytes: 9223372036854771712
+memory.usage_in_bytes: 1665716224
+-- memory.stat (selected)
+cache 52789248
+rss 14155776
+shmem 16777216
+hierarchical_memory_limit 9223372036854771712
+total_cache 1644474368
+total_rss 21385216
+total_shmem 16777216
+-- unified memory.max: cat: /sys/fs/cgroup/unified/memory.max: No such file or directory
+-- /proc/meminfo
+MemTotal:       16472400 kB
+MemFree:        14416484 kB
+MemAvailable:   16059000 kB
+Shmem:             16384 kB
+-- df
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 24775041024 19097227264  57% /
+/dev/vda       270553174016 24775041024 19097227264  57% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 24194376  18649636  57% /
+/dev/vda       ext4 264212084 24194376  18649636  57% /
+TMPDIR=unset
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 24194376  18649636  57% /
+-- computation (cgroup v1): limit is effectively unlimited (9223372036854771712); in use = usage - total_cache + total_shmem = 38019072 bytes
+headroom: no effective cgroup limit -> MemAvailable = 16445435904 bytes = 15.32 GiB (floor 4 GiB): PASS
+disk free on clone filesystem = 19097227264 bytes = 17.79 GiB (floor 12 GiB): PASS
+tmpfs: clone, .lake, oleans tree, cache store and TMPDIR(unset -> /tmp) all on ext4 /dev/vda

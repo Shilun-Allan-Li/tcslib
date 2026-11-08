@@ -1,0 +1,169 @@
+START 2026-11-08T01:26:33.595973+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean sha256=3bbfa4277124c34ab084a8cdb9af068ed77f215ff8f5764c46770e1fb339eeb6
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=159 active=159 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1141:2: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  exec P' V false x y z rP rV (4 * 0) = repViews P' V x y z rP rV 0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1217:2: error: Tactic `rfl` failed: The left-hand side
+  prefixLT b i ⟨k, hk⟩
+is not definitionally equal to the right-hand side
+  b ⟨k, ⋯⟩
+
+m : ℕ
+b : Fin m → Bool
+i : Fin m
+k : ℕ
+hk : k < ↑i
+⊢ prefixLT b i ⟨k, hk⟩ = b ⟨k, ⋯⟩
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1225:2: error: Tactic `rfl` failed: The left-hand side
+  Fin.init (prefixLE b i) ⟨k, hk⟩
+is not definitionally equal to the right-hand side
+  b ⟨k, ⋯⟩
+
+m : ℕ
+b : Fin m → Bool
+i : Fin m
+k : ℕ
+hk : k < ↑i
+⊢ Fin.init (prefixLE b i) ⟨k, hk⟩ = b ⟨k, ⋯⟩
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1228:98: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  prefixLE b i (Fin.last ↑i) = b i
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1235:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 1 then ?m.36 else ?m.37) = ?m.39
+is not definitionally equal to target
+  giVerifierRep.next x z r hist = [r.getD (hist.length / 2) false]
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1241:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 1 then ?m.37 else if hist.length < 2 * x.length then ?m.51 else ?m.52) = ?m.54
+is not definitionally equal to target
+  giVerifierRep.next x z r hist = []
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1251:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 1 then ?m.70 else if hist.length < 2 * x.length then ?m.84 else ?m.85) = ?m.87
+is not definitionally equal to target
+  giVerifierRep.next x z r hist =
+    [decide
+        (wellFormedInstance x = true ∧
+          ∀ (j : Fin x.length),
+            encGraph
+                (permGraph (if r.getD (↑j) false = true then instanceG₁ x else instanceG₀ x)
+                  (decPerm (instanceVertexCount x) (hist.getD (2 * ↑j + 1) []))) =
+              hist.getD (2 * ↑j) [])]
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1264:2: error: 'show' tactic failed, pattern
+  [decide
+        (∀ (j : Fin (encInstance G₀ G₁).length),
+          encGraph
+              (permGraph
+                (if r.getD (↑j) false = true then
+                  decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairSndD (encInstance G₀ G₁))
+                else decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+                (decPerm (instanceVertexCount (encInstance G₀ G₁)) (hist.getD (2 * ↑j + 1) []))) =
+            hist.getD (2 * ↑j) [])] =
+    ?m.107
+is not definitionally equal to target
+  [decide
+        (∀ (j : Fin (encInstance G₀ G₁).length),
+          encGraph
+              (permGraph
+                (if r.getD (↑j) false = true then instanceG₁ (encInstance G₀ G₁) else instanceG₀ (encInstance G₀ G₁))
+                (decPerm (instanceVertexCount (encInstance G₀ G₁)) (hist.getD (2 * ↑j + 1) []))) =
+            hist.getD (2 * ↑j) [])] =
+    [decide
+        (∀ (j : Fin (encInstance G₀ G₁).length),
+          encGraph (permGraph (bif r.getD (↑j) false then G₁ else G₀) (decPerm n (hist.getD (2 * ↑j + 1) []))) =
+            hist.getD (2 * ↑j) [])]
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1282:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 0 then
+      encGraph
+        (permGraph (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+          (samplePerm (instanceVertexCount (encInstance G₀ G₁))
+            (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)))
+    else ?m.81) =
+    ?m.83
+is not definitionally equal to target
+  giProverRep.next (encInstance G₀ G₁) y r hist =
+    encGraph (permGraph G₀ (samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1300:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 0 then ?m.93
+    else
+      encPerm
+        (if (hist.getLastD []).headD false = true then
+          samplePerm (instanceVertexCount (encInstance G₀ G₁))
+              (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) *
+            (decPerm (instanceVertexCount (encInstance G₀ G₁)) (encPerm σ))⁻¹
+        else
+          samplePerm (instanceVertexCount (encInstance G₀ G₁))
+            (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) =
+    ?m.154
+is not definitionally equal to target
+  giProverRep.next (encInstance G₀ G₁) (encPerm σ) r hist =
+    encPerm
+      (if (hist.getLastD []).headD false = true then
+        samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) * σ⁻¹
+      else samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1317:96: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  giProtocolRep.outV P' x y z r =
+    giVerifierRep.next x z (List.ofFn r.2)
+      (exec P' giVerifierRep false x y z (List.ofFn r.1) (List.ofFn r.2) (4 * x.length)).2
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1500:2: error: 'show' tactic failed, pattern
+  permGraph (bif (List.ofFn b).getD (↑i) false then G₁ else G₀)
+        (decPerm n
+          (P'.next ?m.244 y (List.ofFn r₁)
+            (PsOf (fun k => (List.ofFn b).getD k false) ↑i ++ [[(List.ofFn b).getD (↑i) false]]))) =
+      decGraphAt n (P'.next ?m.262 y (List.ofFn r₁) (PsOf (fun k => (List.ofFn b).getD k false) ↑i)) ↔
+    permGraph (bif b i then G₁ else G₀) (γfun P' (encInstance G₀ G₁) y i (prefixLE b i) r₁) =
+      Hfun P' (encInstance G₀ G₁) y i (prefixLT b i) r₁
+is not definitionally equal to target
+  permGraph (bif (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false then G₁ else G₀)
+        (decPerm n
+          (P'.next (encInstance G₀ G₁) y (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).1)
+            (PsOf (fun k => (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD k false) ↑i ++
+              [[(List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false]]))) =
+      decGraphAt n
+        (P'.next (encInstance G₀ G₁) y (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).1)
+          (PsOf (fun k => (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD k false) ↑i)) ↔
+    permGraph (bif (b, r₁).1 i then G₁ else G₀) (γfun P' (encInstance G₀ G₁) y i (prefixLE (b, r₁).1 i) (b, r₁).2) =
+      Hfun P' (encInstance G₀ G₁) y i (prefixLT (b, r₁).1 i) (b, r₁).2
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1515:16: error: Type mismatch
+  hV
+has type
+  giVerifierRep.Efficient
+but is expected to have type
+  giProtocolRep.V.Efficient
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1544:16: error: Type mismatch
+  hP
+has type
+  giProverRep.Efficient
+but is expected to have type
+  giProtocolRep.P.Efficient
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1546:4: error: Type mismatch
+  giProverRep_length_le x y r hist
+has type
+  (giProverRep.next x y r hist).length ≤ x.length
+but is expected to have type
+  (giProtocolRep.P.next x y r hist).length ≤ PolyExpr.var.eval x.length
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1518:13: error: Tactic `rcases` failed: `a✝ : Liso x` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1548:15: error: Tactic `rcases` failed: `a✝ : Riso x y` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): no fresh .olean produced
+
+END 2026-11-08T01:26:47.267214+00:00 RC 1 elapsed=13.7s pid=12890 maxrss=2714168KiB

@@ -1,0 +1,15 @@
+START 2026-11-07T23:49:08.332545+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/MultiMessage
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Asymptotic/MultiMessage.lean sha256=3ed16c59e1b352fb631b13e1c6d4526f414c4b473a493de3ba57ed5671ce6b96
+TCSlib/Cryptography/Asymptotic/MultiMessage.lean:452:8: warning: This simp argument is unused:
+  prfDecFun
+
+Hint: Omit it from the simp argument list.
+  simp [̵p̵r̵f̵D̵e̵c̵F̵u̵n̵,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵]̵[̲F̲u̲n̲c̲t̲i̲o̲n̲.̲c̲o̲m̲p̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-07T23:49:11.432674+00:00 RC 0 elapsed=3.1s pid=29659 maxrss=2769548KiB

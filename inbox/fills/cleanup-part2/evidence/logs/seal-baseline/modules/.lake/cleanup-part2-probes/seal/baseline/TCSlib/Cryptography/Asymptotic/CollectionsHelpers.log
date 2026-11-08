@@ -1,0 +1,22 @@
+START 2026-11-08T01:13:07.942295+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean sha256=0bdac2daca6adad9fec7d338f4f81b9376a72e5779caede0458d9ed539caf6a1
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=120 active=120 already=0
+.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:911:2: error: Type mismatch
+  LE.le.trans (NUPPT.output_length_le A ?m.56) ?m.62
+has type
+  (A.output ?m.56).length ≤ ?m.61
+but is expected to have type
+  (A.runAt n y r).length ≤ A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/baseline/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): no fresh .olean produced
+
+END 2026-11-08T01:13:19.245230+00:00 RC 1 elapsed=11.3s pid=10362 maxrss=2622252KiB
