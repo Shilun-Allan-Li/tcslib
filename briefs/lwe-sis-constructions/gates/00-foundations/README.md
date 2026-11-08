@@ -2,9 +2,11 @@
 
 The review instructions are `audits/lwe-sis-phase0-pack.md`. Mathematical source is
 frozen at `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`, with per-path hashes in
-`evidence/source-freeze.json`. The user selected Codex; no external job has been
-dispatched. See `dispatch-codex-exchange.md` for the current GitHub-input route. The
-shipped pack and ZIP retain their preparation-time status and are not edited retroactively.
+`evidence/source-freeze.json`. The user dispatched Codex at exchange
+`09d1456efacded71850c84497db5c8d1f65ab0a0`; its report passed the statement gate with
+counts 0/0/0/3. See `audits/lwe-sis-phase0-{findings,resolutions}.md` and `status.json`.
+The following evidence describes the immutable statement-stage freeze, including its
+14 admissions. Current filled proofs have separate evidence under `fills/00-encodings/`.
 
 ## Evidence
 
@@ -51,24 +53,24 @@ python3 -I briefs/lwe-sis-constructions/gates/00-foundations/prepare_inventory.p
 ```
 
 `prepare_inventory.py` summarizes the supplied logs; it does not replace them with new
-execution claims. The source declarations are frozen by full-file hashes. Statement
-fill work and all later phases wait for the external statement gate.
+execution claims. It expects the historical frozen source, not the later filled
+checkout. Use `fills/00-encodings/verify_freeze.py` for the filled source. Statement
+review has passed; proof review and later construction gates remain separate.
 
 ## Delivery
 
 The uploadable bundle and portable Git objects are generated under this worktree's
 ignored `.lake/crypto-dispatch/` directory. Bundles are not committed. Its delivery
 README identifies source/records commits, SHA-256 checksums, section count and kickoff.
-The user selected Codex and dispatches the job. Current inputs are prepared for
-`lwe-sis-constructions/outbox/gates/00-foundations-r1/` on the exchange branch. The auditor
-reads them directly from GitHub and returns Markdown in chat. `publish_exchange.py`
-uses the separate sparse `tcslib-exchange-lwe-sis-publish/` clone, checks payload hashes
-and namespace-only changes, rebases before pushing and prints the pinned kickoff.
-It never uses the shared exchange checkout or a campaign push destination. Shell GitHub
-DNS and connector write permissions currently prevent remote publication here.
+The user published the statement inputs at exchange commit
+`09d1456efacded71850c84497db5c8d1f65ab0a0`, dispatched Codex, and returned its Markdown
+findings in chat/inbox. The historical publisher script and receipt are retained.
+The next proof review uses `lwe-sis-constructions/outbox/gates/01-encoding-proofs-r1/`
+and the fill's separate publication command. Both routes use only the dedicated
+namespace in the independent sparse publisher clone; the shared exchange stays untouched.
 
 Exact primary PDF archival and ingestion remain open, as the pack states. An auditor
 must report source fidelity unverified if the primary definitions cannot be checked.
 
-**Not yet clear to merge — external statement review and source archival remain open;
-14 representation proof obligations remain admitted.**
+**Not yet clear to merge — the statement gate passed; proof review, source archival
+and user-controlled integration remain open.**
