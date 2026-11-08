@@ -22,9 +22,10 @@ set_option autoImplicit false
 
 ## Main results
 
-The semantic, length, round-trip and polynomial-time statements are statement-phase
-obligations. Only the three complete defining equations are proved here. In particular,
-this module does not yet certify a new efficient cryptographic primitive.
+The semantic equations, exact output widths, normalization and round-trip formulas,
+and all three polynomial-time contracts are proved. They handle arbitrary parameter
+templates, malformed pairs and zero widths. Complete cryptographic implementations
+and primitive-security theorems remain separate consumer obligations.
 
 ## References
 
@@ -70,14 +71,29 @@ theorem toLE_eq (w : List Bool) :
 `BinArith.bitsVal_append_singleton`. Apply `Nat.bits` to that equality. -/
 theorem toLE_eq_natBits (w : List Bool) :
     toLE w = Nat.bits (listToNat w) := by
-  sorry
+  rw [toLE_eq]
+  apply congrArg Nat.bits
+  induction w with
+  | nil =>
+      rw [List.reverse_nil, NumberTheory.listToNat_nil]
+      exact (BinArith.bitsVal_eq_zero_iff []).2 rfl
+  | cons b w ih =>
+      rw [List.reverse_cons, BinArith.bitsVal_append_singleton,
+        List.length_reverse, ih, NumberTheory.listToNat_cons]
+      cases b with
+      | false =>
+          simp only [Bool.toNat_false, if_neg Bool.false_ne_true,
+            Nat.zero_mul, Nat.add_zero, Nat.zero_add]
+      | true =>
+          simp only [Bool.toNat_true, if_true, Nat.one_mul]
+          exact Nat.add_comm _ _
 
 /-- Reading the converted little-endian word recovers the original MSB value.
 
 **Proof sketch.** Use `toLE_eq_natBits` and the existing `LogProg.bitsVal_bits` equation. -/
 theorem bitsVal_toLE (w : List Bool) :
     LogProg.bitsVal (toLE w) = listToNat w := by
-  sorry
+  rw [toLE_eq_natBits, LogProg.bitsVal_bits]
 
 /-- Converting to a normalized little-endian word never increases its length.
 
@@ -85,7 +101,9 @@ theorem bitsVal_toLE (w : List Bool) :
 word, and use the length equation for reversal. This includes empty and all-zero words. -/
 theorem length_toLE_le (w : List Bool) :
     (toLE w).length ≤ w.length := by
-  sorry
+  rw [toLE_eq]
+  simpa only [List.length_reverse] using
+    BinArith.length_bits_bitsVal_le w.reverse
 
 /-- Conversion from MSB to normalized little-endian words is polynomial-time.
 This is technical representation infrastructure for the existing machine model.
@@ -94,7 +112,13 @@ This is technical representation infrastructure for the existing machine model.
 `BinArith.polyTimeComputable_normBits`; read the normalizer's public contract and
 `toLE_eq`. No new machine or host is required. -/
 theorem polyTimeComputable_toLE : PolyTimeComputable toLE := by
-  sorry
+  have h : PolyTimeComputable
+      (fun w => Nat.bits (LogProg.bitsVal w.reverse)) :=
+    BinArith.polyTimeComputable_normBits.comp
+      BinArith.polyTimeComputable_reverse
+  have heq : toLE = (fun w => Nat.bits (LogProg.bitsVal w.reverse)) :=
+    funext toLE_eq
+  exact heq.symm ▸ h
 
 /-- Normalize the second pair component to `p` evaluated at the first component's
 length, by prepending zeros and retaining the low bits
@@ -115,12 +139,20 @@ width `p.eval u.length`, truncating only high bits when necessary.
 
 **Proof sketch.** Read the pair projections and `normalizeWidthPoly_eq`. Identify an
 all-zero word with the zero numeral using the existing numeral round trip and
-`NumberTheory.listToNat_replicate_false`. Apply `Candidates.natToList_zero_append_drop`.
+`Candidates.listToNat_replicate_false`. Apply `Candidates.natToList_zero_append_drop`.
 This works for arbitrary payload and target lengths, including zero. -/
 theorem normalizeWidthPoly_pairEncode (p : PolyExpr) (u w : List Bool) :
     normalizeWidthPoly p (pairEncode u w) =
       Candidates.natToList (p.eval u.length) (listToNat w) := by
-  sorry
+  have hzero :
+      Candidates.natToList (p.eval u.length) 0 =
+        List.replicate (p.eval u.length) false := by
+    simpa only [List.length_replicate, Candidates.listToNat_replicate_false] using
+      Candidates.natToList_length_listToNat
+        (List.replicate (p.eval u.length) false)
+  rw [normalizeWidthPoly_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, ← hzero]
+  exact Candidates.natToList_zero_append_drop (p.eval u.length) w
 
 /-- The normalized word has exactly the requested polynomial width on every input.
 
@@ -129,7 +161,9 @@ drop length equations. Natural arithmetic cancels the payload length; no valid-p
 premise or positive-width premise is needed. -/
 theorem normalizeWidthPoly_length (p : PolyExpr) (z : List Bool) :
     (normalizeWidthPoly p z).length = p.eval (pairFstD z).length := by
-  sorry
+  rw [normalizeWidthPoly_eq, List.length_drop,
+    List.length_append, List.length_replicate]
+  omega
 
 /-- Width normalization preserves a payload already having the requested width.
 
@@ -138,7 +172,8 @@ prepended zero word because the two lengths agree; use the public list drop equa
 theorem normalizeWidthPoly_of_length_eq (p : PolyExpr) (z : List Bool)
     (h : (pairSndD z).length = p.eval (pairFstD z).length) :
     normalizeWidthPoly p z = pairSndD z := by
-  sorry
+  rw [normalizeWidthPoly_eq, h]
+  exact List.drop_left' List.length_replicate
 
 /-- Numeric width normalization at a syntactic polynomial width is polynomial-time.
 
@@ -149,7 +184,15 @@ word has length `3*w.length + p.eval u.length + 2` and the output has the reques
 width, so no new padding or cut host is needed. -/
 theorem polyTimeComputable_normalizeWidthPoly (p : PolyExpr) :
     PolyTimeComputable (normalizeWidthPoly p) := by
-  sorry
+  have hzeros : PolyTimeComputable
+      (fun z => List.replicate (p.eval (pairFstD z).length) false) :=
+    EnsembleLemmas.polyTimeComputable_zeros p polyTimeComputable_pairFstD
+  convert (polyTimeComputable_pairDropPoly .var).comp
+    (polyTimeComputable_pairSndD.pairEncode
+      (hzeros.append polyTimeComputable_pairSndD)) using 1
+  funext z
+  simp only [normalizeWidthPoly_eq, Function.comp_apply,
+    pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
 
 /-- Convert the second pair component from little-endian bits to the polynomial-width
 MSB format, retaining the first component as the parameter-length template
@@ -173,7 +216,12 @@ do not duplicate the endian induction. -/
 theorem fromLEPoly_pairEncode (p : PolyExpr) (u w : List Bool) :
     fromLEPoly p (pairEncode u w) =
       Candidates.natToList (p.eval u.length) (LogProg.bitsVal w) := by
-  sorry
+  have hvalue : listToNat w.reverse = LogProg.bitsVal w := by
+    have h := congrArg LogProg.bitsVal (toLE_eq_natBits w.reverse)
+    simp only [toLE_eq, List.reverse_reverse, LogProg.bitsVal_bits] at h
+    exact h.symm
+  rw [fromLEPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    normalizeWidthPoly_pairEncode, hvalue]
 
 /-- Reverse conversion has exactly the requested width on every input.
 
@@ -181,7 +229,7 @@ theorem fromLEPoly_pairEncode (p : PolyExpr) (u w : List Bool) :
 first projection of the reconstructed pair. Malformed original inputs remain total. -/
 theorem fromLEPoly_length (p : PolyExpr) (z : List Bool) :
     (fromLEPoly p z).length = p.eval (pairFstD z).length := by
-  sorry
+  rw [fromLEPoly_eq, normalizeWidthPoly_length, pairFstD_pairEncode]
 
 /-- Converting an MSB word to normalized little-endian and back gives its width
 normalization, without requiring its original length to match the target.
@@ -191,7 +239,7 @@ numeral with `normalizeWidthPoly_pairEncode`. -/
 theorem fromLEPoly_toLE (p : PolyExpr) (u w : List Bool) :
     fromLEPoly p (pairEncode u (toLE w)) =
       normalizeWidthPoly p (pairEncode u w) := by
-  sorry
+  rw [fromLEPoly_pairEncode, bitsVal_toLE, normalizeWidthPoly_pairEncode]
 
 /-- Converting to little-endian and back recovers the exact MSB word when its length
 is the requested polynomial width, including leading zero bits.
@@ -201,19 +249,30 @@ theorem, reading the original pair's projections through their public equations.
 theorem fromLEPoly_toLE_of_length_eq (p : PolyExpr) (u w : List Bool)
     (h : w.length = p.eval u.length) :
     fromLEPoly p (pairEncode u (toLE w)) = w := by
-  sorry
+  rw [fromLEPoly_toLE]
+  have hlength :
+      (pairSndD (pairEncode u w)).length = p.eval (pairFstD (pairEncode u w)).length := by
+    simpa only [pairFstD_pairEncode, pairSndD_pairEncode] using h
+  simpa only [pairSndD_pairEncode] using
+    normalizeWidthPoly_of_length_eq p (pairEncode u w) hlength
 
 /-- Converting a fixed-width MSB output back to little-endian yields the original
 payload's value reduced modulo `2^width`, on every input.
 
-**Proof sketch.** Read `fromLEPoly_eq` and the width-writer equation, derive its numeric
-value using the reverse endian equality and `Candidates.listToNat_natToList_eq_mod`,
-then apply `toLE_eq_natBits`. No fit or valid-pair premise is necessary. -/
+**Proof sketch.** Rebuild a pair from the total projections and read
+`fromLEPoly_pairEncode`, which already uses the reverse endian equality. Apply
+`toLE_eq_natBits` and `Candidates.listToNat_natToList_eq_mod`. No fit or valid-pair
+premise is necessary. -/
 theorem toLE_fromLEPoly (p : PolyExpr) (z : List Bool) :
     toLE (fromLEPoly p z) =
       Nat.bits (LogProg.bitsVal (pairSndD z) %
         2 ^ (p.eval (pairFstD z).length)) := by
-  sorry
+  have hpair :
+      fromLEPoly p z =
+        fromLEPoly p (pairEncode (pairFstD z) (pairSndD z)) := by
+    simp only [fromLEPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [hpair, fromLEPoly_pairEncode, toLE_eq_natBits,
+    Candidates.listToNat_natToList_eq_mod]
 
 /-- Conversion from little-endian to a polynomial-width MSB word is polynomial-time.
 
@@ -222,6 +281,16 @@ pair it with the first projection, and compose with
 `polyTimeComputable_normalizeWidthPoly`. Read `fromLEPoly_eq` for functional agreement. -/
 theorem polyTimeComputable_fromLEPoly (p : PolyExpr) :
     PolyTimeComputable (fromLEPoly p) := by
-  sorry
+  have h : PolyTimeComputable (fun z =>
+      normalizeWidthPoly p
+        (pairEncode (pairFstD z) ((pairSndD z).reverse))) :=
+    (polyTimeComputable_normalizeWidthPoly p).comp
+      (polyTimeComputable_pairFstD.pairEncode
+        (BinArith.polyTimeComputable_reverse.comp polyTimeComputable_pairSndD))
+  have heq : fromLEPoly p = (fun z =>
+      normalizeWidthPoly p
+        (pairEncode (pairFstD z) ((pairSndD z).reverse))) :=
+    funext (fromLEPoly_eq p)
+  exact heq.symm ▸ h
 
 end TCSlib.Cryptography.Encoding.BinaryArith
