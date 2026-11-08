@@ -31,6 +31,7 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
 | Current audited stack / intake baseline | `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`, PRs #236/#237/#238/#239 |
 | Combined statement Lean / root freeze | `17b2a282b545c6ebca3fccc88d518d18ae78f485` |
+| Current independent proof source | `f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, existing draft PR #250 |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
 | Phase-1 statement freeze | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
 | Construction-core proof freeze | `690217cc1aaefe411158808a8b0797fd887a8abc` |
@@ -61,7 +62,18 @@ metadata. The returned construction-core proof audit now passes 0/0/0/3; the
 pasted report and separate gate resolutions are preserved under `audits/`. No
 proof repair was needed, and the issued input packet remains unchanged.
 
-## Current combined construction statements
+## Passed combined statements and current independent fill
+
+The combined statement audit passes 0/0/1/4 on #250; its F01 documentation minor
+is corrected at `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c`. The subsequent independent
+fill completes 31 obligations in seven modules at
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, with all definitions/statements/imports
+frozen. Seventy owned admissions remain. A fresh 144-module sweep (303.792 s),
+589-constant axiom probe (53.149 s) and scoped style 0/2/41 pass. All selected
+targets are standard-axiom only. Two older compiler helpers change emitting module;
+all 575 earlier elaborated type representations compare exactly. See
+`briefs/lwe-sis-constructions/fills/04-construction-independent/` for the separate
+proof gate. N01–N04 and user-controlled integration remain open.
 
 The larger overnight draft has 19 mathematical modules and 220 source declarations:
 57 definitions, 163 theorems, 62 closed `rfl` readers and 101 explicit admissions
@@ -84,8 +96,9 @@ Six existing export files overlap with shared facades, in the separate export
 commit. No old mathematical declaration or shared owner API changes. Exact proposals
 for a random-bit reading lemma and registration of the existing public counted
 loop remain data only; dependent proof routes await coordination. The user
-preselects Codex and dispatches one combined statement audit. The new branch is
-locally prepared, with no new PR number or remote publication claimed here.
+preselected Codex and dispatched the combined statement audit. Publication is
+verified as draft PR #250 at exchange `64e245b345d908d835030efede1c91312a4e6cce`.
+The new proof fill on the same branch remains local pending client publication.
 See `briefs/lwe-sis-constructions/gates/08-construction-statements/`.
 
 ## Historical construction-core and arithmetic gates (passed)
@@ -469,3 +482,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-08 | User freshly selects Codex for the separate scalar proof audit. Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, bundled records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110` and the 1301-section packet remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
 | 2026-11-08 | Scalar proof audit PASS 0/0/0/3 at `ec72ed773a690c17ac253707350935cc9e0acb34`; full pasted report retained, 102 frozen sources and all nine nested checksum sets rehashed. Published #239 head and exact exchange input verified. User authorizes a larger combined overnight statement draft with sorries for later fills and preselects Codex for morning audits. | Eight scoped gates pass; no merge; pause only dependent fronts requiring user input and continue independent work |
 | 2026-11-08 (UTC) | Isolated combined draft from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. Mathematics `2bf9dd52882bcafbce9eab48a5bab796275f2094`, separate exports/freeze `17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 modules, 220 declarations, 101 admissions; final fresh 144-module sweep (288.743 s), 575 constants and 48 backing contracts reconciled, style 0/2/41, finite models pass. Two internal agents supplied read-only research; root native work stayed serial. | Combined Codex statement review prepared; no external dispatch, central push or merge; shared reader/catalogue proposals remain unapplied and dependent fills paused; N01–N03 retained |
+| 2026-11-08 (Pacific) | Combined statement audit PASS 0/0/1/4 at exchange `64e245b345d908d835030efede1c91312a4e6cce`, PR #250 verified open/draft. F01 comment-only repair `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c` passes native/style/source invariance checks. Independent fill `f293b63200ee3c6de6e709925f67c4d60fdc7b4a` closes 31 obligations in seven modules; 70 remain. Fresh 144-module sweep 303.792 s, 589 constants and 48 backing contracts reconciled, selected fills sorry-free; all 575 prior elaborated types preserved, two compiler-origin migrations disclosed. | One combined Codex proof review prepared on existing #250; no shared proposal, external dispatch, central push or merge; N01–N04 retained |

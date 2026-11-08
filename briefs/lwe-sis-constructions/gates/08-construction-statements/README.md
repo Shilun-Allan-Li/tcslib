@@ -69,3 +69,18 @@ No external job is dispatched by preparing this gate; no central ref is pushed o
 
 **Not yet clear to merge — the combined statement audit, 101 proof fills,
 source-policy work, applicable landing checks and user approval remain.**
+
+## Returned audit and current continuation
+
+The preparation above is retained as the historical statement handoff. Publication
+is verified at exchange `64e245b345d908d835030efede1c91312a4e6cce`, draft PR #250.
+The returned Codex report passes 0/0/1/4; F01 is corrected and checked separately.
+All N01–N04 limits remain. The next independent proof fill is recorded under
+`../../fills/04-construction-independent/`, with 31 obligations filled and seventy
+remaining. Original issued pack/source/evidence are unchanged. Use that fill's
+publication helper for the new source, rather than rerunning this historical
+statement helper against changed proof bodies.
+
+**Not yet clear to merge — the statement gate passes; the independent proof
+review, remaining fills, shared dispositions, source-policy work and user
+integration remain.**

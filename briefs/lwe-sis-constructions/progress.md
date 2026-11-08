@@ -1,63 +1,49 @@
 # Campaign pulse
 
-Eight earlier scoped statement/proof gates pass with zero blockers, majors or
-minors and three continuing notes each. The newest closed gate is the dyadic
-scalar proof audit: all twelve obligations are discharged at
-`ec72ed773a690c17ac253707350935cc9e0acb34`. No repair was needed. Those audits do
-not certify the whole five-primitive campaign or approve a merge.
+The combined statement audit passes **0 blockers, 0 majors, 1 documentation minor
+and 4 notes** on draft [#250](https://github.com/Shilun-Allan-Li/tcslib/pull/250).
+The missed loop-registration sentence is corrected and checked. Together with
+the eight earlier scoped gates, nine gates pass; this approves no merge.
 
-The larger overnight **statement draft** is frozen at
-`17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 mathematical modules, 220 source
-declarations and 101 admitted obligations for later fills. Codex is preselected
-for one combined audit, dispatched by the user. Preparation does not dispatch it.
+The next independent proof fill completes **31 obligations in seven modules** at
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, leaving **70 owned admissions**. The
+same isolated branch/worktree is used; no additional PR branch is created.
+These fills are checked locally and await client publication and their separate
+combined Codex proof audit. The user dispatches and approves all merges.
 
 | Part | Current progress | Remaining work |
 |---|---|---|
-| DLWE/SIS foundations and sampling | Assumptions/faithful representations are audited; new exact dyadic samplers and centered-binomial laws are drafted | New statement/proof gates, efficient family sampling and implemented schedules |
-| Direct Regev symmetric encryption | Mathematical algorithms, bounded-error correctness and concrete two-DLWE bound are proved and audited | Efficient machine/encoding implementations, uniform message bounds and existing game bridge |
-| SIS collision-resistant hashing | Core hash, collision reduction and dyadic profile are audited; universality, evaluator, raw-output and negligible-collision consumers are drafted | Combined audit/fills, shared loop disposition, final CRH interface bridge under independent SIS hardness |
-| Regev CPA PKE | Algorithms, every-coin correctness, DLWE hybrid and strong leftover-hash bounds are drafted | Combined audit/fills, efficiency and existing CPA primitive/game bridge |
-| PRGs | Structured, encoded and flat direct generators with full seed budgets and advantage equations are drafted | Combined audit/fills, efficient family schedules and standard exact-seed asymptotic PRG bridge |
-| CCA2 PKE | Secret-matrix lossy gadgets/matrices, DLWE column hybrids and all-but-one algebra are drafted | Combined audit/fills, shared reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 construction/game proof |
+| DLWE/SIS foundations and sampling | Foundations audited; exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws now proved | Independent proof audit, efficient uniform family samplers and schedules, source policy |
+| Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
+| SIS collision-resistant hashing | Core hash/reduction/profile audited; universality, raw collision, evaluator and asymptotic statements pass | New proof fills, pending probability readers/loop disposition, final CRH interface under independent SIS hardness |
+| Regev CPA PKE | Algorithms/concrete security statements pass; all four every-coin correctness obligations now proved | Independent proof audit, concrete-security fills, efficiency and final CPA interface |
+| PRGs | All eleven structured/MSB/flat generator obligations now proved with complete seed budgets | Independent proof audit, efficient family schedules and standard exact-seed asymptotic PRG integration |
+| CCA2 PKE | Secret-matrix lossy/all-but-one mathematics and DLWE column-hybrid statements pass | Supporting fills, pending reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 proof |
 
-The final newly empty own object tree passes a serial 144-module scoped sweep:
-zero errors, 101 new and 17 unchanged inherited admission warnings, 288.743 seconds.
-The separate axiom probe records 44.702 seconds. All 575 owned constants reconcile:
-302 preserved earlier constants, 220 source declarations, 40 generated non-simp
-readers and 13 compiler auxiliaries. Exactly the intended 101 admissions use
-`sorryAx`; all 48 selected backing contracts use only standard axioms. Style is
-0 FAIL/2 unchanged WARN over 41 files; independent finite models pass. This is
-neither a whole-library root elaboration nor proof completion.
+The final fresh 144-module scoped sweep passes: zero errors, seventy owned and
+seventeen inherited admission warnings, 303.792 seconds. The final axiom probe
+records 53.149 seconds. All 31 selected targets and 48 backing contracts use only
+standard axioms. Exactly the other seventy source obligations retain `sorryAx`.
+The full inventory has 589 constants, including fourteen new compiler auxiliaries.
+Two old congruence helpers have earlier originating modules, explicitly recorded;
+all 575 previous elaborated level/type representations compare exactly. Style is
+0 FAIL/2 unchanged WARN over 41 files; other native warnings match the statement
+baseline. No whole-library root elaboration or complete security endpoint is claimed.
 
-## Branches, PRs and user action
+Published dependency drafts #236, #237, #238 and #239, and current draft #250,
+all target `cryptography/lwe-sis-constructions`. Their integration stays with the
+user. The latest remotely verified #250 head at intake is
+`c74f629c03933bc4abb4cb24aeff049996cd2b33`; the new fills are not claimed pushed.
+Original statement source `17b2a282b545c6ebca3fccc88d518d18ae78f485` and exchange
+`64e245b345d908d835030efede1c91312a4e6cce` remain immutable historical inputs.
 
-The four published draft PRs target `cryptography/lwe-sis-constructions`:
+The exact random-bit/probability reader and counted-loop catalogue proposals
+remain unapplied, with affected fills paused under N04. Other remaining admissions
+include later independent work too. Source validation/ingestion/approved matching,
+physical/native attestations, landing checks and final consumer bridges remain.
+No short lattice basis, Gaussian preimage sampler or worst-case/search/decision/
+SIS–LWE reduction is introduced. See `fills/04-construction-independent/`.
 
-* [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236): representation proofs.
-* [#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237): direct Regev/SIS core.
-* [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238): binary arithmetic adapters.
-* [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic.
-
-Their scoped statement/proof audits pass; applicable source-policy and landing
-checks remain. No merge action is requested now. The user alone approves/merges.
-
-The new local draft is `cryptography/lwe-sis-construction-statements` in
-`tcslib-lwe-sis-construction-statements`, based on remote-verified central
-`2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack
-`307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. No new PR number is claimed before
-client publication. Its mathematical and export commits are separate. No central
-branch is pushed, and no earlier PR is merged by drafting on this stack.
-
-The six shared export overlaps and exact unapplied random-bit reader/loop-catalogue
-proposals are listed in `gates/08-construction-statements/COORDINATION.md`. Dependent
-fills await those dispositions; no shared-owner patch is applied. The earlier
-probability-reader and source-registry proposals remain unapplied too.
-
-All earlier findings and issued packets are retained. Source validation,
-ingestion/approved matching and execution/landing provenance remain open. No
-search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice basis
-or Gaussian preimage sampling is introduced.
-
-**Not yet clear to merge — the combined statement gate, 101 proof fills,
+**Not yet clear to merge — the new 31-proof gate, seventy remaining admissions,
 shared-owner dispositions, source-policy work, landing checks and user approval
 remain.**

@@ -1,0 +1,53 @@
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:104:56: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  outputBitLength ?P ?width
+in the target expression
+  P.samples * (P.dimension + 1) * width = L
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+P : Parameters
+width t : ℕ
+hq : P.modulus = 2 ^ width
+f : (Fin t → Bool) → ℤ
+D : List Bool → ρ → Bool
+X : Type := Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)
+L : ℕ := outputBitLength P width
+x : X
+⊢ P.samples * (P.dimension + 1) * width = L
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:98:80: error: unsolved goals
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+P : Parameters
+width t : ℕ
+hq : P.modulus = 2 ^ width
+f : (Fin t → Bool) → ℤ
+D : List Bool → ρ → Bool
+X : Type := Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)
+L : ℕ := outputBitLength P width
+hlen : ∀ (x : X), (LWE.encodeChallenge P width x).length = L
+enc : X → Fin L → Bool := fun x i => (LWE.encodeChallenge P width x).get (Fin.cast ⋯ i)
+henc : ∀ (x : X), List.ofFn (enc x) = LWE.encodeChallenge P width x
+hinj : Function.Injective enc
+hcard : Fintype.card X = Fintype.card (Fin L → Bool)
+e : X ≃ (Fin L → Bool) := Equiv.ofBijective enc ⋯
+he : ∀ (x : X), List.ofFn (e x) = LWE.encodeChallenge P width x
+hreal :
+  acceptProb (generateBits P width t f) D =
+    acceptProb (LWE.sample P (LWE.bitNoise t f)) fun x r => D (LWE.encodeChallenge P width x) r
+hideal : acceptProb (fun u => List.ofFn u) D = acceptProb id fun x r => D (LWE.encodeChallenge P width x) r
+⊢ |(acceptProb (LWE.sample P (LWE.bitNoise t f)) fun x r => D (LWE.encodeChallenge P width x) r) -
+        acceptProb (fun u => List.ofFn u) D| =
+    |(acceptProb (LWE.sample P (LWE.bitNoise t f)) fun x r => D (LWE.encodeChallenge P width x) r) -
+        acceptProb id fun x r => D (LWE.encodeChallenge P width x) r|
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean:138:79: warning: This simp argument is unused:
+  hideal
+
+Hint: Omit it from the simp argument list.
+  simp only [TCSlib.Cryptography.LWE.decisionAdvantage_eq, distAdv_def, hreal,̵ ̵h̵i̵d̵e̵a̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits): no fresh .olean produced
