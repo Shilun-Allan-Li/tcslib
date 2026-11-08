@@ -12,7 +12,7 @@ statements/proofs, and dyadic scalar statements. All seven findings reports and
 separate dispositions are retained in code records.
 
 Next prepared input: outbox/gates/07-dyadic-arithmetic-proofs-r1/README.md.
-Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, records `dc631634e1179fa197938ef40a415ef136f1d85d`. Twelve scalar proofs are filled
+Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110`. Twelve scalar proofs are filled
 on PR #239. No proof-gate verdict, new reviewer choice, publication or dispatch
 is claimed by preparation. Earlier gate folders remain unchanged. Source-policy
 work, landing checks and sampler/matrix/primitive consumer gates remain open.

@@ -15,11 +15,11 @@ def main():
     if output.exists():
         raise SystemExit("Output directory already exists; choose a new scratch path.")
     bundle = (here / "lwe-sis-dyadic-arithmetic-proofs-r1-bundle.md").read_bytes()
-    assert len(bundle) == 6674858
+    assert len(bundle) == 6699026
     assert hashlib.sha256(bundle).hexdigest() == (
-        "3fc5b086387e8771752a7beba8a571c64b54bef8aa14ffcd944244856dbce61c")
+        "a252af465a90beab319c27c32b25edafe712f8f105d7969f71b2cbeb98b692d4")
     manifest = json.loads((here / "BUNDLE-FILES.json").read_text())
-    assert len(manifest) == 1299
+    assert len(manifest) == 1301
     assert len({row["path"] for row in manifest}) == len(manifest)
     headers = list(re.finditer(rb"^## ===== (.+) =====\n\n(`+)text\n", bundle, re.M))
     assert len(headers) + 1 == len(manifest)
