@@ -1,0 +1,18 @@
+private theorem xr_firstArrival {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (a : S) (hstat : ∀ d : Cfg k Bool S x, d.state = some a → tm.step d = d)
+    {c c' : Cfg k Bool S x} {T : ℕ} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :
+    ∃ T' ≤ T, tm.runFrom c T' = c' ∧ ∀ u < T', (tm.runFrom c u).state ≠ some a := by
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm (fun q => q = a) c c' T
+    (by
+      rintro d ⟨q, hq, rfl⟩
+      exact hstat d hq)
+    ⟨a, hc', rfl⟩ h
+  exact ⟨t, ht, he, fun u hu hs => hcut u hu ⟨a, hs, rfl⟩⟩
+/-! #### The leaf rows
+
+This file's own rows, on `Bool` tapes, each exiting at a stationary anchor `done b`: the
+ruler-driven pass (the window clear's engine), the head rewind to a word's origin, the extension
+of a word by one `false`, the capture test (which also clears the captured output), the input
+rewind and the answer. Their run lemmas give exact times and exact configurations; the phase
+host's guard comes from `xr_firstArrival`. -/

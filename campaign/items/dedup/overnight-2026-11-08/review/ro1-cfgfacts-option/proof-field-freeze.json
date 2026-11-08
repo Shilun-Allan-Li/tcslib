@@ -1,0 +1,34 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+    "name": "Turing.zr_cellContract",
+    "changed_fields": [
+      "env",
+      "run"
+    ],
+    "only_proof_fields_changed": true,
+    "all_other_fields_byte_identical": true,
+    "before": {
+      "pre": "pre _ _ := True",
+      "time": "time _ _ := 1",
+      "post": "post _ d := zr_cellPost i choose wr dir d",
+      "lo": "lo _ d j := min (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)",
+      "hi": "hi _ d j := max (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)",
+      "run": "run _ d hd _ := by\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      zr_cell_step i choose wr dir d hd]",
+      "exit_mem": "exit_mem _ d _ _ := ⟨choose (d.workTapeSymbols i), rfl⟩",
+      "cut": "cut _ d hd _ u hu := by\n    have he : u = 0 := by omega\n    subst u\n    rw [MultiTapeTM.runFrom_zero, hd]\n    rintro ⟨b, hb⟩\n    cases hb",
+      "env": "env _ d hd _ u hu j := by\n    have he : u = 0 ∨ u = 1 := by omega\n    rcases he with rfl | rfl\n    · rw [MultiTapeTM.runFrom_zero]\n      exact Finset.mem_Icc.mpr ⟨min_le_left _ _, le_max_left _ _⟩\n    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n        zr_cell_step i choose wr dir d hd]\n      exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩"
+    },
+    "after": {
+      "pre": "pre _ _ := True",
+      "time": "time _ _ := 1",
+      "post": "post _ d := zr_cellPost i choose wr dir d",
+      "lo": "lo _ d j := min (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)",
+      "hi": "hi _ d j := max (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)",
+      "run": "run _ d hd _ := by\n    rw [MultiTapeTM.runFrom_one,\n      zr_cell_step i choose wr dir d hd]",
+      "exit_mem": "exit_mem _ d _ _ := ⟨choose (d.workTapeSymbols i), rfl⟩",
+      "cut": "cut _ d hd _ u hu := by\n    have he : u = 0 := by omega\n    subst u\n    rw [MultiTapeTM.runFrom_zero, hd]\n    rintro ⟨b, hb⟩\n    cases hb",
+      "env": "env _ d hd _ u hu j := by\n    have he : u = 0 ∨ u = 1 := by omega\n    rcases he with rfl | rfl\n    · rw [MultiTapeTM.runFrom_zero]\n      exact Finset.mem_Icc.mpr ⟨min_le_left _ _, le_max_left _ _⟩\n    · rw [MultiTapeTM.runFrom_one,\n        zr_cell_step i choose wr dir d hd]\n      exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩"
+    }
+  }
+]

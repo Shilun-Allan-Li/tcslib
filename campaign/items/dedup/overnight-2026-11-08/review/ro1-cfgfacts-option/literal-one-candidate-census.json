@@ -1,0 +1,1595 @@
+[
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean",
+    "line": 221,
+    "declaration_lexical": "step_rej",
+    "context": "\n    (vt mt : ℤ → Option Bool) (j : ℤ) (im : SignType)\n    (h : tr exact q (cf z (some q) p vt mt j []).inputSymbol (fun i => tp vt mt i j) =\n      LA.toAct im .rej) :\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).state = none ∧\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).output = [false] := by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,\n    step_cf exact q p vt mt j [] im .rej h]\n  simp [cf, LA.rej]\n\n/-- Reading the first bit of a pair. -/\ntheorem step_rd1 (exact : Bool) {z : List Bool} (φ : Ph) (i : ℕ) (hi : i + 1 ≤ z.length)\n    (b : Bool) (hb : z[i]? = some b) (vt mt : ℤ → Option Bool) (j : ℤ) :",
+    "same_declaration_edits": [
+      "RO1-0008"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (cf z (some q) p vt mt j []) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean",
+    "line": 222,
+    "declaration_lexical": "step_rej",
+    "context": "\n    (h : tr exact q (cf z (some q) p vt mt j []).inputSymbol (fun i => tp vt mt i j) =\n      LA.toAct im .rej) :\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).state = none ∧\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).output = [false] := by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,\n    step_cf exact q p vt mt j [] im .rej h]\n  simp [cf, LA.rej]\n\n/-- Reading the first bit of a pair. -/\ntheorem step_rd1 (exact : Bool) {z : List Bool} (φ : Ph) (i : ℕ) (hi : i + 1 ≤ z.length)\n    (b : Bool) (hb : z[i]? = some b) (vt mt : ℤ → Option Bool) (j : ℤ) :\n    (evalTM exact).tm.step (cf z (some (.rd1 φ)) (ip z i (by omega)) vt mt j []) =",
+    "same_declaration_edits": [
+      "RO1-0008"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (cf z (some q) p vt mt j []) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean",
+    "line": 464,
+    "declaration_lexical": "good_run",
+    "context": "\n            apply Nat.mul_le_mul <;> omega\n          nlinarith\n        · rw [hv]\n          simp only [List.length_nil] at hhalt hout\n          have h1step : (evalTM exact).tm.runFrom\n              (cfC z (2 * code.length + 2) n n x (by omega)) 1 =\n              cf z (some (.rewV none)) (ip z (2 * code.length + 2 + n) (by omega))\n                (FinTM.bufferTape (x.take n)) (onesFrom n n) ((n : ℤ) - 1) [] := by\n            rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep]\n          have hC : (evalTM exact).tm.runFrom (cfS z .n0 0 0 (Nat.zero_le _))\n              (2 * code.length + 2 + (n + 1) + n + 1 + (n + 1) + r) =",
+    "same_declaration_edits": [
+      "RO1-0009"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom\n              (cfC z (2 * code.length + 2) n n x (by omega)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+    "line": 145,
+    "declaration_lexical": "em_loop",
+    "context": "\n      refine ⟨1 + (v t + 1) + (v t + 1) + T, ?_, pe, hpe, ?_⟩\n      · have := hM t\n        simp only [List.length_cons]; nlinarith\n      · have h1 : emTM.tm.runFrom (⟨some (.em k c ⟨pc, hpc⟩), p, tapesOf v, headsOf v, out⟩ :\n            Cfg 3 Bool St w) 1 = ⟨some (.prW k c ⟨pc, hpc⟩ t), p, tapesOf v,\n              Function.update (headsOf v) t (((v t : ℕ) : ℤ) - 1), out⟩ := by\n          rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]\n          simp only [tr, hget]\n          rw [apply_act, moveInputPos_zero]\n          simp only [wrT, Function.update_eq_self, Option.toList_none, List.append_nil]\n          rw [show headsOf v t + ((SignType.neg : SignType) : ℤ) = ((v t : ℕ) : ℤ) - 1 by",
+    "same_declaration_edits": [
+      "RO1-0010",
+      "RO1-0011"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (⟨some (.em k c ⟨pc, hpc⟩), p, tapesOf v, headsOf v, out⟩ :\n            Cfg 3 Bool St w) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+    "line": 174,
+    "declaration_lexical": "rd_step",
+    "context": "\n/-- One step from the configuration of an abstract state applies the transition of its\nphase to the input symbol read. -/\ntheorem rd_step (w : List Bool) (s : ES) (i : ℕ) (hi : i ≤ w.length) (out : List Bool) :\n    emTM.tm.runFrom (cfgS w s i hi out) 1 =\n      (tr (.rd s.φ) w[i]? (fun j => tapesOf s.vec j (headsOf s.vec j))).apply\n        (cfgS w s i hi out) := by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n  unfold cfgS\n  rw [step_some, FinTM.inputSymbol_at _ i hi rfl]\n\n/-- The gate excursion: at the end of a gate's argument list (phase `l k c`, the `0`\nalready consumed), the machine prints the gate's program, erases the argument counters,",
+    "same_declaration_edits": [
+      "RO1-0012"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (cfgS w s i hi out) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+    "line": 199,
+    "declaration_lexical": "gate_run",
+    "context": "\n  obtain ⟨T₁, hT₁, pe, hpe, h₁⟩ := em_loop k c (ip w i hi) v M hM (prog k c) 0 (by decide) out\n    (by simp)\n  have hlen := length_prog_le k c\n  -- one step onto counter `1`\n  have h₂ : emTM.tm.runFrom (⟨some (.em k c pe), ip w i hi, tapesOf v, headsOf v,\n      out ++ (prog k c).flatMap (exec v)⟩ : Cfg 3 Bool St w) 1 =\n      ⟨some (.clW 1), ip w i hi, Function.update (tapesOf v) (1 : Fin 3) (ones (v 1)),\n        Function.update (headsOf v) (1 : Fin 3) (((v 1 : ℕ) : ℤ) - 1),\n        out ++ emitBits k c v⟩ := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]\n    simp only [tr, hpe]\n    rw [apply_act, moveInputPos_zero]\n    simp only [wrT, Option.toList_none, List.append_nil, emitBits]",
+    "same_declaration_edits": [
+      "RO1-0013",
+      "RO1-0014",
+      "RO1-0015"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (⟨some (.em k c pe), ip w i hi, tapesOf v, headsOf v,\n      out ++ (prog k c).flatMap (exec v)⟩ : Cfg 3 Bool St w) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+    "line": 218,
+    "declaration_lexical": "gate_run",
+    "context": "\n      ⟨some .clS2, ip w i hi, tapesOf v₁, headsOf v₁, out ++ emitBits k c v⟩ := by\n    rw [clear_walk, tapesOf_update, headsOf_update_zero]\n    rfl\n  -- one step onto counter `2`\n  have h₄ : emTM.tm.runFrom (⟨some .clS2, ip w i hi, tapesOf v₁, headsOf v₁,\n      out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1 =\n      ⟨some (.clW 2), ip w i hi, Function.update (tapesOf v₁) (2 : Fin 3) (ones (v 2)),\n        Function.update (headsOf v₁) (2 : Fin 3) (((v 2 : ℕ) : ℤ) - 1),\n        out ++ emitBits k c v⟩ := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]\n    simp only [tr]\n    rw [apply_act, moveInputPos_zero]\n    simp only [wrT, Option.toList_none, List.append_nil]\n    have h2 : v₁ 2 = v 2 := by simp [hv₁]",
+    "same_declaration_edits": [
+      "RO1-0013",
+      "RO1-0014",
+      "RO1-0015"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (⟨some .clS2, ip w i hi, tapesOf v₁, headsOf v₁,\n      out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+    "line": 238,
+    "declaration_lexical": "gate_run",
+    "context": "\n      ⟨some .inc, ip w i hi, tapesOf v₂, headsOf v₂, out ++ emitBits k c v⟩ := by\n    rw [clear_walk, tapesOf_update, headsOf_update_zero]\n    rfl\n  -- one step incrementing counter `0`\n  have h₆ : emTM.tm.runFrom (⟨some .inc, ip w i hi, tapesOf v₂, headsOf v₂,\n      out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1 =\n      cfgS w ⟨.g, s.z + 1, 0, 0⟩ i hi (out ++ emitBits k c v) := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]\n    simp only [tr]\n    rw [apply_act, moveInputPos_zero]\n    unfold cfgS\n    refine Cfg.ext rfl rfl ?_ ?_ (by simp)\n    · funext t\n      fin_cases t\n      · simp [tapesOf, wrT, headsOf, hv₂, hv₁, hv, ES.vec, update_ones_succ]\n      · simp [tapesOf, hv₂, hv₁, ES.vec, ones_zero]",
+    "same_declaration_edits": [
+      "RO1-0013",
+      "RO1-0014",
+      "RO1-0015"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (⟨some .inc, ip w i hi, tapesOf v₂, headsOf v₂,\n      out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "line": 261,
+    "declaration_lexical": "xr_runFrom_one",
+    "context": "\nopen MultiTapeTM in\n/-- One step of a run. -/\nprivate theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (d : Cfg k Bool S x) : tm.runFrom d 1 = tm.step d := by\n  rw [runFrom_succ_eq_step', runFrom_zero]\n\n/-- Two steps of a run. -/\nprivate theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (d : Cfg k Bool S x) : tm.runFrom d 2 = tm.step (tm.step d) := by\n  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]\n\n/-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "line": 1150,
+    "declaration_lexical": "xr_answerTM_run",
+    "context": "\nprivate theorem xr_answerTM_run {K : ℕ} {x : List Bool} (b : Bool) (d : Cfg K Bool xr_St x)\n    (q : xr_St) (hd : d.state = some q) :\n    (xr_answerTM K b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} := by\n  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd]\n  apply Cfg.ext\n  · exact Action.apply_state _ _\n  · exact (Action.apply_inputPos _ _).trans (moveInputPos_zero _)\n  · funext i\n    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]\n    simp [xr_answerTM]\n  · funext i\n    rw [Action.apply_workTapePos]",
+    "same_declaration_edits": [
+      "RO1-0034"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "line": 3111,
+    "declaration_lexical": "xr_answer_tail",
+    "context": "\nprivate theorem xr_answer_tail {K : ℕ} {x : List Bool} {S S' : Type} (b : Bool)\n    (d : Cfg K Bool S x) (q : S) (hd : d.state = some q) (hout : d.output = [])\n    (f : xr_St → S') :\n    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).state = none ∧\n    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).output = [b] := by\n  rw [xr_answerTM_run b (d.mapState fun _ => xr_St.start) xr_St.start\n    (by rw [Cfg.mapState_state, hd]; rfl)]\n  refine ⟨?_, ?_⟩\n  · rw [Cfg.mapState_state]; rfl\n  · rw [Cfg.mapState_output]\n    show (d.mapState fun _ => xr_St.start).output ++ [b] = [b]\n    rw [Cfg.mapState_output, hout, List.nil_append]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (d.mapState fun _ => xr_St.start) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "line": 3112,
+    "declaration_lexical": "xr_answer_tail",
+    "context": "\n    (d : Cfg K Bool S x) (q : S) (hd : d.state = some q) (hout : d.output = [])\n    (f : xr_St → S') :\n    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).state = none ∧\n    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).output = [b] := by\n  rw [xr_answerTM_run b (d.mapState fun _ => xr_St.start) xr_St.start\n    (by rw [Cfg.mapState_state, hd]; rfl)]\n  refine ⟨?_, ?_⟩\n  · rw [Cfg.mapState_state]; rfl\n  · rw [Cfg.mapState_output]\n    show (d.mapState fun _ => xr_St.start).output ++ [b] = [b]\n    rw [Cfg.mapState_output, hout, List.nil_append]\n\n/-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (d.mapState fun _ => xr_St.start) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/NDNormalForm.lean",
+    "line": 1765,
+    "declaration_lexical": "nf_leaf_block",
+    "context": "\n        (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome))\n      workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) } with he₁\n  have h1 : (nf_leaf N (some t)).runFrom e 1 = e₁ := by\n    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1 0\n        (some n.isSome) 1 hst rfl, SignType.coe_one, Cfg.workTapeSymbols_eq]\n  have hsym1 : e₁.workTapeSymbols 1 = e.workTapes 1 (b + 1) := by\n    rw [Cfg.workTapeSymbols_eq]\n    show Function.update e.workTapes 1",
+    "same_declaration_edits": [
+      "RO1-0041"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom e 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/NDNormalForm.lean",
+    "line": 1796,
+    "declaration_lexical": "nf_leaf_block",
+    "context": "\n        workTapePos := Function.update e₁.workTapePos 1 (e₁.workTapePos 1 + m) } := by\n    intro q' m v htr\n    have e2 : (nf_leaf N (some t)).runFrom e 2 =\n        (nf_leaf N (some t)).step ((nf_leaf N (some t)).runFrom e 1) :=\n      MultiTapeTM.runFrom_succ_eq_step'\n    rw [e2, h1,\n      step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last\n        (e.workTapes 1 b)) 1 0 (some v) m rfl htr]\n  have htape2 : Function.update e₁.workTapes 1\n      (Function.update (e₁.workTapes 1) (e₁.workTapePos 1) (some (n.getD false))) =\n        Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) b n) := by",
+    "same_declaration_edits": [
+      "RO1-0041"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom e 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/NDNormalForm.lean",
+    "line": 1879,
+    "declaration_lexical": "nf_leaf_block",
+    "context": "\n        · simp only [he₂, he₁, Function.update_of_ne hi]\n      · rfl\n  · have e2 : (nf_leaf N (some t)).runFrom e 2 =\n        (nf_leaf N (some t)).step ((nf_leaf N (some t)).runFrom e 1) :=\n      MultiTapeTM.runFrom_succ_eq_step'\n    rw [e2, h1, step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last\n        (e.workTapes 1 b)) (q' := .rej) 1 0 0 rfl (by\n        simp only [nf_leaf]\n        rw [hsym1, if_neg hdec])]\n\n/-- **The read of one record by a work-tape instance.** From a record boundary, with the record on\ntape `0` from its head, the instance for work tape `t` reads the record in `2k + 4` steps, at no",
+    "same_declaration_edits": [
+      "RO1-0041"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/NDNormalForm.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom e 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "line": 3152,
+    "declaration_lexical": "a2_countdown",
+    "context": "\n      have hlt : a2Value (a2Debit u).1 < n := by omega\n      obtain ⟨t, ht, hh, ho⟩ := ih _ hlt (a2Debit u).1 (out ++ [true]) rfl\n      have hstep : a2DebitTM.tm.runFrom\n          (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =\n          a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by\n        refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl\n        funext i; simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg,\n          a2DebitTM, Action.apply]\n      refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩\n      · rw [a2Debit_length] at ht\n        have he : n = a2Value (a2Debit u).1 + 1 := by omega\n        rw [he, Nat.add_mul, Nat.one_mul]",
+    "same_declaration_edits": [
+      "RO1-0258",
+      "RO1-0259"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/Nondeterminism.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom\n          (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "line": 1581,
+    "declaration_lexical": "satRed_one",
+    "context": "\n    m none none d₀ d₁ none hm rfl rfl ha hb (by simp)\n\n/-- A single machine transition is the one-step run. -/\nprivate lemma satRed_one {x : List Bool} (cfg : Cfg 2 Bool (Fin 35) x) :\n    satRedTM.tm.runFrom cfg 1 = satRedTM.tm.step cfg := by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n\n/-- Counter rewinds take exactly `r+1` silent transitions, including the\nleft blank, and apply to each of the three return phases.\n\n**Proof sketch.** Induct on the distance to the left boundary. An occupied counter cell gives one silent\nleft move; at the blank cell -1, the final right move enters the return state at head",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/SAT.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom cfg 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+    "line": 307,
+    "declaration_lexical": "poly_loop",
+    "context": "\n        rw [show polyCost q C 0 + 2 = 1 + (C + 1) + 1 by simp [polyCost]; omega,\n          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,\n          show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop 0) h' o) 1 =\n            polyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,\n          poly_emit x q h' C (le_refl C),\n          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n        simpa [h'] using poly_advance (C := C) x q h'\n          (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))\n      · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by\n          intro k hk\n          have hne : k ≠ ⟨i, hi⟩ := by intro he; have := congrArg Fin.val he; simp at this; omega",
+    "same_declaration_edits": [
+      "RO1-0071",
+      "RO1-0072"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/TMSAT.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (polyCfg x q (.loop 0) h' o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+    "line": 343,
+    "declaration_lexical": "poly_loop",
+    "context": "\n        rw [show polyCost q C i + 2 = 1 + polyCost q C i + 1 by omega,\n          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,\n          show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =\n            polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,\n          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n        simpa [h'] using poly_advance (C := C) x q h'\n          (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))\n    induction r generalizing o with\n    | zero =>\n      intro j hj\n      have hj' : j = q := by omega\n      subst j\n      have hs : (polyUnaryTM c C).tm.step",
+    "same_declaration_edits": [
+      "RO1-0071",
+      "RO1-0072"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/ClassNP/TMSAT.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 1258,
+    "declaration_lexical": "qy_run_one",
+    "context": "\n  · rw [Function.update_of_ne h, if_neg h, SignType.coe_zero, add_zero]\n\n/-- One step of a run. -/\nprivate theorem qy_run_one {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)\n    (c : Cfg K Bool S x) : M.runFrom c 1 = M.step c := by\n  rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n\n/-- Two steps of a run. -/\nprivate theorem qy_run_two {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)\n    (c : Cfg K Bool S x) : M.runFrom c 2 = M.step (M.runFrom c 1) := by\n  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step']\n\n/-- **The emitter's run.** From the start of the word `w` on tape `i`, `qyEmitTM` emits",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 1263,
+    "declaration_lexical": "qy_run_two",
+    "context": "\n/-- Two steps of a run. -/\nprivate theorem qy_run_two {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)\n    (c : Cfg K Bool S x) : M.runFrom c 2 = M.step (M.runFrom c 1) := by\n  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step']\n\n/-- **The emitter's run.** From the start of the word `w` on tape `i`, `qyEmitTM` emits\n`pre ++ qyBody dl rr w ++ suf` and reaches `done`, the head of tape `i` at `|w|`, within\n`|pre| + |suf| + 3 + |w| · (rr + 3)` steps, and not earlier.\n\n**Proof sketch.** Three inductions over the emission chains and the word, each step read by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 1367,
+    "declaration_lexical": "qy_emit_run",
+    "context": "\n        rw [show (k : ℤ) + 1 = ((k + 1 : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat,\n          ← List.head?_drop, ← List.drop_drop, hk]\n        rfl\n      have hstep1 : M.runFrom (qyC .rd ip T (Function.update P i k) o') 1 =\n          qyC (.got b) ip T (Function.update P i ((k : ℤ) + 1)) o' := by\n        rw [qy_run_one, qy_step M _ (.got b) ip T _ _\n            (fun j => if j = i then .pos else 0) none (by\n            have hn : T i (Function.update P i (k : ℤ) i) = some b := by\n              rw [Function.update_self, hT, hkb]\n            simp only [hM, qyEmitTM, hn]), qy_moveOne, Function.update_self,\n          Function.update_idem, Option.toList_none, List.append_nil]",
+    "same_declaration_edits": [
+      "RO1-0100",
+      "RO1-0101"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom (qyC .rd ip T (Function.update P i k) o') 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 2091,
+    "declaration_lexical": "qy_emit_halt",
+    "context": "\nprivate theorem qy_emit_halt {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : List Bool) (rr : ℕ)\n    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)\n    (o : List Bool) :\n    ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).state = none ∧\n      ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).output = o := by\n  rw [qy_run_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)\n    (QyEm.done : QyEm pre.length suf.length rr) ip T P o).state = some .done)]\n  constructor\n  · rw [Action.apply_state]\n    rfl\n  · rw [Action.apply_output]\n    show o ++ (none : Option Bool).toList = o\n    rw [Option.toList_none, List.append_nil]",
+    "same_declaration_edits": [
+      "RO1-0102"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (qyC .done ip T P o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 2092,
+    "declaration_lexical": "qy_emit_halt",
+    "context": "\n    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)\n    (o : List Bool) :\n    ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).state = none ∧\n      ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).output = o := by\n  rw [qy_run_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)\n    (QyEm.done : QyEm pre.length suf.length rr) ip T P o).state = some .done)]\n  constructor\n  · rw [Action.apply_state]\n    rfl\n  · rw [Action.apply_output]\n    show o ++ (none : Option Bool).toList = o\n    rw [Option.toList_none, List.append_nil]\n\n/-- **An install call's clause**: from the seam of every argument `arg`, over every native input,",
+    "same_declaration_edits": [
+      "RO1-0102"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (qyC .done ip T P o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 3369,
+    "declaration_lexical": "qy_round_of_seg",
+    "context": "\nprivate theorem qy_round_of_seg {K : ℕ} {S : Type} {x : List Bool} {M : MultiTapeTM K Bool S}\n    {a : S}\n    {E : Set (Option S)} {c c₁ c' : Cfg K Bool S x} {t : ℕ} (hc : c.state = some a)\n    (h1 : M.runFrom c 1 = c₁) (hseg : Segment M (roundStop a E) (fun _ => True) c₁ c' t)\n    (hend : c'.state ∈ insert (some a) E) : Round M a E (fun _ => True) c c' (1 + t) := by\n  obtain ⟨hrun, hcut, -⟩ := (segment_iff _ _ _ _ _ _).mp hseg\n  refine (round_iff _ _ _ _ _ _ _).mpr\n    ⟨hc, by omega, ?_, hend, fun u hu hut => ?_, fun _ _ => trivial⟩\n  · rw [MultiTapeTM.runFrom_add, h1, hrun]\n  · obtain ⟨v, rfl⟩ : ∃ v, u = 1 + v := ⟨u - 1, by omega⟩",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+    "line": 5340,
+    "declaration_lexical": "dz_take_run",
+    "context": "\nprivate theorem dz_take_run {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.length + 2))\n    (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) :\n    (dzTakeTM K i).runFrom (qyC none ip T P o) 1 =\n      qyC (some (T i (P i))) ip (Function.update T i (Function.update (T i) (P i) none))\n        (Function.update P i (P i + 1)) o := by\n  have hs : (qyC none ip T P o : Cfg K Bool (Option (Option Bool)) x).state = some none := rfl\n  have hw : (qyC none ip T P o : Cfg K Bool (Option (Option Bool)) x).workTapeSymbols =\n      fun j => T j (P j) := by\n    funext j\n    rw [Cfg.workTapeSymbols_eq]\n    rfl",
+    "same_declaration_edits": [
+      "RO1-0103"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (qyC none ip T P o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 156,
+    "declaration_lexical": "f6_native_halt",
+    "context": "\n      A.runFrom d t = (seamCompTM R exit leaf ()).runFrom d t :=\n    MultiTapeTM.runFrom_with_q₀ _ _ _ _\n  have hleaf {y : List Bool} (d : Cfg (K + 3) Bool Unit y) (hs : d.state = some ()) :\n      leaf.runFrom d 1 = {d with state := none} := by\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hs]\n    change (FinTM.controlAction 0 none).apply d = _\n    rw [FinTM.controlAction_apply, moveInputPos_zero]\n  refine ⟨K, P, fP, dP, A, fun α => ?_⟩\n  obtain ⟨T, _B, hα⟩ := hR α\n  refine ⟨T, fun w => ?_⟩\n  obtain ⟨hr, hcut, _hout, _hspace⟩ := hα w\n  let d : Cfg (K + 3) Bool P (pairEncode α w) :=",
+    "same_declaration_edits": [
+      "RO1-0104"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "leaf.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 395,
+    "declaration_lexical": "f6_ruler_moves",
+    "context": "\n      ∀ t < ℓ + 1, ((skipTM (K + 4) r).runFrom (e₃.mapState fun _ => .run) t).state ≠\n        some .done) ∧\n    ((walkTM (Symbol := Bool) (K + 4) r (· = r) .neg).runFrom (e₄.mapState fun _ => .run) 1 =\n        f₄ ∧\n      ∀ t < 1, ((walkTM (Symbol := Bool) (K + 4) r (· = r) .neg).runFrom\n        (e₄.mapState fun _ => .run) t).state ≠ some .done) ∧\n    ((rewindTM (K + 4) r).runFrom (e₆.mapState fun _ => .start) (N + 2) = f₆ ∧\n      ∀ t < N + 2, ((rewindTM (K + 4) r).runFrom (e₆.mapState fun _ => .start) t).state ≠\n        some .done) := by\n  intro r W WN e₃ f₃ e₄ f₄ e₆ f₆\n  have hW (a : ℤ) : W (Fin.last (K + 3)) a = FinTM.bufferTape (List.replicate ℓ true) a := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (e₄.mapState fun _ => .run) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 1233,
+    "declaration_lexical": "sph_right_run",
+    "context": "\nand use the zero-step and one-step configurations for the cut and head claim. -/\nprivate lemma sph_right_run {k : ℕ} {Γ : Type} {x : List Γ}\n    (d : Cfg k Γ Bool x) (hd : d.state = some false) :\n    (sphRightTM k Γ).runFrom d 1 =\n        {d with state := some true, inputPos := moveInputPos d.inputPos .pos} ∧\n      1 ≤ (moveInputPos d.inputPos .pos).val ∧\n      (∀ u < 1, ((sphRightTM k Γ).runFrom d u).state ≠ some true) ∧\n      ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos := by\n  have hstep : (sphRightTM k Γ).runFrom d 1 =\n      {d with state := some true, inputPos := moveInputPos d.inputPos .pos} := by",
+    "same_declaration_edits": [
+      "RO1-0105"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 1238,
+    "declaration_lexical": "sph_right_run",
+    "context": "\n      (∀ u < 1, ((sphRightTM k Γ).runFrom d u).state ≠ some true) ∧\n      ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos := by\n  have hstep : (sphRightTM k Γ).runFrom d 1 =\n      {d with state := some true, inputPos := moveInputPos d.inputPos .pos} := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hd]\n    apply Cfg.ext\n    · rw [Action.apply_state]; rfl\n    · rw [Action.apply_inputPos]; rfl\n    · funext j p\n      rw [Action.apply_workTapes]\n      simp only [sphRightTM, Option.getD_none, Cfg.workTapeSymbols_eq,",
+    "same_declaration_edits": [
+      "RO1-0105"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 1283,
+    "declaration_lexical": "sph_emit_run",
+    "context": "\n**Proof sketch.** Read the five fields of its sole action using the public action equations. -/\nprivate lemma sph_emit_run {k : ℕ} {Γ : Type} {x : List Γ} (b : Γ)\n    (d : Cfg k Γ Unit x) (hd : d.state = some ()) :\n    (sphEmitTM k b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} ∧\n      ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos := by\n  have hstep : (sphEmitTM k b).runFrom d 1 =\n      {d with state := none, output := d.output ++ [b]} := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hd]\n    apply Cfg.ext\n    · rw [Action.apply_state]; rfl\n    · rw [Action.apply_inputPos]",
+    "same_declaration_edits": [
+      "RO1-0106"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+    "line": 1285,
+    "declaration_lexical": "sph_emit_run",
+    "context": "\n    (sphEmitTM k b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} ∧\n      ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos := by\n  have hstep : (sphEmitTM k b).runFrom d 1 =\n      {d with state := none, output := d.output ++ [b]} := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hd]\n    apply Cfg.ext\n    · rw [Action.apply_state]; rfl\n    · rw [Action.apply_inputPos]\n      exact moveInputPos_zero _\n    · funext j p\n      rw [Action.apply_workTapes]\n      simp only [sphEmitTM, Option.getD_none, Cfg.workTapeSymbols_eq,",
+    "same_declaration_edits": [
+      "RO1-0106"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+    "line": 212,
+    "declaration_lexical": "b2b_verdict_trace",
+    "context": "\n            (Function.update (d.workTapes i) (d.workTapePos i - 1) none),\n          workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } := by\n  have h1 : (b2b_verdictTM k i).runFrom d 1 =\n      { d with\n        state := some .read\n        workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } := by\n    simpa [MultiTapeTM.runFrom, moveInputPos_zero, sub_eq_add_neg] using\n      step_of_tapeAction_move (b2b_verdictTM k i) d i 0 .neg hs rfl\n  have h2 := step_of_tapeAction_write (q' := .done b) (b2b_verdictTM k i)\n    ({ d with\n        state := some .read\n        workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } :",
+    "same_declaration_edits": [
+      "RO1-0261"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+    "line": 1915,
+    "declaration_lexical": "b2b_trial_run",
+    "context": "\n      .verdict z t (fun _ _ _ _ => rfl) t le_rfl\n  let A := 1 + (I + 1)\n  let B := A + (R + 1)\n  let C := B + (2 * u.length + 2 + 1)\n  let F := C + (V + 1)\n  let T := F + 2\n  have h0 : H.runFrom d 1 = i.mapState (Sigma.mk B2bTestPhase.identity) := by\n    exact ha.2\n  have h1 : H.runFrom d A = (r.mapState Sum.inl).mapState (Sigma.mk B2bTestPhase.rewind) := by\n    rw [show A = 1 + (I + 1) from rfl, MultiTapeTM.runFrom_add, h0, hpi.2]\n    rfl\n  have h2 : H.runFrom d B = c.mapState (Sigma.mk B2bTestPhase.copy) := by\n    rw [show B = A + (R + 1) from rfl, MultiTapeTM.runFrom_add, h1, hpr.2]\n    rfl",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "H.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+    "line": 2327,
+    "declaration_lexical": "b2b_finish_answer",
+    "context": "\n    simp only [Cfg.mapState, hh, Option.map_none]\n  · rw [hp]\n    exact ho\n  · intro r hr\n    rw [hp]\n    change (M.runFrom c r).workTapePos = c.workTapePos\n    have h1 : M.runFrom c 1 = { c with state := some 1, output := c.output ++ [b] } := by\n      simp [M, b2b_answerTM, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hc,\n        FinTM.emitAction, Action.apply]\n    interval_cases r\n    · rfl\n    · rw [h1]\n    · rw [MultiTapeTM.runFrom_succ_eq_step', h1]\n      simp [M, b2b_answerTM, MultiTapeTM.step, FinTM.emitAction, Action.apply]\n\n/-- After counter exhaustion the host reuses the shared trial and emits its",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Inclusions.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "line": 306,
+    "declaration_lexical": "call_run",
+    "context": "\n        refine ⟨by simpa [seam] using hregBoxSeam, fun i => by simp [seam]⟩\n      · obtain rfl : t = 1 := by omega\n        rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from rfl]\n        obtain ⟨_, _, _, _, _, _, _, R0⟩ := hsim0\n        refine ⟨?_, fun i => ?_⟩\n        · intro r; simp only [R0.regPos]; exact regPos_box hnd _ _ R0.valid R0.hs r\n        · rw [R0.dPos]; simp [dc0, Cfg.init]\n    rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = (compileTM P l₀ D q0).step (seam c0)\n      from rfl]\n    apply runFrom_forall_append (Q := Q)",
+    "same_declaration_edits": [
+      "RO1-0107",
+      "RO1-0108",
+      "RO1-0109",
+      "RO1-0110",
+      "RO1-0111"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (seam c0) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "line": 311,
+    "declaration_lexical": "call_run",
+    "context": "\n        · intro r; simp only [R0.regPos]; exact regPos_box hnd _ _ R0.valid R0.hs r\n        · rw [R0.dPos]; simp [dc0, Cfg.init]\n    rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = (compileTM P l₀ D q0).step (seam c0)\n      from rfl]\n    apply runFrom_forall_append (Q := Q)\n    · intro t ht\n      have hTR : ∃ s par dir tp, TrackRel c0 cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t)\n          (D.runFrom dc0 t) s par dir tp := by\n        rcases Nat.lt_or_ge t T0 with h | h\n        · obtain ⟨_, s', par', dir', tp', -, -, R'⟩ := (hsim t ht).1 h\n          exact ⟨s', par', dir', tp', R'⟩",
+    "same_declaration_edits": [
+      "RO1-0107",
+      "RO1-0108",
+      "RO1-0109",
+      "RO1-0110",
+      "RO1-0111"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (seam c0) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "line": 333,
+    "declaration_lexical": "call_run",
+    "context": "\n        exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩\n      · obtain rfl : t = 1 := by omega\n        rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =\n          (compileTM P l₀ D q0).step gH from rfl, hret1]\n        exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩\n    rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =\n      (compileTM P l₀ D q0).step gH from rfl, hret1]\n    apply runFrom_forall_append (Q := Q)\n    · intro t ht\n      dsimp only [Q]\n      rw [hb2 t ht]",
+    "same_declaration_edits": [
+      "RO1-0107",
+      "RO1-0108",
+      "RO1-0109",
+      "RO1-0110",
+      "RO1-0111"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "line": 336,
+    "declaration_lexical": "call_run",
+    "context": "\n          (compileTM P l₀ D q0).step gH from rfl, hret1]\n        exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩\n    rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =\n      (compileTM P l₀ D q0).step gH from rfl, hret1]\n    apply runFrom_forall_append (Q := Q)\n    · intro t ht\n      dsimp only [Q]\n      rw [hb2 t ht]\n      exact ⟨fun r => by simpa using hbox0 r, fun i => by simp⟩\n    rw [hr2]\n    intro t ht\n    dsimp only [Q]\n    obtain ⟨h1, h2⟩ := hb3 t ht\n    refine ⟨h1, fun i => ?_⟩\n    have := congrFun h2 i\n    simp only [Function.comp_apply] at this\n    rw [this]; simp",
+    "same_declaration_edits": [
+      "RO1-0107",
+      "RO1-0108",
+      "RO1-0109",
+      "RO1-0110",
+      "RO1-0111"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+    "line": 354,
+    "declaration_lexical": "call_run",
+    "context": "\n    change (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) _ = _\n    rw [MultiTapeTM.runFrom_add, ← hgH, MultiTapeTM.runFrom_add]\n    rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from rfl, hret1,\n      MultiTapeTM.runFrom_add, hr2, hr3, hfinal]\n\n\nend Whole\n\nend Complexity.LogProg\n",
+    "same_declaration_edits": [
+      "RO1-0107",
+      "RO1-0108",
+      "RO1-0109",
+      "RO1-0110",
+      "RO1-0111"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom gH 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+    "line": 354,
+    "declaration_lexical": "cleanTM_run",
+    "context": "\n      intro ht\n      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), sim_step_clean M q₁ q V t\n        (hlive t (by omega))]\n  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 :=\n    init_step M q₁ q V\n  -- the interval data of every tape at the halt\n  set c := M.runFrom (Cfg.init q V) T0 with hc\n  have htape : ∀ j : Fin k, ∃ a b : ℤ, a ≤ 0 ∧ 0 ≤ b ∧ -(s : ℤ) ≤ a - 1 ∧ b + 1 ≤ s ∧\n      a ≤ c.workTapePos j ∧ c.workTapePos j ≤ b ∧\n      wr (if markSet (visB M q V T0 j) (c.workTapePos j) = some true then none\n        else some (some false)) (markSet (visB M q V T0 j)) (c.workTapePos j) = markI a b ∧",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "runFrom (Cfg.init (.init q) V) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 246,
+    "declaration_lexical": "goR_run",
+    "context": "\n    rcases Nat.lt_or_ge t 1 with h | h\n    · obtain rfl : t = 0 := by omega\n      exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n    · obtain rfl : t = 1 := by omega\n      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n      exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB hbB')\n        (abs_update_le _ _ _ _ hB hbB')\n  | succ n ih =>\n    intro Dp hn ha hB\n    have hin : a ≤ Dp i ∧ Dp i ≤ b := ⟨ha, by omega⟩\n    have hrd : Mt i (Dp i) ≠ none := by\n      rw [hMt]; unfold markI; split_ifs <;> simp_all\n    set Dp' := Function.update Dp i (Dp i + 1) with hDp'\n    have hstep : (cleanTM M q₀).step (ccfg (some (.cl i .goR)) ip Dt Dp Mt Dp out) =",
+    "same_declaration_edits": [
+      "RO1-0112"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 321,
+    "declaration_lexical": "erase_run",
+    "context": "\n    rcases Nat.lt_or_ge t 1 with h | h\n    · obtain rfl : t = 0 := by omega\n      exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n    · obtain rfl : t = 1 := by omega\n      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n      exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB haB')\n        (abs_update_le _ _ _ _ hB haB')\n  | succ n ih =>\n    intro Dt Mt Dp hn hpb hDt hMt hB\n    set p := Dp i with hpdef\n    have hpa : a ≤ p := by omega\n    set Dp' := Function.update Dp i (p - 1) with hDp'\n    set Dt' := Function.update Dt i (eraseAbove f (p - 1)) with hDt'\n    set Mt' := Function.update Mt i (markI a (p - 1)) with hMt'",
+    "same_declaration_edits": [
+      "RO1-0113"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 410,
+    "declaration_lexical": "back_run",
+    "context": "\n    rcases Nat.lt_or_ge t 1 with h | h\n    · obtain rfl : t = 0 := by omega\n      exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n    · obtain rfl : t = 1 := by omega\n      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n      have h0 : |(0 : ℤ)| ≤ B := by have := hB i; rw [hp] at this; exact this\n      exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB h0) (abs_update_le _ _ _ _ hB h0)\n  | succ n ih =>\n    intro Dt Mt Dp hn hpa hMt hB\n    have hrd : Mt i (Dp i) = none := by\n      rw [hMt, markI_empty]; split_ifs <;> first | rfl | omega\n    set Dp' := Function.update Dp i (Dp i + 1) with hDp'",
+    "same_declaration_edits": [
+      "RO1-0114"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 493,
+    "declaration_lexical": "clean_tape",
+    "context": "\n      · obtain rfl : t = 0 := by omega\n        exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n      · obtain rfl : t = 1 := by omega\n        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n        exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n    apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb1\n    rw [hr1]\n    apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb2\n    rw [hr2]\n    exact hb3\n  · rw [MultiTapeTM.runFrom_add,\n      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep,",
+    "same_declaration_edits": [
+      "RO1-0115",
+      "RO1-0116",
+      "RO1-0117"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 495,
+    "declaration_lexical": "clean_tape",
+    "context": "\n        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n        exact PB_ccfg _ _ _ _ _ _ _ _ hB hB\n    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]\n    apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb1\n    rw [hr1]\n    apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb2\n    rw [hr2]\n    exact hb3\n  · rw [MultiTapeTM.runFrom_add,\n      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep,\n      MultiTapeTM.runFrom_add, hr1, MultiTapeTM.runFrom_add, hr2, hr3]\n    simp [hDpa, hDpb, hMt1]",
+    "same_declaration_edits": [
+      "RO1-0115",
+      "RO1-0116",
+      "RO1-0117"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+    "line": 502,
+    "declaration_lexical": "clean_tape",
+    "context": "\n    apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb2\n    rw [hr2]\n    exact hb3\n  · rw [MultiTapeTM.runFrom_add,\n      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep,\n      MultiTapeTM.runFrom_add, hr1, MultiTapeTM.runFrom_add, hr2, hr3]\n    simp [hDpa, hDpb, hMt1]\n\nend Sweeps\n\nend Complexity.LogProg\n",
+    "same_declaration_edits": [
+      "RO1-0115",
+      "RO1-0116",
+      "RO1-0117"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean",
+    "line": 171,
+    "declaration_lexical": "compile_correct_from",
+    "context": "\n            exact ⟨fun r => by simpa [seam] using hbN r, fun i => by simp [seam]⟩\n          · obtain rfl : t = 1 := by omega\n            rw [show (compileTM P l₀ D q0).runFrom (seam c) 1 =\n              (compileTM P l₀ D q0).step (seam c) from rfl, hst, ← hr]\n            exact ⟨fun r => by simpa [seam] using hbN1 r, fun i => by simp [seam]⟩\n        | some cs =>\n          obtain ⟨hnd, hin, hargs, hclean⟩ := hcalls N (by omega) l cs hs hcl\n          obtain ⟨T', hb', hr'⟩ := call_run P l₀ D q0 hs hcl (fun r hr => (hargs r hr).1)\n            (fun r hr => (hargs r hr).2.1) hnd hin _ B hclean",
+    "same_declaration_edits": [
+      "RO1-0118"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (seam c) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/WindowClock.lean",
+    "line": 270,
+    "declaration_lexical": "cw_left_run",
+    "context": "\nand changes only the selected head and control state. -/\nprivate lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)\n    (d : Cfg k Γ Bool x) (hd : d.state = some false) :\n    (cw_leftTM k i).runFrom d 1 =\n      { d with state := some true\n               workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧\n      (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by\n  constructor\n  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n    have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl\n    simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h",
+    "same_declaration_edits": [
+      "RO1-0121"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/WindowClock.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/WindowClock.lean",
+    "line": 957,
+    "declaration_lexical": "cw_seg_left",
+    "context": "\n      (cw_cfg e d (cw_next p j) a n b') (1 + 1) := by\n  obtain ⟨h₁, h₂⟩ := cw_left_run (Fin.last (K + 1)) (cw_cfg e d false a n b) rfl\n  have hend : (cw_leftTM (K + 2) (Fin.last (K + 1))).runFrom (cw_cfg e d false a n b) 1 =\n      cw_cfg e d true a n b' :=\n    h₁.trans (cw_cfg_moveL e d _ _ a n b _ b' (by rw [cw_cfg_posL]; omega))\n  have hseg := cw_seg e R en ex (.left p j) (by simp) _ _ _ hend true rfl (cw_next p j)\n    (by rw [cw_red, if_pos rfl])\n    (cw_guard e R en ex (.left p j) _ _ _ h₂ fun z hz => by rw [cw_red, if_neg hz])\n    (cw_box d.workTapePos r) (fun u hu => by\n      rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/SpaceComplexity/WindowClock.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (cw_cfg e d false a n b) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+    "line": 561,
+    "declaration_lexical": "recordStep_runFrom_one",
+    "context": "\n/-- A one-step run is one machine step, by the published run equations. -/\nprivate theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}\n    (M : MultiTapeTM K Γ S) (d : Cfg K Γ S x) : M.runFrom d 1 = M.step d := by\n  have h := MultiTapeTM.runFrom_succ_eq_step' (tm := M) (cfg := d) (t := 0)\n  rwa [MultiTapeTM.runFrom_zero] at h\n\n/-- One round of unit length is one machine step, by the published orbit equation. -/\nprivate theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}\n    (M : MultiTapeTM K Γ S) (c : Cfg K Γ S x) (r : ℕ) :\n    roundOrbit M (fun _ => 1) c (r + 1) = M.step (roundOrbit M (fun _ => 1) c r) := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+    "line": 844,
+    "declaration_lexical": "recordStep_read_run",
+    "context": "\nprivate theorem recordStep_read_run {Q T : Type} [DecidableEq Q] [DecidableEq T]\n    {x : List (RecSym Q T)} (d : Cfg 4 (RecSym Q T) (Option (Option Bool)) x)\n    (hd : d.state = some none) :\n    recordStepRead.runFrom d 1 =\n        {d with state := some (some (d.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T))))} ∧\n      (∀ u < 1, ∀ b, (recordStepRead.runFrom d u).state ≠ some (some b)) := by\n  constructor\n  · rw [recordStep_runFrom_one]\n    rw [step_of_inputMoveAction recordStepRead d 0 hd rfl, moveInputPos_zero]\n  · intro u hu b\n    have : u = 0 := by omega\n    subst u\n    simp [hd]\n\n/-- Before Save reaches the left boundary it takes exactly one left step per round.",
+    "same_declaration_edits": [
+      "RO1-0125"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "recordStepRead.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "line": 1067,
+    "declaration_lexical": "counter_body",
+    "context": "\n  let emb : S ↪ CounterLoopState S :=\n    ⟨counterLoopRedirect a exit, counter_redirect_injective a exit⟩\n  have first : (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) 1 =\n      (E.runFrom ec 1).mapState emb := by\n    change (counterLoopTMVia e M a exit).step (counterLoopCfg (some (.body a)) c ct cp) =\n      (E.step ec).mapState emb\n    have hec : ec.state = some a := hc\n    simp only [MultiTapeTM.step, hec, counterLoopCfg, Cfg.mapState]\n    rfl\n  have run (u : ℕ) (hu : 0 < u) (hut : u ≤ t) :\n      (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) u =",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "runFrom (counterLoopCfg (some (.body a)) c ct cp) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "line": 1068,
+    "declaration_lexical": "counter_body",
+    "context": "\n    ⟨counterLoopRedirect a exit, counter_redirect_injective a exit⟩\n  have first : (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) 1 =\n      (E.runFrom ec 1).mapState emb := by\n    change (counterLoopTMVia e M a exit).step (counterLoopCfg (some (.body a)) c ct cp) =\n      (E.step ec).mapState emb\n    have hec : ec.state = some a := hc\n    simp only [MultiTapeTM.step, hec, counterLoopCfg, Cfg.mapState]\n    rfl\n  have run (u : ℕ) (hu : 0 < u) (hut : u ≤ t) :\n      (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) u =\n        counterLoopCfg ((M.runFrom c u).state.map (counterLoopRedirect a exit))",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "E.runFrom ec 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "line": 1083,
+    "declaration_lexical": "counter_body",
+    "context": "\n    have tr := MultiTapeTM.runFrom_mapState_of_agreeOn E (counterLoopTMVia e M a exit) emb\n      (fun s => s ≠ a ∧ exit ≠ some s)\n      (by intro s hs inp work; simp [emb, counterLoopRedirect, hs.1, hs.2, counterLoopTMVia, E])\n      (E.runFrom ec 1) n (by\n        intro v hv s hs\n        have he := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c (1 + v)\n        change E.runFrom ec (1 + v) = _ at he\n        rw [MultiTapeTM.runFrom_add] at he\n        have hstate := congrArg Cfg.state he\n        change (E.runFrom (E.runFrom ec 1) v).state = (M.runFrom c (1 + v)).state at hstate\n        obtain ⟨s', hs', ha, hx⟩ := hmid (1 + v) (by omega) (by omega)",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "E.runFrom ec 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "line": 1089,
+    "declaration_lexical": "counter_body",
+    "context": "\n        change E.runFrom ec (1 + v) = _ at he\n        rw [MultiTapeTM.runFrom_add] at he\n        have hstate := congrArg Cfg.state he\n        change (E.runFrom (E.runFrom ec 1) v).state = (M.runFrom c (1 + v)).state at hstate\n        obtain ⟨s', hs', ha, hx⟩ := hmid (1 + v) (by omega) (by omega)\n        have eqs : s = s' := Option.some.inj (hs.symm.trans (hstate.trans hs'))\n        simpa [eqs] using And.intro ha hx)\n    rw [tr, ← MultiTapeTM.runFrom_add]\n    change (E.runFrom ec (1 + n)).mapState emb = _\n    rw [show E.runFrom ec (1 + n) =\n      embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] (M.runFrom c (1 + n)) from",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "E.runFrom ec 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+    "line": 254,
+    "declaration_lexical": "body_round",
+    "context": "\n  have hEsome : ∀ j ≤ tE, ∃ q, (Em.tm.runFrom subc₀ j).state = some q := by\n    intro j hj\n    exact state_isSome_of_runFrom Em.tm (by rw [hErun]; rfl) hj\n  have hone : Em.tm.runFrom subc₀ 1 = Em.tm.step subc₀ := by\n    simp [MultiTapeTM.runFrom]\n  have hEchain : ∀ u ≤ tE - 1,\n      H.runFrom c₀ (1 + u) =\n        embedCfg (Nat.le_max_left Em.k Gm.k) (BodyState.callE (SG := Gm.State))\n          (Em.tm.runFrom subc₀ (1 + u)) := by\n    intro u hu\n    rw [runFrom_add, runFrom_one, hstep₁]\n    rw [embed_run (Nat.le_max_left Em.k Gm.k) Em.tm H\n      (BodyState.callE (SG := Gm.State)) ex htrE (Em.tm.step subc₀) u ?hstates]",
+    "same_declaration_edits": [
+      "RO1-0129",
+      "RO1-0130",
+      "RO1-0131",
+      "RO1-0132",
+      "RO1-0249",
+      "RO1-0250"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom subc₀ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+    "line": 312,
+    "declaration_lexical": "body_round",
+    "context": "\n  have hGsome : ∀ j ≤ tG, ∃ q, (Gm.tm.runFrom subg₀ j).state = some q := by\n    intro j hj\n    exact state_isSome_of_runFrom Gm.tm (by rw [hGrun]; rfl) hj\n  have honeG : Gm.tm.runFrom subg₀ 1 = Gm.tm.step subg₀ := by\n    simp [MultiTapeTM.runFrom]\n  have hGchain : ∀ u ≤ tG - 1,\n      H.runFrom (Cfg.ofWords (BodyState.gStart (SE := Em.State) (SG := Gm.State)) (stateWord (max Em.k Gm.k) s)) (1 + u) =\n        embedCfg (Nat.le_max_right Em.k Gm.k) (BodyState.callG (SE := Em.State))\n          (Gm.tm.runFrom subg₀ (1 + u)) := by\n    intro u hu\n    rw [runFrom_add, runFrom_one, hstep₂]\n    rw [embed_run (Nat.le_max_right Em.k Gm.k) Gm.tm H",
+    "same_declaration_edits": [
+      "RO1-0129",
+      "RO1-0130",
+      "RO1-0131",
+      "RO1-0132",
+      "RO1-0249",
+      "RO1-0250"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom subg₀ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "line": 81,
+    "declaration_lexical": "SafeRun.cons",
+    "context": "\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  have hone : H.runFrom c 1 = c₁ := by\n    simp [runFrom, hstep]\n  refine ⟨?_, ?_⟩\n  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]\n    exact h.1\n  · intro t' ht'\n    cases t' with\n    | zero => simpa using hc\n    | succ u =>\n      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]\n      exact h.2 u (by omega)\n\n/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)",
+    "same_declaration_edits": [
+      "RO1-0252"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "H.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "line": 262,
+    "declaration_lexical": "runFrom_one",
+    "context": "\n      { embedCfg hmk inject c with output := o } := rfl\n\n/-- A one-step run is a step. -/\ntheorem runFrom_one (H : MultiTapeTM k Bool B) (c : Cfg k Bool B x) :\n    H.runFrom c 1 = H.step c := by\n  simp [MultiTapeTM.runFrom]\n\n/-- One host step at a state behaving like the module's state `q` tracks one\nmodule step.\n**Proof sketch.** Both steps dispatch their transition tables on live states;\nthe embedded configuration reads the same input symbol and, through\n`embedCfg_workTapeSymbols`, the same work symbols, so the host's action is\nthe padded module action, and `padAction_apply` pushes it through the",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "H.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean",
+    "line": 554,
+    "declaration_lexical": "rd_call_run",
+    "context": "\n    · funext j p; simp only [Cfg.mapState_workTapes, e]\n    · funext j; simp only [Cfg.mapState_workTapePos, e]\n    · simp only [Cfg.mapState_output, e]\n  have hleaf : (rd_family i).runFrom c 1 = f := by\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n    exact step_of_inputMoveAction (rd_callLeaf op b) c (rd_leafMove op b) hc rfl\n  have leaf := phaseHostTM_run rd_family ⟨.inl none, .inl ()⟩ rd_redirect i c f 1\n    hleaf (.inr a) rfl ⟨.inr (.inr ()), .inr a⟩ rfl (by\n      intro u hu q hq\n      have hu0 : u = 0 := by omega\n      rw [hu0, MultiTapeTM.runFrom_zero, hc] at hq",
+    "same_declaration_edits": [
+      "RO1-0133"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 52,
+    "declaration_lexical": "iw_one",
+    "context": "\n/-- One step from a live state applies that state's transition at the scanned symbols. -/\nprivate theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)\n    (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :\n    M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by\n  calc\n    _ = M.step (M.runFrom c 0) := MultiTapeTM.runFrom_succ_eq_step'\n    _ = _ := by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hc]\n\n/-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/\nprivate theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)\n    (hc : c.state = some false) (hb : c.inputSymbol = some b) :",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 60,
+    "declaration_lexical": "iw_body_copy",
+    "context": "\n/-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/\nprivate theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)\n    (hc : c.state = some false) (hb : c.inputSymbol = some b) :\n    iw_body.runFrom c 1 =\n      { c with\n        state := some false, inputPos := moveInputPos c.inputPos 1,\n        workTapes := fun i => Function.update (c.workTapes i) (c.workTapePos i) (some b),\n        workTapePos := fun i => c.workTapePos i + 1 } := by\n  rw [iw_one iw_body c false hc]\n  simp only [iw_body, Bool.false_eq_true, if_false, hb]\n  apply Cfg.ext\n  · rw [Action.apply_state]\n  · rw [Action.apply_inputPos]\n  · funext i",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_body.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 80,
+    "declaration_lexical": "iw_body_blank",
+    "context": "\n/-- On a blank input cell, the body escapes in one step without changing any data. -/\nprivate theorem iw_body_blank {z : List Bool} (c : Cfg 1 Bool Bool z)\n    (hc : c.state = some false) (hb : c.inputSymbol = none) :\n    iw_body.runFrom c 1 = { c with state := some true } := by\n  rw [iw_one iw_body c false hc]\n  simp only [iw_body, Bool.false_eq_true, if_false, hb,\n    FinTM.controlAction_apply, moveInputPos_zero]\n\n/-- Overwrite a finite interval of a tape, leaving its exterior intact. -/\nprivate def iw_patch (tape : ℤ → Option Bool) (head : ℤ) (v : List Bool) :\n    ℤ → Option Bool := fun q =>\n  if head ≤ q ∧ q < head + (v.length : ℤ)",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_body.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 148,
+    "declaration_lexical": "iw_prefix_step",
+    "context": "\nnext free destination cell, which is exactly the interval append equation. -/\nprivate theorem iw_prefix_step {z : List Bool} (c : Cfg 1 Bool Bool z) (p r : ℕ)\n    (hr : p + r < z.length) :\n    iw_body.runFrom (iw_prefix c p r (by omega)) 1 =\n      iw_prefix c p (r + 1) (by omega) := by\n  have hdrop : r < (z.drop p).length := by rw [List.length_drop]; omega\n  have hlen : ((z.drop p).take r).length = r := List.length_take_of_le hdrop.le\n  have hbit : (iw_prefix c p r (by omega)).inputSymbol = some z[p + r] :=\n    inputSymbolInner (p + r) (by simp only [iw_prefix]; omega) hr\n  rw [iw_body_copy _ _ rfl hbit]\n  refine Cfg.ext rfl ?_ ?_ ?_ ?_",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_body.runFrom (iw_prefix c p r (by omega)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 182,
+    "declaration_lexical": "iw_orbit",
+    "context": "\n    simpa only [roundOrbit_zero] using (iw_prefix_zero c p (by omega) hc hi).symm\n  | succ r ih =>\n    simp only [roundOrbit_succ]\n    exact (congrArg (fun x => iw_body.runFrom x 1) (ih (by omega))).trans\n      (iw_prefix_step c p r (by omega))\n\n/-- The counter loop's escape anchor takes one silent stationary step to its done anchor.\nEvery other transition is the counter loop's. -/\nprivate def iw_machine : MultiTapeTM 2 Bool (CounterLoopState Bool) where\n  q₀ := .dec .run\n  tr := fun q inp work => match q with\n    | .escape => FinTM.controlAction 0 (some .done)\n    | _ => (counterLoopTM iw_body false (some true)).tr q inp work",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_body.runFrom x 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 215,
+    "declaration_lexical": "iw_join_step",
+    "context": "\n/-- The join changes only the control state at the escape anchor. -/\nprivate theorem iw_join_step {z : List Bool} (c : Cfg 2 Bool (CounterLoopState Bool) z)\n    (hc : c.state = some .escape) :\n    iw_machine.runFrom c 1 = { c with state := some .done } := by\n  rw [iw_one iw_machine c .escape hc]\n  simp only [iw_machine, FinTM.controlAction_apply, moveInputPos_zero]\n\n/-- The all-true underflow word has exactly the counter loop's reported tape contents. -/\nprivate theorem iw_patch_true (ct : ℤ → Option Bool) (cp : ℤ) (width : ℕ) :\n    iw_patch ct cp (List.replicate width true) =\n      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_machine.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line": 279,
+    "declaration_lexical": "iw_local",
+    "context": "\n    have hfinal : counterLoopOrbit iw_body (fun _ => 1) c (n + 1) =\n        { iw_prefix c p n (by omega) with state := some true } := by\n      simp only [roundOrbit_succ]\n      exact (congrArg (fun x => iw_body.runFrom x 1) (horbit n (by omega))).trans\n        (iw_body_blank _ rfl (Cfg.inputSymbol_of_end (by simp only [iw_prefix]; omega)))\n    obtain ⟨hend, hcut, _, _⟩ := counterLoopTM_run_escape iw_body false true (by decide)\n      (fun _ => 1) c w ct cp hw n hnd' (fun r hr => by\n        refine ⟨?_, Nat.one_pos, (fun u hu hu' => by dsimp only at hu'; omega)⟩\n        rw [horbit r (by omega)]; rfl) (by rw [hfinal]) t (by simp [t])",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "iw_body.runFrom x 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line": 3482,
+    "declaration_lexical": "emCall_track_initial",
+    "context": "\nleaving source work blank, the source input head at one, and output empty. -/\nprivate lemma emCall_track_initial (M : FinTM Bool) (x : List Bool) :\n    (emCallTrackTM M).tm.runFrom ((emCallTrackTM M).tm.initCfg x) 1 =\n      emCallTrackCfg M (M.tm.initCfg x) (fun _ => 0) (fun _ => 0) := by\n  change (emCallTrackTM M).tm.step ((emCallTrackTM M).tm.initCfg x) = _\n  simp only [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, emCallTrackTM]\n  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl\n  · funext i\n    refine Fin.addCases ?_ ?_ i\n    · intro j; simp [Action.apply, emCallTrackCfg, emCallSlots, -Fin.natAdd_eq_addNat]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom ((emCallTrackTM M).tm.initCfg x) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line": 3788,
+    "declaration_lexical": "emCall_right_finish",
+    "context": "\n    apply Fin.ext\n    change p.val = j + 1\n    dsimp [j]; omega\n  refine ⟨1 + (x.length - j + 1), by omega, ?_⟩\n  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs]\n  exact emCall_right_scan M c (x.length - j) j hj (by omega)\n\n/-- Right-boundary normalization preserves the entire completed source\nconfiguration, not just its output. This retains the tracked cleanup witnesses.\n**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to retain the completed source\nconfiguration and strict earlier-time liveness. The native right scan then costs at most `|x|+2`;",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (emCallRightCfg M c) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line": 4153,
+    "declaration_lexical": "emCall_finish_run",
+    "context": "\n    (bufferTape (if emit then arg else cap)) (if emit then cap else []) cap\n  simp only [ite_self] at harg\n  simp only [List.length_nil, Nat.cast_zero, ite_self] at htransfer\n  have hsrun : (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)\n        arg.length cap.length []) 1 =\n      emCallFinishCfg emit x p 1 (bufferTape arg) (bufferTape cap)\n        ((arg.length : ℤ) - 1) cap.length [] := by\n    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs\n  have h1 := (emCallFinishTM emit).tm.runFrom_add\n    (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)\n      arg.length cap.length []) 1 (arg.length + 1)\n  rw [hsrun, harg] at h1\n  have h2 := (emCallFinishTM emit).tm.runFrom_add",
+    "same_declaration_edits": [
+      "RO1-0140"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom\n      (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)\n        arg.length cap.length []) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line": 4842,
+    "declaration_lexical": "emCall_exit_fixed",
+    "context": "\n      · exact ((embedEmitTM_frame (emCallPairEmbedding M) (emCallFinishTM emit).tm\n          z.workTapes z.workTapePos [] c 0).1 j hj).2\n  have hs : (emCallFinishTM emit).tm.runFrom c 1 = c := by\n    change (controlAction 0 (some (5 : Fin 6))).apply c = c\n    rw [controlAction_apply, moveInputPos_zero]\n  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)\n    (callTM M emit).tm\n    ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩\n    (fun _ => True) (by intros; rfl)\n    (embedEmitCfg (emCallPairEmbedding M) z.workTapes z.workTapePos [] c) 1",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line": 4852,
+    "declaration_lexical": "emCall_exit_fixed",
+    "context": "\n    (embedEmitCfg (emCallPairEmbedding M) z.workTapes z.workTapePos [] c) 1\n    (by intros; trivial)\n  rw [embedEmitTM_runFrom, hs] at he\n  change (callTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)\n    (fun q => .inr (.inr q)) z.workTapes z.workTapePos c) 1 =\n    emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q))\n      z.workTapes z.workTapePos c at he\n  rw [hframe] at he\n  exact he\n\n/-- The complete clean call returns at its actual first positive exit.\n**Proof sketch.** Cut the bounded complete run at the least exit visit.\nAbsorption preserves its full tape/head/output endpoint. The entry and exit\nlie in disjoint finite-control summands, excluding time zero. -/",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Loop.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)\n    (fun q => .inr (.inr q)) z.workTapes z.workTapePos c) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/OracleSim.lean",
+    "line": 1876,
+    "declaration_lexical": "oracleHost_initial",
+    "context": "\n    apply oracleBankCfg_eq oracleDispatchTM _ localInit d rfl rfl rfl\n    · intro i\n      simp [localInit, d, Cfg.ofWords, words]\n    · intro i\n      rfl\n  have boot : oracleDispatchTM.runFrom localInit 1 = localDone := by\n    change oracleDispatchTM.step localInit = _\n    simp [localInit, localDone, MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction,\n      Cfg.ofWords, Cfg.mapState, oracleOrigin, Cfg.ext_iff, funext_iff, Fin.forall_fin_succ,\n      Function.update_apply]\n  have admin := oracleHost_dispatch M C hc en ex d.workTapes d.workTapePos\n    localInit localDone 1 boot .ready rfl ⟨.source, (M.tm.q₀, true)⟩ rfl (by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "oracleDispatchTM.runFrom localInit 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 1341,
+    "declaration_lexical": "catalogPoly_loop",
+    "context": "\n        rw [show catalogPolyCost q C 0 + 2 = 1 + (C + 1) + 1 by simp [catalogPolyCost]; omega,\n          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,\n          show (catalogPolyUnaryTM c C).tm.runFrom (catalogPolyCfg x q (.loop 0) h' o) 1 =\n            catalogPolyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,\n          catalogPoly_emit x q h' C (le_refl C),\n          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n        simpa [h'] using catalogPoly_advance (C := C) x q h'\n          (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))\n      · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by\n          intro k hk",
+    "same_declaration_edits": [
+      "RO1-0148",
+      "RO1-0149"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (catalogPolyCfg x q (.loop 0) h' o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 1377,
+    "declaration_lexical": "catalogPoly_loop",
+    "context": "\n        rw [show catalogPolyCost q C i + 2 = 1 + catalogPolyCost q C i + 1 by omega,\n          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,\n          show (catalogPolyUnaryTM c C).tm.runFrom (catalogPolyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =\n            catalogPolyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,\n          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n        simpa [h'] using catalogPoly_advance (C := C) x q h'\n          (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))\n    induction r generalizing o with\n    | zero =>\n      intro j hj\n      have hj' : j = q := by omega\n      subst j",
+    "same_declaration_edits": [
+      "RO1-0148",
+      "RO1-0149"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (catalogPolyCfg x q (.loop ⟨i, hi⟩) h' o) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 5154,
+    "declaration_lexical": "splitSafe_one",
+    "context": "\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S w)\n    (he : tm.step c = d) (hc : c.state ≠ some anchor) (hd : d.state ≠ some anchor) :\n    tm.runFrom c 1 = d ∧ splitSafe tm anchor c 1 := by\n  refine ⟨he, ?_⟩\n  intro j hj\n  rcases (show j = 0 ∨ j = 1 by omega) with rfl | rfl\n  · exact hc\n  · change (tm.step c).state ≠ _\n    rw [he]; exact hd\n\n/-- Concatenate two safe exact phase runs. -/\nprivate lemma splitSafe_join {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d f : Cfg k Bool S w) (u v : ℕ)\n    (h1 : tm.runFrom c u = d) (hs1 : splitSafe tm anchor c u)",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 5209,
+    "declaration_lexical": "splitBody_round",
+    "context": "\n    ({c with state := some (2 : Fin 3), inputPos := 1} : Cfg (M.k + 1) Bool (Fin 3) w).mapState\n    (SplitBodyState.rewind (S := M.State) ok)\n  have hdepart : tm.runFrom z 1 = p := by\n    change (controlAction 0 (some (.prepare (0, false)))).apply z = p\n    rw [controlAction_apply, moveInputPos_zero]\n    rfl\n  obtain ⟨a, ha, hprep, hpreps⟩ := splitBody_prepare M start w s\n  obtain ⟨b, hb, hcount, hcounts⟩ := splitBody_count M start w s out T hT\n  obtain ⟨h1, hs1⟩ := splitSafe_join tm .anchor p _ d (a + 1) b hprep hpreps hcount hcounts\n  have hcheck : tm.step d = c.mapState (SplitBodyState.rewind ok) := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom z 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 6504,
+    "declaration_lexical": "emitterP2_call_phase",
+    "context": "\n  | zero => omega\n  | succ t =>\n    let ec := embedEmitCfg index tapes heads [] c\n    let z := {ec.mapState emb with state := some enter}\n    have first : host.runFrom z 1 = (embedEmitCfg index tapes heads [] (src.runFrom c 1)).mapState emb := by\n      change host.step z = (embedEmitCfg index tapes heads [] (src.step c)).mapState emb\n      have r1 := congrArg (Cfg.mapState emb) (embedEmitTM_runFrom index src tapes heads [] c 1)\n      change ((embedEmitTM index src).step ec).mapState emb =\n        (embedEmitCfg index tapes heads [] (src.step c)).mapState emb at r1\n      rw [← r1]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "host.runFrom z 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 6504,
+    "declaration_lexical": "emitterP2_call_phase",
+    "context": "\n    let ec := embedEmitCfg index tapes heads [] c\n    let z := {ec.mapState emb with state := some enter}\n    have first : host.runFrom z 1 = (embedEmitCfg index tapes heads [] (src.runFrom c 1)).mapState emb := by\n      change host.step z = (embedEmitCfg index tapes heads [] (src.step c)).mapState emb\n      have r1 := congrArg (Cfg.mapState emb) (embedEmitTM_runFrom index src tapes heads [] c 1)\n      change ((embedEmitTM index src).step ec).mapState emb =\n        (embedEmitCfg index tapes heads [] (src.step c)).mapState emb at r1\n      rw [← r1]\n      have control : ec.state = some entry := hc",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "src.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 6514,
+    "declaration_lexical": "emitterP2_call_phase",
+    "context": "\n      exact Cfg.mapState_apply emb _ ec\n    obtain ⟨endpoint, safe⟩ := emitterP2_phase src host index emb anchor haway\n      (fun q => q ≠ exit) hagree tapes heads (src.runFrom c 1) d t\n      (by\n        intro j hj q hq he\n        apply hguard (1 + j) (by omega) (by omega)\n        rw [MultiTapeTM.runFrom_add, hq, he])\n      (by simpa only [← MultiTapeTM.runFrom_add, Nat.add_comm 1] using hr)\n    constructor\n    · change host.runFrom z (t + 1) = _\n      rw [Nat.add_comm t 1, MultiTapeTM.runFrom_add, first]\n      exact endpoint\n    · intro j hj\n      cases j with\n      | zero => exact fun he => henter (Option.some.inj he)",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "src.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line": 7385,
+    "declaration_lexical": "emitterP2_body_round",
+    "context": "\n  let p := Cfg.ofWords (input := w) (EmitterP2State.prepare (S := C.State) (T := D.State) (0, false))\n    (emitterP2Words C.k D.k s [] [])\n  have hdepart : tm.runFrom z 1 = p := by\n    change tm.step z = p\n    simpa only [z, p, emitterP2_words_clean] using emitterP2_control tm .anchor (.prepare (0, false))\n      (fun _ _ => rfl) w (emitterP2Words C.k D.k s [] [])\n  obtain ⟨c, hc, hp, hps⟩ := emitterP2_body_prepare C D hk hl ce cx de dx w s\n  by_cases hover : w.length < s.length\n  · have hp' : tm.runFrom p c = Cfg.ofWords (.prepare (8, true))\n        (emitterP2Words C.k D.k s s (w.drop s.length)) := by simpa [hover] using hp",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/Primitives.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom z 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 1350,
+    "declaration_lexical": "rt_find_read",
+    "context": "\n    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)\n    {x : List Γ} (d : Cfg 2 Γ (Option Bool) x) (hd : d.state = some none) :\n    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =\n      d.mapState (fun _ => ⟨.read, some (d.workTapes 0 (d.workTapePos 0)).isSome⟩) ∧\n    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 =\n      d.mapState (fun _ => if (d.workTapes 0 (d.workTapePos 0)).isSome then\n        ⟨.scan ⟨0, hm⟩, .fwd a₀⟩ else ⟨.exit, ()⟩) := by\n  let b := (d.workTapes 0 (d.workTapePos 0)).isSome\n  let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }",
+    "same_declaration_edits": [
+      "RO1-0177"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 1357,
+    "declaration_lexical": "rt_find_read",
+    "context": "\n  let b := (d.workTapes 0 (d.workTapePos 0)).isSome\n  let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }\n  have hz : (rt_findParts (m := m) δ a₀ .read).runFrom d 1 = z := by\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n    rw [step_of_inputMoveAction _ d 0 hd (by rfl)]\n    simp only [z, moveInputPos_zero]\n    rfl\n  have hdispatch : rt_findRedirect hm δ a₀ acc .read (some b) =\n      some (if b then ⟨.scan ⟨0, hm⟩, .fwd a₀⟩ else ⟨.exit, ()⟩) := by\n    cases b <;> rfl\n  have hg : ∀ u < 1, ∀ s, ((rt_findParts (m := m) δ a₀ .read).runFrom d u).state = some s →",
+    "same_declaration_edits": [
+      "RO1-0177"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 1376,
+    "declaration_lexical": "rt_find_read",
+    "context": "\n  obtain ⟨hp, h⟩ := phaseHostTM_run (rt_findParts (m := m) δ a₀) ⟨.read, none⟩\n    (rt_findRedirect hm δ a₀ acc) .read d z 1 hz (some b) rfl _ hdispatch hg\n  refine ⟨?_, ?_⟩\n  · rw [show (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =\n        ((rt_findParts (m := m) δ a₀ .read).runFrom d 1).mapState (Sigma.mk (.read : rt_findPhase m A)) from hp 1 le_rfl, hz]\n    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]\n  ·\n    change (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 = _ at h\n    rw [h]\n    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]\n\n/-- A field fold in the search host follows the catalog scan through its first",
+    "same_declaration_edits": [
+      "RO1-0177"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 1377,
+    "declaration_lexical": "rt_find_read",
+    "context": "\n  refine ⟨?_, ?_⟩\n  · rw [show (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =\n        ((rt_findParts (m := m) δ a₀ .read).runFrom d 1).mapState (Sigma.mk (.read : rt_findPhase m A)) from hp 1 le_rfl, hz]\n    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]\n  ·\n    change (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 = _ at h\n    rw [h]\n    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]\n\n/-- A field fold in the search host follows the catalog scan through its first\nexit and then dispatches once, carrying the computed accumulator.",
+    "same_declaration_edits": [
+      "RO1-0177"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 2319,
+    "declaration_lexical": "rt_boundary_run",
+    "context": "\n    workTapes := Function.update d.workTapes i\n      (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))}\n  have one : (rt_boundaryTM k i b).runFrom d 1 = a := by\n    change (rt_boundaryTM k i b).step d = a\n    rw [step_of_tapeAction_move (rt_boundaryTM k i b) d (q' := 1) i 0 .neg hs\n      (by simp [rt_boundaryTM])]\n    simp [a, SignType.cast, sub_eq_add_neg]\n  have two : (rt_boundaryTM k i b).runFrom d 2 = c := by\n    change (rt_boundaryTM k i b).step ((rt_boundaryTM k i b).runFrom d 1) = c\n    rw [one]\n    rw [step_of_tapeAction_write (rt_boundaryTM k i b) a (q := 1) (q' := 2) i 0",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 2325,
+    "declaration_lexical": "rt_boundary_run",
+    "context": "\n    simp [a, SignType.cast, sub_eq_add_neg]\n  have two : (rt_boundaryTM k i b).runFrom d 2 = c := by\n    change (rt_boundaryTM k i b).step ((rt_boundaryTM k i b).runFrom d 1) = c\n    rw [one]\n    rw [step_of_tapeAction_write (rt_boundaryTM k i b) a (q := 1) (q' := 2) i 0\n      (some b) .pos rfl (by simp [rt_boundaryTM])]\n    apply Cfg.ext <;> simp [a, c, SignType.cast, Function.update_idem]\n  have three : (rt_boundaryTM k i b).runFrom d 3 =\n      {d with\n        state := some 3\n        workTapes := Function.update d.workTapes i\n          (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line": 3456,
+    "declaration_lexical": "rt_window_run",
+    "context": "\n  let b' : Cfg 3 Bool SeekPhase x := { b with\n    state := some .done\n    workTapePos := Function.update b.workTapePos 1 (b.workTapePos 1 + 1) }\n  have runB : (skipTM 3 1).runFrom b 1 = b' := by\n    simpa only [b', List.length_nil, Nat.cast_zero, add_zero] using runB\n  let c := b'.mapState (fun _ => SeekPhase.run)\n  have cp : c.workTapePos 1 = d.workTapePos 1 + w.length + 1 := by\n    simp [c, b', Cfg.mapState, bp]\n  obtain ⟨runC, cutC, headsC⟩ := skipBackTM_run_ofCfg (1 : Fin 3) w c rfl (by\n    intro p lo hi\n    change b.workTapes 1 (c.workTapePos 1 - w.length - 1 + p) = _\n    rw [cp]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom b 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+    "line": 166,
+    "declaration_lexical": "sl_pairSkip_two_steps",
+    "context": "\n    (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start) (b₀ b₁ : Bool)\n    (h0 : d.workTapes src (d.workTapePos src) = some b₀)\n    (h1 : d.workTapes src (d.workTapePos src + 1) = some b₁) :\n    (sl_pairSkipTM k src).runFrom d 1 =\n        { d with\n          state := some (.after b₀)\n          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } ∧\n      (sl_pairSkipTM k src).runFrom d 2 =\n        { d with\n          state := some (if b₀ = false ∧ b₁ = true then .done else .start)\n          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) } := by\n  have hs1 : (sl_pairSkipTM k src).step d =",
+    "same_declaration_edits": [
+      "RO1-0178"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+    "line": 182,
+    "declaration_lexical": "sl_pairSkip_two_steps",
+    "context": "\n    have hr : d.workTapeSymbols src = some b₀ := by rw [Cfg.workTapeSymbols_eq]; exact h0\n    simp only [sl_pairSkipTM]\n    rw [hr]\n  have hrun1 : (sl_pairSkipTM k src).runFrom d 1 =\n      { d with\n        state := some (.after b₀)\n        workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by\n    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',\n      MultiTapeTM.runFrom_zero, hs1]\n  refine ⟨hrun1, ?_⟩\n  have hr1 : ({ d with\n      state := some (sl_PairPhase.after b₀)\n      workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } :",
+    "same_declaration_edits": [
+      "RO1-0178"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+    "line": 459,
+    "declaration_lexical": "sl_unarySplit_copy",
+    "context": "\n    rw [Nat.cast_zero, add_zero, decide_eq_false (Nat.lt_irrefl 0)] at h0\n    have hs := sl_split_step_exit src sm hne hstate\n      (by rw [Cfg.workTapeSymbols_eq]; exact h0)\n    have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 = (sl_unarySplitTM k src sm).step d := by\n      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',\n        MultiTapeTM.runFrom_zero]\n    refine ⟨?_, ?_, ?_⟩\n    · rw [show ((0 : ℕ) : ℤ) = 0 from by norm_num, hrun1, hs]\n      apply Cfg.ext <;> dsimp only <;> try rfl\n      · funext j\n        rcases eq_or_ne j sm with rfl | hjsm\n        · simp only [Function.update_self]\n          funext z",
+    "same_declaration_edits": [
+      "RO1-0179"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+    "line": 616,
+    "declaration_lexical": "sl_unarySplitTM_run",
+    "context": "\n      rfl .copy (by simp only [sl_unarySplitTM])).trans ?_\n    apply Cfg.ext <;> dsimp only\n    rw [Function.update_idem, Function.update_self]\n    congr 1\n    ring\n  have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 =\n      { d with\n        state := some .mv2\n        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } := by\n    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',\n      MultiTapeTM.runFrom_zero, hs1]\n  have hrun2 : (sl_unarySplitTM k src sm).runFrom d 2 =\n      { d with\n        state := some .copy\n        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 2) } := by",
+    "same_declaration_edits": [
+      "RO1-0180"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "line": 1500,
+    "declaration_lexical": "seekTM_rank",
+    "context": "\n  by_cases hn : records = []\n  · subst records\n    have hz : rank.val = 0 := hlen.symm\n    simp only [hz, ↓reduceDIte] at step\n    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := step\n    simp only [seekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero,\n      Nat.cast_zero, add_zero, Function.update_eq_self]\n    refine ⟨he, ?_, ?_⟩\n    · intro u hu\n      have hu0 : u = 0 := by omega\n      simp [hu0, seekCfg, Cfg.mapState, hq]\n    · intro u hu\n      rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl\n      · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "runFrom (seekCfg d (.state rank)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "line": 1755,
+    "declaration_lexical": "seekTM_observe",
+    "context": "\n  · intro u hu\n    rcases (show u = 0 ∨ u = 1 ∨ u = 2 by omega) with rfl | rfl | rfl\n    · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩\n    · rw [show (seekTM k).runFrom (seekCfg d .observe) 1 = seekCfg next (.advance rank)\n      from first]\n      exact ⟨rfl, rfl, rfl, fun j hj => by simp [seekCfg, Cfg.mapState, next, hj]⟩\n    · rw [run]\n      refine ⟨rfl, rfl, rfl, ?_⟩\n      intro j hj\n      simp [seekCfg, Cfg.mapState, seekShift, hj]\n\n/-- One state's ordered action list, before serialization. -/\nprivate def readActions {k n : ℕ}\n    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "runFrom (seekCfg d .observe) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean",
+    "line": 139,
+    "declaration_lexical": "fl_leaf_run",
+    "context": "\nprivate lemma fl_leaf_run {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Option Bool) x)\n    (live : Bool) (hd : d.state = some (some live)) :\n    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d :=\n  fl_leaf_step d live hd\n\n/-- Relabelling the forwarding configuration changes only its designated live control. -/\nprivate lemma fl_encode_map {k n : ℕ} {Q R : Type} {x : List Bool} (entry : Q)\n    (f : Q → R) (M : MultiTapeTM k Bool (Fin (n + 1)))\n    (c : Cfg k Bool (Fin (n + 1)) x) :\n    (forwardLoopCfg entry M c).mapState f = forwardLoopCfg (f entry) M c := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+    "line": 611,
+    "declaration_lexical": "up_scan_pair",
+    "context": "\n    cases a <;> cases b <;> simpa only [q, Bool.false_eq_true, Bool.true_eq_false,\n      ↓reduceIte, and_self, and_false, false_and, true_and] using step\n  have one (e : Cfg k Bool (Fin 4) z) :\n      (headerScanTM i).runFrom e 1 = (headerScanTM i).step e := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n  constructor\n  · calc\n      _ = (headerScanTM i).runFrom\n          ((headerScanTM i).runFrom (headerScanCfg i d 0 t (by omega)) 1) 1 :=\n        MultiTapeTM.runFrom_add _ 1 1\n      _ = _ := by rw [one, one, h1, h2]\n  · intro v hv\n    have casesv : v = 0 ∨ v = 1 := by omega\n    rcases casesv with rfl | rfl",
+    "same_declaration_edits": [
+      "RO1-0181"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom e 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+    "line": 615,
+    "declaration_lexical": "up_scan_pair",
+    "context": "\n      (headerScanTM i).runFrom e 1 = (headerScanTM i).step e := by\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n  constructor\n  · calc\n      _ = (headerScanTM i).runFrom\n          ((headerScanTM i).runFrom (headerScanCfg i d 0 t (by omega)) 1) 1 :=\n        MultiTapeTM.runFrom_add _ 1 1\n      _ = _ := by rw [one, one, h1, h2]\n  · intro v hv\n    have casesv : v = 0 ∨ v = 1 := by omega\n    rcases casesv with rfl | rfl\n    · rw [MultiTapeTM.runFrom_zero]\n      change some (0 : Fin 4) ≠ some 3\n      decide\n    · rw [one, h1]\n      change some q ≠ some 3\n      cases a <;> decide\n\n/-- The scanner consumes one doubled header from any native input offset.",
+    "same_declaration_edits": [
+      "RO1-0181"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n          ((headerScanTM i).runFrom (headerScanCfg i d 0 t (by omega)) 1) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+    "line": 616,
+    "declaration_lexical": "up_scan_pair",
+    "context": "\n    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n  constructor\n  · calc\n      _ = (headerScanTM i).runFrom\n          ((headerScanTM i).runFrom (headerScanCfg i d 0 t (by omega)) 1) 1 :=\n        MultiTapeTM.runFrom_add _ 1 1\n      _ = _ := by rw [one, one, h1, h2]\n  · intro v hv\n    have casesv : v = 0 ∨ v = 1 := by omega\n    rcases casesv with rfl | rfl\n    · rw [MultiTapeTM.runFrom_zero]\n      change some (0 : Fin 4) ≠ some 3\n      decide\n    · rw [one, h1]\n      change some q ≠ some 3\n      cases a <;> decide\n\n/-- The scanner consumes one doubled header from any native input offset.",
+    "same_declaration_edits": [
+      "RO1-0181"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom (headerScanCfg i d 0 t (by omega)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+    "line": 1671,
+    "declaration_lexical": "zr_host_dispatch_run",
+    "context": "\n    (MB : MultiTapeTM 2 (ZoneSym k) B) (e : B) (back : B → Option (Option Bool))\n    (c : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh B b) x) (hc : c.state = some ⟨false, some false⟩) :\n    (zr_hostTM MB e back).runFrom c 1 = { c with state := some ⟨true, e⟩ } := by\n  have hD0 : (zr_hostDispatchContract MB e back x).pre () c := by\n    rw [zr_hostDispatchContract, Contract.inPhase_pre, zr_anchorContract,\n      Contract.zero_pre]\n    trivial\n  have hDt : (zr_hostDispatchContract MB e back x).time () c = 1 := by\n    rw [zr_hostDispatchContract, Contract.inPhase_time, zr_anchorContract,\n      Contract.zero_time]\n  rw [← hDt, (zr_hostDispatchContract MB e back x).run () c hc hD0, zr_hostDispatchContract,",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+    "line": 1728,
+    "declaration_lexical": "zr_round_of_body",
+    "context": "\n    {a entry : S} {E X : Set (Option S)} {P : (Fin n → ℤ) → Prop} (C : Contract M entry X I x)\n    (i : I) (c c₁ : Cfg n Γ S x) (hc : c.state = some a) (h1 : M.runFrom c 1 = c₁)\n    (hc₁ : c₁.state = some entry) (hp : C.pre i c₁) (haX : some a ∈ X) (hEX : E ⊆ X)\n    (hend : (C.post i c₁).state ∈ insert (some a) E) (hP0 : P c.workTapePos)\n    (hPC : ∀ p, HeadBox (C.lo i c₁) (C.hi i c₁) p → P p) :\n    Round M a E P c (C.post i c₁) (1 + C.time i c₁) := by\n  rw [round_iff]\n  refine ⟨hc, by omega, ?_, hend, ?_, ?_⟩\n  · rw [MultiTapeTM.runFrom_add, h1, C.run i c₁ hc₁ hp]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+    "line": 1777,
+    "declaration_lexical": "zr_loop_round",
+    "context": "\n        state := some ⟨false, some (c.workTapes 0 (c.workTapePos 0 - u.length)).isNone⟩\n        workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 - u.length - 1) }\n      (u.length + 9) := by\n  have hrun1 : (zr_loopTM k).runFrom c 1 = { c with state := some ⟨true, .inl .run⟩ } :=\n    zr_host_dispatch_run _ _ _ c hc\n  set c₁ : Cfg 2 (ZoneSym k) (Σ b, zr_loopPh b) x := { c with state := some ⟨true, .inl .run⟩ }\n    with hc₁\n  have hc₁s : c₁.state = some ⟨true, .inl .run⟩ := rfl\n  have hB0 : (zr_bodyPhaseContract x).pre u c₁ := by\n    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_pre, zr_bodyContract,\n      Contract.seq_pre, skipBackTM_contract_pre]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 1977,
+    "declaration_lexical": "exists_canonBoolBranch",
+    "context": "\n    let duration := 2 * x.length + 2 + 1 + t\n    let middle := (Cfg.ofWords (input := x) leave (stateWord I.k [p x])).mapState\n      (Sum.inr : I.State → SweepPhase ⊕ I.State)\n    have pop : V.runFrom (middle.mapState (fun _ => none)) 1 =\n        Cfg.ofWords (some (p x)) (fun _ => []) := canonBoolPop_run I.k positive (p x) x\n    have whole := seamCompTM_run_ofCfg P (Sum.inr leave) V none\n      first rfl firstCut pop\n    refine ⟨duration + 1 + 1, ?_, ?_, ?_⟩\n    · simp only [List.length_cons, List.length_nil, Nat.zero_add] at time\n      have bound : t ≤ a * (c + 2) * (x.length + 1) := by\n        apply time.trans\n        rw [Nat.mul_assoc]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "V.runFrom (middle.mapState (fun _ => none)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3107,
+    "declaration_lexical": "exists_canonStripTM",
+    "context": "\n    ({ Cfg.ofWords (input := x) exit (stateWord E.k argument)\n        with output := argument } : Cfg E.k Bool E.State x).mapState Sum.inr\n  let stopped := halt.runFrom (emitted.mapState (fun _ => ())) 1\n  have stopped_eq : stopped =\n      { emitted.mapState (fun _ => ()) with state := none } := by\n    simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,\n      emitted, Cfg.mapState, Cfg.ofWords, Action.apply]\n  have finished := seamCompTM_run_ofCfg release (Sum.inr exit) halt ()\n    released rfl releaseCut (rfl : halt.runFrom (emitted.mapState (fun _ => ())) 1 = stopped)\n  have complete := seamCompTM_run_ofCfg prepare (Sum.inr (.done false)) finish",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "halt.runFrom (emitted.mapState (fun _ => ())) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3113,
+    "declaration_lexical": "exists_canonStripTM",
+    "context": "\n      emitted, Cfg.mapState, Cfg.ofWords, Action.apply]\n  have finished := seamCompTM_run_ofCfg release (Sum.inr exit) halt ()\n    released rfl releaseCut (rfl : halt.runFrom (emitted.mapState (fun _ => ())) 1 = stopped)\n  have complete := seamCompTM_run_ofCfg prepare (Sum.inr (.done false)) finish\n    (Sum.inl (Sum.inl ())) prepared rfl prepareCut finished\n  let duration := (2 * x.length + 2 + 1 + (2 * x.length + 2)) + 1 + (t + 1 + 1)\n  have computation : machine.ComputesInTime x argument duration := by\n    apply (FinTM.computesInTime_iff machine _ _ _).mpr\n    rw [initCfg_ofWords]\n    change ((seamCompTM prepare (Sum.inr (.done false)) finish _).runFrom",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "halt.runFrom (emitted.mapState (fun _ => ())) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3416,
+    "declaration_lexical": "canonUnaryLoop",
+    "context": "\n        { d with state := some (some false), inputPos := ⟨p + r + 1, by omega⟩ } := by\n      change roundOrbit M (fun _ => 1) d (r + 1) = _\n      rw [roundOrbit_succ]\n      change M.runFrom (counterLoopOrbit M (fun _ => 1) d r) 1 = _\n      rw [orbit r le_rfl, MultiTapeTM.runFrom_succ_eq_step,\n        MultiTapeTM.runFrom_zero, canonCell_step true _ (some true) rfl]\n      have read := FinTM.inputSymbol_at\n        ({ d with state := some (some true), inputPos := ⟨p + r + 1, by omega⟩ })\n        (p + r) hr rfl\n      simp only [read, if_neg stopped, decide_eq_false stopped, moveInputPos_zero]\n    let t := r + 1 + counterOverhead w (r + 1)",
+    "same_declaration_edits": [
+      "RO1-0189"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom (counterLoopOrbit M (fun _ => 1) d r) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3951,
+    "declaration_lexical": "canonPairs_run",
+    "context": "\n        have read : d.inputSymbol = none := by rw [native.1, suffix]; rfl\n        have step := step_of_inputMoveAction M d (q' := Sum.inl false) 0 state\n          (by simp [M, canonPairsTM, more, read])\n        have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by\n          simpa only [moveInputPos_zero] using step\n        have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by\n          rw [parse, suffix]\n          rfl\n        refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩\n        · rw [run, verdict]; rfl\n        · rw [run]\n        · intro u hu b\n          have zero : u = 0 := by omega\n          subst u",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3975,
+    "declaration_lexical": "canonPairs_run",
+    "context": "\n        let d1 : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x :=\n          { d with\n            state := some (Sum.inr (j, some a))\n            inputPos := moveInputPos d.inputPos 1 }\n        have run1 : M.runFrom d 1 = d1 :=\n          step_of_inputMoveAction M d _ state\n            (by simp [M, canonPairsTM, more, read])\n        have pos1 : d1.inputPos.val = (p + 1) + 1 := by\n          exact advance.1\n        have range1 : p + 1 ≤ x.length := by have := d1.inputPos.isLt; omega\n        have native1 := canonNativeSuffix d1 (p + 1) pos1 range1\n        have d1state : d1.state = some (Sum.inr (j, some a)) := rfl\n        have cut1 (b : Bool) : (M.runFrom d 1).state ≠ some (Sum.inl b) := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 3983,
+    "declaration_lexical": "canonPairs_run",
+    "context": "\n        have native1 := canonNativeSuffix d1 (p + 1) pos1 range1\n        have d1state : d1.state = some (Sum.inr (j, some a)) := rfl\n        have cut1 (b : Bool) : (M.runFrom d 1).state ≠ some (Sum.inl b) := by\n          rw [run1, d1state]\n          simp\n        have fail (invalid : codeSkipPair vs[j.val] (x.drop p) = none)\n            (tr : M.tr (Sum.inr (j, some a)) d1.inputSymbol d1.workTapeSymbols =\n              inputMoveAction 0 (Sum.inl false)) :\n            ∃ t ≤ 2 * n + 1,\n              (M.runFrom d t).state =\n                some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4071,
+    "declaration_lexical": "canonPairs_run",
+    "context": "\n    · have done : vs.drop j.val = [] := List.drop_eq_nil_of_le (by omega)\n      have step := step_of_inputMoveAction M d (q' := Sum.inl true) 0 state\n        (by simp [M, canonPairsTM, more])\n      have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by\n        simpa only [moveInputPos_zero] using step\n      refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩\n      · rw [run, done]; rfl\n      · rw [run]\n      · intro u hu b\n        have zero : u = 0 := by omega\n        subst u\n        exact firstCut b\n      · rw [run]\n      · rw [run]\n      · rw [run]; change 1 ≤ d.inputPos.val; omega\n      · intro ys accepted",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "M.runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4126,
+    "declaration_lexical": "canonTag_step",
+    "context": "\n/-- The tag leaf's single step follows the public input-only action contract. -/\nprivate lemma canonTag_step {m : ℕ} {x : List Bool}\n    (d : Cfg m Bool (Option (Option Bool)) x) (hs : d.state = some none) :\n    (canonTagTM m).runFrom d 1 =\n      { d with\n        state := some (some d.inputSymbol)\n        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } :=\n  step_of_inputMoveAction _ _ _ hs rfl\n\n/-- The record's native finite pair list. -/\nprivate abbrev canonRecordPairs (k : ℕ) : List (Bool → Bool → Bool) :=\n  (fun a b => a || !b) :: canonWorkPairs k\n\n/-- Fixed pairs, the successor tag, and the bounded unary component are the three",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4291,
+    "declaration_lexical": "exists_canonRecordTM",
+    "context": "\n      have native := canonNativeSuffix tagStart (p + pre.length) tagPos (by omega)\n      have tagRead : tagStart.inputSymbol = ys.head? := by rw [native.1, tail]\n      let tagEnd := (canonTagTM m).runFrom tagStart 1\n      have tagEq : tagEnd = _ := canonTag_step tagStart tagState\n      have tagExit : tagEnd.state = some (some ys.head?) := by rw [tagEq, tagRead]\n      let tagNext : Sigma (canonRecordPhase k S) := match ys.head? with\n        | some true => ⟨some true, ue⟩\n        | some false => exit true\n        | none => exit false\n      have second := phaseHostTM_run family entry red (some false) tagStart tagEnd 1 rfl",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom tagStart 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4495,
+    "declaration_lexical": "canonSuffix_run",
+    "context": "\n          ((canonSuffixTM m).runFrom d t).workTapePos = d.workTapePos ∧\n          ∀ u < t, ∀ b, ((canonSuffixTM m).runFrom d u).state ≠ some (some b) := by\n      have step : (canonSuffixTM m).runFrom d 1 =\n          { d with state := some (some bit), inputPos := moveInputPos d.inputPos 0 } :=\n        step_of_inputMoveAction (canonSuffixTM m) d 0 state (by rw [hv]; exact htr)\n      refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_⟩\n      · rw [step, value]\n      · rw [step]\n      · rw [step]\n      · rw [step]\n      · intro u hu b\n        have zero : u = 0 := by omega\n        subst u\n        simp [state]\n    cases tail : x.drop p with",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4521,
+    "declaration_lexical": "canonSuffix_run",
+    "context": "\n        let e : Cfg m Bool (Option Bool) x :=\n          { d with state := some none, inputPos := moveInputPos d.inputPos 1 }\n        have step : (canonSuffixTM m).runFrom d 1 = e :=\n          step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])\n        obtain ⟨moved, rest⟩ := advance true ys tail\n        have newPos : e.inputPos.val = p + 2 := moved\n        have newTail : x.drop (e.inputPos.val - 1) = ys := by\n          rw [newPos]\n          simpa using rest\n        have smaller : ys.length < n := by\n          change (x.drop p).length = n at hn\n          rw [tail] at hn",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4557,
+    "declaration_lexical": "canonHalt_run",
+    "context": "\n/-- The emitting leaf appends exactly its live control bit and halts. -/\nprivate lemma canonHalt_run {k : ℕ} {x : List Bool} (d : Cfg k Bool Bool x)\n    (bit : Bool) (hs : d.state = some bit) :\n    ((canonHaltTM k).runFrom d 1).state = none ∧\n      ((canonHaltTM k).runFrom d 1).output = d.output ++ [bit] := by\n  simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,\n    canonHaltTM, Action.apply]\n\n/-- A three-port silent computation becomes a one-bit halting computation. The absent\nport and the false port reject; the true port accepts. One public phase dispatch reaches\none emitting halt, so the cost is exactly two additional steps.",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4558,
+    "declaration_lexical": "canonHalt_run",
+    "context": "\nprivate lemma canonHalt_run {k : ℕ} {x : List Bool} (d : Cfg k Bool Bool x)\n    (bit : Bool) (hs : d.state = some bit) :\n    ((canonHaltTM k).runFrom d 1).state = none ∧\n      ((canonHaltTM k).runFrom d 1).output = d.output ++ [bit] := by\n  simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,\n    canonHaltTM, Action.apply]\n\n/-- A three-port silent computation becomes a one-bit halting computation. The absent\nport and the false port reject; the true port accepts. One public phase dispatch reaches\none emitting halt, so the cost is exactly two additional steps.\n\n**Proof sketch.** The supplied strict cuts disable all redirects during the source run.",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4610,
+    "declaration_lexical": "canonEmitVerdict",
+    "context": "\n  have joined : e.mapState (fun _ => (⟨true, bit⟩ : Sigma Ph)) =\n      z.mapState (Sigma.mk true) := by\n    simp [z, Cfg.mapState, Option.map_map, Function.comp_def]\n  have leaf : N.runFrom (z.mapState (Sigma.mk true)) 1 =\n      ((canonHaltTM k).runFrom z 1).mapState (Sigma.mk true) :=\n    phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl\n  have halted := canonHalt_run z bit live\n  apply (FinTM.computesInTime_iff D _ _ _).mpr\n  rw [initCfg_ofWords, show D.tm.q₀ = start from phaseHostTM_q₀ family start red]\n  change (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).state = none ∧\n    (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).output = [bit]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "N.runFrom (z.mapState (Sigma.mk true)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line": 4611,
+    "declaration_lexical": "canonEmitVerdict",
+    "context": "\n      z.mapState (Sigma.mk true) := by\n    simp [z, Cfg.mapState, Option.map_map, Function.comp_def]\n  have leaf : N.runFrom (z.mapState (Sigma.mk true)) 1 =\n      ((canonHaltTM k).runFrom z 1).mapState (Sigma.mk true) :=\n    phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl\n  have halted := canonHalt_run z bit live\n  apply (FinTM.computesInTime_iff D _ _ _).mpr\n  rw [initCfg_ofWords, show D.tm.q₀ = start from phaseHostTM_q₀ family start red]\n  change (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).state = none ∧\n    (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).output = [bit]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom z 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "line": 415,
+    "declaration_lexical": "sim_step",
+    "context": "\n      (⟨some (.main l), ip, fun r => ones (ρ r), fun r => (ρ r : ℤ), out⟩ :\n        Cfg R Bool (TSt R Λ) x) := rfl\n  have hone : ∀ c : Cfg R Bool (TSt R Λ) x, (toTM P l₀).tm.runFrom c 1 = (toTM P l₀).tm.step c :=\n    fun c => rfl\n  rw [henc] at hsym ⊢\n  cases hP : P l with\n  | halt =>\n    refine ⟨1, by omega, ?_⟩\n    rw [hone, step_some]\n    simp only [tr, hP]\n    rw [apply_ctl, moveInputPos_zero]\n    simp [step, hP, enc, hip]\n  | goto l' =>\n    refine ⟨1, by omega, ?_⟩\n    rw [hone, step_some]\n    simp only [tr, hP]\n    rw [apply_ctl, moveInputPos_zero]\n    simp [step, hP, enc, hip]",
+    "same_declaration_edits": [
+      "RO1-0251"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CounterProg.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom c 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "line": 451,
+    "declaration_lexical": "sim_step",
+    "context": "\n      exact heads_update ρ r (ρ r + 1)\n  | dec r l' =>\n    refine ⟨2, by omega, ?_⟩\n    rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, hone (MultiTapeTM.runFrom _ 1),\n      hone, step_some]\n    simp only [tr, hP]\n    rw [apply_act, moveInputPos_zero, step_some]\n    simp only [tr, wrT, Function.update_self, Function.update_eq_self, Option.toList_none,\n      List.append_nil]\n    rcases Nat.eq_zero_or_pos (ρ r) with h0 | h0\n    · have hb : ones (ρ r) ((ρ r : ℤ) + ((SignType.neg : SignType) : ℤ)) = none :=\n        ones_neg (by simp [SignType.cast]; omega)\n      simp only [hb, Option.isSome_none, Bool.false_eq_true, if_false]",
+    "same_declaration_edits": [
+      "RO1-0251"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CounterProg.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "MultiTapeTM.runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "line": 490,
+    "declaration_lexical": "sim_step",
+    "context": "\n        exact heads_update ρ r v\n  | jz r l0 l1 =>\n    refine ⟨2, by omega, ?_⟩\n    rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, hone (MultiTapeTM.runFrom _ 1),\n      hone, step_some]\n    simp only [tr, hP]\n    rw [apply_act, moveInputPos_zero, step_some]\n    simp only [tr, wrT, Function.update_self, Function.update_eq_self, Option.toList_none,\n      List.append_nil]\n    have hback : ∀ (q : TSt R Λ), (act r 0 none .pos none (some q)).apply\n        (⟨some (TSt.jzB r l0 l1), ip, fun r => ones (ρ r),\n          Function.update (fun r => ((ρ r : ℕ) : ℤ)) r ((ρ r : ℤ) + ((SignType.neg : SignType) :",
+    "same_declaration_edits": [
+      "RO1-0251"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CounterProg.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "MultiTapeTM.runFrom _ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "line": 523,
+    "declaration_lexical": "sim_step",
+    "context": "\n      simp [step, hP, enc, show ρ r ≠ 0 by omega, hip]\n  | pr r l' =>\n    refine ⟨1 + (ρ r + 1) + (ρ r + 1), by have := hB r; omega, ?_⟩\n    have h1 : (toTM P l₀).tm.runFrom (⟨some (.main l), ip, fun r => ones (ρ r),\n        fun r => (ρ r : ℤ), out⟩ : Cfg R Bool (TSt R Λ) x) 1 =\n        ⟨some (.prW r l'), ip, fun r => ones (ρ r),\n          Function.update (fun r => ((ρ r : ℕ) : ℤ)) r (((ρ r : ℕ) : ℤ) - 1), out⟩ := by\n      rw [hone, step_some]\n      simp only [tr, hP]\n      rw [apply_act, moveInputPos_zero]\n      simp only [wrT, Function.update_eq_self, Option.toList_none, List.append_nil]\n      rw [show ((ρ r : ℤ) + ((SignType.neg : SignType) : ℤ)) = ((ρ r : ℕ) : ℤ) - 1 by",
+    "same_declaration_edits": [
+      "RO1-0251"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/CounterProg.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom (⟨some (.main l), ip, fun r => ones (ρ r),\n        fun r => (ρ r : ℤ), out⟩ : Cfg R Bool (TSt R Λ) x) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean",
+    "line": 627,
+    "declaration_lexical": "ic_verdictTM_run",
+    "context": "\n    (d : Cfg K Bool (Bool ⊕ Bool) z) (halted : Bool) (out : List Bool)\n    (hd : d.state = some (Sum.inl halted))\n    (hsummary : d.workTapeSymbols summary = StepBlock.outputSummary out) :\n    ((ic_verdictTM K summary).runFrom d 1).state =\n      some (Sum.inr (decide (halted = true ∧ out = [true]))) ∧\n      ∀ u < 1, ∀ verdict : Bool,\n        ((ic_verdictTM K summary).runFrom d u).state ≠ some (Sum.inr verdict) := by\n  constructor\n  · rw [show 1 = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',\n      MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd, Action.apply_state]\n    simp only [ic_verdictTM, hsummary]\n    congr 2",
+    "same_declaration_edits": [
+      "RO1-0208"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean",
+    "line": 727,
+    "declaration_lexical": "ic_loopHost_run",
+    "context": "\n    cases Option.some.inj hq\n    rfl\n  have leafRun := (phaseHostTM_run ic_loopPiece ⟨false, (.dec .run, true)⟩\n    ic_loopRedirect true leaf ((ic_loopPiece true).runFrom leaf 1) 1 rfl\n    (Sum.inr (decide (halted = true ∧ out = [true]))) verdict\n    ⟨true, Sum.inr (decide (halted = true ∧ out = [true]))⟩ rfl leafGuard).1 1 le_rfl\n  have seam : e.mapState (fun _ => (⟨true, Sum.inl halted⟩ : Σ i, ic_loopPh i)) =\n      leaf.mapState (Sigma.mk true) := by\n    apply Cfg.ext <;> (try funext i) <;> (try funext p) <;>\n      simp only [leaf, Cfg.mapState_state, Cfg.mapState_inputPos,",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom leaf 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean",
+    "line": 740,
+    "declaration_lexical": "ic_loopHost_run",
+    "context": "\n    rw [show T + 2 = (T + 1) + 1 by omega, MultiTapeTM.runFrom_add, dispatch]\n    have final : ((phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect).runFrom\n        (leaf.mapState (Sigma.mk true)) 1).state =\n        some ⟨true, Sum.inr (decide (halted = true ∧ out = [true]))⟩ := by\n      rw [leafRun, Cfg.mapState_state, verdict, Option.map_some]\n    rw [← seam] at final\n    exact final\n  · intro u hu result\n    by_cases before : u ≤ T\n    · change ((phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect).runFrom\n        (d.mapState (Sigma.mk false)) u).state ≠ _\n      rw [hpre u before, Cfg.mapState_state]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n        (leaf.mapState (Sigma.mk true)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+    "line": 1057,
+    "declaration_lexical": "macroCfg_cycle",
+    "context": "\n    (obliviousSchedule W a).tm.runFrom (macroCfg W a base (some .macroCheck) u 0) (6 * R + 8) =\n      macroCfg W a base (some .macroCheck) (u + 1) 0 := by\n  have hcheck : (obliviousSchedule W a).tm.runFrom\n      (macroCfg W a base (some .macroCheck) u 0) 1 = macroCfg W a base (some .seekLeft) u 0 := by\n    simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0\n  have hseek : (obliviousSchedule W a).tm.runFrom\n      (macroCfg W a base (some .seekLeft) u 0) (R + 2) =\n      macroCfg W a base (some .forward) u (-(R : ℤ)) := by\n    rw [show R + 2 = (R + 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',\n      macroCfg_seek_run W a base u R _ hg (le_refl _), macroCfg_seek W a base u _ R hg,",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean.txt",
+    "current_source_changed": false,
+    "application_fragment": "tm.runFrom\n      (macroCfg W a base (some .macroCheck) u 0) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+    "line": 157,
+    "declaration_lexical": "setupCfg_reset",
+    "context": "\n    change ((obliviousSchedule W a).tm.tr .resetStart _ _).apply _ = _\n    simp only [obliviousSchedule]\n    rw [setupCfg_apply, hp]\n    simp [setupWrite]\n  have hs1 : (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .resetStart) p b u g bt ut gt) 1 =\n      setupCfg W a base (some .resetScan) ⟨p.val - 1, by have := p.isLt; omega⟩ b u g bt ut gt := by\n    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs\n  rw [show p.val - 1 + 2 = 1 + (p.val - 1) + 1 by omega,\n    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,\n    setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega)]\n  change ((obliviousSchedule W a).tm.tr .resetScan _ _).apply _ = _",
+    "same_declaration_edits": [
+      "RO1-0210"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "tm.runFrom\n      (setupCfg W a base (some .resetStart) p b u g bt ut gt) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+    "line": 755,
+    "declaration_lexical": "tt_round",
+    "context": "\n      Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).inputSymbol = inp) :\n    ((tt_act M q inp D).state = none →\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).state = none ∧\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).output =\n        out ++ ((tt_act M q inp D).output.map Sum.inl).toList) ∧\n    ∀ q', (tt_act M q inp D).state = some q' →\n      Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}",
+    "same_declaration_edits": [
+      "RO1-0216"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+    "line": 758,
+    "declaration_lexical": "tt_round",
+    "context": "\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).state = none ∧\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).output =\n        out ++ ((tt_act M q inp D).output.map Sum.inl).toList) ∧\n    ∀ q', (tt_act M q inp D).state = some q' →\n      Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}\n        (fun _ => True)\n        ((tt_cfg0 (some (.inl q)) D h0 ip out :\n          Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none))\n        (tt_cfg (some ⟨none, .inl q'⟩)\n          (tt_Dtr (tt_moves (tt_act M q inp D)) (tt_homeData (tt_act M q inp D) D) M.k)",
+    "same_declaration_edits": [
+      "RO1-0216"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+    "line": 792,
+    "declaration_lexical": "tt_round",
+    "context": "\n      output := c₀.output ++ (a.output.map Sum.inl).toList } at hstep\n  have h₀ : (tt_Mf M F none).runFrom c₀ 0 = c₀ := MultiTapeTM.runFrom_zero\n  have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ :=\n    MultiTapeTM.runFrom_succ_eq_step.trans MultiTapeTM.runFrom_zero\n  have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →\n      tt_red M F hk none s = none := by\n    intro u hu s hs\n    rw [Nat.lt_one_iff.mp hu, h₀] at hs\n    obtain rfl : (Sum.inl q : tt_LeafSt M) = s := Option.some.inj hs\n    rfl\n  refine ⟨fun hn => ?_, fun q' hq' => ?_⟩\n  · have H := phaseHostTM_run_le (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) none c₀ 1",
+    "same_declaration_edits": [
+      "RO1-0216"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom c₀ 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+    "line": 1544,
+    "declaration_lexical": "tt_cs_halt",
+    "context": "\n    (x : List Bool) (r : ℕ) (hr : (tt_c M x r).state ≠ none)\n    (hh : (tt_c M x (r + 1)).state = none) :\n    ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n        (tt_cs M F x r) 1).state = none ∧\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n        (tt_cs M F x r) 1).output = (tt_c M x (r + 1)).output.map Sum.inl := by\n  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hr\n  have hstep : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'\n  obtain ⟨hact, -, -⟩ := tt_round_inv M (tt_c M x r) q hq _ (tt_D_inv M x r).1 (tt_D_inv M x r).2",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n        (tt_cs M F x r) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+    "line": 1546,
+    "declaration_lexical": "tt_cs_halt",
+    "context": "\n    ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n        (tt_cs M F x r) 1).state = none ∧\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n        (tt_cs M F x r) 1).output = (tt_c M x (r + 1)).output.map Sum.inl := by\n  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hr\n  have hstep : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'\n  obtain ⟨hact, -, -⟩ := tt_round_inv M (tt_c M x r) q hq _ (tt_D_inv M x r).1 (tt_D_inv M x r).2\n  set a := tt_act M q (tt_c M x r).inputSymbol (tt_D M x r) with ha\n  have happly : tt_c M x (r + 1) = a.apply (tt_c M x r) := by",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom\n        (tt_cs M F x r) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "line": 1222,
+    "declaration_lexical": "timedCut_live_block",
+    "context": "\n    have hi : (if base.workTapeSymbols 3 = some true then none else base.inputSymbol) =\n        src.inputSymbol := universalInput_read α src\n    have hmain : timedCutInterpreter.runFrom base 1 =\n        universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)\n          (universalStateTape q.val) 1 := by\n      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]\n      conv_lhs => rw [hcfg]\n      have he := timedCut_Eval_step base .main (.rewindTable false index)\n        M.serialize p (universalStateTape q.val) 1 .neg 0 none (by\n          change universalAdmin (.rewindTable false (universalRecordIndex",
+    "same_declaration_edits": [
+      "RO1-0230"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Universal.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "timedCutInterpreter.runFrom base 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "line": 2038,
+    "declaration_lexical": "timed_clock_pass",
+    "context": "\n    timedInterpreter.runFrom (timedLift cfg bs) (2 * bs.length + 2) =\n    timedClockCfg (timedLift cfg bs) (.borrow bits halt (timedBorrow true bs).1)\n      (timedBorrow true bs).2 bs.length := by\n  have h0 : timedInterpreter.runFrom (timedLift cfg bs) 1 =\n      timedClockCfg (timedLift cfg bs) (.clockBack bits halt) bs (bs.length - 1) := by\n    exact timed_clock_start cfg bs bits halt hs\n  have h1 := timed_clock_back (timedLift cfg bs) bits halt bs bs.length (le_refl _)\n  have h2 := timed_clock_borrow (timedLift cfg bs) bits halt true bs\n  have h := timedCut_run_join timedInterpreter (timedCut_run_join timedInterpreter h0 h1) h2\n  simpa only [show 1 + (bs.length + 1) + bs.length = 2 * bs.length + 2 by omega] using h",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Universal.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "timedInterpreter.runFrom (timedLift cfg bs) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "line": 2205,
+    "declaration_lexical": "timed_flush",
+    "context": "\n  have h1 := timed_output_back cfg bs [] cfg.output.length (le_refl _)\n  have h2 := timed_output_forward cfg bs cfg.output [] [true] (by simp)\n  have hstart : timedInterpreter.runFrom (timedLift cfg bs) 1 =\n      timedOutputCfg cfg bs (some .emitBack) (cfg.output.length - 1) [] := by\n    rw [hcfg]\n    simpa using h0\n  have h := timedCut_run_join timedInterpreter (timedCut_run_join timedInterpreter hstart h1) h2\n  have ht : 1 + (cfg.output.length + 1) + (cfg.output.length + 1) = 2 * cfg.output.length + 3 := by omega\n  rw [ht] at h\n  rw [h]\n  exact ⟨rfl, rfl⟩\n\n/-- The parser is live immediately before consuming the final separator cell. -/",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/Universal.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "timedInterpreter.runFrom (timedLift cfg bs) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+    "line": 641,
+    "declaration_lexical": "universal_live_block",
+    "context": "\n    have hi : (if base.workTapeSymbols 3 = some true then none else base.inputSymbol) =\n        src.inputSymbol := universalInput_read α src\n    have hmain : universalInterpreter.runFrom base 1 =\n        universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)\n          (universalStateTape q.val) 1 := by\n      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]\n      conv_lhs => rw [hcfg]\n      have he := universalEval_step base .main (.rewindTable false index)\n        M.serialize p (universalStateTape q.val) 1 .neg 0 none (by\n          change universalAdmin (.rewindTable false (universalRecordIndex",
+    "same_declaration_edits": [
+      "RO1-0239",
+      "RO1-0240"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/UniversalBlock.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "universalInterpreter.runFrom base 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+    "line": 703,
+    "declaration_lexical": "universal_live_block",
+    "context": "\n        (universalStateTape ((a.state.map Fin.val).getD 0)) 1 := by\n      simpa only [p', List.length_append, List.length_ofFn, Nat.cast_add, Nat.cast_ofNat] using hnext\n    have happly : universalInterpreter.runFrom\n        (universalEvalCfg base (.applyRecord bits a.state.isNone) M.serialize p'\n          (universalStateTape ((a.state.map Fin.val).getD 0)) 1) 1 =\n      universalSimulationCfg M α (a.apply src) p' := by\n      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]\n      exact universal_apply_record M α src p p' a\n    have hrun := universal_run_join universalInterpreter\n      (universal_run_join universalInterpreter\n        (universal_run_join universalInterpreter\n          (universal_run_join universalInterpreter\n            (universal_run_join universalInterpreter",
+    "same_declaration_edits": [
+      "RO1-0239",
+      "RO1-0240"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/UniversalBlock.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "universalInterpreter.runFrom\n        (universalEvalCfg base (.applyRecord bits a.state.isNone) M.serialize p'\n          (universalStateTape ((a.state.map Fin.val).getD 0)) 1) 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+    "line": 626,
+    "declaration_lexical": "ss_bufferLeaf_run",
+    "context": "\nprivate theorem ss_bufferLeaf_run {n : ℕ} (i : Fin n) (emptyMove : SignType)\n    {z : List Bool} (d : Cfg n Bool Bool z) (hstate : d.state = some false) :\n    (ss_bufferLeaf n i emptyMove).runFrom d 1 =\n      { d with\n        state := some true\n        workTapePos := Function.update d.workTapePos i\n          (d.workTapePos i + if d.workTapeSymbols i = none then (emptyMove : ℤ) else 0) } ∧\n      ∀ u < 1, ((ss_bufferLeaf n i emptyMove).runFrom d u).state ≠ some true := by\n  constructor\n  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n    have h := step_of_tapeAction_move (ss_bufferLeaf n i emptyMove) d i 0",
+    "same_declaration_edits": [
+      "RO1-0247"
+    ],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/UniversalK.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+    "line": 723,
+    "declaration_lexical": "ss_bufferAdvance_run",
+    "context": "\n        (d.workTapePos i + if d.workTapeSymbols i = none then (-1 : ℤ) else 0) }\n  obtain ⟨hr, hc⟩ := ss_bufferLeaf_run i .neg d hstate\n  change (ss_bufferLeaf n i .neg).runFrom d 1 = a at hr\n  let b := a.mapState (fun _ => SeekPhase.run)\n  have hba : b.workTapes i = FinTM.bufferTape α := by\n    funext q\n    rw [Cfg.mapState_workTapes]\n    exact congrFun hbuf q\n  have hbp : b.workTapePos i =\n      if p = 0 then (if α = [] then -1 else 0) else (α.length : ℤ) := by\n    rw [Cfg.mapState_workTapePos]\n    dsimp only [a]\n    rw [Function.update_self, Cfg.workTapeSymbols_eq, hbuf, hpos]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/UniversalK.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+    "line": 956,
+    "declaration_lexical": "ss_bufferClear_run",
+    "context": "\n        (d.workTapePos i + if d.workTapeSymbols i = none then (mv : ℤ) else 0) }\n  obtain ⟨hr, hc⟩ := ss_bufferLeaf_run i mv d hstate\n  change (ss_bufferLeaf n i mv).runFrom d 1 = a at hr\n  have haheads : a.workTapePos = Function.update d.workTapePos i 0 := by\n    have hm : d.workTapePos i +\n        (if d.workTapeSymbols i = none then (mv : ℤ) else 0) = 0 := by\n      rw [Cfg.workTapeSymbols_eq, hbuf, hpos]\n      by_cases ha : α = []\n      · rw [if_pos ha, hp ha]\n        subst α\n        simp only [FinTM.bufferTape_nil, ite_true]\n        by_cases h : emptyPos = 0\n        · simp only [mv, if_pos h, SignType.pos_eq_one, SignType.coe_one, h, Nat.cast_zero]",
+    "same_declaration_edits": [],
+    "full_before_source": "/private/tmp/ab34-ro1-integration/source-before/TCSlib/Complexity/TuringMachine/UniversalK.lean.txt",
+    "current_source_changed": true,
+    "application_fragment": "runFrom d 1"
+  }
+]

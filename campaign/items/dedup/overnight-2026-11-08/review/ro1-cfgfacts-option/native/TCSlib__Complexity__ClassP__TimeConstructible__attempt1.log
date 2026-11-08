@@ -1,0 +1,47 @@
+TCSlib/Complexity/ClassP/TimeConstructible.lean:240:8: error: unsolved goals
+case nil
+x : List Bool
+p : Fin (x.length + 2)
+pre : List Bool
+⊢ MultiTapeTM.runFrom (counterCfg x 1 p (↑pre.length) pre []) 1 = counterCfg x 2 p (↑pre.length - 1) (pre ++ [true]) []
+TCSlib/Complexity/ClassP/TimeConstructible.lean:247:12: error: unsolved goals
+case cons.false
+x : List Bool
+p : Fin (x.length + 2)
+bs : List Bool
+ih :
+  ∀ (pre : List Bool),
+    MultiTapeTM.runFrom (counterCfg x 1 p (↑pre.length) (pre ++ bs) []) (counterCarry bs + 1) =
+      counterCfg x 2 p (↑pre.length + ↑(counterCarry bs) - 1) (pre ++ counterInc bs) []
+pre : List Bool
+⊢ MultiTapeTM.runFrom (counterCfg x 1 p (↑pre.length) (pre ++ false :: bs) []) 1 =
+    counterCfg x 2 p (↑pre.length - 1) (pre ++ true :: bs) []
+TCSlib/Complexity/ClassP/TimeConstructible.lean:242:29: warning: This simp argument is unused:
+  MultiTapeTM.runFrom_one
+
+Hint: Omit it from the simp argument list.
+  simp only [counterCarry, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵r̵u̵n̵F̵r̵o̵m̵_̵o̵n̵e̵,̵ ̵counter_carry_step]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:242:54: warning: This simp argument is unused:
+  counter_carry_step
+
+Hint: Omit it from the simp argument list.
+  simp only [counterCarry, MultiTapeTM.runFrom_one,̵ ̵c̵o̵u̵n̵t̵e̵r̵_̵c̵a̵r̵r̵y̵_̵s̵t̵e̵p̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:248:31: warning: This simp argument is unused:
+  MultiTapeTM.runFrom_one
+
+Hint: Omit it from the simp argument list.
+  simp only [counterCarry, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵r̵u̵n̵F̵r̵o̵m̵_̵o̵n̵e̵,̵ ̵counter_carry_step]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:248:56: warning: This simp argument is unused:
+  counter_carry_step
+
+Hint: Omit it from the simp argument list.
+  simp only [counterCarry, MultiTapeTM.runFrom_one,̵ ̵c̵o̵u̵n̵t̵e̵r̵_̵c̵a̵r̵r̵y̵_̵s̵t̵e̵p̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:270:4: error: `simp` made no progress

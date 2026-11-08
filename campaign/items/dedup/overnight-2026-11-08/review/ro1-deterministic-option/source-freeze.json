@@ -1,0 +1,1890 @@
+{
+  "all_existing_headers_exact": true,
+  "changed_existing_declarations": [
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean",
+      "name": "BoolCircuit.CircuitEval.app_walk",
+      "kind": "theorem",
+      "header": "theorem app_walk (exact : Bool) {z : List Bool} (v : Bool) (p : Fin (z.length + 2))\n    (vals : List Bool) (out : List Bool) :\n    ∀ (r h : ℕ) (mt : ℤ → Option Bool), h + r = vals.length →\n      (evalTM exact).tm.runFrom (cf z (some (.app v)) p (FinTM.bufferTape vals) mt h out)\n        (r + 1) =\n      cf z (some (.rewV (some .g))) p (FinTM.bufferTape (vals ++ [v])) (erase mt h vals.length)\n        ((vals.length : ℤ) - 1) out",
+      "before_line": 253,
+      "after_line": 253
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean",
+      "name": "BoolCircuit.CircuitEval.rew",
+      "kind": "theorem",
+      "header": "theorem rew (exact : Bool) {z : List Bool} (q : St) (key : Fin 2) (dest : St)\n    (htr : ∀ inp w, tr exact q inp w = if (w key).isSome\n      then LA.toAct 0 ⟨none, none, .neg, none, some q⟩\n      else LA.toAct 0 ⟨none, none, .pos, none, some dest⟩)\n    (p : Fin (z.length + 2)) (vt mt : ℤ → Option Bool) (out : List Bool) :\n    ∀ h₀ : ℕ, (∀ c : ℕ, c < h₀ → tp vt mt key c ≠ none) →\n      tp vt mt key (-1) = none →\n      (evalTM exact).tm.runFrom (cf z (some q) p vt mt ((h₀ : ℤ) - 1) out) (h₀ + 1) =\n        cf z (some dest) p vt mt 0 out",
+      "before_line": 214,
+      "after_line": 214
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean",
+      "name": "BoolCircuit.CircuitEval.good_run",
+      "kind": "theorem",
+      "header": "theorem good_run (exact : Bool) (code x z : List Bool)\n    (hz : z = dbl code ++ ([false, true] ++ x)) :\n    ∃ t ≤ 12 * (z.length + 1) ^ 2,\n      ((evalTM exact).tm.runFrom ((evalTM exact).tm.initCfg z) t).state = none ∧\n      ((evalTM exact).tm.runFrom ((evalTM exact).tm.initCfg z) t).output =\n        [verdict exact z]",
+      "before_line": 330,
+      "after_line": 330
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean",
+      "name": "BoolCircuit.CircuitEval.step_rej",
+      "kind": "theorem",
+      "header": "theorem step_rej (exact : Bool) {z : List Bool} (q : St) (p : Fin (z.length + 2))\n    (vt mt : ℤ → Option Bool) (j : ℤ) (im : SignType)\n    (h : tr exact q (cf z (some q) p vt mt j []).inputSymbol (fun i => tp vt mt i j) =\n      LA.toAct im .rej) :\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).state = none ∧\n    ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).output = [false]",
+      "before_line": 217,
+      "after_line": 217
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.rd_step",
+      "kind": "theorem",
+      "header": "theorem rd_step (w : List Bool) (s : ES) (i : ℕ) (hi : i ≤ w.length) (out : List Bool) :\n    emTM.tm.runFrom (cfgS w s i hi out) 1 =\n      (tr (.rd s.φ) w[i]? (fun j => tapesOf s.vec j (headsOf s.vec j))).apply\n        (cfgS w s i hi out)",
+      "before_line": 173,
+      "after_line": 172
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.gate_run",
+      "kind": "theorem",
+      "header": "theorem gate_run (w : List Bool) (s : ES) (k : GateKind) (c : Fin 3) (i : ℕ)\n    (hi : i ≤ w.length) (out : List Bool) (M : ℕ) (hM : ∀ t, s.vec t ≤ M) :\n    ∃ T ≤ 200 * (M + 1),\n      emTM.tm.runFrom (⟨some (.em k c 0), ip w i hi, tapesOf s.vec, headsOf s.vec, out⟩ :\n        Cfg 3 Bool St w) T =\n        cfgS w ⟨.g, s.z + 1, 0, 0⟩ i hi (out ++ emitBits k c s.vec)",
+      "before_line": 188,
+      "after_line": 187
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.em_loop",
+      "kind": "theorem",
+      "header": "theorem em_loop {w : List Bool} (k : GateKind) (c : Fin 3) (p : Fin (w.length + 2))\n    (v : Fin 3 → ℕ) (M : ℕ) (hM : ∀ t, v t ≤ M) :\n    ∀ (rest : List Instr) (pc : ℕ) (hpc : pc < 64) (out : List Bool),\n      (prog k c).drop pc = rest →\n      ∃ T ≤ rest.length * (2 * M + 3), ∃ pe : Fin 64, (prog k c)[pe.val]? = none ∧\n        emTM.tm.runFrom (⟨some (.em k c ⟨pc, hpc⟩), p, tapesOf v, headsOf v, out⟩ :\n          Cfg 3 Bool St w) T =\n          ⟨some (.em k c pe), p, tapesOf v, headsOf v, out ++ rest.flatMap (exec v)⟩",
+      "before_line": 96,
+      "after_line": 96
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.clear_walk",
+      "kind": "theorem",
+      "header": "theorem clear_walk {w : List Bool} (t : Fin 3) (p : Fin (w.length + 2))\n    (tp : Fin 3 → ℤ → Option Bool) (hd : Fin 3 → ℤ) (out : List Bool) :\n    ∀ j : ℕ,\n      emTM.tm.runFrom (⟨some (.clW t), p, Function.update tp t (ones j),\n        Function.update hd t ((j : ℤ) - 1), out⟩ : Cfg 3 Bool St w) (j + 1) =\n        ⟨some (clNext t), p, Function.update tp t (ones 0), Function.update hd t 0, out⟩",
+      "before_line": 228,
+      "after_line": 228
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.print_walk",
+      "kind": "theorem",
+      "header": "theorem print_walk {w : List Bool} (k : GateKind) (c : Fin 3) (pc : Fin 64) (t : Fin 3)\n    (p : Fin (w.length + 2)) (tp : Fin 3 → ℤ → Option Bool) (hd : Fin 3 → ℤ) (m : ℕ)\n    (htp : tp t = ones m) :\n    ∀ (j : ℕ) (out : List Bool), j ≤ m →\n      emTM.tm.runFrom (⟨some (.prW k c pc t), p, tp, Function.update hd t ((j : ℤ) - 1), out⟩ :\n        Cfg 3 Bool St w) (j + 1) =\n        ⟨some (.prB k c pc t), p, tp, Function.update hd t 0, out ++ List.replicate j true⟩",
+      "before_line": 153,
+      "after_line": 153
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean",
+      "name": "BoolCircuit.CktSatReduction.Emitter.back_walk",
+      "kind": "theorem",
+      "header": "theorem back_walk {w : List Bool} (k : GateKind) (c : Fin 3) (pc : Fin 64) (t : Fin 3)\n    (p : Fin (w.length + 2)) (tp : Fin 3 → ℤ → Option Bool) (hd : Fin 3 → ℤ) (m : ℕ)\n    (htp : tp t = ones m) (out : List Bool) :\n    ∀ d : ℕ, d ≤ m →\n      emTM.tm.runFrom (⟨some (.prB k c pc t), p, tp,\n        Function.update hd t (((m - d : ℕ) : ℤ)), out⟩ : Cfg 3 Bool St w) (d + 1) =\n        ⟨some (.em k c (pc + 1)), p, tp, Function.update hd t (m : ℤ), out⟩",
+      "before_line": 191,
+      "after_line": 191
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean",
+      "name": "Complexity.Meyer.ret_sweep",
+      "kind": "theorem",
+      "header": "theorem ret_sweep (c : Cfg M.k Bool M.State x) (q : M.State) (r : OutReg) (b : Bool)\n    (τO : ℤ → Option Bool) (zO : ℤ) (L : List Bool) :\n    ∀ j, (tabTM M).tm.runFrom (lcfg M (.ret bits q r b) P c\n        (bufferTape (List.replicate j true ++ L)) ((j : ℤ) - 1) τO zO) (j + 1) =\n      lcfg M (.dec bits q r b) P c (bufferTape (List.replicate j true ++ L)) 0 τO zO",
+      "before_line": 257,
+      "after_line": 257
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.field_none",
+      "kind": "theorem",
+      "header": "theorem field_none {y : List Bool} (f : Bool) (bits : Fin (nbits M) → Bool) :\n    ∀ (rest : List Bool) (p : ℕ) (wC wO : List Bool), 1 ≤ p → p + rest.length = y.length + 1 →\n      y.drop (p - 1) = rest → readField rest = none →\n      ∃ s ≤ rest.length + 1,\n        ((tabTM M).tm.runFrom (pcfg M (.fA f bits) (fpos y p) [] wC wO) s).state = none ∧\n        ((tabTM M).tm.runFrom (pcfg M (.fA f bits) (fpos y p) [] wC wO) s).output = [false]\n  | b :: true :: r', p, wC, wO, h1, hlen, hd, hr => by\n    simp only [readField, Option.map_eq_none_iff] at hr\n    have r0 : y[p - 1]? = some b",
+      "before_line": 114,
+      "after_line": 114
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.rewO_run",
+      "kind": "theorem",
+      "header": "theorem rewO_run (w : List Bool) (τ0 τ1 : ℤ → Option Bool) (z0 z1 : ℤ) :\n    ∀ j, j ≤ w.length →\n      (tabTM M).tm.runFrom (acfg M (some (.rewO bits)) P τ0 τ1 (bufferTape w) z0 z1\n        ((j : ℤ) - 1) []) (j + 1) =\n        acfg M (some (.dec bits M.tm.q₀ .empty true)) P τ0 τ1 (bufferTape w) z0 z1 0 []",
+      "before_line": 273,
+      "after_line": 272
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.rewC_run",
+      "kind": "theorem",
+      "header": "theorem rewC_run (w : List Bool) (τ0 τ2 : ℤ → Option Bool) (z0 z2 : ℤ) :\n    ∀ j, j ≤ w.length →\n      (tabTM M).tm.runFrom (acfg M (some (.rewC bits)) P τ0 (bufferTape w) τ2 z0 ((j : ℤ) - 1)\n        z2 []) (j + 1) =\n        acfg M (some (.rewO bits)) P τ0 (bufferTape w) τ2 z0 0 (z2 - 1) []",
+      "before_line": 245,
+      "after_line": 244
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.rewX_run",
+      "kind": "theorem",
+      "header": "theorem rewX_run (w : List Bool) (τ1 τ2 : ℤ → Option Bool) (z1 z2 : ℤ) :\n    ∀ j, j ≤ w.length →\n      (tabTM M).tm.runFrom (acfg M (some (.rewX bits)) P (bufferTape w) τ1 τ2 ((j : ℤ) - 1)\n        z1 z2 []) (j + 1) =\n        acfg M (some (.rewC bits)) P (bufferTape w) τ1 τ2 0 (z1 - 1) z2 []",
+      "before_line": 218,
+      "after_line": 217
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.cpy_run",
+      "kind": "theorem",
+      "header": "theorem cpy_run {y : List Bool} (bits : Fin (nbits M) → Bool) :\n    ∀ (rest : List Bool) (p : ℕ) (wX wC wO : List Bool), 1 ≤ p →\n      p + rest.length = y.length + 1 → y.drop (p - 1) = rest →\n      (tabTM M).tm.runFrom (pcfg M (.cpy bits) (fpos y p) wX wC wO) (rest.length + 1) =\n        acfg M (some (.rewX bits)) (fpos y (y.length + 1)) (bufferTape (wX ++ rest))\n          (bufferTape wC) (bufferTape wO) ((wX ++ rest).length - 1) wC.length wO.length []\n  | [], p, wX, wC, wO, h1, hlen, hd => by\n    have r0 : y[p - 1]? = none",
+      "before_line": 156,
+      "after_line": 155
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+      "name": "Complexity.Meyer.field_some",
+      "kind": "theorem",
+      "header": "theorem field_some {y : List Bool} (f : Bool) (bits : Fin (nbits M) → Bool) :\n    ∀ (rest : List Bool) (p : ℕ) (wC wO w r : List Bool), 1 ≤ p → y.drop (p - 1) = rest →\n      readField rest = some (w, r) →\n      (tabTM M).tm.runFrom (pcfg M (.fA f bits) (fpos y p) [] wC wO) (2 * w.length + 2) =\n        pcfg M (if f then .cpy bits else .fA true bits) (fpos y (p + 2 * w.length + 2)) []\n          (if f then wC else wC ++ w) (if f then wO ++ w else wO)\n  | b :: true :: r', p, wC, wO, w, r, h1, hd, hr => by\n    simp only [readField, Option.map_eq_some_iff] at hr\n    obtain ⟨⟨w', r''⟩, hw', he⟩",
+      "before_line": 57,
+      "after_line": 57
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean",
+      "name": "Complexity.Meyer.wret_sweep",
+      "kind": "theorem",
+      "header": "theorem wret_sweep (c : Cfg M.k Bool M.State x) (oq : Option M.State) (r : OutReg) (b : Bool)\n    (τC : ℤ → Option Bool) (zC : ℤ) (L : List Bool) :\n    ∀ j, (tabTM M).tm.runFrom (lcfg M (.wret bits oq r b) P c τC zC\n        (bufferTape (List.replicate j true ++ L)) ((j : ℤ) - 1)) (j + 1) =\n      lcfg M (.wdec bits oq r b) P c τC zC (bufferTape (List.replicate j true ++ L)) 0",
+      "before_line": 189,
+      "after_line": 189
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_concat_native",
+      "kind": "lemma",
+      "header": "private lemma enumCont_concat_native (x s pre rest : List Bool) (hx : x = pre ++ rest) :\n    enumCont_concatTM.tm.runFrom\n      (enumCont_concatCfg x s (some false) ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre)\n      (rest.length + 1) =\n      enumCont_concatCfg x s (some true) (Fin.last (x.length + 1)) 0 x",
+      "before_line": 1121,
+      "after_line": 1120
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_pair_rewind",
+      "kind": "lemma",
+      "header": "private lemma enumCont_pair_rewind {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < L)\n    (tm : MultiTapeTM (L + 1) Bool S) (qr qa : S)\n    (htr : ∀ inp work, tm.tr qr inp work = match work 0 with\n      | some _ => enumCont_endsAction none none .neg (some qr)\n      | none => enumCont_endsAction none none .pos (some qa))\n    (w : List Bool) (j : ℕ) (hj : j ≤ w.length) :\n    tm.runFrom (enumCont_pairCfg (x := x) (some qr) (bufferTape w) (fun _ => none) (j - 1))\n      (j + 1) = enumCont_pairCfg (some qa) (bufferTape w) (fun _ => none) 0",
+      "before_line": 1632,
+      "after_line": 1631
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.a3_load_rewind",
+      "kind": "lemma",
+      "header": "private lemma a3_load_rewind (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)\n    (x : List Bool) (j : ℕ) (hj : j ≤ x.length) :\n    (a3RunTM C hk entry exit).tm.runFrom\n      (a3LoadCfg C (x := x) 1 ⟨j, by omega⟩ x ((j : ℤ) - 1)) (j + 1) =\n      Cfg.ofWords (.inl (2 : Fin 3)) (stateWord C.k x)",
+      "before_line": 2745,
+      "after_line": 2744
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_undo_run",
+      "kind": "lemma",
+      "header": "private lemma enumCont_undo_run (M : FinTM Bool) {x : List Bool}\n    (c₀ : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : ℕ)\n    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :\n    (enumCont_undoTM M.k).tm.runFrom\n      (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p) (2 * t + 1) =\n      enumCont_undoResult c₀ p",
+      "before_line": 774,
+      "after_line": 774
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_clean_buffer_rewind",
+      "kind": "lemma",
+      "header": "private lemma enumCont_clean_buffer_rewind (M : FinTM Bool) {x : List Bool}\n    (c₀ : Cfg M.k Bool M.State x) (y : List Bool) (p : Fin (x.length + 2)) :\n    ∀ j, j ≤ y.length →\n      (enumCont_cleanTM M).tm.runFrom\n        (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((j : ℤ) - 1)) (j + 1) =\n        enumCont_cleanCfg M c₀ y (some (.inr (.inl 5))) p 0",
+      "before_line": 1001,
+      "after_line": 1000
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_copy_scan",
+      "kind": "lemma",
+      "header": "private lemma enumCont_copy_scan {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < L)\n    (tm : MultiTapeTM (L + 1) Bool S) (qc qr : S) (f : Bool → Bool)\n    (htr : ∀ inp work, tm.tr qc inp work = match work (Fin.last L) with\n      | some b => enumCont_endsAction (some (some (f b))) (some none) .pos (some qc)\n      | none => enumCont_endsAction none none .neg (some qr))\n    (pre old rest : List Bool) :\n    tm.runFrom (enumCont_pairCfg (x := x) (some qc) (bufferTape (pre ++ old))\n      (enumCont_sparse (List.replicate pre.length none ++ rest.map some)) pre.length)\n      (rest.length + 1) =\n      enumCont_pairCfg (some qr) (bufferTape (pre ++ rest.map f ++ old.drop rest.length))\n        (fun _ => none) ((pre.length : ℤ) + rest.length - 1)",
+      "before_line": 1583,
+      "after_line": 1582
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.a3_nonempty_nil",
+      "kind": "lemma",
+      "header": "private lemma a3_nonempty_nil (M : FinTM Bool) :\n    (a3NonemptyTM M).ComputesInTime [] [false] 1",
+      "before_line": 2954,
+      "after_line": 2953
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_concat_candidate",
+      "kind": "lemma",
+      "header": "private lemma enumCont_concat_candidate (x s pre rest : List Bool) (p : Fin (x.length + 2)) (out : List Bool)\n    (hs : s = pre ++ rest) :\n    enumCont_concatTM.tm.runFrom\n      (enumCont_concatCfg x s (some true) p pre.length (out ++ pre))\n      (rest.length + 1) =\n      enumCont_concatCfg x s none p s.length (out ++ s)",
+      "before_line": 1164,
+      "after_line": 1163
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_back_run",
+      "kind": "theorem",
+      "header": "private theorem xr_back_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (r : Fin K)\n    (wb : Option (Option Bool))\n    (hsome : ∀ (b : Bool) inp w s, w r = some s →\n      tm.tr (.back b) inp w = xr_act (xr_mv1 r wb SignType.neg) (some (.back b)))\n    (hnone : ∀ (b : Bool) inp w, w r = none →\n      tm.tr (.back b) inp w = xr_act (xr_mv1 r none SignType.pos) (some (.done b)))\n    (b : Bool) (o : ℤ) (m : ℕ) :\n    ∀ d : Cfg K Bool xr_St x, d.state = some (.back b) → d.workTapePos r = o + m - 1 →\n      (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) → d.workTapes r (o - 1) = none →\n      tm.runFrom d (m + 1) =\n        ⟨some (.done b), d.inputPos,\n          Function.update d.workTapes r\n            (fun p => if o ≤ p ∧ p < o + m then wb.getD (d.workTapes r p) else d.workTapes r p),\n          Function.update d.workTapePos r o, d.output⟩",
+      "before_line": 416,
+      "after_line": 410
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_runFrom_two",
+      "kind": "theorem",
+      "header": "private theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (d : Cfg k Bool S x) : tm.runFrom d 2 = tm.step (tm.step d)",
+      "before_line": 265,
+      "after_line": 259
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_halt_fixed",
+      "kind": "theorem",
+      "header": "private theorem xr_halt_fixed {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool}\n    (d : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) (a l : Bool)\n    (hd : d.state = some ⟨(.halt, a, l), xr_St.start⟩) : (xr_host C).step d = d",
+      "before_line": 2952,
+      "after_line": 2946
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_answerTM_run",
+      "kind": "theorem",
+      "header": "private theorem xr_answerTM_run {K : ℕ} {x : List Bool} (b : Bool) (d : Cfg K Bool xr_St x)\n    (q : xr_St) (hd : d.state = some q) :\n    (xr_answerTM K b).runFrom d 1 = {d with state := none, output := d.output ++ [b]}",
+      "before_line": 1148,
+      "after_line": 1142
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_testTM_run",
+      "kind": "theorem",
+      "header": "private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List Bool)\n    (d : Cfg K Bool xr_St x) (hd : d.state = some .start)\n    (hr : d.workTapes r = FinTM.bufferTape out) (hpos : d.workTapePos r = out.length) :\n    (xr_testTM K r).runFrom d (out.length + 2) =\n      ⟨some (.done (decide (out = [true]))), d.inputPos,\n        Function.update d.workTapes r (fun _ => none), Function.update d.workTapePos r 0,\n        d.output⟩",
+      "before_line": 960,
+      "after_line": 954
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/NDNormalForm.lean",
+      "name": "Turing.FinNDTM.nf_leaf_block",
+      "kind": "theorem",
+      "header": "private theorem nf_leaf_block (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}\n    (e : Cfg 2 Bool (nf_LeafSt N) x) (σ : nf_SweepState N) (claim n : Option Bool)\n    (mv : SignType) (last : Bool) (hst : e.state = some (.blk₁ σ claim n mv last)) :\n    (∀ u < 2, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →\n      nf_leafExit N s = none) ∧\n    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) =\n        claim → last = true →\n      (nf_leaf N (some t)).runFrom e 2 = { e with\n        state := some .pass\n        workTapes :=\n          Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n)\n        workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) }) ∧\n    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) =\n        claim → last = false →\n      (∀ u < 4, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →\n        nf_leafExit N s = none) ∧\n      (nf_leaf N (some t)).runFrom e 4 = { e with\n        state := some (.read σ)\n        workTapes :=\n          Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n)\n        workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * (mv : ℤ)) }) ∧\n    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) ≠\n        claim → ((nf_leaf N (some t)).runFrom e 2).state = some .rej)",
+      "before_line": 1734,
+      "after_line": 1734
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_start_core",
+      "kind": "lemma",
+      "header": "private lemma cont_start_core (N : FinNDTM Bool) (y x u : List Bool) :\n    (contPairTM N).tm.runFrom\n      (contLoadCfg (y := y) N 3 x u ⟨y.length + 1, by omega⟩ x.length u.length)\n      (1 + (x.length + 1) + (u.length + 1)) =\n        Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0\n          ⟨y.length + 1, by omega⟩)",
+      "before_line": 697,
+      "after_line": 697
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a2_load_rewind",
+      "kind": "lemma",
+      "header": "private lemma a2_load_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (u : List Bool) (j : ℕ) (hj : j ≤ u.length) :\n    a2DebitTM.tm.runFrom (a2LoadCfg x true p u ((j : ℤ) - 1)) (j + 1) =\n      a2DebitCfg [] x p (.inl none) 0 u",
+      "before_line": 3210,
+      "after_line": 3210
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a3n_eq_rewind",
+      "kind": "lemma",
+      "header": "private lemma a3n_eq_rewind (y u : List Bool) (p : Fin (y.length + 2))\n    (j : ℕ) (hj : j ≤ u.length) :\n    a3nEqTM.tm.runFrom (a3nEqCfg y 3 true p u ((j : ℤ) - 1)) (j + 1) =\n      a3nEqCfg y 4 true p u 0",
+      "before_line": 3819,
+      "after_line": 3819
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_parse_separator",
+      "kind": "lemma",
+      "header": "private lemma cont_parse_separator (N : FinNDTM Bool) (y pre u x : List Bool)\n    (hy : y = pre ++ false :: true :: u) :\n    (contPairTM N).tm.runFrom\n      (contLoadCfg (y := y) N 0 x [] ⟨pre.length + 1, by simp [hy]; omega⟩ x.length 0) 2 =\n        contLoadCfg (y := y) N 3 x [] ⟨pre.length + 3, by simp [hy]; omega⟩ x.length 0",
+      "before_line": 780,
+      "after_line": 780
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_rewind_input",
+      "kind": "lemma",
+      "header": "private lemma cont_rewind_input (N : FinNDTM Bool) {y : List Bool}\n    (x u : List Bool) (p : Fin (y.length + 2)) (j : ℕ) (hj : j ≤ x.length) :\n    (contPairTM N).tm.runFrom\n      (contLoadCfg (y := y) N 4 x u p ((j : ℤ) - 1) u.length) (j + 1) =\n        contLoadCfg (y := y) N 5 x u p 0 ((u.length : ℤ) - 1)",
+      "before_line": 566,
+      "after_line": 566
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_parse_double",
+      "kind": "lemma",
+      "header": "private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)\n    (b : Bool) (hy : y = pre ++ b :: b :: rest) :\n    (contPairTM N).tm.runFrom\n      (contLoadCfg (y := y) N 0 x [] ⟨pre.length + 1, by simp [hy]; omega⟩ x.length 0) 2 =\n        contLoadCfg (y := y) N 0 (x ++ [b]) [] ⟨pre.length + 3, by simp [hy]; omega⟩\n          (x ++ [b]).length 0",
+      "before_line": 751,
+      "after_line": 751
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_rewind_choices",
+      "kind": "lemma",
+      "header": "private lemma cont_rewind_choices (N : FinNDTM Bool) {y : List Bool}\n    (x u : List Bool) (p : Fin (y.length + 2)) (j : ℕ) (hj : j ≤ u.length) :\n    (contPairTM N).tm.runFrom (contLoadCfg (y := y) N 5 x u p 0 ((j : ℤ) - 1)) (j + 1) =\n      Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0 p)",
+      "before_line": 513,
+      "after_line": 513
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a2Borrow_rewind",
+      "kind": "lemma",
+      "header": "private lemma a2Borrow_rewind (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))\n    (u : List Bool) (b : Bool) : ∀ j, j ≤ u.length →\n    a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl (some b)) ((j : ℤ) - 1) u)\n        (j + 1) = a2DebitCfg out x p (.inr b) 0 u",
+      "before_line": 3074,
+      "after_line": 3074
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a3n_eq_double",
+      "kind": "lemma",
+      "header": "private lemma a3n_eq_double (y pre rest u : List Bool) (b : Bool)\n    (hy : y = pre ++ b :: b :: rest) :\n    a3nEqTM.tm.runFrom\n      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) 2 =\n      a3nEqCfg y 0 true ⟨pre.length + 3, by simp [hy] <;> omega⟩\n        (u ++ [b]) (u ++ [b]).length",
+      "before_line": 3712,
+      "after_line": 3712
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a3n_eq_separator",
+      "kind": "lemma",
+      "header": "private lemma a3n_eq_separator (y pre v u : List Bool)\n    (hy : y = pre ++ false :: true :: v) :\n    a3nEqTM.tm.runFrom\n      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) 2 =\n      a3nEqCfg y 3 true ⟨pre.length + 3, by simp [hy] <;> omega⟩ u ((u.length : ℤ) - 1)",
+      "before_line": 3754,
+      "after_line": 3754
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.a2_countdown",
+      "kind": "lemma",
+      "header": "private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :\n    ∀ (u out : List Bool), a2Value u = n →\n    ∃ t ≤ (n + 1) * (2 * u.length + 3),\n      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).state = none ∧\n      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).output =\n        out ++ List.replicate n true",
+      "before_line": 3128,
+      "after_line": 3128
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_counterBack",
+      "kind": "lemma",
+      "header": "private lemma satRed_counterBack (x : List Bool) (q dest : Fin 35)\n    (htr : ∀ (inp : Option Bool) (work : Fin 2 → Option Bool), satRedTM.tm.tr q inp work =\n      if (work 0).isSome then satRedAction 0 none none .neg 0 none (some q)\n      else satRedAction 0 none none .pos 0 none (some dest))\n    (i : ℕ) (hi : i ≤ x.length) (n r : ℕ) (hr : r ≤ n)\n    (buf : ℤ → Option Bool) (b : ℤ) (out : List Bool) :\n    satRedTM.tm.runFrom (satRedCfg x (some q) i hi n buf ((r : ℤ) - 1) b out) (r + 1) =\n      satRedCfg x (some dest) i hi n buf 0 b out",
+      "before_line": 1590,
+      "after_line": 1585
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satEval_formula",
+      "kind": "lemma",
+      "header": "private lemma satEval_formula (M : FinTM Bool) {w : List Bool}\n    (saved : Cfg M.k Bool M.State w) (u : List Bool) (φ : CNF ℕ)\n    (hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < u.length) :\n    ∀ pre rest (hw : w = pre ++ satBits (CNF.serialize φ) ++ rest) (a : Bool),\n    ∃ t ≤ 3 * (CNF.serialize φ).length,\n      ((satEvalTM M).tm.runFrom\n        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).state = none ∧\n      ((satEvalTM M).tm.runFrom\n        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).output =\n          [a && φ.eval (satAssignment u)]",
+      "before_line": 629,
+      "after_line": 629
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satAppend_seek",
+      "kind": "lemma",
+      "header": "private lemma satAppend_seek (x w rest : List Bool) :\n    ∀ pre, w = pre ++ rest → satAppendTM.tm.runFrom\n      (satAppendCfg x (some 0) 1 w pre.length) (rest.length + 1) =\n        satAppendCfg x (some 1) 1 w w.length",
+      "before_line": 3639,
+      "after_line": 3632
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_init",
+      "kind": "lemma",
+      "header": "private lemma satRed_init (x : List Bool) :\n    satRedTM.tm.runFrom (satRedTM.tm.initCfg x) 2 =\n      satRedCfg x (some 2) 0 (Nat.zero_le _) 0 (satRedBuffer [] 0) 0 0 []",
+      "before_line": 1857,
+      "after_line": 1852
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satAppend_rewind",
+      "kind": "lemma",
+      "header": "private lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :\n    ∀ r, r ≤ w.length → satAppendTM.tm.runFrom\n      (satAppendCfg x (some 2) i w ((r : ℤ) - 1)) (r + 1) =\n        satAppendCfg x (some 3) i w 0",
+      "before_line": 3718,
+      "after_line": 3709
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satPair_copy",
+      "kind": "lemma",
+      "header": "private lemma satPair_copy (M : FinTM Bool) {x : List Bool}\n    (saved : Cfg M.k Bool M.State x) (u rest : List Bool) :\n    ∀ pre out (hx : x = pre ++ rest),\n      (satPairTM M).tm.runFrom\n        (satPairCfg M saved u (some 7) pre.length (by simp [hx]) u.length out) (rest.length + 1) =\n          satPairCfg M saved u none x.length (Nat.le_refl _) u.length (out ++ rest)",
+      "before_line": 2652,
+      "after_line": 2647
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_maxClause",
+      "kind": "lemma",
+      "header": "private lemma satRed_maxClause (x : List Bool) (C : CNF.Clause ℕ) :\n    ∀ pre rest (hx : x = pre ++ CNF.serializeClause C ++ rest)\n      (n : ℕ) (buf : ℤ → Option Bool) (b : ℤ) (out : List Bool),\n    ∃ t ≤ 2 * (CNF.serializeClause C).length,\n      satRedTM.tm.runFrom\n        (satRedCfg x (some 3) pre.length (by simp [hx]) n buf 0 b out) t =\n      satRedCfg x (some 2) (pre.length + (CNF.serializeClause C).length)\n        (by simp [hx]) (max n (satClauseVars C)) buf 0 b out",
+      "before_line": 1748,
+      "after_line": 1743
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satEval_rewind",
+      "kind": "lemma",
+      "header": "private lemma satEval_rewind (M : FinTM Bool) {w : List Bool}\n    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q dest : SatEvalControl)\n    (htr : ∀ inp work, (satEvalTM M).tm.tr (.inr q) inp work =\n      match work (Fin.last M.k) with\n      | some _ => satEvalAction M 0 .neg none (some q)\n      | none => satEvalAction M 0 .pos none (some dest))\n    (i : ℕ) (hi : i ≤ w.length) (n : ℕ) (hn : n ≤ u.length) :\n    (satEvalTM M).tm.runFrom (satEvalCfg M saved u q i hi ((n : ℤ) - 1)) (n + 1) =\n      satEvalCfg M saved u dest i hi 0",
+      "before_line": 444,
+      "after_line": 444
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satAppend_copy",
+      "kind": "lemma",
+      "header": "private lemma satAppend_copy (x w rest : List Bool) :\n    ∀ pre, x = pre ++ rest → satAppendTM.tm.runFrom\n      (satAppendCfg x (some 1) (satStreamPos x pre.length) (w ++ pre) (w ++ pre).length)\n      (rest.length + 1) =\n        satAppendCfg x (some 2) (satStreamPos x x.length) (w ++ x) ((w ++ x).length - 1)",
+      "before_line": 3671,
+      "after_line": 3663
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satDrop_copy",
+      "kind": "lemma",
+      "header": "private lemma satDrop_copy (x rest : List Bool) (n : ℕ) :\n    ∀ pre out, x = pre ++ rest →\n      satDropTM.tm.runFrom (satDropCfg x (some 5) pre.length n n out) (rest.length + 1) =\n        satDropCfg x none x.length n n (out ++ rest)",
+      "before_line": 3261,
+      "after_line": 3255
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_maxLiteral",
+      "kind": "lemma",
+      "header": "private lemma satRed_maxLiteral (x : List Bool) (v : ℕ) (pol : Bool)\n    (pre rest : List Bool) (hx : x = pre ++ CNF.serializeLit (v, pol) ++ rest)\n    (n : ℕ) (buf : ℤ → Option Bool) (b : ℤ) (out : List Bool) :\n    satRedTM.tm.runFrom\n      (satRedCfg x (some 3) pre.length (by simp [hx]) n buf 0 b out) (2 * v + 5) =\n      satRedCfg x (some 3) (pre.length + (v + 3))\n        (by simp [hx, CNF.serializeLit] <;> omega) (max n (v + 1)) buf 0 b out",
+      "before_line": 1659,
+      "after_line": 1654
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_maxFormula",
+      "kind": "lemma",
+      "header": "private lemma satRed_maxFormula (x : List Bool) (φ : CNF ℕ) :\n    ∀ pre rest (hx : x = pre ++ CNF.serialize φ ++ rest)\n      (n : ℕ) (buf : ℤ → Option Bool) (b : ℤ) (out : List Bool),\n    ∃ t ≤ 2 * (CNF.serialize φ).length,\n      satRedTM.tm.runFrom\n        (satRedCfg x (some 2) pre.length (by simp [hx]) n buf 0 b out) t =\n      satRedCfg x (some 7) (pre.length + (CNF.serialize φ).length - 1)\n        (by simp only [hx, List.length_append] <;> omega) (max n φ.numVars) buf 0 b out",
+      "before_line": 1791,
+      "after_line": 1786
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satDrop_rewind",
+      "kind": "lemma",
+      "header": "private lemma satDrop_rewind (x : List Bool) (p n : ℕ) :\n    ∀ r, r ≤ n → satDropTM.tm.runFrom\n      (satDropCfg x (some 3) p n ((r : ℤ) - 1) []) (r + 1) = satDropCfg x (some 4) p n 0 []",
+      "before_line": 3203,
+      "after_line": 3197
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satPair_rewind",
+      "kind": "lemma",
+      "header": "private lemma satPair_rewind (M : FinTM Bool) {x : List Bool}\n    (saved : Cfg M.k Bool M.State x) (u : List Bool) (n : ℕ) (hn : n ≤ u.length) :\n    (satPairTM M).tm.runFrom\n      (satPairCfg M saved u (some 3) 0 (Nat.zero_le _) ((n : ℤ) - 1) []) (n + 1) =\n        satPairCfg M saved u (some 4) 0 (Nat.zero_le _) 0 []",
+      "before_line": 2515,
+      "after_line": 2510
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.poly_setup",
+      "kind": "lemma",
+      "header": "private lemma poly_setup (c C : ℕ) (x : List Bool) (q : ℕ) : ∀ j (_hj : j ≤ q),\n    (polyUnaryTM c C).tm.runFrom\n      (polyCfg x q .setup (fun _ => (j : ℤ) - 1) []) (j + 1) =\n      polyCfg x q (.loop (Fin.last c)) (fun _ => 0) []",
+      "before_line": 450,
+      "after_line": 450
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.tmsat_take_separator",
+      "kind": "lemma",
+      "header": "private lemma tmsat_take_separator (x : List Bool) (i m : ℕ)\n    (hi : i + 2 ≤ x.length) (h₀ : x[i]? = some false) (h₁ : x[i+1]? = some true) :\n    tmsatTakeTM.tm.runFrom (tmsatTakeCfg x (some 0) i (by omega) m m []) 2 =\n      tmsatTakeCfg x (some 3) (i+2) hi m ((m : ℤ)-1) []",
+      "before_line": 951,
+      "after_line": 950
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.tmsat_take_double",
+      "kind": "lemma",
+      "header": "private lemma tmsat_take_double (x : List Bool) (i m : ℕ) (b : Bool)\n    (hi : i + 2 ≤ x.length) (h₀ : x[i]? = some b) (h₁ : x[i+1]? = some b) :\n    tmsatTakeTM.tm.runFrom (tmsatTakeCfg x (some 0) i (by omega) m m []) 2 =\n      tmsatTakeCfg x (some 0) (i+2) hi (m+1) (m+1) []",
+      "before_line": 919,
+      "after_line": 919
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.poly_rewind",
+      "kind": "lemma",
+      "header": "private lemma poly_rewind {c C : ℕ} (x : List Bool) (q : ℕ)\n    (h : Fin (c + 1) → ℤ) (o : List Bool) (i : Fin (c + 1)) :\n    ∀ j (_hj : j ≤ q),\n    (polyUnaryTM c C).tm.runFrom\n      (polyCfg x q (.rewind i) (Function.update h i ((j : ℤ) - 1)) o) (j + 1) =\n      polyCfg x q (.advance ⟨i.val + 1, by omega⟩) (Function.update h i 0) o",
+      "before_line": 218,
+      "after_line": 218
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.poly_loop",
+      "kind": "lemma",
+      "header": "private lemma poly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :\n    ∀ i (hi : i < c + 1) (h : Fin (c + 1) → ℤ)\n      (_hh : ∀ k, k.val ≤ i → h k = 0) (o : List Bool) (r j : ℕ), j + r = q →\n    (polyUnaryTM c C).tm.runFrom\n      (polyCfg x q (.loop ⟨i, hi⟩) (Function.update h ⟨i, hi⟩ (j : ℤ)) o)\n      (r * (polyCost q C i + 2) + q + 2) =\n      polyCfg x q (.advance ⟨i + 1, by omega⟩) h\n        (o ++ List.replicate (r * (C * q ^ i)) true)",
+      "before_line": 273,
+      "after_line": 273
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "name": "Complexity.poly_emit",
+      "kind": "lemma",
+      "header": "private lemma poly_emit {c C : ℕ} (x : List Bool) (q : ℕ)\n    (h : Fin (c + 1) → ℤ) : ∀ j (hj : j ≤ C) (o : List Bool),\n    (polyUnaryTM c C).tm.runFrom\n      (polyCfg x q (.emit ⟨j, by omega⟩) h o) (j + 1) =\n      polyCfg x q (.advance 0) h (o ++ List.replicate j true)",
+      "before_line": 196,
+      "after_line": 196
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_syntax_separator",
+      "kind": "lemma",
+      "header": "private lemma taut_syntax_separator (x : List Bool) (s : TautSyntax) (i : ℕ)\n    (hi : i+2 ≤ x.length) (h₀ : x[i]? = some false) (h₁ : x[i+1]? = some true) :\n    tautTM.tm.runFrom (tautCfg x (some (.syntaxFirst s)) i (by omega) [] 0) 2 =\n      tautCfg x (some (if s = .done then .copy else .verdict true)) (i+2) hi [] 0",
+      "before_line": 485,
+      "after_line": 484
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_syntax_double",
+      "kind": "lemma",
+      "header": "private lemma taut_syntax_double (x : List Bool) (s : TautSyntax) (i : ℕ)\n    (hi : i+2 ≤ x.length) (b : Bool)\n    (h₀ : x[i]? = some b) (h₁ : x[i+1]? = some b) :\n    tautTM.tm.runFrom (tautCfg x (some (.syntaxFirst s)) i (by omega) [] 0) 2 =\n      tautCfg x (some (.syntaxFirst (tautSyntaxStep s b))) (i+2) hi [] 0",
+      "before_line": 465,
+      "after_line": 465
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_eval_double",
+      "kind": "lemma",
+      "header": "private lemma taut_eval_double (x : List Bool) (q : TautEval) (q' : TautControl)\n    (i : ℕ) (hi : i+2 ≤ x.length) (u : List Bool) (h : ℤ) (b : Bool) (e : SignType)\n    (hr : x[i]? = some b)\n    (ha : tautEvalAction q b (FinTM.bufferTape u h) = tautMove 1 e q') :\n    tautTM.tm.runFrom (tautCfg x (some (.evalFirst q)) i (by omega) u h) 2 =\n      tautCfg x (some q') (i+2) hi u (h+(e : ℤ))",
+      "before_line": 707,
+      "after_line": 705
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_work_rewind",
+      "kind": "lemma",
+      "header": "private lemma taut_work_rewind (q dest : TautControl)\n    (htr : ∀ (inp : Option Bool) (w : Fin 1 → Option Bool), tautTM.tm.tr q inp w =\n      match w 0 with\n      | some _ => tautMove 0 (-1) q\n      | none => tautMove 0 1 dest)\n    (x : List Bool) (i : ℕ) (hi : i ≤ x.length) (u : List Bool) :\n    ∀ n (_hn : n ≤ u.length),\n    tautTM.tm.runFrom (tautCfg x (some q) i hi u ((n : ℤ)-1)) (n+1) =\n      tautCfg x (some dest) i hi u 0",
+      "before_line": 605,
+      "after_line": 603
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Transducer.lean",
+      "name": "Complexity.transducer_run",
+      "kind": "theorem",
+      "header": "theorem transducer_run [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ)\n    (o : σ → Bool → Option Bool) (q₀ : σ) (x : List Bool) :\n    ∀ (l : List Bool) (q : σ) (cfg : Cfg 0 Bool σ x) (i : ℕ), l = x.drop i → i ≤ x.length →\n      cfg.state = some q → cfg.inputPos.val = i + 1 →\n      ((transducerTM δ o q₀).tm.runFrom cfg (l.length + 1)).state = none ∧\n      ((transducerTM δ o q₀).tm.runFrom cfg (l.length + 1)).output =\n        cfg.output ++ transduce δ o q l",
+      "before_line": 111,
+      "after_line": 111
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/Examples.lean",
+      "name": "Complexity.pal_test",
+      "kind": "lemma",
+      "header": "private lemma pal_test (x : List Bool) : ∀ r i (hi : i ≤ x.length)\n    (hr : x.length = i + r),\n    let c",
+      "before_line": 260,
+      "after_line": 260
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "name": "Complexity.counter_carry",
+      "kind": "lemma",
+      "header": "private lemma counter_carry (x : List Bool) (p : Fin (x.length + 2))\n    (bs : List Bool) : ∀ pre : List Bool,\n    FinTM.lengthBitsTM.tm.runFrom (counterCfg x 1 p pre.length (pre ++ bs) [])\n        (counterCarry bs + 1) =\n      counterCfg x 2 p ((pre.length : ℤ) + counterCarry bs - 1)\n        (pre ++ counterInc bs) []",
+      "before_line": 233,
+      "after_line": 233
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "name": "Complexity.counter_rewind",
+      "kind": "lemma",
+      "header": "private lemma counter_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (bs : List Bool) : ∀ j (_hj : j ≤ bs.length),\n    FinTM.lengthBitsTM.tm.runFrom (counterCfg x 2 p ((j : ℤ) - 1) bs []) (j + 1) =\n      counterCfg x 0 p 0 bs []",
+      "before_line": 264,
+      "after_line": 264
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRead_rewind",
+      "kind": "lemma",
+      "header": "private lemma clRead_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (stream w : List Bool) (s : ℤ) : ∀ j, j ≤ w.length →\n    clReadTM.tm.runFrom (clReadCfg x p (.inr false) stream w s ((j : ℤ) - 1)) (j + 1) =\n      clReadCfg x p (.inr true) stream w s 0",
+      "before_line": 3208,
+      "after_line": 3206
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clWipe_forward",
+      "kind": "lemma",
+      "header": "private lemma clWipe_forward (x : List Bool) (p : Fin (x.length + 2))\n    (stream word : List Bool) (s : ℤ) : ∀ j, j ≤ word.length →\n    clWipeTM.tm.runFrom (clWipeCfg x p 0 stream word s j) (word.length - j + 1) =\n      clWipeCfg x p 1 stream word s (word.length - 1)",
+      "before_line": 3347,
+      "after_line": 3345
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCount_carry",
+      "kind": "lemma",
+      "header": "private lemma clCount_carry (x : List Bool) (p : Fin (x.length + 2))\n    (bs : List Bool) : ∀ pre : List Bool,\n    clCountTM.tm.runFrom (clCountCfg x 1 p pre.length (pre ++ bs) [])\n        (clCountCarry bs + 1) =\n      clCountCfg x 2 p ((pre.length : ℤ) + clCountCarry bs - 1)\n        (pre ++ clCountInc bs) []",
+      "before_line": 995,
+      "after_line": 995
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clInput_backward",
+      "kind": "lemma",
+      "header": "private lemma clInput_backward (x w : List Bool) : ∀ j (hj : j ≤ x.length),\n    clInputTM.tm.runFrom (clInputCfg x 1 ⟨j, by omega⟩ w ((j : ℤ) - 1)) (j + 1) =\n      clInputCfg x 2 1 w 0",
+      "before_line": 3771,
+      "after_line": 3769
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clReplay_back",
+      "kind": "lemma",
+      "header": "private lemma clReplay_back (x : List Bool) (p : Fin (x.length + 2)) (w out : List Bool) :\n    ∀ j, j ≤ w.length →\n      clReplayTM.tm.runFrom (clReplayCfg x p (some 1) w ((j : ℤ) - 1) out) (j + 1) =\n        clReplayCfg x p (some 2) w 0 out",
+      "before_line": 4673,
+      "after_line": 4671
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCount_rewind",
+      "kind": "lemma",
+      "header": "private lemma clCount_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (bs : List Bool) : ∀ j (_hj : j ≤ bs.length),\n    clCountTM.tm.runFrom (clCountCfg x 2 p ((j : ℤ) - 1) bs []) (j + 1) =\n      clCountCfg x 0 p 0 bs []",
+      "before_line": 1026,
+      "after_line": 1024
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCmp_rewind",
+      "kind": "lemma",
+      "header": "private lemma clCmp_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin 4 → List Bool) (b : Bool) : ∀ j, j ≤ clCmpSize w →\n    clCmpTM.tm.runFrom (clCmpCfg x p (.inr (.inl b)) w ((j : ℤ) - 1)) (j + 1) =\n      clCmpCfg x p (.inr (.inr b)) w 0",
+      "before_line": 2931,
+      "after_line": 2929
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clReplay_forward",
+      "kind": "lemma",
+      "header": "private lemma clReplay_forward (x : List Bool) (p : Fin (x.length + 2)) (w : List Bool) :\n    ∀ j, j ≤ w.length → ∀ out,\n      clReplayTM.tm.runFrom (clReplayCfg x p (some 2) w j out) (w.length - j + 1) =\n        clReplayCfg x p none w w.length (out ++ w.drop j)",
+      "before_line": 4702,
+      "after_line": 4700
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRead_pair",
+      "kind": "lemma",
+      "header": "private lemma clRead_pair (x : List Bool) (p : Fin (x.length + 2))\n    (pre rest written old : List Bool) (b : Bool) :\n    clReadTM.tm.runFrom\n      (clReadCfg x p (.inl none) (pre ++ b :: b :: rest) (written ++ old)\n        pre.length written.length) 2 =\n      clReadCfg x p (.inl none) (pre ++ b :: b :: rest) (written ++ b :: old.tail)\n        (pre.length + 2) (written.length + 1)",
+      "before_line": 3117,
+      "after_line": 3115
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clWipe_backward",
+      "kind": "lemma",
+      "header": "private lemma clWipe_backward (x : List Bool) (p : Fin (x.length + 2))\n    (stream : List Bool) (s : ℤ) : ∀ word : List Bool,\n    clWipeTM.tm.runFrom (clWipeCfg x p 1 stream word s (word.length - 1))\n      (word.length + 1) = clWipeCfg x p 2 stream [] s 0",
+      "before_line": 3379,
+      "after_line": 3377
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCopy_separator",
+      "kind": "lemma",
+      "header": "private lemma clCopy_separator (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) :\n    clCopyTM.tm.runFrom (clCopyCfg x 0 p w.length w record) 2 =\n      clCopyCfg x 3 p (w.length - 1) w (record ++ [false, true])",
+      "before_line": 1637,
+      "after_line": 1635
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRead_separator",
+      "kind": "lemma",
+      "header": "private lemma clRead_separator (x : List Bool) (p : Fin (x.length + 2))\n    (pre tail w : List Bool) :\n    clReadTM.tm.runFrom\n      (clReadCfg x p (.inl none) (pre ++ false :: true :: tail) w pre.length w.length) 2 =\n      clReadCfg x p (.inr false) (pre ++ false :: true :: tail) w\n        (pre.length + 2) (w.length - 1)",
+      "before_line": 3177,
+      "after_line": 3175
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCopy_rewind",
+      "kind": "lemma",
+      "header": "private lemma clCopy_rewind (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) : ∀ j, j ≤ w.length →\n      clCopyTM.tm.runFrom (clCopyCfg x 3 p ((j : ℤ) - 1) w record) (j + 1) =\n        clCopyCfg x 4 p 0 w record",
+      "before_line": 1660,
+      "after_line": 1658
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clFill_run",
+      "kind": "lemma",
+      "header": "private lemma clFill_run (b : Bool) (x : List Bool) (i : ℕ) (hi : i ≤ x.length)\n    (out : List Bool) :\n    (clFillTM b).tm.runFrom\n      (⟨some (), ⟨i + 1, by omega⟩, fun j => Fin.elim0 j,\n        fun j => Fin.elim0 j, out⟩ : Cfg 0 Bool Unit x)\n      (x.length - i + 1) =\n      ⟨none, ⟨x.length + 1, by omega⟩, fun j => Fin.elim0 j,\n        fun j => Fin.elim0 j, out ++ List.replicate (x.length - i) b⟩",
+      "before_line": 677,
+      "after_line": 677
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCopy_pair",
+      "kind": "lemma",
+      "header": "private lemma clCopy_pair (x : List Bool) (p : Fin (x.length + 2))\n    (pre rest record : List Bool) (b : Bool) :\n    clCopyTM.tm.runFrom (clCopyCfg x 0 p pre.length (pre ++ b :: rest) record) 2 =\n      clCopyCfg x 0 p (pre.length + 1) (pre ++ b :: rest) (record ++ [b, b])",
+      "before_line": 1595,
+      "after_line": 1593
+    },
+    {
+      "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+      "name": "Turing.NTimeDiag.dz_take_run",
+      "kind": "theorem",
+      "header": "private theorem dz_take_run {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.length + 2))\n    (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) :\n    (dzTakeTM K i).runFrom (qyC none ip T P o) 1 =\n      qyC (some (T i (P i))) ip (Function.update T i (Function.update (T i) (P i) none))\n        (Function.update P i (P i + 1)) o",
+      "before_line": 5338,
+      "after_line": 5333
+    },
+    {
+      "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+      "name": "Turing.NTimeDiag.qy_emit_run",
+      "kind": "theorem",
+      "header": "private theorem qy_emit_run {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : List Bool) (rr : ℕ)\n    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)\n    (o : List Bool) (w : List Bool) (hT : T i = FinTM.bufferTape w) (hP : P i = 0) :\n    ∃ t ≤ pre.length + suf.length + 3 + w.length * (rr + 3),\n      (qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) t =\n        qyC .done ip T (Function.update P i w.length) (o ++ pre ++ qyBody dl rr w ++ suf) ∧\n      ∀ u < t, ((qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) u).state ≠\n        some .done",
+      "before_line": 1277,
+      "after_line": 1272
+    },
+    {
+      "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+      "name": "Turing.NTimeDiag.qy_emit_halt",
+      "kind": "theorem",
+      "header": "private theorem qy_emit_halt {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : List Bool) (rr : ℕ)\n    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)\n    (o : List Bool) :\n    ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).state = none ∧\n      ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).output = o",
+      "before_line": 2088,
+      "after_line": 2083
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "name": "Complexity.f6_native_halt",
+      "kind": "theorem",
+      "header": "private theorem f6_native_halt (c : EffectiveMachineCode) :\n    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)\n      (A : MultiTapeTM (K + 3) Bool (P ⊕ Unit)),\n      ∀ α : List Bool, ∃ T : ℕ, ∀ w : List Bool,\n        A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =\n          ⟨none, 1,\n            fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)\n              else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)\n              else fun _ => none,\n            fun _ => 0, []⟩ ∧\n        (∀ u < T + 2, (A.runFrom (A.initCfg (pairEncode α w)) u).state ≠ none)",
+      "before_line": 131,
+      "after_line": 131
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "name": "Complexity.sph_right_run",
+      "kind": "lemma",
+      "header": "private lemma sph_right_run {k : ℕ} {Γ : Type} {x : List Γ}\n    (d : Cfg k Γ Bool x) (hd : d.state = some false) :\n    (sphRightTM k Γ).runFrom d 1 =\n        {d with state := some true, inputPos := moveInputPos d.inputPos .pos} ∧\n      1 ≤ (moveInputPos d.inputPos .pos).val ∧\n      (∀ u < 1, ((sphRightTM k Γ).runFrom d u).state ≠ some true) ∧\n      ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos",
+      "before_line": 1231,
+      "after_line": 1231
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean",
+      "name": "Complexity.sph_emit_run",
+      "kind": "lemma",
+      "header": "private lemma sph_emit_run {k : ℕ} {Γ : Type} {x : List Γ} (b : Γ)\n    (d : Cfg k Γ Unit x) (hd : d.state = some ()) :\n    (sphEmitTM k b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} ∧\n      ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos",
+      "before_line": 1281,
+      "after_line": 1281
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+      "name": "Complexity.b2b_verdict_trace",
+      "kind": "theorem",
+      "header": "private theorem b2b_verdict_trace {k : ℕ} {x : List Bool} (i : Fin k)\n    (d : Cfg k Bool B2bVerdictState x) (b : Bool)\n    (hs : d.state = some .left)\n    (hb : d.workTapes i (d.workTapePos i - 1) = some b) (t : ℕ) (ht : t ≤ 2) :\n    (b2b_verdictTM k i).runFrom d t =\n      if t = 0 then d else if t = 1 then\n        { d with\n          state := some .read\n          workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) }\n      else\n        { d with\n          state := some (.done b)\n          workTapes := Function.update d.workTapes i\n            (Function.update (d.workTapes i) (d.workTapePos i - 1) none),\n          workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) }",
+      "before_line": 197,
+      "after_line": 197
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+      "name": "Complexity.b2b_finish_answer",
+      "kind": "theorem",
+      "header": "private theorem b2b_finish_answer (MV MI MP : FinTM Bool) {x : List Bool} (b : Bool)\n    (c : Cfg (b2b_tapeCount MV.k MI.k MP.k + 1) Bool (Fin 2) x)\n    (hc : c.state = some 0) :\n    let H",
+      "before_line": 2303,
+      "after_line": 2303
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "name": "Complexity.LogProg.call_run",
+      "kind": "theorem",
+      "header": "theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)\n    (hl : c0.state = some l) (hcall : P.call l = some cs)\n    (hW : ∀ r ∈ cs.args, c0.workTapes r = FinTM.bufferTape (W r))\n    (hW0 : ∀ r ∈ cs.args, c0.workTapePos r = 0) (hnd : cs.args.Nodup)\n    (hin : c0.inputPos.val = 1) (b : Bool) (B : ℕ)\n    (hD : CleanRun D (q0 cs.dec) (vword (callSegs cs x W)) b B) :\n    ∃ T, (∀ t ≤ T, RegBox cs c0.workTapePos W (fun r => ((compileTM P l₀ D q0).runFrom\n          (seam c0) t).workTapePos (Fin.castAdd kD r)) ∧\n        ∀ i, |((compileTM P l₀ D q0).runFrom (seam c0) t).workTapePos (Fin.natAdd m i)| ≤ B) ∧\n      (compileTM P l₀ D q0).runFrom (seam c0) T =\n        seam { c0 with state := some (if b then cs.yes else cs.no), inputPos := 1 }",
+      "before_line": 150,
+      "after_line": 150
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "name": "Complexity.LogProg.retR_scan",
+      "kind": "lemma",
+      "header": "lemma retR_scan (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)\n    (s : Fin (m + 1)) (dir b : Bool) (a : Fin m) (w : List Bool) (rr : Fin m)\n    (hrr : cs.args.getD a a = rr)\n    (rt : Fin m → ℤ → Option Bool) (hrt : rt rr = FinTM.bufferTape w)\n    (dt : Fin kD → ℤ → Option Bool) (dp : Fin kD → ℤ) (out : List Bool)\n    (ip : Fin (x.length + 2)) :\n    ∀ (n : ℕ) (rp : Fin m → ℤ), rp (rr) + 1 = n → (n : ℤ) ≤ w.length →\n      (∀ t ≤ n + 1, ∀ r, (((compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a true)) ip rt rp dt dp out) t).workTapePos\n            (Fin.castAdd kD r) = rp r ∨\n          (r = rr ∧ -1 ≤ ((compileTM P l₀ D q0).runFrom\n            (mkCfg (some (.retR l s dir b a true)) ip rt rp dt dp out) t).workTapePos\n              (Fin.castAdd kD r) ∧ ((compileTM P l₀ D q0).runFrom\n            (mkCfg (some (.retR l s dir b a true)) ip rt rp dt dp out) t).workTapePos\n              (Fin.castAdd kD r) ≤ max (rp r) 0)) ∧\n        ((compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a true)) ip rt rp dt dp out) t).workTapePos\n            ∘ Fin.natAdd m = dp) ∧\n      (compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a true)) ip rt rp dt dp out) (n + 1) =\n        mkCfg (some (nextRet cs l s dir b (a.val + 1))) ip rt\n          (Function.update rp (rr) 0) dt dp out",
+      "before_line": 173,
+      "after_line": 173
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "name": "Complexity.LogProg.retR_run",
+      "kind": "lemma",
+      "header": "lemma retR_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)\n    (s : Fin (m + 1)) (dir b : Bool) (a : Fin m) (w : List Bool) (rr : Fin m)\n    (hrr : cs.args.getD a a = rr) (rt : Fin m → ℤ → Option Bool)\n    (hrt : rt rr = FinTM.bufferTape w) (dt : Fin kD → ℤ → Option Bool) (dp : Fin kD → ℤ)\n    (out : List Bool) (ip : Fin (x.length + 2)) (rp : Fin m → ℤ)\n    (hp : -1 ≤ rp rr ∧ rp rr ≤ w.length) (hl : rp rr = -1 → leftSide s dir a = true)\n    (hrgt : rp rr = w.length → leftSide s dir a = false) :\n    ∃ T, (∀ t ≤ T, ∀ r, (((compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a false)) ip rt rp dt dp out) t).workTapePos\n            (Fin.castAdd kD r) = rp r ∨\n          (r = rr ∧ -1 ≤ ((compileTM P l₀ D q0).runFrom\n            (mkCfg (some (.retR l s dir b a false)) ip rt rp dt dp out) t).workTapePos\n              (Fin.castAdd kD r) ∧ ((compileTM P l₀ D q0).runFrom\n            (mkCfg (some (.retR l s dir b a false)) ip rt rp dt dp out) t).workTapePos\n              (Fin.castAdd kD r) ≤ max (rp r) 0)) ∧\n        ((compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a false)) ip rt rp dt dp out) t).workTapePos\n            ∘ Fin.natAdd m = dp) ∧\n      (compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.retR l s dir b a false)) ip rt rp dt dp out) T =\n        mkCfg (some (nextRet cs l s dir b (a.val + 1))) ip rt\n          (Function.update rp rr 0) dt dp out",
+      "before_line": 281,
+      "after_line": 281
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "name": "Complexity.LogProg.ret2_run",
+      "kind": "lemma",
+      "header": "lemma ret2_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)\n    (s : Fin (m + 1)) (dir b : Bool) (rt : Fin m → ℤ → Option Bool) (rp : Fin m → ℤ)\n    (dt : Fin kD → ℤ → Option Bool) (dp : Fin kD → ℤ) (out : List Bool) :\n    ∀ (j : ℕ) (ip : Fin (x.length + 2)), ip.val = j → j ≤ x.length →\n      (∀ t ≤ j + 1, ((compileTM P l₀ D q0).runFrom\n          (mkCfg (some (.ret2 l s dir b)) ip rt rp dt dp out) t).workTapePos =\n        Fin.append rp dp) ∧\n      (compileTM P l₀ D q0).runFrom (mkCfg (some (.ret2 l s dir b)) ip rt rp dt dp out)\n          (j + 1) = mkCfg (some (nextRet cs l s dir b 0)) 1 rt rp dt dp out",
+      "before_line": 112,
+      "after_line": 112
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "name": "Complexity.LogProg.cleanTM_run",
+      "kind": "theorem",
+      "header": "theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T : ℕ)\n    (hT : (M.runFrom (Cfg.init q V) T).state = none) (s : ℕ)\n    (hs : ∀ i, (M.visitedByTapeHead (Cfg.init q V) T i).card ≤ s) :\n    ∃ T', ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').state = none ∧\n      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').output =\n        (M.runFrom (Cfg.init q V) T).output ∧\n      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').workTapes = (fun _ _ => none) ∧\n      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').workTapePos = (fun _ => 0) ∧\n      ∀ t ≤ T', ∀ j, |((cleanTM M q₁).runFrom (Cfg.init (.init q) V) t).workTapePos j| ≤ s",
+      "before_line": 314,
+      "after_line": 314
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "name": "Complexity.LogProg.clean_tape",
+      "kind": "lemma",
+      "header": "lemma clean_tape (a b : ℤ) (Dt Mt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ)\n    (ha : a ≤ 0) (hb : 0 ≤ b) (haB : -B ≤ a - 1) (hbB : b + 1 ≤ B)\n    (hh : a ≤ Dp i ∧ Dp i ≤ b)\n    (hMt : wr (if Mt i (Dp i) = some true then none else some (some false)) (Mt i) (Dp i) =\n      markI a b)\n    (hsupp : ∀ z, Dt i z ≠ none → a ≤ z ∧ z ≤ b) (hB : ∀ j, |Dp j| ≤ B) :\n    ∃ T, (∀ t ≤ T, PB B ((cleanTM M q₀).runFrom\n        (ccfg (some (.cl i .mark)) ip Dt Dp Mt Dp out) t)) ∧\n      (cleanTM M q₀).runFrom (ccfg (some (.cl i .mark)) ip Dt Dp Mt Dp out) T =\n        ccfg (clNext i) ip (Function.update Dt i (fun _ => none)) (Function.update Dp i 0)\n          (Function.update Mt i (fun _ => none)) (Function.update Dp i 0) out",
+      "before_line": 443,
+      "after_line": 443
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "name": "Complexity.LogProg.goR_run",
+      "kind": "lemma",
+      "header": "lemma goR_run (a b : ℤ) (Dt : Fin k → ℤ → Option Bool) (Mt : Fin k → ℤ → Option Bool)\n    (hMt : Mt i = markI a b) (hb : 0 ≤ b) (hbB : b + 1 ≤ B) :\n    ∀ (n : ℕ) (Dp : Fin k → ℤ), b + 1 - Dp i = n → a ≤ Dp i → (∀ j, |Dp j| ≤ B) →\n      (∀ t ≤ n + 1, PB B ((cleanTM M q₀).runFrom\n          (ccfg (some (.cl i .goR)) ip Dt Dp Mt Dp out) t)) ∧\n      (cleanTM M q₀).runFrom (ccfg (some (.cl i .goR)) ip Dt Dp Mt Dp out) (n + 1) =\n        ccfg (some (.cl i .erase)) ip Dt (Function.update Dp i b) Mt (Function.update Dp i b)\n          out",
+      "before_line": 217,
+      "after_line": 217
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "name": "Complexity.LogProg.back_run",
+      "kind": "lemma",
+      "header": "lemma back_run (a : ℤ) :\n    ∀ (n : ℕ) (Dt Mt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ), -Dp i = n → a ≤ Dp i →\n      Mt i = markI a (a - 1) → (∀ j, |Dp j| ≤ B) →\n      (∀ t ≤ n + 1, PB B ((cleanTM M q₀).runFrom\n          (ccfg (some (.cl i .back)) ip Dt Dp Mt Dp out) t)) ∧\n      (cleanTM M q₀).runFrom (ccfg (some (.cl i .back)) ip Dt Dp Mt Dp out) (n + 1) =\n        ccfg (clNext i) ip Dt (Function.update Dp i 0) (Function.update Mt i (fun _ => none))\n          (Function.update Dp i 0) out",
+      "before_line": 379,
+      "after_line": 379
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "name": "Complexity.LogProg.erase_run",
+      "kind": "lemma",
+      "header": "lemma erase_run (a b : ℤ) (f : ℤ → Option Bool) (ha : a ≤ 0) (haB : -B ≤ a - 1) :\n    ∀ (n : ℕ) (Dt Mt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ), Dp i - (a - 1) = n →\n      Dp i ≤ b → Dt i = eraseAbove f (Dp i) → Mt i = markI a (Dp i) → (∀ j, |Dp j| ≤ B) →\n      (∀ t ≤ n + 1, PB B ((cleanTM M q₀).runFrom\n          (ccfg (some (.cl i .erase)) ip Dt Dp Mt Dp out) t)) ∧\n      (cleanTM M q₀).runFrom (ccfg (some (.cl i .erase)) ip Dt Dp Mt Dp out) (n + 1) =\n        ccfg (some (.cl i .back)) ip (Function.update Dt i (eraseAbove f (a - 1)))\n          (Function.update Dp i a) (Function.update Mt i (markI a (a - 1)))\n          (Function.update Dp i a) out",
+      "before_line": 284,
+      "after_line": 284
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean",
+      "name": "Complexity.LogProg.compile_correct_from",
+      "kind": "theorem",
+      "header": "theorem compile_correct_from (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)\n    (q0 : Fin d → SD) (oracle : Fin d → List Bool → Bool) (lo hi : Fin m → ℤ) (B : ℕ)\n    (c₀ : Cfg m Bool Λ x) (N : ℕ)\n    (hbox : ∀ t ≤ N, ∀ r, lo r ≤ (rrun P oracle c₀ t).workTapePos r ∧\n      (rrun P oracle c₀ t).workTapePos r ≤ hi r)\n    (hcalls : ∀ t < N, CallOK P D q0 oracle lo hi B (rrun P oracle c₀ t)) :\n    ∃ T, (compileTM P l₀ D q0).runFrom (seam c₀) T = seam (rrun P oracle c₀ N) ∧\n      ∀ t ≤ T, (∀ r, lo r ≤ ((compileTM P l₀ D q0).runFrom (seam c₀)\n          t).workTapePos (Fin.castAdd kD r) ∧\n          ((compileTM P l₀ D q0).runFrom (seam c₀) t).workTapePos\n            (Fin.castAdd kD r) ≤ hi r) ∧\n        ∀ i, |((compileTM P l₀ D q0).runFrom (seam c₀) t).workTapePos\n          (Fin.natAdd m i)| ≤ B",
+      "before_line": 123,
+      "after_line": 123
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "name": "Complexity.LogProg.marm_run",
+      "kind": "theorem",
+      "header": "theorem marm_run (A : MARM m d Λ) (l₀ : Λ) (oracle : Fin d → List Bool → Bool)\n    (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) (B W P : ℕ) :\n    ∀ (N : ℕ) (l : Λ) (v : Fin m → ℕ) (M : ℤ → Bool) (p : ℤ) (out : List Bool) (b : Bool),\n      (mrun A oracle x ((some l, v, none), (M, p)) N).1.1 = none →\n      (mrun A oracle x ((some l, v, none), (M, p)) N).1.2.2 = some b →\n      (∀ t < N, MGuard A oracle D q0 B W P x (mrun A oracle x ((some l, v, none), (M, p)) t)) →\n      ∃ T, ((mcompileTM A l₀ D q0).runFrom (mseam x l v M p out) T).state = none ∧\n        ((mcompileTM A l₀ D q0).runFrom (mseam x l v M p out) T).output = out ++ [b] ∧\n        ∀ t ≤ T, MBox W B P ((mcompileTM A l₀ D q0).runFrom (mseam x l v M p out) t)",
+      "before_line": 77,
+      "after_line": 77
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/WindowClock.lean",
+      "name": "Turing.cw_left_run",
+      "kind": "lemma",
+      "header": "private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)\n    (d : Cfg k Γ Bool x) (hd : d.state = some false) :\n    (cw_leftTM k i).runFrom d 1 =\n      { d with state := some true\n               workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧\n      (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true)",
+      "before_line": 268,
+      "after_line": 268
+    },
+    {
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockLoop.lean",
+      "name": "Complexity.TimeHierarchy.ret_run",
+      "kind": "lemma",
+      "header": "lemma ret_run {x : List Bool} (c : Cfg W.k Bool W.State x) (q : W.State) (r : OutReg)\n    (kt : Fin K.k → ℤ → Option Bool) (kh : Fin K.k → ℤ) (τ : ℤ → Option Bool)\n    (hneg : τ (-1) = none) : ∀ j, (∀ i : ℕ, i < j → τ i ≠ none) →\n    (clockTM K W).tm.runFrom (ctrCfg K W (some (.ret q r)) c τ ((j : ℤ) - 1) kt kh []) (j + 1) =\n      ctrCfg K W (some (.dec q r)) c τ 0 kt kh []",
+      "before_line": 128,
+      "after_line": 128
+    },
+    {
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "Complexity.TimeHierarchy.cScanCfg_run",
+      "kind": "lemma",
+      "header": "lemma cScanCfg_run {x : List Bool} (s : List Bool) (p : Fin (x.length + 2))\n    (kt : Fin K.k → ℤ → Option Bool) (kh : Fin K.k → ℤ) : ∀ j, j ≤ s.length →\n    (clockTM K W).tm.runFrom (cScanCfg K W s p kt kh j) (j + 1) =\n      ctrCfg K W (some .iStart) ⟨none, p, fun _ _ => none, fun _ => 0, []⟩ (bufferTape s)\n        0 kt kh []",
+      "before_line": 446,
+      "after_line": 446
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+      "name": "Turing.recordStep_orbit_one_step",
+      "kind": "theorem",
+      "header": "private theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}\n    (M : MultiTapeTM K Γ S) (c : Cfg K Γ S x) (r : ℕ) :\n    roundOrbit M (fun _ => 1) c (r + 1) = M.step (roundOrbit M (fun _ => 1) c r)",
+      "before_line": 566,
+      "after_line": 560
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+      "name": "Turing.recordStep_probe_run",
+      "kind": "theorem",
+      "header": "private theorem recordStep_probe_run {Γ : Type} {x : List Γ} (hx : 0 < x.length)\n    (d : Cfg 4 Γ RecordStepProbe x) (hd : d.state = some .start) :\n    ∃ t ≤ 2, ∃ b : Bool, ∃ p : Fin (x.length + 2),\n      recordStepProbe.runFrom d t = {d with state := some (.done b), inputPos := p} ∧\n      (∀ u < t, ∀ v, (recordStepProbe.runFrom d u).state ≠ some (.done v)) ∧\n      b = decide (d.inputPos.val = x.length + 1) ∧\n      p.val = (if b then x.length else d.inputPos.val) ∧\n      (∀ u ≤ t, (recordStepProbe.runFrom d u).workTapePos = d.workTapePos)",
+      "before_line": 924,
+      "after_line": 918
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+      "name": "Turing.recordStep_read_run",
+      "kind": "theorem",
+      "header": "private theorem recordStep_read_run {Q T : Type} [DecidableEq Q] [DecidableEq T]\n    {x : List (RecSym Q T)} (d : Cfg 4 (RecSym Q T) (Option (Option Bool)) x)\n    (hd : d.state = some none) :\n    recordStepRead.runFrom d 1 =\n        {d with state := some (some (d.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T))))} ∧\n      (∀ u < 1, ∀ b, (recordStepRead.runFrom d u).state ≠ some (some b))",
+      "before_line": 841,
+      "after_line": 835
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+      "name": "Turing.body_round",
+      "kind": "theorem",
+      "header": "private theorem body_round (hek : 0 < Em.k) (hgk : 0 < Gm.k) (s es gs : List Bool)\n    (tE : ℕ) (htE : 0 < tE)\n    (hEfirst : ∀ t', 0 < t' → t' < tE →\n      (Em.tm.runFrom (Cfg.ofWords (input := x) ee (stateWord Em.k s)) t').state ≠\n        some ex)\n    (hErun : Em.tm.runFrom (Cfg.ofWords (input := x) ee (stateWord Em.k s)) tE =\n      { Cfg.ofWords ex (stateWord Em.k s) with output := es })\n    (tG : ℕ) (htG : 0 < tG)\n    (hGfirst : ∀ t', 0 < t' → t' < tG →\n      (Gm.tm.runFrom (Cfg.ofWords (input := x) ge (stateWord Gm.k s)) t').state ≠\n        some gx)\n    (hGrun : Gm.tm.runFrom (Cfg.ofWords (input := x) ge (stateWord Gm.k s)) tG =\n      Cfg.ofWords gx (stateWord Gm.k gs)) :\n    (emitIterBody Em Gm hek ee ex ge gx).tm.runFrom\n        (Cfg.ofWords (input := x) .anchor (stateWord (max Em.k Gm.k) s))\n        (tE + 1 + tG + 1) =\n      { Cfg.ofWords (input := x) .anchor (stateWord (max Em.k Gm.k) gs)\n          with output := es } ∧\n    ∀ t', 0 < t' → t' < tE + 1 + tG + 1 →\n      ((emitIterBody Em Gm hek ee ex ge gx).tm.runFrom\n        (Cfg.ofWords (input := x) .anchor (stateWord (max Em.k Gm.k) s))\n          t').state ≠ some .anchor",
+      "before_line": 198,
+      "after_line": 198
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "Turing.SafeRun.cons",
+      "kind": "theorem",
+      "header": "theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c'",
+      "before_line": 77,
+      "after_line": 77
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean",
+      "name": "Turing.rd_call_run",
+      "kind": "theorem",
+      "header": "private theorem rd_call_run {z : List Bool} (op : Option SignType) (ℓ : ℕ)\n    (d : Cfg 1 Bool rd_CallState z) (hd : d.state = some ⟨.inl op, .inl ()⟩)\n    (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)\n    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →\n      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) :\n    let b",
+      "before_line": 502,
+      "after_line": 502
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+      "name": "Turing.iw_one",
+      "kind": "theorem",
+      "header": "private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)\n    (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :\n    M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c",
+      "before_line": 50,
+      "after_line": 50
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_finish_transfer",
+      "kind": "lemma",
+      "header": "private lemma emCall_finish_transfer (emit : Bool) (x arg cap : List Bool)\n    (p : Fin (x.length + 2)) : ∀ rest pre : List Bool, cap = pre ++ rest →\n    (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 3 (bufferTape (if emit then arg else pre))\n        (bufferTape cap) (if emit then 0 else pre.length) pre.length\n        (if emit then pre else [])) (rest.length + 1) =\n      emCallFinishCfg emit x p 4 (bufferTape (if emit then arg else cap))\n        (bufferTape cap) (if emit then 0 else (cap.length : ℤ) - 1)\n        ((cap.length : ℤ) - 1) (if emit then cap else [])",
+      "before_line": 4039,
+      "after_line": 4040
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_finish_run",
+      "kind": "lemma",
+      "header": "private lemma emCall_finish_run (emit : Bool) (x arg cap : List Bool)\n    (p : Fin (x.length + 2)) :\n    (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)\n        arg.length cap.length []) (arg.length + 3 * cap.length + 5) =\n      emCallFinishCfg emit x p 5 (bufferTape (if emit then arg else cap))\n        (fun _ => none) 0 0 (if emit then cap else [])",
+      "before_line": 4130,
+      "after_line": 4131
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.loopHost_fuel_copy",
+      "kind": "lemma",
+      "header": "private lemma loopHost_fuel_copy (body F : FinTM Bool) (anchor : body.State) (forward : Bool)\n    (findMode : Bool) {x : List Bool}\n    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)\n    (p : Fin (x.length + 2)) (flag : ℤ → Option Bool) (out : List Bool)\n    (rest : List Bool) : ∀ pre,\n    (loopHostM body F anchor forward findMode).tm.runFrom\n        (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)\n          (loopCopyTape pre rest) pre.length pre.length out) (rest.length + 1) =\n      loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape (pre ++ rest))\n        (bufferTape []) ((pre ++ rest).length - 1) ((pre ++ rest).length - 1) out",
+      "before_line": 1007,
+      "after_line": 1007
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_finish_rewind",
+      "kind": "lemma",
+      "header": "private lemma emCall_finish_rewind (emit : Bool) (x cap : List Bool)\n    (p : Fin (x.length + 2)) (arg : ℤ → Option Bool) :\n    ∀ pre suf : List Bool, cap = pre ++ suf →\n    (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 2 arg (bufferTape cap) 0\n        ((pre.length : ℤ) - 1) []) (pre.length + 1) =\n      emCallFinishCfg emit x p 3 arg (bufferTape cap) 0 0 []",
+      "before_line": 4000,
+      "after_line": 4001
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_exit_fixed",
+      "kind": "lemma",
+      "header": "private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)\n    (z : Cfg (callTM M emit).k Bool (callTM M emit).State x)\n    (hz : z.state = some (.inr (.inr (5 : Fin 6)))) :\n    (callTM M emit).tm.step z = z",
+      "before_line": 4818,
+      "after_line": 4819
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_track_initial",
+      "kind": "lemma",
+      "header": "private lemma emCall_track_initial (M : FinTM Bool) (x : List Bool) :\n    (emCallTrackTM M).tm.runFrom ((emCallTrackTM M).tm.initCfg x) 1 =\n      emCallTrackCfg M (M.tm.initCfg x) (fun _ => 0) (fun _ => 0)",
+      "before_line": 3481,
+      "after_line": 3481
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_finish_arg",
+      "kind": "lemma",
+      "header": "private lemma emCall_finish_arg (emit : Bool) (x arg cap : List Bool)\n    (p : Fin (x.length + 2)) : ∀ pre suf : List Bool, arg = pre ++ suf →\n    (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 1\n        (bufferTape (if emit then arg else pre)) (bufferTape cap)\n        ((pre.length : ℤ) - 1) cap.length []) (pre.length + 1) =\n      emCallFinishCfg emit x p 2 (bufferTape (if emit then arg else []))\n        (bufferTape cap) 0 ((cap.length : ℤ) - 1) []",
+      "before_line": 3951,
+      "after_line": 3952
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_right_finish",
+      "kind": "lemma",
+      "header": "private lemma emCall_right_finish (M : FinTM Bool) {x : List Bool}\n    (c : Cfg M.k Bool M.State x) (hc : c.state = none) :\n    ∃ t ≤ x.length + 2,\n      (emCallRightTM M).tm.runFrom (emCallRightCfg M c) t =\n        emCallRightScan M c none x.length (le_refl _)",
+      "before_line": 3767,
+      "after_line": 3767
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_finish_erase",
+      "kind": "lemma",
+      "header": "private lemma emCall_finish_erase (emit : Bool) (x : List Bool)\n    (p : Fin (x.length + 2)) (arg : ℤ → Option Bool) (out : List Bool) :\n    ∀ pre : List Bool, (emCallFinishTM emit).tm.runFrom\n      (emCallFinishCfg emit x p 4 arg (bufferTape pre)\n        (if emit then 0 else (pre.length : ℤ) - 1) ((pre.length : ℤ) - 1) out)\n        (pre.length + 1) =\n      emCallFinishCfg emit x p 5 arg (fun _ => none) 0 0 out",
+      "before_line": 4089,
+      "after_line": 4090
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_right_scan",
+      "kind": "lemma",
+      "header": "private lemma emCall_right_scan (M : FinTM Bool) {x : List Bool}\n    (c : Cfg M.k Bool M.State x) :\n    ∀ r j (hj : j ≤ x.length), j + r = x.length →\n      (emCallRightTM M).tm.runFrom (emCallRightScan M c (some true) j hj) (r + 1) =\n        emCallRightScan M c none x.length (le_refl _)",
+      "before_line": 3725,
+      "after_line": 3725
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/OracleSim.lean",
+      "name": "Turing.oracleHost_initial",
+      "kind": "theorem",
+      "header": "private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)\n    (hc : 0 < C.k) (en ex : C.State) (x : List Bool)\n    (w : Fin (M.k + 1) → List Bool) (hw : w (Fin.last M.k) = []) :\n    (oracleHost M C hc en ex).tm.runFrom\n      (Cfg.ofWords (input := x) (oracleHost M C hc en ex).tm.q₀\n        (FinTM.prefixWords (oracleHostTapes M.k C.k) w)) 2 =\n      oracleStableCfg M C (Cfg.ofWords (input := x) M.tm.q₀ w) true",
+      "before_line": 1849,
+      "after_line": 1849
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.scanCopy_suffix",
+      "kind": "lemma",
+      "header": "private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)\n    (htr : ∀ inp work, tm.tr q inp work = match inp with\n      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩\n      | none => ⟨0, fun j => j.elim0, none, none⟩)\n    (x rest : List Bool) : ∀ pre out (hx : x = pre ++ rest),\n    tm.runFrom (scanCfg x (some q) pre.length (by simp [hx]) out) (rest.length + 1) =\n      scanCfg x none x.length (by omega) (out ++ rest)",
+      "before_line": 294,
+      "after_line": 294
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_block",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_block (M : FinTM Bool) (x pre rest a : List Bool) (b c : Bool)\n    (hx : x = pre ++ b :: c :: rest) :\n    (fwdMapTM M false).tm.runFrom\n      (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩\n        a [] a.length 0 []) 2 =\n      if b = c then fwdMapCfg M x (some (.parse none))\n        ⟨pre.length + 3, by simp [hx] <;> omega⟩ (a ++ [b]) [] (a ++ [b]).length 0 []\n      else if b then fwdMapCfg M x none\n        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []\n      else fwdMapCfg M x (some .copyB)\n        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 []",
+      "before_line": 2857,
+      "after_line": 2857
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_parse",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_parse (M : FinTM Bool) (x rest : List Bool) :\n    ∀ pre a (hx : x = pre ++ rest), ∃ t ≤ 3 * rest.length + 3 * a.length + 5,\n      match pairDecode rest with\n      | some (d, b) => (fwdMapTM M false).tm.runFrom\n          (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩\n            a [] a.length 0 []) t =\n          fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩\n            (a ++ d) (pairEncode (a ++ d) [])\n      | none =>\n          ((fwdMapTM M false).tm.runFrom\n            (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩\n              a [] a.length 0 []) t).state = none ∧\n          ((fwdMapTM M false).tm.runFrom\n            (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩\n              a [] a.length 0 []) t).output = []",
+      "before_line": 3141,
+      "after_line": 3140
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogPoly_setup",
+      "kind": "lemma",
+      "header": "private lemma catalogPoly_setup (c C : ℕ) (x : List Bool) (q : ℕ) : ∀ j (_hj : j ≤ q),\n    (catalogPolyUnaryTM c C).tm.runFrom\n      (catalogPolyCfg x q .setup (fun _ => (j : ℤ) - 1) []) (j + 1) =\n      catalogPolyCfg x q (.loop (Fin.last c)) (fun _ => 0) []",
+      "before_line": 1484,
+      "after_line": 1484
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterP2_call_phase",
+      "kind": "lemma",
+      "header": "private lemma emitterP2_call_phase {k l : ℕ} {S H : Type} {x : List Bool}\n    (src : MultiTapeTM k Bool S) (host : MultiTapeTM l Bool H)\n    (index : Fin k ↪ Fin l) (emb : S ↪ H)\n    (enter anchor : H) (henter : enter ≠ anchor) (haway : ∀ q, emb q ≠ anchor)\n    (entry exit : S)\n    (hstart : ∀ inp work, host.tr enter inp work =\n      ((embedEmitTM index src).tr entry inp work).mapState emb)\n    (hagree : ∀ q, q ≠ exit → ∀ inp work,\n      host.tr (emb q) inp work = ((embedEmitTM index src).tr q inp work).mapState emb)\n    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ)\n    (c d : Cfg k Bool S x) (hc : c.state = some entry) (t : ℕ) (ht : 0 < t)\n    (hguard : ∀ j, 0 < j → j < t → (src.runFrom c j).state ≠ some exit)\n    (hr : src.runFrom c t = d) :\n    let z",
+      "before_line": 6483,
+      "after_line": 6481
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitBody_round",
+      "kind": "lemma",
+      "header": "private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List Bool)\n    (T : ℕ) (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :\n    ∃ t, 0 < t ∧ t ≤ T + 5 * s.length + 3 * w.length + 20 ∧\n      (∀ j, 0 < j → j < t →\n        ((splitBodyTM M start).tm.runFrom\n          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) j).state ≠ some .anchor) ∧\n      if decide (s.length + out.length = w.length) then\n        ((splitBodyTM M start).tm.runFrom\n          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).state = none ∧\n        ((splitBodyTM M start).tm.runFrom\n          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).output =\n            pairEncode (w.take s.length) (w.drop s.length)\n      else (splitBodyTM M start).tm.runFrom\n        (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t =\n          Cfg.ofWords .anchor (stateWord (M.k + 1) (splitStep w s))",
+      "before_line": 5180,
+      "after_line": 5177
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenStart",
+      "kind": "lemma",
+      "header": "private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)\n    (hM : M.ComputesInTime x w T) :\n    ∃ t ≤ T + x.length + 4, ∃ c : Cfg M.k Bool M.State x,\n      c.output = w ∧\n      (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =\n        lenCfg M c (some (.inr (.inr none))) 0 (by omega) c.output.length",
+      "before_line": 1830,
+      "after_line": 1830
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_suffix",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_suffix (M : FinTM Bool) (x rest a : List Bool) :\n    ∀ pre b (hx : x = pre ++ rest),\n    (fwdMapTM M false).tm.runFrom\n      (fwdMapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩\n        a b (a.length - 1) b.length []) (rest.length + 1) =\n      fwdMapCfg M x (some .backB) ⟨x.length + 1, by omega⟩\n        a (b ++ rest) (a.length - 1) ((b ++ rest).length - 1) []",
+      "before_line": 2901,
+      "after_line": 2901
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterToken_double",
+      "kind": "lemma",
+      "header": "private lemma emitterToken_double (x pre rest out : List Bool) (b : Bool)\n    (hx : x = pre ++ b :: rest) :\n    unaryTokenTM.tm.runFrom\n      (scanCfg x (some (0 : Fin 6)) pre.length (by simp [hx]) out) 2 =\n      scanCfg x (some (if b then (0 : Fin 6) else 3)) (pre ++ [b]).length\n        (by simp [hx]) (out ++ [b, b])",
+      "before_line": 7699,
+      "after_line": 7698
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.extract_run",
+      "kind": "lemma",
+      "header": "private lemma extract_run (first second : Bool) (x rest : List Bool) :\n    ∀ pre a (hx : x = pre ++ rest),\n    ∃ t ≤ 3 * rest.length + 2 * a.length + 5,\n      ((pairExtractTM first second).tm.runFrom\n        (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) t).state = none ∧\n      ((pairExtractTM first second).tm.runFrom\n        (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) t).output =\n          match pairDecode rest with\n          | some (b, c) => (if first then a ++ b else []) ++ (if second then c else [])\n          | none => []",
+      "before_line": 873,
+      "after_line": 873
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_back",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_back (second : Bool) (M : FinTM Bool) (x a b : List Bool)\n    (p : Fin (x.length + 2)) (other : ℤ) :\n    ∀ j, j ≤ (if second then b else a).length →\n    (fwdMapTM M false).tm.runFrom\n      (fwdMapCfg M x (some (if second then .backB else .backA)) p a b\n        (if second then other else (j : ℤ) - 1)\n        (if second then (j : ℤ) - 1 else other) []) (j + 1) =\n      fwdMapCfg M x (some (if second then .backA else .emitA)) p a b\n        (if second then other else 0) (if second then 0 else other) []",
+      "before_line": 2959,
+      "after_line": 2959
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitEmit_suffix",
+      "kind": "lemma",
+      "header": "private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :\n    ∀ pre out h, w = pre ++ rest → (splitEmitTM k).tm.runFrom\n      (splitEmitCfg k w s (some 3) pre.length h out) (rest.length + 1) =\n      splitEmitCfg k w s none w.length h (out ++ rest)",
+      "before_line": 5093,
+      "after_line": 5091
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.extract_rewind",
+      "kind": "lemma",
+      "header": "private lemma extract_rewind (first second : Bool) (x a : List Bool)\n    (i : ℕ) (hi : i ≤ x.length) : ∀ j, j ≤ a.length →\n    (pairExtractTM first second).tm.runFrom\n      (extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) []) (j + 1) =\n      extractCfg x (some (.inr 1)) i hi a 0 []",
+      "before_line": 687,
+      "after_line": 687
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_launch",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)\n    (hd : pairDecode x = some (a, b)) :\n    ∃ u ≤ 5 * (x.length + 1),\n      (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u =\n        fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) ∧\n      ∀ v ≤ u, (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) v =\n        (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v",
+      "before_line": 3472,
+      "after_line": 3471
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitEmit_separator",
+      "kind": "lemma",
+      "header": "private lemma splitEmit_separator (k : ℕ) (w s : List Bool) (out : List Bool) :\n    (splitEmitTM k).tm.runFrom (splitEmitCfg k w s (some 0) s.length s.length out) 2 =\n      splitEmitCfg k w s (some 3) s.length s.length (out ++ [false, true])",
+      "before_line": 5069,
+      "after_line": 5068
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.anyTrue_run",
+      "kind": "lemma",
+      "header": "private lemma anyTrue_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest),\n    ∃ t ≤ rest.length + 1,\n      (anyTrueTM.tm.runFrom (scanCfg x (some ()) pre.length (by simp [hx]) []) t).state = none ∧\n      (anyTrueTM.tm.runFrom (scanCfg x (some ()) pre.length (by simp [hx]) []) t).output =\n        [rest.any id]",
+      "before_line": 2135,
+      "after_line": 2135
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitter_compare_rewind",
+      "kind": "lemma",
+      "header": "private lemma emitter_compare_rewind (w u v : List Bool) (p : Fin (w.length + 2))\n    (b : Bool) : ∀ j, j ≤ max u.length v.length →\n      emitterCompareTM.tm.runFrom (emitterCompareCfg w u v p 1 b ((j : ℤ) - 1)) (j + 1) =\n        emitterCompareCfg w u v p 2 b 0",
+      "before_line": 5859,
+      "after_line": 5857
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterToken_run",
+      "kind": "lemma",
+      "header": "private lemma emitterToken_run (x rest : List Bool) :\n    ∀ pre out (hx : x = pre ++ rest),\n      unaryTokenTM.tm.runFrom\n        (scanCfg x (some (0 : Fin 6)) pre.length (by simp [hx]) out)\n        (2 * (unaryTokenSplit rest).1.length + (unaryTokenSplit rest).2.length + 3) =\n        scanCfg x none x.length (by omega)\n          (out ++ pairEncode (unaryTokenSplit rest).1 (unaryTokenSplit rest).2)",
+      "before_line": 7743,
+      "after_line": 7742
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterP2_body_round",
+      "kind": "lemma",
+      "header": "private lemma emitterP2_body_round (f : ℕ → ℕ) (C D : FinTM Bool)\n    (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State)\n    (w s : List Bool) (a b : ℕ) (ha : 0 < a) (hb : 0 < b)\n    (hfC : ∀ j, 0 < j → j < a → (C.tm.runFrom\n      (Cfg.ofWords (input := w) ce (stateWord C.k s)) j).state ≠ some cx)\n    (hrC : C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) a =\n      Cfg.ofWords cx (stateWord C.k (Nat.bits (f s.length))))\n    (hfD : ∀ j, 0 < j → j < b → (D.tm.runFrom\n      (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) j).state ≠ some dx)\n    (hrD : D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) b =\n      Cfg.ofWords dx (stateWord D.k (Nat.bits (w.drop s.length).length))) :\n    let B",
+      "before_line": 7358,
+      "after_line": 7357
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenParse_run",
+      "kind": "lemma",
+      "header": "private lemma lenParse_run (M : FinTM Bool) {x : List Bool}\n    (c : Cfg M.k Bool M.State x) (rest : List Bool) :\n    ∀ pre (hx : x = pre ++ rest) r, r ≤ c.output.length →\n    ∃ t ≤ rest.length + 1,\n      ((pairCountTM M).tm.runFrom\n        (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) t).state = none ∧\n      ((pairCountTM M).tm.runFrom\n        (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) t).output =\n          [match pairDecode rest with\n            | some (_, b) => decide (b.length ≤ r)\n            | none => false]",
+      "before_line": 1767,
+      "after_line": 1767
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogPoly_rewind",
+      "kind": "lemma",
+      "header": "private lemma catalogPoly_rewind {c C : ℕ} (x : List Bool) (q : ℕ)\n    (h : Fin (c + 1) → ℤ) (o : List Bool) (i : Fin (c + 1)) :\n    ∀ j (_hj : j ≤ q),\n    (catalogPolyUnaryTM c C).tm.runFrom\n      (catalogPolyCfg x q (.rewind i) (Function.update h i ((j : ℤ) - 1)) o) (j + 1) =\n      catalogPolyCfg x q (.advance ⟨i.val + 1, by omega⟩) (Function.update h i 0) o",
+      "before_line": 1252,
+      "after_line": 1252
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.pairValid_run",
+      "kind": "lemma",
+      "header": "private lemma pairValid_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest),\n    ∃ t ≤ rest.length + 1,\n      (pairValidTM.tm.runFrom\n        (scanCfg x (some none) pre.length (by simp [hx]) []) t).state = none ∧\n      (pairValidTM.tm.runFrom\n        (scanCfg x (some none) pre.length (by simp [hx]) []) t).output =\n          [(pairDecode rest).isSome]",
+      "before_line": 540,
+      "after_line": 540
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterP2_erase_back",
+      "kind": "lemma",
+      "header": "private lemma emitterP2_erase_back (w u : List Bool) :\n    emitterP2EraseTM.tm.runFrom\n      (emitterP2EraseCfg w u 1 ((u.length : ℤ) - 1)) (u.length + 1) =\n        emitterP2EraseCfg w [] 2 0",
+      "before_line": 6055,
+      "after_line": 6053
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitPrepare_rewind",
+      "kind": "lemma",
+      "header": "private lemma splitPrepare_rewind (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.length →\n    (splitPrepareTM k).tm.runFrom (splitPrepareReady k w s 1 ((j : ℤ) - 1)) (j + 1) =\n      splitPrepareReady k w s 2 0",
+      "before_line": 4639,
+      "after_line": 4638
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterToken_separator",
+      "kind": "lemma",
+      "header": "private lemma emitterToken_separator (x out : List Bool) (i : ℕ) (hi : i ≤ x.length) :\n    unaryTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =\n      scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true])",
+      "before_line": 7728,
+      "after_line": 7727
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitRestore_rewind",
+      "kind": "lemma",
+      "header": "private lemma splitRestore_rewind (k : ℕ) (w s : List Bool) (p : Fin (w.length + 2)) :\n    ∀ j, j ≤ s.length →\n      (splitRestoreTM k).tm.runFrom\n        (splitRestoreClean k w s (1, false) p ((j : ℤ) - 1)) (j + 1) =\n        splitRestoreClean k w s (2, false) p 0",
+      "before_line": 4305,
+      "after_line": 4304
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.extract_suffix",
+      "kind": "lemma",
+      "header": "private lemma extract_suffix (first : Bool) (x rest a : List Bool) :\n    ∀ pre out (hx : x = pre ++ rest),\n    (pairExtractTM first true).tm.runFrom\n      (extractCfg x (some (.inr 2)) pre.length (by simp [hx]) a a.length out)\n        (rest.length + 1) =\n      extractCfg x none x.length (by omega) a a.length (out ++ rest)",
+      "before_line": 799,
+      "after_line": 799
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogPoly_emit",
+      "kind": "lemma",
+      "header": "private lemma catalogPoly_emit {c C : ℕ} (x : List Bool) (q : ℕ)\n    (h : Fin (c + 1) → ℤ) : ∀ j (hj : j ≤ C) (o : List Bool),\n    (catalogPolyUnaryTM c C).tm.runFrom\n      (catalogPolyCfg x q (.emit ⟨j, by omega⟩) h o) (j + 1) =\n      catalogPolyCfg x q (.advance 0) h (o ++ List.replicate j true)",
+      "before_line": 1230,
+      "after_line": 1230
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_bank",
+      "kind": "lemma",
+      "header": "private lemma emitterP2_prepare_rewind_bank (candidate : Bool) (w s v : List Bool)\n    (over : Bool) (p : Fin (w.length + 2)) (other : ℤ) :\n    ∀ j, j ≤ (if candidate then s else v).length →\n      emitterP2PrepareTM.tm.runFrom\n        (emitterP2PrepareCfg w s s v (if candidate then 3 else 5) over p\n          (if candidate then (j : ℤ) - 1 else other)\n          (if candidate then other else (j : ℤ) - 1)) (j + 1) =\n        emitterP2PrepareCfg w s s v (if candidate then 4 else 6) over p\n          (if candidate then 0 else other) (if candidate then other else 0)",
+      "before_line": 6248,
+      "after_line": 6246
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitSafe_one",
+      "kind": "lemma",
+      "header": "private lemma splitSafe_one {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S w)\n    (he : tm.step c = d) (hc : c.state ≠ some anchor) (hd : d.state ≠ some anchor) :\n    tm.runFrom c 1 = d ∧ splitSafe tm anchor c 1",
+      "before_line": 5151,
+      "after_line": 5148
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenSuffix_run",
+      "kind": "lemma",
+      "header": "private lemma lenSuffix_run (M : FinTM Bool) {x : List Bool}\n    (c : Cfg M.k Bool M.State x) (rest : List Bool) :\n    ∀ pre (hx : x = pre ++ rest) r, r ≤ c.output.length →\n    ∃ t ≤ rest.length + 1,\n      ((pairCountTM M).tm.runFrom\n        (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) r) t).state = none ∧\n      ((pairCountTM M).tm.runFrom\n        (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) r) t).output =\n          [decide (rest.length ≤ r)]",
+      "before_line": 1661,
+      "after_line": 1661
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_emit",
+      "kind": "lemma",
+      "header": "private lemma fwdMap_emit (M : FinTM Bool) (x a b rest : List Bool)\n    (p : Fin (x.length + 2)) : ∀ pre out, a = pre ++ rest →\n    (fwdMapTM M false).tm.runFrom\n      (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) (2 * rest.length + 2) =\n      fwdMapCfg M x (some (.run M.tm.q₀ true)) p a b a.length 0\n        (out ++ rest.flatMap (fun d => [d, d]) ++ [false, true])",
+      "before_line": 3044,
+      "after_line": 3044
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.rawStrip_rewind",
+      "kind": "lemma",
+      "header": "private lemma rawStrip_rewind (x a : List Bool)\n    (i : ℕ) (hi : i ≤ x.length) : ∀ j, j ≤ a.length →\n    rawStripTM.tm.runFrom\n      (stripCfg x (some 2) i hi a ((j : ℤ) - 1) []) (j + 1) =\n      stripCfg x (some 3) i hi a 0 []",
+      "before_line": 1994,
+      "after_line": 1994
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogPoly_loop",
+      "kind": "lemma",
+      "header": "private lemma catalogPoly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < q) :\n    ∀ i (hi : i < c + 1) (h : Fin (c + 1) → ℤ)\n      (_hh : ∀ k, k.val ≤ i → h k = 0) (o : List Bool) (r j : ℕ), j + r = q →\n    (catalogPolyUnaryTM c C).tm.runFrom\n      (catalogPolyCfg x q (.loop ⟨i, hi⟩) (Function.update h ⟨i, hi⟩ (j : ℤ)) o)\n      (r * (catalogPolyCost q C i + 2) + q + 2) =\n      catalogPolyCfg x q (.advance ⟨i + 1, by omega⟩) h\n        (o ++ List.replicate (r * (C * q ^ i)) true)",
+      "before_line": 1307,
+      "after_line": 1307
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+      "name": "Turing.rt_boundary_run",
+      "kind": "theorem",
+      "header": "private theorem rt_boundary_run {Γ : Type*} {k : ℕ} {x : List Γ}\n    (i : Fin k) (b : Γ) (d : Cfg k Γ (Fin 4) x) (hs : d.state = some 0) :\n    (rt_boundaryTM k i b).runFrom d 3 =\n      {d with\n        state := some 3\n        workTapes := Function.update d.workTapes i\n          (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))\n        workTapePos := Function.update d.workTapePos i (d.workTapePos i + 1)} ∧\n    (∀ u < 3, ((rt_boundaryTM k i b).runFrom d u).state ≠ some 3) ∧\n    (∀ u ≤ 3, ∀ j : Fin k,\n      if j = i then\n        ((rt_boundaryTM k i b).runFrom d u).workTapePos j ∈\n          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + 1)\n      else ((rt_boundaryTM k i b).runFrom d u).workTapePos j = d.workTapePos j)",
+      "before_line": 2298,
+      "after_line": 2298
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+      "name": "Turing.rt_find_read",
+      "kind": "theorem",
+      "header": "private theorem rt_find_read {Γ A : Type} {m : ℕ} (hm : 0 < m)\n    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)\n    {x : List Γ} (d : Cfg 2 Γ (Option Bool) x) (hd : d.state = some none) :\n    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =\n      d.mapState (fun _ => ⟨.read, some (d.workTapes 0 (d.workTapePos 0)).isSome⟩) ∧\n    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 =\n      d.mapState (fun _ => if (d.workTapes 0 (d.workTapePos 0)).isSome then\n        ⟨.scan ⟨0, hm⟩, .fwd a₀⟩ else ⟨.exit, ()⟩)",
+      "before_line": 1347,
+      "after_line": 1347
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+      "name": "Turing.sl_unarySplit_copy",
+      "kind": "theorem",
+      "header": "private theorem sl_unarySplit_copy {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)\n    (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .copy)\n    (hw : ∀ p : ℕ, p ≤ q →\n      d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :\n    (sl_unarySplitTM k src sm).runFrom d (q + 1) =\n        { d with\n          state := some .done\n          workTapes := Function.update (Function.update d.workTapes src\n              (Function.update (d.workTapes src) (d.workTapePos src + q) none)) sm\n            (fun z => if d.workTapePos sm ≤ z ∧ z ≤ d.workTapePos sm + q\n              then some (decide (z < d.workTapePos sm + q)) else d.workTapes sm z)\n          workTapePos := Function.update (Function.update d.workTapePos src\n            (d.workTapePos src + q + 1)) sm (d.workTapePos sm + q) } ∧\n      (∀ t < q + 1, ((sl_unarySplitTM k src sm).runFrom d t).state ≠ some .done) ∧\n      ∀ t ≤ q + 1, ((sl_unarySplitTM k src sm).runFrom d t).output = d.output",
+      "before_line": 438,
+      "after_line": 437
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+      "name": "Turing.sl_unarySplitTM_run",
+      "kind": "theorem",
+      "header": "private theorem sl_unarySplitTM_run {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)\n    (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .mv1)\n    (hw : ∀ p : ℕ, p ≤ q →\n      d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :\n    (sl_unarySplitTM k src sm).runFrom d (q + 3) =\n        { d with\n          state := some .done\n          workTapes := Function.update (Function.update d.workTapes src\n              (Function.update (d.workTapes src) (d.workTapePos src + q) none)) sm\n            (fun z => if d.workTapePos sm + 2 ≤ z ∧ z ≤ d.workTapePos sm + 2 + q\n              then some (decide (z < d.workTapePos sm + 2 + q)) else d.workTapes sm z)\n          workTapePos := Function.update (Function.update d.workTapePos src\n            (d.workTapePos src + q + 1)) sm (d.workTapePos sm + 2 + q) } ∧\n      (∀ t < q + 3, ((sl_unarySplitTM k src sm).runFrom d t).state ≠ some .done) ∧\n      ∀ t ≤ q + 3, ((sl_unarySplitTM k src sm).runFrom d t).output = d.output",
+      "before_line": 581,
+      "after_line": 579
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean",
+      "name": "Turing.sl_pairSkip_two_steps",
+      "kind": "lemma",
+      "header": "private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)\n    (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start) (b₀ b₁ : Bool)\n    (h0 : d.workTapes src (d.workTapePos src) = some b₀)\n    (h1 : d.workTapes src (d.workTapePos src + 1) = some b₁) :\n    (sl_pairSkipTM k src).runFrom d 1 =\n        { d with\n          state := some (.after b₀)\n          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } ∧\n      (sl_pairSkipTM k src).runFrom d 2 =\n        { d with\n          state := some (if b₀ = false ∧ b₁ = true then .done else .start)\n          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) }",
+      "before_line": 162,
+      "after_line": 162
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+      "name": "Turing.StepBlock.seekTM_observe",
+      "kind": "lemma",
+      "header": "private lemma seekTM_observe {k : ℕ} {x : List Bool}\n    (d : Cfg (k + 2) Bool (RecordState k) x)\n    (hq : d.state = some (recordTM k).q₀) :\n    let rank",
+      "before_line": 1702,
+      "after_line": 1704
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+      "name": "Turing.StepBlock.seekTM_rank",
+      "kind": "lemma",
+      "header": "private lemma seekTM_rank {k n : ℕ} {x : List Bool}\n    (records : List (Action k Bool (Fin (n + 1))))\n    (d : Cfg (k + 2) Bool (RecordState k) x) (rank : Fin (3 ^ (k + 1)))\n    (hlen : records.length = rank.val)\n    (hq : d.state = some (recordTM k).q₀)\n    (hs : d.workTapeSymbols (summaryTape k) = some false)\n    (hw : ∀ (r : ℕ) (hr : r < (records.flatMap actionBitsK).length),\n      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =\n        some ((records.flatMap actionBitsK)[r]'hr)) :\n    (seekTM k).runFrom (seekCfg d (.state rank)) (1 + seekCost records) =\n      seekCfg ({d with\n        workTapePos := Function.update d.workTapePos (tableTape k)\n          (d.workTapePos (tableTape k) + (records.flatMap actionBitsK).length)}) .done ∧\n    (∀ u < 1 + seekCost records,\n      ((seekTM k).runFrom (seekCfg d (.state rank)) u).state ≠ some ⟨none, .done⟩) ∧\n    (∀ u ≤ 1 + seekCost records,\n      let f := (seekTM k).runFrom (seekCfg d (.state rank)) u\n      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧\n      ∀ j, j ≠ tableTape k → f.workTapePos j = d.workTapePos j)",
+      "before_line": 1475,
+      "after_line": 1475
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean",
+      "name": "Turing.StepBlock.fl_leaf_run",
+      "kind": "lemma",
+      "header": "private lemma fl_leaf_run {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Option Bool) x)\n    (live : Bool) (hd : d.state = some (some live)) :\n    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d",
+      "before_line": 137,
+      "after_line": 137
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/StepClock.lean",
+      "name": "Turing.sc_body_step",
+      "kind": "theorem",
+      "header": "private theorem sc_body_step {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)\n    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x) (s : S)\n    (hs : c.state = some s) (ct : ℤ → Option Γ) (cp : ℤ) :\n    (sc_clockTM e M stopAt).step (clockCfg (some (.body s)) c ct cp) =\n      clockCfg (some (match (M.step c).state with\n          | some s' => sc_State.dec s' .run\n          | none => sc_State.finish none))\n        (M.step c) ct cp",
+      "before_line": 591,
+      "after_line": 591
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "name": "Turing.up_scan_pair",
+      "kind": "theorem",
+      "header": "private theorem up_scan_pair {k : ℕ} {z : List Bool} (i : Fin k)\n    (d : Cfg k Bool (Fin 4) z) (p t : ℕ) (hp : d.inputPos.val = 1 + p)\n    (a b : Bool) (rest : List Bool) (hz : z.drop (p + t) = a :: b :: rest) :\n    let hlen : d.inputPos.val + (t + 2) < z.length + 2",
+      "before_line": 572,
+      "after_line": 572
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_read_heads",
+      "kind": "lemma",
+      "header": "private lemma timed_read_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}\n    (c : Cfg D.k Bool D.State x) (b : Bool) (hs : c.state = none) (ho : c.output = [b]) :\n    ∀ u ≤ 2, ∃ z : ℤ, 0 ≤ z ∧ z ≤ 1 ∧\n      ((timedCondTM D M₁ M₂).tm.runFrom (timedControlCfg D M₁ M₂ c) u).workTapePos =\n        timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) z",
+      "before_line": 907,
+      "after_line": 907
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+      "name": "Turing.zr_mir_lockstep",
+      "kind": "lemma",
+      "header": "private lemma zr_mir_lockstep {k : ℕ} {S : Type} {x : List (ZoneSym k)}\n    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :\n    Lockstep (x := x) (x' := x) M (zr_mirTM M) zr_mir (fun _ => 1) X X",
+      "before_line": 14867,
+      "after_line": 14867
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+      "name": "Turing.zr_cellContract",
+      "kind": "def",
+      "header": "private def zr_cellContract {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) → Bool)\n    (wr : Option (Option (ZoneSym k))) (dir : SignType) (x : List (ZoneSym k)) :\n    Contract (zr_cellTM i choose wr dir) none (Set.range fun b : Bool => some (some b))\n      Unit x",
+      "before_line": 438,
+      "after_line": 438
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+      "name": "Turing.zr_mir_box",
+      "kind": "lemma",
+      "header": "private lemma zr_mir_box {k : ℕ} {S : Type} {x : List (ZoneSym k)}\n    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :\n    ∀ (c : Cfg 2 (ZoneSym k) S x) v, (v = 0 ∨ (c.state ∉ X ∧ v ≤ 1)) → ∀ j,\n      ((zr_mirTM M).runFrom (zr_mir c) v).workTapePos j ∈\n        Finset.Icc (zr_mirB min M X c j) (zr_mirB max M X c j)",
+      "before_line": 14887,
+      "after_line": 14887
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonHalt_run",
+      "kind": "lemma",
+      "header": "private lemma canonHalt_run {k : ℕ} {x : List Bool} (d : Cfg k Bool Bool x)\n    (bit : Bool) (hs : d.state = some bit) :\n    ((canonHaltTM k).runFrom d 1).state = none ∧\n      ((canonHaltTM k).runFrom d 1).output = d.output ++ [bit]",
+      "before_line": 4555,
+      "after_line": 4558
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonPairs_run",
+      "kind": "lemma",
+      "header": "private lemma canonPairs_run {m : ℕ} {x : List Bool} (vs : List (Bool → Bool → Bool))\n    (j : Fin (vs.length + 1))\n    (d : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x)\n    (p : ℕ) (pos : d.inputPos.val = p + 1) (range : p ≤ x.length)\n    (state : d.state = some (Sum.inr (j, none))) :\n    ∃ t ≤ 2 * (vs.length - j.val) + 1,\n      ((canonPairsTM m vs).runFrom d t).state =\n        some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧\n      ((canonPairsTM m vs).runFrom d t).output = d.output ∧\n      (∀ u < t, ∀ b, ((canonPairsTM m vs).runFrom d u).state ≠ some (Sum.inl b)) ∧\n      ((canonPairsTM m vs).runFrom d t).workTapes = d.workTapes ∧\n      ((canonPairsTM m vs).runFrom d t).workTapePos = d.workTapePos ∧\n      1 ≤ ((canonPairsTM m vs).runFrom d t).inputPos.val ∧\n      ∀ ys, canonPairs (vs.drop j.val) (x.drop p) = some ys →\n        ((canonPairsTM m vs).runFrom d t).inputPos.val = x.length + 1 - ys.length",
+      "before_line": 3916,
+      "after_line": 3915
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonBoolPop_run",
+      "kind": "lemma",
+      "header": "private lemma canonBoolPop_run (k : ℕ) (positive : 0 < k) (b : Bool) (x : List Bool) :\n    (canonBoolPopTM k ⟨0, positive⟩).runFrom\n        (Cfg.ofWords (input := x) none (stateWord k [b])) 1 =\n      Cfg.ofWords (some b) (fun _ => [])",
+      "before_line": 1890,
+      "after_line": 1890
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonUnaryLoop",
+      "kind": "lemma",
+      "header": "private lemma canonUnaryLoop {x : List Bool} (d : Cfg 1 Bool (Option Bool) x)\n    (hs : d.state = some (some true)) (p r : ℕ) (hp : d.inputPos.val = p + 1)\n    (hr : p + r ≤ x.length) (hprefix : ∀ i < r, x[p + i]? = some true)\n    (stopped : x[p + r]? ≠ some true) (w : List Bool) :\n    ∃ t ≤ 5 * x.length + 2 * w.length + 7, ∃ v q,\n      v.length = w.length ∧ (q = CounterLoopState.done ∨ q = .escape) ∧\n      (counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom\n          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) t =\n        counterLoopCfg (some q)\n          { d with inputPos := ⟨p + min (counterValue w) r + 1, by\n              have := Nat.min_le_right (counterValue w) r; omega⟩ }\n          (FinTM.bufferTape v) 0 ∧\n      ∀ u < t,\n        ((counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom\n          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) u).state ≠ some .done ∧\n        ((counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom\n          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) u).state ≠ some .escape",
+      "before_line": 3360,
+      "after_line": 3360
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonSuffix_run",
+      "kind": "lemma",
+      "header": "private lemma canonSuffix_run {m : ℕ} {x : List Bool} (d : Cfg m Bool (Option Bool) x)\n    (state : d.state = some none) (positive : 1 ≤ d.inputPos.val) :\n    ∃ t ≤ (x.drop (d.inputPos.val - 1)).length + 1,\n      ((canonSuffixTM m).runFrom d t).state =\n        some (some ((x.drop (d.inputPos.val - 1)).all id)) ∧\n      ((canonSuffixTM m).runFrom d t).output = d.output ∧\n      ((canonSuffixTM m).runFrom d t).workTapes = d.workTapes ∧\n      ((canonSuffixTM m).runFrom d t).workTapePos = d.workTapePos ∧\n      ∀ u < t, ∀ bit, ((canonSuffixTM m).runFrom d u).state ≠ some (some bit)",
+      "before_line": 4468,
+      "after_line": 4470
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonTag_step",
+      "kind": "lemma",
+      "header": "private lemma canonTag_step {m : ℕ} {x : List Bool}\n    (d : Cfg m Bool (Option (Option Bool)) x) (hs : d.state = some none) :\n    (canonTagTM m).runFrom d 1 =\n      { d with\n        state := some (some d.inputSymbol)\n        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) }",
+      "before_line": 4124,
+      "after_line": 4125
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "name": "Turing.MachineFormat.canonTrueOrbit",
+      "kind": "lemma",
+      "header": "private lemma canonTrueOrbit {k : ℕ} {x : List Bool}\n    (d : Cfg k Bool (Option Bool) x) (hs : d.state = some (some true))\n    (p r : ℕ) (hp : d.inputPos.val = p + 1) (hr : p + r ≤ x.length)\n    (hprefix : ∀ i < r, x[p + i]? = some true) :\n    counterLoopOrbit (canonCellTM k true) (fun _ => 1) d r =\n      { d with state := some (some true), inputPos := ⟨p + r + 1, by omega⟩ }",
+      "before_line": 3313,
+      "after_line": 3313
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "name": "Complexity.CounterProg.sim_step",
+      "kind": "theorem",
+      "header": "theorem sim_step (s : St R Λ) (l : Λ) (hl : s.lbl = some l) (hp : s.pos ≤ x.length) (B : ℕ)\n    (hB : ∀ r, s.regs r ≤ B) :\n    ∃ t ≤ 2 * B + 3, (toTM P l₀).tm.runFrom (enc x s) t = enc x (step P x s)",
+      "before_line": 404,
+      "after_line": 404
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "name": "Complexity.CounterProg.print_walk",
+      "kind": "theorem",
+      "header": "theorem print_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)\n    (hd : Fin R → ℤ) (m : ℕ) (htp : tp r = ones m) :\n    ∀ (j : ℕ) (out : List Bool), j ≤ m →\n      (toTM P l₀).tm.runFrom (⟨some (.prW r l), p, tp, Function.update hd r ((j : ℤ) - 1),\n        out⟩ : Cfg R Bool (TSt R Λ) x) (j + 1) =\n        ⟨some (.prB r l), p, tp, Function.update hd r 0, out ++ List.replicate j true⟩",
+      "before_line": 295,
+      "after_line": 295
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "name": "Complexity.CounterProg.back_walk",
+      "kind": "theorem",
+      "header": "theorem back_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)\n    (hd : Fin R → ℤ) (m : ℕ) (htp : tp r = ones m) (out : List Bool) :\n    ∀ d : ℕ, d ≤ m →\n      (toTM P l₀).tm.runFrom (⟨some (.prB r l), p, tp,\n        Function.update hd r (((m - d : ℕ) : ℤ)), out⟩ : Cfg R Bool (TSt R Λ) x) (d + 1) =\n        ⟨some (.main l), p, tp, Function.update hd r (m : ℤ), out⟩",
+      "before_line": 331,
+      "after_line": 331
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "name": "Turing.pairDiag_rewind",
+      "kind": "lemma",
+      "header": "private lemma pairDiag_rewind (x out : List Bool) : ∀ j, (hj : j ≤ x.length) →\n    pairDiagTM.tm.runFrom (pairDiagCfg x (some 4) ⟨j, by omega⟩ out) (j + 1) =\n      pairDiagCfg x (some 5) 1 out",
+      "before_line": 412,
+      "after_line": 412
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "name": "Turing.pairDiag_separator",
+      "kind": "lemma",
+      "header": "private lemma pairDiag_separator (x out : List Bool) :\n    pairDiagTM.tm.runFrom\n      (pairDiagCfg x (some 0) ⟨x.length + 1, by omega⟩ out) 3 =\n      pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true])",
+      "before_line": 464,
+      "after_line": 464
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "name": "Turing.bridge_seed",
+      "kind": "lemma",
+      "header": "private lemma bridge_seed (c : ToPartrec.Code) (x : List Bool) :\n    (bridgeTM c).tm.runFrom\n      (bridgeCfg (x := x.map Sum.inl) c (some .scan) ⟨x.length + 1, by simp⟩ (bridgeStore []) []) 3 =\n      bridgeCfg c (some .back) ⟨x.length, by simp⟩ (bridgeStore [.bit1, .cons]) []",
+      "before_line": 911,
+      "after_line": 903
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "name": "Turing.bridge_statement",
+      "kind": "lemma",
+      "header": "private lemma bridge_statement (c : ToPartrec.Code) {x : List BridgeAlphabet}\n    (p : Fin (x.length + 2)) (out : List BridgeAlphabet) (q : PartrecToTM2.Stmt') :\n    ∀ (v : Option PartrecToTM2.Γ') (st : PartrecToTM2.K' → List PartrecToTM2.Γ')\n      (_hq : some q ∈ bridgeSupp c),\n    bridgeReach (bridgeTM c).tm (bridgeCfg c (bridgeExec c (some q) v) p st out)\n      (bridgeCfg c (bridgeExec c ((TM2.stepAux q v st).l.map PartrecToTM2.tr)\n        (TM2.stepAux q v st).var) p (TM2.stepAux q v st).stk out)",
+      "before_line": 616,
+      "after_line": 616
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "name": "Turing.bridge_compiles",
+      "kind": "lemma",
+      "header": "private lemma bridge_compiles (c : ToPartrec.Code) (f : List Bool → List Bool)\n    (hc : ∀ x, c.eval [bridgeNumber x] = Part.some [bridgeNumber (f x)]) (x : List Bool) :\n    ∃ t, (bridgeTM c).ComputesInTime (x.map Sum.inl) ((f x).map Sum.inl) t",
+      "before_line": 1023,
+      "after_line": 1014
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "name": "Turing.bridge_emit",
+      "kind": "lemma",
+      "header": "private lemma bridge_emit (c : ToPartrec.Code) {x : List BridgeAlphabet}\n    (p : Fin (x.length + 2)) (xs : List Bool) :\n    ∀ (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet) (carry : Option Bool),\n    st .main = bridgeWord xs →\n    bridgeReach (bridgeTM c).tm (bridgeCfg c (some (.emit carry)) p st out)\n      (bridgeCfg c none p (Function.update st .main [.cons])\n        (out ++ carry.toList.map Sum.inl ++ xs.map Sum.inl))",
+      "before_line": 989,
+      "after_line": 981
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/MathlibBridge.lean",
+      "name": "Turing.bridge_back",
+      "kind": "lemma",
+      "header": "private lemma bridge_back (c : ToPartrec.Code) (x : List Bool) :\n    ∀ j (hj : j ≤ x.length),\n    bridgeReach (bridgeTM c).tm\n      (bridgeCfg (x := x.map Sum.inl) c (some .back) ⟨j, by simp; omega⟩\n        (bridgeStore (bridgeWord (x.drop j))) [])\n      (bridgeCfg c (bridgeExec c (some (PartrecToTM2.tr (PartrecToTM2.trNormal c .halt))) none)\n        0 (bridgeStore (bridgeWord x)) [])",
+      "before_line": 811,
+      "after_line": 803
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean",
+      "name": "Turing.ic_verdictTM_run",
+      "kind": "theorem",
+      "header": "private theorem ic_verdictTM_run {K : ℕ} (summary : Fin K) {z : List Bool}\n    (d : Cfg K Bool (Bool ⊕ Bool) z) (halted : Bool) (out : List Bool)\n    (hd : d.state = some (Sum.inl halted))\n    (hsummary : d.workTapeSymbols summary = StepBlock.outputSummary out) :\n    ((ic_verdictTM K summary).runFrom d 1).state =\n      some (Sum.inr (decide (halted = true ∧ out = [true]))) ∧\n      ∀ u < 1, ∀ verdict : Bool,\n        ((ic_verdictTM K summary).runFrom d u).state ≠ some (Sum.inr verdict)",
+      "before_line": 623,
+      "after_line": 623
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean",
+      "name": "Turing.FinTM.foldCfg_run",
+      "kind": "lemma",
+      "header": "private lemma foldCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ]\n    (M : FinTM Γ) (x : List Γ) (t : ℕ) :\n    (foldTM M).tm.runFrom ((foldTM M).tm.initCfg (x.map foldEmbedding)) (t + 1) =\n      foldCfg (M.tm.runFrom (M.tm.initCfg x) t)",
+      "before_line": 296,
+      "after_line": 296
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "name": "Complexity.macroCfg_cycle",
+      "kind": "lemma",
+      "header": "private lemma macroCfg_cycle (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x) (u : ℤ) (R : ℕ)\n    (hg : base.workTapes (Fin.natAdd W.k (2 : Fin 3)) = guideTape R)\n    (hu : base.workTapes (Fin.natAdd W.k (1 : Fin 3)) u = some .unit) :\n    (obliviousSchedule W a).tm.runFrom (macroCfg W a base (some .macroCheck) u 0) (6 * R + 8) =\n      macroCfg W a base (some .macroCheck) (u + 1) 0",
+      "before_line": 1051,
+      "after_line": 1051
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_reset",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_reset (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (b u g : ℤ) (bt ut gt : ℤ → Option OblSymbol) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .resetStart) p b u g bt ut gt) (p.val - 1 + 2) =\n      setupCfg W a base (some .copyLeft) ⟨1, by omega⟩ b u g bt ut gt",
+      "before_line": 140,
+      "after_line": 140
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_start_center",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_start_center (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (b u : ℤ) (bt ut : ℤ → Option OblSymbol) (R j : ℕ) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .startCenter) p b u (-(j : ℤ)) bt ut (guideTape R)) (j + 1) =\n      setupCfg W a base (some .macroCheck) p b u 0 bt ut (guideTape R)",
+      "before_line": 951,
+      "after_line": 950
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_copy_left",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_copy_left (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (b u : ℤ) (bt ut : ℤ → Option OblSymbol) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .copyLeft) p b u 0 bt ut (fun _ => none)) 2 =\n      setupCfg W a base (some (copyPhase 0)) p b u 0 bt ut (copyGuide 0)",
+      "before_line": 199,
+      "after_line": 199
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_unary_rewind",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_unary_rewind (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (b g : ℤ) (bt gt : ℤ → Option OblSymbol) (N j : ℕ) (last : Bool) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some (unaryRewindPhase last)) p b j g bt (unaryTape N) gt) (j + 1) =\n      setupCfg W a base (some (if last then .startCenter else .layoutRight 0)) p b 1 g bt (unaryTape N) gt",
+      "before_line": 621,
+      "after_line": 620
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_copy_return",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_copy_return (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (b u : ℤ) (bt ut : ℤ → Option OblSymbol) (n j : ℕ) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .copyReturn) p b u j bt ut (copyGuide (n + 1))) (j + 1) =\n      setupCfg W a base (some .budgetStart) p b u 0 bt ut (copyGuide (n + 1))",
+      "before_line": 284,
+      "after_line": 283
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean",
+      "name": "Complexity.setupCfg_budget_back",
+      "kind": "lemma",
+      "header": "private lemma setupCfg_budget_back (W : FinTM Bool) (a : ℕ) {x : List OblSymbol}\n    (base : Cfg (W.k + 3) OblSymbol (OblPhase W.State a) x)\n    (p : Fin (x.length + 2)) (u g : ℤ) (w : List Bool) (ut gt : ℤ → Option OblSymbol) (j : ℕ) :\n    (obliviousSchedule W a).tm.runFrom\n      (setupCfg W a base (some .budgetBack) p j u g (clockTape w) ut gt) (j + 1) =\n      setupCfg W a base (some (.append 0)) p 1 u g (clockTape w) ut gt",
+      "before_line": 344,
+      "after_line": 343
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean",
+      "name": "Turing.FinTM.tt_round",
+      "kind": "theorem",
+      "header": "private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)\n    {x : List (ZoneSym M.k)} (q : M.State) (D : ZoneData M.k) (h0 : Option (ZoneSym M.k))\n    (hread : ∀ t, tt_homeRead h0 t = (D.2 t).home) (ip : Fin (x.length + 2))\n    (out : List (ZoneSym M.k)) (inp : Option Bool)\n    (hinp : tt_decodeIn (tt_cfg0 (some (.inl q)) D h0 ip out :\n      Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).inputSymbol = inp) :\n    ((tt_act M q inp D).state = none →\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).state = none ∧\n      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom\n          ((tt_cfg0 (some (.inl q)) D h0 ip out :\n            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).output =\n        out ++ ((tt_act M q inp D).output.map Sum.inl).toList) ∧\n    ∀ q', (tt_act M q inp D).state = some q' →\n      Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}\n        (fun _ => True)\n        ((tt_cfg0 (some (.inl q)) D h0 ip out :\n          Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none))\n        (tt_cfg (some ⟨none, .inl q'⟩)\n          (tt_Dtr (tt_moves (tt_act M q inp D)) (tt_homeData (tt_act M q inp D) D) M.k)\n          (moveInputPos ip (tt_act M q inp D).inputTape)\n          (out ++ ((tt_act M q inp D).output.map Sum.inl).toList))\n        (2 + ∑ j ∈ Finset.range M.k, tt_τ M F x (tt_moves (tt_act M q inp D))\n          (tt_homeData (tt_act M q inp D) D) (moveInputPos ip (tt_act M q inp D).inputTape)\n          (out ++ ((tt_act M q inp D).output.map Sum.inl).toList) j)",
+      "before_line": 748,
+      "after_line": 748
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "name": "Turing.FinTM.bufferedScanCfg_run",
+      "kind": "lemma",
+      "header": "lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Bool)\n    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)\n    (heads : Fin M₁.k → ℤ) : ∀ j, j ≤ y.length →\n    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedScanCfg M₁ M₂ y p tapes heads j) (j + 1) =\n      bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads",
+      "before_line": 1116,
+      "after_line": 1116
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_table_rewind",
+      "kind": "lemma",
+      "header": "private lemma timedCut_table_rewind {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (initial : Bool) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ) :\n    ∀ j, j ≤ table.length →\n      timedCutInterpreter.runFrom\n        (universalEvalCfg base (.rewindTable initial index) table (j - 1) state sp) (j + 1) =\n      universalEvalCfg base (.countFirst initial index) table 0 state sp",
+      "before_line": 263,
+      "after_line": 263
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_live_block",
+      "kind": "lemma",
+      "header": "private lemma timedCut_live_block (M : CodeTM) (α : List Bool) {x : List Bool}\n    (src : Cfg 1 Bool (Fin (M.numStates + 1)) x) (p : ℕ)\n    (hp : p ≤ M.serialize.length) (hs : src.state ≠ none) :\n    ∃ (d p' : ℕ) (ready : Cfg 4 Bool UniversalControl (pairEncode α x)),\n      d ≤ 3 * M.serialize.length + 5 * (M.numStates + 1) + 20 ∧\n      p' ≤ M.serialize.length ∧\n      (∃ bits halt, ready.state = some (.applyRecord bits halt)) ∧\n      timedCutInterpreter.runFrom (universalSimulationCfg M α src p) d = ready ∧\n      universalInterpreter.step ready = universalSimulationCfg M α (M.tm.step src) p'",
+      "before_line": 1179,
+      "after_line": 1177
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_skip_groups",
+      "kind": "lemma",
+      "header": "private lemma timedCut_skip_groups {x : List Bool} {n : ℕ}\n    (base : Cfg 4 Bool UniversalControl x) (index : Fin 9) (table : List Bool)\n    (groups : List (List (Action 1 Bool (Fin (n + 1)))))\n    (hg : ∀ g ∈ groups, g.length = 9) (l r : List Bool) (j : ℕ)\n    (ht : table = l ++ groups.flatMap (fun g => g.flatMap universalRecordBits) ++ r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base (.group index) table l.length\n        (universalStateWindow j groups.length) (j + 1))\n      (groups.length + (groups.flatMap (fun g => g.flatMap universalRecordBits)).length + 1) =\n    universalEvalCfg base (.rewindState (some index)) table\n      (l.length + (groups.flatMap (fun g => g.flatMap universalRecordBits)).length)\n      (universalStateWindow (j + groups.length) 0) (j + groups.length + 1)",
+      "before_line": 743,
+      "after_line": 742
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_skip_fixed",
+      "kind": "lemma",
+      "header": "private lemma timedCut_skip_fixed {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (dest : Option (Fin 9)) (rem : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ) :\n    ∀ (n : ℕ) (field : Fin 8) (tp : ℤ), field.val + n = 7 →\n      timedCutInterpreter.runFrom\n        (universalEvalCfg base (.skipFixed dest rem field) table tp state sp) (n + 1) =\n      universalEvalCfg base (.skipUnary dest rem) table (tp + n + 1) state sp",
+      "before_line": 594,
+      "after_line": 593
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_initial_skip",
+      "kind": "lemma",
+      "header": "private lemma timedCut_initial_skip {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (n : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base (.initialSkip index) table l.length state sp) (n + 1) =\n      universalEvalCfg base (.group index) table (l.length + n + 1) state sp",
+      "before_line": 412,
+      "after_line": 411
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_clock_pass",
+      "kind": "lemma",
+      "header": "private lemma timed_clock_pass {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    (bs : List Bool) (bits : Fin 8 → Bool) (halt : Bool)\n    (hs : cfg.state = some (.applyRecord bits halt)) :\n    timedInterpreter.runFrom (timedLift cfg bs) (2 * bs.length + 2) =\n    timedClockCfg (timedLift cfg bs) (.borrow bits halt (timedBorrow true bs).1)\n      (timedBorrow true bs).2 bs.length",
+      "before_line": 2032,
+      "after_line": 2030
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_count_run",
+      "kind": "lemma",
+      "header": "private lemma timedCut_count_run {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (initial : Bool) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (bits : List Bool) (l r : List Bool)\n    (ht : table = l ++ (bits.flatMap fun b => [b, b]) ++ [false, true] ++ r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base (.countFirst initial index) table l.length state sp)\n      (2 * bits.length + 2) =\n    universalEvalCfg base (if initial then .initialCopy else .initialSkip index) table\n      (l.length + 2 * bits.length + 2) state sp",
+      "before_line": 297,
+      "after_line": 297
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_read_fixed",
+      "kind": "lemma",
+      "header": "private lemma timedCut_read_fixed {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (table : List Bool)\n    (state : ℤ → Option Bool) (sp : ℤ) (bits : Fin 8 → Bool) (l r : List Bool)\n    (ht : table = l ++ List.ofFn bits ++ r) :\n    ∀ (n : ℕ) (field : Fin 8) (old : Fin 8 → Bool), field.val + n = 7 →\n      (∀ i : Fin 8, i.val < field.val → old i = bits i) →\n      timedCutInterpreter.runFrom\n        (universalEvalCfg base (.readAction field old) table\n          (l.length + field.val) state sp) (n + 1) =\n      universalEvalCfg base (.nextState bits) table (l.length + 8) state sp",
+      "before_line": 797,
+      "after_line": 796
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_state_rewind",
+      "kind": "lemma",
+      "header": "private lemma timedCut_state_rewind {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (q q' : UniversalControl)\n    (table : List Bool) (tp : ℤ) (state : ℤ → Option Bool)\n    (hzero : state 0 = some false)\n    (hother : ∀ j : ℕ, 0 < j → state j ≠ some false)\n    (hstop : ∀ inp work, work 1 = some false →\n      timedCutInterpreter.tr q inp work = universalAdmin q' 0 (none, .pos))\n    (hscan : ∀ inp work, work 1 ≠ some false →\n      timedCutInterpreter.tr q inp work = universalAdmin q 0 (none, .neg)) :\n    ∀ j : ℕ, timedCutInterpreter.runFrom\n      (universalEvalCfg base q table tp state j) (j + 1) =\n      universalEvalCfg base q' table tp state 1",
+      "before_line": 382,
+      "after_line": 381
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_flush",
+      "kind": "lemma",
+      "header": "private lemma timed_flush {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    (bs : List Bool) (hs : cfg.state = none) :\n    let dst",
+      "before_line": 2192,
+      "after_line": 2191
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_clock_back",
+      "kind": "lemma",
+      "header": "private lemma timed_clock_back {x : List Bool} (base : Cfg 6 Bool TimedControl x)\n    (bits : Fin 8 → Bool) (halt : Bool) (bs : List Bool) :\n    ∀ j, j ≤ bs.length →\n    timedInterpreter.runFrom (timedClockCfg base (.clockBack bits halt) bs (j - 1)) (j + 1) =\n      timedClockCfg base (.borrow bits halt true) bs 0",
+      "before_line": 1975,
+      "after_line": 1973
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_prepare_next",
+      "kind": "lemma",
+      "header": "private lemma timedCut_prepare_next {x : List Bool} {n : ℕ}\n    (base : Cfg 4 Bool UniversalControl x) (table : List Bool) (bits : Fin 8 → Bool)\n    (next : Option (Fin (n + 1))) (l r : List Bool)\n    (ht : table = l ++ List.replicate (universalNextOnes next) true ++ false :: r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base (.nextState bits) table l.length (universalStateTape 0) 1)\n      (timedCut_NextCost next) =\n    universalEvalCfg base (.applyRecord bits next.isNone) table\n      (l.length + universalNextOnes next) (universalStateTape ((next.map Fin.val).getD 0)) 1",
+      "before_line": 873,
+      "after_line": 872
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_output_back",
+      "kind": "lemma",
+      "header": "private lemma timed_output_back {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    (bs out : List Bool) : ∀ j, j ≤ cfg.output.length →\n    timedInterpreter.runFrom (timedOutputCfg cfg bs (some .emitBack) (j - 1) out) (j + 1) =\n      timedOutputCfg cfg bs (some .flush) 0 (out ++ [true])",
+      "before_line": 2138,
+      "after_line": 2137
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_skip_unary",
+      "kind": "lemma",
+      "header": "private lemma timedCut_skip_unary {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (dest : Option (Fin 9)) (rem : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (n : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base (.skipUnary dest rem) table l.length state sp) (n + 1) =\n    universalEvalCfg base\n      (if h : rem.val = 0 then universalSkipDone dest\n        else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)\n      table (l.length + n + 1) state sp",
+      "before_line": 626,
+      "after_line": 625
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_unary_copy",
+      "kind": "lemma",
+      "header": "private lemma timedCut_unary_copy {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (q q' : UniversalControl) (doneMove : SignType)\n    (table : List Bool)\n    (htrue : ∀ inp work, work 0 = some true →\n      timedCutInterpreter.tr q inp work = universalAdmin q .pos (some (some true), .pos))\n    (hfalse : ∀ inp work, work 0 = some false →\n      timedCutInterpreter.tr q inp work = universalAdmin q' doneMove (none, 0))\n    (n j : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    timedCutInterpreter.runFrom\n      (universalEvalCfg base q table l.length (universalStateTape j) (j + 1)) (n + 1) =\n      universalEvalCfg base q' table (l.length + n + (doneMove : ℤ))\n        (universalStateTape (j + n)) (j + n + 1)",
+      "before_line": 450,
+      "after_line": 449
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "name": "Turing.universal_prepare_next",
+      "kind": "lemma",
+      "header": "private lemma universal_prepare_next {x : List Bool} {n : ℕ}\n    (base : Cfg 4 Bool UniversalControl x) (table : List Bool) (bits : Fin 8 → Bool)\n    (next : Option (Fin (n + 1))) (l r : List Bool)\n    (ht : table = l ++ List.replicate (universalNextOnes next) true ++ false :: r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base (.nextState bits) table l.length (universalStateTape 0) 1)\n      (universalNextCost next) =\n    universalEvalCfg base (.applyRecord bits next.isNone) table\n      (l.length + universalNextOnes next) (universalStateTape ((next.map Fin.val).getD 0)) 1",
+      "before_line": 301,
+      "after_line": 301
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "name": "Turing.universal_skip_groups",
+      "kind": "lemma",
+      "header": "private lemma universal_skip_groups {x : List Bool} {n : ℕ}\n    (base : Cfg 4 Bool UniversalControl x) (index : Fin 9) (table : List Bool)\n    (groups : List (List (Action 1 Bool (Fin (n + 1)))))\n    (hg : ∀ g ∈ groups, g.length = 9) (l r : List Bool) (j : ℕ)\n    (ht : table = l ++ groups.flatMap (fun g => g.flatMap universalRecordBits) ++ r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base (.group index) table l.length\n        (universalStateWindow j groups.length) (j + 1))\n      (groups.length + (groups.flatMap (fun g => g.flatMap universalRecordBits)).length + 1) =\n    universalEvalCfg base (.rewindState (some index)) table\n      (l.length + (groups.flatMap (fun g => g.flatMap universalRecordBits)).length)\n      (universalStateWindow (j + groups.length) 0) (j + groups.length + 1)",
+      "before_line": 171,
+      "after_line": 171
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "name": "Turing.universal_read_fixed",
+      "kind": "lemma",
+      "header": "private lemma universal_read_fixed {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (table : List Bool)\n    (state : ℤ → Option Bool) (sp : ℤ) (bits : Fin 8 → Bool) (l r : List Bool)\n    (ht : table = l ++ List.ofFn bits ++ r) :\n    ∀ (n : ℕ) (field : Fin 8) (old : Fin 8 → Bool), field.val + n = 7 →\n      (∀ i : Fin 8, i.val < field.val → old i = bits i) →\n      universalInterpreter.runFrom\n        (universalEvalCfg base (.readAction field old) table\n          (l.length + field.val) state sp) (n + 1) =\n      universalEvalCfg base (.nextState bits) table (l.length + 8) state sp",
+      "before_line": 225,
+      "after_line": 225
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "name": "Turing.universal_live_block",
+      "kind": "lemma",
+      "header": "lemma universal_live_block (M : CodeTM) (α : List Bool) {x : List Bool}\n    (src : Cfg 1 Bool (Fin (M.numStates + 1)) x) (p : ℕ)\n    (hp : p ≤ M.serialize.length) (hs : src.state ≠ none) :\n    ∃ d p', 1 ≤ d ∧ d ≤ 3 * M.serialize.length + 5 * (M.numStates + 1) + 20 ∧\n      p' ≤ M.serialize.length ∧\n      universalInterpreter.runFrom (universalSimulationCfg M α src p) d =\n        universalSimulationCfg M α (M.tm.step src) p'",
+      "before_line": 600,
+      "after_line": 599
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "name": "Turing.universal_skip_unary",
+      "kind": "lemma",
+      "header": "private lemma universal_skip_unary {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (dest : Option (Fin 9)) (rem : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (n : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base (.skipUnary dest rem) table l.length state sp) (n + 1) =\n    universalEvalCfg base\n      (if h : rem.val = 0 then universalSkipDone dest\n        else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)\n      table (l.length + n + 1) state sp",
+      "before_line": 54,
+      "after_line": 54
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_state_rewind",
+      "kind": "lemma",
+      "header": "lemma universal_state_rewind {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (q q' : UniversalControl)\n    (table : List Bool) (tp : ℤ) (state : ℤ → Option Bool)\n    (hzero : state 0 = some false)\n    (hother : ∀ j : ℕ, 0 < j → state j ≠ some false)\n    (hstop : ∀ inp work, work 1 = some false →\n      universalInterpreter.tr q inp work = universalAdmin q' 0 (none, .pos))\n    (hscan : ∀ inp work, work 1 ≠ some false →\n      universalInterpreter.tr q inp work = universalAdmin q 0 (none, .neg)) :\n    ∀ j : ℕ, universalInterpreter.runFrom\n      (universalEvalCfg base q table tp state j) (j + 1) =\n      universalEvalCfg base q' table tp state 1",
+      "before_line": 465,
+      "after_line": 464
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_count_run",
+      "kind": "lemma",
+      "header": "lemma universal_count_run {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (initial : Bool) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (bits : List Bool) (l r : List Bool)\n    (ht : table = l ++ (bits.flatMap fun b => [b, b]) ++ [false, true] ++ r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base (.countFirst initial index) table l.length state sp)\n      (2 * bits.length + 2) =\n    universalEvalCfg base (if initial then .initialCopy else .initialSkip index) table\n      (l.length + 2 * bits.length + 2) state sp",
+      "before_line": 317,
+      "after_line": 317
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_table_rewind",
+      "kind": "lemma",
+      "header": "lemma universal_table_rewind {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (initial : Bool) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ) :\n    ∀ j, j ≤ table.length →\n      universalInterpreter.runFrom\n        (universalEvalCfg base (.rewindTable initial index) table (j - 1) state sp) (j + 1) =\n      universalEvalCfg base (.countFirst initial index) table 0 state sp",
+      "before_line": 283,
+      "after_line": 283
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_unary_copy",
+      "kind": "lemma",
+      "header": "lemma universal_unary_copy {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (q q' : UniversalControl) (doneMove : SignType)\n    (table : List Bool)\n    (htrue : ∀ inp work, work 0 = some true →\n      universalInterpreter.tr q inp work = universalAdmin q .pos (some (some true), .pos))\n    (hfalse : ∀ inp work, work 0 = some false →\n      universalInterpreter.tr q inp work = universalAdmin q' doneMove (none, 0))\n    (n j : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base q table l.length (universalStateTape j) (j + 1)) (n + 1) =\n      universalEvalCfg base q' table (l.length + n + (doneMove : ℤ))\n        (universalStateTape (j + n)) (j + n + 1)",
+      "before_line": 530,
+      "after_line": 529
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_initial_skip",
+      "kind": "lemma",
+      "header": "lemma universal_initial_skip {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (index : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)\n    (n : ℕ) (l r : List Bool)\n    (ht : table = l ++ List.replicate n true ++ false :: r) :\n    universalInterpreter.runFrom\n      (universalEvalCfg base (.initialSkip index) table l.length state sp) (n + 1) =\n      universalEvalCfg base (.group index) table (l.length + n + 1) state sp",
+      "before_line": 492,
+      "after_line": 491
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "name": "Turing.universal_skip_fixed",
+      "kind": "lemma",
+      "header": "lemma universal_skip_fixed {x : List Bool}\n    (base : Cfg 4 Bool UniversalControl x) (dest : Option (Fin 9)) (rem : Fin 9)\n    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ) :\n    ∀ (n : ℕ) (field : Fin 8) (tp : ℤ), field.val + n = 7 →\n      universalInterpreter.runFrom\n        (universalEvalCfg base (.skipFixed dest rem field) table tp state sp) (n + 1) =\n      universalEvalCfg base (.skipUnary dest rem) table (tp + n + 1) state sp",
+      "before_line": 997,
+      "after_line": 996
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+      "name": "Turing.ss_bufferLeaf_run",
+      "kind": "theorem",
+      "header": "private theorem ss_bufferLeaf_run {n : ℕ} (i : Fin n) (emptyMove : SignType)\n    {z : List Bool} (d : Cfg n Bool Bool z) (hstate : d.state = some false) :\n    (ss_bufferLeaf n i emptyMove).runFrom d 1 =\n      { d with\n        state := some true\n        workTapePos := Function.update d.workTapePos i\n          (d.workTapePos i + if d.workTapeSymbols i = none then (emptyMove : ℤ) else 0) } ∧\n      ∀ u < 1, ((ss_bufferLeaf n i emptyMove).runFrom d u).state ≠ some true",
+      "before_line": 624,
+      "after_line": 624
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+      "name": "Turing.ss_inputRewind_run",
+      "kind": "theorem",
+      "header": "private theorem ss_inputRewind_run {n : ℕ} {z : List Bool}\n    (d : Cfg n Bool ss_RewindState z) (hd : d.state = some .enter)\n    (hp : 0 < d.inputPos.val) :\n    (ss_inputRewind n).runFrom d (d.inputPos.val + 2) =\n      { d with state := some .done, inputPos := 1 } ∧\n      (∀ u < d.inputPos.val + 2,\n        ((ss_inputRewind n).runFrom d u).state ≠ some .done) ∧\n      ∀ u ≤ d.inputPos.val + 2,\n        ((ss_inputRewind n).runFrom d u).workTapePos = d.workTapePos",
+      "before_line": 1234,
+      "after_line": 1234
+    }
+  ],
+  "added": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "name": "Turing.MultiTapeTM.runFrom_one",
+      "lexical_name": "_root_.Turing.MultiTapeTM.runFrom_one",
+      "kind": "theorem",
+      "private": false,
+      "line": 223,
+      "header": "theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}\n    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c",
+      "body": ":= by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]",
+      "full": "theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}\n    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by\n  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+    }
+  ],
+  "removed": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_runFrom_one"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satRed_one"
+    },
+    {
+      "path": "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean",
+      "name": "Turing.NTimeDiag.qy_run_one"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean",
+      "name": "Turing.recordStep_runFrom_one"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "Turing.runFrom_one"
+    }
+  ],
+  "only_changed_definition": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean",
+      "name": "Turing.zr_cellContract"
+    }
+  ],
+  "definition_proof_field_check": "The zr_cellContract text is identical to the frozen CfgFacts option; only run/env proof fields differ from baseline.",
+  "CfgFacts_exact_baseline": true,
+  "no_import_changes_any_of929_sources": true,
+  "API_binders_target_and_body_exact_source": true
+}

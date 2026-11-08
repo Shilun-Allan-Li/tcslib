@@ -1,0 +1,4 @@
+/-- A one-step run from any configuration is exactly one machine step. -/
+theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]

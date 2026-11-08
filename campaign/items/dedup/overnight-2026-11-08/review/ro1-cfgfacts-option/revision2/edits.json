@@ -1,0 +1,177 @@
+[
+  {
+    "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "line_at_revision2": 241,
+    "kind": "repair simp matcher at zero-plus-one",
+    "before": "\n    simp only [counterCarry, MultiTapeTM.runFrom_one, counter_carry_step]",
+    "after": "\n    simp only [counterCarry]\n    rw [MultiTapeTM.runFrom_one, counter_carry_step]"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "line_at_revision2": 248,
+    "kind": "repair simp matcher at zero-plus-one",
+    "before": "\n      simp only [counterCarry, MultiTapeTM.runFrom_one, counter_carry_step]",
+    "after": "\n      simp only [counterCarry]\n      rw [MultiTapeTM.runFrom_one, counter_carry_step]"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "line_at_revision2": 272,
+    "kind": "repair simp matcher at zero-plus-one",
+    "before": "simp only [MultiTapeTM.runFrom_one]",
+    "after": "rw [MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean",
+    "line_at_revision2": 53,
+    "kind": "separated calc one-step proof",
+    "before": "  calc\n    _ = M.step (M.runFrom c 0) := MultiTapeTM.runFrom_succ_eq_step'\n    _ = _ := by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hc]",
+    "after": "  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hc]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line_at_revision2": 3484,
+    "kind": "additional exact inline conversion",
+    "before": "  change (emCallTrackTM M).tm.step ((emCallTrackTM M).tm.initCfg x) = _",
+    "after": "  rw [MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "line_at_revision2": 4843,
+    "kind": "additional exact inline conversion",
+    "before": "    change (controlAction 0 (some (5 : Fin 6))).apply c = c",
+    "after": "    rw [MultiTapeTM.runFrom_one]\n    change (controlAction 0 (some (5 : Fin 6))).apply c = c"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/OracleSim.lean",
+    "line_at_revision2": 1877,
+    "kind": "additional exact inline conversion",
+    "before": "    change oracleDispatchTM.step localInit = _",
+    "after": "    rw [MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line_at_revision2": 5153,
+    "kind": "additional exact inline conversion",
+    "before": "  refine ⟨he, ?_⟩\n  intro j hj\n  rcases (show j = 0 ∨ j = 1 by omega) with rfl | rfl\n  · exact hc\n  · change (tm.step c).state ≠ _\n    rw [he]; exact hd",
+    "after": "  refine ⟨(MultiTapeTM.runFrom_one tm c).trans he, ?_⟩\n  intro j hj\n  rcases (show j = 0 ∨ j = 1 by omega) with rfl | rfl\n  · exact hc\n  · rw [MultiTapeTM.runFrom_one, he]\n    exact hd"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line_at_revision2": 5208,
+    "kind": "additional exact inline conversion",
+    "before": "    change (controlAction 0 (some (.prepare (0, false)))).apply z = p",
+    "after": "    rw [MultiTapeTM.runFrom_one]\n    change (controlAction 0 (some (.prepare (0, false)))).apply z = p"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line_at_revision2": 6504,
+    "kind": "additional exact inline conversion",
+    "before": "      change host.step z = (embedEmitCfg index tapes heads [] (src.step c)).mapState emb",
+    "after": "      rw [MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line_at_revision2": 6506,
+    "kind": "additional exact inline conversion",
+    "before": "      change ((embedEmitTM index src).step ec).mapState emb =",
+    "after": "      simp only [MultiTapeTM.runFrom_one] at r1\n      change ((embedEmitTM index src).step ec).mapState emb ="
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "line_at_revision2": 7386,
+    "kind": "additional exact inline conversion",
+    "before": "    change tm.step z = p",
+    "after": "    rw [MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean",
+    "line_at_revision2": 2320,
+    "kind": "additional exact inline conversion",
+    "before": "    change (rt_boundaryTM k i b).step d = a",
+    "after": "    rw [MultiTapeTM.runFrom_one]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "line_at_revision2": 1500,
+    "kind": "additional exact inline conversion",
+    "before": "    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := step",
+    "after": "    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := by\n      rw [MultiTapeTM.runFrom_one]\n      exact step"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean",
+    "line_at_revision2": 139,
+    "kind": "additional exact inline conversion",
+    "before": "fl_flush (if live then some none else none) d :=\n  fl_leaf_step d live hd",
+    "after": "fl_flush (if live then some none else none) d := by\n  rw [MultiTapeTM.runFrom_one]\n  exact fl_leaf_step d live hd"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 4070,
+    "kind": "additional exact inline conversion",
+    "before": "have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by\n        simpa only [moveInputPos_zero] using step",
+    "after": "have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by\n        rw [MultiTapeTM.runFrom_one]\n        simpa only [moveInputPos_zero] using step"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 3950,
+    "kind": "additional exact inline conversion",
+    "before": "have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by\n          simpa only [moveInputPos_zero] using step",
+    "after": "have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by\n          rw [MultiTapeTM.runFrom_one]\n          simpa only [moveInputPos_zero] using step"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 4001,
+    "kind": "additional exact inline conversion",
+    "before": "MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]\n            simpa only [moveInputPos_zero] using step",
+    "after": "MultiTapeTM.runFrom_add (tm := M) d 1 1, run1, MultiTapeTM.runFrom_one]\n            simpa only [moveInputPos_zero] using step"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 4130,
+    "kind": "additional exact inline conversion",
+    "before": "        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } :=\n  step_of_inputMoveAction _ _ _ hs rfl",
+    "after": "        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } := by\n  rw [MultiTapeTM.runFrom_one]\n  exact step_of_inputMoveAction _ _ _ hs rfl"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 4523,
+    "kind": "additional exact inline conversion",
+    "before": "        have step : (canonSuffixTM m).runFrom d 1 = e :=\n          step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])",
+    "after": "        have step : (canonSuffixTM m).runFrom d 1 = e := by\n          rw [MultiTapeTM.runFrom_one]\n          exact step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "line_at_revision2": 4562,
+    "kind": "one-step simp successor implicit zero",
+    "before": "simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,\n    canonHaltTM, Action.apply]",
+    "after": "simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, hs,\n    canonHaltTM, Action.apply]"
+  },
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Inclusions.lean",
+    "line_at_revision2": 2328,
+    "kind": "one-step simp successor implicit zero",
+    "before": "simp [M, b2b_answerTM, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hc,",
+    "after": "simp [M, b2b_answerTM, MultiTapeTM.runFrom_one, MultiTapeTM.step, hc,"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+    "line_at_revision2": 164,
+    "kind": "separated nil-length successor/zero pair",
+    "before": "rw [MultiTapeTM.runFrom_succ_eq_step, List.length_nil, MultiTapeTM.runFrom_zero,",
+    "after": "rw [List.length_nil, MultiTapeTM.runFrom_one,"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+    "line_at_revision2": 93,
+    "kind": "inner one-step of two-step chain",
+    "before": "      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,\n      pcfg_fA M f bits p h1 (by omega) e r0,",
+    "after": "      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one,\n      pcfg_fA M f bits p h1 (by omega) e r0,"
+  },
+  {
+    "path": "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean",
+    "line_at_revision2": 95,
+    "kind": "remove discharged zero after inner one-step",
+    "before": "      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1, MultiTapeTM.runFrom_zero]",
+    "after": "      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1]"
+  }
+]

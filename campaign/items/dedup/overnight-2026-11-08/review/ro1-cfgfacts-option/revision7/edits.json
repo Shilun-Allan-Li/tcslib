@@ -1,0 +1,58 @@
+[
+  {
+    "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 :=\n    init_step M q₁ q V",
+    "after": "  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 := by\n    rw [MultiTapeTM.runFrom_one]\n    exact init_step M q₁ q V",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs",
+    "after": "show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from\n    (MultiTapeTM.runFrom_one _ _).trans hs",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "    change (seekTM k).step ((seekTM k).step _) = _\n    rw [first, second]",
+    "after": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, first, second]",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "    · change ((seekTM k).step _).state ≠ _\n      rw [first]",
+    "after": "    · rw [MultiTapeTM.runFrom_one, first]",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "      from first]",
+    "after": "      from (MultiTapeTM.runFrom_one _ _).trans first]",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "    exact timed_clock_start cfg bs bits halt hs",
+    "after": "    rw [MultiTapeTM.runFrom_one]\n    exact timed_clock_start cfg bs bits halt hs",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "    rw [hcfg]\n    simpa using h0",
+    "after": "    rw [MultiTapeTM.runFrom_one, hcfg]\n    simpa using h0",
+    "sites": 1
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+    "kind": "explicit canonical reader replaces an implicit step/run-one conversion",
+    "before": "    simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0",
+    "after": "    rw [MultiTapeTM.runFrom_one]\n    simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0",
+    "sites": 1
+  }
+]

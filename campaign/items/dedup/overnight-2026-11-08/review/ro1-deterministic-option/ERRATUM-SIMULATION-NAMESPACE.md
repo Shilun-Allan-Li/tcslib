@@ -1,0 +1,3 @@
+# Simulation namespace correction
+
+The exact existing declaration is `Turing.FinTM.bufferedScanCfg_run`, not `Turing.bufferedScanCfg_run`. Simulation.lean baseline line 1125 and the CfgFacts → StateRenaming → Simulation graph witness were correct. The old frozen cycle report/declaration-row qualified label omitted `FinTM`; those artifacts remain immutable. The first small alternative AX diagnostic exposed this metadata-only error, and its failed source/log are retained. Corrected probes use the exact full name. No source statement, proof target, import graph, or native-owner result is changed by this correction.
