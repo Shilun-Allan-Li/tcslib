@@ -3194,7 +3194,7 @@ No final records/exchange/bundle SHA or external dispatch is inferred.
 ## Evidence and its limits
 
 - Replay: Root-owned exact 80/80 replay PASS at 7c4b1a3e15b800cc4a98624f71a3b27458a41340; static exit 0; whole 895 input/output; source unchanged. Bound folder: /private/tmp/ab34-nchr1-replay. This is not automatic validity after other source PRs merge.
-- Selected compiled ABI/AX: Fresh BASE and exact replay-bound HEAD selected metadata executed for 5 roots. See selected-ABI-comparison.json; every raw/normalized type, universe, privacy/kind, simp and AX difference is explicit. No theorem proof-value equality is inferred.
+- Selected compiled ABI/AX: Fresh BASE and exact replay-bound HEAD selected metadata executed for 5 roots. See `review/selected-ABI-comparison.json`; every raw/normalized type, universe, privacy/kind, simp and AX difference is explicit. No theorem proof-value equality is inferred.
 - Rule-10 scope: Six ordinary foreign definitions; complete five literal doc/header/body scopes in the original import context. Action.apply default simp unfolding removed in both variants. Twelve fresh positive and twelve expected-negative identities (12 pairs). The unpinned first fixture is quarantined and is NOT evidence.
 - Source/QA freeze: `review/qa/source-freeze.json`, exact complete BASE/HEAD owner and
   full 33-file source population under `review/source/`, plus declaration-freeze stdout.
@@ -3300,15 +3300,19 @@ their recorded owner/window; this packet grants no new exception. Test t=0, halt
 nonempty output/prefix, zero tapes, and j=0/j=t at a live endpoint. Restate the arbitrary
 configuration convention rather than silently specializing to initialized runs.
 
+Independent input provenance is supplied in `campaign/status/2026-11-08-mig1-merge/receipt.json`, `object-hashes.json` and `Lean-tree.json` there. The895 recorded replay input hashes equal that published anchor. Actual static helper and diagnostic helper/context are in `reproduction-tools/`; the replay leanelab-o helper is self-contained. These sources are included for verification, without a new elaboration claim.
+
+Exact screen/lint/freeze/comparison helpers and toolchain/package context are in `reproduction-tools/`. The copied screen source matches the recorded execution SHA. Other context files are current reproduction inputs, not a newly invented historical byte attestation.
+
 ## ===== campaign/gates/123-ch7-run/STATUS.md =====
 
-# Gate123 — ch7 public run-law forwards
+# Gate123
 
-STAGED INPUT; publication in progress; NOT DISPATCHED; no verdict.
+PUBLICATION CORRECTION IN PROGRESS; old prompt VOID; not dispatched.
 
-**Not yet clear to merge: #243 — external Codex audit pending.**
+**Not yet clear to merge: #243 — corrected bundle and external audit pending.**
 
-Actual80/0/static0/31; full5-declaration6-head seal/12 paired controls; exact5-root ABI; actual33-file0-new-pair comparison. Source/records/exchange publication binding is completed separately.
+Source/replay/ABI/seal/screen checks remain passed. Add independent MAC8 adoption anchors and actual helper inputs, then rebuild/verify and reissue the entire prompt.
 
 ## ===== campaign/gates/123-ch7-run/adoption.json =====
 
@@ -273872,4 +273876,2928 @@ private lemma universal_captured_table {S : Type} [Fintype S] [DecidableEq S]
   rw [tapeBlocks_buffer, hc.2.1]
 
 end Turing
+```
+
+## ===== campaign/status/2026-11-08-mig1-merge/receipt.json =====
+
+{
+  "utc": "2026-11-08T09:38:11.250074+00:00",
+  "result": "WHOLE passed MJOINT1 adopted as MAC8",
+  "merged_by": "Seyoon",
+  "pr": 233,
+  "merge": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "PR_head": "50abeae65163f5449d2a2781a94c993284842320",
+  "passed_source": "11b09440347ca8274562d58b5f90a11cfce56e29",
+  "all1003_Lean_paths_and_blobs_exact": true,
+  "objects": 895,
+  "all895_output_hashes_exact": true,
+  "old_snapshot": "oleans-mjoint1",
+  "current_campaign_snapshot": "oleans-mac8",
+  "new_elaboration": false,
+  "snapshot_splicing": false,
+  "actual_replay": "394/0/static0/59",
+  "AX": "Fresh20owner8077/3unchangedWordSize dependency closures; generated ownership effects dispositioned; no global AX claim",
+  "optional_PID_telemetry": "Absent; actualj4helper and394module rows retained; gap documented",
+  "main_and_records_ff": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "user_example_preserved_sha256": "14eb21e97204139a6ca3080245a40547002de3e9e870b8d35d0f5ef60c016a84"
+}
+
+## ===== campaign/status/2026-11-08-mig1-merge/object-hashes.json =====
+
+{
+  "TCSlib/BooleanAnalysis/ArrowTheorem.olean": "b9f4d7499e26cf24dcbeddb60f06592f08c0a51aab354e7a3f35218689a65c67",
+  "TCSlib/BooleanAnalysis/BLR/BoolBLR.olean": "ec2d604f01f0eba78fe4d4fdcc2c1ca31eb756247ec8dc4d7c53dc68906dc231",
+  "TCSlib/BooleanAnalysis/BLR/BoolFourier.olean": "12a206504e88fc18dacb9e9604cb144414160966698352ba018223d2e173f162",
+  "TCSlib/BooleanAnalysis/BLR/LowDegree.olean": "2da80b95123971065cf3c18c0fae36d6935f07dc62b0948dc0b6d524371cb5fe",
+  "TCSlib/BooleanAnalysis/BLR/ZkBLR.olean": "5802225502b6bed9577f8a865d408bee9b479e21cdcf8b68a777ffba08ca768d",
+  "TCSlib/BooleanAnalysis/BLR/ZkFourier.olean": "0d14203e822a446f3b9538891ee0f3a03a6d04c9d296476eb5daa6454db6d4fd",
+  "TCSlib/BooleanAnalysis/BLR.olean": "ac529e19f53399d13dfe63836534b6e95c5eb8773ecb4b3ea103b2555ad861c6",
+  "TCSlib/BooleanAnalysis/Basic.olean": "ae8a2208af29155a2c15df3ad060a3a6d8ec3e1fe0d9767192f273b1c320c58b",
+  "TCSlib/BooleanAnalysis/DecisionTree.olean": "365d22ba584277854d7ef012a85d507f4b4822215e26cc74c829fc5e18f60429",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Anticoncentration.olean": "bc51a9c705f3c57ec79c98b7dc2b358c11b3928c427f189753baadd191b5f468",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Cube.olean": "d66dc2ebfca8f97b5779aeb0140b6dc5e65b687b3509c6f2f4daf3eb967c13d6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.olean": "d653e167697ab733e2d9135955670e4b840b9054ace079a002a0c45038f3ba9c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Interpolation.olean": "211a9ea34a50d724a9ffa937117626665bdb01240de215c06f76f79ad314fbd1",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Noise.olean": "dbf7ffa319e2e0e9d44c52d951dde788f7185dbcfc50929ee7d00c899161766a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.olean": "f13688132b3f031af26a0aef3d8dec64b5aea3f8d398fdaa0535fa2e0667a98c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/TwoPoint.olean": "30bf2b2cd55db68a8a5e51e15c5c032cbf81d00e64d93958646db8a1003fdf97",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Walk.olean": "e7ed02f749eff41d3b6236945d77c63b0146d633ce960ad1e0c0d1e663e6efc2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov.olean": "8b37420629f2d9d6decc9d3373c9bc9daa06dc43b5f6c9a03a759019487babf2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.olean": "150bfa5eeb982ef922f5ada6c051c10e220aaec6a2afebf979998028dd242ce2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Affine.olean": "c54fe8c47eb17f4d462a1146473187ff853cb6fb60be19fa11f3ffe2e4309565",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Bivariate.olean": "de248d3d1403c19936e01e5d5984777d7c7ff5368b757ce8af35a65f7bccae79",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Definitions.olean": "847351bfb8c1176c1319274f45c32a67c7b4e832643fb3e4a6fa703ed95dbac4",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Halfspace.olean": "b43003722a4c6e5c43064d4b51aa32874405ed2e77062e98affd7f29b0c35464",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Indicator.olean": "2b024624e610beaf7aa44f9ae5c70cbcdf7e25376c343b3b3193220292430785",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Integration.olean": "612c03540cb621dcb9a7153139fd9756509e68a3e0f5a0006dce0722ac8fa49f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Interpolation.olean": "afbd84361e2fe5e4ac40bffe5bd4933dd8721356ec075a7b4466246faf84ebbf",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/ProfileCalculus.olean": "048f1602aae59e23512d7bf986c9ee0be66a0bf9ac46adf027921ceb8af3de03",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell.olean": "9648046815f6de0261ae071856eb7f9e932c134a12207934d1a1425c66839296",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Condorcet.olean": "4b829d1f90ec2075748bee29ba684609a386505ca191588285f9cbffc263974c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Definitions.olean": "48943e70a7dcc2c423dad686b719e525e2789c477e7b1773228e55feec1d1c86",
+  "TCSlib/BooleanAnalysis/GaussianSpace/GaussianBobkov.olean": "3870e158c3eefc21df6619b54c0ac646051cf3bd8c0d0b7e04e39e3df67ddc56",
+  "TCSlib/BooleanAnalysis/GaussianSpace/GaussianDensity.olean": "5201f4c0b1bae4af5483a1772a73979ab470b8fc59698a7a42a16414a886006d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.olean": "0eec863ccee95e49be1c0441d31e7353200ad2450111791a30ad83963ebd4841",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Basic.olean": "108ab793ab4e64b3603320e5505dba74ea088dc7d601d0eaad4054020c4244ee",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Basis.olean": "c39bb7e5c5f8eec81cdec86b06a7faa881f71e38088b0f6a77f4583e1f34d81d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Degree.olean": "7c673017d548d242c705722b6b653fe2dac15fb19b380f0ded8877f95a07e415",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/GeneratingFunction.olean": "a0cced5dcc1cedfa4e3ed3c739d984c6658685d672cb64e3d38058959c88ac2f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Generator.olean": "81a03d91a7712902221006929930058dffec12399298e0562708553a8977cc34",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Noise.olean": "a2053c840a23622dde1d680c06413fe834ac2160b743eb4f853db387959693cd",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Orthogonality.olean": "3d546d68e8c482c3fb66bf715247f07e947c740e108f5255bfe6407837370518",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Span.olean": "97e36c8534256649ea9fed6065ff40a5c4dcbecf68954337df3f3048662ac9a1",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Truncation.olean": "69119015cfb1e8f6096155d559b5341b74b43bed698d861f5dda6845af0368ac",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite.olean": "fb5f346a0f28fed4c354e6a1a7c5ef2d737c81151d94bd96170eca4364050524",
+  "TCSlib/BooleanAnalysis/GaussianSpace/HermiteDefinitions.olean": "91bf80b59f212ca04214fc8c6731f25bc2a886dc75f4df43012785d4d353834b",
+  "TCSlib/BooleanAnalysis/GaussianSpace/IndicatorRegularity.olean": "6b199af6d955655897c96bf7eddf85d62188b0de2acf0b65c7bcbb931dc0ebcb",
+  "TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.olean": "a44e4d55d08aec0c21c41bc0ce1ca9845282c01effd07b51f42725d2b5d32fe7",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InputMoments.olean": "1dc07cefccd1d630914084411ce6036c6cb7856bc9f50cb8db92986d174841de",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Inputs.olean": "261f1d9583d2db2439d5377df29ab99491399edfb4097a276129c05dde591243",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Coordinates.olean": "0ef8bc0a009a375eedf39e28363f1d810883452e2486792d8099007a487d5551",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.olean": "dbe3662867c6e3e072e47a8276af6df18643c85ad7c323eb1a55cee8372a79ed",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Moments.olean": "b1b756b60719758143f722b81842c8917bc70c670ce05c6d068f48e06e36ba86",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Perturbation.olean": "3b23f7a229ccbf5bf0b3c442b117d793b404de09d56024a4c4c17c4bbdfb0d05",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Replacement.olean": "a47ecc44b7a1a33d8768e31de03ab1534d1111ffbe189a1e30a0d573cc04556e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.olean": "524b840fe2db6d8e61363302814669dbdda5ce17478551793ee678dc2907644c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.olean": "96450fbc31a682e271effbd8548c9e4f49b5e1727a642c24e1a794e4879e550a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.olean": "fcee8c21aca58231f321020446d4593a12244db494113b9511b59f7582327b01",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdMoments.olean": "c26b11836b02973f50b052acb730dad0b1c79a7d5d87d6cadf6fb30d799e3c8a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdOrder.olean": "30d1ddab5fe490c404f1caea6d5aca8acf375a729f35182de98bd1d15ced8e5e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance.olean": "d910066ae8bf0aebbf1291e7945f3dd1065a8f47c4aa72314ff8ef086c840889",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.olean": "53287d15b4d7c18e2ceae629d5e12c842775715b7a750522875fb278cdd73091",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.olean": "585066fb19a4a366ddd3461e12b63c99c83cf22e76a5a640ac8bbb246df6c009",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceTruncation.olean": "8b6419c98e079ef55e7c7e0cb2631bdc27f60e85f3212fe7fee099a3535cd92a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MajorityIsStablest.olean": "0cf904c1268e49d0880825939cf742d90a90c94486205037d7329e65b91482ea",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCut.olean": "0cb37b0cdf365e8564fdb182a0e4200fe671a5206f3e45e1a02edda3820f4e59",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCutAlgorithm.olean": "50bad1eca11ebe9b116c3e2e0730c06cc3101457a65915369b272acbcae0a748",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCutDefinitions.olean": "1cecbf88e3be1bbfb227bbf446e2c6d313750114f99a35f319d643a01261f73d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BlockCharacteristic.olean": "ca5899cd5de2f250b28f39b916127075f63c8204b292ae744f56fdb0bc360b48",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanBounds.olean": "830467e6cb6b7308bc8ba522d11d80b0ad9d41688841808bbcac409bf397621e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.olean": "68be66078674ca337a0cd74485496f84991a8c16d39ff7747c2050c086439670",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Continuity.olean": "f46e5a775e8c778e3f7f845ae0aaf7d29dcc03a3f11415178f2dae6d5211e2b7",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/ContinuousBounds.olean": "68db0f964700e12b7350b15f9ed7b3f50573450dd48284b8a979007439470356",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Density.olean": "ded4e5439de29ce78487c223a733d552463c1a2328dbc267844b780993556695",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Duality.olean": "1c97704700a27f646c318ef73855631a293d93c7dafb050de42b457bbf586bc6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Exponential.olean": "2dc05949308ace1a1fac0e253341b942b0da7ad0aa55e69e05a852718a361dc1",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Exponents.olean": "7ed520a9f0211f2eb4d9ebdfa855aa3ddc7739b66b2785f83345d5265e839f1a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/FatouBound.olean": "70fc004f6f3511e6aca8c9ece805faa7300893ffff3484fc3f912c8026d01f7d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.olean": "89db36913886cd1cc334770f68cde8a20885975472a03cfa40b3fbf145703804",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/HypercontractivePairing.olean": "40a34d95da80374ed0d57a3602f126be37d7bd45239eab83851196adf9f54b53",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Kernel.olean": "7d369f136d2ce5773b561ac5e4505116c2178f3e0797e9381edd3030ce2362ab",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Linear.olean": "28236d18e98fe14cc8d441a762ea6dd2147c131d8aa3431331c9027cae581cf9",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/LpBounds.olean": "9e114ab413cfb4940c5be3ac275e65534841b3517b355a86d154e63a203897e7",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/MeanBound.olean": "ab0755e6cb243dd27f96045394374f00ca03aebe6822fe041053c22f6b3560a9",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Polynomial.olean": "03437f079c7577e7db719d9faaf721d3ee062da10b539fecb58ad1fe5e291408",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/PolynomialApproximation.olean": "1dc37f66f294dbdedadefdb1db58dc0d6c180b9217d19e8628bc47c8a070d854",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Torus.olean": "1769b8c283afcb99f216a8113a9988213ca0787e03907c0874f3d298292a188a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/TorusApproximation.olean": "39ac8ed4de11d009dcd2c72b85c57bb81e8c6e4cfeb7e920be4e78b3cc82453a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/UniformTransfer.olean": "0ad8f6c2a9c31423a8b150df6fa459009e20c83c44c09becc8e7e8dedd652bf2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise.olean": "44de3a2af9fcc035e6727d64307959885b8a129069d742ea1f94935fd996c472",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NoiseDefinitions.olean": "20981aa73bf23661e37e791b8de4e691c1157bd72ac08abacd3448a8cf3e1531",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NormalizedBlocks.olean": "da80982458110a882a43467a5c39f00cf93a0c60430c60c5ae63a1d1fb7a90f5",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NormalizedSums.olean": "95ded7b43a89cd9c523c5b16c313bd6512e5cdddc79e111e0fd51d467352bc43",
+  "TCSlib/BooleanAnalysis/GaussianSpace/OrnsteinUhlenbeck.olean": "fd712a10355df2a0b3ea971ceebe85d711141bb8f6f3b86df7191f5f785a156c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductBounds.olean": "ac646152e407beed0ccdf883f5f77a96c71c2e94e31d60780681d217bc1666dd",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductDensity.olean": "3ea90638a3b64e02630f27453ab9eba65a17095ca13c5957ab8cb151514d82d6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductDifferentiation.olean": "ea0e2668b5ef1b3af98dd8bef37d1146003a9208acbdd25b0f681fb20b87cf99",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductHessian.olean": "52068afeed77b31fbaa12e77da420ced2cdbaf65b660939c4fda40dc7c3b8963",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Profile.olean": "8e9a3f9f4701751f5437a94b2462355584e5653a9375a75bd99a643438e946e5",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProfileApproximation.olean": "0dd863639e22b3e73b5f76d4ea97d8404da63684566fa1ec697407a309a7001f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Rotation.olean": "45849f881133533952a09cec573b1cf8a327195cb5aa62a603318911010f76cf",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SmoothVariation.olean": "90399b135a543943784356bec7bbbd68404b5bf993b2f1287ea137de6192ed6f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SumInvariance.olean": "2bd6bad11e318ccc2be1b3c447d8e991b3f1e887bec67d19ec9186bac35a0d57",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceArea.olean": "95e2d12fff0265645e9fe584f6395b364676e61372963bf8e96606e0d9a9a046",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceExamples.olean": "ceb6a00cb743db14b61118bb75f1adb0e7ad1da861e3ffa1a975b9bd674973cd",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceRelaxation.olean": "fc63eb12169cf50ca24218d4c34482d8e25efbec0ad801bd89a41b7f6c5143dc",
+  "TCSlib/BooleanAnalysis/GaussianSpace/UniqueGames.olean": "3da9eee63cc56c98f712f680248cd7bce6e3f140dd86b9db962ac15a31f6901e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/UniqueGamesDefinitions.olean": "8d06a3fa75a70671ffbbda7b3ed60a32d784926d6c493af7f76a1e5e7c3625f8",
+  "TCSlib/BooleanAnalysis/GaussianSpace.olean": "0b66b33305865a9b50db3989aabd0b1adec23f5a6f7b3bc2ca715482d9e8d95e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/Influence.olean": "ebebce180effd9012926e3226ab763a06e6fa808adc14446d6911bd344c8e036",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.olean": "2fe3b9d563a7e84cc83b6f6169fb3aebeaa9c3bfbc217540085676a09f3688ac",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Concentration.olean": "d5376112a7d57bf0a6045846a4c24359845b870a2555b809b0907ac617f828e8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.olean": "4633ca6676d98db96019979c867e00d6b4d4297c4ed32c6f634ce1677cda476c",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Elementary.olean": "5047ce3f05a5aa563e79ccd524592a0f861c41624723d8843c76fb2168908fce",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Junta.olean": "09bb7c0aa8271be89a32c9a18f940710328f8adffe20e4a8b142bb1bc2c54d68",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Rounding.olean": "20876b29a036463afc02879e71c0b437a980254f3eaf3c132c1333ff6651f76a",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.olean": "c13ecb781681f6a0f51102237a083dbfb5d7cf29a82de000baf1cda54f309286",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL.olean": "fe35b9c23fccd231f833add5cf78f00c060cb13381a76862ee2e64ad484e3aab",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.olean": "98d350f4dd49fee91dd8a8915f97223c4539db909b02016dc60f97808776dbf2",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/SmallSetExpansion.olean": "e2a35a13dca130ae9a00eaa269a7ff1f12c6e786851cbd273c4006d8ebdc65b6",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications.olean": "e2dc67b5cf3919ff2dcae403760e7d25416497a5f748121bb5594ad95bee27a8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Concentration.olean": "de401bc0d7c24b15eb23061149b46c6aa364902512d0bca04c623e7dcb566381",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Basic.olean": "01d7591017e12937d9dbcfcd1e8cdc4a93c76984011ba5a0febe10549c530c68",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Bonami.olean": "e29059d6f83fd06fea44c24e12153972a10e63635831042a0e33ad41c108b589",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Decomposition.olean": "cbd2ab9b76fe98350e2eace2d52d68e65e6faf615c80289cea2c4babc8c56716",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Definitions.olean": "182a4def15875fa4b7a20a78d1038ab6eade68df5ce4c8ebc242af1751ab28e9",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.olean": "4f0d94522f6d7d454950c69cd481b8b774e86a08fa5020b3bf4693c04772caae",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.olean": "c5a2bdbf025a03ee458ddc366bad6664c21a81b841bdc13a64898dba9be6e0e6",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Bounds.olean": "ca1ad7a122d47d038bdc0496089820e213616a7830a80b95cdae93f89352e0d9",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Duality.olean": "dbd3a16f4b845a66175af8e3ceb5132b394e3f23da672c9f1542d4611ba90e44",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Kernel.olean": "a2e17c3f45bda3a118438f6f7b29f8ae1c85eca639b8e8d7e4b59f6eaf237f31",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Tensorization.olean": "d8e60ce8ac4f11c223e8e9beec3899c333346c963eff6555939799b4f18b6706",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/TwoPoint.olean": "c9dfb6089b28925059e7ae8cd1920f993094ed914af17419a7ba51688823ba19",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General.olean": "24a708540533f350df3922bb5d906eb72e729c4bc93f28a9a9fedb3afeedf983",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/OneBit.olean": "b106bda9851d1a0e58964e7f9b3d15666d69999bc55f727e188146d3b491ac56",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Basic.olean": "05f610c3ec941ef6ed7a487910b02441c684169081795df7ff930a8f888f7354",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Extension.olean": "c26e346aa70a9b4d3abdb7cd2ebfa35da18168c0aff713a5f48638ed77b24fb5",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Holder.olean": "141051a1ec011d45190e95130540d451f12e1f0d62a20579cc2b7ec3a807d95b",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Tensorization.olean": "8bef689f48f4c4146ca01ce5909df9790c3a020c304a48176bf8b8c2565337f5",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoFunction.olean": "3f454799c5733d5d0fbe7f6d39cd17d94e8a8aa3ef9bb2c247685f2b404187a5",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoPoint.olean": "5a223cb3a15e0ce7ac6f7bef080b750df3f371d5fca13a88ceb49da73f71442d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse.olean": "5606cc21dcab061000f2ee947b8ff269651704cdab0b19f6b5f6996bfb841081",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube.olean": "deb5919afdd82407d0d57a0599cf533269d11fe84c1b143ddcf410a2babafc89",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/MomentBounds.olean": "37dd20ef10ef9ec36b7a82319a68a9d0a782d885724891f9211ea74d015270e3",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Parameters.olean": "5bbff49b1ad5d3b01f4ddd7998eac2914729258443980c0b75b8fadcb6f64eb3",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.olean": "8b5139a39f86452bfb2b1765aebe8ef40c396dbe902b3845529884ec956a1fd2",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications.olean": "0e443502a17430f559cb04abb83c87a2d5fbfc8e35a913d2f6b3d3c0e3a0e065",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.olean": "7beb0912d0076edd8bc13483bd3528eddce0c005b80a183e0a5e2c6d6de2a9eb",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Comparison.olean": "4555c2ff648170431bc923b2eda10885d79c3c5c12a079e42310b79fa3e56513",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/General.olean": "3afa57f20b623a1bc374ced5f0ba5ad052c219affc33a4a5f388b3aa61947349",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/NoiseKernel.olean": "c66d59025732da66038d16309d769cdb009b52df8b316b88831134dc8e22fa8e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Norms.olean": "1e41ceedbb74dfc76dad2683e25620f95e622800eb5052e292f789c31102b1ba",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Tensorization.olean": "ac87ab070fb0980b265a630871a6e5d8e618ec554838987143224fde9d510406",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products.olean": "70c45cac9fbe723308454136a3b0860b42e1a3ba5ce8d0fb29f788a3a43fcf15",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Basic.olean": "52242bd7c579d447d58171b2801736434e837c865e889f20c6694180783ac36d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Discrete.olean": "69e038e457b7efd3c8a815e0dcc9abfc2b566e1de9b5a74af491f5c46802d189",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/FiniteLaw.olean": "2f2097abb2d50bca0027eaf06a559e87e42d1d52db4fea206d8c29178a7373bc",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/General.olean": "99f9f26d4f48d71239ba0c601ed793f58a248df7260b2d843f9955cd6939c1bf",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Moments.olean": "406f87389789c0ee128efac08cf391b1ab036b444d6ccf12fef74195cc0ef64d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Norms.olean": "760a481231a89e3302c2b3793b4c12710b44b5593cfe1844bda3928107cfba0d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Polynomial.olean": "1cd85dcbbefc03c8b40efcbc20b3a34b0bfab969454ca1951dab940208e0d935",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteLaw.olean": "86a3c375757423586f50ab9ce85fc067c06911d1424331d2689ca14b4ea89a80",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseContraction.olean": "68c304f6acb454a17cfe646774afa086597e96290f38c0d52981077d9a6fa7a0",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseDuality.olean": "3be397bf726eb623e50ce55928a06590a00e699f5fc73b4f7504ad32fdad4553",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseOptimization.olean": "3de8c414c0c948bf5d4ac2e9878d1a4a69f8fca08d06a9e713a1c0dafe073b25",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/Parameters.olean": "5d045e1989d47d4a01a94d4712e362ba0b750002a204290631c1302444121b33",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointCalculus.olean": "ed1fb789bd92a3335f572cf72bbf2ba14b53dc6ef9eadbfa2f662d69705c57ca",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointContraction.olean": "ea5dbb2c320b0bb012674356ef22e2b883d2d8e1a2339aa3b4ae7cbaa158b161",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointLaw.olean": "c0f1e5c2db58f1762acf33b314e0b45dc8a1982da519fa281ab8861b16ad1e60",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp.olean": "7496425b6aeebb1dba3b841c5a4157ac7f8675ed474e6e74b8fcffcd55e990bc",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Symmetric.olean": "b77d95784bd0f7795729df85251a9ef71949df34dd05c612fa095e2e3f31b047",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Tensorization.olean": "27fb212301c51c4b390f00fd3934eafe8367ae4bb1b02cdd30bca1ca486167fb",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables.olean": "72b2c0c0aa090e611236eeaef9d862de8db0ef62afa4a32748a6fd21f94fd02d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.olean": "24ad59f00fe7c5fad5d660c1af4f6dc30c5b3914abbf696cf004cd0424ca402a",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Centered.olean": "0a77864fe6624bc08223360fd57527ab82f43ec15bfee8c30b5bb643a2ff9629",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Contraction.olean": "7cb4fc8d64604d119349fc015f0c952f9938085d87857052647d52a3b9a7986e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Definitions.olean": "ff36d2f1d6f86ecd9ccf20fb0ca819a0693ab3163ea3b9c4dbe2f75fbbc629a8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.olean": "03636aeb408111be7a5d6c870ddc7bd6c1a42c2a946eff6233e33317917aa6fd",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.olean": "19c87c528d8fbe2066b9669df71162076cea3eaf62f5a1d86213bd072ae69ccc",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization.olean": "90c375b99947fcfb9664b6893fdcc880a3885c07d135dbf84c7d395f81208940",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds/Definitions.olean": "562cf84f8a134cefb6fc1ec0849cd1198b7039467aaa739ddb405c11cc0a37dc",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds/General.olean": "4d7911422dde166d7e577422d7cb76ecb023edbaa81b95dd9adf9734b17e610e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds.olean": "4de7464a036c74694b0ed4fe7fe92eebe52df4ff652c21e80c298accd4c7f726",
+  "TCSlib/BooleanAnalysis/Hypercontractivity.olean": "603bb101258236f55cf596296075b3bde06e9f50d6de4c6eb2e647157058538a",
+  "TCSlib/BooleanAnalysis/LMN/BernoulliCost.olean": "525256cfbfb1d4eabd48728a0310239a25d7f853c19bd16373a3d0c1dd445be2",
+  "TCSlib/BooleanAnalysis/LMN/CircuitCompression.olean": "1504fd861a1100cf9940a53aaad0ebc9d34323fd070cb97ce978de5be73d1391",
+  "TCSlib/BooleanAnalysis/LMN/CircuitHelpers.olean": "761abf210def13eef3b53985593f95456019119a7d6e0328e432edcc8133968e",
+  "TCSlib/BooleanAnalysis/LMN/CircuitLayerReduction.olean": "4b6e654037466c6dbde1cc786146fa8881587969439fc9452a48340ab9b9ded3",
+  "TCSlib/BooleanAnalysis/LMN/CircuitReindex.olean": "9cf749a9257b663f1c8673e42ddecfcbb1bbbeef3cd193b089b0a2596a2e066d",
+  "TCSlib/BooleanAnalysis/LMN/CircuitTreeManip.olean": "b7aa30fbd76816b810ccf69176e0dbf3d070e3a8c4116c86e289c16080c2deff",
+  "TCSlib/BooleanAnalysis/LMN/CompressionStep.olean": "13e902947ea70ec049ab8f8691a0b648678579a72aff95bfada679847dee4909",
+  "TCSlib/BooleanAnalysis/LMN/DecisionTreeFourier.olean": "8ab76dfc69b2fee83870e556039a34f124f0d5f0f3ef0fc55a8d5e843c0f082c",
+  "TCSlib/BooleanAnalysis/LMN/Depth3Switching.olean": "7483fc94af7671f5043a06720066e31cac519d97faac6a5398daae7c03ff0aa6",
+  "TCSlib/BooleanAnalysis/LMN/FourierConcentration.olean": "9282b7fe7cbd3f98466d698d817deef61166052624bd8e2a16fab1c49539434d",
+  "TCSlib/BooleanAnalysis/LMN/GateMerge.olean": "0b7b0f25dedbcb9b512f40a7ee0b65f83f9801e70943d05e43721606eb16f8da",
+  "TCSlib/BooleanAnalysis/LMN/GateSwitching.olean": "50b19f147dd6e3b80266b1767d13150ad2e52d06e638fbd447bb1bc257052b6c",
+  "TCSlib/BooleanAnalysis/LMN/IterativeReduction.olean": "1eccf61c713425fe9e064ff0aeafa0cc39ef5dcaa02b59e2cd6898cf056c0db3",
+  "TCSlib/BooleanAnalysis/LMN/NormalFormConversion.olean": "af45bb6f471944f49f5d1ca78e0c7630cffb8e110243908c593a0241363f9414",
+  "TCSlib/BooleanAnalysis/LMN/RecursiveReduction.olean": "c8648da2ac61294cf410cc6a8a76e526b9af5526d062759d6d8b6bb2ce0f56dc",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionCardTail.olean": "2602f97b3a5136dc3d21bf922595b83ffd7bdaa67b62a1a9bb1a38b455403223",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionCompose.olean": "718cde4d0956510144b4ab4769324b72d61020c9dc436d5a484e2dd21ea45730",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionFourier.olean": "e5b20a33ae9620a07af09feb448be0c86c7c39913ec2eeaf7296540b6f64e334",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionMonotonicity.olean": "284ed8f548902e43cefeb79d13bcee1061934fbf399389e87df4016250fbbd53",
+  "TCSlib/BooleanAnalysis/LMN/SwitchingBernoulli.olean": "718b5f1488e10ec0d39b5066bde31eee4b747780b0b850d017092890ee74642b",
+  "TCSlib/BooleanAnalysis/LMN.olean": "55f89a3ba3ee6172e5ec64a9b6e77fe9f21c1a84b2733212702fa353fef6ae70",
+  "TCSlib/BooleanAnalysis/Switching/BernoulliRestriction.olean": "7ff96b69693adc806ed17949e310cbdb206d4a9f7592772125f2f795d151d512",
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.olean": "9dde12be6c3db6f6ee7931a02cc0c0475d0bbdf5225d20472adcd7c86a5b861c",
+  "TCSlib/BooleanAnalysis/Switching/Encoding.olean": "bc8b9350faebbce910d7e1215d0278d49d9379f4c0bcf7bdab01d5565da7e1a7",
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.olean": "2a39986335dd0aa0525018481c79d17d6cdb2ebb78cc80da64455d53b490d1b5",
+  "TCSlib/BooleanAnalysis/Switching/Restriction.olean": "6e50373fe5ca5af585112fef2626240eaec4fdc01a9edcca31ea3324a315c7fc",
+  "TCSlib/BooleanAnalysis/Switching/RoundTrip.olean": "99d05e2e7e17075ea4e3c4172c830d1631d9a40a8ce67c0595d01051f882e4fa",
+  "TCSlib/BooleanAnalysis/Switching.olean": "3ae4055d53a02843483d37e71299296ffda5975f7bdf225cdbd49c9f8bd3561f",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/AffineKhintchine.olean": "91ab969811b1d52091dba2739b8458c1bdc4e63561af4118d41c3f557205f94b",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Basic.olean": "b7a513c3de5f8a70bc0cb3a11d175b2889c415356de16ef351e91af9d0c1f9a2",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/BitFlipSets.olean": "0b7f2ba9e2270c8dcfaadc5fd7b698b6982a6c782776166e8cfc18eee74cdadb",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/DegreeOne.olean": "0e6ffd0cfdf8e41bce03ebcf60f54f57bfe6d8e66f3b236b9a2607ee437b1886",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Fourier.olean": "faadb045ab5df143a714656b7a554d5d3a8952e3ed1bc1c4f7b7822c59c68e86",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Gaussian.olean": "0e73b086ccdd666734e378ad6b086229f8885a2be5f0fa9a754441f89e9f48db",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianPolar.olean": "93ff7db6e4e6fa6a208ff11733ac7b694eb3f8feabece1d801dd85741c7559b6",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianTail.olean": "1262097718ab07845cf4ee162549a53402e17265a512edcc6447517ebde1f7e3",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/LinearThresholdInfluence.olean": "098cd68f08c60adf318444dda6872366fec46e0138da312388711a2ca2644e1c",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/LowDegreeNorm.olean": "d8c612db872dc776ed20526d667f0c2ee193d49a4eac1f2e4a039493999e522b",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Majority.olean": "4a5308ff973345094a97e1e598e30b6a217256bb648cb64ca4ae3e9d405ad7dc",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/NoiseStability.olean": "29a1f2f018d59e283286f3a846318ecb318b64060c46ecf4f4c811f09723de87",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Polynomial.olean": "8c06cf2a8c0c12e9bf233c85d5bed6722b4a622d252ea4ab2680c5852ac3c979",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/SparseSampling.olean": "298005aec27606911c8c9681511345ce7922237812beaeb685557979edcf4034",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions.olean": "a95f3adcb426398eebc4a70d64f1ec4a5d3fa2ccec2f3edcc59ae7d2523c6c31",
+  "TCSlib/BooleanAnalysis/polylogIndep.olean": "eb04f4c16ca3fcb6cf2fb7d4d899346e273ac48af089e20ec75523de940fae63",
+  "TCSlib/CommunicationComplexity/DeterministicCC/BalancedSimulation.olean": "da8d4214e617882b657ee25988c93800dc402f94257d336ea2ac4a1108371945",
+  "TCSlib/CommunicationComplexity/DeterministicCC/BitString.olean": "0e11b2e030820021aefd05e254a8e56677fe600befbc4ec5b22035038f0e9be2",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetBasic.olean": "26d63f38bf884f17993e7f5e6ef6d3ebe0c8c5afb41fedfc8201695a3656d307",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetComplexity.olean": "a2133e5f13adc3c26dc3045c24aec765a5dab830a8479c6649c06835cf71c9d2",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetComposition.olean": "db23f61312463c315126ce392c4f36632c1459cf8d414cf85d5cf299a2a97bc1",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetRectangle.olean": "677415a7caa471880708bffd888485ba955a0aca85da0354afcfe27dd7103c3e",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FiniteMessage.olean": "e3a7d770c5ab3684053a89741ba990cbb7c203f9d62f164f5c00f45854792cd5",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncDisjointness.olean": "853c97df2e7db50a2cfc0555dd09901be11ac28fd140366f26971ac0c22c78f2",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncEquality.olean": "94cd98691277aa26b6b5838e7262fff50e2e7daca1c4a52e69c0ee693312b07d",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/Basic.olean": "21319f4cb91572ee42e0e573c6ca968ee364f5957ae5003d67111040bcc30282",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.olean": "35dba0a334bc59a9b2b0d2e7e66cb7aecad47a33381ffb2ae6ba2257d2852760",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing.olean": "0433171fecfb79976f1324061141a1e81b3782ea5dc7b80273a22d49ec28a15b",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Hamming.olean": "7630da70fc442e00e1ab0132cc79d709c5fa2ceddd89bebb429681e611f6b57f",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Helper.olean": "a950d56cb463c7381b289806564522e2f25985b8fae47082b22731ef437c1040",
+  "TCSlib/CommunicationComplexity/DeterministicCC/OneWay.olean": "abc5e5d8cb18c6f4c30695c9ef69f9feb52506cfbb86e619bc285d509c75f355",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Rank.olean": "e3ba7c0759468fbfd22da54c838338b9d6eb76b91f1e6b8c59e5737af15bb29b",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Rectangle.olean": "09144eb85114826b7c90e97956d9924b352beab330371caf1d9547df001e2dfc",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Subprotocol.olean": "58ad60c9006532090af527b5f304add4d2a578dd55ddebc0b4be72d7ec773221",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Transcript.olean": "17b6055c3de17c0da5f4f6fb275eca22d6344efd6096f12f6237c68c8d5afd83",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Trees.olean": "213205f7fbdf0b3d164a317abd4e3348eda577bb63a17806c13e5674509216b8",
+  "TCSlib/CommunicationComplexity/DeterministicCC/UpperBounds.olean": "ee0d9ec84f14dc82d8c77eb49703762e575b184e94e550faaa19da5edce1416a",
+  "TCSlib/CommunicationComplexity/DeterministicCC.olean": "1ac6bff4b7807f981776040e7c916c25ab9f54be1b239a33b9b83b3a40b8c04f",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/CoinTape.olean": "1082662c68fa6e72d48e5f2d8d6bd8a9fa988d800eaa1e43d88271c7e17c11e7",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Comparison.olean": "c04d9d812954ff8a4b3fb8bf38b81c6d770c44f4ede15f66a8fb5ebc40aa3483",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Derandomization.olean": "173fe1e8deb88d4fcda485d0cb53ad26ba79c1259235821a7acb06da0e20f5e2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Discrepancy.olean": "7b68cb34f161cc0f740e4062bcbefc1277c476b655f461208e53d60fd3f7adf0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/Basic.olean": "ca95f5a1afe8dc8227f47b85de11eaaf4071342172762e303a11d7ecdd88bf32",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/ChainRules.olean": "62dbce70ef2633613fd5d940b7609f03bfdedb49899b3827c2cb086b06d2c2df",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/Conditioning.olean": "501f32910258d73c79ac50eb94cbc75574db0ee0cfc3959de6875b38ae127e56",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy.olean": "057f8af6baa3bca291d0f5a7998d77d0148d2cd22f87f1b9c583e13a63573aac",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.olean": "cf1f0a28ab56235056561806efd8f6ff1eef6563ce7857a03313364c8fef75a0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/AliceYFalse.olean": "5c142bf19cde39f010a1f211add5153acd9660535f3534b2e1856d47179450f4",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.olean": "7f44592c6292cbeef51d0476cb2534069087583101bf628bf48f4f7f34edabd0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DisjointModel.olean": "83fb21cddb56a4d70dc3243f6ee272ffef74382d8c87e00aa2376c2ba7ea9925",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DualHardSample.olean": "69c8ae7cc03c03c1b09d27550257dc804eca480a1b2b6080184c236afbc7f5af",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DualityMeasurePreserving.olean": "bbaf0f17ffa3518e870ac22fe05064ddb729030bc996e4967e6cd93c3d95568c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardDistributionEvents.olean": "6a15c3dc1c50da77e8ed47552fff38c493beeeb64fa370bf80852b03859ba572",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardSample.olean": "d42465544d789f2a96df2d50e4a709320df95a72ff8b99d7827ef10aeda50b8c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/Headline.olean": "65a30ea1cfd97667f14549a88f635652e38f4aa67c69aaab355b791225deb962",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/InformationTerms.olean": "380dd8a64120fdaf26765b28cb388722db0352484498a6a31b5f3b4484eec2f2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/RectangleSwitching.olean": "83482865adbc74232f09e9db97398c6a2bd1482f00f8369d85135c861dd49da8",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/ZFiberMeasure.olean": "fbfc9fdf988d7bfd161eeb2e703d4a2fa3b4c1ae1f359c920637e64b2d415469",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/ZVariable.olean": "080d786474d80be1c223ef8ba32a67bb823184fc7a7f841a91da5a72c5629045",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound.olean": "2367eb7b445ab8a5f643f1e3d88d21bd62e8964a8983305626ed257aa1da6de7",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncHash.olean": "5587803000f6a339035b94f2318cf8e142ec992366817bce78e7fa275864f0dc",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncInnerProduct.olean": "bbec9317d885488b4ba34db2a597514e2bf3d315c3822db63815f633f20fe72c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.olean": "c5ee39466e1314ef20203509326c1628e1a066d6c49a3fa369c112a36d444567",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Minimax.olean": "ef868893b67eaf54db909452a12222e91f353f52dcc7649d37e2c86b016417c4",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Newman.olean": "cd4881c60c24859925f344784bc1dd89eb30379d6e4a59b464e336a1c9faf35d",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/OneWayMinimax.olean": "773a20ce155f393f95b5c59edebf106c7019468d0a9bfc9c9fa7eb43f67c0bc2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Pinsker.olean": "923039bce3452bbd51dd4e822396c886cf646b89a3e20f6d81aa45befa1de12c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinApproximation.olean": "f32e6548278550f2797a0e48be2066ee90c4d84c5d5ddd9686c29cbc8e601586",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinBasic.olean": "f6d6f1dc3a10b6502ab58d680d39c42aeb63f548ba0fcaa91752c4597a34075e",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinComplexity.olean": "a29f212b7318cc99f5d7a97a0af735ab2650b7bcfe28d971f986d4de68267a4c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinComposition.olean": "1fac3dcb698a297ae3c19aedb23e53d6fdf4e3de09be3f8756a129d738998d91",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinFiniteMessage.olean": "7624721b40d81f13916ee98819bf9e4ccd201abed06481544e8b8a8b86955ec0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinApproximation.olean": "5b031a93eed7588af7cfd4ecf3abbed9dfe76479ff0931766a8b8f4a3df43dd6",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinBasic.olean": "50a6cd8ec3e1d82cc7b839a99377fffb1386216f87d91cf1ae561832caa026a0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinComplexity.olean": "42937eff0ba208313e109cd98822beec1bb7905e2b09aff5c6a54d473723c8e0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinComposition.olean": "b13afdbc0c1c45435799def17f11f6c4707a89610244bc5d08dd01b09d0935cd",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinFiniteMessage.olean": "e5625a4bc5b3c9023dd5eb076cafb23d860f0ecb87ddafbb4cc1841eea0fc616",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinOneWay.olean": "55523877cdb67a5ca6cc6ac35d22351613426241b614def2233c64c7e34798fc",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/TVDistance.olean": "3452051926006ae9f53dca7328e0b36bca2cf99e644efbe8c5ec144f14c0716e",
+  "TCSlib/CommunicationComplexity/NewmanTheorem.olean": "67f3a636cd35af3a70b616cfc83da48fb5fef3e42a8b1ba56f0c6eb0b04d4754",
+  "TCSlib/Complexity/CircuitComplexity/Adder.olean": "0c7df0d1b2bce089f92493a091ce00da0bf91ec0e5c9069e301f861ce55123ed",
+  "TCSlib/Complexity/CircuitComplexity/AdderLanguage.olean": "08f95fa22e58afd017577c1f899d7ff112810cea8972714b46851eb84d99e4ff",
+  "TCSlib/Complexity/CircuitComplexity/Advice.olean": "5c835ca23abbcc768dd5f48d37cef115b95001ce451bc79b7894ce085e401aa9",
+  "TCSlib/Complexity/CircuitComplexity/Basic.olean": "7379adf14d255bda30678431882d87d84da5e54452ad53cf955f152a76b11dee",
+  "TCSlib/Complexity/CircuitComplexity/BookModelBasics.olean": "d1528ee88084883fdc4edc0a19a2c203db92c5b61bfaaf972958709c1b38c347",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEval.olean": "18320695f51312af497ccb832504ff267da4bf5ab372a2d1fc9c001c55e91525",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.olean": "d47304df8064319f855a89b310b027b504430cecd4e5241eae1f8111b9e419d9",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.olean": "1df3f6ea2f5edd334b3341b44ddec4fa975040e85cf0d0ff071cdd2d56327d71",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalNP.olean": "05aa7cc6e37374090b9c3f02f7970ff4818f20085428aeeb5a2918c59b80753d",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.olean": "6d8624b8b7b5763fa55531136343df0c03434bdac3fdfd0d9ddba3c1455144e2",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec.olean": "30b3ee6a4c699742260a6e088ee916177a3f229747dabc23d8f9a78418b8f60c",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSat.olean": "61d028960a13f7ffec6db5d926ca864ba339dcc2f55f0eb1bf5dbc0508d92aca",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard.olean": "0f1ecfbcb2f8478ceb1a5694635f283777eb8c4c494ee14de29c869671c82f01",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReduction.olean": "bf7db375fc98ecae0e9453446fe197a7bc924ef0362102b4484e429955d40859",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.olean": "8bfa1ae01bef39fa5c8cf0f754f726877ca669ecc8f5374780957dfe5d874eb2",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.olean": "fa2d5b2dd4733e7cc9bb4c6a998740be66b27a903b7cf25c5b18fccd61d60a75",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec.olean": "f4220ca74cd14395152e004b553eff56401172425015c4237314dc1b74fdbe2f",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.olean": "4a272e2a559f7e4d3c9fbc4dbfe350f5e61373b615ebcef869b08feebe5e1c29",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuit.olean": "3042f1733f54e5b92b264b3af8d9d8c43aadd24de971651fb272eff366f9ee4b",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSat.olean": "5cf38ee81a6534fcd37814a98b8e415fe3fc38882c26fc1e07d2da21a8118ae0",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.olean": "957f1577f81ab116cee5e8423a553d7dff919604088df7f7bff5085622cb5415",
+  "TCSlib/Complexity/CircuitComplexity/DAGFanin.olean": "87415f814a5c9c90f723b3c3eb37638f55ffd5c6598603a355ca2ba8e5b0319f",
+  "TCSlib/Complexity/CircuitComplexity/DAGHardFunctions.olean": "e463845720760fe6be02d8376606318058bc15edc3ce0a468490dcd87a2078b7",
+  "TCSlib/Complexity/CircuitComplexity/DAGTransform.olean": "9ce97a41dd84676bdbfc497488b3b7754f16a920ffe73104c9847a3aa992634c",
+  "TCSlib/Complexity/CircuitComplexity/Encoding.olean": "ed62bc6ade974f0850539958bd54f1bf5a60e32b4ca9858a0a6768d02c8528f2",
+  "TCSlib/Complexity/CircuitComplexity/FanOut.olean": "ba7feea63a3a987200118de3f834e548f2bb114456369ec5fa6209cee7c5fc5b",
+  "TCSlib/Complexity/CircuitComplexity/FormulaFanOut.olean": "9b39242b4e11a2c98738b58f46046a158d0d93866dbb7bd6736443b39b696827",
+  "TCSlib/Complexity/CircuitComplexity/Formulas.olean": "44f3e9538d86d1391f4a29971577eb4bbacc79487009a0e551f11c0d257a87c6",
+  "TCSlib/Complexity/CircuitComplexity/HardFunctions.olean": "20a236791ef0c2491c01ae5dd15b9ce1c4b892fd7df41989041db97211706d99",
+  "TCSlib/Complexity/CircuitComplexity/HardWire.olean": "d6fa1129960028c8b700de9e445d6d9443af56cb1daf74fc86d16a23aecae98e",
+  "TCSlib/Complexity/CircuitComplexity/Hierarchy.olean": "be923239133a17c78605039d73b7daa5d17c517886dc34a4c4b1ad4c08e6dca9",
+  "TCSlib/Complexity/CircuitComplexity/KarpLipton.olean": "30cd8c040000ca22b61a117609d4acfc5b86d1d949465c89d62700a5206596ee",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.olean": "7be647af1675a66fb80396951014a432aadf3c079b37783940926478bb129281",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch.olean": "68ff3d062db3cf209fff306579c3869e7e501bff1595e57a9ce19093f3ebcb40",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.olean": "6ba47bc9d2aaf92b9f10b81f21a96636197087159e0181ba935bbf50d59c9d8b",
+  "TCSlib/Complexity/CircuitComplexity/LayeredCircuit.olean": "da5c7d2a1daec7d40672e7fe1bad2f8d55c17ac0729e48a8f942ea8781fab254",
+  "TCSlib/Complexity/CircuitComplexity/LayeredDAG.olean": "94c420532c81e6d0e222f61ed42822037695c8787055e260164b4f3a759872bc",
+  "TCSlib/Complexity/CircuitComplexity/LayeredPPoly.olean": "7f5386255b1c1f7153437eeee07aec2ea3efd8f65860e2009f03755369fd769d",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceTableau.olean": "53f571f0391366d5e27e4f55077804963a2498c8452ff467fe5b045d939765bd",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront.olean": "88903b102274c6335f47b5c22c7afd943943e961f6ba39ae9c970ec0effb653d",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniform.olean": "fcb276dd58ac8f8d22b35658e48d871c6d04a7efe054e12d790c1eb0c18e8135",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj.olean": "4976b12ca9c7600083ee797254b4a7a0b3f261a9e074d558315708a14a7f24e1",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic.olean": "e88c6dbd5442235a8ebb7725e05ada6c3bf5c673b73dd94e5733b623b5b0fca5",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon.olean": "ae2638dbe58ef2c412f937d3eef456fff7ff293726aa482abd4461a23da221cd",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample.olean": "e12df862a9fcaff4991f38932f3e0281eb8156a465b09918a382e1043e24cb5a",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan.olean": "9331ad7964a199d3bc8170b71974944ce56c5cb4812f254af271f6e25ffaec4c",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.olean": "30076564443137057c214dddb2773146667fb0cddda49607a707ebabcb8804ff",
+  "TCSlib/Complexity/CircuitComplexity/Lupanov.olean": "86ae2228d0643357b91f0358963c17934d63e1a4dd999cc7f9d9a5e3a1a7d1c6",
+  "TCSlib/Complexity/CircuitComplexity/LupanovGates.olean": "e2ade488121815a7e32bba6fb171d0632d1b85ce75986dcb022934f42a57bbd6",
+  "TCSlib/Complexity/CircuitComplexity/Meyer.olean": "270d5efa85945853d00b08f65b818c9ad5f994d02721b75fea7a9a883e1c32c0",
+  "TCSlib/Complexity/CircuitComplexity/MeyerComplete.olean": "b532aa45c151e792660a3616fd42710dd40f648bcd95314f728599646c231797",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachine.olean": "2f31d452d102f14b081f27eb84ed101ea1d5721faae7f5574654f0586b9c0890",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.olean": "d962c5acfbf430f85d9b62136fa08c6d2f50c963e1a0cb64b86a9d9bbd5e7e88",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.olean": "9744e4055f701bb1757771854d398e66f5aa8077f1769d1f548311c593bc305e",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.olean": "3f1b0724f07278a1c4355e9f682db9c7fb8e6b0dc491c66fd7e7225865384b42",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.olean": "babe58ff55fa9a5e198de8fa37a2b5ba2f696279fea6e4e8433bbc92327fa264",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSigma.olean": "8f343841abb2d01edc3370edd3a95dafbff01ea409f806e651506eba447279f2",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP.olean": "9e9a7a4dc081a4cd4fbd7cd1b4afb8095f2d1a8416d27e7a64a0e4917a918783",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSound.olean": "9b52f5071c94aab87f09daa3821521a669704d089349064dc9e43bceeb145bc8",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput.olean": "3deae47e300e8228605ecbf4030833e87202f988e9b7e39c868bde010874e1d4",
+  "TCSlib/Complexity/CircuitComplexity/MeyerTab.olean": "a0ae806d41d247f23e6beadf1ca368dbb1ecfeb05d3cf3d119811d8e0387abc7",
+  "TCSlib/Complexity/CircuitComplexity/MeyerTableau.olean": "43f28cc3ed71459ff72d3cd8a28137b08fb4d77b00c46209f2eadf9228913a11",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifier.olean": "4ac9b338a9fbe12c26d6cdb6225088d83b1be73e1356c153135318bf9b1c25b8",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.olean": "578d0431a98a864b22eba9ceb87e2fb57445f0290612051ca5ed670a7fc0525b",
+  "TCSlib/Complexity/CircuitComplexity/NCAC.olean": "7ea217e2d75f4fe32f84ecbaa06f62ff9c2eb7308a409f459d58a4690d361feb",
+  "TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.olean": "94629f44183d16dd750de1d4bbd6b9d42bc577164b047e7439890366f7eea70e",
+  "TCSlib/Complexity/CircuitComplexity/PPoly.olean": "e167ee24dd5f00220d90c327c166cebe777a95077c2c8b7efc41a74ede247e0a",
+  "TCSlib/Complexity/CircuitComplexity/PPolyAdvice.olean": "913eb6ecc05220da9c319b0b3c5f76ca1a5dce6f1ed07e7eadd0ed8e35092ede",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly.olean": "4e23a53b573e801e1284ee4d73f6a586c0125092895e960183db47685777f9f7",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig.olean": "93f98a1bf9b148ada1bbda6880f277ec7db8a5773321b7d601f78c504524d00e",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.olean": "9265efb4078574d510144ec68ff7b048e02d3f2b7b577a910ca8495e1328af33",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.olean": "f9cbff9ac81275802ac26769c2592c8a5dcaa3acdc9b04807b7af287cf40684b",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget.olean": "46086057748c9cce76129f80ac3e9918e46153ce0e5ff391a3c77b8874af68c0",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.olean": "a5d8af178f73f0dbe9ffad1a274f538af6c0f47a7e7539854d5498a09ad89f1f",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau.olean": "99f68e77f2cb86222776b880c3f22174958221c0c598163678e61d9075d8b128",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.olean": "068850fc28f13e2e2ff07aa851d3336ec919eb22256a5e0c47019151d14c8314",
+  "TCSlib/Complexity/CircuitComplexity/PUniformP.olean": "e037ed384d9f26a47099f221536a1f0be492eddafb8ffd1d06d298ac3952f98c",
+  "TCSlib/Complexity/CircuitComplexity/PairEncode.olean": "7df3d23b54e95585eb4d676a67e34096ad39ea06a7acfe1fe2b5a5c0b0174b5a",
+  "TCSlib/Complexity/CircuitComplexity/Parity.olean": "adadcac2dd949bb1634868d2c1e0e64dd0a5b40b79684e2f13663a5a19d53bc4",
+  "TCSlib/Complexity/CircuitComplexity/SequentialCircuit.olean": "0323220b880d9bd036a7524862e5aa964bb6620bc45d204932d726a0d8a38beb",
+  "TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.olean": "b92f2e2949b96a14b5f84cf6421b0c9bc455c9081afc230c911ce132506f5401",
+  "TCSlib/Complexity/CircuitComplexity/SizeClasses.olean": "e983fbd89ff56dfbf2bda96d4a495e76a5fab3053f60d8865b371d2425bf5e4e",
+  "TCSlib/Complexity/CircuitComplexity/StraightLine.olean": "172dcd4a9e61c212dd6eba914d1e3a894a59ee2461df789f7b5c86a95a34f7c1",
+  "TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.olean": "4926430e667f29c4c2e7bfa00cdf529a3bad69e92a844e26b963bd02a582ad60",
+  "TCSlib/Complexity/CircuitComplexity/StraightLineSmall.olean": "f3745397806a27dd08d2ca97dfc925a6392a776911ca1df02ce42f80d1333eae",
+  "TCSlib/Complexity/CircuitComplexity/StrictCircuit.olean": "f8d1f03df40cd539643251e34555b1629bf9948e5e7304941e2a31518ecc1cb2",
+  "TCSlib/Complexity/CircuitComplexity/StrictFanOut.olean": "48c17890faabab4a680c1e96f04e7a66e6489d4b3f18f88028d4e71ef497aaf1",
+  "TCSlib/Complexity/CircuitComplexity/StrictSize.olean": "dce35b1c6060082255be06aecddb798e778271855797ae6fe703e80a88e4f8c3",
+  "TCSlib/Complexity/CircuitComplexity/TreeDAG.olean": "22c479da2756bb03db4d80f0d7ee9db49bb764086815a45a8826b39c2bb1e684",
+  "TCSlib/Complexity/CircuitComplexity/TreeNCAC.olean": "b920411bf3c2ee968004c6f3d03fa392967eb10519d87211c7e15a601c52489c",
+  "TCSlib/Complexity/CircuitComplexity/UHalt.olean": "11ff6adebd7b71fd1b4adb3262ee2d3a2f12a54d186219e644ed33adb55c8729",
+  "TCSlib/Complexity/CircuitComplexity/UHaltMachine.olean": "1f02d7818aeeb48add38117e61d513d605b33ec2781cbc1de67e6bb22ccc6cd8",
+  "TCSlib/Complexity/CircuitComplexity/UnaryCode.olean": "9ee408b3f559a039c00a4f7b45cc2704bebcf3ddde75fab198695e8fbe160b30",
+  "TCSlib/Complexity/CircuitComplexity/UnaryLanguages.olean": "e7d57e723e975dd35e0b5191724409736ab0e2feeaa31a22c341588a88123234",
+  "TCSlib/Complexity/CircuitComplexity/Uniform.olean": "3823e2a59f6e7f47369f1a9ad61feb97d732aa9a90b27d9dc292743ed68191ca",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableau.olean": "042ff4c94264feed0df35b3787932ee1d7eb519d2aee3ad899c6a310e5d95cc6",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.olean": "8c79fc57087983b342ad0ef8dcd0d7e14a7a7299f92e208c6358c554c46d5784",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter.olean": "0254cad41abe564def6ca5e70cef44955427efa5350a4dec7307d636c6e2acf8",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr.olean": "73067b29357f81050d53ef05d5cb7c5d7d71228d0d3d5c21a9c300116665e4e8",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.olean": "6fe07fd345e12463d4e0cae8e1bd7a521cea47f8986079ced4779edb4da42716",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain.olean": "bd18f8e01846e9526acd52aca103bc857dafd7db9862902b466de24d7ff07652",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps.olean": "f2e3e0e1b8bc4dfd97fd69cfc738a6ca53591d2771e844d12b522cb9713a96de",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauSpec.olean": "fe194f33fd58742f69d7ce77df298a83ed67a79a9e6e0b90276f3e7d957e98b4",
+  "TCSlib/Complexity/CircuitComplexity/Universal.olean": "a9541538cd3085406d24863b113af4bc8514ca63308f5dad9906a6b5c815fd42",
+  "TCSlib/Complexity/CircuitComplexity.olean": "88ccde4b90a64cb839f48dbb59788f52f5df034ef865fa4f71c4bfc2cdcfaf13",
+  "TCSlib/Complexity/ClassNP/CoNP.olean": "697ccde133ddc2d28a2f9b6d8efd9ac4fb2fd6b61663f84de06a4d810f142b4a",
+  "TCSlib/Complexity/ClassNP/CounterProgPolyTime.olean": "fd05df7282f4ee25b2ba959a6ab1e39449259dafb58da52eb760cba5565cb955",
+  "TCSlib/Complexity/ClassNP/EXP.olean": "8626df0ae28c5a38ea1992ba795a0f443c7e540e4949a7b797d1d49cebfba1d2",
+  "TCSlib/Complexity/ClassNP/ExhaustiveReplay.olean": "dca2bfaec4d1c7e34d8348c200b5183e35545c737cf77042bdbf243bb0264fa9",
+  "TCSlib/Complexity/ClassNP/ExpPoly.olean": "a1ac8e201ba502f436455853216549dc765eecce60f309c14daab678d5105f15",
+  "TCSlib/Complexity/ClassNP/NDNormalForm.olean": "6f15f43e2229b5870bd25f244e76b8392e481fd37d9406589a85858e6224f363",
+  "TCSlib/Complexity/ClassNP/NP.olean": "8189d9dc7982a008d52a1b8e818837ecf66dcd52f1ea73f3983d9b62707614b5",
+  "TCSlib/Complexity/ClassNP/NTIME.olean": "3ae6a4285bbbdc22848fe2e9dca27602ab6d7bbfd153174eef39586f6cf87f71",
+  "TCSlib/Complexity/ClassNP/Nondeterminism.olean": "6ce049a584ad31a72e9f25ca96172a086e355179e5b709c1213b0eda7e2f2bef",
+  "TCSlib/Complexity/ClassNP/PClosure.olean": "412c80c96cb58f3e824492c1d3a335d361a5c8eaa9eda1c5defdd73949fa7f9d",
+  "TCSlib/Complexity/ClassNP/PolyTime.olean": "5794fe5416a92f32a1b476a297b42fd98928d909fd0685abf431ed22654c403b",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.olean": "e5edf7e34fabca6fdc96f62cf19e25ce9b80d0db0d5e11541a770e3dbd0639f7",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.olean": "26a77aa4cf00f4b59b1ea9335da4f8cdf80d19488d9484085dd2d988b445aaff",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.olean": "0915f0fea6b2641db1ab3a337011b6c5b52cf2b17059005895b0180cbd9b0618",
+  "TCSlib/Complexity/ClassNP/PolyTimePairing.olean": "10c1ea455966c60fbd3e7c187cc911aa759476c1367d878c6578f3410d3e11c3",
+  "TCSlib/Complexity/ClassNP/PolyTimePrefix.olean": "15686ac65f6bbfcd6009326ee8c9bb803bfafd06f14946ad2c6472e615616eca",
+  "TCSlib/Complexity/ClassNP/Reductions.olean": "4965410e921fe610bb80162f44cafa3d754c74f21ae3205611874af696629185",
+  "TCSlib/Complexity/ClassNP/SAT.olean": "0d8d49e5ac2306d2f2c75a4af4657bec00dc0ef8e8ff1af3d4f7c3a2f0ca4f6b",
+  "TCSlib/Complexity/ClassNP/TMSAT.olean": "cb0dc5c595a832760d5f6d13e75afe8edbc4fe701e8f7f56bc47a73f3617dba9",
+  "TCSlib/Complexity/ClassNP/Tautology.olean": "d158ff9bee77c176e5d2302abaa9fe27fed32c2c69a5e9eb0d7b605cb75d3514",
+  "TCSlib/Complexity/ClassNP/Transducer.olean": "ee1f56193b4dffecec478542817737d8d07c76cf9743865c00d1eb54e150f314",
+  "TCSlib/Complexity/ClassNP.olean": "a7a7e18fbacf71b7e227f003adcd7a398f074d755f874207bfd2a4bfde1dbdd2",
+  "TCSlib/Complexity/ClassOracle/Classes.olean": "edce7d8a6ef4424c7cc0d729c43358493843880e977fd8cfb417af133900ca9d",
+  "TCSlib/Complexity/ClassOracle/SATOracle.olean": "235365aa314a03b34f005483bb9bdcf9081090f6c2d097d77a52233923bf7dbd",
+  "TCSlib/Complexity/ClassOracle.olean": "962ffe8596638457d86e20f3e1ba1a0ce4e69805068066d1ee6655c2c0386347",
+  "TCSlib/Complexity/ClassP/BinaryArith/AddSub.olean": "29351bfbdc81d8ac6b76f1621f734166d9726a79a10edcc6f13a41f1575a31bb",
+  "TCSlib/Complexity/ClassP/BinaryArith/Basic.olean": "ba938210d7fc02de70242e15997a657bfb3111aabccaa9e6e1ec9c7c85fb7adc",
+  "TCSlib/Complexity/ClassP/BinaryArith/DetMod.olean": "09726f3ed13dfa0a26784845873f98373066712debf46d7be57afa038afc71f9",
+  "TCSlib/Complexity/ClassP/BinaryArith/DetModMath.olean": "989120bf544e8067c9e28f04835f6e28c6df7d8a850d600de1830c86155bb89d",
+  "TCSlib/Complexity/ClassP/BinaryArith/Div.olean": "f535b93e6e424a08fdc750476533fb8c8cb5f30a058b0c3c43b121e26ddb8da4",
+  "TCSlib/Complexity/ClassP/BinaryArith/Iterate.olean": "936a0510fc89fcacdf5ba94a9bf0b9fc0d9a2ec5c926186231772c9a193ce699",
+  "TCSlib/Complexity/ClassP/BinaryArith/Jacobi.olean": "62ddde59604fc0c8f01dff2c9f8446eaf7b740b1d84af25e6671a12bf95884c8",
+  "TCSlib/Complexity/ClassP/BinaryArith/Loops.olean": "1ddb1a7878fbd9e4cfcd6ab93763e5ad4264cd945576271e2b5bbcdda8ef221d",
+  "TCSlib/Complexity/ClassP/BinaryArith/ModPow.olean": "92b875c0507be3df86d5c0cb8ef7ab4e837b4c0693e5f07f49c5218e946a4cd7",
+  "TCSlib/Complexity/ClassP/BinaryArith/Mul.olean": "fef94feab107d897ea90da87a0a1c3307adcfeabd8db322c8b8fce3c14933af4",
+  "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.olean": "d55afd5ecbaea549c0753d696a3209ee1bccfb2abdc13ccc020ebe83287b78b9",
+  "TCSlib/Complexity/ClassP/BinaryArith/Words.olean": "ea22adfd6ecb73914da150e7a6f780dbc50e06fa93717943e7cfcd5b75cd2a8a",
+  "TCSlib/Complexity/ClassP/BinaryArith.olean": "2a8c61ce270456af30ac81520d20343ecf9836e41274b7b9a875814d36100bc9",
+  "TCSlib/Complexity/ClassP/DTIME.olean": "517d1cb340b855bde31e38e3f00dfb789ecdc16b6c7c4a26b7d3d2eaee4c2ae2",
+  "TCSlib/Complexity/ClassP/Examples.olean": "789d3b86f9d4f488da4d618fd3b549ade48d324aa3ca97bb088ec1185ad89237",
+  "TCSlib/Complexity/ClassP/ModelInvariance.olean": "4ead47b336cb1155c7db4767b649e52424ee596e8184a0ac31401754d0805ac7",
+  "TCSlib/Complexity/ClassP/P.olean": "5ed8450b54b197f7107946f3ba49533a322cac9711de063b1645e18655b697f2",
+  "TCSlib/Complexity/ClassP/TimeConstructible.olean": "26e686c90ce61d0bec0085640caa8c09208e7ff65df286a206ead1ea05443cc1",
+  "TCSlib/Complexity/ClassP.olean": "3960143d04ce9a615c3456eb00777e9a8860896f5d1657e84f21dc58466fecb4",
+  "TCSlib/Complexity/ClassPSPACE/Games.olean": "df4b72e915208f66272d98e90c8bde00348806e7769530cdbab9c516554956b7",
+  "TCSlib/Complexity/ClassPSPACE/TQBF.olean": "3d0dd152ad1b12aa83be1a142d29487eaba735153b5ae16f48fca3596e044633",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.olean": "cbafec545fd9a86672041db9961c0142b985cc933e48fb16548baa4a82e97574",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.olean": "69475a126a0d91d10d56f526bc311f65630d40c504bffa76c57b55ee79844afb",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.olean": "2c1ea86e91c3f728c617199af5f28bd8dd8c7134e0a4a35d9024f68032c744d6",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.olean": "c6120e158d76f24256ab975f48392eaf419cfc96f1868e6fa8ba96db0fcc56db",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.olean": "4d2726c83c380bb47726b847d5003a8dfa30b450935b0ba3d17316d7520ed7e0",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHard.olean": "e6a9305272fbfbdaf525166232f2398b23079cb8e0b7c8cdbc6c83be9cba9c99",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.olean": "98c28dd2d87a7ce60efeb183d86faad813349455946619c39bc2b6ce367ce1b6",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.olean": "d33ea48cad2d95ec0e46b3695300bef76fb9f87c8e7df7abaac5118892d53f8a",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardParams.olean": "862dc89c194c2f93a49316670099a94f3c195cfbde6f543f9ee61689c751256e",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.olean": "2d8d43de7cef9635cf4b799a13edb994bf373c6fca8d2f583f5f9d6d242e8ce3",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.olean": "0f7884a273a20ebcabb94b6e47720a60577b7973bf481e4191344e27b6f73ea1",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.olean": "0ff56e80e650ba885966fa04544e988502f0ccd06106a5eb973cf7d5f9796f6c",
+  "TCSlib/Complexity/ClassPSPACE.olean": "7b4d9098e0a942ea4d3acff416d9b42cec038f421c8d038a15e6e2ee6c43f4f3",
+  "TCSlib/Complexity/CookLevin/Hardness.olean": "720a6e154aba49dd9a23fa968b8943679c9df341c9e724861f8a6232270fd583",
+  "TCSlib/Complexity/CookLevin/Snapshot.olean": "7d72000426d55a91cacffa4ea680572e25172943835272833f71b6b01d9214dc",
+  "TCSlib/Complexity/CookLevin.olean": "7ac4653fb4722b208fa3e29b146918f649a23171bafcdfb746f2f37f11216f84",
+  "TCSlib/Complexity/Diagonalization/EXPCOM.olean": "12825a3a9959f3e4b95ecef2a9e2e84abdf9c650376af6901869835d85d06a61",
+  "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.olean": "6d8236bee65cca4198c576ee039acb62022e94afe4ed3ad74388bed580393d21",
+  "TCSlib/Complexity/Diagonalization/NTimeHierarchy.olean": "171e6f828c594f6152c3a14ba5a12f5016b350cb2e4fb47912ee6cada3649e93",
+  "TCSlib/Complexity/Diagonalization/NotTimeConstructible.olean": "25e8a3f280800f11f9f42c2b3eb97b1be4234ce51d5810e38fd633e1754f8419",
+  "TCSlib/Complexity/Diagonalization/Relativization.olean": "5306bb848c03bd93efc26c96179b9d1675c17baa1909edfdfe5bdabb276285dc",
+  "TCSlib/Complexity/Diagonalization.olean": "15489a782c1c0cb0936a0e8e7a7479cfcf7d32afbe1374c6a3bc41fe2c2983e9",
+  "TCSlib/Complexity/Expanders/Basic.olean": "0320ead2dc9b94d21bfd20cb25b458b2a5ebe81c1309b1a3c5986556442fad62",
+  "TCSlib/Complexity/Expanders/Chernoff.olean": "6ce4fb6de2d33cff6d8ed7d51a24e36134a1d875cec7b4626167b37540beafe5",
+  "TCSlib/Complexity/Expanders/Mixing.olean": "cc7c38b9223df349da5535b800cfcbbcbf73e74236dbf211a5f7921e1a31b138",
+  "TCSlib/Complexity/Expanders/Walks.olean": "900bf09f9f4de651cb5bf21f7e8cb7f3e9b75b199646800bd46cb00cd17e83fe",
+  "TCSlib/Complexity/Expanders.olean": "6e0f34ece2f3b29185f8aefddb8481fa8ba227b932898cd6edd9d641535ad728",
+  "TCSlib/Complexity/FormulaKit/Emit.olean": "069a5f5056f45648216a17f44f3aff072e70c2ff7f2cb0697ba2387c6aec972c",
+  "TCSlib/Complexity/FormulaKit/Gate.olean": "1401c89204fd06ab4a78e043bf7ba792689e67af1554b79b10d03b87e477c86f",
+  "TCSlib/Complexity/FormulaKit.olean": "f83d76b8853df73b9b993045f1c9dd8261b2778abfdfd263d183c244be118d72",
+  "TCSlib/Complexity/Formulas/CNF.olean": "468c724e4e4d19d45ba5561166001a97ff206eb72f46e1c2f08d619fc01c5dec",
+  "TCSlib/Complexity/Formulas/CNFEncoding.olean": "7af98dbe3b668e79e81a8edbbbff6526cc4f44434ee272ccbd70f02e67945673",
+  "TCSlib/Complexity/Formulas/DNF.olean": "bd5b7ed5b65fc980c8252b2ac7b484669481b1a395c912c439476c88ce16e741",
+  "TCSlib/Complexity/Formulas/QBF.olean": "c2ca2474585d603864001798ed44e0c315639a5398386267f7aaa172b9b0a0b1",
+  "TCSlib/Complexity/Formulas/QBFEncoding.olean": "794e268091a756bc41db4898200d48ac4d4485cc41dd60c5a036fa95d8f8763b",
+  "TCSlib/Complexity/Formulas.olean": "4e00c43ba90cd590ad81169cf21d2676fb92aa91c587061b5827daa63c35d8e9",
+  "TCSlib/Complexity/NPReductions/NAESATToColoring.olean": "e71487f101654ae7371a1225844b9e4b3b893136ccb7060c2803252ba3ea86f3",
+  "TCSlib/Complexity/NPReductions/SATTo3SAT.olean": "6475935882633af0a3a8e6e660f7b635a67debdb8b472b7001c3b6254bc28957",
+  "TCSlib/Complexity/NPReductions/SubsetSumToPartition.olean": "a5aeb553a32499c2d8f925c2ae48a3e64dadb17dc0c7ac7c2f3ec3b8ae952801",
+  "TCSlib/Complexity/NPReductions/ThreeSATToClique.olean": "95f00124fdcd216778159e6e42ea423846d80eb9381667643eae3313c217a85a",
+  "TCSlib/Complexity/NPReductions/ThreeSATToColoring.olean": "1896d4dc8af6dda266873afb3f3446668df926212fc50a3b35479fd94eb30454",
+  "TCSlib/Complexity/NPReductions.olean": "281b3f3273e7b46cc24379eba4c109181a52b53b26c7490d921d1d654eff4a53",
+  "TCSlib/Complexity/PolyHierarchy/Collapse.olean": "d0637293a38eee5a97d71a36f9dd9fb2d3720e5b48a9df31dc6192af5087513f",
+  "TCSlib/Complexity/PolyHierarchy/Defs.olean": "b40e7d91177cdf08e3970e24676c033c9c44d118e9fcc7472d9e203b39785878",
+  "TCSlib/Complexity/PolyHierarchy/Levels.olean": "451044f1bd470a0d94e04ba9d05df0ae981263aa5f79130586a964dc549a2313",
+  "TCSlib/Complexity/PolyHierarchy/Normalize.olean": "0f4423662fae295c56e41f4e03c974613fa86a59f3ecdbf96aa2d26d46a31fce",
+  "TCSlib/Complexity/PolyHierarchy/Padding.olean": "85c494a429bb53a71210d1e6bfb02db3381e9d19aeceac5dbc6304e8a6eaef03",
+  "TCSlib/Complexity/PolyHierarchy.olean": "6047ee26bdb0383107a6da90ff234056638384572691f7c42c8036877c7d7e3d",
+  "TCSlib/Complexity/RAMSimulation/Classes.olean": "8532a6c9b8d4213bc0e0f8112c3241e1f50649ee94eb455d05d24832e5a58416",
+  "TCSlib/Complexity/RAMSimulation/Simulation.olean": "20666bc4c704ff33e7fd679d81b354c57f0df0a205c0973a4784d8089e6d68c8",
+  "TCSlib/Complexity/RAMSimulation/WordSize.olean": "f9e45a8374e9b0850be75f30edb29adb947ca0adf937b859e895d1236a79eeb5",
+  "TCSlib/Complexity/RAMSimulation.olean": "fba0618c471b8475c05406cb22593d1ec9665841a68790710ddf02a61b198cca",
+  "TCSlib/Complexity/Randomized/Adleman.olean": "726c8b2af586d010b8ca93138c0a4a962c8fbb1d420f6ac2ef3ffa9d983faa59",
+  "TCSlib/Complexity/Randomized/AlgCircuit.olean": "e10e31658f0e65f7d39064387dcaba70aa3231755aedee33198550505e8d90a2",
+  "TCSlib/Complexity/Randomized/AlgCircuitExample.olean": "862002ae8d77139c743ca8cf99bd9fabb9f60d3946bca028dc9502c1cca8f83a",
+  "TCSlib/Complexity/Randomized/BPLInP.olean": "e29af34d47546da22e6773e1cbe4020b81256a4c168279d2310d2f84747c1b1a",
+  "TCSlib/Complexity/Randomized/BPLInPCount.olean": "0e9e3730649663c2c49ee7bbbec62baa941c5cfe899f9d35a48fc051eaa82e07",
+  "TCSlib/Complexity/Randomized/BPLInPWords.olean": "9e168e3afcf439f70d883ef3f229598b40edc64319531b17eaf9d6f20f121cb7",
+  "TCSlib/Complexity/Randomized/BPOperator.olean": "5a82137b94ece25b5a50791961d8716422dd4185d1acd439d0bdb2019529bff5",
+  "TCSlib/Complexity/Randomized/BPPAmplify.olean": "de205bb20c3fc51944200dc5fa7c0eaca2a781262ea3037ffc156ed1d5ee2a8a",
+  "TCSlib/Complexity/Randomized/BPPEqP.olean": "9c9439a442c2e61fd759a833cb3e76a544ec1129966023024f4f9d13cdf419d6",
+  "TCSlib/Complexity/Randomized/BPPHard.olean": "01d3fbc65097764d8d15b4aab5916e945fc59fe0ee77e97990109f303939f2a9",
+  "TCSlib/Complexity/Randomized/BPTIMEThreshold.olean": "a1421800fa5a973fc8ac3e21f045b39e7fb5fc705aac9b9de14874918ca0ae72",
+  "TCSlib/Complexity/Randomized/BiasedCoin.olean": "07c3b359ef68f91c1957226434086671cf09c5e4fecd0b10585c3e84b5fb83c6",
+  "TCSlib/Complexity/Randomized/BiasedCoinHalting.olean": "2e5cce4ed387d1d7c7573bda807b2c55c1f878d6051637e06864ba4b58689478",
+  "TCSlib/Complexity/Randomized/Classes.olean": "2c865fac79fa5c82574a22f9af0f52a64cfdf98d1367e164b9b3cae30a2a5fb4",
+  "TCSlib/Complexity/Randomized/Coins.olean": "57514e50ea0a1dfd522cd54d991f944e380fe7a98d87b6fab2f415b138df75a0",
+  "TCSlib/Complexity/Randomized/DirectedWalk.olean": "37d26c037371bf6762f17750e032c19746995341f51899e804933bf85abd06a8",
+  "TCSlib/Complexity/Randomized/ErrorReduction.olean": "c2d965c63d1767cc03b9721621bcd59ddc79d17f434d0ce60f62dc504798a7e7",
+  "TCSlib/Complexity/Randomized/ExpectedTime.olean": "1bffdda33f20a5b59f0a662e3a47013b09fbc80bdb36e3855482ac0d25108602",
+  "TCSlib/Complexity/Randomized/Fingerprint.olean": "de00b194855a2924e0cdfa8c74bbebdf360050eb90bd9f2b14a683b783e278cd",
+  "TCSlib/Complexity/Randomized/Inclusions.olean": "0e87c5b57bbee5dd244fbfda554fe343076dbd77a340777535b1b0fb70d93d6f",
+  "TCSlib/Complexity/Randomized/Matching.olean": "3f48cadf5397579da6a5088855994a1388a210fa926ccfce8147b5e2b2a62dfe",
+  "TCSlib/Complexity/Randomized/MatchingMath.olean": "62ad7fbf99482536c3113c13d1b1b1a5b2f900a80ec6c7ff6c2984dcdd394d39",
+  "TCSlib/Complexity/Randomized/Median.olean": "53aa18f10665446c109922f69adb40bf8713db8fbe48da94ab73474ec4d1a909",
+  "TCSlib/Complexity/Randomized/NPPoly.olean": "cd866e4b2abcff0f8c46451bed499ec0a8c0ad130790c0d0847c4a878c8fe170",
+  "TCSlib/Complexity/Randomized/PTM.olean": "9a3ea311e7ea475d4f76354d85e030a1968704ff7040e210d2908ab489acf3f5",
+  "TCSlib/Complexity/Randomized/PTMEquiv.olean": "ddb7494240e4ff2f2dd10dcfcccd124233433c6b6747a17a7702511b603e49b5",
+  "TCSlib/Complexity/Randomized/PolyTimeModel.olean": "76925b825c442b4b976c7943d493e66e60f182fe548422a498a3037dc496ebc3",
+  "TCSlib/Complexity/Randomized/Primality.olean": "dc4ac0e5e26161934365371d9115cd9edba0b8fe870d1bf136f8655ebb2813cf",
+  "TCSlib/Complexity/Randomized/PrimalityMath.olean": "464293a6ccb9ff77cb89c303e41517ae9b8fbe3e35eef89d072eda55716fdde3",
+  "TCSlib/Complexity/Randomized/QuasiPolyHierarchy.olean": "9189ab06de9af0801f67ccb6244c9d870918505eb5b545ea937946f94f1ef0bd",
+  "TCSlib/Complexity/Randomized/RPExpected.olean": "e43f4298003e510e57712544eb36fdc77ad68cd6a199e6ac86fb122ebcbf8218",
+  "TCSlib/Complexity/Randomized/RandomBits.olean": "ec3a3865a21ca56cb5b9786553513e86b3ea505218c03ffd4bc1739bd3409ef1",
+  "TCSlib/Complexity/Randomized/RandomWalk.olean": "a450361ec4dcf30902d41963a7ad52a6ab9117a0094add4bb27bf69a981a0f87",
+  "TCSlib/Complexity/Randomized/RandomWalkCover.olean": "943c69e6a3592cefeebfef9e8545b60c6d22c3b0e991e4e08ecd301724a74fb0",
+  "TCSlib/Complexity/Randomized/RandomWalkHitting.olean": "9e9bc3ee8c01c32e2c894afeb1d38214413ef09163076c555df0b8b9540550d5",
+  "TCSlib/Complexity/Randomized/RandomWalkMixing.olean": "62ac060c745ecd98a0225f4a71019d83118894e3bf0007cd71ae395e2222b6e1",
+  "TCSlib/Complexity/Randomized/RandomWalkMixingPad.olean": "2064701f09dc4161952eef1658fcaf18304b7d3c27d0b316cbbfb65a87b3c32b",
+  "TCSlib/Complexity/Randomized/RandomWalkPad.olean": "421928ef4136513c7b7715a516aa030cd4327f99ad0f3b538887302a45750e49",
+  "TCSlib/Complexity/Randomized/Reductions.olean": "5dcd637f83469e4d5f05257c4c72b1bfe4c86c9a403b954efacb5d811ac09afb",
+  "TCSlib/Complexity/Randomized/SchwartzZippel.olean": "1542b72d0d6cc754586dad2fb8cf9575b9a4112b35d0ca54782607007a784ab8",
+  "TCSlib/Complexity/Randomized/SipserGacs.olean": "3fdddc44374d608000baca7aedc3c9b2a9c72044d17d9f6e9b4946a452f0acf9",
+  "TCSlib/Complexity/Randomized/Space.olean": "6498842a60d5f441b1971e9754cdd5e20168b73619d2d3502a2fa246e2d35c2a",
+  "TCSlib/Complexity/Randomized/SpaceAmplify.olean": "8def94c6c6e9bd9d289e42e61a1b0489bdd0c4637525c4f30d81ed788206e30c",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPoly.olean": "afe451dae0708c2c5b6878556e8515e0f9b0bfc1097f998944647c10ae3484b5",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode.olean": "d713f0a7ba5a6741d2f84f47eed09265ba40eb857285de92151dde9479a60dc5",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine.olean": "4ea2b4afcdbd76721446cb1569234fe6eaf60342eaa856f5d8d478c81d04b283",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun.olean": "19885929f93b5ffed79d2f2b68a31eaf488f5921dc581bf9dc1d529491256503",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyRun.olean": "17875de8f850fb2c19515ce2816b72fc4ac965028d2e8e93d01209c5d1f13605",
+  "TCSlib/Complexity/Randomized/UPath.olean": "1b98c02925c289aea36ed214bdb5609e803ecab57df9c8b8a3b8bb5e3834ec2a",
+  "TCSlib/Complexity/Randomized/UPathLoops.olean": "4ae3140e4793f48b6e5bfa2c88ba85e9846855abb48c45e62abd516baa8b8a4e",
+  "TCSlib/Complexity/Randomized/UPathMachine.olean": "0525cc8b6a2ea5baf50705dfa32699d8ea70f14f4d6573667c03dd7537fafdf3",
+  "TCSlib/Complexity/Randomized/UPathParse.olean": "8bde4d822c8eb37a600b2a388e5c4999b01b5f7892339ab45eea2ea832b67c93",
+  "TCSlib/Complexity/Randomized/UPathRL.olean": "8589d5156595cb5d762acfcd302c1ffcff84eb83b3950893a5e455666049dd6f",
+  "TCSlib/Complexity/Randomized/UPathSearch.olean": "d85f91c0f56fee0d7a7d30d65b52f8bd3a50f159fbb50bbb6e9ca1bd74093dd3",
+  "TCSlib/Complexity/Randomized/UPathWalk.olean": "a2f68ef6cbfde20421db2cc78e371445c2bb7ff264aa36f8c8fde6e96aac6a61",
+  "TCSlib/Complexity/Randomized/UniformSample.olean": "f105d68e3c21737cb5af2ccbf5110d13a828f08a627d08a08dbdc83603a489aa",
+  "TCSlib/Complexity/Randomized/Yap.olean": "11c8272eca379afc753069e772c19c434eea6a932f288753b7f8ae71500cda2a",
+  "TCSlib/Complexity/Randomized/ZPPEquiv.olean": "69fff354908a5850282b69ceeba314966c12ba0302ddf7fb8b46914266fab497",
+  "TCSlib/Complexity/Randomized/ZPPHosts.olean": "254069752c800b82b4c29ebdf82acc21dfdc48b12be5ff93a859933cd7a16959",
+  "TCSlib/Complexity/Randomized/ZPPHostsClasses.olean": "56399717cacdd8cd66afbc7d16e9d18a9b44a4c7bb4ec6ef4f7fe63f811e136c",
+  "TCSlib/Complexity/Randomized/ZeroP.olean": "a5463d6fcd377d7941181ba01ab54533a9fd01d7dc7683bf45ce6cac9a02dd74",
+  "TCSlib/Complexity/Randomized/ZeroPEval.olean": "0617077106da6225c267d64fb4d9df9c96a8587d970dc8ef28f6a8aaa9b1fa6a",
+  "TCSlib/Complexity/Randomized/ZeroPPIT.olean": "4ed3287e9426ae9d924f9531c76e0f1d38df37e5c7dd109fbed01e6d99bc77f3",
+  "TCSlib/Complexity/Randomized/ZeroPReduce.olean": "5a3f89079fbd493cb81177bda74bf23995086ed723438994032e1d80953e6ffb",
+  "TCSlib/Complexity/Randomized/ZeroPRun.olean": "be840da2cc2c64ae4992b530cd8db5fb890fad2225b7e5941ddccff1c1c63ccc",
+  "TCSlib/Complexity/Randomized.olean": "b274af63934c319df68613c380a17bc960185d9dd54fd0048cf32c7cc72897f6",
+  "TCSlib/Complexity/SpaceComplexity/Basic.olean": "1a26d6a33ba73c1c21d6b36bdd636b89b3ece5c609e6628051c2cf25090a69b6",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Bridge.olean": "c10d319b2c744c2847d4bbc2ba1b072e26f8dca1277790e431c090c4d9227752",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Checks.olean": "a247c48a779f9a1be3ef49da3ad55c7be712c11791564d1802be4ca2a684fda6",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Deciders.olean": "28ef55c857140925cc7142896d84d2478495c051fa1b9a5ba26779a41ee00a43",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Engine.olean": "ec0722cbe2d6bfa5be690a55e8f8f13ae232970a8b13edeaaa3bc823fa1a5258",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Langs.olean": "3ffaf3b16dacdd1e138d5cad3cbbb81163f77383480b6f820e22961f1bf5fa7c",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Layout.olean": "96ce52e42966945bf68f7fe591e2f2f170b08ed8ca72e6731a6d65969d969b53",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Layout2.olean": "6093beede7d44f71fccfd1248f14bcdf7eb798fb6ed00898d5f92da4ee77dbfe",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Machine.olean": "cdaa87bbfc784f73ea3e3bd7d773ebf58bc7d78e77e60999995d63d9908adf2b",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Parse.olean": "85592abcb2f984a69971d62a40f3dfeae4bed0a58bb9d5dad12238d240785f0d",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Regs.olean": "f920cce1d680e694ebac7211771c6c14ce592f71c29eb6dcb5cab036bbf0ead5",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Run.olean": "4abca7531c61fe0fd2d54db8d5b06ab143f28302e3f665e706f80b9b42981046",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Scan.olean": "cd0856ffa82b3abe9187723f68f9c766ae9b641ab3b2d397cf4a7aad990bb117",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Step.olean": "f1ef4647939fc2382fa41387bcc25da517c1ebeecd6bb1ee7c80ad8180a6a150",
+  "TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.olean": "58da3740b93cb0536e01e6a9890b524faa068573f58064af8710c630e4f63dad",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Valid.olean": "16d01d988be617fbb6ab15c7871c52c2d0a02b091defd40f91e8c26e20a02f6e",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Word.olean": "d8478e0453d7d15f85264d9e00f5749f05dbe5df15cc9a27e351b38ec66c6a29",
+  "TCSlib/Complexity/SpaceComplexity/ConfigCount.olean": "af9d369f0d7fca1249db5a3a539d33df5ae6dd3ef3eb50440d34b523c08be6e9",
+  "TCSlib/Complexity/SpaceComplexity/ConfigGraph.olean": "f24998dea0c3f4f1b000d87a363ca15824e7ad632ced2e7b97753aa050b268a8",
+  "TCSlib/Complexity/SpaceComplexity/Constructible.olean": "30b9da1f5fcbaa588ab35ef43d5c9eda3eda3c36cb22346d6c1b1d39b1339a69",
+  "TCSlib/Complexity/SpaceComplexity/CounterProgSim.olean": "3bf8f4861e129848cc92e454e2eafab3b3880de0fc3a9b440405821f936e2d5e",
+  "TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.olean": "f7bca26c440a85b0b64e9a7f0e4e565f55c5e9f07a8a1de9716fbba37cc45008",
+  "TCSlib/Complexity/SpaceComplexity/Examples.olean": "f87f4035b811126620010bb14716b8c821b83e54cb2b0f660c0d9b158ee2f9a0",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.olean": "acaa984cfda090acd8184728009e855edf447403f0ad01b9537de521a6ededf2",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.olean": "64548dc03ee7a2ff7fbb0219365ffd0de0dd64cb98e8b214fdf19efa005550fa",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.olean": "050d49219a4a225b91614542caeba1be41fd69d1cfdb88d4f085e7ea13023e1d",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.olean": "f30be872a53dddfca2463eb2f9118df0b1a158d359262e0af1ed6644119439a5",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.olean": "5a263e32c7871d948c109c5ba2a0013b70ea906e082b27ec53674cff97e9e71f",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.olean": "3cd0d94434ece6055d1d089d54acd8529af6c59ade7587399fa53ab8ff37f145",
+  "TCSlib/Complexity/SpaceComplexity/ExpTime.olean": "17f9b98ca6bbfbf0695b50b9ebf4d17aab87091f18ce1962a59280d3a314e5da",
+  "TCSlib/Complexity/SpaceComplexity/Hierarchy.olean": "84969c659cf88d0c995304382dd53f7c5d1da3bf5eaf8d57c9c60263c569840d",
+  "TCSlib/Complexity/SpaceComplexity/ImplicitPoly.olean": "cbffad1358bbd759d6f735e20b4e0580bb699bf33812f2929e06be6647bd02bd",
+  "TCSlib/Complexity/SpaceComplexity/Inclusions.olean": "aaeb53c40a722ffe9aa8fe5ec07a05b20dd89c87572be3d33231de58457d0f5a",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.olean": "830bb4dd1963af03ae9f3b88c7a63c026774243f28c5731774fc31641ddf1dca",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.olean": "0f3c71300b09ee6e94f078277f683262ea0875929b590f0328b48243b22a7c6f",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.olean": "5d7af3d01593b80bfc9580e7905577ded7b305e41d0acf5d9db14cea5d8c1b7a",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.olean": "4a21777e0e43b60c0939b223dfc4f608e5cf68109f83f36700c5b7c901b17d5e",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.olean": "a4f27a0a978c2caf52b907ef24471a841c1f8da3989ee8bd463bb6261825b846",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.olean": "f958d067105f271cfe189b8e54a127f6e9b348968c70e2d3c88293c4cbcfb717",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.olean": "53ad5f87f628b5f8729483ed84a66772cdf8d099996fd17c37efa365e291fb2f",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.olean": "a2385305298422c361a8c343dc7b2560c087a6539b5f9a8594df0ddc6591c805",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.olean": "717ae9acdd35be2e49df499dffbd050d9dbd2e733c1db607c3b06d7af0ac6035",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.olean": "0b61b4e40d644cbba0e7b0799bdacbee99c3b0fabfdae49269b1456b3a0d6ed3",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Mult.olean": "8e25b9a7628869a3506c0397d98cf5562448bb4c9a68e0c4eae6ab7f2a94ca65",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Path.olean": "64faf0946f646ab805c1ad2b80886563a383652cdf5be23092d28b4f651b7677",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.olean": "be5701d28cfb913a26a59e81dc4531bf626875ed648637384cac6449aac1b60b",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.olean": "71fe6921408ca5a2f65cf98345e528a553f87460cdf2cfbe329fe5aeb4dd9fc6",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.olean": "21d5e795e634b8ec0adb53d81fcd398cf488259c7e1c841b301fe98b031e4cd0",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.olean": "ff95d7eb343f14817658f7d98532d363bf046d339642c21616f20106d7327225",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.olean": "1ffa778652a393a37d05f01c6949630421c5086eac2c4be162a9519031a73d96",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.olean": "7ade407ab0de30e17f20000a525dae72b5c39c4dc0540eef5a0a4a509b761464",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.olean": "59901335a781e86bba41600816544d505e3f84df9efc019e27598715dd929131",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.olean": "ff1eccea4901986e2ec1e611370afddb1955772e1abc6dd730c414480cd281ce",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.olean": "790392a3a8bee6e8f68959939ff296bca6f915ed1b98a4901413dfd08f75e8b7",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.olean": "6d3139e416fec8c3cee8b04115a81511ff4814d476d4cf38445687c3b7443010",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.olean": "60e5ab6fdf140de7026eb5669271f7a7051dbf34f8f1802394379961b53e810d",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Reductions.olean": "d1e33f6c38b8388724eeac73e58e32f434afd84210ff814c06b5df2b5b1e6604",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARM.olean": "0cff414f51e22c0e55c4d0bf8e701ee2003631e2abd6393cc025287d9cf2793a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.olean": "8220d43b81d88c99e75f79c0f2b9d4e495bb139abe80405b27b553561d9d88d1",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.olean": "e04654ab6ab916596389c64bee62cbb5e75e825766ed557ca912161c5098efa3",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.olean": "25bfb00157bc58aaaf34b6d583b2fdfb0182da3b59d9dd123df7d445deecf940",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.olean": "37c0dfa01a8d8e3100dbbcec034377a46d7928d6f270fbb8161f849e3e127b35",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.olean": "12ec837e41f9023b667cf356eddc6758e8bc87b0faabf7e0ca6ba459f32ecf91",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.olean": "44e77427de68b231c65e1d597ed2c0de88b2c5e59711d65ee19171b4d679ed2b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.olean": "f8f5586312854c3f78585532c8359a5c5c5cbd0bcc7d4a0c735d1ee8b98ed379",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.olean": "b379ccf18bc575f0a4a810e3eef9446152c0b113565403e831798bdaee7b044f",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Bank.olean": "cedb606125f00fb6f16e8dea9be2a1ff02fbcf174418df446b20fedb679b7b1d",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Bin.olean": "b49d413fa86e7ca313ee6270999779845435c9728f0a80f35392ab88e6806231",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Call.olean": "42a551d35d613a33f0698b54eb880d96b2e2d517ffbc068636d5055253ff9b9a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.olean": "35311d119a6234fc2f81e9fc22512a7f1023257652446cfeec8cea760b7ac269",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Clean.olean": "88cf81481fc86c380fedbe655bcf3927e50ac72b3a62e8b18945c918f4344efb",
+  "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.olean": "8bfd185b27697f8a4f72f389dc220d29f52b5a7ad08d1b5943504d4a4a56c78d",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Compile.olean": "19f51518a30ff3ee598f0bd00e23ba9bde5a0050cf502a48d464bcd4d7fc683b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/DblLang.olean": "081eda7da885a2a84d8dce5c0153fd99b48a0cbd195ff93632c9bcbb72c1f6a6",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Frag.olean": "35f541ce3d881443d010d9f91e93b985e4be9e3660788e6eb028ebb0776a879b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/FragDec.olean": "490a6f6867a8203fed4c54d8dd18e64e8632391ed83956709aba6343dd9b0462",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Layout.olean": "5a8bfb3fb1ae89f7c61e1f39b7106327a84e8ed2464aee7010586951282aac2e",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Lib.olean": "5baac2ffedb174f7f946c245cd027c3e9c23cd2cac4ef1e5af7a5512fd02cd3a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARM.olean": "dfe54c2fcd134e22cec2b68f9ff812601bf360fc17ce6ae11b9eb74cd3e67f23",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.olean": "b248ad123b1847b0a4ac7efccb378ba22e62c5c2d71dfc925467e40788ada951",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.olean": "794fe62656b96afced2c9930de7f54e8decce119f99b69fd78132e60dae0e1bd",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARM.olean": "bc528bf1681cfc1dd39f765333de1629cbcf47d2cdb2b84744cf27bd776f3db6",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.olean": "853bb290eee7fc9a30cb57d613edeaca3ccd641321c5ab1888e25cf9c5eb1f0c",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.olean": "e65fdce978fda78c9b46e4270fc0d5fa463f4acac93877a6e8e08083c6c5381e",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.olean": "eae520c5e3f08f91676964202a60b61d5323a31f83aea51481766a19707d5518",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.olean": "3d70435df9dc608010fb3b0165d0537cddedf59edacd462e9002d73fdf8f8890",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.olean": "5dd51cab11b1b87eb83a9e6c43faaa1326e8f264593aedd0a0e25c6e8b63faf0",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMProb.olean": "b145720fbb1d847baeb4d5a884b2b817b0795123985472a32803e09829a88bbb",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.olean": "1a0abad3a4fce8dd0d425ca5929c2ba1780d32f1f0e456f7a586d1c1b9831ba3",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.olean": "d62ac6170f361968071fcaa0e09ab8514965a0aa6744bff98053bce47bcc8bc3",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Parse.olean": "5b8bdda44c705cc2915d30f67fd4896217b27bf778628fb3c1c659bba86b4ca8",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Parse2.olean": "88aad444ea90a450d393345fd0fe332000572d22a9e1de8b516ee36a67327f1d",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.olean": "59decfb5ce1386f2ec4c456a4bf5db5d4e7b05f31e084d1668e02c096a4ed48b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.olean": "f0351ce14152f088f566a60cd102404b330cb39e76e798a005ca10cb4f8db1bc",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Program.olean": "cb446203a6e1f117eb55be95cd77add8d5fc70e3e00004eae3cbf445c95da199",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Sim.olean": "2ef4cdb1ce242bfa925538b916456ade26847b86d14cf79862db1b0ac2fb0f64",
+  "TCSlib/Complexity/SpaceComplexity/Machines/VWord.olean": "c553ae42fe7cb0083beed7bdca6fc3c2ef6344f576b110c6b7986e4277ccb66e",
+  "TCSlib/Complexity/SpaceComplexity/NSPACE.olean": "2e6507f54eec26c19178d85198ec498f3ec5c226a581683df44b515352cd06f0",
+  "TCSlib/Complexity/SpaceComplexity/Padding.olean": "ccbd31d645fea1f587e8289f69a3c4169d07297f7fa6aaa0bba9f4702a0704b1",
+  "TCSlib/Complexity/SpaceComplexity/Savitch.olean": "01143ce415ce5ed98c1cf80c2e4a82f252c545ea66e424307d486d93c364de63",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.olean": "061b108e0c9c559537db0b281094bc6083953934565f200fd56ce8102d44413b",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.olean": "aa33bd5d7f992ba7052505e49e5c785f73cf96c0ff1e2a9cea8fd6401db749e7",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.olean": "5d702374121a3b128c7f109e412982b4fe5cfe3da81554aaf164778afb01b231",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.olean": "1d8f2bb0a5cd05e3ebf205e65bfe03e261dd02e96b7c9895b06bfbab5ceaef46",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.olean": "808353b4844d9fd9649d6b7da0cce0c16b859684d8a29a0b6bc352eb278e9857",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.olean": "d8a96640fe864ba031add7f1cd97826b74eeddf145b06ed54b464bdc30eed11c",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.olean": "a5d4914441eac8802c26ea3f6bd631bae8604a8e034c08528b1fa55b875a905a",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.olean": "81bc8e2c245504aa6f1f4f0a59dbbf40a0b81f8e607eb0d6f276358a177a88f5",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Window.olean": "29ec421d81dee07097aa14249381a7b31cdf5c7e26fdfcaad9796cacec299a42",
+  "TCSlib/Complexity/SpaceComplexity/SpaceClasses.olean": "8e8830728c82ec35adb1ea3811b567a8e0c0703b6ef31de150a9a52b1ab9685f",
+  "TCSlib/Complexity/SpaceComplexity/UnaryLogspace.olean": "b4763277438f4e8a89382e5833fc02c9a62e1a6fe23079bff5a28948e7d880e2",
+  "TCSlib/Complexity/SpaceComplexity/WindowClock.olean": "c30d3bc71c77f2dd3d28093d4df13d597d171a76466f80d28766c380c3738e42",
+  "TCSlib/Complexity/SpaceComplexity/ZeroSpace.olean": "1fb38168b08ff890e3d5c5d6319c57e72023352a06aeacb531857db22ec96bc7",
+  "TCSlib/Complexity/SpaceComplexity.olean": "70faf1e75feb9b13da9df669478fb0d1c26c75152f2ba2a05af158524011e948",
+  "TCSlib/Complexity/TimeHierarchy/ClockLoop.olean": "093b5f83e8a120e5f76622ae2bb727ca9ee0df7f125bba225b5716d82c634e38",
+  "TCSlib/Complexity/TimeHierarchy/ClockMachine.olean": "55dbf3ff5f2b90fd9313d7a3d04df90a47412f8d456128f6d7fe9d530d5f3470",
+  "TCSlib/Complexity/TimeHierarchy/CodePrefix.olean": "a05a102fb348d217322a28ae8e8660a1c157ef8915fd171995dadf64bac3a77d",
+  "TCSlib/Complexity/TimeHierarchy/Diagonal.olean": "65b0a08da07c29075ece88f5b2cebbbfd95a43fb8bacfe8969d2bd4a7cfd3bf7",
+  "TCSlib/Complexity/TimeHierarchy/Separation.olean": "add1c94d7292a4a7d9d106354ed86f76b3bcb4af84dcd9ddb72db8a869e09069",
+  "TCSlib/Complexity/TimeHierarchy.olean": "4ceed64e27dae2a106f5e73142e1f742653fc6211dd172ff8994e06a8aa59f95",
+  "TCSlib/Complexity/TuringMachine/BufferWords.olean": "8e3f80ae65a3816eb792953f3d792633bfa8567b98c69e3f1d4ac06fe19331fc",
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.olean": "403918905536706b7e5f8dc91555b93d2e28d0136dae47e762f9d39b6b7e7bea",
+  "TCSlib/Complexity/TuringMachine/Build/CertShell.olean": "e5ae1ac6cd9940071efd89fb5e1c167ed6886fb60e0c212025d6a7bf408dc7a9",
+  "TCSlib/Complexity/TuringMachine/Build/CfgRecord.olean": "518f0c3f85d662b374b99fd8884b3ea590fb76b9418950b522498b5da0de6948",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.olean": "fa1a768cb5eb3fa145b3077b52e2ff0117f443dbcb806b03b51a6eb5fa318bf5",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.olean": "b8c66d82906e4b366b7966440bf883cd57d37f9f0e345ed070a2535cd1229882",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Counter.olean": "d41de420a684c7629adf3d0b6592e77efe91f0f4fd0a64e77d11d67d93b5262f",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Embed.olean": "cf698f00f883f9506c3ce5b4aa1d1c149ef09f02acf5c5db6030d45026e6d699",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Lift.olean": "0646d795fcce458a943904eb74dad932338a3a3cdb8a89e788fc31ff61e0b915",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.olean": "33e95d2f8bc62891c783c0e060151dfaeab988b8398067a0145823362e3b9aad",
+  "TCSlib/Complexity/TuringMachine/Build/Contract.olean": "ad31d5afc96d276d08d71872cb43643846cc6e52d4efd52fbdce4d69b5a761a8",
+  "TCSlib/Complexity/TuringMachine/Build/Convention.olean": "1ec8b456b9fbf274ebadccb656af333cd42c44a982bf0495e900faa02f5b9f11",
+  "TCSlib/Complexity/TuringMachine/Build/CounterLoop.olean": "e3bd94abf6b0051a1e366696dc36a92602629817a27f7ed137b8cea9ff565fb4",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.olean": "00ea9d16428f78de57850b52cc8966bb3496d828e4cb1c920c607871430838c7",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.olean": "5744ca2ad5e48bdeb84d6bd26edb52863ba1af0d05795a026eb710dab85c278a",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.olean": "9d4e98180c5db74527876afc1c3e6795c198a9fef2a3ed5a339821d54288efeb",
+  "TCSlib/Complexity/TuringMachine/Build/InputCall.olean": "90554593fab7c0ea0b3a38f8417c1b4866d3b4a2ccfd2ff84d247bb0a6d8c5b8",
+  "TCSlib/Complexity/TuringMachine/Build/InputDevice.olean": "e350e81c77da4731cfc2f4942416418472b6bffaf8bc1bb7e38247d77209efbb",
+  "TCSlib/Complexity/TuringMachine/Build/InputLength.olean": "382aadc73e3c8347700a0dc9fec37dd47c065d195c592ee7c691376fe16b92af",
+  "TCSlib/Complexity/TuringMachine/Build/InputRewind.olean": "7c15d81b2e9c3b637707923466d8d552ba47b2c28bc053e9ad101d41ecaf6a4e",
+  "TCSlib/Complexity/TuringMachine/Build/InputWindow.olean": "0415276de95f48d9be4a2ba566f415c4d3c9b7398fea858254285a293e045346",
+  "TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.olean": "723fb7a4c6af48add5fbda5259f8d873574cf0680dff4bd30426bf0698893b26",
+  "TCSlib/Complexity/TuringMachine/Build/Loop.olean": "cf38a7850ea44e58205d222380ef8b5e7b9797e0e2dee789cc1d1753f174af38",
+  "TCSlib/Complexity/TuringMachine/Build/NDClockHost.olean": "929144d9b33d69a94d12085545c72229df9d930a758119f59695d4483083ea5f",
+  "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.olean": "5b3a685487cecebe4204ff5b519a7438613271d3037134210618e5dfcf5459c3",
+  "TCSlib/Complexity/TuringMachine/Build/NDCombinators.olean": "50660cd193c11916f258b9274ff8c49b2a0eaedc85d51c514eb8fb8ca994313b",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.olean": "f63ce48685fd8e26ba5dd605f08269d0132edb47016eb4f877f5b2e752e98f1b",
+  "TCSlib/Complexity/TuringMachine/Build/OracleCall.olean": "b2b368ddd0db48a365e03c1ba1e43d06881a36fc2222cac66f90932249ab92f5",
+  "TCSlib/Complexity/TuringMachine/Build/OracleSim.olean": "d1fda4b277cd3f95495457875db3f24e5b82c11977731de4658cd535257ba74a",
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.olean": "d8e902a613a07bffe208a1c7984dd0a1bb297678e7587b50eb216854150ac0b1",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.olean": "46237527fb40ebe8df8d1b8a9d0462c05209bff3cbfade807ad7501fe90ff067",
+  "TCSlib/Complexity/TuringMachine/Build/Rewind.olean": "d38800f4822a36b88bf36575d0b3b3768db569d031234b8819b793ab9a12b6dc",
+  "TCSlib/Complexity/TuringMachine/Build/Scan.olean": "7b2755087cf7966ba5f46d7abbd1164bc93a5e1ffdc5e0f6b9c3159e892ef4b3",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.olean": "9385135e28020f2cb373cc8cc3386b5647dfd26d77a507d5ceae92420a993ac9",
+  "TCSlib/Complexity/TuringMachine/Build/SeamLayout.olean": "9d9d5443f9702d02f77a1e48f9782a9f845ad91351cb3fa310b864f72627bd9f",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlock.olean": "e409e780c5e5841267af7addd20cde893283645a01a5b716409a01fd0ff940c9",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.olean": "63f4cf28e4494686d2a709c6043000f3976c723296535782145986296716ceaf",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.olean": "7eff9a5658ffeb396e4f89a136dbe3f600ed0241f6a01b7349445d5fd4922152",
+  "TCSlib/Complexity/TuringMachine/Build/StepClock.olean": "cfc5167b56289cb36c82aa432189c779628ef2d5c3427322f21db9e1c29f8ac3",
+  "TCSlib/Complexity/TuringMachine/Build/UniversalParts.olean": "c57f1e608d9c97b2cf1d715553c0ff3679dd81726cb21e3676acd12c39ae2265",
+  "TCSlib/Complexity/TuringMachine/Build/VirtualInput.olean": "faec53fd07fe6fd8f285749055552a600579c2c2413612491b35452fce5728ba",
+  "TCSlib/Complexity/TuringMachine/Build/WindowRun.olean": "39b4380cdc98f28eb7a40f4d60f8f73046594b326f05347910020d33559490a2",
+  "TCSlib/Complexity/TuringMachine/Build/WordTests.olean": "7b049a86e631ac922bef5a69052ccbbd0f0f22ae3918e83965dc620f589e6d3c",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.olean": "080bafa344a3a84bbf602016a5cd70c8cabe0e16c20c868ad522e6631efc272d",
+  "TCSlib/Complexity/TuringMachine/Build/Zone.olean": "88d1622ce3dff2135a5ef56572fe0c02e2d69563f08ef646e3d4b1bad0036571",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.olean": "5af3d0713af04417c5ee1639ef5e6d47b44cdf0f3a8f6d5c24f075dbe2e89985",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneStep.olean": "738a03d369693821581f4b8f1139c5d367ffe88a08068feb0558a6bf34e602eb",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneTape.olean": "54ea3c0d6c5fb0d93138b717fa552cbeb8aa4fe9823f256b35d044e8d99a99af",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.olean": "197ec0804f2701eb7c03a96571f588d15f41ba7ec76f6dccea7d7941f7248041",
+  "TCSlib/Complexity/TuringMachine/ChoiceReplay.olean": "8a6f0f6eb8f0930fb2b8b4ff5cfca31f13b6fb7a2fc0facad9daf84e441c5039",
+  "TCSlib/Complexity/TuringMachine/ChoiceWords.olean": "f109fa2528ac3dfd4db9db7ed18c420bb134ada68fefac6886c6e973b58d59d5",
+  "TCSlib/Complexity/TuringMachine/CodeFormat.olean": "88a93db86057555f0ccca180c05c721c32af7efa9d89c4094b14dbd35e05cd23",
+  "TCSlib/Complexity/TuringMachine/CodeParser.olean": "f3eb7c892a8a29ea08e5644138e420e5f9c9fdcdeeea75cc216457b27bc90430",
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.olean": "3f4f0031e613d63dbf1b8e2ca1630c0a280d30af000db6faa53bd0f271f08612",
+  "TCSlib/Complexity/TuringMachine/Codes2Tape.olean": "f9a335a69a97da2e2f7dc9a1afd881c5224c51ed3938be18a527b49d817121b9",
+  "TCSlib/Complexity/TuringMachine/Composition.olean": "869f45e2d16fb1b34f39fc56960a5805a2d96920191661b95cba964824cfcc3e",
+  "TCSlib/Complexity/TuringMachine/Configuration.olean": "ce9ee2e58b28c9226eeaa3e8733b57f698ece429a22c614edb107b2bbbc326b3",
+  "TCSlib/Complexity/TuringMachine/CounterProg.olean": "02f0a8bc6ba825db494614cdc706fc7a067b4afa65ca03f61d355f77b1e3a958",
+  "TCSlib/Complexity/TuringMachine/CounterProgInput.olean": "c56d7549fd8b1eff10e08516638cd920604936d4fce718b1e241b6156374182c",
+  "TCSlib/Complexity/TuringMachine/CounterProgRun.olean": "5112d43e562ce8ca5d4f246649ab75a92a760c6b9861218192f9dce1adf1acf1",
+  "TCSlib/Complexity/TuringMachine/Deterministic.olean": "d5059e1bbbfae5f5c95c2cbaa157d3bb7129859c5bc387d99ae968dd6d4c5a38",
+  "TCSlib/Complexity/TuringMachine/Encoding.olean": "e55540b56b1555b11d11f6e5f2bc6faf818bfdb7b71dc62ae0f9e1a555cf3e3b",
+  "TCSlib/Complexity/TuringMachine/Finite.olean": "6c460a3f75ef832a4edc1a567edf28d8636feeb3c76496b23cb9be68245f7f49",
+  "TCSlib/Complexity/TuringMachine/MathlibBridge.olean": "425eeb66a113477c15ac5e7e7d916586b99870a2f2cbd8505f10a4caa3f17100",
+  "TCSlib/Complexity/TuringMachine/NDCodeSimulator.olean": "f3abee65f1a597f5c6d17cec9ba46a548928dbfc4f35d7d1a1ac68991eddc289",
+  "TCSlib/Complexity/TuringMachine/NDCodes.olean": "0060c367ed7bdf781ca34a505db48275ff4448c0f1a42d18bf0d184e6aa4c35d",
+  "TCSlib/Complexity/TuringMachine/NatBits.olean": "f821d64812be8ac5019a976c1f57e5f5d05c6fd28fdf1004521cd2138924e859",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.olean": "5823eb5a922aaed32e68ec596dda98012151ca6b8c27b194c1939c55dc54684a",
+  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.olean": "b0c7dca0eab8f23d97dcdc94ec3d04f5b4daf3b454b6d0a384f91ab3b92805dd",
+  "TCSlib/Complexity/TuringMachine/Oracle.olean": "f200ebf3b8ebfb1c3c3ebf77966b3ff726b3a7530cc5894a493c5735519fc973",
+  "TCSlib/Complexity/TuringMachine/OracleAgreement.olean": "63178953e73c137be951553d397173019adb286bc64fe1941214a881a9d9b1eb",
+  "TCSlib/Complexity/TuringMachine/OracleFinite.olean": "0965296c996051fdb4a3072e560f4de6283bd1c346bb8507c9dd07509168adda",
+  "TCSlib/Complexity/TuringMachine/OracleNondeterministic.olean": "8ebc3afd244aebed7cf87fd9edc7dce031f02ddae9ae64a59622701a6844db25",
+  "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.olean": "da7a214cc59a1512121f283d4f0259a506190c1ea3723c67fccd24488c50796b",
+  "TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.olean": "947559cd62ff46d084b236299bd9f3dce7a9cb97db5737bff4fe2dfbfdea4729",
+  "TCSlib/Complexity/TuringMachine/Robustness/Oblivious.olean": "6eadbc9189852aea8dcd00272cfc36a358ac5e07250d030b0b09aade5f493271",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.olean": "c87611a401b830ddb48c1a97f640ba14877332ea1ef527b1a0636a0ea508253f",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.olean": "b8e60fdea9604feb73178905d761fb204d2857ade60b91445200c0bf57415e2c",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.olean": "ed86c05197f351824e29f793845183937eea8a79162d8fbf28ca75ee361fb22d",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.olean": "48433f395941f32e2663d60ab3ccf261319019dc1fd142ede42c60188db48ef0",
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.olean": "7b311d2571a04eaf9417d9b59ab00cc4ebda74ae7d7ce69d43e5f922c61cc261",
+  "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.olean": "7109791b5bcb24ae227999a05381615ca3c2f62cc933a05fd8aa548a15056817",
+  "TCSlib/Complexity/TuringMachine/SelfUniversal.olean": "68e49c0f6f31ef65ba8d8b7a4424d5b2970252bec3daa3e03383fa00f3ce8b2d",
+  "TCSlib/Complexity/TuringMachine/Simulation.olean": "194b69f1327bca022fbdf324175f3aab08b0d0e883c9ecce84a8e2d46642bda4",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.olean": "50b350669fb1b82782ba0c0771a9dbb7a03ab4027816ba46b4102a499b1d77b0",
+  "TCSlib/Complexity/TuringMachine/Sweep.olean": "1615718b1145577a5b0d3d5fb697858acf95f1f8a7790bfcd1389eec2a7abe4b",
+  "TCSlib/Complexity/TuringMachine/SymbolLift.olean": "3296f1303cd68f1ff5f5eac25a82967c7554177a7f00b22413dd4fc45e5022da",
+  "TCSlib/Complexity/TuringMachine/UnaryTape.olean": "c4fca9a3bc6fa4ff043057b1054db236617f67ac211528461e8108dd4d0521be",
+  "TCSlib/Complexity/TuringMachine/Universal.olean": "0ccd642e8dbb866c1aabd77c76e4536136fdd8db626210474e52f5de2ea903a7",
+  "TCSlib/Complexity/TuringMachine/UniversalBlock.olean": "6466b30338ef546a8d2c9efb16cfb4dbd5147944519260e0b30108fb23d045ca",
+  "TCSlib/Complexity/TuringMachine/UniversalInterpreter.olean": "8246e365a6f34d5837044cc822d07bcae93874b5e8226659d92c6cd30fb22dad",
+  "TCSlib/Complexity/TuringMachine/UniversalK.olean": "5df30018631723b01c8d82bc6aeecf8c022503c4563a11902e20a87184f3de3c",
+  "TCSlib/Complexity/TuringMachine/UniversalStartup.olean": "64debcb3de39c6076716f7c248ccd870e813b9b36b9e4e2433fa942e7e866853",
+  "TCSlib/Complexity/TuringMachine/UniversalTlogT.olean": "18fd7fe73c5f6cfe0d24094295849fc415bfa73516739f910cebe378ebdc8bdf",
+  "TCSlib/Complexity/TuringMachine.olean": "3d2a8c6a057b79491b299bd141838b837bd543b5c85d18a54832a3b695720afd",
+  "TCSlib/Complexity/Uncomputability/Computable.olean": "69b3d16123db430a4055fd3a0d59c65691484fb1802c12ff55ec96751ca8be44",
+  "TCSlib/Complexity/Uncomputability/Diagonalization.olean": "f4c5ff68cda55b03dcdec04b88f200c19d86973095209f31d2b5fd7f77a8a28a",
+  "TCSlib/Complexity/Uncomputability/Halting.olean": "b84d1447a836090c5a92ecf5ea69dc60afba39f48b2c1b6760bdb7d5ceac0f41",
+  "TCSlib/Complexity/Uncomputability.olean": "68447cb42461358609636232b6615326453af2298f3fb47101486c5d4b111051",
+  "TCSlib/ComputationalModels.olean": "1bbc2b1a85f467a9493ea9ccf39de0f8803436d5d8c50d06b3824c0b131889cf",
+  "TCSlib/Cryptography/MPC/ArithmeticCircuit.olean": "db3292bd5b78302b5a1a539b6c1263a3c29445403d62ddc1fe5d1e5f093bb119",
+  "TCSlib/Cryptography/MPC/BGW/Privacy.olean": "aebcc90e16a6a43e8c2db529360a636a1e13992d3401a9ee8da79a7a4f91198d",
+  "TCSlib/Cryptography/MPC/BGW/Protocol.olean": "7320a47075da2d66955e57495f2084ac05008e6b3d6dc8572e0922158396254d",
+  "TCSlib/Cryptography/MPC/BGW.olean": "00960679793a91d966962672fcc376c425de18a7328271158b0c9db314607108",
+  "TCSlib/Cryptography/MPC.olean": "94b7a91e127f1fac40a87e5a1d9a791b3eb65cb7964e69515d9e47653a29111c",
+  "TCSlib/Cryptography/SchnorrProtocol.olean": "23909bee3723f89fee251c0ca31064ba9390ed59b165cd54bafc58f61c486825",
+  "TCSlib/Cryptography/SecretSharing/Defs.olean": "ee0d5160ef32eea3331491aa9c93df562020035558a04741be809edc7fe67cad",
+  "TCSlib/Cryptography/SecretSharing/Interpolation.olean": "ca0a3511a85d5b949f7274915c795ea56c76d93278666a0c23626f48c7ddf866",
+  "TCSlib/Cryptography/SecretSharing/Shamir.olean": "8f11f48adcf5c036883eaad2f0294f7f12f9ff7a77a7f2a1df663347a2d5ef9d",
+  "TCSlib/Cryptography/SecretSharing/Sharing.olean": "e3826aa184b9fc5637167a3ab814e9f9541d6934b22d4e095b5e3f6e41b54985",
+  "TCSlib/Cryptography/SecretSharing/Vector.olean": "5d4d711349e18493ba5557c3d6c1babbffa7a030dcedcaf2c8df5cd60e1e0a20",
+  "TCSlib/Cryptography/SecretSharing.olean": "d10655fbfaffabfe45e98013f4a67de58ee88964491291ff929ea92b4e233c2c",
+  "TCSlib/ErrorCorrectingCodes/Basic.olean": "f68d13cf2308030817cdd82f2b4d8c078a2a8c71420c6c6d3b30fcc8859dc7eb",
+  "TCSlib/ErrorCorrectingCodes/Entropy.olean": "4c5c43c4fac1f2df206e1441f0d5a143b47df66e19e9470db80e18f5df3baf90",
+  "TCSlib/ErrorCorrectingCodes/GilbertVarshamov.olean": "0c491ffd5167b3b15b5c9f5bc50ea106ae2f0ee86d6d3311ea1cbc3a90338cf9",
+  "TCSlib/ErrorCorrectingCodes/HammingBound.olean": "9a328504d3d6f8b6adf2e2ab7b5f57437bc1498fff0d9d0b62f8a4a94aa6018d",
+  "TCSlib/ErrorCorrectingCodes/JohnsonBound.olean": "463d75d37affda5e95991f427e86940720d95ec5b644b569f1fcf785e3111e0c",
+  "TCSlib/ErrorCorrectingCodes/LinearCodes.olean": "a249eaf17dfa9deb7c32638610ae27cd57c0400d1f1b2fb6acbe1d2082414a83",
+  "TCSlib/ErrorCorrectingCodes/ListDecoding.olean": "8107713762b417773efa4db718d4f313280ddb8797d01bae5e88c5970d5b89b6",
+  "TCSlib/ErrorCorrectingCodes/MRRW.olean": "b397e769a778e38e5a835b0dd65e8bea36b72755c81fbfc930ac11f90d4e23ac",
+  "TCSlib/ErrorCorrectingCodes/QuantumHamming.olean": "b53f9a3fb141801c9a736352c0b01c544afb06c977ef8a3c69bb1054a0093ec0",
+  "TCSlib/ErrorCorrectingCodes/QuantumSingleton.olean": "3ee22d95ddf4e026e1aa7f1b1a5cc2ed1721c163465883cf14b76acdc6834dbc",
+  "TCSlib/ErrorCorrectingCodes/SingletonBound.olean": "31c2d3da2cbcf435766a7749372c70ae92eb820fb7fcda6fa45f410ae8e68076",
+  "TCSlib/GraphTheory/Kruskal/Basic.olean": "08316ce8f535a8aee1c3e96c24213c12cd2d325091b99ad0f41acf435b7b9d48",
+  "TCSlib/GraphTheory/Kruskal/Exchange.olean": "bd7cbe67442e4ac97ce8656dad5e77c8f01b1c4aada79ab147cf5c1424a28122",
+  "TCSlib/GraphTheory/Kruskal/Optimality.olean": "a4cd30070203ec13965b34fcae76043c5a897d6f56429b297ebda62af3a22f63",
+  "TCSlib/GraphTheory/Kruskal/Reach.olean": "452ae8106531ed402a032a1d5774fed5da4b3651dfc25972a08a255f6583f615",
+  "TCSlib/GraphTheory/Kruskal/UnionFind.olean": "07e2bc23ef1b5fc022adf08c4d55c6d4fcc899f348a9db87783c31b710645fe9",
+  "TCSlib/GraphTheory/Kruskal.olean": "b6ec23ab5297e8f4c3189a48eba46d52eb1c7b5cd881207d317e5fa04e9cc261",
+  "TCSlib/InformationTheory/FinDist.olean": "e9a4c06298cf6a1b49891ee7fddd808291930cb351a940ce4132c245faf6b071",
+  "TCSlib/InformationTheory/LeftoverHash.olean": "80836f7bec7e8d374e0e0d9560c082099cfa7b907a8f4cf4430347700d954183",
+  "TCSlib/InformationTheory/StatisticalDistance.olean": "ee55e2c88f8daef182a1c32fdcd8644d96c3cbcf993ceae736402b8d95474797",
+  "TCSlib/InformationTheory/UniversalHashing.olean": "2a8975dbe5927a5b752b34aa1bcba726cbad915393c48c9e0bc33a92a4d5d67b",
+  "TCSlib/InformationTheory.olean": "4bfb297ea8302dbad92ab9673699732c17a3ae5e096269ad50dfd653e07c9f98",
+  "TCSlib/KikuchiLDC/LDC/BackgroundFacts.olean": "5c159e4a71a81dbcccb5f935201b59d69e11abb34303d0fd4405d8b648172a62",
+  "TCSlib/KikuchiLDC/LDC/Decomposition.olean": "a8f5a545728af5e0aa79d377e8fe7a43008606aa7c2e6e3ce20104bb58d82185",
+  "TCSlib/KikuchiLDC/LDC/Defs.olean": "db4360846f52b69c63dd90a14c4571f57708768fcf92905c03f27003b5195462",
+  "TCSlib/KikuchiLDC/LDC/HighValue.olean": "02abdaf84fe2ff5792720e3f16fc7744701323dff444ecc5168aa17fb213c5bc",
+  "TCSlib/KikuchiLDC/LDC/MainTheorem.olean": "c52e24aa304bf78bcae897c2392b5a7c49ad67f76a317bf56109a790eb2be818",
+  "TCSlib/KikuchiLDC/LDC/ThreeXOR.olean": "bb0167c490bbf933aa63d0e5abb57931c80b4d326d71a5af35e503ad091635c2",
+  "TCSlib/KikuchiLDC/LDC/TwoXOR.olean": "b93f324a1098c1a96d4e1af4592a709427fd05402e6f2c8f000fb33efe04f53d",
+  "TCSlib/KikuchiLDC/Main.olean": "c5fe18b540c9c8a4417b36069e49ce91b390cd4fc77ac1ae1ebfddf0a96e08ac",
+  "TCSlib/LearningTheory/Hedge/Basic.olean": "51202012079f440173605bb3518249308c968da9d416e0ef997fbc8da0751710",
+  "TCSlib/LearningTheory/Hedge/ConvexPrediction.olean": "5842e8b7dce2bd53bb604b1ed7d16fa5e3ef184936bb84bc87ce07715ebce8fb",
+  "TCSlib/LearningTheory/Hedge/Episode.olean": "ca95244415c86639df3d2abd53ef44078e1ac3d3b296d57829d5f5cb839f8ce1",
+  "TCSlib/LearningTheory/Hedge/Hoeffding.olean": "1ae15a42400cb8c1eb7188e6cf06c4f9bb380f0a8f72554313c6361abe89d498",
+  "TCSlib/LearningTheory/Hedge/Regret.olean": "ff7edac9e86a43788a7b487cef86df67660031851a73d7e4fef95d5b3e4e4bf9",
+  "TCSlib/LearningTheory/Hedge.olean": "a18d94f62391aaa799eaa7beeafa439c8520f41b5b857f2caa8276347cc120ea",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Bernstein.olean": "add688091601f33bf71a8c01e0217dc9d99ec462e90b346a8293ce36f55abbff",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/ChiSquaredMGF.olean": "4dec8fc6543e7d06d5bccba2ac03205fd8c40e9a0dee1aa1be50416df59eacfe",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/ConcentrationBound.olean": "2e7ec583681ba04d23762e60aa5444313eeab3b6a53ac158faa6a6fa75dcd544",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Main.olean": "58a7dead05b446fd12b521d8626d2ec2cfd96aac73e2adc0b1ad3d5b8ce537ca",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Rademacher.olean": "fc889e2c145d94284fcf38d27704d40ff38c6acd3b78411d78f8cbc3f3cc4e20",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/RowDistribution.olean": "84ca6025d99433f20ec784472d191f42fd555885e84b4cd5a774b0cba2237200",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/SubGaussian.olean": "2f93f166a7d7a9ecc2b595d21e139432ebaa5fbd9db2d2590c6815f71394d72d",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.olean": "47c02e1f61e773762a2bd2adc7395b37ec1c1ed930d526ed6a531af47855e86e",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss.olean": "7428d7de5bc74fcb3724bfb14069896366d3b3d740533c028805c8312ffc66b8",
+  "TCSlib/LearningTheory/Minimax/CCE.olean": "f2bb9e921cb7b357030c49a61eea3d9b65b68b80b0a9aeb31139ae91cf19e85d",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimax.olean": "116e17ab2521a37614659655a330b22740331bfcd099d6b824f5f207857f242b",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxCore.olean": "2d94411d795e4740ca3bc0630be7e22e843eed9ee9bc664b1525867e02e20092",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.olean": "9896cb75263d9374f81374db75360ce22ed9b3f0ae87acc7394dca79a722fc7e",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxSeparation.olean": "16ebb67414cd1e58d5960584a65d09e9863116fda62dc143b44d4b730a26719e",
+  "TCSlib/LearningTheory/Minimax/FiniteMinimax.olean": "bb54f83a019b28f3c346c09170034f1354035ef33c7f795cd6352b5b412b7bea",
+  "TCSlib/LearningTheory/Minimax/HedgeInteraction.olean": "6d4c2a9598d0539bb5ed6aad0764ab0ad7209b0c65ee71d3999861711611ca13",
+  "TCSlib/LearningTheory/Minimax/ZeroSumGame.olean": "8646bbf9e13a74edfc6011f8aff6c3b68b9016e167351508ee7983353f433f4c",
+  "TCSlib/LearningTheory/Minimax.olean": "198fdc74f42e2e0ea81887100cee55e8590ce1696fa4461c010e09efee2a6f66",
+  "TCSlib/LearningTheory/MistakeBounds/Halving.olean": "ab3a9625dbbc09b33ec6e43eea9e6be3bcf9b0a4fa42754de3c48c412e2c389b",
+  "TCSlib/LearningTheory/MistakeBounds/WeightedMajority.olean": "1c241be12d94a26449864a3feb64012cbd0b0dbdec981c7219ff8bd9aa802e4a",
+  "TCSlib/LearningTheory/MistakeBounds.olean": "ce24d92350fbf7d496dd55073bc004d87dd36128afa38f796c33e4cb0848d105",
+  "TCSlib/Programs/Compat.olean": "d836fce0371b78bcdc2d27e8614a64a1cac49fafec1be9cce97a5b208f614cd0",
+  "TCSlib/Programs/Light/Assigns.olean": "c1387fd502a19209939e16947496bbc8f7f0f9491dda573b727837fc382e8496",
+  "TCSlib/Programs/Light/Calls.olean": "d07951ec7fc63bd0699de10eb7d517fa78384673e9111a513b0156780f845df0",
+  "TCSlib/Programs/Light/Compiler/CallFrames.olean": "ac473a7f1d19dbe70c7eed634436b0835fe842af4b0e2a234059276f4f18489c",
+  "TCSlib/Programs/Light/Compiler/Cells.olean": "468e495e54ad9953efa965d40c214a66563cc55edd93eaef137470c51c405f23",
+  "TCSlib/Programs/Light/Compiler/Conditions.olean": "6bff5b14745b4159a92a31a5a52af5ad9bd08aba46643fa8cec3c86da8d10f03",
+  "TCSlib/Programs/Light/Compiler/Dispatcher.olean": "24dcd2ba82e99ae061539e30bbed8e996df89080125e1102f26e77f68c519aca",
+  "TCSlib/Programs/Light/Compiler/Expressions.olean": "31c6081768098287c0ab22daa7e1f5489dbb4785cff20b2e4d8d711afecfa532",
+  "TCSlib/Programs/Light/Compiler/ProgramCode.olean": "d7ee82b955c1fe0cc166367eb48c95f577f9fc8c38d2a21124044d8d5b561e98",
+  "TCSlib/Programs/Light/Compiler/Simulation.olean": "cd6028359dc0b4333eed13253ef6ecccad26e87a4dad77a3e4da00b5cdcb0da1",
+  "TCSlib/Programs/Light/Compiler/StartUp.olean": "ac2b5a37b0d8b5199e6f710bab629ab0573ef5f387c741730a73d167a9e30ebf",
+  "TCSlib/Programs/Light/Compiler/StatementCode.olean": "3243b766549e9b420560d82c3bb61edd7ca0232b5c5ec214c413de7788bd8f7f",
+  "TCSlib/Programs/Light/Compiler/WholeProgram.olean": "bd36a9c2ac93a88c95606531417750f31e9d49631a2c34835bea882cfaa405f8",
+  "TCSlib/Programs/Light/Frames.olean": "6e5d27fb4b907a868d303320ca679fa3829bc0c5ecaee259942ab5605e4a95bd",
+  "TCSlib/Programs/Light/Lib/ArrayAt.olean": "86e7aac4b26e41f3b6a1fa26f64d20eb97524045600641b9ed32cb7438a4c3f2",
+  "TCSlib/Programs/Light/Lib/Copy.olean": "ab6717a2286ff1956ca0de432644b5b677118765b295f1f341c74ee5fd2edb13",
+  "TCSlib/Programs/Light/Lib/CountSort.olean": "5f0cbf578eecf4df108ca11ef802f869ba8032550921c6905c6bc70f241c1fbd",
+  "TCSlib/Programs/Light/Lib/Emod.olean": "617a3874f73b658d727844cae77e1d1c9c7668a04b3779e44b90b321449d8b73",
+  "TCSlib/Programs/Light/Lib/Logs.olean": "ef57ce6207299ada75582df47a224c217133bb32cddf098a74d6bb8ffb8916a1",
+  "TCSlib/Programs/Light/Lib/Merge.olean": "1b7b2c132cec704f62d94fc2305c1543ba419fb7546aa89e3eaf2e1cbfea4f7c",
+  "TCSlib/Programs/Light/Lib/MergeSort.olean": "0a892f2d0544449405a8d53145846a100102f7de412491ab067a61e1463d29e0",
+  "TCSlib/Programs/Light/Lib/NextPair.olean": "f12ae7c819f8828852d2accbde434bceca4a589082d042041b6b754e2b49bf7a",
+  "TCSlib/Programs/Light/Lib/Odometer.olean": "e0e383b5ae1c3469171af9e15f6b48cd5bb0946d2aa0199e18605a10db803d78",
+  "TCSlib/Programs/Light/Lib/Pass.olean": "852d9e82989b0ee6522fe249c11e01e8d0f6d2669c711113ed0dc93d4c782c2b",
+  "TCSlib/Programs/Light/Lib/PowTable.olean": "4f3b32d88a92809609d7b06e498533e3610c0bcbbd62782798e1837ebfd17ad9",
+  "TCSlib/Programs/Light/Lib/RadixPass.olean": "9bfd57e09f00778ad3e961e392afbe0e11a808cea71ba4aca8341bd789cc0c22",
+  "TCSlib/Programs/Light/Lib/Seg.olean": "d2035713240df392762de4285208cb058cdae73c17d880481e8519641e76907f",
+  "TCSlib/Programs/Light/Lib/Sqrt.olean": "59aa38612ac54bca0691c447be2ec42f95fcb8e62d3c7af7b3835620ee81e892",
+  "TCSlib/Programs/Light/Logic.olean": "34157dcc159f505b94ff5b1124df04123713a544ded9dfa9db2b2ccf1124b660",
+  "TCSlib/Programs/Light/Regions.olean": "4586fe44269721176461761f6ba3d8717adee915a439e65bfe2cd626c2555d20",
+  "TCSlib/Programs/Light/Rules.olean": "ded0f3f78a9eb1f5669d842c716af8ae0b906f1079ef720051bb2ee4e65cdbf5",
+  "TCSlib/Programs/Light/RunsStayInLimits.olean": "26f7a0d6e05d62f9896b0b27fb0e3a58174c772acc5795884fd33f1fdcb6acb3",
+  "TCSlib/Programs/Light/Syntax.olean": "b1ac1a24e9f0275dfd217eee1dda2d43ce22bc61ea0ef2151f121501c32e9180",
+  "TCSlib/Programs/Light/Tactics.olean": "59e1ff60a4f6a9f0acdb607a29b8ad896ddf49e6526c89c3c94eea655453af58",
+  "TCSlib/Programs/Light.olean": "716a2b97ccc6eed147649ef215914e88e7a0216ca73126ac9d3fb37681df31bd",
+  "TCSlib/Programs/Util/Basic.olean": "a32a938e5fddb61229e60525e6b1eb0434ff62937df3565a38a6aa7f1d844786",
+  "TCSlib/Programs/Util/CountingSort.olean": "cfe9fdd8cf69fb2ad74af6ad1bd4593618b5934fb8ba83ab1c3b7412ddd6b8ea",
+  "TCSlib/Programs/Util/Index.olean": "32f6c3be2c59355503efc67d9faaf8aa9651fab047cfd2d9a99292a6d1d65fe7",
+  "TCSlib/Programs/Util/List.olean": "2528c8788883e2e9f2dcf6bcaae90296d7429f182ad3f9312888dd6eb04ad99c",
+  "TCSlib/Programs/Util/Odometer.olean": "504e91d462dd5dd1785a69d0def491e79fff2b19ac29b71b8e294b5110766e9b",
+  "TCSlib/Programs/Util/StablePass.olean": "ea5e0cbae051ede133c07e933a74d5b113a1cfb5bc3371fd68fa6ebfd2a4ae71",
+  "TCSlib/Programs/Util.olean": "4d5944055498d8e13acf88c30774f0bbad46f0756d765812f242f3b6e9bf731c",
+  "TCSlib/Programs/WordRAM/Basic.olean": "d19d31094d1368b79360f401e3ff7d7a2fe453ded76a9d6f862d5ea7a53c221f",
+  "TCSlib/Programs/WordRAM/Extended.olean": "910f6b9e233a42551131cffac789ac2e1945cbb432c2b048d59400ee223af71d",
+  "TCSlib/Programs/WordRAM/Steps.olean": "f3d128f1ccf5a099df71a27210041a0b57f3af3a75f3b487036eeb1ac08467f5",
+  "TCSlib/Programs/WordRAM.olean": "fc40cf91d47b5208cf6fadfa5dd304eb82b112f90cc0af867a57fd1041a6917d",
+  "TCSlib/Programs.olean": "2de40553a8cc2f4da3374cede414d4ddd8064475c1d80d0758272f28b2337640"
+}
+
+## ===== campaign/status/2026-11-08-mig1-merge/Lean-tree.json =====
+
+{
+  ".claude/worktrees/agent-a0bd528c/Switching.lean": "94c710e696a796a2fbcd554bf15cc4293c51b1e6",
+  ".claude/worktrees/agent-a0bd528c/TCSlib.lean": "d8c9181f54e8e40958664c9bc8afd407bc35049a",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/ArrowTheorem.lean": "97786f1ba91935f3b8d3ff0cf3797aa8dd3dd4ea",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Basic.lean": "c387c1aaa9823d348f55cadcab490bba29781d95",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Circuit.lean": "91a3cf5f8ce15fb39d59cc601a91296d29237ee4",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Hypercontractivity.lean": "21ba916cc2a8c4139ddd208da64ef8fbd9ccbf54",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/KKL.lean": "947ea66d8de7c84b1f05bafa2335eb925e915979",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy 2.lean": "aa97d03e398e1d514624d08186323b9195d0f419",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy.lean": "e1c9e91b55f525a6c783ff9ad7402f8872720bd5",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching.lean": "1a48fd6b276939895ff86a23b9cc285946429f0e",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/polylogIndep.lean": "a3376b4144dcacb55babb9b900a3e89a3032c008",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Basic.lean": "4e6c267b5c2064d1ba89dbc6df5bbad622c0cb71",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Entropy.lean": "4c8dca8cd6ca009ebc8a79146533098e2ca17be4",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean": "4f72321e817dbd045dd0d831c4e4a67ae4cf60e2",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/HammingBound.lean": "33211bb9c5e3ae0ac7238957b4d4852bbb96a9ea",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/JohnsonBound.lean": "f95b4ffdd12b9401e845b14552761f8481a96acb",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/LinearCodes.lean": "c01d5e6384fd6dc802e3d3acc7e24d156835c7b4",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/ListDecoding.lean": "5cc26cc573dc676e18743629fa94ae6396c3eab4",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumHamming.lean": "335ac0f7468df86a03d2dfff82e6b33033145afb",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean": "f72b124db31888f6cdb326f5a101666424dc895f",
+  ".claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/SingletonBound.lean": "1b30a50d0ef27956abbc115526198ed8fc0c8552",
+  ".claude/worktrees/agent-a0bd528c/lakefile.lean": "5d5f55909e26545190595b7ae83c0fddea9ae9fd",
+  ".claude/worktrees/agent-a0bd528c/webpage/Main.lean": "09f131b9a2b0fc292f740658e79520f763e869ad",
+  ".claude/worktrees/agent-a0bd528c/webpage/Site.lean": "8856940153b42b9222fb504d785b2de6c2ed5f51",
+  ".claude/worktrees/agent-a0bd528c/webpage/Site/FrontPage.lean": "f69d845e0f6c738e8f65ecc19f7e3719390b501b",
+  "TCSlib.lean": "447e496984d14fe2ead0cbc13373782189e3f799",
+  "TCSlib/BooleanAnalysis/ArrowTheorem.lean": "71ddbd4043fe683cadb0062911ea51a205cda1fb",
+  "TCSlib/BooleanAnalysis/BLR.lean": "c979c59b1c9053e1aba59f487a13e77dcf7962cc",
+  "TCSlib/BooleanAnalysis/BLR/BoolBLR.lean": "4d580fa030aa7d83ff9f94c64c0290a2bf449d69",
+  "TCSlib/BooleanAnalysis/BLR/BoolFourier.lean": "b2e7080ae570d12d65eb82c3cd152ece08a0d3d0",
+  "TCSlib/BooleanAnalysis/BLR/LowDegree.lean": "a723c54e885afd4e1880fd721d5026f76cf6346e",
+  "TCSlib/BooleanAnalysis/BLR/ZkBLR.lean": "9989377878de510721cbb337f9448ccad79683e2",
+  "TCSlib/BooleanAnalysis/BLR/ZkFourier.lean": "324fd90957fd7d3a4366b64cfcbde37baf21ad8f",
+  "TCSlib/BooleanAnalysis/Basic.lean": "02e7b7cd6168523b45f1ec995dcca77680321f72",
+  "TCSlib/BooleanAnalysis/DecisionTree.lean": "bb368711aa48706a5d7d0b4f1a0b862c38ca674b",
+  "TCSlib/BooleanAnalysis/GaussianSpace.lean": "27d23fcb034e6e4e3894772897ad1085c07d52c5",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Anticoncentration.lean": "e74c5230c489764170379a182e2bfc1f4008cc75",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov.lean": "cf734ef970b3e8720f9746ad5d8755316c716316",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Cube.lean": "6c7384e61ef1aeed0fd76f314a32814bf7c4e466",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.lean": "2394077ecc132ab203f4ba7149f678a1a4870131",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Interpolation.lean": "ee511a8b70f00eff1d0a9113cb59d96e36187c4c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Noise.lean": "fd89524ed9607a03383f213c984746ab29abe444",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.lean": "c844274be824e4cf2e4c1e521711982aa5061773",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/TwoPoint.lean": "ee7f37f713d4388209b8f8c7e413064ab2fc3cf2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Bobkov/Walk.lean": "e1c76f7e37a27186d89db031343c0a59642a724f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/BooleanBlocks.lean": "f80bc782f51b88b0b364834d5ac285b6b7756eec",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell.lean": "4a7be7a43577e8291babbed4466b91b8c6f30632",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Affine.lean": "4bf5502404e2d4d9a1ac601c93395ba5e9c8e7c1",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Bivariate.lean": "67a1fed5bb77ca3adc54d828d374c8290c6eccca",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Curvature.lean": "8d479e6ab2cc35b7492a81bb3fd3a78442ee7b88",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Definitions.lean": "9ef40e06d62cdab3ccf4995e211fe244334bfb23",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Halfspace.lean": "61690185ffbe5c213ef54361d60c338e8415eb56",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Indicator.lean": "f5474242ffaf341c3c3ed25a23e73bd23407c6a5",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Integration.lean": "28a257314c4e618666df2fef359ae697a892e447",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/Interpolation.lean": "be0bb9f4b8c495b7464741f6e08fed447e0429fd",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Borell/ProfileCalculus.lean": "9e470a42c1bdd916f4718b49915af92fd4ac2583",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Condorcet.lean": "a21f5bf6ad9c5221eba6ae16fdd6653efabc767e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Definitions.lean": "d66b2ca4802d0e7708afb6e6aa1da11533f0fa8f",
+  "TCSlib/BooleanAnalysis/GaussianSpace/GaussianBobkov.lean": "6cafa2417486751ebbf9bd804d483deee5a8d4ac",
+  "TCSlib/BooleanAnalysis/GaussianSpace/GaussianDensity.lean": "37dc51c431c233e950579a11d4e1849fdfdfe905",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Halfspace.lean": "47bff326245cffa187b24a411da1983ad090ae4d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite.lean": "6568abca06ca17e8a5a1b020eb6ca4c2ad56ba23",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Basic.lean": "4ae599286b4d86fe2cadc2473b7f6ea31bb0fd83",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Basis.lean": "8b3d2dc186ab2424ece42c4be2fdd225b1ad0980",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Degree.lean": "0ad57f107888a695a733e4c6f836fc82e03b3c46",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/GeneratingFunction.lean": "39338db4fa99ef81beff0210b2926fb3e3036d82",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Generator.lean": "8d888d5ed9a168918f948b31b9144c7e34131853",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Noise.lean": "542462606a52d03da5c95d7b02f0d091fc394ef9",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Orthogonality.lean": "231114e636b2716157cf6548f94926311dd1a470",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Span.lean": "385755940772bf9ebd6cefe12105494a758c05b3",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Truncation.lean": "b186e2ce9e63873e5c404a8d9449fb789a3ad3c6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/HermiteDefinitions.lean": "e25e4b4bdd0c1be5c6156a5fdaf032878ebde0fb",
+  "TCSlib/BooleanAnalysis/GaussianSpace/IndicatorRegularity.lean": "2fac8b6a36e6e9d9a7ab57aff50a0cd4de8dc47c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/IndicatorSmoothing.lean": "85c4616b335e5e9ddac10682886039119382b49d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InputMoments.lean": "b201d28dcb592981b095a60a3bca1319634b18a8",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Inputs.lean": "1bc3c92fed9d001b263775681745b4621b48e4d6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance.lean": "00c40fac09e3b6d0ce7b7ee342473b2f9afe14a4",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Coordinates.lean": "6549b675af8a25d281e9897015e04d8935fe19ff",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean": "21663df4a974d4ed77112750b3b2dec4ddd06dc2",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Moments.lean": "ec5b19c57f52a4e9c59a758eceb8903b5525fbd6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Perturbation.lean": "d6de7d5ed19a28e794dc8f2bf812928946eebf3c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Replacement.lean": "add331d745519ce26940d64bccc7b794034ef4e6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Sequence.lean": "73c432b0d8b6fbf179ed111dfa02e9c847c08a73",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.lean": "31d2a056d75dd77c05ad7944822c7464b70de094",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Taylor.lean": "6811de3e25ed83cb52a9dd1926d516a3c7fbf581",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdMoments.lean": "5dc4f380322509530c1db8205cf36c4606495128",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Invariance/ThirdOrder.lean": "969145b9c1e48dd5a35c4fa03b3fd2cb545fcf66",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.lean": "23f2bafc804f06a487c57a867bf1e50af6c02564",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean": "d39ddaa869fcdab233bb3e5bdf698e8866f53c31",
+  "TCSlib/BooleanAnalysis/GaussianSpace/InvarianceTruncation.lean": "af80ec1ecc4b955c066c7e4533624e84006f112d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MajorityIsStablest.lean": "e1ae5c14025877cdda90b86afacb4df6603f8e76",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCut.lean": "8cd2fd9cc0446d1c4a906301c25f13585ec59347",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCutAlgorithm.lean": "820ef1e2dba485147d318ee7ad509693e62d8d81",
+  "TCSlib/BooleanAnalysis/GaussianSpace/MaxCutDefinitions.lean": "19f1fc200a792df499232c54d5fd48b183c47aea",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise.lean": "82513b31ead116d58190e0f7498e3f83f2d60cc3",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BlockCharacteristic.lean": "671f6450dc5f113d5804b3861c129e9a5e726f24",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanBounds.lean": "5bbd4ab2b02ecefea9491a48bb9b874681de6e3e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.lean": "8c4bac55ad727bacbb18bb10d1d92a219135bf24",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Continuity.lean": "cb7b6184d98f137bb4a806babbcc09cc13a30952",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/ContinuousBounds.lean": "99a62a98d5b13e5e626f30f999031716c39f7e63",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Density.lean": "3121035ac0afff8b9138c4edc5ace4d6d96da17d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Duality.lean": "0746b9940d385d82473dd0a39d7375c7a2b7a5c0",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Exponential.lean": "4b358a1a33ef2472bf4db159a8cd211082afbb35",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Exponents.lean": "68bc9cc2cf1ae75fe25f925ece91a25db4d7969c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/FatouBound.lean": "20a704c8b17a153e58c31abac1761a0dc77a4924",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean": "5bacff57619539c6f2bd0b653fcfd3b7d2662841",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/HypercontractivePairing.lean": "29798405d7766309c3a712345fd7476bacec3e94",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Kernel.lean": "576074fe83f23d718fc7dcde5be4e61f71086b43",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Linear.lean": "1ece7abefd8b0ca4b48ac37a6e7d3969c43ace19",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/LpBounds.lean": "2ae9730eadd2000b6382440a62202c50c9db7155",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/MeanBound.lean": "7084cdfda6ae9396491728d602b976fa63390041",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Polynomial.lean": "e8b4d51c6ed702f6bd71e15097d186212cba2d20",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/PolynomialApproximation.lean": "e0734ed98046159867ec789a81f725c362595b4a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/Torus.lean": "3dea84407e08dbc6efe74ba0f3751b8fbd62b33d",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/TorusApproximation.lean": "0b40cacea0a1aec5b6c22527e48667ce924934f3",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Noise/UniformTransfer.lean": "1b82f2b9080137efa09168b2aa52761a301190ae",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NoiseDefinitions.lean": "06884dd6e00649b5f45848ac1cc5b5dc415423b4",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NormalizedBlocks.lean": "53696378f0a8dae45e3999ffb110d82fc17ac2bb",
+  "TCSlib/BooleanAnalysis/GaussianSpace/NormalizedSums.lean": "8b1eb8f3ea7a760ba0b974ffea5908b128b0d868",
+  "TCSlib/BooleanAnalysis/GaussianSpace/OrnsteinUhlenbeck.lean": "c4491c28eaaf686976c2fed9ad1b980b7c034c8e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductBounds.lean": "9f130efaa6c06ea09eeba422eefa4ad4ee0f50f0",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductDensity.lean": "217db9a008d8fb68d82aab3f6c522fc9b4396da7",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductDifferentiation.lean": "7ff445231b2257edde2dd08192195eac0de0094e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProductHessian.lean": "d88d7827699028844964617b7e821789eb25104e",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Profile.lean": "d47038ef8d1d369ff6c52c1eba8db55dd6bc346a",
+  "TCSlib/BooleanAnalysis/GaussianSpace/ProfileApproximation.lean": "5c3c7857bafabde84996fff26b35d809e0c6a391",
+  "TCSlib/BooleanAnalysis/GaussianSpace/Rotation.lean": "bbe53250d5e5fb16f0f0dd852dc1998c21d069b1",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SmoothVariation.lean": "28d1b596e63bd304901be58efc1af746767de7d6",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SumInvariance.lean": "b0fe7693ab84e3c3cbc9dd6afcb62d09b354a79b",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceArea.lean": "e34d3a3b37f10856dd073a4722d3a55fcbd38460",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceExamples.lean": "b95d798112b91fbe376c139936051dbd4ccc10aa",
+  "TCSlib/BooleanAnalysis/GaussianSpace/SurfaceRelaxation.lean": "8c3da9f9d9ae02abb74e800d1aa43ac259e319f5",
+  "TCSlib/BooleanAnalysis/GaussianSpace/UniqueGames.lean": "4b124b707658c00bd3110a1fcc6a901d27aa3c3c",
+  "TCSlib/BooleanAnalysis/GaussianSpace/UniqueGamesDefinitions.lean": "caa306c665a931e0f3123009a8b993d1b18ab3d7",
+  "TCSlib/BooleanAnalysis/Hypercontractivity.lean": "0815184a6744d9ebddaa15f1dc9055fcd1cc5ded",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications.lean": "46bc1b08161c08df414a35bedceea93935012f02",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/Influence.lean": "ef93a348917ca13240edb8ebc9991ee4db495c3d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL.lean": "53a64bd706f41cecf302ea695c5c108f94e46643",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean": "702aac0a0144939df6810765b27886b463000bdd",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Concentration.lean": "593edc629ccb1fe5a3d0d33b9a1dd65a905a0dae",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.lean": "f8f247d4fd58946b3dd4b0b480ea847ecda46840",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Elementary.lean": "88957681e210558d705faa005ad2d9b7ea5436aa",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Junta.lean": "e796fefa6604ef75a4f85c8c04d85e05eb94058d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Rounding.lean": "e7f13c04ff15ab0ea6ca9c010aa959b1a3d223fc",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean": "fcc8e514f482bf3c36e6de809e47a7b7b6fef135",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/LowDegree.lean": "8279942b9e62c4a7bcc73e81234119486c72c40b",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Applications/SmallSetExpansion.lean": "4758aecce2ed829074b493e3857a92a9ceeaacc8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Concentration.lean": "bf0aa3c333f6dbac4a45c04d436a07516165296f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube.lean": "3d655c164e27d965839516815bccf07fa180f33a",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Basic.lean": "079e710aea412975f5c5f22567957270a5e0ab43",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Bonami.lean": "ca7f6537470d3b15a9deebe6c3a279371a661374",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Decomposition.lean": "70504fd624c3b29ed67980505f4721fb20d413ab",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Definitions.lean": "7f8eefe5cfb43acf0cd2e1f9911517a3f53d1f85",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean": "fa427e5bcf64a6e783605fee88b83688a176f5e7",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.lean": "b31a2e87ffceab6507c506fe445ff4452bf62bff",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General.lean": "6ae877a66f677246c4b29d67368960babf721133",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Bounds.lean": "944a8da4714dceaedc5a4c812a6970039d8a3149",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Duality.lean": "73c7e9be8c66342169552a23f13e8e43161eb405",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Kernel.lean": "9d97985746707c746347995eb57bce11d3dc5cc2",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Tensorization.lean": "ce74755acd84b99077bf6985c72c69237474ec00",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/TwoPoint.lean": "d3f437f6b175380687640af5f30c31c06a1ff6a2",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/OneBit.lean": "66381373a85d18c7d297cdcc326dd78a284bcdc1",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse.lean": "d550ddf9c16ae203c37a062b292a87cd60f6be15",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Basic.lean": "33fbdbba563f2321f3229601ea681048d1e3e86d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Extension.lean": "c999b9b7a695d57c1efb0c608ae9de5eb77a7d54",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Holder.lean": "9f69d99e5ee21a2c5c7a2661c1866182592c66a2",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/Tensorization.lean": "f804d37cb56f109b088bb0d14a13441d1c749ed1",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoFunction.lean": "988608296bcef53f45511b4d8be4c861d9acc302",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoPoint.lean": "968bc2e34d836c3ab2e542cf18557ebaa9cabb9e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/MomentBounds.lean": "1b42080f55da44de6ef972879639b15b5806c0ab",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Parameters.lean": "103bb3e28e2a0a9721a8599f00c6b9a7f05fb215",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products.lean": "6e7d6fde6efe14e127f5d1940aa58e764bdc68a0",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications.lean": "92fa7b3efaa4f093a5e73317d1c0a689c439d1c9",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.lean": "dcae90fb54e3ded044bf7c191b954aed8b244f16",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Basic.lean": "de0fb279a462f86ef7975a17cb6d22c3d56f81d8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Comparison.lean": "52acbd43c6e55611eafa1387680f893b0f52fc41",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/General.lean": "f5856def36093c11e232cd068545a2e4aabfffe8",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/NoiseKernel.lean": "b06f08e34a244decec1194059ca92d308f6e2f09",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Norms.lean": "abeec729d896e88bbee184742a97956c5cf7a59d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Products/Tensorization.lean": "9fc01f7a70df8e4a0b4127c80084ab25ec752042",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables.lean": "01b2472adefbfc8e6eeb8c7c6489f46aa4fb025f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Basic.lean": "b174283ed652d0ad2254e6e81a9fbec3e993e14f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Discrete.lean": "dbd62817981d2477f0362524e7befa29a6eb348e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/FiniteLaw.lean": "2cd0cc8dd1d2fb5ed9e5998549dda2f696d8bf46",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/General.lean": "befe346565f0817ff8c8cb317e8317dc8c840c90",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Moments.lean": "ccebb9b3590667f98613ff97911b2358dbccbbaf",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Norms.lean": "2955db5b868c25ce40886e3eb3f3f2afb1515a53",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Polynomial.lean": "d4bbd0db03864128f622bd0ef09b719eac3b7287",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp.lean": "97ed2f074f22f43104f9a7389c53854fac778b37",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteLaw.lean": "1c3c15086403eca1bc2bd2f893aa4e4d76156592",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseContraction.lean": "062861a2e67e89af5174ec8f38e1ef27a5553898",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseDuality.lean": "e9d6cd9b21d0e242e9db574ada7612854cde5429",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseOptimization.lean": "52d598dadfe1334b61adb5fae8a1adbdce70a68a",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/Parameters.lean": "cfb7bff36cb58d169f8dd86790626dbb576bc482",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointCalculus.lean": "f67a2f13f7cc5bcd3bc5233e14cb823c63785889",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointContraction.lean": "75df6461f75bb0343e1501b7b3d39fe91b933dfd",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointLaw.lean": "b24a9fad83031ffd4200f126d1daa4f0f5088f3c",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Symmetric.lean": "3d60f75e53ec0b92aaa379fe7605145e8730d23f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Tensorization.lean": "a6169581e0f4639ae9a8ee0ef64570d5d6bc8970",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization.lean": "a812b54d43dc7845d545e0186197d8d555f4d2f3",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Basic.lean": "df70b7ab2c98eed84305aa5fc029c8075825f15a",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Centered.lean": "692eb48e97df1293a80062bd964bfd58748c918d",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Contraction.lean": "6e49bd7e3e0dcb49c480fd0066935da7e9856f1f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/Definitions.lean": "e7585db730ed9b56cb7a7838e516088a9974b10f",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean": "e9896bb08121b4af7da343f2f363ab411e8f7d17",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.lean": "412e1e8d30d25f021b8fe213c56c00b9159aca2e",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds.lean": "aa7080611ca69a3028def731371c04153edd0cb6",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds/Definitions.lean": "eeebefa75c4f80d1a6657886073b79bf9e222f78",
+  "TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholds/General.lean": "7f1c581f2d0772d2a23088dd6e02737b861fbd89",
+  "TCSlib/BooleanAnalysis/LMN.lean": "d7da7c8209485780d4d5ef4797f5095c211daf52",
+  "TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean": "339cc7faa9cccf94e4fd16fa4ae489aa47e9d656",
+  "TCSlib/BooleanAnalysis/LMN/CircuitCompression.lean": "7cfe66a435d0856b4be70907230bac3ab46df33e",
+  "TCSlib/BooleanAnalysis/LMN/CircuitHelpers.lean": "1d3a36744008bf6fa62a6a25fad84d87cbb3d571",
+  "TCSlib/BooleanAnalysis/LMN/CircuitLayerReduction.lean": "587424a997bd195ddd42c52fc3613c98002bec73",
+  "TCSlib/BooleanAnalysis/LMN/CircuitReindex.lean": "51d2da9554113c5d7f69d1eb27979efff90700bf",
+  "TCSlib/BooleanAnalysis/LMN/CircuitTreeManip.lean": "ba3a5815fdc34ac0abb9eda9e8e02edd3e81e115",
+  "TCSlib/BooleanAnalysis/LMN/CompressionStep.lean": "1da983a13b0985d1fa5507827f6ca86743c95293",
+  "TCSlib/BooleanAnalysis/LMN/DecisionTreeFourier.lean": "71d9c816fdc8c30be32ec60b3639ba466b0879c2",
+  "TCSlib/BooleanAnalysis/LMN/Depth3Switching.lean": "f388c3a9fda7c1b169a9d6d25f153ad0ea248aa6",
+  "TCSlib/BooleanAnalysis/LMN/FourierConcentration.lean": "b8dc93a83fd1d0147df1f6e118c8fd3f1f5f6c84",
+  "TCSlib/BooleanAnalysis/LMN/GateMerge.lean": "fb062f58ef76f98a4d9d8ba876aad382a304dedf",
+  "TCSlib/BooleanAnalysis/LMN/GateSwitching.lean": "47b98c32c553eea8613ebd6d6f677d3bdc2ddbbf",
+  "TCSlib/BooleanAnalysis/LMN/IterativeReduction.lean": "d94902dea6a03c0207a9cb4dff10400574e71003",
+  "TCSlib/BooleanAnalysis/LMN/LMNConcentration.lean": "1349d84315f4fc2da5d4a137b17202073bef45d8",
+  "TCSlib/BooleanAnalysis/LMN/LayerReductionHelpers.lean": "146723fc73d3edbcb5a87e575632038539c74140",
+  "TCSlib/BooleanAnalysis/LMN/NormalFormConversion.lean": "a9325369232c7541caa67b0b6434e192a0ad53cd",
+  "TCSlib/BooleanAnalysis/LMN/RecursiveReduction.lean": "911a9784ee8e7664772f6496c54f0daae1f7e515",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionCardTail.lean": "21672539485ce63b9c5b4c8a326fcf6dc9d3d1d9",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionCompose.lean": "91efdeadd4567aeb56a10741b082a8126ef9676a",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionFourier.lean": "3a7d04f40538d8a88d8672382b0c79cc07396214",
+  "TCSlib/BooleanAnalysis/LMN/RestrictionMonotonicity.lean": "f75132e41337273f9dde44b93bf9e711abb421d9",
+  "TCSlib/BooleanAnalysis/LMN/SwitchingBernoulli.lean": "0aa3075240421eaf753a470883574214218e1166",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky.lean": "5bf7375f55f9bdfd9927bd15c421f1f7441e6fb1",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/ACpGates.lean": "be52142d6da1c69c453e84d183713d5467af21e4",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitDegree.lean": "12be5f69768677fcafe9f6eb4085918704e44265",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitSize.lean": "f5b0ed5c27339319177558fd1a4934db32446237",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.lean": "4feed5bdea9ab03ceff2bbc3a67138f0024cbe02",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction/Completeness.lean": "d2d31bbc74f702fe85e32cb6eadd43b6c286dde7",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction/CountingObstruction.lean": "97add01cc3ba9ba2e401b19e2b0b7f610fc7d22a",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction/SquarefreeRepresentative.lean": "b736d490662a3b7b997e0720d179e765847dd94d",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra.lean": "cfcb1e57849c787cf25b31e99b2443b26e085c4c",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra/BadCount.lean": "d053d88c871b5205efff8b6fb0390168ec399051",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra/Counting.lean": "e27794ff87f7706747c1018e8483557a4e04b2b5",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra/MultilinearSplit.lean": "f57bcd5e856cd17e0a8cd97d146a917e51b71279",
+  "TCSlib/BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra/RootCube.lean": "2282c2bf32f1d49f484e64614eaf46a8ae566556",
+  "TCSlib/BooleanAnalysis/Switching.lean": "075ccf67192263591ae8b15292161748d393c48a",
+  "TCSlib/BooleanAnalysis/Switching/BernoulliRestriction.lean": "9d35a321e8983d01afb489ee15157835a394f281",
+  "TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean": "96af211d3d5637ac73102e4f1326ce94e4200f4b",
+  "TCSlib/BooleanAnalysis/Switching/Encoding.lean": "a5ba5fe3f414915d2bac6bb222cbd9219b0e34f3",
+  "TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean": "3644922ed0238516ad75610088561c06279fa38c",
+  "TCSlib/BooleanAnalysis/Switching/Restriction.lean": "9ae7527f6942efd3be20c06d3edeb4a06a6dcdcd",
+  "TCSlib/BooleanAnalysis/Switching/RoundTrip.lean": "9755c299a820293684379f3651566427c0a2c8f8",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions.lean": "db3245e7d004cf966aa4931465d7f086be14e9ae",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/AffineKhintchine.lean": "e9ff86b56090cbc675d4f617f94a6d47ab1360dc",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Basic.lean": "cfbbfaec9a0991c9d8733798b715a394e3196e91",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/BitFlipSets.lean": "cf0bb015da5025f80221c5229ea6ef2c9031f9e4",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/DegreeOne.lean": "7739d5a9765f7f6a9c9f4f14293b6120ecde2bc6",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Fourier.lean": "7ba065bf40ab9f35da780fd56a6ba04e855b2b52",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Gaussian.lean": "2d997c9a06b40e8d82011a14f2525ba527542eda",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianPolar.lean": "961f9d53d4a7f981410476633c078598feb8a5a0",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/GaussianTail.lean": "69ba25413f5b8b43df54651003ca78a4244ea260",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/LinearThresholdInfluence.lean": "b8e90466bb5a2565e32c936bd4177b9076ed9ee8",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/LowDegreeNorm.lean": "151f54efa9ebca88a9cf1474e5817f67398f3dd4",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Majority.lean": "1ce3c00fd5935ee97b33619efe123c9914f73d4e",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/NoiseStability.lean": "066305f52dfa8da83cc6e854e816c2bdc78f7cdb",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/Polynomial.lean": "77e6e966cf739818630f8a04180c73ef9c266616",
+  "TCSlib/BooleanAnalysis/ThresholdFunctions/SparseSampling.lean": "2b5a18131c05d9fd3837d34409a1f4b5cefecb76",
+  "TCSlib/BooleanAnalysis/polylogIndep.lean": "6603772ad4563435486db67713d7b23002b9822f",
+  "TCSlib/CommunicationComplexity/DeterministicCC.lean": "cf67295a4fcd71a0c7ef6fe55ca470c5a4bf07e8",
+  "TCSlib/CommunicationComplexity/DeterministicCC/BalancedSimulation.lean": "459afc4941a559fe8fe61945404cf2137741bb02",
+  "TCSlib/CommunicationComplexity/DeterministicCC/BitString.lean": "e91c65f206c50a01067e702081603f364c5c92b7",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetBasic.lean": "cbd8b03016229f1dee5d82089a6a19c5765cf837",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetComplexity.lean": "c765135a82f153430228cd3b305f2b14e05ffdb7",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetComposition.lean": "05e563e84d89d89e009c9080ec5b515f21d54b56",
+  "TCSlib/CommunicationComplexity/DeterministicCC/DetRectangle.lean": "874c5f6a6edf1b9b11cd58f92f6e569e8a6d3208",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FiniteMessage.lean": "53bc38f0a34c18c72af75180636d1ec865ae7118",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncDisjointness.lean": "35c68dc6c588f88c0b3fc89e2e063657607b2178",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncEquality.lean": "2c2b31110c5d6705b1d644e8188e592cf96bd239",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing.lean": "11fa15649bc3286846f1e8cd8183abe4396fc1b0",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/Basic.lean": "3b935850bf1022b4d2cc37db0ce23ec68edd107c",
+  "TCSlib/CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.lean": "15fba906e5be6eac91656f0936c9271585f06454",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Hamming.lean": "8c0a41e5ca1a1fce83fb85cc8ac3fb6471fd8547",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Helper.lean": "4d96d287c3f4ab36ea8da72bd15ba5ea198f1d71",
+  "TCSlib/CommunicationComplexity/DeterministicCC/OneWay.lean": "a72c0623fc723d7dd84d43b41516facbdd9154ac",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Rank.lean": "8db2002ffb1d6f774efdda7e4243f30e81372ba6",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Rectangle.lean": "b82f5eb16fbf62a9f09360d04f765c1eac81eb54",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Subprotocol.lean": "9644973011cb3199925a27ca1afc55aabbf20c8d",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Transcript.lean": "d16639deb79804e97a814ce69e435b44ca0fc04f",
+  "TCSlib/CommunicationComplexity/DeterministicCC/Trees.lean": "34821d3da6597b5745cf18742acf3bb357dcac0b",
+  "TCSlib/CommunicationComplexity/DeterministicCC/UpperBounds.lean": "5169d9b9571fb4faa218bec1d9195bffbfa2314a",
+  "TCSlib/CommunicationComplexity/NewmanTheorem.lean": "a984025d2707f0794b0240554cf6e2ecbfdeeb12",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/CoinTape.lean": "74cc90db7bd8c81d740aab674cac6999aaf87893",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Comparison.lean": "79eea6dd1ab96ed2bd083375cb645d4b97ceabd5",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Derandomization.lean": "9279212f1ad3b1c0f9854bb9d7ec8483b08b6ca2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Discrepancy.lean": "28bde748021ef3105d17245ea601d7f0e5323888",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy.lean": "a57e9d9178175900764c2a1267fa08e1d381d0b2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/Basic.lean": "388ea01cdc84774af4592d2af03039219f3896cb",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/ChainRules.lean": "ec8ff0163b4089efe954fafd78d80f0a6e023010",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Entropy/Conditioning.lean": "804e5dc34b9513a227f4b878538ed2ef93f655e2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.lean": "868d2390519484451bf23404cef593a1e621990d",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound.lean": "9a2f5d640fc1a2906dc0546619b2cbe954fb5643",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/AliceYFalse.lean": "8b97fbbc745831854fd5de8b3e3ab285b957a071",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/CoordinateVectorModel.lean": "79d0c97a75dbea4711ff11890c78ba8f813eeef6",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DisjointModel.lean": "9992f9ba9ea0c87f83a97f91b3a9a974f5f3406c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DualHardSample.lean": "b1fb365cf1d8359c2380d913ad5dd45df30b9bc2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DualityMeasurePreserving.lean": "6a9769b1475cd853553c71cdd934b458d22b7b75",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardDistributionEvents.lean": "a5fe941b8309a3f9b9e0d2ef8ad425ac69f39511",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardSample.lean": "1f7d8ff22ac027dc6ab00a55dd8cadee61a28807",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/Headline.lean": "95602ebd41fa7c6cf306f330385760a95edceb45",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/InformationTerms.lean": "4a0b83646beb17e70097e852230bc8b8689dc622",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/RectangleSwitching.lean": "07bc1ab175c894d4a9c6950d841f708a87636326",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/ZFiberMeasure.lean": "c91b2b2a467fad669dcaba5b87b37627733c4dc0",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/ZVariable.lean": "4e5eb88e882dd99067209e778def171241c84daa",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncHash.lean": "b60f0adab89ba7b061a8b82bac56678a49a1bdf2",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/FuncInnerProduct.lean": "26d44d7e4ad8f5c74d2f5edf6a318acb9a5adf62",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/KLDivergence.lean": "4ac46ba8a8e40ff936b7abce3aa8adeb80b40ea5",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Minimax.lean": "a2d7e3ae1bab99cafba4d1b17afd353a356ea01c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Newman.lean": "d636fe9528616c9c9e0d99c94642f810c5a2ecfa",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/OneWayMinimax.lean": "08aef9636876769ae735ecb52527abd3b202567e",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/Pinsker.lean": "ea5e00f0a8742d19d10db796cb734f61077a05c8",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinApproximation.lean": "e0ec5bbef778443eedce64478156d566dfb43ece",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinBasic.lean": "892b2af084d87f5a2938f05cbee493c8e61e574c",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinComplexity.lean": "c41b0df31d05b4690a4500d17e50a23a6e4e36a3",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinComposition.lean": "e786903998a42fcfa25c04ee4f5006abff33de1d",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PrivateCoinFiniteMessage.lean": "796a9d9417fa2b76bf46b169735a618693a9b23e",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinApproximation.lean": "172ab99853b43764f0ecf47e01992cd7a3554ed7",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinBasic.lean": "e0d477174f9585ae1b04f090c7a5b8446d4f7e66",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinComplexity.lean": "3a383697884e0e261ce835fccddcbd6fad346603",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinComposition.lean": "c16ff1c1c3b528932b8deddb41701e5f061eceaf",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinFiniteMessage.lean": "3353628eaa9375c12234b18692ef6949cf0ef34d",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/PublicCoinOneWay.lean": "49b3727b37e3122355702c9ca715a1485d075d22",
+  "TCSlib/CommunicationComplexity/NewmanTheorem/TVDistance.lean": "9b8bd550ed98fca0950f09c73763e4cb524ce0c9",
+  "TCSlib/Complexity/CircuitComplexity.lean": "a489f7371b6599b5f64c80e15a97603a65d5a509",
+  "TCSlib/Complexity/CircuitComplexity/Adder.lean": "53e226200a08d0776c4616a18922f32dc8c744f5",
+  "TCSlib/Complexity/CircuitComplexity/AdderLanguage.lean": "e932b5eeed492d41bade6abe68330a6c684bb80f",
+  "TCSlib/Complexity/CircuitComplexity/Advice.lean": "d14a903d564f4a307014292a03a802ecb8fba1bd",
+  "TCSlib/Complexity/CircuitComplexity/Basic.lean": "81243c43e95b462aabe620b579a4a2c656507559",
+  "TCSlib/Complexity/CircuitComplexity/BookModelBasics.lean": "cd01f0e4e1cacbed3a1466f062c72d690fbbeb4a",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEval.lean": "3c272458435228b7d5e2248bac231856151e2846",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean": "a3c1bb609424d8a3853c80aac95802d3e50500ea",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean": "77876e946b6ca13be71283542714ded4769bac46",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalNP.lean": "9ae2c0bae6f9f8465e665298371d1d8fc90decee",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean": "34b86d8c632ce416f60a55a1670cf57d9b33101a",
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec.lean": "d740d9ceb47b0d4f3c9d640d3f48a2af065a9791",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSat.lean": "a18495b6a1c81444a1cfe90bbb08a6e9b916457e",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard.lean": "a97290fdac9380ff95c9424d5d726575a0c545f8",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReduction.lean": "30832d2802a4f359f958606c8c416023c486ea17",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean": "b96b8d3378e0ef79b2d589d50241f1def977b7ca",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean": "2e06b196cc87a6c5172c197cb4f182e1a14776db",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec.lean": "aa9536e83f657ee4bd8257ff0b601e73c608433c",
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean": "a08e46f25cf03abb1cc852883ce0539b35f3cb95",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean": "09c882563ae4e30e952feadba4c6352da86e89e2",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSat.lean": "aa8839cab545b710baa21c09b39a642f07691df3",
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang.lean": "ec785894b127fd98418fdccaa09ba81baac6dcab",
+  "TCSlib/Complexity/CircuitComplexity/DAGFanin.lean": "7b4bafd41c0fcb5b06b765cb0f2dd565927ea390",
+  "TCSlib/Complexity/CircuitComplexity/DAGHardFunctions.lean": "61cdb27684db142dfe5c0729bace05f950ade791",
+  "TCSlib/Complexity/CircuitComplexity/DAGTransform.lean": "d6312c3f9e14b29fe89478e129509cfda60c0aa6",
+  "TCSlib/Complexity/CircuitComplexity/Encoding.lean": "5f1a6241c90af18e6cc0fb0e2c2f495587d5e3ff",
+  "TCSlib/Complexity/CircuitComplexity/FanOut.lean": "9b8f73c06e053e914df623401f843a0d10dcd0d7",
+  "TCSlib/Complexity/CircuitComplexity/FormulaFanOut.lean": "24b12298db9998b83b1d1ac022b8e2ee38522522",
+  "TCSlib/Complexity/CircuitComplexity/Formulas.lean": "13516b85a165627f3c3d210ce846192a43f00a85",
+  "TCSlib/Complexity/CircuitComplexity/HardFunctions.lean": "a461946de82f00c562509e1d8b14c04c402ee449",
+  "TCSlib/Complexity/CircuitComplexity/HardWire.lean": "8db17f2d9a6cc3d2bf6def7492590fbae2170e1a",
+  "TCSlib/Complexity/CircuitComplexity/Hierarchy.lean": "39c78b5b02b5b2cc431ae106df04d8dde6ba6d3d",
+  "TCSlib/Complexity/CircuitComplexity/KarpLipton.lean": "ccfb8e432bb7afc862d632732dd06920adfbfa19",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean": "d13c46fa3edede18b69c7dd4c2f98ca914749d1f",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch.lean": "0dca7eb968aa7ce6effa5047b353269c20c96378",
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean": "bade38ea6bcb1257d568aede64abacd84d7515cb",
+  "TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean": "49851754cbb1904a1e1c2bdc51d92cc6e03c68a5",
+  "TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean": "e9627e83c26918def643176706878a075bb770fe",
+  "TCSlib/Complexity/CircuitComplexity/LayeredPPoly.lean": "e800c7f423a76b226bc7eef29c8146d7c29347a7",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceTableau.lean": "c44524c3e716e3c7658f61e363a365e7dba55302",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront.lean": "8be23d7c8e3845763d55b36c4bcf80e7f768fb41",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniform.lean": "67096bf28d4460fdc79e877c129baa184b81a5d2",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj.lean": "925274f9fedf528e9ee9deb63ce7ffbf1d8998a1",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic.lean": "c00d66e81c94440b557eece69b00b2ce69184fdf",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon.lean": "d6b6dd088ced87bbb4e4ea3ef0e6ca1e07020c95",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample.lean": "e7b6cc11cb358bbef7d7b9cc26f0d5b1255fe620",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan.lean": "299c4ffec36915a9e342335b88cb7cd7b0de86dd",
+  "TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.lean": "d856700cf0e1ee63a922ae0e94e1d8df185129f6",
+  "TCSlib/Complexity/CircuitComplexity/Lupanov.lean": "65d30116153ae4b329c437985cc17362498c4f27",
+  "TCSlib/Complexity/CircuitComplexity/LupanovGates.lean": "634d5ef63ae60cff74c300c385e9259cd03ea733",
+  "TCSlib/Complexity/CircuitComplexity/Meyer.lean": "f176feda6aa6f1b314fd7be7303032b546a9e167",
+  "TCSlib/Complexity/CircuitComplexity/MeyerComplete.lean": "312ddf43dd3b80a2b275fdb52dd98a49f5f9bd52",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean": "e193b10f45d1c01ccb6a1ec3a15576eddb0bb8c0",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean": "8d4d48103045ab23135b370daa1e5e1077be59bc",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean": "61839c8f13f5056adb9504d7d578d2c08fa4067b",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean": "dcac4e8c0ed1c16fca97b3b9461aeb37c0a686c4",
+  "TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean": "df1b1586d398aae0437c8464d1f048543ea2f457",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSigma.lean": "b97e0a62dcb4e1962370a911587da9185911e7c9",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP.lean": "7e28e2e76e3680ab79f5fa559931b590ca2ffb12",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSound.lean": "2700e6e30f8994f5b600e56e9ecc9f90f3795b18",
+  "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput.lean": "86e1ec69976865fb2e5c0d90d64ce7b1301d185d",
+  "TCSlib/Complexity/CircuitComplexity/MeyerTab.lean": "89ce813f80474d389aed420a9cd8df15699932ec",
+  "TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean": "f27d92e5f11a0aef6a5485b3865490b8802a29ce",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifier.lean": "74418e9fcfb854f205513debe7daeaa9a28b4fb5",
+  "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean": "e91b2cb174cb7f62dd38e891b560306e7bab496d",
+  "TCSlib/Complexity/CircuitComplexity/NCAC.lean": "a8b767b1ac53f296d6d3ec329e58d231a9145d81",
+  "TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean": "2f0a25c5bc1f9fcd3c91d5bc2c98085aa5f113d0",
+  "TCSlib/Complexity/CircuitComplexity/PPoly.lean": "8f5fabc7ddb4c39dff913e56926a42406ba1e3ef",
+  "TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean": "9983558b9d8d7759a289382e63350c1db436a3e6",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly.lean": "751e9ea6e828beee331daa342d7b11bb17d43911",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig.lean": "c0d7d07b9f45452d0a4039a1ddf2e6fa08e6bb90",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean": "d1d7cd7fbc5877bdf6e131ea1343137a0073f36d",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep.lean": "c212d59f671e4cbfdd87c5d6b92efb48db127214",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget.lean": "5295f1bc3a1405b07c1c15105d7c69bdd700b490",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean": "4263e1590b3e506b89da2719c9e71c522c4ddcef",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau.lean": "15e3c575276236797c0bf25762494c8c7cff482d",
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.lean": "ef0fb8ad194f7c79f5274cc18469173d4cf9e324",
+  "TCSlib/Complexity/CircuitComplexity/PUniformP.lean": "2cca06e8d11b5e09a1016db6ad47a4e6795fc9d7",
+  "TCSlib/Complexity/CircuitComplexity/PairEncode.lean": "20add7f98a1cde92559402c29c99bb8c8eb53833",
+  "TCSlib/Complexity/CircuitComplexity/Parity.lean": "f5eda7c51222bcd1d9889e5a313e6fa29b65b321",
+  "TCSlib/Complexity/CircuitComplexity/SequentialCircuit.lean": "41f2b423c00e5dd592e1cb93b6c4c4e2d3687419",
+  "TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean": "baea66354b9dc9e0d9f7d49aa989c4dd93c90020",
+  "TCSlib/Complexity/CircuitComplexity/SizeClasses.lean": "69d6bd5effa5cf0a96070e4ca43e3c043ffc9064",
+  "TCSlib/Complexity/CircuitComplexity/StraightLine.lean": "05dcc5b697d3d6a479656729142e1a47ed5e835a",
+  "TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean": "e5025e860f36d2c9fd0079dc1bd96aaa657bcc55",
+  "TCSlib/Complexity/CircuitComplexity/StraightLineSmall.lean": "aefd6f7a8704502180e0b2869edd580928fc398c",
+  "TCSlib/Complexity/CircuitComplexity/StrictCircuit.lean": "7c05998c96eade626357b9d971391a7e3ccbd6d2",
+  "TCSlib/Complexity/CircuitComplexity/StrictFanOut.lean": "9eed488a5b723abac7fc51341476250fdc3b6859",
+  "TCSlib/Complexity/CircuitComplexity/StrictSize.lean": "044f748dc9e4da08aef0a389ecab3d139018d397",
+  "TCSlib/Complexity/CircuitComplexity/TreeDAG.lean": "1849bd1401eecad68a174c48d74130abd5a17eb8",
+  "TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean": "02cebfca85e3f0c58a192539713a3412dabdd62b",
+  "TCSlib/Complexity/CircuitComplexity/UHalt.lean": "0e4c79a6bbbb84869b73bbec63650f0028952d89",
+  "TCSlib/Complexity/CircuitComplexity/UHaltMachine.lean": "9d5930d2a87f9b7b3f909058c7c82ea6b037b763",
+  "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean": "383b5f3915678da4d91a5bf149cfba6d458e946a",
+  "TCSlib/Complexity/CircuitComplexity/UnaryLanguages.lean": "fc8f89d758a138d56341d85c4e8414d4594744ef",
+  "TCSlib/Complexity/CircuitComplexity/Uniform.lean": "b19742e385dd044df42f7fbe75ed5f97d3573030",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableau.lean": "b21f02af8bf746e6d2086a5fda6cca4fbed5fd6c",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean": "fde3eb200f836e21836e89d7225e0147d2d54436",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter.lean": "60c28bd96b36f10e2ac9f986cb46ebf021af1cd3",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr.lean": "39e2ce584c803e7ef4cbcbb3157536970c862f22",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.lean": "bd95448be08f72d3270644ad67064c2366a4994b",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain.lean": "9fd2556a9f241e920a22eb65ecaad1354f1a2703",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps.lean": "a0eb2459bb0da61fe2e531b11898da87bec6beb8",
+  "TCSlib/Complexity/CircuitComplexity/UniformTableauSpec.lean": "c6eb6d556bc4a551cebbb30cdc02e63d99d27d15",
+  "TCSlib/Complexity/CircuitComplexity/Universal.lean": "e4ab7253a0a885ead36fb252dda66ba3d22aaa12",
+  "TCSlib/Complexity/ClassNP.lean": "3aff019c5c63f2e5e827e0ca3236263859d43bf1",
+  "TCSlib/Complexity/ClassNP/CoNP.lean": "fb49e20cccdebcdf4b5c509959e7c48c9f94df82",
+  "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean": "7117a80f248fe398a083aec691912a96674c261a",
+  "TCSlib/Complexity/ClassNP/EXP.lean": "53dcb8b9cb4170f16c7b36edf9d09233c302eec8",
+  "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean": "0ebadde8fa81dc2747df90d28423cc1aaf01e57a",
+  "TCSlib/Complexity/ClassNP/ExpPoly.lean": "82ee6d0f9e5246b492422357e57d227991adfbfe",
+  "TCSlib/Complexity/ClassNP/NDNormalForm.lean": "f4a4ec59a03ca2c6ce1bda3866bfeeb564ce5968",
+  "TCSlib/Complexity/ClassNP/NP.lean": "1ab1fab0c79f5076bcf7b2082d493c2675efc9c6",
+  "TCSlib/Complexity/ClassNP/NTIME.lean": "a312c47f7d80cb7507ddcaa9062a2649d38830cb",
+  "TCSlib/Complexity/ClassNP/Nondeterminism.lean": "47c74c05feb2e90ad68ae2c77905f5361d9b570a",
+  "TCSlib/Complexity/ClassNP/PClosure.lean": "7acc5fab39d646e29369cf7e39ef5537aa6e95ba",
+  "TCSlib/Complexity/ClassNP/PolyTime.lean": "901ff371f49202d89c47799037c2b713bef34c2c",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean": "a97834f9872607e59aaaeee9c7ec023b5bddea3d",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean": "20bfb56e857c43ae62451fd8fb1b921e99222a32",
+  "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean": "1c14ca4f6a44d4e4ee8a9a47aae7064bdef0f26d",
+  "TCSlib/Complexity/ClassNP/PolyTimePairing.lean": "9b908c6fe0a6e1b7c96aa72876265139bf937fb3",
+  "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean": "73d6b8adebeb72fd105fe0bb4a54e95b31159c2c",
+  "TCSlib/Complexity/ClassNP/Reductions.lean": "0225e205051ee555bc4be14b607c39cfb921279f",
+  "TCSlib/Complexity/ClassNP/SAT.lean": "a1e156389744052d8c639ac6e456c50014b00245",
+  "TCSlib/Complexity/ClassNP/TMSAT.lean": "d5f4e37fdda98c0cbba2a32ab30cb52c25798a31",
+  "TCSlib/Complexity/ClassNP/Tautology.lean": "43f4b62bf7603c4c046cc23990494bc95ee72c5c",
+  "TCSlib/Complexity/ClassNP/Transducer.lean": "c81498944c2d2c1d2f60c5cc3cad2079178561a6",
+  "TCSlib/Complexity/ClassOracle.lean": "03170f7d0a71faca5dbec5d2fa5a84c552545216",
+  "TCSlib/Complexity/ClassOracle/Classes.lean": "8f90bd0c36f5d83759d24b0f370794e831c9e9bf",
+  "TCSlib/Complexity/ClassOracle/SATOracle.lean": "0922daf9deb08e23f3f31cb43b74e584d97e327c",
+  "TCSlib/Complexity/ClassP.lean": "069b812159b7f80cf63458c9b8e3255dfc10923c",
+  "TCSlib/Complexity/ClassP/BinaryArith.lean": "be4c8ba362210775c01303ed297365f3d0fdde7e",
+  "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean": "6c9c20011dbf996aae1fd3e08a049bf4780a6d14",
+  "TCSlib/Complexity/ClassP/BinaryArith/Basic.lean": "1c651377d37ed785f0c1a84ba843eacfd04b4c0b",
+  "TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean": "9724671122e1065ed72ae73d17a4af4575d70316",
+  "TCSlib/Complexity/ClassP/BinaryArith/DetModMath.lean": "418d4fde66ebafccf4879f104c1e0d7bd24ae913",
+  "TCSlib/Complexity/ClassP/BinaryArith/Div.lean": "962124352c66552ab53947efc4cbcd215c7db2fc",
+  "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean": "5a429d87809b39bb92bcb471e568b69b1f6c37aa",
+  "TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean": "7df8024a37730211050604ab16a87cd35656187a",
+  "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean": "7ad4b013ea4a98b3f6f8fb9e494913cfd944d010",
+  "TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean": "aa37665c14e7d753edfd9d64850cae8bbbeddce6",
+  "TCSlib/Complexity/ClassP/BinaryArith/Mul.lean": "11eca19490c0101ceabbb0d50d270a7da9c8654d",
+  "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean": "77949047f7b16d6d2b226a2708bdfc682ec2e051",
+  "TCSlib/Complexity/ClassP/BinaryArith/Words.lean": "392563f389ab537d58b91b25e826e109dd6e458a",
+  "TCSlib/Complexity/ClassP/DTIME.lean": "1ccd573dcc6a706f513bf43bcfb9807554e2b1ee",
+  "TCSlib/Complexity/ClassP/Examples.lean": "fb9c0000bf81951e43b9763665362a26bf16fade",
+  "TCSlib/Complexity/ClassP/ModelInvariance.lean": "f8d0834cf8db1382d21f4caef264f6390ab61266",
+  "TCSlib/Complexity/ClassP/P.lean": "a8f1c942f82fe398b4687ef6bb5682c575169ec2",
+  "TCSlib/Complexity/ClassP/TimeConstructible.lean": "1b75ba4be98ee5d668c43bbc3e39d2a654277dab",
+  "TCSlib/Complexity/ClassPSPACE.lean": "27c31f83502dab907bc4b44a47e745fa5ad12dd2",
+  "TCSlib/Complexity/ClassPSPACE/Games.lean": "8c348e67928c56fa38e13d8f1113badf0d345666",
+  "TCSlib/Complexity/ClassPSPACE/TQBF.lean": "05d164af471942bdd0726d8d957c4b733df92ddf",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean": "3ccc6d78a2352ac676258ce0a9ae22bb70529091",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean": "c718cf5d31595ba654cd628f70588f2c288f2e95",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean": "71019f351975aa2362a672eab85780fe5bbaeaaf",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean": "79904895c2825c00f0a5cdf78e5995a332ff54b1",
+  "TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean": "5321df8c3fdadcfaabcae11d35b54ff6527b8092",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHard.lean": "839b80502e9d4470230c3fa873132e1bf2fc17a1",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean": "168e765bbfd7034f393f104eee752a4142ca68a1",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean": "1ad7891373f537d35ae897a763480ba150284258",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean": "0471b42cce46a9134f5ed07795050207cb051f50",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean": "10c5eee0052fabb2d2b2251855c795bf9e37250c",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean": "5a6cf506323fec0182a9cf86adb9dfdf8eb5c3ee",
+  "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean": "e8e034d677733dfd96baf02236d0c156ab8342df",
+  "TCSlib/Complexity/CookLevin.lean": "052b38227ae63bacadb6f340349c7c0c9b0eb9e3",
+  "TCSlib/Complexity/CookLevin/Hardness.lean": "433d0ce6e17ed264f0d7f650a8692d4da4744b4f",
+  "TCSlib/Complexity/CookLevin/Snapshot.lean": "5643bda2b96beb74fc9e25b02996d15bac3702d8",
+  "TCSlib/Complexity/Diagonalization.lean": "43b823046c16de361fef9074a2cde4ac63f0e908",
+  "TCSlib/Complexity/Diagonalization/EXPCOM.lean": "9f313ea73ec641c6de0120f58a69c212a1068dcb",
+  "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean": "442078d656b63ddf66af569d0c29c0dd28e77aeb",
+  "TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean": "99dada9de8b3417c4bffb87060bf02ef7ada02d8",
+  "TCSlib/Complexity/Diagonalization/NotTimeConstructible.lean": "824b3715c1ce4aac8ffd80b152f81c5628f4d00a",
+  "TCSlib/Complexity/Diagonalization/Relativization.lean": "da05571912c1b0c2f2d03bd77a1af5edcc504403",
+  "TCSlib/Complexity/Expanders.lean": "86b387c2aceb39a7a5aa7b4de568ccaba56f32c2",
+  "TCSlib/Complexity/Expanders/Basic.lean": "5754a54538a8bda1d0a9d00ff484d67c84c34525",
+  "TCSlib/Complexity/Expanders/Chernoff.lean": "d6d0c8fde29e1f2a247ae279b31887519a7fc264",
+  "TCSlib/Complexity/Expanders/Mixing.lean": "99b044c737ff0d9b9ad8cb3404305549fcd21d7b",
+  "TCSlib/Complexity/Expanders/Walks.lean": "c5f7a4d66d400a315226b5574c25ac25de6af7a4",
+  "TCSlib/Complexity/FormulaKit.lean": "fff97e36bb1f748588b9320a47ff439348eadd60",
+  "TCSlib/Complexity/FormulaKit/Emit.lean": "a68b5c80f54102b229e0f45b8351b80af3a31594",
+  "TCSlib/Complexity/FormulaKit/Gate.lean": "9670af17ac1855164d58cdab05f01710dbe0f165",
+  "TCSlib/Complexity/Formulas.lean": "5a4faf81f2cfe0df1342c0b8db60eba9906b9b56",
+  "TCSlib/Complexity/Formulas/CNF.lean": "92f46fc5496c1d4a53b0109aebc77948e80e19c3",
+  "TCSlib/Complexity/Formulas/CNFEncoding.lean": "bab858765edbfe13dcae8af30454c5bb3e5049b1",
+  "TCSlib/Complexity/Formulas/DNF.lean": "66df311eb7c091b7e12d3c5b9d8efb98f6f03ea0",
+  "TCSlib/Complexity/Formulas/QBF.lean": "66fb68aa2f84b8a8538ac2d3c91cc0a0cee72a19",
+  "TCSlib/Complexity/Formulas/QBFEncoding.lean": "fa2175a4d36f8add899a002bcc29ab732e73a42e",
+  "TCSlib/Complexity/NPReductions.lean": "480024734cc0d8b85b9a63c5d55074ec12ed106f",
+  "TCSlib/Complexity/NPReductions/NAESATToColoring.lean": "2c24d8dc9593d53f8db91ac75c2d1070e55a3e6b",
+  "TCSlib/Complexity/NPReductions/SATTo3SAT.lean": "f204e3e5b433d797cc1840e0113ff0eb693b93a1",
+  "TCSlib/Complexity/NPReductions/SubsetSumToPartition.lean": "af2a9947e0c75d4764ff1be52ff9a130480e9307",
+  "TCSlib/Complexity/NPReductions/ThreeSATToClique.lean": "48b1dfb18ed9c20c1a8f930e8906d04af9f9bdf1",
+  "TCSlib/Complexity/NPReductions/ThreeSATToColoring.lean": "589f235682cd2544c98935ce2eb143b1f6d16c85",
+  "TCSlib/Complexity/PolyHierarchy.lean": "579ca291e269ac23659f037740f2de082d24f54a",
+  "TCSlib/Complexity/PolyHierarchy/Collapse.lean": "be99ab2201c568cc3095f0112c1e76e7a6698f65",
+  "TCSlib/Complexity/PolyHierarchy/Defs.lean": "43e747e968da49b82e6557b54846b318d54376e7",
+  "TCSlib/Complexity/PolyHierarchy/Levels.lean": "4fc609f8b5dff8f66a2af7ab1004dbd6bf517f2d",
+  "TCSlib/Complexity/PolyHierarchy/Normalize.lean": "d915f46a85c25456d1d9cce69824142cd7d37c5c",
+  "TCSlib/Complexity/PolyHierarchy/Padding.lean": "9a6b0ace7ba1141381b05b3ef1354127dd07e010",
+  "TCSlib/Complexity/RAMSimulation.lean": "fcc11ab86abe5ceeffe301d35674d41eccedc65e",
+  "TCSlib/Complexity/RAMSimulation/Classes.lean": "eb90c1d9e10e989c1b5039e2889d7a9a3d32dbb2",
+  "TCSlib/Complexity/RAMSimulation/Simulation.lean": "202e2c0d19996ec15ebfdca116e39f88c89ec88b",
+  "TCSlib/Complexity/RAMSimulation/WordSize.lean": "aea14858d3ad820b26cb2f5c663f43b0e4e2c3bc",
+  "TCSlib/Complexity/Randomized.lean": "f5c8c2b572b5ce11bc1df1a509f49344abbd5a29",
+  "TCSlib/Complexity/Randomized/Adleman.lean": "fb87dc9f8d959c18bde8e2284e95032a3bf1aecb",
+  "TCSlib/Complexity/Randomized/AlgCircuit.lean": "c321ddd6604776378ac6572245407835bde527a7",
+  "TCSlib/Complexity/Randomized/AlgCircuitExample.lean": "4f5a96d461bc56a6a9ee445af51959f903052e4f",
+  "TCSlib/Complexity/Randomized/BPLInP.lean": "55b06b3b5fdfdb4f129912aad004e97d60e71b7b",
+  "TCSlib/Complexity/Randomized/BPLInPCount.lean": "18a9cf33245ef2959816eeffeb7372a8d2f6df54",
+  "TCSlib/Complexity/Randomized/BPLInPWords.lean": "1edadf2c6b21e77e534339fbe3255a096cba19a3",
+  "TCSlib/Complexity/Randomized/BPOperator.lean": "8afec733d60a93f76520da003ccbc6cc56deb76f",
+  "TCSlib/Complexity/Randomized/BPPAmplify.lean": "9229002caec0b1d24085f9fdf4a016ea641a8076",
+  "TCSlib/Complexity/Randomized/BPPEqP.lean": "2e701077aaa0d569900f62caaa2ab7aef22f72c0",
+  "TCSlib/Complexity/Randomized/BPPHard.lean": "2f0b92f29c4cb78e99b8e04cce751356b8443af1",
+  "TCSlib/Complexity/Randomized/BPTIMEThreshold.lean": "de3ab2dd4f4e8d6e9747c9cec82dac2a3eac2a13",
+  "TCSlib/Complexity/Randomized/BiasedCoin.lean": "03ad6bf99e6636e0935c933c163815a594275eac",
+  "TCSlib/Complexity/Randomized/BiasedCoinHalting.lean": "d0f1c2a7499283701b9d8a873fd636c8750eeecf",
+  "TCSlib/Complexity/Randomized/Classes.lean": "4be856c717d15b0d43dd48290b3546f59faa7a2d",
+  "TCSlib/Complexity/Randomized/Coins.lean": "3c3b84e3e2807d55839586377f3d3feb06b51290",
+  "TCSlib/Complexity/Randomized/DirectedWalk.lean": "7f395d0331c8119cba45fc3e7d85aa69f155e525",
+  "TCSlib/Complexity/Randomized/ErrorReduction.lean": "bea4881d1baec90ff777023bf0b7fb9c470d9b60",
+  "TCSlib/Complexity/Randomized/ExpectedTime.lean": "47021ff8bf0764a977a4cf90613e43b4f4997a4e",
+  "TCSlib/Complexity/Randomized/Fingerprint.lean": "578f3f2f94e597bfaf4f293117134d7e3a0c7508",
+  "TCSlib/Complexity/Randomized/Inclusions.lean": "4ed713bf988b717c8ef7055f93b44f82e07beb54",
+  "TCSlib/Complexity/Randomized/Matching.lean": "1e686680a0c474430383efa612a94c8514abdbad",
+  "TCSlib/Complexity/Randomized/MatchingMath.lean": "8859de837a27f8109a3af577df4cf366d5338c3c",
+  "TCSlib/Complexity/Randomized/Median.lean": "af07ba4bc41b24e68b649c95aae5f0bc341f19f2",
+  "TCSlib/Complexity/Randomized/NPPoly.lean": "0ee53952f1820108642ca64f2d0467a9f36cd61f",
+  "TCSlib/Complexity/Randomized/PTM.lean": "2dd9823968460d23528d0627047fa495fd8bef79",
+  "TCSlib/Complexity/Randomized/PTMEquiv.lean": "ad07ec41fdc22ebabaca3cdd25ed68bf0a41c37c",
+  "TCSlib/Complexity/Randomized/PolyTimeModel.lean": "2e4bc074d06f805e98c52cdf629c96122ab70320",
+  "TCSlib/Complexity/Randomized/Primality.lean": "bba5ef53c372efabdb31f7c8360785d2c9a3d971",
+  "TCSlib/Complexity/Randomized/PrimalityMath.lean": "1bcd4ac1d8aa197dcdae7a134ab94d514e59a988",
+  "TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean": "4cea80dce5d8d214b29ef54c8d29ed9a6c6c537a",
+  "TCSlib/Complexity/Randomized/RPExpected.lean": "fd370588afd5b409f107fe819838177f4c7e9f0b",
+  "TCSlib/Complexity/Randomized/RandomBits.lean": "975320a89a73ee20990271388d308661f024b4cc",
+  "TCSlib/Complexity/Randomized/RandomWalk.lean": "b93d5e8193213e871cff74ce33ff132c462d900c",
+  "TCSlib/Complexity/Randomized/RandomWalkCover.lean": "dd54596c33de858a94ba7975e8bbd809ef05e760",
+  "TCSlib/Complexity/Randomized/RandomWalkHitting.lean": "741f7efa9440a85985d5734f3bcefd1191735ed0",
+  "TCSlib/Complexity/Randomized/RandomWalkMixing.lean": "6a4dcc2c5388dc94c9cb68ceedaf268d45e12195",
+  "TCSlib/Complexity/Randomized/RandomWalkMixingPad.lean": "7f8a9c58bc6e925aaa166ec2241c409f73ca22a3",
+  "TCSlib/Complexity/Randomized/RandomWalkPad.lean": "c98002abab943c4f28ae09194fdd8ed1c5a62485",
+  "TCSlib/Complexity/Randomized/Reductions.lean": "7268340767aeb797e489aeb4d26c6dca20c461c2",
+  "TCSlib/Complexity/Randomized/SchwartzZippel.lean": "881fe3ef8314274e9ae3df72a83cf65207bbf74e",
+  "TCSlib/Complexity/Randomized/SipserGacs.lean": "dacb43879725cd2f51b7f01486715c72a7bfb628",
+  "TCSlib/Complexity/Randomized/Space.lean": "ffc5478e66190d5ba39d610cc56c6deca0bdcc4e",
+  "TCSlib/Complexity/Randomized/SpaceAmplify.lean": "f042825dab2b31fee54ec624ef3556d37a423feb",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean": "8a9da5fac6b27b820607588e1dc98a625a441690",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode.lean": "fe88fe1488f3d5d3e3688b10f4ef5937b200f026",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine.lean": "0dbd232d0a5f6c5505de1a14923e66f9fff7382b",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun.lean": "5424f86436f2fddaad2ceddd85979a12ac863894",
+  "TCSlib/Complexity/Randomized/SpaceAmplifyRun.lean": "6d2efc818096a766cb6a185bdc7298577a3f928f",
+  "TCSlib/Complexity/Randomized/UPath.lean": "e81d519326cb96bd0dcdd775fea9e539d32c9193",
+  "TCSlib/Complexity/Randomized/UPathLoops.lean": "7d13f99b597d441692772a32dbe364f30b17fe0f",
+  "TCSlib/Complexity/Randomized/UPathMachine.lean": "e44f1f01299a6658bfa6a575584e6f064de3e0e6",
+  "TCSlib/Complexity/Randomized/UPathParse.lean": "51b00d09c8dff8b9681820e8bcc86a9cc176b246",
+  "TCSlib/Complexity/Randomized/UPathRL.lean": "2720523220120dd69904ccdedc225f60df0feeb1",
+  "TCSlib/Complexity/Randomized/UPathSearch.lean": "bd282dd39ff108ec6fe792162f61ad25a900a1bb",
+  "TCSlib/Complexity/Randomized/UPathWalk.lean": "77206ea86dd4e553f8771521fadddbc9892e0c3e",
+  "TCSlib/Complexity/Randomized/UniformSample.lean": "9dc08dd80a54c588e971f6f1bafe914fd98dd11c",
+  "TCSlib/Complexity/Randomized/Yap.lean": "f5e40e7c7bb1e2e790f7bb2d6a60cce205ac8518",
+  "TCSlib/Complexity/Randomized/ZPPEquiv.lean": "6ee8512a13f9c271355611000155a998e1042f7b",
+  "TCSlib/Complexity/Randomized/ZPPHosts.lean": "20fcf07493c52b826ce40b4f0193841117303caa",
+  "TCSlib/Complexity/Randomized/ZPPHostsClasses.lean": "5ef95662c989a1e2c072cefe67b04569be2defc2",
+  "TCSlib/Complexity/Randomized/ZeroP.lean": "1fa3ce1e140fb24de4e95641395bdd6465ce3b9b",
+  "TCSlib/Complexity/Randomized/ZeroPEval.lean": "966543e35e0e580df70e4404864d14e9fadb9c2f",
+  "TCSlib/Complexity/Randomized/ZeroPPIT.lean": "70dad29dc64a309b70c0ffa247d7f8a9c33516ed",
+  "TCSlib/Complexity/Randomized/ZeroPReduce.lean": "7608f02555c2be72d3517622082d2a52d02e3788",
+  "TCSlib/Complexity/Randomized/ZeroPRun.lean": "1198e4179be2cee34c9497ba9fd8283935646f91",
+  "TCSlib/Complexity/SpaceComplexity.lean": "01efac5fc24c86ce87c8e685ca856f185ca936c1",
+  "TCSlib/Complexity/SpaceComplexity/Basic.lean": "0bf0cf32885f0fb6e468ca6c57a3319e0d48b484",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean": "6c3353684eac0a6cd5245f70634538398f08eeb1",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean": "5393518941631080dc87020a056cc7a82f0a9429",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean": "a762a886097da2f13d2ddac9f579ef903ec563d0",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean": "8b68ee89b751f4d9da68a1a6bc7736659b8969fb",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean": "4f4f6c91c0443ef0d097be787a7031781ae7a52e",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean": "218a014c05d63e482fe930b14c459c9792497880",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean": "2f631b1c136b3735538c5350c1bd5ee256015d67",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean": "b9557f7c837b75e44e1ee1164e90217670f2052f",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean": "5f705433291795264cfa997eb1229e6cb678be9d",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean": "ab0a26918246b41e74e956c341093f5601c73007",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Run.lean": "84cd5a6ba4fd0cd67b673b5a2af13a5b398c2695",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean": "6017d10132d7f206dc0e1ff09cf7b3ea422e22b6",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Step.lean": "05c3239c7749c2a1b34989f38020706361cbb3b8",
+  "TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean": "6f569d0ba08f97a31e94506b31ac887548d42bb9",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean": "153846f473a19c1fa99d8e4075a8ceea891c40ae",
+  "TCSlib/Complexity/SpaceComplexity/Codec/Word.lean": "5de22c6db1682fd91a14b037eb7e7eb71dba892a",
+  "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean": "14e422430389b6172820e0744b668e5d091a5606",
+  "TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean": "98bfc02f90ec6e8362cdf86f1232b7370c4d3f48",
+  "TCSlib/Complexity/SpaceComplexity/Constructible.lean": "b830f01aaecb070061354707f4e8066a3df752e6",
+  "TCSlib/Complexity/SpaceComplexity/CounterProgSim.lean": "94d1a57a8bcd11651ef220e21bd2f477c7e28cbc",
+  "TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean": "b2c89b6c5957b23ec11c2c1d6e2c87f2ed47852d",
+  "TCSlib/Complexity/SpaceComplexity/Examples.lean": "9181d4e4a44f86112762529197f1e1da1b7554b7",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean": "a021600af5084f8173cce55e06642f914e1aa0af",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean": "1de162d3ce821177c30bdb461e289f724c33169a",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean": "1cf0278d862100ff0cd0d999d469f40996172e92",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean": "885e154a54df71f0bb4fcb91f5ce4e39086dbeab",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean": "a0ad92fd7809b92bafb5528ccd9ef5c3f8948059",
+  "TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean": "c71c3ced7be7e9f4b9f77e4674becec18a3d6426",
+  "TCSlib/Complexity/SpaceComplexity/ExpTime.lean": "ca7ed6fb51658a46533a8862bd4cfba49ac57d0b",
+  "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean": "b9a7162841b98bdab13be5c03ae48e1954fa16c9",
+  "TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean": "46e38faf9114296504ec5e5469760663426e4c98",
+  "TCSlib/Complexity/SpaceComplexity/Inclusions.lean": "7e0d80eab6e6805c81aa4d165d539745b23232b9",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean": "148e95d9142e8e51814d9489254af3c4a10ef506",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean": "7fcfb20610a8812551d3b31e312797af3d8b25ed",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean": "4a78e7c1629bcedb5895d0332e2cc230feba4a3f",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean": "dad3a22033c61ef2669953329f94b4ebe5e5ac6b",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean": "fab553600356b779249af104adb90b7eb25fcd95",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean": "d82e8c6548309fbe90eae665732d7250ad661a45",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean": "3066bf69ca7c0942b95f3fb2821cea222425a479",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean": "065041a4517fa9873d2fe22701bba8e8e0bdae95",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean": "ca4a0e4a26fd17e000d6b12a68d78177332cdc96",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean": "7c5f7fcca1d6c6e5292f6705b884ebfdd9121883",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean": "ebe2da70df1574482fbcdacd1dd8cbe2bfaed272",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean": "d8f1bd153d4b3d3c7e9386fc030c8ee7144a467b",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean": "896e12dac231e0ed4fa0aceb3fdc6dc52a231700",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean": "ae7cb38e5b96c93fbe5d29e24f9b33822d26783f",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean": "a0c115f1fc087f5fbf6c418b8ff28a16ed3447c3",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean": "afccaa998fa745c4eba9bdaa1a68b51c4ed33aab",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean": "4c874f6747c91e328c6a50355d4053fad091065e",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean": "759c78fb52b8a7b0b6a6786917db5547e0d0b75f",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean": "77d6420ae837696b18b400fed556a94a17046e39",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean": "ed3857f7b55b665df0d26dc4738ae6a8adfe77a4",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean": "2574c0c3dcf6ac1f687e32a757fe2164b5b5a34c",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean": "52645a402e93d26edd029f5ee8eb957a900a5ed7",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean": "5d7b664ba9b6823b737f9546326f424e1c9065bf",
+  "TCSlib/Complexity/SpaceComplexity/Logspace/Reductions.lean": "d60d6932113b9c6b3e8d67df63144c2c027e68ae",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARM.lean": "fca167dd9670621605f06cec5d3ca33d2bcfc361",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean": "e9b4526efaeec1b89242f6681c8d2f91c6bd09bb",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean": "8e7259576c51690ce2024472c2a8bbce44f8826b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean": "1432573fdada8c2e7149a110a7d71d8f9cf72e01",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean": "e125ce5641e4b599df3b7a89809b4c52e59a7b90",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean": "5a07e46264af96af733cca8404659a1a4326fa2d",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean": "cec481846f33a7872e46466dae024118d89404be",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean": "ef71ec26cbb361af84be84751e3ec4936e6f14c0",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean": "0f411942adafd94ab6e92c4c196825214aba265a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean": "9bb56592f9d4fe73f64a836f1b743a7c1da82de6",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean": "610c35ae599a0dea8f7ef2b0b23cb3feed5e624b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean": "12c3c189a7c64b7c337f68f168e06513a5ab4438",
+  "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean": "60ed080716e5dee1f4fc4beda64a6e447256bfeb",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean": "7eb32e40048044339907dfd0c847e377b56cd861",
+  "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean": "833d5d29b082b66b4d70c262a8e35297c9937275",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean": "ec95c11601126a278fca66ca1a3c63ffc531c369",
+  "TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean": "a43124cce3e8b674db985718ab7049ef35bc6376",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean": "ef8863adb3120d5053d2ccdef4a35a2f6ec3fee0",
+  "TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean": "9272eaaed6fbaa7843a6573c99196ed4d0847c6a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean": "caceeabc5347ed57e0b88fb9608312ec425341b3",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean": "bbfef177ee43962ff4e4ca8b2c5aa244baa0901d",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean": "2f9b774462277ff908e5fa40486eda9ed1783edd",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean": "1f7a882f4f4706274b37bab3b307b6fb997ba8a2",
+  "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean": "5eb8c3d5464e555fdf0ccc1cb39d683ee8def344",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean": "55a329d909badffc9ca0b185da948e5a236b363e",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean": "78141aaa859be4479862b7d3d3b996408c197326",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean": "32e9bab1670c246a10054db0cb26cd394da4ca37",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean": "08b9be44ad0d637d77f8965093c91fc426e46244",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean": "9a51e01883a85374cef680bcca8cee5663a68ad3",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.lean": "9a280e6d45439615a14551dd13ddc557921d13ec",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMProb.lean": "48d871c96751c32f9beb6dfbcc537eeea0419c66",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean": "eb600666daa7d7887ef98f57f84f0ed3311d7fac",
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean": "f10ab64f336b82f01daaad7959f3c9b00d33611b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean": "95fd598209370eb6572bcbf472031e2b28dc701b",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean": "b2854df21352ad03f04f1189730081b69115bb15",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean": "2fcaf5a75209b08d00f64cc6edaa734c1c14247a",
+  "TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean": "6655d760c2ac7f958582f9b7af25acf087208271",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean": "617bae27a7b301e33390169163e86d08b85b8810",
+  "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean": "88f9502962d40924833b6db33f8f94063c04d58c",
+  "TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean": "9d1301247842a7d082d515167e13047067258112",
+  "TCSlib/Complexity/SpaceComplexity/NSPACE.lean": "41e53971aeedb3c4dd8581da2b777cee97f1254a",
+  "TCSlib/Complexity/SpaceComplexity/Padding.lean": "d39aecb7d17552c94d254033d45698eac42708df",
+  "TCSlib/Complexity/SpaceComplexity/Savitch.lean": "0c14e432aa98f8277b0e823e160de8f19f8dd0b2",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean": "78814e59e44912a0d59ce3a9cd92e25349f39f74",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean": "f31a7a8b3be0d9b7b5a5883522e6d70a68e592cd",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean": "9d0ae0d3ac4c90401f5ded53c89e86336f5f73d1",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean": "8da4bc53b70397c0640942064cec52de987fc9d5",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean": "8d9bc731cd3c5705990a686b8adb092217a6ce69",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean": "4994472c82fab4b353e957a5d2c1c5303e9b926d",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean": "e49c5ec465ef7196982bf3a373575710c41a51d6",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean": "e7c3700e7c839378a1a314dac4d4b5c9f6c02f71",
+  "TCSlib/Complexity/SpaceComplexity/SavitchARM/Window.lean": "95a88febb191fa1cabe20b88c4cd53cad325fde1",
+  "TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean": "cfc4df3690898ea498c93f74310e6d9cca88883e",
+  "TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean": "7e3ed8fb6781c935898df4166fc1e632dedd33d0",
+  "TCSlib/Complexity/SpaceComplexity/WindowClock.lean": "09e189b41d16a3ec881cafb724f5fdda3f33721f",
+  "TCSlib/Complexity/SpaceComplexity/ZeroSpace.lean": "cc1134ec42c751851c931ab8f0aa4ca03290ee84",
+  "TCSlib/Complexity/TimeHierarchy.lean": "50904f92525c9220f4bf7fc19a972b6e645a6db5",
+  "TCSlib/Complexity/TimeHierarchy/ClockLoop.lean": "c8ff5439ac40b4b1b85eb597065eaa641f217957",
+  "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean": "dd1d5b4207be77afe78892f3f999997a49738ca7",
+  "TCSlib/Complexity/TimeHierarchy/CodePrefix.lean": "db8c8063fbbfbc17b7797f7db93abfb691c7e898",
+  "TCSlib/Complexity/TimeHierarchy/Diagonal.lean": "473d72f35a519e230accd2406f48bdbcd9e7d428",
+  "TCSlib/Complexity/TimeHierarchy/Separation.lean": "349d3205b9443672516d47da4c576aeafdd4944e",
+  "TCSlib/Complexity/TuringMachine.lean": "e817d6f2a075c8f7edf3fe04162b365bcb526476",
+  "TCSlib/Complexity/TuringMachine/BufferWords.lean": "78eaf8b7997787a0f74a7a810bb3c2e9af07e4de",
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": "6f531738ca8c3195d2d22b9a7be21662a8dc84bc",
+  "TCSlib/Complexity/TuringMachine/Build/CertShell.lean": "e08d31000ec29acbb18caae0150eca304152ccc8",
+  "TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean": "5d1f674b069c5fb54cb8626c8393abe56cfb0b50",
+  "TCSlib/Complexity/TuringMachine/Build/Contract.lean": "f1a6de165a06e6c142bed3d8cfe5369728b4465e",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": "43fce3e259817816fb7a3e3132980d69b994341e",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean": "0800ff0c908c62547537b9655bddfcf6d9c7ad69",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean": "901cf7f739a32b95674801156c858b5686442882",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Embed.lean": "daabb91e327e8252f8b6adbdc57ddb8befec53d6",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Lift.lean": "4ecb53d5a1aa7b51d7b8e32ea3493a707554dcc4",
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean": "65bd9dad1dcda2ee8224153d9b06f3b8b6bdd8d2",
+  "TCSlib/Complexity/TuringMachine/Build/Convention.lean": "d9725eb7c1dffa1e8e1a57834a00c5469a7fbdf5",
+  "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": "b2beab0b25899e955adc0117b87abf4fe9fe8f85",
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean": "5ceae723fb5bac0f51b187b55169b6e39633a87f",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean": "22e08d06f20df9a2e50061ea17336c470be00b3e",
+  "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean": "3ac162843c4363e2c31082efa4b66408fd184ce8",
+  "TCSlib/Complexity/TuringMachine/Build/InputCall.lean": "f6bd8c86e402bbd9da6bffe69b4e293ff1790b30",
+  "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean": "ae350de2e7ada6e6319933c9946a08b212b946b1",
+  "TCSlib/Complexity/TuringMachine/Build/InputLength.lean": "af10cbf106e60a5ad2b43b39913ef465ad9cfd1d",
+  "TCSlib/Complexity/TuringMachine/Build/InputRewind.lean": "669ff6b79f64e1f2c936a08506f1fcb99d5ca45c",
+  "TCSlib/Complexity/TuringMachine/Build/InputWindow.lean": "9e6f659de2f27453d3fd449ef8d7120baa30e285",
+  "TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean": "84c00e33d146df824aa94f2e0aed87593a4014ba",
+  "TCSlib/Complexity/TuringMachine/Build/Loop.lean": "01074b43fa0eceefcc6f416de9fc5b1312a0c31f",
+  "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean": "6e245e709a5f377768ec3a66e653937d72318e91",
+  "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean": "ffedb41e20341e995422632e29389164c1ab427a",
+  "TCSlib/Complexity/TuringMachine/Build/NDCombinators.lean": "e81b346475ed3127f3daf21348f17ca5faf3d092",
+  "TCSlib/Complexity/TuringMachine/Build/NDHost.lean": "c01cd77343b3882cabb4da5aa298c5977aaa7bd1",
+  "TCSlib/Complexity/TuringMachine/Build/OracleCall.lean": "290f6ac78072358afab5bf73a4934712c43cfc73",
+  "TCSlib/Complexity/TuringMachine/Build/OracleSim.lean": "ce6451f8dec75caaab99919cbb1ec1dc882ca228",
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": "8e06171554e996ab8e6f58078b2395ebc194a10f",
+  "TCSlib/Complexity/TuringMachine/Build/RecordTable.lean": "7d447bf88178bdba42c19448ee0f20134e87189e",
+  "TCSlib/Complexity/TuringMachine/Build/Rewind.lean": "1d1acb3f8c7d2f7d256bd40855d3f6d541b45dbc",
+  "TCSlib/Complexity/TuringMachine/Build/Scan.lean": "9f73cdc5fe98426b0d293fb468d1b1b27fa60705",
+  "TCSlib/Complexity/TuringMachine/Build/Seam.lean": "ef7737e9389491cc14058cb952a102943e3fe0d9",
+  "TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean": "aa46f40096b924d308276cc02c7368b6dbda4354",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlock.lean": "add8c05fe76dde8c1e7f625d1b0dbfa06689f430",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean": "ec3551f1b3166f33cc89eec81065e2fad268a0a9",
+  "TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean": "e910180976abe37d96e9d703e7603e75ad2957b0",
+  "TCSlib/Complexity/TuringMachine/Build/StepClock.lean": "39e4a7709d3c302406f8af2261a8e925400ea243",
+  "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean": "dcd5d51988449537f5dfa22bfe9b346d209df669",
+  "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean": "01a6029a38cb16f17085baf88ed361882f8d5a03",
+  "TCSlib/Complexity/TuringMachine/Build/WindowRun.lean": "b3c8935b2d8a1e65245f968c68feceee4d6aa442",
+  "TCSlib/Complexity/TuringMachine/Build/WordTests.lean": "9c5a09482f27f4388dd6da98ae8a8ffaba41fc1a",
+  "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean": "1c5b891e3010779d763f831a40622c2a33929151",
+  "TCSlib/Complexity/TuringMachine/Build/Zone.lean": "a67c7d1bbbb6b44495eacd5a8197956f4c2dd977",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean": "3d26b552b14b456d247122c79d117f1707532d0d",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneStep.lean": "a94e820be04d994c3e7259669507cec15977476e",
+  "TCSlib/Complexity/TuringMachine/Build/ZoneTape.lean": "e08a1a4cbf9aa5d7009a9113b5dc252d366b1323",
+  "TCSlib/Complexity/TuringMachine/CfgFacts.lean": "6d6b47275ac2063c371fd9c52c9eeece51ac4268",
+  "TCSlib/Complexity/TuringMachine/ChoiceReplay.lean": "99ff78af182cdae5df54233bc47108243b754592",
+  "TCSlib/Complexity/TuringMachine/ChoiceWords.lean": "c1dc1e6559c375668f637f4b9a18c430126c235f",
+  "TCSlib/Complexity/TuringMachine/CodeFormat.lean": "9af1b24012387d380359639e2592a9e5d24235d1",
+  "TCSlib/Complexity/TuringMachine/CodeParser.lean": "95be4d21bc9b927bfaeb17cb6d406334b981a899",
+  "TCSlib/Complexity/TuringMachine/CodeSimulator.lean": "123a5538616a3456ac3bcc2c7c4b67abdc3f4eea",
+  "TCSlib/Complexity/TuringMachine/Codes2Tape.lean": "06d9339d3f17bc38bda991ccd68185d1fcb57eff",
+  "TCSlib/Complexity/TuringMachine/Composition.lean": "96b61fd02edcec3c0f1c2e5db0444afefb77b9d3",
+  "TCSlib/Complexity/TuringMachine/Configuration.lean": "a9f14a780c7702a5262aea9cb37ca0e19b6f8810",
+  "TCSlib/Complexity/TuringMachine/CounterProg.lean": "d84b88dc7af20ecb6791ed71c8b506654ef30514",
+  "TCSlib/Complexity/TuringMachine/CounterProgInput.lean": "1f4b743692f6cdbe2c2ef8ea4aebd52f228414c1",
+  "TCSlib/Complexity/TuringMachine/CounterProgRun.lean": "22105221c459270d471abc9a7a51e95d9def7279",
+  "TCSlib/Complexity/TuringMachine/Deterministic.lean": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150",
+  "TCSlib/Complexity/TuringMachine/Encoding.lean": "e3870facaec7ff216f762b3f815023b06eeea8b9",
+  "TCSlib/Complexity/TuringMachine/Finite.lean": "405f6d71fc719cb85be376b0949715fae6c1c485",
+  "TCSlib/Complexity/TuringMachine/MathlibBridge.lean": "859016ef4db3948d7868dfa6f0d113e4181e8725",
+  "TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean": "baf1b4543600e6f302af4c2996407cde22370218",
+  "TCSlib/Complexity/TuringMachine/NDCodes.lean": "53ffa79ee6057823849e41187671869a29cc135c",
+  "TCSlib/Complexity/TuringMachine/NatBits.lean": "0bfe1d6c07f81087b970d88f48d63a33bf377cd3",
+  "TCSlib/Complexity/TuringMachine/Nondeterministic.lean": "7fdd1de1a4329b3a902fd05305a016fb67d5ff4f",
+  "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean": "f9f2cacf583eb088bb904dc1c5913f675e9b770e",
+  "TCSlib/Complexity/TuringMachine/Oracle.lean": "9d17fefc163bd600c114ff9b5788d652dc7c0da7",
+  "TCSlib/Complexity/TuringMachine/OracleAgreement.lean": "68ae1c1c6c858132642b6bd0d5887658fa058a9f",
+  "TCSlib/Complexity/TuringMachine/OracleFinite.lean": "1092028eeb3f50cf596948128ec4b9f284bbe4ca",
+  "TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean": "d2e724d08a4a18706df25d51ead43c3cc8c59232",
+  "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean": "7a62c01f42d3240f1231b12de84b703c92619ce6",
+  "TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean": "675eee6cee0dca317146adee45996474db3fb708",
+  "TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean": "774bd6e447e6a00765772b610b940248dc39bdb6",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean": "b999917856b3d44108a2eb4b7a3d451d7f2373f9",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean": "12d97ab9ef3e15687328187dbd7edde36c0799e3",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean": "cd0cf1417178df843e4171d792ad9811e1c025b8",
+  "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean": "1b157ab16f21798d18a9ce1bffac631efba39f51",
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": "560e6cb050ee97872beafd80c417a98eb296f600",
+  "TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean": "e1ef486ece9ce00d5cc3b696a36ffc54e1fbb456",
+  "TCSlib/Complexity/TuringMachine/SelfUniversal.lean": "d1f064d47c683f193b8c0f753a9e34e47dbc74c2",
+  "TCSlib/Complexity/TuringMachine/Simulation.lean": "a9cb5440e7cefcfb189a7f4e39123894ed8d52b2",
+  "TCSlib/Complexity/TuringMachine/StateRenaming.lean": "3c6e7ee072e43ade4bdc3db5f98bc4cef7a85add",
+  "TCSlib/Complexity/TuringMachine/Sweep.lean": "11b4e76d7f8ba6dc564ef3406407e2811109ff60",
+  "TCSlib/Complexity/TuringMachine/SymbolLift.lean": "50de39c2834ce337d72e91ad9e8098472a63215f",
+  "TCSlib/Complexity/TuringMachine/UnaryTape.lean": "7b877560790265f285fbaabf3a0f2c67ea03ed02",
+  "TCSlib/Complexity/TuringMachine/Universal.lean": "b3f23b0546a29171ad401f0a8956bff4cb0840f8",
+  "TCSlib/Complexity/TuringMachine/UniversalBlock.lean": "299e42a9d02819e3fade560898d91148d9833b8c",
+  "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean": "94ea51ff9c7f9705332c9de08140641823ed5dba",
+  "TCSlib/Complexity/TuringMachine/UniversalK.lean": "4c94bbe6651470bfd241f16f77c90d9171c5ecd3",
+  "TCSlib/Complexity/TuringMachine/UniversalStartup.lean": "1f9d8cc4fe2319ec2652d8cff7528658f64fbc43",
+  "TCSlib/Complexity/TuringMachine/UniversalTlogT.lean": "666b3f8324c616500a5febfa3ee317f45d446366",
+  "TCSlib/Complexity/Uncomputability.lean": "0fa732d17746689019f60820635e850f7ca5688d",
+  "TCSlib/Complexity/Uncomputability/Computable.lean": "dfbb42e140647cb16c76b8363603a4fa934e761e",
+  "TCSlib/Complexity/Uncomputability/Diagonalization.lean": "d1f78ab886be88fe8b488c2ba442a020439f502c",
+  "TCSlib/Complexity/Uncomputability/Halting.lean": "3a842dc92ba61bb41baa609fc874488e4b0a8f08",
+  "TCSlib/ComputationalModels.lean": "143a15cc541f0268a9eec983fd6e6cefdd320296",
+  "TCSlib/Cryptography/MPC.lean": "d0d4e4393a88c55b8506153c50920730df62407e",
+  "TCSlib/Cryptography/MPC/ArithmeticCircuit.lean": "9bd2e0b0432df2f172966d77d95599f1698184c5",
+  "TCSlib/Cryptography/MPC/BGW.lean": "de2c3f27da8cf50dd3f3b9978eb10fcaeba6d897",
+  "TCSlib/Cryptography/MPC/BGW/Privacy.lean": "193055d8e0664e330e2f994cb6f8d6d2ddefc0fa",
+  "TCSlib/Cryptography/MPC/BGW/Protocol.lean": "a05c5f3713df0db32255bda061e2bbb93e4de687",
+  "TCSlib/Cryptography/RSA.lean": "ba6e00a10ef03a9390a9ebd3cc2ac42b969820d8",
+  "TCSlib/Cryptography/SchnorrProtocol.lean": "6dabe90e08ac3ca46d1f4d0ed59d2a43bd52565e",
+  "TCSlib/Cryptography/SecretSharing.lean": "1cc981d777057a0906442306350c5bf5b6d968bc",
+  "TCSlib/Cryptography/SecretSharing/Defs.lean": "783dc079d7c4a904c76ff175a6667b84a72bbd82",
+  "TCSlib/Cryptography/SecretSharing/Interpolation.lean": "195be35d5b09babaf03fead3b79a0f6444ac5f91",
+  "TCSlib/Cryptography/SecretSharing/Shamir.lean": "74288535143b54fdd1fb3f483ae078b24cfecc5b",
+  "TCSlib/Cryptography/SecretSharing/Sharing.lean": "978455bbf09002a613092bee2883b1be140e9806",
+  "TCSlib/Cryptography/SecretSharing/Vector.lean": "f93248d71360d5138ecbeb09296e6d6c09ea96bd",
+  "TCSlib/ErrorCorrectingCodes/Basic.lean": "1bad5d9fceb9f5ff6983ed0bd1a9a40318c7f952",
+  "TCSlib/ErrorCorrectingCodes/Elias_Bassalygo_bound.lean": "4c76b4ea341d54735632e4386ea3bf7c94dcd9d2",
+  "TCSlib/ErrorCorrectingCodes/Entropy.lean": "4c8dca8cd6ca009ebc8a79146533098e2ca17be4",
+  "TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean": "4f72321e817dbd045dd0d831c4e4a67ae4cf60e2",
+  "TCSlib/ErrorCorrectingCodes/HammingBound.lean": "33211bb9c5e3ae0ac7238957b4d4852bbb96a9ea",
+  "TCSlib/ErrorCorrectingCodes/JohnsonBound.lean": "e92477701ad0ff9b76c69849f24921faa1fb92ba",
+  "TCSlib/ErrorCorrectingCodes/LinearCodes.lean": "c01d5e6384fd6dc802e3d3acc7e24d156835c7b4",
+  "TCSlib/ErrorCorrectingCodes/ListDecoding.lean": "5cc26cc573dc676e18743629fa94ae6396c3eab4",
+  "TCSlib/ErrorCorrectingCodes/MRRW.lean": "83be772f255565a7b0ebb2c9ed021c3cc794daa3",
+  "TCSlib/ErrorCorrectingCodes/QuantumHamming.lean": "4c14481a0a7b9aa02f14dadf1241fde754cf1b5d",
+  "TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean": "f72b124db31888f6cdb326f5a101666424dc895f",
+  "TCSlib/ErrorCorrectingCodes/SingletonBound.lean": "1b30a50d0ef27956abbc115526198ed8fc0c8552",
+  "TCSlib/GraphTheory/Core/Connectivity.lean": "ef0713198de516b0236a4a620c0c41fef6d5f2e8",
+  "TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean": "8d68723ae6b1078e8954fb35f6c00fc00083be68",
+  "TCSlib/GraphTheory/Core/DirectedGraphs.lean": "40f3026483ab2f3af237fefa6228f63053cde822",
+  "TCSlib/GraphTheory/Core/EdgeColourings.lean": "483872089738a9c907db9cbdbe4f5d5256a523d7",
+  "TCSlib/GraphTheory/Core/EulerHamilton.lean": "cd1c3a89ad6d4939aa85ed3e7bfd10cdf7c33132",
+  "TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean": "8063f49cb4efe9fa00386247e1d92ef9b3dfe258",
+  "TCSlib/GraphTheory/Core/IndependentSetsCliques.lean": "ed4080a5ea55c654f5208fffb7e5c5926eaaef7f",
+  "TCSlib/GraphTheory/Core/Matchings.lean": "c4d116c677ad553781509b080abae789d756c3e6",
+  "TCSlib/GraphTheory/Core/Networks.lean": "6493e75888a729d0a209bb1cee4592647395c30d",
+  "TCSlib/GraphTheory/Core/PlanarGraphs.lean": "dff1dfba13fad675d9605eb23801470ed2a5781b",
+  "TCSlib/GraphTheory/Core/Trees.lean": "eeeb27ac8aef2ed7503c3a89ecfea3051d24c053",
+  "TCSlib/GraphTheory/Core/VertexColourings.lean": "45bb8d0dbf93de2eaebfc6017b5071d8f5127444",
+  "TCSlib/GraphTheory/KargerMinCut.lean": "b1959ff30495352add51aba1831dd6e44369746c",
+  "TCSlib/GraphTheory/KargerMinCutTrace.lean": "6689052b7fdafe3f6f693b78b123c351aa24e6b2",
+  "TCSlib/GraphTheory/Kruskal.lean": "9e67d1da0a2a9f19649e862c46e4edb6034bd462",
+  "TCSlib/GraphTheory/Kruskal/Basic.lean": "dc1bfc4528f4e37df58e62845259438e435c5380",
+  "TCSlib/GraphTheory/Kruskal/Exchange.lean": "8197b928c9487b084d3d7954cfceba079ca1b975",
+  "TCSlib/GraphTheory/Kruskal/Optimality.lean": "295a0de7630f6facbb4f7a8a51fcd9e3fe087edf",
+  "TCSlib/GraphTheory/Kruskal/Reach.lean": "4ae02ffbe13bd36f8288af7821b393fee75508a3",
+  "TCSlib/GraphTheory/Kruskal/UnionFind.lean": "d93076c48066d16f061a2592330593ee8dee6340",
+  "TCSlib/InformationTheory.lean": "12437b49539456c405822f3c90593a97bb2ba83e",
+  "TCSlib/InformationTheory/FinDist.lean": "1a6b55eb4e7ee76fd50b3677e38eb688e07bdff5",
+  "TCSlib/InformationTheory/LeftoverHash.lean": "694552bb5794ea6602d82d09657e53834a0a0819",
+  "TCSlib/InformationTheory/StatisticalDistance.lean": "bf24b2b238a3427a86e882b5b0b393273c35783f",
+  "TCSlib/InformationTheory/UniversalHashing.lean": "186eed39a989701fbf9c48f23452aff5b156edf1",
+  "TCSlib/KikuchiLDC/LDC/BackgroundFacts.lean": "7a5d96cd6591b9af6c92310bfdc97a35c327c9f1",
+  "TCSlib/KikuchiLDC/LDC/Decomposition.lean": "9407fdc03c4b3db62b57bc05b6631ade22b715e5",
+  "TCSlib/KikuchiLDC/LDC/Defs.lean": "0c7584d4165beab4c4fc180e704ae8fbfb5bf362",
+  "TCSlib/KikuchiLDC/LDC/HighValue.lean": "a4687f24fe4b1dad0c92219669fa2e77891e4cf8",
+  "TCSlib/KikuchiLDC/LDC/MainTheorem.lean": "49923e881bd24b1e8af1e85536d42e290d373732",
+  "TCSlib/KikuchiLDC/LDC/ThreeXOR.lean": "ad2551b5ac327444e223250048812999741887a3",
+  "TCSlib/KikuchiLDC/LDC/TwoXOR.lean": "7d71b390ade500cf526674d025416a61709d55fe",
+  "TCSlib/KikuchiLDC/Main.lean": "783c5d267c0ad5b8161ac6a0b22479acb8f34823",
+  "TCSlib/LearningTheory/Hedge.lean": "1a6900aa75e57b3d6e8a2fcc81fb6584571b4a32",
+  "TCSlib/LearningTheory/Hedge/Basic.lean": "5290712171d79caf2465ca5706284c86148ed36d",
+  "TCSlib/LearningTheory/Hedge/ConvexPrediction.lean": "2386a191b1ebdb03e7669970a1646ffb349936ef",
+  "TCSlib/LearningTheory/Hedge/Episode.lean": "8dd9eaeee18273e280108dd1cf65e44c21fe7392",
+  "TCSlib/LearningTheory/Hedge/Hoeffding.lean": "8dd8fa7711181cb9628a5b03f87edc12a150af20",
+  "TCSlib/LearningTheory/Hedge/Regret.lean": "c50e4188c48982cba04ad60a845ab98109ed2c40",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss.lean": "2d2607a84f56c2e2df4ee5d68598923923a13883",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Bernstein.lean": "4e4465f71d815453a9eb586a373bf020e563b1b0",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/ChiSquaredMGF.lean": "58e33607952c0c2f97f95f0529e349fad21fde6a",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/ConcentrationBound.lean": "0e3607ee6d9b878f1429145c1538bd60643407b3",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Main.lean": "5f64a8d333b1eb8aa88cfa7ada765cc9ca5e9419",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/Rademacher.lean": "12f6289bec6be8597d75028a0e69601a78d3c89a",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/RowDistribution.lean": "dcf1fee7ebbb698e46b30fd3a3a289b153201548",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/SubGaussian.lean": "e48c5c4e6d32b44800bcd08ca48ed90c17421921",
+  "TCSlib/LearningTheory/JohnsonLindenstrauss/UnionBound.lean": "58f70cbce9cf6dd8222efdd02942f3a5924e8249",
+  "TCSlib/LearningTheory/Minimax.lean": "3e8002299eb5d49e7a4f174de4b80b8d50b02225",
+  "TCSlib/LearningTheory/Minimax/CCE.lean": "95e0b653452f0a06c5bca0fbdb7f8a9828a53c8a",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimax.lean": "715bde515cee055181b0e7c7e626a40c7412b0ed",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxCore.lean": "7efbc17c37420c92b7db6d7bfcdcd60e6af2a252",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean": "cbea792fe5ece95cfe22b195124236e52b783f38",
+  "TCSlib/LearningTheory/Minimax/ConvexMinimaxSeparation.lean": "07ae70163180f2153f3606627cdc3c8716785a63",
+  "TCSlib/LearningTheory/Minimax/FiniteMinimax.lean": "d949df2e2f229f0952aced3d2c59256eab840a17",
+  "TCSlib/LearningTheory/Minimax/HedgeInteraction.lean": "2dfd4551a1ab47221a53bf28e7f3505bb9a70141",
+  "TCSlib/LearningTheory/Minimax/ZeroSumGame.lean": "fa936bc083506c60a5cbc4b59ade34ac437c1e02",
+  "TCSlib/LearningTheory/MistakeBounds.lean": "12b4d3f2d5d671233627825a641cb282c7c431f1",
+  "TCSlib/LearningTheory/MistakeBounds/Halving.lean": "c72425193b06d99ae7946dd02bdc0124a725fbdf",
+  "TCSlib/LearningTheory/MistakeBounds/WeightedMajority.lean": "61d7ce93806f826564d3e5a971e6c5461649f986",
+  "TCSlib/Programs.lean": "eab72d97dd446b72753d35af0b87e1d9ff004813",
+  "TCSlib/Programs/Compat.lean": "c98b968742bad5be0b877d08d64c980dd2e19119",
+  "TCSlib/Programs/Light.lean": "4071c9de9af0b4875d16c652983f09b02381944d",
+  "TCSlib/Programs/Light/Assigns.lean": "0bd5eb1c715c62983ecc41e0348ec7acb170b3fd",
+  "TCSlib/Programs/Light/Calls.lean": "da5bb7a18bd636d052e9fd3fa27acbc754c44bea",
+  "TCSlib/Programs/Light/Compiler/CallFrames.lean": "8897653f25c67ec8b7e404d5358fc545cd352cd4",
+  "TCSlib/Programs/Light/Compiler/Cells.lean": "99031c234695e8dd915cae1c6c32ca7b2669ab5f",
+  "TCSlib/Programs/Light/Compiler/Conditions.lean": "52caac48638b2f4e4d793945a513e1a29c333515",
+  "TCSlib/Programs/Light/Compiler/Dispatcher.lean": "672c70cfadbcad435d46e291467595d326fdb467",
+  "TCSlib/Programs/Light/Compiler/Expressions.lean": "2256804f214af623f05f7dd8cea9d6b166116bb8",
+  "TCSlib/Programs/Light/Compiler/ProgramCode.lean": "124e55a8ed8d9a9a09ab58088f240f1aaf56f44e",
+  "TCSlib/Programs/Light/Compiler/Simulation.lean": "3dbae6f3b06859420e0d0f3b1dcac4674904fac0",
+  "TCSlib/Programs/Light/Compiler/StartUp.lean": "3270a8d84088176abae237830a97dca06e4551fd",
+  "TCSlib/Programs/Light/Compiler/StatementCode.lean": "fe5fb3ed1373288efb0cd5e3f7a094cdde0850f2",
+  "TCSlib/Programs/Light/Compiler/WholeProgram.lean": "02554a2d74abeb13f0bb26630db7141d20e5fb48",
+  "TCSlib/Programs/Light/Frames.lean": "80ec789b6e5994e8795dba354566c0dc77997fe1",
+  "TCSlib/Programs/Light/Lib/ArrayAt.lean": "90280ffa90b4a62b022a0c828666824c72e868b8",
+  "TCSlib/Programs/Light/Lib/Copy.lean": "d6cfa94e3c6dab9fe5cb850d049e5fbafead14ca",
+  "TCSlib/Programs/Light/Lib/CountSort.lean": "4c1da34730e258597af8acd6c9f370758b3a3e1e",
+  "TCSlib/Programs/Light/Lib/Emod.lean": "9b36dc899468bb834d3e4a80a0f8e12277c50900",
+  "TCSlib/Programs/Light/Lib/Logs.lean": "3c2c5ec7ba8387cf47c09ac8751948d855badeda",
+  "TCSlib/Programs/Light/Lib/Merge.lean": "8e396813ba969dd8cbdaa455ddf594f5d2bc5aaf",
+  "TCSlib/Programs/Light/Lib/MergeSort.lean": "a4dfb078f3b229c3caeda3e1e3662745b241553b",
+  "TCSlib/Programs/Light/Lib/NextPair.lean": "408a637fa67130fcfb65a14d83750a6e77d56cff",
+  "TCSlib/Programs/Light/Lib/Odometer.lean": "1f69806fe91fbe45c00945273f7d15218c8fea41",
+  "TCSlib/Programs/Light/Lib/Pass.lean": "abc8770d5d38aa83fb0cd237c55e06357930a784",
+  "TCSlib/Programs/Light/Lib/PowTable.lean": "7739b3685966626ff0a251503a317cbc2163e59a",
+  "TCSlib/Programs/Light/Lib/RadixPass.lean": "055820c39d0eca4f0ccebf836058c27a42a8c59c",
+  "TCSlib/Programs/Light/Lib/Seg.lean": "3b03f21fa3b8da04331a18c3b98bc93a1b6afb11",
+  "TCSlib/Programs/Light/Lib/Sqrt.lean": "20d376dff6618e02ba7ed463c777938d2e0135b7",
+  "TCSlib/Programs/Light/Logic.lean": "94e28a1526f5649be3c277713250c7a090448fb0",
+  "TCSlib/Programs/Light/Regions.lean": "dc6c34374c797c14a4e28c0ef3d3da127abbc979",
+  "TCSlib/Programs/Light/Rules.lean": "c3938e47225007b3a1a1eaf5a8d76f873e4c7911",
+  "TCSlib/Programs/Light/RunsStayInLimits.lean": "b6c84dc6692346f442caa15495d3764f7d066150",
+  "TCSlib/Programs/Light/Syntax.lean": "4da9b26d00bfabe75651881ca5c40fbf1670a9de",
+  "TCSlib/Programs/Light/Tactics.lean": "c8afc9da10731d5999cdbc1c1dde01efa6f71a10",
+  "TCSlib/Programs/Util.lean": "10a191f528c0632e4e7fdead4f7d1761bece7c57",
+  "TCSlib/Programs/Util/Basic.lean": "43a5d5f2d61d73295464977a3bbad19296246295",
+  "TCSlib/Programs/Util/CountingSort.lean": "1c30fde1a4715dbdbf5a0f75231cda0e838b1740",
+  "TCSlib/Programs/Util/Index.lean": "a3acde4b5beeca0f6c5ae464703d2808126e0650",
+  "TCSlib/Programs/Util/List.lean": "cdacaad947b6c01696c8700382532b9f6a0c13ba",
+  "TCSlib/Programs/Util/Odometer.lean": "f61440e1c7389c14c20eca194992bfe871e0e1e5",
+  "TCSlib/Programs/Util/StablePass.lean": "0b82cdae7c36a3a7af9e3df1cf120e6ae60ec605",
+  "TCSlib/Programs/WordRAM.lean": "fe08d6951b9ed77c593510f17f2bc3a57551a0c3",
+  "TCSlib/Programs/WordRAM/Basic.lean": "874ae169cf5b2020a4f56d730d2f210d8fda9207",
+  "TCSlib/Programs/WordRAM/Extended.lean": "788348ed82eb435d1db0fb41ca1555eeae749116",
+  "TCSlib/Programs/WordRAM/Steps.lean": "dbb8d0eb87a52dd61a7e9b9084bef2983714bc3a",
+  "TCSlib/Tactics/Haves.lean": "909286fc73f4984ed61675f5fb98e2e9487bd104",
+  "TCSlib/Tactics/HavesFixtures.lean": "49e049fae21688dbf37733670130bfe83129aecb",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1AxHead.lean": "7489847ac1ff2449ac6ea59114da9a24d5be7f0c",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1ConsumerProbeOnHead.lean": "4cfc84be7337afe0a7c02731e41d20dad402b268",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1ImportProbeOnHead.lean": "b07f1744dbadfb5c1b41deb7a8f42327c7454f62",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1Kinds.lean": "654210df05026c1bc46b7f2511b9ae25db81a0bf",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1SealBase.lean": "99b8aa9f7bf4fe04ff5683c10cfd70877ceabca2",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1SealControl.lean": "7ec8278a48c0ffb5dafc9ec7232a702a2658e901",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/F3C1SealHead.lean": "7c9ea68633f57b10928504e4d364ab5b4b1620c2",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/StepClockE2Public.lean": "c34d691c28707fe6ace5d45e02a4fa5b83c9b1b7",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/StepClockE2PublicTip.lean": "64126688aea7f9d5b17b3b164cc32a03c308b278",
+  "campaign/fills/b6/reviews/configclock-cont1/probe/WindowClockE2Private.lean": "7b64cc3d8a10104447618c0311d592459aca0d8a",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/C1ExhaustiveImportProbe.lean": "862471f9d6ef08f30ead787de274539f2623d591",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/C1ExhaustiveImportProbeExtended.lean": "be9b476dfbf86273f1d18cd9186849dce1a588a6",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/C1ExhaustiveImportProbeReview.lean": "3cc5ac7816be553d27344aa6c0ad0f98cc30ec13",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRAxHead.lean": "2daef04e8e02a2a204c6ac5911eda17d25a35f4a",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRConsumerNTimeHierarchy.lean": "e9bd0fd979558ca47210c8e181c33badb3cf63c0",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRConsumerNTimeHierarchySorry.lean": "5ab6c4e55c9e495289d36fa6aebb4d6895c9ca76",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRControlEndUnsealed.lean": "d127ccc27d16e9b97613209b3d1afd926d13fabd",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRControlUnsealed.lean": "beeed924412af584ef67efc1f9ee7c29fa4f431b",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRHeadFix.lean": "a4301f625b67adc8bea70a87502e6ba83db0456e",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRKinds.lean": "a10c4ce63a045e30270581f56b09971d78110088",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealControl.lean": "c828c418cd3c61ebc671043b0fdbb9ba953f4dac",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealControlEnd.lean": "09a9820fb61697c57d8f5ac15e8008573b8a0d76",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealHead.lean": "7145eb84030407a6aa9f28bc3675fbaa7c9f480f",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealSimpControl.lean": "67b7a40bc323ace0bc3da2fafe9d517cec3485d6",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealSimpHead.lean": "c46ce47313b48ace40220ca4ee54a9518e6e20c4",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSealSimpHeadFix.lean": "b1e432cbf9f4268a3959da295471389979801cbc",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSimpControlUnsealed.lean": "23da93b01b1f5dbcd6a061a3aec20f1702314c0e",
+  "campaign/fills/c1/reviews/exhaustive-cont1/probe/XRSimpUnfold.lean": "b92be96d9b2758e273d0e5b421aaf700a9c779b2",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/InputWindow.draft-inserted.lean": "09d6113860b2424f986659fbd0cea87bad9cabd3",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/InputWindow.landing.lean": "9e6f659de2f27453d3fd449ef8d7120baa30e285",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/InputWindow.repaired.lean": "6d1ff8751168b4900925194bd9330571e6b0323f",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/draft-region-a.lean": "1a8b332d1f5a50d8de4e7b58113cc80a488a667b",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/draft-region-b.lean": "806c3cbc79b51f6f72de88c548ae39ff30346d48",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/draft/draft-verbatim.lean": "09d6113860b2424f986659fbd0cea87bad9cabd3",
+  "campaign/fills/c1/reviews/window-cont1-r3/out/tip-InputWindow.orig.lean": "5fd86b0392924e50a45df0b373de37f65ebac781",
+  "campaign/programs/ch1-infra-BridgeExportAxioms.lean": "ab40fdc8cdeeccb1b6c89d005713b29cbd9bb3dd",
+  "campaign/programs/ch1-infra-BuildSpecAxioms.lean": "bc12503971966f76fed57dc5a1a1642cf1413a1d",
+  "campaign/programs/ch1-libfill-ClosureAxioms.lean": "02a92e8933bb1ff8acc7cec5d02fc9c4bcb6bfa8",
+  "campaign/programs/ch2-e2-ClosureAxioms.lean": "90fe7df445a5ef494229c1bd8f433b8f40531fcf",
+  "campaign/programs/ch2-e4A5-ClosureAxioms.lean": "c693f280dc6f2992fc7d9fe8f46a4b0e8309f744",
+  "campaign/programs/ch2-e4B-ClosureAxioms.lean": "afb66416082741a5a502a7d2d817e7b32c796a7d",
+  "campaign/programs/ch2-epoch34-R2Axioms.lean": "bde4228fe139a9506cf56f5b8295c00ee46b651f",
+  "campaign/programs/ch2-epoch34-R3Axioms.lean": "5ea37e6299cbc5a255dbe829511fefd3e877a885",
+  "lakefile.lean": "841a96bdb510f201743fea9d68045c7a9580afd2",
+  "webpage/Main.lean": "06dd9a999a6649f0599b2568269fa7bf9e04040c",
+  "webpage/Site.lean": "8cd99e2556bc78222c5d9c532d21d4fbb0cf3865",
+  "webpage/Site/Dataset.lean": "9749d43162769cd33cba71fd5c70262ed5413025",
+  "webpage/Site/FrontPage.lean": "f9e80429decc7dbf3bdffa36e4220924ceab8f0b"
+}
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/context.json =====
+
+{
+  "actual_static_helper_sha256": "2c2ed3d0a7343c883fe6225df147f9fcb50d7f1b1b2c2383bb654232d95db3df",
+  "replay_helper": "review/replay/leanelab-o.sh; self-contained, does not call leanelab.sh",
+  "native_seal_metadata_helper": "leanelab.sh; included for those diagnostic receipts",
+  "runtime_budget": {
+    "local": 3,
+    "machine": 5,
+    "threads": 4,
+    "nice": 10
+  },
+  "environment": "source env.sh configured per provided example; recorded historical absolute paths are locations, not portable requirements",
+  "independent_input_anchor": "campaign/status/2026-11-08-mig1-merge/object-hashes.json"
+}
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/env.sh.example =====
+
+# Copy to $TCSLIB_SCRATCH/env.sh and source it at the start of every command (HANDOFF §1).
+export TCSLIB_SCRATCH=/home/user/tcslib-scratch
+export TCSLIB_REPO=/home/user/tcslib
+export TCSLIB_EXCHANGE=$TCSLIB_SCRATCH/wt-xch/arora-barak-ch3-4
+# Smaller local budget when another campaign reserves the other two machine-wide slots.
+export TCSLIB_LEAN_SLOTS=3
+[ -d "$HOME/.elan/bin" ] && export PATH="$HOME/.elan/bin:$PATH"
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/leanelab.sh =====
+
+#!/usr/bin/env bash
+# Elaborate one module file of worktree $1 against olean tree $2 (no olean output, nothing removed).
+# Throttled (user, 2026-11-06): at most 5 elaborations machine-wide. TCSLIB_LEAN_SLOTS may
+# reserve a smaller local budget while another campaign uses separate locks. Each has 4 threads.
+# Waiting is silent; the output and exit status are lean's.
+WT="$1"; OL="$2"; F="$3"; LP="$OL"
+for d in "$WT"/.lake/packages/*/.lake/build/lib/lean; do [ -d "$d" ] && LP="$LP:$d"; done
+export LEAN_PATH="$LP"
+LOCKS="${TCSLIB_SCRATCH:-$HOME/.tcslib-scratch}"/locks
+SLOT_LIMIT="${TCSLIB_LEAN_SLOTS:-5}"
+case "$SLOT_LIMIT" in 1|2|3|4|5) ;; *) echo 'TCSLIB_LEAN_SLOTS must be 1..5' >&2; exit 2 ;; esac
+mkdir -p "$LOCKS"
+SLOT=""
+release() { if [ -n "$SLOT" ]; then rm -f "$SLOT/pid"; rmdir "$SLOT" 2>/dev/null; SLOT=""; fi; }
+trap release EXIT
+trap 'release; exit 130' INT TERM
+while [ -z "$SLOT" ]; do
+  for ((i=1; i<=SLOT_LIMIT; i++)); do
+    s="$LOCKS/lean-slot-$i"
+    if mkdir "$s" 2>/dev/null; then echo $$ > "$s/pid"; SLOT="$s"; break; fi
+    p=$(cat "$s/pid" 2>/dev/null)
+    # reclaim a stale slot: its holder is gone, or it never recorded a pid within a minute
+    if { [ -n "$p" ] && ! kill -0 "$p" 2>/dev/null; } || { [ -z "$p" ] && [ -n "$(find "$s" -maxdepth 0 -mmin +1 2>/dev/null)" ]; }; then
+      rm -f "$s/pid"; rmdir "$s" 2>/dev/null
+    fi
+  done
+  [ -z "$SLOT" ] && sleep 2
+done
+cd "$WT" || exit 1
+nice -n 10 lean -j4 "$F"
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/staticsorry.py =====
+
+```
+"""Static sorry count per module (declarations whose comment-stripped text contains the token
+`sorry`), compared with a replay log's per-module counts. Usage:
+python3 -I staticsorry.py <repo root> <replay log>"""
+import sys, re
+root, log = sys.argv[1:3]
+def strip(src):
+    out, i, depth = [], 0, 0
+    while i < len(src):
+        if src.startswith("/-", i): depth += 1; i += 2; continue
+        if src.startswith("-/", i) and depth > 0: depth -= 1; i += 2; continue
+        if depth == 0: out.append(src[i])
+        i += 1
+    return "\n".join(l.split("--")[0] for l in "".join(out).splitlines())
+DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|unsafe|partial)\s+)*(theorem|lemma|def|abbrev|instance|example|structure|inductive)\b", re.M)
+bad = 0; n = 0; tot = 0
+for l in open(log):
+    m = re.match(r"(\S+) exit=\d+ errors=\d+ sorry=(\d+)", l)
+    if not m: continue
+    mod, k = m.group(1), int(m.group(2))
+    s = strip(open(f"{root}/{mod}.lean").read())
+    starts = [x.start() for x in DECL.finditer(s)] + [len(s)]
+    c = sum(1 for a, b in zip(starts, starts[1:]) if re.search(r"\bsorry\b", s[a:b]))
+    n += 1; tot += c
+    if c != k: bad += 1; print("MISMATCH", mod, "static", c, "replay", k)
+print(f"modules {n}, mismatches {bad}, static total {tot}")
+```
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/campaign_style_lint.py =====
+
+```
+#!/usr/bin/env python3
+"""Mechanical policy.md conformance lint for the Arora-Barak Chapter 1 tree.
+
+Checks the mechanically checkable slice of policy.md (sections 1-3) plus the
+campaign's standing conventions, so external audit rounds can consume a
+reported attestation instead of performing style review (epoch-1/epoch-2
+practice; see AroraBarakChapter1Plan.md section 5).
+
+  FAIL  - unambiguous policy violation; exit code 1.
+  WARN  - needs a recorded justification (e.g. a file over the 1000-line
+          threshold with an escalation on file); exit code 0.
+  INFO  - context only.
+
+Usage: python3 scripts/style_lint.py [subtree]   (default: TCSlib/Complexity)
+"""
+
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+# `--check8b` (opt-in; user, 2026-10-17: after the #118 briefs issue) adds check 8b below.
+CHECK8B = "--check8b" in sys.argv[1:]
+_ARGS = [a for a in sys.argv[1:] if a != "--check8b"]
+SUBTREE = Path(_ARGS[0]) if _ARGS else Path("TCSlib/Complexity")
+
+SIZE_TARGET = 600     # policy section 1: target upper end
+SIZE_THRESHOLD = 1000 # policy section 1: split unless positively justified
+
+# Vendored files follow upstream style (policy section 2, Statement prose:
+# exempt from the docstring-presence requirement, and frozen anyway).
+VENDORED = {
+    "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    # vendored from [AFM26] anthropics/formal-math 3sum-apsp (design §15b)
+    "TCSlib/Programs/Light/Assigns.lean",
+    "TCSlib/Programs/Light/Calls.lean",
+    "TCSlib/Programs/Light/Compiler/CallFrames.lean",
+    "TCSlib/Programs/Light/Compiler/Cells.lean",
+    "TCSlib/Programs/Light/Compiler/Conditions.lean",
+    "TCSlib/Programs/Light/Compiler/Dispatcher.lean",
+    "TCSlib/Programs/Light/Compiler/Expressions.lean",
+    "TCSlib/Programs/Light/Compiler/ProgramCode.lean",
+    "TCSlib/Programs/Light/Compiler/Simulation.lean",
+    "TCSlib/Programs/Light/Compiler/StartUp.lean",
+    "TCSlib/Programs/Light/Compiler/StatementCode.lean",
+    "TCSlib/Programs/Light/Compiler/WholeProgram.lean",
+    "TCSlib/Programs/Light/Frames.lean",
+    "TCSlib/Programs/Light/Lib/ArrayAt.lean",
+    "TCSlib/Programs/Light/Lib/Copy.lean",
+    "TCSlib/Programs/Light/Lib/CountSort.lean",
+    "TCSlib/Programs/Light/Lib/Emod.lean",
+    "TCSlib/Programs/Light/Lib/Logs.lean",
+    "TCSlib/Programs/Light/Lib/Merge.lean",
+    "TCSlib/Programs/Light/Lib/MergeSort.lean",
+    "TCSlib/Programs/Light/Lib/NextPair.lean",
+    "TCSlib/Programs/Light/Lib/Odometer.lean",
+    "TCSlib/Programs/Light/Lib/Pass.lean",
+    "TCSlib/Programs/Light/Lib/PowTable.lean",
+    "TCSlib/Programs/Light/Lib/RadixPass.lean",
+    "TCSlib/Programs/Light/Lib/Seg.lean",
+    "TCSlib/Programs/Light/Lib/Sqrt.lean",
+    "TCSlib/Programs/Light/Logic.lean",
+    "TCSlib/Programs/Light/Regions.lean",
+    "TCSlib/Programs/Light/Rules.lean",
+    "TCSlib/Programs/Light/RunsStayInLimits.lean",
+    "TCSlib/Programs/Light/Syntax.lean",
+    "TCSlib/Programs/Light/Tactics.lean",
+    "TCSlib/Programs/Util/Basic.lean",
+    "TCSlib/Programs/Util/CountingSort.lean",
+    "TCSlib/Programs/Util/Index.lean",
+    "TCSlib/Programs/Util/List.lean",
+    "TCSlib/Programs/Util/Odometer.lean",
+    "TCSlib/Programs/Util/StablePass.lean",
+    "TCSlib/Programs/WordRAM/Basic.lean",
+    "TCSlib/Programs/WordRAM/Steps.lean",
+}
+
+# Declaration kinds requiring statement prose (instances exempt per policy).
+DOC_DECL_RE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
+    r"(theorem|lemma|def|structure|abbrev|inductive)\s+([A-Za-z0-9_.']+)"
+)
+ATTR_LINE_RE = re.compile(r"^@\[[^\]]*\]$")
+SET_OPTIONS = [
+    "set_option maxHeartbeats 0",
+    "set_option relaxedAutoImplicit false",
+    "set_option autoImplicit false",
+]
+DOCSTRING_RE = re.compile(r"/--.*?-/", re.S)
+DECL_RE = re.compile(
+    r"^(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
+    r"(theorem|def|lemma|structure|abbrev|instance|inductive)\s+([A-Za-z0-9_.']+)",
+    re.M,
+)
+
+# Check 8 (policy section 1, definitions land with their lemmas; user, 2026-10-16).
+API_DEF_RE = re.compile(
+    r"^(?:@\[[^\]]*\]\s*)*(?:(?:noncomputable|protected)\s+)*(private\s+)?"
+    r"(?:(?:noncomputable|protected)\s+)*def\s+([A-Za-z0-9_.']+)",
+    re.M,
+)
+API_LEMMA_RE = re.compile(
+    r"^(?:@\[[^\]]*\]\s*)*(?:protected\s+)?(private\s+)?(?:protected\s+)?"
+    r"(?:theorem|lemma)\s+([A-Za-z0-9_.']+)",
+    re.M,
+)
+API_ATTR_RE = re.compile(
+    r"^attribute\s*\[([^\]]*)\]((?:[ \t]*[A-Za-z0-9_.'«»]+|[ \t]*\n[ \t]+[A-Za-z0-9_.'«»]+)+)",
+    re.M,
+)
+
+findings = []  # (level, path, message)
+
+
+def note(level, path, msg):
+    findings.append((level, str(path), msg))
+
+
+def strip_comments(src: str) -> str:
+    """Remove nesting-aware block comments (docstrings included) and line
+    comments, so declaration counting never matches prose like `lemma advances`
+    inside a docstring (epoch-2 audit, finding 3)."""
+    out, i, depth = [], 0, 0
+    while i < len(src):
+        if src.startswith("/-", i):
+            depth += 1
+            i += 2
+            continue
+        if src.startswith("-/", i) and depth > 0:
+            depth -= 1
+            i += 2
+            continue
+        if depth == 0:
+            out.append(src[i])
+        i += 1
+    return "\n".join(l.split("--")[0] for l in "".join(out).splitlines())
+
+
+# Check 8b (opt-in, `--check8b`): structure-valued definitions need their fields as equations.
+FIELDS8B = {
+    "Cfg": ["state", "inputPos", "workTapes", "workTapePos", "output"],
+    "Action": ["inputTape", "workTapes", "output", "state"],
+    "FinTM": ["k", "State", "tm"],
+    "FinNDTM": ["k", "State", "tm"],
+    "Contract": ["pre", "time", "post", "lo", "hi"],
+    "RoundContract": ["pre", "time", "post", "lo", "hi"],
+    "ReturnContract": ["pre", "time", "post", "lo", "hi"],
+}
+
+
+def uncovered_fields(stripped: str) -> list:
+    """Public `def`s whose value is a configuration, an action, a bundled machine or a contract
+    (`FIELDS8B`), with neither a `simps` attribute, nor an unfolding `<def>_eq`, nor a
+    `<def>_<field>` lemma for every data field (check 8b; policy section 1). Machine-valued
+    definitions are left to check 8, which accepts their run lemmas; so are definitions whose body
+    is not a structure literal (recursion, an application), and bundled machines with a `_computes`
+    or `_run` lemma. A heuristic on the result type's head: it reports names, review judges them."""
+    def last(n):
+        return n.rsplit(".", 1)[-1]
+
+    lemmas = {last(m.group(2)) for m in API_LEMMA_RE.finditer(stripped) if not m.group(1)}
+    simps = set()
+    for m in API_ATTR_RE.finditer(stripped):
+        if "simps" in m.group(1):
+            simps.update(last(x) for x in m.group(2).split())
+    out = []
+    for m in API_DEF_RE.finditer(stripped):
+        if m.group(1):
+            continue
+        name = last(m.group(2))
+        rest = stripped[m.end():]
+        cut = min([i for i in (rest.find(":="), rest.find(" where"), rest.find("\n  |")) if i >= 0] or [len(rest)])
+        header = rest[:cut]
+        depth, colon = 0, -1
+        for i, ch in enumerate(header):
+            if ch in "([{⟨": depth += 1
+            elif ch in ")]}⟩": depth -= 1
+            elif ch == ":" and depth == 0: colon = i
+        if colon < 0:
+            continue
+        rtype = header[colon + 1:].split("→")[-1].strip()
+        head = rtype.split()[0].strip("(") if rtype.split() else ""
+        head = last(head)
+        if head not in FIELDS8B:
+            continue
+        body = rest[cut:].lstrip()
+        if body.startswith(":="):
+            body = body[2:].lstrip()
+        literal = body.startswith(("where", "⟨", "{"))
+        if not literal:
+            continue  # recursion or an application: check 8 asks for its equation
+        if head in ("FinTM", "FinNDTM") and any(
+                l.startswith(name + "_") and ("comput" in l or "run" in l) for l in lemmas):
+            continue  # a bundled machine read through its run or computation lemma
+        line_start = stripped.rfind("\n", 0, m.start()) + 1
+        attrs = stripped[line_start:m.start() + 40]
+        if "simps" in attrs or name in simps or name + "_eq" in lemmas:
+            continue
+        if all(f"{name}_{f}" in lemmas for f in FIELDS8B[head]):
+            continue
+        out.append(name)
+    return out
+
+
+def uncovered_defs(stripped: str) -> list:
+    """Public `def`s with no published lemma beside them (check 8). A definition is covered when
+    a `simps` attribute is attached to it, or when a public theorem or lemma of the same file is
+    named after it: the last name component begins with the definition's last component and an
+    underscore (`zoneSlot_of_lt`, `recordAt_iff` for `RecordAt`), or, for a machine `fooTM`, with
+    `foo_` (its run or contract lemma, `prefixCanon_run`). Abbreviations, structures, inductives
+    and instances are exempt. A heuristic: it reports names, review judges them."""
+    def last(n):
+        return n.rsplit(".", 1)[-1]
+
+    def low1(n):
+        return n[:1].lower() + n[1:]
+
+    lemmas = [last(m.group(2)) for m in API_LEMMA_RE.finditer(stripped) if not m.group(1)]
+    simps = set()
+    for m in API_ATTR_RE.finditer(stripped):
+        if "simps" in m.group(1):
+            simps.update(last(t) for t in m.group(2).split())
+    lines = stripped.splitlines()
+    starts = [0]
+    for ln in lines:
+        starts.append(starts[-1] + len(ln) + 1)
+    out = []
+    for m in API_DEF_RE.finditer(stripped):
+        if m.group(1):
+            continue
+        name = last(m.group(2))
+        # attributes on the definition: its own line, and the attribute lines just above it
+        li = max(i for i, st in enumerate(starts) if st <= m.start())
+        attrs = lines[li]
+        j = li - 1
+        while j >= 0 and lines[j].strip().startswith("@["):
+            attrs += lines[j]
+            j -= 1
+        if "simps" in attrs or name in simps:
+            continue
+        prefixes = {name + "_", low1(name) + "_"}
+        if name.endswith("TM") and len(name) > 2:
+            prefixes |= {name[:-2] + "_", low1(name[:-2]) + "_"}
+        if any(l.startswith(p) for l in lemmas for p in prefixes):
+            continue
+        out.append(m.group(2))
+    return out
+
+
+def is_facade(path: Path) -> bool:
+    return (path.parent / path.stem).is_dir()
+
+
+def check_file(path: Path):
+    src = path.read_text()
+    lines = src.splitlines()
+    rel = path.relative_to(ROOT)
+
+    # 1. Size (policy section 1).
+    n = len(lines)
+    if n > SIZE_THRESHOLD:
+        note("WARN", rel, f"{n} lines > {SIZE_THRESHOLD}: policy requires a split "
+                          "or a recorded justification (escalation/decision log)")
+    elif n > SIZE_TARGET and not is_facade(path):
+        note("INFO", rel, f"{n} lines > target {SIZE_TARGET}")
+
+    # 2. Imports (policy section 1).
+    if re.search(r"^import Mathlib$", src, re.M):
+        note("FAIL", rel, "bare `import Mathlib`")
+
+    # 3. References section (policy section 2) - math files and facades alike.
+    if "## References" not in src and not is_facade(path):
+        note("FAIL", rel, "module docstring lacks a `## References` section")
+
+    # 4. Standard set_option header (campaign convention; facades exempt).
+    if not is_facade(path):
+        missing = [o for o in SET_OPTIONS if o not in src]
+        if missing:
+            note("WARN", rel, f"missing header option(s): {', '.join(missing)}")
+
+    # 5. Every sorry is preceded by a docstring mentioning a proof sketch
+    #    (policy section 3). Heuristic: nearest docstring above the sorry line.
+    for i, line in enumerate(lines):
+        if line.strip() == "sorry":
+            head = "\n".join(lines[:i])
+            docs = DOCSTRING_RE.findall(head)
+            if not docs or "sketch" not in docs[-1].lower():
+                note("FAIL", rel, f"line {i + 1}: `sorry` without a proof sketch "
+                                  "in the preceding docstring")
+
+    # 6. Public/private declaration tally (INFO - context for audit packs).
+    #    Counted on comment-stripped source (epoch-2 audit, finding 3).
+    stripped = strip_comments(src)
+    pub = sum(1 for m in DECL_RE.finditer(stripped) if not m.group(1))
+    priv = sum(1 for m in DECL_RE.finditer(stripped) if m.group(1))
+    note("INFO", rel, f"{n} lines; {pub} public / {priv} private declarations")
+
+    # 8. Definitions land with their lemmas (policy section 1; user, 2026-10-16): every public
+    #    `def` has an equation, field or run lemma beside it. WARN, with the names, so that a
+    #    head-against-base diff shows any new definition that lacks one. Vendored files exempt.
+    if str(rel) not in VENDORED:
+        bare = uncovered_defs(stripped)
+        if bare:
+            note("WARN", rel, f"{len(bare)} public def(s) without a lemma beside them "
+                              f"(check 8): {', '.join(sorted(bare))}")
+        if CHECK8B:
+            nofields = uncovered_fields(stripped)
+            if nofields:
+                note("WARN", rel, f"{len(nofields)} structure-valued def(s) without field equations "
+                                  f"(check 8b): {', '.join(sorted(nofields))}")
+
+    # 7. Statement prose (policy section 2): every public declaration
+    #    (instances and vendored files exempt) is immediately preceded by a
+    #    docstring, skipping attribute / `open ... in` / `noncomputable` lines.
+    #    Presence only; statement *quality* is review judgment.
+    if str(rel) not in VENDORED:
+        depth = 0
+        for idx, line in enumerate(lines):
+            if depth == 0:
+                m = DOC_DECL_RE.match(line)
+                if m and not m.group(1):
+                    j = idx - 1
+                    while j >= 0:
+                        prev = lines[j].strip()
+                        if (ATTR_LINE_RE.fullmatch(prev)
+                                or (prev.startswith("open ") and prev.endswith(" in"))
+                                or prev == "noncomputable"):
+                            j -= 1
+                            continue
+                        break
+                    if not (j >= 0 and lines[j].rstrip().endswith("-/")):
+                        note("FAIL", rel,
+                             f"line {idx + 1}: public {m.group(2)} "
+                             f"`{m.group(3)}` has no preceding docstring "
+                             "(policy section 2, statement prose)")
+            depth += line.count("/-") - line.count("-/")
+
+
+def check_facade(path: Path):
+    """Every child .lean under the facade's directory must be imported."""
+    src = path.read_text()
+    rel = path.relative_to(ROOT)
+    child_dir = path.parent / path.stem
+    for child in sorted(child_dir.rglob("*.lean")):
+        mod = ".".join(child.relative_to(ROOT).with_suffix("").parts)
+        if not is_facade(child) and f"import {mod}" not in src:
+            # A grandchild may legitimately be imported via its own facade.
+            inter = child.parent / (child.parent.name + ".lean")
+            covered = inter != path and inter.exists() and \
+                f"import {'.'.join(inter.relative_to(ROOT).with_suffix('').parts)}" in src
+            if not covered:
+                note("FAIL", rel, f"facade does not import child module `{mod}`")
+
+
+def main():
+    files = sorted((ROOT / SUBTREE).rglob("*.lean"))
+    if not files:
+        print(f"no .lean files under {SUBTREE}", file=sys.stderr)
+        return 2
+    for f in files:
+        check_file(f)
+        if is_facade(f):
+            check_facade(f)
+
+    width = max(len(p) for _, p, _ in findings)
+    failed = False
+    for level in ("FAIL", "WARN", "INFO"):
+        for lv, p, msg in findings:
+            if lv == level:
+                print(f"{lv:4}  {p:<{width}}  {msg}")
+                failed |= lv == "FAIL"
+    print(f"\nstyle_lint: {sum(1 for l, _, _ in findings if l == 'FAIL')} FAIL, "
+          f"{sum(1 for l, _, _ in findings if l == 'WARN')} WARN over {len(files)} files")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/copy-text-screen-v3.py =====
+
+```
+"""Text-level copy screen for retrofit deliveries, v3 (declaration-keyed).
+
+Identical to audits/evidence/retrofit/copy-text-screen-v2.py except in how declarations are told
+apart. v2 skipped a pair when (path, extracted name) coincided, so two distinct declarations in one
+file with the same short name were never compared: the same name in two namespaces (a generic
+`DiagSimulator.time_hierarchy_of_pos` beside the received `Complexity.time_hierarchy_of_pos`, both
+written `theorem time_hierarchy_of_pos`), or two anonymous instances (Diagonal Part 1 gate, m2).
+v3 identifies each declaration by its path and source position and skips a pair only when both
+sides are the same declaration. Labels: as in v2 (`<file>::<name>`) when the extracted name is
+unique among the file's screened declarations; otherwise the namespace-qualified name, with `#k`
+appended (k-th in source order) when that is still not unique. Namespaces are tracked through
+`namespace`, `section`, `noncomputable section`, `mutual` and `end`; a dotted `namespace A.B`
+opens two scopes, as in Lean, and `_root_.` is honoured. Hence, when no file in the argument list
+has two screened declarations with the same extracted name, v3's output is byte-identical to
+v2's. An `end` that closes no matching scope stops the screen (exit 1, message on stderr).
+
+For the given Lean files it lists every like-kind pair (proof vs proof, term vs term) in which one
+declaration reproduces at least half of another's extracted body (at least 60 characters, greedy
+tiling with blocks of at least 25), within a file and across the given files. It also prints the
+total reproduced text. Run it before and after a change: a pair present after but not before is
+new duplication; inlining a deleted copy into a consumer shows up as such a pair.
+Usage: python3 -I copy-text-screen-v3.py <repo-root> <file.lean> [<file.lean> ...]
+"""
+import os, re, sys
+root, files = sys.argv[1], sys.argv[2:]
+paths = list(dict.fromkeys(os.path.normpath(f) for f in files))
+nbase = {}
+for p in paths: nbase[os.path.basename(p)] = nbase.get(os.path.basename(p), 0) + 1
+label = lambda p: os.path.basename(p) if nbase[os.path.basename(p)] == 1 else p
+def strip(src):
+    out = []; i = 0; depth = 0; n = len(src)
+    while i < n:
+        if src.startswith('/-', i): depth += 1; i += 2; continue
+        if depth and src.startswith('-/', i): depth -= 1; i += 2; continue
+        if depth: i += 1; continue
+        if src.startswith('--', i):
+            j = src.find('\n', i); i = n if j < 0 else j; continue
+        out.append(src[i]); i += 1
+    return ''.join(out)
+DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?((?:(?:noncomputable|private|protected)\s+)*)"
+                  r"(def|theorem|lemma|abbrev|instance|structure|inductive)\s+(\S+)", re.M)
+SCOPE = re.compile(r"^[ \t]*(?:(namespace)[ \t]+(\S+)|(?:noncomputable[ \t]+)?(section)\b[ \t]*([^\s]*)"
+                   r"|(mutual)\b|(end)\b[ \t]*([^\s]*))", re.M)
+def scopes(p, t):
+    """(offset, namespace) after each scope command of the stripped text `t`, in source order."""
+    stack = []; ev = [(0, '')]
+    for m in SCOPE.finditer(t):
+        if m.group(1): stack += [('namespace', c) for c in m.group(2).split('.')]
+        elif m.group(3): stack.append(('section', m.group(4)))
+        elif m.group(5): stack.append(('mutual', ''))
+        else:  # `end A.B` closes the innermost scopes B, then A; a bare `end` an anonymous one
+            for c in reversed(m.group(7).split('.')):
+                if not stack or stack[-1][1] != c:
+                    sys.exit(f"copy-text-screen-v3: {p}:{t.count(chr(10), 0, m.start()) + 1}: "
+                             f"`end {m.group(7)}` does not close {stack[-1] if stack else 'any scope'}")
+                stack.pop()
+        ev.append((m.end(), '.'.join(n for k, n in stack if k == 'namespace')))
+    return ev
+def qualify(ns, name):
+    if name.startswith('_root_.'): return name[len('_root_.'):]
+    return f'{ns}.{name}' if ns else name
+def body(b):
+    d = 0
+    for i, ch in enumerate(b):
+        if ch in '([{⟨': d += 1
+        elif ch in ')]}⟩': d -= 1
+        elif b.startswith(':=', i) and d == 0: return b[i + 2:]
+    d = 0
+    for i, ch in enumerate(b):
+        if ch in '([{⟨': d += 1
+        elif ch in ')]}⟩': d -= 1
+        elif d == 0 and (ch == '|' or re.match(r'\bwhere\b', b[i:i + 6])): return b[i:]
+    return ''
+def lcs(a, b):
+    lo, hi, best = 0, min(len(a), len(b)), ''
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        subs = {b[i:i + mid] for i in range(len(b) - mid + 1)}
+        hit = next((a[i:i + mid] for i in range(len(a) - mid + 1) if a[i:i + mid] in subs), None)
+        if hit is not None: lo, best = mid, hit
+        else: hi = mid - 1
+    return lo, best
+def tiled(a, b):
+    c = 0
+    while True:
+        n, seg = lcs(a, b)
+        if n < 25: return c
+        c += n; a = a.replace(seg, '\x00', 1); b = b.replace(seg, '\x01', 1)
+grams = lambda x: {x[i:i + 25] for i in range(len(x) - 24)}
+decls = []
+for p in paths:
+    t = strip(open(f'{root}/{p}', encoding='utf-8').read()); ms = list(DECL.finditer(t))
+    ev = scopes(p, t); found = []
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
+        kind = 'proof' if m.group(2) in ('theorem', 'lemma') else 'term'
+        bd = re.sub(r'\s+', '', body(t[m.start():end]))
+        ns = [n for o, n in ev if o <= m.start()][-1]
+        if len(bd) >= 60: found.append((m.start(), m.group(3), qualify(ns, m.group(3)), kind, bd))
+    short = {}; qual = {}
+    for (_, nm, qn, _, _) in found: short[nm] = short.get(nm, 0) + 1; qual[qn] = qual.get(qn, 0) + 1
+    seen = {}
+    for (pos, nm, qn, kind, bd) in found:
+        if short[nm] == 1: name = nm
+        elif qual[qn] == 1: name = qn
+        else: seen[qn] = seen.get(qn, 0) + 1; name = f'{qn}#{seen[qn]}'
+        decls.append(((p, pos), name, kind, bd, grams(bd)))
+pairs = []; total = 0
+for (fa, a, ka, ta, ga) in decls:
+    for (fb, b, kb, tb, gb) in decls:
+        if fa == fb or ka != kb or not (ga & gb): continue
+        sh = tiled(tb, ta)
+        if sh >= 60 and 2 * sh >= len(tb):
+            pairs.append((sh / len(tb), sh, len(tb), f'{label(fa[0])}::{a}', f'{label(fb[0])}::{b}')); total += sh
+pairs.sort(reverse=True)
+print(f"declarations screened: {len(decls)}; copy pairs (target reproduces >= half of source): {len(pairs)}; reproduced text: {total:,} chars")
+for frac, sh, ln, a, b in pairs:
+    print(f"   {a}  reproduces  {b}: {sh}/{ln} = {frac:.0%}")
+```
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/declfreeze.py =====
+
+```
+import re, sys
+KW = r'(theorem|lemma|def|abbrev|instance|structure|inductive|class)'
+DECL = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|partial|unsafe)\s+)*' + KW + r'\s+([^\s(:{\[]+)')
+# v3 (gate 69 round 2 and gate 71, minor 1): anonymous instances are declarations too; they
+# were skipped and their text absorbed into the previous chunk. Each is keyed by its statement.
+ANON = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|partial|unsafe)\s+)*instance(?=\s*[(:{\[]|\s*$)')
+STOP = re.compile(r'^(end\b|namespace\b|section\b|/-!|open\b|variable\b|set_option\b|#|attribute\b|universe\b)')
+# v4 (gate 78, minor 2): declarations are keyed by their namespace-qualified name, so that two
+# declarations with one short name in different namespaces (`Segment.trans`, `SafeSegment.trans`) are not
+# collapsed; a name that is still not unique gets `#k` (k-th in source order).
+SCOPE = re.compile(r'^(?:(namespace)\s+(\S+)|(?:noncomputable\s+)?(section)\b\s*(\S*)|(mutual)\b|(end)\b\s*(\S*))')
+def chunks(text):
+    lines = text.split('\n'); out = []; pend = None; cur = None; depth = 0; stack = []
+    def ns():
+        return '.'.join(n for k, n in stack if k == 'namespace')
+    def qualify(name):
+        if name.startswith('_root_.'): return name[len('_root_.'):]
+        return f'{ns()}.{name}' if ns() else name
+    def close(i):
+        nonlocal cur
+        if cur:
+            text = '\n'.join(lines[cur[2]:i]).rstrip()
+            name = cur[0]
+            if name is None:
+                name = 'instance⟨' + stmt(text) + '⟩'
+                while any(n == name for n, _, _ in out): name += "'"
+            else:
+                base = name; k = 1
+                while any(n == name for n, _, _ in out): k += 1; name = f'{base}#{k}'
+            out.append((name, cur[1], text))
+        cur = None
+    for i, l in enumerate(lines):
+        # v2 (B5b gate, minor 5): a line that starts inside a block comment or docstring is never
+        # a declaration or a stop line (a docstring line "instance of ..." was counted as one).
+        start_depth, j = depth, 0
+        while j < len(l):
+            if l.startswith('/-', j): depth += 1; j += 2; continue
+            if l.startswith('-/', j) and depth > 0: depth -= 1; j += 2; continue
+            if depth == 0 and l.startswith('--', j): break
+            j += 1
+        if start_depth > 0: continue
+        if l.startswith('/--'):
+            close(i); pend = i; continue
+        m = DECL.match(l)
+        if m:
+            if pend is None: close(i)
+            start = pend if pend is not None else i; pend = None
+            cur = (qualify(m.group(5)), l.lstrip().startswith('private') or ' private ' in l.split(m.group(4))[0], start)
+            continue
+        m = ANON.match(l)
+        if m:
+            if pend is None: close(i)
+            start = pend if pend is not None else i; pend = None
+            cur = (None, l.lstrip().startswith('private'), start)
+            continue
+        if STOP.match(l):
+            close(i); pend = None
+            sm = SCOPE.match(l)
+            if sm:
+                if sm.group(1): stack += [('namespace', c) for c in sm.group(2).split('.')]
+                elif sm.group(3): stack.append(('section', sm.group(4)))
+                elif sm.group(5): stack.append(('mutual', ''))
+                else:
+                    for c in reversed(sm.group(7).split('.')):
+                        if stack and stack[-1][1] == c: stack.pop()
+                        elif stack and c == '': stack.pop()
+    close(len(lines))
+    return out
+def stmt(t):
+    body = t.split('-/', 1)[1] if t.startswith('/--') else t
+    s = re.split(r':=', body, maxsplit=1)[0]
+    return ' '.join(s.split())
+a = chunks(open(sys.argv[1]).read()); b = chunks(open(sys.argv[2]).read())
+allowed = set(sys.argv[3].split(',')) if len(sys.argv) > 3 else set()
+A = {n: (p, t) for n, p, t in a}; B = {n: (p, t) for n, p, t in b}
+pubA = {n for n, (p, _) in A.items() if not p}; pubB = {n for n, (p, _) in B.items() if not p}
+print('public before/after:', len(pubA), len(pubB), 'private before/after:', len(A) - len(pubA), len(B) - len(pubB))
+print('public added:', sorted(pubB - pubA)); print('public removed:', sorted(pubA - pubB))
+for n in sorted(pubA & pubB):
+    ta, tb = A[n][1], B[n][1]
+    if stmt(ta) != stmt(tb): print('STATEMENT CHANGED:', n)
+    elif ta != tb:
+        ok = n in allowed or any(n.endswith('.' + x) for x in allowed)  # short names still accepted
+        print(('authorized body change: ' if ok else 'UNAUTHORIZED BODY CHANGE: ') + n)
+privA = {n for n in A if A[n][0]}; privB = {n for n in B if B[n][0]}
+print('private removed:', sorted(privA - privB)); print('private added:', sorted(privB - privA))
+print('private changed:', sorted(n for n in privA & privB if A[n][1] != B[n][1]))
+```
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/lake-manifest.json =====
+
+{"version": "1.1.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/leanprover/doc-gen4",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "0ece4c27ae1abbd0b70df729e09d8b9c06351b80",
+   "name": "«doc-gen4»",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v4.25.0",
+   "inherited": false,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/teorth/pfr.git",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "e1095d58b7c6f10734988816f7764f2103b9bf29",
+   "name": "PFR",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "e1095d58",
+   "inherited": false,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/mathlib4.git",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+   "name": "mathlib",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "029db123ddaa",
+   "inherited": false,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/leanprover/lean4-cli",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "1dae8b12f8ba27576ffe5ddee78bebf6458157b0",
+   "name": "Cli",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/fgdorais/lean4-unicode-basic",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "1829aec18f0e8a661dd5acf5d659d636979ba4f2",
+   "name": "UnicodeBasic",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/dupuisf/BibtexQuery",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "29a4b34f8caa7c95934ab4494d8866fde1850c0b",
+   "name": "BibtexQuery",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "master",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/acmepjz/md4lean",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "44da417da3705ede62b5c39382ddd2261ec3933e",
+   "name": "MD4Lean",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/YaelDillies/LeanAPAP.git",
+   "type": "git",
+   "subDir": null,
+   "scope": "",
+   "rev": "5bbd91f52aa2e2d413a19afc10d30362e4872527",
+   "name": "LeanAPAP",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v4.25.0",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/plausible",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3",
+   "name": "plausible",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/LeanSearchClient",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "2ed4ba69b6127de8f5c2af83cccacd3c988b06bf",
+   "name": "LeanSearchClient",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/import-graph",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "009064c21bad4d7f421f2901c5e817c8bf3468cb",
+   "name": "importGraph",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/ProofWidgets4",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "fb8ed0a85a96e3176f6e94b20d413ea72d92576d",
+   "name": "proofwidgets",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "v0.0.77",
+   "inherited": true,
+   "configFile": "lakefile.lean"},
+  {"url": "https://github.com/leanprover-community/aesop",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349",
+   "name": "aesop",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "master",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/quote4",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "2781d8ad404303b2fe03710ac7db946ddfe3539f",
+   "name": "Qq",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "master",
+   "inherited": true,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/batteries",
+   "type": "git",
+   "subDir": null,
+   "scope": "leanprover-community",
+   "rev": "39260e31b7b3f7f05643da95242463b462dc05f1",
+   "name": "batteries",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "main",
+   "inherited": true,
+   "configFile": "lakefile.toml"}],
+ "name": "tCSlib",
+ "lakeDir": ".lake"}
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/lean-toolchain =====
+
+leanprover/lean4:v4.25.0
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/pairdiff.py =====
+
+```
+import re, sys
+# usage: pairdiff.py <head screen> <earlier screen>...  -- pairs (by declaration names) in the head screen absent from
+# every earlier screen, and pairs in earlier screens absent from the head.
+P = re.compile(r'^\s+(\S+::\S+)\s+reproduces\s+(\S+::\S+): (\d+)/(\d+) = (\d+)%')
+def pairs(p):
+    d = {}
+    for l in open(p, encoding='utf-8'):
+        m = P.match(l)
+        if m: d[(m.group(1), m.group(2))] = l.strip()
+    return d
+head = pairs(sys.argv[1]); earlier = {}
+for p in sys.argv[2:]: earlier.update(pairs(p))
+new = [head[k] for k in head if k not in earlier]
+gone = [earlier[k] for k in earlier if k not in head]
+print(f'head pairs {len(head)}; union of earlier {len(earlier)}; new at head {len(new)}; earlier-only {len(gone)}')
+for l in new: print('  NEW  ', l)
+for l in gone: print('  GONE ', l)
+```
+
+## ===== campaign/gates/123-ch7-run/reproduction-tools/style_lint.py =====
+
+```
+#!/usr/bin/env python3
+"""
+Mechanical checks for policy.md (Review checklist items 1–5, presence only).
+
+    python3 scripts/style_lint.py <file.lean>... | --area <Area>
+
+Per file: copyright block; the three set_options; no bare `import Mathlib`; module
+docstring headings (# Title, ## Main definitions, ## Main results, ## References);
+placeholder References; facade has ## Contents; every public non-instance declaration
+has a `/-- … -/` docstring; proofs > 20 lines have **Proof sketch.**; size > 1000.
+Statement *quality* is review judgment, not checked here.  Exit 1 if any finding.
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(private |protected |noncomputable |nonrec )*"
+                  r"(theorem|lemma|def|instance|structure|inductive|abbrev|class|opaque|axiom)\b")
+OPTS = ["set_option maxHeartbeats 0", "set_option relaxedAutoImplicit false",
+        "set_option autoImplicit false"]
+HEADINGS = ["## Main definitions", "## Main results", "## References"]
+
+
+def lint(path: Path) -> list[str]:
+    out: list[str] = []
+    text = path.read_text()
+    lines = text.split("\n")
+    rel = path.resolve().relative_to(ROOT)
+    is_facade = (path.with_suffix("")).is_dir()
+
+    if "Copyright" not in text[:1500]:
+        out.append(f"{rel}: missing copyright block")
+    for o in OPTS:
+        if o not in text:
+            out.append(f"{rel}: missing `{o}`")
+    if re.search(r"^import Mathlib\s*$", text, re.M):
+        out.append(f"{rel}: bare `import Mathlib`")
+    m = re.search(r"/-!(.*?)-/", text, re.S)
+    doc = m.group(1) if m else ""
+    if not re.search(r"^# ", doc, re.M):
+        out.append(f"{rel}: module docstring has no `# Title`")
+    if is_facade:
+        if "## Contents" not in doc:
+            out.append(f"{rel}: facade without `## Contents`")
+    else:
+        for h in HEADINGS:
+            if h not in doc:
+                out.append(f"{rel}: module docstring missing `{h}`")
+        refs = doc.split("## References", 1)[1] if "## References" in doc else ""
+        if refs and not re.search(r"\[[A-Za-z]+\d{2}[a-z]?\]|\*[^*]+\*", refs):
+            out.append(f"{rel}: `## References` has no citation (placeholder?)")
+    if len(lines) > 1000:
+        out.append(f"{rel}: {len(lines)} lines (> 1000, must split)")
+
+    starts = [i for i, l in enumerate(lines) if DECL.match(l)]
+    starts.append(len(lines))
+    for k, i in enumerate(starts[:-1]):
+        mm = DECL.match(lines[i])
+        kind = mm.group(2)
+        private = "private " in (mm.group(0))
+        name = re.sub(r"^.*?\b" + kind + r"\s+", "", lines[i]).split()[0] if lines[i].split() else "?"
+        up = i - 1
+        while up >= 0 and (lines[up].strip() == "" or lines[up].lstrip().startswith("@[")):
+            up -= 1
+        has_doc = up >= 0 and lines[up].rstrip().endswith("-/") and "/-!" not in lines[up]
+        if kind != "instance" and not private and not has_doc:
+            out.append(f"{rel}:{i+1}: public `{kind} {name}` has no docstring")
+        if kind in ("theorem", "lemma"):
+            # proof region ends at the next declaration OR at the next docstring/module
+            # comment/attribute that introduces it (otherwise the next docstring is counted)
+            end = starts[k + 1]
+            for j in range(i + 1, starts[k + 1]):
+                if re.match(r"^\s*(/--|/-!|@\[)", lines[j]):
+                    end = j
+                    break
+            body = [l for l in lines[i:end] if l.strip() and not l.strip().startswith("--")]
+            if len(body) > 20:
+                # find the docstring block above
+                j = up
+                while j >= 0 and not lines[j].lstrip().startswith("/--"):
+                    j -= 1
+                ds = "\n".join(lines[max(j, 0):i]) if has_doc else ""
+                if "Proof sketch" not in ds:
+                    out.append(f"{rel}:{i+1}: `{name}` proof is {len(body)} lines, no **Proof sketch.**")
+    return out
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--area", action="append", default=[])
+    ap.add_argument("--summary", action="store_true")
+    ap.add_argument("files", nargs="*")
+    a = ap.parse_args()
+    files = [Path(f) for f in a.files]
+    for ar in a.area:
+        files += sorted((ROOT / "TCSlib" / ar).rglob("*.lean"))
+    total = 0
+    for f in files:
+        fs = lint(f)
+        total += len(fs)
+        if a.summary:
+            print(f"{len(fs):4d}  {f.resolve().relative_to(ROOT)}")
+        else:
+            print("\n".join(fs))
+    print(f"\n{total} findings in {len(files)} files", file=sys.stderr)
+    return 1 if total else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
 ```
