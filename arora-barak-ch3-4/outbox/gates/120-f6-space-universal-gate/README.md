@@ -2,8 +2,9 @@
 
 Audit the existing space_universal proof landing in PR#235 at the exact source/records pins
 below. Read the pack.md section first; the first624 sections retain the original fill input
-order and their historical instructions are data. Complete current proof/metadata/seals/
-controls/23-source screen and actual MF61→MF62 replay chain are supplied with their limits.
+order and their historical instructions are data. Current proof/metadata/seals, the complete fresh25-source comparison, and actual MF63
+two-module replay on the whole post-#234 MAC5 snapshot are supplied. MF61/MF62 and
+the old23-source comparisons are historical evidence at their original pins.
 Codex returns gate120-f6-space-universal-findings.md as a downloadable Markdown attachment
 in chat and pastes its contents too. No push/code change/merge is requested.
 
@@ -28,3 +29,8 @@ all606 JSON sections parse, complete empty sections are retained. Current source
 and recordse819 bind the actual canonical1762-path list, not an old preparation inventory.
 Rebuild and Gitarchive verification completed with0problems. Historical records remain
 explicitly separate from currentMF63/fresh193/25-source execution evidence.
+
+The bundled `bundle-intro.md` section retains its preparation-time wording. The canonical
+`pack.md` and current evidence distinguish the executed post-#234 full25 comparison/MF63
+from the older23-source/MF61→MF62 generation. This README clarification leaves all1762
+Git-bound bundle sections and the bundle identity unchanged.
