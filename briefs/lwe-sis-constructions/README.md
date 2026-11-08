@@ -11,11 +11,11 @@ Filled source `ec72ed773a690c17ac253707350935cc9e0acb34` discharges all twelve
 scalar obligations with the same eighteen declarations. A fresh 94-module sweep
 passes; all 302 owned constants and sixteen backing contracts use only standard
 axioms. Its statement audit passes 0/0/0/3 at exchange
-`1ac4e2e45df94d0b5f20259218d067843458c770`. The separate proof audit is prepared
-with Codex selected; publication and user dispatch remain pending. See
+`1ac4e2e45df94d0b5f20259218d067843458c770`. Its separate proof audit now passes
+0/0/0/3 at exchange `083448cef9229dc95b96ef45686ce7f3768992ab`. See
 `fills/03-dyadic-arithmetic/` and historical `gates/06-dyadic-arithmetic/`.
 
-All seven scoped gates pass 0/0/0/3, including the construction-core proof
+All eight scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.

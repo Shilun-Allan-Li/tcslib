@@ -1,7 +1,10 @@
-# Dyadic scalar proof audit: Codex selected, not dispatched
+# Dyadic scalar proof audit: returned PASS
 
-The user freshly selected Codex for this separate proof audit. Client
-publication and user dispatch remain pending.
+The user selected and dispatched Codex for this separate proof audit. Published
+exchange `083448cef9229dc95b96ef45686ce7f3768992ab` and PR head
+`d3c762d121b15fd0ca6a990a98c1f8d92d2e308f` are verified. The returned audit
+passes 0/0/0/3; see the retained report and dispositions under audits/.
+The preparation and command below are historical; no rerun is needed.
 
 | Item | Prepared identity |
 |---|---|
@@ -38,5 +41,5 @@ checkout/index used. Read GitHub directly; return
 lwe-sis-dyadic-arithmetic-proofs-findings.md as Markdown in chat. No ZIP needed.
 Keep source/root/pin bytes fixed while proof review is pending.
 
-**Not yet clear to merge — proof-audit publication/dispatch,
-source-policy work, applicable landing checks and user approval remain.**
+**Not yet clear to merge — the proof audit passes; source-policy work,
+applicable landing checks and user approval remain.**

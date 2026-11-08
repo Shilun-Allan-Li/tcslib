@@ -6,8 +6,9 @@ with zero owned admissions and seventeen inherited warnings. All 302 owned
 constants and sixteen backing contracts use only standard axioms; no compiler
 auxiliary is added. The exact twelve-body freeze and scoped style checks pass.
 See REPORT.md and evidence/. The separate proof-audit pack is
-`audits/lwe-sis-dyadic-arithmetic-proofs-pack.md`. The user freshly selected
-Codex; client publication and user dispatch remain pending.
+`audits/lwe-sis-dyadic-arithmetic-proofs-pack.md`. The returned Codex audit
+passes 0/0/0/3 at exchange `083448cef9229dc95b96ef45686ce7f3768992ab`.
+Its report, intake receipt and dispositions are retained under `audits/`.
 
 ## Authorized fill scope and execution method
 
@@ -34,7 +35,8 @@ the scoped checks and prepare a separate proof audit before claiming gate closur
 Verified local handoff: 1301 sections, 6699026 bytes, SHA-256
 `a252af465a90beab319c27c32b25edafe712f8f105d7969f71b2cbeb98b692d4`. Bundled records: `a9b97213c616ef7afe80dcaa57eb5a503cf6b110`.
 See DISPATCH.md and review-publication.json for exact identities and the
-superseded unissued status-label correction. Publication and dispatch remain pending.
+superseded unissued status-label correction. Publication and dispatch are verified;
+the returned proof audit passes without repair.
 
-**Not yet clear to merge — all twelve proofs are checked; their external proof
-gate, source-policy work, landing checks and user integration remain open.**
+**Not yet clear to merge — all twelve proofs and their scoped audit pass;
+source-policy work, landing checks and user integration remain open.**

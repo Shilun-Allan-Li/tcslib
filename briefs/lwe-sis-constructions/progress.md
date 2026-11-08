@@ -1,6 +1,6 @@
 # Campaign pulse
 
-Checkpoint: seven scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
+Checkpoint: eight scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
 notes each. The construction-core proof gate closes all 31 core obligations;
 all 263 constants in that audited core have only standard axioms. The latest
 adapter statement gate approves its 20-declaration surface. All 14 adapter proof
@@ -41,7 +41,7 @@ The four campaign draft PRs target
   obligations discharged.
 * [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic;
   its statement audit passes, with all twelve proof obligations now filled
-  and locally checked.
+  and approved by their separate scoped proof audit.
 
 All four have passing scoped statement audits, but none is marked clear to merge: source
 validation/ingestion/matching and applicable landing checks remain. No merge
@@ -60,9 +60,11 @@ shared probability-reader and source-registry diffs remain unapplied.
 The current scalar proof source is `ec72ed773a690c17ac253707350935cc9e0acb34`: a
 fresh 94-module sweep has zero owned admissions and seventeen inherited warnings;
 all 302 owned constants and sixteen backing contracts have only standard axioms.
-The user freshly selected Codex for the separate scalar proof audit.
-Proof-update publication and user dispatch remain pending.
+The returned Codex scalar proof audit passes 0/0/0/3 at exchange
+`083448cef9229dc95b96ef45686ce7f3768992ab`. No proof repair is required.
+The user authorizes a larger combined overnight statement draft with sorries
+for later fills, and preselects Codex for all morning external audits.
 
 **Not yet clear to merge — scoped audits pass; source-policy work, landing checks
-and user approval remain. The adapter proof gate is closed; the scalar
-proof audit remains open.**
+and user approval remain. Both adapter and scalar proof gates are closed;
+the next combined statement draft needs its own audit.**

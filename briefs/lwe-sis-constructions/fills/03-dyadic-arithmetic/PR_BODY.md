@@ -10,7 +10,8 @@ complete 302-constant axiom inventory, twelve-body source freeze and scoped styl
 checks. There are zero owned admissions and seventeen inherited warnings. All
 owned constants and sixteen backing contracts use only standard axioms; no new
 compiler auxiliary is added. The statement audit passes 0/0/0/3; the separate
-proof audit has Codex selected, with publication and user dispatch pending.
+Codex proof audit also passes 0/0/0/3 at exchange
+`083448cef9229dc95b96ef45686ce7f3768992ab`.
 Evidence and execution limits:
 `briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/`. No whole-root build
 or primitive-security completion is claimed.

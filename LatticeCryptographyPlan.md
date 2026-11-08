@@ -112,8 +112,11 @@ Those twelve bodies are now proved locally at
 `ec72ed773a690c17ac253707350935cc9e0acb34`: fresh 94-module sweep, zero owned
 admissions, all 302 owned constants and sixteen backing contracts only standard
 axioms. No new compiler auxiliary or import is added. The user freshly selected
-Codex for the separate proof audit; publication and user dispatch remain pending.
-The proof gate, source-policy work and user integration remain open.
+Codex for the separate proof audit. Its returned report now passes 0/0/0/3
+at exchange `083448cef9229dc95b96ef45686ce7f3768992ab`, with no proof repair.
+Source-policy work and user integration remain open. The user authorizes a larger
+combined overnight statement draft, leaving sorries for later fills and using
+Codex for all morning external audits; the user still dispatches those jobs.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -435,3 +438,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | User resumes with dyadic scalar statement report PASS 0/0/0/3. PR #239 head `659770d616160be594eb1d6eff6fc78807992a26` and exchange `1ac4e2e45df94d0b5f20259218d067843458c770` verified; rehashed 102 frozen source files and 126/146/199/174/106/86/82/9 evidence entries. No statement correction. | Twelve frozen proof bodies enter fill on existing PR #239; no merge; N01–N03 retained |
 | 2026-11-07 (Pacific) | Filled all twelve audited scalar proofs at `ec72ed773a690c17ac253707350935cc9e0acb34`, with eighteen declarations and all definitions/signatures fixed. Fresh 94-module sweep (251.162 s), 302 constants and sixteen backing contracts only standard axioms; no new compiler auxiliary. Three passing development runs retained. | Separate proof audit prepared next on existing PR #239; no export/shared API/pin edit, push or merge; N01–N03 retained |
 | 2026-11-08 | User freshly selects Codex for the separate scalar proof audit. Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, bundled records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110` and the 1301-section packet remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
+| 2026-11-08 | Scalar proof audit PASS 0/0/0/3 at `ec72ed773a690c17ac253707350935cc9e0acb34`; full pasted report retained, 102 frozen sources and all nine nested checksum sets rehashed. Published #239 head and exact exchange input verified. User authorizes a larger combined overnight statement draft with sorries for later fills and preselects Codex for morning audits. | Eight scoped gates pass; no merge; pause only dependent fronts requiring user input and continue independent work |
