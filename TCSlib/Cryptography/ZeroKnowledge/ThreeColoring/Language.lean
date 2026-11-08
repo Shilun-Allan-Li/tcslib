@@ -189,6 +189,10 @@ theorem mem_edgeList_iff {n : ℕ} (G : Graph n) (p : Fin n × Fin n) :
 /-- The edge of index `e : Fin |E|`. -/
 def edgeOf {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : Fin n × Fin n := (edgeList G).get e
 
+/-- The defining equation of `edgeOf`: `edgeOf G e = (edgeList G).get e`. -/
+theorem edgeOf_eq {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : edgeOf G e = (edgeList G).get e :=
+  rfl
+
 /-- The endpoints of `edgeOf G e` are adjacent. -/
 theorem edgeOf_adj {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) :
     G (edgeOf G e).1 (edgeOf G e).2 = true :=

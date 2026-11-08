@@ -198,7 +198,7 @@ def combineAdvice (a b : List Bool) : List Bool :=
   unfold combineAdvice
   split_ifs with h
   · obtain ⟨rfl, rfl⟩ := h
-    rfl
+    exact pairFstD_of_pairDecode_eq_none Turing.pairDecode_nil
   · simp
 
 /-- Decoding the second combined advice string. -/
@@ -206,7 +206,7 @@ def combineAdvice (a b : List Bool) : List Bool :=
   unfold combineAdvice
   split_ifs with h
   · obtain ⟨rfl, rfl⟩ := h
-    rfl
+    exact pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil
   · simp
 
 /-- Two empty advice strings combine to the empty string. -/

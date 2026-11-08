@@ -196,7 +196,7 @@ theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
       pairSndD^[j] (s z) := by
     intro z j
     induction j with
-    | zero => rfl
+    | zero => rw [loopState_zero]; rfl
     | succ j ih =>
       rw [loopState_succ, ih, pairSndD_pairEncode, pairSndD_pairEncode,
         Function.iterate_succ_apply']
@@ -236,7 +236,8 @@ coin polynomial is the uniform machine computing it (`NUPPT.runAtL_ofPolyTimeUni
 theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool}
     (hF : PolyTimeComputable F)
     (h : ∀ x z r hist, S.next x z r hist = F (ilayout x z hist r)) : S.Efficient :=
-  ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
+    (NUPPT.coins_ofPolyTimeUniform hF S.coins).symm,
     fun x z r hist => by
       rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform]
       rfl⟩
@@ -324,8 +325,7 @@ theorem ofFn_padFin (L : ℕ) (w : List Bool) : List.ofFn (padFin L w) = padTo L
   apply List.ext_getElem
   · simp [length_padTo]
   · intro i h1 h2
-    rw [List.getElem_ofFn]
-    show w.getD i false = (padTo L w)[i]
+    rw [List.getElem_ofFn, padFin_apply]
     rw [← getD_padTo L w (by simpa [length_padTo] using h2), List.getD_eq_getElem?_getD,
       List.getElem?_eq_getElem h2, Option.getD_some]
 
@@ -391,7 +391,7 @@ theorem countTrue_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
       List.replicate (countTrue (s z) i) true := by
     intro z i
     induction i with
-    | zero => rfl
+    | zero => rw [loopState_zero]; rfl
     | succ i ih =>
       rw [loopState_succ, ih]
       simp only [upd, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
@@ -571,7 +571,7 @@ theorem edgeOf_val {n : ℕ} (G : Graph n) (x : List Bool)
   have h1 : ((edgeList G).map
       (fun p : Fin n × Fin n => ((finProdFinEquiv p : Fin (n * n)) : ℕ)))[(e : ℕ)]? =
       some ((finProdFinEquiv (edgeOf G e) : Fin (n * n)) : ℕ) := by
-    rw [List.getElem?_map, List.getElem?_eq_getElem e.isLt, Option.map_some]
+    rw [List.getElem?_map, List.getElem?_eq_getElem e.isLt, Option.map_some, edgeOf_eq]
     rfl
   rw [map_edgeList G x hG, getElem?_filter_range_nthTrue x he, Option.some.injEq,
     finProdFinEquiv_apply_val] at h1
@@ -584,22 +584,23 @@ theorem edgeOf_val {n : ℕ} (G : Graph n) (x : List Bool)
 /-- The adjacency matrix of a graph decoded from `x` is the matrix read from `x` (the
 hypothesis of `map_edgeList` for `decGraph`). -/
 theorem decGraph_apply (x : List Bool) (u v : Fin (decGraph x).1) :
-    (decGraph x).2 u v = x.getD (finProdFinEquiv (u, v)) false := rfl
+    (decGraph x).2 u v = x.getD (finProdFinEquiv (u, v)) false :=
+  decGraph_snd_apply x u v
 
 /-- Re-encoding the graph decoded from `x` truncates `x` to its first `n²` bits, `n = √|x|`. -/
 theorem encGraph_decGraph_eq_take (x : List Bool) :
     encGraph (decGraph x).2 = x.take ((decGraph x).1 * (decGraph x).1) := by
   apply List.ext_getElem
   · rw [length_encGraph, List.length_take,
-      min_eq_left (show (decGraph x).1 * (decGraph x).1 ≤ x.length from Nat.sqrt_le _)]
+      min_eq_left (show (decGraph x).1 * (decGraph x).1 ≤ x.length by
+        rw [decGraph_fst]; exact Nat.sqrt_le _)]
   · intro i h1 h2
     have hi : i < x.length := by
       rw [List.length_take] at h2
       omega
     rw [List.getElem_take]
     simp only [encGraph_def, List.getElem_ofFn]
-    show x.getD (finProdFinEquiv (finProdFinEquiv.symm ⟨i, _⟩)) false = x[i]
-    rw [Equiv.apply_symm_apply, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi,
+    rw [decGraph_apply, Equiv.apply_symm_apply, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi,
       Option.getD_some]
 
 /-! ### The numeric model of the samplers -/
@@ -629,7 +630,7 @@ theorem natOfBits_lt (s : List Bool) (b : ℕ) : ∀ k, natOfBits s b k < 2 ^ k
 /-- `bitsToNat` of a tape window is `natOfBits` (`List.ofFn_succ_last`, `List.foldl_append`). -/
 theorem bitsToNat_eq_natOfBits (s : List Bool) (b : ℕ) :
     ∀ k, bitsToNat (fun j : Fin k => s.getD (b + j) false) = natOfBits s b k
-  | 0 => rfl
+  | 0 => by rw [bitsToNat_def]; rfl
   | k + 1 => by
     have ih := bitsToNat_eq_natOfBits s b k
     simp only [bitsToNat_def] at ih ⊢
@@ -824,6 +825,7 @@ def colorFromTable (tbl : List Bool) (a : ℕ) : List Bool :=
 
 /-- The encoding of a colour, numerically: `[a / 2 = 1, a % 2 = 1]`. -/
 theorem encColor_eq (a : Fin 3) : encColor a = [decide (a.val / 2 = 1), decide (a.val % 2 = 1)] := by
+  rw [encColor_def, encColoring_eq]
   fin_cases a <;> rfl
 
 /-- Looking up colour `a` in the table of `σ` gives the encoding of `σ a`. -/
@@ -856,9 +858,7 @@ theorem decColoring_val (n : ℕ) (y : List Bool) (u : Fin n) :
     rw [finProdFinEquiv_apply_val]
     simp
     omega
-  show (2 * (y.getD (finProdFinEquiv (u, (0 : Fin 2))) false).toNat +
-    (y.getD (finProdFinEquiv (u, (1 : Fin 2))) false).toNat) % 3 = _
-  rw [h0, h1]
+  rw [decColoring_val_eq, h0, h1]
   rfl
 
 /-- `decColor` numerically. -/
@@ -907,7 +907,7 @@ theorem pairEncode_eq_append_nil (a b : List Bool) : pairEncode a b = pairEncode
 theorem encodeMsgs_eq_flatMap (l : List (List Bool)) :
     Strategy.encodeMsgs l = l.flatMap (fun m => pairEncode m []) := by
   induction l with
-  | nil => rfl
+  | nil => rw [Strategy.encodeMsgs_nil]; rfl
   | cons m h ih => rw [Strategy.encodeMsgs_cons, List.flatMap_cons, ih, pairEncode_eq_append_nil]
 
 /-- `List.ofFn f` is the image of `range n` under any `ℕ`-indexed extension of `f`. -/
@@ -929,8 +929,9 @@ theorem iterate_pairSndD_encodeMsgs (hist : List (List Bool)) :
     rw [Function.iterate_succ_apply]
     cases hist with
     | nil =>
-      show pairSndD^[i] [] = []
-      exact Function.iterate_fixed rfl i
+      rw [Strategy.encodeMsgs_nil, pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil, List.drop_nil,
+        Strategy.encodeMsgs_nil]
+      exact Function.iterate_fixed (pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil) i
     | cons m h => rw [Strategy.encodeMsgs_cons, pairSndD_pairEncode, ih, List.drop_succ_cons]
 
 /-- An encoded history is empty iff the history is. -/

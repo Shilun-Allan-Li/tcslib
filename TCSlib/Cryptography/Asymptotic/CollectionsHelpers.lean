@@ -103,6 +103,7 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List 
     (r : A.Coins n) :
     (A.runAt n y r).length ≤
       A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct := by
+  rw [NUPPT.runAt_eq, NUPPT.runAtL_eq]
   refine (A.output_length_le _).trans ?_
   simp only [NUPPT.timeBound_def]
   apply Nat.mul_le_mul_left

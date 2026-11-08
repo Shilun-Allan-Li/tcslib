@@ -62,10 +62,22 @@ def Language.InSIZE (T : ℕ → ℕ) (L : Language Bool) : Prop :=
   ∃ C : BoolCircuit.DAGCircuitFamily,
     C.HasFaninTwo ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L
 
+/-- The defining property of `Language.InSIZE`: some fan-in-two family of size at most `T`
+decides `L`. -/
+theorem Language.inSIZE_iff (T : ℕ → ℕ) (L : Language Bool) : L.InSIZE T ↔
+    ∃ C : BoolCircuit.DAGCircuitFamily,
+      C.HasFaninTwo ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L :=
+  Iff.rfl
+
 /-- `L ∈ P/poly`: some polynomial-size fan-in-two circuit family decides `L`.
 [AB09, Def 6.5] -/
 def Language.InPPoly (L : Language Bool) : Prop :=
   ∃ a k : ℕ, L.InSIZE (fun n => a * (n + 1) ^ k)
+
+/-- The defining property of `Language.InPPoly`: `L ∈ SIZE(a (n + 1)^k)` for some `a, k`. -/
+theorem Language.inPPoly_iff_inSIZE (L : Language Bool) :
+    L.InPPoly ↔ ∃ a k : ℕ, L.InSIZE (fun n => a * (n + 1) ^ k) :=
+  Iff.rfl
 
 /-- `SIZE(T) ⊆ SIZE(T')` whenever `T ≤ T'` pointwise. -/
 theorem Language.InSIZE.mono {T T' : ℕ → ℕ} {L : Language Bool} (hL : L.InSIZE T)

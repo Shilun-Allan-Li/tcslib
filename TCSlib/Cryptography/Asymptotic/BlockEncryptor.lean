@@ -348,7 +348,7 @@ private theorem length_decListStep_le (w : List Bool) : (decListStep w).length �
   simp only [decListStep, length_pairEncode]
   cases hz : pairDecode w with
   | none =>
-    simp [pairFstD_eq, pairSndD_eq, hz, pairDecode_nil]
+    simp [pairFstD_eq, pairSndD_eq, hz, Turing.pairDecode_nil]
   | some p =>
     obtain ⟨a, b⟩ := p
     rw [eq_pairEncode_of_pairDecode w a b hz]

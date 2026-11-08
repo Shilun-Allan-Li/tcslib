@@ -321,7 +321,7 @@ squaring a uniform unit, the squaring map being `4`-to-`1` on `Z_N^*` for `N = p
 theorem pushesUniform_of_card_fiber {Ω γ : Type*} [Fintype Ω] [Fintype γ] [DecidableEq γ]
     (π : Ω → γ) {c : ℕ} (hc : 0 < c)
     (hfib : ∀ g : γ, (univ.filter fun ω => π ω = g).card = c) : HardcoreBit.PushesUniform π := by
-  intro F
+  refine (HardcoreBit.pushesUniform_iff π).2 fun F => ?_
   have hsum : ∑ ω, F (π ω) = (c : ℝ) * ∑ g, F g := by
     rw [← Finset.sum_fiberwise' univ π F, mul_sum]
     refine sum_congr rfl fun g _ => ?_

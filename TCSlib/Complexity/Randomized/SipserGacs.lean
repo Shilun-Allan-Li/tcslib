@@ -65,10 +65,24 @@ def InSigma2 (L : Language Bool) : Prop :=
       x ∈ L ↔ ∃ u : List Bool, u.length = polyLen a₁ k₁ x.length ∧
         ∀ v : List Bool, v.length = polyLen a₂ k₂ x.length → N x u v = true
 
+/-- The defining property of `InSigma2`: an efficient two-witness predicate `N` with polynomial
+witness lengths gives `x ∈ L ↔ ∃ u ∀ v, N x u v`. -/
+theorem inSigma2_iff (L : Language Bool) : InSigma2 E L ↔
+    ∃ (N : List Bool → List Bool → List Bool → Bool) (a₁ k₁ a₂ k₂ : ℕ),
+      E.EffTwoWitness N ∧
+      ∀ x : List Bool,
+        x ∈ L ↔ ∃ u : List Bool, u.length = polyLen a₁ k₁ x.length ∧
+          ∀ v : List Bool, v.length = polyLen a₂ k₂ x.length → N x u v = true :=
+  Iff.rfl
+
 /-- `L ∈ Π₂ᵖ` iff its complement is in `Σ₂ᵖ` (equivalently,
 `x ∈ L ↔ ∀ u ∃ v, …`). -/
 def InPi2 (L : Language Bool) : Prop :=
   InSigma2 E Lᶜ
+
+/-- The defining property of `InPi2`: `InPi2 E L ↔ InSigma2 E Lᶜ`. -/
+theorem inPi2_iff (L : Language Bool) : InPi2 E L ↔ InSigma2 E Lᶜ :=
+  Iff.rfl
 
 /-- The two-witness predicate `(u, v) ↦ ⋁_{i < k} M(x, v ⊕ uᵢ)`, where the
 first witness `u` is the concatenation of `k` shift strings `u₁,…,u_k` of
@@ -97,6 +111,12 @@ polynomial time under XOR-shifts and a polynomial OR). -/
 def ClosedUnderShiftOr : Prop :=
   ∀ M a k a' k', E.Eff (boolVerifier M) →
     E.EffTwoWitness (shiftOrVerifier M (polyLen a k) (polyLen a' k'))
+
+/-- The defining property of `ClosedUnderShiftOr`: the shifted-OR predicate of an efficient
+Boolean verifier is an efficient two-witness predicate. -/
+theorem closedUnderShiftOr_iff : ClosedUnderShiftOr E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.EffTwoWitness (shiftOrVerifier M (polyLen a k) (polyLen a' k')) :=
+  Iff.rfl
 
 section Helpers
 

@@ -189,7 +189,7 @@ theorem eval_le (p : PolyExpr) : ∃ C c : ℕ, ∀ n, p.eval n ≤ C * (n + 1) 
 
 /-- The evaluation of a syntactic polynomial is a `Complexity.PolyBound` (the library's
 numerical majorant predicate), by `eval_le`. -/
-theorem polyBound_eval (p : PolyExpr) : PolyBound p.eval := p.eval_le
+theorem polyBound_eval (p : PolyExpr) : PolyBound p.eval := (polyBound_iff _).2 p.eval_le
 
 /-- A syntactic polynomial is bounded by its own normal-form majorant *as an expression*:
 there are `C, c` with `p.eval n ≤ (normal C c).eval n` for every `n`. -/

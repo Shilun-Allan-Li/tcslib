@@ -144,6 +144,14 @@ theorem decGraph_def (w : List Bool) :
     decGraph w =
       (⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩) := rfl
 
+/-- The vertex count of the decoded graph: `(decGraph w).1 = ⌊√|w|⌋`. -/
+theorem decGraph_fst (w : List Bool) : (decGraph w).1 = Nat.sqrt w.length := rfl
+
+/-- The adjacency of the decoded graph: entry `(u, v)` is bit `finProdFinEquiv (u, v)` of `w`
+(default `false`). -/
+theorem decGraph_snd_apply (w : List Bool) (u v : Fin (decGraph w).1) :
+    (decGraph w).2 u v = w.getD (finProdFinEquiv (u, v)) false := rfl
+
 /-- An encoded graph on `n` vertices has `n²` bits. -/
 @[simp] theorem length_encGraph {n : ℕ} (G : Graph n) : (encGraph G).length = n * n := by
   simp [encGraph]
@@ -294,6 +302,14 @@ default `false` and combined modulo `3`. -/
 def decColoring (n : ℕ) (w : List Bool) : Fin n → Fin 3 := fun i =>
   ⟨(2 * (w.getD (finProdFinEquiv (i, (0 : Fin 2))) false).toNat +
       (w.getD (finProdFinEquiv (i, (1 : Fin 2))) false).toNat) % 3, Nat.mod_lt _ (by norm_num)⟩
+
+/-- The value of `decColoring n w i`: `(2 b₀ + b₁) mod 3` from the bits `b₀, b₁` of vertex `i`
+at `finProdFinEquiv (i, 0)` and `finProdFinEquiv (i, 1)`. -/
+theorem decColoring_val_eq (n : ℕ) (w : List Bool) (i : Fin n) :
+    ((decColoring n w i : Fin 3) : ℕ) =
+      (2 * (w.getD (finProdFinEquiv (i, (0 : Fin 2))) false).toNat +
+        (w.getD (finProdFinEquiv (i, (1 : Fin 2))) false).toNat) % 3 :=
+  rfl
 
 /-- An encoded colouring of `n` vertices has `2n` bits. -/
 @[simp] theorem length_encColoring {n : ℕ} (c : Fin n → Fin 3) :

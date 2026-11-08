@@ -186,12 +186,12 @@ theorem output_spec (z : List Bool) : A.M.ComputesInTime z (A.output z) (A.timeB
 
 /-- The machine computes the function `output` within the budget `timeBound`. -/
 theorem computesFunInTime : A.M.ComputesFunInTime A.output A.timeBound :=
-  fun z => A.output_spec z
+  (FinTM.computesFunInTime_iff _ _ _).2 fun z => A.output_spec z
 
 /-- The output function of an `NUPPT` is polynomial-time computable: the black box through
 which every reduction of the campaign is exhibited as a machine (D2). -/
 theorem polyTimeComputable_output : PolyTimeComputable A.output :=
-  ⟨A.M, A.Ct, A.ct, A.computesFunInTime⟩
+  (polyTimeComputable_iff _).2 ⟨A.M, A.Ct, A.ct, A.computesFunInTime⟩
 
 /-- Determinism: any completed computation of the machine on `z` produces `output z`
 (`Turing.FinTM.ComputesInTime.output_unique`). -/
@@ -284,6 +284,10 @@ parameter is the input length (the `1^{|y|}` prefix carries no information). It 
 of the literal forms of [PS10, Definition 26.1] and [PS10, Definition 69.4] (D5). -/
 def runLit (y : List Bool) (r : A.Coins y.length) : List Bool := A.runAt y.length y r
 
+/-- The defining equation of `runLit`: `A.runLit y r = A.runAt |y| y r`. -/
+theorem runLit_eq (y : List Bool) (r : A.Coins y.length) : A.runLit y r = A.runAt y.length y r :=
+  rfl
+
 /-- `A` is *uniform* — a PPT [PS10, Definition 23.4] — when its advice is empty at every
 parameter. -/
 def Uniform : Prop := ∀ n, A.advice n = []
@@ -316,6 +320,11 @@ those encodings, not of `f` on every string (the converse gives polynomial-time 
 def Computes (f : List Bool → List Bool) : Prop :=
   ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)
 
+/-- The defining property of `Computes`: `A.Computes f ↔ ∀ n y r, A.runAt n y r = f ⟨1^n, y⟩`. -/
+theorem computes_iff (f : List Bool → List Bool) :
+    A.Computes f ↔ ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y) :=
+  Iff.rfl
+
 /-- A machine that computes `f` returns `f ⟨1^n, y⟩` on every activation. -/
 theorem Computes.runAt_eq {f : List Bool → List Bool} (h : A.Computes f) (n : ℕ)
     (y : List Bool) (r : A.Coins n) : A.runAt n y r = f (advInput n y) :=
@@ -336,8 +345,8 @@ noncomputable def ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputa
   adv := adv
   advice := advice
   advice_length := hα
-  halts := fun z => ⟨f z, Classical.choose_spec (Classical.choose_spec (Classical.choose_spec
-    ((polyTimeComputable_iff f).1 hf))) z⟩
+  halts := fun z => ⟨f z, (FinTM.computesFunInTime_iff _ _ _).1 (Classical.choose_spec
+    (Classical.choose_spec (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)))) z⟩
 
 /-- The output function of `ofPolyTime hf …` is `f` (determinism of completed outputs). -/
 theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
@@ -345,8 +354,8 @@ theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable
     (ofPolyTime hf coins adv advice hα).output = f := by
   funext z
   exact (ofPolyTime hf coins adv advice hα).output_eq_of_computesInTime
-    (Classical.choose_spec (Classical.choose_spec (Classical.choose_spec
-      ((polyTimeComputable_iff f).1 hf))) z)
+    ((FinTM.computesFunInTime_iff _ _ _).1 (Classical.choose_spec (Classical.choose_spec
+      (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)))) z)
 
 /-- The coin polynomial of `ofPolyTime hf coins adv advice hα` is `coins`. -/
 @[simp] theorem coins_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)

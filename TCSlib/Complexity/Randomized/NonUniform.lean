@@ -85,11 +85,12 @@ variable (A : NUPPT)
 /-- The literal activation `A_{|y|}(y)` is the activation at parameter `|y|`
 [PS10, Definition 26.8, "`A(x)` denotes `A_{|x|}(x)`"]. -/
 theorem runLit_eq_runAt (y : List Bool) (r : A.Coins y.length) :
-    A.runLit y r = A.runAt y.length y r := rfl
+    A.runLit y r = A.runAt y.length y r := A.runLit_eq y r
 
 /-- The literal activation with the coins as a list. -/
 theorem runLit_eq_runAtL (y : List Bool) (r : A.Coins y.length) :
-    A.runLit y r = A.runAtL y.length y (List.ofFn r) := rfl
+    A.runLit y r = A.runAtL y.length y (List.ofFn r) := by
+  rw [A.runLit_eq, A.runAt_eq]
 
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩`: the advice slot is empty. -/
 theorem Uniform.runAtL_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y r : List Bool) :
@@ -133,7 +134,7 @@ theorem polyTimeComputable_runAtL (n : ℕ) :
     ((((polyTimeComputable_const (List.replicate n true)).pairEncode
       polyTimeComputable_pairFstD).pairEncode (polyTimeComputable_const (A.advice n))).pairEncode
       polyTimeComputable_pairSndD)
-  convert h using 1
+  simpa only [Function.comp_def, runAtL_eq, advInput_eq] using h
 
 /-- **Optional sanity bridge** (not on the critical path): a language decided by a machine
 with polynomial-length advice within polynomial time [AB09, Definition 6.16]

@@ -131,6 +131,13 @@ noncomputable def secProb (f : (Fin n → Bool) → β) (A : β × (Fin n → Bo
     (x : Fin n → Bool) : ℝ :=
   uprob fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1
 
+/-- The defining equation of `secProb`:
+`secProb f A x = Pr_{(r, c)}[A (f x, r) c = ⟨x, r⟩]`. -/
+theorem secProb_def (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool)
+    (x : Fin n → Bool) :
+    secProb f A x = uprob fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1 :=
+  rfl
+
 /-- The prediction probability of `A` for the bit `B` of `g` is the average over `x` of the
 probabilities `secProb f A x`. -/
 theorem predProb_glPad_eq (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool) :

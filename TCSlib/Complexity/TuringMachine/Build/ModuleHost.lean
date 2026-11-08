@@ -155,7 +155,8 @@ private lemma stop_step (C : FinTM Bool) (entry exit : C.State)
   | some q =>
     have hq : ¬(b = true ∧ q = exit) := by
       rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step_def, stopCfg, hs, Option.map_some]
+    have hs' : (stopCfg b c).state = some (b, q) := by simp [stopCfg, hs]
+    rw [MultiTapeTM.step_of_some hs', MultiTapeTM.step_of_some hs]
     simp only [stopTM, hq, ↓reduceIte]
     rfl
 
@@ -193,9 +194,9 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
   rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
   have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
   rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step_def, stopTM, stopCfg, Cfg.ofWords_def, FinTM.controlAction_def,
-      Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos,
-          Action.apply_inputPos]
+  rw [MultiTapeTM.step_of_some (q := (true, exit)) (by simp [stopCfg, Cfg.ofWords_def])]
+  simp [stopTM, stopCfg, Cfg.ofWords_def, FinTM.controlAction_def, Action.apply_state,
+    Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos]
 
 /-- **The clean-module contract.** `Clean M result emit B` says: the module `M` has at least one
 work tape (`0 < M.k`), and for every native input `x` and argument `arg`, the run of `M` from the
@@ -404,13 +405,15 @@ private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
   apply MultiTapeTM.runFrom_comm_of_step
   intro c
   cases hs : c.state with
-  | none => simp [MultiTapeTM.step_def, padCfg, hs]
+  | none =>
+    have hs' : (padCfg (K := K) c).state = none := hs
+    rw [MultiTapeTM.step_of_halt hs', MultiTapeTM.step_of_halt hs]
   | some q =>
     have hw : (fun i : Fin M.k => (padCfg (K := K) c).workTapeSymbols
         ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
       funext i; simp [padCfg, Cfg.workTapeSymbols_eq, i.isLt]
     have hstate : (padCfg (K := K) c).state = some q := hs
-    simp only [MultiTapeTM.step_def, hstate, hs]
+    rw [MultiTapeTM.step_of_some hstate, MultiTapeTM.step_of_some hs]
     change (padAction (M.tm.tr q c.inputSymbol _)).apply _ = _
     rw [hw]
     exact pad_apply _ _

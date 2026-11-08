@@ -144,6 +144,18 @@ theorem splitAtLastTrue_of_dropWhile_eq_true_cons {v rest : List Bool}
     splitAtLastTrue v = some rest.reverse := by
   rw [splitAtLastTrue, h]
 
+/-- Reader for `splitAtLastTrue`: an all-`false` word (nothing left after stripping the trailing
+`false`s of its reversal) is rejected. -/
+theorem splitAtLastTrue_of_dropWhile_eq_nil {v : List Bool}
+    (h : v.reverse.dropWhile (fun b => !b) = []) : splitAtLastTrue v = none := by
+  rw [splitAtLastTrue, h]
+
+/-- Reader for `splitAtLastTrue`: the remaining case of the partition, a stripped reversal
+starting with `false`, is rejected (`dropWhile` never stops at a `false`, so it does not occur). -/
+theorem splitAtLastTrue_of_dropWhile_eq_false_cons {v rest : List Bool}
+    (h : v.reverse.dropWhile (fun b => !b) = false :: rest) : splitAtLastTrue v = none := by
+  rw [splitAtLastTrue, h]
+
 /-- Least index `i ≤ n` solving the padding length equation
 `i + C·(i+1)^e = n`, or `none` when no solution exists. Strict monotonicity
 of `i ↦ i + C·(i+1)^e` makes the solution unique; the machine contract

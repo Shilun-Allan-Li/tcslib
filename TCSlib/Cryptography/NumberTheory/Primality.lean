@@ -661,7 +661,7 @@ theorem listToNat_eq (w : List Bool) :
 
 /-- `bitsToNat` is `listToNat` of the list of bits. -/
 theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
-  rfl
+  bitsToNat_def b
 
 /-- The empty word reads as `0`: `listToNat [] = 0`. -/
 theorem listToNat_nil : listToNat [] = 0 := by
