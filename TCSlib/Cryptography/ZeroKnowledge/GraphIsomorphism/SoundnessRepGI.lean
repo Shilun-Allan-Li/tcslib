@@ -154,7 +154,9 @@ theorem PsOfFin_init_prefixLE {m : ℕ} (b : Fin m → Bool) (i : Fin m) :
     PsOfFin (Fin.init (prefixLE b i)) = PsOf (fun k => (List.ofFn b).getD k false) i := by
   unfold PsOfFin
   refine PsOf_congr i fun k hk => ?_
-  rw [dif_pos hk, getD_ofFn_lt' b (by omega), Fin.init, prefixLE_apply]
+  rw [dif_pos hk, getD_ofFn_lt' b (by omega)]
+  show prefixLE b i (Fin.castSucc _) = _
+  rw [prefixLE_apply]
   rfl
 
 /-- The last challenge of a prefix `b_0, …, b_i` is `b_i`. -/
