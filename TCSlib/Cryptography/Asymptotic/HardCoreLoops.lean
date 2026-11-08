@@ -238,7 +238,7 @@ theorem step_poly : PolyTimeComputable step := by
             List.zipWith xor (pairSndD (pairSndD (pairSndD w)))
               ((pairFstD (pairSndD (pairSndD w))).take (pairFstD (pairFstD (pairFstD w))).length)
           else pairSndD (pairSndD (pairSndD w)))) :=
-    ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+    ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
         hβ).pairEncode ((dropLen_poly hu hs).pairEncode
       (polyTimeComputable_ite hhead (zipXor_poly hacc (takeLen_poly hu hs)) hacc))
   convert polyTimeComputable_ite htest polyTimeComputable_pairSndD hbody using 1

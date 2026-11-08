@@ -389,7 +389,7 @@ def step (w : List Bool) : List Bool := st (p₁ w) (p₂ w).tail ((p₃ w).drop
 /-- The step is polynomial-time (`Complexity.polyTimeComputable_tail`,
 `Complexity.polyTimeComputable_pairDropPoly` on `⟨u, rs⟩`). -/
 theorem step_poly : PolyTimeComputable step := by
-  convert st_poly p₁_poly ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp p₂_poly)
+  convert st_poly p₁_poly ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp p₂_poly)
     ((polyTimeComputable_pairDropPoly .var).comp (p₁_poly.pairEncode p₃_poly)) using 1
   funext w
   simp [step]

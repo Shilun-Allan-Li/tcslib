@@ -557,7 +557,7 @@ theorem gniVerifier_efficient : gniVerifier.Efficient := by
   have hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail :=
     ptc_congr (sampleStr_poly.comp
         (w₀_poly.pairEncode
-            ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+            ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
                 NUPPT.polyTimeComputable_inCoins)))
       fun w => by simp
   have hF₀ := relabel_poly selGraph_poly hσ

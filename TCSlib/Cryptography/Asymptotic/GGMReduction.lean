@@ -1063,7 +1063,7 @@ theorem lab_poly (hE : PolyTimeComputable E) : PolyTimeComputable (lab E D q) :=
 /-- The answer is polynomial-time (`ggmEval_poly`). -/
 theorem ans_poly (hE : PolyTimeComputable E) : PolyTimeComputable (ans E D q) :=
   (ggmEval_poly hE).comp ((lab_poly E D q hE).pairEncode
-    ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+    ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
         (dropLen_poly unI_poly (query_poly D q))))
 
 /-- The updated history is polynomial-time. -/

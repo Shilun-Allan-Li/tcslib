@@ -608,7 +608,7 @@ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
       (coinSlice (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).tail :=
     ptc_congr (sampleStr_poly.comp
         (w₀_poly.pairEncode
-            ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+            ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
                 hri))) fun w => by simp
   have hmsg := relabel_poly hsel hσ
   have hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)] := wellFormed_poly.comp argX_poly

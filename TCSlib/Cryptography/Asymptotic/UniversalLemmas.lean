@@ -180,7 +180,7 @@ theorem length_tail_bits (m : ℕ) : (Nat.bits m).tail.length = Nat.log 2 m := b
 (`Turing.FinTM.computesFunInTime_lengthBits`, `Complexity.polyTimeComputable_tail`). -/
 theorem polyTimeComputable_logMarker :
     PolyTimeComputable fun y : List Bool => (Nat.bits y.length).tail :=
-  (polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp (polyTimeComputable_of_linear
+  (polyTimeComputable_tail.congr fun _ => List.drop_one).comp (polyTimeComputable_of_linear
       FinTM.computesFunInTime_lengthBits)
 
 /-- The binary budget `bits ((|y| + 1)³)` of [PS10, Algorithm 64.2] is polynomial-time

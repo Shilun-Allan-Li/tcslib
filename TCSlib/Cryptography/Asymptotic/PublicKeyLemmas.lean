@@ -744,7 +744,7 @@ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredF
     ((polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg).pairEncode
       ((polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg).pairEncode hc))
     NUPPT.polyTimeComputable_inAdvice
-      ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+      ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
         NUPPT.polyTimeComputable_inCoins))
   have hv : PolyTimeComputable fun z => [decide (D.output (NUPPT.layout (NUPPT.inParam z)
       (pairEncode (pairFstD (NUPPT.inArg z))

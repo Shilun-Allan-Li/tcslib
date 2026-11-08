@@ -564,7 +564,7 @@ theorem capped_poly : PolyTimeComputable capped := by
 theorem step_poly : PolyTimeComputable step := by
   convert polyTimeComputable_ite (polyTimeComputable_isNil.comp rest_poly) polyTimeComputable_id
     (pad_poly.pairEncode
-        (((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp rest_poly).pairEncode
+        (((polyTimeComputable_tail.congr fun _ => List.drop_one).comp rest_poly).pairEncode
             capped_poly)) using 1
   funext w
   simp [step]

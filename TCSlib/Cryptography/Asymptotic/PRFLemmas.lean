@@ -363,7 +363,7 @@ theorem ggmStep_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   convert polyTimeComputable_ite htest polyTimeComputable_id
     (hsel.pairEncode
-        ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+        ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
             polyTimeComputable_pairSndD)) using 1
   funext w
   simp [ggmStep]

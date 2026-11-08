@@ -1270,7 +1270,7 @@ private theorem dlb_iStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_iSte
   have hvote := dlb_vote_poly S A H hF hR hS hA
   have hnil := PolyTimeComputable.comp' polyTimeComputable_isNil hC
   have hnew := (PolyTimeComputable.comp'
-      (polyTimeComputable_tail.congr fun _ => List.drop_one.symm) hC).pairEncode
+      (polyTimeComputable_tail.congr fun _ => List.drop_one) hC).pairEncode
     (hRest.pairEncode (hvote.append hV))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 
@@ -1388,7 +1388,7 @@ private theorem dlb_oStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oSte
   have hcs := PolyTimeComputable.comp' polyTimeComputable_pairFstD
     (PolyTimeComputable.comp' polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
   have hnew := (dlb_oNext_poly S A H).pairEncode ((hnq.append dlb_oAcc_poly).pairEncode
-    ((PolyTimeComputable.comp' (polyTimeComputable_tail.congr fun _ => List.drop_one.symm)
+    ((PolyTimeComputable.comp' (polyTimeComputable_tail.congr fun _ => List.drop_one)
         dlb_oCnt_poly).pairEncode hcs))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 

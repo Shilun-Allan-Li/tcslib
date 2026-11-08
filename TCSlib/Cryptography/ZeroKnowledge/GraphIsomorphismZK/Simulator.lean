@@ -302,7 +302,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
         (((simX (pairSndD u)).length + 1) ^ 2) := by
     have htail : PolyTimeComputable fun u =>
         (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1 := by
-      have := (polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp hc
+      have := (polyTimeComputable_tail.congr fun _ => List.drop_one).comp hc
       simpa only [List.drop_one] using this
     exact truncate_poly htail hP
   -- the verifier's tape

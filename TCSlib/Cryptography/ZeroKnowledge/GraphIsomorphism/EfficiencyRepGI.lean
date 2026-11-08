@@ -189,7 +189,7 @@ theorem giStep_poly : PolyTimeComputable giStep := by
         (hsel.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hM))))).pairEncode
       (polyTimeComputable_pairFstD.comp hM))) fun st => by simp
   exact hS.pairEncode ((polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM)).pairEncode
-    (((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp hC).pairEncode
+    (((polyTimeComputable_tail.congr fun _ => List.drop_one).comp hC).pairEncode
         (polyTimeComputable_and (polyTimeComputable_headD.comp hB) hcheck)))
 
 /-- The scan after `k` rounds from the input `⟨u, ⟨S, ⟨M, ⟨R, [b]⟩⟩⟩⟩`: the static data, the
