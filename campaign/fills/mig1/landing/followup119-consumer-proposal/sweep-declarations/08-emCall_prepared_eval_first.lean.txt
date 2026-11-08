@@ -1,0 +1,33 @@
+private lemma emCall_prepared_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime s out T) :
+    let R := emCallRightTM (emCallTrackTM M)
+    ∃ t, 0 < t ∧ t ≤ 1 + 2 * T + s.length + 2 ∧
+      (∀ j < t, ((emCallEvalTM R).tm.runFrom
+        (emCallEvalCfg (w := w) R (R.tm.initCfg s) true 1) j).state ≠ some (.inr ())) ∧
+      (emCallEvalTM R).tm.runFrom
+        (emCallEvalCfg (w := w) R (R.tm.initCfg s) true 1) t =
+          emCallEvalCfg (w := w) R
+            (emCallRightScan (emCallTrackTM M)
+              (emCallTrackCfg M (M.tm.runFrom (M.tm.initCfg s) T)
+                (emCallLo M s T) (emCallHi M s T)) none s.length (le_refl _)) false 1 := by
+  dsimp only
+  let R := emCallRightTM (emCallTrackTM M)
+  let D := 1 + 2 * T + s.length + 2
+  have htrack := emCall_track_computes M s out T hM
+  have hright := (emCall_right_computes (emCallTrackTM M) s out (1 + 2 * T) htrack).1
+  obtain ⟨t, ht, b, _, hh, _, hfirst, hr⟩ := emCall_eval_first R w s out D hright
+  have hpos : 0 < t := by
+    refine Nat.pos_of_ne_zero fun ht0 => not_computesInTime_zero R s _
+      ((computesInTime_iff R s _ 0).2 ⟨?_, rfl⟩)
+    rwa [ht0] at hh
+  have habs : R.tm.runFrom (R.tm.initCfg s) D = R.tm.runFrom (R.tm.initCfg s) t := by
+    rw [show D = t + (D - t) by omega, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_of_halt _ hh]
+  have hend := emCall_right_endpoint (emCallTrackTM M) s (1 + 2 * T)
+    ((computesInTime_iff _ _ _ _).mp htrack).1
+  rw [emCall_track_run] at hend
+  refine ⟨t, hpos, ht, hfirst, ?_⟩
+  rw [hr, ← habs, hend]
+  rfl
+
+/-- The public forwarding tape transport followed by a control-state map. -/

@@ -1,0 +1,48 @@
+* `Turing.embedEmitCfg_eq`, `Turing.embedEmitCfg_mapState_eq`,
+  `Turing.embedEmitCfg_ofWords_eq` — the R1 reconstruction lemma and its corollaries
+  (MIG-0b; the wave-1 fill gate's major F1). `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`
+  moved to `StateRenaming` at MIG-0b.
+* `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
+  the source action on each selected tape, `(none, 0)` on every other tape, and the input
+  move, output and successor state unchanged (12.2c item 6's export).
+* `Turing.embedSilentCfg_cap` — the silent transport's capture tape and head, off the
+  selection (the C1-A assembly gate's export, 2026-10-14).
+* `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
+  the transported run is the transport of the source run, same step count.
+* `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
+  `Set.range ι` byte-identical with heads unmoved, input position tracking
+  the source, output per flavor.
+* `Turing.embedSilentTM_visitedByTapeHead`,
+  `Turing.embedEmitTM_visitedByTapeHead` (and `_frame` companions),
+  `Turing.embedSilentTM_spaceUsedByTape_cap` — per-tape space: host tape
+  `ι i` visits exactly the source's tape-`i` cells, unselected tapes visit
+  nothing new, and the capture tape is bounded by the recorded output.
+* `Turing.embedSilentRetTM_run`, `Turing.embedEmitRetTM_run` — the
+  through-halt contracts: live lockstep, then the handover at the source's
+  first halt, final emission and source residue preserved, with the return
+  anchor reached first exactly there.
+* `Turing.embedSilentRetTM_visitedByTapeHead`,
+  `Turing.embedEmitRetTM_visitedByTapeHead` — the returning flavors visit
+  exactly what the closed flavors visit, at every time.
+* `Turing.embedSilentCfg_unselected`, `Turing.embedSilentCfg_state`, `_inputPos`, `_output`,
+  `Turing.embedEmitCfg_state`, `_inputPos`, `_output` — the transports' remaining fields, the
+  specification API (user, 2026-10-16).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2; tape-subset simulations are the
+  folklore of the §1.3/§1.7 robustness and simulation arguments.)
+* [Bon26] É. Bonnet, *classical-complexity*, Lax Archive entry lax-434930,
+  module `proofs/Lax434930Proofs/InclusionAux/TimeCompiler/`, commit
+  `0c0840319318215fd7b36a9a822b81ce55cf6941`, Apache-2.0, examined
+  2026-10-05. Design adaptation with nothing transcribed (different
+  toolchain and machine model — TM2-style keyed stacks there, `FinTM`
+  tapes with heads here): the bank-embedding shape is `StackRename`'s
+  `rename_executes`.
+-/
+
+namespace Turing
+
+variable {m k : ℕ} {S : Type*} {Symbol : Type*} {x : List Symbol}
+

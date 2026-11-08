@@ -1,0 +1,10 @@
+theorem computesFunInTime_pairDup_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => pairEncode x x)
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (pairDiagTM_computes x).mono (by omega), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+

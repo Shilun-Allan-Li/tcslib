@@ -1,0 +1,22 @@
+-- PROPOSAL DATA ONLY: no public source addition is authorized or performed here.
+-- Candidate home: TCSlib/Complexity/TuringMachine/Build/Embed.lean, beside embedEmitCfg_eq.
+-- Not elaborated by this review. Publishing requires Seyoon's explicit API ruling.
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+namespace Turing
+
+/-- Embedding along the identity with no output prefix returns the original configuration;
+all frame tapes and heads are irrelevant because the identity embedding covers every tape. -/
+theorem embedEmitCfg_refl {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (c : Cfg k Γ S x) :
+    embedEmitCfg (Function.Embedding.refl _) tapes heads [] c = c := by
+  apply embedEmitCfg_eq
+  · rfl
+  · rfl
+  · exact List.nil_append _
+  · intro i
+    exact ⟨rfl, rfl⟩
+  · intro j hj
+    exact False.elim (hj ⟨j, rfl⟩)
+
+end Turing

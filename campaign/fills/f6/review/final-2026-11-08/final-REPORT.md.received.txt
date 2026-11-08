@@ -1,0 +1,207 @@
+# F6 `Complexity.space_universal` fill — final delivery (Claude, ruler-hosted suffix)
+
+**Verdict: COMPLETE.** `Complexity.space_universal` is proved in the owned module with the
+exact frozen statement; `#print axioms` gives only `propext`, `Classical.choice`, `Quot.sound`.
+Every required final check was run; results are PASS except where marked as a disclosure below
+(one idiom-level screen pair for human disposition, the pre-existing file-size lint finding, and
+two derived `Fintype` instances that `attribute [local irreducible]` cannot seal). Nothing is
+admitted by this fill; the 21 inherited admissions are unchanged.
+
+## 1. Identifiers
+
+| Item | Value |
+|---|---|
+| Repository / proof-base branch | `https://github.com/Shilun-Allan-Li/tcslib`, `complexity/arora-barak-ch3-4` |
+| Exact proof base | `3023dc1408c3d216fc07a7cbba9ae30135b861ed` (ancestor of the branch tip, verified) |
+| Work branch / final head | `fill/f6-space-universal` @ **`6e98df4f7f86889b2c9eb3e9a05541cc772a56d4`** (git bundle `fill-f6-space-universal.bundle` in this zip) |
+| Commits (base..head) | `27638178` cp01 · `34c1c0e8` cp02 · `c242e372` final · `86de640c` r1 · `bd712bda` r2 · `6e98df4f` r3 (`COMMITS.txt`, `patches/`) |
+| Records commit / dispatch | `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`; bundle `arora-barak-ch3-4/outbox/fills/f6-space-universal/f6-space-universal-bundle.md` at exchange `2adb80788611696d2cad6f907285c0c5a197ae09`, SHA-256 `8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`, 8707327 bytes, 624 sections — verified, all 624 sections extracted in order (`evidence/logs/packet-extract.log`) |
+| Owned file | `TCSlib/Complexity/SpaceComplexity/Hierarchy.lean`: base SHA-256 `1d7e0c7d706521991a623dfe6963650f867edfebe34c2dae8316e2078dc8069f` (= issued), head `SOURCE-SHA256.txt` |
+| Toolchain | Lean 4.25.0 (pinned `lean-toolchain`), clone's own `lake-manifest` packages (11/11 match) |
+| Earlier checkpoints | `fill-f6-cp01.zip` / `fill-f6-cp02.zip` at exchange `e3feba98340961a8ee56d4bfde0d82568b3bf3a7` |
+
+## 2. Scope and freeze
+
+Only `Hierarchy.lean` changed (1 file). Changes: the target's `sorry` replaced by a proof; 18 new
+**private** `f6_` theorems before the target (one `/-! -/` section header); the target's status
+parenthetical and proof sketch rewritten, and the module's main-results line (status prose).
+
+* `evidence/logs/freeze-final-r3.txt`: **PASS** — public 4→4, no public added/removed, no header,
+  visibility, relative-order or import change, no definition-body change, one proof body changed
+  (`space_universal`); private 43→61.
+* `evidence/logs/chunkcmp-final-r3.txt`: byte comparison of every base declaration chunk
+  (docstrings included): only `Complexity.space_universal` differs; 18 chunks added; outside the
+  chunks only the main-results line and the new section header differ.
+* No import, no public declaration, no `def`/`abbrev`/`structure` (no private host). The frozen
+  statement is untouched (header identical).
+* Status prose: the old parenthetical "spec, fill pending — phase P4.3, restated … statement gate
+  passed 2026-10-14" became false and was replaced by "([AB09, Exercise 4.1], p. 93, forward
+  clause, with the addend-free bound `C · s`)". Pre-existing campaign labels in the statement's
+  *deviation notes* ("design §16b item 3", "the RD-3 gate's minor 1") were left verbatim (outside
+  the authorized proof-sketch/status scope); the maintainer may strip them.
+
+## 3. Proof (where each OWN obligation is discharged)
+
+`SU := ⟨K + 4, P ⊕ V, U⟩`, `U` the zero-outer `startupLoopTM` of the prefix `A` and the hosted
+loop `H`, transported along `K + 4 = 0 + ((K + 2) + 2)` exactly as in the issued v5 consumer.
+
+* **OWN-1 (fixed physical prefix)** — `f6_prefix`: one control `A` on `K + 4` tapes chosen before
+  `α` (`K` from `exists_selfStartupTM TimeHierarchy.code`); five public seams
+  (`seamCompTM_run_ofCfg` + `seamCompTM_firstReturn_ofCfg`, packaged as `f6_seam`), each with its
+  dispatch step and live-exit cut, over six phases:
+  1. `f6_header`: `headerRulerTM` on the last tape from the physical start (scan control `0`, via
+     `MultiTapeTM.initCfg_eq_mapState` / `initCfg_with_q₀`): ruler `true^ℓ₁`, head `0`, input `ℓ₁+1`, `2ℓ₁+3` steps, cut.
+  2. `f6_native_halt` + `f6_hosted`: startup seamed to the stationary silent halt leaf
+     (`FinTM.controlAction 0 none`), first halt at `T_α + 2`, installed bank; hosted on the suffix
+     `⟨α, x⟩` by `exists_rulerHostTM` (ℓ₁, ruler window incl. both blanks, tag `false`) — its
+     halting endpoint and none-liveness give the host's first halt `t' ≤ C_H(ℓ₁+1)(T_α+2)`;
+     `embedEmitRetTM_run` (identity embedding, `f6_full_embed`) turns it into the live return
+     `Sum.inr ()` at the same time with its strict cut. The header endpoint relabelled at the host
+     entry is the host presentation (handoff via `Cfg.mapState_eq_of_fields`).
+  3–4. `f6_ruler_moves`: `skipTM` from ruler cell 0 stops at `ℓ₁+1`; the catalog walk
+     `walkTM … (· = r) .neg []` reads the blank there and moves back to `ℓ₁` (the one-cell seek
+     correction; see §8).
+  5. `f6_scan`: `headerScanTM_run` from input offset `ℓ₁` and `headerScanCfg_ruler` at prefix
+     length `ℓ₁`: ruler `true^ℓ`, `ℓ = (2|bits s|+2)+(2|α|+2)`, input `ℓ+1`.
+  6. `f6_ruler_moves`: `rewindTM_run_ofCfg` rewinds the whole ruler to `0`.
+  Result for all `α, u, x`: `A.runFrom (A.initCfg z) T` is the literal last-ruler endpoint (state
+  `finish`, input `ℓ+1`, bank = startup's table/state tapes, ruler `true^ℓ` last, heads 0, output
+  `[]`), with strict first-return cut and `T ≤ C_H(ℓ+1)(T_α+2) + 4ℓ + 11`. Silence follows from the
+  empty endpoint output. Prefix space: `A.spaceUsed ≤ (K+4)(T+1)` (`spaceUsed_le_mul_succ`).
+* **OWN-2 (loop and layout)** — `f6_loop`: `exists_forwardLoopTM 1` embedded by `Fin.castLEEmb`
+  into the first three of `K+3` bank tapes and hosted by `exists_rulerHostTM`, all chosen before
+  `α`. For the coded `M = (decode α).tm` halting by `t`: `forwardLoop_forward` gives the first halt
+  `t₀ ≤ t` and the loop run to the halted encoding; the host halts at `t'` with `M`'s output
+  (`forwardLoopCfg_halt_iff`, `embedEmitCfg_state/_output`, `rulerHostCfg_*`). Per tape
+  (`spaceUsedByTape_eq_card`): mirrored tape ⊆ source cells at `t₀` ⊆ at `t` (monotone), so
+  `≤ spaceUsed_M(t) ≤ s`; tapes 1, 2 ⊆ `[-D_α, D_α]`, `D_α = 50(|tableBitsK M.tr|+1)+C_L`
+  (`Int.card_Icc`); idle bank tapes `{0}` (`embedEmitTM_visitedByTapeHead_frame`); ruler ⊆
+  `[-1, ℓ]` (both boundary cells). Common budget `S = s + (2D_α+1) + ℓ + 3 ≥ 1`.
+  `f6_last_ruler_layout` (exact `hcfg`), `f6_cast_*` and `f6_final_seam` (both
+  `startupLoopTM_runFrom` and `startupLoopTM_spaceUsed_le`) are the issued v5 consumer.
+* **OWN-3 (arithmetic, target)** — in `space_universal`: `CodeTM.toFinTM_eq` +
+  `FinTM.computesInTime_iff` read the source halt and arbitrary output; `1 ≤ s` from
+  `CodeTM.one_le_spaceUsed`; `|bits s| ≤ s` (`length_bits_le_self`);
+  `C_α = p + q·(2|α|+6) + (K+4)(1 + (2D_α+4) + (2|α|+6)) + 1` with
+  `p = (K+4)(C_H(T_α+2)+12)`, `q = (K+4)(C_H(T_α+2)+4)` (so `B ≤ p + qℓ`), chosen after `α` and
+  before `s, x, output, t`; `B + (K+4)S ≤ C_α s`. The run is `T + 1 + t'` steps, halted, with the
+  source's output.
+
+## 4. Checks (PASS / FAIL / NOT RUN)
+
+| Check | Result | Evidence |
+|---|---|---|
+| Preflight (addendum v2.6: disk ≥ 12 GiB, headroom ≥ 4 GiB) | PASS (21.55 GiB, 15.38 GiB) | `evidence/logs/preflight.log` |
+| Cache: store logged, exactly the 65 issued roots, `TAR_OPTIONS=--no-same-owner`, manifest present-package check, empty-olean check, probe | PASS (11/11 packages match, 0 empty, probe exit 0) | `cache-store.log`, `cache-get.log`, `mathlib-roots.txt`, `package-check.log`, `cache-check.log`, `cache-probe.log` |
+| Bootstrap 132 at base | PASS (132/132 exit 0; resumed once, D1) | `bootstrap-base/` |
+| Remaining 96 final-order modules at base | PASS | `remaining-final/` |
+| Owned module at final head | PASS: exit 0, 0 errors, **0 warnings** (base: 1 `sorry` warning) | `final-sweep/raw/TCSlib.Complexity.SpaceComplexity.Hierarchy.out`, `elab/final-r3-Hierarchy.out` |
+| Downstream order (Hierarchy, SpaceComplexity) | PASS (both exit 0, 0 errors) | `final-sweep/summary.log` |
+| **Final 229-module sweep at head `6e98df4f`, in order, one Lean at a time** | **PASS: 229/229 exit 0, 0 errors; 21 `declaration uses 'sorry'` warnings in 8 modules = the 21 inherited admissions** | `final-sweep/summary.log` (start/end, secs, max RSS per module), `final-sweep/raw/` |
+| `#print axioms Complexity.space_universal` | PASS: `[propext, Classical.choice, Quot.sound]` | `evidence/axioms/Ax_final-sweep.out` |
+| Axioms of every new private declaration (47 incl. auxiliaries) | PASS: 0 non-standard | same file (`AX|…`, `AXSUMMARY`) |
+| Static admission census (229 files) | 21 = 22 − owned target; inherited 17 MIG + 4 RecordTable unchanged | `static-sorry-final-r3.txt` vs `static-sorry-3023dc14….txt` |
+| Seal of the 19 new declarations (each in its own section: 36 foreign definitions `[local irreducible]`, `[-simp]` on the three simp-unfolded ones) | PASS: exit 0, 0 errors, 0 warnings | `evidence/seal/Seal_final.{lean.txt,out,gen}`, `sealed-definitions-final.txt`, `nosimp.txt` |
+| Paired delta controls (point + abstract per sealed definition, `MVarId.refl`) | PASS: unsealed 72/72 close (kernel-checked theorems); sealed 72/72 fail with exactly one tagged error each, exit 1 | `Controls_final_{unsealed,sealed}.{lean.txt,out,check}`; checker `tools/ctlcount.py` |
+| Seal inventory / reducibility | 51 TCSlib definitions reached; 36 regular non-projection definitions + `Nat.bits` sealed; projections (abbrev) not overridden; all 38 candidates semireducible | `Inventory_final.out`, `Reducibility_final.out` |
+| `simp`/`rw`/`unfold` argument inspection | PASS on inspection: no foreign definition unfolded (5 argscan hits are local names or `change` restatements) | `argscan-final-r3.txt`, `argall-final-r3.txt`, §7 |
+| Style lints (`scripts/style_lint.py`, `scripts/campaign_style_lint.py`) | no new finding; pre-existing size and "Main definitions" findings remain | `evidence/lint/` |
+| Copy-text screens, issued 21-file population, tool byte-identical to the issued input | base PASS (byte-identical to the issued baseline output: 1037 / 636 / 171,071); head 1049 / 637 / 171,233; **1 new pair** (§6) | `evidence/screens/` |
+| Boundary checks | PASS (probe exit 0) + §5 | `evidence/probes/Boundary_final.{lean.txt,out}` |
+
+## 5. Boundary checks (no added hypothesis)
+
+`Boundary_final.lean.txt` elaborates (standard axioms only): the empty code, empty payload and
+empty output instance; every code string with an arbitrary output; `s = 0` impossible
+(`CodeTM.one_le_spaceUsed`: the source's initial head cell is visited); both header lengths
+positive (also for `bits 0 = []` and `α = []`); the ruler's boundary cells `-1` and `ℓ` blank and
+cells `0..ℓ-1` marked; the seek arithmetic `0 + ℓ₁ + 1 − 1 = ℓ₁`. In the proof: the first source
+halt `t₀ ≤ t` (any later supplied `t` is allowed) is used for the loop run and the mirrored ledger,
+lifted to `t` by visited-set monotonicity; the walk-back's single read is the blank at `ℓ₁ + 1`
+(checked from `FinTM.bufferTape_eq`); the H5 window premise includes both ruler blanks (`p = -1`
+and `p = ℓ₁`) and the host's ruler visits lie in `[-1, ℓ]`. Codes are arbitrary strings (no
+well-formedness premise); outputs are arbitrary lists.
+
+## 6. Duplication disclosure
+
+Screen (issued population, `copy-text-screen-v3.py`): head-only pairs vs base = **1**
+(`evidence/screens/new-pairs.txt`):
+`Hierarchy.lean::f6_native_halt` reproduces `UniversalK.lean::ss_inputRewind_done` 162/321 = 50%.
+The shared text is the standard one-step reading of a stationary control action through public
+equations (`MultiTapeTM.step_of_some`, `FinTM.controlAction_apply`, `moveInputPos_zero`) — the
+halt leaf's step, taken from the issued v2 probe. **For human disposition** (idiom-level; no proved
+material copied). Earlier head screens (`screen-head-bd712bda.txt`, 6 new pairs) led to r3, which
+removed five in-file pairs and one idiom pair.
+
+Semantic families the text screen does not see:
+* `f6_full_embed` (11 lines) — the identity forwarding embedding with a blank frame is the
+  identity. Same fact as the private `SpaceComplexity/Inclusions.lean::b2b_embed_refl` and the v5
+  probe's `full_bank_embedding`. **Requested shared lemma:** `Turing.embedEmitCfg_refl`-type row
+  beside `embedEmitCfg_eq` in `Build/Embed`; then both privates re-point.
+* `f6_mapState_mk` (one term) — specialization of the public `Cfg.mapState_eq_of_fields` to literal
+  configurations (ledger family RN-1, instance-level, not a re-proof). The three field-by-field
+  renamed-configuration conversions (startup-leaf endpoint, header→host handoff, last-ruler layout)
+  cite `Cfg.mapState_eq_of_fields`.
+* `f6_seam` (one term) — packages `seamCompTM_run_ofCfg` with `seamCompTM_firstReturn_ofCfg`.
+* `f6_cast_*` (6 × ≤ 8 lines) — equality-induction transports, verbatim from the issued v5 consumer;
+  no library counterpart found.
+* Provenance: `f6_native_halt`, `f6_header`, `f6_hosted`, `f6_scan`, `f6_last_ruler_layout`,
+  `f6_final_seam` follow the issued v2–v6 probe proofs (packet text, not library code).
+* Hand-built machines: one, the one-state stationary silent halt leaf inside `f6_native_halt`
+  (authorized; no catalog row is a single halting step). The one-cell correction uses the catalog
+  row `walkTM` instead of the v6 hand leaf (policy: an existing row is cited); this changes no
+  statement. No private host.
+* RS-1 (restart identity): cited via the public `MultiTapeTM.initCfg_eq_mapState`; no copy.
+
+## 7. Seal and argument scan details
+
+Sealed set (36): `TimeHierarchy.code`, `Action.apply`, `Cfg.init`, `Cfg.inputSymbol`,
+`Cfg.mapState`, `Cfg.workTapeSymbols`, `CodeTM.toFinTM`, `FinTM.ComputesInTime`,
+`FinTM.bufferTape`, `FinTM.controlAction`, `MultiTapeTM.{initCfg, runFrom, spaceUsed,
+spaceUsedByTape, step, visitedByTapeHead}`, `StepBlock.forwardLoopCfg`, `embedEmitCfg`,
+`embedEmitRetTM`, `embedEmitTM`, `headerRulerTM`, `headerScanCfg`, `headerScanTM`,
+`instDecidableEqRewindPhase`, `instDecidableEqSeekPhase`, `moveInputPos`, `pairEncode`, `rewindTM`,
+`rulerHostCfg`, `seamCompTM`, `skipTM`, `startupLoopTM`, `tableBitsK`, `unaryFin`, `walkTM`, and
+Mathlib's `Nat.bits` (in the target statement). `[-simp]`: `Action.apply`, `Cfg.init`,
+`MultiTapeTM.initCfg` (the reached definitions that are simp-unfoldable).
+**Not sealable:** `instFintypeRewindPhase`, `instFintypeSeekPhase` — with them in the set the seal
+itself passed but their four controls still closed sealed (`Controls_final-attempt1-38defs_*`):
+`[local irreducible]` does not stop Lean's structure-eta/instance-projection reduction of these
+derived structure instances. They occur only in `f6_prefix`'s value, as the `Fintype` witness of
+the existential state type (`InstUse_final.out`); no proof step reads them. Projections (abbrev
+hints) are not overridden.
+Argument scan: `change` arguments naming `Cfg.init` (`f6_header`), `FinTM.bufferTape` (`f6_hosted`),
+`FinTM.controlAction` (`f6_native_halt`) restate goals through local definitions without unfolding
+those definitions (then rewritten by their public equations); `simp only [q]`, `[W]` and the `rw`
+tokens `A`, `K`, `P`, `length`, `headerScanTM` are local names or terms inside a `show … from`/the
+restart identity's argument. The seal run confirms.
+
+## 8. Notes, escalations and requests (no scope change made)
+
+* **E1 (request):** publish the identity-embedding lemma in `Build/Embed` (§6) to retire
+  `f6_full_embed` and `Inclusions.b2b_embed_refl`.
+* **E2 (file size):** `Hierarchy.lean` grows 2518 → 3441 lines (already above the 1000-line
+  threshold at base; the brief forbids a new module). Suggest moving the `f6_` assembly to its own
+  module in a later window.
+* **E3 (screen pair):** the 50% idiom pair in §6 awaits human disposition.
+* Deviation from the v6-checked correction: catalog `walkTM` over the empty word replaces the
+  hand-built one-step `tapeAction` leaf (same one-cell left move; contract `walkTM_run_ofCfg`).
+* No unresolved mathematical gap; no `sorry`, no new admission, no debt acknowledgment.
+
+## 9. Process deviations (all disclosed in `evidence/logs/deviations.log`)
+
+D1 host cleanup killed the first bootstrap launch at module 73 (resumed; later launches use
+`setsid`). D2 facade checked once before its prerequisites (import failure, no claim). D3, D4, D6:
+three final sweeps deliberately stopped when duplication reviews changed the head (r1, r2, r3);
+logs kept as `final-sweep-{1,2,3}-aborted`; killed modules rebuilt (`elab/repair-D3-*`,
+`repair-D6-*`); the complete final sweep ran at the final head. D5 head screen re-run after a head
+change. One Lean process at a time throughout (shared slot lock; sweeps never overlapped other Lean
+runs); screens serialized by their own lock.
+
+## 10. Contents
+
+`TCSlib/…/Hierarchy.lean` (head), `BASE.txt`, `HEAD.txt`, `COMMITS.txt`, `SOURCE-SHA256.txt`,
+`patches/` (format-patch series + cumulative diff), git bundle, `PRIVATE-HELPERS.md`,
+`ADMISSIONS.md`, `evidence/` (logs, axioms, seal + controls, screens, lints, probes incl. the
+scratch development file `F6Dev-final-scratch.lean.txt`), `tools/` (all scripts and Lean probe
+templates used), `MANIFEST.json`, `SHA256SUMS`.

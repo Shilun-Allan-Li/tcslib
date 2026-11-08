@@ -1,0 +1,3572 @@
+{
+  "full25": {
+    "declarations": 1956,
+    "candidates": 2013,
+    "reproduced_chars": 646340,
+    "by_kind_location": {
+      "proof/cross-file": 897,
+      "term/cross-file": 149,
+      "term/in-file": 110,
+      "proof/in-file": 857
+    }
+  },
+  "old21_subgraph": {
+    "pairs": 1634,
+    "reproduced_chars": 499531,
+    "all_exact_historical_rows_equal": true
+  },
+  "expanded_baseline_pairs": 379,
+  "expanded_baseline_chars": 146809,
+  "groups": [
+    {
+      "key": "proof | Basic.lean ↔ Loop.lean",
+      "count": 1,
+      "rows": [
+        {
+          "a": "Loop.lean::emCall_track_run",
+          "b": "Basic.lean::runFrom",
+          "shared": 87,
+          "denominator": 165,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Catalog.lean ↔ Composition.lean",
+      "count": 12,
+      "rows": [
+        {
+          "a": "Catalog.lean::computesFunInTime_const_spaceUsed",
+          "b": "Composition.lean::constTM_computes",
+          "shared": 161,
+          "denominator": 163,
+          "printed_percent": 99,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_idTM_run",
+          "b": "Composition.lean::idTM_run",
+          "shared": 649,
+          "denominator": 737,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::computesFunInTime_const_spaceUsed",
+          "b": "Composition.lean::computesFunInTime_const",
+          "shared": 264,
+          "denominator": 302,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::idTM_run",
+          "b": "Catalog.lean::f2_idTM_run",
+          "shared": 649,
+          "denominator": 773,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::computesFunInTime_id_spaceUsed",
+          "b": "Composition.lean::computesFunInTime_id",
+          "shared": 633,
+          "denominator": 756,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Catalog.lean::a2_mapSetup_run",
+          "shared": 128,
+          "denominator": 163,
+          "printed_percent": 79,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_mapSetup_run",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 128,
+          "denominator": 166,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Catalog.lean::a2_mapSetup_heads",
+          "shared": 73,
+          "denominator": 98,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_splitCount_run",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 123,
+          "denominator": 166,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_id",
+          "b": "Catalog.lean::computesFunInTime_id_spaceUsed",
+          "shared": 633,
+          "denominator": 870,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_const",
+          "b": "Catalog.lean::computesFunInTime_const_spaceUsed",
+          "shared": 264,
+          "denominator": 380,
+          "printed_percent": 69,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Catalog.lean::catalog_redirect_loop",
+          "shared": 75,
+          "denominator": 140,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Catalog.lean ↔ Loop.lean",
+      "count": 155,
+      "rows": [
+        {
+          "a": "Catalog.lean::f2_loopBody_step",
+          "b": "Loop.lean::loopBody_step",
+          "shared": 1094,
+          "denominator": 1094,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_find_run",
+          "b": "Catalog.lean::f2_loop_find_run",
+          "shared": 678,
+          "denominator": 678,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_find_run",
+          "b": "Loop.lean::loop_find_run",
+          "shared": 678,
+          "denominator": 678,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_halted_run",
+          "b": "Catalog.lean::a2_loop_halted_run",
+          "shared": 659,
+          "denominator": 659,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_loop_halted_run",
+          "b": "Loop.lean::loop_halted_run",
+          "shared": 659,
+          "denominator": 659,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_rewind_bounded",
+          "b": "Catalog.lean::f2_loop_rewind_bounded",
+          "shared": 514,
+          "denominator": 514,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_rewind_bounded",
+          "b": "Loop.lean::loop_rewind_bounded",
+          "shared": 514,
+          "denominator": 514,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBody_run",
+          "b": "Loop.lean::loopBody_run",
+          "shared": 452,
+          "denominator": 452,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuel_init",
+          "b": "Loop.lean::loopFuel_init",
+          "shared": 410,
+          "denominator": 410,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBuffer_write",
+          "b": "Catalog.lean::f2_loopBuffer_write",
+          "shared": 408,
+          "denominator": 408,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBuffer_write",
+          "b": "Loop.lean::loopBuffer_write",
+          "shared": 408,
+          "denominator": 408,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBody_stop",
+          "b": "Loop.lean::loopBody_stop",
+          "shared": 346,
+          "denominator": 346,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopReplay_run",
+          "b": "Loop.lean::loopReplay_run",
+          "shared": 345,
+          "denominator": 345,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_first_halt",
+          "b": "Catalog.lean::f2_loop_first_halt",
+          "shared": 341,
+          "denominator": 341,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_first_halt",
+          "b": "Loop.lean::loop_first_halt",
+          "shared": 341,
+          "denominator": 341,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCopy_erase",
+          "b": "Loop.lean::loopCopy_erase",
+          "shared": 285,
+          "denominator": 285,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_output_length_le",
+          "b": "Catalog.lean::f2_loop_output_length_le",
+          "shared": 254,
+          "denominator": 254,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_output_length_le",
+          "b": "Loop.lean::loop_output_length_le",
+          "shared": 254,
+          "denominator": 254,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuel_run",
+          "b": "Loop.lean::loopFuel_run",
+          "shared": 230,
+          "denominator": 230,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopValue_bits",
+          "b": "Loop.lean::loopValue_bits",
+          "shared": 135,
+          "denominator": 135,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_erase_last",
+          "b": "Catalog.lean::f2_catalogBuffer_erase",
+          "shared": 118,
+          "denominator": 118,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCopy_final",
+          "b": "Loop.lean::loopCopy_final",
+          "shared": 110,
+          "denominator": 110,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_orbit_inv",
+          "b": "Catalog.lean::f2_loop_orbit_inv",
+          "shared": 94,
+          "denominator": 94,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_orbit_inv",
+          "b": "Loop.lean::loop_orbit_inv",
+          "shared": 94,
+          "denominator": 94,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBorrowPos_le",
+          "b": "Loop.lean::loopBorrowPos_le",
+          "shared": 93,
+          "denominator": 93,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBuffer_read",
+          "b": "Catalog.lean::f2_loopBuffer_read",
+          "shared": 89,
+          "denominator": 89,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBuffer_read",
+          "b": "Loop.lean::loopBuffer_read",
+          "shared": 89,
+          "denominator": 89,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_fuel_width",
+          "b": "Catalog.lean::f2_loop_fuel_width",
+          "shared": 87,
+          "denominator": 87,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_fuel_width",
+          "b": "Loop.lean::loop_fuel_width",
+          "shared": 87,
+          "denominator": 87,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFrame_payload",
+          "b": "Loop.lean::loopFrame_payload",
+          "shared": 79,
+          "denominator": 79,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFlag_clear",
+          "b": "Loop.lean::loopFlag_clear",
+          "shared": 60,
+          "denominator": 60,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBody_run",
+          "b": "Catalog.lean::f2_loopBody_run",
+          "shared": 452,
+          "denominator": 455,
+          "printed_percent": 99,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBody_step",
+          "b": "Catalog.lean::f2_loopBody_step",
+          "shared": 1094,
+          "denominator": 1109,
+          "printed_percent": 99,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBody_stop",
+          "b": "Catalog.lean::f2_loopBody_stop",
+          "shared": 346,
+          "denominator": 352,
+          "printed_percent": 98,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopReplay_run",
+          "b": "Catalog.lean::f2_loopReplay_run",
+          "shared": 345,
+          "denominator": 351,
+          "printed_percent": 98,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCopy_erase",
+          "b": "Catalog.lean::f2_loopCopy_erase",
+          "shared": 285,
+          "denominator": 291,
+          "printed_percent": 98,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuel_run",
+          "b": "Catalog.lean::f2_loopFuel_run",
+          "shared": 230,
+          "denominator": 236,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuel_init",
+          "b": "Catalog.lean::f2_loopFuel_init",
+          "shared": 410,
+          "denominator": 422,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBorrowPos_le",
+          "b": "Catalog.lean::f2_loopBorrowPos_le",
+          "shared": 93,
+          "denominator": 96,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFrame_payload",
+          "b": "Catalog.lean::f2_loopFrame_payload",
+          "shared": 79,
+          "denominator": 82,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_contracts",
+          "b": "Loop.lean::loopHost_contracts",
+          "shared": 3477,
+          "denominator": 3618,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopReplay_step",
+          "b": "Loop.lean::loopReplay_step",
+          "shared": 316,
+          "denominator": 329,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopValue_bits",
+          "b": "Catalog.lean::f2_loopValue_bits",
+          "shared": 135,
+          "denominator": 141,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopControl_payload",
+          "b": "Loop.lean::loopControl_payload",
+          "shared": 235,
+          "denominator": 246,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFlag_clear",
+          "b": "Catalog.lean::f2_loopFlag_clear",
+          "shared": 60,
+          "denominator": 63,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_run",
+          "b": "Catalog.lean::a2_loop_halted_run",
+          "shared": 627,
+          "denominator": 659,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopDebit_value",
+          "b": "Loop.lean::loopDebit_value",
+          "shared": 187,
+          "denominator": 197,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCopy_final",
+          "b": "Catalog.lean::f2_loopCopy_final",
+          "shared": 110,
+          "denominator": 116,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_replay",
+          "b": "Loop.lean::loopHost_replay",
+          "shared": 1016,
+          "denominator": 1073,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopControl_payload",
+          "b": "Catalog.lean::f2_loopControl_payload",
+          "shared": 235,
+          "denominator": 249,
+          "printed_percent": 94,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopDebit_success",
+          "b": "Loop.lean::loopDebit_success",
+          "shared": 141,
+          "denominator": 150,
+          "printed_percent": 94,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_exists_loopFind_space",
+          "b": "Loop.lean::exists_loopFindTM",
+          "shared": 851,
+          "denominator": 912,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopReplay_step",
+          "b": "Catalog.lean::f2_loopReplay_step",
+          "shared": 316,
+          "denominator": 341,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_borrow_run",
+          "b": "Loop.lean::loopHost_borrow_run",
+          "shared": 489,
+          "denominator": 531,
+          "printed_percent": 92,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_accept",
+          "b": "Loop.lean::loopHost_accept",
+          "shared": 2071,
+          "denominator": 2252,
+          "printed_percent": 92,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_replay",
+          "b": "Catalog.lean::f2_loopHost_replay",
+          "shared": 1016,
+          "denominator": 1105,
+          "printed_percent": 92,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_frame_replay",
+          "b": "Loop.lean::loopHost_frame_replay",
+          "shared": 856,
+          "denominator": 931,
+          "printed_percent": 92,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_round",
+          "b": "Catalog.lean::f2_loopHost_round",
+          "shared": 1925,
+          "denominator": 2114,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuelCaptured_frame",
+          "b": "Loop.lean::loopFuelCaptured_frame",
+          "shared": 1423,
+          "denominator": 1570,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopDebit_success",
+          "b": "Catalog.lean::f2_loopDebit_success",
+          "shared": 141,
+          "denominator": 156,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_accept",
+          "b": "Catalog.lean::f2_loopHost_accept",
+          "shared": 2071,
+          "denominator": 2297,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_fuel_copy",
+          "b": "Loop.lean::loopHost_fuel_copy",
+          "shared": 1319,
+          "denominator": 1466,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_run",
+          "b": "Catalog.lean::f2_loopHost_borrow_run",
+          "shared": 489,
+          "denominator": 544,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_frame_replay",
+          "b": "Catalog.lean::f2_loopHost_frame_replay",
+          "shared": 856,
+          "denominator": 953,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_anchor_return",
+          "b": "Loop.lean::loopHost_anchor_return",
+          "shared": 829,
+          "denominator": 926,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_loop_halted_run",
+          "b": "Loop.lean::loop_run",
+          "shared": 627,
+          "denominator": 701,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_exists_loopFind_space",
+          "b": "Loop.lean::exists_loopTM",
+          "shared": 687,
+          "denominator": 770,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_splitCount_run",
+          "b": "Loop.lean::emCall_right_run",
+          "shared": 152,
+          "denominator": 172,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopDebit_value",
+          "b": "Catalog.lean::f2_loopDebit_value",
+          "shared": 187,
+          "denominator": 212,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_catalogBuffer_erase",
+          "b": "Loop.lean::emCall_erase_last",
+          "shared": 118,
+          "denominator": 134,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_first_entry",
+          "b": "Catalog.lean::f2_catalogFirstEntry",
+          "shared": 327,
+          "denominator": 375,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_round",
+          "b": "Loop.lean::loopHost_round",
+          "shared": 1925,
+          "denominator": 2210,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuelCaptured_frame",
+          "b": "Catalog.lean::f2_loopFuelCaptured_frame",
+          "shared": 1423,
+          "denominator": 1639,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBodySource_run",
+          "b": "Loop.lean::loopBodySource_run",
+          "shared": 78,
+          "denominator": 90,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_borrow_step",
+          "b": "Loop.lean::loopHost_borrow_step",
+          "shared": 581,
+          "denominator": 671,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_copy",
+          "b": "Catalog.lean::f2_loopHost_fuel_copy",
+          "shared": 1319,
+          "denominator": 1527,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_anchor_return",
+          "b": "Catalog.lean::f2_loopHost_anchor_return",
+          "shared": 829,
+          "denominator": 963,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopDebit_iterate_value",
+          "b": "Loop.lean::loopDebit_iterate_value",
+          "shared": 248,
+          "denominator": 290,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_setup",
+          "b": "Catalog.lean::f2_loopHost_fuel_setup",
+          "shared": 782,
+          "denominator": 921,
+          "printed_percent": 85,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_reject",
+          "b": "Loop.lean::loopHost_reject",
+          "shared": 2023,
+          "denominator": 2398,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_fuel_setup",
+          "b": "Loop.lean::loopHost_fuel_setup",
+          "shared": 782,
+          "denominator": 935,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_fuel_return",
+          "b": "Loop.lean::loopHost_fuel_return",
+          "shared": 982,
+          "denominator": 1176,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCopy_initial",
+          "b": "Loop.lean::loopCopy_initial",
+          "shared": 78,
+          "denominator": 94,
+          "printed_percent": 83,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_step",
+          "b": "Catalog.lean::f2_loopHost_borrow_step",
+          "shared": 581,
+          "denominator": 704,
+          "printed_percent": 83,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_prepare",
+          "b": "Loop.lean::loopHost_prepare",
+          "shared": 1091,
+          "denominator": 1338,
+          "printed_percent": 82,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBodySource_run",
+          "b": "Catalog.lean::f2_loopBodySource_run",
+          "shared": 78,
+          "denominator": 96,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopControl_apply",
+          "b": "Loop.lean::loopControl_apply",
+          "shared": 643,
+          "denominator": 792,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_reject",
+          "b": "Catalog.lean::f2_loopHost_reject",
+          "shared": 2023,
+          "denominator": 2493,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_catalogFirstEntry",
+          "b": "Loop.lean::emCall_first_entry",
+          "shared": 327,
+          "denominator": 403,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::exists_loopTM_spaceUsed",
+          "b": "Loop.lean::exists_loopTM",
+          "shared": 624,
+          "denominator": 770,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopDebit_iterate_value",
+          "b": "Catalog.lean::f2_loopDebit_iterate_value",
+          "shared": 248,
+          "denominator": 308,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_contracts",
+          "b": "Catalog.lean::f2_loopHost_contracts",
+          "shared": 3477,
+          "denominator": 4347,
+          "printed_percent": 80,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_borrow_rewind",
+          "b": "Loop.lean::loopHost_borrow_rewind",
+          "shared": 932,
+          "denominator": 1181,
+          "printed_percent": 79,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCopy_initial",
+          "b": "Catalog.lean::f2_loopCopy_initial",
+          "shared": 78,
+          "denominator": 100,
+          "printed_percent": 78,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopDebit_iterate_length",
+          "b": "Loop.lean::loopDebit_iterate_length",
+          "shared": 68,
+          "denominator": 88,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopControl_apply",
+          "b": "Catalog.lean::f2_loopControl_apply",
+          "shared": 643,
+          "denominator": 834,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Catalog.lean::a2_mapSetup_run",
+          "shared": 125,
+          "denominator": 163,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_halt_return",
+          "b": "Catalog.lean::f2_loopHost_halt_return",
+          "shared": 389,
+          "denominator": 508,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_counterTape_write",
+          "b": "Loop.lean::loopBuffer_write",
+          "shared": 311,
+          "denominator": 408,
+          "printed_percent": 76,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopDebit_iterate_length",
+          "b": "Catalog.lean::f2_loopDebit_iterate_length",
+          "shared": 68,
+          "denominator": 91,
+          "printed_percent": 75,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Catalog.lean::a2_mapSetup_heads",
+          "shared": 73,
+          "denominator": 98,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::exists_loopTM_spaceUsed",
+          "b": "Loop.lean::exists_loopFindTM",
+          "shared": 679,
+          "denominator": 912,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_find_run",
+          "b": "Catalog.lean::a2_loop_halted_run",
+          "shared": 484,
+          "denominator": 659,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_find_run",
+          "b": "Loop.lean::loop_halted_run",
+          "shared": 484,
+          "denominator": 659,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_counterTape_read",
+          "b": "Loop.lean::loopBuffer_read",
+          "shared": 65,
+          "denominator": 89,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_prepare",
+          "b": "Catalog.lean::f2_loopHost_prepare",
+          "shared": 1091,
+          "denominator": 1499,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_mapSetup_run",
+          "b": "Loop.lean::emCall_right_run",
+          "shared": 125,
+          "denominator": 172,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_start",
+          "b": "Catalog.lean::f2_loopHost_start",
+          "shared": 209,
+          "denominator": 289,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBuffer_write",
+          "b": "Catalog.lean::f2_counterTape_write",
+          "shared": 311,
+          "denominator": 432,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_return",
+          "b": "Catalog.lean::f2_loopHost_fuel_return",
+          "shared": 982,
+          "denominator": 1366,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_halted_run",
+          "b": "Catalog.lean::f2_loop_find_run",
+          "shared": 484,
+          "denominator": 678,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_loop_halted_run",
+          "b": "Loop.lean::loop_find_run",
+          "shared": 484,
+          "denominator": 678,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopReady_call",
+          "b": "Loop.lean::loopReady_call",
+          "shared": 708,
+          "denominator": 994,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_rewind",
+          "b": "Catalog.lean::f2_loopHost_borrow_rewind",
+          "shared": 932,
+          "denominator": 1329,
+          "printed_percent": 70,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_counterInc_bits",
+          "b": "Loop.lean::loopValue_bits",
+          "shared": 93,
+          "denominator": 135,
+          "printed_percent": 69,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_init",
+          "b": "Catalog.lean::f2_loopHost_init",
+          "shared": 65,
+          "denominator": 95,
+          "printed_percent": 68,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_input_rewind",
+          "b": "Loop.lean::loopHost_input_rewind",
+          "shared": 164,
+          "denominator": 241,
+          "printed_percent": 68,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_input_rewind",
+          "b": "Catalog.lean::f2_loopHost_input_rewind",
+          "shared": 164,
+          "denominator": 245,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopReady_call",
+          "b": "Catalog.lean::f2_loopReady_call",
+          "shared": 708,
+          "denominator": 1066,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_run",
+          "b": "Catalog.lean::f2_loop_find_run",
+          "shared": 448,
+          "denominator": 678,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBody_step",
+          "b": "Loop.lean::loopBody_stop",
+          "shared": 228,
+          "denominator": 346,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBody_step",
+          "b": "Catalog.lean::f2_loopBody_stop",
+          "shared": 228,
+          "denominator": 352,
+          "printed_percent": 65,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCall_reframe",
+          "b": "Loop.lean::loopCall_reframe",
+          "shared": 484,
+          "denominator": 749,
+          "printed_percent": 65,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_init",
+          "b": "Loop.lean::loopHost_init",
+          "shared": 65,
+          "denominator": 101,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_release",
+          "b": "Loop.lean::loopHost_release",
+          "shared": 524,
+          "denominator": 815,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_find_run",
+          "b": "Loop.lean::loop_run",
+          "shared": 448,
+          "denominator": 701,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_loop_prepare",
+          "b": "Loop.lean::loopHost_prepare",
+          "shared": 849,
+          "denominator": 1338,
+          "printed_percent": 63,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_run",
+          "b": "Catalog.lean::f2_loopBorrow_run",
+          "shared": 288,
+          "denominator": 476,
+          "printed_percent": 61,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_borrow",
+          "b": "Loop.lean::loopHost_borrow",
+          "shared": 258,
+          "denominator": 429,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_release",
+          "b": "Catalog.lean::f2_loopHost_release",
+          "shared": 524,
+          "denominator": 872,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCall_reframe",
+          "b": "Catalog.lean::f2_loopCall_reframe",
+          "shared": 484,
+          "denominator": 809,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::exists_loopTM_spaceUsed",
+          "b": "Loop.lean::exists_loopCfgTM",
+          "shared": 95,
+          "denominator": 161,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow",
+          "b": "Catalog.lean::f2_loopHost_borrow",
+          "shared": 258,
+          "denominator": 445,
+          "printed_percent": 58,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_input_run_le",
+          "b": "Loop.lean::loop_output_length_le",
+          "shared": 145,
+          "denominator": 254,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_borrow_rewind",
+          "b": "Loop.lean::loopHost_fuel_return",
+          "shared": 666,
+          "denominator": 1176,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_rewind_bounded",
+          "b": "Catalog.lean::f2_catalogRewind",
+          "shared": 245,
+          "denominator": 435,
+          "printed_percent": 56,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_halt_return",
+          "b": "Loop.lean::loopHost_halt_return",
+          "shared": 389,
+          "denominator": 701,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_splitEmbed_cut",
+          "b": "Loop.lean::emCall_first_entry",
+          "shared": 221,
+          "denominator": 403,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_body_run",
+          "b": "Catalog.lean::f2_loopHost_body_capture",
+          "shared": 64,
+          "denominator": 117,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_anchor_return",
+          "b": "Catalog.lean::f2_loopBody_capture",
+          "shared": 203,
+          "denominator": 372,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBorrow_run",
+          "b": "Loop.lean::loopHost_borrow_run",
+          "shared": 288,
+          "denominator": 531,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_splitEmit_suffix",
+          "b": "Loop.lean::loopReplay_run",
+          "shared": 187,
+          "denominator": 345,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCall_reframe",
+          "b": "Catalog.lean::f2_loopCall_frame",
+          "shared": 285,
+          "denominator": 527,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_fuel_return",
+          "b": "Loop.lean::loopHost_borrow_rewind",
+          "shared": 633,
+          "denominator": 1181,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Catalog.lean::catalog_redirect_loop",
+          "shared": 75,
+          "denominator": 140,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::exists_loopTM_spaceUsed",
+          "b": "Loop.lean::exists_emitLoopTM",
+          "shared": 1204,
+          "denominator": 2258,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBorrow_step",
+          "b": "Loop.lean::loopReplay_step",
+          "shared": 174,
+          "denominator": 329,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::a2_map_setup",
+          "b": "Loop.lean::loopFuel_init",
+          "shared": 214,
+          "denominator": 410,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuelCaptured_frame",
+          "b": "Loop.lean::loopControl_payload",
+          "shared": 128,
+          "denominator": 246,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_payload_rewind",
+          "b": "Loop.lean::loopHost_fuel_return",
+          "shared": 606,
+          "denominator": 1176,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_fuel_rewind",
+          "b": "Loop.lean::loopHost_fuel_return",
+          "shared": 606,
+          "denominator": 1176,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuelCaptured_frame",
+          "b": "Catalog.lean::f2_loopControl_payload",
+          "shared": 128,
+          "denominator": 249,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost_frame_replay",
+          "b": "Loop.lean::loopControl_payload",
+          "shared": 125,
+          "denominator": 246,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_frame_replay",
+          "b": "Catalog.lean::f2_loopControl_payload",
+          "shared": 125,
+          "denominator": 249,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_return",
+          "b": "Catalog.lean::f2_loopHost_borrow_rewind",
+          "shared": 666,
+          "denominator": 1329,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ Composition.lean",
+      "count": 18,
+      "rows": [
+        {
+          "a": "Composition.lean::exists_comp_partial",
+          "b": "Composition.lean::bufferedCompTM_computes_iff",
+          "shared": 1207,
+          "denominator": 1218,
+          "printed_percent": 99,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_const",
+          "b": "Composition.lean::constTM_computes",
+          "shared": 161,
+          "denominator": 163,
+          "printed_percent": 99,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_comp",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "shared": 256,
+          "denominator": 264,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computes_iff",
+          "b": "Composition.lean::exists_comp_partial",
+          "shared": 1207,
+          "denominator": 1254,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::exists_comp_on_image",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "shared": 203,
+          "denominator": 211,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "b": "Composition.lean::computesFunInTime_comp",
+          "shared": 256,
+          "denominator": 295,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "b": "Composition.lean::exists_comp_on_image",
+          "shared": 203,
+          "denominator": 238,
+          "printed_percent": 85,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "shared": 176,
+          "denominator": 211,
+          "printed_percent": 83,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_comp",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "shared": 168,
+          "denominator": 211,
+          "printed_percent": 80,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::computesFunInTime_comp",
+          "b": "Composition.lean::exists_comp_on_image",
+          "shared": 178,
+          "denominator": 238,
+          "printed_percent": 75,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::exists_comp_partial",
+          "b": "Composition.lean::bufferedCompTM_computesInTime",
+          "shared": 319,
+          "denominator": 450,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computes_iff",
+          "b": "Composition.lean::bufferedCompTM_computesInTime",
+          "shared": 319,
+          "denominator": 450,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "b": "Composition.lean::exists_comp_on_image",
+          "shared": 168,
+          "denominator": 238,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "shared": 176,
+          "denominator": 264,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::exists_comp_on_image",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime",
+          "shared": 168,
+          "denominator": 264,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::exists_comp_on_image",
+          "b": "Composition.lean::computesFunInTime_comp",
+          "shared": 178,
+          "denominator": 295,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "b": "Composition.lean::computesFunInTime_comp",
+          "shared": 168,
+          "denominator": 295,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Composition.lean::constTM_computes",
+          "b": "Composition.lean::computesFunInTime_const",
+          "shared": 161,
+          "denominator": 302,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ Hardness.lean",
+      "count": 5,
+      "rows": [
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Hardness.lean::clCount_idle_run",
+          "shared": 71,
+          "denominator": 91,
+          "printed_percent": 78,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Hardness.lean::clBank_run",
+          "shared": 73,
+          "denominator": 94,
+          "printed_percent": 78,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::condTM_start",
+          "b": "Hardness.lean::clRepeat_initial",
+          "shared": 66,
+          "denominator": 122,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::condTM_start",
+          "b": "Hardness.lean::clRepeat_frame",
+          "shared": 66,
+          "denominator": 128,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clA5Stop_clean",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 85,
+          "denominator": 166,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ Loop.lean",
+      "count": 2,
+      "rows": [
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 125,
+          "denominator": 166,
+          "printed_percent": 75,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::controlCfg_run",
+          "b": "Loop.lean::emCall_right_run",
+          "shared": 125,
+          "denominator": 172,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ Primitives.lean",
+      "count": 3,
+      "rows": [
+        {
+          "a": "Primitives.lean::catalogPayload_computes",
+          "b": "Composition.lean::bufferedCompTM_computesInTime",
+          "shared": 376,
+          "denominator": 450,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::splitCount_run",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 123,
+          "denominator": 166,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::pairMap_computes",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "shared": 110,
+          "denominator": 211,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ SAT.lean",
+      "count": 1,
+      "rows": [
+        {
+          "a": "SAT.lean::satStop_clean",
+          "b": "Composition.lean::controlCfg_run",
+          "shared": 85,
+          "denominator": 166,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Composition.lean ↔ Tautology.lean",
+      "count": 3,
+      "rows": [
+        {
+          "a": "Tautology.lean::taut_comp_on_image",
+          "b": "Composition.lean::bufferedCompTM_computesFunInTime_on_image",
+          "shared": 131,
+          "denominator": 211,
+          "printed_percent": 62,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Tautology.lean::taut_comp_on_image",
+          "b": "Composition.lean::exists_comp_on_image",
+          "shared": 131,
+          "denominator": 238,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Tautology.lean::taut_comp_on_image",
+          "b": "Composition.lean::bufferedCompTM_computesInTime",
+          "shared": 242,
+          "denominator": 450,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Hardness.lean ↔ Loop.lean",
+      "count": 21,
+      "rows": [
+        {
+          "a": "Hardness.lean::clErase_last",
+          "b": "Loop.lean::emCall_erase_last",
+          "shared": 129,
+          "denominator": 134,
+          "printed_percent": 96,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_first_halt",
+          "b": "Hardness.lean::clA5_call_first_halt",
+          "shared": 307,
+          "denominator": 330,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clA5_call_first_halt",
+          "b": "Loop.lean::loop_first_halt",
+          "shared": 307,
+          "denominator": 341,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_erase_last",
+          "b": "Hardness.lean::clErase_last",
+          "shared": 129,
+          "denominator": 146,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Hardness.lean::clCount_idle_run",
+          "shared": 71,
+          "denominator": 91,
+          "printed_percent": 78,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_run",
+          "b": "Hardness.lean::clBank_run",
+          "shared": 73,
+          "denominator": 94,
+          "printed_percent": 78,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clCountTape_write",
+          "b": "Loop.lean::loopBuffer_write",
+          "shared": 311,
+          "denominator": 408,
+          "printed_percent": 76,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clCountTape_read",
+          "b": "Loop.lean::loopBuffer_read",
+          "shared": 65,
+          "denominator": 89,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBuffer_write",
+          "b": "Hardness.lean::clCountTape_write",
+          "shared": 311,
+          "denominator": 426,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clRepeat_complete",
+          "b": "Loop.lean::emCall_banks_run",
+          "shared": 170,
+          "denominator": 237,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_clear_scan",
+          "b": "Hardness.lean::clCmp_forward",
+          "shared": 101,
+          "denominator": 141,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clCountInc_bits",
+          "b": "Loop.lean::loopValue_bits",
+          "shared": 93,
+          "denominator": 135,
+          "printed_percent": 69,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopValue_bits",
+          "b": "Hardness.lean::clNum_bits",
+          "shared": 87,
+          "denominator": 130,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_scan",
+          "b": "Hardness.lean::clTrack_dispatch",
+          "shared": 69,
+          "denominator": 105,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clNum_bits",
+          "b": "Loop.lean::loopValue_bits",
+          "shared": 87,
+          "denominator": 135,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_bank_step",
+          "b": "Hardness.lean::clTrack_dispatch",
+          "shared": 67,
+          "denominator": 105,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finalize_run",
+          "b": "Hardness.lean::clTrack_dispatch",
+          "shared": 66,
+          "denominator": 105,
+          "printed_percent": 63,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_prepare_run",
+          "b": "Hardness.lean::clTrack_dispatch",
+          "shared": 64,
+          "denominator": 105,
+          "printed_percent": 61,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clMatch_prefix",
+          "b": "Loop.lean::emCall_banks_run",
+          "shared": 131,
+          "denominator": 237,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_frame_replay",
+          "b": "Hardness.lean::clRepeat_initial",
+          "shared": 67,
+          "denominator": 122,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHost_frame_replay",
+          "b": "Hardness.lean::clRepeat_frame",
+          "shared": 67,
+          "denominator": 128,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Hardness.lean ↔ PolyTimeBlockLoop.lean",
+      "count": 3,
+      "rows": [
+        {
+          "a": "PolyTimeBlockLoop.lean::xorPairStep_orbit",
+          "b": "Hardness.lean::clCursor_orbit",
+          "shared": 71,
+          "denominator": 110,
+          "printed_percent": 65,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::orbit",
+          "b": "Hardness.lean::clCursor_orbit",
+          "shared": 69,
+          "denominator": 110,
+          "printed_percent": 63,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_iterate_le_of_slack",
+          "b": "Hardness.lean::clCursor_orbit",
+          "shared": 68,
+          "denominator": 110,
+          "printed_percent": 62,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Loop.lean ↔ Loop.lean",
+      "count": 57,
+      "rows": [
+        {
+          "a": "Loop.lean::loop_run",
+          "b": "Loop.lean::loop_halted_run",
+          "shared": 627,
+          "denominator": 659,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_bank_final",
+          "b": "Loop.lean::emCall_bank_initial",
+          "shared": 3070,
+          "denominator": 3250,
+          "printed_percent": 94,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loop_halted_run",
+          "b": "Loop.lean::loop_run",
+          "shared": 627,
+          "denominator": 701,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_loopFindTM",
+          "b": "Loop.lean::exists_loopTM",
+          "shared": 686,
+          "denominator": 770,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_arg",
+          "b": "Loop.lean::emCall_finish_rewind",
+          "shared": 1025,
+          "denominator": 1195,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_pair",
+          "b": "Loop.lean::emCall_pair_triple",
+          "shared": 138,
+          "denominator": 161,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_bank_initial",
+          "b": "Loop.lean::emCall_bank_final",
+          "shared": 3070,
+          "denominator": 3669,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_emitCallTM",
+          "b": "Loop.lean::exists_installCallTM",
+          "shared": 194,
+          "denominator": 232,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_installCallTM",
+          "b": "Loop.lean::exists_emitCallTM",
+          "shared": 194,
+          "denominator": 244,
+          "printed_percent": 80,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_final",
+          "b": "Loop.lean::emCall_finish_initial",
+          "shared": 1279,
+          "denominator": 1629,
+          "printed_percent": 79,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_arg",
+          "b": "Loop.lean::emCall_finish_erase",
+          "shared": 972,
+          "denominator": 1264,
+          "printed_percent": 77,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_loopTM",
+          "b": "Loop.lean::exists_loopFindTM",
+          "shared": 686,
+          "denominator": 912,
+          "printed_percent": 75,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_rewind",
+          "b": "Loop.lean::loopHost_fuel_return",
+          "shared": 879,
+          "denominator": 1176,
+          "printed_percent": 75,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_return",
+          "b": "Loop.lean::loopHost_borrow_rewind",
+          "shared": 879,
+          "denominator": 1181,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_initial",
+          "b": "Loop.lean::emCall_finish_final",
+          "shared": 1279,
+          "denominator": 1731,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loop_find_run",
+          "b": "Loop.lean::loop_halted_run",
+          "shared": 484,
+          "denominator": 659,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loop_halted_run",
+          "b": "Loop.lean::loop_find_run",
+          "shared": 484,
+          "denominator": 678,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_rewind",
+          "b": "Loop.lean::emCall_finish_arg",
+          "shared": 1025,
+          "denominator": 1438,
+          "printed_percent": 71,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_other",
+          "b": "Loop.lean::emCall_triple_inverse",
+          "shared": 128,
+          "denominator": 183,
+          "printed_percent": 70,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_erase",
+          "b": "Loop.lean::emCall_finish_rewind",
+          "shared": 835,
+          "denominator": 1195,
+          "printed_percent": 70,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopBody_step",
+          "b": "Loop.lean::loopBody_stop",
+          "shared": 239,
+          "denominator": 346,
+          "printed_percent": 69,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_erase",
+          "b": "Loop.lean::emCall_finish_arg",
+          "shared": 972,
+          "denominator": 1438,
+          "printed_percent": 68,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_pair",
+          "b": "Loop.lean::emCall_triple_inverse",
+          "shared": 122,
+          "denominator": 183,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loop_run",
+          "b": "Loop.lean::loop_find_run",
+          "shared": 448,
+          "denominator": 678,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_rewind",
+          "b": "Loop.lean::emCall_finish_erase",
+          "shared": 835,
+          "denominator": 1264,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_other",
+          "b": "Loop.lean::emCall_triple_pair",
+          "shared": 152,
+          "denominator": 233,
+          "printed_percent": 65,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_action",
+          "b": "Loop.lean::emCall_right_step",
+          "shared": 134,
+          "denominator": 207,
+          "printed_percent": 65,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_action",
+          "b": "Loop.lean::emCall_track_stamp",
+          "shared": 450,
+          "denominator": 698,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loop_find_run",
+          "b": "Loop.lean::loop_run",
+          "shared": 448,
+          "denominator": 701,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopHost_fuel_return",
+          "b": "Loop.lean::loopHost_payload_scan",
+          "shared": 422,
+          "denominator": 688,
+          "printed_percent": 61,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_transfer",
+          "b": "Loop.lean::emCall_finish_erase",
+          "shared": 764,
+          "denominator": 1264,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_transfer",
+          "b": "Loop.lean::emCall_finish_rewind",
+          "shared": 722,
+          "denominator": 1195,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_emitLoopTM",
+          "b": "Loop.lean::exists_loopTM",
+          "shared": 457,
+          "denominator": 770,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_pair_triple",
+          "b": "Loop.lean::emCall_triple_pair",
+          "shared": 138,
+          "denominator": 233,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_clear_left",
+          "b": "Loop.lean::emCall_clear_scan",
+          "shared": 369,
+          "denominator": 638,
+          "printed_percent": 58,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_stamp",
+          "b": "Loop.lean::emCall_track_initial",
+          "shared": 398,
+          "denominator": 693,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_loopFindTM",
+          "b": "Loop.lean::exists_loopCfgTM",
+          "shared": 92,
+          "denominator": 161,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_inverse",
+          "b": "Loop.lean::emCall_pair_triple",
+          "shared": 92,
+          "denominator": 161,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_initial",
+          "b": "Loop.lean::emCall_track_stamp",
+          "shared": 398,
+          "denominator": 698,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_transfer",
+          "b": "Loop.lean::emCall_finish_arg",
+          "shared": 819,
+          "denominator": 1438,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_arg",
+          "b": "Loop.lean::emCall_finish_transfer",
+          "shared": 819,
+          "denominator": 1459,
+          "printed_percent": 56,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_bank_final",
+          "b": "Loop.lean::emCall_finish_initial",
+          "shared": 904,
+          "denominator": 1629,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_run",
+          "b": "Loop.lean::emCall_track_extent",
+          "shared": 145,
+          "denominator": 269,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_action",
+          "b": "Loop.lean::emCall_track_initial",
+          "shared": 370,
+          "denominator": 693,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_bank_initial",
+          "b": "Loop.lean::emCall_prepare_final",
+          "shared": 377,
+          "denominator": 707,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_pair",
+          "b": "Loop.lean::emCall_triple_other",
+          "shared": 152,
+          "denominator": 287,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_erase",
+          "b": "Loop.lean::emCall_finish_transfer",
+          "shared": 764,
+          "denominator": 1459,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_triple_inverse",
+          "b": "Loop.lean::emCall_triple_pair",
+          "shared": 122,
+          "denominator": 233,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopHost_borrow_rewind",
+          "b": "Loop.lean::loopHost_payload_scan",
+          "shared": 359,
+          "denominator": 688,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopFuelCaptured_frame",
+          "b": "Loop.lean::loopControl_payload",
+          "shared": 128,
+          "denominator": 246,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_finish_initial",
+          "b": "Loop.lean::emCall_prepare_final",
+          "shared": 366,
+          "denominator": 707,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopHost_frame_replay",
+          "b": "Loop.lean::loopControl_payload",
+          "shared": 125,
+          "denominator": 246,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::exists_emitLoopTM",
+          "b": "Loop.lean::exists_loopFindTM",
+          "shared": 460,
+          "denominator": 912,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_clear_run",
+          "b": "Loop.lean::emCall_clear_origin",
+          "shared": 428,
+          "denominator": 850,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_track_computes",
+          "b": "Loop.lean::emCall_right_computes",
+          "shared": 77,
+          "denominator": 153,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_right_computes",
+          "b": "Loop.lean::emCall_track_computes",
+          "shared": 77,
+          "denominator": 153,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCall_pair_triple",
+          "b": "Loop.lean::emCall_triple_inverse",
+          "shared": 92,
+          "denominator": 183,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "key": "proof | Loop.lean ↔ Primitives.lean",
+      "count": 18,
+      "rows": [
+        {
+          "a": "Primitives.lean::emitter_first_entry",
+          "b": "Loop.lean::emCall_first_entry",
+          "shared": 403,
+          "denominator": 403,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_first_entry",
+          "b": "Primitives.lean::emitter_first_entry",
+          "shared": 403,
+          "denominator": 403,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_erase_last",
+          "b": "Primitives.lean::catalogBuffer_erase",
+          "shared": 118,
+          "denominator": 118,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::splitCount_run",
+          "b": "Loop.lean::emCall_right_run",
+          "shared": 152,
+          "denominator": 172,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::catalogBuffer_erase",
+          "b": "Loop.lean::emCall_erase_last",
+          "shared": 118,
+          "denominator": 134,
+          "printed_percent": 88,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_first_entry",
+          "b": "Primitives.lean::catalogFirstEntry",
+          "shared": 327,
+          "denominator": 375,
+          "printed_percent": 87,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finalize_run",
+          "b": "Primitives.lean::emitterP2_control",
+          "shared": 70,
+          "denominator": 83,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_prepare_run",
+          "b": "Primitives.lean::emitterP2_control",
+          "shared": 68,
+          "denominator": 83,
+          "printed_percent": 82,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_bank_step",
+          "b": "Primitives.lean::emitterP2_control",
+          "shared": 68,
+          "denominator": 83,
+          "printed_percent": 82,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::catalogFirstEntry",
+          "b": "Loop.lean::emCall_first_entry",
+          "shared": 327,
+          "denominator": 403,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_right_scan",
+          "b": "Primitives.lean::emitterP2_control",
+          "shared": 66,
+          "denominator": 83,
+          "printed_percent": 80,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::emitterP2_erase_back",
+          "b": "Loop.lean::loopBuffer_read",
+          "shared": 64,
+          "denominator": 89,
+          "printed_percent": 72,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::emitter_bits_injective",
+          "b": "Loop.lean::loopValue_bits",
+          "shared": 84,
+          "denominator": 135,
+          "printed_percent": 62,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_clear_scan",
+          "b": "Primitives.lean::emitterP2_erase_scan",
+          "shared": 193,
+          "denominator": 316,
+          "printed_percent": 61,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_rewind_bounded",
+          "b": "Primitives.lean::catalogRewind",
+          "shared": 245,
+          "denominator": 435,
+          "printed_percent": 56,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::splitEmbed_cut",
+          "b": "Loop.lean::emCall_first_entry",
+          "shared": 221,
+          "denominator": 403,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::splitEmit_suffix",
+          "b": "Loop.lean::loopReplay_run",
+          "shared": 187,
+          "denominator": 345,
+          "printed_percent": 54,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_clear_left",
+          "b": "Primitives.lean::emitterP2_erase_scan",
+          "shared": 168,
+          "denominator": 316,
+          "printed_percent": 53,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | Loop.lean ↔ SAT.lean",
+      "count": 8,
+      "rows": [
+        {
+          "a": "Loop.lean::emCall_right_scan",
+          "b": "SAT.lean::satRed_one",
+          "shared": 61,
+          "denominator": 63,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finish_transfer",
+          "b": "SAT.lean::satRed_one",
+          "shared": 61,
+          "denominator": 63,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finish_rewind",
+          "b": "SAT.lean::satRed_one",
+          "shared": 61,
+          "denominator": 63,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finish_erase",
+          "b": "SAT.lean::satRed_one",
+          "shared": 61,
+          "denominator": 63,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emCall_finish_arg",
+          "b": "SAT.lean::satRed_one",
+          "shared": 61,
+          "denominator": 63,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loop_first_halt",
+          "b": "SAT.lean::sat_call_first_halt",
+          "shared": 307,
+          "denominator": 330,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "SAT.lean::sat_call_first_halt",
+          "b": "Loop.lean::loop_first_halt",
+          "shared": 307,
+          "denominator": 341,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "SAT.lean::satDrop_copy",
+          "b": "Loop.lean::loopReplay_run",
+          "shared": 174,
+          "denominator": 345,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | PolyTimeBlockLoop.lean ↔ PolyTimeBlockLoop.lean",
+      "count": 16,
+      "rows": [
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceTakeAt",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceDropAt",
+          "shared": 767,
+          "denominator": 787,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceDropAt",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceTakeAt",
+          "shared": 767,
+          "denominator": 787,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_sliceDropAt_le",
+          "b": "PolyTimeBlockLoop.lean::length_pairEncode_drop_le",
+          "shared": 331,
+          "denominator": 359,
+          "printed_percent": 92,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_or",
+          "shared": 85,
+          "denominator": 93,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_pairEncode_drop_le",
+          "b": "PolyTimeBlockLoop.lean::length_sliceDropAt_le",
+          "shared": 331,
+          "denominator": 383,
+          "printed_percent": 86,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_sliceDropAt_le",
+          "b": "PolyTimeBlockLoop.lean::length_pairSndD_le",
+          "shared": 134,
+          "denominator": 159,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_take1",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_tail",
+          "shared": 249,
+          "denominator": 306,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_tail",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_take1",
+          "shared": 249,
+          "denominator": 306,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_or",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "shared": 85,
+          "denominator": 124,
+          "printed_percent": 69,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_sliceDropAt_le",
+          "b": "PolyTimeBlockLoop.lean::eq_pairEncode_of_pairFstD_ne",
+          "shared": 103,
+          "denominator": 175,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceTakeAt",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_take1",
+          "shared": 180,
+          "denominator": 306,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceDropAt",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_tail",
+          "shared": 180,
+          "denominator": 306,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_step",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_xorPairStep",
+          "shared": 87,
+          "denominator": 148,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::length_pair_components_le",
+          "b": "PolyTimeBlockLoop.lean::eq_pairEncode_of_pairFstD_ne",
+          "shared": 102,
+          "denominator": 175,
+          "printed_percent": 58,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_xorPairEmit",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "shared": 65,
+          "denominator": 124,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_xorPairEmit",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_xorPairStep",
+          "shared": 74,
+          "denominator": 148,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "key": "proof | PolyTimeBlockLoop.lean ↔ PolyTimePairing.lean",
+      "count": 6,
+      "rows": [
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceTakeAt",
+          "b": "PolyTimePairing.lean::polyTimeComputable_pairSwap",
+          "shared": 65,
+          "denominator": 65,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_sliceDropAt",
+          "b": "PolyTimePairing.lean::polyTimeComputable_pairSwap",
+          "shared": 65,
+          "denominator": 65,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "b": "PolyTimePairing.lean::polyTimeComputable_and",
+          "shared": 92,
+          "denominator": 94,
+          "printed_percent": 98,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimePairing.lean::polyTimeComputable_and",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_or",
+          "shared": 85,
+          "denominator": 93,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::polyTimeComputable_or",
+          "b": "PolyTimePairing.lean::polyTimeComputable_and",
+          "shared": 85,
+          "denominator": 94,
+          "printed_percent": 90,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "PolyTimePairing.lean::polyTimeComputable_and",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "shared": 92,
+          "denominator": 124,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "proof | PolyTimeBlockLoop.lean ↔ SAT.lean",
+      "count": 1,
+      "rows": [
+        {
+          "a": "SAT.lean::satVerdict_true_poly",
+          "b": "PolyTimeBlockLoop.lean::polyTimeComputable_not",
+          "shared": 65,
+          "denominator": 124,
+          "printed_percent": 52,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "term | Catalog.lean ↔ Composition.lean",
+      "count": 4,
+      "rows": [
+        {
+          "a": "Composition.lean::idTM",
+          "b": "Catalog.lean::f2_idTM",
+          "shared": 145,
+          "denominator": 145,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_idTM",
+          "b": "Composition.lean::idTM",
+          "shared": 145,
+          "denominator": 145,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Composition.lean::constTM",
+          "b": "Catalog.lean::f2_constTM",
+          "shared": 61,
+          "denominator": 61,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_constTM",
+          "b": "Composition.lean::constTM",
+          "shared": 61,
+          "denominator": 61,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "term | Catalog.lean ↔ Loop.lean",
+      "count": 32,
+      "rows": [
+        {
+          "a": "Loop.lean::loopBodyTM",
+          "b": "Catalog.lean::f2_loopBodyTM",
+          "shared": 428,
+          "denominator": 428,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBodyTM",
+          "b": "Loop.lean::loopBodyTM",
+          "shared": 428,
+          "denominator": 428,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFrame",
+          "b": "Catalog.lean::f2_loopFrame",
+          "shared": 270,
+          "denominator": 270,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFrame",
+          "b": "Loop.lean::loopFrame",
+          "shared": 270,
+          "denominator": 270,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBodyCfg",
+          "b": "Catalog.lean::f2_loopBodyCfg",
+          "shared": 212,
+          "denominator": 212,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBodyCfg",
+          "b": "Loop.lean::loopBodyCfg",
+          "shared": 212,
+          "denominator": 212,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopControlAction",
+          "b": "Catalog.lean::f2_loopControlAction",
+          "shared": 150,
+          "denominator": 150,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopControlAction",
+          "b": "Loop.lean::loopControlAction",
+          "shared": 150,
+          "denominator": 150,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCall",
+          "b": "Loop.lean::loopCall",
+          "shared": 141,
+          "denominator": 141,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopReplayTM",
+          "b": "Catalog.lean::f2_loopReplayTM",
+          "shared": 130,
+          "denominator": 130,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopReplayTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 130,
+          "denominator": 130,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuelSource",
+          "b": "Catalog.lean::f2_loopFuelSource",
+          "shared": 122,
+          "denominator": 122,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuelSource",
+          "b": "Loop.lean::loopFuelSource",
+          "shared": 122,
+          "denominator": 122,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBodySource",
+          "b": "Loop.lean::loopBodySource",
+          "shared": 119,
+          "denominator": 119,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFuelCfg",
+          "b": "Catalog.lean::f2_loopFuelCfg",
+          "shared": 90,
+          "denominator": 90,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFuelCfg",
+          "b": "Loop.lean::loopFuelCfg",
+          "shared": 90,
+          "denominator": 90,
+          "printed_percent": 100,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopHost",
+          "b": "Loop.lean::loopHostM",
+          "shared": 2368,
+          "denominator": 2417,
+          "printed_percent": 98,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopCall",
+          "b": "Catalog.lean::f2_loopCall",
+          "shared": 141,
+          "denominator": 144,
+          "printed_percent": 98,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBodySource",
+          "b": "Catalog.lean::f2_loopBodySource",
+          "shared": 119,
+          "denominator": 122,
+          "printed_percent": 98,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopHostM",
+          "b": "Catalog.lean::f2_loopHost",
+          "shared": 2368,
+          "denominator": 2495,
+          "printed_percent": 95,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopBodyPadded",
+          "b": "Loop.lean::loopBodyPadded",
+          "shared": 137,
+          "denominator": 147,
+          "printed_percent": 93,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopBodyPadded",
+          "b": "Catalog.lean::f2_loopBodyPadded",
+          "shared": 137,
+          "denominator": 150,
+          "printed_percent": 91,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopReady",
+          "b": "Loop.lean::loopReady",
+          "shared": 119,
+          "denominator": 134,
+          "printed_percent": 89,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopReady",
+          "b": "Catalog.lean::f2_loopReady",
+          "shared": 119,
+          "denominator": 140,
+          "printed_percent": 85,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopFrame",
+          "b": "Catalog.lean::f2_loopControlAction",
+          "shared": 110,
+          "denominator": 150,
+          "printed_percent": 73,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopFrame",
+          "b": "Loop.lean::loopControlAction",
+          "shared": 110,
+          "denominator": 150,
+          "printed_percent": 73,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_rawStripTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 92,
+          "denominator": 130,
+          "printed_percent": 71,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopDebit",
+          "b": "Loop.lean::loopDebit",
+          "shared": 62,
+          "denominator": 93,
+          "printed_percent": 67,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_pairExtractTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 82,
+          "denominator": 130,
+          "printed_percent": 63,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::loopDebit",
+          "b": "Catalog.lean::f2_loopDebit",
+          "shared": 62,
+          "denominator": 99,
+          "printed_percent": 63,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loopCall",
+          "b": "Loop.lean::emLoopCall",
+          "shared": 79,
+          "denominator": 134,
+          "printed_percent": 59,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Loop.lean::emLoopCall",
+          "b": "Catalog.lean::f2_loopCall",
+          "shared": 79,
+          "denominator": 144,
+          "printed_percent": 55,
+          "kind": "term",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "term | Hardness.lean ↔ Loop.lean",
+      "count": 1,
+      "rows": [
+        {
+          "a": "Hardness.lean::clReplayTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 90,
+          "denominator": 130,
+          "printed_percent": 69,
+          "kind": "term",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "term | Loop.lean ↔ Loop.lean",
+      "count": 8,
+      "rows": [
+        {
+          "a": "Loop.lean::loopFrame",
+          "b": "Loop.lean::loopControlAction",
+          "shared": 110,
+          "denominator": 150,
+          "printed_percent": 73,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopBodyImage",
+          "b": "Loop.lean::emLoopCall",
+          "shared": 87,
+          "denominator": 134,
+          "printed_percent": 65,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopBodyDispatch",
+          "b": "Loop.lean::loopBodyImage",
+          "shared": 118,
+          "denominator": 190,
+          "printed_percent": 62,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::loopCall",
+          "b": "Loop.lean::emLoopCall",
+          "shared": 80,
+          "denominator": 134,
+          "printed_percent": 60,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCallTripleEmbedding",
+          "b": "Loop.lean::emCallPairEmbedding",
+          "shared": 69,
+          "denominator": 120,
+          "printed_percent": 57,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emLoopCall",
+          "b": "Loop.lean::loopCall",
+          "shared": 80,
+          "denominator": 141,
+          "printed_percent": 57,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCallPairIndex",
+          "b": "Loop.lean::emCallPairSelect",
+          "shared": 61,
+          "denominator": 108,
+          "printed_percent": 56,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Loop.lean::emCallPairEmbedding",
+          "b": "Loop.lean::emCallTripleEmbedding",
+          "shared": 69,
+          "denominator": 128,
+          "printed_percent": 54,
+          "kind": "term",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "key": "term | Loop.lean ↔ Primitives.lean",
+      "count": 2,
+      "rows": [
+        {
+          "a": "Primitives.lean::rawStripTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 92,
+          "denominator": 130,
+          "printed_percent": 71,
+          "kind": "term",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::pairExtractTM",
+          "b": "Loop.lean::loopReplayTM",
+          "shared": 82,
+          "denominator": 130,
+          "printed_percent": 63,
+          "kind": "term",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "key": "term | PolyTimeBlockLoop.lean ↔ PolyTimeBlockLoop.lean",
+      "count": 2,
+      "rows": [
+        {
+          "a": "PolyTimeBlockLoop.lean::sliceTakeAt",
+          "b": "PolyTimeBlockLoop.lean::sliceDropAt",
+          "shared": 63,
+          "denominator": 67,
+          "printed_percent": 94,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimeBlockLoop.lean::sliceDropAt",
+          "b": "PolyTimeBlockLoop.lean::sliceTakeAt",
+          "shared": 63,
+          "denominator": 67,
+          "printed_percent": 94,
+          "kind": "term",
+          "cross_file": false
+        }
+      ]
+    }
+  ],
+  "scope": "All379 BASELINE rows exposed by widening21→25. Full25 run is fresh; historical subgraph comparison is QA, not output splicing. No new head duplication or debt approval inferred."
+}

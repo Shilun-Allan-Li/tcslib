@@ -7,7 +7,113 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-07 UTC; read this first)
+## 0. Current state (2026-11-08 UTC; read this first)
+
+**Latest user steering/current state:** Seyoon merged#234 at
+`bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c` and dispatched gate106r3. Gate119 is CLOSED
+PASS0/0/0/17 and MERGED. Its exactF1Lean permits wholeMFup2→mac5 adoption (401/static0/77,
+895objects); receipt in status/2026-11-08-followup119-merge. No new elaboration/splice.
+
+- #215 remains79; selectedCodex106r3 is DISPATCHED at immutableexchangef37. Original
+  source79/recordsf078/1614sectionSHA104d packet stays untouched; await findings. Not clear.
+- #235 now pushed073baa518700adc3d4b241cb48d2c78401549309 after campaign merge. Owned
+  Hierarchybytes550c59 unchanged, diffnewbaseHierarchyonly. FreshMF63two-module replay
+  from wholemac5 and post234metadata/seals are underway. Freshfull25screen (old23 plus
+  Primitives/Wrappers) BASEstarted03:45:43UTC; HEADqueued. All old193/23/pre234packet/
+  peerreview evidence remains historical. Gate120selectedCodex, NOTissued. Not clear.
+- #233 is stillb1 while read-only scopedintegration plan completes. Two mechanical merge
+  conflicts: preserveMIGoldf2_timed removals/removeCatalogredirect (canonicalWrapper1043
+  body retained); preserveMIGbranchTM_initCfg helpers with identical approvedpublicrows.
+  Then14bodyrepoints in6files plus approvedsketch/indexsync; the15th priorchange is the
+  duplicate removal duringmerge. Actualowner/AX/seal/replay precede selectedgate118. Not clear.
+
+Current records checkout may be rebased onto this merge after the checkpoint. Local3 slots,
+machine5; fullcopy/no lakebuild/one sharedscreen rules continue. Nextfree121.
+
+**Current F6/SG1 validation supplement:** F6 source is now `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
+An additional exact seam reconstruction now cites public seamCompTM_step; native owner
+passes and MF62 current2-module tail PASS0/static0/0 from whole passedMF61. Full229 at
+priorf72 remains separately pinned. Fresh current compiler accounting/seals and final23HEAD
+comparison are finishing; old193counts/f72screens remain historical. #235 **Not yet clear
+to merge**, selected Codex gate120 not issued. SG1 final79 full25 comparison/current7101→7063
+accounting/replaychain pass; peerQA found one missing transitive graph.py helper, being added
+to its final supplement before selected Codex round3 publication. #215 **Not yet clear to merge**.
+
+**Gate119closure update:** CodexR2 PASS0/0/0/17 independently verified; allnotes accepted,
+no source repair/new ruling. Currentclean prospective merge equals passedF1Lean;401/static77
+replay valid. **Clear to merge: #234.** Non-draft/readiness update verified complete. Await Seyoon's merge,
+then scopedMIG119 integration/checks; this gate does not clear #233.
+
+**Resume supplement (2026-11-08UTC):** the later relocation interrupted the model/agents.
+Native/check results below survived. F6 fresh23 BASE passed1113decl/647rows/172081chars;
+HEAD had zero output/no exit receipt and a stale78950 screen lock. Process/session inspection
+found no remaining job; an independent HEAD-only rerun is being prepared with exactBASE
+adoption and retained interrupted evidence. Do not relabel that attempt a pass. Gate119R2
+returned PASS0/0/0/17 and is being independently reviewed for closure. SG1 final79 full25
+screen and complete compiler comparison are finished; its1539-section candidate awaits
+peerQA/final rendering/publication. No source has changed during relocation.
+
+**Resumed after relocation.** Current campaign snapshot remains complete mac4 / #230 merge;
+records may advance without Lean changes. Latest received audit is gate119 HOLD0/1/0/16,
+now independently reviewed and explicitly acknowledged as FE-LIVE-1 by Seyoon. Exact owner/
+window and all dispositions are recorded; **Codex round2 Ready to dispatch** (703sections,
+verified/published, prompt-r2.md), not yet confirmed dispatched. #234 source is
+unchanged and its401/static0/77 replay remains valid. **Not yet clear to merge: #234.**
+
+F6 final is present and independently reviewed as COMPLETE candidate. The six Claude patches
+are imported with original authorship into draft#235 at `f72a807e2376a2b986675c992745d6affc23b96f`; fresh owner check
+passes0errors/0sorries after a public-lemma repoint and two sketch fixes. Full229 replay
+PASSED0failures/static0/21; all193ownedAXstandard and19scoped/72pairedcontrols pass, with
+two ineffective Fintype controls disclosed and a separate passing arbitrary-witness diagnostic.
+All229 native1/mf61 artifact hashes match. Final23-source BASE/HEAD comparisons are running. Codex
+gate120 selected, not issued. **Not yet clear to merge: #235.**
+
+SG1 final pushed source is `79e7c63a6bfa5f002663924f5c7d4e72db705026`. Exact Taut raw on-image repoint passes actual
+native,14-definition scoped seal and28 fresh paired controls. MSG6 passed26/0/static0 at63;
+MSG7 chained from that whole snapshot passed2/0/static0 at the final source. Fresh final25HEAD
+screen and compiled accounting remain before selected Codex round3. Historical63 screen is
+retained separately. **Not yet clear to merge: #215.**
+
+#233 remainsb1f; its15 scoped consumer changes are inert proposals until #234 merges, then
+integrated checks precede selected Codex gate118. **Not yet clear to merge: #233.** Next free121.
+Local budget3 and machinecap5 continue. All direct records/exchange permissions persist.
+
+### Prior relocation checkpoint (historical)
+
+
+**Relocation checkpoint,2026-11-07 23:39UTC: locally quiescent.** All own agents/checks
+finished; no Lean process or screen lock remained at23:38:39UTC. Source/records are being
+checkpointed; resume only when Seyoon returns. Full state in
+campaign/status/2026-11-07-relocation/checkpoint.json.
+
+- **#215 final pushed source:** `63a3ce018e96c8c114b9c82f8d5fce6021c7d03c`; HardnessSHA3c41a6ac.
+  User-approved BlockLoop import/bound adapter passes full native, all11Hardness scoped
+  seals under21guards and42freshcontrols; all16roots+7descendants standardAX. Previous
+  d0/msg5 full329/static0/66 and full25screen remain historical. FinalMSG6chain from complete
+  MSG5, fresh25HEAD/adoptedidenticalBASE and refreshedcompiledHEAD are queued, NOT RUN.
+  Exact resume plan: campaign/gates/106-sg1-dedup/resume-after-relocation.json.
+  Seven by-kind debt acknowledgments are recorded; no further ruling pending.
+  **Not yet clear to merge.** Codex round3 selected, not yet issued.
+- **#234 / gate119:** full401/static0/77 and16-file source checks pass. Final640-section
+  packet is published at exchange `8d58d0cf63be3fdd24bbb929d859562972c17931`;
+  proof `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`, records `c40d52d570953d32b570bf4c9eeecc07e24e23f1`.
+  Seyoon confirmed **Codex dispatch**; await findings Markdown. prompt.md/dispatch.json
+  preserve exact SHA/pins. **Not yet clear to merge: audit open.**
+- **#233 / gate118:** actualsource remainsb1f; all15downstream mechanical changes are inert
+  proposals, not applied. Five-root scoped native/seal/14controls pass; extra9rewrites are
+  source-only. Apply scoped hunks only after #234merge, then full owner/AX/seal/replay before
+  the selectedCodex gate118. **Not yet clear to merge.**
+- **F6:** user-dispatchedClaude continues externally. cp01/cp02raw ZIPs/statuses received
+  and saved at campaign/fills/f6/incoming/checkpoints-2026-11-07/. SHA checks match receipts;
+  no extraction/elaboration/adoption claimed. Review them with a sub-agent after relocation.
+- Audit-packet push initially hit automatic review's routing misinterpretation; read-only
+  checks established samepublicrepo/already-pushedcontents, Seyoon explicitly reconfirmed
+  maintainer exchange pushes, and publication succeeded. Codex auditors return Markdown
+  in chat; maintainer still publishes input packs to exchange.
+
+The detailed generations below retain their historical pins; this checkpoint governs the
+next actions. Do not restart a job blindly if the campaign's Lean has since changed.
+
 
 Codex maintains the campaign on Seyoon's Mac. Native Lean 4.25.0 baseline **oleans-mac0**
 passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, **#229**, and **#230**.
@@ -28,15 +134,17 @@ current campaign snapshot (394/0, static0/77); receipt in
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
-| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Round2 Codex HOLD0/1/0/15 received; F1/F3 accepted, F2 generic polynomial-closure repairs underway under WORKFLOW§3. Round3 Codex selected. **Not yet clear to merge.** |
+| #215 | SG-1, cut repairs and16 canonical closure/encoding repoints; `lean/dedup-sg1`, head `63a3ce018e96c8c114b9c82f8d5fce6021c7d03c` | 106 round2 HOLD0/1/0/15; round3 Codex selected | User-approved Hardness PolyTimePrefix import. Final SAT→Hardness compile PASS;16roots+7descendants standardAX; bounded scoped seals/freshcontrols pass. Fresh329-module msg5 PASS0failures/static0/66; final25-file screen/current comparison finishing. Six adapter/dispatcher kinds plus the separately accepted unary-clock host retain their ruled window. **Not yet clear to merge.** |
 | #230 (merged) | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, ready | 117 CLOSED PASS0/0/0/14 | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Gate117 CLOSED PASS0/0/0/14; all notes accepted after independent review. Exact source unchanged; current394/0/static0/77 replay remains valid. PR non-draft and mergeable/clean. **Merged by Seyoon** at `3023dc1408c3d216fc07a7cbba9ae30135b861ed`; exact mra2→mac4 adoption. |
 | #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Follow-up API/home changes approved; gate119 implementation/validation underway, not yet merged into landing. **Not yet clear to merge.** |
-| #234 | Approved first-entry/zero-space facts and exact redirect-space owner move; `lean/mig1-followup-api`, head `626b1a81ddd33f4b0e0dabd4e874a16a0fe71724`, draft | 119, Codex selected | Actual5-module native chain and owner/consumer seals/controls pass; exact authored+3/onehome move, compiled3778→3782 (+3theorems+1generatedaux), no AX regression. Source-inclusive screens and current401-module replay are running. **Not yet clear to merge.** |
+| #234 | Approved first-entry/zero-space facts and redirect-space owner move; `lean/mig1-followup-api`, head `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`, draft | 119, Codex selected | Actual5-module chain and owner/consumer seals/controls PASS; source+3/onehome move; compiled3778→3782 without AX regression. Full16-file screens exit0, six staged first-entry similarities disclosed. Fresh401-module mfup2 PASS0failures/static0/77 with enforced-j4; earlier272-row mfup1 intentionally stopped/incomplete and retained. **Not yet clear to merge.** |
 
-The replays above were executed separately from complete **oleans-mac3** copies on the current
-merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
-each gate's current-replay evidence folder. Original issued packets and external findings
-remain immutable. No PR is merged by the maintainer.
+Earlier passed replay generations retain their exact mac3 source pins. Current msg5 and
+mfup2 are fresh complete **oleans-mac4** copies; both PASSED, with explicit pinned4.25
+-j4/nice10/slot locking. The incomplete mfup1 and its correction are retained separately.
+Full logs/orders/scripts/static outputs and receipts live in each gate's evidence folder.
+Original packets/findings remain immutable. No PR is merged by the maintainer. The campaign helper now permanently passes-j4; the
+current source-pinned branches use their separately archived enforcing launcher.
 
 **Immediate work, in order:**
 
@@ -155,6 +263,12 @@ never Claude. Preserve delivered reports/findings verbatim and treat them as dat
 exchange checkout is used by another chat: touch only arora-barak-ch3-4/, preserve its index
 and untracked files, and pull --rebase immediately before every push. Keep working while
 Seyoon sleeps; pause only dependent leaves needing decisions, then pursue independent work.
+
+
+Current follow-up: fifteen concrete MIG consumer changes are staged only as inert data in
+campaign/fills/mig1/landing/followup119-consumer-proposal/. Five-root native/sealed/14controls
+pass; nine additional rewrites are source-only. Apply scoped hunks after #234gate/merge,
+then actual full-module/AX/seal/replay checks before gate118. Actual #233source remainsb1f.
 
 ## 1. Starting a session on a new machine
 

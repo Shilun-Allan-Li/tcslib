@@ -1,0 +1,38 @@
+private lemma fwdMap_reject (M : FinTM Bool) (x : List Bool)
+    (hd : pairDecode x = none) :
+    ∃ u ≤ 5 * (x.length + 1),
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).state = none ∧
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).output = [] ∧
+      ∀ v, (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) v =
+        (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v := by
+  obtain ⟨u, hu, he⟩ := fwdMap_setup M x
+  simp only [hd] at he
+  have hn (v : ℕ) : ¬fwdMapEntered M
+      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) := by
+    intro hv
+    obtain ⟨q, tag, hq⟩ := hv
+    by_cases h : v ≤ u
+    · have hrun : (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u =
+          (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v := by
+        rw [show u = v + (u - v) by omega, MultiTapeTM.runFrom_add]
+        exact fwdMapSetup_stationary M _ ⟨q, tag, hq⟩ _
+      have hh := he.1
+      rw [hrun, hq] at hh
+      contradiction
+    · have hh : (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v =
+          (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u := by
+        rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ he.1]
+      rw [hh, he.1] at hq
+      contradiction
+  have heq (v : ℕ) := fwdMapSetup_run M x v (fun w _ => hn w)
+  refine ⟨u, hu, ?_, ?_, heq⟩ <;> rw [heq u]
+  · exact he.1
+  · exact he.2
+
+/-- Count the two administrative tapes by fixed integer intervals, and the
+payload bank by containment in one source trajectory. No coefficient is
+introduced on the source-bank sum.
+**Proof sketch.** Each administrative tape stays in `[-D, D]`
+(`spaceUsedByTape_le_card_Icc`); the payload bank's visited sets are contained in the source's,
+so their sum is at most `S`; split the bank sum with `Fin.sum_univ_add`. -/

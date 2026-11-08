@@ -1,0 +1,28 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let simp ← liftTermElabM getSimpTheorems
+  for n in [`Complexity.length_pair_components_le, `Complexity.pairFstD_pairEncode,
+      `Complexity.pairSndD_pairEncode, `Turing.eq_pairEncode_of_pairDecode] do
+    let some ci := kenv.find? n | throwError "missing preexisting named reader {n}"
+    let some idx := env.getModuleIdxFor? n | throwError "missing owner {n}"
+    unless ci matches .thmInfo _ do throwError "not theorem {n}"
+    if isPrivateName n then throwError "private reader {n}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"READER|{n}|{env.header.moduleNames[idx.toNat]!}|theorem|private=false|{(ax.qsort Name.lt).toList}"
+    logInfo m!"TYPE_REPR|{n}|{reprStr ci.type}"
+  for n in [`Turing.pairEncode, `Turing.pairDecode, `Complexity.pairFstD, `Complexity.pairSndD] do
+    let some (.defnInfo _) := kenv.find? n | throwError "not actual ordinary def {n}"
+    logInfo m!"ORDINARY|{n}|simp={simp.isLemma (.decl n)}|unfold={simp.toUnfold.contains n}"

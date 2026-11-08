@@ -1,0 +1,410 @@
+--- Base exact raw private auxiliary types
++++ Head exact raw private auxiliary types
+@@ -2,7 +2,7 @@
+   `x
+   (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+   (Lean.Expr.forallE
+-    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "ClassNP") "Tautology") 929700838) "_hygCtx") "_hyg") 408)
++    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "ClassNP") "Tautology") 929700838) "_hygCtx") "_hyg") 446)
+     (Lean.Expr.app
+       (Lean.Expr.const `Not [])
+       (Lean.Expr.app
+@@ -109,7 +109,7 @@
+   `x
+   (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+   (Lean.Expr.forallE
+-    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "ClassNP") "Tautology") 891955738) "_hygCtx") "_hyg") 467)
++    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "ClassNP") "Tautology") 891955738) "_hygCtx") "_hyg") 508)
+     (Lean.Expr.app
+       (Lean.Expr.const `Not [])
+       (Lean.Expr.app
+@@ -285,16 +285,22 @@
+     (Lean.BinderInfo.default))
+   (Lean.BinderInfo.default)
+ TYPE_REPR|_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5Pair_sizes._proof_1_1|Lean.Expr.forallE
+-  `n
+-  (Lean.Expr.const `Nat [])
++  `w
++  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+   (Lean.Expr.forallE
+-    `rest
++    `a
+     (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+     (Lean.Expr.forallE
+-      `hn
+-      (Lean.Expr.app
++      `b
++      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++      (Lean.Expr.forallE
++        `hlen
+         (Lean.Expr.app
+-          (Lean.Expr.app (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))
++          (Lean.Expr.app
++            (Lean.Expr.app (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))
++            (Lean.Expr.app
++              (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++              (Lean.Expr.bvar 2)))
+           (Lean.Expr.app
+             (Lean.Expr.app
+               (Lean.Expr.app
+@@ -322,190 +328,142 @@
+                       (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                       (Lean.Expr.const `instAddNat [])))
+                   (Lean.Expr.app
+-                    (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                    (Lean.Expr.bvar 0)))
++                    (Lean.Expr.app
++                      (Lean.Expr.app
++                        (Lean.Expr.app
++                          (Lean.Expr.app
++                            (Lean.Expr.app
++                              (Lean.Expr.const `HMul.hMul [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
++                              (Lean.Expr.const `Nat []))
++                            (Lean.Expr.const `Nat []))
++                          (Lean.Expr.const `Nat []))
++                        (Lean.Expr.app
++                          (Lean.Expr.app (Lean.Expr.const `instHMul [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                          (Lean.Expr.const `instMulNat [])))
++                      (Lean.Expr.app
++                        (Lean.Expr.app
++                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
++                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
++                    (Lean.Expr.app
++                      (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++                      (Lean.Expr.bvar 1))))
+                 (Lean.Expr.app
+                   (Lean.Expr.app
+                     (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                    (Lean.Expr.lit (Lean.Literal.natVal 1)))
+-                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+-            (Lean.Expr.app
+-              (Lean.Expr.app
+-                (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                (Lean.Expr.lit (Lean.Literal.natVal 1)))
+-              (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+-        (Lean.Expr.bvar 1))
+-      (Lean.Expr.forallE
+-        (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "CookLevin") "Hardness") 217644528) "_hygCtx") "_hyg") 154)
+-        (Lean.Expr.app
+-          (Lean.Expr.const `Not [])
+-          (Lean.Expr.app
+-            (Lean.Expr.app
+-              (Lean.Expr.app
+-                (Lean.Expr.app (Lean.Expr.const `LT.lt [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                (Lean.Expr.const `instLTNat []))
++                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
++                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
++            (Lean.Expr.app
++              (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++              (Lean.Expr.bvar 0))))
++        (Lean.Expr.forallE
++          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "CookLevin") "Hardness") 217644528) "_hygCtx") "_hyg") 158)
++          (Lean.Expr.app
++            (Lean.Expr.const `Not [])
++            (Lean.Expr.app
++              (Lean.Expr.app
++                (Lean.Expr.app
++                  (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                  (Lean.Expr.const `instLENat []))
++                (Lean.Expr.app
++                  (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++                  (Lean.Expr.bvar 2)))
+               (Lean.Expr.app
+                 (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                (Lean.Expr.bvar 1)))
+-            (Lean.Expr.bvar 2)))
+-        (Lean.Expr.const `False [])
++                (Lean.Expr.bvar 3))))
++          (Lean.Expr.const `False [])
++          (Lean.BinderInfo.default))
+         (Lean.BinderInfo.default))
+       (Lean.BinderInfo.default))
+     (Lean.BinderInfo.default))
+   (Lean.BinderInfo.default)
+ TYPE_REPR|_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5Pair_sizes._proof_1_2|Lean.Expr.forallE
+-  `n
+-  (Lean.Expr.const `Nat [])
++  `w
++  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+   (Lean.Expr.forallE
+-    `rest
++    `a
+     (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+     (Lean.Expr.forallE
+-      `p
+-      (Lean.Expr.app
++      `b
++      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++      (Lean.Expr.forallE
++        `hlen
+         (Lean.Expr.app
+-          (Lean.Expr.const `Prod [Lean.Level.zero, Lean.Level.zero])
+-          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-      (Lean.Expr.forallE
+-        `hp
+-        (Lean.Expr.app
+-          (Lean.Expr.app
+-            (Lean.Expr.app
+-              (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-              (Lean.Expr.const `instLENat []))
+-            (Lean.Expr.app
+-              (Lean.Expr.app
+-                (Lean.Expr.app
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app
+-                        (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+-                        (Lean.Expr.const `Nat []))
+-                      (Lean.Expr.const `Nat []))
+-                    (Lean.Expr.const `Nat []))
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                    (Lean.Expr.const `instAddNat [])))
+-                (Lean.Expr.app
+-                  (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app
+-                        (Lean.Expr.const `Prod.fst [Lean.Level.zero, Lean.Level.zero])
+-                        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                    (Lean.Expr.bvar 0))))
+-              (Lean.Expr.app
+-                (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                (Lean.Expr.app
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.const `Prod.snd [Lean.Level.zero, Lean.Level.zero])
+-                      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                  (Lean.Expr.bvar 0)))))
+-          (Lean.Expr.app
+-            (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-            (Lean.Expr.bvar 1)))
+-        (Lean.Expr.forallE
+-          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "CookLevin") "Hardness") 217644528) "_hygCtx") "_hyg") 240)
+-          (Lean.Expr.app
+-            (Lean.Expr.const `Not [])
+-            (Lean.Expr.mdata
+-              { entries := [(`noImplicitLambda, Lean.DataValue.ofBool true)] }
+-              (Lean.Expr.app
+-                (Lean.Expr.app
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                    (Lean.Expr.const `instLENat []))
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app
+-                              (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
++          (Lean.Expr.app
++            (Lean.Expr.app (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))
++            (Lean.Expr.app
++              (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++              (Lean.Expr.bvar 2)))
++          (Lean.Expr.app
++            (Lean.Expr.app
++              (Lean.Expr.app
++                (Lean.Expr.app
++                  (Lean.Expr.app
++                    (Lean.Expr.app
++                      (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
++                      (Lean.Expr.const `Nat []))
++                    (Lean.Expr.const `Nat []))
++                  (Lean.Expr.const `Nat []))
++                (Lean.Expr.app
++                  (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                  (Lean.Expr.const `instAddNat [])))
++              (Lean.Expr.app
++                (Lean.Expr.app
++                  (Lean.Expr.app
++                    (Lean.Expr.app
++                      (Lean.Expr.app
++                        (Lean.Expr.app
++                          (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
++                          (Lean.Expr.const `Nat []))
++                        (Lean.Expr.const `Nat []))
++                      (Lean.Expr.const `Nat []))
++                    (Lean.Expr.app
++                      (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                      (Lean.Expr.const `instAddNat [])))
++                  (Lean.Expr.app
++                    (Lean.Expr.app
++                      (Lean.Expr.app
++                        (Lean.Expr.app
++                          (Lean.Expr.app
++                            (Lean.Expr.app
++                              (Lean.Expr.const `HMul.hMul [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+                               (Lean.Expr.const `Nat []))
+                             (Lean.Expr.const `Nat []))
+                           (Lean.Expr.const `Nat []))
+                         (Lean.Expr.app
+-                          (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                          (Lean.Expr.const `instAddNat [])))
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app
+-                              (Lean.Expr.app
+-                                (Lean.Expr.app
+-                                  (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+-                                  (Lean.Expr.const `Nat []))
+-                                (Lean.Expr.const `Nat []))
+-                              (Lean.Expr.const `Nat []))
+-                            (Lean.Expr.app
+-                              (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                              (Lean.Expr.const `instAddNat [])))
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                            (Lean.Expr.app
+-                              (Lean.Expr.app
+-                                (Lean.Expr.app
+-                                  (Lean.Expr.const `Prod.fst [Lean.Level.zero, Lean.Level.zero])
+-                                  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                                (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                              (Lean.Expr.bvar 1))))
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                            (Lean.Expr.lit (Lean.Literal.natVal 1)))
+-                          (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1))))))
++                          (Lean.Expr.app (Lean.Expr.const `instHMul [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                          (Lean.Expr.const `instMulNat [])))
++                      (Lean.Expr.app
++                        (Lean.Expr.app
++                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                          (Lean.Expr.lit (Lean.Literal.natVal 2)))
++                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+                     (Lean.Expr.app
+                       (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.const `Prod.snd [Lean.Level.zero, Lean.Level.zero])
+-                            (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+-                        (Lean.Expr.bvar 1)))))
+-                (Lean.Expr.app
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+-                            (Lean.Expr.const `Nat []))
+-                          (Lean.Expr.const `Nat []))
+-                        (Lean.Expr.const `Nat []))
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                        (Lean.Expr.const `instAddNat [])))
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app
+-                              (Lean.Expr.app
+-                                (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+-                                (Lean.Expr.const `Nat []))
+-                              (Lean.Expr.const `Nat []))
+-                            (Lean.Expr.const `Nat []))
+-                          (Lean.Expr.app
+-                            (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                            (Lean.Expr.const `instAddNat [])))
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+-                          (Lean.Expr.bvar 2)))
+-                      (Lean.Expr.app
+-                        (Lean.Expr.app
+-                          (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                          (Lean.Expr.lit (Lean.Literal.natVal 1)))
+-                        (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1))))))
+-                  (Lean.Expr.app
+-                    (Lean.Expr.app
+-                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+-                      (Lean.Expr.lit (Lean.Literal.natVal 1)))
+-                    (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 1))))))))
++                      (Lean.Expr.bvar 1))))
++                (Lean.Expr.app
++                  (Lean.Expr.app
++                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                    (Lean.Expr.lit (Lean.Literal.natVal 2)))
++                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2))))))
++            (Lean.Expr.app
++              (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++              (Lean.Expr.bvar 0))))
++        (Lean.Expr.forallE
++          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "CookLevin") "Hardness") 217644528) "_hygCtx") "_hyg") 162)
++          (Lean.Expr.app
++            (Lean.Expr.const `Not [])
++            (Lean.Expr.app
++              (Lean.Expr.app
++                (Lean.Expr.app
++                  (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
++                  (Lean.Expr.const `instLENat []))
++                (Lean.Expr.app
++                  (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++                  (Lean.Expr.bvar 1)))
++              (Lean.Expr.app
++                (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
++                (Lean.Expr.bvar 3))))
+           (Lean.Expr.const `False [])
+           (Lean.BinderInfo.default))
+         (Lean.BinderInfo.default))
+@@ -577,7 +535,7 @@
+                             (Lean.Expr.bvar 1))
+                           (Lean.Expr.bvar 2))
+                         (Lean.Expr.forallE
+-                          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1747)
++                          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1883)
+                           (Lean.Expr.app
+                             (Lean.Expr.const `Not [])
+                             (Lean.Expr.app
+@@ -677,7 +635,7 @@
+                   `r
+                   (Lean.Expr.const `Nat [])
+                   (Lean.Expr.forallE
+-                    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1760)
++                    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1896)
+                     (Lean.Expr.app
+                       (Lean.Expr.const `Not [])
+                       (Lean.Expr.app
+@@ -771,7 +729,7 @@
+                     `u
+                     (Lean.Expr.const `Nat [])
+                     (Lean.Expr.forallE
+-                      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1786)
++                      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Build") "CounterLoop") 1234948956) "_hygCtx") "_hyg") 1925)
+                       (Lean.Expr.app
+                         (Lean.Expr.const `Not [])
+                         (Lean.Expr.app
+@@ -824,7 +782,7 @@
+     `M
+     (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.bvar 0))
+     (Lean.Expr.forallE
+-      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 3814601462) "_hygCtx") "_hyg") 1032)
++      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 3814601462) "_hygCtx") "_hyg") 1069)
+       (Lean.Expr.app
+         (Lean.Expr.const `Not [])
+         (Lean.Expr.app
+@@ -901,7 +859,7 @@
+     `M
+     (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.bvar 0))
+     (Lean.Expr.forallE
+-      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 337900241) "_hygCtx") "_hyg") 1799)
++      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 337900241) "_hygCtx") "_hyg") 1837)
+       (Lean.Expr.app
+         (Lean.Expr.const `Not [])
+         (Lean.Expr.app
+@@ -1012,7 +970,7 @@
+     `M
+     (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.bvar 0))
+     (Lean.Expr.forallE
+-      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 1331854325) "_hygCtx") "_hyg") 1025)
++      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `a.«_@»._internal 0) "TCSlib") "Complexity") "TuringMachine") "Robustness") "SingleTape") 1331854325) "_hygCtx") "_hyg") 1062)
+       (Lean.Expr.app
+         (Lean.Expr.const `Not [])
+         (Lean.Expr.app

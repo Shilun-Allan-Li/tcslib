@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Complexity.f6_seam",
+    "line": 104,
+    "text": "/-- One seam of the prefix: the public `Turing.seamCompTM_step` supplies the run, endpoint"
+  },
+  {
+    "name": "Complexity.f6_seam",
+    "line": 106,
+    "text": "private theorem f6_seam {k : \u2115} {S\u2081 S\u2082 : Type} [DecidableEq S\u2081] {x : List Bool}"
+  },
+  {
+    "name": "Complexity.f6_seam",
+    "line": 113,
+    "text": "    (seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl) (T\u2081 + 1 + T\u2082) ="
+  },
+  {
+    "name": "Complexity.f6_seam",
+    "line": 117,
+    "text": "        ((seamCompTM M\u2081 exit M\u2082 entry).runFrom (c\u2080.mapState Sum.inl) t).state \u2260"
+  },
+  {
+    "name": "Complexity.f6_seam",
+    "line": 119,
+    "text": "  exact seamCompTM_step M\u2081 exit M\u2082 entry q\u2082 h\u2081 hexit hcut h\u2082 hq hcut\u2082"
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 129,
+    "text": "the leaf's live control (`Turing.seamCompTM_runFrom_right`), so the composite is live at every"
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 149,
+    "text": "    {seamCompTM R exit leaf () with q\u2080 := Sum.inl R.q\u2080}"
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 153,
+    "text": "      A.runFrom d t = (seamCompTM R exit leaf ()).runFrom d t :="
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 178,
+    "text": "    exact seamCompTM_run_ofCfg R exit leaf () hr' hd hcut (hleaf _ hs)"
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 187,
+    "text": "  \u00b7 have hdispatch := seamCompTM_runFrom_right R exit leaf () hr' hd hcut 0"
+  },
+  {
+    "name": "Complexity.f6_native_halt",
+    "line": 188,
+    "text": "    have hdispatch' : (seamCompTM R exit leaf ()).runFrom"
+  },
+  {
+    "name": "Complexity.f6_hosted",
+    "line": 309,
+    "text": "  obtain \u27e8_, hret, hcut\u27e9 := embedEmitRetTM_run (Fin.castLEEmb (le_refl (K + 4))) H"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 575,
+    "text": "  let S2 := seamCompTM (headerRulerTM r) (Sum.inr RewindPhase.done) P2"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 577,
+    "text": "  let S3 := seamCompTM S2 (Sum.inr (Sum.inr ())) (skipTM (Symbol := Bool) (K + 4) r)"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 579,
+    "text": "  let S4 := seamCompTM S3 (Sum.inr SeekPhase.done)"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 581,
+    "text": "  let S5 := seamCompTM S4 (Sum.inr SeekPhase.done) (headerScanTM r) (0 : Fin 4)"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 582,
+    "text": "  let S6 := seamCompTM S5 (Sum.inr (3 : Fin 4)) (rewindTM (Symbol := Bool) (K + 4) r)"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 601,
+    "text": "  obtain \u27e8s2, _, c2\u27e9 := f6_seam (headerRulerTM r) _ P2 _ (Sum.inr ()) h1 rfl k1 h2 rfl k2"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 608,
+    "text": "  obtain \u27e8s3, _, c3\u27e9 := f6_seam S2 _ (skipTM (Symbol := Bool) (K + 4) r) _ SeekPhase.done"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 611,
+    "text": "  obtain \u27e8s4, _, c4\u27e9 := f6_seam S3 _ (walkTM (Symbol := Bool) (K + 4) r (\u00b7 = r) .neg) _"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 618,
+    "text": "  obtain \u27e8s5, _, c5\u27e9 := f6_seam S4 _ (headerScanTM r) _ (3 : Fin 4) s4 rfl c4 h5 rfl k5"
+  },
+  {
+    "name": "Complexity.f6_prefix",
+    "line": 620,
+    "text": "  obtain \u27e8s6, _, c6\u27e9 := f6_seam S5 _ (rewindTM (Symbol := Bool) (K + 4) r) _ RewindPhase.done"
+  },
+  {
+    "name": "Complexity.f6_final_seam",
+    "line": 842,
+    "text": "`K + 4 = 0 + ((K + 2) + 2)` by equality induction; apply `startupLoopTM_runFrom` and"
+  },
+  {
+    "name": "Complexity.f6_final_seam",
+    "line": 843,
+    "text": "`startupLoopTM_spaceUsed_le`; transport back ([AB09, Exercise 4.1]). -/"
+  },
+  {
+    "name": "Complexity.f6_final_seam",
+    "line": 872,
+    "text": "      let U0 := startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)"
+  },
+  {
+    "name": "Complexity.f6_final_seam",
+    "line": 908,
+    "text": "  have hr := startupLoopTM_runFrom (k := K + 2) (K := 0)"
+  },
+  {
+    "name": "Complexity.f6_final_seam",
+    "line": 910,
+    "text": "  have hs := startupLoopTM_spaceUsed_le (k := K + 2) (K := 0)"
+  },
+  {
+    "name": "Complexity.space_universal",
+    "line": 963,
+    "text": "forwarding loop, glued by `Turing.startupLoopTM`. (i) **Prefix.** Six phases glued by"
+  },
+  {
+    "name": "Complexity.space_universal",
+    "line": 964,
+    "text": "`Turing.seamCompTM`, each seam with its dispatch step and its first-return cut: the header ruler"
+  },
+  {
+    "name": "Complexity.space_universal",
+    "line": 982,
+    "text": "host halts with the same output, and `Turing.startupLoopTM_runFrom` gives `SU`'s halt with it."
+  },
+  {
+    "name": "Complexity.space_universal",
+    "line": 983,
+    "text": "(iii) **Space.** `Turing.startupLoopTM_spaceUsed_le`, tape by tape: the mirrored tape visits only"
+  },
+  {
+    "name": "Complexity.space_universal",
+    "line": 1005,
+    "text": "    startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)"
+  }
+]

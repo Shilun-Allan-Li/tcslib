@@ -1,0 +1,78 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+namespace MIGFollowup119ConsumerCheck
+open Turing Turing.FinTM
+private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+    (c d : Cfg k Bool S w) (T : ℕ)
+    (hfix : ∀ z : Cfg k Bool S w, (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+      tm.runFrom c t = d := by
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+
+private lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)
+    (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+    (hd : d.state = some q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
+    (by
+      rintro z ⟨r, hz, hr⟩
+      subst r
+      exact hfix z hz)
+    ⟨q, hd, rfl⟩ hT
+  refine ⟨t, ht, ?_, he⟩
+  intro j hj hq
+  exact hcut j hj ⟨q, hq, rfl⟩
+
+private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+    (c d : Cfg k Bool S w) (T : ℕ)
+    (hfix : ∀ z : Cfg k Bool S w, (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+      tm.runFrom c t = d := by
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+
+private lemma pairDup_zero_space_leaf (x : List Bool) (t : ℕ) :
+    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t ≤ 6 := by
+  rw [Turing.pairDiagTM_spaceUsed]
+  omega
+
+private lemma incFixed_zero_space_leaf (x : List Bool) (t : ℕ) :
+    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t ≤ 3 := by
+  rw [Turing.FinTM.incFixedTM_spaceUsed]
+  omega
+
+#print axioms emCall_first_entry
+#print axioms catalogFirstEntry
+#print axioms emitter_first_entry
+#print axioms pairDup_zero_space_leaf
+#print axioms incFixed_zero_space_leaf
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let roots := [``emCall_first_entry, ``catalogFirstEntry, ``emitter_first_entry,
+    ``pairDup_zero_space_leaf, ``incFixed_zero_space_leaf]
+  for (n, ci) in env.constants.toList do
+    if !(roots.any (fun r => r.isPrefixOf n)) then continue
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AX|{n}|{(ax.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for d in used do
+      if seen.contains d then continue
+      seen := seen.push d
+      match env.getModuleIdxFor? d, env.find? d with
+      | some i, some (.defnInfo di) =>
+        let home := env.header.moduleNames[i.toNat]!
+        if (`TCSlib).isPrefixOf home then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{d}|{home}|{hint}"
+      | _, _ => pure ()
+
+end MIGFollowup119ConsumerCheck

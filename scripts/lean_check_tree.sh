@@ -37,7 +37,7 @@ rel="$1"
 mkdir -p "$OL/$(dirname "$rel")"
 rm -f "$OL/$rel.olean"
 out_log="$(mktemp)"
-lean "$rel.lean" -o "$OL/$rel.olean" >"$out_log" 2>&1
+lean -j4 "$rel.lean" -o "$OL/$rel.olean" >"$out_log" 2>&1
 status=$?
 cat "$out_log"
 fail=0

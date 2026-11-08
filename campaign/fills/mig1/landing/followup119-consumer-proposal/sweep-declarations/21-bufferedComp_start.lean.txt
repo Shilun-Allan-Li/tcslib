@@ -1,0 +1,45 @@
+lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
+    (h₁ : M₁.ComputesInTime x y t₁) :
+    ∃ (a : ℕ) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+      (heads : Fin M₁.k → ℤ), a ≤ t₁ + y.length + 2 ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom ((bufferedCompTM M₁ M₂).tm.initCfg x) a =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
+  classical
+  have hh : ∃ t, (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none :=
+    ⟨t₁, ((computesInTime_iff M₁ x y t₁).mp h₁).1⟩
+  let t := Nat.find hh
+  let c := M₁.tm.runFrom (M₁.tm.initCfg x) t
+  have hs : c.state = none := Nat.find_spec hh
+  have ht : t ≤ t₁ := Nat.find_min' hh ((computesInTime_iff M₁ x y t₁).mp h₁).1
+  have hc : M₁.ComputesInTime x c.output t :=
+    (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  have ho : c.output = y := hc.output_unique h₁
+  refine ⟨t + (y.length + 2), c.inputPos, c.workTapes, c.workTapePos, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+    bufferedFirstCfg_run M₁ M₂ _ t (fun s hs => Nat.find_min hh hs)]
+  have hf := bufferedFirstCfg_rewind M₁ M₂ c hs
+  cases ho
+  exact hf
+
+end Turing.FinTM
+
+/-! ### Machine-agreement transfer (§13, Z5)
+
+Two machines over the same tape count and state type whose transition
+tables agree on a set of control states run identically for as long as the
+run's control stays inside that set. This is the `hagree` genre of
+`Turing.capture_run`/`Turing.emit_run` made standalone: those lemmas carry
+a per-state agreement hypothesis for one specific wrapper, re-proved ad hoc
+at every host; the standalone form transfers whole runs between any two
+agreeing tables (design `machine-library-design.md` §13, item Z5; decision
+D-R3). First customers: the forwarding loop host of `Build/Loop.lean`
+(whose fourteen phase lemmas are verbatim re-proofs of the capturing
+host's, since the two tables agree on every non-body state) and the
+guarded `clSlot_run` agreement sites of `CookLevin/Hardness.lean`. -/
+
+namespace Turing.MultiTapeTM
+
+/-- The two transition tables agree on every control state in `Q`: from any
+such state, both machines take the identical action on identical reads.
+Nothing is assumed about states outside `Q`, about `q₀`, or about
+halting. -/

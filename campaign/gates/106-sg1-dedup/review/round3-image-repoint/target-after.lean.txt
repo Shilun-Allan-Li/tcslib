@@ -1,0 +1,11 @@
+/-- Quantitative buffered composition with a second-stage contract only on
+the actual first-stage image.
+
+**Proof sketch.** Apply the public image-composition theorem with the two
+given machine contracts and their original-input time budgets. -/
+private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by
+  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+

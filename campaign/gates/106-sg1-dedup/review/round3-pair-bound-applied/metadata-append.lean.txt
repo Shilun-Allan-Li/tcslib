@@ -1,0 +1,46 @@
+
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let localWanted : List String := ["clNative_linear", "clNative_map", "clNative_pair", "clNative_append", "clNative_unary", "clA5_pt_const", "clA5_pt_cond", "clA5_pt_and", "clA5Pair_sizes", "clA5Le_native", "clA5Drop_native"]
+  let satWanted : List String := ["sat_pt_mapSnd", "sat_pt_pair", "sat_pt_append", "sat_pt_pair_input", "sat_pt_unaryLength"]
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ short =>
+      let selected := match env.getModuleIdxFor? n with
+        | none => localWanted.contains short
+        | some idx => env.header.moduleNames[idx.toNat]! == `TCSlib.Complexity.ClassNP.SAT && satWanted.contains short
+      if selected then
+        unless isPrivateName n do throwError "nonprivate repaired root {n}"
+        roots := roots.push n
+    | _ => pure ()
+  unless roots.size == 16 do throwError "root count mismatch {roots.size}"
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .defnInfo _ => "definition" | .thmInfo _ => "theorem" | .axiomInfo _ => "axiom"
+    | .opaqueInfo _ => "opaque" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  for n in roots.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  for (n, _) in env.constants.toList.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    unless roots.any (fun root => root.isPrefixOf n) do continue
+    let some ci := kenv.find? n | throwError "missing actual constant {n}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(ax.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for usedName in used do
+      if seen.contains usedName then continue
+      seen := seen.push usedName
+      match env.getModuleIdxFor? usedName, kenv.find? usedName with
+      | some idx, some usedInfo =>
+        let owner := env.header.moduleNames[idx.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          logInfo m!"CITED|{n}|{usedName}|{owner}|kind={kind usedInfo}|private={isPrivateName usedName}"
+          if let .defnInfo d := usedInfo then
+            let hint := match d.hints with
+              | .regular _ => "regular" | .abbrev => "abbrev" | .opaque => "opaque"
+            logInfo m!"FOREIGNDEF|{n}|{usedName}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) => logInfo m!"HOMEDEF|{n}|{usedName}"
+      | _, _ => pure ()

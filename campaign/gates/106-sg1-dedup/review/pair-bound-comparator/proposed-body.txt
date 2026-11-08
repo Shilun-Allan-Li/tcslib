@@ -1,0 +1,14 @@
+  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
+    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
+  cases hd : pairDecode w with
+  | none =>
+    simp only [Option.map_none, Option.getD_none, List.length_nil]
+    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
+  | some p =>
+    rcases p with ⟨a, b⟩
+    have heq := eq_pairEncode_of_pairDecode w a b hd
+    have hbound := length_pair_components_le w
+    have hab : 2 * a.length + b.length ≤ w.length := by
+      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
+    simp only [Option.map_some, Option.getD_some]
+    constructor <;> omega

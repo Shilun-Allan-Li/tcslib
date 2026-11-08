@@ -1,0 +1,266 @@
+"""Verify and freeze the final requested25-file source-screen generation."""
+from pathlib import Path
+import base64, collections, datetime, hashlib, io, json, subprocess, tarfile
+
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[4]
+def sha(b):return hashlib.sha256(b).hexdigest()
+def git(*args):return subprocess.run(['git','-C',str(ROOT),*args],check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).stdout
+def save(name,x):(OUT/name).write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n')
+c=json.loads((OUT/'capture.json').read_text());d=json.loads((OUT/'pair-delta.json').read_text())
+assert c['base']=='3023dc1408c3d216fc07a7cbba9ae30135b861ed'
+assert c['head']=='d0c4a292e781b55617e05b33fdd423bb059fd735'
+assert len(c['population'])==25
+for commit in [c['base'],c['head']]:
+    assert git('rev-parse',commit).decode().strip()==commit
+    assert git('cat-file','-t',commit).strip()==b'commit'
+for side in ['base','head']:
+    raw=base64.b64decode((OUT/(side+'.tar.base64.txt')).read_bytes())
+    assert sha(raw)==c['sides'][side]['archive_sha256'] and len(raw)==c['sides'][side]['archive_bytes']
+    with tarfile.open(fileobj=io.BytesIO(raw)) as tar:
+        members={m.name for m in tar.getmembers() if m.isfile()}
+        assert members==set(c['population'])
+        for row in c['sides'][side]['files']:
+            b=(OUT/'inputs'/side/(row['path']+'.txt')).read_bytes()
+            assert tar.extractfile(row['path']).read()==b==git('show',c[side]+':'+row['path'])
+            assert len(b)==row['bytes'] and sha(b)==row['sha256']
+            assert git('rev-parse',c[side]+':'+row['path']).decode().strip()==row['blob']
+            assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==row['blob']
+    receipt=json.loads((OUT/(side+'-run.json')).read_text());output=(OUT/(side+'.out')).read_bytes()
+    assert receipt['exit']==0 and receipt['output_sha256']==sha(output) and receipt['bytes']==len(output)
+    assert receipt['full_population']==25 and receipt['command'][7:]==list(c['population'])
+    assert receipt['command'][:5]==['nice','-n','10','python3','-I']
+    schedule=json.loads((OUT/('scheduling-check-'+side+'.json')).read_text())
+    assert schedule['exit']==0 and int(schedule['actual_process_snapshot'].split()[1])==10
+    rows=json.loads((OUT/(side+'-candidates.json')).read_text())
+    ix={r['label']:r for r in json.loads((OUT/(side+'-index.json')).read_text())}
+    assert len(rows)==d[side]['candidates'] and len(ix)==d[side]['declarations']
+    assert len({(r['a'],r['b']) for r in rows})==len(rows)
+    assert sum(r['shared'] for r in rows)==d[side]['reproduced_chars']
+    assert all(r['denominator']==ix[r['b']]['body_chars'] for r in rows)
+tool='scripts/copy-text-screen-v3.py';b=(ROOT/tool).read_bytes()
+assert sha(b)==c['tools'][tool]=='f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181'
+assert b==(OUT/'tools/copy-text-screen-v3.py.txt').read_bytes()==git('show',c['base']+':'+tool)==git('show',c['head']+':'+tool)
+events=[json.loads(s) for s in (OUT/'lock-events.jsonl').read_text().splitlines()]
+assert [r['event'] for r in events]==['waiting','acquired','released']
+br=json.loads((OUT/'base-run.json').read_text());hr=json.loads((OUT/'head-run.json').read_text())
+assert events[1]['utc']<=br['start_utc']<=br['end_utc']<=hr['start_utc']<=hr['end_utc']<=events[2]['utc']
+assert (d['base']['candidates'],d['head']['candidates'])==(2013,1999)
+assert len(d['new'])==2 and len(d['gone'])==16 and len(d['changed_measurements'])==13
+
+old=OUT.parent/'round3-current-source-screen'
+assert sha((old/'SHA256SUMS').read_bytes())=='6386c9246d0d594e1ff2eb8e7974f4c43dd8a6d2b002c57f0a23833e11935658'
+for line in (old/'SHA256SUMS').read_text().splitlines():
+    digest,path=line.split('  ',1);assert sha((old/path).read_bytes())==digest
+oldcap=json.loads((old/'capture.json').read_text());oldpaths=set(oldcap['population'])
+old9=set((OUT.parent/'round2-current/population.txt').read_text().splitlines())
+index={side:{r['label']:r for r in json.loads((OUT/(side+'-index.json')).read_text())} for side in ['base','head']}
+expansion=[]
+for side in ['base','head']:
+    rows=json.loads((OUT/(side+'-candidates.json')).read_text())
+    subset=[r for r in rows if index[side][r['a']]['path'] in oldpaths and index[side][r['b']]['path'] in oldpaths]
+    assert subset==json.loads((old/(side+'-candidates.json')).read_text())
+    subset9=[r for r in rows if index[side][r['a']]['path'] in old9 and index[side][r['b']]['path'] in old9]
+    extra=[r for r in rows if r not in subset]
+    expansion.append(dict(side=side,old21_subgraph_pairs=len(subset),old21_subgraph_chars=sum(r['shared'] for r in subset),
+                          old9_subgraph_pairs=len(subset9),old9_subgraph_chars=sum(r['shared'] for r in subset9),
+                          added25_rows=extra,added25_count=len(extra),added25_chars=sum(r['shared'] for r in extra)))
+    assert [r for r in index[side].values() if r['path'] in oldpaths]==json.loads((old/(side+'-index.json')).read_text())
+    for row in c['sides'][side]['files']:
+        assert sha((Path(c['temporary_trees'][side])/row['path']).read_bytes())==row['sha256']
+    receipt=json.loads((OUT/(side+'-run.json')).read_text())
+    assert receipt['orchestrator_sha256']==sha((OUT/'run-screens.py').read_bytes())
+assert expansion[0]['added25_count']==379 and expansion[1]['added25_count']==380
+assert expansion[0]['old9_subgraph_pairs']==1583 and expansion[0]['old9_subgraph_chars']==492990
+save('fresh25-versus-historical21.json',dict(
+    method='Both25 runs fresh. Filtering their complete outputs independently recovers exactly the historical21 rows/metrics; no old raw output substitutes for any25 run.',
+    historical21_manifest_sha256=sha((old/'SHA256SUMS').read_bytes()),sides=expansion))
+
+terms={side:{k:r for k,r in ix.items() if r['kind']=='term'} for side,ix in index.items()}
+assert terms['base'].keys()==terms['head'].keys() and len(terms['base'])==435
+assert all(terms['base'][k]['normalized_body']==terms['head'][k]['normalized_body'] for k in terms['base'])
+tc={side:[r for r in json.loads((OUT/(side+'-candidates.json')).read_text()) if r['kind']=='term'] for side in ['base','head']}
+assert tc['base']==tc['head'] and len(tc['base'])==259
+
+oldclasses=json.loads((old/'head-delta-classification.json').read_text())['rows']
+def key(change,row):
+    x=row['head'] if change=='changed' else row
+    return change,x['a'],x['b']
+actual={}
+for change,rows in [('new',d['new']),('gone',d['gone']),('changed',d['changed_measurements'])]:
+    for row in rows:actual[key(change,row)]=row
+classes=[]
+for item in oldclasses:
+    k=key(item['change'],item['row']);assert actual[k]==item['row'];classes.append(item)
+extra_key=('new','PolyTimeBlockLoop.lean::polyTimeComputable_isNil','Hardness.lean::clA5Le_native')
+extra=actual[extra_key]
+assert (extra['shared'],extra['denominator'],extra['printed_percent'])==(89,167,53)
+classes.append(dict(change='new',row=extra,group='G11: shared published length-comparison application',assessment=
+    'Both proofs call the already shared public polyTimeComputable_lenLe contract through pairing/composition and refold the public projection equations. isNil specializes word length≤0; clA5Le_native compares two computed unary lengths. The89-character overlap is the conversion/funext/projection simplification scaffold in a167-character compatibility proof, not a second private comparison machine or polynomial-time witness arithmetic construction. Full headers/bodies retained; no new API or blanket duplication exemption is inferred.'))
+assert len(classes)==31 and {key(i['change'],i['row']) for i in classes}==set(actual)
+save('head-delta-classification.json',dict(scope='Every2new/16gone/13changed directed measurement. All rows taken from fresh full25 outputs; thirty source-identical dispositions are linked to frozen21 review, with one additional current cross-file API-application fragment. No debt approval or gate closure.',rows=classes))
+save('new-candidate-endpoints.json',[index['head'][k] for k in [extra['a'],extra['b'],'SingleTape.lean::dg_turn_with_growth','SingleTape.lean::dg_end_with_growth']])
+
+import re
+snippets=[]
+for label in [extra['a'],extra['b']]:
+    row=index['head'][label];lines=(OUT/'inputs/head'/(row['path']+'.txt')).read_text().splitlines()
+    start=next(i for i,s in enumerate(lines) if re.match(r'(?:private )?(?:theorem|lemma) '+re.escape(row['name'])+r'\b',s))
+    end=next((i for i in range(start+1,len(lines)) if lines[i].startswith('/--')),len(lines))
+    snippets.append('## '+label+'\n\nExact captured source lines'+str(start+1)+'–'+str(end)+':\n\n```lean\n'+'\n'.join(lines[start:end]).rstrip()+'\n```\n')
+(OUT/'new-comparison-source.md').write_text('# Additional current proof candidate\n\n'+'\n'.join(snippets)+'\nBoth use the existing public `polyTimeComputable_lenLe` computation contract.\nOne supplies the empty word/original word to decide emptiness, the other supplies\ntwo computed unary words to decide their numeric comparison. The 167-character target span contains89 matched characters of reader application/refolding scaffold.\nThe underlying comparison machine and time proof are already shared. No replacement\nprivate comparison implementation, new public fact or API design is introduced.\nThis bounded source classification is not gate closure or a global debt exemption.\n')
+
+new_chars=sum(r['shared'] for r in d['new']);gone_chars=sum(r['shared'] for r in d['gone']);changed_chars=sum(r['head']['shared']-r['base']['shared'] for r in d['changed_measurements'])
+assert new_chars-gone_chars+changed_chars==d['head']['reproduced_chars']-d['base']['reproduced_chars']==-22
+save('score-accounting.json',dict(new_shared_chars=new_chars,gone_shared_chars=gone_chars,retained_shared_delta=changed_chars,net_chars=-22,old21_net_chars=-111,extra_comparison_fragment_chars=89,directed_scores_not_debt_counts=True))
+baseline=json.loads((OUT/'expanded-baseline-classification.json').read_text())
+assert len(baseline['groups'])==22 and sum(x['count'] for x in baseline['groups'])==379
+assert len({(r['a'],r['b']) for g in baseline['groups'] for r in g['rows']})==379
+assert not list(OUT.rglob('*.lean')) and not list(OUT.rglob('*.pyc'))
+save('final-verification.json',dict(
+    utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),generation='Final requested source-inclusive25 at3023/d0',
+    exact_Git_source_inputs=50,complete_archives=2,full_source_population=25,
+    actual_temp_exports_exact_after_runs=True,unmodified_tool_and_orchestrator_verified=True,
+    screen_exits=[0,0],screens_serial=True,lock_released=True,niceness_observed=[10,10],
+    source_index_counts=[1956,1948],raw_pair_counts=[2013,1999],all_raw_rows_reconciled=True,
+    all31_head_delta_rows_classified=True,all379_expanded_baseline_rows_enumerated_grouped=True,
+    semantic_baseline_review='Bounded22source/kind families and explicit material copy examples, not exhaustive legacy acceptance.',
+    all435_eligible_terms_identical=True,all259_term_pairs_identical=True,
+    source_coverage_old21_exact_subset=True,old21_frozen_manifest_verified=True,
+    no_Lean_git_source_snapshot_cache_mutation=True,no_dispatch_merge_gate_debt_approval=True,
+    failures='Neither25 screen failed. Earlier21 sandboxed ps diagnostic failure stays disclosed in the independently frozen historical generation.'))
+
+readme='''# Gate106 round3 complete25-file source screens
+
+Both fresh, complete25-file screens passed and released the shared lock. All2new,
+16gone and13changed directed measurements are individually reviewed. No new executable
+term/data candidate occurs. This is bounded source/copy-text evidence; it does not close
+the gate, approve legacy debt or attest a Lean elaboration/replay.
+
+## Pins, population and fidelity
+
+Base`3023dc1408c3d216fc07a7cbba9ae30135b861ed`; PR215 source head
+`d0c4a292e781b55617e05b33fdd423bb059fd735`. Full commit and blob objects, all50 inert
+source inputs, two reversible Git archives, actual temporary exports, canonical tool
+and original commands are verified by `finalize25.py`/`final-verification.json`.
+No network freshness or later records-head identity is inferred; the exact source pins
+are retained for parent to link any subsequent source-equivalent commit without retiling.
+
+`population.txt`/`POPULATION.md` list the same25 complete sources on both sides:
+old9 +7 cited/model homes +5 additional named Prefix-context homes +4 bounded image/
+iteration comparison homes (Composition, Build/Loop, PolyTimeBlockLoop and BinaryArith/
+Iterate). No alias duplicates were found; no file or candidate cap was applied. This is
+the complete named source/citation union, not recursive import closure. All five changed
+Lean files are included. Sources total52,990→52,893 logical lines; full import lines
+and source diff are retained. Comparison sources are not all new dependencies/callers.
+
+The historical21 generation remains wholly frozen in the sibling folder with91-file
+manifest6386c9246d0d594e1ff2eb8e7974f4c43dd8a6d2b002c57f0a23833e11935658.
+Both25 runs were independently recomputed over full25 trees. No old output was spliced,
+subsampled or substituted. Filtering the fresh outputs exactly recovers both historical21
+subgraphs; this is independent QA, documented in `fresh25-versus-historical21.json`.
+
+## Actual runs and full delta
+
+| Measure | BASE25 | HEAD25 |
+|---|---:|---:|
+| Eligible declarations | 1,956 | 1,948 |
+| Directed candidates | 2,013 | 1,999 |
+| Reproduced normalized chars | 646,340 | 646,318 |
+| Proof / cross-file | 897 | 889 |
+| Proof / same-file | 857 | 851 |
+| Term / cross-file | 149 | 149 |
+| Term / same-file | 110 | 110 |
+| Wall seconds | 875.403 | 839.298 |
+
+BASE ran22:32:19–22:46:55UTC; HEAD22:46:55–23:00:54UTC on2026-11-07.
+Both used nice10/Python-I under one continuous newly acquired shared screen lock;
+actual process snapshots observed ni10 for each. Full requests/receipts retain tool/
+orchestrator hashes, Python version, commands, timestamps, exit0, CPU and raw cumulative
+child max-RSS (not a per-run peak claim). Raw stdout includes stderr and parses entirely.
+`lock-events.jsonl` records release. Neither25 screen failed. The unmodified v3 SHA256 is
+`f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181`.
+
+`pair-delta.json/out`, both raw outputs, both full candidate lists and both full parser
+indexes are retained without truncation. Direction is **a reproduces b**; denominator
+is the complete normalized canonical **b** span. Scores are directed text measurements,
+not numbers of independent mathematical recipes, constants or debt members.
+
+All 31 delta rows have a disposition in `head-delta-classification.json`:
+
+- **New cross-file:** public `polyTimeComputable_isNil` reproduces new private
+  `clA5Le_native`,89/167(53%). Both already call the SAME public `polyTimeComputable_lenLe`
+  contract through pairing/composition, then refold projection equations. Emptiness is
+  length≤0; the private result compares two computed unary lengths. The common fragment
+  is conversion/funext/projection simplification, not another comparison machine or time
+  witness derivation. Full exact headers/bodies appear in `new-comparison-source.md`.
+- **New same-file:** SingleTape turn-growth→end-growth784/1,564(50%). The reciprocal
+  changes736/1,283→784/1,331. Material phase/frame scaffold is retained; exact source and
+  the edge already occur in historical round2 HEAD. Different phase assertions and public
+  Segment use are explicit; no permanent-debt acknowledgement is inferred.
+- **Sixteen gone:** one actual private concatenation deletion, four old public/private
+  linear/map derivation rows, shorter surviving pairing/append wrappers, and one changed
+  drop compatibility fragment. A lost edge is not a deleted compiler declaration.
+- **Thirteen changed:** four CounterLoop segment-equation witness/trajectory scores,
+  four Tautology public-composition phase scores, two Segment guard adapters127→525shared
+  chars, two public-map wrappers279→176shared chars but100%coverage, and the SingleTape
+  reciprocal. All are exactly the31-generation's historical21 rows; no additional score
+  change is hidden in the four new comparison homes.
+
+The net score change is−22chars: historical21−111 plus the additional89-character
+API-application fragment. `score-accounting.json` retains the complete contribution
+breakdown; no large textual reduction or blanket semantic cleanup is claimed.
+
+## Wider baseline families and limits
+
+The old nine-file BASE subgraph remains exactly1,583pairs/492,990chars. Widening9→21
+exposed51 baseline rows, fully retained/reviewed in the historical folder. Widening21→25
+exposes379 MORE baseline rows (330proof,49term), not379 new head duplicates. They are
+enumerated in `population-expansion-accounting.json`, with complete source/kind grouping
+and bounded semantic notes in `expanded-baseline-classification.json/md`.
+
+The largest family is Catalog↔Loop:155 proof rows, including18 identical normalized
+source-body directions and substantial host/run/accept/reject/round/frame overlaps.
+There are32 term rows in that family, including14 exact normalized source-body directions
+and the2,368-character loopHost correspondence. Composition/Catalog also contains exact
+source idTM/f2_idTM145-char and constTM/f2_constTM61-char copies. These are explicitly
+definition/witness-code copies, not all merely distinct frozen T5 tables or proof
+boilerplate. Equality of source spans is not kernel definitional identity across
+namespaces/types. Source is unchanged; no broad debt acceptance follows.
+
+The added image comparison visibly retains Tautology's existing private composition
+recipe against public Composition facts, including131/211,131/238 and242/450 overlaps.
+The exact first-entry twins and other substantial old Loop/Primitives scaffold remain
+visible. All435 eligible term bodies and all259 term candidate rows are identical
+base/head. Full Iterate source is included even though it yields no raw candidate;
+absence of text matches is not a statement about API applicability.
+
+`additional-reader-comparator.md` also identifies the stronger existing weighted
+pair-component bound in the currently unimported BlockLoop home. Current approved
+Hardness proof instead uses published Encoding inverse/length equations. This task did
+not test an alternative opaque consumer, request another frozen-file import or infer
+that no public bound exists. Parent owns the comparison/import/reuse disposition.
+
+Canonical parser limits remain explicit: some spans include trailing `omit ... in`,
+`end` or `open` commands; historical21 metadata identifies concrete affected roots.
+Raw denominators are retained without adjustment. The two-file source review identifies
+sixteen proof re-points with normalized headers intact; ten formerly eligible adapters
+drop below60chars, and another changed adapter was already short. Screen eligibility
+does not count compiler/public declarations. No full legacy opacity seal, compiled
+census, axiom walk or Lean check is claimed by this source-only task.
+
+The baseline semantic grouping is bounded; it is not exhaustive approval of the1,999
+head candidates or a one-fifth debt census. Parent owns the ledger, replay, gate,
+source acceptance and dispatch. No source/API/Git, cache/snapshot, commit/push or Lean
+mutation/run occurred. The folder is frozen after exact QA; SHA256SUMS covers every
+other retained file.
+'''
+readme=readme.replace("All are exactly the31-generation's historical21 rows",'All are exactly the historical21 rows')
+(OUT/'README.md').write_text(readme)
+manifest=[]
+for path in sorted(OUT.rglob('*')):
+    if path.is_file() and path.name!='SHA256SUMS':manifest.append(sha(path.read_bytes())+'  '+str(path.relative_to(OUT)))
+(OUT/'SHA256SUMS').write_text('\n'.join(manifest)+'\n')
+for line in manifest:
+    digest,path=line.split('  ',1);assert sha((OUT/path).read_bytes())==digest
+print(json.dumps(dict(frozen_files=len(manifest),manifest_sha256=sha((OUT/'SHA256SUMS').read_bytes()),readme_sha256=sha((OUT/'README.md').read_bytes()),delta_rows=len(classes)),indent=2))

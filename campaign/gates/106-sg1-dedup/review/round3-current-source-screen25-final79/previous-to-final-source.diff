@@ -1,0 +1,40 @@
+diff --git a/TCSlib/Complexity/ClassNP/Tautology.lean b/TCSlib/Complexity/ClassNP/Tautology.lean
+index 44e3f879c..43f4b62bf 100644
+--- a/TCSlib/Complexity/ClassNP/Tautology.lean
++++ b/TCSlib/Complexity/ClassNP/Tautology.lean
+@@ -1045,31 +1045,15 @@ private lemma taut_machine_split (z : List Bool) :
+     omega
+ 
+ /-- Quantitative buffered composition with a second-stage contract only on
+-the actual first-stage image (the proved epoch-2 TMSAT precedent).
++the actual first-stage image.
+ 
+-**Proof sketch.** Capture the first stage's complete output, rewind it, and
+-relocate the second run through the public simulation contract. At most one
+-bit is captured per first-stage step. The second budget remains a function
+-of the original input, exactly as supplied by its image contract. -/
++**Proof sketch.** Apply the public image-composition theorem with the two
++given machine contracts and their original-input time budgets. -/
+ private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+     (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+     (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+     ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by
+-  refine ⟨FinTM.bufferedCompTM M U, ?_⟩
+-  intro x
+-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
+-    FinTM.bufferedComp_start M U x (f x) (T₁ x.length) (hM x)
+-  have hlen : (f x).length ≤ T₁ x.length := by
+-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
+-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
+-  obtain ⟨b, _, hr⟩ := FinTM.bufferedSecondCfg_run M U (U.tm.initCfg (f x)) true
+-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ x.length)
+-  have hu := (FinTM.computesInTime_iff _ _ _ _).mp (hU x)
+-  have hbase : (FinTM.bufferedCompTM M U).ComputesInTime x (g x) (a+T₂ x.length) := by
+-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+-    rw [MultiTapeTM.runFrom_add, hstart, hr]
+-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
+-  exact hbase.mono (by dsimp only; omega)
++  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+ 
+ /-- The verifier is polynomial-time: P10's cubic split followed by the
+ linear syntax/evaluation machine, combined with buffered output.

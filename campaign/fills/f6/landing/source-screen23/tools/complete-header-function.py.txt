@@ -1,0 +1,16 @@
+def header(text):
+    text=h['strip'](text).strip();depth=0;pending=0;i=0
+    while i<len(text):
+        ch=text[i]
+        if ch in '([{⟨':depth+=1
+        elif ch in ')]}⟩':depth-=1
+        if depth==0:
+            token=re.match(r'(?:letI|let)\b',text[i:])
+            if token and (i==0 or not(text[i-1].isalnum() or text[i-1]=='_')):
+                pending+=1;i+=len(token[0]);continue
+            if text.startswith(':=',i):
+                if pending:pending-=1;i+=2;continue
+                return ' '.join(text[:i+2].split())
+            if ch=='|' or (re.match(r'where\b',text[i:]) and (i==0 or not(text[i-1].isalnum() or text[i-1]=='_'))):return ' '.join(text[:i].split())
+        i+=1
+    return ' '.join(text.split())

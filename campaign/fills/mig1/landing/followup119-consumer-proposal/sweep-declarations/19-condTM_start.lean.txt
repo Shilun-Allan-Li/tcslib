@@ -1,0 +1,41 @@
+private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
+    (hD : ∃ t, D.ComputesInTime x [b] t) :
+    ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
+  classical
+  obtain ⟨tD, hDc⟩ := hD
+  have hh : ∃ t, (D.tm.runFrom (D.tm.initCfg x) t).state = none :=
+    ⟨tD, ((computesInTime_iff D x [b] tD).mp hDc).1⟩
+  let t := Nat.find hh
+  let cf := D.tm.runFrom (D.tm.initCfg x) t
+  have hstop : cf.state = none := Nat.find_spec hh
+  have hc : D.ComputesInTime x cf.output t :=
+    (computesInTime_iff D x cf.output t).mpr ⟨hstop, rfl⟩
+  have hout : cf.output = [b] := hc.output_unique hDc
+  have hi : (condTM D M₁ M₂).tm.initCfg x = controlCfg D M₁ M₂ (D.tm.initCfg x) := by
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
+    · funext i
+      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
+  have hrun : (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+      controlCfg D M₁ M₂ cf := by
+    rw [hi]
+    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t (fun s hs => Nat.find_min hh hs)
+  obtain ⟨r, hr⟩ := rewind_from_any (condTM D M₁ M₂).tm
+    (.inl (none, some b)) (.inr (.inl (some b)))
+    (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    (controlCfg D M₁ M₂ cf) (by simp [controlCfg, hstop, hout])
+  refine ⟨t + r, cf.workTapes, cf.workTapePos, ?_⟩
+  rw [MultiTapeTM.runFrom_add, hrun, hr]
+  rfl
+
+/-- After dispatch, the conditional follows the selected branch on its common tape and
+state carrier, while the controller bank remains fixed.
+
+**Proof sketch.** The conditional's table agrees with the false-tag branch after the
+published shape equations normalize the carrier transport. Apply the right-bank run
+contract, then change the Boolean tag using `Turing.FinTM.branchTM_runFrom_independent`.
+[AB09, §1.2] -/

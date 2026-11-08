@@ -1,0 +1,118 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import Lean
+
+set_option maxHeartbeats 0
+set_option maxRecDepth 100000
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let envAfter ← getEnv
+  unless env.constants.toList.length == envAfter.constants.toList.length do
+    throwError "getSimpTheorems changed the environment population"
+  let kenv := env.toKernelEnv
+  let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology,
+    `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag,
+    `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic,
+    `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+    `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+  for owner in owners do
+    unless (env.getModuleIdx? owner).isSome do throwError "missing owner {owner}"
+  let owned := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let owner := env.header.moduleNames[i.toNat]!
+      if owners.contains owner then some (n, ci, owner) else none
+    | none => none
+  let requested : List (String × Name) :=
+    [("sat_pt_mapSnd", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair", `TCSlib.Complexity.ClassNP.SAT),
+     ("sat_pt_append", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair_input", `TCSlib.Complexity.ClassNP.SAT),
+     ("sat_pt_unaryLength", `TCSlib.Complexity.ClassNP.SAT),
+     ("clNative_map", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_pair", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clNative_append", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_unary", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clNative_linear", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_const", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5_pt_cond", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_and", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5Pair_sizes", `TCSlib.Complexity.CookLevin.Hardness), ("clA5Le_native", `TCSlib.Complexity.CookLevin.Hardness),
+     ("clA5Drop_native", `TCSlib.Complexity.CookLevin.Hardness)]
+  let roots := owned.filterMap fun (n, _, owner) =>
+    match n with
+    | .str _ base => if requested.contains (base, owner) then some n else none
+    | _ => none
+  unless roots.length == 16 do throwError "root count mismatch {roots.length}"
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | .opaqueInfo _ => "opaque"
+    | .axiomInfo _ => "axiom" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  let hint := fun (h : ReducibilityHints) => match h with
+    | .opaque => "opaque" | .abbrev => "abbrev" | .regular height => s!"regular:{height.toNat}"
+  let names := fun (ns : List Name) => toJson (ns.map Name.toString)
+  let extra := fun (ci : ConstantInfo) => match ci with
+    | .defnInfo d => Json.mkObj [("hints", toJson (hint d.hints)), ("safety", toJson (reprStr d.safety)), ("all", names d.all)]
+    | .thmInfo d => Json.mkObj [("all", names d.all)]
+    | .opaqueInfo d => Json.mkObj [("all", names d.all)]
+    | .inductInfo d => Json.mkObj [("all", names d.all), ("ctors", names d.ctors),
+        ("numParams", toJson d.numParams), ("numIndices", toJson d.numIndices), ("numNested", toJson d.numNested),
+        ("isRec", toJson d.isRec), ("isReflexive", toJson d.isReflexive)]
+    | .ctorInfo d => Json.mkObj [("induct", toJson d.induct.toString), ("cidx", toJson d.cidx),
+        ("numParams", toJson d.numParams), ("numFields", toJson d.numFields)]
+    | .recInfo d => Json.mkObj [("all", names d.all), ("numParams", toJson d.numParams),
+        ("numIndices", toJson d.numIndices), ("numMotives", toJson d.numMotives), ("numMinors", toJson d.numMinors),
+        ("k", toJson d.k), ("rules", toJson (d.rules.map fun r => Json.mkObj
+          [("ctor", toJson r.ctor.toString), ("nfields", toJson r.nfields), ("rhs_repr", toJson (reprStr r.rhs))]))]
+    | .quotInfo d => Json.mkObj [("kind", toJson (match d.kind with
+        | .type => "type" | .ctor => "constructor" | .lift => "lift" | .ind => "ind"))]
+    | .axiomInfo _ => Json.mkObj []
+  let inlineName := fun (k : InlineAttributeKind) => match k with
+    | .inline => "inline" | .noinline => "noinline" | .macroInline => "macro_inline"
+    | .inlineIfReduce => "inline_if_reduce" | .alwaysInline => "always_inline"
+  liftIO <| IO.println s!"CONTEXT|owners={owners.length}|roots={roots.length}|simp_environment_unchanged=true"
+  for n in roots.toArray.qsort Name.lt do liftIO <| IO.println s!"ROOT|{n}|private={isPrivateName n}"
+  for (n, ci, owner) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let info := Json.mkObj [("levelParams", names ci.levelParams), ("unsafe", toJson ci.isUnsafe),
+      ("partial", toJson ci.isPartial), ("specific", extra ci)]
+    let instancePrio ← liftCoreM <| getInstancePriority? n
+    let instanceKind ← liftCoreM <| getInstanceAttrKind? n
+    let attrs := Json.mkObj [("simp", toJson (simp.isLemma (.decl n))),
+      ("simp_inverse", toJson (simp.isLemma (.decl n true true))), ("simp_unfold", toJson (simp.toUnfold.contains n)),
+      ("reducibility", toJson (reprStr (getReducibilityStatusCore env n))), ("protected", toJson (isProtected env n)),
+      ("instance_priority", toJson instancePrio), ("instance_kind", toJson (instanceKind.map toString)),
+      ("class", toJson (isClass env n)), ("noncomputable", toJson (isNoncomputable env n)),
+      ("inline", toJson ((getInlineAttribute? env n).map inlineName)), ("match_pattern", toJson (hasMatchPatternAttribute env n))]
+    liftIO <| IO.println s!"CONSTANT {n} module={owner} kind={kind ci} private={isPrivateName n} internal={n.isInternalDetail}"
+    liftIO <| IO.println s!"CI|{n}|{info.compress}"
+    liftIO <| IO.println s!"TYPE_REPR|{n}|{(toJson (reprStr ci.type)).compress}"
+    liftIO <| IO.println s!"VALUE_REPR|{n}|{(toJson (reprStr (ci.value? (allowOpaque := true)))).compress}"
+    liftIO <| IO.println s!"ATTR|{n}|{attrs.compress}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    let axjson := names (ax.qsort Name.lt).toList
+    liftIO <| IO.println s!"ALLAX|{n}|{axjson.compress}"
+    if !isPrivateName n then liftIO <| IO.println s!"PUBLICAX|{n}|{axjson.compress}"
+    if roots.any (fun r => r.isPrefixOf n) then
+      liftIO <| IO.println s!"PROOFAX|{n}|kind={kind ci}|{axjson.compress}"
+      for (part, e) in [("type", ci.type), ("value", (ci.value? (allowOpaque := true)).getD (.sort .zero))] do
+        let mut seen : Array Name := #[]
+        for used in e.getUsedConstants do
+          if seen.contains used then continue
+          seen := seen.push used
+          match env.getModuleIdxFor? used, kenv.find? used with
+          | some idx, some usedci =>
+            liftIO <| IO.println s!"CITED|{n}|{part}|{used}|{env.header.moduleNames[idx.toNat]!}|kind={kind usedci}|private={isPrivateName used}"
+          | _, _ => pure ()
+  let simprules := (simp.pre.foldValues (fun a s => a.push s) #[]) ++
+    (simp.post.foldValues (fun a s => a.push s) #[])
+  for s in simprules do
+    if let .decl n phase inv := s.origin then
+      if owned.any (fun (name, _, _) => name == n) then
+        let row := Json.mkObj [("phase", toJson phase), ("inverse", toJson inv), ("priority", toJson s.priority),
+          ("post", toJson s.post), ("perm", toJson s.perm), ("rfl", toJson s.rfl),
+          ("levelParams", names s.levelParams.toList), ("proof_repr", toJson (reprStr s.proof))]
+        liftIO <| IO.println s!"SIMP_RULE|{n}|{row.compress}"
+  liftIO <| IO.println s!"COMPLETE|constants={owned.length}|roots={roots.length}"

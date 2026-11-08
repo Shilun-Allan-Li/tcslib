@@ -1,0 +1,25 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3015,14 +3015,14 @@
+           emCallEvalCfg (w := w) M (M.tm.runFrom (M.tm.initCfg s) t) b 1 := by
+   classical
+   have hspec := (computesInTime_iff M s out T).mp hM
+-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg s) t).state = none := ⟨T, hspec.1⟩
+-  let t := Nat.find hex
+-  have ht : t ≤ T := Nat.find_min' hex hspec.1
+-  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := Nat.find_spec hex
+-  have hlive : ∀ j < t, (M.tm.runFrom (M.tm.initCfg s) j).state ≠ none :=
+-    fun j hj => Nat.find_min hex hj
+-  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out :=
+-    ((computesInTime_iff M s _ t).mpr ⟨hh, rfl⟩).output_unique hM
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg s) hspec.1
++  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := by
++    rw [heq]
++    exact hspec.1
++  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out := by
++    rw [heq]
++    exact hspec.2
+   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
+     simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag

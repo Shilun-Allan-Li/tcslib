@@ -1,0 +1,19 @@
+/-- **Composition with a second machine correct only on the image.** If `M` computes `f`
+within `T₁` and, for every input `x`, `U` maps `f x` to `g x` within `T₂ |x|` steps (the
+budget measured at the *original* input length), then some machine computes `g` within
+`2 T₁ n + T₂ n + 2`. Unlike `computesFunInTime_comp`, `U` need not be total, and no
+monotonicity is assumed.
+
+**Proof sketch.** `bufferedCompTM M U` runs both phases
+(`bufferedCompTM_computesInTime`); the intermediate output is no longer than `M`'s
+running time, so capture and rewind cost at most `T₁ n + 2` more steps. -/
+theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) := by
+  refine ⟨bufferedCompTM M U, fun x => ?_⟩
+  have hlen : (f x).length ≤ T₁ x.length := by
+    have ho := ((computesInTime_iff _ _ _ _).mp (hM x)).2
+    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
+  exact (bufferedCompTM_computesInTime M U (hM x) (hU x)).mono (by dsimp only; omega)
+

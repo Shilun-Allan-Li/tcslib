@@ -1,0 +1,53 @@
+theorem _root_.Turing.FinTM.lengthBitsTM_spaceUsed (x : List Bool) (t : ℕ) :
+    FinTM.lengthBitsTM.tm.spaceUsed (FinTM.lengthBitsTM.tm.initCfg x) t ≤
+      5 * (Nat.size x.length + 1) := by
+  obtain ⟨t₀, -, hc, hb⟩ := counter_count x x.length (le_refl _)
+  obtain ⟨hstart, hdone⟩ := counter_halt x t₀ hc
+  let T := t₀ + 1 + (x.length.bits.length + 1)
+  have hhalt : (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) T).state =
+      none := ((FinTM.computesInTime_iff _ _ _ _).mp hdone).1
+  -- Before the halt: the counting ledger, then the emission walk from the origin.
+  have hpre (v : ℕ) (hv : v ≤ T) (j : Fin 1) :
+      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) v).workTapePos j ∈
+        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
+    by_cases hvt : v ≤ t₀
+    · exact hb v hvt j
+    · rw [show v = (t₀ + 1) + (v - (t₀ + 1)) by omega, MultiTapeTM.runFrom_add, hstart]
+      have hp := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
+        FinTM.lengthBitsTM.tm (counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [])
+        (v - (t₀ + 1)) j)
+      change 0 - ((v - (t₀ + 1) : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((v - (t₀ + 1) : ℕ) : ℤ) at hp
+      have hlen := Nat.size_eq_bits_len x.length
+      dsimp only [T] at hv
+      rw [Finset.mem_Icc]
+      constructor <;> omega
+  -- After the halt the configuration is frozen.
+  have hall (u : ℕ) (j : Fin 1) :
+      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈
+        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
+    by_cases hu : u ≤ T
+    · exact hpre u hu j
+    · rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hhalt]
+      exact hpre T (le_refl _) j
+  rw [MultiTapeTM.spaceUsed_eq_sum]
+  change (∑ i : Fin 1, _) ≤ _
+  rw [Fin.sum_univ_one]
+  exact (MultiTapeTM.spaceUsedByTape_le_card_Icc _ _ t (0 : Fin 1) _ _
+    fun u _ => hall u 0).trans (by omega)
+
+/-- The identity function is time constructible. [AB09, §1.3 examples]
+
+**Proof sketch.** A one-work-tape machine maintains a little-endian binary counter on
+its work tape while scanning the input left to right: for each input symbol it
+increments the counter (walking right over `true` cells turning them `false` until the
+first `false`/blank cell, which becomes `true`, then returning to cell 0). Incrementing
+`n` times costs amortized `O(1)` per increment, `O(n)` in total. When the input head
+reads the blank past the input, the machine walks the counter left to right emitting
+each bit to the output tape (`O(log n)` steps) and halts. The total is at most
+`c · (n + 1)` steps for an absolute constant `c`, and the emitted string is `n.bits`
+(for `n = 0` the counter region is empty and nothing is emitted, matching
+`Nat.bits 0 = []`). The formal proof uses twice the number of true counter bits as
+potential: elapsed time plus potential is at most `4n` after `n` increments.
+Entering emission and its final halting transition add two steps; the output length
+is at most `n`, so `c = 5` suffices. -/

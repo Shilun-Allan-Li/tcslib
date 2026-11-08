@@ -1,0 +1,19 @@
+theorem pairExtractTM_fst_run_budget (a b : List Bool) :
+    let M := pairExtractTM true false
+    let d := M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (5 * ((pairEncode a b).length + 1))
+    d.state = none ∧ d.output = a ∧ d.inputPos.val = 2 * a.length + 3 ∧
+      ∀ j : Fin M.k, d.workTapes j = bufferTape a ∧ d.workTapePos j = (a.length : ℤ) := by
+  intro M d
+  obtain ⟨h, -⟩ := pairExtractTM_fst_run a b
+  have hle : 4 * a.length + 5 ≤ 5 * ((pairEncode a b).length + 1) := by
+    rw [length_pairEncode]; omega
+  have hd : d = M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (4 * a.length + 5) := by
+    change M.tm.runFrom _ _ = _
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, h, MultiTapeTM.runFrom_of_halt _ rfl]
+  rw [hd, h]
+  exact ⟨rfl, rfl, rfl, fun _ => ⟨rfl, rfl⟩⟩
+
+/-! The unary polynomial generator below is adapted privately from
+`ClassNP/TMSAT.lean`, including its exact loop-depth ledger. -/
+
+/-- Control for copying the side length, nested unary loops, and constant emission. -/

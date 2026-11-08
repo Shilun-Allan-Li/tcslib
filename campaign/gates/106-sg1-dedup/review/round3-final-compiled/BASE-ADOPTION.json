@@ -1,0 +1,107 @@
+{
+  "adopted_from": "campaign/gates/106-sg1-dedup/review/round3-current-compiled",
+  "manifest_checks": [
+    {
+      "manifest": "campaign/gates/106-sg1-dedup/review/round3-current-compiled/BASE-MANIFEST.json",
+      "bytes": 12405,
+      "sha256": "a16b95f4fd3154fbe53850b005373baa06451198858c1be3b77c75a406de76c0",
+      "verified_payloads": 71
+    },
+    {
+      "manifest": "campaign/gates/106-sg1-dedup/review/round3-current-compiled/MANIFEST.json",
+      "bytes": 16174,
+      "sha256": "493718f4edd28f22deacc8d3dbdb86afc037330cdacee72e2797163507e16ebc",
+      "verified_payloads": 94
+    }
+  ],
+  "all_71_base_payloads_verified": true,
+  "all_94_previous_final_payloads_verified": true,
+  "stages": [
+    {
+      "stage": "census-v1",
+      "raw_bytes": 2114776,
+      "raw_sha256": "d2efe4495279ec3c056c867319e47dba054344b8831c039dbad37501c13bb2cd",
+      "complete_utf8_roundtrip": true,
+      "exact_probe_match": true,
+      "current_MAC4_owner_artifacts_match": true
+    },
+    {
+      "stage": "types-v1",
+      "raw_bytes": 113922909,
+      "raw_sha256": "163c7f3cda5061ae26f8a49aa9de4c5482a384dec3ad41dc9c6fc24acd4c5859",
+      "complete_utf8_roundtrip": true,
+      "exact_probe_match": true,
+      "current_MAC4_owner_artifacts_match": true
+    },
+    {
+      "stage": "ciattrs-v1",
+      "raw_bytes": 5383361,
+      "raw_sha256": "6fb6335728bbaf5466bc43029dfb433fdcaadb95a7a7fb5fe6bc12c2cbe587a9",
+      "complete_utf8_roundtrip": true,
+      "exact_probe_match": true,
+      "current_MAC4_owner_artifacts_match": true
+    }
+  ],
+  "current_MAC4_owned_oleans": {
+    "TCSlib/Complexity/ClassNP/SAT.olean": {
+      "bytes": 13323712,
+      "sha256": "468607b814c8eb66aeefd5af2e29b8041d519e0e70f3961d29737e7c35bf8ca1"
+    },
+    "TCSlib/Complexity/ClassNP/Tautology.olean": {
+      "bytes": 3502536,
+      "sha256": "da91920eb5e31734f67670ac7385173bdb2d0b2878a6104e3f52017808d78c4a"
+    },
+    "TCSlib/Complexity/CookLevin/Hardness.olean": {
+      "bytes": 19098216,
+      "sha256": "fedf7a12b8f8e580448c42bc3b9a24fdb3de7cd062e052d04bf8b3c68298dff4"
+    },
+    "TCSlib/Complexity/SpaceComplexity/Machines/Frag.olean": {
+      "bytes": 1334872,
+      "sha256": "35f541ce3d881443d010d9f91e93b985e4be9e3660788e6eb028ebb0776a879b"
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Catalog.olean": {
+      "bytes": 29931704,
+      "sha256": "37c0c611397e9c71f1aea3038828d464ae639776790f7df7bf6ce49089b01d95"
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.olean": {
+      "bytes": 1983536,
+      "sha256": "fa1a768cb5eb3fa145b3077b52e2ff0117f443dbcb806b03b51a6eb5fa318bf5"
+    },
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.olean": {
+      "bytes": 4546680,
+      "sha256": "debd6609416de396e21c12e2462d7043a3abfb9329e5b24614d3df95f9efb3ee"
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.olean": {
+      "bytes": 16934736,
+      "sha256": "5be1810f2fc9c7afafa02ef1d50f6673dc1b3345bbe1452f868aa84ba1e4ac21"
+    },
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.olean": {
+      "bytes": 5590056,
+      "sha256": "1aafbf9041b538db9ebc692295906f7a50fe7dffee595d46e0894df838a1803c"
+    }
+  },
+  "population_owners": [
+    "TCSlib.Complexity.ClassNP.SAT",
+    "TCSlib.Complexity.ClassNP.Tautology",
+    "TCSlib.Complexity.CookLevin.Hardness",
+    "TCSlib.Complexity.SpaceComplexity.Machines.Frag",
+    "TCSlib.Complexity.TuringMachine.Build.Catalog",
+    "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+    "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+    "TCSlib.Complexity.TuringMachine.Build.Primitives",
+    "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"
+  ],
+  "exact9_source_archives_verified": true,
+  "toolchain_file": {
+    "content": "leanprover/lean4:v4.25.0\n",
+    "bytes": 25,
+    "sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925"
+  },
+  "trusted_current_wrapper": {
+    "path": "devtools/seyoon/leanelab.sh",
+    "bytes": 1448,
+    "sha256": "03a9deca57a83e2e28ddcf3020eba45f6c02f13688fbec7e8f9389dddfd20f68"
+  },
+  "inherited_toolchain_evidence": "BASE context and native receipts select Lean4.25.0/MAC4. Prior BASE did not record a separate Lean executable SHA or every transitive olean SHA; no stronger historical binary attestation is invented. Current MAC4 is root-designated immutable complete snapshot; all nine originally fingerprinted owned artifacts match. Probe source/population and raw metadata are exact.",
+  "no_new_baseline_native_run": true
+}

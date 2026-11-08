@@ -1,0 +1,90 @@
+**SAT/Hardness adapter debt (gate106 F2; ACKNOWLEDGED by kind by Seyoon, 2026-11-07).**
+The acknowledgment covers every re-derivation of the following generic kinds anywhere in
+TCSlib, including matching correctness/frame proofs, not merely the currently found sites:
+
+1. **Clean-module contract and its install/emit/stop lifting:** a positive bounded first halt
+   from canonical argument tapes, uniform in untouched native input, with prescribed result
+   word and emitted output. Canonical current formula is SatClean/CLA5Clean.
+2. **Positive-release stop adapter:** add a Boolean release flag so a designated exit becomes
+   a halt only after the first source step; preserve physical configuration fields. Includes
+   the machine/configuration, step and clean-contract lemmas.
+3. **Bank-padding adapter:** embed a k-tape action/configuration/machine into K≥k tapes with
+   unused tapes blank, heads0 and stationary actions; includes apply/run/seam commutation.
+4. **Finite one-way word transducer:** zero work tapes, parametric finite next/emit/finish/start,
+   at most one emission per input plus optional final emission. Includes pure word semantics,
+   configuration, run, polynomial-time and head/tail projection proofs.
+5. **Polynomial bridge overhead:** len≤A(n+1)^d implies
+   c*(A(n+1)^d+n+len+1)+1≤(c*(2*A+1)+1)*(n+1)^(d+1).
+
+Independent full-header/code comparison found22 exact prefix-renaming pairs,298 declaration
+span lines in each file: clean4, padding6, release-stop4, transducer7, bridge1. These extend
+the auditor's seven-pair lower bound; they are not raw screen-edge counts.
+
+**Finite-family shared-bank dispatcher debt (separate user acknowledgment, 2026-11-07).**
+Every re-derivation of a dispatcher over a finite family of callable modules sharing a padded
+K-tape bank, with parameterized module count and routing, is covered by kind. Its state shape
+is Unit⊕Σi.State; scope includes entry/return helpers and seam/call/frame/clean lifting proofs.
+Six non-abbrev declarations plus HostState notation per current file correspond after prefix,
+module-count and routing-parameter substitution. Concrete client HostNext tables are data and
+excluded. The older clPlacement/selector item13 is distinct and grants no acknowledgment here.
+
+**Cleanup owner/window for both acknowledgments:** the maintainer (Codex), next12.2c
+SAT/Hardness consolidation after activeMIG1 and before further fills in those two files. Shared
+interfaces will be designed/gated there; this ruling authorizes retained debt, not a new API.
+Named post-F1-repair union: SAT34/270 and Hardness32/544, including notation and prior named
+FH1/PL1/RO1/live-prefix acknowledgment/watch records. These are lower bounds; old watch status
+is not upgraded to acknowledgment. Basic's Segment.trans source is counted once if F1 remains.
+F1's cut-only implementations are being repointed in #215 and retire on its merge. All86
+supplied SAT/Hardness directional candidates are classified separately in gate106's incoming
+review; widerRO1 and statement-specific candidates keep their existing separate dispositions.
+
+**Gate106 round2/R3 generic closure repairs (2026-11-07; retirement on #215 merge).**
+The six adapter/dispatcher acknowledgments above do not cover general polynomial-time
+closure reconstructions. Mechanical repair commit `6d3903f7ba3dbdee3ad233c8d908427f3324be2f` handles16 private
+source declarations, retaining their headers/names as citations:
+
+- SAT5: sat_pt_pair_input, sat_pt_mapSnd, sat_pt_pair, sat_pt_append, sat_pt_unaryLength.
+- Hardness11: clNative_linear, clNative_map, clNative_pair, clNative_append,
+  clNative_unary, clA5_pt_const, clA5_pt_cond, clA5_pt_and, clA5Pair_sizes,
+  clA5Le_native, clA5Drop_native.
+
+The14 closure/comparison members use10 distinct public PolyTimePairing source statements:
+of_linear, const, pairMapSnd, pairEncode, append, unary, polyUnary, ite, and, lenLe.
+The pre-repair source-inclusive union is therefore at least10/26(38.5%), crossing
+onefifth; it is a bounded lower bound, not an exhaustive count or accepted retention.
+The remaining two repairs use Encoding's public inverse/length facts and PolyTimePrefix's
+published prefix remover. Existing serialized pairMapSnd.eq_1/drop.eq_1 suffice.
+Seyoon approved only the latter's single new import; no new API or debt extension.
+Actual final native/scoped-seal evidence is in gate106/review; current replay and Codex
+round3 remain pending. These implementations retire only when #215 merges.
+
+The older retained named unions34/270(SAT),32/544(Hardness) did not include this general
+closure family; do not subtract16 from them. Separately, the inspected fixed-bit
+clFillTM/clFill_run/clNative_fill trio is an exact Unit-state constant-emission instance
+of the already acknowledged one-way transducer kind. Accounting it once raises the
+Hardness retained named lower bound to35/544; SAT remains34/270. Original correspondence
+sets and all candidate rows remain preserved. Image-only composition remains a separate
+bounded class-contract comparison; no exact public class-row match, unavoidable new API,
+retention acknowledgment or global clearance is inferred. Historical widerRO1/live-prefix/
+watch statuses remain distinct. Source counts, canonical originals, raw screen edges and
+compiler auxiliaries are different measurements.
+
+**Unary-clock clean-call host retention (separate seventh kind; Seyoon,2026-11-07).**
+Seyoon explicitly accepted existing unary-clock repetition of arbitrary positive clean calls
+anywhere in TCSlib, including matching frame/call/run/clock/output/budget proofs and actual-orbit
+polynomial iteration wrappers. This is an existing-private-host retention exception, separate
+from the six adapter/dispatcher kinds. Exact user answer/scope and source are in
+gate106/review/unary-host-ruling-proposal/RULING.md and ruling.json; the pre-ruling proposal/
+independent review remain historical data.
+
+Fourteen current Hardness members are12clRepeat* declarations plus clA5Iter_native and
+clA5Iter_shrinking (4private definitions/10private lemmas), disjoint from all35 earlier named
+members. The named affected-declaration lower bound is therefore49/544; this is not49confirmed
+duplicates. SAT remains34/270. Full names and independent disjointness checks are in
+review/round3-host-accounting-addon/. No import, statement, new public API, future private-host
+construction or route change is approved by this acknowledgment.
+
+Owner/window: maintainer(Codex), next12.2c consolidation after activeMIG1 and before further
+SAT/Hardness fills. Design/gate the shared host contract, including resource/head-envelope
+clauses, and replace the private implementations there. The on-image class wrapper is outside
+this ruling; the14 repaired Pairing closure/comparison implementations retain their distinct

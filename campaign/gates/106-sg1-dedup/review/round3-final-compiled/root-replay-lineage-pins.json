@@ -1,0 +1,195 @@
+{
+  "origin": "Executed root-owned evidence, only inspected and hash-verified here; child metadata does not claim to rerun these replays.",
+  "sequence": [
+    "complete MAC4 at3023",
+    "MSG5 full computed329-module downstream pass atD0",
+    "complete clone MSG5→MSG6;26 Hardness-downstream modules at63",
+    "complete clone MSG6→MSG7;2 Tautology-downstream modules at79"
+  ],
+  "receipts": [
+    {
+      "receipt": {
+        "checked_utc": "2026-11-07T22:49:40.231259+00:00",
+        "result": "PASS",
+        "pipeline_exit": 0,
+        "unified_session": 9203,
+        "head": "d0c4a292e781b55617e05b33fdd423bb059fd735",
+        "campaign_at_receipt": "234f5beaf48a9eeb61e26ce18f93987851dca97e",
+        "snapshot_lean": "3023dc1408c3d216fc07a7cbba9ae30135b861ed",
+        "snapshot": "oleans-mac4",
+        "output_snapshot": "oleans-msg5",
+        "modules": 329,
+        "failures": 0,
+        "error_rows": 0,
+        "static_mismatches": 0,
+        "static_total": 66,
+        "module_order_and_all_rows_verified": true,
+        "all_native_launches_enforced_j4": true,
+        "actual_j4_launches": 329,
+        "native_reported_sorries": 66,
+        "complete_snapshot_paths": 895,
+        "baseline_paths_preserved": 895,
+        "source_tracked_clean": true,
+        "pushed_head_exact": true,
+        "current_campaign_lean_equals_snapshot_base": true,
+        "evidence": [
+          {
+            "path": "replay-msg5.log",
+            "bytes": 23324,
+            "sha256": "3ea7663d7f3c0fa8df99868ffbc00aca4ef1b95a1d0a9c20097a76613c4be9b5"
+          },
+          {
+            "path": "replay-msg5-static.txt",
+            "bytes": 43,
+            "sha256": "9071aa5511d71760860b2f8a5e029fe47fc55086dd3d7845d54e4f84c709d996"
+          },
+          {
+            "path": "replay-msg5-launches.log",
+            "bytes": 65354,
+            "sha256": "25d8598016b42b62d6672e7078fddad1b6757c0780695a9fac1e3f7802da2234"
+          }
+        ],
+        "limits": "Executed replay of the full computed downstream closure from one complete snapshot. No snapshot splice, external gate closure or merge clearance. Earlier partial runs retain their statuses."
+      },
+      "pins": [
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/current-replay-r3/receipt.json",
+          "bytes": 1504,
+          "sha256": "1866b459ca6ce61ce06f293c215aaca052eeced16bbffd8ca9323daf62bc4566"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/current-replay-r3/replay-msg5.log",
+          "bytes": 23324,
+          "sha256": "3ea7663d7f3c0fa8df99868ffbc00aca4ef1b95a1d0a9c20097a76613c4be9b5"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/current-replay-r3/replay-msg5-static.txt",
+          "bytes": 43,
+          "sha256": "9071aa5511d71760860b2f8a5e029fe47fc55086dd3d7845d54e4f84c709d996"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/current-replay-r3/replay-msg5-launches.log",
+          "bytes": 65354,
+          "sha256": "25d8598016b42b62d6672e7078fddad1b6757c0780695a9fac1e3f7802da2234"
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "utc": "2026-11-08T00:50:11.138406+00:00",
+        "result": "PASS",
+        "pipeline_exit": 0,
+        "session": 99931,
+        "head": "63a3ce018e96c8c114b9c82f8d5fce6021c7d03c",
+        "modules": 26,
+        "failures": 0,
+        "error_rows": 0,
+        "static_mismatches": 0,
+        "static_total": 0,
+        "launches_j4": 26,
+        "input": "complete895-objectMSG5 atd0, previouslyPASS329/static0/66",
+        "output": "oleans-msg6",
+        "source_tracked_clean_at_completion": true,
+        "evidence": [
+          {
+            "path": "replay-msg6.log",
+            "bytes": 1731,
+            "sha256": "86ce83f9802f6be5f53191e9f499d560b5d730b4ff9374fd37d0398827773d12"
+          },
+          {
+            "path": "replay-msg6-static.txt",
+            "bytes": 41,
+            "sha256": "82a2bc709605404d2278950743ca9e0754ec8419d8480941a2771b01c64644cd"
+          },
+          {
+            "path": "replay-msg6-launches.log",
+            "bytes": 4710,
+            "sha256": "a61ec55279835b079d05a142ba0590f57c02d2eb45a0f8ef4ae5f277a84a5dc8"
+          }
+        ],
+        "limit": "Chained final-Hardness downstream pass; scope26 has no admissions, not a whole-campaign admission-free claim."
+      },
+      "pins": [
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg6/receipt.json",
+          "bytes": 1038,
+          "sha256": "a90ea87d925f3962b4f9f3e22d16a443a6e501a314b51ba9714f805ba8178848"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg6/replay-msg6.log",
+          "bytes": 1731,
+          "sha256": "86ce83f9802f6be5f53191e9f499d560b5d730b4ff9374fd37d0398827773d12"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg6/replay-msg6-static.txt",
+          "bytes": 41,
+          "sha256": "82a2bc709605404d2278950743ca9e0754ec8419d8480941a2771b01c64644cd"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg6/replay-msg6-launches.log",
+          "bytes": 4710,
+          "sha256": "a61ec55279835b079d05a142ba0590f57c02d2eb45a0f8ef4ae5f277a84a5dc8"
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "utc": "2026-11-08T01:09:07.665628+00:00",
+        "head": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+        "result": "PASS",
+        "pipeline_exit": 0,
+        "session": 34270,
+        "modules": 2,
+        "failures": 0,
+        "error_rows": 0,
+        "static_mismatches": 0,
+        "static_total": 0,
+        "launches_j4": 2,
+        "input": "complete passed MSG6 at63; priorMSG5+MSG6 chain retained",
+        "output": "oleans-msg7",
+        "source_clean_at_completion": true,
+        "evidence": [
+          {
+            "path": "replay-msg7.log",
+            "bytes": 246,
+            "sha256": "dd42256f7c5f7e6fe3376254575b3ba9f9fd42b1fbc83343b7184907f23ab3d2"
+          },
+          {
+            "path": "replay-msg7-static.txt",
+            "bytes": 40,
+            "sha256": "718975487d65a7fde9e8e005421024d7965a8aeaaf1b07189a8b3043821faa1f"
+          },
+          {
+            "path": "replay-msg7-launches.log",
+            "bytes": 336,
+            "sha256": "ee34ddd97e433feb9b9ce229d55b809d008d91a8cb415f4160c30c6eb27582ae"
+          }
+        ],
+        "limit": "Tautology and ClassNP dependent chain, not a whole-campaign admission-free claim"
+      },
+      "pins": [
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg7/receipt.json",
+          "bytes": 996,
+          "sha256": "97161ef4e86deeddbe98956bac0e12eb10a712b28909b2854d3e194dae915cfe"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg7/replay-msg7.log",
+          "bytes": 246,
+          "sha256": "dd42256f7c5f7e6fe3376254575b3ba9f9fd42b1fbc83343b7184907f23ab3d2"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg7/replay-msg7-static.txt",
+          "bytes": 40,
+          "sha256": "718975487d65a7fde9e8e005421024d7965a8aeaaf1b07189a8b3043821faa1f"
+        },
+        {
+          "path": "campaign/gates/106-sg1-dedup/evidence/final-replay-msg7/replay-msg7-launches.log",
+          "bytes": 336,
+          "sha256": "ee34ddd97e433feb9b9ce229d55b809d008d91a8cb415f4160c30c6eb27582ae"
+        }
+      ]
+    }
+  ],
+  "limit": "MSG5 scoped static/native admission count66 persists in the campaign closure. MSG6/7 scopes have0 admissions; neither implies campaign admission freedom."
+}

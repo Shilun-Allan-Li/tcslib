@@ -1,0 +1,35 @@
+def split_header(raw):
+    """Balance binders; skip statement-local let assignments, including their indented by values."""
+    c=P.clean(raw);stack=[];quoted=False;i=0;pending=0
+    while i<len(c):
+        ch=c[i]
+        if quoted:
+            if ch=='\\':i+=2;continue
+            if ch=='"':quoted=False
+        elif ch=='"':quoted=True
+        elif ch in '([{⟨':stack.append(ch)
+        elif ch in ')]}⟩':
+            assert stack,(raw[:100],i)
+            stack.pop()
+        elif not stack:
+            if re.match(r'(?:let|letI|have)\b',c[i:]) and (i==0 or not (c[i-1].isalnum() or c[i-1]=='_')):
+                pending+=1
+            if c.startswith(':=',i):
+                if pending:
+                    pending-=1
+                    tail=c[i+2:];m=re.match(r'\s*by\b[^\n]*\n',tail)
+                    if m:
+                        line_start=c.rfind('\n',0,i)+1
+                        indent=len(c[line_start:i])-len(c[line_start:i].lstrip())
+                        j=i+2+m.end()
+                        while j<len(c):
+                            e=c.find('\n',j);e=len(c) if e<0 else e+1;line=c[j:e]
+                            if line.strip() and len(line)-len(line.lstrip())<=indent:break
+                            j=e
+                        i=j;continue
+                    i+=2;continue
+                return raw[:i].rstrip(),':=',raw[i+2:].strip()
+            if re.match(r'where\b',c[i:]) and (i==0 or c[i-1].isspace()):return raw[:i].rstrip(),'where',raw[i+5:].strip()
+            if ch=='\n' and re.match(r'\n\s*\|',c[i:]):return raw[:i].rstrip(),'equations',raw[i:].strip()
+        i+=1
+    return raw.rstrip(),'none',''

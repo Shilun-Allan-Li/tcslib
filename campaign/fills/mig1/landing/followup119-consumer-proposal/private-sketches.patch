@@ -1,0 +1,42 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3614,9 +3614,9 @@
+ 
+ /-- A phase with an absorbing return state can be cut at its actual first
+ return while retaining its complete configuration endpoint.
+-**Proof sketch.** Choose the least return-state visit. Absorption identifies
+-its configuration with the known bounded endpoint. The bound proves existence
+-and bounds the first visit; it is never used to dispatch native control. -/
++**Proof sketch.** Apply `MultiTapeTM.exists_first_entry_of_fixed` to the same
++stop predicate and complete absorbing-configuration hypothesis. The public
++contract supplies the first-entry cut and the exact bounded endpoint. -/
+ private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+     (c d : Cfg k Bool S w) (T : ℕ)
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -4463,8 +4463,9 @@
+ 
+ /-- A run reaching an absorbing control state has a least such entry, and its
+ configuration at that first entry is already the final configuration.
+-**Proof sketch.** Choose the least hit. Absorption makes its entire suffix
+-constant, so the bounded endpoint identifies the first-hit configuration. -/
++**Proof sketch.** Specialize `MultiTapeTM.exists_first_entry_of_fixed` to
++equality with the selected control state, then project its predicate cut to
++the required singleton-state cut. -/
+ private lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)
+     (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+@@ -5874,9 +5875,9 @@
+ 
+ /-- A phase with an absorbing return state can be cut at its actual first
+ return while retaining its complete configuration endpoint.
+-**Proof sketch.** Choose the least return-state visit. Absorption identifies
+-its configuration with the known bounded endpoint. The bound proves existence
+-and bounds the first visit; it is never used to dispatch native control. -/
++**Proof sketch.** Apply `MultiTapeTM.exists_first_entry_of_fixed` to the same
++stop predicate and complete absorbing-configuration hypothesis. The public
++contract supplies the first-entry cut and the exact bounded endpoint. -/
+ private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+     (c d : Cfg k Bool S w) (T : ℕ)

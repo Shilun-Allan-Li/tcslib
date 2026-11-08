@@ -1,0 +1,116 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3624,17 +3624,7 @@
+     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+       tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+ 
+ /-- Each tracked tape's native cleanup can dispatch at its actual positive
+ first return with the exact blank endpoint, never at the analysis deadline.
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -4470,17 +4470,15 @@
+     (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+     (hd : d.state = some q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, (tm.runFrom c t).state = some q := ⟨T, by rw [hT, hd]⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT, hd])
+-  have hs : (tm.runFrom c t).state = some q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
++    (by
++      rintro z ⟨r, hz, hr⟩
++      subst r
++      exact hfix z hz)
++    ⟨q, hd, rfl⟩ hT
++  refine ⟨t, ht, ?_, he⟩
++  intro j hj hq
++  exact hcut j hj ⟨q, hq, rfl⟩
+ 
+ /-- The cleanup's return seam is absorbing, so its exact restoration can be
+ exported with positive duration and no earlier return-state visit. -/
+@@ -5886,17 +5884,7 @@
+     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+       tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+ 
+ /-- The silent comparator reaches its exact endpoint on its first visit to
+ either Boolean return state, after a positive number of steps.
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -2237,7 +2237,7 @@
+         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+   ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+     (pairDiagTM_computes x).mono (by omega), fun x t => by
+-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
++    rw [pairDiagTM_spaceUsed]; omega⟩
+ 
+ /-- **P8 space row, threaded length check** (design
+ §12 R3; annotates `Turing.FinTM.computesFunInTime_pairLenCheck`). The
+@@ -2337,7 +2337,7 @@
+       ∀ (x : List Bool) (t : ℕ),
+         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+   ⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
+-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
++    rw [incFixedTM_spaceUsed]; omega⟩
+ 
+ /-- **Threaded-map space row** (design §12 R3;
+ annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
+@@ -2407,26 +2407,6 @@
+     fun x t => (splitSolveTM_spaceUsed C e x t).trans ?_⟩
+   rw [Nat.add_mul (20 : ℕ) (23 * (splitSolveTM C e).k), Nat.mul_assoc 23]
+   exact Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
+-
+-/-- **W2 space row** (design §12 R3, decision 12.3;
+-annotates `Turing.FinTM.redirectTM` beside its
+-`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
+-no space, per tape and exactly: the redirected machine's tape actions are
+-the source's verbatim, before and after the source halt.
+-
+-**Proof sketch.** `redirect_run`'s configuration correspondence preserves
+-work tapes and heads at every time (the live loop is stationary and the
+-simulation phase copies the source's tape actions), so the two head
+-trajectories coincide pointwise and the visited images agree. -/
+-theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
+-    (x : List Bool) (t : ℕ) (i : Fin M.k) :
+-    (redirectTM M haltOn).tm.spaceUsedByTape
+-        ((redirectTM M haltOn).tm.initCfg x) t i
+-      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+-  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+-  congr 1
+-  ext p
+-  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]
+ 
+ /-- **W3 space row** (design §12 R3, decision 12.3;
+ annotates `Turing.FinTM.computesFunInTime_cond`). Given space bounds for

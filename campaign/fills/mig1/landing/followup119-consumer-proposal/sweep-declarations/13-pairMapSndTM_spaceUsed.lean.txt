@@ -1,0 +1,119 @@
+theorem pairMapSndTM_spaceUsed {Mg : FinTM Bool} (Sg : ℕ → ℕ)
+    (hgs : ∀ (y : List Bool) (t : ℕ), Mg.tm.spaceUsed (Mg.tm.initCfg y) t ≤ Sg y.length)
+    (hSg : Monotone Sg) (x : List Bool) (t : ℕ) :
+    (pairMapSndTM Mg).tm.spaceUsed ((pairMapSndTM Mg).tm.initCfg x) t ≤
+      Sg x.length + 22 * (x.length + 1) := by
+  let M := fwdMapTM Mg true
+  change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _
+  let D := 5 * (x.length + 1)
+  have h0 (i : Fin M.k) : (M.tm.initCfg x).workTapePos i = 0 := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+  have hshort (v : ℕ) (hv : v ≤ D) (i : Fin M.k) :
+      -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+      (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+    have h := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc M.tm (M.tm.initCfg x) v i)
+    rw [h0, zero_sub, zero_add] at h
+    constructor <;> omega
+  -- The payload bank's origin is the source's initial head cell.
+  have horigin {y : List Bool} (i : Fin Mg.k) :
+      (0 : ℤ) ∈ Mg.tm.visitedByTapeHead (Mg.tm.initCfg y) t i := by
+    refine (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨0, Nat.zero_le _, ?_⟩
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+  cases hd : pairDecode x with
+  | none =>
+    obtain ⟨u, hu, hh, _, heq⟩ := fwdMap_reject Mg x hd
+    have hheads (v : ℕ) (i : Fin M.k) :
+        -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) i
+      · rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+        exact hshort u hu i
+    have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg x) t i := by
+      intro z hz
+      obtain ⟨v, _, rfl⟩ := (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mp hz
+      change ((fwdMapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+      rw [heq v, fwdMapSetup_heads]
+      exact horigin i
+    have hs := fwdMap_space Mg x x t D (Sg x.length)
+      (fun v _ => hheads v _) (fun v _ => hheads v _) hp (hgs x t)
+    dsimp only [D] at hs
+    omega
+  | some ab =>
+    rcases ab with ⟨a, b⟩
+    obtain ⟨u, hu, hinit, hprefix⟩ := fwdMap_launch Mg x a b hd
+    have hlen : a.length ≤ x.length ∧ b.length ≤ x.length := by
+      have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
+      rw [length_pairEncode] at h
+      omega
+    have htag : VirtualTag (Mg.tm.initCfg b).inputPos true := by
+      refine (VirtualTag_iff _ _).mpr ⟨fun h => ?_, fun _ => rfl⟩
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] at h
+      exact absurd h one_ne_zero
+    have hrun (v : ℕ) : ∃ tag,
+        M.tm.runFrom (M.tm.initCfg x) (u + v) =
+          fwdMapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) v) tag
+            ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+      obtain ⟨tag, _, he⟩ := fwdMapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true htag
+        (⟨x.length + 1, by omega⟩) a (pairEncode a []) v
+      refine ⟨tag, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hinit]
+      exact he
+    have ha (v : ℕ) : -(D : ℤ) ≤
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) _
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_left]
+        dsimp only [D]
+        constructor <;> omega
+    have hb (v : ℕ) : -(D : ℤ) ≤
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) _
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_buffer]
+        have hp := (Mg.tm.runFrom (Mg.tm.initCfg b) (v - u)).inputPos.isLt
+        dsimp only [D]
+        constructor <;> omega
+    -- Each payload-bank head is either still at its source origin or is
+    -- exactly a source position at a time no greater than this horizon.
+    have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg b) t i := by
+      intro z hz
+      obtain ⟨v, hvt, rfl⟩ := (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mp hz
+      by_cases hvu : v ≤ u
+      · change ((fwdMapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+        rw [hprefix v hvu, fwdMapSetup_heads]
+        exact horigin i
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_right]
+        exact (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨v - u, by omega, rfl⟩
+    have hs := fwdMap_space Mg x b t D (Sg x.length)
+      (fun v _ => ha v) (fun v _ => hb v) hp ((hgs b t).trans (hSg hlen.2))
+    dsimp only [D] at hs
+    omega
+
+/-- **C1, the threaded map combinator** (round-2
+addition per round-1 finding 3 — the data-retaining assembly the
+extractors deliberately do not provide: sequential composition yields
+`g (f z)` only, never simultaneous access to a retained component). Given
+a machine for `g`, transform a pair's payload while carrying its head
+component unchanged; malformed inputs yield `[]`. Monotonicity of `Tg`
+converts the payload-length bound `|b| ≤ |z|` into a time bound, exactly
+as in `Turing.FinTM.computesFunInTime_comp`.
+
+**Construction sketch.** Parse `pairEncode a b` onto two work tapes,
+silent until the separator validates; emit doubled `a` and the separator;
+then run the `g`-machine on the buffered `b` through clamped virtual input,
+forwarding its emissions. The witness is `Turing.FinTM.pairMapSndTM` with
+coefficient `22` (`Turing.FinTM.pairMapSndTM_computes`). -/
