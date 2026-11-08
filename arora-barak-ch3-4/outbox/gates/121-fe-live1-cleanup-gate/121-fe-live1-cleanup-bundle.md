@@ -3308,15 +3308,27 @@ actual executions. Reproduction-tools supplies the checking helpers, exact commi
 lean-toolchain/lake-manifest and sanitized environment example. Later records-only changes
 have no Lean delta from MAC8; later source merges require the standing current-tree check.
 
+## Record-completeness correction and replacement
+
+The original816-section prompt is **VOID**. A publication precheck on a later packet
+revealed that Git had skipped50 FE rawQA `.lean.txt` captures under literal `.claude`
+paths, plus8 historical Mathlib captures under `.lake` in Ladner records. Every byte
+matches its existing frozen manifest/total map. The original FE bundle’s complete
+encoded QA archives already preserved all50 FE sources losslessly; the skipped raw
+copies are now also explicitly tracked at the replacement records pin. No source,
+proof boundary, replay, metadata or current33 comparison changed. The correction
+receipt under campaign/status/2026-11-08-overnight/ lists every exact path/hash/binding.
+This replacement uses that complete records tree and the same actual Lean source.
+
 ## ===== campaign/gates/121-fe-live1-cleanup/STATUS.md =====
 
 # Gate121
 
-Prepared for Codex audit; final publication binding is supplied by the exchange README and issued prompt. No external audit dispatched here.
+Earlier816-section prompt **VOID**; final replacement in preparation.
 
 **Not yet clear to merge: #241 — external audit pending.**
 
-Source `d64dff4fbef865d815c6a561ce8037ea1bae07a2`; nine private proofs/four owners; actual157/static0/35; selected50 exact. Completed current33 comparison:2433 eligible declarations,2110 directed pairs,462920 reproduced chars;8new/5gone/2102 persistent/0 score changes, all13 deltas source-dispositioned. Whole-population/family absence is not claimed.
+Source and validation are unchanged. Fifty rawQA data copies are now explicitly tracked; the original encoded QA archives already preserved their exact content. Final replacement binds all retained files to the new records pin.
 
 ## ===== campaign/gates/121-fe-live1-cleanup/PATH-MAP.json =====
 
@@ -1373158,4 +1373170,428 @@ print(json.dumps({'path':str(O),'manifestSHA256':h((O/'MANIFEST.json').read_byte
   "source_changes": false,
   "all_13_pair_dispositions_reviewed_by_root": true,
   "no_new_debt_ruling": true
+}
+
+## ===== campaign/status/2026-11-08-overnight/record-completeness-correction.json =====
+
+{
+  "utc": "2026-11-08T17:19:06.782213+00:00",
+  "issue": "Git ignored record-data captures beneath literal .claude or .lake path components; standard add skipped58 files.",
+  "verified_data_files": 58,
+  "FE121_raw_QA_captures": 50,
+  "Mathlib_captures": 8,
+  "all_58_bound_to_existing_frozen_manifests_or_total_path_map": true,
+  "unique_FE_content_already_recoverable_from_original_bundled_encoded_QA_archives": true,
+  "library_source_changed": false,
+  "Lean_or_screen_failure": false,
+  "all_computations_unchanged": true,
+  "fix": "Explicitly force-track these exact58 UTF8 .lean.txt data files and check every expected record payload before final publication. Reissue gate121 with a fresh records pin and explanatory receipt; earlier816-section promptVOID. Gate128 was not yet published.",
+  "files": [
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/Switching.lean.txt",
+      "bytes": 73433,
+      "sha256": "ceb040653ed1b1a4ea82324daf3db063eae8fac303b9c1c2a854b6f6c3549d48",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/Switching.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib.lean.txt",
+      "bytes": 598,
+      "sha256": "213e9cf0e468793fbd49eabdcf61ea360f17b8b492df816488a44ea2a1c8d596",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/ArrowTheorem.lean.txt",
+      "bytes": 32004,
+      "sha256": "7c6b10db4c18c4ce73102868c165be4f2522e8a6af058a7c2475e9553525c291",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/ArrowTheorem.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Basic.lean.txt",
+      "bytes": 45403,
+      "sha256": "87312ddc6ecae5fba0ec717d790d96ea80868ebfcf9cadfd66a7611bf2dfd9ce",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Basic.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Circuit.lean.txt",
+      "bytes": 8064,
+      "sha256": "a1ba6299e83af28731c5566dab1daadc8d41a0ac00e44cfbdac971579e2984e1",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Circuit.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Hypercontractivity.lean.txt",
+      "bytes": 46144,
+      "sha256": "aa29463252ac521a99331374955ac60c1c4c9c25adfb61c89a55e878339d50c9",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Hypercontractivity.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/KKL.lean.txt",
+      "bytes": 40018,
+      "sha256": "1ac2f19205cd110c7983dcbc8f7dface32d4e0337225431ab951d1a69f8e3cf5",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/KKL.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy 2.lean.txt",
+      "bytes": 97622,
+      "sha256": "2a84d4d96b281dd27db7ec2a907b55d7bc1c6655f608dfb649a1ae2a82d82693",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy 2.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy.lean.txt",
+      "bytes": 90508,
+      "sha256": "32b04b65c57a3546c9f80783b1b2b816658165b4b4e658e378b009a1fc9b2ab7",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching.lean.txt",
+      "bytes": 92499,
+      "sha256": "e997e506ec0701f7f120fe800b72e937aefffe8e33754a4536880570c14fb161",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/polylogIndep.lean.txt",
+      "bytes": 14165,
+      "sha256": "bcba1d606f014b55001bcad946b0fc2b8c5e3de1984ec95475e84b351fae1bcb",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/polylogIndep.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Basic.lean.txt",
+      "bytes": 8016,
+      "sha256": "f7159e22b6f0399e13f2bdcf60e550a98870de98a8e6374611ce1ccceae0f799",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Basic.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Entropy.lean.txt",
+      "bytes": 49743,
+      "sha256": "808795f845190e0cfd70499257cccdae017de7a3973f22f96b42aa97b0481554",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Entropy.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean.txt",
+      "bytes": 19021,
+      "sha256": "1500a337b23d3f7f3c7dc5d1f676acc8eaf9f0213c915c8aab478931189c0046",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/HammingBound.lean.txt",
+      "bytes": 16617,
+      "sha256": "df7fb923824176452daf260e874496f767768034aee62e0d97ebfb64879337bb",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/HammingBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/JohnsonBound.lean.txt",
+      "bytes": 18832,
+      "sha256": "76476182bc3332eef8c350b3d97e41ee668c2dbf08918a803fad648a73cbbf39",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/JohnsonBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/LinearCodes.lean.txt",
+      "bytes": 24822,
+      "sha256": "6a442a08b1fc598dddb73b80f77852967bdf722dee10549015fb33e6a50fb6ae",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/LinearCodes.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/ListDecoding.lean.txt",
+      "bytes": 17412,
+      "sha256": "2c4129de138c1e700ab483974ca494b79e9a2c4baf1076aca7bbe6c0f680c92c",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/ListDecoding.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumHamming.lean.txt",
+      "bytes": 21844,
+      "sha256": "44578c9bee471c2a0154d0088098bd392f7d7b3ac2362a5b11def3da1bb461c2",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumHamming.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean.txt",
+      "bytes": 51879,
+      "sha256": "2460452c6c4eebec2ccff40da9ed14dd2181f9e01a7aec759cab8178799297d2",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/SingletonBound.lean.txt",
+      "bytes": 6217,
+      "sha256": "450f080ff7531774437391351c230f98e8bd34cf2a9915ed1f4abb44031b6cbd",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/SingletonBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/lakefile.lean.txt",
+      "bytes": 438,
+      "sha256": "14a5198b7bdacf58838b7a140e895bfb14ef4f9cfbb41349b78ec739f2915d27",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/lakefile.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Main.lean.txt",
+      "bytes": 4469,
+      "sha256": "fb76c462acb0c1e4a27680b6f0f384fac6fb7446c165afa6807709c9e23ec24d",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Main.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Site.lean.txt",
+      "bytes": 22,
+      "sha256": "8ee7e3a089c8ec2e9750507fba3f5166785de48a270c3893a9654e08e31a033b",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Site.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Site/FrontPage.lean.txt",
+      "bytes": 2761,
+      "sha256": "eef752bf20bcc867571328e435b8b1eb0b3ba534af51e79da25f3aac0e42304d",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/BASE/.claude/worktrees/agent-a0bd528c/webpage/Site/FrontPage.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/Switching.lean.txt",
+      "bytes": 73433,
+      "sha256": "ceb040653ed1b1a4ea82324daf3db063eae8fac303b9c1c2a854b6f6c3549d48",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/Switching.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib.lean.txt",
+      "bytes": 598,
+      "sha256": "213e9cf0e468793fbd49eabdcf61ea360f17b8b492df816488a44ea2a1c8d596",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/ArrowTheorem.lean.txt",
+      "bytes": 32004,
+      "sha256": "7c6b10db4c18c4ce73102868c165be4f2522e8a6af058a7c2475e9553525c291",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/ArrowTheorem.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Basic.lean.txt",
+      "bytes": 45403,
+      "sha256": "87312ddc6ecae5fba0ec717d790d96ea80868ebfcf9cadfd66a7611bf2dfd9ce",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Basic.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Circuit.lean.txt",
+      "bytes": 8064,
+      "sha256": "a1ba6299e83af28731c5566dab1daadc8d41a0ac00e44cfbdac971579e2984e1",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Circuit.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Hypercontractivity.lean.txt",
+      "bytes": 46144,
+      "sha256": "aa29463252ac521a99331374955ac60c1c4c9c25adfb61c89a55e878339d50c9",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Hypercontractivity.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/KKL.lean.txt",
+      "bytes": 40018,
+      "sha256": "1ac2f19205cd110c7983dcbc8f7dface32d4e0337225431ab951d1a69f8e3cf5",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/KKL.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy 2.lean.txt",
+      "bytes": 97622,
+      "sha256": "2a84d4d96b281dd27db7ec2a907b55d7bc1c6655f608dfb649a1ae2a82d82693",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy 2.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy.lean.txt",
+      "bytes": 90508,
+      "sha256": "32b04b65c57a3546c9f80783b1b2b816658165b4b4e658e378b009a1fc9b2ab7",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching copy.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching.lean.txt",
+      "bytes": 92499,
+      "sha256": "e997e506ec0701f7f120fe800b72e937aefffe8e33754a4536880570c14fb161",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/Switching.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/polylogIndep.lean.txt",
+      "bytes": 14165,
+      "sha256": "bcba1d606f014b55001bcad946b0fc2b8c5e3de1984ec95475e84b351fae1bcb",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/BooleanAnalysis/polylogIndep.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Basic.lean.txt",
+      "bytes": 8016,
+      "sha256": "f7159e22b6f0399e13f2bdcf60e550a98870de98a8e6374611ce1ccceae0f799",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Basic.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Entropy.lean.txt",
+      "bytes": 49743,
+      "sha256": "808795f845190e0cfd70499257cccdae017de7a3973f22f96b42aa97b0481554",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/Entropy.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean.txt",
+      "bytes": 19021,
+      "sha256": "1500a337b23d3f7f3c7dc5d1f676acc8eaf9f0213c915c8aab478931189c0046",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/HammingBound.lean.txt",
+      "bytes": 16617,
+      "sha256": "df7fb923824176452daf260e874496f767768034aee62e0d97ebfb64879337bb",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/HammingBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/JohnsonBound.lean.txt",
+      "bytes": 18832,
+      "sha256": "76476182bc3332eef8c350b3d97e41ee668c2dbf08918a803fad648a73cbbf39",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/JohnsonBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/LinearCodes.lean.txt",
+      "bytes": 24822,
+      "sha256": "6a442a08b1fc598dddb73b80f77852967bdf722dee10549015fb33e6a50fb6ae",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/LinearCodes.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/ListDecoding.lean.txt",
+      "bytes": 17412,
+      "sha256": "2c4129de138c1e700ab483974ca494b79e9a2c4baf1076aca7bbe6c0f680c92c",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/ListDecoding.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumHamming.lean.txt",
+      "bytes": 21844,
+      "sha256": "44578c9bee471c2a0154d0088098bd392f7d7b3ac2362a5b11def3da1bb461c2",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumHamming.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean.txt",
+      "bytes": 51879,
+      "sha256": "2460452c6c4eebec2ccff40da9ed14dd2181f9e01a7aec759cab8178799297d2",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/QuantumSingleton.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/SingletonBound.lean.txt",
+      "bytes": 6217,
+      "sha256": "450f080ff7531774437391351c230f98e8bd34cf2a9915ed1f4abb44031b6cbd",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/TCSlib/ErrorCorrectingCodes/SingletonBound.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/lakefile.lean.txt",
+      "bytes": 438,
+      "sha256": "14a5198b7bdacf58838b7a140e895bfb14ef4f9cfbb41349b78ec739f2915d27",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/lakefile.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Main.lean.txt",
+      "bytes": 4469,
+      "sha256": "fb76c462acb0c1e4a27680b6f0f384fac6fb7446c165afa6807709c9e23ec24d",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Main.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Site.lean.txt",
+      "bytes": 22,
+      "sha256": "8ee7e3a089c8ec2e9750507fba3f5166785de48a270c3893a9654e08e31a033b",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Site.lean.txt"
+    },
+    {
+      "path": "campaign/gates/121-fe-live1-cleanup/review/qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Site/FrontPage.lean.txt",
+      "bytes": 2761,
+      "sha256": "eef752bf20bcc867571328e435b8b1eb0b3ba534af51e79da25f3aac0e42304d",
+      "binding": "campaign/gates/121-fe-live1-cleanup/PATH-MAP.json",
+      "logical_path": "qa/exports/HEAD/.claude/worktrees/agent-a0bd528c/webpage/Site/FrontPage.lean.txt"
+    },
+    {
+      "path": "campaign/gates/128-ladner-statements/review/evidence/prototype132/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt",
+      "bytes": 10009,
+      "sha256": "ea153350653e4132fd9a106c3366441ea6f618a393d78c77acd99bd0b91995cb",
+      "binding": "campaign/gates/128-ladner-statements/review/MANIFEST.json",
+      "logical_path": "evidence/prototype132/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt"
+    },
+    {
+      "path": "campaign/gates/128-ladner-statements/review/evidence/prototype132/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt",
+      "bytes": 20546,
+      "sha256": "8e0e2f7aa05dff8862f60a46058c880270e81c418646c5e9157615a8331ee29a",
+      "binding": "campaign/gates/128-ladner-statements/review/MANIFEST.json",
+      "logical_path": "evidence/prototype132/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt"
+    },
+    {
+      "path": "campaign/gates/128-ladner-statements/review/evidence/readiness149/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt",
+      "bytes": 10009,
+      "sha256": "ea153350653e4132fd9a106c3366441ea6f618a393d78c77acd99bd0b91995cb",
+      "binding": "campaign/gates/128-ladner-statements/review/MANIFEST.json",
+      "logical_path": "evidence/readiness149/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt"
+    },
+    {
+      "path": "campaign/gates/128-ladner-statements/review/evidence/readiness149/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt",
+      "bytes": 20546,
+      "sha256": "8e0e2f7aa05dff8862f60a46058c880270e81c418646c5e9157615a8331ee29a",
+      "binding": "campaign/gates/128-ladner-statements/review/MANIFEST.json",
+      "logical_path": "evidence/readiness149/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt"
+    },
+    {
+      "path": "campaign/items/dedup/overnight-2026-11-08/review/ladner-readiness/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt",
+      "bytes": 10009,
+      "sha256": "ea153350653e4132fd9a106c3366441ea6f618a393d78c77acd99bd0b91995cb",
+      "binding": "campaign/items/dedup/overnight-2026-11-08/review/ladner-readiness/MANIFEST.json",
+      "logical_path": "inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt"
+    },
+    {
+      "path": "campaign/items/dedup/overnight-2026-11-08/review/ladner-readiness/inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt",
+      "bytes": 20546,
+      "sha256": "8e0e2f7aa05dff8862f60a46058c880270e81c418646c5e9157615a8331ee29a",
+      "binding": "campaign/items/dedup/overnight-2026-11-08/review/ladner-readiness/MANIFEST.json",
+      "logical_path": "inputs/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt"
+    },
+    {
+      "path": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt",
+      "bytes": 10009,
+      "sha256": "ea153350653e4132fd9a106c3366441ea6f618a393d78c77acd99bd0b91995cb",
+      "binding": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/MANIFEST.json",
+      "logical_path": "inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Find.lean.txt"
+    },
+    {
+      "path": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt",
+      "bytes": 20546,
+      "sha256": "8e0e2f7aa05dff8862f60a46058c880270e81c418646c5e9157615a8331ee29a",
+      "binding": "campaign/items/dedup/overnight-2026-11-08/review/ladner-v2/MANIFEST.json",
+      "logical_path": "inputs/.lake/packages/mathlib/Mathlib/Data/Nat/Log.lean.txt"
+    }
+  ]
 }
