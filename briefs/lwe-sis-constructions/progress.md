@@ -40,7 +40,8 @@ The four campaign draft PRs target
   adapter proofs; both Codex statement and proof audits pass, with all 14
   obligations discharged.
 * [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic;
-  its statement audit passes, with twelve proof obligations entering fill.
+  its statement audit passes, with all twelve proof obligations now filled
+  and locally checked.
 
 All four have passing scoped statement audits, but none is marked clear to merge: source
 validation/ingestion/matching and applicable landing checks remain. No merge
@@ -56,6 +57,11 @@ No search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice
 basis or Gaussian preimage sampling has been introduced. The exact proposed
 shared probability-reader and source-registry diffs remain unapplied.
 
+The current scalar proof source is `ec72ed773a690c17ac253707350935cc9e0acb34`: a
+fresh 94-module sweep has zero owned admissions and seventeen inherited warnings;
+all 302 owned constants and sixteen backing contracts have only standard axioms.
+No proof-update publication, proof-audit dispatch or merge is claimed yet.
+
 **Not yet clear to merge — scoped audits pass; source-policy work, landing checks
-and user approval remain. The adapter proof gate is closed; the new scalar
-proof fill and its separate audit remain open.**
+and user approval remain. The adapter proof gate is closed; the scalar
+proof audit remains open.**

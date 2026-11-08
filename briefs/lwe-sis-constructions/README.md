@@ -5,15 +5,15 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-The active next statement draft is `cryptography/lwe-sis-dyadic-arithmetic` in
-`tcslib-lwe-sis-dyadic-arithmetic`, source
-`dbacd91218c19f0df106d316ce4ff0e22b869e66`: scalar addition, multiplication and
-modular subtraction, 18 declarations / 12 admitted obligations. A fresh 94-module
-sweep, 302-constant inventory and sixteen backing-contract probes pass. Its own
-statement audit passes 0/0/0/3 at exchange
-`1ac4e2e45df94d0b5f20259218d067843458c770`. It is draft PR #239; the twelve
-audited obligations now enter fill. See `fills/03-dyadic-arithmetic/` and the
-historical statement records under `gates/06-dyadic-arithmetic/`.
+The active dyadic arithmetic draft is locally proved on PR #239's branch,
+`cryptography/lwe-sis-dyadic-arithmetic`, in `tcslib-lwe-sis-dyadic-arithmetic`.
+Filled source `ec72ed773a690c17ac253707350935cc9e0acb34` discharges all twelve
+scalar obligations with the same eighteen declarations. A fresh 94-module sweep
+passes; all 302 owned constants and sixteen backing contracts use only standard
+axioms. Its statement audit passes 0/0/0/3 at exchange
+`1ac4e2e45df94d0b5f20259218d067843458c770`. The separate proof audit is prepared
+next, with fresh reviewer selection, publication and user dispatch pending. See
+`fills/03-dyadic-arithmetic/` and historical `gates/06-dyadic-arithmetic/`.
 
 All seven scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
@@ -131,6 +131,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — all seven scoped gates pass. Scalar proof fill/review,
+**Not yet clear to merge — all seven scoped gates pass. Scalar proof review,
 source ingestion/matching and relevant integration checks remain open.
 The user approves and merges PRs.**

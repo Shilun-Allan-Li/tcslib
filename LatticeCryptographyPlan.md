@@ -108,6 +108,11 @@ Encoding export is the only existing-file overlap. The returned statement gate
 passes 0/0/0/3 at exchange `1ac4e2e45df94d0b5f20259218d067843458c770`, with
 draft PR #239 targeting the central branch. Its twelve audited bodies may now
 be filled, keeping all definitions/signatures and issued inputs fixed.
+Those twelve bodies are now proved locally at
+`ec72ed773a690c17ac253707350935cc9e0acb34`: fresh 94-module sweep, zero owned
+admissions, all 302 owned constants and sixteen backing contracts only standard
+axioms. No new compiler auxiliary or import is added; the separate proof gate,
+source-policy work and user integration remain open.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -427,3 +432,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-08 (UTC) | User supplies the adapter proof report: PASS 0/0/0/3. Published PR #238 head `3350700f054ba07b31bcf23cab9f590afd998e28` and exchange `228c265d642013da76afa6cec976eaf11a8eb1b9` verified; rehashed all 101 sources and 146/199/174/106/86/82/9 nested evidence entries. All 14 proofs close their scoped gate. | No repair/native rerun/merge; scalar arithmetic may enter its next owned statement gate; N01–N03 and user integration remain open |
 | 2026-11-08 (UTC) | Isolated dyadic arithmetic statement branch from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited stack `8627edde9892607a699cf997c8dd5a8a2a700e26`. New source `dbacd91218c19f0df106d316ce4ff0e22b869e66`: 18 declarations / 12 admissions, 94 fresh modules, 16 standard-axiom backing contracts. No new Mathlib root or shared-owner API. | Statement gate prepared next; fresh worker choice/user dispatch and N01–N03 remain; no central push or merge |
 | 2026-11-07 (Pacific) | User resumes with dyadic scalar statement report PASS 0/0/0/3. PR #239 head `659770d616160be594eb1d6eff6fc78807992a26` and exchange `1ac4e2e45df94d0b5f20259218d067843458c770` verified; rehashed 102 frozen source files and 126/146/199/174/106/86/82/9 evidence entries. No statement correction. | Twelve frozen proof bodies enter fill on existing PR #239; no merge; N01–N03 retained |
+| 2026-11-07 (Pacific) | Filled all twelve audited scalar proofs at `ec72ed773a690c17ac253707350935cc9e0acb34`, with eighteen declarations and all definitions/signatures fixed. Fresh 94-module sweep (251.162 s), 302 constants and sixteen backing contracts only standard axioms; no new compiler auxiliary. Three passing development runs retained. | Separate proof audit prepared next on existing PR #239; no export/shared API/pin edit, push or merge; N01–N03 retained |
