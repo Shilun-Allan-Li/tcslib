@@ -1,0 +1,6 @@
+116:theorem pow_log_le_self (b : ℕ) {x : ℕ} (hx : x ≠ 0) : b ^ log b x ≤ x :=
+125:lemma log_lt_self (b : ℕ) {x : ℕ} (hx : x ≠ 0) : log b x < x :=
+134:theorem lt_pow_succ_log_self {b : ℕ} (hb : 1 < b) (x : ℕ) : x < b ^ (log b x).succ :=
+176:theorem pow_log_le_add_one (b : ℕ) : ∀ x, b ^ log b x ≤ x + 1
+180:theorem log_monotone {b : ℕ} : Monotone (log b) := by
+188:theorem log_mono_right {b n m : ℕ} (h : n ≤ m) : log b n ≤ log b m :=

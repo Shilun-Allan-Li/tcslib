@@ -1074,11 +1074,20 @@ existing next12.2c owner/window, before further SAT/Hardness fills.
 
 Eight separate draft source PRs are now open: #241–#247 for mechanical families and #249 for
 the approved Ladner statement skeleton (6 mathematical holes retained). Gates121–128 are
-reserved; nextfree129. Four Codex audits123/124/125/126 are published and their prompts issued;
-none is confirmed dispatched. All8PRs remain **Not yet clear to merge**. Other copy comparisons,
-mandatory #242 backwards-live companion repairs and final packets continue. A whole prospective
-chain passed257+23+2 actual modules without snapshot composition; any new source repair needs
-its own current tail. Use HANDOFF§0, queue.json and DISPATCH.md for exact pins/current status.
+reserved; nextfree129. Six Codex audits121/123/124/125/126/127 are published with full prompts;
+none is confirmed dispatched. All8PRs remain **Not yet clear to merge**. The mandatory #242
+companions are source-bound and its complete222→153 lineage passes. Final prospective chains
+NJ1→NJ2→NJ4 (seven heads) and NJ1→NJ2→NJ3→NJ5 (eight heads) pass without snapshot composition.
+Ladner49 comparison/777-payload packet and publication peer are complete; final128 publication
+and FH13 HEAD44/packet122 remain. Any source repair needs its own current tail. Use HANDOFF§0,
+queue.json and DISPATCH.md for exact pins/current status.
+
+A bounded continuation triage under
+`campaign/items/dedup/overnight-2026-11-08/review/continuation-triage/` records42 grouped
+dispositions and25 source bindings at the final-eight prospective tree. No further complete
+independent mechanical implementation was identified within that inspected controls/harvest
+set. Exact matches are already in these PRs; held cases retain concrete reader/decision/fill
+obstructions. This is not a whole-library absence or debt-completion claim.
 
 Seyoon sleeps; keep approved mechanical/statement work moving and mathematical holes for
 external fills. No self-dispatched fill. New API/header/name/import/home/route/debt questions

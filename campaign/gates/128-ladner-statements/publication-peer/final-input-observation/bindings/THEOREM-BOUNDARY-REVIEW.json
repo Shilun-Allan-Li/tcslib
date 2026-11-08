@@ -1,0 +1,235 @@
+{
+  "utc": "2026-11-08T16:51:11.275104+00:00",
+  "kind": "Read-only existing raw/source boundary qualification; no new Lean",
+  "raw_collector": "evidence/actual-validation162/ImportedInventory.lean.txt",
+  "raw_collector_SHA256": "74fc26b1a44cbf46e34fc452f29ce4af9af7c2656e09e4a54dee5495dc3f00ac",
+  "collector_exact_behavior": {
+    "seed": "For each of17 authored roots, ci.type and ci.value are seeded (line23).",
+    "definition": "Within TCSlib owner scope, traverse definition types and same-owner definition values (lines33–47); foreign definition RHS stays opaque.",
+    "encountered_theorem": "Traverse its type only; never its proof value, irrespective of owner (lines48–50).",
+    "non_TCSlib": "Skipped before traversal, as the standing rule10 guard scope is other-file TCSlib; explicit Core/Mathlib argument review is separate."
+  },
+  "all6_theorem_boundary_rows_verbatim": [
+    {
+      "name": "Complexity.mem_padSAT_iff",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.padSAT_congr"
+    },
+    {
+      "name": "Complexity.padSAT_congr._proof_1_1",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.padSAT_congr"
+    },
+    {
+      "name": "Complexity.ladnerH.eq_1",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.ladnerH_eq"
+    },
+    {
+      "name": "Complexity.padSAT_congr",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.ladnerH_eq"
+    },
+    {
+      "name": "Complexity.ladnerH_eq",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.ladnerH_le"
+    },
+    {
+      "name": "Complexity.SAT_H_intermediate",
+      "owner": "TCSlib.Complexity.Diagonalization.Ladner",
+      "proof_value_traversed": false,
+      "root": "Complexity.ladner"
+    }
+  ],
+  "four_authored_boundaries_independently_seeded_as_selected_roots": [
+    "Complexity.SAT_H_intermediate",
+    "Complexity.ladnerH_eq",
+    "Complexity.mem_padSAT_iff",
+    "Complexity.padSAT_congr"
+  ],
+  "two_non_authored_local_generated_boundaries": [
+    {
+      "helper": "Complexity.padSAT_congr._proof_1_1",
+      "kind": "Generated same-owner theorem, no proof-value traversal",
+      "source_origin": "Separator-length omega subproof in padSAT_congr",
+      "source_file": "source/HEAD/TCSlib/Complexity/Diagonalization/Ladner.lean.txt",
+      "literal_source_ranges": [
+        {
+          "start": 69,
+          "end": 90
+        },
+        {
+          "start": 75,
+          "end": 77
+        },
+        {
+          "start": 84,
+          "end": 86
+        }
+      ],
+      "ordinary_TCSlib_names_in_literal_source": [
+        "Complexity.SAT (context)",
+        "Complexity.padSAT (own definition)"
+      ],
+      "additional_foreign_TCSlib_ordinary_head_observed": false
+    },
+    {
+      "helper": "Complexity.ladnerH.eq_1",
+      "kind": "Generated same-owner equation theorem, no proof-value traversal",
+      "source_origin": "Own ladnerH definition via Nat.strongRecOn; used by own ladnerH rewrite in ladnerH_eq",
+      "source_file": "source/HEAD/TCSlib/Complexity/Diagonalization/Ladner.lean.txt",
+      "literal_source_ranges": [
+        {
+          "start": 107,
+          "end": 113
+        },
+        {
+          "start": 120,
+          "end": 131
+        }
+      ],
+      "ordinary_TCSlib_names_in_literal_source": [
+        "Complexity.ladnerMachine (own definition)",
+        "Complexity.padSAT (own definition)",
+        "Turing.FinTM.ComputesInTime"
+      ],
+      "additional_foreign_TCSlib_ordinary_head_observed": false
+    }
+  ],
+  "raw_definition_records": 146,
+  "distinct_TCSlib_definition_names": 16,
+  "ordinary_other_file_TCSlib_guard_union": [
+    "Complexity.NP",
+    "Complexity.NPComplete",
+    "Complexity.NPHard",
+    "Complexity.P",
+    "Complexity.PolyTimeComputable",
+    "Complexity.SAT",
+    "Complexity.expCode",
+    "Turing.CodeTM.toFinTM",
+    "Turing.FinTM.ComputesInTime"
+  ],
+  "guard_union_by_authored_root": {
+    "Complexity.SAT_H": [
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.SAT_H_eq": [
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.SAT_H_intermediate": [
+      "Complexity.NP",
+      "Complexity.NPComplete",
+      "Complexity.P",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.SAT_H_mem_NP": [
+      "Complexity.NP",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.SAT_mem_P_of_padSAT_NPHard": [
+      "Complexity.NPHard",
+      "Complexity.P",
+      "Complexity.PolyTimeComputable",
+      "Complexity.SAT"
+    ],
+    "Complexity.ladner": [
+      "Complexity.NP",
+      "Complexity.NPComplete",
+      "Complexity.P",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH": [
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH_bounded_of_mem_P": [
+      "Complexity.P",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH_eq": [
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH_le": [
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH_polyTime": [
+      "Complexity.PolyTimeComputable",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerH_unbounded_of_not_mem_P": [
+      "Complexity.P",
+      "Complexity.SAT",
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM",
+      "Turing.FinTM.ComputesInTime"
+    ],
+    "Complexity.ladnerMachine": [
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM"
+    ],
+    "Complexity.ladnerMachine_eq": [
+      "Complexity.expCode",
+      "Turing.CodeTM.toFinTM"
+    ],
+    "Complexity.mem_padSAT_iff": [
+      "Complexity.SAT"
+    ],
+    "Complexity.padSAT": [
+      "Complexity.SAT"
+    ],
+    "Complexity.padSAT_congr": [
+      "Complexity.SAT"
+    ]
+  },
+  "whole_literal_seal": {
+    "source": "evidence/actual-validation162/OwnerEdgesSealed.lean.txt",
+    "guard_line": 50,
+    "first_owner_namespace_line": 51,
+    "generated_helpers_elaborated_inside_actual_guard_section": true,
+    "all17_literal_authored_declarations_and6_private_edges_in_scope": true,
+    "actual_run": "evidence/actual-validation162/attempts/06-whole-owner-edges-sealed/run.json",
+    "new_run": false
+  },
+  "bounded_conclusion": "The existing raw146 type walk, full literal source and explicit-argument inspection disclose no additional other-file TCSlib ordinary head for these two generated boundaries. All17 authored roots and both source origins were inside the actual nine-head whole-file seal. There is no concrete unresolved guard gap warranting new Lean on this evidence. This is not recursive traversal or a complete compiled census of generated theorem proof values.",
+  "limits": [
+    "No generated/helper theorem proof value was rendered or recursively followed.",
+    "Four encountered authored theorems were checked by independent root seeding; that fact is distinct from recursive theorem-value closure.",
+    "Do not describe the footprint as unrestricted same-owner theorem-proof closure or all-library opacity."
+  ],
+  "no_new_policy_exception_or_approval": true
+}

@@ -30,7 +30,7 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #247 |127|`e16049ad20823b3e6abba171e328489746062080`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
-| #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|approved Ladner statement skeleton,17 declarations/6 mathematical holes;2 PASS/static0/6,895→896;17 AX records,whole9-head guard/18pairs/6 edge probes and QA pass;49 screen queued |
+| #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|approved Ladner statement skeleton,17 declarations/6 mathematical holes;2 PASS/static0/6,895→896;17 AX records,whole9-head guard/18pairs/6 edge probes and QA pass;actual49:0new/0gone/0scores; final777 packet+31peer complete/publication preparing |
 
 All source branches use `codex/`; fresh exact heads/status are in
 `campaign/status/2026-11-08-overnight/queue.json`. Keep each family PR separate. Mandatory
@@ -112,9 +112,10 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
 
 1. All source replays are complete and pass. Use the published prompt index for completed
    packets and preserve every changed-pair disposition. Finish any remaining publication.
-2. Finish serialized final44 BASE/HEAD for FH13 and49 HEAD for Ladner, then packets122/128.
+2. Finish FH13 finalHEAD44 and packet122; Ladner49 and packet777/peer31 are complete,
+   awaiting final128 publication.
    Live outputs: `/private/tmp/ab34-fh13-screen44` and
-   `/private/tmp/ab34-late-context-screen` (completed BASE/Nat48;Ladner49 queued).
+   `/private/tmp/ab34-late-context-screen` (completed BASE/Nat48/Ladner49).
    The earlier47 waiter was stopped before execution and is wait-only history.
 3. Adopt frozen complete peer inputs, stage/verify/publish each Codex bundle, issue its full
    prompt, and record that no user dispatch/merge is implied. Keep all copy deltas scoped.
