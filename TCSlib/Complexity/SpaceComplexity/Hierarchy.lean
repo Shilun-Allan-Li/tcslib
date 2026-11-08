@@ -713,11 +713,8 @@ private theorem f6_loop (K : ℕ) :
         · have hi' : i' = Fin.castAdd 2 (0 : Fin 1) := Fin.ext h0
           rw [hi']
           have hmono : M.visitedByTapeHead (M.initCfg x) t₀ 0 ⊆
-              M.visitedByTapeHead (M.initCfg x) t 0 := by
-            intro p hp
-            rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp ⊢
-            obtain ⟨u, hu, hp⟩ := hp
-            exact ⟨u, hu.trans ht₀, hp⟩
+              M.visitedByTapeHead (M.initCfg x) t 0 :=
+            MultiTapeTM.visitedByTapeHead_mono M (M.initCfg x) ht₀ 0
           have hb := M.spaceUsedByTape_le_spaceUsed (M.initCfg x) t 0
           rw [MultiTapeTM.spaceUsedByTape_eq_card] at hb
           have := (Finset.card_le_card ((hmirror 0).trans hmono)).trans hb
@@ -950,7 +947,8 @@ Deviations from the book's `SU(α, t, x) = M_α(x)` within `C · t` cells:
   `Turing.universal`, whose module docstring records why an arbitrary
   effective scheme forces this.
 * "Halts before using `t` cells" is read as "at most `s` visited cells"; the
-  budget is an argument of `SU`, as in the book, but is never read.
+  budget is an argument of `SU`, as in the book. Its encoding is scanned to locate
+  the suffix; its numerical value is not interpreted as a limit or clock.
 * The output is the simulated output itself: with no failure clause there is
   no verdict to tag. The former `[false]` clause, and with it the
   visited-interval counters, the core-count clock and the probe/replay of the
@@ -974,9 +972,10 @@ halt into a live return; the skip `Turing.skipTM` and the walk `Turing.walkTM` o
 extends the ruler to `true^ℓ` (`Turing.headerScanCfg_ruler`); `Turing.rewindTM` rewinds it. The
 prefix first returns at the startup's installed bank (the decoded machine's table and initial
 state; the target's bundled machine is that raw machine by `Turing.CodeTM.toFinTM_eq`), with the
-ruler `true^ℓ` and the input head at `ℓ + 1`, the virtual position `1` on `x`; the budget is never
-read. Its time is at most `C_H (ℓ + 1)(T_α + 2) + 4ℓ + 11` for the startup time `T_α` of `α`, so
-it uses at most `K + 4` times that many cells plus one
+ruler `true^ℓ` and the input head at `ℓ + 1`, the virtual position `1` on `x`. The numerical
+budget is not interpreted as a limit or clock. Its time `T` is at most
+`C_H (ℓ + 1)(T_α + 2) + 4ℓ + 11` for the startup time `T_α` of `α`, so it uses at most
+`(K + 4) * (T + 1)` cells
 (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`). (ii) **Loop.** The forwarding round loop of
 `Turing.StepBlock.exists_forwardLoopTM` on the first three bank tapes, hosted on the suffix `x` by
 the ruler device; the prefix endpoint is the host's presentation of the loop's initial encoding
