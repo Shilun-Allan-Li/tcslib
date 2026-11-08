@@ -1,5 +1,5 @@
 {
-  "utc": "2026-11-08T13:47:24.140007+00:00",
+  "utc": "2026-11-08T14:04:57.440035+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "8e5f2266b6ababbd0784f717e65a4903a0e3a0f0",
   "auditors": "Codex, selected by Seyoon for morning batch",
@@ -20,7 +20,7 @@
       "slug": "first-halt-reuse",
       "branch": "codex/ab34-first-halt-reuse",
       "head": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
-      "status": "Final10/8owners pushed; full boundaries/44pairs passed; actual222 replay and fresh43file screen queued/running",
+      "status": "Final10/8owners e0b full222 PASSED/static0/31; metadata10exact/44pairs passed;43screen pending",
       "note": "Seven held candidates restored to baseline in6whole files; old3/4/17 source evidence retained separately. ClockMachine mechanical FYI is Seyoon-owned."
     },
     {
@@ -33,7 +33,7 @@
       "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
       "pr": 243,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/243",
-      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
+      "status": "Ready to dispatch; verified final publication; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "safe-run",
@@ -65,7 +65,7 @@
       "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
       "pr": 245,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/245",
-      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
+      "status": "Ready to dispatch; verified final publication; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "restart-reader",
@@ -77,7 +77,7 @@
       "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
       "pr": 246,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/246",
-      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
+      "status": "Ready to dispatch; verified final publication; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "nat-reader",
@@ -93,7 +93,15 @@
       "head": "d725e9fa76c81623e95c350250853bec511ddc3c",
       "pr": 247,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/247",
-      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+      "status": "Old d725 full23/focusedNat.bit checks pass; full foreign-reader closure refinement private preflight active; no final current packet ready"
+    },
+    {
+      "gate": 128,
+      "pr": 249,
+      "slug": "ladner-statements",
+      "branch": "codex/ab34-ladner-statements",
+      "head": "63eb044c55032d8d9570e54e99d520522f2449e5",
+      "status": "Draft source17declarations/6mathholes; actual2replayPASS/static0/6/output896; freshmetadata/completeboundaries/QA/pack pending; notyetclear"
     }
   ],
   "held_decisions": [
@@ -103,16 +111,21 @@
   ],
   "replays": {
     "FE121": "Current d64 full157 PASS/static0/35; original11-root a93 full163/static49 historical",
-    "FH122": "Current e0b ten-root full222 running from wholeMAC8; old3-root full50 historical",
+    "FH122": "Exacte0b full222 PASS/static0/31/whole895",
     "ch7_123": "Exact7c4 full80 PASS/static0/31",
     "safe_124": "Exactcfa full80 PASS/static0/31",
     "word_125": "Exactb8b full26 PASS/static0/0",
     "restart_126": "Exact48d full18 PASS/static0/0",
     "nat_127": "Exactd725 full23 PASS/static0/0",
-    "joint7": "Local50998b prospective7-way/13owners full257 running; source not pushed/campaign not merged"
+    "joint7": "Local50998b prospective7-way/13owners full257 running; source not pushed/campaign not merged",
+    "Ladner128": "Exact63eb newmodule+facade2PASS/static0/6; input895unchanged/output896 withonlynewLadner objectadded"
   },
   "QA": "33-file full before/after screens running oneatatime; six source freezes/lints materialized; all captures remain data",
-  "ready_gates": [],
+  "ready_gates": [
+    123,
+    125,
+    126
+  ],
   "live_note": "All7source scopes settled; final10FH complete boundaries/44pairs and sourcefreeze pass; two wholeMAC8 replays active; finalscreens serialized.",
   "passed_replay_receipt": "six-replay-adoption-check.json",
   "worktree_aliases": {
@@ -129,24 +142,31 @@
     "smallpacks_andSafeRun_QA": "agent review_gate106_r4_return"
   },
   "issued_prompts": [
-    123
-  ],
-  "external_dispatch_confirmed": [],
-  "void_issued_prompts": [
-    123
-  ],
-  "gate123_note": "Original359-section prompt VOID; unissued373/SHA607f publication superseded for path qualification; replacement being built.",
-  "pending_current_prompt_issue": [
     123,
     125,
     126
   ],
+  "external_dispatch_confirmed": [],
+  "gate123_note": "Final replacement373/SHA057363 published at563eb; original359 promptVOID; priorunissued607f superseded.",
+  "pending_current_prompt_issue": [],
   "preparing_statement_gate": {
     "gate": 128,
     "name": "Ladner statement skeleton",
-    "PR": null,
+    "PR": 249,
     "six_math_holes": true,
     "SAT_reader_decision_dependency": "fill route, not statement source",
-    "auditor": "Codex"
+    "auditor": "Codex",
+    "source": "63eb044c55032d8d9570e54e99d520522f2449e5"
+  },
+  "current_prompts_issued": [
+    123,
+    125,
+    126
+  ],
+  "historical_void_prompt": {
+    "gate": 123,
+    "sections": 359,
+    "sha256": "7fae374f79e2b93f7581cd2df8f2ff7d92a4a6033aa5b82645acfd2d492f673c",
+    "record": "campaign/gates/123-ch7-run/publication-v1-VOID.json"
   }
 }
