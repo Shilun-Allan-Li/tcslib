@@ -62,7 +62,7 @@ No final records/exchange/bundle SHA or external dispatch is inferred.
 - Rule-10 scope: Six ordinary foreign definitions; complete five literal doc/header/body scopes in the original import context. Action.apply default simp unfolding removed in both variants. Twelve fresh positive and twelve expected-negative identities (12 pairs). The unpinned first fixture is quarantined and is NOT evidence.
 - Source/QA freeze: `review/qa/source-freeze.json`, exact complete BASE/HEAD owner and
   full 33-file source population under `review/source/`, plus declaration-freeze stdout.
-- Lint/size comparison: style-lint.txt: BASE/HEAD bytes identical; campaign-lint.txt: the sole delta is the informational owner line count 326→295; all other stdout is exact. sizes.json confirms 326→295. See qa/lint-comparison.json. Existing BASE findings are not new HEAD findings;
+- Lint/size comparison: style-lint.txt: BASE/HEAD bytes identical; campaign-lint.txt: the sole delta is the informational owner line count 326→295; all other stdout is exact. sizes.json confirms 326→295. See `review/qa/lint-comparison.json`. Existing BASE findings are not new HEAD findings;
   inspect both raw stdout files rather than treating nonzero historical output as
   a clean-tree certificate. No new lint execution is claimed by this helper.
 - Default simp argument: imports and source attributes are unchanged; once both
@@ -98,8 +98,8 @@ Preserve its raw files and the old shell preparation failure; neither is a PASS.
 | Turing.runFrom_of_halted | Turing.MultiTapeTM.runFrom_of_halt | TCSlib/Complexity/TuringMachine/Deterministic.lean:262 |
 | Turing.state_isSome_of_runFrom | Turing.MultiTapeTM.runFrom_state_ne_none_of_le | TCSlib/Complexity/TuringMachine/Finite.lean:201 |
 
-The full files at both revisions are under `source/BASE/TCSlib/...lean.txt` and
-`source/HEAD/TCSlib/...lean.txt`. All 33 screen-population files appear completely
+The full files at both revisions are under `review/source/BASE/TCSlib/...lean.txt` and
+`review/source/HEAD/TCSlib/...lean.txt`. All 33 screen-population files appear completely
 at both sides. The separate full replay context is in `review/replay/compiled-source/`.
 This preserves the five existing public names and headers as thin readers;
 it introduces no new wrapper/API and does not settle another run-law/debt family.

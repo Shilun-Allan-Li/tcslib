@@ -1,0 +1,29 @@
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+
+-- CONTROL initCfg_delta
+example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :
+    A.initCfg x = Cfg.init A.q₀ x := rfl
+
+-- CONTROL initCfg_equation
+example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :
+    (A.initCfg x).state = some A.q₀ := rfl
+
+-- CONTROL Cfg_init_delta
+example {n : ℕ} {P : Type} (q : P) (x : List Bool) :
+    (Cfg.init q x : Cfg n Bool P x) = ⟨some q, 1, fun _ _ => none, fun _ => 0, []⟩ := rfl
+
+-- CONTROL Cfg_init_equation
+example {n : ℕ} {P : Type} (q : P) (x : List Bool) :
+    (Cfg.init q x : Cfg n Bool P x).state = some q := rfl
+
+-- CONTROL mapState_delta
+example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :
+    c.mapState f = ⟨c.state.map f, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := rfl
+
+-- CONTROL mapState_equation
+example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :
+    (c.mapState f).state = c.state.map f := rfl

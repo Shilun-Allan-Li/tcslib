@@ -1,0 +1,7 @@
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:380:6: error: Type mismatch
+  LE.le.trans (spaceUsedByTape_le_spaceUsed (initCfg x) t i) hs
+has type
+  spaceUsedByTape (initCfg x) t i ≤ s
+but is expected to have type
+  (visitedByTapeHead (initCfg x) t i).card ≤ s
+GUARD_OK|47|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.spaceUsed"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.visitedByTapeHead"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.spaceUsedByTape"}]

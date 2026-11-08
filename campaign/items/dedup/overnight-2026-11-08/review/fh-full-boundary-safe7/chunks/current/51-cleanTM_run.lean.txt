@@ -1,0 +1,124 @@
+theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T : ℕ)
+    (hT : (M.runFrom (Cfg.init q V) T).state = none) (s : ℕ)
+    (hs : ∀ i, (M.visitedByTapeHead (Cfg.init q V) T i).card ≤ s) :
+    ∃ T', ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').state = none ∧
+      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').output =
+        (M.runFrom (Cfg.init q V) T).output ∧
+      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').workTapes = (fun _ _ => none) ∧
+      ((cleanTM M q₁).runFrom (Cfg.init (.init q) V) T').workTapePos = (fun _ => 0) ∧
+      ∀ t ≤ T', ∀ j, |((cleanTM M q₁).runFrom (Cfg.init (.init q) V) t).workTapePos j| ≤ s := by
+  classical
+  -- the machine `M` with start state `q`, to use the results stated for `initCfg`
+  set M' : MultiTapeTM k Bool S := { M with q₀ := q } with hM'
+  have hinit : M'.initCfg V = Cfg.init q V := MultiTapeTM.initCfg_with_q₀ M q V
+  have hrun : ∀ t, M'.runFrom (Cfg.init q V) t = M.runFrom (Cfg.init q V) t :=
+    fun t => MultiTapeTM.runFrom_with_q₀ M q (Cfg.init q V) t
+  obtain ⟨T0, hT0le, hlive, hcut⟩ :=
+    MultiTapeTM.exists_first_halt M (Cfg.init q V) hT
+  have hT0 : (M.runFrom (Cfg.init q V) T0).state = none :=
+    (congrArg Cfg.state hcut).trans hT
+  have hfinT : M.runFrom (Cfg.init q V) T = M.runFrom (Cfg.init q V) T0 := hcut.symm
+  have hvisit (t : ℕ) (j : Fin k) :
+      M'.visitedByTapeHead (M'.initCfg V) t j =
+        M.visitedByTapeHead (Cfg.init q V) t j := by
+    apply Finset.ext
+    intro z
+    simp only [MultiTapeTM.mem_visitedByTapeHead_iff, hinit, hrun]
+  -- positions of `M` stay in `[-(s-1), s-1]`
+  have hvis : ∀ j (z : ℤ), z ∈ M.visitedByTapeHead (Cfg.init q V) T0 j → |z| + 1 ≤ s := by
+    intro j z hz
+    have h1 := MultiTapeTM.abs_pos_lt_card_visited M' V T0 j (z := z)
+      (by rw [hvisit T0 j]; exact hz)
+    rw [hvisit T0 j] at h1
+    have h2 := Finset.card_le_card (MultiTapeTM.visitedByTapeHead_mono M (Cfg.init q V) hT0le j)
+    have h3 := hs j
+    change |z| < ((M.visitedByTapeHead (Cfg.init q V) T0 j).card : ℤ) at h1
+    omega
+  -- the simulation phase
+  have hsim : ∀ t ≤ T0, (cleanTM M q₁).runFrom (simCfg M q V 0) t = simCfg M q V t := by
+    intro t
+    induction t with
+    | zero => intro _; simp only [MultiTapeTM.runFrom_zero]
+    | succ t ih =>
+      intro ht
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), sim_step_clean M q₁ q V t
+        (hlive t (by omega))]
+  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 := by
+    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using
+      init_step M q₁ q V
+  -- the interval data of every tape at the halt
+  set c := M.runFrom (Cfg.init q V) T0 with hc
+  have htape : ∀ j : Fin k, ∃ a b : ℤ, a ≤ 0 ∧ 0 ≤ b ∧ -(s : ℤ) ≤ a - 1 ∧ b + 1 ≤ s ∧
+      a ≤ c.workTapePos j ∧ c.workTapePos j ≤ b ∧
+      wr (if markSet (visB M q V T0 j) (c.workTapePos j) = some true then none
+        else some (some false)) (markSet (visB M q V T0 j)) (c.workTapePos j) = markI a b ∧
+      ∀ z, c.workTapes j z ≠ none → a ≤ z ∧ z ≤ b := by
+    intro j
+    obtain ⟨a, b, ha, hb, haU, hbU, hU⟩ := visited_interval M q V T0 j
+    have hva := hvis j a haU
+    have hvb := hvis j b hbU
+    have hpos : c.workTapePos j ∈ M.visitedByTapeHead (Cfg.init q V) T0 j := by
+      simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+      exact ⟨T0, by omega, rfl⟩
+    have hUeq : insert (c.workTapePos j) (visB M q V T0 j) =
+        M.visitedByTapeHead (Cfg.init q V) T0 j := by
+      simp only [visB, MultiTapeTM.visitedByTapeHead, Finset.range_add_one, Finset.image_insert, hc]
+    have hna := neg_abs_le a
+    have hnb := le_abs_self b
+    refine ⟨a, b, ha, hb, by omega, by omega,
+      ((hU _).mp hpos).1, ((hU _).mp hpos).2, ?_, ?_⟩
+    · rw [wr_markSet, hUeq]
+      funext z
+      simp only [markSet, markI, hU]
+    · intro z hz
+      have hmem := MultiTapeTM.mem_visited_of_ne_none M' V T0 j z
+        (by rw [hinit, hrun]; exact hz)
+      rw [hvisit T0 j] at hmem
+      exact (hU z).mp hmem
+  have hstg0 : simCfg M q V T0 = stg 0 c.inputPos c.workTapes
+      (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output := by
+    simp only [simCfg, stg, stSt, simSt, ← hc, hT0, Nat.not_lt_zero, ↓reduceIte]
+    try rfl
+  obtain ⟨T₂, hb₂, hr₂⟩ := stages_run M q₁ c.inputPos c.workTapes
+    (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output s htape (by omega) k 0 (by omega)
+  have hfinal : (stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos
+      c.output : Cfg (k + k) Bool (CleanSt S k) V) = ccfg none c.inputPos (fun _ _ => none)
+        (fun _ => 0) (fun _ _ => none) (fun _ => 0) c.output := by
+    simp only [stg, stSt, lt_self_iff_false, ↓reduceDIte, Fin.is_lt, ↓reduceIte]
+  have hrun_total : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) (1 + (T0 + T₂)) =
+      ccfg none c.inputPos (fun _ _ => none) (fun _ => 0) (fun _ _ => none) (fun _ => 0)
+        c.output := by
+    rw [MultiTapeTM.runFrom_add, hstart, MultiTapeTM.runFrom_add, hsim T0 le_rfl, hstg0, hr₂,
+      hfinal]
+  refine ⟨1 + (T0 + T₂), ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hrun_total]; rfl
+  · rw [hrun_total, hfinT]; rfl
+  · rw [hrun_total]; funext j z
+    refine Fin.addCases (fun r => ?_) (fun r => ?_) j <;>
+      simp only [ccfg, Fin.append_left, Fin.append_right]
+  · rw [hrun_total]; funext j
+    refine Fin.addCases (fun r => ?_) (fun r => ?_) j <;>
+      simp only [ccfg, Fin.append_left, Fin.append_right]
+  · apply Complexity.LogProg.runFrom_forall_append (Q := PB (s : ℤ))
+    · intro t ht
+      rcases Nat.lt_or_ge t 1 with h | h
+      · obtain rfl : t = 0 := by omega
+        intro j; simp [Cfg.init]
+      · obtain rfl : t = 1 := by omega
+        rw [hstart]
+        exact PB_ccfg _ _ _ _ _ _ _ _ (fun j => by simp [Cfg.init]) (fun j => by simp [Cfg.init])
+    rw [hstart]
+    apply Complexity.LogProg.runFrom_forall_append (Q := PB (s : ℤ))
+    · intro t ht
+      rw [hsim t ht]
+      have hb : ∀ j, |(M.runFrom (Cfg.init q V) t).workTapePos j| ≤ s := by
+        intro j
+        have : (M.runFrom (Cfg.init q V) t).workTapePos j ∈
+            M.visitedByTapeHead (Cfg.init q V) T0 j := by
+          simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+          exact ⟨t, by omega, rfl⟩
+        have := hvis j _ this
+        omega
+      exact PB_ccfg _ _ _ _ _ _ _ _ hb hb
+    rw [hsim T0 le_rfl, hstg0]
+    exact hb₂
