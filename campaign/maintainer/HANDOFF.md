@@ -9,6 +9,13 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**RELOCATION CHECKPOINT — Seyoon confirmed dispatch of BOTH Codex audits and is closing this chat. Resume only when he returns.**
+
+Gate106round4 (#215) and gate118 (#233) are DISPATCHED, awaiting findings Markdown. Exact immutable input/source/records/exchange pins and issued prompts are in each gate's publication/dispatch/prompt files. No new source, replay, screen, fill or background work is started for relocation. All own agents/checks finished; all source, evidence and audit inputs are pushed. #235 remains merged/MAC6 current. #215/#233 are NOT yet clear to merge while their external audits are open. On return, inspect the inbox, review incoming reports with subagents in parallel, and preserve the existing current-context/replay pins. Nextfree121.
+
+Earlier readiness wording below is historical; explicit user dispatch confirmation above supersedes it.
+
+
 **LATEST relocation checkpoint: both Codex audit prompts published/issued; no own Lean/screen jobs remain.**
 
 - #235 is MERGED atdf4341236e04a861e65e29d58b35a713f14c819c. Gate120CLOSED PASS0/0/0/20; exact wholeMF63→MAC6 adoption895 objects, no newelaboration/splice.
