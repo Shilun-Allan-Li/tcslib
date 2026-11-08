@@ -1,0 +1,119 @@
+{
+  "status": "FROZEN_R1_ATTACHMENT_MAPPING_BLOCKER",
+  "findings": [
+    {
+      "id": "R1-PARSER-01",
+      "severity": "BLOCKER_FOR_DECLARATION_ATTACHMENT_USE",
+      "cause": "Inline attribute declaration classified as attribute-only and folded into following declaration",
+      "invalid_historical_mapping_count": 3,
+      "rows": [
+        {
+          "file": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+          "historical_source_key": "Complexity.BinArith.uHead_nil",
+          "incorrect_mapped_canonical": "Complexity.BinArith.decodeNat_eq",
+          "incorrect_current_envelope": [
+            235,
+            275
+          ],
+          "incorrect_current_decl_line": 265,
+          "observations": [
+            {
+              "source_line": 251,
+              "ref": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+              "envelopes": [
+                {
+                  "canonical": "Complexity.BinArith.decodeNat_eq",
+                  "range": [
+                    235,
+                    275
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+          "historical_source_key": "Complexity.BinArith.uRest_nil",
+          "incorrect_mapped_canonical": "Complexity.BinArith.decodeNat_eq",
+          "incorrect_current_envelope": [
+            235,
+            275
+          ],
+          "incorrect_current_decl_line": 265,
+          "observations": [
+            {
+              "source_line": 254,
+              "ref": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+              "envelopes": [
+                {
+                  "canonical": "Complexity.BinArith.decodeNat_eq",
+                  "range": [
+                    235,
+                    275
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "TCSlib/Cryptography/Candidates/Concrete.lean",
+          "historical_source_key": "TCSlib.Cryptography.Candidates.primesPairEquiv_apply_val",
+          "incorrect_mapped_canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+          "incorrect_current_envelope": [
+            340,
+            361
+          ],
+          "incorrect_current_decl_line": 348,
+          "observations": [
+            {
+              "source_line": 343,
+              "ref": "d8c4cfed793f04062e7e79b78344e5b593ff3ddc",
+              "envelopes": [
+                {
+                  "canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+                  "range": [
+                    340,
+                    361
+                  ]
+                }
+              ]
+            },
+            {
+              "source_line": 343,
+              "ref": "34cc6518dcceb62fcac4f1cf2dcd9c4c37971c94",
+              "envelopes": [
+                {
+                  "canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+                  "range": [
+                    340,
+                    361
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "native_replay_affected": false,
+      "raw_failure_or_source_loss": false,
+      "requires": "fresh R2 source-envelope parser/preflight and exact raw-line attachments; retain R1"
+    }
+  ],
+  "reviewed_manifest_sha256": "7a3a7dfc28bf29310271310da1541b1fdf20860d04968d5dd7a296c983030d42",
+  "primary_helpers": {
+    "attach_current_failures.py": "20bda947a1485651abfc5bdc7e587a654db074abd02472e28183b6bc2e749e0c",
+    "source_context.py": "096cdb4c5f909260dff27304fc32dc23ff1c4bc0be1a7e1e8facd95900f8efc2",
+    "failure_preflight.py": "e5902f79db43c3b559c43340b4801e2985829a3ac897edac6c29db0e25cc38a7"
+  },
+  "validation_sha256": "ded0944933c5c7cd7f911a6846d134626945532ea36bafaef1772f24ef694986",
+  "independent_raw_ranges_verified": 230,
+  "range_bytes_do_not_prove_identity": true,
+  "historical_keys_retained": 115,
+  "all21_broad_contexts_differ": true,
+  "remaining_source_identity_or_inheritance_clearance": false,
+  "reviewed_programs_executed": false,
+  "native_executed": false,
+  "merge_clearance": false
+}

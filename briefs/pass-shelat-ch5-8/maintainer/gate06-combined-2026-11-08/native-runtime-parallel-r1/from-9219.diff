@@ -1,0 +1,164 @@
+--- native-runtime-resume-r1/continue_native.py
++++ native-runtime-parallel-r1/continue_native.py
+@@ -1,5 +1,8 @@
+-"""UNEXECUTED continuation proposal; python3 -I continue_native.py bootstrap|local.
+-
++"""UNEXECUTED local-only parallel-policy successor; python3 -I continue_native.py local.
++
++Explicit user ruling supersedes global one-host exclusion. Retain one Lean per
++own actual output tree, global resource floors and own-child-only signaling.
++Accept only completed BOOT coordinator9219; never compare it to this new self.
+ Retain the failed R1. Adopt only its two validated successes. Delegate each new
+ check to pinned64b in a fresh call directory; retry only audited host collisions
+ or the exact prelaunch host-deferred case. No source/cache/copy operations.
+@@ -13,12 +16,13 @@
+ import os
+ import re
+ import signal
++import subprocess
+ import sys
+ import time
+ 
+ W = Path('/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4')
+ A = W/'.lake/ps-maintainer/gate06-combined-20261108'
+-HERE = A/'native-runtime-resume-r1'
++HERE = A/'native-runtime-parallel-r1'
+ SELF = HERE/'continue_native.py'
+ ENGINE = A/'native-runtime-proposal/run_combined_native.py'
+ ENGINE_SHA = '64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95'
+@@ -28,6 +32,11 @@
+ BOOT = A/'native-bootstrap-resume-r1'
+ LOCAL = A/'native-local-resume-r1'
+ HEAD = 'a495f3953afff46ad5dec2d29ac8a7f55bd8ae37'
++BOOT_COORDINATOR_SHA = '921959c0d81c4ffb7e2cedd38e540be69e19e8d62ec8f3743b7bd0ad6117369c'
++BOOT_RESULT_SHA = 'e1fa6d0282b1e683f971a3e4088ec5e36228615b279634745e1ff4ea1ace8cca'
++BOOT_MANIFEST_SHA = 'f26e727bea498ad3287c5d928ccb09dce11b3e36bec1574b13f10d36880bc70c'
++APPROVAL = HERE/'user-rulings-20261108-r1.json'
++APPROVAL_SHA = '3f0730086b324c2773bcf5239eadfdb86f7c026bbbb5bf2f344283372fa7f9fa'
+ COLLISION = 'HOST_COLLISION: another native operation started: '
+ 
+ 
+@@ -39,6 +48,33 @@
+     with p.open('x') as stream: stream.write(json.dumps(value, indent=2)+'\n')
+ def append(p, value):
+     with p.open('a') as stream: stream.write(json.dumps(value)+'\n')
++
++
++def own_tree_rows(text):
++    # Read actual argv, never process environments. Return only PID/PGID/executable.
++    rows = []; tree = str(A/'oleans-r1')
++    boundary = re.compile(r'(?<![A-Za-z0-9_./-])'+re.escape(tree)+r'(?=/|\s|$)')
++    for line in text.splitlines():
++        fields = line.strip().split(None,3)
++        if len(fields) != 4: continue
++        name = Path(fields[2]).name
++        native = name in {'lean','lake','leantar'} or (name == 'cache' and '/mathlib/' in fields[2])
++        if native and boundary.search(fields[3]):
++            rows.append({'pid':int(fields[0]),'pgid':int(fields[1]),'command':fields[2]})
++    return rows
++
++
++def own_tree_processes():
++    return own_tree_rows(subprocess.check_output(['ps','-axo','pid=,pgid=,comm=,args='],text=True))
++
++
++def scope_metadata():
++    return {'policy':'OWN_OLEAN_TREE_PARALLEL_HOST_APPROVED','TCSLIB_OLEANS':str(A/'oleans-r1'),
++            'parallel_other_trees_allowed':True,'one_native_per_own_tree':True,
++            'process_match':'actual ps argv contains own absolute tree path; record PID/PGID/executable only; no environment dump',
++            'approval_file':str(APPROVAL),'approval_sha256':APPROVAL_SHA,
++            'user_answer_verbatim':load(APPROVAL)['parallel_verification']['user_answer_verbatim'],
++            'resource_floor_bytes':4*1024**3,'own_process_only_signalling':True}
+ 
+ 
+ def collision_message(value):
+@@ -68,12 +104,13 @@
+     class Coordinator(E.Run):
+         def __init__(self, phase, out):
+             self.coordinator_sha, self.root_out = sha(SELF), out
+-            self.long_idle, self.call_number, self.history, self.success = True, 0, [], {}
++            self.long_idle, self.call_number, self.history, self.success = False, 0, [], {}
+             super().__init__(phase, out)
+ 
+         def quick_pins(self):
+             super().quick_pins()
+             need(sha(SELF) == self.coordinator_sha and sha(R1_PINS) == R1_PINS_SHA, 'Coordinator/R1 inventory changed')
++            need(sha(APPROVAL) == APPROVAL_SHA and sha(A/APPROVAL.name) == APPROVAL_SHA, 'User ruling changed')
+ 
+         def r1_files(self):
+             pins = load(R1_PINS)
+@@ -83,15 +120,15 @@
+             need(not (R1/'RESULT.json').exists(), 'Never turn failed R1 into a success aggregate')
+ 
+         def adaptive_idle(self, out):
+-            """Stronger replacement for E.wait_idle in memory; engine bytes stay64b."""
++            """Own-tree wait only:0.5s normally,30s after same-tree conflict;64b unchanged."""
+             beginning, short, notice = None, 0, 0.0
+             while True:
+                 active = E.native_processes()
+                 if active:
+                     self.long_idle = True; beginning = None; short = 0
+-                    append(out/'host-waits.jsonl', {'utc':E.now(),'active':active,'native_started':False,'idle_policy':'30s after observed activity'})
++                    append(out/'host-waits.jsonl', {'utc':E.now(),'active':active,'native_started':False,'idle_policy':'own tree only;30s after same-tree activity'})
+                     if time.monotonic()-notice >= 30:
+-                        print('HOST_WAIT: continuation waits for30s stable idle after foreign activity', flush=True); notice = time.monotonic()
++                        print('OWN_TREE_WAIT:30s stable idle after same-tree activity', flush=True); notice = time.monotonic()
+                     time.sleep(5); continue
+                 if self.long_idle:
+                     beginning = time.monotonic() if beginning is None else beginning
+@@ -164,7 +201,7 @@
+             while True:
+                 self.call_number += 1; call = self.root_out/'calls'/f'{self.call_number:06d}'
+                 call.mkdir(parents=True,exist_ok=False); self.out = call; self.attempts = []
+-                save(call/'COORDINATOR.json',{'coordinator_sha256':self.coordinator_sha,'engine_sha256':ENGINE_SHA,'key':spec['key'],'phase':self.phase,'idle_policy':'30s at acquisition/after foreign activity;0.5s between own successes'})
++                save(call/'COORDINATOR.json',{'coordinator_sha256':self.coordinator_sha,'engine_sha256':ENGINE_SHA,'key':spec['key'],'phase':self.phase,'idle_policy':'own tree only;0.5s initial/between own successes;30s after same-tree activity','execution_scope':scope_metadata()})
+                 error, row, status = None, None, None
+                 try:
+                     row = E.Run.check(self,spec['label'],spec['rel'],spec['digest'],spec['local'],spec['external'],pfr=spec['pfr'],expected_object=spec['expected'],markers=spec['marker'])
+@@ -231,7 +268,8 @@
+             for r in self.records.values():r['origin'] = 'G06_COPY_SUPPORTED_BY_THREE_EXACT_FRESH_REPRODUCTIONS'
+ 
+         def local_continuation(self):
+-            result = load(BOOT/'RESULT.json'); need(result['passed'] is True and result['phase'] == 'bootstrap-continuation' and result['head'] == HEAD and result['coordinator_sha256'] == self.coordinator_sha,'Same reviewed successful continuation aggregate required')
++            need(sha(BOOT/'RESULT.json') == BOOT_RESULT_SHA and sha(BOOT/'FILE-MANIFEST.json') == BOOT_MANIFEST_SHA,'Only the completed reviewed BOOT aggregate is accepted')
++            result = load(BOOT/'RESULT.json'); need(result['passed'] is True and result['phase'] == 'bootstrap-continuation' and result['head'] == HEAD and result['coordinator_sha256'] == BOOT_COORDINATOR_SHA,'Completed original9219 bootstrap required; not new self')
+             manifest = load(BOOT/'FILE-MANIFEST.json'); need(sha(BOOT/'FILE-MANIFEST.json') == result['file_manifest_sha256'],'Bootstrap continuation manifest changed')
+             for r in manifest:
+                 p = BOOT/r['path']; need(p.resolve(strict=True).is_relative_to(BOOT) and p.stat().st_size == r['bytes'] and sha(p) == r['sha256'],'Bootstrap continuation artifact changed')
+@@ -276,29 +314,30 @@
+             counts = collections.Counter(r['status'] for r in self.history)
+             files = [{'path':str(p.relative_to(self.root_out)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(self.root_out.rglob('*')) if p.is_file()]
+             save(self.root_out/'FILE-MANIFEST.json',files)
+-            result = {'passed':True,'phase':self.phase,'head':HEAD,'tree':str(E.TREE),'coordinator_sha256':self.coordinator_sha,'engine_sha256':ENGINE_SHA,'finished_utc':E.now(),'file_manifest_sha256':sha(self.root_out/'FILE-MANIFEST.json'),'R1_input_manifest_sha256':R1_PINS_SHA,'R1_successes_reused':2,'R1_failed_attempts_retained':1,'history_status_counts':dict(counts),'native_attempts_in_history':sum(r['native_started'] for r in self.history),'successful_native_attempts_in_history':counts['PASSED_REUSED']+counts['PASSED_NEW'],'required_bootstrap_successes':36,'required_fresh_local_successes':638 if self.phase=='local-continuation' else 0,'validated_local_objects':len(self.records),'external_package_objects':3637,'toolchain_object_leaves':173,'warm_G06_objects':437,'S2_objects_borrowed':0,'cold_full_library_run':False,'not_an_old_R1_RESULT':True,'host_only_retry_policy':'exact HOST_COLLISION or exact prelaunch HOST_DEFERRED; never source/setup/resource/pin/marker/signal errors'}
++            result = {'passed':True,'phase':self.phase,'head':HEAD,'tree':str(E.TREE),'coordinator_sha256':self.coordinator_sha,'engine_sha256':ENGINE_SHA,'finished_utc':E.now(),'file_manifest_sha256':sha(self.root_out/'FILE-MANIFEST.json'),'R1_input_manifest_sha256':R1_PINS_SHA,'R1_successes_reused':2,'R1_failed_attempts_retained':1,'history_status_counts':dict(counts),'native_attempts_in_history':sum(r['native_started'] for r in self.history),'successful_native_attempts_in_history':counts['PASSED_REUSED']+counts['PASSED_NEW'],'required_bootstrap_successes':36,'required_fresh_local_successes':638 if self.phase=='local-continuation' else 0,'validated_local_objects':len(self.records),'external_package_objects':3637,'toolchain_object_leaves':173,'warm_G06_objects':437,'S2_objects_borrowed':0,'cold_full_library_run':False,'not_an_old_R1_RESULT':True,'execution_scope':scope_metadata(),'bootstrap_coordinator_sha256':BOOT_COORDINATOR_SHA,'host_only_retry_policy':'exact HOST_COLLISION or exact prelaunch HOST_DEFERRED; never source/setup/resource/pin/marker/signal errors'}
+             if self.phase == 'local-continuation':result['bootstrap_aggregate_sha256'] = sha(BOOT/'RESULT.json')
+             save(self.root_out/'RESULT.json',result); print(json.dumps(result,indent=2),flush=True)
+     return Coordinator
+ 
+ 
+ def main():
+-    need(len(sys.argv) == 2 and sys.argv[1] in {'bootstrap','local'},'Choose bootstrap or local continuation')
++    need(len(sys.argv) == 2 and sys.argv[1] == 'local','This reviewed parallel successor is local-only')
+     need(Path.cwd().resolve() == W and Path(__file__).resolve() == SELF and sha(ENGINE) == ENGINE_SHA and sha(R1_PINS) == R1_PINS_SHA,'Wrong coordinator/engine/inputs')
++    need(sha(APPROVAL) == APPROVAL_SHA and sha(A/APPROVAL.name) == APPROVAL_SHA,'Missing exact user parallel ruling')
+     sys.dont_write_bytecode = True
+     spec = importlib.util.spec_from_file_location('pinned_g06_engine64b',ENGINE); E = importlib.util.module_from_spec(spec); spec.loader.exec_module(E)
+-    phase = 'bootstrap-continuation' if sys.argv[1]=='bootstrap' else 'local-continuation'; out = BOOT if sys.argv[1]=='bootstrap' else LOCAL
++    phase = 'local-continuation'; out = LOCAL
+     need(not out.exists(),'Fresh continuation output required; no reuse of a stopped phase')
+-    out.mkdir(); lease = {'runner_pid':os.getpid(),'phase':phase,'head':HEAD,'coordinator_sha256':sha(SELF),'utc':E.now()}; owned = False
++    out.mkdir(); lease = {'runner_pid':os.getpid(),'phase':phase,'head':HEAD,'coordinator_sha256':sha(SELF),'utc':E.now(),'execution_scope':scope_metadata()}; owned = False
+     def stop_signal(signum,_frame):raise InterruptedError('Coordinator received signal '+str(signum))
+     previous = {s:signal.signal(s,stop_signal) for s in (signal.SIGTERM,signal.SIGHUP)}
+     try:
+         save(E.LEASE,lease); owned = True; save(out/'START.json',lease)
+         run = coordinator_class(E)(phase,out); run.validate_frozen_inputs(); run.validate_sources(); run.r1_files()
+         save(out/'source-start.json',run.frozen_source); save(out/'resources-start.json',E.resources())
++        E.native_processes = own_tree_processes  # Explicit approved scope override, not global host exclusion.
+         E.wait_idle = run.adaptive_idle
+-        if phase == 'bootstrap-continuation':run.bootstrap_continuation()
+-        else:run.local_continuation()
++        run.local_continuation()
+         run.finish_continuation()
+     except BaseException as exc:
+         save(out/'STOP.json',{'utc':E.now(),'phase':phase,'error':repr(exc),'all_prior_attempts_retained':True,'automatic_retry_of_this_error':False}); raise

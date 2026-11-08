@@ -1,0 +1,120 @@
+{
+  "status": "R1_STATIC_REVIEW_BLOCKER_CONFIRMED_NO_HELPER_EXECUTION",
+  "reviewed_manifest_sha256": "7a3a7dfc28bf29310271310da1541b1fdf20860d04968d5dd7a296c983030d42",
+  "preflight_manifest_sha256": "940e3d0c164b20596ea89ea65e7caf4bb2582b57a3e6cfe731e1151677ae2629",
+  "primary_helpers": {
+    "attach_current_failures.py": "20bda947a1485651abfc5bdc7e587a654db074abd02472e28183b6bc2e749e0c",
+    "source_context.py": "096cdb4c5f909260dff27304fc32dc23ff1c4bc0be1a7e1e8facd95900f8efc2",
+    "failure_preflight.py": "e5902f79db43c3b559c43340b4801e2985829a3ac897edac6c29db0e25cc38a7"
+  },
+  "verified_content_addressed_blobs": 1348,
+  "raw_ranges_verified_independently_against_Git": 230,
+  "raw_range_roles": {
+    "Gate06:prior_head": 110,
+    "Gate06:prior_base": 110,
+    "S2:prior_head": 5,
+    "S2:prior_base_source": 5
+  },
+  "historical_root_keys": 115,
+  "invalid_exact_source_mapping_count": 3,
+  "invalid_exact_source_mappings": [
+    {
+      "file": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+      "historical_source_key": "Complexity.BinArith.uHead_nil",
+      "incorrect_mapped_canonical": "Complexity.BinArith.decodeNat_eq",
+      "incorrect_current_envelope": [
+        235,
+        275
+      ],
+      "incorrect_current_decl_line": 265,
+      "observations": [
+        {
+          "source_line": 251,
+          "ref": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+          "envelopes": [
+            {
+              "canonical": "Complexity.BinArith.decodeNat_eq",
+              "range": [
+                235,
+                275
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+      "historical_source_key": "Complexity.BinArith.uRest_nil",
+      "incorrect_mapped_canonical": "Complexity.BinArith.decodeNat_eq",
+      "incorrect_current_envelope": [
+        235,
+        275
+      ],
+      "incorrect_current_decl_line": 265,
+      "observations": [
+        {
+          "source_line": 254,
+          "ref": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+          "envelopes": [
+            {
+              "canonical": "Complexity.BinArith.decodeNat_eq",
+              "range": [
+                235,
+                275
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Cryptography/Candidates/Concrete.lean",
+      "historical_source_key": "TCSlib.Cryptography.Candidates.primesPairEquiv_apply_val",
+      "incorrect_mapped_canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+      "incorrect_current_envelope": [
+        340,
+        361
+      ],
+      "incorrect_current_decl_line": 348,
+      "observations": [
+        {
+          "source_line": 343,
+          "ref": "d8c4cfed793f04062e7e79b78344e5b593ff3ddc",
+          "envelopes": [
+            {
+              "canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+              "range": [
+                340,
+                361
+              ]
+            }
+          ]
+        },
+        {
+          "source_line": 343,
+          "ref": "34cc6518dcceb62fcac4f1cf2dcd9c4c37971c94",
+          "envelopes": [
+            {
+              "canonical": "TCSlib.Cryptography.Candidates.one_div_card_primes_le",
+              "range": [
+                340,
+                361
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "context_modules": 59,
+  "historical_failing_owner_modules": 21,
+  "all_historical_failing_complete_contexts_differ": true,
+  "no_helper_import_or_execution": true,
+  "no_native_or_current_failure_prediction": true,
+  "limits": [
+    "Raw-range byte verification is distinct from declaration identity/correct envelope.",
+    "All115 current inheritance/equality interpretations remain review-required; three named envelope identities are invalid in R1.",
+    "Remaining mappings are not attested as actual generated/private Lean Names by this lexical review."
+  ]
+}

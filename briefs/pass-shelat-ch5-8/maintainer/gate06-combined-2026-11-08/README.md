@@ -98,6 +98,22 @@ The437 warm local objects may now be used under the recorded provenance limits.
 A separately versioned local coordinator will apply the approved process scope
 for638 fresh local checks; no full root/Checks/Rule10 pass is yet asserted.
 
+The approved [local-only parallel successor](native-runtime-parallel-r1/README.md)
+(code24731171b60eb8da0ce731b633f60bc175c424d877e45fa357a0883d02ce83c5)
+is running the638 local checks. Its exact completed-bootstrap pins, unchanged
+source/object/dependency checks and own-tree process scope pass Root/peer review.
+Actual process-argv observation recognizes one native check in the selected tree;
+other-tree activity is permitted. Scope metadata includes the explicit user
+approval. The publication snapshot is progress only, not a complete result.
+
+**Correction before failure attachments:** [R1 helper review](rule10-failure-review-peer-r1/report.md)
+finds three wrong source-envelope labels caused by inline attributes. The
+[correction](failure-preflight-r1-correction.md) preserves all raw bytes and
+qualifies the older per-key equality claims. Use a new reviewed R2 parser and
+raw diagnostic lines for future attachments; R1 was never used for acceptance.
+This does not alter native source or the successful bootstrap. The complete
+failure/context review still awaits actual59-owner results.
+
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.
 Existing #248 remains draft/deferred; its cleanup code is not in this source.
 
