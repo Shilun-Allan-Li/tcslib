@@ -1,0 +1,88 @@
+/-- Loading, comparing and returning one arithmetic bit is a native linear
+computation on the complete encoded four-word argument.
+**Proof sketch.** Consume the banked comparator and native loader, then cut
+at the first completed verdict. Absorption of either completed source verdict
+rules out an earlier different verdict. The replay wrapper follows every
+preceding source transition and emits exactly one bit on its halting step. -/
+private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
+    let arg := clFields (List.ofFn w) ++ []
+    clA5CompareTM.ComputesInTime arg
+      [decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3))]
+      (35 * (arg.length + 1)) := by
+  classical
+  dsimp only
+  let arg := clFields (List.ofFn w) ++ []
+  let A := clPreparedTM clCmpTM
+  let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
+  let ret (v : Bool) : A.State := .inr (.inr (.inr v))
+  have widths (i : Fin 4) : (w i).length ≤ arg.length := by
+    simpa only [arg, List.append_nil] using
+      clFields_width (List.ofFn w) (w i) (List.mem_ofFn.mpr ⟨i, rfl⟩)
+  have size : clCmpSize w ≤ arg.length := Finset.sup_le (fun i _ => widths i)
+  obtain ⟨a, ha, he⟩ := clPrepared_run clCmpTM w [] arg.length widths (2 * clCmpSize w + 2)
+  change a ≤ 2 * arg.length + 4 + clCmpTM.k * (3 * arg.length + 7) at ha
+  change A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) =
+    clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length
+      (clCmpTM.tm.runFrom (Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w) (2 * clCmpSize w + 2)) at he
+  have init : Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w =
+      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := rfl
+  rw [init, clCmp_run] at he
+  let result := clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length (clCmpCfg arg 1 (.inr (.inr b)) w 0)
+  have hend : A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) = result := he
+  have idle (v : Bool) (cfg : Cfg A.k Bool A.State arg) (hc : cfg.state = some (ret v)) :
+      A.tm.step cfg = cfg := clPrepared_idle clCmpTM (.inr (.inr v))
+        (by intros; rfl) cfg hc
+  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)
+    (a + (2 * clCmpSize w + 2)) hend rfl (by simp [A, clPreparedTM, seamCompTM, ret]) (idle b)
+  have guard : ∀ j < t, ∀ v, (A.tm.runFrom (A.tm.initCfg arg) j).state ≠ some (ret v) := by
+    intro j hj v hv
+    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
+    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) =
+      A.tm.runFrom (A.tm.initCfg arg) j at stay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
+    have hstate := congrArg Cfg.state stay
+    change some (ret b) = _ at hstate
+    rw [hv] at hstate
+    have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
+    exact hf j hj (by rw [hb]; exact hv)
+  have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
+    delta Action.mapState
+    simp only [Option.map_id]
+    rfl
+  have run := MultiTapeTM.runFrom_mapState_of_agreeOn A.tm clA5CompareTM.tm (Function.Embedding.refl _)
+    (fun q => ∀ v, q ≠ ret v) (by
+      intro q hq inp work
+      change clA5CompareTM.tm.tr q inp work = (A.tm.tr q inp work).mapState id
+      cases q with
+      | inl q => rw [actionid]; rfl
+      | inr q =>
+        cases q with
+        | inl q => rw [actionid]; rfl
+        | inr q =>
+          cases q with
+          | inl q => rw [actionid]; rfl
+          | inr v => exact False.elim (hq v rfl))
+    (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
+  have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
+    cases cfg
+    simp [Cfg.mapState]
+  change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t =
+    (A.tm.runFrom (A.tm.initCfg arg) t).mapState id at run
+  rw [mapid, hr, mapid] at run
+  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := rfl
+  rw [hi] at run
+  have finish : clA5CompareTM.tm.step result = {result with state := none, output := [b]} := by
+    change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _
+    simp [Action.apply, show result.output = [] from rfl]
+  have hb : b = decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) := by
+    apply Bool.eq_iff_iff.mpr
+    simpa using clCmpVerdict_spec w
+  have hc : clA5CompareTM.ComputesInTime arg [b] (t + 1) := by
+    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_succ_eq_step', run, finish]
+    exact ⟨rfl, rfl⟩
+  rw [hb] at hc
+  apply hc.mono
+  change a ≤ 2 * arg.length + 4 + 4 * (3 * arg.length + 7) at ha
+  change t + 1 ≤ 35 * (arg.length + 1)
+  omega

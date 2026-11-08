@@ -1,0 +1,419 @@
+{
+  "BASE": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "HEAD": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
+  "current_owner_count": 4,
+  "authorized_private_target_count": 9,
+  "targets": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_first_anchor",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.enumCont_first_anchor.lean.txt",
+        "full_chunk_SHA256": "9b6e3f316ac08206ab2a27c6affc0e48ab4cd54544f282e2486806015ce0c028",
+        "source_start_offset": 102162,
+        "source_end_offset": 103480,
+        "source_start_line": 2027,
+        "literal_header": "private lemma enumCont_first_anchor {k : \u2115} {S : Type} {x : List Bool}\n    (tm stop : MultiTapeTM k Bool S) (qa : S)\n    (ha : \u2200 q, q \u2260 qa \u2192 \u2200 inp work, tm.tr q inp work = stop.tr q inp work)\n    (hs : \u2200 inp work, stop.tr qa inp work = controlAction 0 (some qa))\n    (c : Cfg k Bool S x) (T : \u2115) (hT : (stop.runFrom c T).state = some qa) :\n    \u2203 t \u2264 T, (\u2200 j < t, (tm.runFrom c j).state \u2260 some qa) \u2227\n      tm.runFrom c t = stop.runFrom c T ",
+        "literal_header_SHA256": "34b0505e6dc4e957a5ac9df7acb3cee21d36e3053608bdd8ea31f3994e4e66f3",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.enumCont_first_anchor.lean.txt",
+        "full_chunk_SHA256": "7f30c6a2909ad3bb42fdc055d139783186f0768afc7288bc1ca91c1219ef1a46",
+        "source_start_offset": 102162,
+        "source_end_offset": 103685,
+        "source_start_line": 2027,
+        "literal_header": "private lemma enumCont_first_anchor {k : \u2115} {S : Type} {x : List Bool}\n    (tm stop : MultiTapeTM k Bool S) (qa : S)\n    (ha : \u2200 q, q \u2260 qa \u2192 \u2200 inp work, tm.tr q inp work = stop.tr q inp work)\n    (hs : \u2200 inp work, stop.tr qa inp work = controlAction 0 (some qa))\n    (c : Cfg k Bool S x) (T : \u2115) (hT : (stop.runFrom c T).state = some qa) :\n    \u2203 t \u2264 T, (\u2200 j < t, (tm.runFrom c j).state \u2260 some qa) \u2227\n      tm.runFrom c t = stop.runFrom c T ",
+        "literal_header_SHA256": "34b0505e6dc4e957a5ac9df7acb3cee21d36e3053608bdd8ea31f3994e4e66f3",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_firstArrival",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Turing.xr_firstArrival.lean.txt",
+        "full_chunk_SHA256": "fb90fd8d4cc34189c55b707b01771786c17b5a8a637a741797ea4c6652ba9204",
+        "source_start_offset": 13378,
+        "source_end_offset": 14509,
+        "source_start_line": 269,
+        "literal_header": "private theorem xr_firstArrival {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (a : S) (hstat : \u2200 d : Cfg k Bool S x, d.state = some a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227 \u2200 u < T', (tm.runFrom c u).state \u2260 some a ",
+        "literal_header_SHA256": "461550aafa24de871336727412f7bbf338aa65595f4a4cdac18387d9e50d2874",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Turing.xr_firstArrival.lean.txt",
+        "full_chunk_SHA256": "eb145823451328efe88abe61aaac6a7105b48eaeee87810c337f3aba141bc8cf",
+        "source_start_offset": 13378,
+        "source_end_offset": 14246,
+        "source_start_line": 269,
+        "literal_header": "private theorem xr_firstArrival {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (a : S) (hstat : \u2200 d : Cfg k Bool S x, d.state = some a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227 \u2200 u < T', (tm.runFrom c u).state \u2260 some a ",
+        "literal_header_SHA256": "461550aafa24de871336727412f7bbf338aa65595f4a4cdac18387d9e50d2874",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "name": "Turing.xr_firstArrival'",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Turing.xr_firstArrival_prime.lean.txt",
+        "full_chunk_SHA256": "0a9a6207f639899176f52469684724f268f086be7713beff852fbf6d70d82a04",
+        "source_start_offset": 77371,
+        "source_end_offset": 78665,
+        "source_start_line": 1587,
+        "literal_header": "private theorem xr_firstArrival' {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (A : S \u2192 Prop)\n    (hstat : \u2200 d : Cfg k Bool S x, \u2200 a, d.state = some a \u2192 A a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') {a : S} (hc' : c'.state = some a)\n    (ha : A a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227\n      \u2200 u < T', \u2200 a', (tm.runFrom c u).state = some a' \u2192 \u00ac A a' ",
+        "literal_header_SHA256": "ffe4dfe1a373660f4459160bac610df3bfe2805b030c1676c2c2ba54c0b894a1",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Turing.xr_firstArrival_prime.lean.txt",
+        "full_chunk_SHA256": "e28b9f717952e31144a6d99420763834b19c8e782e7e05ca4d6a0dafb3f57fb2",
+        "source_start_offset": 77108,
+        "source_end_offset": 78028,
+        "source_start_line": 1586,
+        "literal_header": "private theorem xr_firstArrival' {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (A : S \u2192 Prop)\n    (hstat : \u2200 d : Cfg k Bool S x, \u2200 a, d.state = some a \u2192 A a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') {a : S} (hc' : c'.state = some a)\n    (ha : A a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227\n      \u2200 u < T', \u2200 a', (tm.runFrom c u).state = some a' \u2192 \u00ac A a' ",
+        "literal_header_SHA256": "ffe4dfe1a373660f4459160bac610df3bfe2805b030c1676c2c2ba54c0b894a1",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clBank_first",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.clBank_first.lean.txt",
+        "full_chunk_SHA256": "21697ca4b159f24e961397ee14528c153db1c1c24cfdbe764cc380156d122188",
+        "source_start_offset": 58069,
+        "source_end_offset": 59932,
+        "source_start_line": 1240,
+        "literal_header": "private lemma clBank_first {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (a : Fin l \u2192 Bool) (n : Fin l \u2192 \u2115) (W : \u2115)\n    (hW : \u2200 i, (n i).bits.length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2,\n      (\u2200 j, j < t \u2192 ((clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state \u2260\n          some (fun _ => some (0 : Fin 4))) \u2227\n      (clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =\n        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) ",
+        "literal_header_SHA256": "0d8e5cc94109d30e761af940338b34c7c773c26ff8db93d6bc624e5447cbd135",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.clBank_first.lean.txt",
+        "full_chunk_SHA256": "519dc220d08c06b321cd197e535ab02b370652b6a2c699f351b411dfabd328fb",
+        "source_start_offset": 58069,
+        "source_end_offset": 59723,
+        "source_start_line": 1240,
+        "literal_header": "private lemma clBank_first {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (a : Fin l \u2192 Bool) (n : Fin l \u2192 \u2115) (W : \u2115)\n    (hW : \u2200 i, (n i).bits.length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2,\n      (\u2200 j, j < t \u2192 ((clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state \u2260\n          some (fun _ => some (0 : Fin 4))) \u2227\n      (clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =\n        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) ",
+        "literal_header_SHA256": "0d8e5cc94109d30e761af940338b34c7c773c26ff8db93d6bc624e5447cbd135",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCopy_first",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.clCopy_first.lean.txt",
+        "full_chunk_SHA256": "baf384b5f5c9e60c96b811ba06ff67cce333990b27d23eefe0eacf3d9186a2fb",
+        "source_start_offset": 83011,
+        "source_end_offset": 85035,
+        "source_start_line": 1716,
+        "literal_header": "private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) :\n    \u2203 t \u2264 3 * w.length + 3, 0 < t \u2227\n      (\u2200 j, j < t \u2192 (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state \u2260 some (4 : Fin 5)) \u2227\n      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =\n        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) ",
+        "literal_header_SHA256": "cf1066e147dbcb2086e89e0593616b52499808294327923683ba3b238681a5d9",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.clCopy_first.lean.txt",
+        "full_chunk_SHA256": "6243508f991d0580e4cdd02bd6a962538b9d74f178229249637a37b3ffd736bd",
+        "source_start_offset": 82802,
+        "source_end_offset": 84310,
+        "source_start_line": 1710,
+        "literal_header": "private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) :\n    \u2203 t \u2264 3 * w.length + 3, 0 < t \u2227\n      (\u2200 j, j < t \u2192 (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state \u2260 some (4 : Fin 5)) \u2227\n      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =\n        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) ",
+        "literal_header_SHA256": "cf1066e147dbcb2086e89e0593616b52499808294327923683ba3b238681a5d9",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRow_first",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.clRow_first.lean.txt",
+        "full_chunk_SHA256": "a24847fa77ceada11ace4dd75c29211ece7386733bde30f8566f0adbcc9c90a8",
+        "source_start_offset": 104052,
+        "source_end_offset": 106071,
+        "source_start_line": 2141,
+        "literal_header": "private lemma clRow_first {l : \u2115} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin l \u2192 List Bool) (record : List Bool) (W : \u2115)\n    (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 l * (3 * W + 4), 0 < t \u2227\n      (\u2200 j, j < t \u2192 ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state \u2260\n        some (Fin.last l, (0 : Fin 5))) \u2227\n      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =\n        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) ",
+        "literal_header_SHA256": "2c5cf6eec0edef6d3bb63f1d1c2a3b24404c5ab8cfad65d437a5d2b7c89c0a75",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.clRow_first.lean.txt",
+        "full_chunk_SHA256": "4546105fe84b191278be308e9bd258e3b94d34182ad221975f718bcf4d0c1072",
+        "source_start_offset": 103327,
+        "source_end_offset": 104943,
+        "source_start_line": 2131,
+        "literal_header": "private lemma clRow_first {l : \u2115} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin l \u2192 List Bool) (record : List Bool) (W : \u2115)\n    (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 l * (3 * W + 4), 0 < t \u2227\n      (\u2200 j, j < t \u2192 ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state \u2260\n        some (Fin.last l, (0 : Fin 5))) \u2227\n      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =\n        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) ",
+        "literal_header_SHA256": "2c5cf6eec0edef6d3bb63f1d1c2a3b24404c5ab8cfad65d437a5d2b7c89c0a75",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clCmp_first",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.clCmp_first.lean.txt",
+        "full_chunk_SHA256": "122d5439fcd90b85a4665f88a7cd6f0715384bbc64e81f8243c0f65eef8c81ff",
+        "source_start_offset": 148190,
+        "source_end_offset": 151139,
+        "source_start_line": 2987,
+        "literal_header": "private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin 4 \u2192 List Bool) (W : \u2115) (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2, 0 < t \u2227 \u2203 b,\n      (b = true \u2194 clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) \u2227\n      (\u2200 j, j < t \u2192 \u2200 d, (clCmpTM.tm.runFrom\n        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state \u2260 some (.inr (.inr d))) \u2227\n      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =\n        clCmpCfg x p (.inr (.inr b)) w 0 ",
+        "literal_header_SHA256": "387d4c13b65fb8aad85abe1496519fc611dcb8a7197abc3a19b37d9ee3240b18",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.clCmp_first.lean.txt",
+        "full_chunk_SHA256": "de21be3a735bee39bdde52c3a20f6cd7978f24b730a47f6b76c46690d08caa67",
+        "source_start_offset": 147062,
+        "source_end_offset": 148735,
+        "source_start_line": 2970,
+        "literal_header": "private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin 4 \u2192 List Bool) (W : \u2115) (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2, 0 < t \u2227 \u2203 b,\n      (b = true \u2194 clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) \u2227\n      (\u2200 j, j < t \u2192 \u2200 d, (clCmpTM.tm.runFrom\n        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state \u2260 some (.inr (.inr d))) \u2227\n      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =\n        clCmpCfg x p (.inr (.inr b)) w 0 ",
+        "literal_header_SHA256": "387d4c13b65fb8aad85abe1496519fc611dcb8a7197abc3a19b37d9ee3240b18",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clFirst",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Complexity.clFirst.lean.txt",
+        "full_chunk_SHA256": "626941ec9b5d1cf6d0e7a381b5997e0856f67c6d00a1de311839066b01f9cc2a",
+        "source_start_offset": 164264,
+        "source_end_offset": 165727,
+        "source_start_line": 3280,
+        "literal_header": "private lemma clFirst {k : \u2115} {S : Type} [DecidableEq S] {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : \u2115)\n    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)\n    (hstart : start.state \u2260 some ret)\n    (hidle : \u2200 c : Cfg k Bool S x, c.state = some ret \u2192 tm.step c = c) :\n    \u2203 t \u2264 B, 0 < t \u2227 (\u2200 j < t, (tm.runFrom start j).state \u2260 some ret) \u2227\n      tm.runFrom start t = finish ",
+        "literal_header_SHA256": "2d7558fd4406f9fefecaa5ac5c9a2ec1de347b65e531787eaba6a49222f2e581",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Complexity.clFirst.lean.txt",
+        "full_chunk_SHA256": "e532c6a70fcec144ed73a11ec5ebdb70c3c0a5085dd2b43a38e8ac8bd4051e5b",
+        "source_start_offset": 161860,
+        "source_end_offset": 163033,
+        "source_start_line": 3243,
+        "literal_header": "private lemma clFirst {k : \u2115} {S : Type} [DecidableEq S] {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : \u2115)\n    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)\n    (hstart : start.state \u2260 some ret)\n    (hidle : \u2200 c : Cfg k Bool S x, c.state = some ret \u2192 tm.step c = c) :\n    \u2203 t \u2264 B, 0 < t \u2227 (\u2200 j < t, (tm.runFrom start j).state \u2260 some ret) \u2227\n      tm.runFrom start t = finish ",
+        "literal_header_SHA256": "2d7558fd4406f9fefecaa5ac5c9a2ec1de347b65e531787eaba6a49222f2e581",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "name": "Turing.inputSeekRewind_run",
+      "BASE": {
+        "full_chunk_capture": "source-freeze/chunks/BASE-Turing.inputSeekRewind_run.lean.txt",
+        "full_chunk_SHA256": "f1fd86235f1a4db4ceb5ddaf5230383b1d727fc7442db0ea754b6e4063c7c814",
+        "source_start_offset": 7455,
+        "source_end_offset": 9515,
+        "source_start_line": 157,
+        "literal_header": "private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)\n    (hd : d.state = some .start) :\n    \u2203 r \u2264 d.inputPos.val + 3,\n      inputSeekRewind.runFrom d r = { d with state := some .done, inputPos := 0 } \u2227\n      (\u2200 u < r, (inputSeekRewind.runFrom d u).state \u2260 some .done) \u2227\n      \u2200 u \u2264 r, (inputSeekRewind.runFrom d u).workTapePos = d.workTapePos ",
+        "literal_header_SHA256": "76ceb00948045595be1bf9affbfc30fe4fe653e7031834fc2b63cad61622a2a5",
+        "private": true
+      },
+      "HEAD": {
+        "full_chunk_capture": "source-freeze/chunks/HEAD-Turing.inputSeekRewind_run.lean.txt",
+        "full_chunk_SHA256": "c6e8804a27a064e97e7c2726a2ae2ed557d7269ba31fd28ce54aa2edc9772b9e",
+        "source_start_offset": 7455,
+        "source_end_offset": 9461,
+        "source_start_line": 157,
+        "literal_header": "private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)\n    (hd : d.state = some .start) :\n    \u2203 r \u2264 d.inputPos.val + 3,\n      inputSeekRewind.runFrom d r = { d with state := some .done, inputPos := 0 } \u2227\n      (\u2200 u < r, (inputSeekRewind.runFrom d u).state \u2260 some .done) \u2227\n      \u2200 u \u2264 r, (inputSeekRewind.runFrom d u).workTapePos = d.workTapePos ",
+        "literal_header_SHA256": "76ceb00948045595be1bf9affbfc30fe4fe653e7031834fc2b63cad61622a2a5",
+        "private": true
+      },
+      "literal_header_exact": true,
+      "parser_statement_exact": true
+    }
+  ],
+  "files": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "BASE_SHA256": "9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17",
+      "HEAD_SHA256": "cff67a2cae4a1c33de29cee6583c957f2a45be4a5029c2ba4937cfc570c172d5",
+      "BASE_bytes": 166968,
+      "HEAD_bytes": 167177,
+      "BASE_splitlines": 3237,
+      "HEAD_splitlines": 3242,
+      "BASE_style_newline_count": 3238,
+      "HEAD_style_newline_count": 3243,
+      "changed_full_chunks": [
+        "Complexity.enumCont_first_anchor"
+      ],
+      "all_names_privacy_exact": true,
+      "public_chunk_bodies_and_headers_exact": true,
+      "all_non_target_chunks_exact": true,
+      "imports_exact": true,
+      "reversing_exact_nine_authorized_chunks_recovers_all_other_BASE_bytes": true,
+      "parser_public_count": 8,
+      "parser_private_count": 145
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "BASE_SHA256": "65ba2e613d48e36cb0b68866207384537345a9bfb61f66ce08593cd2a2755929",
+      "HEAD_SHA256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+      "BASE_bytes": 177900,
+      "HEAD_bytes": 177259,
+      "BASE_splitlines": 3275,
+      "HEAD_splitlines": 3271,
+      "BASE_style_newline_count": 3276,
+      "HEAD_style_newline_count": 3272,
+      "changed_full_chunks": [
+        "Turing.xr_firstArrival",
+        "Turing.xr_firstArrival'"
+      ],
+      "all_names_privacy_exact": true,
+      "public_chunk_bodies_and_headers_exact": true,
+      "all_non_target_chunks_exact": true,
+      "imports_exact": true,
+      "reversing_exact_nine_authorized_chunks_recovers_all_other_BASE_bytes": true,
+      "parser_public_count": 2,
+      "parser_private_count": 181
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "BASE_SHA256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "HEAD_SHA256": "a06413a055a9967a29a67de1a593a528f899e7a63e58dc51471f1ca0d02614ab",
+      "BASE_bytes": 465231,
+      "HEAD_bytes": 462507,
+      "BASE_splitlines": 8685,
+      "HEAD_splitlines": 8642,
+      "BASE_style_newline_count": 8686,
+      "HEAD_style_newline_count": 8643,
+      "changed_full_chunks": [
+        "Complexity.clBank_first",
+        "Complexity.clCopy_first",
+        "Complexity.clRow_first",
+        "Complexity.clCmp_first",
+        "Complexity.clFirst"
+      ],
+      "all_names_privacy_exact": true,
+      "public_chunk_bodies_and_headers_exact": true,
+      "all_non_target_chunks_exact": true,
+      "imports_exact": true,
+      "reversing_exact_nine_authorized_chunks_recovers_all_other_BASE_bytes": true,
+      "parser_public_count": 5,
+      "parser_private_count": 539
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "BASE_SHA256": "427daa23c459618e5397d7c7c332c1e269e1dbe3b873c45e114eb6b3a87edd21",
+      "HEAD_SHA256": "1fd40b2ad35994b02acd9ea8e9e697f448c2069d3c8835a2cc2da0705fc2a89d",
+      "BASE_bytes": 26533,
+      "HEAD_bytes": 26486,
+      "BASE_splitlines": 535,
+      "HEAD_splitlines": 532,
+      "BASE_style_newline_count": 536,
+      "HEAD_style_newline_count": 533,
+      "changed_full_chunks": [
+        "Turing.inputSeekRewind_run"
+      ],
+      "all_names_privacy_exact": true,
+      "public_chunk_bodies_and_headers_exact": true,
+      "all_non_target_chunks_exact": true,
+      "imports_exact": true,
+      "reversing_exact_nine_authorized_chunks_recovers_all_other_BASE_bytes": true,
+      "parser_public_count": 2,
+      "parser_private_count": 9
+    }
+  ],
+  "canonical_parser_cli_receipts": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "-I",
+        "/private/tmp/ab34-fe9-gate-draft/tools/declfreeze.py",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/BASE/TCSlib/Complexity/ClassNP/EXP.lean",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/HEAD/TCSlib/Complexity/ClassNP/EXP.lean",
+        "enumCont_first_anchor"
+      ],
+      "cwd": "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4",
+      "start_utc": "2026-11-08T12:37:37.484832+00:00",
+      "seconds": 0.0486589171923697,
+      "exit": 0,
+      "stdout_SHA256": "b0bf2c608f2f7e9fe888dc29221fe2734d4046360a64abfa8095b4c478bbd665",
+      "stderr_SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_SHA256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700",
+      "scope": "Canonical parser output plus separately asserted full byte recovery/header checks; CLI exit alone is not a semantic freeze verdict"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "-I",
+        "/private/tmp/ab34-fe9-gate-draft/tools/declfreeze.py",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/BASE/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/HEAD/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+        "xr_firstArrival,xr_firstArrival'"
+      ],
+      "cwd": "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4",
+      "start_utc": "2026-11-08T12:37:37.578638+00:00",
+      "seconds": 0.050872625317424536,
+      "exit": 0,
+      "stdout_SHA256": "8dccbd88a6e9a9cb11b027679531e5f4aa9b62df82a70fff2f7df837cbf71785",
+      "stderr_SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_SHA256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700",
+      "scope": "Canonical parser output plus separately asserted full byte recovery/header checks; CLI exit alone is not a semantic freeze verdict"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "-I",
+        "/private/tmp/ab34-fe9-gate-draft/tools/declfreeze.py",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/BASE/TCSlib/Complexity/CookLevin/Hardness.lean",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/HEAD/TCSlib/Complexity/CookLevin/Hardness.lean",
+        "clBank_first,clCopy_first,clRow_first,clCmp_first,clFirst"
+      ],
+      "cwd": "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4",
+      "start_utc": "2026-11-08T12:37:37.812996+00:00",
+      "seconds": 0.10424929112195969,
+      "exit": 0,
+      "stdout_SHA256": "0a449842f805efd8559e610ca78202fa4175818f625af05082f7d3202dc8c103",
+      "stderr_SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_SHA256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700",
+      "scope": "Canonical parser output plus separately asserted full byte recovery/header checks; CLI exit alone is not a semantic freeze verdict"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "-I",
+        "/private/tmp/ab34-fe9-gate-draft/tools/declfreeze.py",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/BASE/TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+        "/private/tmp/ab34-fe9-gate-draft/qa/exports/HEAD/TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+        "inputSeekRewind_run"
+      ],
+      "cwd": "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4",
+      "start_utc": "2026-11-08T12:37:37.927715+00:00",
+      "seconds": 0.025198124814778566,
+      "exit": 0,
+      "stdout_SHA256": "431979fca468e0c09df3c81102d746fe496d40002b5c459b7ecfa1229861bab4",
+      "stderr_SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_SHA256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700",
+      "scope": "Canonical parser output plus separately asserted full byte recovery/header checks; CLI exit alone is not a semantic freeze verdict"
+    }
+  ],
+  "literal_headers_exact_for_all9": true,
+  "public_authored_source_changes": false,
+  "runtime_definition_or_import_changes": false,
+  "full_source_recovery_exact": true,
+  "held_comparator_full_chunk_including_sketch_exact_BASE": true,
+  "held_InputLength_whole_source_exact_BASE": true,
+  "held_InputLength_SHA256": "11bf21c0860d3d8bd89e820df34604a16a1c7e436d6af92f5f7112b7b59eb795",
+  "limitations": "Declfreeze is lexical; exact whole-source reversal plus literal9-header checks and the independent compiled50 ABI comparison provide the stronger bounds. No full type equality is claimed for omitted private/generated declarations."
+}

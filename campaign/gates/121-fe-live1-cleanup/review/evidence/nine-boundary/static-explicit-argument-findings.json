@@ -1,0 +1,41 @@
+{
+  "scope": "All11 full touched proof chunks read; own-file definitions are legal, imported theorem statements usable opaquely; four explicit foreign-definition argument violations observed. No Core/Mathlib definition argument found in those11 chunks. This is bounded to touched declarations, not all source library.",
+  "findings": [
+    {
+      "target": "clA5Compare_compute",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 7214,
+      "exact_argument_site": "by simp [A, clPreparedTM, seamCompTM, ret]",
+      "issue": "Explicit foreign seamCompTM simp argument",
+      "inherited_before_FE": true,
+      "waived": false
+    },
+    {
+      "target": "clA5Compare_compute",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 7236,
+      "exact_argument_site": "delta Action.mapState",
+      "issue": "Explicit foreign Action.mapState delta",
+      "inherited_before_FE": true,
+      "waived": false
+    },
+    {
+      "target": "clA5Compare_compute",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 7255,
+      "exact_argument_site": "simp [Cfg.mapState]",
+      "issue": "Explicit foreign Cfg.mapState simp argument",
+      "inherited_before_FE": true,
+      "waived": false
+    },
+    {
+      "target": "exists_inputLengthTM",
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "line": 503,
+      "exact_argument_site": "simp [c, inputLengthCfg, Cfg.inputSymbol]",
+      "issue": "Explicit foreign Cfg.inputSymbol simp argument",
+      "inherited_before_FE": true,
+      "waived": false
+    }
+  ]
+}

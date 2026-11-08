@@ -1,0 +1,24 @@
+/-- Cut a proved bounded run to its first visit to a fresh absorbing return.
+**Proof sketch.** Specialize the public fixed-stop first-entry theorem to the
+return control. It preserves the complete known endpoint; the initial-control
+exclusion makes the selected time positive. -/
+private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)
+    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)
+    (hstart : start.state ≠ some ret)
+    (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :
+    ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧
+      tm.runFrom start t = finish := by
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm (fun q => q = ret) start finish B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact hidle c hq)
+    ⟨ret, hret, rfl⟩ hrun
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hret] at hs
+    exact hstart hs
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨ret, hs, rfl⟩, he⟩
