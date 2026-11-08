@@ -2092,7 +2092,7 @@ private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}
   have ho : c.output = [b] := hcomp.output_unique hV
   have hp : (w.take t).length = t := List.length_take_of_le (by omega)
   obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
-    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (w.take t)
+    (by simp [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]) p tapes heads (w.take t)
     (fun s hs => hlive s (show s < t from hp ▸ hs))
   rw [hp] at hr
   have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega

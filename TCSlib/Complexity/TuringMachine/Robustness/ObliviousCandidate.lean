@@ -848,11 +848,14 @@ lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
   classical
   have hm := maskedClock_computes W T b hW x
   have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp hm).1
-  obtain ⟨τ, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt
-    (maskedClock W false).tm ((maskedClock W false).tm.initCfg x) hhalt
-  have hs : ((maskedClock W false).tm.runFrom
-      ((maskedClock W false).tm.initCfg x) τ).state = none :=
-    (congrArg Cfg.state hcut).trans hhalt
+  have hex : ∃ t, ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t).state = none :=
+    ⟨_, hhalt⟩
+  let τ := Nat.find hex
+  have hs : ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ).state = none :=
+    Nat.find_spec hex
+  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
+  have hlive : ∀ t < τ, ((maskedClock W false).tm.runFrom
+      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
   let c := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
   have hc : (maskedClock W false).ComputesInTime x c.output τ :=
     (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩

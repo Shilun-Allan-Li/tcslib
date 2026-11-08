@@ -533,6 +533,14 @@ lemma clockTM_setup (x s : List Bool) (tK : ℕ) (hK : K.ComputesInTime x s tK) 
     omega
   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, kCfg_init,
       kCfg_run K W _ t hlive, kCfg_rewind K W c hs, hrun, ← ho]
-    rfl
+    have hi : (W.tm.initCfg x).inputPos = 1 := by
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+    have hw : (W.tm.initCfg x).workTapes = (fun _ _ => none) := by
+      funext i z
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
+    have hp : (W.tm.initCfg x).workTapePos = (fun _ => 0) := by
+      funext i
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    apply Cfg.ext <;> simp only [ctrCfg, start, hi, hw, hp]
 
 end Complexity.TimeHierarchy

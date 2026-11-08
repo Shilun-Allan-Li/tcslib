@@ -221,9 +221,11 @@ theorem runFrom_count_eq [Fintype St] (tm : MultiTapeTM (K + 1) Bool St) (B P T 
       (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2))) = tm.runFrom (tm.initCfg x) T := by
   classical
   set run := fun t => tm.runFrom (tm.initCfg x) t with hrun
-  obtain ⟨T₀, hT0T, hmin, hcut⟩ :=
-    MultiTapeTM.exists_first_halt tm (tm.initCfg x) hT
-  have hT0 : (run T₀).state = none := (congrArg Cfg.state hcut).trans hT
+  have hex : ∃ t, (run t).state = none := ⟨T, hT⟩
+  set T₀ := Nat.find hex with hT₀
+  have hT0 : (run T₀).state = none := Nat.find_spec hex
+  have hT0T : T₀ ≤ T := Nat.find_min' hex hT
+  have hmin : ∀ t < T₀, (run t).state ≠ none := fun t ht => Nat.find_min hex ht
   obtain ⟨hcells, hmono⟩ := last_tape_run (x := x) tm hwrite
   -- nonblank cells lie in the head ranges
   have hwin : ∀ t ≤ T, ∀ (i : Fin (K + 1)) (z : ℤ), (run t).workTapes i z ≠ none →
