@@ -21,7 +21,10 @@ and all 14 audited obligations proved. Its fresh 93-module check passes, all 284
 owned constants use only standard axioms, and the nine public machine contracts
 it consumes are axiom-clean. The separate proof audit passes 0/0/0/3. The next
 implementation slice is scalar modular arithmetic using these adapters and
-the existing public arithmetic machines.
+the existing public arithmetic machines. Its isolated statement draft now
+typechecks at `dbacd91218c19f0df106d316ce4ff0e22b869e66`: eighteen declarations,
+twelve admissions, 94 fresh modules and sixteen axiom-clean backing contracts.
+This new branch has no published PR or dispatched statement audit yet.
 The statements and their proof fill are kept separate from the audited #237 code.
 
 ## PRs and user action
@@ -51,4 +54,5 @@ basis or Gaussian preimage sampling has been introduced. The exact proposed
 shared probability-reader and source-registry diffs remain unapplied.
 
 **Not yet clear to merge — scoped audits pass; source-policy work, landing checks
-and user approval remain. The adapter proof gate is closed.**
+and user approval remain. The adapter proof gate is closed; the new scalar
+statement gate and its proof fill remain open.**

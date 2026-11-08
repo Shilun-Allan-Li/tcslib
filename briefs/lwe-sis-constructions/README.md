@@ -5,6 +5,13 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
+The active next statement draft is `cryptography/lwe-sis-dyadic-arithmetic` in
+`tcslib-lwe-sis-dyadic-arithmetic`, source
+`dbacd91218c19f0df106d316ce4ff0e22b869e66`: scalar addition, multiplication and
+modular subtraction, 18 declarations / 12 admitted obligations. A fresh 94-module
+sweep, 302-constant inventory and sixteen backing-contract probes pass. Its own
+statement audit is not yet selected or dispatched; see `gates/06-dyadic-arithmetic/`.
+
 All six scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
@@ -33,9 +40,10 @@ machine/primitive bridges remain open.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
-The active draft is `cryptography/lwe-sis-adapter-statements` in the separate
-`tcslib-lwe-sis-adapters` worktree. Its audited dependencies are #236 and #237;
-both existing PRs' central targets are remotely verified.
+The active draft is `cryptography/lwe-sis-dyadic-arithmetic` in the separate
+`tcslib-lwe-sis-dyadic-arithmetic` worktree. Its audited dependencies are
+#236/#237/#238. The only new existing-file overlap is the Encoding facade import;
+it is isolated in its own export commit. No new remote PR is claimed yet.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations with all 31 former admissions filled: sample schedules, modular
@@ -86,8 +94,8 @@ they do not execute Lean or prove security.
 
 ## Ownership and publication
 
-Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters`.
-Draft branch: `cryptography/lwe-sis-adapter-statements`.
+Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic`.
+Draft branch: `cryptography/lwe-sis-dyadic-arithmetic`.
 Central PR target: `cryptography/lwe-sis-constructions`.
 Audited dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
 Phase-1 Lean/root freeze: `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`.
