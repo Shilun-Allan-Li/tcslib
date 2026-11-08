@@ -19,4 +19,5 @@ unchanged. Full evidence and limits are under
 
 Target: `cryptography/lwe-sis-constructions`, with audited dependencies #236/#237.
 The user approves and merges. Source-policy and relevant landing checks remain
-open; no reviewer selection, dispatch or adapter gate verdict is claimed yet.
+open. Codex is selected for statement review; no dispatch or adapter gate
+verdict is claimed yet.

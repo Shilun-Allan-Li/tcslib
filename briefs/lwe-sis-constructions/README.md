@@ -16,7 +16,8 @@ branch `cryptography/lwe-sis-adapter-statements`, source
 explicitly admitted obligations; only its three complete defining equations
 are proved. A fresh 93-module sweep passes; all 263 old constants are unchanged,
 and nine consumed machine contracts have only standard axioms. Its statement
-audit is prepared, not selected or dispatched. No new remote PR is claimed yet.
+audit is prepared and Codex is selected; publication/dispatch remain unclaimed.
+No new remote PR is claimed yet.
 
 See `gates/04-encoding-adapters/` for the current review packet and
 `progress.md` for the campaign pulse. The one Encoding facade edit is in a

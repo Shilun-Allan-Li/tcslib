@@ -35,14 +35,14 @@ publishes nor dispatches. The publication receipt distinguishes a prepared local
 commit from a remotely retrievable revision. No new draft PR is claimed until
 client publication succeeds.
 
-The user selects **Codex or Claude** for this new statement audit and dispatches
-it. Run the client command with the chosen flag:
+The user selected **Codex** for this new statement audit and dispatches it.
+Run the prepared client command:
 
 ```sh
 python3 -I /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters/briefs/lwe-sis-constructions/gates/04-encoding-adapters/publish_review.py --worker codex
 ```
 
-Use `--worker claude` for Claude. `--check-only` performs local verification
+`--check-only` performs local verification
 without network access or mutations. The command publishes the records-only
 proof-audit intake to #237's draft branch if it is still open, then pushes only
 the new adapter draft branch and creates/updates its draft PR against the central
@@ -52,7 +52,7 @@ campaign ref, and never operates on the shared exchange checkout/index.
 
 The auditor reads GitHub directly and returns
 `lwe-sis-adapter-statements-findings.md` as Markdown in chat. No ZIP is required.
-No reviewer selection or dispatch is claimed for this new job.
+Codex is selected; no dispatch or remote publication is claimed yet.
 
 **Not yet clear to merge — the adapter statement gate and proof fill remain,
 alongside retained source-policy/landing obligations and user PR approval.**

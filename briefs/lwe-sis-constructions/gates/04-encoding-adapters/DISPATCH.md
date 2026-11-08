@@ -1,7 +1,8 @@
-# Encoding-adapter statement audit: prepared for user selection
+# Encoding-adapter statement audit: Codex selected
 
-No reviewer has been selected and no job dispatched for this new gate.
-The completed construction-core proof audit is a different, closed job.
+The user selected **Codex** for this new statement audit. No dispatch or remote
+publication is claimed yet. The completed construction-core proof audit is a
+different, closed job.
 
 | Item | Prepared identity |
 |---|---|
@@ -20,8 +21,8 @@ claimed until client publication succeeds. The bundle preserves three empty
 unified-diff context lines in the unapplied reader proposal, including their
 required leading spaces. Authored handoff files pass whitespace checking.
 
-Select **Codex or Claude** for this statement audit, then use `publish_review.py`
-with that explicit flag, as documented in README. `--check-only` verifies local
+Use `publish_review.py --worker codex` for the selected reviewer, as documented
+in README. `--check-only` verifies local
 readiness without network access or mutation. The command publishes the records-only
 proof-audit intake to #237's own draft branch if still open, pushes only this new
 draft ref, creates/updates its draft PR against the central branch, rebases the
