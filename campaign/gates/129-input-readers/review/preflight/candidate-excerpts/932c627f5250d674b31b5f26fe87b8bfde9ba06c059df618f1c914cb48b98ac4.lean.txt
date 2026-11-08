@@ -1,0 +1,1 @@
+theorem ReaderControl11 {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) : a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl

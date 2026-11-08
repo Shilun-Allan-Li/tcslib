@@ -1,0 +1,10 @@
+/-- **A non-writing step that advances the input head.** For `i < |x|`, the action that writes
+nothing, moves the input head right, moves the work head by `d`, emits `o` and enters `q'` maps
+the one-buffer configuration `(i, a, z, out)` to the one-buffer configuration
+`(i + 1, a, z + d, out ++ o)` in control `q'`. -/
+theorem apply_cfg_advance {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (hi' : i + 1 ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool)
+    (d : SignType) (o : Option Bool) :
+    (⟨.pos, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
+      cfg x q' (i + 1) hi' a (z + d) (out ++ o.toList) :=
+  Cfg.ext rfl (moveInputPos_pos_of_ne_right _ (by show i + 1 ≠ x.length + 1; omega)) rfl rfl rfl

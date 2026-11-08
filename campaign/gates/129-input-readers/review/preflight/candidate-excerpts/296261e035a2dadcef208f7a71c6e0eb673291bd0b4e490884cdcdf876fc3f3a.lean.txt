@@ -1,0 +1,4 @@
+theorem probe_fold_hD (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) :
+    (inputFoldTM k δ a₀).step (probeFoldD δ a₀ d) = probeFoldD δ a₀ d := by
+  apply Cfg.ext <;> simp [MultiTapeTM.step, inputFoldTM, Action.apply, inputMoveAction,
+    probeFoldD]

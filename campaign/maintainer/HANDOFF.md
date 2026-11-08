@@ -38,18 +38,20 @@ Rule10 acknowledgment; root keeps closure pending. The eight shared-drop origina
 untouched. Existing-reader121 repairs and a concrete three-reader API proposal continue
 without adopting unapproved APIs or inferring debt permission. Six Ladner holes remain.
 
-### Eight current source PRs
+### Source PRs and current validations
 
 | PR | Gate | Pushed source HEAD | Checks and current status |
 |---|---:|---|---|
-| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 first-entry proofs;157/static0/35,50 selected types exact,22pairs;33screen8new5gone/all13dispositioned; Dispatched; Codex findings pending |
-| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|10 first-halt +3 mandatory backwards-live proofs;222→153/static0/31,13types,23heads/46pairs;44screen0new19gone4scores/all23reviewed; Dispatched; Codex findings pending |
-| #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80/static0/31,12pairs;33screen0new2gone; Dispatched; Codex findings pending |
-| #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 SafeRun closures +1 private bridge;80/static0/31,14pairs;33screen0new0gone; Dispatched; Codex findings pending |
-| #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 Hardness head/tail forwards;26/static0/0,30pairs;33screen0new10gone; Dispatched; Codex findings pending |
-| #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`|1 local hinit reader;18/static0/0,6pairs scoped to hinit;33screen0new1gone; Dispatched; Codex findings pending |
-| #247 |127|`e16049ad20823b3e6abba171e328489746062080`|2 existing readers in1 private proof;23/static0/0,full target6pairs;48screen0new0gone0scores; Dispatched; Codex findings pending |
-| #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|17 approved Ladner declarations/6mathholes;2/static0/6,895→896,18pairs/6edges;49screen0new0gone0scores; Dispatched; Codex findings pending |
+| #241 |121|`5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd`|Original9 first-entry proofs + comparator existing-reader repair; original157 replay historicald64; new comparator fullnative/18-headseal36pairs/typeAX pass; final replay/audit pending; **Not yet clear to merge** |
+| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|10 first-halt +3 mandatory backwards-live proofs;222→153/static0/31,13types,23heads/46pairs;44screen0new19gone4scores/all23reviewed; Selected13 technicalPASS; rootM1 governance major open; **Not yet clear to merge** |
+| #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80/static0/31,12pairs;33screen0new2gone; Gate CLOSED; **Clear to merge** |
+| #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 SafeRun closures +1 private bridge;80/static0/31,14pairs;33screen0new0gone; Gate CLOSED; **Clear to merge** |
+| #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 Hardness head/tail forwards;26/static0/0,30pairs;33screen0new10gone; Gate CLOSED; **Clear to merge** |
+| #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`|1 local hinit reader;18/static0/0,6pairs scoped to hinit;33screen0new1gone; Gate CLOSED; **Clear to merge** |
+| #247 |127|`e16049ad20823b3e6abba171e328489746062080`|2 existing readers in1 private proof;23/static0/0,full target6pairs;48screen0new0gone0scores; Gate CLOSED; **Clear to merge** |
+| #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|17 approved Ladner declarations/6mathholes;2/static0/6,895→896,18pairs/6edges;49screen0new0gone0scores; Gate CLOSED; **Clear to merge** |
+
+| #251 |129|`0201e3c420f5bdef94a67b80cee08a1673f2c3fb`|Approved3readers with shared Def name; fresh394 replay active; old-context reader repairs/preflight dispositions in progress; **Not yet clear to merge** |
 
 The source scopes remain separate family PRs. WORKFLOW§3 required the three mechanical
 backwards-live companions in #242's already touched owners; their statements/imports/definitions
@@ -108,7 +110,7 @@ metadata/guard/edge runs; current2-module replay is separately actual1096. TCSli
 all17 seeded roots and encountered-theorem proof boundaries are explicit. Source attribution
 uses the approved Theorem3.3/proof fallback; exact2009 exercise-part wording remains unverified.
 
-Three earlier user decision fronts remain pending; the separate three-reader proposal is now explicitly approved:
+The three earlier decision fronts plus the new core-reader proposal are pending; the separate three-reader APIs and shared-name alignment are explicitly approved:
 
 - SAT's PolyTimeBlockLoop import for head/tail leaves: complete held proposal under
   campaign/items/dedup/sat-word-proposal/.
@@ -126,6 +128,11 @@ Three earlier user decision fronts remain pending; the separate three-reader pro
   campaign/items/dedup/inputlength-reader-proposal/2026-11-08/. Seyoon approved exactly
   these three non-simp APIs; RULING.md records the answer. Source-only PR#251/gate129
   is open, source`0201e3c420f5bdef94a67b80cee08a1673f2c3fb`, fresh nread4/394 replay active. Seyoon additionally approved exact shared-name alignment to controlAction_def; the old-name119 proposal is historical. Stopped nread3 is invalid/not reused. Consumer proof remains separate; no source merge.
+
+- New bounded core-reader proposal: full native MARMTime target, five-head seal and
+  ten effective pairs pass with one hypothetical ConfigCount.core_eq. Exact258-payload
+  packet is in campaign/items/dedup/configcount-core-proposal/2026-11-08/. Public API
+  approval/auditor choice is pending; no source adoption or141-module replay.
 
 A bounded continuation triage records42 dispositions/25 source bindings at final-eight
 source. Exact matches are already in these PRs; remaining inspected targets need reader,

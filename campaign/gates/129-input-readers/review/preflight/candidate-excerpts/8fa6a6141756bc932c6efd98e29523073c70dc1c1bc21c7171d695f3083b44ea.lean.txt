@@ -1,0 +1,12 @@
+/-- An action moving only the input head. -/
+lemma apply_inputOnly (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2))
+    (rt : Fin m → ℤ → Option Bool) (rp : Fin m → ℤ) (dt : Fin kD → ℤ → Option Bool)
+    (dp : Fin kD → ℤ) (out : List Bool) (mvI : SignType) (st' : CSt Λ SD m) :
+    (⟨mvI, fun _ => (none, 0), none, some st'⟩ : Action (m + kD) Bool (CSt Λ SD m)).apply
+        (mkCfg st ip rt rp dt dp out) =
+      mkCfg (some st') (moveInputPos ip mvI) rt rp dt dp out := by
+  refine Cfg.ext rfl rfl ?_ ?_ (by simp [mkCfg])
+  · funext i z
+    refine Fin.addCases (fun r => ?_) (fun j => ?_) i <;> simp [mkCfg]
+  · funext i
+    refine Fin.addCases (fun r => ?_) (fun j => ?_) i <;> simp [mkCfg]

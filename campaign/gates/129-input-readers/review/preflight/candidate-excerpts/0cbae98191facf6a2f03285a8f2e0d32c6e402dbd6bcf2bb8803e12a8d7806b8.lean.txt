@@ -1,0 +1,28 @@
+/-- A related entry configuration is exactly the canonical round frame,
+with its arbitrary physical output prefix retained. This only unpacks the
+seam relation; it makes no assumption about the mirrored source tapes. -/
+private lemma rep_entry {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    d = atKey (roundData c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 d.output)
+      .entry () := by
+  obtain ⟨input, bank, table, summary, tableHome, stateHome⟩ := rel
+  simp only [hq, Option.map_some, Option.getD_some] at summary
+  apply Cfg.ext
+  · exact entry
+  · exact input
+  · funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simpa only [atKey, Cfg.mapState, roundData, Fin.addCases_left] using (bank i).1
+    · fin_cases i
+      · simpa [atKey, Cfg.mapState, roundData, tableTape] using table
+      · simpa [atKey, Cfg.mapState, roundData, summaryTape] using summary
+  · funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simpa only [atKey, Cfg.mapState, roundData, Fin.addCases_left] using (bank i).2
+    · fin_cases i
+      · simpa [atKey, Cfg.mapState, roundData, tableTape] using tableHome
+      · simpa [atKey, Cfg.mapState, roundData, summaryTape] using stateHome
+  · rfl

@@ -1,0 +1,97 @@
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:510:5: error: unsolved goals
+case none
+x : List Bool
+d : Cfg (0 + 1) Bool InputLengthPhase x
+hs : d.state = some InputLengthPhase.count
+hip : d.inputPos = 1
+blank : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑x.length.bits.length → d.workTapes 0 (d.workTapePos 0 + p) = none
+a✝ : ∀ (j : Fin (0 + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none
+t : ℕ
+charge : t + 2 * List.count true x.length.bits = 5 * x.length
+counted :
+  MultiTapeTM.runFrom d t =
+    inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+countHeads :
+  ∀ u ≤ t,
+    d.workTapePos 0 - 1 ≤ (MultiTapeTM.runFrom d u).workTapePos 0 ∧
+      (MultiTapeTM.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + ↑x.length.bits.length
+c : Cfg 1 Bool InputLengthPhase x :=
+  inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+back : Cfg 1 Bool InputLengthPhase x :=
+  { state := some InputLengthPhase.returnStart, inputPos := c.inputPos, workTapes := c.workTapes,
+    workTapePos := c.workTapePos, output := c.output }
+endSymbol : c.inputSymbol = none
+turn : MultiTapeTM.step c = back
+work : Fin 1 → Option Bool
+⊢ { inputTape := (inputMoveAction 1 (ScanPhase.done ())).inputTape,
+      workTapes := (inputMoveAction 1 (ScanPhase.done ())).workTapes,
+      output := (inputMoveAction 1 (ScanPhase.done ())).output,
+      state :=
+        Option.map
+          (fun q =>
+            match q with
+            | ScanPhase.done a => InputLengthPhase.done
+            | x => InputLengthPhase.returnScan)
+          (inputMoveAction 1 (ScanPhase.done ())).state } =
+    FinTM.controlAction SignType.pos (some InputLengthPhase.done)
+
+case some
+x : List Bool
+d : Cfg (0 + 1) Bool InputLengthPhase x
+hs : d.state = some InputLengthPhase.count
+hip : d.inputPos = 1
+blank : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑x.length.bits.length → d.workTapes 0 (d.workTapePos 0 + p) = none
+a✝ : ∀ (j : Fin (0 + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none
+t : ℕ
+charge : t + 2 * List.count true x.length.bits = 5 * x.length
+counted :
+  MultiTapeTM.runFrom d t =
+    inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+countHeads :
+  ∀ u ≤ t,
+    d.workTapePos 0 - 1 ≤ (MultiTapeTM.runFrom d u).workTapePos 0 ∧
+      (MultiTapeTM.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + ↑x.length.bits.length
+c : Cfg 1 Bool InputLengthPhase x :=
+  inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+back : Cfg 1 Bool InputLengthPhase x :=
+  { state := some InputLengthPhase.returnStart, inputPos := c.inputPos, workTapes := c.workTapes,
+    workTapePos := c.workTapePos, output := c.output }
+endSymbol : c.inputSymbol = none
+turn : MultiTapeTM.step c = back
+work : Fin 1 → Option Bool
+val✝ : Bool
+⊢ { inputTape := -1, workTapes := fun x => (none, 0), output := none, state := some InputLengthPhase.returnScan } =
+    { inputTape := SignType.neg, workTapes := fun x => (none, 0), output := none,
+      state := some InputLengthPhase.returnScan }
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:519:19: warning: This simp argument is unused:
+  Action.mapState_inputTape
+
+Hint: Omit it from the simp argument list.
+  simp only [̵A̵c̵t̵i̵o̵n̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵i̵n̵p̵u̵t̵T̵a̵p̵e̵,̵ ̵A̵c̵t̵i̵o̵n̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵[̲A̲c̲t̲i̲o̲n̲.̲m̲a̲p̲S̲t̲a̲t̲e̲_̲w̲o̲r̲k̲T̲a̲p̲e̲s̲,̲ Action.mapState_output, Action.mapState_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:519:46: warning: This simp argument is unused:
+  Action.mapState_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.mapState_inputTape, A̵c̵t̵i̵o̵n̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵Action.mapState_output, Action.mapState_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:520:10: warning: This simp argument is unused:
+  Action.mapState_output
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.mapState_inputTape, Action.mapState_workTapes, A̵c̵t̵i̵o̵n̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵Action.mapState_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:520:34: warning: This simp argument is unused:
+  Action.mapState_state
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.mapState_inputTape, Action.mapState_workTapes, Action.mapState_output,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲A̵c̵t̵i̵o̵n̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵s̵t̵a̵t̵e̵,̵ ̵Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

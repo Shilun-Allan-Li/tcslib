@@ -1,0 +1,26 @@
+/-- **The skipper's composition contract** (`h1Skip_spec`, statement copied): no exit before
+the record's length plus one; and at every time up to then the input position, all tape
+contents and the physical output are unchanged, and only the table head has moved, by
+`min u (4k + 4)` plus the steps after the dispatch.
+
+**Proof sketch.** Split the horizon at the reader's dispatch: the first interval is the
+reader's prefix trace transported by the public phase host, the second the successor-field
+trace transported by public agreement. -/
+theorem recordSkipTM_spec {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (∀ u < (actionBitsK a).length + 1, ∀ b,
+      ((recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u).state ≠
+        some ⟨true, .done b⟩) ∧
+    (∀ u ≤ (actionBitsK a).length + 1,
+      let f := (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u
+      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧
+      (∀ j, f.workTapePos j = d.workTapePos j +
+        if j = tableTape k then
+          ((min u (recordWidth k) + (u - (recordWidth k + 1)) : ℕ) : ℤ)
+        else 0)) := by
+  sorry

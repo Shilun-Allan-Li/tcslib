@@ -1,0 +1,19 @@
+/-- **R8.5d, the input fold** (design §12.8a). Read the native input left to
+right, updating a finite state by `δ` from `a₀`, then walk the input head back
+and enter the live anchor `done a` with the final state `a` as the verdict.
+No work tape is touched. With `δ` testing membership in the image of an
+embedding, it is the input validator of design §12.8a §0. -/
+def inputFoldTM {Γ : Type*} {A : Type} (k : ℕ) (δ : A → Γ → A) (a₀ : A) :
+    MultiTapeTM k Γ (ScanPhase A) where
+  q₀ := .fwd a₀
+  tr := fun q inp _ =>
+    match q with
+    | .fwd a =>
+      match inp with
+      | some γ => inputMoveAction 1 (.fwd (δ a γ))
+      | none => inputMoveAction (-1) (.bwd a)
+    | .bwd a =>
+      match inp with
+      | some _ => inputMoveAction (-1) (.bwd a)
+      | none => inputMoveAction 1 (.done a)
+    | .done a => inputMoveAction 0 (.done a)

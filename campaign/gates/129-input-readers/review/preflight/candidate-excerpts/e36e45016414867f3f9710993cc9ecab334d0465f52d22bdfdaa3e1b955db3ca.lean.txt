@@ -1,0 +1,24 @@
+/-- Appending optional bits at the two right blanks realizes precisely the
+corresponding list appends; all source and capture tapes remain blank. -/
+private lemma cont_write_apply (N : FinNDTM Bool) {y : List Bool}
+    (q q' : Fin 6) (x u : List Bool) (p : Fin (y.length + 2))
+    (m : SignType) (bx bu : Option Bool) :
+    (Action.mk m (choiceTapes (fun _ => (none, 0))
+      (bx.map some, if bx.isSome then 1 else 0)
+      (bu.map some, if bu.isSome then 1 else 0) (none, 0)) none
+      (some (.inl q'))).apply (contLoadCfg (y := y) N q x u p x.length u.length) =
+        contLoadCfg (y := y) N q' (x ++ bx.toList) (u ++ bu.toList) (moveInputPos p m)
+          (x ++ bx.toList).length (u ++ bu.toList).length := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro i; simp [contLoadCfg, choiceTapes]
+    · intro i
+      fin_cases i <;> cases bx <;> cases bu <;>
+        simp [contLoadCfg, choiceTapes, bufferTape_append]
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro i; simp [contLoadCfg, choiceTapes]
+    · intro i
+      fin_cases i <;> cases bx <;> cases bu <;>
+        simp [contLoadCfg, choiceTapes]

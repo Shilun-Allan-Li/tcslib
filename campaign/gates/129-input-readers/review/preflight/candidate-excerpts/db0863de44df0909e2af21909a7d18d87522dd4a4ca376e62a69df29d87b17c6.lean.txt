@@ -1,0 +1,19 @@
+/-- One shared frame argument for the three permitted native-input tables.
+**Proof sketch.** Each live step is the public input-only action, and halted steps are
+stationary. Induct on the run length, projecting tapes, heads and output. -/
+private theorem recordStep_native_frame {K : ℕ} {Γ S : Type} {x : List Γ}
+    (R : MultiTapeTM K Γ S) (move : S → Option Γ → SignType)
+    (next : S → Option Γ → S)
+    (htr : ∀ q inp work, R.tr q inp work = inputMoveAction (move q inp) (next q inp))
+    (d : Cfg K Γ S x) (t : ℕ) :
+    (R.runFrom d t).workTapes = d.workTapes ∧
+      (R.runFrom d t).workTapePos = d.workTapePos ∧ (R.runFrom d t).output = d.output := by
+  induction t with
+  | zero => exact ⟨rfl, rfl, rfl⟩
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    cases hs : (R.runFrom d t).state with
+    | none => rw [MultiTapeTM.step_of_halt hs]; exact ih
+    | some q =>
+      rw [step_of_inputMoveAction R _ (move q _) hs (htr q _ _)]
+      exact ih

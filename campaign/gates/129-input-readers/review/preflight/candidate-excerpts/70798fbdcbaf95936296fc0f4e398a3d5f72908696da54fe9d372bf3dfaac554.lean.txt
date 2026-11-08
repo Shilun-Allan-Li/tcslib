@@ -1,0 +1,8 @@
+/-- The input fold's run is the two-pass trace at every time. -/
+theorem probe_fold_trace (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x)
+    (hstate : d.state = some (.fwd a₀)) (hin : d.inputPos = 1) (t : ℕ) :
+    (inputFoldTM k δ a₀).runFrom d t =
+      catalogTrace (probeFoldF δ a₀ d) (probeFoldR δ a₀ d) (probeFoldD δ a₀ d) x.length t := by
+  conv_lhs => rw [← probe_fold_F0 δ a₀ d hstate hin]
+  exact catalog_trace_run _ _ _ _ _ (probe_fold_hF δ a₀ d) (probe_fold_hturn δ a₀ d)
+    (probe_fold_hR δ a₀ d) (probe_fold_hentry δ a₀ d hin) (probe_fold_hD δ a₀ d) t
