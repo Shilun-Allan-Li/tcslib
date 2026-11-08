@@ -1,0 +1,4175 @@
+{
+  "source": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+  "all5_files_scanned": true,
+  "candidate_count": 84,
+  "exact_F4_implementations": 2,
+  "bounded_not_global_exhaustion": true,
+  "all_candidate_dispositions": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satScan_run",
+      "start_line": 266,
+      "end_line": 291,
+      "sha256": "4f6f2ee3d56ac8542f0fffcd11a7846d470b29417ce0e7cf3dab543ece840009",
+      "hits": {
+        "liveness": [
+          270
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 268,
+          "text": "    (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest) (q : S),"
+        },
+        {
+          "line": 269,
+          "text": "      ((satScanTM step start accept).tm.runFrom"
+        },
+        {
+          "line": 270,
+          "text": "        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).state = none ∧"
+        },
+        {
+          "line": 271,
+          "text": "      ((satScanTM step start accept).tm.runFrom"
+        },
+        {
+          "line": 272,
+          "text": "        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).output ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_index",
+      "start_line": 487,
+      "end_line": 513,
+      "sha256": "fe18b3bec53e92486e6dd01ec33e5d99cc7ac0a44e460d9100db6a64aeafea2b",
+      "hits": {
+        "run_add": [
+          504
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 502,
+          "text": "    have hs := satEval_double M saved u 2 2 a c a c true pre.length hi j (j + 1)"
+        },
+        {
+          "line": 503,
+          "text": "      .pos (by simp) (by simp [hw', List.append_assoc]) (by rfl)"
+        },
+        {
+          "line": 504,
+          "text": "    conv_lhs => rw [show 2 * (n + 1) = 2 + 2 * n by omega, MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 505,
+          "text": "    have hr := ih (pre ++ [true, true]) rest hw' (j + 1)"
+        },
+        {
+          "line": 506,
+          "text": "    simpa [Nat.mul_add, add_assoc, add_comm, add_left_comm] using hr"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_literal",
+      "start_line": 514,
+      "end_line": 583,
+      "sha256": "a3aa54d51cde1ff7291dbe3508896b4248e4456b0b9f0ef0a59e8230632b9e76",
+      "hits": {
+        "run_add": [
+          573,
+          574
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 571,
+          "text": "          p₄.length (by simp [hw₄]) 0 := by simpa using h₅"
+        },
+        {
+          "line": 572,
+          "text": "  conv_lhs => rw [show 3 * v + 8 = 2 + (2 * v + (2 + (2 + (v + 2)))) by omega,"
+        },
+        {
+          "line": 573,
+          "text": "    MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,"
+        },
+        {
+          "line": 574,
+          "text": "    MultiTapeTM.runFrom_add, hh₃, MultiTapeTM.runFrom_add, hh₄, hh₅]"
+        },
+        {
+          "line": 575,
+          "text": "  congr 1"
+        },
+        {
+          "line": 576,
+          "text": "  omega"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_clause",
+      "start_line": 584,
+      "end_line": 628,
+      "sha256": "68cb7a436f3958d40bb3357510db18dddbbf12bb1915290c45c0af5e20fc054b",
+      "hits": {
+        "run_add": [
+          620
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 618,
+          "text": "      simp [CNF.serializeClause, CNF.serializeLit] <;> omega"
+        },
+        {
+          "line": 619,
+          "text": "    refine ⟨3 * ℓ.1 + 8 + t, by omega, ?_⟩"
+        },
+        {
+          "line": 620,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 621,
+          "text": "    simpa only [hl, hlen, Nat.mul_add, Nat.add_assoc, CNF.Clause.eval_cons, Bool.or_assoc] using hr"
+        },
+        {
+          "line": 622,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_formula",
+      "start_line": 629,
+      "end_line": 684,
+      "sha256": "8b11aa7febdc9acc4d374942e3e64562a2b96fd983bee454da7f7524a802e079",
+      "hits": {
+        "run_add": [
+          681
+        ],
+        "liveness": [
+          635
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 633,
+          "text": "    ∃ t ≤ 3 * (CNF.serialize φ).length,"
+        },
+        {
+          "line": 634,
+          "text": "      ((satEvalTM M).tm.runFrom"
+        },
+        {
+          "line": 635,
+          "text": "        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).state = none ∧"
+        },
+        {
+          "line": 636,
+          "text": "      ((satEvalTM M).tm.runFrom"
+        },
+        {
+          "line": 637,
+          "text": "        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).output ="
+        },
+        {
+          "line": 679,
+          "text": "      simp [CNF.serialize, CNF.serializeClause] <;> omega"
+        },
+        {
+          "line": 680,
+          "text": "    refine ⟨2 + (s + t), by omega, ?_⟩"
+        },
+        {
+          "line": 681,
+          "text": "    rw [MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hc']"
+        },
+        {
+          "line": 682,
+          "text": "    simpa only [CNF.eval_cons, Bool.and_assoc] using hr"
+        },
+        {
+          "line": 683,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "sat_first_halt",
+      "start_line": 685,
+      "end_line": 704,
+      "sha256": "10d865c15055a8d68dce1b04f2bca7d08f420ebc708a1c20fd5eaf725a53a53d",
+      "hits": {
+        "halt_absorb": [
+          697
+        ],
+        "run_add": [
+          696
+        ],
+        "time_split": [
+          697
+        ],
+        "liveness": [
+          687,
+          688,
+          692,
+          695
+        ],
+        "least_time": [
+          693,
+          694,
+          695,
+          698
+        ]
+      },
+      "disposition": "distinct first-None-halt selection",
+      "reason": "Selects a least halted time (and endpoint/output/positivity as stated), rather than inferring every u<=t is live from a live endpoint. This review does not extend FE-LIVE-1 or dispose of this separate family.",
+      "source_quotes": [
+        {
+          "line": 685,
+          "text": "private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)"
+        },
+        {
+          "line": 686,
+          "text": "    (h : M.ComputesInTime x y T) :"
+        },
+        {
+          "line": 687,
+          "text": "    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧"
+        },
+        {
+          "line": 688,
+          "text": "      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧"
+        },
+        {
+          "line": 689,
+          "text": "      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by"
+        },
+        {
+          "line": 690,
+          "text": "  classical"
+        },
+        {
+          "line": 691,
+          "text": "  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h"
+        },
+        {
+          "line": 692,
+          "text": "  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hh.1⟩"
+        },
+        {
+          "line": 693,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 694,
+          "text": "  have ht : t ≤ T := Nat.find_min' hex hh.1"
+        },
+        {
+          "line": 695,
+          "text": "  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex"
+        },
+        {
+          "line": 696,
+          "text": "  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)"
+        },
+        {
+          "line": 697,
+          "text": "  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he"
+        },
+        {
+          "line": 698,
+          "text": "  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩"
+        },
+        {
+          "line": 699,
+          "text": ""
+        },
+        {
+          "line": 700,
+          "text": "/-- Capture and both rewinds establish the evaluator's empty-output seam."
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_start",
+      "start_line": 705,
+      "end_line": 759,
+      "sha256": "427dad094cbc2f6d7943a4b3e8c65733d363e44af737ba7ef30ef73579e05882",
+      "hits": {
+        "run_add": [
+          750,
+          751
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 748,
+          "text": "  · have hprefix : (satEvalTM M).tm.runFrom ((satEvalTM M).tm.initCfg w) (t + r) ="
+        },
+        {
+          "line": 749,
+          "text": "        satEvalCfg M saved u (.inl 2) 0 (Nat.zero_le _) u.length := by"
+        },
+        {
+          "line": 750,
+          "text": "      rw [MultiTapeTM.runFrom_add, hcap, hrew]"
+        },
+        {
+          "line": 751,
+          "text": "    rw [MultiTapeTM.runFrom_add, hprefix, MultiTapeTM.runFrom_succ_eq_step, hleft, htape]"
+        },
+        {
+          "line": 752,
+          "text": ""
+        },
+        {
+          "line": 753,
+          "text": "/-- One uniform finite evaluator works for every well-formed paired formula"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satEval_computes",
+      "start_line": 760,
+      "end_line": 786,
+      "sha256": "976170008dc73552c7e2dfa95fc9d33bdf95b3f6521d098e4e007660fd5ea5db",
+      "hits": {
+        "run_add": [
+          776
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 774,
+          "text": "  have hbase : (satEvalTM M).ComputesInTime w [φ.eval (satAssignment u)] (s + t) := by"
+        },
+        {
+          "line": 775,
+          "text": "    apply (FinTM.computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 776,
+          "text": "    rw [MultiTapeTM.runFrom_add, hstart]"
+        },
+        {
+          "line": 777,
+          "text": "    exact ⟨hhalt, by simpa only [Bool.true_and] using hout⟩"
+        },
+        {
+          "line": 778,
+          "text": "  apply hbase.mono"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satRed_maxLiteral",
+      "start_line": 1659,
+      "end_line": 1727,
+      "sha256": "dd0f1ea942d4a9ba8f1e49e060bb11e40e907b4ed4b55d0b03f196c7d990f158",
+      "hits": {
+        "run_add": [
+          1724,
+          1725
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1722,
+          "text": "  rw [← satRed_one] at h₅"
+        },
+        {
+          "line": 1723,
+          "text": "  conv_lhs => rw [show 2 * v + 5 = 1 + (v + (1 + ((v + 2) + 1))) by omega,"
+        },
+        {
+          "line": 1724,
+          "text": "    MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,"
+        },
+        {
+          "line": 1725,
+          "text": "    MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, hh₄, h₅]"
+        },
+        {
+          "line": 1726,
+          "text": ""
+        },
+        {
+          "line": 1727,
+          "text": "/-- Maximum folding distributes over list concatenation. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satRed_maxClause",
+      "start_line": 1748,
+      "end_line": 1790,
+      "sha256": "171ed03fea0afcad55e9398eafc38d015a9c1e604a8c45eec051b6f11dd8446d",
+      "hits": {
+        "run_add": [
+          1781
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1779,
+          "text": "      simp [CNF.serializeClause, CNF.serializeLit] <;> omega"
+        },
+        {
+          "line": 1780,
+          "text": "    refine ⟨2 * ℓ.1 + 5 + t, by omega, ?_⟩"
+        },
+        {
+          "line": 1781,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 1782,
+          "text": "    simpa only [hp, hl, satClauseVars, List.map_cons, List.foldr_cons,"
+        },
+        {
+          "line": 1783,
+          "text": "      max_assoc, Nat.add_assoc] using hr"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satRed_maxFormula",
+      "start_line": 1791,
+      "end_line": 1845,
+      "sha256": "94f4702df30441c970c737e00e271a77cfd688f54dfc8d7b11a1dee8a590c8fd",
+      "hits": {
+        "run_add": [
+          1834
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1832,
+          "text": "    refine ⟨1 + (s + t), by omega, ?_⟩"
+        },
+        {
+          "line": 1833,
+          "text": "    rw [← satRed_one] at hs"
+        },
+        {
+          "line": 1834,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs, MultiTapeTM.runFrom_add, hsrun]"
+        },
+        {
+          "line": 1835,
+          "text": "    have hn : max (max n (satClauseVars C)) (CNF.numVars φ) ="
+        },
+        {
+          "line": 1836,
+          "text": "        max n (CNF.numVars (C :: φ)) := by rw [sat_numVars_cons, max_assoc]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satRed_start",
+      "start_line": 1887,
+      "end_line": 1923,
+      "sha256": "fae66b6ca8c5ff2aee453cbe2f7d2882a430dcdb03265ff2c1a2ca3ed6ad44a0",
+      "hits": {
+        "run_add": [
+          1913
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1911,
+          "text": "  rw [he] at hrew"
+        },
+        {
+          "line": 1912,
+          "text": "  refine ⟨2 + (s + r), by dsimp only [cfg, satRedCfg, x] at hb; omega, ?_⟩"
+        },
+        {
+          "line": 1913,
+          "text": "  rw [MultiTapeTM.runFrom_add, satRed_init, MultiTapeTM.runFrom_add, hr']"
+        },
+        {
+          "line": 1914,
+          "text": "  exact hrew"
+        },
+        {
+          "line": 1915,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satPair_start",
+      "start_line": 2548,
+      "end_line": 2590,
+      "sha256": "f8a6057ad9338b4631f0164971ee930bc449cc963bf4b635dfb0422b5f835a3f",
+      "hits": {
+        "run_add": [
+          2583,
+          2584
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2581,
+          "text": "  · have hpre : (satPairTM M).tm.runFrom ((satPairTM M).tm.initCfg x) (t + r) ="
+        },
+        {
+          "line": 2582,
+          "text": "        satPairCfg M saved u (some 2) 0 (Nat.zero_le _) u.length [] := by"
+        },
+        {
+          "line": 2583,
+          "text": "      rw [MultiTapeTM.runFrom_add, hcap, hrew]"
+        },
+        {
+          "line": 2584,
+          "text": "    rw [MultiTapeTM.runFrom_add, hpre, MultiTapeTM.runFrom_succ_eq_step, hs,"
+        },
+        {
+          "line": 2585,
+          "text": "      satPair_rewind M saved u u.length (Nat.le_refl _)]"
+        },
+        {
+          "line": 2586,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satPair_computes",
+      "start_line": 2693,
+      "end_line": 2713,
+      "sha256": "26ef08395cf9d62687dc4a2458e373f13e93b43f2d9265d58a3ac572b66cce5b",
+      "hits": {
+        "run_add": [
+          2708
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2706,
+          "text": "      (s + (2 * (f x).length + 2) + (x.length + 1)) := by"
+        },
+        {
+          "line": 2707,
+          "text": "    apply (FinTM.computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 2708,
+          "text": "    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add _ s (2 * (f x).length + 2), hstart, hrep, hcopy]"
+        },
+        {
+          "line": 2709,
+          "text": "    exact ⟨rfl, rfl⟩"
+        },
+        {
+          "line": 2710,
+          "text": "  exact hc.mono (by dsimp only; omega)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satMap_run",
+      "start_line": 2772,
+      "end_line": 2807,
+      "sha256": "8cbb910571d414cc70de2fd19115a5129922affc81d6306992c10e7b89b1be92",
+      "hits": {
+        "liveness": [
+          2777
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2775,
+          "text": "    ∀ pre (hx : x = pre ++ rest) q out,"
+        },
+        {
+          "line": 2776,
+          "text": "      ((satMapTM next emit finish start).tm.runFrom"
+        },
+        {
+          "line": 2777,
+          "text": "        (satMapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧"
+        },
+        {
+          "line": 2778,
+          "text": "      ((satMapTM next emit finish start).tm.runFrom"
+        },
+        {
+          "line": 2779,
+          "text": "        (satMapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satMax_computes",
+      "start_line": 2974,
+      "end_line": 2988,
+      "sha256": "de11def9690dbbd4c6d5a0e2360ae4120a3b21faa44827ec2ac46c5a8de39cf8",
+      "hits": {
+        "run_add": [
+          2983
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2981,
+          "text": "      (t + (φ.numVars + 1)) := by"
+        },
+        {
+          "line": 2982,
+          "text": "    apply (FinTM.computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 2983,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs, satMax_finish]"
+        },
+        {
+          "line": 2984,
+          "text": "    exact ⟨rfl, rfl⟩"
+        },
+        {
+          "line": 2985,
+          "text": "  exact hc.mono (by omega)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satDrop_parse",
+      "start_line": 3156,
+      "end_line": 3176,
+      "sha256": "f03a5b31fa41f09016a211264817a198513f4c9cef5d6411636a2c026a2532a5",
+      "hits": {
+        "run_add": [
+          3171
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3169,
+          "text": "    simp only [satBits_length] at hs"
+        },
+        {
+          "line": 3170,
+          "text": "    rw [show 2 * (b :: r).length = 2 + 2 * r.length by simp; omega,"
+        },
+        {
+          "line": 3171,
+          "text": "      MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 3172,
+          "text": "    have ht := ih (pre ++ [b]) (by simpa [List.append_assoc] using hu)"
+        },
+        {
+          "line": 3173,
+          "text": "    simpa [List.length_append, List.length_singleton, Nat.mul_add, Nat.add_assoc] using ht"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satDrop_computes",
+      "start_line": 3299,
+      "end_line": 3345,
+      "sha256": "bf2c875d7c8fd0d425e57fc6406c2322ef9904d217f3193d858826e588fd32cb",
+      "hits": {
+        "run_add": [
+          3327,
+          3328,
+          3329,
+          3337
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3325,
+          "text": "      (2 * u.length + 2 + (u.length + 1) + u.length + 1) ="
+        },
+        {
+          "line": 3326,
+          "text": "        satDropCfg x (some 5) pre.length u.length u.length [] := by"
+        },
+        {
+          "line": 3327,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 3328,
+          "text": "      MultiTapeTM.runFrom_add _ (2 * u.length + 2) (u.length + 1),"
+        },
+        {
+          "line": 3329,
+          "text": "      MultiTapeTM.runFrom_add _ (2 * u.length) 2, hinit, hparse,"
+        },
+        {
+          "line": 3330,
+          "text": "      satDrop_separator, satDrop_rewind _ _ _ u.length (Nat.le_refl _),"
+        },
+        {
+          "line": 3331,
+          "text": "      satDrop_skip _ _ _ u.length (Nat.le_refl _), satDrop_dispatch]"
+        },
+        {
+          "line": 3335,
+          "text": "      (2 * u.length + 2 + (u.length + 1) + u.length + 1 + ((v.drop u.length).length + 1)) := by"
+        },
+        {
+          "line": 3336,
+          "text": "    apply (FinTM.computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 3337,
+          "text": "    rw [MultiTapeTM.runFrom_add, hstart, hcopy]"
+        },
+        {
+          "line": 3338,
+          "text": "    exact ⟨rfl, rfl⟩"
+        },
+        {
+          "line": 3339,
+          "text": "  apply hc.mono"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "sat_call_first_halt",
+      "start_line": 3752,
+      "end_line": 3772,
+      "sha256": "dd3c24006984f5b85ba8d49e58df68ebe0462702fbad372905847e48ad9084fb",
+      "hits": {
+        "halt_absorb": [
+          3767
+        ],
+        "run_add": [
+          3767
+        ],
+        "time_split": [
+          3767
+        ],
+        "contrapositive": [
+          3762
+        ],
+        "liveness": [
+          3754,
+          3755,
+          3758
+        ],
+        "least_time": [
+          3759,
+          3760,
+          3761,
+          3763
+        ]
+      },
+      "disposition": "distinct first-None-halt selection",
+      "reason": "Selects a least halted time (and endpoint/output/positivity as stated), rather than inferring every u<=t is live from a live endpoint. This review does not extend FE-LIVE-1 or dispose of this separate family.",
+      "source_quotes": [
+        {
+          "line": 3752,
+          "text": "private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}"
+        },
+        {
+          "line": 3753,
+          "text": "    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)"
+        },
+        {
+          "line": 3754,
+          "text": "    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :"
+        },
+        {
+          "line": 3755,
+          "text": "    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧"
+        },
+        {
+          "line": 3756,
+          "text": "      tm.runFrom cfg u = tm.runFrom cfg t := by"
+        },
+        {
+          "line": 3757,
+          "text": "  classical"
+        },
+        {
+          "line": 3758,
+          "text": "  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩"
+        },
+        {
+          "line": 3759,
+          "text": "  have hu := Nat.find_spec h"
+        },
+        {
+          "line": 3760,
+          "text": "  have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "line": 3761,
+          "text": "  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩"
+        },
+        {
+          "line": 3762,
+          "text": "  · by_contra hn"
+        },
+        {
+          "line": 3763,
+          "text": "    have hz : Nat.find h = 0 := by omega"
+        },
+        {
+          "line": 3764,
+          "text": "    rw [hz, MultiTapeTM.runFrom_zero] at hu"
+        },
+        {
+          "line": 3765,
+          "text": "    exact hstart hu"
+        },
+        {
+          "line": 3766,
+          "text": "  · symm"
+        },
+        {
+          "line": 3767,
+          "text": "    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]"
+        },
+        {
+          "line": 3768,
+          "text": ""
+        },
+        {
+          "line": 3769,
+          "text": "/-- The appender has a full clean return, in linear time in the native input"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satAppend_clean",
+      "start_line": 3773,
+      "end_line": 3809,
+      "sha256": "38365d97f7408d56b8b1c6200aa99614293dc72125b188b832fdbcb6fdef7fa2",
+      "hits": {
+        "run_add": [
+          3791,
+          3792,
+          3793
+        ],
+        "liveness": [
+          3776
+        ]
+      },
+      "disposition": "separate first-None adapter consumer",
+      "reason": "Constructs its endpoint by phase composition and consumes sat_call_first_halt; no independent general backward-liveness recipe.",
+      "source_quotes": [
+        {
+          "line": 3774,
+          "text": "    ∃ t, 0 < t ∧ t ≤ 2 * w.length + 3 * x.length + 6 ∧"
+        },
+        {
+          "line": 3775,
+          "text": "      (∀ v < t, ¬(satAppendTM.tm.runFrom"
+        },
+        {
+          "line": 3776,
+          "text": "        (Cfg.ofWords (input := x) (0 : Fin 5) (stateWord 1 w)) v).Halted) ∧"
+        },
+        {
+          "line": 3777,
+          "text": "      satAppendTM.tm.runFrom (Cfg.ofWords (input := x) (0 : Fin 5) (stateWord 1 w)) t ="
+        },
+        {
+          "line": 3778,
+          "text": "        { Cfg.ofWords (input := x) (0 : Fin 5) (stateWord 1 (w ++ x)) with state := none } := by"
+        },
+        {
+          "line": 3789,
+          "text": "      (w.length + 1 + (x.length + 1) + ((w ++ x).length + 1) + r) ="
+        },
+        {
+          "line": 3790,
+          "text": "      { Cfg.ofWords (input := x) (0 : Fin 5) (stateWord 1 (w ++ x)) with state := none } := by"
+        },
+        {
+          "line": 3791,
+          "text": "    rw [hi, MultiTapeTM.runFrom_add _ _ r,"
+        },
+        {
+          "line": 3792,
+          "text": "      MultiTapeTM.runFrom_add _ _ ((w ++ x).length + 1),"
+        },
+        {
+          "line": 3793,
+          "text": "      MultiTapeTM.runFrom_add _ (w.length + 1) (x.length + 1)]"
+        },
+        {
+          "line": 3794,
+          "text": "    simp only [List.length_nil, Nat.cast_zero] at hs"
+        },
+        {
+          "line": 3795,
+          "text": "    rw [hs]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satStop_step",
+      "start_line": 3890,
+      "end_line": 3903,
+      "sha256": "dd72f47d86cf2d072c521009d5b3875df688df785ae39750b4fa8ace3ca2fe11",
+      "hits": {
+        "liveness": [
+          3892
+        ]
+      },
+      "disposition": "one-step local assumption",
+      "reason": "Case split consumes hlive:c.state!=none at this one configuration; no temporal prefix inference.",
+      "source_quotes": [
+        {
+          "line": 3890,
+          "text": "private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)"
+        },
+        {
+          "line": 3891,
+          "text": "    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)"
+        },
+        {
+          "line": 3892,
+          "text": "    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :"
+        },
+        {
+          "line": 3893,
+          "text": "    (satStopTM C entry exit).tm.step (satStopCfg b c) = satStopCfg true (C.tm.step c) := by"
+        },
+        {
+          "line": 3894,
+          "text": "  cases hs : c.state with"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "sat_live_prefix",
+      "start_line": 3904,
+      "end_line": 3916,
+      "sha256": "b1f1ce264e3c912c05edb38027c6be9af45302cf3b5869012fc424778c316f35",
+      "hits": {
+        "halt_absorb": [
+          3910
+        ],
+        "run_add": [
+          3910
+        ],
+        "time_split": [
+          3910
+        ],
+        "liveness": [
+          3904,
+          3906,
+          3907
+        ]
+      },
+      "disposition": "confirmed exact F4 implementation",
+      "reason": "Direct Bool specialization of public backward liveness; replace body with the public theorem, keep header.",
+      "source_quotes": [
+        {
+          "line": 3904,
+          "text": "private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}"
+        },
+        {
+          "line": 3905,
+          "text": "    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)"
+        },
+        {
+          "line": 3906,
+          "text": "    (ht : (tm.runFrom c t).state ≠ none) :"
+        },
+        {
+          "line": 3907,
+          "text": "    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by"
+        },
+        {
+          "line": 3908,
+          "text": "  intro u hu hh"
+        },
+        {
+          "line": 3909,
+          "text": "  have he : tm.runFrom c t = tm.runFrom c u := by"
+        },
+        {
+          "line": 3910,
+          "text": "    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]"
+        },
+        {
+          "line": 3911,
+          "text": "  exact ht (by rw [he]; exact hh)"
+        },
+        {
+          "line": 3912,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satStop_clean",
+      "start_line": 3917,
+      "end_line": 3948,
+      "sha256": "e9091db5b08e8efc6b76fa75fe6fd94c4c582cc3b77f148d0fc104cac36e658e",
+      "hits": {
+        "liveness": [
+          3927
+        ]
+      },
+      "disposition": "forwarding consumer",
+      "reason": "Obtains hl by calling sat_live_prefix; the surrounding lockstep induction does not reconstruct the generic fact.",
+      "source_quotes": [
+        {
+          "line": 3925,
+          "text": "      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by"
+        },
+        {
+          "line": 3926,
+          "text": "  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)"
+        },
+        {
+          "line": 3927,
+          "text": "  have hl := sat_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])"
+        },
+        {
+          "line": 3928,
+          "text": "  have hp : ∀ v, v ≤ t → (satStopTM C entry exit).tm.runFrom (satStopCfg false c) v ="
+        },
+        {
+          "line": 3929,
+          "text": "      satStopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satHost_call",
+      "start_line": 4000,
+      "end_line": 4042,
+      "sha256": "1d60a743bb6aafebcafe89d96663fb7229e527d93f388882568ccaaf3d83708c",
+      "hits": {
+        "liveness": [
+          4004
+        ]
+      },
+      "disposition": "liveness supplied as premise",
+      "reason": "Positive clean-call prefix is an explicit input to the host lifting, not derived from a later live state.",
+      "source_quotes": [
+        {
+          "line": 4002,
+          "text": "    (q : (M i).State) (t : ℕ)"
+        },
+        {
+          "line": 4003,
+          "text": "    (hg : ∀ v < t, ¬((M i).tm.runFrom"
+        },
+        {
+          "line": 4004,
+          "text": "      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)"
+        },
+        {
+          "line": 4005,
+          "text": "    (he : (M i).tm.runFrom"
+        },
+        {
+          "line": 4006,
+          "text": "      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "SatClean",
+      "start_line": 4062,
+      "end_line": 4070,
+      "sha256": "66dcddb7fc2dd3621ea10959ffe8a7e57933bcd66e8e1d602b1a8215b37ca7c7",
+      "hits": {
+        "liveness": [
+          4064
+        ]
+      },
+      "disposition": "contract definition",
+      "reason": "Defines the positive clean-call premise; no proof implementation.",
+      "source_quotes": [
+        {
+          "line": 4062,
+          "text": "private def SatClean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :="
+        },
+        {
+          "line": 4063,
+          "text": "  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧"
+        },
+        {
+          "line": 4064,
+          "text": "    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧"
+        },
+        {
+          "line": 4065,
+          "text": "    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t ="
+        },
+        {
+          "line": 4066,
+          "text": "      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "declaration": "satReduction_poly",
+      "start_line": 4184,
+      "end_line": 4374,
+      "sha256": "841f1324e62c7b0badf1c47c64afc41cd5ce82bec0085dc93b859971803f25bb",
+      "hits": {
+        "run_add": [
+          4243,
+          4297,
+          4302,
+          4316
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4241,
+          "text": "    · rw [hi]"
+        },
+        {
+          "line": 4242,
+          "text": "      exact sat_guard_add H.tm anchor _ _ ta ts haGuard haEnd hsGuard"
+        },
+        {
+          "line": 4243,
+          "text": "    · rw [hi, MultiTapeTM.runFrom_add, haEnd, hsEnd]"
+        },
+        {
+          "line": 4244,
+          "text": "      rfl"
+        },
+        {
+          "line": 4245,
+          "text": "  have hround : ∀ x w : List Bool, satStreamInv x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧"
+        },
+        {
+          "line": 4295,
+          "text": "    have hpAE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))"
+        },
+        {
+          "line": 4296,
+          "text": "        (tp + ta) = Cfg.ofWords (satHostEntry M 4) (stateWord K req) := by"
+        },
+        {
+          "line": 4297,
+          "text": "      rw [MultiTapeTM.runFrom_add, hpEnd, haEnd]"
+        },
+        {
+          "line": 4298,
+          "text": "    have hpAguard := sat_guard_add H.tm anchor _ _ tp ta hpGuard hpEnd haGuard"
+        },
+        {
+          "line": 4299,
+          "text": "    have hpAEguard := sat_guard_add H.tm anchor _ _ (tp + ta) te hpAguard hpAE heGuard"
+        },
+        {
+          "line": 4300,
+          "text": "    have hpAEE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))"
+        },
+        {
+          "line": 4301,
+          "text": "        (tp + ta + te) = {Cfg.ofWords (satHostEntry M 5) (stateWord K req) with output := satReqEmit req} := by"
+        },
+        {
+          "line": 4302,
+          "text": "      rw [MultiTapeTM.runFrom_add, hpAE, heEnd]"
+        },
+        {
+          "line": 4303,
+          "text": "    have hguard := sat_guard_add H.tm anchor _ _ (tp + ta + te) ti hpAEguard hpAEE hiGuard"
+        },
+        {
+          "line": 4304,
+          "text": "    refine ⟨(tp + ta + te + ti) + 1, by omega, ?_, ?_, ?_⟩"
+        },
+        {
+          "line": 4314,
+          "text": "    · change H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord K w))"
+        },
+        {
+          "line": 4315,
+          "text": "        ((tp + ta + te + ti) + 1) = _"
+        },
+        {
+          "line": 4316,
+          "text": "      rw [MultiTapeTM.runFrom_succ_eq_step, hdispatch, MultiTapeTM.runFrom_add, hpAEE, hiEnd]"
+        },
+        {
+          "line": 4317,
+          "text": "      rw [hstep, hemit]"
+        },
+        {
+          "line": 4318,
+          "text": "      rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCount_run",
+      "start_line": 1067,
+      "end_line": 1077,
+      "sha256": "25fb9a545a41a1629a98685d751ce0c322591d8cb3664fb7654e900a3e82b6b6",
+      "hits": {
+        "run_add": [
+          1073
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1071,
+          "text": "  simp only [List.length_nil, Nat.cast_zero, zero_add, List.nil_append] at hc"
+        },
+        {
+          "line": 1072,
+          "text": "  rw [show 2 * clCountCarry w + 2 = (clCountCarry w + 1) + (clCountCarry w + 1) by omega,"
+        },
+        {
+          "line": 1073,
+          "text": "    MultiTapeTM.runFrom_add, hc]"
+        },
+        {
+          "line": 1074,
+          "text": "  exact clCount_rewind x p (clCountInc w) (clCountCarry w) (clCountInc_length w).2"
+        },
+        {
+          "line": 1075,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clBank_component",
+      "start_line": 1193,
+      "end_line": 1213,
+      "sha256": "2338d87aa43e884268e42ef733f8fae221b3a38903cb078efd16a975f287b5c5",
+      "hits": {
+        "run_add": [
+          1207
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1205,
+          "text": "    rw [show 2 * W + 2 = (2 * clCountCarry n.bits + 2) +"
+        },
+        {
+          "line": 1206,
+          "text": "      (2 * W + 2 - (2 * clCountCarry n.bits + 2)) by omega,"
+        },
+        {
+          "line": 1207,
+          "text": "      MultiTapeTM.runFrom_add]"
+        },
+        {
+          "line": 1208,
+          "text": "    simp only [clBankStart, ↓reduceIte, clCount_run, clCountInc_bits]"
+        },
+        {
+          "line": 1209,
+          "text": "    exact clCount_idle_run _ rfl _"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clBank_first",
+      "start_line": 1246,
+      "end_line": 1277,
+      "sha256": "d4ac3735ef95b91fef457f81a8fcac02d6825e2fb652896713eef34490e74db9",
+      "hits": {
+        "run_add": [
+          1272
+        ],
+        "time_split": [
+          1272
+        ],
+        "least_time": [
+          1261,
+          1262,
+          1265
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 1259,
+          "text": "      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :="
+        },
+        {
+          "line": 1260,
+          "text": "    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩"
+        },
+        {
+          "line": 1261,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 1262,
+          "text": "  have ht := Nat.find_spec hex"
+        },
+        {
+          "line": 1263,
+          "text": "  refine ⟨t, ht.1, ?_, ?_⟩"
+        },
+        {
+          "line": 1264,
+          "text": "  · intro j hj hs"
+        },
+        {
+          "line": 1265,
+          "text": "    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧"
+        },
+        {
+          "line": 1266,
+          "text": "      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from"
+        },
+        {
+          "line": 1267,
+          "text": "        ⟨by omega, hs⟩)"
+        },
+        {
+          "line": 1270,
+          "text": "    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)"
+        },
+        {
+          "line": 1271,
+          "text": "      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay"
+        },
+        {
+          "line": 1272,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay"
+        },
+        {
+          "line": 1273,
+          "text": "    exact hstay.symm.trans finish"
+        },
+        {
+          "line": 1274,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCopy_forward",
+      "start_line": 1621,
+      "end_line": 1636,
+      "sha256": "e55e069e70600fb6f00e1f5b74d51e7cbff842206c1ecdb39a82686c2ca2f4bd",
+      "hits": {
+        "run_add": [
+          1631
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1629,
+          "text": "    intro pre record"
+        },
+        {
+          "line": 1630,
+          "text": "    rw [List.length_cons, show 2 * (w.length + 1) = 2 + 2 * w.length by omega,"
+        },
+        {
+          "line": 1631,
+          "text": "      MultiTapeTM.runFrom_add, clCopy_pair]"
+        },
+        {
+          "line": 1632,
+          "text": "    have h := ih (pre ++ [b]) (record ++ [b, b])"
+        },
+        {
+          "line": 1633,
+          "text": "    simpa [List.append_assoc, List.length_append, Nat.cast_add, Nat.cast_one] using h"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCopy_run",
+      "start_line": 1695,
+      "end_line": 1706,
+      "sha256": "35d16f1cd25601f1332db31167db680eebdebd5cc3c407c963975c07f28fed9a",
+      "hits": {
+        "run_add": [
+          1702
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1700,
+          "text": "  simp only [List.length_nil, Nat.cast_zero, List.nil_append] at hf"
+        },
+        {
+          "line": 1701,
+          "text": "  rw [show 3 * w.length + 3 = 2 * w.length + (2 + (w.length + 1)) by omega,"
+        },
+        {
+          "line": 1702,
+          "text": "    MultiTapeTM.runFrom_add, hf, MultiTapeTM.runFrom_add, clCopy_separator,"
+        },
+        {
+          "line": 1703,
+          "text": "    clCopy_rewind x p w _ w.length le_rfl]"
+        },
+        {
+          "line": 1704,
+          "text": "  simp [pairEncode, List.append_assoc]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCopy_first",
+      "start_line": 1720,
+      "end_line": 1751,
+      "sha256": "d0ba281773fb7190545068c8c991787063e14587d83563338ee28f33aaa85fab",
+      "hits": {
+        "run_add": [
+          1748
+        ],
+        "time_split": [
+          1748
+        ],
+        "contrapositive": [
+          1733
+        ],
+        "least_time": [
+          1730,
+          1731,
+          1742
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 1728,
+          "text": "      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :="
+        },
+        {
+          "line": 1729,
+          "text": "    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩"
+        },
+        {
+          "line": 1730,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 1731,
+          "text": "  have ht := Nat.find_spec hex"
+        },
+        {
+          "line": 1732,
+          "text": "  have hp : 0 < t := by"
+        },
+        {
+          "line": 1733,
+          "text": "    by_contra h"
+        },
+        {
+          "line": 1734,
+          "text": "    have hz : t = 0 := by omega"
+        },
+        {
+          "line": 1735,
+          "text": "    have hs := ht.2"
+        },
+        {
+          "line": 1740,
+          "text": "  refine ⟨t, ht.1, hp, ?_, ?_⟩"
+        },
+        {
+          "line": 1741,
+          "text": "  · intro j hj hs"
+        },
+        {
+          "line": 1742,
+          "text": "    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧"
+        },
+        {
+          "line": 1743,
+          "text": "      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)"
+        },
+        {
+          "line": 1744,
+          "text": "    omega"
+        },
+        {
+          "line": 1746,
+          "text": "    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)"
+        },
+        {
+          "line": 1747,
+          "text": "      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay"
+        },
+        {
+          "line": 1748,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay"
+        },
+        {
+          "line": 1749,
+          "text": "    exact hstay.symm.trans finish"
+        },
+        {
+          "line": 1750,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRow_prefix_run",
+      "start_line": 2096,
+      "end_line": 2121,
+      "sha256": "2f2ea4e23128b3e4c76d8014c35c527bcc0010e1766ac7c7244672af1fb4cd13",
+      "hits": {
+        "run_add": [
+          2115
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2113,
+          "text": "        t + s ≤ j * (3 * W + 4) + (3 * W + 4) := by omega"
+        },
+        {
+          "line": 2114,
+          "text": "        _ = (j + 1) * (3 * W + 4) := by ring"
+        },
+        {
+          "line": 2115,
+          "text": "    · rw [MultiTapeTM.runFrom_add, he]"
+        },
+        {
+          "line": 2116,
+          "text": "      change (clRowTM l).tm.runFrom (clRowCfg x p i.castSucc 0 w _) s = _"
+        },
+        {
+          "line": 2117,
+          "text": "      rw [he']"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRow_first",
+      "start_line": 2146,
+      "end_line": 2182,
+      "sha256": "ae46c32b2a56360eec49d7c41ddc2a548bdf7715545f59e3613901ddcfd295f2",
+      "hits": {
+        "run_add": [
+          2178
+        ],
+        "time_split": [
+          2178
+        ],
+        "contrapositive": [
+          2160
+        ],
+        "least_time": [
+          2157,
+          2158,
+          2171
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 2155,
+          "text": "  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state ="
+        },
+        {
+          "line": 2156,
+          "text": "      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩"
+        },
+        {
+          "line": 2157,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 2158,
+          "text": "  have ht := Nat.find_spec hex"
+        },
+        {
+          "line": 2159,
+          "text": "  have hp : 0 < t := by"
+        },
+        {
+          "line": 2160,
+          "text": "    by_contra hn"
+        },
+        {
+          "line": 2161,
+          "text": "    have hz : t = 0 := by omega"
+        },
+        {
+          "line": 2162,
+          "text": "    have hs := ht.2"
+        },
+        {
+          "line": 2169,
+          "text": "  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩"
+        },
+        {
+          "line": 2170,
+          "text": "  · intro j hj hs"
+        },
+        {
+          "line": 2171,
+          "text": "    have := Nat.find_min' hex (show j ≤ B ∧"
+        },
+        {
+          "line": 2172,
+          "text": "      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state ="
+        },
+        {
+          "line": 2173,
+          "text": "        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)"
+        },
+        {
+          "line": 2176,
+          "text": "    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)"
+        },
+        {
+          "line": 2177,
+          "text": "      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay"
+        },
+        {
+          "line": 2178,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay"
+        },
+        {
+          "line": 2179,
+          "text": "    exact hstay.symm.trans he"
+        },
+        {
+          "line": 2180,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRec_prefix",
+      "start_line": 2628,
+      "end_line": 2671,
+      "sha256": "3f0ea553bd2b4de28ff92f3b166eb91950849a530a08951b7a8b822c4c3ca25c",
+      "hits": {
+        "run_add": [
+          2660
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2658,
+          "text": "        _ = (j + 1) * (clRecFields M * (3 * T + 4) + 2 * T + 7) := by ring"
+        },
+        {
+          "line": 2659,
+          "text": "    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb'"
+        },
+        {
+          "line": 2660,
+          "text": "    · rw [MultiTapeTM.runFrom_add, he, MultiTapeTM.runFrom_add, hea]"
+        },
+        {
+          "line": 2661,
+          "text": "      change (clRecTM M).tm.runFrom"
+        },
+        {
+          "line": 2662,
+          "text": "        (clRecCfg M (x := x) (.inr (.inl (c.state, b))) c (clCounts M y j)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRec_complete",
+      "start_line": 2672,
+      "end_line": 2691,
+      "sha256": "ee48482594e168c0cdd686e4cd7ebdf13eeacca22cafaaa34bae83efc6c8bfae",
+      "hits": {
+        "run_add": [
+          2686
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2684,
+          "text": "  · rw [Nat.add_mul, Nat.one_mul]"
+        },
+        {
+          "line": 2685,
+          "text": "    omega"
+        },
+        {
+          "line": 2686,
+          "text": "  · rw [MultiTapeTM.runFrom_add, he, MultiTapeTM.runFrom_succ_eq_step', hea]"
+        },
+        {
+          "line": 2687,
+          "text": "    exact clRec_stop M _ b (clCounts M y T) (clRecords M y (T + 1)) T"
+        },
+        {
+          "line": 2688,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCmp_run",
+      "start_line": 2967,
+      "end_line": 2977,
+      "sha256": "ec08a3bd9b79c6bf0f901a92b73329287b334f353c360f315b7838f9367b3f91",
+      "hits": {
+        "run_add": [
+          2973
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 2971,
+          "text": "      clCmpCfg x p (.inr (.inr (clCmpVerdict (clCmpOrbit w (clCmpSize w))))) w 0 := by"
+        },
+        {
+          "line": 2972,
+          "text": "  rw [show 2 * clCmpSize w + 2 = clCmpSize w + (1 + (clCmpSize w + 1)) by omega,"
+        },
+        {
+          "line": 2973,
+          "text": "    MultiTapeTM.runFrom_add, clCmp_forward x p w _ le_rfl,"
+        },
+        {
+          "line": 2974,
+          "text": "    Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, clCmp_finish_scan]"
+        },
+        {
+          "line": 2975,
+          "text": "  exact clCmp_rewind x p w _ _ le_rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clCmp_first",
+      "start_line": 2992,
+      "end_line": 3042,
+      "sha256": "c466afe5c078bbe8dff003e5d0e01b19e264d736d199cbd45884f6b3f0a4948e",
+      "hits": {
+        "run_add": [
+          3023,
+          3038
+        ],
+        "time_split": [
+          3023,
+          3038
+        ],
+        "contrapositive": [
+          3009
+        ],
+        "least_time": [
+          3005,
+          3006,
+          3029
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 3003,
+          "text": "      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state ="
+        },
+        {
+          "line": 3004,
+          "text": "        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩"
+        },
+        {
+          "line": 3005,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 3006,
+          "text": "  have ht := Nat.find_spec hex"
+        },
+        {
+          "line": 3007,
+          "text": "  have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)"
+        },
+        {
+          "line": 3008,
+          "text": "  have hp : 0 < t := by"
+        },
+        {
+          "line": 3009,
+          "text": "    by_contra hn"
+        },
+        {
+          "line": 3010,
+          "text": "    have hz : t = 0 := by omega"
+        },
+        {
+          "line": 3011,
+          "text": "    have hh := ht.2"
+        },
+        {
+          "line": 3021,
+          "text": "      (2 * clCmpSize w + 2 - j) ="
+        },
+        {
+          "line": 3022,
+          "text": "        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay"
+        },
+        {
+          "line": 3023,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay"
+        },
+        {
+          "line": 3024,
+          "text": "    have hh := congrArg Cfg.state (finish.symm.trans hstay)"
+        },
+        {
+          "line": 3025,
+          "text": "    rw [hd] at hh"
+        },
+        {
+          "line": 3027,
+          "text": "    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state ="
+        },
+        {
+          "line": 3028,
+          "text": "        some (.inr (.inr b)) := by rw [hbd]; exact hd"
+        },
+        {
+          "line": 3029,
+          "text": "    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧"
+        },
+        {
+          "line": 3030,
+          "text": "      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state ="
+        },
+        {
+          "line": 3031,
+          "text": "        some (.inr (.inr b)) from ⟨by omega, hs⟩)"
+        },
+        {
+          "line": 3036,
+          "text": "      (2 * clCmpSize w + 2 - t) ="
+        },
+        {
+          "line": 3037,
+          "text": "        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay"
+        },
+        {
+          "line": 3038,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay"
+        },
+        {
+          "line": 3039,
+          "text": "    exact hstay.symm.trans finish"
+        },
+        {
+          "line": 3040,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRead_forward",
+      "start_line": 3154,
+      "end_line": 3176,
+      "sha256": "e031a4aaec8ce5b4b7236bd7fb492d037aaa8a41e2899e0e082aae4b8974fc00",
+      "hits": {
+        "run_add": [
+          3169
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3167,
+          "text": "      simp [pairEncode]"
+        },
+        {
+          "line": 3168,
+          "text": "    rw [List.length_cons, show 2 * (w.length + 1) = 2 + 2 * w.length by omega,"
+        },
+        {
+          "line": 3169,
+          "text": "      MultiTapeTM.runFrom_add, pair, clRead_pair]"
+        },
+        {
+          "line": 3170,
+          "text": "    have he := ih (pre ++ [b, b]) tail (written ++ [b]) old.tail"
+        },
+        {
+          "line": 3171,
+          "text": "    simpa [List.append_assoc, pairEncode, mul_add, Nat.cast_add, Nat.cast_mul,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRead_run",
+      "start_line": 3239,
+      "end_line": 3264,
+      "sha256": "20124444fb283ed75ce6704f14c56852be99a717c572377a65bee251feb9a1b8",
+      "hits": {
+        "run_add": [
+          3259
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3257,
+          "text": "    simp [pairEncode, List.append_assoc]"
+        },
+        {
+          "line": 3258,
+          "text": "  rw [show 3 * w.length + 3 = 2 * w.length + (2 + (w.length + 1)) by omega,"
+        },
+        {
+          "line": 3259,
+          "text": "    MultiTapeTM.runFrom_add, hf, MultiTapeTM.runFrom_add, hword, hs,"
+        },
+        {
+          "line": 3260,
+          "text": "    clRead_rewind x p _ w _ w.length le_rfl]"
+        },
+        {
+          "line": 3261,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clFirst",
+      "start_line": 3283,
+      "end_line": 3312,
+      "sha256": "f6c365816df3c225c37c189f5304f5594b79788cf0c9fd6ca43b2b29d96e0b35",
+      "hits": {
+        "run_add": [
+          3308
+        ],
+        "time_split": [
+          3308
+        ],
+        "contrapositive": [
+          3295
+        ],
+        "least_time": [
+          3292,
+          3293,
+          3303
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 3290,
+          "text": "  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :="
+        },
+        {
+          "line": 3291,
+          "text": "    ⟨B, le_rfl, by rw [hrun]; exact hret⟩"
+        },
+        {
+          "line": 3292,
+          "text": "  let t := Nat.find hex"
+        },
+        {
+          "line": 3293,
+          "text": "  have ht := Nat.find_spec hex"
+        },
+        {
+          "line": 3294,
+          "text": "  have hp : 0 < t := by"
+        },
+        {
+          "line": 3295,
+          "text": "    by_contra hn"
+        },
+        {
+          "line": 3296,
+          "text": "    have hz : t = 0 := by omega"
+        },
+        {
+          "line": 3297,
+          "text": "    have hh := ht.2"
+        },
+        {
+          "line": 3301,
+          "text": "  refine ⟨t, ht.1, hp, ?_, ?_⟩"
+        },
+        {
+          "line": 3302,
+          "text": "  · intro j hj hs"
+        },
+        {
+          "line": 3303,
+          "text": "    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret"
+        },
+        {
+          "line": 3304,
+          "text": "      from ⟨by omega, hs⟩)"
+        },
+        {
+          "line": 3305,
+          "text": "    omega"
+        },
+        {
+          "line": 3306,
+          "text": "  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)"
+        },
+        {
+          "line": 3307,
+          "text": "    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay"
+        },
+        {
+          "line": 3308,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay"
+        },
+        {
+          "line": 3309,
+          "text": "    exact stay.symm"
+        },
+        {
+          "line": 3310,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clWipe_run",
+      "start_line": 3412,
+      "end_line": 3422,
+      "sha256": "7cf3482aba59b9894f99e07b83a0db36dda8b5e9b14e900e4dcca592a7fb8c70",
+      "hits": {
+        "run_add": [
+          3417
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3415,
+          "text": "      clWipeCfg x p 2 stream [] s 0 := by"
+        },
+        {
+          "line": 3416,
+          "text": "  rw [show 2 * word.length + 2 = (word.length + 1) + (word.length + 1) by omega,"
+        },
+        {
+          "line": 3417,
+          "text": "    MultiTapeTM.runFrom_add]"
+        },
+        {
+          "line": 3418,
+          "text": "  have h := clWipe_forward x p stream word s 0 (by omega)"
+        },
+        {
+          "line": 3419,
+          "text": "  simp only [Nat.sub_zero, Nat.cast_zero] at h"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clLoad_prefix",
+      "start_line": 3616,
+      "end_line": 3665,
+      "sha256": "cb0f93d85ae5d67bdd444cbc95cbbccf5d1a9c190e179a61b1b7554e70802505",
+      "hits": {
+        "run_add": [
+          3656
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3654,
+          "text": "        a + b ≤ j * (2 * U + 3 * W + 7) + (2 * U + 3 * W + 7) := by omega"
+        },
+        {
+          "line": 3655,
+          "text": "        _ = (j + 1) * (2 * U + 3 * W + 7) := by ring"
+        },
+        {
+          "line": 3656,
+          "text": "    · rw [MultiTapeTM.runFrom_add, he]"
+        },
+        {
+          "line": 3657,
+          "text": "      change (clLoadTM l).tm.runFrom (clLoadCfg x p i.castSucc _ _ _ _) b = _"
+        },
+        {
+          "line": 3658,
+          "text": "      have heq : Function.update (clLoadWords old new j) i (new i) ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clInput_run",
+      "start_line": 3802,
+      "end_line": 3822,
+      "sha256": "cbcab7e77f2e21e71c7698e4adbe7ea833bf5b7864f2231cfdeeef2f33f24f9c",
+      "hits": {
+        "run_add": [
+          3818
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3816,
+          "text": "    simpa using FinTM.moveInputPos_neg_val (⟨x.length + 1, by omega⟩ : Fin (x.length + 2))"
+        },
+        {
+          "line": 3817,
+          "text": "  rw [init, show 2 * x.length + 2 = x.length + ((x.length + 1) + 1) by omega,"
+        },
+        {
+          "line": 3818,
+          "text": "    MultiTapeTM.runFrom_add, forward, MultiTapeTM.runFrom_succ_eq_step, turn,"
+        },
+        {
+          "line": 3819,
+          "text": "    clInput_backward x x x.length (by omega)]"
+        },
+        {
+          "line": 3820,
+          "text": "  rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clPrepare_complete",
+      "start_line": 3902,
+      "end_line": 3922,
+      "sha256": "b8b948f3554104c9f71c8d649a73119f97a1648fa7e2643967c21160db3d2204",
+      "hits": {
+        "run_add": [
+          3920
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 3918,
+          "text": "  rw [hbRun] at lift"
+        },
+        {
+          "line": 3919,
+          "text": "  refine ⟨a + b, by dsimp [x] at ha; omega, ?_⟩"
+        },
+        {
+          "line": 3920,
+          "text": "  rw [MultiTapeTM.runFrom_add, he, lift]"
+        },
+        {
+          "line": 3921,
+          "text": ""
+        },
+        {
+          "line": 3922,
+          "text": "/-- Completed native field preparation fixes its full final configuration. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRecord_complete",
+      "start_line": 4118,
+      "end_line": 4177,
+      "sha256": "527d6d634e894b07dc1ce1f365feac0070d65f14acd81307a468f28471bd161e",
+      "hits": {
+        "run_add": [
+          4172
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4170,
+          "text": "  · have hcost := clRec_cost_bound M T"
+        },
+        {
+          "line": 4171,
+          "text": "    omega"
+        },
+        {
+          "line": 4172,
+          "text": "  · rw [MultiTapeTM.runFrom_add, arrived]"
+        },
+        {
+          "line": 4173,
+          "text": "    exact liftRec"
+        },
+        {
+          "line": 4174,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clMatch_round",
+      "start_line": 4460,
+      "end_line": 4486,
+      "sha256": "06696240a62878eb01a9ca0027e3e3935ee6c933cad81ad0ac7d7d84233411a7",
+      "hits": {
+        "run_add": [
+          4484
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4482,
+          "text": "  refine ⟨1 + (a + b), by omega, ?_⟩"
+        },
+        {
+          "line": 4483,
+          "text": "  rw [Nat.add_comm 1 (a + b), MultiTapeTM.runFrom_succ_eq_step,"
+        },
+        {
+          "line": 4484,
+          "text": "    clMatch_tick pos neg x _ _ _ _ N j flags hj, MultiTapeTM.runFrom_add, he, hr]"
+        },
+        {
+          "line": 4485,
+          "text": ""
+        },
+        {
+          "line": 4486,
+          "text": "/-- Candidate-bank contents before the next sequential row load. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clMatch_prefix",
+      "start_line": 4496,
+      "end_line": 4530,
+      "sha256": "1c027b6db58a9968def8fca204b7cf5d302be05def3f0b7b4ec68fd96f07d6f1",
+      "hits": {
+        "run_add": [
+          4526
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4524,
+          "text": "          (l * (5 * W + 7) + 2 * W + 5) := by omega"
+        },
+        {
+          "line": 4525,
+          "text": "        _ = (j + 1) * (l * (5 * W + 7) + 2 * W + 5) := by ring"
+        },
+        {
+          "line": 4526,
+          "text": "    · rw [MultiTapeTM.runFrom_add, he]"
+        },
+        {
+          "line": 4527,
+          "text": "      simpa [clPriorRow, clRows, List.range_succ, List.map_append, Nat.cast_add] using hr"
+        },
+        {
+          "line": 4528,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clReplay_run",
+      "start_line": 4732,
+      "end_line": 4745,
+      "sha256": "33209887325b9e8ec92dbfc781bfdb9c50cd6ed8e352a4982b4e029c286919aa",
+      "hits": {
+        "run_add": [
+          4740
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4738,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 4739,
+          "text": "  rw [show 2 * w.length + 3 = ((w.length + 1) + (w.length + 1)) + 1 by omega,"
+        },
+        {
+          "line": 4740,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 4741,
+          "text": "    clReplay_back x p w out w.length le_rfl]"
+        },
+        {
+          "line": 4742,
+          "text": "  simpa only [Nat.sub_zero, Nat.cast_zero, List.drop_zero] using"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clOutput_compute",
+      "start_line": 4773,
+      "end_line": 4822,
+      "sha256": "2dc23298a4e3203b3d6d8d5bb61e1c63432f4beb677abe51b5e97d95f4ebfec9",
+      "hits": {
+        "run_add": [
+          4817
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4815,
+          "text": "    have arrived : (clOutputTM A ret i).tm.runFrom ((clOutputTM A ret i).tm.initCfg x) (t + 1) ="
+        },
+        {
+          "line": 4816,
+          "text": "        framed := by rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]"
+        },
+        {
+          "line": 4817,
+          "text": "    rw [MultiTapeTM.runFrom_add, arrived, replay]"
+        },
+        {
+          "line": 4818,
+          "text": "    exact ⟨rfl, by simp [clReplayCfg]⟩"
+        },
+        {
+          "line": 4819,
+          "text": "  exact hc.mono (by omega)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clPrepared_run",
+      "start_line": 4841,
+      "end_line": 4885,
+      "sha256": "2e16b76ace70b00913ddebf1397efda5c07b8e2e69e5c489f48903b33cd4bc39",
+      "hits": {
+        "run_add": [
+          4881
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 4879,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]"
+        },
+        {
+          "line": 4880,
+          "text": "  refine ⟨a + 1, by omega, ?_⟩"
+        },
+        {
+          "line": 4881,
+          "text": "  rw [MultiTapeTM.runFrom_add, arrived]"
+        },
+        {
+          "line": 4882,
+          "text": "  exact run"
+        },
+        {
+          "line": 4883,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clReplay_from",
+      "start_line": 5218,
+      "end_line": 5235,
+      "sha256": "540751aa71e8784b85041748c06ae60720a4008435cf4cbcd1ad6c53761e981b",
+      "hits": {
+        "run_add": [
+          5227
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 5225,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 5226,
+          "text": "  rw [show j + w.length + 3 = ((j + 1) + (w.length + 1)) + 1 by omega,"
+        },
+        {
+          "line": 5227,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 5228,
+          "text": "    clReplay_back x p w out j hj]"
+        },
+        {
+          "line": 5229,
+          "text": "  simpa only [Nat.sub_zero, Nat.cast_zero, List.drop_zero] using"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clOutputAt_compute",
+      "start_line": 5236,
+      "end_line": 5285,
+      "sha256": "79e372dd21eabf01d1576da814994285db80190aefa120dc1be5bfd3d87cd0f9",
+      "hits": {
+        "run_add": [
+          5280
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 5278,
+          "text": "    have arrived : (clOutputTM A ret i).tm.runFrom ((clOutputTM A ret i).tm.initCfg x) (t + 1) ="
+        },
+        {
+          "line": 5279,
+          "text": "        framed := by rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]"
+        },
+        {
+          "line": 5280,
+          "text": "    rw [MultiTapeTM.runFrom_add, arrived, replay]"
+        },
+        {
+          "line": 5281,
+          "text": "    exact ⟨rfl, by simp [clReplayCfg]⟩"
+        },
+        {
+          "line": 5282,
+          "text": "  exact hc.mono (by omega)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clRepeat_complete",
+      "start_line": 5781,
+      "end_line": 5814,
+      "sha256": "20ab5e3d1dd1df578a4f3129dbddfc21acb616b291e4bd9c5e3f2d9aedfde47b",
+      "hits": {
+        "run_add": [
+          5803
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 5801,
+          "text": "      refine ⟨a + (b + 2), ?_, ?_⟩"
+        },
+        {
+          "line": 5802,
+          "text": "      · rw [Nat.succ_mul]; omega"
+        },
+        {
+          "line": 5803,
+          "text": "      · rw [MultiTapeTM.runFrom_add, he, clRepeat_round C entry exit x _ _ N j b (by omega) hp hf hr,"
+        },
+        {
+          "line": 5804,
+          "text": "          Function.iterate_succ_apply']"
+        },
+        {
+          "line": 5805,
+          "text": "  obtain ⟨a, ha, he⟩ := hpref N le_rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5_call_first_halt",
+      "start_line": 6117,
+      "end_line": 6134,
+      "sha256": "f1b896ea03cf2acb09f97010bdaf0e03ff363a9f3bebd4f0a2b87e1737a547f7",
+      "hits": {
+        "halt_absorb": [
+          6132
+        ],
+        "run_add": [
+          6132
+        ],
+        "time_split": [
+          6132
+        ],
+        "contrapositive": [
+          6127
+        ],
+        "liveness": [
+          6119,
+          6120,
+          6123
+        ],
+        "least_time": [
+          6124,
+          6125,
+          6126,
+          6128
+        ]
+      },
+      "disposition": "distinct first-None-halt selection",
+      "reason": "Selects a least halted time (and endpoint/output/positivity as stated), rather than inferring every u<=t is live from a live endpoint. This review does not extend FE-LIVE-1 or dispose of this separate family.",
+      "source_quotes": [
+        {
+          "line": 6117,
+          "text": "private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}"
+        },
+        {
+          "line": 6118,
+          "text": "    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)"
+        },
+        {
+          "line": 6119,
+          "text": "    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :"
+        },
+        {
+          "line": 6120,
+          "text": "    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧"
+        },
+        {
+          "line": 6121,
+          "text": "      tm.runFrom cfg u = tm.runFrom cfg t := by"
+        },
+        {
+          "line": 6122,
+          "text": "  classical"
+        },
+        {
+          "line": 6123,
+          "text": "  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩"
+        },
+        {
+          "line": 6124,
+          "text": "  have hu := Nat.find_spec h"
+        },
+        {
+          "line": 6125,
+          "text": "  have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "line": 6126,
+          "text": "  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩"
+        },
+        {
+          "line": 6127,
+          "text": "  · by_contra hn"
+        },
+        {
+          "line": 6128,
+          "text": "    have hz : Nat.find h = 0 := by omega"
+        },
+        {
+          "line": 6129,
+          "text": "    rw [hz, MultiTapeTM.runFrom_zero] at hu"
+        },
+        {
+          "line": 6130,
+          "text": "    exact hstart hu"
+        },
+        {
+          "line": 6131,
+          "text": "  · symm"
+        },
+        {
+          "line": 6132,
+          "text": "    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]"
+        },
+        {
+          "line": 6133,
+          "text": ""
+        },
+        {
+          "line": 6134,
+          "text": "/-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Stop_step",
+      "start_line": 6215,
+      "end_line": 6228,
+      "sha256": "94ed04672e326d15737b3b6739c3e18bd7c3238f786af7d8e194be3442bd98b0",
+      "hits": {
+        "liveness": [
+          6217
+        ]
+      },
+      "disposition": "one-step local assumption",
+      "reason": "Case split consumes supplied current-state liveness, not backward liveness.",
+      "source_quotes": [
+        {
+          "line": 6215,
+          "text": "private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)"
+        },
+        {
+          "line": 6216,
+          "text": "    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)"
+        },
+        {
+          "line": 6217,
+          "text": "    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :"
+        },
+        {
+          "line": 6218,
+          "text": "    (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c) := by"
+        },
+        {
+          "line": 6219,
+          "text": "  cases hs : c.state with"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5_live_prefix",
+      "start_line": 6229,
+      "end_line": 6241,
+      "sha256": "66691a7588c0da27f785028fea57b766677c581ba51f994ed8e0122b3e83f781",
+      "hits": {
+        "halt_absorb": [
+          6235
+        ],
+        "run_add": [
+          6235
+        ],
+        "time_split": [
+          6235
+        ],
+        "liveness": [
+          6229,
+          6231,
+          6232
+        ]
+      },
+      "disposition": "confirmed exact F4 implementation",
+      "reason": "Same exact specialization/proof; same mechanical replacement.",
+      "source_quotes": [
+        {
+          "line": 6229,
+          "text": "private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}"
+        },
+        {
+          "line": 6230,
+          "text": "    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)"
+        },
+        {
+          "line": 6231,
+          "text": "    (ht : (tm.runFrom c t).state ≠ none) :"
+        },
+        {
+          "line": 6232,
+          "text": "    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by"
+        },
+        {
+          "line": 6233,
+          "text": "  intro u hu hh"
+        },
+        {
+          "line": 6234,
+          "text": "  have he : tm.runFrom c t = tm.runFrom c u := by"
+        },
+        {
+          "line": 6235,
+          "text": "    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]"
+        },
+        {
+          "line": 6236,
+          "text": "  exact ht (by rw [he]; exact hh)"
+        },
+        {
+          "line": 6237,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Stop_clean",
+      "start_line": 6242,
+      "end_line": 6273,
+      "sha256": "4e0a1e824910927afb21314672b1e2265ca3f128f33e0d181e17d3b42302189c",
+      "hits": {
+        "liveness": [
+          6252
+        ]
+      },
+      "disposition": "forwarding consumer",
+      "reason": "Obtains hl by calling clA5_live_prefix; preserve its caller contract and forward through the repaired helper.",
+      "source_quotes": [
+        {
+          "line": 6250,
+          "text": "      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by"
+        },
+        {
+          "line": 6251,
+          "text": "  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)"
+        },
+        {
+          "line": 6252,
+          "text": "  have hl := clA5_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])"
+        },
+        {
+          "line": 6253,
+          "text": "  have hp : ∀ v, v ≤ t → (clA5StopTM C entry exit).tm.runFrom (clA5StopCfg false c) v ="
+        },
+        {
+          "line": 6254,
+          "text": "      clA5StopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Host_call",
+      "start_line": 6324,
+      "end_line": 6366,
+      "sha256": "7c01995fbdccdfc1cf7b5e12d71d4a97af3513bad0bdea8b0203ddbf1f117dd4",
+      "hits": {
+        "liveness": [
+          6328
+        ]
+      },
+      "disposition": "liveness supplied as premise",
+      "reason": "Same host-lifting contract; source hg already provides the first-halt cut.",
+      "source_quotes": [
+        {
+          "line": 6326,
+          "text": "    (q : (M i).State) (t : ℕ)"
+        },
+        {
+          "line": 6327,
+          "text": "    (hg : ∀ v < t, ¬((M i).tm.runFrom"
+        },
+        {
+          "line": 6328,
+          "text": "      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)"
+        },
+        {
+          "line": 6329,
+          "text": "    (he : (M i).tm.runFrom"
+        },
+        {
+          "line": 6330,
+          "text": "      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "CLA5Clean",
+      "start_line": 6386,
+      "end_line": 6394,
+      "sha256": "5d754ab729e1203632cbbeaa87d30782b26bfefa7243f1a2a1e1dce9a4274ef2",
+      "hits": {
+        "liveness": [
+          6388
+        ]
+      },
+      "disposition": "contract definition",
+      "reason": "Defines the positive clean-call premise; no proof implementation.",
+      "source_quotes": [
+        {
+          "line": 6386,
+          "text": "private def CLA5Clean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :="
+        },
+        {
+          "line": 6387,
+          "text": "  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧"
+        },
+        {
+          "line": 6388,
+          "text": "    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧"
+        },
+        {
+          "line": 6389,
+          "text": "    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t ="
+        },
+        {
+          "line": 6390,
+          "text": "      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Copy_clean",
+      "start_line": 6491,
+      "end_line": 6526,
+      "sha256": "ff58bfa4a1115c9a5276628b0ad05a530ce2c3772be1bd02c6e9aa7fc2a0f388",
+      "hits": {
+        "liveness": [
+          6495
+        ]
+      },
+      "disposition": "separate clean-stop consumer",
+      "reason": "Uses clInput_first and the positive release adapter for a concrete clean copy; no general backward-liveness reconstruction.",
+      "source_quotes": [
+        {
+          "line": 6493,
+          "text": "    ∃ t, 0 < t ∧ t ≤ 2 * x.length + 3 ∧"
+        },
+        {
+          "line": 6494,
+          "text": "      (∀ j < t, ¬(D.tm.runFrom"
+        },
+        {
+          "line": 6495,
+          "text": "        (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) j).Halted) ∧"
+        },
+        {
+          "line": 6496,
+          "text": "      D.tm.runFrom (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) t ="
+        },
+        {
+          "line": 6497,
+          "text": "        {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none} := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Startup",
+      "start_line": 6569,
+      "end_line": 6625,
+      "sha256": "519fa8ef2207565d7c5cbf4853504e60e298d7df90488f8fa541215b33dceea7",
+      "hits": {
+        "run_add": [
+          6617,
+          6622
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 6615,
+          "text": "      (Cfg.ofWords (input := x) (clA5HostEntry bank 0) (stateWord K [])) (t0 + t1) ="
+        },
+        {
+          "line": 6616,
+          "text": "      Cfg.ofWords (clA5HostEntry bank 2) (stateWord K (clPackedRecords M C e c A d x)) := by"
+        },
+        {
+          "line": 6617,
+          "text": "    rw [MultiTapeTM.runFrom_add, e0, e1]"
+        },
+        {
+          "line": 6618,
+          "text": "  have g01 := clA5_guard_add H.tm (.inl ()) _ _ t0 t1 g0 e0 g1"
+        },
+        {
+          "line": 6619,
+          "text": "  refine ⟨t0 + t1 + t2, by omega, ?_, ?_⟩"
+        },
+        {
+          "line": 6620,
+          "text": "  · rw [hi]"
+        },
+        {
+          "line": 6621,
+          "text": "    exact clA5_guard_add H.tm (.inl ()) _ _ (t0 + t1) t2 g01 e01 g2"
+        },
+        {
+          "line": 6622,
+          "text": "  · rw [hi, MultiTapeTM.runFrom_add, e01, e2]"
+        },
+        {
+          "line": 6623,
+          "text": "    rfl"
+        },
+        {
+          "line": 6624,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Map_run",
+      "start_line": 6673,
+      "end_line": 6708,
+      "sha256": "c1434be2683fbe4d2d1941040afacd60fdf2b85748f8377de4bae0b07c70a893",
+      "hits": {
+        "liveness": [
+          6678
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 6676,
+          "text": "    ∀ pre (hx : x = pre ++ rest) q out,"
+        },
+        {
+          "line": 6677,
+          "text": "      ((clA5MapTM next emit finish start).tm.runFrom"
+        },
+        {
+          "line": 6678,
+          "text": "        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none ∧"
+        },
+        {
+          "line": 6679,
+          "text": "      ((clA5MapTM next emit finish start).tm.runFrom"
+        },
+        {
+          "line": 6680,
+          "text": "        (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Round",
+      "start_line": 7045,
+      "end_line": 7085,
+      "sha256": "fd9b4d5b40931d6ae29c60b70f6c83d0a74ad2b402a4c7eafc9443549bc5ad02",
+      "hits": {
+        "run_add": [
+          7081
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 7079,
+          "text": "    exact guard (v - 1) (by omega)"
+        },
+        {
+          "line": 7080,
+          "text": "  · change H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord K w)) ((te + ti) + 1) = _"
+        },
+        {
+          "line": 7081,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, dispatch, MultiTapeTM.runFrom_add, he, hi]"
+        },
+        {
+          "line": 7082,
+          "text": "    rfl"
+        },
+        {
+          "line": 7083,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "declaration": "clA5Compare_compute",
+      "start_line": 7229,
+      "end_line": 7313,
+      "sha256": "dd226ac1c1cc5bcdf9f4e85047d26723bda93f6a110d6ca4c5af7a05690b2e3d",
+      "hits": {
+        "run_add": [
+          7264
+        ],
+        "time_split": [
+          7264
+        ]
+      },
+      "disposition": "distinct fixed-LIVE endpoint selection",
+      "reason": "Fixed live stop/comparator endpoint and earlier-stop exclusion have their own premises and FE-LIVE-1 by-kind boundary. No generic backward-liveness reconstruction is established here; keep the existing named-union accounting, including inline context, unchanged.",
+      "source_quotes": [
+        {
+          "line": 7262,
+          "text": "    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) ="
+        },
+        {
+          "line": 7263,
+          "text": "      A.tm.runFrom (A.tm.initCfg arg) j at stay"
+        },
+        {
+          "line": 7264,
+          "text": "    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay"
+        },
+        {
+          "line": 7265,
+          "text": "    have hstate := congrArg Cfg.state stay"
+        },
+        {
+          "line": 7266,
+          "text": "    change some (ret b) = _ at hstate"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_syntax_run",
+      "start_line": 506,
+      "end_line": 533,
+      "sha256": "c7ef8063c932a68b926d3af605c6fb2ba031913955f270688e8260307f3b022b",
+      "hits": {
+        "run_add": [
+          527
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 525,
+          "text": "      (by simp [hx', List.append_assoc]) (by simp [hx', List.append_assoc])"
+        },
+        {
+          "line": 526,
+          "text": "    conv_lhs => arg 2; rw [show 2*(b::a).length+2 = 2+(2*a.length+2) by simp; omega]"
+        },
+        {
+          "line": 527,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 528,
+          "text": "    simpa only [List.foldl_cons, List.length_append, List.length_cons, List.length_nil,"
+        },
+        {
+          "line": 529,
+          "text": "      Nat.add_zero, Nat.zero_add, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_evaluation_start",
+      "start_line": 650,
+      "end_line": 706,
+      "sha256": "3aacf1255a4167428fb0f4efc9ccd81e4c83ad19d3207e71e38c293288656204",
+      "hits": {
+        "run_add": [
+          671,
+          692,
+          701
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 669,
+          "text": "      (2*x.length+2+u.length) ="
+        },
+        {
+          "line": 670,
+          "text": "      tautCfg z (some .copy) z.length (Nat.le_refl _) u u.length := by"
+        },
+        {
+          "line": 671,
+          "text": "    rw [MultiTapeTM.runFrom_add, taut_init, hs]"
+        },
+        {
+          "line": 672,
+          "text": "    simpa only [hpre, z, universal_pair_length] using hc"
+        },
+        {
+          "line": 673,
+          "text": "  have hback : tautTM.tm.step (tautCfg z (some .copy) z.length (Nat.le_refl _) u u.length) ="
+        },
+        {
+          "line": 690,
+          "text": "      ((2*x.length+2+u.length+1)+(u.length+1)) ="
+        },
+        {
+          "line": 691,
+          "text": "      tautCfg z (some .rewindStart) z.length (Nat.le_refl _) u 0 := by"
+        },
+        {
+          "line": 692,
+          "text": "    rw [MultiTapeTM.runFrom_add, hstart, hw]"
+        },
+        {
+          "line": 693,
+          "text": "  refine ⟨(2*x.length+2+u.length+1)+(u.length+1)+r, ?_, ?_⟩"
+        },
+        {
+          "line": 694,
+          "text": "  · dsimp only [tautCfg] at hr"
+        },
+        {
+          "line": 699,
+          "text": "    rw [hzlen] at hr"
+        },
+        {
+          "line": 700,
+          "text": "    omega"
+        },
+        {
+          "line": 701,
+          "text": "  · rw [MultiTapeTM.runFrom_add, hnext, hrew]"
+        },
+        {
+          "line": 702,
+          "text": "    rfl"
+        },
+        {
+          "line": 703,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_unary_run",
+      "start_line": 740,
+      "end_line": 771,
+      "sha256": "01d66e8d8ae1c95ec411edec3d446855f5aa6f2ee913399636d1155f8c5b16ed",
+      "hits": {
+        "run_add": [
+          758
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 756,
+          "text": "      (by simp [hx', List.append_assoc]) rfl"
+        },
+        {
+          "line": 757,
+          "text": "    conv_lhs => arg 2; rw [show 2*(k+1) = 2+2*k by omega]"
+        },
+        {
+          "line": 758,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs]"
+        },
+        {
+          "line": 759,
+          "text": "    simpa only [List.length_append, List.length_cons, List.length_nil, Nat.add_zero,"
+        },
+        {
+          "line": 760,
+          "text": "      Nat.zero_add, Nat.mul_add, Nat.mul_one, Nat.reduceAdd, Nat.add_assoc,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_literal_run",
+      "start_line": 772,
+      "end_line": 844,
+      "sha256": "ced0e20a7f00a42be0cdb6db10fc7d48aea8435c3e1568f644d6a56669af6190",
+      "hits": {
+        "run_add": [
+          817,
+          824,
+          831,
+          834
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 815,
+          "text": "      tautCfg x (some (.evalFirst (.unary c))) pre₂.length"
+        },
+        {
+          "line": 816,
+          "text": "        (by simp [hx₂, universal_pair_length]) u ℓ.1 := by"
+        },
+        {
+          "line": 817,
+          "text": "    rw [MultiTapeTM.runFrom_add, hs₁]"
+        },
+        {
+          "line": 818,
+          "text": "    simpa only [hp₁, hp₂, SignType.coe_zero, zero_add] using hs₂"
+        },
+        {
+          "line": 819,
+          "text": "  have h₃ : tautTM.tm.runFrom"
+        },
+        {
+          "line": 822,
+          "text": "      tautCfg x (some (.evalFirst (.polarity c))) pre₃.length"
+        },
+        {
+          "line": 823,
+          "text": "        (by simp [hx₃, universal_pair_length]) u ℓ.1 := by"
+        },
+        {
+          "line": 824,
+          "text": "    rw [MultiTapeTM.runFrom_add, h₂]"
+        },
+        {
+          "line": 825,
+          "text": "    simpa only [hp₂, hp₃, SignType.coe_zero, add_zero] using hs₃"
+        },
+        {
+          "line": 826,
+          "text": "  have h₄ : tautTM.tm.runFrom"
+        },
+        {
+          "line": 829,
+          "text": "      tautCfg x (some (.evalBack (c && (tautAssignment u ℓ.1 == ℓ.2))))"
+        },
+        {
+          "line": 830,
+          "text": "        (pre₃.length+2) (by simp [hx₃, universal_pair_length] ; omega) u ((ℓ.1 : ℤ)-1) := by"
+        },
+        {
+          "line": 831,
+          "text": "    rw [MultiTapeTM.runFrom_add, h₃]"
+        },
+        {
+          "line": 832,
+          "text": "    simpa only [SignType.coe_neg_one, sub_eq_add_neg] using hs₄"
+        },
+        {
+          "line": 833,
+          "text": "  rw [show 3*ℓ.1+7 = (2+2*ℓ.1+2+2)+(ℓ.1+1) by omega,"
+        },
+        {
+          "line": 834,
+          "text": "    MultiTapeTM.runFrom_add, h₄, hs₅]"
+        },
+        {
+          "line": 835,
+          "text": "  apply Cfg.ext <;> simp [tautCfg, hp₃, CNF.serializeLit] ; omega"
+        },
+        {
+          "line": 836,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_clause_run",
+      "start_line": 845,
+      "end_line": 896,
+      "sha256": "91a0f3d220aee2704d580b4bb00015e49d6fbf9dcfbc07927772edc8972329f0",
+      "hits": {
+        "run_add": [
+          886
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 884,
+          "text": "        List.length_cons, List.length_nil] at ⊢"
+        },
+        {
+          "line": 885,
+          "text": "      omega"
+        },
+        {
+          "line": 886,
+          "text": "    · rw [MultiTapeTM.runFrom_add, hl]"
+        },
+        {
+          "line": 887,
+          "text": "      simpa only [hp, hs, List.length_append, List.all_cons, Bool.and_assoc,"
+        },
+        {
+          "line": 888,
+          "text": "        Nat.mul_add, Nat.add_assoc] using hr"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_formula_run",
+      "start_line": 897,
+      "end_line": 965,
+      "sha256": "e9c79dd99110406907f555993b98e137955c75f8f31196f22cac71d394579cc2",
+      "hits": {
+        "run_add": [
+          944,
+          961
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 942,
+          "text": "            then .verdict false else .evalFirst .formula)) pre₂.length"
+        },
+        {
+          "line": 943,
+          "text": "          (by simp [hx₂, universal_pair_length]) u 0 := by"
+        },
+        {
+          "line": 944,
+          "text": "      rw [MultiTapeTM.runFrom_add, hfirst]"
+        },
+        {
+          "line": 945,
+          "text": "      simpa only [hp₁, hp₂, Bool.true_and, SignType.coe_zero, zero_add] using hterm"
+        },
+        {
+          "line": 946,
+          "text": "    cases hv : C.all (fun ℓ => tautAssignment u ℓ.1 == ℓ.2) with"
+        },
+        {
+          "line": 959,
+          "text": "      · simp only [hs, List.length_cons, List.length_append]"
+        },
+        {
+          "line": 960,
+          "text": "        omega"
+        },
+        {
+          "line": 961,
+          "text": "      · rw [MultiTapeTM.runFrom_add, hprefix, htail]"
+        },
+        {
+          "line": 962,
+          "text": "        delta DNF.eval"
+        },
+        {
+          "line": 963,
+          "text": "        simp [hv]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "declaration": "taut_machine_pair",
+      "start_line": 989,
+      "end_line": 1023,
+      "sha256": "90070f861dcea79acc0ce9fb4d85d0a8d3db01818d2ec08ffff980dee12aabb6",
+      "hits": {
+        "run_add": [
+          1015
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1013,
+          "text": "        [!((DNF.mk φ).eval (tautAssignment u))] (a+b) := by"
+        },
+        {
+          "line": 1014,
+          "text": "      apply (FinTM.computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 1015,
+          "text": "      rw [MultiTapeTM.runFrom_add, hstart, heval]"
+        },
+        {
+          "line": 1016,
+          "text": "      exact ⟨rfl, rfl⟩"
+        },
+        {
+          "line": 1017,
+          "text": "    rw [DNF.decode_cnf_serialize]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "declaration": "counter_body",
+      "start_line": 1052,
+      "end_line": 1120,
+      "sha256": "61f8a472bf61ae6bed450b0fd39929da6b254ce7537de0942c56a4688ad1af73",
+      "hits": {
+        "run_add": [
+          1079,
+          1087,
+          1093
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1077,
+          "text": "          (M.runFrom c u) ct cp := by"
+        },
+        {
+          "line": 1078,
+          "text": "    obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : u ≠ 0)"
+        },
+        {
+          "line": 1079,
+          "text": "    rw [Nat.succ_eq_add_one, Nat.add_comm n 1, MultiTapeTM.runFrom_add, first]"
+        },
+        {
+          "line": 1080,
+          "text": "    have tr := MultiTapeTM.runFrom_mapState_of_agreeOn E (counterLoopTMVia e M a exit) emb"
+        },
+        {
+          "line": 1081,
+          "text": "      (fun s => s ≠ a ∧ exit ≠ some s)"
+        },
+        {
+          "line": 1085,
+          "text": "        have he := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c (1 + v)"
+        },
+        {
+          "line": 1086,
+          "text": "        change E.runFrom ec (1 + v) = _ at he"
+        },
+        {
+          "line": 1087,
+          "text": "        rw [MultiTapeTM.runFrom_add] at he"
+        },
+        {
+          "line": 1088,
+          "text": "        have hstate := congrArg Cfg.state he"
+        },
+        {
+          "line": 1089,
+          "text": "        change (E.runFrom (E.runFrom ec 1) v).state = (M.runFrom c (1 + v)).state at hstate"
+        },
+        {
+          "line": 1091,
+          "text": "        have eqs : s = s' := Option.some.inj (hs.symm.trans (hstate.trans hs'))"
+        },
+        {
+          "line": 1092,
+          "text": "        simpa [eqs] using And.intro ha hx)"
+        },
+        {
+          "line": 1093,
+          "text": "    rw [tr, ← MultiTapeTM.runFrom_add]"
+        },
+        {
+          "line": 1094,
+          "text": "    change (E.runFrom ec (1 + n)).mapState emb = _"
+        },
+        {
+          "line": 1095,
+          "text": "    rw [show E.runFrom ec (1 + n) ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "declaration": "counter_rounds",
+      "start_line": 1215,
+      "end_line": 1323,
+      "sha256": "1ae1505d4dd079a5f0f6c32dca46100c3e289a3f9b005bb6cd52330e2ca06a39",
+      "hits": {
+        "run_add": [
+          1281,
+          1293,
+          1305,
+          1309
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1279,
+          "text": "        counterLoopCfg ((counterLoopOrbit M τ c (n + 1)).state.map (counterLoopRedirect a exit))"
+        },
+        {
+          "line": 1280,
+          "text": "          (counterLoopOrbit M τ c (n + 1)) nextTape cp := by"
+        },
+        {
+          "line": 1281,
+          "text": "      rw [MultiTapeTM.runFrom_add, debit, body]"
+        },
+        {
+          "line": 1282,
+          "text": "      rw [show counterLoopOrbit M τ c (n + 1) = M.runFrom cn (τ cn) from"
+        },
+        {
+          "line": 1283,
+          "text": "        Function.iterate_succ_apply' _ _ _]"
+        },
+        {
+          "line": 1291,
+          "text": "      have s₁ := (counterSpan_iff_segment ..).1 h₁"
+        },
+        {
+          "line": 1292,
+          "text": "      rw [debit] at s₁"
+        },
+        {
+          "line": 1293,
+          "text": "      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, debit]"
+        },
+        {
+          "line": 1294,
+          "text": "      refine (s₁.mono subset_rfl ?_).trans ((counterSpan_iff_segment ..).1 bs)"
+        },
+        {
+          "line": 1295,
+          "text": "      exact fun p hp => ⟨hp.1, 0, Nat.zero_le _, by simpa using hp.2⟩"
+        },
+        {
+          "line": 1303,
+          "text": "    rw [time]"
+        },
+        {
+          "line": 1304,
+          "text": "    refine ⟨?_, ?_⟩"
+        },
+        {
+          "line": 1305,
+          "text": "    · rw [MultiTapeTM.runFrom_add, before, round]"
+        },
+        {
+          "line": 1306,
+          "text": "      rfl"
+        },
+        {
+          "line": 1307,
+          "text": "    · have s₁ := (counterSpan_iff_segment ..).1 span"
+        },
+        {
+          "line": 1308,
+          "text": "      rw [before] at s₁"
+        },
+        {
+          "line": 1309,
+          "text": "      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, before]"
+        },
+        {
+          "line": 1310,
+          "text": "      refine (s₁.mono subset_rfl ?_).trans"
+        },
+        {
+          "line": 1311,
+          "text": "        (((counterSpan_iff_segment ..).1 rs).mono subset_rfl ?_)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "declaration": "counterLoopTMVia_run_done",
+      "start_line": 1324,
+      "end_line": 1414,
+      "sha256": "a839cfd3ae3d3d1e1c56db54f2882696f4a35ec8e5fb48ae13083b97e1aad3df",
+      "hits": {
+        "run_add": [
+          1401,
+          1406
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 1399,
+          "text": "  rw [time]"
+        },
+        {
+          "line": 1400,
+          "text": "  refine ⟨?_, ?_⟩"
+        },
+        {
+          "line": 1401,
+          "text": "  · rw [MultiTapeTM.runFrom_add, before, debit]"
+        },
+        {
+          "line": 1402,
+          "text": "  · rw [width, ← before] at ds"
+        },
+        {
+          "line": 1403,
+          "text": "    have s := ((counterSpan_iff_segment ..).1 span).trans"
+        },
+        {
+          "line": 1404,
+          "text": "      (((counterSpan_iff_segment ..).1 ds).mono subset_rfl fun p hp =>"
+        },
+        {
+          "line": 1405,
+          "text": "        ⟨hp.1, d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp.2⟩)"
+        },
+        {
+          "line": 1406,
+          "text": "    rw [← MultiTapeTM.runFrom_add] at s"
+        },
+        {
+          "line": 1407,
+          "text": "    exact (counterSpan_iff_segment (R := fun p => ∃ r u,"
+        },
+        {
+          "line": 1408,
+          "text": "      ((r < d ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "declaration": "expandTM_run_ofCfg",
+      "start_line": 1654,
+      "end_line": 1835,
+      "sha256": "9142f86e8dfbe2d9bff43122ff1d4b664c9fa33c2ede429d2de0dbbde7cbfb69",
+      "hits": {
+        "canonical": [
+          1777
+        ]
+      },
+      "disposition": "already canonical public reuse",
+      "reason": "CounterLoop1777 directly applies runFrom_state_ne_none_of_le; no local implementation.",
+      "source_quotes": [
+        {
+          "line": 1775,
+          "text": "    intro u hu hut"
+        },
+        {
+          "line": 1776,
+          "text": "    change u < pat.length + 1 at hut"
+        },
+        {
+          "line": 1777,
+          "text": "    have live := MultiTapeTM.runFrom_state_ne_none_of_le M (counterLoopOrbit M τ c r)"
+        },
+        {
+          "line": 1778,
+          "text": "      (pat.length + 1) (by rw [spec.1]; simp) u (by omega)"
+        },
+        {
+          "line": 1779,
+          "text": "    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp live"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "sweep_init",
+      "start_line": 542,
+      "end_line": 591,
+      "sha256": "55be9fa836b5fac8d8076e59657997fa9ada056fdfca10815e801b60e65e3a97",
+      "hits": {
+        "run_add": [
+          584
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 582,
+          "text": "    exact sweepRevCfg_write _ _ _ _ _ _ _ _"
+        },
+        {
+          "line": 583,
+          "text": "  rw [show 2 * M.k + 2 = (M.k + 1) + M.k + 1 by omega,"
+        },
+        {
+          "line": 584,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 585,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', hinit, sweep_init_block]"
+        },
+        {
+          "line": 586,
+          "text": "  simp only [zero_add, List.append_nil, List.drop_nil]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "sweep_prepare",
+      "start_line": 610,
+      "end_line": 697,
+      "sha256": "dd00c8ab5ce7881bf909b63c521075831564ab72be7174d0941d3c43de955be9",
+      "hits": {
+        "run_add": [
+          677
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 675,
+          "text": "    rw [hsym]"
+        },
+        {
+          "line": 676,
+          "text": "    exact sweepCfg_stay _ _ _ _ _ _ _"
+        },
+        {
+          "line": 677,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 678,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 679,
+          "text": "  unfold sweepStart"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "sweep_finish",
+      "start_line": 698,
+      "end_line": 806,
+      "sha256": "9079f5b4edbeacd15ae0005e46ce97b6a379b3f31970f3b1361152775b79965d",
+      "hits": {
+        "run_add": [
+          796
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 794,
+          "text": "    rw [hsym]"
+        },
+        {
+          "line": 795,
+          "text": "    exact sweepRevCfg_stay _ _ _ _ _ _ _"
+        },
+        {
+          "line": 796,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 797,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', sweep_grow_right_block, hdrop]"
+        },
+        {
+          "line": 798,
+          "text": "  change (sweepTM M).tm.step ((sweepTM M).tm.runFrom"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "sweep_step",
+      "start_line": 807,
+      "end_line": 824,
+      "sha256": "24dc167cfa3859e372d91317897f67c9c7c8f77807e856f289152594c992dc23",
+      "hits": {
+        "run_add": [
+          817
+        ]
+      },
+      "disposition": "different concrete run/phase contract",
+      "reason": "Inspected run-addition/liveness contexts compose concrete machine phases or establish a concrete halt/output endpoint. No generic later-live-to-earlier-live implication is reconstructed.",
+      "source_quotes": [
+        {
+          "line": 815,
+          "text": "  rw [show (2 * n + 5) * M.k + 4 ="
+        },
+        {
+          "line": 816,
+          "text": "    (M.k + 1 + (n + 1) * M.k + 1) + (M.k + 1 + (n + 2) * M.k + 1) by ring,"
+        },
+        {
+          "line": 817,
+          "text": "    MultiTapeTM.runFrom_add, sweep_prepare M hk c q hs a n z (fun i => (hp i).1) hl,"
+        },
+        {
+          "line": 818,
+          "text": "    sweep_finish M hk c q a n _ (fun i => (hp i).2) hr]"
+        },
+        {
+          "line": 819,
+          "text": "  have hz : z - M.k + 1 + ((n + 1) * M.k : ℕ) + M.k - 1 - ((n + 2) * M.k : ℕ) ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "sweep_run_to_halt",
+      "start_line": 856,
+      "end_line": 914,
+      "sha256": "3d6c248b8035e14aa8383effe74fa11479a469df908f940e32edb639ddd08969",
+      "hits": {
+        "run_add": [
+          882
+        ],
+        "liveness": [
+          858
+        ]
+      },
+      "disposition": "liveness supplied as premise",
+      "reason": "Simulation theorem assumes all t<tau are live; it does not establish backward liveness.",
+      "source_quotes": [
+        {
+          "line": 856,
+          "text": "private lemma sweep_run_to_halt {Γ : Type} [Fintype Γ] [DecidableEq Γ]"
+        },
+        {
+          "line": 857,
+          "text": "    (M : FinTM Γ) (hk : 0 < M.k) (x : List Γ) (τ : ℕ)"
+        },
+        {
+          "line": 858,
+          "text": "    (hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg x) t).state ≠ none) :"
+        },
+        {
+          "line": 859,
+          "text": "    ∀ t ≤ τ,"
+        },
+        {
+          "line": 860,
+          "text": "      (sweepTM M).tm.runFrom ((sweepTM M).tm.initCfg (x.map (sweepEmbed Γ M.k))) (sweepTime M.k t) ="
+        },
+        {
+          "line": 880,
+          "text": "      intro i"
+        },
+        {
+          "line": 881,
+          "text": "      exact hc i _ (by right; omega)"
+        },
+        {
+          "line": 882,
+          "text": "    rw [sweepTime, MultiTapeTM.runFrom_add, ih (by omega)]"
+        },
+        {
+          "line": 883,
+          "text": "    rw [show (4 * t + 7) * M.k + 4 = (2 * (2 * t + 1) + 5) * M.k + 4 by ring]"
+        },
+        {
+          "line": 884,
+          "text": "    rw [sweep_step M hk _ q hs _ _ _ hpos hleft hright,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "one_work_tape",
+      "start_line": 915,
+      "end_line": 966,
+      "sha256": "4006ed14f3bdaef07871c7755ed43a3ce384c658f3883bf100a47a916c2122ce",
+      "hits": {
+        "liveness": [
+          935,
+          937,
+          939
+        ],
+        "least_time": [
+          936,
+          937,
+          938,
+          940
+        ]
+      },
+      "disposition": "distinct first-None-halt selection",
+      "reason": "Selects a least halted time (and endpoint/output/positivity as stated), rather than inferring every u<=t is live from a live endpoint. This review does not extend FE-LIVE-1 or dispose of this separate family.",
+      "source_quotes": [
+        {
+          "line": 933,
+          "text": "    intro x"
+        },
+        {
+          "line": 934,
+          "text": "    obtain ⟨hhalt, hout⟩ := (computesInTime_iff M x (f x) (T x.length)).mp (hM x)"
+        },
+        {
+          "line": 935,
+          "text": "    have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T x.length, hhalt⟩"
+        },
+        {
+          "line": 936,
+          "text": "    let τ := Nat.find hex"
+        },
+        {
+          "line": 937,
+          "text": "    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none := Nat.find_spec hex"
+        },
+        {
+          "line": 938,
+          "text": "    have ht : τ ≤ T x.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "line": 939,
+          "text": "    have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg x) t).state ≠ none :="
+        },
+        {
+          "line": 940,
+          "text": "      fun _ h => Nat.find_min hex h"
+        },
+        {
+          "line": 941,
+          "text": "    have hrun := sweep_run_to_halt M (Nat.pos_of_ne_zero hk) x τ hlive τ (le_refl _)"
+        },
+        {
+          "line": 942,
+          "text": "    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "dg_simulate",
+      "start_line": 2057,
+      "end_line": 2117,
+      "sha256": "7caf20dcfae068fbf1e21fffd54ac56c68d4d21f1d439e446329dff74c59fb24",
+      "hits": {
+        "liveness": [
+          2060
+        ]
+      },
+      "disposition": "liveness supplied as premise",
+      "reason": "Window/Segment simulator assumes a live native prefix and builds a resource span.",
+      "source_quotes": [
+        {
+          "line": 2058,
+          "text": "    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k))"
+        },
+        {
+          "line": 2059,
+          "text": "    (τ : ℕ) (hlive : ∀ t < τ,"
+        },
+        {
+          "line": 2060,
+          "text": "      (M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t).state ≠ none) :"
+        },
+        {
+          "line": 2061,
+          "text": "    ∀ t ≤ τ, ∃ (a : ℤ) (n u : ℕ),"
+        },
+        {
+          "line": 2062,
+          "text": "      DGWindow M (x.map (dgRetract a₀)) t a n ∧ u ≤ sweepTime M.k t ∧"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "declaration": "dg_all_inputs",
+      "start_line": 2118,
+      "end_line": 2222,
+      "sha256": "d26cbc5c5c74929d0883f3de354c066cb5afe0272b486ab285b4d3bf0db3856e",
+      "hits": {
+        "halt_absorb": [
+          2156
+        ],
+        "run_add": [
+          2156
+        ],
+        "liveness": [
+          2129,
+          2131,
+          2133,
+          2139
+        ],
+        "least_time": [
+          2130,
+          2131,
+          2132,
+          2134
+        ]
+      },
+      "disposition": "distinct halted-tail head bound",
+      "reason": "At2156 uses absorption after an already halted simulator endpoint to extend head bounds to later times; it does not infer earlier liveness from a live endpoint.",
+      "source_quotes": [
+        {
+          "line": 2127,
+          "text": "  let y := x.map (dgRetract a₀)"
+        },
+        {
+          "line": 2128,
+          "text": "  obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hM y)"
+        },
+        {
+          "line": 2129,
+          "text": "  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg y) t).state = none := ⟨T y.length, hhalt⟩"
+        },
+        {
+          "line": 2130,
+          "text": "  let τ := Nat.find hex"
+        },
+        {
+          "line": 2131,
+          "text": "  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none := Nat.find_spec hex"
+        },
+        {
+          "line": 2132,
+          "text": "  have htime : τ ≤ T y.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "line": 2133,
+          "text": "  have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg y) t).state ≠ none :="
+        },
+        {
+          "line": 2134,
+          "text": "    fun _ h => Nat.find_min hex h"
+        },
+        {
+          "line": 2135,
+          "text": "  obtain ⟨a, n, u, window, hu, span⟩ := dg_simulate M hk a₀ x τ hlive τ (le_refl _)"
+        },
+        {
+          "line": 2136,
+          "text": "  have houtτ : (M.tm.runFrom (M.tm.initCfg y) τ).output = f y :="
+        },
+        {
+          "line": 2137,
+          "text": "    (M.tm.runFrom_output_eq_of_halt (M.tm.initCfg y) htime hτ).symm.trans hout"
+        },
+        {
+          "line": 2138,
+          "text": "  let final := dgStart M a₀ (M.tm.runFrom (M.tm.initCfg y) τ) a n (a * M.k - 1)"
+        },
+        {
+          "line": 2139,
+          "text": "  have hf : final.state = none := by"
+        },
+        {
+          "line": 2140,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg y) τ).state.map _ = none"
+        },
+        {
+          "line": 2141,
+          "text": "    rw [hτ]"
+        },
+        {
+          "line": 2154,
+          "text": "    · exact span.2 v hv"
+        },
+        {
+          "line": 2155,
+          "text": "    · have he : v = u + (v - u) := by omega"
+        },
+        {
+          "line": 2156,
+          "text": "      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]"
+        },
+        {
+          "line": 2157,
+          "text": "      have h := span.2 u (le_refl _)"
+        },
+        {
+          "line": 2158,
+          "text": "      rw [span.1] at h"
+        }
+      ]
+    }
+  ]
+}

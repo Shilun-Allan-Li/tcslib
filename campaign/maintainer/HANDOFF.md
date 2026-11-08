@@ -9,6 +9,19 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**Current checkpoint:** F6allcurrent073/bf64 validation is complete, including fresh25
+1385→1396/1454→1455, MF63PASS2,138→193/stdAX/19scopes/72controls/witness. Full1762-section
+Codexgate120pack is adopted; final rendering/publication next, not yetdispatched/#235notclear.
+
+SG1source078 fixes both confirmedF4backward-liveness copies. All26R3notesaccepted; CodexR4
+selected. CurrentMSG8full329running; fresh25BASEcompleted2019pairs,HEADrunning, scoped/CI
+refresh remains. #215notclear. Originalf37R3packet/findings unchanged.
+
+MIGsourcef631 passesall12owner checks (3unchangedRAMsorries). Six consumerproof reader
+repairs and2equivalentprivateheadertransport proposals are understrongseal/nativepreflight;
+actualsourceunchangedpending reviewedpatch/ruling. ExistingpublicAPIs suffice sofar. Full
+currentMIGBASE5701+59/census/CI/AX is checkpointed; HEAD/full394/gate118remain. #233notclear.
+
 **Latest user steering/current state:** Seyoon merged#234 at
 `bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c` and dispatched gate106r3. Gate119 is CLOSED
 PASS0/0/0/17 and MERGED. Its exactF1Lean permits wholeMFup2→mac5 adoption (401/static0/77,

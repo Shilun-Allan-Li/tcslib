@@ -1,3 +1,13 @@
+# F6 — current proof candidate validated; gate120 final publication next
+
+**Not yet clear to merge: #235.** Source073/550c59 on user-merged#234/bf64. CurrentwholeMAC5→
+MF63PASS2/static0/0; freshBASE138→HEAD193 allstandardAX;19scopes/72pairedcontrols/witness
+pass. Freshfull25BASE+HEAD bothcomplete,1385→1396/1454→1455/477526→477688, soleE3row.
+FullCodexgate120inputsadopted; finalrender/index/publicationnext, notdispatched. Old0d/23/
+229+2 evidence and producerclaims stay separatelypinnedhistory. Priorstatuschronologyfollows.
+
+## Earlier validation/dispatch history
+
 # F6 — current seam citation passes; final audit evidence finishing
 
 **Not yet clear to merge: #235.** Current clean pushed source `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.

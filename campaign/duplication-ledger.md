@@ -1720,3 +1720,22 @@ maintainer evidence. See fills/f6/landing/seam-step-repoint-preflight,
 seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Each kind is proposed
 retired only on #235 merge. This bounded enumeration/inspection is not whole-library absence
 or a generic duplication exception; inherited source candidates retain their own dispositions.
+
+
+## BLIVE-REUSE-1 — backward liveness (proposed retirement in #215)
+
+Canonical contract: Turing.MultiTapeTM.runFrom_state_ne_none_of_le (Finite), any alphabet/state,
+arbitrary start and live endpoint at t imply liveness at every u≤t. Gate106R3F4 confirmed
+sat_live_prefix and clA5_live_prefix as exactBool specializations with copied five-line proofs.
+The old live-prefix record is a watch; sevenSG1 kinds and FE-LIVE-1 do not acknowledge this fact.
+
+Both privateheaders remain; implementations now directly cite the canonical theorem at078263a7.
+No new API/import/statement/machine/debt permission. Same-kind inspection covers84 conservative
+declaration candidates plus inline/contrapositive/time-split closings in all5touchedfiles; only
+these2 implementations were identified. CounterLoop already cites the public theorem. FirstNone
+selection, fixedLIVE-stop entry and post-halt head-bound tails have different contracts.
+Full source chunks/line/hash/dispositions: gate106/review/round3-return-review/.
+
+Retired only on #215merge. These names are already in the affected-name unions; no new member
+or threshold crossing is added. Other watches stay unacknowledged. This is bounded mechanical
+reuse, not global absence, exhaustive accounting or retention permission.

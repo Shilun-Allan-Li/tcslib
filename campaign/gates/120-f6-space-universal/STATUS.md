@@ -1,19 +1,7 @@
-# Gate120 — post-234 current-base validation underway, not issued
+# Gate120 — current validation complete; final render/publication underway
 
-**Not yet clear to merge: #235.** New pushed source073baa518700adc3d4b241cb48d2c78401549309
-contains user-merged#234/basebf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c. Hierarchy proof bytes
-remain exact550c59; PRdelta remainsHierarchyonly. Premerge23/193/full229→2 evidence and
-peerreview are complete but historical. FreshMAC5-based2module replay, metadata/scoped
-checks and full25BASE/HEAD screen are underway; no new pass inferred. Codex selected,
-not dispatched. Prior canonical adoption history follows.
-
-## Historical premerge preparation
-
-# Gate120 — current F6 proof validation passes; final packet review/publication underway
-
-**Not yet clear to merge: #235.** Codex selected. Current0d source proves the existing
-space_universal with18private helpers/public4unchanged. Native/current193AX/scoped19proofs/
-72pairedcontrols/witness diagnostic/final23source comparison pass. Actual replaychain is
-full229 atf72 then current2 at0d, whole snapshots throughout;21inherited admissions remain.
-Canonical pack and full input list adopted; peer input review/finalrender/publication remain
-before Ready to dispatch. No external gate verdict or merger authorization is inferred.
+**Not yet clear to merge: #235.** Source073/Hierarchy550c59 on merged#234/bf64;
+currentMF63two-module replayPASS from wholeMAC5, fresh138→193/stdAX/19scopes/72pairedcontrols/
+conditionalwitness and actualfresh25BASE+HEAD allPASS. Complete1762-section inputs adopted;
+final mixed-pin index/rebuild/archive/render/publication remain before Ready to dispatch.
+Codex selected, not dispatched. Pre234 and old23/229+2 evidence remain explicitly historical.
