@@ -1,0 +1,28 @@
+START 2026-11-08T06:11:22.826860+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean sha256=f9e6e965b9e05b3d1f52da3d5f2168a25b619a2df8df7bf02689b25e359dbc54
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=82 active=82 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:2514:2: error: Type mismatch
+  fun T => abs_uprob_truncAttempts_sub_le att view hθ hnone hsome N T
+has type
+  ∀ (T : Option α → Prop), |(uprob fun w => T (truncAttempts att N w)) - uprob fun u => T (some (view u))| ≤ θ ^ N
+but is expected to have type
+  StatClose (truncAttempts att N) (fun u => some (view u)) (θ ^ N)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas): no fresh .olean produced
+
+END 2026-11-08T06:11:44.460312+00:00 RC 1 elapsed=21.6s pid=567 maxrss=2820640KiB

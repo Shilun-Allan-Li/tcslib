@@ -92,12 +92,12 @@ theorem iterate_forStep (f : List Bool → List Bool) (c d : List Bool) (i : ℕ
     by_cases hi : c.length ≤ i
     · have h1 : min i c.length = c.length := by omega
       have h2 : min (i + 1) c.length = c.length := by omega
-      simp [forStep, isNilB, List.drop_eq_nil_of_le hi, List.drop_eq_nil_of_le (by omega :
+      simp [forStep, isNilB_def, List.drop_eq_nil_of_le hi, List.drop_eq_nil_of_le (by omega :
         c.length ≤ i + 1), h1, h2]
     · have hne : c.drop i ≠ [] := by simp; omega
       have h1 : min i c.length = i := by omega
       have h2 : min (i + 1) c.length = i + 1 := by omega
-      simp only [forStep, pairFstD_pairEncode, pairSndD_pairEncode, isNilB, hne,
+      simp only [forStep, pairFstD_pairEncode, pairSndD_pairEncode, isNilB_def, hne,
         decide_false, Bool.false_eq_true, if_false, List.drop_drop, h1, h2,
         Function.iterate_succ_apply']
 
@@ -114,7 +114,7 @@ theorem forLoop_pairEncode (f : List Bool → List Bool) (c d : List Bool) :
 /-- A state whose counter is empty is fixed by the round. -/
 theorem forStep_of_fst_nil (f : List Bool → List Bool) {S : List Bool} (h : pairFstD S = []) :
     forStep f S = S := by
-  simp [forStep, isNilB, h]
+  simp [forStep, isNilB_def, h]
 
 /-- **The counted loop is polynomial-time** when its body is and the iterates `f^[j] d`,
 `j ≤ |c|`, stay inside a polynomial envelope of `|⟨c, d⟩|`.
@@ -135,14 +135,14 @@ theorem polyTimeComputable_forLoop {f : List Bool → List Bool} (hf : PolyTimeC
         (hf.comp polyTimeComputable_pairSndD))
   refine polyTimeComputable_iterate hstep polyTimeComputable_id 1 1 (B + 2) (b + 1)
     (fun S i _ => ?_)
-  simp only [id]
+  simp only [id_eq]
   have hP : 1 ≤ (S.length + 1) ^ b := Nat.one_le_pow _ _ (by omega)
   have hpow : (S.length + 1) ^ (b + 1) = (S.length + 1) ^ b * (S.length + 1) := pow_succ _ _
   have h5 : S.length + 1 ≤ (S.length + 1) ^ b * (S.length + 1) := Nat.le_mul_of_pos_left _ hP
   rw [hpow]
   cases hd : pairDecode S with
   | none =>
-    have h0 : pairFstD S = [] := by simp [pairFstD, hd]
+    have h0 : pairFstD S = [] := by simp [pairFstD_eq, hd]
     rw [Function.iterate_fixed (forStep_of_fst_nil f h0)]
     nlinarith
   | some cd =>
@@ -220,29 +220,29 @@ def hasFalse (w : List Bool) : Bool := (w.map not).any id
 private theorem transduce_head_false (w : List Bool) : transduce headδ headO false w = [] := by
   induction w with
   | nil => rfl
-  | cons b w ih => simp [transduce, headδ, headO, ih]
+  | cons b w ih => simp [transduce_nil, transduce_cons, headδ, headO, ih]
 
 /-- The `uRest` transducer copies everything once on. -/
 private theorem transduce_rest_true (w : List Bool) : transduce restδ restO true w = w := by
   induction w with
   | nil => rfl
-  | cons b w ih => simp [transduce, restδ, restO, ih]
+  | cons b w ih => simp [transduce_nil, transduce_cons, restδ, restO, ih]
 
 /-- `uHead` on `0w` is empty. -/
 @[simp] theorem uHead_false_cons (w : List Bool) : uHead (false :: w) = [] := by
-  simp [uHead, transduce, headδ, headO, transduce_head_false]
+  simp [uHead, transduce_nil, transduce_cons, headδ, headO, transduce_head_false]
 
 /-- `uHead` on `1w`. -/
 @[simp] theorem uHead_true_cons (w : List Bool) : uHead (true :: w) = true :: uHead w := by
-  simp [uHead, transduce, headδ, headO]
+  simp [uHead, transduce_nil, transduce_cons, headδ, headO]
 
 /-- `uRest` on `0w` is `w`. -/
 @[simp] theorem uRest_false_cons (w : List Bool) : uRest (false :: w) = w := by
-  simp [uRest, transduce, restδ, restO, transduce_rest_true]
+  simp [uRest, transduce_nil, transduce_cons, restδ, restO, transduce_rest_true]
 
 /-- `uRest` on `1w`. -/
 @[simp] theorem uRest_true_cons (w : List Bool) : uRest (true :: w) = uRest w := by
-  simp [uRest, transduce, restδ, restO]
+  simp [uRest, transduce_nil, transduce_cons, restδ, restO]
 
 /-- `uHead []` is empty. -/
 @[simp] theorem uHead_nil : uHead [] = [] := rfl
@@ -266,8 +266,10 @@ theorem decodeNat_eq (w : List Bool) :
   | nil => rfl
   | cons b w ih =>
     cases b
-    · simp [BoolCircuit.decodeNat]
-    · simp only [BoolCircuit.decodeNat, ih, uHead_true_cons, uRest_true_cons, hasFalse_cons,
+    · simp [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons,
+        BoolCircuit.decodeNat_true_cons]
+    · simp only [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons,
+        BoolCircuit.decodeNat_true_cons, ih, uHead_true_cons, uRest_true_cons, hasFalse_cons,
         Bool.not_true, Bool.false_or, List.length_cons]
       split <;> simp
 
@@ -275,22 +277,22 @@ theorem decodeNat_eq (w : List Bool) :
 theorem uHead_encodeNat (j : ℕ) (w : List Bool) :
     uHead (BoolCircuit.encodeNat j ++ w) = List.replicate j true := by
   induction j with
-  | zero => simp [BoolCircuit.encodeNat]
-  | succ j ih => simpa [BoolCircuit.encodeNat, List.replicate_succ] using ih
+  | zero => simp [BoolCircuit.encodeNat_def]
+  | succ j ih => simpa [BoolCircuit.encodeNat_def, List.replicate_succ] using ih
 
 /-- The rest of `1ʲ0w` is `w`. -/
 theorem uRest_encodeNat (j : ℕ) (w : List Bool) :
     uRest (BoolCircuit.encodeNat j ++ w) = w := by
   induction j with
-  | zero => simp [BoolCircuit.encodeNat]
-  | succ j ih => simpa [BoolCircuit.encodeNat, List.replicate_succ] using ih
+  | zero => simp [BoolCircuit.encodeNat_def]
+  | succ j ih => simpa [BoolCircuit.encodeNat_def, List.replicate_succ] using ih
 
 /-- `1ʲ0w` has a `0`. -/
 theorem hasFalse_encodeNat (j : ℕ) (w : List Bool) :
     hasFalse (BoolCircuit.encodeNat j ++ w) = true := by
   induction j with
-  | zero => simp [BoolCircuit.encodeNat]
-  | succ j ih => simpa [BoolCircuit.encodeNat, List.replicate_succ] using ih
+  | zero => simp [BoolCircuit.encodeNat_def]
+  | succ j ih => simpa [BoolCircuit.encodeNat_def, List.replicate_succ] using ih
 
 /-- A word with a `0` is `1ʲ0w` for `1ʲ = uHead`, `w = uRest`. -/
 theorem eq_encodeNat_of_hasFalse {w : List Bool} (h : hasFalse w = true) :
@@ -299,10 +301,10 @@ theorem eq_encodeNat_of_hasFalse {w : List Bool} (h : hasFalse w = true) :
   | nil => simp at h
   | cons b w ih =>
     cases b
-    · simp [BoolCircuit.encodeNat]
+    · simp [BoolCircuit.encodeNat_def]
     · simp only [hasFalse_cons, Bool.not_true, Bool.false_or] at h
       have := ih h
-      simp only [uHead_true_cons, uRest_true_cons, List.length_cons, BoolCircuit.encodeNat,
+      simp only [uHead_true_cons, uRest_true_cons, List.length_cons, BoolCircuit.encodeNat_def,
         List.replicate_succ, List.cons_append] at this ⊢
       exact congrArg _ this
 
@@ -341,7 +343,7 @@ theorem polyTimeComputable_hasFalse : PolyTimeComputable (fun w => [hasFalse w])
     intro w
     induction w with
     | nil => rfl
-    | cons b w ih => simp [transduce, ih]
+    | cons b w ih => simp [transduce_nil, transduce_cons, ih]
   convert polyTimeComputable_any.comp hneg using 1
   funext w
   simp [hasFalse, heq]
@@ -393,11 +395,11 @@ theorem polyTimeComputable_getW : PolyTimeComputable getW := by
 private theorem pair_cases (z : List Bool) :
     (pairFstD z = [] ∧ pairSndD z = []) ∨ z = pairEncode (pairFstD z) (pairSndD z) := by
   cases hd : pairDecode z with
-  | none => left; simp [pairFstD, pairSndD, hd]
+  | none => left; simp [pairFstD_eq, pairSndD_eq, hd]
   | some ab =>
     right
     obtain ⟨a, b⟩ := ab
-    simpa [pairFstD, pairSndD, hd] using eq_pairEncode_of_pairDecode z a b hd
+    simpa [pairFstD_eq, pairSndD_eq, hd] using eq_pairEncode_of_pairDecode z a b hd
 
 /-- Word equality on `⟨a, b⟩`: equal lengths and equal values. -/
 def eqW (z : List Bool) : Bool :=
@@ -405,7 +407,7 @@ def eqW (z : List Bool) : Bool :=
 
 /-- `eqW ⟨a, b⟩` decides `a = b`. -/
 theorem eqW_pairEncode (a b : List Bool) : eqW (pairEncode a b) = decide (a = b) := by
-  simp only [eqW, beq, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [eqW, beq_def, pairFstD_pairEncode, pairSndD_pairEncode]
   by_cases h : a = b
   · simp [h]
   · simp only [h, decide_false, Bool.and_eq_false_iff, decide_eq_false_iff_not]
@@ -475,7 +477,7 @@ private theorem chunkStep_pairEncode (c rest acc : List Bool) :
     chunkStep (pairEncode c (pairEncode rest acc)) = if rest = [] then
       pairEncode c (pairEncode rest acc) else pairEncode c (pairEncode (rest.drop c.length)
         (acc ++ pairEncode (rest.take c.length) [])) := by
-  simp [chunkStep, isNilB, PrefixByLength.take, PrefixByLength.drop]
+  simp [chunkStep, isNilB_def, PrefixByLength.take_def, PrefixByLength.drop_def]
 
 /-- `N` rounds of cutting a word of `N` blocks. -/
 private theorem iterate_chunkStep (c : List Bool) :
@@ -505,11 +507,11 @@ theorem chunkW_pairEncode (c w : List Bool) (N : ℕ) (h : w.length = N * c.leng
     · rw [h]; exact Nat.le_mul_of_pos_right _ hc
     · exact Nat.zero_le _
   have he := iterate_chunkStep c N w [] h hc
-  simp only [encWords, List.flatMap_nil, List.nil_append] at he
+  simp only [encWords_def, List.flatMap_nil, List.nil_append] at he
   simp only [chunkW, pairFstD_pairEncode, pairSndD_pairEncode, forLoop_pairEncode]
   rw [show w.length = (w.length - N) + N by omega, Function.iterate_add_apply, he,
     Function.iterate_fixed (by rw [chunkStep_pairEncode, if_pos rfl])]
-  simp [encWords]
+  simp [encWords_def]
 
 /-- Cutting is polynomial-time.
 
@@ -531,9 +533,9 @@ theorem polyTimeComputable_chunkW : PolyTimeComputable chunkW := by
   have hlen : ∀ d, (chunkStep d).length ≤ d.length + 2 * ((pairFstD d).length + 1) := by
     intro d
     by_cases hr : pairFstD (pairSndD d) = []
-    · simp [chunkStep, isNilB, hr]
+    · simp [chunkStep, isNilB_def, hr]
     rcases pair_cases d with ⟨-, h2⟩ | h
-    · simp [h2, pairFstD, pairDecode] at hr
+    · simp [h2, pairFstD_eq, pairDecode_nil] at hr
     obtain ⟨c, S, rfl⟩ : ∃ c S, d = pairEncode c S := ⟨_, _, h⟩
     simp only [pairSndD_pairEncode] at hr
     rcases pair_cases S with ⟨h1, -⟩ | hS

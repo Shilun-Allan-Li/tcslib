@@ -94,6 +94,12 @@ def encInstance {n : ℕ} (G₀ G₁ : Graph n) : List Bool := pairEncode (encGr
 /-- Shadow of `TCSlib.Cryptography.instanceVertexCount`. -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
 
+/-- The defining equation of `instanceVertexCount`:
+`instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
+theorem instanceVertexCount_def (x : List Bool) :
+    instanceVertexCount x =
+      (Nat.sqrt (pairFstD x).length) := rfl
+
 /-- Shadow of `TCSlib.Cryptography.instanceG₀`. -/
 def instanceG₀ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairFstD x)
 
@@ -104,6 +110,13 @@ def instanceG₁ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _
 def wellFormedInstance (x : List Bool) : Bool :=
   decide ((pairDecode x).isSome ∧ (pairFstD x).length = instanceVertexCount x * instanceVertexCount x ∧
     (pairSndD x).length = instanceVertexCount x * instanceVertexCount x)
+
+/-- The defining equation of `wellFormedInstance` (its body, unfolded once). -/
+theorem wellFormedInstance_def (x : List Bool) :
+    wellFormedInstance x =
+      (decide ((pairDecode x).isSome ∧ (pairFstD x).length = instanceVertexCount x *
+          instanceVertexCount x ∧
+        (pairSndD x).length = instanceVertexCount x * instanceVertexCount x)) := rfl
 
 /-- Shadow of `TCSlib.Cryptography.instanceVertices`. -/
 def instanceVertices (N : ℕ) : ℕ := Nat.sqrt ((N - 2) / 3)
@@ -134,6 +147,11 @@ noncomputable def permFailBound (n : ℕ) : ℝ := n * (2 : ℝ)⁻¹ ^ n
 
 /-- Shadow of `TCSlib.Cryptography.coinSlice`. -/
 def coinSlice (c i : ℕ) (r : List Bool) : List Bool := (r.drop (i * c)).take c
+
+/-- The defining equation of `coinSlice`: `coinSlice c i r = (r.drop (i * c)).take c`. -/
+theorem coinSlice_def (c i : ℕ) (r : List Bool) :
+    coinSlice c i r =
+      ((r.drop (i * c)).take c) := rfl
 
 /-- Shadow of `TCSlib.Cryptography.gniProver` [PS10, Protocol 118.3]. -/
 def gniProver : Strategy where
@@ -250,7 +268,7 @@ theorem giProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
     (giProver.next x y r hist).length ≤ x.length := by
   have h : (giProver.next x y r hist).length =
       Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
-    cases hist <;> simp [giProver, decGraph]
+    cases hist <;> simp [giProver, decGraph_def]
   rw [h]
   exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
 
@@ -323,7 +341,7 @@ theorem encGraph_decGraphAt {n : ℕ} {w : List Bool} (h : w.length = n * n) :
   apply List.ext_getElem
   · simp [h]
   · intro k hk hk'
-    simp only [encGraph, List.getElem_ofFn, decGraphAt, Prod.mk.eta, Equiv.apply_symm_apply]
+    simp only [encGraph_def, List.getElem_ofFn, decGraphAt, Prod.mk.eta, Equiv.apply_symm_apply]
     rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk', Option.getD_some]
 
 /-- An encoded instance on `n` vertices has `3n² + 2` bits. -/
@@ -404,7 +422,7 @@ theorem decGraph_eq_of_sqrt {w : List Bool} {n : ℕ} (h : Nat.sqrt w.length = n
 /-- The decoding of the empty word is the identity permutation (the default row search
 returns the row index). -/
 theorem decPerm_nil (n : ℕ) : decPerm n [] = 1 := by
-  unfold decPerm
+  simp only [decPerm_def]
   have hid : (fun i : Fin n =>
       (Fin.find (fun j : Fin n => ([] : List Bool).getD (finProdFinEquiv (i, j)) false = true)).getD i) =
       id := by
@@ -426,6 +444,13 @@ def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List B
   NUPPT.layout (List.replicate x.length true)
     (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r
 
+/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout
+(List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+theorem ilayout_def (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
+    ilayout x z hist r =
+      (NUPPT.layout (List.replicate x.length true)
+        (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
+
 /-- A strategy whose next-message function is a polynomial-time function `F` of the machine
 layout `ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩, r⟩` is efficient:
 `NUPPT.ofPolyTimeUniform` of `F` with the strategy's coin polynomial is the uniform machine
@@ -445,7 +470,8 @@ theorem gniProtocol_outV (P' : Strategy) (x y z : List Bool) (r : gniProtocol.Ex
     gniProtocol.outV P' x y z r =
       gniVerifier.next x z (List.ofFn r.2)
         [P'.next x y (List.ofFn r.1) [gniVerifier.next x z (List.ofFn r.2) []]] := by
-  simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec, moverIsV]
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, gniProtocol, exec_zero, exec_succ,
+      moverIsV_def]
 
 /-- The verdict of the graph isomorphism protocol against a prover `P'`: the verifier's output
 on the two messages `H` and `γ` of `P'`, the second being its reply to the challenge. -/
@@ -454,7 +480,8 @@ theorem giProtocol_outV (P' : Strategy) (x y z : List Bool) (r : giProtocol.Exec
       giVerifier.next x z (List.ofFn r.2)
         [P'.next x y (List.ofFn r.1) [],
           P'.next x y (List.ofFn r.1) [giVerifier.next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := by
-  simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec, moverIsV]
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, giProtocol, exec_zero, exec_succ,
+      moverIsV_def]
 
 /-- The first message of the graph non-isomorphism verifier on an encoded instance:
 `σ(G_b)` for the first coin `b` and `σ` sampled from the remaining coins. -/
@@ -605,24 +632,12 @@ theorem drop_ofFn_tapeSplit (c : ℕ) (b : Bool) (t : Fin c → Bool) :
     (List.ofFn (tapeSplit c (b, t))).drop 1 = List.ofFn t := by
   rw [ofFn_tapeSplit, List.drop_one, List.tail_cons]
 
-/-- Restricting a uniform tape of `c` bits to its first `m ≤ c` bits gives a uniform tape:
-the tape is the pair (prefix, suffix) through `finSumFinEquiv`, and the first projection pushes
-uniform to uniform. -/
+/-- Restricting a uniform tuple of `c` entries to its first `m ≤ c` entries gives a uniform
+tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+`Fin.castLE_injective`). -/
 theorem pushesUniform_castLE {m c : ℕ} (h : m ≤ c) :
-    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) := by
-  let e : (Fin c → Bool) ≃ (Fin m → Bool) × (Fin (c - m) → Bool) :=
-    (Equiv.arrowCongr (finCongr (Nat.add_sub_cancel' h).symm) (Equiv.refl Bool)).trans
-      ((Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl Bool)).trans
-        (Equiv.sumArrowEquivProdArrow _ _ _))
-  have he : ∀ t : Fin c → Bool, (e t).1 = fun i : Fin m => t (Fin.castLE h i) := by
-    intro t
-    funext i
-    simp only [e, Equiv.trans_apply, Equiv.arrowCongr_apply, Equiv.sumArrowEquivProdArrow_apply_fst,
-      Equiv.coe_refl, Function.comp_apply, Equiv.symm_symm, finCongr_symm,
-      finCongr_apply, finSumFinEquiv_apply_left]
-    congr 1
-  have := (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
-  simpa only [he] using this
+    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) :=
+  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
 
 /-- An entry of the list of a tape below its length. -/
 theorem getD_ofFn_lt {c : ℕ} (t : Fin c → Bool) {i : ℕ} (hi : i < c) (d : Bool) :

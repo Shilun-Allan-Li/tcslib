@@ -190,7 +190,7 @@ theorem invProbOpt_prodFun_le_yaoTryOpt {α β ρ : Type*} [Fintype α] [Nonempt
     invProbOpt (prodFun f q) B ≤
       invProbOpt f fun y (c : (Fin q → α) × ρ) =>
         (B (Function.update (prodFun f q c.1) i y) c.2).map fun xs => xs i := by
-  unfold invProbOpt
+  simp only [invProbOpt_def]
   have h := uprob_update (α := α) (ρ := ρ) i fun xs r =>
     ∃ x', (B (prodFun f q xs) r).map (fun xs => xs i) = some x' ∧ f x' = f (xs i)
   simp only [prodFun_update, Function.update_self] at h
@@ -252,7 +252,7 @@ theorem flatMap_range_ite_eq_flatten_ofFn (E : ℕ → List Bool) {Q R : ℕ} (h
     rw [List.ofFn_eq_map, List.flatMap_def, ← List.map_coe_finRange, List.map_map]
     congr 1
     refine List.map_congr_left fun t _ => ?_
-    simp only [Function.comp]
+    simp only [Function.comp_apply]
     rw [if_neg (not_le.2 t.2)]
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
   induction d with
@@ -300,14 +300,14 @@ theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ
       funext t
       refine Fin.cases ?_ (fun t => ?_) t
       · simp
-      · simp [Fin.tail]
+      · simp [Fin.tail_def]
     have keyY : ∀ c : Fin (N + 1) → τ,
         (Fin.cons (Y (c 0)) (fun t => Y (Fin.tail c t)) : Fin (N + 1) → γ) = fun t => Y (c t) := by
       intro c
       funext t
       refine Fin.cases ?_ (fun t => ?_) t
       · simp
-      · simp [Fin.tail]
+      · simp [Fin.tail_def]
     have hδ : ((N + 1 : ℕ) : ℝ) * δ = δ + N * δ := by push_cast; ring
     rw [hδ]
     convert hp2 using 1
@@ -331,7 +331,7 @@ theorem polyTimeComputable_unaryMulPair :
   convert h using 1
   funext z
   cases hz : pairDecode z with
-  | none => simp [pairFstD, pairSndD, hz]
+  | none => simp [pairFstD_eq, pairSndD_eq, hz]
   | some p =>
     obtain ⟨u, v⟩ := p
     have := eq_pairEncode_of_pairDecode z u v hz
@@ -434,8 +434,8 @@ theorem length_iterate_step_le (inLen : PolyExpr) (w : List Bool) (i : ℕ) :
   | succ i =>
     rw [iterate_step_succ, length_pairEncode, length_pairEncode, List.length_append,
       List.length_replicate]
-    have h1 := StateLoop.length_pairFstD_add_pairSndD_le w
-    have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairFstD w)
+    have h1 := length_pair_components_le w
+    have h2 := length_pair_components_le (pairFstD w)
     have h3 : ((rest w).drop ((i + 1) * inLen.eval (u w).length)).length =
         (rest w).length - (i + 1) * inLen.eval (u w).length := List.length_drop
     simp only [u, cnt, rest] at h2 h3 ⊢
@@ -550,7 +550,7 @@ theorem acc_poly : PolyTimeComputable acc :=
 /-- Doubling is polynomial-time. -/
 theorem dbl_poly : PolyTimeComputable dbl := by
   have hbit : PolyTimeComputable fun w => [(rest w).headD false] :=
-    StateLoop.headBit_poly.comp rest_poly
+    polyTimeComputable_headD.comp rest_poly
   exact (acc_poly.append acc_poly).append
     (polyTimeComputable_ite hbit (polyTimeComputable_const [true]) (polyTimeComputable_const []))
 
@@ -562,8 +562,10 @@ theorem capped_poly : PolyTimeComputable capped := by
 
 /-- The step is polynomial-time. -/
 theorem step_poly : PolyTimeComputable step := by
-  convert polyTimeComputable_ite (StateLoop.isNil_poly.comp rest_poly) polyTimeComputable_id
-    (pad_poly.pairEncode ((StateLoop.tail_poly.comp rest_poly).pairEncode capped_poly)) using 1
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp rest_poly) polyTimeComputable_id
+    (pad_poly.pairEncode
+        (((polyTimeComputable_tail.congr fun _ => List.drop_one).comp rest_poly).pairEncode
+            capped_poly)) using 1
   funext w
   simp [step]
 
@@ -582,7 +584,7 @@ theorem length_capped_le (w : List Bool) : (capped w).length ≤ (pad w).length 
 /-- The unread bits of any word are no longer than the word. -/
 theorem length_rest_le (w : List Bool) : (rest w).length ≤ w.length := by
   have h1 := length_pairFstD_le (pairSndD w)
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le w
+  have h2 := length_pair_components_le w
   unfold rest
   omega
 
@@ -768,7 +770,7 @@ theorem unum_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
 theorem acc_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
     PolyTimeComputable fun v => [acc U v] :=
   polyTimeComputable_and (StateLoop.lenLe_comp rest_poly ukk_poly)
-    (StateLoop.not_poly (StateLoop.lenLe_comp (unum_poly hU) uM_poly))
+    (polyTimeComputable_not (StateLoop.lenLe_comp (unum_poly hU) uM_poly))
 
 /-- Re-pairing the first component of a word with a shorter second component does not lengthen a
 pair, and gives a word of length `2` on a non-pair. -/
@@ -776,7 +778,7 @@ theorem length_pairEncode_pairFstD_le (v s : List Bool) (hs : s.length ≤ (pair
     (pairEncode (pairFstD v) s).length ≤ max v.length 2 := by
   cases hv : pairDecode v with
   | none =>
-    simp only [pairFstD, pairSndD, hv, Option.map_none, Option.getD_none, List.length_nil,
+    simp only [pairFstD_eq, pairSndD_eq, hv, Option.map_none, Option.getD_none, List.length_nil,
       nonpos_iff_eq_zero, List.length_eq_zero_iff] at hs ⊢
     subst hs
     simp [length_pairEncode]
@@ -819,7 +821,7 @@ end PosLoop
 /-- A trial succeeds iff its value is below `m`. -/
 theorem isSome_uniformFromBits {m k : ℕ} (b : Fin k → Bool) :
     (uniformFromBits m k b).isSome = decide (bitsToNat b < m) := by
-  unfold uniformFromBits
+  simp only [uniformFromBits_def]
   split_ifs with h <;> simp [h]
 
 /-- **The position sampler** [PS10, Algorithm 38.5, "`i ← [m]`", by rejection (D10)]: a
@@ -896,7 +898,7 @@ theorem exists_posMachine : ∃ Pm : List Bool → List Bool, PolyTimeComputable
   have hrs : rejectionSample M kk n (fun t j => pb' (finProdFinEquiv (t, j))) =
       ((List.finRange n).find? fun t => decide (bitsToNat (fun j => pb' (finProdFinEquiv (t, j))) < M)).bind
         fun t => uniformFromBits M kk fun j => pb' (finProdFinEquiv (t, j)) := by
-    unfold rejectionSample
+    simp only [rejectionSample_def]
     rw [findSome?_eq_bind_find?]
     congr 2
     funext t
@@ -910,7 +912,7 @@ theorem exists_posMachine : ∃ Pm : List Bool → List Bool, PolyTimeComputable
       simpa using List.find?_some hf
     simp only [Option.map_some, Option.bind_some]
     rw [hunum]
-    unfold uniformFromBits
+    simp only [uniformFromBits_def]
     rw [dif_pos ht]
     rfl
 

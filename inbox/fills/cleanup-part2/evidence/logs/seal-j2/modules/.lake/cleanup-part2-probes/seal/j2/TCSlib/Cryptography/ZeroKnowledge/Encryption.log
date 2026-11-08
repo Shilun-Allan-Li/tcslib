@@ -1,0 +1,35 @@
+START 2026-11-08T06:05:44.784333+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean sha256=92e864b69e0b4fbd1585dd44f879e1a1087b132c01be13bdd82144ee0552ebee
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=162 active=162 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1408:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+S : PrivateKeyScheme
+Sim : NUPPT
+hSim :
+  ∀ (D : NUPPT),
+    ∃ ε,
+      Negligible ε ∧ ∀ (n : ℕ) (m : Fin n → Bool), distAdv (S.encDist n m) (Sim.runAt n []) (D.distinguisherL n) ≤ ε n
+⊢ S.SingleMessageSecure
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1576:24: error: Function expected at
+  h
+but this term has type
+  S.SingleMessageSecure
+
+Note: Expected a function because this term is being applied to the argument
+  D
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:1576:9: error: Tactic `rcases` failed: `x✝ : ?m.13` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encryption): no fresh .olean produced
+
+END 2026-11-08T06:06:00.548524+00:00 RC 1 elapsed=15.8s pid=32211 maxrss=2681316KiB

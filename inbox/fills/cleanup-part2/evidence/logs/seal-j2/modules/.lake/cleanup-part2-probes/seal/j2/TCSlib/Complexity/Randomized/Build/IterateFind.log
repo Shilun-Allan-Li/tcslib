@@ -1,0 +1,16 @@
+START 2026-11-08T05:50:51.083118+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind.lean sha256=c5094cecaabc00087509a13d004bba5a78cba43459e8fd5e8632d6fac7eaf12d
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=163 active=163 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind.lean:976:9: error: Tactic `rcases` failed: `x✝ : PolyTimeComputable fun x => (R.eval x.length).bits` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Complexity/Randomized/Build/IterateFind): no fresh .olean produced
+
+END 2026-11-08T05:51:00.930047+00:00 RC 1 elapsed=9.8s pid=29532 maxrss=1864780KiB

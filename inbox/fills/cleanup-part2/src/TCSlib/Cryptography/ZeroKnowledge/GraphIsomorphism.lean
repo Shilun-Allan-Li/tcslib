@@ -228,11 +228,27 @@ theorem length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : (encInstance G₀ G
 component (the `n` of `decGraph`). -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
 
+/-- The defining equation of `instanceVertexCount`:
+`instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
+theorem instanceVertexCount_def (x : List Bool) :
+    instanceVertexCount x =
+      (Nat.sqrt (pairFstD x).length) := rfl
+
 /-- The first graph of a common input, on the decoded vertex set. -/
 def instanceG₀ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairFstD x)
 
+/-- The defining equation of `instanceG₀`: `instanceG₀ x = decGraphAt _ (pairFstD x)`. -/
+theorem instanceG₀_def (x : List Bool) :
+    instanceG₀ x =
+      (decGraphAt _ (pairFstD x)) := rfl
+
 /-- The second graph of a common input, on the vertex set of the first. -/
 def instanceG₁ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairSndD x)
+
+/-- The defining equation of `instanceG₁`: `instanceG₁ x = decGraphAt _ (pairSndD x)`. -/
+theorem instanceG₁_def (x : List Bool) :
+    instanceG₁ x =
+      (decGraphAt _ (pairSndD x)) := rfl
 
 /-- A common input is well formed when it is a pair whose two components are adjacency
 matrices of the same size `n²` (the "same number of vertices" of [PS10, §4.5]). -/
@@ -351,6 +367,13 @@ trials per position), read from the tape by `coinTable`; the identity on failure
 noncomputable def samplePerm (n : ℕ) (r : List Bool) : Equiv.Perm (Fin n) :=
   (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1
 
+/-- The defining equation of `samplePerm`: `samplePerm n r = (permFromCoins n (permBits n)
+(permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1`. -/
+theorem samplePerm_def (n : ℕ) (r : List Bool) :
+    samplePerm n r =
+      ((permFromCoins n (permBits n) (permTrials n)
+          (coinTable n (permTrials n) (permBits n) r)).getD 1) := rfl
+
 /-- The number of tape bits consumed by `samplePerm n`: `n · permTrials n · permBits n`
 (`= 2n³ · Nat.size n`).
 
@@ -363,6 +386,11 @@ def permCoinLen (n : ℕ) : ℕ := n * permTrials n * permBits n
 **Repair (run-3 audit P2-1):** the run-2 bound `n (1 - 2^{-size n})^{n²}` had no closed form;
 the closed form `n · 2^{-n}` is owned by `Asymptotic/Permutations.lean`. -/
 noncomputable def permFailBound (n : ℕ) : ℝ := n * (2 : ℝ)⁻¹ ^ n
+
+/-- The defining equation of `permFailBound`: `permFailBound n = n * (2 : ℝ)⁻¹ ^ n`. -/
+theorem permFailBound_def (n : ℕ) :
+    permFailBound n =
+      (n * (2 : ℝ)⁻¹ ^ n) := rfl
 
 /-- The sampler consumes at most `(N + 1)²` tape bits whenever `2n² ≤ N` (every encoded
 instance on `n` vertices has length `3n² + 2`, `length_encInstance`), so the coin polynomial
@@ -416,6 +444,11 @@ theorem negligible_mul_permFailBound :
 /-- The `i`-th block of `c` bits of a tape (the coins of iteration `i` of a repeated
 protocol). -/
 def coinSlice (c i : ℕ) (r : List Bool) : List Bool := (r.drop (i * c)).take c
+
+/-- The defining equation of `coinSlice`: `coinSlice c i r = (r.drop (i * c)).take c`. -/
+theorem coinSlice_def (c i : ℕ) (r : List Bool) :
+    coinSlice c i r =
+      ((r.drop (i * c)).take c) := rfl
 
 /-! ### The graph non-isomorphism protocol [PS10, Protocol 118.3] (Prot-118.3) -/
 

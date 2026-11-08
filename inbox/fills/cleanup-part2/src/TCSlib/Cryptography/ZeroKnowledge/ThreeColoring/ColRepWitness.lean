@@ -247,11 +247,11 @@ private theorem scanTest_iff (x y : List Bool) :
 
 /-- The badly-encoded-vertex test is polynomial-time on `⟨1^i, z⟩` for `y = snd z`
 (`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`,
-`StateLoop.xor_poly`). -/
+`BinArith.polyTimeComputable_xor`). -/
 private theorem badVertex_poly :
     PolyTimeComputable fun w => [badVertex (pairSndD (pairSndD w)) (pairFstD w).length] := by
   have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
-    ptc_comp polyTimeComputable_pairSndD polyTimeComputable_pairSndD
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_pairSndD
   have hI := unaryLength_poly polyTimeComputable_pairFstD
   have h2I := unaryMul_poly (unaryConst_poly 2) hI
   have hcv := colorVal_poly hY hI
@@ -259,8 +259,8 @@ private theorem badVertex_poly :
   have hb1 := getBit_poly hY (unaryAdd_poly h2I (unaryConst_poly 1))
   have hd0 := eqTest_poly (divNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
   have hd1 := eqTest_poly (modNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
-  refine ptc_congr (polyTimeComputable_or (StateLoop.xor_poly hb0 hd0)
-    (StateLoop.xor_poly hb1 hd1)) fun w => ?_
+  refine ptc_congr (polyTimeComputable_or (BinArith.polyTimeComputable_xor hb0 hd0)
+    (BinArith.polyTimeComputable_xor hb1 hd1)) fun w => ?_
   rw [badVertex, divNum_eq, modNum_eq]
 
 /-- The monochromatic-edge test is polynomial-time on `⟨1^j, z⟩` for `x = fst z`, `y = snd z`,
@@ -270,9 +270,9 @@ private theorem badEntry_poly :
     PolyTimeComputable fun w => [badEntry (pairFstD (pairSndD w)) (pairSndD (pairSndD w))
       (Nat.sqrt (pairFstD (pairSndD w)).length) (pairFstD w).length] := by
   have hX : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
-    ptc_comp polyTimeComputable_pairFstD polyTimeComputable_pairSndD
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_pairSndD
   have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
-    ptc_comp polyTimeComputable_pairSndD polyTimeComputable_pairSndD
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_pairSndD
   have hI := unaryLength_poly polyTimeComputable_pairFstD
   have hn := unarySqrt_poly (unaryLength_poly hX)
   have hbit := getBit_poly hX hI

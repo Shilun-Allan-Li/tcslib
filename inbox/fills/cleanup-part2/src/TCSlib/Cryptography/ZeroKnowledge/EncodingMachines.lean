@@ -171,11 +171,12 @@ theorem unaryMin_poly {f g : List Bool → ℕ}
 
 /-- Reading bit number `f x` (default `false`) of a polynomial-time string `h x` is a
 polynomial-time test: drop `f x` bits (`Complexity.polyTimeComputable_pairDropPoly`) and read
-the head (`Complexity.StateLoop.headBit_poly`). -/
+the head (`polyTimeComputable_headD`). -/
 theorem getBit_poly {h : List Bool → List Bool} (hh : PolyTimeComputable h) {f : List Bool → ℕ}
     (hf : PolyTimeComputable fun x => List.replicate (f x) true) :
     PolyTimeComputable fun x => [(h x).getD (f x) false] := by
-  convert headBit_poly.comp ((polyTimeComputable_pairDropPoly .var).comp (hf.pairEncode hh))
+  convert polyTimeComputable_headD.comp ((polyTimeComputable_pairDropPoly .var).comp
+      (hf.pairEncode hh))
     using 1
   funext x
   simp [List.headD_eq_head?_getD, List.head?_drop, List.getD_eq_getElem?_getD]
@@ -208,16 +209,16 @@ theorem cstep_iterate (c z : List Bool) (i : ℕ) :
     simp [cstep, List.replicate_succ]
 
 /-- The counter orbit of an arbitrary word `x` stays within `2 i + 2 |x| + 2` after `i` rounds
-(`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+(`length_pair_components_le`). -/
 theorem length_cstep_iterate_le (x : List Bool) (i : ℕ) :
     (cstep^[i] x).length ≤ 2 * i + 2 * x.length + 2 := by
   cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
+  | zero => simp only [Function.iterate_zero, id_eq]; omega
   | succ i =>
     rw [Function.iterate_succ_apply,
       show cstep x = pairEncode (true :: pairFstD x) (pairSndD x) from rfl, cstep_iterate,
       length_pairEncode]
-    have := length_pairFstD_add_pairSndD_le x
+    have := length_pair_components_le x
     simp only [List.length_append, List.length_replicate, List.length_cons]
     omega
 
@@ -314,11 +315,11 @@ test of `⟨1^i, z⟩` and the bound `len z` is a unary function, then
 `z ↦ 1^{firstIdx (p z) (len z)}` is polynomial-time computable.
 
 **Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` on the counter step
-`cstep` from `⟨[], z⟩`, whose orbit is `⟨1^i, z⟩` (`cstep_iterate`) and polynomially bounded
-for every word (`cstep_horbit`), with the acceptance test `len z ≤ i ∨ p z i`
-(`Complexity.StateLoop.lenLe_comp`, `or_poly`), the payload `1^i` (the first projection), and
-the round polynomial `C (n+1)^c` bounding `len` (`PolyTimeComputable.output_length_le`). The
-loop's `List.find?` returns `firstIdx (p z) (len z)` by
+`cstep` from `⟨[], z⟩`, whose orbit is `⟨1^i, z⟩` (`cstep_iterate`) and polynomially bounded for
+every word (`cstep_horbit`), with the acceptance test `len z ≤ i ∨ p z i`
+(`Complexity.StateLoop.lenLe_comp`, `polyTimeComputable_or`), the payload `1^i` (the first
+projection), and the round polynomial `C (n+1)^c` bounding `len`
+(`PolyTimeComputable.output_length_le`). The loop's `List.find?` returns `firstIdx (p z) (len z)` by
 `Complexity.StateLoop.find?_range_eq_some`: below it both disjuncts fail (`firstIdx_min`,
 `firstIdx_le`), at it one holds (`q_firstIdx`, or `len z ≤ firstIdx` on exhaustion). -/
 theorem polyTimeComputable_firstIdx {p : List Bool → ℕ → Bool}
@@ -331,7 +332,7 @@ theorem polyTimeComputable_firstIdx {p : List Bool → ℕ → Bool}
     simpa [PolyExpr.eval_normal] using this
   have hacc : PolyTimeComputable fun w =>
       [decide (len (pairSndD w) ≤ (pairFstD w).length) || p (pairSndD w) (pairFstD w).length] := by
-    refine or_poly ?_ hp
+    refine polyTimeComputable_or ?_ hp
     convert lenLe_comp polyTimeComputable_pairFstD (hlen.comp polyTimeComputable_pairSndD) using 1
     funext w
     simp
@@ -465,20 +466,13 @@ theorem truncate_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
 
 /-! ### Counted loops -/
 
-/-- **State loops** (a copy of the private `polyTimeComputable_stateFind` of
-`TCSlib/Complexity/Randomized/Repetition.lean`, requested as a shared lemma). A state word
+/-- **State loops** (a same-header alias of the public `Complexity.polyTimeComputable_stateFind`
+of `TCSlib/Complexity/Randomized/Repetition.lean`). A state word
 `⟨x, s⟩` retains the input `x` and evolves its state from `start x` by `s ↦ step ⟨x, s⟩`
 (`Complexity.StateLoop.orbit`); a test `acc` on the state word is `false` before round `N x`
 and `true` at round `N x ≤ R|x|`, the states up to that round have length at most `B|x|`, and
 `out` reads the answer off the final state word. Then `x ↦ out ⟨x, orbit x (N x)⟩` is
-polynomial-time computable.
-
-**Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` on the length-guarded
-step `Complexity.StateLoop.gstep step B` with `R` as the round polynomial and
-`StateLoop.gstepBound B` as the orbit bound (valid for every word by
-`StateLoop.length_gstep_iterate_le`), pre-composed with `x ↦ ⟨x, start x⟩`. On the genuine
-orbit the guard never fires (`StateLoop.gstep_iterate_eq`), so the loop's `find?` returns
-`some (N x)` (`StateLoop.find?_range_eq_some`) and the payload is `out ⟨x, orbit x (N x)⟩`. -/
+polynomial-time computable. -/
 theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
     {acc : List Bool → Bool} {out : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
@@ -487,27 +481,8 @@ theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
     (hbound : ∀ x i, i ≤ N x → (orbit start step x i).length ≤ B.eval x.length)
     (hfirst : ∀ x i, i < N x → acc (pairEncode x (orbit start step x i)) = false)
     (hlast : ∀ x, acc (pairEncode x (orbit start step x (N x))) = true) :
-    PolyTimeComputable fun x => out (pairEncode x (orbit start step x (N x))) := by
-  have hF := polyTimeComputable_iterateFind (gstep_poly hstep B) hacc hout R (gstepBound B)
-    (fun w i _ => length_gstep_iterate_le step B w i)
-  have hpre : PolyTimeComputable fun x => pairEncode x (start x) :=
-    polyTimeComputable_id.pairEncode hstart
-  convert hF.comp hpre using 1
-  funext x
-  simp only [Function.comp_apply]
-  have horb := gstep_iterate_eq start step B x (N x) (hbound x)
-  have hle : N x ≤ R.eval (pairEncode x (start x)).length :=
-    (hN x).trans (R.eval_mono (by rw [length_pairEncode]; omega))
-  have hfind : (List.range (R.eval (pairEncode x (start x)).length + 1)).find?
-      (fun i => acc ((gstep step B)^[i] (pairEncode x (start x)))) = some (N x) := by
-    apply find?_range_eq_some hle
-    · intro i hi
-      rw [horb i hi.le]
-      exact hfirst x i hi
-    · rw [horb (N x) le_rfl]
-      exact hlast x
-  rw [hfind]
-  exact (congrArg out (horb (N x) le_rfl)).symm
+    PolyTimeComputable fun x => out (pairEncode x (orbit start step x (N x))) :=
+  Complexity.polyTimeComputable_stateFind hstart hstep hacc hout R B N hN hbound hfirst hlast
 
 /-- The state of a **counted loop** after `i` rounds: from `init x`, round `i` replaces the
 state `s` by `upd ⟨x, ⟨1^i, s⟩⟩` (the update reads the input, the round counter and the state
@@ -538,8 +513,19 @@ def step (upd : List Bool → List Bool) (w : List Bool) : List Bool :=
 def acc (N : List Bool → ℕ) (w : List Bool) : Bool :=
   decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)
 
+/-- The defining equation of `acc`: `acc N w = decide
+(N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)`. -/
+theorem acc_def (N : List Bool → ℕ) (w : List Bool) :
+    acc N w =
+      (decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)) := rfl
+
 /-- The output on `⟨x, ⟨cnt, s⟩⟩`: the state `s`. -/
 def out (w : List Bool) : List Bool := pairSndD (pairSndD w)
+
+/-- The defining equation of `out`: `out w = pairSndD (pairSndD w)`. -/
+theorem out_def (w : List Bool) :
+    out w =
+      (pairSndD (pairSndD w)) := rfl
 
 /-- The initial state word is polynomial-time. -/
 theorem start_poly {init : List Bool → List Bool} (hinit : PolyTimeComputable init) :
@@ -569,7 +555,7 @@ theorem orbit_eq (upd init : List Bool → List Bool) (x : List Bool) (i : ℕ) 
     orbit (start init) (step upd) x i =
       pairEncode (List.replicate i true) (loopState upd init x i) := by
   induction i with
-  | zero => rfl
+  | zero => exact (orbit_zero _ _ _).trans rfl
   | succ i ih =>
     rw [orbit_succ, ih]
     simp [step, List.replicate_succ]

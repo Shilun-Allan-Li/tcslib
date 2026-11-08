@@ -119,18 +119,18 @@ private theorem acceptProb_distinguisherL_congr {σ : Type*} [Fintype σ] {A B :
     (hc : A.coins = B.coins) (n : ℕ) (X Y : σ → List Bool)
     (h : ∀ s r, A.runAtL n (X s) r = B.runAtL n (Y s) r) :
     acceptProb X (A.distinguisherL n) = acceptProb Y (B.distinguisherL n) := by
-  have hlen : A.coinLen n = B.coinLen n := by simp only [NUPPT.coinLen, hc]
+  have hlen : A.coinLen n = B.coinLen n := by simp only [NUPPT.coinLen_eq, hc]
   let e : A.Coins n ≃ B.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
   have hofn : ∀ r : A.Coins n, List.ofFn (e r) = List.ofFn r := fun r =>
     (List.ofFn_congr hlen r).symm
-  unfold acceptProb
+  simp only [acceptProb_def]
   have := uprob_comp_equiv ((Equiv.refl σ).prodCongr e)
     (fun z : σ × B.Coins n => B.distinguisherL n (Y z.1) z.2 = true)
   rw [← this]
   congr 1
   funext z
   simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply,
-    NUPPT.distinguisherL, NUPPT.runAt_eq, h, hofn]
+    NUPPT.distinguisherL_eq, NUPPT.runAt_eq, h, hofn]
 
 /-! ### Efficient private-key encryption [PS10, Definition 24.7] -/
 
@@ -289,7 +289,7 @@ theorem MultiMessageSecure.singleMessageSecure {S : PrivateKeyScheme} (h : S.Mul
           (inferInstanceAs (Unique (Fin 1)))))
       (S.encDist n m) (D.distinguisherL n)
   have := hD n (fun _ => m₀) (fun _ => m₁)
-  unfold distAdv at this ⊢
+  simp only [distAdv_def] at this ⊢
   rwa [key m₀, key m₁] at this
 
 end PrivateKeyScheme
@@ -307,7 +307,7 @@ truncates to the shorter list) is the encoding of `padXor`. -/
 theorem zipWith_xor_ofFn {n L : ℕ} (h : n ≤ L) (m : Fin n → Bool) (p : Fin L → Bool) :
     List.zipWith xor (List.ofFn m) (List.ofFn p) = List.ofFn (padXor h m p) := by
   refine List.ext_getElem (by simp [Nat.min_eq_left h]) fun i h₁ h₂ => ?_
-  simp [padXor, Fin.castLE]
+  simp [padXor, Fin.coe_castLE]
 
 /-- **Perfect secrecy of the one-time pad** (Claim-92.a, used in [PS10, Theorems 92.2 and
 99.2]): for a uniform pad `p ← U_L` the distributions `m₀ ⊕ p|_n` and `m₁ ⊕ p|_n` are
@@ -378,7 +378,7 @@ theorem polyTimeComputable_prgPadFun {F : List Bool → List Bool} (hF : PolyTim
       (hF.comp (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg)))
   convert h using 1
   funext z
-  simp [prgPadFun, Function.comp]
+  simp [prgPadFun, Function.comp_apply]
 
 /-- The activation of the pad machine on `⟨k, w⟩` is `w ⊕ F(k)`. -/
 theorem runAt_prgPad {F : List Bool → List Bool} (hF : PolyTimeComputable F) (coins : PolyExpr)
@@ -387,7 +387,7 @@ theorem runAt_prgPad {F : List Bool → List Bool} (hF : PolyTimeComputable F) (
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_prgPadFun hF) coins).runAt n (pairEncode k w) r =
       List.zipWith xor w (F k) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prgPadFun, NUPPT.inArg, NUPPT.advInput]
+  simp [prgPadFun, NUPPT.inArg_eq, NUPPT.advInput_eq]
 
 /-- The activation of the key generator (the coin string is the key). -/
 theorem runAt_coinKey (coins : PolyExpr) (n : ℕ)
@@ -508,7 +508,7 @@ private theorem prgAdv_eq_of_runAtL {n L : ℕ} (h : n ≤ L) {B D : NUPPT} (hc 
       B.runAtL n (List.ofFn t) r = D.runAtL n (List.ofFn (padXor h m t)) r) :
     prgAdv G (fun t r => D.distinguisherL n (List.ofFn (padXor h m t)) r) =
       prgAdv G (B.distinguisher n L) := by
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   have e₁ : acceptProb G (B.distinguisher n L) =
       acceptProb (fun s => List.ofFn (G s)) (B.distinguisherL n) := rfl
   have e₂ : acceptProb id (B.distinguisher n L) =
@@ -565,7 +565,7 @@ theorem prgScheme_singleMessageSecure (P : PRG) (hP : P.Secure) (F : List Bool �
       (polyTimeComputable_pairSndD.pairEncode polyTimeComputable_pairFstD)
     convert this using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   obtain ⟨D', hD'c, -, -, hD'⟩ := D.exists_comp hpre polyTimeComputable_id
   obtain ⟨B₀, hB₀c, hB₀⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).1) .var (fun n => by simp)
   obtain ⟨B₁, hB₁c, hB₁⟩ := D'.exists_withAdvice (fun n => List.ofFn (μ n).2) .var (fun n => by simp)
@@ -581,8 +581,7 @@ theorem prgScheme_singleMessageSecure (P : PRG) (hP : P.Secure) (F : List Bool �
     prgAdv (P.G n) (B₁.distinguisher n (P.stretch.eval n)), (hP.2 B₀).add (hP.2 B₁),
     fun n m₀ m₁ => ?_⟩
   refine (hμ n (m₀, m₁)).trans ?_
-  unfold distAdv
-  dsimp only
+  simp only [distAdv_def]
   rw [acceptProb_prgScheme_encDist, acceptProb_prgScheme_encDist,
     ← prgAdv_eq_of_runAtL (P.expands n).le (hB₀c.trans hD'c) (μ n).1 (P.G n) (hrun B₀ _ hB₀ n),
     ← prgAdv_eq_of_runAtL (P.expands n).le (hB₁c.trans hD'c) (μ n).2 (P.G n) (hrun B₁ _ hB₁ n)]
@@ -607,15 +606,15 @@ theorem polyTimeComputable_firstTwoEqFun : PolyTimeComputable firstTwoEqFun := b
         NUPPT.polyTimeComputable_inArg))
   convert h using 1
   funext z
-  simp [firstTwoEqFun, Function.comp]
+  simp [firstTwoEqFun, Function.comp_apply]
 
 /-- The distinguisher `[c₀ = c₁]` accepts a word `w` iff its first two components agree. -/
 theorem distinguisherL_firstTwoEq (coins : PolyExpr) (n : ℕ) (w : List Bool)
     (r : (NUPPT.ofPolyTimeUniform polyTimeComputable_firstTwoEqFun coins).Coins n) :
     (NUPPT.ofPolyTimeUniform polyTimeComputable_firstTwoEqFun coins).distinguisherL n w r = true ↔
       pairFstD w = pairFstD (pairSndD w) := by
-  rw [NUPPT.distinguisherL, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [firstTwoEqFun, NUPPT.inArg, NUPPT.advInput]
+  rw [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+  simp [firstTwoEqFun, NUPPT.inArg_eq, NUPPT.advInput_eq]
 
 /-- **[PS10, Theorem 94.2]: a deterministic (stateless) encryption scheme is not
 multi-message secure.** The text's argument: for messages `m₀ ≠ m₁`, the encryptions
@@ -675,7 +674,7 @@ theorem not_multiMessageSecure_of_deterministic (S : PrivateKeyScheme) (hS : S.D
           S.enc.runAt n (pairEncode (S.gen.runAt n [] z.1.1) (List.ofFn (w ⟨1, h1⟩)))
             (z.1.2 ⟨1, h1⟩) := by
     intro w
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext z
     rw [distinguisherL_firstTwoEq, multiEncDist]
@@ -714,7 +713,7 @@ theorem not_multiMessageSecure_of_deterministic (S : PrivateKeyScheme) (hS : S.D
       exact hm c₀.symm
     rw [this, uprob_false]
   -- the advantage is `1`, but `ε n < 1`
-  rw [distAdv, hone, hzero] at hadv
+  rw [distAdv_def, hone, hzero] at hadv
   have h1 : (1 : ℝ) ≤ ε n := by simpa using hadv
   linarith [le_abs_self (ε n)]
 

@@ -104,7 +104,7 @@ theorem eval_chainTree {I O α : Type} (g : I → O) :
     funext j
     refine Fin.cases ?_ (fun j => ?_) j
     · simp
-    · simp [Fin.tail]
+    · simp [Fin.tail_def]
 
 /-- A chain of `k` queries makes at most `k` queries. -/
 theorem boundedBy_chainTree {I O α : Type} :
@@ -202,7 +202,7 @@ theorem uprob_not_injective_le :
   have h1 : uprob (fun r : Fin (q + 1) → Fin n → Bool => ¬ Function.Injective r) ≤
       uprob (fun r : Fin (q + 1) → Fin n → Bool => ∃ p ∈ S, r p.1 = r p.2) := by
     refine uprob_mono fun r hr => ?_
-    simp only [Function.Injective, not_forall] at hr
+    rw [Function.not_injective_iff] at hr
     obtain ⟨i, j, hij, hne⟩ := hr
     rcases lt_or_gt_of_ne hne with h | h
     · exact ⟨(i, j), by simp [S, h], hij⟩
@@ -228,10 +228,8 @@ theorem uprob_not_injective_le :
 `I → O` forward to the uniform distribution on `Fin (q+1) → O` (the generalization of
 `HardcoreBit.pushesUniform_eval_pair` from two points to `q + 1` points).
 
-**Proof sketch.** Every fibre of `R ↦ R ∘ r` has the same size `|O|^{|I| − (q+1)}` (the values
-off the image of `r` are free, `Equiv.funSplitAt`-style splitting of `I` into the image of `r`
-and its complement, `Fintype.card_fun`), so `pushesUniform_of_card_fiber` applies; alternatively
-by induction on `q` with `uprob_update_absorb`. -/
+**Proof sketch.** For an empty `O` both averages are over empty types. Otherwise this is the
+restriction along the injective `r` (`HardcoreBit.pushesUniform_restrict`). -/
 theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [Fintype O]
     {r : Fin (q + 1) → I} (hr : Function.Injective r) :
     HardcoreBit.PushesUniform (fun R : I → O => fun j => R (r j)) := by
@@ -242,17 +240,7 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
     haveI : IsEmpty (I → O) := ⟨fun R => hO.false (R (r 0))⟩
     haveI : IsEmpty (Fin (q + 1) → O) := ⟨fun f => hO.false (f 0)⟩
     simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
-  · -- split `I` into the image of `r` and its complement: `R ↦ R ∘ r` is a projection
-    let e₁ : Fin (q + 1) ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
-      (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
-        (Equiv.Set.sumCompl (Set.range r))
-    let e : (I → O) ≃ (Fin (q + 1) → O) × (((Set.range r)ᶜ : Set I) → O) :=
-      (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
-    have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
-      funext R j
-      simp [e, e₁]
-    rw [he]
-    exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
+  · exact HardcoreBit.pushesUniform_restrict hr
 
 /-- **Thm-99.2.2: the gap `H² → H³` is at most the collision probability**
 ([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when
@@ -417,7 +405,7 @@ theorem polyTimeComputable_prfEncFun {E : List Bool → List Bool} (hE : PolyTim
           NUPPT.polyTimeComputable_inCoins))))
   convert h using 1
   funext z
-  simp [prfEncFun, Function.comp]
+  simp [prfEncFun, Function.comp_apply]
 
 /-- The well-formedness test of `Dec` is polynomial-time: two length comparisons
 (`Complexity.polyTimeComputable_lenEq`). -/
@@ -428,7 +416,7 @@ theorem polyTimeComputable_prfDecWF : PolyTimeComputable (fun z => [prfDecWF z])
     convert polyTimeComputable_lenEq.comp (hg.pairEncode NUPPT.polyTimeComputable_inParam)
       using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   exact polyTimeComputable_and
     (hl _ ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).comp
       NUPPT.polyTimeComputable_inArg))
@@ -449,7 +437,7 @@ theorem polyTimeComputable_prfDecFun {E : List Bool → List Bool} (hE : PolyTim
           NUPPT.polyTimeComputable_inArg))))
   convert h using 1
   funext z
-  simp [prfDecFun, Function.comp]
+  simp [prfDecFun, Function.comp_apply]
 
 /-- The activation of the encryption machine on `⟨k, w⟩` with coins `r` is
 `⟨r, w ⊕ E(⟨k, r⟩)⟩`. -/

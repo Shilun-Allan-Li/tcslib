@@ -1,0 +1,15 @@
+START 2026-11-08T05:31:06.808765+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean sha256=c81e4f8248ad57dd679b2bd7ca802ac92ac4bc404b1bc2f7a0ca8b0164cf9267
+TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean:106:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.challengeStream_def`:
+  [Fintype S]
+  [Fintype V]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype S] [Fintype V] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+
+END 2026-11-08T05:31:08.655261+00:00 RC 0 elapsed=1.8s pid=24731 maxrss=2485896KiB

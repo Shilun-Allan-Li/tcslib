@@ -57,26 +57,26 @@ variable {Ω Ω' α β γ δ : Type*} [Fintype Ω] [Fintype Ω'] [Fintype α] [F
 
 /-- The average of a sum is the sum of the averages. -/
 theorem uexp_add (f g : Ω → ℝ) : uexp (fun ω => f ω + g ω) = uexp f + uexp g := by
-  simp only [uexp, sum_add_distrib, add_div]
+  simp only [uexp_def, sum_add_distrib, add_div]
 
 /-- The average of a difference is the difference of the averages. -/
 theorem uexp_sub (f g : Ω → ℝ) : uexp (fun ω => f ω - g ω) = uexp f - uexp g := by
-  simp only [uexp, sum_sub_distrib, sub_div]
+  simp only [uexp_def, sum_sub_distrib, sub_div]
 
 /-- Constants factor out of an average. -/
 theorem uexp_const_mul (c : ℝ) (f : Ω → ℝ) : uexp (fun ω => c * f ω) = c * uexp f := by
-  simp only [uexp, ← mul_sum, mul_div_assoc]
+  simp only [uexp_def, ← mul_sum, mul_div_assoc]
 
 /-- The average of a constant over a nonempty type is that constant. -/
 theorem uexp_const [Nonempty Ω] (c : ℝ) : uexp (fun _ : Ω => c) = c := by
   have : (Fintype.card Ω : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
-  simp only [uexp, sum_const, card_univ, nsmul_eq_mul]
+  simp only [uexp_def, sum_const, card_univ, nsmul_eq_mul]
   field_simp
 
 /-- The average of a finite sum of functions is the sum of their averages. -/
 theorem uexp_sum {ι : Type*} (s : Finset ι) (f : ι → Ω → ℝ) :
     uexp (fun ω => ∑ i ∈ s, f i ω) = ∑ i ∈ s, uexp (f i) := by
-  simp only [uexp, ← sum_div]
+  simp only [uexp_def, ← sum_div]
   rw [sum_comm]
 
 /-- Averages are monotone. -/
@@ -85,13 +85,13 @@ theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ ue
 
 /-- Relabelling by a bijection preserves averages. -/
 theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by
-  simp only [uexp, Fintype.card_congr e]
+  simp only [uexp_def, Fintype.card_congr e]
   rw [Fintype.sum_equiv e _ _ (fun _ => rfl)]
 
 /-- Fubini for averages: the average over a product is the average over the first
 coordinate of the averages of the sections. -/
 theorem uexp_prod (F : α × β → ℝ) : uexp F = uexp (fun a => uexp (fun b => F (a, b))) := by
-  simp only [uexp, Fintype.card_prod, Fintype.sum_prod_type, ← sum_div, Nat.cast_mul, div_div,
+  simp only [uexp_def, Fintype.card_prod, Fintype.sum_prod_type, ← sum_div, Nat.cast_mul, div_div,
     mul_comm]
 
 /-- A function of the first coordinate has the same average on the product. -/
@@ -252,7 +252,7 @@ theorem pushesUniform_eval {ι : Type*} [Fintype ι] [DecidableEq ι] (i : ι) :
   · intro F
     haveI : IsEmpty (ι → γ) := ⟨fun ω => hγ.false (ω i)⟩
     show uexp _ = uexp _
-    simp only [uexp, univ_eq_empty, sum_empty, zero_div]
+    simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
   · have h := (pushesUniform_equiv (Equiv.funSplitAt i γ)).comp
       (pushesUniform_fst (α := γ) (β := {j // j ≠ i} → γ))
     exact h
@@ -286,7 +286,7 @@ theorem pushesUniform_of_surjective {G H : Type*} [AddGroup G] [AddGroup H] [Fin
   have hpos : (#{g | φ g = 0} : ℝ) ≠ 0 := by
     have : (0 : G) ∈ ({g | φ g = 0} : Finset G) := by simp
     exact_mod_cast (Finset.card_pos.2 ⟨0, this⟩).ne'
-  simp only [uexp, hsum, hcard, Nat.cast_mul]
+  simp only [uexp_def, hsum, hcard, Nat.cast_mul]
   rw [mul_div_mul_left _ _ hpos]
 
 end TCSlib.Cryptography.HardcoreBit

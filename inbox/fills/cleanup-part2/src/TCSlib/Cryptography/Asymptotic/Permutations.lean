@@ -287,7 +287,7 @@ dependent product of subtypes, `Equiv.subtypePiEquivPi`, `Nat.card_pi`). -/
 theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
     (P : ι → α → Prop) :
     uprob (fun xs : ι → α => ∀ i, P i (xs i)) = ∏ i, uprob (P i) := by
-  unfold uprob
+  simp only [uprob_def]
   rw [Nat.card_congr (Equiv.subtypePiEquivPi (p := P)), Nat.card_pi, Fintype.card_fun,
     ← Finset.card_univ (α := ι), ← Finset.prod_const, Nat.cast_prod, Nat.cast_prod,
     Finset.prod_div_distrib]
@@ -431,6 +431,9 @@ position `i` with probability `(n - i)/2^n`, so the frozen sampler `permFromCoin
 failed with probability at least `1 - n/2^n`. -/
 def permBits (n : ℕ) : ℕ := Nat.size n
 
+/-- The defining equation of `permBits`: `permBits n = Nat.size n`. -/
+theorem permBits_eq (n : ℕ) : permBits n = Nat.size n := rfl
+
 /-- Trials per position of the campaign's permutation sampler: `2n²`, so that every position
 fails with probability at most `(1 - 1/(2n))^{2n²} ≤ 2^{-n}` and the whole sampler with
 probability at most `n · 2^{-n}` (`uprob_permFromCoins_none_le_two_pow`) (D10).
@@ -448,19 +451,10 @@ theorem le_two_pow_permBits (n : ℕ) : n ≤ 2 ^ permBits n := (Nat.lt_size_sel
 theorem permBits_le (n : ℕ) : permBits n ≤ n := Nat.size_le.2 Nat.lt_two_pow_self
 
 /-- `2^{permBits n} ≤ 2n` for `n ≥ 1`: a trial of `permBits n` bits is at most twice the
-range `n` (`Nat.size_le`: `2^{size n - 1} ≤ n`). -/
+range `n` (`permBits_eq` and the public `two_pow_size_le_two_mul` of `Asymptotic/Sampling.lean`). -/
 theorem two_pow_permBits_le {n : ℕ} (hn : 0 < n) : 2 ^ permBits n ≤ 2 * n := by
-  have hs : 0 < Nat.size n := Nat.size_pos.2 hn
-  have h : 2 ^ (Nat.size n - 1) ≤ n := by
-    by_contra hc
-    push_neg at hc
-    have := Nat.size_le.2 hc
-    omega
-  calc 2 ^ permBits n = 2 * 2 ^ (Nat.size n - 1) := by
-        rw [permBits, ← pow_succ']
-        congr 1
-        omega
-    _ ≤ 2 * n := by omega
+  rw [permBits_eq]
+  exact two_pow_size_le_two_mul hn
 
 /-- At the campaign parameters the permutation sampler fails with probability at most
 `n · 2^{-n}` (D10; the sampling term of [PS10, Propositions 118.4 and 120.7, Theorem 122.3]

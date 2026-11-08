@@ -188,32 +188,23 @@ theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype 
 
 /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
 theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
-    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
-  apply List.ext_getElem
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · intro i h₁ h₂
-    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ :=
+  _root_.TCSlib.Cryptography.ofFn_drop_take b a k h
 
 /-- A suffix of a tape: `(List.ofFn b).drop a` is the tape of the last `k = L − a` bits. -/
 theorem ofFn_drop_eq {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k = L) :
     (List.ofFn b).drop a = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
-  apply List.ext_getElem
-  · simp only [List.length_drop, List.length_ofFn]
-    omega
-  · intro i h₁ h₂
-    simp only [List.getElem_drop, List.getElem_ofFn]
+  have hk : ((List.ofFn b).drop a).length ≤ k := by
+    simp only [List.length_drop, List.length_ofFn]; omega
+  rw [← _root_.TCSlib.Cryptography.ofFn_drop_take b a k h.le, List.take_of_length_le hk]
 
 /-- A window ending at `B ≤ L`: `((List.ofFn b).take B).drop a` is the tape of the `k = B − a`
 bits from `a`. -/
 theorem ofFn_take_drop {L : ℕ} (b : Fin L → Bool) (a k B : ℕ) (h : a + k = B) (hB : B ≤ L) :
     ((List.ofFn b).take B).drop a =
       List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
-  apply List.ext_getElem
-  · simp only [List.length_drop, List.length_take, List.length_ofFn]
-    omega
-  · intro i h₁ h₂
-    simp only [List.getElem_drop, List.getElem_take, List.getElem_ofFn]
+  rw [List.drop_take, show B - a = k by omega]
+  exact _root_.TCSlib.Cryptography.ofFn_drop_take b a k (by omega)
 
 /-! ### Searches -/
 

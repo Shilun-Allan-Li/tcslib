@@ -9,7 +9,9 @@ Comments are blanked first (positions kept), so bracketed lists spanning blank o
 lines are read to their balanced `]`; `unfold`/`delta` read identifiers to the end of the tactic.
 Each identifier is classified: THEOREM (any home), OWN_DEF (definition of the scanned module),
 FOREIGN_TCS_DEF (definition homed in another TCSlib module; reducible/instance/matcher flagged),
-CORE_MATHLIB_DEF (definition homed outside TCSlib), LOCAL_OR_UNRESOLVED (hypotheses, terms)."""
+CORE_MATHLIB_DEF (definition homed outside TCSlib), SIMPROC (a builtin simplification procedure,
+not a definition body), LOCAL_BINDER (a `let`/`set`/`have` of the same declaration shadows a
+definition name), LOCAL_OR_UNRESOLVED (hypotheses, terms)."""
 import sys, re, json, collections
 table, out = sys.argv[1], sys.argv[2]
 files = sys.argv[3:]
@@ -81,7 +83,7 @@ for f in files:
             for stop in ['\n', ';', '<;>', ' at ', ')']:
                 q = code.find(stop, p)
                 if q >= 0: e = min(e, q)
-            ids = [(x, ln) for x in IDENT.findall(code[p:e])]
+            ids = [(mm.group(0), line_of(p + mm.start()), p + mm.start()) for mm in IDENT.finditer(code[p:e])]
         else:
             q = p
             while q < len(code) and code[q] in ' \t': q += 1
@@ -112,8 +114,10 @@ for f in files:
                     if it.startswith('@'): it = it[1:]
                     else: continue
                 mm = IDENT.match(it)
-                if mm: ids.append((mm.group(0), line_of(st + (len(item) - len(item.lstrip())))))
-        for ident, iln in ids:
+                if mm:
+                    k0 = code.find(mm.group(0), st)
+                    ids.append((mm.group(0), line_of(k0), k0))
+        for ident, iln, off in ids:
             ns, opens = ctx_at[iln]
             cands = []
             parts = ns.split('.') if ns else []
@@ -139,8 +143,17 @@ for f in files:
                 elif h[3] == mod: cls = 'OWN_DEF'
                 elif h[3].startswith('TCSlib'): cls = 'FOREIGN_TCS_DEF'
                 else: cls = 'CORE_MATHLIB_DEF'
+                if cls == 'CORE_MATHLIB_DEF' and h[3].startswith(('Lean.Meta.Tactic.Simp.BuiltinSimprocs', 'Mathlib.Tactic.Simproc')):
+                    cls = 'SIMPROC'
                 if len({x[0] for x in hits}) > 1: cls += '?AMBIGUOUS'
-            res['items'].append({'file': f, 'line': iln + 1, 'decl': decl_at[iln], 'tactic': kw, 'ident': ident,
+            if cls.startswith(('FOREIGN', 'CORE')) and '.' not in ident:
+                # a `let`/`set`/`have` binder of the same name earlier in the declaration shadows it
+                k0 = iln
+                while k0 > 0 and decl_at[k0 - 1] == decl_at[iln]: k0 -= 1
+                before = code[offs[k0]:off]
+                if re.search(r'(?<![\w.])(let|set|have)\s+' + re.escape(ident) + r'(?![\w\'])', before):
+                    cls = 'LOCAL_BINDER'
+            res['items'].append({'file': f, 'line': iln + 1, 'col': off - offs[iln], 'offset': off, 'decl': decl_at[iln], 'tactic': kw, 'ident': ident,
                                  'class': cls, 'resolved': info[0] if info else None, 'home': info[3] if info else None,
                                  'status': info[2] if info else None, 'flags': info[4] if info else None,
                                  'all_hits': sorted({x[0] for x in hits})})

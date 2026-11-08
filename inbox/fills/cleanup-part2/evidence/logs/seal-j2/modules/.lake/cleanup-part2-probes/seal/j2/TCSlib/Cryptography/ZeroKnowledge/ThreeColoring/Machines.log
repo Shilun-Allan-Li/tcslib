@@ -1,0 +1,163 @@
+START 2026-11-08T06:09:10.635053+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean sha256=611395a6de68bb9d55de066ddf09e5082ba864685c23ddd8528d87b51777a094
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=12 active=12 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2004:14: error: Tactic `rfl` failed: The left-hand side
+  loopState (fun w => pairSndD (pairSndD (pairSndD w))) s z 0
+is not definitionally equal to the right-hand side
+  pairSndD^[0] (s z)
+
+case zero
+s : List Bool → List Bool
+hs : PolyTimeComputable s
+i : List Bool → ℕ
+hi : PolyTimeComputable fun z => List.replicate (i z) true
+hupd : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w))
+z : List Bool
+⊢ loopState (fun w => pairSndD (pairSndD (pairSndD w))) s z 0 = pairSndD^[0] (s z)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2044:2: error: Invalid `⟨...⟩` notation: The expected type `S.Efficient` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2133:4: error: 'show' tactic failed, pattern
+  w.getD i false = (padTo L w)[i]
+is not definitionally equal to target
+  padFin L w ⟨i, ⋯⟩ = (padTo L w)[i]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2199:14: error: Tactic `rfl` failed: The left-hand side
+  loopState upd (fun x => []) z 0
+is not definitionally equal to the right-hand side
+  List.replicate (countTrue (s z) 0) true
+
+case zero
+s : List Bool → List Bool
+hs : PolyTimeComputable s
+N : List Bool → ℕ
+hN : PolyTimeComputable fun z => List.replicate (N z) true
+upd : List Bool → List Bool :=
+  fun w =>
+    if (s (pairFstD w)).getD (pairFstD (pairSndD w)).length false = true then true :: pairSndD (pairSndD w)
+    else pairSndD (pairSndD w)
+hupd : PolyTimeComputable upd
+z : List Bool
+⊢ loopState upd (fun x => []) z 0 = List.replicate (countTrue (s z) 0) true
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2380:4: error: Tactic `rfl` failed: The left-hand side
+  some ↑(finProdFinEquiv (edgeList G)[↑e])
+is not definitionally equal to the right-hand side
+  some ↑(finProdFinEquiv (edgeOf G e))
+
+n : ℕ
+G : Graph n
+x : List Bool
+hG : ∀ (u v : Fin n), G u v = x.getD (↑(finProdFinEquiv (u, v))) false
+e : Fin (edgeCount G)
+he : ↑e < countTrue x (n * n)
+⊢ some ↑(finProdFinEquiv (edgeList G)[↑e]) = some ↑(finProdFinEquiv (edgeOf G e))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2392:66: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (decGraph x).snd u v = x.getD (↑(finProdFinEquiv (u, v))) false
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2399:72: error: Type mismatch
+  Nat.sqrt_le ?m.43
+has type
+  Nat.sqrt ?m.43 * Nat.sqrt ?m.43 ≤ ?m.43
+but is expected to have type
+  (decGraph x).fst * (decGraph x).fst ≤ x.length
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2406:4: error: 'show' tactic failed, pattern
+  x.getD (↑(finProdFinEquiv (finProdFinEquiv.symm ⟨i, ?m.87⟩))) false = x[i]
+is not definitionally equal to target
+  (decGraph x).snd (finProdFinEquiv.symm ⟨i, ⋯⟩).1 (finProdFinEquiv.symm ⟨i, ⋯⟩).2 = x[i]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2437:2: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (bitsToNat fun j => s.getD (b + ↑j) false) = natOfBits s b 0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2470:14: error: Tactic `rfl` failed: The left-hand side
+  loopState upd (fun x => []) z 0
+is not definitionally equal to the right-hand side
+  List.replicate (natOfBits (s z) (b z) 0) true
+
+case zero
+s : List Bool → List Bool
+hs : PolyTimeComputable s
+b : List Bool → ℕ
+hb : PolyTimeComputable fun z => List.replicate (b z) true
+k : List Bool → ℕ
+hk : PolyTimeComputable fun z => List.replicate (k z) true
+Bd : PolyExpr
+hBd : ∀ (z : List Bool), 2 ^ k z ≤ Bd.eval z.length
+upd : List Bool → List Bool :=
+  fun w =>
+    List.replicate
+      (2 * (pairSndD (pairSndD w)).length +
+        ((s (pairFstD w)).getD (b (pairFstD w) + (pairFstD (pairSndD w)).length) false).toNat)
+      true
+hupd : PolyTimeComputable upd
+z : List Bool
+⊢ loopState upd (fun x => []) z 0 = List.replicate (natOfBits (s z) (b z) 0) true
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2632:18: error: Tactic `rfl` failed: The left-hand side
+  encColor ((fun i => i) ⟨0, ⋯⟩)
+is not definitionally equal to the right-hand side
+  [decide (↑((fun i => i) ⟨0, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨0, ⋯⟩) % 2 = 1)]
+
+case «0»
+⊢ encColor ((fun i => i) ⟨0, ⋯⟩) = [decide (↑((fun i => i) ⟨0, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨0, ⋯⟩) % 2 = 1)]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2632:18: error: Tactic `rfl` failed: The left-hand side
+  encColor ((fun i => i) ⟨1, ⋯⟩)
+is not definitionally equal to the right-hand side
+  [decide (↑((fun i => i) ⟨1, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨1, ⋯⟩) % 2 = 1)]
+
+case «1»
+⊢ encColor ((fun i => i) ⟨1, ⋯⟩) = [decide (↑((fun i => i) ⟨1, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨1, ⋯⟩) % 2 = 1)]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2632:18: error: Tactic `rfl` failed: The left-hand side
+  encColor ((fun i => i) ⟨2, ⋯⟩)
+is not definitionally equal to the right-hand side
+  [decide (↑((fun i => i) ⟨2, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨2, ⋯⟩) % 2 = 1)]
+
+case «2»
+⊢ encColor ((fun i => i) ⟨2, ⋯⟩) = [decide (↑((fun i => i) ⟨2, ⋯⟩) / 2 = 1), decide (↑((fun i => i) ⟨2, ⋯⟩) % 2 = 1)]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2664:2: error: 'show' tactic failed, pattern
+  (2 * (y.getD (↑(finProdFinEquiv (u, 0))) false).toNat + (y.getD (↑(finProdFinEquiv (u, 1))) false).toNat) % 3 = ?m.101
+is not definitionally equal to target
+  ↑(decColoring n y u) = colorVal y ↑u
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2715:11: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs []
+is not definitionally equal to the right-hand side
+  List.flatMap (fun m => pairEncode m []) []
+
+case nil
+⊢ Strategy.encodeMsgs [] = List.flatMap (fun m => pairEncode m []) []
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2737:6: error: 'show' tactic failed, pattern
+  pairSndD^[i] [] = []
+is not definitionally equal to target
+  pairSndD^[i] (pairSndD (Strategy.encodeMsgs [])) = Strategy.encodeMsgs (List.drop (i + 1) [])
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2752:17: error: typeclass instance problem is stuck, it is often due to metavariables
+  Preorder ?m.15
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:2805:2: error: Tactic `rfl` failed: The left-hand side
+  some (edgeList G)[e % (edgeList G).length]
+is not definitionally equal to the right-hand side
+  some (edgeOf G ⟨e % edgeCount G, ⋯⟩)
+
+n : ℕ
+G : Graph n
+hm : 0 < edgeCount G
+e : ℕ
+⊢ some (edgeList G)[e % (edgeList G).length] = some (edgeOf G ⟨e % edgeCount G, ⋯⟩)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines): no fresh .olean produced
+
+END 2026-11-08T06:09:32.363511+00:00 RC 1 elapsed=21.7s pid=32700 maxrss=2831068KiB

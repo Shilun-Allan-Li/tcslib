@@ -100,23 +100,11 @@ def encView (V' : Strategy) (x z : List Bool) {n : ℕ}
 /-! ### Tapes and the permutation sampler -/
 
 /-- Restricting a uniform tuple of `c` entries to its first `m ≤ c` entries gives a uniform
-tuple: the tuple is the pair (prefix, suffix) through `finSumFinEquiv`, and the first
-projection pushes uniform to uniform. -/
+tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+`Fin.castLE_injective`). -/
 theorem pushesUniform_castLE {B : Type*} [Fintype B] [Nonempty B] {m c : ℕ} (h : m ≤ c) :
-    HardcoreBit.PushesUniform (fun t : Fin c → B => fun i : Fin m => t (Fin.castLE h i)) := by
-  let e : (Fin c → B) ≃ (Fin m → B) × (Fin (c - m) → B) :=
-    (Equiv.arrowCongr (finCongr (Nat.add_sub_cancel' h).symm) (Equiv.refl B)).trans
-      ((Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl B)).trans
-        (Equiv.sumArrowEquivProdArrow _ _ _))
-  have he : ∀ t : Fin c → B, (e t).1 = fun i : Fin m => t (Fin.castLE h i) := by
-    intro t
-    funext i
-    simp only [e, Equiv.trans_apply, Equiv.arrowCongr_apply, Equiv.sumArrowEquivProdArrow_apply_fst,
-      Equiv.coe_refl, Function.comp_apply, Equiv.symm_symm, finCongr_symm, finCongr_apply,
-      finSumFinEquiv_apply_left]
-    congr 1
-  have := (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
-  simpa only [he] using this
+    HardcoreBit.PushesUniform (fun t : Fin c → B => fun i : Fin m => t (Fin.castLE h i)) :=
+  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
 
 /-- An entry of the list of a tape below its length. -/
 theorem getD_ofFn_lt {c : ℕ} (t : Fin c → Bool) {i : ℕ} (hi : i < c) (d : Bool) :
@@ -151,7 +139,7 @@ theorem coinTable_ofFn_castLE {n T k c : ℕ} (h : n * T * k ≤ c) (t : Fin c �
 theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
     samplePerm n (List.ofFn t) =
       samplePerm n (List.ofFn fun i : Fin (permCoinLen n) => t (Fin.castLE h i)) := by
-  unfold samplePerm
+  simp only [samplePerm_def]
   rw [coinTable_ofFn_castLE h t]
   rfl
 
@@ -259,10 +247,10 @@ theorem coinSlice_ofFn {M L : ℕ} (r : Fin (M * L) → Bool) (t : Fin M) :
     calc (t : ℕ) * L + L = ((t : ℕ) + 1) * L := by ring
       _ ≤ M * L := Nat.mul_le_mul_right L t.isLt
   apply List.ext_getElem
-  · simp only [coinSlice, List.length_take, List.length_drop, List.length_ofFn]
+  · simp only [coinSlice_def, List.length_take, List.length_drop, List.length_ofFn]
     omega
   · intro k h1 h2
-    simp only [coinSlice, List.getElem_take, List.getElem_drop, List.getElem_ofFn, tapeBlock]
+    simp only [coinSlice_def, List.getElem_take, List.getElem_drop, List.getElem_ofFn, tapeBlock]
 
 /-- The three fields of a coin block of `1 + P + Q` bits: the permutation coins (positions
 `1, …, P`), the guessed bit (position `0`) and the verifier's tape (positions `1 + P, …`). -/
@@ -346,7 +334,8 @@ theorem attemptStr_ofFn (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : Lis
         (simAttempt G₀ G₁ (vstar V' (encInstance G₀ G₁) z)
           ((samplePerm n (List.ofFn (blockFields _ _ g).1.1), (blockFields _ _ g).1.2),
             (blockFields _ _ g).2)) := by
-  simp only [attemptStr, instanceG₀, instanceG₁, instanceVertexCount, headD_ofFn_block,
+  simp only [attemptStr_def, instanceG₀_def, instanceG₁_def, instanceVertexCount_def,
+      headD_ofFn_block,
     drop_one_take_ofFn_block, drop_ofFn_block]
   rw [show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _,
     show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _]
@@ -417,7 +406,7 @@ the prover's first message, and its reply to the verifier's answer to it (`exec`
 theorem exec_three_snd (P V : Strategy) (x y z rP rV : List Bool) :
     (exec P V false x y z rP rV 3).2 =
       [P.next x y rP [], P.next x y rP [V.next x z rV [P.next x y rP []]]] := by
-  simp [exec, moverIsV]
+  simp [exec_zero, exec_succ, moverIsV_def]
 
 /-- The encoded view of a cheating verifier `V'` in one real iteration of
 [PS10, Protocol 120.6] against the honest prover with witness `encPerm σ`: the encoding of
@@ -571,7 +560,7 @@ theorem negligible_delta :
       have h2 : (1 : ℝ) ≤ N := by exact_mod_cast hN
       linarith
     have hpf : 0 ≤ permFailBound (instanceVertices N) := by
-      unfold permFailBound
+      simp only [permFailBound_def]
       positivity
     rw [abs_of_nonneg (mul_nonneg (by positivity) hpf),
       abs_of_nonneg (mul_nonneg (by norm_num) (mul_nonneg (Nat.cast_nonneg _) hpf))]

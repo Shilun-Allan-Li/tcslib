@@ -48,6 +48,11 @@ open Turing LogProg
 /-- A list of words, as the concatenation of the pairs `⟨w, []⟩`. -/
 def encWords (L : List (List Bool)) : List Bool := L.flatMap (fun w => pairEncode w [])
 
+/-- The defining equation of `encWords`: `encWords L = L.flatMap (fun w => pairEncode w [])`. -/
+theorem encWords_def (L : List (List Bool)) :
+    encWords L =
+      (L.flatMap (fun w => pairEncode w [])) := rfl
+
 /-- A pair with empty second component, followed by `b`, is the pair `⟨a, b⟩`. -/
 theorem pairEncode_nil_append (a b : List Bool) : pairEncode a [] ++ b = pairEncode a b := by
   simp [pairEncode]

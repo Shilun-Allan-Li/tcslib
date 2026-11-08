@@ -82,7 +82,8 @@ advantages: the advantage of `D` against `e ∘ G` is that of `D ∘ e` against 
 theorem prgAdv_comp_equiv [Fintype γ] [Fintype δ] (e : γ ≃ δ) (G : σ → γ)
     (D : δ → ρ → Bool) :
     prgAdv (fun s => e (G s)) D = prgAdv G (fun z r => D (e z) r) := by
-  unfold prgAdv distAdv
+  unfold prgAdv
+  simp only [distAdv_def]
   rw [← acceptProb_comp_equiv e (id : δ → δ) D]
   rfl
 
@@ -100,6 +101,13 @@ the output bit at (0-indexed) position `i` is the bit of `G(S_i)` and the final 
 `S_l`; `prgExt_succ` is the recursion of the construction. -/
 def prgExt (G : S → Bool × S) (l : ℕ) : S → (Fin l → Bool) × S :=
   fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s)
+
+/-- The defining equation of `prgExt`: `prgExt G l = fun s =>
+(fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s)`. -/
+theorem prgExt_def (G : S → Bool × S) (l : ℕ) :
+    prgExt G l =
+      (fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s) :
+        S → (Fin l → Bool) × S) := rfl
 
 omit [Fintype S] in
 /-- The stretch extension unrolls one step: `prgExt G (l + 1)` outputs the bit of `G s`
@@ -202,13 +210,13 @@ theorem acceptProb_prgExtRed_right (G : S → Bool × S) {l k : ℕ} (hk : k < l
   funext w
   refine Prod.ext ?_ ?_
   · funext i
-    simp only [e, prgHybrid, Function.update_apply, Fin.ext_iff, Equiv.coe_fn_mk, id]
+    simp only [e, prgHybrid, Function.update_apply, Fin.ext_iff, Equiv.coe_fn_mk, id_eq]
     rcases lt_trichotomy (i : ℕ) k with h | h | h
     · simp [h, Nat.lt_succ_of_lt h, h.ne]
     · simp [h]
     · simp only [not_lt.mpr h.le, h.ne', if_false, not_lt.mpr (Nat.succ_le_of_lt h)]
       congr 3
-  · simp only [e, prgHybrid, Equiv.coe_fn_mk, id]
+  · simp only [e, prgHybrid, Equiv.coe_fn_mk, id_eq]
     congr 1
 
 /-- Stretch extension, concrete form [Gar26, Theorem 3.1]: if `D` distinguishes the
@@ -228,7 +236,8 @@ theorem exists_prgExtRed_ge (G : S → Bool × S) {l : ℕ} (hl : 0 < l)
     ∃ k < l, prgAdv (prgExt G l) D / l ≤ prgAdv G (prgExtRed G l k D) := by
   obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (prgHybrid G l i) D) hl
   refine ⟨k, hk, ?_⟩
-  unfold prgAdv distAdv
+  unfold prgAdv
+  simp only [distAdv_def]
   rw [acceptProb_prgExtRed_left G hk, acceptProb_prgExtRed_right G hk,
     ← acceptProb_prgHybrid_zero G, ← acceptProb_prgHybrid_self G]
   exact hgap
@@ -250,7 +259,7 @@ theorem prgAdv_prgExtAvgRed (G : S → Bool × S) (l : ℕ)
     prgAdv G (prgExtAvgRed G l D) = prgAdv (prgExt G l) D / l := by
   rw [prgAdv, prgExtAvgRed, distAdv_mixDist_eq G _ _ (fun i => acceptProb (prgHybrid G l i) D)
     (fun k => acceptProb_prgExtRed_left G k.isLt D)
-    (fun k => acceptProb_prgExtRed_right G k.isLt D), prgAdv, distAdv,
+    (fun k => acceptProb_prgExtRed_right G k.isLt D), prgAdv, distAdv_def,
     acceptProb_prgHybrid_zero, acceptProb_prgHybrid_self]
 
 /-! ### Bit strings -/

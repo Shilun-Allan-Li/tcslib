@@ -1,0 +1,26 @@
+START 2026-11-08T06:03:19.075074+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean sha256=e4e2e3035c6949ad18061b5bc0ca03b41394a86250f3843073ecf1655cfab203
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=199 already=1
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=53 active=53 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean:2213:90: warning: This simp argument is unused:
+  dbl_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc, dbl_cons, ̵d̵b̵l̵_̵n̵i̵l̵,̵
+      List.cons_append, List.nil_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+
+END 2026-11-08T06:03:38.845069+00:00 RC 0 elapsed=19.8s pid=31821 maxrss=2794504KiB

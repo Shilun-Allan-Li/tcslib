@@ -42,15 +42,15 @@ exponentially long advice). The polynomial size of Definition 26.8's `A_n` comes
 the optional module `Randomized/Sequence.lean` with one named admission; no theorem of
 chapters 2–4 depends on it.
 
-This file also holds the uniformity lemmas (a PPT is an `NUPPT` with empty advice,
-`Complexity.PPT` the subtype) and the **optional** sanity bridge to the library's
+This file also holds the uniformity lemmas (a PPT is an `NUPPT` with empty advice; the subtype
+`Complexity.PPT` and its API `PPT.toNUPPT`, `PPT.ofPolyTime` live beside it in
+`Randomized/PPT.lean`) and the **optional** sanity bridge to the library's
 advice-taking machines `Turing.FinTM.DecidesWithAdviceInTime` [AB09, Definition 6.16]
 (`NUPPT.decides_of_decidesWithAdviceInTime`, stated with its sketch; it needs the clocking
 construction `NUPPT.ofPartial` and is off every critical path).
 
 ## Main definitions
 
-* `Complexity.PPT.toNUPPT`, `Complexity.PPT.ofPolyTime` — the subtype API of PPTs.
 
 ## Main results
 
@@ -94,7 +94,7 @@ theorem runLit_eq_runAtL (y : List Bool) (r : A.Coins y.length) :
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩`: the advice slot is empty. -/
 theorem Uniform.runAtL_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y r : List Bool) :
     A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) []) r) := by
-  simp [runAtL, h n]
+  simp [NUPPT.runAtL_eq, h.advice_eq n]
 
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩` (typed coins). -/
 theorem Uniform.runAt_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y : List Bool) (r : A.Coins n) :
@@ -161,25 +161,5 @@ theorem decides_of_decidesWithAdviceInTime (M : FinTM Bool) (L : Language Bool)
   sorry
 
 end NUPPT
-
-namespace PPT
-
-/-- The underlying non-uniform machine of a PPT. -/
-def toNUPPT (A : PPT) : NUPPT := A.1
-
-/-- A PPT has empty advice. -/
-theorem uniform (A : PPT) : A.toNUPPT.Uniform := A.2
-
-/-- The PPT with output function `f` and coin polynomial `coins`
-(`Complexity.NUPPT.ofPolyTimeUniform`). -/
-noncomputable def ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (coins : PolyExpr) : PPT :=
-  ⟨NUPPT.ofPolyTimeUniform hf coins, NUPPT.ofPolyTimeUniform_uniform hf coins⟩
-
-/-- The underlying machine of `PPT.ofPolyTime hf coins` is `NUPPT.ofPolyTimeUniform hf coins`. -/
-theorem toNUPPT_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (coins : PolyExpr) : (ofPolyTime hf coins).toNUPPT = NUPPT.ofPolyTimeUniform hf coins := rfl
-
-end PPT
 
 end Complexity

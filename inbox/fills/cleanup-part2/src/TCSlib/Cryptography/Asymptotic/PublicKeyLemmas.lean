@@ -113,10 +113,10 @@ theorem coinBlock_ofFn_coinBlocks (k B : ℕ) (v : Fin k → Fin B → Bool) (i 
       ring
     rw [hx', coinBlocks_apply, Equiv.symm_apply_apply]
   apply List.ext_getElem
-  · simp only [coinBlock, List.length_take, List.length_drop, List.length_ofFn]
+  · simp only [coinBlock_eq, List.length_take, List.length_drop, List.length_ofFn]
     omega
   · intro t h1 h2
-    simp only [coinBlock, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+    simp only [coinBlock_eq, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
     rw [List.length_ofFn] at h2
     exact key _ t h2 (by simp)
 
@@ -127,14 +127,14 @@ theorem coinBlock_take (B i k : ℕ) (r : List Bool) (h : i < k) :
     have := Nat.mul_le_mul_right B h
     rw [Nat.succ_mul] at this
     exact this
-  simp only [coinBlock, List.drop_take, List.take_take]
+  simp only [coinBlock_eq, List.drop_take, List.take_take]
   congr 1
   omega
 
 /-- A segment of a coin string shifted by `k` blocks is the segment `k + i` of the string. -/
 theorem coinBlock_drop (B i k : ℕ) (r : List Bool) :
     coinBlock B i (r.drop (k * B)) = coinBlock B (k + i) r := by
-  simp only [coinBlock, List.drop_drop]
+  simp only [coinBlock_eq, List.drop_drop]
   congr 2
   ring
 
@@ -166,7 +166,7 @@ theorem blockList_flatten (E : List Bool → List Bool) (L B : ℕ) (hL : 0 < L)
   induction j with
   | zero =>
     intro msg r k _
-    cases k <;> simp [blockList]
+    cases k <;> simp [blockList_zero, blockList_succ]
   | succ j ih =>
     intro msg r k hk
     obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
@@ -176,14 +176,14 @@ theorem blockList_flatten (E : List Bool → List Bool) (L B : ℕ) (hL : 0 < L)
       have := congrArg List.length h
       rw [List.length_append, List.length_ofFn, List.length_nil] at this
       omega
-    simp only [blockList, hne, if_false, List.cons.injEq]
+    simp only [blockList_zero, blockList_succ, hne, if_false, List.cons.injEq]
     rw [List.take_left' (by simp), List.drop_left' (by simp)]
     refine ⟨?_, ?_⟩
-    · simp [coinBlock]
+    · simp [coinBlock_eq]
     · rw [ih (fun i => msg i.succ) (r.drop B) k (by omega)]
       congr 1
       funext i
-      simp only [coinBlock, Fin.val_succ, List.drop_drop]
+      simp only [coinBlock_eq, Fin.val_succ, List.drop_drop]
       rw [show (B + ↑i * B) = (↑i + 1) * B by ring]
 
 /-- **The block encryptor of a uniform machine on a tuple of messages**: on the state
@@ -203,10 +203,10 @@ theorem blockEncFun_flatten (Enc : NUPPT) (hEnc : Enc.Uniform) (L : PolyExpr) (n
         Enc.runAtL n (pairEncode pk (List.ofFn (msg i))) (coinBlock (Enc.coinLen n) i r)) := by
   have hk : k ≤ (blockState (List.replicate n true) pk
       (List.ofFn fun i => List.ofFn (msg i)).flatten r).length := by
-    simp only [blockState, length_pairEncode, length_flatten_ofFn]
+    simp only [blockState_def, length_pairEncode, length_flatten_ofFn]
     have := Nat.le_mul_of_pos_right k hL
     omega
-  unfold blockEncFun
+  simp only [blockEncFun_def]
   rw [blockEncFun_spec Enc.output L Enc.coins (List.replicate n true) pk _ _ r (by
     rw [length_flatten_ofFn, List.length_replicate]
     exact Nat.mul_le_mul_right _ hk)]
@@ -297,7 +297,8 @@ theorem hybridPre_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E)
   have h := hpk.pairEncode (hT₁.append (hc.pairEncode hT₂))
   convert h using 1
   funext y
-  simp only [hybridPre, blockState, Function.comp, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [hybridPre, blockState_def, Function.comp_apply, pairFstD_pairEncode,
+      pairSndD_pairEncode,
     PolyExpr.eval_var]
 
 /-- **The hybrid machine** of the single ⇒ multi-message and bitwise theorems
@@ -342,7 +343,7 @@ theorem exists_hybridMachine (Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyExp
     intro n
     by_cases hj : j n < K.eval n
     · simp only [β, dif_pos hj, length_pairEncode, List.length_replicate, length_flatten_ofFn,
-        PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, NUPPT.coinLen]
+        PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, NUPPT.coinLen_eq]
       have h2 : j n * Enc.coins.eval n ≤ K.eval n * Enc.coins.eval n :=
         Nat.mul_le_mul_right _ hj.le
       have h3 : (j n + 1) * Enc.coins.eval n ≤ K.eval n * Enc.coins.eval n :=
@@ -358,7 +359,7 @@ theorem exists_hybridMachine (Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyExp
   rw [hB, hD₂, hD₁, id_eq]
   have hlen : (List.ofFn (coinBlocks (K.eval n) (Enc.coinLen n) v)).length =
       (PolyExpr.mul K Enc.coins).eval n := by
-    simp [NUPPT.coinLen]
+    simp [NUPPT.coinLen_eq]
   rw [List.take_left' hlen, List.drop_left' hlen]
   congr 1
   -- the pre-processing on the hybrid layout
@@ -388,7 +389,7 @@ theorem exists_hybridMachine (Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyExp
 theorem hybridCoins_len (B Enc D : NUPPT) (K : PolyExpr) (n : ℕ)
     (hBc : B.coins = .add (.mul K Enc.coins) D.coins) :
     K.eval n * Enc.coinLen n + D.coinLen n = B.coinLen n := by
-  simp [NUPPT.coinLen, hBc]
+  simp [NUPPT.coinLen_eq, hBc]
 
 /-- The coins of a hybrid machine with coin polynomial `K · Enc.coins + D.coins`: the `K(n)`
 coin blocks of `Enc` followed by the coins of `D` (`coinBlocks`, `Fin.appendEquiv`). -/
@@ -417,7 +418,7 @@ theorem acceptProb_distinguisherL_coins {σ τ : Type*} [Fintype σ] [Fintype τ
     (n : ℕ) (X : σ → List Bool) (e : τ ≃ B.Coins n) (A : List Bool → τ → Bool)
     (h : ∀ s t, B.distinguisherL n (X s) (e t) = A (X s) t) :
     acceptProb X (B.distinguisherL n) = acceptProb X A := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
   congr 1
   funext z
@@ -450,7 +451,7 @@ private theorem acceptProb_plant {κ π γ ρ ρ' : Type*} [Fintype κ] [Fintype
       invFun := fun z => (z.1.2, (z.1.1, z.2))
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [← uprob_comp_equiv e₁, ← uprob_comp_equiv e₂]
   simp only [e₁, e₂, Equiv.coe_fn_mk, hA]
   exact OneWay.uprob_update (ρ := κ × ρ') (α := ρ) j
@@ -497,7 +498,7 @@ theorem distAdv_tuple_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype 
           r.2) =
       |Pr j - Pr (j + 1)| := by
     intro j
-    unfold distAdv
+    simp only [distAdv_def]
     rw [acceptProb_plant P j (fun pk r => E pk (m j) r) (sel j) D _,
       acceptProb_plant P j (fun pk r => E pk (m' j) r) (sel (j + 1)) D _]
     · intro pk r v r'
@@ -531,7 +532,7 @@ theorem distAdv_tuple_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype 
       (fun z : κ × (Fin (q + 1) → ρ) => (P z.1, fun i => E (P z.1) (m i) (z.2 i)))
       (fun z : κ × (Fin (q + 1) → ρ) => (P z.1, fun i => E (P z.1) (m' i) (z.2 i))) D =
       |Pr 0 - Pr (q + 1)| := by
-    rw [distAdv, h0, hq]
+    rw [distAdv_def, h0, hq]
   rw [hstart]
   calc |Pr 0 - Pr (q + 1)|
       ≤ ∑ t ∈ Finset.range (q + 1), |Pr t - Pr (t + 1)| := abs_sub_le_sum_hybrids Pr (q + 1)
@@ -548,6 +549,15 @@ def singleDist (Gen Enc : NUPPT) (n Lc : ℕ) (msg : Fin Lc → Bool) :
     Gen.Coins n × Enc.Coins n → List Bool :=
   fun r => pairEncode (pairFstD (Gen.runAt n [] r.1))
     (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2)
+
+/-- The defining equation of `singleDist`: `singleDist Gen Enc n Lc msg = fun r => pairEncode
+(pairFstD (Gen.runAt n [] r.1))
+(Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2)`. -/
+theorem singleDist_def (Gen Enc : NUPPT) (n Lc : ℕ) (msg : Fin Lc → Bool) :
+    singleDist Gen Enc n Lc msg =
+      (fun r => pairEncode (pairFstD (Gen.runAt n [] r.1))
+        (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2) :
+        Gen.Coins n × Enc.Coins n → List Bool) := rfl
 
 /-- The multi-encryption sampler `{(pk, sk) ← Gen(1^n) : ⟨pk, ⟨Enc(1^n, ⟨pk, m_0⟩), …⟩⟩}` on `N`
 messages of `Lc` bits with independent encryption coins (the sampler
@@ -595,7 +605,7 @@ theorem distAdv_tuple_le_mul {κ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fint
     have hm : ∀ z : κ × (Fin 0 → ρ),
         (List.ofFn fun i => E (P z.1) (m i) (z.2 i)) = List.ofFn fun i => E (P z.1) (m' i) (z.2 i) :=
       fun z => congrArg List.ofFn (funext fun i => i.elim0)
-    simp only [hm, distAdv, sub_self, abs_zero, Nat.cast_zero, zero_mul, le_refl]
+    simp only [hm, distAdv_def, sub_self, abs_zero, Nat.cast_zero, zero_mul, le_refl]
   | succ q =>
     have hterm : ∀ j : Fin (q + 1),
         distAdv (fun z : κ × ρ => (P z.1, E (P z.1) (m j) z.2))
@@ -607,7 +617,7 @@ theorem distAdv_tuple_le_mul {κ ρ ρ' : Type*} [Fintype κ] [Fintype ρ] [Fint
               else E pc.1 (m i) (r.1 i)) r.2) ≤ t := by
       intro j
       refine le_of_eq_of_le ?_ (ht j)
-      unfold distAdv acceptProb
+      simp only [distAdv_def, acceptProb_def]
       refine congrArg₂ (fun a b : ℝ => |a - b|) (congrArg uprob (funext fun z => ?_))
         (congrArg uprob (funext fun z => ?_)) <;>
       simp only [pairFstD_pairEncode, pairSndD_pairEncode, Fin.lt_def, Fin.ext_iff]
@@ -676,7 +686,7 @@ theorem exists_hybridBound (Gen Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyE
   rcases Nat.eq_zero_or_pos (L.eval n) with hL | hL
   · -- no message bits: the two vectors coincide
     have hmm : m n = m' n := funext fun i => funext fun b => absurd b.isLt (by omega)
-    rw [hmm, distAdv, sub_self, abs_zero]
+    rw [hmm, distAdv_def, sub_self, abs_zero]
     exact mul_nonneg (Nat.cast_nonneg _) hε
   rcases Nat.eq_zero_or_pos (K.eval n) with hK | hK
   · -- no positions: the two tuples coincide
@@ -687,7 +697,8 @@ theorem exists_hybridBound (Gen Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyE
       simp only [multiDist]
       congr 3
       exact funext fun i => absurd i.isLt (by omega)
-    simp only [distAdv, acceptProb, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul, le_refl]
+    simp only [distAdv_def, acceptProb_def, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul,
+        le_refl]
   obtain ⟨hj, hjmax⟩ := hjN n hK
   -- the maximal planting advantage is the advantage of the machine `B`
   have hmach : ∀ msg : Fin (L.eval n) → Bool,
@@ -697,10 +708,10 @@ theorem exists_hybridBound (Gen Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyE
     intro msg
     refine (acceptProb_distinguisherL_coins B n _ (hybridCoins B Enc D K n hBc) _ ?_).symm
     rintro ⟨r, s⟩ ⟨v, ρ⟩
-    simp only [singleDist, hybridAdv, NUPPT.distinguisherL, NUPPT.runAt_eq, ofFn_hybridCoins,
+    simp only [singleDist, hybridAdv, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, ofFn_hybridCoins,
       hB n hj hL, pairFstD_pairEncode, pairSndD_pairEncode]
   have hbound : term n ⟨jN n, hj⟩ ≤ ε := by
-    simp only [term, distAdv, hmach]
+    simp only [term, distAdv_def, hmach]
     exact hsingle _ _
   calc distAdv (multiDist Gen Enc n (K.eval n) (L.eval n) (m n))
         (multiDist Gen Enc n (K.eval n) (L.eval n) (m' n)) (D.distinguisherL n)
@@ -722,16 +733,19 @@ def tdpPredFun (D : NUPPT) (flip : Bool) (z : List Bool) : List Bool :=
         (pairEncode (pairSndD (NUPPT.inArg z)) [(NUPPT.inCoins z).headD false]))
       (NUPPT.inAdvice z) (NUPPT.inCoins z).tail) = [true]))) flip]
 
-/-- The raw predictor is polynomial-time (`StateLoop.headBit_poly`, `tail_poly`,
-`polyTimeComputable_pairEq` for the verdict, `StateLoop.xor_poly`/`not_poly`). -/
+/-- The raw predictor is polynomial-time (`polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`,
+`polyTimeComputable_pairEq` for the verdict,
+`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
 theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredFun D flip) := by
   have hc : PolyTimeComputable fun z => [(NUPPT.inCoins z).headD false] :=
-    StateLoop.headBit_poly.comp NUPPT.polyTimeComputable_inCoins
+    polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins
   have hout := D.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout
     NUPPT.polyTimeComputable_inParam
     ((polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg).pairEncode
       ((polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg).pairEncode hc))
-    NUPPT.polyTimeComputable_inAdvice (StateLoop.tail_poly.comp NUPPT.polyTimeComputable_inCoins))
+    NUPPT.polyTimeComputable_inAdvice
+      ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+        NUPPT.polyTimeComputable_inCoins))
   have hv : PolyTimeComputable fun z => [decide (D.output (NUPPT.layout (NUPPT.inParam z)
       (pairEncode (pairFstD (NUPPT.inArg z))
         (pairEncode (pairSndD (NUPPT.inArg z)) [(NUPPT.inCoins z).headD false]))
@@ -739,8 +753,9 @@ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredF
     convert polyTimeComputable_pairEq.comp (hout.pairEncode (polyTimeComputable_const [true]))
       using 1
     funext z
-    simp only [Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
-  exact StateLoop.xor_poly (StateLoop.xor_poly hc (StateLoop.not_poly hv))
+    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+  exact BinArith.polyTimeComputable_xor (BinArith.polyTimeComputable_xor hc
+      (polyTimeComputable_not hv))
     (polyTimeComputable_const [flip])
 
 /-- **The predictor machine** `A_flip` of [PS10, Theorem 104.4, proof]: `D`'s advice, coins
@@ -768,8 +783,9 @@ theorem tdpPredictor_runAtL (D : NUPPT) (flip : Bool) (n : ℕ) (i y : List Bool
       [xor (xor c (!decide (D.runAtL n (pairEncode i (pairEncode y [c])) ρ = [true]))) flip] := by
   unfold tdpPredictor
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
-    NUPPT.layout, NUPPT.runAtL]
+  simp [tdpPredFun, NUPPT.inCoins_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+      NUPPT.advInput_eq,
+    NUPPT.layout_eq, NUPPT.runAtL_eq]
 
 /-- The coins of the predictor machine: the bit `c` followed by the coins of `D`. -/
 noncomputable def predCoins (D : NUPPT) (flip : Bool) (n : ℕ) :
@@ -812,7 +828,7 @@ theorem uprob_tdpPredictor {α : Type*} [Fintype α] (D : NUPPT) (flip : Bool) (
   congr 1
   funext z
   obtain ⟨x, c, ρ⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply, NUPPT.distinguisherL,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, NUPPT.distinguisherL_eq,
     NUPPT.runAt_eq, ofFn_predCoins, tdpPredictor_runAtL, decide_singleton_eq_true, ite_eq_xor_not]
 
 /-! ## Averages and one-letter strings -/

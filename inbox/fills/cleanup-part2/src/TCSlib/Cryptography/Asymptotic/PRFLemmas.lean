@@ -352,17 +352,19 @@ theorem length_ggmStep_iterate_le (E : List Bool → List Bool) (w : List Bool) 
     exact (length_ggmStep_le E _).trans ih
 
 /-- The GGM step is polynomial-time (`Complexity.polyTimeComputable_ite` on the emptiness test
-of `rest`, `selHalf_poly`, `StateLoop.headBit_poly`, `StateLoop.tail_poly`). -/
+of `rest`, `selHalf_poly`, `polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`). -/
 theorem ggmStep_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     PolyTimeComputable (ggmStep E) := by
   have hsel : PolyTimeComputable fun w =>
       selHalf ((pairSndD w).headD false) (pairFstD w) (E (pairFstD w)) :=
-    selHalf_poly (StateLoop.headBit_poly.comp polyTimeComputable_pairSndD)
+    selHalf_poly (polyTimeComputable_headD.comp polyTimeComputable_pairSndD)
       polyTimeComputable_pairFstD (hE.comp polyTimeComputable_pairFstD)
   have htest : PolyTimeComputable fun w => [decide (pairSndD w = [])] :=
-    StateLoop.isNil_poly.comp polyTimeComputable_pairSndD
+    polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   convert polyTimeComputable_ite htest polyTimeComputable_id
-    (hsel.pairEncode (StateLoop.tail_poly.comp polyTimeComputable_pairSndD)) using 1
+    (hsel.pairEncode
+        ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+            polyTimeComputable_pairSndD)) using 1
   funext w
   simp [ggmStep]
 

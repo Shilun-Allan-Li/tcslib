@@ -149,6 +149,10 @@ def pairDecode : List Bool → Option (List Bool × List Bool)
   | false :: true :: rest => some ([], rest)
   | _ => none
 
+/-- The empty word is not a pair: `pairDecode [] = none`. -/
+theorem pairDecode_nil : pairDecode [] = none :=
+  rfl
+
 /-- The aligned parser recovers both components, by induction on the first word. -/
 lemma pairDecode_pairEncode (x α : List Bool) :
     pairDecode (pairEncode x α) = some (x, α) := by
@@ -628,6 +632,13 @@ def actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) : List Bool :=
   signBits a.inputTape ++ optOptBoolBits (a.workTapes 0).1 ++
     signBits (a.workTapes 0).2 ++ optBoolBits a.output ++ optStateBits a.state
 
+/-- The defining equation of `actionBits`: `actionBits a = signBits a.inputTape ++ optOptBoolBits
+(a.workTapes 0).1 ++ signBits (a.workTapes 0).2 ++ optBoolBits a.output ++ optStateBits a.state`. -/
+theorem actionBits_def {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :
+    (actionBits a : List Bool) =
+      (signBits a.inputTape ++ optOptBoolBits (a.workTapes 0).1 ++
+        signBits (a.workTapes 0).2 ++ optBoolBits a.output ++ optStateBits a.state) := rfl
+
 /-- The **fixed, scheme-independent** canonical serialization of a coded machine: the
 state count (self-delimiting via `pairEncode`'s doubled-bit region), then the initial
 state (audit finding 5: it must be recorded — machines with equal tables and
@@ -643,6 +654,16 @@ def CodeTM.serialize (M : CodeTM) : List Bool :=
         ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
           ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
             actionBits (M.tm.tr q inp fun _ => w))
+
+/-- The defining equation of `CodeTM.serialize` (its body, unfolded once). -/
+theorem CodeTM.serialize_def (M : CodeTM) :
+    CodeTM.serialize M =
+      (pairEncode (Nat.bits M.numStates)
+      (unaryFin M.tm.q₀ ++
+        (List.finRange (M.numStates + 1)).flatMap fun q =>
+          ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+            ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+              actionBits (M.tm.tr q inp fun _ => w))) := rfl
 
 end Serialize
 

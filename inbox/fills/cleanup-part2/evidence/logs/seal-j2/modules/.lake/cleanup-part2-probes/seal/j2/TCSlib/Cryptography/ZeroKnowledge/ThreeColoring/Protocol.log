@@ -1,0 +1,86 @@
+START 2026-11-08T06:10:58.632961+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean sha256=6a07060e0ca93b360e7bc092878f4f725af2a55a83492f6dd59cb7ef310b7ddc
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=58 active=58 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2253:45: error: Function expected at
+  hc
+but this term has type
+  ProperColoring G c
+
+Note: Expected a function because this term is being applied to the argument
+  _
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2311:12: error: Invalid `⟨...⟩` notation: The expected type `ThreeColorable G` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2312:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2642:2: error: Type mismatch
+  ColProofs.colProver_efficient hCom ℓ
+has type
+  (ColProofs.colProver Com ℓ).Efficient
+but is expected to have type
+  (colProver Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2657:2: error: Type mismatch
+  ColProofs.colVerifier_efficient hCom ℓ
+has type
+  (ColProofs.colVerifier Com ℓ).Efficient
+but is expected to have type
+  (colVerifier Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2664:2: error: Type mismatch
+  ColProofs.colProverRep_efficient hCom ℓ
+has type
+  (ColProofs.colProverRep Com ℓ).Efficient
+but is expected to have type
+  (colProverRep Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2672:2: error: Type mismatch
+  ColProofs.colVerifierRep_efficient hCom ℓ
+has type
+  (ColProofs.colVerifierRep Com ℓ).Efficient
+but is expected to have type
+  (colVerifierRep Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2704:41: error: Type mismatch
+  Nat.sqrt_le_self ?m.54
+has type
+  Nat.sqrt ?m.54 ≤ ?m.54
+but is expected to have type
+  (decGraph x).fst ≤ x.length
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2821:96: error: Type mismatch
+  rfl
+has type
+  ?m.32 = ?m.32
+but is expected to have type
+  (colProtocol Com ℓ).outV P' x y z r =
+    (colVerifier Com ℓ).next x z (List.ofFn r.2)
+      [P'.next x y (List.ofFn r.1) [],
+        P'.next x y (List.ofFn r.1) [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2865:2: error: Type mismatch
+  he
+has type
+  colVerify Com (ℓ.eval n) G (↑e) com (opn ↑e) = true
+but is expected to have type
+  colVerify Com (ℓ.eval n) G (↑(((ColProofs.finOneEquiv (edgeCount G)) e).1 0)) com
+      (opn ↑(challengesUpTo ((ColProofs.finOneEquiv (edgeCount G)) e).1 0 (Fin.last ↑0))) =
+    true
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2928:8: error: 'show' tactic failed, pattern
+  x.length * (edgeCount G).size ≤ 1 * (x.length + 1) ^ 2
+is not definitionally equal to target
+  x.length * (edgeCount G).size ≤ (colVerifier Com ℓ).coinLen x.length
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:3040:11: error: Tactic `rcases` failed: `h✝ : R3COL x y` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:3048:15: error: Tactic `rcases` failed: `a✝ : R3COL x y` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): no fresh .olean produced
+
+END 2026-11-08T06:11:22.591835+00:00 RC 1 elapsed=24.0s pid=518 maxrss=2889924KiB

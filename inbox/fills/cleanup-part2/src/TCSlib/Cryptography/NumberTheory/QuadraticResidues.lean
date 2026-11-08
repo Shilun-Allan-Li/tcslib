@@ -162,12 +162,12 @@ theorem card_sqrt_eq_two (hp2 : p ≠ 2) {a : (ZMod p)ˣ} (ha : a ∈ QR p) :
 
 /-- **`|QR_p| = (p−1)/2`** for an odd prime `p` [PS10, Lemma 57.1].
 
-**Proof sketch.** Fibre counting (`card_units_eq_mul_card_QR`) with `c = 2`
-(`card_sqrt_eq_two`) and `|Z_p^*| = p − 1`. -/
+**Proof sketch.** `QR_p` is the image of squaring on the cyclic group `Z_p^*` of order `p − 1`
+(`IsCyclic.card_powMonoidHom_range`, `ZMod.card_units`), of size `(p − 1)/gcd(p − 1, 2)`, and
+`gcd(p − 1, 2) = 2` since `p` is odd (`Nat.Prime.even_sub_one`). -/
 theorem card_QR_prime (hp2 : p ≠ 2) : Nat.card (QR p) = (p - 1) / 2 := by
-  have h := card_units_eq_mul_card_QR (N := p) (c := 2) fun y hy => card_sqrt_eq_two hp2 hy
-  rw [ZMod.card_units] at h
-  omega
+  rw [QR, IsCyclic.card_powMonoidHom_range, Nat.card_eq_fintype_card, ZMod.card_units,
+    Nat.gcd_eq_right (hp.out.even_sub_one hp2).two_dvd]
 
 /-- The exponent of [PS10, Theorem 58.2]: for `p = 4k + 3`, `p / 4 + 1 = k + 1`. -/
 theorem div_four_succ_eq (hp3 : p % 4 = 3) : 4 * (p / 4 + 1) = (p - 1) + 2 := by
@@ -178,17 +178,12 @@ theorem div_four_succ_eq (hp3 : p % 4 = 3) : 4 * (p / 4 + 1) = (p - 1) + 2 := by
 /-- **Square roots modulo `p ≡ 3 (mod 4)`** [PS10, Theorem 58.2]: if `p = 4k + 3` and
 `y ∈ QR_p` then `(y^{k+1})² = y` (and so `(−y^{k+1})² = y`), with `k + 1 = p / 4 + 1`.
 
-**Proof sketch.** With `y = a²`: `(y^{k+1})² = a^{4k+4} = a^{p−1} · a² = a² = y` by Fermat's
-little theorem (`ZMod.units_pow_card_sub_one_eq_one`). -/
+**Proof sketch.** Euler's criterion (`ZMod.euler_criterion_units`): `y ∈ QR_p` gives
+`y^{⌊p/2⌋} = 1`, and for `p = 4k + 3`, `(y^{k+1})² = y^{2k+2} = y^{⌊p/2⌋} · y = y`. -/
 theorem sq_pow_div_four_succ (hp3 : p % 4 = 3) {y : (ZMod p)ˣ} (hy : y ∈ QR p) :
     (y ^ (p / 4 + 1)) ^ 2 = y := by
-  obtain ⟨a, rfl⟩ := (mem_QR_iff y).1 hy
-  calc ((a ^ 2) ^ (p / 4 + 1)) ^ 2 = a ^ (4 * (p / 4 + 1)) := by
-        rw [← pow_mul, ← pow_mul]
-        congr 1
-        ring
-    _ = a ^ (p - 1) * a ^ 2 := by rw [div_four_succ_eq hp3, pow_add]
-    _ = a ^ 2 := by rw [ZMod.units_pow_card_sub_one_eq_one, one_mul]
+  have h := (ZMod.euler_criterion_units p y).1 ((mem_QR_iff y).1 hy)
+  rw [← pow_mul, show (p / 4 + 1) * 2 = p / 2 + 1 by omega, pow_succ, h, one_mul]
 
 /-- The root `y^{(p+1)/4}` of [PS10, Theorem 58.2] is itself a residue (an even power of a
 root of `y`): the root selected by the Rabin trapdoor [PS10, Theorem 63.10]. -/

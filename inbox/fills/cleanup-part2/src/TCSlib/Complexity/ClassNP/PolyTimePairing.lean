@@ -112,7 +112,7 @@ theorem PolyTimeComputable.pairMapSnd {g : List Bool → List Bool}
 /-- Appending to a pair appends to its second component. -/
 private lemma pairEncode_append (a b c : List Bool) :
     pairEncode a b ++ c = pairEncode a (b ++ c) := by
-  simp [pairEncode, List.append_assoc]
+  simp [pairEncode_eq, List.append_assoc]
 
 /-- **Pairing two polynomial-time functions is polynomial-time**: if `f` and `g` are
 polynomial-time computable, so is `x ↦ pairEncode (f x) (g x)`.
@@ -148,8 +148,8 @@ theorem PolyTimeComputable.pairEncode {f g : List Bool → List Bool}
 /-- The last `true` of `1^(n+1)` is its last letter: stripping it leaves `1ⁿ`. -/
 private lemma splitAtLastTrue_replicate_succ (n : ℕ) :
     splitAtLastTrue (List.replicate (n + 1) true) = some (List.replicate n true) := by
-  rw [splitAtLastTrue, List.reverse_replicate, List.replicate_succ]
-  simp [List.reverse_replicate]
+  rw [splitAtLastTrue_of_dropWhile_eq_true_cons (rest := List.replicate n true)
+    (by rw [List.reverse_replicate, List.replicate_succ]; rfl), List.reverse_replicate]
 
 /-- **The unary length map is polynomial-time**: `x ↦ 1^|x|` is polynomial-time
 computable. (This is how the input `1ⁿ` of a uniformity machine [AB09, Def 6.12] is
@@ -176,7 +176,7 @@ theorem polyTimeComputable_unary :
   have hs := polyTimeComputable_of_linear FinTM.computesFunInTime_pairSnd
   convert hs.comp (hstrip.comp hpair) using 1
   funext x
-  simp only [Function.comp_apply, id, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
+  simp only [Function.comp_apply, id_eq, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
     splitAtLastTrue_replicate_succ, Option.map_some, Option.getD_some]
 
 /-- **FP is closed under concatenation**: if `f` and `g` are polynomial-time computable,

@@ -1,0 +1,83 @@
+START 2026-11-08T06:05:29.852571+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean sha256=dd84a6ea7f6b9f40011b2398706cf7c3f226ede522d234e257cadc646c3873be
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=9 active=9 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:1435:4: error: Type mismatch
+  LE.le.trans (two_pow_permBits_le hn) (Nat.le_succ (2 * n))
+has type
+  2 ^ permBits n ≤ (2 * n).succ
+but is expected to have type
+  2 ^ n.size ≤ 2 * n + 1
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:1627:4: error: Tactic `rfl` failed: The left-hand side
+  permFromCoinsNum n (permBits n) (permTrials n) (pairSndD (pairSndD w)) ↑⟨m / n, hu'⟩ = ↑⟨m % n, hv'⟩
+is not definitionally equal to the right-hand side
+  permFromCoinsNum n n.size (2 * n * n) (pairSndD (pairSndD w)) (m / n) = m % n
+
+case pos.e_head
+hN : PolyTimeComputable fun z => List.replicate (pairFstD z).length.sqrt true
+hlen :
+  PolyTimeComputable fun z =>
+    List.replicate
+      (encPerm
+          ((permFromCoins (decGraph (pairFstD z)).fst (permBits (decGraph (pairFstD z)).fst)
+                (permTrials (decGraph (pairFstD z)).fst)
+                (coinTable (decGraph (pairFstD z)).fst (permTrials (decGraph (pairFstD z)).fst)
+                  (permBits (decGraph (pairFstD z)).fst) (pairSndD z))).getD
+            1)).length
+      true
+hN' : PolyTimeComputable fun w => List.replicate (pairFstD (pairSndD w)).length.sqrt true
+hm : PolyTimeComputable fun w => List.replicate (pairFstD w).length true
+hr : PolyTimeComputable fun w => pairSndD (pairSndD w)
+hK : PolyTimeComputable fun x => List.replicate (pairFstD (pairSndD x)).length.sqrt.size true
+hT :
+  PolyTimeComputable fun x =>
+    List.replicate (2 * (pairFstD (pairSndD x)).length.sqrt * (pairFstD (pairSndD x)).length.sqrt) true
+hM : PolyTimeComputable fun x => List.replicate (2 * (pairFstD (pairSndD x)).length.sqrt + 1) true
+hX :
+  PolyTimeComputable fun x =>
+    List.replicate
+      (min (divNum (pairFstD x).length (pairFstD (pairSndD x)).length.sqrt) (pairFstD (pairSndD x)).length.sqrt) true
+hval :
+  PolyTimeComputable fun z =>
+    List.replicate
+      (permFromCoinsNum (pairFstD (pairSndD z)).length.sqrt (pairFstD (pairSndD z)).length.sqrt.size
+        (2 * (pairFstD (pairSndD z)).length.sqrt * (pairFstD (pairSndD z)).length.sqrt) (pairSndD (pairSndD z))
+        (min (divNum (pairFstD z).length (pairFstD (pairSndD z)).length.sqrt) (pairFstD (pairSndD z)).length.sqrt))
+      true
+hbit :
+  PolyTimeComputable fun x =>
+    if
+        decide ((pairFstD x).length < (pairFstD (pairSndD x)).length.sqrt * (pairFstD (pairSndD x)).length.sqrt) =
+          true then
+      [decide
+          (permFromCoinsNum (pairFstD (pairSndD x)).length.sqrt (pairFstD (pairSndD x)).length.sqrt.size
+              (2 * (pairFstD (pairSndD x)).length.sqrt * (pairFstD (pairSndD x)).length.sqrt) (pairSndD (pairSndD x))
+              (min (divNum (pairFstD x).length (pairFstD (pairSndD x)).length.sqrt)
+                (pairFstD (pairSndD x)).length.sqrt) =
+            modNum (pairFstD x).length (pairFstD (pairSndD x)).length.sqrt)]
+    else [false]
+w : List Bool
+n : ℕ := (pairFstD (pairSndD w)).length.sqrt
+hn : n = (pairFstD (pairSndD w)).length.sqrt
+m : ℕ := (pairFstD w).length
+hm_def : m = (pairFstD w).length
+hlt : m < n * n
+hn0 : 0 < n
+hu' : m / n < n
+hv' : m % n < n
+hidx : m = ↑⟨m % n, hv'⟩ + n * ↑⟨m / n, hu'⟩
+⊢ permFromCoinsNum n (permBits n) (permTrials n) (pairSndD (pairSndD w)) ↑⟨m / n, hu'⟩ = ↑⟨m % n, hv'⟩ ↔
+    permFromCoinsNum n n.size (2 * n * n) (pairSndD (pairSndD w)) (m / n) = m % n
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/Encoding): no fresh .olean produced
+
+END 2026-11-08T06:05:44.546076+00:00 RC 1 elapsed=14.7s pid=32107 maxrss=2685112KiB

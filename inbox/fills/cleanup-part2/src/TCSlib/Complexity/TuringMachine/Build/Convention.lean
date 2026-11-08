@@ -83,6 +83,12 @@ def Cfg.ofWords {input : List Bool} (q : State) (w : Fin k → List Bool) :
     Cfg k Bool State input :=
   ⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩
 
+/-- The defining equation of `Cfg.ofWords`: `Cfg.ofWords q w =
+⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩`. -/
+theorem Cfg.ofWords_def {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords q w : Cfg k Bool State input) =
+      (⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩) := rfl
+
 /-- A machine's genuine initial configuration is the seam configuration at
 its start state with every tape word empty: `Cfg.init` has blank tapes and
 `Turing.FinTM.bufferTape [] = fun _ => none`. This is the lemma that lets a
@@ -130,6 +136,13 @@ def splitAtLastTrue (v : List Bool) : Option (List Bool) :=
   match v.reverse.dropWhile (fun b => !b) with
   | true :: rest => some rest.reverse
   | _ => none
+
+/-- Reader for `splitAtLastTrue`: when the reversed word, stripped of its trailing `false`s,
+starts with the last `true`, the strip returns the reversed remainder. -/
+theorem splitAtLastTrue_of_dropWhile_eq_true_cons {v rest : List Bool}
+    (h : v.reverse.dropWhile (fun b => !b) = true :: rest) :
+    splitAtLastTrue v = some rest.reverse := by
+  rw [splitAtLastTrue, h]
 
 /-- Least index `i ≤ n` solving the padding length equation
 `i + C·(i+1)^e = n`, or `none` when no solution exists. Strict monotonicity

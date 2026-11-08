@@ -31,7 +31,8 @@ with a `FunFamily`.
 
 ## Main definitions
 
-* `TCSlib.Cryptography.OneWay.blocksE` — the block bijection (the `blocks` of `OneWay.lean`).
+* `TCSlib.Cryptography.OneWay.blocksE` — the block bijection (an alias of `FunFamily.blocks`,
+  `Asymptotic/Adversary.lean`).
 * `TCSlib.Cryptography.OneWay.kkOf` — the trial length `⌊log₂ m⌋ + 1` of the position sampler.
 * `TCSlib.Cryptography.OneWay.YaoMachine.Data`, `YaoMachine.acc`, `YaoMachine.ans`,
   `YaoMachine.g`, `YaoMachine.yaoRaw'` — the round of Algorithm 38.5 and the repeated machine.
@@ -57,18 +58,24 @@ open Complexity Turing Finset
 /-! ### The block bijection -/
 
 /-- A string of `q·ℓ` bits as `q` consecutive blocks of `ℓ` bits (block `i` occupies the
-positions `ℓ·i, …, ℓ·i + ℓ - 1`); the `FunFamily.blocks` of `OneWay.lean`, repeated here
-because this file is imported by it. -/
+positions `ℓ·i, …, ℓ·i + ℓ - 1`): a compatibility alias of the canonical Bool block bijection
+`FunFamily.blocks` of `Asymptotic/Adversary.lean`. -/
 def blocksE (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
+  FunFamily.blocks q ℓ
 
-/-- Block `i`, position `j` of `x` is position `ℓ·i + j`. -/
+/-- `blocksE` is the canonical block bijection: `blocksE q ℓ = FunFamily.blocks q ℓ`. -/
+theorem blocksE_eq (q ℓ : ℕ) : blocksE q ℓ = FunFamily.blocks q ℓ := rfl
+
+/-- Block `i`, position `j` of `x` is position `ℓ·i + j` (`FunFamily.blocks_apply`). -/
 theorem blocksE_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
-    blocksE q ℓ x i j = x (finProdFinEquiv (i, j)) := rfl
+    blocksE q ℓ x i j = x (finProdFinEquiv (i, j)) :=
+  FunFamily.blocks_apply q ℓ x i j
 
-/-- The inverse of `blocksE` reads block `k.divNat`, position `k.modNat`. -/
+/-- The inverse of `blocksE` reads block `k.divNat`, position `k.modNat`
+(`FunFamily.blocks_symm_apply`). -/
 theorem blocksE_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
-    (blocksE q ℓ).symm t k = t k.divNat k.modNat := rfl
+    (blocksE q ℓ).symm t k = t k.divNat k.modNat :=
+  FunFamily.blocks_symm_apply q ℓ t k
 
 /-- The encoding of a tuple of blocks is the concatenation of the encodings of the blocks. -/
 theorem ofFn_blocksE_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
@@ -452,7 +459,7 @@ theorem yaoRaw_poly (T : PolyExpr) : PolyTimeComputable (yaoRaw D T) :=
 include hFe hF' hPm in
 /-- The repeated machine with default is polynomial-time. -/
 theorem yaoRaw'_poly (T : PolyExpr) : PolyTimeComputable (yaoRaw' D T) := by
-  convert polyTimeComputable_ite (StateLoop.isNil_poly.comp (yaoRaw_poly hFe hF' hPm T))
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp (yaoRaw_poly hFe hF' hPm T))
     (uIn_poly (D := D)) (yaoRaw_poly hFe hF' hPm T) using 1
   funext w
   simp [yaoRaw']
@@ -467,7 +474,7 @@ theorem iterate_g_layout (u y α r : List Bool) (i : ℕ) :
   | zero => simp
   | succ i ih =>
     rw [Function.iterate_succ_apply', ih]
-    simp only [g, NUPPT.layout, NUPPT.inCoins, NUPPT.inParam, pairFstD_pairEncode,
+    simp only [g, NUPPT.layout_eq, NUPPT.inCoins_eq, NUPPT.inParam_eq, pairFstD_pairEncode,
       pairSndD_pairEncode, List.drop_drop]
     congr 2
     ring
@@ -693,7 +700,7 @@ theorem ans_layout :
       List.replicate ((posOf hM (nkk_le n _ hM) a).val * D.inLen.eval n) true := by
     simp [offIn, hipos, huIn]
   simp only [ans, hoffIn, huIn, hz, hu, List.length_replicate]
-  rw [yaoTry]
+  rw [yaoTry_eq]
   simp only [yaoB]
   rw [ofFn_padTrue]
 
@@ -721,7 +728,7 @@ theorem yaoInverter_eq_find? {α β ρ : Type*} [DecidableEq β] {q : ℕ} (inst
     @yaoInverter α β ρ _ q inst f B T y cs =
       ((List.finRange T).find? (fun t => decide (f (yaoTry f B y (cs t)) = y))).elim
         (@default α inst) (fun t => yaoTry f B y (cs t)) := by
-  unfold yaoInverter
+  simp only [yaoInverter_def]
   have h := foldr_ite_eq_find? (fun t => f (yaoTry f B y (cs t)) = y)
     (fun t => yaoTry f B y (cs t)) (@default α inst) (List.finRange T)
   convert h
@@ -915,7 +922,7 @@ theorem exists_yaoReduction (inLen outLen m T : PolyExpr)
         some (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
           (T.eval n + 1) y (YaoMachine.sampleAll T n hM r)) := by
     intro y r
-    simp only [NUPPT.inverter, hrun, decodeFin_ofFn]
+    simp only [NUPPT.inverter_def, hrun, decodeFin_ofFn]
   -- the statistical switch
   have hS := YaoMachine.statClose_sampleAll T n hM
   have hδ : (1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n ≤ (1 / 2 : ℝ) ^ n := by
@@ -933,7 +940,7 @@ theorem exists_yaoReduction (inLen outLen m T : PolyExpr)
       uprob fun z : A.Coins n × (Fin (inLen.eval n) → Bool) =>
         f n (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
           (T.eval n + 1) (f n z.2) (YaoMachine.sampleAll T n hM z.1)) = f n z.2 := by
-    unfold invProbOpt
+    simp only [invProbOpt_def]
     rw [← uprob_comp_equiv (Equiv.prodComm (A.Coins n) (Fin (inLen.eval n) → Bool))]
     congr 1
     funext z
@@ -946,7 +953,7 @@ theorem exists_yaoReduction (inLen outLen m T : PolyExpr)
           (Fin (inLen.eval n) → Bool) =>
         f n (@yaoInverter _ _ _ _ _ ⟨fun _ => true⟩ (f n) (yaoB inLen outLen m A' n)
           (T.eval n + 1) (f n z.2) (id z.1)) = f n z.2 := by
-    unfold invProb
+    simp only [invProb_def]
     rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
     congr 1
   have hδ' : ((T.eval n + 1 : ℕ) : ℝ) * ((1 - (D.m.eval n : ℝ) / 2 ^ kkOf (D.m.eval n)) ^ n + 0) ≤

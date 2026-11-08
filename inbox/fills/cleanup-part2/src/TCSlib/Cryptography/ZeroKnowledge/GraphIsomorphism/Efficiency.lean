@@ -43,8 +43,8 @@ malformed inputs).
 
 ## Main results
 
-* `TCSlib.Cryptography.GI.stateFind` — the state-loop form of the repetition lemma (copy of the
-  private `polyTimeComputable_stateFind` of `Randomized/Repetition.lean`).
+* `TCSlib.Cryptography.GI.stateFind` — the state-loop form of the repetition lemma (an alias of
+  the public `Complexity.polyTimeComputable_stateFind` of `Randomized/Repetition.lean`).
 * `TCSlib.Cryptography.GI.unarySqrt_poly` — `w ↦ 1^{√|w|}` is polynomial-time.
 * `TCSlib.Cryptography.GI.wellFormed_poly` — the well-formedness test is polynomial-time.
 * `TCSlib.Cryptography.GI.encPermGraphAt_poly` — relabelling a graph decoded on a given vertex
@@ -67,12 +67,11 @@ open Complexity Turing Complexity.StateLoop
 
 /-! ### An FP toolkit -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- The pair-validity test `x ↦ [(pairDecode x).isSome]` is polynomial-time
 (`Turing.FinTM.computesFunInTime_pairValid`). -/
@@ -80,15 +79,10 @@ theorem pairValid_poly : PolyTimeComputable fun x => [(pairDecode x).isSome] := 
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_pairValid
   exact polyTimeComputable_of_linear ⟨M, c, hM⟩
 
-/-- State loops (copy of `polyTimeComputable_stateFind` of
-`TCSlib.Complexity.Randomized.Repetition`, which is private there): a state word `⟨x, s⟩`
-evolving from `start x` by `step`, a test `acc` first true at round `N x ≤ R|x|`, states of
-length `≤ B|x|` up to that round; then `x ↦ out ⟨x, orbit x (N x)⟩` is polynomial-time.
-
-**Proof sketch.** `Complexity.polyTimeComputable_iterateFind` on the guarded step
-`StateLoop.gstep step B` (orbit bound `StateLoop.length_gstep_iterate_le` for every word),
-pre-composed with `x ↦ ⟨x, start x⟩`; on the genuine orbit the guard never fires
-(`StateLoop.gstep_iterate_eq`) and `List.find?` returns `N x` (`StateLoop.find?_range_eq_some`). -/
+/-- State loops (a same-header alias of the public `Complexity.polyTimeComputable_stateFind` of
+`TCSlib.Complexity.Randomized.Repetition`): a state word `⟨x, s⟩` evolving from `start x` by
+`step`, a test `acc` first true at round `N x ≤ R|x|`, states of length `≤ B|x|` up to that
+round; then `x ↦ out ⟨x, orbit x (N x)⟩` is polynomial-time. -/
 theorem stateFind {start step : List Bool → List Bool}
     {acc : List Bool → Bool} {out : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
@@ -97,27 +91,8 @@ theorem stateFind {start step : List Bool → List Bool}
     (hbound : ∀ x i, i ≤ N x → (orbit start step x i).length ≤ B.eval x.length)
     (hfirst : ∀ x i, i < N x → acc (pairEncode x (orbit start step x i)) = false)
     (hlast : ∀ x, acc (pairEncode x (orbit start step x (N x))) = true) :
-    PolyTimeComputable fun x => out (pairEncode x (orbit start step x (N x))) := by
-  have hF := polyTimeComputable_iterateFind (gstep_poly hstep B) hacc hout R (gstepBound B)
-    (fun w i _ => length_gstep_iterate_le step B w i)
-  have hpre : PolyTimeComputable fun x => pairEncode x (start x) :=
-    polyTimeComputable_id.pairEncode hstart
-  convert hF.comp hpre using 1
-  funext x
-  simp only [Function.comp_apply]
-  have horb := gstep_iterate_eq start step B x (N x) (hbound x)
-  have hle : N x ≤ R.eval (pairEncode x (start x)).length :=
-    (hN x).trans (R.eval_mono (by rw [length_pairEncode]; omega))
-  have hfind : (List.range (R.eval (pairEncode x (start x)).length + 1)).find?
-      (fun i => acc ((gstep step B)^[i] (pairEncode x (start x)))) = some (N x) := by
-    apply find?_range_eq_some hle
-    · intro i hi
-      rw [horb i hi.le]
-      exact hfirst x i hi
-    · rw [horb (N x) le_rfl]
-      exact hlast x
-  rw [hfind]
-  exact (congrArg out (horb (N x) le_rfl)).symm
+    PolyTimeComputable fun x => out (pairEncode x (orbit start step x (N x))) :=
+  Complexity.polyTimeComputable_stateFind hstart hstep hacc hout R B N hN hbound hfirst hlast
 
 /-! ### The unary square root -/
 
@@ -138,7 +113,7 @@ def out (st : List Bool) : List Bool := pairSndD st
 /-- The closed form of the orbit: the counter `1^i` after `i` rounds. -/
 theorem orbit_eq (w : List Bool) (i : ℕ) : orbit start step w i = List.replicate i true := by
   induction i with
-  | zero => rfl
+  | zero => exact (orbit_zero _ _ _).trans rfl
   | succ i ih => simp [step, ih, List.replicate_succ]
 
 /-- The initial state is polynomial-time. -/
@@ -149,7 +124,7 @@ theorem step_poly : PolyTimeComputable step := (cons_poly true).comp polyTimeCom
 
 /-- The test is polynomial-time: the negated length comparison of `w` with `1^{(i+1)²}`. -/
 theorem acc_poly : PolyTimeComputable fun st => [acc st] := by
-  have h := not_poly (lenLe_comp polyTimeComputable_pairFstD
+  have h := polyTimeComputable_not (lenLe_comp polyTimeComputable_pairFstD
     (unaryPoly_comp (.normal 1 2) polyTimeComputable_pairSndD))
   refine ptc_congr h fun st => ?_
   simp only [acc, List.length_replicate, PolyExpr.eval_normal, one_mul]
@@ -193,7 +168,8 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := 
   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
   refine ptc_congr h fun x => ?_
-  simp only [wellFormedInstance, instanceVertexCount, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
+      pairSndD_pairEncode,
     List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
 
 /-! ### Padding a graph word to a given vertex count -/
@@ -260,6 +236,12 @@ theorem relabelAt_replicate (n : ℕ) (w p : List Bool) :
 string (`samplePerm` at `√|w|`). -/
 noncomputable def sampleStr (w r : List Bool) : List Bool := encPerm (samplePerm (Nat.sqrt w.length) r)
 
+/-- The defining equation of `sampleStr`: `sampleStr w r = encPerm
+(samplePerm (Nat.sqrt w.length) r)`. -/
+theorem sampleStr_def (w r : List Bool) :
+    sampleStr w r =
+      (encPerm (samplePerm (Nat.sqrt w.length) r)) := rfl
+
 /-- The product `π σ⁻¹` of the permutations decoded from `p` and `y` on `√|p|` points, as a
 string (the function of `polyTimeComputable_encPermMulInv`). -/
 noncomputable def mulInvStr (p y : List Bool) : List Bool :=
@@ -315,27 +297,27 @@ def vcount (w : List Bool) : ℕ := Nat.sqrt (pairFstD (argX w)).length
 /-- The common input of a layout. -/
 @[simp] theorem argX_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argX (ilayout x z hist r) = x := by
-  simp [argX, ilayout]
+  simp [argX, ilayout_def]
 
 /-- The auxiliary input of a layout. -/
 @[simp] theorem argZ_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argZ (ilayout x z hist r) = z := by
-  simp [argZ, ilayout]
+  simp [argZ, ilayout_def]
 
 /-- The encoded messages of a layout. -/
 @[simp] theorem argM_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argM (ilayout x z hist r) = Strategy.encodeMsgs hist := by
-  simp [argM, ilayout]
+  simp [argM, ilayout_def]
 
 /-- The coins of a layout. -/
 @[simp] theorem inCoins_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     NUPPT.inCoins (ilayout x z hist r) = r := by
-  simp [ilayout]
+  simp [ilayout_def]
 
 /-- The unary parameter of a layout. -/
 @[simp] theorem inParam_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     NUPPT.inParam (ilayout x z hist r) = List.replicate x.length true := by
-  simp [ilayout]
+  simp [ilayout_def]
 
 /-- The vertex count of a layout. -/
 @[simp] theorem vcount_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
@@ -366,7 +348,7 @@ theorem vcount_poly : PolyTimeComputable fun w => List.replicate (vcount w) true
 
 /-- The first bit of the coins (the challenge of the verifiers). -/
 theorem coinBit_poly : PolyTimeComputable fun w => [(NUPPT.inCoins w).headD false] :=
-  headBit_poly.comp NUPPT.polyTimeComputable_inCoins
+  polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins
 
 /-- The graph word selected by the first coin, `G_b`. -/
 theorem selGraph_poly : PolyTimeComputable fun w =>
@@ -472,16 +454,17 @@ theorem Riso_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z =
 /-- The honest prover of the graph isomorphism protocol is efficient (D8)
 [PS10, Proposition 120.7] (Inf-4.2).
 
-**Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is
-`relabel_poly` of `G₀` by the sampled permutation (`piStr_poly`), message `3` is
-`mulInvStr_poly` on `⟨encPerm π, y⟩` or `encPerm π` according to the challenge bit
-(`polyTimeComputable_ite`), the case split on `msgs = []` by `isNil_poly`. The equation with
-`giProver.next` is checked on the two shapes of the history (`giProver_next_nil'`,
-`giProver_next_cons'`) with `relabelAt_replicate`, `decPerm_encPerm`, `mulInvStr_encPerm`. -/
+**Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is `relabel_poly` of
+`G₀` by the sampled permutation (`piStr_poly`), message `3` is `mulInvStr_poly` on `⟨encPerm π, y⟩`
+or `encPerm π` according to the challenge bit (`polyTimeComputable_ite`), the case split on
+`msgs = []` by `polyTimeComputable_isNil`. The equation with `giProver.next` is checked on the two
+shapes of the history (`giProver_next_nil'`, `giProver_next_cons'`) with `relabelAt_replicate`,
+`decPerm_encPerm`, `mulInvStr_encPerm`. -/
 theorem giProver_efficient : giProver.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := isNil_poly.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hbit : PolyTimeComputable fun w => [(pairFstD (argM w)).headD false] :=
-    headBit_poly.comp (polyTimeComputable_pairFstD.comp argM_poly)
+    polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp argM_poly)
   have hF₁ := relabel_poly w₀_poly piStr_poly
   have hmul : PolyTimeComputable fun w =>
       mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w) :=
@@ -508,18 +491,20 @@ theorem giProver_efficient : giProver.Efficient := by
 /-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
 for Proposition 120.7] (Inf-4.2).
 
-**Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`),
-the verdict conjoins the well-formedness test (`wellFormed_poly`) with `relabel_poly` of `G_b`
-by `γ` compared with `H` (`polyTimeComputable_pairEq`); the number of messages is read off the
-nesting of `msgs` by `isNil_poly` tests. The equation with `giVerifier.next` is checked on the
-four shapes of the history (`giVerifier_next_nil'`, `giVerifier_next_one`,
-`giVerifier_next_two'`, `giVerifier_next_long'`). -/
+**Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`), the
+verdict conjoins the well-formedness test (`wellFormed_poly`) with `relabel_poly` of `G_b` by `γ`
+compared with `H` (`polyTimeComputable_pairEq`); the number of messages is read off the nesting of
+`msgs` by `polyTimeComputable_isNil` tests. The equation with `giVerifier.next` is checked on the
+four shapes of the history (`giVerifier_next_nil'`, `giVerifier_next_one`, `giVerifier_next_two'`,
+`giVerifier_next_long'`). -/
 theorem giVerifier_efficient : giVerifier.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := isNil_poly.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])] :=
-    isNil_poly.comp (polyTimeComputable_pairSndD.comp argM_poly)
+    polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)
   have hnil₃ : PolyTimeComputable fun w => [decide (pairSndD (pairSndD (argM w)) = [])] :=
-    isNil_poly.comp (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly))
+    polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp
+        (polyTimeComputable_pairSndD.comp argM_poly))
   have hH : PolyTimeComputable fun w => pairFstD (argM w) := polyTimeComputable_pairFstD.comp argM_poly
   have hγ : PolyTimeComputable fun w => pairFstD (pairSndD (argM w)) :=
     polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp argM_poly)
@@ -565,17 +550,22 @@ the permutation sampled from the coins after the first (`sampleStr_poly` on
 (`wellFormed_poly`). The equation with `gniVerifier.next` is checked on the three shapes of
 the history (`gniVerifier_next_nil'`, `gniVerifier_next_one`, `gniVerifier_next_long'`). -/
 theorem gniVerifier_efficient : gniVerifier.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := isNil_poly.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])] :=
-    isNil_poly.comp (polyTimeComputable_pairSndD.comp argM_poly)
+    polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)
   have hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail :=
-    ptc_congr (sampleStr_poly.comp (w₀_poly.pairEncode (tail_poly.comp NUPPT.polyTimeComputable_inCoins)))
+    ptc_congr (sampleStr_poly.comp
+        (w₀_poly.pairEncode
+            ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+                NUPPT.polyTimeComputable_inCoins)))
       fun w => by simp
   have hF₀ := relabel_poly selGraph_poly hσ
   have hbit : PolyTimeComputable fun w =>
       [decide ([(pairFstD (argM w)).headD false] = [(NUPPT.inCoins w).headD false])] :=
     ptc_congr (polyTimeComputable_pairEq.comp
-      ((headBit_poly.comp (polyTimeComputable_pairFstD.comp argM_poly)).pairEncode coinBit_poly))
+      ((polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp argM_poly)).pairEncode
+          coinBit_poly))
       fun w => by simp
   have hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)] := wellFormed_poly.comp argX_poly
   have hverdict := polyTimeComputable_and hwf hbit

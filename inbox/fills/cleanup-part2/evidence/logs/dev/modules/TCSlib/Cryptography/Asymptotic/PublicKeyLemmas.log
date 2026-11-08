@@ -1,0 +1,15 @@
+START 2026-11-08T05:31:42.598296+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/PublicKeyLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean sha256=1abe23f99c9508649185ba5e341787213669db5cb32eba8972953dcf600162bd
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:179:15: warning: This simp argument is unused:
+  blockList_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵z̵e̵r̵o̵,̵ ̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵s̵u̵c̵c̵,̵[̲b̲l̲o̲c̲k̲L̲i̲s̲t̲_̲s̲u̲c̲c̲,̲ hne, if_false, List.cons.injEq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T05:32:28.781838+00:00 RC 0 elapsed=46.2s pid=25035 maxrss=2625264KiB

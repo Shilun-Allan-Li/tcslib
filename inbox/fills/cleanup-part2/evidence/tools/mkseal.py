@@ -9,11 +9,18 @@ printed by `#cp2closure`; each is checked for existence, home module and kind be
 already-irreducible names are counted separately. An `CP2-EOF` marker command is appended."""
 import sys, re, json
 log, module, srcf, out = sys.argv[1:5]
+import os
+# Standing-rule notation (MAINTAINER-HANDOFF §3 "Notation"): never sealed. Only applied when
+# CP2_SEAL_NOTATION is set (comma-separated full names); the baseline "strict" probes sealed them.
+NOTATION = [n for n in os.environ.get('CP2_SEAL_NOTATION', '').split(',') if n]
 rows = []
+excluded = []
 for line in open(log):
     if not line.startswith('CLOSURE\t'): continue
     _, aud, name, home, kind, status, comps = line.rstrip('\n').split('\t')
     if aud != module: continue
+    if name in NOTATION:
+        excluded.append(name); continue
     rows.append((name, home, kind, eval(comps.replace('[', '["').replace(']', '"]').replace(', ', '", "')) if comps != '[]' else []))
 def term(comps):
     t = 'Lean.Name.anonymous'
@@ -24,6 +31,8 @@ def term(comps):
     return t
 chunks = [rows[k:k + 200] for k in range(0, len(rows), 200)] or [[]]
 parts = [f'-- CP2 WHOLE-FILE SEAL (evidence probe; not library source): {len(rows)} requests for {module}']
+if NOTATION:
+    parts.append(f'-- CP2 notation left unsealed (standing rule): {", ".join(sorted(excluded)) or "none in closure"}')
 for ci_, ch in enumerate(chunks):
     reqs = ',\n    '.join(f'({term(c)}, {json.dumps(home)}, {json.dumps(kind)})' for _, home, kind, c in ch)
     parts.append(f'''run_cmd do
@@ -57,4 +66,4 @@ text = '\n'.join(L)
 if not text.endswith('\n'): text += '\n'
 text += '\nrun_cmd Lean.logInfo "CP2-EOF"\n'
 open(out, 'w').write(text)
-print(module, len(rows), 'requests; seal inserted after line', last + 1)
+print(module, len(rows), 'requests;', len(excluded), 'notation excluded; seal inserted after line', last + 1)

@@ -7,6 +7,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.Perm.Cycle.Type
@@ -184,19 +185,14 @@ private theorem units_pow_eq_neg_one_iff {N m : ℕ} (w : (ZMod N)ˣ) :
     w ^ m = -1 ↔ (w : ZMod N) ^ m = -1 := by
   rw [← Units.val_inj, Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one]
 
-/-- **Lagrange:** a proper subgroup of a finite group has at most half the elements
-(`Subgroup.card_subgroup_dvd_card`; the index is not `1` by `Subgroup.eq_top_of_card_eq`). -/
+/-- **Lagrange:** a proper subgroup of a finite group has at most half the elements: its index
+is at least `2` (`Subgroup.one_lt_index_of_ne_top`) and `|H| · [G : H] = |G|`
+(`Subgroup.card_mul_index`). -/
 private theorem two_mul_card_le_of_ne_top {G : Type*} [Group G] [Finite G] (H : Subgroup G)
     (hH : H ≠ ⊤) : 2 * Nat.card H ≤ Nat.card G := by
-  obtain ⟨k, hk⟩ := H.card_subgroup_dvd_card
-  have hpos : 0 < Nat.card G := Nat.card_pos
-  have hne : Nat.card H ≠ Nat.card G := fun h => hH (Subgroup.eq_top_of_card_eq H h)
-  rcases k with _ | _ | k
-  · omega
-  · rw [Nat.zero_add, mul_one] at hk
-    exact absurd hk.symm hne
-  · rw [hk]
-    nlinarith
+  calc 2 * Nat.card H ≤ H.index * Nat.card H :=
+        Nat.mul_le_mul_right _ (Subgroup.one_lt_index_of_ne_top hH)
+    _ = Nat.card G := by rw [mul_comm, H.card_mul_index]
 
 /-- If every liar is (the value of) an element of a subgroup `H` of `(Z_N)^*`, then
 `|L_N| ≤ |H|` (the map `α ↦ α` as a unit is injective, `Nat.card_le_card_of_injective`). -/
@@ -213,22 +209,16 @@ private theorem card_mrLiars_le_card {N : ℕ} [NeZero N] (hN : 2 ≤ N) (H : Su
   simp only [IsUnit.unit_spec] at this
   exact Subtype.ext this
 
-/-- The subgroup `{x ∈ (Z_N)^* | x^m = 1}` (the kernel of `x ↦ x^m`). -/
-private def powOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ where
-  carrier := {x | x ^ m = 1}
-  mul_mem' := by
-    intro a b ha hb
-    simp only [Set.mem_setOf_eq] at *
-    rw [mul_pow, ha, hb, one_mul]
-  one_mem' := by simp
-  inv_mem' := by
-    intro a ha
-    simp only [Set.mem_setOf_eq] at *
-    rw [inv_pow, ha, inv_one]
+/-- The subgroup `{x ∈ (Z_N)^* | x^m = 1}`: the kernel of Mathlib's `x ↦ x^m`
+(`powMonoidHom m`). -/
+private def powOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ :=
+  (powMonoidHom m).ker
 
-/-- Membership in `powOneSubgroup`. -/
+/-- Membership in `powOneSubgroup`: `x ∈ powOneSubgroup N m ↔ x ^ m = 1` (`MonoidHom.mem_ker`,
+`powMonoidHom_apply`). -/
 private theorem mem_powOneSubgroup {N m : ℕ} (x : (ZMod N)ˣ) :
-    x ∈ powOneSubgroup N m ↔ x ^ m = 1 := Iff.rfl
+    x ∈ powOneSubgroup N m ↔ x ^ m = 1 := by
+  rw [powOneSubgroup, MonoidHom.mem_ker, powMonoidHom_apply]
 
 /-- The subgroup `{x ∈ (Z_N)^* | x^m = ±1}` (the preimage of `{±1}` under `x ↦ x^m`). -/
 private def powPmOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ where
@@ -323,9 +313,9 @@ private theorem exists_unit_pow_ne {N : ℕ} [NeZero N] (hodd : Odd N) {n₁ n�
   have hkcop : Nat.Coprime k N := by
     rw [← hN, Nat.coprime_mul_iff_right]
     constructor
-    · rw [Nat.Coprime, hk₁.gcd_eq]
+    · rw [Nat.coprime_iff_gcd_eq_one, hk₁.gcd_eq]
       exact Nat.Coprime.coprime_dvd_right hd₁ (ZMod.val_coe_unit_coprime v)
-    · rw [Nat.Coprime, hk₂.gcd_eq]
+    · rw [Nat.coprime_iff_gcd_eq_one, hk₂.gcd_eq]
       exact Nat.gcd_one_left _
   have hπ₁ : ZMod.castHom hd₁ (ZMod n₁) (k : ZMod N) =
       ZMod.castHom hd₁ (ZMod n₁) (v : ZMod N) := by
@@ -468,7 +458,7 @@ def millerRabin (N t : ℕ) (α : Fin t → Fin (N - 1)) : Bool :=
 /-- A base `i + 1` with `i < N − 1` is a nonzero residue. -/
 private theorem base_ne_zero {N : ℕ} (hN : 2 ≤ N) (i : Fin (N - 1)) :
     (((i : ℕ) + 1 : ℕ) : ZMod N) ≠ 0 := by
-  rw [Ne, ZMod.natCast_eq_zero_iff]
+  rw [ne_eq, ZMod.natCast_eq_zero_iff]
   intro h
   have := Nat.le_of_dvd (by omega) h
   have := i.2
@@ -759,9 +749,9 @@ private theorem spStep_iterate (u s : List Bool) (i : ℕ) :
     ring
 
 /-- One step at most doubles the length: `|spStep x| ≤ 2|x| + 2`
-(`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+(`length_pair_components_le`). -/
 private theorem length_spStep_le (x : List Bool) : (spStep x).length ≤ 2 * x.length + 2 := by
-  have := StateLoop.length_pairFstD_add_pairSndD_le x
+  have := length_pair_components_le x
   simp only [spStep, length_pairEncode, PolyExpr.eval_var, List.length_drop]
   omega
 
@@ -777,7 +767,7 @@ word `x`, not only for well-formed state words). -/
 private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
     (spStep^[i] x).length ≤ 2 * x.length + 2 := by
   cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
+  | zero => simp only [Function.iterate_zero, id_eq]; omega
   | succ i =>
     induction i with
     | zero => exact length_spStep_le x
@@ -791,11 +781,7 @@ private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
     List.ofFn (chunk T n r t) = ((List.ofFn r).drop (t * n)).take n := by
   have ht : ((t : ℕ) + 1) * n ≤ T * n := Nat.mul_le_mul_right n t.2
   rw [Nat.add_mul, one_mul] at ht
-  apply List.ext_getElem
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · intro i h1 h2
-    simp [chunk]
+  exact (ofFn_drop_take r _ n ht).symm
 
 /-- `firstHit` returns the first draw satisfying `E` (induction on the number of draws,
 `List.finRange_succ`). -/

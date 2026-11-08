@@ -1,0 +1,34 @@
+START 2026-11-08T06:08:55.516945+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean sha256=7346da900fba35b95f56ccf2ca646550f46785420f4a55955284dae2307fc745
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=119 active=119 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:1344:2: error: Tactic `decide` failed for proposition
+  ∀ {a b : Fin 3},
+    a ≠ b →
+      (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨ (encColor a).getD 1 false ≠ (encColor b).getD 1 false
+because its `Decidable` instance
+  Nat.decidableForallFin fun a =>
+    ∀ {b : Fin 3},
+      a ≠ b →
+        (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨ (encColor a).getD 1 false ≠ (encColor b).getD 1 false
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `decEq`, `decidable_of_decidable_of_iff`, `decidable_of_iff`, `forall_prop_decidable`, `instDecidableEqBool`, `instDecidableEqFin`, `instDecidableEqNat`, `instDecidableNot`, `instDecidableOr`, `Bool.decEq`, `Nat.decEq`, `Nat.decidableBallLT`, and `Nat.decidableForallFin`, reduction got stuck at the `Decidable` instance
+  match (encColor ⟨0, ⋯⟩).getD 0 false, (encColor ⟨1, ⋯⟩).getD 0 false with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language): no fresh .olean produced
+
+END 2026-11-08T06:09:10.394698+00:00 RC 1 elapsed=14.9s pid=32663 maxrss=2716948KiB

@@ -108,6 +108,14 @@ def yaoInverter [Inhabited α] (f : α → β) (B : (Fin q → β) → ρ → (F
   fun y cs => (List.finRange T).foldr
     (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default
 
+/-- The defining equation of `yaoInverter`: `yaoInverter f B T = fun y cs => (List.finRange T).foldr
+(fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default`. -/
+theorem yaoInverter_def [Inhabited α] (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (T : ℕ) :
+    yaoInverter f B T =
+      (fun y cs => (List.finRange T).foldr
+        (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default :
+        β → (Fin T → Fin q × (Fin q → α) × ρ) → α) := rfl
+
 /-- The probability, over the coins of one iteration, that `yaoTry` inverts `f(x)`.
 [Gar26, Theorem 2.1, proof], `Pr_B[A inverts f(x) in a single iteration]`. -/
 noncomputable def yaoTryProb (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (x : α) : ℝ :=
@@ -170,7 +178,7 @@ theorem invProb_prodFun_le [Nonempty α] [Nonempty ρ] (f : α → β)
       (1 - uprob (yaoBad f B θ)) ^ q + q * θ * uprob (yaoBad f B θ) := by
   classical
   set S := yaoBad f B θ with hSdef
-  unfold invProb
+  simp only [invProb_def]
   calc uprob (fun z : (Fin q → α) × ρ =>
         prodFun f q (B (prodFun f q z.1) z.2) = prodFun f q z.1)
       ≤ uprob (fun z : (Fin q → α) × ρ => (∀ i, ¬ S (z.1 i)) ∨
@@ -231,7 +239,7 @@ theorem one_sub_invProb_yaoInverter_le [Inhabited α] [NeZero q] [Nonempty ρ] (
     1 - invProb f (yaoInverter f B T) ≤ uprob (yaoBad f B θ) + (1 - θ) ^ T := by
   classical
   set S := yaoBad f B θ with hSdef
-  unfold invProb
+  simp only [invProb_def]
   rw [← uprob_not]
   calc uprob (fun z : α × (Fin T → Fin q × (Fin q → α) × ρ) =>
         ¬ f (yaoInverter f B T (f z.1) z.2) = f z.1)

@@ -1,0 +1,60 @@
+START 2026-11-08T05:52:57.446379+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean sha256=c0a146ffd045f437f5b62f1a812b8fdc26c192281309d5df88455a6766b2f6c3
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=122 active=122 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:916:2: error: Type mismatch
+  LE.le.trans (NUPPT.output_length_le A ?m.56) ?m.62
+has type
+  (A.output ?m.56).length ≤ ?m.61
+but is expected to have type
+  (A.runAt n y r).length ≤ A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:964:8: warning: This simp argument is unused:
+  Equiv.sumArrowEquivProdArrow_apply_snd
+
+Hint: Omit it from the simp argument list.
+  simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst, E̵q̵u̵i̵v̵.̵s̵u̵m̵A̵r̵r̵o̵w̵E̵q̵u̵i̵v̵P̵r̵o̵d̵A̵r̵r̵o̵w̵_̵a̵p̵p̵l̵y̵_̵s̵n̵d̵,̵ ̵Fin.coe_castAdd, Fin.coe_castLE]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:964:48: warning: This simp argument is unused:
+  Fin.coe_castAdd
+
+Hint: Omit it from the simp argument list.
+  simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+         ̵ ̵Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castA̵d̵d̵,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵LE]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:964:65: warning: This simp argument is unused:
+  Fin.coe_castLE
+
+Hint: Omit it from the simp argument list.
+  simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+         ̵ ̵Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castAdd,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵L̵E̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:974:22: warning: This simp argument is unused:
+  Equiv.sumArrowEquivProdArrow_apply_fst
+
+Hint: Omit it from the simp argument list.
+  simp [splitCoins, E̵q̵u̵i̵v̵.̵s̵u̵m̵A̵r̵r̵o̵w̵E̵q̵u̵i̵v̵P̵r̵o̵d̵A̵r̵r̵o̵w̵_̵a̵p̵p̵l̵y̵_̵f̵s̵t̵,̵Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_natAdd]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:975:48: warning: This simp argument is unused:
+  Fin.coe_natAdd
+
+Hint: Omit it from the simp argument list.
+  simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+         ̵ ̵Equiv.sumArrowEquivProdArrow_apply_snd,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵n̵a̵t̵A̵d̵d̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/CollectionsHelpers): no fresh .olean produced
+
+END 2026-11-08T05:53:08.824300+00:00 RC 1 elapsed=11.4s pid=30106 maxrss=2630016KiB

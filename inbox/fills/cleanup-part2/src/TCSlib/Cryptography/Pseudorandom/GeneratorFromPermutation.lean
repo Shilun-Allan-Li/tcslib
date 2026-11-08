@@ -58,7 +58,7 @@ variable {α β ρ : Type*} [Fintype α] [Fintype β] [Fintype ρ]
 two sections. -/
 theorem uprob_bool_prod {γ : Type*} [Fintype γ] (p : Bool × γ → Prop) :
     uprob p = (uprob (fun c => p (false, c)) + uprob (fun c => p (true, c))) / 2 := by
-  rw [uprob_prod, uexp, Fintype.sum_bool, Fintype.card_bool]
+  rw [uprob_prod, uexp_def, Fintype.sum_bool, Fintype.card_bool]
   push_cast
   ring
 
@@ -113,7 +113,7 @@ theorem acceptProb_id_owp [Nonempty ρ] (f : α ≃ α) (B : α × β → Bool)
         (xor z.1.2.2 (B (f.symm z.1.1, z.1.2.1)), ((f.symm z.1.1, z.1.2.1), z.2))
       left_inv := fun v => by simp
       right_inv := fun z => by simp }
-  unfold acceptProb
+  simp only [acceptProb_def]
   refine (uprob_eq_of_equiv e
     (p := fun v : Bool × ((α × β) × ρ) => D (f v.2.1.1, v.2.1.2, xor v.1 (B v.2.1)) v.2.2 = true)
     (q := fun z : (α × β × Bool) × ρ => D (id z.1) z.2 = true) fun _ => Iff.rfl).symm.trans ?_
@@ -137,7 +137,7 @@ theorem predProb_owpPredictor_false [Nonempty ρ] [Nonempty α] [Nonempty β] (f
       invFun := fun z => (xor z.2.1 (B z.1), (z.1, z.2.2))
       left_inv := fun v => by simp
       right_inv := fun z => by simp }
-  unfold predProb
+  simp only [predProb_def]
   refine (uprob_eq_of_equiv e
     (p := fun v => owpPredictor D false (owpPair f (e v).1) (e v).2 = B (e v).1)
     (q := fun z : (α × β) × (Bool × ρ) => owpPredictor D false (owpPair f z.1) z.2 = B z.1)
@@ -146,7 +146,7 @@ theorem predProb_owpPredictor_false [Nonempty ρ] [Nonempty α] [Nonempty β] (f
     intro a b; ring]
   congr 2
   · -- the random bit equals `B(x, r)`: the predictor is right when `D(H_0)` accepts
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext c
     apply propext
@@ -154,7 +154,7 @@ theorem predProb_owpPredictor_false [Nonempty ρ] [Nonempty α] [Nonempty β] (f
       Bool.xor_false]
     cases D (f c.1.1, c.1.2, B c.1) c.2 <;> cases B c.1 <;> simp
   · -- the random bit is `1 - B(x, r)`: the predictor is right when `D(H_1')` rejects
-    unfold acceptProb
+    simp only [acceptProb_def]
     rw [← uprob_not]
     congr 1
     funext c
@@ -175,7 +175,7 @@ theorem predProb_owpPredictor_true [Nonempty ρ] [Nonempty α] [Nonempty β] (f 
       1 / 2 - (acceptProb (owpGen f B) D - acceptProb (owpGenNot f B) D) / 2 := by
   have h : predProb (owpPair f) B (owpPredictor D true) =
       1 - predProb (owpPair f) B (owpPredictor D false) := by
-    unfold predProb
+    simp only [predProb_def]
     rw [← uprob_not]
     congr 1
     funext z
@@ -202,7 +202,7 @@ theorem exists_owpPredictor [Nonempty ρ] [Nonempty α] [Nonempty β] (f : α �
     ∃ flip : Bool, predProb (owpPair f) B (owpPredictor D flip) =
       1 / 2 + prgAdv (owpGen f B) D := by
   have hU := acceptProb_id_owp f B D
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   rcases le_total 0 (acceptProb (owpGen f B) D - acceptProb (owpGenNot f B) D) with h | h
   · refine ⟨false, ?_⟩
     rw [predProb_owpPredictor_false, hU, abs_of_nonneg (by linarith)]

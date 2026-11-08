@@ -1,0 +1,111 @@
+START 2026-11-08T05:59:02.579252+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean sha256=f3938f112575ef64032d7a6170c65134806bc1752788b80da6c4b5b748e8efc4
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=162 active=162 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1355:11: error: Tactic `rfl` failed: The left-hand side
+  encodeList []
+is not definitionally equal to the right-hand side
+  List.flatMap (fun c => pairEncode c []) []
+
+case nil
+⊢ encodeList [] = List.flatMap (fun c => pairEncode c []) []
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1356:26: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_nil
+
+Hint: Omit it from the simp argument list.
+  simp [̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵n̵i̵l̵,̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵,̵[̲P̲r̲i̲v̲a̲t̲e̲K̲e̲y̲S̲c̲h̲e̲m̲e̲.̲e̲n̲c̲o̲d̲e̲L̲i̲s̲t̲_̲c̲o̲n̲s̲,̲ ih, pairEncode_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1364:31: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵n̵i̵l̵,̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵,̵[̲P̲r̲i̲v̲a̲t̲e̲K̲e̲y̲S̲c̲h̲e̲m̲e̲.̲e̲n̲c̲o̲d̲e̲L̲i̲s̲t̲_̲c̲o̲n̲s̲,̲ length_pairEncode,
+  ̲  ̲ ̲ ̲List.length_cons]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1445:51: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairFstD [] = []
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1448:51: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairSndD [] = []
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1476:8: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_cons
+
+Hint: Omit it from the simp argument list.
+  simp [blockEmit_blockState, blockList, PrivateKeyScheme.encodeList_nil,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1486:10: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_cons
+
+Hint: Omit it from the simp argument list.
+  simp [blockEmit_blockState, blockList, PrivateKeyScheme.encodeList_nil,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1490:65: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [blockEmit_blockState, hm0, if_false, blockList, P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵n̵i̵l̵,̵PrivateKeyScheme.encodeList_cons]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1619:56: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_cons
+
+Hint: Omit it from the simp argument list.
+  simp [decListEmit, PrivateKeyScheme.encodeList_nil,̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1627:60: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_cons
+
+Hint: Omit it from the simp argument list.
+  simp [decListStep, PrivateKeyScheme.encodeList_nil, P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵pairSndD_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1630:58: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_cons
+
+Hint: Omit it from the simp argument list.
+  simp [decListEmit, PrivateKeyScheme.encodeList_nil,̵ ̵P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵c̵o̵n̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1633:27: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_nil
+
+Hint: Omit it from the simp argument list.
+  simp [decListStep, P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵n̵i̵l̵,̵ ̵PrivateKeyScheme.encodeList_cons]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:1635:25: warning: This simp argument is unused:
+  PrivateKeyScheme.encodeList_nil
+
+Hint: Omit it from the simp argument list.
+  simp [decListEmit, P̵r̵i̵v̵a̵t̵e̵K̵e̵y̵S̵c̵h̵e̵m̵e̵.̵e̵n̵c̵o̵d̵e̵L̵i̵s̵t̵_̵n̵i̵l̵,̵ ̵PrivateKeyScheme.encodeList_cons, length_pairEncode]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/BlockEncryptor): no fresh .olean produced
+
+END 2026-11-08T05:59:19.155831+00:00 RC 1 elapsed=16.6s pid=31185 maxrss=2722140KiB

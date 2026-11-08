@@ -104,8 +104,8 @@ theorem fmultNat_lt {n x y : ℕ} (hx : x < 2 ^ n) (hy : y < 2 ^ n) : fmultNat x
 
 **Proof sketch.** `pq ≠ 1`, so `x' ≠ 1`, `y' ≠ 1` and `x' y' = pq`. A prime factor `r` of
 `x'` (`Nat.exists_prime_and_dvd`) divides `pq`, so `r ∈ {p, q}` (`Nat.Prime.dvd_mul`,
-`Nat.prime_dvd_prime_iff_eq`); if `r = p` then `x' = p s` with `s y' = q`, so `s ∈ {1, q}`
-(`Nat.Prime.eq_one_or_self_of_dvd`), and `s = q` would force `y' = 1`; hence `x' = p`.
+`Nat.prime_dvd_prime_iff_eq`); if `r = p` then `x' = p s` with `s y' = q`, and a prime
+product has a unit factor (`Nat.prime_mul_iff`), which is not `y' ≠ 1`, so `s = 1` and `x' = p`.
 Symmetrically for `r = q`. -/
 theorem fmultNat_eq_mul_prime {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime)
     (h : fmultNat x y = p * q) : x = p ∨ x = q := by
@@ -120,16 +120,10 @@ theorem fmultNat_eq_mul_prime {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime)
   have key : ∀ {p q : ℕ}, p.Prime → q.Prime → x * y = p * q → p ∣ x → x = p := by
     intro p q hp hq h hpx
     obtain ⟨s, rfl⟩ := hpx
-    have hsy : s * y = q := by
-      have : p * (s * y) = p * q := by rw [← h]; ring
-      exact Nat.eq_of_mul_eq_mul_left hp.pos this
-    rcases hq.eq_one_or_self_of_dvd s ⟨y, hsy.symm⟩ with hs | hs
+    have hsy : s * y = q := Nat.eq_of_mul_eq_mul_left hp.pos (by rw [← mul_assoc, h])
+    rcases Nat.prime_mul_iff.1 (hsy ▸ hq) with ⟨-, hy⟩ | ⟨-, hs⟩
+    · exact absurd hy h1.2
     · rw [hs, mul_one]
-    · exfalso
-      apply h1.2
-      rw [hs] at hsy
-      have : q * y = q * 1 := by rw [hsy, mul_one]
-      exact Nat.eq_of_mul_eq_mul_left hq.pos this
   obtain ⟨r, hr, hrx⟩ := Nat.exists_prime_and_dvd h1.1
   have hrpq : r ∣ p * q := hrx.trans (Dvd.intro y h)
   rcases (Nat.Prime.dvd_mul hr).mp hrpq with hrp | hrq
@@ -204,13 +198,15 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k 
 private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
     (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
       (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
-  have h : List.ofFn x = List.ofFn (FunFamily.blocks 2 n x 0) ++ List.ofFn (FunFamily.blocks 2 n x 1) := by
-    conv_lhs => rw [← (FunFamily.blocks 2 n).symm_apply_apply x]
-    rw [FunFamily.ofFn_blocks_symm, List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
-    simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
-    rfl
-  rw [h]
-  exact ⟨List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)⟩
+  have hb (i : Fin 2) :
+      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
+    (congrArg List.ofFn (funext (FunFamily.blocks_apply 2 n x i))).trans
+      (OneWay.ofFn_block_eq_take_drop x i)
+  have hlen : ((List.ofFn x).drop n).length ≤ n := by
+    simp only [List.length_drop, List.length_ofFn]; omega
+  refine ⟨?_, ?_⟩
+  · rw [hb 0, Fin.val_zero, zero_mul, List.drop_zero]
+  · rw [hb 1, Fin.val_one, one_mul, List.take_of_length_le hlen]
 
 /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
 private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
@@ -685,13 +681,9 @@ def plantFactor {n : ℕ} {ρ : Type*}
   FunFamily.blocks 2 n (OneWay.yaoTry (fmult.f n) B N c) 0
 
 /-- The two block bijections of the library coincide: `FunFamily.blocks q ℓ = OneWay.blocksE q ℓ`
-(their inverses read the same coordinate, `FunFamily.blocks_symm_apply`,
-`OneWay.blocksE_symm_apply`). -/
-private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ := by
-  have h : (FunFamily.blocks q ℓ).symm = (OneWay.blocksE q ℓ).symm :=
-    Equiv.ext fun t => funext fun k => by
-      rw [FunFamily.blocks_symm_apply, OneWay.blocksE_symm_apply]
-  rw [← Equiv.symm_symm (FunFamily.blocks q ℓ), h, Equiv.symm_symm]
+(`OneWay.blocksE` is an alias of the canonical `FunFamily.blocks`, `OneWay.blocksE_eq`). -/
+private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+  (OneWay.blocksE_eq q ℓ).symm
 
 /-- The all-`false` string reads as `0`. -/
 private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by
@@ -1165,17 +1157,11 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
       rfl
     · rw [if_neg (by simpa using hb)]
 
-/-- The `T` blocks of `n` bits of a coin string as a bijection: `fac_chunkEquiv T n r = chunk T n r`
-(`chunk` is `r` read through `finProdFinEquiv`, `chunk_apply`). -/
-private noncomputable def fac_chunkEquiv (T n : ℕ) : (Fin (T * n) → Bool) ≃ (Fin T → Fin n → Bool) where
-  toFun := chunk T n
-  invFun xs k := xs (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
-  left_inv r := by
-    funext k
-    simp only [chunk_apply, Prod.mk.eta, Equiv.apply_symm_apply]
-  right_inv xs := by
-    funext t i
-    simp only [chunk_apply, Equiv.symm_apply_apply]
+/-- `chunk` is the canonical Bool block bijection: `chunk T n r = FunFamily.blocks T n r`
+(`chunk_apply`, `FunFamily.blocks_apply`). -/
+private theorem fac_chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) :
+    chunk T n r = FunFamily.blocks T n r :=
+  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
 
 /-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
 `exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
@@ -1194,8 +1180,8 @@ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
 **Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
 `bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
 reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
-`StatClose.map bitsToNat`; `chunk` is a bijection (`fac_chunkEquiv`, `comp_equiv_left`), the
-uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
+`StatClose.map bitsToNat`; `chunk` is the block bijection (`fac_chunk_eq_blocks`, `comp_equiv_left`),
+the uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
 `(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
 private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
     StatClose (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r)))
@@ -1204,7 +1190,7 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
   have hd : (bitsToNat (natToBits n 2)).Prime := by
     rw [bitsToNat_natToBits h2]; exact Nat.prime_two
   have h0 := ((statClose_samplePrime n (2 * n ^ 2) hn hd).map bitsToNat).comp_equiv_left
-    (fac_chunkEquiv (2 * n ^ 2) n)
+    (FunFamily.blocks (2 * n ^ 2) n)
   let e2 : Primes n ≃ {b : Fin n → Bool // (bitsToNat b).Prime} :=
     (Equiv.subtypeEquiv (bitsEquiv n) (fun b => by rw [bitsEquiv_val])).symm
   have h1 := h0.comp_equiv_right e2
@@ -1215,12 +1201,11 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
     show ((bitsEquiv n) ((bitsEquiv n).symm p.1)).val = _
     rw [Equiv.apply_symm_apply]
   have hX : (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r))) =
-      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (fac_chunkEquiv (2 * n ^ 2) n r)).getD
+      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (FunFamily.blocks (2 * n ^ 2) n r)).getD
         (natToBits n 2)) := by
     funext r
     unfold samplePrimeL
-    rw [padFin_ofFn, ← bitsToNat_eq_listToNat]
-    rfl
+    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, fac_chunk_eq_blocks]
   rw [hX, ← hY]
   exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
 

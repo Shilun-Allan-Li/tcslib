@@ -76,7 +76,7 @@ theorem statDist_uniform_le_sqrt [Nonempty α] (p : FinDist α) :
   have hn0 : n ≠ 0 := ne_of_gt hn
   -- `∑ (p a - 1/n) ^ 2 = collision p - 1/n`
   have hexp : ∑ a, (p a - n⁻¹) ^ 2 = collision p - n⁻¹ := by
-    simp only [collision]
+    simp only [collision_def]
     have hterm : ∀ a : α, (p a - n⁻¹) ^ 2 = p a ^ 2 - 2 * n⁻¹ * p a + n⁻¹ ^ 2 := fun a => by ring
     simp_rw [hterm]
     rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, p.sum_prob,

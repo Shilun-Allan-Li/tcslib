@@ -1,0 +1,290 @@
+From 4138d7b7bf4c46d58798c630332643ee341f9764 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 04:25:06 +0000
+Subject: [PATCH 4/7] =?UTF-8?q?cleanup-part2=20J=20batch=202b:=20G13=20win?=
+ =?UTF-8?q?dows=20repointed=20without=20new=20general=20window=20claims=20?=
+ =?UTF-8?q?=E2=80=94=20ColZK.ofFn=5Fdrop=5Ftake's=20contract=20relocated?=
+ =?UTF-8?q?=20to=20CollectionsHelpers=20(old=20header=20kept=20as=20alias)?=
+ =?UTF-8?q?,=20named=20Concrete/ColRep/ColZK/Primality/Factoring=20windows?=
+ =?UTF-8?q?=20derived=20from=20it=20or=20from=20OneWay.ofFn=5Fblock=5Feq?=
+ =?UTF-8?q?=5Ftake=5Fdrop;=20fac=5FchunkEquiv=20replaced=20by=20FunFamily.?=
+ =?UTF-8?q?blocks;=20EnsembleLemmas=20slice=20theorem=20keeps=20its=20proo?=
+ =?UTF-8?q?f?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ TCSlib/Cryptography/Asymptotic/Adversary.lean | 25 -------------------
+ .../Asymptotic/CollectionsHelpers.lean        | 14 +++++++++++
+ .../Asymptotic/EnsemblesLemmas.lean           | 13 ++++++++--
+ .../Asymptotic/HardCorePermutation.lean       |  6 +++++
+ TCSlib/Cryptography/Candidates/Concrete.lean  |  2 +-
+ TCSlib/Cryptography/Candidates/Factoring.lean | 22 ++++++++++------
+ .../Cryptography/NumberTheory/Primality.lean  | 11 +++-----
+ .../ThreeColoring/ColRepSound.lean            |  2 +-
+ .../ThreeColoring/ColZKLemmas.lean            |  8 +++---
+ 9 files changed, 56 insertions(+), 47 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 1715548fd..e28ed8690 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -167,31 +167,6 @@ theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Boo
+     (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
+   blocksEquivX_symm_apply q ℓ t k
+ 
+-/-- A window of a tuple's list: the `k` entries of `List.ofFn z` from position `a` are the
+-entries `a, …, a + k - 1` of `z` (`a + k ≤ n`). -/
+-theorem take_drop_ofFn {X : Type*} {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → X) :
+-    ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
+-  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
+-  simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+-
+-/-- The window reader of `blocksEquivX`: the `ℓ` entries of `List.ofFn x` from position `i·ℓ`
+-are block `i`, `((List.ofFn x).drop (i·ℓ)).take ℓ = List.ofFn (blocksEquivX q ℓ X x i)`. -/
+-theorem take_drop_ofFn_blocksEquivX {q ℓ : ℕ} {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) :
+-    ((List.ofFn x).drop (i * ℓ)).take ℓ = List.ofFn (blocksEquivX q ℓ X x i) := by
+-  rw [take_drop_ofFn (by rw [← Nat.succ_mul]; exact Nat.mul_le_mul_right ℓ i.2) x]
+-  refine congrArg List.ofFn (funext fun j => ?_)
+-  rw [blocksEquivX_apply]
+-  congr 1
+-  ext
+-  simp only [Fin.val_mk, finProdFinEquiv_apply_val]
+-  ring
+-
+-/-- The Bool window reader: the `ℓ` bits of `List.ofFn x` from position `i·ℓ` are block `i`,
+-`((List.ofFn x).drop (i·ℓ)).take ℓ = List.ofFn (FunFamily.blocks q ℓ x i)`. -/
+-theorem FunFamily.take_drop_ofFn_blocks {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+-    ((List.ofFn x).drop (i * ℓ)).take ℓ = List.ofFn (FunFamily.blocks q ℓ x i) :=
+-  take_drop_ofFn_blocksEquivX x i
+-
+ /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
+ [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean b/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
+index b9ca883dc..041967e81 100644
+--- a/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
++++ b/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
+@@ -39,6 +39,8 @@ field `Collection.encD_decD`).
+   the coin split is `List.take`/`List.drop` on the encoded coin string.
+ * `TCSlib.Cryptography.Collection.ofFn_padFin_of_le`,
+   `TCSlib.Cryptography.Collection.padFin_append_true_injective` — marker padding is lossless.
++* `TCSlib.Cryptography.ofFn_drop_take` — a window of a tape is the tape of the window (the
++  relocated contract of `ColZK.ofFn_drop_take`, shared by the block/window users below it).
+ * `TCSlib.Cryptography.ofFn_of_decodeFin_eq_some` — `decodeFin` is canonical.
+ 
+ ## References
+@@ -198,6 +200,18 @@ theorem padFin_append_true_injective {ℓ : ℕ} {s s' : List Bool} (hs : s.leng
+ 
+ end Collection
+ 
++/-! ## Windows of a tape -/
++
++/-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`
++(the contract of `ColZK.ofFn_drop_take`, relocated here for the lower block/window users). -/
++theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
++    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
++  apply List.ext_getElem
++  · simp only [List.length_take, List.length_drop, List.length_ofFn]
++    omega
++  · intro i h₁ h₂
++    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++
+ /-! ## Canonicity of the fixed-width decoder -/
+ 
+ /-- **Decoding as an `ℓ`-bit string is canonical**: a string that `decodeFin ℓ` decodes to `x`
+diff --git a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+index 5b22a860d..5a392edfb 100644
+--- a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+@@ -389,8 +389,17 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
+ /-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`. -/
+ theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+     ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
+-  rw [blocks_eq]
+-  exact FunFamily.take_drop_ofFn_blocks w ⟨i, hi⟩
++  have hle : i * s + s ≤ q * s := by
++    rw [← Nat.succ_mul]
++    exact Nat.mul_le_mul_right s hi
++  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
++  · simp only [List.length_take, List.length_drop, List.length_ofFn]
++    omega
++  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn, blocks_apply]
++    congr 1
++    ext
++    simp [finProdFinEquiv_apply_val]
++    ring
+ 
+ /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
+ (`List.ofFn_mul`). -/
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean b/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
+index 448cb334e..9fc73d2ad 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
+@@ -497,6 +497,12 @@ private theorem take_ofFn_castLE {n k : ℕ} (h : k ≤ n) (z : Fin n → Bool)
+   simp only [List.getElem_take, List.getElem_ofFn]
+   rfl
+ 
++/-- The `k` bits after the first `a` of an encoded string. -/
++private theorem take_drop_ofFn {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → Bool) :
++    ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
++  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
++  simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++
+ /-- **The encoding of `g_n(z)`**: `f_{⌊n/2⌋}` of the first block followed by the remaining bits
+ of `z`. -/
+ theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool) :
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index f92cfe810..e450c2e6d 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -849,7 +849,7 @@ private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B
+     calc t.val * B + k ≤ t.val * B + B := by omega
+       _ = (t.val + 1) * B := by ring
+       _ ≤ T * B := Nat.mul_le_mul_right _ this
+-  rw [take_drop_ofFn hlen r]
++  rw [ofFn_drop_take r _ k hlen]
+   refine congrArg List.ofFn (funext fun j => congrArg r (Fin.ext ?_))
+   simp only [dla_blockPos, Fin.val_mk, finProdFinEquiv_apply_val, Fin.coe_castLE]
+   ring
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 7faed699f..475c773c0 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -198,13 +198,15 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k
+ private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
+     (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
+       (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
+-  have h0 := FunFamily.take_drop_ofFn_blocks x 0
+-  have h1 := FunFamily.take_drop_ofFn_blocks x 1
++  have hb (i : Fin 2) :
++      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
++    (congrArg List.ofFn (funext (FunFamily.blocks_apply 2 n x i))).trans
++      (OneWay.ofFn_block_eq_take_drop x i)
+   have hlen : ((List.ofFn x).drop n).length ≤ n := by
+     simp only [List.length_drop, List.length_ofFn]; omega
+-  rw [Fin.val_zero, zero_mul, List.drop_zero] at h0
+-  rw [Fin.val_one, one_mul, List.take_of_length_le hlen] at h1
+-  exact ⟨h0, h1⟩
++  refine ⟨?_, ?_⟩
++  · rw [hb 0, Fin.val_zero, zero_mul, List.drop_zero]
++  · rw [hb 1, Fin.val_one, one_mul, List.take_of_length_le hlen]
+ 
+ /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
+ private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
+@@ -1155,6 +1157,12 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
+       rfl
+     · rw [if_neg (by simpa using hb)]
+ 
++/-- `chunk` is the canonical Bool block bijection: `chunk T n r = FunFamily.blocks T n r`
++(`chunk_apply`, `FunFamily.blocks_apply`). -/
++private theorem fac_chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) :
++    chunk T n r = FunFamily.blocks T n r :=
++  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
++
+ /-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
+ `exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
+ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
+@@ -1172,7 +1180,7 @@ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
+ **Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
+ `bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
+ reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
+-`StatClose.map bitsToNat`; `chunk` is the block bijection (`chunk_eq_blocks`, `comp_equiv_left`),
++`StatClose.map bitsToNat`; `chunk` is the block bijection (`fac_chunk_eq_blocks`, `comp_equiv_left`),
+ the uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
+ `(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
+ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+@@ -1197,7 +1205,7 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+         (natToBits n 2)) := by
+     funext r
+     unfold samplePrimeL
+-    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, chunk_eq_blocks]
++    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, fac_chunk_eq_blocks]
+   rw [hX, ← hY]
+   exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
+ 
+diff --git a/TCSlib/Cryptography/NumberTheory/Primality.lean b/TCSlib/Cryptography/NumberTheory/Primality.lean
+index 4e61ca4c5..58d3f6656 100644
+--- a/TCSlib/Cryptography/NumberTheory/Primality.lean
++++ b/TCSlib/Cryptography/NumberTheory/Primality.lean
+@@ -7,7 +7,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
+ import TCSlib.Complexity.Randomized.PPT
+ import TCSlib.Complexity.Randomized.Repetition
+ import TCSlib.Complexity.Randomized.Closure
+-import TCSlib.Cryptography.Asymptotic.Adversary
++import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
+ import Mathlib.Data.Nat.Factorization.Basic
+ import Mathlib.FieldTheory.Finite.Basic
+ import Mathlib.GroupTheory.Perm.Cycle.Type
+@@ -709,11 +709,6 @@ theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin
+   ext
+   simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
+ 
+-/-- `chunk` is the canonical Bool block bijection of `Asymptotic/Adversary.lean`:
+-`chunk T n r = FunFamily.blocks T n r` (`chunk_apply`, `FunFamily.blocks_apply`). -/
+-theorem chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) : chunk T n r = FunFamily.blocks T n r :=
+-  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
+-
+ /-! #### The `SamplePrime` state loop -/
+ 
+ /-- The step of the `SamplePrime` loop on the state word `⟨1^n, s⟩`: discard the first `n`
+@@ -784,7 +779,9 @@ private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
+ /-- Block `t` of the coin layout `chunk` is the `t`-th `n`-bit segment of the coin list. -/
+ private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
+     List.ofFn (chunk T n r t) = ((List.ofFn r).drop (t * n)).take n := by
+-  rw [chunk_eq_blocks, FunFamily.take_drop_ofFn_blocks]
++  have ht : ((t : ℕ) + 1) * n ≤ T * n := Nat.mul_le_mul_right n t.2
++  rw [Nat.add_mul, one_mul] at ht
++  exact (ofFn_drop_take r _ n ht).symm
+ 
+ /-- `firstHit` returns the first draw satisfying `E` (induction on the number of draws,
+ `List.finRange_succ`). -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
+index 09697a679..65dd3a911 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
+@@ -198,7 +198,7 @@ theorem drop_take_ofFn_blockRead (b K C : ℕ) (h : K * b ≤ C) (r : Fin C →
+     calc (t : ℕ) * b + b = ((t : ℕ) + 1) * b := by ring
+       _ ≤ K * b := Nat.mul_le_mul_right b t.isLt
+       _ ≤ C := h
+-  rw [take_drop_ofFn hle r]
++  rw [TCSlib.Cryptography.ofFn_drop_take r _ b hle]
+   exact congrArg List.ofFn (funext fun j => (blockRead_eq b K C h r t j).symm)
+ 
+ /-! ### Independent edge samplers -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index d4d173c3e..151d15185 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -188,15 +188,15 @@ theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype
+ 
+ /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
+ theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+-    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+-  exact take_drop_ofFn h b
++    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ :=
++  _root_.TCSlib.Cryptography.ofFn_drop_take b a k h
+ 
+ /-- A suffix of a tape: `(List.ofFn b).drop a` is the tape of the last `k = L − a` bits. -/
+ theorem ofFn_drop_eq {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k = L) :
+     (List.ofFn b).drop a = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+   have hk : ((List.ofFn b).drop a).length ≤ k := by
+     simp only [List.length_drop, List.length_ofFn]; omega
+-  rw [← take_drop_ofFn h.le b, List.take_of_length_le hk]
++  rw [← _root_.TCSlib.Cryptography.ofFn_drop_take b a k h.le, List.take_of_length_le hk]
+ 
+ /-- A window ending at `B ≤ L`: `((List.ofFn b).take B).drop a` is the tape of the `k = B − a`
+ bits from `a`. -/
+@@ -204,7 +204,7 @@ theorem ofFn_take_drop {L : ℕ} (b : Fin L → Bool) (a k B : ℕ) (h : a + k =
+     ((List.ofFn b).take B).drop a =
+       List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+   rw [List.drop_take, show B - a = k by omega]
+-  exact take_drop_ofFn (by omega) b
++  exact _root_.TCSlib.Cryptography.ofFn_drop_take b a k (by omega)
+ 
+ /-! ### Searches -/
+ 
+-- 
+2.43.0
+

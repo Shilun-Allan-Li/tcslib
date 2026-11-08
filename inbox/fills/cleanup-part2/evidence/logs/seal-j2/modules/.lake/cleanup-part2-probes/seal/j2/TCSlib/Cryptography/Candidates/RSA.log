@@ -1,0 +1,24 @@
+START 2026-11-08T05:57:09.811920+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA.lean sha256=ed843ff9202c8672086e6e911b4a5a50d4ee56d79bd94ad0d3457da5fbcaca76
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=27 active=27 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA.lean:3163:2: error: Type mismatch
+  rsaCollection_oneWay H hR
+has type
+  (rsaCollection H).OneWay
+but is expected to have type
+  (rsaTrapdoor H).OneWay
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Candidates/RSA): no fresh .olean produced
+
+END 2026-11-08T05:57:27.870192+00:00 RC 1 elapsed=18.1s pid=30878 maxrss=2963488KiB

@@ -32,8 +32,10 @@ The simulator is a uniform `Complexity.NUPPT` run once at parameter `|x|` on `�
 parameter `|x|` on the encoded view (`Complexity.NUPPT.distinguisherL`).
 
 **Deviation (D8):** strict PPT simulators (the text's expected polynomial time is not
-formalized; the rewinding simulators of the chapter are truncated and the theorems become
-statistical); the auxiliary input of the verifier is bounded by an arbitrary polynomial
+formalized): the rewinding simulator of graph isomorphism is truncated, and that theorem becomes
+statistical zero-knowledge (`gi_statZK`); the 3-colouring theorem remains computational
+zero-knowledge, its truncated simulator contributing statistical sampling and failure terms to
+the negligible error; the auxiliary input of the verifier is bounded by an arbitrary polynomial
 `Lz : PolyExpr` quantified after the simulator (the class a `t(|x|)`-time verifier can read,
 and what the non-uniform reduction of [PS10, Proposition 128.8] needs); the error bound is
 a function of `|x|` (the text's `e(n)` leaves `n` undefined); the honest-verifier notion is
@@ -258,12 +260,6 @@ theorem StatZK.mono {π : Protocol} {R : List Bool → List Bool → Prop} {δ �
   obtain ⟨S, hS, hclose⟩ := h V' hV'
   exact ⟨S, hS, fun x y z hR => (hclose x y z hR).mono (hle _)⟩
 
-/-- The zero function is negligible. -/
-theorem negligible_const_zero : Negligible (fun _ => (0 : ℝ)) := fun c =>
-  ⟨1, fun n hn => by
-    rw [abs_zero]
-    exact one_div_pos.mpr (pow_pos (Nat.cast_pos.mpr hn) c)⟩
-
 /-- Perfect zero-knowledge is statistical zero-knowledge with error `0`. -/
 theorem PerfectZK.statZK {π : Protocol} {R : List Bool → List Bool → Prop} (h : PerfectZK π R) :
     StatZK π R (fun _ => 0) := h
@@ -271,7 +267,7 @@ theorem PerfectZK.statZK {π : Protocol} {R : List Bool → List Bool → Prop} 
 /-- Perfect zero-knowledge implies zero-knowledge [PS10, §4.6]. -/
 theorem PerfectZK.zk {π : Protocol} {R : List Bool → List Bool → Prop} (h : PerfectZK π R) :
     ZK π R :=
-  StatZK.zk negligible_const_zero h
+  StatZK.zk negligible_zero h
 
 /-- Non-vacuity (gate 03e, note 10): the protocol with no messages is perfectly
 zero-knowledge for every relation.
@@ -302,7 +298,7 @@ theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List
         T (pairEncode (pairEncode x z) (pairEncode (List.ofFn ρ) []))) := by
     refine OneWay.uprob_congr fun ρ => ?_
     rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-    simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+    simp [NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
   simp only [h2]
   rw [abs_nonpos_iff, sub_eq_zero]
   exact h1
@@ -464,7 +460,7 @@ theorem firstHit_map_getD_eq {α β : Type*} (E : α → Prop) [DecidablePred E]
       rw [hq j (hj.trans h)] at this
       exact absurd (decide_eq_true hE) (by rw [this]; decide)
     have hsome : firstHit E xs = some (xs ⟨i, h⟩) := by
-      unfold firstHit
+      simp only [firstHit_eq]
       rw [List.findSome?_eq_some_iff]
       refine ⟨(List.finRange K).take i, ⟨i, h⟩, (List.finRange K).drop (i + 1), ?_, ?_, ?_⟩
       · have hlen : i < (List.finRange K).length := by simpa using h
@@ -598,7 +594,7 @@ theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → P
   refine ⟨S', hS'u, fun x y z hxy => ?_⟩
   obtain ⟨habort, hcond⟩ := hS x y z hxy
   have hlen : S'.coinLen x.length = x.length * S.coinLen x.length := by
-    simp only [NUPPT.coinLen, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
+    simp only [NUPPT.coinLen_eq, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
   -- the tape of `S'` as `|x|` blocks of `S.coinLen |x|` coins
   let e : S'.Coins x.length ≃ (Fin x.length → S.Coins x.length) :=
     ((Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans
@@ -618,7 +614,7 @@ theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → P
         Function.comp_apply, Equiv.symm_symm, Equiv.curry_apply, Function.curry_apply]
       congr 1
       ext
-      simp [finProdFinEquiv]
+      simp [finProdFinEquiv_apply_val]
       ring
   have hatt : ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
       attempt S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) t =

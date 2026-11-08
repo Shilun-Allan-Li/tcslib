@@ -1,0 +1,62 @@
+START 2026-11-08T06:08:07.837517+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean sha256=294bf9840d4719c67e4b71110211002980dee6d85a0ed737780ca714f3c9a446
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=97 active=97 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1319:44: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [blockPoly, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵n̵o̵r̵m̵a̵l̵,̵ ̵PolyExpr.normal_def, Strategy.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1329:44: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [simCoins, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵n̵o̵r̵m̵a̵l̵,̵ ̵PolyExpr.normal_def, Strategy.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1408:34: error: Type mismatch
+  getD_padSq n w (finProdFinEquiv (u, v)).isLt
+has type
+  (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+but is expected to have type
+  decGraphAt n (padSq n w) u v = decGraphAt n w u v
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1427:2: error: Tactic `rfl` failed: The left-hand side
+  decGraph w
+is not definitionally equal to the right-hand side
+  ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+
+w : List Bool
+⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1498:9: error: Tactic `rcases` failed: `hV' : V'.Efficient` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1681:4: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD simX_poly))
+has type
+  PolyTimeComputable fun x => List.replicate ((pairFstD ∘ simX) x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1700:89: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform hF (simCoins V')).coins = simCoins V'
+in the application
+  And.intro rfl
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): no fresh .olean produced
+
+END 2026-11-08T06:08:22.847378+00:00 RC 1 elapsed=15.0s pid=32549 maxrss=2679468KiB

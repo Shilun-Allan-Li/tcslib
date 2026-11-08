@@ -89,70 +89,9 @@ theorem unaryPoly_comp (p : PolyExpr) {f : List Bool → List Bool} (hf : PolyTi
     PolyTimeComputable fun x => List.replicate (p.eval (f x).length) true :=
   (polyTimeComputable_unaryPoly p).comp hf
 
-/-- The first bit of a word (`false` on the empty word) as a one-bit output: `[w.headD false]`
-is `(w ++ [false]).take 1`, a typed cut `Complexity.polyTimeComputable_pairTakePoly` at the
-constant length `1`. -/
-theorem headBit_poly : PolyTimeComputable fun w => [w.headD false] := by
-  have h := (polyTimeComputable_pairTakePoly (.const 1)).comp
-    ((polyTimeComputable_const []).pairEncode
-      (polyTimeComputable_id.append (polyTimeComputable_const [false])))
-  convert h using 1
-  funext w
-  cases w <;> simp
-
-/-- The tail of a word is polynomial-time (`Complexity.polyTimeComputable_pairDropPoly` at the
-constant length `1`). -/
-theorem tail_poly : PolyTimeComputable List.tail := by
-  have h := (polyTimeComputable_pairDropPoly (.const 1)).comp
-    ((polyTimeComputable_const []).pairEncode polyTimeComputable_id)
-  convert h using 1
-  funext w
-  simp [List.drop_one]
-
 /-- Prepending one bit is polynomial-time. -/
 theorem cons_poly (b : Bool) : PolyTimeComputable fun w => b :: w :=
   polyTimeComputable_prepend [b]
-
-/-- The emptiness test `[decide (w = [])]` is polynomial-time (the length test `|w| ≤ 0`). -/
-theorem isNil_poly : PolyTimeComputable fun w => [decide (w = [])] := by
-  convert lenLe_comp (polyTimeComputable_const []) polyTimeComputable_id using 1
-  funext w
-  simp
-
-/-- Negation of a one-bit test is polynomial-time. -/
-theorem not_poly {p : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x]) :
-    PolyTimeComputable fun x => [!p x] := by
-  convert polyTimeComputable_ite hp (polyTimeComputable_const [false])
-    (polyTimeComputable_const [true]) using 1
-  funext x
-  cases p x <;> rfl
-
-/-- Disjunction of two one-bit tests is polynomial-time. -/
-theorem or_poly {p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x])
-    (hq : PolyTimeComputable fun x => [q x]) : PolyTimeComputable fun x => [p x || q x] := by
-  convert polyTimeComputable_ite hp (polyTimeComputable_const [true]) hq using 1
-  funext x
-  cases p x <;> rfl
-
-/-- Exclusive or of two one-bit tests is polynomial-time. -/
-theorem xor_poly {p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x])
-    (hq : PolyTimeComputable fun x => [q x]) :
-    PolyTimeComputable fun x => [xor (p x) (q x)] := by
-  convert polyTimeComputable_ite hp (not_poly hq) hq using 1
-  funext x
-  cases p x <;> cases q x <;> rfl
-
-/-- The two components of a word together are no longer than the word. -/
-theorem length_pairFstD_add_pairSndD_le (z : List Bool) :
-    (pairFstD z).length + (pairSndD z).length ≤ z.length := by
-  cases h : pairDecode z with
-  | none => simp [pairFstD, pairSndD, h]
-  | some ab =>
-    obtain ⟨a, b⟩ := ab
-    have hz := eq_pairEncode_of_pairDecode z a b h
-    subst hz
-    rw [pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode]
-    omega
 
 /-- The length of the concatenation of `i` chunks of length at most `M` is at most `i · M`. -/
 theorem length_flatMap_range_le (f : ℕ → List Bool) (M : ℕ) :

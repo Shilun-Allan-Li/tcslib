@@ -1,0 +1,27 @@
+From f79962995887389a667c9056637a9afd09424477 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 04:35:37 +0000
+Subject: [PATCH 5/7] cleanup-part2 J batch 2a fix:
+ splitAtLastTrue_replicate_succ side condition by rewriting and a core
+ dropWhile step
+
+---
+ TCSlib/Complexity/ClassNP/PolyTimePairing.lean | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/PolyTimePairing.lean b/TCSlib/Complexity/ClassNP/PolyTimePairing.lean
+index a07dad3e6..ba94d4ce4 100644
+--- a/TCSlib/Complexity/ClassNP/PolyTimePairing.lean
++++ b/TCSlib/Complexity/ClassNP/PolyTimePairing.lean
+@@ -149,7 +149,7 @@ theorem PolyTimeComputable.pairEncode {f g : List Bool → List Bool}
+ private lemma splitAtLastTrue_replicate_succ (n : ℕ) :
+     splitAtLastTrue (List.replicate (n + 1) true) = some (List.replicate n true) := by
+   rw [splitAtLastTrue_of_dropWhile_eq_true_cons (rest := List.replicate n true)
+-    (by simp [List.reverse_replicate, List.replicate_succ]), List.reverse_replicate]
++    (by rw [List.reverse_replicate, List.replicate_succ]; rfl), List.reverse_replicate]
+ 
+ /-- **The unary length map is polynomial-time**: `x ↦ 1^|x|` is polynomial-time
+ computable. (This is how the input `1ⁿ` of a uniformity machine [AB09, Def 6.12] is
+-- 
+2.43.0
+

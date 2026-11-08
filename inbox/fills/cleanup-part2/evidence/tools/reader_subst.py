@@ -17,6 +17,10 @@ for line in open(table):
     _, name, kind, status, home, flags = line.rstrip('\n').split('\t')
     names[name] = (kind, status, home, flags)
 scan = json.load(open(scanf))
+if '--extra' in sys.argv:
+    for x in open(sys.argv[sys.argv.index('--extra') + 1]).read().split():
+        base = x[:-4]
+        if base in names: names[x] = ('thm', '', names[base][2], '')
 props = collections.defaultdict(list)
 missing = collections.Counter()
 for it in scan['items']:
@@ -32,25 +36,29 @@ for it in scan['items']:
     if not reader:
         missing[full] += 1
         continue
-    props[it['file']].append((it['line'], it['tactic'], it['ident'], it['ident'] + reader))
+    props[it['file']].append((it['offset'], it['line'], it['tactic'], it['ident'], it['ident'] + reader))
 for f, ps in sorted(props.items()):
     print('==', f)
     for p in ps: print('  ', p)
 print('MISSING READERS:', missing.most_common())
 if apply:
     for f, ps in props.items():
-        lines = open(f'{root}/{f}').read().split('\n')
-        for ln, tac, ident, new in ps:
-            l = lines[ln - 1]
-            if tac in ('unfold', 'delta'):
-                m = re.search(r'\b(unfold|delta)\s+(.*)$', l)
-                if not m: continue
-                rest = m.group(2)
-                at = ''
-                if ' at ' in rest: rest, at = rest.split(' at ', 1); at = ' at ' + at
-                ids = rest.split()
-                ids = [x + ('_def' if x == ident and new.endswith('_def') else '_eq' if x == ident else '') for x in ids]
-                lines[ln - 1] = l[:m.start()] + 'simp only [' + ', '.join(ids) + ']' + at
-            else:
-                lines[ln - 1] = re.sub(r'(?<![\w.\'])' + re.escape(ident) + r'(?![\w.\'])', new, l, count=1)
+        text = open(f'{root}/{f}').read()
+        unf = collections.defaultdict(dict)   # line -> {ident: new}
+        other = []
+        for off, ln, tac, ident, new in ps:
+            if tac in ('unfold', 'delta'): unf[ln][ident] = new
+            else: other.append((off, ident, new))
+        # simp/rw entries: exact offsets, rightmost first
+        for off, ident, new in sorted(other, reverse=True):
+            assert text[off:off + len(ident)] == ident, (f, ident, text[off:off + 40])
+            text = text[:off] + new + text[off + len(ident):]
+        # unfold/delta tactics: rewrite the tactic once per line (offsets no longer needed)
+        lines = text.split('\n')
+        for ln, mp in unf.items():
+            line = lines[ln - 1]
+            m = re.search(r'\b(unfold|delta)\s+([^;]*?)(\s+at\s+[^;]*)?(;.*)?$', line)
+            if not m: continue
+            names = [mp.get(x, x) for x in m.group(2).split()]
+            lines[ln - 1] = line[:m.start()] + 'simp only [' + ', '.join(names) + ']' + (m.group(3) or '') + (m.group(4) or '')
         open(f'{root}/{f}', 'w').write('\n'.join(lines))

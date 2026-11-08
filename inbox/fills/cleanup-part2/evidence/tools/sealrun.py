@@ -37,12 +37,15 @@ for path in [l.strip() for l in open(mods) if l.strip()]:
     for ln, msg in errs:
         if ln <= end: continue
         d = max((s for s in starts if s[0] <= ln), default=(0, '?'))
-        failing.append({'decl': d[1], 'decl_line_in_probe': d[0], 'decl_line_in_source': d[0] - (sealed.count('') * 0) , 'error_line': ln, 'message': msg[:160]})
+        w0 = next(i for i, l in enumerate(sealed) if l.startswith('-- CP2 WHOLE-FILE SEAL')) + 1
+        failing.append({'decl': d[1], 'decl_line_in_probe': d[0], 'decl_line_in_source': d[0] - (end - w0 + 2),
+                        'error_line': ln, 'error_line_in_source': ln - (end - w0 + 2), 'message': msg[:160]})
     valid = (not harness) and eof and sum(int(c[0]) for c in chunks) == req
     res[path] = {'requests': req, 'active': sum(int(c[1]) for c in chunks), 'already_irreducible': sum(int(c[2]) for c in chunks),
                  'chunks_reported': len(chunks), 'eof': eof, 'harness_errors': harness, 'valid': valid,
                  'error_diagnostics': len([e for e in errs if e[0] > end]),
                  'failing_declarations': sorted({f['decl'] for f in failing}), 'diagnostics': failing,
-                 'seal_block_lines': [last := next(i for i, l in enumerate(sealed) if l.startswith('-- CP2 WHOLE-FILE SEAL')) + 1, end]}
+                 'seal_block_lines': [last := next(i for i, l in enumerate(sealed) if l.startswith('-- CP2 WHOLE-FILE SEAL')) + 1, end],
+                 'notation_unsealed': next((l for l in sealed if l.startswith('-- CP2 notation left unsealed')), None)}
     json.dump(res, open(out, 'w'), indent=1)
 print('done', len(res))

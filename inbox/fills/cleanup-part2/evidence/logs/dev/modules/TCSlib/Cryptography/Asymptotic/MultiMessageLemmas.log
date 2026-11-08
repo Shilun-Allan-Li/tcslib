@@ -1,0 +1,16 @@
+START 2026-11-08T05:35:23.235989+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/MultiMessageLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean sha256=0f16e9ba3057b412ef84c11474cec204ca5874f876ae02cec5c311db85333831
+TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean:367:90: warning: This simp argument is unused:
+  dbl_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc, dbl_cons, ̵d̵b̵l̵_̵n̵i̵l̵,̵
+      List.cons_append, List.nil_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T05:35:26.214664+00:00 RC 0 elapsed=3.0s pid=26123 maxrss=2642232KiB

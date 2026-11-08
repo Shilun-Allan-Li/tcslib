@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric
 import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Complexity.Randomized.NonUniform
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -54,23 +55,22 @@ open Complexity Turing Complexity.StateLoop EncodingMachines
 
 /-! ### Generic machine helpers -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- One more position adds the bit at that position to the count. -/
 theorem countBits_succ (x : List Bool) (k : ℕ) :
     countBits x (k + 1) = countBits x k + (x.getD k false).toNat := by
-  unfold countBits
+  simp only [countBits_def]
   rw [List.range_succ, List.filter_append, List.length_append, List.filter_singleton]
   cases x.getD k false <;> simp
 
 /-- The count of set bits is at most the number of positions. -/
 theorem countBits_le (x : List Bool) (k : ℕ) : countBits x k ≤ k := by
-  unfold countBits
+  simp only [countBits_def]
   exact (List.length_filter_le _ _).trans (by simp)
 
 /-- **Counting set bits is unary polynomial-time**: `z ↦ 1^{countBits (X z) (K z)}` for a
@@ -110,7 +110,7 @@ theorem countBits_poly {X : List Bool → List Bool} (hX : PolyTimeComputable X)
       loopState upd (fun _ => []) z i = List.replicate (countBits (X z) i) true := by
     intro i
     induction i with
-    | zero => intro _; simp [countBits]
+    | zero => intro _; simp [countBits_def]
     | succ i ih =>
       intro hi
       rw [loopState_succ, ih (Nat.le_of_succ_le hi)]
@@ -153,7 +153,7 @@ theorem sampleNum_poly {M K T M' : List Bool → ℕ} {R : List Bool → List Bo
   have htr := trialIdx_poly hM hK hT hR (unaryConst_poly 0) hM' hKM
   have hbv := blockVal_poly hR (unaryMul_poly htr hK) hK hM' hKM
   refine ptc_congr (polyTimeComputable_ite (ltTest_poly htr hT) hbv hM) fun z => ?_
-  unfold sampleNum
+  simp only [sampleNum_def]
   by_cases h : trialIdx (M z) (K z) (T z) (R z) 0 < T z <;> simp [h]
 
 /-- Concatenating the first `L` chunks of a longer range. -/
@@ -228,7 +228,7 @@ theorem simR_poly : PolyTimeComputable simR := NUPPT.polyTimeComputable_inCoins
 
 /-- The second component of a word is no longer than the word. -/
 theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length :=
-  le_trans (Nat.le_add_left _ _) (length_pairFstD_add_pairSndD_le z)
+  le_trans (Nat.le_add_left _ _) (length_pair_components_le z)
 
 /-- The common input is no longer than the machine input. -/
 theorem length_simX_le (w : List Bool) : (simX w).length ≤ w.length :=
@@ -283,7 +283,7 @@ theorem eIdx_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     (unaryAdd_poly (unaryMul_poly (unaryConst_poly 2) hm) (unaryConst_poly 1))
     (fun w => two_pow_size_le_two_mul_succ (mE (X w)))
   refine ptc_congr (polyTimeComputable_ite (ltTest_poly hs hm) hs (unaryConst_poly 0)) fun w => ?_
-  unfold eIdx
+  simp only [eIdx_def]
   rw [sampleEdgeIdx_eq]
   by_cases h : sampleNum (mE (X w)) (Nat.size (mE (X w))) (X w).length (B w) < mE (X w) <;>
     simp [h]
@@ -296,7 +296,8 @@ theorem vIdx_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     refine ptc_congr ((polyTimeComputable_pairDropPoly .var).comp
       ((unaryPolyOf_poly (.pow (.add .var (.const 1)) 2) (unaryLength_poly hX)).pairEncode hB))
       fun w => ?_
-    simp [PolyExpr.eval]
+    simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul,
+        PolyExpr.eval_pow, PolyExpr.eval_normal]
   exact sampleNum_poly (unaryConst_poly 6) (unaryConst_poly 3) (unaryLength_poly hX) hdrop
     (unaryConst_poly 8) (fun _ => by norm_num)
 
@@ -341,7 +342,7 @@ theorem colA_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     PolyTimeComputable fun w => encColor (colorA (vIdx (X w) (B w))) := by
   refine ptc_congr (table_poly (fun j => encColor (colorA j)) (vIdx_poly hX hB) 6) fun w => ?_
   congr 1
-  unfold colorA
+  simp only [colorA_def]
   by_cases h : vIdx (X w) (B w) < 6
   · rw [min_eq_left h.le]
   · rw [min_eq_right (not_lt.1 h), dif_neg h, dif_neg (lt_irrefl 6)]
@@ -352,7 +353,7 @@ theorem colB_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     PolyTimeComputable fun w => encColor (colorB (vIdx (X w) (B w))) := by
   refine ptc_congr (table_poly (fun j => encColor (colorB j)) (vIdx_poly hX hB) 6) fun w => ?_
   congr 1
-  unfold colorB
+  simp only [colorB_def]
   by_cases h : vIdx (X w) (B w) < 6
   · rw [min_eq_left h.le]
   · rw [min_eq_right (not_lt.1 h), dif_neg h, dif_neg (lt_irrefl 6)]
@@ -367,7 +368,7 @@ theorem colorStr_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     (polyTimeComputable_ite (eqTest_poly hI (p2_poly hX hB)) (colB_poly hX hB)
       (polyTimeComputable_const (encColor 0)))
   refine ptc_congr h fun w => ?_
-  unfold colorNum
+  simp only [colorNum_def]
   simp only [decide_eq_true_eq]
   split_ifs <;> rfl
 
@@ -385,7 +386,7 @@ theorem rrStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool �
       ((unaryAdd_poly (baseR_poly hX) (unaryMul_poly hI hℓn)).pairEncode hB)) fun w => ?_
     simp
   refine ptc_congr (EnsembleLemmas.polyTimeComputable_padL ℓ (nV_poly hX) hdrop) fun w => ?_
-  simp [rrStr]
+  simp [rrStr_def]
 
 /-- One encoded commitment of the vector is polynomial-time (`hCom` on the padded colour and
 the randomness). -/
@@ -435,22 +436,38 @@ theorem rVStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool �
       List.replicate (baseR (X w) + (X w).length * ℓ.eval (X w).length) true :=
     unaryAdd_poly (baseR_poly hX) (unaryMul_poly hN (unaryPolyOf_poly ℓ hN))
   refine ptc_congr ((polyTimeComputable_pairDropPoly .var).comp (hlen.pairEncode hB)) fun w => ?_
-  simp [rVStr]
+  simp [rVStr_def]
+
+/-- **One activation of an efficient strategy is polynomial-time**: for an efficient `V'` and
+polynomial-time `X, Z, R, C`, the reply `V'.next (X w) (Z w) (R w) [C w]` is polynomial-time.
+
+**Proof sketch.** `Strategy.efficient_iff` gives a uniform machine `A` with
+`V'.next = (Strategy.ofNUPPT A).next`; one activation is `A`'s output on the layout
+`⟨⟨⟨1^{|X w|}, ⟨⟨X w, Z w⟩, ⟨C w, []⟩⟩⟩, []⟩, R w⟩` (`Strategy.ofNUPPT_next`,
+`NUPPT.runAtL_eq_output_layout`, `Strategy.encodeMsgs_cons`/`_nil`), which is polynomial-time by
+`NUPPT.polyTimeComputable_layout` and the machine's `polyTimeComputable_output`. -/
+theorem polyTimeComputable_next {V' : Strategy} (hV' : V'.Efficient)
+    {X Z R C : List Bool → List Bool}
+    (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z)
+    (hR : PolyTimeComputable R) (hC : PolyTimeComputable C) :
+    PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w] := by
+  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
+  have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hX)
+    ((hX.pairEncode hZ).pairEncode (hC.pairEncode (polyTimeComputable_const [])))
+    (polyTimeComputable_const []) hR
+  refine (A.polyTimeComputable_output.comp hlay).congr fun w => ?_
+  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
+    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
+  rfl
 
 /-- The reply of an efficient `V'` to the commitment message is polynomial-time: one activation
-of its machine on the layout `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨com, []⟩⟩⟩, []⟩, r_V⟩`
-(`Strategy.ofNUPPT_next`, `NUPPT.runAtL_eq_output_layout`, `NUPPT.polyTimeComputable_layout`). -/
+of its machine on the layout `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨com, []⟩⟩⟩, []⟩, r_V⟩`, the generic
+`polyTimeComputable_next` with the tape `rVStr_poly`. -/
 theorem reply_poly (ℓ : PolyExpr) {V' : Strategy} (hV' : V'.Efficient) (hX : PolyTimeComputable X)
     (hZ : PolyTimeComputable Z) {B : List Bool → List Bool} (hB : PolyTimeComputable B)
     {C : List Bool → List Bool} (hC : PolyTimeComputable C) :
-    PolyTimeComputable fun w => V'.next (X w) (Z w) (rVStr ℓ (X w) (B w)) [C w] := by
-  obtain ⟨A, hA, -, hnext⟩ := hV'
-  have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hX)
-    ((hX.pairEncode hZ).pairEncode (hC.pairEncode (polyTimeComputable_const [])))
-    (polyTimeComputable_const []) (rVStr_poly ℓ hX hB)
-  refine ptc_congr (A.polyTimeComputable_output.comp hlay) fun w => ?_
-  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq]
-  rfl
+    PolyTimeComputable fun w => V'.next (X w) (Z w) (rVStr ℓ (X w) (B w)) [C w] :=
+  polyTimeComputable_next hV' hX hZ (rVStr_poly ℓ hX hB) hC
 
 /-- The opening message is polynomial-time. -/
 theorem opnStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool → List Bool}
@@ -498,8 +515,8 @@ theorem attemptNum_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputab
   have hview := view_poly hX hZ hrV hcom (opnStr_poly ℓ hX hB)
   have hview0 := view_poly hX hZ hrV hcom0 (polyTimeComputable_const [])
   refine ⟨?_, ?_⟩
-  · refine ptc_congr (or_poly hzero htest) fun w => ?_
-    unfold attemptNum
+  · refine ptc_congr (polyTimeComputable_or hzero htest) fun w => ?_
+    simp only [attemptNum_def]
     by_cases h0 : mE (X w) = 0
     · simp [h0]
     · by_cases ht : (V'.next (X w) (Z w) (rVStr ℓ (X w) (B w))
@@ -507,7 +524,7 @@ theorem attemptNum_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputab
             eIdx (X w) (B w) <;> simp [h0, ht]
   · refine ptc_congr (polyTimeComputable_ite hzero hview0
       (polyTimeComputable_ite htest hview (polyTimeComputable_const []))) fun w => ?_
-    unfold attemptNum
+    simp only [attemptNum_def]
     by_cases h0 : mE (X w) = 0
     · simp [h0]
     · by_cases ht : (V'.next (X w) (Z w) (rVStr ℓ (X w) (B w))
@@ -555,7 +572,7 @@ theorem sim_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) 
       else [] := by
   have hm : edgeCount (decGraph (simX w)).2 = mE (simX w) := edgeCount_eq_countBits _
   have hit : colIterations (simX w) = nV (simX w) * mE (simX w) := by
-    unfold colIterations
+    simp only [colIterations_eq]
     rw [hm]
     rfl
   have hatt : (fun t => attemptStr Com ℓ V' (simX w) (simZ w)
@@ -565,7 +582,7 @@ theorem sim_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) 
   have hatt0 : attemptStr Com ℓ V' (simX w) (simZ w)
       (colCoinSlice ((blockPoly ℓ V').eval (simX w).length) 0 (simR w)) = attemptAt Com ℓ V' w 0 :=
     attemptStr_eq_attemptNum Com ℓ V' _ _ _
-  unfold sim
+  simp only [sim_def]
   simp only [hm, hit, hatt, hatt0]
   rw [findSome?_range_eq]
   by_cases h0 : mE (simX w) = 0
@@ -615,6 +632,6 @@ theorem exists_simulator {Com : List Bool → List Bool} (hCom : PolyTimeComputa
   refine ⟨NUPPT.ofPolyTimeUniform hF (simCoins ℓ V'), NUPPT.ofPolyTimeUniform_uniform _ _, rfl, ?_⟩
   intro x z r
   rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [simX, simZ, simR, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 end TCSlib.Cryptography.ColSimMachine

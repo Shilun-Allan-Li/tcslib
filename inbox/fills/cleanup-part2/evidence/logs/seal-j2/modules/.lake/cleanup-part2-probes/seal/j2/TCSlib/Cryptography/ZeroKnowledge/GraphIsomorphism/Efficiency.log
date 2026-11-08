@@ -1,0 +1,367 @@
+START 2026-11-08T06:06:16.242972+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean sha256=8936f2224ba5bc52c560fa7a459c21ce0a79862e59534984b2e6a4f09e696885
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=170 active=170 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1242:80: error: unsolved goals
+hsq :
+  PolyTimeComputable fun x =>
+    List.replicate ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length) true
+h1 :
+  PolyTimeComputable
+    ((fun z => [decide ((pairFstD z).length = (pairSndD z).length)]) ∘ fun x =>
+      pairEncode (pairFstD x)
+        (List.replicate ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+          true))
+h2 :
+  PolyTimeComputable
+    ((fun z => [decide ((pairFstD z).length = (pairSndD z).length)]) ∘ fun x =>
+      pairEncode (pairSndD x)
+        (List.replicate ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+          true))
+h :
+  PolyTimeComputable fun x =>
+    [(pairDecode x).isSome &&
+        (decide
+            ((pairFstD
+                  ((fun x =>
+                      pairEncode (pairFstD x)
+                        (List.replicate
+                          ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+                          true))
+                    x)).length =
+              (pairSndD
+                  ((fun x =>
+                      pairEncode (pairFstD x)
+                        (List.replicate
+                          ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+                          true))
+                    x)).length) &&
+          decide
+            ((pairFstD
+                  ((fun x =>
+                      pairEncode (pairSndD x)
+                        (List.replicate
+                          ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+                          true))
+                    x)).length =
+              (pairSndD
+                  ((fun x =>
+                      pairEncode (pairSndD x)
+                        (List.replicate
+                          ((PolyExpr.var.mul PolyExpr.var).eval (List.replicate (pairFstD x).length.sqrt true).length)
+                          true))
+                    x)).length))]
+x : List Bool
+⊢ [decide
+        ((pairDecode x).isSome = true ∧
+          (pairFstD x).length = (pairFstD x).length.sqrt * (pairFstD x).length.sqrt ∧
+            (pairSndD x).length = (pairFstD x).length.sqrt * (pairFstD x).length.sqrt)] =
+    [(pairDecode x).isSome &&
+        (decide ((pairFstD x).length = (pairFstD x).length.sqrt * (pairFstD x).length.sqrt) &&
+          decide ((pairSndD x).length = (pairFstD x).length.sqrt * (pairFstD x).length.sqrt))]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1252:65: warning: This simp argument is unused:
+  Bool.decide_and
+
+Hint: Omit it from the simp argument list.
+  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
+      pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var,
+  ̲  ̲ ̲ ̲B̵o̵o̵l̵.̵d̵e̵c̵i̵d̵e̵_̵a̵n̵d̵,̵ ̵Bool.decide_eq_true]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1252:82: warning: This simp argument is unused:
+  Bool.decide_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
+      pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var,
+  ̲  ̲ ̲ ̲B̵o̵o̵l̵.̵d̵e̵c̵i̵d̵e̵_̵a̵n̵d̵,̵ ̵B̵o̵o̵l̵.̵d̵e̵c̵i̵d̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]̵B̲o̲o̲l̲.̲d̲e̲c̲i̲d̲e̲_̲a̲n̲d̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1280:34: error: Type mismatch
+  getD_padSq n w (finProdFinEquiv (u, v)).isLt
+has type
+  (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+but is expected to have type
+  decGraphAt n (padSq n w) u v = decGraphAt n w u v
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1341:2: error: Type mismatch
+  polyTimeComputable_encPermFromCoins
+has type
+  PolyTimeComputable fun z =>
+    encPerm
+      ((permFromCoins (decGraph (pairFstD z)).fst (permBits (decGraph (pairFstD z)).fst)
+            (permTrials (decGraph (pairFstD z)).fst)
+            (coinTable (decGraph (pairFstD z)).fst (permTrials (decGraph (pairFstD z)).fst)
+              (permBits (decGraph (pairFstD z)).fst) (pairSndD z))).getD
+        1)
+but is expected to have type
+  PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1516:60: error: Type mismatch
+  pairFstD_pairEncode ?m.67 ?m.68
+has type
+  pairFstD (pairEncode ?m.67 ?m.68) = ?m.67
+but is expected to have type
+  pairFstD (encInstance G₀ G₁) = encGraph G₀
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1517:60: error: Type mismatch
+  pairSndD_pairEncode ?m.74 ?m.75
+has type
+  pairSndD (pairEncode ?m.74 ?m.75) = ?m.75
+but is expected to have type
+  pairSndD (encInstance G₀ G₁) = encGraph G₁
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1520:10: error: Invalid `⟨...⟩` notation: The expected type `Riso (encInstance G₀ G₁) y` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1521:11: error: Tactic `rcases` failed: `a✝ : Riso x y` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1562:4: error: Tactic `rfl` failed: The left-hand side
+  encGraph (permGraph (decGraph (pairFstD x)).snd (samplePerm (decGraph (pairFstD x)).fst r))
+is not definitionally equal to the right-hand side
+  encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (samplePerm (pairFstD x).length.sqrt r))
+
+case nil
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hbit : PolyTimeComputable fun w => [(pairFstD (argM w)).headD false]
+hF₁ :
+  PolyTimeComputable fun w =>
+    relabelAt (List.replicate (vcount w) true) (pairFstD (argX w)) (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w))
+hmul : PolyTimeComputable fun w => mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+hF₃ :
+  PolyTimeComputable fun w =>
+    if (pairFstD (argM w)).headD false = true then mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+    else sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)
+x z r : List Bool
+⊢ encGraph (permGraph (decGraph (pairFstD x)).snd (samplePerm (decGraph (pairFstD x)).fst r)) =
+    encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (samplePerm (pairFstD x).length.sqrt r))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1568:18: error: Tactic `rfl` failed: The left-hand side
+  encPerm (samplePerm (decGraph (pairFstD x)).fst r * (decPerm (decGraph (pairFstD x)).fst z)⁻¹)
+is not definitionally equal to the right-hand side
+  encPerm (samplePerm (pairFstD x).length.sqrt r * (decPerm (pairFstD x).length.sqrt z)⁻¹)
+
+case pos
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hbit : PolyTimeComputable fun w => [(pairFstD (argM w)).headD false]
+hF₁ :
+  PolyTimeComputable fun w =>
+    relabelAt (List.replicate (vcount w) true) (pairFstD (argX w)) (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w))
+hmul : PolyTimeComputable fun w => mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+hF₃ :
+  PolyTimeComputable fun w =>
+    if (pairFstD (argM w)).headD false = true then mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+    else sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)
+x z r m : List Bool
+h : List (List Bool)
+h✝ : m.headD false = true
+⊢ encPerm (samplePerm (decGraph (pairFstD x)).fst r * (decPerm (decGraph (pairFstD x)).fst z)⁻¹) =
+    encPerm (samplePerm (pairFstD x).length.sqrt r * (decPerm (pairFstD x).length.sqrt z)⁻¹)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1568:18: error: Tactic `rfl` failed: The left-hand side
+  encPerm (samplePerm (decGraph (pairFstD x)).fst r)
+is not definitionally equal to the right-hand side
+  encPerm (samplePerm (pairFstD x).length.sqrt r)
+
+case neg
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hbit : PolyTimeComputable fun w => [(pairFstD (argM w)).headD false]
+hF₁ :
+  PolyTimeComputable fun w =>
+    relabelAt (List.replicate (vcount w) true) (pairFstD (argX w)) (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w))
+hmul : PolyTimeComputable fun w => mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+hF₃ :
+  PolyTimeComputable fun w =>
+    if (pairFstD (argM w)).headD false = true then mulInvStr (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)) (argZ w)
+    else sampleStr (pairFstD (argX w)) (NUPPT.inCoins w)
+x z r m : List Bool
+h : List (List Bool)
+h✝ : ¬m.headD false = true
+⊢ encPerm (samplePerm (decGraph (pairFstD x)).fst r) = encPerm (samplePerm (pairFstD x).length.sqrt r)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1617:18: error: Tactic `rfl` failed: The left-hand side
+  [wellFormedInstance x &&
+      decide
+        (encGraph
+            (permGraph (decGraphAt (decGraph (pairFstD x)).fst (pairSndD x)) (decPerm (decGraph (pairFstD x)).fst γ)) =
+          H)]
+is not definitionally equal to the right-hand side
+  [wellFormedInstance x &&
+      decide
+        (encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairSndD x)) (decPerm (pairFstD x).length.sqrt γ)) =
+          H)]
+
+case pos
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])]
+hnil₃ : PolyTimeComputable fun w => [decide (pairSndD (pairSndD (argM w)) = [])]
+hH : PolyTimeComputable fun w => pairFstD (argM w)
+hγ : PolyTimeComputable fun w => pairFstD (pairSndD (argM w))
+hcheck :
+  PolyTimeComputable fun w =>
+    [decide
+        (relabelAt (List.replicate (vcount w) true)
+            (if (NUPPT.inCoins w).headD false = true then pairSndD (argX w) else pairFstD (argX w))
+            (pairFstD (pairSndD (argM w))) =
+          pairFstD (argM w))]
+hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)]
+hverdict :
+  PolyTimeComputable fun x =>
+    [wellFormedInstance (argX x) &&
+        decide
+          (relabelAt (List.replicate (vcount x) true)
+              (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+              (pairFstD (pairSndD (argM x))) =
+            pairFstD (argM x))]
+hF :
+  PolyTimeComputable fun x =>
+    if decide (argM x = []) = true then [false]
+    else
+      if decide (pairSndD (argM x) = []) = true then [(NUPPT.inCoins x).headD false]
+      else
+        if decide (pairSndD (pairSndD (argM x)) = []) = true then
+          [wellFormedInstance (argX x) &&
+              decide
+                (relabelAt (List.replicate (vcount x) true)
+                    (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+                    (pairFstD (pairSndD (argM x))) =
+                  pairFstD (argM x))]
+        else [false]
+x z r H γ : List Bool
+h✝ : r.headD false = true
+⊢ [wellFormedInstance x &&
+        decide
+          (encGraph
+              (permGraph (decGraphAt (decGraph (pairFstD x)).fst (pairSndD x))
+                (decPerm (decGraph (pairFstD x)).fst γ)) =
+            H)] =
+    [wellFormedInstance x &&
+        decide
+          (encGraph
+              (permGraph (decGraphAt (pairFstD x).length.sqrt (pairSndD x)) (decPerm (pairFstD x).length.sqrt γ)) =
+            H)]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1617:18: error: Tactic `rfl` failed: The left-hand side
+  [wellFormedInstance x &&
+      decide (encGraph (permGraph (decGraph (pairFstD x)).snd (decPerm (decGraph (pairFstD x)).fst γ)) = H)]
+is not definitionally equal to the right-hand side
+  [wellFormedInstance x &&
+      decide
+        (encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (decPerm (pairFstD x).length.sqrt γ)) =
+          H)]
+
+case neg
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])]
+hnil₃ : PolyTimeComputable fun w => [decide (pairSndD (pairSndD (argM w)) = [])]
+hH : PolyTimeComputable fun w => pairFstD (argM w)
+hγ : PolyTimeComputable fun w => pairFstD (pairSndD (argM w))
+hcheck :
+  PolyTimeComputable fun w =>
+    [decide
+        (relabelAt (List.replicate (vcount w) true)
+            (if (NUPPT.inCoins w).headD false = true then pairSndD (argX w) else pairFstD (argX w))
+            (pairFstD (pairSndD (argM w))) =
+          pairFstD (argM w))]
+hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)]
+hverdict :
+  PolyTimeComputable fun x =>
+    [wellFormedInstance (argX x) &&
+        decide
+          (relabelAt (List.replicate (vcount x) true)
+              (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+              (pairFstD (pairSndD (argM x))) =
+            pairFstD (argM x))]
+hF :
+  PolyTimeComputable fun x =>
+    if decide (argM x = []) = true then [false]
+    else
+      if decide (pairSndD (argM x) = []) = true then [(NUPPT.inCoins x).headD false]
+      else
+        if decide (pairSndD (pairSndD (argM x)) = []) = true then
+          [wellFormedInstance (argX x) &&
+              decide
+                (relabelAt (List.replicate (vcount x) true)
+                    (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+                    (pairFstD (pairSndD (argM x))) =
+                  pairFstD (argM x))]
+        else [false]
+x z r H γ : List Bool
+h✝ : ¬r.headD false = true
+⊢ [wellFormedInstance x &&
+        decide (encGraph (permGraph (decGraph (pairFstD x)).snd (decPerm (decGraph (pairFstD x)).fst γ)) = H)] =
+    [wellFormedInstance x &&
+        decide
+          (encGraph
+              (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (decPerm (pairFstD x).length.sqrt γ)) =
+            H)]
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1660:18: error: Tactic `rfl` failed: The left-hand side
+  encGraph (permGraph (decGraphAt (instanceVertexCount x) (pairSndD x)) (samplePerm (instanceVertexCount x) r.tail))
+is not definitionally equal to the right-hand side
+  encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairSndD x)) (samplePerm (pairFstD x).length.sqrt r.tail))
+
+case pos
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])]
+hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail
+hF₀ :
+  PolyTimeComputable fun w =>
+    relabelAt (List.replicate (vcount w) true)
+      (if (NUPPT.inCoins w).headD false = true then pairSndD (argX w) else pairFstD (argX w))
+      (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail)
+hbit : PolyTimeComputable fun w => [decide ([(pairFstD (argM w)).headD false] = [(NUPPT.inCoins w).headD false])]
+hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)]
+hverdict :
+  PolyTimeComputable fun x =>
+    [wellFormedInstance (argX x) && decide ([(pairFstD (argM x)).headD false] = [(NUPPT.inCoins x).headD false])]
+hF :
+  PolyTimeComputable fun x =>
+    if decide (argM x = []) = true then
+      relabelAt (List.replicate (vcount x) true)
+        (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+        (sampleStr (pairFstD (argX x)) (NUPPT.inCoins x).tail)
+    else
+      if decide (pairSndD (argM x) = []) = true then
+        [wellFormedInstance (argX x) && decide ([(pairFstD (argM x)).headD false] = [(NUPPT.inCoins x).headD false])]
+      else [false]
+x z r : List Bool
+h✝ : r.headD false = true
+⊢ encGraph (permGraph (decGraphAt (instanceVertexCount x) (pairSndD x)) (samplePerm (instanceVertexCount x) r.tail)) =
+    encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairSndD x)) (samplePerm (pairFstD x).length.sqrt r.tail))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean:1660:18: error: Tactic `rfl` failed: The left-hand side
+  encGraph (permGraph (decGraphAt (instanceVertexCount x) (pairFstD x)) (samplePerm (instanceVertexCount x) r.tail))
+is not definitionally equal to the right-hand side
+  encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (samplePerm (pairFstD x).length.sqrt r.tail))
+
+case neg
+hnil : PolyTimeComputable fun w => [decide (argM w = [])]
+hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])]
+hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail
+hF₀ :
+  PolyTimeComputable fun w =>
+    relabelAt (List.replicate (vcount w) true)
+      (if (NUPPT.inCoins w).headD false = true then pairSndD (argX w) else pairFstD (argX w))
+      (sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail)
+hbit : PolyTimeComputable fun w => [decide ([(pairFstD (argM w)).headD false] = [(NUPPT.inCoins w).headD false])]
+hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)]
+hverdict :
+  PolyTimeComputable fun x =>
+    [wellFormedInstance (argX x) && decide ([(pairFstD (argM x)).headD false] = [(NUPPT.inCoins x).headD false])]
+hF :
+  PolyTimeComputable fun x =>
+    if decide (argM x = []) = true then
+      relabelAt (List.replicate (vcount x) true)
+        (if (NUPPT.inCoins x).headD false = true then pairSndD (argX x) else pairFstD (argX x))
+        (sampleStr (pairFstD (argX x)) (NUPPT.inCoins x).tail)
+    else
+      if decide (pairSndD (argM x) = []) = true then
+        [wellFormedInstance (argX x) && decide ([(pairFstD (argM x)).headD false] = [(NUPPT.inCoins x).headD false])]
+      else [false]
+x z r : List Bool
+h✝ : ¬r.headD false = true
+⊢ encGraph (permGraph (decGraphAt (instanceVertexCount x) (pairFstD x)) (samplePerm (instanceVertexCount x) r.tail)) =
+    encGraph (permGraph (decGraphAt (pairFstD x).length.sqrt (pairFstD x)) (samplePerm (pairFstD x).length.sqrt r.tail))
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency): no fresh .olean produced
+
+END 2026-11-08T06:06:31.251941+00:00 RC 1 elapsed=15.0s pid=32287 maxrss=2677072KiB

@@ -1,0 +1,31 @@
+START 2026-11-08T05:52:48.542821+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary.lean sha256=b84a2d21fefc42ca6bc60ff4392cbd8f86f7d7bb614229c7df16625f9e9a6e3a
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=154 active=154 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary.lean:883:9: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.19
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary.lean:917:58: error: Function expected at
+  h
+but this term has type
+  A.Computes f
+
+Note: Expected a function because this term is being applied to the argument
+  n
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary.lean:919:12: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+case mpr
+A : NUPPT
+f : List Bool → List Bool
+h : ∀ (n : ℕ) (y : List Bool), (uprob fun r => A.runAt n y r = f (NUPPT.advInput n y)) = 1
+⊢ A.Computes f
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Adversary): no fresh .olean produced
+
+END 2026-11-08T05:52:57.283606+00:00 RC 1 elapsed=8.7s pid=30076 maxrss=2585064KiB

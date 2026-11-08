@@ -1,0 +1,82 @@
+START 2026-11-08T05:59:19.393148+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean sha256=508b05c2829ac7485626fb9194338b02ddfe4f95dbd5b4f85d4409db076fe282
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=143 active=143 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean:1908:68: error: Type mismatch
+  rfl
+has type
+  ?m.504 = ?m.504
+but is expected to have type
+  A.coinLen n = ℓ.eval n + D.coinLen n
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean:1992:67: error: Type mismatch
+  abs_nonneg ?m.286
+has type
+  0 ≤ |?m.286|
+but is expected to have type
+  0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean:2074:46: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (uniform ℓ).X n = ?m.19
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean:2162:73: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.392 = ?m.392
+but is expected to have type
+  (NUPPT.ofPolyTime hG A.coins ((((PolyExpr.const 2).mul A.adv).add (PolyExpr.const 2)).add ℓ)
+        (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv).coins =
+    A.coins
+in the application
+  And.intro rfl
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit.lean:2236:89: error: unsolved goals
+ℓ : PolyExpr
+X : Ensemble ℓ
+hX : X.Pseudorandom
+A : NUPPT
+ε : ℕ → ℝ
+hεle : ∀ (n : ℕ) (j : Fin (ℓ.eval n)), nextBitProb (X.X n) j (A.predictor n ↑j) - 1 / 2 ≤ ε n
+hεeq : ∀ (n : ℕ), ε n = 0 ∨ ∃ j, nextBitProb (X.X n) j (A.predictor n ↑j) - 1 / 2 = ε n
+hneg : ¬Negligible ε
+p : PolyExpr
+hp : ∀ (n : ℕ), 0 < p.eval n
+hinf : ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 / ↑(p.eval n) ≤ |ε n|
+k : ℕ → ℕ := fun n => if h : ∃ j, nextBitProb (X.X n) j (A.predictor n ↑j) - 1 / 2 = ε n then ↑h.choose else 0
+hk : ∀ (n : ℕ), k n ≤ ℓ.eval n
+Dm : NUPPT
+hc : Dm.coins = A.coins
+hDm :
+  ∀ (n : ℕ) (y r : List Bool),
+    Dm.runAtL n y r =
+      [decide ([decide (A.runAtL n (List.take (k n) y) r = [true])] = [(List.drop (k n) y).headD false])]
+hlen : ∀ (n : ℕ), A.coinLen n = Dm.coinLen n
+e : (n : ℕ) → A.Coins n ≃ Dm.Coins n := fun n => (finCongr ⋯).arrowCongr (Equiv.refl Bool)
+hofn : ∀ (n : ℕ) (r : A.Coins n), List.ofFn ((e n) r) = List.ofFn r
+n₀ n : ℕ
+hn : n ≥ n₀
+hpn : 1 / ↑(p.eval n) ≤ |ε n|
+hppos : 0 < ↑(p.eval n)
+hε0 : ε n ≠ 0
+hex : ∃ j, nextBitProb (X.X n) j (A.predictor n ↑j) - 1 / 2 = ε n
+j₀ : Fin (ℓ.eval n)
+hkn : k n = ↑j₀
+hspec : nextBitProb (X.X n) j₀ (A.predictor n ↑j₀) - 1 / 2 = ε n
+t : Fin (ℓ.eval n) → Bool
+r : A.Coins n
+⊢ decide (A.runAtL n (List.take (↑j₀) (List.ofFn t)) (List.ofFn r) = [true]) = t j₀ ↔
+    decide (A.runAtL n (List.take (↑j₀) (List.ofFn t)) (List.ofFn r) = [true]) = t j₀
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/NextBit): no fresh .olean produced
+
+END 2026-11-08T05:59:35.384371+00:00 RC 1 elapsed=16.0s pid=31225 maxrss=2725460KiB

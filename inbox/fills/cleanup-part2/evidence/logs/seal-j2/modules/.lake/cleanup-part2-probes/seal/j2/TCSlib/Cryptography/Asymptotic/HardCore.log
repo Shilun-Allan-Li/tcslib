@@ -1,0 +1,147 @@
+START 2026-11-08T06:01:20.222365+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean sha256=521968e8370aef8cb52af574394d735da27c7805838b3bc96d052a29b4a205b0
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=43 active=43 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:1879:11: error: typeclass instance problem is stuck, it is often due to metavariables
+  Nonempty ?m.68
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:1884:22: error: Function expected at
+  hε
+but this term has type
+  Negligible ε
+
+Note: Expected a function because this term is being applied to the argument
+  1
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:1884:9: error: Tactic `rcases` failed: `x✝ : ?m.76` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2006:15: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.185 ↔ ?m.185
+but is expected to have type
+  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔
+    owpPredictor (fun z r => D (e z) r) flip
+        (owpPair f
+          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+      B ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2012:4: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|
+is not definitionally equal to the right-hand side
+  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+B : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+flip : Bool
+hflip :
+  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =
+    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r
+h1 :
+  predProb (⇑f) B (owpPredictorSnoc D flip) =
+    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)
+⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =
+    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2110:90: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2146:2: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb.{u_4, u_1, u_2} (fun s => (X s).1) D - acceptProb (fun z => id z.1) D|
+is not definitionally equal to the right-hand side
+  |(acceptProb.{u_4, u_1, max u_2 u_3} X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+
+σ : Type u_1
+γ : Type u_2
+δ : Type u_3
+ρ : Type u_4
+inst✝⁴ : Fintype σ
+inst✝³ : Fintype γ
+inst✝² : Fintype δ
+inst✝¹ : Nonempty δ
+inst✝ : Fintype ρ
+X : σ → γ × δ
+D : γ → ρ → Bool
+⊢ |acceptProb (fun s => (X s).1) D - acceptProb (fun z => id z.1) D| =
+    |(acceptProb X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2206:10: error: Tactic `rcases` failed: `left✝ : (PRG.oneBit G).Easy` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2267:6: error: 'show' tactic failed, pattern
+  Fin.init (Fin.snoc ((P.f n) x) (h n x)) = (P.f n) x
+is not definitionally equal to target
+  prgStep (oneBitStep fun x => Fin.snoc ((P.f n) x) (h n x)) x = (P.f n) x
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2352:2: error: Tactic `rfl` failed: The left-hand side
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r))
+is not definitionally equal to the right-hand side
+  Fin.append (𝓕.f n x) r
+
+𝓕 : FunFamily
+n : ℕ
+x r : Fin (𝓕.inLen.eval n) → Bool
+⊢ (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r)) = Fin.append (𝓕.f n x) r
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2359:2: error: Tactic `rfl` failed: The left-hand side
+  HardcoreBit.glBit (x, r)
+is not definitionally equal to the right-hand side
+  HardcoreBit.ip x r
+
+𝓕 : FunFamily
+n : ℕ
+x r : Fin (𝓕.inLen.eval n) → Bool
+⊢ HardcoreBit.glBit (x, r) = HardcoreBit.ip x r
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2396:49: warning: This simp argument is unused:
+  splitPair_symm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, s̵p̵l̵i̵t̵P̵a̵i̵r̵_̵s̵y̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.coe_fn_mk, Equiv.symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2396:71: warning: This simp argument is unused:
+  Equiv.coe_fn_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, splitPair_symm_apply, Equiv.c̵o̵e̵_̵f̵n̵_̵m̵k̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2410:14: error: Tactic `rfl` failed: The left-hand side
+  HardcoreBit.glPad (𝓕.f n) z
+is not definitionally equal to the right-hand side
+  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+
+case h
+𝓕 : FunFamily
+n : ℕ
+hf : Function.Bijective (𝓕.f n)
+z : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)
+⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2433:9: error: Tactic `rcases` failed: `x✝ : 𝓕.Easy` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2492:24: error: Function expected at
+  hBneg
+but this term has type
+  Negligible fun n => 𝓕.glPad.invProbAt B n
+
+Note: Expected a function because this term is being applied to the argument
+  (c + d + 1)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore.lean:2492:11: error: Tactic `rcases` failed: `x✝ : ?m.224` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/HardCore): no fresh .olean produced
+
+END 2026-11-08T06:01:39.573274+00:00 RC 1 elapsed=19.4s pid=31565 maxrss=2739664KiB

@@ -24,6 +24,7 @@ cp -r /workspace/cp2/evidence/. $D/evidence/
 cp -r /workspace/cp2/tools $D/evidence/tools
 # large census tables travel xz-compressed (exact bytes recoverable with `xz -d`)
 find $D/evidence/census -name '*.tsv' -size +1M -exec xz -9 -T1 {} \;
+find $D/evidence/logs -maxdepth 1 -name '*.json' -size +4M -exec xz -9 -T1 {} \;
 cp /workspace/cp2/REPORT.md $D/REPORT.md
 ( cd $D && find . -type f ! -name PAYLOAD-SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > /workspace/cp2/payload-sums.tmp && mv /workspace/cp2/payload-sums.tmp PAYLOAD-SHA256SUMS )
 git add $D

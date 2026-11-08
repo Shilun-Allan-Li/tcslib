@@ -177,10 +177,10 @@ theorem colProver_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y 
     (colProver Com ℓ).next x y r hist = proverStr Com ℓ (ilayout x y hist r) := by
   cases hist with
   | nil =>
-    rw [proverStr, if_pos (by rw [argM_ilayout]; rfl), commitStr_ilayout]
+    rw [proverStr_def, if_pos (by rw [argM_ilayout]; rfl), commitStr_ilayout]
     rfl
   | cons w hist' =>
-    rw [proverStr, if_neg (by
+    rw [proverStr_def, if_neg (by
         rw [argM_ilayout, Strategy.encodeMsgs_cons]; exact Turing.pairEncode_ne_nil _ _),
       mOf_ilayout]
     by_cases hm : edgeCount (decGraph x).2 = 0
@@ -190,7 +190,7 @@ theorem colProver_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y 
     · rw [if_neg hm, openStr_ilayout ℓ x y r hist' w (Nat.pos_of_ne_zero hm)]
       simp only [colProver]
       rw [edgeAt_eq_some_of_pos _ (Nat.pos_of_ne_zero hm)]
-      simp only [edgeIdxOfMsg, Nat.mod_mod]
+      simp only [edgeIdxOfMsg_eq, Nat.mod_mod]
       rfl
 
 /-- When the graph has an edge, the verifier's check is `checkStr`. -/
@@ -202,10 +202,10 @@ theorem colVerify_eq_checkStr (Com : List Bool → List Bool) (L : ℕ) (x com o
     ⟨e % edgeCount (decGraph x).2, Nat.mod_lt _ hm⟩
   unfold colVerify
   rw [edgeAt_eq_some_of_pos _ hm]
-  unfold checkStr
+  simp only [checkStr_def]
   show decide _ = decide _
   rw [decide_eq_decide]
-  simp only [msgAt, padColor, ofFn_padFin, encColor_eq_ofVal, decColor_val, h1, h2, ne_eq,
+  simp only [msgAt, padColor_def, ofFn_padFin, encColor_eq_ofVal, decColor_val, h1, h2, ne_eq,
     Fin.ext_iff]
 
 /-- The verifier's message of one iteration is `verifierStr` of the layout.
@@ -221,7 +221,7 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     (hist : List (List Bool)) :
     (colVerifier Com ℓ).next x z r hist = verifierStr Com ℓ (ilayout x z hist r) := by
   rcases hist with _ | ⟨com, _ | ⟨opn, _ | ⟨m3, t⟩⟩⟩
-  · rw [verifierStr, if_pos (by rw [argM_ilayout]; rfl)]
+  · rw [verifierStr_def, if_pos (by rw [argM_ilayout]; rfl)]
     rfl
   · have c1 : argM (ilayout x z [com] r) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons]
@@ -229,7 +229,7 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     have c2 : pairSndD (argM (ilayout x z [com] r)) = [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode]
       rfl
-    rw [verifierStr, if_neg c1, if_pos c2, eOf_ilayout]
+    rw [verifierStr_def, if_neg c1, if_pos c2, eOf_ilayout]
     rfl
   · have c1 : argM (ilayout x z [com, opn] r) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons]
@@ -241,10 +241,11 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons,
         pairSndD_pairEncode]
       rfl
-    rw [verifierStr, if_neg c1, if_neg c2, if_pos c3]
+    rw [verifierStr_def, if_neg c1, if_neg c2, if_pos c3]
     show [decide _] = [verdictStr Com ℓ (ilayout x z [com, opn] r)]
     refine congrArg (fun b => [b]) ?_
-    rw [verdictStr, nOf_ilayout, mOf_ilayout, LOf_ilayout, eOf_ilayout, argX_ilayout, argM_ilayout,
+    rw [verdictStr_def, nOf_ilayout, mOf_ilayout, LOf_ilayout, eOf_ilayout, argX_ilayout,
+        argM_ilayout,
       Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, pairFstD_pairEncode,
       pairSndD_pairEncode, pairFstD_pairEncode, Bool.decide_and, Bool.decide_or, Bool.decide_and,
       Bool.decide_eq_true, Bool.decide_eq_true, colWellFormed, encGraph_decGraph_eq_take]
@@ -261,7 +262,7 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons,
         pairSndD_pairEncode, Strategy.encodeMsgs_cons]
       exact Turing.pairEncode_ne_nil _ _
-    rw [verifierStr, if_neg c1, if_neg c2, if_neg c3]
+    rw [verifierStr_def, if_neg c1, if_neg c2, if_neg c3]
     rfl
 
 /-- The repeated prover's message is `proverRepStr` of the layout.
@@ -279,19 +280,19 @@ theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x
       pairFstD (pairSndD^[hist.length - 1] (Strategy.encodeMsgs hist)) := by
     rw [getLastD_eq_getD, getD_eq_pairFstD_iterate]
   have hcoin : (colProver Com ℓ).coinLen x.length = proverCoinsOf ℓ x.length := by
-    simp [Strategy.coinLen, colProver, proverCoinsOf]
+    simp [Strategy.coinLen_eq, colProver, proverCoinsOf_def]
   show (if hist.length / 2 < colIterations x then
       (colProver Com ℓ).next x y (colCoinSlice ((colProver Com ℓ).coinLen x.length) (hist.length / 2) r)
         (if hist.length % 2 = 0 then [] else [hist.getLastD []])
     else []) = _
-  rw [proverRepStr]
+  rw [proverRepStr_def]
   simp only [argM_ilayout, histLen_encodeMsgs, nOf_ilayout, mOf_ilayout, argX_ilayout, argZ_ilayout,
     inCoins_ilayout]
   rw [hcoin]
   unfold colIterations colCoinSlice
   by_cases h1 : hist.length / 2 < (decGraph x).1 * edgeCount (decGraph x).2
   · rw [if_pos h1, if_pos h1, colProver_next_eq]
-    unfold ilayout
+    simp only [ilayout_def]
     by_cases h2 : hist.length % 2 = 0
     · rw [if_pos h2, if_pos h2]
       rfl
@@ -319,7 +320,7 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
           (sampleEdgeIdx (edgeCount (decGraph x).2) x.length (colCoinSlice ((x.length + 1) ^ 2) t r))
           (hist.getD (2 * t) []) (hist.getD (2 * t + 1) []) = true)))]
     else []) = _
-  rw [verifierRepStr]
+  rw [verifierRepStr_def]
   simp only [argM_ilayout, histLen_encodeMsgs, nOf_ilayout, mOf_ilayout, argX_ilayout]
   unfold colIterations colCoinSlice
   by_cases h1 : hist.length % 2 = 1
@@ -332,14 +333,15 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
     by_cases h3 : hist.length = 2 * (x.length * x.length)
     · rw [if_pos h3, if_pos h3]
       refine congrArg (fun b => [b]) ?_
-      rw [verdictRepStr, nOf_ilayout, mOf_ilayout, argX_ilayout, Bool.decide_and, Bool.decide_or,
+      rw [verdictRepStr_def, nOf_ilayout, mOf_ilayout, argX_ilayout, Bool.decide_and,
+          Bool.decide_or,
         Bool.decide_and, Bool.decide_eq_true, colWellFormed, encGraph_decGraph_eq_take]
       by_cases hm : edgeCount (decGraph x).2 = 0
       · simp [hm]
       · refine congrArg (fun b => _ && (_ || (_ && b))) ?_
         rw [decide_eq_decide, firstIdx_eq_iff, Fin.forall_iff]
         refine forall_congr' fun t => forall_congr' fun ht => ?_
-        rw [checkRep, eRep_ilayout, Bool.not_eq_false', LOf_ilayout, nOf_ilayout, mOf_ilayout,
+        rw [checkRep_def, eRep_ilayout, Bool.not_eq_false', LOf_ilayout, nOf_ilayout, mOf_ilayout,
           argX_ilayout, argM_ilayout, ← getD_eq_pairFstD_iterate, ← getD_eq_pairFstD_iterate,
           colVerify_eq_checkStr Com _ x _ _ _ (Nat.pos_of_ne_zero hm)]
     · rw [if_neg h3, if_neg h3]
@@ -378,22 +380,12 @@ theorem two_le_of_edge {n : ℕ} {G : Graph n} {c : Fin n → Fin 3} (hc : Prope
   by_contra hlt
   exact hne (Fin.ext (by omega))
 
-/-- A prefix of a uniform tape is uniform (private copy of `GI.pushesUniform_castLE`). -/
+/-- Restricting a uniform tuple of `c` entries to its first `m ≤ c` entries gives a uniform
+tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+`Fin.castLE_injective`). -/
 theorem pushesUniform_castLE {m c : ℕ} (h : m ≤ c) :
-    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) := by
-  let e : (Fin c → Bool) ≃ (Fin m → Bool) × (Fin (c - m) → Bool) :=
-    (Equiv.arrowCongr (finCongr (Nat.add_sub_cancel' h).symm) (Equiv.refl Bool)).trans
-      ((Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl Bool)).trans
-        (Equiv.sumArrowEquivProdArrow _ _ _))
-  have he : ∀ t : Fin c → Bool, (e t).1 = fun i : Fin m => t (Fin.castLE h i) := by
-    intro t
-    funext i
-    simp only [e, Equiv.trans_apply, Equiv.arrowCongr_apply, Equiv.sumArrowEquivProdArrow_apply_fst,
-      Equiv.coe_refl, Function.comp_apply, Equiv.symm_symm, finCongr_symm,
-      finCongr_apply, finSumFinEquiv_apply_left]
-    congr 1
-  have := (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
-  simpa only [he] using this
+    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) :=
+  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
 
 /-- The bit `i < n` of `List.ofFn f` read with a default. -/
 theorem ofFn_getD_lt {n : ℕ} (f : Fin n → Bool) {i : ℕ} (hi : i < n) :
@@ -404,7 +396,7 @@ theorem ofFn_getD_lt {n : ℕ} (f : Fin n → Bool) {i : ℕ} (hi : i < n) :
 theorem sampleEdgeIdx_ofFn_castLE {m T c : ℕ} (h : T * Nat.size m ≤ c) (t : Fin c → Bool) :
     sampleEdgeIdx m T (List.ofFn t) =
       sampleEdgeIdx m T (List.ofFn fun i : Fin (T * Nat.size m) => t (Fin.castLE h i)) := by
-  unfold sampleEdgeIdx sampleIdx
+  simp only [sampleEdgeIdx_def, sampleIdx_def]
   congr 3
   funext tr j
   have hlt : (tr : ℕ) * Nat.size m + j < T * Nat.size m := by

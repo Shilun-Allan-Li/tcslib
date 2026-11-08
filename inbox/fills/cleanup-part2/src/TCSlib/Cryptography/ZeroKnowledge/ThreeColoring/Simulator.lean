@@ -454,12 +454,12 @@ private theorem colSimAttemptPlanted_W (c : Fin n → Fin 3) (V : List Bool → 
     funext i
     by_cases hi : i = p.1 ∨ i = p.2
     · rw [if_pos hi, simColorsW_of_mem p ep.2 c hi]
-      simp only [mergeAt, hi, if_true]
+      simp only [mergeAt_def, hi, if_true]
     · rw [if_neg hi, msgAt_multiCom]
-      simp only [mergeAt, hi, if_false]
+      simp only [mergeAt_def, hi, if_false]
   have hopen : colOpen (fun i => ep.2 (c i)) w.1.2 p =
       colOpen (simColorsW p ep.2 c) (mergeAt p w.1.2 r') p := by
-    unfold colOpen
+    simp only [colOpen_eq]
     rw [mergeAt_fst, mergeAt_snd, simColorsW_of_mem p ep.2 c (Or.inl rfl),
       simColorsW_of_mem p ep.2 c (Or.inr rfl)]
   show (if edgeIdxOfMsg (edgeCount G) (V (Strategy.encodeMsgs (List.ofFn fun i =>
@@ -504,12 +504,12 @@ private theorem colSimAttemptPlanted_H (c : Fin n → Fin 3) (V : List Bool → 
     funext i
     by_cases hi : i = p.1 ∨ i = p.2
     · rw [if_pos hi]
-      simp only [mergeAt, hi, if_true]
+      simp only [mergeAt_def, hi, if_true]
     · rw [if_neg hi, msgAt_multiCom]
-      simp only [mergeAt, hi, if_false]
+      simp only [mergeAt_def, hi, if_false]
   have hopen : colOpen (fun i => ep.2 (c i)) w.1.2 p =
       colOpen (fun i => ep.2 (c i)) (mergeAt p w.1.2 r') p := by
-    unfold colOpen
+    simp only [colOpen_eq]
     rw [mergeAt_fst, mergeAt_snd]
   show (if edgeIdxOfMsg (edgeCount G) (V (Strategy.encodeMsgs (List.ofFn fun i =>
       if i = p.1 ∨ i = p.2 then

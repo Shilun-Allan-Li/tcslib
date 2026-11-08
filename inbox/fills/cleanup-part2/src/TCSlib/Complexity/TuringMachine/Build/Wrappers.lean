@@ -249,6 +249,13 @@ def emitCfg {input : List Bool} (emb : S → H) (ret : H)
   workTapePos := c.workTapePos
   output := pre ++ c.output
 
+/-- The forwarded configuration's state: the embedded source state while the source runs,
+the return state once it has halted. -/
+theorem emitCfg_state {input : List Bool} (emb : S → H) (ret : H) (pre : List Bool)
+    (c : Cfg k Bool S input) :
+    (emitCfg emb ret pre c).state = some ((c.state.map emb).getD ret) :=
+  rfl
+
 /-- Applying a forwarded action preserves the source fields and appends its
 optional emission after the host prefix, including when that action halts.
 **Proof sketch.** The state, input head, work tapes, and work heads agree

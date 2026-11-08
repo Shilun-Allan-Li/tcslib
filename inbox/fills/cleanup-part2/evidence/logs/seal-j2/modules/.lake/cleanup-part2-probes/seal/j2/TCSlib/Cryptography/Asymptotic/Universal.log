@@ -1,0 +1,115 @@
+START 2026-11-08T05:57:50.052326+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean sha256=69d347af2298653d810b9c54deff257a4c59aa0177e2de1b66e8da8ad1524530
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=118 active=118 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1380:85: error: Type mismatch
+  hs
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1381:85: error: Type mismatch
+  ho
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).output =
+    out
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).output =
+    out
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1392:74: error: Application type mismatch: The argument
+  hs
+has type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+in the application
+  And.intro hs
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1507:2: error: Type mismatch
+  ofFn_padFin_eq_take p w
+has type
+  List.ofFn (padFin p w) = List.take p (w ++ List.replicate p false)
+but is expected to have type
+  (List.ofFn fun i => w.getD (↑i) false) = List.take p (w ++ List.replicate p false)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1551:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1633:9: error: Tactic `rcases` failed: `x✝ : PolyTimeComputable fun y =>
+  pairEncode (pairEncode ((y.length + 1) ^ 3).bits (univCode y)) (univArg y)` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1693:9: error: Invalid `⟨...⟩` notation: The expected type `(fUniversal c).Easy` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1694:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1991:60: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1992:49: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1997:58: error: Application type mismatch: The argument
+  e
+has type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin ((fUniversal c).inLen.eval n) → Bool)
+in the application
+  e.prodCongr
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:1999:38: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.341 ↔ ?m.341
+but is expected to have type
+  Invert w ↔
+    ∃ x',
+      A.runAt n (List.ofFn ((fUniversal c).f n (e' w).1)) (e' w).2 = List.ofFn x' ∧
+        (fUniversal c).f n x' = (fUniversal c).f n (e' w).1
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:2027:69: error: Application type mismatch: The argument
+  e (cf, w.1.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  padStr_eq_ofFn_fUniversal_f c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:2029:72: error: Application type mismatch: The argument
+  e (cf, w.1.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  exists_preimage_of_fUniversal_eq c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1))
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal.lean:2068:52: warning: unused variable `hc`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/Universal): no fresh .olean produced
+
+END 2026-11-08T05:58:09.007008+00:00 RC 1 elapsed=19.0s pid=30962 maxrss=2748108KiB

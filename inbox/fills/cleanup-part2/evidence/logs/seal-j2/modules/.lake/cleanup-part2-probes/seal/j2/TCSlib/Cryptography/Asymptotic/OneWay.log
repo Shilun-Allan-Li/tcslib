@@ -1,0 +1,141 @@
+START 2026-11-08T05:54:37.716826+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean sha256=5bed41dd909f58fdf43558141aa5e4a5c1071e0afa6d4f31b8a79051584fae53
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=66 active=66 already=0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1312:59: error: Type mismatch
+  PolyExpr.eval_mono B.coins (hle n)
+has type
+  B.coins.eval n ≤ B.coins.eval (𝓕.outLen.eval n)
+but is expected to have type
+  B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1430:2: error: Type mismatch
+  hFx n ((blocks (q.eval n) (𝓕.inLen.eval n)) x i)
+has type
+  F (NUPPT.advInput n (List.ofFn ((blocks (q.eval n) (𝓕.inLen.eval n)) x i))) =
+    List.ofFn (𝓕.f n ((blocks (q.eval n) (𝓕.inLen.eval n)) x i))
+but is expected to have type
+  F (pairEncode (List.replicate n true) (List.ofFn fun j => x (finProdFinEquiv (i, j)))) =
+    List.ofFn (OneWay.prodFun (𝓕.f n) (q.eval n) ((blocks (q.eval n) (𝓕.inLen.eval n)) x) i)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1483:2: error: Type mismatch
+  congrFun hxs i
+has type
+  prodFun f q (B (prodFun f q (xs, r).1) (xs, r).2) i = prodFun f q (xs, r).1 i
+but is expected to have type
+  f (B (prodFun f q (xs, r).1) (xs, r).2 i) = f ((xs, r).1 i)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1505:20: error: Function expected at
+  hμ
+but this term has type
+  Negligible fun n => ↑(p.eval n) * 2⁻¹ ^ n
+
+Note: Expected a function because this term is being applied to the argument
+  0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1505:9: error: Tactic `rcases` failed: `x✝ : ?m.291` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1650:15: error: Type mismatch
+  hFx n a
+has type
+  F (NUPPT.advInput n (List.ofFn a)) = List.ofFn (𝓕.f n a)
+but is expected to have type
+  F (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (𝓕.f n a)
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1679:6: error: Tactic `rfl` failed: The left-hand side
+  fun j_1 => x'' (finProdFinEquiv (j, j_1))
+is not definitionally equal to the right-hand side
+  (FunFamily.blocks ((yaoBlocks qw).eval n) (𝓕.inLen.eval n)) x'' j
+
+case h
+𝓕 : FunFamily
+h : 𝓕.WeakOneWay
+qw : PolyExpr
+hqw : ∀ (n : ℕ), 0 < qw.eval n
+hhard : ∀ (A : NUPPT), ∃ n₀, ∀ n ≥ n₀, 𝓕.invProbAt A n ≤ 1 - 1 / ↑(qw.eval n)
+A' : NUPPT
+hneg : ¬Negligible fun n => (𝓕.prod (yaoBlocks qw)).invProbAt A' n
+c : ℕ
+hc : ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 / ↑n ^ c ≤ |(𝓕.prod (yaoBlocks qw)).invProbAt A' n|
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hFx : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+hFe_spec :
+  ∀ (n : ℕ) (a : Fin (𝓕.inLen.eval n) → Bool),
+    F (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (𝓕.f n a)
+hm : ∀ (n : ℕ), 1 ≤ n → 0 < (yaoBlocks qw).eval n
+A : NUPPT
+hA :
+  ∀ (n : ℕ),
+    1 ≤ n →
+      invProb (𝓕.f n)
+            (OneWay.yaoInverter (𝓕.f n) (OneWay.yaoB 𝓕.inLen 𝓕.outLen (yaoBlocks qw) A' n)
+              ((yaoRounds qw c).eval n + 1)) -
+          (↑((yaoRounds qw c).eval n) + 1) * (1 / 2) ^ n ≤
+        invProbOpt (𝓕.f n) (A.inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n))
+n₀ : ℕ
+hn₀ : ∀ n ≥ n₀, 𝓕.invProbAt A n ≤ 1 - 1 / ↑(qw.eval n)
+n₁ : ℕ
+hn₁ :
+  ∀ n ≥ n₁,
+    ∀ {α β ρ : Type} [inst : Fintype α] [inst_1 : Inhabited α] [inst_2 : DecidableEq β] [inst_3 : Fintype ρ]
+      [Nonempty ρ] (f : α → β) (B : (Fin ((yaoBlocks qw).eval n) → β) → ρ → Fin ((yaoBlocks qw).eval n) → α),
+      1 / ↑n ^ c ≤ invProb (OneWay.prodFun f ((yaoBlocks qw).eval n)) B →
+        1 - 1 / ↑(qw.eval n) + (↑((yaoRounds qw c).eval n) + 1) * 2⁻¹ ^ n <
+          invProb f (OneWay.yaoInverter f B ((yaoRounds qw c).eval n + 1))
+n : ℕ
+hn : n ≥ max 1 (max n₀ n₁)
+hlow : 1 / ↑n ^ c ≤ (𝓕.prod (yaoBlocks qw)).invProbAt A' n
+hn1 : 1 ≤ n
+hnn₀ : n₀ ≤ n
+hnn₁ : n₁ ≤ n
+xs : Fin ((yaoBlocks qw).eval n) → Fin (𝓕.inLen.eval n) → Bool
+r : A'.Coins n
+x'' : Fin ((yaoBlocks qw).eval n * 𝓕.inLen.eval n) → Bool
+hx'' :
+  A'.runAt n
+      (List.ofFn
+        ((OneWay.blocksE ((yaoBlocks qw).eval n) (𝓕.outLen.eval n)).symm
+          (OneWay.prodFun (𝓕.f n) ((yaoBlocks qw).eval n) (xs, r).1)))
+      (xs, r).2 =
+    List.ofFn x''
+hf :
+  OneWay.prodFun (𝓕.f n) ((yaoBlocks qw).eval n) ((FunFamily.blocks ((yaoBlocks qw).eval n) (𝓕.inLen.eval n)) x'') =
+    OneWay.prodFun (𝓕.f n) ((yaoBlocks qw).eval n) (xs, r).1
+j : Fin ((yaoBlocks qw).eval n)
+⊢ (fun j_1 => x'' (finProdFinEquiv (j, j_1))) = (FunFamily.blocks ((yaoBlocks qw).eval n) (𝓕.inLen.eval n)) x'' j
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1747:52: error: Type mismatch
+  rfl
+has type
+  ?m.149 = ?m.149
+but is expected to have type
+  2 * ℓ + A'.coinLen n = A.coinLen n
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1809:22: error: Function expected at
+  h.hard A
+but this term has type
+  Negligible fun n => 𝓕.invProbAt A n
+
+Note: Expected a function because this term is being applied to the argument
+  1
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1809:9: error: Tactic `rcases` failed: `x✝ : ?m.18` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1823:4: error: Type mismatch
+  NUPPT.inArg_layout ?m.27 ?m.28 ?m.29 ?m.30
+has type
+  NUPPT.inArg (NUPPT.layout ?m.27 ?m.28 ?m.29 ?m.30) = ?m.28
+but is expected to have type
+  NUPPT.inArg (pairEncode (pairEncode (NUPPT.advInput n y) []) (List.ofFn r)) = y
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1857:22: error: Function expected at
+  h.hard A
+but this term has type
+  Negligible fun n => (FunFamily.ofString id PolyExpr.var).invProbAt A n
+
+Note: Expected a function because this term is being applied to the argument
+  0
+.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay.lean:1857:9: error: Tactic `rcases` failed: `x✝ : ?m.17` is not an inductive datatype
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/j2/TCSlib/Cryptography/Asymptotic/OneWay): no fresh .olean produced
+
+END 2026-11-08T05:54:55.684446+00:00 RC 1 elapsed=18.0s pid=30462 maxrss=2713620KiB

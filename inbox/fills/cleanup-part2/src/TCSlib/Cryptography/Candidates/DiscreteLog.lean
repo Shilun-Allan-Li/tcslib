@@ -309,9 +309,7 @@ theorem expF_injective {i : List Bool} (h : ExpValid i) : Function.Injective (ex
   rw [orderOf_expUnit h] at h3
   have hx : x.val < dlM i := lt_of_lt_of_eq (ZMod.val_lt x) (expOrd_of_valid h)
   have hy : y.val < dlM i := lt_of_lt_of_eq (ZMod.val_lt y) (expOrd_of_valid h)
-  apply ZMod.val_injective
-  unfold Nat.ModEq at h3
-  rwa [Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy] at h3
+  exact ZMod.val_injective _ (h3.eq_of_lt_of_lt hx hy)
 
 /-! ## Instance generators and the discrete-log experiment -/
 
@@ -492,7 +490,7 @@ theorem expGenFun_poly {V : List Bool → Prop} (G : ExpGroupGen V) : PolyTimeCo
       (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const (List.replicate G.n₀ true)))
     convert h using 1
     funext z
-    simp [Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
+    simp [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have hf : PolyTimeComputable fun z =>
       pairEncode (G.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z))) [] :=
     (G.gen.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout

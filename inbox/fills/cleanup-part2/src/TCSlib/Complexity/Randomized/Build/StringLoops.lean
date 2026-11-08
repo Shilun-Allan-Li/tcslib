@@ -5,6 +5,8 @@ Authors: TCSlib contributors
 -/
 import Mathlib.Data.Bool.Count
 import TCSlib.Complexity.Randomized.Build.StateLoop
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassP.BinaryArith.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -131,15 +133,16 @@ theorem start_poly : PolyTimeComputable start :=
 /-- The step is polynomial-time (`Complexity.polyTimeComputable_ite` on the head bit). -/
 theorem step_poly : PolyTimeComputable step := by
   have hp : PolyTimeComputable fun v => [(pairFstD (pairSndD v)).headD false] :=
-    headBit_poly.comp rest_poly
-  have h := (tail_poly.comp rest_poly).pairEncode (polyTimeComputable_ite hp
+    polyTimeComputable_headD.comp rest_poly
+  have h := (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp rest_poly).pairEncode (polyTimeComputable_ite hp
     (((cons_poly true).comp trues_poly).pairEncode falses_poly)
     (trues_poly.pairEncode ((cons_poly true).comp falses_poly)))
   convert h using 1
 
 /-- The acceptance test is polynomial-time. -/
 theorem acc_poly : PolyTimeComputable fun v => [acc v] :=
-  isNil_poly.comp rest_poly
+  polyTimeComputable_isNil.comp rest_poly
 
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out :=
@@ -274,10 +277,10 @@ theorem xorBit_poly : PolyTimeComputable fun v =>
     [xor ((pairFstD (pairSndD v)).headD false)
       ((pairFstD (pairSndD (pairSndD v))).headD false)] := by
   have hpa : PolyTimeComputable fun v => [(pairFstD (pairSndD v)).headD false] :=
-    headBit_poly.comp fstRest_poly
+    polyTimeComputable_headD.comp fstRest_poly
   have hpb : PolyTimeComputable fun v => [(pairFstD (pairSndD (pairSndD v))).headD false] :=
-    headBit_poly.comp sndRest_poly
-  exact xor_poly hpa hpb
+    polyTimeComputable_headD.comp sndRest_poly
+  exact BinArith.polyTimeComputable_xor hpa hpb
 
 /-- The initial state is polynomial-time. -/
 theorem start_poly : PolyTimeComputable start :=
@@ -286,16 +289,18 @@ theorem start_poly : PolyTimeComputable start :=
 
 /-- The step is polynomial-time. -/
 theorem step_poly : PolyTimeComputable step :=
-  (tail_poly.comp fstRest_poly).pairEncode
-    ((tail_poly.comp sndRest_poly).pairEncode (accum_poly.append xorBit_poly))
+  (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp fstRest_poly).pairEncode
+    ((((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp sndRest_poly).pairEncode (accum_poly.append xorBit_poly))
 
 /-- The acceptance test is polynomial-time. -/
 theorem acc_poly : PolyTimeComputable fun v => [acc v] := by
   have ha : PolyTimeComputable fun v => [decide (pairFstD (pairSndD v) = [])] :=
-    isNil_poly.comp fstRest_poly
+    polyTimeComputable_isNil.comp fstRest_poly
   have hb : PolyTimeComputable fun v => [decide (pairFstD (pairSndD (pairSndD v)) = [])] :=
-    isNil_poly.comp sndRest_poly
-  exact or_poly ha hb
+    polyTimeComputable_isNil.comp sndRest_poly
+  exact polyTimeComputable_or ha hb
 
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out := accum_poly
@@ -324,7 +329,7 @@ theorem orbit_length_le (z : List Bool) (i : ℕ) (hi : i ≤ rounds z) :
     (orbit start step z i).length ≤ 5 * z.length + 4 := by
   rw [orbit_eq z i hi, length_pairEncode, length_pairEncode, List.length_drop, List.length_drop,
     List.length_take, List.length_zipWith]
-  have := length_pairFstD_add_pairSndD_le z
+  have := length_pair_components_le z
   omega
 
 /-- Before round `rounds z` both remaining components are nonempty, so `acc` is `false`. -/
@@ -403,19 +408,21 @@ theorem flag_eq (a b : List Bool) (i : ℕ) :
 
 /-- The step is polynomial-time. -/
 theorem step_poly : PolyTimeComputable step :=
-  (tail_poly.comp XorLoop.fstRest_poly).pairEncode
-    ((tail_poly.comp XorLoop.sndRest_poly).pairEncode
+  (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp XorLoop.fstRest_poly).pairEncode
+    ((((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp XorLoop.sndRest_poly).pairEncode
       (polyTimeComputable_ite XorLoop.xorBit_poly (polyTimeComputable_const [true])
         XorLoop.accum_poly))
 
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out := by
   have ha : PolyTimeComputable fun v => [decide (pairFstD (pairSndD v) = [])] :=
-    isNil_poly.comp XorLoop.fstRest_poly
+    polyTimeComputable_isNil.comp XorLoop.fstRest_poly
   have hb : PolyTimeComputable fun v => [decide (pairFstD (pairSndD (pairSndD v)) = [])] :=
-    isNil_poly.comp XorLoop.sndRest_poly
+    polyTimeComputable_isNil.comp XorLoop.sndRest_poly
   have hc : PolyTimeComputable fun v => [decide (pairSndD (pairSndD (pairSndD v)) = [])] :=
-    isNil_poly.comp XorLoop.accum_poly
+    polyTimeComputable_isNil.comp XorLoop.accum_poly
   exact polyTimeComputable_and (polyTimeComputable_and ha hb) hc
 
 /-- Two words ending in one bit each are equal iff their bodies and their last bits are. -/
@@ -460,7 +467,7 @@ theorem orbit_eq (z : List Bool) : ∀ i ≤ XorLoop.rounds z, orbit XorLoop.sta
 theorem orbit_length_le (z : List Bool) (i : ℕ) (hi : i ≤ XorLoop.rounds z) :
     (orbit XorLoop.start step z i).length ≤ 5 * z.length + 5 := by
   rw [orbit_eq z i hi, length_pairEncode, length_pairEncode, List.length_drop, List.length_drop]
-  have := length_pairFstD_add_pairSndD_le z
+  have := length_pair_components_le z
   have := length_flag_le (pairFstD z) (pairSndD z) i
   omega
 
@@ -615,7 +622,7 @@ theorem acc_poly (b : PolyExpr) : PolyTimeComputable fun v => [acc b v] := by
     convert lenLe_comp (polyTimeComputable_const []) (unaryPoly_comp b param_poly) using 1
     funext v
     simp [blk]
-  exact or_poly h1 h2
+  exact polyTimeComputable_or h1 h2
 
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out := accum_poly
@@ -643,7 +650,7 @@ and `acc_i` the concatenation of `i` chunks `g (block j)`; each block has length
 `k ≤ b(|z|)` (`PolyExpr.eval_mono`, `Complexity.length_pairFstD_le`), so each chunk has length
 at most `C (b(|z|) + 1)^c`, and `StateLoop.length_flatMap_range_le` bounds `|acc_i|` by
 `i · C (b(|z|) + 1)^c ≤ |z| · C (b(|z|) + 1)^c` since `i ≤ |snd z| / k ≤ |z|`
-(`Nat.div_le_self`, `length_pairFstD_add_pairSndD_le`); `PolyExpr.eval_subst` and
+(`Nat.div_le_self`, `length_pair_components_le`); `PolyExpr.eval_subst` and
 `PolyExpr.eval_normal` identify the bound with the stated expression. -/
 theorem orbit_length_le (b : PolyExpr) (g : List Bool → List Bool) (C c : ℕ)
     (hg : ∀ y, (g y).length ≤ C * (y.length + 1) ^ c) (z : List Bool) (i : ℕ)
@@ -653,7 +660,7 @@ theorem orbit_length_le (b : PolyExpr) (g : List Bool → List Bool) (C c : ℕ)
         (.add (.const 2) (.mul .var ((PolyExpr.normal C c).subst b)))).eval z.length := by
   rw [orbit_eq, length_pairEncode, List.length_drop]
   have hk : b.eval (pairFstD z).length ≤ b.eval z.length := b.eval_mono (length_pairFstD_le z)
-  have hzs := length_pairFstD_add_pairSndD_le z
+  have hzs := length_pair_components_le z
   have hi' : i ≤ z.length :=
     hi.trans ((Nat.div_le_self _ _).trans (by omega))
   have hchunk : ∀ j < i, (g (((pairSndD z).drop (j * b.eval (pairFstD z).length)).take
