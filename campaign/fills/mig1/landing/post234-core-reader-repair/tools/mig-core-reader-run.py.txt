@@ -1,0 +1,16 @@
+from pathlib import Path
+import datetime,hashlib,json,os,re,subprocess,sys,time
+W=Path('/private/tmp/mig-post234-core-reader-repair')
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+label,file=sys.argv[1:];p=W/'project'/file;out=W/'runs';out.mkdir(exist_ok=True)
+assert not (out/(label+'-run.json')).exists()
+argv=['bash',str(R/'devtools/seyoon/leanelab.sh'),str(W/'project'),'/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig-post234-native2',str(p)]
+sha=lambda b:hashlib.sha256(b).hexdigest()
+x=dict(argv=argv,start_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),input_sha256=sha(p.read_bytes()),source_head='ea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533',
+ context_source='f631647190998272127fcd37b7a5d1e61fac4f3f',root_authorized_immutable_context=True,local_slots=os.environ.get('TCSLIB_LEAN_SLOTS'),machine_cap=5,plain_managed=True,no_compiled_output=True)
+assert x['local_slots']=='3';(out/(label+'-request.json')).write_text(json.dumps(x,indent=2)+'\n')
+t=time.monotonic()
+with (out/(label+'.out')).open('wb') as f:cp=subprocess.run(argv,stdout=f,stderr=subprocess.STDOUT)
+b=(out/(label+'.out')).read_bytes();s=b.decode();x.update(exit=cp.returncode,seconds=time.monotonic()-t,end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),output_bytes=len(b),output_sha256=sha(b),
+ errors=len(re.findall(r'(?m)^.*:\d+:\d+: error(?:\([^)]*\))?:',s)),warnings=len(re.findall(r'(?m)^.*:\d+:\d+: warning(?:\([^)]*\))?:',s)),sorry_warnings=s.count("declaration uses 'sorry'"))
+(out/(label+'-run.json')).write_text(json.dumps(x,indent=2)+'\n');print(json.dumps(x,indent=2));print(s[-10000:] if cp.returncode else '\n'.join(s.splitlines()[:8]))

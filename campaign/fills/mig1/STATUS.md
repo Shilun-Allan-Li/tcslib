@@ -2,7 +2,7 @@
 
 ## Current post-#234 integration checkpoint (2026-11-08 UTC)
 
-**Not yet clear to merge: #233.** Sourceea1c51a895c4f7f35ce0b9e6a1b4726d0a91d533 includes the reviewed six public-reader body repairs and two explicitly user-approved equivalent private statement transports. Frozen hypothetical native/14whole-header-body seal/232pairedcontrol/equality checks pass; actual full native/replay after these changes remains pending. An explicit Core Option.map argument caught in final review is being mechanically replaced in a separate recorded supplement before the next source validation. No new API/import/machine change. The priorf631 native2 passed12 owners with only3unchangedRAM admissions; it is not a pass at the new source. CurrentBASE compiled accounting is frozen; fresh25BASE screen runs, HEAD held for final source. Codexgate118 selected, not prepared/dispatched.
+**Not yet clear to merge: #233.** Finalsource`eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` includes six public-reader body repairs, the two explicitly user-approved equivalent private statement transports, and the final Core-reader constructor repair. Actualnative3 PASS12 on one wholeMAC5 clone; only3unchangedRAM admissions remain. Fourteen scoped whole-header/body seals/232pairedcontrols and the final Loopthree-target/40control supplement pass with their recorded context pins. Full394currentMMIG3 replay and fresh25HEAD comparison run; BASE25complete1702. CurrentHEAD compiled accounting/AX and fullsourceQA remain. Codexgate118 selected, not prepared/dispatched. No new API/import/machine/debt decision.
 
 Historical delivery and validation chronology follows.
 

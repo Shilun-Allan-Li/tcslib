@@ -1,0 +1,9 @@
+Prove all17 named-machine specifications and the two already-gated forwarding proofs, route the retained existential rows through those contracts, and retire356 private Catalog declarations plus six superseded public aliases. The three forwarding exports retain time coefficient22 and payload-space coefficient1; the loop coefficient remains10. The three frozen RAM admissions remain.
+
+Both prerequisites #230 and #234 are merged. The current landing consumes their published configuration, first-entry and zero-space APIs and preserves the exact redirect-space theorem in Wrappers. Six reader repairs replace inherited foreign-definition reads; Seyoon explicitly approved two equivalent private statement transports, whose complete old/new types are kernel-equal by rfl. A final constructor proof avoids explicit Core Option.map unfolding. Original Claude commits retain their attribution; maintainer repairs are separate Codex commits. Public statements, executable machine data and the approved import scope are preserved.
+
+Current final source `eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` passed the actual12-owner dependency chain on a complete MAC5 clone, with zero errors and only3 unchanged RAM admissions. The14 refreshed consumer scopes pass whole-header/body opacity checks with232 paired controls; the final Loop correction has its own fresh three-target seal and40 paired controls. Full-module legacy warnings and the generated rewind matcher's ineffective control are explicitly disclosed; no global opacity claim is made.
+
+A fresh394-module merged-tree replay from whole MAC5 is running. Final compiled accounting/axiom comparison and the fresh full25-source HEAD comparison are in progress. Earlier b1/mmig1/mmig2, producer sweeps and hypothetical probes remain historical at their original pins. Records: `campaign/fills/mig1/landing/` and `campaign/gates/118-mig1-landing/`.
+
+**Not yet clear to merge: gate118 (Codex selected) is not yet ready to dispatch.**

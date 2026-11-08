@@ -1,0 +1,137 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Simulation
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let specs : List (String × List Name) := [("Action.apply_inputPos", [`Action.apply_inputPos, (`Turing).append `Action.apply_inputPos, (`Turing.FinTM).append `Action.apply_inputPos]),
+    ("Action.apply_output", [`Action.apply_output, (`Turing).append `Action.apply_output, (`Turing.FinTM).append `Action.apply_output]),
+    ("Action.apply_state", [`Action.apply_state, (`Turing).append `Action.apply_state, (`Turing.FinTM).append `Action.apply_state]),
+    ("Action.apply_workTapePos", [`Action.apply_workTapePos, (`Turing).append `Action.apply_workTapePos, (`Turing.FinTM).append `Action.apply_workTapePos]),
+    ("Action.apply_workTapes", [`Action.apply_workTapes, (`Turing).append `Action.apply_workTapes, (`Turing.FinTM).append `Action.apply_workTapes]),
+    ("Cfg.init_inputPos", [`Cfg.init_inputPos, (`Turing).append `Cfg.init_inputPos, (`Turing.FinTM).append `Cfg.init_inputPos]),
+    ("Cfg.init_output", [`Cfg.init_output, (`Turing).append `Cfg.init_output, (`Turing.FinTM).append `Cfg.init_output]),
+    ("Cfg.init_state", [`Cfg.init_state, (`Turing).append `Cfg.init_state, (`Turing.FinTM).append `Cfg.init_state]),
+    ("Cfg.init_workTapePos", [`Cfg.init_workTapePos, (`Turing).append `Cfg.init_workTapePos, (`Turing.FinTM).append `Cfg.init_workTapePos]),
+    ("Cfg.init_workTapes", [`Cfg.init_workTapes, (`Turing).append `Cfg.init_workTapes, (`Turing.FinTM).append `Cfg.init_workTapes]),
+    ("Cfg.inputSymbol_of_end", [`Cfg.inputSymbol_of_end, (`Turing).append `Cfg.inputSymbol_of_end, (`Turing.FinTM).append `Cfg.inputSymbol_of_end]),
+    ("Cfg.inputSymbol_of_zero", [`Cfg.inputSymbol_of_zero, (`Turing).append `Cfg.inputSymbol_of_zero, (`Turing.FinTM).append `Cfg.inputSymbol_of_zero]),
+    ("Cfg.mapState_state", [`Cfg.mapState_state, (`Turing).append `Cfg.mapState_state, (`Turing.FinTM).append `Cfg.mapState_state]),
+    ("Cfg.mapState_workTapePos", [`Cfg.mapState_workTapePos, (`Turing).append `Cfg.mapState_workTapePos, (`Turing.FinTM).append `Cfg.mapState_workTapePos]),
+    ("Cfg.mapState_workTapes", [`Cfg.mapState_workTapes, (`Turing).append `Cfg.mapState_workTapes, (`Turing.FinTM).append `Cfg.mapState_workTapes]),
+    ("Cfg.workTapeSymbols_eq", [`Cfg.workTapeSymbols_eq, (`Turing).append `Cfg.workTapeSymbols_eq, (`Turing.FinTM).append `Cfg.workTapeSymbols_eq]),
+    ("Fin.addCases_left", [`Fin.addCases_left, (`Turing).append `Fin.addCases_left, (`Turing.FinTM).append `Fin.addCases_left]),
+    ("Fin.addCases_right", [`Fin.addCases_right, (`Turing).append `Fin.addCases_right, (`Turing.FinTM).append `Fin.addCases_right]),
+    ("Fin.val_one", [`Fin.val_one, (`Turing).append `Fin.val_one, (`Turing.FinTM).append `Fin.val_one]),
+    ("Function.update_eq_self", [`Function.update_eq_self, (`Turing).append `Function.update_eq_self, (`Turing.FinTM).append `Function.update_eq_self]),
+    ("List.length_nil", [`List.length_nil, (`Turing).append `List.length_nil, (`Turing.FinTM).append `List.length_nil]),
+    ("List.nil_append", [`List.nil_append, (`Turing).append `List.nil_append, (`Turing.FinTM).append `List.nil_append]),
+    ("MultiTapeTM.initCfg_eq", [`MultiTapeTM.initCfg_eq, (`Turing).append `MultiTapeTM.initCfg_eq, (`Turing.FinTM).append `MultiTapeTM.initCfg_eq]),
+    ("MultiTapeTM.runFrom_add", [`MultiTapeTM.runFrom_add, (`Turing).append `MultiTapeTM.runFrom_add, (`Turing.FinTM).append `MultiTapeTM.runFrom_add]),
+    ("MultiTapeTM.runFrom_of_halt", [`MultiTapeTM.runFrom_of_halt, (`Turing).append `MultiTapeTM.runFrom_of_halt, (`Turing.FinTM).append `MultiTapeTM.runFrom_of_halt]),
+    ("MultiTapeTM.runFrom_succ_eq_step", [`MultiTapeTM.runFrom_succ_eq_step, (`Turing).append `MultiTapeTM.runFrom_succ_eq_step, (`Turing.FinTM).append `MultiTapeTM.runFrom_succ_eq_step]),
+    ("MultiTapeTM.runFrom_succ_eq_step'", [`MultiTapeTM.runFrom_succ_eq_step', (`Turing).append `MultiTapeTM.runFrom_succ_eq_step', (`Turing.FinTM).append `MultiTapeTM.runFrom_succ_eq_step']),
+    ("MultiTapeTM.runFrom_zero", [`MultiTapeTM.runFrom_zero, (`Turing).append `MultiTapeTM.runFrom_zero, (`Turing.FinTM).append `MultiTapeTM.runFrom_zero]),
+    ("MultiTapeTM.step_of_some", [`MultiTapeTM.step_of_some, (`Turing).append `MultiTapeTM.step_of_some, (`Turing.FinTM).append `MultiTapeTM.step_of_some]),
+    ("Nat.cast_zero", [`Nat.cast_zero, (`Turing).append `Nat.cast_zero, (`Turing.FinTM).append `Nat.cast_zero]),
+    ("Option.getD_none", [`Option.getD_none, (`Turing).append `Option.getD_none, (`Turing.FinTM).append `Option.getD_none]),
+    ("Option.getD_some", [`Option.getD_some, (`Turing).append `Option.getD_some, (`Turing.FinTM).append `Option.getD_some]),
+    ("Option.map", [`Option.map, (`Turing).append `Option.map, (`Turing.FinTM).append `Option.map]),
+    ("Option.map_none", [`Option.map_none, (`Turing).append `Option.map_none, (`Turing.FinTM).append `Option.map_none]),
+    ("Option.map_some", [`Option.map_some, (`Turing).append `Option.map_some, (`Turing.FinTM).append `Option.map_some]),
+    ("VirtualTag_iff", [`VirtualTag_iff, (`Turing).append `VirtualTag_iff, (`Turing.FinTM).append `VirtualTag_iff]),
+    ("branchInit", [`branchInit, (`Turing).append `branchInit, (`Turing.FinTM).append `branchInit]),
+    ("branchStart", [`branchStart, (`Turing).append `branchStart, (`Turing.FinTM).append `branchStart]),
+    ("branchTM_State", [`branchTM_State, (`Turing).append `branchTM_State, (`Turing.FinTM).append `branchTM_State]),
+    ("branchTM_k", [`branchTM_k, (`Turing).append `branchTM_k, (`Turing.FinTM).append `branchTM_k]),
+    ("bufferTape_nil", [`bufferTape_nil, (`Turing).append `bufferTape_nil, (`Turing.FinTM).append `bufferTape_nil]),
+    ("bufferedFirstCfg_init", [`bufferedFirstCfg_init, (`Turing).append `bufferedFirstCfg_init, (`Turing.FinTM).append `bufferedFirstCfg_init]),
+    ("bufferedFirstCfg_run", [`bufferedFirstCfg_run, (`Turing).append `bufferedFirstCfg_run, (`Turing.FinTM).append `bufferedFirstCfg_run]),
+    ("bufferedSecondCfg_state", [`bufferedSecondCfg_state, (`Turing).append `bufferedSecondCfg_state, (`Turing.FinTM).append `bufferedSecondCfg_state]),
+    ("c", [`c, (`Turing).append `c, (`Turing.FinTM).append `c]),
+    ("captureCfg_inputPos", [`captureCfg_inputPos, (`Turing).append `captureCfg_inputPos, (`Turing.FinTM).append `captureCfg_inputPos]),
+    ("captureCfg_output", [`captureCfg_output, (`Turing).append `captureCfg_output, (`Turing.FinTM).append `captureCfg_output]),
+    ("captureCfg_state", [`captureCfg_state, (`Turing).append `captureCfg_state, (`Turing.FinTM).append `captureCfg_state]),
+    ("captureCfg_workTapePos", [`captureCfg_workTapePos, (`Turing).append `captureCfg_workTapePos, (`Turing.FinTM).append `captureCfg_workTapePos]),
+    ("captureCfg_workTapes", [`captureCfg_workTapes, (`Turing).append `captureCfg_workTapes, (`Turing.FinTM).append `captureCfg_workTapes]),
+    ("controlCfg", [`controlCfg, (`Turing).append `controlCfg, (`Turing.FinTM).append `controlCfg]),
+    ("dif_neg", [`dif_neg, (`Turing).append `dif_neg, (`Turing.FinTM).append `dif_neg]),
+    ("dif_pos", [`dif_pos, (`Turing).append `dif_pos, (`Turing.FinTM).append `dif_pos]),
+    ("emCallEvalCfg", [`emCallEvalCfg, (`Turing).append `emCallEvalCfg, (`Turing.FinTM).append `emCallEvalCfg]),
+    ("emCallRightCfg", [`emCallRightCfg, (`Turing).append `emCallRightCfg, (`Turing.FinTM).append `emCallRightCfg]),
+    ("fwdMapVirtual", [`fwdMapVirtual, (`Turing).append `fwdMapVirtual, (`Turing.FinTM).append `fwdMapVirtual]),
+    ("hT", [`hT, (`Turing).append `hT, (`Turing.FinTM).append `hT]),
+    ("hagree", [`hagree, (`Turing).append `hagree, (`Turing.FinTM).append `hagree]),
+    ("hback", [`hback, (`Turing).append `hback, (`Turing.FinTM).append `hback]),
+    ("hbranchInit", [`hbranchInit, (`Turing).append `hbranchInit, (`Turing.FinTM).append `hbranchInit]),
+    ("hcT", [`hcT, (`Turing).append `hcT, (`Turing.FinTM).append `hcT]),
+    ("hcap", [`hcap, (`Turing).append `hcap, (`Turing.FinTM).append `hcap]),
+    ("hd", [`hd, (`Turing).append `hd, (`Turing.FinTM).append `hd]),
+    ("he", [`he, (`Turing).append `he, (`Turing.FinTM).append `he]),
+    ("heq", [`heq, (`Turing).append `heq, (`Turing.FinTM).append `heq]),
+    ("hi", [`hi, (`Turing).append `hi, (`Turing.FinTM).append `hi]),
+    ("hin", [`hin, (`Turing).append `hin, (`Turing.FinTM).append `hin]),
+    ("hinit", [`hinit, (`Turing).append `hinit, (`Turing.FinTM).append `hinit]),
+    ("host.step_of_halt", [`host.step_of_halt, (`Turing).append `host.step_of_halt, (`Turing.FinTM).append `host.step_of_halt, `Turing.MultiTapeTM.step_of_halt]),
+    ("host.step_of_some", [`host.step_of_some, (`Turing).append `host.step_of_some, (`Turing.FinTM).append `host.step_of_some, `Turing.MultiTapeTM.step_of_some]),
+    ("hout", [`hout, (`Turing).append `hout, (`Turing.FinTM).append `hout]),
+    ("hp", [`hp, (`Turing).append `hp, (`Turing.FinTM).append `hp]),
+    ("hprefix", [`hprefix, (`Turing).append `hprefix, (`Turing.FinTM).append `hprefix]),
+    ("hq", [`hq, (`Turing).append `hq, (`Turing.FinTM).append `hq]),
+    ("hr", [`hr, (`Turing).append `hr, (`Turing.FinTM).append `hr]),
+    ("hr'", [`hr', (`Turing).append `hr', (`Turing.FinTM).append `hr']),
+    ("hrun", [`hrun, (`Turing).append `hrun, (`Turing.FinTM).append `hrun]),
+    ("hs", [`hs, (`Turing).append `hs, (`Turing.FinTM).append `hs]),
+    ("hstop", [`hstop, (`Turing).append `hstop, (`Turing.FinTM).append `hstop]),
+    ("hw", [`hw, (`Turing).append `hw, (`Turing.FinTM).append `hw]),
+    ("hz", [`hz, (`Turing).append `hz, (`Turing.FinTM).append `hz]),
+    ("id_eq", [`id_eq, (`Turing).append `id_eq, (`Turing.FinTM).append `id_eq]),
+    ("ih", [`ih, (`Turing).append `ih, (`Turing.FinTM).append `ih]),
+    ("incFixedTM_spaceUsed", [`incFixedTM_spaceUsed, (`Turing).append `incFixedTM_spaceUsed, (`Turing.FinTM).append `incFixedTM_spaceUsed]),
+    ("inputSymbolInner", [`inputSymbolInner, (`Turing).append `inputSymbolInner, (`Turing.FinTM).append `inputSymbolInner]),
+    ("leftCfg_inputPos", [`leftCfg_inputPos, (`Turing).append `leftCfg_inputPos, (`Turing.FinTM).append `leftCfg_inputPos]),
+    ("leftCfg_state", [`leftCfg_state, (`Turing).append `leftCfg_state, (`Turing.FinTM).append `leftCfg_state]),
+    ("lenAction", [`lenAction, (`Turing).append `lenAction, (`Turing.FinTM).append `lenAction]),
+    ("lenCfg", [`lenCfg, (`Turing).append `lenCfg, (`Turing.FinTM).append `lenCfg]),
+    ("moveInputPos_zero", [`moveInputPos_zero, (`Turing).append `moveInputPos_zero, (`Turing.FinTM).append `moveInputPos_zero]),
+    ("pairCountTM", [`pairCountTM, (`Turing).append `pairCountTM, (`Turing.FinTM).append `pairCountTM]),
+    ("pairDiagTM_spaceUsed", [`pairDiagTM_spaceUsed, (`Turing).append `pairDiagTM_spaceUsed, (`Turing.FinTM).append `pairDiagTM_spaceUsed]),
+    ("ready", [`ready, (`Turing).append `ready, (`Turing.FinTM).append `ready]),
+    ("ret", [`ret, (`Turing).append `ret, (`Turing.FinTM).append `ret]),
+    ("rightCfg_inputPos", [`rightCfg_inputPos, (`Turing).append `rightCfg_inputPos, (`Turing.FinTM).append `rightCfg_inputPos]),
+    ("rightCfg_output", [`rightCfg_output, (`Turing).append `rightCfg_output, (`Turing.FinTM).append `rightCfg_output]),
+    ("rightCfg_state", [`rightCfg_state, (`Turing).append `rightCfg_state, (`Turing.FinTM).append `rightCfg_state]),
+    ("rightCfg_workTapePos", [`rightCfg_workTapePos, (`Turing).append `rightCfg_workTapePos, (`Turing.FinTM).append `rightCfg_workTapePos]),
+    ("rightCfg_workTapes", [`rightCfg_workTapes, (`Turing).append `rightCfg_workTapes, (`Turing.FinTM).append `rightCfg_workTapes]),
+    ("splitCountCfg", [`splitCountCfg, (`Turing).append `splitCountCfg, (`Turing.FinTM).append `splitCountCfg]),
+    ("sub_eq_add_neg", [`sub_eq_add_neg, (`Turing).append `sub_eq_add_neg, (`Turing.FinTM).append `sub_eq_add_neg]),
+    ("timedBranchCfg", [`timedBranchCfg, (`Turing).append `timedBranchCfg, (`Turing.FinTM).append `timedBranchCfg]),
+    ("timed_control_init", [`timed_control_init, (`Turing).append `timed_control_init, (`Turing.FinTM).append `timed_control_init]),
+    ("timed_read", [`timed_read, (`Turing).append `timed_read, (`Turing.FinTM).append `timed_read]),
+    ("tm.step_of_halt", [`tm.step_of_halt, (`Turing).append `tm.step_of_halt, (`Turing.FinTM).append `tm.step_of_halt, `Turing.MultiTapeTM.step_of_halt]),
+    ("tm.step_of_some", [`tm.step_of_some, (`Turing).append `tm.step_of_some, (`Turing.FinTM).append `tm.step_of_some, `Turing.MultiTapeTM.step_of_some])]
+  for (spelling,candidates) in specs do
+    let mut found : Array Name := #[]
+    for n in candidates do
+      if (env.find? n).isSome && !found.contains n then found := found.push n
+    if found.isEmpty then
+      logInfo m!"ARG_UNRESOLVED|{spelling}"
+    else
+      for n in found do
+        let some ci := env.find? n | throwError "lost name"
+        let kind := match ci with
+          | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+          | .axiomInfo _ => "axiom" | .opaqueInfo _ => "opaque"
+          | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+          | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+        let home := match env.getModuleIdxFor? n with
+          | some i => env.header.moduleNames[i.toNat]!.toString
+          | none => "local"
+        let row := Json.mkObj [("spelling",toJson spelling),("name",toJson n.toString),
+          ("kind",toJson kind),("home",toJson home)]
+        logInfo m!"ARG_KIND|{row.compress}"
+  logInfo "ARG_COMPLETE|all explicit rewrite/unfold heads; no theorem value rendered"
