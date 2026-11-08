@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Encoding.Modular
 import TCSlib.Cryptography.Encoding.ModularDecode
 import TCSlib.Cryptography.Encoding.BinaryArith
+import TCSlib.Cryptography.Encoding.DyadicArithmetic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -19,6 +20,7 @@ set_option autoImplicit false
   defining equations, and their proved length/injectivity guarantees.
 * `ModularDecode`: canonical parsers, rejection equations and statement-phase round trips.
 * `BinaryArith`: endian and polynomial-width adapter statements for existing binary machines.
+* `DyadicArithmetic`: scalar modular addition, multiplication and subtraction statements.
 
 ## References
 
