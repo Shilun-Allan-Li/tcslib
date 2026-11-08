@@ -1,6 +1,6 @@
 {
   "utc": "2026-11-08T08:18:43.153440+00:00",
-  "result": "Both audits CLOSED PASS; #215 merged/MAC7; current #233 combined validation RUNNING",
+  "result": "CLOSED PASS both audits; #215 merged/MAC7; #233 CLEAR after actual combined replay/AX/current merge",
   "gates": {
     "106-r4": {
       "blockers": 0,
@@ -64,7 +64,7 @@
     "modules": 394,
     "input": "whole MAC6/895 objects",
     "session": 2021,
-    "status": "RUNNING; no final result claimed"
+    "status": "COMPLETE PASS0/static0/59; optional PID wrapper log absent, sourcej4 helper/394 rows explicit"
   },
   "recommended_merge_order": [
     215,
@@ -72,12 +72,51 @@
   ],
   "retirement": "Only after actual user merges; seven SG1 schedules and wider FE-LIVE-1 remain scheduled",
   "PR_readiness": {
-    "215": "MERGED by Seyoon; wholeMSG9\u2192MAC7 exact adoption",
-    "233": "NOT YET: closedgate, current50ab exact combinedsource; actual394 replay and20-ownerAX check pending"
+    "215": "MERGED by Seyoon; wholeMSG9\u2192MAC7",
+    "233": "CLEAR; exact current merged source equals passed11b; gateclosed; non-draft/open/mergeable verified; Seyoon merges"
   },
   "current_campaign_snapshot": "oleans-mac7",
   "actual_sg1_merge": "47f067d9ef616ba36a6e9dfb68ed0761d29616d7",
   "current_MIG_head": "50abeae65163f5449d2a2781a94c993284842320",
   "all12_MIG_owner_sources_exact_to_issued55df": true,
-  "all1003_current_MIG_Lean_blobs_equal_running_replay": true
+  "all1003_current_MIG_Lean_blobs_equal_running_replay": true,
+  "actual_combined_replay": {
+    "utc": "2026-11-08T09:15:56.500091+00:00",
+    "result": "PASS",
+    "pipeline_exit": 0,
+    "session": 2021,
+    "source": "11b09440347ca8274562d58b5f90a11cfce56e29",
+    "campaign_base": "8f14c7f1f67ccfb1c03613531abd91fea40c4d46",
+    "snapshot_Lean_base": "df4341236e04a861e65e29d58b35a713f14c819c",
+    "sg1": "b12902832c67210acd737d87d2d0c761bd5b35eb",
+    "mig1": "55df52da9754f04b0c71646df29f83f33ec3aa52",
+    "source_paths": 1003,
+    "changed_source_paths": 17,
+    "modules": 394,
+    "failed": 0,
+    "error_rows": 0,
+    "static_mismatches": 0,
+    "static_total": 59,
+    "recorded_module_execution_rows": 394,
+    "actual_helper_explicit_j4": true,
+    "optional_wrapper_launch_log_produced": false,
+    "input": "whole passed MAC6; APFS clone; no splicing",
+    "output": "oleans-mjoint1",
+    "input_objects": 895,
+    "output_objects": 895,
+    "input_objects_unchanged": true,
+    "changed_objects": 119,
+    "all_outside_replay_scope_equal": true,
+    "no_PR_or_campaign_branch_mutation_by_replay_or_finalizer": true,
+    "scope": "Actual prospective combined SG1+MIG closure from MAC6; no PR or campaign merge by root. Old MSG8/MSG9/MMIG3/MMIG4 retain their own executions and pins."
+  },
+  "fresh_AX": {
+    "owners": 20,
+    "actual_constants": 8077,
+    "comparison_constants": 8078,
+    "unchanged_inherited_WordSize_dependency_closures": 3,
+    "generated_deltas": "Both existing names/type/AX exact; ownership only; fully dispositioned"
+  },
+  "no_own_jobs_running": true,
+  "next_action": "Seyoon merges#233; exact1003-source wholeMJOINT1\u2192MAC8 adoption then scoped retirements/next12.2c"
 }

@@ -1,0 +1,47 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Simulation
+import Lean
+/-! Read-only all-constant axiom scan of the20 owner union after actual combined replay.
+No theorem proof value or type expression is rendered; no source/cache mutation. -/
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let owners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology, `TCSlib.Complexity.ClassP.TimeConstructible, `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.RAMSimulation.WordSize, `TCSlib.Complexity.SpaceComplexity.Machines.Frag, `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.CertShell, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic, `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Loop, `TCSlib.Complexity.TuringMachine.Build.Primitives, `TCSlib.Complexity.TuringMachine.Build.VirtualInput, `TCSlib.Complexity.TuringMachine.Build.Wrappers, `TCSlib.Complexity.TuringMachine.CodeSimulator, `TCSlib.Complexity.TuringMachine.Composition, `TCSlib.Complexity.TuringMachine.Encoding, `TCSlib.Complexity.TuringMachine.Finite, `TCSlib.Complexity.TuringMachine.Robustness.SingleTape, `TCSlib.Complexity.TuringMachine.Simulation]
+  for home in owners do
+    unless (env.getModuleIdx? home).isSome do throwError "missing owner {home}"
+  let entries := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let home := env.header.moduleNames[i.toNat]!
+      if owners.contains home then some (n, ci, home) else none
+    | none => none
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  for (n, ci, home) in entries.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    let row := Json.mkObj [("name", toJson n.toString), ("owner", toJson home.toString),
+      ("private", toJson (isPrivateName n)), ("kind", toJson (kind ci)),
+      ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]
+    logInfo m!"JOINTAX|{row.compress}"
+  logInfo m!"COMPLETE|{entries.length}|owners={owners.length}"

@@ -1,0 +1,52 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Simulation
+import Lean
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  for n in [`Turing.seamCompTM.eq_1, `Turing.MultiTapeTM.indicator.eq_1] do
+    match env.find? n with
+    | none => logInfo m!"BEFORE_ABSENT|{n}"
+    | some ci =>
+      let owner := match env.getModuleIdxFor? n with
+        | some i => env.header.moduleNames[i.toNat]!.toString
+        | none => "CURRENT_PROBE"
+      let ax ← liftCoreM <| Lean.collectAxioms n
+      let row := Json.mkObj [("name",toJson n.toString),("owner",toJson owner),
+        ("typeExpr",toJson (reprStr ci.type)),("axioms",toJson ((ax.qsort Name.lt).toList.map Name.toString))]
+      logInfo m!"BEFORE|{row.compress}"
+#check Turing.MultiTapeTM.indicator.eq_1
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let n := `Turing.MultiTapeTM.indicator.eq_1
+  match env.find? n with
+  | none => throwError "equation missing after explicit consumer"
+  | some ci =>
+    let owner := match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString
+      | none => "CURRENT_PROBE"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    let row := Json.mkObj [("name",toJson n.toString),("owner",toJson owner),
+      ("typeExpr",toJson (reprStr ci.type)),("axioms",toJson ((ax.qsort Name.lt).toList.map Name.toString))]
+    logInfo m!"AFTER|{row.compress}"

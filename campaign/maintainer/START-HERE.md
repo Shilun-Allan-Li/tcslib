@@ -154,13 +154,10 @@ stated).
 
 ## 6. Gate numbering and the current state
 
-Gates are numbered upward; the latest are in `campaign/gates/`. Gate106 round1 (#215, SG-1)
-returned HOLD; its round2 Codex audit returned HOLD0/1/0/15; mechanical closure repairs and Codex round3 preparation are underway. Gates 114 (#222, NatBits) and 115 (#228, E-PAD) are closed and merged. Gate 116
-(#229, the Hierarchy consumer) is closed and merged. Gate **117** is reserved for the
-23 approved reading/resource APIs, CLOSED PASS0/0/0/14 and merged as #230; mac4 is current. Gate118 is reserved
-for draft #233’s MIG-1 landing (Codex selected), awaiting prerequisite#234. Gate119
-round2 is CLOSED PASS0/0/0/17 and #234 is merged; whole passed401/static0/77 snapshot is
-adopted asmac5. Its acknowledged cleanup remains scheduled. F6 current-base refresh and
-scoped MIG integration are underway; HANDOFF§0 has current pins. F6 COMPLETE candidate is draft#235, native owner PASS;
-full validation and selected Codex gate120 preparation continue. Next free: **121**.
-**The current state is HANDOFF §0.**
+Gate106 round4 is CLOSED PASS0/0/0/27; #215 is merged. Gates114/#222,115/#228,
+116/#229,117/#230,119/#234 and120/#235 are closed and merged. Current campaign snapshot
+is wholeMAC7 after exactMSG9 adoption. Gate118 is CLOSED PASS0/0/0/18; #233 is ready,
+with actual combined394 PASS0/static0/59 and fresh20-owner AX validation. Its passed
+wholeMJOINT1 is reserved for exact-tree MAC8 adoption after Seyoon merges. Nextfree121.
+
+The authoritative current state, pins, limits and ordered next steps are HANDOFF §0.

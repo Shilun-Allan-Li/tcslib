@@ -1,0 +1,100 @@
+from pathlib import Path
+import collections
+import datetime
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+
+# Run only after the root has observed the actual replay command exit.
+assert sys.argv[1:] == ["0"], "requires observed successful replay exit"
+scratch = Path(os.environ["TCSLIB_SCRATCH"])
+records = Path("/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4")
+out = records / "campaign/status/2026-11-08-audit-closures/combined-replay-mjoint1"
+prep = json.loads((out / "preparation.json").read_text())
+wt = scratch / "wt-camp"
+
+def git(*args):
+    return subprocess.check_output(["git", "-C", str(wt), *args], text=True).strip()
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def objects(tree):
+    rows = {}
+    for path in sorted(tree.rglob("*.olean")):
+        assert path.stat().st_size > 0
+        rows[path.relative_to(tree).as_posix()] = digest(path)
+    return rows
+
+head = git("rev-parse", "HEAD")
+assert head == prep["prospective_combined_merge"]
+subprocess.run(["git", "-C", str(wt), "cat-file", "-e", head + "^{commit}"], check=True)
+assert not git("status", "--porcelain", "--untracked-files=no")
+source_map = {
+    line.split("\t", 1)[1]: line.split()[2]
+    for line in git("ls-tree", "-r", head).splitlines()
+    if line.split("\t", 1)[1].endswith(".lean")
+}
+assert len(source_map) == 1003 and source_map == prep["source_files"]
+log = scratch / "fills/replay/replay-mjoint1.log"
+lines = log.read_text().splitlines()
+order = (out / "order-mjoint1.txt").read_text().splitlines()
+matches = [re.fullmatch(r"(\S+) exit=(\d+) errors=(\d+) sorry=(\d+)", line) for line in lines]
+rows = [m.groups() for m in matches if m]
+assert len(rows) == len(order) == prep["modules"] == 394
+assert [row[0] for row in rows] == order
+assert all(row[1:3] == ("0", "0") for row in rows)
+assert lines[-1] == "# modules=394 failed=0"
+static = scratch / "fills/replay/replay-mjoint1-static.txt"
+static_match = re.search(r"mismatches (\d+),.*total (\d+)", static.read_text())
+assert static_match and tuple(map(int, static_match.groups())) == (0, 59)
+assert sum(int(row[3]) for row in rows) == 59
+launches = scratch / "fills/replay/replay-mjoint1-launches.log"
+helper = wt / "scripts/lean_check_tree.sh"
+assert helper.read_bytes() == (out / "actual-branch-helper.txt").read_bytes()
+assert 'lean -j4 "$rel.lean" -o "$OL/$rel.olean"' in helper.read_text()
+assert not launches.exists(), "investigate any newly found launch telemetry instead of overwriting it"
+telemetry = dict(
+    wrapper_launch_log_produced=False,
+    reason="The driver's source-env line prepended .elan/bin after the outer wrapper PATH setup; the optional logging wrapper was bypassed.",
+    actual_helper_unchanged=True, actual_helper_explicit_j4=True,
+    module_execution_rows=394,
+    j4_evidence="Captured unchanged actual helper invokes lean -j4 once per serial module; root also observed the actual DetMod process with -j4. No394-row wrapper/PID log is claimed.",
+    future_tooling="Restore wrapper PATH after all environment sourcing when optional PID telemetry is desired.",
+)
+(out / "launch-telemetry-limitation.json").write_text(json.dumps(telemetry, indent=2) + "\n")
+input_before = json.loads((out / "input-objects.json").read_text())
+input_after = objects(scratch / "oleans-mac6")
+output = objects(scratch / "oleans-mjoint1")
+assert len(input_before) == len(input_after) == len(output) == 895
+assert input_before == input_after and set(output) == set(input_before)
+changed = [name for name in output if output[name] != input_before[name]]
+outside = [name for name in changed if name[:-6] not in set(order)]
+assert not outside
+(out / "snapshot-objects.json").write_text(json.dumps({"input_MAC6": input_after, "output_MJOINT1": output, "changed_objects": changed, "outside_scope_changes": outside}, indent=2) + "\n")
+for source in [log, static]:
+    (out / source.name).write_bytes(source.read_bytes())
+(out / "finalize-replay.py.txt").write_bytes(Path(__file__).read_bytes())
+receipt = dict(
+    utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    result="PASS", pipeline_exit=0, session=2021,
+    source=head, campaign_base=prep["campaign"], snapshot_Lean_base=prep["snapshot_Lean_base"],
+    sg1=prep["sg1"], mig1=prep["mig1"],
+    source_paths=1003, changed_source_paths=17,
+    modules=394, failed=0, error_rows=0, static_mismatches=0, static_total=59,
+    recorded_module_execution_rows=394, actual_helper_explicit_j4=True,
+    optional_wrapper_launch_log_produced=False,
+    input="whole passed MAC6; APFS clone; no splicing",
+    output="oleans-mjoint1", input_objects=895, output_objects=895,
+    input_objects_unchanged=True, changed_objects=len(changed), all_outside_replay_scope_equal=True,
+    no_PR_or_campaign_branch_mutation_by_replay_or_finalizer=True,
+    scope="Actual prospective combined SG1+MIG closure from MAC6; no PR or campaign merge by root. Old MSG8/MSG9/MMIG3/MMIG4 retain their own executions and pins.",
+)
+(out / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+(out / "README.md").write_text("# Actual prospective combined-tree replay MJOINT1\n\nPASS394/0 failures, static0/59 from the entire895-objectMAC6 snapshot. All17 source changes since MAC6 and their full394-module downstream closure are included. The prior MMIG3 static60 is its pre-F6 execution: current Hierarchy has0 versus its1, while all393 other per-module counts agree. No rootTCSlib or snapshot composition. Exact source/parents,1003Lean map, runtime tools, all394 module-result rows/static counts and whole input/output object maps are retained. The optional PID launch wrapper was bypassed by environment PATH ordering, so no wrapper launch log is claimed. The unchanged actual prescribed helper explicitly invokes lean -j4; an actual DetMod process spot-check agrees. See launch-telemetry-limitation.json. The root observed session2021 exit0; this finalizer separately reconciles all data and unchanged input/outside-scope objects. Old per-PR full and two-module runs retain their actual pins. Later user merge adoption requires exact1003Lean path/blob equality with this source.\n")
+manifest = [dict(path=p.relative_to(out).as_posix(), bytes=p.stat().st_size, sha256=digest(p)) for p in sorted(out.rglob("*")) if p.is_file() and p.name != "MANIFEST.json"]
+(out / "MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
+print(json.dumps({**receipt, "manifest_sha256": digest(out / "MANIFEST.json")}, indent=2))

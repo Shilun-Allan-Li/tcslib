@@ -1069,22 +1069,25 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** Current state is
 `campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230/#234/#235/#215 are merged;
-completeMAC7 is current, adopted wholeMSG9 by exact1003-source/895-object equality after
-Seyoon's #215 merge `47f067d9ef616ba36a6e9dfb68ed0761d29616d7`. Gate106R4 CLOSED PASS0/0/0/27;
-gate118 CLOSED PASS0/0/0/18. All notes accepted with no new repair/ruling.
+MAC7 is current after wholeMSG9 exact adoption. Gate106R4 CLOSED PASS0/0/0/27;
+gate118 CLOSED PASS0/0/0/18, all notes accepted after root/independent review.
 
-#233 now contains mergedSG1 at `50abeae65163f5449d2a2781a94c993284842320`, preserving all12 audited
-MIG source files and exactly matching the running combined source across1003 Lean paths.
-**Not yet clear to merge: #233 — actual combined394 replay running**, from the entireMAC6
-snapshot, with no result yet. Final20-owner AX check/readiness remains. Full review/plan/maps:
-status/2026-11-08-audit-closures/; integration: fills/mig1/landing/post-sg1-source-merge/.
+**Clear to merge: #233 — Seyoon merges.** Current head `50abeae65163f5449d2a2781a94c993284842320` is
+verified non-draft/open/mergeable and incorporates SG1. Its12 audited sources are exact;
+all1003 prospective merged Lean blobs equal actual passed `11b09440347ca8274562d58b5f90a11cfce56e29`.
+Actual combined394 PASS0/static0/59 from wholeMAC6; whole895 input unchanged,119 scoped
+output changes. Static59 reflects mergedF6's Hierarchy1→0; oldMMIG3/static60 stays historical.
+Fresh20-owner8077-constant AX scan preserves3 inherited WordSize dependency closures.
+Two generated ownership/count effects are resolved with exact old type/AX/name availability.
+Optional PID wrapper telemetry was absent; actual helper usesj4 and394 module rows are
+retained. Complete scoped evidence/limits: status/2026-11-08-audit-closures/.
 
-The F6 proof is merged and no F6 fill runs. After activeMIG-1 lands, next12.2c consolidation
-must address seven retained SG1 kinds and wider FE-LIVE-1 before further SAT/Hardness fills,
-preserving each exact owner/window and shared-host design/gating needs. SG1's scoped repaired
-implementations are now retired; affected-name unions are not retained-copy counts and are
-not reduced by the number of repaired declarations. Ladner still needs its statement phase.
-Records remain direct; Lean byPR/gate/replay and Seyoon's merge. Nextfree121.
+After user merge, exact1003-source equality permits wholeMJOINT1→MAC8 adoption. Candidate
+MIG retirements wait for that merge. Then next12.2c consolidation must address seven retained
+SG1 kinds and wider FE-LIVE-1 before more SAT/Hardness fills, preserving their exact scopes,
+owner/window and shared-host design/gating needs. F6 is merged; no F6 fill runs. Ladner still
+needs its statement phase. No new audit dispatch or decision is needed now; no own job runs.
+Records direct; Lean byPR/gate/replay and Seyoon merge. Nextfree121.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 
