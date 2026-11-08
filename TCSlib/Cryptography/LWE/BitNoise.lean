@@ -21,7 +21,7 @@ set_option autoImplicit false
 ## Main results
 
 The law equation retains seed multiplicities. The centered profile has support in
-`[-t,t]`, a symmetric law and mean zero. Nontrivial claims await the statement audit.
+`[-t,t]`, a symmetric law and mean zero. These exact-law claims are proved below.
 
 ## References
 
@@ -58,7 +58,9 @@ evaluate its cardinality as `2^t`. This asserts the actual law, not uniform supp
 theorem bitNoise_probability (t : ℕ) (f : (Fin t → Bool) → ℤ) (z : ℤ) :
     uprob (fun r : (bitNoise t f).Coins => (bitNoise t f).sample r = z) =
       ((Finset.univ.filter fun r : Fin t → Bool => f r = z).card : ℝ) / (2 ^ t : ℕ) := by
-  sorry
+  classical
+  simpa only [bitNoise_sample, Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
+    using (uprob_eq_card_filter (fun r : Fin t → Bool => f r = z))
 
 /-- Subtract the count of true bits in the second block from the count in the first.
 This centered finite profile is a repository specialization of the noise-law slot
@@ -92,23 +94,77 @@ theorem centeredNoise_sample (t : ℕ) (r : Fin (t + t) → Bool) :
 **Proof sketch.** Each bit count lies between zero and `t`. Their integer difference
 lies in `[-t,t]`, including the empty two-block seed at `t=0`. -/
 theorem centeredNoise_bounded (t : ℕ) : (centeredNoise t).Bounded t := by
-  sorry
+  rw [Noise.bounded_iff]
+  intro r
+  rw [centeredNoise_sample, centeredValue_eq]
+  rw [← Nat.cast_le (α := ℤ), Int.natCast_natAbs]
+  have hnonneg (g : Fin t → Bool) :
+      0 ≤ ∑ i : Fin t, ((g i).toNat : ℤ) :=
+    Finset.sum_nonneg (fun _ _ => Int.natCast_nonneg _)
+  have hle (g : Fin t → Bool) :
+      (∑ i : Fin t, ((g i).toNat : ℤ)) ≤ (t : ℤ) := by
+    calc
+      (∑ i : Fin t, ((g i).toNat : ℤ)) ≤ ∑ _i : Fin t, (1 : ℤ) :=
+        Finset.sum_le_sum (fun i _ => Int.ofNat_le.mpr (Bool.toNat_le (g i)))
+      _ = (t : ℤ) := by simp
+  exact abs_sub_le_of_nonneg_of_le
+    (hnonneg (fun i => r (Fin.castAdd t i)))
+    (hle (fun i => r (Fin.castAdd t i)))
+    (hnonneg (fun i => r (Fin.natAdd t i)))
+    (hle (fun i => r (Fin.natAdd t i)))
 
 /-- Negating an output preserves its probability under the centered profile.
 
-**Proof sketch.** Swap the two `t`-bit blocks by a finite-seed equivalence. This
-negates the count difference and preserves the uniform seed probability. -/
+**Proof sketch.** Complement every seed bit by an involution. Each block count
+becomes `t` minus its old count, so their difference is negated. Relabeling the
+uniform seed preserves each event probability. -/
 theorem centeredValue_symmetric (t : ℕ) (z : ℤ) :
     uprob (fun r : Fin (t + t) → Bool => centeredValue t r = z) =
       uprob (fun r : Fin (t + t) → Bool => centeredValue t r = -z) := by
-  sorry
+  let e : (Fin (t + t) → Bool) ≃ (Fin (t + t) → Bool) :=
+    Function.Involutive.toPerm (fun r : Fin (t + t) → Bool => fun i => !(r i))
+      (by intro r; funext i; exact Bool.not_not (r i))
+  have he (r : Fin (t + t) → Bool) (i : Fin (t + t)) : e r i = !(r i) := rfl
+  have hbit (b : Bool) : ((!b).toNat : ℤ) = 1 - (b.toNat : ℤ) := by
+    cases b <;> decide
+  have hn (r : Fin (t + t) → Bool) :
+      centeredValue t (e r) = -centeredValue t r := by
+    rw [centeredValue_eq, centeredValue_eq]
+    simp_rw [he, hbit]
+    simp only [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
+      Fintype.card_fin, nsmul_eq_mul, mul_one, sub_sub_sub_cancel_left, neg_sub]
+  simpa only [hn, neg_inj] using
+    (uprob_comp_equiv e (fun r : Fin (t + t) → Bool => centeredValue t r = -z))
 
 /-- The centered profile has exactly zero real expectation.
 
-**Proof sketch.** Swapping blocks negates the sample and preserves its uniform
-expectation. A real number equal to its own negative is zero. -/
+**Proof sketch.** Distribute both integer bit counts and interchange the finite
+sums. A coordinate permutation identifies the uniform sums for any two positions,
+so the corresponding contributions from the two blocks cancel. -/
 theorem centeredValue_mean (t : ℕ) :
     uexp (fun r : Fin (t + t) → Bool => (centeredValue t r : ℝ)) = 0 := by
-  sorry
+  classical
+  have hcoord (a b : Fin (t + t)) :
+      (∑ r : Fin (t + t) → Bool, ((r a).toNat : ℝ)) =
+        ∑ r : Fin (t + t) → Bool, ((r b).toNat : ℝ) := by
+    let e := Equiv.arrowCongr (Equiv.swap a b) (Equiv.refl Bool)
+    have h := e.sum_comp (fun r : Fin (t + t) → Bool => ((r b).toNat : ℝ))
+    simpa only [e, Equiv.arrowCongr_apply, Equiv.refl_apply,
+      Function.comp_apply, Equiv.symm_swap, Equiv.swap_apply_right] using h
+  have hz : (∑ r : Fin (t + t) → Bool, (centeredValue t r : ℝ)) = 0 := by
+    simp only [centeredValue_eq, Int.cast_sub, Int.cast_sum,
+      Int.cast_natCast, Finset.sum_sub_distrib]
+    apply sub_eq_zero.mpr
+    calc
+      (∑ r : Fin (t + t) → Bool, ∑ i : Fin t,
+          ((r (Fin.castAdd t i)).toNat : ℝ)) =
+        ∑ i : Fin t, ∑ r : Fin (t + t) → Bool,
+          ((r (Fin.castAdd t i)).toNat : ℝ) := Finset.sum_comm
+      _ = ∑ i : Fin t, ∑ r : Fin (t + t) → Bool,
+          ((r (Fin.natAdd t i)).toNat : ℝ) :=
+        Finset.sum_congr rfl (fun i _ => hcoord (Fin.castAdd t i) (Fin.natAdd t i))
+      _ = ∑ r : Fin (t + t) → Bool, ∑ i : Fin t,
+          ((r (Fin.natAdd t i)).toNat : ℝ) := Finset.sum_comm
+  rw [uexp_def, hz, zero_div]
 
 end TCSlib.Cryptography.LWE

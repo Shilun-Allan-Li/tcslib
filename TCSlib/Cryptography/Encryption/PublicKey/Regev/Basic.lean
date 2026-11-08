@@ -21,7 +21,7 @@ set_option autoImplicit false
 
 The residual is the integer subset sum of the original errors plus the codepoint.
 The worst-case support bound gives every-coin correctness under an explicit strict
-separation condition. Nontrivial proofs are left for the combined statement audit.
+separation condition. These every-coin correctness claims are proved below.
 
 ## References
 
@@ -99,8 +99,8 @@ theorem decrypt_eq (P : Parameters) (s : Fin P.dimension → ZMod P.modulus)
 subset-error sum reduced modulo `q` [Pei16, Section 5.2.1].
 
 **Proof sketch.** Read both encryption projections and `LWE.noisyValues_apply`.
-Distribute the selected-sample sum, swap the finite sums in the matrix-secret term,
-and cancel that term against the secret product. Integer-cast add/multiply equations
+Apply the public dot-product/matrix identity to the common-secret term, distribute
+the selected-sample sum, and cancel that term. Integer-cast add/multiply equations
 identify the remaining sum without first reducing the errors' signs or magnitudes. -/
 theorem encrypt_residual (P : Parameters)
     (A : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus))
@@ -110,7 +110,23 @@ theorem encrypt_residual (P : Parameters)
       ∑ j, s j * (encrypt P (A, LWE.noisyValues P A s e) μ r).1 j =
     LWE.BitEncoding.codepoint P μ +
       ((∑ i, e i * ((r i).toNat : ℤ) : ℤ) : ZMod P.modulus) := by
-  sorry
+  let v : Fin P.samples → ZMod P.modulus := fun i => ((r i).toNat : ZMod P.modulus)
+  have hlin : dotProduct s (A.transpose.mulVec v) = dotProduct (A.mulVec s) v := by
+    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
+  have hvalues : LWE.noisyValues P A s e =
+      A.mulVec s + fun i => (e i : ZMod P.modulus) := by
+    funext i
+    rw [LWE.noisyValues_apply]
+    rfl
+  have herr : dotProduct (fun i => (e i : ZMod P.modulus)) v =
+      ((∑ i, e i * ((r i).toNat : ℤ) : ℤ) : ZMod P.modulus) := by
+    change (∑ i, (e i : ZMod P.modulus) * ((r i).toNat : ZMod P.modulus)) = _
+    simp only [Int.cast_sum, Int.cast_mul, Int.cast_natCast]
+  rw [encrypt_snd, encrypt_fst]
+  change (dotProduct (LWE.noisyValues P A s e) v + LWE.BitEncoding.codepoint P μ) -
+    dotProduct s (A.transpose.mulVec v) = _
+  rw [hvalues, add_dotProduct, hlin, herr]
+  rw [add_assoc, add_sub_cancel_left, add_comm]
 
 /-- Any binary subset of errors bounded by `B` has absolute sum at most `m*B`
 [Pei16, Section 5.2.1, worst-case bounded-support specialization].
@@ -120,7 +136,21 @@ absolute value at most `B`, and an unselected coordinate is zero; sum over all r
 theorem subsetError_bound (P : Parameters) (e : Fin P.samples → ℤ)
     (r : Fin P.samples → Bool) (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B) :
     (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤ P.samples * B := by
-  sorry
+  calc
+    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤
+        ∑ i : Fin P.samples, (e i * ((r i).toNat : ℤ)).natAbs :=
+      Finset.le_sum_of_subadditive Int.natAbs (by decide)
+        (fun x y => Int.natAbs_add_le x y) Finset.univ _
+    _ ≤ ∑ _i : Fin P.samples, B := by
+      apply Finset.sum_le_sum
+      intro i _
+      cases r i
+      · simp only [Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
+        exact Nat.zero_le B
+      · simpa only [Bool.toNat_true, Nat.cast_one, mul_one] using he i
+    _ = P.samples * B := by
+      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_id]
 
 /-- Bounded errors give correctness for every public matrix, secret, bit and subset
 coin vector when `2*(m*B) < floor(q/2)` [Pei16, Section 5.2.1, strict refinement].
@@ -133,7 +163,9 @@ theorem decrypt_encrypt (P : Parameters)
     (μ : Bool) (r : Fin P.samples → Bool) (B : ℕ)
     (he : ∀ i, (e i).natAbs ≤ B) (hsep : 2 * (P.samples * B) < P.modulus / 2) :
     decrypt P s (encrypt P (A, LWE.noisyValues P A s e) μ r) = μ := by
-  sorry
+  rw [decrypt_eq, encrypt_residual]
+  exact LWE.BitEncoding.decode_codepoint_add P (P.samples * B) μ
+    (∑ i, e i * ((r i).toNat : ℤ)) (subsetError_bound P e r B he) hsep
 
 /-- Bounded finite-seed noise gives every-keygen-coin and every-encryption-coin
 correctness for Regev PKE [Pei16, Section 5.2.1, finite-law specialization].
@@ -146,6 +178,12 @@ theorem decrypt_keygen_encrypt (P : Parameters) (χ : Noise)
     (μ : Bool) (r : Fin P.samples → Bool) (B : ℕ)
     (hχ : χ.Bounded B) (hsep : 2 * (P.samples * B) < P.modulus / 2) :
     decrypt P (keygen P χ rg).2 (encrypt P (keygen P χ rg).1 μ r) = μ := by
-  sorry
+  rw [keygen_snd, keygen_fst]
+  have hsample : LWE.sample P χ rg =
+      (rg.1, LWE.noisyValues P rg.1 rg.2.1 (fun i => χ.sample (rg.2.2 i))) :=
+    Prod.ext (LWE.sample_fst P χ rg) (LWE.sample_snd P χ rg)
+  rw [hsample]
+  exact decrypt_encrypt P rg.1 rg.2.1 (fun i => χ.sample (rg.2.2 i)) μ r B
+    (fun i => (Noise.bounded_iff χ B).mp hχ (rg.2.2 i)) hsep
 
 end TCSlib.Cryptography.Encryption.PublicKey.Regev

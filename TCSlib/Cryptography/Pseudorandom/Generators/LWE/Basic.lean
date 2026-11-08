@@ -72,7 +72,9 @@ theorem prgAdv_generate {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     (D : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       (Fin P.samples → ZMod P.modulus)) → ρ → Bool) :
     prgAdv (generate P χ) D = TCSlib.Cryptography.LWE.decisionAdvantage P χ D := by
-  sorry
+  have hg : generate P χ = TCSlib.Cryptography.LWE.sample P χ :=
+    funext (generate_eq P χ)
+  rw [prgAdv_eq, TCSlib.Cryptography.LWE.decisionAdvantage_eq, hg]
 
 /-- The fixed-sample DLWE assumption supplies negligible generator advantage for
 every existing encoded non-uniform PPT test [Pei16, Definition 4.2.3].
@@ -86,7 +88,8 @@ theorem pseudorandom_under_DLWE (F : Family)
       (fun x r => D.distinguisherL κ
         (TCSlib.Cryptography.LWE.encodeChallenge (F.parameters κ)
           (F.residueBits.eval κ) x) r)) := by
-  sorry
+  have hD := (TCSlib.Cryptography.LWE.dlweAssumption_iff F).mp h D
+  simpa only [prgAdv_generate, TCSlib.Cryptography.LWE.Family.advantageAt_eq] using hD
 
 /-- Count the seed bits for the full matrix, one secret, and `t` independent noise
 bits per row [Pei16, Definition 4.2.3, explicit entropy accounting]. -/
@@ -117,7 +120,15 @@ theorem seed_cardinality (P : Parameters) (width t : ℕ)
       ((Fin P.dimension → ZMod P.modulus) ×
         (Fin P.samples → (TCSlib.Cryptography.LWE.bitNoise t f).Coins))) =
       2 ^ seedBitLength P width t := by
-  sorry
+  change Fintype.card ((Fin P.samples → Fin P.dimension → ZMod P.modulus) ×
+    ((Fin P.dimension → ZMod P.modulus) ×
+      (Fin P.samples → (TCSlib.Cryptography.LWE.bitNoise t f).Coins))) = _
+  rw [seedBitLength_eq]
+  simp only [TCSlib.Cryptography.LWE.bitNoise_Coins, Fintype.card_prod,
+    Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, ZMod.card, hq]
+  simp only [← pow_mul, ← pow_add]
+  congr 1
+  ac_rfl
 
 /-- The full dyadic output space has exactly `2^outputBitLength` elements.
 
@@ -127,7 +138,14 @@ theorem output_cardinality (P : Parameters) (width : ℕ)
     (hq : P.modulus = 2 ^ width) :
     Fintype.card (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       (Fin P.samples → ZMod P.modulus)) = 2 ^ outputBitLength P width := by
-  sorry
+  change Fintype.card ((Fin P.samples → Fin P.dimension → ZMod P.modulus) ×
+    (Fin P.samples → ZMod P.modulus)) = _
+  rw [outputBitLength_eq]
+  simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin, ZMod.card, hq]
+  simp only [← pow_mul, ← pow_add]
+  congr 1
+  simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one]
+  ac_rfl
 
 /-- Positive stretch is equivalent to paying for the secret and noise from the
 published value-vector budget. The matrix is counted on both sides.
@@ -137,6 +155,8 @@ and cancel the common nonnegative matrix budget from the strict inequality. -/
 theorem stretch_iff (P : Parameters) (width t : ℕ) :
     seedBitLength P width t < outputBitLength P width ↔
       P.dimension * width + P.samples * t < P.samples * width := by
-  sorry
+  rw [seedBitLength_eq, outputBitLength_eq]
+  simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one,
+    Nat.add_assoc, Nat.add_lt_add_iff_left]
 
 end TCSlib.Cryptography.Pseudorandom.Generators.LWE

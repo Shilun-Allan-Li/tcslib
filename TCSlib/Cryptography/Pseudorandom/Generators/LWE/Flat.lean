@@ -156,7 +156,14 @@ theorem generateFlat_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     prgAdv (generateFlat P width t hq f) D =
       TCSlib.Cryptography.LWE.decisionAdvantage P (TCSlib.Cryptography.LWE.bitNoise t f)
         (fun pk r => D ((flatOutputEquiv P width hq).symm pk) r) := by
-  sorry
+  have hG : generateFlat P width t hq f = fun r =>
+      (flatOutputEquiv P width hq).symm
+        (generate P (TCSlib.Cryptography.LWE.bitNoise t f)
+          (flatSeedEquiv P width t hq r)) :=
+    funext (generateFlat_eq P width t hq f)
+  rw [hG, prgAdv_comp_equiv, ← prgAdv_generate]
+  simp only [prgAdv_eq, distAdv_def]
+  rw [acceptProb_comp_equiv (flatSeedEquiv P width t hq)]
 
 /-- The flat seed type uses exactly the earlier full seed budget.
 
@@ -164,13 +171,14 @@ theorem generateFlat_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
 theorem flat_seed_length (P : Parameters) (width t : ℕ) :
     P.samples * P.dimension * width + (P.dimension * width + P.samples * t) =
       seedBitLength P width t := by
-  sorry
+  rw [seedBitLength_eq, Nat.add_assoc]
 
 /-- The flat output type uses exactly the earlier full matrix-and-value budget.
 
 **Proof sketch.** Read `outputBitLength_eq` and distribute natural multiplication. -/
 theorem flat_output_length (P : Parameters) (width : ℕ) :
     P.samples * P.dimension * width + P.samples * width = outputBitLength P width := by
-  sorry
+  rw [outputBitLength_eq]
+  simp only [Nat.mul_add, Nat.mul_one, Nat.add_mul]
 
 end TCSlib.Cryptography.Pseudorandom.Generators.LWE

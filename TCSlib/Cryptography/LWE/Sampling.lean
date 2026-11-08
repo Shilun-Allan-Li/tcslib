@@ -73,19 +73,42 @@ theorem sampleFromBits_law (P : Parameters) (width t : ℕ)
     (FinDist.uniform (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       ((Fin P.dimension → ZMod P.modulus) ×
         (Fin P.samples → (bitNoise t f).Coins)))).map (sample P (bitNoise t f)) := by
-  sorry
+  classical
+  let eA := Equiv.ofBijective
+    (bitsToMatrix (q := P.modulus) (rows := P.samples) (columns := P.dimension) width)
+    (bitsToMatrix_bijective width hq)
+  let eS := Equiv.ofBijective
+    (bitsToVector (q := P.modulus) (length := P.dimension) width)
+    (bitsToVector_bijective width hq)
+  let e := eA.prodCongr
+    (eS.prodCongr (Equiv.refl (Fin P.samples → Fin t → Bool)))
+  have he (r : (Fin P.samples → Fin P.dimension → Fin width → Bool) ×
+      ((Fin P.dimension → Fin width → Bool) × (Fin P.samples → Fin t → Bool))) :
+      sampleFromBits P width t f r = sample P (bitNoise t f) (e r) := by
+    rw [sampleFromBits_eq]
+    rfl
+  have hc := Fintype.card_congr e
+  apply FinDist.ext
+  intro y
+  rw [FinDist.map_apply, FinDist.map_apply, Finset.sum_filter, Finset.sum_filter]
+  simp only [FinDist.uniform_apply, bitNoise_Coins]
+  rw [hc]
+  exact Fintype.sum_equiv e _ _ (fun r => by rw [he r])
 
 /-- The exact real-law implementation preserves every independently randomized test.
 
-**Proof sketch.** Use the same product seed equivalence as in `sampleFromBits_law`
-and extend it by the identity on the independent distinguisher coins. -/
+**Proof sketch.** Apply the existing acceptance-as-averaged-pushforward equation
+on both sides and substitute `sampleFromBits_law`. The averaging equation retains
+the independent distinguisher coins. -/
 theorem acceptProb_sampleFromBits {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     (P : Parameters) (width t : ℕ) (hq : P.modulus = 2 ^ width)
     (f : (Fin t → Bool) → ℤ)
     (D : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       (Fin P.samples → ZMod P.modulus)) → ρ → Bool) :
     acceptProb (sampleFromBits P width t f) D = acceptProb (sample P (bitNoise t f)) D := by
-  sorry
+  classical
+  rw [acceptProb_eq_uexp_sum_map, acceptProb_eq_uexp_sum_map,
+    sampleFromBits_law P width t hq f]
 
 /-- Read independent matrix and value-vector blocks for the comparison distribution
 [Pei16, Definition 4.2.3, dyadic adaptation]. -/
@@ -113,6 +136,30 @@ theorem uniformFromBits_law (P : Parameters) (width : ℕ)
       (Fin P.samples → Fin width → Bool))).map (uniformFromBits P width) =
       FinDist.uniform (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
         (Fin P.samples → ZMod P.modulus)) := by
-  sorry
+  classical
+  let eA := Equiv.ofBijective
+    (bitsToMatrix (q := P.modulus) (rows := P.samples) (columns := P.dimension) width)
+    (bitsToMatrix_bijective width hq)
+  let eV := Equiv.ofBijective
+    (bitsToVector (q := P.modulus) (length := P.samples) width)
+    (bitsToVector_bijective width hq)
+  let e := eA.prodCongr eV
+  have he : uniformFromBits P width = fun r => e r := by
+    funext r
+    rw [uniformFromBits_eq]
+    rfl
+  rw [he]
+  apply FinDist.ext
+  intro y
+  have hf : (Finset.univ.filter fun r => e r = y) = {e.symm y} := by
+    ext r
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro hr
+      exact e.injective (hr.trans (e.apply_symm_apply y).symm)
+    · rintro rfl
+      exact e.apply_symm_apply y
+  simp only [FinDist.map_apply, hf, Finset.sum_singleton,
+    FinDist.uniform_apply, Fintype.card_congr e]
 
 end TCSlib.Cryptography.LWE

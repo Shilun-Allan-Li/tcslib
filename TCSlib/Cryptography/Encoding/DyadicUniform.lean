@@ -21,7 +21,7 @@ set_option autoImplicit false
 
 The bijection and pushforward statements identify the actual uniform sampling laws.
 Canonical encoding recovers every input bit when the modulus is exactly a power of two.
-All nontrivial statements are admitted for the combined statement audit.
+The bijections, exact laws and encoding round trips are proved below.
 
 ## References
 
@@ -59,7 +59,22 @@ representative loses nothing. The existing fixed-width numeral round trips give
 both inverses. At width zero both the seed and residue types have one element. -/
 theorem bitsToResidue_bijective {q : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) : Function.Bijective (bitsToResidue (q := q) width) := by
-  sorry
+  rw [Fintype.bijective_iff_injective_and_card]
+  constructor
+  · intro r s hrs
+    apply List.ofFn_injective
+    have recover (v : Fin width → Bool) :
+        Candidates.natToList width (bitsToResidue (q := q) width v).val =
+          List.ofFn v := by
+      rw [bitsToResidue_eq]
+      apply Candidates.natToList_val_natCast
+        (show (List.ofFn v).length = width from List.length_ofFn)
+      simpa only [List.length_ofFn, hq] using
+        Candidates.listToNat_lt_two_pow (List.ofFn v)
+    exact (recover r).symm.trans
+      ((congrArg (fun x : ZMod q => Candidates.natToList width x.val) hrs).trans
+        (recover s))
+  · simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin, ZMod.card, hq]
 
 /-- A uniform block of bits induces the full uniform residue law at a dyadic modulus.
 
@@ -69,7 +84,18 @@ theorem bitsToResidue_uniform {q : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     (FinDist.uniform (Fin width → Bool)).map (bitsToResidue (q := q) width) =
       FinDist.uniform (ZMod q) := by
-  sorry
+  classical
+  have hb := bitsToResidue_bijective (q := q) width hq
+  apply FinDist.ext
+  intro y
+  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
+  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
+  calc
+    (∑ x : Fin width → Bool,
+        if bitsToResidue (q := q) width x = y then (Fintype.card (ZMod q) : ℝ)⁻¹ else 0) =
+        ∑ z : ZMod q, if z = y then (Fintype.card (ZMod q) : ℝ)⁻¹ else 0 :=
+      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
+    _ = _ := by simp
 
 /-- Re-encoding a residue sampled from one full-width block returns all original bits.
 
@@ -78,7 +104,11 @@ Read the residue representative and apply the public numeral reconstruction theo
 theorem encode_bitsToResidue {q : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) (r : Fin width → Bool) :
     Candidates.natToList width (bitsToResidue (q := q) width r).val = List.ofFn r := by
-  sorry
+  rw [bitsToResidue_eq]
+  apply Candidates.natToList_val_natCast
+    (show (List.ofFn r).length = width from List.length_ofFn)
+  simpa only [List.length_ofFn, hq] using
+    Candidates.listToNat_lt_two_pow (List.ofFn r)
 
 /-- Read independent full-width residue blocks as a modular vector
 [Pei16, Definition 4.2.3, fair-bit specialization]. -/
@@ -98,7 +128,18 @@ finite function extensionality and choice assemble the inverses. -/
 theorem bitsToVector_bijective {q length : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     Function.Bijective (bitsToVector (q := q) (length := length) width) := by
-  sorry
+  constructor
+  · intro r s h
+    funext i
+    apply (bitsToResidue_bijective (q := q) width hq).1
+    simpa only [bitsToVector_apply] using congrFun h i
+  · intro v
+    classical
+    choose r hr using fun i : Fin length =>
+      (bitsToResidue_bijective (q := q) width hq).2 (v i)
+    refine ⟨r, ?_⟩
+    funext i
+    exact (bitsToVector_apply width r i).trans (hr i)
 
 /-- Uniform independent bit blocks give the exact full uniform vector law.
 
@@ -108,7 +149,20 @@ theorem bitsToVector_uniform {q length : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     (FinDist.uniform (Fin length → Fin width → Bool)).map
       (bitsToVector (q := q) width) = FinDist.uniform (Fin length → ZMod q) := by
-  sorry
+  classical
+  have hb := bitsToVector_bijective (q := q) (length := length) width hq
+  apply FinDist.ext
+  intro y
+  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
+  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
+  calc
+    (∑ x : Fin length → Fin width → Bool,
+        if bitsToVector (q := q) width x = y then
+          (Fintype.card (Fin length → ZMod q) : ℝ)⁻¹ else 0) =
+        ∑ z : Fin length → ZMod q,
+          if z = y then (Fintype.card (Fin length → ZMod q) : ℝ)⁻¹ else 0 :=
+      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
+    _ = _ := by simp
 
 /-- Encoding a sampled vector concatenates the original bit blocks in coordinate order.
 
@@ -118,7 +172,7 @@ theorem encode_bitsToVector {q length : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) (r : Fin length → Fin width → Bool) :
     Modular.encodeVector width (bitsToVector (q := q) width r) =
       (List.ofFn fun i => List.ofFn (r i)).flatten := by
-  sorry
+  simp only [Modular.encodeVector_eq, bitsToVector_apply, encode_bitsToResidue width hq]
 
 /-- Read disjoint row-major bit blocks as a modular matrix
 [Pei16, Definition 4.2.3, fair-bit specialization]. -/
@@ -140,7 +194,20 @@ or columns give a singleton matrix space and require no positive-dimension premi
 theorem bitsToMatrix_bijective {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) :
     Function.Bijective (bitsToMatrix (q := q) (rows := rows) (columns := columns) width) := by
-  sorry
+  constructor
+  · intro r s h
+    funext i
+    apply (bitsToVector_bijective (q := q) (length := columns) width hq).1
+    funext j
+    simpa only [bitsToVector_apply, bitsToMatrix_apply] using congrFun (congrFun h i) j
+  · intro A
+    classical
+    choose r hr using fun i : Fin rows =>
+      (bitsToVector_bijective (q := q) (length := columns) width hq).2 (A i)
+    refine ⟨r, ?_⟩
+    funext i j
+    exact (bitsToMatrix_apply width r i j).trans
+      ((bitsToVector_apply width (r i) j).symm.trans (congrFun (hr i) j))
 
 /-- Uniform matrix blocks induce exactly the full uniform modular matrix distribution.
 
@@ -151,7 +218,21 @@ theorem bitsToMatrix_uniform {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (FinDist.uniform (Fin rows → Fin columns → Fin width → Bool)).map
       (bitsToMatrix (q := q) width) =
         FinDist.uniform (Matrix (Fin rows) (Fin columns) (ZMod q)) := by
-  sorry
+  classical
+  have hb := bitsToMatrix_bijective (q := q) (rows := rows) (columns := columns) width hq
+  apply FinDist.ext
+  intro y
+  rw [FinDist.map_apply, FinDist.uniform_apply, Finset.sum_filter]
+  simp only [FinDist.uniform_apply, Fintype.card_of_bijective hb]
+  calc
+    (∑ x : Fin rows → Fin columns → Fin width → Bool,
+        if bitsToMatrix (q := q) width x = y then
+          (Fintype.card (Matrix (Fin rows) (Fin columns) (ZMod q)) : ℝ)⁻¹ else 0) =
+        ∑ z : Matrix (Fin rows) (Fin columns) (ZMod q),
+          if z = y then
+            (Fintype.card (Matrix (Fin rows) (Fin columns) (ZMod q)) : ℝ)⁻¹ else 0 :=
+      Fintype.sum_bijective _ hb _ _ (fun _ => rfl)
+    _ = _ := by simp
 
 /-- Canonical matrix encoding recovers every row-major input bit block.
 
@@ -161,6 +242,7 @@ theorem encode_bitsToMatrix {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (hq : q = 2 ^ width) (r : Fin rows → Fin columns → Fin width → Bool) :
     Modular.encodeMatrix width (bitsToMatrix (q := q) width r) =
       (List.ofFn fun i => (List.ofFn fun j => List.ofFn (r i j)).flatten).flatten := by
-  sorry
+  simp only [Modular.encodeMatrix_eq, Modular.encodeVector_eq, bitsToMatrix_apply,
+    encode_bitsToResidue width hq]
 
 end TCSlib.Cryptography.Encoding.DyadicUniform
