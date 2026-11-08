@@ -1067,27 +1067,20 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 
 ## 2. Campaign work queued or on hold
 
-**Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230/#234/#235/#215 are merged;
-MAC7 is current after wholeMSG9 exact adoption. Gate106R4 CLOSED PASS0/0/0/27;
-gate118 CLOSED PASS0/0/0/18, all notes accepted after root/independent review.
+**Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** #233 merged at
+`9b5dcf46408db681bcbc721930ef2203fa6bc47d`; exact wholeMJOINT1→MAC8 adoption is recorded in
+status/2026-11-08-mig1-merge/. All related gates are closed, with actual combined394/0/static0/59.
+Scoped MIG implementation retirements now apply. Wider FE-LIVE-1 and seven retained SG1
+kinds still need next12.2c consolidation before further SAT/Hardness fills.
 
-**Clear to merge: #233 — Seyoon merges.** Current head `50abeae65163f5449d2a2781a94c993284842320` is
-verified non-draft/open/mergeable and incorporates SG1. Its12 audited sources are exact;
-all1003 prospective merged Lean blobs equal actual passed `11b09440347ca8274562d58b5f90a11cfce56e29`.
-Actual combined394 PASS0/static0/59 from wholeMAC6; whole895 input unchanged,119 scoped
-output changes. Static59 reflects mergedF6's Hierarchy1→0; oldMMIG3/static60 stays historical.
-Fresh20-owner8077-constant AX scan preserves3 inherited WordSize dependency closures.
-Two generated ownership/count effects are resolved with exact old type/AX/name availability.
-Optional PID wrapper telemetry was absent; actual helper usesj4 and394 module rows are
-retained. Complete scoped evidence/limits: status/2026-11-08-audit-closures/.
-
-After user merge, exact1003-source equality permits wholeMJOINT1→MAC8 adoption. Candidate
-MIG retirements wait for that merge. Then next12.2c consolidation must address seven retained
-SG1 kinds and wider FE-LIVE-1 before more SAT/Hardness fills, preserving their exact scopes,
-owner/window and shared-host design/gating needs. F6 is merged; no F6 fill runs. Ladner still
-needs its statement phase. No new audit dispatch or decision is needed now; no own job runs.
-Records direct; Lean byPR/gate/replay and Seyoon merge. Nextfree121.
+Seyoon sleeps; continue approved mechanical/statement preparation, leave mathematical
+proof holes for fills, prepare morning Codex audits. Use small separate family PRs; new
+API/header/name/import/home/route/debt decisions pause their own front. No self-dispatched fill.
+Current26 existing-API candidate roots are being partitioned; no cleanup PR is open yet.
+RO1 genericCfgFacts API and every-site replacement are already ruled; SAT's newBlockLoop
+import remains pending with concrete tested proposal. Structural seven-kind proposals and
+Ladner source/host worksheet remain distinct from approved source changes. T31/F6/deepening
+are already landed. Details/current progress in HANDOFF §0. Nextfree121.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

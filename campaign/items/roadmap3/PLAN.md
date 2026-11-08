@@ -1,5 +1,7 @@
 # Three roadmap tracks: F6, book-form Theorem 3.1, Ladner (planning note)
 
+**Current factual supplement (2026-11-08):** F6 is proved/merged#235; book-form T31 is proved/merged#223 at `72fcfbef3c1deb331aedc95d4a158a9ed4c56524` (gate113). Their planning/old line-number sections below are historical; do not repeat them. Ladner remains the independent statement front. The accepted LD1–7 choices and §(f) rulings stay unchanged. Current campaign after#233 is `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/MAC8.
+
 **Status:** read-only planning (sub-agent, 2026-11-06). No tracked file was edited, and Lean was not run.
 **Base:** campaign `complexity/arora-barak-ch3-4` at `508781aa` (Lean as at #209/#191/#207's merges).
 Line numbers are at this base unless marked otherwise. **The user's ruling** (HANDOFF §3 item 4, 2026-11-06)
@@ -319,8 +321,8 @@ theorem time_hierarchy_book_of_pos {f g : ℕ → ℕ} (hg : TimeConstructible g
     the pack): `ladnerH_eq`, `padSAT_congr` (agreement below a length), `mem_padSAT_iff`, and
     `ladnerH_le` (`≤ log log n`).
 - **LD-6, Ex 3.6(b)'s statement.** *General in `h`:* `PolyTimeComputable (bits ∘ h ∘ length)`, `h → ∞`,
-  `NPHard (padSAT h) → SAT ∈ P`. `NPHard` is strictly stronger than the book's `NPComplete` hypothesis;
-  this is a declared strengthening. The book's form is the alternative.
+  `NPHard (padSAT h) → SAT ∈ P`. `NPHard` is a weaker premise than the book's `NPComplete` hypothesis, so this is a stronger theorem;
+  the change is a declared strengthening. The book's form is the alternative.
 - **LD-7, the shape of Theorem 3.3.** *Both*:
   - `ladner : P ≠ NP → ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L` (the book's statement);
   - the witness form `SAT_H_intermediate : P ≠ NP → SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H`.

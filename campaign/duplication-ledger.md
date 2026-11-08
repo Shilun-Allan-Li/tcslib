@@ -1634,10 +1634,9 @@ two predicates.
 
 
 
-## MIG-1 proof factoring proposed in #233 (2026-11-07)
+## MIG-1 proof factoring implemented in merged #233 (2026-11-08)
 
-**Proposed, not retired on the campaign branch; gate118 open.** The partial fill and subsequent
-maintainer review identify the following kinds, with canonical reuse implemented in draft#233:
+**Merged by Seyoon at `9b5dcf46408db681bcbc721930ef2203fa6bc47d` after gate118 CLOSED PASS0/0/0/18.** The following is the bounded implemented factoring scope, now retired for its enumerated sites; broader kinds elsewhere remain independently governed. The partial fill and maintainer review identify:
 input/work-buffer rewind variants; selected/unselected bank and phase frames; buffer replay;
 split-orbit/erase/embedding variants; startup-plus-halted-segment computation certificates;
 clean-bank boundary reconstruction; canonical tape-update/clipping and framed increment
@@ -1659,13 +1658,11 @@ consumers call the existing first-halt theorem. The two constant-space leaves co
 merged zero-space facts. The exact redirect-space theorem remains once in Wrappers and its
 Catalog duplicate is removed. Six additional body readers and the two explicitly approved
 kernel-equivalent private header transports are implemented; the final Core-reader correction
-has its own native/seal evidence. These former interface HOLDs are resolved in candidate#233,
-not retired on the campaign branch. Current dispositions and limits are in
+has its own native/seal evidence. These former interface HOLDs are resolved and their enumerated implementations are now on campaign. Current dispositions and limits are in
 `campaign/fills/mig1/landing/factoring-dispositions-post234.md`.
 
 No new debt is acknowledged; the SAT/Hardness kind rulings are not extended to these leaves.
-Full source/screen/accounting checks pass at the candidate; current replay and gate118 remain
-open. Final retirement accounting changes only after Seyoon merges the gated PR.
+Full source/screen/accounting checks and actual combined394/static59 passed; gate118 closed and Seyoon merged. This is scoped implementation retirement, not whole-kind absence. WholeMAC8/source adoption is in status/2026-11-08-mig1-merge/.
 
 ## FE-LIVE-1 — fixed-live-stop first-entry proofs (Seyoon, 2026-11-08 UTC)
 
@@ -1793,3 +1790,8 @@ next12.2c owner/window, after activeMIG-1 and before further SAT/Hardness fills.
 union is converted into a retained-copy total, no global absence is inferred, and no new host
 or public interface is authorized by these passing checks. Root records adoption/retirement
 only after Seyoon's actual merge. Earlier running-status passages are historical.
+
+
+## Overnight next12.2c checkpoint
+
+#233 is actually merged at `9b5dcf46408db681bcbc721930ef2203fa6bc47d`; MAC8 is current. The enumerated MIG leaves/frames/rewinds and five LIVE/seven None first-entry conversions are now on campaign. Remaining existing FE-LIVE-1 instances and the seven SG1 retention kinds keep their exact cleanup scope and owner. Mechanical existing-API work begins as small separate family PRs, each gated/replayed; no future-copy, public-interface or new-import permission is inferred. New decisions pause only their fronts. All morning auditors are Codex per Seyoon's latest batch instruction.
