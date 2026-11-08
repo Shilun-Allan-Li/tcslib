@@ -1,6 +1,6 @@
 # Dispatch cleanup part 2 to Claude
 
-**Prepared and staged; user dispatch pending.** One external session, one coordinated cleanup job.
+**Active Claude fill.** Checkpoints0and1 received; the issued prompt below is retained for provenance. User requested30-minute monitoring for the upcoming partial delivery on2026-11-08 PST.
 
 ```text
 You are the external Claude fill worker for cleanup-part2 of the Pass–shelat formalization in https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0, pinned Mathlib).
