@@ -10,8 +10,10 @@ Lean changes go through audited PRs approved and merged by the user. PR #236's
 foundation statement and representation-proof gates both passed 0/0/0/3; the
 reports are preserved at code head `0769cba3e44c56700349f954190fc99d9e622270`.
 
-The next prepared input is `outbox/gates/02-construction-core-r1/README.md`:
-source `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`, records `4f403f777cda259ced52d74243d7ff7f9d547f99`, 31 admitted statement obligations.
-No external verdict or dispatch is claimed. Earlier gate folders are historical
-and unchanged. Exact Pei16/Wu24 PDFs have been acquired; reference ingestion and
-approved matching remain open. Read the frozen pack for all native/source limits.
+The construction-core statement gate passed 0/0/0/3; the verbatim report and
+resolutions are included in the code records. The next prepared input is
+`outbox/gates/03-construction-core-proofs-r1/README.md`: source `690217cc1aaefe411158808a8b0797fd887a8abc`,
+records `42a400a1b88eecf9172a91ba287894450c72f9b0`, 31 filled obligations, no owned admissions. No proof-audit
+verdict, reviewer selection or dispatch is claimed. Earlier issued gate folders
+are historical and unchanged. Exact Pei16/Wu24 PDFs have been acquired; reference
+ingestion and approved matching remain open. Read the frozen pack for all limits.
