@@ -1643,3 +1643,42 @@ the approved shared absorbing-stop API, now being implemented/gated separately a
 redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
 and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
 retirement accounting is updated only after the gated PR merges.
+
+## FE-LIVE-1 — fixed-live-stop first-entry proofs (Seyoon, 2026-11-08 UTC)
+
+**Acknowledged by kind across TCSlib; cleanup remains scheduled.** Existing proofs selecting
+first entry into whole-configuration absorbing live stop states may temporarily remain,
+including singleton/predicate, initial-exclusion positive-time and inline specializations.
+Canonical contract: `Turing.MultiTapeTM.exists_first_entry_of_fixed` in Finite. A run reaches
+a specified live P-stop endpoint by T, and every P-stop configuration is fixed by one step;
+select u≤T with no earlier P-stop and preserve the complete endpoint. The comparison predicate
+includes both completed verdicts. State-only absorption or a nonabsorbing visit is outside
+this kind, as is the distinct first-None-halt family.
+
+**Owner/window:** maintainer(Codex). Keep the staged MIG conversions in #233 before gate118;
+replace remaining existing instances in the next12.2c consolidation after active MIG-1 and
+before further SAT/Hardness fills. No new API/import/statement or future-copy permission is
+created. Exact answer: **Accept this scheduled debt (Recommended)**. Gate119 resolutions and
+`ruling-live-stop.json` preserve the finding/ruling; follow-up Codex audit is still required.
+
+At gate119 source, verified family-specific lower bound: **14 distinct authored declarations,
+including the canonical theorem** — Finite1/27, Loop1/204, Primitives3/288, Catalog2/504,
+Hardness5/544, ExhaustiveReplay2/183. These are not14 new copies or all-family cumulative totals;
+semantic fragments count once, directed screen edges are not added. No new one-fifth crossing
+is established. Full named blocks and hashes: gate119/review/audit-return-review/first-entry-family.json.
+C1E-1(g) already scheduled `xr_firstArrival'` promotion when a second consumer is briefed;
+that prior schedule remains relevant but did not acknowledge this wider kind. The seven
+SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scopes.
+
+## IMG-COMP-1 — raw on-image composition reconstruction (proposed retirement in #215)
+
+Canonical contract: `Turing.FinTM.exists_comp_on_image` in Composition, composing one
+finite machine with a second contract only on its actual image and original-input budgets,
+with time2*T1+T2+2. The final five-touched-file sweep found Tautology.taut_comp_on_image
+reconstructing this exact statement; it now directly cites the public theorem, with its
+private full header unchanged and only the obsolete sketch updated. SAT.sat_comp_on_image
+already directly cited it. Hardness.clNative_image is different class-level packaging,
+not charged or silently discharged here. Full candidate blocks/dispositions are in gate106's
+final screen sweep and round3-image-repoint evidence. Native/sealed14definitions/28paired
+controls and finalMSG7dependent replay pass. Retired only when #215 merges; this bounded
+candidate enumeration does not claim no further instance anywhere in TCSlib.

@@ -1,0 +1,23 @@
+# Private helper inventory (final head 6e98df4f)
+
+All in `TCSlib/Complexity/SpaceComplexity/Hierarchy.lean`, namespace `Complexity`, `private`,
+theorems only (no private `def`/host). Lines at the final head; sizes include the signature.
+
+| Declaration | Lines | Role |
+|---|---|---|
+| `f6_full_embed` | 93–103 | identity forwarding embedding with blank frame (`embedEmitCfg_eq`); see duplication §6 / E1 |
+| `f6_seam` | 106–122 | one seam: `seamCompTM_run_ofCfg` + `seamCompTM_firstReturn_ofCfg` |
+| `f6_native_halt` | 133–198 | startup (`exists_selfStartupTM`) + stationary silent halt leaf; first halt `T+2`, live before |
+| `f6_header` | 207–243 | phase 1: `headerRulerTM_run` from the physical start |
+| `f6_mapState_mk` | 246–251 | relabelled literal configuration (`Cfg.mapState_eq_of_fields`) |
+| `f6_hosted` | 266–363 | phase 2: H5 host of a first-halting machine on the suffix + identity `embedEmitRetTM`; live return, strict cut |
+| `f6_ruler_moves` | 378–452 | phases 3, 4, 6: `skipTM`, `walkTM` (one cell back), `rewindTM` on the ruler |
+| `f6_scan` | 460–533 | phase 5: `headerScanTM_run` + `headerScanCfg_ruler` at prefix `ℓ₁` |
+| `f6_prefix` | 546–640 | OWN-1: the fixed prefix machine, run, cut, time bound |
+| `f6_loop` | 654–730 | OWN-2: hosted H2-F loop; halt/output transport; per-tape ledger |
+| `f6_last_ruler_layout` | 738–792 | exact `hcfg`: prefix endpoint = host presentation |
+| `f6_cast_init_run`, `f6_cast_init_space`, `f6_cast_cfg_state`, `f6_cast_cfg_mapState`, `f6_cast_cfg_embedding`, `f6_cast_back_embedding` | 794–839 | equality-induction transports along `K + 4 = 0 + ((K+2)+2)` |
+| `f6_final_seam` | 849–935 | both `startupLoopTM_runFrom` and `startupLoopTM_spaceUsed_le` at the last-ruler endpoint |
+
+Target `Complexity.space_universal`: lines 992–1082 (OWN-3 arithmetic and closure).
+Every proof over 20 lines has a `**Proof sketch.**` (style lint: no finding).

@@ -1,25 +1,20 @@
-# Gate106 — round2 HOLD0/1/0/15; round3 validation
+# Gate106 — round2 HOLD; final source checks for Codex round3
 
-**Not yet clear to merge: #215.** Round2 findings remain verbatim. F1's Segment
-cut repair and F3's six-declaration/twelve-call accounting are accepted. F2's major
-awaits the selected Codex round3 audit; no general-closure debt is acknowledged.
+**Not yet clear to merge: #215.** Current pushed clean source `79e7c63a6bfa5f002663924f5c7d4e72db705026` includes16
+SAT/Hardness canonical closure/encoding repairs and the additional exact raw on-image
+Tautology repoint. User-approved PolyTimePrefix/PolyTimeBlockLoop imports are explicit;
+public headers, machines and other imports remain preserved. Seven distinct scheduled
+debt kinds remain acknowledged, not extended by these mechanical fixes.
 
-Repair commit `6d3903f7ba3dbdee3ad233c8d908427f3324be2f` replaces16 private SAT/Hardness
-reconstructions by existing public closure/encoding results. Seyoon approved the
-single new Hardness PolyTimePrefix import. Public contracts, machines and other
-imports remain frozen. Actual final SAT→Hardness same-overlay compilation passes;
-all16 repaired roots and7 generated descendants have standard axioms. Bounded
-scoped seals and fresh36/40/42-control groups pass in their recorded contexts.
+Fresh source-pinned chained replays passed: MSG5full329/static0/66; MSG6Hardness26/static0/0;
+MSG7Tautology+ClassNP2/static0/0. Each uses a whole complete predecessor copy and enforced
+Lean4.25 -j4/nice10/slot locking. The prior63-head25-file screen actually passed and is
+historical after the Taut change. Fresh final79-head25-file screen and final compiledHEAD
+comparison are still required before issue; Codex round3 is selected, not dispatched.
 
-Current pushed head `d0c4a292e781b55617e05b33fdd423bb059fd735` incorporates merged#230.
-Fresh329-module msg5 replay PASSED from complete mac4:0failures,static0mismatches/66.
-Every329order/error/exit row andeffective-j4 launch is checked. The current compiled
-comparison is finishing; final full25-file source screen is running. Seyoon accepted
-the distinct seventh unary-clock-host retention kind under the same cleanup window;
-exact14-member ruling and49/544affected-set accounting are recorded. Older MSG4 pre-230 compiler counts remain separate.
-No round3 packet is issued and the external gate remains open.
-
-Seyoon also approved the additional BlockLoop import for the available stronger pair bound.
-The actual one-body/import repair is in progress; the passed d0/msg5/25-screen generation
-remains separately pinned. Final source validation/chained replay/head screen are required
-before round3 issue. No current new-head pass is claimed in advance.
+Actual Taut native/scoped14-definition seal/28 paired controls PASS; the previous sixteen
+root/encoding scopes and standardAX evidence retain their exact source pins. The source
+sweep of allfive touched files found SAT already using the canonical on-image theorem;
+Taut was the sole reconstructing raw-contract member found. Hardness's class-level wrapper
+has a different contract and remains a separately disclosed bounded comparison. No global
+semantic absence or new debt acknowledgment is inferred. Original findings/packs unchanged.

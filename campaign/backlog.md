@@ -1038,30 +1038,55 @@ The old pre-ruling review remains unchanged. No public API/import/route is autho
 future extraction decisions return to Seyoon. The distinct on-image class wrapper remains a
 bounded unresolved comparison. Exact user answer: **Accept scheduled host debt (Recommended)**.
 
+### FE-LIVE-1: fixed-live-stop first-entry retention (Seyoon, 2026-11-08 UTC)
+
+
+**Acknowledged by kind across TCSlib; cleanup remains scheduled.** Existing proofs selecting
+first entry into whole-configuration absorbing live stop states may temporarily remain,
+including singleton/predicate, initial-exclusion positive-time and inline specializations.
+Canonical contract: `Turing.MultiTapeTM.exists_first_entry_of_fixed` in Finite. A run reaches
+a specified live P-stop endpoint by T, and every P-stop configuration is fixed by one step;
+select u≤T with no earlier P-stop and preserve the complete endpoint. The comparison predicate
+includes both completed verdicts. State-only absorption or a nonabsorbing visit is outside
+this kind, as is the distinct first-None-halt family.
+
+**Owner/window:** maintainer(Codex). Keep the staged MIG conversions in #233 before gate118;
+replace remaining existing instances in the next12.2c consolidation after active MIG-1 and
+before further SAT/Hardness fills. No new API/import/statement or future-copy permission is
+created. Exact answer: **Accept this scheduled debt (Recommended)**. Gate119 resolutions and
+`ruling-live-stop.json` preserve the finding/ruling; follow-up Codex audit is still required.
+
+At gate119 source, verified family-specific lower bound: **14 distinct authored declarations,
+including the canonical theorem** — Finite1/27, Loop1/204, Primitives3/288, Catalog2/504,
+Hardness5/544, ExhaustiveReplay2/183. These are not14 new copies or all-family cumulative totals;
+semantic fragments count once, directed screen edges are not added. No new one-fifth crossing
+is established. Full named blocks and hashes: gate119/review/audit-return-review/first-entry-family.json.
+C1E-1(g) already scheduled `xr_firstArrival'` promotion when a second consumer is briefed;
+that prior schedule remains relevant but did not acknowledge this wider kind. The seven
+SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scopes.
+
 ## 2. Campaign work queued or on hold
 
-**Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. Seyoon merged #228, #222 and #229; gates114/115/116
-are CLOSED PASS, all notes dispositioned. #230 is now merged; current snapshot is **oleans-mac4**.
-SG-1 #215 has both cut-helper audit repairs and explicit scheduled-debt rulings for six
-adapter/dispatcher kinds; its current329-module replay passes, gate106 round2 Codex pending.
-#230 is merged at3023dc14 after gate117 PASS; mac4 is current. #215 now includes16canonical
-closure/encoding repairs and a separate accepted unary-clock-host retention ruling. Its fresh
-329-module replay passes (static0/66); full25-file screen/current compiler comparison are
-finishing for selectedCodex round3. #234's approved first-entry/zero-space/home follow-up
-passes401modules/static0/77 and full16-file screens; gate119Codex packet is being finalized.
-#233's downstream15-change mechanical proposal is prepared but waits for #234gate/merge.
-All three open PRs are **not yet clear to merge** until their required gates/steps close.
+**Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** Current state is
+`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230 are merged; mac4 remains the current
+campaign snapshot. #215's final-Hardness MSG6 chain passed26/0/static0; one additional exact
+raw-on-image repoint in Tautology is being validated before fresh replay/screen/compiled
+accounting and the selected Codex round3. Its seven distinct debt kinds remain scheduled.
+**Not yet clear to merge: #215.**
 
-The **Claude MIG-1 megafill remains dispatched**; immutable pins are in its dispatch.json.
-cp01–cp07 are reviewed partial deliveries: all17 original targets plus two new gated proof
-bodies are source-filled, only frozen RAM3 remains; cp07 deletes356 private Catalog copies
-and retires six public rows. Final worker evidence is awaited. Maintainer audit/interface
-repairs are underway in an unpushed landing branch; no new fill is run internally. New
-first-entry and two zero-space API proposals remain unapproved, separate from #230's scope.
-F6's ruler-hosted suffix/Claude choice is settled; #229 is merged, #230 audit/merge and full
-concrete route pre-ship remain. Ladner needs its statement phase. Records remain direct;
-every actual Lean change requires a PR, gate/replay and Seyoon's merge.
+Gate119 for #234 returned HOLD0/1/0/16; its one major is now explicitly acknowledged as
+FE-LIVE-1 above, with implementation still scheduled. Source/API unchanged at `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`;
+its passed401/static0/77 replay remains separately pinned. Codex follow-up audit selected,
+not yet dispatched. **Not yet clear to merge: #234.** #233's15-change mechanical proposal
+remains inert until #234 merges, then integrated checks and Codex gate118 are required.
+**Not yet clear to merge: #233.**
+
+The Claude F6 final delivery is reviewed as a COMPLETE proof candidate, imported with original
+authorship into draft#235 at `f72a807e2376a2b986675c992745d6affc23b96f`. Native Hierarchy passes with no errors/sorries;
+full229 replay and fresh accounting/seals/23-file comparison are underway. Codex gate120
+selected, not issued. **Not yet clear to merge: #235.** No fill remains running for F6.
+Ladner still needs its statement phase. Records remain direct; every Lean change requires
+PR, gate/replay and Seyoon's merge. Next free gate121.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

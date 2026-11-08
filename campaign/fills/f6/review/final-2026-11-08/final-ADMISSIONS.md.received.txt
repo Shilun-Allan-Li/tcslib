@@ -1,0 +1,19 @@
+# Admissions (static census over the 229 final-order files; `evidence/logs/static-sorry-*.txt`)
+
+| Tree | Admitted declarations |
+|---|---|
+| base `3023dc14` | 22 = owned target `Complexity.space_universal` + 17 MIG specifications + 4 RecordTable results |
+| cp01 `27638178`, cp02 `34c1c0e8` | 22 (target still admitted) |
+| final `6e98df4f` | **21** = the 17 MIG specifications + 4 RecordTable results, unchanged |
+
+Remaining (inherited, preserved): `Simulation.branchTM_spaceUsed`; `Encoding.pairDiagTM_computes`;
+`Composition.{idTM_computes, ifEqTM_computes, condTM_computes_iff}`;
+`TimeConstructible.{lengthBitsTM_computes, lengthBitsTM_spaceUsed}`;
+`Wrappers.{timedCondTM_computes, timedCondTM_spaceUsed}`;
+`Loop.{loopHostTM_contracts, loopHostTM_decides, loopHostTM_finds, loopHostTM_spaceUsed_le_budget,
+emitLoopTM_computes}`; `Primitives.{polyUnaryTM_spaceUsed, unaryTokenTM_computes,
+appendBitTM_computes}`; `RecordTable.{exists_tableFindTM, exists_tableAppendTM,
+exists_recordValidTM, exists_recordNextTM}`.
+The final sweep reports exactly 21 `declaration uses 'sorry'` warnings (8 modules), none in
+`Hierarchy`. `Complexity.space_universal` and every new private declaration depend only on
+`propext`, `Classical.choice`, `Quot.sound` (no `sorryAx`).

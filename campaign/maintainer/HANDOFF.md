@@ -7,7 +7,32 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-07 UTC; read this first)
+## 0. Current state (2026-11-08 UTC; read this first)
+
+**Resumed after relocation.** Current campaign snapshot remains complete mac4 / #230 merge;
+records may advance without Lean changes. Latest received audit is gate119 HOLD0/1/0/16,
+now independently reviewed and explicitly acknowledged as FE-LIVE-1 by Seyoon. Exact owner/
+window and all dispositions are recorded; Codex round2 selected, preparing. #234 source is
+unchanged and its401/static0/77 replay remains valid. **Not yet clear to merge: #234.**
+
+F6 final is present and independently reviewed as COMPLETE candidate. The six Claude patches
+are imported with original authorship into draft#235 at `f72a807e2376a2b986675c992745d6affc23b96f`; fresh owner check
+passes0errors/0sorries after a public-lemma repoint and two sketch fixes. Full229 replay,
+unfiltered compiledAX census and final23-source comparisons/seals are in progress. Codex
+gate120 selected, not issued. **Not yet clear to merge: #235.**
+
+SG1 final pushed source is `79e7c63a6bfa5f002663924f5c7d4e72db705026`. Exact Taut raw on-image repoint passes actual
+native,14-definition scoped seal and28 fresh paired controls. MSG6 passed26/0/static0 at63;
+MSG7 chained from that whole snapshot passed2/0/static0 at the final source. Fresh final25HEAD
+screen and compiled accounting remain before selected Codex round3. Historical63 screen is
+retained separately. **Not yet clear to merge: #215.**
+
+#233 remainsb1f; its15 scoped consumer changes are inert proposals until #234 merges, then
+integrated checks precede selected Codex gate118. **Not yet clear to merge: #233.** Next free121.
+Local budget3 and machinecap5 continue. All direct records/exchange permissions persist.
+
+### Prior relocation checkpoint (historical)
+
 
 **Relocation checkpoint,2026-11-07 23:39UTC: locally quiescent.** All own agents/checks
 finished; no Lean process or screen lock remained at23:38:39UTC. Source/records are being

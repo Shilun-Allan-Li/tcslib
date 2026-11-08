@@ -1,3 +1,15 @@
+# F6 — complete delivery reviewed; draft #235 validating
+
+**Not yet clear to merge: #235.** Final ZIP received/tracked exchange bytes match; independent
+checksums/source/patch/bundle review classifies it as a COMPLETE proof candidate with no
+remaining OWN/API prerequisite. Review/final-2026-11-08/ preserves evidence and limitations.
+Six patches imported with Claude authorship; Codex mechanical monotonicity/sketch fixes give
+clean pushed source `f72a807e2376a2b986675c992745d6affc23b96f`. Fresh Hierarchy native check passes0errors/0sorry.
+Full229 replay, full compiler/ALLAX/seals and23-source comparisons are underway. Codex
+landing audit selected; gate120 reserved, not issued. Producer results remain producer evidence.
+
+## Immutable fill dispatch and prior checkpoints
+
 # F6 — dispatched to Claude
 
 Seyoon selected Claude and the ruler-hosted suffix route, and merged #229/#230.

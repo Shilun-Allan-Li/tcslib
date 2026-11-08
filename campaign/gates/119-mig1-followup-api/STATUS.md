@@ -1,3 +1,13 @@
+# Gate119 — round1 HOLD, ruling recorded; Codex follow-up preparing
+
+**Not yet clear to merge: #234.** Round1 findings are preserved verbatim and independently
+reviewed (HOLD0/1/0/16). Seyoon acknowledged the fixed-live-stop kind FE-LIVE-1 with explicit
+owner/window. All17 findings have dispositions in resolutions.md; no API source correction
+was required. Codex round2 is selected, not dispatched. Actual source/replay remains the
+frozen passed f1/mfup2 generation below. Next free121; F6 gate120 reserved.
+
+## Prior validation and immutable issued packet
+
 # Gate119 — validation complete, Codex packet finalization
 
 **Not yet clear to merge: #234.** Current pushed head `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`;
