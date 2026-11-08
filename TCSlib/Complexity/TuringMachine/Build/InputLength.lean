@@ -469,7 +469,9 @@ exists (`Turing.counterLoopTM` needs its round count on a tape, which is what
 is being computed), so the fill proves the framed round induction for this
 table directly and records the pair with `f2_counterTM` for 12.2c, which can
 re-derive `Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` from this row.
-The counter head stays in `[pos - 1, pos + |bits |x||]`. -/
+The counter head stays in `[pos - 1, pos + |bits |x||]`. The public fixed-stop
+first-entry theorem cuts the completed return without changing its exact framed
+endpoint or these head bounds. -/
 theorem exists_inputLengthTM :
     ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)
       (entry exit : S) (C : ℕ),
@@ -527,26 +529,21 @@ theorem exists_inputLengthTM :
         MultiTapeTM.runFrom_add, reachedBack, returnHeads _ hu']
       simp only [back, c, inputLengthCfg, add_zero]
       constructor <;> omega
-  -- Select the first exit, and use stationarity to keep the exact finish.
-  have exits : ∃ u, (inputLengthMachine.runFrom d u).state = some .done :=
-    ⟨t + 1 + r, congrArg Cfg.state finish⟩
-  let first := Nat.find exits
-  have firstState : (inputLengthMachine.runFrom d first).state = some .done :=
-    Nat.find_spec exits
-  have firstLe : first ≤ t + 1 + r := Nat.find_min' exits (congrArg Cfg.state finish)
-  have fixed : inputLengthMachine.step (inputLengthMachine.runFrom d first) =
-      inputLengthMachine.runFrom d first := by
-    rw [step_of_inputMoveAction _ _ 0 firstState (q' := .done) rfl]
-    simp only [moveInputPos_zero]
-    apply Cfg.ext <;> simp [firstState]
+  -- The public fixed-stop entry contract keeps the exact completed configuration.
+  obtain ⟨first, firstLe, firstCut, firstEnd⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    inputLengthMachine (fun q => q = .done) d
+    {back with state := some .done, inputPos := 1} (t + 1 + r)
+    (by
+      rintro z ⟨q, hq, rfl⟩
+      rw [step_of_inputMoveAction _ _ 0 hq (q' := .done) rfl]
+      simp only [moveInputPos_zero]
+      apply Cfg.ext <;> simp [hq])
+    ⟨.done, rfl, rfl⟩ finish
   have same : inputLengthMachine.runFrom d (t + 1 + r) =
-      inputLengthMachine.runFrom d first := by
-    rw [show t + 1 + r = first + (t + 1 + r - first) by omega,
-      MultiTapeTM.runFrom_add]
-    exact Function.iterate_fixed fixed _
+      inputLengthMachine.runFrom d first := finish.trans firstEnd.symm
   refine ⟨first, firstLe.trans deadline, ?_, ?_, ?_⟩
-  · intro u hu
-    exact Nat.find_min exits hu
+  · intro u hu hs
+    exact firstCut u hu ⟨.done, hs, rfl⟩
   · intro u hu j
     have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
     subst j

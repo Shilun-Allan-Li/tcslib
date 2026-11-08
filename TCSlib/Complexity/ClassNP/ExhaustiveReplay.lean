@@ -273,14 +273,13 @@ private theorem xr_firstArrival {k : ℕ} {S : Type} {x : List Bool} (tm : Multi
     (a : S) (hstat : ∀ d : Cfg k Bool S x, d.state = some a → tm.step d = d)
     {c c' : Cfg k Bool S x} {T : ℕ} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :
     ∃ T' ≤ T, tm.runFrom c T' = c' ∧ ∀ u < T', (tm.runFrom c u).state ≠ some a := by
-  classical
-  have hT' : (tm.runFrom c T).state = some a := by rw [h]; exact hc'
-  have hex : ∃ u, (tm.runFrom c u).state = some a := ⟨T, hT'⟩
-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
-  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
-  exact hsplit.symm.trans h
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm (fun q => q = a) c c' T
+    (by
+      rintro d ⟨q, hq, rfl⟩
+      exact hstat d hq)
+    ⟨a, hc', rfl⟩ h
+  exact ⟨t, ht, he, fun u hu hs => hcut u hu ⟨a, hs, rfl⟩⟩
 /-! #### The leaf rows
 
 This file's own rows, on `Bool` tapes, each exiting at a stationary anchor `done b`: the
@@ -1594,16 +1593,13 @@ private theorem xr_firstArrival' {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
     (ha : A a) :
     ∃ T' ≤ T, tm.runFrom c T' = c' ∧
       ∀ u < T', ∀ a', (tm.runFrom c u).state = some a' → ¬ A a' := by
-  classical
-  have hT' : ∃ a', (tm.runFrom c T).state = some a' ∧ A a' := ⟨a, by rw [h]; exact hc', ha⟩
-  have hex : ∃ u, ∃ a', (tm.runFrom c u).state = some a' ∧ A a' := ⟨T, hT'⟩
-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
-    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
-  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
-  rw [xr_runFrom_fixed tm _ (hstat _ a'' ha'' hA'')] at hsplit
-  exact hsplit.symm.trans h
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    tm A c c' T
+    (by
+      rintro d ⟨q, hq, hA⟩
+      exact hstat d q hq hA)
+    ⟨a, hc', ha⟩ h
+  exact ⟨t, ht, he, fun u hu a' ha' hA => hcut u hu ⟨a', ha', hA⟩⟩
 
 /-- Every `done` anchor of a leaf row whose table is stationary there is stationary. -/
 private theorem xr_done_stationary {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St)

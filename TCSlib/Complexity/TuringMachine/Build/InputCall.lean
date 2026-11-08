@@ -156,8 +156,9 @@ private def inputSeekRewind : MultiTapeTM 2 Bool InputSeekRw where
 
 /-- Rewind to the left marker, keeping all work heads fixed and excluding an earlier exit.
 
-**Proof sketch.** Invoke the public rewind with exit `left`, then move left once. Since
-`done` is stationary, reaching it before the public rewind's `left` endpoint is impossible. -/
+**Proof sketch.** Invoke the public rewind with exit `left`, then move left once.
+Apply the public fixed-stop first-entry theorem to the stationary `done` control,
+retaining the exact parked endpoint and the prefix work-head bounds. -/
 private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)
     (hd : d.state = some .start) :
     ∃ r ≤ d.inputPos.val + 3,
@@ -166,37 +167,32 @@ private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw 
       ∀ u ≤ r, (inputSeekRewind.runFrom d u).workTapePos = d.workTapePos := by
   obtain ⟨r, hr, hrun, hheads⟩ := FinTM.rewind_heads inputSeekRewind .start .scan
     (some .left) (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) d hd
-  have hcut (u : ℕ) (hu : u ≤ r) : (inputSeekRewind.runFrom d u).state ≠ some .done := by
-    intro hdone
-    have hfix : inputSeekRewind.step (inputSeekRewind.runFrom d u) =
-        inputSeekRewind.runFrom d u := by
-      rw [step_of_inputMoveAction _ _ 0 hdone rfl]
-      apply Cfg.ext
-      · exact hdone.symm
-      · simp
-      · rfl
-      · rfl
-      · rfl
-    have hsame : inputSeekRewind.runFrom d r = inputSeekRewind.runFrom d u := by
-      rw [show r = u + (r - u) by omega, MultiTapeTM.runFrom_add]
-      exact Function.iterate_fixed hfix _
-    have := congrArg Cfg.state hsame
-    simp [hrun, hdone] at this
   have hend : inputSeekRewind.runFrom d (r + 1) =
       { d with state := some .done, inputPos := 0 } := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', hrun]
+    rw [MultiTapeTM.runFrom_succ_eq_step', hrun, MultiTapeTM.step_of_some rfl]
     change (FinTM.controlAction SignType.neg (some InputSeekRw.done)).apply
       ({ d with state := some .left, inputPos := 1 } : Cfg 2 Bool InputSeekRw x) = _
     rw [FinTM.controlAction_apply]
     apply Cfg.ext rfl _ rfl rfl rfl
     apply Fin.ext
     rw [FinTM.moveInputPos_neg_val]
-  refine ⟨r + 1, by omega, hend, (fun u hu => hcut u (by omega)), ?_⟩
-  intro u hu
-  by_cases hur : u ≤ r
-  · exact hheads u hur
-  · have : u = r + 1 := by omega
-    subst u
+  obtain ⟨u, hu, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    inputSeekRewind (fun q => q = .done) d {d with state := some .done, inputPos := 0} (r + 1)
+    (by
+      rintro z ⟨q, hq, rfl⟩
+      rw [MultiTapeTM.step_of_some hq]
+      change (FinTM.controlAction 0 (some InputSeekRw.done)).apply z = z
+      rw [FinTM.controlAction_apply, moveInputPos_zero]
+      cases z
+      simp_all)
+    ⟨.done, rfl, rfl⟩ hend
+  refine ⟨u, by omega, he, (fun v hv hs => hcut v hv ⟨.done, hs, rfl⟩), ?_⟩
+  intro v hv
+  have hvr : v ≤ r + 1 := hv.trans hu
+  by_cases hvr' : v ≤ r
+  · exact hheads v hvr'
+  · have : v = r + 1 := by omega
+    subst v
     rw [hend]
 
 /-- A seek round moves the input right once; there is no public native-input-head primitive
