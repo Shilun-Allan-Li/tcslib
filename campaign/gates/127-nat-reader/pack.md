@@ -167,3 +167,13 @@ verified and mapped by `PATH-MAP.json`. Source indexes distinguish `.lean.txt`
 captures from library sources, including the two pinned package Mathlib inputs.
 Independent MAC8 anchors and the full reproduction helper/configuration set are
 included beside the final canonical pack. No extra Lean module is added as evidence.
+
+## Independent publication peer
+
+`publication-peer/findings.md` and its complete30-payload verification inputs report
+0 blockers/0 majors,2 publication minors resolved in this canonical wrapper and2 notes.
+The stale preparation field and missing portable execution context are explicitly
+resolved above. Every512 frozen payload and all current source/native/meta/screen
+claims were independently checked within their recorded limits. The peer is not
+an external gate verdict, new replay, debt ruling or merge clearance. Final bundle
+pins are supplied separately after the exact mixed rebuild and archive checks.

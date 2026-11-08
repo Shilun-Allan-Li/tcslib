@@ -23,12 +23,12 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 
 | PR | Gate | Pushed source HEAD | Current state |
 |---|---:|---|---|
-| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 FE helpers/4 owners; actual157 PASS/static0/35,50 selected exact types/all owned AX standard,9 full proof boundaries/22pairs; current33 completed:2433/2110/462920,8new5gone,all13 deltas dispositioned; publication preparing |
+| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 PASS/static0/31; final44 comparison running |
-| #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80 PASS/static0/31, full5 proof boundaries/12pairs and33 screen complete; **Ready to dispatch** |
-| #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 public SafeRun closures plus1 private bridge;80 PASS/static0/31,4 full boundaries/14pairs, public3 exact/private1 standard,33 screen0new0gone; **Ready to dispatch** |
-| #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 private Hardness head/tail closures;26 PASS/static0/0,2 exact types/30pairs,33 screen0new10gone; **Ready to dispatch** |
-| #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`|1 local hinit reader;18 PASS/static0/0,3 public consumers exact, abstract hinit3guards/6pairs,33 screen0new1gone; **Ready to dispatch** |
+| #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
+| #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
+| #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
+| #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #247 |127|`e16049ad20823b3e6abba171e328489746062080`|full canonOffset_spec now reads Nat.bit and codeBitsNat via equations;23 PASS/static0/0, private metadata exact,2 foreign TCS heads+Nat.bit/6pairs; actual48 screen0new0gone0scores; final512-payload packet prepared/publication peer pending |
 | #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|approved Ladner statement skeleton,17 declarations/6 mathematical holes;2 PASS/static0/6,895→896;17 AX records,whole9-head guard/18pairs/6 edge probes and QA pass;49 screen queued |
 
@@ -42,20 +42,19 @@ Only gates/merges retire implementations. Old FH10/e0b/43 results remain histori
 
 ### Published morning audit inputs
 
-Current full bindings, SHA/counts and pasteable prompts live in each gate's
-`publication.json` and `prompt.md`. The maintainer publishes artifacts; Seyoon dispatches.
+Complete source/records/exchange bindings, bundle SHA/counts and the exact pasteable prompts
+are in `campaign/status/2026-11-08-overnight/DISPATCH.md` and each gate’s
+`publication.json`/`prompt.md`. The maintainer publishes artifacts; Seyoon dispatches.
 
-- Gate123:373 sections/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`;
-  gate125:291/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`;
-  gate126:261/SHA`8b8ae13401e9af863bc2decdbac810283657def59e269e8caf52df4f2be0bd0c`.
-  All three use records`0b696a122a765defbab1965125930d6d5c514aab` and exchange
-  `563eb1dc4b9700811544e6e3e798f26bb00e9d27`; complete prompts were issued in chat.
-- Gate124:670 sections/23,947,361bytes/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`;
-  records`ec54c705c5683f056340c62e8d88ed3dcff628ce`, exchange`78b371245f6998332e95cbd23671035e6d781a8a`.
-  Its complete prompt was issued in chat and is saved at `campaign/gates/124-safe-run/prompt.md`.
-- Original gate123359-section/SHA7fa prompt is **VOID**. The later unissued
-  gate123SHA607f and gate125SHAb526 revisions are superseded and preserved. Use only the
-  current publication.json/prompt.md. No external dispatch has been confirmed for this batch.
+- Gate121: 816sections/79431795bytes/SHA`cb9b9f37ac69c3b723954bfee63b42112683ab9b04a978085adb0dcf3b3dcb6c`; prompt issued in chat.
+- Gate123: 373sections/15573692bytes/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`; prompt issued in chat.
+- Gate124: 670sections/23947361bytes/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; prompt issued in chat.
+- Gate125: 291sections/16566759bytes/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; prompt issued in chat.
+- Gate126: 261sections/15532664bytes/SHA`8b8ae13401e9af863bc2decdbac810283657def59e269e8caf52df4f2be0bd0c`; prompt issued in chat.
+
+Original gate123359-section/SHA7fa prompt is **VOID**. Its later unissued SHA607f revision
+and gate125's unissued SHAb526 are superseded history. Use only each current publication.
+No external dispatch has been confirmed for this batch. None of these PRs is clear to merge.
 
 ### Passed prospective merged-tree chain
 
@@ -110,8 +109,8 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
 
 ### Running work and ordered continuation
 
-1. All source replays are now complete and pass. Finish publication121/127 using the
-   completed current33/current48 results; preserve every changed-pair disposition.
+1. All source replays are complete and pass. Use the published prompt index for completed
+   packets and preserve every changed-pair disposition. Finish any remaining publication.
 2. Finish serialized final44 BASE/HEAD for FH13 and49 HEAD for Ladner, then packets122/128.
    Live outputs: `/private/tmp/ab34-fh13-screen44` and
    `/private/tmp/ab34-late-context-screen` (completed BASE/Nat48;Ladner49 queued).
