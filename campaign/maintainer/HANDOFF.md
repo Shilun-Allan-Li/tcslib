@@ -18,9 +18,10 @@ validation; #243/#244/#245/#246/#247/#249 are **Clear to merge**. #241/#242 rema
 
 Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / **whole MAC8**:895 objects and1003 tracked Lean blobs.
 All subsequent campaign pushes are records only. #215/#222/#223/#228/#229/#230/#233/#234/#235
-are merged; the eight overnight source PRs remain unmerged. Next free gate:**129**.
+are merged; the eight overnight source PRs remain unmerged. Next free gate:**130**;129 is reserved for approved reader PR#251.
 The prior replay/copy-screen jobs are complete. A three-reader InputLength proposal
-now passes the complete consumer and guards but awaits Seyoon's API ruling. Two private
+passes the complete consumer and guards; Seyoon approved all three equations.
+Its source-only prerequisite PR#251/gate129 is open and the full394 replay is running. Two private
 existing-reader mechanical repair fronts are active; no mathematical fill was self-dispatched.
 
 ### Audit returns and current dispositions
@@ -31,8 +32,9 @@ reads and1 portable-integrity minor. Gate127 is PASS with1 records pointer minor
 in the current context record. Gates122/123/124/125/126/128 report clean PASS. Root and parallel subagents have dispositioned all notes for six scoped gates and
 verified current clean target source against the actual passed replays, all1003 campaign
 Lean blobs, toolchain/package inputs and895 physical MAC8 objects. Six gates are CLOSED.
-Gate122's selected13 PASS is preserved, but exposed held-front governance is not disposed
-by BASE restoration; root keeps closure pending. The eight shared-drop originals remain
+Gate122's selected13 PASS is preserved; root records one separate governance majorM1
+for the shared121 step reads and seven exposed held fronts. BASE restoration is not
+Rule10 acknowledgment; root keeps closure pending. The eight shared-drop originals remain
 untouched. Existing-reader121 repairs and a concrete three-reader API proposal continue
 without adopting unapproved APIs or inferring debt permission. Six Ladner holes remain.
 
@@ -106,7 +108,7 @@ metadata/guard/edge runs; current2-module replay is separately actual1096. TCSli
 all17 seeded roots and encountered-theorem proof boundaries are explicit. Source attribution
 uses the approved Theorem3.3/proof fallback; exact2009 exercise-part wording remains unverified.
 
-Four user decision fronts remain pending; no approval is inferred from the overnight mandate:
+Three earlier user decision fronts remain pending; the separate three-reader proposal is now explicitly approved:
 
 - SAT's PolyTimeBlockLoop import for head/tail leaves: complete held proposal under
   campaign/items/dedup/sat-word-proposal/.
@@ -121,8 +123,9 @@ Four user decision fronts remain pending; no approval is inferred from the overn
 
 - Three additional non-simp owner readers for InputLength: exact equations, full four-owner
   hypothetical patch and actual native/sealed/22-pair evidence are in
-  campaign/items/dedup/inputlength-reader-proposal/2026-11-08/. They are unapproved
-  source-text proposals; no API adoption, full downstream replay or source merge.
+  campaign/items/dedup/inputlength-reader-proposal/2026-11-08/. Seyoon approved exactly
+  these three non-simp APIs; RULING.md records the answer. Source-only PR#251/gate129
+  is open, source`1d35e812ce12059b87066d8680748e46553a9137`, full394 replay active. Consumer proof remains separate; no source merge.
 
 A bounded continuation triage records42 dispositions/25 source bindings at final-eight
 source. Exact matches are already in these PRs; remaining inspected targets need reader,
@@ -133,14 +136,15 @@ debt retains its exact kinds/owner/window, after MIG1 and before further SAT/Har
 Next: Seyoon may merge the six cleared PRs. Rebind each subsequent source merge
 to the actual campaign and apply the standing replay-validity rule or whole-overlay replay.
 Continue existing-reader121 repairs and precise122 held-front disposition; ask for the
-three-reader public API decision before adoption. Preserve reports verbatim and pause
+approved reader gate129 to dispatch when full evidence passes. Preserve reports verbatim and pause
 other unresolved design fronts. No new fill dispatch follows from an audit PASS.
 
 ### Machine and preservation constraints
 
 Local3/machine5 Lean slots, nice10/j4; only leanelab/leanelab-o, never lake build.
 One global screen lock. Every shell sources scratch/env.sh; Python only-I. Use whole APFS
-snapshot clones and unlink compiled outputs before elaboration. Current own fronts:two private mechanical repairs, each at most1 locked Lean job.
+snapshot clones and unlink compiled outputs before elaboration. Current own fronts:129 whole394 replay plus two private mechanical repairs, at most
+3 shared locked Lean jobs; one129 copy screen under the global lock.
 
 R is /Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4;S is the original
 tcslib-scratch. S/wt-hk→R;wt-xch→shared exchange;wt-camp→ab34-campaign-current;

@@ -1,0 +1,9 @@
+/-- The unrestricted loader's completed state is absorbing. -/
+private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)
+    (hc : c.state = some (.inr (.inr true))) : clFreshTM.tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  change (FinTM.controlAction 0 (some (Sum.inr (.inr true)))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

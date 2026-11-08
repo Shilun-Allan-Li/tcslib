@@ -1,3 +1,3 @@
 **Not yet clear to merge: #242.**
 
-The external selected13 PASS and seven notes are preserved. Current clean merge/replay validity passes, but restoration of seven exposed candidates in six BASE-exact owners is not a Rule10 acknowledgment. Root keeps closure pending the precise held-front governance disposition; no new source defect in the selected13 or waiver is inferred.
+External selected13 PASS is preserved. Root accepts all seven factual notes with note5 qualified and records one separate governance major M1. Existing-reader repairs and exact new-interface/transport dispositions are still required for the disclosed held fronts. Current clean merge/replay validity passes and does not waive M1. See resolutions.md and status/audit-reviews/122/.
