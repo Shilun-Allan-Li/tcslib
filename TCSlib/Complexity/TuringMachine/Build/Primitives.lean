@@ -3466,7 +3466,7 @@ private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
     have hs := fwdMapSetup_stationary M z hentered 1
     simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
   have hdstop : ∃ r,
-      (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+      (fwdMapVirtual M (x := x) (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
         (pairEncode a [])).state = some r ∧ stop r := by
     refine ⟨.run M.tm.q₀ true, ?_, M.tm.q₀, true, rfl⟩
     simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
