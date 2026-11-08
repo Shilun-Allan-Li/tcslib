@@ -10,10 +10,11 @@ Lean changes go through audited PRs approved and merged by the user. PR #236's
 foundation statement and representation-proof gates both passed 0/0/0/3; the
 reports are preserved at code head `0769cba3e44c56700349f954190fc99d9e622270`.
 
-The construction-core statement gate passed 0/0/0/3; the verbatim report and
-resolutions are included in the code records. The next prepared input is
-`outbox/gates/03-construction-core-proofs-r1/README.md`: source `690217cc1aaefe411158808a8b0797fd887a8abc`,
-records `42a400a1b88eecf9172a91ba287894450c72f9b0`, 31 filled obligations, no owned admissions. No proof-audit
-verdict, reviewer selection or dispatch is claimed. Earlier issued gate folders
-are historical and unchanged. Exact Pei16/Wu24 PDFs have been acquired; reference
-ingestion and approved matching remain open. Read the frozen pack for all limits.
+The construction-core statement and proof gates both passed 0/0/0/3. Their
+verbatim reports and separate dispositions are included in the code records.
+The next prepared input is `outbox/gates/04-encoding-adapters-r1/README.md`:
+source `6eec97be8f54d9990340900a5595dab32fb477f5`, records `82f01285d688c09ddbce370a34f20944ba206fb6`, 14 admitted adapter obligations.
+The new draft branch is `cryptography/lwe-sis-adapter-statements`, targeting the
+central branch and depending on audited PRs #236/#237. No adapter gate verdict,
+reviewer selection or dispatch is claimed. Earlier folders remain historical
+and unchanged; source-policy work and user integration remain outstanding.
