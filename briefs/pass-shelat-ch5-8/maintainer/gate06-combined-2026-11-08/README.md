@@ -114,6 +114,21 @@ raw diagnostic lines for future attachments; R1 was never used for acceptance.
 This does not alter native source or the successful bootstrap. The complete
 failure/context review still awaits actual59-owner results.
 
+The [R3 probe guard](native-rule10-guard-r3/README.md) is frozen and reviewed,
+ready only after an actual completed LOCAL receipt is available. It checks
+all1075 source/object/direct-dependency contracts and3810 external objects before
+and after each pinned probe phase, enforces the approved own-tree scope, and
+returns the actual rc without interpreting negative controls or source failures.
+The isolated instance and expanded C3 sources are prepared byte-for-byte from
+the reviewed snapshots; neither has run. No fake future LOCAL result is supplied.
+
+The [historical-key link review](rule10-failure-review-peer-r2-keylinks/report.md)
+also qualifies148 provisional inventory links:2 full canonical source-key links
+and146 unqualified source-spelling candidates. Uniqueness within a file does
+not make the latter canonical links. The fresh R2 must retain them separately;
+no closure or waiver follows from such spelling. These are review-index limits,
+not changes to the native source. Earlier inputs and all rows stay preserved.
+
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.
 Existing #248 remains draft/deferred; its cleanup code is not in this source.
 
