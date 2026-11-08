@@ -1,0 +1,15 @@
+{
+  "module": ".lake/ps-maintainer/cleanup-partial-fixes-20261108-r1/InstanceEligibility",
+  "source": "import TCSlib.Complexity.TuringMachine.Configuration\nimport Lean\n\nopen Lean Lean.Meta in\nrun_cmd do\n  let n := `Turing.instInhabitedCfg\n  let env \u2190 getEnv\n  let info \u2190 getConstInfo n\n  unless info.isDefinition && isInstanceCore env n do\n    throwError \"Expected the exact imported definition-instance\"\n  unless (\u2190 getReducibilityStatus n) matches .semireducible do\n    throwError \"Expected semireducible before local attribute\"\n  logInfo m!\"INSTANCE-ELIGIBILITY before name={n.toString} kind=definition instance=true status=semireducible\"\n\nattribute [local irreducible] Turing.instInhabitedCfg\n\nopen Lean Lean.Meta in\nrun_cmd do\n  let n := `Turing.instInhabitedCfg\n  unless (\u2190 getReducibilityStatus n) matches .irreducible do\n    throwError \"Local irreducibility was not installed\"\n  logInfo m!\"INSTANCE-ELIGIBILITY after name={n.toString} status=irreducible; EOF\"\n",
+  "source_sha256": "a93500852547ca3c8109ce2abb6a6e541571426860797850dc463234ee8fcba7",
+  "start_utc": "2026-11-08T12:47:05.590642+00:00",
+  "end_utc": "2026-11-08T12:47:06.959337+00:00",
+  "elapsed_seconds": 1.3687055837363005,
+  "rc": 0,
+  "passed": true,
+  "log": "evidence/logs/InstanceEligibility.attempt01.log",
+  "log_sha256": "216ccea037312709c23a32144cc8caa5c62fe2c3a9797350817e3a0d7af56705",
+  "object_sha256": "6614fea34eac71453c55762553b257b6ea52eb96e536842ade4c476c4624d46f",
+  "eligibility_verified": true,
+  "limit": "One exact ordinary semireducible definition-instance accepts local irreducibility without unsafe options. This is not a complete instance sensitivity test or a notation/scope ruling."
+}

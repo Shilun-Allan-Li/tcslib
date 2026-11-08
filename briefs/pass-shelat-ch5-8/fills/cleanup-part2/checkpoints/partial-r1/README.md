@@ -26,4 +26,8 @@ been executed, no source applied, no new external job dispatched, and no ruling
 or merge clearance is granted by intake. The CP1 local API follow-up remains a
 separate checked local commit; it is not implicitly in this worker payload.
 
-**Not yet clear to merge — final-PARTIAL delivery received; independent review and incomplete work remain.**
+The later [checked maintainer repairs](checked-repairs-r1/README.md) are separate
+from this immutable intake. Their124-module closure and ten selected axiom checks
+pass; full cleanup and seal acceptance remain open.
+
+**Not yet clear to merge — partial delivery reviewed and local repairs checked; full acceptance remains open.**
