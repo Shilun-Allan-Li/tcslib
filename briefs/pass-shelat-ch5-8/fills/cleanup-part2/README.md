@@ -1,5 +1,10 @@
 # Cleanup part 2
 
+**Continuation deferred at the user's request (2026-11-08 PST), roughly a week.**
+Keep #248 draft and resume when the user is ready; worker/scope choices can wait.
+The [independent-front triage](../../maintainer/cleanup-deferral-2026-11-08.md)
+records narrow Gate06B/D options and the fronts that still require cleanup.
+
 Claude's [final-PARTIAL delivery](checkpoints/partial-r1/README.md) arrived during
 the requested30-minute watch. The [incoming review](checkpoints/partial-r1/review-r1/README.md)
 records five unique majors and three minors; it remains immutable history.
