@@ -1,0 +1,168 @@
+{
+  "statement_baseline": "a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf",
+  "source_declarations_before": 62,
+  "source_declarations_after": 62,
+  "source_kinds": {
+    "definitions": 17,
+    "theorems": 45
+  },
+  "ordered_declarations_unchanged": true,
+  "declaration_multiset_unchanged": true,
+  "signatures_definitions_attributes_namespaces_unchanged": true,
+  "changed_proof_bodies": [
+    "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_encodeMatrix",
+    "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_of_outOfRange",
+    "TCSlib.Cryptography.Encoding.Modular.decodeVector_encodeVector",
+    "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_decodeMatrix",
+    "TCSlib.Cryptography.Encoding.Modular.encodeVector_decodeVector",
+    "TCSlib.Cryptography.Encryption.Symmetric.Regev.acceptProb_uniform_shift",
+    "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt_encrypt",
+    "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt_encrypt_noise",
+    "TCSlib.Cryptography.Encryption.Symmetric.Regev.distAdv_encrypt_le",
+    "TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist_eq_shift_sample",
+    "TCSlib.Cryptography.Hashing.SIS.cardinal_compression",
+    "TCSlib.Cryptography.Hashing.SIS.collisionDifference_isSolution",
+    "TCSlib.Cryptography.Hashing.SIS.collisionDifference_ne_zero",
+    "TCSlib.Cryptography.Hashing.SIS.collisionDifference_sqNorm_le",
+    "TCSlib.Cryptography.Hashing.SIS.collisionProbability_le_successProbability",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_cardinal_compression",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_exists_solution",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_inputBitsBound_eval",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_magnitude_fits",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_modulus_ge_two",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_not_isSolution_of_modulus_dvd",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_outputBitsBound_eval",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_sqNormBound_lt_modulus_sq",
+    "TCSlib.Cryptography.Hashing.SIS.exists_collision",
+    "TCSlib.Cryptography.Hashing.SIS.exists_solution",
+    "TCSlib.Cryptography.LWE.BitEncoding.decode_codepoint_add",
+    "TCSlib.Cryptography.LWE.BitEncoding.distance_add_right",
+    "TCSlib.Cryptography.LWE.BitEncoding.distance_codepoints",
+    "TCSlib.Cryptography.LWE.BitEncoding.distance_intCast_zero_le",
+    "TCSlib.Cryptography.LWE.BitEncoding.distance_symm",
+    "TCSlib.Cryptography.LWE.BitEncoding.distance_triangle"
+  ],
+  "new_helpers": 0,
+  "added_imports": {
+    "TCSlib/Cryptography/Encoding/ModularDecode.lean": [
+      "import Mathlib.Algebra.BigOperators.Group.List.Lemmas\n"
+    ],
+    "TCSlib/Cryptography/Hashing/SIS/Profiles.lean": [
+      "import Mathlib.Tactic.Linarith\n",
+      "import Mathlib.Tactic.Ring\n"
+    ]
+  },
+  "unchanged_other_frozen_files": [
+    "AGENTS.md",
+    "TCSlib.lean",
+    "TCSlib/Complexity/ClassNP/PolyTime.lean",
+    "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+    "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+    "TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+    "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+    "TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+    "TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+    "TCSlib/Complexity/Randomized/Closure.lean",
+    "TCSlib/Complexity/Randomized/PPT.lean",
+    "TCSlib/Complexity/Randomized/PolyExpr.lean",
+    "TCSlib/Complexity/Randomized/Primitives.lean",
+    "TCSlib/Complexity/Randomized/Repetition.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+    "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+    "TCSlib/Complexity/TuringMachine/Sweep.lean",
+    "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+    "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+    "TCSlib/Cryptography/Candidates/Arithmetic.lean",
+    "TCSlib/Cryptography/Encoding.lean",
+    "TCSlib/Cryptography/Encoding/Modular.lean",
+    "TCSlib/Cryptography/Encryption.lean",
+    "TCSlib/Cryptography/Encryption/Symmetric.lean",
+    "TCSlib/Cryptography/Encryption/Symmetric/Regev.lean",
+    "TCSlib/Cryptography/Foundations/Experiments.lean",
+    "TCSlib/Cryptography/Foundations/Negligible.lean",
+    "TCSlib/Cryptography/Foundations/Probability.lean",
+    "TCSlib/Cryptography/HardcoreBit/Basic.lean",
+    "TCSlib/Cryptography/Hashing.lean",
+    "TCSlib/Cryptography/Hashing/SIS.lean",
+    "TCSlib/Cryptography/LWE.lean",
+    "TCSlib/Cryptography/LWE/Assumption.lean",
+    "TCSlib/Cryptography/LWE/Basic.lean",
+    "TCSlib/Cryptography/LWE/Encoding.lean",
+    "TCSlib/Cryptography/LWE/Experiments.lean",
+    "TCSlib/Cryptography/LWE/Noise.lean",
+    "TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+    "TCSlib/Cryptography/NumberTheory/Primality.lean",
+    "TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+    "TCSlib/Cryptography/SIS.lean",
+    "TCSlib/Cryptography/SIS/Assumption.lean",
+    "TCSlib/Cryptography/SIS/Basic.lean",
+    "TCSlib/Cryptography/SIS/Encoding.lean",
+    "TCSlib/Cryptography/SIS/Experiments.lean",
+    "TCSlib/InformationTheory/FinDist.lean",
+    "TCSlib/InformationTheory/StatisticalDistance.lean",
+    "lake-manifest.json",
+    "lean-toolchain",
+    "policy.md",
+    "scripts/campaign_style_lint.py",
+    "scripts/lean_check_tree.sh",
+    "workflow.md"
+  ],
+  "source_files": [
+    {
+      "path": "TCSlib/Cryptography/Encoding/ModularDecode.lean",
+      "source_sha256": "1c56a77c6b059a440a807ff979ad733ee98b359c7fefa91e135d740780ebafd3",
+      "invariant_surface_sha256": "6aff81737e2ead6129b3f634a43addc09e1c525d80f310e64e4dc7c4ecd7fa94"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean",
+      "source_sha256": "01672b5b9fc91b14de71199d6b272d0128a1f666205a7007e05367074e283e04",
+      "invariant_surface_sha256": "5339017157b0bba6e4bde4e42318de76650d14fa09ac0f53c0c5f311fdb627b6"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean",
+      "source_sha256": "f018bc556efe37126ed67e2855a2c30fc4001cd43c86132fd81d5878caa15ae5",
+      "invariant_surface_sha256": "6178d7e4a4a3db0b4d14be75e53548c78fbf1e94dd658b3fabe538df8d48e25d"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Basic.lean",
+      "source_sha256": "9a95ce0621be8245a02bcb1e7c8fa387a0d414b7ce727ddea0da477c8aa8df2e",
+      "invariant_surface_sha256": "5bb97d6fe1b0a91d2c4f3c756c90a89d8bc6a769f63708b6e160b19a66716d8f"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Experiments.lean",
+      "source_sha256": "66cadbfdb9c40f3f553dcf230e750c15dd1ecf583cf5fc59d145ec13a54e14a8",
+      "invariant_surface_sha256": "0c9ecb97132dce3e863240a9c69508028ad3a1ea99c4f618cf0d8ae8f27b0601"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Profiles.lean",
+      "source_sha256": "41cc987cfaf76384714b5037cbb677e2f4b63a4bd8cf126a68e12228d963d2ad",
+      "invariant_surface_sha256": "0ebdeb19f557bab4dd2d4efcbb02cbc68194f0e6d2d213d6255d534514839fbe"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/BitEncoding.lean",
+      "source_sha256": "341fadb151a36feb97b3f052ecb6d0c7c2cdcd55bde24c6bd921e27cabccf147",
+      "invariant_surface_sha256": "4a5f320b08e0681db208f9b1e8c2cc69848959d5103a3abaa6893ae33ea8eeec"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/SampleSchedules.lean",
+      "source_sha256": "ef0a7374ef06298f7dade397b454ec4f06cfe92c029501ae80fad5800bd9263f",
+      "invariant_surface_sha256": "7b2468047b445f7d5b0a8595cd929977b39fc79dc04fd023f735443b78baeccc"
+    }
+  ],
+  "scope": "Comment-stripped source invariant, not an elaborated type-hash comparison."
+}

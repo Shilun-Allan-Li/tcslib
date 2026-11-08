@@ -5,17 +5,22 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-The construction-core statement audit passes with 0 blockers, 0 majors,
-0 minors and 3 continuing notes. The report is preserved verbatim at
-`audits/lwe-sis-core-statements-findings.md`, with dispositions in
-`audits/lwe-sis-core-statements-resolutions.md`. Intake reverified the frozen
-source, policies, pins and current/prior/exchange checksums without changing
-Lean or running a new native check. The scoped 31-proof fill can now begin
-on existing PR #237, preserving the audited definitions and statements.
+The construction-core statement audit passes 0/0/0/3. Its verbatim findings and
+separate dispositions are under `audits/`. All 31 approved obligations are now
+proved at `690217cc1aaefe411158808a8b0797fd887a8abc`, on existing PR #237.
+All definitions/signatures and the 62 source declarations are unchanged.
+
+The fresh serial 68-module sweep passes with zero owned admissions and the same
+17 inherited warnings. All 263 owned constants use only standard axioms, with
+no sorryAx; seven compiler auxiliaries are explicitly inventoried. Freeze and
+style checks pass. `fills/01-construction-core/` contains the evidence, report
+and prepared proof-audit handoff. A new Codex/Claude selection and user dispatch
+are still required; no external proof verdict or publication is claimed yet.
 
 Independent source and machine-adapter preparation is under `continuation/`.
 Raw local PDF extraction is complete, but validation/matching and the proposed
-two-tag registry change remain unexecuted. No new external job is dispatched.
+two-tag registry change remain unexecuted. Source-policy and machine/primitive
+bridge obligations remain open. No new external job is dispatched.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
@@ -24,12 +29,13 @@ The active draft is `cryptography/lwe-sis-phase1-statements` in the separate
 targets are remotely verified.
 
 The construction-core statement draft contains eight new mathematical modules,
-62 source declarations and 31 direct admissions: sample schedules, modular
+62 source declarations with all 31 former admissions filled: sample schedules, modular
 parsers, bit decoding, direct Regev symmetric encryption and its concrete
 security bound, and SIS hashing/collision bounds with a dyadic profile. A fresh
 68-module sweep passes. The statement gate passes;
-the 31 proofs, efficient machines and existing primitive bridges remain open.
-See `gates/02-construction-core/` for scope, evidence and publication instructions.
+the proof audit, efficient machines and existing primitive bridges remain open.
+See `gates/02-construction-core/` for the statement gate and
+`fills/01-construction-core/` for the current proof handoff.
 
 The phase-0 statement audit passed with 0 blockers, 0 majors, 0 minors and 3 notes.
 The report is retained verbatim under `audits/lwe-sis-phase0-findings.md`, with its
@@ -50,9 +56,9 @@ definition/instance bodies, attributes and namespaces are unchanged. No helper w
 
 The public hypotheses remain `TCSlib.Cryptography.LWE.DLWEAssumption` and
 `TCSlib.Cryptography.SIS.SISAssumption`. They define hardness propositions; no hardness
-axiom, efficient sampler or primitive construction/security theorem is asserted.
+axiom, efficient sampler or primitive-security endpoint follows from these propositions alone.
 
-## Verification
+## Foundation verification (historical)
 
 A fresh serial 55-module dependency sweep through `scripts/lean_check_tree.sh` passes
 with zero errors, zero new admissions and the same 17 inherited warnings. It uses a newly
@@ -64,7 +70,7 @@ Source signatures and all other frozen code are checked by `verify_freeze.py`.
 Style reports zero FAIL and the same two acronym-reader false positives accepted by the
 statement audit. No linter edit or reader rename was made.
 
-Current proof evidence is under `fills/00-encodings/evidence/`. Historical statement
+Foundation proof evidence is under `fills/00-encodings/evidence/`. Historical statement
 evidence under `gates/00-foundations/evidence/` remains unchanged and records 14 admissions
 at its earlier freeze. Independent finite-model calculations remain supporting checks;
 they do not execute Lean or prove security.
