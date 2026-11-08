@@ -29,5 +29,12 @@ a newly empty own tree and checks one module at a time with
 No push, merge or external worker dispatch occurs in this proof fill. Complete
 the scoped checks and prepare a separate proof audit before claiming gate closure.
 
+
+
+Verified local handoff: 1301 sections, 6699026 bytes, SHA-256
+`a252af465a90beab319c27c32b25edafe712f8f105d7969f71b2cbeb98b692d4`. Bundled records: `a9b97213c616ef7afe80dcaa57eb5a503cf6b110`.
+See DISPATCH.md and review-publication.json for exact identities and the
+superseded unissued status-label correction. Publication and dispatch remain pending.
+
 **Not yet clear to merge — all twelve proofs are checked; their external proof
 gate, source-policy work, landing checks and user integration remain open.**
