@@ -670,8 +670,8 @@ private theorem rbl_step_iterate (h c s : List Bool) (i : ℕ) :
 
 /-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
 private theorem rbl_length_step_le (x : List Bool) : (rbl_step x).length ≤ 2 * x.length + 4 := by
-  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
+  have h1 := length_pair_components_le x
+  have h2 := length_pair_components_le (pairSndD x)
   simp only [rbl_step, length_pairEncode, List.length_drop]
   omega
 
@@ -798,7 +798,7 @@ truncated sampler on strings.
   (`PolyTimeComputable.comp'`).
 - **Polynomial time.** One step at most doubles the length (`|step x| ≤ 2|x| + 4`), and from the
   second step on the state is a well-formed pair that only shrinks
-  (`StateLoop.length_pairFstD_add_pairSndD_le`), so every orbit point has length at most
+  (`length_pair_components_le`), so every orbit point has length at most
   `2|x| + 4`. The repetition host `Complexity.polyTimeComputable_iterateFind`, with `R = var` and
   orbit bound `2n + 4`, therefore makes the loop polynomial-time. Its `match` on the search
   result is split by `split` (its equation lemmas), never matched by definitional unfolding.

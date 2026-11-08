@@ -281,8 +281,8 @@ theorem owpPredPre_poly : PolyTimeComputable owpPredPre :=
   NUPPT.polyTimeComputable_inArg.append NUPPT.polyTimeComputable_inAdvice
 
 /-- The post-processing of the predictor is polynomial-time (`polyTimeComputable_pairEq` for
-the verdict test, `StateLoop.headBit_poly` for the two bits, `polyTimeComputable_ite`,
-`StateLoop.xor_poly`). -/
+the verdict test, `polyTimeComputable_headD` for the two bits, `polyTimeComputable_ite`,
+`BinArith.polyTimeComputable_xor`). -/
 theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
   have htest : PolyTimeComputable fun v : List Bool => [decide (pairSndD v = [true])] := by
     convert polyTimeComputable_pairEq.comp
@@ -291,17 +291,17 @@ theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
     simp
   have hσ : PolyTimeComputable fun v : List Bool =>
       [(NUPPT.inAdvice (pairFstD v)).headD false] :=
-    StateLoop.headBit_poly.comp (NUPPT.polyTimeComputable_inAdvice.comp polyTimeComputable_pairFstD)
+    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inAdvice.comp polyTimeComputable_pairFstD)
   have hflip : PolyTimeComputable fun v : List Bool =>
       [(NUPPT.inCoins (pairFstD v)).headD false] :=
-    StateLoop.headBit_poly.comp (NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairFstD)
+    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairFstD)
   have hite : PolyTimeComputable fun v : List Bool =>
       [if pairSndD v = [true] then (NUPPT.inAdvice (pairFstD v)).headD false
         else !(NUPPT.inAdvice (pairFstD v)).headD false] := by
-    convert polyTimeComputable_ite htest hσ (StateLoop.not_poly hσ) using 1
+    convert polyTimeComputable_ite htest hσ (polyTimeComputable_not hσ) using 1
     funext v
     by_cases hv : pairSndD v = [true] <;> simp [hv]
-  exact StateLoop.xor_poly hite hflip
+  exact BinArith.polyTimeComputable_xor hite hflip
 
 /-- **The predictor machine of [PS10, Theorem 79.4]** for a distinguisher `D` and a sign
 family `flip`: advice `⟨[flip n], D.advice n⟩`, coins `1 + D.coins`; on `⟨1^n, y⟩` it reads the

@@ -528,11 +528,11 @@ theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x)) :
     P.glHalf.toFunFamily.Easy := by
   have huh : PolyTimeComputable fun w => unaryHalf (pairFstD w) :=
-    ptcComp unaryHalf_poly polyTimeComputable_pairFstD
+    PolyTimeComputable.comp' unaryHalf_poly polyTimeComputable_pairFstD
   refine ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
       ((pairSndD w).take (unaryHalf (pairFstD w)).length)) ++
       (pairSndD w).drop (unaryHalf (pairFstD w)).length,
-    (ptcComp hF (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
+    (PolyTimeComputable.comp' hF (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
       (dropLen_poly huh polyTimeComputable_pairSndD), fun n z => ?_⟩
   have hFx' : ∀ n (x : Fin n → Bool),
       F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := hFx
@@ -547,10 +547,10 @@ the parameter, cut the two blocks of `⌊n/2⌋` bits and apply the inner-produc
 theorem glHalfBit_easy : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
     ∀ n (z : Fin n → Bool), H (NUPPT.advInput n (List.ofFn z)) = [glHalfBit n z] := by
   have huh : PolyTimeComputable fun w => unaryHalf (pairFstD w) :=
-    ptcComp unaryHalf_poly polyTimeComputable_pairFstD
+    PolyTimeComputable.comp' unaryHalf_poly polyTimeComputable_pairFstD
   refine ⟨fun w => ipFun (pairEncode ((pairSndD w).take (unaryHalf (pairFstD w)).length)
       (((pairSndD w).drop (unaryHalf (pairFstD w)).length).take (unaryHalf (pairFstD w)).length)),
-    ptcComp ipFun_poly ((takeLen_poly huh polyTimeComputable_pairSndD).pairEncode
+    PolyTimeComputable.comp' ipFun_poly ((takeLen_poly huh polyTimeComputable_pairSndD).pairEncode
       (takeLen_poly huh (dropLen_poly huh polyTimeComputable_pairSndD))), fun n z => ?_⟩
   simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
     List.length_replicate]

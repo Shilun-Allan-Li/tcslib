@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Cryptography.Foundations.Experiments
+import TCSlib.Cryptography.HardcoreBit.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -44,6 +45,10 @@ by `ifEq`).
 
 * `TCSlib.Cryptography.decodeFin` — decode a string as an `ℓ`-bit string, failure on a wrong
   length; `TCSlib.Cryptography.padFin` — pad/truncate (for samplers).
+* `TCSlib.Cryptography.blocksEquivX`, `TCSlib.Cryptography.FunFamily.blocks` — the canonical
+  block bijection `(Fin (q·ℓ) → X) ≃ (Fin q → Fin ℓ → X)` and its Bool form, with the readers
+  `blocksEquivX_apply`, `blocksEquivX_symm_apply`, `FunFamily.blocks_apply`,
+  `FunFamily.blocks_symm_apply`.
 * `Complexity.NUPPT.inverter`, `Complexity.NUPPT.inverterLit` — an `NUPPT` as an inverter
   (with `1^n`, and literal).
 * `Complexity.NUPPT.distinguisher`, `Complexity.NUPPT.distinguisherL`,
@@ -53,7 +58,8 @@ by `ifEq`).
 ## Main results
 
 * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
-  padding invert `List.ofFn`.
+  padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
+  exactly on the encoding.
 * `TCSlib.Cryptography.invProbOpt_le_invProb`, `TCSlib.Cryptography.invProbOpt_some` — the
   bridges to the concrete `invProb`.
 * `TCSlib.Cryptography.invProbOpt_nonneg`, `TCSlib.Cryptography.invProbOpt_le_one` — bounds.
@@ -97,10 +103,63 @@ theorem length_eq_of_decodeFin_eq_some {ℓ : ℕ} {w : List Bool} {x : Fin ℓ 
   by_contra hw
   simp [decodeFin, hw] at h
 
+/-- **Decoding succeeds exactly on the encoding**: `decodeFin ℓ w = some x ↔ w = List.ofFn x`,
+for every width `ℓ` (`ℓ = 0` included) and every string `w`.
+
+**Proof sketch.** A successful decoding has `|w| = ℓ` (`length_eq_of_decodeFin_eq_some`); after
+substituting the width, `w = List.ofFn (w.get ·)` (`List.ofFn_get`) decodes to the bits of `w`
+(`decodeFin_ofFn`), which are therefore `x`. Conversely `decodeFin_ofFn`. -/
+theorem decodeFin_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
+    decodeFin ℓ w = some x ↔ w = List.ofFn x := by
+  constructor
+  · intro h
+    have hw := length_eq_of_decodeFin_eq_some h
+    subst hw
+    have h' := decodeFin_ofFn (fun j : Fin w.length => w.get j)
+    rw [List.ofFn_get, h, Option.some.injEq] at h'
+    rw [h']
+    exact (List.ofFn_get w).symm
+  · rintro rfl
+    exact decodeFin_ofFn x
+
 /-- Padding the encoding of an `ℓ`-bit string returns it. -/
 theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x) = x := by
   funext i
   simp [padFin]
+
+/-! ### Blocks of a flat tuple -/
+
+/-- A tuple of `q · ℓ` entries with values in an arbitrary type `X` as `q` consecutive blocks of
+`ℓ` entries: block `i`, position `j` is entry `finProdFinEquiv (i, j) = j + ℓ·i` (Mathlib's
+`finProdFinEquiv` and `Equiv.curry`). All `q`, `ℓ` (zero included). -/
+def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
+  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl X)).trans (Equiv.curry _ _ _)
+
+/-- The forward reader of `blocksEquivX`: block `i`, position `j` of `x` is entry
+`finProdFinEquiv (i, j)` of `x`. -/
+theorem blocksEquivX_apply (q ℓ : ℕ) {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) (j : Fin ℓ) :
+    blocksEquivX q ℓ X x i j = x (finProdFinEquiv (i, j)) := rfl
+
+/-- The inverse of `blocksEquivX` reads block `p.divNat`, position `p.modNat`. -/
+theorem blocksEquivX_symm_apply (q ℓ : ℕ) {X : Type*} (t : Fin q → Fin ℓ → X) (p : Fin (q * ℓ)) :
+    (blocksEquivX q ℓ X).symm t p = t p.divNat p.modNat := rfl
+
+/-- A string of `q · ℓ` bits as `q` consecutive blocks of `ℓ` bits (block `i` occupies the
+positions `ℓ·i, …, ℓ·i + ℓ - 1`): the encoding of the tuple `(x₁, …, x_q)` of
+[PS10, Theorem 35.1] as the `q·ℓ`-bit concatenation; the Bool specialization of
+`blocksEquivX`. -/
+def FunFamily.blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
+  blocksEquivX q ℓ Bool
+
+/-- The defining equation of `blocks`: block `i`, position `j` is position `ℓ·i + j` of `x`. -/
+theorem FunFamily.blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+    FunFamily.blocks q ℓ x i j = x (finProdFinEquiv (i, j)) :=
+  blocksEquivX_apply q ℓ x i j
+
+/-- The inverse of `blocks` reads block `k.divNat`, position `k.modNat`. -/
+theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
+    (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
+  blocksEquivX_symm_apply q ℓ t k
 
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
 [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
@@ -211,26 +270,11 @@ theorem invProbOpt_le_one {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α �
     (A : β → ρ → Option α) : invProbOpt f A ≤ 1 :=
   uprob_le_one _
 
-/-- An event of probability one holds everywhere (private copy of
-`TCSlib.Cryptography.HardcoreBit.forall_of_uprob_eq_one`, which lives in a frozen file). -/
-private theorem forall_of_uprob_eq_one {Ω : Type*} [Fintype Ω] {p : Ω → Prop}
-    (h : uprob p = 1) (ω : Ω) : p ω := by
-  classical
-  rw [uprob_eq_card_filter] at h
-  have hc : (Fintype.card Ω : ℝ) ≠ 0 := by
-    intro h0; rw [h0, div_zero] at h; exact zero_ne_one h
-  have hcard : (univ.filter p).card = Fintype.card Ω := by
-    have := (div_eq_one_iff_eq hc).1 h
-    exact_mod_cast this
-  have := Finset.eq_univ_of_card _ hcard
-  have hω : ω ∈ univ.filter p := by rw [this]; exact mem_univ ω
-  exact (mem_filter.1 hω).2
-
 /-- **"With probability one" is "for every coin string"** [PS10, Definition 24.6]: `A`
 computes `f` in the frozen sense (`Complexity.NUPPT.Computes`, equality for every coin
 string) iff at every parameter and argument the event `A(1^n, y; r) = f(⟨1^n, y⟩)` has
 probability one over the uniform coins. (On a finite uniform space an event of probability
-one is the whole space.) -/
+one is the whole space, `HardcoreBit.forall_of_uprob_eq_one`.) -/
 theorem _root_.Complexity.NUPPT.computes_iff_uprob (A : NUPPT) (f : List Bool → List Bool) :
     A.Computes f ↔
       ∀ n y, uprob (fun r : A.Coins n => A.runAt n y r = f (NUPPT.advInput n y)) = 1 := by
@@ -240,6 +284,6 @@ theorem _root_.Complexity.NUPPT.computes_iff_uprob (A : NUPPT) (f : List Bool �
       funext fun r => propext ⟨fun _ => trivial, fun _ => h n y r⟩
     rw [hp, uprob_true]
   · intro h n y r
-    exact forall_of_uprob_eq_one (h n y) r
+    exact HardcoreBit.forall_of_uprob_eq_one (h n y) r
 
 end TCSlib.Cryptography

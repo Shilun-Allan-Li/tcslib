@@ -605,24 +605,12 @@ theorem drop_ofFn_tapeSplit (c : ℕ) (b : Bool) (t : Fin c → Bool) :
     (List.ofFn (tapeSplit c (b, t))).drop 1 = List.ofFn t := by
   rw [ofFn_tapeSplit, List.drop_one, List.tail_cons]
 
-/-- Restricting a uniform tape of `c` bits to its first `m ≤ c` bits gives a uniform tape:
-the tape is the pair (prefix, suffix) through `finSumFinEquiv`, and the first projection pushes
-uniform to uniform. -/
+/-- Restricting a uniform tuple of `c` entries to its first `m ≤ c` entries gives a uniform
+tuple: the restriction along the injective `Fin.castLE h` (`HardcoreBit.pushesUniform_restrict`,
+`Fin.castLE_injective`). -/
 theorem pushesUniform_castLE {m c : ℕ} (h : m ≤ c) :
-    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) := by
-  let e : (Fin c → Bool) ≃ (Fin m → Bool) × (Fin (c - m) → Bool) :=
-    (Equiv.arrowCongr (finCongr (Nat.add_sub_cancel' h).symm) (Equiv.refl Bool)).trans
-      ((Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl Bool)).trans
-        (Equiv.sumArrowEquivProdArrow _ _ _))
-  have he : ∀ t : Fin c → Bool, (e t).1 = fun i : Fin m => t (Fin.castLE h i) := by
-    intro t
-    funext i
-    simp only [e, Equiv.trans_apply, Equiv.arrowCongr_apply, Equiv.sumArrowEquivProdArrow_apply_fst,
-      Equiv.coe_refl, Function.comp_apply, Equiv.symm_symm, finCongr_symm,
-      finCongr_apply, finSumFinEquiv_apply_left]
-    congr 1
-  have := (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
-  simpa only [he] using this
+    HardcoreBit.PushesUniform (fun t : Fin c → Bool => fun i : Fin m => t (Fin.castLE h i)) :=
+  HardcoreBit.pushesUniform_restrict (Fin.castLE_injective h)
 
 /-- An entry of the list of a tape below its length. -/
 theorem getD_ofFn_lt {c : ℕ} (t : Fin c → Bool) {i : ℕ} (hi : i < c) (d : Bool) :

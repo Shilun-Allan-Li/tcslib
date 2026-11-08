@@ -89,7 +89,9 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
   primitive); `NUPPT.timeBound`, `NUPPT.coinLen`, `NUPPT.adviceLen`.
 * `Complexity.NUPPT.advInput` — the adversary input `⟨1^n, y⟩`; `NUPPT.Coins` — the coin type
   at parameter `n`; `NUPPT.runAt`, `NUPPT.runAtL`, `NUPPT.runLit` — activations.
-* `Complexity.NUPPT.Uniform` — no advice (a PPT); `Complexity.PPT` — the subtype.
+* `Complexity.NUPPT.Uniform` — no advice (a PPT); `Complexity.PPT` — the subtype, with
+  `PPT.toNUPPT`, `PPT.ofPolyTime` (readers `PPT.toNUPPT_mk`, `PPT.uniform`,
+  `PPT.toNUPPT_ofPolyTime`).
 * `Complexity.NUPPT.Computes` — computes `f` with probability one: [PS10, Definition 24.6] for a
   uniform `A` (`NUPPT.Uniform`), the advice analogue otherwise.
 * `Complexity.NUPPT.ofPolyTime`, `Complexity.NUPPT.ofPolyTimeUniform` — the `NUPPT` with a
@@ -321,14 +323,15 @@ reduction is an FP function of the raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r
 noncomputable def ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins adv : PolyExpr) (advice : ℕ → List Bool)
     (hα : ∀ n, (advice n).length ≤ adv.eval n) : NUPPT where
-  M := Classical.choose hf
-  Ct := Classical.choose (Classical.choose_spec hf)
-  ct := Classical.choose (Classical.choose_spec (Classical.choose_spec hf))
+  M := Classical.choose ((polyTimeComputable_iff f).1 hf)
+  Ct := Classical.choose (Classical.choose_spec ((polyTimeComputable_iff f).1 hf))
+  ct := Classical.choose (Classical.choose_spec (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)))
   coins := coins
   adv := adv
   advice := advice
   advice_length := hα
-  halts := fun z => ⟨f z, Classical.choose_spec (Classical.choose_spec (Classical.choose_spec hf)) z⟩
+  halts := fun z => ⟨f z, Classical.choose_spec (Classical.choose_spec (Classical.choose_spec
+    ((polyTimeComputable_iff f).1 hf))) z⟩
 
 /-- The output function of `ofPolyTime hf …` is `f` (determinism of completed outputs). -/
 theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
@@ -336,7 +339,8 @@ theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable
     (ofPolyTime hf coins adv advice hα).output = f := by
   funext z
   exact (ofPolyTime hf coins adv advice hα).output_eq_of_computesInTime
-    (Classical.choose_spec (Classical.choose_spec (Classical.choose_spec hf)) z)
+    (Classical.choose_spec (Classical.choose_spec (Classical.choose_spec
+      ((polyTimeComputable_iff f).1 hf))) z)
 
 /-- The coin polynomial of `ofPolyTime hf coins adv advice hα` is `coins`. -/
 @[simp] theorem coins_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
@@ -431,6 +435,29 @@ end NUPPT
 /-- PPT [PS10, Definition 23.4] = non-uniform PPT with empty advice: the subtype of uniform
 `NUPPT`s. -/
 def PPT : Type 1 := {A : NUPPT // A.Uniform}
+
+namespace PPT
+
+/-- The underlying non-uniform machine of a PPT. -/
+def toNUPPT (A : PPT) : NUPPT := A.1
+
+/-- The underlying machine of the PPT built from a uniform `A`: `PPT.toNUPPT ⟨A, h⟩ = A`. -/
+theorem toNUPPT_mk (A : NUPPT) (h : A.Uniform) : PPT.toNUPPT ⟨A, h⟩ = A := rfl
+
+/-- A PPT has empty advice. -/
+theorem uniform (A : PPT) : A.toNUPPT.Uniform := A.2
+
+/-- The PPT with output function `f` and coin polynomial `coins`
+(`Complexity.NUPPT.ofPolyTimeUniform`). -/
+noncomputable def ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) : PPT :=
+  ⟨NUPPT.ofPolyTimeUniform hf coins, NUPPT.ofPolyTimeUniform_uniform hf coins⟩
+
+/-- The underlying machine of `PPT.ofPolyTime hf coins` is `NUPPT.ofPolyTimeUniform hf coins`. -/
+theorem toNUPPT_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) : (ofPolyTime hf coins).toNUPPT = NUPPT.ofPolyTimeUniform hf coins := rfl
+
+end PPT
 
 /-- Non-vacuity: the class is inhabited (the identity machine with no coins). -/
 theorem NUPPT.nonempty : Nonempty NUPPT :=

@@ -381,25 +381,11 @@ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
       zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
 
 /-- A string of `q·s` bits read as `q` chunks of `s` bits: chunk `i` is block `i` of
-`FunFamily.blocks` (a public duplicate of `EnsembleLemmas.take_drop_ofFn_blocks` in
-`Asymptotic/EnsemblesLemmas.lean`). -/
+`FunFamily.blocks` (the canonical `EnsembleLemmas.take_drop_ofFn_blocks`, read through
+`EnsembleLemmas.blocks_eq`). -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
     ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
-  have hle : i * s + s ≤ q * s := by
-    rw [← Nat.succ_mul]
-    exact Nat.mul_le_mul_right s hi
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    have hj : j < s := by simp only [List.length_take, List.length_drop, List.length_ofFn] at h₁; omega
-    have hs : 0 < s := by omega
-    rw [eq_blocks_divNat_modNat w]
-    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
-    · show (i * s + j) / s = i
-      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hs, Nat.div_eq_of_lt hj, Nat.zero_add]
-    · show (i * s + j) % s = j
-      rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hj]
+  rw [EnsembleLemmas.take_drop_ofFn_blocks w i hi, EnsembleLemmas.blocks_eq]
 
 /-! ### The next-query machine of Thm-99.2.1 -/
 

@@ -386,10 +386,11 @@ theorem arg_poly : PolyTimeComputable arg := by
 /-- The step: drop the first value bit and the first `|u|` randomness bits. -/
 def step (w : List Bool) : List Bool := st (p₁ w) (p₂ w).tail ((p₃ w).drop (p₁ w).length)
 
-/-- The step is polynomial-time (`StateLoop.tail_poly`,
+/-- The step is polynomial-time (`Complexity.polyTimeComputable_tail`,
 `Complexity.polyTimeComputable_pairDropPoly` on `⟨u, rs⟩`). -/
 theorem step_poly : PolyTimeComputable step := by
-  convert st_poly p₁_poly (StateLoop.tail_poly.comp p₂_poly)
+  convert st_poly p₁_poly (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp p₂_poly)
     ((polyTimeComputable_pairDropPoly .var).comp (p₁_poly.pairEncode p₃_poly)) using 1
   funext w
   simp [step]
@@ -433,13 +434,13 @@ def emit (w : List Bool) : List Bool :=
   if p₂ w = [] then [] else F (arg w) ++ [xor ((p₂ w).headD false) ((H (arg w)).headD false)]
 
 /-- The emission is polynomial-time (`Complexity.polyTimeComputable_ite` on the emptiness test
-`StateLoop.isNil_poly`, `StateLoop.headBit_poly`, `StateLoop.xor_poly`,
+`polyTimeComputable_isNil`, `polyTimeComputable_headD`, `BinArith.polyTimeComputable_xor`,
 `PolyTimeComputable.append`). -/
 theorem emit_poly (hF : PolyTimeComputable F) (hH : PolyTimeComputable H) :
     PolyTimeComputable (emit F H) := by
-  convert polyTimeComputable_ite (StateLoop.isNil_poly.comp p₂_poly) (polyTimeComputable_const [])
-    ((hF.comp arg_poly).append (StateLoop.xor_poly (StateLoop.headBit_poly.comp p₂_poly)
-      (StateLoop.headBit_poly.comp (hH.comp arg_poly)))) using 1
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp p₂_poly) (polyTimeComputable_const [])
+    ((hF.comp arg_poly).append (BinArith.polyTimeComputable_xor (polyTimeComputable_headD.comp p₂_poly)
+      (polyTimeComputable_headD.comp (hH.comp arg_poly)))) using 1
   funext w
   simp [emit]
 

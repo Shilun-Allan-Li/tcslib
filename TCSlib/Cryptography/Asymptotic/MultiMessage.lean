@@ -228,10 +228,8 @@ theorem uprob_not_injective_le :
 `I → O` forward to the uniform distribution on `Fin (q+1) → O` (the generalization of
 `HardcoreBit.pushesUniform_eval_pair` from two points to `q + 1` points).
 
-**Proof sketch.** Every fibre of `R ↦ R ∘ r` has the same size `|O|^{|I| − (q+1)}` (the values
-off the image of `r` are free, `Equiv.funSplitAt`-style splitting of `I` into the image of `r`
-and its complement, `Fintype.card_fun`), so `pushesUniform_of_card_fiber` applies; alternatively
-by induction on `q` with `uprob_update_absorb`. -/
+**Proof sketch.** For an empty `O` both averages are over empty types. Otherwise this is the
+restriction along the injective `r` (`HardcoreBit.pushesUniform_restrict`). -/
 theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [Fintype O]
     {r : Fin (q + 1) → I} (hr : Function.Injective r) :
     HardcoreBit.PushesUniform (fun R : I → O => fun j => R (r j)) := by
@@ -242,17 +240,7 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
     haveI : IsEmpty (I → O) := ⟨fun R => hO.false (R (r 0))⟩
     haveI : IsEmpty (Fin (q + 1) → O) := ⟨fun f => hO.false (f 0)⟩
     simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
-  · -- split `I` into the image of `r` and its complement: `R ↦ R ∘ r` is a projection
-    let e₁ : Fin (q + 1) ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
-      (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
-        (Equiv.Set.sumCompl (Set.range r))
-    let e : (I → O) ≃ (Fin (q + 1) → O) × (((Set.range r)ᶜ : Set I) → O) :=
-      (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
-    have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
-      funext R j
-      simp [e, e₁]
-    rw [he]
-    exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
+  · exact HardcoreBit.pushesUniform_restrict hr
 
 /-- **Thm-99.2.2: the gap `H² → H³` is at most the collision probability**
 ([PS10, Theorem 99.2, proof, "`H²` and `H³` are 'almost' identical except for the case when

@@ -104,8 +104,8 @@ theorem fmultNat_lt {n x y : ℕ} (hx : x < 2 ^ n) (hy : y < 2 ^ n) : fmultNat x
 
 **Proof sketch.** `pq ≠ 1`, so `x' ≠ 1`, `y' ≠ 1` and `x' y' = pq`. A prime factor `r` of
 `x'` (`Nat.exists_prime_and_dvd`) divides `pq`, so `r ∈ {p, q}` (`Nat.Prime.dvd_mul`,
-`Nat.prime_dvd_prime_iff_eq`); if `r = p` then `x' = p s` with `s y' = q`, so `s ∈ {1, q}`
-(`Nat.Prime.eq_one_or_self_of_dvd`), and `s = q` would force `y' = 1`; hence `x' = p`.
+`Nat.prime_dvd_prime_iff_eq`); if `r = p` then `x' = p s` with `s y' = q`, and a prime
+product has a unit factor (`Nat.prime_mul_iff`), which is not `y' ≠ 1`, so `s = 1` and `x' = p`.
 Symmetrically for `r = q`. -/
 theorem fmultNat_eq_mul_prime {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime)
     (h : fmultNat x y = p * q) : x = p ∨ x = q := by
@@ -120,16 +120,10 @@ theorem fmultNat_eq_mul_prime {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime)
   have key : ∀ {p q : ℕ}, p.Prime → q.Prime → x * y = p * q → p ∣ x → x = p := by
     intro p q hp hq h hpx
     obtain ⟨s, rfl⟩ := hpx
-    have hsy : s * y = q := by
-      have : p * (s * y) = p * q := by rw [← h]; ring
-      exact Nat.eq_of_mul_eq_mul_left hp.pos this
-    rcases hq.eq_one_or_self_of_dvd s ⟨y, hsy.symm⟩ with hs | hs
+    have hsy : s * y = q := Nat.eq_of_mul_eq_mul_left hp.pos (by rw [← mul_assoc, h])
+    rcases Nat.prime_mul_iff.1 (hsy ▸ hq) with ⟨-, hy⟩ | ⟨-, hs⟩
+    · exact absurd hy h1.2
     · rw [hs, mul_one]
-    · exfalso
-      apply h1.2
-      rw [hs] at hsy
-      have : q * y = q * 1 := by rw [hsy, mul_one]
-      exact Nat.eq_of_mul_eq_mul_left hq.pos this
   obtain ⟨r, hr, hrx⟩ := Nat.exists_prime_and_dvd h1.1
   have hrpq : r ∣ p * q := hrx.trans (Dvd.intro y h)
   rcases (Nat.Prime.dvd_mul hr).mp hrpq with hrp | hrq
@@ -685,13 +679,9 @@ def plantFactor {n : ℕ} {ρ : Type*}
   FunFamily.blocks 2 n (OneWay.yaoTry (fmult.f n) B N c) 0
 
 /-- The two block bijections of the library coincide: `FunFamily.blocks q ℓ = OneWay.blocksE q ℓ`
-(their inverses read the same coordinate, `FunFamily.blocks_symm_apply`,
-`OneWay.blocksE_symm_apply`). -/
-private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ := by
-  have h : (FunFamily.blocks q ℓ).symm = (OneWay.blocksE q ℓ).symm :=
-    Equiv.ext fun t => funext fun k => by
-      rw [FunFamily.blocks_symm_apply, OneWay.blocksE_symm_apply]
-  rw [← Equiv.symm_symm (FunFamily.blocks q ℓ), h, Equiv.symm_symm]
+(`OneWay.blocksE` is an alias of the canonical `FunFamily.blocks`, `OneWay.blocksE_eq`). -/
+private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+  (OneWay.blocksE_eq q ℓ).symm
 
 /-- The all-`false` string reads as `0`. -/
 private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by

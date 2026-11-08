@@ -151,7 +151,7 @@ theorem exists_glBitEvaluator (iP : PolyExpr) :
         H (NUPPT.advInput n (List.ofFn x ++ List.ofFn r)) = [HardcoreBit.ip x r] := by
   refine ⟨fun w => ipFun (pairEncode ((pairSndD w).take (iP.eval (pairFstD w).length))
       ((pairSndD w).drop (iP.eval (pairFstD w).length))),
-    ptcComp ipFun_poly ((polyTimeComputable_pairTakePoly iP).pairEncode
+    PolyTimeComputable.comp' ipFun_poly ((polyTimeComputable_pairTakePoly iP).pairEncode
       (polyTimeComputable_pairDropPoly iP)), fun n x r => ?_⟩
   simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
     take_ofFn_append, drop_ofFn_append, ipFun_ofFn]

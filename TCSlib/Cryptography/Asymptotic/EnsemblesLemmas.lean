@@ -35,7 +35,7 @@ part of the public API of the campaign.
   length equation).
 * `TCSlib.Cryptography.EnsembleLemmas.padL` — the padded/truncated string `padFin` as a list.
 * `TCSlib.Cryptography.EnsembleLemmas.blocks` — the blockwise bijection
-  `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (the copy of `Ensembles.lean`'s private `blocks`).
+  `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (an alias of `FunFamily.blocks`, `Asymptotic/Adversary.lean`).
 * `TCSlib.Cryptography.EnsembleLemmas.CopiesLoop` — the state loop sampling `t(n)` copies
   with the challenge planted at a hard-wired position (the multicopy reduction as an FP
   function).
@@ -171,18 +171,13 @@ theorem padL_eq (k : ℕ) (a : List Bool) : padL k a = (a ++ List.replicate k fa
     · simp [List.getElem?_eq_getElem h]
     · simp [List.getElem?_eq_none_iff.2 (not_lt.1 h)]
 
-/-- Composition of polynomial-time functions, in applied form. -/
-private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
-
 /-- The all-`false` string `0^{p(|u z|)}` is polynomial-time: the bitwise xor of `1^{p(|u z|)}`
 with itself (`Complexity.polyTimeComputable_pairXor`, `Complexity.polyTimeComputable_unaryPoly`). -/
 theorem polyTimeComputable_zeros (p : PolyExpr) {u : List Bool → List Bool}
     (hu : PolyTimeComputable u) :
     PolyTimeComputable fun z => List.replicate (p.eval (u z).length) false := by
   have h1 := StateLoop.unaryPoly_comp p hu
-  convert ptc_comp polyTimeComputable_pairXor (h1.pairEncode h1) using 1
+  convert PolyTimeComputable.comp' polyTimeComputable_pairXor (h1.pairEncode h1) using 1
   funext z
   simp
 
@@ -192,7 +187,7 @@ theorem polyTimeComputable_zeros (p : PolyExpr) {u : List Bool → List Bool}
 theorem polyTimeComputable_padL (p : PolyExpr) {u a : List Bool → List Bool}
     (hu : PolyTimeComputable u) (ha : PolyTimeComputable a) :
     PolyTimeComputable fun z => padL (p.eval (u z).length) (a z) := by
-  convert ptc_comp (polyTimeComputable_pairTakePoly p)
+  convert PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly p)
     (hu.pairEncode (ha.append (polyTimeComputable_zeros p hu))) using 1
   funext z
   simp [padL_eq]
@@ -204,7 +199,7 @@ theorem polyTimeComputable_padL (p : PolyExpr) {u a : List Bool → List Bool}
 theorem polyTimeComputable_negVerdict :
     PolyTimeComputable fun w => if w = [true] then [false] else [true] := by
   have htest : PolyTimeComputable fun w => [decide (w = [true])] := by
-    convert ptc_comp polyTimeComputable_pairEq
+    convert PolyTimeComputable.comp' polyTimeComputable_pairEq
       (polyTimeComputable_id.pairEncode (polyTimeComputable_const [true])) using 1
     funext w
     simp
@@ -292,16 +287,16 @@ theorem exists_pushRed (M D : NUPPT) (ℓ' : PolyExpr) :
       ∀ n y r, B.runAtL n y r =
         D.runAtL n (padL (ℓ'.eval n) (M.runAtL n y (r.take (M.coinLen n)))) (r.drop (M.coinLen n)) := by
   have hcut := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
-  have hr₁ := ptc_comp (polyTimeComputable_pairTakePoly M.coins) hcut
-  have hr₂ := ptc_comp (polyTimeComputable_pairDropPoly M.coins) hcut
-  have ha := ptc_comp M.polyTimeComputable_output
+  have hr₁ := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly M.coins) hcut
+  have hr₂ := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly M.coins) hcut
+  have ha := PolyTimeComputable.comp' M.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam
       NUPPT.polyTimeComputable_inArg
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice) hr₁)
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice) hr₁)
   have hpad := polyTimeComputable_padL ℓ' NUPPT.polyTimeComputable_inParam ha
-  have hF := ptc_comp D.polyTimeComputable_output
+  have hF := PolyTimeComputable.comp' D.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam hpad
-      (ptc_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice) hr₂)
+      (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice) hr₂)
   have hadv : ∀ n, (NUPPT.combineAdvice (M.advice n) (D.advice n)).length ≤
       (PolyExpr.add (.add (.mul (.const 2) M.adv) (.const 2)) D.adv).eval n := fun n => by
     have h₁ := NUPPT.length_combineAdvice_le (M.advice n) (D.advice n)
@@ -360,19 +355,25 @@ theorem negligible_polyExpr_mul (p : PolyExpr) {μ : ℕ → ℝ} (hμ : Negligi
 
 /-! ### Blocks and chunks -/
 
-/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (the copy of the private `blocks` of
-`Asymptotic/Ensembles.lean` and `Asymptotic/OneWay.lean`): block `i`, bit `j` is bit
-`finProdFinEquiv (i, j) = j + ℓ·i` of the string. -/
+/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a compatibility alias of the canonical
+Bool block bijection `FunFamily.blocks` of `Asymptotic/Adversary.lean` (block `i`, bit `j` is bit
+`finProdFinEquiv (i, j) = j + ℓ·i` of the string). -/
 def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
+  FunFamily.blocks q ℓ
 
-/-- Unfolding `blocks`. -/
+/-- `blocks` is the canonical block bijection: `blocks q ℓ = FunFamily.blocks q ℓ`. -/
+theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
+
+/-- Block `i`, bit `j` of `w` is bit `finProdFinEquiv (i, j)` (`FunFamily.blocks_apply`). -/
 theorem blocks_apply (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
-    blocks q ℓ w i j = w (finProdFinEquiv (i, j)) := rfl
+    blocks q ℓ w i j = w (finProdFinEquiv (i, j)) :=
+  FunFamily.blocks_apply q ℓ w i j
 
-/-- Unfolding `blocks.symm`. -/
+/-- Bit `x` of `(blocks q ℓ).symm V` is bit `(finProdFinEquiv.symm x).2` of block
+`(finProdFinEquiv.symm x).1` (`FunFamily.blocks_symm_apply`, `finProdFinEquiv_symm_apply`). -/
 theorem blocks_symm_apply (q ℓ : ℕ) (V : Fin q → Fin ℓ → Bool) (x : Fin (q * ℓ)) :
-    (blocks q ℓ).symm V x = V (finProdFinEquiv.symm x).1 (finProdFinEquiv.symm x).2 := rfl
+    (blocks q ℓ).symm V x = V (finProdFinEquiv.symm x).1 (finProdFinEquiv.symm x).2 := by
+  rw [blocks_eq, FunFamily.blocks_symm_apply, finProdFinEquiv_symm_apply]
 
 /-- The index `i·ℓ + j` decodes to block `i`, bit `j`. -/
 theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i * ℓ + j < q * ℓ) :
@@ -608,9 +609,9 @@ def step (w : List Bool) : List Bool :=
 /-- The step is polynomial-time (`Complexity.polyTimeComputable_pairDropPoly` on `⟨u, rX⟩`,
 `⟨u, rY⟩`). -/
 theorem step_poly : PolyTimeComputable (step sX sY) := by
-  convert st_poly p₁_poly (ptc_comp (StateLoop.cons_poly true) p₂_poly) p₃_poly p₄_poly
-    (ptc_comp (polyTimeComputable_pairDropPoly sX) (p₁_poly.pairEncode p₅_poly))
-    (ptc_comp (polyTimeComputable_pairDropPoly sY) (p₁_poly.pairEncode p₆_poly)) using 1
+  convert st_poly p₁_poly (PolyTimeComputable.comp' (StateLoop.cons_poly true) p₂_poly) p₃_poly p₄_poly
+    (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly sX) (p₁_poly.pairEncode p₅_poly))
+    (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly sY) (p₁_poly.pairEncode p₆_poly)) using 1
   funext w
   simp [step]
 
@@ -666,15 +667,15 @@ def emit (w : List Bool) : List Bool :=
 theorem emit_poly (hSX : PolyTimeComputable SX) (hSY : PolyTimeComputable SY) :
     PolyTimeComputable (emit sX sY SX SY ℓ) := by
   have hlt : PolyTimeComputable fun w => [decide ((p₂ w).length < (p₃ w).length)] := by
-    exact StateLoop.lenLe_comp p₃_poly (ptc_comp (StateLoop.cons_poly true) p₂_poly)
+    exact StateLoop.lenLe_comp p₃_poly (PolyTimeComputable.comp' (StateLoop.cons_poly true) p₂_poly)
   have heq : PolyTimeComputable fun w => [decide ((p₂ w).length = (p₃ w).length)] := by
-    convert ptc_comp polyTimeComputable_lenEq (p₂_poly.pairEncode p₃_poly) using 1
+    convert PolyTimeComputable.comp' polyTimeComputable_lenEq (p₂_poly.pairEncode p₃_poly) using 1
     funext w
     simp
-  have hY := polyTimeComputable_padL ℓ p₁_poly (ptc_comp hSY (p₁_poly.pairEncode
-    (ptc_comp (polyTimeComputable_pairTakePoly sY) (p₁_poly.pairEncode p₆_poly))))
-  have hX := polyTimeComputable_padL ℓ p₁_poly (ptc_comp hSX (p₁_poly.pairEncode
-    (ptc_comp (polyTimeComputable_pairTakePoly sX) (p₁_poly.pairEncode p₅_poly))))
+  have hY := polyTimeComputable_padL ℓ p₁_poly (PolyTimeComputable.comp' hSY (p₁_poly.pairEncode
+    (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly sY) (p₁_poly.pairEncode p₆_poly))))
+  have hX := polyTimeComputable_padL ℓ p₁_poly (PolyTimeComputable.comp' hSX (p₁_poly.pairEncode
+    (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly sX) (p₁_poly.pairEncode p₅_poly))))
   convert polyTimeComputable_ite hlt hY (polyTimeComputable_ite heq p₄_poly hX) using 1
   funext w
   simp [emit]
@@ -739,10 +740,10 @@ def copiesInit (sX t : PolyExpr) (w : List Bool) : List Bool :=
 theorem copiesInit_poly (sX t : PolyExpr) : PolyTimeComputable (copiesInit sX t) := by
   have hcut := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
   convert CopiesLoop.st_poly NUPPT.polyTimeComputable_inParam (polyTimeComputable_const [])
-    (ptc_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
-    (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
-    (ptc_comp (polyTimeComputable_pairTakePoly (.mul t sX)) hcut)
-    (ptc_comp (polyTimeComputable_pairDropPoly (.mul t sX)) hcut) using 1
+    (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+    (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+    (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly (.mul t sX)) hcut)
+    (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly (.mul t sX)) hcut) using 1
   funext w
   simp [copiesInit]
 
@@ -757,9 +758,9 @@ def copiesSampler (SX SY : List Bool → List Bool) (sX sY ℓ t : PolyExpr) (w 
 theorem copiesSampler_poly {SX SY : List Bool → List Bool} (hSX : PolyTimeComputable SX)
     (hSY : PolyTimeComputable SY) (sX sY ℓ t : PolyExpr) :
     PolyTimeComputable (copiesSampler SX SY sX sY ℓ t) := by
-  convert ptc_comp (polyTimeComputable_pairTakePoly (.mul t ℓ))
+  convert PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly (.mul t ℓ))
     (NUPPT.polyTimeComputable_inParam.pairEncode
-      (ptc_comp (CopiesLoop.loopOut_poly sX sY SX SY ℓ t hSX hSY) (copiesInit_poly sX t))) using 1
+      (PolyTimeComputable.comp' (CopiesLoop.loopOut_poly sX sY SX SY ℓ t hSX hSY) (copiesInit_poly sX t))) using 1
   funext w
   simp [copiesSampler]
 

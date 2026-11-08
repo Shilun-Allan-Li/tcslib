@@ -341,16 +341,10 @@ theorem exists_univCoeff_le (c : EffectiveMachineCode) (hc : CanonizerExp c) :
 
 /-! ## The evaluator machine of `f_universal` -/
 
-/-- Composition of polynomial-time functions, in applied form (private copy of the helper
-of `TCSlib.Complexity.Randomized.Closure`). -/
-private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
-
 /-- **The code field is polynomial-time**: the typed cut `polyTimeComputable_pairTakePoly var`
 on `⟨(bits |y|).tail, y⟩` keeps the first `⌊log₂ |y|⌋` bits (`length_tail_bits`). -/
 theorem polyTimeComputable_univCode : PolyTimeComputable univCode := by
-  have h := ptc_comp (polyTimeComputable_pairTakePoly .var)
+  have h := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly .var)
     (polyTimeComputable_logMarker.pairEncode polyTimeComputable_id)
   convert h using 1
   funext y
@@ -360,7 +354,7 @@ theorem polyTimeComputable_univCode : PolyTimeComputable univCode := by
 /-- **The argument field is polynomial-time**: the typed cut `polyTimeComputable_pairDropPoly var`
 on `⟨(bits |y|).tail, y⟩` drops the first `⌊log₂ |y|⌋` bits (`length_tail_bits`). -/
 theorem polyTimeComputable_univArg : PolyTimeComputable univArg := by
-  have h := ptc_comp (polyTimeComputable_pairDropPoly .var)
+  have h := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var)
     (polyTimeComputable_logMarker.pairEncode polyTimeComputable_id)
   convert h using 1
   funext y
@@ -441,9 +435,9 @@ theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
     (fUniversal c).Easy := by
   have hF : PolyTimeComputable fun z =>
       padStr univOutLen (pairFstD z) (fUniversalStr c (pairSndD z)) := by
-    have h := ptc_comp (polyTimeComputable_padStr univOutLen)
+    have h := PolyTimeComputable.comp' (polyTimeComputable_padStr univOutLen)
       (polyTimeComputable_pairFstD.pairEncode
-        (ptc_comp (polyTimeComputable_fUniversalStr c hc) polyTimeComputable_pairSndD))
+        (PolyTimeComputable.comp' (polyTimeComputable_fUniversalStr c hc) polyTimeComputable_pairSndD))
     convert h using 1
     funext z
     simp
@@ -875,10 +869,10 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
     omega
   have hpre : PolyTimeComputable fun w => padStr univOutLen (pairFstD (pairFstD w))
       (pairEncode (pairSndD (pairFstD w)) (true :: pairSndD w)) := by
-    have h := ptc_comp (polyTimeComputable_padStr univOutLen)
-      ((ptc_comp polyTimeComputable_pairFstD polyTimeComputable_pairFstD).pairEncode
-        ((ptc_comp polyTimeComputable_pairSndD polyTimeComputable_pairFstD).pairEncode
-          (ptc_comp (StateLoop.cons_poly true) polyTimeComputable_pairSndD)))
+    have h := PolyTimeComputable.comp' (polyTimeComputable_padStr univOutLen)
+      ((PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_pairFstD).pairEncode
+        ((PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_pairFstD).pairEncode
+          (PolyTimeComputable.comp' (StateLoop.cons_poly true) polyTimeComputable_pairSndD)))
     convert h using 1
     funext w
     simp

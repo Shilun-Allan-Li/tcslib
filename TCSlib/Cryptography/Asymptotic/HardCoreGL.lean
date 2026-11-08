@@ -202,21 +202,21 @@ theorem entry_poly : PolyTimeComputable entry :=
 /-- The vote of a round is polynomial-time (`ipFun`, `selXorFun`, `A.output` on the layout,
 the verdict test `polyTimeComputable_pairEq`). 
 
-**Proof sketch.** The bit `B_L` is `headBit_poly` after `ipFun_poly`; the query is the pairing of `pY` with the XOR (`zipXor_poly`) of `selXorFun` and the unit vector; `A.output` on the layout is `A.polyTimeComputable_output` after `polyTimeComputable_layout`; the verdict test is `polyTimeComputable_pairEq`; the two bits are combined by `xor_poly`. -/
+**Proof sketch.** The bit `B_L` is `polyTimeComputable_headD` after `ipFun_poly`; the query is the pairing of `pY` with the XOR (`zipXor_poly`) of `selXorFun` and the unit vector; `A.output` on the layout is `A.polyTimeComputable_output` after `polyTimeComputable_layout`; the verdict test is `polyTimeComputable_pairEq`; the two bits are combined by `BinArith.polyTimeComputable_xor`. -/
 theorem vote_poly (A : NUPPT) : PolyTimeComputable fun w => [vote A w] := by
   have hβ : PolyTimeComputable fun w => pairSndD (entry w) :=
     polyTimeComputable_pairSndD.comp entry_poly
   have hB : PolyTimeComputable fun w => [(ipFun (pairEncode (pairSndD (entry w)) (pb w))).headD false] :=
-    ptcComp headBit_poly (ptcComp ipFun_poly (hβ.pairEncode pb_poly))
+    PolyTimeComputable.comp' polyTimeComputable_headD (PolyTimeComputable.comp' ipFun_poly (hβ.pairEncode pb_poly))
   have hq : PolyTimeComputable fun w => pairEncode (pY w) (List.zipWith xor
       (selXorFun (pairEncode (pairEncode (pum w) (pairSndD (entry w))) (ps w))) (pairFstD (entry w))) :=
-    pY_poly.pairEncode (zipXor_poly (ptcComp selXorFun_poly ((pum_poly.pairEncode hβ).pairEncode ps_poly))
+    pY_poly.pairEncode (zipXor_poly (PolyTimeComputable.comp' selXorFun_poly ((pum_poly.pairEncode hβ).pairEncode ps_poly))
       (polyTimeComputable_pairFstD.comp entry_poly))
   have hans : PolyTimeComputable fun w => A.output (NUPPT.layout (pu w)
       (pairEncode (pY w) (List.zipWith xor
         (selXorFun (pairEncode (pairEncode (pum w) (pairSndD (entry w))) (ps w))) (pairFstD (entry w))))
       (pα w) ((pcs w).take (pur w).length)) :=
-    ptcComp A.polyTimeComputable_output
+    PolyTimeComputable.comp' A.polyTimeComputable_output
       (NUPPT.polyTimeComputable_layout pu_poly hq pα_poly (takeLen_poly pur_poly pcs_poly))
   have htest : PolyTimeComputable fun w => [decide (A.output (NUPPT.layout (pu w)
       (pairEncode (pY w) (List.zipWith xor
@@ -225,7 +225,7 @@ theorem vote_poly (A : NUPPT) : PolyTimeComputable fun w => [vote A w] := by
     convert polyTimeComputable_pairEq.comp (hans.pairEncode (polyTimeComputable_const [true])) using 1
     funext w
     simp
-  exact xor_poly hB htest
+  exact BinArith.polyTimeComputable_xor hB htest
 
 /-- The step is polynomial-time. -/
 theorem step_poly (A : NUPPT) : PolyTimeComputable (step A) := by
@@ -234,7 +234,7 @@ theorem step_poly (A : NUPPT) : PolyTimeComputable (step A) := by
         (pairEncode ((pcs w).drop (pur w).length) (pvotes w ++ [vote A w])) :=
     (dropLen_poly (pum_poly.pairEncode puk_poly) ptbl_poly).pairEncode
       ((dropLen_poly pur_poly pcs_poly).pairEncode (pvotes_poly.append (vote_poly A)))
-  have htest : PolyTimeComputable fun w => [decide (ptbl w = [])] := isNil_poly.comp ptbl_poly
+  have htest : PolyTimeComputable fun w => [decide (ptbl w = [])] := polyTimeComputable_isNil.comp ptbl_poly
   convert polyTimeComputable_ite htest polyTimeComputable_pairSndD hbody using 1
   funext w
   simp only [step, decide_eq_true_eq]
@@ -595,17 +595,17 @@ theorem tbl_poly : PolyTimeComputable tbl :=
 /-- The projection `um` is polynomial-time. -/
 theorem um_poly (mP : PolyExpr) : PolyTimeComputable (um mP) := by
   unfold um
-  exact ptcComp (g := fun x => List.replicate (mP.eval x.length) true)
+  exact PolyTimeComputable.comp' (g := fun x => List.replicate (mP.eval x.length) true)
     (polyTimeComputable_unaryPoly mP) NUPPT.polyTimeComputable_inParam
 /-- The projection `ur` is polynomial-time. -/
 theorem ur_poly (A : NUPPT) : PolyTimeComputable (ur A) := by
   unfold ur
-  exact ptcComp (g := fun x => List.replicate (A.coins.eval x.length) true)
+  exact PolyTimeComputable.comp' (g := fun x => List.replicate (A.coins.eval x.length) true)
     (polyTimeComputable_unaryPoly A.coins) NUPPT.polyTimeComputable_inParam
 /-- The projection `ukm` is polynomial-time. -/
 theorem ukm_poly (mP : PolyExpr) : PolyTimeComputable (ukm mP) := by
   unfold ukm
-  exact ptcComp (g := unaryMulFun) unaryMulFun_poly (uk_poly.pairEncode (um_poly mP))
+  exact PolyTimeComputable.comp' (g := unaryMulFun) unaryMulFun_poly (uk_poly.pairEncode (um_poly mP))
 /-- The projection `cs₁` is polynomial-time. -/
 theorem cs₁_poly (mP : PolyExpr) : PolyTimeComputable (cs₁ mP) :=
   takeLen_poly (ukm_poly mP) NUPPT.polyTimeComputable_inCoins
@@ -632,8 +632,8 @@ def glRawFun (A : NUPPT) (mP : PolyExpr) (z : List Bool) : List Bool :=
 /-- The raw recovery function is polynomial-time. -/
 theorem glRawFun_poly (A : NUPPT) (mP : PolyExpr) : PolyTimeComputable (glRawFun A mP) := by
   unfold glRawFun
-  exact ptcComp (g := glMajFun) glMajFun_poly (GLRaw.uM_poly.pairEncode
-    (ptcComp (g := glVotesFun A) (glVotesFun_poly A)
+  exact PolyTimeComputable.comp' (g := glMajFun) glMajFun_poly (GLRaw.uM_poly.pairEncode
+    (PolyTimeComputable.comp' (g := glVotesFun A) (glVotesFun_poly A)
       ((NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam
         NUPPT.polyTimeComputable_inArg GLRaw.α_poly
         (((GLRaw.um_poly mP).pairEncode GLRaw.uk_poly).pairEncode
@@ -769,15 +769,12 @@ theorem glMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : �
 
 /-! ## A bound on powers of two -/
 
-/-- `2^{size x} ≤ 2x + 1`. -/
+/-- `2^{size x} ≤ 2x + 1` (`1 ≤ 1` at `x = 0`; for `x ≥ 1` the public `two_pow_size_le_two_mul`
+of `Asymptotic/Sampling.lean`). -/
 theorem two_pow_size_le (x : ℕ) : 2 ^ Nat.size x ≤ 2 * x + 1 := by
   rcases Nat.eq_zero_or_pos x with rfl | hx
   · simp
-  · have hpos : 0 < Nat.size x := Nat.size_pos.mpr hx
-    have h := Nat.lt_size.mp (Nat.sub_lt hpos Nat.one_pos)
-    calc 2 ^ Nat.size x = 2 * 2 ^ (Nat.size x - 1) := by
-          rw [← pow_succ', Nat.sub_add_cancel hpos]
-      _ ≤ 2 * x + 1 := by omega
+  · exact (two_pow_size_le_two_mul hx).trans (Nat.le_succ _)
 
 
 /-! ## Majorities under reindexing -/
@@ -795,15 +792,6 @@ theorem majority_comp_equiv {κ κ' : Type*} [Fintype κ] [Fintype κ'] (σ : κ
   rw [Fintype.card_congr σ, hcard]
 
 /-! ## The coins of the recovery machine as `GuessCoins` -/
-
-/-- A tuple of blocks with values in an arbitrary type as a function of the flattened index
-(`blocksEquiv` for an arbitrary codomain). -/
-def blocksEquivX (q ℓ : ℕ) (X : Type*) : (Fin (q * ℓ) → X) ≃ (Fin q → Fin ℓ → X) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl X)).trans (Equiv.curry _ _ _)
-
-/-- The inverse of `blocksEquivX` reads block `p.divNat`, position `p.modNat`. -/
-theorem blocksEquivX_symm_apply (q ℓ : ℕ) {X : Type*} (t : Fin q → Fin ℓ → X) (p : Fin (q * ℓ)) :
-    (blocksEquivX q ℓ X).symm t p = t p.divNat p.modNat := rfl
 
 /-- The coins of the concrete inverter (`GuessCoins`) together with unread coins, as the coin
 string of the recovery machine: `s` as `k` blocks of `m` bits, then `b`, then the call blocks

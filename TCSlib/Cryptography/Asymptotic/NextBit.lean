@@ -529,7 +529,7 @@ private theorem ofFn_prefixOf {ℓ : ℕ} (i : Fin ℓ) (t : Fin ℓ → Bool) :
   rfl
 
 /-- Bit `i` of `u` is the head of the suffix `(ofFn u).drop i` — the readout
-`StateLoop.headBit_poly` of the machines below (`List.head?_drop`, `List.getElem?_ofFn`). -/
+`polyTimeComputable_headD` of the machines below (`List.head?_drop`, `List.getElem?_ofFn`). -/
 private theorem headD_drop_ofFn {ℓ : ℕ} (i : Fin ℓ) (u : Fin ℓ → Bool) :
     ((List.ofFn u).drop i).headD false = u i := by
   rw [List.headD_eq_head?, List.head?_drop, List.getElem?_ofFn]
@@ -564,8 +564,8 @@ cuts `r` into `u := r.take (ℓ n)` and `c := r.drop (ℓ n)` (`polyTimeComputab
 `PolyTimeComputable.append`), runs `D.output` on `layout 1^n w (D.advice n) c`
 (`NUPPT.polyTimeComputable_output`, `polyTimeComputable_layout`), tests the verdict against
 `[true]` (`polyTimeComputable_pairEq`), reads `u_{|y|}` as the head of `u.drop |y|` and the sign
-as the head of the advice's second component (`StateLoop.headBit_poly`), and combines them
-(`polyTimeComputable_ite`, `StateLoop.not_poly`, `StateLoop.xor_poly`). `A := ofPolyTime` of
+as the head of the advice's second component (`polyTimeComputable_headD`), and combines them
+(`polyTimeComputable_ite`, `polyTimeComputable_not`, `BinArith.polyTimeComputable_xor`). `A := ofPolyTime` of
 it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3` (`length_pairEncode`); the coin
 split is `Fin.appendEquiv` composed with `finCongr`, and the identity is `runAtL_ofPolyTime`,
 the projection identities of the layout, `List.take_left'`/`List.drop_left'`,
@@ -608,9 +608,9 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : �
     funext z
     simp
   -- the bit `u_{|y|}` and the sign
-  have hui := StateLoop.headBit_poly.comp hud
+  have hui := polyTimeComputable_headD.comp hud
   have hflip : PolyTimeComputable fun z => [(pairSndD (NUPPT.inAdvice z)).headD false] :=
-    StateLoop.headBit_poly.comp
+    polyTimeComputable_headD.comp
       (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inAdvice)
   have hsel : PolyTimeComputable fun z => [if decide (D.output (NUPPT.layout (NUPPT.inParam z)
       (NUPPT.inArg z ++ ((NUPPT.inCoins z).take (ℓ.eval (NUPPT.inParam z).length)).drop
@@ -620,10 +620,10 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : �
           (NUPPT.inArg z).length).headD false
       else !(((NUPPT.inCoins z).take (ℓ.eval (NUPPT.inParam z).length)).drop
           (NUPPT.inArg z).length).headD false] := by
-    convert polyTimeComputable_ite hgb hui (StateLoop.not_poly hui) using 1
+    convert polyTimeComputable_ite hgb hui (polyTimeComputable_not hui) using 1
     funext z
     split_ifs <;> rfl
-  have hF := StateLoop.xor_poly hsel hflip
+  have hF := BinArith.polyTimeComputable_xor hsel hflip
   -- the advice `⟨D.advice n, [flip n]⟩`
   have hadv : ∀ n, (pairEncode (D.advice n) [flip n]).length ≤
       (PolyExpr.add (.add (.mul (.const 2) D.adv) (.const 2)) (.const 1)).eval n := fun n => by
@@ -835,7 +835,7 @@ verdict equals the bit — the untyped form of `nextBitDist (k n) (A.predictor n
 `y` at the unary length of the advice's second component (`polyTimeComputable_pairTakePoly`/
 `pairDropPoly var` on `⟨1^{k n}, y⟩`), runs `A.output` on `layout 1^n (y.take (k n)) (A.advice n) r`
 (`NUPPT.polyTimeComputable_output`, `polyTimeComputable_layout`), reads the bit as the head of
-`y.drop (k n)` (`StateLoop.headBit_poly`) and compares twice with `polyTimeComputable_pairEq`
+`y.drop (k n)` (`polyTimeComputable_headD`) and compares twice with `polyTimeComputable_pairEq`
 (verdict against `[true]`, then against the bit). `Dm := ofPolyTime` of it with `A.coins` and
 advice bound `2·A.adv + 2 + ℓ` (`length_pairEncode`, `hk`); the identity is
 `runAtL_ofPolyTime` plus the projection identities of the layout. -/
@@ -853,7 +853,7 @@ private theorem exists_nextBitDistMachine {ℓ : PolyExpr} (A : NUPPT) (k : ℕ 
     simp
   have hb : PolyTimeComputable fun z =>
       [((NUPPT.inArg z).drop (pairSndD (NUPPT.inAdvice z)).length).headD false] := by
-    convert StateLoop.headBit_poly.comp ((polyTimeComputable_pairDropPoly .var).comp hpair)
+    convert polyTimeComputable_headD.comp ((polyTimeComputable_pairDropPoly .var).comp hpair)
       using 1
     funext z
     simp

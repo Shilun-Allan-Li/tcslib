@@ -417,7 +417,7 @@ theorem statClose_samplePerm3 (T : ℕ) :
 
 **Proof sketch.** `statClose_rejectionSample m (Nat.size m) T` with `m ≤ 2^{size m}`
 (`Nat.lt_size_self`) gives closeness `(1 - m/2^{size m})^T`; since `2^{size m} ≤ 2m` for
-`m ≥ 1` (`Nat.size_le`, `Nat.lt_size`), `1 - m/2^{size m} ≤ 1/2` and `pow_le_pow_left₀`;
+`m ≥ 1` (`two_pow_size_le_two_mul`), `1 - m/2^{size m} ≤ 1/2` and `pow_le_pow_left₀`;
 the tape-to-trials map is the curried `finProdFinEquiv` (`StatClose.comp_equiv_left`), and
 `sampleEdgeIdx` is `Fin.val` of the sampler's `getD ⟨0, hm⟩`. -/
 theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
@@ -425,14 +425,7 @@ theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
         (⟨sampleEdgeIdx m T (List.ofFn r), sampleEdgeIdx_lt hm T _⟩ : Fin m))
       (id : Fin m → Fin m) ((1 / 2 : ℝ) ^ T) := by
   have hk : m ≤ 2 ^ Nat.size m := (Nat.lt_size_self m).le
-  have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
-  have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
-  have h2 : 2 ^ Nat.size m ≤ 2 * m := by
-    have : 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
-      rw [← pow_succ']
-      congr 1
-      omega
-    omega
+  have h2 : 2 ^ Nat.size m ≤ 2 * m := two_pow_size_le_two_mul hm
   have h := (statClose_rejectionSample m (Nat.size m) T hm hk ⟨0, hm⟩).comp_equiv_left
     (tapeEquiv T (Nat.size m))
   have h2k : (0 : ℝ) < 2 ^ Nat.size m := by positivity

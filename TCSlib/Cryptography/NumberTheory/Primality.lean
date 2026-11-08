@@ -184,19 +184,14 @@ private theorem units_pow_eq_neg_one_iff {N m : ℕ} (w : (ZMod N)ˣ) :
     w ^ m = -1 ↔ (w : ZMod N) ^ m = -1 := by
   rw [← Units.val_inj, Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one]
 
-/-- **Lagrange:** a proper subgroup of a finite group has at most half the elements
-(`Subgroup.card_subgroup_dvd_card`; the index is not `1` by `Subgroup.eq_top_of_card_eq`). -/
+/-- **Lagrange:** a proper subgroup of a finite group has at most half the elements: its index
+is at least `2` (`Subgroup.one_lt_index_of_ne_top`) and `|H| · [G : H] = |G|`
+(`Subgroup.card_mul_index`). -/
 private theorem two_mul_card_le_of_ne_top {G : Type*} [Group G] [Finite G] (H : Subgroup G)
     (hH : H ≠ ⊤) : 2 * Nat.card H ≤ Nat.card G := by
-  obtain ⟨k, hk⟩ := H.card_subgroup_dvd_card
-  have hpos : 0 < Nat.card G := Nat.card_pos
-  have hne : Nat.card H ≠ Nat.card G := fun h => hH (Subgroup.eq_top_of_card_eq H h)
-  rcases k with _ | _ | k
-  · omega
-  · rw [Nat.zero_add, mul_one] at hk
-    exact absurd hk.symm hne
-  · rw [hk]
-    nlinarith
+  calc 2 * Nat.card H ≤ H.index * Nat.card H :=
+        Nat.mul_le_mul_right _ (Subgroup.one_lt_index_of_ne_top hH)
+    _ = Nat.card G := by rw [mul_comm, H.card_mul_index]
 
 /-- If every liar is (the value of) an element of a subgroup `H` of `(Z_N)^*`, then
 `|L_N| ≤ |H|` (the map `α ↦ α` as a unit is injective, `Nat.card_le_card_of_injective`). -/
@@ -213,22 +208,16 @@ private theorem card_mrLiars_le_card {N : ℕ} [NeZero N] (hN : 2 ≤ N) (H : Su
   simp only [IsUnit.unit_spec] at this
   exact Subtype.ext this
 
-/-- The subgroup `{x ∈ (Z_N)^* | x^m = 1}` (the kernel of `x ↦ x^m`). -/
-private def powOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ where
-  carrier := {x | x ^ m = 1}
-  mul_mem' := by
-    intro a b ha hb
-    simp only [Set.mem_setOf_eq] at *
-    rw [mul_pow, ha, hb, one_mul]
-  one_mem' := by simp
-  inv_mem' := by
-    intro a ha
-    simp only [Set.mem_setOf_eq] at *
-    rw [inv_pow, ha, inv_one]
+/-- The subgroup `{x ∈ (Z_N)^* | x^m = 1}`: the kernel of Mathlib's `x ↦ x^m`
+(`powMonoidHom m`). -/
+private def powOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ :=
+  (powMonoidHom m).ker
 
-/-- Membership in `powOneSubgroup`. -/
+/-- Membership in `powOneSubgroup`: `x ∈ powOneSubgroup N m ↔ x ^ m = 1` (`MonoidHom.mem_ker`,
+`powMonoidHom_apply`). -/
 private theorem mem_powOneSubgroup {N m : ℕ} (x : (ZMod N)ˣ) :
-    x ∈ powOneSubgroup N m ↔ x ^ m = 1 := Iff.rfl
+    x ∈ powOneSubgroup N m ↔ x ^ m = 1 := by
+  rw [powOneSubgroup, MonoidHom.mem_ker, powMonoidHom_apply]
 
 /-- The subgroup `{x ∈ (Z_N)^* | x^m = ±1}` (the preimage of `{±1}` under `x ↦ x^m`). -/
 private def powPmOneSubgroup (N m : ℕ) : Subgroup (ZMod N)ˣ where
@@ -759,9 +748,9 @@ private theorem spStep_iterate (u s : List Bool) (i : ℕ) :
     ring
 
 /-- One step at most doubles the length: `|spStep x| ≤ 2|x| + 2`
-(`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+(`length_pair_components_le`). -/
 private theorem length_spStep_le (x : List Bool) : (spStep x).length ≤ 2 * x.length + 2 := by
-  have := StateLoop.length_pairFstD_add_pairSndD_le x
+  have := length_pair_components_le x
   simp only [spStep, length_pairEncode, PolyExpr.eval_var, List.length_drop]
   omega
 

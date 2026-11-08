@@ -32,8 +32,10 @@ The simulator is a uniform `Complexity.NUPPT` run once at parameter `|x|` on `�
 parameter `|x|` on the encoded view (`Complexity.NUPPT.distinguisherL`).
 
 **Deviation (D8):** strict PPT simulators (the text's expected polynomial time is not
-formalized; the rewinding simulators of the chapter are truncated and the theorems become
-statistical); the auxiliary input of the verifier is bounded by an arbitrary polynomial
+formalized): the rewinding simulator of graph isomorphism is truncated, and that theorem becomes
+statistical zero-knowledge (`gi_statZK`); the 3-colouring theorem remains computational
+zero-knowledge, its truncated simulator contributing statistical sampling and failure terms to
+the negligible error; the auxiliary input of the verifier is bounded by an arbitrary polynomial
 `Lz : PolyExpr` quantified after the simulator (the class a `t(|x|)`-time verifier can read,
 and what the non-uniform reduction of [PS10, Proposition 128.8] needs); the error bound is
 a function of `|x|` (the text's `e(n)` leaves `n` undefined); the honest-verifier notion is
@@ -258,12 +260,6 @@ theorem StatZK.mono {π : Protocol} {R : List Bool → List Bool → Prop} {δ �
   obtain ⟨S, hS, hclose⟩ := h V' hV'
   exact ⟨S, hS, fun x y z hR => (hclose x y z hR).mono (hle _)⟩
 
-/-- The zero function is negligible. -/
-theorem negligible_const_zero : Negligible (fun _ => (0 : ℝ)) := fun c =>
-  ⟨1, fun n hn => by
-    rw [abs_zero]
-    exact one_div_pos.mpr (pow_pos (Nat.cast_pos.mpr hn) c)⟩
-
 /-- Perfect zero-knowledge is statistical zero-knowledge with error `0`. -/
 theorem PerfectZK.statZK {π : Protocol} {R : List Bool → List Bool → Prop} (h : PerfectZK π R) :
     StatZK π R (fun _ => 0) := h
@@ -271,7 +267,7 @@ theorem PerfectZK.statZK {π : Protocol} {R : List Bool → List Bool → Prop} 
 /-- Perfect zero-knowledge implies zero-knowledge [PS10, §4.6]. -/
 theorem PerfectZK.zk {π : Protocol} {R : List Bool → List Bool → Prop} (h : PerfectZK π R) :
     ZK π R :=
-  StatZK.zk negligible_const_zero h
+  StatZK.zk negligible_zero h
 
 /-- Non-vacuity (gate 03e, note 10): the protocol with no messages is perfectly
 zero-knowledge for every relation.

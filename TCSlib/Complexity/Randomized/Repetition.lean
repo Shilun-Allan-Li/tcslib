@@ -310,6 +310,29 @@ theorem polyTimeComputable_iterate {g : List Bool → List Bool} (hg : PolyTimeC
   rw [IterLoop.orbit_eq]
   simp [IterLoop.out_eq]
 
+/-- **Guarded state iteration for a fixed number of rounds.** A state word `⟨x, s⟩` retains
+the input `x` and evolves its state from `start x` by the length-guarded step
+`Complexity.StateLoop.gstep step B`; running it for `|⟨x, start x⟩|` rounds and reading `out`
+is polynomial-time. On inputs whose genuine orbit stays within `B|x|` the guard never fires
+(`StateLoop.gstep_iterate_eq`). (The fixed-round companion of the acceptance-test state loop
+`Complexity.polyTimeComputable_stateFind`.)
+
+**Proof sketch.** `polyTimeComputable_iterate` on the guarded step (`StateLoop.gstep_poly`) with
+round count `R = var` and the orbit bound `StateLoop.gstepBound B`
+(`StateLoop.length_gstep_iterate_le`), composed with the polynomial-time start word
+`x ↦ ⟨x, start x⟩` and the output map (`PolyExpr.eval_var` reads the round count). -/
+theorem StateLoop.polyTimeComputable_stateIterate {start step out : List Bool → List Bool}
+    (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
+    (hout : PolyTimeComputable out) (B : PolyExpr) :
+    PolyTimeComputable fun x =>
+      out ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) := by
+  have hF := polyTimeComputable_iterate (StateLoop.gstep_poly hstep B) .var (StateLoop.gstepBound B)
+    (fun w i _ => StateLoop.length_gstep_iterate_le step B w i)
+  simp only [PolyExpr.eval_var] at hF
+  have hpre : PolyTimeComputable fun x => pairEncode x (start x) :=
+    polyTimeComputable_id.pairEncode hstart
+  exact hout.comp (hF.comp hpre)
+
 /-- **Polynomially many iterations with concatenated emissions:** under the orbit bound,
 `x ↦ emit x ++ emit (g x) ++ ⋯ ++ emit (g^[R|x|] x)` is polynomial-time computable (the
 `m − 1` evaluations of `f` whose outputs form the tuple of Algorithm 38.5, the block
@@ -372,8 +395,8 @@ theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
 
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
 `Complexity.StateLoop.MajLoop`) with `R := var` on the state `⟨rest, ⟨1^{#true}, 1^{#false}⟩⟩`
-from `⟨w, ⟨[], []⟩⟩`: each step drops the first bit of `rest` (`StateLoop.tail_poly`) and
-appends a token to the counter of its value (`StateLoop.headBit_poly`,
+from `⟨w, ⟨[], []⟩⟩`: each step drops the first bit of `rest` (`Complexity.polyTimeComputable_tail`) and
+appends a token to the counter of its value (`polyTimeComputable_headD`,
 `polyTimeComputable_ite`), so after `i ≤ |w|` rounds the state is
 `⟨w.drop i, ⟨1^{#true (w.take i)}, 1^{#false (w.take i)}⟩⟩` (`MajLoop.orbit_eq`); `acc` is the
 emptiness test on `rest`, first `true` at round `|w|`; `out` is the length test
@@ -397,17 +420,17 @@ hard-core-bit mask of [PS10, Algorithm 104.3]).
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
 `Complexity.StateLoop.XorLoop`) with `R := var` on the state `⟨a', ⟨b', c⟩⟩` from
 `⟨fst z, ⟨snd z, []⟩⟩`: each step drops the heads of `a'`, `b'` and appends their xor to `c`
-(`StateLoop.tail_poly`, `StateLoop.headBit_poly`, `StateLoop.xor_poly`), so after
+(`Complexity.polyTimeComputable_tail`, `polyTimeComputable_headD`, `BinArith.polyTimeComputable_xor`), so after
 `i ≤ min |a| |b|` rounds the state is `⟨a.drop i, ⟨b.drop i, (zipWith xor a b).take i⟩⟩`
 (`XorLoop.orbit_eq`, by `List.take_succ` and `List.getElem?_zipWith`); `acc` is "one of `a'`,
-`b'` is empty" (`StateLoop.isNil_poly`, `StateLoop.or_poly`), first `true` at round
+`b'` is empty" (`polyTimeComputable_isNil`, `polyTimeComputable_or`), first `true` at round
 `min |a| |b| = |zipWith xor a b|` (`List.length_zipWith`), where `out` returns `c`. States have
-length at most `5|z| + 4` (`StateLoop.length_pairFstD_add_pairSndD_le`). -/
+length at most `5|z| + 4` (`length_pair_components_le`). -/
 theorem polyTimeComputable_pairXor :
     PolyTimeComputable fun z => List.zipWith xor (pairFstD z) (pairSndD z) := by
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
-    have := length_pairFstD_add_pairSndD_le z
+    have := length_pair_components_le z
     rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
@@ -426,7 +449,7 @@ verification step of the reductions).
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
 `Complexity.StateLoop.EqLoop`) with `R := var` on the state `⟨a', ⟨b', flag⟩⟩` from
 `⟨fst z, ⟨snd z, []⟩⟩`: each step drops the heads of `a'`, `b'` and sets `flag := [true]` if
-they differ (`polyTimeComputable_ite` on `StateLoop.xor_poly`), so after `i ≤ min |a| |b|`
+they differ (`polyTimeComputable_ite` on `BinArith.polyTimeComputable_xor`), so after `i ≤ min |a| |b|`
 rounds the state is `⟨a.drop i, ⟨b.drop i, flag⟩⟩` with `flag = []` iff `a.take i = b.take i`
 (`EqLoop.orbit_eq`, `EqLoop.flag_succ`); `acc` is `XorLoop.acc` ("one of `a'`, `b'` is
 empty"), first `true` at round `min |a| |b|`, where `out` is the conjunction of the three
@@ -437,7 +460,7 @@ theorem polyTimeComputable_pairEq :
     PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)] := by
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
-    have := length_pairFstD_add_pairSndD_le z
+    have := length_pair_components_le z
     rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
@@ -472,7 +495,7 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
   obtain ⟨C, c, hC⟩ := hg.output_length_le
   have hN : ∀ z, BlockMapLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
     intro z
-    have := length_pairFstD_add_pairSndD_le z
+    have := length_pair_components_le z
     rw [BlockMapLoop.rounds_eq]
     exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
   have h := polyTimeComputable_stateFind BlockMapLoop.start_poly (BlockMapLoop.step_poly b hg)

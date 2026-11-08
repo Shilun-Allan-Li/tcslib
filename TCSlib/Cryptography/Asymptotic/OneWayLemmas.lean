@@ -434,8 +434,8 @@ theorem length_iterate_step_le (inLen : PolyExpr) (w : List Bool) (i : ℕ) :
   | succ i =>
     rw [iterate_step_succ, length_pairEncode, length_pairEncode, List.length_append,
       List.length_replicate]
-    have h1 := StateLoop.length_pairFstD_add_pairSndD_le w
-    have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairFstD w)
+    have h1 := length_pair_components_le w
+    have h2 := length_pair_components_le (pairFstD w)
     have h3 : ((rest w).drop ((i + 1) * inLen.eval (u w).length)).length =
         (rest w).length - (i + 1) * inLen.eval (u w).length := List.length_drop
     simp only [u, cnt, rest] at h2 h3 ⊢
@@ -550,7 +550,7 @@ theorem acc_poly : PolyTimeComputable acc :=
 /-- Doubling is polynomial-time. -/
 theorem dbl_poly : PolyTimeComputable dbl := by
   have hbit : PolyTimeComputable fun w => [(rest w).headD false] :=
-    StateLoop.headBit_poly.comp rest_poly
+    polyTimeComputable_headD.comp rest_poly
   exact (acc_poly.append acc_poly).append
     (polyTimeComputable_ite hbit (polyTimeComputable_const [true]) (polyTimeComputable_const []))
 
@@ -562,8 +562,9 @@ theorem capped_poly : PolyTimeComputable capped := by
 
 /-- The step is polynomial-time. -/
 theorem step_poly : PolyTimeComputable step := by
-  convert polyTimeComputable_ite (StateLoop.isNil_poly.comp rest_poly) polyTimeComputable_id
-    (pad_poly.pairEncode ((StateLoop.tail_poly.comp rest_poly).pairEncode capped_poly)) using 1
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp rest_poly) polyTimeComputable_id
+    (pad_poly.pairEncode ((((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp rest_poly).pairEncode capped_poly)) using 1
   funext w
   simp [step]
 
@@ -582,7 +583,7 @@ theorem length_capped_le (w : List Bool) : (capped w).length ≤ (pad w).length 
 /-- The unread bits of any word are no longer than the word. -/
 theorem length_rest_le (w : List Bool) : (rest w).length ≤ w.length := by
   have h1 := length_pairFstD_le (pairSndD w)
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le w
+  have h2 := length_pair_components_le w
   unfold rest
   omega
 
@@ -768,7 +769,7 @@ theorem unum_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
 theorem acc_poly {U : List Bool → List Bool} (hU : PolyTimeComputable U) :
     PolyTimeComputable fun v => [acc U v] :=
   polyTimeComputable_and (StateLoop.lenLe_comp rest_poly ukk_poly)
-    (StateLoop.not_poly (StateLoop.lenLe_comp (unum_poly hU) uM_poly))
+    (polyTimeComputable_not (StateLoop.lenLe_comp (unum_poly hU) uM_poly))
 
 /-- Re-pairing the first component of a word with a shorter second component does not lengthen a
 pair, and gives a word of length `2` on a non-pair. -/

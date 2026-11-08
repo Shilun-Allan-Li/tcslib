@@ -159,19 +159,6 @@ end Concrete
 
 /-! ## Decoding queries -/
 
-/-- `decodeFin ℓ w = some x` iff `w` is the encoding of `x`. -/
-theorem decodeFin_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
-    decodeFin ℓ w = some x ↔ w = List.ofFn x := by
-  constructor
-  · intro h
-    have hw : w.length = ℓ := length_eq_of_decodeFin_eq_some h
-    simp only [decodeFin, dif_pos hw, Option.some.injEq] at h
-    subst h
-    refine List.ext_get (by simp [hw]) fun i h₁ h₂ => ?_
-    simp
-  · rintro rfl
-    exact decodeFin_ofFn x
-
 /-- `queryOf` recognises exactly the pairs `⟨[false], x⟩` with `x` an `ℓ`-bit string. -/
 theorem queryOf_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
     queryOf ℓ w = some x ↔ pairDecode w = some ([false], List.ofFn x) := by

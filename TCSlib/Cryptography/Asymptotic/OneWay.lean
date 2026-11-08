@@ -55,8 +55,8 @@ deviations of `Easy`, `invProbAt` and `WeakOneWay` are recorded on the declarati
 
 ## Main definitions
 
-* `TCSlib.Cryptography.FunFamily` (`Easy`, `invProbAt`, `ofString`, `LengthRegular`, `blocks`,
-  `prod`); `FunFamily.StrongOneWay`, `FunFamily.WeakOneWay`, `FunFamily.WorstCaseOneWay`
+* `TCSlib.Cryptography.FunFamily` (`Easy`, `invProbAt`, `ofString`, `LengthRegular`, `prod`;
+  the block bijection `FunFamily.blocks` lives in `Asymptotic/Adversary.lean`); `FunFamily.StrongOneWay`, `FunFamily.WeakOneWay`, `FunFamily.WorstCaseOneWay`
   (`1^n` form, headline) and `FunFamily.WorstCaseOneWayLit` (literal form)
   [PS10, Definitions 27.3, 28.4, 26.1].
 * `TCSlib.Cryptography.yaoBlocks`, `yaoRounds` — `m = 2nq(n)`, `T = 2nm(n)n^c` [PS10, §2.4.3].
@@ -237,16 +237,6 @@ theorem ofString_f_apply (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ)
 def LengthRegular (f : List Bool → List Bool) (p : PolyExpr) : Prop :=
   ∀ x, (f x).length = p.eval x.length
 
-/-- A string of `q · ℓ` bits as `q` consecutive blocks of `ℓ` bits (block `i` occupies the
-positions `ℓ·i, …, ℓ·i + ℓ - 1`): the encoding of the tuple `(x₁, …, x_q)` of
-[PS10, Theorem 35.1] as the `q·ℓ`-bit concatenation. -/
-def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
-
-/-- The defining equation of `blocks`: block `i`, position `j` is position `ℓ·i + j` of `x`. -/
-theorem blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
-    blocks q ℓ x i j = x (finProdFinEquiv (i, j)) := rfl
-
 /-- The direct product `f'_n = (f_n)^{q n}` of [PS10, Theorem 35.1]:
 `f'(x₁, …, x_{q(n)}) = (f(x₁), …, f(x_{q(n)}))` on blocks, encoded as concatenations;
 `OneWay.prodFun` [Gar26, Theorem 2.1] blockwise. -/
@@ -382,10 +372,6 @@ theorem ofFn_ofString_apply {f : List Bool → List Bool} {p : PolyExpr} (hf : L
 theorem ofString_id_f (n : ℕ) (x : Fin n → Bool) : (ofString id .var).f n x = x := by
   have h := ofFn_ofString_f (f := id) (p := .var) (fun x => by simp) n x
   exact List.ofFn_injective (by simpa using h)
-
-/-- The inverse of `blocks` reads block `k.divNat`, position `k.modNat`. -/
-theorem blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) :
-    (blocks q ℓ).symm t k = t k.divNat k.modNat := rfl
 
 /-- The encoding of a tuple of blocks is the concatenation of the encodings of the blocks. -/
 theorem ofFn_blocks_symm (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) :
@@ -623,7 +609,8 @@ theorem claim_38_2 (q : PolyExpr) (hq : ∀ n, 0 < q.eval n) (c : ℕ) :
 /-! ## Hardness amplification -/
 
 /-- The block bijection of this file is the one of `OneWayLemmas`/`OneWayYao`. -/
-private theorem blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ := rfl
+private theorem blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ :=
+  (OneWay.blocksE_eq q ℓ).symm
 
 /-- **Yao's hardness amplification** [PS10, Theorem 35.1]: for every weak one-way function
 `𝓕` there is a polynomial `m` (the proof takes `m(n) = 2nq(n)`, `q` the polynomial of weak

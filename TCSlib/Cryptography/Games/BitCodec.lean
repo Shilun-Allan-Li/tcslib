@@ -213,17 +213,6 @@ theorem decodeBitMove_ret (din dout : Fin k → ℕ) (dα : ℕ) (a : Fin dα �
     decodeBitMove din dout dα (pairEncode [true] (List.ofFn a)) = .ret a := by
   simp [decodeBitMove, pairDecode_pairEncode, decodeFin_ofFn]
 
-/-- A decoded `ℓ`-bit string is the string itself (read through `decodeFin`'s published lemmas
-only). -/
-private theorem eq_ofFn_of_decodeFin {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}
-    (h : decodeFin ℓ w = some x) : w = List.ofFn x := by
-  have hw := length_eq_of_decodeFin_eq_some h
-  subst hw
-  have h' := decodeFin_ofFn (fun j : Fin w.length => w.get j)
-  rw [List.ofFn_get, h, Option.some.injEq] at h'
-  rw [h']
-  exact (List.ofFn_get w).symm
-
 /-- **Only the canonical query word decodes as a query:** `decodeBitMove din dout dα w` is the
 query `x` to oracle `i` exactly when `w = ⟨[false], ⟨1^i, x⟩⟩` (the converse of
 `decodeBitMove_query`).
@@ -249,7 +238,7 @@ theorem decodeBitMove_eq_query_iff {din dout : Fin k → ℕ} {dα : ℕ} {w : L
         · rename_i x' hx
           cases h
           rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_pairEncode_of_pairDecode _ _ _ hr,
-            decodeIdx_eq_some_iff.1 hj, eq_ofFn_of_decodeFin hx]
+            decodeIdx_eq_some_iff.1 hj, (decodeFin_eq_some_iff _ _ _).1 hx]
         · cases h
       · cases h
     · cases h
@@ -280,7 +269,7 @@ theorem decodeBitMove_of_not_canonical {din dout : Fin k → ℕ} {dα : ℕ} {w
         · rename_i x hx
           refine absurd ?_ (hq j x)
           rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_pairEncode_of_pairDecode _ _ _ hr',
-            decodeIdx_eq_some_iff.1 hj, eq_ofFn_of_decodeFin hx]
+            decodeIdx_eq_some_iff.1 hj, (decodeFin_eq_some_iff _ _ _).1 hx]
         · rfl
       · rfl
     · rfl
@@ -288,7 +277,7 @@ theorem decodeBitMove_of_not_canonical {din dout : Fin k → ℕ} {dα : ℕ} {w
     split
     · rename_i a ha
       refine absurd ?_ (hr a)
-      rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_ofFn_of_decodeFin ha]
+      rw [eq_pairEncode_of_pairDecode _ _ _ hw, (decodeFin_eq_some_iff _ _ _).1 ha]
     · rfl
   · rfl
 

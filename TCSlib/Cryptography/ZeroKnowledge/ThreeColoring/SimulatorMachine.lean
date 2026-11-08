@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric
 import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Complexity.Randomized.NonUniform
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -54,12 +55,11 @@ open Complexity Turing Complexity.StateLoop EncodingMachines
 
 /-! ### Generic machine helpers -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- One more position adds the bit at that position to the count. -/
 theorem countBits_succ (x : List Bool) (k : ℕ) :
@@ -228,7 +228,7 @@ theorem simR_poly : PolyTimeComputable simR := NUPPT.polyTimeComputable_inCoins
 
 /-- The second component of a word is no longer than the word. -/
 theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length :=
-  le_trans (Nat.le_add_left _ _) (length_pairFstD_add_pairSndD_le z)
+  le_trans (Nat.le_add_left _ _) (length_pair_components_le z)
 
 /-- The common input is no longer than the machine input. -/
 theorem length_simX_le (w : List Bool) : (simX w).length ≤ w.length :=
@@ -437,20 +437,36 @@ theorem rVStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool �
   refine ptc_congr ((polyTimeComputable_pairDropPoly .var).comp (hlen.pairEncode hB)) fun w => ?_
   simp [rVStr]
 
+/-- **One activation of an efficient strategy is polynomial-time**: for an efficient `V'` and
+polynomial-time `X, Z, R, C`, the reply `V'.next (X w) (Z w) (R w) [C w]` is polynomial-time.
+
+**Proof sketch.** `Strategy.efficient_iff` gives a uniform machine `A` with
+`V'.next = (Strategy.ofNUPPT A).next`; one activation is `A`'s output on the layout
+`⟨⟨⟨1^{|X w|}, ⟨⟨X w, Z w⟩, ⟨C w, []⟩⟩⟩, []⟩, R w⟩` (`Strategy.ofNUPPT_next`,
+`NUPPT.runAtL_eq_output_layout`, `Strategy.encodeMsgs_cons`/`_nil`), which is polynomial-time by
+`NUPPT.polyTimeComputable_layout` and the machine's `polyTimeComputable_output`. -/
+theorem polyTimeComputable_next {V' : Strategy} (hV' : V'.Efficient)
+    {X Z R C : List Bool → List Bool}
+    (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z)
+    (hR : PolyTimeComputable R) (hC : PolyTimeComputable C) :
+    PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w] := by
+  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
+  have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hX)
+    ((hX.pairEncode hZ).pairEncode (hC.pairEncode (polyTimeComputable_const [])))
+    (polyTimeComputable_const []) hR
+  refine (A.polyTimeComputable_output.comp hlay).congr fun w => ?_
+  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
+    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
+  rfl
+
 /-- The reply of an efficient `V'` to the commitment message is polynomial-time: one activation
-of its machine on the layout `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨com, []⟩⟩⟩, []⟩, r_V⟩`
-(`Strategy.ofNUPPT_next`, `NUPPT.runAtL_eq_output_layout`, `NUPPT.polyTimeComputable_layout`). -/
+of its machine on the layout `⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨com, []⟩⟩⟩, []⟩, r_V⟩`, the generic
+`polyTimeComputable_next` with the tape `rVStr_poly`. -/
 theorem reply_poly (ℓ : PolyExpr) {V' : Strategy} (hV' : V'.Efficient) (hX : PolyTimeComputable X)
     (hZ : PolyTimeComputable Z) {B : List Bool → List Bool} (hB : PolyTimeComputable B)
     {C : List Bool → List Bool} (hC : PolyTimeComputable C) :
-    PolyTimeComputable fun w => V'.next (X w) (Z w) (rVStr ℓ (X w) (B w)) [C w] := by
-  obtain ⟨A, hA, -, hnext⟩ := hV'
-  have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hX)
-    ((hX.pairEncode hZ).pairEncode (hC.pairEncode (polyTimeComputable_const [])))
-    (polyTimeComputable_const []) (rVStr_poly ℓ hX hB)
-  refine ptc_congr (A.polyTimeComputable_output.comp hlay) fun w => ?_
-  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq]
-  rfl
+    PolyTimeComputable fun w => V'.next (X w) (Z w) (rVStr ℓ (X w) (B w)) [C w] :=
+  polyTimeComputable_next hV' hX hZ (rVStr_poly ℓ hX hB) hC
 
 /-- The opening message is polynomial-time. -/
 theorem opnStr_poly (ℓ : PolyExpr) (hX : PolyTimeComputable X) {B : List Bool → List Bool}
@@ -498,7 +514,7 @@ theorem attemptNum_poly {Com : List Bool → List Bool} (hCom : PolyTimeComputab
   have hview := view_poly hX hZ hrV hcom (opnStr_poly ℓ hX hB)
   have hview0 := view_poly hX hZ hrV hcom0 (polyTimeComputable_const [])
   refine ⟨?_, ?_⟩
-  · refine ptc_congr (or_poly hzero htest) fun w => ?_
+  · refine ptc_congr (polyTimeComputable_or hzero htest) fun w => ?_
     unfold attemptNum
     by_cases h0 : mE (X w) = 0
     · simp [h0]

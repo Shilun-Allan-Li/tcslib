@@ -200,16 +200,9 @@ end Collection
 
 /-- **Decoding as an `ℓ`-bit string is canonical**: a string that `decodeFin ℓ` decodes to `x`
 is `List.ofFn x` (the field `Collection.encD_decD` of the collections whose elements are
-encoded by `List.ofFn`). It has length `ℓ` (`length_eq_of_decodeFin_eq_some`), so padding it to
-`ℓ` bits is the identity (`Collection.ofFn_padFin_of_le`), and `decodeFin_ofFn` reads `x` off
-the padding. -/
+encoded by `List.ofFn`): the reversed-direction corollary of `decodeFin_eq_some_iff`. -/
 theorem ofFn_of_decodeFin_eq_some {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}
-    (h : decodeFin ℓ w = some x) : List.ofFn x = w := by
-  have hw := length_eq_of_decodeFin_eq_some h
-  have hpad : List.ofFn (padFin ℓ w) = w := by
-    rw [Collection.ofFn_padFin_of_le hw.le, hw, Nat.sub_self, List.replicate_zero,
-      List.append_nil]
-  rw [← hpad, decodeFin_ofFn, Option.some.injEq] at h
-  rw [← h, hpad]
+    (h : decodeFin ℓ w = some x) : List.ofFn x = w :=
+  ((decodeFin_eq_some_iff ℓ w x).1 h).symm
 
 end TCSlib.Cryptography

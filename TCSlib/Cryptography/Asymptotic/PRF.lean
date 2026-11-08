@@ -230,6 +230,40 @@ theorem decodeOracleMove_true_two (ℓ₁ : ℕ) (b : Bool) :
   unfold decodeOracleMove
   rw [pairDecode_true_two]
 
+/-- Decoding a well-formed query word: for every `ℓ₁`-bit string `x` (`ℓ₁ = 0` included),
+`decodeOracleMove ℓ₁ (pairEncode [false] (List.ofFn x)) = .query x`. -/
+theorem decodeOracleMove_pairEncode_ofFn (ℓ₁ : ℕ) (x : Fin ℓ₁ → Bool) :
+    decodeOracleMove ℓ₁ (pairEncode [false] (List.ofFn x)) = .query x := by
+  rw [decodeOracleMove_pairEncode_false, decodeFin_ofFn]
+
+/-- Decoding a query-shaped word of the wrong length: if `|x| ≠ ℓ₁` then
+`decodeOracleMove ℓ₁ (pairEncode [false] x) = .ret false`. -/
+theorem decodeOracleMove_pairEncode_false_of_length_ne (ℓ₁ : ℕ) {x : List Bool}
+    (hx : x.length ≠ ℓ₁) : decodeOracleMove ℓ₁ (pairEncode [false] x) = .ret false := by
+  rw [decodeOracleMove_pairEncode_false]
+  cases h : decodeFin ℓ₁ x with
+  | none => rfl
+  | some y => exact absurd (length_eq_of_decodeFin_eq_some h) hx
+
+/-- **The malformed branch**: a word that is neither a query-shaped pair `⟨[false], x⟩` (for any
+string `x`) nor a two-bit verdict word `[true, b]` decodes to the verdict `false`:
+`decodeOracleMove ℓ₁ w = .ret false`. Together with `decodeOracleMove_pairEncode_ofFn`,
+`decodeOracleMove_pairEncode_false_of_length_ne` and `decodeOracleMove_true_two` this covers every
+word, for every `ℓ₁`.
+
+**Proof sketch.** Along the match of `decodeOracleMove`: a decoding `pairDecode w = some ([false], x)`
+gives `w = ⟨[false], x⟩` (`eq_pairEncode_of_pairDecode`), excluded; the word `[true, b]` is
+excluded; the remaining branch is `.ret false`. -/
+theorem decodeOracleMove_of_ne (ℓ₁ : ℕ) {w : List Bool} (hq : ∀ x, w ≠ pairEncode [false] x)
+    (hv : ∀ b, w ≠ [true, b]) : decodeOracleMove ℓ₁ w = .ret false := by
+  unfold decodeOracleMove
+  split
+  · rename_i w' o w'' x hx
+    exact absurd (eq_pairEncode_of_pairDecode w' _ _ hx) (hq x)
+  · rename_i o w' b hp
+    exact absurd rfl (hv b)
+  · rfl
+
 /-- The encoding of the history of (query, answer) pairs handed to a next-query machine: the
 nested pair `⟨⟨x₁, y₁⟩, ⟨⟨x₂, y₂⟩, ⟨…, []⟩⟩⟩`. -/
 def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
@@ -633,43 +667,42 @@ theorem thm_97_3_2 {ρ : Type*} [Fintype ρ] (G : ∀ n, (Fin n → Bool) → (F
 query `queryOf` if there is one, else the verdict `verdictOf` (`[true, true]` is the only
 accepting output).
 
-**Proof sketch.** Case split along the match of `decodeOracleMove`. A pair `⟨[false], x⟩`
-decodes to the query `x` iff `|x| = ℓ₁`, and otherwise to `ret false`, which is `verdictOf` of
-a word starting with `false`. The two-bit word `[true, b]` is not a pair and decodes to `ret b`,
-which is `verdictOf [true, b]`. Any other word is neither a query nor `[true, true]`. -/
+**Proof sketch.** Along the published case readers of `decodeOracleMove`: a pair `⟨[false], x⟩`
+decodes as `decodeFin ℓ₁ x` decides (`decodeOracleMove_pairEncode_false`), which is
+`queryOf` (`GGMRed.queryOf_eq`), and its failure is `ret false = verdictOf` of a word starting
+with `false`; the two-bit word `[true, b]` decodes to `ret b` (`decodeOracleMove_true_two`),
+which is `verdictOf [true, b]`, and is no query; any other word is neither a query nor
+`[true, true]` (`decodeOracleMove_of_ne`, `GGMRed.queryOf_eq_some_iff`). -/
 private theorem decodeOracleMove_eq (ℓ₁ : ℕ) (w : List Bool) :
     decodeOracleMove ℓ₁ w =
       match GGMRed.queryOf ℓ₁ w with
       | some x => .query x
       | none => .ret (GGMRed.verdictOf w) := by
-  unfold decodeOracleMove
-  split
-  · rename_i w o w' x hx
-    have hw := eq_pairEncode_of_pairDecode w _ _ hx
-    have hq : GGMRed.queryOf ℓ₁ w = decodeFin ℓ₁ x := by
-      rw [GGMRed.queryOf_eq, hx]
-    rw [hq]
+  by_cases hq : ∃ x, w = pairEncode [false] x
+  · obtain ⟨x, rfl⟩ := hq
+    have hqo : GGMRed.queryOf ℓ₁ (pairEncode [false] x) = decodeFin ℓ₁ x := by
+      rw [GGMRed.queryOf_eq, pairDecode_pairEncode]
+    rw [hqo, decodeOracleMove_pairEncode_false]
     cases decodeFin ℓ₁ x with
     | some y => rfl
     | none =>
-      simp only
-      congr 1
-      rw [hw, GGMRed.verdictOf_eq]
-      simp [pairEncode_eq]
-  · rename_i o w' b hp
-    have hq : GGMRed.queryOf ℓ₁ [true, b] = none := by
-      rw [GGMRed.queryOf_eq, pairDecode_true_two]
-    rw [hq, GGMRed.verdictOf_eq]
-    cases b <;> rfl
-  · rename_i w o w' hb hp
-    have hq : GGMRed.queryOf ℓ₁ w = none := by
-      rw [Option.eq_none_iff_forall_ne_some]
-      intro x hx
-      rw [GGMRed.queryOf_eq_some_iff] at hx
-      exact hp (List.ofFn x) hx
-    rw [hq]
-    simp only [OracleMove.ret.injEq, GGMRed.verdictOf_eq]
-    exact (decide_eq_false_iff_not.2 fun h => hb true h).symm
+      show OracleMove.ret false = OracleMove.ret (GGMRed.verdictOf (pairEncode [false] x))
+      rw [GGMRed.verdictOf_eq, decide_eq_false (by simp [pairEncode_eq])]
+  · by_cases hv : ∃ b, w = [true, b]
+    · obtain ⟨b, rfl⟩ := hv
+      have hqn : GGMRed.queryOf ℓ₁ [true, b] = none := by
+        rw [GGMRed.queryOf_eq, pairDecode_true_two]
+      rw [hqn, decodeOracleMove_true_two, GGMRed.verdictOf_eq]
+      cases b <;> rfl
+    · push_neg at hq hv
+      have hqn : GGMRed.queryOf ℓ₁ w = none := by
+        rw [Option.eq_none_iff_forall_ne_some]
+        intro x hx
+        rw [GGMRed.queryOf_eq_some_iff] at hx
+        exact hq (List.ofFn x) (eq_pairEncode_of_pairDecode w _ _ hx)
+      rw [hqn, decodeOracleMove_of_ne ℓ₁ hq hv]
+      simp only [OracleMove.ret.injEq, GGMRed.verdictOf_eq]
+      exact (decide_eq_false_iff_not.2 fun h => hv true h).symm
 
 /-- `buildTree` of the decoded moves is `buildTreeQ` of the raw outputs. -/
 private theorem buildTree_eq_buildTreeQ {ℓ₁ ℓ₂ : ℕ}

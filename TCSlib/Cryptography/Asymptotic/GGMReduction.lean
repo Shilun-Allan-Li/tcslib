@@ -273,7 +273,7 @@ theorem length_tblEnc_tblOf {i : ℕ} (val : ℕ → List Bool) {v : ℕ}
 
 /-! ## State loops with a retained input -/
 
-/-- **The state-loop function** (the function form of the private
+/-- **The state-loop function** (a data function, unlike the computability statement
 `Complexity.polyTimeComputable_stateFind` of `TCSlib.Complexity.Randomized.Repetition`): on the
 input `x`, run the length-guarded step `Complexity.StateLoop.gstep step B` from `⟨x, start x⟩`
 for at most `R|⟨x, start x⟩|` rounds and return `out` of the first state word accepted by `acc`
@@ -356,23 +356,23 @@ theorem lookStep_poly : PolyTimeComputable lookStep :=
   polyTimeComputable_pairFstD.pairEncode
     (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The lookup test is polynomial-time (`StateLoop.isNil_poly`, `polyTimeComputable_pairEq`,
-`StateLoop.or_poly`). -/
+/-- The lookup test is polynomial-time (`polyTimeComputable_isNil`, `polyTimeComputable_pairEq`,
+`polyTimeComputable_or`). -/
 theorem lookAcc_poly : PolyTimeComputable fun v => [lookAcc v] := by
   have h1 : PolyTimeComputable fun v => [decide (pairSndD v = [])] :=
-    StateLoop.isNil_poly.comp polyTimeComputable_pairSndD
+    polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   have h2 : PolyTimeComputable fun v => [decide (pairFstD (pairFstD (pairSndD v)) = pairFstD v)] := by
     convert polyTimeComputable_pairEq.comp
       ((polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp
         polyTimeComputable_pairSndD)).pairEncode polyTimeComputable_pairFstD) using 1
     funext v
     simp
-  exact StateLoop.or_poly h1 h2
+  exact polyTimeComputable_or h1 h2
 
 /-- The lookup output is polynomial-time. -/
 theorem lookOut_poly : PolyTimeComputable lookOut := by
   have h1 : PolyTimeComputable fun v => [decide (pairSndD v = [])] :=
-    StateLoop.isNil_poly.comp polyTimeComputable_pairSndD
+    polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   convert polyTimeComputable_ite h1 (polyTimeComputable_const [])
     ((polyTimeComputable_const []).pairEncode (polyTimeComputable_pairSndD.comp
       (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))) using 1
@@ -390,7 +390,7 @@ theorem length_lookStep_iterate_le (v : List Bool) (k : ℕ) :
     intro a b
     unfold lookStep
     rw [pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode, length_pairEncode]
-    have h1 := StateLoop.length_pairFstD_add_pairSndD_le b
+    have h1 := length_pair_components_le b
     omega
   have hone : (lookStep v).length ≤ v.length + 2 := by
     cases hd : pairDecode v with
@@ -798,7 +798,7 @@ theorem mul1_poly : PolyTimeComputable mul1 := unaryMul_poly paramU_poly cnt_pol
 theorem mul2_poly : PolyTimeComputable mul2 := unaryMul_poly un2_poly cnt_poly
 /-- The test `|T| < j` is polynomial-time. -/
 theorem ltJ_poly : PolyTimeComputable fun w => [ltJ w] :=
-  StateLoop.not_poly (StateLoop.lenLe_comp cnt_poly unJ_poly)
+  polyTimeComputable_not (StateLoop.lenLe_comp cnt_poly unJ_poly)
 
 /-- The test `|T| = j` is polynomial-time. -/
 theorem eqJ_poly : PolyTimeComputable fun w => [eqJ w] := by
@@ -814,7 +814,7 @@ theorem fresh_poly (hE : PolyTimeComputable E) : PolyTimeComputable (fresh E q) 
 
 /-- The not-found test is polynomial-time. -/
 theorem notFound_poly : PolyTimeComputable fun w => [notFound D q w] :=
-  StateLoop.isNil_poly.comp (look_poly D q)
+  polyTimeComputable_isNil.comp (look_poly D q)
 
 /-- The value of the prefix is polynomial-time. -/
 theorem vstr_poly (hE : PolyTimeComputable E) : PolyTimeComputable (vstr E D q) :=
@@ -833,13 +833,14 @@ theorem cnt'_poly : PolyTimeComputable (cnt' D q) :=
 
 /-- The label is polynomial-time (`selHalf_poly`). -/
 theorem lab_poly (hE : PolyTimeComputable E) : PolyTimeComputable (lab E D q) :=
-  selHalf_poly (StateLoop.headBit_poly.comp (dropLen_poly unI_poly (query_poly D q))) paramU_poly
+  selHalf_poly (polyTimeComputable_headD.comp (dropLen_poly unI_poly (query_poly D q))) paramU_poly
     (vstr_poly E D q hE)
 
 /-- The answer is polynomial-time (`ggmEval_poly`). -/
 theorem ans_poly (hE : PolyTimeComputable E) : PolyTimeComputable (ans E D q) :=
   (ggmEval_poly hE).comp ((lab_poly E D q hE).pairEncode
-    (StateLoop.tail_poly.comp (dropLen_poly unI_poly (query_poly D q))))
+    (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp (dropLen_poly unI_poly (query_poly D q))))
 
 /-- The updated history is polynomial-time. -/
 theorem hist'_poly (hE : PolyTimeComputable E) : PolyTimeComputable (hist' E D q) :=
@@ -856,7 +857,7 @@ theorem unQ_poly : PolyTimeComputable (unQ q) := StateLoop.unaryPoly_comp q para
 
 /-- The stopping test is polynomial-time. -/
 theorem acc_poly : PolyTimeComputable fun w => [acc D q w] :=
-  StateLoop.or_poly (StateLoop.not_poly (isQ_poly D q)) (StateLoop.lenLe_comp rnd_poly (unQ_poly q))
+  polyTimeComputable_or (polyTimeComputable_not (isQ_poly D q)) (StateLoop.lenLe_comp rnd_poly (unQ_poly q))
 
 /-- The output is polynomial-time (`polyTimeComputable_pairEq` for the verdict). -/
 theorem out_poly : PolyTimeComputable (out D q) := by

@@ -69,7 +69,7 @@ theorem ptc_apply_unary {F : List Bool → ℕ → List Bool}
 
 /-- The second component of a word is no longer than the word. -/
 theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length :=
-  (Nat.le_add_left _ _).trans (length_pairFstD_add_pairSndD_le z)
+  (Nat.le_add_left _ _).trans (length_pair_components_le z)
 
 /-- The common input of a layout is no longer than the layout. -/
 theorem length_argX_le (w : List Bool) : (argX w).length ≤ w.length :=
@@ -189,7 +189,7 @@ theorem openStr_poly : PolyTimeComputable (openStr ℓ) := by
 
 /-- The honest prover of one iteration is polynomial-time when `Com` is. -/
 theorem proverStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (proverStr Com ℓ) := by
-  have h := polyTimeComputable_ite (isNil_poly.comp argM_poly) (commitStr_poly Com ℓ hCom)
+  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly) (commitStr_poly Com ℓ hCom)
     (polyTimeComputable_ite (eqTest_poly mOf_poly (unaryConst_poly 0)) (polyTimeComputable_const [])
       (openStr_poly ℓ))
   exact ptc_congr h fun w => by simp only [proverStr, decide_eq_true_eq, Function.comp_apply]
@@ -229,7 +229,7 @@ noncomputable def checkStr (L n m : ℕ) (x com opn : List Bool) (e : ℕ) : Boo
 and `nthTrue_poly`, its endpoints `j / n`, `j mod n` by `divNum_poly`, `modNum_poly`; the two
 colours by `colorVal_poly` and the randomness by the pair projections. The five conjuncts are
 `eqTest_poly` on the randomness lengths, `polyTimeComputable_pairEq` of `Com` on the padded
-openings against the selected commitments (`padTo_poly`, `iterSnd_poly`), and `not_poly` of
+openings against the selected commitments (`padTo_poly`, `iterSnd_poly`), and `polyTimeComputable_not` of
 `eqTest_poly` on the colours, combined by `polyTimeComputable_and`. -/
 theorem checkStr_poly (hCom : PolyTimeComputable Com)
     {L n m : List Bool → ℕ} (hL : PolyTimeComputable fun w => List.replicate (L w) true)
@@ -262,7 +262,7 @@ theorem checkStr_poly (hCom : PolyTimeComputable Com)
   have t4 := polyTimeComputable_pairEq.comp
     ((hCom.comp ((padTo_poly (encColorOfVal_poly hb) hn).pairEncode hrj)).pairEncode
       (polyTimeComputable_pairFstD.comp (iterSnd_poly hcom hv)))
-  have t5 := not_poly (eqTest_poly ha hb)
+  have t5 := polyTimeComputable_not (eqTest_poly ha hb)
   have h := polyTimeComputable_and t1 (polyTimeComputable_and t2
     (polyTimeComputable_and t3 (polyTimeComputable_and t4 t5)))
   convert h using 1
@@ -284,7 +284,7 @@ theorem verdictStr_poly (hCom : PolyTimeComputable Com) :
     ptc_congr (polyTimeComputable_pairEq.comp
       (argX_poly.pairEncode (truncate_poly argX_poly (unaryMul_poly nOf_poly nOf_poly))))
       fun w => by simp
-  exact polyTimeComputable_and hwf (or_poly (eqTest_poly mOf_poly (unaryConst_poly 0))
+  exact polyTimeComputable_and hwf (polyTimeComputable_or (eqTest_poly mOf_poly (unaryConst_poly 0))
     (polyTimeComputable_and (leTest_poly (unaryConst_poly 2) nOf_poly)
       (checkStr_poly Com hCom (LOf_poly ℓ) nOf_poly mOf_poly argX_poly
         (polyTimeComputable_pairFstD.comp argM_poly)
@@ -300,10 +300,10 @@ noncomputable def verifierStr (w : List Bool) : List Bool :=
 
 /-- The verifier of one iteration is polynomial-time when `Com` is. -/
 theorem verifierStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (verifierStr Com ℓ) := by
-  have h := polyTimeComputable_ite (isNil_poly.comp argM_poly) (polyTimeComputable_const [false])
-    (polyTimeComputable_ite (isNil_poly.comp (polyTimeComputable_pairSndD.comp argM_poly)) eOf_poly
+  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly) (polyTimeComputable_const [false])
+    (polyTimeComputable_ite (polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)) eOf_poly
       (polyTimeComputable_ite
-        (isNil_poly.comp (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly)))
+        (polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly)))
         (verdictStr_poly Com ℓ hCom) (polyTimeComputable_const [false])))
   exact ptc_congr h fun w => by simp only [verifierStr, decide_eq_true_eq, Function.comp_apply]
 
@@ -352,7 +352,7 @@ theorem proverRepStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (
   have hlay := NUPPT.polyTimeComputable_layout hxl ((argX_poly.pairEncode argZ_poly).pairEncode hM)
     (polyTimeComputable_const []) hslice
   have h := polyTimeComputable_ite (ltTest_poly ht (unaryMul_poly nOf_poly mOf_poly))
-    (ptc_comp (proverStr_poly Com ℓ hCom) hlay) (polyTimeComputable_const [])
+    (PolyTimeComputable.comp' (proverStr_poly Com ℓ hCom) hlay) (polyTimeComputable_const [])
   exact ptc_congr h fun w => by simp only [proverRepStr, decide_eq_true_eq]
 
 /-- The challenge of iteration `t` of the repeated verifier: the sampler on the `t`-th block of
@@ -415,8 +415,8 @@ theorem verdictRepStr_poly (hCom : PolyTimeComputable Com) :
       fun w => by simp
   have hN := unaryMul_poly nOf_poly mOf_poly
   have hfirst := polyTimeComputable_firstIdx (p := fun w t => !checkRep Com ℓ w t)
-    (not_poly (checkRep_poly Com ℓ hCom)) hN
-  exact polyTimeComputable_and hwf (or_poly (eqTest_poly mOf_poly (unaryConst_poly 0))
+    (polyTimeComputable_not (checkRep_poly Com ℓ hCom)) hN
+  exact polyTimeComputable_and hwf (polyTimeComputable_or (eqTest_poly mOf_poly (unaryConst_poly 0))
     (polyTimeComputable_and (leTest_poly (unaryConst_poly 2) nOf_poly) (eqTest_poly hfirst hN)))
 
 /-- The verifier of the repeated protocol as a function of the layout. -/

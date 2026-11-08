@@ -228,9 +228,11 @@ within `B |arg|` cells of the origin, where all heads start (`Cfg.ofWords_workTa
 This is the coarse envelope from the time bound: one step moves each head by at most one cell
 (`Turing.MultiTapeTM.workTapePos_step_le`; over a run,
 `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`), the first halt comes at a time `t ≤ B |arg|`,
-and the run is constant from `t` on. The contract gives nothing sharper: it fixes the terminal
-seam, not the intermediate head positions, and a clean module may move a head out and back
-before it halts at the seam (gate 03l round 2, finding 1).
+and the run is constant from `t` on. The theorem intentionally publishes this coarse
+time-derived bound. A sharper one does hold: every head starts at the origin and the terminal
+seam (`Cfg.ofWords`) puts it back there, so a head that reaches distance `d` spends at least
+`2d ≤ t` steps going out and back, and `|position| ≤ B |arg| / 2`; that factor-two bound is not
+stated here (gate 03l round 2, finding 1).
 
 **Proof sketch.** Take the first halt `t ≤ B |arg|` of `Clean`. At a time `v ≤ t` each head is
 within `v` cells of its start (`MultiTapeTM.workTapePos_runFrom_mem_Icc`); at `v > t` the run

@@ -722,16 +722,17 @@ def tdpPredFun (D : NUPPT) (flip : Bool) (z : List Bool) : List Bool :=
         (pairEncode (pairSndD (NUPPT.inArg z)) [(NUPPT.inCoins z).headD false]))
       (NUPPT.inAdvice z) (NUPPT.inCoins z).tail) = [true]))) flip]
 
-/-- The raw predictor is polynomial-time (`StateLoop.headBit_poly`, `tail_poly`,
-`polyTimeComputable_pairEq` for the verdict, `StateLoop.xor_poly`/`not_poly`). -/
+/-- The raw predictor is polynomial-time (`polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`,
+`polyTimeComputable_pairEq` for the verdict, `BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
 theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredFun D flip) := by
   have hc : PolyTimeComputable fun z => [(NUPPT.inCoins z).headD false] :=
-    StateLoop.headBit_poly.comp NUPPT.polyTimeComputable_inCoins
+    polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins
   have hout := D.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout
     NUPPT.polyTimeComputable_inParam
     ((polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg).pairEncode
       ((polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg).pairEncode hc))
-    NUPPT.polyTimeComputable_inAdvice (StateLoop.tail_poly.comp NUPPT.polyTimeComputable_inCoins))
+    NUPPT.polyTimeComputable_inAdvice (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp NUPPT.polyTimeComputable_inCoins))
   have hv : PolyTimeComputable fun z => [decide (D.output (NUPPT.layout (NUPPT.inParam z)
       (pairEncode (pairFstD (NUPPT.inArg z))
         (pairEncode (pairSndD (NUPPT.inArg z)) [(NUPPT.inCoins z).headD false]))
@@ -740,7 +741,7 @@ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredF
       using 1
     funext z
     simp only [Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
-  exact StateLoop.xor_poly (StateLoop.xor_poly hc (StateLoop.not_poly hv))
+  exact BinArith.polyTimeComputable_xor (BinArith.polyTimeComputable_xor hc (polyTimeComputable_not hv))
     (polyTimeComputable_const [flip])
 
 /-- **The predictor machine** `A_flip` of [PS10, Theorem 104.4, proof]: `D`'s advice, coins

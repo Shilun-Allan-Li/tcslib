@@ -858,7 +858,7 @@ polynomial-time computable.
 commitment loop `CommitmentLemmas.ComLoop` — and run the loop `ComLoop.loopOut F H`
 (`polyTimeComputable_iterateEmit`, state `⟨1^n, ⟨v.drop i, rest⟩⟩`: each round drops one value
 bit and one `n`-bit block and emits `F ⟨1^n, r_i⟩ ++ [v_i ⊕ H ⟨1^n, r_i⟩]`, nothing once the
-value bits are exhausted; `StateLoop.headBit_poly`, `StateLoop.xor_poly`,
+value bits are exhausted; `polyTimeComputable_headD`, `BinArith.polyTimeComputable_xor`,
 `PolyTimeComputable.append`, `pairTakePoly/pairDropPoly`). The result equals `owpComStr P h w`
 by `owpComStr_eq_loopOut` (`hF`, `hH`, `List.ofFn` of `(blocks n (n+1)).symm` being the
 concatenation of the blocks, and `padFin` matching the padding). -/

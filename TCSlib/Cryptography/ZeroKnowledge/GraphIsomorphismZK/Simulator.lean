@@ -122,12 +122,11 @@ theorem sim_eq (V' : Strategy) (x z r : List Bool) :
 
 /-! ### An FP toolkit -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 private theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- Bitwise exclusive-or of a word with itself is the all-`false` word of its length. -/
 theorem zipWith_xor_self (l : List Bool) : List.zipWith xor l l = List.replicate l.length false := by
@@ -245,7 +244,7 @@ A.output ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨H, []⟩⟩⟩, []⟩, rV⟩` (`Str
 `NUPPT.runAtL_eq_output_layout`), polynomial-time by `A.polyTimeComputable_output` and
 `NUPPT.polyTimeComputable_layout`. The block is `(r.drop (t · L)).take L` with `L` in unary
 (`unaryPoly_comp (blockPoly V')`, `unaryMul_poly`, `pairDropPoly`, `truncate_poly`); its
-fields are the head bit (`headBit_poly`), the permutation coins (`tail_poly`, `truncate_poly`
+fields are the head bit (`polyTimeComputable_headD`), the permutation coins (`Complexity.polyTimeComputable_tail`, `truncate_poly`
 at `(|x|+1)²`) and the tape (`pairDropPoly`); the permutation word is
 `polyTimeComputable_encPermFromCoins` on `⟨fst x, coins⟩`, the graph `H` is
 `encPermGraphAt_poly` on `⟨1^n, ⟨G_{b'}, encPerm π⟩⟩` (`decPerm_encPerm`), the comparison is
@@ -277,7 +276,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
   have hb : PolyTimeComputable fun u =>
       [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false] :=
-    headBit_poly.comp hc
+    polyTimeComputable_headD.comp hc
   -- `(|x| + 1)²` in unary
   have hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true := by
     have := unaryPoly_comp (.normal 1 2) hx
@@ -288,7 +287,8 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
         (((simX (pairSndD u)).length + 1) ^ 2) := by
     have htail : PolyTimeComputable fun u =>
         (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1 := by
-      have := tail_poly.comp hc
+      have := ((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail).comp hc
       simpa only [List.drop_one] using this
     exact truncate_poly htail hP
   -- the verifier's tape
@@ -361,7 +361,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
             1).take (((simX (pairSndD u)).length + 1) ^ 2))))]).headD false =
       (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false)] := by
-    have := polyTimeComputable_pairEq.comp ((headBit_poly.comp hmsg).pairEncode hb)
+    have := polyTimeComputable_pairEq.comp ((polyTimeComputable_headD.comp hmsg).pairEncode hb)
     refine ptc_congr this fun u => ?_
     simp
   -- the view

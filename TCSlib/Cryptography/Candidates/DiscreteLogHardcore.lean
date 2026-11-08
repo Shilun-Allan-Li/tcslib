@@ -1107,19 +1107,14 @@ private theorem dlb_ite_poly {c : List Bool → Prop} [DecidablePred c] {f g : L
   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
   simp only [decide_eq_true_eq]
 
-/-- **Guarded state iteration for `|⟨x, start x⟩|` rounds** (the form of
-`TCSlib.Cryptography.polyTimeComputable_stateIterate` of `Asymptotic/HardCoreLoops`, which is not
-in this module's import closure): `Complexity.polyTimeComputable_iterate` on the guarded step
-`StateLoop.gstep`, whose orbit bound is `StateLoop.length_gstep_iterate_le`. -/
+/-- **Guarded state iteration for `|⟨x, start x⟩|` rounds**, read by the second component: the
+public fixed-round state loop `Complexity.StateLoop.polyTimeComputable_stateIterate` with output
+`pairSndD`. -/
 private theorem dlb_stateIterate_poly {start step : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step) (B : PolyExpr) :
     PolyTimeComputable fun x =>
-      pairSndD ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) := by
-  have hF := polyTimeComputable_iterate (StateLoop.gstep_poly hstep B) .var (StateLoop.gstepBound B)
-    (fun w i _ => StateLoop.length_gstep_iterate_le step B w i)
-  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp
-    (PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' hF (polyTimeComputable_id.pairEncode hstart)))
-  simp only [PolyExpr.eval_var, id_eq]
+      pairSndD ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) :=
+  StateLoop.polyTimeComputable_stateIterate hstart hstep polyTimeComputable_pairSndD B
 
 /-! ### The fixed data of the inverter's loops -/
 
@@ -1274,7 +1269,8 @@ private theorem dlb_iStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_iSte
   have hRest : PolyTimeComputable dlb_iRest := dlb_drop_poly (PolyTimeComputable.comp' dlb_fuA_poly hF) hCs1
   have hvote := dlb_vote_poly S A H hF hR hS hA
   have hnil := PolyTimeComputable.comp' polyTimeComputable_isNil hC
-  have hnew := (PolyTimeComputable.comp' StateLoop.tail_poly hC).pairEncode (hRest.pairEncode (hvote.append hV))
+  have hnew := (PolyTimeComputable.comp' ((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail) hC).pairEncode (hRest.pairEncode (hvote.append hV))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 
 private theorem dlb_iStart_poly : PolyTimeComputable dlb_iStart :=
@@ -1391,7 +1387,8 @@ private theorem dlb_oStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oSte
   have hcs := PolyTimeComputable.comp' polyTimeComputable_pairFstD
     (PolyTimeComputable.comp' polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
   have hnew := (dlb_oNext_poly S A H).pairEncode ((hnq.append dlb_oAcc_poly).pairEncode
-    ((PolyTimeComputable.comp' StateLoop.tail_poly dlb_oCnt_poly).pairEncode hcs))
+    ((PolyTimeComputable.comp' ((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
+      polyTimeComputable_tail) dlb_oCnt_poly).pairEncode hcs))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 
 private theorem dlb_outer_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_outer S A) :=
@@ -2444,23 +2441,9 @@ end Machine
 
 /-! ### The guess -/
 
-/-- Splitting an `n`-bit string at `κ ≤ n`: its first `κ` and its last `n − κ` bits. -/
-private def dlb_cut {n κ : ℕ} (hκ : κ ≤ n) : (Fin n → Bool) ≃ (Fin κ → Bool) × (Fin (n - κ) → Bool) where
-  toFun tb := (fun a => tb ⟨a, lt_of_lt_of_le a.2 hκ⟩, fun b => tb ⟨κ + b, by omega⟩)
-  invFun u := fun q => if h : q.val < κ then u.1 ⟨q, h⟩ else u.2 ⟨q - κ, by omega⟩
-  left_inv tb := by
-    funext q
-    by_cases h : q.val < κ
-    · simp [h]
-    · simp only [h, dite_false]
-      congr 1; ext; simp; omega
-  right_inv u := by
-    ext a
-    · simp [a.2]
-    · simp
-
-/-- The guess read from the first `κ` coins is uniform on `[0, 2^κ)`: the cut pushes uniform to
-uniform, and its first part is read by `bitsEquiv`. -/
+/-- The guess read from the first `κ` coins is uniform on `[0, 2^κ)`: the restriction to the
+first `κ` coins (along the injective `Fin.castLE hκ`) pushes uniform to uniform
+(`HardcoreBit.pushesUniform_restrict`), and it is read by `bitsEquiv`. -/
 private theorem dlb_guess_pushesUniform {n κ : ℕ} (hκ : κ ≤ n) :
     HardcoreBit.PushesUniform fun tb : Fin n → Bool => (⟨listToNat ((List.ofFn tb).take κ), by
         have := listToNat_lt_two_pow ((List.ofFn tb).take κ)
@@ -2468,7 +2451,7 @@ private theorem dlb_guess_pushesUniform {n κ : ℕ} (hκ : κ ≤ n) :
   have heq : (fun tb : Fin n → Bool => (⟨listToNat ((List.ofFn tb).take κ), by
         have := listToNat_lt_two_pow ((List.ofFn tb).take κ)
         rwa [List.length_take, List.length_ofFn, min_eq_left hκ] at this⟩ : Fin (2 ^ κ))) =
-      fun tb => bitsEquiv κ (dlb_cut hκ tb).1 := by
+      fun tb => bitsEquiv κ (fun a : Fin κ => tb (Fin.castLE hκ a)) := by
     funext tb
     apply Fin.ext
     rw [bitsEquiv_val, bitsToNat_eq_listToNat, Fin.val_mk]
@@ -2476,9 +2459,9 @@ private theorem dlb_guess_pushesUniform {n κ : ℕ} (hκ : κ ≤ n) :
     apply List.ext_get
     · simp [min_eq_left hκ]
     · intro m h1 h2
-      simp [dlb_cut]
+      simp
   rw [heq]
-  exact ((HardcoreBit.pushesUniform_equiv (dlb_cut hκ)).comp HardcoreBit.pushesUniform_fst).comp
+  exact (HardcoreBit.pushesUniform_restrict (Fin.castLE_injective hκ)).comp
     (HardcoreBit.pushesUniform_equiv (bitsEquiv κ))
 
 /-! ### A full-group instance -/

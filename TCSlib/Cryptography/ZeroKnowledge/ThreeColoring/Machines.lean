@@ -80,19 +80,18 @@ open Complexity Turing Complexity.StateLoop TCSlib.Cryptography.EncodingMachines
 
 /-! ### Generic tools -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- Composition of polynomial-time functions in applied form (`fun z => g (f z)` rather than
 `g ∘ f`, so that later unifications never have to unfold `Function.comp` against a large
 definition). -/
 theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
     (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
+  PolyTimeComputable.comp' hg hf
 
 /-- **Counted loops bounded along the genuine orbit:** `EncodingMachines.polyTimeComputable_loopState`
 with the length bound required only of the states `loopState upd init x i`, `i ≤ N x`
@@ -187,7 +186,7 @@ theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
 /-- **The iterated second projection** `pairSndD^[i z] (s z)` is polynomial-time for a
 polynomial-time `s` and a unary `i`. **Proof sketch.** A counted loop
 (`polyTimeComputable_loopState'`) whose `j`-th state is `pairSndD^[j] (s z)`, never longer than
-`|s z|` (`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+`|s z|` (`length_pair_components_le`). -/
 theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
     PolyTimeComputable fun z => pairSndD^[i z] (s z) := by
@@ -207,7 +206,7 @@ theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     | zero => exact le_rfl
     | succ j ih =>
       rw [Function.iterate_succ_apply']
-      exact ((Nat.le_add_left _ _).trans (length_pairFstD_add_pairSndD_le _)).trans ih
+      exact ((Nat.le_add_left _ _).trans (length_pair_components_le _)).trans ih
   obtain ⟨C, c, hC⟩ := hs.output_length_le
   have h := polyTimeComputable_loopState' hupd hs hi (PolyExpr.normal C c) fun z j _ => by
     rw [hclosed]
@@ -744,7 +743,7 @@ theorem sampleVal_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     PolyTimeComputable fun z => List.replicate (sampleVal (s z) (m z) (k z) (T z) (d z)) true := by
   have hBd' : ∀ w : List Bool, 2 ^ k (pairSndD w) ≤ Bd.eval w.length := fun w =>
     (hBd _).trans (Bd.eval_mono
-      ((Nat.le_add_left _ _).trans (length_pairFstD_add_pairSndD_le w)))
+      ((Nat.le_add_left _ _).trans (length_pair_components_le w)))
   have hwin : PolyTimeComputable fun w =>
       List.replicate (natOfBits (s (pairSndD w)) ((pairFstD w).length * k (pairSndD w))
         (k (pairSndD w))) true :=
@@ -976,7 +975,7 @@ theorem histLen_encodeMsgs (hist : List (List Bool)) :
 /-- The message count of an encoded history is polynomial-time in unary. -/
 theorem histLen_poly : PolyTimeComputable fun M => List.replicate (histLen M) true :=
   polyTimeComputable_firstIdx (p := fun M i => decide (pairSndD^[i] M = []))
-    (isNil_poly.comp (iterSnd_poly polyTimeComputable_pairSndD
+    (polyTimeComputable_isNil.comp (iterSnd_poly polyTimeComputable_pairSndD
       (unaryLength_poly polyTimeComputable_pairFstD)))
     (unaryAdd_poly (unaryLength_poly polyTimeComputable_id) (unaryConst_poly 1))
 

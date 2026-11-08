@@ -226,14 +226,19 @@ theorem gniRep_complete {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀ 
 /-! ### Tapes as blocks -/
 
 /-- A tape of `m · c` bits as `m` blocks of `c` bits (`finProdFinEquiv`: block `i` occupies
-the positions `i c, …, i c + c - 1`). -/
+the positions `i c, …, i c + c - 1`): the inverse of the canonical block bijection
+`FunFamily.blocks`, kept as a compatibility alias with its reverse orientation. -/
 def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
-  (Equiv.curry (Fin m) (Fin c) Bool).symm.trans (Equiv.arrowCongr finProdFinEquiv (Equiv.refl Bool))
+  (FunFamily.blocks m c).symm
+
+/-- `blocksEquiv` is the inverse of the canonical block bijection `FunFamily.blocks` of
+`Asymptotic/Adversary.lean`: `blocksEquiv m c = (FunFamily.blocks m c).symm`. -/
+theorem blocksEquiv_eq (m c : ℕ) : blocksEquiv m c = (FunFamily.blocks m c).symm := rfl
 
 /-- Entry `k` of the tape of blocks is entry `k mod c` of block `k / c`. -/
 theorem blocksEquiv_apply (m c : ℕ) (F : Fin m → Fin c → Bool) (k : Fin (m * c)) :
-    blocksEquiv m c F k = F k.divNat k.modNat := by
-  simp [blocksEquiv, Equiv.arrowCongr_apply, finProdFinEquiv_symm_apply, Function.uncurry]
+    blocksEquiv m c F k = F k.divNat k.modNat :=
+  FunFamily.blocks_symm_apply m c F k
 
 /-- Block `j < m` of the tape of blocks is the `j`-th block.
 

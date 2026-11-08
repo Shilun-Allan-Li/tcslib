@@ -272,6 +272,43 @@ theorem StatClose.prod {σ σ' τ τ' γ γ' : Type*} [Fintype σ] [Fintype σ']
 
 end StatClose
 
+/-- **Averages along close laws** (the conditional-expectation step of the reductions): if `X`
+is `δ`-close to `Y` in a finite type `γ`, the average of `c ↦ Pr[Q c]` (a probability over
+auxiliary coins `Aux c` depending on `c`) under `X` exceeds its average under `Y` by at most
+`δ`: `E_s Pr[Q (X s)] ≤ E_t Pr[Q (Y t)] + δ`. The seed types `σ`, `τ` may be empty.
+
+**Proof sketch.** Read `Pr[Q c]` as a probability over a uniform family
+`ω ∈ Π_c Aux c` at the coordinate `c` (`Equiv.piSplitAt`, `uprob_fst`), so both averages are
+probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+`ω` as the auxiliary coins. -/
+theorem uexp_le_of_statClose {σ τ γ : Type*}
+    [Fintype σ] [Fintype τ] [Fintype γ] [DecidableEq γ]
+    {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+    (Aux : γ → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)]
+    (Q : ∀ c, Aux c → Prop) :
+    uexp (fun s => uprob (Q (X s))) ≤
+      uexp (fun t => uprob (Q (Y t))) + δ := by
+  have hpi : ∀ c, uprob (Q c) = uprob (fun ω : (∀ c', Aux c') => Q c (ω c)) := by
+    intro c
+    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
+    rw [uprob_fst] at h
+    exact h.symm
+  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
+  have e1 : uprob (fun w : σ × (∀ c', Aux c') => Q (X w.1) (w.2 (X w.1))) =
+      uexp (fun s => uprob (Q (X s))) := by
+    rw [uprob_prod]
+    congr 1
+    funext s
+    rw [hpi]
+  have e2 : uprob (fun w : τ × (∀ c', Aux c') => Q (Y w.1) (w.2 (Y w.1))) =
+      uexp (fun t => uprob (Q (Y t))) := by
+    rw [uprob_prod]
+    congr 1
+    funext t
+    rw [hpi]
+  rw [e1, e2] at hh
+  linarith [(abs_le.1 hh).2]
+
 /-! ### Equal fibres push uniform to uniform (C5) -/
 
 /-- A map all of whose fibres have the same positive size `c` pushes the uniform distribution
