@@ -167,31 +167,6 @@ theorem FunFamily.blocks_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Boo
     (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat :=
   blocksEquivX_symm_apply q ℓ t k
 
-/-- A window of a tuple's list: the `k` entries of `List.ofFn z` from position `a` are the
-entries `a, …, a + k - 1` of `z` (`a + k ≤ n`). -/
-theorem take_drop_ofFn {X : Type*} {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → X) :
-    ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
-  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-
-/-- The window reader of `blocksEquivX`: the `ℓ` entries of `List.ofFn x` from position `i·ℓ`
-are block `i`, `((List.ofFn x).drop (i·ℓ)).take ℓ = List.ofFn (blocksEquivX q ℓ X x i)`. -/
-theorem take_drop_ofFn_blocksEquivX {q ℓ : ℕ} {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) :
-    ((List.ofFn x).drop (i * ℓ)).take ℓ = List.ofFn (blocksEquivX q ℓ X x i) := by
-  rw [take_drop_ofFn (by rw [← Nat.succ_mul]; exact Nat.mul_le_mul_right ℓ i.2) x]
-  refine congrArg List.ofFn (funext fun j => ?_)
-  rw [blocksEquivX_apply]
-  congr 1
-  ext
-  simp only [Fin.val_mk, finProdFinEquiv_apply_val]
-  ring
-
-/-- The Bool window reader: the `ℓ` bits of `List.ofFn x` from position `i·ℓ` are block `i`,
-`((List.ofFn x).drop (i·ℓ)).take ℓ = List.ofFn (FunFamily.blocks q ℓ x i)`. -/
-theorem FunFamily.take_drop_ofFn_blocks {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q) :
-    ((List.ofFn x).drop (i * ℓ)).take ℓ = List.ofFn (FunFamily.blocks q ℓ x i) :=
-  take_drop_ofFn_blocksEquivX x i
-
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
 [PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
 

@@ -497,6 +497,12 @@ private theorem take_ofFn_castLE {n k : ℕ} (h : k ≤ n) (z : Fin n → Bool) 
   simp only [List.getElem_take, List.getElem_ofFn]
   rfl
 
+/-- The `k` bits after the first `a` of an encoded string. -/
+private theorem take_drop_ofFn {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → Bool) :
+    ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
+  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
+  simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+
 /-- **The encoding of `g_n(z)`**: `f_{⌊n/2⌋}` of the first block followed by the remaining bits
 of `z`. -/
 theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool) :

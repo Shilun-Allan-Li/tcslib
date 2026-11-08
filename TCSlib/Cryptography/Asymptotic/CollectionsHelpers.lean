@@ -39,6 +39,8 @@ field `Collection.encD_decD`).
   the coin split is `List.take`/`List.drop` on the encoded coin string.
 * `TCSlib.Cryptography.Collection.ofFn_padFin_of_le`,
   `TCSlib.Cryptography.Collection.padFin_append_true_injective` — marker padding is lossless.
+* `TCSlib.Cryptography.ofFn_drop_take` — a window of a tape is the tape of the window (the
+  relocated contract of `ColZK.ofFn_drop_take`, shared by the block/window users below it).
 * `TCSlib.Cryptography.ofFn_of_decodeFin_eq_some` — `decodeFin` is canonical.
 
 ## References
@@ -197,6 +199,18 @@ theorem padFin_append_true_injective {ℓ : ℕ} {s s' : List Bool} (hs : s.leng
   exact h2
 
 end Collection
+
+/-! ## Windows of a tape -/
+
+/-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`
+(the contract of `ColZK.ofFn_drop_take`, relocated here for the lower block/window users). -/
+theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+  apply List.ext_getElem
+  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+    omega
+  · intro i h₁ h₂
+    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
 
 /-! ## Canonicity of the fixed-width decoder -/
 

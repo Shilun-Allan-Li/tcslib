@@ -198,13 +198,15 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k 
 private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
     (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
       (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
-  have h0 := FunFamily.take_drop_ofFn_blocks x 0
-  have h1 := FunFamily.take_drop_ofFn_blocks x 1
+  have hb (i : Fin 2) :
+      List.ofFn (FunFamily.blocks 2 n x i) = ((List.ofFn x).drop (i * n)).take n :=
+    (congrArg List.ofFn (funext (FunFamily.blocks_apply 2 n x i))).trans
+      (OneWay.ofFn_block_eq_take_drop x i)
   have hlen : ((List.ofFn x).drop n).length ≤ n := by
     simp only [List.length_drop, List.length_ofFn]; omega
-  rw [Fin.val_zero, zero_mul, List.drop_zero] at h0
-  rw [Fin.val_one, one_mul, List.take_of_length_le hlen] at h1
-  exact ⟨h0, h1⟩
+  refine ⟨?_, ?_⟩
+  · rw [hb 0, Fin.val_zero, zero_mul, List.drop_zero]
+  · rw [hb 1, Fin.val_one, one_mul, List.take_of_length_le hlen]
 
 /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
 private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
@@ -1155,6 +1157,12 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
       rfl
     · rw [if_neg (by simpa using hb)]
 
+/-- `chunk` is the canonical Bool block bijection: `chunk T n r = FunFamily.blocks T n r`
+(`chunk_apply`, `FunFamily.blocks_apply`). -/
+private theorem fac_chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) :
+    chunk T n r = FunFamily.blocks T n r :=
+  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
+
 /-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
 `exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
 private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
@@ -1172,7 +1180,7 @@ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
 **Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
 `bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
 reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
-`StatClose.map bitsToNat`; `chunk` is the block bijection (`chunk_eq_blocks`, `comp_equiv_left`),
+`StatClose.map bitsToNat`; `chunk` is the block bijection (`fac_chunk_eq_blocks`, `comp_equiv_left`),
 the uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
 `(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
 private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
@@ -1197,7 +1205,7 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
         (natToBits n 2)) := by
     funext r
     unfold samplePrimeL
-    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, chunk_eq_blocks]
+    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, fac_chunk_eq_blocks]
   rw [hX, ← hY]
   exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
 

@@ -849,7 +849,7 @@ private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B
     calc t.val * B + k ≤ t.val * B + B := by omega
       _ = (t.val + 1) * B := by ring
       _ ≤ T * B := Nat.mul_le_mul_right _ this
-  rw [take_drop_ofFn hlen r]
+  rw [ofFn_drop_take r _ k hlen]
   refine congrArg List.ofFn (funext fun j => congrArg r (Fin.ext ?_))
   simp only [dla_blockPos, Fin.val_mk, finProdFinEquiv_apply_val, Fin.coe_castLE]
   ring

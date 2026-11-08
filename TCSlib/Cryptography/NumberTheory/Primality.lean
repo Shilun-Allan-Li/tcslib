@@ -7,7 +7,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Complexity.Randomized.Closure
-import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.Perm.Cycle.Type
@@ -709,11 +709,6 @@ theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin 
   ext
   simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
 
-/-- `chunk` is the canonical Bool block bijection of `Asymptotic/Adversary.lean`:
-`chunk T n r = FunFamily.blocks T n r` (`chunk_apply`, `FunFamily.blocks_apply`). -/
-theorem chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) : chunk T n r = FunFamily.blocks T n r :=
-  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
-
 /-! #### The `SamplePrime` state loop -/
 
 /-- The step of the `SamplePrime` loop on the state word `⟨1^n, s⟩`: discard the first `n`
@@ -784,7 +779,9 @@ private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
 /-- Block `t` of the coin layout `chunk` is the `t`-th `n`-bit segment of the coin list. -/
 private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
     List.ofFn (chunk T n r t) = ((List.ofFn r).drop (t * n)).take n := by
-  rw [chunk_eq_blocks, FunFamily.take_drop_ofFn_blocks]
+  have ht : ((t : ℕ) + 1) * n ≤ T * n := Nat.mul_le_mul_right n t.2
+  rw [Nat.add_mul, one_mul] at ht
+  exact (ofFn_drop_take r _ n ht).symm
 
 /-- `firstHit` returns the first draw satisfying `E` (induction on the number of draws,
 `List.finRange_succ`). -/

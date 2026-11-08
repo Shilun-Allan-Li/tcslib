@@ -389,8 +389,17 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
 /-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`. -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
     ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
-  rw [blocks_eq]
-  exact FunFamily.take_drop_ofFn_blocks w ⟨i, hi⟩
+  have hle : i * s + s ≤ q * s := by
+    rw [← Nat.succ_mul]
+    exact Nat.mul_le_mul_right s hi
+  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
+  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+    omega
+  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn, blocks_apply]
+    congr 1
+    ext
+    simp [finProdFinEquiv_apply_val]
+    ring
 
 /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
 (`List.ofFn_mul`). -/
