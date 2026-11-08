@@ -1,3 +1,7 @@
+# F6 — gate120 returned PASS; closure review pending
+
+Codex gate120 returned **PASS0/0/0/20**, preserved verbatim in findings.md. Root current merge/replay checks pass; independent parallel audit-return review runs. **Not yet clear to merge: #235 — closure review pending.** The issued1762-section packet remains immutable. Earlier currentvalidation, publication and dispatch details follow.
+
 # F6 — Codex gate120 dispatched
 
 **Dispatched by Seyoon: Codex gate120.** Verified1762-section packet is published at exchange0eb0d599d7b28882280de09ae85a819b21338afc; exact pins, SHA256, full prompt and verification in campaign/gates/120-f6-space-universal/{publication.json,prompt.md}. Seyoon confirmed dispatch in chat; await findings.
