@@ -1,0 +1,291 @@
+"""Own final evidence assembly; writes only a new private data packet."""
+from pathlib import Path
+from collections import Counter
+import ast,datetime,difflib,hashlib,json,re,shutil,subprocess,sys
+V=Path('/private/tmp/mig-post234-consumer-validation')
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+OUT=Path('/private/tmp/mig-post234-consumer-seals-final')
+PIN='f631647190998272127fcd37b7a5d1e61fac4f3f'
+VERSION='v10'
+MAP=json.loads((R/'campaign/fills/mig1/landing/post234-integration-preparation/API-BINDINGS.json').read_text())['consumer_mappings']
+PLAN=json.loads((V/'guard-plan.json').read_text())
+ALLOWED={'propext','Classical.choice','Quot.sound'}
+sha=lambda b:hashlib.sha256(b).hexdigest()
+git=lambda *a:subprocess.run(['git','-C',str(R),*a],stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True).stdout
+def write(rel,data):
+    p=OUT/rel;p.parent.mkdir(parents=True,exist_ok=True)
+    p.write_bytes(data.encode() if isinstance(data,str) else data)
+def jwrite(rel,data):write(rel,json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+def bounds(s,name):
+    m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(name)+r'\b',s);assert m,name
+    e=re.search(r'(?m)^(?:/--|(?:private )?(?:theorem|lemma|def|instance|structure|inductive)\b|end\b|namespace\b)',s[m.end():])
+    en=m.end()+e.start() if e else len(s)
+    doc=s.rfind('/--',0,m.start());assert doc>=0
+    depth=0;assign=None
+    for i in range(m.end(),en-1):
+        if s[i] in '({[':depth+=1
+        elif s[i] in ')}]':depth-=1
+        elif s[i:i+2]==':=' and depth==0:assign=i;break
+    assert assign is not None and assign<en
+    return doc,m.start(),assign,en
+def diff(before,after):
+    return ''.join(''.join(difflib.unified_diff(before[f].splitlines(True),after[f].splitlines(True),fromfile='a/'+f,tofile='b/'+f)) for f in sorted(before) if before[f]!=after[f])
+def apply_patch_data(before,patch,reverse=False):
+    out=before.copy();lines=patch.splitlines(True);i=0
+    while i<len(lines):
+        assert lines[i].startswith('--- a/');old=lines[i][6:].rstrip('\n');i+=1
+        assert lines[i].startswith('+++ b/');new=lines[i][6:].rstrip('\n');i+=1
+        assert old==new and old in before
+        source=before[old].splitlines(True);dst=[];cursor=0
+        while i<len(lines) and not lines[i].startswith('--- a/'):
+            m=re.fullmatch(r'@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@[^\n]*\n',lines[i]);assert m,lines[i]
+            a,ac,b,bc=m.groups();ac=1 if ac is None else int(ac);bc=1 if bc is None else int(bc)
+            start=int(b if reverse else a)-1
+            if (bc if reverse else ac)==0:start+=1
+            assert start>=cursor;dst.extend(source[cursor:start]);cursor=start;i+=1
+            consumed=produced=0
+            while i<len(lines) and not lines[i].startswith(('@@ ','--- a/')):
+                kind=lines[i][0];text=lines[i][1:];assert kind in ' +-'
+                if reverse:kind={'+':'-','-':'+',' ':' '}[kind]
+                if kind in ' -':assert cursor<len(source) and source[cursor]==text;(consumed:=consumed+1);cursor+=1
+                if kind in ' +':dst.append(text);produced+=1
+                i+=1
+            assert consumed==(bc if reverse else ac) and produced==(ac if reverse else bc)
+        dst.extend(source[cursor:]);out[old]=''.join(dst)
+    return out
+
+SEALS={'Catalog':'v2','Loop':'v2','Primitives':VERSION,'Wrappers':'v7','Composition':'v6','Simulation':'v2'}
+NATIVES={'Loop':'v7','Primitives':VERSION,'Wrappers':'v7','Composition':'v7'}
+sources={f:git('show',PIN+':'+f).decode() for f in sorted({x['file'] for x in MAP})}
+combined={f:(V/('proposed-'+VERSION)/(f+'.txt')).read_text() for f in sources}
+body=combined.copy();scope=[];changed_bodies=[];changed_headers=[]
+for target in MAP:
+    f=target['file'];name=target['name'].split('.')[-1]
+    od,os,oa,oe=bounds(sources[f],name);nd,ns,na,ne=bounds(combined[f],name)
+    assert sources[f][od:os]==combined[f][nd:ns],'docstring changed'
+    oh=sources[f][os:oa];nh=combined[f][ns:na]
+    if oh!=nh:
+        assert name in ['timed_start','condTM_start'];changed_headers.append(name)
+        assert body[f].count(nh)==1;body[f]=body[f].replace(nh,oh,1)
+    if sources[f][oa:oe]!=combined[f][na:ne]:changed_bodies.append(name)
+    scope.append(dict(file=f,name=target['name'],old_header_sha256=sha(oh.encode()),
+                      proposed_header_sha256=sha(nh.encode()),header_changed=oh!=nh,
+                      body_changed=sources[f][oa:oe]!=combined[f][na:ne],docstring_exact=True))
+assert len(changed_bodies)==6 and len(changed_headers)==2
+for f in sources:
+    rebuilt=sources[f]
+    for target in [x for x in MAP if x['file']==f]:
+        n=target['name'].split('.')[-1];od,os,oa,oe=bounds(sources[f],n);nd,ns,na,ne=bounds(combined[f],n)
+        a=sources[f][od:oe];b=combined[f][nd:ne];assert rebuilt.count(a)==1;rebuilt=rebuilt.replace(a,b,1)
+        bd,bs,ba,be=bounds(body[f],n);assert body[f][bs:ba]==sources[f][os:oa]
+    assert rebuilt==combined[f],'change outside the fourteen original blocks'
+    assert re.findall(r'(?m)^import .*$',sources[f])==re.findall(r'(?m)^import .*$',combined[f])
+
+seal_checks=[];all_ax=[];final_labels=set();warning_rows=[]
+for home,plan in PLAN['by_home'].items():
+    short=home.split('.')[-1];ver=SEALS[short];label='Sealed-'+short+'-'+ver;final_labels.add(label)
+    run=json.loads((V/'runs'/(label+'-run.json')).read_text());assert run['exit']==run['errors']==run['sorry_warnings']==0
+    filename=Path(run['argv'][-1]).name;inp=(V/'project'/filename).read_bytes();raw=(V/'runs'/(label+'.out')).read_bytes()
+    assert sha(inp)==run['input_sha256'] and sha(raw)==run['output_sha256']
+    receipt=next(x for x in json.loads((V/('seal-build-'+ver)/'roundtrip-receipts.json').read_text()) if x['owner']==home)
+    f=home.replace('.','/')+'.lean';assert receipt['source_sha256']==sha(combined[f].encode())
+    assert receipt['guards']==plan['guards'] and receipt['roundtrip_exact']
+    rawtext=raw.decode();active=re.findall(r'^SEAL_ACTIVE\|([^|]+)\|(\d+)$',rawtext,re.M)
+    expected=[x['name'].split('.')[-1] for x in MAP if x['file']==f]
+    assert Counter(active)==Counter((n,str(len(plan['guards']))) for n in expected)
+    axes=[json.loads(l.split('|',1)[1]) for l in rawtext.splitlines() if l.startswith('LOCAL_AX|')]
+    roots=re.findall(r'^LOCAL_ROOT\|([^|]+)\|([^\n]+)$',rawtext,re.M)
+    assert Counter(n for n,_ in roots)==Counter(expected)
+    assert all(set(x['axioms'])<=ALLOWED for x in axes)
+    for n,root in roots:assert any(x['name']==root for x in axes)
+    for mask in receipt['masks']:
+        prefix=mask['prefix'];suffix=mask['suffix'];text=inp.decode()
+        st=text.index(prefix)+len(prefix);en=text.index(suffix,st)
+        first=text[:st].count('\n')+1;last=text[:en].count('\n')+1
+        ws=[l for l in rawtext.splitlines() if (m:=re.search(r':(\d+):\d+: warning:',l)) and first<=int(m.group(1))<=last]
+        warning_rows.append(dict(label=label,target=mask['name'],changed_region_warnings=ws))
+        assert not ws,ws
+    seal_checks.append(dict(owner=home,label=label,targets=expected,guards=len(plan['guards']),
+                            seconds=run['seconds'],errors=0,sorry_warnings=0,
+                            full_file_warnings=run['warnings'],changed_region_warnings=0,
+                            selected_roots_and_descendants=len(axes),all_axioms_standard=True,
+                            source_sha256=receipt['source_sha256'],whole_header_and_body=True,
+                            source_removal_roundtrip_exact=True))
+    all_ax.extend(dict(owner=home,label=label,**x) for x in axes)
+
+native_checks=[];foreign=[]
+for short,ver in NATIVES.items():
+    label='FinalNative-'+short+'-'+ver;final_labels.add(label)
+    run=json.loads((V/'runs'/(label+'-run.json')).read_text());assert run['exit']==run['errors']==run['sorry_warnings']==0
+    raw=(V/'runs'/(label+'.out')).read_bytes();inp=Path(run['argv'][-1]).read_bytes()
+    assert sha(raw)==run['output_sha256'] and sha(inp)==run['input_sha256']
+    rows=[json.loads(l.split('|',1)[1]) for l in raw.decode().splitlines() if l.startswith('FINAL_FOREIGN|')]
+    axes=[json.loads(l.split('|',1)[1]) for l in raw.decode().splitlines() if l.startswith('FINAL_AX|')]
+    assert rows and axes and all(set(x['axioms'])<=ALLOWED for x in axes)
+    assert all(x['kernelHint']=='abbrev' or x['covered'] for x in rows)
+    f=next(f for f in combined if f.endswith('/'+short+'.lean'));assert inp.decode().startswith(combined[f])
+    for target in [x for x in MAP if x['file']==f]:
+        name=target['name'].split('.')[-1];d,st,a,en=bounds(combined[f],name)
+        first=combined[f][:st].count('\n')+1;last=combined[f][:en].count('\n')+1
+        ws=[l for l in raw.decode().splitlines() if (m:=re.search(r':(\d+):\d+: warning:',l)) and first<=int(m.group(1))<=last]
+        assert not ws,ws
+    foreign.extend(dict(owner=short,**x) for x in rows)
+    native_checks.append(dict(label=label,seconds=run['seconds'],errors=0,sorry_warnings=0,
+                              full_file_warnings=run['warnings'],changed_region_warnings=0,
+                              frontier_rows=len(rows),all_ordinary_foreign_guarded=True,
+                              all_selected_axioms_standard=True,candidate_source_sha256=sha(combined[f].encode())))
+for short in ['Wrappers','Composition']:
+    label='BodyOnlyNative-'+short+'-v7';final_labels.add(label)
+    run=json.loads((V/'runs'/(label+'-run.json')).read_text());assert run['exit']==run['errors']==run['sorry_warnings']==0
+    f=next(f for f in body if f.endswith('/'+short+'.lean'));assert Path(run['argv'][-1]).read_text()==body[f]
+    native_checks.append(dict(label=label,seconds=run['seconds'],errors=0,sorry_warnings=0,full_file_warnings=run['warnings'],body_only_headers_exact=True))
+
+equiv=json.loads((V/'header-equivalence-v4.json').read_text())
+for x in equiv:
+    label=x['label'];final_labels.add(label)
+    run=json.loads((V/'runs'/(label+'-run.json')).read_text());assert run['exit']==run['errors']==run['sorry_warnings']==0
+    d,st,a,en=bounds(combined[x['file']],x['theorem'])
+    header=combined[x['file']][st:a].split(x['theorem'],1)[1].strip()
+    assert header==x['new_header']
+    raw=(V/'runs'/(label+'.out')).read_text();assert "depends on axioms: [propext," in raw and 'sorryAx' not in raw
+
+# Every explicit rewriting/unfolding argument is independently checked against the ordinary foreign aliases.
+audit=[];forbidden=[]
+for target in MAP:
+    f=target['file'];n=target['name'].split('.')[-1];d,st,a,en=bounds(combined[f],n);block=combined[f][st:en]
+    plan=PLAN['by_home'][f[:-5].replace('/','.')]
+    alias={}
+    for name in plan['guards']:
+        for x in [name,name.removeprefix('Turing.'),name.removeprefix('Turing.FinTM.'),name.split('.')[-1]]:alias[x]=name
+    for match in re.finditer(r'\b(simp_all|simp_rw|simpa|simp|erw|rw|dsimp|unfold|change|show)\b',block):
+        tactic=match.group(1);pos=match.end()
+        while pos<len(block) and block[pos].isspace():pos+=1
+        if block.startswith('only',pos):
+            pos+=4
+            while pos<len(block) and block[pos].isspace():pos+=1
+        args=''
+        if pos<len(block) and block[pos]=='[':
+            depth=1;end=pos+1
+            while depth:
+                if block[end]=='[':depth+=1
+                if block[end]==']':depth-=1
+                end+=1
+            args=block[pos+1:end-1]
+        elif tactic=='unfold':args=block[pos:block.find('\n',pos) if '\n' in block[pos:] else len(block)]
+        tokens=re.findall(r"[A-Za-z_][A-Za-z_0-9']*(?:\.[A-Za-z_][A-Za-z_0-9']*)*",args)
+        hits=sorted({alias[x] for x in tokens if x in alias})
+        if hits:forbidden.append(dict(target=target['name'],tactic=tactic,args=args,definitions=hits))
+        audit.append(dict(target=target['name'],file=f,tactic=tactic,
+                          block_line=block[:match.start()].count('\n')+1,args=args,
+                          ordinary_foreign_arguments=hits))
+assert not forbidden,forbidden
+
+# The complete 895-object imported TCSlib context is immutable across every own probe.
+before=json.loads((V/'native2-context-before.json').read_text())
+context=Path(before['context']);objects=[]
+for p in sorted(context.rglob('*.olean')):
+    b=p.read_bytes();objects.append(dict(path=str(p.relative_to(context)),bytes=len(b),sha256=sha(b)))
+assert objects==before['objects'] and len(objects)==895
+after=dict(context=str(context),source=PIN,objects=objects)
+(V/'native2-context-after.json').write_text(json.dumps(after,indent=2)+'\n')
+(V/'context-immutability-check.json').write_text(json.dumps(dict(result='PASS',objects=895,all_names_bytes_hashes_exact=True,no_context_writes=True),indent=2)+'\n')
+
+OUT.mkdir(exist_ok=False)
+for label,content in [('before',sources),('body-only',body),('combined-proposal',combined)]:
+    for f,text in content.items():write('captures/'+label+'/'+f+'.txt',text)
+    for target in MAP:
+        f=target['file'];n=target['name'].split('.')[-1];d,st,a,en=bounds(content[f],n)
+        write('blocks/'+label+'/'+n+'.lean.txt',content[f][d:en])
+
+patches=[('0001-public-reader-body-repairs.patch',sources,body),('0002-private-header-carrier-transports.patch',body,combined),('combined-proposal.patch',sources,combined)]
+roundtrips=[]
+for name,old,new in patches:
+    patch=diff(old,new);assert apply_patch_data(old,patch)==new and apply_patch_data(new,patch,True)==old
+    write(name,patch)
+    roundtrips.append(dict(patch=name,bytes=len(patch.encode()),sha256=sha(patch.encode()),
+                           forward_exact=True,reverse_exact=True,
+                           files=[dict(path=f,before_sha256=sha(old[f].encode()),after_sha256=sha(new[f].encode())) for f in old if old[f]!=new[f]]))
+jwrite('PATCH-ROUNDTRIPS.json',roundtrips)
+jwrite('SCOPE.json',dict(source=PIN,targets=scope,changed_bodies=changed_bodies,changed_headers=changed_headers,
+                       no_changes_outside_14_blocks=True,all_14_original_docs_exact=True,imports_exact=True,
+                       machine_definitions_exact=True,no_new_public_API=True,no_new_sorry_or_axiom=True,
+                       body_only_all_14_headers_exact=True,private_header_changes_PENDING_USER_APPROVAL=True))
+jwrite('FINAL-CHECKS.json',dict(source=PIN,result='PASS for hypothetical combined proposal; actual source unchanged',
+    full_seals=seal_checks,native=native_checks,selected_AX=all_ax,
+    strict_controls=json.loads((V/'strict-control-checks.json').read_text()),
+    original_proposed_header_equalities=equiv,context_895_unchanged=True,
+    no_guard_exclusion=True,no_unsafe_reducibility_override=True,
+    actual_integration_and_gate118='PENDING ROOT',merge_status='Not yet clear to merge: #233'))
+jwrite('EXPLICIT-ARGUMENT-REVIEW.json',dict(result='PASS',forms=list(sorted({r['tactic'] for r in audit})),
+     rows=audit,ordinary_foreign_definition_arguments=[],
+     manual_notes=['Option.map is non-TCSlib; allowed ordinary Option reader in Loop.',
+       'Same-home definitions and local lets/hypotheses are permitted and remain unguarded.',
+       'All other-file TCSlib objects are mentioned in types/change/show or read through public equations.',
+       'The first filter missed simpa; the final scan includes simpa and retained timed_start failure evidence.']))
+jwrite('FINAL-FOREIGN-FRONTIER.json',dict(rows=foreign,all_ordinary_covered=True,
+    traversal='selected root/descendant type and value constant names; own ordinary def closure; TCS theorem statement types only; no imported theorem proof values rendered'))
+
+# Copy all own evidence without exposing runnable Lean files or compiled caches.
+copies=[]
+for p in sorted(V.rglob('*')):
+    if p.is_symlink() or not p.is_file() or '.lake' in p.relative_to(V).parts:continue
+    rel=p.relative_to(V).as_posix();target='evidence/'+rel+('.txt' if p.suffix=='.lean' else '')
+    data=p.read_bytes();write(target,data);copies.append(dict(original=str(p),packet=target,bytes=len(data),sha256=sha(data)))
+jwrite('EVIDENCE-COPY-RECEIPTS.json',copies)
+initial=Path('/private/tmp/mig-post234-consumer-seals-static-v1')
+for p in sorted(initial.rglob('*')):
+    if p.is_file():write('initial-static-e3/'+p.relative_to(initial).as_posix(),p.read_bytes())
+
+run_index=[]
+control_current={j['label']:j for j in PLAN['control_runs']}
+for p in sorted((V/'runs').glob('*-run.json')):
+    run=json.loads(p.read_text());label=p.name.removesuffix('-run.json');raw=(V/'runs'/(label+'.out')).read_bytes()
+    input_path=Path(run['argv'][-1]);input_bytes=input_path.read_bytes()
+    assert sha(raw)==run['output_sha256'] and len(raw)==run['output_bytes'] and sha(input_bytes)==run['input_sha256']
+    status='CURRENT_CHECK' if label in final_labels else ('CURRENT_CONTROL' if label in control_current else 'RETAINED_ATTEMPT_OR_AUXILIARY')
+    run_index.append(dict(label=label,role=status,exit=run['exit'],errors=run['errors'],warnings=run['warnings'],
+      sorry_warnings=run['sorry_warnings'],seconds=run['seconds'],
+      input='evidence/'+input_path.relative_to(V).as_posix()+'.txt',
+      raw='evidence/runs/'+label+'.out',request='evidence/runs/'+label+'-request.json',
+      result='evidence/runs/'+label+'-run.json'))
+jwrite('RUN-INDEX.json',run_index)
+
+metadata=json.loads((V/'ordinary-frontier.json').read_text())
+homes=sorted({x['definitionHome'] for x in metadata['foreign_rows']})
+bindings=[]
+for f in sorted(set(sources)|{h.replace('.','/')+'.lean' for h in homes}):
+    b=git('show',PIN+':'+f);write('api-home-sources/'+f+'.txt',b)
+    bindings.append(dict(path=f,source=PIN,mechanism='git show source:path',bytes=len(b),sha256=sha(b)))
+jwrite('SOURCE-BINDINGS.json',bindings)
+
+scripts=list(Path('/private/tmp').glob('mig-*consumer*.py'))+[
+    Path('/private/tmp/mig-build-final-native.py'),Path('/private/tmp/mig-build-header-equivalence.py'),
+    Path('/private/tmp/mig-run-seal-queue.py'),Path('/private/tmp/mig-advance-consumer-transport.py'),
+    Path('/private/tmp/mig-check-controls.py')]
+deps=[]
+for p in sorted(set(scripts)):
+    data=p.read_bytes();write('tools/'+p.name+'.txt',data)
+    tree=ast.parse(data);imports=sorted({alias.name.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.Import) for alias in n.names}|{n.module.split('.')[0] for n in ast.walk(tree) if isinstance(n,ast.ImportFrom)})
+    assert set(imports)<=sys.stdlib_module_names
+    deps.append(dict(path=str(p),bytes=len(data),sha256=sha(data),imports=imports,stdlib_only=True,execution='python3 -I'))
+tool=R/'devtools/seyoon/leanelab.sh';tb=tool.read_bytes();write('tools/leanelab.sh.txt',tb)
+env=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/env.sh')
+jwrite('TOOL-PROVENANCE.json',dict(own_scripts=deps,managed_wrapper=dict(path=str(tool),sha256=sha(tb),bytes=len(tb),
+      dependency='self-contained shell wrapper plus OS lock/nice commands and pinned Lean; no repository script helper'),
+      env=dict(path=str(env),sha256=sha(env.read_bytes()),contents_not_copied=True),
+      graph_py='Not used by this scoped consumer-seal validation',
+      lean_toolchain=(V/'project/lean-toolchain').read_text(),
+      package_directory_symlink=str((V/'project/.lake/packages').resolve()),
+      wrapper_hash_recorded_at_assembly=True,wrapper_not_mutated_by_this_agent=True))
+write('API-BINDINGS-INPUT.json',(R/'campaign/fills/mig1/landing/post234-integration-preparation/API-BINDINGS.json').read_bytes())
+
+summary=dict(source=PIN,combined_proposal_version=VERSION,targets=14,changed_bodies=6,changed_files=4,
+             proposed_private_headers=2,full_seal_owners=6,full_seal_roots=14,
+             selected_roots_and_descendants=len(all_ax),
+             owner_context_guards=116,unique_ordinary_definitions=36,paired_identities=232,
+             strict_corruption_tests=9,context_objects_unchanged=895,
+             changed_region_warnings=0,source_changes_by_this_agent=False,
+             pending=['User approval of two literal private header transports','Root actual source adoption/native/metadata/replay/gate118'],
+             merge_status='Not yet clear to merge: #233')
+jwrite('SUMMARY.json',summary)
+print(json.dumps(dict(packet=str(OUT),summary=summary),ensure_ascii=False))

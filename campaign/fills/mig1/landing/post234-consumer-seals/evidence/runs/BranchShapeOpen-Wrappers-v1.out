@@ -1,0 +1,46 @@
+SEAL_ACTIVE|timed_start|21
+/private/tmp/mig-post234-consumer-validation/project/BranchShapeOpen_Wrappers_v1.lean:764:6: error: Type mismatch: After simplification, term
+  MultiTapeTM.timed_input_bound (MultiTapeTM.initCfg x) t
+ has type
+  ↑(MultiTapeTM.runFrom (Cfg.init D.tm.q₀ x) t).inputPos ≤ 1 + t
+but is expected to have type
+  ↑c.inputPos ≤ 1 + t
+/private/tmp/mig-post234-consumer-validation/project/BranchShapeOpen_Wrappers_v1.lean:770:4: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+    workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+    output := (D.timedReadyCfg M₁ M₂ c b).output }
+is not definitionally equal to the right-hand side
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+
+case refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output } =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+LOCAL_ROOT|timed_start|_private.BranchShapeOpen_Wrappers_v1.0.Turing.FinTM.timed_start
+LOCAL_AX|{"axioms":["propext","Quot.sound"],"name":"_private.BranchShapeOpen_Wrappers_v1.0.Turing.FinTM.timed_start._proof_1_1","short":"timed_start"}
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.BranchShapeOpen_Wrappers_v1.0.Turing.FinTM.timed_start","short":"timed_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Wrappers|1

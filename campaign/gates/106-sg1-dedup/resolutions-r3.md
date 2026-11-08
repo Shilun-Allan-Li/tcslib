@@ -2,7 +2,7 @@
 
 **Not yet clear to merge: #215.** Returned HOLD0/1/0/26 is independently supported.
 Verbatim report SHA256 a98e9f12d2e5b75c270edf0e28cc79783505c7b6163cbeacb50536204b1d2cc6.
-F4 source repair: 078263a74fe90b92aa6228cf20e43726138afbe6. Current replay/screens/scoped/compiler checks and CodexR4 remain.
+F4 source repair: 078263a74fe90b92aa6228cf20e43726138afbe6. CurrentMSG8 PASS329/static0/66 and fresh25BASE/HEAD screens2019→1991 are frozen; current scoped/compiler checks and CodexR4 remain.
 All26 notes accepted within their stated scopes. Original79/f078/f37 packet stays immutable.
 #234 has since merged; its premerge status was historical context of that issued packet.
 

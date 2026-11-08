@@ -1,0 +1,15 @@
+private lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)
+    (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+    (hd : d.state = some q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
+    (by
+      rintro z ⟨r, hz, hr⟩
+      subst r
+      exact hfix z hz)
+    ⟨q, hd, rfl⟩ hT
+  refine ⟨t, ht, ?_, he⟩
+  intro j hj hq
+  exact hcut j hj ⟨q, hq, rfl⟩
+

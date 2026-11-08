@@ -1,0 +1,1316 @@
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1853:4: error: unsolved goals
+case state
+M : FinTM Bool
+x w : List Bool
+T : ℕ
+hM : M.ComputesInTime x w T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = w
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg M.k Bool M.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = w
+emb : M.State → M.pairCountTM.State := Sum.inl
+ret : M.pairCountTM.State := Sum.inr (Sum.inl 0)
+⊢ some M.pairCountTM.tm.q₀ = some (emb M.tm.q₀)
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1856:4: error: unsolved goals
+case workTapes.h
+M : FinTM Bool
+x w : List Bool
+T : ℕ
+hM : M.ComputesInTime x w T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = w
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg M.k Bool M.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = w
+emb : M.State → M.pairCountTM.State := Sum.inl
+ret : M.pairCountTM.State := Sum.inr (Sum.inl 0)
+i : Fin M.pairCountTM.k
+⊢ (fun x => none) =
+    (captureCfg emb ret [] []
+          { state := some M.tm.q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+            output := [] }).workTapes
+      i
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1877:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1857:12: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp [̵M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵[̲C̲f̲g̲.̲i̲n̲i̲t̲_̲w̲o̲r̲k̲T̲a̲p̲e̲s̲,̲ captureCfg_workTapes, Cfg.init_output, bufferTape_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1857:36: warning: This simp argument is unused:
+  Cfg.init_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵captureCfg_workTapes, Cfg.init_output, bufferTape_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1857:56: warning: This simp argument is unused:
+  captureCfg_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, c̵a̵p̵t̵u̵r̵e̵C̵f̵g̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵Cfg.init_output, bufferTape_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1858:8: warning: This simp argument is unused:
+  Cfg.init_output
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes, C̵f̵g̵.̵i̵n̵i̵t̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵bufferTape_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1858:25: warning: This simp argument is unused:
+  bufferTape_nil
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes, C̵f̵g̵.̵i̵n̵i̵t̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵_̵n̵i̵l̵]̵C̲f̲g̲.̲i̲n̲i̲t̲_̲o̲u̲t̲p̲u̲t̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1860:12: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp [̵M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵[̲C̲f̲g̲.̲i̲n̲i̲t̲_̲w̲o̲r̲k̲T̲a̲p̲e̲P̲o̲s̲,̲ captureCfg_workTapePos, Cfg.init_output]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1860:36: warning: This simp argument is unused:
+  Cfg.init_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵captureCfg_workTapePos, Cfg.init_output]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1861:8: warning: This simp argument is unused:
+  Cfg.init_output
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵o̵u̵t̵p̵u̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1876:41: warning: This simp argument is unused:
+  Action.apply_state
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵s̵t̵a̵t̵e̵,̵ ̵ready, lenCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1880:41: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵Cfg.workTapeSymbols_eq, Function.update_eq_self,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲captureCfg_workTapes, ready, lenCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1881:8: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, Action.apply_workTapes, C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Function.update_eq_self,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲captureCfg_workTapes, ready, lenCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1881:32: warning: This simp argument is unused:
+  Function.update_eq_self
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, Action.apply_workTapes, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵e̵q̵_̵s̵e̵l̵f̵,̵ ̵captureCfg_workTapes, ready, lenCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1885:43: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵captureCfg_workTapePos, ready, lenCfg, hi,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:1887:41: warning: This simp argument is unused:
+  Action.apply_output
+
+Hint: Omit it from the simp argument list.
+  simp [pairCountTM, ret, lenAction, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵o̵u̵t̵p̵u̵t̵,̵captureCfg_output, ready, lenCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2296:65: warning: This simp argument is unused:
+  ↓reduceDIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, catalogPolyMove, Action.apply_workTapes,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲↓reduceIte, ↓̵r̵e̵d̵u̵c̵e̵D̵I̵t̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2304:35: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2304:81: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2304:100: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2306:39: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2306:60: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2306:104: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2306:122: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]̵S̲i̲g̲n̲T̲y̲p̲e̲.̲c̲o̲e̲_̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2319:85: warning: This simp argument is unused:
+  ↓reduceDIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, Action.apply_workTapes, ↓reduceIte,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲↓̵r̵e̵d̵u̵c̵e̵D̵I̵t̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2322:32: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, ↓reduceIte, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵s̵t̵a̵t̵e̵,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]̵A̲c̲t̲i̲o̲n̲.̲a̲p̲p̲l̲y̲_̲s̲t̲a̲t̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2323:68: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, Action.apply_workTapePos, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2323:89: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2323:133: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_o̵ne,̵ ̵S̵i̵gn̵T̵y̵p̵e̵.̵c̵o̵e̵_n̵e̵g̵_̵one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2323:151: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2341:65: warning: This simp argument is unused:
+  ↓reduceDIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, catalogPolyMove, Action.apply_workTapes,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲↓reduceIte, ↓̵r̵e̵d̵u̵c̵e̵D̵I̵t̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2349:56: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2349:81: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2349:118: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]̵S̲i̲g̲n̲T̲y̲p̲e̲.̲c̲o̲e̲_̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2351:39: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2351:60: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2351:104: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2351:122: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2359:65: warning: This simp argument is unused:
+  ↓reduceDIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, catalogPolyMove, Action.apply_workTapes,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲↓reduceIte, ↓̵r̵e̵d̵u̵c̵e̵D̵I̵t̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2367:35: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2367:81: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2367:100: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2369:39: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2369:60: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2369:104: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2369:122: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2377:53: warning: This simp argument is unused:
+  ↓reduceIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, catalogPolyMove, Action.apply_workTapes, ↓̵r̵e̵d̵u̵c̵e̵I̵t̵e̵,̵ ̵↓reduceDIte,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2384:60: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2384:85: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2384:122: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]̵S̲i̲g̲n̲T̲y̲p̲e̲.̲c̲o̲e̲_̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2387:39: warning: This simp argument is unused:
+  SignType.pos_eq_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵p̵o̵s̵_̵e̵q̵_̵o̵n̵e̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2387:60: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2387:104: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2387:122: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2391:69: warning: This simp argument is unused:
+  ↓reduceIte
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, Action.apply_workTapes, ↓reduceI̵t̵e̵,̵ ̵↓̵r̵e̵d̵u̵c̵e̵DIte, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2394:134: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, ↓reduceDIte, Action.apply_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_workTapePos, polyHeads, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2394:152: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, ↓reduceDIte, Action.apply_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_workTapePos, polyHeads, SignType.pos_eq_one, SignType.neg_eq_neg_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2402:59: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, Action.apply_state,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2838:34: warning: This simp argument is unused:
+  SignType.neg_eq_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [SignType.pos_eq_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵n̵e̵g̵_̵e̵q̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one,
+  ̲  ̲ ̲ ̲add_zero, Option.toList_none, List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2838:78: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one,
+  ̲  ̲ ̲ ̲add_zero, Option.toList_none, List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2838:96: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one,
+  ̲ S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵  ̲ ̲add_zero, Option.toList_none,
+  ̵  ̵ ̵ ̵List.append_nil]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2830:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2830:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2828:72: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2881:39: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2881:63: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2881:89: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2881:113: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2881:131: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2884:37: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2884:61: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2884:87: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2884:111: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, Option.getD_s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n.̵g̵e̵t̵D̵_̵n̵one, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2884:129: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, Option.getD_some, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2886:39: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2886:63: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2886:89: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2886:113: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2886:131: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2867:60: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2867:60: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2853:72: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2856:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2858:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2860:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2868:36: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2932:48: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2932:72: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2932:98: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2932:122: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2932:140: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2936:50: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2936:74: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2936:100: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2936:124: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2936:142: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2939:48: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2939:72: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2939:98: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2939:122: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2939:140: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2941:50: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2941:74: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2941:100: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵Option.getD_some, Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2941:124: warning: This simp argument is unused:
+  Option.getD_some
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵Option.getD_none]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2941:142: warning: This simp argument is unused:
+  Option.getD_none
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵s̵o̵m̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵g̵e̵t̵D̵_̵n̵o̵n̵e̵]̵O̲p̲t̲i̲o̲n̲.̲g̲e̲t̲D̲_̲s̲o̲m̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2918:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2918:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2897:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2916:67: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:2929:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3070:17: warning: This simp argument is unused:
+  List.length_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵n̵i̵l̵,̵ ̵N̵a̵t̵.̵m̵u̵l̵_̵z̵e̵r̵o̵,̵[̲N̲a̲t̲.̲m̲u̲l̲_̲z̲e̲r̲o̲,̲ zero_add, MultiTapeTM.runFrom_succ_eq_step',
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3070:34: warning: This simp argument is unused:
+  Nat.mul_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, N̵a̵t̵.̵m̵u̵l̵_̵z̵e̵r̵o̵,̵ ̵zero_add, MultiTapeTM.runFrom_succ_eq_step',
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3070:48: warning: This simp argument is unused:
+  zero_add
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.mul_zero, z̵e̵r̵o̵_̵a̵d̵d̵,̵MultiTapeTM.runFrom_succ_eq_step',
+          MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3121:40: warning: This simp argument is unused:
+  Cfg.init_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapCfg, fwdMapVirtual,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3126:40: warning: This simp argument is unused:
+  Cfg.init_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapCfg, fwdMapVirtual, Cfg.init_i̵n̵p̵u̵t̵P̵o̵s̵,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵workTapePos]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3126:59: warning: This simp argument is unused:
+  Cfg.init_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapCfg, fwdMapVirtual, Cfg.init_inputPos,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3127:36: warning: This simp argument is unused:
+  Cfg.init_output
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapCfg, fwdMapVirtual, C̵f̵g̵.̵i̵n̵i̵t̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵pairEncode_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3099:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3179:19: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3195:39: warning: This simp argument is unused:
+  Action.apply_state
+
+Hint: Omit it from the simp argument list.
+  simp [hx, fwdMapTM, fwdMapAct, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵s̵t̵a̵t̵e̵,̵ ̵Action.apply_output, fwdMapCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3195:59: warning: This simp argument is unused:
+  Action.apply_output
+
+Hint: Omit it from the simp argument list.
+  simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵fwdMapCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3203:41: warning: This simp argument is unused:
+  Action.apply_state
+
+Hint: Omit it from the simp argument list.
+  simp [hx, fwdMapTM, fwdMapAct, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵s̵t̵a̵t̵e̵,̵ ̵Action.apply_output, fwdMapCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3203:61: warning: This simp argument is unused:
+  Action.apply_output
+
+Hint: Omit it from the simp argument list.
+  simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵o̵u̵t̵p̵u̵t̵,̵ ̵fwdMapCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3217:19: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3138:76: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3144:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3147:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3307:31: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3307:55: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3307:81: warning: This simp argument is unused:
+  Action.apply_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵i̵n̵p̵u̵t̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3307:104: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_inputPos, C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3309:33: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3309:57: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3309:83: warning: This simp argument is unused:
+  Action.apply_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵i̵n̵p̵u̵t̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3309:106: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_inputPos, C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3312:31: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3312:55: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3312:81: warning: This simp argument is unused:
+  Action.apply_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵i̵n̵p̵u̵t̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3312:104: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_inputPos, C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3315:33: warning: This simp argument is unused:
+  Action.apply_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Action.apply_workTapePos, Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3315:57: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Action.apply_inputPos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3315:83: warning: This simp argument is unused:
+  Action.apply_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵i̵n̵p̵u̵t̵P̵o̵s̵,̵ ̵Cfg.workTapeSymbols_eq, act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3315:106: warning: This simp argument is unused:
+  Cfg.workTapeSymbols_eq
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_inputPos, C̵f̵g̵.̵w̵o̵r̵k̵T̵a̵p̵e̵S̵y̵m̵b̵o̵l̵s̵_̵e̵q̵,̵ ̵act]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3414:57: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3417:45: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3420:43: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, he, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3421:55: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, he, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3422:56: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3435:48: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:3436:46: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [fwdMapTM, fwdMapAct,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4057:25: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4057:25: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4163:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4311:34: warning: This simp argument is unused:
+  splitRestoreScan
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵s̵p̵l̵i̵t̵R̵e̵s̵t̵o̵r̵e̵S̵c̵a̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4341:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4341:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4404:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4449:52: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵,̵ ̵Fin.ext_iff, Fin.val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4449:66: warning: This simp argument is unused:
+  Fin.ext_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.e̵x̵t̵_̵i̵f̵f̵,̵ ̵F̵i̵n̵.̵val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4449:79: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.ext_iff,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4489:20: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4489:38: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4489:72: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4490:10: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4490:28: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4490:62: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4535:23: warning: This simp argument is unused:
+  Prod.mk.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [ht0, MultiTapeTM.runFrom_zero, splitRestoreScan, Cfg.ofWords,
+      Option.some.injEq,̵ ̵P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵] at hstate
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:4735:10: error(lean.unknownIdentifier): Unknown constant `Turing.Cfg.inputSymbol_congr`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6187:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵hwrite]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6188:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6223:37: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6259:60: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵e̵q̵_̵s̵e̵l̵f̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]̵F̲u̲n̲c̲t̲i̲o̲n̲.̲u̲p̲d̲a̲t̲e̲_̲e̲q̲_̲s̲e̲l̲f̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6262:15: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵[̲e̲m̲i̲t̲t̲e̲r̲P̲2̲P̲r̲e̲p̲a̲r̲e̲C̲f̲g̲,̲ SignType.pos_eq_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6262:41: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply_workTapePos, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵SignType.pos_eq_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6292:64: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp only [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵e̵q̵_̵s̵e̵l̵f̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]̵F̲u̲n̲c̲t̲i̲o̲n̲.̲u̲p̲d̲a̲t̲e̲_̲e̲q̲_̲s̲e̲l̲f̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6295:19: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp [̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵[̲e̲m̲i̲t̲t̲e̲r̲P̲2̲P̲r̲e̲p̲a̲r̲e̲C̲f̲g̲,̲ SignType.neg_eq_neg_one, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6295:45: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply_workTapePos, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵SignType.neg_eq_neg_one, sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6801:74: warning: This simp argument is unused:
+  emitterP2RightIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2LeftIndex,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵R̵i̵g̵h̵t̵I̵n̵d̵e̵x̵] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6815:54: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:6822:56: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:7706:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:7706:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:7709:6: warning: 'simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:7709:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/mig-post234-consumer-validation/project/Proposed_Primitives_native_v1.lean:7760:61: warning: This simp argument is unused:
+  List.append_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [unaryTokenTM, Action.apply, scanCfg, pairEncode, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵hlen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

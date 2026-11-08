@@ -1,0 +1,32 @@
+[
+  {
+    "filename": "HeaderEquivalence_Wrappers_v4.lean",
+    "label": "HeaderEquivalence-Wrappers-v4",
+    "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "theorem": "timed_start",
+    "old_header": "(D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115)\n    (hD : D.ComputesInTime x [b] T) :\n    \u2203 a \u2264 2 * T + 5, \u2203 (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124),\n      (timedCondTM D M\u2081 M\u2082).tm.runFrom ((timedCondTM D M\u2081 M\u2082).tm.initCfg x) a =\n        timedBranchCfg D M\u2081 M\u2082 ((branchTM M\u2081 M\u2082 b).tm.initCfg x) tapes heads b",
+    "new_header": "(D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115)\n    (hD : D.ComputesInTime x [b] T) :\n    \u2203 a \u2264 2 * T + 5, \u2203 (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124),\n      (timedCondTM D M\u2081 M\u2082).tm.runFrom ((timedCondTM D M\u2081 M\u2082).tm.initCfg x) a =\n        timedBranchCfg D M\u2081 M\u2082 (show Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x from by\n          simpa only [branchTM_k, branchTM_State] using ((branchTM M\u2081 M\u2082 b).tm.initCfg x)) tapes heads b",
+    "old_header_sha256": "fa4d7b397556bb988e7b6ea01306740f4b655cd962e4d222665398be8c40803a",
+    "new_header_sha256": "17bc63e0f85dd760a2b0a40661ae44bbd078de8ffd63210fe9fd0dc28193d0d2",
+    "exact_binders": true,
+    "probe_sha256": "b38f088e8ea64ede450c90bbb1fb15bff5428275885f84271f369a7300a91cdc",
+    "native_prior_source_sha256": "c75018b056faaa1bd70b457992be263799e2a3c948676fa1c35c54b1d66999ac",
+    "identity": "equality of complete forall theorem types by kernel-checked rfl",
+    "new_public_API": false
+  },
+  {
+    "filename": "HeaderEquivalence_Composition_v4.lean",
+    "label": "HeaderEquivalence-Composition-v4",
+    "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "theorem": "condTM_start",
+    "old_header": "(D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool)\n    (hD : \u2203 t, D.ComputesInTime x [b] t) :\n    \u2203 (t : \u2115) (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124),\n      (condTM D M\u2081 M\u2082).tm.runFrom ((condTM D M\u2081 M\u2082).tm.initCfg x) t =\n        rightCfg (fun q => .inr (.inr q)) ((branchTM M\u2081 M\u2082 b).tm.initCfg x) tapes heads",
+    "new_header": "(D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool)\n    (hD : \u2203 t, D.ComputesInTime x [b] t) :\n    \u2203 (t : \u2115) (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124),\n      (condTM D M\u2081 M\u2082).tm.runFrom ((condTM D M\u2081 M\u2082).tm.initCfg x) t =\n        rightCfg (fun q => .inr (.inr q)) (show Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x from by\n          simpa only [branchTM_k, branchTM_State] using ((branchTM M\u2081 M\u2082 b).tm.initCfg x)) tapes heads",
+    "old_header_sha256": "9b344cffee30048ad23becb6c01ba17c28a3bc8f624a0f061d7bffd96e06b3bf",
+    "new_header_sha256": "4fba324fb327644bfde3d31db3344ea97f6e6df818cfd5806c23436a18660844",
+    "exact_binders": true,
+    "probe_sha256": "2e013c34425ca5052bfddf913b68a73d02c3d329c1dd658537b9811a9c9760c7",
+    "native_prior_source_sha256": "73773d58d4cff13529386950787ac0ee0497849f2fdf42cf0c07fec236b05e4c",
+    "identity": "equality of complete forall theorem types by kernel-checked rfl",
+    "new_public_API": false
+  }
+]

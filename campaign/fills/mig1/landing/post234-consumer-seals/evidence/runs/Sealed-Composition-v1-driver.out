@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "bash",
+    "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+    "/private/tmp/mig-post234-consumer-validation/project",
+    "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig-post234-native2",
+    "/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean"
+  ],
+  "start_utc": "2026-11-08T04:47:05.723928+00:00",
+  "input_sha256": "029f809f3eb0b650be2baf90357387c8ee1706b2d23529274c90a701c91384f0",
+  "source_head": "f631647190998272127fcd37b7a5d1e61fac4f3f",
+  "context": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig-post234-native2",
+  "root_confirmed_PASS12": true,
+  "local_slots": "3",
+  "machine_cap": 5,
+  "plain_managed": true,
+  "outer_slot": false,
+  "one_own_Lean_at_a_time": true,
+  "no_compiled_output": true,
+  "exit": 1,
+  "seconds": 2.5129365832544863,
+  "end_utc": "2026-11-08T04:47:08.237633+00:00",
+  "output_bytes": 1689,
+  "output_sha256": "e8530ee39043fc5b3f8880542fe35b4bc8588c7159e248823652e65997be584e",
+  "errors": 6,
+  "warnings": 1,
+  "sorry_warnings": 1
+}
+SEAL_ACTIVE|condTM_start|18
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:696:8: error: Type mismatch
+  rightCfg (fun q => ?m.26) (MultiTapeTM.initCfg x) tapes heads
+has type
+  Cfg (D.k + (M₁.branchTM M₂ b).k) Bool ?m.23 x
+but is expected to have type
+  Cfg (D.condTM M₁ M₂).k Bool (D.condTM M₁ M₂).State x
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:696:27: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inr` could not be determined
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:712:33: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.184 = ?m.184
+but is expected to have type
+  (MultiTapeTM.initCfg x).output = (D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)).output
+in the application
+  Cfg.ext ?m.177 ?m.180 ?m.181 ?m.182 rfl
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:723:22: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:779:8: warning: declaration uses 'sorry'
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:863:7: error: unexpected token 'matches'; expected '(', ':=', 'rec', '|', identifier or term
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:859:0: error: don't know how to synthesize placeholder
+context:
+case m
+⊢ Type
+

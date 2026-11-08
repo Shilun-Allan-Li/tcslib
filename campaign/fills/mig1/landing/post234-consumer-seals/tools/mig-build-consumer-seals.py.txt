@@ -1,0 +1,76 @@
+"""Own data/probe generator: no repository Lean or Git mutation."""
+from pathlib import Path
+import hashlib,json,re,sys
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+V=Path('/private/tmp/mig-post234-consumer-validation')
+MAP=json.loads((R/'campaign/fills/mig1/landing/post234-integration-preparation/API-BINDINGS.json').read_text())['consumer_mappings']
+PLAN=json.loads((V/'guard-plan.json').read_text())
+version=sys.argv[1]
+out=V/('seal-build-'+version);out.mkdir(exist_ok=False)
+sha=lambda s:hashlib.sha256(s.encode()).hexdigest()
+jobs=[];receipts=[]
+for home,plan in PLAN['by_home'].items():
+    rel=home.replace('.','/')+'.lean';short=home.split('.')[-1]
+    src=(V/('proposed-'+version)/(rel+'.txt')).read_text()
+    targets=[x for x in MAP if x['file']==rel]
+    insertions=[];masks=[]
+    for target in targets:
+        name=target['name'].split('.')[-1]
+        m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(name)+r'\b',src);assert m
+        e=re.search(r'(?m)^(?:/--|(?:private )?(?:theorem|lemma|def|instance|structure|inductive)\b|end\b|namespace\b)',src[m.end():])
+        en=m.end()+e.start() if e else len(src)
+        st=src.rfind('/--',0,m.start());assert st>=0
+        assert src[st:m.start()].count('/--')==1
+        prefix='\nsection MIGPost234Seal_'+name+'\n'
+        prefix+='attribute [local irreducible] '+' '.join(plan['guards'])+'\n'
+        prefix+='attribute [-simp] '+' '.join(PLAN['model_default_simps_disabled'])+'\n'
+        quoted=', '.join('`'+d for d in plan['guards'])
+        prefix+='open Lean Elab Command Meta in\nrun_cmd do\n'
+        prefix+='  let env ← getEnv\n  let simpSet ← liftTermElabM getSimpTheorems\n'
+        prefix+='  for n in (['+quoted+'] : List Name) do\n'
+        prefix+='    unless getReducibilityStatusCore env n == .irreducible do throwError "ineffective guard {n}"\n'
+        prefix+='    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError "remaining default simp {n}"\n'
+        prefix+='  logInfo "SEAL_ACTIVE|'+name+'|'+str(len(plan['guards']))+'"\n\n'
+        suffix='\nend MIGPost234Seal_'+name+'\n\n'
+        insertions.extend([(st,prefix),(en,suffix)])
+        masks.append(dict(name=target['name'],doc_start=st,decl_start=m.start(),end=en,
+                          source_line=src[:m.start()].count('\n')+1,
+                          block_sha256=sha(src[st:en]),prefix=prefix,suffix=suffix))
+    sealed=src
+    for pos,text in sorted(insertions,reverse=True):sealed=sealed[:pos]+text+sealed[pos:]
+    recovered=sealed
+    for mask in masks:
+        assert recovered.count(mask['prefix'])==recovered.count(mask['suffix'])==1
+        recovered=recovered.replace(mask['prefix'],'',1).replace(mask['suffix'],'',1)
+    assert recovered==src
+    names=', '.join(json.dumps(x['name'].split('.')[-1]) for x in targets)
+    appendix='''
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let shorts : List String := [SHORTS]
+  for short in shorts do
+    let found := env.constants.toList.filter fun (n, _) =>
+      (env.getModuleIdxFor? n).isNone && n.toString.endsWith ("." ++ short)
+    unless found.length == 1 do throwError "local target multiplicity {short}: {found.length}"
+    let root := found.head!.1
+    logInfo m!"LOCAL_ROOT|{short}|{root}"
+    for (n, _) in env.constants.toList do
+      unless root.isPrefixOf n do continue
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      let row := Json.mkObj [("short", toJson short),("name", toJson n.toString),
+        ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]
+      logInfo m!"LOCAL_AX|{row.compress}"
+  logInfo "SEAL_COMPLETE|HOME|NCOUNT"
+'''.replace('SHORTS',names).replace('HOME',home).replace('NCOUNT',str(len(targets)))
+    filename='Sealed_'+short+'_'+version+'.lean'
+    p=V/'project'/filename;assert not p.exists();p.write_text(sealed+appendix)
+    (out/(filename+'.txt')).write_text(sealed+appendix)
+    jobs.append(dict(label='Sealed-'+short+'-'+version,filename=filename,owner=home,targets=len(targets)))
+    receipts.append(dict(owner=home,source_sha256=sha(src),sealed_sha256=sha(sealed+appendix),
+                         removal_sha256=sha(recovered),roundtrip_exact=True,guards=plan['guards'],
+                         model_default_simps_disabled=PLAN['model_default_simps_disabled'],
+                         masks=masks,metadata_appendix=appendix))
+(out/'jobs.json').write_text(json.dumps(jobs,indent=2)+'\n')
+(out/'roundtrip-receipts.json').write_text(json.dumps(receipts,indent=2)+'\n')
+print(json.dumps(dict(generation=version,owners=len(jobs),targets=sum(x['targets'] for x in jobs),exact_roundtrips=len(receipts))))

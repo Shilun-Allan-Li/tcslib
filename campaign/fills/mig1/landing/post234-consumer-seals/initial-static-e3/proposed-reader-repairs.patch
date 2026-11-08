@@ -1,0 +1,122 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3024,7 +3024,8 @@
+     rw [heq]
+     exact hspec.2
+   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
+-    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
++    rw [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
++    simp
+   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
+     (1 : Fin (w.length + 2)) t hlive
+   refine ⟨t, ht, b, hb, hh, hout, ?_, hr⟩
+@@ -3035,8 +3036,8 @@
+   cases hs : (M.tm.runFrom (M.tm.initCfg s) j).state with
+   | none => exact False.elim (hlive j hj hs)
+   | some q =>
+-    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]
+-    rw [hs]
++    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state,
++      hs, Option.map_some, Option.getD_some]
+     simp
+ 
+ /-- A contiguous visited interval, marked independently of the simulated data.
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -1849,9 +1849,17 @@
+   let emb : M.State → (pairCountTM M).State := Sum.inl
+   let ret : (pairCountTM M).State := .inr (.inl 0)
+   have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
+-    refine Cfg.ext rfl rfl ?_ ?_ rfl
+-    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+-    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
++    apply Cfg.ext
++    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, captureCfg_state,
++        Option.map_some, Option.getD_some]
++    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, captureCfg_inputPos]
++    · funext i
++      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes,
++        Cfg.init_output, bufferTape_nil]
++    · funext i
++      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,
++        Cfg.init_output]
++    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, captureCfg_output]
+   have hcap : (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+       captureCfg emb ret [] [] c := by
+     rw [hinit]
+@@ -1861,17 +1869,23 @@
+     {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
+       inputPos := c.inputPos}
+   have hback : (pairCountTM M).tm.step (captureCfg emb ret [] [] c) = ready := by
+-    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]
+-    simp only [MultiTapeTM.step, hstate]
++    have hstate : (captureCfg emb ret [] [] c).state = some ret := by
++      simp only [captureCfg_state, hs, Option.map_none, Option.getD_none]
++    rw [MultiTapeTM.step_of_some hstate]
+     apply Cfg.ext
+-    · rfl
+-    · exact moveInputPos_zero _
+-    · rfl
++    · simp [pairCountTM, ret, lenAction, Action.apply_state, ready, lenCfg]
++    · simpa [pairCountTM, ret, lenAction, Action.apply_inputPos,
++        captureCfg_inputPos, ready] using moveInputPos_zero c.inputPos
++    · funext i z
++      simp [pairCountTM, ret, lenAction, Action.apply_workTapes,
++        Cfg.workTapeSymbols_eq, Function.update_eq_self, captureCfg_workTapes,
++        ready, lenCfg]
+     · funext i
+       by_cases hi : i.val < M.k <;>
+-        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+-          sub_eq_add_neg]
+-    · rfl
++        simp [pairCountTM, ret, lenAction, Action.apply_workTapePos,
++          captureCfg_workTapePos, ready, lenCfg, hi, sub_eq_add_neg]
++    · simp [pairCountTM, ret, lenAction, Action.apply_output,
++        captureCfg_output, ready, lenCfg]
+   obtain ⟨r, hrle, hr⟩ := timed_rewind (pairCountTM M).tm
+     (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
+     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
+@@ -4701,7 +4715,7 @@
+   have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
+     intro j
+     induction j with
+-    | zero => intro hj; rfl
++    | zero => intro hj; simp only [MultiTapeTM.runFrom_zero]
+     | succ j ih =>
+       intro hj
+       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+@@ -4709,18 +4723,28 @@
+       let z := tm.runFrom c j
+       change host.step (z.mapState emb) = (tm.step z).mapState emb
+       cases hz : z.state with
+-      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
++      | none =>
++        have hm : (z.mapState emb).state = none := by
++          simp only [Cfg.mapState_state, hz, Option.map_none]
++        rw [host.step_of_halt hm, tm.step_of_halt hz]
+       | some q =>
+         have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
+-        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
+-        rw [hagree q hn]
+-        rfl
++        have hm : (z.mapState emb).state = some (emb q) := by
++          simp only [Cfg.mapState_state, hz, Option.map_some]
++        have hin : (z.mapState emb).inputSymbol = z.inputSymbol :=
++          Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
++        have hw : (z.mapState emb).workTapeSymbols = z.workTapeSymbols := by
++          funext i
++          rw [Cfg.workTapeSymbols_eq, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
++            Cfg.workTapeSymbols_eq]
++        rw [host.step_of_some hm, tm.step_of_some hz, hin, hw, hagree q hn]
++        exact Cfg.mapState_apply emb _ z
+   refine ⟨t, ht, by rw [hp t (le_refl _), he], ?_⟩
+   intro j hj
+   rw [hp j hj]
+   cases hs : (tm.runFrom c j).state with
+-  | none => simp [Cfg.mapState, hs]
+-  | some q => simpa [Cfg.mapState, hs] using haway q
++  | none => simp [Cfg.mapState_state, hs]
++  | some q => simpa [Cfg.mapState_state, hs] using haway q
+ 
+ /-- A standalone native-input rewind, with an absorbing return at state two. -/
+ private def splitRewindTM (k : ℕ) : FinTM Bool where

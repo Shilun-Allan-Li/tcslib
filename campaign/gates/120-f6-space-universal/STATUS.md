@@ -1,7 +1,6 @@
-# Gate120 — current validation complete; final render/publication underway
+# Gate120 — Ready to dispatch
 
-**Not yet clear to merge: #235.** Source073/Hierarchy550c59 on merged#234/bf64;
-currentMF63two-module replayPASS from wholeMAC5, fresh138→193/stdAX/19scopes/72pairedcontrols/
-conditionalwitness and actualfresh25BASE+HEAD allPASS. Complete1762-section inputs adopted;
-final mixed-pin index/rebuild/archive/render/publication remain before Ready to dispatch.
-Codex selected, not dispatched. Pre234 and old23/229+2 evidence remain explicitly historical.
+**Ready to dispatch: Codex gate120 for #235.** Exact published packet/pins/checksums and
+pasteable prompt are in publication.json and prompt.md. User dispatch not yet confirmed.
+
+**Not yet clear to merge: #235 — gate120 remains open.** Current073/bf64 validation passes: MF63 two-module replay from complete MAC5, fresh138→193 compiled accounting with standard target axioms,19 scoped proofs/72 paired controls, conditional arbitrary-witness diagnostic, and actual fresh25-source BASE+HEAD comparison. Old23/MF61/MF62 generations retain their historical pins.

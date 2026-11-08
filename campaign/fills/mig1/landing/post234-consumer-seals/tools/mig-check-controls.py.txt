@@ -1,0 +1,73 @@
+"""Strict data-only paired-identity checker with independent corruption fixtures."""
+from pathlib import Path
+from collections import Counter
+import copy,hashlib,json,re
+V=Path('/private/tmp/mig-post234-consumer-validation')
+PLAN=json.loads((V/'guard-plan.json').read_text())
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def semantic(owner,native,sealed,nrun,srun,ninput,sinput):
+    guards=PLAN['by_home'][owner]['guards'];short=owner.split('.')[-1]
+    expected=[(n,m) for n in guards for m in ['point','abstract']]
+    assert len(expected)==len(set(expected))
+    attr='attribute [local irreducible] '+' '.join(guards)+'\n'
+    assert sinput.count(attr)==1 and sinput.replace(attr,'',1)==ninput,'nonidentical paired goal sources'
+    assert nrun['exit']==0 and nrun['errors']==0 and nrun['sorry_warnings']==0,'native run status'
+    assert srun['exit']==1 and srun['errors']==len(expected) and srun['sorry_warnings']==0,'sealed run status'
+    matches=re.findall(r'^CONTROL\|([^|\n]+)\|(point|abstract)\|(PASS|FAIL)(?:\|kernelChecked=([^\n]+))?$',native,re.M)
+    assert len(matches)==len(expected),'native marker count'
+    actual=[(n,m) for n,m,_,_ in matches]
+    assert Counter(actual)==Counter(expected),'native identity multiplicity'
+    kernels=[]
+    for index,(n,m,state,kernel) in enumerate(matches,1):
+        assert (n,m)==expected[index-1] and state=='PASS','native ordered identity/status'
+        assert kernel==f'MIGPost234_{short}_{index}_{m}','kernel identity'
+        kernels.append(kernel)
+    assert len(kernels)==len(set(kernels)),'kernel uniqueness'
+    matches=re.findall(r'^CONTROL\|([^|\n]+)\|(point|abstract)\|(PASS|FAIL)(?:\|kernelChecked=([^\n]+))?$',sealed,re.M)
+    assert [(n,m) for n,m,_,_ in matches]==expected,'sealed ordered identity/multiplicity'
+    assert all(state=='FAIL' and not k for _,_,state,k in matches),'sealed status/kernel'
+    errors=re.findall(r'^.*?:\d+:\d+: error(?:\([^)]*\))?: ([^\n]*)$',sealed,re.M)
+    assert len(errors)==len(expected),'error header count'
+    wanted=[f'RFL_CONTROL|{n}|{m}|Tactic `rfl` failed: equality lhs' for n,m in expected]
+    assert errors==wanted,'non-rfl or incorrectly paired error'
+    assert not re.search(r'^.*?:\d+:\d+: error(?:\([^)]*\))?: ',native,re.M),'native diagnostic'
+    return dict(owner=owner,guards=len(guards),paired_identities=len(expected),
+                native_kernel_identities=kernels,all_effective=True)
+
+rows=[];fixtures=[]
+for owner in PLAN['by_home']:
+    jobs=[j for j in PLAN['control_runs'] if j['owner']==owner]
+    nj=next(j for j in jobs if '-native' in j['label']);sj=next(j for j in jobs if '-sealed' in j['label'])
+    def get(j):
+        raw=(V/'runs'/(j['label']+'.out')).read_bytes();inp=(V/'project'/j['filename']).read_bytes()
+        run=json.loads((V/'runs'/(j['label']+'-run.json')).read_text())
+        assert sha(raw)==run['output_sha256'] and len(raw)==run['output_bytes']
+        assert sha(inp)==run['input_sha256']
+        return raw.decode(),run,inp.decode()
+    native,nrun,ninput=get(nj);sealed,srun,sinput=get(sj)
+    rows.append(semantic(owner,native,sealed,nrun,srun,ninput,sinput))
+    if len(fixtures):continue
+    def reject(name,nn=native,ss=sealed,nr=nrun,sr=srun,ni=ninput,si=sinput):
+        try:semantic(owner,nn,ss,nr,sr,ni,si)
+        except AssertionError as e:fixtures.append(dict(corruption=name,rejected=True,reason=str(e)))
+        else:raise AssertionError('accepted corrupt fixture '+name)
+    lines=native.splitlines(True);control=[i for i,l in enumerate(lines) if l.startswith('CONTROL|')]
+    corrupt=lines.copy();del corrupt[control[0]];reject('missing positive identity',nn=''.join(corrupt))
+    corrupt=lines.copy();corrupt[control[1]]=corrupt[control[0]];reject('duplicate identity preserving marker count',nn=''.join(corrupt))
+    reject('wrong kernel name',nn=native.replace('kernelChecked=MIGPost234_','kernelChecked=WRONG_',1))
+    reject('sealed PASS masquerading as failure',ss=sealed.replace('|point|FAIL','|point|PASS',1))
+    reject('same-count non-rfl diagnostic',ss=sealed.replace('Tactic `rfl` failed: equality lhs','Unknown identifier calibration',1))
+    sr=copy.deepcopy(srun);sr['exit']=0;reject('wrong sealed process exit',sr=sr)
+    nr=copy.deepcopy(nrun);nr['errors']=1;reject('native error status',nr=nr)
+    reject('changed paired goal input',si=sinput.replace('for mode in ["point", "abstract"]','for mode in ["point"]',1))
+    guardline='attribute [local irreducible] '+' '.join(PLAN['by_home'][owner]['guards'])+'\n'
+    brokenline='attribute [local irreducible] '+' '.join(PLAN['by_home'][owner]['guards'][1:])+'\n'
+    reject('missing effective irreducible guard in input',si=sinput.replace(guardline,brokenline,1))
+result=dict(result='PASS',owner_context_guard_occurrences=sum(x['guards'] for x in rows),
+            unique_definitions=len(set(d for p in PLAN['by_home'].values() for d in p['guards'])),
+            paired_identities=sum(x['paired_identities'] for x in rows),
+            checks=rows,corruption_tests=fixtures,
+            control_source_pairing='byte identical except exact ordered irreducible attribute',
+            special_recursive_definition_controls=PLAN['special_recursive_definition_controls'])
+(V/'strict-control-checks.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({k:result[k] for k in ['result','owner_context_guard_occurrences','unique_definitions','paired_identities']}|dict(rejected_corruptions=len(fixtures))))

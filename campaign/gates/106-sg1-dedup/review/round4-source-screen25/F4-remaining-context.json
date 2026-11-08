@@ -1,0 +1,116 @@
+{
+  "observed_utc": "2026-11-08T04:58:57.318875+00:00",
+  "base": "750987d674899d97db3c73c7278c891fa8772b40",
+  "head": "078263a74fe90b92aa6228cf20e43726138afbe6",
+  "F4_incident_BASE_directed_rows": [
+    {
+      "a": "SAT.lean::sat_live_prefix",
+      "b": "Hardness.lean::clA5_live_prefix",
+      "shared": 152,
+      "denominator": 152,
+      "printed_percent": 100,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Hardness.lean::clA5_live_prefix",
+      "b": "SAT.lean::sat_live_prefix",
+      "shared": 152,
+      "denominator": 152,
+      "printed_percent": 100,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Finite.lean::runFrom_state_ne_none_of_le",
+      "b": "SAT.lean::sat_live_prefix",
+      "shared": 139,
+      "denominator": 152,
+      "printed_percent": 91,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Finite.lean::runFrom_state_ne_none_of_le",
+      "b": "Hardness.lean::clA5_live_prefix",
+      "shared": 139,
+      "denominator": 152,
+      "printed_percent": 91,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Catalog.lean::f2_loop_live_prefix",
+      "b": "SAT.lean::sat_live_prefix",
+      "shared": 139,
+      "denominator": 152,
+      "printed_percent": 91,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Catalog.lean::f2_loop_live_prefix",
+      "b": "Hardness.lean::clA5_live_prefix",
+      "shared": 139,
+      "denominator": 152,
+      "printed_percent": 91,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "SAT.lean::sat_live_prefix",
+      "b": "Finite.lean::runFrom_state_ne_none_of_le",
+      "shared": 139,
+      "denominator": 156,
+      "printed_percent": 89,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "SAT.lean::sat_live_prefix",
+      "b": "Catalog.lean::f2_loop_live_prefix",
+      "shared": 139,
+      "denominator": 156,
+      "printed_percent": 89,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Hardness.lean::clA5_live_prefix",
+      "b": "Finite.lean::runFrom_state_ne_none_of_le",
+      "shared": 139,
+      "denominator": 156,
+      "printed_percent": 89,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Hardness.lean::clA5_live_prefix",
+      "b": "Catalog.lean::f2_loop_live_prefix",
+      "shared": 139,
+      "denominator": 156,
+      "printed_percent": 89,
+      "kind": "proof",
+      "cross_file": true
+    }
+  ],
+  "F4_incident_row_count": 10,
+  "Catalog_context": {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "name": "f2_loop_live_prefix",
+    "within_current25": true,
+    "outside_five_PR_Lean_files": true,
+    "BASE_HEAD_bytes_identical": true,
+    "present_in_current_campaign": true,
+    "disposition": "Preserved out-of-scope older candidate; remaining watch status is not upgraded to acknowledged debt. No claim that #215 retires backward-liveness copies globally."
+  },
+  "MIG_context": {
+    "parent_requested_bounded_check": true,
+    "actual_Git_pin": "f631647190998272127fcd37b7a5d1e61fac4f3f",
+    "Catalog_sha256": "accec25d04d52b9476bd697246a44dade906099bcb91a745a3a408b58f516d98",
+    "same_name_absent": true,
+    "meaning": "Already absent in the prepared/pushed MIG source after its old f2-host deletion. This is not a campaign retirement until #233 merges; no new source fix is requested by this observation."
+  },
+  "current_ledger_excerpt": "tion exception; inherited source candidates retain their own dispositions.\n\n\n## BLIVE-REUSE-1 — backward liveness (proposed retirement in #215)\n\nCanonical contract: Turing.MultiTapeTM.runFrom_state_ne_none_of_le (Finite), any alphabet/state,\narbitrary start and live endpoint at t imply liveness at every u≤t. Gate106R3F4 confirmed\nsat_live_prefix and clA5_live_prefix as exactBool specializations with copied five-line proofs.\nThe old live-prefix record is a watch; sevenSG1 kinds and FE-LIVE-1 do not acknowledge this fact.\n\nBoth privateheaders remain; implementations now directly cite the canonical theorem at078263a7.\nNo new API/import/statement/machine/debt permission. Same-kind inspection covers84 conservative\ndeclaration candidates plus inline/contrapositive/time-split closings in all5touchedfiles; only\nthese2 implementations were identified. CounterLoop already cites the public theorem. FirstNone\nselection, fixedLIVE-stop entry and post-halt head-bound tails have different contracts.\nFull source chunks/line/hash/dispositions: gate106/review/round3-return-review/.\n\nRetired only on #215merge. These names are already in the affected-name unions; no new member\nor threshold crossing is added. Other watches stay unacknowledged. This is bounded mechanical\nreuse, not global absence, exhaustive accounting or retention permission.\n",
+  "scope": "Two SG1 implementations only proposed retired on #215 merge; retain every other candidate and its exact distinct status."
+}

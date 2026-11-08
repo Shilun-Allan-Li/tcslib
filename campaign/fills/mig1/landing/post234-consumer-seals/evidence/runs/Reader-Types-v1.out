@@ -1,0 +1,24 @@
+Turing.captureCfg_workTapes.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H) (ret : H)
+  (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) (a✝ : ℤ) :
+  (Turing.captureCfg emb ret pre out₀ c).workTapes i a✝ =
+    (if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output)) a✝
+Turing.captureCfg_workTapePos.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H)
+  (ret : H) (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) :
+  (Turing.captureCfg emb ret pre out₀ c).workTapePos i =
+    if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length
+Turing.Cfg.init_workTapes.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x✝ : Fin k) (x✝¹ : ℤ) : (Turing.Cfg.init q₀ input).workTapes x✝ x✝¹ = none
+Turing.FinTM.bufferTape_nil.{u_1} {Symbol : Type u_1} : Turing.FinTM.bufferTape [] = fun x => none
+Turing.Cfg.mapState_workTapes.{u_1, u_2, u_3} {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a✝ : Fin k) (a✝¹ : ℤ) :
+  (Turing.Cfg.mapState f cfg).workTapes a✝ a✝¹ = cfg.workTapes a✝ a✝¹
+Turing.Cfg.mapState_inputPos.{u_1, u_2, u_3} {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) :
+  (Turing.Cfg.mapState f cfg).inputPos = cfg.inputPos
+Turing.inputSymbolInner.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input} (p : ℕ) (h₁ : ↑cfg.inputPos = 1 + p) (h₂ : p < input.length) :
+  cfg.inputSymbol = some input[p]
+Turing.Cfg.inputSymbol_of_zero.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input} (h : cfg.inputPos = 0) : cfg.inputSymbol = none
+Turing.Cfg.inputSymbol_of_end.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input} (h : ↑cfg.inputPos = input.length + 1) : cfg.inputSymbol = none

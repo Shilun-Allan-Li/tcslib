@@ -1,0 +1,31 @@
+"""Own sequential managed plain-lean runner. Call only after root context PASS."""
+from pathlib import Path
+import datetime,hashlib,json,os,re,subprocess,sys,time
+ROOT=Path('/private/tmp/mig-post234-consumer-validation')
+PROJECT=ROOT/'project'
+RECORDS=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+CONTEXT=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig-post234-native2')
+label,filename=sys.argv[1:3]
+source=PROJECT/filename;out=ROOT/'runs';out.mkdir(exist_ok=True)
+request=out/(label+'-request.json');result=out/(label+'-run.json');log=out/(label+'.out')
+assert not request.exists() and not result.exists() and not log.exists()
+argv=['bash',str(RECORDS/'devtools/seyoon/leanelab.sh'),str(PROJECT),str(CONTEXT),str(source)]
+record=dict(argv=argv,start_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),source_head='f631647190998272127fcd37b7a5d1e61fac4f3f',
+    context=str(CONTEXT),root_confirmed_PASS12=True,local_slots=os.environ.get('TCSLIB_LEAN_SLOTS'),machine_cap=5,
+    plain_managed=True,outer_slot=False,one_own_Lean_at_a_time=True,no_compiled_output=True)
+assert record['local_slots']=='3'
+request.write_text(json.dumps(record,indent=2)+'\n')
+start=time.monotonic()
+with log.open('wb') as stream:
+    completed=subprocess.run(argv,stdout=stream,stderr=subprocess.STDOUT)
+data=log.read_bytes();text=data.decode('utf-8')
+record.update(exit=completed.returncode,seconds=time.monotonic()-start,end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    output_bytes=len(data),output_sha256=hashlib.sha256(data).hexdigest(),
+    errors=len(re.findall(r'(?m)^.*:\d+:\d+: error(?:\([^)]*\))?:',text)),
+    warnings=len(re.findall(r'(?m)^.*:\d+:\d+: warning(?:\([^)]*\))?:',text)),
+    sorry_warnings=text.count("declaration uses 'sorry'"))
+result.write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps(record,indent=2))
+print(text[-18000:] if record['exit'] else '\n'.join(text.splitlines()[:18]))
+sys.exit(0)

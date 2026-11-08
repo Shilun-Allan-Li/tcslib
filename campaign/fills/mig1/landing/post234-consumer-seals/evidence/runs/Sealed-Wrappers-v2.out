@@ -1,0 +1,28 @@
+SEAL_ACTIVE|timed_start|21
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v2.lean:738:31: error: Application type mismatch: The argument
+  MultiTapeTM.initCfg x
+has type
+  Cfg (M₁.branchTM M₂ b).k Bool (M₁.branchTM M₂ b).State x
+but is expected to have type
+  Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) ?m.33
+in the application
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x)
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v2.lean:758:28: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v2.lean:763:6: error: Type mismatch: After simplification, term
+  MultiTapeTM.timed_input_bound (MultiTapeTM.initCfg x) t
+ has type
+  ↑(MultiTapeTM.runFrom (Cfg.init D.tm.q₀ x) t).inputPos ≤ 1 + t
+but is expected to have type
+  ↑c.inputPos ≤ 1 + t
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v2.lean:783:8: warning: declaration uses 'sorry'
+LOCAL_ROOT|timed_start|_private.Sealed_Wrappers_v2.0.Turing.FinTM.timed_start
+LOCAL_AX|{"axioms":["propext","Quot.sound"],"name":"_private.Sealed_Wrappers_v2.0.Turing.FinTM.timed_start._proof_1_1","short":"timed_start"}
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.Sealed_Wrappers_v2.0.Turing.FinTM.timed_start","short":"timed_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Wrappers|1

@@ -1,0 +1,38 @@
+private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S → H) (anchor : H) (stop : S → Prop) [DecidablePred stop]
+    (haway : ∀ q, emb q ≠ anchor)
+    (hfix : ∀ c : Cfg k Bool S w, (∃ q, c.state = some q ∧ stop q) → tm.step c = c)
+    (hagree : ∀ q, ¬stop q → ∀ inp work,
+      host.tr (emb q) inp work = (tm.tr q inp work).mapState emb)
+    (c d : Cfg k Bool S w) (T : ℕ)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, host.runFrom (c.mapState emb) t = d.mapState emb ∧
+      splitSafe host anchor (c.mapState emb) t := by
+  classical
+  obtain ⟨t, ht, hcut, he⟩ :=
+    MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+  have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
+    intro j
+    induction j with
+    | zero => intro hj; rfl
+    | succ j ih =>
+      intro hj
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+        MultiTapeTM.runFrom_succ_eq_step']
+      let z := tm.runFrom c j
+      change host.step (z.mapState emb) = (tm.step z).mapState emb
+      cases hz : z.state with
+      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
+      | some q =>
+        have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
+        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
+        rw [hagree q hn]
+        rfl
+  refine ⟨t, ht, by rw [hp t (le_refl _), he], ?_⟩
+  intro j hj
+  rw [hp j hj]
+  cases hs : (tm.runFrom c j).state with
+  | none => simp [Cfg.mapState, hs]
+  | some q => simpa [Cfg.mapState, hs] using haway q
+
