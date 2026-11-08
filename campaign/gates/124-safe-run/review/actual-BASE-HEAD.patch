@@ -1,0 +1,60 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+index 3ac162843..3362598b9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+@@ -68,41 +68,33 @@ def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
+     (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
+   H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
+ 
++/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
++private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
++    {c c' : Cfg k Bool B x} {t : ℕ} :
++    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
++  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]
++
+ /-- The empty run is safe. -/
+ theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
+-    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
+-  ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩
++    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by
++  exact safeRun_iff_segment.mpr (Segment.zero True.intro)
+ 
+ /-- Prepend one non-avoided step to a safe run. -/
+ theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}
+     {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)
+     (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
+     SafeRun H avoid c (t + 1) c' := by
+-  have hone : H.runFrom c 1 = c₁ := by
+-    simp [runFrom, hstep]
+-  refine ⟨?_, ?_⟩
+-  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]
+-    exact h.1
+-  · intro t' ht'
+-    cases t' with
+-    | zero => simpa using hc
+-    | succ u =>
+-      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]
+-      exact h.2 u (by omega)
++  apply safeRun_iff_segment.mpr
++  simpa only [Nat.add_comm 1 t] using
++    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)
++      True.intro (safeRun_iff_segment.mp h))
+ 
+ /-- Concatenate safe runs. -/
+ theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}
+     {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)
+     (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by
+-  refine ⟨?_, ?_⟩
+-  · rw [runFrom_add, h₁.1]
+-    exact h₂.1
+-  · intro t' ht'
+-    by_cases hlt : t' < t₁
+-    · exact h₁.2 t' hlt
+-    · obtain ⟨u, rfl⟩ : ∃ u, t' = t₁ + u := ⟨t' - t₁, by omega⟩
+-      rw [runFrom_add, h₁.1]
+-      exact h₂.2 u (by omega)
++  exact safeRun_iff_segment.mpr
++    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))
+ 
+ /-! ### Output-prefix commutation
+ 

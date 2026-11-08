@@ -1,0 +1,52 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import Lean
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace Turing
+open MultiTapeTM
+variable {k m : ℕ} {B SS : Type} {x : List Bool}
+/-- A run from `c` to `c'` in exactly `t` steps that never visits the state
+`avoid` strictly before `t`. -/
+def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
+    (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
+  H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
+
+section BridgeOpacity
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.Segment Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
+private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c' : Cfg k Bool B x} {t : ℕ} :
+    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
+  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]
+
+/-- The empty run is safe. -/
+theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
+    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by
+  exact safeRun_iff_segment.mpr (Segment.zero True.intro)
+
+/-- Prepend one non-avoided step to a safe run. -/
+theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)
+    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
+    SafeRun H avoid c (t + 1) c' := by
+  apply safeRun_iff_segment.mpr
+  simpa only [Nat.add_comm 1 t] using
+    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)
+      True.intro (safeRun_iff_segment.mp h))
+
+/-- Concatenate safe runs. -/
+theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)
+    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by
+  exact safeRun_iff_segment.mpr
+    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))
+
+#print axioms safeRun_iff_segment
+#print axioms SafeRun.zero
+#print axioms SafeRun.cons
+#print axioms SafeRun.trans
+end BridgeOpacity
+end Turing

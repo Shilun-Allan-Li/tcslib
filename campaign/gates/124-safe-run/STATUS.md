@@ -1,9 +1,7 @@
-# Gate 124 — safe-run
+# Gate124
 
-PREPARING for morning Codex audit; NOT DISPATCHED; no verdict.
+Publication in progress; no external audit dispatched.
 
-**Not yet clear to merge: #244 — final validation/packet and external audit pending.**
+**Not yet clear to merge: #244 — external audit pending.**
 
-Pushed source `535c0043310bb3ad6efd9359aef62518699b7de8`; campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / whole MAC8.
-
-Source remains a separate existing-API/header/import-preserving mechanical family.
+Source `cfa6a3ee327b03e601b25fd5f0535e85fd18f897`; actual80/0/static0/31.
