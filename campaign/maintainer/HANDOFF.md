@@ -7,18 +7,18 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-08T23:55:23.879985-08:00; authoritative)
+## 0. Current state (2026-11-09T00:08:17.292013-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. #252, #249 and #253 have merged.
-Campaign Lean is `e9478d452d5830adbe70ab77542224f326296a3e`, using `oleans-g131-ladner-base` (1,004 Lean paths and
-896 compiled objects). Adoption evidence is in
-campaign/status/2026-11-08-seam-reader-merge/. The preceding post-#249
-snapshot is `oleans-pr249-space-verified`. Keep each snapshot whole.
+only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
+Campaign Lean is `967bc00f00637312676f438c7f61b14219fa943b`. The complete post-#246 snapshot
+`oleans-pr246-post253` matches 1,004 source blobs and 896 object hashes.
+The actual post-#247/#245 replay from that whole snapshot is running.
+See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 2 dispatched to Codex at `06abd00adf61c257fcd25ee9181a37ddec0a4c87`. Verdict pending and 395-module post-#253 replay running. |
+| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD at `06abd00adf61c257fcd25ee9181a37ddec0a4c87` with two majors. Mechanical reuse and full revalidation underway. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** Four native-checked #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared 121 reads and three distinct held roots remain. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Await the gate 129 provider, integrated repairs, replay and follow-up. |
@@ -26,10 +26,10 @@ snapshot is `oleans-pr249-space-verified`. Keep each snapshot whole.
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
 | #254 | **Clear to merge** as tooling only, no Lean diff. |
 
-Gates 123–127 stay closed. **Clear to merge:** #246 and #247 have current
-replays (19 and 24 modules). Merge #246 before #247 if landing both. The
-#247 owner has no dependency on the #246 change. #245 is also clear after its 28-module replay. Replays for #243
-and #244 remain in the queue on the same Lean base.
+Gates 123–127 stay closed. #245–#247 have merged. The #243 replay is
+running on the post-#253 base. Revalidate the import context against the new
+merges before clearing it. #244 needs a replay refresh and shares the
+EmitIterEmbed owner with #243.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
