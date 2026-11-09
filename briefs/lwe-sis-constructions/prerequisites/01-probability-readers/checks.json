@@ -1,0 +1,78 @@
+{
+  "base": "27f9ea89b72d84abaec8128f2abd826f24aaced4",
+  "source": "c744076da5fbb6ea5e14ce7095eeaec33554c124",
+  "branch": "cryptography/lwe-sis-probability-readers",
+  "target": "cryptography/lwe-sis-constructions",
+  "owner_coordination": "User approved the exact two-reader proposal before either owner edit.",
+  "approved_patch_sha256": "8b70194f6db9048fc91f6cb7d3dc90ed6f0db3457301ea91b2f8c633979a5915",
+  "approved_patch_exact_hunks": true,
+  "scoped_module_checks": 4,
+  "probe": "three standard-axiom prints",
+  "legacy_style_failures": 14,
+  "legacy_style_warnings": 2,
+  "resolved_style_warning": "FinDist.HasMinEntropy",
+  "new_style_diagnostics": 0,
+  "fresh_checks": [
+    {
+      "module": "TCSlib/InformationTheory/FinDist",
+      "started_utc": "2026-11-09T06:59:53.218668+00:00",
+      "seconds": 9.186,
+      "exit_code": 0,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "source_sha256": "967e8cfcd47c37c791530fc9d5b8304a329cacb7d1d427c8eb08ec37a5901dcf",
+      "log": ".lake/reader-scoped-checks/TCSlib-InformationTheory-FinDist.log",
+      "fresh_olean": true
+    },
+    {
+      "module": "TCSlib/InformationTheory/StatisticalDistance",
+      "started_utc": "2026-11-09T07:00:02.407346+00:00",
+      "seconds": 4.6,
+      "exit_code": 0,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "source_sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739",
+      "log": ".lake/reader-scoped-checks/TCSlib-InformationTheory-StatisticalDistance.log",
+      "fresh_olean": true
+    },
+    {
+      "module": "TCSlib/InformationTheory/UniversalHashing",
+      "started_utc": "2026-11-09T07:00:07.008497+00:00",
+      "seconds": 2.759,
+      "exit_code": 0,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "source_sha256": "db95a73e2fbb04ebc2de598072bb0de91c96ca957f2d75c70473b72f50ddf108",
+      "log": ".lake/reader-scoped-checks/TCSlib-InformationTheory-UniversalHashing.log",
+      "fresh_olean": true
+    },
+    {
+      "module": "TCSlib/InformationTheory/LeftoverHash",
+      "started_utc": "2026-11-09T07:00:09.769452+00:00",
+      "seconds": 3.085,
+      "exit_code": 0,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "source_sha256": "83bc1fde6ee7b3855700113b2bff2207b61d0579f7c13bac77768672bf4149d9",
+      "log": ".lake/reader-scoped-checks/TCSlib-InformationTheory-LeftoverHash.log",
+      "fresh_olean": true
+    },
+    {
+      "module": ".lake/reader-scoped-checks/Checks",
+      "started_utc": "2026-11-09T07:00:12.855482+00:00",
+      "seconds": 3.355,
+      "exit_code": 0,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "source_sha256": "1e138572eb046c0ce59e12a7f4ff7b351120200db96e6514504390070c2929bf",
+      "log": ".lake/reader-scoped-checks/.lake-reader-scoped-checks-Checks.log",
+      "fresh_olean": true
+    }
+  ],
+  "module_seconds": 19.63,
+  "facade_attempt": "Stopped at Entropy.lean because the isolated cache lacks Mathlib.Analysis.SpecialFunctions.Log.NegMulLog.",
+  "lean_toolchain": "leanprover/lean4:v4.25.0",
+  "mathlib": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+  "pins_preserved": true,
+  "library_root_checked": false
+}
