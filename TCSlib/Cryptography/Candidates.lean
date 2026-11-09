@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DiscreteLog
 import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Candidates.DDH
 import TCSlib.Cryptography.Candidates.ElGamal
 
 set_option maxHeartbeats 0
@@ -53,8 +54,10 @@ polynomial-time computability is an explicit hypothesis, never an axiom.
   [PS10, Assumption 52.2, Theorem 52.3].
 * `DiscreteLogHardcore` — the hard-core bit of the discrete logarithm
   [PS10, Lemma 84.1, Algorithm 84.2].
-* `ElGamal` — the DDH assumption and El Gamal encryption [PS10, Assumption 105.1,
-  Algorithm 106.2, Theorem 107.3].
+* `DDH` gives the safe-prime group facts and decisional Diffie–Hellman experiments
+  [PS10, Assumption 105.1].
+* `ElGamal` gives El Gamal encryption and its security theorem [PS10, Algorithm 106.2,
+  Theorem 107.3].
 
 ## References
 

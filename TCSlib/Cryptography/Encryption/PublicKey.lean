@@ -12,6 +12,7 @@ import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
+import TCSlib.Cryptography.Candidates.DDH
 import TCSlib.Cryptography.Candidates.ElGamal
 import TCSlib.Cryptography.Composability.PublicKey
 
@@ -55,6 +56,7 @@ multi-message security.
 * `Candidates.Rabin` constructs `TCSlib.Cryptography.Candidates.rabinBlumTrapdoor`.
   `TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_oneWay` uses
   `TCSlib.Cryptography.Candidates.FactoringAssumption` and `TCSlib.Cryptography.Candidates.BlumDensity`.
+* `Candidates.DDH` defines the reusable safe-prime DDH assumption.
 * `Candidates.ElGamal` gives the group-message scheme `TCSlib.Cryptography.Candidates.elGamal`.
   `TCSlib.Cryptography.Candidates.elGamal_correct` handles admissible messages.
   `TCSlib.Cryptography.Candidates.elGamal_secure` uses
