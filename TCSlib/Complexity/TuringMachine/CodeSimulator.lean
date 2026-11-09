@@ -1455,9 +1455,9 @@ private lemma canonOffset_spec (w : List Bool) :
   · rw [← foldr_bit_eq_ofDigits]
     change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _
     rw [(canonCount_spec w.length.bits).2.2]
-    change Nat.bit true (codeBitsNat w.length.bits + 1) = _
+    rw [← codeBitsNat_eq]
     rw [codeBitsNat_bits]
-    simp [Nat.bit]
+    simp only [Nat.bit_val, Bool.toNat_true]
     omega
   · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
     simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
