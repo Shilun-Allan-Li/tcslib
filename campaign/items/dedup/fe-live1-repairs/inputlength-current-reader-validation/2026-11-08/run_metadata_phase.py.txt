@@ -1,0 +1,8 @@
+from pathlib import Path
+import subprocess,json
+O=Path(__file__).parent
+for label,side in [('metadata-BASE','BASE'),('metadata-CANDIDATE-first','CANDIDATE'),('metadata-CANDIDATE-second','CANDIDATE')]:
+ r=subprocess.run(['python3','-I',str(O/'run_probe.py.txt'),label,side,str(O/'ConsumerMetadata.lean.txt'),'Probe.lean']);assert r.returncode==0
+ raw=(O/'probes'/label/'attempt-01/raw.out').read_text();rows=[json.loads(s.split('|',1)[1]) for s in raw.splitlines() if s.startswith('CONSUMER_METADATA|')];assert len(rows)==1
+ (O/(label+'.json')).write_text(json.dumps(rows[0],indent=2)+'\n')
+ print('SELECTED_ACTUAL',label,rows[0]['axioms'],[d['name'] for d in rows[0]['foreign_definitions'] if d['ordinary']],flush=True)

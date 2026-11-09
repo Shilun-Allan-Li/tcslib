@@ -1,10 +1,10 @@
 {
-  "utc": "2026-11-08T21:09:21.541807+00:00",
+  "utc": "2026-11-09T04:41:57.394149+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "94f6e87de950472928eb9d0c5eb970e70e824638",
   "auditors": "Codex, selected by Seyoon for morning batch",
   "mathematical_fills": "Leave holes; not dispatched by maintainer",
-  "next_free_gate": 131,
+  "next_free_gate": 132,
   "gates": [
     {
       "gate": 121,
@@ -28,7 +28,7 @@
       "wt": "ab34-natbits",
       "branch": "codex/ab34-ch7-run-reuse",
       "title": "Reuse public deterministic run laws in emit-loop embedding",
-      "detail": "The five acknowledged ch7 run-infrastructure proofs now consume the public output-prefix, output-extension, halt-absorption and live-prefix equations. All existing statements, definitions and imports are preserved. Loop\u2019s older companion copies were already removed by the merged SG-1 cleanup.",
+      "detail": "The five acknowledged ch7 run-infrastructure proofs now consume the public output-prefix, output-extension, halt-absorption and live-prefix equations. All existing statements, definitions and imports are preserved. Loop’s older companion copies were already removed by the merged SG-1 cleanup.",
       "gate": 123,
       "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
       "pr": 243,
@@ -118,15 +118,17 @@
     "restart_126": "Exact48d full18 PASS/static0/0",
     "nat_127": "Currente160 full23PASS/static0/0/whole895; oldd725 historical only",
     "joint7": "HistoricalNJ1 full257PASS/static0/45 beforefinalNatreaderrepair and FH13companions",
-    "Ladner128": "Current1096 fresh2PASS/static0/6/895\u2192896; old63eb2PASS historicalonewordfacadedocfix",
-    "joint_current7": "EntireNJ1\u2192NJ2(23/static0)\u2192NJ4(153/static31), finalseven currentheads pass/895",
-    "joint_all8": "EntireNJ1\u2192NJ2\u2192NJ3(2/static6)\u2192NJ5(154/static37), finaleight currentheads pass/896;6mathholes remain",
+    "Ladner128": "Current1096 fresh2PASS/static0/6/895→896; old63eb2PASS historicalonewordfacadedocfix",
+    "joint_current7": "EntireNJ1→NJ2(23/static0)→NJ4(153/static31), finalseven currentheads pass/895",
+    "joint_all8": "EntireNJ1→NJ2→NJ3(2/static6)→NJ5(154/static37), finaleight currentheads pass/896;6mathholes remain",
     "FH122_current": "Currentf3c8 actual153PASS/static0/31,whole895,allinputhashesunchanged; only2ownerobjectschange",
     "joint_after_FH13": "Both final whole-overlay tails PASS; NJ4 branches fromNJ2, NJ5 fromNJ3, allsource/objectmaps checked"
   },
   "QA": "All current FE33/FH44/Nat48/Ladner49 computations and source-based dispositions complete; current full44=0new19gone4scores, all23 reviewed.",
-  "ready_gates": [],
-  "live_note": "All8 returns preserved and reviewed. Six scoped gates CLOSED;127 record-pointer minor fixed.121 remains HOLD and122 governance disposition pending. Existing-reader repairs active; no source merge or mathematical fill.",
+  "ready_gates": [
+    130
+  ],
+  "live_note": "Gates 129/130 dispatched and awaiting findings. Gate 131 published and prompt issued; no user dispatch or source merge.",
   "passed_replay_receipt": "joint-chain/RECEIPT.json",
   "worktree_aliases": {
     "wt-camp": "/Users/seyoonr/.codex/worktrees/ab34-campaign-current/tcslib-arora-barak-ch3-4",
@@ -135,8 +137,8 @@
     "wt-night-all8": "/Users/seyoonr/.codex/worktrees/ab34-overnight-all8/tcslib-arora-barak-ch3-4"
   },
   "live_sessions": {
-    "Lean_jobs": "Grouped reader335 replay and two private reader/proposal check fronts under local3/machine5 locks",
-    "copy_screen_jobs": "Final current129 HEAD50 rerun under single global screen lock"
+    "Lean_jobs": "nseam2/403; final129 pack preparation",
+    "copy_screen_jobs": "129 and130 completed;131 pending"
   },
   "issued_prompts": [
     121,
@@ -146,7 +148,8 @@
     125,
     126,
     127,
-    128
+    128,
+    130
   ],
   "external_dispatch_confirmed": [
     121,
@@ -156,7 +159,9 @@
     125,
     126,
     127,
-    128
+    128,
+    129,
+    130
   ],
   "gate123_note": "Final replacement373/SHA057363 published at563eb; original359 promptVOID; priorunissued607f superseded.",
   "pending_current_prompt_issue": [],
@@ -168,7 +173,10 @@
     125,
     126,
     127,
-    128
+    128,
+    129,
+    130,
+    131
   ],
   "historical_void_prompt": {
     "gate": 123,
@@ -191,7 +199,8 @@
     125,
     126,
     127,
-    128
+    128,
+    130
   ],
   "statement_gate": {
     "gate": 128,
@@ -211,7 +220,9 @@
     125,
     126,
     127,
-    128
+    128,
+    129,
+    130
   ],
   "audit_review_in_progress": [
     121,
@@ -223,7 +234,8 @@
     125,
     126,
     127,
-    128
+    128,
+    130
   ],
   "clear_to_merge_prs": [
     243,
@@ -231,19 +243,26 @@
     245,
     246,
     247,
-    249
+    249,
+    252
   ],
   "approved_reader_prerequisite": {
     "gate": 129,
     "pr": 251,
-    "head": "0f926779de590194f5222277dc038d2ad097ff91",
+    "head": "2e2f415c9bbf654cd8a68bb02aa62ea291d91116",
     "auditor": "Codex",
-    "source_only_three_readers": true,
-    "replay": "Actual0201/394 PASS/static59 + actual final3 PASS/static0; strict compatibility certificate accepted by root, whole895 rehashed",
+    "source_only_three_readers": false,
+    "replay": "Actual394 + actual3 and actual2 provider refreshes; current exact compiled compatibility and client check",
     "clear_to_merge": false,
     "canonical_action_reader": "controlAction_def",
-    "proof_scopes": "3 new readers+6 old proof repairs",
-    "current_HEAD50_screen": "Interrupted attempt invalid; fresh complete rerun active"
+    "proof_scopes": "Three approved readers plus seven old proof repairs",
+    "current_HEAD50_screen": "Complete, 2335 vs 2338 reported pairs; all 11218 affected ordered pairs considered",
+    "ready_to_dispatch": false,
+    "publication": "campaign/gates/129-input-readers/publication.json",
+    "user_dispatch_confirmed": true,
+    "gate_closed": false,
+    "verdict": "HOLD: 3 majors, 2 minors, 8 notes",
+    "followup_auditor": "Codex"
   },
   "gate122_governance_major": "M1: exposed shared121 step reads plus seven held operational/type-boundary fronts remain unacknowledged; selected13 technicalPASS preserved",
   "gate121_comparator_repair": {
@@ -310,11 +329,16 @@
     "auditor": "Codex",
     "approved_API_count": 5,
     "consumer_patches_adopted": false,
-    "replay": "Actual335 running",
-    "clear_to_merge": false,
+    "replay": "Actual335PASS/static0/59 inherited/whole895",
+    "clear_to_merge": true,
     "producers": "Actual3 native/5metadata twice/6pairedcontrols PASS",
     "census": "Fresh587refs/391heads/1035chunks dispositioned",
-    "QA": "Source lints/freeze prepared; both53 screens queued behind129"
+    "QA": "Complete 53-file coverage, all 2424 reported pair scores unchanged; actual baseline and exact current reuse/affected tilings",
+    "ready_to_dispatch": false,
+    "publication": "campaign/gates/130-space-reader-prerequisites/publication.json",
+    "user_dispatch_confirmed": true,
+    "gate_closed": true,
+    "verdict": "PASS; one minor corrected in local helper and strict335 verification"
   },
   "gate121_CfgFacts_import": {
     "utc": "2026-11-08T20:42:36.309979+00:00",
@@ -330,5 +354,31 @@
     "no_final_integrated_replay_claim": true,
     "Fresh_Prepared_seam_fronts_open": true,
     "source_merged": false
+  },
+  "approved_seam_reader": {
+    "gate": 131,
+    "API": "Turing.seamCompTM_tr_inr",
+    "auditor": "Codex",
+    "source_PR_pending": false,
+    "source_merged": false,
+    "pr": 253,
+    "head": "1d88037a8b2a0cd1858245a979ced7dea4a7172c",
+    "home_move_approved": true,
+    "CfgFacts_approved_and_adopted": true,
+    "replay": "Actual403 pass plus actual final comment-only Seam refresh; whole895, clean current merge",
+    "QA": "56 files 0 new / 12 gone / 0 changed scores; final doc normalized rows exact",
+    "ready_to_dispatch": true,
+    "user_dispatch_confirmed": false,
+    "publication": "campaign/gates/131-seam-worktape-readers/publication.json"
+  },
+  "relocation_checkpoint": "campaign/status/2026-11-08-relocation-2154/RESUME.md",
+  "roadmap_status": "campaign/status/2026-11-08-roadmap-readiness/STATUS.md",
+  "roadmap_held_RD2": {
+    "direct_ConfigCodec_admissions": 21,
+    "already_held_since": "2026-10-14",
+    "not_dependencies_of_TQBF_complete": true,
+    "evidence": "campaign/status/2026-11-08-roadmap-readiness/RESULT.json",
+    "direct_FormulaKit_admissions": 20,
+    "checked_total_held_route": 41
   }
 }

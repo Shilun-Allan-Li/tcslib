@@ -1,0 +1,42 @@
+from pathlib import Path,PurePosixPath
+import json,hashlib,base64,gzip,tempfile,datetime,sys
+T=Path(__file__).parent;mapping=json.loads((T/'RECOVERY-MAP.json').read_text());assert mapping['format']=='ab34-streaming-raw-gzip-base64-v1'
+assert len(mapping['files'])==mapping['logical_raw_files']==3
+assert len({r['logical_path'] for r in mapping['files']})==3
+assert sum(r['bytes'] for r in mapping['files'])==mapping['logical_raw_bytes']
+assert {r['blob'] for r in mapping['files']}==set(mapping['blobs']) and len(mapping['blobs'])==mapping['unique_blobs']
+verified={}
+recovery=None
+if len(sys.argv)>1:
+ assert len(sys.argv)==3 and sys.argv[1]=='--recover';recovery=Path(sys.argv[2]);assert not recovery.exists();recovery.mkdir(parents=True)
+for key,b in mapping['blobs'].items():
+ rp=PurePosixPath(b['carrier']);assert not rp.is_absolute() and '..' not in rp.parts
+ source=T/b['carrier'];assert source.stat().st_size==b['base64_file_bytes'];enc_hash=hashlib.sha256();gz_hash=hashlib.sha256();gz_bytes=0
+ with tempfile.TemporaryFile() as compressed:
+  with source.open('rb') as f:
+   while True:
+    chunk=f.read(4*1024*1024)
+    if not chunk:break
+    enc_hash.update(chunk)
+    if b'\n' in chunk:
+     assert chunk.endswith(b'\n') and chunk.count(b'\n')==1 and f.read(1)==b'';chunk=chunk[:-1]
+    decoded=base64.b64decode(chunk,validate=True);gz_hash.update(decoded);gz_bytes+=len(decoded);compressed.write(decoded)
+  assert enc_hash.hexdigest()==b['base64_file_sha256'] and gz_hash.hexdigest()==b['gzip_sha256'] and gz_bytes==b['gzip_bytes']
+  compressed.seek(0);raw_hash=hashlib.sha256();raw_bytes=0
+  target_paths=[];outs=[]
+  if recovery is not None:
+   for row in mapping['files']:
+    if row['blob']!=key:continue
+    p=PurePosixPath(row['logical_path']);assert not p.is_absolute() and '..' not in p.parts and not str(p).endswith('.lean');dest=recovery/str(p);dest.parent.mkdir(parents=True,exist_ok=True);outs.append(dest.open('wb'));target_paths.append(str(dest))
+  try:
+   with gzip.GzipFile(fileobj=compressed,mode='rb') as decompressed:
+    for chunk in iter(lambda:decompressed.read(4*1024*1024),b''):
+     raw_hash.update(chunk);raw_bytes+=len(chunk);assert raw_bytes<=b['uncompressed_bytes']
+     for out in outs:out.write(chunk)
+  finally:
+   for out in outs:out.close()
+  assert raw_bytes==b['uncompressed_bytes'] and raw_hash.hexdigest()==b['uncompressed_sha256']==key
+ verified[key]={'bytes':raw_bytes,'sha256':raw_hash.hexdigest(),'complete_gzip_CRC_and_SHA256_verified':True,'recovered_paths':target_paths}
+for row in mapping['files']:
+ assert verified[row['blob']]['bytes']==row['bytes'] and verified[row['blob']]['sha256']==row['sha256']
+print(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'format':mapping['format'],'unique_blobs_verified':len(verified),'logical_raw_files_verified':len(mapping['files']),'logical_raw_bytes_verified':sum(r['bytes'] for r in mapping['files']),'all_base64_gzip_and_raw_byte_counts_SHA256_exact':True,'raw_logs_complete_without_truncation':True,'no_payload_execution':True,'memory_bounded_streaming':True,'unique_blob_results':verified,'recovery_directory':str(recovery) if recovery else None},indent=2))

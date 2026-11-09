@@ -1,0 +1,58 @@
+from pathlib import Path
+import json,hashlib,re,subprocess,datetime
+O=Path(__file__).parent;pin=json.loads((O/'PIN.json').read_text());W=Path(pin['current241_worktree']);P=Path(pin['provider251_worktree'])
+def read(p):return json.loads(p.read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def fsha(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for b in iter(lambda:f.read(4*1024*1024),b''):h.update(b)
+ return h.hexdigest()
+def write(n,d):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+def marked(label,attempt,marker):
+ s=(O/'probes'/label/attempt/'raw.out').read_text();return [json.loads(r.split('|',1)[1]) for r in s.splitlines() if r.startswith(marker+'|')]
+def result(label,attempt='attempt-01'):return read(O/'probes'/label/attempt/'result.json')
+B=read(O/'metadata-v2-BASE.json');C=read(O/'metadata-v2-CANDIDATE-first.json');C2=read(O/'metadata-v2-CANDIDATE-second.json');assert C==C2
+raw1=O/'probes/metadata-v2-CANDIDATE-first/attempt-01/raw.out';raw2=O/'probes/metadata-v2-CANDIDATE-second/attempt-01/raw.out';assert raw1.read_bytes()==raw2.read_bytes()
+keys=['name','owner','type_Expr','universes','axioms','simp','unfold','simp_unfold_thms'];assert all(B[k]==C[k] for k in keys);assert set(C['axioms'])=={'propext','Classical.choice','Quot.sound'};assert C['name']=='Turing.exists_inputLengthTM' and not C['simp'] and not C['unfold'] and C['simp_unfold_thms'] is None
+assert C['full_selected_proof_traversed_not_expanded_as_text'] and len(C['all_reached_constant_names'])==len(set(C['all_reached_constant_names']))
+defs=read(O/'ORDINARY-UNION11.json');assert len(defs)==11
+cb={d['name']:d for d in C['foreign_definitions'] if d['ordinary']};bb={d['name']:d for d in B['foreign_definitions'] if d['ordinary']};assert cb==bb=={d['name']:d for d in defs}
+guard=read(O/'GUARD-SCOPE.json');gsource=(O/'InputLength-full-selected-sealed.lean.txt').read_bytes();assert sha(gsource)==guard['guard_source_sha256'];target=read(O/'TARGET.json');source=(O/'source/CANDIDATE'/str(target['path']+'.txt')).read_text();current=(O/'source/BASE'/str(target['path']+'.txt')).read_text();start=source.index(target['CANDIDATE_full_literal_chunk']);end=start+len(target['CANDIDATE_full_literal_chunk']);assert gsource.decode().startswith(source[:start]);assert gsource.decode().count(target['CANDIDATE_full_literal_chunk'])==1;assert source[:start]==current[:current.index(target['BASE_full_literal_chunk'])];assert target['BASE_full_literal_chunk'].split(':= by',1)[0]==target['CANDIDATE_full_literal_chunk'].split(':= by',1)[0]
+graw=(O/'probes/guard-full11/attempt-01/raw.out').read_text();states=[json.loads(line.split('|',1)[1]) for line in graw.splitlines() if line.startswith('CURRENT_INPUTLENGTH_GUARD_OK|')];assert len(states)==1 and len(states[0])==11;assert [d['name'] for d in states[0]]==guard['heads'];assert all(d['irreducible'] and not d['definition_simp_unfold'] and d['unfold_thms'] in [None,[]] for d in states[0]);assert result('guard-full11')['exit']==0 and result('guard-full11')['errors']==0
+native=(O/'controls/Native.lean.txt').read_text();sealed=(O/'controls/Sealed.lean.txt').read_text();seal='attribute [local irreducible] '+' '.join(sorted(cb))+'\n';assert sealed.count(seal)==1 and sealed.replace(seal,'')==native
+ng=marked('controls-native22','attempt-02','CONTROL_GOAL');sg=marked('controls-sealed22','attempt-01','CONTROL_GOAL');assert len(ng)==len(sg)==22 and ng==sg and len({(d['name'],d['mode']) for d in ng})==22
+np=(O/'probes/controls-native22/attempt-02/raw.out').read_text();sp=(O/'probes/controls-sealed22/attempt-01/raw.out').read_text();positives=[x for x in np.splitlines() if x.startswith('CONTROL|')];negatives=[x for x in sp.splitlines() if x.startswith('CONTROL|')];assert len(positives)==len(negatives)==22;assert all('|PASS|kernelChecked=ConsumerControl_' in s for s in positives);assert all(s.endswith('|FAIL') for s in negatives);assert result('controls-native22','attempt-02')['exit']==0 and result('controls-native22','attempt-02')['errors']==0;assert result('controls-sealed22')['exit']==1 and result('controls-sealed22')['errors']==22 and sp.count('CONTROL_RFL|')==22
+nd=marked('controls-native22','attempt-02','CONTROL_DEFINITION');sd=marked('controls-sealed22','attempt-01','CONTROL_DEFINITION');assert len(nd)==len(sd)==11
+identities=[];owners=set()
+for name,d in cb.items():
+ keys=['name','type_Expr','value_Expr','universes'];n=next(r for r in nd if r['name']==name);s=next(r for r in sd if r['name']==name);assert {k:d[k] for k in keys}=={k:n[k] for k in keys}=={k:s[k] for k in keys}
+ identities.append({'name':name,'owner':d['owner'],'type_Expr':d['type_Expr'],'value_Expr':d['value_Expr'],'universes':d['universes'],'literal_BASE_CANDIDATE_positive_negative_identity':True});owners.add(d['owner'])
+for owner in owners:
+ rel=owner.replace('.','/')+'.lean';data=subprocess.check_output(['git','-C',str(P),'show',pin['provider251_head']+':'+rel]);assert data==(P/rel).read_bytes();dest=O/'foreign-source'/str(rel+'.txt');dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data)
+write('FOREIGN-DEFINITION-IDENTITIES11.json',identities)
+args=marked('explicit-arguments','attempt-01','EXPLICIT_ARGUMENT');assert len(args)==15 and all(d['kind']=='theorem' for d in args);expected=read(O/'EXPLICIT-ARGUMENT-SOURCE-REVIEW.json')['public_arguments_and_direct_equation_providers'];assert [d['requested'] for d in args]==expected
+owned=[]
+for suffix in ['.Turing.inputLengthMachine','.Turing.inputLengthCfg']:
+ matches=[d for d in C['own_definition_helpers'] if d['name'].endswith(suffix)];assert len(matches)==1 and matches[0]['owner']==C['owner'] and matches[0]['full_value_traversed'];owned.append({'name':matches[0]['name'],'owner':matches[0]['owner'],'full_value_traversed':True})
+write('EXPLICIT-ARGUMENT-VERIFICATION.json',{'actual_public_argument_rows':args,'all15_are_published_theorems':True,'owned_definition_arguments':owned,'foreign_definition_explicit_arguments':[],'Core_Mathlib_definition_explicit_arguments':[],'complete_selected_source_reviewed':True})
+receipts=[]
+for f in sorted((O/'probes').glob('*/attempt-*/result.json')):
+ r=read(f);request=read(f.with_name('request.json'));assert all(r[k]==v for k,v in request.items());assert fsha(f.with_name('source.lean.txt'))==r['source_sha256'];assert f.with_name('raw.out').stat().st_size==r['raw_bytes'] and fsha(f.with_name('raw.out'))==r['raw_sha256'];assert r['actual_nice10_observed'] and r['localcap']==3 and r['machinecap']==5 and r['one_own_Lean'] and r['sorry_warnings']==0
+ expected_failure=r['label']=='controls-sealed22' or r['label']=='controls-native22' and f.parent.name=='attempt-01';assert r['exit']==(1 if expected_failure else 0)
+ if r['label']=='controls-sealed22':disposition='expected22 sealed rfl failures, accepted negative evidence'
+ elif r['label']=='controls-native22' and f.parent.name=='attempt-01':disposition='unaccepted fixture attempt: stale out-of-scope NDTM.initCfg attribute; full source/raw retained, corrected by attempt02'
+ elif r['label'].startswith('metadata-') and not r['label'].startswith('metadata-v2-'):disposition='successful oververbose diagnostic observation; complete raw retained losslessly; canonical compact observer used for direct review'
+ else:disposition='accepted fresh current-context evidence'
+ receipts.append({'path':str(f.relative_to(O)),**r,'disposition':disposition,'source_raw_hashes_and_bytes_reverified':True})
+assert len(receipts)==11
+for row in read(O/'native/module-results.json'):
+ assert row['pass'] and row['exit']==row['errors']==row['sorry_warnings']==0 and all(s['nice']>=10 for s in row['observed_Lean_processes']);assert fsha(O/'native'/str(row['variant']+'.log'))==row['raw_sha256']
+source_bind=read(O/'CURRENT241-SOURCE1003.json');assert len(source_bind)==1003 and all(fsha(W/n)==d['sha256'] for n,d in source_bind.items());assert subprocess.check_output(['git','-C',str(W),'rev-parse','HEAD']).decode().strip()==pin['source_context241_head'];assert subprocess.check_output(['git','-C',str(P),'rev-parse','HEAD']).decode().strip()==pin['provider251_head']
+def objects(p):return {str(f.relative_to(p)):fsha(f) for f in sorted(p.rglob('*.olean'))}
+original=objects(Path(pin['whole_original_nread5']));base=objects(Path(pin['whole_BASE_snapshot']));candidate=objects(Path(pin['whole_CANDIDATE_snapshot']));assert len(original)==len(base)==len(candidate)==895;assert original==read(O/'INPUT895-actual-nread5-before.json');assert base==read(O/'native/OUTPUT895-BASE.json') and candidate==read(O/'native/OUTPUT895-CANDIDATE.json')
+write('INPUT895-actual-nread5-after.json',original);write('BASE895-after-probes.json',base);write('CANDIDATE895-after-probes.json',candidate)
+raw_verification=read(O/'raw-recovery/VERIFICATION.json');assert raw_verification['all_base64_gzip_and_raw_byte_counts_SHA256_exact'] and raw_verification['logical_raw_bytes_verified']==2715439424 and raw_verification['logical_raw_files_verified']==3
+write('ALL-ACTUAL-RUNS.json',receipts)
+write('CHECKS.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'private_prospective_consumer_only':True,'source_context241_head':pin['source_context241_head'],'provider251_head':pin['provider251_head'],'current241_tracked_Lean_sources_Git_bound_and_unchanged':1003,'consumer_import_closure_modules':24,'current241_predecessors_needed':[],'actual_full_owner_native_compilations':2,'selected_complete_type_Expr_universes_name_owner_exact_BASE_CANDIDATE':True,'AXIOMS_exact_standard_triple':['propext','Quot.sound','Classical.choice'],'selected_non_simp_and_non_unfold':True,'canonical_fresh_metadata_BASE_bytes':result('metadata-v2-BASE')['raw_bytes'],'canonical_fresh_metadata_CANDIDATE_bytes_each':result('metadata-v2-CANDIDATE-first')['raw_bytes'],'candidate_fresh_two_raw_outputs_byte_exact':True,'ordinary_foreign_heads':list(cb),'ordinary_head_count':11,'full_selected_proof_and_own_helper_values_traversed':True,'reached_constant_inventory_count_BASE':len(B['all_reached_constant_names']),'reached_constant_inventory_count_CANDIDATE':len(C['all_reached_constant_names']),'own_helper_count_CANDIDATE':len(C['own_definition_helpers']),'other_theorem_type_boundaries_CANDIDATE':len(C['other_theorems_stopped_at_type']),'selected_generated_proof_helpers_CANDIDATE':len(C['selected_generated_proofs_traversed']),'full_current11_head_guard_pass':True,'guard_has_zero_errors_sorry_and1_ordinary_linter_warning':result('guard-full11')['warnings']==1,'effective_paired_control_identities':22,'native22_kernel_checked_and_zero_errors':True,'sealed22_expected_rfl_failures':True,'control_types_literal_exact_between_fixtures':True,'all11_definition_full_type_value_universe_identity_BASE_CANDIDATE_controls':True,'all15_explicit_public_arguments_actual_theorems':True,'all895_nread5_BASE_CANDIDATE_physical_hash_maps_unchanged_after_all_jobs':True,'no_snapshot_composition':True,'no_whole241_snapshot_or_full_downstream_replay_claim':True,'no_source_adoption_API_import_header_definition_debt_mathfill_or_Git_records_exchange_status_decision':True,'no_copy_screen_started':True,'all_own_Lean_sequential_approved_helpers_nice10_observed_j4_local3_machine5':True,'verbose_raw_recovery':raw_verification,'unexpected_control_fixture_attempt_retained_and_excluded_from_positive_count':True,'preparation_directory_attempt_retained':True,'no_received_script_executed':True})
+print('CURRENT_INPUTLENGTH_PRIVATE_ALL_EVIDENCE_AND_FINAL_HASH_CHECKS_PASS',flush=True)

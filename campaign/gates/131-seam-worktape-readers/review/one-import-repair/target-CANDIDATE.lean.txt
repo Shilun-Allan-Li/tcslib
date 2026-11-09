@@ -1,0 +1,22 @@
+/-- Right steps commute with state mapping, even after a source halt. -/
+private lemma seamComp_step_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (c : Cfg k Symbol S₂ x) :
+    (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inr) =
+      (M₂.step c).mapState Sum.inr := by
+  have hin : (c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).inputSymbol = c.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hwork : (c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).workTapeSymbols = c.workTapeSymbols := by
+    funext i
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+  cases hs : c.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt (cfg := c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂))
+        (by rw [Cfg.mapState_state, hs, Option.map_none]),
+      MultiTapeTM.step_of_halt hs]
+  | some q =>
+    rw [MultiTapeTM.step_of_some (cfg := c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂))
+        (q := Sum.inr q) (by rw [Cfg.mapState_state, hs, Option.map_some]),
+      MultiTapeTM.step_of_some hs, hin, hwork, seamCompTM_tr_inr]
+    exact Cfg.mapState_apply Sum.inr _ c

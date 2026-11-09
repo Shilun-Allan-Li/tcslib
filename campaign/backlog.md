@@ -2741,6 +2741,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   regenerated if they go ahead. The user's four answers on them (2026-10-14, all as
   recommended): integrate partials; delete the two unusable KEEP rows as a disclosed deviation;
   `Mathlib.Data.List.MinMax` in `Gate.lean`; `CfgRecord`'s docstring is the maintainer's.
+  **Checked 2026-11-08 on MAC8:** all 21 direct admitted declarations in the
+  144-module chapter-native scope are in `Complexity.ConfigCodec`. TQBF
+  membership, hardness and completeness have standard axiom closures and
+  do not depend on them. See
+  `campaign/status/2026-11-08-roadmap-readiness/STATUS.md` and its exact Lean
+  outputs. RD-2a/b remain held; no fill or scope ruling inferred.
+
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating

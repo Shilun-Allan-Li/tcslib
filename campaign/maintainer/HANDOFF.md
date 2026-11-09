@@ -7,44 +7,40 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-08T21:00:10.525308+00:00; authoritative)
+## 0. Current state (2026-11-09T05:18:50.670574+00:00; authoritative)
 
-Seyoon alone merges source PRs, dispatches external audits/fills and rules on design/debt. Root builds, reviews and publishes; records go direct after fetch/rebase, all Lean edits by PR. All eight morning audit reports are received verbatim and reviewed. Gates123/124/125/126/127/128 are CLOSED: #243/#244/#245/#246/#247/#249 are **Clear to merge**, still unmerged. Gate121/#241 and gate122/#242 remain **Not yet clear to merge**; selected13 gate122 PASS is preserved separately from root governance majorM1. No mathematical fill is self-dispatched; Ladner retains six direct mathematical holes.
+Seyoon alone dispatches, rules on design/debt and merges source PRs. Records
+only go directly, after fetch/rebase. #252 merged at `6e43b7a237481d0d03ff3ef47116918e1e835559`; the campaign
+uses whole `oleans-nspace5` (1,003 tracked Lean paths, 895 objects) from its
+actual335 PASS, verified in campaign/status/2026-11-08-space-reader-merge/.
+MAC8 is the earlier pre-#252 snapshot. Never compose these snapshots.
 
-Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` /wholeMAC8:1003 tracked Lean blobs/895 objects. Later campaign commits are records only. Source#215/#222/#223/#228/#229/#230/#233/#234/#235 is merged. Complete prior dispatch/return/disposition/current replay records remain in `campaign/status/2026-11-08-overnight/` and each gate. Current six-clear validity is `current-replay-validity/RESULT.json`; prospective NJ1→NJ2→NJ4 and all-eight NJ1→NJ2→NJ3→NJ5 are historical whole-overlay validations, never silently adopted as the campaign.
+| PR / gate | Current state |
+|---|---|
+| #251 / 129 | **Not yet clear to merge.** First return HOLD. Mechanical repairs on the draft branch; final guards and full current-base replay before Codex follow-up. |
+| #252 / 130 | **Merged.** Gate closed before merge, snapshot adopted as above. |
+| #253 / 131 | **Not yet clear to merge.** Seyoon dispatched the pinned Codex audit. Older replay validity checked after #252. Waiting for findings. |
+| #241 / 121 | **Not yet clear to merge.** InputLength/Seam providers and integrated replay/follow-up remain. |
+| #242 / 122 | **Not yet clear to merge.** Selected13 external PASS preserved. #252 unlocks the four prepared consumer repairs. Shared 121 reads and three separate held roots remain. |
+| #254 | **Clear to merge** as tooling only. No Lean change or Lean gate. |
 
-### Active source and checks
+Gates123–128 remain closed. #243–#247 and #249 have clean prospective
+trees after #252 but need refreshed replay evidence, because their owners
+reach the changed modules. #249 is the Ladner statement scaffold with six
+approved holes; the current small replay is running. Never merge source here.
 
-| PR | Gate | Current pushed source | State |
-|---|---:|---|---|
-|#241|121|`9936345ae64a4380bbec3ac6f3dad192f927420a`|Original9 +comparator +9stationary +EXP +Prepare=21 changed roots; one explicit approvedCfgFacts import. All formal headers/definitions exact. Fresh/Prepared seam proposal and InputLength prerequisites/final integrated replay/followup pending. **Not yet clear to merge** |
-|#242|122|`f3c8c050ef98375bc237c72bde74f83d33833374`|Selected13 externalPASS; separate rootM1 for overlapping121 reads/seven held operational/type-boundary fronts remains. Four held consumers have complete private reader repairs; source not adopted. **Not yet clear to merge** |
-|#251|129|`0f926779de590194f5222277dc038d2ad097ff91`|Three approved readers plus6 old proof repairs. Actual0201/394PASS/static59 and separate final3PASS/static0; root accepted strict compiled compatibility certificate and rehashed895 final objects. Final50-file screen rerunning after verified interrupted attempt; Codex pack not issued. **Not yet clear to merge** |
-|#252|130|`04b0b07d4ea836f52cb645f480b67cdc9e99ea59`|Five approved non-simp reader prerequisites in3 owners; actual335-module replay running. Fresh producer checks/census/QA pending. Consumer patches separate. Codex selected; no prompt issued. **Not yet clear to merge** |
+The audited roadmap snapshot records 26/26 earlier headlines and 19 other
+results without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6 are
+proved and merged. Ladner remains the main open theorem; no fill is dispatched.
+RD-2/H6 remains held (41 known direct admissions across the recorded scopes,
+independent of the merged TQBF proof). See campaign/status/2026-11-08-roadmap-readiness/.
 
-Six cleared PR heads are unchanged: #243 `7c4b1a3e15b800cc4a98624f71a3b27458a41340`; #244 `cfa6a3ee327b03e601b25fd5f0535e85fd18f897`; #245 `b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`; #246 `48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`; #247 `e16049ad20823b3e6abba171e328489746062080`; #249 `1096e50b4e105392737ec52939b1db0cdbd9316d`. Seyoon may merge these; rebind actual merged source before later validity/adoption claims.
-
-### Latest explicit rulings and scope
-
-Seyoon approved InputLength's3 equations and then exact shared-name reuse `FinTM.controlAction_def` from Pass–Shelat#248 (no alias). Gate129 new facts are that equation, `inputMoveAction_eq` and `inputFoldTM_tr_bwd`; imports/definitions/old statements stay exact. Six exposed old proof repairs use existing readers; four closures gain existing standard Classical.choice dependencies, no new axiom/admission or AX-equality claim. Source#251 is not a full InputLength consumer landing. Actual394 execution stays bound to0201; no final-source394 execution is relabelled. The strict whole-type/material/attribute/client-proof compatibility certificate and exact recovery of all1127 raw files are in gate129/review/compiled-compatibility/; complete failed attempts retained. The interrupted final50 screen is invalid, a fresh run is active.
-
-Seyoon explicitly approved `MultiTapeTM.ConfigCount.core_eq`, NDClockHost `ClockHost.bootCfg_of_halt`/`runCfg_initCfg` and Sweep `sweepRevCfg_state`/`sweepRevCfg_output`, grouped into gate130. Five API-only additions are now in#252. The complete historical hypothetical consumers remain private evidence, not current-source claims: MARMTime5heads/10pairedidentities, Startup12heads/26pairs, SingleTape8/11heads/24pairs. Proposal packets and exact rulings are under campaign/items/dedup/. Fresh actual-source producer checks and335 replay are running.
-
-Seyoon approved only `import TCSlib.Complexity.TuringMachine.CfgFacts` in Hardness for Prepare/comparator. Applied in#241 after the stationary/EXP repairs;21 changed roots total. The exact154-payload hypothesis is preserved; final integrated validation still required. Fresh/Prepared seam boundary remains open. A private minimal Seam reader proposal is being validated; no unapproved API/import/header/definition is adopted.
-
-### Decisions still pending
-
-- SAT PolyTimeBlockLoop import for head/tail leaves (separate from approved Hardness imports).
-- Public `SAT_exists_linear_verifier` sharpn+1 reader (blocks the fill route, not the already audited Ladner skeleton).
-- RO1 generic `runFrom_one` home revision CfgFacts→Deterministic; preserve intentionally dirty old candidate. Existing all-sites scope approval does not settle the new home/import.
-
-### Next actions and preservation
-
-Finish gate129 current50 screen and per-pair dispositions, root package integrity/current clean merged source checks, then stage and publish a lossless sub100MB Codex bundle and full prompt. Independently finish#252's actual335 replay, fresh producer metadata/guards and current-ref census, then its own QA/pack. Do not call either source clear before external closure. Continue#241's bounded mechanical repair front and pause new design fronts until Seyoon rules. No new mathematical fill follows from an audit PASS.
-
-R=/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4; scratch remains the original tcslib-scratch. Source worktrees use package symlinks; S/wt-hk→R, wt-input-readers→ab34-input-readers, wt-space-readers→ab34-space-readers. Local3/machine5 Lean cap, nice10/j4, only leanelab/leanelab-o; one global screen lock. Use whole APFS snapshot clones and unlink own outputs before compile. Exchange is shared: only AB subtree mutations, pull --rebase before every push, no force/cleanup/stash of unrelated work. Preserve R's preexisting118 static data and untracked shared inbox originals. MAIN's untracked3sumapsp_example.lean stays SHA256 `14eb21e97204139a6ca3080245a40547002de3e9e870b8d35d0f5ef60c016a84`.
-
-Earlier full§0, including immutable dispatch pins and historical chain details, is preserved in `campaign/maintainer/history/2026-11-08-before-grouped-readers-section0.md`. The current queue is campaign/status/2026-11-08-overnight/queue.json. Next free gate131.
+Pending design decisions: SAT PolyTimeBlockLoop import, sharp SAT verifier
+interface and RO1 home; preserve the intentionally dirty RO1 worktree. Keep
+the approved Hardness CfgFacts import separate. The next free gate is 132.
+Whole clones, approved wrappers only, local3/machine5 slots, one copy screen.
+Keep the original 3sumapsp_example.lean and shared inbox files intact. Do not
+discard partial/invalid snapshots without a separate check and record.
 
 ## 1. Starting a session on a new machine
 

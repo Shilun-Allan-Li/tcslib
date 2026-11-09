@@ -155,6 +155,18 @@ def sweepRevCfg {A S : Type} {x : List A} (q : Option S)
     Cfg 1 A S x :=
   ⟨q, p, fun _ w => sweepTape (-z) l r (-w), fun _ => z, out⟩
 
+/-- The reverse-sweep configuration has the supplied control state. -/
+theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).state = q := by
+  rfl
+
+/-- The reverse-sweep configuration has the supplied output word. -/
+theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).output = out := by
+  rfl
+
 /-- Reflection converts the forward zipper identity into a left-moving step. -/
 lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
     (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
