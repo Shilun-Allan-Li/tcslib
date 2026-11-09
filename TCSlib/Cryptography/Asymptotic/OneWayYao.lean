@@ -686,7 +686,9 @@ theorem ans_layout :
     congr 2
     funext i
     rw [hFe]
-    rfl
+    simpa only [prodFun_apply] using
+      congrArg (fun x => List.ofFn (f x))
+        (funext fun j => (blocksE_apply (D.m.eval n) (D.inLen.eval n) b i j).symm)
   have huOut : uOut D w = List.replicate (D.outLen.eval n) true := by simp [uOut, hu]
   have hoff : off D w = List.replicate ((posOf hM (nkk_le n _ hM) a).val * D.outLen.eval n) true := by
     simp [off, hipos, huOut]

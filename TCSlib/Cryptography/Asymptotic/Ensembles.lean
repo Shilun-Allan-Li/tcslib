@@ -225,11 +225,15 @@ def copies (t : PolyExpr) (X : Ensemble ℓ) : Ensemble (.mul t ℓ) where
   X n s := (blocks (t.eval n) (ℓ.eval n)).symm (TCSlib.Cryptography.copies (t.eval n) (X.X n) s)
 
 /-- Unfolding of `copies`: bit `i` of the concatenation is bit `i mod ℓ` of copy `i / ℓ`
-(through `finProdFinEquiv`). -/
+(through `finProdFinEquiv`).
+
+**Proof sketch.** Expand the copied ensemble's sample field and apply the inverse block
+and copy family equations. -/
 theorem copies_X (t : PolyExpr) (X : Ensemble ℓ) (n : ℕ) (s : Fin (t.eval n) → X.σ n)
     (i : Fin (t.eval n * ℓ.eval n)) :
-    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 :=
-  rfl
+    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 := by
+  simp only [copies, blocks_eq, FunFamily.blocks_symm_apply, TCSlib.Cryptography.copies_def,
+    finProdFinEquiv_symm_apply]
 
 /-- The uniform ensemble is efficiently samplable: `s := ℓ` and the sampler returns its coins
 (`pairSndD` of `⟨1^n, r⟩`). Non-vacuity of `Samplable` (the case `U_n` of D6). -/
