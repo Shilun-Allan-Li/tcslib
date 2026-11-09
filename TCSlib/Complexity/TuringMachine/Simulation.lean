@@ -155,6 +155,38 @@ lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}
     simp [he]
 
 
+/-- A word stored contiguously from cell zero, blank at every other integer cell. -/
+def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
+  if 0 ≤ z then w[z.toNat]? else none
+
+/-- An empty buffer is blank everywhere. -/
+@[simp] lemma bufferTape_nil {Symbol : Type*} : bufferTape (Symbol := Symbol) [] = fun _ => none := by
+  funext z
+  simp [bufferTape]
+
+/-- The buffer cell at any nonnegative natural position reads the corresponding
+optional word entry, so position `w.length` is the right blank. -/
+@[simp] lemma bufferTape_nat {Symbol : Type*} (w : List Symbol) (i : ℕ) :
+    bufferTape w i = w[i]? := by simp [bufferTape]
+
+/-- Cell minus one is the left blank, including for an empty word. -/
+@[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
+  simp [bufferTape]
+
+/-- Buffer reads at virtual position minus one equal native input reads. -/
+lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
+    (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : ℤ) - 1) = c.inputSymbol := by
+  by_cases h0 : c.inputPos = 0
+  · simp [Cfg.inputSymbol_of_zero h0, h0]
+  · have hp : 0 < c.inputPos.val := by
+      have : c.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
+      omega
+    have he : (c.inputPos.val : ℤ) - 1 = ((c.inputPos.val - 1 : ℕ) : ℤ) := by omega
+    rw [he, bufferTape_nat]
+    have h := inputSymbol_at c (c.inputPos.val - 1)
+      (by have := c.inputPos.isLt; omega) (by omega)
+    exact h.symm
+
 /-- Extend an action to the left block of a disjoint tape sum and rename states. -/
 def leftAction {k : ℕ} {S S' : Type} (l : ℕ) (f : S → S')
     (a : Action k Bool S) : Action (k + l) Bool S' where
@@ -228,7 +260,10 @@ lemma rightCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
       simp [rightAction, rightCfg, Action.apply]
 
 /-- A machine whose renamed transitions use only the left block simulates one
-step exactly, including the absorbing halting configuration. -/
+step exactly, including the absorbing halting configuration.
+
+**Proof sketch.** The input read is determined by the unchanged head position.
+The left projection recovers the original work reads, so the action correspondence applies. -/
 lemma leftCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
     (htr : ∀ q inp work, tm'.tr (f q) inp work =
@@ -246,12 +281,17 @@ lemma leftCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
         c.workTapeSymbols := by
       funext i
       simp [Cfg.workTapeSymbols_eq, leftCfg]
-    change (leftAction l f (tm.tr q c.inputSymbol _)).apply _ = _
-    rw [hr]
+    have hi : (leftCfg f c tapes heads).inputSymbol = c.inputSymbol := by
+      rw [← bufferTape_inputSymbol (leftCfg f c tapes heads), ← bufferTape_inputSymbol c,
+        leftCfg_inputPos]
+    rw [hr, hi]
     exact leftCfg_apply f _ c tapes heads
 
 /-- The right-block version of the one-step correspondence; inactive tapes may
-contain arbitrary data from an earlier phase. -/
+contain arbitrary data from an earlier phase.
+
+**Proof sketch.** Recover the source input read from the shared head position
+and the original work reads from the right tape block. Apply the right action correspondence. -/
 lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
     (tm : MultiTapeTM l Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
     (htr : ∀ q inp work, tm'.tr (f q) inp work =
@@ -269,8 +309,10 @@ lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
         c.workTapeSymbols := by
       funext i
       simp [Cfg.workTapeSymbols_eq, rightCfg]
-    change (rightAction k f (tm.tr q c.inputSymbol _)).apply _ = _
-    rw [hr]
+    have hi : (rightCfg f c tapes heads).inputSymbol = c.inputSymbol := by
+      rw [← bufferTape_inputSymbol (rightCfg f c tapes heads), ← bufferTape_inputSymbol c,
+        rightCfg_inputPos]
+    rw [hr, hi]
     exact rightCfg_apply f _ c tapes heads
 
 /-- Lift the left-block one-step correspondence to every finite run. -/
@@ -511,8 +553,8 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
       intro cfg hs hj _
       have hz : cfg.inputPos = 0 := Fin.ext hj
       have hsym := Cfg.inputSymbol_of_zero hz
-      change tm.step cfg = _
-      rw [MultiTapeTM.step_of_some hs, htr, hsym]
+      rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+        MultiTapeTM.step_of_some hs, htr, hsym]
       rw [controlAction_apply]
       have hm : moveInputPos cfg.inputPos .pos = 1 := by
         apply Fin.ext
@@ -669,24 +711,6 @@ def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)
     (c : Fin l → α) (i : Fin l) :
     tapeBlocks a b c (Fin.natAdd k (Fin.natAdd 1 i)) = c i := by simp [tapeBlocks]
 
-/-- A word stored contiguously from cell zero, blank at every other integer cell. -/
-def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
-  if 0 ≤ z then w[z.toNat]? else none
-
-/-- An empty buffer is blank everywhere. -/
-@[simp] lemma bufferTape_nil {Symbol : Type*} : bufferTape (Symbol := Symbol) [] = fun _ => none := by
-  funext z
-  simp [bufferTape]
-
-/-- The buffer cell at any nonnegative natural position reads the corresponding
-optional word entry, so position `w.length` is the right blank. -/
-@[simp] lemma bufferTape_nat {Symbol : Type*} (w : List Symbol) (i : ℕ) :
-    bufferTape w i = w[i]? := by simp [bufferTape]
-
-/-- Cell minus one is the left blank, including for an empty word. -/
-@[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
-  simp [bufferTape]
-
 /-- **The buffer, unfolded** (the ND inventory API, round 2; G2's consumer): cell `z` reads
 `w[z.toNat]?` when `0 ≤ z`, and is blank otherwise. -/
 theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :
@@ -745,20 +769,6 @@ def virtualNextTag (b : Bool) (m : SignType) : Bool :=
   | .zero => b
   | .pos => true
 
-/-- Buffer reads at virtual position minus one equal native input reads. -/
-lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
-    (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : ℤ) - 1) = c.inputSymbol := by
-  by_cases h0 : c.inputPos = 0
-  · simp [Cfg.inputSymbol_of_zero h0, h0]
-  · have hp : 0 < c.inputPos.val := by
-      have : c.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
-      omega
-    have he : (c.inputPos.val : ℤ) - 1 = ((c.inputPos.val - 1 : ℕ) : ℤ) := by omega
-    rw [he, bufferTape_nat]
-    have h := inputSymbol_at c (c.inputPos.val - 1)
-      (by have := c.inputPos.isLt; omega) (by omega)
-    exact h.symm
-
 /-- The virtual movement and arrival tag exactly implement native clamping.
 
 **Proof sketch.** Split into left boundary, right boundary, and interior. The
@@ -776,10 +786,15 @@ lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}
   · have he : c.inputPos = 0 := Fin.ext h0
     have hbf := hb.1 h0
     subst b
-    cases m <;>
-      simp [virtualMove, virtualNextTag, Cfg.inputSymbol_of_zero he, he, VirtualTag,
-        moveInputPos, SignType.zero_eq_zero, SignType.neg_eq_neg_one,
-        SignType.pos_eq_one]
+    have hs := Cfg.inputSymbol_of_zero he
+    cases m with
+    | zero =>
+      simp [virtualMove, virtualNextTag, hs, he, VirtualTag, SignType.zero_eq_zero]
+    | neg =>
+      simp [virtualMove, virtualNextTag, hs, he, VirtualTag, SignType.neg_eq_neg_one]
+    | pos =>
+      rw [he, moveInputPos_pos_of_ne_right _ (by simp)]
+      simp [virtualMove, virtualNextTag, hs, he, VirtualTag, SignType.pos_eq_one]
   · have hne : c.inputPos ≠ 0 := fun h => h0 (congrArg Fin.val h)
     by_cases hr : c.inputPos.val = w.length + 1
     · have hbt := hb.2 hr
@@ -894,7 +909,9 @@ lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
         (Fin.castAdd (1 + M₂.k) i)) = c.workTapeSymbols := by
       funext i
       simp [bufferedFirstCfg, Cfg.workTapeSymbols_eq]
-    have hi : (bufferedFirstCfg M₁ M₂ c).inputSymbol = c.inputSymbol := rfl
+    have hi : (bufferedFirstCfg M₁ M₂ c).inputSymbol = c.inputSymbol := by
+      rw [← bufferTape_inputSymbol (bufferedFirstCfg M₁ M₂ c), ← bufferTape_inputSymbol c]
+      rfl
     rw [hr, hi]
     let a := M₁.tm.tr q c.inputSymbol c.workTapeSymbols
     change (⟨a.inputTape, tapeBlocks a.workTapes
