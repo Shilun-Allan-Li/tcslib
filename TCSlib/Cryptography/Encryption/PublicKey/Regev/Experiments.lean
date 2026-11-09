@@ -28,9 +28,7 @@ set_option autoImplicit false
 The real-to-uniform-key advantage equals one DLWE advantage. The uniform-key
 view is within the leftover-hash error of a fully independent uniform view.
 Two fixed bits' real views differ by at most two DLWE advantages plus twice
-that extraction error. The first hybrid, augmented-key identities and doubled
-error budget are proved below. The statistical hybrid and final bound remain
-admitted.
+that extraction error.
 
 ## References
 
@@ -238,10 +236,11 @@ theorem extractionError_eq (P : Parameters) :
 /-- The uniform-key encryption view is within `extractionError P` of a fully uniform,
 independent public-key/ciphertext pair [Pei16, Section 5.2.1].
 
-**Proof sketch.** Relabel the public key by `augmented_bijective` and the ciphertext
-by finite-vector snoc. Read `encrypt_augmented` and apply the strong leftover-hash
-advantage bound to the original distinguisher with message translation composed in.
-Translation is bijective and hence leaves the comparison ciphertext uniform. -/
+**Proof sketch.** Relabel the key seed by augmentation. Translate the hash output
+by the message codepoint and invert finite-vector snoc to recover the ciphertext.
+The ciphertext identity gives the same real acceptance probability after this
+relabeling. The same output bijection preserves uniformity of the ideal pair.
+Apply the strong leftover-hash advantage bound to the resulting test. -/
 theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     (P : Parameters) (μ : Bool)
     (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
@@ -252,7 +251,45 @@ theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
         (Fin P.samples → ZMod P.modulus)) ×
         ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → _) D ≤
       extractionError P := by
-  sorry
+  let Key := Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+    (Fin P.samples → ZMod P.modulus)
+  let AugKey := Matrix (Fin (P.dimension + 1)) (Fin P.samples) (ZMod P.modulus)
+  let Ciphertext := (Fin P.dimension → ZMod P.modulus) × ZMod P.modulus
+  let Output := Fin (P.dimension + 1) → ZMod P.modulus
+  let Input := Fin P.samples → Bool
+  let keyEquiv : Key ≃ AugKey := Equiv.ofBijective (augmented P) (augmented_bijective P)
+  let cipherEquiv : Ciphertext ≃ Output :=
+    (Equiv.prodComm _ _).trans (Fin.snocEquiv (fun _ => ZMod P.modulus))
+  let shift : Output :=
+    Fin.snoc (0 : Fin P.dimension → ZMod P.modulus) (LWE.BitEncoding.codepoint P μ)
+  let unpack : AugKey × Output ≃ Key × Ciphertext :=
+    keyEquiv.symm.prodCongr ((Equiv.addRight shift).trans cipherEquiv.symm)
+  let keySeeds : Key × Input ≃ AugKey × Input := keyEquiv.prodCongr (Equiv.refl Input)
+  let sampleHash (r : AugKey × Input) : AugKey × Output :=
+    (r.1, Hashing.SIS.hash (hashParameters P) r.1 r.2)
+  let test (v : AugKey × Output) (coins : ρ) : Bool := D (unpack v) coins
+  have hsampler : uniformKeyView P μ = fun r => unpack (sampleHash (keySeeds r)) := by
+    funext r
+    rw [uniformKeyView_eq, view_eq]
+    have hcipher : cipherEquiv (encrypt P r.1 μ r.2) =
+        (sampleHash (keySeeds r)).2 + shift :=
+      encrypt_augmented P r.1 μ r.2
+    change (r.1, encrypt P r.1 μ r.2) =
+      (keyEquiv.symm (keyEquiv r.1),
+        cipherEquiv.symm ((sampleHash (keySeeds r)).2 + shift))
+    rw [Equiv.symm_apply_apply, ← hcipher, Equiv.symm_apply_apply]
+  have hreal : acceptProb (uniformKeyView P μ) D = acceptProb sampleHash test := by
+    rw [hsampler]
+    simpa only [acceptProb_def] using
+      acceptProb_comp_equiv keySeeds (fun r => unpack (sampleHash r)) D
+  have hideal : acceptProb (id : Key × Ciphertext → Key × Ciphertext) D =
+      acceptProb (id : AugKey × Output → AugKey × Output) test := by
+    simpa only [acceptProb_def, id_eq] using
+      (acceptProb_comp_equiv unpack (id : Key × Ciphertext → Key × Ciphertext) D).symm
+  have hbound := Hashing.SIS.distAdv_hash_uniform_le (hashParameters P) test
+  rw [distAdv_def] at hbound ⊢
+  rw [hreal, hideal, extractionError_eq]
+  simpa only [hashParameters_modulus, hashParameters_dimension, hashParameters_columns] using hbound
 
 /-- Two fixed bits' real encryption views differ by at most two DLWE advantages
 plus twice the explicit leftover-hash error [Pei16, Section 5.2.1, quantitative form].
@@ -269,7 +306,25 @@ theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
       LWE.decisionAdvantage P χ (reduction P μ₀ D) +
       LWE.decisionAdvantage P χ (reduction P μ₁ D) + 2 * extractionError P := by
-  sorry
+  let View := (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+    (Fin P.samples → ZMod P.modulus)) × ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)
+  let ideal : View → View := id
+  have hkey₀ := real_uniformKey_advantage P χ μ₀ D
+  have hkey₁ := real_uniformKey_advantage P χ μ₁ D
+  have hstat₀ : distAdv (uniformKeyView P μ₀) ideal D ≤ extractionError P :=
+    uniformKey_uniform_advantage_le P μ₀ D
+  have hstat₁ : distAdv (uniformKeyView P μ₁) ideal D ≤ extractionError P :=
+    uniformKey_uniform_advantage_le P μ₁ D
+  have htriangle₀ := abs_sub_le (acceptProb (realView P χ μ₀) D)
+    (acceptProb (uniformKeyView P μ₀) D) (acceptProb (realView P χ μ₁) D)
+  have htriangle₁ := abs_sub_le (acceptProb (uniformKeyView P μ₀) D)
+    (acceptProb ideal D) (acceptProb (realView P χ μ₁) D)
+  have htriangle₂ := abs_sub_le (acceptProb ideal D)
+    (acceptProb (uniformKeyView P μ₁) D) (acceptProb (realView P χ μ₁) D)
+  rw [abs_sub_comm (acceptProb ideal D) (acceptProb (uniformKeyView P μ₁) D),
+    abs_sub_comm (acceptProb (uniformKeyView P μ₁) D) (acceptProb (realView P χ μ₁) D)] at htriangle₂
+  rw [distAdv_def] at hkey₀ hkey₁ hstat₀ hstat₁ ⊢
+  linarith only [hkey₀, hkey₁, hstat₀, hstat₁, htriangle₀, htriangle₁, htriangle₂]
 
 /-- A width bound and `2κ` sample slack make twice the extraction error at most
 `2^(-κ)` [Pei16, Section 5.2.1, explicit sufficient parameter budget].

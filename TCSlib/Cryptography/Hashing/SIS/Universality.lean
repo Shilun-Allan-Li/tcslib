@@ -31,9 +31,8 @@ bound with explicit dimension and sample parameters.
 
 No SIS or LWE hardness assumption is used here; the SIS norm field is irrelevant.
 The family is collision-universal, not pairwise independent: its zero input always
-hashes to zero. The uniform difference law and extraction error budget are proved
-below. The universality, entropy and strong extraction proofs await owner-side
-readings of `IsUniversal` and `HasMinEntropy`.
+hashes to zero. The proofs use the owner-side universality and min-entropy
+equivalences to apply the strong leftover-hash lemma.
 -/
 
 namespace TCSlib.Cryptography.Hashing.SIS
@@ -108,7 +107,24 @@ theorem hash_difference_probability (P : Parameters) (x y : Fin P.columns → Bo
 as zero difference, and convert the probability equation to the owner's collision
 count bound. No field structure, norm bound or hardness assumption is used. -/
 theorem isUniversal_hash (P : Parameters) : IsUniversal (hash P) := by
-  sorry
+  classical
+  refine (isUniversal_iff (hash P)).2 ?_
+  intro x y hxy
+  let Key := Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus)
+  have hprob : uprob (fun A : Key => hash P A x = hash P A y) =
+      1 / (P.modulus : ℝ) ^ P.dimension := by
+    simpa only [sub_eq_zero] using hash_difference_probability P x y hxy 0
+  rw [uprob_eq_card_filter] at hprob
+  have hkeys : (Fintype.card Key : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
+  have houtputs : (Fintype.card (Fin P.dimension → ZMod P.modulus) : ℝ) =
+      (P.modulus : ℝ) ^ P.dimension := by
+    simp only [Fintype.card_fun, Fintype.card_fin, ZMod.card, Nat.cast_pow]
+  rw [houtputs]
+  apply le_of_eq
+  calc
+    _ = (1 / (P.modulus : ℝ) ^ P.dimension) * Fintype.card Key :=
+      (div_eq_iff hkeys).mp hprob
+    _ = _ := by rw [one_div, mul_comm, ← div_eq_mul_inv]
 
 /-- The full uniform distribution on binary words of length `m` has min-entropy `m`
 [Vad12, Section 6.1, exact finite uniform specialization].
@@ -117,7 +133,10 @@ theorem isUniversal_hash (P : Parameters) : IsUniversal (hash P) := by
 equation and the finite function-space cardinality. This is `2^(-m)` over the reals. -/
 theorem uniform_bits_hasMinEntropy (m : ℕ) :
     FinDist.HasMinEntropy (FinDist.uniform (Fin m → Bool)) (m : ℝ) := by
-  sorry
+  refine (FinDist.hasMinEntropy_iff _ _).2 ?_
+  intro r
+  rw [FinDist.uniform_apply, Fintype.card_fun, Fintype.card_fin, Fintype.card_bool,
+    Nat.cast_pow, Nat.cast_ofNat, Real.rpow_neg (by norm_num), Real.rpow_natCast]
 
 /-- Publishing the uniform hash seed retains a statistical extraction error at most
 `sqrt(q^dimension / 2^columns)/2` [Pei16, Section 5.2.1; Vad12, Theorem 6.18].
@@ -131,14 +150,19 @@ theorem strong_leftover_hash (P : Parameters) :
         (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
           (Fin P.dimension → ZMod P.modulus))) ≤
       (1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns) := by
-  sorry
+  classical
+  simpa only [Fintype.card_fun, Fintype.card_fin, ZMod.card, Nat.cast_pow,
+    Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2), Real.rpow_natCast, div_eq_mul_inv]
+    using leftover_hash (isUniversal_hash P) (uniform_bits_hasMinEntropy P.columns)
 
 /-- Any independently randomized test of the seed-published hash has at most the
 strong leftover-hash distinguishing error [Pei16, Section 5.2.1].
 
-**Proof sketch.** Identify the uniform product seed's pushforward with `hashPair`
-through its public probability equation, then apply `distAdv_le_statDist` and
-`strong_leftover_hash`. Distinguisher coins remain independent throughout. -/
+**Proof sketch.** For each target pair, the sampler fiber is the product of its
+singleton key and the matching subset words. Sum the uniform mass over this
+product to recover the public `hashPair` equation. The ideal sampler has a
+singleton fiber. Apply the advantage bound for independently randomized tests
+and the strong leftover-hash theorem. -/
 theorem distAdv_hash_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
     (P : Parameters)
     (D : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
@@ -148,7 +172,44 @@ theorem distAdv_hash_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
       (id : (Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ×
         (Fin P.dimension → ZMod P.modulus)) → _) D ≤
       (1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns) := by
-  sorry
+  classical
+  let Key := Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus)
+  let Input := Fin P.columns → Bool
+  let Output := Fin P.dimension → ZMod P.modulus
+  let View := Key × Output
+  let sampler (r : Key × Input) : View := (r.1, hash P r.1 r.2)
+  have hmap : (FinDist.uniform (Key × Input)).map sampler =
+      hashPair (hash P) (FinDist.uniform Input) := by
+    apply FinDist.ext
+    rintro ⟨A, y⟩
+    have hfilter : (Finset.univ.filter fun r : Key × Input => sampler r = (A, y)) =
+        ({A} : Finset Key) ×ˢ (Finset.univ.filter fun x : Input => hash P A x = y) := by
+      apply Finset.ext
+      intro r
+      rw [Finset.mem_filter, Finset.mem_product]
+      simp only [Finset.mem_univ, true_and, Finset.mem_singleton, Finset.mem_filter]
+      change (r.1, hash P r.1 r.2) = (A, y) ↔ _
+      rw [Prod.mk.injEq]
+      constructor
+      · rintro ⟨hA, hy⟩
+        exact ⟨hA, by simpa only [hA] using hy⟩
+      · rintro ⟨hA, hy⟩
+        exact ⟨hA, by simpa only [hA]⟩
+    rw [FinDist.map_apply, hashPair_apply, hfilter, Finset.sum_product, Finset.sum_singleton,
+      Finset.mul_sum]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    simp only [FinDist.uniform_apply, Fintype.card_prod, Nat.cast_mul, mul_inv_rev, mul_comm, Key]
+  have hideal : (FinDist.uniform View).map (id : View → View) = FinDist.uniform View := by
+    apply FinDist.ext
+    intro z
+    rw [FinDist.map_apply]
+    have hfilter : (Finset.univ.filter fun r : View => id r = z) = {z} := by
+      ext r
+      simp only [id_eq, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    rw [hfilter, Finset.sum_singleton]
+  have h := distAdv_le_statDist sampler (id : View → View) D
+  rw [hmap, hideal] at h
+  exact h.trans (strong_leftover_hash P)
 
 /-- A residue width and `2κ` entropy slack give an explicit exponentially small
 extraction error [Pei16, Section 5.2.1, quantitative repository refinement].
