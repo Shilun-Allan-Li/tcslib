@@ -25,8 +25,8 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 
 | Item | Identity |
 |---|---|
-| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters` |
-| Active draft PR branch | `cryptography/lwe-sis-adapter-statements` |
+| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic` |
+| Active draft PR branch | `cryptography/lwe-sis-dyadic-arithmetic` |
 | Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
@@ -101,6 +101,22 @@ unchanged. The separate adapter proof audit now passes 0/0/0/3 at exchange
 dispositions are preserved under `audits/`; no proof correction is required.
 Source-policy and integration remain open. The next owned statement slice is
 scalar dyadic arithmetic using the proved encoders and existing public machines.
+The new 18-declaration statement slice is checked at
+`dbacd91218c19f0df106d316ce4ff0e22b869e66`, with twelve explicit admissions,
+a fresh 94-module sweep and sixteen axiom-clean backing contracts. Its separate
+Encoding export is the only existing-file overlap. The returned statement gate
+passes 0/0/0/3 at exchange `1ac4e2e45df94d0b5f20259218d067843458c770`, with
+draft PR #239 targeting the central branch. Its twelve audited bodies may now
+be filled, keeping all definitions/signatures and issued inputs fixed.
+Those twelve bodies are now proved locally at
+`ec72ed773a690c17ac253707350935cc9e0acb34`: fresh 94-module sweep, zero owned
+admissions, all 302 owned constants and sixteen backing contracts only standard
+axioms. No new compiler auxiliary or import is added. The user freshly selected
+Codex for the separate proof audit. Its returned report now passes 0/0/0/3
+at exchange `083448cef9229dc95b96ef45686ce7f3768992ab`, with no proof repair.
+Source-policy work and user integration remain open. The user authorizes a larger
+combined overnight statement draft, leaving sorries for later fills and using
+Codex for all morning external audits; the user still dispatches those jobs.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -340,7 +356,7 @@ whole-library root elaboration or merge clearance. Each PR discloses this overla
 ## Verification and current execution limits
 
 Use only this branch's `.lake/packages/` and fresh
-`TCSLIB_OLEANS=<worktree>/.lake/adapter-final-2-oleans`. Do not use another chat's
+`TCSLIB_OLEANS=<worktree>/.lake/dyadic-final-oleans`. Do not use another chat's
 TCSlib scratch objects. The installed Lean 4.25.0 executable has been checked. Disk
 space exceeds 400 GiB. Process inspection via `ps` is denied by the execution sandbox.
 The user subsequently increased the coordination budget by two and authorized up to
@@ -418,3 +434,8 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | Filled all 14 audited adapter proofs at `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`; 20 declarations and trusted surface fixed, 100 other frozen paths unchanged. Fresh 93-module sweep (194.383 s), 284 owned constants and nine backing contracts only standard axioms, scoped style 0/2/19. One arithmetic compiler auxiliary disclosed; nine development runs retain two failures. | Separate proof-review preparation on existing PR #238; fresh worker choice/user dispatch, source-policy and landing obligations remain; no push or merge |
 | 2026-11-08 (UTC) | User freshly selects Codex for the separate adapter proof audit. The 1009-section bundle, filled source and bundled-record pins remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
 | 2026-11-08 (UTC) | User supplies the adapter proof report: PASS 0/0/0/3. Published PR #238 head `3350700f054ba07b31bcf23cab9f590afd998e28` and exchange `228c265d642013da76afa6cec976eaf11a8eb1b9` verified; rehashed all 101 sources and 146/199/174/106/86/82/9 nested evidence entries. All 14 proofs close their scoped gate. | No repair/native rerun/merge; scalar arithmetic may enter its next owned statement gate; N01–N03 and user integration remain open |
+| 2026-11-08 (UTC) | Isolated dyadic arithmetic statement branch from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited stack `8627edde9892607a699cf997c8dd5a8a2a700e26`. New source `dbacd91218c19f0df106d316ce4ff0e22b869e66`: 18 declarations / 12 admissions, 94 fresh modules, 16 standard-axiom backing contracts. No new Mathlib root or shared-owner API. | Statement gate prepared next; fresh worker choice/user dispatch and N01–N03 remain; no central push or merge |
+| 2026-11-07 (Pacific) | User resumes with dyadic scalar statement report PASS 0/0/0/3. PR #239 head `659770d616160be594eb1d6eff6fc78807992a26` and exchange `1ac4e2e45df94d0b5f20259218d067843458c770` verified; rehashed 102 frozen source files and 126/146/199/174/106/86/82/9 evidence entries. No statement correction. | Twelve frozen proof bodies enter fill on existing PR #239; no merge; N01–N03 retained |
+| 2026-11-07 (Pacific) | Filled all twelve audited scalar proofs at `ec72ed773a690c17ac253707350935cc9e0acb34`, with eighteen declarations and all definitions/signatures fixed. Fresh 94-module sweep (251.162 s), 302 constants and sixteen backing contracts only standard axioms; no new compiler auxiliary. Three passing development runs retained. | Separate proof audit prepared next on existing PR #239; no export/shared API/pin edit, push or merge; N01–N03 retained |
+| 2026-11-08 | User freshly selects Codex for the separate scalar proof audit. Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, bundled records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110` and the 1301-section packet remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
+| 2026-11-08 | Scalar proof audit PASS 0/0/0/3 at `ec72ed773a690c17ac253707350935cc9e0acb34`; full pasted report retained, 102 frozen sources and all nine nested checksum sets rehashed. Published #239 head and exact exchange input verified. User authorizes a larger combined overnight statement draft with sorries for later fills and preselects Codex for morning audits. | Eight scoped gates pass; no merge; pause only dependent fronts requiring user input and continue independent work |

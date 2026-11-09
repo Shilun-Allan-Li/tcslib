@@ -5,7 +5,17 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-All six scoped gates pass 0/0/0/3, including the construction-core proof
+The active dyadic arithmetic draft is locally proved on PR #239's branch,
+`cryptography/lwe-sis-dyadic-arithmetic`, in `tcslib-lwe-sis-dyadic-arithmetic`.
+Filled source `ec72ed773a690c17ac253707350935cc9e0acb34` discharges all twelve
+scalar obligations with the same eighteen declarations. A fresh 94-module sweep
+passes; all 302 owned constants and sixteen backing contracts use only standard
+axioms. Its statement audit passes 0/0/0/3 at exchange
+`1ac4e2e45df94d0b5f20259218d067843458c770`. Its separate proof audit now passes
+0/0/0/3 at exchange `083448cef9229dc95b96ef45686ce7f3768992ab`. See
+`fills/03-dyadic-arithmetic/` and historical `gates/06-dyadic-arithmetic/`.
+
+All eight scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.
@@ -33,9 +43,10 @@ machine/primitive bridges remain open.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
-The active draft is `cryptography/lwe-sis-adapter-statements` in the separate
-`tcslib-lwe-sis-adapters` worktree. Its audited dependencies are #236 and #237;
-both existing PRs' central targets are remotely verified.
+The active draft is `cryptography/lwe-sis-dyadic-arithmetic` in the separate
+`tcslib-lwe-sis-dyadic-arithmetic` worktree. Its audited dependencies are
+#236/#237/#238. The only new existing-file overlap is the Encoding facade import;
+it is isolated in its own export commit. Its published draft PR is #239.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations with all 31 former admissions filled: sample schedules, modular
@@ -86,8 +97,8 @@ they do not execute Lean or prove security.
 
 ## Ownership and publication
 
-Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters`.
-Draft branch: `cryptography/lwe-sis-adapter-statements`.
+Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic`.
+Draft branch: `cryptography/lwe-sis-dyadic-arithmetic`.
 Central PR target: `cryptography/lwe-sis-constructions`.
 Audited dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
 Phase-1 Lean/root freeze: `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`.
@@ -120,6 +131,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — all six scoped gates pass. Source ingestion/matching
-and relevant integration checks remain open.
+**Not yet clear to merge — all seven scoped gates pass. Scalar proof review,
+source ingestion/matching and relevant integration checks remain open.
 The user approves and merges PRs.**
