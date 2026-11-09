@@ -1108,19 +1108,32 @@ lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Boo
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols_eq,
       tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
-    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    rw [MultiTapeTM.initCfg_eq]
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · simp only [if_true, Action.apply_state, bufferedSecondCfg, Cfg.init_state, Option.map_some]
+    · simp only [if_true, Action.apply_inputPos, moveInputPos_zero, bufferedSecondCfg]
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedSecondCfg, Action.apply]
+      · intro j; simp [bufferedSecondCfg, -Action.apply, Action.apply_workTapes,
+        Cfg.workTapeSymbols_eq]
       · intro j
-        refine Fin.addCases ?_ ?_ j <;> intro j <;>
-          simp [bufferedSecondCfg, Action.apply]
+        refine Fin.addCases ?_ ?_ j
+        · intro j
+          simp [-Action.apply, -Cfg.init, bufferedSecondCfg, Action.apply_workTapes,
+            Cfg.workTapeSymbols_eq]
+        · intro j
+          funext z
+          simp [-Action.apply, -Cfg.init, bufferedSecondCfg, Action.apply_workTapes,
+            Cfg.workTapeSymbols_eq, Cfg.init_workTapes]
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedSecondCfg, Action.apply]
+      · intro j; simp [bufferedSecondCfg, -Action.apply, Action.apply_workTapePos]
       · intro j
         refine Fin.addCases ?_ ?_ j <;> intro j <;>
-          simp [bufferedSecondCfg, Action.apply]
+          simp [-Action.apply, -Cfg.init, bufferedSecondCfg, Action.apply_workTapePos,
+            Cfg.init_inputPos, Cfg.init_workTapePos]
+    · simp only [if_true, Action.apply_output, Option.toList_none, List.append_nil,
+        bufferedSecondCfg, Cfg.init_output]
   | succ j ih =>
     intro hj
     have hread : bufferTape y (((j + 1 : ℕ) : ℤ) - 1) = some y[j] := by
@@ -1131,17 +1144,23 @@ lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Boo
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols_eq,
         tapeBlocks_buffer, hread, Option.some_ne_none, if_false]
-      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · exact Action.apply_state _ _
+      · rw [Action.apply_inputPos]
+        exact moveInputPos_zero _
       · funext i
         refine Fin.addCases ?_ ?_ i
-        · intro j; simp [Action.apply]
+        · intro j; simp [-Action.apply, Action.apply_workTapes, Cfg.workTapeSymbols_eq]
         · intro j
-          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [Action.apply]
+          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [-Action.apply, Action.apply_workTapes,
+            Cfg.workTapeSymbols_eq]
       · funext i
         refine Fin.addCases ?_ ?_ i
-        · intro j; simp [Action.apply]
+        · intro j; simp [-Action.apply, Action.apply_workTapePos]
         · intro z
-          refine Fin.addCases ?_ ?_ z <;> intro z <;> simp [Action.apply, sub_eq_add_neg]
+          refine Fin.addCases ?_ ?_ z <;> intro z <;> simp [-Action.apply, Action.apply_workTapePos,
+            sub_eq_add_neg]
+      · exact Action.apply_output _ _
     rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
     exact ih (by omega)
 
@@ -1161,17 +1180,24 @@ lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
       simp [bufferedFirstCfg, hs]
     rw [MultiTapeTM.step_of_some hstate]
     simp only [bufferedFirstCfg, bufferedCompTM]
-    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_zero _
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j; simp [bufferedScanCfg, -Action.apply, Action.apply_workTapes,
+        Cfg.workTapeSymbols_eq]
       · intro j
-        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply]
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, -Action.apply,
+          Action.apply_workTapes, Cfg.workTapeSymbols_eq]
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j; simp [bufferedScanCfg, -Action.apply, Action.apply_workTapePos]
       · intro j
-        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply, sub_eq_add_neg]
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, -Action.apply,
+          Action.apply_workTapePos, sub_eq_add_neg]
+    · exact Action.apply_output _ _
   rw [show c.output.length + 2 = (c.output.length + 1) + 1 by omega,
     MultiTapeTM.runFrom_succ_eq_step, hstep]
   exact bufferedScanCfg_run M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos _ (le_refl _)
