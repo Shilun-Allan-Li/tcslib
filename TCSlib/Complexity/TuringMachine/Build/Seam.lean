@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import TCSlib.Complexity.TuringMachine.CfgFacts
 import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Build.Embed
@@ -183,11 +184,22 @@ private lemma seamComp_step_right {Symbol : Type*} {x : List Symbol} [DecidableE
     (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (c : Cfg k Symbol S₂ x) :
     (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inr) =
       (M₂.step c).mapState Sum.inr := by
+  have hin : (c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).inputSymbol = c.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hwork : (c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).workTapeSymbols = c.workTapeSymbols := by
+    funext i
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
   cases hs : c.state with
-  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+  | none =>
+    rw [MultiTapeTM.step_of_halt (cfg := c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂))
+        (by rw [Cfg.mapState_state, hs, Option.map_none]),
+      MultiTapeTM.step_of_halt hs]
   | some q =>
-    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
-    rfl
+    rw [MultiTapeTM.step_of_some (cfg := c.mapState (Sum.inr : S₂ → S₁ ⊕ S₂))
+        (q := Sum.inr q) (by rw [Cfg.mapState_state, hs, Option.map_some]),
+      MultiTapeTM.step_of_some hs, hin, hwork, seamCompTM_tr_inr]
+    exact Cfg.mapState_apply Sum.inr _ c
 
 /-- A stationary, silent, write-free action changes only the control field. -/
 private lemma seam_stationary_apply {Symbol : Type*} {x : List Symbol} (c : Cfg k Symbol S₁ x) (q : S₁) :
