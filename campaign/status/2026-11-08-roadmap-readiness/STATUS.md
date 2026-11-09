@@ -1,5 +1,10 @@
 # Chapters 3–4 roadmap readiness, 2026-11-08
 
+**After #249:** rerunning both proof-closure probes on `770a4488e1bb770a3b7c9c878327fc2d468dd7f2`
+confirmed the same 26 headlines and 19 other results with no sorryAx.
+The Ladner scaffold has six separate direct holes. See post249/RESULT.json.
+
+
 At the time of these checks, the merged campaign Lean tree was `9b5dcf46408db681bcbc721930ef2203fa6bc47d` (MAC8). Fresh Lean checks through
 leanelab.sh found no sorryAx in all 26 previously tracked headline closures
 (9 for chapter 3, 17 for chapter 4) or in 19 additional roadmap results. The

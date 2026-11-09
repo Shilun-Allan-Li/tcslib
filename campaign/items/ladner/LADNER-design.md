@@ -1,5 +1,10 @@
 # Ladner statement phase: decisions and host obligations
 
+**Post-#249 update:** the scratch [numeric clock probe](clock-envelope-probe/README.md)
+proves the deadline bound and the numerical simulator polynomial envelope.
+The setup, memo and other quantitative premises below remain open.
+
+
 This records the already approved statement phase. It introduces no new mathematical proof, public host, theorem header, name, import or route decision. Mathematical holes remain for separately dispatched fills. The intended new home is `TCSlib/Complexity/Diagonalization/Ladner.lean`, namespace `Complexity`, with the planned `Diagonalization.lean` import/Contents wiring. PLAN Track3(c) requires this design note before the source file.
 
 ## Approved formal surface
