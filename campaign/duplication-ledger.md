@@ -1913,3 +1913,22 @@ PolyTimePairing, alongside the PL-1 linear lift. These occur on both
 sides of the #251 comparison. A later Nondeterminism cleanup requires
 its own import ruling. The bounded evidence and remaining candidate
 kinds are in campaign/gates/129-input-readers/r3-evidence/COPY-REVIEW.md.
+
+
+## Gate 129 reader and scan re-points
+
+The following exact instances are retired on merge of #251 at
+`39dfa843b02ae7fdd0acaeacfadf5bba17a60feb`. See the 53-file copy review and source pins
+in `campaign/gates/129-input-readers/r4-evidence/`.
+
+- The complete native-input copy is a whole-word instance of the suffix copy.
+  The obsolete private prefix wrapper is removed. The indexed right-moving
+  zero-tape row is shared by the prefix, suffix, true-prefix, increment and
+  token proofs.
+- A work tape with an outer `none` write keeps its entire word. The exact
+  Primitives instances now cite the same private field lemma, including the
+  replay, rewind, polynomial and length-checker cases.
+- The optional-state map of a canonical word seam is the same seam with the
+  mapped anchor. Convention now owns the equation. It replaces the private
+  Seam proof, the CodeSimulator inline proof, and the two checked Primitives
+  instances.
