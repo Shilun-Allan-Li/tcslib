@@ -71,6 +71,37 @@ The RSA/Rabin width work, ElGamal's message and game transport, and the
 oracle CPA proof and multi-message lifting are separate proof tasks.
 [Implications design](implications/README.md)
 
+### Pseudorandomness and private-key encryption
+
+Seyoon approved the following destination layout on 2026-11-09 PST. Land the
+construction map first, then review one connected set of moves at a time. The
+precise support-file splits follow the import and seal checks for each move.
+
+* `Pseudorandom.lean` is the construction map for the finite and asymptotic
+  routes. The finite generator and GGM proofs have homes in `Generators.lean`
+  and `Functions/GGM.lean`. Put the asymptotic PRG contract, permutation
+  construction, stretch theorems and stretch reduction machine under
+  `Pseudorandom/Generators/Asymptotic/` in `Defs`, `FromPermutation`, `Stretch`
+  and `StretchMachine`. Put the ensemble next-bit result in `NextBit.lean` and
+  its finite experiment and hybrid proof under `NextBit/`. Put the asymptotic
+  oracle and PRF contracts and the GGM construction under
+  `Pseudorandom/Functions/Asymptotic/`. The GGM evaluator, lazy table, reduction
+  machine and run agreement belong next to the construction under `GGM/`.
+* `Encryption/PrivateKey.lean` is the entry point for symmetric encryption.
+  Under `Encryption/PrivateKey/`, use `Scheme` and `EnsembleSecurity` for the
+  interface and fixed-vector games. Use `FromPRG` for the single-message scheme
+  and `FromPRF` for the multi-message scheme, with its finite hybrid and
+  reduction machine under `FromPRF/`. Use `OracleSecurity` for the fixed-length
+  interface and oracle games, `OracleFromPRF` for the fixed-length PRF wrapper
+  and CPA/CCA1 statements, and `EncryptThenTag` for the tagged construction
+  and CCA2 statement. The map labels the pending oracle proofs separately
+  from the existing fixed-vector theorem.
+* `Encryption/OracleAttack.lean` and `Encryption/BlockCodec.lean` are proposed
+  shared owners for the attack policy and ciphertext-list encoding. Agree on
+  ownership with the LWE/SIS campaign before relocating either. Give both
+  encryption families narrow imports of their shared definitions and preserve
+  the existing Lean names and compatibility imports.
+
 ## 3. Close the inherited seal ledger on the new layout
 
 Regenerate the full inventory on the settled import graph. Resolve the
