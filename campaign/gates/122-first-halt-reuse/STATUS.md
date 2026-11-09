@@ -1,3 +1,9 @@
 **Not yet clear to merge: #242.**
 
-External selected13 PASS is preserved. Root accepts all seven factual notes with note5 qualified and records one separate governance major M1. Existing-reader repairs and exact new-interface/transport dispositions are still required for the disclosed held fronts. Current clean merge/replay validity passes and does not waive M1. See resolutions.md and status/audit-reviews/122/.
+External selected13 PASS is preserved; root governance major M1 remains. The five
+shared gate121 reads need integration. Four held sites (MARMTime, startup and two
+SingleTape proofs) have complete private checked repair proposals; their provider
+gate130 is dispatched and their text placement passes, but they are not adopted.
+Call.call_run, Clean.cleanTM_run and clockStageCfg_captures remain open. No imported
+definition debt waiver or source merge. See resolutions.md and the exact site and
+placement evidence.
