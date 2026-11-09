@@ -1,0 +1,47 @@
+# Audited encoding-adapter proof fill
+
+All fourteen proofs are filled and checked at
+`b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`. A fresh serial 93-module sweep
+passes with zero owned admissions and 17 inherited warnings. All 284 owned
+constants and the nine backing contracts use only standard axioms. The exact
+fourteen-body freeze and scoped style checks pass. See REPORT.md and evidence/.
+The proof-review pack is `audits/lwe-sis-adapter-proofs-pack.md`.
+The user selected and dispatched Codex; the returned proof report passes
+0/0/0/3. It is retained verbatim from the chat paste under `audits/`, with
+separate dispositions. No proof correction is required.
+
+The prepared bundle has 1009 sections, 5,711,128 bytes and SHA-256
+`24de3637321750a0ad12ec46120e32d28db102fd4cd77f0b56621e5e4bd16225`.
+Its bundled records are `223713ba5ea15ac98dc5efedaad5a7208854e3d1`;
+all sections and exact revision-qualified Git blobs were checked. See
+DISPATCH.md and review-publication.json retain the earlier preparation history.
+The exact published exchange input is
+`228c265d642013da76afa6cec976eaf11a8eb1b9`; PR #238's published head is
+`3350700f054ba07b31bcf23cab9f590afd998e28`. The separate
+`proof-intake-r1.json` records the publication and returned-audit checks without
+changing the issued bundle or historical evidence.
+
+## Authorized fill scope and method
+
+Fill the 14 admitted theorem bodies in
+`TCSlib/Cryptography/Encoding/BinaryArith.lean` against statement freeze
+`6eec97be8f54d9990340900a5595dab32fb477f5`. The statement audit passes
+0/0/0/3; its pasted report and dispositions are preserved under `audits/`.
+The three definitions, their complete equation proofs, all 20 signatures,
+namespaces and attributes stay fixed. Add no source declaration or private host.
+
+Use draft PR #238 on `cryptography/lwe-sis-adapter-statements`, targeting
+`cryptography/lwe-sis-constructions`, in `tcslib-lwe-sis-adapters`.
+Root alone edits and runs native checks. The two internal research agents are
+read-only and run no native/cache jobs. Existing owned pinned packages and the
+adapter development objects belong to this chat; no other chat's objects or
+packages are consumed or changed. No cache fetch is needed for these proofs.
+
+Check each changed module through `scripts/lean_check_tree.sh`, serially, using
+an explicit owned `TCSLIB_OLEANS`. At completion, run the exact scoped dependency
+sweep in a newly empty own object tree and check every axiom/inventory row.
+Keep all development failures separately identifiable. A passing statement gate
+does not certify filled proofs or close source-policy/integration obligations.
+
+**Not yet clear to merge — all 14 proofs pass their external gate; source-policy
+work, applicable landing checks and user approval remain.**

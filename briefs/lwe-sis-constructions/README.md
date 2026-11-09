@@ -5,32 +5,37 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-The construction-core statement audit passes 0/0/0/3. Its verbatim findings and
-separate dispositions are under `audits/`. All 31 approved obligations are now
-proved at `690217cc1aaefe411158808a8b0797fd887a8abc`, on existing PR #237.
-All definitions/signatures and the 62 source declarations are unchanged.
+All six scoped gates pass 0/0/0/3, including the construction-core proof
+report supplied as a user paste. All 31 core obligations are proved, with 263
+owned constants free of sorryAx. Their code and records stay fixed on #237;
+source-policy and relevant landing checks remain open for #236/#237.
 
-The fresh serial 68-module sweep passes with zero owned admissions and the same
-17 inherited warnings. All 263 owned constants use only standard axioms, with
-no sorryAx; seven compiler auxiliaries are explicitly inventoried. Freeze and
-style checks pass. `fills/01-construction-core/` contains the evidence, report
-and proof-audit handoff. The user has dispatched that audit; GitHub verifies
-the published draft and immutable exchange input. The returned proof audit now
-passes 0/0/0/3; its pasted report is preserved verbatim under `audits/`, with
-separate resolutions and an intake receipt. No proof correction is required.
+The isolated adapter draft is now proved in `tcslib-lwe-sis-adapters`,
+branch `cryptography/lwe-sis-adapter-statements`, filled source
+`b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`. All 14 audited obligations are
+filled, with the same 20 source declarations. A fresh 93-module sweep passes;
+all 284 owned constants and nine consumed machine contracts have only standard
+axioms. All 263 earlier constants retain exact identity/axiom sets, with one new
+compiler arithmetic auxiliary disclosed. Its statement audit passes 0/0/0/3.
+Draft PR
+[#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) and exchange input
+`a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4` are remotely verified; findings
+pass 0/0/0/3. The subsequent Codex proof audit also passes 0/0/0/3 at exchange
+`228c265d642013da76afa6cec976eaf11a8eb1b9`. Its report is preserved verbatim
+from the user paste; definitions/signatures and issued inputs remain frozen.
 
-Independent source and machine-adapter preparation is under `continuation/`.
-Raw local PDF extraction is complete, but validation/matching and the proposed
-two-tag registry change remain unexecuted. Source-policy and machine/primitive
-bridge obligations remain open. The new `continuation/proof-audit/` records
-a nine-page visual source comparison, concrete arithmetic/sampling reuse, and
-PKE preflight. No additional external job is dispatched by that preparation.
+See `fills/02-encoding-adapters/` for the current proof-review preparation and
+`gates/04-encoding-adapters/` for the passing statement gate;
+`progress.md` for the campaign pulse. The one Encoding facade edit is in a
+separate commit. Shared owner APIs, probability readers, source registry and
+pins remain unchanged. Reference validation/ingestion/matching and the eventual
+machine/primitive bridges remain open.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
-The active draft is `cryptography/lwe-sis-phase1-statements` in the separate
-`tcslib-lwe-sis-phase1` worktree. It depends on audited PR #236; both PRs' central
-targets are remotely verified.
+The active draft is `cryptography/lwe-sis-adapter-statements` in the separate
+`tcslib-lwe-sis-adapters` worktree. Its audited dependencies are #236 and #237;
+both existing PRs' central targets are remotely verified.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations with all 31 former admissions filled: sample schedules, modular
@@ -81,8 +86,8 @@ they do not execute Lean or prove security.
 
 ## Ownership and publication
 
-Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-phase1`.
-Draft branch: `cryptography/lwe-sis-phase1-statements`.
+Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters`.
+Draft branch: `cryptography/lwe-sis-adapter-statements`.
 Central PR target: `cryptography/lwe-sis-constructions`.
 Audited dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
 Phase-1 Lean/root freeze: `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`.
@@ -115,6 +120,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — the foundation and construction-core statement gates
-pass, including the construction-core proof gate. Source ingestion/matching and
-relevant integration checks remain open. The user approves and merges PRs.**
+**Not yet clear to merge — all six scoped gates pass. Source ingestion/matching
+and relevant integration checks remain open.
+The user approves and merges PRs.**
