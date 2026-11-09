@@ -110,7 +110,10 @@ def emitAction {k : ℕ} {S : Type} (w : List Bool)
     ⟨0, fun _ => (none, 0), none, none⟩
 
 /-- After `t` emission steps the state is the `t`-th chain state and exactly the
-first `t` symbols have been appended. The induction uses no tape invariant because
+first `t` symbols have been appended.
+
+**Proof sketch.** Induct on the number of steps, using the transition equation
+and the state and output readers. No tape invariant is needed because the
 emission transitions ignore all reads. -/
 lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
