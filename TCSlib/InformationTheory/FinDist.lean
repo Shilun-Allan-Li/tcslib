@@ -141,6 +141,11 @@ Stated as this bound rather than as `-logb 2 (⨆ a, p a)` so that no logarithms
 hypotheses of the results that use it. [Vad12, §6.2] -/
 def HasMinEntropy (p : FinDist α) (k : ℝ) : Prop := ∀ a, p a ≤ (2 : ℝ) ^ (-k)
 
+/-- Min-entropy at least `k` means every outcome has probability at most `2^(-k)`.
+This is the public reading of the point-probability bound `HasMinEntropy`. -/
+theorem hasMinEntropy_iff (p : FinDist α) (k : ℝ) :
+    HasMinEntropy p k ↔ ∀ a, p a ≤ (2 : ℝ) ^ (-k) := Iff.rfl
+
 /-- Min-entropy `k` bounds the collision probability by `2 ^ (-k)`: the chance of a collision is
 at most the chance of hitting any single most-likely point.
 
