@@ -1,0 +1,17 @@
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+
+namespace Complexity
+open Turing
+
+section
+attribute [local irreducible] Complexity.PolyTimeComputable Turing.FinTM.ComputesFunInTime Turing.pairEncode
+/-- The fixed-code pairing machine is polynomial-time computable. -/
+private lemma fixedPairReuse (α : List Bool) :
+    PolyTimeComputable (fun x => pairEncode α x) :=
+  polyTimeComputable_of_linear (FinTM.computesFunInTime_pairEncodeFixed α)
+
+
+#print axioms fixedPairReuse
+end
+end Complexity

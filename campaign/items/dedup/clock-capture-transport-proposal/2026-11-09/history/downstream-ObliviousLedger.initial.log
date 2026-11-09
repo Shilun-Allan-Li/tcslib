@@ -1,0 +1,55 @@
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean:126:66: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  MultiTapeTM.runFrom (clockStageCfg W a c)
+    (↑(clockStageCfg W a c).inputPos - 1 + 2 +
+      (2 * (List.map (⇑oblEmbed) x).length + 4 +
+        ((T x.length + 1) * (2 * c.output.length + (a + 1) + 4) + (14 * ((a + 1) * (T x.length + 1)) + 10))))
+in the target expression
+  (MultiTapeTM.runFrom
+        (MultiTapeTM.runFrom
+          (have this := id (clockStageCfg W a c);
+          this)
+          initTime)
+        finishTime).state =
+    none
+
+case refine_2
+W : FinTM Bool
+a b : ℕ
+T : ℕ → ℕ
+hW : ∀ (x : List Bool), W.ComputesInTime x (T x.length).bits (b * (T x.length + 1))
+hT : ∀ (n : ℕ), n ≤ T n
+x : List Bool
+τ : ℕ
+hτ : τ ≤ b * (T x.length + 1)
+c : Cfg W.k Bool W.State x
+hs : c.state = none
+ho : c.output = (T x.length).bits
+hclock :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (List.map (⇑oblEmbed) x)) (τ + 1) =
+    have this := id (clockStageCfg W a c);
+    this
+hv : budgetValue c.output = T x.length
+hn : (List.map (⇑oblEmbed) x).length + 1 ≤ (a + 1) * (T x.length + 1)
+w' : List Bool
+hlen : w'.length = c.output.length
+hinit :
+  MultiTapeTM.runFrom (clockStageCfg W a c)
+      (↑(clockStageCfg W a c).inputPos - 1 + 2 +
+        (2 * (List.map (⇑oblEmbed) x).length + 4 +
+          ((T x.length + 1) * (2 * c.output.length + (a + 1) + 4) + (14 * ((a + 1) * (T x.length + 1)) + 10)))) =
+    setupCfg W a (clockStageCfg W a c) (some OblPhase.macroCheck) ⟨(List.map (⇑oblEmbed) x).length + 1, ⋯⟩
+      (↑c.output.length + 1) 1 0 (clockTape w') (unaryTape ((a + 1) * (T x.length + 1)))
+      (guideTape (3 * ((a + 1) * (T x.length + 1))))
+B : ℕ := (a + 1) * (T x.length + 1)
+initTime : ℕ :=
+  ↑(clockStageCfg W a c).inputPos - 1 + 2 +
+    (2 * (List.map (⇑oblEmbed) x).length + 4 + ((T x.length + 1) * (2 * c.output.length + (a + 1) + 4) + (14 * B + 10)))
+finishTime : ℕ := B * (6 * (3 * B) + 8) + 1
+t : ℕ := τ + 1 + (initTime + finishTime)
+⊢ (MultiTapeTM.runFrom
+        (MultiTapeTM.runFrom
+          (have this := id (clockStageCfg W a c);
+          this)
+          initTime)
+        finishTime).state =
+    none

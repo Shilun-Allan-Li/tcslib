@@ -1,0 +1,1162 @@
+{
+  "modules": [
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed",
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterBody",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockTests",
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority",
+    "TCSlib/Complexity/ClassNP/PClosure",
+    "TCSlib/Complexity/PolyHierarchy/Padding",
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+    "TCSlib/Complexity/PolyHierarchy/Normalize",
+    "TCSlib/Complexity/PolyHierarchy/Levels",
+    "TCSlib/Complexity/PolyHierarchy/Collapse",
+    "TCSlib/Complexity/CircuitComplexity/KarpLipton",
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily",
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue",
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifier",
+    "TCSlib/Complexity/CircuitComplexity/MeyerSound",
+    "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput",
+    "TCSlib/Complexity/CircuitComplexity/MeyerComplete",
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigma",
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP",
+    "TCSlib/Complexity/CircuitComplexity/Meyer",
+    "TCSlib/Complexity/CircuitComplexity",
+    "TCSlib/Complexity/CookLevin/Hardness",
+    "TCSlib/Complexity/ClassNP/Tautology",
+    "TCSlib/Complexity/ClassNP",
+    "TCSlib/Complexity/ClassOracle/SATOracle",
+    "TCSlib/Complexity/ClassOracle",
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+    "TCSlib/Complexity/ClassP/BinaryArith/Div",
+    "TCSlib/Complexity/ClassP/BinaryArith/ModPow",
+    "TCSlib/Complexity/ClassP/BinaryArith/Words",
+    "TCSlib/Complexity/ClassP/BinaryArith/DetMod",
+    "TCSlib/Complexity/ClassP/BinaryArith/Jacobi",
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+    "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind",
+    "TCSlib/Complexity/ClassP/BinaryArith",
+    "TCSlib/Complexity/ClassP",
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier",
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge",
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardParams",
+    "TCSlib/Complexity/ClassPSPACE/TQBFHard",
+    "TCSlib/Complexity/FormulaKit/Emit",
+    "TCSlib/Complexity/ClassPSPACE/TQBF",
+    "TCSlib/Complexity/ClassPSPACE",
+    "TCSlib/Complexity/CookLevin",
+    "TCSlib/Complexity/Diagonalization/Ladner",
+    "TCSlib/Complexity/Diagonalization",
+    "TCSlib/Complexity/FormulaKit",
+    "TCSlib/Complexity/PolyHierarchy",
+    "TCSlib/Complexity/Randomized/BPLInPWords",
+    "TCSlib/Complexity/Randomized/BPLInP",
+    "TCSlib/Complexity/Randomized/PolyTimeModel",
+    "TCSlib/Complexity/Randomized/Inclusions",
+    "TCSlib/Complexity/Randomized/PTMEquiv",
+    "TCSlib/Complexity/Randomized/Reductions",
+    "TCSlib/Complexity/Randomized/BPOperator",
+    "TCSlib/Complexity/Randomized/BPPAmplify",
+    "TCSlib/Complexity/Randomized/QuasiPolyHierarchy",
+    "TCSlib/Complexity/Randomized/BPPEqP",
+    "TCSlib/Complexity/Randomized/BPTIMEThreshold",
+    "TCSlib/Complexity/Randomized/BiasedCoin",
+    "TCSlib/Complexity/Randomized/BiasedCoinHalting",
+    "TCSlib/Complexity/Randomized/Primality",
+    "TCSlib/Complexity/Randomized/Matching",
+    "TCSlib/Complexity/Randomized/NPPoly",
+    "TCSlib/Complexity/Randomized/RPExpected",
+    "TCSlib/Complexity/Randomized/UniformSample",
+    "TCSlib/Complexity/Randomized/Yap",
+    "TCSlib/Complexity/Randomized/ZPPEquiv",
+    "TCSlib/Complexity/Randomized/ZPPHosts",
+    "TCSlib/Complexity/Randomized/ZPPHostsClasses",
+    "TCSlib/Complexity/Randomized/ZeroPEval",
+    "TCSlib/Complexity/Randomized/ZeroPRun",
+    "TCSlib/Complexity/Randomized/ZeroP",
+    "TCSlib/Complexity/Randomized/ZeroPPIT",
+    "TCSlib/Complexity/Randomized/ZeroPReduce",
+    "TCSlib/Complexity/Randomized",
+    "TCSlib/Complexity/SpaceComplexity/Hierarchy",
+    "TCSlib/Complexity/SpaceComplexity"
+  ],
+  "all_local_imports": {
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed": [
+      "TCSlib/Complexity/TuringMachine/Build/Loop",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives"
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterBody": [
+      "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop": [
+      "Mathlib/Computability/Language",
+      "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+      "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "TCSlib/Complexity/TuringMachine/CounterProgInput",
+      "TCSlib/Complexity/TuringMachine/Build/Loop",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "TCSlib/Complexity/TuringMachine/Build/EmitIterBody"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockTests": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockTests"
+    ],
+    "TCSlib/Complexity/ClassNP/PClosure": [
+      "TCSlib/Complexity/ClassNP/CoNP",
+      "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Padding": [
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix": [
+      "TCSlib/Complexity/PolyHierarchy/Padding",
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Normalize": [
+      "TCSlib/Complexity/PolyHierarchy/Defs",
+      "TCSlib/Complexity/PolyHierarchy/Padding"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Levels": [
+      "TCSlib/Complexity/PolyHierarchy/Normalize"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Collapse": [
+      "TCSlib/Complexity/PolyHierarchy/Levels"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLipton": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEval",
+      "TCSlib/Complexity/CircuitComplexity/PPoly",
+      "TCSlib/Complexity/CircuitComplexity/Uniform",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/PPoly"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerTableau",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEval",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid",
+      "TCSlib/Complexity/ClassNP/CoNP"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifier": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSound": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifier"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSound"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerComplete": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigma": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerComplete",
+      "TCSlib/Complexity/CircuitComplexity/PPoly",
+      "TCSlib/Complexity/CircuitComplexity/Uniform"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP": [
+      "Mathlib/Tactic/Linarith",
+      "TCSlib/Complexity/ClassNP/ExpPoly",
+      "TCSlib/Complexity/PolyHierarchy/Collapse",
+      "TCSlib/Complexity/ClassNP/CoNP"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/Meyer": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigma",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP",
+      "TCSlib/Complexity/PolyHierarchy/Collapse",
+      "TCSlib/Complexity/TimeHierarchy/Separation"
+    ],
+    "TCSlib/Complexity/CircuitComplexity": [
+      "TCSlib/Complexity/CircuitComplexity/Basic",
+      "TCSlib/Complexity/CircuitComplexity/Formulas",
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+      "TCSlib/Complexity/CircuitComplexity/PPoly",
+      "TCSlib/Complexity/CircuitComplexity/NCAC",
+      "TCSlib/Complexity/CircuitComplexity/TreeDAG",
+      "TCSlib/Complexity/CircuitComplexity/DAGTransform",
+      "TCSlib/Complexity/CircuitComplexity/DAGFanin",
+      "TCSlib/Complexity/CircuitComplexity/LayeredCircuit",
+      "TCSlib/Complexity/CircuitComplexity/LayeredPPoly",
+      "TCSlib/Complexity/CircuitComplexity/LayeredDAG",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSat",
+      "TCSlib/Complexity/CircuitComplexity/Encoding",
+      "TCSlib/Complexity/CircuitComplexity/Universal",
+      "TCSlib/Complexity/CircuitComplexity/HardFunctions",
+      "TCSlib/Complexity/CircuitComplexity/TreeNCAC",
+      "TCSlib/Complexity/CircuitComplexity/Parity",
+      "TCSlib/Complexity/CircuitComplexity/Hierarchy",
+      "TCSlib/Complexity/CircuitComplexity/UnaryLanguages",
+      "TCSlib/Complexity/CircuitComplexity/UHalt",
+      "TCSlib/Complexity/CircuitComplexity/SizeClasses",
+      "TCSlib/Complexity/CircuitComplexity/StraightLine",
+      "TCSlib/Complexity/CircuitComplexity/StraightLineDualRail",
+      "TCSlib/Complexity/CircuitComplexity/Adder",
+      "TCSlib/Complexity/CircuitComplexity/AdderLanguage",
+      "TCSlib/Complexity/CircuitComplexity/DAGHardFunctions",
+      "TCSlib/Complexity/CircuitComplexity/HardWire",
+      "TCSlib/Complexity/CircuitComplexity/PairEncode",
+      "TCSlib/Complexity/CircuitComplexity/Advice",
+      "TCSlib/Complexity/CircuitComplexity/UnaryCode",
+      "TCSlib/Complexity/CircuitComplexity/Uniform",
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuitSat",
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEval",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEvalNP",
+      "TCSlib/Complexity/CircuitComplexity/PUniformP",
+      "TCSlib/Complexity/CircuitComplexity/PPolyAdvice",
+      "TCSlib/Complexity/CircuitComplexity/UHaltMachine",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReduction",
+      "TCSlib/Complexity/CircuitComplexity/BookModelBasics",
+      "TCSlib/Complexity/CircuitComplexity/LupanovGates",
+      "TCSlib/Complexity/CircuitComplexity/Lupanov",
+      "TCSlib/Complexity/CircuitComplexity/FanOut",
+      "TCSlib/Complexity/CircuitComplexity/FormulaFanOut",
+      "TCSlib/Complexity/CircuitComplexity/StrictCircuit",
+      "TCSlib/Complexity/CircuitComplexity/StrictSize",
+      "TCSlib/Complexity/CircuitComplexity/StrictFanOut",
+      "TCSlib/Complexity/CircuitComplexity/SequentialCircuit",
+      "TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic",
+      "TCSlib/Complexity/CircuitComplexity/StraightLineSmall",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch",
+      "TCSlib/Complexity/CircuitComplexity/KarpLipton",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly",
+      "TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableau",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniform",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceTableau",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample",
+      "TCSlib/Complexity/CircuitComplexity/Meyer",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront",
+      "TCSlib/Complexity/CircuitComplexity/MeyerComplete",
+      "TCSlib/Complexity/CircuitComplexity/MeyerMachine",
+      "TCSlib/Complexity/CircuitComplexity/MeyerMachineParse",
+      "TCSlib/Complexity/CircuitComplexity/MeyerMachineRun",
+      "TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup",
+      "TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigma",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSound",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput",
+      "TCSlib/Complexity/CircuitComplexity/MeyerTab",
+      "TCSlib/Complexity/CircuitComplexity/MeyerTableau",
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifier",
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableauSpec"
+    ],
+    "TCSlib/Complexity/CookLevin/Hardness": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "TCSlib/Complexity/ClassNP/SAT",
+      "TCSlib/Complexity/ClassNP/TMSAT",
+      "TCSlib/Complexity/TuringMachine/Robustness/Oblivious",
+      "TCSlib/Complexity/CookLevin/Snapshot",
+      "TCSlib/Complexity/TuringMachine/Build/Seam"
+    ],
+    "TCSlib/Complexity/ClassNP/Tautology": [
+      "TCSlib/Complexity/Formulas/DNF",
+      "TCSlib/Complexity/Formulas/CNFEncoding",
+      "TCSlib/Complexity/ClassNP/CoNP",
+      "TCSlib/Complexity/ClassNP/Reductions",
+      "TCSlib/Complexity/CookLevin/Hardness",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "TCSlib/Complexity/TuringMachine/Build/Contract/Basic",
+      "Mathlib/Data/Sigma/Basic"
+    ],
+    "TCSlib/Complexity/ClassNP": [
+      "TCSlib/Complexity/ClassNP/PolyTime",
+      "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "TCSlib/Complexity/ClassNP/NP",
+      "TCSlib/Complexity/ClassNP/CoNP",
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/ClassNP/EXP",
+      "TCSlib/Complexity/ClassNP/ExpPoly",
+      "TCSlib/Complexity/ClassNP/Reductions",
+      "TCSlib/Complexity/ClassNP/NTIME",
+      "TCSlib/Complexity/ClassNP/Nondeterminism",
+      "TCSlib/Complexity/ClassNP/ExhaustiveReplay",
+      "TCSlib/Complexity/ClassNP/NDNormalForm",
+      "TCSlib/Complexity/ClassNP/SAT",
+      "TCSlib/Complexity/ClassNP/TMSAT",
+      "TCSlib/Complexity/ClassNP/Tautology"
+    ],
+    "TCSlib/Complexity/ClassOracle/SATOracle": [
+      "TCSlib/Complexity/ClassOracle/Classes",
+      "TCSlib/Complexity/ClassNP/CoNP",
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/ClassOracle": [
+      "TCSlib/Complexity/ClassOracle/Classes",
+      "TCSlib/Complexity/ClassOracle/SATOracle"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul": [
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Div": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/ModPow": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "Mathlib/Data/Nat/Size",
+      "Mathlib/Data/Nat/ModEq"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Words": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/DetMod": [
+      "TCSlib/Complexity/ClassP/BinaryArith/DetModMath",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Jacobi": [
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow",
+      "Mathlib/NumberTheory/LegendreSymbol/JacobiSymbol"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/CircuitComplexity/UnaryCode",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "Mathlib/Data/Nat/Log",
+      "Mathlib/NumberTheory/Bertrand"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow",
+      "TCSlib/Complexity/ClassP/BinaryArith/Jacobi",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind",
+      "TCSlib/Complexity/ClassP/BinaryArith/DetModMath",
+      "TCSlib/Complexity/ClassP/BinaryArith/DetMod"
+    ],
+    "TCSlib/Complexity/ClassP": [
+      "TCSlib/Complexity/ClassP/DTIME",
+      "TCSlib/Complexity/ClassP/TimeConstructible",
+      "TCSlib/Complexity/ClassP/P",
+      "TCSlib/Complexity/ClassP/ModelInvariance",
+      "TCSlib/Complexity/ClassP/Examples",
+      "TCSlib/Complexity/ClassP/BinaryArith"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardMachine",
+      "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockTests",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/ClassP/P",
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Deciders",
+      "TCSlib/Complexity/SpaceComplexity/Codec/StepDecider"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardParams": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge",
+      "TCSlib/Complexity/Formulas/QBFEncoding"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHard": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardParams",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin",
+      "TCSlib/Complexity/CircuitComplexity/UniformTableau",
+      "TCSlib/Complexity/CircuitComplexity/CircuitSatReduction",
+      "TCSlib/Complexity/SpaceComplexity/SpaceClasses",
+      "TCSlib/Complexity/ClassNP/Reductions"
+    ],
+    "TCSlib/Complexity/FormulaKit/Emit": [
+      "TCSlib/Complexity/FormulaKit/Gate",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "TCSlib/Complexity/ClassNP/Transducer"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBF": [
+      "TCSlib/Complexity/Formulas/QBFEncoding",
+      "TCSlib/Complexity/SpaceComplexity/ConfigGraph",
+      "TCSlib/Complexity/SpaceComplexity/Constructible",
+      "TCSlib/Complexity/SpaceComplexity/Inclusions",
+      "TCSlib/Complexity/TuringMachine/Build/CfgRecord",
+      "TCSlib/Complexity/FormulaKit/Gate",
+      "TCSlib/Complexity/FormulaKit/Emit",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHard"
+    ],
+    "TCSlib/Complexity/ClassPSPACE": [
+      "TCSlib/Complexity/ClassPSPACE/TQBF",
+      "TCSlib/Complexity/ClassPSPACE/Games",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk",
+      "TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardMachine",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardParams",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHard"
+    ],
+    "TCSlib/Complexity/CookLevin": [
+      "TCSlib/Complexity/CookLevin/Snapshot",
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/Diagonalization/Ladner": [
+      "TCSlib/Complexity/ClassNP/Reductions",
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/CookLevin/Hardness",
+      "TCSlib/Complexity/Diagonalization/EXPCOM",
+      "Mathlib/Data/Nat/Log"
+    ],
+    "TCSlib/Complexity/Diagonalization": [
+      "TCSlib/Complexity/TuringMachine/OracleAgreement",
+      "TCSlib/Complexity/Diagonalization/EXPCOM",
+      "TCSlib/Complexity/Diagonalization/Ladner",
+      "TCSlib/Complexity/Diagonalization/Relativization",
+      "TCSlib/Complexity/Diagonalization/NotTimeConstructible",
+      "TCSlib/Complexity/Diagonalization/NTimeHierarchy",
+      "TCSlib/Complexity/Diagonalization/NTimeDiagonalizer"
+    ],
+    "TCSlib/Complexity/FormulaKit": [
+      "TCSlib/Complexity/FormulaKit/Gate",
+      "TCSlib/Complexity/FormulaKit/Emit"
+    ],
+    "TCSlib/Complexity/PolyHierarchy": [
+      "TCSlib/Complexity/PolyHierarchy/Defs",
+      "TCSlib/Complexity/PolyHierarchy/Padding",
+      "TCSlib/Complexity/PolyHierarchy/Normalize",
+      "TCSlib/Complexity/PolyHierarchy/Levels",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/BPLInPWords": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/Randomized/BPLInP": [
+      "TCSlib/Complexity/Randomized/BPLInPCount",
+      "TCSlib/Complexity/Randomized/BPLInPWords",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops"
+    ],
+    "TCSlib/Complexity/Randomized/PolyTimeModel": [
+      "TCSlib/Complexity/Randomized/SipserGacs",
+      "TCSlib/Complexity/Randomized/Adleman",
+      "TCSlib/Complexity/ClassP/P",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly",
+      "TCSlib/Complexity/CircuitComplexity/PairEncode",
+      "TCSlib/Complexity/TuringMachine/Encoding",
+      "TCSlib/Complexity/PolyHierarchy/Defs",
+      "TCSlib/Complexity/PolyHierarchy/Normalize",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/Inclusions": [
+      "TCSlib/Complexity/Randomized/PTM",
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/ClassNP/Nondeterminism",
+      "TCSlib/Complexity/CookLevin/Hardness",
+      "TCSlib/Complexity/CircuitComplexity/KarpLipton",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP"
+    ],
+    "TCSlib/Complexity/Randomized/PTMEquiv": [
+      "TCSlib/Complexity/Randomized/Inclusions"
+    ],
+    "TCSlib/Complexity/Randomized/Reductions": [
+      "TCSlib/Complexity/Randomized/Inclusions",
+      "TCSlib/Complexity/Randomized/RandomBits"
+    ],
+    "TCSlib/Complexity/Randomized/BPOperator": [
+      "TCSlib/Complexity/Randomized/Reductions",
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/BPPAmplify": [
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Reductions",
+      "Mathlib/Algebra/Order/Archimedean/Basic"
+    ],
+    "TCSlib/Complexity/Randomized/QuasiPolyHierarchy": [
+      "Mathlib/Data/Nat/Size",
+      "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind",
+      "TCSlib/Complexity/ClassNP/Transducer",
+      "TCSlib/Complexity/TimeHierarchy/Diagonal"
+    ],
+    "TCSlib/Complexity/Randomized/BPPEqP": [
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "TCSlib/Complexity/Randomized/BPPHard",
+      "TCSlib/Complexity/Randomized/QuasiPolyHierarchy"
+    ],
+    "TCSlib/Complexity/Randomized/BPTIMEThreshold": [
+      "TCSlib/Complexity/Randomized/SpaceAmplifyRun",
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "Mathlib/Algebra/Order/Archimedean/Basic"
+    ],
+    "TCSlib/Complexity/Randomized/BiasedCoin": [
+      "TCSlib/Complexity/Randomized/Coins",
+      "TCSlib/Complexity/Randomized/ErrorReduction",
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/BiasedCoinHalting": [
+      "TCSlib/Complexity/Randomized/BiasedCoin",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "TCSlib/Complexity/CircuitComplexity/UHalt",
+      "Mathlib/Analysis/SpecificLimits/Basic"
+    ],
+    "TCSlib/Complexity/Randomized/Primality": [
+      "TCSlib/Complexity/Randomized/PrimalityMath",
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/ClassP/BinaryArith"
+    ],
+    "TCSlib/Complexity/Randomized/Matching": [
+      "TCSlib/Complexity/Randomized/MatchingMath",
+      "TCSlib/Complexity/Randomized/Primality"
+    ],
+    "TCSlib/Complexity/Randomized/NPPoly": [
+      "TCSlib/Complexity/Randomized/Reductions"
+    ],
+    "TCSlib/Complexity/Randomized/RPExpected": [
+      "TCSlib/Complexity/Randomized/ExpectedTime",
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/UniformSample": [
+      "TCSlib/Complexity/Randomized/RandomBits",
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "Mathlib/Data/Real/Archimedean",
+      "Mathlib/Data/Nat/Log"
+    ],
+    "TCSlib/Complexity/Randomized/Yap": [
+      "TCSlib/Complexity/Randomized/NPPoly",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/CircuitEval",
+      "TCSlib/Complexity/CircuitComplexity/Uniform",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPEquiv": [
+      "TCSlib/Complexity/Randomized/ExpectedTime",
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Reductions"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPHosts": [
+      "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun",
+      "TCSlib/Complexity/Randomized/ZPPEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPHostsClasses": [
+      "TCSlib/Complexity/Randomized/ZPPHosts"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPEval": [
+      "Mathlib/Data/ZMod/Basic",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "TCSlib/Complexity/Randomized/AlgCircuit"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPRun": [
+      "TCSlib/Complexity/Randomized/ZeroPEval"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroP": [
+      "TCSlib/Complexity/Randomized/ZeroPRun",
+      "TCSlib/Complexity/Randomized/Fingerprint",
+      "TCSlib/Complexity/Randomized/Primality"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPPIT": [
+      "TCSlib/Complexity/Randomized/ZeroP"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPReduce": [
+      "TCSlib/Complexity/Randomized/ZeroPPIT"
+    ],
+    "TCSlib/Complexity/Randomized": [
+      "TCSlib/Complexity/Randomized/SchwartzZippel",
+      "TCSlib/Complexity/Randomized/ErrorReduction",
+      "TCSlib/Complexity/Randomized/Classes",
+      "TCSlib/Complexity/Randomized/Adleman",
+      "TCSlib/Complexity/Randomized/SipserGacs",
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/Randomized/PTM",
+      "TCSlib/Complexity/Randomized/Inclusions",
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Median",
+      "TCSlib/Complexity/Randomized/PrimalityMath",
+      "TCSlib/Complexity/Randomized/Primality",
+      "TCSlib/Complexity/Randomized/AlgCircuit",
+      "TCSlib/Complexity/Randomized/RandomBits",
+      "TCSlib/Complexity/Randomized/Fingerprint",
+      "TCSlib/Complexity/Randomized/ZeroPEval",
+      "TCSlib/Complexity/Randomized/ZeroPRun",
+      "TCSlib/Complexity/Randomized/ZeroP",
+      "TCSlib/Complexity/Randomized/ZeroPPIT",
+      "TCSlib/Complexity/Randomized/MatchingMath",
+      "TCSlib/Complexity/Randomized/Matching",
+      "TCSlib/Complexity/Randomized/ExpectedTime",
+      "TCSlib/Complexity/Randomized/Coins",
+      "TCSlib/Complexity/Randomized/ZPPEquiv",
+      "TCSlib/Complexity/Randomized/ZPPHosts",
+      "TCSlib/Complexity/Randomized/ZPPHostsClasses",
+      "TCSlib/Complexity/Randomized/Reductions",
+      "TCSlib/Complexity/Randomized/NPPoly",
+      "TCSlib/Complexity/Randomized/Yap",
+      "TCSlib/Complexity/Randomized/DirectedWalk",
+      "TCSlib/Complexity/Randomized/BPPHard",
+      "TCSlib/Complexity/Randomized/BPLInPCount",
+      "TCSlib/Complexity/Randomized/BPLInPWords",
+      "TCSlib/Complexity/Randomized/BPLInP",
+      "TCSlib/Complexity/Randomized/RandomWalkCover",
+      "TCSlib/Complexity/Randomized/RandomWalkMixing",
+      "TCSlib/Complexity/Randomized/RandomWalkMixingPad",
+      "TCSlib/Complexity/Randomized/UniformSample",
+      "TCSlib/Complexity/Randomized/BiasedCoin",
+      "TCSlib/Complexity/Randomized/BiasedCoinHalting",
+      "TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode",
+      "TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine",
+      "TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun",
+      "TCSlib/Complexity/Randomized/SpaceAmplifyPoly",
+      "TCSlib/Complexity/Randomized/ZeroPReduce",
+      "TCSlib/Complexity/Randomized/BPPAmplify",
+      "TCSlib/Complexity/Randomized/RPExpected",
+      "TCSlib/Complexity/Randomized/BPOperator",
+      "TCSlib/Complexity/Randomized/AlgCircuitExample",
+      "TCSlib/Complexity/Randomized/QuasiPolyHierarchy",
+      "TCSlib/Complexity/Randomized/BPPEqP",
+      "TCSlib/Complexity/Randomized/BPTIMEThreshold",
+      "TCSlib/Complexity/Randomized/Space",
+      "TCSlib/Complexity/Randomized/SpaceAmplify",
+      "TCSlib/Complexity/Randomized/SpaceAmplifyRun",
+      "TCSlib/Complexity/Randomized/RandomWalk",
+      "TCSlib/Complexity/Randomized/RandomWalkHitting",
+      "TCSlib/Complexity/Randomized/RandomWalkPad",
+      "TCSlib/Complexity/Randomized/UPath",
+      "TCSlib/Complexity/Randomized/UPathMachine",
+      "TCSlib/Complexity/Randomized/UPathLoops",
+      "TCSlib/Complexity/Randomized/UPathParse",
+      "TCSlib/Complexity/Randomized/UPathSearch",
+      "TCSlib/Complexity/Randomized/UPathWalk",
+      "TCSlib/Complexity/Randomized/UPathRL"
+    ],
+    "TCSlib/Complexity/SpaceComplexity/Hierarchy": [
+      "TCSlib/Complexity/SpaceComplexity/ConfigGraph",
+      "TCSlib/Complexity/SpaceComplexity/Constructible",
+      "TCSlib/Complexity/SpaceComplexity/Padding",
+      "TCSlib/Complexity/TimeHierarchy/CodePrefix",
+      "TCSlib/Complexity/TimeHierarchy/Diagonal",
+      "TCSlib/Complexity/ClassNP/NP",
+      "TCSlib/Complexity/TuringMachine/SelfUniversal",
+      "TCSlib/Complexity/TuringMachine/Build/WindowRun",
+      "TCSlib/Complexity/SpaceComplexity/WindowClock",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/SpaceComplexity": [
+      "TCSlib/Complexity/SpaceComplexity/Basic",
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Layout",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Program",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Sim",
+      "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Call",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Compile",
+      "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Clean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bank",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Lib",
+      "TCSlib/Complexity/SpaceComplexity/Machines/FragDec",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Frag",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Parse",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Parse2",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARM",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMSim",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMRun",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMProof",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMKit",
+      "TCSlib/Complexity/SpaceComplexity/Machines/DblLang",
+      "TCSlib/Complexity/SpaceComplexity/UnaryLogspace",
+      "TCSlib/Complexity/SpaceComplexity/CounterProgSim",
+      "TCSlib/Complexity/SpaceComplexity/CounterProgSimRun",
+      "TCSlib/Complexity/SpaceComplexity/ImplicitPoly",
+      "TCSlib/Complexity/SpaceComplexity/NSPACE",
+      "TCSlib/Complexity/SpaceComplexity/SpaceClasses",
+      "TCSlib/Complexity/SpaceComplexity/Constructible",
+      "TCSlib/Complexity/SpaceComplexity/Inclusions",
+      "TCSlib/Complexity/SpaceComplexity/Examples",
+      "TCSlib/Complexity/SpaceComplexity/ZeroSpace",
+      "TCSlib/Complexity/SpaceComplexity/ConfigGraph",
+      "TCSlib/Complexity/SpaceComplexity/WindowClock",
+      "TCSlib/Complexity/SpaceComplexity/Savitch",
+      "TCSlib/Complexity/SpaceComplexity/Hierarchy",
+      "TCSlib/Complexity/SpaceComplexity/Padding",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/Reductions",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/Path",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/Mult",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMReach",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARM",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMRun",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMProof",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMExample",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMKit",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMProb",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem",
+      "TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace",
+      "TCSlib/Complexity/SpaceComplexity/Machines/VWord",
+      "TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Word",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Scan",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Valid",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Step",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Langs",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Checks",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Engine",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Regs",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Machine",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Run",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Parse",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Layout",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Layout2",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Deciders",
+      "TCSlib/Complexity/SpaceComplexity/Codec/StepDecider",
+      "TCSlib/Complexity/SpaceComplexity/Codec/Bridge",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Run",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Search",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen",
+      "TCSlib/Complexity/SpaceComplexity/SavitchARM/Window",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs",
+      "TCSlib/Complexity/SpaceComplexity/Machines/MARM",
+      "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile",
+      "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Run",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Search",
+      "TCSlib/Complexity/SpaceComplexity/ExpBFS/Main",
+      "TCSlib/Complexity/SpaceComplexity/ExpTime",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHard",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius",
+      "TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect"
+    ]
+  },
+  "dependency_gates": {
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed": [],
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterBody": [
+      "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop": [
+      "TCSlib/Complexity/TuringMachine/Build/EmitIterBody"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockTests": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockTests"
+    ],
+    "TCSlib/Complexity/ClassNP/PClosure": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Padding": [
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix": [
+      "TCSlib/Complexity/PolyHierarchy/Padding",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Normalize": [
+      "TCSlib/Complexity/PolyHierarchy/Padding"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Levels": [
+      "TCSlib/Complexity/PolyHierarchy/Normalize"
+    ],
+    "TCSlib/Complexity/PolyHierarchy/Collapse": [
+      "TCSlib/Complexity/PolyHierarchy/Levels"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLipton": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerVerifier": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSound": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifier"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSound"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerComplete": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigma": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerComplete"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP": [
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/CircuitComplexity/Meyer": [
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigma",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/CircuitComplexity": [
+      "TCSlib/Complexity/CircuitComplexity/KarpLipton",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily",
+      "TCSlib/Complexity/CircuitComplexity/Meyer",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/CircuitComplexity/MeyerComplete",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigma",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSound",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSoundInput",
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifier",
+      "TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue"
+    ],
+    "TCSlib/Complexity/CookLevin/Hardness": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassNP/Tautology": [
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/ClassNP": [
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/ClassNP/Tautology"
+    ],
+    "TCSlib/Complexity/ClassOracle/SATOracle": [
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/ClassOracle": [
+      "TCSlib/Complexity/ClassOracle/SATOracle"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Iterate": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Basic": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/AddSub": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Mul": [
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Div": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/ModPow": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Div"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Words": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/DetMod": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Jacobi": [
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/Loops": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Div"
+    ],
+    "TCSlib/Complexity/ClassP/BinaryArith": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "TCSlib/Complexity/ClassP/BinaryArith/Div",
+      "TCSlib/Complexity/ClassP/BinaryArith/ModPow",
+      "TCSlib/Complexity/ClassP/BinaryArith/Jacobi",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops",
+      "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind",
+      "TCSlib/Complexity/ClassP/BinaryArith/DetMod"
+    ],
+    "TCSlib/Complexity/ClassP": [
+      "TCSlib/Complexity/ClassP/BinaryArith"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockTests"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHardParams": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBFHard": [
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardParams"
+    ],
+    "TCSlib/Complexity/FormulaKit/Emit": [
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop"
+    ],
+    "TCSlib/Complexity/ClassPSPACE/TQBF": [
+      "TCSlib/Complexity/FormulaKit/Emit",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHard"
+    ],
+    "TCSlib/Complexity/ClassPSPACE": [
+      "TCSlib/Complexity/ClassPSPACE/TQBF",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardBridge",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHardParams",
+      "TCSlib/Complexity/ClassPSPACE/TQBFHard"
+    ],
+    "TCSlib/Complexity/CookLevin": [
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/Diagonalization/Ladner": [
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/CookLevin/Hardness"
+    ],
+    "TCSlib/Complexity/Diagonalization": [
+      "TCSlib/Complexity/Diagonalization/Ladner"
+    ],
+    "TCSlib/Complexity/FormulaKit": [
+      "TCSlib/Complexity/FormulaKit/Emit"
+    ],
+    "TCSlib/Complexity/PolyHierarchy": [
+      "TCSlib/Complexity/PolyHierarchy/Padding",
+      "TCSlib/Complexity/PolyHierarchy/Normalize",
+      "TCSlib/Complexity/PolyHierarchy/Levels",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/BPLInPWords": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Words",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/Randomized/BPLInP": [
+      "TCSlib/Complexity/Randomized/BPLInPWords",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops"
+    ],
+    "TCSlib/Complexity/Randomized/PolyTimeModel": [
+      "TCSlib/Complexity/PolyHierarchy/Normalize",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/Inclusions": [
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/CookLevin/Hardness",
+      "TCSlib/Complexity/CircuitComplexity/KarpLipton",
+      "TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP"
+    ],
+    "TCSlib/Complexity/Randomized/PTMEquiv": [
+      "TCSlib/Complexity/Randomized/Inclusions"
+    ],
+    "TCSlib/Complexity/Randomized/Reductions": [
+      "TCSlib/Complexity/Randomized/Inclusions"
+    ],
+    "TCSlib/Complexity/Randomized/BPOperator": [
+      "TCSlib/Complexity/Randomized/Reductions",
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/BPPAmplify": [
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Reductions"
+    ],
+    "TCSlib/Complexity/Randomized/QuasiPolyHierarchy": [
+      "TCSlib/Complexity/ClassP/BinaryArith/PrimeFind"
+    ],
+    "TCSlib/Complexity/Randomized/BPPEqP": [
+      "TCSlib/Complexity/ClassNP/PClosure",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "TCSlib/Complexity/Randomized/QuasiPolyHierarchy"
+    ],
+    "TCSlib/Complexity/Randomized/BPTIMEThreshold": [
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/BiasedCoin": [
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/BiasedCoinHalting": [
+      "TCSlib/Complexity/Randomized/BiasedCoin",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops"
+    ],
+    "TCSlib/Complexity/Randomized/Primality": [
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/ClassP/BinaryArith"
+    ],
+    "TCSlib/Complexity/Randomized/Matching": [
+      "TCSlib/Complexity/Randomized/Primality"
+    ],
+    "TCSlib/Complexity/Randomized/NPPoly": [
+      "TCSlib/Complexity/Randomized/Reductions"
+    ],
+    "TCSlib/Complexity/Randomized/RPExpected": [
+      "TCSlib/Complexity/Randomized/PTMEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/UniformSample": [
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops"
+    ],
+    "TCSlib/Complexity/Randomized/Yap": [
+      "TCSlib/Complexity/Randomized/NPPoly",
+      "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+      "TCSlib/Complexity/PolyHierarchy/Collapse"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPEquiv": [
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Reductions"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPHosts": [
+      "TCSlib/Complexity/Randomized/ZPPEquiv"
+    ],
+    "TCSlib/Complexity/Randomized/ZPPHostsClasses": [
+      "TCSlib/Complexity/Randomized/ZPPHosts"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPEval": [
+      "TCSlib/Complexity/ClassP/BinaryArith/Loops"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPRun": [
+      "TCSlib/Complexity/Randomized/ZeroPEval"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroP": [
+      "TCSlib/Complexity/Randomized/ZeroPRun",
+      "TCSlib/Complexity/Randomized/Primality"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPPIT": [
+      "TCSlib/Complexity/Randomized/ZeroP"
+    ],
+    "TCSlib/Complexity/Randomized/ZeroPReduce": [
+      "TCSlib/Complexity/Randomized/ZeroPPIT"
+    ],
+    "TCSlib/Complexity/Randomized": [
+      "TCSlib/Complexity/Randomized/PolyTimeModel",
+      "TCSlib/Complexity/Randomized/Inclusions",
+      "TCSlib/Complexity/Randomized/PTMEquiv",
+      "TCSlib/Complexity/Randomized/Primality",
+      "TCSlib/Complexity/Randomized/ZeroPEval",
+      "TCSlib/Complexity/Randomized/ZeroPRun",
+      "TCSlib/Complexity/Randomized/ZeroP",
+      "TCSlib/Complexity/Randomized/ZeroPPIT",
+      "TCSlib/Complexity/Randomized/Matching",
+      "TCSlib/Complexity/Randomized/ZPPEquiv",
+      "TCSlib/Complexity/Randomized/ZPPHosts",
+      "TCSlib/Complexity/Randomized/ZPPHostsClasses",
+      "TCSlib/Complexity/Randomized/Reductions",
+      "TCSlib/Complexity/Randomized/NPPoly",
+      "TCSlib/Complexity/Randomized/Yap",
+      "TCSlib/Complexity/Randomized/BPLInPWords",
+      "TCSlib/Complexity/Randomized/BPLInP",
+      "TCSlib/Complexity/Randomized/UniformSample",
+      "TCSlib/Complexity/Randomized/BiasedCoin",
+      "TCSlib/Complexity/Randomized/BiasedCoinHalting",
+      "TCSlib/Complexity/Randomized/ZeroPReduce",
+      "TCSlib/Complexity/Randomized/BPPAmplify",
+      "TCSlib/Complexity/Randomized/RPExpected",
+      "TCSlib/Complexity/Randomized/BPOperator",
+      "TCSlib/Complexity/Randomized/QuasiPolyHierarchy",
+      "TCSlib/Complexity/Randomized/BPPEqP",
+      "TCSlib/Complexity/Randomized/BPTIMEThreshold"
+    ],
+    "TCSlib/Complexity/SpaceComplexity/Hierarchy": [
+      "TCSlib/Complexity/ClassNP/PClosure"
+    ],
+    "TCSlib/Complexity/SpaceComplexity": [
+      "TCSlib/Complexity/SpaceComplexity/Hierarchy"
+    ]
+  },
+  "no_outside_TCSlib_importer_of_rebuilt_module": true
+}

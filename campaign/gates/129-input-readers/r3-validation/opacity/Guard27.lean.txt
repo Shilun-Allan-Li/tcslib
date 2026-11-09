@@ -1,0 +1,162 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Option
+import TCSlib.Complexity.TuringMachine.Finite
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Simulation gadgets
+
+Generic building blocks for machine constructions, split out of
+`TCSlib.Complexity.TuringMachine.Composition` at the epoch-1/epoch-2 boundary
+(epoch-1 audit, findings 5 and 11, and the policy file-size standard): the
+machines of the composition file, and the heavier constructions of later
+epochs, are assembled from these. The constructions and their specification API are
+public shared surface, with local proof helpers for their intrinsic bounds.
+Each gadget carries only the finiteness assumptions it needs.
+
+## Contents
+
+* **Emission chains** (`Turing.FinTM.emitAction`, `emit_run`, `emit_halts`):
+  states that write a fixed word to the output, one symbol per step, ignoring
+  all reads, then halt.
+* **Control actions** (`Turing.FinTM.controlAction`, `controlAction_apply`):
+  transitions that only move the input head and change state.
+* **Input-head positioning** (`Turing.FinTM.inputSymbol_at`,
+  `moveInputPos_neg_val`, `rewind_scan`, `rewind_from_any`): reading at a
+  position, the clamped left move, and the audited rewind-to-start procedure
+  (one unconditional left move, left while reading a symbol, one right move).
+  The rewind head bounds `Turing.FinTM.rewind_scan_heads` and `rewind_heads` (every
+  work head stays put throughout the rewind) moved here from `Build/Catalog` at
+  MIG-1 stage S (2026-10-14).
+* **Disjoint tape-block embeddings** (`Turing.FinTM.leftAction`/`rightAction`,
+  `leftCfg`/`rightCfg`, their `apply`/`step`/`run` lemmas): run a machine on
+  the left or right block of a `k + l`-tape machine, in lockstep, with the
+  other block's tapes inactive. **Scope note** (epoch-1 audit, finding 11):
+  these embeddings preserve the *native* input tape and pass emissions to the
+  *real* output — they are not, by themselves, a buffered-composition
+  simulator; buffering and virtual-input clamping need their own invariants on
+  top.
+* **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
+  machines in disjoint tape and state blocks; the Boolean chooses only the
+  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed`: the selected machine's
+  space plus one origin cell per idle tape.
+* **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
+  that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
+* **Optional-write normalization** (`Turing.Action.apply_workTapes`, from
+  `Configuration`): the raw action-application identity for work tapes.
+* **Buffered sequential simulator** (`Turing.FinTM.bufferedCompTM`): the
+  three-block tape partition, contiguous buffer representation, virtual-input
+  reads and clamping invariant, first- and second-phase run correspondence,
+  and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
+  the native-input embeddings above without changing their statements.
+* **Machine agreement** (`Turing.MultiTapeTM.AgreeOn`, `step_eq_of_agreeOn`,
+  `runFrom_eq_of_agreeOn`): two tables agreeing on a set of control states run identically while
+  the control stays inside it. `Turing.MultiTapeTM.agreeOn_iff` states the agreement as an
+  equivalence (the ND inventory API, round 2).
+* **Buffers** (`Turing.FinTM.bufferTape`): a word stored from cell `0`, blank elsewhere;
+  `Turing.FinTM.bufferTape_eq` and `bufferTape_of_neg` (the ND inventory API, round 2).
+
+**The specification API** (user, 2026-10-16): the fields of the buffered composite's two
+configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
+equations.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2-§1.3; the "high-level description"
+  convention on p. 14.)
+-/
+
+namespace Turing.FinTM
+
+/-- One step of a fixed-word emission chain, with an arbitrary state embedding.
+The input and all work tapes are left untouched. -/
+def emitAction {k : ℕ} {S : Type} (w : List Bool)
+    (e : Fin (w.length + 1) → S) (i : Fin (w.length + 1)) : Action k Bool S :=
+  if h : i.val < w.length then
+    ⟨0, fun _ => (none, 0), some w[i.val], some (e ⟨i.val + 1, by omega⟩)⟩
+  else
+    ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- After `t` emission steps the state is the `t`-th chain state and exactly the
+first `t` symbols have been appended.
+
+**Proof sketch.** Induct on the number of steps, using the transition equation
+and the state and output readers. No tape invariant is needed because the
+emission transitions ignore all reads. -/
+lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    ∀ t (ht : t ≤ w.length),
+      (tm.runFrom cfg t).state = some (e ⟨t, by omega⟩) ∧
+      (tm.runFrom cfg t).output = cfg.output ++ w.take t := by
+  intro t
+  induction t with
+  | zero =>
+    intro ht
+    rw [MultiTapeTM.runFrom_zero]
+    exact ⟨hs, by simp⟩
+  | succ t ih =>
+    intro ht
+    obtain ⟨hstate, hout⟩ := ih (by omega)
+    have hstep : tm.runFrom cfg (t + 1) =
+        (emitAction w e ⟨t, by omega⟩).apply (tm.runFrom cfg t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate, htr]
+    rw [hstep]
+    constructor
+    · simp only [Action.apply_state, emitAction, dif_pos (show t < w.length by omega)]
+    · simp only [Action.apply_output, emitAction, dif_pos (show t < w.length by omega),
+        Option.toList_some]
+      rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp [List.append_assoc]
+
+/-- One further, nonemitting step halts the fixed-word emission chain. -/
+lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    (tm.runFrom cfg (w.length + 1)).state = none ∧
+      (tm.runFrom cfg (w.length + 1)).output = cfg.output ++ w := by
+  obtain ⟨hstate, hout⟩ := emit_run tm w e htr cfg hs w.length (le_refl _)
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate, htr]
+  simp [Action.apply_state, Action.apply_output, emitAction, hout]
+
+
+/-- An action that only moves the input head and changes the state. -/
+def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
+
+section Boundary129
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+/-- The defining equation of `controlAction`:
+`controlAction m q = ⟨m, fun _ => (none, 0), none, q⟩`. -/
+theorem controlAction_def {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    (controlAction m q : Action k Bool S) =
+      (⟨m, fun _ => (none, 0), none, q⟩) := rfl
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := [`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.workTapeSymbols, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.step]
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "SIMP_STILL_ACTIVE|{n}"
+    logInfo m!"GUARD_ACTIVE|{n}"
+end Boundary129
+end Turing.FinTM

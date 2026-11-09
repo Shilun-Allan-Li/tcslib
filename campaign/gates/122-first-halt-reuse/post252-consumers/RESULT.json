@@ -1,0 +1,83 @@
+{
+  "pass": true,
+  "runs": [
+    {
+      "module": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "source_sha256": "21a9d100868bfddd90c595bef78085e09a9af809dbcede702f67d1965517a647",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "argv": [
+        "bash",
+        "/private/tmp/ab34-post252-consumers/candidate/devtools/seyoon/leanelab-o.sh",
+        "/private/tmp/ab34-post252-consumers/candidate",
+        "/private/tmp/ab34-post252-consumers/whole",
+        "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+        "/private/tmp/ab34-post252-consumers/whole"
+      ],
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "source_sha256": "c73fb4abdd261e140f066c05584a951c9fe161472766ae16f534fa84995e22cd",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "argv": [
+        "bash",
+        "/private/tmp/ab34-post252-consumers/candidate/devtools/seyoon/leanelab-o.sh",
+        "/private/tmp/ab34-post252-consumers/candidate",
+        "/private/tmp/ab34-post252-consumers/whole",
+        "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+        "/private/tmp/ab34-post252-consumers/whole"
+      ],
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "source_sha256": "efcbc019105d944b6bab51479a590a8123d10d80a3f0b64f59fd4293d7894d87",
+      "log_sha256": "15b7d261735d21b28518db037fa60302c1874d32dd2680a9bf8881b3f1328939",
+      "argv": [
+        "bash",
+        "/private/tmp/ab34-post252-consumers/candidate/devtools/seyoon/leanelab-o.sh",
+        "/private/tmp/ab34-post252-consumers/candidate",
+        "/private/tmp/ab34-post252-consumers/whole",
+        "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "/private/tmp/ab34-post252-consumers/whole"
+      ],
+      "exit": 0,
+      "pass": true
+    }
+  ],
+  "consumers": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "repointed_roots": [
+        "Complexity.LogProg.runFrom_count_eq"
+      ],
+      "before_SHA256": "1f064e29fa79ec52faf876e7d72fbed93d106a2f08b060643039c52753729b7b",
+      "after_SHA256": "21a9d100868bfddd90c595bef78085e09a9af809dbcede702f67d1965517a647",
+      "all_headers_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "repointed_roots": [
+        "Turing.ClockHost.startup"
+      ],
+      "before_SHA256": "7d17ca0505e769c98173f78ab0a9ff5727a4626008cf53b352ab7dd191f2cfbc",
+      "after_SHA256": "c73fb4abdd261e140f066c05584a951c9fe161472766ae16f534fa84995e22cd",
+      "all_headers_exact": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "repointed_roots": [
+        "Turing.FinTM.one_work_tape",
+        "Turing.FinTM.dg_all_inputs"
+      ],
+      "before_SHA256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "after_SHA256": "efcbc019105d944b6bab51479a590a8123d10d80a3f0b64f59fd4293d7894d87",
+      "all_headers_exact": true
+    }
+  ],
+  "actual_providers_not_hypothetical": true,
+  "pr_branch_mutated": false,
+  "merged_tree_full_replay_claimed": false
+}

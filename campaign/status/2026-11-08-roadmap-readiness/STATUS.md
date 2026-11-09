@@ -1,5 +1,10 @@
 # Chapters 3–4 roadmap readiness, 2026-11-08
 
+**After #249:** rerunning both proof-closure probes on `770a4488e1bb770a3b7c9c878327fc2d468dd7f2`
+confirmed the same 26 headlines and 19 other results with no sorryAx.
+The Ladner scaffold has six separate direct holes. See post249/RESULT.json.
+
+
 At the time of these checks, the merged campaign Lean tree was `9b5dcf46408db681bcbc721930ef2203fa6bc47d` (MAC8). Fresh Lean checks through
 leanelab.sh found no sorryAx in all 26 previously tracked headline closures
 (9 for chapter 3, 17 for chapter 4) or in 19 additional roadmap results. The
@@ -11,7 +16,7 @@ admission count. Ladner is outside the old 26.
 |---|---|
 | P3.1–P3.2, oracle classes and relativization | The oracle classes, co-SAT and P-oracle facts, EXPCOM equalities, both sides of Baker–Gill–Solovay, and a non-time-constructible function are in the merged source. |
 | P3.3, time hierarchies | The book-strength f log f deterministic result and its positive-bound version (#223), the nondeterministic time hierarchy and its linear-overhead universal NDTM pass. The deterministic theorem's positivity/normalization and machine model are as stated in TimeHierarchy/Diagonal. |
-| P3.4, Ladner | Gate128 is closed at `1096e50b4e105392737ec52939b1db0cdbd9316d`. #249 is clear to merge as the statement scaffold; the PR remains open with six direct mathematical admissions and one packaging theorem depending on them. No proof fill is dispatched. |
+| P3.4, Ladner | Gate128 is closed at `1096e50b4e105392737ec52939b1db0cdbd9316d`. #249 merged at `770a4488e1bb770a3b7c9c878327fc2d468dd7f2` as a statement scaffold with six direct mathematical admissions and one packaging theorem depending on them. No proof fill is dispatched. |
 | P4.1–P4.2, space classes and simulations | DTIME ⊆ SPACE ⊆ NSPACE, NSPACE to exponential time, the configuration bound, NP ⊆ PSPACE, 3SAT, EVEN and MULT, general Savitch and PSPACE = NPSPACE are in the merged tree. |
 | P4.3, hierarchy and PSPACE completeness | Space hierarchy and L ⊊ PSPACE, SPACE(n+1) ≠ NP (#229), F6's forward space-universal simulation (#235), TQBF membership/hardness/completeness and finite-game determinacy pass. TQBF hardness uses Complexity.Codec and a uniform tableau, independent of RD-2. The separate closed-form ConfigCodec semantic and uniformity lemmas remain admitted (see below). |
 | P4.4, logspace | The checked logspace reduction laws, PATH membership and NL-completeness, NL ⊆ P, NL = coNL and the general NSPACE complement theorem are merged. The separately queued additive NL closure lemma and deferred book items are not implied by this count. |

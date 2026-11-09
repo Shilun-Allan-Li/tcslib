@@ -1,0 +1,14 @@
+Envelope.lean:9:7: error: unknown tactic
+Envelope.lean:9:4: error: unsolved goals
+case pos
+k : ℕ
+ih : ∀ m < k, m * (m + 1) ≤ 2 ^ (m + 1)
+hs : k ≤ 2
+⊢ k * (k + 1) ≤ 2 ^ (k + 1)
+Envelope.lean:7:11: error: unsolved goals
+case neg
+k : ℕ
+ih : ∀ m < k, m * (m + 1) ≤ 2 ^ (m + 1)
+hs : ¬k ≤ 2
+⊢ k * (k + 1) ≤ 2 ^ (k + 1)
+'ladnerNumericEnvelopeProbe' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

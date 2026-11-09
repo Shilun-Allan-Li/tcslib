@@ -1,0 +1,96 @@
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import hashlib,json,os,re,shutil,subprocess,sys
+
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+source=Path(sys.argv[1])
+out=Path(sys.argv[2])
+out.mkdir()
+(out/'.lake').mkdir()
+(out/'.lake/packages').symlink_to((source/'.lake/packages').resolve(),target_is_directory=True)
+shutil.copyfile(source/'lean-toolchain',out/'lean-toolchain')
+over=Path(sys.argv[4])
+ns={}
+raw=(R/'devtools/seyoon/declfreeze.py').read_text()
+exec(compile(raw.split('a = chunks(open(sys.argv[1]).read())')[0],'declfreeze.py','exec'),ns)
+cleaner=Path('/private/tmp/ab34-reader-context-repairs/prepare_boundaries.py').read_text()
+exec(compile(cleaner[cleaner.index('def clean(s):'):cleaner.index('for idx,m in enumerate(M,1):')],
+             'prepare_boundaries.py','exec'),ns)
+targets={
+ 'Catalog':('catalog_apply_record','catalog_clear_trace','copyMapTM_step_eq','catalog_transferMap_trace',
+            'catalog_compare_trace','catalog_increment_trace'),
+ 'Primitives':('catalogPrefixTM_emit','catalogPrefixTM_copy','catalogPoly_rewind','catalogPoly_copy',
+               'emitterP2_erase_scan','pairExtractTM_computes','catalogPoly_emit','catalogPoly_setup',
+               'catalogPoly_loop','rawStrip_computes'),
+ 'Simulation':('bufferedScanCfg_run','bufferedFirstCfg_rewind'),
+}
+scope=json.loads(Path(sys.argv[3]).read_bytes())
+targets={Path(row['path']).stem:tuple(n.rsplit('.',1)[1] for n in row['r3_changed_or_added'])
+         for row in scope['owner_source'] if row['r3_changed_or_added']}
+assert sum(map(len,targets.values()))==scope['r3_proof_edits']==64
+names=['Turing.Action.apply','Turing.MultiTapeTM.step','Turing.MultiTapeTM.runFrom',
+       'Turing.MultiTapeTM.initCfg','Turing.Cfg.init','Turing.Cfg.workTapeSymbols']
+remove=['Turing.Action.apply','Turing.MultiTapeTM.initCfg','Turing.Cfg.init']
+body="""open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  for n in (HEAD_NAMES : List Name) do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "unexpected reducibility at {n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "unexpected simp registration at {n}"
+    logInfo m!"ACTIVE|{n}"
+"""
+sha=lambda b:hashlib.sha256(b).hexdigest()
+rows=[]
+for owner,roots in targets.items():
+    text=(source/(owner+'.lean')).read_text()
+    for _,_,chunk in ns['chunks'](text):
+        pass
+    for root in roots:
+        found=[(n,c) for n,_,c in ns['chunks'](text) if n.endswith('.'+root)]
+        assert len(found)==1,(owner,root)
+        qualified,chunk=found[0]
+        assert text.count(chunk)==1
+        start=text.index(chunk)
+        before=start
+        while True:
+            m=re.search(r'(?m)^open [^\n]+ in\s*\n\s*\Z',text[:before])
+            if not m:break
+            before=m.start()
+        end=start+len(chunk)
+        stack=[]
+        for line in ns['clean'](text[:end]).splitlines():
+            m=re.fullmatch(r'\s*(namespace|section|noncomputable section)(?:\s+([^\s]+))?\s*',line)
+            if m:
+                stack.append(m.group(2) or '')
+            elif re.fullmatch(r'\s*end(?:\s+([^\s]+))?\s*',line):
+                assert stack
+                stack.pop()
+        heads=names+(['Turing.FinTM.bufferTape'] if owner!='Simulation' else [])
+        prefix=text[:before]
+        guard='section Audit129\nattribute [local irreducible] '+' '.join(heads)+'\n'
+        guard+='attribute [-simp] '+' '.join(remove)+'\n'
+        present=body.replace('HEAD_NAMES','['+', '.join(chr(96)+n for n in heads)+']')
+        test=prefix+guard+'\n'+text[before:end]+'\n'+present+'end Audit129\n'
+        test+=''.join('end'+(' '+n if n else '')+'\n' for n in reversed(stack))
+        f=owner+'_'+root+'.lean'
+        (out/f).write_text(test)
+        rows.append({'owner':owner,'root':qualified,'file':f,'heads':heads,'simp_removed':remove,
+                     'owner_sha256':sha(text.encode()),'source_sha256':sha(test.encode())})
+(out/'REQUEST.json').write_text(json.dumps(rows,indent=2)+'\n')
+def run(z):
+    cmd=['bash',str(R/'devtools/seyoon/leanelab.sh'),str(out),str(over),z['file']]
+    v=subprocess.run(cmd,capture_output=True)
+    log=v.stdout+v.stderr
+    (out/z['file'].replace('.lean','.log')).write_bytes(log)
+    active=re.findall(rb'ACTIVE\|([^\r\n]+)',log)
+    ok=v.returncode==0 and b'error:' not in log and set(x.decode() for x in active)==set(z['heads'])
+    print(z['root'],'PASS' if ok else 'FAIL',flush=True)
+    return z|{'pass':ok,'exit':v.returncode,'argv':cmd,'log_sha256':sha(log)}
+with ThreadPoolExecutor(max_workers=1) as pool:
+    checks=list(pool.map(run,rows))
+(out/'RESULT.json').write_text(json.dumps({'all_pass':all(z['pass'] for z in checks),
+    'family_specific_heads_only':True,'rows':checks},indent=2)+'\n')

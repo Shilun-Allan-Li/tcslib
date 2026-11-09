@@ -1,0 +1,22 @@
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+
+namespace Complexity
+open Turing
+
+section
+example (x a : List Bool) :
+    pairEncode x a = (x.flatMap fun b => [b, b]) ++ [false, true] ++ a := by rfl
+example : pairEncode = fun x a : List Bool =>
+    (x.flatMap fun b => [b, b]) ++ [false, true] ++ a := by rfl
+example (f : List Bool → List Bool) :
+    PolyTimeComputable f ↔ ∃ (M : FinTM Bool) (C c : ℕ),
+      M.ComputesFunInTime f (fun n => C * (n + 1)^c) := by rfl
+example : PolyTimeComputable = fun f =>
+    ∃ (M : FinTM Bool) (C c : ℕ), M.ComputesFunInTime f (fun n => C * (n + 1)^c) := by rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T ↔ ∀ x, M.ComputesInTime x (f x) (T x.length) := by rfl
+example : @FinTM.ComputesFunInTime Bool = fun M f T =>
+    ∀ x, M.ComputesInTime x (f x) (T x.length) := by rfl
+end
+end Complexity
