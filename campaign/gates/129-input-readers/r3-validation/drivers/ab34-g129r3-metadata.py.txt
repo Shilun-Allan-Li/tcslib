@@ -1,0 +1,81 @@
+from pathlib import Path
+import hashlib,json,re,shutil,subprocess,sys
+
+freeze=Path(sys.argv[1]); owners=Path(sys.argv[2]); out=Path(sys.argv[3])
+q=json.loads((freeze/'RESULT.json').read_bytes())
+owners_result=json.loads((owners/'RESULT.json').read_bytes())
+assert owners_result['all_predecessors_pass'] and owners_result['freeze']==str(freeze)
+over=Path(owners_result['whole_output_snapshot'])
+w=owners/'runtime'
+out.mkdir()
+p=out/'runtime'
+p.mkdir(); (p/'.lake').mkdir()
+(p/'.lake/packages').symlink_to((w/'.lake/packages').resolve(),target_is_directory=True)
+shutil.copyfile(w/'lean-toolchain',p/'lean-toolchain')
+M=Path('/private/tmp/ab34-gate131-right-step-import-proposal-dzo3ncc0/MetadataBody.lean.txt').read_text()
+roots=[]
+for row in q['owner_source']:
+    rel=row['path']
+    expected=row['sha256']
+    assert hashlib.sha256((w/rel).read_bytes()).hexdigest()==expected
+    roots.extend((n,rel[:-5].replace('/','.')) for n in row['r3_changed_or_added'])
+old_scope={
+    'Build.Catalog':('step_of_tapeAction_move','step_of_tapeAction_write','step_of_inputMoveAction',
+                     'walkTM_run_ofCfg','inputMoveAction_eq'),
+    'Simulation':('FinTM.controlAction_apply','FinTM.controlAction_def','FinTM.emit_run',
+                  'FinTM.emit_halts','FinTM.inputSymbol_at','FinTM.rewind_scan_heads',
+                  'FinTM.bufferedSecondCfg_step'),
+    'Build.Primitives':('FinTM.incFixedTM_computes','FinTM.catalogPrefixTM_halt','FinTM.scanCfg_read',
+                       'FinTM.extractCfg_read','FinTM.emitterP2_control','FinTM.pairExtractTM_fst_run'),
+    'Build.Scan':('scan_copy_trace','inputFoldTM_tr_bwd','scan_fold_trace'),
+}
+for mod,names in old_scope.items():
+    for n in names:
+        pair=('Turing.'+n,'TCSlib.Complexity.TuringMachine.'+mod)
+        if pair not in roots: roots.append(pair)
+assert len(roots)==len(set(roots))
+declaration_names='['+', '.join(f'({chr(96)}{n}, {chr(96)}{m})' for n,m in roots)+']'
+start=M.index('  let target :=')
+end=M.index('  for root in roots do',start)
+M=M[:start]+f"""  let targets : List (Name × Name) := {declaration_names}
+  let table := env.constants.toList
+  let roots := table.filterMap fun (n, _) =>
+    if targets.contains ((privateToUserName? n).getD n, homeOf n) then some n else none
+  unless roots.length == targets.length do
+    throwError "selected count {{roots.length}} for {{targets.length}}"
+"""+M[end:]
+M=M.replace('let nameHits := env.constants.toList.filter','let nameHits := table.filter')
+M=M.replace('("name",toJson root.toString),("owner",toJson owner.toString),',
+    '("name",toJson root.toString),("surface",toJson (((privateToUserName? root).getD root).toString)),("owner",toJson owner.toString),')
+M=M.replace('("root",toJson root.toString),("owner",toJson owner.toString),',
+    '("root",toJson root.toString),("surface",toJson (((privateToUserName? root).getD root).toString)),("owner",toJson owner.toString),')
+M='import Lean\nimport TCSlib.Complexity.TuringMachine.Build.Scan\n'+M
+(p/'AuditMetadata.lean').write_text(M)
+cmd=['bash',str(w/'devtools/seyoon/leanelab.sh'),str(p),str(over),'AuditMetadata.lean']
+a=subprocess.run(cmd,capture_output=True)
+raw=a.stdout+a.stderr
+(out/'Metadata.lean.txt').write_text(M)
+(out/'Metadata.log').write_bytes(raw)
+assert a.returncode==0 and b'error:' not in raw,(a.returncode,raw[-1800:])
+result={n:{} for n in ('SELECTED','BOUNDARY','IDENTITY')}
+for line in raw.decode().splitlines():
+    for label,table in result.items():
+        if label+'|' not in line:continue
+        entry=json.loads(line.split(label+'|',1)[1])
+        key=entry.get('surface',entry.get('name'))
+        if key in table: assert table[key]==entry
+        table[key]=entry
+assert set(result['SELECTED'])==set(result['BOUNDARY'])=={n for n,_ in roots}
+for n,mod in roots:
+    z=result['SELECTED'][n]
+    assert z['owner']==mod and z['kind']=='theorem' and z['typeIsProp']
+    assert not set(z['axioms'])-{'propext','Quot.sound','Classical.choice'},(n,z['axioms'])
+for n in q['exact_published_three_readers']:
+    z=result['SELECTED'][n]
+    assert not z['simp'] and not z['unfold'] and not z['axioms']
+(out/'DATA.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+(out/'RESULT.json').write_text(json.dumps({'pass':True,'roots':len(roots),'changed_roots':q['r3_proof_edits'],
+    'argv':cmd,'source_sha256':hashlib.sha256(M.encode()).hexdigest(),
+    'log_sha256':hashlib.sha256(raw).hexdigest(),
+    'ordinary_union':sorted(result['IDENTITY']),'all_standard_axioms':True},indent=2)+'\n')
+print('Verified',len(roots),'standard-axiom closures and their imported definition footprints.')

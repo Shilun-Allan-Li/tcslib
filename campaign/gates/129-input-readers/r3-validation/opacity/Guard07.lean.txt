@@ -1,0 +1,254 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import Mathlib.Data.List.Induction
+import Mathlib.Data.Nat.Bits
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: the primitive catalog
+
+The instruction set of the machine-construction library
+(`machine-library-design.md` §4, P1–P12): the timed string functions every
+Chapter-2 fill batch privately rebuilt, stated once as machine contracts.
+`Turing.FinTM.computesFunInTime_id` and
+`Turing.FinTM.computesFunInTime_const` (in
+`TCSlib.Complexity.TuringMachine.Composition`) are catalog entries P1–P2
+and already proved; this module states the rest.
+
+**Status: proved.** Every theorem below is proved; roughly half were
+harvests — their fills adapted already-proved private constructions from
+the Chapter-2 epoch-2 batches (named per entry) — and the rest are new
+small machines. Following the house idiom of
+`TCSlib.Complexity.TuringMachine.Composition`, the convenience rows package
+public named witnesses with their run specifications. Private helpers establish
+the local invariants used by those specifications. Multi-argument interfaces
+go through `Turing.pairEncode`, whose self-delimiting grammar lets a
+pipeline stage **thread the original input through its output** — the
+`pairLenCheck` and `stripLast` contracts below are deliberately stated in
+that threaded form, which is exactly how the Chapter-2 verifier
+constructions consume them. New Chapter-1 surface, flagged for the shared
+infrastructure audit round.
+
+**Catalog refinements at spec time** (recorded against the frozen design
+§4): P6 is realized as the fixed-first-component encoder plus the threaded
+extractors/validity test; P7 (replicate) is subsumed by the unary clause of
+P5, whose instances are what the emission customers actually consume; P8
+is realized in threaded form (`pairLenCheck`); P12 (`clearTM`) has no
+standalone string-function contract — clearing is intra-machine and lives
+in the loop fill's toolkit. **Round-2 additions** (per round-1 finding 3:
+the extractors discard the other component by design, and sequential
+composition alone never yields simultaneous access to two results): P13
+`pairConcat` (the D-WRAP shape), P14 `pairDup` (the entry stage of
+data-retaining pipelines), and the threaded-map combinator `pairMapSnd`;
+P10's narrowing is recorded, and result-bearing search is now
+`Turing.FinTM.exists_loopFindTM` (`machine-library-design.md` §9b).
+
+## Named witnesses and their specs
+
+The rows' witnesses are public, each with its spec theorem:
+* `Turing.FinTM.prependTM` (`prependTM_computes`), `incFixedTM` (`incFixedTM_computes`),
+  `pairValidTM` (`pairValidTM_computes`), `pairExtractTM` (`pairExtractTM_computes`,
+  `pairExtractTM_fst`, `pairExtractTM_snd`, `pairExtractTM_concat`; the first component's complete
+  run, `pairExtractTM_fst_run` and `pairExtractTM_fst_run_budget`);
+* `polyUnaryTM` (`polyUnaryTM_computes`, `polyUnaryTM_spaceUsed`), `polyBitsTM`
+  (`polyBitsTM_computes`), `pairLenCheckTM` (`pairLenCheckTM_computes`), `stripLastTM`
+  (`stripLastTM_computes`);
+* `splitSolveTM` (`splitSolveTM_computes`, `splitSolveTM_spaceUsed`), `splitSolveWithTM`
+  (`splitSolveWithTM_computes`);
+* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`);
+* `pairMapSndTM` (`pairMapSndTM_computes`, `pairMapSndTM_spaceUsed`), the forwarding
+  mapper with time coefficient `22` and coefficient one on the payload's space.
+
+Every named specification is proved. The polynomial-bit, stripping and split-search
+results consume the corresponding named time and space specifications.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2–§1.4: all entries are the
+  folklore tape subroutines of the textbook's simulation arguments.)
+
+**Implementation note (batch P).** The first eleven targets in the batch
+brief's fill order and the four continuation targets `pairLenCheck`,
+`stripLast`, `pairMapSnd`, and `splitSolve` are proved. The original spec-phase
+prose above and on the contracts is retained as the audit record. The length
+counter is obtained from the public `Complexity.timeConstructible_id`, whose
+proved machine implements precisely the sketched amortized counter. The three
+extractors share one private buffered parser, so suffix-only extraction also
+buffers and replays silently before copying the suffix; its linear envelope
+is unchanged. The fixed-width incrementer adapts the enumerator's carry
+semantics to two native-input scans, validating before physical emission.
+
+
+**Implementation note (batch P2).** The threaded length checker, marker stripper,
+threaded map, and split search are proved. The length checker composes the existing
+buffered first extractor with the unary generator, captures the result with
+`capture_run`, then reparses and counts down on the native payload. Malformed
+inputs emit only `[false]`. The marker stripper first guards on a valid
+extracted suffix containing a true bit; the successful branch buffers the
+whole original encoding, erases its final marker/false-run, and replays the
+retained encoding. The guard is complete before any physical output. Both
+routes reuse the in-file parser/scan invariant patterns and proved public
+wrappers.
+
+**The threaded map.** `Turing.FinTM.pairMapSndTM` is the forwarding controller: it validates
+and buffers the pair silently, emits the encoded first component and the separator, then runs
+the payload machine on the buffered second component through clamped virtual input, forwarding
+its emissions (`pairMapSndTM_computes`, coefficient `22`; `pairMapSndTM_spaceUsed`, coefficient
+one on the payload's space). It replaces an earlier captured-output controller, whose capture tape
+could not carry a linear space bound. Pair duplication uses `Turing.pairDiagTM`.
+
+The split-search theorem is proved. Its private components include the unary
+orbit/search bridges and
+`splitSolve_of_body`, which closes the public result only when supplied the
+actual startup and round contracts; a candidate-preserving unary-bank
+preparer; a counted source-simulation correspondence; the generator's exact
+loop endpoint; and a scratch-restoration controller with a positive first
+return and no earlier visit to its return state. The combined `splitBodyTM`
+and `splitBody_round` assemble these components and prove `hround`.
+-/
+
+/-! Batch P4 closure note: the split-search body is now constructed and proved.
+`splitBodyTM` separates preparation, counted source evaluation, checked rewind,
+rejection restoration, and native-bit emission into disjoint finite phases.
+`splitBody_round` composes their exact seams and proves positive duration and
+strict-interior anchor exclusion, including the arbitrary-bit past-end stall.
+`splitEmit_run` supplies the native-slice payload; `splitBody_envelope` accounts
+for every phase within the common polynomial bound. Both exponent cases
+instantiate this body through the proved `splitSolve_of_body` loop closure.
+All fifteen primitive contracts are now proved without admissions. Earlier
+spec/checkpoint status notes above are retained as historical documentation. -/
+
+namespace Turing.FinTM
+
+/-! Implementation note (batch P): the private prefix construction below is
+adapted in-file from `ClassNP/Reductions.lean`; no private declaration from
+that module is used. Completed contracts retain their audited spec docstrings. -/
+
+/-- **The prepending machine**. A machine with no work tapes that writes the fixed word `w` and then
+copies its input, so that it computes `x ↦ w ++ x`; its last state is the copy state. [AB09, §1.2]
+-/
+def prependTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Fin (w.length + 1)
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        if h : q.val < w.length then
+          ⟨0, fun i => i.elim0, some w[q.val], some ⟨q.val + 1, by omega⟩⟩
+        else match inp with
+          | some b => ⟨1, fun i => i.elim0, some b, some q⟩
+          | none => ⟨0, fun i => i.elim0, none, none⟩ }
+
+/-- A fixed-word prepending machine visits no work-tape cells, on every input and at every time. -/
+theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+/-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
+private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin (w.length + 1)) x :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
+and the input head has not moved.
+
+**Proof sketch.** Read the initial configuration fields at time zero. At each
+live prefix state, the transition emits the next fixed bit and leaves the input
+head in place. The action fields identify the next prefix configuration. -/
+private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
+    (prependTM w).tm.runFrom ((prependTM w).tm.initCfg x) i =
+      catalogPrefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
+  intro i
+  induction i with
+  | zero =>
+    intro hi
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext_zero_tapes <;>
+      simp [-Cfg.init, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output,
+        catalogPrefixCfg, prependTM]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hlt : i < w.length := by omega
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [catalogPrefixCfg, prependTM, dif_pos hlt]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_zero _
+    · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem hlt]
+
+/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
+    (prependTM w).tm.runFrom
+      (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
+      catalogPrefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
+        (w ++ x.take i) := by
+  intro i
+  induction i with
+  | zero => intro hi; simp [catalogPrefixCfg]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hsym : (catalogPrefixCfg w x (some ⟨w.length, by omega⟩)
+        ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
+      inputSymbolInner i (by simp only [catalogPrefixCfg]; omega) (by omega)
+    rw [MultiTapeTM.step_of_some (by rfl), hsym]
+    simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte, catalogPrefixCfg]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
+    · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem (by omega),
+        List.append_assoc]
+
+section Boundary129
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.bufferTape Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step Turing.moveInputPos
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+/-- A blank in the final copy state halts without moving or emitting. -/
+private lemma catalogPrefixTM_halt (w x : List Bool) (p : Fin (x.length + 2))
+    (hp : p.val = x.length + 1) (out : List Bool) :
+    (prependTM w).tm.step (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out) =
+      catalogPrefixCfg w x none p out := by
+  let c := catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out
+  have hblank : c.inputSymbol = none := Cfg.inputSymbol_of_end hp
+  change (prependTM w).tm.step c = _
+  rw [MultiTapeTM.step_of_some (by rfl), hblank]
+  simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte]
+  apply Cfg.ext_zero_tapes
+  · exact Action.apply_state _ _
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · rw [Action.apply_output]
+    exact List.append_nil _
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := [`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.bufferTape, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.step, `Turing.moveInputPos]
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "SIMP_STILL_ACTIVE|{n}"
+    logInfo m!"GUARD_ACTIVE|{n}"
+end Boundary129
+end Turing.FinTM

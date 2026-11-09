@@ -1,20 +1,24 @@
 # Gate 129 round 3 repair checkpoint
 
-**Not yet clear to merge: #251.** The external round 2 HOLD remains
-the current verdict. The earlier issued source and bundle are retained.
+**Not yet clear to merge: #251.** Round 2 returned HOLD with two majors
+at 06abd00adf61c257fcd25ee9181a37ddec0a4c87. The documented local head
+bf8d502573a0ba945a04f7a9dfe827f55b2c840f addresses both reported issues.
 
-The private proof candidate 30f8ee1d69a8158111dce3cec838f5fef1e88eb4 passed 28
-complete selected proof seals, 34 matched controls, 64 family-specific
-seals and 85 standard-axiom closures. Five missing sketches were then
-added to existing docstrings. The proof source is byte-identical after
-reversing those doc edits. The documented local head is bf8d502573a0ba945a04f7a9dfe827f55b2c840f.
-Its exact 395-module prospective replay on 967bc00f00637312676f438c7f61b14219fa943b is running. The
-earlier partial execution was stopped and its objects are excluded.
+The live-step, initialization and action repairs cite public equations.
+The forward eraser is an exact instance of `bufferReplay_run` with
+emission disabled. The public change remains the three approved
+non-simp readers. See the exact owner sources and freeze under
+r3-validation/source.
 
-The copy screen's new and changed pairs are under review. In particular,
-Reductions' private fixed-prefix chain is a pre-existing copy of the
-pairing construction it already imports through EXP. A private exact
-reuse patch is being checked separately from the documented head.
-The later finite-run proof uses and remaining case-specific frame
-similarities are assessed before publication. Audit agent selection
-has been requested. The proof candidate remains local.
+The prospective replay on 967bc00f00637312676f438c7f61b14219fa943b passed all 395
+modules. The static receipt has zero mismatches and 65 inherited
+admissions. Complete logs, receipts, and the 1,004-source and 896-object
+maps are under r3-validation/replay. The actual documented head passed
+28 selected proof seals, 34 controls, 64 family-specific seals and 85
+standard-axiom closures. Lint has zero new findings.
+
+The 51-file copy review exposed additional reuse. The Primitives-only
+patch and the Reductions import proposal are checked separately from
+the replayed local head. Their scopes and the follow-up audit agent
+are awaiting decisions. The earlier issued audit and remote #251 head
+remain the operative external pins.

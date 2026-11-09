@@ -1,0 +1,41 @@
+ControlSeal.lean:10:77: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x a
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+
+x a : List Bool
+⊢ pairEncode x a = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+ControlSeal.lean:12:60: error: Tactic `rfl` failed: The left-hand side
+  pairEncode
+is not definitionally equal to the right-hand side
+  fun x a => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+
+⊢ pairEncode = fun x a => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+ControlSeal.lean:15:59: error: Tactic `rfl` failed: The left-hand side
+  PolyTimeComputable f
+is not definitionally equal to the right-hand side
+  ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+f : List Bool → List Bool
+⊢ PolyTimeComputable f ↔ ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+ControlSeal.lean:17:87: error: Tactic `rfl` failed: The left-hand side
+  PolyTimeComputable
+is not definitionally equal to the right-hand side
+  fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+⊢ PolyTimeComputable = fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+ControlSeal.lean:19:79: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T ↔ ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+ControlSeal.lean:21:53: error: Tactic `rfl` failed: The left-hand side
+  FinTM.ComputesFunInTime
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ FinTM.ComputesFunInTime = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
