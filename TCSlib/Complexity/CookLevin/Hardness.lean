@@ -6715,33 +6715,15 @@ private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S]
   simpa only [Nat.pow_one, Nat.one_mul, hi, List.length_nil, List.nil_append] using
     clA5Map_run next emit finish start x x [] (by simp) start []
 
-/-- Removing the first bit is a two-state finite transduction. -/
+/-- Removing the first bit is polynomial-time by the public tail closure. -/
 private lemma clA5_pt_tail : PolyTimeComputable List.tail := by
-  let emit (q b : Bool) : Option Bool := if q then some b else none
-  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [clA5MapWord, emit, ih]
-  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by
-    cases x <;> simp [clA5MapWord, emit, hc]
-  convert h using 1
+  convert polyTimeComputable_tail using 1
   funext x
-  exact (he x).symm
+  cases x <;> rfl
 
-/-- Extracting at most the first bit is also a two-state finite transduction. -/
+/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
 private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by
-  let emit (q b : Bool) : Option Bool := if q then none else some b
-  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false
-  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simp [clA5MapWord, emit, ih]
-  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by
-    cases x <;> simp [clA5MapWord, emit, hc]
-  convert h using 1
-  funext x
-  exact (he x).symm
+  exact polyTimeComputable_take1
 
 /-- Equality to a fixed control word is decided by the public finite-word
 comparison constructor, after any polynomial field computation. -/
