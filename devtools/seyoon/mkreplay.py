@@ -41,7 +41,7 @@ cd "$WT" || exit 1
   done < "$LIST"
   echo "# modules=$n failed=$f"
 }} > "$LOG" 2>&1
-python3 -I "$S/api/staticsorry.py" "$WT" "$LOG" > "${{LOG%.log}}-static.txt"; sst=$?
+python3 -I "$S/api/staticsorry.py" "$WT" "$LOG" "$LIST" > "${{LOG%.log}}-static.txt"; sst=$?
 tail -n 6 "$LOG"
 tail -n 1 "${{LOG%.log}}-static.txt"
 # the exit status: nonzero unless every listed module passed and the static check found no mismatch
