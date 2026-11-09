@@ -1248,17 +1248,6 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
           C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
             Cfg.ofWords exit (Function.update (stateWord C.k arg) dst (f arg)) := by
   classical
-  have canonical_map {k : ℕ} {S S' : Type} {x : List Bool}
-      (q : S) (w : Fin k → List Bool) (f : S → S') :
-      (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := by
-    apply Cfg.mapState_eq_of_fields
-    · rw [Cfg.ofWords_state, Cfg.ofWords_state, Option.map_some]
-    · rw [Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
-    · funext j p
-      rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapes]
-    · funext j
-      rw [Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos]
-    · rw [Cfg.ofWords_output, Cfg.ofWords_output]
   obtain ⟨I, enter, leave, a, positive, installed⟩ := canonStrictInstall M f T hM
   let zero : Fin I.k := ⟨0, positive⟩
   let dst : Fin (I.k + 1) := zero.succ
@@ -1312,10 +1301,10 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
     simpa only [embedEmitCfg_state] using cut₁ u hu
   have second' : E.runFrom
       ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState fun _ => enter) t₁ =
-      Cfg.ofWords leave result := by simpa only [canonical_map] using second
+      Cfg.ofWords leave result := by simpa only [Cfg.ofWords_mapState] using second
   have cut' (u : ℕ) (hu : u < t₁) :
       (E.runFrom ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState
-        fun _ => enter) u).state ≠ some leave := by simpa only [canonical_map] using secondCut u hu
+        fun _ => enter) u).state ≠ some leave := by simpa only [Cfg.ofWords_mapState] using secondCut u hu
   have whole := seamCompTM_run_ofCfg P .done E enter run₀ (Cfg.ofWords_state _ _) cut₀ second'
   have first := seamCompTM_firstReturn_ofCfg P .done E enter leave
     run₀ (Cfg.ofWords_state _ _) cut₀ second' (Cfg.ofWords_state _ _) cut'
@@ -1326,8 +1315,8 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
       _ ≤ (a + 4) * (T arg.length + arg.length + (f arg).length + 1) := by
         rw [Nat.add_mul]
         omega
-  · simpa only [C, MultiTapeTM.runFrom_with_q₀, canonical_map] using first
-  · simpa only [C, result, w, MultiTapeTM.runFrom_with_q₀, canonical_map] using whole
+  · simpa only [C, MultiTapeTM.runFrom_with_q₀, Cfg.ofWords_mapState] using first
+  · simpa only [C, result, w, MultiTapeTM.runFrom_with_q₀, Cfg.ofWords_mapState] using whole
 
 
 /-- Load the undoubled header and install its nonoverflowing successor on

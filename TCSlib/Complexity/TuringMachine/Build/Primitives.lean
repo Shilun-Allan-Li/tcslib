@@ -161,12 +161,11 @@ theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
   exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
 
 /-- A tape with no requested write keeps its contents. Read the
-published optional-write equation, then update the cell with its old value. -/
+action equation at the no-write branch. -/
 private lemma apply_workTape_of_no_write {k : ℕ} {Symbol State : Type*} {x : List Symbol}
     (a : Action k Symbol State) (d : Cfg k Symbol State x) (i : Fin k)
     (hw : (a.workTapes i).1 = none) : (a.apply d).workTapes i = d.workTapes i := by
-  rw [Action.apply_workTapes, hw, Option.getD_none, Cfg.workTapeSymbols_eq,
-    Function.update_eq_self]
+  simp only [Action.apply.eq_1, hw]
 
 /-- A zero-work-tape configuration indexed by the number of input bits passed. -/
 private def scanCfg {S : Type} (x : List Bool) (q : Option S)
@@ -178,6 +177,23 @@ private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
     (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
     (scanCfg x q i hi out).inputSymbol = x[i]? :=
   inputSymbol_at _ i hi rfl
+
+/-- A right-moving zero-tape transition advances the indexed configuration
+and appends exactly its optional emission. -/
+private lemma scanStep_right {S : Type} (tm : MultiTapeTM 0 Bool S)
+    (x : List Bool) (q : S) (q' : Option S) (i : ℕ) (hi : i < x.length)
+    (out : List Bool) (emit : Option Bool)
+    (htr : ∀ work, tm.tr q x[i]? work = ⟨.pos, fun j => j.elim0, emit, q'⟩) :
+    tm.step (scanCfg x (some q) i (by omega) out) =
+      scanCfg x q' (i + 1) (by omega) (out ++ emit.toList) := by
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  change (tm.tr q _ _).apply _ = _
+  rw [scanCfg_read, htr]
+  apply Cfg.ext_zero_tapes
+  · exact Action.apply_state _ _
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+  · exact Action.apply_output _ _
 
 /-- Copy the first `j` input symbols while staying in the same live state.
 Only the transition on a symbol is needed because each step in the prefix
@@ -198,16 +214,10 @@ private lemma scanCopy_run_of_symbol {S : Type} (tm : MultiTapeTM 0 Bool S) (q :
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    rw [MultiTapeTM.step_of_some (by rfl)]
-    change (tm.tr q (scanCfg x (some q) j (by omega) (out ++ x.take j)).inputSymbol
-      _).apply _ = _
-    rw [scanCfg_read, List.getElem?_eq_getElem (by omega), htr]
-    apply Cfg.ext_zero_tapes
-    · exact Action.apply_state _ _
-    · rw [Action.apply_inputPos]
-      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-    · simp only [Action.apply_output, scanCfg, Option.toList_some, List.take_succ,
-        List.getElem?_eq_getElem (by omega : j < x.length), List.append_assoc]
+    have hj' : j < x.length := by omega
+    rw [scanStep_right tm x q (some q) j hj' (out ++ x.take j) (some (x[j]'hj'))
+      (by intro work; rw [List.getElem?_eq_getElem hj']; exact htr _ work)]
+    simp only [Option.toList_some, List.take_succ, List.getElem?_eq_getElem hj', List.append_assoc]
 
 /-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
 private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
@@ -322,15 +332,9 @@ private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
     have hread : x[pre.length]? = some b := by simp [hx]
     have hs : tm.step (scanCfg x (some q) pre.length (by omega) out) =
         scanCfg x (some q) (pre ++ [b]).length (by simp [hx]) (out ++ [b]) := by
-      rw [MultiTapeTM.step_of_some (by rfl)]
-      change (tm.tr q _ _).apply _ = _
-      rw [htr, scanCfg_read, hread]
-      apply Cfg.ext_zero_tapes
-      · exact Action.apply_state _ _
-      · rw [Action.apply_inputPos]
-        simpa [scanCfg] using moveInputPos_pos_of_ne_right
-          (⟨pre.length + 1, by omega⟩ : Fin (x.length + 2)) (by simp; omega)
-      · exact Action.apply_output _ _
+      simpa only [List.length_append, List.length_singleton, Option.toList_some] using
+        scanStep_right tm x q (some q) pre.length hlen out (some b)
+          (by intro work; rw [hread]; exact htr (some b) work)
     simp only [List.length_cons]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     simpa only [List.append_assoc, List.singleton_append] using
@@ -373,14 +377,10 @@ private lemma scanTrues_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
       have h := congrArg (fun w : List Bool => w[j]?) hp
       simpa [List.getElem?_take, Nat.lt_succ_self] using h
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega) hshort]
-    rw [MultiTapeTM.step_of_some (by rfl)]
-    change (tm.tr q _ _).apply _ = _
-    rw [scanCfg_read, hb, htr]
-    apply Cfg.ext_zero_tapes
-    · exact Action.apply_state _ _
-    · rw [Action.apply_inputPos]
-      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-    · cases emit <;> simp [-Action.apply, Action.apply_output, scanCfg, List.replicate_succ']
+    rw [scanStep_right tm x q (some q) j (by omega)
+      (if emit then List.replicate j false else []) (if emit then some false else none)
+      (by intro work; rw [hb]; exact htr work)]
+    cases emit <;> simp [List.replicate_succ']
 
 /-- Either every input bit is true (overflow), or its first false splits off
 the carry prefix and determines the exact incremented word. -/
@@ -486,13 +486,9 @@ theorem incFixedTM_computes (x : List Bool) :
           (List.replicate j false ++ [true]) := by
       rw [MultiTapeTM.runFrom_succ_eq_step',
         scanTrues_run incFixedTM.tm (2 : Fin 4) true (fun _ => rfl) x j (by omega) hpre]
-      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
-      change (Action.mk .pos (fun j => j.elim0) (some true) (some (3 : Fin 4))).apply _ = _
-      apply Cfg.ext_zero_tapes
-      · exact Action.apply_state _ _
-      · rw [Action.apply_inputPos]
-        exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-      · exact Action.apply_output _ _
+      simpa only [Option.toList_some] using
+        scanStep_right incFixedTM.tm x (2 : Fin 4) (some (3 : Fin 4)) j hj
+          (List.replicate j false) (some true) (by intro work; rw [hread]; rfl)
     have hcopy := scanCopy_suffix incFixedTM.tm (3 : Fin 4) (fun _ _ => rfl)
       x rest (List.replicate j true ++ [false]) (List.replicate j false ++ [true])
       (by simpa [List.append_assoc] using hx)
@@ -505,23 +501,6 @@ theorem incFixedTM_computes (x : List Bool) :
       exact ⟨rfl, by simp [scanCfg, List.append_assoc]⟩
     have hlen : x.length = j + 1 + rest.length := by simp [hx]; omega
     simpa only [hinc, Option.getD_some] using hh.mono (by omega)
-
-/-- A right-moving zero-tape transition advances the indexed configuration
-and appends exactly its optional emission. -/
-private lemma scanStep_right {S : Type} (tm : MultiTapeTM 0 Bool S)
-    (x : List Bool) (q : S) (q' : Option S) (i : ℕ) (hi : i < x.length)
-    (out : List Bool) (emit : Option Bool)
-    (htr : ∀ work, tm.tr q x[i]? work = ⟨.pos, fun j => j.elim0, emit, q'⟩) :
-    tm.step (scanCfg x (some q) i (by omega) out) =
-      scanCfg x q' (i + 1) (by omega) (out ++ emit.toList) := by
-  rw [MultiTapeTM.step_of_some (by rfl)]
-  change (tm.tr q _ _).apply _ = _
-  rw [scanCfg_read, htr]
-  apply Cfg.ext_zero_tapes
-  · exact Action.apply_state _ _
-  · rw [Action.apply_inputPos]
-    exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-  · exact Action.apply_output _ _
 
 /-- **The pair-grammar validator**. A machine with no work tapes that scans aligned pairs of input
 bits, remembering the first bit of the current pair, and emits the single verdict
@@ -2051,10 +2030,10 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
       rfl
     · simp only [pairCountTM, ret, lenAction, Action.apply_inputPos,
         captureCfg_inputPos, ready, moveInputPos_zero]
-    · funext i z
-      simp only [pairCountTM, ret, lenAction, Action.apply_workTapes,
-        Cfg.workTapeSymbols_eq, Option.getD_none, Function.update_eq_self]
-      simp only [captureCfg_workTapes, ready, lenCfg, List.nil_append]
+    · funext i
+      rw [apply_workTape_of_no_write _ _ i rfl]
+      funext z
+      simp only [captureCfg_workTapes, ready, lenCfg]
     · funext i
       rw [Action.apply_workTapePos]
       by_cases hi : i.val < M.k <;>
@@ -2558,9 +2537,9 @@ private lemma poly_step {d C q : ℕ} {x : List Bool} (hq : 0 < q)
       by_cases hi : i.val < d + 1
       · constructor
         · funext j
-          simp only [catalogPolyUnaryTM, hi,
-            catalogPolyMove, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
-          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
+          simp only [catalogPolyUnaryTM, hi, ↓reduceDIte]
+          rw [apply_workTape_of_no_write _ _ j rfl]
+          exact congrFun hw j
         · simp only [catalogPolyUnaryTM, hi,
             ↓reduceDIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
           intro j
@@ -2573,8 +2552,9 @@ private lemma poly_step {d C q : ℕ} {x : List Bool} (hq : 0 < q)
             exact ⟨hj.1, le_of_lt hj.2, fun _ => hj.2⟩
       · constructor
         · funext j
-          simp only [catalogPolyUnaryTM, hi, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
-          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
+          simp only [catalogPolyUnaryTM, hi, ↓reduceDIte]
+          rw [apply_workTape_of_no_write _ _ j rfl]
+          exact congrFun hw j
         · simp only [catalogPolyUnaryTM, hi, ↓reduceDIte,
             Action.apply_state, Action.apply_workTapePos, polyHeads, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
           intro j
@@ -2583,7 +2563,7 @@ private lemma poly_step {d C q : ℕ} {x : List Bool} (hq : 0 < q)
     | emit j =>
       constructor
       · simp only [catalogPolyUnaryTM]
-        split <;> (funext j; simpa only [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j)
+        split <;> (funext j; rw [apply_workTape_of_no_write _ _ j rfl]; exact congrFun hw j)
       · simp only [catalogPolyUnaryTM, Action.apply_state, Action.apply_workTapePos]
         split <;> simpa only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero] using hp
 
@@ -8095,18 +8075,11 @@ private lemma emitterToken_double (x pre rest out : List Bool) (b : Bool)
       Action.apply_inputPos, Action.apply_output, scanCfg]
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst]
-  cases b <;>
-    rw [MultiTapeTM.step_of_some (by rfl)] <;> apply Cfg.ext_zero_tapes
-  all_goals first
-    | rfl
-    | simpa [unaryTokenTM, -Action.apply, Action.apply_state, Action.apply_inputPos,
-      Action.apply_workTapes, Action.apply_workTapePos, Action.apply_output, Cfg.workTapeSymbols_eq,
-      scanCfg] using
-        moveInputPos_pos_of_ne_right
-          (⟨pre.length + 1, by omega⟩ : Fin (x.length + 2)) (by simp; omega)
-    | simp [unaryTokenTM, -Action.apply, Action.apply_state, Action.apply_inputPos,
-      Action.apply_workTapes, Action.apply_workTapePos, Action.apply_output, Cfg.workTapeSymbols_eq,
-      scanCfg, List.append_assoc]
+  simpa only [List.length_append, List.length_singleton, Option.toList_some,
+      List.append_assoc, List.singleton_append] using
+    scanStep_right (S := Fin 6) unaryTokenTM.tm x (if b then 1 else 2)
+      (some (if b then 0 else 3)) pre.length hlen (out ++ [b]) (some b)
+      (by cases b <;> intros <;> rfl)
 
 /-- The two separator transitions preserve the input position and append the
 unique pair delimiter before entering the suffix copier.
