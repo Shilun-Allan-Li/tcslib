@@ -512,15 +512,8 @@ lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
     (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
     (controlAction m q).apply cfg =
       {cfg with state := q, inputPos := moveInputPos cfg.inputPos m} := by
-  apply Cfg.ext
-  · rw [Action.apply_state, controlAction_def]
-  · rw [Action.apply_inputPos, controlAction_def]
-  · funext i
-    rw [Action.apply_workTapes, controlAction_def, Option.getD_none,
-      Cfg.workTapeSymbols_eq, Function.update_eq_self]
-  · funext i
-    simp only [Action.apply_workTapePos, controlAction_def, SignType.coe_zero, add_zero]
-  · simp only [Action.apply_output, controlAction_def, Option.toList_none, List.append_nil]
+  rw [controlAction_def, Action.apply.eq_1]
+  simp only [SignType.coe_zero, add_zero, Option.toList_none, List.append_nil]
 
 /-- The clamped left move always subtracts one from the natural input position. -/
 lemma moveInputPos_neg_val {n : ℕ} (pos : Fin (n + 2)) :

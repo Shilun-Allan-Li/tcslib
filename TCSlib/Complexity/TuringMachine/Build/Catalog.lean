@@ -504,25 +504,6 @@ private def catalogClearR {Symbol : Type*} {x : List Symbol} (i : Fin k) (d : Cf
                then none else d.workTapes j q
            workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) - 1 else 0 }
 
-/-- Read a full action through its field equations. The explicit no-write
-branch lets the trace proofs simplify the tape functions before they split
-on the affected tape and cell. -/
-private lemma catalog_apply_record {Symbol State : Type*} {x : List Symbol}
-    (a : Action k Symbol State) (d : Cfg k Symbol State x) :
-    a.apply d = ⟨a.state, moveInputPos d.inputPos a.inputTape,
-      (fun j => match (a.workTapes j).1 with
-        | none => d.workTapes j
-        | some s => Function.update (d.workTapes j) (d.workTapePos j) s),
-      (fun j => d.workTapePos j + (a.workTapes j).2), d.output ++ a.output.toList⟩ := by
-  apply Cfg.ext
-  · exact Action.apply_state a d
-  · exact Action.apply_inputPos a d
-  · funext j
-    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
-    cases hw : (a.workTapes j).1 <;> simp [hw]
-  · exact funext (Action.apply_workTapePos a d)
-  · exact Action.apply_output a d
-
 /-- Clear's exact framed invariant. **Proof sketch.** The forward pass reads
 the original interval. The right blank turns without writing. Each return
 step erases just the last remaining cell, and the left blank restores the head.
@@ -548,7 +529,7 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
         List.getElem?_eq_getElem hr]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogClearF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
@@ -556,7 +537,7 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
       simp [catalogClearF, Cfg.workTapeSymbols_eq, hw w.length (by omega) (by omega)]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogClearF, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearF, catalogClearR]
     · funext j q
       split_ifs <;> simp_all <;> omega
     · funext j
@@ -567,7 +548,7 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearR]
     · funext j
       by_cases hj : j = i
       · subst j
@@ -582,7 +563,7 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
       simpa [catalogClearR, Cfg.workTapeSymbols_eq] using hw (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [clearTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogClearR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogClearR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
@@ -705,7 +686,7 @@ private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} 
         have hc : c.workTapes src (c.workTapePos src) = some b :=
           (Cfg.workTapeSymbols_eq c src).symm.trans hb
         simp only [copyMapTM, transferMapTM, hb]
-        apply Cfg.ext <;> simp only [catalog_apply_record]
+        apply Cfg.ext <;> simp only [Action.apply.eq_1]
         · funext j
           by_cases hs : j = src
           · subst hs
@@ -782,7 +763,7 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogSweepF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepF]
     · funext j
       by_cases hj : j = dst
       · subst j
@@ -804,7 +785,7 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
       simp [catalogSweepF, Cfg.workTapeSymbols_eq, hne, hw w.length (by omega) (by omega)]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogSweepF, catalogSweepR,
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepF, catalogSweepR,
       catalogSweepResidueR]
     · funext j
       by_cases hj : j = src <;> by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
@@ -822,7 +803,7 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogSweepResidueR,
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepResidueR,
       catalogSweepR, catalogSweepF]
     · funext j
       by_cases hj : j = src
@@ -842,13 +823,13 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
         hw (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [transferMapTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogSweepResidueR,
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogSweepResidueR,
       catalogSweepR, catalogSweepF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · rw [MultiTapeTM.step_of_some (by rfl)]
-    apply Cfg.ext <;> simp [transferMapTM, -Action.apply, catalog_apply_record]
+    apply Cfg.ext <;> simp [transferMapTM, -Action.apply, Action.apply.eq_1]
 
 /-- The first unequal or terminating cells occur after a common nonblank
 prefix, and equality at those terminating cells is precisely word equality.
@@ -1001,7 +982,7 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
       simpa [catalogCompareF, Cfg.workTapeSymbols_eq, hg] using hv r (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hsf, hsg, ↓reduceIte]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogCompareF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
@@ -1047,7 +1028,7 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
           simp [hab, hneq]
     rw [MultiTapeTM.step_of_some (by rfl)]
     rw [ht]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogCompareF, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareF, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
@@ -1059,7 +1040,7 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
         show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using hu r (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hread]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
@@ -1068,12 +1049,12 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
       simpa [catalogCompareR, Cfg.workTapeSymbols_eq] using hu (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [compareTM, hread]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogCompareR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogCompareR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast]
   · rw [MultiTapeTM.step_of_some (by rfl)]
-    apply Cfg.ext <;> simp [compareTM, -Action.apply, catalog_apply_record]
+    apply Cfg.ext <;> simp [compareTM, -Action.apply, Action.apply.eq_1]
 
 /-- A word consists of its leading true bits followed by either a first false
 bit and its tail, or no remaining bits. -/
@@ -1183,7 +1164,7 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
       omega
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogIncF]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF]
     · funext j
       by_cases hj : j = i
       · subst j
@@ -1204,7 +1185,7 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
         simpa [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq, hsplit] using hh
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogIncF, catalogIncR]
+      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
       all_goals
         funext j
         split_ifs <;> simp_all [SignType.cast] <;> omega
@@ -1213,7 +1194,7 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
         simp [catalogIncF, catalogTape, Cfg.workTapeSymbols_eq]
       rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [incrementTM, hs]
-      apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogIncF, catalogIncR]
+      apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncF, catalogIncR]
       · funext j
         by_cases hj : j = i
         · subst j
@@ -1228,7 +1209,7 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
       simp [catalogIncR, catalogTape, Cfg.workTapeSymbols_eq, List.getElem?_append, hr, hb]
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogIncR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
@@ -1237,12 +1218,12 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
         hw (-1) (by omega) (by omega)
     rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [incrementTM, hs]
-    apply Cfg.ext <;> simp [-Action.apply, catalog_apply_record, catalogIncR]
+    apply Cfg.ext <;> simp [-Action.apply, Action.apply.eq_1, catalogIncR]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · rw [MultiTapeTM.step_of_some (by rfl)]
-    apply Cfg.ext <;> simp [incrementTM, -Action.apply, catalog_apply_record]
+    apply Cfg.ext <;> simp [incrementTM, -Action.apply, Action.apply.eq_1]
 
 /-! ### Framed contracts (design §12.6)
 
