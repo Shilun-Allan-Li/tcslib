@@ -71,12 +71,6 @@ open scoped Quantum
 
 /-! ### No-cloning -/
 
-/-- A unitary preserves the Hermitian inner product `star a ⬝ᵥ b`. -/
-private theorem inner_mulVec_of_mem_unitaryGroup {d : Type*} [Fintype d] [DecidableEq d] {U : Matrix d d ℂ}
-    (hU : U ∈ 𝐔[d]) (a b : d → ℂ) : star (U *ᵥ a) ⬝ᵥ (U *ᵥ b) = star a ⬝ᵥ b := by
-  rw [Matrix.mem_unitaryGroup_iff'] at hU
-  rw [star_mulVec, dotProduct_mulVec, vecMul_vecMul, ← star_eq_conjTranspose, hU, vecMul_one]
-
 /-- **No-cloning for two states.** Let `ψ` and `φ` be states whose overlap
 `t = |⟨ψ, φ⟩| = |∑ₓ conj (ψ x) φ x|` satisfies `0 < t < 1`. Then no unitary `U` maps `|ψ⟩|e⟩` to
 `c₁ |ψ⟩|ψ⟩` and `|φ⟩|e⟩` to `c₂ |φ⟩|φ⟩` for any phases `|c₁| = |c₂| = 1`, whatever the blank
@@ -231,9 +225,9 @@ theorem teleportState_eq (ψ : Ket (Reg 1)) :
       ((teleportInit ψ).evolve (applyOnU wires01 Gate.CNOT)).evolve (applyOnU (wire 0) Gate.H) :=
   rfl
 
-/-- `(1/√2)² = 1/2` in `ℂ`. -/
+/-- `(1/√2)² = 1/2` in `ℂ`, in the `^ 2` form `ring_nf` produces (from `inv_sqrt_two_mul_self`). -/
 private theorem inv_sqrt_two_sq : ((Real.sqrt 2 : ℂ))⁻¹ ^ 2 = 1 / 2 := by
-  rw [sq, ← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]; norm_num
+  rw [sq, inv_sqrt_two_mul_self]
 
 /-- `CNOT` on wires `0, 1` of a three-wire register adds wire `0` into wire `1`. -/
 private theorem cnot_extend_wires01 (z : Reg 3) :

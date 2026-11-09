@@ -31,7 +31,9 @@ is a unit vector `d → ℂ`.
 
 ## Main results
 
-* `Quantum.sum_norm_sq_mulVec_of_mem_unitaryGroup` — unitaries preserve the squared norm.
+* `Quantum.inner_mulVec_of_mem_unitaryGroup`, `Quantum.sum_norm_sq_mulVec_of_mem_unitaryGroup` —
+  unitaries preserve inner products and squared norms.
+* `Quantum.regAppendEquiv_symm_apply` — splitting a register into its first and last wires.
 * The normalization lemmas behind `Ket.basis`, `Ket.relabel` and `Ket.prod`.
 * `Quantum.Ket.evolve_mul`, `Quantum.Ket.evolve_one` — evolution is an action.
 
@@ -180,6 +182,17 @@ private theorem sum_norm_sq_eq_dotProduct (w : d → ℂ) :
   push_cast
   simp [dotProduct, Complex.conj_mul']
 
+/-- A unitary matrix preserves the Hermitian inner product: `⟨U a, U b⟩ = ⟨a, b⟩`, where
+`⟨a, b⟩ = star a ⬝ᵥ b = ∑ₓ conj (a x) · b x`. [dW26, App. A.4] (Added in fill epoch E1; the
+squared-norm statement below and the no-cloning proofs both use it.)
+
+**Proof sketch.** `star (U a) ⬝ᵥ (U b) = star a ⬝ᵥ ((star U * U) b)` (`star_mulVec`,
+`dotProduct_mulVec`, `vecMul_vecMul`), and `star U * U = 1` (`Matrix.mem_unitaryGroup_iff'`). -/
+theorem inner_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ} (hU : U ∈ 𝐔[d])
+    (a b : d → ℂ) : star (U *ᵥ a) ⬝ᵥ (U *ᵥ b) = star a ⬝ᵥ b := by
+  rw [Matrix.mem_unitaryGroup_iff'] at hU
+  rw [star_mulVec, dotProduct_mulVec, vecMul_vecMul, ← star_eq_conjTranspose, hU, vecMul_one]
+
 /-- A unitary matrix preserves the squared norm of every vector: `∑ ‖(U v) x‖² = ∑ ‖v x‖²`.
 [dW26, §1.2.3, App. A.4]
 
@@ -190,10 +203,7 @@ theorem sum_norm_sq_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d �
     (hU : U ∈ 𝐔[d]) (v : d → ℂ) :
     ∑ x, ‖(U *ᵥ v) x‖ ^ 2 = ∑ x, ‖v x‖ ^ 2 := by
   apply Complex.ofReal_injective
-  rw [sum_norm_sq_eq_dotProduct, sum_norm_sq_eq_dotProduct, star_mulVec, dotProduct_mulVec,
-    vecMul_vecMul]
-  rw [Matrix.mem_unitaryGroup_iff'] at hU
-  rw [← star_eq_conjTranspose, hU, vecMul_one]
+  rw [sum_norm_sq_eq_dotProduct, sum_norm_sq_eq_dotProduct, inner_mulVec_of_mem_unitaryGroup hU]
 
 end Norms
 

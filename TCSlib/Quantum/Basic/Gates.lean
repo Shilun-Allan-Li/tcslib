@@ -37,6 +37,7 @@ Hadamard gate `H` is neither.
 * `Quantum.permMat_mem_unitaryGroup`, `Quantum.diagonal_mem_unitaryGroup` — classical and
   phase gates are unitary.
 * `Quantum.permMat_mulVec_basis` — a classical gate maps `|x⟩` to `|σ x⟩`.
+* `Quantum.inv_sqrt_two_mul_self` — `(1/√2)² = 1/2`, the square of the Hadamard entries.
 * `Quantum.Gate.H_mul_H`, `Quantum.Gate.S_mul_S`, `Quantum.Gate.H_mul_Z_mul_H` — gate
   identities.
 * `Quantum.Gate.X_eq_H_mul_S_mul_S_mul_H` — the NOT gate from Hadamard and phase gates
@@ -208,8 +209,9 @@ private theorem sum_reg1 (f : Reg 1 → ℂ) : ∑ z, f z = f (fun _ => 0) + f (
   rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp, Fin.sum_univ_two]
   rfl
 
-/-- `(1/√2)² = 1/2` in `ℂ`. -/
-private theorem inv_sqrt_two_mul_self :
+/-- `(1/√2)² = 1/2` in `ℂ`: the square of the Hadamard matrix's entries. Public so that later
+files computing with `H` share it (added in fill epoch E1). -/
+theorem inv_sqrt_two_mul_self :
     ((Real.sqrt 2 : ℂ))⁻¹ * ((Real.sqrt 2 : ℂ))⁻¹ = 1 / 2 := by
   rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]
   norm_num
