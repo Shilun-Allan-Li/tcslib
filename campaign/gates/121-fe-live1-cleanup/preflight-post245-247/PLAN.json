@@ -1,0 +1,35 @@
+{
+  "providers_are_prospective": true,
+  "owners": [
+    "TCSlib/Complexity/ClassNP/EXP.lean",
+    "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+    "TCSlib/Complexity/TuringMachine/Build/InputLength.lean"
+  ],
+  "rebuilt_intermediate_importers": [
+    "TCSlib/Complexity/ClassNP/Reductions.lean",
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/ClassNP/TMSAT.lean"
+  ],
+  "dependency_gates": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": [
+      "TCSlib/Complexity/ClassNP/Reductions.lean"
+    ],
+    "TCSlib/Complexity/ClassNP/EXP.lean": [],
+    "TCSlib/Complexity/CookLevin/Hardness.lean": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "TCSlib/Complexity/ClassNP/TMSAT.lean"
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/InputLength.lean": [],
+    "TCSlib/Complexity/ClassNP/TMSAT.lean": [
+      "TCSlib/Complexity/ClassNP/Reductions.lean"
+    ],
+    "TCSlib/Complexity/ClassNP/Reductions.lean": [
+      "TCSlib/Complexity/ClassNP/EXP.lean"
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/InputCall.lean": [],
+    "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean": []
+  },
+  "input_object_map_sha256": "4684aaa47917735039e229c8e6f26e87314c3535fb66304dcffb480418704ac2"
+}
