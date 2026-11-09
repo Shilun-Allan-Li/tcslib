@@ -2,6 +2,7 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import TCSlib.Cryptography.LWE.Basic
 import TCSlib.Cryptography.TrapdoorFunctions.Lossy.Gadget
 import Mathlib.Data.Finset.Image
 
@@ -149,26 +150,12 @@ theorem residual_injectiveKey (b a w d : ℕ)
 
 /-- A selected integer error column has absolute sum at most `N*B`.
 
-**Proof sketch.** Each binary multiplier is zero or one. Apply the integer triangle
-inequality and add the `N` coordinatewise bounds. -/
+**Proof sketch.** Use the shared binary subset-sum bound with column `j`
+and the original selection bits. -/
 theorem error_sum_bound {N w : ℕ} (E : Matrix (Fin N) (Fin w) ℤ)
     (x : Fin N → Bool) (B : ℕ) (hE : ∀ i j, (E i j).natAbs ≤ B) (j : Fin w) :
     (∑ i, E i j * ((x i).toNat : ℤ)).natAbs ≤ N * B := by
-  have hterm (i : Fin N) : |E i j * ((x i).toNat : ℤ)| ≤ (B : ℤ) := by
-    have hi : ((E i j).natAbs : ℤ) ≤ (B : ℤ) := by exact_mod_cast hE i j
-    rw [Int.natCast_natAbs] at hi
-    cases hx : x i
-    · simp
-    · simpa using hi
-  have hsum : |∑ i, E i j * ((x i).toNat : ℤ)| ≤ (N : ℤ) * B := by
-    calc
-      _ ≤ ∑ i : Fin N, |E i j * ((x i).toNat : ℤ)| :=
-        Finset.abs_sum_le_sum_abs _ _
-      _ ≤ ∑ _i : Fin N, (B : ℤ) := Finset.sum_le_sum (fun i _ => hterm i)
-      _ = _ := by simp
-  have hcast : ((∑ i, E i j * ((x i).toNat : ℤ)).natAbs : ℤ) ≤ ((N * B : ℕ) : ℤ) := by
-    simpa only [Int.natCast_natAbs, Nat.cast_mul] using hsum
-  exact_mod_cast hcast
+  exact LWE.binaryErrorSum_bound (fun i => E i j) x B (fun i => hE i j)
 
 /-- The retained ordinary secret matrix perfectly recovers every input for every
 bounded-error key under strict rounding separation [PW10, Section 6.3, refinement].

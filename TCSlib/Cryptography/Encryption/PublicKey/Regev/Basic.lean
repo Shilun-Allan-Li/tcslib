@@ -131,26 +131,12 @@ theorem encrypt_residual (P : Parameters)
 /-- Any binary subset of errors bounded by `B` has absolute sum at most `m*B`
 [Pei16, Section 5.2.1, worst-case bounded-support specialization].
 
-**Proof sketch.** Apply the integer triangle inequality. A selected coordinate has
-absolute value at most `B`, and an unselected coordinate is zero; sum over all rows. -/
+**Proof sketch.** Use the shared binary subset-sum bound with the original error
+vector and subset coins. -/
 theorem subsetError_bound (P : Parameters) (e : Fin P.samples → ℤ)
     (r : Fin P.samples → Bool) (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B) :
     (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤ P.samples * B := by
-  calc
-    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤
-        ∑ i : Fin P.samples, (e i * ((r i).toNat : ℤ)).natAbs :=
-      Finset.le_sum_of_subadditive Int.natAbs (by decide)
-        (fun x y => Int.natAbs_add_le x y) Finset.univ _
-    _ ≤ ∑ _i : Fin P.samples, B := by
-      apply Finset.sum_le_sum
-      intro i _
-      cases r i
-      · simp only [Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
-        exact Nat.zero_le B
-      · simpa only [Bool.toNat_true, Nat.cast_one, mul_one] using he i
-    _ = P.samples * B := by
-      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
-        Nat.cast_id]
+  exact LWE.binaryErrorSum_bound e r B he
 
 /-- Bounded errors give correctness for every public matrix, secret, bit and subset
 coin vector when `2*(m*B) < floor(q/2)` [Pei16, Section 5.2.1, strict refinement].
