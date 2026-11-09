@@ -1,8 +1,10 @@
 # Source review for the declarations being landed
 
-The [first landing review](FIRST-LANDING-REVIEW.md) records the checked Pei16
-attributions for #236 and the exact one-entry shared registry proposal. It
-starts with #236 so the first integration uses only its consumed reference.
+PR #236 has merged. Its approved Pei16 reference is on the central branch at
+`d748845a18b575b65a61950598eb0b805d2a97c6`. The
+[construction-core review](CORE-LANDING-REVIEW.md) records #237's 26 source
+attributions, proposed reference excerpts and exact Wu24 registry addition.
+The [first landing review](FIRST-LANDING-REVIEW.md) preserves the #236 proposal.
 
 On 2026-11-08 the user asked to postpone PDF-to-Markdown transcription of material
 we are not formalizing. The root agrees: requesting both entire documents in the
