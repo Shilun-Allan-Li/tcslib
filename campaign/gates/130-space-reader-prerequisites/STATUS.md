@@ -1,3 +1,3 @@
-**Ready to dispatch: gate 130 (Codex).** Bundle published and verified, prompt issued in chat. Dispatch not yet confirmed.
+**Not yet clear to merge: #252.**
 
-**Not yet clear to merge: #252 — external audit open.** Actual335 replay, five producer checks and complete53 copy coverage passed. Exact publication pins are in publication.json.
+Seyoon confirmed dispatch of Codex gate 130 at exact source `04b0b07d4ea836f52cb645f480b67cdc9e99ea59`. Awaiting findings Markdown. No gate closure or source merge. Exact audit pins are in publication.json.

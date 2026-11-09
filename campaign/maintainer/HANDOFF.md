@@ -19,9 +19,11 @@ All own jobs/subagents stopped. Read `campaign/status/2026-11-08-relocation-2154
 
 ### Resumed reader gates (2026-11-09T03:57:49.863953+00:00; current)
 
-Gates129/#251 and130/#252 are **Ready to dispatch** for Codex. Both exact exchange bundles and full prompts are recorded under their gate folders; both await confirmation of Seyoon's dispatch, remain **Not yet clear to merge** and have no source merge. Gate129 final source is `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`: three approved equations, seven old proof repairs, actual394 plus actual3/actual2 owner refreshes and bounded compiled compatibility. Current 50-file screen and all candidate dispositions are preserved. Gate130 actual335, five producer checks and complete current 53-file score coverage pass.
+Seyoon confirmed both Codex gates129/#251 and130/#252 dispatched. Both await findings, remain **Not yet clear to merge** and have no source merge. Gate129 final source is `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`: three approved equations, seven old proof repairs, actual394 plus actual3/actual2 owner refreshes and bounded compiled compatibility. Current 50-file screen and all candidate dispositions are preserved. Gate130 actual335, five producer checks and complete current 53-file score coverage pass.
 
 Gate131/#253 at `d26b7340265ff1318d44838aaca2cd660f8528f3`: approved single Seam import, right-step re-point and exact existing work-tape equation move. Actual403 replay active. Exact 56-file screen has no new reported pair and twelve gone; a required proof sketch remains to add and validate. Incomplete nseam1 invalid. The records under each gate supersede older running labels below.
+
+Roadmap readiness: all 26 previously tracked headline closures and 19 supplements are standard-only on MAC8. Book-form Theorem 3.1 and F6 are merged; Ladner #249 is a cleared statement scaffold with six open mathematical proofs. See `campaign/status/2026-11-08-roadmap-readiness/STATUS.md`.
 
 ### Active source and checks
 
