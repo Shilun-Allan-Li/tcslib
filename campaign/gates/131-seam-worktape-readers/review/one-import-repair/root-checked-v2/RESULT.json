@@ -1,0 +1,78 @@
+{
+  "source": "86e52739282233aa992c36ca961d82d0657ff142",
+  "proposal_only": true,
+  "candidate_full_native_pass": true,
+  "complete_target_guard_pass": true,
+  "heads": [
+    "Turing.Action.apply",
+    "Turing.Action.mapState",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.mapState",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.MultiTapeTM.step"
+  ],
+  "unfold_entries_removed": [
+    "Turing.Action.apply"
+  ],
+  "effective_controls": 12,
+  "selected_metadata_changes": [
+    "axioms"
+  ],
+  "old_axioms": [
+    "propext",
+    "Quot.sound"
+  ],
+  "new_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "input_actual131_objects_unchanged": true,
+  "runs": [
+    {
+      "name": "SeamRightGuard",
+      "argv": [
+        "bash",
+        "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/source",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/right-repair-objects",
+        "SeamRightGuard.lean"
+      ],
+      "source_sha256": "2f662836a34346557258ad92a438624cad4da6c4178eafa2ac23483d50dfa8f4",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 7.185100042261183
+    },
+    {
+      "name": "SeamRightControlsUnsealed",
+      "argv": [
+        "bash",
+        "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/source",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/right-repair-objects",
+        "SeamRightControlsUnsealed.lean"
+      ],
+      "source_sha256": "1b53e4a6e77cc7747c731718d32ba195c67f4970b1f67143680e94a4adef9783",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.9377849576994777
+    },
+    {
+      "name": "SeamRightControlsSealed",
+      "argv": [
+        "bash",
+        "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/source",
+        "/private/tmp/ab34-gate131-producer-runtime-c___408h/right-repair-objects",
+        "SeamRightControlsSealed.lean"
+      ],
+      "source_sha256": "6ca9b145b09d4fff4b344857fe2dc7cfa8533ef46a7d2f78e664b937e59558c3",
+      "log_sha256": "5747019202d6531c4c23b582bf9cf22d5db9b30e7635855b890a13cd9e39b437",
+      "exit": 1,
+      "errors": 12,
+      "seconds": 1.644050540868193
+    }
+  ]
+}

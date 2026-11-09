@@ -1,0 +1,63 @@
+import TCSlib.Complexity.TuringMachine.Build.Seam
+set_option smartUnfolding false
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+private def blankCfg : Cfg 0 Bool Unit [] :=
+  {state := some (), inputPos := 0, workTapes := fun i => Fin.elim0 i,
+   workTapePos := fun i => Fin.elim0 i, output := []}
+
+-- CONTROL|Turing.Action.apply|point
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).state = a.state := by rfl
+
+-- CONTROL|Turing.Action.apply|equation
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).inputPos = moveInputPos c.inputPos a.inputTape := by rfl
+
+
+-- CONTROL|Turing.Action.mapState|point
+example {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) :
+    (a.mapState f).state = a.state.map f := by rfl
+
+-- CONTROL|Turing.Action.mapState|equation
+example {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) :
+    a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl
+
+
+-- CONTROL|Turing.Cfg.inputSymbol|point
+example : blankCfg.inputSymbol = none := by rfl
+
+-- CONTROL|Turing.Cfg.inputSymbol|equation
+example : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl
+
+
+-- CONTROL|Turing.Cfg.mapState|point
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).state = c.state.map f := by rfl
+
+-- CONTROL|Turing.Cfg.mapState|equation
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    c.mapState f = {c with state := c.state.map f} := by rfl
+
+
+-- CONTROL|Turing.Cfg.workTapeSymbols|point
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+
+-- CONTROL|Turing.Cfg.workTapeSymbols|equation
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl
+
+
+-- CONTROL|Turing.MultiTapeTM.step|point
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.step {c with state := none} = {c with state := none} := by rfl
+
+-- CONTROL|Turing.MultiTapeTM.step|equation
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.step c = match c.state with
+      | none => c
+      | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl
+
+

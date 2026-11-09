@@ -1,1 +1,3 @@
-**Not yet clear to merge: #253.** Approved Seam equation and exact optional-write equation home move are pushed. Private producer checks pass. Root403 replay was interrupted215/403 for relocation; oleans-nseam1 is INVALID/never reused. Full right-step mechanical repair needs a separately unapproved CfgFacts import; its variant is prepared only, not validated or adopted. No gate prompt issued.
+**Not yet clear to merge: #253 — fresh 403-module replay and external audit pending.**
+
+Approved single import and proof re-point pushed at d26b7340265ff1318d44838aaca2cd660f8528f3. Full private native/6-head guard/12 controls passed. No user dispatch or merge.

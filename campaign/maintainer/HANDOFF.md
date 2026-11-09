@@ -17,6 +17,10 @@ Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` /wholeMAC8:1003
 
 All own jobs/subagents stopped. Read `campaign/status/2026-11-08-relocation-2154/RESUME.md` first on return.335 reader replay passes;403 interrupted snapshot invalid; successfulBASE53 retained,HEAD53 incomplete. Approved grouped Seam/home reader source is#253 at`86e52739282233aa992c36ca961d82d0657ff142`. Two new129 mechanical proof repairs are certified privately, unadopted. Next source/screen/compatibility steps and exact paths are in the checkpoint. No new dispatch prompt issued; no source merge.
 
+### Resumed reader gates (2026-11-09T03:45:39.809223+00:00; current)
+
+Gate130 bundle published, prompt issued; user dispatch pending. #252 is not yet clear. #251 exact source 2e2f415c9bbf654cd8a68bb02aa62ea291d91116: two mechanical repairs adopted, provider refresh/current copy coverage and four-owner compatibility pass; publication pending. #253 exact source d26b7340265ff1318d44838aaca2cd660f8528f3: approved single Seam import and proof re-point pushed, fresh403 replay active. No source merges.
+
 ### Active source and checks
 
 | PR | Gate | Current pushed source | State |
