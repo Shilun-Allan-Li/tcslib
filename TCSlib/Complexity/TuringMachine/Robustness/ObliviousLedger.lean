@@ -85,6 +85,7 @@ private lemma obliviousSchedule_halts (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
       ((obliviousSchedule W a).tm.runFrom
         ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) t).state = none := by
   obtain ⟨τ, hτ, c, hs, ho, hclock⟩ := clockStageCfg_captures W a b T hW x
+  simp only [id_eq] at hclock
   have hv : budgetValue c.output = T x.length := by rw [ho, budgetValue_bits]
   have hn : (x.map oblEmbed).length + 1 ≤ (a + 1) * (T x.length + 1) := by
     simp only [List.length_map]

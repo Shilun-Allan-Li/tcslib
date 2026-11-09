@@ -935,6 +935,7 @@ private lemma obliviousSchedule_ready (W : FinTM Bool) (a b : ℕ) (T : ℕ → 
       c.workTapes (Fin.natAdd W.k (1 : Fin 3)) = unaryTape ((a + 1) * (T x.length + 1)) ∧
       c.workTapes (Fin.natAdd W.k (2 : Fin 3)) = guideTape (3 * ((a + 1) * (T x.length + 1))) := by
   obtain ⟨τ, _, c, hs, ho, hclock⟩ := clockStageCfg_captures W a b T hW x
+  simp only [id_eq] at hclock
   have hv : budgetValue c.output = T x.length := by rw [ho, budgetValue_bits]
   have hn : (x.map oblEmbed).length + 1 ≤ (a + 1) * (T x.length + 1) := by
     simp only [List.length_map]
