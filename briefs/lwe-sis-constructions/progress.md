@@ -140,5 +140,11 @@ sections at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`.
 [Findings](../../audits/lwe-sis-gadget-inversion-proofs-findings.md) ·
 [Disposition](../../audits/lwe-sis-gadget-inversion-proofs-resolutions.md)
 
+The counted-loop registration proposal pairs the existing FP contract with
+the H14 clean-install and head-envelope contracts. The Lean specialization
+passes using the existing owners. The one-row registry diff awaits
+maintainer coordination and its own review.
+[Counted-loop proposal](prerequisites/02-counted-loop-registration/README.md)
+
 **Not yet clear to merge.** The nine counted-loop and CRH admissions,
 scoped source matching, and landing checks remain open. The user approves all merges.
