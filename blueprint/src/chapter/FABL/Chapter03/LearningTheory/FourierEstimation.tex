@@ -146,9 +146,9 @@ cost $(m,0,m+m(|S|+1))$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.LearningProgram.runWithCost, FABL.PositiveLearningParameter, FABL.empiricalFourierCoeff, FABL.fourierEstimatorSampleCount, FABL.runWithCost_fourierCoeffEstimatorProgram, FABL.scheduledFourierCoeffEstimatorProgram, FABL.uniformPMF}
 \difficulty{1}
-Let $n$ be a natural number, let $S$ be a finite subset of $\text{Fin}(n)$, and let
-$psilon,\delta$ be rational parameters satisfying $0<psilon,\delta\text{ and
-}epsilon,\delta\text{ are at most }1/2$. For any Boolean target on the $n$-dimensional
+Let $n$ be a natural number, let $S$ be a finite subset of $	ext{Fin}(n)$, and let
+$psilon,delta$ be rational parameters satisfying $0<psilon,delta	ext{ and
+}epsilon,delta	ext{ are at most }1/2$. For any Boolean target on the $n$-dimensional
 sign cube, the estimator’s run has the distribution obtained by drawing uniformly a
 batch of $m$ cube inputs, where $m$ is the prescribed sample count, and returning the
 empirical Fourier coefficient of their target labels together with cost
@@ -196,8 +196,8 @@ with uniform random elements of $\{−1,1\}^n$.
 \lean{FABL.finiteUniformEmpiricalMean}
 \label{FABL.finiteUniformEmpiricalMean}
 \leanok
-Let $$ be a finite nonempty set, let $m$ be a natural number, let $o$ be a
-real-valued observation on that set, and let $x_0,\ldots,x_{m-1}$ be a sample
+Let $[4m[0m$ be a finite nonempty set, let $m$ be a natural number, let $o$ be a
+real-valued observation on that set, and let $x_0,[4m\ldots[0m,x_{m-1}$ be a sample
 from the set, with repetitions allowed. The finite uniform empirical mean is
 $\frac{1}{m}\sum_{i=0}^{m-1}o(x_i)$.
 \end{definition}
@@ -1089,7 +1089,7 @@ parameter $1$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.fourierObservation, FABL.fourierObservation_mem_Icc, FABL.integral_fourierObservation_uniformPMF, FABL.uniformPMF}
 \difficulty{4}
-Let $n,m$ be natural numbers, let $S$ be a finite subset of $\text{Fin}(n)$, let
+Let $n,m$ be natural numbers, let $S$ be a finite subset of $	ext{Fin}(n)$, let
 $i\in\text{Fin}(m)$, and let the target be a Boolean function on the $n$-dimensional
 sign cube. Under the product law of $m$ independent uniform cube inputs, the centered
 Fourier observation at coordinate $i$ has subgaussian moment-generating-function bound

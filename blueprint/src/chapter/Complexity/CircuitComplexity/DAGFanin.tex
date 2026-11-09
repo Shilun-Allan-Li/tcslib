@@ -68,7 +68,7 @@ $vals$ as the gate with input list $l$.
 \lean{BoolCircuit.foldr_max_le₂}
 \leanok
 \difficulty{4}
-Let $l$ be a finite list of natural numbers, let $f:\bbr\to\bbr$ be a function on the
+Let $l$ be a finite list of natural numbers, let $f:br	obr$ be a function on the
 natural numbers, and let $B$ be a natural number. If $f(a)\le B$ for every $a$ in $l$,
 then the maximum of the values $f(a)$ over $a$ in $l$, taken to be $0$ when $l$ is
 empty, is at most $B$.
@@ -203,7 +203,7 @@ arguments.
 \uses{BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsWellFormed, BoolCircuit.DAGCircuit.size}
 \difficulty{4}
 Let $C$ be a finite Boolean circuit in which every gate has distinct arguments, and
-every NOT gate has exactly one argument. Then each gate has at most $\text{size}(C)$
+every NOT gate has exactly one argument. Then each gate has at most $	ext{size}(C)$
 arguments.
 \end{theorem}
 
@@ -299,7 +299,7 @@ every appended gate is well formed and is a NOT gate.
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.DAGGate.depth, BoolCircuit.DAGGate.eval, BoolCircuit.GatesAcyclic, BoolCircuit.GatesAcyclic.snoc, BoolCircuit.NotsSpec, BoolCircuit.emitNots, BoolCircuit.foldr_max_le₂, BoolCircuit.le_foldr_max₂, BoolCircuit.vertexDepth, BoolCircuit.vertexDepth_append, BoolCircuit.vertexDepth_last, BoolCircuit.vertexValue, BoolCircuit.vertexValue_append, BoolCircuit.vertexValue_last}
 \difficulty{6}
-Let $n$ be a natural number, let $a_1,\ldots,a_m$ be a list of vertex indices, and
+Let $n$ be a natural number, let $a_1,[0m\ldots,a_m$ be a list of vertex indices, and
 let $G$ be a list of Boolean gates such that every gate reads only earlier vertices:
 gate $i$ reads indices less than $n+i$. Suppose every $a_j<n+|G|$. Then the procedure
 that appends one negation gate for each listed index returns a gate list and
@@ -307,7 +307,7 @@ corresponding output indices with the following properties: the new gate list ex
 $G$, is acyclic, and has length $|G|+m$; there are $m$ distinct output indices, each
 between $n+|G|$ and strictly less than $n$ plus the new gate-list length. On every
 Boolean input to the original $n$ vertices, these outputs are the negations of the
-values at $a_1,\ldots,a_m$ in the original gate list. Each output has depth at most
+values at $a_1,[0m\ldots,a_m$ in the original gate list. Each output has depth at most
 one plus the maximum original depth of the listed vertices (with maximum taken as $0$
 for an empty list), and every appended gate is a well-formed negation gate.
 \end{theorem}
@@ -349,7 +349,7 @@ construction applied to $g$ after $G$ produces a gate list extending $G$ and an 
 vertex whose index is less than $n$ plus the length of the resulting list. The resulting
 list is acyclic, and on every Boolean input the output vertex has the value of $g$
 evaluated on the values obtained by running $G$ on that input. The resulting list has
-length at most $|G|+|g\text{'s argument list}|+2$, the output depth is at most three plus
+length at most $|G|+|g	ext{'s argument list}|+2$, the output depth is at most three plus
 the maximum depth of the vertices read by $g$ (taking this maximum to be zero when there
 are no arguments), and every added gate is well formed, is not an OR gate, and has at
 most $\max(1,K)$ arguments.

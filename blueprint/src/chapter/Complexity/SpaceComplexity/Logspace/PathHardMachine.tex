@@ -49,9 +49,9 @@ Let $S$ be a two-element set with elements labeled $N$ and $M$.
 \uses{Complexity.PathHard.CpS, Complexity.PathHard.LeS, Complexity.PathHard.SbS, Complexity.PathHard.ShS}
 For natural numbers $a$, $b$, and $f$, define the type of instruction labels to consist
 of the constructors listed below: the unindexed labels, together with labels indexed by
-a Boolean value, an element of $\text{Fin }2$, $\text{Fin }3$, $\text{Fin }4$, $\text{Fin
-}5$, $\text{Fin }9$, $\text{Fin }a$, $\text{Fin }b$, or $\text{Fin }f$, in exactly the
-combinations specified by the constructors. Here $\text{Fin }m$ denotes the set of
+a Boolean value, an element of $	ext{Fin }2$, $	ext{Fin }3$, $	ext{Fin }4$, $	ext{Fin
+}5$, $	ext{Fin }9$, $	ext{Fin }a$, $	ext{Fin }b$, or $	ext{Fin }f$, in exactly the
+combinations specified by the constructors. Here $	ext{Fin }m$ denotes the set of
 natural numbers less than $m$.
 \end{definition}
 
@@ -115,7 +115,7 @@ the target coordinate.
 \label{Complexity.PathHard.sbReg}
 \leanok
 \uses{Complexity.PathHard.SbS, Complexity.PathHard.rM, Complexity.PathHard.rN, Complexity.PathHard.rT}
-The function from the three subtraction sites to registers in $\text{Fin}(15)$ assigns
+The function from the three subtraction sites to registers in $	ext{Fin}(15)$ assigns
 register $7$ to site $N$, register $8$ to site $M$, and register $3$ to site $T$.
 \end{definition}
 
@@ -359,7 +359,7 @@ instruction-specific precondition holds.
 \uses{Complexity.LogProg.AConf, Complexity.LogProg.AReach, Complexity.LogProg.AReach.step, Complexity.LogProg.GuardLe, Complexity.LogProg.astep, Complexity.PathHard.A, Complexity.PathHard.Lb, Complexity.PathHard.St, Complexity.PathHard.St.Bd, Complexity.PathHard.St.toV, Complexity.PathHard.gb_of}
 \difficulty{1}
 Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let
-$o:\text{Fin}(5)\to\text{List}(\text{Bool})\to\text{Bool}$ be an oracle, let $y$ be a Boolean
+$o:	ext{Fin}(5)	o	ext{List}(	ext{Bool})	o	ext{Bool}$ be an oracle, let $y$ be a Boolean
 string, and let $st$ be a fifteen-register state with every register at most $B$. For
 any instruction $l$ and abstract configuration $c$, if there is a finite run from the
 configuration obtained by taking one step of the program at $l$ with registers $st$ and
@@ -435,7 +435,7 @@ $st$, under the same guard.
 \uses{Complexity.PathHard.CpS, Complexity.PathHard.cpDst, Complexity.PathHard.cpSrc}
 \difficulty{4}
 For every copy operation $k$ in the finite set of twelve copy operations, the
-destination register $\text{cpDst}(k)$ differs from the source register $\text{cpSrc}(k)$.
+destination register $	ext{cpDst}(k)$ differs from the source register $	ext{cpSrc}(k)$.
 \end{lemma}
 
 \begin{theorem}[Execution of a Copy Site]

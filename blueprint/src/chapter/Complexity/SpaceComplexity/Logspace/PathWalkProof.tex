@@ -48,12 +48,12 @@ $K(j)$ both hold.
 \uses{Complexity.DblAt, Complexity.LogProg.NSem.call_neg, Complexity.LogProg.NSem.call_pos, Complexity.LogProg.NSem.congr, Complexity.LogProg.NSem.half, Complexity.LogProg.NSem.inc, Complexity.LogProg.NSem.jodd_neg, Complexity.LogProg.NSem.jodd_pos, Complexity.LogProg.NSem.jz_neg, Complexity.LogProg.NSem.jz_pos, Complexity.LogProg.NSem.ret, Complexity.LogProg.PReg, Complexity.LogProg.PReg.Le, Complexity.LogProg.PReg.reg, Complexity.LogProg.PReg.v_0, Complexity.LogProg.PReg.v_6, Complexity.LogProg.PS, Complexity.LogProg.PS.of_eq, Complexity.LogProg.pathOr_bit, Complexity.bits_eq_cons, Complexity.dblAt_cons}
 \difficulty{6}
 Let $x$ be a finite bit string, $B$ a natural number, $K$ a proposition, and
-$\sigma=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose every register of $\sigma$ is
+$σ=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose every register of $σ$ is
 at most $B$ and $p+2|\mathrm{bits}(tmp)|+2\le B$. Assume that whenever the word of
 binary digits of $tmp$ is doubled at position $p$ in $x$, the program started at the
 target stage with pointer $p+2|\mathrm{bits}(tmp)|+2$ and scratch register zero
 terminates with all registers bounded by $B$ and has an accepting computation exactly
-when $K$ holds. Then the program started at the scan stage in state $\sigma$ terminates with
+when $K$ holds. Then the program started at the scan stage in state $σ$ terminates with
 all registers bounded by $B$ and has an accepting computation exactly when both that
 doubled-word condition and $K$ hold.
 \end{lemma}
@@ -65,13 +65,13 @@ doubled-word condition and $K$ hold.
 \uses{Complexity.DblAt, Complexity.LogProg.NSem.congr, Complexity.LogProg.PReg, Complexity.LogProg.PReg.Le, Complexity.LogProg.PReg.reg, Complexity.LogProg.PReg.v, Complexity.LogProg.PReg.v_1, Complexity.LogProg.PReg.v_4, Complexity.LogProg.PS, Complexity.LogProg.PS.of_eq, Complexity.LogProg.nsem_copy, Complexity.LogProg.nsem_guess, Complexity.LogProg.pathA, Complexity.LogProg.pathOr, Complexity.LogProg.ps_scmp, Turing.length_bits_le_self}
 \difficulty{3}
 Let $x$ be a finite bit string, $B$ a natural number, let $K(j)$ be a proposition for
-each natural number $j$, and let $\sigma=(p,n,a,b,s,t,tmp,st,nx)$ be a program register
-state. Suppose every register of $\sigma$ is at most $B$, $s=0$, $tmp=0$, and $p+2n+2\le B$.
+each natural number $j$, and let $σ=(p,n,a,b,s,t,tmp,st,nx)$ be a program register
+state. Suppose every register of $σ$ is at most $B$, $s=0$, $tmp=0$, and $p+2n+2\le B$.
 Assume that for every $j<n$, if the binary word of $j$ is doubled at position $p$ in
 $x$, then the program started at the target stage with source register $j$, pointer
 $p+2|\mathrm{bits}(j)|+2$, and scratch register zero terminates with all registers
 bounded by $B$ and has an accepting computation exactly when $K(j)$ holds. Then the
-program started at the existential-search stage in state $\sigma$ terminates with all
+program started at the existential-search stage in state $σ$ terminates with all
 registers bounded by $B$ and has an accepting computation exactly when there exists
 $j<n$ for which the binary word of $j$ is doubled at position $p$ in $x$ and $K(j)$
 holds.

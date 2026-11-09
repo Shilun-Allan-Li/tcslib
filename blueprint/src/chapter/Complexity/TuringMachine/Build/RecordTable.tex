@@ -83,7 +83,7 @@ head mark is set exactly at offset $s$, followed by the tag field containing $\t
 Let $k,n,s$ be natural numbers, let $Q,T$ be types, and let $fs$ be a list of fields of
 record symbols. If $fs$ is a valid record for a configuration using $k$ work tapes,
 input length $n$, and window bound $s$, then joining its fields with separators produces
-a list of length $k(2s+1)+\text{posWidth}(n)+k+4$.
+a list of length $k(2s+1)+	ext{posWidth}(n)+k+4$.
 \end{theorem}
 
 \begin{theorem}[Characterization of valid configuration records]
@@ -229,12 +229,13 @@ and the length of that field, inclusive.
 \label{Turing.rt_fields_slice}
 \leanok
 \uses{Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_length, Turing.fieldOffset_succ, Turing.fieldsTape, Turing.fieldsTape_field, Turing.joinFields, Turing.rt_field_cover}
-Let $\Gamma$ be a type, and let $pre$, $g$, and $post$ be lists of lists of elements of
-$\Gamma$, with $g$ nonempty. The offset of the first middle field, computed from the
+Let $    $ be a type, and let $    $ and $    $ be lists of lists of its elements, with
+the middle list $g$ nonempty. The offset of the first middle field, computed from the
 fields preceding it, plus the length of the joined middle fields is at most the length
-of all the joined fields. For every integer $p$ between $-1$ and the length of the joined
-middle fields, the tape content at offset plus $p$ in the joined list of all fields equals
-the tape content at $p$ in the joined middle fields.
+of all the joined fields. For every integer $p$ with $-1   p      $ (where the upper
+bound is the length of the joined middle fields), the tape content at offset plus $p$ in
+the joined list of all fields equals the tape content at $p$ in the joined middle
+fields.
 \end{theorem}
 
 \begin{theorem}[A table entry contains a record prefix]
@@ -490,11 +491,11 @@ at its initial position.
 \label{Turing.rt_find_fold_cons}
 \leanok
 \uses{Turing.joinFields, Turing.joinFields_cons_cons}
-Let the symbol alphabet and state set be fixed, together with a transition function that
-updates a state using an optional symbol. For any initial state $a$ and words $u,v$, and
-any list of words $fs$, folding the joined fields $u,v,fs$ from $a$ gives the same state
-as first folding $u$ using its symbols as present symbols, then applying the transition
-once to the blank symbol, and then folding the joined fields $v,fs$.
+Let $    $ be a type, let $    $ be a state set, and let $    $ be a transition function
+that updates a state using an optional symbol. For any initial state $a$ and words
+$u,v$, and any list of words $fs$, folding the joined fields $u,v,fs$ from $a$ gives the
+same state as first folding $u$ using its symbols as present symbols, then applying the
+transition once to the blank symbol, and then folding the joined fields $v,fs$.
 \end{theorem}
 
 \begin{theorem}[Initial read phase]
@@ -503,7 +504,7 @@ once to the blank symbol, and then folding the joined fields $v,fs$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_zero, Turing.phaseHostTM_run, Turing.rt_findParts, Turing.rt_findPhase, Turing.rt_findRedirect, Turing.rt_findRound, Turing.step_of_inputMoveAction}
 \difficulty{5}
-Let $m>0$, let $\delta:A\times(\Gamma\cup\{\text{blank}\to A$ be the state update
+Let $m>0$, let $\delta:A\times(\Gamma\cup\{\text{blank}	o A$ be the state update
 function, and let $a_0\in A$ and $\mathrm{acc}:A\to\{\mathrm{false},\mathrm{true}\}$.
 For a two-work-tape configuration $d$ on input $x$ whose control state is the initial
 read control, after one step of the constructed machine its control is the read phase
@@ -555,7 +556,7 @@ $|w|+1$; all other configuration data agree with $d$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_state_ne_none_of_le, Turing.ScanPhase, Turing.rt_findPhase, Turing.rt_findRedirect, Turing.rt_findRound, Turing.rt_find_scan, Turing.rt_find_scan_phase, Turing.scanFold, Turing.scanKeep, Turing.scanTM}
 \difficulty{5}
-Let $m>0$, and fix the symbol alphabet, state set, transition function, initial state $a_0$, and acceptance predicate. Let $j<m$ be the final field
+Let $m>0$, let $    $, $a_0$, and $    $ be fixed, and let $j<m$ be the final field
 index, so $j+1=m$. Let $a$ be a state and $w$ a word such that the acceptance predicate
 holds on the state obtained by folding $w$ from $a$. Let $d$ be a configuration in the
 forward scan state with value $a$, whose tape $0$ agrees with the buffer for $w$ at
@@ -573,7 +574,7 @@ inclusive; the head on tape $1$ remains fixed.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.ScanPhase, Turing.SeekPhase, Turing.rt_findControl, Turing.rt_findPhase, Turing.rt_findRedirect, Turing.rt_findRound, Turing.rt_find_scan_phase, Turing.rt_find_skip_phase, Turing.scanFold, Turing.scanKeep, Turing.scanTM, Turing.skipTM}
 \difficulty{5}
-Let $m>0$, and fix the symbol alphabet, state set, transition function, initial state $a_0$, and acceptance predicate. Let $j$ be an index less than
+Let $m>0$, let $    $, $a_0$, and $    $ be fixed, and let $j$ be an index less than
 $m$. Let $a,b$ be states, let $w$ be a word, and let $d$ be a configuration in the
 forward scan state with state value $a$. Suppose tape $0$, relative to its head,
 contains the buffer for $w$ at every integer position from $-1$ through $|w|$. Suppose
@@ -591,7 +592,7 @@ read state with no stored Boolean value nor the exit state.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.ScanPhase, Turing.fieldOffset, Turing.fieldOffset_add_length_le, Turing.fieldOffset_cons_succ, Turing.fieldsTape, Turing.fieldsTape_cons_shift, Turing.fieldsTape_field, Turing.joinFields, Turing.joinFields_cons_cons, Turing.rt_findPhase, Turing.rt_findRedirect, Turing.rt_findRound, Turing.rt_find_advance, Turing.rt_find_fold_cons, Turing.rt_find_last_accept}
 \difficulty{6}
-Let $m>0$, and fix the symbol alphabet, state set, transition function, initial state $a_0$, and acceptance predicate. Let $fs$ be a list of fields and let
+Let $m>0$, let $    $, $a_0$, and $    $ be fixed. Let $fs$ be a list of fields and let
 $j<m$ satisfy $j+|fs|=m$. Let $a$ be a state and $d$ a configuration in the forward scan
 state with value $a$. Suppose tape $0$, relative to its head, agrees with the tape
 formed by joining $fs$ at every integer position from $-1$ through its length. Then
@@ -610,7 +611,7 @@ stored Boolean value.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM.runFrom, Turing.rt_findPhase, Turing.rt_findRound, Turing.rt_find_read}
 \difficulty{4}
-Let $m>0$, and fix the symbol alphabet, state set, transition function, initial state $a_0$, and acceptance predicate. Let $d$ be a configuration whose
+Let $m>0$, let $    $, $a_0$, and $    $ be fixed, and let $d$ be a configuration whose
 state is the halted state. If the cell under work-tape head $0$ is blank, then after two
 steps the round machine is in the exit state, with all other configuration data
 unchanged. At each integer time strictly between zero and two, the machine has some
@@ -656,7 +657,7 @@ value; if no such time exists, define the clock to be $1$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.rt_findClock, Turing.rt_findControl, Turing.rt_findPhase, Turing.rt_findRound}
 \difficulty{4}
-Let $m>0$, and fix the symbol alphabet, state set, transition function, initial state $a_0$, and acceptance predicate. Let $d$ be a configuration for
+Let $m>0$, let $    $, $a_0$, and $    $ be fixed, and let $d$ be a configuration for
 the corresponding machine. Suppose $t>0$ and after $t$ steps the machine is in either
 the read state with no stored Boolean value or the exit state. Suppose also that at
 every positive time $u<t$ it is in neither of those states. Then the clock of $d$ is
@@ -691,7 +692,7 @@ separators in the accepted case, and by $|J|+1$ in the other case.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.TableAt, Turing.TableWF, Turing.joinFields, Turing.tableFields, Turing.tableOffset}
 Let $\Gamma$ be a type with decidable equality, let $e:\{0,1\}\hookrightarrow\Gamma$ be
 an injection, and let $m$ be a positive integer. For every finite type $A$ with
-decidable equality, transition map $\delta:A\times(\Gamma\cup\{\text{blank}\\to A$,
+decidable equality, transition map $\delta:A\times(\Gamma\cup\{\text{blank}\	o A$,
 initial state $a_0\in A$, and predicate $\mathrm{acc}:A\to\{0,1\}$, there are a natural
 number $K$, a finite state type $P$, a deterministic machine $R$ with $K+2$ work tapes
 and distinct states $\mathrm{yes},\mathrm{no}\in P$, an entry state, and a constant
@@ -1131,13 +1132,13 @@ output, are unchanged.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.rt_adjacentWrites, Turing.rt_advanceCfg}
 \difficulty{4}
-Let $k$ be a nonnegative integer, let $\Gamma$ be a symbol alphabet, let $P,S$ be state
+Let $k$ be a nonnegative integer, let $[?m$ be a symbol alphabet, let $P,S$ be state
 sets, and fix an input word. For a configuration $d$, tape $i$, words $u,v$, states
 $q,r\in P$, and a state map $f:P\to S$, consider the operation that sets the state to
 the specified state, writes the word at the current head position and advances that head
 by its length. Advancing first by $u$ to state $q$, renaming states by $f$, and then
 advancing by $v$ to state $r$ gives the same configuration as first renaming the state
-of $d$ by $f$ and then advancing by the concatenation $u\mathbin{+}v$ to state $r$.
+of $d$ by $f$ and then advancing by the concatenation $u\mathbin{+[?m}v$ to state $r$.
 \end{theorem}
 
 \begin{definition}[Half-state space]
@@ -1588,10 +1589,10 @@ machine defined for $k$, and then scans back on the destination tape.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.SeekPhase, Turing.SweepPhase, Turing.copyTM, Turing.copyTM_run_ofCfg, Turing.fieldOffset, Turing.fieldsTape, Turing.fieldsTape_cons_shift, Turing.fieldsTape_field, Turing.joinFields, Turing.joinFields_cons_cons, Turing.rt_copy_seam, Turing.rt_tailEntry, Turing.rt_tailExit, Turing.rt_tailState, Turing.rt_tailTM, Turing.seamCompTM, Turing.skipBackTM, Turing.skipBackTM_run_ofCfg, Turing.skipTM, Turing.skipTM_run_ofCfg, Turing.writeConstTM_run_ofCfg}
 \difficulty{7}
-Let $m,k$ be nonnegative integers, let $\text{src}$ and $\text{dst}$ be distinct indices
-in $\text{Fin}(m)$, let $w$ be a finite word over an alphabet $\Gamma$, and let $\text{last}$
+Let $m,k$ be nonnegative integers, let $	ext{src}$ and $	ext{dst}$ be distinct indices
+in $	ext{Fin}(m)$, let $w$ be a finite word over an alphabet $93$, and let $	ext{last}$
 be an alphabet symbol. Form the word $F$ by joining $k$ copies of $w$ followed by the
-one-symbol word $[\text{last}]$, with a blank separator between consecutive words.
+one-symbol word $[	ext{last}]$, with a blank separator between consecutive words.
 Suppose a configuration $d$ on a fixed input is in the prescribed entry state, the
 source tape contains the word $w$ at each offset $p$ with $-1\le p\le |w|$ (using blank
 cells outside the word), and the destination tape is blank at each offset $p$ with

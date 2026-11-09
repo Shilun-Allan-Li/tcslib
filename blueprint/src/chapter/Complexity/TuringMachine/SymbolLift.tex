@@ -10,7 +10,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.TuringMachine.SymbolLi
 \lean{Turing.decodeBool}
 \label{Turing.decodeBool}
 \leanok
-Let $e$ be an injection from $\{\mathrm{false},\mathrm{true}\}$ into an alphabet
+Let $e$ be an injection from $\{\mathrm{false},\mathrm{true}\}$ into an alphabet
 $\Gamma$. For $\gamma\in\Gamma$, return the Boolean whose image under $e$ is $\gamma$,
 if there is one; otherwise return no value.
 \end{definition}
@@ -68,7 +68,7 @@ through $e$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.liftSymbols}
 \difficulty{5}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
+Let $e:ool	o	ext{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
 $c$ be a configuration on $x$. The symbol scanned by the input head after lifting $c$
 through $e$ is the image under $e$ of the symbol scanned by $c$, with absence of a
 scanned symbol preserved.
@@ -118,7 +118,7 @@ gives the lift of the configuration reached by running $M$ from $c$ for $t$ step
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftSymbols}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
+Let $e:ool	o	ext{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
 $c$ be a configuration on $x$. The state of the configuration obtained by lifting $c$
 through $e$ equals the state of $c$.
 \end{lemma}
@@ -129,7 +129,7 @@ through $e$ equals the state of $c$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftSymbols}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
+Let $e:ool	o	ext{Γ}$ be an injective map, let $x$ be a finite Boolean string, and let
 $c$ be a configuration on $x$. The positions of the heads on all work tapes in the
 configuration obtained by lifting $c$ through $e$ equal the corresponding positions in
 $c$.
@@ -196,8 +196,8 @@ $e$-image of $f(x)$.
 \uses{Turing.decodeBool}
 \difficulty{4}
 Let $e$ be an injective map from the Boolean set into a type with decidable equality,
-and let $\mathbb$ be an element of that type. If decoding $\mathbb$ returns a Boolean $b$, then
-$\mathbb=e(b)$.
+and let $b$ be an element of that type. If decoding $b$ returns a Boolean $b$, then
+$b=e(b)$.
 \end{theorem}
 
 \begin{theorem}[Mapping a buffer tape through an embedding]
@@ -368,7 +368,7 @@ obtained by decoding $D$ is empty.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftOver}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, and let $x$ be a finite string over $\text{Γ}$
+Let $e:ool	o	ext{Γ}$ be an injective map, and let $x$ be a finite string over $	ext{Γ}$
 and $x'$ a finite Boolean string of the same length. For configurations $D$ on $x$ and
 $c$ on $x'$, the state of the configuration obtained by lifting $c$ over $D$ equals the
 state of $c$.
@@ -380,7 +380,7 @@ state of $c$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftOver}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, and let $x$ be a finite string over $\text{Γ}$
+Let $e:ool	o	ext{Γ}$ be an injective map, and let $x$ be a finite string over $	ext{Γ}$
 and $x'$ a finite Boolean string of the same length. For any configurations $D$ on $x$
 and $c$ on $x'$, the input-head position of the configuration obtained by lifting $c$
 over $D$ has the same numerical value as the input-head position of $c$.
@@ -392,7 +392,7 @@ over $D$ has the same numerical value as the input-head position of $c$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftOver, Turing.decodeBool}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, and let $x$ be a finite string over $\text{Γ}$
+Let $e:ool	o	ext{Γ}$ be an injective map, and let $x$ be a finite string over $	ext{Γ}$
 and $x'$ a finite Boolean string of the same length. For configurations $D$ on $x$ and
 $c$ on $x'$, and for each work tape $j$ and integer tape position $p$, the symbol stored
 at $(j,p)$ in the configuration obtained by lifting $c$ over $D$ equals $D$'s symbol
@@ -406,7 +406,7 @@ the image under $e$ of $c$'s symbol, with blank cells remaining blank under this
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftOver}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, and let $x$ be a finite string over $\text{Γ}$
+Let $e:ool	o	ext{Γ}$ be an injective map, and let $x$ be a finite string over $	ext{Γ}$
 and $x'$ a finite Boolean string of the same length. For configurations $D$ on $x$ and
 $c$ on $x'$, the positions of the heads on all work tapes in the configuration obtained
 by lifting $c$ over $D$ equal the corresponding positions in $c$.
@@ -418,7 +418,7 @@ by lifting $c$ over $D$ equal the corresponding positions in $c$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.liftOver}
 \difficulty{1}
-Let $e:\text{Bool}\to\text{Γ}$ be an injective map, and let $x$ be a finite string over $\text{Γ}$
+Let $e:ool	o	ext{Γ}$ be an injective map, and let $x$ be a finite string over $	ext{Γ}$
 and $x'$ a finite Boolean string of the same length. For configurations $D$ on $x$ and
 $c$ on $x'$, the output of the configuration obtained by lifting $c$ over $D$ is the
 concatenation of the output of $D$ with the symbolwise image under $e$ of the output of

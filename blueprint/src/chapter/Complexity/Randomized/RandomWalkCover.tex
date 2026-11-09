@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.RandomWalkC
 \label{Randomized.RegularMultigraph.endpoint}
 \leanok
 Let $G$ be a regular multigraph on a vertex type $V$, with neighbor choices indexed by
-$\text{Fin}(D)$. Starting at a vertex $v$, follow the neighbor indexed by each successive
+$	ext{Fin}(D)$. Starting at a vertex $v$, follow the neighbor indexed by each successive
 entry of a finite list of indices; the endpoint is the vertex reached after all choices,
 and is $v$ when the list is empty.
 \end{definition}
@@ -77,11 +77,11 @@ $(x,b)$ in the same sense.
 \uses{Randomized.RegularMultigraph.Adj, Randomized.RegularMultigraph.coverAdj}
 \difficulty{5}
 Let $G$ be a regular multigraph on $V$, and suppose there is a finite sequence of
-neighbor steps from $v$ to $w$. Then there is a Boolean value $\text{(parity)}$ such
+neighbor steps from $v$ to $w$. Then there is a Boolean value $	ext{(parity)}$ such
 that, for either starting label $b$, the corresponding lifted walk goes from $(v,b)$ to
 $(w,b
-e \text{parity})$, where $b
-e \text{parity}$ denotes Boolean exclusive-or.
+e 	ext{parity})$, where $b
+e 	ext{parity}$ denotes Boolean exclusive-or.
 \end{theorem}
 
 \begin{theorem}[Reachability in the lifted graph]
@@ -92,8 +92,8 @@ e \text{parity}$ denotes Boolean exclusive-or.
 \difficulty{6}
 Let $G$ be a regular multigraph on $V$. Suppose every pair of vertices is connected by a
 finite sequence of neighbor steps, and suppose there is no Boolean coloring of $V$ that
-assigns opposite colors across every neighbor step. Then for every $u,v\to V$, there is a
-finite walk in the two-sheeted lift from $(u,\text{false})$ to $(v,\text{false})$, where
+assigns opposite colors across every neighbor step. Then for every $u,v	o V$, there is a
+finite walk in the two-sheeted lift from $(u,	ext{false})$ to $(v,	ext{false})$, where
 each lifted step follows a neighbor step and flips the Boolean label.
 \end{theorem}
 
@@ -104,8 +104,8 @@ each lifted step follows a neighbor step and flips the Boolean label.
 \uses{Randomized.RegularMultigraph.coverAdj, Randomized.RegularMultigraph.coverAdj_symm, Randomized.RegularMultigraph.endpoint}
 \difficulty{5}
 Let $G$ be a regular multigraph of degree $D$, and form a graph whose vertices are pairs
-$(v,b)$ with $v$ a vertex of $G$ and $b\text{ is a bit}$, joining $(v,b)$ to $(v',b')$
-when some neighbor index $i$ satisfies $v'=\text{nbr}(v,i)$ and $b'$ is the opposite bit.
+$(v,b)$ with $v$ a vertex of $G$ and $b	ext{ is a bit}$, joining $(v,b)$ to $(v',b')$
+when some neighbor index $i$ satisfies $v'=	ext{nbr}(v,i)$ and $b'$ is the opposite bit.
 For every walk $p$ in this graph from $(x_1,x_2)$ to $(y_1,y_2)$, there is a word $w$ of
 neighbor indices of length equal to the length of $p$, whose walk in $G$ goes from $x_1$
 to $y_1$, and $y_2$ is $x_2$ toggled if and only if the length of $p$ is odd.

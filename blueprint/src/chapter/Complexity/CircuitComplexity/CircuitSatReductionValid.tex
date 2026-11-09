@@ -197,7 +197,7 @@ empty bit string.
 For every state $q$, bit $b$, and finite bit string $w$, processing $bw$ from state $q$
 outputs the bit obtained by swapping $b$ according to $q$, followed by the result of
 processing $w$ from the next state determined by $q$ and $b$:
-$T_q(bw)=\bigl(\text{swap}_q(b)\bigr)T_{\text{next}(q,b)}(w)$.
+$T_q(bw)=igl(	ext{swap}_q(b)igr)T_{	ext{next}(q,b)}(w)$.
 \end{theorem}
 
 \begin{theorem}[Output on the empty input]
@@ -297,7 +297,7 @@ $r$.
 \difficulty{4}
 For every finite list $A$ of natural numbers and every finite bit string $r$, processing
 the encoding of $A$ followed by $r$ from state $a$ leaves the encoded list unchanged and
-processes the suffix from state $g$: $T_a(\text{encode}(A)Vert r)=\text{encode}(A)Vert
+processes the suffix from state $g$: $T_a(	ext{encode}(A)Vert r)=	ext{encode}(A)Vert
 T_g(r)$.
 \end{theorem}
 

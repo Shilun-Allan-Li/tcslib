@@ -97,7 +97,7 @@ of $M$ and $W$ is the fixed instruction-block width of the tableau construction 
 \lean{Complexity.UTab.rNC}
 \label{Complexity.UTab.rNC}
 \leanok
-The distinguished residue index $r_{m NC}$ is the element $0$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m NC}$ is the element $0$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -105,7 +105,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rZ}
 \label{Complexity.UTab.rZ}
 \leanok
-The distinguished residue index $r_{m Z}$ is the element $1$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m Z}$ is the element $1$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -113,7 +113,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rT}
 \label{Complexity.UTab.rT}
 \leanok
-The distinguished residue index $r_{m T}$ is the element $2$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m T}$ is the element $2$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -121,7 +121,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rI}
 \label{Complexity.UTab.rI}
 \leanok
-The distinguished residue index $r_{m I}$ is the element $3$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m I}$ is the element $3$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -129,7 +129,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rQ}
 \label{Complexity.UTab.rQ}
 \leanok
-The distinguished residue index $r_{m Q}$ is the element $4$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m Q}$ is the element $4$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -137,7 +137,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rLB}
 \label{Complexity.UTab.rLB}
 \leanok
-The distinguished residue index $r_{m LB}$ is the element $5$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m LB}$ is the element $5$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -145,7 +145,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rLT}
 \label{Complexity.UTab.rLT}
 \leanok
-The distinguished residue index $r_{m LT}$ is the element $6$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m LT}$ is the element $6$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -153,7 +153,7 @@ set of integers from $0$ through $10$.
 \lean{Complexity.UTab.rLL}
 \label{Complexity.UTab.rLL}
 \leanok
-The distinguished residue index $r_{m LL}$ is the element $7$ of $\text{Fin}(11)$, the
+The distinguished residue index $r_{m LL}$ is the element $7$ of $	ext{Fin}(11)$, the
 set of integers from $0$ through $10$.
 \end{definition}
 
@@ -162,7 +162,7 @@ set of integers from $0$ through $10$.
 \label{Complexity.UTab.rPA}
 \leanok
 For any finite-state Turing machine $M$ over the binary alphabet, the register index
-denoted by $r_{PA}$ is $8$ in the set $\text{Fin }11$.
+denoted by $r_{PA}$ is $8$ in the set $	ext{Fin }11$.
 \end{definition}
 
 \begin{definition}[Register index nine]
@@ -170,7 +170,7 @@ denoted by $r_{PA}$ is $8$ in the set $\text{Fin }11$.
 \label{Complexity.UTab.rPB}
 \leanok
 For any finite-state Turing machine $M$ over the binary alphabet, the register index
-denoted by $r_{PB}$ is $9$ in the set $\text{Fin }11$.
+denoted by $r_{PB}$ is $9$ in the set $	ext{Fin }11$.
 \end{definition}
 
 \begin{definition}[Register index ten]
@@ -178,7 +178,7 @@ denoted by $r_{PB}$ is $9$ in the set $\text{Fin }11$.
 \label{Complexity.UTab.rTMP}
 \leanok
 For any finite-state Turing machine $M$ over the binary alphabet, the register index
-denoted by $r_{TMP}$ is $10$ in the set $\text{Fin }11$.
+denoted by $r_{TMP}$ is $10$ in the set $	ext{Fin }11$.
 \end{definition}
 
 \begin{definition}[Sources for tableau bits]
@@ -385,10 +385,10 @@ $t$.
 \uses{BoolCircuit.BitSrc, Complexity.UTab.SSrc.toBitSrc, Complexity.UTab.cellS, Complexity.UTab.chS, Complexity.UTab.nbS, Complexity.UTab.psnS_toBitSrc, Complexity.UTab.rI, Complexity.UTab.rLB, Complexity.UTab.rQ, Complexity.cellIdx, Complexity.cellSrcs, Complexity.cfgStride, Complexity.chSrc, Complexity.nbSrc, Complexity.snapWidth}
 \difficulty{5}
 Let $M$ be a finite Turing machine over the binary alphabet with $k$ work tapes, and let
-$N,T,t,r$ be natural numbers, $\tau$ a work-tape index, and $ho$ an assignment of
-natural numbers to the eleven registers. Let $\sigma$ be a list of bit sources of length $N$.
-Suppose the instruction register gives the index of cell $(t,\tau,r)$, the preceding-cell
-register gives the index of cell $(t-1,\tau,r)$ whenever $t\ne 0$, and the
+$N,T,t,r$ be natural numbers, $	au$ a work-tape index, and $ho$ an assignment of
+natural numbers to the eleven registers. Let $$ be a list of bit sources of length $N$.
+Suppose the instruction register gives the index of cell $(t,	au,r)$, the preceding-cell
+register gives the index of cell $(t-1,	au,r)$ whenever $t\ne 0$, and the
 first-instruction register equals $t$ times the configuration stride. Then translating
 the cell source list for time $t$ and position $r$ through $ho$ yields exactly the
 bit-source list for cell $(t,\tau,r)$, with the specified constants and neighbor,

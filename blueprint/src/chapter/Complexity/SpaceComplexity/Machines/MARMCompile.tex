@@ -132,9 +132,9 @@ is available, and otherwise uses the compiled register-program and decider trans
 \label{Complexity.LogProg.mcompileFinTM}
 \leanok
 \uses{Complexity.LogProg.CSt, Complexity.LogProg.MARM, Complexity.LogProg.Ph, Complexity.LogProg.mcompileTM, Turing.FinTM, Turing.MultiTapeTM}
-Let $m$, $d$, and $k_D$ be natural numbers, let $\Lambda$ and $SD$ be finite types with
-decidable equality, and let $A$ assign to each element of $\Lambda$ an instruction with
-$m$ registers, $d$ decider indices, and labels in $\Lambda$. Choose an initial label
+Let $m$, $d$, and $k_D$ be natural numbers, let $Lambda$ and $SD$ be finite types with
+decidable equality, and let $A$ assign to each element of $Lambda$ an instruction with
+$m$ registers, $d$ decider indices, and labels in $Lambda$. Choose an initial label
 $l_0$, a Boolean-alphabet Turing machine $D$ with $k_D$ work tapes and state set $SD$,
 and a map $q_0$ assigning a state of $D$ to each of the $d$ decider indices. The
 compilation of these data is a finite Boolean-alphabet Turing machine with $m+k_D+1$
@@ -174,9 +174,9 @@ $\beta'$ have identical call maps.
 \uses{Complexity.LogProg.CSt, Complexity.LogProg.MARM, Complexity.LogProg.MARM.detPart, Complexity.LogProg.MARM.detPart_det, Complexity.LogProg.MARM.detPart_mem, Complexity.LogProg.MIns.isMem, Complexity.LogProg.Ph, Complexity.LogProg.armProg_mdetPart_call, Complexity.LogProg.compileTM, Complexity.LogProg.ctr_congr, Complexity.LogProg.detM, Complexity.LogProg.insTr, Complexity.LogProg.mop, Turing.MultiTapeTM}
 \difficulty{5}
 Let $A$ be a memory-augmented register program, let $D$ be a decider, and choose an
-initial decider state for each decider index. For any Boolean answer $\beta$ and compiled
+initial decider state for each decider index. For any Boolean answer $eta$ and compiled
 state $q$ at which the memory-choice map of $A$ is undefined, the transition of the
-deterministic compilation with answer parameter $\beta$ agrees with the transition using
+deterministic compilation with answer parameter $eta$ agrees with the transition using
 answer parameter false.
 \end{lemma}
 
@@ -221,10 +221,10 @@ deterministic run at time $t$, with that same memory tape and head position atta
 \difficulty{5}
 Let $A$ be a program of memory instructions, let $l_0$ be an initial program location,
 let $D$ be a multi-tape Turing machine, let $q_0$ assign an initial state of $D$ to each
-decider index, and let $\beta$ be a Boolean value. For any input and any configuration
+decider index, and let $eta$ be a Boolean value. For any input and any configuration
 $c$ of the compiled machine, if $c$ has state $q$ and the memory-instruction map at $q$
 is defined, then the machine halts after one step and its output is the output of $c$
-with $\beta$ appended.
+with $eta$ appended.
 \end{lemma}
 
 \begin{lemma}[Choice-independent memory precondition]

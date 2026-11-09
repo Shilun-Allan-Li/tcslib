@@ -36,9 +36,9 @@ The neutral sign assigned to the logical OR gate is $1$.
 \lean{FABL.embeddingPreimage}
 \label{FABL.embeddingPreimage}
 \leanok
-Let $m,n$ be natural numbers, let $e:\text{Fin}(m)\to\text{Fin}(n)$ be an embedding, and
-let $I$ be a finite set of elements of $\text{Fin}(n)$. The preimage of $I$ under $e$ is
-the set of all $i\in\text{Fin}(m)$ such that $e(i)\in I$.
+Let $m,n$ be natural numbers, let $e:	ext{Fin}(m)	o	ext{Fin}(n)$ be an embedding, and
+let $I$ be a finite set of elements of $	ext{Fin}(n)$. The preimage of $I$ under $e$ is
+the set of all $i\in	ext{Fin}(m)$ such that $e(i)\in I$.
 \end{definition}
 
 \begin{theorem}[Membership in an embedding preimage]
@@ -47,8 +47,8 @@ the set of all $i\in\text{Fin}(m)$ such that $e(i)\in I$.
 \leanok
 \uses{FABL.embeddingPreimage}
 \difficulty{1}
-Let $m,n$ be natural numbers, let $e:\bbr^{m}\to\bbr^{n}$ be an injective map between the
-index sets $\bbr^{m}$ and $\bbr^{n}$, and let $A$ be a set of indices in $\bbr^{n}$. An
+Let $m,n$ be natural numbers, let $e:br^{m}\tobr^{n}$ be an injective map between the
+index sets $br^{m}$ and $br^{n}$, and let $A$ be a set of indices in $br^{n}$. An
 index $i$ belongs to the preimage of $A$ under $e$ if and only if $e(i)$ belongs to $A$.
 \end{theorem}
 
@@ -59,7 +59,7 @@ index $i$ belongs to the preimage of $A$ under $e$ if and only if $e(i)$ belongs
 \uses{FABL.CircuitGate, FABL.CircuitGate.evalFinset, FABL.CircuitGate.neutral, FABL.Sign, FABL.embeddingPreimage, FABL.mem_embeddingPreimage}
 \difficulty{5}
 Let $m,n$ be nonnegative integers, let $G$ be an AND or OR gate, let
-$e:\\text{Fin}(m)\hookrightarrow\text{Fin}(n)$ be an injective coordinate map, let
+$e:\	ext{Fin}(m)\hookrightarrow\text{Fin}(n)$ be an injective coordinate map, let
 $v:\text{Fin}(m)\to\{\pm1\}$ assign signs to the smaller coordinate set, and let
 $S\subseteq\text{Fin}(n)$. Extend $v$ to the larger coordinate set by assigning the
 neutral sign of $G$ outside the image of $e$. Then evaluating $G$ on the preimage of $S$
@@ -106,7 +106,7 @@ with those of $k$.
 \uses{FABL.CircuitGate, FABL.CircuitTail, FABL.CircuitTail.castInput, FABL.CircuitTail.eval, FABL.Sign}
 \difficulty{3}
 Let $m,k$ be natural numbers with $m=k$, let $T$ be a circuit tail with $m$ inputs, let
-$g$ be an AND or OR gate, and let $v:\text{Fin}(k)\to\text{Sign}$ assign a sign to each of
+$g$ be an AND or OR gate, and let $v:	ext{Fin}(k)	o	ext{Sign}$ assign a sign to each of
 the $k$ inputs. Evaluating $T$ after identifying its input indices with those of $k$
 gives the same sign as evaluating $T$ on the values reindexed along that identification.
 \end{theorem}
@@ -129,7 +129,7 @@ their preimages under the map.
 \uses{FABL.CircuitTail, FABL.CircuitTail.layerCount, FABL.CircuitTail.pullInputs}
 \difficulty{4}
 Let $m,k$ be natural numbers, let $T$ be a circuit tail with $m$ input indices, and let
-$e:\text{Fin}(k)\to\text{Fin}(m)$ be an injective map. Pulling each layer's input sets back
+$e:	ext{Fin}(k)	o	ext{Fin}(m)$ be an injective map. Pulling each layer's input sets back
 along $e$ leaves the layer count unchanged.
 \end{theorem}
 
@@ -139,7 +139,7 @@ along $e$ leaves the layer count unchanged.
 \leanok
 \uses{FABL.CircuitTail, FABL.CircuitTail.internalNodeCount, FABL.CircuitTail.pullInputs}
 \difficulty{4}
-Let $T$ be a circuit tail with $m$ inputs, and let $e:\text{Fin}(k)\to\text{Fin}(m)$ be
+Let $T$ be a circuit tail with $m$ inputs, and let $e:	ext{Fin}(k)	o	ext{Fin}(m)$ be
 injective. The number of internal nodes is unchanged when the circuit inputs are pulled
 back along $e$.
 \end{theorem}
@@ -151,7 +151,7 @@ back along $e$.
 \uses{FABL.CircuitGate, FABL.CircuitGate.evalFinset_embeddingPreimage_extend, FABL.CircuitGate.neutral, FABL.CircuitTail, FABL.CircuitTail.eval, FABL.CircuitTail.eval_castInput, FABL.CircuitTail.pullInputs, FABL.Sign}
 \difficulty{4}
 Let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or OR gate, let
-$e:\text{Fin}(k)\to\text{Fin}(m)$ be an injective map, and assign a sign to each of the $k$
+$e:	ext{Fin}(k)	o	ext{Fin}(m)$ be an injective map, and assign a sign to each of the $k$
 inputs. Pulling the circuit inputs back along $e$ and evaluating gives the same sign as
 evaluating the original tail after assigning the given values on the image of $e$ and
 assigning $-1$ outside that image for an AND gate, or $1$ outside it for an OR gate.
@@ -498,7 +498,7 @@ of width at most $\\ell$: a CNF when the gate is AND, or a DNF when the gate is 
 \leanok
 \uses{FABL.BooleanFunction, FABL.CircuitGate, FABL.CircuitTail, FABL.CircuitTail.evalFunction, FABL.FixedSignCube, FABL.reindexedSignRestriction}
 \difficulty{1}
-Let $n,m\in\mathbb{N}$, let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or
+Let $n,m \in\mathbb{N}$, let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or
 OR gate, and assign a sign-valued Boolean function on the $n$-dimensional sign cube to
 each input of $T$. For a set $J$ of coordinates and a fixed sign assignment $z$ on its
 complement, reindex the free coordinates of each restricted function by the $|J|$
@@ -763,8 +763,8 @@ samples per coefficient for that family and parameter.
 \label{FABL.lowDegreeLearnerWorkCost}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeLearnerRandomExampleCost}
-For natural numbers $n$ and $k$ and a rational parameter $\tfrac12
-obreak<
+For natural numbers $n$ and $k$ and a rational parameter $	frac12 
+obreak< 
 obreakrac12$?
 \end{definition}
 

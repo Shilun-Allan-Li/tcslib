@@ -38,7 +38,7 @@ the second represents OR, and the third represents NOT.
 \label{BoolCircuit.encodeKind}
 \leanok
 \uses{BoolCircuit.GateKind}
-The three gate kinds are encoded by the elements $0$, $1$, and $2$ of $\text{Fin}(3)$:
+The three gate kinds are encoded by the elements $0$, $1$, and $2$ of $	ext{Fin}(3)$:
 conjunction maps to $0$, disjunction to $1$, and negation to $2$.
 \end{definition}
 
@@ -57,8 +57,8 @@ encoding returns $k$.
 \label{BoolCircuit.decodeGate}
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.GateCode, BoolCircuit.decodeKind}
-For a natural number $S$, a gate code consists of a kind code in $\text{Fin}(3)$ and two
-optional argument indices in $\text{Fin}(S)$. Decode the kind code as conjunction,
+For a natural number $S$, a gate code consists of a kind code in $	ext{Fin}(3)$ and two
+optional argument indices in $	ext{Fin}(S)$. Decode the kind code as conjunction,
 disjunction, or negation according as it is $0$, $1$, or $2$, and form the gate's
 argument list by taking the values of the two present indices in order, omitting absent
 ones.
@@ -69,9 +69,9 @@ ones.
 \label{BoolCircuit.encodeArg}
 \leanok
 Given a natural number $S$ and an optional natural-number argument $a$, encode it as an
-optional element of $\text{Fin}(S)$: an absent argument, or a present $a
+optional element of $	ext{Fin}(S)$: an absent argument, or a present $a
 ot< S$, is encoded as absent; a present $a<S$ is encoded by its corresponding element of
-$\text{Fin}(S)$.
+$	ext{Fin}(S)$.
 \end{definition}
 
 \begin{definition}[Gate encoding]
@@ -111,7 +111,7 @@ order.
 \leanok
 \uses{BoolCircuit.CircCode, BoolCircuit.DAGGate.eval, BoolCircuit.gatesOf, BoolCircuit.runWith}
 For a natural number $n$, a circuit code of capacity $S$, and an input
-$x:\text{Fin}(n)\to\text{Bool}$, evaluate the decoded gate list on the list of input
+$x:	ext{Fin}(n)	o	ext{Bool}$, evaluate the decoded gate list on the list of input
 values. Return the resulting value at the circuit's output index if present, and return
 false if that index has no value.
 \end{definition}
@@ -139,8 +139,8 @@ agrees with $C$ on every input assignment.
 \label{BoolCircuit.computableDAG}
 \leanok
 \uses{BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.IsFaninTwo, BoolCircuit.DAGCircuit.eval, BoolCircuit.DAGCircuit.size}
-For natural numbers $n$ and $S$, the set of functions from $\text{Fin}(n)\to\text{Bool}$ to
-$\text{Bool}$ computed by an acyclic gate circuit whose gates each have at most two
+For natural numbers $n$ and $S$, the set of functions from $	ext{Fin}(n)	o	ext{Bool}$ to
+$	ext{Bool}$ computed by an acyclic gate circuit whose gates each have at most two
 inputs and whose size is at most $S$.
 \end{definition}
 

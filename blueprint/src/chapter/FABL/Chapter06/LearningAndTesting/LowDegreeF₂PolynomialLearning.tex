@@ -18,28 +18,28 @@ $a : \nu \to \mathbb{F}_2$ and a constant $c \in \mathbb{F}_2$.
 \lean{FABL.F₂LinearEquation.eval}
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.𝔽₂}
-Let $V$ be a finite set, let $a_v\text{ and }x_v$ be elements of $\bbr/2\bbr$ for each
-$v\text{ in }V$, and let $E$ be the equation with coefficients $a_v$. Its evaluation at
-the assignment $x$ is $\sum_{v\in V} a_vx_v$ in $\bbr/2\bbr$.
+Let $V$ be a finite set, let $a_v	ext{ and }x_v$ be elements of $br/2br$ for each
+$v	ext{ in }V$, and let $E$ be the equation with coefficients $a_v$. Its evaluation at
+the assignment $x$ is $sum_{v\in V} a_vx_v$ in $br/2br$.
 \end{definition}
 
 \begin{definition}[Satisfaction of a binary linear equation]
 \lean{FABL.F₂LinearEquation.IsSatisfied}
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.eval, FABL.𝔽₂}
-Let $V$ be a finite set, let $E$ be a linear equation over $\bbr/2\bbr$ with constant term
+Let $V$ be a finite set, let $E$ be a linear equation over $br/2br$ with constant term
 $c$, and let $x:V\to\bbr/2\bbr$ be an assignment. The assignment satisfies $E$ exactly
-when the sum of each coefficient times its assigned value equals $c$ in $\bbr/2\bbr$.
+when the sum of each coefficient times its assigned value equals $c$ in $br/2\bbr$.
 \end{definition}
 
 \begin{definition}[Addition of binary linear equations]
 \lean{FABL.F₂LinearEquation.add}
 \leanok
 \uses{FABL.F₂LinearEquation}
-Let $V$ be a finite set, and let $E_1$ and $E_2$ be linear equations over $\bbr/2\bbr$ on
+Let $V$ be a finite set, and let $E_1$ and $E_2$ be linear equations over $br/2br$ on
 $V$. Their sum is the equation whose coefficient at each variable is the sum of the
 corresponding coefficients of $E_1$ and $E_2$, and whose constant term is the sum of
-their constant terms, all in $\bbr/2\bbr$.
+their constant terms, all in $br/2br$.
 \end{definition}
 
 \begin{theorem}[Evaluation preserves equation addition]
@@ -47,7 +47,7 @@ their constant terms, all in $\bbr/2\bbr$.
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.add, FABL.F₂LinearEquation.eval, FABL.𝔽₂}
 \difficulty{1}
-Let $\nu$ be a finite set, let $L_1,L_2$ be linear equations over $\mathbb{F}_2$
+Let $[0m[0m\nu$ be a finite set, let $L_1,L_2$ be linear equations over $\mathbb{F}_2$
 on $\nu$, and let $x\colon\nu\to\mathbb{F}_2$ be an assignment. The evaluation of the
 sum of the two equations at $x$ equals the sum of their evaluations at $x$.
 \end{theorem}
@@ -76,7 +76,7 @@ itself if its coefficient at $p$ is zero, and otherwise is the sum $R+P$.
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.clearPivot}
 \difficulty{3}
-Let a pivot variable and two linear equations over $\mathbb{F}_2$ on a finite
+Let a pivot variable and two linear equations over $[0m[0m\mathbb{F}_2$ on a finite
 set of variables be given. If the pivot equation has coefficient $1$ at the pivot
 variable, then after clearing that pivot from the row equation, the resulting equation
 has coefficient $0$ at the pivot variable.
@@ -98,7 +98,7 @@ satisfied by $x$.
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.IsSatisfied, FABL.𝔽₂}
 Let $V$ be a finite set, and let each row in a finite list of equations assign a
-coefficient in the field $\bbr/2\bbr$ to every element of $V$ and have a constant in that
+coefficient in the field $br/2br$ to every element of $V$ and have a constant in that
 field. An assignment $x:V\to\bbr/2\bbr$ satisfies the list if it satisfies every
 equation that occurs in it.
 \end{definition}
@@ -107,7 +107,7 @@ equation that occurs in it.
 \lean{FABL.extractF₂Pivot}
 \leanok
 \uses{FABL.F₂LinearEquation}
-Let $V$ be a finite set, choose a variable $p\in V$, and let $\mathcal R$ be a list of
+Let $V$ be a finite set, choose a variable $p\in V$, and let $mathcal R$ be a list of
 linear equations over $rr/2rr$ on $V$. Pivot extraction returns no result if no row
 has coefficient $1$ at $p$; otherwise it returns the first such row together with the
 list of all other rows in their original order.
@@ -163,7 +163,7 @@ each row, in the original order.
 \leanok
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.IsSatisfied, FABL.F₂LinearEquation.clearPivot, FABL.F₂LinearEquation.isSatisfied_clearPivot_iff, FABL.F₂SatisfiesRows, FABL.clearF₂PivotRows, FABL.𝔽₂}
 \difficulty{3}
-Let $\nu$ be a finite set, let $p$ be a linear equation over $mathbb{F}_2$, and let $R$
+Let $\nu$ be a finite set, let $p$ be a linear equation over $mathbb{F}_2$, and let $R$
 be a finite list of such equations. Fix an assignment that satisfies $p$. Clearing the
 coefficient of a chosen variable in every equation of $R$ by adding $p$ whenever that
 coefficient is nonzero preserves satisfaction of the list: the assignment satisfies the
@@ -229,7 +229,7 @@ and $R$ produces a pivot list whose length is at most the length of $C$.
 \difficulty{5}
 Let $
 u$ be a finite coordinate set, let $C$ be a list of coordinates, and let $R$ be a list
-of linear equations over $\mathbb{F}_2$. The work recorded by eliminating along $C$ is
+of linear equations over $mathbb{F}_2$. The work recorded by eliminating along $C$ is
 at most $|C|\,|R|\,(|\nu|+2)$.
 \end{theorem}
 
@@ -239,7 +239,7 @@ at most $|C|\,|R|\,(|\nu|+2)$.
 \uses{FABL.F₂LinearEquation, FABL.F₂LinearEquation.IsSatisfied, FABL.F₂SatisfiesRows, FABL.clearF₂PivotRows, FABL.eliminateF₂Rows, FABL.extractF₂Pivot, FABL.extractF₂Pivot_satisfiesRows_iff, FABL.satisfiesRows_clearF₂PivotRows_iff, FABL.𝔽₂}
 \difficulty{5}
 Let $\nu$ be a finite variable set, let $C$ be a list of variables, and let $R$ be a
-list of linear equations over $mathbb{F}_2$. For any assignment, it satisfies every
+list of linear equations over $mathbb{F}_2$. For any assignment, it satisfies every
 equation in $R$ if and only if it satisfies every pivot equation recorded by eliminating
 along $C$ and every equation in the resulting residual list.
 \end{theorem}
@@ -368,7 +368,7 @@ list.
 \difficulty{5}
 Let $
 u$ be a finite coordinate set, let $C$ be a list of coordinates, and let $R$ be a list
-of linear equations over $\mathbb{F}_2$. For every coordinate $z$ that occurs in $C$,
+of linear equations over $mathbb{F}_2$. For every coordinate $z$ that occurs in $C$,
 every residual equation produced by eliminating along $C$ has coefficient zero at $z$.
 \end{theorem}
 
@@ -825,7 +825,7 @@ $2^\ell\big((\ell+1)(n+1)^\ell+\lceil\log_2\lceil2/\delta\rceil\rceil\big)$.
 \uses{FABL.F₂Cube, FABL.binaryCubeSignEquiv}
 For natural numbers $n$ and $m$, the map sending each of $m$ samples of sign vectors of
 length $n$ to the corresponding samples of binary vectors is the coordinatewise
-bijection induced by the standard bijection between signs and elements of $\bbF_2$.
+bijection induced by the standard bijection between signs and elements of $bF_2$.
 \end{definition}
 
 \begin{definition}[Sign-coded separation failure set]

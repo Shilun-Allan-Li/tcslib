@@ -276,7 +276,7 @@ negative-answer states are pairwise distinct.
 \leanok
 \uses{Complexity.CanonTab, Turing.OracleTM}
 For natural numbers $k$ and $n$, the collection of well-formed oracle Turing machines
-with $k$ ordinary work tapes, Boolean tape symbols, and states indexed by $\text{Fin}(n)$
+with $k$ ordinary work tapes, Boolean tape symbols, and states indexed by $	ext{Fin}(n)$
 is finite.
 \end{definition}
 
@@ -449,7 +449,7 @@ length chosen for $i$ and $b$.
 \difficulty{1}
 Let $N$ be a sequence of finite oracle Turing machines, let $i$ be a natural number, and
 let $d$ be stage data. The number of queries in the list produced at stage $i$ using $d$
-is strictly less than $2^{\text{freshLen}(i,d.\text{bound})}$.
+is strictly less than $2^{reshLen(i,d.ound)}$.
 \end{theorem}
 
 \begin{definition}[Stage witness string]
@@ -474,7 +474,7 @@ query in the stage query list for $N$, $i$, and $d$.
 \difficulty{1}
 Let $N$ be a sequence of finite oracle Turing machines, let $i$ be a natural number, and
 let $d$ be stage data. The witness selected for this stage is a Boolean string of length
-$\text{freshLen}(i,d.\text{bound})$ that does not occur among the queries made by the
+$	ext{freshLen}(i,d.	ext{bound})$ that does not occur among the queries made by the
 $i$th machine during this stage.
 \end{theorem}
 
@@ -490,7 +490,7 @@ $i$th machine during this stage.
 For a sequence $N$ of finite oracle Turing machines with Boolean input symbols, a stage
 index $i$, and stage data $d$, acceptance means that the $i$th machine, with oracle
 consisting of the positive strings in $d$, halts on the all-true input of length
-$\text{freshLen}(i,d.\text{bound})$ within $\text{freshLen}(i,d.\text{bound})^i+i$ steps and
+$	ext{freshLen}(i,d.	ext{bound})$ within $	ext{freshLen}(i,d.	ext{bound})^i+i$ steps and
 outputs the one-symbol string $[\mathrm{true}]$.
 \end{definition}
 

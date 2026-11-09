@@ -12,7 +12,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.F₂Polynomials.CompleteQ
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
 For natural numbers $m$ and $p$, the vector space of functions from an $(m+p)$-element
-index set to $\mathbb{F}_2$ is linearly equivalent to the product of the corresponding
+index set to $mathbb{F}_2$ is linearly equivalent to the product of the corresponding
 spaces of functions on $m$ and $p$ coordinates, by splitting the coordinates into two
 consecutive blocks.
 \end{definition}
@@ -22,9 +22,9 @@ consecutive blocks.
 \label{FABL.splitLastTwoLinearEquiv}
 \leanok
 \uses{FABL.F₂Cube, FABL.cubeAppendLinearEquiv, FABL.𝔽₂}
-For a natural number $m$, the space of $\mathbb{F}_2$-valued vectors with $m+2$
+For a natural number $m$, the space of $mathbb{F}_2$-valued vectors with $m+2$
 coordinates is linearly equivalent to the product of the space with $m$ coordinates and
-two copies of $\mathbb{F}_2$, by splitting off the last two coordinates.
+two copies of $mathbb{F}_2$, by splitting off the last two coordinates.
 \end{definition}
 
 \begin{definition}[Appending two coordinates]
@@ -32,7 +32,7 @@ two copies of $\mathbb{F}_2$, by splitting off the last two coordinates.
 \label{FABL.appendTwo}
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
-For a vector $x$ of $m$ coordinates over $\mathbb{F}_2$ and scalars
+For a vector $x$ of $m$ coordinates over $mathbb{F}_2$ and scalars
 $a,b\in\mathbb{F}_2$, append $a$ and $b$ to $x$ to obtain a vector of $m+2$ coordinates.
 \end{definition}
 
@@ -64,7 +64,7 @@ $(x,(a,b))$ to the vector obtained by appending $a,b$ to $x$.
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
 For a natural number $m$, the coordinate-sum linear functional on the space of
-$\mathbb{F}_2$-valued vectors with $m$ coordinates sends a vector $x$ to
+$mathbb{F}_2$-valued vectors with $m$ coordinates sends a vector $x$ to
 $\sum_{i=1}^{m}x_i$.
 \end{definition}
 
@@ -84,7 +84,7 @@ For any natural number $m$ and any function $x : \\{0,1,\\ldots,m-1\\} \\to
 \leanok
 \uses{FABL.F₂Cube, FABL.coordinateSumLinearMap, FABL.𝔽₂}
 For a natural number $m$, define a linear map on the product of the $m$-coordinate space
-with $\mathbb{F}_2^2$ by sending $(x,(a,b))$ to $(x,(a+s(x),b+s(x)))$, where $s(x)$ is
+with $mathbb{F}_2^2$ by sending $(x,(a,b))$ to $(x,(a+s(x),b+s(x)))$, where $s(x)$ is
 the sum of the coordinates of $x$.
 \end{definition}
 
@@ -105,7 +105,7 @@ $(\\mathbb{F}_2)^m\\times(\\mathbb{F}_2\\times\\mathbb{F}_2)$ returns that eleme
 \uses{FABL.F₂Cube, FABL.tailShearLinearMap, FABL.tailShearLinearMap_involutive, FABL.𝔽₂}
 For a natural number $m$, the map $(x,(a,b))\mapsto(x,(a+s(x),b+s(x)))$, where $s(x)$ is
 the sum of the coordinates of $x$, is regarded as a linear equivalence of the product of
-the $m$-coordinate space with $\mathbb{F}_2^2$ to itself.
+the $m$-coordinate space with $mathbb{F}_2^2$ to itself.
 \end{definition}
 
 \begin{theorem}[Action of the tail shear]
@@ -125,7 +125,7 @@ $(x,(a+\\sum_{i=1}^m x_i,\\ b+\\sum_{i=1}^m x_i))$.
 \leanok
 \uses{FABL.F₂Cube, FABL.splitLastTwoLinearEquiv, FABL.tailShearLinearEquiv, FABL.𝔽₂}
 For natural numbers $r$ and $k$, define a linear equivalence from the space of
-$\mathbb{F}_2$-valued vectors with $r+2k$ coordinates to itself recursively. At $k=0$ it
+$mathbb{F}_2$-valued vectors with $r+2k$ coordinates to itself recursively. At $k=0$ it
 is the identity; at $k+1$, split a vector into a block of $r+2k$ coordinates and its
 final two coordinates, add the sum of the block’s coordinates to each final coordinate,
 apply the equivalence for $k$ to the block, and reassemble the coordinates.

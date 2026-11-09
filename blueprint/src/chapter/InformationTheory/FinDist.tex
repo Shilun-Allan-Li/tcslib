@@ -53,7 +53,7 @@ the probability $p(a)$ is at most $1$.
 \leanok
 \uses{TCSlib.InformationTheory.FinDist}
 \difficulty{4}
-If a finite set $\alpha$ is equipped with a probability distribution, then $\alpha$ is nonempty;
+If a finite set $[ is equipped with a probability distribution, then $[ is nonempty;
 equivalently, its cardinality is positive.
 \end{theorem}
 
@@ -283,7 +283,7 @@ probability to be $\sum_{a\in\alpha}p(a)^2$.
 \leanok
 \uses{TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.FinDist.collision}
 \difficulty{1}
-For every probability distribution $p$ on a finite set, its collision probability $\sum_a
+For every probability distribution $p$ on a finite set, its collision probability $[a
 p(a)^2$ is nonnegative.
 \end{theorem}
 
@@ -293,9 +293,9 @@ p(a)^2$ is nonnegative.
 \leanok
 \uses{TCSlib.InformationTheory.FinDist.collision, TCSlib.InformationTheory.FinDist.uniform, TCSlib.InformationTheory.FinDist.uniform_apply}
 \difficulty{3}
-Let $\alpha$ be a nonempty finite set, and give each of its elements equal probability. The
+Let $[$ be a nonempty finite set, and give each of its elements equal probability. The
 collision probability of this uniform distribution is the reciprocal of the cardinality
-of $\alpha$.
+of $[$.
 \end{theorem}
 
 \begin{theorem}[Lower bound on collision probability]
@@ -304,8 +304,8 @@ of $\alpha$.
 \leanok
 \uses{TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.FinDist.card_pos, TCSlib.InformationTheory.FinDist.collision}
 \difficulty{4}
-For every probability distribution $p$ on a finite set $\alpha$, its collision probability
-$\sum_a p(a)^2$ is at least the reciprocal of the cardinality of $\alpha$.
+For every probability distribution $p$ on a finite set $[$, its collision probability
+$[a p(a)^2$ is at least the reciprocal of the cardinality of $[$.
 \end{theorem}
 
 \begin{definition}[Min-entropy bound]
@@ -328,7 +328,7 @@ $k\in\mathbb R$ if $p(a)\le 2^{-k}$ for every $a\in\alpha$.
 \leanok
 \uses{TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.FinDist.HasMinEntropy, TCSlib.InformationTheory.FinDist.collision}
 \difficulty{3}
-Let $p$ be a probability distribution on a finite set and let $k\in\mathbb R$. If every outcome
-has probability at most $2^{-k}$, then the collision probability $\sum_a p(a)^2$ is at most
+Let $p$ be a probability distribution on a finite set and let $k[br$. If every outcome
+has probability at most $2^{-k}$, then the collision probability $[a p(a)^2$ is at most
 $2^{-k}$.
 \end{theorem}

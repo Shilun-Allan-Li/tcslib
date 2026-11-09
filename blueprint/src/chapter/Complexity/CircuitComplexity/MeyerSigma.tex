@@ -11,8 +11,8 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.CircuitComplexity.Meye
 \label{Complexity.Meyer.wordOf}
 \leanok
 \uses{Complexity.enumWord}
-For natural numbers $W$ and $v$, let $\text{enumWord}(W,v)$ denote the binary word
-enumerating $v$ at width $W$. Define the associated word to be $\text{enumWord}(W,v)$ if
+For natural numbers $W$ and $v$, let $	ext{enumWord}(W,v)$ denote the binary word
+enumerating $v$ at width $W$. Define the associated word to be $	ext{enumWord}(W,v)$ if
 $v<2^W$, and the empty word otherwise.
 \end{definition}
 
@@ -22,9 +22,9 @@ $v<2^W$, and the empty word otherwise.
 \leanok
 \uses{Complexity.Meyer.Sel, Complexity.Meyer.ansD, Complexity.Meyer.wordOf}
 Let $M$ be a finite Turing machine over the Boolean alphabet, let $W$ be a natural
-number, let $x,D$ be Boolean strings, and let $\text{sel}$ be a selector. For natural
+number, let $x,D$ be Boolean strings, and let $	ext{sel}$ be a selector. For natural
 numbers $t,a$, define the answer by applying the table-answer procedure to
-$M,D,\text{sel},x$, and the length-$W$ enumerations of $t$ and $a$, using the empty word
+$M,D,	ext{sel},x$, and the length-$W$ enumerations of $t$ and $a$, using the empty word
 whenever either number is at least $2^W$.
 \end{definition}
 
@@ -117,9 +117,9 @@ language of satisfiable circuit encodings if and only if that circuit accepts $q
 Let $M$ be a finite-state Turing machine with Boolean alphabet, and let $F$ be a family
 of Boolean circuits such that every circuit has fan-in at most two and $F$ accepts
 exactly the language recognized by the tabulating function of $M$. For any natural
-number $W$, Boolean word $x$, selector $\text{sel}$, and natural numbers $t,a<2^W$, the
+number $W$, Boolean word $x$, selector $	ext{sel}$, and natural numbers $t,a<2^W$, the
 circuit in $F$ on $n_{m bits}(M)+4W+4+|x|$ input bits, encoded as a circuit description
-and queried with the encoding of $\text{sel}$ and the width-$W$ words for $t$ and $a$
-together with $x$, returns the tabulated answer for $\text{sel}$ after $t$ steps of $M$
+and queried with the encoding of $	ext{sel}$ and the width-$W$ words for $t$ and $a$
+together with $x$, returns the tabulated answer for $	ext{sel}$ after $t$ steps of $M$
 on $x$, with counter value $a$.
 \end{theorem}

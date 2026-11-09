@@ -287,7 +287,7 @@ $b'$.
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.embedEmitCfg, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitTM_frame}
 \difficulty{4}
 Let $m,k$ be natural numbers, let $S$ be a state type, let $x$ be a finite Boolean
-input, and let $A$ be an $m$-work-tape Turing machine. Suppose $\iota$ embeds
+input, and let $A$ be an $m$-work-tape Turing machine. Suppose $[0m[0m\iota$ embeds
 the $m$ work-tape indices into the $k$ work-tape indices, and let $c$ and $d$ be
 configurations on $m$ and $k$ work tapes, respectively, for the same input. If their
 states, input-head positions, and output strings agree, and for every work-tape index
@@ -426,8 +426,8 @@ configuration obtained by setting both positions to $p+mu$.
 \leanok
 \uses{Turing.oracleOrigin}
 \difficulty{4}
-Let the oracle origin be the function from $\mathbb{Z}$ to
-$\mathrm{Option}(\mathrm{Bool})$ that takes the value $\mathrm{some}(\mathrm{true})$ at
+Let the oracle origin be the function from $\mathbb{Z}$ to
+$\mathrm{Option}(\mathrm{Bool})$ that takes the value $\mathrm{some}(\mathrm{true})$ at
 $0$ and $\mathrm{none}$ elsewhere. For any integers $p$ and $z$ with $z \ne 0$, changing
 the oracle's value at $p$ to $\mathrm{some}(\mathrm{false})$ leaves its value at $z$
 different from $\mathrm{some}(\mathrm{true})$.
@@ -927,7 +927,7 @@ work tapes, and let $C$ be a finite Turing machine over that alphabet with $c$ w
 tapes. For a Boolean input word $x$ and a family $w$ of Boolean words indexed by the
 $m+1$ tapes of $M$ (including its query tape), form a host configuration $d$ with
 $m+c+4$ work tapes by using the words $w$ on the first $m+1$ tapes and empty words on
-the remaining tapes; give it initial state $(q_0,\text{true})$, where $q_0$ is the
+the remaining tapes; give it initial state $(q_0,	ext{true})$, where $q_0$ is the
 initial state of $M$. The configuration obtained by embedding the initial configuration
 of $M$ on $x$, with the Boolean side set to true, is exactly $d$ with the work tape at
 the embedded query-tape position replaced by the tape containing a true symbol at cell

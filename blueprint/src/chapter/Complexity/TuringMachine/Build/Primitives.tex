@@ -529,7 +529,7 @@ $i$ is $h(i)+d$.
 \uses{Turing.Action.apply, Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyUnaryTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
 For natural numbers $c,C,q$, a Boolean input word $x$, arbitrary work-head positions $h
-: \text{Fin}(c+1) \to \mathbb{Z}$, an output word $o$, and $j \le C$, starting with the
+: 	ext{Fin}(c+1) \to \mathbb{Z}$, an output word $o$, and $j \le C$, starting with the
 generator in emission state $j$, work-head positions $h$, and output $o$, after exactly
 $j+1$ steps it is in advance state $0$ with the same work-head positions and output $o$
 followed by $j$ ones.
@@ -1343,7 +1343,7 @@ Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boole
 let $c$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position
 for $x$, and let $o$ be a Boolean word. Starting the threaded-map controller in its
 payload-replay state, with capture-head displacement $0$ and output word $o$, after
-$|c.\text{output}|+1$ steps it has halted and its output is $o$ followed by the output
+$|c.	ext{output}|+1$ steps it has halted and its output is $o$ followed by the output
 word of $c$.
 \end{lemma}
 
@@ -1769,7 +1769,7 @@ other work tapes blank, and empty output.
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.splitCountCfg, Turing.FinTM.splitPos_read}
 \difficulty{3}
 Let $w$ and $s$ be finite Boolean words, let $c$ be a configuration of a $k$-tape Turing
-machine over empty input with Boolean tape symbols and state set $S$, and let $\tau$ be
+machine over empty input with Boolean tape symbols and state set $S$, and let $	au$ be
 the configuration built from $w$, $s$, and $c$ using state maps
 $S\times\{\mathrm{false},\mathrm{true}\}\to H$ and $\{\mathrm{false},\mathrm{true}\}\to
 H$. The overflow test is false and the input head of $\tau$ scans no symbol if and only
@@ -2290,7 +2290,7 @@ For all natural numbers $C$ and $e$, there exist a finite Turing machine $M$ and
 natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within
 $c(n+1)^{e+2}$ steps. Its output is the encoding that doubles each bit of the prefix of
 $w$ of length $i$, appends the separator $01$, and then appends the remaining suffix,
-where $i$ is the least integer in $0,\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such
+where $i$ is the least integer in $0,\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such
 $i$ exists, its output is the empty word.
 \end{theorem}
 
@@ -3608,7 +3608,7 @@ the unique one-tape index.
 \uses{Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.FinTM.emitterP2OneIndex, Turing.FinTM.emitterP2_frame, Turing.embedEmitCfg}
 \difficulty{3}
 Let $l$ be a natural number, let $S$ and $H$ be types, choose a tape slot in
-$\text{Fin}(l)$, a state map $e:S\to H$, a family of Boolean words on the $l$ host tapes,
+$	ext{Fin}(l)$, a state map $e:S\to H$, a family of Boolean words on the $l$ host tapes,
 and Boolean words $w,u$ and a state $q\in S$. Embedding the one-tape configuration with
 input $w$, state $q$, and tape contents $u$ into the chosen slot, using the given words
 on all other tapes and placing every head at the origin, then renaming the state by $e$,
@@ -4072,7 +4072,7 @@ of $f(|s|)$. Then there exist a finite Turing machine $M$ and a natural number $
 that, on every Boolean input $w$ of length $n$, $M$ halts within $c(n+1)(T_E(n+1)+n+2)$
 steps and outputs the encoding that doubles each bit of the prefix of $w$ of length $i$,
 appends $01$, and then appends the remaining suffix, where $i$ is the least integer in
-$0,\ldots,n$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the empty
+$0,\ldots,n$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the empty
 word.
 \end{theorem}
 
@@ -4329,7 +4329,7 @@ word as the other branch.
 \leanok
 \uses{Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.catalogPoly_unary_computes, Turing.FinTM.constTM_computes, Turing.FinTM.polyUnaryTM}
 \difficulty{4}
-For all natural numbers $C$ and $e$, the machine $\text{polyUnaryTM}(C,e)$ computes, on
+For all natural numbers $C$ and $e$, the machine $	ext{polyUnaryTM}(C,e)$ computes, on
 every Boolean input $x$, the word consisting of $C(|x|+1)^e$ copies of $1$ within
 $(C+5e+4)(|x|+1)^e$ steps.
 \end{theorem}

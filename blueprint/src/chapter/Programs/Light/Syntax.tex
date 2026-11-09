@@ -184,7 +184,7 @@ cost. A loop requires a safe condition and either exits immediately when the con
 does not hold, at condition cost plus one, or executes its body and then the loop again
 when the condition holds, adding both execution costs to the condition cost plus one. A
 procedure call requires every argument expression to be safe, the program entry at index
-$p$ to be the called body, and $d < \text{depth limit}$; it executes that body at depth
+$p$ to be the called body, and $d < 	ext{depth limit}$; it executes that body at depth
 $d+1$ in a state whose locations are initialized from the evaluated arguments (with
 missing entries zero) and whose memory is unchanged, then updates location $x$ with the
 body's final location zero and adopts its final memory. Its cost is the sum of

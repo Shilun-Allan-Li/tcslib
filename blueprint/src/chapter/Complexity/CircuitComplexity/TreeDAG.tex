@@ -496,7 +496,7 @@ $i$, using the constant-true gate as a default, equals the gate at index $i$.
 \leanok
 \difficulty{3}
 Let $C$ be a finite directed acyclic Boolean circuit with $n$ input vertices and a list
-of gates in topological order. If $v$ is not an input vertex and $v<n+\text{number of
+of gates in topological order. If $v$ is not an input vertex and $v<n+	ext{number of
 gates}$, then every argument of the gate at position $v-n$ has index strictly less than
 $v$.
 \end{theorem}
@@ -521,7 +521,7 @@ strictly smaller depth than $v$.
 Let $C$ be a Boolean directed acyclic circuit whose gates have pairwise distinct input
 vertices and whose NOT gates each have exactly one input, and let $x$ be an assignment
 of Boolean values to its $n$ input variables. For every natural number $f$, vertex index
-$v$, and polarity $p$, if $v<n+\text{number of gates of }C$ and $v<f$, then unfolding $v$
+$v$, and polarity $p$, if $v<n+	ext{number of gates of }C$ and $v<f$, then unfolding $v$
 with fuel $f$ and polarity $p$ evaluates to the value of vertex $v$ under $x$ when $p$
 is true, and to its negation when $p$ is false.
 \end{theorem}
@@ -546,7 +546,7 @@ value as $C$ under $x$.
 \difficulty{5}
 Let $C$ be a Boolean directed acyclic circuit whose gates have pairwise distinct input
 vertices and whose NOT gates each have exactly one input. For every natural number $f$,
-vertex index $v$, and polarity $p$, if $v<n+\text{number of gates of }C$ and $v<f$, then
+vertex index $v$, and polarity $p$, if $v<n+	ext{number of gates of }C$ and $v<f$, then
 the depth of the tree obtained by unfolding $v$ with fuel $f$ and polarity $p$ is at
 most the depth assigned to vertex $v$ by $C$.
 \end{theorem}
@@ -571,7 +571,7 @@ most the depth of $C$.
 Let $C$ be a Boolean directed acyclic circuit with $n$ inputs, whose gates have distinct
 argument vertices and whose NOT gates each have exactly one argument. Suppose every gate
 has at most $k$ arguments. For every fuel bound, polarity, and vertex
-$v<n+|C.\text{gates}|$, the maximum fanin of the tree obtained by unfolding $v$ is at
+$v<n+|C.	ext{gates}|$, the maximum fanin of the tree obtained by unfolding $v$ is at
 most $k$.
 \end{theorem}
 
@@ -596,7 +596,7 @@ $k$.
 Let $C$ be a Boolean directed acyclic circuit with $n$ inputs, whose gates have distinct
 argument vertices and whose NOT gates each have exactly one argument. Suppose every gate
 has at most $k$ arguments. For every fuel bound, polarity, and vertex
-$v<n+|C.\text{gates}|$ with $v$ less than the fuel bound, the unfolded tree at $v$ has
+$v<n+|C.	ext{gates}|$ with $v$ less than the fuel bound, the unfolded tree at $v$ has
 size at most $(k+1)^{d(v)}$, where $d(v)$ is the depth assigned to vertex $v$ in $C$.
 \end{theorem}
 
@@ -609,5 +609,5 @@ size at most $(k+1)^{d(v)}$, where $d(v)$ is the depth assigned to vertex $v$ in
 Let $C$ be a Boolean directed acyclic circuit whose gates have pairwise distinct input
 vertices and whose NOT gates each have exactly one input. If every gate has at most $k$
 input vertices, then the size of the tree obtained by unfolding $C$ is at most
-$(k+1)^{\text{depth}(C)}$.
+$(k+1)^{	ext{depth}(C)}$.
 \end{theorem}

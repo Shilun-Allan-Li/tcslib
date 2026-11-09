@@ -18,56 +18,56 @@ numbered from $0$ to $20$.
 \lean{Complexity.Codec.rP}
 \label{Complexity.Codec.rP}
 \leanok
-Let $r_p$ be the element of $\bbr/21\bbr$ represented by $1$.
+Let $r_p$ be the element of $br/21br$ represented by $1$.
 \end{definition}
 
 \begin{definition}[Residue label for a]
 \lean{Complexity.Codec.rA}
 \label{Complexity.Codec.rA}
 \leanok
-Let $r_a$ be the element of $\bbr/21\bbr$ represented by $2$.
+Let $r_a$ be the element of $br/21br$ represented by $2$.
 \end{definition}
 
 \begin{definition}[Residue label for b]
 \lean{Complexity.Codec.rB}
 \label{Complexity.Codec.rB}
 \leanok
-Let $r_b$ be the element of $\bbr/21\bbr$ represented by $3$.
+Let $r_b$ be the element of $br/21br$ represented by $3$.
 \end{definition}
 
 \begin{definition}[Residue label for s]
 \lean{Complexity.Codec.rS}
 \label{Complexity.Codec.rS}
 \leanok
-Let $r_s$ be the element of $\bbr/21\bbr$ represented by $4$.
+Let $r_s$ be the element of $br/21br$ represented by $4$.
 \end{definition}
 
 \begin{definition}[Residue label for n1]
 \lean{Complexity.Codec.rN1}
 \label{Complexity.Codec.rN1}
 \leanok
-Let $r_{n_1}$ be the element of $\bbr/21\bbr$ represented by $5$.
+Let $r_{n_1}$ be the element of $br/21br$ represented by $5$.
 \end{definition}
 
 \begin{definition}[Residue label for wp]
 \lean{Complexity.Codec.rWp}
 \label{Complexity.Codec.rWp}
 \leanok
-Let $r_{wp}$ be the element of $\bbr/21\bbr$ represented by $6$.
+Let $r_{wp}$ be the element of $br/21br$ represented by $6$.
 \end{definition}
 
 \begin{definition}[Residue label for e]
 \lean{Complexity.Codec.rE}
 \label{Complexity.Codec.rE}
 \leanok
-Let $r_e$ be the element of $\bbr/21\bbr$ represented by $7$.
+Let $r_e$ be the element of $br/21br$ represented by $7$.
 \end{definition}
 
 \begin{definition}[Residue label for f]
 \lean{Complexity.Codec.rF}
 \label{Complexity.Codec.rF}
 \leanok
-Let $r_f$ be the element of $\bbr/21\bbr$ represented by $8$.
+Let $r_f$ be the element of $br/21br$ represented by $8$.
 \end{definition}
 
 \begin{definition}[Index nine]
@@ -130,7 +130,7 @@ Let $r_{Q2}$ denote the element $16$ of the set of integers from $0$ to $20$.
 \lean{Complexity.Codec.rQ3}
 \label{Complexity.Codec.rQ3}
 \leanok
-The register index for $Q_3$ is $17$ in $\text{Fin}(21)$, the set of integers from $0$ to
+The register index for $Q_3$ is $17$ in $	ext{Fin}(21)$, the set of integers from $0$ to
 $20$.
 \end{definition}
 
@@ -138,7 +138,7 @@ $20$.
 \lean{Complexity.Codec.rQ4}
 \label{Complexity.Codec.rQ4}
 \leanok
-The register index for $Q_4$ is $18$ in $\text{Fin}(21)$, the set of integers from $0$ to
+The register index for $Q_4$ is $18$ in $	ext{Fin}(21)$, the set of integers from $0$ to
 $20$.
 \end{definition}
 
@@ -146,7 +146,7 @@ $20$.
 \lean{Complexity.Codec.rCap}
 \label{Complexity.Codec.rCap}
 \leanok
-The register index for $\text{Cap}$ is $19$ in $\text{Fin}(21)$, the set of integers from
+The register index for $	ext{Cap}$ is $19$ in $	ext{Fin}(21)$, the set of integers from
 $0$ to $20$.
 \end{definition}
 
@@ -154,7 +154,7 @@ $0$ to $20$.
 \lean{Complexity.Codec.rZ}
 \label{Complexity.Codec.rZ}
 \leanok
-The register index for $Z$ is $20$ in $\text{Fin}(21)$, the set of integers from $0$ to
+The register index for $Z$ is $20$ in $	ext{Fin}(21)$, the set of integers from $0$ to
 $20$.
 \end{definition}
 
@@ -163,8 +163,8 @@ $20$.
 \label{Complexity.Codec.Regs}
 \leanok
 A register configuration is a collection of 21 natural-number registers, named $L$, $P$,
-$A$, $B$, $S$, $N_1$, $W_p$, $E$, $F$, $E_2$, $F_2$, $\text{Pos}$, $\text{Pos}_2$, $T$,
-$U$, $Q_1$, $Q_2$, $Q_3$, $Q_4$, $\text{Cap}$, and $Z$; each register has default value
+$A$, $B$, $S$, $N_1$, $W_p$, $E$, $F$, $E_2$, $F_2$, $	ext{Pos}$, $	ext{Pos}_2$, $T$,
+$U$, $Q_1$, $Q_2$, $Q_3$, $Q_4$, $	ext{Cap}$, and $Z$; each register has default value
 $0$.
 \end{definition}
 
@@ -173,9 +173,9 @@ $0$.
 \label{Complexity.Codec.Regs.val}
 \leanok
 \uses{Complexity.Codec.Regs}
-For a register record $R$, define its value function on the indices $0,\ldots,20$ by
+For a register record $R$, define its value function on the indices $0,ldots,20$ by
 assigning the values of $L$, $P$, $A$, $B$, $S$, $N_1$, $W_p$, $E$, $F$, $E_2$, $F_2$,
-$\text{Pos}$, $\text{Pos}_2$, $T$, $U$, $Q_1$, $Q_2$, $Q_3$, $Q_4$, $\text{Cap}$, and $Z$
+$	ext{Pos}$, $	ext{Pos}_2$, $T$, $U$, $Q_1$, $Q_2$, $Q_3$, $Q_4$, $	ext{Cap}$, and $Z$
 to indices $0$ through $20$, respectively.
 \end{definition}
 

@@ -151,7 +151,7 @@ the length of the binary representation of $y$'s length.
 \uses{Complexity.Codec.CA, Complexity.Codec.Regs.Bd.val_le, Complexity.Codec.VAcc, Complexity.Codec.W, Complexity.Codec.codecAs, Complexity.Codec.codecAs_mem, Complexity.Codec.gd_mono, Complexity.Codec.indicator_eq_of_iff, Complexity.Codec.one_run, Complexity.Codec.shape_of_code, Complexity.Codec.val_empty, Complexity.Codec.validChk_iff_pre, Complexity.Codec.validLang, Complexity.Codec.validLang_iff, Complexity.LOGSPACE, Complexity.LogProg.AHalt.mono, Complexity.LogProg.AHalt.ret, Complexity.LogProg.AReach.halt, Complexity.LogProg.PreS, Complexity.LogProg.arm_decides_poly, Turing.MultiTapeTM.indicator}
 \difficulty{5}
 For every finite nondeterministic Turing machine $N$ with Boolean input and work-tape
-symbols, the language consisting of encodings of pairs $(x,\text{code}(c,s))$ for which
+symbols, the language consisting of encodings of pairs $(x,	ext{code}(c,s))$ for which
 $c$ is the configuration code of an $N$-configuration on input $x$ whose work-tape heads
 and nonblank cells lie within distance $s$ of the origin is decidable in logarithmic
 space. Here the encoding uses the self-delimiting pair encoding described above, and the
@@ -190,8 +190,8 @@ Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet,
 write $y$ as the paired encoding of Boolean words $x$ and the paired encoding of Boolean
 words $w$ and $r$. Let $R$ be a register assignment, $s$ a natural number, and $st$ a
 verifier-and-accumulator state. Suppose every register of $R$ is at most
-$(8W_N+8)(|y|+1)$, $R_A=2|x|+2$, $R_S=s$, and $R_T=0$; also suppose $s\le 2|y|$ and
-$W_N(2s+1)\hookrightarrow|$. Then the initialization-mode codec program, started at its verifier
+$(8W_N+8)(|y|+1)$, $R_A=2|x|+2$, $R_S=s$, and $R_T=0$; also suppose $s2|y|$ and
+$W_N(2s+1)w|$. Then the initialization-mode codec program, started at its verifier
 state $st$ with register values $R$, no answer yet, and input $y$, halts while
 satisfying the same register bound at every earlier time, and returns true exactly when
 the scan state passes the initialization checks, $R_{Pos}=1$, and either $N$ has no work

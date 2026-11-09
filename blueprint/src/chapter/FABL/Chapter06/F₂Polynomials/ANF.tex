@@ -71,9 +71,9 @@ associated monomial by $\prod_{i\in S}x_i$, with the empty product equal to $1$.
 \label{FABL.anfEval}
 \leanok
 \uses{FABL.ANFCoefficients, FABL.F₂Cube, FABL.anfMonomial, FABL.𝔽₂}
-Let $n$ be a natural number, let $c$ assign a coefficient in $_2$ to each subset of
-$_n$, and let $x in _2^n$. The evaluation of the algebraic normal form with
-coefficients $c$ at $x$ is the sum, over all subsets $S$ of $_n$, of $c(S)$ times the
+Let $n$ be a natural number, let $c$ assign a coefficient in $_2$ to each subset of
+$_n$, and let $x in _2^n$. The evaluation of the algebraic normal form with
+coefficients $c$ at $x$ is the sum, over all subsets $S$ of $_n$, of $c(S)$ times the
 monomial indexed by $S$ evaluated at $x$.
 \end{definition}
 
@@ -83,9 +83,9 @@ monomial indexed by $S$ evaluated at $x$.
 \label{FABL.anfSupport}
 \leanok
 \uses{FABL.ANFCoefficients}
-Let $n$ be a natural number, and let $c$ assign a coefficient in $_2$ to each subset of
-$_n$. The support of $c$ is the set of all subsets $S subseteq _n$ for which $c(S)
-ne 0$.
+Let $n$ be a natural number, and let $c$ assign a coefficient in $_2$ to each subset of
+$_n$. The support of $c$ is the set of all subsets $S subseteq _n$ for which $c(S)
+ne 0$.
 \end{definition}
 
 \begin{definition}[Algebraic degree of coefficients]
@@ -99,8 +99,8 @@ ne 0$.
 \label{FABL.algebraicDegree}
 \leanok
 \uses{FABL.ANFCoefficients, FABL.anfSupport}
-Let $n$ be a natural number, and let $c$ assign a coefficient in $_2$ to each subset of
-$_n$. Its algebraic degree is the largest cardinality of a subset in its support, with
+Let $n$ be a natural number, and let $c$ assign a coefficient in $_2$ to each subset of
+$_n$. Its algebraic degree is the largest cardinality of a subset in its support, with
 degree $0$ when the support is empty.
 \end{definition}
 
@@ -131,7 +131,7 @@ monomial indexed by the empty set has value $1$.
 \leanok
 \uses{FABL.F₂Cube, FABL.anfEval}
 \difficulty{1}
-For any dimension $n$ and any point $x$ in the Boolean cube $\bbr^n$ over $\bbr/2\bbr$, the
+For any dimension $n$ and any point $x$ in the Boolean cube $br^n$ over $br/2br$, the
 algebraic normal form whose coefficient at every subset of coordinates is zero evaluates
 to zero at $x$.
 \end{theorem}
@@ -156,7 +156,7 @@ $\operatorname{ANF}(c+d)(x)=\operatorname{ANF}(c)(x)+\operatorname{ANF}(d)(x)$.
 \difficulty{5}
 Let $n$ be a natural number, let $S$ and $T$ be finite sets of coordinates in $
 {0,1}$, and let $x$ be a function from $
-{0,1}$ to the field $\bbr/2\bbr$. The product of the monomials indexed by $S$ and $T$,
+{0,1}$ to the field $br/2br$. The product of the monomials indexed by $S$ and $T$,
 evaluated at $x$, equals the monomial indexed by $S\cup T$, evaluated at $x$.
 \end{theorem}
 
@@ -166,9 +166,9 @@ evaluated at $x$, equals the monomial indexed by $S\cup T$, evaluated at $x$.
 \label{FABL.anfMul}
 \leanok
 \uses{FABL.ANFCoefficients}
-Let $n$ be a natural number, and let $c$ and $d$ assign coefficients in $_2$ to subsets
-of $_n$. Their product has, at each subset $U subseteq _n$, coefficient equal to the
-sum of $c(S)d(T)$ over all pairs of subsets $S,T subseteq _n$ whose union is $U$.
+Let $n$ be a natural number, and let $c$ and $d$ assign coefficients in $_2$ to subsets
+of $_n$. Their product has, at each subset $U subseteq _n$, coefficient equal to the
+sum of $c(S)d(T)$ over all pairs of subsets $S,T subseteq _n$ whose union is $U$.
 \end{definition}
 
 \begin{theorem}[Evaluation of the product coefficients]
@@ -211,7 +211,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.anfMonomial, FABL.f₂CubeOfFinset, FABL.f₂CubeOfFinset_apply}
 \difficulty{4}
-Let $n$ be a natural number, and let $S$ and $U$ be subsets of the coordinate set $\mathbin
+Let $n$ be a natural number, and let $S$ and $U$ be subsets of the coordinate set $in
 n$. Evaluating the monomial indexed by $S$ at the point that equals $1$ on $U$ and $0$
 outside $U$ gives $1$ if $S\subseteq U$, and $0$ otherwise.
 \end{theorem}
@@ -875,9 +875,9 @@ at the vector equal to $1$ on $U$ and $0$ elsewhere, is $\sum_{S\subseteq U}c(S)
 \label{FABL.anfCoeff}
 \leanok
 \uses{FABL.ANFCoefficients, FABL.F₂BooleanFunction, FABL.f₂CubeOfFinset}
-Let $n$ be a natural number and let $f:_2^nto_2$. For each subset $Ssubseteq_n$,
+Let $n$ be a natural number and let $f:_2^nto_2$. For each subset $Ssubseteq_n$,
 its algebraic normal form coefficient is the sum of $f$ evaluated at the indicator
-vectors of all subsets $Tsubseteq S$.
+vectors of all subsets $Tsubseteq S$.
 \end{definition}
 
 \begin{theorem}[Recovery at an indicator vector]

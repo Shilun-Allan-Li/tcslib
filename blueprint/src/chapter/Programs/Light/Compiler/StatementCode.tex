@@ -176,8 +176,8 @@ it.
 \uses{Light.Compiler.digitsLen, Light.Expr}
 Define the size of an expression recursively: a constant has size equal to the assigned
 length of its base-$2$ digit list; a variable has size $2$; an operation applied to $a$
-and $b$ has size $\text{size}(a)+\text{size}(b)+1$; and a load applied to $a$ has size
-$\text{size}(a)+1$.
+and $b$ has size $	ext{size}(a)+	ext{size}(b)+1$; and a load applied to $a$ has size
+$	ext{size}(a)+1$.
 \end{definition}
 
 \begin{definition}[Compilation of conditions]
@@ -335,7 +335,7 @@ The epilogue size is $5$.
 \label{Light.Compiler.dispatcher}
 \leanok
 \uses{Light.Compiler.cONE, Light.Compiler.cRR, WordRAM.Instr}
-For each integer $j$ with $0 \langle j<n$, the dispatcher appends two instructions:
+For each integer $j$ with $0  le j<n$, the dispatcher appends two instructions:
 decrement the return register by one, then branch to code position $j$ if that register
 is negative. Thus the dispatcher is the concatenation of these pairs in increasing order
 of $j$.
@@ -456,7 +456,7 @@ bounds of its two operands, and a load has the bound of its address expression.
 \uses{Light.Expr}
 For expressions built from natural-number constants and variables using binary addition,
 subtraction, and multiplication, and unary loads, define the height $h$ recursively by
-$h(c)=h(x)=1$ for a constant $c$ or variable $x$, $h(\text{op}(a,b))=\max(h(a),h(b)+1)$
+$h(c)=h(x)=1$ for a constant $c$ or variable $x$, $h(	ext{op}(a,b))=\max(h(a),h(b)+1)$
 for a binary operation with operands $a,b$, and $h(\text{load}(a))=h(a)$.
 \end{definition}
 

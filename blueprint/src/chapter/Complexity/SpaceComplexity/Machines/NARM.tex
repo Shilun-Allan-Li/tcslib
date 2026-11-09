@@ -127,10 +127,10 @@ input, and configuration.
 Let $A$ be a nondeterministic register program, let an oracle assign a Boolean answer to
 each decider and bit string, and fix an input word, a program state $l$, and a
 deterministic instruction $i$. If $A$ assigns the deterministic instruction $i$ to $l$,
-then for either Boolean choice parameter $\beta$ and any choice bit $b$, register
+then for either Boolean choice parameter $eta$ and any choice bit $b$, register
 valuation, and optional result, one step of the nondeterministic program from state $l$
 agrees with one step of the deterministic program obtained from $A$ by replacing each
-choice instruction with the answer $\beta$.
+choice instruction with the answer $eta$.
 \end{lemma}
 
 \begin{lemma}[Step at a choice instruction]
@@ -153,8 +153,8 @@ $b$ is false, leaving the registers and result unchanged.
 \leanok
 \uses{Complexity.LogProg.nastep}
 \difficulty{1}
-Let $m,d$ be natural numbers, let $\Lambda$ be a type, let $A$ be a nondeterministic
-register program with states in $\Lambda$, let $O$ assign a Boolean answer to each
+Let $m,d$ be natural numbers, let $[0m\Lambda$ be a type, let $A$ be a nondeterministic
+register program with states in $[0m\Lambda$, let $O$ assign a Boolean answer to each
 of the $d$ deciders on each bit string, and let $x$ be a bit string. For every choice
 bit $b$, register valuation $v : \\mathrm{Fin}(m) \\to \\mathbb{N}$, and optional
 Boolean result $r$, one step of the program on input $x$ with oracle $O$ leaves the
@@ -191,9 +191,9 @@ running on $\sigma$.
 \leanok
 \uses{Complexity.LogProg.AConf, Complexity.LogProg.narun}
 \difficulty{4}
-Let $A$ be a nondeterministic register machine, let $\text{oracle}$ be an oracle, let $x$
+Let $A$ be a nondeterministic register machine, let $	ext{oracle}$ be an oracle, let $x$
 be an input bit string, and let $a$ be a machine configuration. For any two finite
-choice strings $\sigma$ and $\tau$, running on their concatenation gives the same
+choice strings $[0m\sigma$ and $\tau$, running on their concatenation gives the same
 configuration as first running on $\sigma$ and then running on $\tau$.
 \end{lemma}
 
@@ -216,7 +216,7 @@ unchanged for every finite choice string.
 \leanok
 \uses{Complexity.LogProg.AConf, Complexity.LogProg.narun, Complexity.LogProg.narun_append, Complexity.LogProg.narun_halted}
 \difficulty{4}
-Let $A$ be a nondeterministic register machine, let $\text{oracle}$ be an oracle, let $x$
+Let $A$ be a nondeterministic register machine, let $	ext{oracle}$ be an oracle, let $x$
 be an input bit string, and let $a$ be an initial configuration. If the run on a finite
 choice string $\sigma$ has halted, then for every finite choice string $\tau$, running
 on the concatenation $\sigma\tau$ yields exactly the same configuration as running on
@@ -358,7 +358,7 @@ intermediate-configuration properties.
 \difficulty{5}
 Let $A$ be a nondeterministic register machine, with oracle, input bit string, and
 configuration guard $G$ fixed. Suppose that $T$ steps of the machine obtained by
-replacing every choice instruction by the fixed return value $\beta$ take configuration
+replacing every choice instruction by the fixed return value $eta$ take configuration
 $a$ to $a'$. At every time $t<T$, suppose the configuration reached from $a$ satisfies
 $G$, and whenever it is live its current instruction in $A$ is deterministic. If the
 halting condition holds for $N$ steps from $a'$, then it holds for $T+N$ steps from $a$.
@@ -387,7 +387,7 @@ configuration guard $G$ fixed. Suppose the instruction at control state $l$ is t
 deterministic instruction $i$, and the halting condition holds for $N+1$ steps from the
 configuration at $l$. Then it holds for $N$ steps from the configuration obtained by
 applying one step of the machine in which every choice instruction is replaced by the
-fixed return value $\beta$.
+fixed return value $eta$.
 \end{lemma}
 
 \begin{lemma}[Halting After a Choice]

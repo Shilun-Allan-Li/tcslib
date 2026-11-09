@@ -484,12 +484,12 @@ Then every entry of the length-nine vector $(p,n,z,s,u,f,q,t,a)$ is at most $B$.
 \leanok
 \uses{Complexity.DropHalt, Complexity.DropReach, Complexity.LogProg.AReach.halt, Complexity.LogProg.AReach.refl, Complexity.LogProg.AReach.step, Complexity.LogProg.AReach.trans, Complexity.LogProg.Canon, Complexity.LogProg.astep, Complexity.LogProg.bitsVal, Complexity.LogProg.boundedDecode_loop, Complexity.LogProg.canonicalTail_loop, Complexity.LogProg.drop_canon, Complexity.LogProg.register_update_le, Complexity.dropARM, Complexity.dropCopy, Complexity.dropDecodeAdvance, Complexity.dropOracle, Complexity.dropTailAdvance, Complexity.dropValues, Complexity.dropValues_apply, Complexity.dropValues_bound, Complexity.drop_bit, Complexity.drop_copy_run, Complexity.drop_preS, Complexity.drop_ret, Complexity.pairEncode_getD, Complexity.query_accumulator_bound, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{7}
-Let $z$ and $t$ be finite bit strings, let $h=\langle z,t\rangle$, and set $p=2|z|+2$.
+Let $z$ and $t$ be finite bit strings, let $h=angle z,trangle$, and set $p=2|z|+2$.
 For either Boolean mode, if $t$ is canonical and $|t|$ is at most the length of the
 binary representation of $|h|$, the machine has a run from the configuration with state
-$\mathrm{copy}(0,\mathrm{false})$, pointer $p$, all other registers zero, and no answer
-set, to the configuration with state $\mathrm{copy}(3,\mathrm{false})$, the same
-pointer, query register $\mathrm{bitsVal}(t)$, tail register $p$, all other registers
+$mathrm{copy}(0,mathrm{false})$, pointer $p$, all other registers zero, and no answer
+set, to the configuration with state $mathrm{copy}(3,mathrm{false})$, the same
+pointer, query register $mathrm{bitsVal}(t)$, tail register $p$, all other registers
 zero, and no answer set. Every configuration before the endpoint satisfies the machine's
 safety condition and has each register at most $4|h|+4$. If either condition on $t$
 fails, the machine instead halts with answer false from that initial configuration, with
@@ -732,7 +732,7 @@ For a bit string $z$, parse it as an encoded pair $(u,b')$; then parse $u$ as an
 pair $(w,b'')$ and return the encoding of $(w,b')$. If either parse fails, return the
 empty string. This resulting function is implicitly logspace computable: its output
 length is bounded by $C(|x|+1)^c$ for some natural numbers $C,c$ on every input $x$, and
-both the language of encoded pairs $(x,\text{bits}(i))$ for which output bit $i$ is $1$
+both the language of encoded pairs $(x,	ext{bits}(i))$ for which output bit $i$ is $1$
 and the language of such pairs for which $i$ is less than the output length are
 decidable in logarithmic space.
 \end{theorem}
@@ -852,13 +852,13 @@ $(e+2)$-element set, and the factor-increment counter in a $(2C+3)$-element set.
 \label{Complexity.compCopy}
 \leanok
 \uses{Complexity.CompState}
-For natural numbers $C$ and $e$, define a function on the eight stages $0,1,2,3,4,5,6,7$
-whose values are triples of elements of $\text{Fin}(14)$ and computation states, in
-order: $(2,0,\text{the copy state at stage }1\text{ with bump false})$, $(3,2,\text{the
-outer-decrement state with second flag false})$, $(8,1,\text{the base-increment state})$,
-$(0,1,\text{the decode state})$, $(4,0,\text{the canonical state})$, $(0,3,\text{the
-canonical-decrement state with second flag false})$, $(8,4,\text{the inner-halving state
-with second flag false})$, and $(0,4,\text{the seek state with suffix flag true})$.
+For natural numbers $C$ and $e$, define a function on the eight stages $0,1,,3,4,5,6,7$
+whose values are triples of elements of $	ext{Fin}(14)$ and computation states, in
+order: $(2,0,	ext{the copy state at stage }1	ext{ with bump false})$, $(3,2,	ext{the
+outer-decrement state with second flag false})$, $(8,1,	ext{the base-increment state})$,
+$(0,1,	ext{the decode state})$, $(4,0,	ext{the canonical state})$, $(0,3,	ext{the
+canonical-decrement state with second flag false})$, $(8,4,	ext{the inner-halving state
+with second flag false})$, and $(0,4,	ext{the seek state with suffix flag true})$.
 \end{definition}
 
 \begin{definition}[Stride determined by an inner flag]
@@ -1058,7 +1058,7 @@ at most $B$.
 \difficulty{6}
 Let $C,e$ be natural numbers, let $m$ and $o$ be Booleans, let $f$ map finite bit
 strings to finite bit strings, let $h$ be a finite bit string, let $k$ be an element of
-$\text{Fin}(e+2)$, let $B$ be a natural number, and let $v$ assign a natural number to
+$	ext{Fin}(e+2)$, let $B$ be a natural number, and let $v$ assign a natural number to
 each of fourteen registers. Suppose every register value is at most $B$, registers $6$,
 $10$, and $11$ are $0$, and the product of the values in registers $7$ and $8$ is at
 most $B$. Then the computation can run from the product-copy state with parameters $o,k$
@@ -1270,7 +1270,7 @@ with $\mathrm{tail}$, is the bit of $b$ at position $j$.
 \difficulty{3}
 Let $x$, $b$, and $t$ be bit strings, with $b$ nonempty. In the encoding of the pair
 whose first component is the encoding of $(x,b)$ and whose second component is $t$, the
-bit at position $2\bigl(\text{length of the encoding of }(x,b)\bigr)-2$, using false as the
+bit at position $2igl(	ext{length of the encoding of }(x,b)igr)-2$, using false as the
 default for an out-of-range position, equals the last bit of $b$, using true as the
 default when taking the last bit.
 \end{lemma}
@@ -1318,7 +1318,7 @@ $B$.
 \uses{Complexity.CompHalt, Complexity.CompReach, Complexity.LogProg.AReach.halt, Complexity.LogProg.AReach.refl, Complexity.LogProg.AReach.single, Complexity.LogProg.AReach.step, Complexity.LogProg.AReach.trans, Complexity.LogProg.Canon, Complexity.LogProg.astep, Complexity.LogProg.bitsVal, Complexity.LogProg.boundedDecode_loop, Complexity.LogProg.canonicalTail_loop, Complexity.LogProg.drop_canon, Complexity.LogProg.register_update_le, Complexity.compARM, Complexity.compBound, Complexity.compCopy, Complexity.compDecodeAdvance, Complexity.compOracle, Complexity.compValues, Complexity.comp_bit, Complexity.comp_bound_room, Complexity.comp_copy_run, Complexity.comp_preS, Complexity.comp_ret, Complexity.pairEncode_getD, Complexity.query_accumulator_bound, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{6}
 Let $C,e$ be natural numbers, let $m$ be a Boolean, let $f$ map finite Boolean words to
-finite Boolean words, and let $z,t$ be finite Boolean words. Write $h=\langle z,t\rangle$, where the
+finite Boolean words, and let $z,t$ be finite Boolean words. Write $h= z,t $, where the
 pairing doubles each bit of $z$, appends the separator $01$, and then appends $t$; set
 $a=2|z|+2$, $c=(2C+3)(|h|+1)^{e+1}$, and $B=8(2C+3)(|h|+1)^{e+1}$. Start with input $h$,
 state tail test with its flag true, no result, and register values
@@ -1366,19 +1366,19 @@ flags true; in every other case, it is the seek state with flag $\mathit{suffix}
 \leanok
 \uses{Complexity.CompReach, Complexity.LogProg.indexedSeek_loop, Complexity.compARM, Complexity.compOracle, Complexity.compStride, Complexity.compWalk}
 \difficulty{4}
-Let $C,e,B,\text{count}$ be natural numbers, let $\text{mode}$ and $\text{suffix}$ be
+Let $C,e,B,	ext{count} $ be natural numbers, let $	ext{mode}$ and $	ext{suffix}$ be
 Boolean flags, let $f$ map finite Boolean words to finite Boolean words, and let $h$ be
 a finite Boolean word. Let $v$ assign a natural number to each of $14$ registers.
 Suppose every register value is at most $B$, the value of register $3$ when
-$\text{suffix}$ is true (or register $11$ when it is false) is
-$v_0+\text{compStride}(\text{suffix})\text{count}$, register $13$ plus $\text{count}$ is at
-most $B$, and $v_{13}\le v_5$. If $v_5<v_{13}+\text{count}$, there is a run from the
-search state with flag $\text{suffix}$ to the suffix-hit state when $\text{suffix}$ is
+$	ext{suffix}$ is true (or register $11$ when it is false) is
+$v_0+	ext{compStride}(	ext{suffix})	ext{count}$, register $13$ plus $	ext{count}$ is at
+most $B$, and $v_{13} 	ext{le}v_5$. If $v_5<v_{13}+	ext{count}$, there is a run from the
+search state with flag $	ext{suffix}$ to the suffix-hit state when $	ext{suffix}$ is
 true and the prefix-hit state otherwise; at its endpoint, registers $0$ and $13$ equal
-$v_0+\text{compStride}(\text{suffix})(v_5-v_{13})$ and $v_5$, respectively. If
-$v_5\ge v_{13}+\text{count}$, there is a run to the false-answer state when
-$\text{suffix}$ is true and the separator state with flag false otherwise; registers $0$
-and $13$ then equal $v_3$ (or $v_{11}$, respectively) and $v_{13}+\text{count}$. In
+$v_0+	ext{compStride}(	ext{suffix})(v_5-v_{13})$ and $v_5$, respectively. If
+$v_5 	ext{ge} v_{13}+	ext{count}$, there is a run to the false-answer state when
+$	ext{suffix}$ is true and the separator state with flag false otherwise; registers $0$
+and $13$ then equal $v_3$ (or $v_{11}$, respectively) and $v_{13}+	ext{count}$. In
 either case, every configuration before the endpoint satisfies the program's
 step-validity condition and has all register values at most $B$.
 \end{lemma}
@@ -1407,11 +1407,11 @@ invariant holds.
 \leanok
 \uses{Complexity.CompHalt, Complexity.LogProg.AHalt.ret, Complexity.comp_bit, Complexity.comp_call_return, Complexity.comp_preS}
 \difficulty{3}
-Let $C,e,B$ be natural numbers, let $\text{mode}$ be a Boolean flag, let $f$ map finite
+Let $C,e,B$ be natural numbers, let $	ext{mode}$ be a Boolean flag, let $f$ map finite
 Boolean words to finite Boolean words, let $h$ be a finite Boolean word, and let $v$
 assign a natural number to each of $14$ registers. Suppose every register value is at
 most $B$. Starting in the suffix-hit state with register vector $v$ and no answer
-recorded, the machine halts with answer true if $\text{mode}$ is true, and otherwise with
+recorded, the machine halts with answer true if $	ext{mode}$ is true, and otherwise with
 the bit of $h$ at position $v_0$, using false when that position is beyond the end;
 every configuration before halting satisfies the program's step-validity condition and
 has all register values at most $B$.
@@ -1460,15 +1460,15 @@ the machine's step-validity condition, and every register remains at most $B$.
 \leanok
 \uses{Complexity.CompHalt, Complexity.CompReach, Complexity.LogProg.AHalt.step, Complexity.LogProg.AReach.halt, Complexity.LogProg.AReach.single, Complexity.LogProg.AReach.step, Complexity.LogProg.AReach.trans, Complexity.LogProg.astep, Complexity.LogProg.register_update_le, Complexity.compARM, Complexity.compCopy, Complexity.compOracle, Complexity.comp_copy_run, Complexity.comp_preS, Complexity.comp_ret, Complexity.comp_suffix_run, Complexity.pairEncode_getD, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{6}
-Let $C,e,B,p$ be natural numbers, let $\text{mode}$ be a Boolean flag, let $f$ map finite
+Let $C,e,B,p$ be natural numbers, let $	ext{mode}$ be a Boolean flag, let $f$ map finite
 Boolean words to finite Boolean words, and let $x,b$ be finite Boolean words. Let $v$
 assign a natural number to each of $14$ registers. Suppose every register value is at
 most $B$, register $3$ equals twice the length of the pairing of $x$ with $b$, register
 $4$ equals $4|x|+4$, register $13$ equals twice the length of $f(x)$, register $5$
 equals $p$, twice the length of $f(x)$ is at most $p$, and the length of the pairing of
 $f(x)$ with $b$ is at most $B$. Starting in the separator state with flag false and with
-no answer recorded, the machine halts with answer $p<|\langle f(x),b\rangle|$ if
-$\text{mode}$ is true, and otherwise with the bit at position $p$ of $\langle
+no answer recorded, the machine halts with answer $p<| \langle f(x),b\rangle|$ if
+$	ext{mode}$ is true, and otherwise with the bit at position $p$ of $ \langle
 f(x),b\rangle$, taking the bit to be false when $p$ is beyond its length. Every
 configuration before halting satisfies the program's step-validity condition and has all
 register values at most $B$.

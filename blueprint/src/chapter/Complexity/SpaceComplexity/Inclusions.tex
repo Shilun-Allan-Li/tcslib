@@ -119,12 +119,12 @@ value $b$.
 \leanok
 \uses{Complexity.B2bVerdictState, Turing.MultiTapeTM, Turing.inputMoveAction, Turing.tapeAction}
 For a natural number $k$ and a selected work tape $i$ among the $k$ work tapes, define a
-Turing machine with Boolean symbols and states $\text{left}$, $\text{read}$, and
-$\text{done}(b)$ for $b\in\{\mathrm{false},\mathrm{true}\}$. Its initial state is
-$\text{left}$. In state $\text{left}$ it moves the head of work tape $i$ one cell left and
-enters $\text{read}$; in state $\text{read}$, if the scanned cell contains $b$, it erases
-that cell and enters $\text{done}(b)$, while a blank cell leads to
-$\text{done}(\mathrm{false})$ without changing the tape. In state $\text{done}(b)$ it
+Turing machine with Boolean symbols and states $	ext{left}$, $	ext{read}$, and
+$	ext{done}(b)$ for $b\in\{\mathrm{false},\mathrm{true}\}$. Its initial state is
+$	ext{left}$. In state $	ext{left}$ it moves the head of work tape $i$ one cell left and
+enters $	ext{read}$; in state $	ext{read}$, if the scanned cell contains $b$, it erases
+that cell and enters $	ext{done}(b)$, while a blank cell leads to
+$	ext{done}(\mathrm{false})$ without changing the tape. In state $	ext{done}(b)$ it
 remains in that state without moving the input head.
 \end{definition}
 
@@ -783,12 +783,12 @@ through time $2$ every work-head position has absolute value at most $1$.
 Let $M_V$, $M_I$, and $M_P$ be finite-state Boolean-input Turing machines, let $x,u$ be
 Boolean words, let $b$ be a Boolean, and let $t_i,s_i,s_v$ be natural numbers. Suppose
 $M_I$ halts on input $x$ after $t_i$ steps with output $x$ and uses at most $s_i$ cells
-of space, and the cleaned simulation of $M_V$ on input $x\mathbin{+\!\!+}u$ halts with
+of space, and the cleaned simulation of $M_V$ on input $x\mathbin{++}u$ halts with
 output $b$, clears all work tapes, returns all work heads to the origin, and keeps every
 work head within distance $s_v$ of the origin. Starting the associated trial machine in
 its anchor phase with input head at position $1$, buffer $u$, and the other designated
 tapes blank, there is a positive time $T$ at which it is in the verdict state recording
-$b$, with the buffer still $u$ and the copied word $x\mathbin{+\!\!+}u$ in the designated
+$b$, with the buffer still $u$ and the copied word $x\mathbin{++}u$ in the designated
 tape. At every earlier time $r$ with $0<r<T$ it is not in the anchor state, and at every
 $r<T$ it is not in any verdict state; through time $T$ it never halts or emits output,
 and every work-head position has absolute value at most $|x|+|u|+s_v+s_i+1$.
@@ -842,7 +842,7 @@ $|x|+|u|+s_V+s_I+1$.
 \uses{Complexity.B2bHostPhase, Complexity.b2b_answerTM, Complexity.b2b_answer_run, Complexity.b2b_host, Complexity.b2b_hostState, Complexity.b2b_tapeCount, Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM, Turing.FinTM.emitAction, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_mapState_of_agreeOn, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $M_V$, $M_I$, and $M_P$ be finite Boolean Turing machines, and let $H$ be the
-associated host machine with $4+2k_V+2k_I+2k_P$ work tapes and state set $\text{Fin}(2)$,
+associated host machine with $4+2k_V+2k_I+2k_P$ work tapes and state set $	ext{Fin}(2)$,
 where $k_V,k_I,k_P$ are the respective numbers of work tapes. For a Boolean input word
 $x$, a Boolean value $b$, and a configuration $c$ of $H$ on input $x$ whose state is
 $0$, map the state of $c$ to the answer phase for $b$ and run $H$ for two steps. The

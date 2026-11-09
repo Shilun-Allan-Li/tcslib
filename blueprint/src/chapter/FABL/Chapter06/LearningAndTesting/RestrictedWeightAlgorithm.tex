@@ -142,9 +142,9 @@ the increasing enumeration of $J$.
 \lean{FABL.freeFrequencyReindex}
 \label{FABL.freeFrequencyReindex}
 \leanok
-Let $J$ be a finite subset of $Fin(n)$, and let $S$ be a finite subset of $J$.
+Let $J$ be a finite subset of $Fin(n)$, and let $S$ be a finite subset of $J$.
 Reindexing the elements of $S$ through the increasing enumeration of $J$ gives a finite
-subset of $Fin(|J|)$.
+subset of $Fin(|J|)$.
 \end{definition}
 
 \begin{theorem}[Monomial under frequency reindexing]
@@ -165,8 +165,8 @@ $S$ evaluated at the transferred assignment.
 \label{FABL.fixedCoordinateProjectionLinear}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.𝔽₂}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate projection
-is the linear map from $Fin(n)\to\mathbb{F}_2$ to $Fin(|Fin(n)\setminus
+Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate projection
+is the linear map from $Fin(n)\to\mathbb{F}_2$ to $Fin(|Fin(n)\setminus
 J|)\to\mathbb{F}_2$ that records, in reindexed order, the coordinates outside $J$.
 \end{definition}
 
@@ -176,10 +176,10 @@ J|)\to\mathbb{F}_2$ that records, in reindexed order, the coordinates outside $J
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateProjectionLinear}
 \difficulty{1}
-Let $n$ be a natural number, let $J$ be a set of indices in $\mathbin n$, and let $x$ be a
-function from $\mathbin n$ to the field with two elements. For any position $q$ among the
+Let $n$ be a natural number, let $J$ be a set of indices in $in n$, and let $x$ be a
+function from $in n$ to the field with two elements. For any position $q$ among the
 indices outside $J$, the coordinate of the projection of $x$ at $q$ equals the
-coordinate of $x$ indexed by the corresponding element of $\mathbin n \setminus J$.
+coordinate of $x$ indexed by the corresponding element of $in n \setminus J$.
 \end{theorem}
 
 \begin{definition}[Fixed-coordinate extension]
@@ -187,7 +187,7 @@ coordinate of $x$ indexed by the corresponding element of $\mathbin n \setminus 
 \label{FABL.fixedCoordinateExtension}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. Extend a function from the
+Let $J$ be a finite subset of the coordinates $Fin(n)$. Extend a function from the
 coordinates outside $J$ to all coordinates by retaining its values outside $J$ and
 assigning $0$ on $J$, with the outside coordinates reindexed in increasing order.
 \end{definition}
@@ -198,9 +198,9 @@ assigning $0$ on $J$, with the outside coordinates reindexed in increasing order
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateExtension, FABL.fixedCoordinateProjectionLinear}
 \difficulty{3}
-Let $n$ be a natural number, let $J$ be a set of indices in $\mathbin n$, and let $z$ assign
+Let $n$ be a natural number, let $J$ be a set of indices in $in n$, and let $z$ assign
 a value in the field with two elements to each index outside $J$. Extend $z$ to all
-indices in $\mathbin n$ by assigning zero on $J$. Projecting this extension onto the indices
+indices in $in n$ by assigning zero on $J$. Projecting this extension onto the indices
 outside $J$ recovers $z$.
 \end{theorem}
 
@@ -209,10 +209,10 @@ outside $J$ recovers $z$.
 \label{FABL.fixedCoordinateFrequencyLift}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateProjectionLinear, FABL.𝔽₂}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate frequency
-lift sends a function $gamma$ on the reindexed coordinates outside $J$ to the unique
+Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate frequency
+lift sends a function $gamma$ on the reindexed coordinates outside $J$ to the unique
 coefficient vector on all $n$ coordinates whose dot product with any vector over
-$mathbb{F}_2$ equals the dot product of $gamma$ with that vector's restriction to the
+$mathbb{F}_2$ equals the dot product of $gamma$ with that vector's restriction to the
 coordinates outside $J$.
 \end{definition}
 
@@ -587,7 +587,7 @@ the product of its outer count and inner count.
 \leanok
 \uses{FABL.RestrictedWeightInput, FABL.RestrictedWeightInput.innerInput, FABL.RestrictedWeightInput.outerInput, FABL.SmallBiasFourierInput.sampleCount, FABL.deterministicRestrictedWeightQueryCount}
 Let $Q$ be the product of the outer and inner sample counts for a restricted weight
-input. Each index $q\text{ with }0\le q<Q$ determines the corresponding pair of indices,
+input. Each index $q	ext{ with }0\le q<Q$ determines the corresponding pair of indices,
 one in the outer sample range and one in the inner sample range, under the standard
 equivalence between a finite range of size equal to a product and the product of the two
 ranges.
@@ -598,7 +598,7 @@ ranges.
 \label{FABL.deterministicRestrictedWeightQueryPoint}
 \leanok
 \uses{FABL.RestrictedWeightInput, FABL.combineSignCube, FABL.deterministicRestrictedWeightQueryCount, FABL.deterministicRestrictedWeightQueryPair, FABL.restrictedWeightFixedAssignment, FABL.restrictedWeightFreeAssignment}
-Given a restricted-weight input, a set $J$ of coordinates in $\mathbin{n}$, and a query index
+Given a restricted-weight input, a set $J$ of coordinates in $in{n}$, and a query index
 $q$ from the set of all queries, the deterministic query point is the sign vector in
 $\\{-1,1\\}^n$ obtained by combining the free assignment for the second component of the
 query pair with the fixed assignment for its first component, using $J$.
@@ -623,8 +623,8 @@ with $i$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.RestrictedWeightInput, FABL.deterministicRestrictedWeightEstimateFromAnswers, FABL.deterministicRestrictedWeightQueryPair, FABL.deterministicRestrictedWeightQueryPoint, FABL.restrictedFourierCoefficientEstimate, FABL.restrictedFourierWeightEstimate}
 \difficulty{1}
-Let the dimension and accuracy data satisfy $n>0$, $0<\text{numerator}$, and $2\text{
-numerator}\langle\text{denominator}$, and let the Fourier bound be at least $1$. For a
+Let the dimension and accuracy data satisfy $n>0$, $0<	ext{numerator}$, and $2	ext{
+numerator} le	ext{denominator}$, and let the Fourier bound be at least $1$. For a
 Boolean function $f$ on the sign cube, a coordinate set $J$, and a subset $S\subseteq
 J$, the expected squared empirical Fourier coefficient obtained by querying $f$ at every
 point of the prescribed product sample equals the restricted Fourier weight of $f$ on

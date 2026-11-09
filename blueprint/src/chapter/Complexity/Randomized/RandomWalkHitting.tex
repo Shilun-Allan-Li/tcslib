@@ -90,7 +90,7 @@ visits $t$ is zero.
 \uses{Randomized.RegularMultigraph.missProb}
 Let $G$ be a regular multigraph on a finite vertex type, with positive natural-number
 degree $D$. For vertices $t$ and $s$ and a natural number $N$, the hit time from $s$ to
-$t$ up to time $N$ is the sum of the miss probabilities at times $j=0,1,\varnothing,N-1$
+$t$ up to time $N$ is the sum of the miss probabilities at times $j=0,1,nothing,N-1$
 for the walk on $G$ from $s$ relative to target $t$.
 \end{definition}
 
@@ -204,7 +204,7 @@ $F(u)$ and its neighbor average.
 \difficulty{4}
 Let $G$ be a regular multigraph of degree $D$, let $F$ assign a rational number to each
 vertex, and let $a$ be rational. Suppose that for every vertex $x$ and every index $i$
-among the $D$ neighbor indices, $|F(x)-F(G.\text{nbr}(x,i))|\le a$. For any vertex $t$
+among the $D$ neighbor indices, $|F(x)-F(G.	ext{nbr}(x,i))|\le a$. For any vertex $t$
 and any walk $p$ from $x$ to $t$ in the graph whose edges join adjacent vertices of $G$,
 one has $|F(x)-F(t)|\le \operatorname{length}(p)\,a$.
 \end{theorem}

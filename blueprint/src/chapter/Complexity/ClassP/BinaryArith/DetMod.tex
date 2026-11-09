@@ -385,7 +385,7 @@ component as its parameter.
 For a finite list $z$ of Boolean values, define its output to be the empty list when the
 integer represented by the decoded first component of $z$ is less than $2$. Otherwise,
 start from the initial configuration determined by $z$, apply the transition rule
-$(\text{length}(z)+1)^2$ times, and return the decoded left component of the resulting
+$(	ext{length}(z)+1)^2$ times, and return the decoded left component of the resulting
 configuration.
 \end{definition}
 
@@ -432,8 +432,8 @@ length of the shorter list is strictly less than $p$.
 Let $p$ be a positive natural number, and let $inv$, $piv$, and $row$ be natural numbers
 and finite lists of natural numbers, respectively. Every entry of the list formed by
 pairing the entries after the first in $row$ and $piv$ and replacing each pair $(r,y)$
-by the remainder modulo $p$ of $r+p-(\text{the first entry of }row\text{, or }0\text{ if
-}row\text{ is empty})\,inv\, y$ is strictly less than $p$.
+by the remainder modulo $p$ of $r+p-(	ext{the first entry of }row	ext{, or }0	ext{ if
+}row	ext{ is empty})\,inv\, y$ is strictly less than $p$.
 \end{theorem}
 
 \begin{theorem}[Length of the row elimination list]
@@ -481,9 +481,9 @@ $x$ has length at most $K+2$.
 Let $z$ be a finite bit string and let $s=(R,d,m,rc)$ consist of a list of rows of
 natural numbers and three natural numbers. Decode the first component of $z$ using the
 aligned pair parser, taking the empty word if parsing fails, and let its binary value be
-$p$. Suppose $R$ has length $m\text{,}$ has at most $|z|$ rows, each row has length at
+$p$. Suppose $R$ has length $m	ext{,}$ has at most $|z|$ rows, each row has length at
 most $|z|$, every entry of every row is less than $p+2^{|z|}+2$, $d<p+2^{|z|}+2$, and
-$rc\text{≤}m$. Then the bit string obtained by encoding $p$ and the state $s$ has length
+$rc	ext{≤}m$. Then the bit string obtained by encoding $p$ and the state $s$ has length
 at most $64(|z|+1)^3$.
 \end{theorem}
 
@@ -549,7 +549,7 @@ computable.
 Let $p$ be a prime and let $R$ be a finite list of natural-number rows, each of length
 equal to the number of rows in $R$. Applying the determinant-modulo algorithm to the
 pair encoding of the binary expansion of $p$ and the encoding of $R$ returns the binary
-expansion of the determinant of the square matrix over $\bbr/p\bbr$ whose $(i,j)$ entry is
+expansion of the determinant of the square matrix over $br/pbr$ whose $(i,j)$ entry is
 the $j$th entry of row $i$, interpreted modulo $p$, with missing entries taken to be
 zero.
 \end{theorem}

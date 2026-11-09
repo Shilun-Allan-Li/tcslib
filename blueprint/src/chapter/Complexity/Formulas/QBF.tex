@@ -78,12 +78,12 @@ its value at $i$ to $\tau(i)$ agrees with $\tau$ at every index below $i+1$.
 \leanok
 \uses{Complexity.QBF.truthAux, Complexity.QBF.update_prefix_agreement, Complexity.eval_congr_of_lt_numVars, Std.Sat.CNF.numVars}
 \difficulty{5}
-Let $m$ be a CNF formula over natural-number variables, let $\tau$ be a Boolean
-assignment satisfying $m$, and let $j,i\text{ be natural numbers}$ and $\text{ let }
-\sigma$ be another Boolean assignment. If $\tau$ and $\text{ let }
+Let $m$ be a CNF formula over natural-number variables, let $	au$ be a Boolean
+assignment satisfying $m$, and let $j,i	ext{ be natural numbers}$ and $	ext{ let }
+\sigma$ be another Boolean assignment. If $	au$ and $	ext{ let }
 \sigma$ agree at every variable with index less than $i$, and the variable count of $m$
 is at most $i+j$, then the prefix of $j$ existential quantifiers starting at index $i$
-is true under $\text{ let }
+is true under $	ext{ let }
 \sigma$.
 \end{theorem}
 
@@ -105,7 +105,7 @@ is true if and only if $m$ is satisfiable.
 \label{Complexity.QBF.PrefixTruth}
 \leanok
 \uses{Complexity.QBF.Quant}
-Let $P$ be a property of Boolean assignments $sigma : \mathbb{N} \to
+Let $P$ be a property of Boolean assignments $sigma : \mathbb{N} \to
 \{\mathrm{false},\mathrm{true}\}$. The prefix is true at an assignment when its
 quantifiers can be evaluated in order starting at variable index $i$: an existential
 quantifier requires some Boolean value for the current variable, while a universal
@@ -134,10 +134,10 @@ that $m$ evaluates to true.
 \uses{Complexity.QBF.PrefixTruth, Complexity.QBF.Quant}
 \difficulty{5}
 Let $P$ and $P'$ be predicates on Boolean assignments, and let $q$ be a finite
-quantifier prefix, $\text{ let }
+quantifier prefix, $	ext{ let }
 \sigma$ a Boolean assignment, and $i$ a natural-number starting index. Suppose that $P$
-and $P'$ agree on every assignment $\tau$ that agrees with $\text{ let }
-\sigma$ at all indices below $i$. Then $q$ is true under $\text{ let }
+and $P'$ agree on every assignment $	au$ that agrees with $	ext{ let }
+\sigma$ at all indices below $i$. Then $q$ is true under $	ext{ let }
 \sigma$ at index $i$ with predicate $P$ if and only if it is true there with predicate
 $P'$.
 \end{theorem}
@@ -149,7 +149,7 @@ $P'$.
 \uses{Complexity.QBF.PrefixTruth, Complexity.QBF.Quant, Complexity.QBF.prefixTruth_congr_agree}
 \difficulty{1}
 Let $P$ and $P'$ be predicates on Boolean assignments that agree on every assignment.
-For any finite quantifier prefix, Boolean assignment $\text{ let }
+For any finite quantifier prefix, Boolean assignment $	ext{ let }
 \sigma$, and natural-number starting index $i$, the prefix is true with predicate $P$
 exactly when it is true with predicate $P'$.
 \end{theorem}
@@ -161,10 +161,10 @@ exactly when it is true with predicate $P'$.
 \uses{Complexity.QBF.PrefixTruth, Complexity.QBF.Quant}
 \difficulty{4}
 Let $P$ be a predicate on Boolean assignments to natural-number variables, let $q$ and
-$r$ be finite quantifier prefixes, and let $\text{ let }
+$r$ be finite quantifier prefixes, and let $	ext{ let }
 \sigma$ be an assignment with starting index $i$. Truth of the concatenated prefix $q$
-followed by $r$ under $\text{ let }
-\sigma$ at index $i$ is equivalent to truth of $q$ under $\text{ let }
+followed by $r$ under $	ext{ let }
+\sigma$ at index $i$ is equivalent to truth of $q$ under $	ext{ let }
 \sigma$ at index $i$, with the predicate that the remaining prefix $r$ is true starting
 at index $i+|q|$.
 \end{theorem}

@@ -14,7 +14,7 @@ Declarations of the Lean module \texttt{FABL.Chapter07.QuadraticPCPP}.
 For a natural number $n$ and an $n\times n$ matrix $A$ over the field with two elements,
 flatten $A$ into a vector of length $n^2$ over that field by listing its entries in the
 order induced by the standard equivalence between pairs of indices and indices in
-$\text{Fin}(n^2)$.
+$	ext{Fin}(n^2)$.
 \end{definition}
 
 \begin{definition}[Reconstructing a binary matrix]
@@ -43,9 +43,9 @@ length $n^2$ over the field with two elements returns the original vector.
 \leanok
 \uses{FABL.flattenBinaryMatrix, FABL.unflattenBinaryMatrix, FABL.𝔽₂}
 \difficulty{3}
-For every natural number $n$ and every $n \times n$ matrix $A$ over $\bbF_2$, unflattening
+For every natural number $n$ and every $n 	imes n$ matrix $A$ over $F_2$, unflattening
 its associated vector recovers the matrix:
-$\operatorname{unflatten}(\operatorname{flatten}(A))=A$.
+$operatorname{unflatten}(operatorname{flatten}(A))=A$.
 \end{theorem}
 
 \begin{definition}[Binary matrices and binary vectors]
@@ -85,8 +85,8 @@ vectors.
 \leanok
 \uses{FABL.F₂Cube, FABL.unflattenBinaryMatrix}
 \difficulty{1}
-For every natural number $n$, unflattening the zero vector of length $n^2$ over $\bbF_2$
-gives the zero $n \times n$ matrix.
+For every natural number $n$, unflattening the zero vector of length $n^2$ over $F_2$
+gives the zero $n 	imes n$ matrix.
 \end{theorem}
 
 \begin{theorem}[Additivity of matrix unflattening]
@@ -95,9 +95,9 @@ gives the zero $n \times n$ matrix.
 \leanok
 \uses{FABL.F₂Cube, FABL.unflattenBinaryMatrix}
 \difficulty{1}
-For every natural number $n$ and all vectors $x,y \in (\bbF_2)^{n^2}$, unflattening their
-coordinatewise sum gives the sum of their associated $n \times n$ matrices over $\bbF_2$:
-$\operatorname{unflatten}(x+y)=\operatorname{unflatten}(x)+\operatorname{unflatten}(y)$.
+For every natural number $n$ and all vectors $x,y \in (F_2)^{n^2}$, unflattening their
+coordinatewise sum gives the sum of their associated $n 	imes n$ matrices over $F_2$:
+$operatorname{unflatten}(x+y)=operatorname{unflatten}(x)+operatorname{unflatten}(y)$.
 \end{theorem}
 
 \begin{definition}[Binary matrix pairing]
@@ -614,7 +614,7 @@ with every flattened coefficient matrix from $L$ is zero.
 \leanok
 \uses{FABL.F₂Cube, FABL.HomogeneousQuadraticSystem, FABL.SatisfiesHomogeneousQuadraticSystem, FABL.SatisfiesLinearizedQuadraticSystem, FABL.flattenBinaryMatrix, FABL.f₂DotProduct_flattenBinaryMatrix, FABL.rankOneSelfMatrix}
 \difficulty{3}
-Let $L$ be a list of homogeneous quadratic equations over $mathbb{F}_2$ in $n$
+Let $L$ be a list of homogeneous quadratic equations over $mathbb{F}_2$ in $n$
 variables, and let $w\in\mathbb{F}_2^n$. The rank-one matrix formed from $w$, when
 flattened into a vector, satisfies the linearized system associated with $L$ if and only
 if $w$ satisfies every equation in $L$.
@@ -627,7 +627,7 @@ if $w$ satisfies every equation in $L$.
 \uses{FABL.F₂Cube, FABL.HomogeneousQuadraticSystem, FABL.SatisfiesLinearizedQuadraticSystem, FABL.binaryAffineSubspace, FABL.f₂DotProduct, FABL.homogeneousQuadraticSystemDirection, FABL.mem_binaryAffineSubspace_iff_add_mem, FABL.𝔽₂}
 \difficulty{4}
 Let $L$ be a list of homogeneous quadratic equations in $n$ variables over
-$mathbb{F}_2$, and suppose that $a_0\in\mathbb{F}_2^{n^2}$ satisfies the associated
+$mathbb{F}_2$, and suppose that $a_0\in\mathbb{F}_2^{n^2}$ satisfies the associated
 linearized system. For every $a\in\mathbb{F}_2^{n^2}$, $a$ satisfies that system if and
 only if it belongs to the affine subspace through $a_0$ whose direction consists of the
 solutions to the corresponding homogeneous linear system.
@@ -649,7 +649,7 @@ its unique vector if and only if its right-hand side is zero.
 \leanok
 \uses{FABL.F₂Cube, FABL.HomogeneousQuadraticSystem, FABL.SatisfiesHomogeneousQuadraticSystem, FABL.homogeneousQuadraticEquation_satisfiedBy_zero_iff}
 \difficulty{4}
-Let $L$ be a finite list of homogeneous quadratic equations over $mathbb{F}_2$ in zero
+Let $L$ be a finite list of homogeneous quadratic equations over $mathbb{F}_2$ in zero
 variables, and let $w$ be the unique assignment on the empty set of variables. Then $w$
 satisfies every equation in $L$ if and only if every equation in $L$ has right-hand side
 $0$.
@@ -890,7 +890,7 @@ $\sum_{i,j=1}^n w_iw_jA_{ij}$ in $\mathbb{F}_2$.
 \leanok
 \uses{FABL.F₂Cube, FABL.encodeHomogeneousQuadraticProof, FABL.f₂DotProduct, FABL.quadraticLinearProofFunction, FABL.quadraticLinearProofIndex, FABL.quadraticLinearProofTable}
 \difficulty{1}
-For every binary vector $w\in\\bbr^n$ over $\mathbb{F}_2$, the linear function extracted
+For every binary vector $w\in\br^n$ over $\mathbb{F}_2$, the linear function extracted
 from its encoded homogeneous quadratic proof is the dot product with $w$: at every
 $x\in\mathbb{F}_2^n$, its value is $w\cdot x$.
 \end{theorem}
@@ -1268,7 +1268,7 @@ pairings are over $\mathbb F_2$.
 \uses{FABL.F₂Cube, FABL.IsClose, FABL.affineCoordinateCorrectionProbability, FABL.affineCoordinateCorrectionProbability_ge, FABL.f₂CubeProofFunction, FABL.f₂CubeProofFunction_quadraticLinearProofTable, FABL.f₂DotProduct, FABL.pcppBoolCubeEquiv, FABL.quadraticLinearProofFunction, FABL.quadraticLinearProofTable, FABL.relativeHammingDist, FABL.relativeHammingDist_signEncode, FABL.signEncode}
 \difficulty{3}
 Let $n$ be a positive integer, let $P$ be a Boolean-valued function on a set of
-$2^n+2^{n^2}$ indices, and let $\tau:mathbb{F}_2^n\to\{\pm1\}$ be the sign-valued
+$2^n+2^{n^2}$ indices, and let $	au:mathbb{F}_2^n\to\{\pm1\}$ be the sign-valued
 function obtained from its first $2^n$ entries. Suppose the Boolean-valued function
 encoded by those entries differs from the linear function
 $x\mapsto\langle\gamma,x\rangle$ on at most a fraction $\delta$ of inputs, where

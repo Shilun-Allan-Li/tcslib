@@ -64,7 +64,7 @@ $-1$, and returns $1$ if every input value is different from $-1$.
 \leanok
 \uses{FABL.FiniteDecisionTree.Computes, FABL.FiniteDecisionTree.eval, FABL.orOnCoordinates, FABL.sequentialOrTreeAux}
 \difficulty{6}
-Let $n$ be a nonnegative integer, let $A$ be a set of coordinates in $\text{Fin }n$, and
+Let $n$ be a nonnegative integer, let $A$ be a set of coordinates in $	ext{Fin }n$, and
 let $x$ assign a sign in $\\{ -1,1 \\}$ to each coordinate. The decision tree that
 queries the available coordinates in increasing order, returns $-1$ as soon as it finds
 a coordinate with value $-1$, and returns $1$ if all queried coordinates have value $1$
@@ -3719,8 +3719,8 @@ $T_dho^d$.
 \uses{FABL.nandGrowthRate, FABL.nandGrowthRate_pos, FABL.recursiveNandFalseCost, FABL.recursiveNandTrueCost, FABL.recursiveNand_conditionalCost_bounds}
 \difficulty{4}
 Define $F_0=T_0=1$, $F_{d+1}=2T_d$, and $T_{d+1}=F_d+T_d/2$, and let
-$ho=(1+\text{sqrt}(33))/4$. For every natural number $d$,
-$\text{max}(F_d,T_d)rac{2}{ho}ho^d$.
+$ho=(1+	ext{sqrt}(33))/4$. For every natural number $d$,
+$	ext{max}(F_d,T_d)rac{2}{ho}ho^d$.
 \end{theorem}
 
 \begin{theorem}[Logarithmic inequality for a sum]
@@ -3760,7 +3760,7 @@ queries made by $T$ is at most $\log_2 L$, where $L$ is the number of leaves of 
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.auxiliaryAverageCost_complete, FABL.FiniteDecisionTree.auxiliaryAverageCost_uniform_le_log_leafCount, FABL.FiniteDecisionTree.leafCount, FABL.RandomizedDecisionTree.deterministicAverageCost, FABL.Sign, FABL.uniformPMF}
 \difficulty{1}
 Let a deterministic decision tree query coordinates of an input in the finite sign
-alphabet $\{\pm 1\}^n$, branching according to each queried sign, and let its number of
+alphabet $\{\pm 1\}^n$, branching according to each queried sign, and let its number of
 leaves be $L$. Under the uniform product distribution on inputs, its average number of
 queries is at most $\log_2 L$.
 \end{theorem}
@@ -4120,7 +4120,7 @@ variance under the uniform distribution on the cube is $11/8+5\sqrt{33}/24$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_zero, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.
@@ -4135,7 +4135,7 @@ difference between $F$ and its average over coordinate $0$ is $\frac18$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_one, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.
@@ -4151,7 +4151,7 @@ $\frac56+\frac{\sqrt{33}}8$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_two, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.

@@ -192,7 +192,7 @@ $f(z)$ and $f'(z)$.
 \leanok
 \difficulty{3}
 Let $l$ be a finite list and let $f$ assign a finite list to each element of its type.
-If every element $a$ of $l$ satisfies $\text{length}(f(a))\le c$ for some natural number
+If every element $a$ of $l$ satisfies $	ext{length}(f(a))\le c$ for some natural number
 $c$, then the length of the list obtained by concatenating the lists $f(a)$ over $a\in
 l$ is at most $\text{length}(l)c$.
 \end{theorem}
@@ -202,8 +202,8 @@ l$ is at most $\text{length}(l)c$.
 \label{List.sum_map_range}
 \leanok
 \difficulty{1}
-Let $M$ be a commutative additive monoid, let $f:\bbn\to M$ be a function on the natural
-numbers, and let $n\in\bbn$. The sum of the list obtained by applying $f$ to $0,1,\ldots,n-1$
+Let $M$ be a commutative additive monoid, let $f:br	o M$ be a function on the natural
+numbers, and let $nbr$. The sum of the list obtained by applying $f$ to $0,1,n-1$
 equals the sum of $f(i)$ over all natural numbers $i<n$.
 \end{theorem}
 
@@ -212,8 +212,8 @@ equals the sum of $f(i)$ over all natural numbers $i<n$.
 \label{List.sum_map_range_mono}
 \leanok
 \difficulty{4}
-Let $g:\bbn\to\bbn$ take natural-number values, and let $a,b$ be natural numbers with
-$a\le b$. The sum of $g(i)$ for $i<a$ is at most the sum of $g(i)$ for $i<b$.
+Let $g:br	obr$ take natural-number values, and let $a,b$ be natural numbers with $ab
+b$. The sum of $g(i)$ for $0b i<a$ is at most the sum of $g(i)$ for $0b i<b$.
 \end{theorem}
 
 \begin{theorem}[Successive partial sums of a list]
@@ -233,7 +233,7 @@ such position.
 \leanok
 \uses{List.getD_map_range, List.sum_take_succ_getD}
 \difficulty{3}
-Let $M$ be an additive monoid, let $f:\bbn\to M$, and let $n,j$ be natural numbers with
+Let $M$ be an additive monoid, let $f:br	o M$, and let $n,j$ be natural numbers with
 $j<n$. The sum of the first $j+1$ terms of the list $[f(0),f(1),\ldots,f(n-1)]$ equals
 the sum of its first $j$ terms plus $f(j)$.
 \end{theorem}
@@ -481,7 +481,7 @@ not occur among the first $i$ entries of $l$.
 \label{Light.AbsLe}
 \leanok
 A list $l$ of integers is bounded in absolute value by an integer $U$ if every entry $x$
-of $l$ satisfies $|x|\le U$.
+of $l$ satisfies $|x|le U$.
 \end{definition}
 
 \begin{theorem}[Bound on an in-range list entry]

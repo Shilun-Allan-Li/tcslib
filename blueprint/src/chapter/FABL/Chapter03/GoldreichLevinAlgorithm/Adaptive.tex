@@ -30,8 +30,8 @@ frequency prefix, and a rational estimate.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.IsAccurate, FABL.GoldreichLevinThreshold}
 Let $n$ be a natural number, let a trace be a finite list of estimate records of length
 $n$, let the target be a Boolean function on the $n$-dimensional Boolean cube, and let
-$\tau$ be a rational threshold in $(0,1]$. The trace has a failure if it contains a
-record that is not accurate for this target at threshold $\tau$.
+$	au$ be a rational threshold in $(0,1]$. The trace has a failure if it contains a
+record that is not accurate for this target at threshold $	au$.
 \end{definition}
 
 \begin{definition}[Failure in a query state]
@@ -41,10 +41,10 @@ record that is not accurate for this target at threshold $\tau$.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateTrace.HasFailure, FABL.GoldreichLevinQueryState, FABL.GoldreichLevinThreshold}
 Let $n$ be a natural number, let a query state consist of an optional active family of
 subsets of the $n$ coordinates and a finite trace of estimate records, let the target be
-a Boolean function on the $n$-dimensional Boolean cube, and let $\tau$ be a rational
+a Boolean function on the $n$-dimensional Boolean cube, and let $	au$ be a rational
 threshold in $(0,1]$. The state has a failure if its trace contains a record for which
 the absolute difference between its estimate and the restricted Fourier weight of the
-target, at the record's coordinates and frequency prefix, is at least $\tau^2/4$.
+target, at the record's coordinates and frequency prefix, is at least $	au^2/4$.
 \end{definition}
 
 \begin{definition}[Query State Invariant]
@@ -155,9 +155,9 @@ appended list is inaccurate.
 \label{FABL.goldreichLevinControllerStepWork}
 \leanok
 \uses{FABL.GoldreichLevinThreshold, FABL.goldreichLevinActiveCap}
-For a natural number $n$ and a rational threshold $\tau$ in $(0,1]$, define the
-controller step work to be $16(n+1)^2(A(\tau)+1)^2$, where $A(\tau)$ is the active cap at
-threshold $\tau$.
+For a natural number $n$ and a rational threshold $	au$ in $(0,1]$, define the
+controller step work to be $16(n+1)^2(A(	au)+1)^2$, where $A(	au)$ is the active cap at
+threshold $	au$.
 \end{definition}
 
 \begin{definition}[Goldreich–Levin stage step program]
@@ -214,10 +214,10 @@ is measured against the restricted Fourier weight, with tolerance $\tau^2/4$.
 \label{FABL.goldreichLevinStageFailureBudget}
 \leanok
 \uses{FABL.GoldreichLevinThreshold, FABL.goldreichLevinActiveCap, FABL.goldreichLevinCallConfidence}
-For a natural number $n$ and a rational threshold $\tau$ in $(0,1]$, define the stage
-failure budget as $2A(\tau)$ times the nonnegative extended real number obtained by
+For a natural number $n$ and a rational threshold $	au$ in $(0,1]$, define the stage
+failure budget as $2A(	au)$ times the nonnegative extended real number obtained by
 taking the nonnegative part of the real value of the first component of the
-call-confidence interval at $(n,\tau)$.
+call-confidence interval at $(n,	au)$.
 \end{definition}
 
 \begin{theorem}[Goldreich–Levin failure budget]

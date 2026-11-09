@@ -406,7 +406,7 @@ the configuration with state $\delta(q,x_i)$, head at position $i+1$, and empty 
 Let $S$ be a finite set with decidable equality, let $\delta:S\times\{0,1\}\to S$ be a
 transition function, let $s_0\in S$ be a starting state, and let $A:S\to\{0,1\}$ be an
 acceptance predicate. For all Boolean words $x$ and $r$, every prefix $p$ satisfying
-$x=p\mathbin{+\!\!+}s}r$, and every state $q\in S$, the scanner started on $x$ in state $q$
+$x=p\mathbin{+s}r$, and every state $q\in S$, the scanner started on $x$ in state $q$
 with its input head just after $p$ is halted after $|r|+1$ steps and has output
 $[A(\operatorname{foldl}(\delta,q,r))]$.
 \end{lemma}
@@ -2627,7 +2627,7 @@ Let $S$ be a finite state set with decidable equality, let $\delta:S\times\{0,1\
 be a transition function, let $\varepsilon:S\times\{0,1\}\to\{0,1\}\cup\{\text{no
 output}\}$ be a per-bit emission rule, let $\phi:S\to\{0,1\}\cup\{\text{no output}\}$ be
 a final emission rule, and choose a start state. For Boolean words $x$ and $r$, suppose
-$x=p\mathbin{+\!\!+}r$ for a word $p$; for every state $q$ and already-emitted word $o$,
+$x=p\mathbin{++}r$ for a word $p$; for every state $q$ and already-emitted word $o$,
 the associated transducer machine, started on input $x$ in state $q$ with its input head
 at position $|p|$ and output $o$, is halted after $|r|+1$ steps and has output $o$
 followed by the transducer semantics on $q$ and $r$.

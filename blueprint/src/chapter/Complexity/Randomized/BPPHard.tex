@@ -12,7 +12,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.BPPHard}.
 \leanok
 \uses{Turing.NDTM}
 A code for a binary-choice Turing machine consists of a natural number $k$ of work
-tapes, a natural number $m$ such that the machine has state set $\text{Fin}(m+1)$, and
+tapes, a natural number $m$ such that the machine has state set $	ext{Fin}(m+1)$, and
 the machine itself, whose input alphabet is Boolean and whose transitions are indexed by
 a choice bit.
 \end{definition}
@@ -23,7 +23,7 @@ a choice bit.
 \leanok
 \uses{Turing.CodePTM, Turing.FinNDTM}
 Given a binary-choice Turing machine code with $k$ work tapes and state set
-$\text{Fin}(m+1)$, its associated finite-state machine has $k$ work tapes, that state
+$	ext{Fin}(m+1)$, its associated finite-state machine has $k$ work tapes, that state
 set, and the same underlying machine.
 \end{definition}
 
@@ -78,7 +78,7 @@ data, output symbol, and successor state is injective.
 \uses{Turing.Action, Turing.CodePTM}
 For a binary-choice Turing machine code with $k$ work tapes and one more than its stated
 number of states, the associated dependent tuple records the pair of natural numbers
-$(k,\text{number of states minus one})$, an initial state among the corresponding states,
+$(k,	ext{number of states minus one})$, an initial state among the corresponding states,
 and the two transition functions specifying the machine's actions.
 \end{definition}
 

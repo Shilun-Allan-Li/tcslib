@@ -260,7 +260,7 @@ identified with $0$ or $1$.
 For a machine with $k$ work tapes, encode each natural-number index $j$ as follows:
 indices $0,1,2$ represent the state, input-head, and input-symbol ports; indices $3$
 through $2+k$ represent work-head ports; and indices from $3+k$ up to but not including
-$3+3k$ represent work-symbol ports, with tape number $\biglloor{(j-3-k)/2}\bigrfloor$
+$3+3k$ represent work-symbol ports, with tape number $iglloor{(j-3-k)/2}igrfloor$
 and Boolean label given by whether $(j-3-k)$ is odd. The next two indices represent the
 false and true summary ports, followed by the old-bit and new-bit ports; every remaining
 index also represents the new-bit port.
@@ -349,7 +349,7 @@ true exactly when the guard for that case and flag is false, or the value at the
 port equals the bit prescribed by the case’s machine action and expectation.
 \end{definition}
 
-\begin{definition}[Base-(2s+1) quotient remainder]
+\begin{definition}[Base-(2s+1) quotient remainder]
 \lean{Complexity.ConfigCodec.headOf}
 \label{Complexity.ConfigCodec.headOf}
 \leanok
@@ -1815,7 +1815,7 @@ $2^{3k+7}(3k+8)$, times $C(s+n+2)^{k+2}$.
 \difficulty{4}
 Let $M$ be a finite-state Turing machine over the Boolean alphabet, with $k$ work tapes,
 and let $n,s,C$ be nonnegative integers. Write $Q$ for its state set, and let
-$A=|Q|+6k+5$ and $T=2^k(2|Q|+2)^{\text{?}}$—more precisely,
+$A=|Q|+6k+5$ and $T=2^k(2|Q|+2)^{	ext{?}}$—more precisely,
 $T=2^k\,|\mathrm{Option}(Q)\times\mathrm{Option}(\mathrm{Bool})\times(\mathrm{Fin}(k)\to\mathrm{Option}(\mathrm{Bool}))|\,2^{3k+7}(3k+8)$.
 If $A\le C$, then the cost of the concatenation of the input-equality CNF and transition
 CNF is at most $(6+T)C(s+n+2)^{k+2}$. Here the cost of a CNF is the sum, over its
@@ -2121,7 +2121,7 @@ adjacency, and acceptance formulas each have length at most $K(s+n+2)^K$.
 \leanok
 \uses{Complexity.ConfigCodec.validity, Complexity.PolyTimeComputable, Std.Sat.CNF.serialize}
 Let $M$ be a finite-state Turing machine with Boolean tape symbols, and let
-$n,s,o:\{0,1\text{-strings}\to\mathbb N\}$ be functions such that each of the three maps
+$n,s,o:\{0,1	ext{-strings}	o\mathbb N\}$ be functions such that each of the three maps
 $x\mapsto 1^{n(x)}$, $x\mapsto 1^{s(x)}$, and $x\mapsto 1^{o(x)}$ is computable in
 polynomial time in the stated machine model. Then the map sending $x$ to the binary
 encoding of the validity CNF for parameters $n(x),s(x)$, with every variable index
@@ -2147,7 +2147,7 @@ shifting every variable index by $o(x)$ is computable in polynomial time.
 \leanok
 \uses{Complexity.ConfigCodec.acceptance, Complexity.PolyTimeComputable, Std.Sat.CNF.serialize}
 Let $M$ be a finite-state Turing machine with Boolean tape symbols, and let
-$n,s,o:\{0,1\text{-strings}\to\mathbb N\}$ be functions such that each of the three maps
+$n,s,o:\{0,1	ext{-strings}	o\mathbb N\}$ be functions such that each of the three maps
 $x\mapsto 1^{n(x)}$, $x\mapsto 1^{s(x)}$, and $x\mapsto 1^{o(x)}$ is computable by
 $M$-model polynomial time. Then the map sending $x$ to the binary encoding of the
 acceptance CNF for parameters $n(x),s(x)$, with every variable index shifted by $o(x)$,

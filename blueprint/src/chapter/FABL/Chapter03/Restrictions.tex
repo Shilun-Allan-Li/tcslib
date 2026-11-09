@@ -4157,7 +4157,7 @@ monomial on the finite sign cube on $n$ coordinates.
 \leanok
 \uses{FABL.fourierCoeff, FABL.indexedFourierCoeff}
 \difficulty{1}
-For a natural number $n$, a function $f$ from the sign cube on $n$ coordinates to $\bbr$,
+For a natural number $n$, a function $f$ from the sign cube on $n$ coordinates to $br$,
 and a set of coordinates $S$, the Fourier coefficient of $f$ defined using indexed sign
 assignments equals the coefficient defined using the finite sign cube: both are the
 uniform average of $f(x)$ times the product of the signs in $S$.
@@ -4205,7 +4205,7 @@ assignments on its complement in $\mathrm{Fin}(n)$.
 \label{FABL.combineSignCube}
 \leanok
 \uses{FABL.FixedSignCube, FABL.FreeSignCube, FABL.signCubeSplitEquiv}
-Let $n$ be a natural number and let $J$ be a set of coordinates in $\mathbin n$. Given a sign
+Let $n$ be a natural number and let $J$ be a set of coordinates in $in n$. Given a sign
 assignment $y$ on $J$ and a sign assignment $z$ on the coordinates outside $J$, combine
 them into the sign vector on all $n$ coordinates that restricts to $y$ on $J$ and to $z$
 outside $J$.
@@ -4217,7 +4217,7 @@ outside $J$.
 \leanok
 \uses{FABL.FixedSignCube, FABL.FreeSignCube, FABL.combineSignCube, FABL.signCubeSplitEquiv}
 \difficulty{1}
-Let $n$ be a natural number, let $J$ be a set of indices in $\text{Fin}(n)$, and let $y$
+Let $n$ be a natural number, let $J$ be a set of indices in $	ext{Fin}(n)$, and let $y$
 and $z$ specify signs on the indices in $J$ and outside $J$, respectively. The sign
 vector formed by combining $y$ and $z$ agrees with $y$ at every index in $J$.
 \end{theorem}
@@ -4228,7 +4228,7 @@ vector formed by combining $y$ and $z$ agrees with $y$ at every index in $J$.
 \leanok
 \uses{FABL.FixedIndex, FABL.FixedSignCube, FABL.FreeSignCube, FABL.combineSignCube, FABL.signCubeSplitEquiv}
 \difficulty{1}
-Let $n$ be a natural number, let $J$ be a set of indices in $\text{Fin}(n)$, let $y$
+Let $n$ be a natural number, let $J$ be a set of indices in $	ext{Fin}(n)$, let $y$
 assign a sign to each index in $J$, and let $z$ assign a sign to each index outside $J$.
 If $i$ is an index outside $J$, then the sign vector obtained by combining $y$ and $z$
 has value $z(i)$ at $i$.
@@ -4274,9 +4274,9 @@ evaluated on the vector formed by combining $y$ and $z$.
 \lean{FABL.liftFreeFrequency}
 \label{FABL.liftFreeFrequency}
 \leanok
-Let $n$ be a natural number, let $J$ be a set of coordinates in $\mathbin n$, and let $S$ be
+Let $n$ be a natural number, let $J$ be a set of coordinates in $in n$, and let $S$ be
 a set of elements of $J$. The lifted frequency set consists of the corresponding
-coordinates in $\mathbin n$.
+coordinates in $in n$.
 \end{definition}
 
 \begin{definition}[Lifting a complementary frequency set]
@@ -4284,16 +4284,16 @@ coordinates in $\mathbin n$.
 \label{FABL.liftFixedFrequency}
 \leanok
 \uses{FABL.FixedIndex}
-Let $n$ be a natural number, let $J$ be a set of coordinates in $\mathbin n$, and let $T$ be
+Let $n$ be a natural number, let $J$ be a set of coordinates in $in n$, and let $T$ be
 a set of coordinates outside $J$. The lifted frequency set consists of those same
-coordinates viewed in $\mathbin n$.
+coordinates viewed in $in n$.
 \end{definition}
 
 \begin{definition}[Free part of a frequency set]
 \lean{FABL.freeFrequencyPart}
 \label{FABL.freeFrequencyPart}
 \leanok
-Let $n$ be a natural number and let $J$ and $U$ be sets of coordinates in $\mathbin n$. The
+Let $n$ be a natural number and let $J$ and $U$ be sets of coordinates in $in n$. The
 free part of $U$ relative to $J$ is the set of elements of $J$ whose underlying
 coordinates belong to $U$.
 \end{definition}
@@ -4303,7 +4303,7 @@ coordinates belong to $U$.
 \label{FABL.fixedFrequencyPart}
 \leanok
 \uses{FABL.FixedIndex}
-Let $n$ be a natural number and let $J$ and $U$ be sets of coordinates in $\mathbin n$. The
+Let $n$ be a natural number and let $J$ and $U$ be sets of coordinates in $in n$. The
 fixed part of $U$ relative to $J$ is the set of coordinates outside $J$ whose underlying
 coordinates belong to $U$.
 \end{definition}
@@ -4325,8 +4325,8 @@ belongs to $U$.
 \leanok
 \uses{FABL.FixedIndex, FABL.fixedFrequencyPart}
 \difficulty{1}
-Let $n$ be a natural number, and let $J,U\text{Fin}(n)$ be finite sets. For an index
-$i\text{Fin}(n)$ outside $J$, the corresponding element of the fixed frequency part
+Let $n$ be a natural number, and let $J,U	ext{Fin}(n)$ be finite sets. For an index
+$i	ext{Fin}(n)$ outside $J$, the corresponding element of the fixed frequency part
 belongs to that part exactly when $i$ belongs to $U$.
 \end{theorem}
 
@@ -4358,9 +4358,9 @@ frequencies in $U$ outside $J$, lifted to the full coordinate set.
 \leanok
 \uses{FABL.fixedFrequencyPart, FABL.freeFrequencyPart, FABL.liftFixedFrequency, FABL.liftFreeFrequency}
 \difficulty{4}
-Let $n$ be a natural number and let $J,U$ be subsets of $\mathbin n$. The elements of $U$
+Let $n$ be a natural number and let $J,U$ be subsets of $in n$. The elements of $U$
 lying in $J$, together with those outside $J$, partition $U$; after viewing each part as
-a subset of $\mathbin n$, their union is $U$.
+a subset of $in n$, their union is $U$.
 \end{theorem}
 
 \begin{theorem}[Unique frequency decomposition]
@@ -9524,7 +9524,7 @@ f(x)=\frac18-\frac18x_0+\frac18x_1-\frac18x_2-\frac18x_3+\frac38x_0x_1+\frac18x_
 \label{FABL.example3_19FreeCoordinates}
 \leanok
 The free coordinates in this example are $0$ and $1$ among the four coordinates indexed
-by $\mathbin 4$.
+by $in 4$.
 \end{definition}
 
 \begin{definition}[First free coordinate]
@@ -9532,7 +9532,7 @@ by $\mathbin 4$.
 \label{FABL.example3_19First}
 \leanok
 \uses{FABL.example3_19FreeCoordinates}
-Among the free coordinates $\\{0,1\\}$ in $\mathbin 4$, the first selected coordinate is $0$.
+Among the free coordinates $\\{0,1\\}$ in $in 4$, the first selected coordinate is $0$.
 \end{definition}
 
 \begin{definition}[A selected free coordinate]
@@ -9639,7 +9639,7 @@ sign $y(1)$ at coordinate $1$.
 \leanok
 \uses{FABL.FixedIndex, FABL.FreeSignCube, FABL.combineSignCube, FABL.combineSignCube_apply_fixed, FABL.example3_19FixedAssignment, FABL.example3_19FixedAssignment_two, FABL.example3_19FreeCoordinates}
 \difficulty{3}
-Let $y$ assign a sign in $\{ -1,1\}$ to each of the free coordinates $0$ and $1$.
+Let $y$ assign a sign in $\{ -1,1\}$ to each of the free coordinates $0$ and $1$.
 Combining $y$ with the fixed assignment that gives coordinate $2$ the sign $1$ and
 coordinate $3$ the sign $-1$ produces a sign vector whose coordinate $2$ is $1$.
 \end{theorem}
@@ -18675,7 +18675,7 @@ uniform average of $f(h+z)$ over $h\in H$.
 \leanok
 \uses{FABL.perpendicularSubspace, FABL.subspaceEvaluationCharacter, FABL.subspaceEvaluationCharacter_eq_zero_iff, FABL.vectorWalshCharacter, FABL.vectorWalshCharacter_apply, FABL.𝔽₂}
 \difficulty{4}
-Let $H$ be a linear subspace of $\mathbb{F}_2^n$ and let $\gamma\in\mathbb{F}_2^n$.
+Let $H$ be a linear subspace of $ \mathbb{F}_2^n$ and let $ \gamma\in\mathbb{F}_2^n$.
 The average over $h\in H$ of the Walsh character $(-1)^{\sum_{i:\gamma_i\ne 0}h_i}$ is
 $1$ if $\gamma$ is orthogonal to every vector in $H$ under the standard dot product over
 $\mathbb{F}_2$, and is $0$ otherwise.

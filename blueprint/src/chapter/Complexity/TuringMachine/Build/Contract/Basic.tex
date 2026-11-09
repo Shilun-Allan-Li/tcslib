@@ -346,7 +346,7 @@ Let $M$ be a multi-tape Turing machine, let $F$ be a set of states (including th
 possibility of the halting state), and let $P$ be a property of work-tape head
 positions. Suppose a computation from $a$ reaches $b$ after $t$ steps, avoids $F$ at
 every time $u<t$, and satisfies $P$ at every time $u\le t$. If $b$ is not halted, then
-the same computation segment also avoids $F\cup\{\text{halt}\text{ state}\}$ at every
+the same computation segment also avoids $F\cup\{\text{halt}	ext{ state}\}$ at every
 time before $t$, while still satisfying $P$ through time $t$.
 \end{theorem}
 
@@ -499,7 +499,7 @@ Let $M$ be a $k$-work-tape Turing machine, let $a$ be a state, let $E$ be a set 
 optional states, and let $P$ be a predicate on work-tape head positions. For
 configurations $c$ and $c'$ on a fixed input and a natural number $t$, require that $c$
 starts in state $a$, that $t>0$, and that after exactly $t$ steps the machine reaches
-$c'$ with state in $\bigl\{a\bigr\}\cup E$. At every intermediate time $u$ with $0<u<t$,
+$c'$ with state in $igl\{a\bigr\}\cup E$. At every intermediate time $u$ with $0<u<t$,
 the state must lie outside the union of $E$, the state $a$, and the halting state;
 throughout times $0$ through $t$, the work-tape head positions must satisfy $P$.
 \end{definition}
@@ -1049,7 +1049,7 @@ of the supplied bounds over the source run, including the endpoint.
 \uses{Turing.Cfg, Turing.Contract, Turing.Contract.lockstep, Turing.Lockstep, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
 Let $M$ and $N$ be machines, let $E$ map configurations of $M$ to configurations of $N$,
-and let $c\text{ost}$ assign a natural-number cost to each configuration of $M$. Let $C$
+and let $c	ext{ost}$ assign a natural-number cost to each configuration of $M$. Let $C$
 be a contract for $M$ with entry state $e$ and exit set $X$, and let $L$ be a lockstep
 relation between $M$ and $N$ using $E$, $c\text{ost}$, and exit sets $X,X'$. Let $e'$ be
 a state of $N$, and let $b_-,b_+$ assign integer bounds to each configuration of $M$ and

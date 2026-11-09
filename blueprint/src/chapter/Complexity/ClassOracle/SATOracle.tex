@@ -35,14 +35,14 @@ bit strings whose decoded CNF formulas are satisfiable.
 \leanok
 \uses{Complexity.NP_subset_POracle_SAT, Complexity.POracle, Complexity.SAT, Complexity.coNP, Complexity.compl_mem_POracle}
 \difficulty{3}
-Let a language be a set of finite binary strings. Define $\text{NP}$ to consist of
+Let a language be a set of finite binary strings. Define $	ext{NP}$ to consist of
 languages $L$ for which there are fixed nonnegative integers $C,c$ and a language $V$
 decidable in deterministic polynomial time such that, for every string $x$, membership
 $x\in L$ is equivalent to the existence of a string $u$ of length exactly $C(|x|+1)^c$
-with $xu\in V$. Let $\text{coNP}$ consist of languages whose complements belong to
-$\text{NP}$. Let $\text{SAT}$ be the language of binary strings whose decoded conjunctive
+with $xu\in V$. Let $	ext{coNP}$ consist of languages whose complements belong to
+$	ext{NP}$. Let $	ext{SAT}$ be the language of binary strings whose decoded conjunctive
 normal form is satisfiable, with strings that fail to parse decoded as the empty
-formula. Let $\text{P}^{\text{SAT}}$ consist of languages decidable by a deterministic
-oracle Turing machine with access to $\text{SAT}$ in time at most $a(n^d+1)$ for some
+formula. Let $	ext{P}^{\text{SAT}}$ consist of languages decidable by a deterministic
+oracle Turing machine with access to $	ext{SAT}$ in time at most $a(n^d+1)$ for some
 fixed nonnegative integers $a,d$. Then $\text{coNP}\subseteq\text{P}^{\text{SAT}}$.
 \end{theorem}

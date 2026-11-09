@@ -290,8 +290,8 @@ two-bit encoding of the input symbol in $s$.
 \difficulty{3}
 Let $M$ be a finite Turing machine over the binary alphabet with $k$ work tapes, let a
 binary code be given for its optional states, and let $s$ be a snapshot of $M$. For each
-work tape $\tau$, the two bits in the work-symbol slice for $\tau$ of the encoded snapshot
-are exactly the two-bit encoding of the symbol on tape $\tau$ in $s$.
+work tape $	au$, the two bits in the work-symbol slice for $	au$ of the encoded snapshot
+are exactly the two-bit encoding of the symbol on tape $	au$ in $s$.
 \end{lemma}
 
 \begin{lemma}[Blocks are determined by their slices]
@@ -502,7 +502,7 @@ for $0\le i\le R(|x|)$ is computable in polynomial time.
 \leanok
 \uses{Complexity.NP, Complexity.clObliviousVerifier, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.Oblivious}
 \difficulty{1}
-Let $L$ be a language in $\mathbb{NP}$. There exist natural numbers $C,e,c,A,d$, a Boolean
+Let $L$ be a language in $bb{NP}$. There exist natural numbers $C,e,c,A,d$, a Boolean
 language $V$, and a finite Turing machine $M$ over the Boolean alphabet such that, for
 every binary word $x$, membership $x\in L$ is equivalent to the existence of a word $u$
 of length exactly $C(|x|+1)^e$ with $xu\in V$. The numbers $c,A,d$ are positive, $M$ is
@@ -1204,7 +1204,7 @@ Let $M$ be a finite Turing machine over Booleans, let $x,y$ be Boolean words, le
 a configuration of $M$ on $y$, and let $b$ be a Boolean tag satisfying the boundary
 conditions for the input-head position of $c$. Assign a natural number $n_i$ to each of
 the $2(1+k)$ counter indices, and suppose their binary representations all have length
-at most $W$. There is a time $\tau$ with $0<\tau\le 2W+4$ such that at every integer time
+at most $W$. There is a time $	au$ with $0<\tau\le 2W+4$ such that at every integer time
 $j$ with $0<j<\tau$, the tracking machine is in its bank phase; at time $\tau$ it is at
 the canonical configuration for the one-step successor of $c$, with a valid boundary tag
 and each counter updated by one exactly when its index is selected by the actual
@@ -2248,7 +2248,7 @@ A list of binary words is packed by encoding each word as a self-delimiting doub
 \uses{Turing.pairEncode}
 \difficulty{1}
 For all Boolean words $a,b,c$, appending $c$ to the encoding of the pair $(a,b)$ gives
-the encoding of $(a,b\text{ followed by }c)$; that is, $\langle a,b\rangle c=\langle
+the encoding of $(a,b	ext{ followed by }c)$; that is, $\langle a,b\rangle c=\langle
 a,bc\rangle$.
 \end{lemma}
 
@@ -3150,7 +3150,7 @@ search configuration.
 \uses{Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clMatchCfg, Complexity.clMatchLoadSelect, Complexity.clMatchState, Complexity.clPlacedCfg}
 \difficulty{3}
 For any number $l$ of candidate fields, positive and negative coordinates in
-$\text{Fin}(l)$, input word, loader state, old and new rows, target words, stream,
+$	ext{Fin}(l)$, input word, loader state, old and new rows, target words, stream,
 cursors, clock data, and flags, embedding the loader configuration into the matcher’s
 loading slots gives the matcher configuration in its loading state. The embedded
 configuration uses the new row and the supplied stream cursor; the target words, clock,
@@ -4565,8 +4565,8 @@ $result$ and $emit$ with budget $n\mapsto B(n)+1$.
 \label{Complexity.clA5_bridge_bound}
 \leanok
 \difficulty{4}
-Let $c,A,d,n,\ell$ be natural numbers, and suppose that $\ell \langle A(n+1)^d$. Then
-$c\bigl(A(n+1)^d+n+\ell+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}$.
+Let $c,A,d,n, ell$ be natural numbers, and suppose that $ ell  le A(n+1)^d$. Then
+$c\bigl(A(n+1)^d+n+ ell+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}$.
 \end{lemma}
 
 \begin{lemma}[Clean installation of a polynomial-time function]
@@ -5466,10 +5466,10 @@ For a work tape $\tau$, a persistent body word, and a time $t$, the stored visit
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.clA5Add_native, Complexity.clA5Field_native, Complexity.clA5Times_native, Complexity.clA5Visit, Complexity.clA5_pt_const, Complexity.clHeaderTail_native, Turing.FinTM}
 \difficulty{2}
-Let $M$ be a finite-state binary Turing machine, let $\tau$ be one of its work tapes, and
+Let $M$ be a finite-state binary Turing machine, let $	au$ be one of its work tapes, and
 let $t$ assign a natural number to each bit string. If the function that maps $z$ to the
 unary bit string of length $t(z)$ is polynomial-time computable, then the function that
-maps $z$ to the stored visit code for tape $\tau$ at time $t(z)$ is polynomial-time
+maps $z$ to the stored visit code for tape $	au$ at time $t(z)$ is polynomial-time
 computable.
 \end{lemma}
 
@@ -5481,7 +5481,7 @@ computable.
 \difficulty{2}
 Let $M$ be a finite-state binary Turing machine, let $C,e,c,A,d$ be natural numbers, let
 $x$ be a bit string, and let $j,t$ be natural numbers. If $t$ is at most the producer
-horizon for these parameters and $|x|$, then for every work tape $\tau$ of $M$, the
+horizon for these parameters and $|x|$, then for every work tape $	au$ of $M$, the
 stored visit code at time $t$ in the packed records with cursor $j$ equals the
 optional-time code for the greatest time $s<t$ at which that tape's head, on the
 all-zero input of length $|x|+C(|x|+1)^e$, occupies its position at time $t$; it is the
@@ -5537,9 +5537,9 @@ For a work tape $\tau$, a persistent body word, and a time $t$: an empty stored 
 \uses{Complexity.CLFieldCode, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Group_native, Complexity.clA5Sizes_native, Complexity.clA5SmallNum_native, Complexity.clA5Visit_native, Complexity.clA5WorkFragment, Complexity.clA5_pt_cond, Complexity.clA5_pt_const, Complexity.clA5_pt_eq, Complexity.clHeaderTail_native, Turing.FinTM}
 \difficulty{3}
 Let $M$ be a finite-state binary Turing machine, let a binary code be given for its
-optional states, and let $\tau$ be one of its work tapes. If $t$ assigns a natural number
+optional states, and let $	au$ be one of its work tapes. If $t$ assigns a natural number
 to each bit string and the unary string of length $t(z)$ is polynomial-time computable
-as a function of $z$, then the work fragment for tape $\tau$ at time $t(z)$ is
+as a function of $z$, then the work fragment for tape $	au$ at time $t(z)$ is
 polynomial-time computable as a function of $z$.
 \end{lemma}
 
@@ -5552,9 +5552,9 @@ polynomial-time computable as a function of $z$.
 Let $M$ be a finite-state binary Turing machine, let a binary code be given for its
 optional states, let $C,e,c,A,d$ be natural numbers, let $x$ be a bit string, and let
 $j,t$ be natural numbers. If $t$ is at most the producer horizon at input length $|x|$,
-then for each work tape $\tau$ of $M$, the work fragment obtained from the stored visit
+then for each work tape $	au$ of $M$, the work fragment obtained from the stored visit
 table in the packed records with cursor $j$ equals the serialized fragment of the pure
-work clause group at time $t$ and tape $\tau$, using the reference input length
+work clause group at time $t$ and tape $	au$, using the reference input length
 $|x|+C(|x|+1)^e$.
 \end{lemma}
 
@@ -5566,7 +5566,7 @@ $|x|+C(|x|+1)^e$.
 \difficulty{4}
 Let $f$ be a function from binary words to natural numbers whose unary representation is
 polynomial-time computable. For every natural number $k$, the function that maps $x$ to
-the unary representation of $f(x)/k$ is polynomial-time computable, where division is
+the unary representation of $ f(x)/k $ is polynomial-time computable, where division is
 natural-number division and in particular $f(x)/0=0$.
 \end{lemma}
 

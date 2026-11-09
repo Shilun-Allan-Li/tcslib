@@ -19,7 +19,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.UPathWalk}.
 \uses{Complexity.SymRest, Complexity.inEdge, Complexity.symmetric_inEdge, Randomized.RegularMultigraph, Randomized.le_padDegree, Randomized.padDegree, Randomized.padGraph}
 Let $x$ be a Boolean list and let $n$ be a natural number. If the encoded edge relation
 is symmetric on vertices below $n$, the construction assigns a regular multigraph on the
-vertex set $\\text{Fin}(n)$ of degree $2^{\operatorname{size}(n)}$.
+vertex set $\	ext{Fin}(n)$ of degree $2^{\operatorname{size}(n)}$.
 \end{definition}
 
 \begin{lemma}[Length-loop entry from multiplication]
@@ -95,10 +95,10 @@ termination and probability properties.
 \uses{Randomized.RegularMultigraph, Randomized.padDegree}
 \difficulty{3}
 Let $n$ be a natural number, let $G$ be an undirected multigraph with vertices indexed
-by $\text{Fin}(n)$ and degree $2^{\text{size}(n)}$, and let $f$ assign a rational number
+by $	ext{Fin}(n)$ and degree $2^{	ext{size}(n)}$, and let $f$ assign a rational number
 to each vertex. For any vertex $v$, the sum of $f$ over the neighbors in the slots
-indexed from $0$ to $2^{\text{size}(n)}-1$, with out-of-range slots contributing $0$,
-divided by $2^{\text{size}(n)}$, equals the sum of $f$ over all edge slots at $v$ divided
+indexed from $0$ to $2^{	ext{size}(n)}-1$, with out-of-range slots contributing $0$,
+divided by $2^{	ext{size}(n)}$, equals the sum of $f$ over all edge slots at $v$ divided
 by the degree.
 \end{lemma}
 

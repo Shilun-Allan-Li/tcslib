@@ -11,8 +11,8 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.RandomWalk}
 \label{Randomized.idxProb}
 \leanok
 Let $D$ and $k$ be natural numbers, and let $A$ be a property of lists of elements of
-$\text{Fin}(D)$. The probability of $A$ under a uniformly chosen length-$k$ sequence from
-$\text{Fin}(D)$ is the number of such sequences for which $A$ holds, divided by $D^k$.
+$	ext{Fin}(D)$. The probability of $A$ under a uniformly chosen length-$k$ sequence from
+$	ext{Fin}(D)$ is the number of such sequences for which $A$ holds, divided by $D^k$.
 \end{definition}
 
 \begin{theorem}[Probability at length zero]
@@ -285,7 +285,7 @@ inclusive.
 \label{Randomized.decodeIdx}
 \leanok
 Let $b,D$ be natural numbers and let $e$ be a bijection from Boolean strings of length
-$b$ to $\text{Fin}(D)$. For a natural number $k$ and a Boolean list, decode $k$
+$b$ to $	ext{Fin}(D)$. For a natural number $k$ and a Boolean list, decode $k$
 successive blocks of length $b$ by applying $e$ to each block, treating any positions
 beyond the list as false; the resulting list has length $k$.
 \end{definition}

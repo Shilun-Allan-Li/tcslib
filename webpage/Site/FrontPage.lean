@@ -19,9 +19,6 @@ Theoretical Computer Science
 TCSlib is an open-source library formalizing results across theoretical
 computer science using [Lean 4](https://lean-lang.org) and
 [Mathlib](https://leanprover-community.github.io/mathlib4_docs/).
-Our work spans Boolean function analysis and hypercontractivity, error-correcting
-codes, cryptography, and an ongoing formalization of Arora and Barak’s
-*Computational Complexity: A Modern Approach*.
 
 ::::html a (class := "hero-btn primary") (href := "https://github.com/Shilun-Allan-Li/tcslib")
 :::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
@@ -34,6 +31,90 @@ Get Started
 ::::
 
 :::::
+
+::::::
+
+::::::html div (class := "pillars") (id := "formalization-tools")
+
+*Scripts and Tools for Lean Formalization*
+
+::::htmlDiv (class := "pillar")
+
+*Have-to-Lemma*
+
+Extract local proof steps into reusable lemmas and clean up unnecessary
+intermediate facts. The tool uses Lean’s elaborated proof information and
+rechecks each rewrite before writing changes.
+
+[Use the have-to-lemma tool](https://github.com/Shilun-Allan-Li/tcslib/blob/main/scripts/haves.py).
+
+::::
+
+::::htmlDiv (class := "pillar")
+
+*Proofmatch*
+
+Match reference statements and proofs from PDFs or validated Markdown to
+Lean declarations. Proofmatch supports source extraction, search, and comparison
+to help maintain auditable links between informal mathematics and formal proofs.
+
+[Explore Proofmatch](https://github.com/Shilun-Allan-Li/tcslib/tree/main/proofmatch).
+
+::::
+
+::::htmlDiv (class := "pillar")
+
+*Blueprints and Dependency Tools*
+
+Scripts extract declaration dependencies, generate and validate blueprint
+entries, and check style and attribution, keeping the informal exposition
+connected to the evolving library.
+
+[Browse the scripts](https://github.com/Shilun-Allan-Li/tcslib/tree/main/scripts).
+
+::::
+
+::::::
+
+::::::html div (class := "pillars") (id := "autoformalization-dataset")
+
+*Mathematics Dataset and Autoformalization Pipeline*
+
+::::htmlDiv (class := "pillar")
+
+*Paired Informal and Formal Mathematics*
+
+Our dataset brings together TCSlib and attributed FABL material, pairing
+informal statements and proof accounts with extracted Lean statements,
+flattened proofs, dependency information, and source provenance.
+It is designed to support training and evaluation for autoformalization.
+
+::::
+
+::::htmlDiv (class := "pillar")
+
+*From Sources to Dataset*
+
+An incremental pipeline ingests references, matches citations, maintains
+blueprints, and generates statement prose and proof accounts where sources
+are unmatched. Cached stages support resuming work as the library grows.
+
+[Follow the pipeline guide](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/INSTRUCTIONS.md).
+
+::::
+
+::::htmlDiv (class := "pillar")
+
+*Provenance and Validation*
+
+Published gzip shards and a manifest make the dataset accessible with
+checksums and project provenance. Structural checks and optional sampled
+Lean checks track quality; the proof-completeness flag records the absence
+of placeholders in extracted text and is separate from kernel validation.
+
+[Explore the dataset and schema](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/README.md).
+
+::::
 
 ::::::
 
@@ -54,8 +135,7 @@ including the Fourier expansion, Parseval's identity, and spectral norms.
 
 *Hypercontractivity Beyond the Cube*
 
-Our newer development extends beyond the Bonami lemma and the
-$`(2,4)` inequality to general forward and reverse noise inequalities,
+General forward and reverse noise inequalities,
 finite-product hypercontractivity, tensorization, and random-variable moment bounds.
 
 ::::
@@ -76,7 +156,7 @@ Arrow’s impossibility theorem via Boolean function analysis.
 
 ::::::html div (class := "pillars") (id := "complexity-theory")
 
-*Complexity Theory: Formalizing Arora–Barak*
+*Complexity Theory*
 
 ::::htmlDiv (class := "pillar")
 
@@ -172,90 +252,6 @@ dual codes, and the MacWilliams identity.
 
 Quantum Singleton and Quantum Hamming bounds,
 formalizing the fundamental limits of quantum error correction.
-
-::::
-
-::::::
-
-::::::html div (class := "pillars") (id := "formalization-tools")
-
-*Scripts and Tools for Lean Formalization*
-
-::::htmlDiv (class := "pillar")
-
-*Have-to-Lemma*
-
-Extract local proof steps into reusable lemmas and clean up unnecessary
-intermediate facts. The tool uses Lean’s elaborated proof information and
-rechecks each rewrite before writing changes.
-
-[Use the have-to-lemma tool](https://github.com/Shilun-Allan-Li/tcslib/blob/main/scripts/haves.py).
-
-::::
-
-::::htmlDiv (class := "pillar")
-
-*Proofmatch*
-
-Match reference statements and proofs from PDFs or validated Markdown to
-Lean declarations. Proofmatch supports source extraction, search, and comparison
-to help maintain auditable links between informal mathematics and formal proofs.
-
-[Explore Proofmatch](https://github.com/Shilun-Allan-Li/tcslib/tree/main/proofmatch).
-
-::::
-
-::::htmlDiv (class := "pillar")
-
-*Blueprints and Dependency Tools*
-
-Scripts extract declaration dependencies, generate and validate blueprint
-entries, and check style and attribution, keeping the informal exposition
-connected to the evolving library.
-
-[Browse the scripts](https://github.com/Shilun-Allan-Li/tcslib/tree/main/scripts).
-
-::::
-
-::::::
-
-::::::html div (class := "pillars") (id := "autoformalization-dataset")
-
-*Mathematics Dataset and Autoformalization Pipeline*
-
-::::htmlDiv (class := "pillar")
-
-*Paired Informal and Formal Mathematics*
-
-Our dataset brings together TCSlib and attributed FABL material, pairing
-informal statements and proof accounts with extracted Lean statements,
-flattened proofs, dependency information, and source provenance.
-It is designed to support training and evaluation for autoformalization.
-
-::::
-
-::::htmlDiv (class := "pillar")
-
-*From Sources to Dataset*
-
-An incremental pipeline ingests references, matches citations, maintains
-blueprints, and generates statement prose and proof accounts where sources
-are unmatched. Cached stages support resuming work as the library grows.
-
-[Follow the pipeline guide](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/INSTRUCTIONS.md).
-
-::::
-
-::::htmlDiv (class := "pillar")
-
-*Provenance and Validation*
-
-Published gzip shards and a manifest make the dataset accessible with
-checksums and project provenance. Structural checks and optional sampled
-Lean checks track quality; the proof-completeness flag records the absence
-of placeholders in extracted text and is separate from kernel validation.
-
-[Explore the dataset and schema](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/README.md).
 
 ::::
 

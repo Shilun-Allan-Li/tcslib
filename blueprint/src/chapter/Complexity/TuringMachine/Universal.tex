@@ -177,8 +177,8 @@ For every natural number $n$, the unary state tape encoding $n$ is blank at cell
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour}
 \difficulty{4}
 Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter
-controls. Let the state tape $\sigma:\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ satisfy
-$\sigma(0)=0$ and $\sigma(j)\ne0$ for every positive natural number $j$. Suppose that in
+controls. Let the state tape $sigma:\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ satisfy
+$sigma(0)=0$ and $sigma(j)\ne0$ for every positive natural number $j$. Suppose that in
 control $q$, reading $0$ on work tape $1$ causes a transition to $q'$ with a one-cell
 right state-head move, while any other read causes the machine to remain in $q$ with a
 one-cell left move. Then, for every $j\in\mathbb{N}$, from the interpreter configuration
@@ -299,7 +299,7 @@ remaining counter, table cursor $p+n+1$, and unchanged state tape and state-tape
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter, Turing.universalSkipDone}
 \difficulty{4}
 Let $x$ be a Boolean word, let $B$ be a four-tape configuration on input $x$, let $d$ be
-an optional record destination, and let $r$ be a counter in $\text{Fin}(9)$. Suppose the
+an optional record destination, and let $r$ be a counter in $	ext{Fin}(9)$. Suppose the
 table is a concatenation of words $l$ and $r_0$ with $n$ copies of $1$ followed by $0$
 between them. Starting in the unary-skip control with table cursor $|l|$, after $n+1$
 steps the table cursor is $|l|+n+1$; the control is the skip continuation for $d$ if the
@@ -457,7 +457,7 @@ nine read-symbol pairs at each state.
 \uses{Turing.Action, Turing.CodeTM, Turing.CodeTM.serialize, Turing.timedCut_Actions, Turing.timedCut_Actions_lookup, Turing.timedCut_Header, Turing.timedCut_serialization_actions, Turing.universalRecordBits, Turing.universalRecordIndex}
 \difficulty{5}
 Let $M$ be a coded machine, let $q$ be a state of $M$, and let
-$u,v\in\{\text{absent},0,1\}$ be the input and work-tape reads. There are a list $G$ of
+$u,v\in\{	ext{absent},0,1\}$ be the input and work-tape reads. There are a list $G$ of
 lists of transition actions, a list $B$ of transition actions, and a Boolean word $R$
 such that $G$ has length equal to the index of $q$, every list in $G$ has length nine,
 and $B$ has length equal to the record index of $(u,v)$. The serialization of $M$ is the
@@ -1076,7 +1076,7 @@ Let $x$ be a Boolean word, let $c$ be a base configuration of the timed interpre
 input $x$, let $u$ assign eight Boolean action bits, and let $h$ and $r$ be Boolean
 flags. For every Boolean word $b_s$, integer frontier $z$, and finite lists $l,r_s$ of
 possibly blank bits, running the interpreter for $|b_s|$ steps from the borrow phase
-with flag $r$ and zipper state $(z,l,b_s\mathbin{+}r_s)$ yields the borrow phase with
+with flag $r$ and zipper state $(z,l,b_s\mathbin{+}r_s)$ yields the borrow phase with
 flag equal to the final borrow from subtracting $r$ from $b_s$, frontier $z+|b_s|$,
 processed stack the reversed resulting word followed by $l$, and unprocessed list $r_s$.
 \end{lemma}
@@ -1308,9 +1308,9 @@ output is the concatenation of $o$ and $r$.
 \difficulty{4}
 Let $x$ be a finite Boolean word, and let $c$ be a four-tape interpreter configuration
 on input $x$ with no active state. For any Boolean clock word $b$, after
-$2|c.\text{output}|+3$ steps of the timed interpreter from the six-tape lift of $c$ with
+$2|c.	ext{output}|+3$ steps of the timed interpreter from the six-tape lift of $c$ with
 clock word $b$, the machine has no active state and its real output is the one-bit word
-$1$ followed by $c.\text{output}$.
+$1$ followed by $c.	ext{output}$.
 \end{lemma}
 
 \begin{lemma}[The prefix parser remains active]

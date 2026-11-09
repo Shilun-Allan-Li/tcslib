@@ -10,7 +10,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Pseudorandomness.ModThree
 \lean{FABL.signCoordinateIntegerSum}
 \label{FABL.signCoordinateIntegerSum}
 \leanok
-For a sign vector $x$ of length $n$, its integer coordinate sum is $\sum_{i=1}^n x_i$,
+For a sign vector $x$ of length $n$, its integer coordinate sum is $sum_{i=1}^n x_i$,
 with each coordinate regarded as an integer.
 \end{definition}
 
@@ -87,7 +87,7 @@ reduced modulo $3$ is zero, and equals $0$ otherwise.
 \lean{FABL.modThreeCubicRoot}
 \label{FABL.modThreeCubicRoot}
 \leanok
-Let $\omega=\exp(2\pi i/3)$. This defines a complex primitive cube root of unity.
+Let $omega=exp(2pi i/3)$. This defines a complex primitive cube root of unity.
 \end{definition}
 
 \begin{theorem}[Cartesian form of the cubic root]
@@ -124,8 +124,8 @@ For $\zeta=\exp(2\pi i/3)$, one has $\zeta^3=1$.
 \label{FABL.modThreeCubicCharacter}
 \leanok
 \uses{FABL.modThreeCubicRoot_cube}
-Let $\omega=\exp(2\pi i/3)$. The associated additive character on $\bbZ/3\bbZ$ is the
-character that sends the residue class of $1$ to $\omega$.
+Let $omega=exp(2pi i/3)$. The associated additive character on $bbZ/3bbZ$ is the
+character that sends the residue class of $1$ to $omega$.
 \end{definition}
 
 \begin{theorem}[Character value at zero]
@@ -185,7 +185,7 @@ indicator of $a=0$ satisfies $\mathbf
 \label{FABL.modThreeCubicFactor}
 \leanok
 \uses{FABL.Sign, FABL.signValue}
-For a sign $s$, define the complex number $-frac12 + frac{\sqrt{3}}2 s i$.
+For a sign $s$, define the complex number $-frac12 + frac{sqrt{3}}2 s i$.
 \end{definition}
 
 \begin{theorem}[Cubic character on a sign residue]
@@ -239,7 +239,7 @@ where $\\mathrm{i}$ is the imaginary unit.
 \leanok
 \uses{FABL.monomial}
 For a finite coordinate set $S$ and a sign vector $x$ of length $n$, define
-$\bigl(-\sqrt{3}\bigr)^{|S|}prod_{j\mathbin S}x_j, i^{|S|}$.
+$bigl(-sqrt{3}bigr)^{|S|}prod_{jin S}x_j, i^{|S|}$.
 \end{definition}
 
 \begin{theorem}[Product of cubic complex factors]
@@ -249,7 +249,7 @@ $\bigl(-\sqrt{3}\bigr)^{|S|}prod_{j\mathbin S}x_j, i^{|S|}$.
 \uses{FABL.modThreeComplexTerm, FABL.monomial, FABL.signValue}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $S$ be a subset of the coordinate indices
-$\text{Fin}(n)$, and let $x$ be a sign vector in $\\{-1,1\\}^n$. The product over $i\\in
+$	ext{Fin}(n)$, and let $x$ be a sign vector in $\\{-1,1\\}^n$. The product over $i\\in
 S$ of $(-\\sqrt{3}\,x_i)\,\\mathrm{i}$ equals $(-\\sqrt{3})^{|S|}(\\prod_{i\\in
 S}x_i)\\,\\mathrm{i}^{|S|}$, where $\\mathrm{i}$ is the imaginary unit.
 \end{theorem}
@@ -292,7 +292,7 @@ For every odd nonnegative integer $k$, the real part of $i^k$ is zero.
 Let $S\subseteq\{1,\ldots,n\}$ and $x\in\{-1,1\}^n$. The real part of
 $(-\sqrt{3})^{|S|}\bigl(\prod_{i\in S}x_i\bigr)\,\mathrm{i}^{|S|}$ is
 $$\begin{cases}(-1)^{(|S|\bmod 4)/2}(\sqrt{3})^{|S|}\displaystyle\prod_{i\in
-S}x_i,&|S|\text{ is even},\\0,&|S|\text{ is odd}.\end{cases}$$
+S}x_i,&|S|\text{ is even},\\0,&|S|\text{ is odd}. \end{cases}$$
 \end{theorem}
 
 \begin{theorem}[Real part of the cubic product]

@@ -169,7 +169,7 @@ value false beyond the end of $u$.
 Let $V$ be the language of binary strings $z$ for which there is an index $i$ satisfying
 $|z|=i+(i+1)$ such that the DNF formula decoded from the first $i$ bits of $z$ evaluates
 to false under the assignment given by the remaining $i+1$ bits, with all variables
-beyond those bits assigned false. If $V$ belongs to $\text{P}$, then the language of
+beyond those bits assigned false. If $V$ belongs to $	ext{P}$, then the language of
 binary strings whose decoded DNF formula is a tautology belongs to coNP.
 \end{lemma}
 
@@ -501,7 +501,7 @@ with bit $1$.
 \uses{Complexity.TautSyntax, Complexity.tautCfg, Complexity.tautSyntaxStep, Complexity.tautTM, Complexity.taut_syntax_double, Complexity.taut_syntax_separator, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
 Let $a$ and $u$ be binary strings. For every binary string $x$, prefix $p$,
-syntax-scanner state $s$, and equality $x=p\mathbin{+\!\!+}\langle a,u\rangle$, start the
+syntax-scanner state $s$, and equality $x=p\mathbin{++}\langle a,u\rangle$, start the
 verifier on $x$ in the syntax state carrying $s$, with $|p|$ input bits consumed, empty
 work tape, and work head at $0$. After $2|a|+2$ steps, it has consumed $|p|+2|a|+2$
 bits, with empty work tape and work head at $0$; its state is certificate-copy if
@@ -1007,7 +1007,7 @@ time before step $a+b$.
 \uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let $r,x,\mathrm{pre},o$ be binary strings and let $q$ be a syntax-scanner state, with
-$x=\mathrm{pre}\mathbin{++}r$. Starting on input $x$ in scanning state $q$ with head
+$x=\mathrm{pre}\mathbin{+[0m+}r$. Starting on input $x$ in scanning state $q$ with head
 at position $|\mathrm{pre}|+1$ and output $o$, the dual transducer reaches scanning
 state equal to the scanner transition folded over $r$ from $q$, at position $|x|+1$ with
 output still $o$, after exactly $|r|$ steps. At every earlier time in this segment, its

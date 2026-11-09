@@ -300,7 +300,7 @@ has the copied word as specified by the forward configuration at progress $|w|$.
 Let $k$ be a natural number, let $x$ be an input word, let $S$ be a symbol alphabet, and
 let $w$ be a finite word over $S$. Choose distinct work tapes $s$ and $d$, and let $c$
 be a configuration in the sweep phase. Suppose that, for every integer $p$ with $-1\le
-p\le |w|$, tape $s$ at position $\text{head}_s(c)+p$ contains exactly the symbol or blank
+p\le |w|$, tape $s$ at position $	ext{head}_s(c)+p$ contains exactly the symbol or blank
 specified by storing $w$ from offset $p$ (with positions outside the word blank). Then
 the run of the transfer machine from $c$ follows this trace: during the forward pass,
 both selected heads advance by one at each step and the destination tape is filled with
@@ -394,11 +394,11 @@ absent, the increment result is absent.
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.catalogTape}
 \difficulty{4}
-Let $f:\bbr\to\text{Option}(S)$ be a tape, let $z$ be an integer, let $\text{pre}$ and
-$\text{rest}$ be finite words over a symbol set $S$, and let $a,b\in S$. If the tape is
-formed by storing $\text{pre}\,a\,\text{rest}$ starting at position $z$, then updating the
-cell at position $z+|\text{pre}|$ to contain $b$ gives exactly the tape formed by storing
-$\text{pre}\,b\,\text{rest}$ starting at $z$, with the original tape retained outside the
+Let $f:br	o	ext{Option}(S)$ be a tape, let $z$ be an integer, let $	ext{pre}$ and
+$	ext{rest}$ be finite words over a symbol set $S$, and let $a,b\in S$. If the tape is
+formed by storing $	ext{pre}\,a\,	ext{rest}$ starting at position $z$, then updating the
+cell at position $z+|	ext{pre}|$ to contain $b$ gives exactly the tape formed by storing
+$	ext{pre}\,b\,	ext{rest}$ starting at $z$, with the original tape retained outside the
 stored segment.
 \end{lemma}
 
@@ -663,9 +663,9 @@ and it visits exactly one distinct cell on each tape $j\ne i$.
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.MultiTapeTM.runFrom, Turing.catalogCompareF, Turing.catalogCompareR, Turing.catalogTrace, Turing.catalog_compare_stop, Turing.catalog_compare_trace, Turing.compareTM}
 \difficulty{4}
-Let $k$ be a natural number, let $x$ be a Boolean input string, let $fst,snd<k$ be
+Let $k$ be a natural number, let $x$ be a Boolean input string, let $fst,sndin k$ be
 work-tape indices, and let $w$ assign a Boolean string to each work tape. There exists a
-natural number $T\le 2oot{\text{min}(|w(fst)|,|w(snd)|)}+2$ such that at every time
+natural number $T\le 2oot{	ext{min}(|w(fst)|,|w(snd)|)}+2$ such that at every time
 $t<T$ the machine has not entered either completed state, and at time $T$ its
 configuration is the initial word configuration with state set to completed with the
 truth value of whether $w(fst)=w(snd)$.
@@ -677,10 +677,10 @@ truth value of whether $w(fst)=w(snd)$.
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.MultiTapeTM.spaceUsedByTape, Turing.catalogCompareF, Turing.catalogCompareR, Turing.catalogTrace, Turing.catalog_compare_stop, Turing.catalog_compare_trace, Turing.catalog_space_bound, Turing.catalog_space_one, Turing.compareTM}
 \difficulty{5}
-Let $k$ be a natural number, choose work-tape indices $fst,snd<k$, let $w$ assign a
+Let $k$ be a natural number, choose work-tape indices $fst,sndin k$, let $w$ assign a
 Boolean word to each of the $k$ work tapes, and let $t$ be a natural number. Starting
 from the configuration containing those words, the comparison machine visits at most
-$\min(|w(fst)|,|w(snd)|)+2$ distinct cells on each of tapes $fst$ and $snd$ by time $t$.
+$min(|w(fst)|,|w(snd)|)+2$ distinct cells on each of tapes $fst$ and $snd$ by time $t$.
 Every tape whose index differs from both $fst$ and $snd$ visits exactly one distinct
 cell by that time.
 \end{theorem}
@@ -1249,7 +1249,7 @@ indexed by $j\in\{0,\ldots,C\}$.
 \label{Turing.FinTM.f2_catalogPolyTape}
 \leanok
 For each natural number $q$, define a function on the integers that returns the optional
-Boolean value $\text{some}(\text{true})$ at $z$ when $0 \le z < q$, and returns no value
+Boolean value $	ext{some}(	ext{true})$ at $z$ when $0 \le z < q$, and returns no value
 otherwise.
 \end{definition}
 
@@ -3394,10 +3394,10 @@ unchanged.
 Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, let $x$ be a
 Boolean input, and let a base configuration on $x$ have $B.k+1+(1+F.k)+1$ work tapes and
 states from $F$’s state set or from
-$(\text{Bool}\times(B.\text{State}\times\text{Bool}))\times\text{Fin}(14)$. Choose an optional
+$(	ext{Bool}	imes(B.	ext{State}	imes	ext{Bool}))	imes	ext{Fin}(14)$. Choose an optional
 state $q$ from this combined state set, an input-head position $p$ among the $|x|+2$
-positions, three work-tape contents $f,c,u:\bbr\to\text{Option}(\text{Bool})$, head
-positions $h_c,h_u\in\bbr$, and an output string $o$ of Booleans. The resulting
+positions, three work-tape contents $f,c,u:br	o	ext{Option}(	ext{Bool})$, head
+positions $h_c,h_u\inbr$, and an output string $o$ of Booleans. The resulting
 configuration has state $q$, input-head position $p$, and output $o$; its tapes at
 indices $B.k$, $B.k+1$, and $B.k+1+(1+F.k)$ have contents $f,c,u$ and head positions
 $0,h_c,h_u$, respectively, while every other tape and head position agrees with the base
@@ -4389,7 +4389,7 @@ $j+1\le z<q$.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.controlAction}
 For each natural number $k$, define a Boolean-alphabet Turing machine with $k+1$ work
-tapes, state set $\text{Fin}(5)\times\{\mathrm{false},\mathrm{true}\}$, and initial state
+tapes, state set $	ext{Fin}(5)\times\{\mathrm{false},\mathrm{true}\}$, and initial state
 $(0,\mathrm{false})$. Its transition function is specified as follows. In a state whose
 first coordinate is $0$, if work tape $0$ scans a symbol, the input head moves right,
 work tape $0$ moves right, and each other work tape moves right while its scanned cell
@@ -4733,7 +4733,7 @@ with all work-tape heads at zero after $j+1$ steps.
 \uses{Turing.Cfg.ofWords, Turing.FinTM.f2_catalogPolyTape, Turing.FinTM.f2_splitPos, Turing.FinTM.f2_splitPrepareReady, Turing.FinTM.f2_splitPrepareScan, Turing.FinTM.f2_splitPrepareTM, Turing.FinTM.f2_splitPrepare_extra, Turing.FinTM.f2_splitPrepare_rewind, Turing.FinTM.f2_splitPrepare_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.stateWord}
 \difficulty{4}
 For every natural number $k$ and Boolean words $w,s$, running the split-preparation
-machine on input $w$, from its initial configuration with state $(0,\text{false})$ and
+machine on input $w$, from its initial configuration with state $(0,	ext{false})$ and
 with $s$ on the first work tape and all other work tapes empty, for $2(|s|+1)$ steps
 yields the configuration with state $(2, |w|<|s|)$, input head at position
 $\min(|s|,|w|)+1$, first work tape storing $s$, every other work tape containing true
@@ -4834,11 +4834,11 @@ place, emits nothing, and halts. All work tapes are otherwise unchanged.
 \label{Turing.FinTM.f2_SplitBodyState}
 \leanok
 For a type $S$, define a control-state type with an anchor state; preparation states
-indexed by $\text{Fin}(3)\times\{\mathrm{false},\mathrm{true}\}$; counting states indexed
+indexed by $	ext{Fin}(3)\times\{\mathrm{false},\mathrm{true}\}$; counting states indexed
 by $S$ and a Boolean; checking states indexed by a Boolean; rewind states indexed by a
-Boolean and $\text{Fin}(3)$; restore states indexed by
-$\text{Fin}(5)\times\{\mathrm{false},\mathrm{true}\}$; and emit states indexed by
-$\text{Fin}(4)$.
+Boolean and $	ext{Fin}(3)$; restore states indexed by
+$	ext{Fin}(5)\times\{\mathrm{false},\mathrm{true}\}$; and emit states indexed by
+$	ext{Fin}(4)$.
 \end{definition}
 
 \begin{definition}[Split-body machine]
@@ -4962,7 +4962,7 @@ steps. Throughout these steps it avoids its anchor state.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.f2_catalogPolyTape, Turing.FinTM.f2_splitPos}
 Given a natural number $k$, Boolean lists $w$ and $s$, an optional state from
-$\text{Fin}(4)$, natural numbers $j$ and $h$, and a Boolean output list, define a
+$	ext{Fin}(4)$, natural numbers $j$ and $h$, and a Boolean output list, define a
 configuration with $k+1$ work tapes on input $w$. Its input-head position is the split
 position determined by $w$ and $j$; its first work tape is the buffer tape determined by
 $s$, each remaining work tape is the catalog polynomial tape with length parameter
@@ -5173,7 +5173,7 @@ For all natural numbers $C$ and $e$, there exist a finite Turing machine $M$ and
 natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within
 $c(n+1)^{e+2}$ steps and outputs the encoding that doubles each bit of the prefix of $w$
 of length $i$, appends $01$, and then appends the remaining suffix, where $i$ is the
-least integer in $0,\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such $i$ exists, its
+least integer in $0,\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such $i$ exists, its
 output is the empty word. For every Boolean word $x$ and every time $t$, the computation
 of $M$ on $x$ up to time $t$ uses at most $c(|x|+1)^{e+1}$ work-tape cells.
 \end{theorem}
@@ -6002,18 +6002,18 @@ equals the buffer tape storing $fs_j$ at position $p$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FlagPhase, Turing.MultiTapeTM.runFrom, Turing.catalogCompareF, Turing.catalogCompareR, Turing.catalogTrace, Turing.catalog_compare_stop, Turing.catalog_compare_trace, Turing.compareTM}
 \difficulty{5}
-Let $\Sigma$ be a type with decidable equality, let $k$ be a natural number, let $x$ be
-an input word over $\Sigma$, choose distinct work-tape indices $fst,snd<k$, choose
-words $u,v$ over $\Sigma$, and let $d$ be a configuration on input $x$ whose state is
+Let $Sigma$ be a type with decidable equality, let $k$ be a natural number, let $x$ be
+an input word over $Sigma$, choose distinct work-tape indices $fst,sndin k$, choose
+words $u,v$ over $Sigma$, and let $d$ be a configuration on input $x$ whose state is
 the running state. Suppose that, for every integer $p$ with $-1\le p\le |u|$, tape $fst$
 at position $d$'s head position plus $p$ contains the symbol prescribed by storing $u$
 contiguously from position zero; assume the analogous condition for tape $snd$ and word
-$v$. Then there exists a natural number $\delta\le\text{min}(|u|,|v|)$ such that after
-$2\delta+2$ steps the machine is in configuration $d$ with only its state changed to
+$v$. Then there exists a natural number $delta\le	ext{min}(|u|,|v|)$ such that after
+$2delta+2$ steps the machine is in configuration $d$ with only its state changed to
 completed with the truth value of $u=v$; before that time it has not entered either
-completed state. At every time up to and including $2\delta+2$, the heads of tapes $fst$
+completed state. At every time up to and including $2delta+2$, the heads of tapes $fst$
 and $snd$ remain between their respective initial positions minus one and initial
-positions plus $\delta$, inclusive, and every other work-tape head remains at its
+positions plus $delta$, inclusive, and every other work-tape head remains at its
 initial position.
 \end{theorem}
 
@@ -6031,7 +6031,7 @@ crossing a blank, the backward return, and the completed phase with a live exit 
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.catalogTrace, Turing.catalog_trace_run}
 \difficulty{4}
-Let $M$ be a $k$-tape machine, let $F:\bbr\to C$ be a sequence of configurations, let $D$
+Let $M$ be a $k$-tape machine, let $F:br	o C$ be a sequence of configurations, let $D$
 be a configuration, and let $L$ be a natural number. Suppose each step from $F(r)$ is
 $F(r+1)$ for $r<L$, the step from $F(L)$ is $D$, and $D$ is fixed by a step. If
 predicates $P$ and $Q$ both hold at every $F(r)$ for $r\le L$, and $Q$ holds at $D$,

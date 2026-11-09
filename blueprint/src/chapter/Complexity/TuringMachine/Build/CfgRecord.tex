@@ -59,13 +59,13 @@ the base-two representation of $n+1$.
 \label{Turing.cfgRecord}
 \leanok
 \uses{Turing.Cfg, Turing.RecSym, Turing.binDigits, Turing.posWidth}
-Let $k,s\text{ be natural numbers}$, let $Q,T$ be types, let $x$ be a finite Boolean
+Let $k,s	ext{ be natural numbers}$, let $Q,T$ be types, let $x$ be a finite Boolean
 string, and let $c$ be a configuration of a $k$-tape machine on input $x$, with tag
-$\tau\text{ in }T$. Its record is a list of fields: first the current state; then the
+$	au	ext{ in }T$. Its record is a list of fields: first the current state; then the
 binary digits of the shifted input-head position, using width equal to the binary length
 of $|x|+1$; then, for each work tape, the cells at positions $-s,-s+1,\\ldots,s$, each
 recording its content and whether its head is there; and finally a field containing
-$\tau$.
+$	au$.
 \end{definition}
 
 \begin{theorem}[Length of a configuration record]
@@ -394,7 +394,7 @@ is blank; otherwise, it moves left and enters state false.
 \uses{Turing.MultiTapeTM, Turing.RecSym, Turing.RecSym.digitEmb, Turing.decodeBool, Turing.inputMoveAction}
 Let $Q$ and $T$ be types with decidable equality. A machine with four work tapes,
 alphabet consisting of record symbols over $Q$ and $T$, and state set
-$\text{Option}(\text{Option}(\text{Bool}))$ starts in the state indicating halt. At every
+$	ext{Option}(	ext{Option}(	ext{Bool}))$ starts in the state indicating halt. At every
 step it stays in place and enters the state obtained by decoding the scanned input
 symbol when it is a binary digit; a blank or any non-digit input gives the inner value
 none, and the resulting value is wrapped as a nonhalting state.
@@ -522,8 +522,8 @@ product of the record-step stages for $k$ tapes and the corresponding record-ste
 \label{Turing.recordStepTapeFold}
 \leanok
 \uses{Turing.RecSym}
-For types $Q$ and $T$, define a function from $\text{Bool} \times
-\text{Option}(\text{Bool}) \times \text{Bool} \times \text{Bool}$ and record symbols to
+For types $Q$ and $T$, define a function from $	ext{Bool} \times
+\text{Option}(	ext{Bool}) \times \text{Bool} \times \text{Bool}$ and record symbols to
 the same product as follows. On a cell symbol with content $u$ and head mark $m$, an
 input accumulator $(a,v,c,d)$ is sent to $(\mathrm{true},\, v \text{ if }
 m=\mathrm{false} \text{ and } u \text{ if } m=\mathrm{true},\, c \lor (\neg a \land
@@ -735,9 +735,9 @@ configuration obtained by applying $a$ to $c$, with marks at the new head positi
 For a natural number $k$, types $Q,T,S$, and a record-step index consisting of a stage
 and its associated data, assign a phase type according to the stage. The state,
 position, tape-reading, tag-reading, writing, and shifting stages use scan phases
-carrying, respectively, an optional state, a pair in $\text{Fin}(3)\times\mathrm{Bool}$,
+carrying, respectively, an optional state, a pair in $	ext{Fin}(3)\times\mathrm{Bool}$,
 a tuple in
-$\text{Bool}\times\mathrm{Option}(\text{Bool})\times\mathrm{Bool}\times\mathrm{Bool}$, an
+$	ext{Bool}\times\mathrm{Option}(	ext{Bool})\times\mathrm{Bool}\times\mathrm{Bool}$, an
 optional tag, the unit type, or a Boolean; the probe and save stages use the probe and
 counter-loop state types, the seek and restore stages use $S$, the read stage uses a
 nested optional Boolean, the counter-update stages use flag phases, and the copying and
@@ -1571,7 +1571,7 @@ $b$, again with the running seek phase.
 \label{Turing.recordEqRows}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.RecordEqIndex, Turing.compareTM, Turing.recordEqPhase, Turing.skipBackTM, Turing.skipTM}
-For a natural number $k$, a symbol type $\Gamma$ with decidable equality, and an
+For a natural number $k$, a symbol type $[0m\Gamma$ with decidable equality, and an
 index of one of four forms—comparison with $j<k+3$, forward pass with $j<k+2$ and $i<2$,
 backward pass with a Boolean flag, $j<k+2$ and $i<2$, or verdict with a Boolean
 flag—define a two-work-tape Turing machine whose state type is the phase type assigned

@@ -174,10 +174,10 @@ several downstream gates are duplicated.
 \leanok
 \uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.Gate.eval, BoolCircuit.LayeredCircuit.IsAndOrGate, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.Lit.eval, BoolCircuit.TreeCircuit.eval, BoolCircuit.nodeToTreeCircuit}
 \difficulty{5}
-Let $F$ be a Boolean layered circuit with input type $\text{Fin }n$, and assign to each
+Let $F$ be a Boolean layered circuit with input type $	ext{Fin }n$, and assign to each
 non-input node an AND or OR flag. Suppose every gate has finite arity and computes the
 conjunction of its inputs when its flag is AND, and their disjunction otherwise. For
-every layer index $m<\text{depth}(F)+1$, every node $v$ in that layer, and every Boolean
+every layer index $m<	ext{depth}(F)+1$, every node $v$ in that layer, and every Boolean
 assignment $x$ to the inputs, the tree obtained by recursively unrolling $v$ evaluates
 to the same Boolean value as $v$ in $F$ under $x$.
 \end{theorem}
@@ -188,9 +188,9 @@ to the same Boolean value as $v$ in $F$ under $x$.
 \leanok
 \uses{BoolCircuit.LayeredCircuit, BoolCircuit.TreeCircuit.size, BoolCircuit.nodeToTreeCircuit}
 \difficulty{6}
-Let $F$ be a Boolean layered circuit with input type $\text{Fin }n$, and assign an
+Let $F$ be a Boolean layered circuit with input type $	ext{Fin }n$, and assign an
 AND-or-OR flag to each non-input node. Suppose every gate has finite arity, and for some
-natural number $k$ every gate's arity is at most $k$. For every $m<\text{depth}(F)+1$ and
+natural number $k$ every gate's arity is at most $k$. For every $m<	ext{depth}(F)+1$ and
 every node $v$ at layer $m$, the tree obtained by recursively unrolling $v$ has size at
 most $(k+1)^m$.
 \end{theorem}

@@ -25,7 +25,7 @@ $\sigma$ has probabilistic semantics with acceptance probability $q$.
 \uses{Complexity.LogProg.PSem.call_neg, Complexity.LogProg.PSem.call_pos, Complexity.LogProg.PSem.inc, Complexity.LogProg.UPS, Complexity.LogProg.UPS.of_eq, Complexity.LogProg.UReg, Complexity.LogProg.UReg.Le, Complexity.LogProg.UReg.reg, Complexity.LogProg.UReg.v_0, Complexity.LogProg.pathOr_bit, Complexity.LogProg.ups_rej, Complexity.UnaryRest, Complexity.lt_of_getD_true}
 \difficulty{6}
 Let $x$ be a Boolean word, $B$ a natural number, $q$ a rational number, $d$ a natural
-number, and let $\sigma$ be a register state with fields
+number, and $[?]$ a register state $[?]$ with fields
 $p,n,a,b,cur,t,tmp,st,nx,q_0,L,u,w,e,f$. Suppose $|x|-p=d$, every register field is at
 most $B$, $2|x|+2\le B$, $p=2n$, and $p\le |x|$. Assume that for every $n'\ge n$ for
 which the bits of $x$ at positions $2i,2i+1$ are both $1$ for all $n\le i<n'$, and the
@@ -80,7 +80,7 @@ semantics with acceptance probability $q$.
 \uses{Complexity.LogProg.PSem.clr, Complexity.LogProg.PSem.inc, Complexity.LogProg.PSem.jeq_neg, Complexity.LogProg.PSem.jeq_pos, Complexity.LogProg.UPS, Complexity.LogProg.UPS.of_eq, Complexity.LogProg.UReg, Complexity.LogProg.UReg.Le, Complexity.LogProg.UReg.reg, Complexity.LogProg.ups_ycol, Complexity.pathEdge}
 \difficulty{6}
 Let $x$ be a Boolean word, $B$ a natural number, and $q$ a rational number. Suppose
-$\sigma$ is a register state and $dd$ is a natural number such that
+$\sigma$ is a register state and $dd$ is a natural number such that
 $\sigma.n-\sigma.u=dd$, each register of $\sigma$ is at most $B$,
 $2\sigma.n+2+2\sigma.n^2\le B$, and $\sigma.u\le\sigma.n$. If every encoded edge from a
 row $u'$ with $\sigma.u\le u'<\sigma.n$ to a column $w'<\sigma.n$ is present exactly

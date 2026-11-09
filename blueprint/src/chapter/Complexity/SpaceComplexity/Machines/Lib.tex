@@ -125,8 +125,8 @@ tape by $f$, and placing its head at $p$, the symbol scanned by register $r$ is 
 \uses{Turing.FinTM.bufferTape}
 \difficulty{4}
 For Boolean words $\mathrm{pre}$ and $w$ and bits $b,b'$, overwrite the tape storing
-$\mathrm{pre}\mathbin{+\!\!+}b\mathbin{+\!\!+}w$ at cell $|\mathrm{pre}|$ with $b'$. The
-resulting tape is exactly the tape storing $\mathrm{pre}\mathbin{+\!\!+}b'\mathbin{+\!\!+}w$.
+$\mathrm{pre}\mathbin{+}b\mathbin{+}w$ at cell $|\mathrm{pre}|$ with $b'$. The
+resulting tape is exactly the tape storing $\mathrm{pre}\mathbin{+}b'\mathbin{+}w$.
 \end{lemma}
 
 \begin{lemma}[Appending a Bit to a Tape]
@@ -171,11 +171,11 @@ Let $P$ be a register program with oracle, and suppose its transition at label $
 the carry-in action for incrementing register $r$, with the next state determined by the
 scanned bit; suppose also that $c_C$ is not an oracle-call label. For any configuration
 $c$ and Boolean words $w$ and $pre$, there are a time $T$ and an integer head position
-$p$ such that $-1\le p<|pre\mathbin{+\!\!+}incW(w)|$, and the run from state $c_C$, with
-tape $pre\mathbin{+\!\!+}w$ and head at $|pre|$, reaches state $c_B$ with tape
-$pre\mathbin{+\!\!+}incW(w)$ and head at $p$. At every earlier time, the state is $c_C$, the
+$p$ such that $-1\le p<|pre\mathbin{+}incW(w)|$, and the run from state $c_C$, with
+tape $pre\mathbin{+}w$ and head at $|pre|$, reaches state $c_B$ with tape
+$pre\mathbin{+}incW(w)$ and head at $p$. At every earlier time, the state is $c_C$, the
 tape is some word $f$, and the head position $q$ satisfies $|pre|\le q\le
-|pre\mathbin{+\!\!+}w|$.
+|pre\mathbin{+}w|$.
 \end{lemma}
 
 \begin{lemma}[Run of the increment carry phase]
@@ -201,12 +201,12 @@ position $q$ with $-1\le q\le p$.
 \uses{Complexity.LogProg.bits_succ, Complexity.LogProg.incB_run, Complexity.LogProg.incC_run, Complexity.LogProg.incW, Complexity.LogProg.regCfg, Complexity.LogProg.rrun, Complexity.LogProg.rrun_add, Turing.Cfg, Turing.FinTM.bufferTape}
 \difficulty{5}
 Let $P$ be a register program with oracle, let $r$ be a register, and let
-$c_C,c_B,\text{next}$ be states. Suppose the transition at $c_C$ is always the action
+$c_C,c_B,	ext{next}$ be states. Suppose the transition at $c_C$ is always the action
 denoted by `incCAct` for register $r$, and the transition at $c_B$ is always the action
 denoted by `incBAct` for register $r$; suppose neither state is a call state. From any
 configuration $c$, there is a finite run from the configuration with state $c_C$,
 register $r$ holding the binary word of $n$, and head position zero to the configuration
-with state $\text{next}$, register $r$ holding the binary word of $n+1$, and head
+with state $	ext{next}$, register $r$ holding the binary word of $n+1$, and head
 position zero. At every earlier time $t$, the configuration has the form of $c$ with
 register $r$ holding some tape word and head position $q$, its state is either $c_C$ or
 $c_B$, and $-1\le q\le |\mathrm{bits}(n+1)|$.

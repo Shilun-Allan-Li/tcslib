@@ -66,7 +66,7 @@ list of $w$'s length many true bits.
 \leanok
 \uses{BoolCircuit.GateOp}
 For each natural number $w$, define a gate operation with $w$ input slots and alphabet
-$\text{Fin }2$ whose output is the product of the input values in $\text{Fin }2$
+$	ext{Fin }2$ whose output is the product of the input values in $	ext{Fin }2$
 (equivalently, their conjunction).
 \end{definition}
 
@@ -96,7 +96,7 @@ equals $1$ if and only if every $x_i$ equals $1$.
 \label{BoolCircuit.allOnesNodes}
 \leanok
 For each natural number $n$, define the node types in the two layers of a circuit so
-that layer $0$ has type $\text{Fin }n$ and layer $1$ has type $\text{Unit}$.
+that layer $0$ has type $	ext{Fin }n$ and layer $1$ has type $	ext{Unit}$.
 \end{definition}
 
 \begin{definition}[All-ones circuit]
@@ -104,10 +104,10 @@ that layer $0$ has type $\text{Fin }n$ and layer $1$ has type $\text{Unit}$.
 \label{BoolCircuit.allOnesCircuit}
 \leanok
 \uses{BoolCircuit.LayeredCircuit, BoolCircuit.allOnesNodes, BoolCircuit.andGateOp}
-For each natural number $n$, define a depth-one layered circuit over $\text{Fin }2$, with
-inputs in $\text{Fin }n$ and a single output. Its input layer has type $\text{Fin }n$, its
-output layer has type $\text{Unit}$, and its sole output gate takes all $n$ input values
-and returns their product in $\text{Fin }2$.
+For each natural number $n$, define a depth-one layered circuit over $	ext{Fin }2$, with
+inputs in $	ext{Fin }n$ and a single output. Its input layer has type $	ext{Fin }n$, its
+output layer has type $	ext{Unit}$, and its sole output gate takes all $n$ input values
+and returns their product in $	ext{Fin }2$.
 \end{definition}
 
 \begin{theorem}[Evaluation of the all-ones circuit]
@@ -135,8 +135,8 @@ For every natural number $n$, the all-ones circuit on $n$ inputs has size $1$.
 \leanok
 \uses{BoolCircuit.LayeredCircuitFamily, BoolCircuit.allOnesCircuit}
 Define a family of circuits indexed by the natural number $n$, where the circuit for
-inputs in $\text{Fin }n$ is the depth-one circuit that outputs the product of all input
-values in $\text{Fin }2$. Every layer of every circuit in this family has a finite node
+inputs in $	ext{Fin }n$ is the depth-one circuit that outputs the product of all input
+values in $	ext{Fin }2$. Every layer of every circuit in this family has a finite node
 type.
 \end{definition}
 
@@ -148,7 +148,7 @@ type.
 \difficulty{1}
 For every natural number $n$, the circuit assigned by the all-ones family to inputs of
 length $n$ is exactly the depth-one circuit with input nodes indexed by
-$Fin\,n$, one output node, and an AND gate taking all $n$ input values.
+$[0m[0mFin\,n$, one output node, and an AND gate taking all $n$ input values.
 \end{theorem}
 
 \begin{theorem}[Gate Set of the All-Ones Family]

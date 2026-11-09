@@ -16,10 +16,10 @@ Declarations of the Lean module \texttt{FABL.Chapter07.AlgebraicPCPP}.
 \label{FABL.BinarySubspaceSplit}
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
-Let $H$ be a subspace of the $n$-dimensional vector space over $\bbF_2$. A binary
+Let $H$ be a subspace of the $n$-dimensional vector space over $bF_2$. A binary
 subspace splitting consists of a finite enumeration of $H$, a natural number $d$, and a
-linear isomorphism from $H\times\bbF_2^d$ to $\bbF_2^n$ such that every $(h,0)$ maps to the
-original vector $h$ in $\bbF_2^n$.
+linear isomorphism from $H	imesbF_2^d$ to $bF_2^n$ such that every $(h,0)$ maps to the
+original vector $h$ in $bF_2^n$.
 \end{definition}
 
 \begin{definition}[Existence of binary subspace splitting data]
@@ -32,8 +32,8 @@ original vector $h$ in $\bbF_2^n$.
 \label{FABL.binarySubspaceSplit}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.𝔽₂}
-For every subspace $H$ of $\bbF_2^n$, there is a binary subspace splitting: a natural
-number $d$ and a linear isomorphism $H\times\bbF_2^d\to\bbF_2^n$ that sends $(h,0)$ to $h$
+For every subspace $H$ of $bF_2^n$, there is a binary subspace splitting: a natural
+number $d$ and a linear isomorphism $H	imesbF_2^d	obF_2^n$ that sends $(h,0)$ to $h$
 for every $h\in H$.
 \end{definition}
 
@@ -43,8 +43,8 @@ for every $h\in H$.
 \label{FABL.BinarySubspaceSplit.point}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.𝔽₂}
-Given a binary subspace splitting of $H\subseteq\bbF_2^n$, its point associated to $h\in
-H$ and $x\in\bbF_2^d$ is the image of $(h,x)$ under the splitting isomorphism.
+Given a binary subspace splitting of $H\subseteqbF_2^n$, its point associated to $h\in
+H$ and $x\inbF_2^d$ is the image of $(h,x)$ under the splitting isomorphism.
 \end{definition}
 
 \begin{definition}[Character from split coordinates]
@@ -56,10 +56,10 @@ H$ and $x\in\bbF_2^d$ is the image of $(h,x)$ under the splitting isomorphism.
 \label{FABL.BinarySubspaceSplit.character}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.Sign, FABL.f₂DotProduct, FABL.signEncode, FABL.𝔽₂}
-Given a binary subspace splitting of $H\subseteq\bbF_2^n$ and a vector
-$\gamma\in\bbF_2^d$, define a sign-valued function on $\bbF_2^n$ by sending $z$ to
-$(-1)^{\langle\gamma,yrangle}$, where $y$ is the second coordinate of the inverse image
-of $z$ under the splitting isomorphism and the inner product is over $\bbF_2$.
+Given a binary subspace splitting of $H\subseteqbF_2^n$ and a vector
+$gamma\inbF_2^d$, define a sign-valued function on $bF_2^n$ by sending $z$ to
+$(-1)^{langlegamma,yrangle}$, where $y$ is the second coordinate of the inverse image
+of $z$ under the splitting isomorphism and the inner product is over $bF_2$.
 \end{definition}
 
 \begin{definition}[Split character]
@@ -72,9 +72,9 @@ of $z$ under the splitting isomorphism and the inner product is over $\bbF_2$.
 \label{FABL.IsSplitCharacter}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.character, FABL.F₂Cube, FABL.Sign, FABL.𝔽₂}
-Given a binary subspace splitting of $H\subseteq\bbF_2^n$, a sign-valued function on
-$\bbF_2^n$ is a split character if it equals the character associated to some vector
-$\gamma\in\bbF_2^d$ by the splitting.
+Given a binary subspace splitting of $H\subseteqbF_2^n$, a sign-valued function on
+$bF_2^n$ is a split character if it equals the character associated to some vector
+$gamma\inbF_2^d$ by the splitting.
 \end{definition}
 
 \begin{definition}[Frequency functional]
@@ -83,9 +83,9 @@ $\gamma\in\bbF_2^d$ by the splitting.
 \label{FABL.BinarySubspaceSplit.frequencyFunctional}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.𝔽₂}
-Given a binary subspace splitting of $H\subseteq\bbF_2^n$ and $\gamma\in\bbF_2^d$, the
-associated frequency functional sends $z\in\bbF_2^n$ to the $\bbF_2$ dot product of
-$\gamma$ with the second coordinate of the inverse image of $z$ under the splitting
+Given a binary subspace splitting of $H\subseteqbF_2^n$ and $gamma\inbF_2^d$, the
+associated frequency functional sends $z\inbF_2^n$ to the $bF_2$ dot product of
+$gamma$ with the second coordinate of the inverse image of $z$ under the splitting
 isomorphism.
 \end{definition}
 
@@ -95,9 +95,9 @@ isomorphism.
 \label{FABL.BinarySubspaceSplit.liftFrequency}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.frequencyFunctional, FABL.F₂Cube, FABL.𝔽₂}
-Given a binary subspace splitting of $H\subseteq\bbF_2^n$ and $\gamma\in\bbF_2^d$, the
-lifted frequency is the unique vector in $\bbF_2^n$ whose dot product with each
-$z\in\bbF_2^n$ equals the frequency functional associated to $\gamma$ evaluated at $z$.
+Given a binary subspace splitting of $H\subseteqbF_2^n$ and $gamma\inbF_2^d$, the
+lifted frequency is the unique vector in $bF_2^n$ whose dot product with each
+$z\inbF_2^n$ equals the frequency functional associated to $gamma$ evaluated at $z$.
 \end{definition}
 
 \begin{theorem}[Character and lifted frequency]
@@ -106,7 +106,7 @@ $z\in\bbF_2^n$ equals the frequency functional associated to $\gamma$ evaluated 
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.character, FABL.BinarySubspaceSplit.frequencyFunctional, FABL.BinarySubspaceSplit.liftFrequency, FABL.F₂Cube, FABL.f₂DotProduct, FABL.signEncode, FABL.𝔽₂}
 \difficulty{3}
-Let $H$ be a subspace of the binary cube $\\bbr_2^n$, and let a binary subspace split
+Let $H$ be a subspace of the binary cube $\br_2^n$, and let a binary subspace split
 identify that cube linearly with $H$ times a complementary binary cube. For each
 complementary frequency $\gamma$, the character that evaluates the dot product of
 $\gamma$ with the complementary coordinate of a point $z$ equals the sign encoding of
@@ -132,7 +132,7 @@ the perpendicular subspace of $H$.
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.𝔽₂}
 Let $n$ be a natural number, let $H$ be a subspace of the binary cube $[𝔽_2]^n$, and
-let a split identify $H \times [𝔽_2]^d$ linearly with $[𝔽_2]^n$, carrying $(h,0)$ to
+let a split identify $H 	imes [𝔽_2]^d$ linearly with $[𝔽_2]^n$, carrying $(h,0)$ to
 $h$ for every $h [𝔽_2] H$. For $[𝔽_2]$-valued vectors $[η] [𝔽_2]^n$, the restriction
 functional associated with this split sends $y [𝔽_2]^d$ to the dot product of $[η]$
 with the image of $(0,y)$ under the identification.
@@ -144,11 +144,11 @@ with the image of $(0,y)$ under the identification.
 \label{FABL.BinarySubspaceSplit.restrictFrequency}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.restrictionFunctional, FABL.F₂Cube, FABL.𝔽₂}
-Let $H$ be a subspace of the binary cube $\bbr^n$ over $\bbr/2\bbr$, let a split of $H$
+Let $H$ be a subspace of the binary cube $br^n$ over $br/2br$, let a split of $H$
 identify $H$ together with a complementary binary cube of dimension $d$ with the full
-cube, and let $\eta$ be a frequency in the full cube. The restricted frequency is
+cube, and let $[0m\eta$ be a frequency in the full cube. The restricted frequency is
 the vector in the complementary cube whose dot-product functional corresponds, under
-this identification, to the restriction functional of $\eta$.
+this identification, to the restriction functional of $[0m\eta$.
 \end{definition}
 
 \begin{theorem}[Dot product of the restricted frequency]
@@ -188,11 +188,11 @@ cube.
 \label{FABL.IsPerpendicularCharacter}
 \leanok
 \uses{FABL.F₂Cube, FABL.Sign, FABL.f₂DotProduct, FABL.perpendicularSubspace, FABL.signEncode, FABL.𝔽₂}
-Let $H$ be a subspace of the binary cube $\bbr^n$ over the field with two elements, and
-let $f$ map the binary cube to the signs $\{\pm1\}$. Then $f$ is a character arising
-from the perpendicular subspace of $H$ precisely when there is some $\eta$ in that
+Let $H$ be a subspace of the binary cube $br^n$ over the field with two elements, and
+let $f$ map the binary cube to the signs $\{\pm1\}$. Then $f$ is a character arising
+from the perpendicular subspace of $H$ precisely when there is some $\eta$ in that
 perpendicular subspace such that, for every $z$, $f(z)$ is the sign encoding of the
-binary dot product of $\eta$ and $z$.
+binary dot product of $\eta$ and $z$.
 \end{definition}
 
 \begin{theorem}[Split and perpendicular characters]
@@ -227,9 +227,9 @@ the product of the first two equals the third; otherwise reject.
 \label{FABL.SplitCharacterSeed}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.F₂Cube, FABL.𝔽₂}
-Let $H$ be a subspace of the binary cube $\bbr_2^n$, and let a binary subspace split of
+Let $H$ be a subspace of the binary cube $br_2^n$, and let a binary subspace split of
 $H$ have complementary dimension $d$. The split character seed space is
-$(\bbr_2^d\times\bbr_2^d)\times H$.
+$(br_2^d\times\bbr_2^d)\times H$.
 \end{definition}
 
 \begin{definition}[Split character function tester]
@@ -277,7 +277,7 @@ $(1+ (a) (b) (c))/2$.
 \label{FABL.splitCharacterCorrelation}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.point, FABL.F₂Cube, FABL.Sign, FABL.signValue, FABL.𝔽₂}
-Let $n$ be a natural number, let $H$ be a linear subspace of $(\bbr/\text{?})^n$ over the
+Let $n$ be a natural number, let $H$ be a linear subspace of $(br/	ext{?})^n$ over the
 two-element field, and let a binary subspace split of $H$ have complementary dimension
 $d$. For a function $f$ from the $n$-dimensional binary cube to the signs $\\{\pm1\}$,
 its split character correlation is the average over independent uniform $a,b$ in the
@@ -334,7 +334,7 @@ coefficient of $u$ indexed by $\gamma$.
 \label{FABL.BinarySubspaceSplit.cosetAverage}
 \leanok
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.point, FABL.F₂Cube, FABL.Sign, FABL.signValue, FABL.𝔽₂}
-Let $H$ be a subspace of the binary cube $\mathbb{F}_2^n$, let a binary subspace split
+Let $H$ be a subspace of the binary cube $\mathbb{F}_2^n$, let a binary subspace split
 of $H$ be given, let $f$ map the binary cube to the signs, and let $a$ be a point of the
 complementary binary cube specified by the split. The coset average at $a$ is the
 average, over uniformly chosen $h\in H$, of the real sign value of $f$ evaluated at the
@@ -432,11 +432,11 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsLocalTester, FABL.IsPerpendicularCharacter, FABL.binarySubspaceSplit, FABL.splitCharacterFunctionTester, FABL.splitCharacterFunctionTester_isLocalTester, FABL.𝔽₂}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $H$ be a subspace of $\bbF_2^n$, and write
-$H^\perp$ for its orthogonal complement under the usual dot product. Consider the class
-of sign-valued functions $g$ on $\bbF_2^n$ of the form $g(z)=(-1)^{\langle\eta,z\rangle}$
-for some $\beta\in H^\perp$, and the three-query tester associated with a coordinate
-decomposition of $\bbF_2^n$ having $H$ as its first factor. The tester accepts every
+Let $n$ be a nonnegative integer, let $H$ be a subspace of $bF_2^n$, and write
+$H^perp$ for its orthogonal complement under the usual dot product. Consider the class
+of sign-valued functions $g$ on $bF_2^n$ of the form $g(z)=(-1)^{\langle\eta,z\rangle}$
+for some $beta\in H^perp$, and the three-query tester associated with a coordinate
+decomposition of $bF_2^n$ having $H$ as its first factor. The tester accepts every
 function in this class with probability $1$; moreover, for every $\epsilon\in[0,1]$ and
 every sign-valued function $f$ whose relative Hamming distance from each function in the
 class is greater than $\epsilon$, its rejection probability is greater than $\epsilon$.
@@ -448,7 +448,7 @@ class is greater than $\epsilon$, its rejection probability is greater than $\ep
 \label{FABL.signTwist}
 \leanok
 \uses{FABL.Sign}
-Let $\Omega$ be a type, and let $f$ and $phase$ be sign-valued functions on $\Omega$.
+Let $Omega$ be a type, and let $f$ and $phase$ be sign-valued functions on $Omega$.
 Their sign twist is the function that assigns to each $x$ the product $f(x)phase(x)$.
 \end{definition}
 
@@ -478,7 +478,7 @@ relative Hamming distance.
 \label{FABL.signTwistTranscript}
 \leanok
 \uses{FABL.NonadaptiveFunctionTester, FABL.Sign}
-Let a nonadaptive tester make $r$ queries to a domain $\Omega$ with sign-valued answers.
+Let a nonadaptive tester make $r$ queries to a domain $Omega$ with sign-valued answers.
 Given a seed, a transcript of optional answers, and a sign-valued phase function on the
 domain, form a new transcript by multiplying each present answer by the phase at its
 queried point; at positions with no query or no answer, leave the transcript absent.
@@ -490,7 +490,7 @@ queried point; at positions with no query or no answer, leave the transcript abs
 \label{FABL.signTwistFunctionTester}
 \leanok
 \uses{FABL.NonadaptiveFunctionTester, FABL.Sign, FABL.signTwistTranscript}
-Let a nonadaptive tester query a domain $\Omega$ at $r$ positions and receive
+Let a nonadaptive tester query a domain $Omega$ at $r$ positions and receive
 sign-valued answers, and let $phase$ assign a sign to each domain point. The
 sign-twisted tester has the same seed space, seed distribution, and queries, and applies
 the original acceptance rule to the transcript whose present answers are multiplied by
@@ -563,9 +563,9 @@ $\varepsilon\in[0,1]$—then $T$ is a local tester for $Q$ at the same rate.
   pdf-ffbe9c7b3306-p148-b004,
   pdf-ffbe9c7b3306-p197-b009
 }
-For a frequency vector $\gamma$ in the binary cube, its sign character is the function
+For a frequency vector $gamma$ in the binary cube, its sign character is the function
 on binary cube vectors $z$ whose value is the sign encoding of the binary dot product of
-$\gamma$ and $z$.
+$gamma$ and $z$.
 \end{definition}
 
 \begin{theorem}[Product of binary sign characters]
@@ -1196,8 +1196,8 @@ $(i,b)$, where $i$ is an index in $\\{0,\ldots,m-1\}$ and $b$ is a Boolean value
 Let $m$ be a natural number, let $w$ be a Boolean word of length $2m$, let $p$ be a
 Boolean word of length $2m+1$, and choose a seed from the linear check seed space. If
 the seed is a Boolean value $b$, the designated final-prefix position for $b$ must
-contain $b$. If the seed is $(i,\text{false})$, the designated product position must
-contain the product of the two input bits at index $i$. If the seed is $(i,\text{true})$,
+contain $b$. If the seed is $(i,	ext{false})$, the designated product position must
+contain the product of the two input bits at index $i$. If the seed is $(i,	ext{true})$,
 the values at the designated consecutive prefix and product positions, interpreted in
 the field with two elements, must satisfy $p_i+q_i=p_{i+1}$, where $p_i$ and $p_{i+1}$
 denote the designated prefix values and $q_i$ the designated product value.
@@ -1211,9 +1211,9 @@ denote the designated prefix values and $q_i$ the designated product value.
 \uses{FABL.InnerProductLinearCheckSeed, FABL.pcppBoolF₂Equiv}
 Given a seed and three possibly missing Boolean transcript values, accept according to
 the seed type. For a Boolean seed, accept exactly when the first value is present and
-equals that Boolean. For a seed $(i,\text{false})$, accept exactly when all three values
+equals that Boolean. For a seed $(i,	ext{false})$, accept exactly when all three values
 are present and the third is the Boolean product of the first two. For a seed
-$(i,\text{true})$, accept exactly when all three are present and, after interpreting them
+$(i,	ext{true})$, accept exactly when all three are present and, after interpreting them
 in the field with two elements, the first plus the second equals the third.
 \end{definition}
 
@@ -1231,9 +1231,9 @@ For each positive natural number $m$, there is a Boolean proof-carrying property
 system whose input has length $2m$, whose proof has length $2m+1$, and whose verifier
 makes three nonadaptive query slots. Its seed is uniform over the linear check seed
 space. For a Boolean seed, it queries the corresponding proof prefix position in the
-first slot and makes no other queries. For a seed $(i,\text{false})$, it queries the two
+first slot and makes no other queries. For a seed $(i,	ext{false})$, it queries the two
 input positions in the two blocks at index $i$, then the corresponding proof product
-position. For a seed $(i,\text{true})$, it queries the proof prefix positions
+position. For a seed $(i,	ext{true})$, it queries the proof prefix positions
 corresponding to $i$ and $i+1$ and the proof product position at $i$. It accepts by the
 linear transcript acceptance rule.
 \end{definition}
@@ -1417,7 +1417,7 @@ from $w$ to this new string is at most $1/m$.
 For every positive natural number $m$, there is a PCPP verifier for Boolean words $w$ of
 length $2m$ whose inner product modulo two is $1$, with rejection rate $1/4$. Every word
 satisfying the property has a proof accepted with probability $1$; for every
-$ \text{error parameter }\varepsilon\in[0,1]$, every word whose relative Hamming distance
+$ 	ext{error parameter }\varepsilon\in[0,1]$, every word whose relative Hamming distance
 from each satisfying word is greater than $\varepsilon$ is rejected, for every proof,
 with probability strictly greater than $\varepsilon/4$.
 \end{theorem}
@@ -1698,9 +1698,9 @@ truncating $w$ through coordinate $k$.
 \leanok
 \uses{FABL.completeQuadraticTruncation, FABL.pcppBoolF₂Equiv}
 \difficulty{5}
-Let $n$ be a natural number, let $w:\{0,\ldots,n-1ightarrow\text{Bool}$, and let $k<n$.
-Regard $w$ as an $\bbF_2^n$-valued vector by sending each Boolean coordinate to its
-corresponding element of $\bbF_2$. The truncation retaining the first $k+1$ coordinates
+Let $n$ be a natural number, let $w:\{0,ots,n-1ightarrow	ext{Bool}$, and let $k<n$.
+Regard $w$ as an $F_2^n$-valued vector by sending each Boolean coordinate to its
+corresponding element of $F_2$. The truncation retaining the first $k+1$ coordinates
 equals the truncation retaining the first $k$ coordinates plus the vector supported at
 coordinate $k$ with value $w(k)$.
 \end{theorem}
@@ -1757,9 +1757,9 @@ obtained by mapping every Boolean coordinate of $w$ into $\mathbb F_2$.
 \statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p197-b012}
 \label{FABL.completeQuadraticProductProofIndex}
 \leanok
-For a natural number $n$, define a map from $\mathrm{Fin}(n)$ to
-$\mathrm{Fin}(n+2(n+1))$ by sending each index to the corresponding index in the first
-summand of $\mathrm{Fin}(n)\oplus\mathrm{Fin}(2(n+1))$.
+For a natural number $n$, define a map from $\mathrm{Fin}(n)$ to
+$\mathrm{Fin}(n+2(n+1))$ by sending each index to the corresponding index in the first
+summand of $\mathrm{Fin}(n)\oplus\mathrm{Fin}(2(n+1))$.
 \end{definition}
 
 \begin{definition}[Index for linear-prefix proof coordinates]
@@ -1903,7 +1903,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.CompleteQuadraticLinearCheckHolds, FABL.completeQuadraticLinearPrefixBit, FABL.completeQuadraticLinearPrefixBit_succ, FABL.completeQuadraticLinearPrefixProofIndex, FABL.pcppBoolF₂Equiv}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $w_0,\ldots,w_{n-1}$ be Boolean values, and
+Let $n$ be a nonnegative integer, let $w_0,[0m\ldots,w_{n-1}$ be Boolean values, and
 let a Boolean table assign values to the indices for linear prefixes, quadratic
 prefixes, and coordinate products. Suppose the table satisfies all of the following
 checks: the linear prefix at $0$ is false; the quadratic prefix at $0$ is false and at
@@ -1939,14 +1939,14 @@ coordinates of $w$.
 \leanok
 \uses{FABL.CompleteQuadraticLinearCheckHolds, FABL.IsCompleteQuadraticOne, FABL.completeQuadraticPrefixBit_full, FABL.completeQuadraticPrefixProof_eq_of_checks, FABL.pcppBoolF₂Equiv, FABL.pcppBoolF₂Equiv_true}
 \difficulty{3}
-Let $n$ be a natural number, let $w:\text{Fin}(n)\to\text{Bool}$, and let $P$ be a
-Boolean-valued table indexed by $\text{Fin}(n+2(n+1))$. Suppose that every endpoint,
+Let $n$ be a natural number, let $w:	ext{Fin}(n)	o	ext{Bool}$, and let $P$ be a
+Boolean-valued table indexed by $	ext{Fin}(n+2(n+1))$. Suppose that every endpoint,
 linear-transition, product, and quadratic-prefix check holds for $w$ and $P$: the linear
 and quadratic prefix bits start at $0$, the final quadratic prefix bit is $1$, each
 linear prefix advances by adding the corresponding bit of $w$ modulo $2$, each product
 bit is the conjunction of the preceding linear prefix bit and the corresponding bit of
 $w$, and each quadratic prefix advances by adding the corresponding product bit modulo
-$2$. Then the sum of $w_iw_j$ over $i<j$ equals $1$ in $\bbr/2\bbr$.
+$2$. Then the sum of $w_iw_j$ over $i<j$ equals $1$ in $br/2br$.
 \end{theorem}
 
 \begin{theorem}[Lower bound on check failure probability]
@@ -2091,8 +2091,8 @@ $\mathbb{P}(x^{\mathsf T}Dy\neq 0)\geq 1/4$.
 \label{FABL.rankOneSelfMatrix}
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
-For a vector $\gamma$ in the $n$-dimensional coordinate space over the field with two
-elements, define the matrix whose $(i,j)$ entry is $\gamma_i\gamma_j$.
+For a vector $gamma$ in the $n$-dimensional coordinate space over the field with two
+elements, define the matrix whose $(i,j)$ entry is $gamma_igamma_j$.
 \end{definition}
 
 \begin{definition}[Matrix pairing with two vectors]
@@ -2101,9 +2101,9 @@ elements, define the matrix whose $(i,j)$ entry is $\gamma_i\gamma_j$.
 \label{FABL.matrixRankOnePairing}
 \leanok
 \uses{FABL.F₂Cube, FABL.𝔽₂}
-Let $\Gamma$ be an $n$-by-$n$ matrix over the field with two elements, and let $x,y$ be
+Let $Gamma$ be an $n$-by-$n$ matrix over the field with two elements, and let $x,y$ be
 vectors in the $n$-dimensional coordinate space over that field. Their matrix pairing is
-$\sum_i\sum_j \Gamma_{ij}(x_i y_j)$.
+$sum_isum_j Gamma_{ij}(x_i y_j)$.
 \end{definition}
 
 \begin{theorem}[Pairing with a rank-one matrix]
@@ -2155,10 +2155,10 @@ Statement pending regeneration.
 \label{FABL.rankOneConsistencyProbability}
 \leanok
 \uses{FABL.F₂Cube, FABL.f₂DotProduct, FABL.matrixRankOnePairing, FABL.uniformProbability, FABL.𝔽₂}
-Let $\gamma$ be a vector and $\Gamma$ a matrix over the field with two elements, both of
+Let $gamma$ be a vector and $Gamma$ a matrix over the field with two elements, both of
 dimension $n$. Choose $x,y$ independently and uniformly from the $n$-dimensional
 coordinate space. The rank-one consistency probability is the probability that
-$(\gamma\cdot x)(\gamma\cdot y)$ equals the matrix pairing of $\Gamma$ with $x,y$.
+$(gammacdot x)(gammacdot y)$ equals the matrix pairing of $Gamma$ with $x,y$.
 \end{definition}
 
 \begin{theorem}[Consistency for the rank-one matrix]

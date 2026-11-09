@@ -118,7 +118,7 @@ the $(1+n+i)$-th coordinate, with indexing starting at zero.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.BooleanCircuit.evalGate, FABL.F₂Cube, FABL.pcppBoolF₂Equiv}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and let $w$ be an
-assignment of Boolean values to its input bits. Form a vector over $\mathbb{F}_2$ with
+assignment of Boolean values to its input bits. Form a vector over $\mathbb{F}_2$ with
 $1+n+g$ coordinates: its constant coordinate is $1$, its input coordinates encode the
 values of $w$, and its gate coordinates encode the values produced by evaluating the
 corresponding gates of $C$ on $w$.
@@ -143,7 +143,7 @@ constant coordinate.
 \difficulty{1}
 Let $C$ be a Boolean circuit on $n$ input bits, let $w$ be an input assignment, and let
 $i$ be an input position. The circuit witness associated with $w$, evaluated at the
-coordinate for input $i$, equals the element of $mathbb{F}_2$ corresponding to the bit
+coordinate for input $i$, equals the element of $mathbb{F}_2$ corresponding to the bit
 $w(i)$.
 \end{theorem}
 
@@ -176,7 +176,7 @@ $\mathbb{F}_2$.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticConstantIndex, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.HomogeneousQuadraticEquation, FABL.homogeneousQuadraticEquationOfTerms}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and use $1+n+g$
-variables over $\mathbb{F}_2$. The associated homogeneous quadratic equation has the
+variables over $\mathbb{F}_2$. The associated homogeneous quadratic equation has the
 single quadratic term given by the square of the constant-coordinate variable and has
 right-hand side $1$.
 \end{definition}
@@ -188,7 +188,7 @@ right-hand side $1$.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticConstantIndex, FABL.BooleanCircuit.circuitQuadraticGateIndex, FABL.BooleanCircuit.circuitQuadraticInputIndex, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.BooleanCircuit.previousGateIndex, FABL.HomogeneousQuadraticEquation, FABL.homogeneousQuadraticEquationOfTerms}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and use $1+n+g$
-variables over $\mathbb{F}_2$. For a gate $i$, define a homogeneous quadratic equation
+variables over $\mathbb{F}_2$. For a gate $i$, define a homogeneous quadratic equation
 with right-hand side $0$ as follows, writing $c$ for the constant-coordinate variable,
 $x_j$ for input variables, and $y_k$ for gate variables: if gate $i$ reads input $j$,
 its equation is $y_i c+x_j c=0$; if it is the constant $0$, its equation is $y_i c=0$;
@@ -205,7 +205,7 @@ equation is $y_i c+y_k c+y_\ell c+y_k y_\ell=0$.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticConstantIndex, FABL.BooleanCircuit.circuitQuadraticGateIndex, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.HomogeneousQuadraticEquation, FABL.homogeneousQuadraticEquationOfTerms}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and use $1+n+g$
-variables over $\mathbb{F}_2$. The associated homogeneous quadratic equation has
+variables over $\mathbb{F}_2$. The associated homogeneous quadratic equation has
 right-hand side $0$ and is $y_o c+c^2=0$, where $y_o$ is the variable for the
 distinguished output gate and $c$ is the constant-coordinate variable.
 \end{definition}
@@ -217,7 +217,7 @@ distinguished output gate and $c$ is the constant-coordinate variable.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticConstantEquation, FABL.BooleanCircuit.circuitQuadraticGateEquation, FABL.BooleanCircuit.circuitQuadraticOutputEquation, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.HomogeneousQuadraticSystem}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and use $1+n+g$
-variables over $\mathbb{F}_2$. The associated system, in order, consists of the
+variables over $\mathbb{F}_2$. The associated system, in order, consists of the
 constant equation, one gate equation for each gate in the circuit's order, and the
 output equation.
 \end{definition}
@@ -229,7 +229,7 @@ output equation.
 \leanok
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticInputIndex, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.F₂Cube, FABL.pcppBoolF₂Equiv}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and let $z$ be a vector
-over $\mathbb{F}_2$ with $1+n+g$ coordinates. The Boolean input assignment recovered
+over $\mathbb{F}_2$ with $1+n+g$ coordinates. The Boolean input assignment recovered
 from $z$ assigns to each input position the Boolean value encoded by the corresponding
 input coordinate of $z$.
 \end{definition}
@@ -240,8 +240,8 @@ input coordinate of $z$.
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticInput, FABL.BooleanCircuit.circuitQuadraticInputIndex, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.F₂Cube, FABL.pcppBoolF₂Equiv}
 \difficulty{1}
 Let $C$ be a Boolean circuit with $n$ input bits and $g$ gates, and let $z$ assign an
-element of $[?]$ to each of its $1+n+g$ coordinates. Identify $\text{false}$ with $0$
-and $\text{true}$ with $1$ in the field $[?]$. For every input index $i$, encoding the
+element of $[?]$ to each of its $1+n+g$ coordinates. Identify $	ext{false}$ with $0$
+and $	ext{true}$ with $1$ in the field $[?]$. For every input index $i$, encoding the
 Boolean value obtained by decoding the coordinate of $z$ assigned to input $i$ recovers
 that coordinate.
 \end{theorem}
@@ -311,9 +311,9 @@ associated homogeneous quadratic system, then its constant coordinate is $1$.
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticConstant_eq_one_of_satisfies, FABL.BooleanCircuit.circuitQuadraticGateEquation, FABL.BooleanCircuit.circuitQuadraticGateIndex, FABL.BooleanCircuit.circuitQuadraticInput, FABL.BooleanCircuit.circuitQuadraticInputIndex, FABL.BooleanCircuit.circuitQuadraticSystem, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.BooleanCircuit.evalGate, FABL.BooleanCircuit.evalGate_eq_and, FABL.BooleanCircuit.evalGate_eq_const, FABL.BooleanCircuit.evalGate_eq_input, FABL.BooleanCircuit.evalGate_eq_neg, FABL.BooleanCircuit.evalGate_eq_or, FABL.BooleanCircuit.pcppBoolF₂Equiv_circuitQuadraticInput, FABL.BooleanCircuit.pcppBoolF₂Equiv_or, FABL.BooleanCircuit.previousGateIndex, FABL.F₂Cube, FABL.SatisfiesHomogeneousQuadraticSystem, FABL.homogeneousQuadraticEquationOfTerms_satisfiedBy_iff, FABL.pcppBoolF₂Equiv, FABL.pcppBoolF₂Equiv_and, FABL.pcppBoolF₂Equiv_not}
 \difficulty{6}
 Let $C$ be a Boolean circuit on $n$ input bits, and let $z$ assign an element of
-$\mathbb{F}_2$ to each of its $1+n+g$ variables, where $g$ is the number of gates. If
+$\mathbb{F}_2$ to each of its $1+n+g$ variables, where $g$ is the number of gates. If
 $z$ satisfies the circuit’s homogeneous quadratic system, then for every gate $i$, its
-variable equals the $\mathbb{F}_2$ encoding of the Boolean value of gate $i$ on the
+variable equals the $\mathbb{F}_2$ encoding of the Boolean value of gate $i$ on the
 input decoded from the input variables of $z$.
 \end{theorem}
 
@@ -560,7 +560,7 @@ respective portions.
 \uses{FABL.BooleanCircuit, FABL.BooleanCircuit.circuitQuadraticInnerProofIndex, FABL.BooleanCircuit.circuitQuadraticPCPPProofLength, FABL.BooleanCircuit.circuitQuadraticVariableCount, FABL.quadraticLinearProofIndex}
 For a Boolean circuit $C$ with $n$ input bits and $g$ gates, let $q=1+n+g$ and let the
 proof length be $q+2^q+2^{q^2}$. The quadratic linear proof index assigns each index in
-$\text{Fin}(2^q)$ an index in $\text{Fin}(q+2^q+2^{q^2})$ by first applying the quadratic
+$	ext{Fin}(2^q)$ an index in $	ext{Fin}(q+2^q+2^{q^2})$ by first applying the quadratic
 linear proof-index map and then the circuit's inner proof-index map.
 \end{definition}
 

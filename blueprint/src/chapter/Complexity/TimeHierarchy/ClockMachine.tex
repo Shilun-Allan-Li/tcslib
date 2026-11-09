@@ -61,8 +61,8 @@ true exactly when $w$ is the one-symbol word containing true.
 \label{Complexity.TimeHierarchy.ctrVal}
 \leanok
 For a list of Booleans, define its value recursively by assigning the empty list value
-$0$ and assigning a list with first bit $b$ and remaining list $bs$ the value $(1\text{
-if }b\text{ is true, otherwise }0)+2$ times the value of $bs$. Thus the first list
+$0$ and assigning a list with first bit $b$ and remaining list $bs$ the value $(1	ext{
+if }b	ext{ is true, otherwise }0)+2$ times the value of $bs$. Thus the first list
 element is the least significant bit.
 \end{definition}
 
@@ -71,8 +71,8 @@ element is the least significant bit.
 \label{Complexity.TimeHierarchy.ctrPop}
 \leanok
 For a list of Booleans, define its population count recursively: the empty list has
-count $0$, and a list with first bit $b$ and remaining list $bs$ has count $(1\text{ if
-}b\text{ is true, otherwise }0)$ plus the count of $bs$.
+count $0$, and a list with first bit $b$ and remaining list $bs$ has count $(1	ext{ if
+}b	ext{ is true, otherwise }0)$ plus the count of $bs$.
 \end{definition}
 
 \begin{lemma}[True Bits Bounded by Length]
@@ -224,8 +224,8 @@ specified as being written are left unchanged, and their heads remain stationary
 \uses{Complexity.TimeHierarchy.ClockState, Complexity.TimeHierarchy.clockTr, Turing.FinTM}
 Given finite Turing machines $K$ and $W$ over the Boolean alphabet, define a finite
 Turing machine with $K.k+1+W.k$ work tapes, state set
-$\text{ClockState}(K.\text{State},W.\text{State})$, initial state $\text{.kRun}(\text{some
-}K.q_0)$, and transition function $\text{clockTr}(K,W)$.
+$	ext{ClockState}(K.	ext{State},W.	ext{State})$, initial state $	ext{.kRun}(	ext{some
+}K.q_0)$, and transition function $	ext{clockTr}(K,W)$.
 \end{definition}
 
 \begin{lemma}[Clock machine step in a state]

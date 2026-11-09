@@ -81,8 +81,8 @@ $t4$, $ttt$, $lc(0)$, $c0$, $c4$, and $stay$.
 \label{Complexity.LogProg.ixRow}
 \leanok
 \uses{Complexity.LogProg.IxSite}
-Let the index-site set be $\{y_0,y_1,y_2,w\}$. Define a position in
-$\{0,1,\ldots,14\}$ by assigning $y_0$ to $11$, $y_1$ and $y_2$ to $12$, and $w$ to
+Let the index-site set be $\{y_0,y_1,y_2,w\}$. Define a position in
+$\{0,1,\ldots,14\}$ by assigning $y_0$ to $11$, $y_1$ and $y_2$ to $12$, and $w$ to
 $4$.
 \end{definition}
 
@@ -92,7 +92,7 @@ $4$.
 \leanok
 \uses{Complexity.LogProg.IxSite}
 Let the four index sites be $y_0$, $y_1$, $y_2$, and $w$. Define a map from these sites
-to the column indices $0,1,2,3,4,5,6,7,8,9,10,11,12,13,14$ by sending $y_0$ to $12$, both
+to the column indices $0,,,,,,,,,	,,,,,$ by sending $y_0$ to $12$, both
 $y_1$ and $y_2$ to $11$, and $w$ to $8$.
 \end{definition}
 
@@ -113,7 +113,7 @@ site $w$ to the word label.
 \uses{Complexity.LogProg.AdSite, Complexity.LogProg.ixCol}
 Define a map from addition sites to column indices $0$ through $14$ as follows: an index
 site $(k,j)$ maps to $1$ when $j=0$ or $1$, and to the column assigned to index site $k$
-when $j=2$; every site $(\text{ten},j)$ maps to $1$, and the doubling site maps to $8$.
+when $j=2$; every site $(	ext{ten},j)$ maps to $1$, and the doubling site maps to $8$.
 \end{definition}
 
 \begin{definition}[Addition site positions]
@@ -122,7 +122,7 @@ when $j=2$; every site $(\text{ten},j)$ maps to $1$, and the doubling site maps 
 \leanok
 \uses{Complexity.LogProg.AdSite}
 Define a map from addition sites to column indices $0$ through $14$ by sending every
-index site $(k,j)$ to $0$, every site $(\text{ten},j)$ to $13$, and the doubling site to
+index site $(k,j)$ to $0$, every site $(	ext{ten},j)$ to $13$, and the doubling site to
 $13$.
 \end{definition}
 
@@ -134,8 +134,8 @@ $13$.
 Define a map from addition sites to labels as follows. For an index site $(k,j)$, assign
 the label indexed by $k$ with subscript $2$ when $j=0$, with subscript $8$ when $j=1$,
 and the example label assigned to $k$ when $j=2$. The five sites indexed by
-$j=0,1,2,3,4$ map respectively to $\text{lc}_1$, $\text{lc}_2$, $\text{lc}_3$,
-$\text{lc}_4$, and $\text{mc}_{m_0}$; the doubling site maps to $c_3$.
+$j=0,1,2,3,4$ map respectively to $	ext{lc}_1$, $	ext{lc}_2$, $	ext{lc}_3$,
+$	ext{lc}_4$, and $	ext{mc}_{m_0}$; the doubling site maps to $c_3$.
 \end{definition}
 
 \begin{definition}[Multiplication site indices]
@@ -153,7 +153,7 @@ the indices $0,1,\ldots,14$ by sending $m_0$ to $1$ and $m_1$ to $14$.
 \leanok
 \uses{Complexity.LogProg.MulSite}
 Let the two multiplication sites be $m_0$ and $m_1$. Define their indices in
-$\text{Fin}(15)$ by assigning $13$ to $m_0$ and $14$ to $m_1$.
+$	ext{Fin}(15)$ by assigning $13$ to $m_0$ and $14$ to $m_1$.
 \end{definition}
 
 \begin{definition}[Right column indices for multiplication sites]
@@ -217,7 +217,7 @@ scratch sum, and scratch product.
 \label{Complexity.LogProg.UReg.v}
 \leanok
 \uses{Complexity.LogProg.UReg}
-For a register state, define its value vector on the indices $0,14$ by listing, in order,
+For a register state, define its value vector on the indices $0,$ by listing, in order,
 its fifteen fields $p,n,a,b,cur,t,tmp,st,nx,q,L,u,w,e,f$.
 \end{definition}
 

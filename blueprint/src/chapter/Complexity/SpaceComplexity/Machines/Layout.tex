@@ -155,7 +155,7 @@ segment $i$.
 \leanok
 \uses{Complexity.LogProg.Seg, Complexity.LogProg.off, Complexity.LogProg.render, Complexity.LogProg.rlen, Complexity.LogProg.seg, Complexity.LogProg.seg_cons_succ, Complexity.LogProg.seg_cons_zero, Complexity.LogProg.vword}
 \difficulty{5}
-Let $(s_i,\beta_i)$ be the $i$th segment of a finite list of Boolean segments, using the
+Let $(s_i,eta_i)$ be the $i$th segment of a finite list of Boolean segments, using the
 default empty segment if the index is out of range. If $i+1$ is less than the number of
 segments, then in the concatenated word that renders each segment and places the
 separator $01$ between consecutive segments, the bit immediately after the rendered
@@ -229,7 +229,7 @@ and position is strictly less than its rendered length.
 \leanok
 \uses{Complexity.LogProg.Seg, Complexity.LogProg.TPos, Complexity.LogProg.seg, Complexity.LogProg.wlen}
 Given a list of segments, a segment index $s$, a tape position, and a direction in
-$\text{SignType}$, this rule returns a new segment index and tape position. Direction
+$	ext{SignType}$, this rule returns a new segment index and tape position. Direction
 zero leaves both unchanged. In the positive direction, at cell $c$ with marker $p$, if
 the current segment's flag is true and $p$ is false, the marker becomes true; otherwise
 the position advances to cell $c+1$ when that cell lies within the segment, and moves to

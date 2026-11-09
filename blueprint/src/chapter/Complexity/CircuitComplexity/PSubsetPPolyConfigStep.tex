@@ -97,7 +97,7 @@ transition gives $h_r$ or, at the left boundary, $h_m$.
 \uses{Complexity.CfgKind, Complexity.CfgTableau.optBits, Complexity.CfgTableau.optOf, Complexity.Snapshot, Complexity.cellContent, Complexity.cellHead, Complexity.emitted, Complexity.inHead, Complexity.snapDecode, Complexity.snapEncode, Complexity.snapWidth, Complexity.stepState}
 Let $M$ be a finite Turing machine over the Boolean alphabet, with $k$ work tapes, and
 let $l$ be a finite Boolean list. The function indexed by configuration kinds returns a
-Boolean list as follows. For a work-tape kind specifying tape $\tau$, read the preceding
+Boolean list as follows. For a work-tape kind specifying tape $	au$, read the preceding
 snapshot from the block of $l$ beginning at position $13$, of length equal to the number
 of possible snapshots; determine the new head bit from positions $0$–$1$ when the marker
 at position $0$ is set, and otherwise from the preceding snapshot and positions $2,5,8$.
@@ -113,7 +113,7 @@ the output is the head bit followed by its two-bit encoding. For the absent kind
 the preceding snapshot from the block beginning at position $4+2k$ and form a new
 snapshot whose state is the initial state when position $0$ is true and otherwise the
 successor state of the preceding snapshot, whose input symbol is encoded by positions
-$2$–$3$, and whose work-tape symbols are encoded by positions $4+2\tau$–$5+2\tau$. The
+$2$–$3$, and whose work-tape symbols are encoded by positions $4+2	au$–$5+2	au$. The
 output is the encoding of that snapshot followed by a bit that is false when position
 $0$ is true and otherwise is the disjunction of position $1$ and whether the preceding
 snapshot emits true. At any position beyond the end of $l$, the bit read is false.
@@ -136,7 +136,7 @@ exactly $t$ steps.
 \leanok
 \uses{Complexity.CfgTableau.cfgAt, Turing.Cfg.workTapeSymbols}
 Let $M$ be a deterministic Turing machine with Boolean input alphabet, let $w$ be a
-finite Boolean input string, and let $t$ be a nonnegative integer. For a work tape $\tau$
+finite Boolean input string, and let $t$ be a nonnegative integer. For a work tape $	au$
 and cell position $z\in\mathbb Z$, the work chain value is the symbol at cell $z$ in the
 configuration after $t$ steps if that tape's head position is at most $z$, and is absent
 otherwise.

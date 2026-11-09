@@ -28,7 +28,7 @@ respectively $1,1,8$.
 \label{Complexity.LogProg.akEx}
 \leanok
 \uses{Complexity.LogProg.PathLabel}
-Define a map from the three-element set $\text{Fin }3$ to the path labels by sending its
+Define a map from the three-element set $	ext{Fin }3$ to the path labels by sending its
 three elements, in order, to $wi1$, $wrn$, and $wrd$.
 \end{definition}
 
@@ -62,7 +62,7 @@ input-format check required at the current instruction is satisfied.
 \label{Complexity.LogProg.pathAs}
 \leanok
 \uses{Complexity.inputBitLang, Complexity.inputLenLang}
-Define a map from the two-element set $\text{Fin }2$ to languages of Boolean words by
+Define a map from the two-element set $	ext{Fin }2$ to languages of Boolean words by
 assigning the input-bit language to the first element and the input-length language to
 the second.
 \end{definition}
@@ -124,7 +124,7 @@ source or current vertex, target, scratch copy, step count, and guessed next ver
 \label{Complexity.LogProg.PReg.v}
 \leanok
 \uses{Complexity.LogProg.PReg}
-For a program register state $\sigma$, define its value vector in $\bbn^9$ to list, in order,
+For a program register state $σ$, define its value vector in $ℕ^9$ to list, in order,
 its input pointer, vertex count, row counter, column counter, source or current vertex,
 target, scratch copy, step count, and guessed next vertex.
 \end{definition}
@@ -134,7 +134,7 @@ target, scratch copy, step count, and guessed next vertex.
 \label{Complexity.LogProg.PReg.Le}
 \leanok
 \uses{Complexity.LogProg.PReg}
-For a program register state $\sigma$ and a natural number $B$, the state is bounded by $B$
+For a program register state $σ$ and a natural number $B$, the state is bounded by $B$
 exactly when each of its nine register values is at most $B$.
 \end{definition}
 
@@ -344,10 +344,10 @@ replacing $nx$ by $z$.
 \label{Complexity.LogProg.PS}
 \leanok
 \uses{Complexity.LogProg.NSem, Complexity.LogProg.PReg, Complexity.LogProg.PReg.v, Complexity.LogProg.PathLabel, Complexity.LogProg.RegLe, Complexity.LogProg.pathA, Complexity.LogProg.pathOr}
-Given a Boolean word $x$, a natural-number bound $B$, a path label $\ell$, a program
-register state $\sigma$, and a proposition $P$, define the predicate to mean that $P$ holds
+Given a Boolean word $x$, a natural-number bound $B$, a path label $l$, a program
+register state $σ$, and a proposition $P$, define the predicate to mean that $P$ holds
 in the nondeterministic semantics of the specified nine-register program, starting at
-label $\ell$ with register values $\sigma$ and no additional configuration data, under
+label $l$ with register values $σ$ and no additional configuration data, under
 register bound $B$.
 \end{definition}
 
@@ -357,12 +357,12 @@ register bound $B$.
 \leanok
 \uses{Complexity.LogProg.PReg, Complexity.LogProg.PS, Complexity.LogProg.PathLabel}
 \difficulty{1}
-Let $x$ be a finite Boolean word, $B$ a natural number, $l$ a program label, $\sigma,\sigma'$
-register states, and $P$ a proposition. If $\sigma=\sigma'$ and, starting at $l$ with register
-state $\sigma'$, every computation terminates with all registers bounded by $B$ at every
+Let $x$ be a finite Boolean word, $B$ a natural number, $l$ a program label, $σ,σ'$
+register states, and $P$ a proposition. If $σ=σ'$ and, starting at $l$ with register
+state $σ'$, every computation terminates with all registers bounded by $B$ at every
 preterminal configuration satisfying the program’s safety conditions, and an accepting
 computation exists exactly when $P$ holds, then the same properties hold starting at $l$
-with register state $\sigma$.
+with register state $σ$.
 \end{lemma}
 
 \begin{lemma}[Matrix row scan]
@@ -372,12 +372,12 @@ with register state $\sigma$.
 \uses{Complexity.LogProg.NSem.clr, Complexity.LogProg.NSem.inc, Complexity.LogProg.NSem.jeq_neg, Complexity.LogProg.NSem.jeq_pos, Complexity.LogProg.PReg, Complexity.LogProg.PReg.Le, Complexity.LogProg.PReg.reg, Complexity.LogProg.PS, Complexity.LogProg.PS.of_eq, Complexity.LogProg.nsem_addTwice, Complexity.LogProg.pathA, Complexity.LogProg.pathOr}
 \difficulty{6}
 Let $x$ be a finite bit string, $B$ a natural number, $P$ a proposition, and
-$\sigma=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose $2|x|+2\le B$, every
-register of $\sigma$ is at most $B$, $a\le s<n$, $p=2n+2+2an$, $b\le n$, and $2n+2+2n^2\le
+$σ=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose $2|x|+2\le B$, every
+register of $σ$ is at most $B$, $a\le s<n$, $p=2n+2+2an$, $b\le n$, and $2n+2+2n^2\le
 |x|$. Assume that for every $b'\le n$, the program started at the column-check stage
 with row register $s$, column register $b'$, and pointer $2n+2+2sn$ terminates with all
 registers bounded by $B$ and has an accepting computation exactly when $P$ holds. Then
-the program started at the row-scan stage in state $\sigma$ terminates with all registers
+the program started at the row-scan stage in state $σ$ terminates with all registers
 bounded by $B$ and has an accepting computation exactly when $P$ holds.
 \end{lemma}
 

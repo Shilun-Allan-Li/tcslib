@@ -10,8 +10,8 @@ Declarations of the Lean module \texttt{FABL.Chapter07.TestingExercises}.
 \lean{FABL.equalityPairIndex}
 \label{FABL.equalityPairIndex}
 \leanok
-For $i\text{ in }\text{Fin}(n)$ and $s\text{ in }\text{Fin}(2)$, the pair $(i,s)$ is
-identified with its index in $\text{Fin}(2n)$ under the standard equivalence between a
+For $i	ext{ in }	ext{Fin}(n)$ and $s	ext{ in }	ext{Fin}(2)$, the pair $(i,s)$ is
+identified with its index in $	ext{Fin}(2n)$ under the standard equivalence between a
 product of finite index sets and a single finite index set.
 \end{definition}
 
@@ -20,9 +20,9 @@ product of finite index sets and a single finite index set.
 \label{FABL.IsEqualPairString}
 \leanok
 \uses{FABL.equalityPairIndex}
-A Boolean string $w$ of length $2n$ has equal paired entries if, for every $i\text{ in
-}\text{Fin}(n)$, its entries indexed by $(i,0)$ and $(i,1)$ are equal, using the standard
-pair-to-index correspondence with $\text{Fin}(2n)$.
+A Boolean string $w$ of length $2n$ has equal paired entries if, for every $i	ext{ in
+}	ext{Fin}(n)$, its entries indexed by $(i,0)$ and $(i,1)$ are equal, using the standard
+pair-to-index correspondence with $	ext{Fin}(2n)$.
 \end{definition}
 
 \begin{definition}[Equality of Two Transcript Answers]
@@ -39,7 +39,7 @@ Boolean answers and those answers are equal; reject if either position is unansw
 \leanok
 \uses{FABL.NonadaptiveStringTester, FABL.equalityPairIndex, FABL.equalityPairTranscriptAccept, FABL.uniformPMF}
 Let $n$ be a positive natural number, and consider Boolean strings of length $2n$.
-Define a tester that samples an index uniformly from $\mathbin n$ and, at its two transcript
+Define a tester that samples an index uniformly from $in n$ and, at its two transcript
 positions, queries the addresses obtained by applying the equality-pair address map to
 that index and to $0$ and $1$, respectively. It accepts exactly when both answers are
 present and equal.
@@ -96,8 +96,8 @@ value that $w$ has at the first position of the pair.
 \leanok
 \uses{FABL.equalityPairIndex, FABL.equalityPairRepair, FABL.equalityPairRepair_pair, FABL.relativeHammingDist, FABL.uniformProbability, FABL.uniformProbability_ne_eq_relativeHammingDist}
 \difficulty{5}
-Let $n$ be a positive integer and let $w:\{1,\ldots,n\text{ paired
-coordinates}\to\\text{Bool}$ be a Boolean string of length $2n$. Form a repaired string by
+Let $n$ be a positive integer and let $w:\{1,[0m\ldots,n	ext{ paired
+coordinates}	o\	ext{Bool}$ be a Boolean string of length $2n$. Form a repaired string by
 replacing both entries of each pair with the first entry. Then twice the fraction of
 coordinates on which $w$ differs from its repaired string equals the fraction of pairs
 whose two entries in $w$ differ.

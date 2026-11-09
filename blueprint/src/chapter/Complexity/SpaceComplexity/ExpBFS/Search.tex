@@ -37,13 +37,13 @@ for $M'$ than for $M$.
 \uses{Complexity.LogProg.ExpBFS.A, Complexity.LogProg.ExpBFS.G, Complexity.LogProg.ExpBFS.Mono, Complexity.LogProg.ExpBFS.Mono.refl, Complexity.LogProg.ExpBFS.Mono.trans, Complexity.LogProg.ExpBFS.Out, Complexity.LogProg.ExpBFS.Out.refl, Complexity.LogProg.ExpBFS.Out.trans, Complexity.LogProg.ExpBFS.SBd, Complexity.LogProg.ExpBFS.St, Complexity.LogProg.ExpBFS.St.Bd, Complexity.LogProg.ExpBFS.cell, Complexity.LogProg.ExpBFS.cf, Complexity.LogProg.ExpBFS.cont, Complexity.LogProg.ExpBFS.ex1_pre, Complexity.LogProg.ExpBFS.outer_run, Complexity.LogProg.ExpBFS.reach_cf, Complexity.LogProg.ExpBFS.rr, Complexity.LogProg.ExpBFS.step_of, Complexity.LogProg.ExpBFS.stp, Complexity.LogProg.ExpBFS.unmarked, Complexity.LogProg.ExpBFS.unmarked_lt, Complexity.LogProg.MReach, Complexity.LogProg.MReach.refl, Complexity.LogProg.astep}
 \difficulty{6}
 Fix a natural parameter $K_0$, an oracle, a Boolean string $x$, and natural numbers
-$B,P$. Let $\varphi\in\{\mathrm{false},\mathrm{true}\}$, let $j$ be a natural number,
+$B,P$. Let $varphi\in\{\mathrm{false},\mathrm{true}\}$, let $j$ be a natural number,
 let $S$ be a machine state, and let $M:\mathbb{Z}\to\{\mathrm{false},\mathrm{true}\}$
 satisfy that exactly $j$ of the $K$ cells at positions $B_s+v$ for $v<K$ are unmarked.
 Suppose $U=K$, $V=T=T_2=Z=0$, $ch\leq 1$, every component of $S$ is at most $B$, and
 $B_s+K\leq B$, $B_s+K\leq P$, and $K+1\leq B$. Then there is a memory $M'$ such that,
-starting at label $\mathrm{rl0}(\varphi)$ with state $S$, memory $M$, and head position
-$0$, the machine reaches label $\mathrm{cn0}(\varphi)$ with state $S$ except that $ch$
+starting at label $mathrm{rl0}(\varphi)$ with state $S$, memory $M$, and head position
+$0$, the machine reaches label $mathrm{cn0}(\varphi)$ with state $S$ except that $ch$
 is reset to $0$, memory $M'$, and head position $0$, while its guard holds at every time
 strictly before arrival. Moreover, $M'$ extends the marked positions of $M$ and agrees
 with $M$ outside the block of positions $B_s+v$ with $v<K$. For every predicate $Q$ on

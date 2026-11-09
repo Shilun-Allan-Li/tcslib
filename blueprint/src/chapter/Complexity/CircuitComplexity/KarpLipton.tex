@@ -290,13 +290,13 @@ $\\mathsf{P}$.
 \leanok
 \uses{Complexity.KarpLipton.badLang, Complexity.KarpLipton.dropMarker, Complexity.KarpLipton.gU, Complexity.KarpLipton.gj, Complexity.KarpLipton.gp, Complexity.KarpLipton.gu, Complexity.KarpLipton.gx, Complexity.KarpLipton.polyTimeComputable_dropMarker, Complexity.KarpLipton.polyTimeComputable_gU, Complexity.KarpLipton.polyTimeComputable_gj, Complexity.KarpLipton.polyTimeComputable_gp, Complexity.KarpLipton.polyTimeComputable_gu, Complexity.KarpLipton.polyTimeComputable_gx, Complexity.KarpLipton.pred_and, Complexity.KarpLipton.pred_len_eq, Complexity.KarpLipton.pred_len_le, Complexity.KarpLipton.pred_not, Complexity.KarpLipton.pred_or, Complexity.KarpLipton.pred_query, Complexity.P, Complexity.PolyHierarchy.unaryPT_poly, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_prepend, Complexity.polyTimeComputable_unary, Complexity.preimage_mem_P, Turing.pairEncode}
 \difficulty{5}
-Let $C$ and $c$ be natural numbers, and let $V$ be a language of bit strings
+Let $C,c	ext{ in }acks lash	extbackslash N$, and let $V$ be a language of bit strings
 in $P$. Form the language of strings $z$ for which the five decoded components
 $x,U,u,j,p$ satisfy the following: $|u|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, and $|p|\le
 C(|x|+1)^c$; and at least one of the following holds. The circuit encoded by the
-marker-deleted $U$, queried on $\varnothing x,u\varnothing$ with the all-ones marker of length
+marker-deleted $U$, queried on $g x,ug$ with the all-ones marker of length
 $C(|x|+1)^c$ followed by $0$, rejects; or $|p|=C(|x|+1)^c$, that circuit accepts the
-query with suffix $0p$, and $\varnothing\varnothing x,p\varnothing$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the
+query with suffix $0p$, and $gg x,pg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the
 circuit accepts the query with suffix $1 0 p$ preceded by $|j|$ ones, and rejects both
 queries with suffixes $0(p0)$ and $0(p1)$ preceded by $|j|$ ones. Then this language is
 in $P$.
@@ -351,15 +351,15 @@ bad-specification condition with parameters $C,c,V$ belongs to $\mathrm{coNP}$.
 \leanok
 \uses{Complexity.KarpLipton.BadSpec, Complexity.KarpLipton.Query, Complexity.KarpLipton.dropMarker, Turing.pairEncode}
 \difficulty{6}
-Let $C$ and $c$ be natural numbers, let $V$ be a language of bit strings, and
+Let $C,c	ext{ in }acks lash	extbackslash N$, let $V$ be a language of bit strings, and
 let $x,U$ be bit strings. Suppose that for every triple of bit strings $u',j,p$, the
 length bounds $|u'|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, and $|p|\le C(|x|+1)^c$ do not
 hold together with any of the three bad cases: the corresponding circuit query rejects
-the all-ones marker; or $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $\varnothing\varnothing
-x,p\varnothing$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$
+the all-ones marker; or $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $gg
+x,pg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$
 ones accepts, and both queries on $0(p0)$ and $0(p1)$ preceded by $|j|$ ones reject.
 Then for every $u$ of length $C(|x|+1)^c$, there is a string $v$ of that length such
-that $\varnothing\varnothing x,u\varnothing,v\varnothing$ belongs to $V$.
+that $gg x,ug,vg$ belongs to $V$.
 \end{theorem}
 
 \begin{theorem}[Circuit query and family language equivalence]
@@ -400,23 +400,23 @@ $q(C,c,x)=2\bigl(2|x|+2+C(|x|+1)^c\bigr)+2+C(|x|+1)^c+1$.
 \leanok
 \uses{BoolCircuit.DAGCircuit.encode, BoolCircuit.DAGCircuitFamily, BoolCircuit.DAGCircuitFamily.HasFaninTwo, BoolCircuit.DAGCircuitFamily.language, Complexity.KarpLipton.BadSpec, Complexity.KarpLipton.Query, Complexity.KarpLipton.dropMarker, Complexity.KarpLipton.length_query, Complexity.KarpLipton.mem_prefixLang_iff, Complexity.KarpLipton.prefixLang, Complexity.KarpLipton.qlen, Complexity.KarpLipton.query_iff_mem_language, Complexity.KarpLipton.wLen_pairEncode, Turing.pairEncode}
 \difficulty{6}
-Let $C$ and $c$ be natural numbers, let $V$ be a language of bit strings, and
+Let $C,c	ext{ in }acks lash	extbackslash N$, let $V$ be a language of bit strings, and
 let $F$ be a family of acyclic Boolean circuits with at most two inputs per gate, with
 well-formed gates, one circuit for each input length. Suppose the language accepted by
 $F$ is the language of strings $q$ for which, writing $(x,y)$ for the decoded pair
-components of $q$, there is a suffix $s$ such that $|y' s|=C(|x|+1)^c$ and $\varnothing
-x,y's\varnothing\text{ belongs to }V$, where $y'$ is obtained by deleting the marker from $y$. For
+components of $q$, there is a suffix $s$ such that $|y' s|=C(|x|+1)^c$ and $g
+x,y'sg	ext{ belongs to }V$, where $y'$ is obtained by deleting the marker from $y$. For
 bit strings $x,U$, suppose deleting the marker from $U$ gives the encoding of the
 circuit in $F$ on input length $2(2|x|+2+C(|x|+1)^c)+2+(C(|x|+1)^c+1)$. Suppose also
-that for every $u$ of length $C(|x|+1)^c$ there is a $v$ of that same length with $\varnothing\varnothing
-x,u\varnothing,v\varnothing\text{ belongs to }V$. Then for every bit strings $u,j,p$ it is not the case
+that for every $u$ of length $C(|x|+1)^c$ there is a $v$ of that same length with $gg
+x,ug,vg	ext{ belongs to }V$. Then for every bit strings $u,j,p$ it is not the case
 that all three length bounds $|u|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, $|p|\le C(|x|+1)^c$
-hold together with at least one of these: the corresponding circuit query on $\varnothing x,u\varnothing$
-rejects the all-ones marker; $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $\varnothing\varnothing
-x,p\varnothing
+hold together with at least one of these: the corresponding circuit query on $g x,ug$
+rejects the all-ones marker; $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $gg
+x,pg
 otin V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$ ones accepts,
-and both queries formed by preceding $0(p0)$ and $0(p1)$ by $|j|$ ones reject. Here $\varnothing
-a,b\varnothing$ denotes the encoding of a pair, and each query uses the circuit code obtained by
+and both queries formed by preceding $0(p0)$ and $0(p1)$ by $|j|$ ones reject. Here $g
+a,bg$ denotes the encoding of a pair, and each query uses the circuit code obtained by
 deleting the marker from $U$.
 \end{theorem}
 

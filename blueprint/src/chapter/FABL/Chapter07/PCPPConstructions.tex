@@ -4454,7 +4454,7 @@ weight.
 \difficulty{4}
 Let $n,r$ be nonnegative integers, let $T$ be a nonadaptive tester of Boolean strings of
 length $n$ using $r$ query positions, let $s$ be a seed of $T$, and let $i
-e j$ be an arbitrary coordinate in $\{0,\dots,n-1\}$. If none of the query positions
+e j$ be an arbitrary coordinate in $\{0,\dots,n-1\}$. If none of the query positions
 for seed $s$ addresses coordinate $i$, then the transcript obtained by querying the
 string that is true only at $i$ equals the transcript obtained by querying the
 constantly false string.
@@ -4532,7 +4532,7 @@ Boolean bit or an index in $\{0,\ldots,m-1\}$.
 \leanok
 \uses{FABL.pcppBoolF₂Equiv, FABL.𝔽₂}
 For a Boolean word $w$ of length $m+2$ and a natural number $k$, define its prefix
-parity to be the sum in $\mathbb{F}_2$ of the values corresponding to $w_i$ for $i<k$
+parity to be the sum in $mathbb{F}_2$ of the values corresponding to $w_i$ for $i<k$
 and $i<m+2$; indices outside the word contribute zero.
 \end{definition}
 
@@ -5217,7 +5217,7 @@ length $j+2$.
 \leanok
 \uses{FABL.pcppBoolF₂Equiv}
 For a triple of possibly missing Boolean values, accept exactly when all three values
-are present and, after identifying Booleans with elements of $\mathbb{F}_2$, the
+are present and, after identifying Booleans with elements of $[1m\mathbb{F}_2[0m$, the
 third equals the sum of the first two.
 \end{definition}
 
@@ -5227,11 +5227,11 @@ third equals the sum of the first two.
 \label{FABL.oddWeightPartialSumTranscriptAccept}
 \leanok
 \uses{FABL.OddWeightPartialSumCheckSeed, FABL.linearTripleTranscriptAccept, FABL.pcppBoolF₂Equiv}
-Let the seed be either a Boolean or an index in $\{0,\ldots,m-1\}$, and let a
+Let the seed be either a Boolean or an index in $[1m\{0,\ldots,m-1\}[0m$, and let a
 transcript assign an optional Boolean to each of three positions. If the seed is false,
 or is an index, accept exactly when all three answers are present and the third equals
-the sum of the first two in $\mathbb{F}_2$. If the seed is true, accept exactly
-when the first answer is present and equals $1$ in $\mathbb{F}_2$.
+the sum of the first two in $[1m\mathbb{F}_2[0m$. If the seed is true, accept exactly
+when the first answer is present and equals $1$ in $[1m\mathbb{F}_2[0m$.
 \end{definition}
 
 \begin{definition}[Odd weight partial sum check]
@@ -5242,9 +5242,9 @@ when the first answer is present and equals $1$ in $\mathbb{F}_2$.
 \uses{FABL.OddWeightPartialSumCheckSeed, FABL.pcppBoolF₂Equiv}
 Let $m$ be a natural number, let the seed be either a Boolean or an index $k<m$, let $w$
 assign Booleans to the $m+2$ input positions, and let $p$ assign Booleans to the $m+1$
-proof positions. If the seed is false, then $p_0=w_0+w_1$ in $\mathbb{F}_2$. If
-the seed is true, then the last proof bit is $1$ in $\mathbb{F}_2$. If the seed
-is $k$, then $p_{k+1}=p_k+w_{k+2}$ in $\mathbb{F}_2$.
+proof positions. If the seed is false, then $p_0=w_0+w_1$ in $[1m\mathbb{F}_2[0m$. If
+the seed is true, then the last proof bit is $1$ in $[1m\mathbb{F}_2[0m$. If the seed
+is $k$, then $p_{k+1}=p_k+w_{k+2}$ in $[1m\mathbb{F}_2[0m$.
 \end{definition}
 
 \begin{definition}[Odd weight partial sum verifier]
@@ -8004,7 +8004,7 @@ of $w$ equal to $1$ is odd.
 \difficulty{4}
 Let $m$ be a natural number, let $w$ be a Boolean string of length $m+2$, and let $p$ be
 a Boolean string of length $m+1$. Consider the $m+2$ checks consisting of the initial
-check that $p_0=w_0+w_1$ modulo $2$, the final check that $p_m=1$, and, for each $k\text{
+check that $p_0=w_0+w_1$ modulo $2$, the final check that $p_m=1$, and, for each $k	ext{
 with }0\le k<m$, the transition check that $p_{k+1}=p_k+w_{k+2}$ modulo $2$. If a
 specified check in this collection fails, then a uniformly chosen check from the
 collection fails with probability at least $1/(m+2)$.
@@ -8844,7 +8844,7 @@ $\varepsilon$.
 \leanok
 \uses{FABL.Sign, FABL.binarySignEquiv, FABL.pcppBoolF₂Equiv}
 Define the correspondence from Boolean values to signs ${pm 1}$ as the composition of
-the correspondence from Booleans to $\mathbb{F}_2$ and the binary-sign correspondence;
+the correspondence from Booleans to $mathbb{F}_2$ and the binary-sign correspondence;
 this is an equivalence.
 \end{definition}
 
@@ -8884,7 +8884,7 @@ and the integers from $0$ through $2^n-1$.
 \leanok
 \uses{FABL.SignCube}
 For each natural number $N$, there is an equivalence between the set of length-$N$ sign
-vectors, with entries in $\{ -1,1\}$, and the set of integers from $0$ through
+vectors, with entries in $[1m\{ -1,1\}[0m$, and the set of integers from $0$ through
 $2^N-1$.
 \end{definition}
 
@@ -8965,7 +8965,7 @@ assigned to $w$ gives the sign corresponding to the bit $w_j$.
 \leanok
 \uses{FABL.booleanStringIndexEquiv}
 Let $n$ be a natural number and let $P$ be a property of Boolean strings of length $n$.
-The property index set consists of those indices in $\text{Fin}(2^n)$ whose corresponding
+The property index set consists of those indices in $	ext{Fin}(2^n)$ whose corresponding
 Boolean string satisfies $P$.
 \end{definition}
 
@@ -9811,7 +9811,7 @@ $i$ is at least $1-0.4\varepsilon$ and at least $1/2$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.F₂Cube, FABL.binaryCubeSignEquiv, FABL.coordinateTruthTable, FABL.localCorrection, FABL.pcppBoolSignEquiv, FABL.uniformProbability}
 Let $n$ be a natural number, let $f$ be a sign-valued Boolean function on strings of
-length $2^n$, let $j$ be a coordinate in $\text{Fin}(n)$, and let $b$ be a Boolean bit.
+length $2^n$, let $j$ be a coordinate in $	ext{Fin}(n)$, and let $b$ be a Boolean bit.
 The coordinate correction probability is the uniform probability over Boolean strings
 $y$ of length $2^n$ that the local correction of the sign version of $f$, at the truth
 table encoding the $j$th coordinate, evaluated at $y$, equals the sign corresponding to
@@ -9870,7 +9870,7 @@ product of the proof signs at $y$ and at its translate by the coordinate truth t
 \uses{FABL.F₂Cube, FABL.binaryCubeSignEquiv, FABL.booleanStringIndexEquiv, FABL.coordinateTruthTable, FABL.coordinateTruthTable_apply_index, FABL.dictator, FABL.localCorrection, FABL.pcppBoolSignEquiv, FABL.signEncode, FABL.signEncode_add}
 \difficulty{4}
 Let $n$ be a natural number, let $w:\{0,1\}^n$ be a Boolean string, let $j$ be a
-coordinate, and let $y$ be an $\mathbb F_2$-valued vector indexed by the Boolean
+coordinate, and let $y$ be an $[0m\mathbb F_2$-valued vector indexed by the Boolean
 strings of length $n$. Encode each Boolean string as a sign vector coordinatewise, and
 use the truth table of the $j$th bit as the input to the local correction of the
 dictator that reads the coordinate indexed by $w$. The resulting sign is the encoding of
@@ -10693,7 +10693,7 @@ that rejection rate.
 For every natural number $n>0$ and every property $P$ of Boolean strings of length $n$,
 there is a probabilistically checkable proof system with proof length $2^{2^n}$ and a
 verifier making three nonadaptive queries, such that every string satisfying $P$ has a
-proof accepted with probability $1$. Moreover, for every $\varepsilon\in[0,1]$, any
+proof accepted with probability $1$. Moreover, for every $[0m\varepsilon\in[0,1]$, any
 input whose relative Hamming distance from every string satisfying $P$ is greater than
 $\varepsilon$ is rejected, for every proof, with probability greater than
 $\varepsilon/1000$.

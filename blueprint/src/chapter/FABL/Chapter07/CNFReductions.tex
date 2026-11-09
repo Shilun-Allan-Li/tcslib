@@ -242,8 +242,8 @@ coordinates of the enlarged set of $n+a$ coordinates, preserving their order.
 \leanok
 \uses{FABL.Literal}
 Let $n$, $c$, and $b$ be natural numbers, and let $i$ be a clause index in
-$\text{Fin}(c)$. The construction assigns a list of $b$ literals on $n+bc$ coordinates,
-one for each position $j$ in $\text{Fin}(b)$. The literal at position $j$ uses coordinate
+$	ext{Fin}(c)$. The construction assigns a list of $b$ literals on $n+bc$ coordinates,
+one for each position $j$ in $	ext{Fin}(b)$. The literal at position $j$ uses coordinate
 $n+jc+i$ and has required sign $-1$.
 \end{definition}
 
@@ -287,8 +287,8 @@ their indices remain pairwise distinct.
 \uses{FABL.tseitinAuxiliaryLiterals}
 \difficulty{4}
 Let $n$, $c$, and $b$ be natural numbers, and let $j$ be a clause index in
-$\text{Fin}(c)$. The list of auxiliary literals for clause $j$, with variable coordinates
-in $\text{Fin}(n+b c)$, has pairwise distinct variable indices.
+$	ext{Fin}(c)$. The list of auxiliary literals for clause $j$, with variable coordinates
+in $	ext{Fin}(n+b c)$, has pairwise distinct variable indices.
 \end{theorem}
 
 \begin{theorem}[Disjointness of lifted and auxiliary coordinates]
@@ -3650,9 +3650,9 @@ width-$3$ Tseitin clause block constructed from that clause has at most $w-2$ cl
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p093-b004,
     pdf-ffbe9c7b3306-p094-b004}
-Let $$ be a CNF formula and let $w$ be a natural number with $3\leq w$. If every clause
-of $$ has width at most $w$, then the number of clauses in its width-three Tseitin
-transformation is at most $(w-2)||$, where $||$ denotes the number of clauses of $$.
+Let $$ be a CNF formula and let $w$ be a natural number with $3\leq w$. If every clause
+of $$ has width at most $w$, then the number of clauses in its width-three Tseitin
+transformation is at most $(w-2)||$, where $||$ denotes the number of clauses of $$.
 \end{theorem}
 
 \begin{theorem}[Auxiliary Variable Count]
@@ -3661,7 +3661,7 @@ transformation is at most $(w-2)||$, where $||$ denotes the number of clauses of
 \leanok
 \uses{FABL.CNFFormula, FABL.CNFFormula.size, FABL.widthThreeTseitinAuxiliaryCount}
 \difficulty{1}
-For a finite CNF formula $$ with $s$ clauses and any natural-number width parameter
+For a finite CNF formula $$ with $s$ clauses and any natural-number width parameter
 $w$, the auxiliary-variable count is $(w-3)s$.
 \end{theorem}
 
@@ -5299,8 +5299,8 @@ $w$, the auxiliary-variable count is $(w-3)s$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p094-b004,
     pdf-ffbe9c7b3306-p103-b002}
-Let $$ be a CNF formula and let $w$ be a natural number with $3\leq w$. If every clause
-of $$ has width at most $w$, then every clause of its width-three Tseitin
+Let $$ be a CNF formula and let $w$ be a natural number with $3\leq w$. If every clause
+of $$ has width at most $w$, then every clause of its width-three Tseitin
 transformation has width at most $3$.
 \end{theorem}
 
@@ -5363,9 +5363,9 @@ original assignment.
 \leanok
 \uses{FABL.CNFFormula, FABL.CNFFormula.clauseAt, FABL.CNFFormula.clauseEval, FABL.CNFFormula.clauseEval_eq_neg_one_iff, FABL.CNFFormula.size, FABL.disjoint_tseitinLiftLiterals_tseitinAuxiliaryLiterals, FABL.literalHolds, FABL.literalListHolds_of_tseitinClauseChain, FABL.literalListsHold, FABL.literalListsHold_iff_tseitinClauseTerms, FABL.nodupIndices_tseitinAuxiliaryLiterals, FABL.nodupIndices_tseitinLiftLiterals, FABL.restrictCNFAssignment, FABL.tseitinAuxiliaryLiterals, FABL.tseitinClauseChain, FABL.tseitinLiftLiteral, FABL.tseitinLiftLiterals, FABL.widthThreeTseitinClauseBlock}
 \difficulty{5}
-Let $\psi$ be a CNF formula on $n$ sign variables, let $w$ be a natural
-number, and choose a clause index $i$ of $\psi$. If an assignment to the
-original variables and the $(w-3)|\psi|$ auxiliary variables makes every
+Let $[0m[0m[0m\psi$ be a CNF formula on $n$ sign variables, let $w$ be a natural
+number, and choose a clause index $i$ of $[0m[0m[0m\psi$. If an assignment to the
+original variables and the $(w-3)|[0m[0m[0m\psi|$ auxiliary variables makes every
 clause in the width-three Tseitin block for clause $i$ true, then the original clause
 $i$ is true when evaluated on the restriction of that assignment to the original
 variables.
@@ -6994,9 +6994,9 @@ variables.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p019-b003,
     pdf-ffbe9c7b3306-p196-b010}
-Let $$ be a CNF formula on $n$ variables, let $w$ be any natural number, and let $y$ be
-an assignment to the original and auxiliary variables, of total length $n+(w-3)||$. If
-the width-three Tseitin transformation evaluates to the satisfying sign at $y$, then $$
+Let $$ be a CNF formula on $n$ variables, let $w$ be any natural number, and let $y$ be
+an assignment to the original and auxiliary variables, of total length $n+(w-3)||$. If
+the width-three Tseitin transformation evaluates to the satisfying sign at $y$, then $$
 evaluates to the satisfying sign on the restriction of $y$ to the original variables.
 \end{theorem}
 
@@ -8734,10 +8734,10 @@ that chosen clause at the literal’s coordinate.
   {context}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p197-b004}
-Let $$ be a CNF formula on $n$ variables, let $w$ be a natural-number width parameter,
-and let $x$ be an assignment to the original variables. If $$ evaluates to the
-satisfying sign at $x$, then there is an assignment to $(w-3)||$ auxiliary variables
-such that the width-three Tseitin transformation of $$ evaluates to the satisfying sign
+Let $$ be a CNF formula on $n$ variables, let $w$ be a natural-number width parameter,
+and let $x$ be an assignment to the original variables. If $$ evaluates to the
+satisfying sign at $x$, then there is an assignment to $(w-3)||$ auxiliary variables
+such that the width-three Tseitin transformation of $$ evaluates to the satisfying sign
 on the combined assignment.
 \end{theorem}
 
@@ -10425,9 +10425,9 @@ on the combined assignment.
   {context}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p197-b004}
-Let $$ be a CNF formula on $n$ variables, let $w$ be any natural number, and let $x$ be
-an assignment to its variables. The formula $$ evaluates to the satisfying sign at $x$
-if and only if there is an assignment to $(w-3)||$ auxiliary variables for which the
+Let $$ be a CNF formula on $n$ variables, let $w$ be any natural number, and let $x$ be
+an assignment to its variables. The formula $$ evaluates to the satisfying sign at $x$
+if and only if there is an assignment to $(w-3)||$ auxiliary variables for which the
 width-three Tseitin transformation evaluates to the satisfying sign on the combined
 assignment.
 \end{theorem}

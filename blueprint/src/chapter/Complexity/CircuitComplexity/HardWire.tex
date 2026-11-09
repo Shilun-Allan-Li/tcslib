@@ -34,7 +34,7 @@ copies of $1$.
 \label{BoolCircuit.foldr_max_le_succ}
 \leanok
 \difficulty{5}
-Let $l$ be a finite list of natural numbers and let $p,q:\bbr\to\bbr$ be functions on the
+Let $l$ be a finite list of natural numbers and let $p,q:br	obr$ be functions on the
 natural numbers. If $p(a)\le q(a)+1$ for every $a$ in $l$, then the maximum of the
 values $p(a)$ over $a$ in $l$, taken to be $0$ when $l$ is empty, is at most one plus
 the corresponding maximum of the values $q(a)$.
@@ -47,8 +47,8 @@ the corresponding maximum of the values $q(a)$.
 \uses{BoolCircuit.DAGGate, BoolCircuit.DAGGate.depth, BoolCircuit.DAGGate.remap, BoolCircuit.foldr_max_le_succ}
 \difficulty{3}
 Let $g$ be a Boolean circuit gate, let $ds,ds'$ be lists of natural numbers, and let
-$\varphi$ be a map from natural numbers to natural numbers. Suppose that for every argument
-$a$ of $g$, the defaulted lookup in $ds$ at index $\varphi(a)$ is at most the defaulted
+$[?]$ be a map from natural numbers to natural numbers. Suppose that for every argument
+$a$ of $g$, the defaulted lookup in $ds$ at index $[?](a)$ is at most the defaulted
 lookup in $ds'$ at index $a$, plus $1$. Then the depth of the remapped gate computed
 from $ds$ is at most the depth of $g$ computed from $ds'$, plus $1$.
 \end{theorem}
@@ -152,7 +152,7 @@ hardwiring $y$ has these same properties.
 \difficulty{6}
 Let $C$ be a directed acyclic circuit with $n+m$ input bits, and fix an assignment to
 its last $m$ inputs. The circuit obtained by hardwiring those inputs has depth at most
-$\text{depth}(C)+1$.
+$	ext{depth}(C)+1$.
 \end{theorem}
 
 \begin{definition}[Permutation of input indices]
@@ -273,7 +273,7 @@ arguments at each gate, and exactly one argument at every NOT gate.
 \difficulty{6}
 Let $C$ be a directed acyclic circuit with $m+n$ input bits, and fix an assignment $y$
 to its first $m$ inputs. The circuit obtained by hardwiring those inputs has depth at
-most $\text{depth}(C)+1$.
+most $	ext{depth}(C)+1$.
 \end{theorem}
 
 \begin{definition}[Hardwiring a circuit family]

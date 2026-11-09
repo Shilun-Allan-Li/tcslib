@@ -52,8 +52,8 @@ value containing $v$ exactly when $o$ is the singleton word $[v]$.
 \leanok
 For state types $SS$ and $AS$, define the clock phase to be one of: a boot phase
 carrying a yardstick machine state; either of two rewind phases; a run phase carrying an
-optional attempt-machine state and an optional captured value in $none, none,
-some\text{-valued Boolean}$; or one of three reset-sweep phases, in leftward,
+optional attempt-machine state and an optional captured value in $none, none,
+some	ext{-valued Boolean}$; or one of three reset-sweep phases, in leftward,
 rightward, then leftward order.
 \end{definition}
 
@@ -61,8 +61,8 @@ rightward, then leftward order.
 \lean{Turing.ClockHost.slots}
 \label{Turing.ClockHost.slots}
 \leanok
-Given a type $α$, nonnegative integers $s$ and $a$, functions $f:Fin(s)\to α$ and
-$g:Fin(a)\to α$, and an element $y\to α$, define a function on $s+a+1$ slots by placing
+Given a type $α$, nonnegative integers $s$ and $a$, functions $f:Fin(s)	o α$ and
+$g:Fin(a)	o α$, and an element $y	o α$, define a function on $s+a+1$ slots by placing
 the values of $f$ first, then the values of $g$, and then the constant value $y$ in the
 final slot.
 \end{definition}
@@ -71,7 +71,7 @@ final slot.
 \lean{Turing.ClockHost.sI}
 \label{Turing.ClockHost.sI}
 \leanok
-For nonnegative integers $s$ and $a$, the index associated to $i\to Fin(s)$ is the
+For nonnegative integers $s$ and $a$, the index associated to $i	o Fin(s)$ is the
 corresponding position among the first $s$ slots of a list of $s+a+1$ slots.
 \end{definition}
 
@@ -79,7 +79,7 @@ corresponding position among the first $s$ slots of a list of $s+a+1$ slots.
 \lean{Turing.ClockHost.aI}
 \label{Turing.ClockHost.aI}
 \leanok
-For nonnegative integers $s$ and $a$, the index associated to $i\to Fin(a)$ is the
+For nonnegative integers $s$ and $a$, the index associated to $i	o Fin(a)$ is the
 position $s+i$ among the $a$ slots following the first $s$ slots of a list of $s+a+1$
 slots.
 \end{definition}
@@ -146,7 +146,7 @@ combined set.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg}
 Given an action consisting of a captured output value and a head movement, a work tape
-$t:\mathbb{Z}\to \mathrm{Option}(\mathrm{Bool})$, and a head position $p\to\mathbb{Z}$, define the resulting tape as the
+$t:ℤ	oOption(Bool)$, and a head position $p	oℤ$, define the resulting tape as the
 work tape obtained by applying that action to a one-tape configuration whose state is
 absent, whose output is empty, and whose sole work tape and head position are $t$ and
 $p$.
@@ -238,7 +238,7 @@ tape value and zero head movement.
 \leanok
 \uses{Turing.ClockHost.idle}
 \difficulty{3}
-For every natural number $n$ and every function $P:\text{Fin}(n)\to\mathbb{Z}$ assigning
+For every natural number $n$ and every function $P:	ext{Fin}(n)\to\mathbb{Z}$ assigning
 integer head positions, adding the movement specified by the idle action leaves $P$
 unchanged.
 \end{theorem}
@@ -442,7 +442,7 @@ moving it right once gives position $1$.
 Let $S$ be a deterministic Boolean Turing machine, $A$ a nondeterministic Boolean Turing
 machine, $x$ a Boolean input, and $m$ a natural number. If the yard tape containing $m$
 consecutive true symbols has value true at an integer position $z$, then one step of the
-host machine in phase $\text{rew2}$ moves the input head one position left and the yard
+host machine in phase $	ext{rew2}$ moves the input head one position left and the yard
 head from $z$ to $z-1$, leaving the phase, all other tape contents and head positions,
 and the output unchanged.
 \end{theorem}
@@ -508,8 +508,8 @@ and the output remains empty.
 Let $S$ be a deterministic Boolean Turing machine, $A$ a nondeterministic Boolean Turing
 machine, $x$ a Boolean input, and $m$ a natural number. For any input-head position and
 work-tape contents and head positions, if a choice word $w$ has length $m+2$, then
-running the host machine from phase $\text{rew}$ with the yard head at $m$ for $w$ steps
-ends in phase $\text{run}$ with $A$ in its initial state and no captured output, with the
+running the host machine from phase $	ext{rew}$ with the yard head at $m$ for $w$ steps
+ends in phase $	ext{run}$ with $A$ in its initial state and no captured output, with the
 yard head at $0$ and the input head at the position obtained by moving left $m+1$ steps
 and then right once; the other tape data and output are unchanged.
 \end{theorem}
@@ -554,7 +554,7 @@ Let $S$ be a deterministic Boolean Turing machine, $A$ a nondeterministic Boolea
 machine, $x$ a Boolean input, and $m$ a natural number. Let $a$ be any configuration of
 $A$ on $x$, let $j$ be a natural number, and let $u$ be a Boolean choice word such that
 $j+|u|\le m$. For any work-tape contents and head positions of $S$, running the host
-machine on $u$ from the representation of $a$ in phase $\text{run}$, with yard-head
+machine on $u$ from the representation of $a$ in phase $	ext{run}$, with yard-head
 position $j$, gives the representation of the run of $A$ on $u$ from $a$, with yard-head
 position $j+|u|$; the other stated host data are preserved as specified by that
 representation.
@@ -570,7 +570,7 @@ Let $S$ be a deterministic Boolean Turing machine, $A$ a nondeterministic Boolea
 machine, $x$ a Boolean input, and $m$ a natural number. For any configuration $a$ of $A$
 on $x$, any work-tape contents and head positions for $S$, and any Boolean choice word
 $u$ with $|u|\le m$, running the host machine on $u$ from the representation of $a$ in
-phase $\text{run}$ with yard-head position zero gives the representation of the run of
+phase $	ext{run}$ with yard-head position zero gives the representation of the run of
 $A$ on $u$ from $a$, with yard-head position $|u|$.
 \end{theorem}
 

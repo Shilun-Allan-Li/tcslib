@@ -317,7 +317,7 @@ function $x\\mapsto (f(x)-f(-x))/2$.
 \label{FABL.BoundedCubeFunction.oddPart}
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.oddPart}
-For a bounded real-valued function $f$ on the sign cube $\{-1,1\}^n$, its odd part is
+For a bounded real-valued function $f$ on the sign cube $\{-1,1\}^n$, its odd part is
 the bounded function $x\\mapsto (f(x)-f(-x))/2$.
 \end{definition}
 
@@ -361,7 +361,7 @@ value at $-x$ is the negative of its value at $x$.
 \leanok
 \uses{FABL.BoundedCubeFunction.ext, FABL.BoundedCubeFunction.oddPart, FABL.BoundedCubeFunction.ofBoolean, FABL.dictator, FABL.signValue, FABL.signValue_neg}
 \difficulty{3}
-For a natural number $n$ and a coordinate $i\in\{0,\ldots,n-1\}$, the odd part of
+For a natural number $n$ and a coordinate $i\in\{0,[0m\ldots,n-1\}$, the odd part of
 the bounded real-valued function induced by the $i$th coordinate function on the sign
 cube equals that function.
 \end{theorem}
@@ -563,7 +563,7 @@ tester with probability at most $B$.
 \uses{FABL.BoundedCubeFunction, FABL.BoundedCubeFunction.ofBoolean, FABL.HasSmallStableInfluences, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.SignTester.oddSymmetrization_preserves_parameters_of_property, FABL.SignTester.oddSymmetrizedAcceptanceProbability, FABL.dictator, FABL.oddPart, FABL.stableInfluence, FABL.stableInfluence_oddPart_le}
 \difficulty{4}
 Let $n$ be a natural number, let $T$ be a randomized sign tester on the $n$-dimensional
-Boolean cube, and let $\beta,\varepsilon,\delta, B\in\mathbb{R}$ with
+Boolean cube, and let $eta,[0m\varepsilon,\delta, B\in\mathbb{R}$ with
 $0\leq\delta\leq1$. Suppose every coordinate dictator is accepted by $T$ with
 probability at least $\beta$, and every odd function $f$ valued in $[-1,1]$ whose stable
 influences at parameter $1-\delta$ are all at most $\varepsilon$ is accepted with
@@ -584,7 +584,7 @@ is accepted by the odd-symmetrized tester with probability at most $B$.
 \leanok
 \uses{FABL.SignTester, FABL.e3LinPredicate, FABL.scaledPointwiseProduct, FABL.uniformPMF}
 For each natural number $n$, define a sign tester whose seeds are pairs $(x,y)$ of
-points chosen independently and uniformly from the sign cube $\{-1,1\}^n$. Its check
+points chosen independently and uniformly from the sign cube $\{-1,1\}^n$. Its check
 uses the three-query linearity predicate with parameter $1$, querying $x$, $y$, and
 their coordinatewise product scaled by $1$.
 \end{definition}
@@ -1074,8 +1074,8 @@ Statement pending regeneration.
 \label{FABL.oxrPredicate}
 \leanok
 \uses{FABL.Sign, FABL.SignPredicate}
-Let $P$ be the Boolean predicate on triples of signs $(y_0,y_1,y_2)\text{,}$ where each
-$y_i$ is a unit in $\bbr$. The predicate accepts exactly when $y_0=-1$ or $y_1y_2=-1$.
+Let $P$ be the Boolean predicate on triples of signs $(y_0,y_1,y_2)	ext{,}$ where each
+$y_i$ is a unit in $br$. The predicate accepts exactly when $y_0=-1$ or $y_1y_2=-1$.
 \end{definition}
 
 \begin{theorem}[Indicator of predicate acceptance]
@@ -1797,7 +1797,7 @@ dictator function $x\mapsto x_i$ is $1$.
 \lean{FABL.hastadThreeSatDegree}
 \label{FABL.hastadThreeSatDegree}
 \leanok
-For $\delta\in(0,1/8)$, define the degree parameter to be a natural number $k$ chosen
+For $\delta\in(0,1/8)$, define the degree parameter to be a natural number $k$ chosen
 so that $(1-4\delta)^k<(4\delta)^2$.
 \end{definition}
 

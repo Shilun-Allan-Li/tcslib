@@ -151,10 +151,10 @@ $Q$.
 \leanok
 \uses{Light.Ends, Light.State, Light.Stmt}
 \difficulty{4}
-Let $\lim$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2,s_3$
-statements. For any state $\sigma$, time bound $T$, and postcondition $Q$, if
-$s_1;(s_2;s_3)$ ends from $\sigma$ within time $T$ satisfying $Q$, then $(s_1;s_2);s_3$
-also ends from $\sigma$ within time $T$ satisfying $Q$.
+Let $lim$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2,s_3$
+statements. For any state $sigma$, time bound $T$, and postcondition $Q$, if
+$s_1;(s_2;s_3)$ ends from $sigma$ within time $T$ satisfying $Q$, then $(s_1;s_2);s_3$
+also ends from $sigma$ within time $T$ satisfying $Q$.
 \end{theorem}
 
 \begin{theorem}[Skip before a program]
@@ -188,9 +188,9 @@ $Q$.
 \leanok
 \uses{Light.Ends, Light.State, Light.Stmt}
 \difficulty{1}
-Let $\lim$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2$
-statements. For any state $\sigma$, time bound $T$, and postcondition $Q$, if $s_1;s_2$
-ends from $\sigma$ within time $T$ satisfying $Q$, then $s_1;s_2$ ends from $\sigma$
+Let $lim$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2$
+statements. For any state $sigma$, time bound $T$, and postcondition $Q$, if $s_1;s_2$
+ends from $sigma$ within time $T$ satisfying $Q$, then $s_1;s_2$ ends from $sigma$
 within time $T$ satisfying $Q$.
 \end{theorem}
 
@@ -243,11 +243,11 @@ from $(\mathrm{loc},\mu)$ ends within time $T$ in a state satisfying $Q$.
 \uses{Light.Ends, Light.Ends.next, Light.Ends.set, Light.Expr, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.State, Light.Stmt}
 \difficulty{1}
 Let $L$ be resource limits, $P$ a program, $d$ a call depth, and
-$\text{loc},\text{mem}:\bbn\to\bbz$ an initial state. For an index $x$, an expression $e$, a
+$	ext{loc},	ext{mem}:bn	obz$ an initial state. For an index $x$, an expression $e$, a
 statement $s$, a time bound $T$, and a postcondition $Q$, suppose that executing $s$
 from the state obtained by assigning the value of $e$ in the initial state to local $x$
-ends within $\max(T-(\text{cost}(e)+1),0)$ steps and satisfies $Q$. If $e$ is safe
-in the initial state and $\text{cost}(e)+1\le T$, then executing the assignment of $e$ to
+ends within $ 	ext{max}(T-(	ext{cost}(e)+1),0)$ steps and satisfies $Q$. If $e$ is safe
+in the initial state and $	ext{cost}(e)+1\le T$, then executing the assignment of $e$ to
 $x$ followed by $s$ from the initial state ends within $T$ steps and satisfies $Q$.
 \end{theorem}
 
@@ -367,16 +367,16 @@ body followed by incrementing $i$ by one, while $i<h$.
 \leanok
 \uses{Light.Cond.cost, Light.Ends, Light.Ends.mono, Light.Ends.seq, Light.Ends.set, Light.Ends.whileConst, Light.Expr, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.State, Light.Stmt, Light.Stmt.for, Light.k, Light.v}
 \difficulty{6}
-Let $\text{lim}$ be execution limits, let $P$ be a program, and let $i,n,T$ be natural
-numbers, with initial state $\sigma$, upper-bound expression $hi$, loop body $body$, and
-postcondition $Q$. Let $I(j,\sigma)$ be an invariant. Suppose after setting local
+Let $	ext{lim}$ be execution limits, let $P$ be a program, and let $i,n,T$ be natural
+numbers, with initial state $ sigma$, upper-bound expression $hi$, loop body $body$, and
+postcondition $Q$. Let $I(j, sigma)$ be an invariant. Suppose after setting local
 variable $i$ to $0$, $I(0)$ holds. For every $j<n$, if a state has local value $i=j$ and
 satisfies $I(j)$, assume the body executes within cost $b$, preserves the loop index at
 $j$, and leaves a state satisfying $I(j+1)$ after that index is incremented by one.
 Assume that at index $n$, $I(n)$ and local value $i=n$ imply $Q$; and whenever $j≤n$,
 local value $i=j$ and $I(j)$ hold, the upper-bound expression is safe and evaluates to
-$n$. If $n$ is at most the word limit and $n(\text{cost}(hi)+b+7)+\text{cost}(hi)+5≤T$,
-then the for-loop terminates from $\sigma$ within cost $T$ in a state satisfying $Q$.
+$n$. If $n$ is at most the word limit and $n(	ext{cost}(hi)+b+7)+	ext{cost}(hi)+5≤T$,
+then the for-loop terminates from $ sigma$ within cost $T$ in a state satisfying $Q$.
 \end{theorem}
 
 \begin{theorem}[For-loop with an invariant on memory]
@@ -385,15 +385,15 @@ then the for-loop terminates from $\sigma$ within cost $T$ in a state satisfying
 \leanok
 \uses{Light.Ends, Light.Ends.for, Light.Ends.mono, Light.Expr, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.State, Light.Stmt, Light.Stmt.for}
 \difficulty{4}
-Let $\text{lim}$ be execution limits, let $P$ be a program, and let $i,n,T,b$ be natural
-numbers, with fixed local-variable function $loc$, initial memory $\mu$, upper-bound
-expression $hi$, loop body $body$, and postcondition $Q$. Let $I(j,\mu')$ be a memory
-invariant. Suppose $I(0,\mu)$ holds. For each $j<n$, assume that from local variables
+Let $	ext{lim}$ be execution limits, let $P$ be a program, and let $i,n,T,b$ be natural
+numbers, with fixed local-variable function $loc$, initial memory $ mu$, upper-bound
+expression $hi$, loop body $body$, and postcondition $Q$. Let $I(j, mu')$ be a memory
+invariant. Suppose $I(0, mu)$ holds. For each $j<n$, assume that from local variables
 obtained by setting $i$ to $j$ in $loc$ and any memory satisfying $I(j)$, the body
 executes within cost $b$, preserves the local-variable function, and leaves memory
-satisfying $I(j+1)$. Assume that $I(n,\mu')$ implies $Q$ for the state with local
-variable $i$ set to $n$ and memory $\mu'$. Also assume that whenever $j≤n$ and
-$I(j,\mu')$ holds, $hi$ is safe and evaluates to $n$ in that state. If $n$ is at most
-the word limit and $n(\text{cost}(hi)+b+7)+\text{cost}(hi)+5≤T$, then the for-loop
-terminates from $(loc,\mu)$ within cost $T$ in a state satisfying $Q$.
+satisfying $I(j+1)$. Assume that $I(n, mu')$ implies $Q$ for the state with local
+variable $i$ set to $n$ and memory $ mu'$. Also assume that whenever $j≤n$ and
+$I(j, mu')$ holds, $hi$ is safe and evaluates to $n$ in that state. If $n$ is at most
+the word limit and $n(	ext{cost}(hi)+b+7)+	ext{cost}(hi)+5≤T$, then the for-loop
+terminates from $(loc, mu)$ within cost $T$ in a state satisfying $Q$.
 \end{theorem}
