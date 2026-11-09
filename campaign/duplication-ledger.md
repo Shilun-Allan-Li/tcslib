@@ -1896,3 +1896,20 @@ generic public contracts. The three inspected SafeRun zero, cons and
 trans implementations cite the public Segment operations through their
 private conversion. These scoped retirements preserve the existing
 declaration headers. The RO1 home ruling remains separate.
+
+## Gate 129 round 3 proof reuse on #251 (2026-11-09)
+
+The exact source ead826bc6b1900c4209717aafc14244745106d7d shares three live-copy
+and five aligned rewind implementations in Primitives, and centralizes
+thirty no-write field subproofs. The former forward eraser proof now
+uses the existing buffer replay. The six private Reductions fixed-prefix
+declarations are replaced by the public pairing computation and its
+linear-to-polynomial lift. The recorded implementation retirements
+take effect on merge.
+
+The expanded 52-file comparison also identifies the existing
+Nondeterminism conditional and threaded-map closure proofs against
+PolyTimePairing, alongside the PL-1 linear lift. These occur on both
+sides of the #251 comparison. A later Nondeterminism cleanup requires
+its own import ruling. The bounded evidence and remaining candidate
+kinds are in campaign/gates/129-input-readers/r3-evidence/COPY-REVIEW.md.
