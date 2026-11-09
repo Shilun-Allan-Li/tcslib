@@ -1,0 +1,115 @@
+{
+  "verdict": "HOLD on policy",
+  "blockers": 0,
+  "majors": 1,
+  "minors": 1,
+  "continuing_notes": 4,
+  "mathematically_accepted_fills": 40,
+  "findings": {
+    "path": "audits/lwe-sis-trapdoor-proofs-findings.md",
+    "bytes": 13894,
+    "sha256": "3c2126ffaff1b51a777ce86bcfd9cd4ca4cd0dab0b793db71ce9cd2f0b2b4007"
+  },
+  "audited": {
+    "exchange_commit": "7200aafd9ae628aeef6a7dd69f2125618b903433",
+    "source_pin": "3bf1cb424b10abef3ae7a438c6b7d0e1916d0800",
+    "records_pin": "aff0a82679c201834415cbe293393fef7477f6e7",
+    "bundle_sha256": "49b4ed235b2213d205410f320799cf4e317556ef404e6067ea1d04d5862a12a1",
+    "bundle_bytes": 5020677,
+    "sections": 236,
+    "central_target_at_publication": "27f9ea89b72d84abaec8128f2abd826f24aaced4"
+  },
+  "pinned_exchange_payloads_reverified": 7,
+  "F01": {
+    "status": "checked in isolated proposal checkout; owner approval pending",
+    "patch": "proposed-binary-error-sum.patch",
+    "patch_sha256": "850430aa5d4a63d6f86f63ed633c32b4b1dec032e2ebe47046a69a54f94e14fc",
+    "axiom_probe_log": "proposal-axioms.log",
+    "axiom_probe_sha256": "74917c209dfc7cb7513e5054b53e189b40f9adff380692afae4c9ee214cf896e",
+    "checks": [
+      {
+        "module": "TCSlib/Cryptography/LWE/Basic",
+        "started_utc": "2026-11-09T17:55:35.133577+00:00",
+        "seconds": 4.522,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 0,
+        "source_sha256": "53f1d9d7c744168ebb67d3f6fd4edd750d8fc0cdb7dd6b4b9a18e6c762911dc4",
+        "fresh_olean": true
+      },
+      {
+        "module": "TCSlib/Cryptography/LWE/BitEncoding",
+        "started_utc": "2026-11-09T17:55:39.656944+00:00",
+        "seconds": 1.909,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 0,
+        "source_sha256": "341fadb151a36feb97b3f052ecb6d0c7c2cdcd55bde24c6bd921e27cabccf147",
+        "fresh_olean": true
+      },
+      {
+        "module": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic",
+        "started_utc": "2026-11-09T17:55:41.566810+00:00",
+        "seconds": 1.9,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 0,
+        "source_sha256": "d3248c429394a333c68120bb923845d11540e39910f6672393399c67fa6e8f5e",
+        "fresh_olean": true
+      },
+      {
+        "module": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix",
+        "started_utc": "2026-11-09T17:55:43.467763+00:00",
+        "seconds": 2.131,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 3,
+        "source_sha256": "b07e84d498fd31ca0ff953a54a7d9d7a77e0ec215d49bb4ac60ef6c662526e4b",
+        "fresh_olean": true
+      },
+      {
+        "module": "Checks",
+        "started_utc": "2026-11-09T17:55:45.599407+00:00",
+        "seconds": 1.696,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 0,
+        "source_sha256": "473204117d21b42a14369b75f888d6c203a340e4cba875ef0281a16229a8a1df",
+        "fresh_olean": true
+      }
+    ]
+  },
+  "F02": {
+    "source_pin": "d3bb52db5aaf249a35e83506371a3c86e76cb69a",
+    "comment_stripped_source_unchanged": true,
+    "checks": [
+      {
+        "module": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix",
+        "started_utc": "2026-11-09T17:53:55.890442+00:00",
+        "seconds": 5.004,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 3,
+        "source_sha256": "d3c546f0b7285977dd3c8c9dc57f04a8afcb4ef6796f8fe13cd526774388906b",
+        "fresh_olean": true
+      },
+      {
+        "module": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic",
+        "started_utc": "2026-11-09T17:54:00.895684+00:00",
+        "seconds": 2.147,
+        "exit_code": 0,
+        "error_lines": 0,
+        "admission_warnings": 2,
+        "source_sha256": "bc056c10bd2c5454897ce48ec1b7b14cbf6231b93f67d52a97b8b74c0596272d",
+        "fresh_olean": true
+      }
+    ]
+  },
+  "integration_preview": {
+    "pr_255": "MERGED",
+    "central_tip": "41aaf0a1acf29318fa8d741dadd9f5f585e43c93",
+    "consumer_tip": "d3bb52db5aaf249a35e83506371a3c86e76cb69a",
+    "merge_tree": "393600b27620aacacfb1ad7ac2d22f1fc2aafe4c",
+    "lean_root_and_pins_unchanged": true
+  }
+}

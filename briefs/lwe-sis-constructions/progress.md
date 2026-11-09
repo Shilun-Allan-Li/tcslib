@@ -30,10 +30,10 @@ serial closures and reproduced both axiom probes. See
 |---|---|---|
 | DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
 | Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
-| SIS collision-resistant hashing | Core hash/reduction/profile and strong extraction audited. Raw evaluator and exact collision-to-SIS output proofs checked | Review of the new fills, counted-loop efficiency, and the CRH interface under independent SIS hardness |
+| SIS collision-resistant hashing | Core hash/reduction/profile and strong extraction audited. Raw evaluator and exact collision-to-SIS output proofs checked | Gate 12 disposition, counted-loop efficiency, and the CRH interface under independent SIS hardness |
 | Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
-| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation checked | Review of the new fills, positional digit reader, anti-cyclic rank, all-but-one inverse, strong one-time signatures and CCA2 |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation checked | Gate 12 disposition, positional digit reader, anti-cyclic rank, all-but-one inverse, strong one-time signatures and CCA2 |
 
 The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
 seconds with zero errors, seventy owned and seventeen inherited admission
@@ -90,9 +90,20 @@ zero errors. The 220 elaborated type comparisons agree with Gate 11, and all
 in the [proof report](fills/07-sis-trapdoor/REPORT.md). The scoped PW10 preflight
 pins the author PDF and the consumed passages.
 
-PR #255 passed its exact-target landing checks, including the full
-InformationTheory facade. [Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
+The Gate 12 audit passes the mathematics and axiom checks for all 40 fills and
+reproduces both native sweeps. The gate is **HOLD on policy** because the lossy
+column bound duplicates the existing Regev subset-sum bound. The PW10 reference
+ranges and overview are corrected in `d3bb52db5aaf249a35e83506371a3c86e76cb69a`.
+An isolated Lean check passed the proposed shared bound and both wrappers.
+The proposal awaits approval because it adds a theorem to the shared LWE owner.
+[Gate 12 findings](../../audits/lwe-sis-trapdoor-proofs-findings.md) ·
+[Exact proposed diff](fills/07-sis-trapdoor/intake-r1/proposed-binary-error-sum.patch)
 
-**Not yet clear to merge.** #250 awaits the 40-proof audit and retains 18
-admissions, shared-owner decisions, scoped source review and landing checks.
+PR #255 is merged. The live central tip is
+`41aaf0a1acf29318fa8d741dadd9f5f585e43c93`. The merge preview preserves the
+current #250 Lean tree, root, and pins.
+[Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
+
+**Not yet clear to merge.** The shared bound needs approval and re-audit.
+The 18 admissions, scoped source review, and landing checks remain open.
 The user approves all merges.
