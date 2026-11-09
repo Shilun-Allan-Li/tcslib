@@ -1,7 +1,6 @@
-**Ready to dispatch: gate 129 round 3 (Codex).** See prompt-r3.md.
-The published bundle has 26 sections and SHA-256
-e09465af2b3c1e475eb17d8897dab5f1eb8c0dc690b8ab67f20344d0634e509d.
-
-**Not yet clear to merge: #251.** The exact draft head is
-ead826bc6b1900c4209717aafc14244745106d7d. All current replay and proof
-checks passed. The external follow-up still needs dispatch and return.
+**Not yet clear to merge: #251.** Gate 129 round 3 returned HOLD
+at ead826bc6b1900c4209717aafc14244745106d7d with three majors covering
+reader discipline, Simulation input reads and exact proof reuse.
+The prior replay and issued bundle remain the evidence at their
+pinned source. Codex is selected for the round 4 follow-up.
+See findings-r3.md and resolutions-r4-in-progress.md.

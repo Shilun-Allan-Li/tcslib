@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T09:51:55.314520-08:00; authoritative)
+## 0. Current state (2026-11-09T10:11:53.102719-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #243 and #244 merged after #245–#247.
@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Exact source `ead826bc6b1900c4209717aafc14244745106d7d` passed all395 replay modules. **Ready to dispatch** Codex round3. See gate129 prompt-r3.md. |
+| #251 / 129 | **Not yet clear to merge.** Round 3 HOLD at `ead826bc6b1900c4209717aafc14244745106d7d` with three majors. Mechanical repairs and expanded checks in progress. Codex selected for round 4. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the final gate 129 round 3 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
