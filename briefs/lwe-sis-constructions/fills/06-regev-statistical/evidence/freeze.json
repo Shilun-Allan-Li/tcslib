@@ -1,0 +1,866 @@
+{
+  "baseline": "22f4d3c2e6ab01ad85698eed156d3728fc259362",
+  "central": "27f9ea89b72d84abaec8128f2abd826f24aaced4",
+  "statement_freeze": "17b2a282b545c6ebca3fccc88d518d18ae78f485",
+  "source_declarations": 220,
+  "unchanged_frozen_paths": 151,
+  "changed_theorems": [
+    {
+      "module": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments",
+      "name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKey_uniform_advantage_le",
+      "proof_sha256": "a73835dff822931a8925ceec588e5e404563fc9c626823b75c58b0db94b99acc"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments",
+      "name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.distAdv_encrypt_le",
+      "proof_sha256": "297546f46a233bc4902646629c4a6c95c4317166c655ef414208cef7d33bdd9b"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Universality",
+      "name": "TCSlib.Cryptography.Hashing.SIS.isUniversal_hash",
+      "proof_sha256": "b405053694eb51cd95c462be91e79614842ca18d9c5287289e41894a4e0ad72f"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Universality",
+      "name": "TCSlib.Cryptography.Hashing.SIS.uniform_bits_hasMinEntropy",
+      "proof_sha256": "08b9b90a974c3203cad83218d5ebf5c7f4fbab9182aad891706a73de659d41b9"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Universality",
+      "name": "TCSlib.Cryptography.Hashing.SIS.strong_leftover_hash",
+      "proof_sha256": "b5fa0bf20d97b41276f062f51fed58cc8a915bfcaf7062294476eb86cb9269f2"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Universality",
+      "name": "TCSlib.Cryptography.Hashing.SIS.distAdv_hash_uniform_le",
+      "proof_sha256": "86aebde54562b22c95248f17b3447a55d23e7c9cba4284bec71f04747e26ee18"
+    }
+  ],
+  "remaining_admissions": [
+    "TCSlib.Cryptography.Encoding.BooleanVector.expandStep_fst",
+    "TCSlib.Cryptography.Encoding.BooleanVector.expandStep_length_le",
+    "TCSlib.Cryptography.Encoding.BooleanVector.polyTimeComputable_expandStep",
+    "TCSlib.Cryptography.Encoding.BooleanVector.expandPoly_length",
+    "TCSlib.Cryptography.Encoding.BooleanVector.expandPoly_encode",
+    "TCSlib.Cryptography.Encoding.BooleanVector.polyTimeComputable_expandPoly",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep_fst",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep_length_le",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotStep",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotWords_length",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotWords",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_length",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_encodeVector",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotPoly",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep_fst",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep_length_le",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_matVecStep",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_length",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_encodeMatrix",
+    "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_matVecPoly",
+    "TCSlib.Cryptography.Hashing.SIS.negligible_collisions_of_SIS",
+    "TCSlib.Cryptography.Hashing.SIS.dyadic_collision_negligible",
+    "TCSlib.Cryptography.Hashing.SIS.collisionOutputStep_fst",
+    "TCSlib.Cryptography.Hashing.SIS.collisionOutputStep_length_le",
+    "TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_collisionOutputStep",
+    "TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly_length",
+    "TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly_pairEncode",
+    "TCSlib.Cryptography.Hashing.SIS.decode_collisionOutputPoly",
+    "TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_collisionOutputPoly",
+    "TCSlib.Cryptography.Hashing.SIS.rawCollisionProbability_le_successProbability",
+    "TCSlib.Cryptography.Hashing.SIS.hashPoly_length",
+    "TCSlib.Cryptography.Hashing.SIS.hashPoly_encodeMatrix",
+    "TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_hashPoly",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_sub",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_mulVec_injective",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_difference_injective",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_message_bound",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluate_lossy_branch",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.residual_branch",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch_injective",
+    "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.lossy_branch_range_card",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.conceal_column",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.column_gap",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealed_advantage_le",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.shifted_advantage_le",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_intCast",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_add",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode_encode_add",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits_val",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget_mulVec",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits_injective",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_conceal",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_injectiveKey",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.error_sum_bound",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover_evaluate",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate_injective",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_range_card",
+    "TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_bits"
+  ],
+  "source_files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4726,
+      "sha256": "c0c081f3465f06b79c806a5e5d2ee2a04387965cbbbeca5b67d542d17443e29f"
+    },
+    {
+      "path": "TCSlib.lean",
+      "bytes": 2725,
+      "sha256": "4c11e2dcfb7d715adb18c8cef8d543820197b7fa7e12d1211a2bcc3cc48cff92"
+    },
+    {
+      "path": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+      "bytes": 2368,
+      "sha256": "27269a6c51d956d781a3279ec8e5e5e5513ab8ab631f93beaa45e50c2c4eb772"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/CoNP.lean",
+      "bytes": 7711,
+      "sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "bytes": 3393,
+      "sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/NP.lean",
+      "bytes": 26803,
+      "sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PClosure.lean",
+      "bytes": 12208,
+      "sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "bytes": 7972,
+      "sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "bytes": 39696,
+      "sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean",
+      "bytes": 12124,
+      "sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+      "bytes": 11225,
+      "sha256": "c5d091944b891adcf4cae2ffadd532e39a84e5deffb0c7045ab10afa6a829def"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "bytes": 17138,
+      "sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "bytes": 17598,
+      "sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Transducer.lean",
+      "bytes": 8105,
+      "sha256": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+      "bytes": 11971,
+      "sha256": "36f37a2212cbe21ed026bdee8586f37828f660fc7a62592ca2bff46b4db0e3e5"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Basic.lean",
+      "bytes": 16523,
+      "sha256": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Div.lean",
+      "bytes": 13216,
+      "sha256": "9bcd67e88694e4f268bc1aaa35d9a1b3c31122fe9fcc060b5a7837cdf24293cc"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+      "bytes": 10996,
+      "sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+      "bytes": 25075,
+      "sha256": "46e2d496b6437f806232a009ff0958acaa137adb286ae93626819d700f37449c"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Mul.lean",
+      "bytes": 11740,
+      "sha256": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+      "bytes": 16910,
+      "sha256": "4fc7c87b64e523adcc381deebb3ee2a199adbc13971052b7af2a83e7c98d7ca3"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "bytes": 5670,
+      "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/P.lean",
+      "bytes": 5995,
+      "sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "bytes": 24101,
+      "sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481"
+    },
+    {
+      "path": "TCSlib/Complexity/PolyHierarchy/Padding.lean",
+      "bytes": 11187,
+      "sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/IterateFind.lean",
+      "bytes": 31571,
+      "sha256": "81e21a15b6ee3da6d1a788ecdab5213aca7ec853d9a8b3ec5dc4cf22da00a7b7"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean",
+      "bytes": 17661,
+      "sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/PairSplit.lean",
+      "bytes": 34928,
+      "sha256": "c7fcf877294a8a11a88bcd5803059b88aea71033a359f6c00e0a0334bbe59cf7"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+      "bytes": 20615,
+      "sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+      "bytes": 34882,
+      "sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/UnaryMul.lean",
+      "bytes": 22117,
+      "sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Classes.lean",
+      "bytes": 63061,
+      "sha256": "072d89a0918f0e0ff125bd6927ff8941fda9b4096e552b091b32e2c7ab4e0d04"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Closure.lean",
+      "bytes": 27332,
+      "sha256": "6c00fec9cd9c2c86b6584eb921b910baf50b8c2cfe000928aa734fe56121d50d"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/PPT.lean",
+      "bytes": 26118,
+      "sha256": "1766685ee73e2221d7cdecffe8a8cafedc43dc46af2d1b06da8c750973a453f4"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/PolyExpr.lean",
+      "bytes": 10125,
+      "sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Primitives.lean",
+      "bytes": 12211,
+      "sha256": "806389a7b0492af8836938156f0424b0a374791fd576cca6bf6018c00534823b"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/RandomBits.lean",
+      "bytes": 20065,
+      "sha256": "960f5357d64e8c5e6415d18b6acef2f1a4778c7eb6a415ab6e8e432a987b8ba1"
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Repetition.lean",
+      "bytes": 29003,
+      "sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "bytes": 8340,
+      "sha256": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "bytes": 12128,
+      "sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+      "bytes": 62217,
+      "sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean",
+      "bytes": 43305,
+      "sha256": "bc35c3485cad1755dcfdb43d2c77c3a21af390c4201db1d15c2ccfe77e3bd3fe"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "bytes": 13202,
+      "sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "bytes": 287942,
+      "sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean",
+      "bytes": 37767,
+      "sha256": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "bytes": 371583,
+      "sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "bytes": 43171,
+      "sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "bytes": 46110,
+      "sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "bytes": 12934,
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "bytes": 25046,
+      "sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "bytes": 3519,
+      "sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "bytes": 20237,
+      "sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "bytes": 25824,
+      "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "bytes": 40542,
+      "sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "bytes": 25023,
+      "sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "bytes": 43268,
+      "sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "bytes": 123875,
+      "sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "bytes": 59880,
+      "sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "bytes": 11199,
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "bytes": 18068,
+      "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "bytes": 3017,
+      "sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+      "bytes": 12392,
+      "sha256": "4e9b47534922e6397b823173b00ab6ed2cb393b4e88ad4bc81a9065d4656cb0d"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+      "bytes": 10656,
+      "sha256": "723389b4d10f7939154b3172527b11bcb67de0d928789d571f266c26860ae021"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean",
+      "bytes": 5288,
+      "sha256": "97efc0c699e5d536c8f4f68d6b64929a7e2d98e9de60fdfd6fbc1a46268b15a6"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+      "bytes": 44956,
+      "sha256": "ab6aa036e7d2e8f4311162ffa33de06b8a9252b6a8b1150e9c34e5f5164ce934"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+      "bytes": 57225,
+      "sha256": "91692d69d8d6e279fd449ba2551fdd38a2035ac446225d358e311ecf729e7874"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+      "bytes": 44311,
+      "sha256": "bf32d98a79fa2537a9368b93cb2c7569d926593bdf8e9167f3202e356bfadd1b"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+      "bytes": 47019,
+      "sha256": "a2d591271d69e0b2c4574b4c5612270e0d924efc58300ba095ffd0e006625245"
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+      "bytes": 47390,
+      "sha256": "9860769695ceada5454be8b9012183d015083cd2e5a1c916b3f9f6b68a4f50f3"
+    },
+    {
+      "path": "TCSlib/Cryptography/Candidates/Arithmetic.lean",
+      "bytes": 25748,
+      "sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding.lean",
+      "bytes": 1474,
+      "sha256": "8d172e1a5eea54e2c234ec61f9670c6f1e0796c83bf9e75638d9365bd24f1528"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/BinaryArith.lean",
+      "bytes": 14357,
+      "sha256": "1b7cee2f2adcf718257ea50cf048255b7bf71df684af1a816fa7cfff74b8b635"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/BooleanVector.lean",
+      "bytes": 5689,
+      "sha256": "82b182dcfae7fc1eee139b570f6787554f44c0ea9bd328c1b5a7cd6014feccef"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/DyadicArithmetic.lean",
+      "bytes": 17293,
+      "sha256": "0222d51364a74c3fa5c361056fb01cb9c2436ddbbbb9c11bf5f3956dd5c1814a"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean",
+      "bytes": 13361,
+      "sha256": "32c025a3f1c2abcdfd92aa922d77e17206cc810250c6e81e247ccbd0d095ce11"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/DyadicUniform.lean",
+      "bytes": 11564,
+      "sha256": "a219d80f442ccc1448e71ea0ab6d92140a33ba02d6ed2d0f2fa9f94408eaf130"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/Modular.lean",
+      "bytes": 6869,
+      "sha256": "b6c9022a65d70bf021cd91e31623b0703dd307098fd67aa676cee57b556cccca"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/ModularDecode.lean",
+      "bytes": 12861,
+      "sha256": "1c56a77c6b059a440a807ff979ad733ee98b359c7fefa91e135d740780ebafd3"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption.lean",
+      "bytes": 713,
+      "sha256": "4df3b3c27eb5cb7a14f10d6987d5ef8feccacbe7021160e26d1a5013b9ee99fe"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/PublicKey.lean",
+      "bytes": 750,
+      "sha256": "c88d2bc0e16ed259cbe3e341a22f7fc5e7c128b32830d2fc04c37d84b7b08bb6"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/PublicKey/Regev.lean",
+      "bytes": 901,
+      "sha256": "dcdc71a131969861823bb28c03455a51f13ca116cb4fe5be5823cf40d87a0ea1"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "bytes": 9764,
+      "sha256": "ce89e0d5de3082a2bf5fe52f294d9d14b0b207d2f0178d91b17533260bf3aebc"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "bytes": 18691,
+      "sha256": "2ea12a29795a01281311b598d203b6cfed1a87cafd0aa4a1be3ee3d7fa89b4d9"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric.lean",
+      "bytes": 475,
+      "sha256": "6f5bf6659e26d264a20dca1424c5e690d3201591676762007f4e86a38af2e5d9"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev.lean",
+      "bytes": 760,
+      "sha256": "b8406ff9cfbdef04ba330341ca726c96598c6492b10f2c4eaf266eec4ba636dd"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean",
+      "bytes": 5833,
+      "sha256": "01672b5b9fc91b14de71199d6b272d0128a1f666205a7007e05367074e283e04"
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean",
+      "bytes": 6641,
+      "sha256": "f018bc556efe37126ed67e2855a2c30fc4001cd43c86132fd81d5878caa15ae5"
+    },
+    {
+      "path": "TCSlib/Cryptography/Foundations/Experiments.lean",
+      "bytes": 9248,
+      "sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220"
+    },
+    {
+      "path": "TCSlib/Cryptography/Foundations/Negligible.lean",
+      "bytes": 11000,
+      "sha256": "5e6d2c9e69dbfe012c36a92bad05ec27e691c044dae73a7277b9599902074e1a"
+    },
+    {
+      "path": "TCSlib/Cryptography/Foundations/Probability.lean",
+      "bytes": 10528,
+      "sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46"
+    },
+    {
+      "path": "TCSlib/Cryptography/Games/OracleComp.lean",
+      "bytes": 15931,
+      "sha256": "13914fce8c1b681411a391510a59d3b1663edfd6d3aff4d886227394bc8aea98"
+    },
+    {
+      "path": "TCSlib/Cryptography/HardcoreBit/Basic.lean",
+      "bytes": 14125,
+      "sha256": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing.lean",
+      "bytes": 504,
+      "sha256": "f2056c6df3e6d3e275558c9d9dfcf6e4def7392a59459bdc0130785b31c9b36b"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS.lean",
+      "bytes": 1386,
+      "sha256": "59ae4c6f728fdefeebbebd12708fad56c34f8177f03882038a64086ee63c6965"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean",
+      "bytes": 4276,
+      "sha256": "b18a78b81796a07f23f848e5e2f5e8e9ddea60c65f10d7742dfe5ce7edaad82a"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Basic.lean",
+      "bytes": 7438,
+      "sha256": "9a95ce0621be8245a02bcb1e7c8fa387a0d414b7ce727ddea0da477c8aa8df2e"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean",
+      "bytes": 9571,
+      "sha256": "f251233cb54dee5724b573362c38bc55443c1078e529fd1829edc0eaaf1f52a0"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Experiments.lean",
+      "bytes": 3567,
+      "sha256": "66cadbfdb9c40f3f553dcf230e750c15dd1ecf583cf5fc59d145ec13a54e14a8"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Implementation.lean",
+      "bytes": 4024,
+      "sha256": "40f721e963771f1f59830d415853b9c69a19e8fcc4b611a4a9f68122e29c830d"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Profiles.lean",
+      "bytes": 9349,
+      "sha256": "41cc987cfaf76384714b5037cbb677e2f4b63a4bd8cf126a68e12228d963d2ad"
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "bytes": 12604,
+      "sha256": "772285e6d86a4f6e340341cadac4aff965a3f38e6d3c8e6896232506ec3102cc"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE.lean",
+      "bytes": 1580,
+      "sha256": "57e510461154a35578fc7f0a7d10c5caa80bad6d5892e39c0b27d5d566539fb9"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Assumption.lean",
+      "bytes": 7354,
+      "sha256": "43be481ecc2ea2ad4e559ca21a50e0c6295f9d1d1d1ffec640832070186c19d6"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Basic.lean",
+      "bytes": 4262,
+      "sha256": "215198380b295a4f482578a8f3e28df2bce672b5869a0a594a6ebca3322edcf2"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/BitEncoding.lean",
+      "bytes": 6507,
+      "sha256": "341fadb151a36feb97b3f052ecb6d0c7c2cdcd55bde24c6bd921e27cabccf147"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/BitNoise.lean",
+      "bytes": 8027,
+      "sha256": "8522f3cbf92ab3f7757e8aef733b9b04ea6b42666674afc8d5b74b8b35439b26"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Encoding.lean",
+      "bytes": 3587,
+      "sha256": "49dc02f02d1751882df60469e16e0297227a624cbc431ebbdfad7fd912902f25"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Experiments.lean",
+      "bytes": 2505,
+      "sha256": "d38c177a1ffc7600947fa57442f4b545ddb3563b8d0b5780981916a30431c037"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Noise.lean",
+      "bytes": 2479,
+      "sha256": "07f408771e912672d331f78cb9a05ef19dc48fcb753cd37daac1e821c66a063b"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/SampleSchedules.lean",
+      "bytes": 3697,
+      "sha256": "ef0a7374ef06298f7dade397b454ec4f06cfe92c029501ae80fad5800bd9263f"
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Sampling.lean",
+      "bytes": 7594,
+      "sha256": "a67b780b6d8de494201fbf70cd91d097322e6ccb9542ade6b44192234c402fcf"
+    },
+    {
+      "path": "TCSlib/Cryptography/NumberTheory/Chebyshev.lean",
+      "bytes": 15799,
+      "sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1"
+    },
+    {
+      "path": "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "bytes": 48414,
+      "sha256": "c1aabf599529e54b4f092e800bb53d46a53346007b11bde4631a0a8e907a9d58"
+    },
+    {
+      "path": "TCSlib/Cryptography/OneWayFunctions/Amplification.lean",
+      "bytes": 18102,
+      "sha256": "a258eca2b4172cb38fde46aa9e551093ca1af42c1081b67ef628f1ec0a1fc016"
+    },
+    {
+      "path": "TCSlib/Cryptography/OneWayFunctions/Basic.lean",
+      "bytes": 6719,
+      "sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom.lean",
+      "bytes": 1601,
+      "sha256": "d254126906cb9834ead1ff66cebe04c831bec6a75cb097d9c78bc5e978e6437f"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions.lean",
+      "bytes": 1565,
+      "sha256": "c5e3c009e7194a8c496acd1734f7a023e246b7d19da3e24e951d916519654b57"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean",
+      "bytes": 5070,
+      "sha256": "28a68e0d8cc0621216923b5515d2c78c2eb6014a7823fe2fd4837e0301bd03e6"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean",
+      "bytes": 20158,
+      "sha256": "193bbe7a5553286c999c79c951bf8a2a482da70b57b610342487cd243e67666e"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean",
+      "bytes": 18874,
+      "sha256": "c7ba03a03ed91625a1c40f4f29bacba20cc7d69f443bc661cf9f4c047bfb78b4"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean",
+      "bytes": 11530,
+      "sha256": "1bd9ff4a8eb8a9561f218bc49b0b4cbc524ca7fea55d952a934218604c453bfd"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean",
+      "bytes": 16231,
+      "sha256": "76ffc482cb304f07a86b397cc03c156be18bcd59cf01843cad9889659e57f4e7"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean",
+      "bytes": 12604,
+      "sha256": "98e5508596486b980eb95dfe96d84703b9881436e309964732c46032520ca89a"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Generators.lean",
+      "bytes": 15027,
+      "sha256": "f3ac4cba8a9ad823551be322661bcbf6b7264c039088b28b8c1b03890a39cd36"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE.lean",
+      "bytes": 1035,
+      "sha256": "787cd5de9bd8e23b1d6b11aa57df4f9c52bda022af2619c5defc1330ced2802c"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "bytes": 8026,
+      "sha256": "945fa4ca019c6807e614c80f32de41fdc5f76c3126b797f52dd2269fde634597"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean",
+      "bytes": 7361,
+      "sha256": "60fe740905e9159d89334440922f829f73f8edbbae968698f9a4d18c390694c7"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Flat.lean",
+      "bytes": 9707,
+      "sha256": "12687deaa620db504ebfe5943bd49effeaba7172fcca7d018327b3380d47e30e"
+    },
+    {
+      "path": "TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean",
+      "bytes": 16725,
+      "sha256": "ad14d4e190a56344860a856a1b9ff0eaeb66286c1c1c1b46312a870f50dd22eb"
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS.lean",
+      "bytes": 955,
+      "sha256": "b1501c9ce5781b5d353034293161d13cc5194f8b7622f74bf62e48f2d2182ecc"
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Assumption.lean",
+      "bytes": 8350,
+      "sha256": "159e13ea8359827c2fd92d5b5a81de61fc9b7397e07c23439d2282b3e1b9c3d5"
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Basic.lean",
+      "bytes": 2945,
+      "sha256": "ae3427a4392dbdad45a4bd686a484651eba5889aca968e0efdac5bb38f3fefb6"
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Encoding.lean",
+      "bytes": 12397,
+      "sha256": "5ab3511446d1abd2fdf29231585e7877ef7fff2d2185146c7bfbaf9aacf352b7"
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Experiments.lean",
+      "bytes": 2384,
+      "sha256": "baa956040177e67435f09bcfa5c8adad1c0c81ad9043420e951612cf7c10eca8"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions.lean",
+      "bytes": 902,
+      "sha256": "3a315f80e36faa2e5d2c7ae5153816dc18def21f86ee8b211e3ae7d5d2044a7f"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne.lean",
+      "bytes": 904,
+      "sha256": "b8674fcaa0b973a5aa6c89374f85ff284e13db1a5d4e2d89dc53b15d63082e47"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean",
+      "bytes": 4033,
+      "sha256": "2e7905e1a690cb473c9775ffa9506c9281766b57430dacf0d9df752d8c80b630"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "bytes": 8346,
+      "sha256": "266eb0d86b1f2db3c90732d4eccd0b6dc67178de74bca82b23a1b48636ecf0e9"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy.lean",
+      "bytes": 1024,
+      "sha256": "e58b31676712e7b711468eb7142465a2b38a2517581ec2a0b568c17c012ff187"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "bytes": 10616,
+      "sha256": "c38b3f3a3287e88798055d0c1aaf6ecd1062e7884d0730308bce81181296cc16"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "bytes": 6493,
+      "sha256": "beb599a17bf4ec855917de0562b35d887f44e959e543340595526c4f35fbe2e3"
+    },
+    {
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "bytes": 10557,
+      "sha256": "f612f60a5fcb6c9b426cf61ef641d150dcf54cb2b6a5ec3cc0d009db82d47d77"
+    },
+    {
+      "path": "TCSlib/InformationTheory/FinDist.lean",
+      "bytes": 6871,
+      "sha256": "967e8cfcd47c37c791530fc9d5b8304a329cacb7d1d427c8eb08ec37a5901dcf"
+    },
+    {
+      "path": "TCSlib/InformationTheory/LeftoverHash.lean",
+      "bytes": 9559,
+      "sha256": "83bc1fde6ee7b3855700113b2bff2207b61d0579f7c13bac77768672bf4149d9"
+    },
+    {
+      "path": "TCSlib/InformationTheory/StatisticalDistance.lean",
+      "bytes": 4425,
+      "sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739"
+    },
+    {
+      "path": "TCSlib/InformationTheory/UniversalHashing.lean",
+      "bytes": 4309,
+      "sha256": "6a2cbcacb746dfe5b32ae0a10d901a2cb25281bcf3781b739de0383d781d12f7"
+    },
+    {
+      "path": "lake-manifest.json",
+      "bytes": 4935,
+      "sha256": "cad7de215c4cc216d03acb77cb1abfbe9f3b4062a8988b29459504f932015100"
+    },
+    {
+      "path": "lean-toolchain",
+      "bytes": 25,
+      "sha256": "dbbf063fc415c8e718172605f23a8f86679a3c320eff6d3890cc009534452925"
+    },
+    {
+      "path": "machine-library-design.md",
+      "bytes": 267037,
+      "sha256": "f4f5cba99f0321f044340adfb3f3221170ed4ec1bfc212c3fdb7dd318b495292"
+    },
+    {
+      "path": "policy.md",
+      "bytes": 16611,
+      "sha256": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4"
+    },
+    {
+      "path": "scripts/campaign_style_lint.py",
+      "bytes": 16127,
+      "sha256": "65c420ea2f33165c674c13bf181995543133cd4b63290631655e31a4b3b29e2e"
+    },
+    {
+      "path": "scripts/lean_check_tree.sh",
+      "bytes": 2295,
+      "sha256": "366dab40e8e8f0f13e14118e14c3d6be1bc1b36604e6c9ccdebb03bc96cdf335"
+    },
+    {
+      "path": "workflow.md",
+      "bytes": 15173,
+      "sha256": "a89d9a4e38bf14a90271000376828d7c5246617c5a6f9f55f3366bf4d0dbed0e"
+    }
+  ]
+}
