@@ -1,0 +1,9 @@
+/-- A returned interval cleaner preserves every field on further steps. -/
+private lemma emitterClear_fixed {w : List Bool} (z : Cfg 3 Bool (Fin 4) w)
+    (hz : z.state = some 3) : emitterClearTM.tm.step z = z := by
+  unfold MultiTapeTM.step
+  rw [hz]
+  change (controlAction 0 (some (3 : Fin 4))).apply z = z
+  rw [controlAction_apply, moveInputPos_zero]
+  cases z
+  simp_all

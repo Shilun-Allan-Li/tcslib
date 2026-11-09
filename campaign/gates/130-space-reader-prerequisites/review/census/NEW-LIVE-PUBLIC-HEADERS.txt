@@ -1,0 +1,1222 @@
+Turing.MultiTapeTM.ConfigCount.core_step fb295febe5a0142ac5fc68f7a98b40789232f4d83d756155ee6a0b8cb71c7c0e
+lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :
+    core (tm.step c) = core (tm.step d)
+
+Turing.MultiTapeTM.ConfigCount.core_runFrom 3f10268f2ffe14be2a997904ba0fe83fbe0c041426ce838e7cb82cca756535e1
+lemma core_runFrom (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d)
+    (t : ℕ) : core (tm.runFrom c t) = core (tm.runFrom d t)
+
+Turing.MultiTapeTM.ConfigCount.core_injOn 29b90c68ea02caab85f52b646955d6cf7a8527a2197593cd446eabad836231d0
+lemma core_injOn (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (T : ℕ)
+    (hT : (tm.runFrom c T).state = none)
+    (hmin : ∀ t < T, (tm.runFrom c t).state ≠ none) {t₁ t₂ : ℕ} (h₁₂ : t₁ < t₂)
+    (h₂ : t₂ < T) : core (tm.runFrom c t₁) ≠ core (tm.runFrom c t₂)
+
+Turing.MultiTapeTM.ConfigCount.coreCode_inj d80818f6830b7fd538829ce3344fe76846fe4cd687d6eb3e85cee783a9bd5ec2
+lemma coreCode_inj (B : ℕ) {c d : Cfg k Bool S x}
+    (hc : ∀ i, |c.workTapePos i| ≤ B ∧ ∀ z, c.workTapes i z ≠ none → |z| ≤ B)
+    (hd : ∀ i, |d.workTapePos i| ≤ B ∧ ∀ z, d.workTapes i z ≠ none → |z| ≤ B)
+    (h : coreCode B c = coreCode B d) : core c = core d
+
+Turing.FinTM.ComputesInTime.of_spaceUsed_le 57d8114db61ba94ca5713584f95a71be0d3885d11d008296ecd929496f38142f
+theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : ℕ}
+    (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    M.ComputesInTime x w (M.configBound x.length s)
+
+Complexity.LogProg.call_run 259f4677a42e42894910cfd86fd55cfc57234d3bafdc14ddc8228dae1d87fe2c
+theorem call_run (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)
+    (hl : c0.state = some l) (hcall : P.call l = some cs)
+    (hW : ∀ r ∈ cs.args, c0.workTapes r = FinTM.bufferTape (W r))
+    (hW0 : ∀ r ∈ cs.args, c0.workTapePos r = 0) (hnd : cs.args.Nodup)
+    (hin : c0.inputPos.val = 1) (b : Bool) (B : ℕ)
+    (hD : CleanRun D (q0 cs.dec) (vword (callSegs cs x W)) b B) :
+    ∃ T, (∀ t ≤ T, RegBox cs c0.workTapePos W (fun r => ((compileTM P l₀ D q0).runFrom
+          (seam c0) t).workTapePos (Fin.castAdd kD r)) ∧
+        ∀ i, |((compileTM P l₀ D q0).runFrom (seam c0) t).workTapePos (Fin.natAdd m i)| ≤ B) ∧
+      (compileTM P l₀ D q0).runFrom (seam c0) T =
+        seam { c0 with state := some (if b then cs.yes else cs.no), inputPos := 1 }
+
+Complexity.LogProg.seam_eq_mkCfg 46dd22cb380a1812c2936817d7b18ad55dbf70e55d68b1da33acc5130c7bc302
+lemma seam_eq_mkCfg (c : Cfg m Bool Λ x) :
+    seam (kD := kD) (SD := SD) c = mkCfg (c.state.map .prog) c.inputPos c.workTapes
+      c.workTapePos (fun _ _ => none) (fun _ => 0) c.output
+
+Complexity.LogProg.step_sim 34176628d555b133a6e3f8ced09fb9b462fec8458f91f95d3a5584dc8cf784ae
+lemma step_sim {x : List Bool} (M : MultiTapeTM k Bool S) (q₁ : S) (c : Cfg k Bool S x)
+    (q' : S) (hq' : c.state = some q') (Mt : Fin k → ℤ → Option Bool) :
+    (cleanTM M q₁).step (ccfg (some (.sim q')) c.inputPos c.workTapes c.workTapePos Mt
+        c.workTapePos c.output) =
+      ccfg (simSt (M.step c)) (M.step c).inputPos (M.step c).workTapes (M.step c).workTapePos
+        (fun i => wr (if Mt i (c.workTapePos i) = some true then none else some (some false))
+          (Mt i) (c.workTapePos i)) (M.step c).workTapePos (M.step c).output
+
+Complexity.TimeHierarchy.kCfg_rewind 5005a9fafa68d505bfad177353ae8e313ecbaabaea747eafb5650d9b39fc2343
+lemma kCfg_rewind {x : List Bool} (c : Cfg K.k Bool K.State x) (hs : c.state = none) :
+    (clockTM K W).tm.runFrom (kCfg K W c) (c.output.length + 2) =
+      ctrCfg K W (some .iStart) ⟨none, c.inputPos, fun _ _ => none, fun _ => 0, []⟩
+        (bufferTape c.output) 0 c.workTapes c.workTapePos []
+
+Turing.FinTM.bufferedFirstCfg_rewind a76ea5705b3407752d0c3415f4cd5c1545fd2ab988e03e63c8da96259798d13b
+lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (hs : c.state = none) :
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c) (c.output.length + 2) =
+      bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg c.output) true c.inputPos c.workTapes c.workTapePos
+
+Turing.FinTM.sweepRevCfg_left 909fa7f3121c98f94fa690951fd63e9d1a6f68ed2c5ddc8ad14cffa6d1de4f8b
+lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (a b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l (a :: r) out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r out
+
+Turing.FinTM.sweep_run_reverse 5072c4eace2848d267ef102e1aefd0cb8abc606d4a23ed9332817a94023e1d3f
+lemma sweep_run_reverse {A S R C : Type} (tm : MultiTapeTM 1 A S)
+    (state : R → S) (symbol : C → A) (visit : R → C → R × C)
+    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
+      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
+    {x : List A} (p : Fin (x.length + 2)) (out : List A)
+    (as : List C) (s : R) (z : ℤ) (l r : List (Option A)) :
+    tm.runFrom (sweepRevCfg (some (state s)) p z l
+      (as.map (fun a => some (symbol a)) ++ r) out) as.length =
+    sweepRevCfg (some (state (sweepFold visit s as).1)) p (z - as.length)
+      (((sweepFold visit s as).2.map (fun a => some (symbol a))).reverse ++ l) r out
+
+Turing.FinTM.sweepRevCfg_left_any 29f98d1dd492f9120e62528fb09c0304e5e5d3ba801eec932155f2ed960545b9
+lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l r out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r.tail out
+
+Turing.NDTM.coreSum_stepWith 676aa0bde0becb05e48c0dc4aac0469a6b20c9711448ced855fe1d4c774ed89f
+theorem coreSum_stepWith (tm : NDTM k Bool S) (b : Bool) {c d : Cfg k Bool S x}
+    (h : coreSum c = coreSum d) :
+    coreSum (tm.stepWith b c) = coreSum (tm.stepWith b d)
+
+Complexity.LogProg.OIS.run a989e38b98c01978af393d01da0daaae2dcf620398aca52327f63be0de9897b6
+theorem run (x v : List Bool) (o : Fin 2 → List Bool → Bool)
+    (ho0 : ∀ i ≤ v.length, o 0 (pairEncode x (Nat.bits i)) = decide (i < v.length))
+    (ho1 : ∀ i < v.length, o 1 (pairEncode x (Nat.bits i)) = v.getD i false)
+    (t : ℕ) (ht : (M.tm.runFrom (M.tm.initCfg v) t).state = none) :
+    ∃ N, (rrun (prog M) o (Cfg.init (start M) x) N).state = none ∧
+      (rrun (prog M) o (Cfg.init (start M) x) N).output =
+        (M.tm.runFrom (M.tm.initCfg v) t).output ∧
+      (∀ n ≤ N, ∀ r,
+        lo M (M.tm.spaceUsed (M.tm.initCfg v) t) r ≤
+            (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ≤
+            hi M (M.tm.spaceUsed (M.tm.initCfg v) t) (Nat.bits (v.length + 1)).length r) ∧
+      ∀ n < N, ∀ l cs, (rrun (prog M) o (Cfg.init (start M) x) n).state = some l →
+        (prog M).call l = some cs →
+          (rrun (prog M) o (Cfg.init (start M) x) n).inputPos.val = 1 ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos (q M) = 0 ∧
+          ∃ i ≤ v.length, (rrun (prog M) o (Cfg.init (start M) x) n).workTapes (q M) =
+            FinTM.bufferTape (Nat.bits i)
+
+Turing.cfgRecord_inj c992bca47bda08c8a0be316284e71443a7b0f9b05eec58e914283acca529d80a
+theorem cfgRecord_inj {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) {c d : Cfg k Bool Q x}
+    {τ τ' : T} (hc : c.InWindow s) (hd : d.InWindow s) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ'
+
+Turing.exists_inputSeekTM f04a1d1e381f421a31376cee51aa013e143c1bd27000bc725f5d27f689985e6a
+theorem exists_inputSeekTM :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
+      (C : ℕ),
+      ∀ {x : List Bool} (p : ℕ) (w : List Bool), Nat.ofDigits 2 (w.map Bool.toNat) = p →
+        p ≤ x.length + 1 → ∀ d : Cfg 2 Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+          (R.runFrom d t).state = some exit ∧ ((R.runFrom d t).inputPos : ℕ) = p ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧ (R.runFrom d t).workTapePos = d.workTapePos ∧
+          (R.runFrom d t).output = d.output
+
+Turing.inputCopyTM_run_ofCfg 338a6ba6776e655ccc3413adb75bb95bbab6f6b21c3bc44632eefb4b03fcda9c
+theorem inputCopyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep) (hin : d.inputPos = 1) :
+    (inputCopyTM k i).runFrom d (2 * x.length + 2) =
+        { d with
+          state := some .done
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (x.length : ℤ)
+              then FinTM.bufferTape x (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * x.length + 2, ((inputCopyTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * x.length + 2 →
+        if j = i then
+          ((inputCopyTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (x.length : ℤ))
+        else ((inputCopyTM k i).runFrom d t).workTapePos j = d.workTapePos j)
+
+Turing.FinTM.exists_zoneShiftInTM 5caaf315c9a1160cd232fb42e07702e6d0273dad649635b9d4615fa8d2d5dc97
+theorem exists_zoneShiftInTM (side : Bool) :
+    ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
+      ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
+        {x : List Bool} (d : Cfg Z.k Bool Z.State x)
+        (hstate : d.state = some Z.tm.q₀)
+        (htape : d.workTapes = fun j =>
+          if j.val = 0 then zoneTape z else bufferTape (List.replicate i true))
+        (hheads : d.workTapePos = fun _ => 0) (hout : d.output = []),
+        ∃ T ≤ c * (2 ^ i + i + 1),
+          (Z.tm.runFrom d T).state = none ∧
+          (Z.tm.runFrom d T).workTapes = (fun j =>
+            if j.val = 0 then zoneTape (zoneShiftIn side i z)
+            else bufferTape (List.replicate i true)) ∧
+          (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
+          (Z.tm.runFrom d T).output = [] ∧
+          (Z.tm.runFrom d T).inputPos = d.inputPos ∧
+          (∀ t < T, (Z.tm.runFrom d t).state ≠ none) ∧
+          (∀ j (hj : j.val = 0) (t : ℕ), t ≤ T →
+            (Z.tm.runFrom d t).workTapePos j ∈
+              Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+                (2 * (zoneBase (i + 1) : ℤ) + 2)) ∧
+          (∀ j : Fin Z.k, j.val = 1 →
+            Z.tm.spaceUsedByTape d T j ≤ c * (2 ^ i + i + 1))
+
+Turing.FinTM.exists_zoneShiftOutTM dfefce230f9e08070cda4811ab5b8c76fc7b7421745521b7d8faf88f07dfeab3
+theorem exists_zoneShiftOutTM (side : Bool) :
+    ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
+      ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
+        {x : List Bool} (d : Cfg Z.k Bool Z.State x)
+        (hstate : d.state = some Z.tm.q₀)
+        (htape : d.workTapes = fun j =>
+          if j.val = 0 then zoneTape z else bufferTape (List.replicate i true))
+        (hheads : d.workTapePos = fun _ => 0) (hout : d.output = []),
+        ∃ T ≤ c * (2 ^ i + i + 1),
+          (Z.tm.runFrom d T).state = none ∧
+          (Z.tm.runFrom d T).workTapes = (fun j =>
+            if j.val = 0 then zoneTape (zoneShiftOut side i z)
+            else bufferTape (List.replicate i true)) ∧
+          (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
+          (Z.tm.runFrom d T).output = [] ∧
+          (Z.tm.runFrom d T).inputPos = d.inputPos ∧
+          (∀ t < T, (Z.tm.runFrom d t).state ≠ none) ∧
+          (∀ j (hj : j.val = 0) (t : ℕ), t ≤ T →
+            (Z.tm.runFrom d t).workTapePos j ∈
+              Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+                (2 * (zoneBase (i + 1) : ℤ) + 2)) ∧
+          (∀ j : Fin Z.k, j.val = 1 →
+            Z.tm.spaceUsedByTape d T j ≤ c * (2 ^ i + i + 1))
+
+Complexity.LogProg.OIS.run df48441441a482e63348e533e6528fbd4220ff87de8315f9ddb72502466cdc23
+theorem run (x v : List Bool) (o : Fin 2 → List Bool → Bool)
+    (ho0 : ∀ i ≤ v.length, o 0 (pairEncode x (Nat.bits i)) = decide (i < v.length))
+    (ho1 : ∀ i < v.length, o 1 (pairEncode x (Nat.bits i)) = v.getD i false)
+    (t : ℕ) (ht : (M.tm.runFrom (M.tm.initCfg v) t).state = none) :
+    ∃ N, (rrun (prog M) o (Cfg.init (start M) x) N).state = none ∧
+      (rrun (prog M) o (Cfg.init (start M) x) N).output =
+        (M.tm.runFrom (M.tm.initCfg v) t).output ∧
+      (∀ n ≤ N, ∀ r,
+        lo M (M.tm.spaceUsed (M.tm.initCfg v) t) r ≤
+            (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ≤
+            hi M (M.tm.spaceUsed (M.tm.initCfg v) t) (Nat.bits (v.length + 1)).length r) ∧
+      ∀ n < N, ∀ l cs, (rrun (prog M) o (Cfg.init (start M) x) n).state = some l →
+        (prog M).call l = some cs →
+          (rrun (prog M) o (Cfg.init (start M) x) n).inputPos.val = 1 ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos (q M) = 0 ∧
+          ∃ i ≤ v.length, (rrun (prog M) o (Cfg.init (start M) x) n).workTapes (q M) =
+            FinTM.bufferTape (Nat.bits i)
+
+Turing.step_of_tapeAction_write a0d501e00d80085bbd63a0aeb501edd88170792a708e6851fac13f64a14e9c09
+theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp : SignType) (s : Option Symbol) (m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp (some s) m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapes := Function.update c.workTapes i
+          (Function.update (c.workTapes i) (c.workTapePos i) s)
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) }
+
+Turing.cfgRecord_inj 0d69ede34fa648ca5afe026c124a3318225bd07b1495945506ef84453bef70a8
+theorem cfgRecord_inj {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) {c d : Cfg k Bool Q x}
+    {τ τ' : T} (hc : c.InWindow s) (hd : d.InWindow s) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ'
+
+Turing.exists_inputSeekTM ac3546677a199f6ed49025cf05d5088fe1026806c38e01478cc821c714890f4a
+theorem exists_inputSeekTM :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
+      (C : ℕ),
+      ∀ {x : List Bool} (p : ℕ) (w : List Bool), Nat.ofDigits 2 (w.map Bool.toNat) = p →
+        p ≤ x.length + 1 → ∀ d : Cfg 2 Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+          (R.runFrom d t).state = some exit ∧ ((R.runFrom d t).inputPos : ℕ) = p ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧ (R.runFrom d t).workTapePos = d.workTapePos ∧
+          (R.runFrom d t).output = d.output
+
+Turing.exists_inputLengthTM b7e324f741cf2ca73583088411853f3f87c82107d2cc4c204e6b9b7dded8c99a
+theorem exists_inputLengthTM :
+    ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)
+      (entry exit : S) (C : ℕ),
+      ∀ {x : List Bool} (d : Cfg (K + 1) Bool S x), d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((Nat.bits x.length).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 1),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((Nat.bits x.length).length + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((Nat.bits x.length).length : ℤ)
+                  then FinTM.bufferTape (Nat.bits x.length) (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_recordTemplateTM 343fa85c26b93a088972f1182510fb4fb7a5de0f663f14aee25693f2186fdddc
+theorem exists_recordTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_recordInitTM 6ac5ef1c64058fc8e017be014cf1765cd61e9f159bafb7932e7a977e48e12038
+theorem exists_recordInitTM (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] (q₀ : Q) (τ₀ : T) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                    (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.inputCopyTM_run_ofCfg 490abef9c4e27b9017d6a8fba76e17129bc3f88bcef1c66fb1a08fbbf56c5ed7
+theorem inputCopyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep) (hin : d.inputPos = 1) :
+    (inputCopyTM k i).runFrom d (2 * x.length + 2) =
+        { d with
+          state := some .done
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (x.length : ℤ)
+              then FinTM.bufferTape x (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * x.length + 2, ((inputCopyTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * x.length + 2 →
+        if j = i then
+          ((inputCopyTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (x.length : ℤ))
+        else ((inputCopyTM k i).runFrom d t).workTapePos j = d.workTapePos j)
+
+Complexity.Codec.mem_of_codePath d521c0f8d85f893629ed4c22706443580d9bc949b6b5a116c91bad73048b4341
+theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
+    (x : List Bool) (s u v : ℕ)
+    (hinit : pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N)
+    (hpath : Relation.ReflTransGen (StepRel N x s) u v)
+    (hacc : pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N) : x ∈ L
+
+Complexity.Codec.initChk_iff f4612784b075fcd2b88a3b8a04c874302e28d7c26208743debdb8fddc403f310
+theorem initChk_iff (s : ℕ) (w : List Bool) :
+    InitChk N x s w ↔ w = cfgWord s (N.tm.initCfg x)
+
+Complexity.Codec.cellOf_congr a1c125a8b2e1cc703471c40374a2b36f8a59c4053bf11dee28d3c43e2cc04798
+lemma cellOf_congr {s : ℕ} {C D : Cfg N.k Bool N.State x} (h : NDTM.coreSum C = NDTM.coreSum D) :
+    cellOf s C = cellOf s D
+
+Complexity.Codec.cfgWord_congr 277cc5631a9155fd0fd4db79e674fa5fea195503a9896244eb58968cfff064fb
+theorem cfgWord_congr {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (h : NDTM.coreSum C = NDTM.coreSum D) : cfgWord s C = cfgWord s D
+
+Complexity.Codec.coreSum_eq_of_cfgWord_eq d8019e3200d578556afc74e0ed28df15a9e5c003c2d03eb6ec89311df8e4843e
+theorem coreSum_eq_of_cfgWord_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (hC : Cfg.InWindow s C) (hD : Cfg.InWindow s D) (h : cfgWord s C = cfgWord s D) :
+    NDTM.coreSum C = NDTM.coreSum D
+
+Complexity.LogProg.runFrom_count_eq 05a1bc5d32379202d14c173cead680e24618304501924b490cf98ea386cef26d
+theorem runFrom_count_eq [Fintype St] (tm : MultiTapeTM (K + 1) Bool St) (B P T : ℕ)
+    (hwrite : ∀ q a w, ((tm.tr q a w).workTapes (Fin.last K)).1 = none ∨
+      ((tm.tr q a w).workTapes (Fin.last K)).1 = some (some true))
+    (hT : (tm.runFrom (tm.initCfg x) T).state = none)
+    (hbox : ∀ t ≤ T, (∀ i : Fin K, |(tm.runFrom (tm.initCfg x) t).workTapePos i.castSucc| ≤ B) ∧
+      |(tm.runFrom (tm.initCfg x) t).workTapePos (Fin.last K)| ≤ P) :
+    tm.runFrom (tm.initCfg x) ((Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
+      (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2))) = tm.runFrom (tm.initCfg x) T
+
+Turing.embedEmitCfg_eq 391f7fd28a7b7ee34818179157b1f66ba3ef7a721d6f5ed7fe589f841677a3b5
+theorem embedEmitCfg_eq {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Cfg m Γ S x)
+    (d : Cfg k Γ S x) (hs : c.state = d.state) (hin : c.inputPos = d.inputPos)
+    (hout : pre ++ c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
+    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    embedEmitCfg σ tapes heads pre c = d
+
+Turing.embedEmitCfg_mapState_eq cbb54745b1696bfb0e6fbf9076be02219f319b0eb78f0d2b892adffbdfef523b
+theorem embedEmitCfg_mapState_eq {m : ℕ} {S H : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (f : S → H) (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ)
+    (c : Cfg m Γ S x) (d : Cfg k Γ H x) (hs : c.state.map f = d.state)
+    (hin : c.inputPos = d.inputPos) (hout : pre ++ c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
+    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    (embedEmitCfg σ tapes heads pre c).mapState f = d
+
+Turing.exists_rulerTestTM a1eafef28b56706761d0bb97e5c3516e37cbee11d1b4caf348afa00a976c7e8d
+theorem exists_rulerTestTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z), d.state = some entry → 0 < ℓ →
+        ℓ ≤ d.inputPos.val →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+        ∃ t ≤ C * (ℓ + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+          R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) }
+
+Turing.exists_rulerDeviceTM 4727dcd98d81f9efe432aeab1cb54cba6c16db6e47468e565a45f7865ef584ec
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output)
+
+Turing.exists_inputWindowCopyTM d6ae3972529d8e6ba08c283c74e1ff7fd8d82000ec5b749ecfc94a451d503485
+theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {z : List Bool} (d : Cfg k Bool Q z) (p : ℕ) (w : List Bool),
+        d.state = some entry → d.inputPos.val = p + 1 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape w q) →
+        let y
+
+Turing.FinTM.incFixedTM_computes a4d74e2fe6d8569daeda2a4e93329fbeeb5a514e26b0199dd68683ddcf569e7b
+theorem incFixedTM_computes (x : List Bool) :
+    incFixedTM.ComputesInTime x ((incFixed x).getD []) (3 * (x.length + 1))
+
+Turing.exists_recordInitTM f7754d87962815b6d14bb20239c38042ca6416e5f225d0f614aac6eada3c4c9e
+theorem exists_recordInitTM (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] (q₀ : Q) (τ₀ : T) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                    (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.StepBlock.recordTM_effect 2e69db7ee52c6b029821d6c1788f19b02d8f428f8e44a0829366ccc5da82b2c1
+lemma recordTM_effect {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (recordWidth k) → Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ i : Fin (recordWidth k),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (recordWidth k))
+    (hin : d.inputPos = c.inputPos)
+    (htapes : ∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i)
+    (hheads : ∀ i : Fin k, d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i)
+    (hsum : d.workTapeSymbols (summaryTape k) = outputSummary c.output) :
+    let e
+
+Turing.StepBlock.Rep_iff 89cb7e4dac11fe9b00706df98bec768e2b4ab36ab3d34c3084ed11774d92e0f3
+theorem Rep_iff {k n : ℕ} {x : List Bool}
+    {tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))}
+    {c : Cfg k Bool (Fin (n + 1)) x} {d : Cfg (k + 2) Bool (Σ key, Ph k key) x} :
+    Rep tr c d ↔
+      d.inputPos = c.inputPos ∧
+      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+      d.workTapes (summaryTape k) =
+        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0
+
+Turing.exists_stepClockTMVia 5c0c71bbe2bc2ad168a1cd76505e367899e37ec9d8969a56f18e1184470b2669
+theorem exists_stepClockTMVia {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S]
+    [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (stopAt : S → Bool) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Γ Q)
+      (inj : S → Q) (finish timeout : Option S → Q),
+      Function.Injective finish ∧ Function.Injective timeout ∧
+      (∀ a b, finish a ≠ timeout b) ∧ (∀ s r, inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+      ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S), c.state = some q →
+      ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) →
+        (∀ τ ≤ Nat.ofDigits 2 (w.map Bool.toNat), (M.runFrom c τ).Stopped stopAt →
+          (∀ u < τ, ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (finish (M.runFrom c τ).state)) (M.runFrom c τ)
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ τ,
+              (∀ j : Fin k,
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                  (M.runFrom c v).workTapes j ∧
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                  (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                (M.runFrom c v).inputPos ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                (M.runFrom c v).output ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ))) ∧
+        ((∀ u ≤ Nat.ofDigits 2 (w.map Bool.toNat), ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2,
+            ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (timeout (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))).state))
+                (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat)))
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ Nat.ofDigits 2 (w.map Bool.toNat),
+              (∀ j : Fin k,
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                  (M.runFrom c v).workTapes j ∧
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                  (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                (M.runFrom c v).inputPos ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                (M.runFrom c v).output ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+
+Turing.FinTM.redirectTM_runFrom 3cc5f52107165f484afc47d2a26d50e5eccbc19d219b84bccb5d57a39ef31f2a
+theorem redirectTM_runFrom (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+    ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).state =
+        (match (M.tm.runFrom (M.tm.initCfg x) t).state with
+          | some s => some (.inl (s, (M.tm.runFrom (M.tm.initCfg x) t).output.getLast?))
+          | none =>
+            if (M.tm.runFrom (M.tm.initCfg x) t).output.getLast? = some haltOn then none
+            else some (.inr ())) ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).inputPos =
+        (M.tm.runFrom (M.tm.initCfg x) t).inputPos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapes =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapes ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapePos =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapePos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).output = []
+
+Randomized.BPLInP.acceptLang_iff 319b56792a153f0bdab14311bba0085fd50bcf61866abe0af7193e39243364b6
+theorem acceptLang_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s)
+    (v : List Bool) :
+    pairEncode x (pairEncode (Nat.bits (cfgCode s (run v))) (Nat.bits s)) ∈ acceptLang N ↔
+      (run v).state = none ∧ (run v).output = [true]
+
+Randomized.BPLInP.haltsWithin_of_codes 8f3791157cd2f7a4014553f9feeddbc571e56a5f8d76e1786507f46d038a0682
+theorem haltsWithin_of_codes {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s)
+    (hV : 2 ^ (codeK N * (s + logSpace x.length + 1)) ≤ V) {T : ℕ}
+    (hT : N.tm.HaltsWithin x T) : N.tm.HaltsWithin x V
+
+Randomized.PolyAmp.accepting_congr 392be1ae0ca612f9adf0719c5a70f90aa37c98e0abd0eeb8183a9dcf0fc2f19a
+theorem accepting_congr {C D : Cfg N.k Bool N.State x} (h : NDTM.coreSum C = NDTM.coreSum D) :
+    Accepting C ↔ Accepting D
+
+Randomized.clockHost_zDecides d469fdf22c7c6da681974b71a43797b2a15aa71e796a48f9c701f4641b503db6
+theorem clockHost_zDecides (S : FinTM Bool) (A : FinNDTM Bool) (L : Language Bool)
+    (m TS : ℕ → ℕ)
+    (hS : S.ComputesFunInTime (fun x => List.replicate (m x.length) true) TS)
+    (hm : ∀ n, n ≤ m n)
+    (hcorr : ∀ x u v, u.length = m x.length → attemptBit A x u = some v →
+      v = MultiTapeTM.indicator (L : Set (List Bool)) x)
+    (hprob : ∀ x : List Bool, randProb (m x.length) (fun u => attemptBit A x u = none) ≤ 3 / 4) :
+    (FinNDTM.clockHost S A true).ZDecidesInTime L
+      fun n => TS n + m n + 2 + 16 * (m n + 1)
+
+Randomized.clockHost_abortDecides c0609271ed3b6b13dcb021b15d3e703e8225cc6d0183305d0a1bcc719b462ffa
+theorem clockHost_abortDecides (S : FinTM Bool) (A : FinNDTM Bool) (L : Language Bool)
+    (m TS : ℕ → ℕ)
+    (hS : S.ComputesFunInTime (fun x => List.replicate (m x.length) true) TS)
+    (hm : ∀ n, n ≤ m n)
+    (hcorr : ∀ x u v, u.length = m x.length → attemptBit A x u = some v →
+      v = MultiTapeTM.indicator (L : Set (List Bool)) x)
+    (hprob : ∀ x : List Bool, 1 / 2 ≤ randProb (m x.length)
+      (fun u => attemptBit A x u = some (MultiTapeTM.indicator (L : Set (List Bool)) x))) :
+    (FinNDTM.clockHost S A false).AbortDecidesInTime L
+      fun n => TS n + m n + 2 + (m n + 1)
+
+Turing.exists_rulerDeviceTM 1ccf237496e046e328bf2ed1ad89880ee454d5f3a62f491135d5715554c946b3
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output)
+
+Turing.inputRewindTM_run 9e679af45af394201c75074894ff536d88ddfc5eefd929385a77ff680162786c
+theorem inputRewindTM_run {k : ℕ} {x : List Bool} (d : Cfg k Bool InputRewindPhase x)
+    (hstate : d.state = some .start) (hp : 1 ≤ d.inputPos.val) :
+    (inputRewindTM k).runFrom d (d.inputPos.val + 1) =
+        { d with state := some .done, inputPos := 1 } ∧
+      (∀ t < d.inputPos.val + 1, ((inputRewindTM k).runFrom d t).state ≠ some .done) ∧
+      ∀ t ≤ d.inputPos.val + 1,
+        ((inputRewindTM k).runFrom d t).workTapes = d.workTapes ∧
+        ((inputRewindTM k).runFrom d t).workTapePos = d.workTapePos ∧
+        ((inputRewindTM k).runFrom d t).output = d.output
+
+Turing.inputRewindTM_step_done 019c8d551fd6bdda4fad2f6752383372600293ae3656d50ca0d9786a7947fa33
+theorem inputRewindTM_step_done {k : ℕ} {x : List Bool} (c : Cfg k Bool InputRewindPhase x)
+    (hc : c.state = some .done) : (inputRewindTM k).step c = c
+
+Turing.exists_windowCall c5d6bb8a41d41c4abde1d98bf37bb4ace65a14d1c8bb2fc4d0e11aef1f5d0527
+theorem exists_windowCall (K : ℕ) (j dst : Fin K) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ (α x : List Bool) (t : ℕ)
+        (d : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)),
+        d.state = some entry →
+        d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape (Nat.bits t) q) →
+        d.workTapes dst = (fun _ => none) → d.workTapePos dst = 0 →
+        ∃ T ≤ C * (min t x.length + 1) + 2 * (Nat.bits t).length,
+          (W.runFrom d T).state = some done ∧
+          (W.runFrom d T).inputPos.val =
+            4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length ∧
+          (W.runFrom d T).workTapes dst = FinTM.bufferTape (x.take t) ∧
+          (W.runFrom d T).workTapePos dst = ((x.take t).length : ℤ) ∧
+          (W.runFrom d T).workTapePos j = d.workTapePos j ∧
+          (∀ i : Fin K, i ≠ j → i ≠ dst →
+            (W.runFrom d T).workTapes i = d.workTapes i ∧
+            (W.runFrom d T).workTapePos i = d.workTapePos i) ∧
+          (W.runFrom d T).output = d.output ∧
+          ∀ u < T, (W.runFrom d u).state ≠ some done
+
+Turing.exists_layoutCall a9b69acad3bb4a1fd38c1b0a07206e2f6a95759de0b5913c8ec6f9a077be9349
+theorem exists_layoutCall (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
+        ∃ T ≤ C * ((pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)).length + 1),
+          ∀ {z : List Bool} (d : Cfg K Bool Q z),
+            d.state = some entry →
+            d.workTapes src =
+              FinTM.bufferTape (pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)) →
+            d.workTapePos src = 0 →
+            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+            (L.runFrom d T).state = some done ∧
+            (L.runFrom d T).inputPos = d.inputPos ∧
+            (L.runFrom d T).workTapes =
+              Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
+                tbl (FinTM.bufferTape (tableBitsK M.tr)))
+                sm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
+            (L.runFrom d T).workTapePos =
+              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
+            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+            ∀ u < T, (L.runFrom d u).state ≠ some done
+
+Turing.ClockHost.boot_step e14a38b2c389a5f78808470efe63a42873cbea0fe96134d22f3fc1d4560954a6
+theorem boot_step (b : Bool) (c : Cfg S.k Bool S.State x) {q : S.State}
+    (hq : c.state = some q) :
+    (hostTM S A loop).stepWith b (bootCfg (A := A) c) = bootCfg (S.tm.step c)
+
+Turing.ClockHost.boot_run 09ba42923b03504a393e8575d242e85855b21272d608f8f74a9dfcca1d6fec87
+theorem boot_run (c : Cfg S.k Bool S.State x) (w : List Bool)
+    (hlive : ∀ t < w.length, (S.tm.runFrom c t).state ≠ none) :
+    (hostTM S A loop).runWith w (bootCfg (A := A) c) = bootCfg (S.tm.runFrom c w.length)
+
+Turing.ClockHost.initCfg_eq_bootCfg e30f255e2493a8858caca6e344458fd68bd607bc3b1e1d98673c3a7e6103f359
+theorem initCfg_eq_bootCfg :
+    (hostTM S A loop).initCfg x = bootCfg (A := A) (S.tm.initCfg x)
+
+Turing.ClockHost.run_step 16af402a9ac1f722f77440a0f3df78bed969dbb8e7bccd40f4436e2e9cb73d69
+theorem run_step (b : Bool) (a : Cfg A.k Bool A.State x) (j : ℕ) (hj : j < m)
+    (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    (hostTM S A loop).stepWith b (runCfg m a j sT sP) =
+      runCfg m (A.tm.stepWith b a) ((j + 1 : ℕ) : ℤ) sT sP
+
+Turing.ClockHost.run_run efe472de6df8b59a6c9953bae567bd7abfe1b004edc9459eebbe219ea5bf8b19
+theorem run_run (a : Cfg A.k Bool A.State x) (j : ℕ) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hj : j + u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a j sT sP) =
+      runCfg m (A.tm.runWith u a) ((j + u.length : ℕ) : ℤ) sT sP
+
+Turing.ClockHost.run_run_zero eb7bed5cd22941fd3097dbb3a72d1828a879a71cc857944188fd32b81c1b9a8e
+theorem run_run_zero (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hu : u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a 0 sT sP) =
+      runCfg m (A.tm.runWith u a) u.length sT sP
+
+Turing.ClockHost.timeout_success 04690deaa950b0f99e274d9fa216b70a71c0e5ba19831f9bc1ca4d4202f8295e
+theorem timeout_success (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) {v : Bool} (ha : a.state = none) (ho : a.output = [v]) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m [v]
+
+Turing.ClockHost.timeout_fail f11f2c9cf54aa79d4482b2c301b2c0acedc2e76563bac9aa78da580c78bf2818
+theorem timeout_fail (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (hfail : ¬ (a.state = none ∧ ∃ v, a.output = [v])) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      if loop then hostCfg (some .p0) a.inputPos sT sP a.workTapes a.workTapePos (yard m)
+        ((m : ℤ) - 1) []
+      else hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m []
+
+Turing.ClockHost.ClockReady.state_ne_none 6ef6fa635b0907424aa2590c0dabe0eac4c9489d94d6bd3be1d5fbe345d93398
+theorem ClockReady.state_ne_none {c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x}
+    (hc : ClockReady m c) : c.state ≠ none
+
+Turing.ClockHost.startup d61c33f1440879694bb24fb0564e6ae331b882893561339308c9c2588e67ddcf
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP
+
+Turing.ClockHost.oneShot 21deb51047b3747e4b4d04151172bbb5ccf88b510fff35dd62cd312f33e7fe08
+theorem oneShot (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) (w : List Bool)
+    (hw : w.length = m + 1) :
+    ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).state = none ∧
+      ∀ v, ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).output = [v] ↔
+        (A.tm.runWith (w.take m) (A.tm.initCfg x)).state = none ∧
+          (A.tm.runWith (w.take m) (A.tm.initCfg x)).output = [v]
+
+Turing.Cfg.mapState_eq_of_fields b4c4e4ff8ecd32045e45e7eb886e69afad9fa33a5b4e045a0fd1700038d0de4a
+theorem Cfg.mapState_eq_of_fields {k : ℕ} {Γ S S' : Type*} {x : List Γ} (c : Cfg k Γ S x)
+    (f : S → S') (d : Cfg k Γ S' x) (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+    (ho : c.output = d.output) : c.mapState f = d
+
+Turing.Cfg.mapState_const_eq_mapState_sigma a5f63e1e7e6668a03d3ce477162d4a91073b9e0e656445b5c2a503557537d2b5
+theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
+    {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
+    (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
+    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+    (ho : c.output = c₂.output) :
+    c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i)
+
+Turing.exists_rulerTestTM 6218b1c50193ca4dbc326aea7eebfc375ebcf7542685ee960f9d8e08de9b136a
+theorem exists_rulerTestTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z), d.state = some entry → 0 < ℓ →
+        ℓ ≤ d.inputPos.val →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+        ∃ t ≤ C * (ℓ + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+          R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) }
+
+Turing.exists_inputWindowCopyTM 381bb10efa06ac4880e62e9b80bda1b3c8b12ceeecefedef0eb1eb5c04192847
+theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {z : List Bool} (d : Cfg k Bool Q z) (p : ℕ) (w : List Bool),
+        d.state = some entry → d.inputPos.val = p + 1 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape w q) →
+        let y
+
+Complexity.Codec.mem_of_codePath af6624778a9736f12d1598d8128ccfe6cc3d584247294f00983d07e3c2698d4d
+theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
+    (x : List Bool) (s u v : ℕ)
+    (hinit : pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N)
+    (hpath : Relation.ReflTransGen (StepRel N x s) u v)
+    (hacc : pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N) : x ∈ L
+
+Complexity.Codec.initChk_iff cef9a9a4355530d450c1176ca2de0de9abd3188d6c1330882c61b0249f1ce870
+theorem initChk_iff (s : ℕ) (w : List Bool) :
+    InitChk N x s w ↔ w = cfgWord s (N.tm.initCfg x)
+
+Complexity.Codec.coreSum_eq_of_cfgWord_eq 69a0fb87d507b440fb91e0711eb1349c3f8ca46acb1c4c199853a07af5ff6172
+theorem coreSum_eq_of_cfgWord_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (hC : InWin N s C) (hD : InWin N s D) (h : cfgWord s C = cfgWord s D) :
+    NDTM.coreSum C = NDTM.coreSum D
+
+Complexity.ExpBFS.inWin_of_coreSum_eq cb241181dbb79a8b24f0af2f2358aeb85081be1961cb68d9820406f22dc15458
+lemma inWin_of_coreSum_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (h : NDTM.coreSum C = NDTM.coreSum D) (hC : InWin N s C) : InWin N s D
+
+Turing.exists_stepClockTMVia 665d345dd67246df9132530131a9485abb42d6ea4c8019a001cb81c54c29d56a
+theorem exists_stepClockTMVia {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S]
+    [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (stopAt : S → Bool) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Γ Q)
+      (inj : S → Q) (finish timeout : Option S → Q),
+      Function.Injective finish ∧ Function.Injective timeout ∧
+      (∀ a b, finish a ≠ timeout b) ∧ (∀ s r, inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+      ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S), c.state = some q →
+      ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) →
+        (∀ τ ≤ Nat.ofDigits 2 (w.map Bool.toNat), (M.runFrom c τ).Stopped stopAt →
+          (∀ u < τ, ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (finish (M.runFrom c τ).state)) (M.runFrom c τ)
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ τ,
+              (∀ j : Fin k,
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                  (M.runFrom c v).workTapes j ∧
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                  (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                (M.runFrom c v).inputPos ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                (M.runFrom c v).output ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ))) ∧
+        ((∀ u ≤ Nat.ofDigits 2 (w.map Bool.toNat), ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2,
+            ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (timeout (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))).state))
+                (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat)))
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ Nat.ofDigits 2 (w.map Bool.toNat),
+              (∀ j : Fin k,
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                  (M.runFrom c v).workTapes j ∧
+                (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                  (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                (M.runFrom c v).inputPos ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                (M.runFrom c v).output ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+
+Randomized.BPLInP.acceptLang_iff 46ff306196fa7cc1d493684cdb5f0323e4ff658627e0bbc12e55c7a47c9c010c
+theorem acceptLang_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s)
+    (v : List Bool) :
+    pairEncode x (pairEncode (Nat.bits (cfgCode s (run v))) (Nat.bits s)) ∈ acceptLang N ↔
+      (run v).state = none ∧ (run v).output = [true]
+
+Randomized.BPLInP.haltsWithin_of_codes cfb487d66f5851c361358f7261273d108bae350f17a69ecffb3b24df341a3769
+theorem haltsWithin_of_codes {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s)
+    (hV : 2 ^ (codeK N * (s + logSpace x.length + 1)) ≤ V) {T : ℕ}
+    (hT : N.tm.HaltsWithin x T) : N.tm.HaltsWithin x V
+
+Turing.MultiTapeTM.ConfigCount.core_eq d5d28c83766a95b1dfdb4c385b73e9e731e45b6350f016089f11a6cd7ea807ad
+theorem core_eq (c : Cfg k Bool S x) :
+    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos)
+
+Turing.ClockHost.bootCfg_of_halt 36c1f2b31192c6eb17337145b4868614311e66f7450a23c7ab0710c32886ee53
+theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
+    bootCfg (A := A) c =
+      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
+        (fun _ => 0) (bufferTape c.output) c.output.length []
+
+Turing.ClockHost.runCfg_initCfg 534b22472d5f5f049e62cc3eed08b7c0bf96703d4a10b15c7a6faf8d8f6fa717
+theorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    runCfg m (A.tm.initCfg x) j sT sP =
+      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)
+        (fun _ => 0) (yard m) j []
+
+Turing.FinTM.sweepRevCfg_state c363af44efad893c346c3ed4480579b333e4ebc54276f6510282167f1fbc25bc
+theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).state = q
+
+Turing.FinTM.sweepRevCfg_output 80505d1b05bb646486475fe5134307c761296dc7dc55d01caa2ea8c1df955451
+theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).output = out
+
+Complexity.IterateFind.host_dispatch 510d061fe52a8df1457a72de7a7337dd41bd4676a9acc637ddde267a817b4823
+theorem host_dispatch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w : List Bool) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
+      Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w)
+
+Complexity.IterateFind.host_branch 1a1a7d63586640d102f470710793e15a516d87846f034a751efac29aa6e5aed8
+theorem host_branch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
+      Cfg.ofWords (ModuleHost.entry M (if b then 4 else 3)) (stateWord (K + 1) w)
+
+Complexity.IterateFind.host_halt ce8a323a479a10a79ad6eaf5caf9f03a36b054abb14b03d7717fdd5d84f65d56
+theorem host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w o : List Bool) :
+    (hostTM M K hk).tm.step
+        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
+      {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
+        with state := none, output := o}
+
+Complexity.IterateFind.host_dispatch 2fbaf84a7682f861c262af17fa9fe0712ce233240ce29a2dcabe0dd2be1a4b67
+lemma host_dispatch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w : List Bool) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
+      Cfg.ofWords (hostEntry M 2) (stateWord (K + 1) w)
+
+Complexity.IterateFind.host_branch bc2d1cbf806f6e5921470a6d9483c09ecdf0912fa2200f3be0deda0276e40ccb
+lemma host_branch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
+      Cfg.ofWords (hostEntry M (if b then 4 else 3)) (stateWord (K + 1) w)
+
+Complexity.IterateFind.host_halt 0a1aff15889e500c26bf0f540fa86efb87f4d76ef3491ca46e71463b148f1b79
+lemma host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w o : List Bool) :
+    (hostTM M K hk).tm.step
+        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
+      {Cfg.ofWords (input := x) (.inl 2 : HostState M) (stateWord (K + 1) w)
+        with state := none, output := o}
+
+Turing.exists_recordTemplateTM b63f36062737b9be5697297fbbf52ed75577aac3081bae7a0b76e4060eec33dd
+theorem exists_recordTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_recordInitTM 8e4cd71ab277e5fbfde4ffbe18e25c79abb06a40f0331b939f5b94458f76b31d
+theorem exists_recordInitTM (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] (q₀ : Q) (τ₀ : T) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                    (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_rulerDeviceTM d52953a7acbf149303f70ed465c8fe3d9434ffa8f71936fef31002e6eca560ec
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output)
+
+Turing.step_of_tapeAction_write 6545a27ef5705119a48ce345d6c15725bc8052df282e92e0b9bec1763bb19ee4
+theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp : SignType) (s : Option Symbol) (m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp (some s) m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapes := Function.update c.workTapes i
+          (Function.update (c.workTapes i) (c.workTapePos i) s)
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) }
+
+Turing.step_of_inputMoveAction 1f3f62897288ceaf4023121d3d7e273fb1be4255111e533e03245b8092c40ea6
+theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State}
+    (inp : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
+    M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp }
+
+Turing.FinTM.controlAction_apply 38f5791a9e9d21f1f28cd4f4743fff54cedf7b9ba14c97db45189a3ace6a0f01
+lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
+    (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
+    (controlAction m q).apply cfg =
+      {cfg with state := q, inputPos := moveInputPos cfg.inputPos m}
+
+Turing.exists_inputLengthTM 62773c7779834934da585b2c7ef230d0a945e1fab1d9fdbadae60b60d9a499b7
+theorem exists_inputLengthTM :
+    ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)
+      (entry exit : S) (C : ℕ),
+      ∀ {x : List Bool} (d : Cfg (K + 1) Bool S x), d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((Nat.bits x.length).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 1),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((Nat.bits x.length).length + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((Nat.bits x.length).length : ℤ)
+                  then FinTM.bufferTape (Nat.bits x.length) (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_recordTemplateTM 4024cb08a1dd65a2bd64302b922ad42edec209414bfe955897d7f136c7109a68
+theorem exists_recordTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_recordInitTM aea1cc60652d6c17ca7889872d66a908ddd9cb91ae28ed29dedf9a42b474c18c
+theorem exists_recordInitTM (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] (q₀ : Q) (τ₀ : T) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                    (q - d.workTapePos j)
+                else d.workTapes j q }
+
+Turing.exists_inputWindowCopyTM 81ae2f78b87e68c8ee95f9fa0fb2e40b69438daf6e22829aedc24c6eda7c5443
+theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {z : List Bool} (d : Cfg k Bool Q z) (p : ℕ) (w : List Bool),
+        d.state = some entry → d.inputPos.val = p + 1 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape w q) →
+        let y
+
+Turing.inputRewindTM_run 62d3ada969bc1d5d7d074ea6c266c4bdff14eddf1885aec67fc06419ca0853e0
+theorem inputRewindTM_run {k : ℕ} {x : List Bool} (d : Cfg k Bool InputRewindPhase x)
+    (hstate : d.state = some .start) (hp : 1 ≤ d.inputPos.val) :
+    (inputRewindTM k).runFrom d (d.inputPos.val + 1) =
+        { d with state := some .done, inputPos := 1 } ∧
+      (∀ t < d.inputPos.val + 1, ((inputRewindTM k).runFrom d t).state ≠ some .done) ∧
+      ∀ t ≤ d.inputPos.val + 1,
+        ((inputRewindTM k).runFrom d t).workTapes = d.workTapes ∧
+        ((inputRewindTM k).runFrom d t).workTapePos = d.workTapePos ∧
+        ((inputRewindTM k).runFrom d t).output = d.output
+
+Turing.FinTM.ComputesInTime.of_spaceUsed_le dc71d315515e2deacf6b08cf6cc6a496d153ec83076b973d692b77256ba9ca39
+theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : ℕ}
+    (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    M.ComputesInTime x w (M.configBound x.length s)
+
+Turing.exists_inputWindowCopyTM 72ba9a1e182eb115e19fd781eba02ea4d3759b93410aa50d631e03401797bac8
+theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {z : List Bool} (d : Cfg k Bool Q z) (p : ℕ) (w : List Bool),
+        d.state = some entry → d.inputPos.val = p + 1 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape w q) →
+        let y
+
+Turing.exists_rulerTestTM 4fd727b0b0b99edadb016ae83c5c201e7a5d47a53275e76126ecad99beb5fdc2
+theorem exists_rulerTestTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z), d.state = some entry → 0 < ℓ →
+        ℓ ≤ d.inputPos.val →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+        ∃ t ≤ C * (ℓ + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+          R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) }
+
+Turing.exists_rulerDeviceTM 740badef1c60a1f9802a0f8481c415fa83f4c7abbdc81dc8c312476638a6cc1e
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output)

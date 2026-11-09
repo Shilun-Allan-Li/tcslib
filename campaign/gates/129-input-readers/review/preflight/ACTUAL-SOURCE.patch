@@ -1,0 +1,58 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 6f531738c..9f260143e 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -2566,6 +2566,13 @@ def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State
+     Action k Symbol State :=
+   ⟨inp, fun _ => (none, 0), none, some q⟩
+ 
++/-- An input-only action has the requested input movement and live successor,
++with no work-tape writes or head movement and no output symbol. -/
++theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
++    inputMoveAction (k := k) (Symbol := Symbol) inp q =
++      (⟨inp, fun _ => (none, 0), none, some q⟩ : Action k Symbol State) := by
++  rfl
++
+ /-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
+ gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
+ the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Scan.lean b/TCSlib/Complexity/TuringMachine/Build/Scan.lean
+index 9f73cdc5f..c5f29b3fb 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Scan.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Scan.lean
+@@ -547,6 +547,17 @@ def inputFoldTM {Γ : Type*} {A : Type} (k : ℕ) (δ : A → Γ → A) (a₀ :
+       | none => inputMoveAction 1 (.done a)
+     | .done a => inputMoveAction 0 (.done a)
+ 
++/-- In the backward phase the native fold moves left across an input symbol;
++at the left blank it moves right and enters the completed phase, preserving
++the accumulator. The work-tape reads do not affect this transition. -/
++theorem inputFoldTM_tr_bwd {Γ : Type*} {A : Type} (k : ℕ)
++    (δ : A → Γ → A) (a₀ a : A) (inp : Option Γ) (work : Fin k → Option Γ) :
++    (inputFoldTM k δ a₀).tr (.bwd a) inp work =
++      (match inp with
++       | some _ => inputMoveAction (-1) (.bwd a)
++       | none => inputMoveAction 1 (.done a)) := by
++  rfl
++
+ /-- The native fold's forward accumulator and input position after `r` reads. -/
+ private def scanFoldF {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
+     (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) (r : ℕ) :
+diff --git a/TCSlib/Complexity/TuringMachine/Simulation.lean b/TCSlib/Complexity/TuringMachine/Simulation.lean
+index a9cb5440e..603bc3757 100644
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -159,6 +159,13 @@ lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
+ def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+     Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
+ 
++/-- A control action has the requested input movement and successor state,
++with no work-tape writes or head movement and no output symbol. -/
++theorem controlAction_eq {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
++    controlAction (k := k) m q =
++      (⟨m, fun _ => (none, 0), none, q⟩ : Action k Bool S) := by
++  rfl
++
+ /-- Read position `i + 1` as the optional `i`-th input symbol, including the
+ right boundary. -/
+ lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}

@@ -1,0 +1,62 @@
+theorem r_seam_phase2 {k N n : ℕ} {P Q H : Type} (entry : Q) (inj : Q → Bool → H)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x z : List Bool) (ℓ : ℕ)
+    (hz : z.length = ℓ + x.length)
+    (σ : Fin ((k + 2) + 1) ↪ Fin N) (hσ : ∀ j : Fin (k + 2), (σ j.castSucc).val = j.val)
+    (r : Fin N) (hr : σ (Fin.last (k + 2)) = r) (hrk : k + 2 ≤ r.val)
+    (D : Cfg N Bool P z) (e : P) (hst : D.state = some e) (hin : D.inputPos.val = ℓ + 1)
+    (htapes : D.workTapes = fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+        else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+        else if j = r then FinTM.bufferTape (List.replicate ℓ true)
+        else fun _ => none)
+    (hheads : D.workTapePos = fun _ => 0) (hout : D.output = []) :
+    embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+        (rulerHostCfg ℓ hz
+          ((StepBlock.forwardLoopCfg entry M (M.initCfg x)).state.map fun q => inj q false)
+          (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+          (FinTM.bufferTape (List.replicate ℓ true)) 0) =
+      D.mapState fun _ => inj entry false := by
+  obtain ⟨hs, hin', hh, ho⟩ := r_encode_init_fields entry M x
+  apply embedEmitCfg_eq
+  · rw [rulerHostCfg_state, hs, Option.map_some, Cfg.mapState_state, hst, Option.map_some]
+  · rw [Cfg.mapState_inputPos]
+    apply Fin.ext
+    rw [hin, rulerHostCfg_inputPos]
+    show ℓ + _ = ℓ + 1
+    rw [hin']
+  · rw [rulerHostCfg_output, ho, Cfg.mapState_output, hout, List.nil_append]
+  · intro i
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · refine ⟨?_, ?_⟩
+      · funext p
+        rw [rulerHostCfg_workTapes, Fin.lastCases_last, Cfg.mapState_workTapes, htapes, hr]
+        show _ = (if r.val = k then (_ : ℤ → Option Bool) else _) p
+        rw [if_neg (by omega), if_neg (by omega), if_pos rfl]
+      · rw [rulerHostCfg_workTapePos, Fin.lastCases_last, Cfg.mapState_workTapePos, hheads]
+    · refine ⟨?_, ?_⟩
+      · funext p
+        rw [rulerHostCfg_workTapes, Fin.lastCases_castSucc, Cfg.mapState_workTapes, htapes,
+          r_encode_init_tapes]
+        have hne : σ j.castSucc ≠ r := by
+          rw [← hr]; exact fun h => (Fin.castSucc_ne_last j) (σ.injective h)
+        show (if j.val = k then (_ : ℤ → Option Bool) else _) p =
+          (if (σ j.castSucc).val = k then (_ : ℤ → Option Bool) else _) p
+        rw [hσ j]
+        by_cases h1 : j.val = k
+        · rw [if_pos h1, if_pos h1]
+        · rw [if_neg h1, if_neg h1]
+          by_cases h2 : j.val = k + 1
+          · rw [if_pos h2, if_pos h2]
+          · rw [if_neg h2, if_neg h2, if_neg hne]
+      · rw [rulerHostCfg_workTapePos, Fin.lastCases_castSucc, hh, Cfg.mapState_workTapePos,
+          hheads]
+  · intro j hj
+    have hge : k + 2 ≤ j.val := by
+      by_contra hlt
+      exact hj ⟨(⟨j.val, by omega⟩ : Fin (k + 2)).castSucc, Fin.ext (by rw [hσ])⟩
+    have hjr : j ≠ r := fun h => hj ⟨Fin.last (k + 2), hr.trans h.symm⟩
+    refine ⟨?_, ?_⟩
+    · funext p
+      rw [Cfg.mapState_workTapes, htapes]
+      show _ = (if j.val = k then (_ : ℤ → Option Bool) else _) p
+      rw [if_neg (by omega), if_neg (by omega), if_neg hjr]
+    · rw [Cfg.mapState_workTapePos, hheads]

@@ -1,0 +1,112 @@
+/-- **The mapped transfer's exact framed phase invariant.** The run from a sweep-phase start whose
+source tape carries `w` delimited at its head is, at every time, the two-pass trace whose forward
+phase writes `merge c (extract w[s])` at destination offset `s` (`c` the cell's original content)
+and whose return rewrites each source cell to its residue `rest w[s]` as the head leaves it, with
+the exit at `2|w| + 2`. At the identity map with the blank residue it is the plain transfer's
+trace; with the identity residue `some` it is the mapped copy's (`copyMapTM_runFrom_eq`).
+
+**Proof sketch.** `Turing.catalog_trace_run` with `catalogSweepF` and `catalogSweepResidueR`, in
+the plain transfer's shape: the forward phase is the mapped copy's (the two tables agree on the
+`sweep` phase); on return each source write extends the rewritten suffix by one cell and leaves
+the next read unchanged, since the cell read is still original (the forward pass never writes the
+source, and the return pass writes a cell only as it leaves it); the two delimiter cells are never
+written, so the final entry restores both original head positions. -/
+private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List Symbol}
+    (src dst : Fin k) (hne : src ≠ dst) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) (t : ℕ) :
+    (transferMapTM k src dst extract merge rest).runFrom d t =
+      catalogTrace
+        (catalogSweepF src dst (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ)) d)
+        (catalogSweepResidueR src dst (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ))
+          (fun q => (FinTM.bufferTape w (q - d.workTapePos src)).bind rest) d w.length)
+        { d with state := some .done
+                 workTapes := (catalogSweepResidueR src dst
+                   (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+                     fun γ => merge (d.workTapes dst q) (extract γ))
+                   (fun q => (FinTM.bufferTape w (q - d.workTapePos src)).bind rest)
+                   d w.length 0).workTapes }
+        w.length t := by
+  have h0 : catalogSweepF src dst
+      (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+        fun γ => merge (d.workTapes dst q) (extract γ)) d 0 = d := by
+    apply Cfg.ext <;> simp [catalogSweepF, hstate]
+    funext j q
+    split_ifs <;> simp_all <;> omega
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    have hs : (catalogSweepF src dst
+        (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ)) d r).workTapeSymbols src = some w[r] := by
+      simp [catalogSweepF, Cfg.workTapeSymbols, hne,
+        hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
+    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepF]
+    · funext j
+      by_cases hj : j = dst
+      · subst j
+        simp only [if_true, true_and, or_true]
+        funext q
+        rw [Function.update_apply]
+        by_cases hq : q = d.workTapePos dst + r
+        · subst hq
+          simp [Cfg.workTapeSymbols, FinTM.bufferTape, List.getElem?_eq_getElem hr]
+        · rw [if_neg hq]
+          split_ifs <;> simp_all <;> omega
+      · by_cases hs' : j = src <;> simp [hj, hs', hne]
+    · funext j
+      by_cases hd : j = dst <;> by_cases hs : j = src <;>
+        simp [hd, hs, hne, SignType.cast] <;> omega
+  · have hs : ∀ v : ℤ → Option Symbol,
+        (catalogSweepF src dst v d w.length).workTapeSymbols src = none := by
+      intro v
+      simp [catalogSweepF, Cfg.workTapeSymbols, hne, hw w.length (by omega) (by omega)]
+    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepF, catalogSweepR, catalogSweepResidueR]
+    · funext j
+      by_cases hj : j = src <;> by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
+      all_goals
+        funext q
+        split_ifs <;> simp_all <;> omega
+    · funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · intro r hr
+    have hs : ∀ v u : ℤ → Option Symbol,
+        (catalogSweepResidueR src dst v u d w.length (r + 1)).workTapeSymbols src =
+          some w[r] := by
+      intro v u
+      simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne,
+        hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
+    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
+    · funext j
+      by_cases hj : j = src
+      · subst j
+        simp only [ite_true, true_and]
+        funext q
+        simp only [Function.update_apply]
+        split_ifs <;>
+          simp_all [FinTM.bufferTape] <;> omega
+      · by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · have hs : ∀ v u : ℤ → Option Symbol,
+        (catalogSweepResidueR src dst v u d w.length 0).workTapeSymbols src = none := by
+      intro v u
+      simpa [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne] using
+        hw (-1) (by omega) (by omega)
+    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]

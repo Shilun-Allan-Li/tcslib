@@ -1,0 +1,5 @@
+/-- The same zipper viewed while scanning toward decreasing coordinates. -/
+def sweepRevCfg {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    Cfg 1 A S x :=
+  ⟨q, p, fun _ w => sweepTape (-z) l r (-w), fun _ => z, out⟩

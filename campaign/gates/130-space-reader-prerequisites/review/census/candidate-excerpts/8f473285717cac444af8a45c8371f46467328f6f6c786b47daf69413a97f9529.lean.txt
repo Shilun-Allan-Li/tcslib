@@ -1,0 +1,75 @@
+/-- The pass's forward phase: after `m ≤ |u|` steps, head `j` has moved `m` cells along `dir`,
+blanking the cells it left, and the ruler head is at `m`. -/
+private theorem xr_pass_fwd {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j ≠ r) (dir : SignType)
+    (u : List Bool) (d : Cfg K Bool xr_St x) (hd : d.state = some .run)
+    (hr : d.workTapes r = FinTM.bufferTape u) (hpos : d.workTapePos r = 0) (m : ℕ)
+    (hm : m ≤ u.length) :
+    ∃ f : ℤ → Option Bool,
+      (xr_passTM K j r dir).runFrom d m =
+        ⟨some .run, d.inputPos, Function.update d.workTapes j f,
+          fun i => if i = j then d.workTapePos j + m * (dir : ℤ)
+            else if i = r then (m : ℤ) else d.workTapePos i, d.output⟩ ∧
+      (∀ p : ℤ, (∃ i : ℕ, i < m ∧ p = d.workTapePos j + i * (dir : ℤ)) → f p = none) ∧
+      (∀ p : ℤ, (∀ i : ℕ, i < m → p ≠ d.workTapePos j + i * (dir : ℤ)) →
+        f p = d.workTapes j p) := by
+  induction m with
+  | zero =>
+    refine ⟨d.workTapes j, ?_, fun p ⟨i, hi, _⟩ => absurd hi (Nat.not_lt_zero i), fun p _ => rfl⟩
+    rw [MultiTapeTM.runFrom_zero]
+    apply Cfg.ext
+    · exact hd
+    · rfl
+    · exact (Function.update_eq_self _ _).symm
+    · funext i
+      dsimp only
+      by_cases hij : i = j
+      · rw [if_pos hij, hij]
+        simp
+      · rw [if_neg hij]
+        by_cases hir : i = r
+        · rw [if_pos hir, hir, hpos]
+          simp
+        · rw [if_neg hir]
+    · rfl
+  | succ m ih =>
+    obtain ⟨f, hrun, hblank, hkeep⟩ := ih (by omega)
+    have hread : (⟨some .run, d.inputPos, Function.update d.workTapes j f,
+        fun i => if i = j then d.workTapePos j + m * (dir : ℤ)
+          else if i = r then (m : ℤ) else d.workTapePos i, d.output⟩ :
+        Cfg K Bool xr_St x).workTapeSymbols r = some (u[m]'(by omega)) := by
+      rw [Cfg.workTapeSymbols_eq]
+      dsimp only
+      rw [if_neg (Ne.symm hjr), if_pos rfl, Function.update_of_ne (Ne.symm hjr), hr,
+        FinTM.bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    refine ⟨Function.update f (d.workTapePos j + m * (dir : ℤ)) none, ?_, ?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_succ_eq_step', hrun, MultiTapeTM.step_of_some rfl,
+        show (xr_passTM K j r dir).tr .run _ _ =
+          xr_act (xr_mv2 j r (some none) dir SignType.pos) (some .run) by
+            simp only [xr_passTM]
+            rw [hread],
+        xr_mv2_apply j r hjr]
+      dsimp only
+      simp only [Function.update_self, Function.update_idem, Option.getD_some,
+        if_neg (Ne.symm hjr), xr_cast_pos, ite_true]
+      congr 1
+      funext i
+      by_cases hij : i = j
+      · simp only [if_pos hij]
+        push_cast
+        ring
+      · by_cases hir : i = r
+        · simp only [if_neg hij, if_pos hir]
+          push_cast
+          ring
+        · simp only [if_neg hij, if_neg hir]
+    · rintro p ⟨i, hi, rfl⟩
+      by_cases hp : d.workTapePos j + i * (dir : ℤ) = d.workTapePos j + m * (dir : ℤ)
+      · rw [hp, Function.update_self]
+      · rw [Function.update_of_ne hp]
+        refine hblank _ ⟨i, ?_, rfl⟩
+        rcases Nat.lt_succ_iff_lt_or_eq.mp hi with h | h
+        · exact h
+        · exact absurd (by rw [h]) hp
+    · intro p hp
+      rw [Function.update_of_ne (hp m (by omega))]
+      exact hkeep p (fun i hi => hp i (by omega))

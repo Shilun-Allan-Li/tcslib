@@ -1,0 +1,23 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Sweep
+import TCSlib.Complexity.SpaceComplexity.ConfigCount
+import TCSlib.Complexity.TuringMachine.Build.NDClockHost
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option smartUnfolding false
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let names : List Name := [`Turing.ClockHost.bootCfg, `Option.map_none, `Option.getD_none, `Turing.NDTM.initCfg_eq, `Turing.Cfg.init_workTapes, `Turing.Cfg.init_workTapePos, `Turing.ClockHost.runCfg, `Turing.Cfg.init_state, `Turing.Cfg.init_inputPos, `Turing.Cfg.init_output, `Turing.capOf]
+  for n in names do
+    let some ci := env.find? n | throwError "MISSING_EXPLICIT_ARG|{n}"
+    let kind := match ci with
+      | .defnInfo _ => "definition" | .thmInfo _ => "theorem" | _ => "other"
+    let home := match env.getModuleIdxFor? n with
+      | some idx => env.header.moduleNames[idx.toNat]!.toString
+      | none => ""
+    logInfo m!"EXPLICIT_ARGUMENT|{(Json.mkObj [("name",toJson n.toString),("kind",toJson kind),
+      ("owner",toJson home),("type_Expr",toJson (reprStr ci.type))]).compress}"
+  logInfo m!"EXPLICIT_ARGUMENT_COMPLETE|{names.length}"

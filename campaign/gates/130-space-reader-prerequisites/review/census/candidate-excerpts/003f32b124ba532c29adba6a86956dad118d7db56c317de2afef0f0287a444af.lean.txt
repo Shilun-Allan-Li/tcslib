@@ -1,0 +1,19 @@
+theorem captureCfg_consumer {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x)
+    (hs : (captureCfg emb ret pre out₀ c).state = some ((c.state.map emb).getD ret))
+    (hi : (captureCfg emb ret pre out₀ c).inputPos = c.inputPos)
+    (ht : ∀ i a, (captureCfg emb ret pre out₀ c).workTapes i a =
+      (if h : i.val < k then c.workTapes ⟨i.val, h⟩
+       else FinTM.bufferTape (pre ++ c.output)) a)
+    (hp : ∀ i, (captureCfg emb ret pre out₀ c).workTapePos i =
+      if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else ((pre ++ c.output).length : ℤ))
+    (ho : (captureCfg emb ret pre out₀ c).output = out₀) :
+    captureCfg emb ret pre out₀ c =
+      ⟨some ((c.state.map emb).getD ret), c.inputPos,
+        (fun i => if h : i.val < k then c.workTapes ⟨i.val, h⟩
+          else FinTM.bufferTape (pre ++ c.output)),
+        (fun i => if h : i.val < k then c.workTapePos ⟨i.val, h⟩
+          else ((pre ++ c.output).length : ℤ)), out₀⟩ := by
+  refine Cfg.ext hs hi ?_ ?_ ho
+  · funext i a; exact ht i a
+  · funext i; exact hp i

@@ -1,0 +1,8 @@
+/-- Read and erase a singleton Boolean result at the selected work head.
+The two live exits retain the bit. This one-cell leaf is not supplied by
+the catalog's whole-word scans; composition uses the public seam host. -/
+private def canonBoolPopTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool (Option Bool) where
+  q₀ := none
+  tr := fun q _ w => match q with
+    | none => tapeAction i 0 (some none) 0 (some ((w i).getD false))
+    | some b => inputMoveAction 0 (some b)

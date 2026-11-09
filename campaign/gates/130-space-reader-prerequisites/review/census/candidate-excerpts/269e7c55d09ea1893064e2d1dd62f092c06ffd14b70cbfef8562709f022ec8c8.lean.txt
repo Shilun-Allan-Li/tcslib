@@ -1,0 +1,22 @@
+/-- A complete return phase cites the unchanged source-zone transduction. -/
+private lemma dg_write {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {y : List Γ} (c : Cfg M.k Γ M.State y)
+    (q : M.State) (inp : Option Γ) (reads : Fin M.k → Option Γ)
+    (a z : ℤ) (n : ℕ) {x : List (SweepAlphabet Γ M.k)}
+    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
+    (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (dgTM M a₀).tm.runFrom
+      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))
+        p z l ((tapeZone (fun j => tapeRow c j true) a n).reverse.map
+          (fun b => some (sweepSymbol b)) ++ r) out) (n * M.k) =
+      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))
+        p (z - n * M.k)
+        ((tapeZone (fun j => tapeRow ((M.tm.tr q inp reads).apply c) j false) a n).map
+          (fun b => some (sweepSymbol b)) ++ l) r out := by
+  have h := sweep_run_reverse (dgTM M a₀).tm
+    (fun s => Sum.inl (SweepState.write q inp reads s)) sweepSymbol
+    (writeVisit (M.tm.tr q inp reads)) (by intro s b inp'; rfl) p out
+    (tapeZone (fun j => tapeRow c j true) a n).reverse
+    (fun i => headAt c i (a + n)) z l r
+  simpa only [write_zone, List.length_reverse, tapeZone_length,
+    List.map_reverse, List.reverse_reverse, Int.natCast_mul] using h

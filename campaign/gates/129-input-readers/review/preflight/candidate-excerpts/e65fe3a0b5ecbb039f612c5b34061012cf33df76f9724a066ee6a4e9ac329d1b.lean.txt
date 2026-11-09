@@ -1,0 +1,18 @@
+/-- A payload-only controller action is the right-block action extension. -/
+private lemma loopControl_payload (body F : FinTM Bool) (d : SignType)
+    (out : Option Bool) (next : Option (LoopHostState body F)) :
+    loopControlAction body F 0 none (none, 0) (none, d) out next =
+      rightAction (body.k + 1 + (1 + F.k)) id
+        (⟨0, fun _ : Fin 1 => (none, d), out, next⟩ : Action 1 Bool (LoopHostState body F)) := by
+  simp only [loopControlAction, rightAction, Option.map_id]
+  congr 1
+  funext i
+  refine Fin.addCases ?_ ?_ i
+  · intro j
+    have hj : (j : ℕ) ≠ body.k + 1 + (1 + F.k) := Nat.ne_of_lt j.isLt
+    simp [hj]
+  · intro j
+    have hj : j = 0 := Subsingleton.elim _ _
+    subst j
+    have hf : body.k + 1 + (1 + F.k) ≠ body.k := by omega
+    simp [hf]

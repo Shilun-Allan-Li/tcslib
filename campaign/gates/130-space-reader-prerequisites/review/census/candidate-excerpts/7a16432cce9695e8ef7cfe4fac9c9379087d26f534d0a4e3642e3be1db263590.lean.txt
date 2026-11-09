@@ -1,0 +1,27 @@
+/-- Preparation can be dispatched on its first observed return, with a
+positive duration even for empty input and an empty candidate.
+**Proof sketch.** Cut the complete preparation run at its first visit to its absorbing return phase. The complete frame is unchanged by later steps, so the first visit has that same frame. -/
+private lemma emitterP2_prepare_first (w s : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ 5 * (s.length + w.length + 3) ∧
+      (∀ j < t, ∀ b, (emitterP2PrepareTM.tm.runFrom
+        (emitterP2PrepareCfg w s [] [] 0 false 1 0 0) j).state ≠ some ((8 : Fin 9), b)) ∧
+      emitterP2PrepareTM.tm.runFrom (emitterP2PrepareCfg w s [] [] 0 false 1 0 0) t =
+        emitterP2PrepareCfg w s s (w.drop s.length) 8 (decide (w.length < s.length)) 1 0 0 := by
+  obtain ⟨T, hT, hr⟩ := emitterP2_prepare_run w s
+  obtain ⟨t, ht, hf, he⟩ := emitter_first_entry emitterP2PrepareTM.tm
+    (fun q : Fin 9 × Bool => q.1 = 8) _ _ T (by
+      rintro z ⟨⟨q, b⟩, hz, hq⟩
+      change q = 8 at hq
+      subst q
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some ((8 : Fin 9), b))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    ⟨((8 : Fin 9), decide (w.length < s.length)), rfl, rfl⟩ hr
+  refine ⟨t, ?_, ht.trans hT, fun j hj b h => hf j hj ⟨((8 : Fin 9), b), h, rfl⟩, he⟩
+  by_contra h
+  have hz : t = 0 := by omega
+  have he' := congrArg Cfg.state he
+  simp [hz, emitterP2PrepareCfg] at he'
+  have hv := congrArg (fun q : Fin 9 × Bool => q.1.val) he'.symm
+  norm_num at hv

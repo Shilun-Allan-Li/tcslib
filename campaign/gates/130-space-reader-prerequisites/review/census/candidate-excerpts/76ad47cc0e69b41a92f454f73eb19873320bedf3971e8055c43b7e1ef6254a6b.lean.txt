@@ -1,0 +1,10 @@
+def rewindTM (k : ℕ) (halt : Bool) : MultiTapeTM k Bool RwPh where
+  q₀ := .start
+  tr := fun q inp _ =>
+    match q with
+    | .start => FinTM.controlAction .neg (some .scan)
+    | .scan =>
+      match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos (rewindDest halt)
+    | .done => FinTM.controlAction 0 (some .done)

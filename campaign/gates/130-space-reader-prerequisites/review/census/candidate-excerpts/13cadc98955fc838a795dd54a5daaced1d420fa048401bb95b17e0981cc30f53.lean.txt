@@ -1,0 +1,64 @@
+/-- Counting the first `n` input symbols preserves the exterior frame and pays
+exactly five units per symbol after including twice the true-bit potential.
+
+**Proof sketch.** Induct on the number of symbols. The framed round theorem
+provides each physical segment, the digit split identifies its next canonical
+word, and the frame-composition lemma joins it to the original configuration.
+The potential equation telescopes, while both segments' head intervals fit the
+new binary width. -/
+private theorem inputLength_count {x : List Bool}
+    (d : Cfg 1 Bool InputLengthPhase x) (hs : d.state = some .count)
+    (hip : d.inputPos = 1)
+    (blank : ∀ a : ℤ, -1 ≤ a → a ≤ (x.length.bits.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + a) = none) :
+    ∀ n (hn : n ≤ x.length), ∃ t,
+      t + 2 * n.bits.count true = 5 * n ∧
+      inputLengthMachine.runFrom d t =
+        inputLengthCfg d n.bits n.bits.length .count ⟨n + 1, by omega⟩ 0 ∧
+      ∀ u ≤ t,
+        d.workTapePos 0 - 1 ≤ (inputLengthMachine.runFrom d u).workTapePos 0 ∧
+        (inputLengthMachine.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + (n.bits.length : ℤ) := by
+  intro n
+  induction n with
+  | zero =>
+    intro _
+    refine ⟨0, by simp, ?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_zero]
+      simp only [Nat.zero_bits, List.length_nil, inputLengthCfg_zero]
+      apply Cfg.ext <;> simp [hs, hip]
+    · intro u hu
+      have : u = 0 := by omega
+      subst u
+      simp
+  | succ n ih =>
+    intro hn
+    obtain ⟨t, charge, reached, bounded⟩ := ih (by omega)
+    obtain ⟨p, v, old, next⟩ := inputLength_digits n
+    have accounting := inputLength_charge n p v old next
+    let ip : Fin (x.length + 2) := ⟨n + 1, by omega⟩
+    let c := inputLengthCfg d n.bits n.bits.length .count ip 0
+    have oldwidth : n.bits.length ≤ x.length.bits.length := by
+      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (show n ≤ x.length by omega)
+    have newwidth : n.bits.length ≤ (n + 1).bits.length := by
+      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ n)
+    have field (a : ℤ) (ha : -1 ≤ a) (hb : a ≤ (n.bits.length : ℤ)) :
+        c.workTapes 0 (c.workTapePos 0 + a) = FinTM.bufferTape n.bits a := by
+      simpa only [c, inputLengthCfg, add_zero] using
+        inputLengthCfg_read d n.bits .count ip x.length.bits.length blank a ha (by omega)
+    have round := inputLength_round c n p v rfl rfl (by omega) old next field
+    have inext : moveInputPos c.inputPos .pos = (⟨n + 1 + 1, by omega⟩ : Fin (x.length + 2)) := by
+      rw [moveInputPos_pos_of_ne_right _ (by simp only [c, inputLengthCfg, ip]; omega)]
+      rfl
+    have ctime : inputLengthMachine.runFrom d t = c := reached
+    refine ⟨t + (2 * p + 3), by omega, ?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_add, ctime, round.1, inext]
+      exact inputLengthCfg_merge d n p v old next ip _
+    · intro u hu
+      by_cases before : u ≤ t
+      · obtain ⟨lower, upper⟩ := bounded u before
+        exact ⟨lower, by omega⟩
+      · have localBound := round.2 (u - t) (by omega)
+        rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add, ctime]
+        have hcpos : c.workTapePos 0 = d.workTapePos 0 := by simp [c, inputLengthCfg]
+        rw [hcpos] at localBound
+        exact ⟨localBound.1, by omega⟩

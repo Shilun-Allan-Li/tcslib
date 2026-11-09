@@ -1,0 +1,72 @@
+from pathlib import Path
+import json,hashlib
+O=Path(__file__).parent;M=json.loads((O/'metadata-v2-CANDIDATE-first.json').read_text());B=json.loads((O/'metadata-v2-BASE.json').read_text());target=json.loads((O/'TARGET.json').read_text());pin=json.loads((O/'PIN.json').read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def write(n,d):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+assert all(B[k]==M[k] for k in ['name','owner','type_Expr','universes','axioms','simp','unfold','simp_unfold_thms'])
+assert M['name']=='Turing.exists_inputLengthTM' and set(M['axioms'])=={'propext','Classical.choice','Quot.sound'}
+defs=[d for d in M['foreign_definitions'] if d['ordinary']];heads=[d['name'] for d in defs];assert len(heads)==len(set(heads))==11
+old=json.loads(Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/items/dedup/inputlength-reader-proposal/2026-11-08/TYPE-AX-FOOTPRINT-COMPARISON.json').read_text())['ordinary_foreign_heads_per_root']['Turing.exists_inputLengthTM'];assert set(heads)==set(old)
+base_defs={d['name']:d for d in B['foreign_definitions'] if d['ordinary']};assert all(base_defs[d['name']]==d for d in defs)
+write('ORDINARY-UNION11.json',defs)
+rel=target['path'];source=(O/'source/CANDIDATE'/str(rel+'.txt')).read_text();start=source.index(target['CANDIDATE_full_literal_chunk']);end=start+len(target['CANDIDATE_full_literal_chunk']);assert source[end:]=='\nend Turing\n'
+simp=[d['name'] for d in defs if d['simp'] or d['unfold']];section='CurrentInputLengthConsumerBoundary';attr='section '+section+'\nattribute [local irreducible] '+' '.join(heads)+'\n'
+if simp:attr+='attribute [-simp] '+' '.join(simp)+'\n'
+witness='''
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := ['''+', '.join('`'+n for n in heads)+''']
+  let mut states : List Json := []
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "GUARD_NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "GUARD_DEFINITION_SIMP_ACTIVE|{n}"
+    states := Json.mkObj [("name",toJson n.toString),("irreducible",toJson true),
+      ("definition_simp_unfold",toJson false),
+      ("unfold_thms",toJson ((st.toUnfoldThms.find? n).map (fun ns => ns.toList.map Name.toString)))] :: states
+  logInfo m!"CURRENT_INPUTLENGTH_GUARD_OK|{(Json.arr states.reverse.toArray).compress}"
+'''
+code=source[:start]+attr+source[start:end]+witness+'end '+section+'\nend Turing\n';(O/'InputLength-full-selected-sealed.lean.txt').write_text(code)
+write('GUARD-SCOPE.json',{'name':M['name'],'owner':rel,'heads':heads,'ordinary_head_count':len(heads),'definition_simp_removed':simp,'full_literal_doc_statement_body_preserved':True,'all_previous_source_declarations_preserved_unsealed':True,'full_prefix_characters':start,'full_prefix_UTF8_bytes':len(source[:start].encode()),'selected_chunk_sha256':sha(target['CANDIDATE_full_literal_chunk'].encode()),'guard_source_sha256':sha(code.encode()),'only_wrapper_local_seal_and_postproof_witness_added':True,'original_imports_options_definitions_unchanged':True,'no_other_theorem_proof_guard_claim':True})
+# Correct an initial metadata label for an offset; source and theorem chunks stay exact.
+(O/'preparation/TARGET-initial-offset-label.json').write_bytes((O/'TARGET.json').read_bytes());target['prefix_character_offset']=target.pop('prefix_bytes');target['prefix_UTF8_bytes']=len(source[:start].encode());write('TARGET.json',target)
+# Adapt the previously reviewed own reflective-control fixture; only import and target names change.
+control=Path('/private/tmp/ab34-nspace5-producers-actual/controls/Native.lean.txt').read_text();oldimports='import TCSlib.Complexity.TuringMachine.Sweep\nimport TCSlib.Complexity.SpaceComplexity.ConfigCount\nimport TCSlib.Complexity.TuringMachine.Build.NDClockHost\n';assert control.count(oldimports)==1;control=control.replace(oldimports,'import TCSlib.Complexity.TuringMachine.Build.InputLength\n')
+oldtargets='let targets : List Name := [`Turing.Cfg.init, `Turing.FinTM.bufferTape, `Turing.NDTM.initCfg]';assert control.count(oldtargets)==1;control=control.replace(oldtargets,'let targets : List Name := ['+', '.join('`'+n for n in sorted(heads))+']');control=control.replace('ProducerControl_','ConsumerControl_')
+if simp:
+ anchor='open Lean Elab Command Meta in\n';assert control.count(anchor)==1;control=control.replace(anchor,'attribute [-simp] '+' '.join(simp)+'\n'+anchor)
+seal='attribute [local irreducible] '+' '.join(sorted(heads))+'\n';anchor='open Lean Elab Command Meta in\n';assert control.count(anchor)==1
+cdir=O/'controls';cdir.mkdir();(cdir/'Native.lean.txt').write_text(control);(cdir/'Sealed.lean.txt').write_text(control.replace(anchor,seal+anchor))
+write('controls/SCOPE.json',{'ordinary_heads':sorted(heads),'paired_identities':22,'forms':['pointwise identity quantified over all original parameters','whole definition constant equals its complete literal value'],'goals_and_options_identical_except_one_local_seal_attribute':True,'smartUnfolding_both':False,'same_definition_simp_removals':simp,'positive_values_kernel_checked':True,'expected_negative_rfl_diagnostics':22,'no_transparency_override':True})
+# Every public nonlocal rw/simp argument and direct equation provider in the entire selected body.
+args=['Turing.Cfg.inputSymbol_of_end','Turing.step_of_inputMoveAction','Turing.moveInputPos_zero','Turing.inputFoldTM_tr_bwd','Turing.inputMoveAction_eq','Turing.FinTM.controlAction_def','Turing.Action.mapState_inputTape','Turing.Action.mapState_output','Turing.Action.mapState_state','Option.map_some','Turing.Action.mapState_workTapes',"Turing.MultiTapeTM.runFrom_succ_eq_step'",'Turing.MultiTapeTM.runFrom_add','add_zero','Turing.MultiTapeTM.exists_first_entry_of_fixed']
+argcode='''import Lean
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let names : List Name := ['''+', '.join('`'+n for n in args)+''']
+  for requested in names do
+    let e ← liftTermElabM <| Term.elabTerm (mkIdent requested) none
+    let some n := e.getAppFn.constName? | throwError "ARGUMENT_NOT_CONSTANT|{requested}"
+    let some ci := env.find? n | throwError "MISSING_ARGUMENT|{n}"
+    let home := match env.getModuleIdxFor? n with
+      | some idx => env.header.moduleNames[idx.toNat]!.toString
+      | none => ""
+    let kind := match ci with | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | _ => "other"
+    logInfo m!"EXPLICIT_ARGUMENT|{(Json.mkObj [("requested",toJson requested.toString),
+      ("name",toJson n.toString),("kind",toJson kind),("owner",toJson home)]).compress}"
+  logInfo m!"EXPLICIT_ARGUMENT_COMPLETE|{names.length}"
+'''
+(O/'ExplicitArguments.lean.txt').write_text(argcode)
+write('EXPLICIT-ARGUMENT-SOURCE-REVIEW.json',{'source_scope':'Complete current prospective public InputLength proof in TARGET.json, not a prefix-only proof or earlier consumer execution','public_arguments_and_direct_equation_providers':args,'owned_definition_arguments':['inputLengthMachine','inputLengthCfg'],'local_let_arguments':['c','back'],'local_hypothesis_or_fact_arguments':['endSymbol','counted','reachedBack','returned','returnHeads','same','finish','hq'],'foreign_definition_explicit_arguments':[],'Core_Mathlib_definition_explicit_arguments':[],'full_body_reviewed':True,'complete_native_scope_and11head_guard_will_verify_implicit_definition_reads':True})
+write('TYPE-AX-FOOTPRINT-COMPARISON.json',{'actual_BASE_current241_consumer_vs_actual_candidate':{k:B[k]==M[k] for k in ['name','owner','type_Expr','universes','axioms','simp','unfold','simp_unfold_thms']},'actual_standard_AXIOM_triple_exact':True,'actual_ordinary_foreign_heads':heads,'matches_historical11_name_set_but_all_execution_is_fresh':True,'all11_foreign_definition_full_type_value_universes_flags_literal_exact_BASE_CANDIDATE':True,'all_source_bytes_outside_public_proof_body_exact':True,'other_theorem_proof_boundary':'Full types traversed; proof values stopped except selected generated auxiliaries, which are traversed and inventoried. Own definition-helper values traversed; foreign definition RHS recorded for identity but not traversed.','current_inputLength_snapshot_context_private_prospective_only':True})
+print('PREPARED_FULL11_HEAD_GUARD_AND22_EFFECTIVE_CONTROL_PAIRS',flush=True)

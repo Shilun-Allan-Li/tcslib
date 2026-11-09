@@ -1,0 +1,146 @@
+from pathlib import Path
+import json,re,hashlib
+O=Path(__file__).parent;M=json.loads((O/'METADATA-FIRST.json').read_text());pin=json.loads((O/'PIN.json').read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def write(n,d):p=O/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+def clean(s):
+ out=[];i=0;depth=0;quote=False
+ while i<len(s):
+  if depth:
+   if s.startswith('/-',i):depth+=1;i+=2
+   elif s.startswith('-/',i):depth-=1;i+=2
+   else:out.append('\n' if s[i]=='\n' else ' ');i+=1
+  elif quote:
+   out.append(s[i])
+   if s[i]=='\\' and i+1<len(s):i+=1;out.append(s[i])
+   elif s[i]=='"':quote=False
+   i+=1
+  elif s.startswith('/-',i):depth=1;i+=2
+  elif s.startswith('--',i):
+   end=s.find('\n',i);i=len(s) if end<0 else end
+  else:out.append(s[i]);quote=s[i]=='"';i+=1
+ return ''.join(out)
+bounds={
+'Turing.MultiTapeTM.ConfigCount.core_eq':('/-- The core records exactly the state','/-- The core after a step'),
+'Turing.ClockHost.bootCfg_of_halt':('/-- A halted yardstick configuration','/-- A boot step is a step'),
+'Turing.ClockHost.runCfg_initCfg':('/-- The attempt configuration of the initial machine','/-- Before the timeout'),
+'Turing.FinTM.sweepRevCfg_state':('/-- The reverse-sweep configuration has the supplied control state.','/-- The reverse-sweep configuration has the supplied output word.'),
+'Turing.FinTM.sweepRevCfg_output':('/-- The reverse-sweep configuration has the supplied output word.','/-- Reflection converts the forward zipper')}
+headers=[];guards=[];zero=[];union={}
+for idx,m in enumerate(M,1):
+ rel=m['owner'].replace('.','/')+'.lean';source=(O/'source/HEAD'/str(rel+'.txt')).read_text();a,b=bounds[m['name']];assert source.count(a)==source.count(b)==1
+ start=source.index(a);end=source.index(b,start);chunk=source[start:end];assign=chunk.index(':= by');header=chunk[:assign];body=chunk[assign+len(':= by'):];assert 'sorry' not in body
+ heads=[d['name'] for d in m['foreign_definitions'] if d['ordinary']];definitions=[d for d in m['foreign_definitions'] if d['ordinary']]
+ for d in definitions:
+  if d['name'] in union:assert union[d['name']]==d
+  union[d['name']]=d
+ headers.append({'id':idx,'name':m['name'],'owner':rel,'full_literal_doc_header':header,'full_literal_body':body,'full_literal_chunk':chunk,'literal_chunk_sha256':sha(chunk.encode()),'start':start,'end':end,'ordinary_foreign_heads':heads,'native_source_head':pin['source_head']})
+ if not heads:
+  zero.append({'name':m['name'],'owner':rel,'ordinary_foreign_heads':[],'full_producer_proof':chunk,'own_helpers_traversed':[d['name'] for d in m['own_definition_helpers']],'foreign_exclusions':[{'name':d['name'],'projection':d['projection'],'kernel_hints':d['kernel_hints']} for d in m['foreign_definitions']],'disposition':'Native whole-owner check and complete selected metadata/explicit-source review only; no zero-head seal or vacuous control count.'});continue
+ stack=[]
+ for line in clean(source[:end]).splitlines():
+  z=re.fullmatch(r'\s*(namespace|section|noncomputable section)(?:\s+([^\s]+))?\s*',line)
+  if z:stack.append(z.group(2) or '');continue
+  if re.fullmatch(r'\s*end(?:\s+([^\s]+))?\s*',line):assert stack;stack.pop()
+ simp=[d['name'] for d in definitions if d['simp'] or d['unfold']];section='ProducerGuard_'+str(idx)
+ attr='section '+section+'\nattribute [local irreducible] '+' '.join(heads)+'\n'
+ if simp:attr+='attribute [-simp] '+' '.join(simp)+'\n'
+ witness='''
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := ['''+', '.join('`'+n for n in heads)+''']
+  let mut states : List Json := []
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "GUARD_NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "GUARD_DEFINITION_SIMP_STILL_ACTIVE|{n}"
+    states := Json.mkObj [("name",toJson n.toString),("irreducible",toJson true),
+      ("definition_simp_unfold",toJson false)] :: states
+  logInfo m!"PRODUCER_GUARD_OK|'''+str(idx)+'''|{(Json.arr states.reverse.toArray).compress}"
+'''
+ code=source[:start]+attr+source[start:end]+witness+'end '+section+'\n'+''.join('end'+(' '+n if n else '')+'\n' for n in reversed(stack))
+ dest=O/'guards'/str(idx)/'source.lean.txt';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(code)
+ guards.append({'id':idx,'name':m['name'],'owner':rel,'source_capture':str(dest.relative_to(O)),'source_sha256':sha(code.encode()),'heads':heads,'simp_removed':simp,'full_selected_proof_preserved':True,'native_prefix_bytes_preserved_until_guard_insertion':start,'full_selected_chunk_sha256':sha(chunk.encode()),'original_scope_closures':stack,'all_previous_proofs_preserved_unsealed':True,'no_new_import_or_proof_option':True})
+write('HEADERS5.json',headers);write('GUARD-INPUTS.json',guards);write('ZERO-HEAD-DISPOSITIONS.json',zero);write('ORDINARY-UNION.json',list(union.values()))
+heads=sorted(union);simp=sorted(n for n,d in union.items() if d['simp'] or d['unfold'])
+top='''import Lean
+import TCSlib.Complexity.TuringMachine.Sweep
+import TCSlib.Complexity.SpaceComplexity.ConfigCount
+import TCSlib.Complexity.TuringMachine.Build.NDClockHost
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option smartUnfolding false
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+'''
+common=('attribute [-simp] '+' '.join(simp)+'\n') if simp else ''
+control='''open Lean Elab Command Meta in
+run_cmd do
+  let targets : List Name := ['''+', '.join('`'+n for n in heads)+''']
+  let mut i : Nat := 0
+  for name in targets do
+    let some (.defnInfo info) := (← getEnv).find? name | throwError "not ordinary definition {name}"
+    logInfo m!"CONTROL_DEFINITION|{(Json.mkObj [("name",toJson name.toString),
+      ("type_Expr",toJson (reprStr info.type)),("value_Expr",toJson (reprStr info.value)),
+      ("universes",toJson (info.levelParams.map Name.toString))]).compress}"
+    for mode in ["point", "abstract"] do
+      i := i + 1
+      let result ← liftTermElabM do
+        let levels := info.levelParams.map Level.param
+        let head := mkConst name levels
+        let solve := fun (xs : Array Expr) (lhs rhs : Expr) => do
+          let ty ← mkEq lhs rhs
+          let closedType ← mkForallFVars xs ty
+          logInfo m!"CONTROL_GOAL|{(Json.mkObj [("id",toJson i),("name",toJson name.toString),
+            ("mode",toJson mode),("type_Expr",toJson (reprStr closedType)),
+            ("universes",toJson (info.levelParams.map Name.toString))]).compress}"
+          let goal ← mkFreshExprSyntheticOpaqueMVar ty
+          try
+            goal.mvarId!.refl
+            pure (some (closedType, ← mkLambdaFVars xs (← instantiateMVars goal)))
+          catch _ =>
+            logInfo m!"CONTROL|{i}|{name}|{mode}|FAIL"
+            logError m!"CONTROL_RFL|{i}|{name}|{mode}|rfl did not close reflected identity"
+            pure none
+        if mode == "abstract" then solve #[] head info.value
+        else forallTelescopeReducing info.type fun xs _ => do
+          if xs.isEmpty then
+            let unitTy := mkConst ``Unit
+            solve #[] (Expr.lam `_u unitTy head .default)
+              (Expr.lam `_u unitTy info.value .default)
+          else solve xs (mkAppN head xs) ((mkAppN info.value xs).headBeta)
+      if let some (ty, value) := result then
+        let ty ← liftTermElabM <| instantiateMVars ty
+        let value ← liftTermElabM <| instantiateMVars value
+        if ty.hasFVar || ty.hasMVar || value.hasFVar || value.hasMVar then
+          throwError "unclosed control {i}"
+        let kernelName := Name.mkSimple ("ProducerControl_" ++ toString i)
+        liftCoreM <| addDecl (.thmDecl { name := kernelName, levelParams := info.levelParams, type := ty, value := value })
+        logInfo m!"CONTROL|{i}|{name}|{mode}|PASS|kernelChecked={kernelName}"
+  logInfo m!"CONTROL_COMPLETE|{i}"
+'''
+d=O/'controls';d.mkdir();(d/'Native.lean.txt').write_text(top+common+control);(d/'Sealed.lean.txt').write_text(top+common+'attribute [local irreducible] '+' '.join(heads)+'\n'+control)
+write('controls/SCOPE.json',{'heads':heads,'ordinary_heads':len(heads),'paired_identities':2*len(heads),'same_goals_options_except_seal_attribute':True,'both_smartUnfolding':False,'same_definition_simp_rows_removed':simp,'two_distinct_identity_forms':['pointwise, quantified over original parameters','whole definition constant equals literal full value'],'native_positive_kernel_checked':True,'expected_sealed_negative_errors':2*len(heads),'no_transparency_override':True,'foreign_definition_type_value_universe_full_identity_emitted_in_both':True})
+explicit=[('Turing.ClockHost.bootCfg','owned definition'),('Option.map_none','Core theorem'),('Option.getD_none','Core theorem'),('Turing.NDTM.initCfg_eq','published foreign equation'),('Turing.Cfg.init_workTapes','published foreign equation'),('Turing.Cfg.init_workTapePos','published foreign equation'),('Turing.ClockHost.runCfg','owned definition'),('Turing.Cfg.init_state','published foreign equation'),('Turing.Cfg.init_inputPos','published foreign equation'),('Turing.Cfg.init_output','published foreign equation'),('Turing.capOf','owned definition')]
+argcode=top+'''open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let names : List Name := ['''+', '.join('`'+n for n,_ in explicit)+''']
+  for n in names do
+    let some ci := env.find? n | throwError "MISSING_EXPLICIT_ARG|{n}"
+    let kind := match ci with
+      | .defnInfo _ => "definition" | .thmInfo _ => "theorem" | _ => "other"
+    let home := match env.getModuleIdxFor? n with
+      | some idx => env.header.moduleNames[idx.toNat]!.toString
+      | none => ""
+    logInfo m!"EXPLICIT_ARGUMENT|{(Json.mkObj [("name",toJson n.toString),("kind",toJson kind),
+      ("owner",toJson home),("type_Expr",toJson (reprStr ci.type))]).compress}"
+  logInfo m!"EXPLICIT_ARGUMENT_COMPLETE|{names.length}"
+'''
+(O/'ExplicitArguments.lean.txt').write_text(argcode)
+write('EXPLICIT-ARGUMENT-SOURCE-REVIEW.json',{'scope':'All five complete literal producer proof bodies in HEADERS5.json, not previous consumer proofs','full_source_head':pin['source_head'],'producer_rows':[{'name':h['name'],'full_literal_body':h['full_literal_body'],'simp_rw_unfold_lines':[s for s in h['full_literal_body'].splitlines() if re.search(r'\b(simp|rw|unfold)\b',s)]} for h in headers],'resolved_nonlocal_arguments_expected':[{'name':n,'classification':c} for n,c in explicit],'local_hypothesis_arguments':['hc','hw','hp'],'foreign_TCSlib_definition_explicit_arguments':[],'Core_or_Mathlib_definition_explicit_arguments':[],'owned_definitions_named':['Turing.ClockHost.bootCfg','Turing.ClockHost.runCfg','Turing.capOf'],'rfl_producers':['Turing.MultiTapeTM.ConfigCount.core_eq','Turing.FinTM.sweepRevCfg_state','Turing.FinTM.sweepRevCfg_output'],'rfl_disposition':'Own definition bodies and projections/constructors only; full metadata traversal follows own helper values and excludes only kernel projections/abbreviations from foreign ordinary guards.'})
+print('Prepared2 exact owner-prefix guards,3 zero-head dispositions,',2*len(heads),'effective paired identities for',heads,flush=True)

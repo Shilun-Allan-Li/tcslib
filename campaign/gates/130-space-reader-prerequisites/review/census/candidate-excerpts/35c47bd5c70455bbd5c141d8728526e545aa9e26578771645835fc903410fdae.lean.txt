@@ -1,0 +1,5 @@
+/-- A seek round moves the input right once; there is no public native-input-head primitive
+for the counter host's cyclic one-step body. -/
+private def inputSeekStep : MultiTapeTM 1 Bool Unit where
+  q₀ := ()
+  tr := fun _ _ _ => inputMoveAction 1 ()

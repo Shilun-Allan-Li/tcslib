@@ -1,0 +1,19 @@
+/-- **Canonical decoding** (design §12.8a §2). On windowed configurations of
+one input, records agree exactly when the configurations agree on state, input
+position, work tapes and work heads, and the tags agree. The output is not
+compared, so this is injectivity on the configuration core, the vertex
+quotient of the configuration graph.
+
+**Proof sketch.** Compare the fields. The state field gives the state. The
+position field is `Turing.binDigits` at a width with `2 ^ posWidth |x| >
+|x| + 1`, which is injective on values `≤ |x| + 1`, the range of input
+positions. For tape `i`, the content track gives the cells in `[-s, s]`, and
+outside it both configurations are blank by the window hypothesis. The mark
+track has exactly one mark, at the head, which lies in `[-s, s]`. The tag field
+gives the tag. -/
+theorem cfgRecord_inj {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) {c d : Cfg k Bool Q x}
+    {τ τ' : T} (hc : c.InWindow s) (hd : d.InWindow s) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ' := by
+  sorry

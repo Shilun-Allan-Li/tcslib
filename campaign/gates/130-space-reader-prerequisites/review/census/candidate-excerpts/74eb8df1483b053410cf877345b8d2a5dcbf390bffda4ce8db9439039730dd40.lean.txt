@@ -1,0 +1,6 @@
+/-- No public native-input-head primitive reads a native symbol into finite control.
+Read makes one stationary step and returns the decoded Bool symbol, leaving the bank intact. -/
+private def recordStepRead {Q T : Type} [DecidableEq Q] [DecidableEq T] :
+    MultiTapeTM 4 (RecSym Q T) (Option (Option Bool)) where
+  q₀ := none
+  tr _ inp _ := inputMoveAction 0 (some (inp.bind (decodeBool (RecSym.digitEmb Q T))))

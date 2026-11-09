@@ -1,0 +1,45 @@
+/-- **One replay, the `finish` exit.** If the branch along `s` first halts at `τ ≤ |s|`, and the
+budget word `w` has value `|s|`, the replay phase reaches, within `5τ + 2|w| + 2` steps and with no
+earlier exit, the exit `finish none` over `N`'s halted branch configuration, translated by `h`:
+its input head and output, its work tapes and heads translated, the choice head at some `p ≤ τ`,
+the counter rewritten to some word of the same width with its head at the origin, the output
+captured with the capture head at its end, the depth tape untouched, and nothing emitted. -/
+private theorem xr_replay_finish {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) (hval : Nat.ofDigits 2 (w.map Bool.toNat) = s.length) (τ : ℕ)
+    (hτ : τ ≤ s.length) (hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none)
+    (hlive : ∀ u < τ, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none) :
+    ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ p ≤ τ, ∃ w' : List Bool, w'.length = w.length ∧
+      (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) T =
+        ⟨some (C.finish none), (N.tm.runWith (s.take τ) (N.tm.initCfg z)).inputPos,
+          xr_tapes (xr_shift h (N.tm.runWith (s.take τ) (N.tm.initCfg z))).workTapes
+            (FinTM.bufferTape s) (FinTM.bufferTape w')
+            (FinTM.bufferTape (N.tm.runWith (s.take τ) (N.tm.initCfg z)).output)
+            (FinTM.bufferTape wD),
+          xr_heads (xr_shift h (N.tm.runWith (s.take τ) (N.tm.initCfg z))).workTapePos p 0
+            ((N.tm.runWith (s.take τ) (N.tm.initCfg z)).output.length : ℤ) 0, []⟩ ∧
+      ∀ u < T, ∀ r,
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
+  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
+      some N.tm.q₀ := by
+    rw [NDTM.withChoiceTape_state]
+    show (N.tm.initCfg z).state = _
+    rw [NDTM.initCfg_eq, Cfg.init_state]
+  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_finish _ _ hq w (FinTM.bufferTape w) 0 hct τ
+    (by rw [hval]; exact hτ) (by rw [xr_replay_state z s h τ hτ]; exact hhalt)
+    (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u hu)
+  obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s τ hτ
+  rw [xr_runWith_shift] at hrep
+  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) u) := fun u => by
+    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
+  refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
+  · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append]
+    rfl
+  · rw [hE, embedSilentCfg_state]
+    exact hguard u hu r

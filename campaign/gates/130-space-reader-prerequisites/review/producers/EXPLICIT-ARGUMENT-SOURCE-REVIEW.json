@@ -1,0 +1,102 @@
+{
+  "scope": "All five complete literal producer proof bodies in HEADERS5.json, not previous consumer proofs",
+  "full_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59",
+  "producer_rows": [
+    {
+      "name": "Turing.MultiTapeTM.ConfigCount.core_eq",
+      "full_literal_body": "\n  rfl\n\n",
+      "simp_rw_unfold_lines": []
+    },
+    {
+      "name": "Turing.ClockHost.bootCfg_of_halt",
+      "full_literal_body": "\n  simp only [bootCfg, hc, Option.map_none, Option.getD_none]\n\n",
+      "simp_rw_unfold_lines": [
+        "  simp only [bootCfg, hc, Option.map_none, Option.getD_none]"
+      ]
+    },
+    {
+      "name": "Turing.ClockHost.runCfg_initCfg",
+      "full_literal_body": "\n  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by\n    funext i z\n    rw [NDTM.initCfg_eq, Cfg.init_workTapes]\n  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by\n    funext i\n    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]\n  rw [runCfg, hw, hp]\n  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]\n\n",
+      "simp_rw_unfold_lines": [
+        "    rw [NDTM.initCfg_eq, Cfg.init_workTapes]",
+        "    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]",
+        "  rw [runCfg, hw, hp]",
+        "  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]"
+      ]
+    },
+    {
+      "name": "Turing.FinTM.sweepRevCfg_state",
+      "full_literal_body": "\n  rfl\n\n",
+      "simp_rw_unfold_lines": []
+    },
+    {
+      "name": "Turing.FinTM.sweepRevCfg_output",
+      "full_literal_body": "\n  rfl\n\n",
+      "simp_rw_unfold_lines": []
+    }
+  ],
+  "resolved_nonlocal_arguments_expected": [
+    {
+      "name": "Turing.ClockHost.bootCfg",
+      "classification": "owned definition"
+    },
+    {
+      "name": "Option.map_none",
+      "classification": "Core theorem"
+    },
+    {
+      "name": "Option.getD_none",
+      "classification": "Core theorem"
+    },
+    {
+      "name": "Turing.NDTM.initCfg_eq",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.Cfg.init_workTapes",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.Cfg.init_workTapePos",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.ClockHost.runCfg",
+      "classification": "owned definition"
+    },
+    {
+      "name": "Turing.Cfg.init_state",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.Cfg.init_inputPos",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.Cfg.init_output",
+      "classification": "published foreign equation"
+    },
+    {
+      "name": "Turing.capOf",
+      "classification": "owned definition"
+    }
+  ],
+  "local_hypothesis_arguments": [
+    "hc",
+    "hw",
+    "hp"
+  ],
+  "foreign_TCSlib_definition_explicit_arguments": [],
+  "Core_or_Mathlib_definition_explicit_arguments": [],
+  "owned_definitions_named": [
+    "Turing.ClockHost.bootCfg",
+    "Turing.ClockHost.runCfg",
+    "Turing.capOf"
+  ],
+  "rfl_producers": [
+    "Turing.MultiTapeTM.ConfigCount.core_eq",
+    "Turing.FinTM.sweepRevCfg_state",
+    "Turing.FinTM.sweepRevCfg_output"
+  ],
+  "rfl_disposition": "Own definition bodies and projections/constructors only; full metadata traversal follows own helper values and excludes only kernel projections/abbreviations from foreign ordinary guards."
+}

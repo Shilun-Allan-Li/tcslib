@@ -1,0 +1,123 @@
+/-- **R8.5c, the input length** (design §12.8a §3, §12.8b). There is a `Bool`
+module with an entry and an exit state and `K + 1` tapes with the following
+contract. Start it at its entry with the input head at position `1`, tape `0`
+blank on the `|bits |x|| + 2` cells from one left of its head to one right of
+where the word will end, and the other tapes blank. It reaches its exit within
+`C·(|x| + 1)` steps, and not earlier. At that point tape `0` holds
+`Nat.bits |x|` from its head, and every other cell, every head, the input
+position and the output are as they were. Up to the exit every work head stays
+within `C·(|bits |x|| + 1)` cells of its entry position, so the work space is
+logarithmic in `|x|` however far the input head travels. At `x = []` nothing is
+written, since `Nat.bits 0 = []`.
+
+**Proof sketch.** One pass over the input drives an in-place binary counter on
+tape `0`. For each input symbol, move the input head right and increment the
+counter: the carry turns the maximal `true` prefix to `false` and writes `true`
+on the next cell, which is the blank just after the word when the counter
+overflows, so the width grows by one cell exactly at the powers of two. A
+return pass brings the counter head back to its first cell, guided by the
+blank delimiter on its left. At the input's right end marker, walk the input
+head back to position `1` (the `Turing.inputFoldTM_run_ofCfg` return) and exit.
+The increments from `0` to `|x|` cost `Σ_v (2·p_v + 2)` for the true-prefix
+lengths `p_v`, which telescopes against twice the number of `true` cells, as
+in `Turing.counterOverhead_le_of_le` mirrored, so the total is linear in
+`|x|`. Route: the counting phase is the transition table of Catalog's private
+`f2_counterTM` without its emission, framed; no public input-driven loop host
+exists (`Turing.counterLoopTM` needs its round count on a tape, which is what
+is being computed), so the fill proves the framed round induction for this
+table directly and records the pair with `f2_counterTM` for 12.2c, which can
+re-derive `Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` from this row.
+The counter head stays in `[pos - 1, pos + |bits |x||]`. -/
+theorem exists_inputLengthTM :
+    ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)
+      (entry exit : S) (C : ℕ),
+      ∀ {x : List Bool} (d : Cfg (K + 1) Bool S x), d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((Nat.bits x.length).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 1),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((Nat.bits x.length).length + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((Nat.bits x.length).length : ℤ)
+                  then FinTM.bufferTape (Nat.bits x.length) (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  refine ⟨0, InputLengthPhase, inferInstance, inferInstance, inputLengthMachine,
+    .count, .done, 6, ?_⟩
+  intro x d hs hip blank _
+  obtain ⟨t, charge, counted, countHeads⟩ := inputLength_count d hs hip blank x.length le_rfl
+  let c := inputLengthCfg d x.length.bits x.length.bits.length .count
+    (⟨x.length + 1, by omega⟩ : Fin (x.length + 2)) 0
+  let back : Cfg 1 Bool InputLengthPhase x := {c with state := some .returnStart}
+  have endSymbol : c.inputSymbol = none := by
+    simp [c, inputLengthCfg, Cfg.inputSymbol]
+  have turn : inputLengthMachine.step c = back := by
+    rw [step_of_inputMoveAction _ _ 0 rfl (q' := .returnStart) (by
+      simp [inputLengthMachine, endSymbol])]
+    simp only [moveInputPos_zero]
+    rfl
+  obtain ⟨r, hr, returned, returnHeads⟩ := FinTM.rewind_heads inputLengthMachine
+    .returnStart .returnScan (some .done) (by intros; rfl)
+    (by intro inp work; cases inp <;> rfl) back rfl
+  have reachedBack : inputLengthMachine.runFrom d (t + 1) = back := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', counted]
+    exact turn
+  have finish : inputLengthMachine.runFrom d (t + 1 + r) =
+      {back with state := some .done, inputPos := 1} := by
+    rw [MultiTapeTM.runFrom_add, reachedBack, returned]
+  have deadline : t + 1 + r ≤ 6 * (x.length + 1) := by
+    have hr' : r ≤ x.length + 3 := by simpa [back, c, inputLengthCfg] using hr
+    omega
+  have heads (u : ℕ) (hu : u ≤ t + 1 + r) :
+      d.workTapePos 0 - 1 ≤ (inputLengthMachine.runFrom d u).workTapePos 0 ∧
+      (inputLengthMachine.runFrom d u).workTapePos 0 ≤
+        d.workTapePos 0 + (x.length.bits.length : ℤ) := by
+    by_cases h : u ≤ t
+    · exact countHeads u h
+    · have hu' : u - (t + 1) ≤ r := by omega
+      rw [show u = t + 1 + (u - (t + 1)) by omega,
+        MultiTapeTM.runFrom_add, reachedBack, returnHeads _ hu']
+      simp only [back, c, inputLengthCfg, add_zero]
+      constructor <;> omega
+  -- The public fixed-stop entry contract keeps the exact completed configuration.
+  obtain ⟨first, firstLe, firstCut, firstEnd⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    inputLengthMachine (fun q => q = .done) d
+    {back with state := some .done, inputPos := 1} (t + 1 + r)
+    (by
+      rintro z ⟨q, hq, rfl⟩
+      rw [step_of_inputMoveAction _ _ 0 hq (q' := .done) rfl]
+      simp only [moveInputPos_zero]
+      apply Cfg.ext <;> simp [hq])
+    ⟨.done, rfl, rfl⟩ finish
+  have same : inputLengthMachine.runFrom d (t + 1 + r) =
+      inputLengthMachine.runFrom d first := finish.trans firstEnd.symm
+  refine ⟨first, firstLe.trans deadline, ?_, ?_, ?_⟩
+  · intro u hu
+    intro hs
+    exact firstCut u hu ⟨.done, hs, rfl⟩
+  · intro u hu j
+    have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
+    subst j
+    obtain ⟨lower, upper⟩ := heads u (hu.trans firstLe)
+    apply abs_le.mpr
+    push_cast
+    constructor <;> omega
+  · rw [← same, finish]
+    apply Cfg.ext
+    · rfl
+    · exact hip.symm
+    · funext j a
+      have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
+      subst j
+      simp [back, c, inputLengthCfg]
+    · funext j
+      have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
+      subst j
+      simp [back, c, inputLengthCfg]
+    · rfl

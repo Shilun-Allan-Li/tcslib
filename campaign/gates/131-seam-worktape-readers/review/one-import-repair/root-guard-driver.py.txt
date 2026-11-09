@@ -1,0 +1,56 @@
+from pathlib import Path
+import datetime, hashlib, json, os, re, subprocess, time
+D=Path('/private/tmp/ab34-gate131-right-step-import-proposal-dzo3ncc0')
+C=json.loads((D/'CONTEXT.json').read_text()); W=Path(C['private_source_tree']); OV=Path(C['private_complete_clone'])
+O=D/'root-checked-v2'; O.mkdir()
+def sha(b):return hashlib.sha256(b).hexdigest()
+def parse(label,key):
+ return [json.loads(l.split(key+'|',1)[1]) for l in (D/'runs'/label/'raw.out').read_text().splitlines() if key+'|' in l]
+old=parse('01-BASE-target-metadata','SELECTED')[0];new=parse('03-CANDIDATE-target-metadata','SELECTED')[0]
+assert {k for k in old if old[k]!=new[k]}=={'axioms'}
+assert set(old['axioms'])=={'propext','Quot.sound'} and set(new['axioms'])=={'propext','Quot.sound','Classical.choice'}
+foreign=parse('03-CANDIDATE-target-metadata','BOUNDARY')[0]
+heads=foreign['ordinary_foreign_heads']
+want=['Turing.Action.apply','Turing.Action.mapState','Turing.Cfg.inputSymbol','Turing.Cfg.mapState','Turing.Cfg.workTapeSymbols','Turing.MultiTapeTM.step']
+assert heads==want
+remove=[x['name'] for x in foreign['foreign_definitions'] if x['ordinary'] and (x['simp'] or x['unfold'])];assert remove==['Turing.Action.apply']
+seal='attribute [-simp] '+' '.join(remove)+'\nattribute [local irreducible] '+' '.join(heads)+'\n'
+p=(D/'Seam-CANDIDATE.lean.txt').read_text(); start='/-- Right steps commute with state mapping, even after a source halt. -/'
+end='/-- A stationary, silent, write-free action changes only the control field. -/'
+assert p.count(start)==p.count(end)==1
+prefix=p[:p.index(start)]+'section\n'+seal+p[p.index(start):p.index(end)]+'end\nend Turing\n'
+q=Path('/private/tmp/ab34-seam-reader-proposal-uwz2__8u/source/controls-unsealed.lean.txt').read_text()
+parts=re.split(r'(?m)^-- CONTROL\|',q); header=parts[0]
+assert header.count('import TCSlib.Complexity.CookLevin.Hardness')==1
+header=header.replace('import TCSlib.Complexity.CookLevin.Hardness','import TCSlib.Complexity.TuringMachine.Build.Seam')
+assert header.count('set_option autoImplicit false')==1
+header=header.replace('set_option autoImplicit false','set_option smartUnfolding false\nset_option autoImplicit false')
+ret=[s for s in parts[1:] if s.split('|',1)[0] in heads]
+assert len(ret)==12 and {s.split('|',1)[0] for s in ret}==set(heads)
+common=''.join('-- CONTROL|'+s for s in ret)
+files={'SeamRightGuard':prefix,'SeamRightControlsUnsealed':header+common,'SeamRightControlsSealed':header+seal+'\n'+common}
+objs=lambda p:{str(f.relative_to(p)):sha(f.read_bytes()) for f in sorted(p.rglob('*.olean'))}
+before=objs(OV); actual=objs(Path(C['actual131_input_objects'])); expected={x['path']:x['SHA256'] for x in json.loads((D/'INPUT895-actual131.json').read_text())}
+assert len(before)==len(actual)==895 and actual==expected
+chg=[k for k in before if before[k]!=actual[k]]
+assert chg==['TCSlib/Complexity/TuringMachine/Build/Seam.olean']
+helper=Path(C['approved_helper_paths']['leanelab.sh'])
+assert sha(helper.read_bytes())==C['approved_helper_SHA256']['leanelab.sh']
+rows=[]
+for name,s in files.items():
+ path=W/(name+'.lean'); assert not path.exists();path.write_text(s)
+ (O/(name+'.lean.txt')).write_text(s)
+ t=time.monotonic();args=['bash',str(helper),str(W),str(OV),path.name]
+ r=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(O/(name+'.out.txt')).write_bytes(r.stdout)
+ errs=[x for x in r.stdout.decode().splitlines() if re.search(r':\d+:\d+: error',x)]
+ if name.endswith('ControlsSealed'):
+  markers=[i for i,l in enumerate(s.splitlines(),1) if l.startswith('-- CONTROL|')]
+  assert len(errs)==12 and r.returncode==1,errs
+  for i,e in enumerate(errs):
+   line=int(re.search(r':(\d+):\d+: error',e)[1]);assert markers[i]<line<(markers[i+1] if i+1<len(markers) else len(s.splitlines())+1),(line,e)
+  assert all('rfl' in e or 'defeq' in e for e in errs),errs
+ else: assert r.returncode==0 and not errs and b"declaration uses 'sorry'" not in r.stdout,(name,r.stdout.decode())
+ rows.append({'name':name,'argv':args,'source_sha256':sha(s.encode()),'log_sha256':sha(r.stdout),'exit':r.returncode,'errors':len(errs),'seconds':time.monotonic()-t})
+ print(name,r.returncode,'errors',len(errs),flush=True)
+assert before==objs(OV) and actual==objs(Path(C['actual131_input_objects']))
+(O/'RESULT.json').write_text(json.dumps({'source':C['source'],'proposal_only':True,'candidate_full_native_pass':True,'complete_target_guard_pass':True,'heads':heads,'unfold_entries_removed':remove,'effective_controls':12,'selected_metadata_changes':['axioms'],'old_axioms':old['axioms'],'new_axioms':new['axioms'],'input_actual131_objects_unchanged':True,'runs':rows},indent=2)+'\n')

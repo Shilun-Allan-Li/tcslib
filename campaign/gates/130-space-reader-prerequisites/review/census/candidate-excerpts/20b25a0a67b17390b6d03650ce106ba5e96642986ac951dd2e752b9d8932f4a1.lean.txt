@@ -1,0 +1,18 @@
+/-- Initial calls pad correctly even for a zero-work-tape source. -/
+private lemma enumCont_lift_init (M B : FinTM Bool) (hk : M.k ≤ B.k)
+    (emb : M.State → B.State)
+    (htr : ∀ q inp work, B.tm.tr (emb q) inp work =
+      enumCont_padAction emb (M.tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (x y : List Bool) (T : ℕ) (h : M.ComputesInTime x y T) :
+    (B.tm.runFrom (Cfg.ofWords (input := x) (emb M.tm.q₀) (stateWord B.k [])) T).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) (emb M.tm.q₀) (stateWord B.k [])) T).output = y := by
+  obtain ⟨hh, ho⟩ := (computesInTime_iff M x y T).mp h
+  rw [← enumCont_pad_init (k := M.k) emb M.tm.q₀ x]
+  change (B.tm.runFrom (enumCont_padCfg emb (M.tm.initCfg x)) T).state = none ∧
+    (B.tm.runFrom (enumCont_padCfg emb (M.tm.initCfg x)) T).output = y
+  rw [enumCont_pad_run hk M.tm B.tm emb htr]
+  refine ⟨?_, ho⟩
+  change ((M.tm.runFrom (M.tm.initCfg x) T).state.map emb) = none
+  rw [hh]
+  rfl

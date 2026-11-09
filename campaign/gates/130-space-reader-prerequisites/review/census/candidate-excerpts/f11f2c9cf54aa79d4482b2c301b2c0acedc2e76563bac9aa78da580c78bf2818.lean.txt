@@ -1,0 +1,39 @@
+/-- **Timeout, failure**: otherwise the host resets (`loop`) or halts silently.
+
+**Proof sketch.** `Y` reads a blank; since `A` has not halted with a one-bit output
+(`capOf_eq_some_some`), the transition takes its second branch. -/
+theorem timeout_fail (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (hfail : ¬ (a.state = none ∧ ∃ v, a.output = [v])) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      if loop then hostCfg (some .p0) a.inputPos sT sP a.workTapes a.workTapePos (yard m)
+        ((m : ℤ) - 1) []
+      else hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m [] := by
+  have hst : (runCfg (S := S) m a m sT sP).state = some (.run a.state (capOf a.output)) := by
+    simp [runCfg, hostCfg]
+  rw [NDTM.stepWith_of_state _ b hst]
+  have hY : (runCfg (S := S) (A := A) m a m sT sP).workTapeSymbols yI = none := by
+    simp [runCfg]
+  have hnot : ∀ v, ¬ (a.state = none ∧ capOf a.output = some (some v)) := fun v h =>
+    hfail ⟨h.1, v, capOf_eq_some_some.mp h.2⟩
+  have hgo : clockTr S A loop b (.run a.state (capOf a.output))
+      (runCfg (S := S) m a m sT sP).inputSymbol (runCfg (S := S) m a m sT sP).workTapeSymbols =
+      if loop then ⟨0, slots (fun _ => idle) (fun _ => idle) (none, -1), none, some .p0⟩
+      else ⟨0, slots (fun _ => idle) (fun _ => idle) idle, none, none⟩ := by
+    simp only [clockTr, hY]
+    rcases hq : a.state with _ | qa
+    · rcases hc : capOf a.output with _ | _ | v
+      · rfl
+      · rfl
+      · exact absurd ⟨hq, hc⟩ (hnot v)
+    · rfl
+  change (clockTr S A loop b _ _ _).apply _ = _
+  rw [hgo]
+  cases loop
+  · simp only [Bool.false_eq_true, if_false]
+    unfold runCfg
+    rw [apply_hostCfg]
+    host_congr
+  · simp only [if_true]
+    unfold runCfg
+    rw [apply_hostCfg]
+    host_congr

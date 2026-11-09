@@ -1,0 +1,16 @@
+/-- The bounded reference runner consumes one unary clock cell per source
+step. Clock exhaustion dispatches to a live return state; source halting
+does not dispatch. The initial configuration in its contract is prepared,
+not claimed to arise from native initialization without header installation. -/
+private def clRefClockTM (M : FinTM Bool) : FinTM Bool where
+  k := 1 + (1 + M.k)
+  State := (Option M.State × Bool) ⊕ Unit
+  tm := {
+    q₀ := .inl (some M.tm.q₀, true)
+    tr := fun q _ work => match q with
+      | .inr _ => FinTM.controlAction 0 (some (.inr ()))
+      | .inl (s, b) =>
+        if work (Fin.castAdd (1 + M.k) (0 : Fin 1)) = none then
+          FinTM.controlAction 0 (some (.inr ()))
+        else
+          clRefAction M (fun q b => .inl (q, b)) s b work (fun _ => (none, .pos)) }

@@ -1,0 +1,7 @@
+/-- No public native-input-head primitive provides the save-loop round.
+Save has zero work tapes: a nonblank input cell moves left and returns to false; a blank
+exits to true. The separate counter is supplied only by `counterLoopTM`. -/
+private def recordStepSave : MultiTapeTM 0 Bool Bool where
+  q₀ := false
+  tr q inp _ := if q || inp.isNone then inputMoveAction 0 true
+    else inputMoveAction (-1) false

@@ -1,0 +1,284 @@
+/-- The generic action-record validator preserves its binary bound and scratch bank.
+It decides the fixed fields and successor field with strict Boolean exits and a linear
+bound in the input length and binary width.
+
+**Proof sketch.** The native pair leaf decides the prescribed fixed fields. A public
+phase host then reads the successor tag: blank rejects, false accepts, and true dispatches
+to the proved bounded unary reader on the same bank. The reader's framed contract restores
+the bank. The fixed finite cost plus its linear ledger gives one linear bound. -/
+private lemma exists_canonRecordTM (k : ℕ) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (bound : Fin m) (a : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1),
+          (R.runFrom d t).state =
+            some (exit (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (R.runFrom d t).output = d.output ∧
+          (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (exit v)) ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧
+          (R.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (R.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  obtain ⟨m, S, fS, dS, U, ue, ux, bound, a, injective, unary⟩ := exists_canonUnaryTM
+  letI : Fintype S := fS
+  letI : DecidableEq S := dS
+  letI : ∀ p, Fintype (canonRecordPhase k S p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  letI : ∀ p, DecidableEq (canonRecordPhase k S p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  let family := canonRecordFamily k U
+  let red := canonRecordNext k ue ux
+  let entry : Sigma (canonRecordPhase k S) := ⟨none, Sum.inr (0, none)⟩
+  let R := phaseHostTM family entry red
+  let exit (b : Bool) : Sigma (canonRecordPhase k S) :=
+    ⟨some false, some (if b then some false else none)⟩
+  refine ⟨m, _, inferInstance, inferInstance, R, entry, exit, bound, a + 4 * k + 9, ?_, ?_⟩
+  · intro b c eq
+    cases b <;> cases c <;> simp_all [exit]
+  · intro x w d state positive word origin blank
+    let p := d.inputPos.val - 1
+    have pos : d.inputPos.val = p + 1 := by dsimp [p]; omega
+    have range : p ≤ x.length := by have := d.inputPos.isLt; omega
+    let f : Cfg m Bool (canonRecordPhase k S none) x :=
+      d.mapState (fun _ => Sum.inr (0, none))
+    have fState : f.state = some (Sum.inr (0, none)) := by simp [f, Cfg.mapState, state]
+    obtain ⟨ft, fixedBudget, fixedExit, fixedOutput, fixedCuts, fixedTapes, fixedHeads,
+      fixedPositive, fixedConsumed⟩ :=
+      canonPairs_run (canonRecordPairs k) 0 f p pos range fState
+    simp only [Fin.val_zero, Nat.sub_zero, canonRecordPairs, List.length_cons,
+      canonWorkPairs_length] at fixedBudget
+    simp only [Fin.val_zero, List.drop_zero, canonRecordPairs, canonPairs_fields]
+      at fixedExit fixedConsumed
+    let fEnd := (family none).runFrom f ft
+    have fExit : fEnd.state = some (Sum.inl (canonSkipFields k (x.drop p)).isSome) := fixedExit
+    have fOutput : fEnd.output = d.output := fixedOutput
+    have fTapes : fEnd.workTapes = d.workTapes := fixedTapes
+    have fHeads : fEnd.workTapePos = d.workTapePos := fixedHeads
+    let target : Sigma (canonRecordPhase k S) :=
+      if (canonSkipFields k (x.drop p)).isSome then ⟨some false, none⟩ else exit false
+    have first := phaseHostTM_run family entry red none f fEnd ft rfl _ fExit target
+      (by cases h : (canonSkipFields k (x.drop p)).isSome <;>
+          simp [red, canonRecordNext, target, h, exit]) (by
+        intro u hu s hs
+        cases s with
+        | inr pair => rfl
+        | inl b => exact (fixedCuts u hu b hs).elim)
+    have start : f.mapState (Sigma.mk none) = d := by
+      apply Cfg.ext <;> simp [f, Cfg.mapState, state, entry]
+    rw [start] at first
+    have safeFirst (u : ℕ) (hu : u ≤ ft) (b : Bool) :
+        (R.runFrom d u).state ≠ some (exit b) := by
+      rw [first.1 u hu]
+      intro eq
+      obtain ⟨s, _, tagged⟩ := Option.map_eq_some_iff.mp eq
+      have impossible := congrArg Sigma.fst tagged
+      cases impossible
+    cases fields : canonSkipFields k (x.drop p) with
+    | none =>
+      have record : codeSkipActionK k (counterValue w) (x.drop p) = none := by
+        rw [canonSkipAction_eq, fields]
+        rfl
+      have run : R.runFrom d (ft + 1) = fEnd.mapState (fun _ => exit false) := by
+        simpa only [target, fields, Option.isSome_none, Bool.false_eq_true, if_false] using first.2
+      refine ⟨ft + 1, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [run]
+        change Option.map (fun _ => exit false) fEnd.state = _
+        rw [fExit]
+        change some (exit false) =
+          some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+        rw [record]
+        rfl
+      · rw [run]; exact fOutput
+      · intro u hu b; exact safeFirst u (by omega) b
+      · rw [run]; exact fTapes
+      · rw [run]; exact fHeads
+      · intro ys accepted
+        change codeSkipActionK k (counterValue w) (x.drop p) = some ys at accepted
+        rw [record] at accepted
+        cases accepted
+    | some ys =>
+      have record : codeSkipActionK k (counterValue w) (x.drop p) =
+          codeSkipState (counterValue w + 1) ys := by
+        rw [canonSkipAction_eq, fields]
+        rfl
+      obtain ⟨pre, split, width⟩ := canonSkipFields_cells k (x.drop p) ys fields
+      have size : x.length = p + pre.length + ys.length := by
+        have lengths := congrArg List.length split
+        simp only [List.length_drop, List.length_append] at lengths
+        omega
+      have tail : x.drop (p + pre.length) = ys := by
+        have e := congrArg (List.drop pre.length) split
+        simpa only [List.drop_drop, List.drop_left] using e
+      let tagStart : Cfg m Bool (Option (Option Bool)) x := fEnd.mapState (fun _ => none)
+      have tagState : tagStart.state = some none := by simp [tagStart, Cfg.mapState, fExit]
+      have tagPos : tagStart.inputPos.val = p + pre.length + 1 := by
+        have h := fixedConsumed ys fields
+        change fEnd.inputPos.val = _ at h ⊢
+        omega
+      have native := canonNativeSuffix tagStart (p + pre.length) tagPos (by omega)
+      have tagRead : tagStart.inputSymbol = ys.head? := by rw [native.1, tail]
+      let tagEnd := (canonTagTM m).runFrom tagStart 1
+      have tagEq : tagEnd = _ := canonTag_step tagStart tagState
+      have tagExit : tagEnd.state = some (some ys.head?) := by rw [tagEq, tagRead]
+      let tagNext : Sigma (canonRecordPhase k S) := match ys.head? with
+        | some true => ⟨some true, ue⟩
+        | some false => exit true
+        | none => exit false
+      have second := phaseHostTM_run family entry red (some false) tagStart tagEnd 1 rfl
+        (some ys.head?) tagExit tagNext (by
+          cases h : ys.head? with
+          | none => simp [red, canonRecordNext, tagNext, h, exit]
+          | some b => cases b <;> simp [red, canonRecordNext, tagNext, h, exit]) (by
+          intro u hu s hs
+          have zero : u = 0 := by omega
+          subst u
+          have eq : s = none := (Option.some.inj (tagState.symm.trans hs)).symm
+          subst s
+          rfl)
+      have join : fEnd.mapState (fun _ => target) =
+          tagStart.mapState (Sigma.mk (some false)) := by
+        simp [tagStart, target, fields, Cfg.mapState, Option.map_map, Function.comp_def]
+      have firstRun : R.runFrom d (ft + 1) = tagStart.mapState (Sigma.mk (some false)) := by
+        rw [first.2, join]
+      have tagRun : R.runFrom d (ft + 2) = tagEnd.mapState (Sigma.mk (some false)) := by
+        rw [show ft + 2 = ft + 1 + 1 by omega,
+          MultiTapeTM.runFrom_add d (ft + 1) 1, firstRun, second.1 1 le_rfl]
+      have tagDispatch : R.runFrom d (ft + 3) = tagEnd.mapState (fun _ => tagNext) := by
+        rw [show ft + 3 = ft + 1 + (1 + 1) by omega,
+          MultiTapeTM.runFrom_add d (ft + 1) (1 + 1), firstRun, second.2]
+      have tagOutput : tagEnd.output = d.output := by rw [tagEq]; exact fOutput
+      have tagTapes : tagEnd.workTapes = d.workTapes := by rw [tagEq]; exact fTapes
+      have tagHeads : tagEnd.workTapePos = d.workTapePos := by rw [tagEq]; exact fHeads
+      have safeTag (u : ℕ) (hu : u ≤ ft + 1) (b : Bool) :
+          (R.runFrom d u).state ≠ some (exit b) := by
+        by_cases early : u ≤ ft
+        · exact safeFirst u early b
+        · have eq : u = ft + 1 := by omega
+          rw [eq, firstRun]
+          simp [Cfg.mapState, tagState, exit]
+      cases ys with
+      | nil =>
+        refine ⟨ft + 2, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [tagRun]
+          change Option.map (fun s : Option (Option Bool) =>
+            (⟨some false, s⟩ : Sigma (canonRecordPhase k S))) tagEnd.state = _
+          rw [tagExit]
+          change some (exit false) =
+            some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+          rw [record]
+          rfl
+        · rw [tagRun]; exact tagOutput
+        · intro u hu b; exact safeTag u (by omega) b
+        · rw [tagRun]; exact tagTapes
+        · rw [tagRun]; exact tagHeads
+        · intro zs accepted
+          change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+          rw [record] at accepted
+          cases accepted
+      | cons b ys =>
+        cases b with
+        | false =>
+          refine ⟨ft + 2, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [tagRun]
+            change Option.map (fun s : Option (Option Bool) =>
+              (⟨some false, s⟩ : Sigma (canonRecordPhase k S))) tagEnd.state = _
+            rw [tagExit]
+            change some (exit true) =
+              some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+            rw [record]
+            rfl
+          · rw [tagRun]; exact tagOutput
+          · intro u hu bit; exact safeTag u (by omega) bit
+          · rw [tagRun]; exact tagTapes
+          · rw [tagRun]; exact tagHeads
+          · intro zs accepted
+            change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+            rw [record] at accepted
+            have same : ys = zs := Option.some.inj accepted
+            subst zs
+            rw [tagRun, tagEq]
+            change (moveInputPos tagStart.inputPos
+              (if tagStart.inputSymbol.isSome then 1 else 0)).val = _
+            rw [tagRead]
+            have advance := (native.2 false ys tail).1
+            simp only [List.head?_cons, Option.isSome_some, if_true]
+            simp only [List.length_cons] at size
+            omega
+        | true =>
+          let uStart : Cfg m Bool S x := tagEnd.mapState (fun _ => ue)
+          have uState : uStart.state = some ue := by simp [uStart, Cfg.mapState, tagExit]
+          have advance := native.2 true ys tail
+          have uPos : uStart.inputPos.val = p + pre.length + 2 := by
+            change tagEnd.inputPos.val = _
+            rw [tagEq, tagRead]
+            exact advance.1
+          have uTail : x.drop (uStart.inputPos.val - 1) = ys := by
+            rw [uPos]
+            simpa only [Nat.add_sub_cancel] using advance.2
+          obtain ⟨ut, unaryBudget, uExit, uOutput, uCuts, uTapes, uHeads, uConsumed⟩ :=
+            unary x w uStart uState (by omega)
+              (by change tagEnd.workTapes bound = _; rw [tagTapes]; exact word)
+              (by change tagEnd.workTapePos bound = _; rw [tagHeads]; exact origin)
+              (by intro j hj; change tagEnd.workTapes j = _ ∧ tagEnd.workTapePos j = _
+                  rw [tagTapes, tagHeads]; exact blank j hj)
+          let uEnd := U.runFrom uStart ut
+          let verdict := (codeSkipFin (counterValue w + 1) ys).isSome
+          have uFinal : uEnd.state = some (ux verdict) := by simpa only [uTail] using uExit
+          have third := phaseHostTM_run family entry red (some true) uStart uEnd ut rfl
+            (ux verdict) uFinal (exit verdict) (by
+              have different : ux false ≠ ux true := fun eq => Bool.false_ne_true (injective eq)
+              cases verdict <;> simp [red, canonRecordNext, exit, different]) (by
+              intro u hu s hs
+              have noTrue : s ≠ ux true := fun eq => uCuts u hu true (hs.trans (congrArg some eq))
+              have noFalse : s ≠ ux false := fun eq =>
+                uCuts u hu false (hs.trans (congrArg some eq))
+              simp [red, canonRecordNext, noTrue, noFalse])
+          have uJoin : tagEnd.mapState (fun _ => tagNext) =
+              uStart.mapState (Sigma.mk (some true)) := by
+            simp [uStart, tagNext, Cfg.mapState, Option.map_map, Function.comp_def]
+          have whole : R.runFrom d (ft + 3 + (ut + 1)) =
+              uEnd.mapState (fun _ => exit verdict) := by
+            rw [MultiTapeTM.runFrom_add d (ft + 3) (ut + 1), tagDispatch, uJoin, third.2]
+          have semantics : (codeSkipActionK k (counterValue w) (x.drop p)).isSome = verdict := by
+            rw [record]
+            rfl
+          refine ⟨ft + 3 + (ut + 1), by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [whole]
+            change Option.map (fun _ => exit verdict) uEnd.state = _
+            rw [uFinal]
+            change some (exit verdict) =
+              some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+            rw [semantics]
+          · rw [whole]
+            exact uOutput.trans tagOutput
+          · intro u hu b
+            by_cases early : u ≤ ft + 1
+            · exact safeTag u early b
+            · by_cases onTag : u = ft + 2
+              · rw [onTag, tagRun]
+                simp [Cfg.mapState, tagExit, exit]
+              · have index : u = ft + 3 + (u - (ft + 3)) := by omega
+                rw [index, MultiTapeTM.runFrom_add d (ft + 3) (u - (ft + 3)), tagDispatch,
+                  uJoin, third.1 _ (by omega)]
+                intro eq
+                obtain ⟨s, _, tagged⟩ := Option.map_eq_some_iff.mp eq
+                have impossible := congrArg Sigma.fst tagged
+                cases impossible
+          · rw [whole]
+            exact uTapes.trans tagTapes
+          · rw [whole]
+            exact uHeads.trans tagHeads
+          · intro zs accepted
+            rw [whole]
+            apply uConsumed zs
+            rw [uTail]
+            change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+            rw [record] at accepted
+            exact accepted

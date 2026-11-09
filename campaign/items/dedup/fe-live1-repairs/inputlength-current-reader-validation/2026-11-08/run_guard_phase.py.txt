@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess
+O=Path(__file__).parent
+for label,source,relative,expected in [
+ ('guard-full11',O/'InputLength-full-selected-sealed.lean.txt','TCSlib/Complexity/TuringMachine/Build/InputLength.lean',0),
+ ('explicit-arguments',O/'ExplicitArguments.lean.txt','Probe.lean',0),
+ ('controls-native22',O/'controls/Native.lean.txt','Probe.lean',0),
+ ('controls-sealed22',O/'controls/Sealed.lean.txt','Probe.lean',1)]:
+ r=subprocess.run(['python3','-I',str(O/'run_probe.py.txt'),label,'CANDIDATE',str(source),relative]);assert r.returncode==expected,(label,r.returncode,expected)
+print('FULL_CURRENT_CONSUMER_GUARD_AND_CONTROLS_EXPECTED_EXITS',flush=True)

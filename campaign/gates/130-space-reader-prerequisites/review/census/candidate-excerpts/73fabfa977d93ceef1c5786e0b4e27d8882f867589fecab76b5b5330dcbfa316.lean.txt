@@ -1,0 +1,12 @@
+/-- A standalone native-input rewind, with an absorbing return at state two. -/
+private def splitRewindTM (k : ℕ) : FinTM Bool where
+  k := k + 1
+  State := Fin 3
+  tm := {
+    q₀ := 0
+    tr := fun q inp _ => match q.val with
+      | 0 => controlAction .neg (some 1)
+      | 1 => match inp with
+        | some _ => controlAction .neg (some 1)
+        | none => controlAction .pos (some 2)
+      | _ => controlAction 0 (some 2) }

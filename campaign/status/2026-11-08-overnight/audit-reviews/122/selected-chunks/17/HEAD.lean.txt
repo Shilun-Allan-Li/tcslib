@@ -1,0 +1,42 @@
+/-- Every branch of the verifier phase halts with its single verdict within
+the source budget plus one. Actual first halts may depend on the assembled
+certificate; the declared upper bound is common.
+**Proof sketch.** Take the source's first halt, simulate the corresponding
+choice prefix, and execute one verdict transition. All remaining choices
+are absorbed by the halted host. Output uniqueness identifies the completed
+source output with its specified singleton. -/
+private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}
+    (y : List Bool) (b : Bool) (T : ℕ) (hV : V.ComputesInTime y [b] T)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (w : List Bool) (hw : w.length = T + 1) :
+    let out := (b2Host S V).tm.runWith w
+      (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)
+    out.state = none ∧ out.output = [b] := by
+  classical
+  obtain ⟨t, ht, hlive, heq⟩ := MultiTapeTM.exists_first_halt V.tm (V.tm.initCfg y)
+    (((computesInTime_iff _ _ _ _).mp hV).1)
+  let c := V.tm.runFrom (V.tm.initCfg y) t
+  have hc : c.state = none :=
+    (congrArg Cfg.state heq).trans ((computesInTime_iff _ _ _ _).mp hV).1
+  have hcomp : V.ComputesInTime y c.output t :=
+    (computesInTime_iff _ _ _ _).mpr ⟨hc, rfl⟩
+  have ho : c.output = [b] := hcomp.output_unique hV
+  have hp : (w.take t).length = t := List.length_take_of_le (by omega)
+  obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
+    (by simp [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]) p tapes heads (w.take t)
+    (fun s hs => hlive s (show s < t from hp ▸ hs))
+  rw [hp] at hr
+  have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega
+  cases hd : w.drop t with
+  | nil => simp [hd] at hlen
+  | cons bit rest =>
+    have hf := b2_verify_finish S V c hc tag p tapes heads bit
+    have hout : ((b2Host S V).tm.stepWith bit
+        (b2VerifyCfg S V c tag p tapes heads)).output = [b] := by
+      rw [hf.2, ho]
+      cases b <;> simp
+    have hsplit : w = w.take t ++ bit :: rest := by rw [← hd, List.take_append_drop]
+    dsimp only
+    rw [hsplit, NDTM.runWith_append, hr, NDTM.runWith_cons,
+      NDTM.runWith_of_halt _ hf.1]
+    exact ⟨hf.1, hout⟩

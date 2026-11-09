@@ -1,0 +1,15 @@
+private def splitPrepareTM (k : ℕ) : FinTM Bool where
+  k := k + 1
+  State := Fin 3 × Bool
+  tm := {
+    q₀ := (0, false)
+    tr := fun q inp work => match q.1.val with
+      | 0 => match work 0 with
+        | some _ => ⟨.pos, Fin.cases (none, .pos) (fun _ => (some (some true), .pos)),
+            none, some (0, q.2 || inp.isNone)⟩
+        | none => ⟨0, Fin.cases (none, .neg) (fun _ => (some (some true), .neg)),
+            none, some (1, q.2)⟩
+      | 1 => match work 0 with
+        | some _ => ⟨0, fun _ => (none, .neg), none, some (1, q.2)⟩
+        | none => ⟨0, fun _ => (none, .pos), none, some (2, q.2)⟩
+      | _ => controlAction 0 (some (2, q.2)) }

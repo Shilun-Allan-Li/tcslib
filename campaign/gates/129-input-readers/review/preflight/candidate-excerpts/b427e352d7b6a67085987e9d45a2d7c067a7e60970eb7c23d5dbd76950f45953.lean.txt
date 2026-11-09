@@ -1,0 +1,9 @@
+/-- A control action leaves all work tapes, work heads, and output unchanged. -/
+lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
+    (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
+    (controlAction m q).apply cfg =
+      {cfg with state := q, inputPos := moveInputPos cfg.inputPos m} := by
+  refine Cfg.ext rfl rfl rfl ?_ ?_
+  · funext i
+    simp [controlAction, Action.apply]
+  · simp [controlAction, Action.apply]

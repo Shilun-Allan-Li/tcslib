@@ -1,0 +1,37 @@
+/-- One simulated step, for an arbitrary live configuration of `M` and arbitrary marks.
+
+**Proof sketch.** Unfold one step of the cleaned machine in a simulation state: it applies `M`'s
+action to the decider block, writes a mark under each decider head (keeping the origin mark),
+and moves the mark heads with the decider heads. Compare the configurations componentwise. -/
+lemma step_sim {x : List Bool} (M : MultiTapeTM k Bool S) (q₁ : S) (c : Cfg k Bool S x)
+    (q' : S) (hq' : c.state = some q') (Mt : Fin k → ℤ → Option Bool) :
+    (cleanTM M q₁).step (ccfg (some (.sim q')) c.inputPos c.workTapes c.workTapePos Mt
+        c.workTapePos c.output) =
+      ccfg (simSt (M.step c)) (M.step c).inputPos (M.step c).workTapes (M.step c).workTapePos
+        (fun i => wr (if Mt i (c.workTapePos i) = some true then none else some (some false))
+          (Mt i) (c.workTapePos i)) (M.step c).workTapePos (M.step c).output := by
+  have hMstep : M.step c = (M.tr q' c.inputSymbol c.workTapeSymbols).apply c := by
+    unfold MultiTapeTM.step; rw [hq']
+  rw [hMstep]
+  unfold MultiTapeTM.step
+  simp only [ccfg_state]
+  have hin : (ccfg (some (.sim q')) c.inputPos c.workTapes c.workTapePos Mt c.workTapePos
+      c.output : Cfg (k + k) Bool (CleanSt S k) x).inputSymbol = c.inputSymbol := rfl
+  have hw : (fun i => (ccfg (some (.sim q')) c.inputPos c.workTapes c.workTapePos Mt
+      c.workTapePos c.output : Cfg (k + k) Bool (CleanSt S k) x).workTapeSymbols
+        (Fin.castAdd k i)) = c.workTapeSymbols := by
+    funext i; rw [ccfg_work]; rfl
+  simp only [cleanTM, hin, hw, ccfg_mark]
+  refine Cfg.ext ?_ rfl ?_ ?_ ?_
+  · simp only [Action.apply, ccfg, simSt]
+    cases (M.tr q' c.inputSymbol c.workTapeSymbols).state <;> rfl
+  · funext i z
+    refine Fin.addCases (fun r => ?_) (fun r => ?_) i
+    · simp only [Action.apply, ccfg, Fin.append_left]
+    · simp only [Action.apply, ccfg, Fin.append_right, wr]
+      try (split_ifs <;> rfl)
+  · funext i
+    refine Fin.addCases (fun r => ?_) (fun r => ?_) i
+    · simp only [Action.apply, ccfg, Fin.append_left]
+    · simp only [Action.apply, ccfg, Fin.append_right]
+  · simp only [Action.apply, ccfg]

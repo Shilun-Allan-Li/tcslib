@@ -1837,3 +1837,37 @@ retirement is not yet recorded. Ladner is a statement skeleton with six direct h
 Gate121 remains HOLD for exposed foreign-definition reads; gate122 selected13 PASS
 does not dispose of exposed held fronts by BASE restoration. No blanket Rule10
 acknowledgment, generic host permission or existing family scope extension is inferred.
+
+
+## Approved reader prerequisites and six staged operational repairs (2026-11-08)
+
+PR#251/gate129 adds the three explicitly approved non-simp readers (including the exact shared controlAction_def name) and repairs six exposed old proof bodies through existing equations: controlAction_apply, step_of_tapeAction_move/write, step_of_inputMoveAction, walkTM_run_ofCfg and private scan_fold_trace. They consume live-step, action-field and input-symbol equations instead of re-deriving those readings. All old headers/imports/definitions remain exact. Four selected closures add existing standard Classical.choice dependencies, with no new axiom/admission. Current source/certificate and closing-form candidates are retained in gate129. This is a scoped staged implementation change; only actual merge retires these six inspected implementations, not every operational proof anywhere in TCSlib.
+
+The wider complete closing-form census retains 39 source candidate chunks/69 raw lines. Unselected operational proofs and the foreign owner proof of published Action.apply_workTapes are not certified or acknowledged by the selected6 guard. Its possible exact owner-home move is being assessed separately and needs a human home ruling. Other candidates needing public readers, imports or statement decisions remain held. No legacy Rule10 exemption, future-copy permission or all-owner/global absence follows. Existing debt kinds/owner/window stay exact.
+
+PR#252/gate130 contains only the five explicitly approved core/NDClockHost/Sweep readers. Hypothetical MARMTime/Startup/SingleTape consumer repairs are independent feasibility evidence, not landed implementations or family retirements. No consumer source was adopted, mathematical hole filled or source gate closed.
+
+### Gate 129's current operational proof scope
+
+#251 now has seven exact-header old proof repairs: the former six plus the
+terminal branch of FinTM.pairExtractTM_fst_run. Input-only action application
+and extractor halt now cite existing one-tape / zero-tape and action equations.
+Only on actual merge do these seven inspected proof implementations retire.
+The current 50-file comparison has two new directed text matches (walk versus
+one-tape move/write). Their arbitrary-head versus one-selected-head and
+write/no-write premises do not identify a replaceable same-contract theorem.
+Five old pair reports disappear. These are pair counts, not new debt or a
+claim of whole-kind retirement. The approved separate Configuration move in
+#253 is not assumed available or merged in #251. Existing retention kinds and
+cleanup windows are unchanged.
+
+### Gate 131 seam and work-tape prerequisite
+
+#253's one new public right-transition reader is used by the existing private
+right-step proof. The repaired exact-header implementation's inline table
+reading retires only on merge. The existing optional-write normalization
+moves to its Configuration home with identical statement and proof; it is
+one theorem, with one new home, not a retained copy. The 56-file copy score
+comparison has no new pair and twelve disappear, all incident to the revised
+right-step proof. These are directed text scores, not family counts. No
+whole-kind retirement or debt acceptance is made.

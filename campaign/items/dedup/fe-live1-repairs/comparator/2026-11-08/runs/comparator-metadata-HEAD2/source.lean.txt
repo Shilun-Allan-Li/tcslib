@@ -1,0 +1,57 @@
+import Lean
+import TCSlib.Complexity.CookLevin.Hardness
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let root : Name := Name.str (Name.str (Name.num ("_private.TCSlib.Complexity.CookLevin.Hardness".toName) 0) "Complexity") "clA5Compare_compute"
+  let some ci := env.find? root | throwError "missing target"
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let owner := homeOf root
+  let ax ← liftTermElabM <| collectAxioms root
+  let pretty ← liftTermElabM <| ppExpr ci.type
+  let mut todo := ci.type.getUsedConstants.toList ++ (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+  let mut seen : List Name := [root]
+  let mut defs : List Json := []
+  let mut foreign : List Json := []
+  let mut ordinary : List Name := []
+  let mut theoremBoundaries : List Name := []
+  while !todo.isEmpty do
+    let n := todo.head!
+    todo := todo.tail!
+    if seen.contains n then continue
+    seen := n :: seen
+    let some info := env.find? n | continue
+    todo := info.type.getUsedConstants.toList ++ todo
+    let home := homeOf n
+    match info with
+    | .defnInfo di =>
+      if home == owner then
+        todo := di.value.getUsedConstants.toList ++ todo
+        defs := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString)] :: defs
+      else if home.toString.startsWith "TCSlib." then
+        let isAbbrev := match di.hints with | .abbrev => true | _ => false
+        let hints := reprStr di.hints
+        let guard := !isAbbrev && !(env.isProjectionFn n)
+        if guard then ordinary := n :: ordinary
+        foreign := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString),
+          ("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),
+          ("ordinary",toJson guard),("simp",toJson (simp.isLemma (.decl n))),
+          ("unfold",toJson (simp.toUnfold.contains n))] :: foreign
+    | .thmInfo _ => theoremBoundaries := n :: theoremBoundaries
+    | _ => pure ()
+  logInfo m!"SELECTED|{(Json.mkObj [("root",toJson root.toString),("owner",toJson owner.toString),
+    ("type_Expr",toJson (reprStr ci.type)),("universes",toJson (ci.levelParams.map Name.toString)),
+    ("type_pretty",toJson pretty.pretty),("axioms",toJson (ax.toList.map Name.toString)),
+    ("simp",toJson (simp.isLemma (.decl root))),("unfold",toJson (simp.toUnfold.contains root)),
+    ("foreign_definitions",Json.arr foreign.reverse.toArray),("own_definition_helpers",Json.arr defs.reverse.toArray),
+    ("other_theorem_proof_boundaries",toJson ((theoremBoundaries.toArray.qsort Name.lt).toList.map Name.toString)),
+    ("foreign_definition_values_traversed",toJson false),("other_theorem_values_traversed",toJson false)]).compress}"
+  for n in ordinary do
+    let some (.defnInfo di) := env.find? n | throwError "missing ordinary head"
+    logInfo m!"IDENTITY|{(Json.mkObj [("name",toJson n.toString),("owner",toJson (homeOf n).toString),
+      ("type_Expr",toJson (reprStr di.type)),("value_Expr",toJson (reprStr di.value)),
+      ("universes",toJson (di.levelParams.map Name.toString))]).compress}"

@@ -1,0 +1,22 @@
+/-- A native sequential field reader on two work tapes. It consumes an
+aligned doubled-bit field from a read-only stream, overwrites the target
+word, and rewinds only the target. The contract below requires the old
+target no longer than the decoded field, as holds for movement counts
+read in increasing source-time order. -/
+private def clReadTM : FinTM Bool where
+  k := 2
+  State := Option Bool ⊕ Bool
+  tm := {
+    q₀ := .inl none
+    tr := fun q _ work => match q with
+      | .inl none =>
+        ⟨0, clTwo (none, .pos) (none, 0), none, some (.inl (work 0))⟩
+      | .inl (some b) =>
+        if work 0 = some b then
+          ⟨0, clTwo (none, .pos) (some (some b), .pos), none, some (.inl none)⟩
+        else ⟨0, clTwo (none, .pos) (none, .neg), none, some (.inr false)⟩
+      | .inr false =>
+        if work 1 = none then
+          ⟨0, clTwo (none, 0) (none, .pos), none, some (.inr true)⟩
+        else ⟨0, clTwo (none, 0) (none, .neg), none, some (.inr false)⟩
+      | .inr true => FinTM.controlAction 0 (some q) }

@@ -1,0 +1,15 @@
+theorem probe_fold_hturn (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) :
+    (inputFoldTM k δ a₀).step (probeFoldF δ a₀ d x.length) =
+      probeFoldR δ a₀ d x.length := by
+  have hs : (probeFoldF δ a₀ d x.length).inputSymbol = none := by
+    simp [Cfg.inputSymbol, probeFoldF]
+  change ((inputFoldTM k δ a₀).tr (.fwd _) _ _).apply _ = _
+  simp only [inputFoldTM, hs]
+  apply Cfg.ext
+  case state => simp [Action.apply, inputMoveAction, probeFoldF, probeFoldR]
+  case inputPos =>
+    simp only [Action.apply, inputMoveAction, probeFoldF, probeFoldR]
+    apply Fin.ext
+    rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+    simp
+  all_goals simp [Action.apply, inputMoveAction, probeFoldF, probeFoldR]

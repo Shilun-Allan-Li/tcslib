@@ -1,0 +1,7 @@
+/-- A halted yardstick configuration is the rewind configuration with its output on the
+extra tape and with the attempt bank blank. -/
+theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
+    bootCfg (A := A) c =
+      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
+        (fun _ => 0) (bufferTape c.output) c.output.length [] := by
+  simp only [bootCfg, hc, Option.map_none, Option.getD_none]

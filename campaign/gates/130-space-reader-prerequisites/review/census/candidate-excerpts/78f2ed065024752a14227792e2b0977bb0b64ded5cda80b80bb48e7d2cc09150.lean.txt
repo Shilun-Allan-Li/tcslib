@@ -1,0 +1,20 @@
+/-- Duplicate the input into the self-delimiting pair: double on the first
+pass, rewind silently after emitting the separator's first bit, then emit its
+second bit and copy. Every input is legal, so no validation buffer is needed. -/
+private def pairDupTM : FinTM Bool where
+  k := 0
+  State := Fin 5
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ => match q.val with
+        | 0 => match inp with
+          | some b => ⟨0, fun j => j.elim0, some b, some 1⟩
+          | none => ⟨.neg, fun j => j.elim0, some false, some 2⟩
+        | 1 => ⟨.pos, fun j => j.elim0, inp, some 0⟩
+        | 2 => match inp with
+          | some _ => controlAction .neg (some 2)
+          | none => controlAction .pos (some 3)
+        | 3 => ⟨0, fun j => j.elim0, some true, some 4⟩
+        | _ => match inp with
+          | some b => ⟨.pos, fun j => j.elim0, some b, some 4⟩
+          | none => ⟨0, fun j => j.elim0, none, none⟩ }

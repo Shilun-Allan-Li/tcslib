@@ -1,0 +1,27 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := [`Turing.Cfg.init, `Turing.FinTM.bufferTape, `Turing.NDTM.initCfg]
+  for n in names do
+    let some (.defnInfo info) := env.find? n | throwError "MISSING_FOREIGN_DEFINITION|{n}"
+    let home := match env.getModuleIdxFor? n with
+      | some idx => env.header.moduleNames[idx.toNat]!.toString
+      | none => ""
+    let regular := match info.hints with | .abbrev => false | _ => true
+    let status := match getReducibilityStatusCore env n with
+      | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible"
+    logInfo m!"FOREIGN_DEFINITION|{(Json.mkObj [("name",toJson n.toString),("owner",toJson home),
+      ("type_Expr",toJson (reprStr info.type)),("value_Expr",toJson (reprStr info.value)),
+      ("universes",toJson (info.levelParams.map Name.toString)),("kernel_hints",toJson (if regular then "non-abbrev" else "abbrev")),
+      ("reducibility",toJson status),("projection",toJson (env.isProjectionFn n)),
+      ("ordinary",toJson (regular && !(env.isProjectionFn n))),
+      ("simp",toJson (st.isLemma (.decl n))),("unfold",toJson (st.toUnfold.contains n))]).compress}"
+  logInfo m!"FOREIGN_DEFINITION_COMPLETE|{names.length}"

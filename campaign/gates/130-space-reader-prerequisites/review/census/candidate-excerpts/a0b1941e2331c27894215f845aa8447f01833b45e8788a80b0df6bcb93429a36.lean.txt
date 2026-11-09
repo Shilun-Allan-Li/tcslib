@@ -1,0 +1,13 @@
+/-- **The input rewind**: one step left, then left while the input head reads a symbol, then one
+step right at the left blank into the park, which stays put. It never writes, moves a work head or
+emits. -/
+def inputRewindTM (k : ℕ) : MultiTapeTM k Bool InputRewindPhase where
+  q₀ := .start
+  tr := fun q inp _ =>
+    match q with
+    | .start => FinTM.controlAction .neg (some .scan)
+    | .scan =>
+      match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos (some .done)
+    | .done => FinTM.controlAction 0 (some .done)

@@ -1,0 +1,4022 @@
+{
+  "source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
+  "population": [
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "blob": "fa1e15b858de4929a9e7e4ba75840f86b11b12cf",
+      "sha256": "a06413a055a9967a29a67de1a593a528f899e7a63e58dc51471f1ca0d02614ab",
+      "lines": 8642
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "blob": "03e2b27d17e0f58e91f4165d5d31dc842e1c92cd",
+      "sha256": "cff67a2cae4a1c33de29cee6583c957f2a45be4a5029c2ba4937cfc570c172d5",
+      "lines": 3242
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "blob": "82df1342d444db11bfebb278df4f2d67b15040a0",
+      "sha256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+      "lines": 3271
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "blob": "f68fdcd1e9111f4d4b1cb233259b9c83ad157033",
+      "sha256": "1fd40b2ad35994b02acd9ea8e9e697f448c2069d3c8835a2cc2da0705fc2a89d",
+      "lines": 532
+    }
+  ],
+  "raw_occurrences": 91,
+  "raw_by_file": {
+    "TCSlib/Complexity/CookLevin/Hardness.lean": 58,
+    "TCSlib/Complexity/ClassNP/EXP.lean": 33
+  },
+  "by_category": {
+    "operational-or-composite-transition-candidate": 60,
+    "inline-live-or-halt-case-candidate": 19,
+    "selected-stationary-root": 12
+  },
+  "rows": [
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 689,
+      "declaration": "clFill_run",
+      "declaration_line": 677,
+      "raw_line": "    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 686,
+          "text": "  | zero =>"
+        },
+        {
+          "line": 687,
+          "text": "    have he : i = x.length := by omega"
+        },
+        {
+          "line": 688,
+          "text": "    subst i"
+        },
+        {
+          "line": 689,
+          "text": "    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]"
+        },
+        {
+          "line": 690,
+          "text": "    constructor <;> funext j <;> exact Fin.elim0 j"
+        },
+        {
+          "line": 691,
+          "text": "  | succ r ih =>"
+        },
+        {
+          "line": 692,
+          "text": "    have hil : i < x.length := by omega"
+        },
+        {
+          "line": 693,
+          "text": "    have hs := inputSymbolInner (cfg :="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 702,
+      "declaration": "clFill_run",
+      "declaration_line": 677,
+      "raw_line": "      simp only [MultiTapeTM.step, clFillTM, hs, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 699,
+          "text": "          fun j => Fin.elim0 j, out\u27e9 : Cfg 0 Bool Unit x) ="
+        },
+        {
+          "line": 700,
+          "text": "        \u27e8some (), \u27e8i + 1 + 1, by omega\u27e9, fun j => Fin.elim0 j,"
+        },
+        {
+          "line": 701,
+          "text": "          fun j => Fin.elim0 j, out ++ [b]\u27e9 := by"
+        },
+        {
+          "line": 702,
+          "text": "      simp only [MultiTapeTM.step, clFillTM, hs, Action.apply]"
+        },
+        {
+          "line": 703,
+          "text": "      refine Cfg.ext rfl ?_ (by funext j; exact Fin.elim0 j)"
+        },
+        {
+          "line": 704,
+          "text": "        (by funext j; exact Fin.elim0 j) rfl"
+        },
+        {
+          "line": 705,
+          "text": "      exact moveInputPos_pos_of_ne_right _ (by simp; omega)"
+        },
+        {
+          "line": 706,
+          "text": "    rw [step]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 848,
+      "declaration": "clRef_apply",
+      "declaration_line": 806,
+      "raw_line": "    have hc : M.tm.step c = a.apply c := by simp only [MultiTapeTM.step, hq, a]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 845,
+          "text": "    let a := M.tm.tr q c.inputSymbol c.workTapeSymbols"
+        },
+        {
+          "line": 846,
+          "text": "    let m := FinTM.virtualMove b c.inputSymbol a.inputTape"
+        },
+        {
+          "line": 847,
+          "text": "    have hm := FinTM.virtualMove_correct c b hb a.inputTape"
+        },
+        {
+          "line": 848,
+          "text": "    have hc : M.tm.step c = a.apply c := by simp only [MultiTapeTM.step, hq, a]"
+        },
+        {
+          "line": 849,
+          "text": "    refine \u27e8FinTM.virtualNextTag b m, ?_, ?_\u27e9"
+        },
+        {
+          "line": 850,
+          "text": "    \u00b7 simpa only [hc, Action.apply] using hm.2"
+        },
+        {
+          "line": 851,
+          "text": "    \u00b7 rw [hc]"
+        },
+        {
+          "line": 852,
+          "text": "      simp only [clRefAction, hv, hr]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 976,
+      "declaration": "clCount_carry_step",
+      "declaration_line": 970,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 973,
+          "text": "      if bs.head? = some true then"
+        },
+        {
+          "line": 974,
+          "text": "        clCountCfg x 1 p (pre.length + 1) (pre ++ false :: bs.tail) []"
+        },
+        {
+          "line": 975,
+          "text": "      else clCountCfg x 2 p (pre.length - 1) (pre ++ true :: bs.tail) [] := by"
+        },
+        {
+          "line": 976,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 977,
+          "text": "  change (clCountTM.tm.tr (1 : Fin 4) _ _).apply _ = _"
+        },
+        {
+          "line": 978,
+          "text": "  simp only [clCountTM, \u2193reduceIte]"
+        },
+        {
+          "line": 979,
+          "text": "  change (clCountBump .zero (clCountTape (pre ++ bs) pre.length)).apply _ = _"
+        },
+        {
+          "line": 980,
+          "text": "  rw [clCountTape_read]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1036,
+      "declaration": "clCount_rewind",
+      "declaration_line": 1026,
+      "raw_line": "      simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1033,
+          "text": "    intro hj"
+        },
+        {
+          "line": 1034,
+          "text": "    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 1035,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 1036,
+          "text": "      simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,"
+        },
+        {
+          "line": 1037,
+          "text": "        clCountTape, Action.apply]"
+        },
+        {
+          "line": 1038,
+          "text": "  | succ j ih =>"
+        },
+        {
+          "line": 1039,
+          "text": "    intro hj"
+        },
+        {
+          "line": 1040,
+          "text": "    have hw : (clCountCfg x 2 p (j : \u2124) bs []).workTapeSymbols 0 = some bs[j] := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1046,
+      "declaration": "clCount_rewind",
+      "declaration_line": 1026,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1043,
+          "text": "      exact List.getElem?_eq_getElem (by omega)"
+        },
+        {
+          "line": 1044,
+          "text": "    have hs : clCountTM.tm.step (clCountCfg x 2 p (j : \u2124) bs []) ="
+        },
+        {
+          "line": 1045,
+          "text": "        clCountCfg x 2 p ((j : \u2124) - 1) bs [] := by"
+        },
+        {
+          "line": 1046,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1047,
+          "text": "      change (clCountTM.tm.tr (2 : Fin 4) _ _).apply _ = _"
+        },
+        {
+          "line": 1048,
+          "text": "      simp only [clCountTM, show (2 : Fin 4) \u2260 1 from by decide, \u2193reduceIte, hw]"
+        },
+        {
+          "line": 1049,
+          "text": "      apply Cfg.ext"
+        },
+        {
+          "line": 1050,
+          "text": "      \u00b7 rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1080,
+      "declaration": "clCount_idle",
+      "declaration_line": 1078,
+      "raw_line": "  simp only [MultiTapeTM.step, hc, clCountTM,",
+      "closing_form": "simp",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 1078,
+          "text": "private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)"
+        },
+        {
+          "line": 1079,
+          "text": "    (hc : c.state = some 0) : clCountTM.tm.step c = c := by"
+        },
+        {
+          "line": 1080,
+          "text": "  simp only [MultiTapeTM.step, hc, clCountTM,"
+        },
+        {
+          "line": 1081,
+          "text": "    show (0 : Fin 4) \u2260 1 from by decide, show (0 : Fin 4) \u2260 2 from by decide, if_false]"
+        },
+        {
+          "line": 1082,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 1083,
+          "text": "  cases c"
+        },
+        {
+          "line": 1084,
+          "text": "  simp_all"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1159,
+      "declaration": "clBank_step",
+      "declaration_line": 1149,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1156,
+          "text": "        | some q => clCountTM.tm.tr q (c i).inputSymbol (c i).workTapeSymbols := by"
+        },
+        {
+          "line": 1157,
+          "text": "    funext i"
+        },
+        {
+          "line": 1158,
+          "text": "    exact clBank_part p c i"
+        },
+        {
+          "line": 1159,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1160,
+          "text": "  change ((clBankTM l).tm.tr (fun i => (c i).state) _ _).apply _ = _"
+        },
+        {
+          "line": 1161,
+          "text": "  dsimp only [clBankTM]"
+        },
+        {
+          "line": 1162,
+          "text": "  rw [ha]"
+        },
+        {
+          "line": 1163,
+          "text": "  refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1168,
+      "declaration": "clBank_step",
+      "declaration_line": 1149,
+      "raw_line": "      simp [MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1165,
+          "text": "    congr 1"
+        },
+        {
+          "line": 1166,
+          "text": "    funext i"
+        },
+        {
+          "line": 1167,
+          "text": "    cases hs : (c i).state <;>"
+        },
+        {
+          "line": 1168,
+          "text": "      simp [MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1169,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 1170,
+          "text": "    cases hs : (c i).state <;>"
+        },
+        {
+          "line": 1171,
+          "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1172,
+          "text": "  \u00b7 funext i"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1171,
+      "declaration": "clBank_step",
+      "declaration_line": 1149,
+      "raw_line": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1168,
+          "text": "      simp [MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1169,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 1170,
+          "text": "    cases hs : (c i).state <;>"
+        },
+        {
+          "line": 1171,
+          "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1172,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 1173,
+          "text": "    cases hs : (c i).state <;>"
+        },
+        {
+          "line": 1174,
+          "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1175,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1174,
+      "declaration": "clBank_step",
+      "declaration_line": 1149,
+      "raw_line": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1171,
+          "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1172,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 1173,
+          "text": "    cases hs : (c i).state <;>"
+        },
+        {
+          "line": 1174,
+          "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 1175,
+          "text": ""
+        },
+        {
+          "line": 1176,
+          "text": "/-- All counter trajectories are exact projections of one native bank run. -/"
+        },
+        {
+          "line": 1177,
+          "text": "private lemma clBank_run {l : \u2115} {x : List Bool} (p : Fin (x.length + 2))"
+        },
+        {
+          "line": 1178,
+          "text": "    (c : Fin l \u2192 Cfg 1 Bool (Fin 4) x) (t : \u2115) :"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1231,
+      "declaration": "clBank_idle",
+      "declaration_line": 1227,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 1228,
+          "text": "    (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)"
+        },
+        {
+          "line": 1229,
+          "text": "    (hc : c.state = some (fun _ => some (0 : Fin 4))) :"
+        },
+        {
+          "line": 1230,
+          "text": "    (clBankTM l).tm.step c = c := by"
+        },
+        {
+          "line": 1231,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1232,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 1233,
+          "text": "  refine Cfg.ext hc.symm (moveInputPos_zero _) ?_ ?_ ?_"
+        },
+        {
+          "line": 1234,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 1235,
+          "text": "    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1304,
+      "declaration": "clMoves_correct",
+      "declaration_line": 1292,
+      "raw_line": "      simpa [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply] using hm.symm",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1301,
+          "text": "      (M.tm.tr q c.inputSymbol c.workTapeSymbols).inputTape).1"
+        },
+        {
+          "line": 1302,
+          "text": "    refine Fin.addCases ?_ ?_ i"
+        },
+        {
+          "line": 1303,
+          "text": "    \u00b7 intro j"
+        },
+        {
+          "line": 1304,
+          "text": "      simpa [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply] using hm.symm"
+        },
+        {
+          "line": 1305,
+          "text": "    \u00b7 intro j"
+        },
+        {
+          "line": 1306,
+          "text": "      simp [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply]"
+        },
+        {
+          "line": 1307,
+          "text": ""
+        },
+        {
+          "line": 1308,
+          "text": "/-- Select the positive-move counter in the first bank and the"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1306,
+      "declaration": "clMoves_correct",
+      "declaration_line": 1292,
+      "raw_line": "      simp [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1303,
+          "text": "    \u00b7 intro j"
+        },
+        {
+          "line": 1304,
+          "text": "      simpa [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply] using hm.symm"
+        },
+        {
+          "line": 1305,
+          "text": "    \u00b7 intro j"
+        },
+        {
+          "line": 1306,
+          "text": "      simp [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply]"
+        },
+        {
+          "line": 1307,
+          "text": ""
+        },
+        {
+          "line": 1308,
+          "text": "/-- Select the positive-move counter in the first bank and the"
+        },
+        {
+          "line": 1309,
+          "text": "negative-move counter in the second bank. Zero moves select neither. -/"
+        },
+        {
+          "line": 1310,
+          "text": "private def clSelect {l : \u2115} (d : Fin l \u2192 SignType) : Fin (l + l) \u2192 Bool :="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1434,
+      "declaration": "clLeft_until",
+      "declaration_line": 1414,
+      "raw_line": "    | none => simp [MultiTapeTM.step, FinTM.leftCfg, hs]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1431,
+          "text": "    change host.step (FinTM.leftCfg emb z tapes heads) ="
+        },
+        {
+          "line": 1432,
+          "text": "      FinTM.leftCfg emb (tm.step z) tapes heads"
+        },
+        {
+          "line": 1433,
+          "text": "    cases hs : z.state with"
+        },
+        {
+          "line": 1434,
+          "text": "    | none => simp [MultiTapeTM.step, FinTM.leftCfg, hs]"
+        },
+        {
+          "line": 1435,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 1436,
+          "text": "      have hq : q \u2260 exit := by intro he; subst q; exact hne hs"
+        },
+        {
+          "line": 1437,
+          "text": "      have hw : (fun i => (FinTM.leftCfg emb z tapes heads).workTapeSymbols"
+        },
+        {
+          "line": 1438,
+          "text": "          (Fin.castAdd l i)) = z.workTapeSymbols := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1441,
+      "declaration": "clLeft_until",
+      "declaration_line": 1414,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1438,
+          "text": "          (Fin.castAdd l i)) = z.workTapeSymbols := by"
+        },
+        {
+          "line": 1439,
+          "text": "        funext i"
+        },
+        {
+          "line": 1440,
+          "text": "        simp [FinTM.leftCfg, Cfg.workTapeSymbols]"
+        },
+        {
+          "line": 1441,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1442,
+          "text": "      rw [show (FinTM.leftCfg emb z tapes heads).state = some (emb q) by"
+        },
+        {
+          "line": 1443,
+          "text": "        simp only [FinTM.leftCfg, hs, Option.map_some]]"
+        },
+        {
+          "line": 1444,
+          "text": "      dsimp only"
+        },
+        {
+          "line": 1445,
+          "text": "      rw [htr q _ _ hq]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1479,
+      "declaration": "clTrack_dispatch",
+      "declaration_line": 1472,
+      "raw_line": "  simp only [MultiTapeTM.step, clRefCfg, clTrackTM, if_true]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1476,
+          "text": "      (clRefCfg M (fun s b => (s, b, some (fun _ => some (0 : Fin 4)))) c b"
+        },
+        {
+          "line": 1477,
+          "text": "        (1 : Fin (x.length + 2)) (fun i => FinTM.bufferTape (n i).bits) (fun _ => 0) []) ="
+        },
+        {
+          "line": 1478,
+          "text": "      clTrackCfg M (x := x) c b n := by"
+        },
+        {
+          "line": 1479,
+          "text": "  simp only [MultiTapeTM.step, clRefCfg, clTrackTM, if_true]"
+        },
+        {
+          "line": 1480,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 1481,
+          "text": "  rfl"
+        },
+        {
+          "line": 1482,
+          "text": ""
+        },
+        {
+          "line": 1483,
+          "text": "/-- A full native source-and-counter round has a strictly positive first"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1664,
+      "declaration": "clCopy_rewind",
+      "declaration_line": 1654,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1661,
+          "text": "    intro _"
+        },
+        {
+          "line": 1662,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 1663,
+          "text": "    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 1664,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,"
+        },
+        {
+          "line": 1665,
+          "text": "        Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 1666,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,"
+        },
+        {
+          "line": 1667,
+          "text": "        Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 1668,
+          "text": "  | succ j ih =>"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1666,
+      "declaration": "clCopy_rewind",
+      "declaration_line": 1654,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1663,
+          "text": "    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 1664,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,"
+        },
+        {
+          "line": 1665,
+          "text": "        Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 1666,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,"
+        },
+        {
+          "line": 1667,
+          "text": "        Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 1668,
+          "text": "  | succ j ih =>"
+        },
+        {
+          "line": 1669,
+          "text": "    intro hj"
+        },
+        {
+          "line": 1670,
+          "text": "    have hr : FinTM.bufferTape w (j : \u2124) = some w[j] := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1703,
+      "declaration": "clCopy_idle",
+      "declaration_line": 1701,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 1701,
+          "text": "private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)"
+        },
+        {
+          "line": 1702,
+          "text": "    (hc : c.state = some (4 : Fin 5)) : clCopyTM.tm.step c = c := by"
+        },
+        {
+          "line": 1703,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1704,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 1705,
+          "text": "  change (FinTM.controlAction 0 (some (4 : Fin 5))).apply c = c"
+        },
+        {
+          "line": 1706,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 1707,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2124,
+      "declaration": "clRow_idle",
+      "declaration_line": 2121,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 2121,
+          "text": "private lemma clRow_idle {l : \u2115} {x : List Bool}"
+        },
+        {
+          "line": 2122,
+          "text": "    (c : Cfg (clRowTM l).k Bool (clRowTM l).State x)"
+        },
+        {
+          "line": 2123,
+          "text": "    (hc : c.state = some (Fin.last l, (0 : Fin 5))) : (clRowTM l).tm.step c = c := by"
+        },
+        {
+          "line": 2124,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2125,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 2126,
+          "text": "  simp only [clRowTM, Fin.val_last, Nat.lt_irrefl, dite_false]"
+        },
+        {
+          "line": 2127,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 2128,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2412,
+      "declaration": "clRec_copy",
+      "declaration_line": 2383,
+      "raw_line": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2409,
+          "text": "      (clRec_row_frame M c b n record T t 0 0)).symm.trans (lift.trans hend)"
+        },
+        {
+          "line": 2410,
+          "text": "  refine \u27e8s + 1, by omega, ?_\u27e9"
+        },
+        {
+          "line": 2411,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step', run]"
+        },
+        {
+          "line": 2412,
+          "text": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]"
+        },
+        {
+          "line": 2413,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 2414,
+          "text": ""
+        },
+        {
+          "line": 2415,
+          "text": "/-- Left and right slots of a disjoint tape bank cannot coincide. -/"
+        },
+        {
+          "line": 2416,
+          "text": "private lemma clLeft_ne_right {a b : \u2115} (i : Fin a) (j : Fin b) :"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2546,
+      "declaration": "clPlaced_release",
+      "declaration_line": 2527,
+      "raw_line": "  simpa only [MultiTapeTM.step, hc, Cfg.mapState, Action.apply] using",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2543,
+          "text": "  change (clPlacedAction slots emb q (src.tr q c.inputSymbol"
+        },
+        {
+          "line": 2544,
+          "text": "    (fun i => (clPlacedCfg slots emb tapes heads c).workTapeSymbols (slots.index i)))).apply _ = _"
+        },
+        {
+          "line": 2545,
+          "text": "  rw [symbols]"
+        },
+        {
+          "line": 2546,
+          "text": "  simpa only [MultiTapeTM.step, hc, Cfg.mapState, Action.apply] using"
+        },
+        {
+          "line": 2547,
+          "text": "    clPlaced_apply slots emb q tapes heads (src.tr q c.inputSymbol c.workTapeSymbols) c"
+        },
+        {
+          "line": 2548,
+          "text": ""
+        },
+        {
+          "line": 2549,
+          "text": "/-- The native recorder executes one source transition and its full signed"
+        },
+        {
+          "line": 2550,
+          "text": "counter update, then dispatches to the next row-copy state. Record and clock"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2599,
+      "declaration": "clRec_advance",
+      "declaration_line": 2553,
+      "raw_line": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2596,
+          "text": "  have run' := run.trans hend"
+        },
+        {
+          "line": 2597,
+          "text": "  refine \u27e8s + 1, by omega, b', hb', ?_\u27e9"
+        },
+        {
+          "line": 2598,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step', run']"
+        },
+        {
+          "line": 2599,
+          "text": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]"
+        },
+        {
+          "line": 2600,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 2601,
+          "text": ""
+        },
+        {
+          "line": 2602,
+          "text": "/-- At every logical time through the horizon, one native recorder holds"
+        },
+        {
+          "line": 2603,
+          "text": "all strictly earlier rows and is ready to store the current row. This"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2963,
+      "declaration": "clCmp_idle",
+      "declaration_line": 2961,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 2961,
+          "text": "private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)"
+        },
+        {
+          "line": 2962,
+          "text": "    (b : Bool) (hc : c.state = some (.inr (.inr b))) : clCmpTM.tm.step c = c := by"
+        },
+        {
+          "line": 2963,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2964,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 2965,
+          "text": "  change (FinTM.controlAction 0 (some (.inr (.inr b)))).apply c = c"
+        },
+        {
+          "line": 2966,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 2967,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3098,
+      "declaration": "clRead_pair",
+      "declaration_line": 3080,
+      "raw_line": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3095,
+          "text": "      clReadCfg x p (.inl (some b)) (pre ++ b :: b :: rest) (written ++ old)"
+        },
+        {
+          "line": 3096,
+          "text": "        (pre.length + 1) written.length := by"
+        },
+        {
+          "line": 3097,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3098,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3099,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3100,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3101,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3102,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3099,
+      "declaration": "clRead_pair",
+      "declaration_line": 3080,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3096,
+          "text": "        (pre.length + 1) written.length := by"
+        },
+        {
+          "line": 3097,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3098,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3099,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3100,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3101,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3102,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        },
+        {
+          "line": 3103,
+          "text": "  change (clReadTM.tm.tr (.inl (some b)) _ _).apply _ = _"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3100,
+      "declaration": "clRead_pair",
+      "declaration_line": 3080,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3097,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3098,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3099,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3100,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3101,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3102,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        },
+        {
+          "line": 3103,
+          "text": "  change (clReadTM.tm.tr (.inl (some b)) _ _).apply _ = _"
+        },
+        {
+          "line": 3104,
+          "text": "  simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, \u2193reduceIte, r1]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3156,
+      "declaration": "clRead_separator",
+      "declaration_line": 3140,
+      "raw_line": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3153,
+          "text": "      clReadCfg x p (.inl (some false)) (pre ++ false :: true :: tail) w"
+        },
+        {
+          "line": 3154,
+          "text": "        (pre.length + 1) w.length := by"
+        },
+        {
+          "line": 3155,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3156,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3157,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3158,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3159,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3160,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3157,
+      "declaration": "clRead_separator",
+      "declaration_line": 3140,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3154,
+          "text": "        (pre.length + 1) w.length := by"
+        },
+        {
+          "line": 3155,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3156,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3157,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3158,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3159,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3160,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        },
+        {
+          "line": 3161,
+          "text": "  change (clReadTM.tm.tr (.inl (some false)) _ _).apply _ = _"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3158,
+      "declaration": "clRead_separator",
+      "declaration_line": 3140,
+      "raw_line": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3155,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3156,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]"
+        },
+        {
+          "line": 3157,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3158,
+          "text": "    \u00b7 funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]"
+        },
+        {
+          "line": 3159,
+          "text": "  rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 3160,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]"
+        },
+        {
+          "line": 3161,
+          "text": "  change (clReadTM.tm.tr (.inl (some false)) _ _).apply _ = _"
+        },
+        {
+          "line": 3162,
+          "text": "  simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, \u2193reduceIte, r1]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3181,
+      "declaration": "clRead_rewind",
+      "declaration_line": 3171,
+      "raw_line": "      simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3178,
+          "text": "    intro _"
+        },
+        {
+          "line": 3179,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 3180,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 3181,
+          "text": "      simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,"
+        },
+        {
+          "line": 3182,
+          "text": "        Action.apply, funext_iff]"
+        },
+        {
+          "line": 3183,
+          "text": "  | succ j ih =>"
+        },
+        {
+          "line": 3184,
+          "text": "    intro hj"
+        },
+        {
+          "line": 3185,
+          "text": "    have hr : FinTM.bufferTape w (j : \u2124) = some w[j] := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3315,
+      "declaration": "clWipe_forward",
+      "declaration_line": 3304,
+      "raw_line": "      simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3312,
+          "text": "    subst j"
+        },
+        {
+          "line": 3313,
+          "text": "    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 3314,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 3315,
+          "text": "      simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,"
+        },
+        {
+          "line": 3316,
+          "text": "        Action.apply, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 3317,
+          "text": "  | succ r ih =>"
+        },
+        {
+          "line": 3318,
+          "text": "    have hjl : j < word.length := by omega"
+        },
+        {
+          "line": 3319,
+          "text": "    have hr : FinTM.bufferTape word j = some word[j] := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3346,
+      "declaration": "clWipe_backward",
+      "declaration_line": 3336,
+      "raw_line": "    \u00b7 simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3343,
+          "text": "    rw [show ([] : List Bool).length + 1 = 1 by rfl,"
+        },
+        {
+          "line": 3344,
+          "text": "      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 3345,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3346,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]"
+        },
+        {
+          "line": 3347,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3348,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 3349,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3350,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3348,
+      "declaration": "clWipe_backward",
+      "declaration_line": 3336,
+      "raw_line": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3345,
+          "text": "    refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 3346,
+          "text": "    \u00b7 simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]"
+        },
+        {
+          "line": 3347,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3348,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 3349,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3350,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 3351,
+          "text": "  | append_singleton pre b ih =>"
+        },
+        {
+          "line": 3352,
+          "text": "    have hr : FinTM.bufferTape (pre ++ [b]) pre.length = some b := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3350,
+      "declaration": "clWipe_backward",
+      "declaration_line": 3336,
+      "raw_line": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3347,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3348,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 3349,
+          "text": "    \u00b7 funext i; fin_cases i <;>"
+        },
+        {
+          "line": 3350,
+          "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]"
+        },
+        {
+          "line": 3351,
+          "text": "  | append_singleton pre b ih =>"
+        },
+        {
+          "line": 3352,
+          "text": "    have hr : FinTM.bufferTape (pre ++ [b]) pre.length = some b := by"
+        },
+        {
+          "line": 3353,
+          "text": "      simp [FinTM.bufferTape_nat]"
+        },
+        {
+          "line": 3354,
+          "text": "    have step : clWipeTM.tm.step (clWipeCfg x p 1 stream (pre ++ [b]) s pre.length) ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3382,
+      "declaration": "clWipe_idle",
+      "declaration_line": 3380,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 3380,
+          "text": "private lemma clWipe_idle {x : List Bool} (c : Cfg 2 Bool (Fin 3) x)"
+        },
+        {
+          "line": 3381,
+          "text": "    (hc : c.state = some 2) : clWipeTM.tm.step c = c := by"
+        },
+        {
+          "line": 3382,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 3383,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 3384,
+          "text": "  change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c"
+        },
+        {
+          "line": 3385,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 3386,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3426,
+      "declaration": "clFresh_idle",
+      "declaration_line": 3424,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 3424,
+          "text": "private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)"
+        },
+        {
+          "line": 3425,
+          "text": "    (hc : c.state = some (.inr (.inr true))) : clFreshTM.tm.step c = c := by"
+        },
+        {
+          "line": 3426,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 3427,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 3428,
+          "text": "  change (FinTM.controlAction 0 (some (Sum.inr (.inr true)))).apply c = c"
+        },
+        {
+          "line": 3429,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 3430,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3641,
+      "declaration": "clLoad_idle",
+      "declaration_line": 3638,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 3638,
+          "text": "private lemma clLoad_idle {l : \u2115} {x : List Bool}"
+        },
+        {
+          "line": 3639,
+          "text": "    (c : Cfg (clLoadTM l).k Bool (clLoadTM l).State x)"
+        },
+        {
+          "line": 3640,
+          "text": "    (hc : c.state = some (Fin.last l, .inl 0)) : (clLoadTM l).tm.step c = c := by"
+        },
+        {
+          "line": 3641,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 3642,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 3643,
+          "text": "  simp only [clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]"
+        },
+        {
+          "line": 3644,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 3645,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3737,
+      "declaration": "clInput_backward",
+      "declaration_line": 3728,
+      "raw_line": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3734,
+          "text": "    intro hj"
+        },
+        {
+          "line": 3735,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 3736,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 3737,
+          "text": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,"
+        },
+        {
+          "line": 3738,
+          "text": "        moveInputPos, funext_iff]"
+        },
+        {
+          "line": 3739,
+          "text": "  | succ j ih =>"
+        },
+        {
+          "line": 3740,
+          "text": "    intro hj"
+        },
+        {
+          "line": 3741,
+          "text": "    have hin : (clInputCfg x 1 \u27e8j + 1, by omega\u27e9 w (((j + 1 : \u2115) : \u2124) - 1)).inputSymbol ="
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3770,
+      "declaration": "clInput_run",
+      "declaration_line": 3759,
+      "raw_line": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 3767,
+          "text": "      (clInputCfg x 0 \u27e8x.length + 1, by omega\u27e9 x x.length) ="
+        },
+        {
+          "line": 3768,
+          "text": "      clInputCfg x 1 \u27e8x.length, by omega\u27e9 x ((x.length : \u2124) - 1) := by"
+        },
+        {
+          "line": 3769,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 3770,
+          "text": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,"
+        },
+        {
+          "line": 3771,
+          "text": "        FinTM.moveInputPos_neg_val, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 3772,
+          "text": "    apply Fin.ext"
+        },
+        {
+          "line": 3773,
+          "text": "    simpa using FinTM.moveInputPos_neg_val (\u27e8x.length + 1, by omega\u27e9 : Fin (x.length + 2))"
+        },
+        {
+          "line": 3774,
+          "text": "  rw [init, show 2 * x.length + 2 = x.length + ((x.length + 1) + 1) by omega,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3782,
+      "declaration": "clInput_idle",
+      "declaration_line": 3780,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 3780,
+          "text": "private lemma clInput_idle {x : List Bool} (c : Cfg 1 Bool (Fin 3) x)"
+        },
+        {
+          "line": 3781,
+          "text": "    (hc : c.state = some 2) : clInputTM.tm.step c = c := by"
+        },
+        {
+          "line": 3782,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 3783,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 3784,
+          "text": "  change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c"
+        },
+        {
+          "line": 3785,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 3786,
+          "text": "  cases c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3883,
+      "declaration": "clPrepare_idle",
+      "declaration_line": 3880,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 3880,
+          "text": "private lemma clPrepare_idle {l : \u2115} {x : List Bool}"
+        },
+        {
+          "line": 3881,
+          "text": "    (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)"
+        },
+        {
+          "line": 3882,
+          "text": "    (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by"
+        },
+        {
+          "line": 3883,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 3884,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 3885,
+          "text": "  simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]"
+        },
+        {
+          "line": 3886,
+          "text": "  change (FinTM.controlAction 0 (some (Sum.inr (Fin.last l, .inl 0)))).apply c = c"
+        },
+        {
+          "line": 3887,
+          "text": "  rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4640,
+      "declaration": "clReplay_back",
+      "declaration_line": 4630,
+      "raw_line": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 4637,
+          "text": "    intro hj"
+        },
+        {
+          "line": 4638,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 4639,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 4640,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]"
+        },
+        {
+          "line": 4641,
+          "text": "  | succ j ih =>"
+        },
+        {
+          "line": 4642,
+          "text": "    intro hj"
+        },
+        {
+          "line": 4643,
+          "text": "    have hr : FinTM.bufferTape w (j : \u2124) = some w[j] := by"
+        },
+        {
+          "line": 4644,
+          "text": "      rw [FinTM.bufferTape_nat]; exact List.getElem?_eq_getElem (by omega)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4671,
+      "declaration": "clReplay_forward",
+      "declaration_line": 4659,
+      "raw_line": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 4668,
+          "text": "    subst j"
+        },
+        {
+          "line": 4669,
+          "text": "    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 4670,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 4671,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]"
+        },
+        {
+          "line": 4672,
+          "text": "  | succ r ih =>"
+        },
+        {
+          "line": 4673,
+          "text": "    intro out"
+        },
+        {
+          "line": 4674,
+          "text": "    have hjl : j < w.length := by omega"
+        },
+        {
+          "line": 4675,
+          "text": "    have hr : FinTM.bufferTape w (j : \u2124) = some w[j] := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4695,
+      "declaration": "clReplay_run",
+      "declaration_line": 4689,
+      "raw_line": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 4692,
+          "text": "  have release : clReplayTM.tm.step (clReplayCfg x p (some 0) w w.length out) ="
+        },
+        {
+          "line": 4693,
+          "text": "      clReplayCfg x p (some 1) w (w.length - 1) out := by"
+        },
+        {
+          "line": 4694,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 4695,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 4696,
+          "text": "  rw [show 2 * w.length + 3 = ((w.length + 1) + (w.length + 1)) + 1 by omega,"
+        },
+        {
+          "line": 4697,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 4698,
+          "text": "    clReplay_back x p w out w.length le_rfl]"
+        },
+        {
+          "line": 4699,
+          "text": "  simpa only [Nat.sub_zero, Nat.cast_zero, List.drop_zero] using"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4753,
+      "declaration": "clOutput_compute",
+      "declaration_line": 4730,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 4750,
+          "text": "  have dispatch : (clOutputTM A ret i).tm.step (d.mapState Sum.inl) = framed := by"
+        },
+        {
+          "line": 4751,
+          "text": "    have hs : (d.mapState (Sum.inl : A.State \u2192 (clOutputTM A ret i).State)).state ="
+        },
+        {
+          "line": 4752,
+          "text": "        some (.inl ret) := by simp [Cfg.mapState, hret]"
+        },
+        {
+          "line": 4753,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 4754,
+          "text": "    rw [hs]"
+        },
+        {
+          "line": 4755,
+          "text": "    simp only [clOutputTM, if_true]"
+        },
+        {
+          "line": 4756,
+          "text": "    rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 4757,
+          "text": "    refine Cfg.ext rfl rfl ?_ ?_ ?_"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4847,
+      "declaration": "clPrepared_idle",
+      "declaration_line": 4843,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 4844,
+          "text": "    (htr : \u2200 inp work, A.tm.tr ret inp work = FinTM.controlAction 0 (some ret))"
+        },
+        {
+          "line": 4845,
+          "text": "    {x : List Bool} (c : Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x)"
+        },
+        {
+          "line": 4846,
+          "text": "    (hc : c.state = some (.inr ret)) : (clPreparedTM A).tm.step c = c := by"
+        },
+        {
+          "line": 4847,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 4848,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 4849,
+          "text": "  change (clPlacedAction (clKeepLastPlacement A.k) Sum.inr ret"
+        },
+        {
+          "line": 4850,
+          "text": "    (A.tm.tr ret c.inputSymbol (fun i => c.workTapeSymbols ((clKeepLastPlacement A.k).index i)))).apply c = c"
+        },
+        {
+          "line": 4851,
+          "text": "  rw [htr]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4991,
+      "declaration": "clRecord_idle",
+      "declaration_line": 4987,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": true,
+      "category": "selected-stationary-root",
+      "nearby_lines": [
+        {
+          "line": 4988,
+          "text": "    (c : Cfg (clRecordTM M).k Bool (clRecordTM M).State x)"
+        },
+        {
+          "line": 4989,
+          "text": "    (hc : c.state = some (.inr (.inr (.inr (.inr (.inr ())))))) :"
+        },
+        {
+          "line": 4990,
+          "text": "    (clRecordTM M).tm.step c = c := by"
+        },
+        {
+          "line": 4991,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 4992,
+          "text": "  rw [hc]"
+        },
+        {
+          "line": 4993,
+          "text": "  simp only [clRecordTM, clRecTM]"
+        },
+        {
+          "line": 4994,
+          "text": "  have ha : clPlacedAction (clRecordSelect M) (Sum.inr : (clRecTM M).State \u2192 (clRecordTM M).State) (.inr (.inr (.inr (.inr ())))) (FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr ())))))) ="
+        },
+        {
+          "line": 4995,
+          "text": "      FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr (.inr ())))))) := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5182,
+      "declaration": "clReplay_from",
+      "declaration_line": 5175,
+      "raw_line": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 5179,
+          "text": "  have release : clReplayTM.tm.step (clReplayCfg x p (some 0) w j out) ="
+        },
+        {
+          "line": 5180,
+          "text": "      clReplayCfg x p (some 1) w (j - 1) out := by"
+        },
+        {
+          "line": 5181,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 5182,
+          "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]"
+        },
+        {
+          "line": 5183,
+          "text": "  rw [show j + w.length + 3 = ((j + 1) + (w.length + 1)) + 1 by omega,"
+        },
+        {
+          "line": 5184,
+          "text": "    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 5185,
+          "text": "    clReplay_back x p w out j hj]"
+        },
+        {
+          "line": 5186,
+          "text": "  simpa only [Nat.sub_zero, Nat.cast_zero, List.drop_zero] using"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5216,
+      "declaration": "clOutputAt_compute",
+      "declaration_line": 5193,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 5213,
+          "text": "  have dispatch : (clOutputTM A ret i).tm.step (d.mapState Sum.inl) = framed := by"
+        },
+        {
+          "line": 5214,
+          "text": "    have hs : (d.mapState (Sum.inl : A.State \u2192 (clOutputTM A ret i).State)).state ="
+        },
+        {
+          "line": 5215,
+          "text": "        some (.inl ret) := by simp [Cfg.mapState, hret]"
+        },
+        {
+          "line": 5216,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 5217,
+          "text": "    rw [hs]"
+        },
+        {
+          "line": 5218,
+          "text": "    simp only [clOutputTM, if_true]"
+        },
+        {
+          "line": 5219,
+          "text": "    rw [FinTM.controlAction_apply, moveInputPos_zero]"
+        },
+        {
+          "line": 5220,
+          "text": "    refine Cfg.ext rfl rfl ?_ ?_ ?_"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5717,
+      "declaration": "clRepeat_round",
+      "declaration_line": 5704,
+      "raw_line": "      simp [MultiTapeTM.step, clRepeatTM, clRepeatCfg, Cfg.workTapeSymbols, Action.apply,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 5714,
+          "text": "  have tick : (clRepeatTM C entry exit).tm.step (clRepeatCfg C entry exit x (.inl 0) s N j) ="
+        },
+        {
+          "line": 5715,
+          "text": "      clRepeatCfg C entry exit x (.inl 1) s N (j + 1) := by"
+        },
+        {
+          "line": 5716,
+          "text": "    apply Cfg.ext <;>"
+        },
+        {
+          "line": 5717,
+          "text": "      simp [MultiTapeTM.step, clRepeatTM, clRepeatCfg, Cfg.workTapeSymbols, Action.apply,"
+        },
+        {
+          "line": 5718,
+          "text": "        hclock, funext_iff, -Fin.natAdd_eq_addNat]"
+        },
+        {
+          "line": 5719,
+          "text": "    all_goals"
+        },
+        {
+          "line": 5720,
+          "text": "      intro i"
+        },
+        {
+          "line": 5721,
+          "text": "      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6130,
+      "declaration": "clA5Pad_run",
+      "declaration_line": 6124,
+      "raw_line": "  | none => simp [MultiTapeTM.step, clA5PadCfg, hs]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 6127,
+          "text": "  apply MultiTapeTM.runFrom_comm_of_step"
+        },
+        {
+          "line": 6128,
+          "text": "  intro c"
+        },
+        {
+          "line": 6129,
+          "text": "  cases hs : c.state with"
+        },
+        {
+          "line": 6130,
+          "text": "  | none => simp [MultiTapeTM.step, clA5PadCfg, hs]"
+        },
+        {
+          "line": 6131,
+          "text": "  | some q =>"
+        },
+        {
+          "line": 6132,
+          "text": "    have hw : (fun i : Fin M.k => (clA5PadCfg (K := K) c).workTapeSymbols"
+        },
+        {
+          "line": 6133,
+          "text": "        \u27e8i.val, Nat.lt_of_lt_of_le i.isLt hk\u27e9) = c.workTapeSymbols := by"
+        },
+        {
+          "line": 6134,
+          "text": "      funext i; simp [clA5PadCfg, Cfg.workTapeSymbols, i.isLt]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6136,
+      "declaration": "clA5Pad_run",
+      "declaration_line": 6124,
+      "raw_line": "    simp only [MultiTapeTM.step, hstate, hs]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 6133,
+          "text": "        \u27e8i.val, Nat.lt_of_lt_of_le i.isLt hk\u27e9) = c.workTapeSymbols := by"
+        },
+        {
+          "line": 6134,
+          "text": "      funext i; simp [clA5PadCfg, Cfg.workTapeSymbols, i.isLt]"
+        },
+        {
+          "line": 6135,
+          "text": "    have hstate : (clA5PadCfg (K := K) c).state = some q := hs"
+        },
+        {
+          "line": 6136,
+          "text": "    simp only [MultiTapeTM.step, hstate, hs]"
+        },
+        {
+          "line": 6137,
+          "text": "    change (clA5PadAction (M.tm.tr q c.inputSymbol _)).apply _ = _"
+        },
+        {
+          "line": 6138,
+          "text": "    rw [hw]"
+        },
+        {
+          "line": 6139,
+          "text": "    exact clA5Pad_apply _ _"
+        },
+        {
+          "line": 6140,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6181,
+      "declaration": "clA5Stop_step",
+      "declaration_line": 6172,
+      "raw_line": "    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 6178,
+          "text": "  | some q =>"
+        },
+        {
+          "line": 6179,
+          "text": "    have hq : \u00ac(b = true \u2227 q = exit) := by"
+        },
+        {
+          "line": 6180,
+          "text": "      rintro \u27e8hb, rfl\u27e9; exact hg hb hs"
+        },
+        {
+          "line": 6181,
+          "text": "    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]"
+        },
+        {
+          "line": 6182,
+          "text": "    simp only [clA5StopTM, hq, \u2193reduceIte]"
+        },
+        {
+          "line": 6183,
+          "text": "    rfl"
+        },
+        {
+          "line": 6184,
+          "text": ""
+        },
+        {
+          "line": 6185,
+          "text": "/-- Live endpoints force earlier module states to be live by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6225,
+      "declaration": "clA5Stop_clean",
+      "declaration_line": 6197,
+      "raw_line": "  simp [MultiTapeTM.step, clA5StopTM, clA5StopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 6222,
+          "text": "  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]"
+        },
+        {
+          "line": 6223,
+          "text": "  have hflag : decide (t \u2260 0) = true := by simp [Nat.ne_of_gt ht]"
+        },
+        {
+          "line": 6224,
+          "text": "  rw [hflag, show C.tm.runFrom c t = _ from he]"
+        },
+        {
+          "line": 6225,
+          "text": "  simp [MultiTapeTM.step, clA5StopTM, clA5StopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]"
+        },
+        {
+          "line": 6226,
+          "text": ""
+        },
+        {
+          "line": 6227,
+          "text": "/-- Five finite modules form the body: native input copy, full packed-record"
+        },
+        {
+          "line": 6228,
+          "text": "installation and cursor installation, then recurring emission and cursor update. -/"
+        },
+        {
+          "line": 6229,
+          "text": "private abbrev CLA5HostState (M : Fin 5 \u2192 FinTM Bool) := Unit \u2295 (\u03a3 i, (M i).State)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6642,
+      "declaration": "clA5Map_run",
+      "declaration_line": 6628,
+      "raw_line": "    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, clA5MapTM,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 6639,
+          "text": "    intro pre hx q out"
+        },
+        {
+          "line": 6640,
+          "text": "    simp only [List.append_nil] at hx"
+        },
+        {
+          "line": 6641,
+          "text": "    subst x"
+        },
+        {
+          "line": 6642,
+          "text": "    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, clA5MapTM,"
+        },
+        {
+          "line": 6643,
+          "text": "      clA5MapCfg, Cfg.inputSymbol, Action.apply, clA5MapWord]"
+        },
+        {
+          "line": 6644,
+          "text": "  | cons b rest ih =>"
+        },
+        {
+          "line": 6645,
+          "text": "    intro pre hx q out"
+        },
+        {
+          "line": 6646,
+          "text": "    have hs : (clA5MapTM next emit finish start).tm.step"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6652,
+      "declaration": "clA5Map_run",
+      "declaration_line": 6628,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 6649,
+          "text": "      have hin : (clA5MapCfg x q pre.length (by simp [hx]) out).inputSymbol = some b := by"
+        },
+        {
+          "line": 6650,
+          "text": "        rw [FinTM.inputSymbol_at _ pre.length (by simp [hx]) rfl]"
+        },
+        {
+          "line": 6651,
+          "text": "        simp [hx]"
+        },
+        {
+          "line": 6652,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 6653,
+          "text": "      change (((clA5MapTM next emit finish start).tm.tr q _ _).apply _) = _"
+        },
+        {
+          "line": 6654,
+          "text": "      rw [hin]"
+        },
+        {
+          "line": 6655,
+          "text": "      refine Cfg.ext_zero_tapes rfl ?_ rfl"
+        },
+        {
+          "line": 6656,
+          "text": "      simpa using moveInputPos_pos_of_ne_right"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 583,
+      "declaration": "enumCont_log_run",
+      "declaration_line": 565,
+      "raw_line": "      simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 580,
+          "text": "    cases hs : c.state with"
+        },
+        {
+          "line": 581,
+          "text": "    | none =>"
+        },
+        {
+          "line": 582,
+          "text": "      have hn : (M.tm.runFrom c\u2080 t).state = none := hsrun.trans hs"
+        },
+        {
+          "line": 583,
+          "text": "      simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step,"
+        },
+        {
+          "line": 584,
+          "text": "        enumCont_history, enumCont_logCfg, hn]"
+        },
+        {
+          "line": 585,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 586,
+          "text": "      have hq : (M.tm.runFrom c\u2080 t).state = some q := hsrun.trans hs"
+        },
+        {
+          "line": 587,
+          "text": "      have hstate : (enumCont_logCfg (M.tm.runFrom c\u2080 t)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 589,
+      "declaration": "enumCont_log_run",
+      "declaration_line": 565,
+      "raw_line": "      simp only [MultiTapeTM.step, hstate]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 586,
+          "text": "      have hq : (M.tm.runFrom c\u2080 t).state = some q := hsrun.trans hs"
+        },
+        {
+          "line": 587,
+          "text": "      have hstate : (enumCont_logCfg (M.tm.runFrom c\u2080 t)"
+        },
+        {
+          "line": 588,
+          "text": "          (enumCont_history M.tm c\u2080 t)).state = some q := hq"
+        },
+        {
+          "line": 589,
+          "text": "      simp only [MultiTapeTM.step, hstate]"
+        },
+        {
+          "line": 590,
+          "text": "      change (enumCont_logAction _ ((M.tm.tr q _ _))).apply _ = _"
+        },
+        {
+          "line": 591,
+          "text": "      rw [hr, enumCont_log_apply]"
+        },
+        {
+          "line": 592,
+          "text": "      simp only [enumCont_history, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 593,
+          "text": "        MultiTapeTM.step, hq]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 593,
+      "declaration": "enumCont_log_run",
+      "declaration_line": 565,
+      "raw_line": "        MultiTapeTM.step, hq]",
+      "closing_form": "continued simp only",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 590,
+          "text": "      change (enumCont_logAction _ ((M.tm.tr q _ _))).apply _ = _"
+        },
+        {
+          "line": 591,
+          "text": "      rw [hr, enumCont_log_apply]"
+        },
+        {
+          "line": 592,
+          "text": "      simp only [enumCont_history, MultiTapeTM.runFrom_succ_eq_step',"
+        },
+        {
+          "line": 593,
+          "text": "        MultiTapeTM.step, hq]"
+        },
+        {
+          "line": 594,
+          "text": "      rfl"
+        },
+        {
+          "line": 595,
+          "text": ""
+        },
+        {
+          "line": 596,
+          "text": "/-- The restoration controller alternates inverse head movement with writing"
+        },
+        {
+          "line": 597,
+          "text": "the old symbols. It erases history as it goes and halts with history heads at"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 795,
+      "declaration": "enumCont_undo_run",
+      "declaration_line": 774,
+      "raw_line": "        simp only [MultiTapeTM.step, hq]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 792,
+          "text": "      let a := M.tm.tr q c.inputSymbol c.workTapeSymbols"
+        },
+        {
+          "line": 793,
+          "text": "      have hsrun : M.tm.runFrom c\u2080 (t + 1) = a.apply c := by"
+        },
+        {
+          "line": 794,
+          "text": "        rw [MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 795,
+          "text": "        simp only [MultiTapeTM.step, hq]"
+        },
+        {
+          "line": 796,
+          "text": "        rfl"
+        },
+        {
+          "line": 797,
+          "text": "      have hhist : enumCont_history M.tm c\u2080 (t + 1) ="
+        },
+        {
+          "line": 798,
+          "text": "          enumCont_history M.tm c\u2080 t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)] := by"
+        },
+        {
+          "line": 799,
+          "text": "        simp only [enumCont_history, hq]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 904,
+      "declaration": "enumCont_clean_undo_entry",
+      "declaration_line": 894,
+      "raw_line": "  simp only [MultiTapeTM.step, hstate]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 901,
+          "text": "  have hstate : (captureCfg (fun q => (Sum.inl q : (enumCont_cleanTM M).State))"
+        },
+        {
+          "line": 902,
+          "text": "      (.inr (.inl 0)) [] [] (enumCont_logCfg c h)).state = some (.inr (.inl 0)) := by"
+        },
+        {
+          "line": 903,
+          "text": "    simp [captureCfg, enumCont_logCfg, hs]"
+        },
+        {
+          "line": 904,
+          "text": "  simp only [MultiTapeTM.step, hstate]"
+        },
+        {
+          "line": 905,
+          "text": "  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl"
+        },
+        {
+          "line": 906,
+          "text": "  \u00b7 funext i"
+        },
+        {
+          "line": 907,
+          "text": "    refine Fin.lastCases ?_ (fun j => ?_) i"
+        },
+        {
+          "line": 908,
+          "text": "    \u00b7 simp [enumCont_cleanTM, enumCont_logTM, enumCont_undoTM, captureAction, captureCfg, enumCont_undoEntry,"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 985,
+      "declaration": "enumCont_rewind",
+      "declaration_line": 974,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 982,
+          "text": "      tm.runFrom c r = {c with state := dest, inputPos := 1} := by"
+        },
+        {
+          "line": 983,
+          "text": "  have hstep : tm.step c ="
+        },
+        {
+          "line": 984,
+          "text": "      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by"
+        },
+        {
+          "line": 985,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 986,
+          "text": "    rw [hs]"
+        },
+        {
+          "line": 987,
+          "text": "    dsimp only"
+        },
+        {
+          "line": 988,
+          "text": "    rw [hstart, controlAction_apply]"
+        },
+        {
+          "line": 989,
+          "text": "  have hp : (moveInputPos c.inputPos .neg).val \u2264 x.length := by"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1012,
+      "declaration": "enumCont_clean_buffer_rewind",
+      "declaration_line": 1001,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1009,
+          "text": "  | zero =>"
+        },
+        {
+          "line": 1010,
+          "text": "    intro _"
+        },
+        {
+          "line": 1011,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 1012,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1013,
+          "text": "    change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _"
+        },
+        {
+          "line": 1014,
+          "text": "    have hr : (enumCont_cleanCfg M c\u2080 y (some (.inr (.inl 4))) p ((0 : \u2124) - 1)).workTapeSymbols"
+        },
+        {
+          "line": 1015,
+          "text": "        (Fin.last (enumCont_logTM M).k) = none := by"
+        },
+        {
+          "line": 1016,
+          "text": "      simp [enumCont_cleanCfg, Cfg.workTapeSymbols]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1027,
+      "declaration": "enumCont_clean_buffer_rewind",
+      "declaration_line": 1001,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1024,
+          "text": "    have hs : (enumCont_cleanTM M).tm.step"
+        },
+        {
+          "line": 1025,
+          "text": "        (enumCont_cleanCfg M c\u2080 y (some (.inr (.inl 4))) p j) ="
+        },
+        {
+          "line": 1026,
+          "text": "        enumCont_cleanCfg M c\u2080 y (some (.inr (.inl 4))) p ((j : \u2124) - 1) := by"
+        },
+        {
+          "line": 1027,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1028,
+          "text": "      change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _"
+        },
+        {
+          "line": 1029,
+          "text": "      have hr : (enumCont_cleanCfg M c\u2080 y (some (.inr (.inl 4))) p j).workTapeSymbols"
+        },
+        {
+          "line": 1030,
+          "text": "          (Fin.last (enumCont_logTM M).k) = some (y[j]'(by omega)) := by"
+        },
+        {
+          "line": 1031,
+          "text": "        simp [enumCont_cleanCfg, Cfg.workTapeSymbols, List.getElem?_eq_getElem (by omega : j < y.length)]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1134,
+      "declaration": "enumCont_concat_native",
+      "declaration_line": 1121,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1131,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 1132,
+          "text": "    have hr : (enumCont_concatCfg x s (some false) \u27e8x.length + 1, by omega\u27e9 0 x).inputSymbol ="
+        },
+        {
+          "line": 1133,
+          "text": "        none := by simp [enumCont_concatCfg, Cfg.inputSymbol]"
+        },
+        {
+          "line": 1134,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1135,
+          "text": "    change (enumCont_concatTM.tm.tr false _ _).apply _ = _"
+        },
+        {
+          "line": 1136,
+          "text": "    simp only [enumCont_concatTM, Bool.false_eq_true, \u2193reduceIte, hr]"
+        },
+        {
+          "line": 1137,
+          "text": "    rw [controlAction_apply]"
+        },
+        {
+          "line": 1138,
+          "text": "    simp [moveInputPos_zero, enumCont_concatCfg]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1149,
+      "declaration": "enumCont_concat_native",
+      "declaration_line": 1121,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1146,
+          "text": "        (enumCont_concatCfg x s (some false) \u27e8pre.length + 1, by simp [hx]; omega\u27e9 0 pre) ="
+        },
+        {
+          "line": 1147,
+          "text": "        enumCont_concatCfg x s (some false)"
+        },
+        {
+          "line": 1148,
+          "text": "          \u27e8(pre ++ [b]).length + 1, by simp [hx]\u27e9 0 (pre ++ [b]) := by"
+        },
+        {
+          "line": 1149,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1150,
+          "text": "      change (enumCont_concatTM.tm.tr false _ _).apply _ = _"
+        },
+        {
+          "line": 1151,
+          "text": "      simp only [enumCont_concatTM, Bool.false_eq_true, \u2193reduceIte, hread]"
+        },
+        {
+          "line": 1152,
+          "text": "      refine Cfg.ext rfl ?_ rfl ?_ rfl"
+        },
+        {
+          "line": 1153,
+          "text": "      \u00b7 apply Fin.ext"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1176,
+      "declaration": "enumCont_concat_candidate",
+      "declaration_line": 1164,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1173,
+          "text": "    subst pre"
+        },
+        {
+          "line": 1174,
+          "text": "    simp only [List.length_nil]"
+        },
+        {
+          "line": 1175,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 1176,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1177,
+          "text": "    change (enumCont_concatTM.tm.tr true _ _).apply _ = _"
+        },
+        {
+          "line": 1178,
+          "text": "    simp only [enumCont_concatTM, \u2193reduceIte, enumCont_concatCfg, Cfg.workTapeSymbols,"
+        },
+        {
+          "line": 1179,
+          "text": "      bufferTape_nat, List.getElem?_length]"
+        },
+        {
+          "line": 1180,
+          "text": "    rw [controlAction_apply]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1190,
+      "declaration": "enumCont_concat_candidate",
+      "declaration_line": 1164,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 1187,
+          "text": "        (enumCont_concatCfg x s (some true) p pre.length (out ++ pre)) ="
+        },
+        {
+          "line": 1188,
+          "text": "        enumCont_concatCfg x s (some true) p"
+        },
+        {
+          "line": 1189,
+          "text": "          (pre ++ [b]).length (out ++ (pre ++ [b])) := by"
+        },
+        {
+          "line": 1190,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 1191,
+          "text": "      change (enumCont_concatTM.tm.tr true _ _).apply _ = _"
+        },
+        {
+          "line": 1192,
+          "text": "      simp only [enumCont_concatTM, \u2193reduceIte, hr]"
+        },
+        {
+          "line": 1193,
+          "text": "      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_"
+        },
+        {
+          "line": 1194,
+          "text": "      \u00b7 funext i; simp [enumCont_concatCfg, Action.apply]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1321,
+      "declaration": "enumCont_return_run",
+      "declaration_line": 1303,
+      "raw_line": "      simp only [MultiTapeTM.step, enumCont_returnCfg, hq, Option.map_some, Option.getD_some]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1318,
+          "text": "    cases hq : (tm.runFrom c\u2080 t).state with"
+        },
+        {
+          "line": 1319,
+          "text": "    | none => exact False.elim (hs hq)"
+        },
+        {
+          "line": 1320,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 1321,
+          "text": "      simp only [MultiTapeTM.step, enumCont_returnCfg, hq, Option.map_some, Option.getD_some]"
+        },
+        {
+          "line": 1322,
+          "text": "      rw [htr]"
+        },
+        {
+          "line": 1323,
+          "text": "      rfl"
+        },
+        {
+          "line": 1324,
+          "text": ""
+        },
+        {
+          "line": 1325,
+          "text": "/-- Pad an action with inactive high tapes and embed its finite control. -/"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1363,
+      "declaration": "enumCont_pad_run",
+      "declaration_line": 1352,
+      "raw_line": "  | none => simp only [MultiTapeTM.step, enumCont_padCfg, hq, Option.map_none]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1360,
+          "text": "  apply MultiTapeTM.runFrom_comm_of_step (enumCont_padCfg emb) ?_ c t"
+        },
+        {
+          "line": 1361,
+          "text": "  intro c"
+        },
+        {
+          "line": 1362,
+          "text": "  cases hq : c.state with"
+        },
+        {
+          "line": 1363,
+          "text": "  | none => simp only [MultiTapeTM.step, enumCont_padCfg, hq, Option.map_none]"
+        },
+        {
+          "line": 1364,
+          "text": "  | some q =>"
+        },
+        {
+          "line": 1365,
+          "text": "    have hs : (enumCont_padCfg (K := K) emb c).state = some (emb q) := by"
+        },
+        {
+          "line": 1366,
+          "text": "      simp only [enumCont_padCfg, hq, Option.map_some]"
+        },
+        {
+          "line": 1367,
+          "text": "    have hw : (fun i : Fin k => (enumCont_padCfg (K := K) emb c).workTapeSymbols"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1372,
+      "declaration": "enumCont_pad_run",
+      "declaration_line": 1352,
+      "raw_line": "    simp only [MultiTapeTM.step, hs, hq]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1369,
+          "text": "      funext i"
+        },
+        {
+          "line": 1370,
+          "text": "      simp [enumCont_padCfg, Cfg.workTapeSymbols, i.isLt]"
+        },
+        {
+          "line": 1371,
+          "text": "    have hin : (enumCont_padCfg (K := K) emb c).inputSymbol = c.inputSymbol := rfl"
+        },
+        {
+          "line": 1372,
+          "text": "    simp only [MultiTapeTM.step, hs, hq]"
+        },
+        {
+          "line": 1373,
+          "text": "    rw [htr, hw, hin, enumCont_pad_apply]"
+        },
+        {
+          "line": 1374,
+          "text": ""
+        },
+        {
+          "line": 1375,
+          "text": "/-- Three finite source routines share a common padded tape block. The"
+        },
+        {
+          "line": 1376,
+          "text": "startup routine is the initial branch; prepared calls may select either"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1844,
+      "declaration": "enumCont_body_accept",
+      "declaration_line": 1837,
+      "raw_line": "  simp [MultiTapeTM.step, enumCont_bodyTM, enumCont_pairCfg, Cfg.workTapeSymbols,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1841,
+          "text": "    ((enumCont_bodyTM B qv qi stop).tm.step c).state = none \u2227"
+        },
+        {
+          "line": 1842,
+          "text": "      ((enumCont_bodyTM B qv qi stop).tm.step c).output = [true] := by"
+        },
+        {
+          "line": 1843,
+          "text": "  have hL : (enumCont_logTM B).k \u2260 0 := by dsimp [enumCont_logTM]; omega"
+        },
+        {
+          "line": 1844,
+          "text": "  simp [MultiTapeTM.step, enumCont_bodyTM, enumCont_pairCfg, Cfg.workTapeSymbols,"
+        },
+        {
+          "line": 1845,
+          "text": "    hL, Action.apply, bufferTape]"
+        },
+        {
+          "line": 1846,
+          "text": ""
+        },
+        {
+          "line": 1847,
+          "text": "/-- A false verdict is erased before entering the clean increment call. -/"
+        },
+        {
+          "line": 1848,
+          "text": "private lemma enumCont_body_reject (B : FinTM Bool) (qv qi : B.State) (stop : Bool)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2000,
+      "declaration": "enumCont_absorb",
+      "declaration_line": 1992,
+      "raw_line": "    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 1997,
+          "text": "  | zero => rfl"
+        },
+        {
+          "line": 1998,
+          "text": "  | succ t ih =>"
+        },
+        {
+          "line": 1999,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', ih]"
+        },
+        {
+          "line": 2000,
+          "text": "    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]"
+        },
+        {
+          "line": 2001,
+          "text": "    apply Cfg.ext"
+        },
+        {
+          "line": 2002,
+          "text": "    \u00b7 exact hc.symm"
+        },
+        {
+          "line": 2003,
+          "text": "    \u00b7 exact moveInputPos_zero _"
+        },
+        {
+          "line": 2004,
+          "text": "    \u00b7 rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2022,
+      "declaration": "enumCont_agree_run",
+      "declaration_line": 2010,
+      "raw_line": "    | none => simp only [MultiTapeTM.step, hs]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2019,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hn j (by omega)),"
+        },
+        {
+          "line": 2020,
+          "text": "      MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 2021,
+          "text": "    cases hs : (stop.runFrom c t).state with"
+        },
+        {
+          "line": 2022,
+          "text": "    | none => simp only [MultiTapeTM.step, hs]"
+        },
+        {
+          "line": 2023,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 2024,
+          "text": "      have hq : q \u2260 qa := by intro he; subst q; exact hn t (by omega) hs"
+        },
+        {
+          "line": 2025,
+          "text": "      simp only [MultiTapeTM.step, hs, ha q hq]"
+        },
+        {
+          "line": 2026,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2025,
+      "declaration": "enumCont_agree_run",
+      "declaration_line": 2010,
+      "raw_line": "      simp only [MultiTapeTM.step, hs, ha q hq]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2022,
+          "text": "    | none => simp only [MultiTapeTM.step, hs]"
+        },
+        {
+          "line": 2023,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 2024,
+          "text": "      have hq : q \u2260 qa := by intro he; subst q; exact hn t (by omega) hs"
+        },
+        {
+          "line": 2025,
+          "text": "      simp only [MultiTapeTM.step, hs, ha q hq]"
+        },
+        {
+          "line": 2026,
+          "text": ""
+        },
+        {
+          "line": 2027,
+          "text": "/-- The first visit to a stopped anchor transfers to the active machine with"
+        },
+        {
+          "line": 2028,
+          "text": "the same full endpoint and no earlier anchor visit. Absorption identifies"
+        },
+        {
+          "line": 2029,
+          "text": "the first endpoint with the supplied bounded endpoint."
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2570,
+      "declaration": "a3_shift_scan",
+      "declaration_line": 2551,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 2567,
+          "text": "          (((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).workTapeSymbols)).apply"
+        },
+        {
+          "line": 2568,
+          "text": "          ((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t) := by"
+        },
+        {
+          "line": 2569,
+          "text": "      rw [MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 2570,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2571,
+          "text": "      rw [hs]"
+        },
+        {
+          "line": 2572,
+          "text": "      dsimp only"
+        },
+        {
+          "line": 2573,
+          "text": "      rw [inputSymbolInner (p := t) (by omega) (by omega)]"
+        },
+        {
+          "line": 2574,
+          "text": "    refine \u27e8?_, ?_, ?_\u27e9"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2608,
+      "declaration": "a3_shift_computes",
+      "declaration_line": 2591,
+      "raw_line": "    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, a3ShiftTM, hinp]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2605,
+          "text": "      (controlAction 0 (some (.inr (0 : Fin (w.length + 1))))).apply cfg := by"
+        },
+        {
+          "line": 2606,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 2607,
+          "text": "    change (a3ShiftTM w).tm.step cfg = _"
+        },
+        {
+          "line": 2608,
+          "text": "    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, a3ShiftTM, hinp]"
+        },
+        {
+          "line": 2609,
+          "text": "  let next := (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (x.length + 1)"
+        },
+        {
+          "line": 2610,
+          "text": "  have hnext : next.state = some (.inr (0 : Fin (w.length + 1))) := by"
+        },
+        {
+          "line": 2611,
+          "text": "    dsimp only [next]"
+        },
+        {
+          "line": 2612,
+          "text": "    rw [henter]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2715,
+      "declaration": "a3_copy_step",
+      "declaration_line": 2708,
+      "raw_line": "  unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 2712,
+          "text": "      a3LoadCfg C (x := x) 0 \u27e8i + 2, by omega\u27e9 (x.take (i + 1)) (i + 1) := by"
+        },
+        {
+          "line": 2713,
+          "text": "  have hr : (a3LoadCfg C (x := x) 0 \u27e8i + 1, by omega\u27e9 (x.take i) i).inputSymbol ="
+        },
+        {
+          "line": 2714,
+          "text": "      some x[i] := inputSymbolInner i (by simp [a3LoadCfg]; omega) hi"
+        },
+        {
+          "line": 2715,
+          "text": "  unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2716,
+          "text": "  change ((a3RunTM C hk entry exit).tm.tr (.inl 0) _ _).apply _ = _"
+        },
+        {
+          "line": 2717,
+          "text": "  simp only [a3RunTM, \u2193reduceIte]"
+        },
+        {
+          "line": 2718,
+          "text": "  rw [hr]"
+        },
+        {
+          "line": 2719,
+          "text": "  refine Cfg.ext rfl ?_ ?_ ?_ rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2758,
+      "declaration": "a3_load_rewind",
+      "declaration_line": 2750,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 2755,
+          "text": "  induction j with"
+        },
+        {
+          "line": 2756,
+          "text": "  | zero =>"
+        },
+        {
+          "line": 2757,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 2758,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2759,
+          "text": "    simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,"
+        },
+        {
+          "line": 2760,
+          "text": "      show (1 : Fin 3) \u2260 0 by decide, \u2193reduceIte, bufferTape_left]"
+        },
+        {
+          "line": 2761,
+          "text": "    refine Cfg.ext rfl ?_ ?_ ?_ rfl"
+        },
+        {
+          "line": 2762,
+          "text": "    \u00b7 apply Fin.ext"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2774,
+      "declaration": "a3_load_rewind",
+      "declaration_line": 2750,
+      "raw_line": "      unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 2771,
+          "text": "        a3LoadCfg C (x := x) 1 \u27e8j, by omega\u27e9 x ((j : \u2124) - 1) := by"
+        },
+        {
+          "line": 2772,
+          "text": "      have hz : ((j + 1 : \u2115) : \u2124) - 1 = (j : \u2124) := by omega"
+        },
+        {
+          "line": 2773,
+          "text": "      rw [hz]"
+        },
+        {
+          "line": 2774,
+          "text": "      unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2775,
+          "text": "      simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols,"
+        },
+        {
+          "line": 2776,
+          "text": "        show (1 : Fin 3) \u2260 0 by decide, \u2193reduceIte, bufferTape_nat,"
+        },
+        {
+          "line": 2777,
+          "text": "        List.getElem?_eq_getElem (by omega : j < x.length)]"
+        },
+        {
+          "line": 2778,
+          "text": "      refine Cfg.ext rfl ?_ ?_ ?_ rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2803,
+      "declaration": "a3_run_start",
+      "declaration_line": 2792,
+      "raw_line": "    unfold MultiTapeTM.step",
+      "closing_form": "unfold",
+      "selected12": false,
+      "category": "inline-live-or-halt-case-candidate",
+      "nearby_lines": [
+        {
+          "line": 2800,
+          "text": "      a3LoadCfg C (x := x) 1 \u27e8x.length, by omega\u27e9 x ((x.length : \u2124) - 1) := by"
+        },
+        {
+          "line": 2801,
+          "text": "    have hr : (a3LoadCfg C (x := x) 0 \u27e8x.length + 1, by omega\u27e9 x x.length).inputSymbol = none :="
+        },
+        {
+          "line": 2802,
+          "text": "      by simp [Cfg.inputSymbol, a3LoadCfg]"
+        },
+        {
+          "line": 2803,
+          "text": "    unfold MultiTapeTM.step"
+        },
+        {
+          "line": 2804,
+          "text": "    change ((a3RunTM C hk entry exit).tm.tr (.inl 0) _ _).apply _ = _"
+        },
+        {
+          "line": 2805,
+          "text": "    simp only [a3RunTM, \u2193reduceIte]"
+        },
+        {
+          "line": 2806,
+          "text": "    rw [hr]"
+        },
+        {
+          "line": 2807,
+          "text": "    refine Cfg.ext rfl ?_ ?_ ?_ rfl"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2835,
+      "declaration": "a3_run_guarded",
+      "declaration_line": 2824,
+      "raw_line": "    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2832,
+          "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hguard j (by omega)),"
+        },
+        {
+          "line": 2833,
+          "text": "      MultiTapeTM.runFrom_succ_eq_step']"
+        },
+        {
+          "line": 2834,
+          "text": "    cases hs : (C.tm.runFrom cfg t).state with"
+        },
+        {
+          "line": 2835,
+          "text": "    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]"
+        },
+        {
+          "line": 2836,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 2837,
+          "text": "      have hq : q \u2260 exit := by intro he; subst q; exact hguard t (by omega) hs"
+        },
+        {
+          "line": 2838,
+          "text": "      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]"
+        },
+        {
+          "line": 2839,
+          "text": "      simp only [a3RunTM, if_neg hq]"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2838,
+      "declaration": "a3_run_guarded",
+      "declaration_line": 2824,
+      "raw_line": "      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2835,
+          "text": "    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]"
+        },
+        {
+          "line": 2836,
+          "text": "    | some q =>"
+        },
+        {
+          "line": 2837,
+          "text": "      have hq : q \u2260 exit := by intro he; subst q; exact hguard t (by omega) hs"
+        },
+        {
+          "line": 2838,
+          "text": "      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]"
+        },
+        {
+          "line": 2839,
+          "text": "      simp only [a3RunTM, if_neg hq]"
+        },
+        {
+          "line": 2840,
+          "text": "      rfl"
+        },
+        {
+          "line": 2841,
+          "text": ""
+        },
+        {
+          "line": 2842,
+          "text": "/-- A dedicated entry action handles the permitted entry-equals-exit case;"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2861,
+      "declaration": "a3_run_call",
+      "declaration_line": 2848,
+      "raw_line": "    simp only [MultiTapeTM.step, Cfg.ofWords, a3RunTM,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2858,
+          "text": "  have hstep : (a3RunTM C hk entry exit).tm.step"
+        },
+        {
+          "line": 2859,
+          "text": "      (Cfg.ofWords (input := x) (.inl (2 : Fin 3)) (stateWord C.k x)) ="
+        },
+        {
+          "line": 2860,
+          "text": "      (C.tm.step cfg).mapState Sum.inr := by"
+        },
+        {
+          "line": 2861,
+          "text": "    simp only [MultiTapeTM.step, Cfg.ofWords, a3RunTM,"
+        },
+        {
+          "line": 2862,
+          "text": "      show (2 : Fin 3) \u2260 0 by decide, show (2 : Fin 3) \u2260 1 by decide, \u2193reduceIte]"
+        },
+        {
+          "line": 2863,
+          "text": "    rfl"
+        },
+        {
+          "line": 2864,
+          "text": "  have hguard : \u2200 j < t - 1, (C.tm.runFrom (C.tm.step cfg) j).state \u2260 some exit := by"
+        },
+        {
+          "line": 2865,
+          "text": "    intro j hj"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2889,
+      "declaration": "a3_run_singleton",
+      "declaration_line": 2879,
+      "raw_line": "  simp [MultiTapeTM.step, Cfg.mapState, Cfg.ofWords, stateWord, a3RunTM,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2886,
+          "text": "  apply (computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 2887,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,"
+        },
+        {
+          "line": 2888,
+          "text": "    a3_run_start, a3_run_call C hk entry exit x [b] t ht hfirst hr]"
+        },
+        {
+          "line": 2889,
+          "text": "  simp [MultiTapeTM.step, Cfg.mapState, Cfg.ofWords, stateWord, a3RunTM,"
+        },
+        {
+          "line": 2890,
+          "text": "    Cfg.workTapeSymbols, Action.apply, bufferTape]"
+        },
+        {
+          "line": 2891,
+          "text": ""
+        },
+        {
+          "line": 2892,
+          "text": "/-- An installed clean call implements an ordinary decider with explicit"
+        },
+        {
+          "line": 2893,
+          "text": "linear loading overhead. The result may subsequently be run on a recovered"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2953,
+      "declaration": "a3_nonempty_run",
+      "declaration_line": 2946,
+      "raw_line": "  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2950,
+          "text": "  apply MultiTapeTM.runFrom_comm_of_step (fun cfg => cfg.mapState Sum.inr) ?_ cfg t"
+        },
+        {
+          "line": 2951,
+          "text": "  intro cfg"
+        },
+        {
+          "line": 2952,
+          "text": "  cases hs : cfg.state with"
+        },
+        {
+          "line": 2953,
+          "text": "  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]"
+        },
+        {
+          "line": 2954,
+          "text": "  | some q =>"
+        },
+        {
+          "line": 2955,
+          "text": "    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]"
+        },
+        {
+          "line": 2956,
+          "text": "    rfl"
+        },
+        {
+          "line": 2957,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2955,
+      "declaration": "a3_nonempty_run",
+      "declaration_line": 2946,
+      "raw_line": "    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2952,
+          "text": "  cases hs : cfg.state with"
+        },
+        {
+          "line": 2953,
+          "text": "  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]"
+        },
+        {
+          "line": 2954,
+          "text": "  | some q =>"
+        },
+        {
+          "line": 2955,
+          "text": "    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]"
+        },
+        {
+          "line": 2956,
+          "text": "    rfl"
+        },
+        {
+          "line": 2957,
+          "text": ""
+        },
+        {
+          "line": 2958,
+          "text": "/-- The failed-search payload emits exactly one rejecting bit. -/"
+        },
+        {
+          "line": 2959,
+          "text": "private lemma a3_nonempty_nil (M : FinTM Bool) :"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2962,
+      "declaration": "a3_nonempty_nil",
+      "declaration_line": 2959,
+      "raw_line": "  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2959,
+          "text": "private lemma a3_nonempty_nil (M : FinTM Bool) :"
+        },
+        {
+          "line": 2960,
+          "text": "    (a3NonemptyTM M).ComputesInTime [] [false] 1 := by"
+        },
+        {
+          "line": 2961,
+          "text": "  apply (computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 2962,
+          "text": "  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,"
+        },
+        {
+          "line": 2963,
+          "text": "    Cfg.inputSymbol, a3NonemptyTM, Action.apply]"
+        },
+        {
+          "line": 2964,
+          "text": ""
+        },
+        {
+          "line": 2965,
+          "text": "/-- Successful split payloads enter the source machine, charging the guard. -/"
+        },
+        {
+          "line": 2966,
+          "text": "private lemma a3_nonempty_computes (M : FinTM Bool) (x y : List Bool) (t : \u2115)"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2974,
+      "declaration": "a3_nonempty_computes",
+      "declaration_line": 2966,
+      "raw_line": "      simp [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol,",
+      "closing_form": "simp",
+      "selected12": false,
+      "category": "operational-or-composite-transition-candidate",
+      "nearby_lines": [
+        {
+          "line": 2971,
+          "text": "    cases x with"
+        },
+        {
+          "line": 2972,
+          "text": "    | nil => contradiction"
+        },
+        {
+          "line": 2973,
+          "text": "    | cons b x =>"
+        },
+        {
+          "line": 2974,
+          "text": "      simp [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol,"
+        },
+        {
+          "line": 2975,
+          "text": "        a3NonemptyTM, controlAction, Action.apply, Cfg.mapState, moveInputPos_zero]"
+        },
+        {
+          "line": 2976,
+          "text": "  apply (computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "line": 2977,
+          "text": "  rw [MultiTapeTM.runFrom_succ_eq_step, hs, a3_nonempty_run]"
+        },
+        {
+          "line": 2978,
+          "text": "  have hc := (computesInTime_iff _ _ _ _).mp hM"
+        }
+      ]
+    }
+  ],
+  "limit": "Literal token enumeration at this pin over four files, not copy classification or exhaustive duplication census; all unselected candidates require inspection. One EXP continuation at line593 is included."
+}

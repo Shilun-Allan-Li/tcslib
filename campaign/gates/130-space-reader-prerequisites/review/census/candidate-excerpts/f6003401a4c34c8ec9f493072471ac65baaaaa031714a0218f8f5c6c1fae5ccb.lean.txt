@@ -1,0 +1,24 @@
+/-- **The park stays put**: at `done` the rewind's step changes nothing. -/
+theorem irTM'_step_done {k : ℕ} {x : List Bool} (c : Cfg k Bool IRPhase' x)
+    (hc : c.state = some .done) : (irTM' k).step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  show (FinTM.controlAction 0 (some IRPhase'.done)).apply c = c
+  rw [FinTM.controlAction_apply]
+  refine Cfg.ext ?_ ?_ rfl rfl rfl
+  · rw [hc]
+  · exact moveInputPos_zero c.inputPos
+
+
+-- controls (each should FAIL under the seal)
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (d : Cfg k Bool S x) :
+    M.runFrom d 0 = d := rfl
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (d : Cfg k Bool S x) :
+    M.step { d with state := none } = { d with state := none } := rfl
+example {k : ℕ} {S : Type} : (FinTM.controlAction (k := k) (S := S) 0 none).output = none := rfl
+example : moveInputPos (⟨1, by omega⟩ : Fin 3) 0 = ⟨1, by omega⟩ := rfl
+example {k : ℕ} {S : Type} {x : List Bool} (d : Cfg k Bool S x) :
+    ({ d with inputPos := 0 } : Cfg k Bool S x).inputSymbol = none := rfl
+example {k : ℕ} {S T : Type} {x : List Bool} (d : Cfg k Bool S x) (f : S → T) :
+    (d.mapState f).inputPos = d.inputPos := rfl
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (d : Cfg k Bool S x) :
+    (a.apply d).output = d.output ++ a.output.toList := rfl

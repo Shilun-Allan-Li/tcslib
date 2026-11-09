@@ -1,0 +1,65 @@
+/-- The inherited bound writer starts on any globally blank selected bank
+of a rich configuration; no purity condition is imposed on unselected tapes.
+Its endpoint is stated directly on the host, with every other field restored.
+
+**Proof sketch.** Build an actual blank Boolean source bank with the selected
+head origins and empty output. Its lift and forwarding frame equal the given
+host by `rt_embed_matches`. Invoke `rt_exists_digitBoundTM`, then identify the
+transported endpoint by the same public projections. The binary bound is the
+only selected-tape change, and all unselected rich cells stay in the frame. -/
+private theorem rt_exists_cleanDigitBoundTM (Q T : Type) [DecidableEq Q] [DecidableEq T] :
+    ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+      (R : MultiTapeTM (K + 1) (RecSym Q T) S) (entry exit : S) (C : ℕ),
+      ∀ {k : ℕ} (ι : Fin (K + 1) ↪ Fin k) {x : List Bool}
+        (d : Cfg k (RecSym Q T) S (x.map (RecSym.digitEmb Q T))),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ i p, d.workTapes (ι i) p = none) →
+      ∃ t ≤ C * (x.length + 1),
+        (∀ u < t, ((embedEmitTM ι R).runFrom d u).state ≠ some exit) ∧
+        (∀ u ≤ t, ∀ j,
+          |((embedEmitTM ι R).runFrom d u).workTapePos j - d.workTapePos j| ≤
+            ((C * ((x.length + 1).bits.length + 1) : ℕ) : ℤ)) ∧
+        (embedEmitTM ι R).runFrom d t =
+          {d with
+            state := some exit
+            workTapes := fun j p => if j = ι 0 then
+              FinTM.bufferTape ((x.length + 1).bits.map RecSym.digit) (p - d.workTapePos j)
+              else d.workTapes j p} := by
+  obtain ⟨K, S, hfin, heq, R, en, ex, C, bound⟩ := rt_exists_digitBoundTM Q T
+  refine ⟨K, S, hfin, heq, R, en, ex, C, ?_⟩
+  intro k ι x d state input blank
+  let e := RecSym.digitEmb Q T
+  let a : Cfg (K + 1) Bool S x :=
+    { state := some en, inputPos := 1, workTapes := fun _ _ => none,
+      workTapePos := fun i => d.workTapePos (ι i), output := [] }
+  have initial : embedEmitCfg ι d.workTapes d.workTapePos d.output (a.liftSymbols e) = d := by
+    apply rt_embed_matches ι R
+    · exact state.symm
+    · rw [input]; rfl
+    · intro i; funext p
+      simp [a, Cfg.liftSymbols, blank]
+    · intro i; rfl
+    · intro j _; exact ⟨rfl, rfl⟩
+    · simp [a, Cfg.liftSymbols]
+  obtain ⟨t, cost, first, heads, run⟩ := bound ι a rfl rfl (fun _ _ => rfl) rfl
+    d.workTapes d.workTapePos d.output
+  rw [initial] at first heads run
+  refine ⟨t, cost, first, heads, ?_⟩
+  rw [run]
+  apply rt_embed_matches ι R
+  · rfl
+  · rw [input]; rfl
+  · intro i; funext p
+    change (if i = 0 then FinTM.bufferTape (x.length + 1).bits (p - d.workTapePos (ι i))
+      else none).map e = if ι i = ι 0 then _ else d.workTapes (ι i) p
+    by_cases zero : i = 0
+    · subst i
+      simp only [if_true]
+      exact (FinTM.bufferTape_map e _ _).symm
+    · rw [if_neg zero, if_neg (fun h => zero (ι.injective h)), blank]
+      rfl
+  · intro i; rfl
+  · intro j off
+    have ne : j ≠ ι 0 := by intro h; exact off ⟨0, h.symm⟩
+    exact ⟨by funext p; simp only [if_neg ne], rfl⟩
+  · simp [a, Cfg.liftSymbols]

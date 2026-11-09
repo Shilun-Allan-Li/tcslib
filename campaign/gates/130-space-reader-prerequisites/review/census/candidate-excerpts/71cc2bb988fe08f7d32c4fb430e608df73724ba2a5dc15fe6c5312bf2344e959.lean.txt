@@ -1,0 +1,13 @@
+/-- The test's clearing tail: from `back false` at the end of the stored word `v`, `|v| + 1` steps
+blank it, return the head to `0`, and stop at `done false`. -/
+private theorem xr_test_tail {K : ℕ} {x : List Bool} (r : Fin K) (v : List Bool)
+    (d : Cfg K Bool xr_St x) (hd : d.state = some (.back false))
+    (hr : d.workTapes r = FinTM.bufferTape v) (hpos : d.workTapePos r = (v.length : ℤ) - 1) :
+    (xr_testTM K r).runFrom d (v.length + 1) =
+      ⟨some (.done false), d.inputPos, Function.update d.workTapes r (fun _ => none),
+        Function.update d.workTapePos r 0, d.output⟩ := by
+  rw [xr_back_run (xr_testTM K r) r (some none)
+    (fun b inp w s hs => by simp [xr_testTM, hs]) (fun b inp w hw => by simp [xr_testTM, hw])
+    false 0 v.length d hd (by rw [hpos]; ring)
+    (fun i hi => by rw [zero_add, hr]; exact xr_bufferTape_ne_none v i hi)
+    (by rw [hr]; exact xr_bufferTape_neg v _ (by omega)), hr, xr_clear_fun]

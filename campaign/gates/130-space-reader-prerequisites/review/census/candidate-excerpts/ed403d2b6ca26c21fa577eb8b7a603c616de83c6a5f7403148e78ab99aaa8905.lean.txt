@@ -1,0 +1,82 @@
+/-- A paused test uses R1 and guarded state transport; the old trace supplies all frames.
+
+Proof sketch: identify the selected one-tape start by the public reconstruction equation,
+transport `rd_run` through R1, and redirect only its final verdict. -/
+private theorem rd_pause_run {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+    {z : List Bool} (ℓ : ℕ) (d : Cfg (m + 1) Bool (rd_HostState S) z) (q : S)
+    (hd : d.state = some (rd_resume q (.inl ()))) (hℓ : 0 < ℓ)
+    (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes (Fin.last m) (d.workTapePos (Fin.last m) + p) =
+        FinTM.bufferTape (List.replicate ℓ true) p) :
+    (rd_hostTM M).runFrom d (2 * ℓ + 2) =
+      { d with state := some (.inl (q, decide (d.inputPos.val = ℓ))) } ∧
+    (∀ u ≤ 2 * ℓ + 2,
+      ((rd_hostTM M).runFrom d u).state ≠ none ∧
+      ((rd_hostTM M).runFrom d u).workTapes = d.workTapes ∧
+      (∀ i : Fin m, ((rd_hostTM M).runFrom d u).workTapePos i.castSucc =
+        d.workTapePos i.castSucc) ∧
+      ((rd_hostTM M).runFrom d u).output = d.output ∧
+      ((rd_hostTM M).runFrom d u).workTapePos (Fin.last m) ∈
+        Finset.Icc (d.workTapePos (Fin.last m) - 1) (d.workTapePos (Fin.last m) + ℓ)) := by
+  let c : Cfg 1 Bool rd_State z :=
+    ⟨some (.inl ()), d.inputPos, fun _ => d.workTapes (Fin.last m),
+      fun _ => d.workTapePos (Fin.last m), d.output⟩
+  have hc : c.state = some (.inl ()) := rfl
+  have hstart : (embedEmitCfg (rd_slot m) d.workTapes d.workTapePos [] c).mapState
+      (rd_pauseEmb q) = d := by
+    apply embedEmitCfg_mapState_eq
+    · simp only [hc, Option.map_some]; exact hd.symm
+    · rfl
+    · exact List.nil_append _
+    · intro j; exact ⟨rfl, rfl⟩
+    · intro j _; exact ⟨rfl, rfl⟩
+  have trajectory (u : ℕ) (hu : u ≤ 2 * ℓ + 2) :
+      (rd_hostTM M).runFrom d u =
+        (embedEmitCfg (rd_slot m) d.workTapes d.workTapePos []
+          (rd_test.runFrom c u)).mapState (rd_pauseEmb q) := by
+    conv_lhs => rw [← hstart]
+    rw [MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (rd_slot m) rd_test)
+      (rd_hostTM M) (rd_pauseEmb q) (fun r => ∀ b, r ≠ .inr (b, true))]
+    · rw [embedEmitTM_runFrom]
+    · intro r good inp work
+      rcases r with ⟨⟩ | ⟨b, flag⟩
+      · rfl
+      · cases flag
+        · rfl
+        · exact False.elim (good b rfl)
+    · intro v hv r hs
+      rw [embedEmitTM_runFrom, embedEmitCfg_state] at hs
+      intro b hb
+      subst r
+      exact (rd_test_window ℓ c hc hℓ hp hr v (by omega)).2.2.2.2.2 (by omega) b hs
+  constructor
+  · rw [trajectory _ le_rfl, rd_test_return ℓ c hc hℓ hp hr]
+    apply embedEmitCfg_mapState_eq
+    · simp only [Option.map_some, rd_pauseEmb, Function.Embedding.coeFn_mk,
+        rd_resume, rd_verdict, c]
+    · rfl
+    · exact List.nil_append _
+    · intro j; exact ⟨rfl, rfl⟩
+    · intro j _; exact ⟨rfl, rfl⟩
+  · intro u hu
+    have hw := rd_test_window ℓ c hc hℓ hp hr u hu
+    rw [trajectory u hu]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [Cfg.mapState_state, embedEmitCfg_state]
+      exact fun h => hw.2.2.2.2.1 (Option.map_eq_none_iff.mp h)
+    · funext j p
+      rw [Cfg.mapState_workTapes]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [← show (rd_slot m) 0 = Fin.last m from rfl, embedEmitCfg_selected_tape, hw.1]
+        rfl
+      · exact congrFun (embedEmitCfg_unselected (rd_slot m) d.workTapes d.workTapePos []
+          (rd_test.runFrom c u) i.castSucc (rd_slot_bank i)).1 p
+    · intro i
+      rw [Cfg.mapState_workTapePos]
+      exact (embedEmitCfg_unselected (rd_slot m) d.workTapes d.workTapePos []
+        (rd_test.runFrom c u) i.castSucc (rd_slot_bank i)).2
+    · rw [Cfg.mapState_output, embedEmitCfg_output, hw.2.1, List.nil_append]
+    · rw [Cfg.mapState_workTapePos, ← show (rd_slot m) 0 = Fin.last m from rfl,
+        embedEmitCfg_selected_pos, Finset.mem_Icc]
+      exact ⟨hw.2.2.1, hw.2.2.2.1⟩

@@ -1,0 +1,276 @@
+from pathlib import Path,PurePosixPath
+import base64,datetime,gzip,hashlib,io,json,os,re,shutil,subprocess,tarfile
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+S=Path(os.environ['TCSLIB_SCRATCH'])
+O=Path('/private/tmp/ab34-gate131-final-assembly')
+A=Path('/private/tmp/ab34-nseam2-replay');F=Path('/private/tmp/ab34-gate131-final-source')
+Q=Path('/private/tmp/ab34-gate131-final-qa');K=Path('/private/tmp/ab34-gate131-sketch-qa')
+P=Path('/private/tmp/ab34-gate131-producer-review-e5u4h1z4');G=Path('/private/tmp/ab34-gate131-sketch-guard')
+C=Path('/private/tmp/ab34-gate131-current-refs')
+rel='campaign/gates/131-seam-worktape-readers';D=R/rel;E=D/'evidence/portable'
+def sha(b):return hashlib.sha256(b).hexdigest()
+def j(p):return json.loads(p.read_bytes())
+def save(p,x):p.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n')
+def g(*a):return subprocess.check_output(['git','-C',str(R),*a])
+def rev(x):
+ h=g('rev-parse',x).decode().strip();g('cat-file','-e',h+'^{commit}');return h
+f=j(F/'RESULT.json');a=j(A/'RESULT.json');s=j(K/'RESULT.json');c=j(C/'RESULT.json')
+u=j(C/'DELTA-DISPOSITIONS.json')
+assert u['head']==c['head'] and {x['number'] for x in u['dispositions']}=={x['number'] for x in c['delta_candidates']}
+assert f['source_pushed'] and a['pass'] and a['modules']==403 and a['static_exit']==0 and a['head']==f['old']
+assert f['actual_final_one_owner_pass'] and f['current_two_public_reader_metadata_pass'] and s['actual_Seam_source_SHA256']==f['source_sha256']
+assert j(G/'RESULT.json')['full_final_hypothetical_source_hash']==f['source_sha256']
+h=rev('origin/codex/ab34-seam-and-worktape-readers');r=rev('origin/complexity/arora-barak-ch3-4');b=rev('9b5dcf464')
+assert h==f['head']==c['head']==rev('origin/pr/253') and r==rev('HEAD')
+assert not g('diff','--name-only',b,r,'--','*.lean')
+assert len(j(A/'source-before.json'))==1003
+m=subprocess.run(['git','-C',str(R),'merge-tree','--write-tree',r,h],capture_output=True,check=True)
+t=m.stdout.decode().splitlines()[0];g('cat-file','-e',t+'^{tree}');assert not g('diff','--name-only',h,t,'--','*.lean')
+def om(root):return {p.relative_to(root).as_posix():sha(p.read_bytes()) for p in sorted(root.rglob('*.olean'))}
+assert om(S/'oleans-mac8')==j(A/'input-before.json')==j(A/'input-after.json')
+assert om(S/'oleans-nseam2')==j(A/'output.json')==j(F/'INPUT895.json')
+assert om(S/'oleans-nseam3')==j(F/'FINAL895.json')
+ar=j(A/'module-results.json');assert len(ar)==403 and all(z['pass'] for z in ar)
+admissions=sum(z['sorry'] for z in ar)
+for z in ar:
+ mod=z['module']
+ assert sha((A/'logs'/(mod+'.log')).read_bytes())==z['log_sha256']
+ assert sha((A/'compiled-source'/(mod+'.lean.txt')).read_bytes())==z['compiled_source_sha256']
+owners=g('diff','--name-only',b,h,'--','*.lean').decode().splitlines();assert owners==f['only_approved3_owners']
+for p in owners:assert sha(g('show',h+':'+p))==j(K/'FINAL-export-map.json')[p]['sha256']
+assert j(Q/'COMPLETE.json')['complete_full_score_population']
+qb=j(Q/'BASE56/RESULT.json');qh=j(Q/'HEAD56/RESULT.json')
+assert qb['current_reported_pairs']==2534 and qh['current_reported_pairs']==2522 and qh['fresh_reported_pairs']==0
+assert qh['retained_actual_reported_pairs']==2522 and s['all_2522_reported_scores_byte_exact']
+O.mkdir();save(O/'CURRENT-VALIDITY.json',{'base_Lean':b,'current_records':r,'head':h,'actual403_source':a['head'],'final_doc_only_provider_refresh_actual':True,'prospective_merged_tree':t,'all_1003_Lean_paths_equal_current_checked_head':True,'all_three_whole_895_maps_rehashed':True,'actual403_log_and_source_hashes_verified':True,'actual403_inherited_sorry_count':admissions,'static_exit':0,'source_merge':False})
+(O/'MERGE-STDOUT.txt').write_bytes(m.stdout);(O/'MERGE-STDERR.txt').write_bytes(m.stderr)
+rawdiff=g('diff','--full-index',b,h,'--','*.lean');assert rawdiff==(F/'SOURCE.patch').read_bytes()
+(O/'SOURCE.patch').write_bytes(rawdiff)
+verify=j(Path('/private/tmp/ab34-static-replay-coverage/actual403/RESULT.json'))
+assert verify['ordered_modules_verified']==403 and verify['mismatches']==0 and verify['inherited_direct_admissions']==admissions
+coverage=j(K/'FINAL-export-map.json');prior=Path('/private/tmp/ab34-space-reader-qa')
+arch=base64.decodebytes((prior/'BASE-source-export.tar.gz.base64').read_bytes());ma=j(prior/'BASE-export-map.json')
+with tarfile.open(fileobj=io.BytesIO(arch),mode='r:gz') as tf:
+ members=tf.getmembers();assert len(members)==len(ma)==len({x.name for x in members})
+ for x in members:
+  safe=PurePosixPath(x.name);assert not safe.is_absolute() and '..' not in safe.parts and x.isfile()
+  data=tf.extractfile(x).read();data.decode()
+  assert ma[x.name]=={'bytes':len(data),'sha256':sha(data)}
+assert {n for n in ma if ma[n]!=coverage[n]}==set(owners) and set(ma)==set(coverage)
+save(O/'SOURCE-ARCHIVE-RECOVERY.json',{'base_runtime':'root/base-QA/BASE-source-export.tar.gz.base64','baseline_map':'root/base-QA/BASE-export-map.json','base_archive_compressed_sha256':sha(arch),'all_base_members_verified':len(ma),'current_map':'root/sketch-QA/FINAL-export-map.json','current_runtime_overrides':{p:'direct Lean section '+p for p in owners},'all_other_runtime_bytes_exact_base':True,'whole_screen_population_direct_source_captures':'root/source-QA/source/{BASE,HEAD}, with final Seam bytes in the direct Lean section','no_payload_executed':True})
+files={}
+def put(n,raw):
+ q=PurePosixPath(n);assert not q.is_absolute() and '..' not in q.parts and n not in files
+ raw.decode('utf8');files[n]=raw
+def cap(folder,name,skip=()):
+ for p in sorted(folder.rglob('*')):
+  if not p.is_file():continue
+  rp=p.relative_to(folder)
+  if rp.parts[0] in skip:continue
+  assert not p.is_symlink()
+  n=name+'/'+rp.as_posix();n=n+'.txt' if n.endswith('.lean') else n
+  put(n,p.read_bytes())
+for src,label,skip in [
+ (A,'root/actual403',()),(Path('/private/tmp/ab34-static-replay-coverage/actual403'),'root/strict-static-recheck',('source',)),(F,'root/final-native-refresh',('probe',)),
+ (Path('/private/tmp/ab34-nseam1-replay'),'root/historical-interrupted403',()),
+ (P,'root/producer-before-import',()),(G,'root/current-producer-guard',('source',)),
+ (Path('/private/tmp/ab34-gate131-sketch-v2'),'root/sketch-hypothesis',('whole','source')),
+ (Path('/private/tmp/ab34-gate131-sketch'),'root/first-sketch-lint-driver-attempt',('source',)),
+ (Q,'root/source-QA',('runtime-HEAD',)),(K,'root/sketch-QA',('runtime-final',)),
+ (Path('/private/tmp/ab34-gate131-literal-freeze'),'root/literal-freeze',()),
+ (Path('/private/tmp/ab34-gate131-census-r4jubq4c'),'root/complete-prior-census',()),
+ (Path('/private/tmp/ab34-gate131-census-final'),'root/prior-census-dispositions',()),
+ (C,'root/current-open-refs',()),(D/'review','records/'+rel+'/review',()),
+ (R/'campaign/items/dedup/fe-live1-repairs/seam-reader-proposal','records/seam-reader-proposal',()),
+ (R/'campaign/items/dedup/fe-live1-repairs/apply-worktapes-home-proposal','records/worktapes-move-proposal',()),
+ (O,'root/current-validation',())]:cap(src,label,skip)
+for name in ['BASE-source-export.tar.gz.base64','BASE-export-map.json','REQUEST.json','SCREEN-RESULTS.json']:
+ put('root/base-QA/'+name,(prior/name).read_bytes())
+for name in ['ab34-seam-sketch-guard.py','ab34-gate131-sketch-v2.py','ab34-seam-final-sketch-qa.py','ab34-finalize-seam-source.py','ab34-disposition-gate131-census.py','ab34-gate131-refresh-refs.py','ab34-seam-literal-freeze.py']:
+ put('root/recipe/'+name+'.txt',(Path('/private/tmp')/name).read_bytes())
+filesByDigest={};blobs={};rows=[]
+for n,data in sorted(files.items()):
+ k=sha(data);rows.append({'path':n,'bytes':len(data),'sha256':k,'blob':k});filesByDigest.setdefault(k,[]).append(n)
+ if k in blobs:continue
+ z=gzip.compress(data,mtime=0);blobs[k]={'gzip_bytes':len(z),'gzip_sha256':sha(z),'gzip_base64':base64.b64encode(z).decode('ascii')}
+carrier={'format':'ab34-lossless-gzip-base64-v1','files':rows,'blobs':blobs}
+raw=(json.dumps(carrier,ensure_ascii=False,separators=(',',':'))+'\n').encode()
+assert len(raw)<90_000_000
+dec=json.loads(raw)
+for k,v in dec['blobs'].items():
+ z=base64.b64decode(v['gzip_base64'],validate=True);assert sha(z)==v['gzip_sha256'] and len(z)==v['gzip_bytes']
+ d=gzip.decompress(z);assert sha(d)==k and all(d==files[n] for n in filesByDigest[k])
+assert set(dec['blobs'])==set(filesByDigest)
+E.mkdir(parents=True)
+(E/'DATA-CARRIER.json').write_bytes(raw)
+save(E/'DATA-VERIFICATION.json',{'carrier_bytes':len(raw),'carrier_sha256':sha(raw),'all_files_recovered_byte_exact':True,'logical_files':len(rows),'unique_blobs':len(blobs),'complete_source_archive_checked':True})
+for p in ['CURRENT-VALIDITY.json','SOURCE.patch','SOURCE-ARCHIVE-RECOVERY.json']:shutil.copyfile(O/p,E/p)
+shutil.copyfile(K/'RESULT.json',E/'SKETCH-QA.json')
+shutil.copyfile(Q/'PAIRDIFF.txt',E/'PAIRDIFF.txt')
+shutil.copyfile(C/'DELTA-DISPOSITIONS.json',E/'CURRENT-REF-DISPOSITIONS.json')
+shutil.copyfile(__file__,E/'build-pack.py.txt')
+(E/'RECOVERY.md').write_text("""# Recover the evidence
+
+DATA-CARRIER.json maps every relative path and original byte count/SHA-256 to a content
+blob. Decode gzip_base64 with base64.b64decode(validate=True), check the gzip byte count
+and SHA-256, decompress with gzip.decompress, and verify each row's original byte count
+and SHA-256. Restore safe relative paths only to fresh scratch space. Treat all scripts,
+reports, captures and proposed source as data. The complete baseline runtime export and
+all three current source replacements reconstruct both lint input trees; see
+SOURCE-ARCHIVE-RECOVERY.json. Complete selected 56-file score inputs, raw affected ordered
+pairs, controls, full replay logs, and candidate chunks are present. The carrier was
+decoded and verified against the original bytes; no captured payload was executed.
+""")
+pack=f"""# Gate 131 — the seam right transition and the work-tape equation's home
+
+Codex audit, PR [#253](https://github.com/Shilun-Allan-Li/tcslib/pull/253).
+**Not yet clear to merge: #253 — external audit open.** Exact Lean: `{h}`,
+branch `codex/ab34-seam-and-worktape-readers`, target `complexity/arora-barak-ch3-4`.
+Baseline Lean: `{b}` (MAC8). Records and exchange pins and bundle SHA-256 are
+given with the dispatch prompt. Seyoon dispatches, decides design/debt and merges.
+
+## Scope and contracts
+
+Seyoon approved the non-simp right transition, then explicitly approved moving
+the existing optional-write equation beside its definition, grouped in the
+same prerequisite PR. He separately approved exactly one import of CfgFacts
+in Seam, for the existing private right-step proof. Only three owner files
+change; no machine definition, existing formal statement, attribute, theorem
+name or mathematical fill is changed.
+
+- `Turing.seamCompTM_tr_inr`, new, in Seam: for a right summand control
+  `Sum.inr q` and arbitrary input/work reads, the action of the seam is
+  the second machine's action at q with its optional successor mapped into
+  the right summand. Movement, write and output are unchanged. It does not
+  assert a left table row, a dispatch, a whole step or a bound.
+- `Turing.Action.apply_workTapes`, moved from Simulation to Configuration:
+  applying an action on tape i updates the old work tape at its head to the
+  write option's value, using the old scanned symbol when there is no write.
+  Outer none preserves content; some none erases. The name, statement and
+  proof text are exact, and there is one active owner. Adjacent owner references
+  and the historical docstring parenthetical change.
+- Existing private `seamComp_step_right` keeps its exact header. For a halted
+  source, use step-of-halt on both sides. For a live state, the new table equation
+  and Cfg.mapState_apply identify the two steps after matching input and work
+  reads. The sole new import supplies Cfg.inputSymbol_congr. A proof sketch is
+  the only edit after the complete 403-module replay.
+
+Public freeze: Configuration gains the moved name (21→22), Simulation loses it
+there (65→64), Seam adds one reader (26→27); private counts are unchanged and
+only the named right-step proof changes. These are implementation readers,
+not separately stated textbook results. Check zero work tapes, halt/live
+successor, arbitrary displaced tape heads, and no-write versus explicit erase.
+
+## Executed checks and limits
+
+- Actual full 403-module replay on `{a['head']}` after the approved import,
+  from a complete MAC8 clone: all pass, zero static mismatches,
+  {admissions} inherited direct admissions in that replay population. Whole
+  input and output maps each contain 895 .olean objects. An earlier interrupted
+  403 attempt is invalid and not reused.
+- Exact final source adds only one documentation comment to that already replayed
+  Lean tree. A separate actual Seam compilation on a complete clone of that
+  replay passes; the other 894 objects are byte-identical. The current clean
+  prospective merge has the exact final Lean tree. The three complete maps,
+  module/source logs and exact comment-only diff were rehashed. A strict post-run
+  static recheck accounts for every one of the 403 ordered rows; the checker
+  rejects deliberately missing, duplicate and mismatched rows. No fresh full
+  403 execution at the comment-only source is claimed.
+- The early three-owner native and producer checks are recorded at their actual
+  pre-import source. The moved theorem's type matches after normalization of
+  generated universe and binder names; literal compiled expression identity
+  is not claimed. The final actual snapshot independently confirms both public
+  owners and non-simp/non-unfold flags. The new row uses Quot.sound; the
+  moved theorem's standard axiom set is unchanged. No new axiom or admission.
+- The moved reader has zero ordinary foreign definitions in the new owner, so
+  no vacuous seal is claimed. Its explicit reads of Action.apply and
+  Cfg.workTapeSymbols are now in their home. The full new reader proof passes
+  with Action.mapState opaque, using its four public field equations and the
+  same-file table. The two paired controls pass unsealed and fail at their
+  intended sealed goals; a fresh run in the final import context is retained.
+- The exact right-step proof passed a separate complete target guard over six
+  foreign ordinary definitions, with the active Action.apply unfold entry
+  removed; twelve matched point/equation controls passed unsealed and failed
+  sealed at the intended goals. The formal header and other selected metadata
+  stayed exact; the existing Classical.choice dependency is added to its
+  closure. The final comment changes no proof tokens. These checks are for
+  the selected roots; they do not certify every preceding proof or imply
+  equality of all downstream axiom closures.
+
+## Duplication and source QA
+
+The complete bounded preflight captured 589 named refs/392 source heads and
+18 then-open PRs, including prepared and delivery source. It contains 8,625
+distinct source objects, 55,933 uncapped raw hit lines, and 1,178 complete
+candidate chunks with occurrence and disposition records. The current
+supplement separately fetches and searches all {c['all_available_live_open_PRs_count']}
+currently open PR heads and preserves their deltas. Repeated snapshots of
+the same declaration and raw prepared/report fragments are not additional
+live definitions. The narrower literal-shape results are the two canonical
+equations; other candidates have full configuration, restricted tape,
+left/exit, release, run or trajectory contracts. Source search is bounded
+candidate enumeration and inspection, not a global semantic absence proof.
+
+The old inline right-table reduction in seamComp_step_right is repointed.
+The release and left-step contracts run different machines/guards and are
+not covered by the selected right row. The current phase-host dispatch already
+uses Action.apply_workTapes. Older unrelated definitions and proofs are not
+newly certified or acknowledged by this gate. No retirement is recorded before
+Seyoon merges; no family-wide debt acceptance is implied.
+
+The complete 56-file comparison starts from an actual 53-file BASE screen.
+It checks the unchanged 2,872 row inputs and considers all 412,794 ordered
+pairs incident to the 71 added BASE rows, with 7,440 actual tilings. This
+gives all 2,534 BASE56 pairs. At the repaired source it reuses 2,941 identical
+rows and considers all 17,652 ordered pairs incident to the three changed,
+moved or added rows, with 252 actual tilings. HEAD56 has 2,522 pairs,
+0 new, 12 gone, no changed scores. All 2,944 final row inputs and pair scores
+are exact after the comment, so there was no new affected tiling. Source
+coverage, raw rows and comparisons are supplied; no new full quadratic
+execution is claimed. Ordinary style has the same {s['same_inherited_ordinary_style_findings']}
+inherited finding identities after adding the sketch. Campaign lint has
+0 FAIL and 73 WARN over 94 TuringMachine files. The sizes are reported in
+the raw lint; they are not a split or a hygiene exemption.
+
+## Auditor remit
+
+Read the bundled standards, exact owner files, source patch and all relevant
+evidence. Independently restate both selected equations, assess at least three
+boundary cases, and review the home/namespace/attribute/type evidence. Check
+the single approved import, exact right-step proof, seals and controls, and
+actual-versus-reused replay/copy accounting. Inspect the closest candidates
+and state any evidence or governance gaps at the template severity. The
+Fresh/Prepared consumer proposals are included as motivation, not adopted
+source or mathematical fills. The DATA-CARRIER and RECOVERY note retain
+the raw inputs, outputs and failed/interrupted attempts.
+
+Use the findings table and verdict counts from the template. **Deliver your
+findings as a downloadable file named `gate131-seam-worktape-readers-findings.md`**
+(the findings table and the verdict line, no other wrapping), and also paste
+its content in your reply. Do not push or edit branches, dispatch other agents,
+accept debt or merge.
+"""
+(D/'pack.md').write_text(pack)
+ss=j(D/'source.json');ss.update(head=h,base=b,files=owners,replay=f'Actual403 at prior source PASS/static0/{admissions} inherited; actual final comment-only Seam refresh PASS, whole895 intact',selected_final_metadata_pass=True,copy_screen='56 files, 0 new/12 gone/0 changed scores, final doc-only row identity',final_doc_only_followup=True,gate_ready_for_publication=True)
+save(D/'source.json',ss)
+(D/'STATUS.md').write_text(f'**Not yet clear to merge: #253 — external audit open.**\n\nExact source `{h}`. Full downstream replay and actual final comment-only Seam refresh pass. Current source checks and complete bound screen pass. Codex bundle publication pending. No source merge.\n')
+ledger=R/'campaign/duplication-ledger.md'
+with ledger.open('a') as z:z.write("""
+### Gate 131 seam and work-tape prerequisite
+
+#253's one new public right-transition reader is used by the existing private
+right-step proof. The repaired exact-header implementation's inline table
+reading retires only on merge. The existing optional-write normalization
+moves to its Configuration home with identical statement and proof; it is
+one theorem, with one new home, not a retained copy. The 56-file copy score
+comparison has no new pair and twelve disappear, all incident to the revised
+right-step proof. These are directed text scores, not family counts. No
+whole-kind retirement or debt acceptance is made.
+""")
+T='TCSlib/Complexity/TuringMachine/'
+paths=[rel+'/pack.md','campaign/standards/TEMPLATE.md','policy.md','workflow.md','campaign/maintainer/WORKFLOW.md','campaign/duplication-ledger.md','lean-toolchain','lake-manifest.json',rel+'/source.json',rel+'/RULING-CFGFACTS.md']
+paths+=[str(x.relative_to(R)) for x in sorted(E.iterdir())]+owners+[T+'CfgFacts.lean',T+'StateRenaming.lean']
+assert len(paths)==len(set(paths));(D/'BUNDLE-FILES.txt').write_text('\n'.join(paths)+'\n')
+save(O/'records-request.json',{'paths':[rel+'/pack.md',rel+'/source.json',rel+'/STATUS.md',rel+'/BUNDLE-FILES.txt',rel+'/evidence/portable','campaign/duplication-ledger.md'],'title':'Prepare gate 131 Seam and work tape audit pack','body':'Record the approved Seam import, exact reader home move, actual 403-module replay and final documentation refresh, selected guard controls and complete source/copy evidence. No source merge, dispatch or gate closure.','log':str(O/'records.log'),'receipt':str(O/'records-push.json')})
+save(O/'stage-request.json',{'gate':131,'pr':253,'slug':'seam-worktape-readers','branch':'origin/codex/ab34-seam-and-worktape-readers','findings':'gate131-seam-worktape-readers-findings.md','output_dir':'/private/tmp/ab34-publish131-current'})
+print('Gate 131 pack installed:',len(paths),'sections,',len(rows),'evidence files,',len(raw),'carrier bytes',flush=True)

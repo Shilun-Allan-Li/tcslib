@@ -1,0 +1,101 @@
+/-- **The pass's contract.** From the origin of the ruler word `u`, `2|u| + 2` steps move head `j`
+by `|u|` cells along `dir`, blank the `|u| + 1` cells it visited, return the ruler head to `0`,
+change nothing else, and stop at `done true`.
+
+**Proof sketch.** `xr_pass_fwd` gives the first `|u|` steps: head `j` moves `|u|` cells along
+`dir`, blanking each cell it leaves, while the ruler head walks over `u`. At the ruler's right
+blank one step blanks the last visited cell and turns the ruler head back, and `xr_back_run`
+returns it to `0` in `|u| + 1` steps. The visited cells are `pos + i·dir` for `i ≤ |u|`; every
+other cell keeps its symbol. -/
+private theorem xr_passTM_run {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j ≠ r) (dir : SignType)
+    (u : List Bool) (d : Cfg K Bool xr_St x) (hd : d.state = some .run)
+    (hr : d.workTapes r = FinTM.bufferTape u) (hpos : d.workTapePos r = 0) :
+    ∃ f : ℤ → Option Bool,
+      (xr_passTM K j r dir).runFrom d (2 * u.length + 2) =
+        ⟨some (.done true), d.inputPos, Function.update d.workTapes j f,
+          Function.update d.workTapePos j (d.workTapePos j + u.length * (dir : ℤ)), d.output⟩ ∧
+      (∀ p : ℤ, (∃ i : ℕ, i ≤ u.length ∧ p = d.workTapePos j + i * (dir : ℤ)) → f p = none) ∧
+      (∀ p : ℤ, (∀ i : ℕ, i ≤ u.length → p ≠ d.workTapePos j + i * (dir : ℤ)) →
+        f p = d.workTapes j p) := by
+  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_pass_fwd j r hjr dir u d hd hr hpos u.length le_rfl
+  set c₁ : Cfg K Bool xr_St x := ⟨some .run, d.inputPos, Function.update d.workTapes j f,
+    fun i => if i = j then d.workTapePos j + u.length * (dir : ℤ)
+      else if i = r then (u.length : ℤ) else d.workTapePos i, d.output⟩ with hc₁
+  have hread : c₁.workTapeSymbols r = none := by
+    rw [Cfg.workTapeSymbols_eq, hc₁]
+    dsimp only
+    rw [if_neg (Ne.symm hjr), if_pos rfl, Function.update_of_ne (Ne.symm hjr), hr,
+      FinTM.bufferTape_nat, List.getElem?_eq_none_iff]
+  set f' : ℤ → Option Bool := Function.update f (d.workTapePos j + u.length * (dir : ℤ)) none
+    with hf'
+  have h2 : (xr_passTM K j r dir).step c₁ =
+      ⟨some (.back true), d.inputPos, Function.update d.workTapes j f',
+        fun i => if i = j then d.workTapePos j + u.length * (dir : ℤ)
+          else if i = r then (u.length : ℤ) + -1 else d.workTapePos i, d.output⟩ := by
+    rw [MultiTapeTM.step_of_some rfl,
+      show (xr_passTM K j r dir).tr .run _ _ =
+        xr_act (xr_mv2 j r (some none) 0 SignType.neg) (some (.back true)) by
+          simp only [xr_passTM]
+          rw [hread],
+      xr_mv2_apply j r hjr, hc₁]
+    dsimp only
+    simp only [Function.update_self, Function.update_idem, Option.getD_some,
+      if_neg (Ne.symm hjr), SignType.coe_zero, add_zero, ite_true]
+    congr 1
+    funext i
+    by_cases hij : i = j
+    · simp [hij]
+    · by_cases hir : i = r
+      · simp [hir]
+      · simp [hij, hir]
+  have h3 := xr_back_run (xr_passTM K j r dir) r none
+    (fun b inp w s hs => by simp [xr_passTM, hs]) (fun b inp w hw => by simp [xr_passTM, hw])
+    true 0 u.length
+    ⟨some (.back true), d.inputPos, Function.update d.workTapes j f',
+      fun i => if i = j then d.workTapePos j + u.length * (dir : ℤ)
+        else if i = r then (u.length : ℤ) + -1 else d.workTapePos i, d.output⟩ rfl
+    (by dsimp only; rw [if_neg (Ne.symm hjr), if_pos rfl]; ring)
+    (by
+      intro i hi
+      dsimp only
+      rw [Function.update_of_ne (Ne.symm hjr), zero_add, hr]
+      exact xr_bufferTape_ne_none u i hi)
+    (by
+      dsimp only
+      rw [Function.update_of_ne (Ne.symm hjr), hr]
+      exact xr_bufferTape_neg u _ (by omega))
+  refine ⟨f', ?_, ?_, ?_⟩
+  · have hsplit : (xr_passTM K j r dir).runFrom d (2 * u.length + 2) =
+        (xr_passTM K j r dir).runFrom
+          ((xr_passTM K j r dir).step ((xr_passTM K j r dir).runFrom d u.length))
+          (u.length + 1) := by
+      rw [show 2 * u.length + 2 = (u.length + 1) + (u.length + 1) by ring,
+        MultiTapeTM.runFrom_add, ← MultiTapeTM.runFrom_succ_eq_step']
+    rw [hsplit, hrun, h2, h3]
+    dsimp only
+    congr 1
+    · have hG : Function.update (Function.update d.workTapes j f') r
+          (fun p => if 0 ≤ p ∧ p < 0 + (u.length : ℤ)
+            then none.getD (Function.update d.workTapes j f' r p)
+            else Function.update d.workTapes j f' r p) = Function.update d.workTapes j f' := by
+        rw [Function.update_eq_self_iff, Function.update_of_ne (Ne.symm hjr)]
+        funext p
+        simp only [Option.getD_none, ite_self]
+      exact hG
+    · funext i
+      by_cases hij : i = j
+      · rw [hij, Function.update_of_ne hjr, if_pos rfl, Function.update_self]
+      · by_cases hir : i = r
+        · rw [hir, Function.update_self, Function.update_of_ne (Ne.symm hjr), hpos]
+        · rw [Function.update_of_ne hir, if_neg hij, if_neg hir, Function.update_of_ne hij]
+  · rintro p ⟨i, hi, rfl⟩
+    by_cases hp : d.workTapePos j + i * (dir : ℤ) = d.workTapePos j + u.length * (dir : ℤ)
+    · rw [hp, hf', Function.update_self]
+    · rw [hf', Function.update_of_ne hp]
+      refine hblank _ ⟨i, ?_, rfl⟩
+      rcases Nat.lt_or_eq_of_le hi with h | h
+      · exact h
+      · exact absurd (by rw [h]) hp
+  · intro p hp
+    rw [hf', Function.update_of_ne (hp u.length le_rfl)]
+    exact hkeep p (fun i hi => hp i hi.le)

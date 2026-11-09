@@ -1,0 +1,65 @@
+{
+  "source": "0f926779de590194f5222277dc038d2ad097ff91",
+  "MAC8_source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "current_Simulation_TCSlib_import_closure": [
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Configuration",
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "source_SHA256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "MAC8_SHA256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "source_exact_MAC8": true,
+      "imports": [
+        "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+        "Mathlib.Algebra.Order.Group.Abs",
+        "Mathlib.Algebra.Order.Group.Int",
+        "Mathlib.Data.Finset.Dedup",
+        "Mathlib.Data.Finset.Max",
+        "Mathlib.Data.Int.Interval",
+        "Mathlib.Data.Sign.Defs"
+      ]
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_SHA256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "MAC8_SHA256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "source_exact_MAC8": true,
+      "imports": [
+        "Mathlib.Algebra.Order.Group.Abs",
+        "Mathlib.Algebra.Order.Group.Int",
+        "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+        "Mathlib.Data.Sign.Defs",
+        "Mathlib.Logic.Embedding.Basic",
+        "TCSlib.Complexity.TuringMachine.Configuration"
+      ]
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Finite",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_SHA256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "MAC8_SHA256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "source_exact_MAC8": true,
+      "imports": [
+        "Mathlib.Data.Fintype.Basic",
+        "TCSlib.Complexity.TuringMachine.Deterministic"
+      ]
+    },
+    {
+      "module": "TCSlib.Complexity.TuringMachine.Simulation",
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "source_SHA256": "70252817c618c2dee77ff8c4847a3bf34efaaee15d8e10e3813a9a2e27cd6136",
+      "MAC8_SHA256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+      "source_exact_MAC8": false,
+      "imports": [
+        "Mathlib.Algebra.BigOperators.Fin",
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ]
+    }
+  ],
+  "all_imported_TCSlib_sources_other_than_Simulation_exact_MAC8": true,
+  "Configuration_has_no_TCSlib_imports": true,
+  "no_new_import_proposed": true
+}

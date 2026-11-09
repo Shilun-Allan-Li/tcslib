@@ -1,0 +1,55 @@
+/-- Preparation reaches its first return with the exact counted-source bank.
+Every configuration of the embedded preparation is outside the anchor phase.
+**Proof sketch.** Cut the absorbing source at its first return, map its full
+configuration into the preparation phase, then take the explicit dispatch.
+Check the source-bank seam field by field, including the native head and flag. -/
+private lemma splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List Bool) :
+    ∃ t ≤ 2 * (s.length + 1),
+      (splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+          splitCountCfg SplitBodyState.count SplitBodyState.check w s
+            (splitBank M s (some start) []) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        (Cfg.ofWords (input := w) (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) := by
+  obtain ⟨t, ht, he, hsafe⟩ := splitEmbed_cut (splitPrepareTM M.k).tm
+    (splitBodyTM M start).tm SplitBodyState.prepare .anchor (fun q => q.1 = 2)
+    (by intro q; simp)
+    (by
+      rintro z ⟨⟨q, over⟩, hz, hq⟩
+      change q = 2 at hq
+      subst q
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2, over))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [splitBodyTM, hq])
+    (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s))
+    (splitPrepareReady M.k w s 2 0) (2 * (s.length + 1))
+    ⟨_, rfl, rfl⟩ (splitPrepare_run M.k w s)
+  have hstep : (splitBodyTM M start).tm.step
+      ((splitPrepareReady M.k w s 2 0).mapState SplitBodyState.prepare) =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s
+        (splitBank M s (some start) []) := by
+    simp only [MultiTapeTM.step, Cfg.mapState, splitPrepareReady, Option.map_some,
+      splitBodyTM, ↓reduceIte]
+    refine Cfg.ext ?_ ?_ rfl ?_ rfl
+    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
+    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
+    · funext i
+      refine Fin.cases ?_ (fun j => ?_) i <;>
+        simp [Action.apply, controlAction, splitCountCfg, splitBank]
+  have hinit : (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s)).mapState
+      (SplitBodyState.prepare (S := M.State)) = Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s) := rfl
+  rw [hinit] at he hsafe
+  have hend : (splitBodyTM M start).tm.runFrom
+      (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s
+        (splitBank M s (some start) []) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', he, hstep]
+  refine ⟨t, ht, hend, ?_⟩
+  intro j hj
+  by_cases hjt : j ≤ t
+  · exact hsafe j hjt
+  · have hj' : j = t + 1 := by omega
+    rw [hj', hend]
+    simp [splitCountCfg, splitBank]

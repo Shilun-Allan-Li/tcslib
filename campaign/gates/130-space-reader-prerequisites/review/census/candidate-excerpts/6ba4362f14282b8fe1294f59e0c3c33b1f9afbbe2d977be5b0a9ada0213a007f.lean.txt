@@ -1,0 +1,7 @@
+/-- Fixed-width increment and the generic one-symbol extension supply the
+successor's only computational phases. -/
+private def rt_succParts (k : ℕ) (i : Fin k) :
+    (p : rt_succPhase) → MultiTapeTM k Bool (rt_succControl p)
+  | .increment => incrementTM k i
+  | .extend => rt_appendSymbolTM k i true
+  | .exit => {q₀ := (), tr := fun _ _ _ => inputMoveAction 0 ()}

@@ -1,0 +1,53 @@
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option smartUnfolding false
+set_option maxHeartbeats 0
+open Turing Turing.FinTM
+private def blankCfg : Cfg 0 Bool Unit [] :=
+  {state := some (), inputPos := 0, workTapes := fun i => Fin.elim0 i,
+    workTapePos := fun i => Fin.elim0 i, output := []}
+attribute [local irreducible] Turing.MultiTapeTM.runFrom Turing.FinTM.bufferTape Turing.inputMoveAction Turing.tapeAction Turing.FinTM.controlAction Turing.Action.mapState Turing.inputFoldTM Turing.Cfg.inputSymbol Turing.MultiTapeTM.step Turing.moveInputPos Turing.Cfg.workTapeSymbols
+theorem ReaderControl1 {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.runFrom c 0 = c := by rfl
+
+theorem ReaderControl2 {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.runFrom c 1 = M.step c := by rfl
+
+theorem ReaderControl3  : bufferTape ([] : List Bool) 0 = none := by rfl
+
+theorem ReaderControl4  : bufferTape [true] 0 = some true := by rfl
+
+theorem ReaderControl5 {k : ℕ} {S : Type} (m : SignType) (q : S) : (inputMoveAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none (some q) := by rfl
+
+theorem ReaderControl6 {k : ℕ} {S : Type} (m : SignType) (q : S) : (inputMoveAction (k := k) m q : Action k Bool S).state = some q := by rfl
+
+theorem ReaderControl7 {k : ℕ} {S : Type} (i : Fin k) (m s : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i m w s q : Action k Bool S) = Action.mk m (fun j => if j = i then (w, s) else (none, 0)) none (some q) := by rfl
+
+theorem ReaderControl8 {k : ℕ} {S : Type} (i : Fin k) (m s : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i m w s q : Action k Bool S).state = some q := by rfl
+
+theorem ReaderControl9 {k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl
+
+theorem ReaderControl10 {k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction (k := k) m q : Action k Bool S).state = q := by rfl
+
+theorem ReaderControl11 {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) : a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl
+
+theorem ReaderControl12 {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) : (a.mapState f).state = a.state.map f := by rfl
+
+theorem ReaderControl13 {k : ℕ} {A : Type} (δ : A → Bool → A) (a₀ : A) : (inputFoldTM k δ a₀).q₀ = .fwd a₀ := by rfl
+
+theorem ReaderControl14 {k : ℕ} {A : Type} (δ : A → Bool → A) (a₀ a : A) (inp : Option Bool) (work : Fin k → Option Bool) : (inputFoldTM k δ a₀).tr (.bwd a) inp work = (match inp with | some _ => inputMoveAction (-1) (.bwd a) | none => inputMoveAction 1 (.done a)) := by rfl
+
+theorem ReaderControl15  : blankCfg.inputSymbol = none := by rfl
+
+theorem ReaderControl16  : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl
+
+theorem ReaderControl17 {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.step {c with state := none} = {c with state := none} := by rfl
+
+theorem ReaderControl18 {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.step c = match c.state with | none => c | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl
+
+theorem ReaderControl19  : moveInputPos (0 : Fin 2) 0 = 0 := by rfl
+
+theorem ReaderControl20  : moveInputPos (1 : Fin 2) 0 = 1 := by rfl
+
+theorem ReaderControl21 {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) : c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+
+theorem ReaderControl22 {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl

@@ -1,0 +1,29 @@
+/-- One product step applies each native counter step, preserving the
+whole tape contents and independently positioned heads.
+**Proof sketch.** Project the full transition to each tape and component state. A halted component is fixed; a live component uses its own counter action. The physical input stays fixed and every component output is suppressed. -/
+private lemma clBank_step {l : ℕ} {x : List Bool} (p : Fin (x.length + 2))
+    (c : Fin l → Cfg 1 Bool (Fin 4) x) :
+    (clBankTM l).tm.step (clBankCfg p c) =
+      clBankCfg p (fun i => clCountTM.tm.step (c i)) := by
+  have ha : clBankPart (fun i => (c i).state) (clBankCfg p c).workTapeSymbols =
+      fun i => match (c i).state with
+        | none => FinTM.controlAction 0 none
+        | some q => clCountTM.tm.tr q (c i).inputSymbol (c i).workTapeSymbols := by
+    funext i
+    exact clBank_part p c i
+  unfold MultiTapeTM.step
+  change ((clBankTM l).tm.tr (fun i => (c i).state) _ _).apply _ = _
+  dsimp only [clBankTM]
+  rw [ha]
+  refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl
+  · dsimp only [Action.apply, clBankCfg]
+    congr 1
+    funext i
+    cases hs : (c i).state <;>
+      simp [MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]
+  · funext i
+    cases hs : (c i).state <;>
+      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]
+  · funext i
+    cases hs : (c i).state <;>
+      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]

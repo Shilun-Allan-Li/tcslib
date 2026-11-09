@@ -1,0 +1,134 @@
+[
+  {
+    "number": 1,
+    "definition": "Turing.MultiTapeTM.runFrom",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.runFrom c 0 = c",
+    "kernel_name": "ReaderControl1"
+  },
+  {
+    "number": 2,
+    "definition": "Turing.MultiTapeTM.runFrom",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.runFrom c 1 = M.step c",
+    "kernel_name": "ReaderControl2"
+  },
+  {
+    "number": 3,
+    "definition": "Turing.FinTM.bufferTape",
+    "goal": " : bufferTape ([] : List Bool) 0 = none",
+    "kernel_name": "ReaderControl3"
+  },
+  {
+    "number": 4,
+    "definition": "Turing.FinTM.bufferTape",
+    "goal": " : bufferTape [true] 0 = some true",
+    "kernel_name": "ReaderControl4"
+  },
+  {
+    "number": 5,
+    "definition": "Turing.inputMoveAction",
+    "goal": "{k : ℕ} {S : Type} (m : SignType) (q : S) : (inputMoveAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none (some q)",
+    "kernel_name": "ReaderControl5"
+  },
+  {
+    "number": 6,
+    "definition": "Turing.inputMoveAction",
+    "goal": "{k : ℕ} {S : Type} (m : SignType) (q : S) : (inputMoveAction (k := k) m q : Action k Bool S).state = some q",
+    "kernel_name": "ReaderControl6"
+  },
+  {
+    "number": 7,
+    "definition": "Turing.tapeAction",
+    "goal": "{k : ℕ} {S : Type} (i : Fin k) (m s : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i m w s q : Action k Bool S) = Action.mk m (fun j => if j = i then (w, s) else (none, 0)) none (some q)",
+    "kernel_name": "ReaderControl7"
+  },
+  {
+    "number": 8,
+    "definition": "Turing.tapeAction",
+    "goal": "{k : ℕ} {S : Type} (i : Fin k) (m s : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i m w s q : Action k Bool S).state = some q",
+    "kernel_name": "ReaderControl8"
+  },
+  {
+    "number": 9,
+    "definition": "Turing.FinTM.controlAction",
+    "goal": "{k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q",
+    "kernel_name": "ReaderControl9"
+  },
+  {
+    "number": 10,
+    "definition": "Turing.FinTM.controlAction",
+    "goal": "{k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction (k := k) m q : Action k Bool S).state = q",
+    "kernel_name": "ReaderControl10"
+  },
+  {
+    "number": 11,
+    "definition": "Turing.Action.mapState",
+    "goal": "{k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) : a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f)",
+    "kernel_name": "ReaderControl11"
+  },
+  {
+    "number": 12,
+    "definition": "Turing.Action.mapState",
+    "goal": "{k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) : (a.mapState f).state = a.state.map f",
+    "kernel_name": "ReaderControl12"
+  },
+  {
+    "number": 13,
+    "definition": "Turing.inputFoldTM",
+    "goal": "{k : ℕ} {A : Type} (δ : A → Bool → A) (a₀ : A) : (inputFoldTM k δ a₀).q₀ = .fwd a₀",
+    "kernel_name": "ReaderControl13"
+  },
+  {
+    "number": 14,
+    "definition": "Turing.inputFoldTM",
+    "goal": "{k : ℕ} {A : Type} (δ : A → Bool → A) (a₀ a : A) (inp : Option Bool) (work : Fin k → Option Bool) : (inputFoldTM k δ a₀).tr (.bwd a) inp work = (match inp with | some _ => inputMoveAction (-1) (.bwd a) | none => inputMoveAction 1 (.done a))",
+    "kernel_name": "ReaderControl14"
+  },
+  {
+    "number": 15,
+    "definition": "Turing.Cfg.inputSymbol",
+    "goal": " : blankCfg.inputSymbol = none",
+    "kernel_name": "ReaderControl15"
+  },
+  {
+    "number": 16,
+    "definition": "Turing.Cfg.inputSymbol",
+    "goal": " : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none",
+    "kernel_name": "ReaderControl16"
+  },
+  {
+    "number": 17,
+    "definition": "Turing.MultiTapeTM.step",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.step {c with state := none} = {c with state := none}",
+    "kernel_name": "ReaderControl17"
+  },
+  {
+    "number": 18,
+    "definition": "Turing.MultiTapeTM.step",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) : M.step c = match c.state with | none => c | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c",
+    "kernel_name": "ReaderControl18"
+  },
+  {
+    "number": 19,
+    "definition": "Turing.moveInputPos",
+    "goal": " : moveInputPos (0 : Fin 2) 0 = 0",
+    "kernel_name": "ReaderControl19"
+  },
+  {
+    "number": 20,
+    "definition": "Turing.moveInputPos",
+    "goal": " : moveInputPos (1 : Fin 2) 0 = 1",
+    "kernel_name": "ReaderControl20"
+  },
+  {
+    "number": 21,
+    "definition": "Turing.Cfg.workTapeSymbols",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) : c.workTapeSymbols i = c.workTapes i (c.workTapePos i)",
+    "kernel_name": "ReaderControl21"
+  },
+  {
+    "number": 22,
+    "definition": "Turing.Cfg.workTapeSymbols",
+    "goal": "{k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i))",
+    "kernel_name": "ReaderControl22"
+  }
+]

@@ -1,0 +1,28 @@
+/-- Configuration assembly from the public selected-tape and frame laws.
+This is the common extensionality step for word banks and native seeks.
+
+**Proof sketch.** Split each host tape by membership in the embedded bank;
+use the public selected projections there and the public frame at time zero
+elsewhere. The other three fields are supplied by the caller. -/
+private lemma canonEmbedEq {m k : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (c : Cfg m Bool S x) (d : Cfg k Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (hs : c.state = d.state) (hp : c.inputPos = d.inputPos) (ho : c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (ι i) ∧
+      c.workTapePos i = d.workTapePos (ι i))
+    (outside : ∀ j, j ∉ Set.range ι →
+      tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    embedEmitCfg ι tapes heads [] c = d := by
+  apply Cfg.ext hs hp ?_ ?_ (by simpa only [embedEmitCfg, List.nil_append] using ho)
+  all_goals
+    funext j
+    by_cases located : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := located
+      first
+      | exact (embedEmitCfg_selected_tape ι tapes heads [] c i).trans (selected i).1
+      | exact (embedEmitCfg_selected_pos ι tapes heads [] c i).trans (selected i).2
+    · have fixed := (embedEmitTM_frame ι M tapes heads [] c 0).1 j located
+      first
+      | exact fixed.1.trans (outside j located).1
+      | exact fixed.2.trans (outside j located).2

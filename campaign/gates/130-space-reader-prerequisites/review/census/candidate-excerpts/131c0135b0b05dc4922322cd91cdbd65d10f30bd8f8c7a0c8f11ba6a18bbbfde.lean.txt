@@ -1,0 +1,10 @@
+/-- Once returned, the counter module does no further work. This allows
+an arbitrary upper bound to be cut to the actual first return. -/
+private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
+    (hc : c.state = some 0) : clCountTM.tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clCountTM,
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

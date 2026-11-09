@@ -1,0 +1,42 @@
+/-- **Local transition equations determine the sweep trace** (design §12.6; public
+since the §12.8 fill). If one step takes each forward configuration to the next for
+`L` steps, turns the last into the return family's start, takes each return
+configuration to the previous one, enters `D` from the return's end, and leaves `D`
+fixed, then the run from `F 0` is `Turing.catalogTrace F R D L` at every time,
+including all stationary steps after the exit. Every two-pass row (the R3 sweeps, the
+framed compare, the scan, the writers and the native-input sweeps) is an instance.
+
+**Proof sketch.** Induct on elapsed time; split at the forward endpoint, return
+endpoint, and stationary tail. -/
+theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)
+    (F R : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ)
+    (hF : ∀ r < L, M.step (F r) = F (r + 1))
+    (hturn : M.step (F L) = R L)
+    (hR : ∀ r < L, M.step (R (r + 1)) = R r)
+    (hentry : M.step (R 0) = D) (hD : M.step D = D) (t : ℕ) :
+    M.runFrom (F 0) t = catalogTrace F R D L t := by
+  induction t with
+  | zero => simp [catalogTrace]
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    by_cases h₁ : t < L
+    · simpa [catalogTrace, show t ≤ L by omega, show t + 1 ≤ L by omega]
+        using hF t h₁
+    · by_cases h₂ : t = L
+      · subst t
+        simpa [catalogTrace, show ¬L + 1 ≤ L by omega,
+          show L + 1 ≤ 2 * L + 1 by omega, show 2 * L + 1 - (L + 1) = L by omega]
+          using hturn
+      · by_cases h₃ : t < 2 * L + 1
+        · have he : 2 * L + 1 - t = (2 * L - t) + 1 := by omega
+          simpa [catalogTrace, show ¬t ≤ L by omega, show ¬t + 1 ≤ L by omega,
+            show t ≤ 2 * L + 1 by omega, show t + 1 ≤ 2 * L + 1 by omega,
+            he, show 2 * L + 1 - (t + 1) = 2 * L - t by omega]
+            using hR (2 * L - t) (by omega)
+        · by_cases h₄ : t = 2 * L + 1
+          · subst t
+            simpa [catalogTrace, show ¬2 * L + 1 ≤ L by omega,
+              show ¬2 * L + 1 + 1 ≤ L by omega] using hentry
+          · simpa [catalogTrace, show ¬t ≤ L by omega,
+              show ¬t + 1 ≤ L by omega, show ¬t ≤ 2 * L + 1 by omega,
+              show ¬t + 1 ≤ 2 * L + 1 by omega] using hD

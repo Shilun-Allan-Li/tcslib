@@ -1,0 +1,84 @@
+/-- The demand-grown witness computes on every native word after finite-control
+retraction, with both resource bounds at that word's unchanged length.
+**Proof sketch.** Simulate through the source's first halt. The final window is
+exactly covered by source visits, while the whole physical trajectory lies
+between its boundary cells. Halting absorption extends that containment to
+all later times. Its cardinality is `n*k+2`; the window bound and a single
+coefficient absorb both this space ledger and the quadratic time ledger. -/
+private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ)
+    (f : List Γ → List Γ) (T S : ℕ → ℕ) (hM : M.ComputesFunInTime f T)
+    (hS : ∀ y t, M.tm.spaceUsed (M.tm.initCfg y) t ≤ S y.length)
+    (x : List (SweepAlphabet Γ M.k)) :
+    (dgTM M a₀).ComputesInTime x ((f (x.map (dgRetract a₀))).map (sweepEmbed Γ M.k))
+      ((9 * M.k + 6) * (T x.length + 1) ^ 2) ∧
+    ∀ t, (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) t ≤
+      (9 * M.k + 6) * (S x.length + 1) := by
+  have hFun := (computesFunInTime_iff M f T).mp hM
+  let y := x.map (dgRetract a₀)
+  obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hFun y)
+  obtain ⟨τ, htime, hlive, hfirst⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg y) hhalt
+  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none :=
+    (congrArg Cfg.state hfirst).trans hhalt
+  obtain ⟨a, n, u, window, hu, span⟩ := dg_simulate M hk a₀ x τ hlive τ (le_refl _)
+  have houtτ : (M.tm.runFrom (M.tm.initCfg y) τ).output = f y :=
+    (congrArg Cfg.output hfirst).trans hout
+  let final := dgStart M a₀ (M.tm.runFrom (M.tm.initCfg y) τ) a n (a * M.k - 1)
+  have hf : final.state = none := by
+    simp only [final, dgStart, sweepRevCfg_state, hτ, Option.map_none]
+  have compute : (dgTM M a₀).ComputesInTime x ((f y).map (sweepEmbed Γ M.k)) u := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [span.1]
+    constructor
+    · exact hf
+    · rw [dgStart, sweepRevCfg_output, houtτ]
+  have hpositions (v : ℕ) :
+      a * M.k - 1 ≤ ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ∧
+      ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ≤ (a + n) * M.k := by
+    by_cases hv : v ≤ u
+    · exact span.2 v hv
+    · have he : v = u + (v - u) := by omega
+      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]
+      have h := span.2 u (le_refl _)
+      rw [span.1] at h
+      exact h
+  constructor
+  · apply compute.mono
+    calc u ≤ sweepTime M.k τ := hu
+      _ ≤ (9 * M.k + 6) * (τ + 1) ^ 2 := sweepTime_le M.k τ
+      _ ≤ (9 * M.k + 6) * (T x.length + 1) ^ 2 := by
+        apply Nat.mul_le_mul_left
+        apply Nat.pow_le_pow_left
+        simpa only [y, List.length_map] using Nat.add_le_add_right htime 1
+  · intro v
+    have hsub : (dgTM M a₀).tm.visitedByTapeHead ((dgTM M a₀).tm.initCfg x) v (0 : Fin 1) ⊆
+        Finset.Icc (a * M.k - 1) ((a + n) * M.k) := by
+      intro j hj
+      obtain ⟨s, _, rfl⟩ :=
+        (MultiTapeTM.mem_visitedByTapeHead_iff (tm := (dgTM M a₀).tm)
+          ((dgTM M a₀).tm.initCfg x) v (0 : Fin 1) j).mp hj
+      exact Finset.mem_Icc.mpr (hpositions s)
+    have hcard : (Finset.Icc (a * M.k - 1) ((a + n) * M.k)).card = n * M.k + 2 := by
+      rw [Int.card_Icc]
+      have he : (a + n) * M.k + 1 - (a * M.k - 1) = ((n * M.k + 2 : ℕ) : ℤ) := by
+        push_cast
+        ring
+      rw [he, Int.toNat_natCast]
+    have hphysical : (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) v ≤ n * M.k + 2 := by
+      rw [MultiTapeTM.spaceUsed_eq_sum]
+      have hz (i : Fin 1) : i = 0 := Subsingleton.elim _ _
+      simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.nsmul_eq_mul, one_mul]
+      rw [MultiTapeTM.spaceUsedByTape_eq_card, ← hcard]
+      exact Finset.card_le_card hsub
+    have hn : n ≤ S x.length := by
+      have h := (dgWindow_space M y τ a n window).trans (hS y τ)
+      simpa only [y, List.length_map] using h
+    refine hphysical.trans ?_
+    calc n * M.k + 2 ≤ (S x.length + 1) * M.k + 2 * (S x.length + 1) :=
+        Nat.add_le_add
+          ((Nat.mul_le_mul_right M.k hn).trans (Nat.mul_le_mul_right M.k (Nat.le_succ _)))
+          (Nat.le_mul_of_pos_right 2 (Nat.succ_pos _))
+      _ = (M.k + 2) * (S x.length + 1) := by ring
+      _ ≤ (9 * M.k + 6) * (S x.length + 1) := Nat.mul_le_mul_right _ (by omega)
+

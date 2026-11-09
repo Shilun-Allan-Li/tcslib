@@ -1,0 +1,128 @@
+{
+  "BASE_pairs": 2338,
+  "HEAD_pairs": 2335,
+  "new": [
+    {
+      "edge": [
+        "Catalog.lean::walkTM_run_ofCfg",
+        "Catalog.lean::step_of_tapeAction_move"
+      ],
+      "score": [
+        454,
+        650,
+        70
+      ],
+      "disposition": "The walk transition can move an arbitrary head set. The one-tape donors require a single selected moved head and a specific write/no-write action row. Neither premise covers the general walk; the supplied literal case probes establish the gap. Shared field-equation calls are not an additional copy of either one-tape theorem."
+    },
+    {
+      "edge": [
+        "Catalog.lean::walkTM_run_ofCfg",
+        "Catalog.lean::step_of_tapeAction_write"
+      ],
+      "score": [
+        381,
+        671,
+        57
+      ],
+      "disposition": "The walk transition can move an arbitrary head set. The one-tape donors require a single selected moved head and a specific write/no-write action row. Neither premise covers the general walk; the supplied literal case probes establish the gap. Shared field-equation calls are not an additional copy of either one-tape theorem."
+    }
+  ],
+  "gone": [
+    {
+      "edge": [
+        "Catalog.lean::catalog_increment_trace",
+        "Catalog.lean::step_of_tapeAction_move"
+      ],
+      "prior_score": [
+        92,
+        167,
+        55
+      ],
+      "disposition": "No longer reported in exact current score coverage; no claim about broader debt."
+    },
+    {
+      "edge": [
+        "Catalog.lean::catalog_increment_trace",
+        "Catalog.lean::step_of_tapeAction_write"
+      ],
+      "prior_score": [
+        92,
+        167,
+        55
+      ],
+      "disposition": "No longer reported in exact current score coverage; no claim about broader debt."
+    },
+    {
+      "edge": [
+        "Catalog.lean::step_of_tapeAction_move",
+        "Catalog.lean::step_of_inputMoveAction"
+      ],
+      "prior_score": [
+        68,
+        84,
+        81
+      ],
+      "disposition": "No longer reported in exact current score coverage; no claim about broader debt."
+    },
+    {
+      "edge": [
+        "Catalog.lean::step_of_tapeAction_write",
+        "Catalog.lean::step_of_inputMoveAction"
+      ],
+      "prior_score": [
+        68,
+        84,
+        81
+      ],
+      "disposition": "No longer reported in exact current score coverage; no claim about broader debt."
+    },
+    {
+      "edge": [
+        "Hardness.lean::clBank_idle",
+        "Simulation.lean::controlAction_apply"
+      ],
+      "prior_score": [
+        60,
+        101,
+        59
+      ],
+      "disposition": "No longer reported in exact current score coverage; no claim about broader debt."
+    }
+  ],
+  "changed_scores": [
+    {
+      "edge": [
+        "Catalog.lean::step_of_tapeAction_move",
+        "Catalog.lean::step_of_tapeAction_write"
+      ],
+      "prior_score": [
+        167,
+        167,
+        100
+      ],
+      "score": [
+        627,
+        671,
+        93
+      ],
+      "disposition": "Both existing edges. The same field-equation calls are used in distinct write and non-writing transition premises; the writer requires a selected write and does not cover the no-write row. No new copied theorem or retained-debt approval."
+    },
+    {
+      "edge": [
+        "Catalog.lean::step_of_tapeAction_write",
+        "Catalog.lean::step_of_tapeAction_move"
+      ],
+      "prior_score": [
+        167,
+        167,
+        100
+      ],
+      "score": [
+        627,
+        650,
+        96
+      ],
+      "disposition": "Both existing edges. The same field-equation calls are used in distinct write and non-writing transition premises; the writer requires a selected write and does not cover the no-write row. No new copied theorem or retained-debt approval."
+    }
+  ]
+}

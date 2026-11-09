@@ -1,0 +1,26 @@
+/-- Writing the next symbol and moving right extends the shared written prefix.
+
+**Proof sketch.** Cite the public writing-step equation. On the selected tape,
+`catalog_write_take` extends the overwrite interval by one cell; all other tapes
+are fixed, and the selected head advances by one. -/
+private theorem scan_write_step {Symbol S : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol S) (i : Fin k) (w : List Symbol) (d : Cfg k Symbol S x)
+    (q q' : S) (p : Fin (x.length + 2)) (inp : SignType) (r : ℕ) (hr : r < w.length)
+    (htr : M.tr q (scanWriteCfg i w d q p r).inputSymbol
+        (scanWriteCfg i w d q p r).workTapeSymbols =
+      tapeAction i inp (some (some w[r])) .pos q') :
+    M.step (scanWriteCfg i w d q p r) =
+      scanWriteCfg i w d q' (moveInputPos p inp) (r + 1) := by
+  rw [step_of_tapeAction_write M _ i inp _ .pos rfl htr]
+  apply Cfg.ext
+  case workTapes =>
+    funext j
+    by_cases hj : j = i
+    · subst j
+      simpa [scanWriteCfg] using catalog_write_take (d.workTapes i) (d.workTapePos i) w r hr
+    · simp [scanWriteCfg, hj]
+  case workTapePos =>
+    funext j
+    by_cases hj : j = i <;>
+      simp [scanWriteCfg, hj, Function.update_apply, SignType.cast] <;> omega
+  all_goals simp [scanWriteCfg]

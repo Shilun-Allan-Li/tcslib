@@ -1,0 +1,117 @@
+/-- The silent virtual call uses the trial buffer and verifier bank, while the
+certificate stays in the frame. This identifies both call seams, including
+the captured singleton and the buffer head's return to zero.
+
+**Proof sketch.** Split host tapes into the virtual buffer, selected verifier
+bank, capture tape and unselected frame. Use the public selected projections
+and frame theorem; the two special heads are the virtual input position minus
+one and the length of the captured output. -/
+private theorem b2b_call_shape (MV MI MP : FinTM Bool) {x y : List Bool}
+    (u : List Bool) (p : Fin (x.length + 2))
+    (c : Cfg (MV.k + MV.k) Bool
+      ((B2bRewindState ⊕ Unit) ⊕
+        ((LogProg.CleanSt MV.State MV.k ⊕ Unit) ⊕ B2bRewindState)) y)
+    (ht : c.workTapes = fun _ _ => none) (hh : c.workTapePos = fun _ => 0) (b : Bool) :
+    embedSilentCfg (b2b_callEmb MV.k MI.k MP.k) (b2b_wordTape MV.k MI.k MP.k 2)
+      (b2b_trialCfg MV MI MP () p u [] [] 0 0).workTapes (fun _ => 0) [] []
+      (vhostCfg c b p []) =
+    { b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+        ((c.inputPos.val : ℤ) - 1) c.output.length with
+      state := c.state.map (fun q => (q, b)) } := by
+  classical
+  let ι := b2b_callEmb MV.k MI.k MP.k
+  let CAP := b2b_wordTape MV.k MI.k MP.k 2
+  let BUF := b2b_wordTape MV.k MI.k MP.k 1
+  let tapes := (b2b_trialCfg MV MI MP () p u [] [] 0 0).workTapes
+  let d := vhostCfg c b p []
+  have hcap : CAP ∉ Set.range ι := by
+    rintro ⟨a, ha⟩
+    have he := congrArg Fin.val ha
+    dsimp [ι, CAP, b2b_callEmb, b2b_wordTape] at he
+    split_ifs at he <;> omega
+  have hbuf : ι (vhostBuffer (MV.k + MV.k)) = BUF := by
+    apply Fin.ext
+    rfl
+  have hbank (a : Fin (MV.k + MV.k)) :
+      ι (vhostBank a) ≠ b2b_wordTape MV.k MI.k MP.k 0 ∧
+      ι (vhostBank a) ≠ BUF ∧ ι (vhostBank a) ≠ CAP := by
+    refine ⟨?_, ?_, ?_⟩ <;> intro heq
+    all_goals
+      have he := congrArg Fin.val heq
+      dsimp [ι, BUF, CAP, b2b_callEmb, b2b_wordTape, vhostBank] at he
+      split_ifs at he <;> omega
+  apply Cfg.ext <;> try rfl
+  · funext j
+    change (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapes j = _
+    by_cases hsel : j ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hsel
+      rw [embedSilentCfg_selected_tape]
+      refine Fin.addCases (fun a => ?_) (fun a => ?_) a
+      · have ha : a = 0 := Subsingleton.elim _ _
+        subst a
+        change FinTM.bufferTape y = _
+        change FinTM.bufferTape y =
+          (b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+            ((c.inputPos.val : ℤ) - 1) c.output.length).workTapes
+              (ι (vhostBuffer (MV.k + MV.k)))
+        rw [hbuf]
+        simp [b2b_trialCfg, BUF, b2b_wordTape]
+      · have ha := hbank a
+        dsimp only [BUF, CAP, vhostBank] at ha
+        simp only [d, vhostCfg, Fin.addCases_right, ht]
+        simp [b2b_trialCfg, ha.1, ha.2.1, ha.2.2]
+    · by_cases hc : j = CAP
+      · subst j
+        simp only [embedSilentCfg]
+        split
+        · rename_i a ha
+          have hfind := List.find?_some (p := fun a => decide (ι a = CAP)) ha
+          exact False.elim (hcap ⟨a, of_decide_eq_true hfind⟩)
+        · simp [d, vhostCfg, b2b_trialCfg, CAP, b2b_wordTape]
+      · have hjb : j ≠ BUF := by
+          intro hj
+          exact hsel ⟨vhostBuffer _, hbuf.trans hj.symm⟩
+        have hf : (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapes j = tapes j := by
+          simpa only [MultiTapeTM.runFrom_zero] using
+            ((embedSilentTM_frame ι CAP hcap (vhostEmitTM (b2b_hostedSource MV))
+              tapes (fun _ => 0) [] [] d 0).1 j hsel hc).1
+        rw [hf]
+        dsimp only [BUF, CAP] at hjb hc
+        simp [tapes, b2b_trialCfg, hjb, hc]
+  · funext j
+    change (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapePos j = _
+    by_cases hsel : j ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hsel
+      rw [embedSilentCfg_selected_pos]
+      refine Fin.addCases (fun a => ?_) (fun a => ?_) a
+      · have ha : a = 0 := Subsingleton.elim _ _
+        subst a
+        change (c.inputPos.val : ℤ) - 1 = _
+        change (c.inputPos.val : ℤ) - 1 =
+          (b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+            ((c.inputPos.val : ℤ) - 1) c.output.length).workTapePos
+              (ι (vhostBuffer (MV.k + MV.k)))
+        rw [hbuf]
+        simp [b2b_trialCfg, BUF]
+      · have ha := hbank a
+        dsimp only [BUF, CAP, vhostBank] at ha
+        simp only [d, vhostCfg, Fin.addCases_right, hh]
+        simp [b2b_trialCfg, ha.2.1, ha.2.2]
+    · by_cases hc : j = CAP
+      · subst j
+        simp only [embedSilentCfg]
+        split
+        · rename_i a ha
+          have hfind := List.find?_some (p := fun a => decide (ι a = CAP)) ha
+          exact False.elim (hcap ⟨a, of_decide_eq_true hfind⟩)
+        · simp [d, vhostCfg, b2b_trialCfg, CAP, b2b_wordTape]
+      · have hjb : j ≠ BUF := by
+          intro hj
+          exact hsel ⟨vhostBuffer _, hbuf.trans hj.symm⟩
+        have hf : (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapePos j = 0 := by
+          simpa only [MultiTapeTM.runFrom_zero] using
+            ((embedSilentTM_frame ι CAP hcap (vhostEmitTM (b2b_hostedSource MV))
+              tapes (fun _ => 0) [] [] d 0).1 j hsel hc).2
+        rw [hf]
+        dsimp only [BUF, CAP] at hjb hc
+        simp [b2b_trialCfg, hjb, hc]

@@ -1,0 +1,10 @@
+/-- Probe stand-in for `Complexity.evenScanTM`. The state `true` means odd
+parity; scan transitions go through `controlAction`. -/
+def scanTM : FinTM Bool where
+  k := 0
+  State := Bool
+  tm :=
+    { q₀ := false
+      tr := fun q inp _ => match inp with
+        | some b => FinTM.controlAction .pos (some (if b then !q else q))
+        | none => ⟨0, fun i => i.elim0, some (!q), none⟩ }

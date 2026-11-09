@@ -1,0 +1,160 @@
+/-- **R8.3, seek to the start, framed** (design §12.8a). Let the head of tape
+`i` be on a nonblank cell, preceded by a list `ws` of nonempty fields in the
+field layout, each followed by its blank separator, so that the layout of `ws`
+starts at `pos - D` with `D = fieldOffset ws |ws|`, and preceded in turn by two
+blank cells. Then the seek reaches `done` at exactly `D + 4` and not earlier,
+with the head of tape `i` at `pos - D`, the start of the table, and nothing
+else changed. At `ws = []` the head is already at the start, and the run takes
+`4` steps. The cells from `pos + 1` on and before `pos - D - 2` are arbitrary.
+Up to the exit the head stays within `[pos - D - 2, pos]`, and every other
+head is fixed.
+
+**Proof sketch.** The current cell is one left step in `run`. Then induct on
+`ws` from its last field: its separator is one left step into `gap`, and each
+of its cells one left step in `run`. The two blanks before the table are one
+left step into `gap` and one right step into `back`, and `back` is one right
+step into `done`. The left steps number `D + 2`. -/
+theorem seekStartTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (ws : List (List Symbol)) (hws : ∀ u ∈ ws, u ≠ [])
+    (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hcur : d.workTapes i (d.workTapePos i) ≠ none)
+    (hw : ∀ p : ℤ, -2 ≤ p → p < (fieldOffset ws ws.length : ℤ) →
+      d.workTapes i (d.workTapePos i - fieldOffset ws ws.length + p) = fieldsTape ws p) :
+    (seekStartTM k i).runFrom d (fieldOffset ws ws.length + 4) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i - fieldOffset ws ws.length) } ∧
+      (∀ t < fieldOffset ws ws.length + 4,
+        ((seekStartTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ fieldOffset ws ws.length + 4 →
+        if j = i then
+          ((seekStartTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - fieldOffset ws ws.length - 2) (d.workTapePos j)
+        else ((seekStartTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  classical
+  let L := fieldOffset ws ws.length
+  let phase := fun r : ℕ => if r = 0 then SeekPhase.run else
+    if d.workTapes i (d.workTapePos i - r + 1) = none then .gap else .run
+  let F := fun r : ℕ => if r ≤ L + 2 then catalogSeekCfg i d (phase r) (-(r : ℤ))
+    else catalogSeekCfg i d .back (-(L : ℤ) - 1)
+  let D : Cfg k Symbol SeekPhase x := { d with
+    state := some .done
+    workTapePos := Function.update d.workTapePos i (d.workTapePos i - L) }
+  have first (hL : 0 < L) : fieldsTape ws 0 ≠ none := by
+    cases ws with
+    | nil => simp [L, fieldOffset] at hL
+    | cons u us =>
+      have hu : 0 < u.length := List.length_pos_iff.mpr (hws u (by simp))
+      have h := fieldsTape_field (u :: us) 0 (by simp) 0 (by omega) (by simp)
+      simp only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil, Nat.cast_zero,
+        zero_add, List.getElem_cons_zero] at h
+      rw [h]
+      simp [FinTM.bufferTape, List.getElem?_eq_getElem hu]
+  have blank (p : ℤ) (hp : p < 0) (hlo : -2 ≤ p) :
+      d.workTapes i (d.workTapePos i - L + p) = none := by
+    rw [hw p hlo (by omega)]
+    simp [fieldsTape, show ¬0 ≤ p by omega]
+  have noearly (r : ℕ) (hr : r ≤ L + 1) (hrpos : 0 < r) :
+      ¬(d.workTapes i (d.workTapePos i - r) = none ∧
+        d.workTapes i (d.workTapePos i - r + 1) = none) := by
+    intro hb
+    by_cases hr1 : r = 1
+    · subst r
+      exact hcur (by simpa using hb.2)
+    have ht0 := hw ((L : ℤ) - r) (by omega) (by omega)
+    have ht1 := hw ((L : ℤ) - r + 1) (by omega) (by omega)
+    rw [show d.workTapePos i - L + ((L : ℤ) - r) = d.workTapePos i - r by omega] at ht0
+    rw [show d.workTapePos i - L + ((L : ℤ) - r + 1) = d.workTapePos i - r + 1 by omega] at ht1
+    have hb0 := ht0.symm.trans hb.1
+    have hb1 := ht1.symm.trans hb.2
+    by_cases he : r = L + 1
+    · have hz : (L : ℤ) - r + 1 = 0 := by omega
+      rw [hz] at hb1
+      exact first (by omega) hb1
+    · exact fieldsTape_no_double_blank ws hws ((L : ℤ) - r) (by omega) (by omega) ⟨hb0, hb1⟩
+  have read (q : SeekPhase) (r : ℕ) :
+      (catalogSeekCfg i d q (-(r : ℤ))).workTapeSymbols i =
+        d.workTapes i (d.workTapePos i - r) := by
+    simp [catalogSeekCfg, Cfg.workTapeSymbols, sub_eq_add_neg]
+  have h0 : F 0 = d := by
+    apply Cfg.ext <;> simp [F, phase, catalogSeekCfg, hstate]
+  have hF (r : ℕ) (hr : r < L + 3) : (seekStartTM k i).step (F r) = F (r + 1) := by
+    by_cases hreg : r < L + 2
+    · let q' : SeekPhase := if d.workTapes i (d.workTapePos i - r) = none then .gap else .run
+      have htr : (seekStartTM k i).tr (phase r) (catalogSeekCfg i d (phase r) (-(r : ℤ))).inputSymbol
+          (catalogSeekCfg i d (phase r) (-(r : ℤ))).workTapeSymbols = tapeAction i 0 none .neg q' := by
+        cases hc : d.workTapes i (d.workTapePos i - r) with
+        | none =>
+          have hq : phase r = .run := by
+            by_cases hr0 : r = 0
+            · simp [phase, hr0]
+            · have hp : d.workTapes i (d.workTapePos i - r + 1) ≠ none := by
+                intro hp
+                exact noearly r (by omega) (by omega) ⟨hc, hp⟩
+              simp [phase, hr0, hp]
+          rw [hq]
+          simp [seekStartTM, read, hc, q']
+        | some γ =>
+          have hq : phase r = .run ∨ phase r = .gap := by
+            dsimp [phase]
+            split_ifs <;> simp
+          rcases hq with hq | hq <;> rw [hq] <;> simp [seekStartTM, read, hc, q']
+      have h := catalog_seek_step (seekStartTM k i) i d (phase r) q' (-(r : ℤ)) .neg htr
+      have hz : -(r : ℤ) + (SignType.neg : ℤ) = -((r + 1 : ℕ) : ℤ) := by
+        simp [SignType.cast]
+        omega
+      rw [hz] at h
+      have hp : phase (r + 1) = q' := by
+        simp only [phase, show r + 1 ≠ 0 by omega, if_false]
+        rw [show d.workTapePos i - ((r + 1 : ℕ) : ℤ) + 1 = d.workTapePos i - r by omega]
+      simpa only [F, if_pos (show r ≤ L + 2 by omega),
+        if_pos (show r + 1 ≤ L + 2 by omega), hp] using h
+    · have he : r = L + 2 := by omega
+      subst r
+      have hphase : phase (L + 2) = .gap := by
+        have hb := blank (-1) (by omega) (by omega)
+        rw [show d.workTapePos i - L + (-1) = d.workTapePos i - ((L + 2 : ℕ) : ℤ) + 1 by omega] at hb
+        simp only [Nat.cast_add, Nat.cast_ofNat] at hb
+        simp [phase, hb]
+      have hs : (catalogSeekCfg i d .gap (-((L + 2 : ℕ) : ℤ))).workTapeSymbols i = none := by
+        rw [read]
+        have hb := blank (-2) (by omega) (by omega)
+        convert hb using 1
+        congr 1
+        omega
+      have h := catalog_seek_step (seekStartTM k i) i d .gap .back (-((L + 2 : ℕ) : ℤ)) .pos
+        (by simp only [seekStartTM, hs])
+      have hz : -((L + 2 : ℕ) : ℤ) + (SignType.pos : ℤ) = -(L : ℤ) - 1 := by
+        simp only [SignType.cast]
+        omega
+      rw [hz] at h
+      simpa [F, hphase] using h
+  have hexit : (seekStartTM k i).step (F (L + 3)) = D := by
+    have h := catalog_seek_step (seekStartTM k i) i d .back .done (-(L : ℤ) - 1) .pos rfl
+    simp only [F, show ¬L + 3 ≤ L + 2 by omega, if_false]
+    rw [h]
+    apply Cfg.ext <;> simp [D, catalogSeekCfg, SignType.cast]
+    congr 1
+  have hD : (seekStartTM k i).step D = D := by
+    rw [step_of_inputMoveAction (seekStartTM k i) D 0 rfl rfl, moveInputPos_zero]
+  have result := catalog_pass_contract (seekStartTM k i) F D (L + 3) hF hexit hD
+    (fun c => c.state ≠ some .done)
+    (fun c => ∀ j : Fin k, if j = i then
+      c.workTapePos j ∈ Finset.Icc (d.workTapePos j - L - 2) (d.workTapePos j)
+      else c.workTapePos j = d.workTapePos j)
+    (by intro r _; dsimp [F]; split_ifs <;> simp [catalogSeekCfg, phase]; split_ifs <;> simp)
+    (by
+      intro r hr j
+      rcases eq_or_ne j i with rfl | hj
+      · dsimp [F]; split_ifs <;> simp [catalogSeekCfg, Finset.mem_Icc] <;> omega
+      · simp only [if_neg hj]
+        dsimp [F]
+        split_ifs <;> simp [catalogSeekCfg, hj])
+    (by
+      intro j
+      rcases eq_or_ne j i with rfl | hj
+      · simp [D, Finset.mem_Icc]
+      · simp [D, hj])
+  rw [h0] at result
+  exact ⟨result.1, result.2.1, fun j t ht => result.2.2 t ht j⟩

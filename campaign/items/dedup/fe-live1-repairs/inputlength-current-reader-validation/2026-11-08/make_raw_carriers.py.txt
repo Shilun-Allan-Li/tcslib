@@ -1,0 +1,27 @@
+from pathlib import Path
+import json,hashlib,gzip,base64,zlib,datetime
+O=Path(__file__).parent;T=O/'raw-recovery';T.mkdir();B=T/'blobs';B.mkdir();work=O/'carrier-work';work.mkdir()
+def shafile(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for b in iter(lambda:f.read(4*1024*1024),b''):h.update(b)
+ return h.hexdigest()
+rows=[];blobs={}
+for label in ['metadata-BASE','metadata-CANDIDATE-first','metadata-CANDIDATE-second']:
+ src=O/'probes'/label/'attempt-01/raw.out';result=json.loads(src.with_name('result.json').read_text());h=result['raw_sha256'];assert src.stat().st_size==result['raw_bytes'];assert shafile(src)==h
+ if h not in blobs:
+  gz=work/(h+'.gz')
+  with gz.open('wb') as out:
+   with gzip.GzipFile(filename='',mode='wb',compresslevel=9,fileobj=out,mtime=0) as compressor:
+    with src.open('rb') as inp:
+     for b in iter(lambda:inp.read(4*1024*1024),b''):compressor.write(b)
+  encoded=B/(h+'.gz.b64')
+  with gz.open('rb') as inp,encoded.open('wb') as out:
+   for b in iter(lambda:inp.read(3*1024*1024),b''):out.write(base64.b64encode(b))
+   out.write(b'\n')
+  blobs[h]={'carrier':str(encoded.relative_to(T)),'gzip_bytes':gz.stat().st_size,'gzip_sha256':shafile(gz),'base64_file_bytes':encoded.stat().st_size,'base64_file_sha256':shafile(encoded),'uncompressed_bytes':src.stat().st_size,'uncompressed_sha256':h,'gzip_mtime':0,'gzip_filename_header':'','compression_level':9}
+  print('LOSSLESS_RAW_BLOB',h,blobs[h]['gzip_bytes'],blobs[h]['base64_file_bytes'],flush=True)
+ rows.append({'logical_path':str(src.relative_to(O)),'source_private_path':str(src),'bytes':src.stat().st_size,'sha256':h,'blob':h,'actual_request_and_result':str(src.with_name('result.json').relative_to(O))})
+manifest={'format':'ab34-streaming-raw-gzip-base64-v1','utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'logical_raw_files':len(rows),'logical_raw_bytes':sum(r['bytes'] for r in rows),'unique_blobs':len(blobs),'files':rows,'blobs':blobs,'base64_encoding':'Continuous RFC4648 base64 with one terminal newline; gzip streamed in4MiB input chunks, mtime0 and empty filename.','zlib_version':zlib.ZLIB_VERSION,'raw_originals_untruncated_and_retained':True,'no_payload_execution':True}
+(T/'RECOVERY-MAP.json').write_text(json.dumps(manifest,indent=2)+'\n')
+print('RAW_RECOVERY_MAP_DONE',manifest['logical_raw_bytes'],'logical bytes; transport',sum(b['base64_file_bytes'] for b in blobs.values()),'bytes',flush=True)

@@ -1,0 +1,8 @@
+/-- A silent controller dispatch preserves every component of a canonical
+word seam and changes only control. -/
+private lemma emitterP2_control {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S)
+    (q r : S) (h : ∀ inp work, tm.tr q inp work = controlAction 0 (some r))
+    (w : List Bool) (words : Fin k → List Bool) :
+    tm.step (Cfg.ofWords (input := w) q words) = Cfg.ofWords r words := by
+  simp only [MultiTapeTM.step, Cfg.ofWords, h]
+  rw [controlAction_apply, moveInputPos_zero]

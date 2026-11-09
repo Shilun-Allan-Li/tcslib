@@ -1,0 +1,65 @@
+/-- Clear's exact framed invariant. **Proof sketch.** The forward pass reads
+the original interval. The right blank turns without writing. Each return
+step erases just the last remaining cell, and the left blank restores the head.
+All cells outside the interval and all other configuration fields are retained. -/
+private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) (t : ℕ) :
+    (clearTM k i).runFrom d t =
+      catalogTrace (catalogClearF i d) (catalogClearR i d w.length)
+        { d with state := some .done
+                 workTapes := fun j q =>
+                   if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+                     then none else d.workTapes j q } w.length t := by
+  have h0 : catalogClearF i d 0 = d := by
+    apply Cfg.ext <;> simp [catalogClearF, hstate]
+  conv_lhs => rw [← h0]
+  -- Keep the original frame fixed while inducting on elapsed time.
+  apply catalog_trace_run
+  · intro r hr
+    have hs : (catalogClearF i d r).workTapeSymbols i = some w[r] := by
+      simp [catalogClearF, Cfg.workTapeSymbols, hw r (by omega) (by omega),
+        List.getElem?_eq_getElem hr]
+    change ((clearTM k i).tr .sweep _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearF]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · have hs : (catalogClearF i d w.length).workTapeSymbols i = none := by
+      simp [catalogClearF, Cfg.workTapeSymbols, hw w.length (by omega) (by omega)]
+    change ((clearTM k i).tr .sweep _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR]
+    · funext j q
+      split_ifs <;> simp_all <;> omega
+    · funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · intro r hr
+    have hs : (catalogClearR i d w.length (r + 1)).workTapeSymbols i = some w[r] := by
+      have he : ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) := by omega
+      simp [catalogClearR, Cfg.workTapeSymbols, he,
+        hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
+    change ((clearTM k i).tr .rewind _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearR]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simp only [ite_true, true_and, Prod.fst]
+        funext q
+        simp only [Function.update_apply]
+        split_ifs <;> simp_all <;> omega
+      · simp [hj]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · have hs : (catalogClearR i d w.length 0).workTapeSymbols i = none := by
+      simpa [catalogClearR, Cfg.workTapeSymbols] using hw (-1) (by omega) (by omega)
+    change ((clearTM k i).tr .rewind _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]

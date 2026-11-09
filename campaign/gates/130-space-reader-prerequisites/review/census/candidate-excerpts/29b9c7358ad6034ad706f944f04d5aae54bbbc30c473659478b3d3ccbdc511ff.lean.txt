@@ -1,0 +1,10 @@
+/-- **A non-writing step that keeps the input head.** The action that writes nothing, keeps the
+input head, moves the work head by `d`, emits `o` and enters `q'` maps the one-buffer
+configuration `(i, a, z, out)` to the one-buffer configuration `(i, a, z + d, out ++ o)` in
+control `q'`. -/
+theorem apply_cfg_stay {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) (d : SignType)
+    (o : Option Bool) :
+    (⟨0, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
+      cfg x q' i hi a (z + d) (out ++ o.toList) :=
+  Cfg.ext rfl (moveInputPos_zero _) rfl rfl rfl

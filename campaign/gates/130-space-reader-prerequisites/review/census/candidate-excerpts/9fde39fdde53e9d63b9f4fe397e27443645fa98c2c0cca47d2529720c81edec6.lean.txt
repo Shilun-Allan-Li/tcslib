@@ -1,0 +1,5 @@
+/-- The table of the body's one control state, the loop anchor: a stationary dispatch into the
+request-packing module. -/
+private def satHostCtrl (M : Fin 6 → FinTM Bool) (K : ℕ) :
+    Unit → Option Bool → (Fin K → Option Bool) → Action K Bool (ModuleHost.State Unit M) :=
+  fun _ _ _ => FinTM.controlAction 0 (some (ModuleHost.entry M 2))

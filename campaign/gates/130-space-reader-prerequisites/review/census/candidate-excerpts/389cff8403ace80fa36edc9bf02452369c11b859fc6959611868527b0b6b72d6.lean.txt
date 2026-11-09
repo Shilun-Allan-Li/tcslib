@@ -1,0 +1,11 @@
+/-- A genuine round leaves the anchor in one silent stationary transition. -/
+private lemma enumCont_body_depart (B : FinTM Bool) (qv qi : B.State) (x s : List Bool) :
+    (enumCont_bodyTM B qv qi false).tm.step
+      (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) =
+      enumCont_pairCfg (some (.inl (.inl qv, 1))) (bufferTape s) (fun _ => none) 0 := by
+  rw [enumCont_pair_words]
+  change (controlAction 0 (some (.inl (.inl qv, (1 : Fin 3)) :
+    (enumCont_bodyTM B qv qi false).State))).apply _ = _
+  rw [controlAction_apply]
+  simp [moveInputPos_zero, Cfg.ofWords]
+  exact ⟨rfl, rfl⟩

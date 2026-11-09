@@ -1,0 +1,24 @@
+/-- **The counter phase's layout**: a one-tape configuration `D` placed on
+the last tape by R1 along `Turing.lastEmb`, with the body's tapes and heads as the frame, is the
+clock layout of the body `c` with `D`'s tape and head as the counter, when `D` has the body's
+input position and output.
+
+**Proof sketch.** `Turing.embedEmitCfg_eq` along `Turing.lastEmb`: the one selected tape is the
+last; the unselected ones are the body's. -/
+private theorem sc_lastLayout {k : ℕ} {Γ S Q : Type} {x : List Γ} (c : Cfg k Γ S x)
+    (D : Cfg 1 Γ Q x) (ct : ℤ → Option Γ) (cp : ℤ) (hin : D.inputPos = c.inputPos)
+    (hout : D.output = c.output) :
+    embedEmitCfg (lastEmb k) (Fin.lastCases ct c.workTapes) (Fin.lastCases cp c.workTapePos) []
+        D = clockCfg D.state c (D.workTapes 0) (D.workTapePos 0) := by
+  apply embedEmitCfg_eq
+  · rfl
+  · exact hin
+  · simp [clockCfg, hout]
+  · intro i
+    have hi : i = 0 := Subsingleton.elim _ _
+    subst hi
+    simp [clockCfg, lastEmb_apply]
+  · intro j hj
+    induction j using Fin.lastCases with
+    | last => exact absurd ⟨0, lastEmb_apply k 0⟩ hj
+    | cast i => simp [clockCfg]

@@ -1,0 +1,24 @@
+Turing.MultiTapeTM.step_of_some.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input} {q : State} (h : cfg.state = some q) :
+  MultiTapeTM.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+Turing.FinTM.controlAction_apply {k : ℕ} {S : Type} {x : List Bool} (cfg : Cfg k Bool S x) (m : SignType)
+  (q : Option S) :
+  (FinTM.controlAction m q).apply cfg =
+    { state := q, inputPos := moveInputPos cfg.inputPos m, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos,
+      output := cfg.output }
+Turing.Action.apply_state.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) : (action.apply cfg).state = action.state
+Turing.Action.apply_workTapes.{u_1, u_2} {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+Turing.Action.apply_workTapePos.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) (i : Fin k) :
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+Turing.Action.apply_inputPos.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) :
+  (action.apply cfg).inputPos = moveInputPos cfg.inputPos action.inputTape
+Turing.Action.apply_output.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) :
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+Complexity.clCountTM✝ : FinTM Bool

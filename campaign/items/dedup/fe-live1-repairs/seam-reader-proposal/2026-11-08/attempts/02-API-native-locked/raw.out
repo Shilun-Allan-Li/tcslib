@@ -1,0 +1,36 @@
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:159:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (M₂.tr q inp work).workTapes ?a✝
+in the target expression
+  { inputTape := (Action.mapState Sum.inr (M₂.tr q inp work)).inputTape, workTapes := (M₂.tr q inp work).workTapes,
+      output := (M₂.tr q inp work).output, state := Option.map Sum.inr (M₂.tr q inp work).state } =
+    Action.mapState Sum.inr (M₂.tr q inp work)
+
+k : ℕ
+S₁ : Type u_1
+S₂ : Type u_2
+Symbol : Type u_3
+inst✝ : DecidableEq S₁
+M₁ : MultiTapeTM k Symbol S₁
+exit : S₁
+M₂ : MultiTapeTM k Symbol S₂
+entry q : S₂
+inp : Option Symbol
+work : Fin k → Option Symbol
+⊢ { inputTape := (Action.mapState Sum.inr (M₂.tr q inp work)).inputTape, workTapes := (M₂.tr q inp work).workTapes,
+      output := (M₂.tr q inp work).output, state := Option.map Sum.inr (M₂.tr q inp work).state } =
+    Action.mapState Sum.inr (M₂.tr q inp work)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:397:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:437:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:593:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:594:5: warning: unused variable `hq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:794:5: warning: unused variable `hc'`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

@@ -1,0 +1,10 @@
+/-- The row-loader's return is absorbing, including the empty-row case. -/
+private lemma clLoad_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clLoadTM l).k Bool (clLoadTM l).State x)
+    (hc : c.state = some (Fin.last l, .inl 0)) : (clLoadTM l).tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  simp only [clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

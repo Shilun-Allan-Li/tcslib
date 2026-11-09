@@ -1,0 +1,10 @@
+/-- A redirected configuration is determined by its redirected state and its other fields. -/
+private lemma zr_bindState_eq {n : ℕ} {Γ S S' : Type} {x : List Γ} (e : Cfg n Γ S x)
+    (r : S → Option S') (y : Cfg n Γ S' x) (hs : e.state.bind r = y.state)
+    (hi : e.inputPos = y.inputPos) (ht : e.workTapes = y.workTapes)
+    (hp : e.workTapePos = y.workTapePos) (ho : e.output = y.output) : e.bindState r = y :=
+  Cfg.ext ((Cfg.bindState_state e r).trans hs) ((Cfg.bindState_inputPos e r).trans hi)
+    (funext fun j => funext fun q =>
+      (Cfg.bindState_workTapes e r j q).trans (congrFun (congrFun ht j) q))
+    (funext fun j => (Cfg.bindState_workTapePos e r j).trans (congrFun hp j))
+    ((Cfg.bindState_output e r).trans ho)

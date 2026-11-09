@@ -1,0 +1,22 @@
+/-- A two-tape native record copier. It doubles each source bit, writes
+one aligned `01` field separator, then restores the source head. The
+record head remains at its new right blank. Physical output is silent. -/
+private def clCopyTM : FinTM Bool where
+  k := 2
+  State := Fin 5
+  tm := {
+    q₀ := 0
+    tr := fun q _ work =>
+      if q = 0 then
+        match work 0 with
+        | some b => ⟨0, clTwo (none, 0) (some (some b), .pos), none, some 1⟩
+        | none => ⟨0, clTwo (none, .neg) (some (some false), .pos), none, some 2⟩
+      else if q = 1 then
+        ⟨0, clTwo (none, .pos) (some (some ((work 0).getD false)), .pos), none, some 0⟩
+      else if q = 2 then
+        ⟨0, clTwo (none, 0) (some (some true), .pos), none, some 3⟩
+      else if q = 3 then
+        match work 0 with
+        | some _ => ⟨0, clTwo (none, .neg) (none, 0), none, some 3⟩
+        | none => ⟨0, clTwo (none, .pos) (none, 0), none, some 4⟩
+      else FinTM.controlAction 0 (some q) }

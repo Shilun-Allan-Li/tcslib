@@ -1,0 +1,4 @@
+/-- A host configuration at the start of an attempt from a ready configuration. -/
+def ClockReady (c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x) : Prop :=
+  ∃ (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+    ReadyAt m a ∧ c = runCfg m a 0 sT sP

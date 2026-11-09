@@ -1,0 +1,41 @@
+/-- **The mapped copy is the mapped transfer with the identity residue.** With `rest := some`
+the transfer's return pass writes back, at each source cell it leaves, the symbol it has just read
+there, which changes nothing; every other transition of the two tables is the same. So the two
+machines take the same step from every configuration.
+
+**Proof sketch.** Unfold one step and split on the phase and the scanned source cell. Only the
+`rewind` phase over a nonblank source cell differs, where the transfer's write is
+`Function.update` of the tape at the head with the cell's own content. -/
+private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} (src dst : Fin k)
+    (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol)
+    (c : Cfg k Symbol SweepPhase x) :
+    (copyMapTM k src dst extract merge).step c =
+      (transferMapTM k src dst extract merge some).step c := by
+  unfold MultiTapeTM.step
+  cases hq : c.state with
+  | none => rfl
+  | some q =>
+    cases q with
+    | sweep => rfl
+    | done => rfl
+    | rewind =>
+      cases hb : c.workTapeSymbols src with
+      | none => simp only [copyMapTM, transferMapTM, hb]
+      | some b =>
+        have hc : c.workTapes src (c.workTapePos src) = some b := hb
+        simp only [copyMapTM, transferMapTM, hb]
+        apply Cfg.ext <;> simp only [Action.apply]
+        · funext j
+          by_cases hs : j = src
+          · subst hs
+            simp only [true_or, if_true]
+            rw [← hc, Function.update_eq_self]
+          · by_cases hd : j = dst
+            · subst hd; simp [hs]
+            · simp [hs, hd]
+        · funext j
+          by_cases hs : j = src
+          · simp [hs]
+          · by_cases hd : j = dst
+            · subst hd; simp [hs]
+            · simp [hs, hd]

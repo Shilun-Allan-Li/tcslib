@@ -1,0 +1,5 @@
+/-- An already halted source contributes no further writes, no output, and no
+virtual movement. The surrounding physical schedule nevertheless continues. -/
+private lemma obliviousSourceAction_idle (M : FinTM Bool)
+    (read : Fin (M.k + 1) → OblPayload) :
+    obliviousSourceAction M none read = ⟨0, fun _ => (none, 0), none, none⟩ := rfl

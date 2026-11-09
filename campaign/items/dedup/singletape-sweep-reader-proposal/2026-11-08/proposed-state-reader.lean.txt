@@ -1,0 +1,5 @@
+/-- The reverse-sweep configuration has the supplied control state. -/
+theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).state = q := by
+  rfl

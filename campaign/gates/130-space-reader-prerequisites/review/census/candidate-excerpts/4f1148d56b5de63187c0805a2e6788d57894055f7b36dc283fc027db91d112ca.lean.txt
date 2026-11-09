@@ -1,0 +1,32 @@
+/-- The certified selector gives both selected source fields and the ambient frame.
+**Proof sketch.** On a selected slot, exact correspondence identifies the
+source index and the two public selected-field theorems apply. An unselected
+slot lies outside the embedding's range, so the time-zero frame theorem
+preserves its tape and head. The other configuration fields are unchanged. -/
+private lemma clPlacedCfg_eq {k l : ℕ} {S H : Type} {x : List Bool}
+    (slots : clPlacement k l) (emb : S → H)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (c : Cfg k Bool S x) :
+    clPlacedCfg slots emb tapes heads c =
+      ⟨c.state.map emb, c.inputPos,
+        (fun j => match slots.select j with | some i => c.workTapes i | none => tapes j),
+        (fun j => match slots.select j with | some i => c.workTapePos i | none => heads j),
+        c.output⟩ := by
+  have fields (j : Fin l) :
+      (embedEmitCfg slots.index tapes heads [] c).workTapes j =
+        (match slots.select j with | some i => c.workTapes i | none => tapes j) ∧
+      (embedEmitCfg slots.index tapes heads [] c).workTapePos j =
+        (match slots.select j with | some i => c.workTapePos i | none => heads j) := by
+    cases hs : slots.select j with
+    | some i =>
+      rw [← (slots.exact i j).mp hs, embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
+      exact ⟨rfl, rfl⟩
+    | none =>
+      have outside : j ∉ Set.range slots.index := by
+        rintro ⟨i, hi⟩
+        have he := (slots.exact i j).mpr hi
+        rw [hs] at he
+        cases he
+      exact (embedEmitTM_frame slots.index
+        ⟨(), fun _ _ _ => FinTM.controlAction 0 none⟩ tapes heads []
+        (c.mapState (fun _ => ())) 0).1 j outside
+  exact Cfg.ext rfl rfl (funext fun j => (fields j).1) (funext fun j => (fields j).2) rfl

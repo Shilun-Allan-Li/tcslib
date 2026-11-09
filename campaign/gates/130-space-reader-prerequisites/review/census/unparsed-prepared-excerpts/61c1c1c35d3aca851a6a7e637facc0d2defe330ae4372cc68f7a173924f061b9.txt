@@ -1,0 +1,75 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+
+/-! §13d G4 continuation 1: every public declaration the brief cites, and every published lemma its
+route reads, resolves from `Build/ZoneRebalance`'s import context (maintainer pre-ship probe). -/
+
+-- G4's first-round probe (94 names)
+
+-- names this brief cites
+
+-- the field equations and layer lemmas the route reads (#112, #116)
+
+-- #118 and the composition bridges
+
+open Lean Elab Command in
+/-- Review re-run of the pre-ship inventory, with the seeds included (read-only). For the cited
+names: `SEED <name> @ <module>` when the name is itself a `TCSlib` definition (not an instance or
+internal, not a structure projection); `INV <name> -> <def> @ <module>` for every such definition in its type, as
+`#def_inventory_each` printed. Then, for every definition listed, `LEM <def> <count> : <names>`,
+the `TCSlib` theorems (and this file's) whose statement mentions it; and
+`FLD <def> : <structure> data <n> missing [...]` for a structure-valued definition, the
+data fields with no `<def>_<field>` lemma. -/
+elab "#def_inventory_seeds " ids:ident* : command => do
+  let env ← getEnv
+  let modOf : Name → String := fun c => match env.getModuleIdxFor? c with
+    | some idx => env.header.moduleNames[idx.toNat]!.toString
+    | none => "(this file)"
+  let local? : Name → Bool := fun c =>
+    (modOf c).startsWith "TCSlib" || modOf c == "(this file)"
+  let isTDef : Name → Bool := fun c => match env.find? c with
+    | some (.defnInfo _) => local? c && !(Lean.Meta.isInstanceCore env c) && !c.isInternal &&
+        !env.isProjectionFn c
+    | _ => false
+  let mut out : Array String := #[]
+  let mut defs : NameSet := {}
+  for id in ids do
+    let n ← liftCoreM (realizeGlobalConstNoOverload id)
+    let some ci := env.find? n | throwError "unknown constant {n}"
+    if isTDef n then
+      out := out.push s!"SEED {n} @ {modOf n}"
+      defs := defs.insert n
+    for c in ci.type.getUsedConstants do
+      if isTDef c then
+        out := out.push s!"INV {n} -> {c} @ {modOf c}"
+        defs := defs.insert c
+  let lem : NameMap (Array Name) := env.constants.fold (init := {}) fun acc n ci =>
+    match ci with
+    | .thmInfo t =>
+      if local? n && !n.isInternal then
+        t.type.getUsedConstants.foldl (init := acc) fun acc c =>
+          if defs.contains c then acc.insert c (((acc.find? c).getD #[]).push n) else acc
+      else acc
+    | _ => acc
+  for d in defs.toList do
+    let ls := ((lem.find? d).getD #[]).map toString
+    let ls := ls.qsort (· < ·)
+    out := out.push s!"LEM {d} {ls.size} : {String.intercalate " " ls.toList}"
+  -- check 8's blind spot: a structure-valued definition's data fields without a `<def>_<field>`
+  for d in defs.toList do
+    let some ci := env.find? d | continue
+    let some s := ci.type.getForallBody.getAppFn.constName? | continue
+    let some info := getStructureInfo? env s | continue
+    let mut miss : Array String := #[]
+    let mut data : Nat := 0
+    for f in info.fieldNames do
+      let some pf := getProjFnForField? env s f | continue
+      let some pci := env.find? pf | continue
+      let isPf ← liftTermElabM <| Meta.forallTelescope pci.type fun _ b => Meta.isProp b
+      if isPf then continue
+      data := data + 1
+      let eqn := d.appendAfter ("_" ++ f.toString)
+      unless env.contains eqn do miss := miss.push f.toString
+    out := out.push s!"FLD {d} : {s} data {data} missing [{String.intercalate " " miss.toList}]"
+  logInfo m!"{String.intercalate "\n" (out.qsort (· < ·)).toList}"
+
+#def_inventory_seeds Turing.exists_zoneRebalanceTM Turing.exists_zoneExtendTM Turing.ZoneData Turing.zoneRowPre Turing.zoneRebalanceIndex Turing.zoneRebalanceData Turing.zoneExtendData Turing.zoneRebalancePost Turing.zoneExtendPost Turing.zoneRowLo Turing.zoneRowHi Turing.zoneRowPre_rebalancePost Turing.zoneRowPre_extendPost Turing.zoneRebalancePost_state_done Turing.zoneRebalanceData_of_short Turing.zoneRebalanceIndex_extend_of_short Turing.zoneRebalancePost_frames Turing.zoneExtendPost_frames Turing.ZoneContents Turing.ZoneContents.extend Turing.zoneCapacity Turing.zoneShiftIndex Turing.zoneRebalance Turing.zoneCascade Turing.zoneCascadeRight Turing.zoneCascadeLeft Turing.zoneMove Turing.zoneShiftInW Turing.zoneShiftOutW Turing.zoneSide_rebalance_right Turing.zoneCascade_cost_le Turing.zoneRebalance_frame Turing.ZoneSym Turing.ZoneCell Turing.zoneSlotOf Turing.zoneSlotSet Turing.zoneStart Turing.zoneStart_succ Turing.zoneStart_eq Turing.zoneOwner Turing.zoneCells Turing.zonedTape Turing.zonedTape_zero Turing.zonedTape_right Turing.zonedTape_left Turing.zonedTape_right_sep Turing.zonedTape_left_sep Turing.zonedTape_blank_outside Turing.zonedTape_right_word Turing.zonedTape_left_word Turing.zonedTape_update_slot Turing.zonedTape_isSome Turing.zonedTape_extend Turing.framedContract Turing.sweepContract Turing.seekPost Turing.walkTM Turing.walkTM_run_ofCfg Turing.walkTM_contract Turing.skipTM_contract Turing.skipBackTM_contract Turing.seekEndTM_contract Turing.seekStartTM_contract Turing.scanTM_contract Turing.scanResult Turing.scanMap Turing.scanShift Turing.copyMapTM_contract Turing.transferMapTM_contract Turing.clearTM_contract Turing.fieldsTape Turing.fieldOffset Turing.fieldsTape_cons_shift Turing.fieldOffset_succ Turing.joinFields Turing.Contract Turing.Contract.seq Turing.Contract.inPhase Turing.Contract.branch Turing.Contract.trans Turing.Contract.Traj Turing.Contract.Frames Turing.Contract.Traj.seq Turing.Contract.Frames.seq Turing.Round Turing.Round.iterate Turing.roundOrbit Turing.RoundContract Turing.RoundContract.release Turing.ReturnContract.release Turing.tapeAction Turing.inputMoveAction Turing.step_of_tapeAction_move Turing.step_of_inputMoveAction Turing.Action.apply Turing.Cfg.bindState Turing.Cfg.bindState_state Turing.Cfg.mapState Turing.Cfg.sameOutside_iff Turing.Contract.ofSegment Turing.Contract.segment Turing.Contract.traj_iff Turing.HeadBox Turing.MultiTapeTM.step Turing.Round.of_cut Turing.Segment Turing.Segment.mono Turing.Segment.trans Turing.ZoneContents.swap Turing.ZoneContents.swap_left Turing.fieldOffset_zero Turing.headBox_iff Turing.roundOrbit_succ Turing.roundOrbit_zero Turing.round_iff Turing.scanResult_map Turing.scanResult_shiftLeft Turing.scanResult_shiftRight Turing.seekEndTM Turing.seekStartTM Turing.segment_iff Turing.skipBackTM Turing.skipTM Turing.zoneCapacity_eq Turing.zoneCascadeRight_eq Turing.zoneCellAt_eq Turing.zoneCells_eq Turing.zoneMove_true Turing.zoneShiftIn Turing.zoneShiftInW_eq Turing.zoneShiftOut Turing.zoneShiftOutW_eq Turing.zoneSide_cascadeRight Turing.zoneSlotOf_inr Turing.zoneSlotOf_slotSet_self Turing.zoneStepPair_eq Turing.zonedTape_of_pos Turing.Contract.branch_hi Turing.Contract.branch_lo Turing.Contract.branch_positive Turing.Contract.branch_post Turing.Contract.branch_pre Turing.Contract.branch_time Turing.Contract.inPhase_hi Turing.Contract.inPhase_lo Turing.Contract.inPhase_positive Turing.Contract.inPhase_post Turing.Contract.inPhase_pre Turing.Contract.inPhase_time Turing.Contract.seq_hi Turing.Contract.seq_lo Turing.Contract.seq_positive Turing.Contract.seq_post Turing.Contract.seq_pre Turing.Contract.seq_time Turing.Contract.trans_hi Turing.Contract.trans_lo Turing.Contract.trans_positive Turing.Contract.trans_post Turing.Contract.trans_pre Turing.Contract.trans_time Turing.ReturnContract.release_hi Turing.ReturnContract.release_lo Turing.ReturnContract.release_positive Turing.ReturnContract.release_post Turing.ReturnContract.release_pre Turing.ReturnContract.release_time Turing.Round.cut_some Turing.Round.segment Turing.Round.time_box Turing.RoundContract.release_hi Turing.RoundContract.release_lo Turing.RoundContract.release_positive Turing.RoundContract.release_post Turing.RoundContract.release_pre Turing.RoundContract.release_time Turing.Segment.and Turing.Segment.cons Turing.Segment.drop Turing.Segment.live Turing.Segment.one Turing.Segment.take Turing.Segment.time_eq Turing.Segment.zero Turing.ZoneContents.extend_home Turing.ZoneContents.extend_left Turing.ZoneContents.extend_right Turing.ZoneContents.extend_words_castSucc Turing.ZoneContents.extend_words_last Turing.ZoneContents.swap_home Turing.ZoneContents.swap_right Turing.ZoneContents.swap_swap Turing.ZoneContents.words_false Turing.ZoneContents.words_le Turing.ZoneContents.words_true Turing.clearTM_contract_frames Turing.clearTM_contract_hi Turing.clearTM_contract_lo Turing.clearTM_contract_post Turing.clearTM_contract_pre Turing.clearTM_contract_time Turing.clearTM_contract_traj Turing.copyMapTM_contract_frames Turing.copyMapTM_contract_hi Turing.copyMapTM_contract_lo Turing.copyMapTM_contract_post Turing.copyMapTM_contract_post_workTapes Turing.copyMapTM_contract_pre Turing.copyMapTM_contract_time Turing.copyMapTM_contract_traj Turing.fieldOffset_add_length_le Turing.fieldOffset_cons_succ Turing.fieldsTape_field Turing.fieldsTape_nil Turing.fieldsTape_of_length_le Turing.fieldsTape_of_neg Turing.fieldsTape_of_nonneg Turing.framedContract_hi Turing.framedContract_lo Turing.framedContract_post Turing.framedContract_pre Turing.framedContract_time Turing.joinFields_cons_cons Turing.joinFields_nil Turing.joinFields_singleton Turing.scanTM_contract_hi Turing.scanTM_contract_lo Turing.scanTM_contract_post Turing.scanTM_contract_pre Turing.scanTM_contract_time Turing.seekEndTM_contract_hi Turing.seekEndTM_contract_lo Turing.seekEndTM_contract_post Turing.seekEndTM_contract_pre Turing.seekEndTM_contract_time Turing.seekPost_inputPos Turing.seekPost_output Turing.seekPost_state Turing.seekPost_workTapePos Turing.seekPost_workTapes Turing.seekStartTM_contract_hi Turing.seekStartTM_contract_lo Turing.seekStartTM_contract_post Turing.seekStartTM_contract_pre Turing.seekStartTM_contract_time Turing.skipBackTM_contract_hi Turing.skipBackTM_contract_lo Turing.skipBackTM_contract_post Turing.skipBackTM_contract_pre Turing.skipBackTM_contract_time Turing.skipTM_contract_hi Turing.skipTM_contract_lo Turing.skipTM_contract_post Turing.skipTM_contract_pre Turing.skipTM_contract_time Turing.sweepPost_inputPos Turing.sweepPost_output Turing.sweepPost_state Turing.sweepPost_workTapePos Turing.sweepPost_workTapes Turing.transferMapTM_contract_frames Turing.transferMapTM_contract_hi Turing.transferMapTM_contract_lo Turing.transferMapTM_contract_post Turing.transferMapTM_contract_post_workTapes Turing.transferMapTM_contract_pre Turing.transferMapTM_contract_time Turing.walkTM_contract_hi Turing.walkTM_contract_lo Turing.walkTM_contract_post Turing.walkTM_contract_pre Turing.walkTM_contract_time Turing.zoneCascadeLeft_eq Turing.zoneCascadeLeft_lengths Turing.zoneCascadeRight_blocked Turing.zoneCascadeRight_frame Turing.zoneCascadeRight_home Turing.zoneCascadeRight_lengths Turing.zoneCascadeRight_zero Turing.zoneCascade_false Turing.zoneCascade_true Turing.zoneCells_length Turing.zoneHomeWrite_home Turing.zoneHomeWrite_left Turing.zoneHomeWrite_right Turing.zoneMoveLeft_home Turing.zoneMoveLeft_left Turing.zoneMoveLeft_right Turing.zoneMoveRight_home Turing.zoneMoveRight_left Turing.zoneMoveRight_right Turing.zoneMove_false Turing.zoneOwner_beyond Turing.zoneOwner_eq Turing.zoneOwner_of_mem Turing.zoneOwner_of_not_mem Turing.zoneOwner_sep Turing.zoneOwner_succ Turing.zoneRebalance_false Turing.zoneRebalance_of_le Turing.zoneRebalance_of_lt Turing.zoneShiftIn_home Turing.zoneShiftIn_left Turing.zoneShiftIn_right Turing.zoneShiftIndex_empty Turing.zoneShiftIndex_eq Turing.zoneShiftIndex_eq_findIdx Turing.zoneShiftIndex_eq_length_iff Turing.zoneShiftIndex_extend Turing.zoneShiftIndex_extend_of_lt Turing.zoneShiftIndex_le Turing.zoneShiftIndex_nonempty Turing.zoneShiftOut_home Turing.zoneShiftOut_left Turing.zoneShiftOut_right Turing.zoneSlotOf_inl Turing.zoneSlotOf_slotSet_ne Turing.zoneSlotSet_eq Turing.zoneStart_add_lt Turing.zoneStart_mono Turing.zonedTape_homeWrite Turing.zonedTape_injective Turing.zonedTape_of_neg Turing.RoundContract.hullLo_eq Turing.RoundContract.hullHi_eq Turing.Cfg.bindState_inputPos Turing.Cfg.bindState_workTapes Turing.Cfg.bindState_workTapePos Turing.Cfg.bindState_output Turing.Contract.ofSegment_pre Turing.Contract.ofSegment_time Turing.Contract.ofSegment_post Turing.Contract.ofSegment_lo Turing.Contract.ofSegment_hi Turing.step_of_tapeAction_write Turing.MultiTapeTM.runFrom_succ_eq_step' Turing.MultiTapeTM.runFrom_zero Turing.moveInputPos_zero

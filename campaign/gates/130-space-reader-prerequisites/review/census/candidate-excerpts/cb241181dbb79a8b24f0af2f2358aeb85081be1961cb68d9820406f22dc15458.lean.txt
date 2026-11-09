@@ -1,0 +1,8 @@
+/-- The window predicate depends only on the configuration-graph vertex. -/
+lemma inWin_of_coreSum_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (h : NDTM.coreSum C = NDTM.coreSum D) (hC : InWin N s C) : InWin N s D := by
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+  obtain ⟨⟨-, -, hw, hp⟩, -⟩ := h
+  intro i
+  rw [← hw, ← hp]
+  exact hC i

@@ -1,0 +1,230 @@
+ControlsSealed.lean:11:132: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 0
+is not definitionally equal to the right-hand side
+  c
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+⊢ MultiTapeTM.runFrom c 0 = c
+ControlsSealed.lean:13:139: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+ControlsSealed.lean:15:69: error: Tactic `rfl` failed: The left-hand side
+  bufferTape [] 0
+is not definitionally equal to the right-hand side
+  none
+
+⊢ bufferTape [] 0 = none
+ControlsSealed.lean:17:64: error: Tactic `rfl` failed: The left-hand side
+  bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ bufferTape [true] 0 = some true
+ControlsSealed.lean:19:171: error: Tactic `rfl` failed: The left-hand side
+  inputMoveAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := some q }
+
+k : ℕ
+S : Type
+m : SignType
+q : S
+⊢ inputMoveAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := some q }
+ControlsSealed.lean:21:137: error: Tactic `rfl` failed: The left-hand side
+  (inputMoveAction m q).state
+is not definitionally equal to the right-hand side
+  some q
+
+k : ℕ
+S : Type
+m : SignType
+q : S
+⊢ (inputMoveAction m q).state = some q
+ControlsSealed.lean:23:230: error: Tactic `rfl` failed: The left-hand side
+  tapeAction i m w s q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun j => if j = i then (w, s) else (none, 0), output := none, state := some q }
+
+k : ℕ
+S : Type
+i : Fin k
+m s : SignType
+w : Option (Option Bool)
+q : S
+⊢ tapeAction i m w s q =
+    { inputTape := m, workTapes := fun j => if j = i then (w, s) else (none, 0), output := none, state := some q }
+ControlsSealed.lean:25:170: error: Tactic `rfl` failed: The left-hand side
+  (tapeAction i m w s q).state
+is not definitionally equal to the right-hand side
+  some q
+
+k : ℕ
+S : Type
+i : Fin k
+m s : SignType
+w : Option (Option Bool)
+q : S
+⊢ (tapeAction i m w s q).state = some q
+ControlsSealed.lean:27:169: error: Tactic `rfl` failed: The left-hand side
+  controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+k : ℕ
+S : Type
+m : SignType
+q : Option S
+⊢ controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+ControlsSealed.lean:29:138: error: Tactic `rfl` failed: The left-hand side
+  (controlAction m q).state
+is not definitionally equal to the right-hand side
+  q
+
+k : ℕ
+S : Type
+m : SignType
+q : Option S
+⊢ (controlAction m q).state = q
+ControlsSealed.lean:31:161: error: Tactic `rfl` failed: The left-hand side
+  Action.mapState f a
+is not definitionally equal to the right-hand side
+  { inputTape := a.inputTape, workTapes := a.workTapes, output := a.output, state := Option.map f a.state }
+
+k : ℕ
+S T : Type
+f : S → T
+a : Action k Bool S
+⊢ Action.mapState f a =
+    { inputTape := a.inputTape, workTapes := a.workTapes, output := a.output, state := Option.map f a.state }
+ControlsSealed.lean:33:124: error: Tactic `rfl` failed: The left-hand side
+  (Action.mapState f a).state
+is not definitionally equal to the right-hand side
+  Option.map f a.state
+
+k : ℕ
+S T : Type
+f : S → T
+a : Action k Bool S
+⊢ (Action.mapState f a).state = Option.map f a.state
+ControlsSealed.lean:35:113: error: Tactic `rfl` failed: The left-hand side
+  (inputFoldTM k δ a₀).q₀
+is not definitionally equal to the right-hand side
+  ScanPhase.fwd a₀
+
+k : ℕ
+A : Type
+δ : A → Bool → A
+a₀ : A
+⊢ (inputFoldTM k δ a₀).q₀ = ScanPhase.fwd a₀
+ControlsSealed.lean:37:271: error: Tactic `rfl` failed: The left-hand side
+  (inputFoldTM k δ a₀).tr (ScanPhase.bwd a) inp work
+is not definitionally equal to the right-hand side
+  match inp with
+  | some val => inputMoveAction (-1) (ScanPhase.bwd a)
+  | none => inputMoveAction 1 (ScanPhase.done a)
+
+k : ℕ
+A : Type
+δ : A → Bool → A
+a₀ a : A
+inp : Option Bool
+work : Fin k → Option Bool
+⊢ (inputFoldTM k δ a₀).tr (ScanPhase.bwd a) inp work =
+    match inp with
+    | some val => inputMoveAction (-1) (ScanPhase.bwd a)
+    | none => inputMoveAction 1 (ScanPhase.done a)
+ControlsSealed.lean:39:61: error: Tactic `rfl` failed: The left-hand side
+  blankCfg.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+⊢ blankCfg.inputSymbol = none
+ControlsSealed.lean:41:105: error: Tactic `rfl` failed: The left-hand side
+  (let __src := blankCfg;
+    { state := __src.state, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := __src.output }).inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (let __src := blankCfg;
+      { state := __src.state, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+        output := __src.output }).inputSymbol =
+    none
+ControlsSealed.lean:43:170: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ControlsSealed.lean:45:218: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step c
+is not definitionally equal to the right-hand side
+  match c.state with
+  | none => c
+  | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+⊢ MultiTapeTM.step c =
+    match c.state with
+    | none => c
+    | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c
+ControlsSealed.lean:47:64: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 0 0
+is not definitionally equal to the right-hand side
+  0
+
+⊢ moveInputPos 0 0 = 0
+ControlsSealed.lean:49:64: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 0
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 0 = 1
+ControlsSealed.lean:51:154: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+k : ℕ
+S : Type
+x : List Bool
+c : Cfg k Bool S x
+i : Fin k
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ControlsSealed.lean:53:151: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols
+is not definitionally equal to the right-hand side
+  fun i => c.workTapes i (c.workTapePos i)
+
+k : ℕ
+S : Type
+x : List Bool
+c : Cfg k Bool S x
+⊢ c.workTapeSymbols = fun i => c.workTapes i (c.workTapePos i)

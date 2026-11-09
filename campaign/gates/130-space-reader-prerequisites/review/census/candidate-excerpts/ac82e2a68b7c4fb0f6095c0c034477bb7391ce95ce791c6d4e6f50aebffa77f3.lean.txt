@@ -1,0 +1,53 @@
+/-- **The hosted input seek.** The input seek of `Turing.exists_inputSeekTM`, embedded along `σ`
+on tapes holding `[true]` and a blank, brings the input head home to `1` from anywhere within
+`C (|[true]| + pos + 1 + 1)` steps, keeping everything else, and not earlier.
+
+**Proof sketch.** Apply the seek's clause at `p = 1` with the word `[true]`, worth `1`, to the
+selected bank: its endpoint is the bank with the input head at `1`, its tapes, heads and output
+restored. Transport along `σ` (`qy_embed`); the cut is the seek's. -/
+private theorem qy_seekHost {K : ℕ} {x : List Bool} {S : Type} (R : MultiTapeTM 2 Bool S)
+    (entry exit : S) (C : ℕ)
+    (hR : ∀ (p : ℕ) (w : List Bool), Nat.ofDigits 2 (w.map Bool.toNat) = p →
+        p ≤ x.length + 1 → ∀ d : Cfg 2 Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+          (R.runFrom d t).state = some exit ∧ ((R.runFrom d t).inputPos : ℕ) = p ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧ (R.runFrom d t).workTapePos = d.workTapePos ∧
+          (R.runFrom d t).output = d.output)
+    (σ : Fin 2 ↪ Fin K) (s0 s1 : Fin K) (hσ0 : σ 0 = s0) (hσ1 : σ 1 = s1)
+    (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
+    (hT0 : T s0 = FinTM.bufferTape [true]) (hP0 : P s0 = 0)
+    (hT1 : T s1 = FinTM.bufferTape []) :
+    ∃ t ≤ C * (1 + ip.val + 1 + 1),
+      (embedEmitTM σ R).runFrom (qyC entry ip T P o) t = qyC exit 1 T P o ∧
+      ∀ u < t, ((embedEmitTM σ R).runFrom (qyC entry ip T P o) u).state ≠ some exit := by
+  have hv : Nat.ofDigits 2 (([true] : List Bool).map Bool.toNat) = 1 := by
+    rw [List.map_cons, List.map_nil, Bool.toNat_true, Nat.ofDigits_singleton]
+  obtain ⟨t, ht, hcut, -, hst, hpos, hwt, hwp, hout⟩ := hR 1 [true] hv (by omega)
+    (qyC entry ip (fun i => T (σ i)) (fun i => P (σ i)) []) rfl
+    (fun q _ _ => by
+      show T (σ 0) (P (σ 0) + q) = _
+      rw [hσ0, hP0, zero_add, hT0])
+    (fun q => by
+      show T (σ 1) q = none
+      rw [hσ1, hT1, FinTM.bufferTape_nil])
+  have hsrc : R.runFrom (qyC entry ip (fun i => T (σ i)) (fun i => P (σ i)) []) t =
+      qyC exit 1 (fun i => T (σ i)) (fun i => P (σ i)) [] := by
+    apply Cfg.ext
+    · exact hst
+    · exact Fin.ext hpos
+    · exact hwt
+    · exact hwp
+    · exact hout
+  refine ⟨t, ht, ?_, fun u hu => ?_⟩
+  · have h := qy_embed σ R entry exit ip 1 T T P P o [] _ _ t hsrc (fun _ => ⟨rfl, rfl⟩)
+      (fun _ _ => ⟨rfl, rfl⟩)
+    rw [List.append_nil] at h
+    exact h
+  · rw [qy_embed_state]
+    exact hcut u hu

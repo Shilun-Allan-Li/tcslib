@@ -1,0 +1,37 @@
+/-- Capture the payload computation, rewind both relevant heads, and silently
+validate the original pair. Only after validation, replay the native encoded
+prefix followed by the captured payload. The source bank is never reused. -/
+private def pairMapTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ (Fin 7 ⊕ (Bool × Option Bool))
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl s => captureAction Sum.inl (.inr (.inl 0))
+          (M.tm.tr s inp fun i => work i.castSucc)
+      | .inr (.inl q) => match q.val with
+        | 0 => mapAction M 0 .neg none (some (.inr (.inl 1)))
+        | 1 => match work (Fin.last M.k) with
+          | some _ => mapAction M 0 .neg none (some (.inr (.inl 1)))
+          | none => mapAction M 0 .pos none (some (.inr (.inl 2)))
+        | 2 => controlAction .neg (some (.inr (.inl 3)))
+        | 3 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 3)))
+          | none => controlAction .pos (some (.inr (.inr (false, none))))
+        | 4 => controlAction .neg (some (.inr (.inl 5)))
+        | 5 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 5)))
+          | none => controlAction .pos (some (.inr (.inr (true, none))))
+        | _ => match work (Fin.last M.k) with
+          | some b => mapAction M 0 .pos (some b) (some (.inr (.inl 6)))
+          | none => mapAction M 0 0 none none
+      | .inr (.inr (emit, none)) => match inp with
+        | none => mapAction M 0 0 none none
+        | some b => mapAction M .pos 0 (if emit then some b else none)
+            (some (.inr (.inr (emit, some b))))
+      | .inr (.inr (emit, some b)) => match inp with
+        | none => mapAction M 0 0 none none
+        | some d => mapAction M .pos 0 (if emit then some d else none)
+            (if b = d then some (.inr (.inr (emit, none)))
+             else if b then none
+             else some (.inr (.inl (if emit then 6 else 4)))) }

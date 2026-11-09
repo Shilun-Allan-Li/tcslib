@@ -1,0 +1,32 @@
+from pathlib import Path
+import hashlib,json,re,subprocess,sys
+O=Path(__file__).parent
+A=Path(sys.argv[1]);label=sys.argv[2];T=O/label;T.mkdir()
+data=json.loads((A/'module-results.json').read_bytes());mods=(A/'down.txt').read_text().splitlines()
+assert len(data)==len(mods) and [r['module'] for r in data]==mods
+assert all(r['pass'] and r['exit']==r['errors']==0 and r['fresh_output'] for r in data)
+log=(A/'replay.log').read_text()
+rows=re.findall(r'^(\S+) exit=(\d+) errors=(\d+) sorry=(\d+)$',log,re.M)
+assert rows==[(r['module'],str(r['exit']),str(r['errors']),str(r['sorry'])) for r in data]
+for r in data:
+ m=r['module'];b=(A/'compiled-source'/(m+'.lean.txt')).read_bytes()
+ assert hashlib.sha256(b).hexdigest()==r['compiled_source_sha256']
+ lp=(A/'logs'/(m+'.log')).read_bytes()
+ assert hashlib.sha256(lp).hexdigest()==r['log_sha256'] and lp.count(b"declaration uses 'sorry'")==r['sorry'] and not lp.count(b'error:')
+ f=T/'source'/(m+'.lean');f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes(b)
+strict=lambda lp:subprocess.run(['python3','-I',str(O/'staticsorry.py'),str(T/'source'),str(lp),str(A/'down.txt')],capture_output=True)
+p=strict(A/'replay.log')
+(T/'VERIFIED.txt').write_bytes(p.stdout+p.stderr)
+assert p.returncode==0 and f'modules {len(mods)}, mismatches 0, static total {sum(r["sorry"] for r in data)}\n'.encode()==p.stdout
+first=next(l for l in log.splitlines() if l.startswith(mods[0]+' exit='))
+variants={'mismatch':(log.replace(first,first.rsplit('=',1)[0]+'='+str(data[0]['sorry']+1),1),'MISMATCH'),
+          'missing':(log.replace(first+'\n','',1),'MISSING'),
+          'duplicate':(log.replace(first,first+'\n'+first,1),'duplicate')}
+out=[]
+for name,(s,expected) in variants.items():
+ f=T/(name+'.log');f.write_text(s);p=strict(f)
+ (T/(name+'.txt')).write_bytes(p.stdout+p.stderr)
+ assert p.returncode==1 and expected.encode() in p.stdout
+ out.append({'case':name,'exit':p.returncode,'diagnostic':expected})
+(T/'RESULT.json').write_text(json.dumps({'archived_actual_run':str(A),'ordered_modules_verified':len(mods),'all_log_and_source_hashes_matched':True,'all_log_sorry_rows_matched_actual_warnings':True,'mismatches':0,'inherited_direct_admissions':sum(r['sorry'] for r in data),'positive_exit':0,'negative_control_runs':out,'no_Lean_execution':True},indent=2)+'\n')
+print((T/'VERIFIED.txt').read_text().strip(),'; mismatch, missing, duplicate controls rejected')

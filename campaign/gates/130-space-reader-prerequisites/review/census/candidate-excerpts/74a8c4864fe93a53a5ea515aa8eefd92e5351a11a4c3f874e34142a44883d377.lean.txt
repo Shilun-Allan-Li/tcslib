@@ -1,0 +1,15 @@
+theorem probe_fold_hR (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x)
+    (r : ℕ) (hr : r < x.length) :
+    (inputFoldTM k δ a₀).step (probeFoldR δ a₀ d (r + 1)) = probeFoldR δ a₀ d r := by
+  have hs : (probeFoldR δ a₀ d (r + 1)).inputSymbol = some x[r] :=
+    inputSymbolInner r (by simp [probeFoldR]; omega) hr
+  change ((inputFoldTM k δ a₀).tr (.bwd _) _ _).apply _ = _
+  simp only [inputFoldTM, hs]
+  apply Cfg.ext
+  case inputPos =>
+    simp only [Action.apply, inputMoveAction, probeFoldR]
+    apply Fin.ext
+    rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+    simp
+    omega
+  all_goals simp [Action.apply, inputMoveAction, probeFoldR]

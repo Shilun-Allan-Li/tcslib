@@ -1,0 +1,67 @@
+/-- **The fixed-field reader's contract** (`h1Record_effect`). Started on a
+configuration whose first `k` work tapes and input head mirror a source configuration `c`,
+whose summary cell holds the summary of `c`'s output, and whose table head is at a record of
+`a` (fixed fields `bits`): after exactly `4k + 5` steps the reader is at its live exit, the
+mirrored bank and input head are those of `a.apply c`, the summary cell is the summary of
+`(a.apply c)`'s output, and the physical output is unchanged; the exit is not reached earlier;
+the record is at least that long; and at every time each mirrored and input head is at its
+start (or, at the last step, its action endpoint), every head moves at most one cell
+(mirrored, input) or `4k + 4` cells (auxiliary), the table head has advanced `min u (4k + 4)`
+cells and the summary head is fixed. [AB09, §1.4.1, Theorem 1.9]
+
+**Proof sketch.** Project the proved execution equality onto the input, mirrored bank and
+summary cell. The summary identity is `outputSummary_append`, including when the source
+action halts. Before the last step the prefix trace has a reading state, never the live
+exit. -/
+lemma recordTM_effect {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (recordWidth k) → Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ i : Fin (recordWidth k),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (recordWidth k))
+    (hin : d.inputPos = c.inputPos)
+    (htapes : ∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i)
+    (hheads : ∀ i : Fin k, d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i)
+    (hsum : d.workTapeSymbols (summaryTape k) = outputSummary c.output) :
+    let e := (recordTM k).runFrom d (recordWidth k + 1)
+    e.state = some none ∧ e.inputPos = (a.apply c).inputPos ∧
+      (∀ i : Fin k, e.workTapes (Fin.castAdd 2 i) = (a.apply c).workTapes i ∧
+        e.workTapePos (Fin.castAdd 2 i) = (a.apply c).workTapePos i) ∧
+      e.workTapeSymbols (summaryTape k) = outputSummary (a.apply c).output ∧
+      e.output = d.output ∧
+      (∀ u < recordWidth k + 1, ((recordTM k).runFrom d u).state ≠ some none) ∧
+      recordWidth k + 1 ≤ (actionBitsK a).length ∧
+      (∀ u ≤ recordWidth k + 1,
+        let f := (recordTM k).runFrom d u
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) =
+          d.workTapePos (Fin.castAdd 2 i) +
+            if u = recordWidth k + 1 then ((a.workTapes i).2 : ℤ) else 0) ∧
+        f.inputPos = (if u = recordWidth k + 1 then moveInputPos d.inputPos a.inputTape
+          else d.inputPos) ∧
+        (∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (recordWidth k : ℤ)) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        f.workTapePos (tableTape k) =
+          d.workTapePos (tableTape k) + min u (recordWidth k) ∧
+        f.workTapePos (summaryTape k) = d.workTapePos (summaryTape k)) := by
+  dsimp only
+  have he := recordTM_execute d a bits hq hw hbits
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, codeActionK_length a,
+    recordTM_envelope d a bits hq hw hbits⟩
+  · rw [he]
+    rfl
+  · rw [he]
+    exact congrArg (fun p => moveInputPos p a.inputTape) hin
+  · intro i
+    rw [he]
+    simp [applyPayload, readCfg, Fin.addCases_left, mirror_ne_table k i, htapes i, hheads i]
+  · rw [he]
+    simp [Cfg.workTapeSymbols, applyPayload, readCfg, summaryTape,
+      ← hsum, outputSummary_append]
+  · rw [he]
+    simp [applyPayload, readCfg]
+  · intro u hu
+    rw [recordTM_read d bits hq hw u (by omega)]
+    simp [readCfg]

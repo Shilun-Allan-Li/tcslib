@@ -1,0 +1,188 @@
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1131:      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1132:      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1134:      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1135:      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1172:    (tm.runFrom (sweepRevCfg (some (state s)) p z l
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1173:    (tm.runFrom (sweepRevCfg (some (state s)) p z l
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1177:  simpa only [List.length_take, Nat.min_eq_left hu, sweepRevCfg] using
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1178:  simpa only [List.length_take, Nat.min_eq_left hu, sweepRevCfg] using
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1216:  sweepRevCfg (c.state.map (fun q => .inl (.growLeft q 0))) (dgPos a₀ c.inputPos) z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1223:  sweepRevCfg (c.state.map (fun q => .inl (.growLeft q 0))) (dgPos a₀ c.inputPos) z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1261:    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1262:      (sweepRevCfg (some (state ⟨n, by omega⟩)) p (z - n)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1264:  let cfg := fun i z l r => sweepRevCfg (some (state i)) p z l r out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1268:    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1269:      (sweepRevCfg (some (state ⟨n, by omega⟩)) p (z - n)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1269:      simpa only [sub_eq_add_neg] using sweepRevCfg_left_any _ _ p z l r out _)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1271:  let cfg := fun i z l r => sweepRevCfg (some (state i)) p z l r out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1274:  change (tm.runFrom (sweepRevCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + -1 * u at hp
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1276:      simpa only [sub_eq_add_neg] using sweepRevCfg_left_any _ _ p z l r out _)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1281:  change (tm.runFrom (sweepRevCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + -1 * u at hp
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1324:    sweepRevCfg (some (.inl .back)) 1 ((M.k : ℤ) - 1) [some sweepBoundary] L.reverse []
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1330:    sweepRevCfg (some (.inl .back)) 1 ((M.k : ℤ) - 1) [some sweepBoundary] L.reverse []
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1335:    dgSpan_one turn (by dsimp [c₁, sweepCfg]; omega) (by dsimp [c₂, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1337:    sweepRevCfg (some (.inl .back)) 1 (-1) (L ++ [some sweepBoundary]) [] []
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1341:    dgSpan_one turn (by dsimp [c₁, sweepCfg]; omega) (by dsimp [c₂, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1343:    sweepRevCfg (some (.inl .back)) 1 (-1) (L ++ [some sweepBoundary]) [] []
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1358:      simp [c₃, Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1363:    rw [show c₃ = sweepRevCfg (some (.inl .back)) 1 (-1)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1364:      (L ++ [some sweepBoundary]) [] [] from rfl, sweepRevCfg_write]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1364:      simp [c₃, Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1367:  have hlast := dgSpan_one last (by dsimp [c₃, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1369:    rw [show c₃ = sweepRevCfg (some (.inl .back)) 1 (-1)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1370:        dsimp [dgStart, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1370:      (L ++ [some sweepBoundary]) [] [] from rfl, sweepRevCfg_write]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1373:  have hlast := dgSpan_one last (by dsimp [c₃, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1376:        dsimp [dgStart, sweepRevCfg]; omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1413:      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1414:      (sweepRevCfg (some (.inr (q, heads, ⟨M.k, by omega⟩))) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1418:      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1419:      (sweepRevCfg (some (.inr (q, heads, ⟨M.k, by omega⟩))) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1461:    simp only [dgStart, MultiTapeTM.step, sweepRevCfg, hs, Option.map_some]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1464:        (sweepRevCfg (some (.inl (.growLeft q 0))) p z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1466:    simp only [dgStart, MultiTapeTM.step, sweepRevCfg, hs, Option.map_some]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1469:        (sweepRevCfg (some (.inl (.growLeft q 0))) p z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1471:    dgSpan_one step (by dsimp [dgStart, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1476:    dgSpan_one step (by dsimp [dgStart, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1504:      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1508:      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1553:      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1557:      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1572:    (by dsimp [sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1576:    (by dsimp [sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1590:      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1594:      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1635:      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1636:  have h := sweepRevCfg_write q dummy p z l r out b
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1638:      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1639:  have h := sweepRevCfg_write q dummy p z l r out b
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1653:      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1654:      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1656:      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1657:      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1659:    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1662:    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1666:  exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1669:  exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1680:      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1681:      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1683:      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1684:      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1689:    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1691:    sweepRevCfg (some (.inr (act.state, heads, 0))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1692:    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1694:    sweepRevCfg (some (.inr (act.state, heads, 0))) p z l [some sweepBoundary] out
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1699:    exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1701:    dgSpan_one step (by dsimp [d, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1702:      (by dsimp [e, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1702:    exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1704:    dgSpan_one step (by dsimp [d, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1705:      (by dsimp [e, sweepRevCfg]; constructor <;> omega)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1709:      (sweepRevCfg (some (.inr (act.state, heads, ⟨M.k, by omega⟩))) p (z - M.k) L [] out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1710:      sweepRevCfg (act.state.map (fun q => .inl (.growLeft q 0))) p (z - M.k) L [some sweepBoundary] out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1712:      (sweepRevCfg (some (.inr (act.state, heads, ⟨M.k, by omega⟩))) p (z - M.k) L [] out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1713:      sweepRevCfg (act.state.map (fun q => .inl (.growLeft q 0))) p (z - M.k) L [some sweepBoundary] out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1788:    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1790:    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1792:    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i a))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1794:    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i a))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:390:  sweepRevCfg (c.state.map (fun q => .growLeft q 0)) (sweepPos M.k c.inputPos) z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:391:  sweepRevCfg (c.state.map (fun q => .growLeft q 0)) (sweepPos M.k c.inputPos) z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:392:  sweepRevCfg (c.state.map (fun q => .growLeft q 0)) (sweepPos M.k c.inputPos) z
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:414:    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList) := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:415:    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList) := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:416:    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList) := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:425:    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:426:    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:427:    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:467:    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:468:      sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:468:    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:469:      sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:469:    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:470:      sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:474:    (fun i z l r => sweepRevCfg (some (.growLeft q ⟨i.val, by simpa [hw] using i.isLt⟩))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:475:    (fun i z l r => sweepRevCfg (some (.growLeft q ⟨i.val, by simpa [hw] using i.isLt⟩))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:476:    (fun i z l r => sweepRevCfg (some (.growLeft q ⟨i.val, by simpa [hw] using i.isLt⟩))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:479:    change (sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨i, by omega⟩)) p z l r out) = _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:480:    change (sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨i, by omega⟩)) p z l r out) = _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:481:    change (sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨i, by omega⟩)) p z l r out) = _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:485:    exact sweepRevCfg_left_any _ _ p z l r out _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:486:    exact sweepRevCfg_left_any _ _ p z l r out _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:487:    exact sweepRevCfg_left_any _ _ p z l r out _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:523:private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:524:private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:525:private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:526:    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:527:      sweepRevCfg (some q') p z l (b :: r.tail) out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:527:    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:528:      sweepRevCfg (some q') p z l (b :: r.tail) out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:528:    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:529:      sweepRevCfg (some q') p z l (b :: r.tail) out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:555:      sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:556:      sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:557:      sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:567:      (sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse []) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:568:      (sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse []) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:568:      sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:569:      (sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse []) M.k =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:569:      sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:570:      sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] [] := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:571:      (sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] []) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:572:      (sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] []) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:572:      sweepRevCfg (some (.growLeft M.tm.q₀ 0)) p (-1)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:573:      (sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] []) =
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:573:      sweepRevCfg (some (.growLeft M.tm.q₀ 0)) p (-1)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:574:      sweepRevCfg (some (.growLeft M.tm.q₀ 0)) p (-1)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:574:    have hr : (sweepRevCfg (some (SweepState.back (Γ := Γ) (S := M.State) (k := M.k)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:575:    have hr : (sweepRevCfg (some (SweepState.back (Γ := Γ) (S := M.State) (k := M.k)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:576:    have hr : (sweepRevCfg (some (SweepState.back (Γ := Γ) (S := M.State) (k := M.k)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:577:      simp [Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:578:      simp [Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:579:      simp [Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:580:    exact sweepRevCfg_write _ _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:581:    exact sweepRevCfg_write _ _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:582:    exact sweepRevCfg_write _ _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:596:private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:597:private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:598:    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:598:private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:599:    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:599:  apply Cfg.ext <;> simp [sweepMove, sweepRevCfg, Action.apply]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:600:    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out := by
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:600:  apply Cfg.ext <;> simp [sweepMove, sweepRevCfg, Action.apply]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:601:  apply Cfg.ext <;> simp [sweepMove, sweepRevCfg, Action.apply]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:639:      (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:640:      (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:641:      (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:682:    ((sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:683:    ((sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:684:    ((sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:744:      sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:745:      sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:746:      sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:779:      (sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:780:      (sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:781:      (sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:784:    have hsym : (sweepRevCfg
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:785:    have hsym : (sweepRevCfg
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:786:    have hsym : (sweepRevCfg
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:793:    exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:794:    exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:795:    exact sweepRevCfg_stay _ _ _ _ _ _ _
+TCSlib/Complexity/TuringMachine/Sweep.lean:153:def sweepRevCfg {A S : Type} {x : List A} (q : Option S)
+TCSlib/Complexity/TuringMachine/Sweep.lean:159:lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
+TCSlib/Complexity/TuringMachine/Sweep.lean:162:    (sweepAct q' b .neg).apply (sweepRevCfg q p z l (a :: r) out) =
+TCSlib/Complexity/TuringMachine/Sweep.lean:163:      sweepRevCfg (some q') p (z - 1) (b :: l) r out := by
+TCSlib/Complexity/TuringMachine/Sweep.lean:182:    tm.runFrom (sweepRevCfg (some (state s)) p z l
+TCSlib/Complexity/TuringMachine/Sweep.lean:184:    sweepRevCfg (some (state (sweepFold visit s as).1)) p (z - as.length)
+TCSlib/Complexity/TuringMachine/Sweep.lean:192:    have hr : (sweepRevCfg (some (state s)) p z l
+TCSlib/Complexity/TuringMachine/Sweep.lean:198:    rw [hr, htr, sweepRevCfg_left, ih]
+TCSlib/Complexity/TuringMachine/Sweep.lean:27:* **Tape zippers** (`Turing.FinTM.sweepTape`, `sweepCfg`, `sweepRevCfg`, with
+TCSlib/Complexity/TuringMachine/Sweep.lean:314:lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)
+TCSlib/Complexity/TuringMachine/Sweep.lean:317:    (sweepAct q' b .neg).apply (sweepRevCfg q p z l r out) =
+TCSlib/Complexity/TuringMachine/Sweep.lean:318:      sweepRevCfg (some q') p (z - 1) (b :: l) r.tail out := by
+TCSlib/Complexity/TuringMachine/Sweep.lean:320:  | cons a r => exact sweepRevCfg_left q q' p z l r out a b
+TCSlib/Complexity/TuringMachine/Sweep.lean:322:    have hc : sweepRevCfg q p z l ([] : List (Option A)) out =
+TCSlib/Complexity/TuringMachine/Sweep.lean:323:        sweepRevCfg q p z l [none] out := by
+TCSlib/Complexity/TuringMachine/Sweep.lean:328:    exact sweepRevCfg_left q q' p z l [] out none b

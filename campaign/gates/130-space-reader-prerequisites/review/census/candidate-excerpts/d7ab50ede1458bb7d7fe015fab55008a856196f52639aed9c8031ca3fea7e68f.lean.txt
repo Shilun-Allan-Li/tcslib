@@ -1,0 +1,11 @@
+/-- The sanctioned two-step verdict glue: move left, then read and erase. -/
+private def b2b_verdictTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool B2bVerdictState where
+  q₀ := .left
+  tr := fun q _ w =>
+    match q with
+    | .left => tapeAction i 0 none .neg .read
+    | .read =>
+      match w i with
+      | some b => tapeAction i 0 (some none) 0 (.done b)
+      | none => tapeAction i 0 none 0 (.done false)
+    | .done b => inputMoveAction 0 (.done b)

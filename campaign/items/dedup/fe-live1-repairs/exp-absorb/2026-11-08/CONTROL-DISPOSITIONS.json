@@ -1,0 +1,147 @@
+{
+  "pairs": 7,
+  "goals": 14,
+  "all_unsealed_pass_sealed_fail": true,
+  "rows": [
+    {
+      "definition": "Turing.MultiTapeTM.step",
+      "kind": "point",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step {c with state := none} = {c with state := none} := by rfl",
+      "Base_line": 11,
+      "Sealed_line": 12,
+      "errors": [
+        13
+      ]
+    },
+    {
+      "definition": "Turing.MultiTapeTM.step",
+      "kind": "equation",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step c = match c.state with\n      | none => c\n      | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl",
+      "Base_line": 15,
+      "Sealed_line": 16,
+      "errors": [
+        19
+      ]
+    },
+    {
+      "definition": "Turing.FinTM.controlAction",
+      "kind": "point",
+      "source": "example {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S).state = q := by rfl",
+      "Base_line": 21,
+      "Sealed_line": 22,
+      "errors": [
+        23
+      ]
+    },
+    {
+      "definition": "Turing.FinTM.controlAction",
+      "kind": "equation",
+      "source": "example {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl",
+      "Base_line": 25,
+      "Sealed_line": 26,
+      "errors": [
+        27
+      ]
+    },
+    {
+      "definition": "Turing.Action.apply",
+      "kind": "point",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).state = a.state := by rfl",
+      "Base_line": 29,
+      "Sealed_line": 30,
+      "errors": [
+        31
+      ]
+    },
+    {
+      "definition": "Turing.Action.apply",
+      "kind": "equation",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).inputPos = moveInputPos c.inputPos a.inputTape := by rfl",
+      "Base_line": 33,
+      "Sealed_line": 34,
+      "errors": [
+        35
+      ]
+    },
+    {
+      "definition": "Turing.Cfg.inputSymbol",
+      "kind": "point",
+      "source": "example : blankCfg.inputSymbol = none := by rfl",
+      "Base_line": 37,
+      "Sealed_line": 38,
+      "errors": [
+        38
+      ]
+    },
+    {
+      "definition": "Turing.Cfg.inputSymbol",
+      "kind": "equation",
+      "source": "example : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl",
+      "Base_line": 40,
+      "Sealed_line": 41,
+      "errors": [
+        41
+      ]
+    },
+    {
+      "definition": "Turing.Cfg.workTapeSymbols",
+      "kind": "point",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :\n    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl",
+      "Base_line": 43,
+      "Sealed_line": 44,
+      "errors": [
+        45
+      ]
+    },
+    {
+      "definition": "Turing.Cfg.workTapeSymbols",
+      "kind": "equation",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :\n    c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl",
+      "Base_line": 47,
+      "Sealed_line": 48,
+      "errors": [
+        49
+      ]
+    },
+    {
+      "definition": "Turing.moveInputPos",
+      "kind": "point",
+      "source": "example : moveInputPos (0 : Fin 2) 0 = 0 := by rfl",
+      "Base_line": 51,
+      "Sealed_line": 52,
+      "errors": [
+        52
+      ]
+    },
+    {
+      "definition": "Turing.moveInputPos",
+      "kind": "equation",
+      "source": "example : moveInputPos (1 : Fin 2) 0 = 1 := by rfl",
+      "Base_line": 54,
+      "Sealed_line": 55,
+      "errors": [
+        55
+      ]
+    },
+    {
+      "definition": "Turing.MultiTapeTM.runFrom",
+      "kind": "point",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 0 = c := by rfl",
+      "Base_line": 57,
+      "Sealed_line": 58,
+      "errors": [
+        59
+      ]
+    },
+    {
+      "definition": "Turing.MultiTapeTM.runFrom",
+      "kind": "equation",
+      "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 1 = M.step c := by rfl",
+      "Base_line": 61,
+      "Sealed_line": 62,
+      "errors": [
+        63
+      ]
+    }
+  ]
+}

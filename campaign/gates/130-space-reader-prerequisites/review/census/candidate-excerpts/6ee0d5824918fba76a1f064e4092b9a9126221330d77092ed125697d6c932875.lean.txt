@@ -1,0 +1,8 @@
+/-- Probe sketch of the save loop's round body: anchor `false`, exit `true`. -/
+def probeSaveBody : MultiTapeTM 0 Bool Bool where
+  q₀ := false
+  tr := fun q inp _ =>
+    match q, inp with
+    | false, some _ => inputMoveAction (-1) false
+    | false, none => inputMoveAction 0 true
+    | true, _ => inputMoveAction 0 true

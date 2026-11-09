@@ -1,0 +1,9 @@
+/-- The configuration-graph **vertex** of a configuration: its core (state,
+input position, work tapes, work heads — `Turing.MultiTapeTM.ConfigCount.core`)
+together with the output summary. Two configurations with equal vertices have
+equal futures up to output-suffix equality, which is exactly what acceptance
+needs. [AB09, §4.1.1] -/
+def coreSum (c : Cfg k Bool S x) :
+    (Option S × Fin (x.length + 2) × (Fin k → ℤ → Option Bool) × (Fin k → ℤ)) ×
+      OutSummary :=
+  (MultiTapeTM.ConfigCount.core c, outSummary c.output)

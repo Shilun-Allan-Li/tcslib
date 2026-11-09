@@ -1,0 +1,40 @@
+{
+  "current_source": "0201e3c420f5bdef94a67b80cee08a1673f2c3fb",
+  "original_source": "1d35e812ce12059b87066d8680748e46553a9137",
+  "readers": [
+    {
+      "reader": "Turing.FinTM.controlAction_def",
+      "home": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "literal_contract": "controlAction (k:=k) m q = (⟨m,fun _ => (none,0),none,q⟩ : Action k Bool S)",
+      "boundary": "Arbitrary k including0; arbitrary S:Type and q:Option S including none; no work writes/moves/output. Same original definition and same-home rfl; source naming now exact PS10 canonical statement.",
+      "ordinary_foreign_heads": [],
+      "proof": "rfl",
+      "explicit_forbidden_definition_arguments": [],
+      "new_compiled_metadata_at0201": "Not executed by this preflight; old metadata name was controlAction_eq."
+    },
+    {
+      "reader": "Turing.inputMoveAction_eq",
+      "home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "literal_contract": "inputMoveAction (k:=k) (Symbol:=Symbol) inp q = (⟨inp,fun _ => (none,0),none,some q⟩ : Action k Symbol State)",
+      "boundary": "Arbitrary k including0, universe-polymorphic Symbol/State, every SignType movement and supplied live q; no finiteness/positivity assumptions. Same-home rfl; no ordinary foreign definition read.",
+      "ordinary_foreign_heads": [],
+      "proof": "rfl",
+      "explicit_forbidden_definition_arguments": [],
+      "new_compiled_metadata_at0201": "Not executed by this preflight; old exact-source selected metadata retained as prior execution."
+    },
+    {
+      "reader": "Turing.inputFoldTM_tr_bwd",
+      "home": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+      "literal_contract": "(inputFoldTM k δ a₀).tr (.bwd a) inp work = match inp with | some _ => inputMoveAction (-1) (.bwd a) | none => inputMoveAction 1 (.done a)",
+      "boundary": "Both Option input cases; arbitrary work read, k including0, δ/a₀/a; preserves a and ignores work/δ/a₀ in backward phase. Does not assert endpoint/run/step behavior. ScanPhase is existing public inductive at Catalog3699 on original source. Own inputFoldTM can unfold at home; imported inputMoveAction remains opaque on both sides.",
+      "ordinary_foreign_heads": [
+        "Turing.inputMoveAction"
+      ],
+      "proof": "rfl",
+      "explicit_forbidden_definition_arguments": [],
+      "new_compiled_metadata_at0201": "Not executed by this preflight; exact-source prior one-head guard retained with named source/context limits."
+    }
+  ],
+  "shape_twin_controlAction": "Resolved by exact authorized reuse in0201; other2 no independent twin identified within explicit census, no global absence claim.",
+  "no_api_approval_gate_status_or_merge_decision_by_review": true
+}

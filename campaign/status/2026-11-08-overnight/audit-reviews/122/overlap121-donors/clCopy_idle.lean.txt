@@ -1,0 +1,9 @@
+/-- Returned record-copy configurations remain unchanged in their entirety. -/
+private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
+    (hc : c.state = some (4 : Fin 5)) : clCopyTM.tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  change (FinTM.controlAction 0 (some (4 : Fin 5))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

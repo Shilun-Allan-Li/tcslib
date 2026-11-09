@@ -1,0 +1,21 @@
+/-- Applying a slot-assembled action to a host configuration acts slot by slot. -/
+theorem apply_hostCfg {SS AS : Type} {s a : ℕ} {x : List Bool} (im : SignType)
+    (sa : Fin s → Option (Option Bool) × SignType) (aa : Fin a → Option (Option Bool) × SignType)
+    (ya : Option (Option Bool) × SignType) (o : Option Bool) (q' q : Option (ClockPhase SS AS))
+    (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool) (sP : Fin s → ℤ)
+    (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool) (yP : ℤ)
+    (out : List Bool) :
+    (⟨im, slots sa aa ya, o, q'⟩ : Action (s + a + 1) Bool (ClockPhase SS AS)).apply
+        (hostCfg q ip sT sP aT aP yT yP out) =
+      hostCfg q' (moveInputPos ip im) (fun i => tapeAfter (sa i) (sT i) (sP i))
+        (fun i => sP i + (sa i).2) (fun i => tapeAfter (aa i) (aT i) (aP i))
+        (fun i => aP i + (aa i).2) (tapeAfter ya yT yP) (yP + ya.2) (out ++ o.toList) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext j
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;>
+      simp only [Action.apply, hostCfg, slots_sI, slots_aI, slots_yI, tapeAfter]
+  · funext j
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;>
+      simp only [Action.apply, hostCfg, slots_sI, slots_aI, slots_yI]

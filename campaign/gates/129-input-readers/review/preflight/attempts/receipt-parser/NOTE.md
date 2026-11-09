@@ -1,0 +1,2 @@
+Private receipt parser preparation initially assumed ACTUAL-RUNS entries equal run.json including aggregation label. The only added aggregate field is label; corrected comparison binds every per-run field exactly while retaining the directory label. No new Lean/native run and no source failure.
+The guard-wrapper comparison also accounts for the two blank separator lines inserted alongside the InputLength section wrapper. Removing only that exact wrapper and its separators recovers the complete hypothetical native/compiled owner byte-for-byte.

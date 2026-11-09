@@ -1,0 +1,15 @@
+/-- Exhausting the clock stops before inspecting the next row, including
+an empty time-zero query. No stream bit is read on this transition. -/
+private lemma clMatch_stop {l : ℕ} (pos neg : Fin l) (x : List Bool)
+    (row : Fin l → List Bool) (target : Fin 2 → List Bool) (stream : List Bool)
+    (cursor : ℤ) (N : ℕ) (flags : List Bool) :
+    (clMatchTM pos neg).tm.step
+      (clMatchCfg pos neg x (.inl ()) row target stream cursor N N flags) =
+      clMatchCfg pos neg x (.inr (.inr (.inr ()))) row target stream cursor N N flags := by
+  have hr : (clMatchCfg pos neg x (.inl ()) row target stream cursor N N flags).workTapeSymbols
+      (Fin.natAdd l (3 : Fin 5)) = none := by
+    simp [clMatchCfg, Cfg.workTapeSymbols, -Fin.natAdd_eq_addNat]
+  change ((clMatchTM pos neg).tm.tr (.inl ()) _ _).apply _ = _
+  simp only [clMatchTM, hr, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  rfl

@@ -1,3 +1,9 @@
 **Not yet clear to merge: #241.**
 
-The valid major covers exposed imported-definition reads. Existing-reader repairs are in progress; the complete three-reader InputLength proposal is awaiting human API approval. The portable-integrity minor is corrected in the next-packet list; the issued817-section bundle remains immutable. No new bundle or follow-up audit is issued yet.
+Gate121's valid imported-definition major remains open. The three InputLength readers
+were approved and their separate gate129 was dispatched. The approved Seam prerequisite
+is #253/gate131. The complete private InputLength and Fresh/Prepared patches have
+prior native/opacity checks and fit the current source in a text dry-run. They are
+not adopted. After the providers merge, refresh the exact integrated proof checks,
+copy governance and actual replay before the selected Codex follow-up. The previous
+817-section issued bundle remains immutable.

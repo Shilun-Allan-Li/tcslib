@@ -1,0 +1,104 @@
+/-- The full-host service copies the prepared query, runs the clean call,
+and redirects to restoration with the singleton verdict installed. Its return
+preserves every other tape and head, the native input position and the output.
+
+**Proof sketch.** The prepared call bank is blank by the dispatch frame
+lemma. `oracleQueryWindow` supplies the public copy's window. Apply the
+R2 service theorem, then its first-return cut in the public phase-host
+contract. R1 tape replacement identifies the returned prepared seam. -/
+private theorem oracleHost_service (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side verdict : Bool) (r t : ℕ)
+    (hblank : c.workTapes (OracleTM.queryTapeIdx M.k) (r : ℤ) = none)
+    (hend : C.tm.runFrom (Cfg.ofWords (input := []) en
+        (stateWord C.k (OracleTM.queryString c))) t =
+      Cfg.ofWords ex (stateWord C.k [verdict]))
+    (hcut : ∀ s < t, (C.tm.runFrom (Cfg.ofWords (input := []) en
+      (stateWord C.k (OracleTM.queryString c))) s).state ≠ some ex) :
+    (oracleHost M C hc en ex).tm.runFrom
+      ((oracleDispatchCfg M C hc c side
+        (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+          (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [] .copy c.inputPos c.output)).mapState
+        (fun _ => ⟨.service, Sum.inl SweepPhase.sweep⟩))
+      (2 * (OracleTM.queryString c).length + 4 + t) =
+        (oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [verdict] .read
+            c.inputPos c.output)).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch) := by
+  classical
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  let d₀ := oracleDispatchCfg M C hc c side
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output)
+  let d := d₀.mapState (fun _ => SweepPhase.sweep)
+  let dst := oracleCallBank M.k C.k (vhostBank ⟨0, hc⟩)
+  have clean := oracleDispatchCfg_callBlank M C hc c side
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output)
+    (by simp [oracleReadyCfg]) rfl
+  have hne : oracleSlots M.k C.k hc 0 ≠ dst := by
+    intro he
+    have hi : (0 : Fin 4) = 3 := oracleSlots_injective M.k C.k hc he
+    cases hi
+  have window : ∀ z : ℤ, -1 ≤ z → z ≤ ((OracleTM.queryString c).length : ℤ) →
+      d.workTapes (oracleSlots M.k C.k hc 0)
+        (d.workTapePos (oracleSlots M.k C.k hc 0) + z) =
+          FinTM.bufferTape (OracleTM.queryString c) z := by
+    intro z hz hlen
+    have htape := embedEmitCfg_selected_tape
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 0
+    have hhead := embedEmitCfg_selected_pos
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 0
+    change d.workTapes (oracleSlots M.k C.k hc 0) = Function.update f (-1) none at htape
+    change d.workTapePos (oracleSlots M.k C.k hc 0) = 0 at hhead
+    rw [htape, hhead, zero_add]
+    exact oracleQueryWindow c r hblank z hz hlen
+  obtain ⟨service, firstReturn⟩ := oracleService_run C hc en ex
+    (oracleCallBank M.k C.k) (oracleSlots M.k C.k hc 0) hne d rfl
+    (fun j => (clean j).1) (fun j => (clean j).2)
+    (OracleTM.queryString c) [verdict] t window hend hcut
+  let returned : Cfg (oracleHostTapes M.k C.k) Bool (SweepPhase ⊕ (C.State × Bool)) x :=
+    ({d with
+      workTapes := Function.update d.workTapes dst (FinTM.bufferTape [verdict])}).mapState
+        (fun _ => Sum.inr (ex, true))
+  have hosted := (phaseHostTM_run (oraclePhases M C hc en) ⟨.dispatch, .boot⟩
+    (oracleRedirect M C ex) .service (d.mapState Sum.inl) returned
+    (2 * (OracleTM.queryString c).length + 3 + t) service (.inr (ex, true)) rfl
+    ⟨.dispatch, .read⟩ (by simp [oracleRedirect]) (by
+      intro u hu s hs
+      have hn : s ≠ Sum.inr (ex, true) := fun he =>
+        firstReturn u hu (hs.trans (congrArg some he))
+      simp [oracleRedirect, hn])).2
+  have replaced :
+      {d₀ with workTapes := Function.update d₀.workTapes dst (FinTM.bufferTape [verdict])} =
+        oracleDispatchCfg M C hc c side
+          (oracleReadyCfg f p side [verdict] .copy c.inputPos c.output) := by
+    have update := oracleEmbed_updateTape oracleDispatchTM
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 3 (FinTM.bufferTape [verdict])
+    exact update.symm.trans (congrArg
+      (embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+        (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos [])
+      (oracleReadyCfg_replace f p side [] [verdict] .copy .copy c.inputPos c.output))
+  have entry : (d.mapState Sum.inl).mapState
+      (Sigma.mk (β := oraclePhaseState M C) OraclePhase.service) =
+      d₀.mapState (fun _ => ⟨OraclePhase.service, Sum.inl SweepPhase.sweep⟩) := rfl
+  have exitView : returned.mapState (fun _ =>
+      (⟨OraclePhase.dispatch, OracleDispatch.read⟩ : Σ i, oraclePhaseState M C i)) =
+      (oracleDispatchCfg M C hc c side
+        (oracleReadyCfg f p side [verdict] .read c.inputPos c.output)).mapState
+          (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch) := by
+    change ({d₀ with
+      workTapes := Function.update d₀.workTapes dst (FinTM.bufferTape [verdict])}).mapState
+        (fun _ : OracleDispatch =>
+          (⟨.dispatch, .read⟩ : Σ i, oraclePhaseState M C i)) = _
+    rw [replaced]
+    rfl
+  rw [show 2 * (OracleTM.queryString c).length + 4 + t =
+    (2 * (OracleTM.queryString c).length + 3 + t) + 1 from by omega]
+  rw [entry] at hosted
+  exact hosted.trans exitView

@@ -1,0 +1,15 @@
+/-- **The fixed-field reader**: read the `4k + 4` fixed bits of the record under the table head
+into finite control, then execute them on the mirrored bank and the native input head and
+update the summary cell, exiting live with the table head at the successor field.
+[AB09, §1.4.1, Theorem 1.9] (`h1RecordTM`.) No catalog row reads a fixed-length,
+non-delimited prefix into finite control: the two-pass scan requires delimiters. -/
+def recordTM (k : ℕ) : MultiTapeTM (k + 2) Bool (RecordState k) where
+  q₀ := some (0, fun _ => false)
+  tr := fun q _ w => match q with
+    | none => inputMoveAction 0 none
+    | some (p, bits) =>
+      if h : p.val < recordWidth k then
+        tapeAction (tableTape k) 0 none .pos
+          (some (⟨p.val + 1, by omega⟩,
+            Function.update bits ⟨p.val, h⟩ ((w (tableTape k)).getD false)))
+      else applyPayload (payload k bits) (w (summaryTape k))

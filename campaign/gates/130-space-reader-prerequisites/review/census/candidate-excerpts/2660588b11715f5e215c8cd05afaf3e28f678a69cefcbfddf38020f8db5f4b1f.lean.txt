@@ -1,0 +1,143 @@
+/-- Clearing preparation restores the old unary-state head, erases its word,
+and returns to the summary cell before invoking the selected-record reader.
+All mirrored heads remain at their round-start positions throughout.
+
+**Proof sketch.** Apply the public framed skip, reverse skip and clear contracts
+in order, followed by the fixed two-cell move. Each is lifted by the public
+phase host, and their proved strict prefixes are joined by run addition. -/
+private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (q : Fin (n + 1)) (table : List Bool) (summary : Option Bool) (pos : ℤ) (pre : List Bool) :
+    h1RoundSpan c a
+      (h1At (h1Data c table summary (unaryFin q) pos (q.val + 2) pre) .stateTail .run)
+      (h1At (h1Data c table summary [] pos 0 pre) .record (h1RecordTM k).q₀)
+      (3 * q.val + 16) := by
+  let d0 := h1Data c table summary (unaryFin q) pos (q.val + 2) pre
+  let d1 := h1Data c table summary (unaryFin q) pos (q.val + 4) pre
+  let d2 := h1Data c table summary (unaryFin q) pos 2 pre
+  let d3 := h1Data c table summary [] pos 2 pre
+  let d4 := h1Data c table summary [] pos 0 pre
+  let s0 := d0.mapState (fun _ => SeekPhase.run)
+  let s1 := d1.mapState (fun _ => SeekPhase.run)
+  let s2 := d2.mapState (fun _ => SweepPhase.sweep)
+  let s3 := d3.mapState (fun _ => (0 : Fin 3))
+  have skip := skipTM_run_ofCfg (h1SummaryTape k) [false] s0 rfl (by
+    intro z hz hz'
+    have cases : z = 0 ∨ z = 1 := by simp only [List.length_cons, List.length_nil] at hz'; omega
+    rcases cases with rfl | rfl
+    · simp [s0, d0, Cfg.mapState, h1Data, h1SummaryTape, h1SummaryState, unaryFin,
+        show (q.val : ℤ) + 2 ≠ 0 by omega, FinTM.bufferTape]
+    · have cell := h1Data_stateCell c table summary (unaryFin q) pos (q.val + 2) pre
+        ((q.val + 1 : ℕ) : ℤ) (by omega)
+      have blank : FinTM.bufferTape (unaryFin q) ((q.val + 1 : ℕ) : ℤ) = none := by
+        rw [FinTM.bufferTape_nat]
+        simp [unaryFin]
+      rw [blank] at cell
+      convert cell using 1; simp [s0, d0, Cfg.mapState, h1Data, h1SummaryTape]; congr 1; omega)
+  have skipEnd : (skipTM (k + 2) (h1SummaryTape k)).runFrom s0 2 = d1.mapState (fun _ =>
+    SeekPhase.done) := by
+    have he := skip.1
+    simp only [List.length_cons, List.length_nil, Nat.zero_add] at he
+    rw [he]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s0, d0, d1, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
+    · fin_cases i <;> simp [s0, d0, d1, h1Data, Cfg.mapState, h1SummaryTape, add_assoc]
+  have p0 := h1Round_phase c a .stateTail (by decide) (by decide) s0
+    (d1.mapState (fun _ => SeekPhase.done)) 2 skipEnd .done rfl ⟨.stateHome, .run⟩
+    (by simp [h1RoundRed]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (skip.2.1 u (by simpa using hu)) (hr.trans (congrArg some
+        eq))
+      simp [h1RoundRed, ne]) (by
+      intro u hu
+      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 2) pre
+        false)
+      · exact h1Run_input (skipTM (k + 2) (h1SummaryTape k))
+          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
+            simp [skipTM, h, tapeAction, inputMoveAction]) s0 u
+      · intro i
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s0, Cfg.mapState] using skip.2.2
+          (Fin.castAdd 2 i) u (by simpa using hu))
+  have back := skipBackTM_run_ofCfg (h1SummaryTape k) (unaryFin q) s1 rfl (by
+    intro z hz hz'
+    have cell := h1Data_stateCell c table summary (unaryFin q) pos (q.val + 4) pre z hz
+    convert cell using 1; simp [s1, d1, Cfg.mapState, h1Data, h1SummaryTape, unaryFin])
+  have backEnd : (skipBackTM (k + 2) (h1SummaryTape k)).runFrom s1 ((unaryFin q).length + 3) =
+      d2.mapState (fun _ => SeekPhase.done) := by
+    rw [back.1]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s1, d1, d2, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
+    · fin_cases i <;> simp [s1, d1, d2, h1Data, Cfg.mapState, h1SummaryTape, unaryFin]
+  have p1 := h1Round_phase c a .stateHome (by decide) (by decide) s1
+    (d2.mapState (fun _ => SeekPhase.done)) _ backEnd .done rfl ⟨.clearState, .sweep⟩
+    (by simp [h1RoundRed]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (back.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [h1RoundRed, ne]) (by
+      intro u hu
+      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 4) pre
+        false)
+      · exact h1Run_input (skipBackTM (k + 2) (h1SummaryTape k))
+          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
+            simp [skipBackTM, h, tapeAction, inputMoveAction]) s1 u
+      · intro i
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s1, Cfg.mapState] using back.2.2
+          (Fin.castAdd 2 i) u hu)
+  have clear := clearTM_run_ofCfg (h1SummaryTape k) (unaryFin q) s2 rfl (by
+    intro z hz _
+    simpa [s2, d2, Cfg.mapState, h1Data, h1SummaryTape] using
+      h1Data_stateCell c table summary (unaryFin q) pos 2 pre z hz)
+  have clearEnd : (clearTM (k + 2) (h1SummaryTape k)).runFrom s2 (2 * (unaryFin q).length + 2) =
+      d3.mapState (fun _ => SweepPhase.done) := by
+    rw [clear.1]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s2, d2, d3, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
+    · fin_cases i
+      · simp [s2, d2, d3, h1Data, Cfg.mapState, h1SummaryTape]
+      · simpa [s2, d2, d3, h1Data, Cfg.mapState, h1SummaryTape] using
+          congrFun (h1SummaryState_clear summary (unaryFin q)) z
+  have p2 := h1Round_phase c a .clearState (by decide) (by decide) s2
+    (d3.mapState (fun _ => SweepPhase.done)) _ clearEnd .done rfl ⟨.toSummary, (0 : Fin 3)⟩
+    (by simp [h1RoundRed]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (clear.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [h1RoundRed, ne]) (by
+      intro u hu
+      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos 2 pre false)
+      · exact h1Run_input (clearTM (k + 2) (h1SummaryTape k))
+          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
+            simp [clearTM, h]) s2 u
+      · intro i
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using clear.2.2
+          (Fin.castAdd 2 i) u hu)
+  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .neg).runFrom s3 2 = d4.mapState (fun _ => (2 :
+    Fin 3)) := by
+    rw [h1TwoMove_run _ _ s3 rfl 2 le_rfl]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s3, d3, d4, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
+    · fin_cases i <;> simp [s3, d3, d4, h1Data, Cfg.mapState, h1SummaryTape]
+  have p3 := h1Round_phase c a .toSummary (by decide) (by decide) s3
+    (d4.mapState (fun _ => (2 : Fin 3))) 2 moveEnd 2 rfl ⟨.record, (h1RecordTM k).q₀⟩
+    (by simp [h1RoundRed]) (by
+      intro u hu r hr
+      rw [h1TwoMove_run _ _ s3 rfl u (by omega)] at hr
+      have vr : r.val = u := congrArg Fin.val (Option.some.inj hr).symm
+      have ne : r ≠ 2 := by intro bad; subst r; omega
+      simp [h1RoundRed, ne]) (by
+      intro u hu
+      rw [h1TwoMove_run _ _ s3 rfl u hu]
+      refine ⟨Or.inl rfl, fun i => Or.inl ?_⟩
+      simp [s3, d3, h1Data, Cfg.mapState, h1Mirror_ne_summary k i])
+  have joined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a p0 p1) p2) p3
+  have cost : ((2 + 1) + ((unaryFin q).length + 3 + 1) + (2 * (unaryFin q).length + 2 + 1)) + (2
+    + 1) =
+      3 * q.val + 16 := by simp [unaryFin]; omega
+  simpa only [h1At, s0, d0, d4, Cfg.mapState, h1Data, cost] using joined

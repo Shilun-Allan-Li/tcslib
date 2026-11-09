@@ -1,0 +1,31 @@
+/-- Two-tape result finalization. The argument and capture enter at their
+known right blanks. Install mode replaces the argument; emit mode preserves
+it and forwards the captured result. Both modes erase and rewind capture. -/
+private def emCallFinishTM (emit : Bool) : FinTM Bool where
+  k := 2
+  State := Fin 6
+  tm := {
+    q₀ := 0
+    tr := fun q _ work => match q.val with
+      | 0 => ⟨0, fun i => (none, if i = 0 then .neg else 0), none, some 1⟩
+      | 1 => match work 0 with
+        | some _ => ⟨0, fun i =>
+            (if i = 0 ∧ emit = false then some none else none,
+              if i = 0 then .neg else 0), none, some 1⟩
+        | none => ⟨0, fun i => (none, if i = 0 then .pos else .neg), none, some 2⟩
+      | 2 => match work 1 with
+        | some _ => ⟨0, fun i => (none, if i = 0 then 0 else .neg), none, some 2⟩
+        | none => ⟨0, fun i => (none, if i = 0 then 0 else .pos), none, some 3⟩
+      | 3 => match work 1 with
+        | some b => ⟨0, fun i =>
+            (if i = 0 ∧ emit = false then some (some b) else none,
+              if i = 0 ∧ emit = true then 0 else .pos),
+            if emit then some b else none, some 3⟩
+        | none => ⟨0, fun i =>
+            (none, if i = 0 ∧ emit = true then 0 else .neg), none, some 4⟩
+      | 4 => match work 1 with
+        | some _ => ⟨0, fun i => (if i = 0 then none else some none,
+            if i = 0 ∧ emit = true then 0 else .neg), none, some 4⟩
+        | none => ⟨0, fun i =>
+            (none, if i = 0 ∧ emit = true then 0 else .pos), none, some 5⟩
+      | _ => controlAction 0 (some 5) }

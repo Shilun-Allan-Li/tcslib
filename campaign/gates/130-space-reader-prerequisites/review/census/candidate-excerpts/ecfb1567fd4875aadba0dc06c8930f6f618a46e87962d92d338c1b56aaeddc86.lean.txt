@@ -1,0 +1,13 @@
+private lemma embedReturn_step (N : MultiTapeTM k Bool S)
+    (R : MultiTapeTM k Bool (S ⊕ Unit))
+
+
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+    (c : Cfg k Bool S x) :
+
+    R.step (embedReturnCfg c) = embedReturnCfg (N.step c) := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with

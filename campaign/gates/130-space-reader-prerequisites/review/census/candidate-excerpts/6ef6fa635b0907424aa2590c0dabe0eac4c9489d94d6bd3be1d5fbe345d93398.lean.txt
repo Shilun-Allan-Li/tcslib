@@ -1,0 +1,5 @@
+/-- A ready host configuration is live. -/
+theorem ClockReady.state_ne_none {c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x}
+    (hc : ClockReady m c) : c.state ≠ none := by
+  obtain ⟨a, sT, sP, -, rfl⟩ := hc
+  simp [runCfg, hostCfg]

@@ -1,0 +1,11 @@
+--- a/HYPOTHETICAL-CONSUMER/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
++++ b/HYPOTHETICAL-CONSUMER/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+@@ -513,7 +513,7 @@
+         (.bwd ()) inp work).mapState
+         (fun q => match q with | .done _ => InputLengthPhase.done | _ => .returnScan)) = _
+       rw [inputFoldTM_tr_bwd]
+-      cases inp <;> simp only [inputMoveAction_eq, FinTM.controlAction_eq]
++      cases inp <;> simp only [inputMoveAction_eq, FinTM.controlAction_def]
+       all_goals
+         change Action.mk _ _ _ _ = _
+         simp only [Action.mapState_inputTape, Action.mapState_output,

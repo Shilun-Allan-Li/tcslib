@@ -1,0 +1,1 @@
+Invalid metadata fixture, not a target-proof failure: ReducibilityHints has no Repr instance at this pin. Corrected observation records the exact guard-relevant abbrev/non-abbrev class via pattern matching. No root row from this attempt is counted.

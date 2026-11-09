@@ -1,0 +1,17 @@
+/-- The right input blank triggers a mandatory left move before the rewind
+scan, so an empty input is handled without confusing its two boundaries. -/
+private lemma b2_copy_done (S V : FinTM Bool) (x : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit
+      (b2LoadCfg S V (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length) =
+        b2LoadCfg S V (x := x) 1 ⟨x.length, by omega⟩ x x.length := by
+  have hr : (b2LoadCfg S V (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length).inputSymbol =
+      none := (inputSymbol_at _ x.length (le_refl _) rfl).trans (by simp)
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 0) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  change (moveInputPos (⟨x.length + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = x.length
+  rw [moveInputPos_neg_val]
+  simp

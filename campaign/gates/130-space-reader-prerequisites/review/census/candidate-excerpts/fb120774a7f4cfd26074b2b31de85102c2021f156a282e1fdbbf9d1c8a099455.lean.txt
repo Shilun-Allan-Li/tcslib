@@ -1,0 +1,21 @@
+/-- **The untimed conditional** (landing: `Turing.FinTM.condTM`, made public in place at
+`Composition.lean:517`, body unchanged). Run `D` with its first emission captured in a state
+register, rewind the input, then enter `M₁` or `M₂` on disjoint fresh tapes according to the
+register; an empty register at dispatch halts. -/
+def condTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
+  k := D.k + (M₁.k + M₂.k)
+  State := (Option D.State × Option Bool) ⊕ (Option Bool ⊕ (M₁.State ⊕ M₂.State))
+  tm :=
+    { q₀ := .inl (some D.tm.q₀, none)
+      tr := fun q inp work => match q with
+        | .inl (some q, reg) =>
+          let a := D.tm.tr q inp (fun i => work (Fin.castAdd (M₁.k + M₂.k) i))
+          ⟨a.inputTape, Fin.addCases a.workTapes (fun _ => (none, 0)), none,
+            some (.inl (a.state, reg.or a.output))⟩
+        | .inl (none, reg) => controlAction .neg (some (.inr (.inl reg)))
+        | .inr (.inl reg) => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl reg)))
+          | none => controlAction .pos
+              (reg.map (fun b => .inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+        | .inr (.inr q) => rightAction D.k (fun s => .inr (.inr s))
+            ((branchTM M₁ M₂ false).tm.tr q inp (fun i => work (Fin.natAdd D.k i))) }

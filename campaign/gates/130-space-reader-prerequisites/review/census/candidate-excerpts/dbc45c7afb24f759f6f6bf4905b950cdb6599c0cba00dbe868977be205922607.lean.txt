@@ -1,0 +1,5 @@
+/-- A stationary phase change preserves a backward-facing tape. -/
+private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out := by
+  apply Cfg.ext <;> simp [sweepMove, sweepRevCfg, Action.apply]

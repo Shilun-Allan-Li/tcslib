@@ -1,0 +1,11 @@
+/-- Genuine native initialization followed by the complete sequential loader. -/
+private def clPrepareTM (l : ℕ) : FinTM Bool where
+  k := l + 1
+  State := Fin 3 ⊕ (clLoadTM l).State
+  tm := {
+    q₀ := .inl 0
+    tr := fun q inp work => match q with
+      | .inl r =>
+        if r = 2 then FinTM.controlAction 0 (some (.inr (0, .inl 0)))
+        else clPlacedAction (clPrepareSelect l) Sum.inl r (clInputTM.tm.tr r inp (fun i => work ((clPrepareSelect l).index i)))
+      | .inr r => ((clLoadTM l).tm.tr r inp work).mapState Sum.inr }

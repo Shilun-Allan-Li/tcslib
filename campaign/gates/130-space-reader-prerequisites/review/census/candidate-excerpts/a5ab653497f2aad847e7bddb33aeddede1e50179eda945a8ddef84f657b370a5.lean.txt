@@ -1,0 +1,14 @@
+/-- The single induction that identifies every point of the finite restoring sweep. -/
+private theorem rd_run {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hd : d.state = some (.inl ())) (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (u : ℕ) (hu : u ≤ 2 * ℓ + 2) : rd_test.runFrom d u = rd_trace d ℓ u := by
+  induction u with
+  | zero =>
+    rw [MultiTapeTM.runFrom_zero]
+    simp only [rd_trace, Nat.zero_le, if_true, rd_cfg, Nat.sub_zero, Nat.cast_zero, add_zero]
+    exact Cfg.ext hd rfl rfl rfl rfl
+  | succ u ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    exact rd_trace_step ℓ d hℓ hp hr u (by omega)

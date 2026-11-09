@@ -1,0 +1,48 @@
+/-- **One transition step** [HS66; AB09, §1.7]: from a configuration at `Sum.inl q`, one step
+of the transition machine applies `M`'s transition `a` at `q` to the home tuple read from the
+home cell and to the decoded input symbol. It writes the new home tuple into the cell under
+head `0` and leaves tape `1`, moves the input head by `a`'s input move, keeps both work heads,
+appends `a`'s output symbol through `Sum.inl`, and goes to `Sum.inr (q', m)` for `a`'s
+successor `q'` and head moves `m`, or halts with `a`.
+
+**Proof sketch.** `Turing.MultiTapeTM.step_of_some` applies the table's action; its fields are
+read through `Turing.Action.apply_state`, `_inputPos`, `_workTapePos`, `_output` and
+`Turing.Action.apply_workTapes`, the table being this file's own definition. -/
+private theorem tt_leaf_step (M : FinTM Bool) {x : List (ZoneSym M.k)}
+    (c : Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x) (q : M.State) (hc : c.state = some (.inl q)) :
+    (tt_leafTM M).step c =
+      { state := (M.tm.tr q (tt_decodeIn c.inputSymbol)
+            (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).state.map fun q' =>
+          .inr (q', tt_moves (M.tm.tr q (tt_decodeIn c.inputSymbol)
+            (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))))
+        inputPos := moveInputPos c.inputPos (M.tm.tr q (tt_decodeIn c.inputSymbol)
+          (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).inputTape
+        workTapes := fun j => if j = 0 then
+            Function.update (c.workTapes 0) (c.workTapePos 0) (some (.inr fun t =>
+              some (tt_homeNew (M.tm.tr q (tt_decodeIn c.inputSymbol)
+                (tt_homeRead (c.workTapes 0 (c.workTapePos 0))))
+                (tt_homeRead (c.workTapes 0 (c.workTapePos 0))) t)))
+          else c.workTapes j
+        workTapePos := c.workTapePos
+        output := c.output ++ ((M.tm.tr q (tt_decodeIn c.inputSymbol)
+          (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).output.map Sum.inl).toList } := by
+  have hW : c.workTapeSymbols = fun i => c.workTapes i (c.workTapePos i) :=
+    funext (Cfg.workTapeSymbols_eq c)
+  rw [MultiTapeTM.step_of_some hc]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state, hW]
+    rfl
+  · rw [Action.apply_inputPos, hW]
+    rfl
+  · funext j p
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq, hW]
+    by_cases hj : j = 0
+    · subst hj
+      rfl
+    · rw [tt_leafTM_tr_workTapes_of_ne M q _ _ hj, Option.getD_none, Function.update_eq_self]
+      show c.workTapes j p = (if j = 0 then _ else c.workTapes j) p
+      rw [if_neg hj]
+  · funext j
+    rw [Action.apply_workTapePos, tt_leafTM_tr_moves, SignType.coe_zero, add_zero]
+  · rw [Action.apply_output, hW]
+    rfl

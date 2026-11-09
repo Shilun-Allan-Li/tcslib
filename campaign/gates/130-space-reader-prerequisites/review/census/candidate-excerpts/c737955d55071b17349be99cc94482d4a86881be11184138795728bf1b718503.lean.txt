@@ -1,0 +1,16 @@
+private theorem ss_inputRewind_done {n : ℕ} {z : List Bool}
+    (d : Cfg n Bool ss_RewindState z) (hd : d.state = some .done) (t : ℕ) :
+    (ss_inputRewind n).runFrom d t = d := by
+  have hs : (ss_inputRewind n).step d = d := by
+    rw [MultiTapeTM.step_of_some hd]
+    change (FinTM.controlAction 0 (some ss_RewindState.done)).apply d = d
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+    apply Cfg.ext
+    · exact hd.symm
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+  induction t with
+  | zero => exact MultiTapeTM.runFrom_zero
+  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hs]

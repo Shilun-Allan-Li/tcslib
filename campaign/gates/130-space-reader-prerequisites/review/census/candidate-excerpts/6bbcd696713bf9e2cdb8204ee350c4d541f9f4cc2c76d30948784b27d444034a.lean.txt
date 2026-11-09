@@ -1,0 +1,6 @@
+/-- With no track operations, a controller action is the standard input-only action. -/
+private lemma f2_loopControl_idle (body F : FinTM Bool) (inp : SignType)
+    (next : Option (f2_LoopHostState body F)) :
+    f2_loopControlAction body F inp none (none, 0) (none, 0) none next =
+      controlAction inp next := by
+  simp [f2_loopControlAction, controlAction]

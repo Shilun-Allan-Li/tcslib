@@ -1,0 +1,26 @@
+/-- The whole-record skipper's composition contract: a first live exit,
+complete framing, exact head trace, and a linear cost in the whole record.
+Both the prefix width and the finite controller depend on `k` alone. -/
+private lemma recordSkipTM_spec {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (∀ u < (actionBitsK a).length + 1, ∀ b,
+      ((recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u).state ≠ some ⟨true, .done b⟩) ∧
+    (∀ u ≤ (actionBitsK a).length + 1,
+      let f := (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u
+      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧
+      (∀ j, f.workTapePos j = d.workTapePos j +
+        if j = tableTape k then ((min u (recordWidth k) + (u - (recordWidth k + 1)) : ℕ) : ℤ)
+        else 0)) := by
+  obtain ⟨bits, _, hlen, hp, ht⟩ := actionBitsK_reads d a hw
+  have run := recordSkipTM_path d bits a.state hq hp ht
+  constructor
+  · intro u hu b
+    exact (run u (by omega)).2.2.2.2 (by omega) b
+  · intro u hu
+    exact ⟨(run u (by omega)).1, (run u (by omega)).2.1,
+      (run u (by omega)).2.2.1, (run u (by omega)).2.2.2.1⟩

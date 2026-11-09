@@ -1,0 +1,19 @@
+/-- A marked finite work interval can be cleared natively despite arbitrary
+blank holes in its data. Tape one marks the visited interval; tape two marks
+only the origin. All three heads stay aligned. Return state three is silent. -/
+private def emitterClearTM : FinTM Bool where
+  k := 3
+  State := Fin 4
+  tm := {
+    q₀ := 0
+    tr := fun q _ work => match q.val with
+      | 0 => if work 1 = none then
+          ⟨0, fun _ => (none, .pos), none, some 1⟩
+        else ⟨0, fun _ => (none, .neg), none, some 0⟩
+      | 1 => if work 1 = none then
+          ⟨0, fun _ => (none, .neg), none, some 2⟩
+        else ⟨0, fun i => (if i = 2 then none else some none, .pos), none, some 1⟩
+      | 2 => if work 2 = none then
+          ⟨0, fun _ => (none, .neg), none, some 2⟩
+        else ⟨0, fun i => (if i = 2 then some none else none, 0), none, some 3⟩
+      | _ => controlAction 0 (some 3) }

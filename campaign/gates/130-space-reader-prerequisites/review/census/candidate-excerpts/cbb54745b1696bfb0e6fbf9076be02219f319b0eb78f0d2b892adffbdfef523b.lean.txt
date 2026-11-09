@@ -1,0 +1,14 @@
+/-- **R1 reconstruction with state relabelling**: as `Turing.embedEmitCfg_eq`, for a host whose
+control is the source's relabelled by `f` (the phase-host and call-controller tags). This is the
+shape of `Primitives.emitterP2_frame` and of `Loop.emCall_exit_fixed`'s `hframe`.
+
+**Proof sketch.** Relabelling the embedded configuration is embedding the relabelled source, by
+definition; apply `Turing.embedEmitCfg_eq` to it. -/
+theorem embedEmitCfg_mapState_eq {m : ℕ} {S H : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (f : S → H) (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ)
+    (c : Cfg m Γ S x) (d : Cfg k Γ H x) (hs : c.state.map f = d.state)
+    (hin : c.inputPos = d.inputPos) (hout : pre ++ c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
+    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    (embedEmitCfg σ tapes heads pre c).mapState f = d :=
+  embedEmitCfg_eq σ tapes heads pre (c.mapState f) d hs hin hout selected outside

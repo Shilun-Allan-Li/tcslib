@@ -1,0 +1,72 @@
+/-- The inherited physical guard on one selected counter tape, with an
+arbitrary ambient bank. No post-guard property of that counter is assumed.
+Both exit cuts and the exact frame survive the public embedding.
+
+**Proof sketch.** Identify the selected tape and native head with the
+inherited guard's preloaded start using the existing configuration assembly
+lemma. Transport its run by the public embedding equation, and project the
+public frame. The predecessor's guard proof supplies all branch semantics,
+positions, cuts and the numerical-value-independent time bound. -/
+private lemma canonGuard_onBank {k : ℕ} (i : Fin k) (F : MachineFormat)
+    (x bits rest : List Bool) (pair : pairDecode x = some (bits, rest))
+    (d : Cfg k Bool (CounterLoopState (Option (Fin (canonGuardBlock F - 1 + 1)))) x)
+    (control : d.state = some (.dec .run))
+    (position : d.inputPos.val = 2 * bits.length + 3)
+    (counter : d.workTapes i = FinTM.bufferTape (canonCount bits))
+    (home : d.workTapePos i = 0) (silent : d.output = []) :
+    let G := embedEmitTM (canonCounterBank i) (binaryGuardTM (canonGuardBlock F - 1))
+    ∃ t ≤ (canonGuardBlock F + 6) * (x.length + 1),
+      let e := G.runFrom d t
+      e.state = some (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+        then .done else .escape) ∧ e.output = [] ∧
+      e.inputPos.val = (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+        then 2 * bits.length + 3 + canonGuardBlock F * (codeBitsNat bits + 1)
+        else x.length + 1) ∧
+      (∀ u < t, (G.runFrom d u).state ≠ some .done ∧
+        (G.runFrom d u).state ≠ some .escape) ∧
+      ∀ j, j ≠ i → e.workTapes j = d.workTapes j ∧ e.workTapePos j = d.workTapePos j := by
+  obtain ⟨hpos, elapsed, budget, finish, output, native, cuts⟩ := canonGuard_run F x bits rest pair
+  let src := binaryGuardStart (canonGuardBlock F - 1) x (2 * bits.length + 2) hpos []
+    (canonCount bits)
+  have identified : embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] src = d := by
+    apply canonEmbedEq (binaryGuardTM (canonGuardBlock F - 1)) (canonCounterBank i)
+      src d _ _ control.symm (Fin.ext (by simpa [src, binaryGuardStart,
+        counter_cfg_eq, guardCfg, Nat.add_assoc] using position.symm)) silent.symm
+    · intro j
+      have last : j = Fin.last 0 := Subsingleton.elim _ _
+      subst j
+      simp only [src, binaryGuardStart, counter_cfg_eq, Fin.lastCases_last]
+      exact ⟨counter.symm, home.symm⟩
+    · exact fun _ _ => ⟨rfl, rfl⟩
+  have transported (u : ℕ) :
+      (embedEmitTM (canonCounterBank i) (binaryGuardTM (canonGuardBlock F - 1))).runFrom d u =
+        embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos []
+          ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src u) := by
+    conv_lhs => rw [← identified]
+    exact embedEmitTM_runFrom _ _ _ _ _ _ u
+  have length : bits.length ≤ x.length := by
+    have loaded := canonHeader_length x
+    simpa [canonHeader, pair] using loaded
+  refine ⟨elapsed, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp only [Nat.add_mul] at budget ⊢
+    omega
+  · rw [transported]
+    exact finish
+  · rw [transported]
+    exact output
+  · rw [transported]
+    change ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src elapsed).inputPos.val = _
+    change ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src elapsed).inputPos.val = _ at native
+    split_ifs at native ⊢ <;> omega
+  · intro u hu
+    rw [transported]
+    exact cuts u hu
+  · intro j hj
+    have notSelected : j ∉ Set.range (canonCounterBank i) := by
+      rintro ⟨q, eq⟩
+      exact hj eq.symm
+    have frame := (embedEmitTM_frame (canonCounterBank i)
+      (binaryGuardTM (canonGuardBlock F - 1)) d.workTapes d.workTapePos [] src elapsed).1
+        j notSelected
+    rw [identified] at frame
+    exact frame

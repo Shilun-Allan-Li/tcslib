@@ -1,0 +1,16 @@
+private lemma arMoveCfg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (a : Action M.k Γ M.State)
+    (r : Fin (N + 2)) (hr : r.val ≠ 0) :
+    (arTM E e M).tm.step (arMoveCfg E e c a r) =
+      arMoveCfg E e c a ⟨r.val - 1, by omega⟩ := by
+  unfold MultiTapeTM.step
+  change ((if h : r.val = 0 then _ else _) : Action M.k Bool (ArState Γ M.State M.k N)).apply _ = _
+  rw [dif_neg hr]
+  refine Cfg.ext rfl ?_ rfl ?_ ?_
+  · simp [arMoveCfg, arCfg, Action.apply]
+  · funext i
+    have hcast : ((r.val - 1 : ℕ) : ℤ) = (r.val : ℤ) - 1 := by omega
+    simp only [Action.apply, arMoveCfg, arPending, hcast]
+    ring
+  · simp [arMoveCfg, arCfg, Action.apply]

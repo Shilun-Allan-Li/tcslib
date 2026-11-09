@@ -1,0 +1,1 @@
+Source-catalog preparation corrected informal shorthand runFrom_succ to actual runFrom_succ_eq_step and runFrom_with_q₀ home to Finite. Only read-only name lookup; no Lean proof/reader invocation or whole-target repair claim.

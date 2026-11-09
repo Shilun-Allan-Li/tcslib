@@ -1,0 +1,6 @@
+/-- A control action has the requested input movement and successor state,
+with no work-tape writes or head movement and no output symbol. -/
+theorem controlAction_eq {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    controlAction (k := k) m q =
+      (⟨m, fun _ => (none, 0), none, q⟩ : Action k Bool S) := by
+  rfl

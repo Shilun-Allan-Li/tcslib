@@ -1,0 +1,28 @@
+/-- Frame-level action calculus keeps output append and both tape updates
+explicit; it is shared by the maximum pass and the streaming serializer.
+
+**Proof sketch.** Compare all five configuration fields. Split the two work-tape cases, substitute the
+prescribed tape updates and integer head movements, and use the explicit output-append
+equation. -/
+private lemma satRedAction_apply (x : List Bool) (q q' : Option (Fin 35))
+    (i i' : ℕ) (hi : i ≤ x.length) (hi' : i' ≤ x.length) (n n' : ℕ)
+    (buf buf' : ℤ → Option Bool) (a b a' b' : ℤ) (out out' : List Bool)
+    (m : SignType) (w₀ w₁ : Option (Option Bool)) (d₀ d₁ : SignType) (emit : Option Bool)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) m = ⟨i' + 1, by omega⟩)
+    (h₀ : (match w₀ with
+      | none => satRedCounter n
+      | some c => Function.update (satRedCounter n) a c) = satRedCounter n')
+    (h₁ : (match w₁ with | none => buf | some c => Function.update buf b c) = buf')
+    (ha : a + d₀.cast = a') (hb : b + d₁.cast = b')
+    (ho : out ++ emit.toList = out') :
+    (satRedAction m w₀ w₁ d₀ d₁ emit q').apply (satRedCfg x q i hi n buf a b out) =
+      satRedCfg x q' i' hi' n' buf' a' b' out' := by
+  refine Cfg.ext rfl hm ?_ ?_ ho
+  · funext t
+    fin_cases t
+    · cases w₀ <;> simpa [satRedAction, satRedCfg, Action.apply] using h₀
+    · cases w₁ <;> simpa [satRedAction, satRedCfg, Action.apply] using h₁
+  · funext t
+    fin_cases t
+    · simpa [satRedAction, satRedCfg, Action.apply] using ha
+    · simpa [satRedAction, satRedCfg, Action.apply] using hb

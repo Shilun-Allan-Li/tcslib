@@ -1,0 +1,21 @@
+private lemma arWriteCfg_finish {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (a : Action M.k Γ M.State) :
+    (arTM E e M).tm.step (arWriteCfg E e c a 0) =
+      arMoveCfg E e c a ⟨N + 1, by omega⟩ := by
+  unfold MultiTapeTM.step
+  dsimp only [arWriteCfg, arTM, arPending]
+  rw [dif_pos (show (0 : Fin (N + 1)).val = 0 from rfl)]
+  refine Cfg.ext rfl ?_ ?_ ?_ ?_
+  · simp [arMoveCfg, arCfg, Action.apply]
+  · funext i
+    simp only [Action.apply, arMoveCfg, arCfg, arPending]
+    rw [arTail_update]
+    simp only [Fin.val_zero, arTail_zero]
+    change arTape (fun z => E (Function.update (c.workTapes i) (c.workTapePos i)
+      ((a.workTapes i).1.getD (c.workTapeSymbols i)) z)) =
+      arTape (fun z => E ((a.apply c).workTapes i z))
+    rw [Action.apply_workTapes]
+  · funext i
+    simp [arMoveCfg, arPos, Action.apply]
+  · simp [arMoveCfg, arCfg, Action.apply]

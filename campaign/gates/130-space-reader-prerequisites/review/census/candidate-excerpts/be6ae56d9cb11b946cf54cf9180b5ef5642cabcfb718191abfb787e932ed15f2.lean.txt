@@ -1,0 +1,17 @@
+/-- **R8.4, the constant writer** (design §12.8a). Write the fixed word `w₀` on
+tape `i` from its head, moving right, then walk back `|w₀|` cells and enter the
+live `done` anchor with the head where it started. The old contents of the
+tape are never read. -/
+def writeConstTM {Symbol : Type*} (k : ℕ) (i : Fin k) (w₀ : List Symbol) :
+    MultiTapeTM k Symbol (WritePhase w₀.length) where
+  q₀ := .wr 0
+  tr := fun q _ _ =>
+    match q with
+    | .wr j =>
+      if h : (j : ℕ) < w₀.length then
+        tapeAction i 0 (some (some w₀[(j : ℕ)])) .pos (.wr ⟨j + 1, by omega⟩)
+      else inputMoveAction 0 (.bk ⟨w₀.length, by omega⟩)
+    | .bk j =>
+      if (j : ℕ) = 0 then inputMoveAction 0 .done
+      else tapeAction i 0 none .neg (.bk ⟨j - 1, by omega⟩)
+    | .done => inputMoveAction 0 .done

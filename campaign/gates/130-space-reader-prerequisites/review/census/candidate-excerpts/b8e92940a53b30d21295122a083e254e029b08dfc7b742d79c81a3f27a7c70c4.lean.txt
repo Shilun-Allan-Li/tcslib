@@ -1,0 +1,7 @@
+/-- On a blank input cell, the body escapes in one step without changing any data. -/
+private theorem iw_body_blank {z : List Bool} (c : Cfg 1 Bool Bool z)
+    (hc : c.state = some false) (hb : c.inputSymbol = none) :
+    iw_body.runFrom c 1 = { c with state := some true } := by
+  rw [iw_one iw_body c false hc]
+  simp only [iw_body, Bool.false_eq_true, if_false, hb,
+    FinTM.controlAction_apply, moveInputPos_zero]

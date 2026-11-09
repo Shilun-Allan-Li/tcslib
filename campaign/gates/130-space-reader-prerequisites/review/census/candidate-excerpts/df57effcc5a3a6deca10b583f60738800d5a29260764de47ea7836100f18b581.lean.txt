@@ -1,0 +1,11 @@
+/-- Completed native field preparation fixes its full final configuration. -/
+private lemma clPrepare_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)
+    (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
+  let d : Cfg (clLoadTM l).k Bool (clLoadTM l).State x :=
+    {c with state := some (Fin.last l, .inl 0)}
+  have hd : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c hc.symm rfl rfl rfl rfl
+  rw [← hd, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]

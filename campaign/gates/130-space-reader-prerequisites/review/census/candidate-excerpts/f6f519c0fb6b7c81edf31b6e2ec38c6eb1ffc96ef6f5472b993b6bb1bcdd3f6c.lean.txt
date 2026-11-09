@@ -1,0 +1,78 @@
+/-- The native input rewind returns at an exact position-dependent time, with a first exit
+and fixed work heads throughout. Its time is independent of the input's suffix.
+
+**Proof sketch.** One left step puts the input head within the word. The public scan equation
+then reaches the pre-exit anchor after exactly the old position plus one steps. An earlier
+final exit would be stationary and contradict that anchor. The public rewind-head theorem
+has the same pre-exit time, since leaving that anchor enters the stationary final exit.
+One final stationary step completes the run. -/
+private theorem ss_inputRewind_run {n : ℕ} {z : List Bool}
+    (d : Cfg n Bool ss_RewindState z) (hd : d.state = some .enter)
+    (hp : 0 < d.inputPos.val) :
+    (ss_inputRewind n).runFrom d (d.inputPos.val + 2) =
+      { d with state := some .done, inputPos := 1 } ∧
+      (∀ u < d.inputPos.val + 2,
+        ((ss_inputRewind n).runFrom d u).state ≠ some .done) ∧
+      ∀ u ≤ d.inputPos.val + 2,
+        ((ss_inputRewind n).runFrom d u).workTapePos = d.workTapePos := by
+  let M := ss_inputRewind n
+  let c : Cfg n Bool ss_RewindState z :=
+    { d with state := some .scan, inputPos := moveInputPos d.inputPos .neg }
+  have hstep : M.step d = c := by
+    rw [MultiTapeTM.step_of_some hd]
+    change (FinTM.controlAction .neg (some ss_RewindState.scan)).apply d = c
+    rw [FinTM.controlAction_apply]
+  have hcp : c.inputPos.val ≤ z.length := by
+    dsimp only [c]
+    rw [FinTM.moveInputPos_neg_val]
+    have := d.inputPos.isLt
+    omega
+  have hscan := FinTM.rewind_scan M .scan (some .stop)
+    (fun inp _ => by cases inp <;> rfl) c rfl hcp
+  have ht : 1 + (c.inputPos.val + 1) = d.inputPos.val + 1 := by
+    dsimp only [c]
+    rw [FinTM.moveInputPos_neg_val]
+    omega
+  have hstop : M.runFrom d (d.inputPos.val + 1) =
+      { d with state := some .stop, inputPos := 1 } := by
+    rw [← ht, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_one, hstep, hscan]
+  have hlast : ∀ (a : Cfg n Bool ss_RewindState z), a.state = some .stop →
+      M.step a = { a with state := some .done } := by
+    intro a ha
+    rw [MultiTapeTM.step_of_some ha]
+    change (FinTM.controlAction 0 (some ss_RewindState.done)).apply a = _
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  have hcut : ∀ u ≤ d.inputPos.val + 1, (M.runFrom d u).state ≠ some .done := by
+    intro u hu hdone
+    have hf := ss_inputRewind_done (M.runFrom d u) hdone (d.inputPos.val + 1 - u)
+    have hsum : u + (d.inputPos.val + 1 - u) = d.inputPos.val + 1 := by omega
+    rw [← MultiTapeTM.runFrom_add, hsum, hstop] at hf
+    have heq := congrArg Cfg.state hf
+    rw [hdone] at heq
+    cases heq
+  have hret : M.runFrom d (d.inputPos.val + 2) =
+      { d with state := some .done, inputPos := 1 } := by
+    rw [show d.inputPos.val + 2 = (d.inputPos.val + 1) + 1 by omega,
+      MultiTapeTM.runFrom_succ_eq_step', hstop, hlast _ rfl]
+  obtain ⟨r, hr, hrun, hheads⟩ := FinTM.rewind_heads M .enter .scan (some .stop)
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) d hd
+  have htime : r = d.inputPos.val + 1 := by
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · have hx : (M.runFrom d (r + 1)).state = some .done := by
+        rw [MultiTapeTM.runFrom_succ_eq_step', hrun, hlast _ rfl]
+      exact hcut (r + 1) (by omega) hx
+    · have hf := ss_inputRewind_done
+        ({ d with state := some .done, inputPos := 1 } : Cfg n Bool ss_RewindState z)
+        rfl (r - (d.inputPos.val + 2))
+      have hsum : d.inputPos.val + 2 + (r - (d.inputPos.val + 2)) = r := by omega
+      rw [← hret, ← MultiTapeTM.runFrom_add, hsum, hrun, hret] at hf
+      have heq := congrArg Cfg.state hf
+      cases heq
+  refine ⟨hret, fun u hu => hcut u (by omega), ?_⟩
+  intro u hu
+  by_cases h : u ≤ d.inputPos.val + 1
+  · exact hheads u (by omega)
+  · have heq : u = d.inputPos.val + 2 := by omega
+    rw [heq, hret]

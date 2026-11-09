@@ -1,0 +1,10 @@
+/-- A certified layout reads the source action on its exact selected slots. -/
+private lemma clPlacedAction_eq {k l : ℕ} {S H : Type}
+    (slots : clPlacement k l) (emb : S → H) (q : S) (a : Action k Bool S) :
+    clPlacedAction slots emb q a =
+      ⟨a.inputTape, (fun j => match slots.select j with
+        | some i => a.workTapes i | none => (none, 0)), a.output, a.state.map emb⟩ := by
+  change (⟨a.inputTape, (fun j => match (List.finRange k).find?
+    (fun i => decide (slots.index i = j)) with
+      | some i => a.workTapes i | none => (none, 0)), a.output, a.state.map emb⟩ : Action l Bool H) = _
+  simp_rw [clPlacement_lookup]

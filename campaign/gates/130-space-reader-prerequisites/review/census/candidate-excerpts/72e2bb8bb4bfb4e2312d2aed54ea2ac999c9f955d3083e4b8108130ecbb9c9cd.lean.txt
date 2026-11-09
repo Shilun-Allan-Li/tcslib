@@ -1,0 +1,43 @@
+theorem probe_outSummary_append_congr {u v : List Bool} (h : outSummary u = outSummary v)
+    (e : List Bool) : outSummary (u ++ e) = outSummary (v ++ e) := by
+  have key : ∀ u : List Bool, (outSummary u = .empty ↔ u = []) ∧
+      (outSummary u = .accept ↔ u = [true]) := by
+    intro u
+    match u with
+    | [] => simp [outSummary]
+    | [true] => simp [outSummary]
+    | [false] => simp [outSummary]
+    | _ :: _ :: _ => simp [outSummary]
+  have dead : ∀ u e : List Bool, outSummary u = .dead → outSummary (u ++ e) = .dead := by
+    intro u e hu
+    cases hs : outSummary (u ++ e) with
+    | dead => rfl
+    | empty =>
+      have := ((key _).1.mp hs); simp only [List.append_eq_nil_iff] at this
+      rw [this.1] at hu; simp [outSummary] at hu
+    | accept =>
+      have h1 := (key _).2.mp hs
+      rcases u with _ | ⟨a, u⟩
+      · simp [outSummary] at hu
+      · rcases u with _ | ⟨b, u⟩
+        · simp only [List.cons_append, List.nil_append, List.cons.injEq] at h1
+          rw [h1.1] at hu; simp [outSummary] at hu
+        · simp at h1
+  cases hu : outSummary u with
+  | empty =>
+    rw [hu] at h; rw [(key _).1.mp hu, (key _).1.mp h.symm]
+  | accept =>
+    rw [hu] at h; rw [(key _).2.mp hu, (key _).2.mp h.symm]
+  | dead =>
+    rw [hu] at h; rw [dead u e hu, dead v e h.symm]
+
+-- Route 2 composes: slice + `core_step` + `step_output` + the congruence.
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (b : Bool)
+    {c d : Cfg k Bool S x} (h : NDTM.coreSum c = NDTM.coreSum d) :
+    NDTM.coreSum (tm.stepWith b c) = NDTM.coreSum (tm.stepWith b d) := by
+  simp only [NDTM.coreSum, Prod.mk.injEq] at h ⊢
+  obtain ⟨hc, hs⟩ := h
+  rw [NDTM.stepWith_eq_fixChoice_step, NDTM.stepWith_eq_fixChoice_step]
+  refine ⟨MultiTapeTM.ConfigCount.core_step _ hc, ?_⟩
+  rw [MultiTapeTM.step_output, MultiTapeTM.step_output, NDTM.probe_outputSymbol_congr _ hc]
+  exact probe_outSummary_append_congr hs _

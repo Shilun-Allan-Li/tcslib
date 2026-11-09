@@ -1,0 +1,24 @@
+/-- Growing the left boundary writes exactly one reversed blank block. -/
+private lemma sweep_grow_left_block {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (q : M.State) {x : List (SweepAlphabet Γ M.k)}
+    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
+    (z : ℤ) (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k =
+      sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+        ((blankRow M.k false).map (fun a => some (sweepSymbol a)) ++ l)
+        (r.drop M.k) out := by
+  let w := ((blankRow (Γ := Γ) M.k false).map sweepSymbol).reverse
+  have hw : w.length = M.k := by simp [w, blankRow]
+  have h := sweep_generate (sweepTM M).tm w
+    (fun i z l r => sweepRevCfg (some (.growLeft q ⟨i.val, by simpa [hw] using i.isLt⟩))
+      p z l r out) (-1) (fun i hi z l r => ?_) z l r M.k (by omega)
+  · rw [List.take_of_length_le (show w.length ≤ M.k by omega)] at h
+    simpa [hw, w, List.map_reverse, List.map_map, sub_eq_add_neg] using h
+  · have hik : i < M.k := by omega
+    change (sweepTM M).tm.step (sweepRevCfg (some (.growLeft q ⟨i, by omega⟩)) p z l r out) = _
+    change ((sweepTM M).tm.tr (.growLeft q ⟨i, by omega⟩) _ _).apply _ = _
+    simp only [sweepTM, dif_pos hik]
+    have he : w[i] = sweepSymbol (⟨M.k - 1 - i, by omega⟩, none, false, false) := by
+      simp [w, blankRow, List.getElem_reverse]
+    rw [he]
+    exact sweepRevCfg_left_any _ _ p z l r out _

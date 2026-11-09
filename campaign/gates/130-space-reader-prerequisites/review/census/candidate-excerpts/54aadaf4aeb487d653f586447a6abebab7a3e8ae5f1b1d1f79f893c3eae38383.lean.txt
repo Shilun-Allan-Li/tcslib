@@ -1,0 +1,27 @@
+/-- Read a selected configuration through R1 reconstruction, without unfolding the selector.
+This common field calculation is used by the runner and final record test.
+
+**Proof sketch.** Project the public reconstruction identity and use the public equations for
+the forwarding transport's selected tapes, positions, state, input and output. -/
+private lemma sph_select_fields {m k : ℕ} {Γ S : Type} {x : List Γ}
+    (ι : Fin m ↪ Fin k) (d : Cfg k Γ S x) :
+    (d.select ι).state = d.state ∧ (d.select ι).inputPos = d.inputPos ∧
+      d.output ++ (d.select ι).output = d.output ∧
+      (∀ i, (d.select ι).workTapes i = d.workTapes (ι i)) ∧
+      (∀ i, (d.select ι).workTapePos i = d.workTapePos (ι i)) := by
+  have hr := embedEmitCfg_select ι d
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · have h := congrArg Cfg.state hr
+    rwa [embedEmitCfg_state] at h
+  · have h := congrArg Cfg.inputPos hr
+    rwa [embedEmitCfg_inputPos] at h
+  · have h := congrArg Cfg.output hr
+    rwa [embedEmitCfg_output] at h
+  · intro i
+    have h : (embedEmitCfg ι d.workTapes d.workTapePos d.output (d.select ι)).workTapes
+        (ι i) = d.workTapes (ι i) := congrArg (fun c => c.workTapes (ι i)) hr
+    rwa [embedEmitCfg_selected_tape] at h
+  · intro i
+    have h : (embedEmitCfg ι d.workTapes d.workTapePos d.output (d.select ι)).workTapePos
+        (ι i) = d.workTapePos (ι i) := congrArg (fun c => c.workTapePos (ι i)) hr
+    rwa [embedEmitCfg_selected_pos] at h

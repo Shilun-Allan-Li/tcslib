@@ -1,0 +1,48 @@
+/-- **A code path from an initial to an accepting code makes the input a member**: if `N`
+decides `L` (in any space bound), `u` is the initial code and `v` an accepting code at
+radius `s`, and `v` is reachable from `u` along step pairs (`Relation.ReflTransGen` of
+`StepRel N x s`, of any length), then `x ∈ L`. This is the direction `⇐` of
+`Complexity.Codec.mem_iff_codeChain`, without its length and size bounds. [AB09, §4.1.1:
+a path from the initial to an accepting configuration in the configuration graph is an
+accepting branch]
+
+**Proof sketch.** By induction along the path, some choice word reaches a configuration with
+the vertex of the current code: codes determine vertices on window-bounded configurations
+(`coreSum_eq_of_cfgWord_eq`) and steps respect vertices (`Turing.NDTM.coreSum_stepWith`).
+At the accepting code the vertex is halted with output `[true]`, so the word accepts, and an
+accepting branch of any length gives membership (`mem_of_acceptsWithin`). -/
+theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
+    (x : List Bool) (s u v : ℕ)
+    (hinit : pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N)
+    (hpath : Relation.ReflTransGen (StepRel N x s) u v)
+    (hacc : pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N) : x ∈ L := by
+  rw [mem_initLang] at hinit
+  have chain : ∀ c, Relation.ReflTransGen (StepRel N x s) u c → ∃ w : List Bool,
+      ∃ D : Cfg N.k Bool N.State x, InWin N s D ∧ cfgCode s D = c ∧
+        NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum D := by
+    intro c hc
+    induction hc with
+    | refl =>
+      exact ⟨[], N.tm.initCfg x, fun i => by simp [NDTM.initCfg, Cfg.init], hinit, rfl⟩
+    | tail _ hst ih =>
+      obtain ⟨w, D, hD, hcD, hcore⟩ := ih
+      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
+      have hDC : NDTM.coreSum D = NDTM.coreSum C :=
+        coreSum_eq_of_cfgWord_eq hD hC (by rw [← bits_cfgCode, ← bits_cfgCode, hcD, hcC])
+      refine ⟨w ++ [b], C', hC', hcC', ?_⟩
+      rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil, ← hb]
+      exact NDTM.coreSum_stepWith N.tm b (hcore.trans hDC)
+  obtain ⟨w, D, hD, hcD, hcore⟩ := chain v hpath
+  obtain ⟨C, hC, hcC, hst, hout⟩ := (mem_acceptLang N x _ s).mp hacc
+  have hDC : NDTM.coreSum D = NDTM.coreSum C :=
+    coreSum_eq_of_cfgWord_eq hD hC (by rw [← bits_cfgCode, ← bits_cfgCode, hcD, hcC])
+  have hfin := hcore.trans hDC
+  apply mem_of_acceptsWithin h (t := w.length)
+  refine ⟨w, rfl, ?_, ?_⟩
+  · have := congrArg (fun z => z.1.1) hfin
+    simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core] at this
+    rw [this, hst]
+  · have := congrArg Prod.snd hfin
+    simp only [NDTM.coreSum] at this
+    rw [hout] at this
+    exact (outSummary_eq_accept_iff _).mp this

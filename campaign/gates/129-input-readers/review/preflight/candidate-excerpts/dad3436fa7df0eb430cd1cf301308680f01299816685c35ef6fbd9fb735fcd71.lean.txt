@@ -1,0 +1,12 @@
+/-- The control table: `hostCtrl M K c inp work` is the stationary silent action into the
+verdict module's entry if `c = 0`, into the payload module's entry (`work 0 = some true`) or the
+step module's entry (otherwise) if `c = 1`, and the halting action if `c = 2`. -/
+theorem hostCtrl_eq (M : Fin 5 → FinTM Bool) (K : ℕ) (c : Fin 3) (inp : Option Bool)
+    (work : Fin (K + 1) → Option Bool) :
+    hostCtrl M K c inp work =
+      if c = 0 then FinTM.controlAction 0 (some (ModuleHost.entry M 2))
+      else if c = 1 then
+        FinTM.controlAction 0
+          (some (if work 0 = some true then ModuleHost.entry M 4 else ModuleHost.entry M 3))
+      else FinTM.controlAction 0 none :=
+  rfl

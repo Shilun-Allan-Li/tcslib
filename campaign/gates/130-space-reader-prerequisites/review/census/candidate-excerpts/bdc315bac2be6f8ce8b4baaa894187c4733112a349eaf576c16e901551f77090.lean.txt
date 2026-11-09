@@ -1,0 +1,23 @@
+/-- The concrete test's frames and its two-sided head envelope, projected from `rd_run`. -/
+private theorem rd_test_window {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hd : d.state = some (.inl ())) (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (u : ℕ) (hu : u ≤ 2 * ℓ + 2) :
+    (rd_test.runFrom d u).workTapes = d.workTapes ∧
+    (rd_test.runFrom d u).output = d.output ∧
+    d.workTapePos 0 - 1 ≤ (rd_test.runFrom d u).workTapePos 0 ∧
+    (rd_test.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + ℓ ∧
+    (rd_test.runFrom d u).state ≠ none ∧
+    (u < 2 * ℓ + 2 → ∀ b, (rd_test.runFrom d u).state ≠ some (.inr (b, true))) := by
+  rw [rd_run ℓ d hd hℓ hp hr u hu]
+  unfold rd_trace
+  split_ifs with hf hb
+  · simp only [rd_cfg, ne_eq, reduceCtorEq, not_false_eq_true, true_and]
+    exact ⟨by omega, by omega, by simp⟩
+  · simp only [rd_cfg, ne_eq, reduceCtorEq, not_false_eq_true, true_and]
+    refine ⟨by omega, by omega, ?_⟩
+    intro _ b h
+    exact Bool.false_ne_true (congrArg Prod.snd (Sum.inr.inj (Option.some.inj h)))
+  · simp only [rd_cfg, add_zero, ne_eq, reduceCtorEq, not_false_eq_true, true_and]
+    exact ⟨by omega, by omega, fun h => False.elim (by omega)⟩

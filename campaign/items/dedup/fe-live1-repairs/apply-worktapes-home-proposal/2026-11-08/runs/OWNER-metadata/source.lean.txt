@@ -1,0 +1,78 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Configuration
+set_option maxHeartbeats 0
+set_option pp.universes true
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let roots : List Name := [`Turing.Action.apply_workTapes]
+  for root in roots do
+    let some ci := env.find? root | throwError "missing selected theorem {root}"
+    let nameHits := env.constants.toList.filter fun (n, _) => n == root
+    unless nameHits.length == 1 do throwError "selected theorem name count {nameHits.length}"
+    let owner := homeOf root
+    let axs ← liftCoreM <| collectAxioms root
+    let pretty ← liftTermElabM <| ppExpr ci.type
+    let ip ← liftCoreM <| getInstancePriority? root
+    let propType ← liftTermElabM <| Meta.isProp ci.type
+    let valueText := (ci.value?.map reprStr).getD ""
+    logInfo m!"SELECTED|{(Json.mkObj [
+      ("name",toJson root.toString),("owner",toJson owner.toString),
+      ("nameCount",toJson nameHits.length),("kind",toJson (kind ci)),
+      ("private",toJson (isPrivateName root)),("internal",toJson root.isInternalDetail),
+      ("levelParams",toJson (ci.levelParams.map Name.toString)),
+      ("typeExpr",toJson (reprStr ci.type)),("typePretty",toJson pretty.pretty),
+      ("valueExpr",toJson valueText),("typeIsProp",toJson propType),
+      ("unsafe",toJson ci.isUnsafe),("partial",toJson ci.isPartial),
+      ("reducibility",toJson (reprStr (getReducibilityStatusCore env root))),
+      ("simp",toJson (simp.isLemma (.decl root))),("unfold",toJson (simp.toUnfold.contains root)),
+      ("protected",toJson (isProtected env root)),("instancePriority",toJson ip),
+      ("axioms",toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+    let mut todo := ci.type.getUsedConstants.toList ++
+      (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+    let mut seen : List Name := [root]
+    let mut localDefs : List Name := []
+    let mut foreign : List Json := []
+    let mut ordinary : List Name := []
+    let mut theoremStops : List Name := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      todo := info.type.getUsedConstants.toList ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        if home == owner then
+          localDefs := n :: localDefs
+          todo := di.value.getUsedConstants.toList ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          let isAbbrev := match di.hints with | .abbrev => true | _ => false
+          let regular := !isAbbrev && !(env.isProjectionFn n)
+          if regular then ordinary := n :: ordinary
+          foreign := Json.mkObj [
+            ("name",toJson n.toString),("owner",toJson home.toString),
+            ("abbrev",toJson isAbbrev),("projection",toJson (env.isProjectionFn n)),
+            ("ordinary",toJson regular),("simp",toJson (simp.isLemma (.decl n))),
+            ("unfold",toJson (simp.toUnfold.contains n))] :: foreign
+      | .thmInfo _ => theoremStops := n :: theoremStops
+      | _ => pure ()
+    logInfo m!"BOUNDARY|{(Json.mkObj [
+      ("root",toJson root.toString),("owner",toJson owner.toString),
+      ("own_definition_helpers",toJson ((localDefs.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("foreign_definitions",Json.arr foreign.reverse.toArray),
+      ("ordinary_foreign_heads",toJson ((ordinary.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("other_theorem_proof_boundaries",toJson ((theoremStops.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("foreign_definition_values_traversed",toJson false),
+      ("other_theorem_values_traversed",toJson false)]).compress}"
+  logInfo m!"COMPLETE|{roots.length}"

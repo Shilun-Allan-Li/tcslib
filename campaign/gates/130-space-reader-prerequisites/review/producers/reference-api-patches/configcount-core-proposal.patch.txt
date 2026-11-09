@@ -1,0 +1,15 @@
+--- a/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
+@@ -81,6 +81,12 @@
+ def core (c : Cfg k Bool S x) :
+     Option S × Fin (x.length + 2) × (Fin k → ℤ → Option Bool) × (Fin k → ℤ) :=
+   (c.state, c.inputPos, c.workTapes, c.workTapePos)
++
++/-- The core records exactly the state, input position, work tapes and work-head
++positions of a configuration, in that order; it omits the output tape. -/
++theorem core_eq (c : Cfg k Bool S x) :
++    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) := by
++  rfl
+ 
+ /-- The core after a step depends only on the core before it. -/
+ lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :

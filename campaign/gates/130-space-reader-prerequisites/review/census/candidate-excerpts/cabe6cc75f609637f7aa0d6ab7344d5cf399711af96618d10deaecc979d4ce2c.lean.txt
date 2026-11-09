@@ -1,0 +1,47 @@
+/-- The public native-input seek, embedded in a caller-selected bank. All
+host tapes, all heads and the output are restored, including the frame.
+This contract can therefore be used again after a destructive guard.
+
+**Proof sketch.** Project the two selected tapes to the public seek row,
+then transport its run and strict cut by forwarding embedding. Assemble
+the returned host configuration by `canonEmbedEq`; the selected projections
+come from the seek and the remaining tapes come from the public frame. -/
+private lemma exists_canonSeekOnBank {k : ℕ} (ι : Fin 2 ↪ Fin k) :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+      (R : MultiTapeTM k Bool S) (entry exit : S) (a : ℕ),
+      ∀ {x : List Bool} (p : ℕ) (w : List Bool),
+        Nat.ofDigits 2 (w.map Bool.toNat) = p → ∀ hp : p ≤ x.length + 1,
+        ∀ d : Cfg k Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes (ι 0) (d.workTapePos (ι 0) + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes (ι 1) q = none) →
+        ∃ t ≤ a * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          R.runFrom d t = { d with state := some exit, inputPos := ⟨p, by omega⟩ } := by
+  classical
+  obtain ⟨S, finite, equal, M, entry, exit, a, seek⟩ := exists_inputSeekTM
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  refine ⟨S, finite, equal, embedEmitTM ι M, entry, exit, a, ?_⟩
+  intro x p w hw hp d hd word blank
+  let src : Cfg 2 Bool S x :=
+    ⟨d.state, d.inputPos, fun i => d.workTapes (ι i), fun i => d.workTapePos (ι i), d.output⟩
+  have start : embedEmitCfg ι d.workTapes d.workTapePos [] src = d := by
+    exact canonEmbedEq M ι src d _ _ rfl rfl rfl (fun _ => ⟨rfl, rfl⟩)
+      (fun _ _ => ⟨rfl, rfl⟩)
+  have lift (u : ℕ) : (embedEmitTM ι M).runFrom d u =
+      embedEmitCfg ι d.workTapes d.workTapePos [] (M.runFrom src u) := by
+    conv_lhs => rw [← start]
+    exact embedEmitTM_runFrom ι M _ _ [] src u
+  obtain ⟨t, time, cut, _, state, pos, tapes, heads, out⟩ := seek p w hw hp src hd word blank
+  refine ⟨t, time, ?_, ?_⟩
+  · intro u hu
+    rw [lift]
+    exact cut u hu
+  · rw [lift]
+    refine canonEmbedEq M ι (M.runFrom src t)
+      ({ d with state := some exit, inputPos := ⟨p, by omega⟩ })
+      d.workTapes d.workTapePos state (Fin.ext pos) out ?_ ?_
+    · intro i
+      exact ⟨congrFun tapes i, congrFun heads i⟩
+    · exact fun _ _ => ⟨rfl, rfl⟩

@@ -1,0 +1,5 @@
+/-- The anchor phase: one stationary state, always redirected by the phase host, so the
+loop anchor is a state the round never revisits. -/
+def anchorTM (k : ℕ) : MultiTapeTM k Bool Unit where
+  q₀ := ()
+  tr := fun _ _ _ => inputMoveAction 0 ()

@@ -1,0 +1,57 @@
+/-- A halting source call can be made clean: retain its output on the final
+tape, restore every source work field, blank all histories, and rewind both
+exposed heads. The full duration is at most `3T+|x|+|y|+8`.
+**Proof sketch.** Capture the logged run through its first halt; undo the
+recorded actions; rewind native input; rewind the retained word; halt. Each
+administrative transition is charged, and all phases keep physical output
+empty. Only the actual source time is used in the restoration bound. -/
+private lemma enumCont_clean_complete (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (y : List Bool) (T : ℕ)
+    (hh : (M.tm.runFrom c₀ T).state = none)
+    (ho : (M.tm.runFrom c₀ T).output = y) :
+    ∃ τ ≤ 3 * T + x.length + y.length + 8,
+      (enumCont_cleanTM M).tm.runFrom
+        (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) τ =
+        enumCont_cleanCfg M c₀ y none 1 0 := by
+  obtain ⟨t, ht, hlive, he⟩ := enumCont_first_halt M.tm c₀ T hh
+  have hs : (M.tm.runFrom c₀ t).state = none := by rw [he]; exact hh
+  have hout : (M.tm.runFrom c₀ t).output = y := by rw [he]; exact ho
+  have hcap := enumCont_clean_capture M c₀ t hlive
+  have hentry := enumCont_clean_undo_entry M (M.tm.runFrom c₀ t)
+    (enumCont_history M.tm c₀ t) hs
+  obtain ⟨r, hr, hrest⟩ := enumCont_clean_restore M c₀ (M.tm.runFrom c₀ t).inputPos t hlive
+  have hfirst : (enumCont_cleanTM M).tm.runFrom
+      (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) (t + 1 + r) =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+        (M.tm.runFrom c₀ t).inputPos (y.length : ℤ) := by
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step', hcap, hentry, hrest, hout]
+  obtain ⟨u, hu, hrew⟩ := enumCont_rewind (enumCont_cleanTM M).tm
+    (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inl 3)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    (enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+      (M.tm.runFrom c₀ t).inputPos (y.length : ℤ)) rfl
+  have hrew' : (enumCont_cleanTM M).tm.runFrom
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+        (M.tm.runFrom c₀ t).inputPos (y.length : ℤ)) u =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 3))) 1 (y.length : ℤ) := hrew
+  have hback : (enumCont_cleanTM M).tm.step
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 3))) 1 (y.length : ℤ)) =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) 1 ((y.length : ℤ) - 1) := by
+    change (enumCont_bufferAction 0 .neg _).apply _ = _
+    rw [enumCont_buffer_apply]
+    simp [sub_eq_add_neg, SignType.cast]
+  have hlast : (enumCont_cleanTM M).tm.step
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 5))) 1 0) =
+      enumCont_cleanCfg M c₀ y none 1 0 := by
+    change (controlAction 0 none).apply _ = _
+    rw [controlAction_apply]
+    simp [moveInputPos_zero, enumCont_cleanCfg]
+  refine ⟨t + 1 + r + u + 1 + (y.length + 1) + 1, ?_, ?_⟩
+  · change u ≤ (M.tm.runFrom c₀ t).inputPos.val + 2 at hu
+    have hp := (M.tm.runFrom c₀ t).inputPos.isLt
+    omega
+  · rw [MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.runFrom_add _ _ (y.length + 1),
+      MultiTapeTM.runFrom_succ_eq_step' (t := t + 1 + r + u),
+      MultiTapeTM.runFrom_add _ _ u, hfirst, hrew', hback,
+      enumCont_clean_buffer_rewind M c₀ y 1 y.length (le_refl _), hlast]

@@ -1,0 +1,14 @@
+/-- **Rewind a work-tape head to the start of a word.** From `start`, step the head of tape `i`
+left once; in `back`, keep stepping left while the head reads a symbol; at the first blank, step
+right into `done`. Nothing is written, the input head and every other tape are untouched, and
+`done` is a stationary live anchor. -/
+def rewindTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol RewindPhase where
+  q₀ := .start
+  tr := fun q _ w =>
+    match q with
+    | .start => tapeAction i 0 none .neg .back
+    | .back =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .back
+      | none => tapeAction i 0 none .pos .done
+    | .done => inputMoveAction 0 .done

@@ -1,0 +1,42 @@
+/-- The fresh exit control is an absorbing silent state, on every tape
+configuration, so cutting at first exit preserves the entire endpoint. -/
+private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
+    (z : Cfg (emCallTM M emit).k Bool (emCallTM M emit).State x)
+    (hz : z.state = some (.inr (.inr (5 : Fin 6)))) :
+    (emCallTM M emit).tm.step z = z := by
+  let c : Cfg 2 Bool (Fin 6) x :=
+    ⟨some 5, z.inputPos, (fun i => z.workTapes (emCallPairEmbedding M i)),
+      (fun i => z.workTapePos (emCallPairEmbedding M i)), z.output⟩
+  have hframe : emCallEmbeddedCfg (emCallPairEmbedding M)
+      (fun q => .inr (.inr q) : Fin 6 → emCallState M) z.workTapes z.workTapePos c = z := by
+    refine Cfg.ext hz.symm rfl ?_ ?_ rfl
+    · funext j
+      simp only [emCallEmbeddedCfg, Cfg.mapState]
+      by_cases hj : j ∈ Set.range (emCallPairEmbedding M)
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_tape]
+      · exact ((embedEmitTM_frame (emCallPairEmbedding M) (emCallFinishTM emit).tm
+          z.workTapes z.workTapePos [] c 0).1 j hj).1
+    · funext j
+      simp only [emCallEmbeddedCfg, Cfg.mapState]
+      by_cases hj : j ∈ Set.range (emCallPairEmbedding M)
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_pos]
+      · exact ((embedEmitTM_frame (emCallPairEmbedding M) (emCallFinishTM emit).tm
+          z.workTapes z.workTapePos [] c 0).1 j hj).2
+  have hs : (emCallFinishTM emit).tm.runFrom c 1 = c := by
+    change (controlAction 0 (some (5 : Fin 6))).apply c = c
+    rw [controlAction_apply, moveInputPos_zero]
+  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+    (emCallTM M emit).tm
+    ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
+    (fun _ => True) (by intros; rfl)
+    (embedEmitCfg (emCallPairEmbedding M) z.workTapes z.workTapePos [] c) 1
+    (by intros; trivial)
+  rw [embedEmitTM_runFrom, hs] at he
+  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
+    (fun q => .inr (.inr q)) z.workTapes z.workTapePos c) 1 =
+    emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q))
+      z.workTapes z.workTapePos c at he
+  rw [hframe] at he
+  exact he

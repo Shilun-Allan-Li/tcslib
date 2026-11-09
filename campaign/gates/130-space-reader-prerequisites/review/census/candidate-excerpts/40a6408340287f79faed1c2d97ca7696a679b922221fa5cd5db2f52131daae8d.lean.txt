@@ -1,0 +1,26 @@
+/-- **The clean call** (landing: `Turing.FinTM.callTM`, made public in place at
+`Build/Loop.lean:3897`, today the private `emCallTM`, body unchanged). From the entry seam holding
+an argument word on tape `0`, it runs `M` on that argument through tracked banks with `M`'s
+output captured, clears every bank to its observed extent, and then either installs the result
+in place of the argument (`emit = false`) or forwards it to the physical output and keeps the
+argument (`emit = true`), erases its administrative storage, and enters its exit state. -/
+def callTM (M : FinTM Bool) (emit : Bool) : FinTM Bool where
+  k := (emCallSource M).k
+  State := emCallState M
+  tm := {
+    q₀ := .inl (.inl (.inr (.inr ((emCallRightTM (emCallTrackTM M)).tm.q₀, true))))
+    tr := fun q inp work => match q with
+      | .inl q =>
+        if q = .inr () then controlAction 0 (some (.inr (.inl (0, 0))))
+        else ((embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm).tr
+          q inp work).mapState Sum.inl
+      | .inr (.inl (i, q)) =>
+        if hi : i.val < M.k then
+          if q = 3 then controlAction 0 (some (.inr (.inl (⟨i.val + 1, by omega⟩, 0))))
+          else ((embedEmitTM (emCallTripleEmbedding M ⟨i.val, hi⟩) emCallClearTM.tm).tr
+            q inp work).mapState
+            (fun s => .inr (.inl (i, s)))
+        else controlAction 0 (some (.inr (.inr 0)))
+      | .inr (.inr q) => ((embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm).tr
+          q inp work).mapState
+          (fun s => .inr (.inr s)) }

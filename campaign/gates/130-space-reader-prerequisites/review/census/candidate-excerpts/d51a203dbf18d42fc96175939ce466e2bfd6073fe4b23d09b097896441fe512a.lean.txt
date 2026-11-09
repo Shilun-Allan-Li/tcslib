@@ -1,0 +1,14 @@
+/-- Load a fixed row in increasing field order. Every field first clears
+its own target, so repeated queries need no monotonic-width assumption. -/
+private def clLoadTM (l : ℕ) : FinTM Bool where
+  k := l + 1
+  State := Fin (l + 1) × clFreshTM.State
+  tm := {
+    q₀ := (0, .inl 0)
+    tr := fun q inp work =>
+      if hi : q.1.val < l then
+        if q.2 = .inr (.inr true) then
+          FinTM.controlAction 0 (some (⟨q.1.val + 1, by omega⟩, .inl 0))
+        else clSlotAction (clLoadSelect ⟨q.1.val, hi⟩) (fun s => (q.1, s))
+          (clFreshTM.tm.tr q.2 inp (fun j => work (clLoadIndex ⟨q.1.val, hi⟩ j)))
+      else FinTM.controlAction 0 (some q) }

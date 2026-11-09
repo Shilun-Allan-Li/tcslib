@@ -1,0 +1,50 @@
+from pathlib import Path
+import json,hashlib,datetime
+O=Path(__file__).parent;E=O/'EXPORT';assert not E.exists();E.mkdir();R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/items/dedup')
+def sha(b):return hashlib.sha256(b).hexdigest()
+def write(n,d):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(d,indent=2,ensure_ascii=False)+'\n')
+checks=json.loads((O/'CHECKS.json').read_text());assert checks['fresh_metadata_queries']==2 and checks['effective_control_pairs']==6
+references=[]
+for group in ['configcount-core-proposal','ndclock-startup-reader-proposal','singletape-sweep-reader-proposal']:
+ src=R/group/'2026-11-08/API-only.patch';data=src.read_bytes();dest=O/'reference-api-patches'/str(group+'.patch.txt');dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data);references.append({'source_path':str(src),'capture':str(dest.relative_to(O)),'sha256':sha(data),'bytes':len(data),'use':'Reviewed source/provenance data only. Earlier proposal executions and consumer changes are not reused or adopted.'})
+write('REFERENCE-INPUTS.json',references)
+write('SCOPE.json',{'actual_source_head':checks['source_head'],'approved_new_public_theorem_facts':5,'no_additional_API_design_or_source_adoption_by_this_review':True,'actual_private_native_complete_owners':3,'actual_fresh_selected_metadata_queries':2,'actual_nonzero_complete_prefix_guards':2,'ordinary_foreign_heads_by_selected_root':[0,1,3,0,0],'zero_head_cases_no_vacuous_seals':3,'union_ordinary_foreign_definitions':3,'effective_paired_identities':6,'actual_positive_kernel_checked_controls':6,'actual_expected_negative_controls':6,'all5_root_statements_universes_owner_AXIOM_non_simp_metadata_actual_current_source':True,'scope_boundary':'Selected full producer proof values and own definition helper RHS are traversed; foreign definition RHS are recorded only for identities, not recursively traversed; other theorem values stop at full types. No old owner theorem, provider proof, consumer, whole-library absence or current335 replay certificate follows.','whole_MAC8_clone_not_composed':True,'shared_read_only_package_directory':str(Path('/Users/seyoonr/.codex/worktrees/ab34-space-readers/tcslib-arora-barak-ch3-4/.lake/packages').resolve()),'lean_toolchain_sha256':sha((O/'helpers/lean-toolchain').read_bytes()),'lake_manifest_sha256':sha((O/'helpers/lake-manifest.json').read_bytes()),'no_copy_screen_no_Git_records_exchange_status_dispatch_or_merge_mutation':True})
+review='''# Private producer-five execution review
+
+All five approved producer facts pass fresh checks at exact source `04b0b07d4ea836f52cb645f480b67cdc9e99ea59`. This packet contains private producer proof/metadata evidence; it makes no gate, dispatch, merge, source-adoption or full335 replay decision.
+
+| Complete producer | Ordinary foreign heads | Actual AX set | Check |
+|---|---:|---|---|
+| `Turing.MultiTapeTM.ConfigCount.core_eq` | 0 | `[]` | Native/full metadata and explicit complete-body review; no vacuous seal |
+| `Turing.ClockHost.bootCfg_of_halt` | 1 | `[propext, Quot.sound]` | Exact owner-prefix guard passes |
+| `Turing.ClockHost.runCfg_initCfg` | 3 | `[propext, Quot.sound]` | Exact owner-prefix guard passes |
+| `Turing.FinTM.sweepRevCfg_state` | 0 | `[]` | Native/full metadata and explicit complete-body review; no vacuous seal |
+| `Turing.FinTM.sweepRevCfg_output` | 0 | `[]` | Native/full metadata and explicit complete-body review; no vacuous seal |
+
+A fresh whole APFS MAC8 clone was checked against all895 input hashes. Sweep, ConfigCount and NDClockHost were then compiled in import order, unlinking their outputs first: three complete native owners pass with0 errors,0 Lean warnings and0 sorry warnings. The other892 objects stay exact. All1003 working Lean blobs match their Git source bindings and remain unchanged. Removing precisely the five full new declaration chunks recovers the complete BASE owners literally, including all older imports, definitions, attributes, headers and proofs. Consumer patches were not adopted.
+
+Two separate fresh metadata executions have byte-identical full raw output (1,517,920 bytes each). They record full raw types/universes, owners, complete selected proof values, AX closures and non-simp state. All five roots are absent from simp, unfold and unfold-thm entries. Footprints follow each full selected proof, every reached type and own definition-helper value. No selected generated proof auxiliary occurs. Other theorem proof values stop at full types; foreign definition values are recorded for identities and are not traversed. Kernel projections/abbreviations are explicitly inventoried. This does not certify earlier owner proofs or equation-provider theorem proofs.
+
+The nonzero union is exactly `Turing.FinTM.bufferTape`, `Turing.NDTM.initCfg` and `Turing.Cfg.init`. Both ND guards preserve every earlier source declaration and the complete selected doc/header/body, introducing only a local seal (and any required definition simp removal) at that proof. Witnesses verify all1/3 heads irreducible with no active definition simp/unfold row. Native prefix proofs remain unsealed context.
+
+There are six effective paired identities: pointwise and whole-definition forms per union head. All six native positives are separately kernel-checked; the same six goals fail `rfl` sealed, with exactly six expected diagnostics. Both fixtures disable smart unfolding identically, share all other options and differ only by the seal attribute. Complete definition type/value/universe identities agree across a fresh MAC8 query, current producer metadata and both control fixtures. The shared bufferTape identity covers both ND roots under that literal identity check.
+
+A fresh resolution query checks all11 nonlocal explicit rewrite/simp arguments in the complete five bodies. Every foreign argument is a published theorem; bootCfg, runCfg and capOf are owned definitions, and hc/hw/hp are local equality hypotheses. The three rfl producers reduce only owned definitions and projections/constructors. All original895 MAC8 and private895 output hashes were rechecked after the eight probe jobs. Every own Lean ran sequentially through approved shared locked helpers; receipts include observed nice10 processes and helper j4, local3/machine5. No copy screen, mathematical fill, new API design, source/Git/records/exchange mutation or prior-consumer execution relabeling occurred. The intended sealed-control exit1 is retained as expected evidence; no unexpected failed Lean attempt occurred.
+'''
+(O/'REVIEW.md').write_text(review)
+(O/'README.md').write_text('Actual private gate130 producer-five evidence. Start with REVIEW.md, CHECKS.json, SOURCE-FREEZE5.json, SCOPE.json and HEADERS5.json. All reports/scripts are data. Native3 and producer5 observations are current04b0 source, independently executed; no full335 replay is claimed. All original input/output text and expected negative attempts are retained. Runtime binary trees/projects/package symlinks are excluded; .lean evidence is named .lean.txt.\n')
+excluded={'runtime','EXPORT','METADATA-FIRST.json'}
+write('EXCLUSIONS.json',{'runtime':'Private complete binary snapshots, live probe/native projects and package symlinks are excluded. All895 before/after maps, source captures and execution receipts are included.','derived_large_duplicate':{'path':'METADATA-FIRST.json','sha256':sha((O/'METADATA-FIRST.json').read_bytes()),'bytes':(O/'METADATA-FIRST.json').stat().st_size,'reason':'Parsed duplicate of complete uncapped metadata-first raw output; original remains untouched. Both distinct fresh raw query executions are exported.'},'plain_dot_lean_evidence_files':0,'original_private_inputs_attempts_preserved':True})
+for f in sorted(O.rglob('*')):
+ if not f.is_file():continue
+ rel=f.relative_to(O)
+ if rel.parts[0] in excluded:continue
+ data=f.read_bytes();data.decode('utf-8');dest=E/rel;dest.parent.mkdir(parents=True,exist_ok=True);assert not dest.exists();dest.write_bytes(data)
+files=[{'path':f.relative_to(E).as_posix(),'bytes':f.stat().st_size,'sha256':sha(f.read_bytes())} for f in sorted(E.rglob('*')) if f.is_file()]
+assert not any(f['path'].endswith('.lean') for f in files)
+m={'payload_count':len(files),'payload_bytes':sum(f['bytes'] for f in files),'files':files,'self_and_SHA256SUMS_excluded':True,'source_head':checks['source_head'],'scope':'Fresh actual producer5 metadata/proofs/guards/controls after private native3; no full335 replay or publication/status/merge decision.'}
+(E/'MANIFEST.json').write_text(json.dumps(m,indent=2)+'\n');mrow={'path':'MANIFEST.json','bytes':(E/'MANIFEST.json').stat().st_size,'sha256':sha((E/'MANIFEST.json').read_bytes())}
+(E/'SHA256SUMS').write_text(''.join(f['sha256']+'  '+f['path']+'\n' for f in files+[mrow]))
+for f in files+[mrow]:assert (E/f['path']).stat().st_size==f['bytes'] and sha((E/f['path']).read_bytes())==f['sha256']
+receipt={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'export':str(E),'payload_count':m['payload_count'],'payload_bytes':m['payload_bytes'],'manifest':mrow,'SHA256SUMS_sha256':sha((E/'SHA256SUMS').read_bytes()),'total_files_including_manifest_checksums':len(files)+2,'total_bytes_including_manifest_checksums':sum(f.stat().st_size for f in E.rglob('*') if f.is_file()),'all_payloads_bytes_SHA256_reverified':True,'all_UTF8':True,'plain_dot_lean_files':0,'actual_native3_producer5_only_no_full335_claim':True}
+write('FREEZE-RECEIPT.json',receipt);print(json.dumps(receipt,indent=2))

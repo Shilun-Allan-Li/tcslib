@@ -1,0 +1,21 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let names : List Name := [`Turing.Cfg.inputSymbol_of_end, `Turing.step_of_inputMoveAction, `Turing.moveInputPos_zero, `Turing.inputFoldTM_tr_bwd, `Turing.inputMoveAction_eq, `Turing.FinTM.controlAction_def, `Turing.Action.mapState_inputTape, `Turing.Action.mapState_output, `Turing.Action.mapState_state, `Option.map_some, `Turing.Action.mapState_workTapes, `Turing.MultiTapeTM.runFrom_succ_eq_step', `Turing.MultiTapeTM.runFrom_add, `add_zero, `Turing.MultiTapeTM.exists_first_entry_of_fixed]
+  for requested in names do
+    let e ← liftTermElabM <| Term.elabTerm (mkIdent requested) none
+    let some n := e.getAppFn.constName? | throwError "ARGUMENT_NOT_CONSTANT|{requested}"
+    let some ci := env.find? n | throwError "MISSING_ARGUMENT|{n}"
+    let home := match env.getModuleIdxFor? n with
+      | some idx => env.header.moduleNames[idx.toNat]!.toString
+      | none => ""
+    let kind := match ci with | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | _ => "other"
+    logInfo m!"EXPLICIT_ARGUMENT|{(Json.mkObj [("requested",toJson requested.toString),
+      ("name",toJson n.toString),("kind",toJson kind),("owner",toJson home)]).compress}"
+  logInfo m!"EXPLICIT_ARGUMENT_COMPLETE|{names.length}"

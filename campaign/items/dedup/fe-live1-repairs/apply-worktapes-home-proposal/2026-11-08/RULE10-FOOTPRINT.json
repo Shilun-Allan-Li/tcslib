@@ -1,0 +1,51 @@
+{
+  "reader": "Turing.Action.apply_workTapes",
+  "BASE_owner": "TCSlib.Complexity.TuringMachine.Simulation",
+  "BASE_ordinary_foreign_heads": [
+    "Turing.Action.apply",
+    "Turing.Cfg.workTapeSymbols"
+  ],
+  "CANDIDATE_owner": "TCSlib.Complexity.TuringMachine.Configuration",
+  "CANDIDATE_ordinary_foreign_heads": [],
+  "CANDIDATE_definitions_read_by_explicit_simp_arguments": [
+    {
+      "name": "Turing.Action.apply",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "same_file_after_move": true
+    },
+    {
+      "name": "Turing.Cfg.workTapeSymbols",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "same_file_after_move": true
+    }
+  ],
+  "source_proof_argument_rows": [
+    {
+      "source": "simp [Action.apply, hw, Cfg.workTapeSymbols]",
+      "definition_arguments": [
+        "Turing.Action.apply",
+        "Turing.Cfg.workTapeSymbols"
+      ],
+      "local_hypothesis_arguments": [
+        "hw"
+      ]
+    },
+    {
+      "source": "simp [Action.apply, hw]",
+      "definition_arguments": [
+        "Turing.Action.apply"
+      ],
+      "local_hypothesis_arguments": [
+        "hw"
+      ]
+    }
+  ],
+  "foreign_TCSlib_definition_values_traversed": false,
+  "other_theorem_proof_values_traversed": false,
+  "Configuration_has_no_TCSlib_imports": true,
+  "guard_controls_required_for_selected_moved_reader": 0,
+  "seal_execution_claimed": false,
+  "zero_guard_reason": "The owner-native selected-reader footprint has zero ordinary foreign TCSlib heads. Both explicit unfolded definitions are same-file after this exact proposed move. No seal/control execution is invented for an empty guard population.",
+  "Simulation_consumer_is_unchanged_and_imports_moved_theorem": true,
+  "consumer_footprint_boundary": "The consumer statement/type traversal still mentions imported Action.apply, moveInputPos and Cfg.workTapeSymbols through published theorem types. Its proof bytes and compiled metadata remain exact; this proposal does not claim to clear every pre-existing Simulation Rule10 read."
+}

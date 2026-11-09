@@ -1,0 +1,44 @@
+import Lean
+import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.ClassNP.Nondeterminism
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.ConfigCount
+import TCSlib.Complexity.SpaceComplexity.Machines.Call
+import TCSlib.Complexity.SpaceComplexity.Machines.Clean
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMTime
+import TCSlib.Complexity.TimeHierarchy.ClockMachine
+import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let wanted : List Name := [`Complexity.LogProg.Consistent, `Complexity.LogProg.HaltRel, `Complexity.LogProg.Mode.seg0, `Complexity.LogProg.PB, `Complexity.LogProg.RegBox, `Complexity.LogProg.SimRel, `Complexity.LogProg.TPos.Valid, `Complexity.LogProg.callSegs, `Complexity.LogProg.ccfg, `Complexity.LogProg.cellOff, `Complexity.LogProg.cleanTM, `Complexity.LogProg.compileTM, `Complexity.LogProg.ctr, `Complexity.LogProg.dIdle, `Complexity.LogProg.inPos, `Complexity.LogProg.leftSide, `Complexity.LogProg.markI, `Complexity.LogProg.mkCfg, `Complexity.LogProg.nextRet, `Complexity.LogProg.off, `Complexity.LogProg.regPos, `Complexity.LogProg.retPos, `Complexity.LogProg.rlen, `Complexity.LogProg.seam, `Complexity.LogProg.seg, `Complexity.LogProg.trackPos, `Complexity.LogProg.vpos, `Complexity.LogProg.vword, `Complexity.LogProg.wlen, `Complexity.LogProg.wr, `Complexity.maskedClock, `Complexity.oblEmbed, `Complexity.obliviousSchedule, `Fin.append_left, `Fin.append_right, `Fin.is_lt, `Fin.mk.injEq, `Fin.val_zero, `Finset.card_range, `Finset.card_univ, `Finset.coe_range, `Finset.mem_filter, `Finset.mem_image, `Finset.mem_range, `Finset.prod_const, `Finset.sum_const, `Fintype.card_bool, `Fintype.card_fin, `Fintype.card_option, `Fintype.card_pi, `Fintype.card_prod, `Function.Embedding.coe_refl, `Function.comp_apply, `List.idxOf_lt_length_of_mem, `List.length_map, `List.map_id, `Nat.not_lt_zero, `Nat.nsmul_eq_mul, `Prod.mk.injEq, `Set.mem_Iio, `Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.ClockHost.bootCfg, `Turing.ClockHost.hostCfg, `Turing.ClockHost.hostTM, `Turing.ClockHost.inLeft, `Turing.ClockHost.runCfg, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesFunInTimeVia, `Turing.FinTM.ComputesInTime, `Turing.FinTM.VirtualTag, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.indexedVisit, `Turing.FinTM.leftAction, `Turing.FinTM.rightAction, `Turing.FinTM.sweepAct, `Turing.FinTM.sweepRevCfg, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.ConfigCount.core, `Turing.MultiTapeTM.ConfigCount.posCode, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.NDTM.initCfg, `Turing.NDTM.runWith, `Turing.NDTM.stepWith, `Turing.captureAction, `Turing.instDecidableEqUniversalControl, `Turing.instFintypeUniversalControl, `Turing.moveInputPos, `Turing.universalInterpreter, `lt_self_iff_false, `one_mul]
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => env.mainModule
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .defnInfo _ => "definition" | .thmInfo _ => "theorem" | .axiomInfo _ => "axiom"
+    | .opaqueInfo _ => "opaque" | .inductInfo _ => "inductive" | .ctorInfo _ => "constructor"
+    | .recInfo _ => "recursor" | .quotInfo _ => "quotient"
+  let entries := env.constants.toList
+  for n in wanted do
+    unless (env.find? n).isSome do logInfo m!"MISSING|{n}"
+    let some ci := env.find? n | continue
+    let hints := match ci with
+      | .defnInfo di => match di.hints with
+        | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+      | _ => "not_definition"
+    logInfo m!"CATALOG|{(Json.mkObj [("name",toJson n.toString),("owner",toJson (homeOf n).toString),("kind",toJson (kind ci)),("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),("type",toJson (reprStr ci.type))]).compress}"
+    if (homeOf n).toString.startsWith "TCSlib." then
+      let readerPrefix := n.toString.toLower
+      for (r, info) in entries do
+        if info matches .thmInfo _ then
+          if r.toString.toLower.startsWith readerPrefix && !isPrivateName r then
+            let ty ← liftTermElabM <| Meta.ppExpr info.type
+            logInfo m!"READER|{(Json.mkObj [("definition",toJson n.toString),("name",toJson r.toString),("owner",toJson (homeOf r).toString),("typeExpr",toJson (reprStr info.type)),("typePretty",toJson ty.pretty)]).compress}"
+  logInfo m!"CATALOG_COMPLETE|{wanted.length}"

@@ -1,0 +1,34 @@
+/-- Deleting a segment between equal vertices preserves the final vertex and
+makes every new prefix vertex an old prefix vertex. [AB09, §4.1.1]
+
+The resulting injection has a finite codomain of the displayed cardinality. -/
+private theorem count_windowed_vertices (N : FinNDTM Bool) (x : List Bool) (s t : ℕ)
+    (cs : ℕ → Cfg N.k Bool N.State x)
+    (window : ∀ j ≤ t, InWindow s (cs j))
+
+    (distinct : Set.InjOn (fun j => NDTM.coreSum (cs j)) (Finset.range (t + 1))) :
+    t + 1 ≤ N.configBound x.length s := by
+  classical
+
+    apply distinct ha hb
+    apply Prod.ext
+    · exact MultiTapeTM.ConfigCount.coreCode_inj s
+        (window a (Nat.le_of_lt_succ (Finset.mem_range.mp ha)))
+        (window b (Nat.le_of_lt_succ (Finset.mem_range.mp hb)))
+
+
+        (congrArg Prod.fst eqcode)
+    · exact outSummaryCode_injective (congrArg Prod.snd eqcode)
+  have card := Finset.card_le_card_of_injOn code (fun j _ => Finset.mem_univ (code j)) injective
+
+  let good (t : ℕ) : Prop := ∃ v : List Bool, v.length = t ∧
+    (N.tm.runWith v (N.tm.initCfg x)).state = none ∧
+    (N.tm.runWith v (N.tm.initCfg x)).output = [true] ∧
+    ∀ j ≤ t, InWindow s (N.tm.runWith (v.take j) (N.tm.initCfg x))
+
+  have exists_good : ∃ t, good t := ⟨T, w, hw, halted, output,
+    fun j _ => NDTM.runWith_take_inWindow N.tm w (hs w hw) j⟩
+  obtain ⟨v, hv, hvhalt, hvout, window⟩ := Nat.find_spec exists_good
+
+  exact (show N.AcceptsWithin x (Nat.find exists_good) from ⟨v, hv, hvhalt, hvout⟩).mono
+    (by omega)

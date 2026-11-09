@@ -1,0 +1,42 @@
+/-- **Restriction to a dedicated digit bank** (the start of every lifted phase of the record
+step). A rich host configuration whose selected tapes hold only digits and blanks *is* the R1
+transport of the lift of its decoded `Bool` restriction, with the host's other tapes, heads and
+output as the frame. Proved from the public API (`embedEmitCfg_selected_*`, `embedEmitTM_frame`
+at time `0`, `decodeBool_apply`); a candidate shared lemma for `Build/Embed` or `SymbolLift`. -/
+theorem probeRestrict {K m : ℕ} {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {S H : Type}
+    (ι : Fin m ↪ Fin K) {x : List Bool} (D : Cfg K Γ H (x.map e)) (s : S) (h₀ : H)
+    (hD : D.state = some h₀)
+    (hdig : ∀ i p γ, D.workTapes (ι i) p = some γ → ∃ b, γ = e b) :
+    D.mapState (fun _ => s) =
+      embedEmitCfg ι D.workTapes D.workTapePos D.output
+        (Cfg.liftSymbols e (⟨some s, Fin.cast (by simp) D.inputPos,
+          fun i p => (D.workTapes (ι i) p).bind (decodeBool e),
+          fun i => D.workTapePos (ι i), []⟩ : Cfg m Bool S x)) := by
+  set c : Cfg m Bool S x := ⟨some s, Fin.cast (by simp) D.inputPos,
+    fun i p => (D.workTapes (ι i) p).bind (decodeBool e), fun i => D.workTapePos (ι i), []⟩
+  have hframe := fun (j : Fin K) (hj : j ∉ Set.range ι) =>
+    (embedEmitTM_frame ι
+      (⟨s, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩ : MultiTapeTM m Γ S)
+      D.workTapes D.workTapePos D.output (c.liftSymbols e) 0).1 j hj
+  apply Cfg.ext
+  · simp [Cfg.mapState, hD, embedEmitCfg, Cfg.liftSymbols, c]
+  · simp [Cfg.mapState, embedEmitCfg, Cfg.liftSymbols, c]
+  · funext j
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_tape]
+      funext p
+      simp only [Cfg.mapState, Cfg.liftSymbols, c]
+      cases hcell : D.workTapes (ι i) p with
+      | none => rfl
+      | some γ =>
+        obtain ⟨b, rfl⟩ := hdig i p γ hcell
+        simp
+    · simpa [Cfg.mapState] using (hframe j hj).1.symm
+  · funext j
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_pos]
+      rfl
+    · simpa [Cfg.mapState] using (hframe j hj).2.symm
+  · simp [Cfg.mapState, embedEmitCfg, Cfg.liftSymbols, c]

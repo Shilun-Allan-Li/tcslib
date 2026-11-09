@@ -1,0 +1,33 @@
+/-- Each tracked tape's native cleanup can dispatch at its actual positive
+first return with the exact blank endpoint, never at the analysis deadline.
+**Proof sketch.** Apply the per-tape bounded cleanup, then cut the absorbing return state
+at its first visit. The initial left-scan state proves positivity, and
+absorption preserves the complete blank endpoint. -/
+private lemma emitter_clear_first (M : FinTM Bool) (x w : List Bool)
+    (p : Fin (w.length + 2)) (T : ℕ) (i : Fin M.k) :
+    ∃ t, 0 < t ∧ t ≤ 6 * T + 7 ∧
+      (∀ j < t, (emitterClearTM.tm.runFrom
+        (emitterClearCfg w p 0 ((M.tm.runFrom (M.tm.initCfg x) T).workTapes i)
+          (emitterSpan (emitterLo M x T i) (emitterHi M x T i)) (bufferTape [true])
+          ((M.tm.runFrom (M.tm.initCfg x) T).workTapePos i)) j).state ≠ some (3 : Fin 4)) ∧
+      emitterClearTM.tm.runFrom
+        (emitterClearCfg w p 0 ((M.tm.runFrom (M.tm.initCfg x) T).workTapes i)
+          (emitterSpan (emitterLo M x T i) (emitterHi M x T i)) (bufferTape [true])
+          ((M.tm.runFrom (M.tm.initCfg x) T).workTapePos i)) t =
+        emitterClearCfg w p 3 (fun _ => none) (fun _ => none) (fun _ => none) 0 := by
+  obtain ⟨t, _, ht, hr⟩ := emitter_track_clearable M x w p T i
+  obtain ⟨a, ha, hfirst, he⟩ := emitter_first_entry emitterClearTM.tm
+    (fun q : Fin 4 => q = 3) _ _ t (by
+      rintro z ⟨q, hz, rfl⟩
+      unfold MultiTapeTM.step
+      rw [hz]
+      change (controlAction 0 (some (3 : Fin 4))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all) ⟨(3 : Fin 4), rfl, rfl⟩ hr
+  have hpos : 0 < a := by
+    by_contra h
+    have hz : a = 0 := by omega
+    have hh := congrArg Cfg.state he
+    have hv := congrArg (fun q : Option (Fin 4) => q.map Fin.val) hh
+    norm_num [hz, emitterClearCfg] at hv
+  exact ⟨a, hpos, ha.trans ht, fun j hj hh => hfirst j hj ⟨(3 : Fin 4), hh, rfl⟩, he⟩

@@ -1,0 +1,30 @@
+/-- Capture a total generator, rewind the physical input, validate its pair
+syntax, then compare the suffix length with the captured word's length.
+Only the final comparison or rejection transition emits a verdict. -/
+private def f2_pairCountTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ (Fin 4 ⊕ Option Bool)
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl s => captureAction Sum.inl (.inr (.inl 0))
+          (M.tm.tr s inp fun i => work i.castSucc)
+      | .inr (.inl q) => match q.val with
+        | 0 => f2_lenAction M 0 .neg none (some (.inr (.inl 1)))
+        | 1 => controlAction .neg (some (.inr (.inl 2)))
+        | 2 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 2)))
+          | none => controlAction .pos (some (.inr (.inr none)))
+        | _ => match inp with
+          | none => f2_lenAction M 0 0 (some true) none
+          | some _ => match work (Fin.last M.k) with
+            | none => f2_lenAction M 0 0 (some false) none
+            | some _ => f2_lenAction M .pos .neg none (some (.inr (.inl 3)))
+      | .inr (.inr none) => match inp with
+        | none => f2_lenAction M 0 0 (some false) none
+        | some b => f2_lenAction M .pos 0 none (some (.inr (.inr (some b))))
+      | .inr (.inr (some b)) => match inp with
+        | none => f2_lenAction M 0 0 (some false) none
+        | some d => if b = d then f2_lenAction M .pos 0 none (some (.inr (.inr none)))
+          else if b then f2_lenAction M 0 0 (some false) none
+          else f2_lenAction M .pos 0 none (some (.inr (.inl 3))) }

@@ -1,0 +1,13 @@
+/-- Buffer reads at virtual position minus one equal native input reads. -/
+lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
+    (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : ℤ) - 1) = c.inputSymbol := by
+  by_cases h0 : c.inputPos = 0
+  · simp [Cfg.inputSymbol, h0]
+  · have hp : 0 < c.inputPos.val := by
+      have : c.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
+      omega
+    have he : (c.inputPos.val : ℤ) - 1 = ((c.inputPos.val - 1 : ℕ) : ℤ) := by omega
+    rw [he, bufferTape_nat]
+    have h := inputSymbol_at c (c.inputPos.val - 1)
+      (by have := c.inputPos.isLt; omega) (by omega)
+    exact h.symm

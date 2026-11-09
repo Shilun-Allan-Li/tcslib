@@ -1,0 +1,35 @@
+/-- The controller reaches its first bank-cleaning entry from the genuine
+argument seam after observed evaluation, with no native-input scan.
+**Proof sketch.** The prepared evaluator's actual first-return contract
+supplies the guard for identity tape relocation into the call controller.
+The full endpoint frame then takes one silent dispatch to bank zero. -/
+private lemma emCall_prepare_run (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
+    ∃ t ≤ 2 * T + arg.length + 4,
+      (emCallTM M emit).tm.runFrom
+        (Cfg.ofWords (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg)) t =
+        emCallBankFrame M emit x arg cap T 0 (.inr (.inl (0, 0))) := by
+  obtain ⟨t, _, ht, hfirst, hr⟩ := emCall_prepared_eval_first M x arg cap T hM
+  let R := emCallRightTM (emCallTrackTM M)
+  let c := emCallEvalCfg (w := x) R (R.tm.initCfg arg) true 1
+  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm)
+    (emCallTM M emit).tm
+    ⟨(Sum.inl : (emCallSource M).State → emCallState M), Sum.inl_injective⟩
+    (fun q => q ≠ .inr ())
+    (by intro q hq inp work; simp [emCallTM, hq])
+    (embedEmitCfg (Function.Embedding.refl _) (fun _ _ => none) (fun _ => 0) [] c) t
+    (by
+      intro j hj q hs hq
+      rw [embedEmitTM_runFrom] at hs
+      rw [hq] at hs
+      exact hfirst j hj hs)
+  rw [embedEmitTM_runFrom] at he
+  dsimp only [c, R] at he
+  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (Function.Embedding.refl _)
+    Sum.inl _ _ _) t = emCallEmbeddedCfg (Function.Embedding.refl _) Sum.inl _ _ _ at he
+  erw [emCall_prepare_initial M emit x arg, hr,
+    emCall_prepare_final M emit x arg cap T ((computesInTime_iff _ _ _ _).mp hM).2] at he
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', he]
+  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM, ↓reduceIte]
+  rw [controlAction_apply, moveInputPos_zero]

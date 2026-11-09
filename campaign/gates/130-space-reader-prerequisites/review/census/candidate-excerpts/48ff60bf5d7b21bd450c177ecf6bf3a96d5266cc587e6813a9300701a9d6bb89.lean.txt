@@ -1,0 +1,114 @@
+/-- The second half grows the right guard, executes the native input/output
+action once, rewrites the zone, and enters the next boundary configuration.
+**Proof sketch.** The head upper bound identifies the completed read table with
+the source's scanned symbols. Append a blank right block carrying the last
+block's head flags, then place its boundary and perform the source input/output
+action while turning left. The reverse transduction applies the source action
+to every block. At the left boundary, install the next source state (or halt),
+and identify the resulting zipper with the enlarged canonical zone. -/
+private lemma sweep_finish {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) {x : List Γ} (c : Cfg M.k Γ M.State x)
+    (q : M.State) (a : ℤ) (n : ℕ) (z : ℤ)
+    (hp : ∀ i, c.workTapePos i < a + n)
+    (hr : ∀ i, c.workTapes i (a + n) = none) :
+    (sweepTM M).tm.runFrom
+      (sweepCfg (some (.growRight q (readState c (a + n)) 0)) (sweepPos M.k c.inputPos) z
+        (((tapeZone (fun j => tapeRow c j true) (a - 1) (n + 1)).map
+          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (M.k + 1 + (n + 2) * M.k + 1) =
+    sweepStart M ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c) (a - 1) (n + 2)
+      (z + M.k - 1 - ((n + 2) * M.k : ℕ)) := by
+  let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
+  let p := sweepPos M.k c.inputPos
+  let out := c.output.map (sweepEmbed Γ M.k)
+  let s := readState c (a + n)
+  let R := tapeZone (fun j => tapeRow c j true) (a - 1) (n + 1)
+  let W := tapeZone (fun j => tapeRow c j true) (a - 1) (n + 2)
+  let V := tapeZone (fun j => tapeRow (act.apply c) j false) (a - 1) (n + 2)
+  let put : SweepCell Γ M.k → Option (SweepAlphabet Γ M.k) := fun b => some (sweepSymbol b)
+  let p' := sweepPos M.k (act.apply c).inputPos
+  let out' := (act.apply c).output.map (sweepEmbed Γ M.k)
+  have hrs : (fun i => (s i).1) = c.workTapeSymbols := by
+    funext i
+    simp only [s, readState, if_pos (hp i)]
+  have hrow : rightRow s = tapeRow c (a + n) true := by
+    unfold rightRow tapeRow
+    apply List.map_congr_left
+    intro i _
+    have hh : c.workTapePos i ≠ a + n := by have := hp i; omega
+    simp [s, readState, hr i, headAt, hh]
+  have hwhole : W = R ++ rightRow s := by
+    rw [hrow]
+    dsimp [W, R]
+    rw [show n + 2 = (n + 1) + 1 by omega, tapeZone_append]
+    simp only [tapeZone, List.append_nil]
+    rw [show a - 1 + (n + 1 : ℕ) = a + n by omega]
+  have hbuf : (((rightRow s).map put).reverse.append ((R.map put).reverse ++ [some sweepBoundary])) =
+      (W.map put).reverse ++ [some sweepBoundary] := by
+    rw [hwhole]
+    simp [List.map_append, List.reverse_append, List.append_assoc]
+  have hdrop : ([some (sweepBoundary (Γ := Γ) (k := M.k))] : List _).drop M.k = [] := by
+    apply List.drop_eq_nil_of_le
+    simpa using hk
+  have hturn : (sweepTM M).tm.step
+      (sweepCfg (some (.growRight q s ⟨M.k, by omega⟩)) p (z + M.k)
+        ((W.map put).reverse ++ [some sweepBoundary]) [] out) =
+      sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))
+        p' (z + M.k - 1) [some sweepBoundary] ((W.map put).reverse ++ [some sweepBoundary]) out' := by
+    have hin := sweepInput_read c
+      (sweepCfg (some (SweepState.growRight q s ⟨M.k, by omega⟩)) p (z + M.k)
+        ((W.map put).reverse ++ [some sweepBoundary]) [] out) rfl
+    change ((sweepTM M).tm.tr (.growRight q s ⟨M.k, by omega⟩) _ _).apply _ = _
+    simp only [sweepTM, lt_self_iff_false, ↓reduceDIte]
+    rw [hin, hrs]
+    change (⟨act.inputTape, fun _ => (some (some sweepBoundary), .neg),
+      act.output.map Sum.inl, some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))⟩ :
+      Action 1 (SweepAlphabet Γ M.k) (SweepState Γ M.State M.k)).apply _ = _
+    rw [sweep_turn_left]
+    have hm : moveInputPos p act.inputTape = p' := sweepPos_move _ _ _
+    rw [hm]
+    have ho : out ++ (act.output.map Sum.inl).toList = out' := by
+      dsimp [out, out', Action.apply]
+      cases act.output <;> simp [sweepEmbed, List.map_append]
+    rw [ho]
+    rfl
+  have hzero : (fun i => headAt c i (a - 1 + (n + 2 : ℕ))) = fun _ => false := by
+    funext i
+    have hh : c.workTapePos i ≠ a - 1 + (n + 2 : ℕ) := by have := hp i; omega
+    simpa only [headAt, decide_eq_false_iff_not] using hh
+  have hfold : sweepFold (writeVisit act) (fun _ => false) W.reverse =
+      (fun i => headAt c i (a - 1), V.reverse) := by
+    have h := write_zone c act (a - 1) (n + 2)
+    rw [hzero] at h
+    exact h
+  have hwlen : W.length = (n + 2) * M.k := tapeZone_length c _ _ _
+  have hwrite := sweep_run_reverse (sweepTM M).tm
+    (fun right => SweepState.write q c.inputSymbol c.workTapeSymbols right)
+    sweepSymbol (writeVisit act) (by intro right b inp; rfl) p' out'
+    W.reverse (fun _ => false) (z + M.k - 1) [some sweepBoundary] [some sweepBoundary]
+  simp only [List.length_reverse, hwlen, hfold, List.map_reverse, List.reverse_reverse] at hwrite
+  have hlast : (sweepTM M).tm.step
+      (sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))
+        p' (z + M.k - 1 - ((n + 2) * M.k : ℕ))
+        (V.map put ++ [some sweepBoundary]) [some sweepBoundary] out') =
+      sweepStart M (act.apply c) (a - 1) (n + 2)
+        (z + M.k - 1 - ((n + 2) * M.k : ℕ)) := by
+    have hsym : (sweepRevCfg
+        (some (SweepState.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))
+        p' (z + M.k - 1 - ((n + 2) * M.k : ℕ))
+        (V.map put ++ [some sweepBoundary]) [some sweepBoundary] out').workTapeSymbols =
+        fun _ => some sweepBoundary := by
+      funext i
+      exact sweepTape_read _ _ _
+    change ((sweepTM M).tm.tr (.write q c.inputSymbol c.workTapeSymbols _) _ _).apply _ = _
+    rw [hsym]
+    exact sweepRevCfg_stay _ _ _ _ _ _ _
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_succ_eq_step', sweep_grow_right_block, hdrop]
+  change (sweepTM M).tm.step ((sweepTM M).tm.runFrom
+    ((sweepTM M).tm.step (sweepCfg (some (.growRight q s ⟨M.k, by omega⟩)) p (z + M.k)
+      ((rightRow s).map put |>.reverse |>.append ((R.map put).reverse ++ [some sweepBoundary]))
+      [] out)) ((n + 2) * M.k)) = _
+  rw [hbuf, hturn, hwrite]
+  exact hlast

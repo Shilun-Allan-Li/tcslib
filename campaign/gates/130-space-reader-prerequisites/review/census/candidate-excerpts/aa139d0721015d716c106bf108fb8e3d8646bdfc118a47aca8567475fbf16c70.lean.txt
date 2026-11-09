@@ -1,0 +1,16 @@
+/-- A live configuration's state map preserves its physical frame, read through the public
+field equations rather than through the definition of state renaming.
+
+**Proof sketch.** Configuration extensionality reduces to the five published field equations;
+the live-state equation reduces the option map to one constructor. -/
+private theorem ss_live_map {n : ℕ} {P Q : Type} {z : List Bool}
+    (d : Cfg n Bool P z) (q : P) (hq : d.state = some q) (f : P → Q) :
+    d.mapState f = ⟨some (f q), d.inputPos, d.workTapes, d.workTapePos, d.output⟩ := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hq, Option.map_some]
+  · exact Cfg.mapState_inputPos _ _
+  · funext i p
+    exact Cfg.mapState_workTapes _ _ _ _
+  · funext i
+    exact Cfg.mapState_workTapePos _ _ _
+  · exact Cfg.mapState_output _ _

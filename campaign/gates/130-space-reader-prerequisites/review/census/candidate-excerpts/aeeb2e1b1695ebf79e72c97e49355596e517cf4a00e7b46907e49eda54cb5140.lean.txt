@@ -1,0 +1,44 @@
+/-- At a live stable boundary, the four-tape dispatch view agrees with the
+source query, origin shadow, blank scratch and blank argument tape.
+
+**Proof sketch.** The first two selected slots are source/shadow projections;
+the other two lie outside that prefix and use its blank-frame lemma. The
+inherited R1 configuration-identification lemma then equates the full views. -/
+private theorem oracleSource_localView (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x)
+    (side : Bool) (q : OracleDispatch) (hs : c.state ≠ none) :
+    embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleLocalCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+        (c.workTapePos (OracleTM.queryTapeIdx M.k)) q c.inputPos c.output) =
+        (oracleSourceCfg M C c side).mapState (fun _ => q) := by
+  let localCfg := oracleLocalCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+    (c.workTapePos (OracleTM.queryTapeIdx M.k)) q c.inputPos c.output
+  have fields (i : Fin 4) :
+      (localCfg.workTapes i, localCfg.workTapePos i) =
+        ((oracleSourceCfg M C c side).workTapes (oracleSlots M.k C.k hc i),
+         (oracleSourceCfg M C c side).workTapePos (oracleSlots M.k C.k hc i)) := by
+    fin_cases i
+    · simp [localCfg, oracleLocalCfg, oracleSlots, oracleSourceCfg,
+        embedEmitCfg_selected_tape, embedEmitCfg_selected_pos, oracleShadowCfg,
+        OracleTM.queryTapeIdx]
+    · simp [localCfg, oracleLocalCfg, oracleSlots, oracleSourceCfg,
+        embedEmitCfg_selected_tape, embedEmitCfg_selected_pos, oracleShadowCfg]
+    · have hf := oracleSourceCfg_frame M C c side (oracleSlots M.k C.k hc 2)
+        (by simp [oracleSlots])
+      exact Prod.ext hf.1.symm hf.2.symm
+    · have hf := oracleSourceCfg_frame M C c side (oracleSlots M.k C.k hc 3)
+        (by simp [oracleSlots, oracleCallBank, vhostBank])
+      exact Prod.ext hf.1.symm hf.2.symm
+  apply oracleBankCfg_eq oracleDispatchTM _ localCfg
+    ((oracleSourceCfg M C c side).mapState (fun _ => q))
+  · cases h : c.state <;>
+      simp_all [localCfg, oracleLocalCfg, oracleSourceCfg, oracleShadowCfg,
+        embedEmitCfg, Cfg.mapState]
+  · rfl
+  · simp [localCfg, oracleLocalCfg, oracleSourceCfg, embedEmitCfg, oracleShadowCfg,
+      Cfg.mapState]
+  · intro i
+    exact congrArg Prod.fst (fields i)
+  · intro i
+    exact congrArg Prod.snd (fields i)

@@ -1,0 +1,4 @@
+/-- The seam of a program configuration as a `mkCfg`. -/
+lemma seam_eq_mkCfg (c : Cfg m Bool Λ x) :
+    seam (kD := kD) (SD := SD) c = mkCfg (c.state.map .prog) c.inputPos c.workTapes
+      c.workTapePos (fun _ _ => none) (fun _ => 0) c.output := rfl

@@ -1,0 +1,81 @@
+diff --git a/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean b/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
+index 14e422430..5e11be9f5 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
+@@ -82,6 +82,12 @@ def core (c : Cfg k Bool S x) :
+     Option S × Fin (x.length + 2) × (Fin k → ℤ → Option Bool) × (Fin k → ℤ) :=
+   (c.state, c.inputPos, c.workTapes, c.workTapePos)
+ 
++/-- The core records exactly the state, input position, work tapes and work-head
++positions of a configuration, in that order; it omits the output tape. -/
++theorem core_eq (c : Cfg k Bool S x) :
++    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) := by
++  rfl
++
+ /-- The core after a step depends only on the core before it. -/
+ lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :
+     core (tm.step c) = core (tm.step d) := by
+diff --git a/TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean b/TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean
+index 6e245e709..a8a03ce6f 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean
+@@ -313,6 +313,14 @@ def bootCfg (c : Cfg S.k Bool S.State x) :
+   hostCfg (some ((c.state.map ClockPhase.boot).getD ClockPhase.rew)) c.inputPos c.workTapes
+     c.workTapePos (fun _ _ => none) (fun _ => 0) (bufferTape c.output) c.output.length []
+ 
++/-- A halted yardstick configuration is the rewind configuration with its output on the
++extra tape and with the attempt bank blank. -/
++theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
++    bootCfg (A := A) c =
++      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
++        (fun _ => 0) (bufferTape c.output) c.output.length [] := by
++  simp only [bootCfg, hc, Option.map_none, Option.getD_none]
++
+ /-- A boot step is a step of `S`, its emission appended to the yardstick tape.
+ 
+ **Proof sketch.** The boot action is `S`'s action on its bank with its emission written on `Y`
+@@ -481,6 +489,21 @@ def runCfg (a : Cfg A.k Bool A.State x) (j : ℤ) (sT : Fin S.k → ℤ → Opti
+   hostCfg (some (.run a.state (capOf a.output))) a.inputPos sT sP a.workTapes a.workTapePos
+     (yard m) j []
+ 
++/-- The attempt configuration of the initial machine has the initial control and input
++position, a blank attempt bank, and no captured output, at the given yardstick position. -/
++theorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
++    runCfg m (A.tm.initCfg x) j sT sP =
++      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)
++        (fun _ => 0) (yard m) j [] := by
++  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by
++    funext i z
++    rw [NDTM.initCfg_eq, Cfg.init_workTapes]
++  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by
++    funext i
++    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]
++  rw [runCfg, hw, hp]
++  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]
++
+ /-- Before the timeout, a host step is a step of `A` under the same coin.
+ 
+ **Proof sketch.** `Y` reads a mark. If `A` has halted, only `Y` moves; otherwise the host applies
+diff --git a/TCSlib/Complexity/TuringMachine/Sweep.lean b/TCSlib/Complexity/TuringMachine/Sweep.lean
+index 11b4e76d7..f31f8be75 100644
+--- a/TCSlib/Complexity/TuringMachine/Sweep.lean
++++ b/TCSlib/Complexity/TuringMachine/Sweep.lean
+@@ -155,6 +155,18 @@ def sweepRevCfg {A S : Type} {x : List A} (q : Option S)
+     Cfg 1 A S x :=
+   ⟨q, p, fun _ w => sweepTape (-z) l r (-w), fun _ => z, out⟩
+ 
++/-- The reverse-sweep configuration has the supplied control state. -/
++theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
++    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
++    (sweepRevCfg q p z l r out).state = q := by
++  rfl
++
++/-- The reverse-sweep configuration has the supplied output word. -/
++theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
++    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
++    (sweepRevCfg q p z l r out).output = out := by
++  rfl
++
+ /-- Reflection converts the forward zipper identity into a left-moving step. -/
+ lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
+     (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)

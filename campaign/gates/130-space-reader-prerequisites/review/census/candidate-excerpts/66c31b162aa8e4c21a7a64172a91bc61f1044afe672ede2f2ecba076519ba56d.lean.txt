@@ -1,0 +1,15 @@
+/-- All variable scans use their landed catalog machines. A table rewind
+first walks to the right delimiter, then uses `skipBackTM` on the whole word;
+this avoids requiring blank separators between encoded records. -/
+private def h1RoundPart (k : ℕ) : (key : h1RoundKey) → MultiTapeTM (k + 2) Bool (h1RoundPh k key)
+  | .entry | .halt => ⟨(), fun _ _ _ => inputMoveAction 0 ()⟩
+  | .lookup => h1SeekTM k
+  | .stateTail | .stateGap _ => skipTM (k + 2) (h1SummaryTape k)
+  | .stateHome | .stateRestore _ => skipBackTM (k + 2) (h1SummaryTape k)
+  | .clearState => clearTM (k + 2) (h1SummaryTape k)
+  | .toSummary | .finish _ => h1TwoMoveTM (h1SummaryTape k) .neg
+  | .toState => h1TwoMoveTM (h1SummaryTape k) .pos
+  | .record => h1RecordTM k
+  | .successor => h1SuccTM (h1TableTape k) (h1SummaryTape k) true
+  | .tableTail _ => skipTM (k + 2) (h1TableTape k)
+  | .tableHome _ => skipBackTM (k + 2) (h1TableTape k)

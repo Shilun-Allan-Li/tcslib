@@ -1,0 +1,216 @@
+/-- **R8.2, scan, framed** (design §12.8a). From any configuration in the
+forward phase at `a₀` whose tape `i` carries the delimited word `w`, the scan
+reaches `done` at exactly `2|w| + 2` and no `done` anchor earlier. At that
+point the control state is `done` of the final state of
+`Turing.scanResult δf δb a₀ w`, the word interval `[pos, pos + |w|)` holds its
+rewritten word, and every other cell, the head positions, the input position
+and the output are unchanged. Up to the exit the head of tape `i` stays within
+`[pos - 1, pos + |w|]`, and every other head is fixed.
+
+**Proof sketch.** The `catalog_trace_run` skeleton, with the forward and
+backward cell maps of the two Mealy passes in place of the sweeps'. Induct on
+the cells for each pass: the forward pass takes `|w|` steps, writing
+`mealyRun δf`'s outputs; the right delimiter turns the head in one step; the
+backward pass takes `|w|` steps over the forward output in reverse, writing
+`mealyRun δb`'s outputs; the left delimiter supplies the entry step. -/
+theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+    (δf δb : A → Γ → A × Γ) (a₀ : A) (w : List Γ) (d : Cfg k Γ (ScanPhase A) x)
+    (hstate : d.state = some (.fwd a₀))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (scanTM k i δf δb a₀).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some (.done (scanResult δf δb a₀ w).1)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2, ∀ a,
+        ((scanTM k i δf δb a₀).runFrom d t).state ≠ some (.done a)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = i then
+          ((scanTM k i δf δb a₀).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((scanTM k i δf δb a₀).runFrom d t).workTapePos j = d.workTapePos j) := by
+  let f := mealyRun δf a₀ w
+  let b := fun r => mealyRun δb f.1 (f.2.reverse.take (w.length - r))
+  let F : ℕ → Cfg k Γ (ScanPhase A) x := fun r => { d with
+    state := some (.fwd (mealyRun δf a₀ (w.take r)).1)
+    workTapes := fun j q =>
+      if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (r : ℤ)
+        then FinTM.bufferTape f.2 (q - d.workTapePos j) else d.workTapes j q
+    workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) else 0 }
+  let R : ℕ → Cfg k Γ (ScanPhase A) x := fun r => { d with
+    state := some (.bwd (b r).1)
+    workTapes := fun j => if j = i then
+      catalogTape (d.workTapes j) (d.workTapePos j) (f.2.take r ++ (b r).2.reverse)
+      else d.workTapes j
+    workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) - 1 else 0 }
+  let D : Cfg k Γ (ScanPhase A) x := { d with
+    state := some (.done (scanResult δf δb a₀ w).1)
+    workTapes := fun j q =>
+      if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+        then FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+        else d.workTapes j q }
+  have fl : f.2.length = w.length := mealyRun_length δf a₀ w
+  have ft : f.2.take w.length = f.2 := List.take_of_length_le (by omega)
+  have bl (r : ℕ) : (b r).2.length = w.length - r := by
+    simp [b, mealyRun_length, fl]
+  have wl (r : ℕ) (hr : r ≤ w.length) :
+      (f.2.take r ++ (b r).2.reverse).length = w.length := by
+    simp only [List.length_append, List.length_take, List.length_reverse, bl, fl,
+      Nat.min_eq_left hr]
+    omega
+  have h0 : F 0 = d := by
+    apply Cfg.ext <;> simp [F, mealyRun, hstate]
+    funext j q
+    split_ifs <;> first | rfl | omega
+  have hF (r : ℕ) (hr : r < w.length) :
+      (scanTM k i δf δb a₀).step (F r) = F (r + 1) := by
+    have hs : (F r).workTapeSymbols i = some w[r] := by
+      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      rw [if_neg (by omega)]
+      simpa only [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr] using
+        hw r (by omega) (by omega)
+    have hn := mealyRun_next δf a₀ w r hr
+    rw [step_of_tapeAction_write (scanTM k i δf δb a₀) (F r)
+      (q' := .fwd (δf (mealyRun δf a₀ (w.take r)).1 w[r]).1) i 0
+      (some (δf (mealyRun δf a₀ (w.take r)).1 w[r]).2) .pos rfl
+      (by simp only [scanTM, hs])]
+    apply Cfg.ext
+    · simp only [F, hn.1]
+    · simp [F]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        have ht := catalog_write_take (d.workTapes i) (d.workTapePos i) f.2 r
+          (by simpa only [fl] using hr)
+        simpa only [F, Function.update_self, ↓reduceIte, true_and, f, hn.2] using ht
+      · simp [F, hj]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simp [F, SignType.pos_eq_one]
+        omega
+      · simp [F, hj]
+    · rfl
+  have hturn : (scanTM k i δf δb a₀).step (F w.length) = R w.length := by
+    have hs : (F w.length).workTapeSymbols i = none := by
+      simp only [F, Cfg.workTapeSymbols, ↓reduceIte, true_and]
+      rw [if_neg (by omega)]
+      simpa using hw w.length (by omega) (by omega)
+    rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (F w.length)
+      (q := .fwd f.1) (q' := .bwd f.1) i 0 .neg
+      (by simp [F, f]) (by simp only [scanTM, hs])]
+    apply Cfg.ext
+    · simp [R, b, mealyRun]
+    · simp [F, R]
+    · funext j q
+      by_cases hj : j = i
+      · subst j
+        simp [F, R, b, mealyRun, catalogTape, fl, ft]
+      · simp [F, R, hj]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simp [F, R, SignType.cast, sub_eq_add_neg, add_assoc]
+      · simp [F, R, hj]
+    · rfl
+  have hR (r : ℕ) (hr : r < w.length) :
+      (scanTM k i δf δb a₀).step (R (r + 1)) = R r := by
+    have hrout : r < f.2.length := by omega
+    have hb : b r = ((δb (b (r + 1)).1 f.2[r]).1,
+        (b (r + 1)).2 ++ [(δb (b (r + 1)).1 f.2[r]).2]) := by
+      have hi : w.length - (r + 1) < f.2.reverse.length := by simp only [List.length_reverse]; omega
+      have he : f.2.reverse[w.length - (r + 1)] = f.2[r] := by
+        rw [List.getElem_reverse]
+        congr 1
+        omega
+      have hn : w.length - r = (w.length - (r + 1)) + 1 := by omega
+      change mealyRun δb f.1 (f.2.reverse.take (w.length - r)) = _
+      rw [hn, List.take_succ_eq_append_getElem hi, mealyRun_append]
+      simp only [he, mealyRun]
+      rfl
+    have hword : f.2.take (r + 1) ++ (b (r + 1)).2.reverse =
+        f.2.take r ++ f.2[r] :: (b (r + 1)).2.reverse := by
+      rw [List.take_succ_eq_append_getElem hrout, List.append_assoc]
+      rfl
+    have hl : (f.2.take r).length = r := by simp [fl, Nat.min_eq_left hr.le]
+    have hs : (R (r + 1)).workTapeSymbols i = some f.2[r] := by
+      simp only [R, Cfg.workTapeSymbols, ↓reduceIte]
+      rw [show d.workTapePos i + (((r + 1 : ℕ) : ℤ) - 1) = d.workTapePos i + r by omega]
+      unfold catalogTape
+      rw [wl (r + 1) (by omega), if_pos (by omega)]
+      rw [show d.workTapePos i + (r : ℤ) - d.workTapePos i = r by omega,
+        FinTM.bufferTape_nat, hword, List.getElem?_append_right (by omega)]
+      simp [hl]
+    rw [step_of_tapeAction_write (scanTM k i δf δb a₀) (R (r + 1))
+      (q' := .bwd (δb (b (r + 1)).1 f.2[r]).1) i 0
+      (some (δb (b (r + 1)).1 f.2[r]).2) .neg rfl
+      (by simp only [scanTM, hs])]
+    apply Cfg.ext
+    · simp [R, hb]
+    · simp [R]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        have ht := catalog_write_middle (d.workTapes i) (d.workTapePos i)
+          (f.2.take r) (b (r + 1)).2.reverse f.2[r] (δb (b (r + 1)).1 f.2[r]).2
+        simpa only [R, Function.update_self, ↓reduceIte, hword, hl, hb,
+          List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
+          List.singleton_append,
+          show d.workTapePos i + (((r + 1 : ℕ) : ℤ) - 1) = d.workTapePos i + r by omega]
+          using ht
+      · simp [R, hj]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simp [R, SignType.cast]
+        omega
+      · simp [R, hj]
+    · rfl
+  have hentry : (scanTM k i δf δb a₀).step (R 0) = D := by
+    have hb0 : b 0 = mealyRun δb f.1 f.2.reverse := by
+      dsimp [b]
+      rw [List.take_of_length_le (by simp [fl])]
+    have result : scanResult δf δb a₀ w = ((b 0).1, (b 0).2.reverse) := by
+      rw [hb0]
+      rfl
+    have hs : (R 0).workTapeSymbols i = none := by
+      simp only [R, Cfg.workTapeSymbols, ↓reduceIte, Nat.cast_zero, zero_sub, catalogTape]
+      rw [if_neg (by omega)]
+      simpa only [sub_eq_add_neg] using hw (-1) (by omega) (by omega)
+    rw [step_of_tapeAction_move (scanTM k i δf δb a₀) (R 0)
+      (q' := .done (b 0).1) i 0 .pos rfl (by simp only [scanTM, hs])]
+    apply Cfg.ext
+    · simp [D, result]
+    · simp [R, D]
+    · funext j q
+      by_cases hj : j = i
+      · subst j
+        simp [R, D, catalogTape, result, bl]
+      · simp [R, D, hj]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simp [R, D, SignType.pos_eq_one]
+      · simp [R, D, hj]
+    · rfl
+  have hD : (scanTM k i δf δb a₀).step D = D := by
+    rw [step_of_inputMoveAction (scanTM k i δf δb a₀) D 0 rfl rfl, moveInputPos_zero]
+  have trace (t : ℕ) : (scanTM k i δf δb a₀).runFrom d t =
+      catalogTrace F R D w.length t := by
+    rw [← h0]
+    exact catalog_trace_run _ F R D _ hF hturn hR hentry hD t
+  refine ⟨?_, ?_, ?_⟩
+  · rw [trace]
+    simp [catalogTrace, show ¬2 * w.length + 2 ≤ w.length by omega, D]
+  · intro t ht a
+    rw [trace]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [F, R]
+    omega
+  · intro j t ht
+    rw [trace]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [F, R, D, Finset.mem_Icc] <;> omega

@@ -1,0 +1,25 @@
+/-- A machine may run on an initial tape block of a larger controller.
+**Proof sketch.** The source-block reads agree when the source fits. One
+step commutes with padding, including the absorbing halted case; iterate. -/
+private lemma enumCont_pad_run {k K : ℕ} {S H : Type} {x : List Bool}
+    (hk : k ≤ K) (tm : MultiTapeTM k Bool S) (host : MultiTapeTM K Bool H)
+    (emb : S → H)
+    (htr : ∀ q inp work, host.tr (emb q) inp work =
+      enumCont_padAction emb (tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (c : Cfg k Bool S x) (t : ℕ) :
+    host.runFrom (enumCont_padCfg emb c) t = enumCont_padCfg emb (tm.runFrom c t) := by
+  apply MultiTapeTM.runFrom_comm_of_step (enumCont_padCfg emb) ?_ c t
+  intro c
+  cases hq : c.state with
+  | none => simp only [MultiTapeTM.step, enumCont_padCfg, hq, Option.map_none]
+  | some q =>
+    have hs : (enumCont_padCfg (K := K) emb c).state = some (emb q) := by
+      simp only [enumCont_padCfg, hq, Option.map_some]
+    have hw : (fun i : Fin k => (enumCont_padCfg (K := K) emb c).workTapeSymbols
+        ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
+      funext i
+      simp [enumCont_padCfg, Cfg.workTapeSymbols, i.isLt]
+    have hin : (enumCont_padCfg (K := K) emb c).inputSymbol = c.inputSymbol := rfl
+    simp only [MultiTapeTM.step, hs, hq]
+    rw [htr, hw, hin, enumCont_pad_apply]

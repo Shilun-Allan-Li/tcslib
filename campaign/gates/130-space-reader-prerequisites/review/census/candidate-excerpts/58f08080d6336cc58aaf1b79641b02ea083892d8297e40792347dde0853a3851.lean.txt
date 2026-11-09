@@ -1,0 +1,28 @@
+/-- The conditional controller captures the decider on the last tape,
+steps back to read its singleton verdict, rewinds the physical input, then
+runs the selected branch on its untouched tape bank. In the administrative
+states, the first Boolean distinguishes back/read and the second distinguishes
+rewind-start/scan. The branch transition table is independent of its selector. -/
+private def timedCondTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
+  k := (D.k + (M₁.k + M₂.k)) + 1
+  State := D.State ⊕ (Bool ⊕ ((Bool × Bool) ⊕ (M₁.State ⊕ M₂.State)))
+  tm :=
+    { q₀ := .inl D.tm.q₀
+      tr := fun q inp work => match q with
+        | .inl q => captureAction Sum.inl (.inr (.inl false))
+            ((timedPadTM D (M₁.k + M₂.k)).tr q inp (fun i => work i.castSucc))
+        | .inr (.inl false) =>
+          ⟨0, (fun i => if (i : ℕ) < D.k + (M₁.k + M₂.k) then (none, 0)
+            else (none, .neg)), none, some (.inr (.inl true))⟩
+        | .inr (.inl true) => controlAction 0
+            (some (.inr (.inr (.inl ((work (Fin.last _)).getD false, false)))))
+        | .inr (.inr (.inl (b, false))) =>
+            controlAction .neg (some (.inr (.inr (.inl (b, true)))))
+        | .inr (.inr (.inl (b, true))) => match inp with
+          | some _ => controlAction .neg (some (.inr (.inr (.inl (b, true)))))
+          | none => controlAction .pos
+              (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
+        | .inr (.inr (.inr q)) => leftAction 1 id
+            (rightAction D.k (fun s => .inr (.inr (.inr s)))
+              ((branchTM M₁ M₂ false).tm.tr q inp
+                (fun i => work (Fin.natAdd D.k i).castSucc))) }

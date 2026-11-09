@@ -1,0 +1,25 @@
+/-- The code is injective on cores whose heads and nonblank cells lie in `[-B, B]`.
+
+**Proof sketch.** State, input position and head positions are read off the code directly, the
+positions by injectivity of `posCode` on `[-B, B]`. A cell `z` with `|z| ≤ B` is recorded in the
+code. A cell with `|z| > B` is blank in both configurations by hypothesis. -/
+lemma coreCode_inj (B : ℕ) {c d : Cfg k Bool S x}
+    (hc : ∀ i, |c.workTapePos i| ≤ B ∧ ∀ z, c.workTapes i z ≠ none → |z| ≤ B)
+    (hd : ∀ i, |d.workTapePos i| ≤ B ∧ ∀ z, d.workTapes i z ≠ none → |z| ≤ B)
+    (h : coreCode B c = coreCode B d) : core c = core d := by
+  simp only [coreCode, Prod.mk.injEq] at h
+  obtain ⟨hs, hi, hw, hp⟩ := h
+  simp only [core, Prod.mk.injEq]
+  refine ⟨hs, hi, ?_, ?_⟩
+  · funext i z
+    by_cases hz : |z| ≤ B
+    · have := congrFun (congrFun hw i) ⟨(z + B).toNat, by rw [abs_le] at hz; omega⟩
+      simp only at this
+      rwa [show (((z + B).toNat : ℕ) : ℤ) - B = z by rw [abs_le] at hz; omega] at this
+    · have h1 : c.workTapes i z = none := by
+        by_contra hne; exact hz ((hc i).2 z hne)
+      have h2 : d.workTapes i z = none := by
+        by_contra hne; exact hz ((hd i).2 z hne)
+      rw [h1, h2]
+  · funext i
+    exact posCode_injOn B (hc i).1 (hd i).1 (congrFun hp i)

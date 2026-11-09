@@ -1,0 +1,28 @@
+/-- The finite transduction lemma for the return sweep, with the exact cost. -/
+lemma sweep_run_reverse {A S R C : Type} (tm : MultiTapeTM 1 A S)
+    (state : R → S) (symbol : C → A) (visit : R → C → R × C)
+    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
+      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
+    {x : List A} (p : Fin (x.length + 2)) (out : List A)
+    (as : List C) (s : R) (z : ℤ) (l r : List (Option A)) :
+    tm.runFrom (sweepRevCfg (some (state s)) p z l
+      (as.map (fun a => some (symbol a)) ++ r) out) as.length =
+    sweepRevCfg (some (state (sweepFold visit s as).1)) p (z - as.length)
+      (((sweepFold visit s as).2.map (fun a => some (symbol a))).reverse ++ l) r out := by
+  induction as generalizing s z l with
+  | nil => simp only [List.map_nil, List.nil_append, List.length_nil,
+      MultiTapeTM.runFrom_zero, sweepFold, Int.natCast_zero, sub_zero, List.reverse_nil]
+  | cons a as ih =>
+    simp only [List.map_cons, List.cons_append, List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have hr : (sweepRevCfg (some (state s)) p z l
+        (some (symbol a) :: (as.map (fun a => some (symbol a)) ++ r)) out).workTapeSymbols =
+        fun _ => some (symbol a) := by
+      funext i
+      exact sweepTape_read (-z) l _
+    change tm.runFrom ((tm.tr (state s) _ _).apply _) as.length = _
+    rw [hr, htr, sweepRevCfg_left, ih]
+    simp only [sweepFold, List.map_cons, List.reverse_cons, List.append_assoc,
+      List.cons_append, List.nil_append, Int.natCast_add, Int.natCast_one]
+    congr 1
+    omega

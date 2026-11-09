@@ -1,0 +1,183 @@
+/-- A native fixed-field scan is linear in the finite list of pair tests. The head never
+returns to the left blank, and every work tape and head is unchanged.
+
+**Proof sketch.** Induct on the number of remaining pairs. A missing first or second
+cell rejects immediately. A failed predicate rejects after two tests; a successful pair
+advances two cells and invokes the induction hypothesis at the next finite index.
+Only the permitted native leaf is traced; there is no private phase or loop host. -/
+private lemma canonPairs_run {m : ℕ} {x : List Bool} (vs : List (Bool → Bool → Bool))
+    (j : Fin (vs.length + 1))
+    (d : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x)
+    (p : ℕ) (pos : d.inputPos.val = p + 1) (range : p ≤ x.length)
+    (state : d.state = some (Sum.inr (j, none))) :
+    ∃ t ≤ 2 * (vs.length - j.val) + 1,
+      ((canonPairsTM m vs).runFrom d t).state =
+        some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧
+      ((canonPairsTM m vs).runFrom d t).output = d.output ∧
+      (∀ u < t, ∀ b, ((canonPairsTM m vs).runFrom d u).state ≠ some (Sum.inl b)) ∧
+      ((canonPairsTM m vs).runFrom d t).workTapes = d.workTapes ∧
+      ((canonPairsTM m vs).runFrom d t).workTapePos = d.workTapePos ∧
+      1 ≤ ((canonPairsTM m vs).runFrom d t).inputPos.val ∧
+      ∀ ys, canonPairs (vs.drop j.val) (x.drop p) = some ys →
+        ((canonPairsTM m vs).runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  generalize hn : vs.length - j.val = n
+  induction n using Nat.strong_induction_on generalizing j d p with
+  | h n ih =>
+    let M := canonPairsTM m vs
+    have native := canonNativeSuffix d p pos range
+    have firstCut (b : Bool) : (M.runFrom d 0).state ≠ some (Sum.inl b) := by
+      simpa only [MultiTapeTM.runFrom_zero, state] using
+        (by simp : some (Sum.inr (j, none)) ≠
+          (some (Sum.inl b) : Option (Bool ⊕ (Fin (vs.length + 1) × Option Bool))))
+    by_cases more : j.val < vs.length
+    · have parse : canonPairs (vs.drop j.val) (x.drop p) =
+          (codeSkipPair vs[j.val] (x.drop p)).bind (canonPairs (vs.drop (j.val + 1))) := by
+        rw [List.drop_eq_getElem_cons more]
+        rfl
+      cases suffix : x.drop p with
+      | nil =>
+        rw [← suffix]
+        have read : d.inputSymbol = none := by rw [native.1, suffix]; rfl
+        have step := step_of_inputMoveAction M d (q' := Sum.inl false) 0 state
+          (by simp [M, canonPairsTM, more, read])
+        have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by
+          rw [MultiTapeTM.runFrom_one]
+          simpa only [moveInputPos_zero] using step
+        have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+          rw [parse, suffix]
+          rfl
+        refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [run, verdict]; rfl
+        · rw [run]
+        · intro u hu b
+          have zero : u = 0 := by omega
+          subst u
+          exact firstCut b
+        · rw [run]
+        · rw [run]
+        · rw [run]; change 1 ≤ d.inputPos.val; omega
+        · intro ys accepted; rw [verdict] at accepted; cases accepted
+      | cons a tail =>
+        rw [← suffix]
+        have read : d.inputSymbol = some a := by rw [native.1, suffix]; rfl
+        have advance := native.2 a tail suffix
+        let d1 : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x :=
+          { d with
+            state := some (Sum.inr (j, some a))
+            inputPos := moveInputPos d.inputPos 1 }
+        have run1 : M.runFrom d 1 = d1 :=
+          step_of_inputMoveAction M d _ state
+            (by simp [M, canonPairsTM, more, read])
+        have pos1 : d1.inputPos.val = (p + 1) + 1 := by
+          exact advance.1
+        have range1 : p + 1 ≤ x.length := by have := d1.inputPos.isLt; omega
+        have native1 := canonNativeSuffix d1 (p + 1) pos1 range1
+        have d1state : d1.state = some (Sum.inr (j, some a)) := rfl
+        have cut1 (b : Bool) : (M.runFrom d 1).state ≠ some (Sum.inl b) := by
+          rw [run1, d1state]
+          simp
+        have fail (invalid : codeSkipPair vs[j.val] (x.drop p) = none)
+            (tr : M.tr (Sum.inr (j, some a)) d1.inputSymbol d1.workTapeSymbols =
+              inputMoveAction 0 (Sum.inl false)) :
+            ∃ t ≤ 2 * n + 1,
+              (M.runFrom d t).state =
+                some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧
+              (M.runFrom d t).output = d.output ∧
+              (∀ u < t, ∀ b, (M.runFrom d u).state ≠ some (Sum.inl b)) ∧
+              (M.runFrom d t).workTapes = d.workTapes ∧
+              (M.runFrom d t).workTapePos = d.workTapePos ∧
+              1 ≤ (M.runFrom d t).inputPos.val ∧
+              ∀ ys, canonPairs (vs.drop j.val) (x.drop p) = some ys →
+                (M.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+          have step := step_of_inputMoveAction M d1 _ d1state tr
+          have run2 : M.runFrom d 2 = { d1 with state := some (Sum.inl false) } := by
+            rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1, MultiTapeTM.runFrom_one]
+            simpa only [moveInputPos_zero] using step
+          have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+            rw [parse, invalid]
+            rfl
+          refine ⟨2, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [run2, verdict]; rfl
+          · rw [run2]
+          · intro u hu b
+            have choices : u = 0 ∨ u = 1 := by omega
+            rcases choices with rfl | rfl
+            · exact firstCut b
+            · exact cut1 b
+          · rw [run2]
+          · rw [run2]
+          · rw [run2]; change 1 ≤ d1.inputPos.val; omega
+          · intro ys accepted; rw [verdict] at accepted; cases accepted
+        cases tail with
+        | nil =>
+          apply fail (by rw [suffix]; rfl)
+          have read1 : d1.inputSymbol = none := by rw [native1.1, advance.2]; rfl
+          simp [M, canonPairsTM, more, read1]
+        | cons b ys =>
+          have read1 : d1.inputSymbol = some b := by rw [native1.1, advance.2]; rfl
+          by_cases valid : vs[j.val] a b = true
+          · let j' : Fin (vs.length + 1) := ⟨j.val + 1, by omega⟩
+            let d2 : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x :=
+              { d1 with
+                state := some (Sum.inr (j', none))
+                inputPos := moveInputPos d1.inputPos 1 }
+            have run2 : M.runFrom d 2 = d2 := by
+              rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+              exact step_of_inputMoveAction M d1 _ d1state
+                (by simp [M, canonPairsTM, more, read1, valid, j'])
+            have advance1 := native1.2 b ys advance.2
+            have pos2 : d2.inputPos.val = (p + 2) + 1 := advance1.1
+            have range2 : p + 2 ≤ x.length := by have := d2.inputPos.isLt; omega
+            have parser : canonPairs (vs.drop j.val) (x.drop p) =
+                canonPairs (vs.drop j'.val) (x.drop (p + 2)) := by
+              rw [parse, suffix]
+              simp only [codeSkipPair, valid, if_true, Option.bind_some]
+              exact congrArg (canonPairs (vs.drop j'.val)) advance1.2.symm
+            obtain ⟨t, budget, finish, silent, cuts, tapes, heads, positive, consumed⟩ :=
+              ih (vs.length - j'.val) (by dsimp [j']; omega) j' d2 (p + 2)
+                pos2 range2 rfl rfl
+            have whole : M.runFrom d (2 + t) = M.runFrom d2 t := by
+              rw [MultiTapeTM.runFrom_add (tm := M), run2]
+            refine ⟨2 + t, by dsimp [j'] at budget; omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+            · rw [whole, parser]; exact finish
+            · rw [whole]; exact silent
+            · intro u hu bit
+              by_cases early : u < 2
+              · have choices : u = 0 ∨ u = 1 := by omega
+                rcases choices with rfl | rfl
+                · exact firstCut bit
+                · exact cut1 bit
+              · have index : u = 2 + (u - 2) := by omega
+                rw [index, MultiTapeTM.runFrom_add (tm := M), run2]
+                exact cuts _ (by omega) bit
+            · rw [whole]; exact tapes
+            · rw [whole]; exact heads
+            · rw [whole]; exact positive
+            · intro zs accepted
+              rw [whole]
+              exact consumed zs (parser.symm.trans accepted)
+          · apply fail (by simp [suffix, codeSkipPair, valid])
+            simp [M, canonPairsTM, more, read1, valid]
+    · have done : vs.drop j.val = [] := List.drop_eq_nil_of_le (by omega)
+      have step := step_of_inputMoveAction M d (q' := Sum.inl true) 0 state
+        (by simp [M, canonPairsTM, more])
+      have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by
+        rw [MultiTapeTM.runFrom_one]
+        simpa only [moveInputPos_zero] using step
+      refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [run, done]; rfl
+      · rw [run]
+      · intro u hu b
+        have zero : u = 0 := by omega
+        subst u
+        exact firstCut b
+      · rw [run]
+      · rw [run]
+      · rw [run]; change 1 ≤ d.inputPos.val; omega
+      · intro ys accepted
+        have same : x.drop p = ys := Option.some.inj (by simpa [done, canonPairs] using accepted)
+        have lengths := congrArg List.length same
+        simp only [List.length_drop] at lengths
+        rw [run]
+        change d.inputPos.val = _
+        omega

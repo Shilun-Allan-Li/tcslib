@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Turing.MultiTapeTM.ConfigCount.core_eq",
+    "owner": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+    "ordinary_foreign_heads": [],
+    "full_producer_proof": "/-- The core records exactly the state, input position, work tapes and work-head\npositions of a configuration, in that order; it omits the output tape. -/\ntheorem core_eq (c : Cfg k Bool S x) :\n    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) := by\n  rfl\n\n",
+    "own_helpers_traversed": [
+      "Turing.MultiTapeTM.ConfigCount.core"
+    ],
+    "foreign_exclusions": [
+      {
+        "name": "Turing.Cfg.state",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      },
+      {
+        "name": "Turing.Cfg.inputPos",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      },
+      {
+        "name": "Turing.Cfg.workTapes",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      },
+      {
+        "name": "Turing.Cfg.workTapePos",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      }
+    ],
+    "disposition": "Native whole-owner check and complete selected metadata/explicit-source review only; no zero-head seal or vacuous control count."
+  },
+  {
+    "name": "Turing.FinTM.sweepRevCfg_state",
+    "owner": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+    "ordinary_foreign_heads": [],
+    "full_producer_proof": "/-- The reverse-sweep configuration has the supplied control state. -/\ntheorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).state = q := by\n  rfl\n\n",
+    "own_helpers_traversed": [
+      "Turing.FinTM.sweepRevCfg",
+      "Turing.FinTM.sweepTape"
+    ],
+    "foreign_exclusions": [
+      {
+        "name": "Turing.Cfg.state",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      }
+    ],
+    "disposition": "Native whole-owner check and complete selected metadata/explicit-source review only; no zero-head seal or vacuous control count."
+  },
+  {
+    "name": "Turing.FinTM.sweepRevCfg_output",
+    "owner": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+    "ordinary_foreign_heads": [],
+    "full_producer_proof": "/-- The reverse-sweep configuration has the supplied output word. -/\ntheorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).output = out := by\n  rfl\n\n",
+    "own_helpers_traversed": [
+      "Turing.FinTM.sweepRevCfg",
+      "Turing.FinTM.sweepTape"
+    ],
+    "foreign_exclusions": [
+      {
+        "name": "Turing.Cfg.output",
+        "projection": true,
+        "kernel_hints": "abbrev"
+      }
+    ],
+    "disposition": "Native whole-owner check and complete selected metadata/explicit-source review only; no zero-head seal or vacuous control count."
+  }
+]

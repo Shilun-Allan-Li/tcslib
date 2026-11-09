@@ -1,0 +1,16 @@
+/-- Silent in-place binary increment. State 1 carries, state 2 rewinds,
+and state 0 is an absorbing live return. Unlike the length clCount from
+which the carry/rewind proof is harvested, this module never advances the
+native input, emits an answer, or starts another increment at return. -/
+private def clCountTM : FinTM Bool where
+  k := 1
+  State := Fin 4
+  tm := {
+    q₀ := 1
+    tr := fun q _ work =>
+      if q = 1 then clCountBump 0 (work 0)
+      else if q = 2 then
+        match work 0 with
+        | none => ⟨0, fun _ => (none, .pos), none, some 0⟩
+        | some _ => ⟨0, fun _ => (none, .neg), none, some 2⟩
+      else FinTM.controlAction 0 (some q) }

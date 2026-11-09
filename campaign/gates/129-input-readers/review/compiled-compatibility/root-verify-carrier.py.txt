@@ -1,0 +1,32 @@
+from pathlib import Path, PurePosixPath
+import base64,datetime,gzip,hashlib,json
+p=Path('/private/tmp/ab34-reader-context-validity/PORTABLE'); original=Path('/private/tmp/ab34-reader-context-validity/EXPORT')
+sha=lambda b:hashlib.sha256(b).hexdigest()
+m=json.loads((p/'RECOVERY-MAP.json').read_bytes()); raw=(p/'RECOVERY-CARRIER.json').read_bytes(); c=json.loads(raw)
+assert sha(raw)==m['carrier_sha256'] and len(raw)==m['carrier_bytes']
+assert c['files']==m['files'] and len(c['files'])==m['logical_file_count']==1127
+assert len({r['path'] for r in c['files']})==len(c['files'])
+assert {r['blob'] for r in c['files']}==set(c['blobs'])
+blobs={}
+for k,v in c['blobs'].items():
+ z=base64.b64decode(v['gzip_base64'],validate=True)
+ assert len(z)==v['gzip_bytes'] and sha(z)==v['gzip_sha256']
+ b=gzip.decompress(z); b.decode('utf-8')
+ assert len(b)==v['uncompressed_bytes'] and sha(b)==v['uncompressed_sha256']==k
+ blobs[k]=b
+files={}
+for r in c['files']:
+ q=PurePosixPath(r['path']); assert not q.is_absolute() and '..' not in q.parts and q.as_posix()==r['path'] and not r['path'].endswith('.lean')
+ b=blobs[r['blob']]; assert len(b)==r['bytes'] and sha(b)==r['sha256']
+ assert (original/r['path']).is_file() and not (original/r['path']).is_symlink()
+ assert (original/r['path']).read_bytes()==b
+ files[r['path']]=b
+assert {str(f.relative_to(original)) for f in original.rglob('*') if f.is_file()}==set(files)
+fm=json.loads(files['MANIFEST.json']); assert sha(files['MANIFEST.json'])==m['canonical_export_manifest_sha256']==c['canonical_export_manifest_sha256']
+assert {r['path'] for r in fm['files']}==set(files)-{'MANIFEST.json','SHA256SUMS'}
+for r in fm['files']: assert len(files[r['path']])==r['bytes'] and sha(files[r['path']])==r['sha256']
+sums={line.split('  ',1)[1]:line.split('  ',1)[0] for line in files['SHA256SUMS'].decode().splitlines()}
+assert set(sums)==set(files)-{'SHA256SUMS'} and all(sha(files[k])==v for k,v in sums.items())
+result={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'verified_by':'Codex root, independent own reader, no stored script executed','logical_files':len(files),'logical_bytes':sum(len(b) for b in files.values()),'all_canonical_files_byte_identical':True,'all_payload_manifest_and_checksum_entries_verified':True,'carrier_SHA256':sha(raw),'canonical_MANIFEST_SHA256':sha(files['MANIFEST.json']),'no_Lean_replay_or_screen_executed':True}
+Path('/private/tmp/ab34-reader-context-validity/ROOT-CARRIER-VERIFICATION.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result,indent=2))
