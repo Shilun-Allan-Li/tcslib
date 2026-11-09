@@ -77,11 +77,6 @@ equations.
   convention on p. 14.)
 -/
 
-namespace Turing
-
-
-end Turing
-
 namespace Turing.FinTM
 
 /-- One step of a fixed-word emission chain, with an arbitrary state embedding.
