@@ -29,3 +29,4 @@ record arrives.
 | Folder | Files | Status |
 |---|---|---|
 | `gates/01-quantum-phase1/` | `pack.md`, `findings.md`, `pack-r2.md`, `findings-r2.md`, `resolutions.md`, `kickoff.md`, `kickoff-r2.md`, `evidence/`, `evidence-r2/`, `evidence-close/` | **closed** 2026-11-09, round 2 (closing commit `13c8664b`) |
+| `gates/02-quantum-e1/` | `pack.md`, `kickoff.md`, `evidence/` (diff, bundle script); fill evidence in `fills/e1/evidence/` | **open**: round 1 pending |

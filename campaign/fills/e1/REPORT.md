@@ -8,7 +8,7 @@ covers E1. The audited baseline is the closing commit of gate `quantum-phase1`,
 | Item | Value |
 |---|---|
 | Branch | `quantum/e1-fill` (from `quantum/p1-basic`) |
-| Final commit | `f93c7ee69a5c1f54e44436beed93f365e1423eae` |
+| Final commit | `a97fceca7c0f7b360f91cb08d4db5a5b33bdb548` (fills through `f93c7ee6`, then the pre-audit cleanup below) |
 | Files owned | `TCSlib/Quantum/Basic/{Register, Gates, ApplyOn, Measure, Protocols}.lean` |
 | Targets | the 52 sorried statements in those files (10, 15, 11, 6, 10) |
 | Result | **all 52 proved**; `TCSlib/Quantum/**` has no `sorry` left |
@@ -25,11 +25,11 @@ covers E1. The audited baseline is the closing commit of gate `quantum-phase1`,
   equation lemmas that inherited `sorryAx` through proof fields before E1 (gate note 9). The 33
   `sorryAx` dependents are exactly the remaining counting-layer statements.
 - **Statement freeze (`drift.log`, `drift.py`, comparing signatures and full bodies).** From 212
-  declarations at the baseline to 245:
+  declarations at the baseline to 246:
   - **0 removed;**
   - **0 signatures changed;**
   - **52 bodies changed**, exactly the 52 filled statements;
-  - **33 added** (below);
+  - **34 added** (below);
   - 160 unchanged in signature and body.
 - **Style (`style_lint.log`, `campaign_style_lint.log`).** `style_lint.py` reports 0 findings
   over the 14 files. That includes its check that every proof over about 20 lines has a sketch,
@@ -54,10 +54,11 @@ with a statement-prose docstring, a proof sketch where nontrivial, and an entry 
 The last three are general tools. Teleportation and superdense coding are proved through them,
 and Phase 2's circuits (plan Q2) will need them.
 
-## Private helpers (27)
+## Private helpers (28)
 
 - **`Register.lean` (1).** `sum_norm_sq_eq_dotProduct`.
-- **`Gates.lean` (3).** `reg1_cases`, `sum_reg1`, `toffoli_cnot_slice`.
+- **`Gates.lean` (4).** `reg1_cases`, `sum_reg1`, `toffoli_cnot_slice`, and `gate1_ext` (two
+  one-qubit gates are equal if their four entries agree; shared by the five gate identities).
 - **`ApplyOn.lean` (11).**
   - the reconstruction of a register from its gate wires (`Function.extend`): `agreeOff_symm`,
     `agreeOff_trans`, `extend_comp`, `agreeOff_extend`, `extend_self`, `eq_of_agreeOff`;
@@ -73,19 +74,50 @@ and Phase 2's circuits (plan Q2) will need them.
 
 ## Duplication ledger
 
-- **Copies of proved material: none.** Two near-copies made during E1 were removed before this
-  report by promoting the shared fact to a public lemma: `(1/√2)² = 1/2`, and the
-  inner-product/norm rewrite chain. The register-splitting lemma was promoted before any copy was
-  made.
-- **Similar technique, not copied (disclosed for the auditor's judgment).** `Protocols.lean`'s
-  private `permMat_mulVec_apply` (`(permMat σ v) c = v (σ⁻¹ c)`) is proved by the same
-  `Finset.sum_eq_single` step as the public `applyOn_permMat_mulVec_apply`. The statements
-  differ: one is about an unplaced matrix, the other about a placed one. The unplaced form could
-  later be derived from the placed one at the identity embedding.
+Screened mechanically with the repository's copy screen, `scripts/copy-text-screen-v3.py`
+(`evidence/scripts/copy_screen.sh`, `evidence/logs/copy_screen.log`). It lists every pair of
+like-kind declarations where one reproduces at least half of the other's body (at least 60
+characters), over the five E1 files plus `ErrorCorrectingCodes/QuantumHamming.lean` and
+`QuantumSingleton.lean`.
+
+**Removed before this report.** The first screen also found real duplication from E1, now gone:
+- `applyOn_mul` repeated the bijection argument of `applyOn_mulVec_apply` (465 characters). It is
+  now derived from `applyOn_mulVec_apply`, which moved before it.
+- `Protocols.lean`'s private `permMat_mulVec_apply` repeated the core of the public
+  `applyOn_permMat_mulVec_apply` (73–76%). It is now derived from it at the identity embedding
+  (`applyOn_refl`).
+- Earlier, two near-copies (`(1/√2)² = 1/2`, and the inner-product/norm rewrite chain) were
+  removed by promoting the shared fact to a public lemma, and the register-splitting lemma was
+  promoted before any copy was made.
+
+**Remaining pairs at the final commit: 21 among the E1 files** (the screen's other 7 pairs are
+inside `QuantumHamming.lean` and `QuantumSingleton.lean`, which predate E1). None reproduces the
+proof of the same fact. Each shares a tactic idiom across *different* statements:
+
+| Pairs | What is shared | Classification |
+|---|---|---|
+| 12 among `X_mul_X`, `Z_mul_Z`, `S_mul_S`, `H_mul_H`, `H_mul_Z_mul_H` | `refine gate1_ext …; fin_cases a <;> fin_cases b <;> simp (config := …)`: the case split itself is already factored into the private `gate1_ext` | Idiom; five different gate identities |
+| 3 pairs with `hadamardMat_mem_unitaryGroup` (with `gate1_ext`, `H_mul_H`) | the four-case split over `Reg 1` and the two-term sum | Idiom; it states unitarity of a matrix, not equality of gates, so it cannot use `gate1_ext` |
+| 4 among `X_mulVec_apply`, `cnot_mulVec_apply`, `teleportState_vec_sum` | the rewrite chain `permMat_mulVec_apply, Function.Involutive.toPerm_symm, Function.Involutive.coe_toPerm` | Idiom; it reads three different permutation gates |
+| `superdenseState_vec_aux` / `teleportState_vec` (62%) | the closing `fin_cases … <;> simp […] <;> ring_nf <;> rw [inv_sqrt_two_sq]` | Idiom; two different protocols |
+| `probQubit_zero_add_one` / `probQubit_basis` (69 characters) | `rw [probQubit_eq …]` and a `simp` call | Idiom |
+
+- **Copies of proved material: none.**
 - **Unchanged from the gate:** the acknowledged overlap with Physlib (plan FD-1, FD-2) and with
-  `QuantumHamming`'s `sigmaX`/`sigmaZ` (plan OQ-6).
+  `QuantumHamming`'s `sigmaX`/`sigmaZ` (plan OQ-6). The screen finds no text shared between the
+  E1 files and `QuantumHamming.lean`.
 
 ## Notes for the epoch-boundary audit
+
+- **Sketches synchronized (policy §3).** Sixteen sketches written at skeleton time described
+  routes the fills did not take. Before this report, each was rewritten to describe the proof that
+  is there: `sum_norm_sq_mulVec_of_mem_unitaryGroup`; in `Gates.lean`, `permMat_mem_unitaryGroup`,
+  `H_mul_H`, `X_mul_X`, `Z_mul_Z`, `S_mul_S`, `H_mul_Z_mul_H`, `Toffoli_apply_of_control_one`; in
+  `ApplyOn.lean`, `applyOn_mul`, `applyOn_wire_X_mulVec_basis`,
+  `applyOn_wires20_CNOT_mulVec_basis`; `probQubit_evolve_applyOnU_of_forall_ne`; in
+  `Protocols.lean`, `teleportInit_vec`, `teleportState_vec`, `teleport_correct`,
+  `superdense_decode`, `superdenseState_vec`. These are docstring changes only; the drift check
+  strips comments.
 
 - `Measure.lean` gained `open Matrix` (for the `*ᵥ` notation in a private helper). It changes no
   statement.
