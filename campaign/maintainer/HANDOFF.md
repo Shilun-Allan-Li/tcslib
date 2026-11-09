@@ -7,13 +7,14 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T00:08:17.292013-08:00; authoritative)
+## 0. Current state (2026-11-09T00:17:33.311233-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
 Campaign Lean is `967bc00f00637312676f438c7f61b14219fa943b`. The complete post-#246 snapshot
 `oleans-pr246-post253` matches 1,004 source blobs and 896 object hashes.
-The actual post-#247/#245 replay from that whole snapshot is running.
+The 49-module post-#247/#245 replay passed. Use the verified whole snapshot
+`oleans-campaign-post245-247` (1,004 source blobs, 896 object hashes).
 See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 
 | PR / gate | Current state |
@@ -26,10 +27,10 @@ See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
 | #254 | **Clear to merge** as tooling only, no Lean diff. |
 
-Gates 123–127 stay closed. #245–#247 have merged. The #243 replay is
-running on the post-#253 base. Revalidate the import context against the new
-merges before clearing it. #244 needs a replay refresh and shares the
-EmitIterEmbed owner with #243.
+Gates 123–127 stay closed. #245–#247 have merged. **Clear to merge:** #243.
+Its actual 82-module replay remains current under START-HERE §4 because the
+changed owner and its complete import source are byte-exact. #244 shares that
+owner and its prospective replay after #243 is running.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
