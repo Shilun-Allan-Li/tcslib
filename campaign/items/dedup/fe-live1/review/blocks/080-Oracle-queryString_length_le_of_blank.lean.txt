@@ -1,0 +1,7 @@
+theorem queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input)
+    (n : ℕ) (h : cfg.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none) :
+    (OracleTM.queryString cfg).length ≤ n := by
+  classical
+  rw [OracleTM.queryString, dif_pos ⟨n, h⟩]
+  refine (List.length_filterMap_le _ _).trans ?_
+  simpa using (Nat.find_le (h := ⟨n, h⟩) h)

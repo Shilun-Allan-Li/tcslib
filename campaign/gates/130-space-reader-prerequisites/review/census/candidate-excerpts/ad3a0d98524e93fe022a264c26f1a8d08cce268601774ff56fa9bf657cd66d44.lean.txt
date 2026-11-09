@@ -1,0 +1,28 @@
+/-- The new left-row writer stays within exactly the newly allocated block.
+**Proof sketch.** Instantiate the generic leftward writer with the reversed
+marked blank row. Its all-prefix ledger accounts for the new boundary too. -/
+private lemma dg_left_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) (q : Option M.State) (heads : Fin M.k → Bool)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l r : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)
+      (sweepRevCfg (some (.inr (q, heads, ⟨M.k, by omega⟩))) p (z - M.k)
+        ((dgLeftRow heads).map (fun b => some (sweepSymbol b)) ++ l)
+        (r.drop M.k) out) M.k (z - M.k) z := by
+  let w := (dgLeftRow (Γ := Γ) heads).reverse.map sweepSymbol
+  have hw : w.length = M.k := by simp [w, dgLeftRow, blankRow]
+  have h := dgSpan_generate_left (dgTM M a₀).tm w
+    (fun i => Sum.inr (q, heads, ⟨i.val, by simpa [hw] using i.isLt⟩))
+    (fun i hi inp work => by
+      have hik : i < M.k := by omega
+      have he : w[i] = sweepSymbol
+          (⟨M.k - 1 - i, by omega⟩, none, heads ⟨M.k - 1 - i, by omega⟩, false) := by
+        simp [w, dgLeftRow, blankRow, List.getElem_reverse]
+      simp only [dgTM, dif_pos hik]
+      rw [he]) p out z l r M.k (by omega)
+  have htake : w.take M.k = w := List.take_of_length_le (le_of_eq hw)
+  rw [htake] at h
+  simpa only [w, List.map_map, Function.comp_def,
+    List.map_reverse, List.reverse_reverse] using h

@@ -1,0 +1,4264 @@
+{
+  "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+  "touched_owner_step_reader_import_chain": [
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/CookLevin/Snapshot.lean",
+    "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+  ],
+  "per_held_site": [
+    {
+      "id": 50,
+      "target": "Complexity.LogProg.call_run",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.bufferTape",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Int",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.init",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.vword",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Bool"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.callSegs",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.CallSpec",
+            "List",
+            "Bool",
+            "Fin",
+            "Complexity.LogProg.Seg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.RegBox",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "Int",
+            "List",
+            "Bool"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.compileTM",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.RProg",
+            "Turing.MultiTapeTM",
+            "Bool",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CSt"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.seam",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Turing.Cfg",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CSt"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.step",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.mkCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Option",
+            "Complexity.LogProg.CSt",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.apply",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Action",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.inputSymbol",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.workTapeSymbols",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Fin",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.dIdle",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Fin",
+            "Prod",
+            "Option",
+            "Bool",
+            "SignType"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.moveInputPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "SignType"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.SimRel",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Turing.Cfg",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CSt",
+            "Complexity.LogProg.vword",
+            "Complexity.LogProg.callSegs"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.wlen",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.TPos.Valid",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat",
+            "Complexity.LogProg.TPos"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.Consistent",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat",
+            "Bool",
+            "Complexity.LogProg.TPos"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.vpos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat",
+            "Complexity.LogProg.TPos"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.inPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.CallSpec",
+            "List",
+            "Bool",
+            "Fin",
+            "Complexity.LogProg.TPos"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.regPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Turing.Cfg",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "Complexity.LogProg.TPos",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.Mode.seg0",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Complexity.LogProg.Mode",
+            "List",
+            "Bool",
+            "Complexity.LogProg.Seg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.seg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.off",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.trackPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Complexity.LogProg.Seg",
+            "Nat",
+            "Complexity.LogProg.TPos",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.HaltRel",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Turing.Cfg",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CSt",
+            "Complexity.LogProg.vword",
+            "Complexity.LogProg.callSegs"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.nextRet",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Bool",
+            "Complexity.LogProg.CSt"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.retPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Complexity.LogProg.CallSpec",
+            "Fin",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.leftSide",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Bool"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+            "TCSlib/Complexity/TuringMachine/Configuration.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 51,
+      "target": "Complexity.LogProg.cleanTM_run",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.init",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.visitedByTapeHead",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg",
+            "Fin",
+            "Finset",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.cleanTM",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "Bool",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CleanSt"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.ccfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Option",
+            "Complexity.LogProg.CleanSt",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.step",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.wr",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Option",
+            "Bool",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.markI",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Int",
+            "Option",
+            "Bool"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.LogProg.PB",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Int",
+            "Turing.Cfg",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "Complexity.LogProg.CleanSt"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+            "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+            "TCSlib/Complexity/SpaceComplexity/Basic.lean",
+            "TCSlib/Complexity/ClassP/DTIME.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+            "TCSlib/Complexity/TuringMachine/Configuration.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+            "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+            "TCSlib/Complexity/SpaceComplexity/Basic.lean",
+            "TCSlib/Complexity/ClassP/DTIME.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 52,
+      "target": "Complexity.LogProg.runFrom_count_eq",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean",
+        "TCSlib/Complexity/ClassP/DTIME.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.visitedByTapeHead",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg",
+            "Fin",
+            "Finset",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.ConfigCount.posCode",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Int",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "HMul.hMul",
+            "instHMul",
+            "instMulNat",
+            "OfNat.ofNat",
+            "instOfNatNat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.ConfigCount.core",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Turing.Cfg",
+            "Prod",
+            "Option",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean",
+            "TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean",
+            "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+            "TCSlib/Complexity/ClassP/DTIME.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 58,
+      "target": "Turing.ClockHost.startup",
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.NDTM.runWith",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Nondeterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.NDTM",
+            "Bool",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.ClockHost.hostTM",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Bool",
+            "Turing.FinNDTM",
+            "Turing.NDTM",
+            "HAdd.hAdd",
+            "Nat",
+            "instHAdd",
+            "instAddNat",
+            "Turing.FinTM.k",
+            "Turing.FinNDTM.k",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Turing.ClockPhase",
+            "Turing.FinTM.State",
+            "Turing.FinNDTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.NDTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Nondeterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.NDTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.ClockHost.runCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Bool",
+            "Turing.FinNDTM",
+            "List",
+            "Nat",
+            "Turing.Cfg",
+            "Turing.FinNDTM.k",
+            "Turing.FinNDTM.State",
+            "Int",
+            "Fin",
+            "Turing.FinTM.k",
+            "Option",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Turing.ClockPhase",
+            "Turing.FinTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.ClockHost.bootCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Bool",
+            "Turing.FinNDTM",
+            "List",
+            "Turing.Cfg",
+            "Turing.FinTM.k",
+            "Turing.FinTM.State",
+            "HAdd.hAdd",
+            "Nat",
+            "instHAdd",
+            "instAddNat",
+            "Turing.FinNDTM.k",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Turing.ClockPhase",
+            "Turing.FinNDTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.ClockHost.hostCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Bool",
+            "Option",
+            "Turing.ClockPhase",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.bufferTape",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Int",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.moveInputPos",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "SignType"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.ClockHost.inLeft",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "OfNat.ofNat",
+            "instOfNatNat"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+            "TCSlib/Complexity/TuringMachine/Configuration.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDCombinators.lean",
+            "TCSlib/Complexity/TuringMachine/Nondeterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+            "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 82,
+      "target": "Complexity.clockStageCfg_captures",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+        "TCSlib/Complexity/TuringMachine/Sweep.lean",
+        "TCSlib/Complexity/ClassP/DTIME.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.obliviousSchedule",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Bool",
+            "Nat",
+            "Complexity.OblSymbol"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.oblEmbed",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Function.Embedding",
+            "Bool",
+            "Complexity.OblSymbol"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.bufferTape",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Int",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Complexity.maskedClock",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+            "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+            "TCSlib/Complexity/TuringMachine/Simulation.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 83,
+      "target": "Turing.FinTM.one_work_tape",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+        "TCSlib/Complexity/TuringMachine/Sweep.lean",
+        "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesFunInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesFunInTimeVia",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Function.Embedding",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.sweepAct",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Option",
+            "SignType",
+            "Turing.Action",
+            "OfNat.ofNat",
+            "Nat",
+            "instOfNatNat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.indexedVisit",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "DecidableEq",
+            "Prod"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.sweepRevCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Option",
+            "Fin",
+            "HAdd.hAdd",
+            "Nat",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    },
+    {
+      "id": 84,
+      "target": "Turing.FinTM.dg_all_inputs",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "direct_imports": [
+        "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+        "TCSlib/Complexity/TuringMachine/Sweep.lean",
+        "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean"
+      ],
+      "full_historical_ordinary_foreign_heads": [
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesFunInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.spaceUsed",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesInTime",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "List",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.sweepAct",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Option",
+            "SignType",
+            "Turing.Action",
+            "OfNat.ofNat",
+            "Nat",
+            "instOfNatNat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.indexedVisit",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "DecidableEq",
+            "Prod"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.mapState",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.Action"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.sweepRevCfg",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Sweep",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "List",
+            "Option",
+            "Fin",
+            "HAdd.hAdd",
+            "Nat",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat",
+            "Int",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.visitedByTapeHead",
+          "ordinary_guard_target": true,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.MultiTapeTM",
+            "Turing.Cfg",
+            "Fin",
+            "Finset",
+            "Int"
+          ],
+          "unfold": false
+        }
+      ],
+      "ordinary_foreign_home_import_chains": [
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+            "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean",
+            "TCSlib/Complexity/TuringMachine/Finite.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/StateRenaming.lean"
+          ]
+        },
+        {
+          "foreign_home": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+          "shortest_existing_import_chain": [
+            "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+            "TCSlib/Complexity/TuringMachine/Sweep.lean"
+          ]
+        }
+      ],
+      "all_foreign_homes_already_imported": true,
+      "historical_footprint_status": "proposal70abd boundary inventory; source locations/current reads independently rechecked, not a new baseline guard execution"
+    }
+  ],
+  "existing_public_reader_source_lookup": [
+    {
+      "name": "step_of_some",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 200,
+          "source_line": "theorem step_of_some {cfg : Cfg k Symbol State input} {q : State} (h : cfg.state = some q) :"
+        }
+      ]
+    },
+    {
+      "name": "runFrom_zero",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 210,
+          "source_line": "lemma runFrom_zero {cfg : Cfg k Symbol State input} :"
+        }
+      ]
+    },
+    {
+      "name": "runFrom_succ_eq_step",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 214,
+          "source_line": "lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :"
+        },
+        {
+          "line": 218,
+          "source_line": "lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :"
+        }
+      ]
+    },
+    {
+      "name": "runFrom_with_q₀",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_declarations": [
+        {
+          "line": 265,
+          "source_line": "theorem runFrom_with_q₀ (tm : MultiTapeTM k Symbol State) (q : State)"
+        }
+      ]
+    },
+    {
+      "name": "initCfg_eq",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 187,
+          "source_line": "theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :="
+        }
+      ]
+    },
+    {
+      "name": "mem_visitedByTapeHead_iff",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 349,
+          "source_line": "theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :"
+        }
+      ]
+    },
+    {
+      "name": "spaceUsed_eq_sum",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 326,
+          "source_line": "theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :"
+        }
+      ]
+    },
+    {
+      "name": "spaceUsedByTape_eq_card",
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source_declarations": [
+        {
+          "line": 332,
+          "source_line": "theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :"
+        }
+      ]
+    },
+    {
+      "name": "computesFunInTime_iff",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_declarations": [
+        {
+          "line": 320,
+          "source_line": "theorem computesFunInTime_iff (M : FinTM Symbol) (f : List Symbol → List Symbol)"
+        }
+      ]
+    },
+    {
+      "name": "computesFunInTimeVia_iff",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_declarations": [
+        {
+          "line": 337,
+          "source_line": "theorem computesFunInTimeVia_iff {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)"
+        }
+      ]
+    },
+    {
+      "name": "computesInTime_iff",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_declarations": [
+        {
+          "line": 414,
+          "source_line": "theorem computesInTime_iff (M : FinTM Symbol) (x w : List Symbol) (t : ℕ) :"
+        }
+      ]
+    },
+    {
+      "name": "exists_first_halt",
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source_declarations": [
+        {
+          "line": 218,
+          "source_line": "theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)"
+        }
+      ]
+    },
+    {
+      "name": "ccfg_state",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "source_declarations": [
+        {
+          "line": 118,
+          "source_line": "@[simp] lemma ccfg_state {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+        }
+      ]
+    },
+    {
+      "name": "ccfg_work",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "source_declarations": [
+        {
+          "line": 130,
+          "source_line": "@[simp] lemma ccfg_work {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+        }
+      ]
+    },
+    {
+      "name": "PB_ccfg",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "source_declarations": [
+        {
+          "line": 189,
+          "source_line": "lemma PB_ccfg {x : List Bool} (B : ℤ) (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+        }
+      ]
+    },
+    {
+      "name": "seam_eq_mkCfg",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "source_declarations": [
+        {
+          "line": 96,
+          "source_line": "lemma seam_eq_mkCfg (c : Cfg m Bool Λ x) :"
+        }
+      ]
+    },
+    {
+      "name": "mkCfg_state",
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "source_declarations": [
+        {
+          "line": 49,
+          "source_line": "@[simp] lemma mkCfg_state (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp"
+        }
+      ]
+    },
+    {
+      "name": "initCfg_eq_bootCfg",
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "source_declarations": [
+        {
+          "line": 361,
+          "source_line": "theorem initCfg_eq_bootCfg :"
+        }
+      ]
+    }
+  ],
+  "complete_foreign_home_captures": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "0c12552177c3ebafdafb3a2268d3c64c727d7cb7",
+      "bytes": 28789,
+      "sha256": "a83dce1294535be5d79d1fcd5ff31cd8b4f9490995febb20384350b7827a956d",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "60ed080716e5dee1f4fc4beda64a6e447256bfeb",
+      "bytes": 23872,
+      "sha256": "d858432b2c4b2420c81577f19cd6634a2f8736fe9fb701af15c45401cf9ea8ac",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "833d5d29b082b66b4d70c262a8e35297c9937275",
+      "bytes": 24668,
+      "sha256": "2c680a5a335f7195c467d09b8a1d8c46c6ecc646128d708eaecd15015ec6d730",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "caceeabc5347ed57e0b88fb9608312ec425341b3",
+      "bytes": 18506,
+      "sha256": "a521df6947264245e851a7a32de94b93c4c3ffda77b39bd2ff4ced766b90fb5e",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "617bae27a7b301e33390169163e86d08b85b8810",
+      "bytes": 16912,
+      "sha256": "ad408e23dd8cd6f0dde31ec83f9c1c15e393eebdeb952903655afa5ac8e1fb17",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "88f9502962d40924833b6db33f8f94063c04d58c",
+      "bytes": 26030,
+      "sha256": "6ed290d656d91aab07c96b8c04b5cfe8f49d8e84276b62548c870e1bc09bf5e3",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "6e245e709a5f377768ec3a66e653937d72318e91",
+      "bytes": 28326,
+      "sha256": "406c39635302ad2e8b41782aff68b1d49d857b27a8418b2167badb406945af8f",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "a9f14a780c7702a5262aea9cb37ca0e19b6f8810",
+      "bytes": 12934,
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150",
+      "bytes": 25824,
+      "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "405f6d71fc719cb85be376b0949715fae6c1c485",
+      "bytes": 26720,
+      "sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "7fdd1de1a4329b3a902fd05305a016fb67d5ff4f",
+      "bytes": 36763,
+      "sha256": "37181134c960c117e92e169f88174034df1bdcdac54046faac6686231774fb25",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "cd0cf1417178df843e4171d792ad9811e1c025b8",
+      "bytes": 33082,
+      "sha256": "357c9d98f62a574b487abb6833cb33f2602e6f75a3b1d95a11fec5212b79fd67",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "a9cb5440e7cefcfb189a7f4e39123894ed8d52b2",
+      "bytes": 66449,
+      "sha256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "3c6e7ee072e43ade4bdc3db5f98bc4cef7a85add",
+      "bytes": 11199,
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "definition_and_reader_source_capture_complete": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "Git_blob": "11b4e76d7f8ba6dc564ef3406407e2811109ff60",
+      "bytes": 18068,
+      "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "definition_and_reader_source_capture_complete": true
+    }
+  ],
+  "source_only_declaration_catalog": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 81,
+      "source_line": "def core (c : Cfg k Bool S x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 86,
+      "source_line": "lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 102,
+      "source_line": "lemma core_runFrom (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 116,
+      "source_line": "lemma core_injOn (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (T : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 154,
+      "source_line": "lemma exists_eq_of_between (p : ℕ → ℤ) (h0 : p 0 = 0) (hstep : ∀ j, |p (j + 1) - p j| ≤ 1) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 178,
+      "source_line": "lemma abs_lt_card_image_of_unitSteps (p : ℕ → ℤ) (h0 : p 0 = 0)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 211,
+      "source_line": "lemma mem_image_workTapePos_of_ne_none {k : ℕ} {Symbol State : Type*} {input : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 253,
+      "source_line": "lemma abs_pos_lt_card_visited (tm : MultiTapeTM k Bool S) (x : List Bool) (t : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 268,
+      "source_line": "lemma mem_visited_of_ne_none (tm : MultiTapeTM k Bool S) (x : List Bool) (t : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 281,
+      "source_line": "lemma visitedByTapeHead_mono (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) {t t' : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 289,
+      "source_line": "lemma spaceUsed_mono (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) {t t' : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 296,
+      "source_line": "def posCode (B : ℕ) (z : ℤ) : Fin (2 * B + 1) :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 300,
+      "source_line": "lemma posCode_injOn (B : ℕ) {z z' : ℤ} (hz : |z| ≤ B) (hz' : |z'| ≤ B)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 307,
+      "source_line": "def coreCode (B : ℕ) (c : Cfg k Bool S x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 318,
+      "source_line": "lemma coreCode_inj (B : ℕ) {c d : Cfg k Bool S x}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 349,
+      "source_line": "def configBound (M : FinTM Bool) (n s : ℕ) : ℕ :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 362,
+      "source_line": "theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 418,
+      "source_line": "theorem configBound_logSpace_le (M : FinTM Bool) (c n : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 463,
+      "source_line": "theorem ComputesInSpace.computesFunInTime {M : FinTM Bool} {f : List Bool → List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 485,
+      "source_line": "theorem LOGSPACE_subset_P : LOGSPACE ⊆ P := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 492,
+      "source_line": "theorem polyTimeComputable_of_computesInSpace {f : List Bool → List Bool} {M : FinTM Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 515,
+      "source_line": "theorem ComputesInTime.spaceUsed_le_of_halt {Symbol : Type} {M : FinTM Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 542,
+      "source_line": "theorem ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le {M : FinTM Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "line": 566,
+      "source_line": "theorem decidesInSpace_of_alphabetReduction {Γ : Type} [Fintype Γ] [DecidableEq Γ]"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 43,
+      "source_line": "def mkCfg (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) (rt : Fin m → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 49,
+      "source_line": "@[simp] lemma mkCfg_state (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2)) rt rp"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 54,
+      "source_line": "lemma apply_moves (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 68,
+      "source_line": "lemma apply_regMove (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 83,
+      "source_line": "lemma apply_inputOnly (st : Option (CSt Λ SD m)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 96,
+      "source_line": "lemma seam_eq_mkCfg (c : Cfg m Bool Λ x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 112,
+      "source_line": "lemma ret2_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 173,
+      "source_line": "lemma retR_scan (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 271,
+      "source_line": "def leftSide (s : Fin (m + 1)) (dir : Bool) (a : Fin m) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 281,
+      "source_line": "lemma retR_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 387,
+      "source_line": "def retPos (cs : CallSpec m d Λ) (rp0 : Fin m → ℤ) (a : ℕ) (r : Fin m) : ℤ :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 392,
+      "source_line": "def RegBox (cs : CallSpec m d Λ) (c0pos : Fin m → ℤ) (W : Fin m → List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "line": 402,
+      "source_line": "lemma regs_run (l : Λ) (cs : CallSpec m d Λ) (hcall : P.call l = some cs) (hnd : cs.args.Nodup)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 65,
+      "source_line": "def idleK : Fin k → Option (Option Bool) × SignType := fun _ => (none, 0)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 69,
+      "source_line": "def clAct (i : Fin k) (wD wM : Option (Option Bool)) (mv : SignType) (st : Option (CleanSt S k)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 75,
+      "source_line": "def clNext (i : Fin k) : Option (CleanSt S k) :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 80,
+      "source_line": "def cleanTM (M : MultiTapeTM k Bool S) (q₀ : S) : MultiTapeTM (k + k) Bool (CleanSt S k) where"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 112,
+      "source_line": "def ccfg {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 118,
+      "source_line": "@[simp] lemma ccfg_state {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 123,
+      "source_line": "@[simp] lemma ccfg_mark {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 130,
+      "source_line": "@[simp] lemma ccfg_work {x : List Bool} (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 137,
+      "source_line": "def wr (w : Option (Option Bool)) (f : ℤ → Option Bool) (p : ℤ) : ℤ → Option Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 147,
+      "source_line": "lemma apply_clAct {x : List Bool} (i : Fin k) (wD wM : Option (Option Bool)) (mv : SignType)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 180,
+      "source_line": "def markI (a b : ℤ) (z : ℤ) : Option Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 184,
+      "source_line": "def PB {x : List Bool} (B : ℤ) (g : Cfg (k + k) Bool (CleanSt S k) x) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 189,
+      "source_line": "lemma PB_ccfg {x : List Bool} (B : ℤ) (st : Option (CleanSt S k)) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 200,
+      "source_line": "lemma abs_update_le (Dp : Fin k → ℤ) (i : Fin k) (v B : ℤ) (h : ∀ j, |Dp j| ≤ B)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 217,
+      "source_line": "lemma goR_run (a b : ℤ) (Dt : Fin k → ℤ → Option Bool) (Mt : Fin k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 275,
+      "source_line": "def eraseAbove (f : ℤ → Option Bool) (p : ℤ) : ℤ → Option Bool := fun z => if z ≤ p then f z else none"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 284,
+      "source_line": "lemma erase_run (a b : ℤ) (f : ℤ → Option Bool) (ha : a ≤ 0) (haB : -B ≤ a - 1) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 371,
+      "source_line": "lemma markI_empty (a : ℤ) (z : ℤ) : markI a (a - 1) z = if z = 0 then some true else none := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 379,
+      "source_line": "lemma back_run (a : ℤ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "line": 443,
+      "source_line": "lemma clean_tape (a b : ℤ) (Dt Mt : Fin k → ℤ → Option Bool) (Dp : Fin k → ℤ)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 65,
+      "source_line": "abbrev Seg := List Bool × Bool"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 68,
+      "source_line": "def render (s : Seg) : List Bool := if s.2 then dbl s.1 else s.1"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 71,
+      "source_line": "def rlen (s : Seg) : ℕ := if s.2 then 2 * s.1.length else s.1.length"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 74,
+      "source_line": "@[simp] lemma rlen_true (w : List Bool) : rlen (w, true) = 2 * w.length := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 76,
+      "source_line": "@[simp] lemma rlen_false (w : List Bool) : rlen (w, false) = w.length := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 79,
+      "source_line": "@[simp] lemma length_render (s : Seg) : (render s).length = rlen s := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 83,
+      "source_line": "def vword : List Seg → List Bool"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 89,
+      "source_line": "def off : List Seg → ℕ → ℕ"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 95,
+      "source_line": "def seg (segs : List Seg) (i : ℕ) : Seg := segs.getD i ([], false)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 98,
+      "source_line": "@[simp] lemma seg_cons_zero (s : Seg) (rest : List Seg) : seg (s :: rest) 0 = s := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 100,
+      "source_line": "@[simp] lemma seg_cons_succ (s : Seg) (rest : List Seg) (i : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 104,
+      "source_line": "lemma off_succ (segs : List Seg) (i : ℕ) (hi : i + 1 < segs.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 117,
+      "source_line": "lemma length_vword (segs : List Seg) (h : segs ≠ []) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 138,
+      "source_line": "lemma getElem?_vword_seg (segs : List Seg) (i k : ℕ) (hi : i < segs.length)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 166,
+      "source_line": "lemma getElem?_vword_sep (segs : List Seg) (i : ℕ) (hi : i + 1 < segs.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 206,
+      "source_line": "def wlen (segs : List Seg) (s : ℕ) : ℕ := (seg segs s).1.length"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 209,
+      "source_line": "def TPos.Valid (segs : List Seg) (s : ℕ) : TPos → Prop"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 214,
+      "source_line": "def cellOff (segs : List Seg) (s c : ℕ) (p : Bool) : ℕ :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 219,
+      "source_line": "def vpos (segs : List Seg) (s : ℕ) : TPos → ℕ"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 225,
+      "source_line": "lemma cellOff_lt (segs : List Seg) (s c : ℕ) (p : Bool) (hc : c < wlen segs s) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 235,
+      "source_line": "def tmove (segs : List Seg) (s : ℕ) : TPos → SignType → ℕ × TPos"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 249,
+      "source_line": "lemma tmove_valid (segs : List Seg) (s : ℕ) (hs : s < segs.length) (tp : TPos)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 257,
+      "source_line": "lemma vpos_right_last (segs : List Seg) (s : ℕ) (hs : s + 1 = segs.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 264,
+      "source_line": "lemma off_add_rlen_le (segs : List Seg) (j : ℕ) (hj : j < segs.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 283,
+      "source_line": "lemma moveInputPos_val (N p : ℕ) (hp : p < N + 2) (m : SignType) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 300,
+      "source_line": "lemma vpos_tmove (segs : List Seg) (s : ℕ) (hs : s < segs.length) (tp : TPos)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 372,
+      "source_line": "def vsym (segs : List Seg) (s : ℕ) : TPos → Option Bool"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "line": 384,
+      "source_line": "lemma inputSymbol_vpos {k : ℕ} {S : Type} (segs : List Seg) (s : ℕ) (hs : s < segs.length)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 81,
+      "source_line": "def Mode.seg0 : Mode → List Bool → Seg"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 86,
+      "source_line": "def argSegs : List (List Bool) → List Seg"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 92,
+      "source_line": "@[simp] lemma length_argSegs (ws : List (List Bool)) : (argSegs ws).length = ws.length := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 100,
+      "source_line": "lemma seg_argSegs (ws : List (List Bool)) (i : ℕ) (hi : i < ws.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 119,
+      "source_line": "structure CallSpec (m d : ℕ) (Λ : Type) where"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 133,
+      "source_line": "structure RProg (m d : ℕ) (Λ : Type) where"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 140,
+      "source_line": "def callSegs {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (x : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 145,
+      "source_line": "lemma callSegs_congr {m d m' d' : ℕ} {Λ Λ' : Type} {cs : CallSpec m d Λ} {cs' : CallSpec m' d' Λ'}"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 151,
+      "source_line": "@[simp] lemma length_callSegs {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (x : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 177,
+      "source_line": "def gstep (dbl last first : Bool) (s : ℕ) (par dir isChar : Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 190,
+      "source_line": "def toFin (m s : ℕ) : Fin (m + 1) := ⟨min s m, by omega⟩"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 193,
+      "source_line": "def segDbl {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (s : ℕ) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 197,
+      "source_line": "def segReg {m d : ℕ} {Λ : Type} (cs : CallSpec m d Λ) (s : ℕ) (h : 0 < m) : Fin m :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 202,
+      "source_line": "def isCharRead (mode : Mode) (s : ℕ) (rd : Option Bool) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 206,
+      "source_line": "def virtSym (mode : Mode) (s nseg : ℕ) (dir : Bool) (rd : Option Bool) : Option Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 212,
+      "source_line": "def regMove {m : ℕ} (r : Fin m) (mv : SignType) : Fin m → Option (Option Bool) × SignType :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 217,
+      "source_line": "def nextRet {Λ SD : Type} {m d : ℕ} (cs : CallSpec m d Λ) (l : Λ) (s : Fin (m + 1))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 227,
+      "source_line": "def dIdle : Fin kD → Option (Option Bool) × SignType := fun _ => (none, 0)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 235,
+      "source_line": "def ctr (P : RProg m d Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 295,
+      "source_line": "def compileTM (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 302,
+      "source_line": "def seam {x : List Bool} (c : Cfg m Bool Λ x) : Cfg (m + kD) Bool (CSt Λ SD m) x :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 307,
+      "source_line": "lemma seam_init (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 322,
+      "source_line": "lemma step_seam_prog (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "line": 347,
+      "source_line": "lemma seam_state_none {x : List Bool} (c : Cfg m Bool Λ x) (h : c.state = none) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 52,
+      "source_line": "def trackPos (segs : List Seg) (s : ℕ) : TPos → ℤ"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 58,
+      "source_line": "def TPos.isCell : TPos → Bool"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 63,
+      "source_line": "def Consistent (segs : List Seg) (s : ℕ) (par dir : Bool) : TPos → Prop"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 77,
+      "source_line": "lemma gstep_tmove (segs : List Seg) (s : ℕ) (hs : s < segs.length) (tp : TPos)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 112,
+      "source_line": "lemma inputSymbol_eq {k : ℕ} {S : Type} {x : List Bool} (cfg : Cfg k Bool S x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 123,
+      "source_line": "lemma takeWhile_true_getElem? (x : List Bool) (c : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 138,
+      "source_line": "lemma takeWhile_true_end (x : List Bool) : x[(x.takeWhile (· = true)).length]? ≠ some true := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 147,
+      "source_line": "lemma Mode.seg0_whole {md : Mode} (h : md = .whole) (x : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 151,
+      "source_line": "lemma Mode.seg0_unaryFst {md : Mode} (h : md = .unaryFst) (x : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 159,
+      "source_line": "@[simp] lemma seg_callSegs_zero : seg (callSegs cs x W) 0 = cs.mode.seg0 x := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 163,
+      "source_line": "lemma seg_callSegs_succ (a : ℕ) (ha : a < cs.args.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 170,
+      "source_line": "lemma segDbl_eq (s : ℕ) (hs : s < cs.args.length + 1) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 179,
+      "source_line": "lemma wlen_zero_le : wlen (callSegs cs x W) 0 ≤ x.length := by"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 186,
+      "source_line": "lemma segReg_eq (s : ℕ) (h : 0 < m) (h1 : 0 < s) (h2 : s ≤ cs.args.length) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 202,
+      "source_line": "def regPos (s : ℕ) (tp : TPos) (r : Fin m) : ℤ :="
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 210,
+      "source_line": "def inPos (cs : CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool) (s : ℕ) (tp : TPos) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 216,
+      "source_line": "structure TrackRel (g : Cfg (m + kD) Bool (CSt Λ SD m) x)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 231,
+      "source_line": "def SimRel (g : Cfg (m + kD) Bool (CSt Λ SD m) x)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 238,
+      "source_line": "def HaltRel (g : Cfg (m + kD) Bool (CSt Λ SD m) x)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 254,
+      "source_line": "lemma track_read (hW : ∀ r ∈ cs.args, c0.workTapes r = FinTM.bufferTape (W r))"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 353,
+      "source_line": "lemma trackPos_bounds (segs : List Seg) (s : ℕ) (tp : TPos) (h : tp.Valid segs s) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 363,
+      "source_line": "lemma regPos_after (hnd : cs.args.Nodup) (s : ℕ) (tp : TPos) (G1 : ℕ) (T2 : TPos)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 412,
+      "source_line": "lemma inPos_after (s : ℕ) (tp : TPos) (htp : tp.Valid (callSegs cs x W) s) (G1 : ℕ) (T2 : TPos)"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 446,
+      "source_line": "lemma head?_append_toList (l : List Bool) (o : Option Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "line": 461,
+      "source_line": "theorem sim_step {l₀ : Λ} (P : RProg m d Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 59,
+      "source_line": "def capPush : Option (Option Bool) → Option Bool → Option (Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 66,
+      "source_line": "def capOf : List Bool → Option (Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 72,
+      "source_line": "theorem capOf_append (o : List Bool) (e : Option Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 79,
+      "source_line": "theorem capOf_eq_some_some {o : List Bool} {v : Bool} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 110,
+      "source_line": "def slots (f : Fin s → α) (g : Fin a → α) (y : α) : Fin (s + a + 1) → α :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 114,
+      "source_line": "def sI (i : Fin s) : Fin (s + a + 1) := Fin.castAdd 1 (Fin.castAdd a i)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 117,
+      "source_line": "def aI (i : Fin a) : Fin (s + a + 1) := Fin.castAdd 1 (Fin.natAdd s i)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 120,
+      "source_line": "def yI : Fin (s + a + 1) := Fin.natAdd (s + a) 0"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 123,
+      "source_line": "@[simp] theorem slots_sI (f : Fin s → α) (g : Fin a → α) (y : α) (i : Fin s) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 127,
+      "source_line": "@[simp] theorem slots_aI (f : Fin s → α) (g : Fin a → α) (y : α) (i : Fin a) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 131,
+      "source_line": "@[simp] theorem slots_yI (f : Fin s → α) (g : Fin a → α) (y : α) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 135,
+      "source_line": "theorem slots_cases {P : Fin (s + a + 1) → Prop} (hs : ∀ i, P (sI i)) (ha : ∀ i, P (aI i))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 146,
+      "source_line": "def tapeAfter (act : Option (Option Bool) × SignType) (t : ℤ → Option Bool) (p : ℤ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 152,
+      "source_line": "def hostCfg {SS AS : Type} {s a : ℕ} {x : List Bool} (q : Option (ClockPhase SS AS))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 159,
+      "source_line": "theorem apply_hostCfg {SS AS : Type} {s a : ℕ} {x : List Bool} (im : SignType)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 181,
+      "source_line": "@[simp] theorem hostCfg_symbols_sI {SS AS : Type} {s a : ℕ} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 189,
+      "source_line": "@[simp] theorem hostCfg_symbols_aI {SS AS : Type} {s a : ℕ} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 197,
+      "source_line": "@[simp] theorem hostCfg_symbols_yI {SS AS : Type} {s a : ℕ} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 209,
+      "source_line": "abbrev idle : Option (Option Bool) × SignType := (none, 0)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 212,
+      "source_line": "theorem heads_idle {n : ℕ} (P : Fin n → ℤ) : (fun i => P i + ((idle.2 : SignType) : ℤ)) = P :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 216,
+      "source_line": "def emitTo : Option Bool → Option (Option Bool) × SignType"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 221,
+      "source_line": "def clockTr (b : Bool) (q : ClockPhase S.State A.State) (inp : Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 258,
+      "source_line": "def hostTM : NDTM (S.k + A.k + 1) Bool (ClockPhase S.State A.State) :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 266,
+      "source_line": "def FinNDTM.clockHost (S : FinTM Bool) (A : FinNDTM Bool) (loop : Bool) : FinNDTM Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 283,
+      "source_line": "theorem stepWith_hostCfg (b : Bool) (q : ClockPhase S.State A.State) (ip : Fin (x.length + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 293,
+      "source_line": "abbrev yard (m : ℕ) : ℤ → Option Bool := bufferTape (List.replicate m true)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 296,
+      "source_line": "theorem yard_of_lt {m : ℕ} {z : ℤ} (h0 : 0 ≤ z) (h : z < m) : yard m z = some true := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 302,
+      "source_line": "theorem yard_neg_one (m : ℕ) : yard m (-1) = none := FinTM.bufferTape_left _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 305,
+      "source_line": "theorem yard_len (m : ℕ) : yard m m = none := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 311,
+      "source_line": "def bootCfg (c : Cfg S.k Bool S.State x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 320,
+      "source_line": "theorem boot_step (b : Bool) (c : Cfg S.k Bool S.State x) {q : S.State}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 345,
+      "source_line": "theorem boot_run (c : Cfg S.k Bool S.State x) (w : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 361,
+      "source_line": "theorem initCfg_eq_bootCfg :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 374,
+      "source_line": "def inLeft {n : ℕ} : Fin (n + 2) → ℕ → Fin (n + 2)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 379,
+      "source_line": "theorem inLeft_val {n : ℕ} (ip : Fin (n + 2)) (j : ℕ) : (inLeft ip j).val = ip.val - j := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 392,
+      "source_line": "theorem moveInputPos_inLeft {n : ℕ} (ip : Fin (n + 2)) {j : ℕ} (hj : ip.val ≤ j) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 401,
+      "source_line": "theorem rew2_step (b : Bool) (ip : Fin (x.length + 2)) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 412,
+      "source_line": "theorem rew_step (b : Bool) (ip : Fin (x.length + 2)) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 422,
+      "source_line": "theorem rew2_turn (b : Bool) (ip : Fin (x.length + 2)) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 433,
+      "source_line": "theorem rew2_marks (ip : Fin (x.length + 2)) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 454,
+      "source_line": "theorem rewind_run (ip : Fin (x.length + 2)) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 479,
+      "source_line": "def runCfg (a : Cfg A.k Bool A.State x) (j : ℤ) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 488,
+      "source_line": "theorem run_step (b : Bool) (a : Cfg A.k Bool A.State x) (j : ℕ) (hj : j < m)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 523,
+      "source_line": "theorem run_run (a : Cfg A.k Bool A.State x) (j : ℕ) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 536,
+      "source_line": "theorem run_run_zero (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 545,
+      "source_line": "theorem timeout_success (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 560,
+      "source_line": "theorem timeout_fail (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 88,
+      "source_line": "structure Action (k : ℕ) (Symbol State : Type*) where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 107,
+      "source_line": "structure Cfg (k : ℕ) (Symbol State : Type*) (input : List Symbol) where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 122,
+      "source_line": "lemma Cfg.ext_zero_tapes {Symbol State : Type*} {input : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 135,
+      "source_line": "def moveInputPos {n : ℕ} (pos : Fin (n + 2)) (m : SignType) : Fin (n + 2) :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 140,
+      "source_line": "lemma moveInputPos_zero {n : ℕ} (pos : Fin (n + 2)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 146,
+      "source_line": "lemma moveInputPos_leftBoundary {n : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 152,
+      "source_line": "lemma moveInputPos_rightBoundary {n : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 160,
+      "source_line": "lemma moveInputPos_neg_of_ne_left {n : ℕ} (p : Fin (n + 2)) (h : p ≠ 0) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 169,
+      "source_line": "lemma moveInputPos_pos_of_ne_right {n : ℕ} (p : Fin (n + 2)) (h : p.val ≠ n + 1) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 178,
+      "source_line": "def Cfg.inputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 188,
+      "source_line": "lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 202,
+      "source_line": "def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 207,
+      "source_line": "theorem Cfg.inputSymbol_of_zero {cfg : Cfg k Symbol State input} (h : cfg.inputPos = 0) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 213,
+      "source_line": "theorem Cfg.inputSymbol_of_end {cfg : Cfg k Symbol State input}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 221,
+      "source_line": "theorem Cfg.workTapeSymbols_eq (cfg : Cfg k Symbol State input) (i : Fin k) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 226,
+      "source_line": "abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 230,
+      "source_line": "def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 244,
+      "source_line": "def Action.apply (action : Action k Symbol State) (cfg : Cfg k Symbol State input) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 264,
+      "source_line": "lemma workTapePos_apply_le (action : Action k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 271,
+      "source_line": "def visitedOfCfgs (cfgs : List (Cfg k Symbol State input)) (i : Fin k) : Finset ℤ :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "line": 275,
+      "source_line": "def spaceUsedOfCfgs (cfgs : List (Cfg k Symbol State input)) : ℕ :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 145,
+      "source_line": "structure MultiTapeTM (k : ℕ) (Symbol State : Type*) where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 169,
+      "source_line": "def step (cfg : Cfg k Symbol State input) : Cfg k Symbol State input :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 176,
+      "source_line": "def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 183,
+      "source_line": "def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 187,
+      "source_line": "theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 191,
+      "source_line": "lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 200,
+      "source_line": "theorem step_of_some {cfg : Cfg k Symbol State input} {q : State} (h : cfg.state = some q) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 207,
+      "source_line": "def runFrom (cfg : Cfg k Symbol State input) (t : ℕ) : Cfg k Symbol State input := tm.step^[t] cfg"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 210,
+      "source_line": "lemma runFrom_zero {cfg : Cfg k Symbol State input} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 214,
+      "source_line": "lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 218,
+      "source_line": "lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 223,
+      "source_line": "lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 231,
+      "source_line": "lemma timed_input_bound (cfg : Cfg k Symbol State input) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 252,
+      "source_line": "lemma runFrom_comm_of_step {k' : ℕ} {State' : Type*} {input input' : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 262,
+      "source_line": "lemma runFrom_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none) {n : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 267,
+      "source_line": "lemma outputSymbol_of_halt {cfg : Cfg k Symbol State input} (h_halt : cfg.state = none) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 274,
+      "source_line": "theorem outputSymbol_of_some {cfg : Cfg k Symbol State input} {q : State}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 281,
+      "source_line": "lemma workTapePos_step_le (c : Cfg k Symbol State input) (i : Fin k) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 295,
+      "source_line": "def visitedByTapeHead (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) : Finset ℤ :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 302,
+      "source_line": "def spaceUsedByTape (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) : ℕ :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 309,
+      "source_line": "def spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) : ℕ := ∑ i, tm.spaceUsedByTape cfg t i"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 313,
+      "source_line": "lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg k Symbol State input) (t : ℕ) (h_zero : k = 0) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 320,
+      "source_line": "lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 326,
+      "source_line": "theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 332,
+      "source_line": "theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 337,
+      "source_line": "lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 349,
+      "source_line": "theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 360,
+      "source_line": "lemma visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 380,
+      "source_line": "lemma visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 397,
+      "source_line": "lemma step_output (cfg : Cfg k Symbol State input) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 403,
+      "source_line": "lemma runFrom_output_eq_of_halt"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 414,
+      "source_line": "def ComputesInTimeAndSpace"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 424,
+      "source_line": "def ComputesFunInTimeAndSpace {α β : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 433,
+      "source_line": "def ComputableInTimeAndSpace {α β : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 442,
+      "source_line": "abbrev ComputableInTimeAndSpaceOfLength {α β : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 449,
+      "source_line": "theorem ComputesFunInTimeAndSpace.mono {α β : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 459,
+      "source_line": "theorem ComputableInTimeAndSpace.mono {α β : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 473,
+      "source_line": "def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 480,
+      "source_line": "def haltsAtStep (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 485,
+      "source_line": "lemma halting_step_unique"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "line": 511,
+      "source_line": "lemma not_halts_of_repeat_nonhalt"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 112,
+      "source_line": "theorem output_length_le (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 129,
+      "source_line": "theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 149,
+      "source_line": "theorem spaceUsed_le_mul_succ (tm : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 167,
+      "source_line": "theorem step_output_prepend (tm : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 189,
+      "source_line": "theorem runFrom_output_prepend (tm : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 201,
+      "source_line": "theorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 218,
+      "source_line": "theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 236,
+      "source_line": "theorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 265,
+      "source_line": "theorem runFrom_with_q₀ (tm : MultiTapeTM k Symbol State) (q : State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 272,
+      "source_line": "theorem initCfg_with_q₀ (tm : MultiTapeTM k Symbol State) (q : State) (x : List Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 286,
+      "source_line": "structure FinTM (Symbol : Type) : Type 1 where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 307,
+      "source_line": "def ComputesInTime (M : FinTM Symbol) (input output : List Symbol) (t : ℕ) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 312,
+      "source_line": "def ComputesFunInTime (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 320,
+      "source_line": "theorem computesFunInTime_iff (M : FinTM Symbol) (f : List Symbol → List Symbol)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 330,
+      "source_line": "def ComputesFunInTimeVia {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 337,
+      "source_line": "theorem computesFunInTimeVia_iff {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 350,
+      "source_line": "def Computes (M : FinTM Symbol) (f : List Symbol → List Symbol) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 356,
+      "source_line": "theorem computes_iff (M : FinTM Symbol) (f : List Symbol → List Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 368,
+      "source_line": "theorem ComputesInTime.mono {M : FinTM Symbol} {input output : List Symbol} {t t' : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 381,
+      "source_line": "theorem not_computesInTime_zero (M : FinTM Symbol) (input output : List Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 394,
+      "source_line": "theorem ComputesInTime.output_unique {M : FinTM Symbol} {input w w' : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 405,
+      "source_line": "theorem ComputesFunInTime.computes {M : FinTM Symbol} {f : List Symbol → List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 414,
+      "source_line": "theorem computesInTime_iff (M : FinTM Symbol) (x w : List Symbol) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 429,
+      "source_line": "theorem Computes.exists_computesInTime_iff {M : FinTM Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 451,
+      "source_line": "theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 471,
+      "source_line": "theorem MultiTapeTM.spaceUsed_le_of_abs_le {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "line": 502,
+      "source_line": "theorem MultiTapeTM.workTapePos_runFrom_mem_Icc {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 123,
+      "source_line": "structure NDTM (k : ℕ) (Symbol State : Type*) where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 139,
+      "source_line": "def stepWith (b : Bool) (cfg : Cfg k Symbol State input) : Cfg k Symbol State input :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 147,
+      "source_line": "def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 152,
+      "source_line": "theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 159,
+      "source_line": "def runWith : List Bool → Cfg k Symbol State input → Cfg k Symbol State input"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 165,
+      "source_line": "lemma runWith_nil {cfg : Cfg k Symbol State input} : tm.runWith [] cfg = cfg := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 169,
+      "source_line": "lemma runWith_cons {b : Bool} {w : List Bool} {cfg : Cfg k Symbol State input} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 174,
+      "source_line": "lemma runWith_append (w w' : List Bool) (cfg : Cfg k Symbol State input) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 184,
+      "source_line": "def fixChoice (tm : NDTM k Symbol State) (b : Bool) : MultiTapeTM k Symbol State :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 195,
+      "source_line": "theorem stepWith_eq_fixChoice_step (tm : NDTM k Symbol State) (b : Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 201,
+      "source_line": "lemma stepWith_of_halt {b : Bool} {cfg : Cfg k Symbol State input} (h : cfg.state = none) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 210,
+      "source_line": "theorem stepWith_of_some {b : Bool} {cfg : Cfg k Symbol State input} {q : State}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 220,
+      "source_line": "lemma runWith_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 232,
+      "source_line": "def HaltsWithin (tm : NDTM k Symbol State) (input : List Symbol) (t : ℕ) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 238,
+      "source_line": "theorem haltsWithin_iff {tm : NDTM k Symbol State} {input : List Symbol} {t : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 250,
+      "source_line": "theorem HaltsWithin.mono {tm : NDTM k Symbol State} {input : List Symbol} {t t' : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 270,
+      "source_line": "theorem not_haltsWithin_zero (tm : NDTM k Symbol State) (input : List Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 284,
+      "source_line": "structure FinNDTM (Symbol : Type) : Type 1 where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 301,
+      "source_line": "def MultiTapeTM.toNDTM (tm : MultiTapeTM k Symbol State) : NDTM k Symbol State :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 310,
+      "source_line": "lemma MultiTapeTM.toNDTM_initCfg (tm : MultiTapeTM k Symbol State) (input : List Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 322,
+      "source_line": "theorem MultiTapeTM.toNDTM_runWith (tm : MultiTapeTM k Symbol State) {input : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 333,
+      "source_line": "def FinTM.toFinNDTM {Symbol : Type} (M : FinTM Symbol) : FinNDTM Symbol :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 371,
+      "source_line": "theorem stepWith_mapState_of_agreeOn {x : List Γ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 400,
+      "source_line": "theorem runWith_mapState_of_agreeOn {x : List Γ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 429,
+      "source_line": "theorem runWith_mapState_of_agreeOn_det {x : List Γ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 462,
+      "source_line": "theorem runWith_eq_fixChoice_runFrom (tm : NDTM k Symbol State) (b : Bool) (w : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 493,
+      "source_line": "def relabelState (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 507,
+      "source_line": "theorem relabelState_runWith {x : List Γ} (tm : NDTM k Γ S) (e : S ≃ S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 524,
+      "source_line": "private lemma inputSymbol_take_eq {x : List Γ} {m : ℕ} (c : Cfg k Γ S x)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 544,
+      "source_line": "private lemma moveInputPos_val {N : ℕ} (q : Fin (N + 2)) (s : SignType) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 557,
+      "source_line": "private lemma moveInputPos_val_take {n n' : ℕ} (pos : Fin (n + 2)) (pos' : Fin (n' + 2))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 575,
+      "source_line": "private lemma stepWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} (b : Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 619,
+      "source_line": "private lemma runWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "line": 649,
+      "source_line": "theorem runWith_initCfg_take (tm : NDTM k Γ S) (x : List Γ) (m : ℕ) (w : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 77,
+      "source_line": "def Oblivious {Γ : Type} (M : FinTM Γ) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 92,
+      "source_line": "private def maskedCfg {k : ℕ} {A S : Type} (zero : A) {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 99,
+      "source_line": "private lemma maskedCfg_input {k : ℕ} {A S : Type} (zero : A) {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 107,
+      "source_line": "private lemma maskedCfg_apply {k : ℕ} {A S : Type} (zero : A) {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 121,
+      "source_line": "def maskedClock {A : Type} (W : FinTM A) (zero : A) : FinTM A where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 128,
+      "source_line": "private lemma maskedClock_step {A : Type} (W : FinTM A) (zero : A) {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 147,
+      "source_line": "private lemma maskedClock_lockstep {A : Type} (W : FinTM A) (zero : A) (x : List A) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 157,
+      "source_line": "private lemma maskedClock_oblivious {A : Type} (W : FinTM A) (zero : A) : (maskedClock W zero).Oblivious := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 172,
+      "source_line": "private lemma inputInsensitive_oblivious {A : Type} (P : FinTM A) (zero : A)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 184,
+      "source_line": "lemma maskedClock_computes (W : FinTM Bool) (T : ℕ → ℕ) (b : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 197,
+      "source_line": "def decorateTM {A D : Type} [Fintype D] [DecidableEq D]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 215,
+      "source_line": "private def scheduleCfg {A D S : Type} {k l : ℕ} {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 222,
+      "source_line": "private lemma decorateTM_step {A D : Type} [Fintype D] [DecidableEq D]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 255,
+      "source_line": "lemma decorateTM_run {A D : Type} [Fintype D] [DecidableEq D]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 272,
+      "source_line": "private lemma decorateTM_heads {A D : Type} [Fintype D] [DecidableEq D]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 300,
+      "source_line": "lemma decorateTM_oblivious {A D : Type} [Fintype D] [DecidableEq D]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 325,
+      "source_line": "private def parallelCode {A : Type} [DecidableEq A] : Option A ↪ (A → Option Bool) where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 348,
+      "source_line": "private lemma parallelDecode_code {A : Type} [DecidableEq A] (a : Option A) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 353,
+      "source_line": "private def parallelBit {A : Type} [DecidableEq A] (e : Bool ↪ A) (a : A) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 357,
+      "source_line": "private lemma parallelBit_embed {A : Type} [DecidableEq A] (e : Bool ↪ A) (b : Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 390,
+      "source_line": "private lemma parallelCfg_input {A S : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 398,
+      "source_line": "private lemma parallelCfg_read {A S : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 413,
+      "source_line": "private lemma parallelTM_step {A : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 448,
+      "source_line": "private lemma parallelCfg_init {A : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 459,
+      "source_line": "lemma parallelTM_run {A : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 471,
+      "source_line": "lemma parallelTM_oblivious {A : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 482,
+      "source_line": "lemma parallelTM_computes {A : Type} [Fintype A] [DecidableEq A]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 507,
+      "source_line": "def oblEmbed : Bool ↪ OblSymbol := ⟨OblSymbol.bit, fun _ _ h => OblSymbol.bit.inj h⟩"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 510,
+      "source_line": "def clockBit : Option OblSymbol → Option Bool"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 548,
+      "source_line": "def oblAction {S : Type} {k : ℕ} (q : Option S) (inp : SignType)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 555,
+      "source_line": "def nextThird (i : Fin 3) : Fin 3 :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 567,
+      "source_line": "def obliviousSchedule (W : FinTM Bool) (a : ℕ) : FinTM OblSymbol where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 672,
+      "source_line": "lemma obliviousSchedule_output (W : FinTM Bool) (a : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "line": 682,
+      "source_line": "lemma obliviousSchedule_oblivious (W : FinTM Bool) (a : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 90,
+      "source_line": "lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 105,
+      "source_line": "def emitAction {k : ℕ} {S : Type} (w : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 115,
+      "source_line": "lemma emit_run {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 143,
+      "source_line": "lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 159,
+      "source_line": "def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 164,
+      "source_line": "lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 179,
+      "source_line": "def leftAction {k : ℕ} {S S' : Type} (l : ℕ) (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 187,
+      "source_line": "def rightAction {l : ℕ} {S S' : Type} (k : ℕ) (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 196,
+      "source_line": "def leftCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 207,
+      "source_line": "def rightCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 223,
+      "source_line": "lemma leftCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 237,
+      "source_line": "lemma rightCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 252,
+      "source_line": "lemma leftCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 276,
+      "source_line": "lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 299,
+      "source_line": "lemma leftCfg_run {k l : ℕ} {S S' : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 310,
+      "source_line": "lemma rightCfg_run {k l : ℕ} {S S' : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 321,
+      "source_line": "def branchTM (M₁ M₂ : FinTM Bool) (b : Bool) : FinTM Bool where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 333,
+      "source_line": "theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 337,
+      "source_line": "theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 342,
+      "source_line": "private lemma branchTM_initCfg_false (M₁ M₂ : FinTM Bool) (x : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 360,
+      "source_line": "private lemma branchTM_initCfg_true (M₁ M₂ : FinTM Bool) (x : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 378,
+      "source_line": "lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 398,
+      "source_line": "theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 431,
+      "source_line": "theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 491,
+      "source_line": "lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 501,
+      "source_line": "lemma moveInputPos_neg_val {n : ℕ} (pos : Fin (n + 2)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 514,
+      "source_line": "lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 567,
+      "source_line": "private lemma rewind_first_step {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 581,
+      "source_line": "lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 598,
+      "source_line": "lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 616,
+      "source_line": "theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 655,
+      "source_line": "theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 679,
+      "source_line": "def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 684,
+      "source_line": "@[simp] lemma tapeBlocks_left {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 689,
+      "source_line": "@[simp] lemma tapeBlocks_buffer {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 695,
+      "source_line": "@[simp] lemma tapeBlocks_right {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 700,
+      "source_line": "def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 704,
+      "source_line": "@[simp] lemma bufferTape_nil {Symbol : Type*} : bufferTape (Symbol := Symbol) [] = fun _ => none := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 710,
+      "source_line": "@[simp] lemma bufferTape_nat {Symbol : Type*} (w : List Symbol) (i : ℕ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 714,
+      "source_line": "@[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 719,
+      "source_line": "theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 725,
+      "source_line": "theorem bufferTape_of_neg {Symbol : Type*} (w : List Symbol) {z : ℤ} (hz : z < 0) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 734,
+      "source_line": "lemma bufferTape_append {Symbol : Type*} (w : List Symbol) (b : Symbol) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 752,
+      "source_line": "def VirtualTag {n : ℕ} (p : Fin (n + 2)) (b : Bool) : Prop :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 758,
+      "source_line": "theorem VirtualTag_iff {n : ℕ} (p : Fin (n + 2)) (b : Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 764,
+      "source_line": "def virtualMove (b : Bool) (inp : Option Bool) (m : SignType) : SignType :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 769,
+      "source_line": "def virtualNextTag (b : Bool) (m : SignType) : Bool :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 776,
+      "source_line": "lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 795,
+      "source_line": "lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 843,
+      "source_line": "def bufferedCompTM (M₁ M₂ : FinTM Bool) : FinTM Bool where"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 878,
+      "source_line": "def bufferedFirstCfg (M₁ M₂ : FinTM Bool) {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 888,
+      "source_line": "lemma bufferedFirstCfg_init (M₁ M₂ : FinTM Bool) (x : List Bool) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 909,
+      "source_line": "lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 954,
+      "source_line": "lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 972,
+      "source_line": "def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 989,
+      "source_line": "theorem bufferedSecondCfg_workTapes_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1000,
+      "source_line": "theorem bufferedSecondCfg_workTapePos_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1015,
+      "source_line": "lemma bufferedSecondCfg_step (M₁ M₂ : FinTM Bool) {x y : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1072,
+      "source_line": "lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1099,
+      "source_line": "def bufferedScanCfg (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1116,
+      "source_line": "lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1170,
+      "source_line": "lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1199,
+      "source_line": "lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1247,
+      "source_line": "def AgreeOn {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1253,
+      "source_line": "theorem agreeOn_iff {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1265,
+      "source_line": "theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1286,
+      "source_line": "theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "line": 1305,
+      "source_line": "theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 78,
+      "source_line": "def Action.mapState {State' : Type*} (f : State → State') (a : Action k Symbol State) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 87,
+      "source_line": "def Cfg.mapState {State' : Type*} {input : List Symbol} (f : State → State')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 102,
+      "source_line": "lemma Cfg.mapState_apply {State' : Type*} {input : List Symbol} (f : State → State')"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 110,
+      "source_line": "def MultiTapeTM.relabelState {State' : Type*} (tm : MultiTapeTM k Symbol State)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 116,
+      "source_line": "lemma MultiTapeTM.relabelState_step {State' : Type*} {input : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 136,
+      "source_line": "lemma MultiTapeTM.relabelState_runFrom_init {State' : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 158,
+      "source_line": "theorem MultiTapeTM.runFrom_mapState_of_agreeOn {k : ℕ} {S H : Type} {x : List Symbol}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 211,
+      "source_line": "theorem MultiTapeTM.relabelState_visitedByTapeHead {k : ℕ} {Symbol : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "line": 223,
+      "source_line": "theorem MultiTapeTM.relabelState_spaceUsed {k : ℕ} {Symbol : Type*} {State State' : Type*}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 55,
+      "source_line": "def sweepTape {A : Type} (z : ℤ) (l r : List (Option A))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 60,
+      "source_line": "lemma sweepTape_read {A : Type} (z : ℤ) (l r : List (Option A)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 69,
+      "source_line": "lemma sweepTape_right {A : Type} (z : ℤ) (l r : List (Option A))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 87,
+      "source_line": "def sweepCfg {A S : Type} {x : List A} (q : Option S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 92,
+      "source_line": "def sweepAct {A S : Type} (q : S) (a : Option A) (d : SignType) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 96,
+      "source_line": "lemma sweepCfg_right {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 110,
+      "source_line": "def sweepFold {R C : Type} (visit : R → C → R × C) (s : R) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 123,
+      "source_line": "lemma sweep_run {A S R C : Type} (tm : MultiTapeTM 1 A S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 153,
+      "source_line": "def sweepRevCfg {A S : Type} {x : List A} (q : Option S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 159,
+      "source_line": "lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 176,
+      "source_line": "lemma sweep_run_reverse {A S R C : Type} (tm : MultiTapeTM 1 A S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 205,
+      "source_line": "lemma sweepTape_turn {A : Type} (z : ℤ) (l r : List (Option A)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 217,
+      "source_line": "lemma sweepFold_append {R C : Type} (visit : R → C → R × C)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 228,
+      "source_line": "def indexedVisit {I V C : Type} [DecidableEq I]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 239,
+      "source_line": "lemma indexedFold {I V C : Type} [DecidableEq I]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 266,
+      "source_line": "lemma indexedFold_block {k : ℕ} {V C : Type}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 276,
+      "source_line": "lemma indexedFold_block_reverse {k : ℕ} {V C : Type}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 288,
+      "source_line": "lemma sweepTape_nil {A : Type} (z : ℤ) (l : List (Option A)) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 297,
+      "source_line": "lemma sweepCfg_right_any {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 314,
+      "source_line": "lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 332,
+      "source_line": "lemma sweep_generate {A S : Type} {x : List A}"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 359,
+      "source_line": "lemma source_bounds {Γ : Type} (M : FinTM Γ) (x : List Γ) (t : ℕ) :"
+    }
+  ],
+  "limits": "Source/import dependency review only. No source changes, new proof, new API, or Lean/native/seal checks. A located existing reader makes only its particular substep mechanical; no whole-target repair is claimed. Lack of a selected source-catalog reader is not a global API absence proof."
+}

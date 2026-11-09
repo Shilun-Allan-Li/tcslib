@@ -1,0 +1,11 @@
+/-- Right steps commute with state mapping, even after a source halt. -/
+private lemma seamComp_step_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (c : Cfg k Symbol S₂ x) :
+    (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inr) =
+      (M₂.step c).mapState Sum.inr := by
+  cases hs : c.state with
+  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+  | some q =>
+    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+    rfl

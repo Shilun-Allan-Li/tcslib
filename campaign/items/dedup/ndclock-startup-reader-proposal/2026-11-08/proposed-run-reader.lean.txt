@@ -1,0 +1,14 @@
+/-- The attempt configuration of the initial machine has the initial control and input
+position, a blank attempt bank, and no captured output, at the given yardstick position. -/
+theorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    runCfg m (A.tm.initCfg x) j sT sP =
+      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)
+        (fun _ => 0) (yard m) j [] := by
+  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by
+    funext i z
+    rw [NDTM.initCfg_eq, Cfg.init_workTapes]
+  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by
+    funext i
+    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]
+  rw [runCfg, hw, hp]
+  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]

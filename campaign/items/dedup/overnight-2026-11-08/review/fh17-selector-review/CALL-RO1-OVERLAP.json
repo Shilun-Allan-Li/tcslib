@@ -1,0 +1,48 @@
+{
+  "source_START": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+  "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+  "target": "call_run",
+  "original_full_guard_errors": 4,
+  "captured_regions": 5,
+  "additional_latent_point": "Final gH one-step rfl was downstream of the originally failing change, so it is captured separately as a fifth region.",
+  "API_used": [
+    "MultiTapeTM.runFrom_zero",
+    "MultiTapeTM.runFrom_succ_eq_step"
+  ],
+  "generic_RO1_API_consumed": false,
+  "kind": "Existing one-step chains retain already-acknowledged RO1 status pending generic API/home decision; no new waiver.",
+  "rows": [
+    {
+      "region": "simulation zero",
+      "before": "    | zero => intro _; exact \u27e8fun _ => hsim0, fun h => absurd h (by omega)\u27e9",
+      "after": "    | zero =>\n      intro _\n      exact \u27e8fun _ => by simpa only [MultiTapeTM.runFrom_zero] using hsim0,\n        fun h => absurd h (by omega)\u27e9"
+    },
+    {
+      "region": "box first-step endpoint",
+      "before": "        rw [show (compileTM P l\u2080 D q0).runFrom (seam c0) 1 = ((compileTM P l\u2080 D q0).step (seam c0)) from rfl]",
+      "after": "        rw [show (compileTM P l\u2080 D q0).runFrom (seam c0) 1 = ((compileTM P l\u2080 D q0).step (seam c0))\n          from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]]"
+    },
+    {
+      "region": "box append starting configuration",
+      "before": "    rw [show (compileTM P l\u2080 D q0).runFrom (seam c0) 1 = (compileTM P l\u2080 D q0).step (seam c0)\n      from rfl]",
+      "after": "    rw [show (compileTM P l\u2080 D q0).runFrom (seam c0) 1 = (compileTM P l\u2080 D q0).step (seam c0)\n      from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]]"
+    },
+    {
+      "region": "whole-run initial step before change",
+      "before": "  \u00b7 rw [MultiTapeTM.runFrom_add]\n    change (compileTM P l\u2080 D q0).runFrom ((compileTM P l\u2080 D q0).step (seam c0)) _ = _",
+      "after": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n    change (compileTM P l\u2080 D q0).runFrom ((compileTM P l\u2080 D q0).step (seam c0)) _ = _"
+    },
+    {
+      "region": "whole-run final return step (latent after prior change failure)",
+      "before": "    rw [show (compileTM P l\u2080 D q0).runFrom gH 1 = (compileTM P l\u2080 D q0).step gH from rfl, hret1,",
+      "after": "    rw [show (compileTM P l\u2080 D q0).runFrom gH 1 = (compileTM P l\u2080 D q0).step gH\n      from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero], hret1,"
+    }
+  ],
+  "additional_round2_latent_reads": {
+    "count": 2,
+    "before": "(compileTM P l\u2080 D q0).step gH from rfl, hret1]",
+    "after": "(compileTM P l\u2080 D q0).step gH\n          from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero], hret1]",
+    "reason": "Both return-box append branches were downstream of earlier guard failures."
+  },
+  "captured_regions_total": 7
+}

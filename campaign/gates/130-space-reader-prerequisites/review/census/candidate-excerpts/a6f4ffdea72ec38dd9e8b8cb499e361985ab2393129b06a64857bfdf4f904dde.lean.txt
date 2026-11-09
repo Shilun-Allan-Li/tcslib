@@ -1,0 +1,13 @@
+/-- Extend a safe phase by one silent dispatch to another non-anchor phase. -/
+private lemma emitterP2_after {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c : Cfg k Bool S w)
+    (t : ℕ) (q r : S) (words : Fin k → List Bool)
+    (hr : tm.runFrom c t = Cfg.ofWords q words) (hs : splitSafe tm anchor c t)
+    (htr : ∀ inp work, tm.tr q inp work = controlAction 0 (some r))
+    (hq : q ≠ anchor) (hnext : r ≠ anchor) :
+    tm.runFrom c (t + 1) = Cfg.ofWords r words ∧ splitSafe tm anchor c (t + 1) := by
+  obtain ⟨he, hse⟩ := splitSafe_one tm anchor (Cfg.ofWords q words) (Cfg.ofWords r words)
+    (emitterP2_control tm q r htr w words)
+    (by simpa only [Cfg.ofWords, ne_eq, Option.some.injEq] using hq)
+    (by simpa only [Cfg.ofWords, ne_eq, Option.some.injEq] using hnext)
+  exact splitSafe_join tm anchor c _ _ t 1 hr hs he hse

@@ -1,0 +1,12 @@
+theorem zonedTape_left_sep {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : ℕ) :
+    zonedTape z (-(zoneStart i : ℤ) + 1) = none := by
+  have h2 := two_le_zoneStart i
+  simp only [zonedTape, zoneCellAt]
+  rw [if_neg (by omega), if_neg (by omega), show (-(-(zoneStart i : ℤ) + 1)).toNat =
+    zoneStart i - 1 by omega, zoneOwner_sep]
+  rfl
+
+/-- **Blank outside the layout**: every cell at distance at least `zoneStart ℓ - 1` from home
+(the separator after the last laid-out zone, and beyond) is blank. With `ℓ` levels the
+nonblank cells lie in `[-(zoneStart ℓ - 2), zoneStart ℓ - 2]`; this replaces the retired
+`Turing.zoneTape_blank_outside` as the carrier's extent. -/

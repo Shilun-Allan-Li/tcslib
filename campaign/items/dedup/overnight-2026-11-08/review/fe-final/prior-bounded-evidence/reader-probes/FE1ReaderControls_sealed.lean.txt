@@ -1,0 +1,38 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.workTapeSymbols Turing.moveInputPos
+open Lean Elab Command Meta in
+run_cmd do
+  let targets : List Name := [`Turing.Action.apply, `Turing.Cfg.workTapeSymbols, `Turing.moveInputPos]
+  let mut i := 0
+  for name in targets do
+    let some (.defnInfo info) := (← getEnv).find? name | throwError "not ordinary definition {name}"
+    for mode in ["point", "abstract"] do
+      i := i + 1
+      let result ← liftTermElabM do
+        let levels := info.levelParams.map Level.param
+        let head := mkConst name levels
+        let solve := fun (lhs rhs : Expr) => do
+          let ty ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar ty
+          try
+            goal.mvarId!.refl
+            pure (some (ty, ← instantiateMVars goal))
+          catch ex =>
+            logInfo m!"READER_CONTROL|{name}|{mode}|FAIL"
+            logError m!"READER_RFL|{name}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then solve head info.value
+        else forallTelescope info.type fun xs _ => do
+          let result ← solve (mkAppN head xs) ((mkAppN info.value xs).headBeta)
+          match result with
+          | none => pure none
+          | some (ty, value) => pure (some (← mkForallFVars xs ty, ← mkLambdaFVars xs value))
+      if let some (ty, value) := result then
+        let kernelName := Name.mkSimple ("FE1ReaderControl_" ++ toString i)
+        liftCoreM <| addDecl (.thmDecl { name := kernelName, levelParams := info.levelParams, type := ty, value := value })
+        logInfo m!"READER_CONTROL|{name}|{mode}|PASS|kernelChecked={kernelName}"

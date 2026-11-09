@@ -1,0 +1,63 @@
+{
+  "source_commit": "9936345ae64a4380bbec3ac6f3dad192f927420a",
+  "BASE": "actual complete current BASE native owner (attempt13), imported for actual metadata attempt14",
+  "HYP": "actual complete HYP native owner (attempt06), imported for actual metadata attempt07",
+  "selected_consumer_comparisons": [
+    {
+      "name": "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFresh_idle",
+      "checks": {
+        "name": true,
+        "owner": true,
+        "private": true,
+        "levelParams": true,
+        "typeExpr": true,
+        "axioms": true,
+        "simp": true,
+        "unfold": true
+      },
+      "AX": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "literal_typeExpr_sha256": "3a33ab963be275daa6f08c6e1cda52179ab6dd5a3312abff9921d847560c0016"
+    },
+    {
+      "name": "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepared_idle",
+      "checks": {
+        "name": true,
+        "owner": true,
+        "private": true,
+        "levelParams": true,
+        "typeExpr": true,
+        "axioms": true,
+        "simp": true,
+        "unfold": true
+      },
+      "AX": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "literal_typeExpr_sha256": "fb372978c2a05627ae3e0490b5a7829d61453e03ba315a023b48f80af76ca718"
+    }
+  ],
+  "new_provider": {
+    "axioms": [
+      "Quot.sound"
+    ],
+    "levelParams": [
+      "u_1",
+      "u_2",
+      "u_3"
+    ],
+    "name": "Turing.seamCompTM_tr_inr",
+    "owner": "TCSlib.Complexity.TuringMachine.Build.Seam",
+    "private": false,
+    "simp": false,
+    "typeExpr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `S\u2081\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n    (Lean.Expr.forallE\n      `S\u2082\n      (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_2)))\n      (Lean.Expr.forallE\n        `Symbol\n        (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_3)))\n        (Lean.Expr.forallE\n          (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `inst.\u00ab_@\u00bb.TCSlib.Complexity.TuringMachine.Build.Seam 1959889514) \"_hygCtx\") \"_hyg\") 10)\n          (Lean.Expr.app (Lean.Expr.const `DecidableEq [Lean.Level.succ (Lean.Level.param `u_1)]) (Lean.Expr.bvar 2))\n          (Lean.Expr.forallE\n            `M\u2081\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.param `u_3, Lean.Level.param `u_1])\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.bvar 1))\n              (Lean.Expr.bvar 3))\n            (Lean.Expr.forallE\n              `exit\n              (Lean.Expr.bvar 4)\n              (Lean.Expr.forallE\n                `M\u2082\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.param `u_3, Lean.Level.param `u_2])\n                      (Lean.Expr.bvar 6))\n                    (Lean.Expr.bvar 3))\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.forallE\n                  `entry\n                  (Lean.Expr.bvar 5)\n                  (Lean.Expr.forallE\n                    `q\n                    (Lean.Expr.bvar 6)\n                    (Lean.Expr.forallE\n                      `inp\n                      (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.param `u_3]) (Lean.Expr.bvar 6))\n                      (Lean.Expr.forallE\n                        `work\n                        (Lean.Expr.forallE\n                          (Lean.Name.mkNum `a._@._internal._hyg 0)\n                          (Lean.Expr.app (Lean.Expr.const `Fin []) (Lean.Expr.bvar 10))\n                          (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.param `u_3]) (Lean.Expr.bvar 8))\n                          (Lean.BinderInfo.default))\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.const\n                                `Eq\n                                [Lean.Level.max\n                                   (Lean.Level.max\n                                     (Lean.Level.succ (Lean.Level.param `u_1))\n                                     (Lean.Level.succ (Lean.Level.param `u_2)))\n                                   (Lean.Level.succ (Lean.Level.param `u_3))])\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const\n                                      `Turing.Action\n                                      [Lean.Level.param `u_3,\n                                       Lean.Level.max (Lean.Level.param `u_1) (Lean.Level.param `u_2)])\n                                    (Lean.Expr.bvar 11))\n                                  (Lean.Expr.bvar 8))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Sum [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                                    (Lean.Expr.bvar 10))\n                                  (Lean.Expr.bvar 9))))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const\n                                            `Turing.MultiTapeTM.tr\n                                            [Lean.Level.param `u_3,\n                                             Lean.Level.max (Lean.Level.param `u_1) (Lean.Level.param `u_2)])\n                                          (Lean.Expr.bvar 11))\n                                        (Lean.Expr.bvar 8))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const `Sum [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                                          (Lean.Expr.bvar 10))\n                                        (Lean.Expr.bvar 9)))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.const\n                                                        `Turing.seamCompTM\n                                                        [Lean.Level.param `u_1,\n                                                         Lean.Level.param `u_2,\n                                                         Lean.Level.param `u_3])\n                                                      (Lean.Expr.bvar 11))\n                                                    (Lean.Expr.bvar 10))\n                                                  (Lean.Expr.bvar 9))\n                                                (Lean.Expr.bvar 8))\n                                              (Lean.Expr.bvar 7))\n                                            (Lean.Expr.bvar 6))\n                                          (Lean.Expr.bvar 5))\n                                        (Lean.Expr.bvar 4))\n                                      (Lean.Expr.bvar 3)))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `Sum.inr [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                                        (Lean.Expr.bvar 10))\n                                      (Lean.Expr.bvar 9))\n                                    (Lean.Expr.bvar 2)))\n                                (Lean.Expr.bvar 1))\n                              (Lean.Expr.bvar 0)))\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.const\n                                        `Turing.Action.mapState\n                                        [Lean.Level.param `u_3,\n                                         Lean.Level.param `u_2,\n                                         Lean.Level.max (Lean.Level.param `u_2) (Lean.Level.param `u_1)])\n                                      (Lean.Expr.bvar 11))\n                                    (Lean.Expr.bvar 8))\n                                  (Lean.Expr.bvar 9))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Sum [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                                    (Lean.Expr.bvar 10))\n                                  (Lean.Expr.bvar 9)))\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `Sum.inr [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                                  (Lean.Expr.bvar 10))\n                                (Lean.Expr.bvar 9)))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const\n                                            `Turing.MultiTapeTM.tr\n                                            [Lean.Level.param `u_3, Lean.Level.param `u_2])\n                                          (Lean.Expr.bvar 11))\n                                        (Lean.Expr.bvar 8))\n                                      (Lean.Expr.bvar 9))\n                                    (Lean.Expr.bvar 4))\n                                  (Lean.Expr.bvar 2))\n                                (Lean.Expr.bvar 1))\n                              (Lean.Expr.bvar 0))))\n                        (Lean.BinderInfo.default))\n                      (Lean.BinderInfo.default))\n                    (Lean.BinderInfo.default))\n                  (Lean.BinderInfo.default))\n                (Lean.BinderInfo.default))\n              (Lean.BinderInfo.default))\n            (Lean.BinderInfo.default))\n          (Lean.BinderInfo.instImplicit))\n        (Lean.BinderInfo.implicit))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "typePretty": "\u2200 {k : \u2115} {S\u2081 : Type u_1} {S\u2082 : Type u_2} {Symbol : Type u_3} [inst : DecidableEq S\u2081]\n  (M\u2081 : Turing.MultiTapeTM k Symbol S\u2081) (exit : S\u2081) (M\u2082 : Turing.MultiTapeTM k Symbol S\u2082) (entry q : S\u2082)\n  (inp : Option Symbol) (work : Fin k \u2192 Option Symbol),\n  (Turing.seamCompTM M\u2081 exit M\u2082 entry).tr (Sum.inr q) inp work = Turing.Action.mapState Sum.inr (M\u2082.tr q inp work)",
+    "unfold": false
+  },
+  "scope": "Exactly these two existing private consumers plus the proposed provider. No all-private/global type-equality claim."
+}

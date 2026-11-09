@@ -1,0 +1,10 @@
+/-- The anchor dispatches into the verdict module in one stationary step: from the seam at
+`inl 0` holding `w`, one step reaches the seam at the verdict module's entry holding `w`. -/
+theorem host_dispatch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w : List Bool) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 0) (stateWord (K + 1) w)) =
+      Cfg.ofWords (ModuleHost.entry M 2) (stateWord (K + 1) w) := by
+  rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ 0 rfl]
+  change (FinTM.controlAction 0 (some (ModuleHost.entry M 2))).apply _ = _
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  rfl

@@ -1,0 +1,28 @@
+private lemma clBank_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)
+    (hc : c.state = some (fun _ => some (0 : Fin 4))) :
+    (clBankTM l).tm.step c = c := by
+  -- Proof sketch. Read each component action through its public equations, then compare the bank fields.
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clBankTM, clBankPart, clCountTM,
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  let d (i : Fin l) : Cfg 1 Bool (Fin 4) x :=
+    ⟨some 0, c.inputPos, (fun _ => c.workTapes i),
+      (fun _ => c.workTapePos i), c.output⟩
+  have hd (i : Fin l) : (FinTM.controlAction 0 (some (0 : Fin 4))).apply (d i) = d i := by
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state]
+    refine (congrArg some ?_).trans hc.symm
+    funext i
+    have hs := congrArg Cfg.state (hd i)
+    simpa only [Action.apply_state] using hs
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · funext i
+    have hw := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapes 0) (hd i)
+    simpa only [Action.apply_workTapes, Cfg.workTapeSymbols_eq] using hw
+  · funext i
+    have hp := congrArg (fun e : Cfg 1 Bool (Fin 4) x => e.workTapePos 0) (hd i)
+    simpa only [Action.apply_workTapePos] using hp
+  · simp only [Action.apply_output, Option.toList_none, List.append_nil]

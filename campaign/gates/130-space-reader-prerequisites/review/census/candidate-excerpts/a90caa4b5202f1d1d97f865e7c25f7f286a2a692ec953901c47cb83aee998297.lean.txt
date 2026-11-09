@@ -1,0 +1,46 @@
+/-- **The forward scan** of the leaf rows: from `run` with the head at `o` and `m` non-blank
+cells ahead, `m` steps move the head to `o + m` and change nothing else. -/
+private theorem xr_fwd_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (r : Fin K)
+    (hsome : ∀ inp w s, w r = some s →
+      tm.tr .run inp w = xr_act (xr_mv1 r none SignType.pos) (some .run))
+    (m : ℕ) :
+    ∀ (o : ℤ) (d : Cfg K Bool xr_St x), d.state = some .run → d.workTapePos r = o →
+      (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) →
+      tm.runFrom d m =
+        ⟨some .run, d.inputPos, d.workTapes, Function.update d.workTapePos r (o + m),
+          d.output⟩ := by
+  induction m with
+  | zero =>
+    intro o d hd hpos _
+    rw [MultiTapeTM.runFrom_zero]
+    apply Cfg.ext
+    · exact hd
+    · rfl
+    · rfl
+    · funext i
+      dsimp only
+      by_cases hi : i = r
+      · rw [hi, Function.update_self, hpos]
+        simp
+      · rw [Function.update_of_ne hi]
+    · rfl
+  | succ m ih =>
+    intro o d hd hpos hcells
+    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp (hcells 0 (by omega))
+    have hread : d.workTapeSymbols r = some s := by
+      rw [Cfg.workTapeSymbols_eq, hpos]
+      simpa using hs
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step_of_some hd, hsome _ _ s hread,
+      xr_mv1_apply_none, hpos, xr_cast_pos]
+    rw [ih (o + 1) _ rfl (by dsimp only; rw [Function.update_self]) ?_]
+    · dsimp only
+      rw [Function.update_idem]
+      congr 2
+      push_cast
+      ring
+    · intro i hi
+      dsimp only
+      have := hcells (i + 1) (by omega)
+      push_cast at this ⊢
+      convert this using 2
+      ring

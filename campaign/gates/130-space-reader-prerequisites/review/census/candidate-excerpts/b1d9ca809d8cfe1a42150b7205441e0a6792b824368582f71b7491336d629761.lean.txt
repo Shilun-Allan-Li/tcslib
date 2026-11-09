@@ -1,0 +1,11 @@
+/-- The four-state input rewind; no public native-input-head primitive finishes at marker `0`.
+The public `FinTM.rewind_heads` supplies its scan and all prefix work-head bounds. -/
+private def inputSeekRewind : MultiTapeTM 2 Bool InputSeekRw where
+  q₀ := .start
+  tr := fun q inp _ => match q with
+    | .start => FinTM.controlAction .neg (some .scan)
+    | .scan => match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos (some .left)
+    | .left => FinTM.controlAction .neg (some .done)
+    | .done => FinTM.controlAction 0 (some .done)

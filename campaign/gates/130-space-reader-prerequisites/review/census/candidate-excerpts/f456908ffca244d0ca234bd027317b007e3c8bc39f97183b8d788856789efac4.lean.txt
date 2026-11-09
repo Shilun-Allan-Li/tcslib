@@ -1,0 +1,23 @@
+/-- Combined round controller. The polynomial source starts on the prepared
+bank, and its emissions are counted against native input without physical
+output. Every seam transition is explicit, including the final anchor return. -/
+private def splitBodyTM (M : FinTM Bool) (start : M.State) : FinTM Bool where
+  k := M.k + 1
+  State := SplitBodyState M.State
+  tm := {
+    q₀ := .anchor
+    tr := fun q inp work => match q with
+      | .anchor => controlAction 0 (some (.prepare (0, false)))
+      | .prepare p =>
+        if p.1 = 2 then controlAction 0 (some (.count start p.2))
+        else ((splitPrepareTM M.k).tm.tr p inp work).mapState .prepare
+      | .count q over => splitCountAction .count .check over inp
+          (M.tm.tr q none (fun i => work i.succ))
+      | .check over => controlAction 0 (some (.rewind (!over && inp.isNone) 0))
+      | .rewind ok p =>
+        if p = 2 then controlAction 0 (some (if ok then .emit 0 else .restore (0, false)))
+        else ((splitRewindTM M.k).tm.tr p inp work).mapState (.rewind ok)
+      | .restore p =>
+        if p = (4, false) then controlAction 0 (some .anchor)
+        else ((splitRestoreTM M.k).tm.tr p inp work).mapState .restore
+      | .emit p => ((splitEmitTM M.k).tm.tr p inp work).mapState .emit }

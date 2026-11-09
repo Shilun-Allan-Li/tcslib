@@ -1,0 +1,31 @@
+/-- Finalization in the full controller includes the post-cleanup dispatch
+and restores every scratch tape and head. -/
+private lemma emCall_finalize_run (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) :
+    (emCallTM M emit).tm.runFrom
+      (emCallBankFrame M emit x arg cap T M.k (.inr (.inl (Fin.last M.k, 0))))
+      (arg.length + 3 * cap.length + 6) =
+      { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
+          (stateWord (emCallTM M emit).k (if emit then arg else cap))
+        with output := if emit then cap else [] } := by
+  have hs : (emCallTM M emit).tm.step
+      (emCallBankFrame M emit x arg cap T M.k (.inr (.inl (Fin.last M.k, 0)))) =
+      emCallBankFrame M emit x arg cap T M.k (.inr (.inr 0)) := by
+    simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM,
+      Fin.val_last, lt_self_iff_false, ↓reduceDIte]
+    rw [controlAction_apply, moveInputPos_zero]
+  have he := emCall_state_run (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+    (emCallTM M emit).tm
+    ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
+    (fun _ => True) (by intros; rfl)
+    (embedEmitCfg (emCallPairEmbedding M) (fun _ _ => none) (fun _ => 0) []
+      (emCallFinishCfg emit x 1 0 (bufferTape arg) (bufferTape cap) arg.length cap.length []))
+    (arg.length + 3 * cap.length + 5) (by intros; trivial)
+  rw [embedEmitTM_runFrom] at he
+  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
+    (fun q => .inr (.inr q)) _ _ _) _ =
+    emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q)) _ _ _ at he
+  erw [emCall_finish_initial M emit x arg cap T, emCall_finish_run, emCall_finish_final] at he
+  rw [show arg.length + 3 * cap.length + 6 = (arg.length + 3 * cap.length + 5) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step, hs]
+  exact he

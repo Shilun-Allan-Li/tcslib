@@ -1,0 +1,72 @@
+{
+  "utc": "2026-11-08T15:14:26.138773+00:00",
+  "HEAD": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+  "BASE": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "source_tracked_clean": true,
+  "candidate_is_private_hypothesis_not_Git_commit": true,
+  "project": "/private/tmp/ab34-fh13-blive-companions/live/project",
+  "whole_input_snapshot": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-nfh10",
+  "whole_input_source": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+  "whole_input_objects": 895,
+  "immutable_e0b_packet": "/private/tmp/ab34-gate122-fh10-e0b-frozen",
+  "immutable_e0b_manifest_sha256": "1a897379688f5fb669e71d83dd9f84363bcf09fceff25b2e2922cd0f6cad64ca",
+  "targets": [
+    {
+      "id": "BLIVE1",
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedCut_live_before",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedCutInterpreter cfg t ht s hst",
+      "source_line": 1731,
+      "literal_header": "private lemma timedCut_live_before {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    {s t : \u2115} (hst : s \u2264 t) (ht : (timedCutInterpreter.runFrom cfg t).state \u2260 none) :\n    (timedCutInterpreter.runFrom cfg s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "1016d39fda49e561a207e8a387dcdabbb706ffec544ba57bf6d6040676cb8ae0",
+      "new_chunk_sha256": "02610d4f9fcfed0d244ede4f04d42bbd20f5852f8c1c5efa0ec7c33e2977691c",
+      "old_chunk": "targets/BLIVE1/old.lean.txt",
+      "new_chunk": "targets/BLIVE1/new.lean.txt"
+    },
+    {
+      "id": "BLIVE2",
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedPrefix_live",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm\n    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs \u03b1) x))\n    (4 * bs.length + 2 * \u03b1.length + 5) (timedPrefix_penultimate bs \u03b1 x) s (by omega)",
+      "source_line": 2230,
+      "literal_header": "private lemma timedPrefix_live (bs \u03b1 x : List Bool) (s : \u2115)\n    (hs : s < 4 * bs.length + 2 * \u03b1.length + 6) :\n    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs \u03b1) x)) s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "50add313197c4ea3a1a370ef0bcef63817861b6bd9e5f344ff708998e627ad6f",
+      "new_chunk_sha256": "e4d011f84dfc8a248bc1dfa778b355cb7934023c614c427fc4c477e4f1fd041d",
+      "old_chunk": "targets/BLIVE2/old.lean.txt",
+      "new_chunk": "targets/BLIVE2/new.lean.txt"
+    },
+    {
+      "id": "BLIVE3",
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "universal_live_before",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst",
+      "source_line": 232,
+      "literal_header": "private lemma universal_live_before {k : \u2115} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : \u2115}\n    (hst : s \u2264 t) (ht : (tm.runFrom cfg t).state \u2260 none) :\n    (tm.runFrom cfg s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "fe27ffab0f17a76a589d2ce0984211a6c124dd7d517429fa7ae76f0563ae3ff3",
+      "new_chunk_sha256": "8f26a8124566e4f8c80b1a35fc1920aa18a84a92835d912c7a3ae0385421b091",
+      "old_chunk": "targets/BLIVE3/old.lean.txt",
+      "new_chunk": "targets/BLIVE3/new.lean.txt"
+    }
+  ],
+  "owners": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "E0B_sha256": "3692e500be0c43e303b2c1b048065c744bde91a3f70068c3ac10950a3be41b7d",
+      "candidate_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e",
+      "source_HEAD_blob": "8c9eef2a9222ad422280b393e2d67a992d73df2f"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "E0B_sha256": "6f0cf3a4e6a5727431ef162cd6907e3305f6b77a6f1c1fa099117474b5d4dbe4",
+      "candidate_sha256": "59a9f0adda2a1984485c47c740d78143e8f5d81b39d27c63f584820769ed4e81",
+      "source_HEAD_blob": "c93495c7daded314d42a466dbd4bafb25c2f85cf"
+    }
+  ],
+  "no_actual_source_Git_canonical_mutation": true,
+  "only_three_formal_bodies_replaced": true,
+  "no_header_import_definition_name_API_home_route_or_math_fill": true
+}

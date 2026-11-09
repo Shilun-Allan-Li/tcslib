@@ -1,0 +1,44 @@
+[
+  {
+    "id": "initCfg_delta",
+    "guard": "MultiTapeTM.initCfg",
+    "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    A.initCfg x = Cfg.init A.q₀ x := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  },
+  {
+    "id": "initCfg_equation",
+    "guard": "MultiTapeTM.initCfg",
+    "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    (A.initCfg x).state = some A.q₀ := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  },
+  {
+    "id": "Cfg_init_delta",
+    "guard": "Cfg.init",
+    "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x) = ⟨some q, 1, fun _ _ => none, fun _ => 0, []⟩ := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  },
+  {
+    "id": "Cfg_init_equation",
+    "guard": "Cfg.init",
+    "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x).state = some q := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  },
+  {
+    "id": "mapState_delta",
+    "guard": "Cfg.mapState",
+    "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    c.mapState f = ⟨c.state.map f, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  },
+  {
+    "id": "mapState_equation",
+    "guard": "Cfg.mapState",
+    "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    (c.mapState f).state = c.state.map f := rfl\n",
+    "unsealed_expected": "PASS",
+    "sealed_expected": "rfl type mismatch"
+  }
+]

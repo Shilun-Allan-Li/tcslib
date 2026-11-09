@@ -1,0 +1,15 @@
+/-- The branch state reads the first cell of tape 0 — the verdict `b` of a verdict word —
+and dispatches into the payload module (`true`) or the step module (`false`), stationary. -/
+lemma host_branch (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x : List Bool) (b : Bool) (w : List Bool) (hw : w[0]? = some b) :
+    (hostTM M K hk).tm.step (Cfg.ofWords (input := x) (.inl 1) (stateWord (K + 1) w)) =
+      Cfg.ofWords (hostEntry M (if b then 4 else 3)) (stateWord (K + 1) w) := by
+  have hread : (Cfg.ofWords (input := x) (.inl 1 : HostState M)
+      (stateWord (K + 1) w)).workTapeSymbols 0 = some b := by
+    simp [Cfg.ofWords, Cfg.workTapeSymbols, stateWord, FinTM.bufferTape, hw]
+  unfold MultiTapeTM.step
+  show (FinTM.controlAction 0 (some (if (Cfg.ofWords (input := x) (.inl 1 : HostState M)
+    (stateWord (K + 1) w)).workTapeSymbols 0 = some true
+      then hostEntry M 4 else hostEntry M 3))).apply _ = _
+  rw [hread, FinTM.controlAction_apply, moveInputPos_zero]
+  cases b <;> rfl

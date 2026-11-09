@@ -1,0 +1,11 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.tapeAction
+open Turing
+-- C30 tapeAction, pointwise and abstracted
+example (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) :
+    (tapeAction i inp wr m q).output = none := by rfl
+example : (fun (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) =>
+    (tapeAction i inp wr m q).output) = fun _ _ _ _ _ => none := by rfl

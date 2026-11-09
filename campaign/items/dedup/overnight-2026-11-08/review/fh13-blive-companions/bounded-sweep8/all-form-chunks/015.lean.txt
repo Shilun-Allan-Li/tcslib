@@ -1,0 +1,20 @@
+/-- Every recorded displacement is exactly the change in the represented
+position, including blocked input moves and the halting transition.
+**Proof sketch.** The halted branch is stationary. In the live branch the
+public virtual-move theorem identifies clamped input movement, while work
+heads follow the source action literally, regardless of its next state. -/
+private lemma clMoves_correct (M : FinTM Bool) {y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool) (hb : FinTM.VirtualTag c.inputPos b)
+    (i : Fin (1 + M.k)) :
+    clPositions M (M.tm.step c) i = clPositions M c i +
+      (clMoves M c.state b c.inputSymbol c.workTapeSymbols i : ℤ) := by
+  cases hs : c.state with
+  | none => simp [clMoves, hs, MultiTapeTM.step_of_halt hs]
+  | some q =>
+    have hm := (FinTM.virtualMove_correct c b hb
+      (M.tm.tr q c.inputSymbol c.workTapeSymbols).inputTape).1
+    refine Fin.addCases ?_ ?_ i
+    · intro j
+      simpa [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply] using hm.symm
+    · intro j
+      simp [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply]

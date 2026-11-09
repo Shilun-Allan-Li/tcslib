@@ -1,0 +1,50 @@
+{
+  "complete_target": "Turing.MachineFormat.canonOffset_spec",
+  "all_imports_original": true,
+  "guard_names": [
+    "Nat.bit",
+    "Turing.codeBitsNat",
+    "Turing.incFixed"
+  ],
+  "default_simp_definitions_removed": [],
+  "scope_native_sealed_only_guard_line_difference": true,
+  "full_target_doc_header_body_inside_guard_section": true,
+  "same_owner_helpers_values_and_types_inventoried": true,
+  "imported_theorem_values_not_traversed": true,
+  "earlier_same_owner_helpers_not_claimed_sealed": true,
+  "fresh_paired_control_identities": [
+    {
+      "definition": "Nat.bit",
+      "mode": "point",
+      "kernel_name": "NatClosureRfl_1_point"
+    },
+    {
+      "definition": "Nat.bit",
+      "mode": "abstract",
+      "kernel_name": "NatClosureRfl_2_abstract"
+    },
+    {
+      "definition": "Turing.codeBitsNat",
+      "mode": "point",
+      "kernel_name": "NatClosureRfl_3_point"
+    },
+    {
+      "definition": "Turing.codeBitsNat",
+      "mode": "abstract",
+      "kernel_name": "NatClosureRfl_4_abstract"
+    },
+    {
+      "definition": "Turing.incFixed",
+      "mode": "nil_equation",
+      "kernel_name": "NatClosureIncFixed_nil",
+      "exact_control": "theorem NatClosureIncFixed_nil : Turing.incFixed [] = none := rfl"
+    },
+    {
+      "definition": "Turing.incFixed",
+      "mode": "false_cons_equation",
+      "kernel_name": "NatClosureIncFixed_false_cons",
+      "exact_control": "theorem NatClosureIncFixed_false_cons (w : List Bool) :\n    Turing.incFixed (false :: w) = some (true :: w) := rfl"
+    }
+  ],
+  "failed_control_preparation_preserved": "attempt1-controls plus original-attempt1 receipts/logs: generic reflected incFixed body rfl fails natively, so does not establish effective controls. Replaced with native-checked constructor equations; no transparency override."
+}

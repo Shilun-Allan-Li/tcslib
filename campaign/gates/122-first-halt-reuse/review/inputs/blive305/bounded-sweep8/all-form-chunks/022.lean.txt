@@ -1,0 +1,59 @@
+/-- **The universal machine as an all-string evaluator** [AB09, Theorem 1.9]: for any
+effective scheme there is a single machine `U` such that for every string `α` there
+is a constant `C` (depending on `α`, absorbing its decoding) with, for every input
+`x`: whenever the machine `α` denotes halts on `x` within `t` steps with `output`,
+`U` on `pairEncode α x` halts with the same output within `C · (t + 1)` steps —
+and conversely every *completed* output of `U` on `pairEncode α x` (its output on
+halting) is a completed output of the denoted machine on `x`, so divergence is
+preserved.
+
+**Proof sketch** (after [AB09, Figure 1.6], adapted to the code-first layout).
+Startup: `U` runs the scheme's `canonizer` on the doubled-bit `α`-region (via the
+composition combinators), leaving the fixed serialization of `M := c.decode α` — the
+state count, initial state, and table — on a *table* work tape, and writes the
+initial state on a *state* tape; cost `O(canonizerTime |α| + |α| + 1)`, a constant
+for fixed `α`, absorbed into `C`. `U`'s input head then parks at the start of the
+verbatim `x` region, and a *work* tape mirrors `M`'s work tape. **The simulated
+input's left boundary must be emulated explicitly** (round-2 audit, finding 3): the
+cell physically left of the `x` region is the pairing delimiter's `true`, not a
+blank, so `U` keeps a marker on a spare work tape whose head tracks the virtual
+input position — at virtual position zero it supplies a blank read and suppresses
+further outward moves (mirroring `moveInputPos`'s clamp), and for empty `x` the
+virtual head starts at the right boundary blank adjacent to that marked left
+boundary. Each simulated step: read the mirrored work symbol and the input symbol
+under the simulated head (the input head moves one cell per simulated move — `x` is
+verbatim, no doubling — with the boundary marker moved in lockstep), scan the table
+for the record matching (state, input read, work read) — at most the table length,
+constant in `t` — and apply it: update the state tape, write/move on the mirrored
+tape, emit `M`'s emission verbatim. Forward bound: `C · (t + 1)`. Converse:
+`U` emits only what the simulation emits and halts only when the simulation halts,
+so any completed output of `U` is an output of `M` on `x`. -/
+theorem universal (c : EffectiveMachineCode) :
+    ∃ U : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ x : List Bool,
+      (∀ (output : List Bool) (t : ℕ),
+        (c.decode α).toFinTM.ComputesInTime x output t →
+        U.ComputesInTime (pairEncode α x) output (C * (t + 1))) ∧
+      (∀ output : List Bool,
+        (∃ t, U.ComputesInTime (pairEncode α x) output t) →
+        ∃ t, (c.decode α).toFinTM.ComputesInTime x output t) := by
+  refine ⟨universalTM c, ?_⟩
+  apply universal_from_blocks c (universalTM c) (universalStartupBound c)
+    (universalBlockBound c) (universalRelation c)
+  · exact universalRelation_start c
+  · intro α x src dst h
+    by_cases hs : src.state = none
+    · have hu := (universalRelation_halt c α x src dst h).mp hs
+      refine ⟨1, le_refl _, ?_, ?_⟩
+      · simp only [universalBlockBound]
+        omega
+      · rw [MultiTapeTM.step_of_halt hs, MultiTapeTM.runFrom_of_halt _ hu]
+        exact h
+    · -- A live source: lift the proved interpreter block through capture.
+      obtain ⟨p, tapes, heads, hp, rfl⟩ := h
+      obtain ⟨d, p', hd, hB, hp', he⟩ := universal_live_block (c.decode α) α src p hp hs
+      refine ⟨d, hd, hB, p', tapes, heads, hp', ?_⟩
+      change (universalCaptureTM (universalCanonTM c) universalInterpreter).tm.runFrom
+        (rightCfg Sum.inr (universalSimulationCfg (c.decode α) α src p) tapes heads) d = _
+      rw [universalCapture_interpreter_run, he]
+  · exact universalRelation_halt c
+  · exact universalRelation_output c

@@ -1,0 +1,62 @@
+{
+  "actual_owner_SHA256": "166c77cc4d86b0ae1a4e2d32967628cc5f3f4710c7ec5fc0cedbde5c75333311",
+  "full_authored_value_scope": "All4 definition bodies, all6 proved owner readings,6 intentional sorry bodies and packaging proof; no imported theorem proof values",
+  "explicit_foreign_or_Core_Mathlib_definition_arguments_observed": [],
+  "own_definition_unfold_allowed": [
+    "Complexity.ladnerH (rw)"
+  ],
+  "published_equation_or_hypothesis_arguments": [
+    "mem_padSAT_iff",
+    "List.length_append",
+    "List.length_cons",
+    "List.length_replicate",
+    "WellFounded.fix_eq",
+    "Nat.find_congr'",
+    "ladnerH_eq",
+    "hypotheses/local let bindings"
+  ],
+  "every_tactic_hit": [
+    {
+      "line": 76,
+      "source": "      rw [he, List.length_append, List.length_cons, List.length_replicate]"
+    },
+    {
+      "line": 80,
+      "source": "    rw [\u2190 hfg \u03c8.length hshort]"
+    },
+    {
+      "line": 85,
+      "source": "      rw [he, List.length_append, List.length_cons, List.length_replicate]"
+    },
+    {
+      "line": 89,
+      "source": "    rw [hfg \u03c8.length hshort]"
+    },
+    {
+      "line": 128,
+      "source": "  conv_lhs => rw [ladnerH]"
+    },
+    {
+      "line": 129,
+      "source": "  change (Nat.lt_wfRel.wf.fix (C := fun _ : \u2115 => \u2115) _ n) = _"
+    },
+    {
+      "line": 130,
+      "source": "  rw [WellFounded.fix_eq]"
+    },
+    {
+      "line": 131,
+      "source": "  dsimp only"
+    },
+    {
+      "line": 150,
+      "source": "    simp at hi"
+    },
+    {
+      "line": 175,
+      "source": "  rw [ladnerH_eq]"
+    }
+  ],
+  "sealed_whole_source_cross_check_passed": true,
+  "limits": "Static argument review and full9-head seal cover consumer use; selected owned root values are inspected, no other-file theorem proof values or foreign implementation bodies are followed, no projection/abbrev guards"
+}

@@ -1,0 +1,18 @@
+from pathlib import Path
+import json,re,subprocess,hashlib
+O=Path('/private/tmp/ab34-nat-reader-closure-refinement');P=O/'project';s=(O/'owner-proposed.lean.txt').read_text();log=(O/'OwnerInventory-attempt1.log').read_text();guards=json.loads(next(l.split('GUARDS|',1)[1] for l in log.splitlines() if l.startswith('GUARDS|')));simp=json.loads(next(l.split('SIMPDEFS|',1)[1] for l in log.splitlines() if l.startswith('SIMPDEFS|')));assert guards==['Nat.bit','Turing.codeBitsNat','Turing.incFixed'] and simp==[]
+a=s.index('/-- The offset word represents the actual native-input address');b=s.index('/-- The native remainder address is computed',a);chunk=s[a:b];(O/'complete-target-doc-header-body.lean.txt').write_text(chunk);start='section NatReaderOpacity\n';line='attribute [local irreducible] '+' '.join(guards)+'\n';end='end NatReaderOpacity\n\n';diagnostic='\n#print axioms Turing.MachineFormat.canonOffset_spec\n'
+for name,sealed in [('ScopeGuardNative',False),('ScopeSealed',True)]:
+ out=s[:a]+start+(line if sealed else '')+chunk+end+s[b:]+diagnostic;(O/(name+'.lean.txt')).write_text(out);(P/(name+'.lean')).write_text(out)
+assert (O/'ScopeGuardNative.lean.txt').read_text()==(O/'ScopeSealed.lean.txt').read_text().replace(line,'',1)
+template=Path('/private/tmp/ab34-small-gate-drafts/124/inputs/sg-extras/SafeRun-controls-native.lean.txt').read_text();tail=template[template.index('open Lean Elab Command Meta'):];tail=tail.replace('OvernightSafeRunRfl_','NatClosureRfl_');tail=re.sub(r'let names : List Name := \[[^\n]+\]','let names : List Name := ['+', '.join('`'+n for n in guards)+']',tail);tail=tail.rsplit('end ExtraOpacity',1)[0];imports='\n'.join(l for l in s.splitlines() if l.startswith('import '))+'\nimport Lean\nset_option maxHeartbeats 0\nset_option relaxedAutoImplicit false\nset_option autoImplicit false\nsection NatReaderOpacity\n'
+for name,sealed in [('ControlsNative',False),('ControlsSealed',True)]:
+ out=imports+(line if sealed else '')+tail+'end NatReaderOpacity\n';(O/(name+'.lean.txt')).write_text(out);(P/(name+'.lean')).write_text(out)
+assert (O/'ControlsNative.lean.txt').read_text()==(O/'ControlsSealed.lean.txt').read_text().replace(line,'',1)
+identities=[{'definition':n,'mode':mode,'kernel_name':'NatClosureRfl_'+str(i*2+j+1)+'_'+mode} for i,n in enumerate(guards) for j,mode in enumerate(['point','abstract'])];(O/'guard-context.json').write_text(json.dumps({'complete_target':'Turing.MachineFormat.canonOffset_spec','all_imports_original':True,'guard_names':guards,'default_simp_definitions_removed':simp,'scope_native_sealed_only_guard_line_difference':True,'full_target_doc_header_body_inside_guard_section':True,'same_owner_helpers_values_and_types_inventoried':True,'imported_theorem_values_not_traversed':True,'earlier_same_owner_helpers_not_claimed_sealed':True,'fresh_paired_control_identities':identities},indent=2)+'\n')
+WT='/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4';base='9b5dcf46408db681bcbc721930ef2203fa6bc47d';API=O/'canonical-source';API.mkdir(exist_ok=True)
+for rel in ['TCSlib/Complexity/TuringMachine/CodeParser.lean','TCSlib/Complexity/TuringMachine/Build/Convention.lean']:
+ b=subprocess.check_output(['git','-C',WT,'show',base+':'+rel]);p=API/(rel+'.txt');p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b)
+M=Path('/private/tmp/ab34-small-gate-drafts/127/inputs/nat-reader')
+for n in ['Mathlib-BinaryRec.lean.txt','Mathlib-source-binding.json']:(API/n).write_bytes((M/n).read_bytes())
+print('Prepared complete target native/sealed owners under exact3 guards, six fresh paired controls, complete canonical source captures.')

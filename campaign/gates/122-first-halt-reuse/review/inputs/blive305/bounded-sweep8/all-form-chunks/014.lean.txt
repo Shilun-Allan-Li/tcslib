@@ -1,0 +1,68 @@
+/-- Exact one-source-step correspondence, including the complete
+administrative frame. The native input and physical output are unchanged.
+**Proof sketch.** The public buffer-read and clamping lemmas identify the
+virtual input. Split on the source state. The live case copies its work
+actions literally, before internalizing its successor state; thus both
+erasure and terminal writes survive. The halted case fixes all source
+components while still applying administrative actions. -/
+private lemma clRef_apply (M : FinTM Bool) {l : ℕ} {S : Type}
+    (emb : Option M.State → Bool → S) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool) (hb : FinTM.VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin l → ℤ → Option Bool)
+    (heads : Fin l → ℤ) (out : List Bool)
+    (ops : Fin l → Option (Option Bool) × SignType) :
+    ∃ b', FinTM.VirtualTag (M.tm.step c).inputPos b' ∧
+      (clRefAction M emb c.state b (clRefCfg M emb c b p tapes heads out).workTapeSymbols
+        ops).apply (clRefCfg M emb c b p tapes heads out) =
+      clRefCfg M emb (M.tm.step c) b' p
+        (fun i => match (ops i).1 with
+          | none => tapes i
+          | some w => Function.update (tapes i) (heads i) w)
+        (fun i => heads i + (ops i).2) out := by
+  have hv : (clRefCfg M emb c b p tapes heads out).workTapeSymbols
+      (Fin.natAdd l (Fin.castAdd M.k (0 : Fin 1))) = c.inputSymbol := by
+    simp [clRefCfg, Cfg.workTapeSymbols, FinTM.bufferTape_inputSymbol]
+  have hr : (fun i => (clRefCfg M emb c b p tapes heads out).workTapeSymbols
+      (Fin.natAdd l (Fin.natAdd 1 i))) = c.workTapeSymbols := by
+    funext i
+    simp [clRefCfg, Cfg.workTapeSymbols]
+  cases hq : c.state with
+  | none =>
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.step_of_halt hq] using hb
+    · rw [MultiTapeTM.step_of_halt hq]
+      simp only [clRefAction]
+      refine Cfg.ext (by simp [clRefCfg, hq]) (moveInputPos_zero _) ?_ ?_ (by simp [clRefCfg])
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; cases ho : (ops j).1 <;> simp [Action.apply, clRefCfg, ho]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [Action.apply, clRefCfg]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [Action.apply, clRefCfg]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [Action.apply, clRefCfg]
+  | some q =>
+    let a := M.tm.tr q c.inputSymbol c.workTapeSymbols
+    let m := FinTM.virtualMove b c.inputSymbol a.inputTape
+    have hm := FinTM.virtualMove_correct c b hb a.inputTape
+    have hc : M.tm.step c = a.apply c := by simp only [MultiTapeTM.step, hq, a]
+    refine ⟨FinTM.virtualNextTag b m, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · rw [hc]
+      simp only [clRefAction, hv, hr]
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ (by simp [clRefCfg])
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; cases ho : (ops j).1 <;> simp [Action.apply, clRefCfg, ho]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [Action.apply, clRefCfg, a]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [Action.apply, clRefCfg]
+        · intro j
+          refine Fin.addCases ?_ ?_ j
+          · intro j
+            simpa only [clRefCfg, Action.apply, FinTM.tapeBlocks_buffer] using hm.1
+          · intro j; simp [Action.apply, clRefCfg, a]

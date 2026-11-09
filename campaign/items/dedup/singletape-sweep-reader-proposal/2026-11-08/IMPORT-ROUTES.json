@@ -1,0 +1,48 @@
+{
+  "changes": [],
+  "actual_existing_definition_home": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+  "consumer_direct_imports": [
+    "Mathlib.Tactic.Ring",
+    "Mathlib.Tactic.DeriveFintype",
+    "Mathlib.Data.Fintype.Option",
+    "Mathlib.Data.Fintype.Pi",
+    "Mathlib.Data.Fintype.Prod",
+    "Mathlib.Data.List.FinRange",
+    "Mathlib.Data.Sigma.Basic",
+    "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+    "TCSlib.Complexity.TuringMachine.Sweep",
+    "TCSlib.Complexity.TuringMachine.StateRenaming",
+    "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+  ],
+  "producer_direct_imports": [
+    "Mathlib.Tactic.Ring",
+    "Mathlib.Data.List.FinRange",
+    "TCSlib.Complexity.TuringMachine.Finite"
+  ],
+  "routes": {
+    "TCSlib.Complexity.TuringMachine.Sweep": [
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/Sweep.lean"
+    ],
+    "TCSlib.Complexity.TuringMachine.Finite": [
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "TCSlib/Complexity/TuringMachine/Finite.lean"
+    ],
+    "TCSlib.Complexity.TuringMachine.Deterministic": [
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "TCSlib/Complexity/TuringMachine/Deterministic.lean"
+    ],
+    "TCSlib.Complexity.TuringMachine.Configuration": [
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "TCSlib/Complexity/TuringMachine/Configuration.lean"
+    ],
+    "TCSlib.Complexity.TuringMachine.StateRenaming": [
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/StateRenaming.lean"
+    ]
+  }
+}

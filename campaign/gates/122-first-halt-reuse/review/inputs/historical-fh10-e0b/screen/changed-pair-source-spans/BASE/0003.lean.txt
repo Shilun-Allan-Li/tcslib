@@ -1,0 +1,11 @@
+theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :
+    p ∈ tm.visitedByTapeHead cfg t i ↔ ∃ u ≤ t, (tm.runFrom cfg u).workTapePos i = p := by
+  simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range, Nat.lt_succ_iff]
+
+/-- **Visited cells split at an intermediate time** (moved here from `Build/StepBlock`, design
+note O9, with the specification API, user 2026-10-16): the cells visited by head `j` in
+`T₁ + T₂` steps from `d` are those visited in the first `T₁` steps, together with those visited
+in `T₂` steps from where the run is at time `T₁`.
+
+**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
+`v ≤ T₂`, and then run additivity identifies the configuration. -/

@@ -1,0 +1,52 @@
+/-- The output wrapper also accepts a buffer already at its left edge.
+**Proof sketch.** Cut the absorbing source return and relocate the replay
+from the explicitly supplied prefix boundary. The whole source frame is
+preserved and every rewind/output transition appears in the ledger. -/
+private lemma clOutputAt_compute (A : FinTM Bool) (ret : A.State) (i : Fin A.k)
+    (x w : List Bool) (a j : ℕ) (d : Cfg A.k Bool A.State x)
+    (hrun : A.tm.runFrom (A.tm.initCfg x) a = d) (hret : d.state = some ret)
+    (hstart : A.tm.q₀ ≠ ret)
+    (hidle : ∀ c : Cfg A.k Bool A.State x, c.state = some ret → A.tm.step c = c)
+    (hout : d.output = []) (hword : d.workTapes i = FinTM.bufferTape w)
+    (hhead : d.workTapePos i = j) (hj : j ≤ w.length) :
+    (clOutputTM A ret i).ComputesInTime x w (a + j + w.length + 4) := by
+  obtain ⟨t, ht, _, hf, he⟩ := clFirst A.tm (A.tm.initCfg x) d ret a hrun hret
+    (by intro h; apply hstart; exact Option.some.inj h) hidle
+  have lift := clMap_run A.tm (clOutputTM A ret i).tm Sum.inl (fun q => q ≠ ret)
+    (by intro q hq inp work; simp only [clOutputTM, if_neg hq]) (A.tm.initCfg x) t
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have init : ((A.tm.initCfg x).mapState Sum.inl :
+      Cfg A.k Bool (clOutputTM A ret i).State x) = (clOutputTM A ret i).tm.initCfg x := rfl
+  rw [init] at lift
+  let framed := clSlotCfg (clOneSelect i) (Sum.inr : Fin 3 → (clOutputTM A ret i).State)
+    d.workTapes d.workTapePos (clReplayCfg x d.inputPos (some 0) w j [])
+  have dispatch : (clOutputTM A ret i).tm.step (d.mapState Sum.inl) = framed := by
+    have hs : (d.mapState (Sum.inl : A.State → (clOutputTM A ret i).State)).state =
+        some (.inl ret) := by simp [Cfg.mapState, hret]
+    unfold MultiTapeTM.step
+    rw [hs]
+    simp only [clOutputTM, if_true]
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+    refine Cfg.ext rfl rfl ?_ ?_ ?_
+    · funext j
+      by_cases hj : j = i
+      · subst j; simpa [framed, clSlotCfg, clOneSelect, clReplayCfg] using hword
+      · simp [framed, clSlotCfg, clOneSelect, clReplayCfg, Cfg.mapState, hj]
+    · funext j
+      by_cases hj : j = i
+      · subst j; simpa [framed, clSlotCfg, clOneSelect, clReplayCfg] using hhead
+      · simp [framed, clSlotCfg, clOneSelect, clReplayCfg, Cfg.mapState, hj]
+    · exact hout
+  have replay := clSlot_run clReplayTM.tm (clOutputTM A ret i).tm (fun _ => i)
+    (clOneSelect i) (by intro j; have hj : j = (0 : Fin 1) := Fin.eq_zero j; subst j; simp [clOneSelect])
+    Sum.inr (fun _ => True) (by intros; rfl) d.workTapes d.workTapePos
+    (clReplayCfg x d.inputPos (some 0) w j []) (j + w.length + 3) (by intros; trivial)
+  rw [clReplay_from x d.inputPos w [] j hj] at replay
+  have hc : (clOutputTM A ret i).ComputesInTime x w (t + 1 + (j + w.length + 3)) := by
+    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    have arrived : (clOutputTM A ret i).tm.runFrom ((clOutputTM A ret i).tm.initCfg x) (t + 1) =
+        framed := by rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]
+    rw [MultiTapeTM.runFrom_add, arrived, replay]
+    exact ⟨rfl, by simp [clSlotCfg, clReplayCfg]⟩
+  exact hc.mono (by omega)

@@ -1,0 +1,49 @@
+/-- Native split-search controller. Clean-call modules consume the prepared
+candidate and suffix; comparison is whole-word; both result words are erased
+before acceptance or rejection. The native input is never overwritten and
+supplies every payload bit. A past-end preparation bypasses both evaluators.
+No time bound or width function appears in the transition table. -/
+private def emitterP2BodyTM (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k)
+    (ce cx : C.State) (de dx : D.State) : FinTM Bool where
+  k := C.k + D.k + 1
+  State := EmitterP2State C.State D.State
+  tm := {
+    q₀ := .anchor
+    tr := fun q inp work => match q with
+      | .anchor => controlAction 0 (some (.prepare (0, false)))
+      | .prepare p =>
+        if p.1 = 8 then controlAction 0 (some (if p.2 then .eraseLeft false 0 else .widthStart))
+        else emitterP2Action (emitterP2SmallSelect C.k D.k) .prepare
+          (emitterP2PrepareTM.tm.tr p inp (fun i => work (emitterP2SmallIndex C.k D.k hk hl i)))
+      | .widthStart => emitterP2Action (emitterP2LeftSelect C.k D.k) .width
+          (C.tm.tr ce inp (fun i => work (emitterP2LeftIndex C.k D.k i)))
+      | .width p =>
+        if p = cx then controlAction 0 (some .lengthStart)
+        else emitterP2Action (emitterP2LeftSelect C.k D.k) .width
+          (C.tm.tr p inp (fun i => work (emitterP2LeftIndex C.k D.k i)))
+      | .lengthStart => emitterP2Action (emitterP2RightSelect C.k D.k) .length
+          (D.tm.tr de inp (fun i => work (emitterP2RightIndex C.k D.k i)))
+      | .length p =>
+        if p = dx then controlAction 0 (some (.compare (0, true)))
+        else emitterP2Action (emitterP2RightSelect C.k D.k) .length
+          (D.tm.tr p inp (fun i => work (emitterP2RightIndex C.k D.k i)))
+      | .compare p =>
+        if p.1 = 2 then controlAction 0 (some (.eraseLeft p.2 0))
+        else emitterP2Action (emitterP2PairSelect C.k D.k) .compare
+          (emitterCompareTM.tm.tr p inp (fun i => work (emitterP2PairIndex C.k D.k hk hl i)))
+      | .eraseLeft ok p =>
+        if p = 2 then controlAction 0 (some (.eraseRight ok 0))
+        else emitterP2Action (emitterP2OneSelect (emitterP2LeftIndex C.k D.k ⟨0, hk⟩))
+          (.eraseLeft ok) (emitterP2EraseTM.tm.tr p inp
+            (fun _ => work (emitterP2LeftIndex C.k D.k ⟨0, hk⟩)))
+      | .eraseRight ok p =>
+        if p = 2 then controlAction 0 (some (if ok then .emit 0 else .advance (0, false)))
+        else emitterP2Action (emitterP2OneSelect (emitterP2RightIndex C.k D.k ⟨0, hl⟩))
+          (.eraseRight ok) (emitterP2EraseTM.tm.tr p inp
+            (fun _ => work (emitterP2RightIndex C.k D.k ⟨0, hl⟩)))
+      | .advance p =>
+        if p = (4, false) then controlAction 0 (some .anchor)
+        else emitterP2Action (emitterP2OneSelect (0 : Fin (C.k + D.k + 1))) .advance
+          ((splitRestoreTM 0).tm.tr p inp (fun _ => work 0))
+      | .emit p => emitterP2Action (emitterP2OneSelect (0 : Fin (C.k + D.k + 1))) .emit
+          ((splitEmitTM 0).tm.tr p inp (fun _ => work 0)) }

@@ -1,0 +1,1 @@
+Initial comment-sync check compared placeholder whitespace bytes from a comment reader, so different-length comments failed despite unchanged code. Corrected to compare every non-whitespace token after nested-comment/string-aware removal. No Lean/code/source change was inferred from this checker issue.

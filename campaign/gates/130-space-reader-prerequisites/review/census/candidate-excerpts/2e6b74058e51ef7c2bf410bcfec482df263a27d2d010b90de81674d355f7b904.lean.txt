@@ -1,0 +1,15 @@
+/-- Successful split payloads enter the source machine, charging the guard. -/
+private lemma a3_nonempty_computes (M : FinTM Bool) (x y : List Bool) (t : ℕ)
+    (hx : x ≠ []) (hM : M.ComputesInTime x y t) :
+    (a3NonemptyTM M).ComputesInTime x y (t + 1) := by
+  have hs : (a3NonemptyTM M).tm.step ((a3NonemptyTM M).tm.initCfg x) =
+      (M.tm.initCfg x).mapState Sum.inr := by
+    cases x with
+    | nil => contradiction
+    | cons b x =>
+      simp [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol,
+        a3NonemptyTM, controlAction, Action.apply, Cfg.mapState, moveInputPos_zero]
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, a3_nonempty_run]
+  have hc := (computesInTime_iff _ _ _ _).mp hM
+  exact ⟨by simpa only [Cfg.mapState, Option.map_eq_none_iff] using hc.1, hc.2⟩

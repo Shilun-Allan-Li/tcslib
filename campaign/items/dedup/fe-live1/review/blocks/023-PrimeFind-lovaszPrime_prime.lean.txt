@@ -1,0 +1,2 @@
+theorem lovaszPrime_prime (n : ℕ) : (lovaszPrime n).Prime :=
+  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).2

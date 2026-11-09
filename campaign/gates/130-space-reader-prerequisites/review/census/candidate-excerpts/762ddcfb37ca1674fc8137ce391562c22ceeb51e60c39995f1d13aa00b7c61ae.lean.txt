@@ -1,0 +1,13 @@
+/-- Writing without moving in a backward-facing zipper. -/
+private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) =
+      sweepRevCfg (some q') p z l (b :: r.tail) out := by
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ (List.append_nil _)
+  · funext i w
+    have h := congrFun (sweepTape_write (-z) l r b) (-w)
+    change Function.update (fun w => sweepTape (-z) l r (-w)) z b w = _
+    simpa only [Function.update_apply, neg_inj] using h
+  · funext i
+    exact add_zero z

@@ -1,0 +1,25 @@
+/-- A unary-state router step either requests one complete state group and
+advances the state head, or requests the finite read-rank suffix. -/
+private lemma seekTM_stateStep {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x) (rank : Fin (3 ^ (k + 1))) (b : Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hs : d.workTapeSymbols (summaryTape k) = some b) :
+    (seekTM k).step (seekCfg d (.state rank)) =
+      if b then
+        seekCfg ({d with
+          workTapePos := Function.update d.workTapePos (summaryTape k)
+            (d.workTapePos (summaryTape k) + 1)})
+          (.request rank ⟨3 ^ (k + 1) - 1, by
+            have hp : 0 < 3 ^ (k + 1) := Nat.pow_pos (by omega); omega⟩ false)
+      else seekCfg d (if hr : rank.val = 0 then .done
+        else .request rank ⟨rank.val - 1, by have := rank.isLt; omega⟩ true) := by
+  simp only [Cfg.workTapeSymbols] at hs
+  cases b <;>
+    apply Cfg.ext <;>
+    simp [MultiTapeTM.step, seekTM, seekCfg, Cfg.mapState, phaseHostTM,
+      seekRed, seekPart, seekRouterTM, hq, Cfg.workTapeSymbols, hs, tapeAction, inputMoveAction, Action.mapState]
+  all_goals
+    funext j
+    by_cases hj : j = summaryTape k
+    · subst j; simp
+    · simp [hj]

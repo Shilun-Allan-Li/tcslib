@@ -1,0 +1,26 @@
+/-- Capture `f x`, rewind both heads, replay its bits twice, emit the pairing
+separator, then copy native `x`. Thus the output is `pairEncode (f x) x`.
+This private data-retaining combinator supplies the two-field round arguments. -/
+private def satPairTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ Fin 8
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+    | .inl q => captureAction Sum.inl (.inr 0)
+        (M.tm.tr q inp (fun i => work (Fin.castSucc i)))
+    | .inr q => match q.val with
+      | 0 => FinTM.controlAction .neg (some (.inr 1))
+      | 1 => if inp.isSome then FinTM.controlAction .neg (some (.inr 1))
+        else FinTM.controlAction .pos (some (.inr 2))
+      | 2 => satPairAction M 0 .neg none (some 3)
+      | 3 => if (work (Fin.last M.k)).isSome then satPairAction M 0 .neg none (some 3)
+        else satPairAction M 0 .pos none (some 4)
+      | 4 => match work (Fin.last M.k) with
+        | some b => satPairAction M 0 0 (some b) (some 5)
+        | none => satPairAction M 0 0 (some false) (some 6)
+      | 5 => satPairAction M 0 .pos (work (Fin.last M.k)) (some 4)
+      | 6 => satPairAction M 0 0 (some true) (some 7)
+      | _ => match inp with
+        | some b => satPairAction M .pos 0 (some b) (some 7)
+        | none => satPairAction M 0 0 none none }

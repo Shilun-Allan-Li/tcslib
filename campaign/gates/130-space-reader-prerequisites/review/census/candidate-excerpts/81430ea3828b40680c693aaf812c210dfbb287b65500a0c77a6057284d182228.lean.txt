@@ -1,0 +1,71 @@
+/-- The complete native preparation restores every head and presents the
+actual candidate and actual original suffix on clean argument tapes.
+**Proof sketch.** Copy the candidate, copy the remaining native input, rewind
+the two aligned candidate heads, rewind the suffix head, and finally rewind
+the native input. Every transition between these phases is charged. -/
+private lemma emitterP2_prepare_run (w s : List Bool) :
+    ∃ t ≤ 5 * (s.length + w.length + 3),
+      emitterP2PrepareTM.tm.runFrom
+        (emitterP2PrepareCfg w s [] [] 0 false 1 0 0) t =
+          emitterP2PrepareCfg w s s (w.drop s.length) 8 (decide (w.length < s.length)) 1 0 0 := by
+  let tm := emitterP2PrepareTM.tm
+  let v := w.drop s.length
+  let over := decide (w.length < s.length)
+  let p := splitPos w (s.length + v.length)
+  have hp : p.val = w.length + 1 := by
+    dsimp [p, splitPos, v]
+    simp only [List.length_drop]
+    omega
+  have hcopy := emitterP2_prepare_candidate w s s.length (le_refl _)
+  simp only [List.take_length] at hcopy
+  have h1 : tm.runFrom (emitterP2PrepareCfg w s [] [] 0 false 1 0 0) (s.length + 1) =
+      emitterP2PrepareCfg w s s [] 1 over (splitPos w s.length) s.length 0 := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hcopy]
+    simp only [tm, MultiTapeTM.step, emitterP2PrepareCfg, emitterP2PrepareTM,
+      Cfg.workTapeSymbols, Fin.reduceEq, ↓reduceIte, bufferTape_nat, List.getElem?_length]
+    rw [controlAction_apply, moveInputPos_zero]
+  have hsuffix := emitterP2_prepare_suffix w s over v.length (le_refl _)
+  simp only [v, List.take_length] at hsuffix
+  have h2 : tm.runFrom
+      (emitterP2PrepareCfg w s s [] 1 over (splitPos w s.length) s.length 0) (v.length + 1) =
+        emitterP2PrepareCfg w s s v 2 over p s.length v.length := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hsuffix]
+    let c := emitterP2PrepareCfg w s s v 1 over p s.length v.length
+    have hin : c.inputSymbol = none := by simp [Cfg.inputSymbol, c, emitterP2PrepareCfg, hp]
+    change tm.step c = _
+    simp only [MultiTapeTM.step, c, emitterP2PrepareCfg]
+    change (emitterP2PrepareTM.tm.tr (1, over) c.inputSymbol c.workTapeSymbols).apply c = _
+    rw [hin]
+    change (controlAction 0 (some ((2 : Fin 9), over))).apply c = _
+    rw [controlAction_apply, moveInputPos_zero]
+    rfl
+  have h3 : tm.runFrom (emitterP2PrepareCfg w s s v 2 over p s.length v.length)
+      (1 + (s.length + 1)) = emitterP2PrepareCfg w s s v 4 over p 0 v.length := by
+    have hstep : tm.step (emitterP2PrepareCfg w s s v 2 over p s.length v.length) =
+        emitterP2PrepareCfg w s s v 3 over p ((s.length : ℤ) - 1) v.length := by
+      simp only [MultiTapeTM.step, emitterP2PrepareCfg, tm, emitterP2PrepareTM]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+      funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
+    rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact emitterP2_prepare_rewind_candidate w s v over p v.length s.length (le_refl _)
+  have h4 : tm.runFrom (emitterP2PrepareCfg w s s v 4 over p 0 v.length)
+      (1 + (v.length + 1)) = emitterP2PrepareCfg w s s v 6 over p 0 0 := by
+    have hstep : tm.step (emitterP2PrepareCfg w s s v 4 over p 0 v.length) =
+        emitterP2PrepareCfg w s s v 5 over p 0 ((v.length : ℤ) - 1) := by
+      simp only [MultiTapeTM.step, emitterP2PrepareCfg, tm, emitterP2PrepareTM]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+      funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
+    rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact emitterP2_prepare_rewind_suffix w s v over p v.length (le_refl _)
+  obtain ⟨r, hr, h5⟩ := catalogRewind tm ((6 : Fin 9), over) ((7 : Fin 9), over)
+    (some ((8 : Fin 9), over)) (fun _ _ => rfl) (fun _ _ => rfl)
+    (emitterP2PrepareCfg w s s v 6 over p 0 0) rfl
+  have hr' : r ≤ w.length + 3 := by simpa only [emitterP2PrepareCfg, hp] using hr
+  have h5' : tm.runFrom (emitterP2PrepareCfg w s s v 6 over p 0 0) r =
+      emitterP2PrepareCfg w s s v 8 over 1 0 0 := h5
+  refine ⟨s.length + 1 + (v.length + 1) + (1 + (s.length + 1)) +
+    (1 + (v.length + 1)) + r, ?_, ?_⟩
+  · have hv : v.length ≤ w.length := by dsimp [v]; simp only [List.length_drop]; omega
+    omega
+  · exact emitterP2_join tm (emitterP2_join tm (emitterP2_join tm
+      (emitterP2_join tm h1 h2) h3) h4) h5'

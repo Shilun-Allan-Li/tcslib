@@ -1,0 +1,23 @@
+/-- The right-block version of the one-step correspondence; inactive tapes may
+contain arbitrary data from an earlier phase. -/
+lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM l Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
+    (htr : ∀ q inp work, tm'.tr (f q) inp work =
+      rightAction k f (tm.tr q inp (fun i => work (Fin.natAdd k i))))
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    tm'.step (rightCfg f c tapes heads) = rightCfg f (tm.step c) tapes heads := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [rightCfg, hs]
+  | some q =>
+    have hs' : (rightCfg f c tapes heads).state = some (f q) := by simp [rightCfg, hs]
+    rw [hs']
+    dsimp only
+    rw [htr]
+    have hr : (fun i => (rightCfg f c tapes heads).workTapeSymbols (Fin.natAdd k i)) =
+        c.workTapeSymbols := by
+      funext i
+      simp [Cfg.workTapeSymbols, rightCfg]
+    change (rightAction k f (tm.tr q c.inputSymbol _)).apply _ = _
+    rw [hr]
+    exact rightCfg_apply f _ c tapes heads

@@ -1,0 +1,6 @@
+/-- An input-only action has the requested input movement and live successor,
+with no work-tape writes or head movement and no output symbol. -/
+theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    inputMoveAction (k := k) (Symbol := Symbol) inp q =
+      (⟨inp, fun _ => (none, 0), none, some q⟩ : Action k Symbol State) := by
+  rfl

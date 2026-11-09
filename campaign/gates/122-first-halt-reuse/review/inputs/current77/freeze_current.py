@@ -1,0 +1,25 @@
+from pathlib import Path
+import json,hashlib,subprocess,shutil,datetime
+O=Path(__file__).parent;Q=O/'qa';P=json.loads((Q/'REQUEST.json').read_text());W=Path('/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4');H=lambda b:hashlib.sha256(b).hexdigest();g=lambda *a:subprocess.check_output(['git','-C',str(W),*a]);head=g('rev-parse','HEAD').decode().strip();assert head==P['HEAD'];assert not g('status','--porcelain','--untracked-files=no');g('cat-file','-e',head+'^{commit}');branch=g('branch','--show-current').decode().strip();tracking=g('rev-parse','refs/remotes/origin/'+branch).decode().strip();assert tracking==head
+for d in P['source_inputs']:assert H(Path(d['input']).read_bytes())==d['sha256']
+compare=json.loads((Q/'comparison.json').read_text());assert compare['style']['new_identity_occurrences']==0 and compare['campaign']['new_identity_occurrences']==0
+pin={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'BASE':P['BASE'],'HEAD':head,'HEAD_parent':g('rev-parse',head+'^').decode().strip(),'HEAD_tree':g('rev-parse',head+'^{tree}').decode().strip(),'branch':branch,'local_origin_tracking_HEAD':tracking,'tracking_ref_is_local_remote_receipt_no_network_fetch':True,'actual_source_tracked_clean':True,'actual_8_source_checks_and_13_literal_headers':True,'actual8x2style_campaign_size_checks':True,'no_Lean_or_screen_execution_in_this_sourceQA':True,'immutable_BLIVE305_manifest_sha256':P['frozen_BLIVE305_manifest_sha256'],'historical_FH10_1529_manifest_sha256':'1a897379688f5fb669e71d83dd9f84363bcf09fceff25b2e2922cd0f6cad64ca'};(O/'PIN.json').write_text(json.dumps(pin,indent=2)+'\n')
+(O/'REVIEW.md').write_text('''# Actual current FH13 source QA
+
+The pushed source f3c8c050ef98375bc237c72bde74f83d33833374 matches the validated private candidate byte-for-byte in all eight changed owners. Every one of the 13 complete literal headers is exact BASE/HEAD. The complete 1003 tracked Lean-blob inventories show exactly eight owners changed from BASE, and exactly the two expected owners changed from historical e0b. Actual canonical declfreeze checks plus complete-chunk comparison find exactly thirteen changed declarations, with every other declaration chunk literal-exact. There are still 106 public and 1288 private declarations in these owners; no name is added/removed, no definition/import/API/home/route/admission is changed.
+
+Fresh selected metadata/AX and full-prefix guards for five targets bind to these exact actual owner bytes. The other eight targets in six complete source-exact owners retain prior actual types/AX and bounded guard receipts under their honest historical pins. No Lean query or guard was rerun after commit. The immutable305 supplement contains the exact original execution inputs, full type Expr strings, source maps, explicit-argument review, effective46 paired controls for23 ordinary heads, and all bounded sweep dispositions. This sheet binds that evidence to the pushed source; it does not expand the opacity or whole-ABI scope.
+
+Actual BASE/HEAD lint covers all eight changed owners, with helper source/hash, exact argv, exit code, full stdout/stderr and uncapped finding-identity dispositions. Style exits1/1: 68 inherited findings on each endpoint, zero new/removed identities. Forty-four raw source-position/count differences remain preserved. Campaign check_file uses its default8bFalse; exits0/0,0FAIL/9WARN/9INFO each, zero new/removed identities. Fourteen raw position/count differences remain preserved. Inherited findings are not described as clean. Only source locations and dynamic line counts are normalized for identity matching; raw diagnostics are retained.
+
+Size changes: 1,345,452 to1,344,168 bytes and25,434 to25,408 splitlines across eight files. Five files exceed1000lines at each endpoint; no600/1000 threshold is crossed. No Lean elaboration, screen, source edit, Git write or canonical write was performed for this sourceQA. Actual downstream-tail replay and population44 BASE/HEAD screens are root-owned and are separate pending receipts; the earlier222/43 evidence stays historical.
+''')
+X=O/'EXPORT';assert not X.exists();X.mkdir()
+for f in sorted(O.rglob('*')):
+ rel=f.relative_to(O)
+ if 'live' in rel.parts or 'EXPORT' in rel.parts or f.is_symlink() or not f.is_file():continue
+ assert f.suffix not in ['.olean','.ilean','.lean','.pdf']
+ d=X/rel;d.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(f,d)
+files=[{'path':str(f.relative_to(X)),'bytes':f.stat().st_size,'sha256':H(f.read_bytes())} for f in sorted(X.rglob('*')) if f.is_file()];(X/'MANIFEST.json').write_text(json.dumps({'payload_count':len(files),'payload_bytes':sum(r['bytes'] for r in files),'files':files,'self_excluded':True,'actual_HEAD':head},indent=2)+'\n');(X/'SHA256SUMS').write_text(''.join(r['sha256']+'  '+r['path']+'\n' for r in files))
+for d in files:assert H((X/d['path']).read_bytes())==d['sha256']
+print(json.dumps({'export':str(X),'payload_count':len(files),'payload_bytes':sum(r['bytes'] for r in files),'MANIFEST_sha256':H((X/'MANIFEST.json').read_bytes()),'REVIEW_sha256':H((X/'REVIEW.md').read_bytes()),'HEAD':head},indent=2))

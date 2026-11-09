@@ -1,0 +1,766 @@
+{
+  "source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
+  "scope": [
+    "TCSlib/Complexity/ClassNP/EXP.lean",
+    "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+    "TCSlib/Complexity/TuringMachine/Build/InputLength.lean"
+  ],
+  "raw_candidate_count": 90,
+  "raw_candidates": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 583,
+      "declaration": "enumCont_log_run",
+      "text": "      simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 589,
+      "declaration": "enumCont_log_run",
+      "text": "      simp only [MultiTapeTM.step, hstate]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 795,
+      "declaration": "enumCont_undo_run",
+      "text": "        simp only [MultiTapeTM.step, hq]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 904,
+      "declaration": "enumCont_clean_undo_entry",
+      "text": "  simp only [MultiTapeTM.step, hstate]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 985,
+      "declaration": "enumCont_rewind",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1012,
+      "declaration": "enumCont_clean_buffer_rewind",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1027,
+      "declaration": "enumCont_clean_buffer_rewind",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1134,
+      "declaration": "enumCont_concat_native",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1149,
+      "declaration": "enumCont_concat_native",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1176,
+      "declaration": "enumCont_concat_candidate",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1190,
+      "declaration": "enumCont_concat_candidate",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1321,
+      "declaration": "enumCont_return_run",
+      "text": "      simp only [MultiTapeTM.step, enumCont_returnCfg, hq, Option.map_some, Option.getD_some]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1363,
+      "declaration": "enumCont_pad_run",
+      "text": "  | none => simp only [MultiTapeTM.step, enumCont_padCfg, hq, Option.map_none]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1372,
+      "declaration": "enumCont_pad_run",
+      "text": "    simp only [MultiTapeTM.step, hs, hq]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 1844,
+      "declaration": "enumCont_body_accept",
+      "text": "  simp [MultiTapeTM.step, enumCont_bodyTM, enumCont_pairCfg, Cfg.workTapeSymbols,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2000,
+      "declaration": "enumCont_absorb",
+      "text": "    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2022,
+      "declaration": "enumCont_agree_run",
+      "text": "    | none => simp only [MultiTapeTM.step, hs]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2025,
+      "declaration": "enumCont_agree_run",
+      "text": "      simp only [MultiTapeTM.step, hs, ha q hq]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2570,
+      "declaration": "a3_shift_scan",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2608,
+      "declaration": "a3_shift_computes",
+      "text": "    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, a3ShiftTM, hinp]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2715,
+      "declaration": "a3_copy_step",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2758,
+      "declaration": "a3_load_rewind",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2774,
+      "declaration": "a3_load_rewind",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2803,
+      "declaration": "a3_run_start",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2835,
+      "declaration": "a3_run_guarded",
+      "text": "    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2838,
+      "declaration": "a3_run_guarded",
+      "text": "      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2861,
+      "declaration": "a3_run_call",
+      "text": "    simp only [MultiTapeTM.step, Cfg.ofWords, a3RunTM,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2889,
+      "declaration": "a3_run_singleton",
+      "text": "  simp [MultiTapeTM.step, Cfg.mapState, Cfg.ofWords, stateWord, a3RunTM,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2953,
+      "declaration": "a3_nonempty_run",
+      "text": "  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2955,
+      "declaration": "a3_nonempty_run",
+      "text": "    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2962,
+      "declaration": "a3_nonempty_nil",
+      "text": "  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "line": 2974,
+      "declaration": "a3_nonempty_computes",
+      "text": "      simp [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 689,
+      "declaration": "clFill_run",
+      "text": "    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 702,
+      "declaration": "clFill_run",
+      "text": "      simp only [MultiTapeTM.step, clFillTM, hs, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 848,
+      "declaration": "clRef_apply",
+      "text": "    have hc : M.tm.step c = a.apply c := by simp only [MultiTapeTM.step, hq, a]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 976,
+      "declaration": "clCount_carry_step",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1036,
+      "declaration": "clCount_rewind",
+      "text": "      simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1046,
+      "declaration": "clCount_rewind",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1080,
+      "declaration": "clCount_idle",
+      "text": "  simp only [MultiTapeTM.step, hc, clCountTM,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1159,
+      "declaration": "clBank_step",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1168,
+      "declaration": "clBank_step",
+      "text": "      simp [MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1171,
+      "declaration": "clBank_step",
+      "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1174,
+      "declaration": "clBank_step",
+      "text": "      simp [clBankCfg, MultiTapeTM.step, hs, FinTM.controlAction, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1231,
+      "declaration": "clBank_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1304,
+      "declaration": "clMoves_correct",
+      "text": "      simpa [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply] using hm.symm",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1306,
+      "declaration": "clMoves_correct",
+      "text": "      simp [clPositions, clMoves, MultiTapeTM.step, hs, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1434,
+      "declaration": "clLeft_until",
+      "text": "    | none => simp [MultiTapeTM.step, FinTM.leftCfg, hs]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1441,
+      "declaration": "clLeft_until",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1479,
+      "declaration": "clTrack_dispatch",
+      "text": "  simp only [MultiTapeTM.step, clRefCfg, clTrackTM, if_true]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1664,
+      "declaration": "clCopy_rewind",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1666,
+      "declaration": "clCopy_rewind",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 1703,
+      "declaration": "clCopy_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2124,
+      "declaration": "clRow_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2412,
+      "declaration": "clRec_copy",
+      "text": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2546,
+      "declaration": "clPlaced_release",
+      "text": "  simpa only [MultiTapeTM.step, hc, Cfg.mapState, Action.apply] using",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2599,
+      "declaration": "clRec_advance",
+      "text": "  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 2963,
+      "declaration": "clCmp_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3098,
+      "declaration": "clRead_pair",
+      "text": "    · simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3099,
+      "declaration": "clRead_pair",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3100,
+      "declaration": "clRead_pair",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3156,
+      "declaration": "clRead_separator",
+      "text": "    · simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, r0]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3157,
+      "declaration": "clRead_separator",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3158,
+      "declaration": "clRead_separator",
+      "text": "    · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3181,
+      "declaration": "clRead_rewind",
+      "text": "      simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3315,
+      "declaration": "clWipe_forward",
+      "text": "      simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3346,
+      "declaration": "clWipe_backward",
+      "text": "    · simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3348,
+      "declaration": "clWipe_backward",
+      "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3350,
+      "declaration": "clWipe_backward",
+      "text": "        simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3382,
+      "declaration": "clWipe_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3426,
+      "declaration": "clFresh_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3641,
+      "declaration": "clLoad_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3737,
+      "declaration": "clInput_backward",
+      "text": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3770,
+      "declaration": "clInput_run",
+      "text": "      simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3782,
+      "declaration": "clInput_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 3883,
+      "declaration": "clPrepare_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4640,
+      "declaration": "clReplay_back",
+      "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4671,
+      "declaration": "clReplay_forward",
+      "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4695,
+      "declaration": "clReplay_run",
+      "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4753,
+      "declaration": "clOutput_compute",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4847,
+      "declaration": "clPrepared_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 4991,
+      "declaration": "clRecord_idle",
+      "text": "  unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5182,
+      "declaration": "clReplay_from",
+      "text": "      simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Action.apply, funext_iff, sub_eq_add_neg]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5216,
+      "declaration": "clOutputAt_compute",
+      "text": "    unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 5717,
+      "declaration": "clRepeat_round",
+      "text": "      simp [MultiTapeTM.step, clRepeatTM, clRepeatCfg, Cfg.workTapeSymbols, Action.apply,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6130,
+      "declaration": "clA5Pad_run",
+      "text": "  | none => simp [MultiTapeTM.step, clA5PadCfg, hs]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6136,
+      "declaration": "clA5Pad_run",
+      "text": "    simp only [MultiTapeTM.step, hstate, hs]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6181,
+      "declaration": "clA5Stop_step",
+      "text": "    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6225,
+      "declaration": "clA5Stop_clean",
+      "text": "  simp [MultiTapeTM.step, clA5StopTM, clA5StopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6642,
+      "declaration": "clA5Map_run",
+      "text": "    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, clA5MapTM,",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "line": 6652,
+      "declaration": "clA5Map_run",
+      "text": "      unfold MultiTapeTM.step",
+      "classification": "EXPLICIT_OPERATIONAL_STEP_READER_CANDIDATE_NOT_AUTOMATIC_COPY_OR_FIX"
+    }
+  ],
+  "count_by_owner": {
+    "TCSlib/Complexity/ClassNP/EXP.lean": 32,
+    "TCSlib/Complexity/CookLevin/Hardness.lean": 58
+  },
+  "same_named_idle_family12": [
+    {
+      "name": "clCount_idle",
+      "line": 1080,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "690f6c47654f651072bd9efe2c77deef2e18acd29b6f3c95ac8ae040a87e4873",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clBank_idle",
+      "line": 1231,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "9e9da0bed8813eeee75b56a471f1cfe521bf4352152ce45a22e7810f71400da3",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clCopy_idle",
+      "line": 1703,
+      "direct_five_in_audit": true,
+      "whole_chunk_sha256": "8e97e094205202c3b5e62f5c6b10918dca94fe92f24ea6c2cc0e5b8f22d08ffb",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clRow_idle",
+      "line": 2124,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "6d0f8992b06e3c03f5e10a8cb3d8669d809a423925fcf8c632eea5fdfcee7fc8",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clCmp_idle",
+      "line": 2963,
+      "direct_five_in_audit": true,
+      "whole_chunk_sha256": "810ea7a62fa82fddc9fbe63dcee6a21825ada18a35fc7df8b6307643dacd2e42",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clWipe_idle",
+      "line": 3382,
+      "direct_five_in_audit": true,
+      "whole_chunk_sha256": "1223fe727e83de7de54d8aa229c4aa45b8c697c29e5d83084d5b3f84597e41aa",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clFresh_idle",
+      "line": 3426,
+      "direct_five_in_audit": true,
+      "whole_chunk_sha256": "fea9867ed4b74c2b1d53db119f86a631566396cbb80e018c3eea658b2f26c60e",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clLoad_idle",
+      "line": 3641,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "2aa2785458a2170d06f077b9907544d2d6fc1ed0028cc4f612bdf1a95be9ed3d",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clInput_idle",
+      "line": 3782,
+      "direct_five_in_audit": true,
+      "whole_chunk_sha256": "edd0aef243ae4b093a36936dab645dab7af6e3457ed66750e8659714ccbc6eee",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clPrepare_idle",
+      "line": 3883,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "48ba04b39d3e9b111178ee91c0e40146a63bc5bba2a66e6bfa981b1386b83c2e",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clPrepared_idle",
+      "line": 4847,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "bfb7244ee3a654155b54c917d7c5127e444bf95b4b0718c2d00705261149a23a",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    },
+    {
+      "name": "clRecord_idle",
+      "line": 4991,
+      "direct_five_in_audit": false,
+      "whole_chunk_sha256": "761349358581cc545247bcb105f7a6a89d99ed4936645573bce8ac10f35ec88a",
+      "exact_current_source": "d64dff4fbef865d815c6a561ce8037ea1bae07a2:TCSlib/Complexity/CookLevin/Hardness.lean",
+      "proposal_prefix": "rw [MultiTapeTM.step_of_some hc]",
+      "limit": "For the seven extra idle sites, Action.apply/controlAction and other explicit foreign arguments also need complete-source review; prefix substitution alone is not a full-seal claim."
+    }
+  ],
+  "limits": "All matches of the stated line-level pattern in these five whole pinned sources. Not an exhaustive semantic/library census, unique-copy count, new debt approval or proof every candidate has the same fix. Existing multi-line explicit arguments and implicit conversions require separate complete-source review.",
+  "inputFoldTM_named_theorems_across1003": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+      "line": 645,
+      "text": "theorem inputFoldTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}"
+    }
+  ],
+  "minimal_missing_reader_observation": "No published named/generated .bwd tr reader was found. Scan535 definition rows are literal data; run_ofCfg645 is a different initialized forward-run contract. A new public row equation would be a human API decision if no larger existing contract removes the read."
+}

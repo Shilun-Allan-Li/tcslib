@@ -1,0 +1,8 @@
+theorem stage_spec (f : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) :
+    ladder f (stage f n) < n ∧ n ≤ ladder f (stage f n + 1) := by
+  refine ⟨?_, Nat.find_spec (exists_le_ladder_succ f n)⟩
+  unfold stage
+  rcases h : Nat.find (exists_le_ladder_succ f n) with _ | i
+  · rw [ladder_zero]; omega
+  · have hmin := Nat.find_min (exists_le_ladder_succ f n) (m := i) (by omega)
+    omega

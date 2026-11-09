@@ -1,0 +1,14 @@
+/-- One further, nonemitting step halts the fixed-word emission chain. -/
+lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    (tm.runFrom cfg (w.length + 1)).state = none ∧
+      (tm.runFrom cfg (w.length + 1)).output = cfg.output ++ w := by
+  obtain ⟨hstate, hout⟩ := emit_run tm w e htr cfg hs w.length (le_refl _)
+  rw [MultiTapeTM.runFrom_succ_eq_step']
+  unfold MultiTapeTM.step
+  rw [hstate]
+  dsimp only
+  rw [htr]
+  simp [emitAction, Action.apply, hout]

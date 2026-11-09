@@ -1,0 +1,24 @@
+import TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+variable {k : ℕ} {Symbol State : Type} {input : List Symbol}
+variable (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) (n : ℕ)
+theorem FH1_4_Clean_run_point : tm.runFrom cfg n = tm.step^[n] cfg := by rfl
+#check FH1_4_Clean_run_point
+theorem FH1_4_Clean_run_abstract :
+    (tm.runFrom : Cfg k Symbol State input → ℕ → Cfg k Symbol State input) =
+      fun cfg n => tm.step^[n] cfg := by rfl
+#check FH1_4_Clean_run_abstract
+theorem FH1_4_Clean_step_point : tm.step cfg =
+    (match cfg.state with
+      | none => cfg
+      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg) := by rfl
+#check FH1_4_Clean_step_point
+theorem FH1_4_Clean_step_abstract :
+    (tm.step : Cfg k Symbol State input → Cfg k Symbol State input) =
+      fun cfg => match cfg.state with
+        | none => cfg
+        | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by rfl
+#check FH1_4_Clean_step_abstract

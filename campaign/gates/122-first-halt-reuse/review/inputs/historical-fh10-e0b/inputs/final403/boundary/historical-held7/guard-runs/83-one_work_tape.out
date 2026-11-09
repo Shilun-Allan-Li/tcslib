@@ -1,0 +1,25 @@
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:927:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+case pos
+Γ : Type
+inst✝¹ : Fintype Γ
+inst✝ : DecidableEq Γ
+M : FinTM Γ
+f : List Γ → List Γ
+T : ℕ → ℕ
+hM : M.ComputesFunInTime f T
+hk : M.k = 0
+⊢ (M.unusedTapeTM hk).ComputesFunInTimeVia (Function.Embedding.refl Γ) f fun n => 1 * (T n + 1) ^ 2
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:936:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+case neg
+Γ : Type
+inst✝¹ : Fintype Γ
+inst✝ : DecidableEq Γ
+M : FinTM Γ
+f : List Γ → List Γ
+T : ℕ → ℕ
+hM : M.ComputesFunInTime f T
+hk : ¬M.k = 0
+⊢ M.sweepTM.ComputesFunInTimeVia (sweepEmbed Γ M.k) f fun n => (9 * M.k + 6) * (T n + 1) ^ 2
+GUARD_OK|83|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesFunInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesFunInTimeVia"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.sweepAct"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.indexedVisit"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.sweepRevCfg"}]

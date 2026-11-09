@@ -1,0 +1,166 @@
+import TCSlib.Complexity.ClassOracle
+import TCSlib.Complexity.ClassOracle.Classes
+import TCSlib.Complexity.ClassOracle.SATOracle
+import TCSlib.Complexity.ClassPSPACE
+import TCSlib.Complexity.ClassPSPACE.Games
+import TCSlib.Complexity.ClassPSPACE.TQBF
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Correct
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Leaf
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Machine
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Semantics
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Walk
+import TCSlib.Complexity.ClassPSPACE.TQBFHard
+import TCSlib.Complexity.ClassPSPACE.TQBFHardBridge
+import TCSlib.Complexity.ClassPSPACE.TQBFHardMachine
+import TCSlib.Complexity.ClassPSPACE.TQBFHardParams
+import TCSlib.Complexity.ClassPSPACE.TQBFHardSemantics
+import TCSlib.Complexity.ClassPSPACE.TQBFHardTseitin
+import TCSlib.Complexity.ClassPSPACE.TQBFHardVerifier
+import TCSlib.Complexity.Diagonalization
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NotTimeConstructible
+import TCSlib.Complexity.Diagonalization.Relativization
+import TCSlib.Complexity.SpaceComplexity
+import TCSlib.Complexity.SpaceComplexity.Basic
+import TCSlib.Complexity.SpaceComplexity.Codec.Bridge
+import TCSlib.Complexity.SpaceComplexity.Codec.Checks
+import TCSlib.Complexity.SpaceComplexity.Codec.Deciders
+import TCSlib.Complexity.SpaceComplexity.Codec.Engine
+import TCSlib.Complexity.SpaceComplexity.Codec.Langs
+import TCSlib.Complexity.SpaceComplexity.Codec.Layout
+import TCSlib.Complexity.SpaceComplexity.Codec.Layout2
+import TCSlib.Complexity.SpaceComplexity.Codec.Machine
+import TCSlib.Complexity.SpaceComplexity.Codec.Parse
+import TCSlib.Complexity.SpaceComplexity.Codec.Regs
+import TCSlib.Complexity.SpaceComplexity.Codec.Run
+import TCSlib.Complexity.SpaceComplexity.Codec.Scan
+import TCSlib.Complexity.SpaceComplexity.Codec.Step
+import TCSlib.Complexity.SpaceComplexity.Codec.StepDecider
+import TCSlib.Complexity.SpaceComplexity.Codec.Valid
+import TCSlib.Complexity.SpaceComplexity.Codec.Word
+import TCSlib.Complexity.SpaceComplexity.ConfigCount
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.CounterProgSim
+import TCSlib.Complexity.SpaceComplexity.CounterProgSimRun
+import TCSlib.Complexity.SpaceComplexity.Examples
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Machine
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Main
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Relax
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Run
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Search
+import TCSlib.Complexity.SpaceComplexity.ExpTime
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.ImplicitPoly
+import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenCorrect
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenLoop
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenRadius
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenStage
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountRegs
+import TCSlib.Complexity.SpaceComplexity.Logspace.ImmermanSzelepcsenyi
+import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
+import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
+import TCSlib.Complexity.SpaceComplexity.Logspace.Path
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHard
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardDecide
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardRegs
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardRun
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalkMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalkProof
+import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
+import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
+import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.SpaceComplexity.Machines.ARM
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMKit
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMProof
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMReach
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMRun
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMSim
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidthExample
+import TCSlib.Complexity.SpaceComplexity.Machines.Bank
+import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+import TCSlib.Complexity.SpaceComplexity.Machines.Call
+import TCSlib.Complexity.SpaceComplexity.Machines.CallReturn
+import TCSlib.Complexity.SpaceComplexity.Machines.Clean
+import TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep
+import TCSlib.Complexity.SpaceComplexity.Machines.Compile
+import TCSlib.Complexity.SpaceComplexity.Machines.DblLang
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.SpaceComplexity.Machines.FragDec
+import TCSlib.Complexity.SpaceComplexity.Machines.Layout
+import TCSlib.Complexity.SpaceComplexity.Machines.Lib
+import TCSlib.Complexity.SpaceComplexity.Machines.MARM
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMCompile
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMTime
+import TCSlib.Complexity.SpaceComplexity.Machines.NARM
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMCompile
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMExample
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMKit
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMLogspace
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMPSem
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMProb
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMProof
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMRun
+import TCSlib.Complexity.SpaceComplexity.Machines.Parse
+import TCSlib.Complexity.SpaceComplexity.Machines.Parse2
+import TCSlib.Complexity.SpaceComplexity.Machines.ParseCmp
+import TCSlib.Complexity.SpaceComplexity.Machines.ParsePlain
+import TCSlib.Complexity.SpaceComplexity.Machines.Program
+import TCSlib.Complexity.SpaceComplexity.Machines.Sim
+import TCSlib.Complexity.SpaceComplexity.Machines.VWord
+import TCSlib.Complexity.SpaceComplexity.NSPACE
+import TCSlib.Complexity.SpaceComplexity.Padding
+import TCSlib.Complexity.SpaceComplexity.Savitch
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Machine
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Recursion
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Run
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Setup
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
+import TCSlib.Complexity.SpaceComplexity.SpaceClasses
+import TCSlib.Complexity.SpaceComplexity.UnaryLogspace
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.SpaceComplexity.ZeroSpace
+import TCSlib.Complexity.TimeHierarchy
+import TCSlib.Complexity.TimeHierarchy.ClockLoop
+import TCSlib.Complexity.TimeHierarchy.ClockMachine
+import TCSlib.Complexity.TimeHierarchy.CodePrefix
+import TCSlib.Complexity.TimeHierarchy.Diagonal
+import TCSlib.Complexity.TimeHierarchy.Separation
+
+set_option maxHeartbeats 0
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let prefixes := ["TCSlib.Complexity.ClassOracle", "TCSlib.Complexity.ClassPSPACE",
+    "TCSlib.Complexity.Diagonalization", "TCSlib.Complexity.SpaceComplexity",
+    "TCSlib.Complexity.TimeHierarchy"]
+  let mut nChecked : Nat := 0
+  let mut nDirect : Nat := 0
+  for (n, ci) in env.constants.toList do
+    if let some i := env.getModuleIdxFor? n then
+      let owner := env.header.moduleNames[i.toNat]!.toString
+      if prefixes.any (fun p => owner == p || owner.startsWith (p ++ ".")) then
+        nChecked := nChecked + 1
+        let inType := ci.type.getUsedConstants.contains ``sorryAx
+        let inValue := (ci.value? (allowOpaque := true)).any
+          (fun e => e.getUsedConstants.contains ``sorryAx)
+        if inType || inValue then
+          nDirect := nDirect + 1
+          logInfo m!"DIRECT|{owner}|{n}|type={inType}|value={inValue}"
+  logInfo m!"TOTAL|{nChecked}|{nDirect}"

@@ -1,0 +1,20 @@
+theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t t' : ℕ} (h : t ≤ t') :
+    (tm.runFrom cfg t).output <+: (tm.runFrom cfg t').output := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  clear h
+  rw [MultiTapeTM.runFrom_add]
+  generalize tm.runFrom cfg t = c
+  induction d with
+  | zero => simp
+  | succ d ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output]
+    exact ih.trans (List.prefix_append _ _)
+
+/-- A run of `t` steps visits at most `t + 1` cells on each work tape, hence at most
+`k · (t + 1)` cells in all. [AB09, proof of Theorem 4.2: a machine running in time `T`
+visits at most `T` cells per tape, up to the starting cell]
+
+**Proof sketch.** Each tape's visited set is the image of `Finset.range (t + 1)`
+(`Finset.card_image_le`, `Finset.card_range`); sum over the `k` tapes
+(`Finset.sum_le_sum`, `Finset.sum_const_nat`). -/

@@ -1,0 +1,48 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let roots : List Name := [`Turing.FinTM.controlAction_eq, `Turing.inputMoveAction_eq,
+    `Turing.inputFoldTM_tr_bwd, `Turing.exists_inputLengthTM]
+  for root in roots do
+    let some ci := env.find? root | logInfo m!"ABSENT|{root}"; continue
+    let owner := homeOf root
+    let ax ← liftTermElabM <| collectAxioms root
+    let typ ← liftTermElabM <| ppExpr ci.type
+    let mut todo := ci.type.getUsedConstants.toList ++
+      (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+    let mut seen : List Name := [root]
+    let mut foreign : List Json := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      todo := info.type.getUsedConstants.toList ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        if home == owner then todo := di.value.getUsedConstants.toList ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          let regular := match di.hints with | .abbrev => false | _ => true
+          foreign := Json.mkObj [("name",toJson n.toString),("owner",toJson home.toString),
+            ("ordinary",toJson (regular && !(env.isProjectionFn n))),
+            ("projection",toJson (env.isProjectionFn n)),
+            ("simp",toJson (st.isLemma (.decl n))),
+            ("unfold",toJson (st.toUnfold.contains n))] :: foreign
+      | _ => pure ()
+    logInfo m!"SELECTED|{(Json.mkObj [("name",toJson root.toString),
+      ("owner",toJson owner.toString),("type_Expr",toJson (reprStr ci.type)),
+      ("universes",toJson (ci.levelParams.map Name.toString)),
+      ("type_pretty",toJson typ.pretty),("axioms",toJson (ax.toList.map Name.toString)),
+      ("simp",toJson (st.isLemma (.decl root))),("unfold",toJson (st.toUnfold.contains root)),
+      ("foreign_definitions",Json.arr foreign.reverse.toArray),
+      ("imported_theorem_proof_values_traversed",toJson false),
+      ("foreign_definition_values_traversed",toJson false)]).compress}"

@@ -1,0 +1,1 @@
+Seyoon answered **Approve the single import (Recommended)**. Add only the CfgFacts import to Seam and re-point seamComp_step_right to Cfg.inputSymbol_congr and the approved right-state equation. The old statement and machine definitions remain unchanged. Full native/6-head guard/12 controls passed; the old proof now depends on existing Classical.choice. Codex remains selected.

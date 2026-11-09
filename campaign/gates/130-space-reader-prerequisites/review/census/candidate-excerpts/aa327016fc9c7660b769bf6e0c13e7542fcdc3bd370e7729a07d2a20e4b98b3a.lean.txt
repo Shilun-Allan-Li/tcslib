@@ -1,0 +1,19 @@
+/-- An absorbing return in the prepared machine remains absorbing after
+native loading, with the complete retained-input frame fixed. -/
+private lemma clPrepared_idle (A : FinTM Bool) (ret : A.State)
+    (htr : ∀ inp work, A.tm.tr ret inp work = FinTM.controlAction 0 (some ret))
+    {x : List Bool} (c : Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x)
+    (hc : c.state = some (.inr ret)) : (clPreparedTM A).tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  simp only [clPreparedTM, htr]
+  have ha : clSlotAction (Fin.addCases (some : Fin A.k → Option (Fin A.k)) (fun _ : Fin 1 => none))
+      (Sum.inr : A.State → (clPreparedTM A).State) (FinTM.controlAction 0 (some ret)) =
+      FinTM.controlAction 0 (some (.inr ret)) := by
+    unfold clSlotAction FinTM.controlAction
+    congr 1
+    funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i <;> simp
+  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

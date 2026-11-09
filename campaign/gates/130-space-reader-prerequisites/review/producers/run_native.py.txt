@@ -1,0 +1,38 @@
+from pathlib import Path
+import json,hashlib,subprocess,time,datetime,re
+O=Path(__file__).parent;pin=json.loads((O/'PIN.json').read_text());W=Path(pin['source_worktree']);project=Path(pin['native_project']);snap=Path(pin['whole_output_snapshot']);original=Path(pin['whole_input_snapshot']);D=O/'native';D.mkdir()
+def sha(b):return hashlib.sha256(b).hexdigest()
+def write(n,v):(D/n).write_text(json.dumps(v,indent=2)+'\n')
+def objects(p):return {str(f.relative_to(p)):sha(f.read_bytes()) for f in sorted(p.rglob('*.olean'))}
+source=json.loads((O/'SOURCE1003-HEAD-before.json').read_text());base=json.loads((O/'INPUT895-MAC8-before.json').read_text());helper=W/'devtools/seyoon/leanelab-o.sh';assert helper.read_bytes()==(O/'helpers/leanelab-o.sh.txt').read_bytes()
+rows=[]
+for rel in pin['owner_compile_order']:
+ assert sha((project/rel).read_bytes())==source[rel]['sha256']
+ for ext in ['.olean','.ilean','.c','.trace']:(snap/(rel[:-5]+ext)).unlink(missing_ok=True)
+ dest=D/str(rel[:-5]+'.log');dest.parent.mkdir(parents=True,exist_ok=True)
+ argv=['bash',str(helper),str(project),str(snap),rel,str(snap)]
+ req={'source_head':pin['source_head'],'module':rel[:-5],'argv':argv,'source_sha256':source[rel]['sha256'],'helper_sha256':sha(helper.read_bytes()),'whole_snapshot':str(snap),'localcap':pin['localcap'],'machinecap':5,'one_own_Lean':True,'requested_nice':10,'requested_j':4}
+ write(str(len(rows)+1)+'-request.json',req);started=datetime.datetime.now(datetime.timezone.utc).isoformat();t=time.monotonic();samples=[]
+ with dest.open('wb') as f:
+  p=subprocess.Popen(argv,stdout=f,stderr=subprocess.STDOUT)
+  while p.poll() is None:
+   children=subprocess.run(['pgrep','-P',str(p.pid)],capture_output=True,text=True)
+   for child in children.stdout.split():
+    q=subprocess.run(['ps','-o','pid=,ppid=,ni=,comm=','-p',child],capture_output=True,text=True)
+    parts=q.stdout.strip().split(None,3)
+    if len(parts)==4 and Path(parts[3]).name=='lean':
+     sample={'pid':int(parts[0]),'parent_pid':int(parts[1]),'nice':int(parts[2]),'comm':parts[3]}
+     if sample not in samples:samples.append(sample)
+   time.sleep(0.1)
+  exitcode=p.returncode
+ raw=dest.read_bytes();out=snap/str(rel[:-5]+'.olean');ok=exitcode==0 and not re.search(rb'\berror(?::|\()',raw) and b"declaration uses 'sorry'" not in raw and out.is_file() and out.stat().st_size>0
+ assert samples and all(s['nice']>=10 for s in samples),('actual nice10 not observed',rel,samples)
+ row=req|{'UTC_start':started,'seconds':time.monotonic()-t,'exit':exitcode,'errors':len(re.findall(rb'\berror(?::|\()',raw)),'sorry_warnings':raw.count(b"declaration uses 'sorry'"),'warnings':len(re.findall(rb'\bwarning:',raw)),'raw_sha256':sha(raw),'raw_bytes':len(raw),'observed_Lean_processes':samples,'fresh_olean_sha256':sha(out.read_bytes()) if out.is_file() else None,'fresh_olean_bytes':out.stat().st_size if out.is_file() else None,'pass':bool(ok)}
+ rows.append(row);write('module-results.json',rows);print('ACTUAL_PRODUCER_OWNER',rel,'PASS' if ok else 'FAIL',flush=True);assert ok
+assert objects(original)==base;output=objects(snap);assert len(output)==895 and set(output)==set(base)
+changed=[n for n in output if output[n]!=base[n]];assert set(changed)<=set(f[:-5]+'.olean' for f in pin['owner_compile_order'])
+assert subprocess.check_output(['git','-C',str(W),'rev-parse','HEAD']).decode().strip()==pin['source_head']
+assert all(sha((W/n).read_bytes())==v['sha256'] for n,v in source.items())
+write('OUTPUT895.json',output);write('INPUT895-MAC8-after.json',base)
+write('RESULT.json',{'pass':True,'source_head':pin['source_head'],'actual_complete_owner_modules':3,'actual_selected_producer_facts':5,'errors':0,'sorry_warnings':0,'whole_output_objects':895,'input_MAC8_895_unchanged':True,'changed_objects':changed,'other892_objects_exact':True,'all_source1003_unchanged':True,'whole_overlay_no_composition':True,'actual_nice10_observed':True,'helpers_j4':True,'localcap':pin['localcap'],'machinecap':5,'no_full335_execution_claim':True})
+print('ACTUAL_PRODUCER3_NATIVE_PASS',flush=True)

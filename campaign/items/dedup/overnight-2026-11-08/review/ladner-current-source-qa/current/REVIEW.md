@@ -1,0 +1,15 @@
+# Ladner final sourceQA and actual lint sheet
+
+Pinned actual clean source: 1096e50b4e105392737ec52939b1db0cdbd9316d, BASE 9b5dcf46408db681bcbc721930ef2203fa6bc47d. This sheet runs no Lean, AX, proof-boundary or copy-text screen checks; those remain separately owned. No source/Git/canonical mutation was performed.
+
+Only two source paths change: the new Ladner owner and the existing Diagonalization facade. The new owner is absent from BASE; absence is recorded with null blob/hash and no invented empty file. Existing facade code exactly recovers BASE after removing only the authorized Ladner import. Existing imports remain in identical order. The other1002 old Lean blobs are exact; source paths1003→1004. TCSlib.lean is byte-exact, and existing line40 imports Diagonalization, completing the export route.
+
+The full actual new Ladner file has17 public declarations:4 definitions,6 interface readings,6 direct mathematical sorry statements and1 packaging theorem using the admitted intermediate-language statement. All6 mathematical holes remain. The owner is byte-identical to63eb at SHA256166c77cc4d86b0ae1a4e2d32967628cc5f3f4710c7ec5fc0cedbde5c75333311. Its complete comment-stripped code STRING is literally equal to the frozen prototype file SHA25656c999de7f9a86a9d67cf4de3e567381fc448d2f798435602a99d79783bb3a6a; all non-doc comments are exact. Both full code strings, source files, comments and complete diffs are supplied.56c denotes a file SHA256, not a Git revision.
+
+Actual lint uses exact canonical helper bytes and an explicit-list API adapter. BASE checks only the existing facade; HEAD checks both actual owners. style_lint exits1/1 with3 inherited facade missing-option findings on each side and0 new identities. The new Ladner owner has0 style findings. Campaign check_file (default check8b false) exits0/0,0FAIL/0WARN; one new INFO row reports the authorized17-declaration file. Full raw stdout/stderr, adapter/helper/source hashes, actual argv/exit receipts and uncapped dispositions remain; inherited facade findings are not called clean.
+
+Historical63eb style3→5 introduced2 parser false positives: a module doc line beginning 'theorem and…' was read as a theorem called and. Root changed exactly one word to result in1096. The historical57-payload attempt is immutable, with all original findings and full source. Current reruns prove the two artifacts are gone; no formal code, new import beyond the planned facade import, statement or mathematical proof changed in that correction.
+
+Sizes: existing facade2636→2982 bytes,53→59 splitlines; new Ladner11097 bytes/252 splitlines. The new-file BASE size is absent/null, not zero. Neither crosses600/1000. Planned home/import/layout and LD1–7 choices are treated as already authorized under PLAN(f) and parent instructions; no extra design decision is inferred or requested.
+
+This is source and lint evidence only. It does not claim the mathematical placeholders are filled, all17 results have standard axioms, or the proof boundary/edge probes pass. Source is unchanged after all checks. Frozen UTC 2026-11-08T14:22:29.489965+00:00.

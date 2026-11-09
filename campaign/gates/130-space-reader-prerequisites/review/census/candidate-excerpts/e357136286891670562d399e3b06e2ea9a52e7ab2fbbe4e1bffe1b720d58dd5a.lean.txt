@@ -1,0 +1,11 @@
+/-- A three-step boundary extension: from one cell past a delimiter, move left,
+write one symbol, and move twice right. No catalog row has this exact local
+interface; the unbounded scans around it use the public skip rows. -/
+private def rt_boundaryTM {Γ : Type*} (k : ℕ) (i : Fin k) (b : Γ) :
+    MultiTapeTM k Γ (Fin 4) where
+  q₀ := 0
+  tr := fun q _ _ =>
+    if q = 0 then tapeAction i 0 none .neg 1
+    else if q = 1 then tapeAction i 0 (some (some b)) .pos 2
+    else if q = 2 then tapeAction i 0 none .pos 3
+    else inputMoveAction 0 3

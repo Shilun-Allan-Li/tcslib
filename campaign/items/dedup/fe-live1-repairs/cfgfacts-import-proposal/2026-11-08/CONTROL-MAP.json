@@ -1,0 +1,254 @@
+[
+  {
+    "definition": "Turing.MultiTapeTM.step",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step {c with state := none} = {c with state := none} := by rfl",
+    "Base_line": 11,
+    "Sealed_line": 12
+  },
+  {
+    "definition": "Turing.MultiTapeTM.step",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step c = match c.state with\n      | none => c\n      | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl",
+    "Base_line": 15,
+    "Sealed_line": 16
+  },
+  {
+    "definition": "Turing.FinTM.controlAction",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S).state = q := by rfl",
+    "Base_line": 21,
+    "Sealed_line": 22
+  },
+  {
+    "definition": "Turing.FinTM.controlAction",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl",
+    "Base_line": 25,
+    "Sealed_line": 26
+  },
+  {
+    "definition": "Turing.Action.apply",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).state = a.state := by rfl",
+    "Base_line": 29,
+    "Sealed_line": 30
+  },
+  {
+    "definition": "Turing.Action.apply",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).inputPos = moveInputPos c.inputPos a.inputTape := by rfl",
+    "Base_line": 33,
+    "Sealed_line": 34
+  },
+  {
+    "definition": "Turing.Cfg.inputSymbol",
+    "kind": "point",
+    "source": "example : blankCfg.inputSymbol = none := by rfl",
+    "Base_line": 37,
+    "Sealed_line": 38
+  },
+  {
+    "definition": "Turing.Cfg.inputSymbol",
+    "kind": "equation",
+    "source": "example : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl",
+    "Base_line": 40,
+    "Sealed_line": 41
+  },
+  {
+    "definition": "Turing.Cfg.workTapeSymbols",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :\n    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl",
+    "Base_line": 43,
+    "Sealed_line": 44
+  },
+  {
+    "definition": "Turing.Cfg.workTapeSymbols",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :\n    c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl",
+    "Base_line": 47,
+    "Sealed_line": 48
+  },
+  {
+    "definition": "Turing.moveInputPos",
+    "kind": "point",
+    "source": "example : moveInputPos (0 : Fin 2) 0 = 0 := by rfl",
+    "Base_line": 51,
+    "Sealed_line": 52
+  },
+  {
+    "definition": "Turing.moveInputPos",
+    "kind": "equation",
+    "source": "example : moveInputPos (1 : Fin 2) 0 = 1 := by rfl",
+    "Base_line": 54,
+    "Sealed_line": 55
+  },
+  {
+    "definition": "Turing.Action.mapState",
+    "kind": "point",
+    "source": "example {k : \u2115} {S T : Type} (f : S \u2192 T) (a : Action k Bool S) :\n    (a.mapState f).state = a.state.map f := by rfl",
+    "Base_line": 57,
+    "Sealed_line": 58
+  },
+  {
+    "definition": "Turing.Action.mapState",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S T : Type} (f : S \u2192 T) (a : Action k Bool S) :\n    a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl",
+    "Base_line": 61,
+    "Sealed_line": 62
+  },
+  {
+    "definition": "Turing.Cfg.mapState",
+    "kind": "point",
+    "source": "example {k : \u2115} {S T : Type} {x : List Bool} (f : S \u2192 T) (c : Cfg k Bool S x) :\n    (c.mapState f).state = c.state.map f := by rfl",
+    "Base_line": 65,
+    "Sealed_line": 66
+  },
+  {
+    "definition": "Turing.Cfg.mapState",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S T : Type} {x : List Bool} (f : S \u2192 T) (c : Cfg k Bool S x) :\n    c.mapState f = {c with state := c.state.map f} := by rfl",
+    "Base_line": 69,
+    "Sealed_line": 70
+  },
+  {
+    "definition": "Turing.embedEmitTM",
+    "kind": "point",
+    "source": "example {m k : \u2115} {S : Type} (i : Fin m \u21aa Fin k) (M : MultiTapeTM m Bool S) :\n    (embedEmitTM i M).q\u2080 = M.q\u2080 := by rfl",
+    "Base_line": 73,
+    "Sealed_line": 74
+  },
+  {
+    "definition": "Turing.embedEmitTM",
+    "kind": "equation",
+    "source": "example {m k : \u2115} {S : Type} (i : Fin m \u21aa Fin k) (M : MultiTapeTM m Bool S)\n    (q : S) (inp : Option Bool) (work : Fin k \u2192 Option Bool) :\n    ((embedEmitTM i M).tr q inp work).state = (M.tr q inp (fun j => work (i j))).state := by rfl",
+    "Base_line": 77,
+    "Sealed_line": 78
+  },
+  {
+    "definition": "Turing.embedEmitCfg",
+    "kind": "point",
+    "source": "example {m k : \u2115} {S : Type} {x : List Bool} (i : Fin m \u21aa Fin k)\n    (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (pre : List Bool) (c : Cfg m Bool S x) :\n    (embedEmitCfg i tapes heads pre c).state = c.state := by rfl",
+    "Base_line": 82,
+    "Sealed_line": 83
+  },
+  {
+    "definition": "Turing.embedEmitCfg",
+    "kind": "equation",
+    "source": "example {m k : \u2115} {S : Type} {x : List Bool} (i : Fin m \u21aa Fin k)\n    (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (pre : List Bool) (c : Cfg m Bool S x) :\n    (embedEmitCfg i tapes heads pre c).output = pre ++ c.output := by rfl",
+    "Base_line": 87,
+    "Sealed_line": 88
+  },
+  {
+    "definition": "Turing.seamCompTM",
+    "kind": "point",
+    "source": "example {k : \u2115} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)\n    (N : MultiTapeTM k Bool T) (entry : T) :\n    (seamCompTM M exit N entry).q\u2080 = .inl M.q\u2080 := by rfl",
+    "Base_line": 92,
+    "Sealed_line": 93
+  },
+  {
+    "definition": "Turing.seamCompTM",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)\n    (N : MultiTapeTM k Bool T) (entry q : T) (inp : Option Bool) (work : Fin k \u2192 Option Bool) :\n    ((seamCompTM M exit N entry).tr (.inr q) inp work).state = (N.tr q inp work).state.map Sum.inr := by rfl",
+    "Base_line": 97,
+    "Sealed_line": 98
+  },
+  {
+    "definition": "Turing.MultiTapeTM.runFrom",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 0 = c := by rfl",
+    "Base_line": 102,
+    "Sealed_line": 103
+  },
+  {
+    "definition": "Turing.MultiTapeTM.runFrom",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 1 = M.step c := by rfl",
+    "Base_line": 106,
+    "Sealed_line": 107
+  },
+  {
+    "definition": "Turing.pairEncode",
+    "kind": "point",
+    "source": "example : pairEncode [] [] = [false, true] := by rfl",
+    "Base_line": 110,
+    "Sealed_line": 111
+  },
+  {
+    "definition": "Turing.pairEncode",
+    "kind": "equation",
+    "source": "example : pairEncode [false] [] = [false, false, false, true] := by rfl",
+    "Base_line": 113,
+    "Sealed_line": 114
+  },
+  {
+    "definition": "Turing.FinTM.bufferTape",
+    "kind": "point",
+    "source": "example : bufferTape ([] : List Bool) 0 = none := by rfl",
+    "Base_line": 116,
+    "Sealed_line": 117
+  },
+  {
+    "definition": "Turing.FinTM.bufferTape",
+    "kind": "equation",
+    "source": "example : bufferTape [true] 0 = some true := by rfl",
+    "Base_line": 119,
+    "Sealed_line": 120
+  },
+  {
+    "definition": "Turing.MultiTapeTM.initCfg",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} (M : MultiTapeTM k Bool S) :\n    M.initCfg [] = Cfg.init M.q\u2080 [] := by rfl",
+    "Base_line": 122,
+    "Sealed_line": 123
+  },
+  {
+    "definition": "Turing.MultiTapeTM.initCfg",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :\n    M.initCfg x = Cfg.init M.q\u2080 x := by rfl",
+    "Base_line": 126,
+    "Sealed_line": 127
+  },
+  {
+    "definition": "Turing.Cfg.init",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} (q : S) :\n    (Cfg.init (k := k) q ([] : List Bool)).state = some q := by rfl",
+    "Base_line": 130,
+    "Sealed_line": 131
+  },
+  {
+    "definition": "Turing.Cfg.init",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} (q : S) (x : List Bool) :\n    (Cfg.init (k := k) q x).output = [] := by rfl",
+    "Base_line": 134,
+    "Sealed_line": 135
+  },
+  {
+    "definition": "Turing.Cfg.ofWords",
+    "kind": "point",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (q : S) (w : Fin k \u2192 List Bool) :\n    (Cfg.ofWords (input := x) q w).state = some q := by rfl",
+    "Base_line": 138,
+    "Sealed_line": 139
+  },
+  {
+    "definition": "Turing.Cfg.ofWords",
+    "kind": "equation",
+    "source": "example {k : \u2115} {S : Type} {x : List Bool} (q : S) (w : Fin k \u2192 List Bool) :\n    (Cfg.ofWords (input := x) q w).output = [] := by rfl",
+    "Base_line": 142,
+    "Sealed_line": 143
+  },
+  {
+    "definition": "Turing.FinTM.ComputesInTime",
+    "kind": "point",
+    "source": "example (M : FinTM Bool) (x y : List Bool) :\n    M.ComputesInTime x y 0 \u2194 \u2203 s, M.tm.ComputesInTimeAndSpace x y 0 s := by rfl",
+    "Base_line": 146,
+    "Sealed_line": 147
+  },
+  {
+    "definition": "Turing.FinTM.ComputesInTime",
+    "kind": "equation",
+    "source": "example (M : FinTM Bool) (x y : List Bool) (t : \u2115) :\n    M.ComputesInTime x y t = (\u2203 s, M.tm.ComputesInTimeAndSpace x y t s) := by rfl",
+    "Base_line": 150,
+    "Sealed_line": 151
+  }
+]

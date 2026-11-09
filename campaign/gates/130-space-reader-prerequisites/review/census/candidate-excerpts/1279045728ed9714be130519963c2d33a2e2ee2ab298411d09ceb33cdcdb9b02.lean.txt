@@ -1,0 +1,18 @@
+/-- The counter-bank frame is literally the reference representation,
+including its virtual-input buffer, every source tape, and all heads. -/
+private lemma clTrack_frame (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool)
+    (qs : Fin ((1 + M.k) + (1 + M.k)) → Fin 4)
+    (n : Fin ((1 + M.k) + (1 + M.k)) → ℕ) :
+    FinTM.leftCfg (fun s => (c.state, b, some s))
+      (clBankCfg (1 : Fin (x.length + 2))
+        (fun i => clCountCfg x (qs i) 1 0 (n i).bits []))
+      (Fin.addCases (fun _ : Fin 1 => FinTM.bufferTape y) c.workTapes)
+      (Fin.addCases (fun _ : Fin 1 => (c.inputPos.val : ℤ) - 1) c.workTapePos) =
+      clRefCfg M (fun s b => (s, b, some (fun i => some (qs i)))) c b
+        (1 : Fin (x.length + 2)) (fun i => FinTM.bufferTape (n i).bits) (fun _ => 0) [] := by
+  refine Cfg.ext rfl rfl ?_ rfl rfl
+  funext i
+  refine Fin.addCases ?_ ?_ i
+  · intro j; simp [FinTM.leftCfg, clBankCfg, clCountCfg, clRefCfg, clCountTape_eq]
+  · intro j; simp [FinTM.leftCfg, clRefCfg, FinTM.tapeBlocks, clBankTM]

@@ -1,0 +1,17 @@
+/-- One step transfers across an agreement: if the configuration's control
+state (when live) lies in the agreement set, both machines step it to the
+same configuration. Halted configurations step to themselves on both sides.
+
+**Proof sketch.** On `c.state = none` both steps are the identity. On
+`c.state = some q` with `q ∈ Q`, unfold `step`: both sides apply the same
+action `M.tr q c.inputSymbol c.workTapeSymbols = N.tr q …` to `c`. -/
+theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (hq : ∀ q, c.state = some q → q ∈ Q) :
+    N.step c = M.step c := by
+  cases hs : c.state with
+  | none => simp only [step_of_halt hs]
+  | some q =>
+    simp only [step, hs]
+    rw [h q (hq q hs)]

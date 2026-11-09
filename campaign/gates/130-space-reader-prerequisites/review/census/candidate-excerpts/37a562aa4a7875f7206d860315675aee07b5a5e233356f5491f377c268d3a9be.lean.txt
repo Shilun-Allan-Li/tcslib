@@ -1,0 +1,34 @@
+/-- **The silent transport, reconstructed.** A configuration whose state, input head and output
+agree with the source's state, input head and the given physical output, whose selected tapes are
+the source's, whose capture tape holds the recorded word `pre ++ c.output` with its head after it,
+and whose other tapes are the frame, is the silent transport `Turing.embedSilentCfg`.
+
+**Proof sketch.** Field by field: the state, input head and output by the transport's equations;
+a selected tape by `Turing.embedSilentCfg_selected_tape` and `_selected_pos`; the capture tape by
+`Turing.embedSilentCfg_cap`; every other tape by `Turing.embedSilentCfg_unselected`. -/
+private theorem dz_silentCfg_eq {m K : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin K)
+    (cap : Fin K) (hcap : cap ∉ Set.range ι) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)
+    (pre o : List Bool) (c : Cfg m Bool S x) (d : Cfg K Bool S x) (hs : c.state = d.state)
+    (hin : c.inputPos = d.inputPos) (hout : o = d.output)
+    (hsel : ∀ i, c.workTapes i = d.workTapes (ι i) ∧ c.workTapePos i = d.workTapePos (ι i))
+    (hc : FinTM.bufferTape (pre ++ c.output) = d.workTapes cap ∧
+      ((pre ++ c.output).length : ℤ) = d.workTapePos cap)
+    (hfr : ∀ j, j ∉ Set.range ι → j ≠ cap → T j = d.workTapes j ∧ P j = d.workTapePos j) :
+    embedSilentCfg ι cap T P pre o c = d := by
+  have fields (j : Fin K) :
+      (embedSilentCfg ι cap T P pre o c).workTapes j = d.workTapes j ∧
+        (embedSilentCfg ι cap T P pre o c).workTapePos j = d.workTapePos j := by
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedSilentCfg_selected_tape, embedSilentCfg_selected_pos]
+      exact hsel i
+    · by_cases hjc : j = cap
+      · subst hjc
+        obtain ⟨h1, h2⟩ := embedSilentCfg_cap ι j hcap T P pre o c
+        exact ⟨h1.trans hc.1, h2.trans hc.2⟩
+      · obtain ⟨h1, h2⟩ := embedSilentCfg_unselected ι cap T P pre o c j hj hjc
+        exact ⟨h1.trans (hfr j hj hjc).1, h2.trans (hfr j hj hjc).2⟩
+  exact Cfg.ext ((embedSilentCfg_state ι cap T P pre o c).trans hs)
+    ((embedSilentCfg_inputPos ι cap T P pre o c).trans hin)
+    (funext fun j => (fields j).1) (funext fun j => (fields j).2)
+    ((embedSilentCfg_output ι cap T P pre o c).trans hout)

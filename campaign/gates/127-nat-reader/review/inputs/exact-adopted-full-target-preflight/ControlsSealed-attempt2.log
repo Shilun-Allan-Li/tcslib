@@ -1,0 +1,45 @@
+CONTROL|Nat.bit|point|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Nat.bit|point|Tactic `rfl` failed: equality lhs
+  Nat.bit b n
+is not definitionally equal to rhs
+  bif b then 2 * n + 1 else 2 * n
+
+b : Bool
+n : ℕ
+⊢ Nat.bit b n = bif b then 2 * n + 1 else 2 * n
+CONTROL|Nat.bit|abstract|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Nat.bit|abstract|Tactic `rfl` failed: equality lhs
+  Nat.bit
+is not definitionally equal to rhs
+  fun b n => bif b then 2 * n + 1 else 2 * n
+
+⊢ Nat.bit = fun b n => bif b then 2 * n + 1 else 2 * n
+CONTROL|Turing.codeBitsNat|point|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.codeBitsNat|point|Tactic `rfl` failed: equality lhs
+  Turing.codeBitsNat xs
+is not definitionally equal to rhs
+  List.foldr Nat.bit 0 xs
+
+xs : List Bool
+⊢ Turing.codeBitsNat xs = List.foldr Nat.bit 0 xs
+CONTROL|Turing.codeBitsNat|abstract|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.codeBitsNat|abstract|Tactic `rfl` failed: equality lhs
+  Turing.codeBitsNat
+is not definitionally equal to rhs
+  fun xs => List.foldr Nat.bit 0 xs
+
+⊢ Turing.codeBitsNat = fun xs => List.foldr Nat.bit 0 xs
+ControlsSealed.lean:73:62: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  Turing.incFixed [] = none
+ControlsSealed.lean:76:55: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  Turing.incFixed (false :: w) = some (true :: w)
+CONTROL|Turing.incFixed|nil_equation|FAIL
+CONTROL|Turing.incFixed|false_cons_equation|FAIL

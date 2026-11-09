@@ -1,0 +1,33 @@
+from pathlib import Path
+import json,hashlib,base64,gzip,tarfile,io,subprocess,os,collections
+D=Path('/private/tmp/ab34-fe9-gate-draft');O=Path('/private/tmp/ab34-fe9-draft-peer');sha=lambda b:hashlib.sha256(b).hexdigest();archives=json.loads((D/'qa/encoded-exports/ARCHIVE-MEMBERS.json').read_text())['archives'];rows=[];errors=[];phase_files={}
+for a in archives:
+ phase=a['phase'];encoded=(D/a['encoded_file']).read_bytes();assert sha(encoded)==a['encoded_SHA256'];compressed=base64.b64decode(b''.join(encoded.split()),validate=True);assert sha(compressed)==a['gzip_SHA256'];raw=gzip.decompress(compressed);assert sha(raw)==a['tar_SHA256'];expected={r['path']:r for r in a['members']};seen={}
+ with tarfile.open(fileobj=io.BytesIO(raw)) as tf:
+  for m in tf:
+   p=Path(m.name);assert m.isfile() and not p.is_absolute() and '..' not in p.parts and not m.issym() and not m.islnk();b=tf.extractfile(m).read();b.decode('utf-8');assert len(b)==expected[m.name]['bytes'] and sha(b)==expected[m.name]['SHA256'];assert (D/'qa/exports'/phase/m.name).read_bytes()==b;seen[m.name]=b
+ assert set(seen)==set(expected);phase_files[phase]=seen
+ rows.append({'phase':phase,'archive_encoded_gzip_tar_all_SHA256_exact':True,'regular_safe_UTF8_member_count':len(seen),'all_member_sizes_SHA256_and_raw_export_bytes_exact':True,'Lean_member_count':sum(p.endswith('.lean') for p in seen),'lean_toolchain_present':'lean-toolchain' in seen,'lake_manifest_present':'lake-manifest.json' in seen,'plain_leanelab_helper_present':'devtools/seyoon/leanelab.sh' in seen,'native_output_helper_present':'devtools/seyoon/leanelab-o.sh' in seen})
+# Read-only Git object inventories independently bind the provided source maps.
+repo='/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4';gitrows=[];env=dict(os.environ);env['GIT_OPTIONAL_LOCKS']='0'
+for phase,ref in [('BASE','9b5dcf46408db681bcbc721930ef2203fa6bc47d'),('HEAD','d64dff4fbef865d815c6a561ce8037ea1bae07a2')]:
+ raw=subprocess.check_output(['git','-C',repo,'ls-tree','-r',ref],env=env);tree={}
+ for line in raw.decode().splitlines():
+  left,path=line.split('\t',1);mode,kind,blob=left.split()
+  if path.endswith('.lean'):tree[path]=blob
+ supplied=json.loads((D/'bindings'/(phase+'-all1003-Lean-map.json')).read_text());assert isinstance(supplied,dict) and len(supplied)==1003;assert set(tree)==set(supplied)
+ for p,blob in tree.items():
+  b=phase_files[phase][p];r=supplied[p];assert hashlib.sha1(('blob '+str(len(b))+'\0').encode()+b).hexdigest()==blob==r
+ gitrows.append({'phase':phase,'source_commit':ref,'actual_read_only_git_tree_Lean_blobs':len(tree),'all_archive_and_supplied_1003_Git_blob_SHA1_SHA256_sizes_exact':True})
+# Independently reverse complete exact chunks and check every source range/header.
+sf=json.loads((D/'source-freeze/SOURCE-FREEZE.json').read_text());owners=collections.defaultdict(list)
+for t in sf['targets']:
+ for phase in ['BASE','HEAD']:
+  r=t[phase];chunk=(D/r['full_chunk_capture']).read_text();b=phase_files[phase][t['path']];text=b.decode();assert sha(chunk.encode())==r['full_chunk_SHA256'] and text[r['source_start_offset']:r['source_end_offset']]==chunk;assert text.count(chunk)==1;assert chunk.split(':=',1)[0].split('-/',1)[-1].lstrip()==r['literal_header'];assert sha(r['literal_header'].encode())==r['literal_header_SHA256']
+ assert t['BASE']['literal_header']==t['HEAD']['literal_header'];owners[t['path']].append(t)
+for p,ts in owners.items():
+ s=phase_files['HEAD'][p].decode()
+ for t in ts:s=s.replace((D/t['HEAD']['full_chunk_capture']).read_text(),(D/t['BASE']['full_chunk_capture']).read_text(),1)
+ assert s.encode()==phase_files['BASE'][p]
+assert phase_files['BASE']['TCSlib/Complexity/TuringMachine/Build/InputLength.lean']==phase_files['HEAD']['TCSlib/Complexity/TuringMachine/Build/InputLength.lean'];actual_changed=sorted(p for p,b in phase_files['BASE'].items() if p.endswith('.lean') and b!=phase_files['HEAD'][p]);assert actual_changed==sorted(owners)
+portable=(D/'BUNDLE-FILES.draft.txt').read_text().splitlines();all603=[p for p in portable if p.strip()];extensions=collections.Counter(Path(p).suffix for p in all603);result={'archives':rows,'git_source_bindings':gitrows,'full_nine_chunk_ranges_headers_hashes_and_four_owner_reverse_recovery_exact':True,'InputLength_whole_source_BASE_exact':True,'actual_changed_Lean_files':actual_changed,'portable_603_extensions':dict(extensions),'both_archives_members_decoder_in_portable':all(p in all603 for p in ['qa/encoded-exports/ARCHIVE-MEMBERS.json','qa/encoded-exports/BASE-QA-export.tar.gz.base64.txt','qa/encoded-exports/HEAD-QA-export.tar.gz.base64.txt','tools/recover_qa_export.py']),'no_Lean_screen_or_source_Git_canonical_mutation':True};(O/'source-portability-checks.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

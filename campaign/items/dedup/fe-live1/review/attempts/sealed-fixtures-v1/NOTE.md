@@ -1,0 +1,1 @@
+Complete actual v1 fixture/control run retained. Five contexts' controls are valid native PASS4/sealed4 matching rfl errors and remain unchanged. Whole-declaration fixture failures at misplaced section commands are not proof-opacity results and are superseded by corrected docstring-aware envelopes.

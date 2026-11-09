@@ -1,0 +1,31 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Codex
+-/
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PClosure
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import Mathlib.Data.Nat.Log
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing Complexity
+open scoped Classical
+attribute [local irreducible] Complexity.SAT Complexity.expCode Turing.FinTM.ComputesInTime Turing.CodeTM.toFinTM
+attribute [-simp] Turing.CodeTM.toFinTM_k
+
+example : SAT = {x : List Bool | (Std.Sat.CNF.decode x).Satisfiable} := by rfl
+example (x : List Bool) : x ∈ SAT ↔ (Std.Sat.CNF.decode x).Satisfiable := Iff.rfl
+example : expCode = Classical.choice exists_uniformMachineCode := by rfl
+example : expCode.simDegree = (Classical.choice exists_uniformMachineCode).simDegree := by rfl
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = (∃ s, M.tm.ComputesInTimeAndSpace x y t s) := by rfl
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t ↔ (∃ s, M.tm.ComputesInTimeAndSpace x y t s) := Iff.rfl
+example (M : CodeTM) : M.toFinTM =
+    { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := by rfl
+example (M : CodeTM) : M.toFinTM.k = 1 := by rfl

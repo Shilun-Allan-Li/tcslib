@@ -1,0 +1,73 @@
+/-- **The return pass** of the leaf rows. From `back b` with the head on the rightmost of the `m`
+non-blank cells `o, …, o + m - 1` and a blank at `o - 1`, `m + 1` steps write `wb` on those `m`
+cells, return the head to `o`, and stop at `done b`. -/
+private theorem xr_back_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (r : Fin K)
+    (wb : Option (Option Bool))
+    (hsome : ∀ (b : Bool) inp w s, w r = some s →
+      tm.tr (.back b) inp w = xr_act (xr_mv1 r wb SignType.neg) (some (.back b)))
+    (hnone : ∀ (b : Bool) inp w, w r = none →
+      tm.tr (.back b) inp w = xr_act (xr_mv1 r none SignType.pos) (some (.done b)))
+    (b : Bool) (o : ℤ) (m : ℕ) :
+    ∀ d : Cfg K Bool xr_St x, d.state = some (.back b) → d.workTapePos r = o + m - 1 →
+      (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) → d.workTapes r (o - 1) = none →
+      tm.runFrom d (m + 1) =
+        ⟨some (.done b), d.inputPos,
+          Function.update d.workTapes r
+            (fun p => if o ≤ p ∧ p < o + m then wb.getD (d.workTapes r p) else d.workTapes r p),
+          Function.update d.workTapePos r o, d.output⟩ := by
+  induction m with
+  | zero =>
+    intro d hd hpos _ hleft
+    have hread : d.workTapeSymbols r = none := by
+      rw [Cfg.workTapeSymbols_eq, hpos]
+      simpa using hleft
+    rw [show (0 : ℕ) + 1 = 1 from rfl, xr_runFrom_one, MultiTapeTM.step_of_some hd,
+      hnone b _ _ hread, xr_mv1_apply_none]
+    congr 1
+    · symm
+      rw [Function.update_eq_self_iff]
+      funext p
+      split_ifs with h
+      · exfalso
+        push_cast at h
+        omega
+      · rfl
+    · rw [hpos, xr_cast_pos]
+      congr 1
+      push_cast
+      ring
+  | succ m ih =>
+    intro d hd hpos hcells hleft
+    have hcur : d.workTapes r (o + m) ≠ none := hcells m (by omega)
+    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp hcur
+    have hpos' : d.workTapePos r = o + m := by rw [hpos]; push_cast; ring
+    have hread : d.workTapeSymbols r = some s := by
+      rw [Cfg.workTapeSymbols_eq, hpos', hs]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step_of_some hd, hsome b _ _ s hread,
+      xr_mv1_apply, hpos', xr_cast_neg]
+    have hX : ∀ p : ℤ, p ≠ o + m →
+        Function.update (d.workTapes r) (o + m) (wb.getD (d.workTapes r (o + m))) p =
+          d.workTapes r p := fun p hp => Function.update_of_ne hp _ _
+    rw [ih _ rfl ?_ ?_ ?_]
+    · dsimp only
+      simp only [Function.update_self, Function.update_idem]
+      congr 1
+      refine congrArg (Function.update d.workTapes r) (funext fun p => ?_)
+      dsimp only
+      by_cases hp : p = o + m
+      · rw [hp, Function.update_self, if_neg (fun h => lt_irrefl _ h.2),
+          if_pos ⟨by omega, by push_cast; omega⟩]
+      · rw [hX p hp]
+        by_cases h1 : o ≤ p ∧ p < o + m
+        · rw [if_pos h1, if_pos ⟨h1.1, by push_cast; omega⟩]
+        · rw [if_neg h1, if_neg (by push_cast at h1 ⊢; omega)]
+    · dsimp only
+      rw [Function.update_self]
+      omega
+    · intro i hi
+      dsimp only
+      rw [Function.update_self, hX _ (by omega)]
+      exact hcells i (by omega)
+    · dsimp only
+      rw [Function.update_self, hX _ (by omega)]
+      exact hleft

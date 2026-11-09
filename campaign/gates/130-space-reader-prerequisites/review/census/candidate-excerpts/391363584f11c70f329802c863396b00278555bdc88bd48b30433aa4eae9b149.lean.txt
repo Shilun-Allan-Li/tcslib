@@ -1,0 +1,21 @@
+/-- A finite controller runs `D` with its first emission captured in a register,
+rewinds, then enters the selected branch on disjoint fresh tapes. A simulated halt
+is represented by a live control state so that dispatch occurs only after `D` halts.
+An empty register at dispatch halts safely. -/
+private def condTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
+  k := D.k + (M₁.k + M₂.k)
+  State := (Option D.State × Option Bool) ⊕ (Option Bool ⊕ (M₁.State ⊕ M₂.State))
+  tm :=
+    { q₀ := .inl (some D.tm.q₀, none)
+      tr := fun q inp work => match q with
+        | .inl (some q, reg) =>
+          let a := D.tm.tr q inp (fun i => work (Fin.castAdd (M₁.k + M₂.k) i))
+          ⟨a.inputTape, Fin.addCases a.workTapes (fun _ => (none, 0)), none,
+            some (.inl (a.state, reg.or a.output))⟩
+        | .inl (none, reg) => controlAction .neg (some (.inr (.inl reg)))
+        | .inr (.inl reg) => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl reg)))
+          | none => controlAction .pos
+              (reg.map (fun b => .inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+        | .inr (.inr q) => rightAction D.k (fun s => .inr (.inr s))
+            ((branchTM M₁ M₂ false).tm.tr q inp (fun i => work (Fin.natAdd D.k i))) }

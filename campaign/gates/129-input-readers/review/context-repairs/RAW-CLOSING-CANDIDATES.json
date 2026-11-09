@@ -1,0 +1,416 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 96,
+    "source": "  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]",
+    "context": "        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by\n  cases hw : (a.workTapes i).1 with\n  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]\n  | some w => simp [Action.apply, hw]\n\nend Turing"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 97,
+    "source": "  | some w => simp [Action.apply, hw]",
+    "context": "  cases hw : (a.workTapes i).1 with\n  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]\n  | some w => simp [Action.apply, hw]\n\nend Turing\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 133,
+    "source": "      unfold MultiTapeTM.step",
+    "context": "        (emitAction w e \u27e8t, by omega\u27e9).apply (tm.runFrom cfg t) := by\n      rw [MultiTapeTM.runFrom_succ_eq_step']\n      unfold MultiTapeTM.step\n      rw [hstate]\n      exact congrArg (fun a => a.apply (tm.runFrom cfg t)) (htr _ _ _)\n    rw [hstep]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 151,
+    "source": "  unfold MultiTapeTM.step",
+    "context": "  obtain \u27e8hstate, hout\u27e9 := emit_run tm w e htr cfg hs w.length (le_refl _)\n  rw [MultiTapeTM.runFrom_succ_eq_step']\n  unfold MultiTapeTM.step\n  rw [hstate]\n  dsimp only\n  rw [htr]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 155,
+    "source": "  simp [emitAction, Action.apply, hout]",
+    "context": "  dsimp only\n  rw [htr]\n  simp [emitAction, Action.apply, hout]\n\n\n/-- An action that only moves the input head and changes the state. -/"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 180,
+    "source": "    simp only [Cfg.inputSymbol, dif_neg hz, dif_pos (show cfg.inputPos.val = x.length + 1 by omega)]",
+    "context": "      rw [hz] at hp\n      simp at hp\n    simp only [Cfg.inputSymbol, dif_neg hz, dif_pos (show cfg.inputPos.val = x.length + 1 by omega)]\n    simp [he]\n\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 264,
+    "source": "  unfold MultiTapeTM.step",
+    "context": "    (c : Cfg k Bool S x) (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) :\n    tm'.step (leftCfg f c tapes heads) = leftCfg f (tm.step c) tapes heads := by\n  unfold MultiTapeTM.step\n  cases hs : c.state with\n  | none => simp [leftCfg, hs]\n  | some q =>"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 288,
+    "source": "  unfold MultiTapeTM.step",
+    "context": "    (c : Cfg l Bool S x) (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) :\n    tm'.step (rightCfg f c tapes heads) = rightCfg f (tm.step c) tapes heads := by\n  unfold MultiTapeTM.step\n  cases hs : c.state with\n  | none => simp [rightCfg, hs]\n  | some q =>"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 540,
+    "source": "      unfold MultiTapeTM.step",
+    "context": "        rw [dif_pos hz]\n      change tm.step cfg = _\n      unfold MultiTapeTM.step\n      rw [hs]\n      dsimp only\n      rw [htr, hsym]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 557,
+    "source": "        unfold MultiTapeTM.step",
+    "context": "      have hstep : tm.step cfg =\n          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by\n        unfold MultiTapeTM.step\n        rw [hs]\n        dsimp only\n        rw [htr, hsym]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 637,
+    "source": "      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]",
+    "context": "    \u00b7 rfl\n    \u00b7 have hz : cfg.inputPos = 0 := Fin.ext hj\n      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]\n      change (tm.step cfg).workTapePos = _\n      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]\n  | succ j ih =>"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 639,
+    "source": "      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]",
+    "context": "      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]\n      change (tm.step cfg).workTapePos = _\n      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]\n  | succ j ih =>\n    intro cfg hs hj hp u hu\n    cases u with"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 649,
+    "source": "        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]",
+    "context": "      have he : tm.step cfg =\n          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by\n        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]\n      rw [MultiTapeTM.runFrom_succ_eq_step, he]\n      apply ih _ rfl _ (by omega) u (by omega)\n      simp only [moveInputPos_neg_val]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 785,
+    "source": "  \u00b7 simp [Cfg.inputSymbol, h0]",
+    "context": "    (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : \u2124) - 1) = c.inputSymbol := by\n  by_cases h0 : c.inputPos = 0\n  \u00b7 simp [Cfg.inputSymbol, h0]\n  \u00b7 have hp : 0 < c.inputPos.val := by\n      have : c.inputPos.val \u2260 0 := fun h => h0 (Fin.ext h)\n      omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 813,
+    "source": "      simp [virtualMove, virtualNextTag, Cfg.inputSymbol, he, VirtualTag,",
+    "context": "    subst b\n    cases m <;>\n      simp [virtualMove, virtualNextTag, Cfg.inputSymbol, he, VirtualTag,\n        moveInputPos, SignType.zero_eq_zero, SignType.neg_eq_neg_one,\n        SignType.pos_eq_one]\n  \u00b7 have hne : c.inputPos \u2260 0 := fun h => h0 (congrArg Fin.val h)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 821,
+    "source": "      have hs : c.inputSymbol = none := by simp [Cfg.inputSymbol, he]",
+    "context": "      subst b\n      have he : c.inputPos = \u27e8w.length + 1, by omega\u27e9 := Fin.ext hr\n      have hs : c.inputSymbol = none := by simp [Cfg.inputSymbol, he]\n      cases m with\n      | zero =>\n        simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 919,
+    "source": "  unfold MultiTapeTM.step",
+    "context": "    (bufferedCompTM M\u2081 M\u2082).tm.step (bufferedFirstCfg M\u2081 M\u2082 c) =\n      bufferedFirstCfg M\u2081 M\u2082 (M\u2081.tm.step c) := by\n  unfold MultiTapeTM.step\n  cases hq : c.state with\n  | none => exact False.elim (hs hq)\n  | some q =>"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 946,
+    "source": "            simp [bufferedFirstCfg, Action.apply, ho, bufferTape_append]",
+    "context": "        \u00b7 intro j\n          cases ho : a.output <;>\n            simp [bufferedFirstCfg, Action.apply, ho, bufferTape_append]\n        \u00b7 intro j; simp [bufferedFirstCfg, Action.apply]\n    \u00b7 funext i\n      refine Fin.addCases ?_ ?_ i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 954,
+    "source": "          cases ho : a.output <;> simp [bufferedFirstCfg, Action.apply, ho]",
+    "context": "        refine Fin.addCases ?_ ?_ j\n        \u00b7 intro j\n          cases ho : a.output <;> simp [bufferedFirstCfg, Action.apply, ho]\n        \u00b7 intro j; simp [bufferedFirstCfg, Action.apply]\n    \u00b7 simp [bufferedFirstCfg, Action.apply]\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1039,
+    "source": "      simp only [MultiTapeTM.step, hq, a]",
+    "context": "    have hm := virtualMove_correct c b hb a.inputTape\n    have hc : M\u2082.tm.step c = a.apply c := by\n      simp only [MultiTapeTM.step, hq, a]\n    refine \u27e8virtualNextTag b m, ?_, ?_\u27e9\n    \u00b7 simpa only [hc, Action.apply] using hm.2\n    \u00b7 have hs : (bufferedSecondCfg M\u2081 M\u2082 c b p tapes heads).state ="
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1051,
+    "source": "      unfold MultiTapeTM.step",
+    "context": "        funext i\n        simp [bufferedSecondCfg, Cfg.workTapeSymbols]\n      unfold MultiTapeTM.step\n      rw [hs]\n      dsimp only [bufferedCompTM]\n      rw [hv, hr, hq]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1059,
+    "source": "        \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]",
+    "context": "      \u00b7 funext i\n        refine Fin.addCases ?_ ?_ i\n        \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]\n        \u00b7 intro j\n          refine Fin.addCases ?_ ?_ j <;> intro j <;>\n            simp [bufferedSecondCfg, Action.apply, a]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1062,
+    "source": "            simp [bufferedSecondCfg, Action.apply, a]",
+    "context": "        \u00b7 intro j\n          refine Fin.addCases ?_ ?_ j <;> intro j <;>\n            simp [bufferedSecondCfg, Action.apply, a]\n      \u00b7 funext i\n        refine Fin.addCases ?_ ?_ i\n        \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1065,
+    "source": "        \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]",
+    "context": "      \u00b7 funext i\n        refine Fin.addCases ?_ ?_ i\n        \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]\n        \u00b7 intro j\n          refine Fin.addCases ?_ ?_ j\n          \u00b7 intro j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1069,
+    "source": "            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1",
+    "context": "          refine Fin.addCases ?_ ?_ j\n          \u00b7 intro j\n            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1\n          \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]\n\n/-- Every second-phase run has a matching virtual run at the same time and a"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1070,
+    "source": "          \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]",
+    "context": "          \u00b7 intro j\n            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1\n          \u00b7 intro j; simp [bufferedSecondCfg, Action.apply, a]\n\n/-- Every second-phase run has a matching virtual run at the same time and a\nvalid arrival tag. This preserves completed outputs and absorbing halting."
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1132,
+    "source": "    simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,",
+    "context": "    intro _\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]\n    simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,\n      tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]\n    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl\n    \u00b7 funext i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1154,
+    "source": "      simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,",
+    "context": "    have hstep : (bufferedCompTM M\u2081 M\u2082).tm.step (bufferedScanCfg M\u2081 M\u2082 y p tapes heads (j + 1)) =\n        bufferedScanCfg M\u2081 M\u2082 y p tapes heads j := by\n      simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,\n        tapeBlocks_buffer, hread, Option.some_ne_none, if_false]\n      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl\n      \u00b7 funext i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1166,
+    "source": "          refine Fin.addCases ?_ ?_ z <;> intro z <;> simp [Action.apply, sub_eq_add_neg]",
+    "context": "        \u00b7 intro j; simp [Action.apply]\n        \u00b7 intro z\n          refine Fin.addCases ?_ ?_ z <;> intro z <;> simp [Action.apply, sub_eq_add_neg]\n    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]\n    exact ih (by omega)\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1182,
+    "source": "    simp only [MultiTapeTM.step, bufferedFirstCfg, hs, bufferedCompTM]",
+    "context": "  have hstep : (bufferedCompTM M\u2081 M\u2082).tm.step (bufferedFirstCfg M\u2081 M\u2082 c) =\n      bufferedScanCfg M\u2081 M\u2082 c.output c.inputPos c.workTapes c.workTapePos c.output.length := by\n    simp only [MultiTapeTM.step, bufferedFirstCfg, hs, bufferedCompTM]\n    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl\n    \u00b7 funext i\n      refine Fin.addCases ?_ ?_ i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "line": 1193,
+    "source": "        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply, sub_eq_add_neg]",
+    "context": "      \u00b7 intro j; simp [bufferedScanCfg, Action.apply]\n      \u00b7 intro j\n        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply, sub_eq_add_neg]\n  rw [show c.output.length + 2 = (c.output.length + 1) + 1 by omega,\n    MultiTapeTM.runFrom_succ_eq_step, hstep]\n  exact bufferedScanCfg_run M\u2081 M\u2082 c.output c.inputPos c.workTapes c.workTapePos _ (le_refl _)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+    "line": 438,
+    "source": "      simp [Cfg.inputSymbol, scanCopyF, scanWriteCfg]",
+    "context": "    omega\n  \u00b7 have hs : (scanCopyF i d x.length).inputSymbol = none := by\n      simp [Cfg.inputSymbol, scanCopyF, scanWriteCfg]\n    rw [step_of_tapeAction_move _ _ i (-1) .neg rfl (q' := .rewind)\n      (by simp only [inputCopyTM, hs])]\n    apply Cfg.ext"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+    "line": 470,
+    "source": "      simp [Cfg.inputSymbol, scanCopyR, scanWriteCfg]",
+    "context": "    all_goals simp [scanCopyR, scanWriteCfg]\n  \u00b7 have hs : (scanCopyR i d 0).inputSymbol = none := by\n      simp [Cfg.inputSymbol, scanCopyR, scanWriteCfg]\n    rw [step_of_tapeAction_move _ _ i 1 .pos rfl (q' := .done)\n      (by simp only [inputCopyTM, hs])]\n    apply Cfg.ext"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+    "line": 608,
+    "source": "      simp [Cfg.inputSymbol, scanFoldF]",
+    "context": "    all_goals simp [scanFoldF]\n  \u00b7 have hs : (scanFoldF \u03b4 a\u2080 d x.length).inputSymbol = none := by\n      simp [Cfg.inputSymbol, scanFoldF]\n    rw [step_of_inputMoveAction _ _ (-1) rfl\n      (q' := .bwd ((x.take x.length).foldl \u03b4 a\u2080)) (by simp only [inputFoldTM, hs])]\n    apply Cfg.ext"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+    "line": 632,
+    "source": "      simp [Cfg.inputSymbol, scanFoldR]",
+    "context": "    all_goals simp [scanFoldR]\n  \u00b7 have hs : (scanFoldR \u03b4 a\u2080 d 0).inputSymbol = none := by\n      simp [Cfg.inputSymbol, scanFoldR]\n    rw [step_of_inputMoveAction _ _ 1 rfl\n      (q' := .done (x.foldl \u03b4 a\u2080)) (by simp only [inputFoldTM, hs])]\n    apply Cfg.ext"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 532,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogClearF]",
+    "context": "    change ((clearTM k i).tr .sweep _ _).apply _ = _\n    simp only [clearTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogClearF]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 540,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR]",
+    "context": "    change ((clearTM k i).tr .sweep _ _).apply _ = _\n    simp only [clearTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR]\n    \u00b7 funext j q\n      split_ifs <;> simp_all <;> omega\n    \u00b7 funext j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 552,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogClearR]",
+    "context": "    change ((clearTM k i).tr .rewind _ _).apply _ = _\n    simp only [clearTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogClearR]\n    \u00b7 funext j\n      by_cases hj : j = i\n      \u00b7 subst j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 567,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogClearR]",
+    "context": "    change ((clearTM k i).tr .rewind _ _).apply _ = _\n    simp only [clearTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogClearR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 571,
+    "source": "  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]",
+    "context": "      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega\n  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]\n\n/-- The framed forward phase of the mapped copy and transfer: after `r` forward steps the\ndestination interval `[pos, pos + r)` holds the row's written values `v q`, every other cell is"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 668,
+    "source": "  unfold MultiTapeTM.step",
+    "context": "    (copyMapTM k src dst extract merge).step c =\n      (transferMapTM k src dst extract merge some).step c := by\n  unfold MultiTapeTM.step\n  cases hq : c.state with\n  | none => rfl\n  | some q =>"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 758,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogSweepF]",
+    "context": "    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _\n    simp only [transferMapTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogSweepF]\n    \u00b7 funext j\n      by_cases hj : j = dst\n      \u00b7 subst j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 780,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogSweepF, catalogSweepR, catalogSweepResidueR]",
+    "context": "    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _\n    simp only [transferMapTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogSweepF, catalogSweepR, catalogSweepResidueR]\n    \u00b7 funext j\n      by_cases hj : j = src <;> by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]\n      all_goals"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 797,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]",
+    "context": "    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _\n    simp only [transferMapTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]\n    \u00b7 funext j\n      by_cases hj : j = src\n      \u00b7 subst j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 816,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]",
+    "context": "    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _\n    simp only [transferMapTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 820,
+    "source": "  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]",
+    "context": "      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega\n  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]\n\n/-- The first unequal or terminating cells occur after a common nonblank\nprefix, and equality at those terminating cells is precisely word equality."
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 973,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogCompareF]",
+    "context": "    change ((compareTM k fst snd).tr .run _ _).apply _ = _\n    simp only [compareTM, hsf, hsg, \u2193reduceIte]\n    apply Cfg.ext <;> simp [Action.apply, catalogCompareF]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1019,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCompareR]",
+    "context": "    change ((compareTM k fst snd).tr .run _ _).apply _ = _\n    rw [ht]\n    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCompareR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1031,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]",
+    "context": "    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _\n    simp only [compareTM, hread]\n    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1040,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]",
+    "context": "    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _\n    simp only [compareTM, hread]\n    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1044,
+    "source": "  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, compareTM, Action.apply]",
+    "context": "      funext j\n      split_ifs <;> simp_all [SignType.cast]\n  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, compareTM, Action.apply]\n\n/-- A word consists of its leading true bits followed by either a first false\nbit and its tail, or no remaining bits. -/"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1154,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogIncF]",
+    "context": "    change ((incrementTM k i).tr .run _ _).apply _ = _\n    simp only [incrementTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogIncF]\n    \u00b7 funext j\n      by_cases hj : j = i\n      \u00b7 subst j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1175,
+    "source": "      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]",
+    "context": "      change ((incrementTM k i).tr .run _ _).apply _ = _\n      simp only [incrementTM, hs]\n      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]\n      all_goals\n        funext j\n        split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1184,
+    "source": "      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]",
+    "context": "      change ((incrementTM k i).tr .run _ _).apply _ = _\n      simp only [incrementTM, hs]\n      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]\n      \u00b7 funext j\n        by_cases hj : j = i\n        \u00b7 subst j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1199,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogIncR]",
+    "context": "    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _\n    simp only [incrementTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogIncR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1208,
+    "source": "    apply Cfg.ext <;> simp [Action.apply, catalogIncR]",
+    "context": "    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _\n    simp only [incrementTM, hs]\n    apply Cfg.ext <;> simp [Action.apply, catalogIncR]\n    all_goals\n      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 1212,
+    "source": "  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, incrementTM, Action.apply]",
+    "context": "      funext j\n      split_ifs <;> simp_all [SignType.cast] <;> omega\n  \u00b7 apply Cfg.ext <;> simp [MultiTapeTM.step, incrementTM, Action.apply]\n\n/-! ### Framed contracts (design \u00a712.6)\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2591,
+    "source": "  simp only [MultiTapeTM.step, hq, htr]",
+    "context": "        inputPos := moveInputPos c.inputPos inp\n        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, tapeAction]\n  \u00b7 funext j\n    by_cases hj : j = i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2592,
+    "source": "  apply Cfg.ext <;> simp [Action.apply, tapeAction]",
+    "context": "        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, tapeAction]\n  \u00b7 funext j\n    by_cases hj : j = i\n    \u00b7 subst hj; simp"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2619,
+    "source": "  simp only [MultiTapeTM.step, hq, htr]",
+    "context": "          (Function.update (c.workTapes i) (c.workTapePos i) s)\n        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, tapeAction]\n  \u00b7 funext j\n    by_cases hj : j = i"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2620,
+    "source": "  apply Cfg.ext <;> simp [Action.apply, tapeAction]",
+    "context": "        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, tapeAction]\n  \u00b7 funext j\n    by_cases hj : j = i\n    \u00b7 subst hj; simp"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2641,
+    "source": "  simp only [MultiTapeTM.step, hq, htr]",
+    "context": "    (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :\n    M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]\n\n/-! ### The field layout -/"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 2642,
+    "source": "  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]",
+    "context": "    M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by\n  simp only [MultiTapeTM.step, hq, htr]\n  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]\n\n/-! ### The field layout -/\n"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3065,
+    "source": "    simp only [MultiTapeTM.step, hst, htr]",
+    "context": "      M.step (F r) = { F (r + 1) with state := some q } := by\n    have hst : (F r).state = some .run := hstate\n    simp only [MultiTapeTM.step, hst, htr]\n    apply Cfg.ext\n    \u00b7 rfl\n    \u00b7 simp [Action.apply, F, moveInputPos_zero]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3068,
+    "source": "    \u00b7 simp [Action.apply, F, moveInputPos_zero]",
+    "context": "    apply Cfg.ext\n    \u00b7 rfl\n    \u00b7 simp [Action.apply, F, moveInputPos_zero]\n    \u00b7 funext j\n      by_cases hj : moved j <;> simp [Action.apply, F, hj]\n    \u00b7 funext j"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3070,
+    "source": "      by_cases hj : moved j <;> simp [Action.apply, F, hj]",
+    "context": "    \u00b7 simp [Action.apply, F, moveInputPos_zero]\n    \u00b7 funext j\n      by_cases hj : moved j <;> simp [Action.apply, F, hj]\n    \u00b7 funext j\n      by_cases hj : moved j\n      \u00b7 simp only [Action.apply, F, hj, if_true]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3073,
+    "source": "      \u00b7 simp only [Action.apply, F, hj, if_true]",
+    "context": "    \u00b7 funext j\n      by_cases hj : moved j\n      \u00b7 simp only [Action.apply, F, hj, if_true]\n        push_cast\n        ring\n      \u00b7 simp [Action.apply, F, hj]"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3076,
+    "source": "      \u00b7 simp [Action.apply, F, hj]",
+    "context": "        push_cast\n        ring\n      \u00b7 simp [Action.apply, F, hj]\n    \u00b7 simp [Action.apply, F]\n  have hsym (r : \u2115) : (F r).workTapeSymbols src = d.workTapes src\n      (d.workTapePos src + (dir : \u2124) * (r : \u2124)) := by"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "line": 3077,
+    "source": "    \u00b7 simp [Action.apply, F]",
+    "context": "        ring\n      \u00b7 simp [Action.apply, F, hj]\n    \u00b7 simp [Action.apply, F]\n  have hsym (r : \u2115) : (F r).workTapeSymbols src = d.workTapes src\n      (d.workTapePos src + (dir : \u2124) * (r : \u2124)) := by\n    simp [F, Cfg.workTapeSymbols, hsrc]"
+  }
+]

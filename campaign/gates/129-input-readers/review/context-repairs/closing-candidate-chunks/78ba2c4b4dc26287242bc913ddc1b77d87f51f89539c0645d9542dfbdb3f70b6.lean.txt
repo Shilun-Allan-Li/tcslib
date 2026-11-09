@@ -1,0 +1,56 @@
+/-- One second-phase step simulates one native step, with a valid new arrival
+tag. The statement includes the absorbing halting case.
+
+**Proof sketch.** Buffer reads agree with virtual input reads. The clamping lemma
+proves the head equation and preserves the tag. All second-machine work actions
+and emissions are unchanged, while the buffer and first block are read-only. -/
+lemma bufferedSecondCfg_step (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) :
+    ∃ b', VirtualTag (M₂.tm.step c).inputPos b' ∧
+      (bufferedCompTM M₁ M₂).tm.step (bufferedSecondCfg M₁ M₂ c b p tapes heads) =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.step c) b' p tapes heads := by
+  cases hq : c.state with
+  | none =>
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.step_of_halt hq] using hb
+    · rw [MultiTapeTM.step_of_halt hq, MultiTapeTM.step_of_halt]
+      simp [bufferedSecondCfg, hq]
+  | some q =>
+    let a := M₂.tm.tr q c.inputSymbol c.workTapeSymbols
+    let m := virtualMove b c.inputSymbol a.inputTape
+    have hm := virtualMove_correct c b hb a.inputTape
+    have hc : M₂.tm.step c = a.apply c := by
+      simp only [MultiTapeTM.step, hq, a]
+    refine ⟨virtualNextTag b m, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · have hs : (bufferedSecondCfg M₁ M₂ c b p tapes heads).state =
+          some (.inr (.inr (q, b))) := by simp [bufferedSecondCfg, hq]
+      have hv : (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
+          (Fin.natAdd M₁.k (Fin.castAdd M₂.k (0 : Fin 1))) = c.inputSymbol := by
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+      have hr : (fun i => (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
+          (Fin.natAdd M₁.k (Fin.natAdd 1 i))) = c.workTapeSymbols := by
+        funext i
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols]
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [bufferedCompTM]
+      rw [hv, hr, hq]
+      change (Action.apply _ _) = bufferedSecondCfg M₁ M₂ (a.apply c) _ p tapes heads
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;>
+            simp [bufferedSecondCfg, Action.apply, a]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j
+          refine Fin.addCases ?_ ?_ j
+          · intro j
+            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1
+          · intro j; simp [bufferedSecondCfg, Action.apply, a]

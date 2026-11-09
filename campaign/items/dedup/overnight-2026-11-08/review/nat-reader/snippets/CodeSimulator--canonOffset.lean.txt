@@ -1,0 +1,9 @@
+private def canonOffset (w : List Bool) : List Bool :=
+  true :: canonCount w.length.bits
+
+/-- The offset word represents the actual native-input address and has
+length at most the original header length plus two.
+
+**Proof sketch.** The existing successor-word law gives the length plus
+one. Prepending a low one doubles that value and adds one. The public
+binary-size inequality bounds the length of the length counter. -/

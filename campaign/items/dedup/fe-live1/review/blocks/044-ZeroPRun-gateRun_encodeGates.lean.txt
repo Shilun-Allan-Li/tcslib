@@ -1,0 +1,8 @@
+theorem gateRun_encodeGates (R : List Bool) (P : List (List Bool)) (gs : List (AlgGate n))
+    (h : ∀ i (hi : i < gs.length), gs[i].refsBelow i = true) :
+    gateRun (pairEncode (ctxOf n R P) (encodeGates gs)) =
+      encState (ctxOf n R P) [false] (evalVals (bitsVal R + 1) (ptVal P) gs []) := by
+  have hlen := length_encodeGates gs
+  have hit := iterate_absStep_encodeGates (bitsVal R + 1) (ptVal P) gs [] (by simpa using h)
+  rw [gateRun_eq, show (encodeGates gs).length = ((encodeGates gs).length - gs.length) +
+    gs.length by omega, Function.iterate_add_apply, hit, Function.iterate_fixed rfl]

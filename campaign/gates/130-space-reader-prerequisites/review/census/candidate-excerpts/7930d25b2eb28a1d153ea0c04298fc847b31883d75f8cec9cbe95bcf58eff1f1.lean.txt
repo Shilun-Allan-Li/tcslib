@@ -1,0 +1,11 @@
+/-- A pure control transition replaces only the state. -/
+private theorem control_step {H : MultiTapeTM k Bool B} {q r : B}
+    (h : ∀ inp work, H.tr q inp work = FinTM.controlAction 0 (some r))
+    {c : Cfg k Bool B x} (hc : c.state = some q) :
+    H.step c = { c with state := some r } := by
+  have hs : H.step c = (H.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+    unfold MultiTapeTM.step
+    rw [hc]
+  rw [hs, h]
+  refine Cfg.ext rfl ?_ ?_ ?_ ?_ <;>
+    simp [FinTM.controlAction, Action.apply]

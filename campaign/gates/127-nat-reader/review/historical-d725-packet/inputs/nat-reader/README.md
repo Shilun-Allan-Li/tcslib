@@ -1,0 +1,1 @@
+Only the exact private canonOffset_spec Nat.bit reader replacement is included, with complete historical owner source/native/AX inputs, current-import API probe, focused Nat.bit_val equation seal, two paired controls and complete pinned Mathlib source. The full private proof is not claimed to be sealed. Other existing-API candidate census/source-family proposals are omitted.

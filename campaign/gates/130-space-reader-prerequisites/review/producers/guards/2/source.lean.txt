@@ -1,0 +1,344 @@
+/-
+Copyright (c) 2026 The TCSlib Authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
+import TCSlib.Complexity.TuringMachine.Build.NDCombinators
+import TCSlib.Complexity.TuringMachine.Simulation
+import Mathlib.Tactic.DeriveFintype
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The clocked restart host for binary-choice machines
+
+A host that runs a binary-choice machine `A` against a clock, and optionally restarts it: the
+clocked runner of [AB09, §7.4.2] and the restart loop of [AB09, Exercise 7.6(a)]. Its tapes are
+a bank for a deterministic *yardstick* machine `S`, a bank for `A`, and a yardstick tape `Y`.
+
+* **Startup.** `S` runs on its bank with its emissions written on `Y` (it is meant to emit
+  `1^m`); then `Y`'s head and the input head are rewound.
+* **Attempt.** `A` runs in lockstep with `Y`'s head, one coin per step, its emissions captured
+  in the control state (`Turing.capOf`); after `m` steps `Y` reads a blank (the timeout).
+* **Timeout.** If `A` has halted with output exactly `[v]`, the host emits `v` and halts.
+  Otherwise it halts silently (`loop = false`) or resets (`loop = true`).
+* **Reset.** Three sweeps over `Y` move every head of `A`'s bank `3(m+1)` cells to the right,
+  onto blank tape, and bring the input head back to its start; then a new attempt begins.
+
+Each phase is a hand-built transition table: the construction layer has no rows for
+nondeterministic machines, and the deterministic clocked runner
+(`Complexity.TimeHierarchy.clockTM`) does not host a coin-reading machine. The boot, rewind and
+attempt contracts are proved here; the reset sweeps and the startup and round contracts are in
+`TCSlib.Complexity.TuringMachine.Build.NDClockHostRun`.
+
+## Main definitions
+
+* `Turing.capOf` — the captured summary of an output word: empty, one bit, or longer.
+* `Turing.ClockPhase`, `Turing.ClockHost.hostTM`, `Turing.FinNDTM.clockHost` — the host.
+
+## Main results
+
+* `Turing.ClockHost.boot_run`, `Turing.ClockHost.rewind_run`, `Turing.ClockHost.run_run`,
+  `Turing.ClockHost.timeout_success`, `Turing.ClockHost.timeout_fail` — the phase contracts.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+-/
+
+namespace Turing
+
+open FinTM (bufferTape)
+
+/-! ### Captured output -/
+
+/-- Append one optional emission to a captured summary. -/
+def capPush : Option (Option Bool) → Option Bool → Option (Option Bool)
+  | c, none => c
+  | none, some e => some (some e)
+  | some _, some _ => some none
+
+/-- The captured summary of an output word: `none` if empty, `some (some b)` for `[b]`, and
+`some none` for two or more bits. -/
+def capOf : List Bool → Option (Option Bool)
+  | [] => none
+  | [b] => some (some b)
+  | _ :: _ :: _ => some none
+
+/-- The summary is updated emission by emission. -/
+theorem capOf_append (o : List Bool) (e : Option Bool) :
+    capOf (o ++ e.toList) = capPush (capOf o) e := by
+  rcases e with _ | e
+  · simp [capPush]
+  · rcases o with _ | ⟨a, _ | ⟨b, o⟩⟩ <;> rfl
+
+/-- The summary records a single bit exactly for one-bit words. -/
+theorem capOf_eq_some_some {o : List Bool} {v : Bool} :
+    capOf o = some (some v) ↔ o = [v] := by
+  rcases o with _ | ⟨a, _ | ⟨b, o⟩⟩ <;> simp [capOf]
+
+/-- The control phases of the clocked restart host. -/
+inductive ClockPhase (SS AS : Type) where
+  /-- running the yardstick machine in state `q` -/
+  | boot (q : SS)
+  /-- first rewind step -/
+  | rew
+  /-- rewinding the yardstick -/
+  | rew2
+  /-- the clocked attempt: the attempt's state and its captured output -/
+  | run (q : Option AS) (cap : Option (Option Bool))
+  /-- first reset sweep (leftward) -/
+  | p0
+  /-- second reset sweep (rightward) -/
+  | p1
+  /-- third reset sweep (leftward) -/
+  | p2
+  deriving DecidableEq, Fintype
+
+namespace ClockHost
+
+/-! ### Tape layout: yardstick bank, attempt bank, yardstick tape -/
+
+section Slots
+
+variable {α : Type*} {s a : ℕ}
+
+/-- Assemble a per-tape family from the yardstick bank, the attempt bank and the tape `Y`. -/
+def slots (f : Fin s → α) (g : Fin a → α) (y : α) : Fin (s + a + 1) → α :=
+  Fin.append (Fin.append f g) fun _ => y
+
+/-- The yardstick-bank tape `i`. -/
+def sI (i : Fin s) : Fin (s + a + 1) := Fin.castAdd 1 (Fin.castAdd a i)
+
+/-- The attempt-bank tape `i`. -/
+def aI (i : Fin a) : Fin (s + a + 1) := Fin.castAdd 1 (Fin.natAdd s i)
+
+/-- The yardstick tape. -/
+def yI : Fin (s + a + 1) := Fin.natAdd (s + a) 0
+
+/-- A yardstick-bank slot. -/
+@[simp] theorem slots_sI (f : Fin s → α) (g : Fin a → α) (y : α) (i : Fin s) :
+    slots f g y (sI i) = f i := by simp [slots, sI]
+
+/-- An attempt-bank slot. -/
+@[simp] theorem slots_aI (f : Fin s → α) (g : Fin a → α) (y : α) (i : Fin a) :
+    slots f g y (aI i) = g i := by simp [slots, aI]
+
+/-- The yardstick-tape slot. -/
+@[simp] theorem slots_yI (f : Fin s → α) (g : Fin a → α) (y : α) :
+    slots f g y (yI : Fin (s + a + 1)) = y := by simp [slots, yI]
+
+/-- Every tape index is a yardstick-bank, attempt-bank or yardstick index. -/
+theorem slots_cases {P : Fin (s + a + 1) → Prop} (hs : ∀ i, P (sI i)) (ha : ∀ i, P (aI i))
+    (hy : P yI) (j : Fin (s + a + 1)) : P j := by
+  refine Fin.addCases (fun j => Fin.addCases (fun i => hs i) (fun i => ha i) j) (fun i => ?_) j
+  have : i = 0 := Subsingleton.elim _ _
+  subst this
+  exact hy
+
+end Slots
+
+/-- A work tape after an action: written at the head if the action writes, as computed by
+`Turing.Action.apply` (to which it unfolds). -/
+def tapeAfter (act : Option (Option Bool) × SignType) (t : ℤ → Option Bool) (p : ℤ) :
+    ℤ → Option Bool :=
+  (Action.apply (⟨0, fun _ => act, none, none⟩ : Action 1 Bool Unit)
+    (⟨none, 0, fun _ => t, fun _ => p, []⟩ : Cfg 1 Bool Unit [])).workTapes 0
+
+/-- A host configuration from its parts. -/
+def hostCfg {SS AS : Type} {s a : ℕ} {x : List Bool} (q : Option (ClockPhase SS AS))
+    (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool) (sP : Fin s → ℤ)
+    (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool) (yP : ℤ)
+    (out : List Bool) : Cfg (s + a + 1) Bool (ClockPhase SS AS) x :=
+  ⟨q, ip, slots sT aT yT, slots sP aP yP, out⟩
+
+/-- Applying a slot-assembled action to a host configuration acts slot by slot. -/
+theorem apply_hostCfg {SS AS : Type} {s a : ℕ} {x : List Bool} (im : SignType)
+    (sa : Fin s → Option (Option Bool) × SignType) (aa : Fin a → Option (Option Bool) × SignType)
+    (ya : Option (Option Bool) × SignType) (o : Option Bool) (q' q : Option (ClockPhase SS AS))
+    (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool) (sP : Fin s → ℤ)
+    (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool) (yP : ℤ)
+    (out : List Bool) :
+    (⟨im, slots sa aa ya, o, q'⟩ : Action (s + a + 1) Bool (ClockPhase SS AS)).apply
+        (hostCfg q ip sT sP aT aP yT yP out) =
+      hostCfg q' (moveInputPos ip im) (fun i => tapeAfter (sa i) (sT i) (sP i))
+        (fun i => sP i + (sa i).2) (fun i => tapeAfter (aa i) (aT i) (aP i))
+        (fun i => aP i + (aa i).2) (tapeAfter ya yT yP) (yP + ya.2) (out ++ o.toList) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext j
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;>
+      simp only [Action.apply, hostCfg, slots_sI, slots_aI, slots_yI, tapeAfter]
+  · funext j
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;>
+      simp only [Action.apply, hostCfg, slots_sI, slots_aI, slots_yI]
+
+/-- The symbol read on a yardstick-bank tape. -/
+@[simp] theorem hostCfg_symbols_sI {SS AS : Type} {s a : ℕ} {x : List Bool}
+    (q : Option (ClockPhase SS AS)) (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool)
+    (sP : Fin s → ℤ) (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool)
+    (yP : ℤ) (out : List Bool) (i : Fin s) :
+    (hostCfg q ip sT sP aT aP yT yP out).workTapeSymbols (sI i) = sT i (sP i) := by
+  simp [hostCfg, Cfg.workTapeSymbols]
+
+/-- The symbol read on an attempt-bank tape. -/
+@[simp] theorem hostCfg_symbols_aI {SS AS : Type} {s a : ℕ} {x : List Bool}
+    (q : Option (ClockPhase SS AS)) (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool)
+    (sP : Fin s → ℤ) (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool)
+    (yP : ℤ) (out : List Bool) (i : Fin a) :
+    (hostCfg q ip sT sP aT aP yT yP out).workTapeSymbols (aI i) = aT i (aP i) := by
+  simp [hostCfg, Cfg.workTapeSymbols]
+
+/-- The symbol read on the yardstick tape. -/
+@[simp] theorem hostCfg_symbols_yI {SS AS : Type} {s a : ℕ} {x : List Bool}
+    (q : Option (ClockPhase SS AS)) (ip : Fin (x.length + 2)) (sT : Fin s → ℤ → Option Bool)
+    (sP : Fin s → ℤ) (aT : Fin a → ℤ → Option Bool) (aP : Fin a → ℤ) (yT : ℤ → Option Bool)
+    (yP : ℤ) (out : List Bool) :
+    (hostCfg q ip sT sP aT aP yT yP out).workTapeSymbols yI = yT yP := by
+  simp [hostCfg, Cfg.workTapeSymbols]
+
+/-! ### The machine -/
+
+variable (S : FinTM Bool) (A : FinNDTM Bool) (loop : Bool)
+
+/-- No write, no move. -/
+abbrev idle : Option (Option Bool) × SignType := (none, 0)
+
+/-- Heads under the idle action stay put. -/
+theorem heads_idle {n : ℕ} (P : Fin n → ℤ) : (fun i => P i + ((idle.2 : SignType) : ℤ)) = P :=
+  funext fun i => by show P i + ((0 : SignType) : ℤ) = P i; simp
+
+/-- Write an emission on the yardstick tape and advance, or do nothing. -/
+def emitTo : Option Bool → Option (Option Bool) × SignType
+  | some e => (some (some e), 1)
+  | none => (none, 0)
+
+/-- The transition table of the clocked restart host. -/
+def clockTr (b : Bool) (q : ClockPhase S.State A.State) (inp : Option Bool)
+    (w : Fin (S.k + A.k + 1) → Option Bool) :
+    Action (S.k + A.k + 1) Bool (ClockPhase S.State A.State) :=
+  match q with
+  | .boot q =>
+    let act := S.tm.tr q inp fun i => w (sI i)
+    ⟨act.inputTape, slots act.workTapes (fun _ => idle) (emitTo act.output), none,
+      some ((act.state.map ClockPhase.boot).getD ClockPhase.rew)⟩
+  | .rew => ⟨-1, slots (fun _ => idle) (fun _ => idle) (none, -1), none, some .rew2⟩
+  | .rew2 => match w yI with
+    | some _ => ⟨-1, slots (fun _ => idle) (fun _ => idle) (none, -1), none, some .rew2⟩
+    | none => ⟨1, slots (fun _ => idle) (fun _ => idle) (none, 1), none,
+        some (.run (some A.tm.q₀) none)⟩
+  | .run q c => match w yI with
+    | some _ => match q with
+      | some qa =>
+        let act := A.tm.tr b qa inp fun i => w (aI i)
+        ⟨act.inputTape, slots (fun _ => idle) act.workTapes (none, 1), none,
+          some (.run act.state (capPush c act.output))⟩
+      | none => ⟨0, slots (fun _ => idle) (fun _ => idle) (none, 1), none, some (.run none c)⟩
+    | none => match q, c with
+      | none, some (some v) => ⟨0, slots (fun _ => idle) (fun _ => idle) idle, some v, none⟩
+      | _, _ =>
+        if loop then ⟨0, slots (fun _ => idle) (fun _ => idle) (none, -1), none, some .p0⟩
+        else ⟨0, slots (fun _ => idle) (fun _ => idle) idle, none, none⟩
+  | .p0 => match w yI with
+    | some _ => ⟨-1, slots (fun _ => idle) (fun _ => (none, 1)) (none, -1), none, some .p0⟩
+    | none => ⟨-1, slots (fun _ => idle) (fun _ => (none, 1)) (none, 1), none, some .p1⟩
+  | .p1 => match w yI with
+    | some _ => ⟨0, slots (fun _ => idle) (fun _ => (none, 1)) (none, 1), none, some .p1⟩
+    | none => ⟨0, slots (fun _ => idle) (fun _ => (none, 1)) (none, -1), none, some .p2⟩
+  | .p2 => match w yI with
+    | some _ => ⟨0, slots (fun _ => idle) (fun _ => (none, 1)) (none, -1), none, some .p2⟩
+    | none => ⟨1, slots (fun _ => idle) (fun _ => (none, 1)) (none, 1), none,
+        some (.run (some A.tm.q₀) none)⟩
+
+/-- The host as a raw binary-choice machine. -/
+def hostTM : NDTM (S.k + A.k + 1) Bool (ClockPhase S.State A.State) :=
+  ⟨.boot S.tm.q₀, clockTr S A loop⟩
+
+end ClockHost
+
+/-- **The clocked restart host** [AB09, §7.4.2 and Exercise 7.6(a)]: run the yardstick machine
+`S` (meant to emit `1^m`), then run `A` for `m` coins; emit `A`'s one-bit output if it has
+halted with one, else halt silently (`loop = false`) or reset and retry (`loop = true`). -/
+def FinNDTM.clockHost (S : FinTM Bool) (A : FinNDTM Bool) (loop : Bool) : FinNDTM Bool :=
+  @FinNDTM.mk Bool (S.k + A.k + 1) (ClockPhase S.State A.State) inferInstance inferInstance
+    (ClockHost.hostTM S A loop)
+
+namespace ClockHost
+
+variable {S : FinTM Bool} {A : FinNDTM Bool} {loop : Bool} {x : List Bool}
+
+/-- Close the slot-by-slot equations left by `apply_hostCfg`. -/
+scoped macro "host_congr" : tactic =>
+  `(tactic| (congr 1 <;> (try rfl) <;> (try exact Turing.moveInputPos_zero _)
+    <;> (try exact Turing.ClockHost.heads_idle _)
+    <;> (try (funext i; (simp [Turing.ClockHost.tapeAfter, Turing.ClockHost.idle]); done))
+    <;> (try ((simp [Turing.ClockHost.tapeAfter, Turing.capOf_append]); done))
+    <;> (try ((simp [Turing.ClockHost.tapeAfter]); omega))))
+
+/-- A host step from a live host configuration applies `clockTr`. -/
+theorem stepWith_hostCfg (b : Bool) (q : ClockPhase S.State A.State) (ip : Fin (x.length + 2))
+    (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) (aT : Fin A.k → ℤ → Option Bool)
+    (aP : Fin A.k → ℤ) (yT : ℤ → Option Bool) (yP : ℤ) (out : List Bool) :
+    (hostTM S A loop).stepWith b (hostCfg (some q) ip sT sP aT aP yT yP out) =
+      (clockTr S A loop b q (hostCfg (some q) ip sT sP aT aP yT yP out).inputSymbol
+        (hostCfg (some q) ip sT sP aT aP yT yP out).workTapeSymbols).apply
+        (hostCfg (some q) ip sT sP aT aP yT yP out) :=
+  NDTM.stepWith_of_state _ b rfl
+
+/-- The yardstick tape `1^m`. -/
+abbrev yard (m : ℕ) : ℤ → Option Bool := bufferTape (List.replicate m true)
+
+/-- The yardstick reads a mark on `[0, m)`. -/
+theorem yard_of_lt {m : ℕ} {z : ℤ} (h0 : 0 ≤ z) (h : z < m) : yard m z = some true := by
+  obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h0
+  simp only [yard, FinTM.bufferTape_nat, List.getElem?_replicate]
+  rw [if_pos (by omega)]
+
+/-- The yardstick reads a blank at `-1`. -/
+theorem yard_neg_one (m : ℕ) : yard m (-1) = none := FinTM.bufferTape_left _
+
+/-- The yardstick reads a blank at `m`. -/
+theorem yard_len (m : ℕ) : yard m m = none := by
+  simp only [yard, FinTM.bufferTape_nat, List.getElem?_replicate, lt_irrefl, if_false]
+
+/-! ### Boot phase -/
+
+/-- The boot-phase configuration: `S` on its bank, its output on the yardstick tape. -/
+def bootCfg (c : Cfg S.k Bool S.State x) :
+    Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x :=
+  hostCfg (some ((c.state.map ClockPhase.boot).getD ClockPhase.rew)) c.inputPos c.workTapes
+    c.workTapePos (fun _ _ => none) (fun _ => 0) (bufferTape c.output) c.output.length []
+
+section ProducerGuard_2
+attribute [local irreducible] Turing.FinTM.bufferTape
+/-- A halted yardstick configuration is the rewind configuration with its output on the
+extra tape and with the attempt bank blank. -/
+theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
+    bootCfg (A := A) c =
+      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
+        (fun _ => 0) (bufferTape c.output) c.output.length [] := by
+  simp only [bootCfg, hc, Option.map_none, Option.getD_none]
+
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := [`Turing.FinTM.bufferTape]
+  let mut states : List Json := []
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "GUARD_NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "GUARD_DEFINITION_SIMP_STILL_ACTIVE|{n}"
+    states := Json.mkObj [("name",toJson n.toString),("irreducible",toJson true),
+      ("definition_simp_unfold",toJson false)] :: states
+  logInfo m!"PRODUCER_GUARD_OK|2|{(Json.arr states.reverse.toArray).compress}"
+end ProducerGuard_2
+end ClockHost
+end Turing

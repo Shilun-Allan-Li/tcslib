@@ -1,0 +1,17 @@
+1246:private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+1511:  obtain ⟨t, ht, hf, he⟩ := clBank_first x 1 (clSelect d) n W hW
+1720:private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
+2059:  obtain ⟨t, ht, hp, hf, he⟩ := clCopy_first x p (w i) record
+2146:private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+2408:  obtain ⟨s, hs, _, hf, he⟩ := clRow_first (by dsimp [clRecFields]; omega) x 1
+2992:private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
+3283:private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
+3439:  clFirst clWipeTM.tm _ _ (2 : Fin 3) _ (clWipe_run x p stream word s) rfl (by simp [clWipeCfg])
+3489:  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst clFreshTM.tm _ _ (.inr (.inr true)) B he rfl
+3713:  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst (clLoadTM l).tm _ _ (Fin.last l, .inl 0) B he rfl
+3838:  clFirst clInputTM.tm _ _ (2 : Fin 3) _ (clInput_run x) rfl
+3946:  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst (clPrepareTM l).tm _ _ (.inr (Fin.last l, .inl 0)) B
+4397:  obtain ⟨t, ht, _, b, hb, hf, he⟩ := clCmp_first x 1 (clMatchWords pos neg row target) W widths
+4781:  obtain ⟨t, ht, _, hf, he⟩ := clFirst A.tm (A.tm.initCfg x) d ret a hrun hret
+5244:  obtain ⟨t, ht, _, hf, he⟩ := clFirst A.tm (A.tm.initCfg x) d ret a hrun hret
+7255:  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)

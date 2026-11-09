@@ -1,0 +1,101 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.ClassNP.Reductions
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.List.MinMax
+import Lean
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace Complexity
+open Turing
+/-- Select the actual first halting transition, retaining its final emission. -/
+private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)
+    (h : M.ComputesInTime x y T) :
+    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by
+  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h
+  obtain ⟨t, ht, hg, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hh.1
+  refine ⟨t, ht, hg, ?_, ?_⟩
+  · rw [he]; exact hh.1
+  · rw [he]; exact hh.2
+
+/-- A padded halting run can be cut at its first positive halt without changing
+any endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live
+initial state excludes time zero. -/
+private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
+    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
+    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
+  have hp : 0 < u := by
+    by_contra hn
+    have hz : u = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
+    exact hstart hs
+  exact ⟨u, hp, hu, hg, he⟩
+
+/-- Removing the first bit is polynomial-time by the public tail closure. -/
+private lemma sat_pt_tail : PolyTimeComputable List.tail := by
+  convert polyTimeComputable_tail using 1
+  funext x
+  cases x <;> rfl
+
+/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
+private lemma sat_pt_head : PolyTimeComputable (fun x => x.take 1) := by
+  exact polyTimeComputable_take1
+
+#print axioms Complexity.sat_first_halt
+#print axioms Complexity.sat_call_first_halt
+#print axioms Complexity.sat_pt_tail
+#print axioms Complexity.sat_pt_head
+
+end Complexity
+
+open Lean Elab Command Meta
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let sourceNames : List String := ["Complexity.sat_first_halt", "Complexity.sat_call_first_halt", "Complexity.sat_pt_tail", "Complexity.sat_pt_head"]
+  let mut guards : Array Name := #[]
+  let mut simpDefs : Array Name := #[]
+  for sourceName in sourceNames do
+    let hits := env.constants.toList.filter fun (n, _) =>
+      n.toString == sourceName || (isPrivateName n && n.toString.endsWith ("." ++ sourceName))
+    unless hits.length == 1 do throwError "root mismatch {sourceName}: {hits.length}"
+    let (root, ci) := hits.head!
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    logInfo m!"AX|{(Json.mkObj [("root", toJson sourceName), ("kernel", toJson root.toString), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+    let mut pending := ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[])
+    let mut visited : Array Name := #[]
+    let mut index := 0
+    while index < pending.size do
+      let n := pending[index]!
+      index := index + 1
+      if visited.contains n then continue
+      visited := visited.push n
+      let home := (env.getModuleIdxFor? n).map fun i => env.header.moduleNames[i.toNat]!
+      let foreign := home.any fun h => (`TCSlib).isPrefixOf h
+      unless foreign || home.isNone do continue
+      let some info := env.find? n | continue
+      match info with
+      | .defnInfo d =>
+        let projection := (env.getProjectionFnInfo? n).isSome
+        let abbrevDecl := match d.hints with | .abbrev => true | _ => false
+        let ordinary := foreign && !projection && !abbrevDecl
+        let isSimp := simp.isLemma (.decl n) || simp.toUnfold.contains n
+        if ordinary && !guards.contains n then guards := guards.push n
+        if foreign && isSimp && !simpDefs.contains n then simpDefs := simpDefs.push n
+        logInfo m!"DEF|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("owner", toJson ((home.map Name.toString).getD "current scratch owner")), ("foreign", toJson foreign), ("projection", toJson projection), ("kernel_abbrev", toJson abbrevDecl), ("ordinary_guard", toJson ordinary), ("default_simp_definition", toJson isSimp), ("reducibility", toJson (reprStr (getReducibilityStatusCore env n)))]).compress}"
+        pending := pending ++ d.type.getUsedConstants ++ d.value.getUsedConstants
+      | .thmInfo _ =>
+        logInfo m!"THEOREM_BOUNDARY|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("proof_value_traversed", toJson false)]).compress}"
+        pending := pending ++ info.type.getUsedConstants
+      | _ => pure ()
+  logInfo m!"GUARDS|{(toJson ((guards.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"SIMPDEFS|{(toJson ((simpDefs.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"COMPLETE|{sourceNames.length}"

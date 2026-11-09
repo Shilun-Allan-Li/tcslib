@@ -1,0 +1,14 @@
+theorem capture_fields {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x) :
+    (captureCfg emb ret pre out₀ c).state = some ((c.state.map emb).getD ret) ∧
+    (captureCfg emb ret pre out₀ c).inputPos = c.inputPos ∧
+    (∀ i a, (captureCfg emb ret pre out₀ c).workTapes i a =
+      (if h : i.val < k then c.workTapes ⟨i.val, h⟩
+        else bufferTape (pre ++ c.output)) a) ∧
+    (∀ i, (captureCfg emb ret pre out₀ c).workTapePos i =
+      if h : i.val < k then c.workTapePos ⟨i.val, h⟩
+      else ((pre ++ c.output).length : ℤ)) ∧
+    (captureCfg emb ret pre out₀ c).output = out₀ := by
+  exact ⟨captureCfg_state _ _ _ _ _, captureCfg_inputPos _ _ _ _ _,
+    captureCfg_workTapes _ _ _ _ _, captureCfg_workTapePos _ _ _ _ _,
+    captureCfg_output _ _ _ _ _⟩

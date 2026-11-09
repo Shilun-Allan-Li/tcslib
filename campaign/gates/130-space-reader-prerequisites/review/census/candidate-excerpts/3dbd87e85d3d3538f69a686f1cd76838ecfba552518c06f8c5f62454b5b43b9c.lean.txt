@@ -1,0 +1,75 @@
+/-- Relation-level effect of the selected record's fixed fields. The first
+`k` work tapes mirror an arbitrary source configuration, and a stationary
+auxiliary cell stores its output summary. After exactly `4k + 5` steps the
+input/work fields mirror the source action, its emission has been included
+in the summary, and the physical output is unchanged. The live exit is
+first reached at that time, whose bound is the selected record's length.
+
+This is the fixed-field part of H1's step block, not yet a full simulated
+transition: the coded successor must still be installed by the caller.
+
+**Promotion candidate (host H2, step block; machine-library-design.md §14).**
+This component's contract includes Addendum 1's head envelope: at every
+intermediate time each mirrored head and the native input head is still at
+its start or has made exactly the source action's move, with displacement at
+most one. Auxiliary work-head displacement is bounded by `4k + 4`; the table
+head advances by `min u (4k + 4)`, and the summary head stays at home. Lookup,
+successor installation and table-head restoration remain outside this partial
+contract; promotion as a complete step block must wait for those parts.
+
+**Proof sketch.** Project the proved execution equality onto the input,
+mirrored bank and summary cell. The summary identity is the inherited
+`outputSummary_append`, including when the source action halts. Before the
+last step the prefix trace has a reading state, never the live exit. -/
+private lemma h1Record_effect {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k))
+    (hin : d.inputPos = c.inputPos)
+    (htapes : ∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i)
+    (hheads : ∀ i : Fin k, d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i)
+    (hsum : d.workTapeSymbols (h1SummaryTape k) = outputSummary c.output) :
+    let e := (h1RecordTM k).runFrom d (h1RecordWidth k + 1)
+    e.state = some none ∧ e.inputPos = (a.apply c).inputPos ∧
+      (∀ i : Fin k, e.workTapes (Fin.castAdd 2 i) = (a.apply c).workTapes i ∧
+        e.workTapePos (Fin.castAdd 2 i) = (a.apply c).workTapePos i) ∧
+      e.workTapeSymbols (h1SummaryTape k) = outputSummary (a.apply c).output ∧
+      e.output = d.output ∧
+      (∀ u < h1RecordWidth k + 1, ((h1RecordTM k).runFrom d u).state ≠ some none) ∧
+      h1RecordWidth k + 1 ≤ (actionBitsK a).length ∧
+      (∀ u ≤ h1RecordWidth k + 1,
+        let f := (h1RecordTM k).runFrom d u
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) =
+          d.workTapePos (Fin.castAdd 2 i) +
+            if u = h1RecordWidth k + 1 then ((a.workTapes i).2 : ℤ) else 0) ∧
+        f.inputPos = (if u = h1RecordWidth k + 1 then moveInputPos d.inputPos a.inputTape
+          else d.inputPos) ∧
+        (∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (h1RecordWidth k : ℤ)) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        f.workTapePos (h1TableTape k) =
+          d.workTapePos (h1TableTape k) + min u (h1RecordWidth k) ∧
+        f.workTapePos (h1SummaryTape k) = d.workTapePos (h1SummaryTape k)) := by
+  dsimp only
+  have he := h1Record_execute d a bits hq hw hbits
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, codeActionK_length a,
+    h1Record_envelope d a bits hq hw hbits⟩
+  · rw [he]
+    rfl
+  · rw [he]
+    exact congrArg (fun p => moveInputPos p a.inputTape) hin
+  · intro i
+    rw [he]
+    simp [h1ApplyPayload, h1ReadCfg, Fin.addCases_left, h1Mirror_ne_table k i, htapes i, hheads i]
+  · rw [he]
+    simp [Cfg.workTapeSymbols, h1ApplyPayload, h1ReadCfg, h1SummaryTape,
+      ← hsum, outputSummary_append]
+  · rw [he]
+    simp [h1ApplyPayload, h1ReadCfg]
+  · intro u hu
+    rw [h1Record_read d bits hq hw u (by omega)]
+    simp [h1ReadCfg]

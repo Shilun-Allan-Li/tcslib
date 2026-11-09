@@ -1,0 +1,11 @@
+/-- The forwarding leaf. `some live` reads, emits and clears; `none` is the live return
+anchor. There is no public row for this atomic emission and clearing: the step block and
+its clocked loop are silent, and `tapeAction` itself emits nothing. The leaf changes only
+that action's emission and successor fields and moves no head. -/
+private def fl_leafTM (k : ℕ) : MultiTapeTM (k + 2) Bool (Option Bool) where
+  q₀ := some true
+  tr q _ w := match q with
+    | some live => { tapeAction (summaryTape k) 0 (some none) 0 (none : Option Bool) with
+        output := w (summaryTape k)
+        state := if live then some none else none }
+    | none => inputMoveAction 0 none

@@ -1,0 +1,5 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+example (w : List Bool) : w.length.bits.length ≤ w.length :=
+  Turing.length_bits_le_self _
+example (n : ℕ) : Nat.bit true n = 2 * n + 1 :=
+  (Nat.bit_val true n).trans (congrArg (fun m => 2 * n + m) Bool.toNat_true)

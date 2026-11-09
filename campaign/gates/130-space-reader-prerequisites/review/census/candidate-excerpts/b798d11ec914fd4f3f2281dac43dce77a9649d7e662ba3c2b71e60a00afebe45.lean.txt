@@ -1,0 +1,79 @@
+theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
+    (x : List Bool) (s u v : ℕ)
+    (hinit : pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N)
+
+    (hacc : pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N) : x ∈ L := by
+  rw [mem_initLang] at hinit
+  have chain : ∀ c, Relation.ReflTransGen (StepRel N x s) u c → ∃ w : List Bool,
+
+      ∃ D : Cfg N.k Bool N.State x, Cfg.InWindow s D ∧ cfgCode s D = c ∧
+        NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum D := by
+    intro c hc
+    induction hc with
+    | refl =>
+
+      exact ⟨[], N.tm.initCfg x, Cfg.inWindow_init _ x s, hinit, rfl⟩
+    | tail _ hst ih =>
+      obtain ⟨w, D, hD, hcD, hcore⟩ := ih
+      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
+
+  have hDC : NDTM.coreSum D = NDTM.coreSum C :=
+    coreSum_eq_of_cfgWord_eq hD hC (by rw [← bits_cfgCode, ← bits_cfgCode, hcD, hcC])
+  have hfin := hcore.trans hDC
+
+  apply h.mem_of_acceptsWithin (t := w.length)
+  refine ⟨w, rfl, ?_, ?_⟩
+  · have := congrArg (fun z => z.1.1) hfin
+    simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core] at this
+
+
+**Proof sketch.** (⇒) Take an accepting branch of length the vertex count at the space bound
+(`DecidesInSpace.mem_iff_acceptsWithin_configBound`, `configBound_mono`); its prefixes stay in
+
+
+the window `[-s, s]` (`Turing.NDTM.runWith_take_inWindow`: compare with a branch of the
+halting budget — padding the accepting word, or truncating it where every branch has halted);
+the codes of
+the prefix configurations form the chain, consecutive prefixes differing by one step, the
+last halted with output `[true]`; codes are short (`cfgCode_lt`). (⇐) The chain is a
+`StepRel`-path from the initial to the accepting code, which gives membership
+
+    set tb := N.configBound x.length (sp x.length)
+    obtain ⟨T, hHalt, hSpace, -⟩ := h x
+    -- every prefix configuration is in the window
+
+    have hwin : ∀ j, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) := by
+      by_cases hT : tb ≤ T
+      · intro j
+        set w' := w ++ List.replicate (T - tb) false
+
+        by_cases hj : j ≤ tb
+        · have e : w'.take j = w.take j := by
+            simp only [w']; rw [List.take_append_of_le_length (by omega)]
+
+          rw [← e]; exact NDTM.runWith_take_inWindow N.tm w' hsp j
+        · have e1 : w.take j = w := List.take_of_length_le (by omega)
+          have e2 : w'.take tb = w := by
+            simp only [w']; rw [List.take_append_of_le_length (by omega),
+              List.take_of_length_le (by omega)]
+
+          rw [e1, ← e2]; exact NDTM.runWith_take_inWindow N.tm w' hsp tb
+      · intro j
+        have hlen : (w.take T).length = T := List.length_take_of_le (by omega)
+        have hsp := (hSpace (w.take T) hlen).trans hs
+        by_cases hj : j ≤ T
+        · have e : (w.take T).take j = w.take j := by rw [List.take_take, Nat.min_eq_left hj]
+
+          rw [← e]; exact NDTM.runWith_take_inWindow N.tm (w.take T) hsp j
+        · have frozen : N.tm.runWith (w.take j) (N.tm.initCfg x) =
+              N.tm.runWith (w.take T) (N.tm.initCfg x) := by
+            have : w.take j = w.take T ++ (w.take j).drop T := by
+
+              rw [List.take_take, Nat.min_eq_left (by omega : T ≤ j)]
+            rw [this, NDTM.runWith_append, NDTM.runWith_of_halt _ (hHalt _ hlen)]
+          rw [frozen, show w.take T = (w.take T).take T by simp]
+
+          exact NDTM.runWith_take_inWindow N.tm (w.take T) hsp T
+    refine ⟨tb, fun i => cfgCode s (N.tm.runWith (w.take i) (N.tm.initCfg x)),
+      configBound_mono N _ hs, ?_, fun i hi => ?_, ?_, fun i _ => cfgCode_lt s _⟩
+    · rw [mem_initLang]; simp

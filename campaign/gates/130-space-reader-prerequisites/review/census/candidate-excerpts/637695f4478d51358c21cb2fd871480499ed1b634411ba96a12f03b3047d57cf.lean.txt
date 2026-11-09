@@ -1,0 +1,69 @@
+/-- Fixed-width increment is computed within `3(|x|+1)` steps, with no output
+on overflow, including the empty word.
+**Proof sketch.** The all-true case scans and halts silently. Otherwise let
+`j` be the first false's index. Detection plus rewind costs `2j+2`; carry
+emission and suffix copy cost `|x|+1`. Since `j < |x|`, the advertised
+linear envelope covers the whole run. -/
+private lemma f2_incFixed_computes (x : List Bool) :
+    f2_incFixedTM.ComputesInTime x ((incFixed x).getD []) (3 * (x.length + 1)) := by
+  rcases f2_incFixed_cases x with ⟨hx, hinc⟩ | ⟨j, rest, hx, hinc⟩
+  · have hr := f2_scanTrues_run f2_incFixedTM.tm (0 : Fin 4) false (fun _ => rfl)
+      x x.length (by omega) (by simpa using hx)
+    have hh : f2_incFixedTM.ComputesInTime x [] (x.length + 1) := by
+      apply (computesInTime_iff _ _ _ _).mpr
+      rw [MultiTapeTM.runFrom_succ_eq_step', show f2_incFixedTM.tm.initCfg x =
+        f2_scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+          by apply Cfg.ext_zero_tapes <;> simp [f2_incFixedTM, f2_scanCfg], hr]
+      unfold MultiTapeTM.step
+      change ((f2_incFixedTM.tm.tr (0 : Fin 4) _ _).apply _).state = none ∧ _
+      rw [f2_scanCfg_read]
+      simp [f2_incFixedTM, controlAction, Action.apply, f2_scanCfg]
+    simpa only [hinc, Option.getD_none] using hh.mono (by omega)
+  · have hj : j < x.length := by simp [hx]
+    have hpre : x.take j = List.replicate j true := by simp [hx]
+    have hread : x[j]? = some false := by simp [hx]
+    let c : Cfg 0 Bool (Fin 4) x :=
+      ⟨some 1, ⟨j, by omega⟩, fun i => i.elim0, fun i => i.elim0, []⟩
+    have hdet : f2_incFixedTM.tm.runFrom (f2_incFixedTM.tm.initCfg x) (j + 1) = c := by
+      rw [MultiTapeTM.runFrom_succ_eq_step', show f2_incFixedTM.tm.initCfg x =
+        f2_scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+          by apply Cfg.ext_zero_tapes <;> simp [f2_incFixedTM, f2_scanCfg],
+        f2_scanTrues_run f2_incFixedTM.tm (0 : Fin 4) false (fun _ => rfl) x j (by omega) hpre]
+      unfold MultiTapeTM.step
+      change (f2_incFixedTM.tm.tr (0 : Fin 4) _ _).apply _ = _
+      rw [f2_scanCfg_read, hread]
+      apply Cfg.ext_zero_tapes
+      · rfl
+      · simpa [f2_incFixedTM, controlAction, Action.apply, f2_scanCfg, c] using
+          moveInputPos_neg_of_ne_left (⟨j + 1, by omega⟩ : Fin (x.length + 2))
+            (by simp [Fin.ext_iff])
+      · rfl
+    have hrew : f2_incFixedTM.tm.runFrom (f2_incFixedTM.tm.initCfg x) (j + 1 + (j + 1)) =
+        f2_scanCfg x (some (2 : Fin 4)) 0 (by omega) [] := by
+      rw [MultiTapeTM.runFrom_add, hdet]
+      exact rewind_scan f2_incFixedTM.tm (1 : Fin 4) (some (2 : Fin 4))
+        (fun _ _ => rfl) c rfl (by simp [c]; omega)
+    have hemit : f2_incFixedTM.tm.runFrom (f2_scanCfg x (some (2 : Fin 4)) 0 (by omega) [])
+        (j + 1) = f2_scanCfg x (some (3 : Fin 4)) (j + 1) (by omega)
+          (List.replicate j false ++ [true]) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step',
+        f2_scanTrues_run f2_incFixedTM.tm (2 : Fin 4) true (fun _ => rfl) x j (by omega) hpre]
+      unfold MultiTapeTM.step
+      change (f2_incFixedTM.tm.tr (2 : Fin 4) _ _).apply _ = _
+      rw [f2_scanCfg_read, hread]
+      apply Cfg.ext_zero_tapes
+      · rfl
+      · exact moveInputPos_pos_of_ne_right _ (by simp [f2_scanCfg]; omega)
+      · rfl
+    have hcopy := f2_scanCopy_suffix f2_incFixedTM.tm (3 : Fin 4) (fun _ _ => rfl)
+      x rest (List.replicate j true ++ [false]) (List.replicate j false ++ [true])
+      (by simpa [List.append_assoc] using hx)
+    have hh : f2_incFixedTM.ComputesInTime x (List.replicate j false ++ true :: rest)
+        ((j + 1 + (j + 1)) + ((j + 1) + (rest.length + 1))) := by
+      apply (computesInTime_iff _ _ _ _).mpr
+      rw [MultiTapeTM.runFrom_add, hrew, MultiTapeTM.runFrom_add, hemit]
+      simp only [List.length_append, List.length_replicate, List.length_singleton] at hcopy
+      rw [hcopy]
+      exact ⟨rfl, by simp [f2_scanCfg, List.append_assoc]⟩
+    have hlen : x.length = j + 1 + rest.length := by simp [hx]; omega
+    simpa only [hinc, Option.getD_some] using hh.mono (by omega)

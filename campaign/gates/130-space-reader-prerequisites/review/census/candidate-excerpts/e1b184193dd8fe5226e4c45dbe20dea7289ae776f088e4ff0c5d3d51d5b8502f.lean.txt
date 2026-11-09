@@ -1,0 +1,51 @@
+/-- A left crossing creates exactly one marked blank row and moves the boundary
+by its width. The endpoint may halt; containment includes the final boundary.
+**Proof sketch.** Dispatch without moving, use the new left-row writer, and
+write the new boundary with the optional successor state. -/
+private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (q : M.State) (inp : Option Γ)
+    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
+    (hc : dgCross (M.tm.tr q inp reads) right .neg = true)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+        p (z - M.k)
+        ((dgLeftRow (fun i => right i && decide (((M.tm.tr q inp reads).workTapes i).2 = .neg))).map
+          (fun b => some (sweepSymbol b)) ++ l) [some sweepBoundary] out)
+      (M.k + 2) (z - M.k) z := by
+  let act := M.tm.tr q inp reads
+  let heads := fun i => right i && decide ((act.workTapes i).2 = .neg)
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+  let e : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inr (act.state, heads, 0))) p z l [some sweepBoundary] out
+  have step : (dgTM M a₀).tm.step d = e := by
+    have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
+      funext i
+      exact sweepTape_read (-z) l _
+    change ((dgTM M a₀).tm.tr (.inl (.write q inp reads right)) d.inputSymbol d.workTapeSymbols).apply d = e
+    rw [hw]
+    simp only [dgTM, sweepBoundary, hc, ↓reduceIte]
+    exact sweepRevCfg_stay _ _ _ _ _ _ _
+  have h₁ : DGSpan (dgTM M a₀).tm d e 1 (z - M.k) z :=
+    dgSpan_one step (by dsimp [d, sweepRevCfg]; constructor <;> omega)
+      (by dsimp [e, sweepRevCfg]; constructor <;> omega)
+  have hdrop : ([some (sweepBoundary (Γ := Γ) (k := M.k))] : List _).drop M.k = [] :=
+    List.drop_eq_nil_of_le (by simpa using hk)
+  have h₂ := dg_left_span M a₀ act.state heads p out z l [some sweepBoundary]
+  rw [hdrop] at h₂
+  let L := (dgLeftRow (Γ := Γ) heads).map (fun b => some (sweepSymbol b)) ++ l
+  have last : (dgTM M a₀).tm.step
+      (sweepRevCfg (some (.inr (act.state, heads, ⟨M.k, by omega⟩))) p (z - M.k) L [] out) =
+      sweepRevCfg (act.state.map (fun q => .inl (.growLeft q 0))) p (z - M.k) L [some sweepBoundary] out := by
+    change ((dgTM M a₀).tm.tr (.inr (act.state, heads, ⟨M.k, by omega⟩)) _ _).apply _ = _
+    simp only [dgTM, lt_self_iff_false, ↓reduceDIte]
+    exact dgRev_write_optional (Sum.inl SweepState.back) _ _ _ _ _ _ _ _
+  have h₃ := dgSpan_one last
+    (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+    (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
+  simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h

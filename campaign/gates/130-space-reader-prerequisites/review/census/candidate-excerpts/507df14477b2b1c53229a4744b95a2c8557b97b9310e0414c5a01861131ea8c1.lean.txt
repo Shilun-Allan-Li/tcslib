@@ -1,0 +1,16 @@
+/-- **R8.3, skip back** (design §12.8a). The inverse of `Turing.skipTM`: from
+the first cell of a field, move the head of tape `i` to the first cell of the
+previous field. `run` steps off the current cell, `gap` steps over the blank
+separator, `back` walks left over the previous word, and its left delimiter
+turns the head into `done`. Nothing is written. -/
+def skipBackTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run => tapeAction i 0 none .neg .gap
+    | .gap => tapeAction i 0 none .neg .back
+    | .back =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .back
+      | none => tapeAction i 0 none .pos .done
+    | .done => inputMoveAction 0 .done

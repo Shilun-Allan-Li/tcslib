@@ -1,0 +1,48 @@
+theorem probe_wc_trace (i : Fin k) (w₀ : List Symbol) (d : Cfg k Symbol (WritePhase w₀.length) x)
+    (hstate : d.state = some (.wr 0)) (t : ℕ) :
+    (writeConstTM k i w₀).runFrom d t =
+      catalogTrace (probeWcF i w₀ d) (probeWcR i w₀ d) (probeWcD i w₀ d) w₀.length t := by
+  have h0 : probeWcF i w₀ d 0 = d := by
+    apply Cfg.ext
+    case state => simp [probeWcF, probeWriteCfg, hstate]
+    case workTapes =>
+      funext j z
+      simp [probeWcF, probeWriteCfg]
+    all_goals simp [probeWcF, probeWriteCfg]
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · -- forward: one write step
+    intro r hr
+    change ((writeConstTM k i w₀).tr (.wr _) _ _).apply _ = _
+    simp only [writeConstTM, probeWcF]
+    rw [dif_pos (show min r w₀.length < w₀.length by omega)]
+    simp only [show min r w₀.length = r by omega, show min (r + 1) w₀.length = r + 1 by omega]
+    rw [probe_write_step i w₀ d _ _ _ _ r hr, moveInputPos_zero]
+  · -- turn: stationary, into the walk back
+    change ((writeConstTM k i w₀).tr (.wr _) _ _).apply _ = _
+    simp only [writeConstTM]
+    rw [dif_neg (show ¬ min w₀.length w₀.length < w₀.length by omega)]
+    apply Cfg.ext <;> simp [Action.apply, inputMoveAction, probeWcF, probeWcR, probeWriteCfg]
+  · -- return: one left move
+    intro r hr
+    change ((writeConstTM k i w₀).tr (.bk _) _ _).apply _ = _
+    simp only [writeConstTM]
+    rw [if_neg (show ¬ min (r + 1) w₀.length = 0 by omega)]
+    apply Cfg.ext
+    case state => simp [Action.apply, tapeAction, probeWcR, probeWriteCfg]; omega
+    case workTapes =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeWcR, probeWriteCfg, hj]
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeWcR, probeWriteCfg, hj] <;>
+        omega
+    all_goals simp [Action.apply, tapeAction, probeWcR, probeWriteCfg]
+  · -- entry: stationary, into `done`
+    change ((writeConstTM k i w₀).tr (.bk _) _ _).apply _ = _
+    simp only [writeConstTM]
+    rw [if_pos (show min 0 w₀.length = 0 by omega)]
+    apply Cfg.ext <;>
+      simp [Action.apply, inputMoveAction, probeWcR, probeWcD, probeWcF, probeWriteCfg]
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, writeConstTM, Action.apply, inputMoveAction,
+      probeWcD]

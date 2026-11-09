@@ -1,0 +1,13 @@
+theorem zoneTrackTape_rebalance_left {ℓ : ℕ} (z : ZoneContents ℓ)
+    (h : zoneShiftIndex false z < ℓ)
+    (hr : ∀ k (hk : k < zoneShiftIndex false z),
+      (z.right ⟨k, by omega⟩).length = zoneCapacity k)
+    (hroom : (z.right ⟨zoneShiftIndex false z, h⟩).length + 2 ^ (zoneShiftIndex false z - 1) ≤
+      zoneCapacity (zoneShiftIndex false z)) (p : ℤ) :
+    zoneTrackTape (zoneRebalance false z) p = zoneTrackTape z (p - 1) := by
+  rw [zoneRebalance_false, zoneTrackTape_swap,
+    zoneTrackTape_rebalance_right z.swap h hr hroom, zoneTrackTape_swap]
+  congr 1
+  omega
+
+end Turing

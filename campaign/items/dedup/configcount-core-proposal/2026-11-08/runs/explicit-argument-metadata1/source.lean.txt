@@ -1,0 +1,16 @@
+import Lean
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMTime
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for s in ["Prod.mk.injEq", "Fin.mk.injEq", "Turing.MultiTapeTM.ConfigCount.core_eq", "Finset.mem_filter", "Finset.mem_Icc", "abs_le", "Finset.coe_range", "Set.mem_Iio", "Finset.card_range", "Finset.card_univ", "Fintype.card_prod", "Fintype.card_option", "Fintype.card_fin", "Fintype.card_pi", "Finset.prod_const", "Fintype.card_bool", "pow_mul", "Nat.mul_comm", "Turing.MultiTapeTM.runFrom_add", "Turing.MultiTapeTM.runFrom_of_halt"] do
+    let n := s.toName
+    let some ci := env.find? n | throwError "missing explicit argument {n}"
+    let kind := match ci with
+      | .thmInfo _ => "theorem"
+      | .defnInfo _ => "definition"
+      | _ => "other"
+    let owner := match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString
+      | none => "<current>"
+    logInfo m!"ARGUMENT|{(Json.mkObj [("name",toJson s),("kind",toJson kind),("owner",toJson owner)]).compress}"

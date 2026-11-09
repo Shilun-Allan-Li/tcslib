@@ -1,0 +1,27 @@
+/-- From a completed first-phase configuration, rewind and dispatch cost exactly
+`|output| + 2` steps. The first move is unconditional from the right blank.
+
+**Proof sketch.** That first left move reaches scan position `|output|`. Apply
+the scan invariant for the remaining `|output| + 1` transitions. The real output
+stays empty and the native input head and first work block stay fixed. -/
+lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (hs : c.state = none) :
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c) (c.output.length + 2) =
+      bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg c.output) true c.inputPos c.workTapes c.workTapePos := by
+  have hstep : (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
+      bufferedScanCfg M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos c.output.length := by
+    simp only [MultiTapeTM.step, bufferedFirstCfg, hs, bufferedCompTM]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply, sub_eq_add_neg]
+  rw [show c.output.length + 2 = (c.output.length + 1) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step, hstep]
+  exact bufferedScanCfg_run M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos _ (le_refl _)

@@ -1,0 +1,9 @@
+/-- **The park stays put**: at `done` the rewind's step changes nothing. -/
+theorem inputRewindTM_step_done {k : ℕ} {x : List Bool} (c : Cfg k Bool InputRewindPhase x)
+    (hc : c.state = some .done) : (inputRewindTM k).step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  show (FinTM.controlAction 0 (some InputRewindPhase.done)).apply c = c
+  rw [FinTM.controlAction_apply]
+  refine Cfg.ext ?_ ?_ rfl rfl rfl
+  · rw [hc]
+  · exact moveInputPos_zero c.inputPos

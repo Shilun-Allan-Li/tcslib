@@ -1,0 +1,28 @@
+/-- The finite row identifies exactly the configuration-graph vertex at a fixed input.
+
+**Proof sketch.** Forward, the four finite core fields agree, so `coreCode_inj`
+recovers the core using the window bounds; the fifth field supplies the summary.
+Backward, equality of cores and summaries directly makes all finite fields equal. -/
+private theorem codecRowOf_eq_iff (M : FinTM Bool) (n s : ℕ)
+    (x : List Bool) (hx : x.length = n) (c d : Cfg M.k Bool M.State x)
+    (hc : c.InWindow s) (hd : d.InWindow s) :
+    codecRowOf M n s x hx c = codecRowOf M n s x hx d ↔
+      NDTM.coreSum c = NDTM.coreSum d := by
+  constructor
+  · intro h
+    apply Prod.ext
+    · apply MultiTapeTM.ConfigCount.coreCode_inj s hc.core_bounds hd.core_bounds
+      apply Prod.ext (congrArg CodecRow.state h)
+      apply Prod.ext
+      · apply Fin.ext
+        exact congrArg (fun r => r.inputHead.val) h
+      · exact Prod.ext (congrArg CodecRow.symbols h) (congrArg CodecRow.heads h)
+    · exact congrArg CodecRow.summary h
+  · intro h
+    have hc := congrArg Prod.fst h
+    have ho := congrArg Prod.snd h
+    change MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d at hc
+    change outSummary c.output = outSummary d.output at ho
+    simp only [MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at hc
+    rcases hc with ⟨hs, hp, hw, hh⟩
+    simp only [codecRowOf, MultiTapeTM.ConfigCount.coreCode, hs, hp, hw, hh, ho]

@@ -1,0 +1,30 @@
+private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
+    (w record : List Bool) :
+    ∃ t ≤ 3 * w.length + 3, 0 < t ∧
+      (∀ j, j < t → (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state ≠ some (4 : Fin 5)) ∧
+      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =
+        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by
+  have finish := clCopy_run x p w record
+  have hex : ∃ t, t ≤ 3 * w.length + 3 ∧
+      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :=
+    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩
+  let t := Nat.find hex
+  have ht := Nat.find_spec hex
+  have hp : 0 < t := by
+    by_contra h
+    have hz : t = 0 := by omega
+    have hs := ht.2
+    change (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) at hs
+    rw [hz, MultiTapeTM.runFrom_zero] at hs
+    have hh := congrArg (fun z => z.map Fin.val) hs
+    norm_num [clCopyCfg] at hh
+  refine ⟨t, ht.1, hp, ?_, ?_⟩
+  · intro j hj hs
+    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
+      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)
+    omega
+  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)
+    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)
+      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+    exact hstay.symm.trans finish

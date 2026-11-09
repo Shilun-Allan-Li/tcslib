@@ -1,0 +1,8 @@
+import TCSlib.Complexity.TuringMachine.CfgFacts
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+attribute [local irreducible] Turing.Cfg.mapState
+example {k : ℕ} {S : Type*} {x : List Bool} (cfg : Cfg k Bool S x) :
+    cfg.mapState id = cfg := by
+  exact Cfg.mapState_eq_of_fields cfg id cfg (by simp only [Option.map_id]) rfl rfl rfl rfl

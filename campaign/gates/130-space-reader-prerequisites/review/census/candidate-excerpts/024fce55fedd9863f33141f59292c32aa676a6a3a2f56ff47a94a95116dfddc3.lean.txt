@@ -1,0 +1,18 @@
+/-- Each interior rewind transition moves the physical input head left by
+one, preserving the copied word and both blank machine banks. -/
+private lemma b2_rewind_step (S V : FinTM Bool) (x : List Bool) (j : ℕ)
+    (hj : j < x.length) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit
+      (b2LoadCfg S V (x := x) 1 ⟨j + 1, by omega⟩ x x.length) =
+        b2LoadCfg S V (x := x) 1 ⟨j, by omega⟩ x x.length := by
+  have hr : (b2LoadCfg S V (x := x) 1 ⟨j + 1, by omega⟩ x x.length).inputSymbol =
+      some x[j] := inputSymbolInner j (by simp [b2LoadCfg]; omega) hj
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 1) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (1 : Fin 3) ≠ 0), if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  change (moveInputPos (⟨j + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = j
+  rw [moveInputPos_neg_val]
+  simp

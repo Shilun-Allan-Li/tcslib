@@ -1,0 +1,11 @@
+/-- A single-cell controller with two live verdicts. No public row performs just one optional
+write, one work-head step, and a slot-dependent verdict: the sweep and seek rows traverse whole
+words. This permitted leaf covers the ruler adjustment, constant writes, and slot tests; it
+contains no iteration or phase dispatch. State `none` is the entry; `some b` is verdict `b`. -/
+private def zr_cellTM {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) → Bool)
+    (wr : Option (Option (ZoneSym k))) (dir : SignType) :
+    MultiTapeTM 2 (ZoneSym k) (Option Bool) where
+  q₀ := none
+  tr q _ a := match q with
+    | none => tapeAction i 0 wr dir (some (choose (a i)))
+    | some b => inputMoveAction 0 (some b)

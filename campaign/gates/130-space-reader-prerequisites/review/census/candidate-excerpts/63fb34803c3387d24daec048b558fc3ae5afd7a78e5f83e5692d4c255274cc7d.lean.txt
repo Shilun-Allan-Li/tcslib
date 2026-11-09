@@ -1,0 +1,11 @@
+/-- An unrestricted field loader actually resets its target before invoking
+the banked reader. Stream positions and all reset/read transitions are charged. -/
+private def clFreshTM : FinTM Bool where
+  k := 2
+  State := (Fin 3) ⊕ clReadTM.State
+  tm := {
+    q₀ := .inl 0
+    tr := fun q inp work => match q with
+      | .inl q => if q = 2 then FinTM.controlAction 0 (some (.inr (.inl none)))
+          else (clWipeTM.tm.tr q inp work).mapState Sum.inl
+      | .inr q => (clReadTM.tm.tr q inp work).mapState Sum.inr }

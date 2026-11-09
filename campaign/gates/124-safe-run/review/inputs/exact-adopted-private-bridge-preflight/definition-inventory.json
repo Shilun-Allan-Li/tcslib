@@ -1,0 +1,1044 @@
+{
+  "roots": [
+    "Turing.safeRun_iff_segment",
+    "Turing.SafeRun.zero",
+    "Turing.SafeRun.cons",
+    "Turing.SafeRun.trans"
+  ],
+  "guards": [
+    "Turing.Segment",
+    "Turing.moveInputPos",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.step"
+  ],
+  "default_simp_definitions_removed": [
+    "Turing.Action.apply"
+  ],
+  "all_definition_records": [
+    {
+      "default_simp_definition": false,
+      "foreign": false,
+      "kernel_abbrev": false,
+      "name": "Turing.SafeRun",
+      "ordinary_guard": false,
+      "owner": "current scratch owner",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Segment",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.runFrom",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapePos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.step",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.step.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": true,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Action.apply",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.tr",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.inputSymbol",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.workTapeSymbols",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.moveInputPos",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.inputPos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.inputTape",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.apply.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": false,
+      "kernel_abbrev": false,
+      "name": "Turing.SafeRun",
+      "ordinary_guard": false,
+      "owner": "current scratch owner",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Segment",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.runFrom",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapePos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.step",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.step.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": true,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Action.apply",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.tr",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.inputSymbol",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.workTapeSymbols",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.moveInputPos",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.inputPos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.inputTape",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.apply.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.step",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": false,
+      "kernel_abbrev": false,
+      "name": "Turing.SafeRun",
+      "ordinary_guard": false,
+      "owner": "current scratch owner",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Segment",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.step.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": true,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Action.apply",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.tr",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.inputSymbol",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.workTapeSymbols",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.runFrom",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapePos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.moveInputPos",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.inputPos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.inputTape",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.apply.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": false,
+      "kernel_abbrev": false,
+      "name": "Turing.SafeRun",
+      "ordinary_guard": false,
+      "owner": "current scratch owner",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Segment",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.runFrom",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapePos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.MultiTapeTM.step",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.step.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": true,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Action.apply",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.MultiTapeTM.tr",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.inputSymbol",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.Cfg.workTapeSymbols",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.state",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": false,
+      "name": "Turing.moveInputPos",
+      "ordinary_guard": true,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.inputPos",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.inputTape",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.apply.match_1",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "reducibility": "Lean.ReducibilityStatus.semireducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.workTapes",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Cfg.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "default_simp_definition": false,
+      "foreign": true,
+      "kernel_abbrev": true,
+      "name": "Turing.Action.output",
+      "ordinary_guard": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": true,
+      "reducibility": "Lean.ReducibilityStatus.reducible",
+      "root": "Turing.SafeRun.trans"
+    }
+  ],
+  "theorem_boundaries": [
+    {
+      "name": "_private.Inventory.0.Turing.safeRun_iff_segment._simp_1_2",
+      "proof_value_traversed": false,
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "name": "_private.Inventory.0.Turing.safeRun_iff_segment._simp_1_3",
+      "proof_value_traversed": false,
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "name": "Turing.instInhabitedCfg.default._proof_1",
+      "proof_value_traversed": false,
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "name": "Turing.Cfg.inputSymbol._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "name": "Turing.moveInputPos._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "name": "_private.Inventory.0.Turing.safeRun_iff_segment",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "name": "Turing.Segment.zero",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "name": "Turing.instInhabitedCfg.default._proof_1",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "name": "Turing.Cfg.inputSymbol._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "name": "Turing.moveInputPos._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "name": "_private.Inventory.0.Turing.safeRun_iff_segment",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "Turing.Segment.cons",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "Turing.SafeRun.cons._simp_1_1",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "Turing.instInhabitedCfg.default._proof_1",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "Turing.Cfg.inputSymbol._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "Turing.moveInputPos._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "name": "_private.Inventory.0.Turing.safeRun_iff_segment",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "name": "Turing.Segment.trans",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "name": "Turing.instInhabitedCfg.default._proof_1",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "name": "Turing.Cfg.inputSymbol._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.trans"
+    },
+    {
+      "name": "Turing.moveInputPos._proof_2",
+      "proof_value_traversed": false,
+      "root": "Turing.SafeRun.trans"
+    }
+  ],
+  "root_axioms": [
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "_private.Inventory.0.Turing.safeRun_iff_segment",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.zero",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.cons",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.trans",
+      "root": "Turing.SafeRun.trans"
+    }
+  ],
+  "traversal_limit": "Root type/value, referenced definition type/value and theorem type; imported theorem proof values are not traversed. Own SafeRun definition is allowed; private bridge is an explicit checked root."
+}

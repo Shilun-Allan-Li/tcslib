@@ -1,0 +1,13 @@
+theorem sumW_encWords (L : List ℕ) : sumW (encWords (L.map Nat.bits)) = Nat.bits L.sum := by
+  unfold sumW
+  have hlen : L.length ≤ 1 * ((encWords (L.map Nat.bits)).length + 1) ^ 1 := by
+    have := two_mul_length_le_encWords (L.map Nat.bits)
+    rw [List.length_map] at this
+    simp only [pow_one, one_mul]
+    omega
+  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hlen
+  have hfix : sumStep (pairEncode (Nat.bits L.sum) []) = pairEncode (Nat.bits L.sum) [] := by
+    simp [sumStep, add, bitsVal_bits, pairFstD_nil, show pairSndD ([] : List Bool) = [] from rfl,
+      LogProg.bitsVal]
+  rw [hd, Nat.add_comm, Function.iterate_add_apply, ← Nat.zero_bits,
+    iterate_sumStep_encWords, Nat.zero_add, Function.iterate_fixed hfix, pairFstD_pairEncode]

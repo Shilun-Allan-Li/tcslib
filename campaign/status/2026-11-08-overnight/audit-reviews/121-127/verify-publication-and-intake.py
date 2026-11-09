@@ -1,0 +1,56 @@
+from pathlib import Path
+import os,json,re,hashlib,subprocess
+O=Path(__file__).parent;R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');X=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange');I=Path('/private/tmp/ab34-audit-intake-v2h60oly');E=os.environ|{'GIT_OPTIONAL_LOCKS':'0'}
+H=lambda b:hashlib.sha256(b).hexdigest();J=lambda p:json.loads(p.read_text())
+def git(w,*args):return subprocess.check_output(['git','-C',str(w),*args],env=E)
+def save(n,a):(O/n).write_text(json.dumps(a,ensure_ascii=False,indent=2)+'\n')
+intake=J(I/'INTAKE.json');reports=[]
+for name in ['121-fe-live1-cleanup-findings.md','gate127-nat-reader-findings.md']:
+ row=next(x for x in intake['files'] if x['intake']==name);raw=(I/name).read_bytes();assert len(raw)==row['bytes'] and H(raw)==row['sha256'];d=O/'returns';d.mkdir(exist_ok=True);(d/name).write_bytes(raw);reports.append(row)
+(O/'returns/INTAKE.json').write_bytes((I/'INTAKE.json').read_bytes())
+configs=[(121,'121-fe-live1-cleanup','121-fe-live1-cleanup-bundle.md'),(127,'127-nat-reader','127-nat-reader-bundle.md')]
+results=[]
+for gate,slug,bundle in configs:
+ C=R/'campaign/gates'/slug;pub=J(C/'publication.json');folder=pub['folder']+'/'
+ # Read exact published exchange blob and its ordered index.
+ raw=git(X,'show',pub['exchange']+':'+folder+bundle);assert H(raw)==pub['sha256'] and len(raw)==pub['bytes']
+ idx=git(X,'show',pub['exchange']+':'+folder+'BUNDLE-FILES.txt').decode().splitlines();ms=list(re.finditer(rb'(?m)^## ===== (.+?) =====\n',raw));paths=[m[1].decode() for m in ms]
+ assert paths==idx and len(idx)==pub['sections'] and len(idx)==len(set(idx))
+ # The bundler inserts exactly a leading LF and final LF around each complete original file.
+ specs=[(pub['source'] if p.startswith('TCSlib/') else pub['records'])+':'+p for p in idx]
+ batch=git(R,'cat-file','--batch',) if False else subprocess.check_output(['git','-C',str(R),'cat-file','--batch'],input=('\n'.join(specs)+'\n').encode(),env=E)
+ at=0;rows=[]
+ for n,(m,path,spec) in enumerate(zip(ms,idx,specs)):
+  end=batch.index(b'\n',at);head=batch[at:end].split();assert len(head)==3 and head[1]==b'blob',head
+  size=int(head[2]);data=batch[end+1:end+1+size];assert batch[end+1+size:end+2+size]==b'\n';at=end+2+size
+  region=raw[m.end():ms[n+1].start() if n+1<len(ms) else len(raw)]
+  content=data+(b'' if data.endswith(b'\n') else b'\n')
+  if path.endswith(('.lean','.py')):content=b'```\n'+content+b'```\n'
+  expected=b'\n'+content+(b'\n' if n+1<len(ms) else b'')
+  assert region==expected,(gate,path,len(region),len(data))
+  rows.append({'path':path,'source_spec':spec,'bytes':len(data),'sha256':H(data),'original_git_blob':head[0].decode(),'exact_envelope':True})
+ assert at==len(batch)
+ checksums=git(X,'show',pub['exchange']+':'+folder+'SHA256SUMS').decode().splitlines();cs={line.split()[1]:line.split()[0] for line in checksums}
+ assert cs[bundle]==H(raw) and cs['README.md']==H(git(X,'show',pub['exchange']+':'+folder+'README.md'))
+ results.append({'gate':gate,'publication':pub,'all_ordered_sections_exact_pinned_git':True,'section_count':len(rows),'section_rows':rows,'both_exchange_checksums_exact':True})
+# Four files are original component integrity files, not absent validation payloads.
+pin='be1fbf132ebdca9e6fdfbe73d97d045eaa9e4c8b';prefix='campaign/gates/121-fe-live1-cleanup/';mp=json.loads(git(R,'show',pin+':'+prefix+'PATH-MAP.json'));mmap={x['original_logical_path']:x for x in mp};list121={x['path'] for x in results[0]['section_rows']};miss=[]
+for component,count in [('compact-census',78),('nine-boundary',176)]:
+ comp='evidence/'+component+'/'
+ for name in ['MANIFEST.json','SHA256SUMS.txt']:
+  logical=comp+name;row=mmap[logical];path=prefix+'review/'+row['actual_record_path'];data=git(R,'show',pin+':'+path);assert H(data)==row['sha256'] and len(data)==row['bytes'];assert path not in list121
+  miss.append({'logical':logical,'record_path':path,'bytes':len(data),'sha256':H(data),'present_in_published_records':True,'omitted_from_published817':True})
+ man=json.loads(git(R,'show',pin+':'+prefix+'review/'+comp+'MANIFEST.json'));assert man['payload_count']==len(man['files'])==count
+ for row in man['files']:
+  mapped=mmap[comp+row['path']];assert mapped['sha256']==row['sha256'] and mapped['bytes']==row['bytes']
+  # Actual canonical spelling is map-authoritative, including captured .lean.txt renames.
+  data=git(R,'show',pin+':'+prefix+'review/'+mapped['actual_record_path']);assert H(data)==row['sha256'] and len(data)==row['bytes']
+# Replay-helper reference is a record-only pointer defect.
+pin127='4e372e4e262ec607f417848fb57361fa13c40268';root127='campaign/gates/127-nat-reader/';context=json.loads(git(R,'show',pin127+':'+root127+'reproduction-tools/context.json'))
+assert context['replay_helper']=='review/replay/leanelab-o.sh is self-contained'
+old=root127+'review/replay/leanelab-o.sh';new=root127+'review/replay/drivers/leanelab-o.sh'
+exists_old=subprocess.run(['git','-C',str(R),'cat-file','-e',pin127+':'+old],env=E,stdout=subprocess.PIPE,stderr=subprocess.PIPE).returncode==0;assert not exists_old
+helper=git(R,'show',pin127+':'+new);assert new in {x['path'] for x in results[1]['section_rows']}
+save('published-packets-and-intake-checks.json',{'pass':True,'intake_reports':reports,'publications':results,'not_a_new_Lean_screen_lint_or_gate_closure':True})
+save('confirmed-record-minors.json',{'gate121_finding2':{'status':'VALID_MINOR_RECORDS_ONLY','omitted_original_integrity4':miss,'all78_plus176_payload_manifest_entries_reconciled':True,'repair':'Add these four original files to portable BUNDLE-FILES and reissued binding; preserve all original component bytes and history.'},'gate127_finding1':{'status':'VALID_MINOR_RECORDS_ONLY','published_context':context,'missing_old_path':old,'present_correct_path':new,'correct_helper_sha256':H(helper),'repair':'Set replay_helper to review/replay/drivers/leanelab-o.sh is self-contained; update record bindings/context only, no source or replay needed for this typo.'}})
+print('PASS exact121817/127615 published sections and checksums; intake reports bound; 121four integrity omissions and127helper typo confirmed')

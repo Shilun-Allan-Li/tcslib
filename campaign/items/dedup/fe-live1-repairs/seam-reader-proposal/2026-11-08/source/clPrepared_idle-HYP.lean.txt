@@ -1,0 +1,33 @@
+  let d : Cfg A.k Bool A.State x :=
+    ⟨some ret, c.inputPos, fun i => c.workTapes ((clKeepLastPlacement A.k).index i),
+      fun i => c.workTapePos ((clKeepLastPlacement A.k).index i), c.output⟩
+  let e := embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos [] d
+  have hm : e.mapState (Sum.inr : A.State → (clPreparedTM A).State) = c :=
+    embedEmitCfg_mapState_eq (clKeepLastPlacement A.k).index Sum.inr
+      c.workTapes c.workTapePos [] d c
+      (by simpa only [d, Option.map_some] using hc.symm) rfl (List.nil_append _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have he : e.state = some ret := by rw [embedEmitCfg_state]
+  have hi : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).inputSymbol =
+      e.inputSymbol :=
+    Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+  have hw : (e.mapState (Sum.inr : A.State → (clPreparedTM A).State)).workTapeSymbols =
+      e.workTapeSymbols := by
+    funext i
+    rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,
+      Cfg.mapState_workTapePos, Cfg.mapState_workTapes]
+  have hd : A.tm.step d = d := by
+    rw [MultiTapeTM.step_of_some (show d.state = some ret from rfl), htr,
+      FinTM.controlAction_apply, moveInputPos_zero]
+  have hr : (embedEmitTM (clKeepLastPlacement A.k).index A.tm).step e =
+      embedEmitCfg (clKeepLastPlacement A.k).index c.workTapes c.workTapePos []
+        (A.tm.step d) := by
+    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+      embedEmitTM_runFrom (clKeepLastPlacement A.k).index A.tm
+        c.workTapes c.workTapePos [] d 1
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM (clPrepareTM A.k).tm (.inr (Fin.last A.k, .inl 0))
+    (embedEmitTM (clKeepLastPlacement A.k).index A.tm) A.tm.q₀).tr
+      (.inr ret) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr, ← hm, hi, hw, Cfg.mapState_apply,
+    ← MultiTapeTM.step_of_some he, hr, hd]

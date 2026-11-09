@@ -1,0 +1,51 @@
+/-- A positive crossing test allocates exactly one right row, then performs
+the source action. Every prefix stays within the new right boundary.
+**Proof sketch.** Compose a stationary dispatch, the delegated row writer,
+and the already checked source input/output turn. -/
+private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = true)
+    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z + M.k - 1)
+        [some sweepBoundary]
+        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
+      (M.k + 2) (z - 1) (z + M.k) := by
+  let p := dgPos a₀ c.inputPos
+  let out := c.output.map (sweepEmbed Γ M.k)
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.read q s))) p z l [some sweepBoundary] out
+  let e : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.growRight q s 0))) p z l [some sweepBoundary] out
+  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
+    funext i
+    exact sweepTape_read z l _
+  have he := dg_read_boundary M a₀ q s d.inputSymbol
+  rw [dgInput_read a₀ c d rfl, hs, hc] at he
+  simp only [↓reduceIte] at he
+  have step : (dgTM M a₀).tm.step d = e := by
+    change ((dgTM M a₀).tm.tr (.inl (.read q s)) d.inputSymbol d.workTapeSymbols).apply d = e
+    rw [hw]
+    exact (congrArg (fun act => act.apply d) he).trans (sweepCfg_stay _ _ _ _ _ _ _)
+  have h₁ : DGSpan (dgTM M a₀).tm d e 1 (z - 1) (z + M.k) :=
+    dgSpan_one step (by dsimp [d, sweepCfg]; constructor <;> omega)
+      (by dsimp [e, sweepCfg]; constructor <;> omega)
+  have hdrop : ([some (sweepBoundary (Γ := Γ) (k := M.k))] : List _).drop M.k = [] :=
+    List.drop_eq_nil_of_le (by simpa using hk)
+  have h₂ := dgSpan_mono (lo' := z - 1) (hi' := z + M.k)
+    (dg_right_span M a₀ q s p out z l [some sweepBoundary]) (by omega) (by omega)
+  rw [hdrop] at h₂
+  have ht := dg_turn M a₀ c q s hs (z + M.k)
+    (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l) []
+  have h₃ := dgSpan_one ht
+    (show z - 1 ≤ z + (M.k : ℤ) ∧ z + (M.k : ℤ) ≤ z + M.k by omega)
+    (show z - 1 ≤ z + (M.k : ℤ) - 1 ∧ z + (M.k : ℤ) - 1 ≤ z + M.k by omega)
+  rw [dgSpan_iff_segment] at h₁ h₂ h₃
+  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
+  simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h

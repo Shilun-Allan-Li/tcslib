@@ -1,0 +1,22 @@
+import TCSlib.Complexity.TuringMachine.Deterministic
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed
+import TCSlib.Complexity.TuringMachine.Build.EmitIterBody
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+import TCSlib.Complexity.TimeHierarchy.ClockMachine
+import Lean
+set_option maxHeartbeats 0
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  let roots : List (String × String) := [("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.bufferedScanCfg_run"), ("TCSlib.Complexity.TuringMachine.Encoding", "Turing.pairDiag_separator"), ("TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed", "Turing.SafeRun.cons"), ("TCSlib.Complexity.TuringMachine.Build.EmitIterBody", "Turing.body_round"), ("TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate", "Complexity.macroCfg_cycle"), ("TCSlib.Complexity.TimeHierarchy.ClockMachine", "Complexity.TimeHierarchy.cScanCfg_run")]
+  for (owner, sourceName) in roots do
+    let hits := env.constants.toList.filter fun (n, _) =>
+      (n.toString == sourceName || (isPrivateName n && n.toString.endsWith ("." ++ sourceName))) &&
+      ((env.getModuleIdxFor? n).any fun i => env.header.moduleNames[i.toNat]!.toString == owner)
+    unless hits.length == 1 do throwError "root mismatch {owner}/{sourceName}: {hits.length}"
+    let (root, _) := hits.head!
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    logInfo m!"AX|{(Json.mkObj [("root", toJson sourceName), ("owner", toJson owner), ("kernel", toJson root.toString), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+  logInfo m!"COMPLETE|{roots.length}"

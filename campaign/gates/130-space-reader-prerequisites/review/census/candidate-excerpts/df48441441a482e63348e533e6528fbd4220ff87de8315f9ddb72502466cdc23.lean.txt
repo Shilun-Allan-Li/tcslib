@@ -1,0 +1,102 @@
+/-- **The run contract of the simulator** (phase P4.4b; proved). Let `M` halt
+by time `t` on the virtual input `v`. Let the oracle answer every length query
+`⟨x, bits i⟩` with `i ≤ |v|`, and every bit query with `i < |v|`, truthfully. Then the
+program, started on the host input `x`:
+
+* halts with `M`'s output on `v`;
+* keeps the work registers in `[-S, S]`, with `S` the space `M` uses up to `t`;
+* keeps the index register in `[-1, |bits (|v| + 1)|]`;
+* at every call has the input head on position `1` and the index register holding some
+  `bits i`, `i ≤ |v|`, with its head on cell `0` — so the call's virtual input is
+  `⟨x, bits i⟩` (`Complexity.LogProg.vword_whole₁`).
+
+**Proof sketch.** Encode `M`'s configuration `c` on `v` as the program configuration with:
+
+* the work tapes and heads of `c` on registers `castSucc i`;
+* `bits (p − 1)` on `q`, with its head on `0` (`p` the input position of `c`; `bits 0` at
+  `p = 0`);
+* the host input head on `1`, and `c`'s output;
+* state `(s, ask)`, or `(s, work none true)` at `p = 0`.
+
+By induction on `n ≤ t`, the run reaches the encoding of `M.tm.runFrom (M.tm.initCfg v) n`
+until `M` halts. One step goes as follows.
+
+1. At most two calls fix the symbol `inSym v p`: by the oracle laws, the length call says
+   `p − 1 < |v|`.
+2. `work` applies `M.tm.tr` to the `castSucc` block (`liftAct`), so the work registers move
+   exactly as `M`'s tapes.
+3. The clamped move of `p` is realized by `nextPh`:
+   * `inc_run` only when `p − 1 < |v|`;
+   * the zero test and `dec_run` only when `p − 1 ≥ 1`;
+   * a phase change at the left blank.
+
+Intermediate configurations are those of the received fragments on `q`. The work heads are
+`M`'s, so they lie in `[-S, S]` by `Turing.MultiTapeTM.abs_pos_lt_card_visited`. Template:
+`ImplicitEnum.{round, rounds, run}`. -/
+theorem run (x v : List Bool) (o : Fin 2 → List Bool → Bool)
+    (ho0 : ∀ i ≤ v.length, o 0 (pairEncode x (Nat.bits i)) = decide (i < v.length))
+    (ho1 : ∀ i < v.length, o 1 (pairEncode x (Nat.bits i)) = v.getD i false)
+    (t : ℕ) (ht : (M.tm.runFrom (M.tm.initCfg v) t).state = none) :
+    ∃ N, (rrun (prog M) o (Cfg.init (start M) x) N).state = none ∧
+      (rrun (prog M) o (Cfg.init (start M) x) N).output =
+        (M.tm.runFrom (M.tm.initCfg v) t).output ∧
+      (∀ n ≤ N, ∀ r,
+        lo M (M.tm.spaceUsed (M.tm.initCfg v) t) r ≤
+            (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ≤
+            hi M (M.tm.spaceUsed (M.tm.initCfg v) t) (Nat.bits (v.length + 1)).length r) ∧
+      ∀ n < N, ∀ l cs, (rrun (prog M) o (Cfg.init (start M) x) n).state = some l →
+        (prog M).call l = some cs →
+          (rrun (prog M) o (Cfg.init (start M) x) n).inputPos.val = 1 ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos (q M) = 0 ∧
+          ∃ i ≤ v.length, (rrun (prog M) o (Cfg.init (start M) x) n).workTapes (q M) =
+            FinTM.bufferTape (Nat.bits i) := by
+  obtain ⟨u, hut, hu, heu⟩ := M.tm.exists_first_halt (M.tm.initCfg v) ht
+  have rounds : ∀ n ≤ u, ∃ N,
+      Represents M (M.tm.runFrom (M.tm.initCfg v) n)
+        (rrun (prog M) o (Cfg.init (start M) x) N) ∧
+      ∀ j < N, Safe M v.length (M.tm.spaceUsed (M.tm.initCfg v) t)
+        (rrun (prog M) o (Cfg.init (start M) x) j) := by
+    intro n
+    induction n with
+    | zero =>
+      intro _
+      refine ⟨0, ⟨0, Nat.zero_le _, ?_, ?_⟩, fun j hj => by omega⟩
+      · refine Cfg.ext rfl ?_ ?_ ?_ rfl
+        · apply Fin.ext; simp [rrun_zero, imageCfg, Cfg.init]
+        · funext r z
+          refine Fin.lastCases ?_ (fun i => ?_) r <;>
+            simp [rrun_zero, imageCfg, Cfg.init, MultiTapeTM.initCfg, Nat.zero_bits]
+        · funext r
+          refine Fin.lastCases ?_ (fun i => ?_) r <;>
+            simp [rrun_zero, imageCfg, Cfg.init, MultiTapeTM.initCfg]
+      · intro _; rfl
+    | succ n ih =>
+      intro hn
+      obtain ⟨N, hrep, hmid⟩ := ih (by omega)
+      obtain ⟨T, hstep, hfrag⟩ := represented_step M o ho0 ho1 _ _ _ hrep (hu n (by omega))
+        (source_head_bounds M v t n (by omega))
+        (by simpa only [MultiTapeTM.runFrom_succ_eq_step'] using
+          source_head_bounds M v t (n + 1) (by omega))
+      refine ⟨N + T, ?_, fun j hj => ?_⟩
+      · rw [rrun_add, MultiTapeTM.runFrom_succ_eq_step']
+        exact hstep
+      · by_cases hjN : j < N
+        · exact hmid j hjN
+        · have he : j = N + (j - N) := by omega
+          rw [he, rrun_add]
+          exact hfrag (j - N) (by omega)
+  obtain ⟨N, hrep, hmid⟩ := rounds u le_rfl
+  have hlast := represents_safe M hrep (source_head_bounds M v t u hut)
+  obtain ⟨i, hi, he, _⟩ := hrep
+  refine ⟨N, ?_, ?_, ?_, ?_⟩
+  · rw [he]
+    simp only [imageCfg, heu, ht, Option.map_none]
+  · rw [he]
+    exact congrArg Cfg.output heu
+  · intro n hn r
+    rcases lt_or_eq_of_le hn with h | rfl
+    · exact (hmid n h).1 r
+    · exact hlast.1 r
+  · intro n hn
+    exact (hmid n hn).2

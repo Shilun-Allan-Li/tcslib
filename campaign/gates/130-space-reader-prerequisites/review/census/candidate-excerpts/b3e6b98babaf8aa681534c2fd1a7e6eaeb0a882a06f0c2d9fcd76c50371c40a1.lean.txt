@@ -1,0 +1,8 @@
+/-- Canonical configurations at the left boundary between simulated steps. -/
+private def sweepStart {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ)
+    {x : List Γ} (c : Cfg M.k Γ M.State x) (j : ℤ) (n : ℕ) (z : ℤ) :
+    Cfg 1 (SweepAlphabet Γ M.k) (SweepState Γ M.State M.k)
+      (x.map (sweepEmbed Γ M.k)) :=
+  sweepRevCfg (c.state.map (fun q => .growLeft q 0)) (sweepPos M.k c.inputPos) z
+    ((tapeZone (fun j => tapeRow c j false) j n).map (fun a => some (sweepSymbol a)) ++
+      [some sweepBoundary]) [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k))

@@ -1,0 +1,169 @@
+CONTROL|Turing.moveInputPos|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.moveInputPos|point|Tactic `rfl` failed: equality lhs
+  Turing.moveInputPos pos m
+is not definitionally equal to rhs
+  have p := (↑↑pos + ↑m).toNat;
+  if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+n : ℕ
+pos : Fin (n + 2)
+m : SignType
+⊢ Turing.moveInputPos pos m =
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+CONTROL|Turing.moveInputPos|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.moveInputPos|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.moveInputPos
+is not definitionally equal to rhs
+  fun {n} pos m =>
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+⊢ @Turing.moveInputPos = fun {n} pos m =>
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+CONTROL|Turing.Action.apply|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Action.apply|point|Tactic `rfl` failed: equality lhs
+  (action.apply cfg).1
+is not definitionally equal to rhs
+  { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }.1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+action : Turing.Action k Symbol State
+cfg : Turing.Cfg k Symbol State input
+⊢ (action.apply cfg).1 =
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+        workTapes := fun i =>
+          match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+          | none => cfg.workTapes i
+          | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+        workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+        output := cfg.output ++ action.output.toList }.1
+CONTROL|Turing.Action.apply|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Action.apply|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Action.apply
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+
+⊢ @Turing.Action.apply = fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+CONTROL|Turing.Cfg.inputSymbol|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Cfg.inputSymbol|point|Tactic `rfl` failed: equality lhs
+  cfg.inputSymbol
+is not definitionally equal to rhs
+  if h₁ : cfg.inputPos = 0 then none
+  else if h₂ : ↑cfg.inputPos = input.length + 1 then none else some input[↑cfg.inputPos - 1]
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+cfg : Turing.Cfg k Symbol State input
+⊢ cfg.inputSymbol =
+    if h₁ : cfg.inputPos = 0 then none
+    else if h₂ : ↑cfg.inputPos = input.length + 1 then none else some input[↑cfg.inputPos - 1]
+CONTROL|Turing.Cfg.inputSymbol|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Cfg.inputSymbol|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Cfg.inputSymbol
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} cfg =>
+    if h₁ : cfg.inputPos = 0 then none
+    else if h₂ : ↑cfg.inputPos = input.length + 1 then none else some input[↑cfg.inputPos - 1]
+
+⊢ @Turing.Cfg.inputSymbol = fun {k} {State} {Symbol} {input} cfg =>
+    if h₁ : cfg.inputPos = 0 then none
+    else if h₂ : ↑cfg.inputPos = input.length + 1 then none else some input[↑cfg.inputPos - 1]
+CONTROL|Turing.Cfg.workTapeSymbols|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Cfg.workTapeSymbols|point|Tactic `rfl` failed: equality lhs
+  cfg.workTapeSymbols i
+is not definitionally equal to rhs
+  cfg.workTapes i (cfg.workTapePos i)
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+cfg : Turing.Cfg k Symbol State input
+i : Fin k
+⊢ cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)
+CONTROL|Turing.Cfg.workTapeSymbols|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.Cfg.workTapeSymbols|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Cfg.workTapeSymbols
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} cfg i => cfg.workTapes i (cfg.workTapePos i)
+
+⊢ @Turing.Cfg.workTapeSymbols = fun {k} {State} {Symbol} {input} cfg i => cfg.workTapes i (cfg.workTapePos i)
+CONTROL|Turing.MultiTapeTM.runFrom|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.MultiTapeTM.runFrom|point|Tactic `rfl` failed: equality lhs
+  (Turing.MultiTapeTM.runFrom cfg t).1
+is not definitionally equal to rhs
+  (Turing.MultiTapeTM.step^[t] cfg).1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+t : ℕ
+⊢ (Turing.MultiTapeTM.runFrom cfg t).1 = (Turing.MultiTapeTM.step^[t] cfg).1
+CONTROL|Turing.MultiTapeTM.runFrom|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.MultiTapeTM.runFrom|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.runFrom
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+
+⊢ @Turing.MultiTapeTM.runFrom = fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+CONTROL|Turing.MultiTapeTM.step|point|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.MultiTapeTM.step|point|Tactic `rfl` failed: equality lhs
+  (Turing.MultiTapeTM.step cfg).1
+is not definitionally equal to rhs
+  (match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg).1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+⊢ (Turing.MultiTapeTM.step cfg).1 =
+    (match cfg.state with
+      | none => cfg
+      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg).1
+CONTROL|Turing.MultiTapeTM.step|abstract|FAIL
+APIControlsSealedFixed.lean:9:0: error: RFL_CONTROL|Turing.MultiTapeTM.step|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.step
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+⊢ @Turing.MultiTapeTM.step = fun {k} {State} {Symbol} {input} {tm} cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg

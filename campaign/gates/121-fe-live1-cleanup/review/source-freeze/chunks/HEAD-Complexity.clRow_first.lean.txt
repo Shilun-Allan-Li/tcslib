@@ -1,0 +1,32 @@
+/-- A row is completely stored at the actual first end-of-row return.
+The fixed positive field count makes that return strictly positive.
+**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
+completed control and the proved copying bound. Stationarity preserves the
+exact word and restored counter heads. The nonzero field count excludes an
+initial completed control and makes the selected time positive. -/
+private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+    (w : Fin l → List Bool) (record : List Bool) (W : ℕ)
+    (hW : ∀ i, (w i).length ≤ W) :
+    ∃ t ≤ l * (3 * W + 4), 0 < t ∧
+      (∀ j, j < t → ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state ≠
+        some (Fin.last l, (0 : Fin 5))) ∧
+      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =
+        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by
+  obtain ⟨B, hB, finish⟩ := clRow_stored x p w record W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clRowTM l).tm (fun q => q = (Fin.last l, (0 : Fin 5)))
+    (clRowCfg x p 0 0 w record)
+    (clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l)) B
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clRow_idle c hq)
+    ⟨(Fin.last l, 0), rfl, rfl⟩ finish
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero] at hs
+    have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs
+    simp [clRowCfg] at hh
+    omega
+  exact ⟨t, ht.trans hB, hp, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩

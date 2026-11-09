@@ -1,0 +1,7 @@
+∀ (S V : Turing.FinTM Bool) {x : List Bool} (y : List Bool) (b : Bool) (T : ℕ),
+  V.ComputesInTime y [b] T →
+    ∀ (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool) (heads : Fin S.k → ℤ) (w : List Bool),
+      w.length = T + 1 →
+        have out :=
+          Turing.NDTM.runWith w (Complexity.b2VerifyCfg✝ S V (Turing.MultiTapeTM.initCfg y) true p tapes heads);
+        out.state = none ∧ out.output = [b]

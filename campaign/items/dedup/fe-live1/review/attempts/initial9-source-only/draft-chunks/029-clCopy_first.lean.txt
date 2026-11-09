@@ -1,0 +1,23 @@
+private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
+    (w record : List Bool) :
+    ∃ t ≤ 3 * w.length + 3, 0 < t ∧
+      (∀ j, j < t → (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state ≠ some (4 : Fin 5)) ∧
+      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =
+        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by
+  have finish := clCopy_run x p w record
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCopyTM.tm (fun q => q = (4 : Fin 5))
+    (clCopyCfg x 0 p 0 w record) (clCopyCfg x 4 p 0 w (record ++ pairEncode w []))
+    (3 * w.length + 3)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clCopy_idle c hq)
+    ⟨4, rfl, rfl⟩ finish
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero] at hs
+    have hh := congrArg (fun z => z.map Fin.val) hs
+    norm_num [clCopyCfg] at hh
+  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨4, hs, rfl⟩, he⟩

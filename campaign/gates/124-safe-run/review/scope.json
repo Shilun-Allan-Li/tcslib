@@ -1,0 +1,95 @@
+{
+  "slug": "safe-run",
+  "wt": "ab34-safe-run",
+  "branch": "codex/ab34-safe-run-segments",
+  "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+  "include": [
+    "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean"
+  ],
+  "title": "One private SafeRun segment bridge and three public closure readers",
+  "detail": "Exactly one private non-simp SafeRun/Segment iff bridge plus the existing public zero/cons/trans readers. All existing headers/imports/definitions/docstrings unchanged.",
+  "gate": 124,
+  "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
+  "pr": 244,
+  "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/244",
+  "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "records_capture": "f71f616400c769e7d551789a1b5307f9c69285b4",
+  "owner": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "roots": [
+    "Turing.SafeRun.zero",
+    "Turing.SafeRun.cons",
+    "Turing.SafeRun.trans"
+  ],
+  "evidence_inputs": [
+    "inputs/exact-adopted-private-bridge-preflight"
+  ],
+  "replay_candidates": [
+    "nsafe2"
+  ],
+  "source_freeze": {
+    "gate": 124,
+    "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+    "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
+    "owner": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "BASE_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+    "HEAD_sha256": "e64bb55b65e76d234a316e01e9704df876592f3c3bf36857dc0df030a6dcadad",
+    "public_before": 18,
+    "public_after": 18,
+    "private_before": 0,
+    "private_after": 1,
+    "only_new_private_helper": "Turing.safeRun_iff_segment",
+    "new_public_API": false,
+    "new_import": false,
+    "all_existing_imports_definitions_attributes_docstrings_public_headers_names_and_outside_three_bodies_byte_exact": true,
+    "exact_reverse_of_one_new_helper_and_three_bodies_recovers_BASE": true,
+    "root_exact_adopted_proposal_manifest_sha256": "3175a0a808033488ed88ba5528123be2043349f5a024ab6dd568767353738604",
+    "public_three_selected_ABI_preflight_exact_old_head_and_BASE": true,
+    "actual_cfa_replay_HEAD_selected_metadata": "PASS actual cfa full80/static0 plus replay-bound selected4 query; public3 full fields exact BASE, newprivate1 standard non-simp",
+    "no_whole_owner_global_metadata_or_proof_value_equality_inferred": true
+  },
+  "QA_export": "/private/tmp/ab34-overnight-qa/exports/124",
+  "lint_comparison": [
+    {
+      "kind": "style-lint.txt",
+      "BASE_bytes": 24,
+      "HEAD_bytes": 24,
+      "BASE_sha256": "c095bd4e4d87a7ded821b7583558acacf8948a71e678ad16af08b93b3abee03c",
+      "HEAD_sha256": "c095bd4e4d87a7ded821b7583558acacf8948a71e678ad16af08b93b3abee03c",
+      "stdout_or_JSON_bytes_exact": true
+    },
+    {
+      "kind": "campaign-lint.txt",
+      "BASE_bytes": 134274,
+      "HEAD_bytes": 134274,
+      "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+      "HEAD_sha256": "6b140f5bd4c7c26eaa84a9e87962fd77a0aec1e74af326128519a8c030bff6a3",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "sizes.json",
+      "BASE_bytes": 70,
+      "HEAD_bytes": 70,
+      "BASE_sha256": "4d415a1126b652275afad23760438bf637c59becedd6bf8ed242bf59df0d7da1",
+      "HEAD_sha256": "10b4611c3c201febdad9f08fde6ba69b270786734924755e774936a026e44509",
+      "stdout_or_JSON_bytes_exact": false
+    }
+  ],
+  "status": "PREPARING new33-file screen/pair dispositions and root publication binding; actual replay/metadata PASS",
+  "screen_population_count": 33,
+  "no_source_Git_records_or_snapshot_writes": true,
+  "captured_utc": "2026-11-08T13:21:00.153465+00:00",
+  "standards_note": "Standards copied as complete frozen input snapshots; root final current records/exchange/bundle publication binding remains required.",
+  "actual_replay": {
+    "pass": true,
+    "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
+    "modules": 80,
+    "expected_modules": 80,
+    "failed": 0,
+    "static_exit": 0,
+    "seconds": 1061.3823445001617,
+    "snapshot_valid": true,
+    "complete_input_objects": 895,
+    "complete_output_objects": 895,
+    "source_unchanged_during_replay": true
+  }
+}

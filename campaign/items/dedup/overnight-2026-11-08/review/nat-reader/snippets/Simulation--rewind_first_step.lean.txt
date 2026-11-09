@@ -1,0 +1,14 @@
+private lemma rewind_first_step {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    tm.step c = {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} ∧
+      (moveInputPos c.inputPos .neg).val ≤ x.length := by
+  refine ⟨by rw [MultiTapeTM.step_of_some hs, hstart, controlAction_apply], ?_⟩
+  rw [moveInputPos_neg_val]
+  have := c.inputPos.isLt
+  omega
+
+/-- From any valid input position, take the mandatory first left move and then
+scan left. This returns to position `1`, even for an empty input or a start at a
+boundary. No work tape or output is changed. -/

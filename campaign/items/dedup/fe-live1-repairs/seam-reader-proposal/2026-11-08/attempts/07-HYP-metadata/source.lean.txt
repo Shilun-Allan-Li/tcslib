@@ -1,0 +1,59 @@
+import Lean
+import TCSlib.Complexity.CookLevin.Hardness
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let roots : List Name := [(Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clFresh_idle"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clPrepared_idle"), `Turing.seamCompTM_tr_inr]
+  for root in roots do
+    let some ci := env.find? root | throwError "missing target {root}"
+    let owner := homeOf root
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    let pretty ← liftTermElabM <| Meta.ppExpr ci.type
+    let metadata := Json.mkObj [("name",toJson root.toString), ("owner",toJson owner.toString),
+      ("private",toJson (isPrivateName root)),("levelParams",toJson (ci.levelParams.map Name.toString)),
+      ("typeExpr",toJson (reprStr ci.type)),("typePretty",toJson pretty.pretty),
+      ("axioms",toJson ((axs.qsort Name.lt).toList.map Name.toString)),
+      ("simp",toJson (simp.isLemma (.decl root))),("unfold",toJson (simp.toUnfold.contains root))]
+    logInfo m!"SELECTED|{metadata.compress}"
+    let mut todo := ci.type.getUsedConstants.toList ++
+      (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+    let mut seen : List Name := [root]
+    let mut localDefs : List Name := []
+    let mut foreign : List Json := []
+    let mut theoremStops : List Name := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      todo := info.type.getUsedConstants.toList ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        if home == owner then
+          localDefs := n :: localDefs
+          todo := di.value.getUsedConstants.toList ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          let hints := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          foreign := Json.mkObj [
+            ("name",toJson n.toString),("owner",toJson home.toString),
+            ("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),
+            ("simp",toJson (simp.isLemma (.decl n))),
+            ("unfold",toJson (simp.toUnfold.contains n))] :: foreign
+      | .thmInfo _ => theoremStops := n :: theoremStops
+      | _ => pure ()
+    let row := Json.mkObj [
+      ("root",toJson root.toString),("owner",toJson owner.toString),
+      ("local_definition_helpers",toJson ((localDefs.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("foreign_definition_mentions",Json.arr foreign.reverse.toArray),
+      ("theorem_value_boundaries",toJson ((theoremStops.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("visited_constants",toJson seen.length)]
+    logInfo m!"BOUNDARY|{row.compress}"
+  logInfo "COMPLETE|3"

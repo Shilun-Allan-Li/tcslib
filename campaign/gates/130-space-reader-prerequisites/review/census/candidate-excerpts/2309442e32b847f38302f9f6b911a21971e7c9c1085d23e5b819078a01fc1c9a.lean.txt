@@ -1,0 +1,88 @@
+/-- One requested whole-record call, with its two public-host dispatches.
+No intermediate point has the selector's final control. All data are framed,
+and every non-table head stays fixed throughout this call.
+
+**Proof sketch.** The first dispatch enters the shared skipper. Its first-exit
+contract discharges the public phase-host guard, and the host theorem provides
+both the complete inner prefix and the final dispatch. -/
+private lemma seekTM_request {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1))) (rank rest : Fin (3 ^ (k + 1))) (last : Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (seekTM k).runFrom (seekCfg d (.request rank rest last)) ((actionBitsK a).length + 3) =
+      seekCfg ({ d with
+          workTapePos := Function.update d.workTapePos (tableTape k)
+            (d.workTapePos (tableTape k) + (actionBitsK a).length) }) (seekNext rank rest last) ∧
+    (∀ u < (actionBitsK a).length + 3,
+      ((seekTM k).runFrom (seekCfg d (.request rank rest last)) u).state ≠ some ⟨none, .done⟩) ∧
+    (∀ u ≤ (actionBitsK a).length + 3,
+      let f := (seekTM k).runFrom (seekCfg d (.request rank rest last)) u
+      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧
+      ∀ j, j ≠ tableTape k → f.workTapePos j = d.workTapePos j) := by
+  let key : SeekKey k := some (rank, rest, last)
+  let start := d.mapState (@Sigma.mk Bool (SkipPh k) false)
+  let finish : Cfg (k + 2) Bool (Σ b, SkipPh k b) x :=
+    { d.mapState (fun _ => ⟨true, SuccPhase.done a.state.isSome⟩) with
+      workTapePos := Function.update d.workTapePos (tableTape k)
+        (d.workTapePos (tableTape k) + (actionBitsK a).length) }
+  have hrun : (seekPart k key).runFrom start ((actionBitsK a).length + 1) = finish :=
+    recordSkipTM_run d a hq hw
+  have hfirst : (seekTM k).step (seekCfg d (.request rank rest last)) =
+      start.mapState (Sigma.mk key) := by
+    rw [step_of_inputMoveAction (seekTM k) (seekCfg d (.request rank rest last))
+      (q := ⟨none, .request rank rest last⟩) (q' := ⟨key, (recordSkipTM k).q₀⟩) 0
+      (by simp [seekCfg, Cfg.mapState, hq]) rfl]
+    apply Cfg.ext <;> simp [seekCfg, Cfg.mapState, hq, start, key, recordSkipTM, phaseHostTM]
+  have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := seekTM k)
+    (cfg := seekCfg d (.request rank rest last)) (t := u)
+  rw [hfirst] at advance
+  have hosted := phaseHostTM_run (seekPart k) ⟨none, .observe⟩ (seekRed k)
+    key start finish ((actionBitsK a).length + 1) hrun ⟨true, .done a.state.isSome⟩
+    (by simp [finish, Cfg.mapState, hq]) ⟨none, seekNext rank rest last⟩ rfl (by
+      intro u hu s hs
+      have hc := (recordSkipTM_spec d a hq hw).1 u hu
+      change ((recordSkipTM k).runFrom start u).state = some s at hs
+      obtain ⟨b, q⟩ := s
+      cases b with
+      | false => rfl
+      | true =>
+        cases q with
+        | tag => rfl
+        | unary => rfl
+        | done b => exact False.elim (hc b hs))
+  have hpre (u : ℕ) (hu : u ≤ (actionBitsK a).length + 1) :
+      (seekTM k).runFrom (seekCfg d (.request rank rest last)) (u + 1) =
+        ((recordSkipTM k).runFrom start u).mapState (Sigma.mk key) := by
+    rw [advance u]
+    exact hosted.1 u hu
+  have hend : (seekTM k).runFrom (seekCfg d (.request rank rest last))
+      ((actionBitsK a).length + 3) =
+      seekCfg ({ d with
+          workTapePos := Function.update d.workTapePos (tableTape k)
+            (d.workTapePos (tableTape k) + (actionBitsK a).length) }) (seekNext rank rest last) := by
+    rw [show (actionBitsK a).length + 3 = ((actionBitsK a).length + 1 + 1) + 1 by omega,
+      advance, hosted.2]
+    apply Cfg.ext <;> simp [finish, seekCfg, Cfg.mapState, hq]
+  refine ⟨hend, ?_, ?_⟩
+  · intro u hu
+    cases u with
+    | zero => simp [seekCfg, Cfg.mapState, hq]
+    | succ u =>
+      rw [hpre u (by omega)]
+      cases ((recordSkipTM k).runFrom start u).state <;> simp [Cfg.mapState, key]
+  · intro u hu
+    by_cases he : u = (actionBitsK a).length + 3
+    · subst u
+      rw [hend]
+      exact ⟨rfl, rfl, rfl, fun j hj => by simp [seekCfg, Cfg.mapState, hj]⟩
+    · cases u with
+      | zero => exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
+      | succ u =>
+        rw [hpre u (by omega)]
+        have hf := (recordSkipTM_spec d a hq hw).2 u (by omega)
+        refine ⟨hf.1, hf.2.1, hf.2.2.1, ?_⟩
+        intro j hj
+        simpa [Cfg.mapState, hj] using hf.2.2.2 j

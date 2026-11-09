@@ -1,0 +1,21 @@
+import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
+import Lean
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Lean Elab Command Meta
+run_cmd do
+  for n in [`Nat.bit, `Turing.codeBitsNat, `Turing.incFixed] do
+    logInfo m!"STATUS|{n}|{reprStr (getReducibilityStatusCore (← getEnv) n)}"
+example : Turing.incFixed [] = none := rfl
+example (w : List Bool) : Turing.incFixed (false :: w) = some (true :: w) := rfl

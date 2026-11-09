@@ -1,0 +1,13 @@
+/-- Transport every prefix of a Bool row on a selected digit bank; the surrounding rich
+record and arbitrary output prefix remain the R1 frame. The restriction lemma is used once. -/
+private theorem recordStep_transport {K m : ℕ} {Γ S : Type} [DecidableEq Γ]
+    (R : MultiTapeTM m Bool S) (e : Bool ↪ Γ) (ι : Fin m ↪ Fin K) {x : List Bool}
+    (d : Cfg K Γ S (x.map e))
+    (hdig : ∀ i p γ, d.workTapes (ι i) p = some γ → ∃ b, γ = e b) (t : ℕ) :
+    (embedEmitTM ι (R.liftSymbols e)).runFrom d t =
+      embedEmitCfg ι d.workTapes d.workTapePos d.output
+        ((R.runFrom (⟨d.state, Fin.cast (by simp) d.inputPos,
+          fun i p => (d.workTapes (ι i) p).bind (decodeBool e),
+          fun i => d.workTapePos (ι i), []⟩ : Cfg m Bool S x) t).liftSymbols e) := by
+  conv_lhs => rw [recordStep_restrict R e ι d hdig]
+  rw [embedEmitTM_runFrom, MultiTapeTM.liftSymbols_runFrom]

@@ -1,0 +1,331 @@
+{
+  "rows": [
+    {
+      "id": 54,
+      "name": "clockTM_setup",
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "root": "Complexity.TimeHierarchy.clockTM_setup",
+      "ordinary_heads": 7,
+      "ordinary_head_names": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.tapeBlocks",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.FinTM.bufferTape",
+        "Turing.Cfg.init"
+      ],
+      "excluded_abbrev_or_projection_heads": 18,
+      "excluded_mentions": [
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.k",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Nat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.State",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.fintypeState",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Fintype",
+            "Turing.FinTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.decEqState",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "DecidableEq",
+            "Turing.FinTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.MultiTapeTM.q\u2080",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.tm",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Turing.FinTM",
+            "Turing.MultiTapeTM",
+            "Turing.FinTM.k",
+            "Turing.FinTM.State"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.MultiTapeTM.tr",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.MultiTapeTM",
+            "Option",
+            "Fin",
+            "Turing.Action"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.inputTape",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.Action",
+            "SignType"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.workTapes",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.Action",
+            "Fin",
+            "Prod",
+            "Option",
+            "SignType"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.output",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.Action",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.state",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "Turing.Action",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.inputPos",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Fin",
+            "HAdd.hAdd",
+            "instHAdd",
+            "instAddNat",
+            "List.length",
+            "OfNat.ofNat",
+            "instOfNatNat"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapes",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Fin",
+            "Int",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapePos",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Fin",
+            "Int"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.Halted",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.state",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg",
+            "Option"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.output",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "type_mentions": [
+            "Nat",
+            "List",
+            "Turing.Cfg"
+          ],
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.rewind_scan.match_1",
+          "ordinary_guard_target": false,
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "type_mentions": [
+            "Option",
+            "Bool",
+            "Option.some",
+            "Unit",
+            "Option.none"
+          ],
+          "unfold": false
+        }
+      ],
+      "local_ordinary_helpers": 27,
+      "local_helper_names": [
+        "Complexity.TimeHierarchy.clockTM",
+        "Complexity.TimeHierarchy.instFintypeClockState",
+        "Complexity.TimeHierarchy.instFintypeOutReg",
+        "Complexity.TimeHierarchy.OutReg.proxyTypeEquiv",
+        "Complexity.TimeHierarchy.instFintypeOutReg.match_3",
+        "Complexity.TimeHierarchy.instFintypeOutReg.match_5",
+        "Complexity.TimeHierarchy.OutReg.casesOn",
+        "Complexity.TimeHierarchy.ClockState.proxyTypeEquiv",
+        "Complexity.TimeHierarchy.instFintypeClockState.match_3",
+        "Complexity.TimeHierarchy.instFintypeClockState.match_5",
+        "Complexity.TimeHierarchy.ClockState.casesOn",
+        "Complexity.TimeHierarchy.instDecidableEqClockState",
+        "Complexity.TimeHierarchy.instDecidableEqClockState.decEq",
+        "Complexity.TimeHierarchy.instDecidableEqClockState.decEq.match_1",
+        "Complexity.TimeHierarchy.instDecidableEqOutReg",
+        "Complexity.TimeHierarchy.instDecidableEqOutReg.decEq",
+        "Complexity.TimeHierarchy.instDecidableEqOutReg.decEq.match_1",
+        "Complexity.TimeHierarchy.clockTr",
+        "Complexity.TimeHierarchy.clockTr.match_5",
+        "Complexity.TimeHierarchy.ctrAction",
+        "Complexity.TimeHierarchy.ctrIdx",
+        "Complexity.TimeHierarchy.clockTr.match_1",
+        "Complexity.TimeHierarchy.clockTr.match_3",
+        "Complexity.TimeHierarchy.OutReg.push",
+        "Complexity.TimeHierarchy.OutReg.push.match_1",
+        "Complexity.TimeHierarchy.ctrCfg",
+        "Complexity.TimeHierarchy.kCfg"
+      ],
+      "selected_type_Expr": "Lean.Expr.forallE\n  `K\n  (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.const `Bool []))\n  (Lean.Expr.forallE\n    `W\n    (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.const `Bool []))\n    (Lean.Expr.forallE\n      `x\n      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n      (Lean.Expr.forallE\n        `s\n        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n        (Lean.Expr.forallE\n          `tK\n          (Lean.Expr.const `Nat [])\n          (Lean.Expr.forallE\n            `hK\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.ComputesInTime []) (Lean.Expr.const `Bool []))\n                    (Lean.Expr.bvar 4))\n                  (Lean.Expr.bvar 2))\n                (Lean.Expr.bvar 1))\n              (Lean.Expr.bvar 0))\n            (Lean.Expr.app\n              (Lean.Expr.app (Lean.Expr.const `Exists [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))\n              (Lean.Expr.lam\n                `a\n                (Lean.Expr.const `Nat [])\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `Exists [Lean.Level.succ (Lean.Level.zero)])\n                    (Lean.Expr.forallE\n                      (Lean.Name.mkNum `a._@._internal._hyg 0)\n                      (Lean.Expr.app\n                        (Lean.Expr.const `Fin [])\n                        (Lean.Expr.app\n                          (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))\n                          (Lean.Expr.bvar 6)))\n                      (Lean.Expr.forallE\n                        (Lean.Name.mkNum `a._@._internal._hyg 0)\n                        (Lean.Expr.const `Int [])\n                        (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n                        (Lean.BinderInfo.default))\n                      (Lean.BinderInfo.default)))\n                  (Lean.Expr.lam\n                    `kt\n                    (Lean.Expr.forallE\n                      (Lean.Name.mkNum `a._@._internal._hyg 0)\n                      (Lean.Expr.app\n                        (Lean.Expr.const `Fin [])\n                        (Lean.Expr.app\n                          (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))\n                          (Lean.Expr.bvar 6)))\n                      (Lean.Expr.forallE\n                        (Lean.Name.mkNum `a._@._internal._hyg 0)\n                        (Lean.Expr.const `Int [])\n                        (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n                        (Lean.BinderInfo.default))\n                      (Lean.BinderInfo.default))\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.const `Exists [Lean.Level.succ (Lean.Level.zero)])\n                        (Lean.Expr.forallE\n                          (Lean.Name.mkNum `a._@._internal._hyg 0)\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Fin [])\n                            (Lean.Expr.app\n                              (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))\n                              (Lean.Expr.bvar 7)))\n                          (Lean.Expr.const `Int [])\n                          (Lean.BinderInfo.default)))\n                      (Lean.Expr.lam\n                        `kh\n                        (Lean.Expr.forallE\n                          (Lean.Name.mkNum `a._@._internal._hyg 0)\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Fin [])\n                            (Lean.Expr.app\n                              (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))\n                              (Lean.Expr.bvar 7)))\n                          (Lean.Expr.const `Int [])\n                          (Lean.BinderInfo.default))\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.const `And [])\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `instLENat []))\n                                (Lean.Expr.bvar 2))\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const\n                                            `HAdd.hAdd\n                                            [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                                          (Lean.Expr.const `Nat []))\n                                        (Lean.Expr.const `Nat []))\n                                      (Lean.Expr.const `Nat []))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `instHAdd [Lean.Level.zero])\n                                        (Lean.Expr.const `Nat []))\n                                      (Lean.Expr.const `instAddNat [])))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const\n                                                `HAdd.hAdd\n                                                [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                                              (Lean.Expr.const `Nat []))\n                                            (Lean.Expr.const `Nat []))\n                                          (Lean.Expr.const `Nat []))\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const `instHAdd [Lean.Level.zero])\n                                            (Lean.Expr.const `Nat []))\n                                          (Lean.Expr.const `instAddNat [])))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.const\n                                                    `HAdd.hAdd\n                                                    [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                                                  (Lean.Expr.const `Nat []))\n                                                (Lean.Expr.const `Nat []))\n                                              (Lean.Expr.const `Nat []))\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `instHAdd [Lean.Level.zero])\n                                                (Lean.Expr.const `Nat []))\n                                              (Lean.Expr.const `instAddNat [])))\n                                          (Lean.Expr.bvar 4))\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const `List.length [Lean.Level.zero])\n                                            (Lean.Expr.const `Bool []))\n                                          (Lean.Expr.bvar 5))))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `List.length [Lean.Level.zero])\n                                        (Lean.Expr.const `Bool []))\n                                      (Lean.Expr.bvar 6))))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])\n                                      (Lean.Expr.const `Nat []))\n                                    (Lean.Expr.lit (Lean.Literal.natVal 5)))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `instOfNatNat [])\n                                    (Lean.Expr.lit (Lean.Literal.natVal 5)))))))\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero])\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const `Turing.FinTM.k [])\n                                            (Lean.Expr.const `Bool []))\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                              (Lean.Expr.bvar 8))\n                                            (Lean.Expr.bvar 7))))\n                                      (Lean.Expr.const `Bool []))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `Turing.FinTM.State [])\n                                        (Lean.Expr.const `Bool []))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                          (Lean.Expr.bvar 8))\n                                        (Lean.Expr.bvar 7))))\n                                  (Lean.Expr.bvar 6)))\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const\n                                              `Turing.MultiTapeTM.runFrom\n                                              [Lean.Level.zero, Lean.Level.zero])\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Turing.FinTM.k [])\n                                                (Lean.Expr.const `Bool []))\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                                  (Lean.Expr.bvar 8))\n                                                (Lean.Expr.bvar 7))))\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const `Turing.FinTM.State [])\n                                              (Lean.Expr.const `Bool []))\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                                (Lean.Expr.bvar 8))\n                                              (Lean.Expr.bvar 7))))\n                                        (Lean.Expr.const `Bool []))\n                                      (Lean.Expr.bvar 6))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.tm []) (Lean.Expr.const `Bool []))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                          (Lean.Expr.bvar 8))\n                                        (Lean.Expr.bvar 7))))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const\n                                              `Turing.MultiTapeTM.initCfg\n                                              [Lean.Level.zero, Lean.Level.zero])\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Turing.FinTM.k [])\n                                                (Lean.Expr.const `Bool []))\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                                  (Lean.Expr.bvar 8))\n                                                (Lean.Expr.bvar 7))))\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const `Turing.FinTM.State [])\n                                              (Lean.Expr.const `Bool []))\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                                (Lean.Expr.bvar 8))\n                                              (Lean.Expr.bvar 7))))\n                                        (Lean.Expr.const `Bool []))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.tm []) (Lean.Expr.const `Bool []))\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.const `Complexity.TimeHierarchy.clockTM [])\n                                            (Lean.Expr.bvar 8))\n                                          (Lean.Expr.bvar 7))))\n                                    (Lean.Expr.bvar 6)))\n                                (Lean.Expr.bvar 2)))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Complexity.TimeHierarchy.ctrCfg [])\n                                                (Lean.Expr.bvar 8))\n                                              (Lean.Expr.bvar 7))\n                                            (Lean.Expr.bvar 6))\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const `Option.some [Lean.Level.zero])\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.const `Complexity.TimeHierarchy.ClockState [])\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.const `Turing.FinTM.State [])\n                                                      (Lean.Expr.const `Bool []))\n                                                    (Lean.Expr.bvar 8)))\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.const `Turing.FinTM.State [])\n                                                    (Lean.Expr.const `Bool []))\n                                                  (Lean.Expr.bvar 7))))\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.const `Complexity.TimeHierarchy.ClockState.dec [])\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.app\n                                                        (Lean.Expr.const `Turing.FinTM.State [])\n                                                        (Lean.Expr.const `Bool []))\n                                                      (Lean.Expr.bvar 8)))\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.const `Turing.FinTM.State [])\n                                                      (Lean.Expr.const `Bool []))\n                                                    (Lean.Expr.bvar 7)))\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.app\n                                                        (Lean.Expr.const\n                                                          `Turing.MultiTapeTM.q\u2080\n                                                          [Lean.Level.zero, Lean.Level.zero])\n                                                        (Lean.Expr.app\n                                                          (Lean.Expr.app\n                                                            (Lean.Expr.const `Turing.FinTM.k [])\n                                                            (Lean.Expr.const `Bool []))\n                                                          (Lean.Expr.bvar 7)))\n                                                      (Lean.Expr.const `Bool []))\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.app\n                                                        (Lean.Expr.const `Turing.FinTM.State [])\n                                                        (Lean.Expr.const `Bool []))\n                                                      (Lean.Expr.bvar 7)))\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.const `Turing.FinTM.tm [])\n                                                      (Lean.Expr.const `Bool []))\n                                                    (Lean.Expr.bvar 7))))\n                                              (Lean.Expr.const `Complexity.TimeHierarchy.OutReg.empty []))))\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.const\n                                                    `Turing.MultiTapeTM.initCfg\n                                                    [Lean.Level.zero, Lean.Level.zero])\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.app\n                                                      (Lean.Expr.const `Turing.FinTM.k [])\n                                                      (Lean.Expr.const `Bool []))\n                                                    (Lean.Expr.bvar 7)))\n                                                (Lean.Expr.app\n                                                  (Lean.Expr.app\n                                                    (Lean.Expr.const `Turing.FinTM.State [])\n                                                    (Lean.Expr.const `Bool []))\n                                                  (Lean.Expr.bvar 7)))\n                                              (Lean.Expr.const `Bool []))\n                                            (Lean.Expr.app\n                                              (Lean.Expr.app\n                                                (Lean.Expr.const `Turing.FinTM.tm [])\n                                                (Lean.Expr.const `Bool []))\n                                              (Lean.Expr.bvar 7)))\n                                          (Lean.Expr.bvar 6)))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const `Turing.FinTM.bufferTape [Lean.Level.zero])\n                                          (Lean.Expr.const `Bool []))\n                                        (Lean.Expr.bvar 5)))\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])\n                                          (Lean.Expr.const `Int []))\n                                        (Lean.Expr.lit (Lean.Literal.natVal 0)))\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `instOfNat [])\n                                        (Lean.Expr.lit (Lean.Literal.natVal 0)))))\n                                  (Lean.Expr.bvar 1))\n                                (Lean.Expr.bvar 0))\n                              (Lean.Expr.app\n                                (Lean.Expr.const `List.nil [Lean.Level.zero])\n                                (Lean.Expr.const `Bool [])))))\n                        (Lean.BinderInfo.default)))\n                    (Lean.BinderInfo.default)))\n                (Lean.BinderInfo.default)))\n            (Lean.BinderInfo.default))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.default))\n      (Lean.BinderInfo.default))\n    (Lean.BinderInfo.default))\n  (Lean.BinderInfo.default)",
+      "selected_type_pretty": "\u2200 (K W : Turing.FinTM Bool) (x s : List Bool) (tK : \u2115),\n  K.ComputesInTime x s tK \u2192\n    \u2203 a kt kh,\n      a \u2264 tK + s.length + x.length + 5 \u2227\n        Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) a =\n          Complexity.TimeHierarchy.ctrCfg K W\n            (some (Complexity.TimeHierarchy.ClockState.dec W.tm.q\u2080 Complexity.TimeHierarchy.OutReg.empty))\n            (Turing.MultiTapeTM.initCfg x) (Turing.FinTM.bufferTape s) 0 kt kh []",
+      "selected_axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "footprint_source_owner": "TCSlib.Complexity.TimeHierarchy.ClockMachine",
+      "actual_main_module": "TCSlib.Complexity.TimeHierarchy.ClockMachine"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+open Lean Elab Command in
+run_cmd do
+  let e ← getEnv
+  for n in [`Turing.Action.ext, `Turing.Action.eta, `Turing.Action.mapState_inputTape,
+      `Turing.Action.mapState_workTapes, `Turing.Action.mapState_output,
+      `Turing.Action.mapState_state] do
+    logInfo m!"VISIBLE|{n}|{e.contains n}"

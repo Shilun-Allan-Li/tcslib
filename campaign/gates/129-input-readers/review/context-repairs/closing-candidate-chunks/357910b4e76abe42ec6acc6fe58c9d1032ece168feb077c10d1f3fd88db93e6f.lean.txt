@@ -1,0 +1,49 @@
+/-- One live first-phase transition preserves the complete buffer invariant,
+including an emission on the simulated halting transition.
+
+**Proof sketch.** The first work block and native input move in lockstep. A
+nonemitting transition leaves the buffer fixed; an emission updates precisely its
+right blank by `bufferTape_append` and moves that head one step. The second block
+and real output stay empty, and a simulated halt remains an administrative state. -/
+lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (hs : c.state ≠ none) :
+    (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
+      bufferedFirstCfg M₁ M₂ (M₁.tm.step c) := by
+  unfold MultiTapeTM.step
+  cases hq : c.state with
+  | none => exact False.elim (hs hq)
+  | some q =>
+    have hs' : (bufferedFirstCfg M₁ M₂ c).state = some (.inl (some q)) := by
+      simp [bufferedFirstCfg, hq]
+    rw [hs']
+    dsimp only [bufferedCompTM]
+    have hr : (fun i => (bufferedFirstCfg M₁ M₂ c).workTapeSymbols
+        (Fin.castAdd (1 + M₂.k) i)) = c.workTapeSymbols := by
+      funext i
+      simp [bufferedFirstCfg, Cfg.workTapeSymbols]
+    have hi : (bufferedFirstCfg M₁ M₂ c).inputSymbol = c.inputSymbol := rfl
+    rw [hr, hi]
+    let a := M₁.tm.tr q c.inputSymbol c.workTapeSymbols
+    change (⟨a.inputTape, tapeBlocks a.workTapes
+      (a.output.map some, if a.output = none then 0 else .pos)
+      (fun _ => (none, 0)), none, some (.inl a.state)⟩ :
+      Action (M₁.k + (1 + M₂.k)) Bool _).apply _ = bufferedFirstCfg M₁ M₂ (a.apply c)
+    refine Cfg.ext rfl rfl ?_ ?_ ?_
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j
+        · intro j
+          cases ho : a.output <;>
+            simp [bufferedFirstCfg, Action.apply, ho, bufferTape_append]
+        · intro j; simp [bufferedFirstCfg, Action.apply]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j
+        · intro j
+          cases ho : a.output <;> simp [bufferedFirstCfg, Action.apply, ho]
+        · intro j; simp [bufferedFirstCfg, Action.apply]
+    · simp [bufferedFirstCfg, Action.apply]

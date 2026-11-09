@@ -1,0 +1,35 @@
+/-- **Z2, the outward shift row**: the mirrored contract realizing the
+total guarded outward operation (the room condition is inside the pure
+op's guard; a cramped receiver yields the identity), with the same budget
+shape, interval clause, and scratch bound.
+
+**Proof sketch** (fill plan): as the inward row with the fullness and
+room tests up front (both by bounded window passes) and the transfer
+direction reversed; the full lower zone's outer half is staged through
+tape `1` and written to zone `i`'s front after its stored word is slid
+outward by `2^(i-1)` slots — one extra pass over the level-`i` window,
+inside the same geometric budget. -/
+theorem exists_zoneShiftOutTM (side : Bool) :
+    ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
+      ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
+        {x : List Bool} (d : Cfg Z.k Bool Z.State x)
+        (hstate : d.state = some Z.tm.q₀)
+        (htape : d.workTapes = fun j =>
+          if j.val = 0 then zoneTape z else bufferTape (List.replicate i true))
+        (hheads : d.workTapePos = fun _ => 0) (hout : d.output = []),
+        ∃ T ≤ c * (2 ^ i + i + 1),
+          (Z.tm.runFrom d T).state = none ∧
+          (Z.tm.runFrom d T).workTapes = (fun j =>
+            if j.val = 0 then zoneTape (zoneShiftOut side i z)
+            else bufferTape (List.replicate i true)) ∧
+          (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
+          (Z.tm.runFrom d T).output = [] ∧
+          (Z.tm.runFrom d T).inputPos = d.inputPos ∧
+          (∀ t < T, (Z.tm.runFrom d t).state ≠ none) ∧
+          (∀ j (hj : j.val = 0) (t : ℕ), t ≤ T →
+            (Z.tm.runFrom d t).workTapePos j ∈
+              Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+                (2 * (zoneBase (i + 1) : ℤ) + 2)) ∧
+          (∀ j : Fin Z.k, j.val = 1 →
+            Z.tm.spaceUsedByTape d T j ≤ c * (2 ^ i + i + 1)) := by
+  sorry

@@ -1,0 +1,66 @@
+{
+  "rows": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "SafeRun.zero",
+      "line": 72,
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "chunk_sha256": "4c3164c62e59d1df325809e742f81d29db36df2e2ba37f8b95035e0af1be211e",
+      "complete_header": "theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c",
+      "public_API": "Turing.Segment.zero",
+      "status": "Source-only exact Segment specialization; not in assigned native patch",
+      "premise_mapping": "Segment H {some avoid} (fun _=>True), exact endpoints; same-home SafeRun can be read locally, use public segment_iff for foreign Segment. cons requires t+1=1+t arithmetic only.",
+      "no_new_import_or_bridge_name_required": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "SafeRun.cons",
+      "line": 77,
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "chunk_sha256": "d032edb9d248f02f56b41fb8ce34c14af467f11ec47d94e0844f541219b2ad9c",
+      "complete_header": "theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c'",
+      "public_API": "Turing.Segment.cons",
+      "status": "Source-only exact Segment specialization; not in assigned native patch",
+      "premise_mapping": "Segment H {some avoid} (fun _=>True), exact endpoints; same-home SafeRun can be read locally, use public segment_iff for foreign Segment. cons requires t+1=1+t arithmetic only.",
+      "no_new_import_or_bridge_name_required": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "SafeRun.trans",
+      "line": 94,
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "chunk_sha256": "e201780b9b52bbc512e7d943382b9e0da87095151d4342274d8dbe22ae664a93",
+      "complete_header": "theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c'",
+      "public_API": "Turing.Segment.trans",
+      "status": "Source-only exact Segment specialization; not in assigned native patch",
+      "premise_mapping": "Segment H {some avoid} (fun _=>True), exact endpoints; same-home SafeRun can be read locally, use public segment_iff for foreign Segment. cons requires t+1=1+t arithmetic only.",
+      "no_new_import_or_bridge_name_required": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_pt_head",
+      "line": 6733,
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "chunk_sha256": "ed02bf87b3e6a847b9ac303020f9611b0440da7c14128f4e6918a1fe6f8116c9",
+      "complete_header": "private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1)",
+      "public_API": "Complexity.polyTimeComputable_take1",
+      "status": "Source-only exact existing imported specialization reported to root; extra scope not yet adopted",
+      "premise_mapping": "head has literal identical take1 statement; tail is List.tail=drop1 by funext/cases/rfl. No headD default substitution.",
+      "no_new_import_or_bridge_name_required": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_pt_tail",
+      "line": 6719,
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "chunk_sha256": "7adf59c0812deb2f323b18bf98545de298f6b5d18a449d24ddfd5aa8df25d7a0",
+      "complete_header": "private lemma clA5_pt_tail : PolyTimeComputable List.tail",
+      "public_API": "Complexity.polyTimeComputable_tail",
+      "status": "Source-only exact existing imported specialization reported to root; extra scope not yet adopted",
+      "premise_mapping": "head has literal identical take1 statement; tail is List.tail=drop1 by funext/cases/rfl. No headD default substitution.",
+      "no_new_import_or_bridge_name_required": true
+    }
+  ],
+  "not_native_checked": true,
+  "root_integration_separate": true
+}

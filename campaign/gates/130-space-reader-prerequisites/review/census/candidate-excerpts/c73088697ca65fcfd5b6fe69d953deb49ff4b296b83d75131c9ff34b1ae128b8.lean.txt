@@ -1,0 +1,8 @@
+/-- **Canonical decoding.** On windowed configurations of one input, records agree exactly
+when cores and tags agree. -/
+theorem cfgRecord_inj {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) {c d : Cfg k Bool Q x}
+    {τ τ' : T} (hc : WindowedP s c) (hd : WindowedP s d) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ' := by
+  sorry

@@ -1,0 +1,96 @@
+/-- Write the canonical bound field directly on a rich destination, using
+an isolated clean bank and restoring that bank completely.
+
+**Proof sketch.** The inherited bound writer is applied through its clean
+rich-bank bridge. Move its canonical word to the destination by the public
+copy/clear composite. The source clear restores the initial blank bank, while
+all other tapes are framed. R2 joins the cuts and the logarithmic envelopes. -/
+private theorem rt_exists_boundFieldTM (Q T : Type) [DecidableEq Q] [DecidableEq T] :
+    ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+      (R : ∀ {k : ℕ}, (Fin (K + 1) ↪ Fin k) → Fin k → MultiTapeTM k (RecSym Q T) S)
+      (entry exit : S) (C : ℕ),
+      ∀ {k : ℕ} (ι : Fin (K + 1) ↪ Fin k) (dst : Fin k), dst ∉ Set.range ι →
+      ∀ {x : List Bool} (d : Cfg k (RecSym Q T) S (x.map (RecSym.digitEmb Q T))),
+        d.state = some entry → d.inputPos = 1 → (∀ i p, d.workTapes (ι i) p = none) →
+      ∃ t ≤ C * (x.length + 1),
+        (∀ u < t, ((R ι dst).runFrom d u).state ≠ some exit) ∧
+        (∀ u ≤ t, ∀ j,
+          |((R ι dst).runFrom d u).workTapePos j - d.workTapePos j| ≤
+            ((C * ((x.length + 1).bits.length + 1) : ℕ) : ℤ)) ∧
+        (R ι dst).runFrom d t =
+          { d with
+            state := some exit
+            workTapes := fun j p =>
+              if j = dst ∧ d.workTapePos j ≤ p ∧
+                  p < d.workTapePos j + ((x.length + 1).bits.length : ℤ)
+              then FinTM.bufferTape ((x.length + 1).bits.map RecSym.digit)
+                (p - d.workTapePos j) else d.workTapes j p } := by
+  obtain ⟨K, P, fin, eq, R, en, ex, C, bound⟩ := rt_exists_cleanDigitBoundTM Q T
+  letI := fin
+  letI := eq
+  refine ⟨K, P ⊕ (SweepPhase ⊕ SweepPhase), inferInstance, inferInstance,
+    fun {k} ι dst => seamCompTM (embedEmitTM ι R) ex (rt_moveWordTM k (ι 0) dst) (.inl .sweep),
+    .inl en, .inr (.inr .done), C + 10, ?_⟩
+  intro k ι dst outside x d entry input blank
+  let a := d.mapState (fun _ => en)
+  have ae : a.state = some en := by simp [a, Cfg.mapState, entry]
+  obtain ⟨t, cost, cut, heads, run⟩ := bound ι a ae input blank
+  let a' : Cfg k (RecSym Q T) P (x.map (RecSym.digitEmb Q T)) :=
+    { a with
+      state := some ex
+      workTapes := fun j p => if j = ι 0 then
+        FinTM.bufferTape ((x.length + 1).bits.map RecSym.digit) (p - d.workTapePos j)
+        else d.workTapes j p }
+  change (embedEmitTM ι R).runFrom a t = a' at run
+  let b := a'.mapState (fun _ => (Sum.inl SweepPhase.sweep : SweepPhase ⊕ SweepPhase))
+  let w : List (RecSym Q T) := (x.length + 1).bits.map RecSym.digit
+  have length : w.length = (x.length + 1).bits.length := by simp [w]
+  have different : ι 0 ≠ dst := by intro h; exact outside ⟨0, h⟩
+  have frame : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      b.workTapes (ι 0) (b.workTapePos (ι 0) + p) = FinTM.bufferTape w p := by
+    intro p _ _
+    change (if ι 0 = ι 0 then FinTM.bufferTape w
+      (d.workTapePos (ι 0) + p - d.workTapePos (ι 0)) else _) = _
+    rw [if_pos rfl]; congr 1; omega
+  obtain ⟨move, moveCut, moveHeads⟩ := rt_moveWord_run (ι 0) dst different w b rfl frame
+  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+  let B : ℤ := ((C + 10) * ((x.length + 1).bits.length + 1) : ℕ)
+  have radA : ∀ u ≤ t, ∀ j,
+      |((embedEmitTM ι R).runFrom a u).workTapePos j - d.workTapePos j| ≤ B := by
+    intro u hu j
+    exact (heads u hu j).trans (by dsimp [B]; exact_mod_cast
+      (show C * ((x.length + 1).bits.length + 1) ≤
+        (C + 10) * ((x.length + 1).bits.length + 1) by nlinarith))
+  have radB : ∀ u ≤ 4 * w.length + 5, ∀ j,
+      |((rt_moveWordTM k (ι 0) dst).runFrom b u).workTapePos j - d.workTapePos j| ≤ B := by
+    intro u hu j
+    exact (moveHeads u hu j).trans (by dsimp [B]; rw [length]; exact_mod_cast
+      (show (x.length + 1).bits.length + 1 ≤
+        (C + 10) * ((x.length + 1).bits.length + 1) by nlinarith))
+  obtain ⟨joined, first, radius⟩ := rt_copy_seam (embedEmitTM ι R) ex
+    (rt_moveWordTM k (ι 0) dst) (.inl .sweep) (.inr .done) d.workTapePos B
+    run rfl cut radA move rfl moveCut radB
+  have start : a.mapState Sum.inl = d := by
+    apply Cfg.ext <;> simp [a, Cfg.mapState, entry]
+  rw [start] at joined first radius
+  refine ⟨t + 1 + (4 * w.length + 5), by rw [length]; nlinarith,
+    first, radius, ?_⟩
+  rw [joined]
+  apply Cfg.ext
+  · rfl
+  · rfl
+  · funext j p
+    simp only [Cfg.mapState, b, a', a, length]
+    by_cases source : j = ι 0
+    · subst j
+      simp only [different, false_and, if_false, true_and]
+      rw [blank]
+      have mask := rt_bufferMask w (d.workTapePos (ι 0)) p
+      rw [length] at mask
+      split_ifs with inside
+      · rfl
+      · simpa only [if_neg inside] using mask.symm
+    · simp only [source, false_and, if_false]
+      rfl
+  · rfl
+  · rfl

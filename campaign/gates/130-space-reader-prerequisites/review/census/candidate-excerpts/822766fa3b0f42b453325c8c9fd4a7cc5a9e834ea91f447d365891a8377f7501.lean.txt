@@ -1,0 +1,143 @@
+/-- One live source transition, with optional growth at each crossed boundary.
+This includes every prefix of all five phases, even when the final state halts.
+**Proof sketch.** Collect the current row interval, conditionally append its
+right neighbor, apply the unchanged reverse transduction, and conditionally
+prepend the new left row. Compose the five all-prefix ledgers. The ordinary
+cell semantics are solely the received `read_zone` and `write_zone` facts. -/
+private lemma dg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))
+    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)
+    (hp : ∀ i, a ≤ c.workTapePos i ∧ c.workTapePos i < a + n)
+    (hl : ∀ i, c.workTapes i (a - 1) = none)
+    (hr : ∀ i, c.workTapes i (a + n) = none)
+    (left right : Bool)
+    (hleft : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)
+      (fun i => headAt c i a) .neg = left)
+    (hright : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)
+      (fun i => headAt c i (a + n - 1)) .pos = right) :
+    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)
+      (dgStart M a₀ (M.tm.step c) (a - left.toNat) (n + right.toNat + left.toNat)
+        (z - left.toNat * M.k))
+      (dgCost M.k n left right) (z - left.toNat * M.k)
+        (z + 1 + (n + right.toNat) * M.k) := by
+  let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
+  let s := readState c (a + n)
+  let p := dgPos a₀ c.inputPos
+  let out := c.output.map (sweepEmbed Γ M.k)
+  let p' := dgPos a₀ (act.apply c).inputPos
+  let out' := (act.apply c).output.map (sweepEmbed Γ M.k)
+  let put : SweepCell Γ M.k → Option (SweepAlphabet Γ M.k) := fun b => some (sweepSymbol b)
+  let F := tapeZone (fun j => tapeRow c j true) a n
+  let W := tapeZone (fun j => tapeRow c j true) a (n + right.toNat)
+  let V := tapeZone (fun j => tapeRow (act.apply c) j false) a (n + right.toNat)
+  let lo := z - (left.toNat : ℤ) * M.k
+  let hi := z + 1 + ((n + right.toNat : ℕ) : ℤ) * M.k
+  let collected : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.read q s))) p (z + 1 + n * M.k)
+      ((F.map put).reverse ++ [some sweepBoundary]) [some sweepBoundary] out
+  let writing : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+      p' (z + ((n + right.toNat : ℕ) : ℤ) * M.k) [some sweepBoundary]
+      (W.reverse.map put ++ [some sweepBoundary]) out'
+  let written : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i a))))
+      p' z (V.map put ++ [some sweepBoundary]) [some sweepBoundary] out'
+  have hn0 : 0 ≤ (n : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (n * M.k))
+  have hl0 : 0 ≤ (left.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (left.toNat * M.k))
+  have hr0 : 0 ≤ (right.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (right.toNat * M.k))
+  have hsum : ((n + right.toNat : ℕ) : ℤ) * M.k = (n : ℤ) * M.k + (right.toNat : ℤ) * M.k := by
+    push_cast
+    ring
+  have hcollect : DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z) collected
+      (1 + n * M.k) lo hi :=
+    dgSpan_mono (dg_collect M a₀ c q hs a z n (fun i => (hp i).1))
+      (by dsimp [lo]; omega) (by dsimp [hi]; rw [add_mul]; omega)
+  have hreads : (fun i => (s i).1) = c.workTapeSymbols := by
+    funext i
+    exact if_pos (hp i).2
+  have hrtest : dgCross act (fun i => (s i).2) .pos = right := hright
+  have hrow : rightRow s = tapeRow c (a + n) true := by
+    unfold rightRow tapeRow
+    apply List.map_congr_left
+    intro i _
+    have hn : c.workTapePos i ≠ a + n := by have := (hp i).2; omega
+    simp [s, readState, headAt, hr i, hn]
+  have hdispatch : DGSpan (dgTM M a₀).tm collected writing
+      (1 + right.toNat * (M.k + 1)) lo hi := by
+    cases right with
+    | false =>
+      have h := dg_turn_without_growth M a₀ c q s hreads hrtest (z + 1 + n * M.k)
+        ((F.map put).reverse ++ [some sweepBoundary])
+      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
+        (by dsimp [lo]; omega) (by dsimp [hi]; omega)
+      have hz : z + 1 + (n : ℤ) * M.k - 1 = z + n * M.k := by omega
+      simpa only [collected, writing, W, F, Bool.toNat_false, Nat.add_zero,
+        Nat.zero_mul, hz, List.map_reverse] using h
+    | true =>
+      have h := dg_turn_with_growth M hk a₀ c q s hreads hrtest (z + 1 + n * M.k)
+        ((F.map put).reverse ++ [some sweepBoundary])
+      have he : tapeZone (fun j => tapeRow c j true) a (n + 1) = F ++ rightRow s := by
+        rw [tapeZone_append, hrow]
+        simp only [tapeZone, List.append_nil]
+        rfl
+      have hh : z + 1 + (n : ℤ) * M.k + M.k = hi := by
+        dsimp [hi]
+        ring
+      have hz : z + 1 + (n : ℤ) * M.k + M.k - 1 = z + ((n + 1 : ℕ) : ℤ) * M.k := by
+        push_cast
+        ring
+      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
+        (by dsimp [lo]; omega) (le_of_eq hh)
+      simpa [collected, writing, W, put, p, p', out, out', act, Bool.toNat_true, he, List.map_append,
+        List.reverse_append, List.map_reverse, List.append_assoc, hz,
+        show 1 + (M.k + 1) = M.k + 2 by omega] using h
+  have hzero : (fun i => headAt c i (a + (n + right.toNat : ℕ))) = fun _ => false := by
+    funext i
+    have h := (hp i).2
+    simp only [headAt, decide_eq_false_iff_not]
+    omega
+  have hwrite : DGSpan (dgTM M a₀).tm writing written ((n + right.toNat) * M.k) lo hi := by
+    constructor
+    · have h := dg_write M a₀ c q c.inputSymbol c.workTapeSymbols a
+        (z + ((n + right.toNat : ℕ) : ℤ) * M.k) (n + right.toNat) p' out'
+        [some sweepBoundary] [some sweepBoundary]
+      rw [hzero] at h
+      simpa only [writing, written, W, V, put, act, add_sub_cancel_right] using h
+    · intro u hu
+      have h := dg_sweep_reverse_prefix (dgTM M a₀).tm
+        (fun r => Sum.inl (SweepState.write q c.inputSymbol c.workTapeSymbols r))
+        sweepSymbol (writeVisit act) (by intro r b inp; rfl) p' out' W.reverse
+        (fun _ => false) (z + ((n + right.toNat : ℕ) : ℤ) * M.k)
+        [some sweepBoundary] [some sweepBoundary] u
+        (by simpa only [W, List.length_reverse, tapeZone_length] using hu)
+      change ((dgTM M a₀).tm.runFrom writing u).workTapePos (0 : Fin 1) =
+        z + ((n + right.toNat : ℕ) : ℤ) * M.k - u at h
+      rw [h]
+      have hu' : (u : ℤ) ≤ ((n + right.toNat : ℕ) : ℤ) * M.k := by exact_mod_cast hu
+      simp only [Int.natCast_add] at h hu'
+      dsimp [lo, hi]
+      constructor <;> omega
+  have hfinish : DGSpan (dgTM M a₀).tm written
+      (dgStart M a₀ (act.apply c) (a - left.toNat) (n + right.toNat + left.toNat)
+        (z - left.toNat * M.k)) (1 + left.toNat * (M.k + 1)) lo hi := by
+    cases left with
+    | false =>
+      have h := dg_end_without_growth M a₀ q c.inputSymbol c.workTapeSymbols
+        (fun i => headAt c i a) hleft p' out' z (V.map put ++ [some sweepBoundary])
+      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
+        (by dsimp [lo]; simp) (by dsimp [hi]; rw [add_mul]; omega)
+      simpa only [written, dgStart, V, put, act, Bool.toNat_false, Nat.zero_mul,
+        Int.natCast_zero, zero_mul, sub_zero, Nat.add_zero] using h
+    | true =>
+      have h := dg_end_with_growth M hk a₀ q c.inputSymbol c.workTapeSymbols
+        (fun i => headAt c i a) hleft p' out' z (V.map put ++ [some sweepBoundary])
+      have he := dg_new_left_row c act a (fun i => (hp i).1) hl
+      rw [he] at h
+      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
+        (by dsimp [lo]; simp) (by dsimp [hi]; rw [add_mul]; omega)
+      simpa only [written, dgStart, Bool.toNat_true, Nat.one_mul, Int.natCast_one,
+        one_mul, tapeZone, show a - 1 + 1 = a by omega, List.map_append,
+        List.append_assoc, V, put, act, show 1 + (M.k + 1) = M.k + 2 by omega] using h
+  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
+  simpa only [dgCost, MultiTapeTM.step, hs, act] using h

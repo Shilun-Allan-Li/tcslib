@@ -1,0 +1,30 @@
+/-- A native binary countdown emitter. Startup copies the input and rewinds;
+borrow/rewind transitions implement fixed-width subtraction. Each successful
+subtraction emits one `true` at its return state; underflow halts silently.
+The debit subroutine is adapted in-file from the proved private template in
+`Build/Loop.lean` at the pinned base; no emitter spec contract is used. -/
+private def a2DebitTM : FinTM Bool where
+  k := 1
+  State := Bool ⊕ (Option Bool ⊕ Bool)
+  tm :=
+    { q₀ := .inl false
+      tr := fun q inp work => match q with
+        | .inl false => match inp with
+          | some b => ⟨1, fun _ => (some (some b), 1), none, some (.inl false)⟩
+          | none => ⟨0, fun _ => (none, -1), none, some (.inl true)⟩
+        | .inl true => match work 0 with
+          | some _ => ⟨0, fun _ => (none, -1), none, some (.inl true)⟩
+          | none => ⟨0, fun _ => (none, 1), none, some (.inr (.inl none))⟩
+        | .inr (.inl none) => match work 0 with
+          | some false => ⟨0, fun _ => (some (some true), 1), none,
+              some (.inr (.inl none))⟩
+          | some true => ⟨0, fun _ => (some (some false), -1), none,
+              some (.inr (.inl (some true)))⟩
+          | none => ⟨0, fun _ => (none, -1), none,
+              some (.inr (.inl (some false)))⟩
+        | .inr (.inl (some b)) => match work 0 with
+          | some _ => ⟨0, fun _ => (none, -1), none, some (.inr (.inl (some b)))⟩
+          | none => ⟨0, fun _ => (none, 1), none, some (.inr (.inr b))⟩
+        | .inr (.inr true) =>
+          ⟨0, fun _ => (none, 0), some true, some (.inr (.inl none))⟩
+        | .inr (.inr false) => controlAction 0 none }

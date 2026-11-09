@@ -1,0 +1,17 @@
+# Exact closure criterion after records-only campaign commits
+
+The standing START-HERE §4 rule says older replay remains valid only if no PR changed file imports a module those merges changed in a way that can matter: statements, definitions, imports or simp sets; proof-body-only upstream changes are harmless. When in doubt, rerun. START-HERE also says gate closure requires zero blockers and majors, disposition of findings, and separately distinguishes clear-to-merge requirements (closed gate, dispositioned minors, clean merge and current-snapshot replay or an explicit validity argument). WORKFLOW §2 requires whole snapshots, no snapshot composition, and replay of all changed-source downstream closures on an actual merged tree.
+
+Here the stronger simple case is proved at observed records `6fd9cd541adb15af0d4f18fb35c4eb77ac02f7fd`: all 1003 tracked `.lean` path/blob pairs equal BASE `9b5dcf46408db681bcbc721930ef2203fa6bc47d`, and lean-toolchain/lake-manifest bytes match. Thus no changed source module, import or source attribute/simp definition was introduced by those records commits. `.lean.txt` evidence additions are records data, not Lean source. This is not merely a no-diff assertion for the two owners.
+
+The actual NWord2 source b8b (26/0) and NRS2 source 48d (18/0) replay records are exact to their audited heads and whole MAC8 inputs. Both input-before and input-after 895 maps equal the independent MAC8 adoption; outputs retain 895 keys and change only their own owner object. Selected metadata/source/native-control scope bindings are unchanged. Their older request records pin does not invalidate them solely because later campaign records commits exist.
+
+Recommended root gate-closure record:
+
+1. Preserve each returned report verbatim with its actual intake SHA; accept every scoped note with the per-finding disposition, recording zero blockers/majors/minors and no new waiver or permission.
+2. Confirm the PR heads still equal exact b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80 and 48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10. Local and available origin refs matched in this review.
+3. At closure, confirm current campaign still has the same complete 1003 Lean blob map and package/toolchain context as 9b5, and that the adopted current whole MAC8 marker/object map still names that895-object baseline. This review verifies the bundled adopted maps, not an independent fresh hash traversal of all live binary package/snapshot files.
+4. State the resulting validity argument explicitly: only records advanced, so the actual 26/18-module replays remain valid against unchanged MAC8; no Lean rerun is required solely for those records commits. Root may then decide gate closure within the audited scopes.
+5. Do not convert gate closure into merge clearance. Clean merge and actual current merged-tree replay/adoption (or the standing explicit dependency-validity argument after any source merge) remain separate root/user checks. The eight unmerged proposals are not assumed landed; no composed snapshot or global compatibility/debt clearance is claimed.
+
+If a source file, imported statement/definition/import/default-simp context, package context or baseline object provenance changes, this strong records-only argument no longer applies automatically. Inspect the actual complete import closure under the quoted rule or replay on the new complete current snapshot. Preserve all family/debt scopes and cleanup windows; a local gate does not discharge unrelated debt.

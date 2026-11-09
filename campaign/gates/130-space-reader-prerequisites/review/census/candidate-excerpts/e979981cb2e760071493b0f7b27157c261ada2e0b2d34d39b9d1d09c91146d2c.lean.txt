@@ -1,0 +1,39 @@
+/-- One full row is loaded into the native search, including clearing all
+old field targets, and the search then dispatches to signed comparison.
+**Proof sketch.** Relocate the loader at its positive first return. The
+frame theorem preserves all search bookkeeping; charge one more transition
+for the dispatch to the fixed four-word comparator. -/
+private lemma clMatch_load {l : ℕ} (hl : 0 < l) (pos neg : Fin l) (x : List Bool)
+    (old row : Fin l → List Bool) (target : Fin 2 → List Bool)
+    (pre tail : List Bool) (N j W : ℕ) (flags : List Bool)
+    (hOld : ∀ i, (old i).length ≤ W) (hRow : ∀ i, (row i).length ≤ W) :
+    ∃ t ≤ l * (5 * W + 7) + 1,
+      (clMatchTM pos neg).tm.runFrom
+        (clMatchCfg pos neg x (.inr (.inl (0, .inl 0))) old target
+          (pre ++ clFields (List.ofFn row) ++ tail) pre.length N j flags) t =
+      clMatchCfg pos neg x (.inr (.inr (.inl (.inl (false, false, true))))) row target
+        (pre ++ clFields (List.ofFn row) ++ tail)
+        (pre.length + (clFields (List.ofFn row)).length) N j flags := by
+  let stream := pre ++ clFields (List.ofFn row) ++ tail
+  let start := clMatchCfg pos neg x (.inr (.inl (0, .inl 0))) old target stream pre.length N j flags
+  obtain ⟨t, ht, _, hf, he⟩ := clLoad_first hl x 1 old row pre tail W W hOld hRow
+  have lift := clPlaced_run (clLoadTM l).tm (clMatchTM pos neg).tm (clMatchLoadSelect l) (fun r => (Sum.inr (.inl r) : clMatchState l)) (by intro a b h; cases h; rfl)
+    (fun r => r ≠ (Fin.last l, .inl 0))
+    (fun _ hr _ _ => if_neg hr)
+    start.workTapes start.workTapePos
+    (clLoadCfg x 1 0 (.inl 0) old stream pre.length) t
+    (by intro a ha q hq heq; subst q; exact hf a ha hq)
+  rw [he] at lift
+  have fstFrame := clMatch_load_frame pos neg x (0, .inl 0) old old target stream
+    pre.length pre.length N j flags
+  have sndFrame := clMatch_load_frame pos neg x (Fin.last l, .inl 0) old row target stream
+    (pre.length + (clFields (List.ofFn row)).length) pre.length N j flags
+  have run := (congrArg (fun z => (clMatchTM pos neg).tm.runFrom z t) fstFrame).symm.trans
+    (lift.trans sndFrame)
+  rw [show 2 * W + 3 * W + 7 = 5 * W + 7 by omega] at ht
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', run]
+  change ((clMatchTM pos neg).tm.tr (.inr (.inl (Fin.last l, .inl 0))) _ _).apply _ = _
+  simp only [clMatchTM, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  rfl

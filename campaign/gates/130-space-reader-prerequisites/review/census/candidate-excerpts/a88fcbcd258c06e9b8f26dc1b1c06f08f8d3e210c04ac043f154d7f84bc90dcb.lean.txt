@@ -1,0 +1,13 @@
+/-- *Fit:* `CodeSimulator`'s `canonEmbedEq` (`CodeSimulator.lean:1201`, private there), verbatim,
+is `Turing.embedEmitCfg_eq` with the empty prefix. -/
+theorem canonEmbedEq {m k : ℕ} {S : Type} {x : List Bool}
+    (_M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (c : Cfg m Bool S x) (d : Cfg k Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (hs : c.state = d.state) (hp : c.inputPos = d.inputPos) (ho : c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (ι i) ∧
+      c.workTapePos i = d.workTapePos (ι i))
+    (outside : ∀ j, j ∉ Set.range ι →
+      tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    embedEmitCfg ι tapes heads [] c = d :=
+  embedEmitCfg_eq ι tapes heads [] c d hs hp ho selected outside

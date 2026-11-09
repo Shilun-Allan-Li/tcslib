@@ -1,0 +1,126 @@
+[
+  {
+    "actual_main_module": "TCSlib.Complexity.ClassNP.EXP",
+    "direct_body_mentions": [
+      "Nat",
+      "List",
+      "Bool",
+      "Turing.MultiTapeTM",
+      "Turing.Cfg",
+      "Eq",
+      "Option",
+      "Turing.Cfg.state",
+      "Turing.MultiTapeTM.runFrom",
+      "Option.none",
+      "Turing.MultiTapeTM.exists_first_halt"
+    ],
+    "direct_type_mentions": [
+      "Nat",
+      "List",
+      "Bool",
+      "Turing.MultiTapeTM",
+      "Turing.Cfg",
+      "Eq",
+      "Option",
+      "Turing.Cfg.state",
+      "Turing.MultiTapeTM.runFrom",
+      "Option.none",
+      "Exists",
+      "And",
+      "LE.le",
+      "instLENat",
+      "LT.lt",
+      "instLTNat",
+      "Not",
+      "Turing.Cfg.Halted"
+    ],
+    "footprint_foreign_definition_values_traversed": false,
+    "footprint_imported_theorem_values_traversed": false,
+    "foreign_definition_mentions": [
+      {
+        "hints": "abbrev",
+        "name": "Turing.Cfg.state",
+        "ordinary_guard_target": false,
+        "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+        "projection": true,
+        "simp": false,
+        "type_mentions": [
+          "Nat",
+          "List",
+          "Turing.Cfg",
+          "Option"
+        ],
+        "unfold": false
+      },
+      {
+        "hints": "regular",
+        "name": "Turing.MultiTapeTM.runFrom",
+        "ordinary_guard_target": true,
+        "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+        "projection": false,
+        "simp": false,
+        "type_mentions": [
+          "Nat",
+          "List",
+          "Turing.MultiTapeTM",
+          "Turing.Cfg"
+        ],
+        "unfold": false
+      },
+      {
+        "hints": "abbrev",
+        "name": "Turing.Cfg.Halted",
+        "ordinary_guard_target": false,
+        "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+        "projection": false,
+        "simp": false,
+        "type_mentions": [
+          "Nat",
+          "List",
+          "Turing.Cfg"
+        ],
+        "unfold": false
+      }
+    ],
+    "imported_theorems_types_only": [
+      "Turing.MultiTapeTM.exists_first_halt"
+    ],
+    "local_definition_helpers": [],
+    "other_local_theorems_types_only": [],
+    "root": "_private.TCSlib.Complexity.ClassNP.EXP.0.Complexity.enumCont_first_halt",
+    "root_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "root_levelParams": [],
+    "root_type_Expr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `S\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.zero)))\n    (Lean.Expr.forallE\n      `x\n      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n      (Lean.Expr.forallE\n        `tm\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 2))\n            (Lean.Expr.const `Bool []))\n          (Lean.Expr.bvar 1))\n        (Lean.Expr.forallE\n          `c\u2080\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 3))\n                (Lean.Expr.const `Bool []))\n              (Lean.Expr.bvar 2))\n            (Lean.Expr.bvar 1))\n          (Lean.Expr.forallE\n            `T\n            (Lean.Expr.const `Nat [])\n            (Lean.Expr.forallE\n              `hh\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])\n                    (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 4)))\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Turing.Cfg.state [Lean.Level.zero, Lean.Level.zero])\n                            (Lean.Expr.bvar 5))\n                          (Lean.Expr.const `Bool []))\n                        (Lean.Expr.bvar 4))\n                      (Lean.Expr.bvar 3))\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `Turing.MultiTapeTM.runFrom [Lean.Level.zero, Lean.Level.zero])\n                                  (Lean.Expr.bvar 5))\n                                (Lean.Expr.bvar 4))\n                              (Lean.Expr.const `Bool []))\n                            (Lean.Expr.bvar 3))\n                          (Lean.Expr.bvar 2))\n                        (Lean.Expr.bvar 1))\n                      (Lean.Expr.bvar 0))))\n                (Lean.Expr.app (Lean.Expr.const `Option.none [Lean.Level.zero]) (Lean.Expr.bvar 4)))\n              (Lean.Expr.app\n                (Lean.Expr.app (Lean.Expr.const `Exists [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))\n                (Lean.Expr.lam\n                  `t\n                  (Lean.Expr.const `Nat [])\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.const `And [])\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                            (Lean.Expr.const `instLENat []))\n                          (Lean.Expr.bvar 0))\n                        (Lean.Expr.bvar 2)))\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.const `And [])\n                        (Lean.Expr.forallE\n                          `j\n                          (Lean.Expr.const `Nat [])\n                          (Lean.Expr.forallE\n                            (Lean.Name.mkNum `a._@._internal._hyg 0)\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app (Lean.Expr.const `LT.lt [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `instLTNat []))\n                                (Lean.Expr.bvar 0))\n                              (Lean.Expr.bvar 1))\n                            (Lean.Expr.app\n                              (Lean.Expr.const `Not [])\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `Turing.Cfg.Halted [Lean.Level.zero, Lean.Level.zero])\n                                        (Lean.Expr.bvar 9))\n                                      (Lean.Expr.bvar 8))\n                                    (Lean.Expr.const `Bool []))\n                                  (Lean.Expr.bvar 7))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.app\n                                          (Lean.Expr.app\n                                            (Lean.Expr.app\n                                              (Lean.Expr.const\n                                                `Turing.MultiTapeTM.runFrom\n                                                [Lean.Level.zero, Lean.Level.zero])\n                                              (Lean.Expr.bvar 9))\n                                            (Lean.Expr.bvar 8))\n                                          (Lean.Expr.const `Bool []))\n                                        (Lean.Expr.bvar 7))\n                                      (Lean.Expr.bvar 6))\n                                    (Lean.Expr.bvar 5))\n                                  (Lean.Expr.bvar 1))))\n                            (Lean.BinderInfo.default))\n                          (Lean.BinderInfo.default)))\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero])\n                                    (Lean.Expr.bvar 7))\n                                  (Lean.Expr.const `Bool []))\n                                (Lean.Expr.bvar 6))\n                              (Lean.Expr.bvar 5)))\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.app\n                                        (Lean.Expr.const `Turing.MultiTapeTM.runFrom [Lean.Level.zero, Lean.Level.zero])\n                                        (Lean.Expr.bvar 7))\n                                      (Lean.Expr.bvar 6))\n                                    (Lean.Expr.const `Bool []))\n                                  (Lean.Expr.bvar 5))\n                                (Lean.Expr.bvar 4))\n                              (Lean.Expr.bvar 3))\n                            (Lean.Expr.bvar 0)))\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.const `Turing.MultiTapeTM.runFrom [Lean.Level.zero, Lean.Level.zero])\n                                      (Lean.Expr.bvar 7))\n                                    (Lean.Expr.bvar 6))\n                                  (Lean.Expr.const `Bool []))\n                                (Lean.Expr.bvar 5))\n                              (Lean.Expr.bvar 4))\n                            (Lean.Expr.bvar 3))\n                          (Lean.Expr.bvar 2)))))\n                  (Lean.BinderInfo.default)))\n              (Lean.BinderInfo.default))\n            (Lean.BinderInfo.default))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.default))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "root_type_pretty": "\u2200 {k : \u2115} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S) (c\u2080 : Turing.Cfg k Bool S x) (T : \u2115),\n  (Turing.MultiTapeTM.runFrom c\u2080 T).state = none \u2192\n    \u2203 t \u2264 T,\n      (\u2200 j < t, \u00ac(Turing.MultiTapeTM.runFrom c\u2080 j).Halted) \u2227\n        Turing.MultiTapeTM.runFrom c\u2080 t = Turing.MultiTapeTM.runFrom c\u2080 T",
+    "source_owner": "TCSlib.Complexity.ClassNP.EXP",
+    "suffix": "enumCont_first_halt",
+    "visited_constants": [
+      "And",
+      "Bool",
+      "Eq",
+      "Exists",
+      "LE",
+      "LT",
+      "List",
+      "Nat",
+      "Not",
+      "Option",
+      "instLENat",
+      "instLTNat",
+      "LE.le",
+      "LT.lt",
+      "Option.none",
+      "Turing.Cfg",
+      "Turing.MultiTapeTM",
+      "_private.TCSlib.Complexity.ClassNP.EXP.0.Complexity.enumCont_first_halt",
+      "Turing.Cfg.Halted",
+      "Turing.Cfg.state",
+      "Turing.MultiTapeTM.exists_first_halt",
+      "Turing.MultiTapeTM.runFrom"
+    ]
+  }
+]

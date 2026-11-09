@@ -1,0 +1,21 @@
+{
+  "status": "APPROVAL-ONLY; no source/import adoption",
+  "source_base_commit": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+  "final_source_capture": "source/Hardness-HYP-v2.lean.txt",
+  "final_source_sha256": "d87a8f8b375a7b95e7231e9fcdd65011753d0c7660c8a6e78f4f16033b589f48",
+  "final_patch": "source/single-import-and-two-readers-final.patch",
+  "only_new_import": "TCSlib.Complexity.TuringMachine.CfgFacts",
+  "approved_body_shape_if_import_ruling_obtained": [
+    "clPrepare_idle: published Cfg.mapState_eq_of_fields/Cfg.mapState_apply/controlAction_apply/moveInputPos_zero",
+    "clA5Compare_compute: replace existing local mapid proof by Cfg.mapState_eq_of_fields cfg id cfg (congrFun Option.map_id cfg.state) rfl rfl rfl rfl"
+  ],
+  "no_new_API_declaration_or_private_bridge": true,
+  "not_included": [
+    "nine previously certified no-import body replacements",
+    "separate EXP absorb repair",
+    "Fresh/Prepared seam-reader repair",
+    "API129/controlAction_def",
+    "full downstream or combined-tree replay",
+    "gate closure/status/merge clearance"
+  ]
+}

@@ -1,0 +1,6 @@
+private lemma timedPrefix_live (bs α x : List Bool) (s : ℕ)
+    (hs : s < 4 * bs.length + 2 * α.length + 6) :
+    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x)) s).state ≠ none := by
+  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm
+    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x))
+    (4 * bs.length + 2 * α.length + 5) (timedPrefix_penultimate bs α x) s (by omega)

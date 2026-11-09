@@ -1,0 +1,1 @@
+Historical sourceQA attempt at63eb044c55032d8d9570e54e99d520522f2449e5. Source/prototype code and wiring checks pass; style3→5 has2 NEW parser false positives inside facade module doc line28. Root corrected the one word in later1096; these outputs are not current. Six mathematical sorries remain.

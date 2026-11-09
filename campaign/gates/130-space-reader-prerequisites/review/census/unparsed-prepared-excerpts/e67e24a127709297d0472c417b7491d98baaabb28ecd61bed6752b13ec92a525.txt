@@ -1,0 +1,314 @@
+From cccc46916d79f9dffbf3d27a2ad3f40e2e09c8e0 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 16:45:57 -0300
+Subject: [PATCH 1/2] refactor(loop): remove eight dead private declarations
+
+---
+ .../Complexity/TuringMachine/Build/Loop.lean  | 167 +-----------------
+ 1 file changed, 2 insertions(+), 165 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index c33e04c1..3e99b317 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -189,16 +189,6 @@ private lemma loop_live_prefix {k : ℕ} {S : Type*} {x : List Bool}
+       MultiTapeTM.runFrom_of_halt _ hh]
+   exact ht (by rw [he]; exact hh)
+ 
+-/-- An empty final output forces every earlier output to be empty. -/
+-private lemma loop_silent_prefix {k : ℕ} {S : Type*} {x : List Bool}
+-    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
+-    (ht : (tm.runFrom cfg t).output = []) :
+-    ∀ u ≤ t, (tm.runFrom cfg u).output = [] := by
+-  intro u hu
+-  have hp := tm.output_prefix cfg hu
+-  rw [ht] at hp
+-  simpa using hp
+-
+ /-- Replace a possibly padded halting-time witness by its first halt,
+ retaining the entire endpoint configuration.
+ **Proof sketch.** Choose the least halting time. Minimality supplies the
+@@ -436,132 +426,6 @@ private lemma loopBuffer_write (pre bs : List Bool) (old new : Bool) :
+         simp only [List.getElem?_cons, if_neg (by omega : z.toNat - pre.length ≠ 0)]
+     · simp only [if_neg hn]
+ 
+-/-- One-tape fixed-width decrement, followed by a rewind. The live states are
+-borrow (`inl none`), rewind with success flag (`inl (some b)`), and return
+-(`inr b`). No transition emits physical output. Return states wait for a
+-surrounding controller. This privately re-derives the counter template. -/
+-private def loopDebitTM : FinTM Bool where
+-  k := 1
+-  State := Option Bool ⊕ Bool
+-  tm :=
+-    { q₀ := .inl none
+-      tr := fun q _ work => match q with
+-        | .inl none => match work 0 with
+-          | some false => ⟨0, fun _ => (some (some true), .pos), none, some (.inl none)⟩
+-          | some true => ⟨0, fun _ => (some (some false), .neg), none, some (.inl (some true))⟩
+-          | none => ⟨0, fun _ => (none, .neg), none, some (.inl (some false))⟩
+-        | .inl (some b) => match work 0 with
+-          | some _ => ⟨0, fun _ => (none, .neg), none, some (.inl (some b))⟩
+-          | none => ⟨0, fun _ => (none, .pos), none, some (.inr b)⟩
+-        | .inr b => controlAction 0 (some (.inr b)) }
+-
+-/-- A candidate on the borrow tape, with arbitrary native input-head position. -/
+-private def loopDebitCfg (x : List Bool) (p : Fin (x.length + 2))
+-    (q : Option Bool ⊕ Bool) (z : ℤ) (u : List Bool) :
+-    Cfg loopDebitTM.k Bool loopDebitTM.State x :=
+-  ⟨some q, p, fun _ => bufferTape u, fun _ => z, []⟩
+-
+-/-- One borrow transition writes only inside the fixed-width word, or detects
+-the right blank without writing to it. -/
+-private lemma loopBorrow_step (x : List Bool) (p : Fin (x.length + 2))
+-    (pre bs : List Bool) :
+-    loopDebitTM.tm.step (loopDebitCfg x p (.inl none) pre.length (pre ++ bs)) =
+-      match bs with
+-      | [] => loopDebitCfg x p (.inl (some false)) (pre.length - 1) pre
+-      | true :: us => loopDebitCfg x p (.inl (some true)) (pre.length - 1) (pre ++ false :: us)
+-      | false :: us => loopDebitCfg x p (.inl none) (pre.length + 1) (pre ++ true :: us) := by
+-  unfold MultiTapeTM.step
+-  change (loopDebitTM.tm.tr (.inl none) _ _).apply _ = _
+-  simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, loopBuffer_read]
+-  cases bs with
+-  | nil =>
+-    refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ rfl
+-    · simp
+-    · funext i; simp [Action.apply, sub_eq_add_neg]
+-  | cons b bs =>
+-    cases b <;> refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ rfl
+-    all_goals first
+-      | (funext i; exact loopBuffer_write pre bs _ _)
+-      | (funext i; simp [Action.apply, sub_eq_add_neg])
+-
+-/-- The borrow phase takes one step beyond the leading false prefix, including
+-one blank test on underflow.
+-**Proof sketch.** Induct on the remaining candidate. Each false bit is set
+-and added to the processed prefix. A true bit or the right blank starts
+-rewind without changing the width. -/
+-private lemma loopBorrow_run (x : List Bool) (p : Fin (x.length + 2))
+-    (u : List Bool) : ∀ pre : List Bool,
+-    loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl none) pre.length (pre ++ u))
+-        (loopBorrowPos u + 1) =
+-      loopDebitCfg x p (.inl (some (loopDebit u).2))
+-        ((pre.length : ℤ) + loopBorrowPos u - 1) (pre ++ (loopDebit u).1) := by
+-  induction u with
+-  | nil =>
+-    intro pre
+-    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+-      loopBorrow_step x p pre []
+-  | cons b u ih =>
+-    intro pre
+-    cases b with
+-    | true =>
+-      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
+-        loopBorrow_step x p pre (true :: u)
+-    | false =>
+-      simp only [loopBorrowPos]
+-      rw [MultiTapeTM.runFrom_succ_eq_step, loopBorrow_step]
+-      simpa [loopDebit, List.append_assoc, Nat.cast_add, Nat.cast_one,
+-        add_assoc, add_comm, add_left_comm] using ih (pre ++ [true])
+-
+-/-- Rewind over `j` known candidate cells to the left blank, then return at
+-cell zero in exactly `j+1` steps, retaining the candidate and success flag. -/
+-private lemma loopBorrow_rewind (x : List Bool) (p : Fin (x.length + 2))
+-    (u : List Bool) (b : Bool) : ∀ j, j ≤ u.length →
+-    loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl (some b)) ((j : ℤ) - 1) u)
+-        (j + 1) = loopDebitCfg x p (.inr b) 0 u := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    simp only [Nat.cast_zero, zero_sub]
+-    unfold MultiTapeTM.step
+-    simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, bufferTape_left]
+-    refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+-    funext i; simp [Action.apply]
+-  | succ j ih =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step]
+-    have hstep : loopDebitTM.tm.step
+-        (loopDebitCfg x p (.inl (some b)) ((j + 1 : ℕ) - 1) u) =
+-          loopDebitCfg x p (.inl (some b)) ((j : ℤ) - 1) u := by
+-      have hz : ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
+-      rw [hz]
+-      unfold MultiTapeTM.step
+-      simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, bufferTape_nat,
+-        List.getElem?_eq_getElem (by omega : j < u.length)]
+-      refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+-      funext i; simp [Action.apply, sub_eq_add_neg]
+-    rw [hstep]
+-    exact ih (by omega)
+-
+-/-- A complete fixed-width decrement and rewind costs `2j+2 ≤ 2|u|+2`,
+-where `j` is the leading false-prefix length. It returns live at cell zero,
+-retains the input head, and emits nothing. Width zero returns underflow only
+-when this subroutine is called, so enumeration can process `[]` first. -/
+-private lemma loopBorrow_correct (x : List Bool) (p : Fin (x.length + 2))
+-    (u : List Bool) :
+-    2 * loopBorrowPos u + 2 ≤ 2 * u.length + 2 ∧
+-      loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl none) 0 u)
+-          (2 * loopBorrowPos u + 2) =
+-        loopDebitCfg x p (.inr (loopDebit u).2) 0 (loopDebit u).1 := by
+-  refine ⟨by have := loopBorrowPos_le u; omega, ?_⟩
+-  have hr := loopBorrow_run x p u []
+-  simp only [List.length_nil, Nat.cast_zero, List.nil_append, zero_add] at hr
+-  rw [show 2 * loopBorrowPos u + 2 = (loopBorrowPos u + 1) + (loopBorrowPos u + 1) by omega,
+-    MultiTapeTM.runFrom_add, hr]
+-  exact loopBorrow_rewind x p (loopDebit u).1 (loopDebit u).2 _
+-    (by rw [loopDebit_length]; exact loopBorrowPos_le u)
+-
+ /-- Stop the body at the next anchor entry, distinguishing that return from
+ a genuine source halt on an extra one-cell flag tape. A true release bit
+ forces one source action, even at the anchor; every source successor clears
+@@ -689,33 +553,6 @@ private lemma loopBody_run (body : FinTM Bool) (anchor : body.State) {x : List B
+     rw [if_neg ht, loopBody_step body anchor _ q _ none hq hgo]
+     simp only [Nat.succ_ne_zero, ↓reduceIte, MultiTapeTM.runFrom_succ_eq_step']
+ 
+-/-- W1 captures the stopped body's complete trace in any agreeing controller.
+-This includes an output bit emitted by the halting transition.
+-**Proof sketch.** The preceding simulation gives strict liveness of the
+-stop wrapper before the endpoint. Apply the audited capture contract with
+-the supplied controller as host, then substitute the simulated endpoint. -/
+-private lemma loopBody_capture (body : FinTM Bool) (anchor : body.State)
+-    {H : Type*} {x : List Bool} (host : MultiTapeTM (body.k + 1 + 1) Bool H)
+-    (emb : body.State × Bool → H) (ret : H)
+-    (hagree : ∀ s inp work, host.tr (emb s) inp work =
+-      captureAction emb ret ((loopBodyTM body anchor).tm.tr s inp fun i => work i.castSucc))
+-    (c : Cfg body.k Bool body.State x) (release : Bool) (hc : c.state ≠ none)
+-    (t : ℕ) (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
+-    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
+-      (body.tm.runFrom c u).state ≠ some anchor) :
+-    host.runFrom (captureCfg emb ret [] [] (loopBodyCfg body anchor c release none)) t =
+-      captureCfg emb ret [] []
+-        (loopBodyCfg body anchor (body.tm.runFrom c t) (if t = 0 then release else false)
+-          (if (body.tm.runFrom c t).state = none then some true else none)) := by
+-  have hguard : ∀ u < t,
+-      ¬((loopBodyTM body anchor).tm.runFrom (loopBodyCfg body anchor c release none) u).Halted := by
+-    intro u hu
+-    rw [loopBody_run body anchor c release hc u
+-      (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
+-    simpa [Cfg.Halted, loopBodyCfg] using hlive u hu
+-  rw [capture_run (loopBodyTM body anchor).tm host emb ret hagree [] [] _ t hguard,
+-    loopBody_run body anchor c release hc t hlive hanchor]
+-
+ /-- Disjoint finite control for fuel, body calls, and fourteen controller phases. -/
+ private abbrev LoopHostState (body F : FinTM Bool) :=
+   F.State ⊕ ((Bool × (body.State × Bool)) ⊕ Fin 14)
+@@ -2202,8 +2039,8 @@ iterated body word and `loopDebit` word, retaining the fuel work residue.
+ `loop_orbit_inv` supplies every local body premise. The body simulation and
+ first-halt lemmas identify the first stop; W1 preserves its full payload.
+ Phase 7 either emits/replays that payload or starts the width-bounded
+-borrow. `loopBorrow_correct` is the standalone counter template to be
+-lifted into phases 8--10. Final zero underflow and phase 11 belong to the
++borrow. The host performs the counter borrow and rewind
++in phases 8--10. Final zero underflow and phase 11 belong to the
+ last rejecting segment. If the last candidate accepts, choose any halted
+ false/empty terminal. Sum the phase constants with the audit's maximum
+ ledger. The missing proof is precisely the controller-level lifting and
+-- 
+2.51.1
+
+From 2bb8f379e1560dbdf6c693c1a1f40f417297876f Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 16:47:08 -0300
+Subject: [PATCH 2/2] refactor(loop): derive body forwarding from emit_run
+
+---
+ .../Complexity/TuringMachine/Build/Loop.lean  | 73 +++++--------------
+ 1 file changed, 19 insertions(+), 54 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 3e99b317..dbb41eae 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -5024,58 +5024,6 @@ private def emLoopForwardCfg {k : ℕ} {S H : Type} {x : List Bool}
+     Cfg (k + 1) Bool H x :=
+   leftCfg id (Turing.emitCfg emb ret pre c) (fun _ : Fin 1 => bufferTape []) (fun _ => 0)
+ 
+-/-- A forwarded action preserves the padded source configuration and appends
+-its optional bit after the accumulated prefix, including on a halting action. -/
+-private lemma emLoop_forward_apply {k : ℕ} {S H : Type} {x : List Bool}
+-    (emb : S → H) (ret : H) (pre : List Bool)
+-    (a : Action k Bool S) (c : Cfg k Bool S x) :
+-    (leftAction 1 id (Turing.emitAction emb ret a)).apply (emLoopForwardCfg emb ret pre c) =
+-      emLoopForwardCfg emb ret pre (a.apply c) := by
+-  unfold emLoopForwardCfg
+-  rw [leftCfg_apply]
+-  have he : (Turing.emitAction emb ret a).apply (Turing.emitCfg emb ret pre c) =
+-      Turing.emitCfg emb ret pre (a.apply c) := by
+-    refine Cfg.ext rfl rfl rfl rfl ?_
+-    simp only [Turing.emitAction, Turing.emitCfg, Action.apply, List.append_assoc]
+-  rw [he]
+-
+-/-- Guarded forwarding with one inactive tape, proved locally so this batch
+-does not depend on the concurrent `Turing.emit_run` admission.
+-**Proof sketch.** The host sees exactly the source's active symbols. Apply
+-the forwarded-action identity once per live source step and induct; the source
+-may halt on the final action, after that action's emission is forwarded. -/
+-private lemma emLoop_forward_run {k : ℕ} {S H : Type} {x : List Bool}
+-    (src : MultiTapeTM k Bool S) (host : MultiTapeTM (k + 1) Bool H)
+-    (emb : S → H) (ret : H)
+-    (hagree : ∀ q inp work, host.tr (emb q) inp work =
+-      leftAction 1 id (Turing.emitAction emb ret (src.tr q inp (fun i => work i.castSucc))))
+-    (pre : List Bool) (c : Cfg k Bool S x) (t : ℕ)
+-    (hlive : ∀ j < t, (src.runFrom c j).state ≠ none) :
+-    host.runFrom (emLoopForwardCfg emb ret pre c) t =
+-      emLoopForwardCfg emb ret pre (src.runFrom c t) := by
+-  have hs (d : Cfg k Bool S x) (hd : d.state ≠ none) :
+-      host.step (emLoopForwardCfg emb ret pre d) =
+-        emLoopForwardCfg emb ret pre (src.step d) := by
+-    cases hq : d.state with
+-    | none => exact False.elim (hd hq)
+-    | some q =>
+-      have hstate : (emLoopForwardCfg emb ret pre d).state = some (emb q) := by
+-        simp [emLoopForwardCfg, leftCfg, Turing.emitCfg, hq]
+-      have hwork : (fun i => (emLoopForwardCfg emb ret pre d).workTapeSymbols i.castSucc) =
+-          d.workTapeSymbols := by
+-        funext i
+-        simp [emLoopForwardCfg, leftCfg, Turing.emitCfg, Cfg.workTapeSymbols,
+-          Fin.addCases, i.isLt]
+-      have hin : (emLoopForwardCfg emb ret pre d).inputSymbol = d.inputSymbol := rfl
+-      simp only [MultiTapeTM.step, hstate, hq]
+-      rw [hagree, hwork, hin]
+-      exact emLoop_forward_apply emb ret pre _ d
+-  induction t with
+-  | zero => rfl
+-  | succ t ih =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hlive j (by omega)),
+-      hs _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+-
+ /-- The forwarding call stores output physically and keeps the former payload
+ tape blank at zero. All body, counter, and fuel data use the existing layout. -/
+ private def emLoopCall (body F : FinTM Bool) (anchor : body.State) {x : List Bool}
+@@ -5119,8 +5067,25 @@ private lemma emLoopHost_body_forward (body F : FinTM Bool) (anchor : body.State
+       emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
+         (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre
+         ((loopBodySource body F anchor).runFrom c t) := by
+-  exact emLoop_forward_run (loopBodySource body F anchor) (emLoopHost body F anchor findMode).tm
+-    _ _ (by intros; rfl) pre c t hlive
++  -- Pad the stopped body, then use the public forwarding contract in this host.
++  let src := loopBodySource body F anchor
++  let padded : MultiTapeTM (body.k + 1 + (1 + F.k) + 1) Bool (body.State × Bool) :=
++    ⟨src.q₀, fun q inp work => leftAction 1 id (src.tr q inp (fun i => work i.castSucc))⟩
++  have hrun (u : ℕ) := leftCfg_run src padded id (fun _ _ _ => rfl)
++    c (fun _ : Fin 1 => bufferTape []) (fun _ => 0) u
++  have hcfg (emb : body.State × Bool → LoopHostState body F) (ret : LoopHostState body F)
++      (d : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) :
++      Turing.emitCfg emb ret pre (leftCfg id d (fun _ : Fin 1 => bufferTape []) (fun _ => 0)) =
++        emLoopForwardCfg emb ret pre d := by
++    refine Cfg.ext ?_ rfl rfl rfl rfl
++    simp [Turing.emitCfg, emLoopForwardCfg, leftCfg]
++  rw [← hcfg]
++  rw [Turing.emit_run padded _ _ _ ?_ pre _ t ?_, hrun t, hcfg]
++  · intro q inp work
++    simp [padded, src, emLoopHost, Turing.emitAction, leftAction, Option.map_id]
++  · intro u hu
++    rw [hrun u]
++    simpa [Cfg.Halted, leftCfg] using hlive u hu
+ 
+ /-- A live anchor endpoint is forwarded after one additional stop step.
+ The exact endpoint keeps every inactive tape and carries the false stop flag.
+-- 
+2.51.1
+

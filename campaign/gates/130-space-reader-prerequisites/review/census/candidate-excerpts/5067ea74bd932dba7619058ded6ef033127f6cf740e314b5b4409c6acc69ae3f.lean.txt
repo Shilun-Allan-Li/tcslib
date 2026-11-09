@@ -1,0 +1,52 @@
+/-- Initialization builds the marked origin block and both boundaries.
+**Proof sketch.** Write `k` marked blank cells, write the right boundary and
+turn left, traverse the same `k` cells without altering them, then write the
+left boundary. All four phases preserve the native input and output. -/
+private lemma sweep_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (x : List Γ) :
+    (sweepTM M).tm.runFrom ((sweepTM M).tm.initCfg (x.map (sweepEmbed Γ M.k))) (2 * M.k + 2) =
+      sweepStart M (M.tm.initCfg x) 0 1 (-1) := by
+  let p := sweepPos M.k (M.tm.initCfg x).inputPos
+  let B := (blankRow (Γ := Γ) M.k true).map (fun a => some (sweepSymbol a))
+  have hlen : (blankRow (Γ := Γ) M.k true).length = M.k := by simp [blankRow]
+  have hp : p = 1 := by apply Fin.ext; simp [p, sweepPos]
+  have hinit : (sweepTM M).tm.initCfg (x.map (sweepEmbed Γ M.k)) =
+      sweepCfg (some (.init 0)) p 0 [] [] [] := by
+    refine Cfg.ext rfl hp.symm ?_ rfl rfl
+    funext i z
+    simp [sweepCfg, sweepTape]
+  have hturn : (sweepTM M).tm.step
+      (sweepCfg (some (.init ⟨M.k, by omega⟩)) p M.k B.reverse [] []) =
+      sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse [] := by
+    change ((sweepTM M).tm.tr (.init ⟨M.k, by omega⟩) _ _).apply _ = _
+    simp only [sweepTM, lt_self_iff_false, ↓reduceDIte]
+    simpa only [sweepAct, SignType.zero_eq_zero, moveInputPos_zero, List.tail_nil,
+      Option.toList_none, List.append_nil] using
+      sweep_turn_left (S := SweepState Γ M.State M.k)
+        (some (.init ⟨M.k, by omega⟩)) (some .back) p (M.k : ℤ)
+        B.reverse [] [] (some sweepBoundary) none .zero
+  have hback := sweep_run_reverse (sweepTM M).tm (fun _ : Unit => SweepState.back)
+    sweepSymbol (fun s a => (s, a)) (by intro s a inp; rfl) p []
+    (blankRow (Γ := Γ) M.k true).reverse () ((M.k : ℤ) - 1) [some sweepBoundary] []
+  have hback' : (sweepTM M).tm.runFrom
+      (sweepRevCfg (some .back) p ((M.k : ℤ) - 1) [some sweepBoundary] B.reverse []) M.k =
+      sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] [] := by
+    simpa [B, List.map_reverse, hlen, sweepFold_id] using hback
+  have hlast : (sweepTM M).tm.step
+      (sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] []) =
+      sweepRevCfg (some (.growLeft M.tm.q₀ 0)) p (-1)
+        (B ++ [some sweepBoundary]) [some sweepBoundary] [] := by
+    have hr : (sweepRevCfg (some (SweepState.back (Γ := Γ) (S := M.State) (k := M.k)))
+        p (-1) (B ++ [some sweepBoundary]) [] []).workTapeSymbols = fun _ => none := by
+      funext i
+      simp [Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+    change ((sweepTM M).tm.tr .back _ _).apply _ = _
+    rw [hr]
+    exact sweepRevCfg_write _ _ _ _ _ _ _ _
+  rw [show 2 * M.k + 2 = (M.k + 1) + M.k + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_succ_eq_step', hinit, sweep_init_block]
+  simp only [zero_add, List.append_nil, List.drop_nil]
+  rw [hturn, hback', hlast]
+  congr 1
+  simp [tapeZone, tapeRow, blankRow, headAt, B]

@@ -1,0 +1,3 @@
+theorem not_prime_of_lt_lovaszPrime {n q : ℕ} (h1 : 2 ^ Nat.clog 2 (2 * n) < q)
+    (h2 : q < lovaszPrime n) : ¬ q.Prime := fun hq =>
+  Nat.find_min (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1)) h2 ⟨h1, hq⟩

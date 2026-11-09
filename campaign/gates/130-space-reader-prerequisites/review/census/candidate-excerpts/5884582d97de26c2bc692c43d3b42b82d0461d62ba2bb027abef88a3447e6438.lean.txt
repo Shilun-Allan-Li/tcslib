@@ -1,0 +1,28 @@
+/-- The completed source enters the right scan by a positive native move.
+Clamping guarantees a position at least one even on empty input.
+**Proof sketch.** The mandatory positive move reaches a position of at least one.
+Apply the right-scan induction to its remaining distance; neither that move
+nor the scan changes the completed source work tapes or output. -/
+private lemma emCall_right_finish (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (hc : c.state = none) :
+    ∃ t ≤ x.length + 2,
+      (emCallRightTM M).tm.runFrom (emCallRightCfg M c) t =
+        emCallRightScan M c none x.length (le_refl _) := by
+  let p := moveInputPos c.inputPos .pos
+  have hp : 1 ≤ p.val := by
+    dsimp [p, moveInputPos]
+    split <;> simp_all <;> omega
+  let j := p.val - 1
+  have hj : j ≤ x.length := by have := p.isLt; dsimp [j]; omega
+  have hs : (emCallRightTM M).tm.step (emCallRightCfg M c) =
+      emCallRightScan M c (some true) j hj := by
+    simp only [MultiTapeTM.step, emCallRightCfg, hc, Option.map_none, Option.getD_none]
+    change (controlAction .pos (some (Sum.inr true))).apply _ = _
+    rw [controlAction_apply]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    apply Fin.ext
+    change p.val = j + 1
+    dsimp [j]; omega
+  refine ⟨1 + (x.length - j + 1), by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs]
+  exact emCall_right_scan M c (x.length - j) j hj (by omega)

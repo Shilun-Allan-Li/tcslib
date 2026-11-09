@@ -1,0 +1,34 @@
+/-- The maximum pass and native rewind establish the streaming seam with
+exactly `numVars` in unary, empty output, and both work heads at zero.
+
+**Proof sketch.** Install the literal-buffer marker, run the complete silent
+maximum scan, then use the audited native rewind contract. The bound is
+linear in the serialized formula length and also covers the empty formula. -/
+private lemma satRed_start (φ : CNF ℕ) :
+    ∃ t ≤ 3 * (CNF.serialize φ).length + 5,
+      satRedTM.tm.runFrom (satRedTM.tm.initCfg (CNF.serialize φ)) t =
+      satRedCfg (CNF.serialize φ) (some 9) 0 (Nat.zero_le _) φ.numVars
+        (satRedBuffer [] 0) 0 0 [] := by
+  let x := CNF.serialize φ
+  obtain ⟨s, hs, hr⟩ := satRed_maxFormula x φ [] [] (by simp [x])
+    0 (satRedBuffer [] 0) 0 []
+  have hr' : satRedTM.tm.runFrom
+      (satRedCfg x (some 2) 0 (Nat.zero_le _) 0 (satRedBuffer [] 0) 0 0 []) s =
+      satRedCfg x (some 7) (x.length - 1) (Nat.sub_le _ _) φ.numVars
+        (satRedBuffer [] 0) 0 0 [] := by simpa [x] using hr
+  let cfg := satRedCfg x (some 7) (x.length - 1) (Nat.sub_le _ _) φ.numVars
+    (satRedBuffer [] 0) 0 0 []
+  obtain ⟨r, hb, hrew⟩ := FinTM.timed_rewind satRedTM.tm (7 : Fin 35) (8 : Fin 35) (some (9 : Fin 35))
+    (by
+      intro inp work
+      simp [satRedTM, satRedAction, FinTM.controlAction])
+    (by
+      intro inp work
+      cases inp <;> simp [satRedTM, satRedAction, FinTM.controlAction]) cfg rfl
+  have he : {cfg with state := some 9, inputPos := 1} =
+      satRedCfg x (some 9) 0 (Nat.zero_le _) φ.numVars (satRedBuffer [] 0) 0 0 [] := by
+    exact Cfg.ext rfl rfl rfl rfl rfl
+  rw [he] at hrew
+  refine ⟨2 + (s + r), by dsimp only [cfg, satRedCfg, x] at hb; omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, satRed_init, MultiTapeTM.runFrom_add, hr']
+  exact hrew

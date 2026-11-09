@@ -1,0 +1,16 @@
+/-- Capture the canonizer's table, then run the timed interpreter with the retained clock. -/
+private def timedCaptureTM (M : FinTM Bool) (clock : Fin M.k) : FinTM Bool where
+  k := M.k + (1 + 4)
+  State := Option M.State ⊕ TimedControl
+  tm :=
+    { q₀ := .inl (some M.tm.q₀)
+      tr := fun q inp work => match q with
+        | .inl (some q) =>
+          let a := M.tm.tr q inp (fun i => work (Fin.castAdd 5 i))
+          ⟨a.inputTape, tapeBlocks a.workTapes
+            (a.output.map some, if a.output = none then 0 else .pos)
+            (fun _ => (none, 0)), none, some (.inl a.state)⟩
+        | .inl none => controlAction 0 (some (.inr timedInterpreter.q₀))
+        | .inr q => timedFrameAction M clock (timedInterpreter.tr q inp
+            (timedSix (fun i => work (Fin.natAdd M.k (i.castAdd 1)))
+              (work (clock.castAdd 5)) (work (Fin.natAdd M.k (4 : Fin 5))))) }

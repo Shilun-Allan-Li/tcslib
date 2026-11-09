@@ -1,0 +1,11 @@
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1455,7 +1455,7 @@
+   · rw [← foldr_bit_eq_ofDigits]
+     change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _
+     rw [(canonCount_spec w.length.bits).2.2]
+-    change Nat.bit true (codeBitsNat w.length.bits + 1) = _
++    rw [← codeBitsNat_eq]
+     rw [codeBitsNat_bits]
+     simp only [Nat.bit_val, Bool.toNat_true]
+     omega

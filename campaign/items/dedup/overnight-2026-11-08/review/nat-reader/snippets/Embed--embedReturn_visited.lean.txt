@@ -1,0 +1,33 @@
+private lemma embedReturn_visited (N : MultiTapeTM k Symbol S)
+    (R : MultiTapeTM k Symbol (S ⊕ Unit))
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+    (c : Cfg k Symbol S x) (t : ℕ) (j : Fin k) :
+    R.visitedByTapeHead (c.mapState Sum.inl) t j = N.visitedByTapeHead c t j := by
+  unfold MultiTapeTM.visitedByTapeHead
+  congr 1
+  funext u
+  by_cases hc : c.state = none
+  · rw [R.runFrom_of_halt _ (by simp [Cfg.mapState, hc]), N.runFrom_of_halt _ hc]
+    rfl
+  · have hrun := MultiTapeTM.runFrom_comm_of_step embedReturnCfg
+      (embedReturn_step N R hleft hidle) c u
+    rw [embedReturnCfg_live c hc] at hrun
+    exact congrArg (fun d => d.workTapePos j) hrun
+
+/-- **R1′ space, suppressing flavor** (round-1 repair
+R1): at every time and on every tape, the returning embedding's visited set
+from the `Sum.inl`-mapped seam equals the closed embedding's from the plain
+seam — the trajectories coincide through the halt, and afterwards one idles
+at the live anchor while the other sits halted, both stationary.
+
+**Proof sketch.** For `t` up to the first source halt, both machines apply
+identical tape actions (`embedSilentRetTM_run`'s lockstep and the halting
+step's shared core); beyond it, the anchor's idle action and the halted
+absorption are both stationary, freezing both visited sets.
+
+**Fill appendix.** The direct host comparison `embedReturn_visited`
+handles initially halted and live starts separately. It uses neither
+through-halt contract nor a capture-separation hypothesis. -/

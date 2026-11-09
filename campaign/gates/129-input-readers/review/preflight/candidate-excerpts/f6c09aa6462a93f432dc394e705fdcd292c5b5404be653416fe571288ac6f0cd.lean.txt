@@ -1,0 +1,14 @@
+theorem probe_fold_hentry (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x)
+    (hin : d.inputPos = 1) :
+    (inputFoldTM k δ a₀).step (probeFoldR δ a₀ d 0) = probeFoldD δ a₀ d := by
+  have hs : (probeFoldR δ a₀ d 0).inputSymbol = none := by
+    simp [Cfg.inputSymbol, probeFoldR]
+  change ((inputFoldTM k δ a₀).tr (.bwd _) _ _).apply _ = _
+  simp only [inputFoldTM, hs]
+  apply Cfg.ext
+  case inputPos =>
+    simp only [Action.apply, inputMoveAction, probeFoldR, probeFoldD, hin]
+    rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp)]
+    apply Fin.ext
+    simp
+  all_goals simp [Action.apply, inputMoveAction, probeFoldR, probeFoldD]

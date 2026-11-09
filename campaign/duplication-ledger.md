@@ -1795,3 +1795,79 @@ only after Seyoon's actual merge. Earlier running-status passages are historical
 ## Overnight next12.2c checkpoint
 
 #233 is actually merged at `9b5dcf46408db681bcbc721930ef2203fa6bc47d`; MAC8 is current. The enumerated MIG leaves/frames/rewinds and five LIVE/seven None first-entry conversions are now on campaign. Remaining existing FE-LIVE-1 instances and the seven SG1 retention kinds keep their exact cleanup scope and owner. Mechanical existing-API work begins as small separate family PRs, each gated/replayed; no future-copy, public-interface or new-import permission is inferred. New decisions pause only their fronts. All morning auditors are Codex per Seyoon's latest batch instruction.
+
+
+## Overnight source PR candidates: scoped implementation changes, not retirements
+
+Current merged Lean stays `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/MAC8. None of these PRs is merged or
+externally gated yet. Counts below name inspected implementation changes, not deleted
+public declarations, new unique family members, directed copy-screen edges or global absence.
+The current pins and actual replay/source/AX/control limits are in HANDOFF§0 and
+status/2026-11-08-overnight/queue.json.
+
+| Kind / inspected scope | Candidate source | Canonical reuse / bounded disposition |
+|---|---|---|
+| FE-LIVE-1:9 private helpers in4 owners | #241/gate121 | existing exists_first_entry_of_fixed; comparator/InputLength candidates held and baseline-restored; no whole-family retirement |
+| FH-1:10 current consumers in8 owners | #242/gate122 | existing exists_first_halt;7 other implementations restored and held; ordinary halt selection remains distinct from fixed-live entry |
+| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242/gate122 | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; adopted in currentf3c8; final153 replay/44comparison PASS; external selected13 PASS, root governance closure pending |
+| Five Bool-facing public run-law implementations | #243/gate123 | public generic output-prefix/extension, halt-absorption and backward-live contracts; names/headers retained; runFrom_one belongs to the paused RO1 front |
+| SafeRun zero/cons/trans implementations | #244/gate124 | public Segment operations through1 new private, non-simp own-definition conversion;3 public headers retained; no added public API |
+| Two private Hardness head/tail implementations | #245/gate125 | existing polyTimeComputable_tail/take1; SAT counterparts wait for the separate pending import decision |
+| RS-1:one local startup hinit reconstruction | #246/gate126 | existing initCfg_eq_mapState from an already imported owner;3 public AX consumers are not3 copies; siblings needing imports remain held |
+| One private binary-address proof:definition-reader discipline | #247/gate127 | existing Nat.bit_val/Bool.toNat_true/codeBitsNat_eq; complete target has2 foreign TCS heads plus Nat.bit and6 paired controls; no copy-count subtraction |
+
+All implementation retirements remain contingent on the actual gate closure and Seyoon's
+merge. Current screen extraction counts are parser/filter measures, not interface censuses.
+The three BLIVE finds do not reopen the already merged two named #215 implementations; they
+extend bounded enumeration into these newly touched owners. Further mechanical same-kind
+members found there are reviewed under the standing rule before final source settlement.
+
+Seven retained SG1 structural kinds and the wider FE-LIVE-1 acknowledgment keep their exact
+owner/window: maintainer, next12.2c after active MIG-1 and before further SAT/Hardness fills.
+The present partial cleanups do not acknowledge future copies, retire those whole kinds,
+change a public statement/import/home or close another watch. Ladner's approved17-declaration
+statement skeleton/#249, with6 mathematical holes, is not a duplication retirement.
+
+
+### Returned overnight audits (2026-11-08; not source retirement)
+
+Gates123/124/125/126/127/128 are CLOSED after scoped per-finding disposition and
+current clean-merge/replay validity. Source PRs remain unmerged, so implementation
+retirement is not yet recorded. Ladner is a statement skeleton with six direct holes.
+Gate121 remains HOLD for exposed foreign-definition reads; gate122 selected13 PASS
+does not dispose of exposed held fronts by BASE restoration. No blanket Rule10
+acknowledgment, generic host permission or existing family scope extension is inferred.
+
+
+## Approved reader prerequisites and six staged operational repairs (2026-11-08)
+
+PR#251/gate129 adds the three explicitly approved non-simp readers (including the exact shared controlAction_def name) and repairs six exposed old proof bodies through existing equations: controlAction_apply, step_of_tapeAction_move/write, step_of_inputMoveAction, walkTM_run_ofCfg and private scan_fold_trace. They consume live-step, action-field and input-symbol equations instead of re-deriving those readings. All old headers/imports/definitions remain exact. Four selected closures add existing standard Classical.choice dependencies, with no new axiom/admission. Current source/certificate and closing-form candidates are retained in gate129. This is a scoped staged implementation change; only actual merge retires these six inspected implementations, not every operational proof anywhere in TCSlib.
+
+The wider complete closing-form census retains 39 source candidate chunks/69 raw lines. Unselected operational proofs and the foreign owner proof of published Action.apply_workTapes are not certified or acknowledged by the selected6 guard. Its possible exact owner-home move is being assessed separately and needs a human home ruling. Other candidates needing public readers, imports or statement decisions remain held. No legacy Rule10 exemption, future-copy permission or all-owner/global absence follows. Existing debt kinds/owner/window stay exact.
+
+PR#252/gate130 contains only the five explicitly approved core/NDClockHost/Sweep readers. Hypothetical MARMTime/Startup/SingleTape consumer repairs are independent feasibility evidence, not landed implementations or family retirements. No consumer source was adopted, mathematical hole filled or source gate closed.
+
+### Gate 129's current operational proof scope
+
+#251 now has seven exact-header old proof repairs: the former six plus the
+terminal branch of FinTM.pairExtractTM_fst_run. Input-only action application
+and extractor halt now cite existing one-tape / zero-tape and action equations.
+Only on actual merge do these seven inspected proof implementations retire.
+The current 50-file comparison has two new directed text matches (walk versus
+one-tape move/write). Their arbitrary-head versus one-selected-head and
+write/no-write premises do not identify a replaceable same-contract theorem.
+Five old pair reports disappear. These are pair counts, not new debt or a
+claim of whole-kind retirement. The approved separate Configuration move in
+#253 is not assumed available or merged in #251. Existing retention kinds and
+cleanup windows are unchanged.
+
+### Gate 131 seam and work-tape prerequisite
+
+#253's one new public right-transition reader is used by the existing private
+right-step proof. The repaired exact-header implementation's inline table
+reading retires only on merge. The existing optional-write normalization
+moves to its Configuration home with identical statement and proof; it is
+one theorem, with one new home, not a retained copy. The 56-file copy score
+comparison has no new pair and twelve disappear, all incident to the revised
+right-step proof. These are directed text scores, not family counts. No
+whole-kind retirement or debt acceptance is made.

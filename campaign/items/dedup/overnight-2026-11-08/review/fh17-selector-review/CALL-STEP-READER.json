@@ -1,0 +1,13 @@
+{
+  "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+  "target": "call_run",
+  "before": "    unfold MultiTapeTM.step\n    simp only [mkCfg_state, hl, Option.map_some]\n",
+  "after": "    rw [MultiTapeTM.step_of_some (q := .prog l)\n      (by simp only [mkCfg_state, hl, Option.map_some])]\n",
+  "reason": "A forced unfold of the named step guard would bypass irreducibility; the existing step_of_some equation reads it without unfolding.",
+  "new_API_or_import_or_statement": false,
+  "second_forced_step_reader": {
+    "before": "    unfold MultiTapeTM.step\n    simp only [mkCfg_state]\n",
+    "after": "    rw [MultiTapeTM.step_of_some (q := .ret1 l s dir b)\n      (by simp only [mkCfg_state])]\n",
+    "reason": "Full-declaration explicit-argument scan found a second forced unfold that would bypass the named guard, in the return transition."
+  }
+}

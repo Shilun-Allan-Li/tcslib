@@ -1,0 +1,22 @@
+private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+    (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)
+    (hW : ∀ i, (n i).bits.length ≤ W) :
+    ∃ t ≤ 2 * W + 2,
+      (∀ j, j < t → ((clBankTM l).tm.runFrom
+        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state ≠
+          some (fun _ => some (0 : Fin 4))) ∧
+      (clBankTM l).tm.runFrom
+        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =
+        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by
+  let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])
+  let finishCfg := clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits [])
+  have finish : (clBankTM l).tm.runFrom start (2 * W + 2) = finishCfg :=
+    clBank_finish x p a n W hW
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (clBankTM l).tm (fun q => q = (fun _ : Fin l => some (0 : Fin 4)))
+    start finishCfg (2 * W + 2)
+    (by
+      rintro c ⟨q, hq, rfl⟩
+      exact clBank_idle c hq)
+    ⟨(fun _ => some (0 : Fin 4)), rfl, rfl⟩ finish
+  exact ⟨t, ht, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩

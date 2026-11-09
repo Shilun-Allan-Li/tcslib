@@ -1,0 +1,5 @@
+/-- A control action leaves all work tapes, work heads, and output unchanged. -/
+lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
+
+  intro cfg hs hp
+  exact aux cfg.inputPos.val cfg hs rfl hp

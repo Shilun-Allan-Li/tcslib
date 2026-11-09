@@ -1,0 +1,12 @@
+/-- **Timeout, success**: an attempt that has halted with output `[v]` makes the host emit
+`v` and halt. -/
+theorem timeout_success (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) {v : Bool} (ha : a.state = none) (ho : a.output = [v]) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m [v] := by
+  have hst : (runCfg (S := S) m a m sT sP).state = some (.run none (some (some v))) := by
+    simp [runCfg, hostCfg, ha, ho, capOf]
+  rw [NDTM.stepWith_of_state _ b hst]
+  simp only [hostTM, clockTr, runCfg, hostCfg_symbols_yI, yard_len]
+  rw [apply_hostCfg]
+  host_congr

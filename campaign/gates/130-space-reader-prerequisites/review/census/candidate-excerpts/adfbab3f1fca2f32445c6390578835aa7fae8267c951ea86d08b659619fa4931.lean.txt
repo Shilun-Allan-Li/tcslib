@@ -1,0 +1,44 @@
+/-- The native-input scan emits exactly the remaining input and switches to
+the candidate phase, preserving the candidate and its head at zero.
+**Proof sketch.** Induct on the remaining native suffix. A bit is emitted
+and advances the native head; the right blank takes one silent phase change. -/
+private lemma enumCont_concat_native (x s pre rest : List Bool) (hx : x = pre ++ rest) :
+    enumCont_concatTM.tm.runFrom
+      (enumCont_concatCfg x s (some false) ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre)
+      (rest.length + 1) =
+      enumCont_concatCfg x s (some true) (Fin.last (x.length + 1)) 0 x := by
+  induction rest generalizing pre with
+  | nil =>
+    have hp : x = pre := by simpa using hx
+    subst pre
+    simp only [List.length_nil]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have hr : (enumCont_concatCfg x s (some false) ⟨x.length + 1, by omega⟩ 0 x).inputSymbol =
+        none := by simp [enumCont_concatCfg, Cfg.inputSymbol]
+    unfold MultiTapeTM.step
+    change (enumCont_concatTM.tm.tr false _ _).apply _ = _
+    simp only [enumCont_concatTM, Bool.false_eq_true, ↓reduceIte, hr]
+    rw [controlAction_apply]
+    simp [moveInputPos_zero, enumCont_concatCfg]
+    rfl
+  | cons b rest ih =>
+    have hread : (enumCont_concatCfg x s (some false)
+        ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre).inputSymbol = some b := by
+      rw [inputSymbol_at _ pre.length (by simp [hx]) rfl]
+      simp [hx]
+    have hstep : enumCont_concatTM.tm.step
+        (enumCont_concatCfg x s (some false) ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre) =
+        enumCont_concatCfg x s (some false)
+          ⟨(pre ++ [b]).length + 1, by simp [hx]⟩ 0 (pre ++ [b]) := by
+      unfold MultiTapeTM.step
+      change (enumCont_concatTM.tm.tr false _ _).apply _ = _
+      simp only [enumCont_concatTM, Bool.false_eq_true, ↓reduceIte, hread]
+      refine Cfg.ext rfl ?_ rfl ?_ rfl
+      · apply Fin.ext
+        dsimp only [Action.apply, enumCont_concatCfg]
+        rw [moveInputPos_pos_of_ne_right _ (by simp [hx])]
+        simp
+      · funext i; simp [Action.apply, enumCont_concatCfg]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact ih (pre ++ [b]) (by simpa only [List.append_assoc, List.singleton_append] using hx)

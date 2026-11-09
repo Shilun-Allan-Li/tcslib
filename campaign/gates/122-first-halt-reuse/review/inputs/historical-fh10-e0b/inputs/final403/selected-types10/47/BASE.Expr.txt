@@ -1,0 +1,93 @@
+Lean.Expr.forallE
+  `M
+  (Lean.Expr.app (Lean.Expr.const `Turing.FinTM []) (Lean.Expr.const `Bool []))
+  (Lean.Expr.forallE
+    `x
+    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+    (Lean.Expr.forallE
+      `w
+      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+      (Lean.Expr.forallE
+        `t
+        (Lean.Expr.const `Nat [])
+        (Lean.Expr.forallE
+          `s
+          (Lean.Expr.const `Nat [])
+          (Lean.Expr.forallE
+            `h
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.ComputesInTime []) (Lean.Expr.const `Bool []))
+                    (Lean.Expr.bvar 4))
+                  (Lean.Expr.bvar 3))
+                (Lean.Expr.bvar 2))
+              (Lean.Expr.bvar 1))
+            (Lean.Expr.forallE
+              `hs
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                    (Lean.Expr.const `instLENat []))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Turing.MultiTapeTM.spaceUsed [Lean.Level.zero, Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))
+                                  (Lean.Expr.bvar 5)))
+                              (Lean.Expr.app
+                                (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.State []) (Lean.Expr.const `Bool []))
+                                (Lean.Expr.bvar 5)))
+                            (Lean.Expr.const `Bool []))
+                          (Lean.Expr.bvar 4))
+                        (Lean.Expr.app
+                          (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.tm []) (Lean.Expr.const `Bool []))
+                          (Lean.Expr.bvar 5)))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Turing.MultiTapeTM.initCfg [Lean.Level.zero, Lean.Level.zero])
+                                (Lean.Expr.app
+                                  (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.k []) (Lean.Expr.const `Bool []))
+                                  (Lean.Expr.bvar 5)))
+                              (Lean.Expr.app
+                                (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.State []) (Lean.Expr.const `Bool []))
+                                (Lean.Expr.bvar 5)))
+                            (Lean.Expr.const `Bool []))
+                          (Lean.Expr.app
+                            (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.tm []) (Lean.Expr.const `Bool []))
+                            (Lean.Expr.bvar 5)))
+                        (Lean.Expr.bvar 4)))
+                    (Lean.Expr.bvar 2)))
+                (Lean.Expr.bvar 1))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.ComputesInTime []) (Lean.Expr.const `Bool []))
+                      (Lean.Expr.bvar 6))
+                    (Lean.Expr.bvar 5))
+                  (Lean.Expr.bvar 4))
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app (Lean.Expr.const `Turing.FinTM.configBound []) (Lean.Expr.bvar 6))
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+                      (Lean.Expr.bvar 5)))
+                  (Lean.Expr.bvar 2)))
+              (Lean.BinderInfo.default))
+            (Lean.BinderInfo.default))
+          (Lean.BinderInfo.implicit))
+        (Lean.BinderInfo.implicit))
+      (Lean.BinderInfo.implicit))
+    (Lean.BinderInfo.implicit))
+  (Lean.BinderInfo.implicit)

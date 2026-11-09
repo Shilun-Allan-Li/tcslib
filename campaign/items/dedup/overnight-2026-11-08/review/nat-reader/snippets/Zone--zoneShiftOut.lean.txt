@@ -1,0 +1,19 @@
+def zoneShiftOut {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+    ZoneContents ℓ where
+  home := z.home
+  left := if side then z.left else zoneShiftOutW i z.left
+  right := if side then zoneShiftOutW i z.right else z.right
+  left_le := by
+    cases side
+    · exact zoneShiftOutW_capacity i z.left z.left_le
+    · exact z.left_le
+  right_le := by
+    cases side
+    · exact z.right_le
+    · exact zoneShiftOutW_capacity i z.right z.right_le
+
+attribute [simps (config := { isSimp := false }) home left right] zoneShiftOut
+
+/-! ### Pure head steps and the home write -/
+
+/-- Overwrite the virtual cell under the head. -/

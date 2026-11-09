@@ -1,0 +1,30 @@
+/-- The unary clock advances once before each positive clean call. Both
+administrative dispatches are charged, including calls returning empty words.
+**Proof sketch.** Read and advance the occupied unary clock cell, execute the entire positive clean call, and perform one return dispatch. Both surrounding configurations are exact. -/
+private lemma clRepeat_round (C : FinTM Bool) (entry exit : C.State)
+    (x s s' : List Bool) (N j t : ℕ) (hj : j < N) (hp : 0 < t)
+    (hf : ∀ r, 0 < r → r < t →
+      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) r).state ≠ some exit)
+    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k s)) t =
+      Cfg.ofWords exit (stateWord C.k s')) :
+    (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N j) (t + 2) =
+      clRepeatCfg C entry exit x (.inl 0) s' N (j + 1) := by
+  have hclock : FinTM.bufferTape (List.replicate N true) (j : ℤ) = some true := by
+    rw [FinTM.bufferTape_nat, List.getElem?_replicate_of_lt hj]
+  have tick : (clRepeatTM C entry exit).tm.step (clRepeatCfg C entry exit x (.inl 0) s N j) =
+      clRepeatCfg C entry exit x (.inl 1) s N (j + 1) := by
+    apply Cfg.ext <;>
+      simp [MultiTapeTM.step, clRepeatTM, clRepeatCfg, Cfg.workTapeSymbols, Action.apply,
+        hclock, funext_iff, -Fin.natAdd_eq_addNat]
+    all_goals
+      intro i
+      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp
+  have back : (clRepeatTM C entry exit).tm.step
+      (clRepeatCfg C entry exit x (.inr exit) s' N (j + 1)) =
+      clRepeatCfg C entry exit x (.inl 0) s' N (j + 1) := by
+    change ((clRepeatTM C entry exit).tm.tr (.inr exit) _ _).apply _ = _
+    simp only [clRepeatTM, if_true]
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+    rfl
+  rw [show t + 2 = (t + 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, tick,
+    MultiTapeTM.runFrom_succ_eq_step', clRepeat_call C entry exit x s s' N (j + 1) t hp hf he, back]

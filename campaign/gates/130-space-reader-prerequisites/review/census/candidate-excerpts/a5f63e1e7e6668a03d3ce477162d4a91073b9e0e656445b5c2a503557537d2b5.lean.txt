@@ -1,0 +1,18 @@
+/-- **Redirecting a live configuration to a phase's state.** If `c` is live and `c₂` is a
+configuration of phase `i` at state `q` with `c`'s tapes, heads and output, then sending every
+state of `c` to `⟨i, q⟩` gives `c₂` tagged by `i`.
+
+**Proof sketch.** Both sides are renamings; by `Turing.Cfg.mapState_eq_of_fields` it suffices to
+compare the left side's fields with the right side's: the states are both `some ⟨i, q⟩` since `c`
+is live, and the remaining fields are the hypotheses. -/
+theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
+    {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
+    (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
+    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+    (ho : c.output = c₂.output) :
+    c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i) := by
+  obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+  refine Cfg.mapState_eq_of_fields c _ _ ?_ (by rw [Cfg.mapState_inputPos, hin])
+    (by funext j p; rw [Cfg.mapState_workTapes, hw])
+    (by funext j; rw [Cfg.mapState_workTapePos, hp]) (by rw [Cfg.mapState_output, ho])
+  rw [Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]

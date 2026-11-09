@@ -1,0 +1,27 @@
+private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
+    (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :
+    ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,
+      (b = true ↔ clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) ∧
+      (∀ j, j < t → ∀ d, (clCmpTM.tm.runFrom
+        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state ≠ some (.inr (.inr d))) ∧
+      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =
+        clCmpCfg x p (.inr (.inr b)) w 0 := by
+  let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
+  have finish := clCmp_run x p w
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    clCmpTM.tm (fun q => ∃ d : Bool, q = .inr (.inr d))
+    (clCmpCfg x p (.inl (false, false, true)) w 0)
+    (clCmpCfg x p (.inr (.inr b)) w 0) (2 * clCmpSize w + 2)
+    (by
+      rintro c ⟨q, hq, d, rfl⟩
+      exact clCmp_idle c d hq)
+    ⟨.inr (.inr b), rfl, b, rfl⟩ finish
+  have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hh := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero] at hh
+    cases hh
+  exact ⟨t, by omega, hp, b, clCmpVerdict_spec w,
+    fun j hj d hd => hcut j hj ⟨.inr (.inr d), hd, d, rfl⟩, he⟩

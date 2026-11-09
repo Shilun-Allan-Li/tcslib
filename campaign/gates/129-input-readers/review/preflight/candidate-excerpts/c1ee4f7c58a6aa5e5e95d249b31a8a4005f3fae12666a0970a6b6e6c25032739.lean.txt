@@ -1,0 +1,14 @@
+/-- Pairing administration changes only the displayed positions and output. -/
+private lemma satPairAction_apply (M : FinTM Bool) {x : List Bool}
+    (saved : Cfg M.k Bool M.State x) (u : List Bool) (q q' : Option (Fin 8))
+    (i i' : ℕ) (hi : i ≤ x.length) (hi' : i' ≤ x.length) (j j' : ℤ)
+    (m d : SignType) (b : Option Bool) (out : List Bool)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) m = ⟨i' + 1, by omega⟩)
+    (hd : j + d.cast = j') :
+    (satPairAction M m d b q').apply (satPairCfg M saved u q i hi j out) =
+      satPairCfg M saved u q' i' hi' j' (out ++ b.toList) := by
+  refine Cfg.ext rfl hm rfl ?_ rfl
+  funext t
+  by_cases ht : t.val < M.k
+  · simp [satPairAction, satPairCfg, Action.apply, ht]
+  · simpa [satPairAction, satPairCfg, Action.apply, ht] using hd

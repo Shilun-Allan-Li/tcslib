@@ -1,0 +1,20 @@
+/-- Preparation can be exposed at its first return-state entry, with no
+premature visit and without changing its exact initialized-bank endpoint. -/
+private lemma splitPrepare_first (k : ℕ) (w s : List Bool) :
+    ∃ t ≤ 2 * (s.length + 1),
+      (∀ j < t, ((splitPrepareTM k).tm.runFrom
+        (Cfg.ofWords (input := w) (0, false) (stateWord (k + 1) s)) j).state ≠
+          some (2, decide (w.length < s.length))) ∧
+      (splitPrepareTM k).tm.runFrom
+        (Cfg.ofWords (input := w) (0, false) (stateWord (k + 1) s)) t =
+          splitPrepareReady k w s 2 0 := by
+  apply catalogFirstEntry (splitPrepareTM k).tm (2, decide (w.length < s.length))
+  · intro z hz
+    unfold MultiTapeTM.step
+    rw [hz]
+    change (controlAction 0 (some (2, decide (w.length < s.length)))).apply z = z
+    rw [controlAction_apply, moveInputPos_zero]
+    cases z
+    simp_all
+  · rfl
+  · exact splitPrepare_run k w s

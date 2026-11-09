@@ -1,0 +1,6 @@
+/-- A zero-tape placeholder supplies only the empty inactive bank of the
+virtual-input wrapper. Its own transition is never entered by this phase. -/
+private def emCallIdleTM : FinTM Bool where
+  k := 0
+  State := Unit
+  tm := ⟨(), fun _ _ _ => controlAction 0 none⟩

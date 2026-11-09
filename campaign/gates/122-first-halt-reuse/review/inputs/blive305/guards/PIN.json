@@ -1,0 +1,61 @@
+{
+  "HEAD": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "private_candidate": true,
+  "roots": [
+    {
+      "id": "BLIVE1",
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedCut_live_before",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedCutInterpreter cfg t ht s hst",
+      "source_line": 1731,
+      "literal_header": "private lemma timedCut_live_before {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    {s t : \u2115} (hst : s \u2264 t) (ht : (timedCutInterpreter.runFrom cfg t).state \u2260 none) :\n    (timedCutInterpreter.runFrom cfg s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "1016d39fda49e561a207e8a387dcdabbb706ffec544ba57bf6d6040676cb8ae0",
+      "new_chunk_sha256": "02610d4f9fcfed0d244ede4f04d42bbd20f5852f8c1c5efa0ec7c33e2977691c",
+      "old_chunk": "targets/BLIVE1/old.lean.txt",
+      "new_chunk": "targets/BLIVE1/new.lean.txt",
+      "final_complete_chunk": "/private/tmp/ab34-fh13-blive-companions/targets/BLIVE1/new.lean.txt"
+    },
+    {
+      "id": "BLIVE2",
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedPrefix_live",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm\n    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs \u03b1) x))\n    (4 * bs.length + 2 * \u03b1.length + 5) (timedPrefix_penultimate bs \u03b1 x) s (by omega)",
+      "source_line": 2230,
+      "literal_header": "private lemma timedPrefix_live (bs \u03b1 x : List Bool) (s : \u2115)\n    (hs : s < 4 * bs.length + 2 * \u03b1.length + 6) :\n    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs \u03b1) x)) s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "50add313197c4ea3a1a370ef0bcef63817861b6bd9e5f344ff708998e627ad6f",
+      "new_chunk_sha256": "e4d011f84dfc8a248bc1dfa778b355cb7934023c614c427fc4c477e4f1fd041d",
+      "old_chunk": "targets/BLIVE2/old.lean.txt",
+      "new_chunk": "targets/BLIVE2/new.lean.txt",
+      "final_complete_chunk": "/private/tmp/ab34-fh13-blive-companions/targets/BLIVE2/new.lean.txt"
+    },
+    {
+      "id": "BLIVE3",
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "universal_live_before",
+      "new_body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst",
+      "source_line": 232,
+      "literal_header": "private lemma universal_live_before {k : \u2115} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : \u2115}\n    (hst : s \u2264 t) (ht : (tm.runFrom cfg t).state \u2260 none) :\n    (tm.runFrom cfg s).state \u2260 none := by",
+      "literal_header_exact": true,
+      "old_chunk_sha256": "fe27ffab0f17a76a589d2ce0984211a6c124dd7d517429fa7ae76f0563ae3ff3",
+      "new_chunk_sha256": "8f26a8124566e4f8c80b1a35fc1920aa18a84a92835d912c7a3ae0385421b091",
+      "old_chunk": "targets/BLIVE3/old.lean.txt",
+      "new_chunk": "targets/BLIVE3/new.lean.txt",
+      "final_complete_chunk": "/private/tmp/ab34-fh13-blive-companions/targets/BLIVE3/new.lean.txt"
+    },
+    {
+      "id": 85,
+      "name": "timedCapture_start",
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "final_complete_chunk": "/private/tmp/ab34-gate122-fh10-e0b-frozen/inputs/final403/root-chunks/85/HEAD.lean.txt"
+    },
+    {
+      "id": 86,
+      "name": "universalCapture_start",
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "final_complete_chunk": "/private/tmp/ab34-gate122-fh10-e0b-frozen/inputs/final403/root-chunks/86/HEAD.lean.txt"
+    }
+  ]
+}

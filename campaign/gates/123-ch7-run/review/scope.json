@@ -1,0 +1,90 @@
+{
+  "slug": "ch7-run",
+  "wt": "ab34-natbits",
+  "branch": "codex/ab34-ch7-run-reuse",
+  "title": "Reuse public deterministic run laws in emit-loop embedding",
+  "detail": "The five acknowledged ch7 run-infrastructure proofs now consume the public output-prefix, output-extension, halt-absorption and live-prefix equations. All existing statements, definitions and imports are preserved. Loop\u2019s older companion copies were already removed by the merged SG-1 cleanup.",
+  "gate": 123,
+  "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
+  "pr": 243,
+  "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/243",
+  "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "records_capture": "a65af49cbd8e720f267b6a16b6b4812d31be0904",
+  "owner": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "roots": [
+    "Turing.step_output_prefix",
+    "Turing.runFrom_output_prefix",
+    "Turing.runFrom_output_extends",
+    "Turing.runFrom_of_halted",
+    "Turing.state_isSome_of_runFrom"
+  ],
+  "evidence_inputs": [
+    "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/items/dedup/overnight-2026-11-08/review/sg-harvest",
+    "/private/tmp/ab34-ch7-run-seals-v2"
+  ],
+  "replay_candidates": [
+    "nchr1"
+  ],
+  "source_freeze": {
+    "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+    "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
+    "gate": 123,
+    "pr": 243,
+    "rows": [
+      {
+        "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+        "BASE_blob": "3ac162843c4363e2c31082efa4b66408fd184ce8",
+        "HEAD_blob": "188fdc7b1776e0141bcbf29bc088d06628ec6539",
+        "BASE_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+        "HEAD_sha256": "b9014e1a466ec3a57207f01decce39f75d41dec30f522cc0ca3c4ba53c3f3cbd",
+        "changed_chunks": [
+          "Turing.step_output_prefix",
+          "Turing.runFrom_output_prefix",
+          "Turing.runFrom_output_extends",
+          "Turing.runFrom_of_halted",
+          "Turing.state_isSome_of_runFrom"
+        ],
+        "imports_exact": true,
+        "declaration_names_privacy_and_parser_headers_exact": true,
+        "full_chunk_freeze_scope": "declfreeze parser; exact full-header recovery and compiled evidence separately supplied"
+      }
+    ],
+    "allowed_targets": [
+      "step_output_prefix",
+      "runFrom_output_prefix",
+      "runFrom_output_extends",
+      "runFrom_of_halted",
+      "state_isSome_of_runFrom"
+    ]
+  },
+  "QA_export": "/private/tmp/ab34-overnight-qa/exports/123",
+  "lint_comparison": [
+    {
+      "kind": "style-lint.txt",
+      "BASE_bytes": 24,
+      "HEAD_bytes": 24,
+      "BASE_sha256": "c095bd4e4d87a7ded821b7583558acacf8948a71e678ad16af08b93b3abee03c",
+      "HEAD_sha256": "c095bd4e4d87a7ded821b7583558acacf8948a71e678ad16af08b93b3abee03c",
+      "stdout_or_JSON_bytes_exact": true
+    },
+    {
+      "kind": "campaign-lint.txt",
+      "BASE_bytes": 134274,
+      "HEAD_bytes": 134274,
+      "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+      "HEAD_sha256": "f5a9ce872da8a698c827fa38b7fe48379ef9841234a7cd2308a367e9d2aded12",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "sizes.json",
+      "BASE_bytes": 70,
+      "HEAD_bytes": 70,
+      "BASE_sha256": "4d415a1126b652275afad23760438bf637c59becedd6bf8ed242bf59df0d7da1",
+      "HEAD_sha256": "18de4633b0d23b0cae95a83c103b9ee42586194684ff9fd170ac89a9758fcc0d",
+      "stdout_or_JSON_bytes_exact": false
+    }
+  ],
+  "status": "PREPARING; not ready to dispatch; root final binding required",
+  "screen_population_count": 33,
+  "no_source_Git_records_or_snapshot_writes": true
+}

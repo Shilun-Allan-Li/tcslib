@@ -1,0 +1,29 @@
+/-- `inputCopyTM_run_ofCfg` (statement copied from `Build/Scan.lean:215`). -/
+theorem probe_inputCopy_contract (i : Fin k)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep) (hin : d.inputPos = 1) :
+    (inputCopyTM k i).runFrom d (2 * x.length + 2) =
+        { d with
+          state := some .done
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (x.length : ℤ)
+              then FinTM.bufferTape x (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * x.length + 2, ((inputCopyTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * x.length + 2 →
+        if j = i then
+          ((inputCopyTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (x.length : ℤ))
+        else ((inputCopyTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [probe_ic_trace i d hstate hin]
+    simp [catalogTrace, probeIcD, probeIcF, probeWriteCfg,
+      show ¬2 * x.length + 2 ≤ x.length by omega]
+  · intro t ht
+    rw [probe_ic_trace i d hstate hin]
+    simp only [catalogTrace]
+    split_ifs <;> simp [probeIcF, probeIcR, probeIcD, probeWriteCfg] <;> omega
+  · intro j t ht
+    rw [probe_ic_trace i d hstate hin]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [probeIcF, probeIcR, probeIcD, probeWriteCfg, Finset.mem_Icc] <;>
+      omega

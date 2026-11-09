@@ -1,0 +1,7 @@
+/-- Read one native cell, advancing exactly when it is the requested bit. The catalog's
+native readers traverse the whole input, so this single-cell leaf supplies the local test.
+No work tape is touched and no symbol is emitted. -/
+private def canonCellTM (k : ℕ) (bit : Bool) : MultiTapeTM k Bool (Option Bool) where
+  q₀ := none
+  tr := fun _ inp _ =>
+    inputMoveAction (if inp = some bit then 1 else 0) (some (decide (inp = some bit)))

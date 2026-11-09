@@ -1,0 +1,18 @@
+/-- Unary-bounded repetition of one clean native call. The fresh begin
+phase executes its first transition before testing the positive return. -/
+private def clRepeatTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
+  k := C.k + 1
+  State := Fin 3 ⊕ C.State
+  tm := {
+    q₀ := .inl 0
+    tr := fun q inp work => match q with
+      | .inl q =>
+        if q = 0 then
+          if work (Fin.natAdd C.k (0 : Fin 1)) = none then FinTM.controlAction 0 (some (.inl 2))
+          else ⟨0, Fin.addCases (fun _ => (none, 0)) (fun _ : Fin 1 => (none, .pos)),
+            none, some (.inl 1)⟩
+        else if q = 1 then
+          clPlacedAction (clKeepLastPlacement _) Sum.inr entry (C.tm.tr entry inp (fun i => work ((clKeepLastPlacement _).index i)))
+        else FinTM.controlAction 0 (some (.inl 2))
+      | .inr q => if q = exit then FinTM.controlAction 0 (some (.inl 0))
+          else clPlacedAction (clKeepLastPlacement _) Sum.inr q (C.tm.tr q inp (fun i => work ((clKeepLastPlacement _).index i))) }

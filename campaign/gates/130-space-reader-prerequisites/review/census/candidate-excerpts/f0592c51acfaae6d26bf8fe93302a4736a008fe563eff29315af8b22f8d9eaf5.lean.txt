@@ -1,0 +1,130 @@
+/-- The two record-tape scans write the old marked cell and shift its mark exactly once.
+They leave the head at the same field, ready for its skip, with all other data framed.
+**Proof sketch.** Apply the public map scan to the marked write, then the public scan
+contract for the move's delay transducer. The inherited tape-word identity identifies
+their composite word with the source action's field. Both exits are intercepted by
+the existing host, and both trajectories stay in the same delimited field. -/
+private theorem recordStep_tape_run {k : ℕ} {Q T S : Type}
+    [DecidableEq Q] [DecidableEq T] [DecidableEq S]
+    (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
+    (seek : MultiTapeTM 2 Bool S) (start finish : S) {x : List Bool}
+    (s : ℕ) (c : Cfg k Bool Q x) (hc : c.InWindow s) (data : RecordStepData k Q T) (i : Fin k)
+    (d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map (RecSym.digitEmb Q T)))
+    (hw : ∀ z : ℤ, -1 ≤ z → z ≤ (2 * s + 1 : ℕ) →
+      d.workTapes 0 (d.workTapePos 0 + z) = FinTM.bufferTape
+        ((List.range (2 * s + 1)).map fun (r : ℕ) =>
+          RecSym.cell (c.workTapes i ((r : ℤ) - s)) (decide (c.workTapePos i = (r : ℤ) - s))) z) :
+    RecordSeg (recordStepMachine M upd seek start finish)
+      (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (2 * s + 2)
+      {d with state := some ⟨⟨.writeTape i, data⟩, .fwd ()⟩}
+      {d with
+        state := some ⟨⟨.skipNewTape i, data⟩, .run⟩
+        workTapes := fun j z =>
+          if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + (2 * s + 1 : ℕ) then
+            FinTM.bufferTape ((List.range (2 * s + 1)).map fun (r : ℕ) =>
+              RecSym.cell (((recordStepAction M data).apply c).workTapes i ((r : ℤ) - s))
+                (decide (((recordStepAction M data).apply c).workTapePos i = (r : ℤ) - s)))
+              (z - d.workTapePos j)
+          else d.workTapes j z} (4 * (2 * s + 1) + 6) := by
+  let old : List (RecSym Q T) := (List.range (2 * s + 1)).map fun (r : ℕ) =>
+    .cell (c.workTapes i ((r : ℤ) - s)) (decide (c.workTapePos i = (r : ℤ) - s))
+  let a := recordStepAction M data
+  let write := recordStepWriteCell (Q := Q) (T := T) (a.workTapes i).1
+  let written := old.map write
+  let patch := fun (v : List (RecSym Q T)) (j : Fin 4) (z : ℤ) =>
+    if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + (old.length : ℤ)
+      then FinTM.bufferTape v (z - d.workTapePos j) else d.workTapes j z
+  let first : Cfg 4 (RecSym Q T) (ScanPhase Unit) (x.map (RecSym.digitEmb Q T)) :=
+    ⟨some (.fwd ()), d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+  have len : old.length = 2 * s + 1 := by simp [old]
+  have wlen : written.length = old.length := by simp [written]
+  obtain ⟨e1, c1, h1⟩ := recordStep_contract_clauses_range
+    (scanTM_contract (0 : Fin 4) (scanMap write) scanKeep () _) old first rfl
+    (by rw [scanTM_contract_pre]; simpa only [first, len] using hw)
+  rw [scanTM_contract_time, scanTM_contract_post] at e1
+  simp only [scanTM_contract_time, scanTM_contract_lo, scanTM_contract_hi] at c1 h1
+  rw [scanResult_map] at e1
+  let middle : Cfg 4 (RecSym Q T) (ScanPhase Bool) (x.map (RecSym.digitEmb Q T)) :=
+    ⟨some (.fwd false), d.inputPos, patch written, d.workTapePos, d.output⟩
+  have midword : ∀ z : ℤ, -1 ≤ z → z ≤ (written.length : ℤ) →
+      middle.workTapes 0 (middle.workTapePos 0 + z) = FinTM.bufferTape written z := by
+    intro z hz hu
+    dsimp only [middle, patch]
+    split_ifs with hin
+    · simp
+    · have hend : z = -1 ∨ z = (old.length : ℤ) := by rw [wlen] at hu; omega
+      rw [hw z hz (by simpa only [← len, wlen] using hu)]
+      rcases hend with rfl | rfl
+      · simp
+      · simp [FinTM.bufferTape_eq, wlen, len]
+  let f : Bool → RecSym Q T → Bool × RecSym Q T := match (a.workTapes i).2 with
+    | .pos => scanShift recordStepGetMark recordStepSetMark | _ => scanKeep
+  let g : Bool → RecSym Q T → Bool × RecSym Q T := match (a.workTapes i).2 with
+    | .neg => scanShift recordStepGetMark recordStepSetMark | _ => scanKeep
+  let result := scanResult f g false written
+  obtain ⟨e2, c2, h2⟩ := recordStep_contract_clauses_range
+    (scanTM_contract (0 : Fin 4) f g false _) written middle rfl
+    (by rw [scanTM_contract_pre]; exact midword)
+  rw [scanTM_contract_time, scanTM_contract_post] at e2
+  simp only [scanTM_contract_time, scanTM_contract_lo, scanTM_contract_hi] at c2 h2
+  have word : result.2 = (List.range (2 * s + 1)).map fun (r : ℕ) =>
+      RecSym.cell ((a.apply c).workTapes i ((r : ℤ) - s))
+        (decide ((a.apply c).workTapePos i = (r : ℤ) - s)) := by
+    have h := recordStep_tape_word (T := T) s c hc a i
+    dsimp only at h
+    rw [scanResult_map] at h
+    cases hm : (a.workTapes i).2 <;> simpa [result, f, g, hm, written, write, old] using h
+  have bounded {A : Type} (row : MultiTapeTM 4 (RecSym Q T) A)
+      (base : Cfg 4 (RecSym Q T) A (x.map (RecSym.digitEmb Q T))) (n : ℕ)
+      (he : base.workTapePos = d.workTapePos)
+      (hh : ∀ j u, u ≤ n → (row.runFrom base u).workTapePos j ∈
+        Finset.Icc (if j = 0 then base.workTapePos j - 1 else base.workTapePos j)
+          (if j = 0 then base.workTapePos j + (old.length : ℤ) else base.workTapePos j)) :
+      ∀ u ≤ n, ∀ j, |(row.runFrom base u).workTapePos j - d.workTapePos j| ≤ ((2 * s + 2 : ℕ) : ℤ) := by
+    intro u hu j
+    have h := hh j u hu
+    rw [he] at h
+    split_ifs at h with hj
+    · simp only [Finset.mem_Icc, len] at h
+      rw [abs_le]; constructor <;> omega
+    · rw [Finset.mem_Icc] at h
+      rw [le_antisymm h.2 h.1]
+      simp
+      omega
+  have p1 := recordStep_phase_run M upd seek start finish ⟨.writeTape i, data⟩
+    (by intro b h; cases h) first
+    (⟨some (.done ()), d.inputPos, patch written, d.workTapePos, d.output⟩) (2 * old.length + 2)
+    e1 (.done ()) rfl (⟨⟨.shiftTape i, data⟩, .fwd false⟩ : RecordStepControl k Q T S) rfl
+    (by intro u hu q hq; cases q with
+        | done v => exact (c1 u hu v hq).elim
+        | fwd v => rfl
+        | bwd v => rfl)
+    d.workTapePos (2 * s + 2) (bounded _ first _ rfl h1)
+  have row2 : recordStepRows M upd seek ⟨.shiftTape i, data⟩ = scanTM 4 0 f g false := by
+    cases hm : (a.workTapes i).2 <;> simp [recordStepRows, f, g, a] at hm ⊢ <;> rw [hm]
+  let final : Cfg 4 (RecSym Q T) (ScanPhase Bool) (x.map (RecSym.digitEmb Q T)) :=
+    ⟨some (.done result.1), d.inputPos, patch result.2, d.workTapePos, d.output⟩
+  have end2 : (recordStepRows M upd seek ⟨.shiftTape i, data⟩).runFrom middle (2 * old.length + 2) = final := by
+    rw [row2, ← wlen, e2]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    dsimp only [final, middle, patch]
+    rw [wlen]
+    split_ifs <;> rfl
+  have p2 := recordStep_phase_run M upd seek start finish ⟨.shiftTape i, data⟩
+    (by intro b h; cases h) middle final (2 * old.length + 2) end2 (.done result.1) rfl
+    (⟨⟨.skipNewTape i, data⟩, .run⟩ : RecordStepControl k Q T S) rfl
+    (by intro u hu q hq; cases q with
+        | done v =>
+          rw [row2] at hq
+          exact (c2 u (by simpa only [wlen] using hu) v hq).elim
+        | fwd v => rfl
+        | bwd v => rfl)
+    d.workTapePos (2 * s + 2) (by
+      rw [row2]
+      exact bounded _ middle _ rfl (by simpa only [wlen] using h2))
+  simp only [first, middle, final, recordStep_mapState_mk, Option.map_some] at p1 p2
+  have total := Segment.trans p1 p2
+  have time : (2 * old.length + 2 + 1) + (2 * old.length + 2 + 1) = 4 * (2 * s + 1) + 6 := by omega
+  rw [time] at total
+  simpa [first, middle, final, patch, recordStep_mapState_mk, word, a, len] using total

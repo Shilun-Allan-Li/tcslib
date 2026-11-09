@@ -1,0 +1,93 @@
+/-- The initial-record phase on the diagonalizer's tape plan. Only the initializer's scratch
+bank must be blank; the witness and runner banks are framed. [AB09, Theorem 4.8]
+
+**Proof sketch.** Select the record, radius and initializer scratch tapes. Read the selected
+configuration through the R1 reconstruction equation and its field equations. Apply the
+published initial-record row, transport its run by R1 and reconstruct the framed endpoint. -/
+private lemma sph_initial_record (M : FinTM Bool) (KR m : ℕ) :
+    ∃ (KI : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (KI + KR + m + 2) (RecSym M.State (Fin 3)) P)
+      (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (KI + KR + m + 2) (RecSym M.State (Fin 3)) P
+          (x.map (RecSym.digitEmb M.State (Fin 3))),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength M.k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (KI + KR + m + 2), 2 ≤ j.val → j.val < KI + 2 →
+          ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength M.k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength M.k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength M.k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (M.tm.initCfg x) 0) (q - d.workTapePos j)
+                else d.workTapes j q} := by
+  classical
+  obtain ⟨KI, P, hF, hD, I, entry, exit, C, hI⟩ :=
+    exists_recordInitTM M.k M.tm.q₀ (0 : Fin 3)
+  letI := hF
+  letI := hD
+  let ι := sphInitSel KI KR m
+  have h0 : ι 0 = 0 := Fin.ext rfl
+  have h1 : ι 1 = 1 := Fin.ext rfl
+  refine ⟨KI, P, hF, hD, embedEmitTM ι I, entry, exit, C, ?_⟩
+  intro x s ws hws d hd hin hrad hslot hblank
+  let a := d.select ι
+  have hrecon : embedEmitCfg ι d.workTapes d.workTapePos d.output a = d :=
+    embedEmitCfg_select ι d
+  obtain ⟨hstate, hinput, houtput, htapes, hheads⟩ := sph_select_fields ι d
+  obtain ⟨t, htime, hcut, henv, hr⟩ := hI s ws hws a (hstate.trans hd) (hinput.trans hin)
+    (by intro p hp hp'; rw [htapes, hheads, h1]; exact hrad p hp hp')
+    (by intro p hp hp'; rw [htapes, hheads, h0]; exact hslot p hp hp')
+    (by
+      intro j hj p
+      rw [htapes]
+      exact hblank (ι j) hj (by have := j.isLt; exact this) p)
+  have hrun (u : ℕ) :
+      (embedEmitTM ι I).runFrom d u =
+        embedEmitCfg ι d.workTapes d.workTapePos d.output (I.runFrom a u) := by
+    have h := embedEmitTM_runFrom ι I d.workTapes d.workTapePos d.output a u
+    rwa [hrecon] at h
+  refine ⟨t, htime, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [hrun, embedEmitCfg_state]
+    exact hcut u hu
+  · intro u hu j
+    rw [hrun]
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_pos, ← hheads]
+      exact henv u hu i
+    · rw [(embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).2]
+      simp only [sub_self, abs_zero, Nat.cast_nonneg]
+  · rw [hrun, hr, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [embedEmitCfg_state]
+    · rw [embedEmitCfg_inputPos]
+      exact hinput
+    · funext j q
+      by_cases hj : j ∈ Set.range ι
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_tape]
+        have hz : ι i = 0 ↔ i = 0 := by rw [← h0]; exact ι.injective.eq_iff
+        simp only [a, hheads, htapes, hz]
+      · rw [(embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).1]
+        have hj0 : j ≠ 0 := fun h => hj ⟨0, h0.trans h.symm⟩
+        simp only [hj0, false_and, ite_false]
+    · funext j
+      by_cases hj : j ∈ Set.range ι
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_pos]
+        exact hheads i
+      · exact (embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).2
+    · rw [embedEmitCfg_output]
+      exact houtput

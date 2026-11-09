@@ -1,0 +1,9 @@
+# Gate128 external return — independent internal review
+
+PASS within the statement/reading scope. All 22 notes accepted, 0 blocker/major/minor, no unresolved source/evidence issue and no source fix/new permission required. Exact issued 1096/be1/975/885 binding, all 777 committed frozen payloads, genuine BASE absence and source freeze, raw 17 selected ABI/AX, complete literal TCSlib nine-head guards/18 controls, exact theorem-value stop boundary, actual Nlad2 and 115-import transport and final 48/49 zero-delta comparison verify. Full receipts are in VERIFICATION.json; per-finding dispositions are separate.
+
+No mathematical target is filled or certified by new proof. Ten definitions/readings are standard-only; six direct math targets and dependent ladner remain admitted. Imported/generated theorem proof values are not recursively traversed by the collector; local auxiliary source origins remain bounded. Core/Mathlib explicit-argument rule, sourceQA check8b disabled scope, raw-source/projection/abbreviation limits and all debt-family bounds persist.
+
+Recommend root may close the statement gate after preserving the report verbatim with SHA, recording 22 scoped dispositions and confirming exact pushed source/currentMAC8 validity. The standing records-only source-map criterion in the frozen 125/126 review applies: if current campaign remains the same 9b5/MAC8 source/config/object baseline, records commits do not invalidate exact standalone Nlad2. Any source merge needs the stated dependency-validity argument or current complete merged-tree replay. Clean merge/user decision is separate. This review sets no status and grants no merge clearance, fill readiness, debt waiver or pending SAT-reader approval.
+
+No new Lean, native probe, replay, matching score computation or screen ran, and no source/Git/canonical/X data changed by this reviewer. External claimed computations are distinguished from this read-only blob/source/data inspection.

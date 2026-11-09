@@ -1,0 +1,7 @@
+/-- The counter loop's escape anchor takes one silent stationary step to its done anchor.
+Every other transition is delegated to the public counter loop. -/
+private def iw_machine : MultiTapeTM 2 Bool (CounterLoopState Bool) where
+  q₀ := .dec .run
+  tr := fun q inp work => match q with
+    | .escape => FinTM.controlAction 0 (some .done)
+    | _ => (counterLoopTM iw_body false (some true)).tr q inp work

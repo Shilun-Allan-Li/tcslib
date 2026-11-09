@@ -1,0 +1,58 @@
+/-- Package an exit segment and its joint trajectory into the headline's concrete clauses.
+
+**Proof sketch.** First-exit uniqueness supplies the cut without unfolding `Segment`.
+Read the body fields from each observed clock configuration, keeping the same source time
+for every field. The endpoint word and the time bound are supplied by the caller. -/
+private theorem sc_deliver {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x) (q : S)
+    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ) (τ B : ℕ)
+    (exit : Option S → sc_State S) (w' : List Bool) (T : ℕ)
+    (width : w'.length = w.length) (time : T ≤ B)
+    (exit_mem : some (exit (M.runFrom c τ).state) ∈ sc_exits)
+    (run : (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) T =
+      clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+        (wordPatch ct cp (w'.map e)) cp)
+    (seg : Segment (sc_clockTM e M stopAt) sc_exits
+      (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+      (clockCfg (some (.dec q .run)) c ct cp)
+      (clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+        (wordPatch ct cp (w'.map e)) cp) T)
+    (trace : ∀ u ≤ T, ∃ v ≤ τ, ∃ z tape head,
+      (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u =
+        clockCfg z (M.runFrom c v) tape head ∧
+      head ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ))) :
+    ∃ T ≤ B, ∃ w' : List Bool, w'.length = w.length ∧
+      (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) T =
+        clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+          (wordPatch ct cp (w'.map e)) cp ∧
+      (∀ u < T, ∀ r,
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+            some (.finish r) ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+            some (.timeout r)) ∧
+      ∀ u ≤ T, ∃ v ≤ τ,
+        (∀ j : Fin k,
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapes
+              j.castSucc = (M.runFrom c v).workTapes j ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+              j.castSucc = (M.runFrom c v).workTapePos j) ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).inputPos =
+          (M.runFrom c v).inputPos ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).output =
+          (M.runFrom c v).output ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+            (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
+  refine ⟨T, time, w', width, run, ?_, ?_⟩
+  · intro u hu r
+    have avoid := sc_firstExit seg exit_mem u hu
+    exact ⟨fun h => avoid ⟨r, Or.inl h⟩, fun h => avoid ⟨r, Or.inr h⟩⟩
+  · intro u hu
+    obtain ⟨v, hv, z, tape, head, seen, bound⟩ := trace u hu
+    refine ⟨v, hv, ?_, ?_, ?_, ?_⟩
+    · intro j
+      rw [seen]
+      simp [clockCfg]
+    · rw [seen]; rfl
+    · rw [seen]; rfl
+    · rw [seen]
+      simpa only [clockCfg, Fin.lastCases_last] using bound

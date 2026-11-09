@@ -1,0 +1,129 @@
+{
+  "scope": "Newly added tactic lines of exact11-body patch; explicit argument review, not whole legacy-proof Rule10 clearance",
+  "added_tactic_lines": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "added_tactic_line": "      simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "added_tactic_line": "  · rw [enumCont_agree_run tm stop qa ha c t hn]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "    rw [hz, MultiTapeTM.runFrom_zero, hret] at hs"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      dsimp only [result, clPreparedCfg]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      rw [clPlacedCfg_eq]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      dsimp only [result, clPreparedCfg]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      rw [clPlacedCfg_eq]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "    rw [MultiTapeTM.step_of_some fields.1]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "    · rw [Action.apply_state]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "    · rw [Action.apply_inputPos, moveInputPos_zero]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "      rw [Action.apply_workTapePos]"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "added_tactic_line": "    · rw [Action.apply_output, fields.2]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "added_tactic_line": "    rw [MultiTapeTM.runFrom_succ_eq_step', hrun, MultiTapeTM.step_of_some rfl]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "added_tactic_line": "      rw [MultiTapeTM.step_of_some hq]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "added_tactic_line": "      rw [FinTM.controlAction_apply, moveInputPos_zero]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "added_tactic_line": "      simp_all)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "added_tactic_line": "      rw [step_of_inputMoveAction _ _ 0 hq (q' := .done) rfl]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "added_tactic_line": "      simp only [moveInputPos_zero]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "added_tactic_line": "      apply Cfg.ext <;> simp [hq])"
+    }
+  ],
+  "published_or_same_home_or_local_heads": {
+    "MultiTapeTM.runFrom_zero": "public theorem/Deterministic",
+    "MultiTapeTM.runFrom_succ_eq_step'": "public theorem/Deterministic",
+    "MultiTapeTM.step_of_some": "public theorem/Deterministic",
+    "FinTM.controlAction_apply": "public theorem/Simulation",
+    "moveInputPos_zero": "public theorem/Configuration",
+    "step_of_inputMoveAction": "public theorem/Catalog",
+    "FinTM.moveInputPos_neg_val": "public theorem/Simulation",
+    "clCopyCfg": "same-home private definition/Hardness",
+    "clRowCfg": "same-home private definition/Hardness",
+    "clPreparedCfg": "same-home private definition/Hardness",
+    "clPlacedCfg_eq": "same-home private theorem/Hardness",
+    "enumCont_agree_run": "same-home private theorem/EXP",
+    "result": "local let",
+    "hq": "local hypothesis",
+    "hz": "local equality",
+    "hret": "local hypothesis",
+    "hend": "local hypothesis",
+    "he": "local equality",
+    "hrun": "local hypothesis",
+    "same": "local equality",
+    "finish": "local hypothesis",
+    "Action.apply_state": "published field theorem/Configuration",
+    "Action.apply_inputPos": "published field theorem/Configuration",
+    "Action.apply_workTapes": "published field theorem/Simulation",
+    "Action.apply_workTapePos": "published field theorem/Configuration",
+    "Action.apply_output": "published field theorem/Configuration",
+    "Cfg.workTapeSymbols_eq": "published field theorem/Configuration",
+    "Option.getD_none": "Core equation theorem",
+    "Function.update_eq_self": "Mathlib theorem",
+    "fields.1": "local conjunction component",
+    "fields.2": "local conjunction component"
+  },
+  "new_forbidden_explicit_Core_Mathlib_or_other_file_TCS_definition_arguments": 0,
+  "hand_review": "All new bracketed heads resolve to local equalities/lets, same-home private definitions/theorems, or the named published equations. The wider comparator new result-state proof uses same-home clPlacedCfg_eq. InputCall stationarity uses public step/controlAction equations rather than identifying controlAction/inputMoveAction by foreign delta.",
+  "unchanged_legacy_boundary": [
+    "Hardness.clA5Compare_compute retains its prior seamCompTM initialization and other operational-reader lines literally outside the replacement guard.",
+    "InputLength.exists_inputLengthTM retains prior counting/rewind proof and explicit Cfg.inputSymbol read literally outside the inline cut.",
+    "Two-guard seals test complete declarations at runFrom/step only; they are not claimed as complete foreign-definition closure seals."
+  ],
+  "reader_corrections": [
+    "InputCall last-step proof explicitly invokes MultiTapeTM.step_of_some.",
+    "Comparator final emission explicitly invokes MultiTapeTM.step_of_some and published Action field equations; removed old explicit Action.apply unfolding."
+  ]
+}

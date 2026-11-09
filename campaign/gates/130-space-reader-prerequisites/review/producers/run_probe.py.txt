@@ -1,0 +1,27 @@
+from pathlib import Path
+import json,hashlib,subprocess,time,datetime,re,sys
+O=Path(__file__).parent;pin=json.loads((O/'PIN.json').read_text());W=Path(pin['source_worktree']);label,source,relative=sys.argv[1:];snap=Path(pin['whole_output_snapshot']);assert (O/'native/RESULT.json').exists()
+project=O/'runtime'/label;(project/'.lake').mkdir(parents=True,exist_ok=True)
+if not (project/'.lake/packages').exists():(project/'.lake/packages').symlink_to(W/'.lake/packages',target_is_directory=True)
+(project/'lean-toolchain').write_bytes((W/'lean-toolchain').read_bytes());data=Path(source).read_bytes();dest=project/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data)
+root=O/'probes'/label;root.mkdir(parents=True,exist_ok=True);attempt=root/('attempt-'+str(len(list(root.glob('attempt-*')))+1).zfill(2));attempt.mkdir();(attempt/'source.lean.txt').write_bytes(data)
+def sha(b):return hashlib.sha256(b).hexdigest()
+helper=W/'devtools/seyoon/leanelab.sh';assert helper.read_bytes()==(O/'helpers/leanelab.sh.txt').read_bytes()
+argv=['bash',str(helper),str(project),str(snap),relative]
+req={'source_head':pin['source_head'],'label':label,'argv':argv,'whole_snapshot':str(snap),'source_sha256':sha(data),'helper_sha256':sha(helper.read_bytes()),'localcap':pin['localcap'],'machinecap':5,'one_own_Lean':True,'requested_nice':10,'requested_j':4,'no_olean_write':True}
+(attempt/'request.json').write_text(json.dumps(req,indent=2)+'\n');started=datetime.datetime.now(datetime.timezone.utc).isoformat();t=time.monotonic();samples=[]
+with (attempt/'raw.out').open('wb') as f:
+ p=subprocess.Popen(argv,stdout=f,stderr=subprocess.STDOUT)
+ while p.poll() is None:
+  children=subprocess.run(['pgrep','-P',str(p.pid)],capture_output=True,text=True)
+  for child in children.stdout.split():
+   q=subprocess.run(['ps','-o','pid=,ppid=,ni=,comm=','-p',child],capture_output=True,text=True);parts=q.stdout.strip().split(None,3)
+   if len(parts)==4 and Path(parts[3]).name=='lean':
+    sample={'pid':int(parts[0]),'parent_pid':int(parts[1]),'nice':int(parts[2]),'comm':parts[3]}
+    if sample not in samples:samples.append(sample)
+  time.sleep(0.1)
+ code=p.returncode
+raw=(attempt/'raw.out').read_bytes();result=req|{'UTC_start':started,'seconds':time.monotonic()-t,'exit':code,'errors':len(re.findall(rb'\berror(?::|\()',raw)),'warnings':len(re.findall(rb'\bwarning:',raw)),'sorry_warnings':raw.count(b"declaration uses 'sorry'"),'raw_sha256':sha(raw),'raw_bytes':len(raw),'observed_Lean_processes':samples,'actual_nice10_observed':bool(samples) and all(s['nice']>=10 for s in samples)}
+(attempt/'result.json').write_text(json.dumps(result,indent=2)+'\n');assert result['actual_nice10_observed']
+print(json.dumps({k:result[k] for k in ['label','exit','errors','warnings','sorry_warnings','seconds','raw_bytes','actual_nice10_observed']}),flush=True)
+raise SystemExit(code)

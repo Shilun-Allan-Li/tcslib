@@ -1,0 +1,12 @@
+/-- Reject an empty failure payload; on a nonempty payload start the
+supplied machine from its genuine initial configuration after one step. -/
+private def a3NonemptyTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k
+  State := Unit ⊕ M.State
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp work => match q with
+      | .inl _ => match inp with
+        | none => ⟨0, fun _ => (none, 0), some false, none⟩
+        | some _ => controlAction 0 (some (.inr M.tm.q₀))
+      | .inr q => (M.tm.tr q inp work).mapState Sum.inr }

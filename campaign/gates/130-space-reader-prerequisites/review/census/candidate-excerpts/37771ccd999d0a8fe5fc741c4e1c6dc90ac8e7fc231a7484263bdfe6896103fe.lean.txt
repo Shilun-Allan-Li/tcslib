@@ -1,0 +1,45 @@
+/-- A bank step is exactly one step of every component cleaner.
+**Proof sketch.** Project the disjoint data, visited-marker, and origin banks.
+Each selected action is the corresponding cleaner action; a stopped component
+performs the identity. The bank itself preserves the physical input and output. -/
+private lemma emitterBank_step {k : ℕ} {w : List Bool} (p : Fin (w.length + 2))
+    (c : Fin k → Cfg 3 Bool (Fin 4) w) :
+    (emitterBankTM k).tm.step (emitterBankCfg p c) =
+      emitterBankCfg p (fun i => emitterClearTM.tm.step (c i)) := by
+  have ha : emitterBankPart (fun i => (c i).state) (emitterBankCfg p c).workTapeSymbols =
+      fun i => match (c i).state with
+        | none => controlAction 0 none
+        | some q => emitterClearTM.tm.tr q (c i).inputSymbol (c i).workTapeSymbols := by
+    funext i
+    exact emitterBank_part p c i
+  unfold MultiTapeTM.step
+  change ((emitterBankTM k).tm.tr (fun i => (c i).state) _ _).apply _ = _
+  dsimp only [emitterBankTM]
+  rw [ha]
+  refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl
+  · dsimp only [Action.apply, emitterBankCfg]
+    congr 1
+    funext i
+    cases hs : (c i).state <;> simp [emitterBankCfg, MultiTapeTM.step, hs, controlAction, Action.apply]
+  · funext j
+    refine Fin.addCases ?_ ?_ j
+    · intro i
+      cases hs : (c i).state <;>
+        simp [emitterBankCfg, emitterSlots, MultiTapeTM.step, hs, controlAction, Action.apply,
+          -Fin.natAdd_eq_addNat]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro i
+      all_goals cases hs : (c i).state <;>
+        simp [emitterBankCfg, emitterSlots, MultiTapeTM.step, hs, controlAction, Action.apply,
+          -Fin.natAdd_eq_addNat]
+  · funext j
+    refine Fin.addCases ?_ ?_ j
+    · intro i
+      cases hs : (c i).state <;>
+        simp [emitterBankCfg, emitterSlots, MultiTapeTM.step, hs, controlAction, Action.apply,
+          -Fin.natAdd_eq_addNat]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro i
+      all_goals cases hs : (c i).state <;>
+        simp [emitterBankCfg, emitterSlots, MultiTapeTM.step, hs, controlAction, Action.apply,
+          -Fin.natAdd_eq_addNat]

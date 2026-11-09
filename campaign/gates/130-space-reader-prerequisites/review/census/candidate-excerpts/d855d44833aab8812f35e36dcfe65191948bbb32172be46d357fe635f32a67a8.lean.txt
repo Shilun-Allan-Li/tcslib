@@ -1,0 +1,10 @@
+/-- Starting at the current native head, accept a suffix of true cells and reject its
+first false cell. The catalog's whole-input scans do not supply this local suffix test. -/
+private def canonSuffixTM (m : ℕ) : MultiTapeTM m Bool (Option Bool) where
+  q₀ := none
+  tr := fun q inp _ => match q with
+    | some bit => inputMoveAction 0 (some bit)
+    | none => match inp with
+      | some true => inputMoveAction 1 none
+      | some false => inputMoveAction 0 (some false)
+      | none => inputMoveAction 0 (some true)

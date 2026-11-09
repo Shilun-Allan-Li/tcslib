@@ -1,0 +1,37 @@
+/-- The public record reader recovers exactly the fixed action fields from
+their finite buffer, regardless of the actual successor's state space.
+
+**Proof sketch.** The movement, work actions and emission occupy exactly
+`4k + 4` bits. Replace only the remaining successor field by the halt tag,
+then invoke `codeReadActionK_append` at the one-state type. -/
+private lemma h1Payload_correct {k n : ℕ} (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (h1RecordWidth k) → Bool)
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k)) :
+    h1Payload k bits = ⟨a.inputTape, a.workTapes, a.output, none⟩ := by
+  have moves (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
+  have writes (b : Option (Option Bool)) : (optOptBoolBits b).length = 2 := by
+    cases b with
+    | none => rfl
+    | some b => cases b with
+      | none => rfl
+      | some b => cases b <;> rfl
+  have emits (b : Option Bool) : (optBoolBits b).length = 2 := by
+    cases b with
+    | none => rfl
+    | some b => cases b <;> rfl
+  let fixed := signBits a.inputTape ++
+    (List.finRange k).flatMap (fun i => optOptBoolBits (a.workTapes i).1 ++
+      signBits (a.workTapes i).2) ++ optBoolBits a.output
+  have plen : fixed.length = h1RecordWidth k := by
+    simp [fixed, h1RecordWidth, List.length_flatMap, moves, writes, emits]
+    omega
+  have he : List.ofFn bits ++ [false] =
+      actionBitsK (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1)) := by
+    rw [hbits]
+    change (fixed ++ optStateBits a.state).take (h1RecordWidth k) ++ [false] =
+      fixed ++ [false]
+    rw [← plen, List.take_left]
+  have hp := codeReadActionK_append
+    (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1)) []
+  simp only [List.append_nil] at hp
+  simp only [h1Payload, he, hp, Option.map_some, Option.getD_some]

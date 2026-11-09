@@ -1,0 +1,39 @@
+/-- **The time-bounded universal machine** [AB09, §1.4.1, "Universal TM with time
+bound"]: a single machine that, given `⟨⟨⌞t⌟, α⟩, x⟩` (clock and code first, input
+last), simulates the machine `α` denotes on `x` for at most `t` steps, reporting
+success (`true :: output`) or timeout (`[false]`).
+
+**Proof sketch.** Extend the simulation of `Turing.universal` with a binary
+countdown clock on a further work tape, initialized from `⌞t⌟ = Nat.bits t` (parsed
+from the doubled-bit region; cost `O(t + 1)`, within budget). Each simulated step
+costs an additional `O((Nat.bits t).length + 1)` for the decrement, whence the
+quadratic budget; `M`'s emissions are buffered on a work tape rather than emitted
+(their total length is at most `t`, by `Turing.MultiTapeTM.output_length_le`).
+Halting is checked after each simulated transition, **including the `t`-th**: if the
+simulated machine has halted by the time the clock expires — deadline included —
+`U` emits `true` and flushes the buffer; otherwise it emits `false`. At `t = 0` no
+initialized machine has halted (`Turing.FinTM.not_computesInTime_zero`), and the
+timeout branch applies (audit finding 6). The two cases below are exhaustive:
+either some output witnesses halting within `t`, or every output fails to. -/
+theorem timed_universal (c : EffectiveMachineCode) :
+    ∃ U : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      (∀ output : List Bool,
+        (c.decode α).toFinTM.ComputesInTime x output t →
+        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
+          (true :: output) (C * (t + 1) ^ 2)) ∧
+      ((∀ output : List Bool, ¬(c.decode α).toFinTM.ComputesInTime x output t) →
+        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
+          [false] (C * (t + 1) ^ 2)) := by
+  refine ⟨timedUniversalTM c, fun α =>
+    ⟨timedStartupBound c α + universalBlockBound c α + 14, ?_⟩⟩
+  intro x t
+  have hu := timed_computes c α x t
+  constructor
+  · intro output hsource
+    obtain ⟨hh, ho⟩ := (computesInTime_iff _ _ _ _).mp hsource
+    simpa only [timedAnswer, hh, if_pos, ho] using hu
+  · intro hsource
+    have hh : ((c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t).state ≠ none := by
+      intro hhalt
+      exact hsource _ ((computesInTime_iff _ _ _ _).mpr ⟨hhalt, rfl⟩)
+    simpa only [timedAnswer, if_neg hh] using hu

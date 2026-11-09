@@ -1,0 +1,5 @@
+/-- The demo transitions: the read fragment on index register `0`, counter `1`; the exit emits
+the symbol (if any) and halts. -/
+def demoTr : DSt → Option Bool → (Fin 2 → Option Bool) → Action 2 Bool DSt
+  | .rd ph, a, w => readTr 0 1 DSt.rd DSt.out ph a w
+  | .out a, _, _ => ⟨0, fun _ => (none, 0), a, none⟩

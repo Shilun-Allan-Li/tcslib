@@ -1,0 +1,16 @@
+/-- The backward write identity also applies beyond the stored zone. -/
+lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l r out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r.tail out := by
+  cases r with
+  | cons a r => exact sweepRevCfg_left q q' p z l r out a b
+  | nil =>
+    have hc : sweepRevCfg q p z l ([] : List (Option A)) out =
+        sweepRevCfg q p z l [none] out := by
+      refine Cfg.ext rfl rfl ?_ rfl rfl
+      funext i w
+      exact congrFun (sweepTape_nil (-z) l) (-w)
+    rw [hc]
+    exact sweepRevCfg_left q q' p z l [] out none b

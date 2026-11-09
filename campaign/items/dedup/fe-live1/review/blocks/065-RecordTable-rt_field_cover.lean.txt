@@ -1,0 +1,23 @@
+private theorem rt_field_cover {Γ : Type*} (fs : List (List Γ)) (hne : fs ≠ [])
+    (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ ((joinFields fs).length : ℤ)) :
+    ∃ (j : ℕ) (hj : j < fs.length),
+      -1 ≤ p - fieldOffset fs j ∧ p - fieldOffset fs j ≤ (fs[j].length : ℤ) := by
+  have hlen : 0 < fs.length := List.length_pos_iff.mpr hne
+  have hlast : fs.length - 1 < fs.length := by omega
+  have hend := fieldOffset_succ fs (fs.length - 1) hlast
+  rw [Nat.sub_add_cancel hlen, fieldOffset_length fs hne] at hend
+  have hex : ∃ (j : ℕ) (hj : j < fs.length),
+      p ≤ (fieldOffset fs j : ℤ) + (fs[j].length : ℤ) := by
+    exact ⟨fs.length - 1, hlast, by omega⟩
+  obtain ⟨hj, hu⟩ := Nat.find_spec hex
+  refine ⟨Nat.find hex, hj, ?_, by omega⟩
+  by_cases hz : Nat.find hex = 0
+  · simpa only [hz, fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+      Nat.cast_zero, sub_zero] using hp
+  · have hprev : Nat.find hex - 1 < fs.length := by omega
+    have hmin := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by omega)
+    have hnot : ¬p ≤ (fieldOffset fs (Nat.find hex - 1) : ℤ) +
+        (fs[Nat.find hex - 1].length : ℤ) := fun h => hmin ⟨hprev, h⟩
+    have hstep := fieldOffset_succ fs (Nat.find hex - 1) hprev
+    rw [Nat.sub_add_cancel (show 1 ≤ Nat.find hex by omega)] at hstep
+    omega

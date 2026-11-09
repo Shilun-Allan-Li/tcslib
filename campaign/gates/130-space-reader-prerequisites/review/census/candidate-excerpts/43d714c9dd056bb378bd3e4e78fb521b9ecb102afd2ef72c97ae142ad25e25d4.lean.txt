@@ -1,0 +1,13 @@
+/-- Initialize arbitrary exact work words from self-delimiting native input,
+then invoke the supplied prepared machine. The retained input has its own tape. -/
+private def clPreparedTM (A : FinTM Bool) : FinTM Bool where
+  k := A.k + 1
+  State := (clPrepareTM A.k).State ⊕ A.State
+  tm := {
+    q₀ := .inl (clPrepareTM A.k).tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q =>
+        if q = .inr (Fin.last A.k, .inl 0) then FinTM.controlAction 0 (some (.inr A.tm.q₀))
+        else ((clPrepareTM A.k).tm.tr q inp work).mapState Sum.inl
+      | .inr q => clSlotAction (Fin.addCases some (fun _ : Fin 1 => none)) Sum.inr
+          (A.tm.tr q inp (fun i => work (Fin.castAdd 1 i))) }

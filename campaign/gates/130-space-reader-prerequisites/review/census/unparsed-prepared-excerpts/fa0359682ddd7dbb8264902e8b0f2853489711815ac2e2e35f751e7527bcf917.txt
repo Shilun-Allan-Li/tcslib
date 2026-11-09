@@ -1,0 +1,13 @@
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.FinTM.bufferedCompTM Turing.Cfg.ofWords Turing.FinTM.redirectTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace Turing.FinTM
+
+/-! Boundary control: freshly restate the exact frozen header under foreign opacity. -/
+example (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) (i : Fin M.k) :
+    (redirectTM M haltOn).tm.spaceUsedByTape ((redirectTM M haltOn).tm.initCfg x) t i =
+      M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+  exact redirectTM_spaceUsedByTape M haltOn x t i
+end Turing.FinTM

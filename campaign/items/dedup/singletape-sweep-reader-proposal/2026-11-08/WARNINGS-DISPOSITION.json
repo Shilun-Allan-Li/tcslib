@@ -1,0 +1,19 @@
+{
+  "final_native_warnings": [
+    {
+      "warning": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1992:103: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice",
+      "candidate_line": 1992,
+      "literal_context": "        exact \u27e8i, u, by omega, he\u27e9\n      \u00b7 have he : j = a + n := by omega\n        have ht : right = true := by cases right <;> simp_all only [Bool.toNat_false, Bool.toNat_true] <;> omega\n        have hit : \u2203 i, c.workTapePos i = a + n - 1 \u2227 (act.workTapes i).2 = .pos := by\n          have h := hright.trans ht",
+      "context_present_byte_exact_BASE_f3": true
+    },
+    {
+      "warning": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2003:99: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice",
+      "candidate_line": 2003,
+      "literal_context": "        omega\n    \u00b7 have he : j = a - 1 := by omega\n      have ht : left = true := by cases left <;> simp_all only [Bool.toNat_false, Bool.toNat_true] <;> omega\n      have hit : \u2203 i, c.workTapePos i = a \u2227 (act.workTapes i).2 = .neg := by\n        have h := hleft.trans ht",
+      "context_present_byte_exact_BASE_f3": true
+    }
+  ],
+  "all_in_unchanged_preceding_helper_source": true,
+  "not_a_new_BASE_native_run_claim": true,
+  "failed_native1_had_one_additional_unused_one_mul_warning": "Preserved in its actual raw log; owned tape-count repair allows that simp lemma to apply in final source."
+}

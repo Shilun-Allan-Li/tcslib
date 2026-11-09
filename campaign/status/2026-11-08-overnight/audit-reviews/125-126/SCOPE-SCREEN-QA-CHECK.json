@@ -1,0 +1,605 @@
+{
+  "gates": [
+    {
+      "gate": 125,
+      "actual33_population": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+        "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+        "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+        "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+        "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+        "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+        "TCSlib/Complexity/TuringMachine/Configuration.lean",
+        "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "TCSlib/Complexity/TuringMachine/NatBits.lean",
+        "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+        "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "TCSlib/Complexity/TuringMachine/Simulation.lean",
+        "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean"
+      ],
+      "parser_capture_counts": {
+        "BASE": 2433,
+        "HEAD": 2431
+      },
+      "pair_counts": {
+        "BASE": 2107,
+        "HEAD": 2097
+      },
+      "new_pairs": [],
+      "gone_pairs": [
+        {
+          "target": "Hardness.lean::clA5_pt_head",
+          "source": "Hardness.lean::clA5_pt_tail",
+          "BASE_score": [
+            384,
+            400,
+            96
+          ]
+        },
+        {
+          "target": "Hardness.lean::clA5_pt_head",
+          "source": "SAT.lean::sat_pt_head",
+          "BASE_score": [
+            382,
+            397,
+            96
+          ]
+        },
+        {
+          "target": "Hardness.lean::clA5_pt_head",
+          "source": "SAT.lean::sat_pt_tail",
+          "BASE_score": [
+            339,
+            395,
+            86
+          ]
+        },
+        {
+          "target": "Hardness.lean::clA5_pt_tail",
+          "source": "Hardness.lean::clA5_pt_head",
+          "BASE_score": [
+            384,
+            402,
+            96
+          ]
+        },
+        {
+          "target": "Hardness.lean::clA5_pt_tail",
+          "source": "SAT.lean::sat_pt_head",
+          "BASE_score": [
+            339,
+            397,
+            85
+          ]
+        },
+        {
+          "target": "Hardness.lean::clA5_pt_tail",
+          "source": "SAT.lean::sat_pt_tail",
+          "BASE_score": [
+            380,
+            395,
+            96
+          ]
+        },
+        {
+          "target": "SAT.lean::sat_pt_head",
+          "source": "Hardness.lean::clA5_pt_head",
+          "BASE_score": [
+            382,
+            402,
+            95
+          ]
+        },
+        {
+          "target": "SAT.lean::sat_pt_head",
+          "source": "Hardness.lean::clA5_pt_tail",
+          "BASE_score": [
+            339,
+            400,
+            85
+          ]
+        },
+        {
+          "target": "SAT.lean::sat_pt_tail",
+          "source": "Hardness.lean::clA5_pt_head",
+          "BASE_score": [
+            339,
+            402,
+            84
+          ]
+        },
+        {
+          "target": "SAT.lean::sat_pt_tail",
+          "source": "Hardness.lean::clA5_pt_tail",
+          "BASE_score": [
+            380,
+            400,
+            95
+          ]
+        }
+      ],
+      "changed_score_pairs": [],
+      "source_capture_new": [],
+      "source_capture_gone": [
+        "Hardness.lean::clA5_pt_head",
+        "Hardness.lean::clA5_pt_tail"
+      ],
+      "source_body_changed": [],
+      "all_other_capture_bodies_exact": true,
+      "control_binding_verified_to_literal_sources_and_original_run_records": true,
+      "guard_scope": {
+        "complete_two_literal_chunks_match_actual_HEAD": true,
+        "scope_native_sealed_only_guard_line_difference": true,
+        "ordinary_guard_count": 15,
+        "guard_names": [
+          "Complexity.PolyTimeComputable",
+          "Turing.moveInputPos",
+          "Turing.Action.apply",
+          "Turing.Cfg.init",
+          "Turing.Cfg.inputSymbol",
+          "Turing.Cfg.workTapeSymbols",
+          "Turing.FinTM.ComputesFunInTime",
+          "Turing.FinTM.ComputesInTime",
+          "Turing.MultiTapeTM.ComputesInTimeAndSpace",
+          "Turing.MultiTapeTM.initCfg",
+          "Turing.MultiTapeTM.runFrom",
+          "Turing.MultiTapeTM.spaceUsed",
+          "Turing.MultiTapeTM.spaceUsedByTape",
+          "Turing.MultiTapeTM.step",
+          "Turing.MultiTapeTM.visitedByTapeHead"
+        ],
+        "default_simp_definitions_removed_in_both": [
+          "Turing.Action.apply",
+          "Turing.Cfg.init",
+          "Turing.MultiTapeTM.initCfg"
+        ],
+        "positive_kernel_checked_count": 30,
+        "negative_matching_identity_count": 30,
+        "every_control_pair": [
+          {
+            "definition": "Complexity.PolyTimeComputable",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_1_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Complexity.PolyTimeComputable",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_2_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.moveInputPos",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_3_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.moveInputPos",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_4_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Action.apply",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_5_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Action.apply",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_6_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.init",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_7_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.init",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_8_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.inputSymbol",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_9_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.inputSymbol",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_10_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.workTapeSymbols",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_11_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.Cfg.workTapeSymbols",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_12_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.FinTM.ComputesFunInTime",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_13_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.FinTM.ComputesFunInTime",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_14_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.FinTM.ComputesInTime",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_15_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.FinTM.ComputesInTime",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_16_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.ComputesInTimeAndSpace",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_17_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.ComputesInTimeAndSpace",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_18_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.initCfg",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_19_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.initCfg",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_20_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.runFrom",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_21_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.runFrom",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_22_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.spaceUsed",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_23_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.spaceUsed",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_24_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.spaceUsedByTape",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_25_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.spaceUsedByTape",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_26_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.step",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_27_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.step",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_28_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.visitedByTapeHead",
+            "mode": "point",
+            "kernel_name": "OvernightHardnessLeavesRfl_29_point",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          },
+          {
+            "definition": "Turing.MultiTapeTM.visitedByTapeHead",
+            "mode": "abstract",
+            "kernel_name": "OvernightHardnessLeavesRfl_30_abstract",
+            "positive_kernel_checked": true,
+            "negative_same_identity_failed": true
+          }
+        ],
+        "receipts": [
+          {
+            "receipt": "HardnessLeaves-scope-native-attempt1.json",
+            "source": "HardnessLeaves-scope-native-instrumented.lean.txt",
+            "exit": 0,
+            "errors": 0
+          },
+          {
+            "receipt": "HardnessLeaves-scope-sealed-attempt1.json",
+            "source": "HardnessLeaves-scope-sealed-instrumented.lean.txt",
+            "exit": 0,
+            "errors": 0
+          },
+          {
+            "receipt": "HardnessLeaves-controls-native-attempt1.json",
+            "source": "HardnessLeaves-controls-native.lean.txt",
+            "exit": 0,
+            "errors": 0
+          },
+          {
+            "receipt": "HardnessLeaves-controls-sealed-attempt1.json",
+            "source": "HardnessLeaves-controls-sealed.lean.txt",
+            "exit": 1,
+            "errors": 30
+          }
+        ],
+        "imported_theorem_proof_values_not_traversed": true
+      },
+      "lint_stdout_and_diff": [
+        {
+          "kind": "style-lint",
+          "BASE_sha256": "36362b7fb4de0852f5995daa383c5ed5adf90a124b712906dc7966c17efc9394",
+          "HEAD_sha256": "430e72244e63175f8623c2d70153eeed5f3efc815272ab7de718b9f1f1f7ed54",
+          "uncapped_diff": "125/qa/style-lint.diff"
+        },
+        {
+          "kind": "campaign-lint",
+          "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+          "HEAD_sha256": "3c4eac73a4ec7b77afa25bb4da816fbb96443cca9d9b65ee0a7cf33e243fbd93",
+          "uncapped_diff": "125/qa/campaign-lint.diff"
+        }
+      ]
+    },
+    {
+      "gate": 126,
+      "actual33_population": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+        "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+        "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+        "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+        "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+        "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+        "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+        "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+        "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+        "TCSlib/Complexity/TuringMachine/Configuration.lean",
+        "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "TCSlib/Complexity/TuringMachine/NatBits.lean",
+        "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+        "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+        "TCSlib/Complexity/TuringMachine/Simulation.lean",
+        "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean"
+      ],
+      "parser_capture_counts": {
+        "BASE": 2433,
+        "HEAD": 2433
+      },
+      "pair_counts": {
+        "BASE": 2107,
+        "HEAD": 2106
+      },
+      "new_pairs": [],
+      "gone_pairs": [
+        {
+          "target": "UniversalK.lean::exists_selfStartupTMK",
+          "source": "CodeSimulator.lean::us_start",
+          "BASE_score": [
+            220,
+            281,
+            78
+          ]
+        }
+      ],
+      "changed_score_pairs": [],
+      "source_capture_new": [],
+      "source_capture_gone": [],
+      "source_body_changed": [
+        "UniversalK.lean::exists_selfStartupTMK"
+      ],
+      "all_other_capture_bodies_exact": true,
+      "control_binding_verified_to_literal_sources_and_original_run_records": true,
+      "guard_scope": {
+        "scope_input": "inputs/rs1/HinitSealed.lean.txt",
+        "scope_source_sha256": "c291d41c3eb94f5b026f613dadd6e4120635fc6efe145f0b3fcbe027c56de875",
+        "native_sealed_controls_identical_after_only_guard_attribute_and_empty_anonymous_section_wrapper_removal": true,
+        "ordinary_or_focused_guards": [
+          "Turing.MultiTapeTM.initCfg",
+          "Turing.Cfg.init",
+          "Turing.Cfg.mapState"
+        ],
+        "positive_examples_pass": 6,
+        "negative_same_identity_failures": 6,
+        "negative_actual_Type_mismatch_error_lines": [
+          12,
+          20,
+          28,
+          36,
+          43,
+          50
+        ],
+        "all_pairs": [
+          {
+            "id": "initCfg_delta",
+            "guard": "MultiTapeTM.initCfg",
+            "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    A.initCfg x = Cfg.init A.q₀ x := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 12,
+            "full_example_sha256": "0b751be977285482ce4d122e4563d014c44dea8de347d3323e923fc067505936"
+          },
+          {
+            "id": "initCfg_equation",
+            "guard": "MultiTapeTM.initCfg",
+            "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    (A.initCfg x).state = some A.q₀ := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 20,
+            "full_example_sha256": "85fd74ba1e017b7305c4bd5af5a76dfe573c8b399006b13be4ad5d9592e5fa34"
+          },
+          {
+            "id": "Cfg_init_delta",
+            "guard": "Cfg.init",
+            "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x) = ⟨some q, 1, fun _ _ => none, fun _ => 0, []⟩ := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 28,
+            "full_example_sha256": "e08e1fb815fb1520dc2673625cd058b2c48fa53d22bdc2ecc934a4d4434a6c0f"
+          },
+          {
+            "id": "Cfg_init_equation",
+            "guard": "Cfg.init",
+            "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x).state = some q := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 36,
+            "full_example_sha256": "26b0c9b755ce2323dd5bc79d5be6cccef710868740c575131c31254d5ff2c2e4"
+          },
+          {
+            "id": "mapState_delta",
+            "guard": "Cfg.mapState",
+            "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    c.mapState f = ⟨c.state.map f, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 43,
+            "full_example_sha256": "ec776824e73236fc426d254f2897de2d4c2c347feacfb3ebae811325c9074b22"
+          },
+          {
+            "id": "mapState_equation",
+            "guard": "Cfg.mapState",
+            "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    (c.mapState f).state = c.state.map f := rfl\n",
+            "unsealed_expected": "PASS",
+            "sealed_expected": "rfl type mismatch",
+            "positive_example_passed": true,
+            "negative_same_identity_failed_at_line": 50,
+            "full_example_sha256": "9d5fd6394468906e1cc1bfca930a76a16b0468e3f14b5ae584ffc7cbc9d1daf2"
+          }
+        ],
+        "scope_limit": "Exact supplied abstract local-hinit consumer with local q0 update and d0 alias; not a seal of the full public startup/universal construction.",
+        "no_new_tests_executed_for_this_binding": true,
+        "actual_original_run_sources_hash_bound": true,
+        "raw_output_paths": [
+          "inputs/rs1/ControlsUnsealed.out",
+          "inputs/rs1/ControlsSealed.out"
+        ]
+      },
+      "lint_stdout_and_diff": [
+        {
+          "kind": "style-lint",
+          "BASE_sha256": "372d74190c63f2c994bfca78532275993489a9aed1f82c26bb92271245997482",
+          "HEAD_sha256": "b5a661d9e815b4d3e498e71adbbf2773296315b0a1d9442d2adfbc8995d778f9",
+          "uncapped_diff": "126/qa/style-lint.diff"
+        },
+        {
+          "kind": "campaign-lint",
+          "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+          "HEAD_sha256": "447c5ef128ecc53bacddaf4a107049b1d85819bbeb31f07992df6b42e6388ebe",
+          "uncapped_diff": "126/qa/campaign-lint.diff"
+        }
+      ]
+    }
+  ],
+  "new_matching_screen_or_Lean_execution": false,
+  "operation": "Pure source extraction, linear raw-pair comparison and original run/source/hash verification only. No lcs/tiling or native replay."
+}

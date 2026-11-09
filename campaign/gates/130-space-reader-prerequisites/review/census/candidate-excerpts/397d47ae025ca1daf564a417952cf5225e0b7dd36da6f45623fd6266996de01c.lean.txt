@@ -1,0 +1,24 @@
+/-- The same prefix containment wrapper for a fixed leftward writer. -/
+private lemma dgSpan_generate_left {A Q : Type} {x : List A}
+    (tm : MultiTapeTM 1 A Q) (w : List A) (state : Fin (w.length + 1) → Q)
+    (htr : ∀ (i : ℕ) (hi : i < w.length) inp work,
+      tm.tr (state ⟨i, by omega⟩) inp work =
+        sweepAct (state ⟨i + 1, by omega⟩) (some w[i]) .neg)
+    (p : Fin (x.length + 2)) (out : List A) (z : ℤ)
+    (l r : List (Option A)) (n : ℕ) (hn : n ≤ w.length) :
+    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)
+      (sweepRevCfg (some (state ⟨n, by omega⟩)) p (z - n)
+        ((w.take n).map some |>.reverse |>.append l) (r.drop n) out) n (z - n) z := by
+  let cfg := fun i z l r => sweepRevCfg (some (state i)) p z l r out
+  have hr (u : ℕ) (hu : u ≤ w.length) := sweep_generate tm w cfg (-1)
+    (fun i hi z l r => by
+      change (tm.tr (state ⟨i, by omega⟩) _ _).apply _ = _
+      rw [htr i hi]
+      simpa only [sub_eq_add_neg] using sweepRevCfg_left_any _ _ p z l r out _)
+    z l r u hu
+  refine ⟨by simpa only [cfg, neg_one_mul, sub_eq_add_neg] using hr n hn, ?_⟩
+  intro u hu
+  have hp := congrArg (fun c => c.workTapePos 0) (hr u (hu.trans hn))
+  change (tm.runFrom (sweepRevCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + -1 * u at hp
+  rw [hp]
+  constructor <;> omega

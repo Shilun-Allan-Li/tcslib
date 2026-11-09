@@ -1,0 +1,8 @@
+/-- **An action on the input head only** (design §12.8a): move the input head
+by `inp`, touch no work tape, emit nothing, and continue in `q`. At `inp = 0`
+it is the stationary action of a live anchor. -/
+def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    Action k Symbol State :=
+  ⟨inp, fun _ => (none, 0), none, some q⟩
+
+-- TCSlib/Complexity/TuringMachine/Build/Catalog.lean at 684f3d88, lines 11696-11720: step_of_tapeAction_move

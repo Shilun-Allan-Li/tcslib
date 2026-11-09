@@ -1,0 +1,1824 @@
+[
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "UniversalStartup.lean::universal_live_before",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 121,
+      "source_chars": 121,
+      "percent": 100
+    },
+    "changed_reader_ids": [
+      "BLIVE1",
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 1,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The two old helpers contain byte-identical generic add/decomposition/post-halt contradictions. Both now specialize the existing backwards-live reader; universal_live_before is under the60-character extraction threshold. Both complete declarations and literal headers remain.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedCut_live_before",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 121,
+      "source_chars": 121,
+      "percent": 100
+    },
+    "changed_reader_ids": [
+      "BLIVE1",
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 2,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "Reverse direction of the same old identical backwards-live reproofs. The fixed interpreter helper now calls the public reader, while the generic helper is a shorter reader below the filter threshold; no declaration is removed.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+      "source": "Deterministic.lean::mem_visitedByTapeHead_iff",
+      "matched_chars": 60,
+      "source_chars": 79,
+      "percent": 76
+    },
+    "changed_reader_ids": [
+      47
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "Turing.MultiTapeTM.mem_visitedByTapeHead_iff",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 3,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old resource proof manually unfolded visitedByTapeHead and built a time witness, overlapping its published membership reader. The complete current proof uses mem_visitedByTapeHead_iff and spaceUsedByTape_eq_card, with the separate full boundary/explicit-argument check; no new witness reproof remains at this site.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0001.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+          1
+        ],
+        "normalized_body_sha256": "5d3f3a7a97ede3439276c87594e6afd321ffc5404682e47fe49698a4c3accf6b"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Deterministic.lean::mem_visitedByTapeHead_iff",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0003.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "Turing.MultiTapeTM.mem_visitedByTapeHead_iff",
+          1
+        ],
+        "normalized_body_sha256": "e3b745c2ed48ef0803ad105c1dbf1654c7a31683d033738aab8dbacf45e22855"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 47,
+        "name": "ComputesInTime.of_spaceUsed_le",
+        "BASE_complete_chunk": "source-review13/chunks/47/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/47/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "30d24186c1e8bdd468c8e4baecf7436d4679b1609267ee530cdde10c4621d2b7",
+        "HEAD_complete_chunk_sha256": "50b42e46e44db8e45b6b9028646060cf1fa372645bbf538214122cbd5df8b238",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk. Existing-reader repairs also remove inherited foreign definition reads inside this same complete proof; see the exact prior explicit-review rows and controls."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "UniversalStartup.lean::universalCapture_start",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 82,
+      "source_chars": 121,
+      "percent": 68
+    },
+    "changed_reader_ids": [
+      86,
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 4,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old capture proof and generic live-before helper shared add/decomposition/post-halt text despite different contracts. Capture now uses exists_first_halt; the helper uses the backwards-live reader and falls below the filter. This does not equate the two mathematical statements.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universalCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0013.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universalCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "d8d06f9d7063776990f399c392966ec03ee788717726b5e7e9b6ea503634a891"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 86,
+        "name": "universalCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+        "HEAD_complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "UniversalStartup.lean::universalCapture_start",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 82,
+      "source_chars": 121,
+      "percent": 68
+    },
+    "changed_reader_ids": [
+      86,
+      "BLIVE1"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 5,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old capture proof shared post-halt add/decomposition text with the fixed-interpreter live-before helper. Both current complete bodies use their respective published first-halt/backwards-live contracts, so this old directed edge disappears.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universalCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0013.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universalCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "d8d06f9d7063776990f399c392966ec03ee788717726b5e7e9b6ea503634a891"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 86,
+        "name": "universalCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+        "HEAD_complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedCapture_start",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 82,
+      "source_chars": 121,
+      "percent": 68
+    },
+    "changed_reader_ids": [
+      85,
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 6,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old timed capture proof shared generic post-halt text with universal_live_before. The capture is now a first-halt reader and the generic helper is a short backwards-live reader below the filter; both statements are preserved.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0010.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "3c21378892683a9f1c25f4ffa813f3533fee236b59c001acb58fb850aa17a77f"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 85,
+        "name": "timedCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+        "HEAD_complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedCapture_start",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 82,
+      "source_chars": 121,
+      "percent": 68
+    },
+    "changed_reader_ids": [
+      85,
+      "BLIVE1"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 7,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old timed capture proof and fixed-interpreter live helper shared the same operational contradiction pattern. Their current bodies read the appropriate published contracts, removing this old textual edge.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0010.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "3c21378892683a9f1c25f4ffa813f3533fee236b59c001acb58fb850aa17a77f"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 85,
+        "name": "timedCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+        "HEAD_complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedPrefix_live",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 79,
+      "source_chars": 121,
+      "percent": 65
+    },
+    "changed_reader_ids": [
+      "BLIVE2",
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedPrefix_live",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 8,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old prefix proof implemented the backwards-live contradiction around its penultimate live point. It now passes that existing point to the canonical reader; the generic comparison helper is also repointed and falls below the filter.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedPrefix_live",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0012.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedPrefix_live",
+          1
+        ],
+        "normalized_body_sha256": "73b3598c5604783595224a5dcec0331b437102a28e96221c60cb86651bbef8be"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE2",
+        "name": "timedPrefix_live",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE2/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "1c6dbe3dba02f9e4556cf82495bb97a2a59fb4954b0a51fbbce5cd528f423c1b",
+        "HEAD_complete_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing timedPrefix_penultimate supplies the later live point; the original strict bound yields s <= penultimate by omega; exact canonical reader application."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedPrefix_live",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 79,
+      "source_chars": 121,
+      "percent": 65
+    },
+    "changed_reader_ids": [
+      "BLIVE1",
+      "BLIVE2"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedPrefix_live",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 9,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old prefix and fixed-interpreter helpers shared the add/post-halt contradiction. Both now use the same existing backwards-live theorem, with only original machine/configuration/deadline premises and the existing penultimate witness.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedPrefix_live",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0012.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedPrefix_live",
+          1
+        ],
+        "normalized_body_sha256": "73b3598c5604783595224a5dcec0331b437102a28e96221c60cb86651bbef8be"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      },
+      {
+        "id": "BLIVE2",
+        "name": "timedPrefix_live",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE2/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "1c6dbe3dba02f9e4556cf82495bb97a2a59fb4954b0a51fbbce5cd528f423c1b",
+        "HEAD_complete_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing timedPrefix_penultimate supplies the later live point; the original strict bound yields s <= penultimate by omega; exact canonical reader application."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "EXP.lean::enumCont_first_halt",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 79,
+      "source_chars": 121,
+      "percent": 65
+    },
+    "changed_reader_ids": [
+      9,
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "Complexity.enumCont_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 10,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old first-None selector and live-before helper shared Nat/add/post-halt scaffolding but prove distinct contracts. Both now consume their respective public readers and the first-None selector and generic live helper are below the extraction threshold; declarations remain.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "EXP.lean::enumCont_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0005.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/EXP.lean",
+          "Complexity.enumCont_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "f1660a15b2eb5c9f9d3cc01874efc8cdd81fe6b4659c9c6f6272997b2f4660d3"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 9,
+        "name": "enumCont_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/9/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/9/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "528871bde1ef75742c523527d31f31a3246bfff735938cbc0b4488cea55a22ec",
+        "HEAD_complete_chunk_sha256": "48030653532bd5778784d254694ab481586afc50cf4c8ff17cfabe75e46bdf37",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "EXP.lean::enumCont_first_halt",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 79,
+      "source_chars": 121,
+      "percent": 65
+    },
+    "changed_reader_ids": [
+      9,
+      "BLIVE1"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "Complexity.enumCont_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 11,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old first-None selector and fixed live-before helper shared operational scaffolding. The first now calls exists_first_halt; the second calls runFrom_state_ne_none_of_le. The disappeared edge does not claim semantic equivalence or global retirement.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "EXP.lean::enumCont_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0005.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/EXP.lean",
+          "Complexity.enumCont_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "f1660a15b2eb5c9f9d3cc01874efc8cdd81fe6b4659c9c6f6272997b2f4660d3"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 9,
+        "name": "enumCont_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/9/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/9/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "528871bde1ef75742c523527d31f31a3246bfff735938cbc0b4488cea55a22ec",
+        "HEAD_complete_chunk_sha256": "48030653532bd5778784d254694ab481586afc50cf4c8ff17cfabe75e46bdf37",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "SAT.lean::sat_call_first_halt",
+      "source": "Finite.lean::exists_first_halt",
+      "matched_chars": 140,
+      "source_chars": 244,
+      "percent": 57
+    },
+    "changed_reader_ids": [
+      19
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "Complexity.sat_call_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "Turing.MultiTapeTM.exists_first_halt",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 12,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old positive-time caller rederived the public first-halt minimum and endpoint equality. It now obtains those from exists_first_halt and keeps only its original live-start positivity packaging; its complete header and all premises are unchanged.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "SAT.lean::sat_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0009.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/SAT.lean",
+          "Complexity.sat_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "4f8802dc7820b38c1f0593d7ad7cb99df78b12aaf4561fcf38c58e3bbf242b38"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Finite.lean::exists_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0006.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "Turing.MultiTapeTM.exists_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "092d461271cdcf191a914938cbd6376d376c210e9a07f2545ec89ecb46d10860"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 19,
+        "name": "sat_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/19/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/19/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "29eae55e653c992c23af7deb0cf82362ae6bd4d2f2e71fef75820a2e67ba6f2a",
+        "HEAD_complete_chunk_sha256": "f89c4f8bf15a6e9a93dce8c67ee681821aeff6a68103c796c84a1701479966e0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Hardness.lean::clA5_call_first_halt",
+      "source": "Finite.lean::exists_first_halt",
+      "matched_chars": 140,
+      "source_chars": 244,
+      "percent": 57
+    },
+    "changed_reader_ids": [
+      33
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "Complexity.clA5_call_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "Turing.MultiTapeTM.exists_first_halt",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 13,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The same canonical first-halt reuse in the Hardness positive-time wrapper removes overlap with the public theorem. The live-start positivity argument remains caller packaging, with unchanged statement/import/API.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Hardness.lean::clA5_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0008.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "Complexity.clA5_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "4f8802dc7820b38c1f0593d7ad7cb99df78b12aaf4561fcf38c58e3bbf242b38"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Finite.lean::exists_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0006.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "Turing.MultiTapeTM.exists_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "092d461271cdcf191a914938cbd6376d376c210e9a07f2545ec89ecb46d10860"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 33,
+        "name": "clA5_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/33/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/33/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "f2c8f38d714ef3fd52fe439419e0883f840c27e1763cef3a46a8d478e826487d",
+        "HEAD_complete_chunk_sha256": "2ea2f0e970063fbc8e168b0eb41617f8630a6fb4564fa855d0a6e747843367f0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "EXP.lean::enumCont_first_anchor",
+      "source": "EXP.lean::enumCont_first_halt",
+      "matched_chars": 141,
+      "source_chars": 260,
+      "percent": 54
+    },
+    "changed_reader_ids": [
+      9
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "Complexity.enumCont_first_anchor",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "Complexity.enumCont_first_halt",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 14,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The unchanged live-anchor selector uses a some-qa absorbing stop and transfer between two machines, a different contract from first None. The first-None helper is now a short canonical reader below the screen filter. The anchor is not claimed fixed by this edge deletion; its existing FE-LIVE-1 schedule remains authoritative, with no new waiver or global retirement inferred.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "EXP.lean::enumCont_first_anchor",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0004.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/EXP.lean",
+          "Complexity.enumCont_first_anchor",
+          1
+        ],
+        "normalized_body_sha256": "150ec05b9e91353846ef7cfad11fd0d37bfaccd03208a2699fd3c8abae707353"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "EXP.lean::enumCont_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0005.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/EXP.lean",
+          "Complexity.enumCont_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "f1660a15b2eb5c9f9d3cc01874efc8cdd81fe6b4659c9c6f6272997b2f4660d3"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 9,
+        "name": "enumCont_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/9/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/9/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "528871bde1ef75742c523527d31f31a3246bfff735938cbc0b4488cea55a22ec",
+        "HEAD_complete_chunk_sha256": "48030653532bd5778784d254694ab481586afc50cf4c8ff17cfabe75e46bdf37",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Finite.lean::output_prefix",
+      "source": "UniversalStartup.lean::universal_live_before",
+      "matched_chars": 65,
+      "source_chars": 121,
+      "percent": 54
+    },
+    "changed_reader_ids": [
+      "BLIVE3"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "Turing.MultiTapeTM.output_prefix",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 15,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The unchanged output_prefix theorem proves forward output monotonicity. Its old lexical overlap with the generic backwards-live contradiction disappears because the latter is a short canonical reader below the filter; the output theorem and its proof remain unchanged.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Finite.lean::output_prefix",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0007.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "Turing.MultiTapeTM.output_prefix",
+          1
+        ],
+        "normalized_body_sha256": "ee183b97efed54f3270adbd7494957fc23fe77f4b773000a43ca881192112736"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universal_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0014.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universal_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE3",
+        "name": "universal_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+        "HEAD_complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Finite.lean::output_prefix",
+      "source": "Universal.lean::timedCut_live_before",
+      "matched_chars": 65,
+      "source_chars": 121,
+      "percent": 54
+    },
+    "changed_reader_ids": [
+      "BLIVE1"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "Turing.MultiTapeTM.output_prefix",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 16,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The unchanged output_prefix theorem shares only add/decomposition scaffolding with the old fixed-interpreter live proof. The current fixed-interpreter proof is a direct canonical reader; no output monotonicity contract is converted.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Finite.lean::output_prefix",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0007.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "Turing.MultiTapeTM.output_prefix",
+          1
+        ],
+        "normalized_body_sha256": "ee183b97efed54f3270adbd7494957fc23fe77f4b773000a43ca881192112736"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedCut_live_before",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0011.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCut_live_before",
+          1
+        ],
+        "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": "BLIVE1",
+        "name": "timedCut_live_before",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+        "HEAD_complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+      "source": "ConfigCount.lean::visitedByTapeHead_mono",
+      "matched_chars": 61,
+      "source_chars": 114,
+      "percent": 54
+    },
+    "changed_reader_ids": [
+      47
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "Turing.MultiTapeTM.visitedByTapeHead_mono",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 17,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old resource proof built a visited-position witness through the raw Finset definition, overlapping the unchanged local monotonicity helper. The current resource proof uses the public membership iff; the monotonicity helper itself is unchanged and this edge is not a global opacity/debt claim.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0001.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+          1
+        ],
+        "normalized_body_sha256": "5d3f3a7a97ede3439276c87594e6afd321ffc5404682e47fe49698a4c3accf6b"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "ConfigCount.lean::visitedByTapeHead_mono",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0002.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "Turing.MultiTapeTM.visitedByTapeHead_mono",
+          1
+        ],
+        "normalized_body_sha256": "7fe4562d0c4a3b9b6e751c1b1e909f193c1a6983aa99872b74d7f79bdf74051e"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 47,
+        "name": "ComputesInTime.of_spaceUsed_le",
+        "BASE_complete_chunk": "source-review13/chunks/47/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/47/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "30d24186c1e8bdd468c8e4baecf7436d4679b1609267ee530cdde10c4621d2b7",
+        "HEAD_complete_chunk_sha256": "50b42e46e44db8e45b6b9028646060cf1fa372645bbf538214122cbd5df8b238",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk. Existing-reader repairs also remove inherited foreign definition reads inside this same complete proof; see the exact prior explicit-review rows and controls."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "UniversalStartup.lean::universalCapture_start",
+      "source": "Universal.lean::timedPrefix_live",
+      "matched_chars": 96,
+      "source_chars": 191,
+      "percent": 50
+    },
+    "changed_reader_ids": [
+      86,
+      "BLIVE2"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedPrefix_live",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 18,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The old universal capture and fixed prefix proof shared Nat.find/add/post-halt scaffolding. Capture now uses exists_first_halt; the prefix now applies the backwards-live reader with timedPrefix_penultimate. The original capture assembly and prefix time premises are retained.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "UniversalStartup.lean::universalCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0013.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universalCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "d8d06f9d7063776990f399c392966ec03ee788717726b5e7e9b6ea503634a891"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedPrefix_live",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0012.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedPrefix_live",
+          1
+        ],
+        "normalized_body_sha256": "73b3598c5604783595224a5dcec0331b437102a28e96221c60cb86651bbef8be"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 86,
+        "name": "universalCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+        "HEAD_complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE2",
+        "name": "timedPrefix_live",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE2/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "1c6dbe3dba02f9e4556cf82495bb97a2a59fb4954b0a51fbbce5cd528f423c1b",
+        "HEAD_complete_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing timedPrefix_penultimate supplies the later live point; the original strict bound yields s <= penultimate by omega; exact canonical reader application."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "BASE_ONLY",
+    "pair": {
+      "target": "Universal.lean::timedCapture_start",
+      "source": "Universal.lean::timedPrefix_live",
+      "matched_chars": 96,
+      "source_chars": 191,
+      "percent": 50
+    },
+    "changed_reader_ids": [
+      85,
+      "BLIVE2"
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedPrefix_live",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 19,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "EXPLAINED_CANONICAL_READER_CHANGE",
+    "source_reason": "The corresponding timed capture/prefix edge disappears for the same source-verified reason: canonical first-halt capture setup versus canonical backwards-live prefix setup, with the unchanged local run/transfer assembly.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "BASE",
+        "label": "Universal.lean::timedCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0010.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "3c21378892683a9f1c25f4ffa813f3533fee236b59c001acb58fb850aa17a77f"
+      },
+      {
+        "role": "source",
+        "side": "BASE",
+        "label": "Universal.lean::timedPrefix_live",
+        "raw_screen_span": "screen/changed-pair-source-spans/BASE/0012.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedPrefix_live",
+          1
+        ],
+        "normalized_body_sha256": "73b3598c5604783595224a5dcec0331b437102a28e96221c60cb86651bbef8be"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 85,
+        "name": "timedCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+        "HEAD_complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": "BLIVE2",
+        "name": "timedPrefix_live",
+        "BASE_complete_chunk": "source-review13/chunks/BLIVE2/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "1c6dbe3dba02f9e4556cf82495bb97a2a59fb4954b0a51fbbce5cd528f423c1b",
+        "HEAD_complete_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing timedPrefix_penultimate supplies the later live point; the original strict bound yields s <= penultimate by omega; exact canonical reader application."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "PERSISTENT_SCORE_CHANGED",
+    "pair": {
+      "BASE": {
+        "target": "SAT.lean::sat_call_first_halt",
+        "source": "Hardness.lean::clA5_call_first_halt",
+        "matched_chars": 330,
+        "source_chars": 330,
+        "percent": 100
+      },
+      "HEAD": {
+        "target": "SAT.lean::sat_call_first_halt",
+        "source": "Hardness.lean::clA5_call_first_halt",
+        "matched_chars": 206,
+        "source_chars": 206,
+        "percent": 100
+      }
+    },
+    "changed_reader_ids": [
+      19,
+      33
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "Complexity.sat_call_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "Complexity.clA5_call_first_halt",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 20,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "DISCLOSED_PERSISTENT_CALLER_PACKAGING_OR_ASSEMBLY",
+    "source_reason": "The positive-time SAT/Hardness wrappers remain textually identical after replacing their full Nat.find first-halt reproof by a public reader. The residual206-character body is the original live-start positivity packaging plus that reader call. This persistent row is disclosed, not described as zero duplication or a newly retired family; no new public-wrapper design/retention ruling is invented.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "HEAD",
+        "label": "SAT.lean::sat_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0016.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/SAT.lean",
+          "Complexity.sat_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8"
+      },
+      {
+        "role": "source",
+        "side": "HEAD",
+        "label": "Hardness.lean::clA5_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0015.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "Complexity.clA5_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 19,
+        "name": "sat_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/19/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/19/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "29eae55e653c992c23af7deb0cf82362ae6bd4d2f2e71fef75820a2e67ba6f2a",
+        "HEAD_complete_chunk_sha256": "f89c4f8bf15a6e9a93dce8c67ee681821aeff6a68103c796c84a1701479966e0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": 33,
+        "name": "clA5_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/33/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/33/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "f2c8f38d714ef3fd52fe439419e0883f840c27e1763cef3a46a8d478e826487d",
+        "HEAD_complete_chunk_sha256": "2ea2f0e970063fbc8e168b0eb41617f8630a6fb4564fa855d0a6e747843367f0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "PERSISTENT_SCORE_CHANGED",
+    "pair": {
+      "BASE": {
+        "target": "Hardness.lean::clA5_call_first_halt",
+        "source": "SAT.lean::sat_call_first_halt",
+        "matched_chars": 330,
+        "source_chars": 330,
+        "percent": 100
+      },
+      "HEAD": {
+        "target": "Hardness.lean::clA5_call_first_halt",
+        "source": "SAT.lean::sat_call_first_halt",
+        "matched_chars": 206,
+        "source_chars": 206,
+        "percent": 100
+      }
+    },
+    "changed_reader_ids": [
+      19,
+      33
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "Complexity.clA5_call_first_halt",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "Complexity.sat_call_first_halt",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 21,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "DISCLOSED_PERSISTENT_CALLER_PACKAGING_OR_ASSEMBLY",
+    "source_reason": "Reverse direction of the same persistent short positive-time wrapper:330/330 to206/206. Both complete bodies were inspected; they now share canonical reader consumption and original positivity packaging. No new directed pair is introduced, and this score is not a unique-copy/debt-retirement count.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "HEAD",
+        "label": "Hardness.lean::clA5_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0015.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "Complexity.clA5_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8"
+      },
+      {
+        "role": "source",
+        "side": "HEAD",
+        "label": "SAT.lean::sat_call_first_halt",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0016.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/ClassNP/SAT.lean",
+          "Complexity.sat_call_first_halt",
+          1
+        ],
+        "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 19,
+        "name": "sat_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/19/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/19/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "29eae55e653c992c23af7deb0cf82362ae6bd4d2f2e71fef75820a2e67ba6f2a",
+        "HEAD_complete_chunk_sha256": "f89c4f8bf15a6e9a93dce8c67ee681821aeff6a68103c796c84a1701479966e0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": 33,
+        "name": "clA5_call_first_halt",
+        "BASE_complete_chunk": "source-review13/chunks/33/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/33/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "f2c8f38d714ef3fd52fe439419e0883f840c27e1763cef3a46a8d478e826487d",
+        "HEAD_complete_chunk_sha256": "2ea2f0e970063fbc8e168b0eb41617f8630a6fb4564fa855d0a6e747843367f0",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "PERSISTENT_SCORE_CHANGED",
+    "pair": {
+      "BASE": {
+        "target": "UniversalStartup.lean::universalCapture_start",
+        "source": "Universal.lean::timedCapture_start",
+        "matched_chars": 434,
+        "source_chars": 508,
+        "percent": 85
+      },
+      "HEAD": {
+        "target": "UniversalStartup.lean::universalCapture_start",
+        "source": "Universal.lean::timedCapture_start",
+        "matched_chars": 299,
+        "source_chars": 381,
+        "percent": 78
+      }
+    },
+    "changed_reader_ids": [
+      85,
+      86
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 22,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "DISCLOSED_PERSISTENT_CALLER_PACKAGING_OR_ASSEMBLY",
+    "source_reason": "The two capture assemblies still share canonical first-halt selection, extraction of halt state/full endpoint equality, t+1 arithmetic and successor/run/transfer composition. Their actual capture machines/configurations/local helper arguments differ. The old minimum/add reproof is gone; the remaining299-character overlap is disclosed as persistent assembly/scaffolding under existing schedules, without a new waiver.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "HEAD",
+        "label": "UniversalStartup.lean::universalCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0018.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universalCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "d21d75a46cc9d6a28f9de296c654457ecaaab4707acc68b1a571d27f54e6d753"
+      },
+      {
+        "role": "source",
+        "side": "HEAD",
+        "label": "Universal.lean::timedCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0017.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "de41c7b2b50782c51a116eb53d041dc2683852d3889c7109905a36d0cb1ac522"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 85,
+        "name": "timedCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+        "HEAD_complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": 86,
+        "name": "universalCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+        "HEAD_complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  },
+  {
+    "status": "PERSISTENT_SCORE_CHANGED",
+    "pair": {
+      "BASE": {
+        "target": "Universal.lean::timedCapture_start",
+        "source": "UniversalStartup.lean::universalCapture_start",
+        "matched_chars": 434,
+        "source_chars": 512,
+        "percent": 85
+      },
+      "HEAD": {
+        "target": "Universal.lean::timedCapture_start",
+        "source": "UniversalStartup.lean::universalCapture_start",
+        "matched_chars": 299,
+        "source_chars": 385,
+        "percent": 78
+      }
+    },
+    "changed_reader_ids": [
+      85,
+      86
+    ],
+    "target_source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "source_source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "review_status": "SOURCE_REVIEW_COMPLETE",
+    "no_global_absence_or_debt_retirement_inferred": true,
+    "row": 23,
+    "source_review_complete": true,
+    "no_new_fix_required": true,
+    "disposition": "DISCLOSED_PERSISTENT_CALLER_PACKAGING_OR_ASSEMBLY",
+    "source_reason": "Reverse direction of the same persistent capture assembly. Both use exists_first_halt and retain the original machine-specific capture init/run/transfer calls; matched text falls434 to299 and ratio85% to78%. This does not imply one theorem replaces the other or global capture-family retirement.",
+    "raw_span_references": [
+      {
+        "role": "target",
+        "side": "HEAD",
+        "label": "Universal.lean::timedCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0017.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "Turing.timedCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "de41c7b2b50782c51a116eb53d041dc2683852d3889c7109905a36d0cb1ac522"
+      },
+      {
+        "role": "source",
+        "side": "HEAD",
+        "label": "UniversalStartup.lean::universalCapture_start",
+        "raw_screen_span": "screen/changed-pair-source-spans/HEAD/0018.lean.txt",
+        "canonical_identity": [
+          "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "Turing.universalCapture_start",
+          1
+        ],
+        "normalized_body_sha256": "d21d75a46cc9d6a28f9de296c654457ecaaab4707acc68b1a571d27f54e6d753"
+      }
+    ],
+    "complete_changed_proof_references": [
+      {
+        "id": 85,
+        "name": "timedCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+        "HEAD_complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      },
+      {
+        "id": 86,
+        "name": "universalCapture_start",
+        "BASE_complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+        "HEAD_complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+        "BASE_complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+        "HEAD_complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+        "literal_complete_header_exact": true,
+        "source_route_review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk."
+      }
+    ],
+    "no_new_debt_API_import_header_or_home_ruling": true,
+    "no_global_absence_or_family_retirement_claim": true
+  }
+]

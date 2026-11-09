@@ -1,0 +1,29 @@
+/-- After `t` emission steps the state is the `t`-th chain state and exactly the
+first `t` symbols have been appended. The induction uses no tape invariant because
+emission transitions ignore all reads. -/
+lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    ∀ t (ht : t ≤ w.length),
+      (tm.runFrom cfg t).state = some (e ⟨t, by omega⟩) ∧
+      (tm.runFrom cfg t).output = cfg.output ++ w.take t := by
+  intro t
+  induction t with
+  | zero =>
+    intro ht
+    exact ⟨hs, by simp⟩
+  | succ t ih =>
+    intro ht
+    obtain ⟨hstate, hout⟩ := ih (by omega)
+    have hstep : tm.runFrom cfg (t + 1) =
+        (emitAction w e ⟨t, by omega⟩).apply (tm.runFrom cfg t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+      unfold MultiTapeTM.step
+      rw [hstate]
+      exact congrArg (fun a => a.apply (tm.runFrom cfg t)) (htr _ _ _)
+    rw [hstep]
+    simp only [emitAction, dif_pos (show t < w.length by omega), Action.apply]
+    refine ⟨True.intro, ?_⟩
+    rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
+    simp [List.append_assoc]

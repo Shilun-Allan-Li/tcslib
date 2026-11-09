@@ -1,0 +1,48 @@
+/private/tmp/ab34-fe241-rule10-peer/runtime/InputCallFullBoundary.lean:180:4: error: Tactic `apply` failed: could not unify the type of `Cfg.ext rfl ?m.213 rfl rfl rfl`
+  ?m.209 = ?m.209
+with the goal
+  { state := some InputSeekRw.done,
+      inputPos :=
+        moveInputPos
+          { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+              output := d.output }.inputPos
+          SignType.neg,
+      workTapes :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.workTapes,
+      workTapePos :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.workTapePos,
+      output :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.output } =
+    { state := some InputSeekRw.done, inputPos := 0, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+
+x : List Bool
+d : Cfg 2 Bool InputSeekRw x
+hd : d.state = some InputSeekRw.start
+r : ℕ
+hr : r ≤ ↑d.inputPos + 2
+hrun :
+  MultiTapeTM.runFrom d r =
+    { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+hheads : ∀ u ≤ r, (MultiTapeTM.runFrom d u).workTapePos = d.workTapePos
+⊢ { state := some InputSeekRw.done,
+      inputPos :=
+        moveInputPos
+          { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+              output := d.output }.inputPos
+          SignType.neg,
+      workTapes :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.workTapes,
+      workTapePos :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.workTapePos,
+      output :=
+        { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.output } =
+    { state := some InputSeekRw.done, inputPos := 0, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }

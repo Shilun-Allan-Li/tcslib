@@ -1,0 +1,11 @@
+theorem stage_eq (f : ℕ → ℕ) {n i : ℕ} (hlo : ladder f i < n) (hhi : n ≤ ladder f (i + 1)) :
+    stage f n = i := by
+  have hle : stage f n ≤ i := Nat.find_min' (exists_le_ladder_succ f n) hhi
+  rcases Nat.lt_or_eq_of_le hle with hlt | heq
+  · exfalso
+    have hs := Nat.find_spec (exists_le_ladder_succ f n)
+    have hm : ladder f (stage f n + 1) ≤ ladder f i :=
+      (ladder_strictMono f).monotone (by unfold stage at hlt ⊢; omega)
+    unfold stage at hm
+    omega
+  · exact heq

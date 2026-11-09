@@ -1,0 +1,16 @@
+/-- Reflection converts the forward zipper identity into a left-moving step. -/
+lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (a b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l (a :: r) out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r out := by
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
+  · funext i w
+    have h := congrFun (sweepTape_right (-z) l r a b) (-w)
+    have he : -(z - 1) = -z + 1 := by omega
+    change Function.update (fun w => sweepTape (-z) l (a :: r) (-w)) z b w =
+      sweepTape (-(z - 1)) (b :: l) r (-w)
+    simpa only [Function.update_apply, neg_inj, he] using h
+  · funext i
+    rfl
+  · exact List.append_nil _

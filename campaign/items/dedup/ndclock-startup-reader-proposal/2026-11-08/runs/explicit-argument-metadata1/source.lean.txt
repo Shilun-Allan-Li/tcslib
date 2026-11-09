@@ -1,0 +1,16 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for s in ["Option.map_none", "Option.getD_none", "Turing.NDTM.initCfg_eq", "Turing.Cfg.init_workTapes", "Turing.Cfg.init_workTapePos", "Turing.Cfg.init_state", "Turing.Cfg.init_inputPos", "Turing.Cfg.init_output", "Turing.ClockHost.initCfg_eq_bootCfg", "List.take_append_drop", "Turing.NDTM.runWith_append", "Turing.ClockHost.bootCfg_of_halt", "List.length_replicate", "Turing.ClockHost.rewind_run", "Turing.ClockHost.moveInputPos_inLeft", "List.length_drop", "Turing.ClockHost.bootCfg", "Turing.ClockHost.runCfg", "Turing.capOf"] do
+    let n := s.toName
+    let some ci := env.find? n | throwError "missing explicit argument {n}"
+    let kind := match ci with
+      | .thmInfo _ => "theorem"
+      | .defnInfo _ => "definition"
+      | _ => "other"
+    let owner := match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString
+      | none => "<current>"
+    logInfo m!"ARGUMENT|{(Json.mkObj [("name",toJson s),("kind",toJson kind),("owner",toJson owner)]).compress}"

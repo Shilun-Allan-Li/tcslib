@@ -1,0 +1,18 @@
+theorem zoneSide_rebalance_left {ℓ : ℕ} (z : ZoneContents ℓ) (h : zoneShiftIndex false z < ℓ)
+    (hr : ∀ k (hk : k < zoneShiftIndex false z),
+      (z.right ⟨k, by omega⟩).length = zoneCapacity k)
+    (hroom : (z.right ⟨zoneShiftIndex false z, h⟩).length + 2 ^ (zoneShiftIndex false z - 1) ≤
+      zoneCapacity (zoneShiftIndex false z)) :
+    zoneSide (zoneRebalance false z).right = z.home :: zoneSide z.right ∧
+    zoneSide (zoneRebalance false z).left = (zoneSide z.left).tail := by
+  rw [zoneRebalance_false]
+  exact zoneSide_rebalance_right z.swap h hr hroom
+
+/-- **A right rebalance moves the represented tape one cell**: under the classical left state
+at its scanned index (below `ℓ`), the tape the rebalanced track represents is the old one read
+one cell further right. This is the per-track honesty statement the Hennie–Stearns assembly
+consumes. [AB09, §1.7]
+
+**Proof sketch.** Unfold the guard; the scan supplies the right-side hypotheses
+(`Turing.zoneShiftIndex_empty`, `Turing.zoneShiftIndex_nonempty`) and
+`Turing.zoneTrackTape_cascadeRight` finishes. -/

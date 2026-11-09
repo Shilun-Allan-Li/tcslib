@@ -1,0 +1,14 @@
+import TCSlib.Complexity.TuringMachine.Deterministic
+import Lean
+set_option maxHeartbeats 0
+
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  let some ci := env.find? ``Turing.MultiTapeTM.runFrom_one | throwError "API absent"
+  let axs ← liftCoreM <| Lean.collectAxioms ``Turing.MultiTapeTM.runFrom_one
+  let home := (env.getModuleIdxFor? ``Turing.MultiTapeTM.runFrom_one).map fun i => env.header.moduleNames[i.toNat]!.toString
+  logInfo m!"CONST|{(Json.mkObj [("name", toJson ci.name.toString), ("levels", toJson (ci.levelParams.map Name.toString)), ("type", toJson (reprStr ci.type)), ("owner", toJson home), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+example {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tm : Turing.MultiTapeTM k Γ S) (c : Turing.Cfg k Γ S x) :
+    tm.runFrom c 1 = tm.step c := Turing.MultiTapeTM.runFrom_one tm c

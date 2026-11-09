@@ -1,0 +1,5 @@
+/-- The leaf uses the public input-only action, including a stationary read. -/
+private def rd_callLeaf (op : Option SignType) (b : Bool) : MultiTapeTM 1 Bool rd_State where
+  q₀ := .inl ()
+  tr := fun _ inp _ =>
+    inputMoveAction (rd_leafMove op b) (.inr (rd_leafAnswer op b inp))

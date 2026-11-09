@@ -1,0 +1,23 @@
+/-- Agreement of branches on `x` and on `x.take m` propagates along a choice word while the
+input head cannot pass position `m`.
+
+**Proof sketch.** Induct on the word with the one-step lemma; the head budget
+`position + remaining length ≤ m + 1` is preserved because each step moves the head at most one
+cell. -/
+private lemma runWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} :
+    ∀ (w : List Bool) (c : Cfg k Γ S x) (c' : Cfg k Γ S (x.take m)),
+      c'.state = c.state → c'.inputPos.val = c.inputPos.val → c'.workTapes = c.workTapes →
+      c'.workTapePos = c.workTapePos → c'.output = c.output →
+      c.inputPos.val + w.length ≤ m + 1 →
+      (tm.runWith w c').state = (tm.runWith w c).state ∧
+        (tm.runWith w c').inputPos.val = (tm.runWith w c).inputPos.val ∧
+        (tm.runWith w c').workTapes = (tm.runWith w c).workTapes ∧
+        (tm.runWith w c').workTapePos = (tm.runWith w c).workTapePos ∧
+        (tm.runWith w c').output = (tm.runWith w c).output
+  | [], _, _, hs, hp, hw, hq, ho, _ => ⟨hs, hp, hw, hq, ho⟩
+  | b :: w, c, c', hs, hp, hw, hq, ho, hlen => by
+    simp only [List.length_cons] at hlen
+    obtain ⟨hs₁, hp₁, hw₁, hq₁, ho₁, hb⟩ :=
+      stepWith_take_agree tm b c c' hs hp hw hq ho (by omega)
+    simp only [runWith_cons]
+    exact runWith_take_agree tm w _ _ hs₁ hp₁ hw₁ hq₁ ho₁ (by omega)

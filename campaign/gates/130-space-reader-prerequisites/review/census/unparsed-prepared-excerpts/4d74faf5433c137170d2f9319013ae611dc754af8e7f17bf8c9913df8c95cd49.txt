@@ -1,0 +1,83 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Composition
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.branchTM Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.leftCfg Turing.FinTM.rightAction Turing.FinTM.rightCfg Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.moveInputPos
+open Lean Elab Command Meta in
+elab "#post234_consumer_controls" : command => do
+  let names : List Name := [`Turing.Action.apply,
+    `Turing.Cfg.init,
+    `Turing.Cfg.inputSymbol,
+    `Turing.Cfg.workTapeSymbols,
+    `Turing.FinTM.Computes,
+    `Turing.FinTM.ComputesFunInTime,
+    `Turing.FinTM.ComputesInTime,
+    `Turing.FinTM.branchTM,
+    `Turing.FinTM.bufferTape,
+    `Turing.FinTM.controlAction,
+    `Turing.FinTM.leftAction,
+    `Turing.FinTM.leftCfg,
+    `Turing.FinTM.rightAction,
+    `Turing.FinTM.rightCfg,
+    `Turing.MultiTapeTM.initCfg,
+    `Turing.MultiTapeTM.runFrom,
+    `Turing.MultiTapeTM.spaceUsed,
+    `Turing.MultiTapeTM.spaceUsedByTape,
+    `Turing.MultiTapeTM.step,
+    `Turing.MultiTapeTM.visitedByTapeHead,
+    `Turing.moveInputPos]
+  let mut index := 0
+  for n in names do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            let value ← instantiateMVars goal
+            pure (some (goalType, value))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs resultType => do
+            let mut lhs := mkAppN head xs
+            let mut rhs := (mkAppN di.value xs).headBeta
+            -- Projection goals are distinct from the complete equation even for nullary data.
+            match resultType.getAppFn with
+            | .const ``Turing.FinTM _ =>
+              lhs := mkProj ``Turing.FinTM 0 lhs
+              rhs := mkProj ``Turing.FinTM 0 rhs
+            | .const ``Turing.Cfg _ =>
+              lhs := mkProj ``Turing.Cfg 0 lhs
+              rhs := mkProj ``Turing.Cfg 0 rhs
+            | .const ``Turing.MultiTapeTM _ =>
+              lhs := mkProj ``Turing.MultiTapeTM 0 lhs
+              rhs := mkProj ``Turing.MultiTapeTM 0 rhs
+            | .const ``Turing.Action _ =>
+              lhs := mkProj ``Turing.Action 0 lhs
+              rhs := mkProj ``Turing.Action 0 rhs
+            | _ => pure ()
+            match ← solve lhs rhs with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"MIGPost234_Wrappers_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={declName}"
+
+#post234_consumer_controls

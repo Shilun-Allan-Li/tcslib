@@ -1,0 +1,366 @@
+04690deaa950b0f99e274d9fa216b70a71c0e5ba19831f9bc1ca4d4202f8295e.lean.txt
+theorem timeout_success (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) {v : Bool} (ha : a.state = none) (ho : a.output = [v]) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m [v]
+
+09ba42923b03504a393e8575d242e85855b21272d608f8f74a9dfcca1d6fec87.lean.txt
+theorem boot_run (c : Cfg S.k Bool S.State x) (w : List Bool)
+    (hlive : ∀ t < w.length, (S.tm.runFrom c t).state ≠ none) :
+    (hostTM S A loop).runWith w (bootCfg (A := A) c) = bootCfg (S.tm.runFrom c w.length)
+
+16af402a9ac1f722f77440a0f3df78bed969dbb8e7bccd40f4436e2e9cb73d69.lean.txt
+theorem run_step (b : Bool) (a : Cfg A.k Bool A.State x) (j : ℕ) (hj : j < m)
+    (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    (hostTM S A loop).stepWith b (runCfg m a j sT sP) =
+      runCfg m (A.tm.stepWith b a) ((j + 1 : ℕ) : ℤ) sT sP
+
+1aa4a81f73803f27b0503d9a2a66a9854a87c810c3145823b89da66d8efb2d2e.lean.txt
+private lemma dg_turn_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = false)
+    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
+        [some sweepBoundary] l
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
+      1 (z - 1) z
+
+21deb51047b3747e4b4d04151172bbb5ccf88b510fff35dd62cd312f33e7fe08.lean.txt
+theorem oneShot (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) (w : List Bool)
+    (hw : w.length = m + 1) :
+    ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).state = none ∧
+      ∀ v, ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).output = [v] ↔
+        (A.tm.runWith (w.take m) (A.tm.initCfg x)).state = none ∧
+          (A.tm.runWith (w.take m) (A.tm.initCfg x)).output = [v]
+
+269e7c55d09ea1893064e2d1dd62f092c06ffd14b70cbfef8562709f022ec8c8.lean.txt
+private lemma dg_write {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {y : List Γ} (c : Cfg M.k Γ M.State y)
+    (q : M.State) (inp : Option Γ) (reads : Fin M.k → Option Γ)
+    (a z : ℤ) (n : ℕ) {x : List (SweepAlphabet Γ M.k)}
+    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
+    (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (dgTM M a₀).tm.runFrom
+      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))
+        p z l ((tapeZone (fun j => tapeRow c j true) a n).reverse.map
+          (fun b => some (sweepSymbol b)) ++ r) out) (n * M.k) =
+      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))
+        p (z - n * M.k)
+        ((tapeZone (fun j => tapeRow ((M.tm.tr q inp reads).apply c) j false) a n).map
+          (fun b => some (sweepSymbol b)) ++ l) r out
+
+29b90c68ea02caab85f52b646955d6cf7a8527a2197593cd446eabad836231d0.lean.txt
+lemma core_injOn (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (T : ℕ)
+    (hT : (tm.runFrom c T).state = none)
+    (hmin : ∀ t < T, (tm.runFrom c t).state ≠ none) {t₁ t₂ : ℕ} (h₁₂ : t₁ < t₂)
+    (h₂ : t₂ < T) : core (tm.runFrom c t₁) ≠ core (tm.runFrom c t₂)
+
+29f98d1dd492f9120e62528fb09c0304e5e5d3ba801eec932155f2ed960545b9.lean.txt
+lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l r out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r.tail out
+
+36c1f2b31192c6eb17337145b4868614311e66f7450a23c7ab0710c32886ee53.lean.txt
+theorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :
+    bootCfg (A := A) c =
+      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)
+        (fun _ => 0) (bufferTape c.output) c.output.length []
+
+397d47ae025ca1daf564a417952cf5225e0b7dd36da6f45623fd6266996de01c.lean.txt
+private lemma dgSpan_generate_left {A Q : Type} {x : List A}
+    (tm : MultiTapeTM 1 A Q) (w : List A) (state : Fin (w.length + 1) → Q)
+    (htr : ∀ (i : ℕ) (hi : i < w.length) inp work,
+      tm.tr (state ⟨i, by omega⟩) inp work =
+        sweepAct (state ⟨i + 1, by omega⟩) (some w[i]) .neg)
+    (p : Fin (x.length + 2)) (out : List A) (z : ℤ)
+    (l r : List (Option A)) (n : ℕ) (hn : n ≤ w.length) :
+    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)
+      (sweepRevCfg (some (state ⟨n, by omega⟩)) p (z - n)
+        ((w.take n).map some |>.reverse |>.append l) (r.drop n) out) n (z - n) z
+
+3a2d7ddd024e1139a5960cd071da9b24794083432d7f61facab20a12e338abeb.lean.txt
+private theorem outputSymbol_congr (M : MultiTapeTM k Bool S) {c d : Cfg k Bool S x}
+    (h : MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d) :
+    M.outputSymbol c = M.outputSymbol d
+
+3e5207408d7d8f161d5a0767bc3a413819ea64ed6d7de736e8f952abd29d71d0.lean.txt
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP
+
+3f10268f2ffe14be2a997904ba0fe83fbe0c041426ce838e7cb82cca756535e1.lean.txt
+lemma core_runFrom (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d)
+    (t : ℕ) : core (tm.runFrom c t) = core (tm.runFrom d t)
+
+4de47c60f64cce014f010d7f0165b60a758bfb3ba87a9f0107164bcf835a36cc.lean.txt
+private lemma dg_sweep_reverse_prefix {A Q R C : Type} (tm : MultiTapeTM 1 A Q)
+    (state : R → Q) (symbol : C → A) (visit : R → C → R × C)
+    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
+      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
+    {x : List A} (p : Fin (x.length + 2)) (out : List A)
+    (as : List C) (s : R) (z : ℤ) (l r : List (Option A))
+    (u : ℕ) (hu : u ≤ as.length) :
+    (tm.runFrom (sweepRevCfg (some (state s)) p z l
+      (as.map (fun a => some (symbol a)) ++ r) out) u).workTapePos 0 = z - u
+
+5072c4eace2848d267ef102e1aefd0cb8abc606d4a23ed9332817a94023e1d3f.lean.txt
+lemma sweep_run_reverse {A S R C : Type} (tm : MultiTapeTM 1 A S)
+    (state : R → S) (symbol : C → A) (visit : R → C → R × C)
+    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
+      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
+    {x : List A} (p : Fin (x.length + 2)) (out : List A)
+    (as : List C) (s : R) (z : ℤ) (l r : List (Option A)) :
+    tm.runFrom (sweepRevCfg (some (state s)) p z l
+      (as.map (fun a => some (symbol a)) ++ r) out) as.length =
+    sweepRevCfg (some (state (sweepFold visit s as).1)) p (z - as.length)
+      (((sweepFold visit s as).2.map (fun a => some (symbol a))).reverse ++ l) r out
+
+534b22472d5f5f049e62cc3eed08b7c0bf96703d4a10b15c7a6faf8d8f6fa717.lean.txt
+theorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    runCfg m (A.tm.initCfg x) j sT sP =
+      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)
+        (fun _ => 0) (yard m) j []
+
+6639223b93224fa7b4494b33e15075507527e82d6b0fbe212be98246377fa2b5.lean.txt
+private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = true)
+    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z + M.k - 1)
+        [some sweepBoundary]
+        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
+      (M.k + 2) (z - 1) (z + M.k)
+
+750a1827c52fcf299fb6845d52ba15da110e702ae89b1babc143f38ae6d8f186.lean.txt
+private lemma sweep_turn_right {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) =
+      sweepCfg (some q') p (z + 1) (b :: r.tail) l out
+
+762ddcfb37ca1674fc8137ce391562c22ceeb51e60c39995f1d13aa00b7c61ae.lean.txt
+private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) =
+      sweepRevCfg (some q') p z l (b :: r.tail) out
+
+80505d1b05bb646486475fe5134307c761296dc7dc55d01caa2ea8c1df955451.lean.txt
+theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).output = out
+
+909fa7f3121c98f94fa690951fd63e9d1a6f68ed2c5ddc8ad14cffa6d1de4f8b.lean.txt
+lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (a b : Option A) :
+    (sweepAct q' b .neg).apply (sweepRevCfg q p z l (a :: r) out) =
+      sweepRevCfg (some q') p (z - 1) (b :: l) r out
+
+99048646c86c9775a089647ad64e7c48d7ee700be002d6c0783acf02dfc66730.lean.txt
+private lemma dgRev_write_optional {A Q : Type} {x : List A}
+    (dummy : Q) (q q' : Option Q) (p : Fin (x.length + 2)) (z : ℤ)
+    (l r : List (Option A)) (out : List A) (b : Option A) :
+    (⟨0, fun _ => (some b, .zero), none, q'⟩ : Action 1 A Q).apply
+      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out
+
+ad3a0d98524e93fe022a264c26f1a8d08cce268601774ff56fa9bf657cd66d44.lean.txt
+private lemma dg_left_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) (q : Option M.State) (heads : Fin M.k → Bool)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l r : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)
+      (sweepRevCfg (some (.inr (q, heads, ⟨M.k, by omega⟩))) p (z - M.k)
+        ((dgLeftRow heads).map (fun b => some (sweepSymbol b)) ++ l)
+        (r.drop M.k) out) M.k (z - M.k) z
+
+b1db45c919ec23de83d959800b21eb538b89d492ab759e59676c7ba5c9c12ae0.lean.txt
+private lemma sweep_turn_left {A S : Type} {x : List A} (q q' : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b emit : Option A) (di : SignType) :
+    (⟨di, fun _ => (some b, .neg), emit, q'⟩ : Action 1 A S).apply
+      (sweepCfg q p z l r out) =
+    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList)
+
+ba1dac49febda75f370a6270a3764157cf22378db0064be5441c8707d247bf23.lean.txt
+private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = true)
+    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z + M.k - 1)
+        [some sweepBoundary]
+        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
+      (M.k + 2) (z - 1) (z + M.k)
+
+c363af44efad893c346c3ed4480579b333e4ebc54276f6510282167f1fbc25bc.lean.txt
+theorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).state = q
+
+ce71ee2031863fdff0988ec0679e751632bb3a52afcebb9a1193927006a9c709.lean.txt
+private lemma dg_turn {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (z : ℤ) (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (dgTM M a₀).tm.step
+      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
+        l r (c.output.map (sweepEmbed Γ M.k))) =
+      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
+        (some sweepBoundary :: r.tail) l
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k))
+
+cf6eccb22fe47e8b5c0cd604792328a94f045690169d27f1764057df20a02737.lean.txt
+private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (q : M.State) (inp : Option Γ)
+    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
+    (hc : dgCross (M.tm.tr q inp reads) right .neg = true)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+        p (z - M.k)
+        ((dgLeftRow (fun i => right i && decide (((M.tm.tr q inp reads).workTapes i).2 = .neg))).map
+          (fun b => some (sweepSymbol b)) ++ l) [some sweepBoundary] out)
+      (M.k + 2) (z - M.k) z
+
+d5d28c83766a95b1dfdb4c385b73e9e731e45b6350f016089f11a6cd7ea807ad.lean.txt
+theorem core_eq (c : Cfg k Bool S x) :
+    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos)
+
+d61c33f1440879694bb24fb0564e6ae331b882893561339308c9c2588e67ddcf.lean.txt
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP
+
+d80818f6830b7fd538829ce3344fe76846fe4cd687d6eb3e85cee783a9bd5ec2.lean.txt
+lemma coreCode_inj (B : ℕ) {c d : Cfg k Bool S x}
+    (hc : ∀ i, |c.workTapePos i| ≤ B ∧ ∀ z, c.workTapes i z ≠ none → |z| ≤ B)
+    (hd : ∀ i, |d.workTapePos i| ≤ B ∧ ∀ z, d.workTapes i z ≠ none → |z| ≤ B)
+    (h : coreCode B c = coreCode B d) : core c = core d
+
+dbc45c7afb24f759f6f6bf4905b950cdb6599c0cba00dbe868977be205922607.lean.txt
+private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out
+
+e14a38b2c389a5f78808470efe63a42873cbea0fe96134d22f3fc1d4560954a6.lean.txt
+theorem boot_step (b : Bool) (c : Cfg S.k Bool S.State x) {q : S.State}
+    (hq : c.state = some q) :
+    (hostTM S A loop).stepWith b (bootCfg (A := A) c) = bootCfg (S.tm.step c)
+
+e1b184193dd8fe5226e4c45dbe20dea7289ae776f088e4ff0c5d3d51d5b8502f.lean.txt
+private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (q : M.State) (inp : Option Γ)
+    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
+    (hc : dgCross (M.tm.tr q inp reads) right .neg = true)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+        p (z - M.k)
+        ((dgLeftRow (fun i => right i && decide (((M.tm.tr q inp reads).workTapes i).2 = .neg))).map
+          (fun b => some (sweepSymbol b)) ++ l) [some sweepBoundary] out)
+      (M.k + 2) (z - M.k) z
+
+e30f255e2493a8858caca6e344458fd68bd607bc3b1e1d98673c3a7e6103f359.lean.txt
+theorem initCfg_eq_bootCfg :
+    (hostTM S A loop).initCfg x = bootCfg (A := A) (S.tm.initCfg x)
+
+eb7bed5cd22941fd3097dbb3a72d1828a879a71cc857944188fd32b81c1b9a8e.lean.txt
+theorem run_run_zero (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hu : u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a 0 sT sP) =
+      runCfg m (A.tm.runWith u a) u.length sT sP
+
+ed5483d5a116c84bfda51229f53f2449737006b27c24bb8c707d1cda5382a22a.lean.txt
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP
+
+efe472de6df8b59a6c9953bae567bd7abfe1b004edc9459eebbe219ea5bf8b19.lean.txt
+theorem run_run (a : Cfg A.k Bool A.State x) (j : ℕ) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hj : j + u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a j sT sP) =
+      runCfg m (A.tm.runWith u a) ((j + u.length : ℕ) : ℤ) sT sP
+
+f11f2c9cf54aa79d4482b2c301b2c0acedc2e76563bac9aa78da580c78bf2818.lean.txt
+theorem timeout_fail (b : Bool) (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (hfail : ¬ (a.state = none ∧ ∃ v, a.output = [v])) :
+    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+      if loop then hostCfg (some .p0) a.inputPos sT sP a.workTapes a.workTapePos (yard m)
+        ((m : ℤ) - 1) []
+      else hostCfg none a.inputPos sT sP a.workTapes a.workTapePos (yard m) m []
+
+f4b50b981a2a4e15dd110f665985a66fe797b5bd20726014ce4b98c10d61d49a.lean.txt
+private lemma dg_end_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) (q : M.State) (inp : Option Γ)
+    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
+    (hc : dgCross (M.tm.tr q inp reads) right .neg = false)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+        p z l [some sweepBoundary] out) 1 z z
+
+f57837be011abe43a63ac0ac7f856b79c2a0e8e69f154f18a0db63d7f2e0518d.lean.txt
+private lemma sweep_grow_left_block {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (q : M.State) {x : List (SweepAlphabet Γ M.k)}
+    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
+    (z : ℤ) (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k =
+      sweepRevCfg (some (.growLeft q ⟨M.k, by omega⟩)) p (z - M.k)
+        ((blankRow M.k false).map (fun a => some (sweepSymbol a)) ++ l)
+        (r.drop M.k) out
+
+f5b0c98e7dd8597045abb72734a2cc0c7b5d575f3fdf450404ce27e31588590a.lean.txt
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP
+
+fb295febe5a0142ac5fc68f7a98b40789232f4d83d756155ee6a0b8cb71c7c0e.lean.txt
+lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :
+    core (tm.step c) = core (tm.step d)

@@ -1,0 +1,11 @@
+/-- Convert a first-positive-exit module into a halting source: a release flag, raised after
+the first step, makes the module halt silently when it is at `exit` — so an entry equal to
+the exit still executes once. -/
+private def stopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
+  k := C.k
+  State := Bool × C.State
+  tm := { q₀ := (false, entry)
+          tr := fun q inp work =>
+            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
+            else {C.tm.tr q.2 inp work with
+              state := (C.tm.tr q.2 inp work).state.map (true, ·)} }

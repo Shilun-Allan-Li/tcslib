@@ -1,0 +1,18 @@
+/-- One-tape fixed-width decrement, followed by a rewind. The live states are
+borrow (`inl none`), rewind with success flag (`inl (some b)`), and return
+(`inr b`). No transition emits physical output. Return states wait for a
+surrounding controller. This privately re-derives the counter template. -/
+private def f2_loopDebitTM : FinTM Bool where
+  k := 1
+  State := Option Bool ⊕ Bool
+  tm :=
+    { q₀ := .inl none
+      tr := fun q _ work => match q with
+        | .inl none => match work 0 with
+          | some false => ⟨0, fun _ => (some (some true), .pos), none, some (.inl none)⟩
+          | some true => ⟨0, fun _ => (some (some false), .neg), none, some (.inl (some true))⟩
+          | none => ⟨0, fun _ => (none, .neg), none, some (.inl (some false))⟩
+        | .inl (some b) => match work 0 with
+          | some _ => ⟨0, fun _ => (none, .neg), none, some (.inl (some b))⟩
+          | none => ⟨0, fun _ => (none, .pos), none, some (.inr b)⟩
+        | .inr b => controlAction 0 (some (.inr b)) }

@@ -1,0 +1,28 @@
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:131:4: error: Type mismatch
+  WellFounded.fix_eq WellFoundedRelation.wf ?m.136 n
+has type
+  ⋯.fix ?m.136 n = ?m.136 n fun y x => ⋯.fix ?m.136 y
+but is expected to have type
+  ladnerH n = select localTest
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:152:20: error: Application type mismatch: The argument
+  congrArg select htests
+has type
+  select localTest = select globalTest
+but is expected to have type
+  select localTest =
+    if hex :
+        ∃ i < Nat.log 2 (Nat.log 2 n),
+          ∀ (x : List Bool),
+            x.length ≤ Nat.log 2 n →
+              ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH) then
+      Nat.find hex
+    else Nat.log 2 (Nat.log 2 n)
+in the application
+  Eq.trans hstep (congrArg select htests)
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:155:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:173:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:181:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:190:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:200:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:211:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:222:8: warning: declaration uses 'sorry'

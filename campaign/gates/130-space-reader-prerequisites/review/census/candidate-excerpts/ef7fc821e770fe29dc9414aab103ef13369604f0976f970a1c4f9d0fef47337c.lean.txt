@@ -1,0 +1,12 @@
+/-- Read-only catalog phases for a table-search round. The one-cell read is
+the only non-catalog action: it records whether the entry cell is blank. -/
+private def rt_findParts {Γ A : Type} {m : ℕ}
+    (δ : A → Option Γ → A) (a₀ : A) :
+    (p : rt_findPhase m A) → MultiTapeTM 2 Γ (rt_findControl p)
+  | .read =>
+      { q₀ := none
+        tr := fun q _ w => inputMoveAction 0
+          (match q with | none => some (w 0).isSome | some b => some b) }
+  | .scan _ => scanTM 2 0 (scanFold (fun a b => δ a (some b))) scanKeep a₀
+  | .skip _ _ => skipTM 2 0
+  | .exit => { q₀ := (), tr := fun _ _ _ => inputMoveAction 0 () }

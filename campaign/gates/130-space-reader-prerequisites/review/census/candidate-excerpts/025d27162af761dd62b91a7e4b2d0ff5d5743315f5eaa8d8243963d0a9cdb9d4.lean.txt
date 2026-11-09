@@ -1,0 +1,13 @@
+private def emCallRightTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k
+  State := M.State ⊕ Bool
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q =>
+        let a := M.tm.tr q inp work
+        { a with state := some ((a.state.map Sum.inl).getD (.inr false)) }
+      | .inr false => controlAction .pos (some (.inr true))
+      | .inr true => match inp with
+        | some _ => controlAction .pos (some (.inr true))
+        | none => controlAction 0 none }

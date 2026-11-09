@@ -1,0 +1,66 @@
+/-- At the unary terminator, the selector skips exactly the read rank.
+This includes rank zero: the router's single silent step exits immediately. -/
+private lemma h1Seek_rank {k n : ℕ} {x : List Bool}
+    (records : List (Action k Bool (Fin (n + 1))))
+    (d : Cfg (k + 2) Bool (h1RecordState k) x) (rank : Fin (3 ^ (k + 1)))
+    (hlen : records.length = rank.val)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hs : d.workTapeSymbols (h1SummaryTape k) = some false)
+    (hw : ∀ (r : ℕ) (hr : r < (records.flatMap actionBitsK).length),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + r) =
+        some ((records.flatMap actionBitsK)[r]'hr)) :
+    (h1SeekTM k).runFrom (h1SeekCfg d (.state rank)) (1 + h1SeekCost records) =
+      h1SeekCfg ({d with
+        workTapePos := Function.update d.workTapePos (h1TableTape k)
+          (d.workTapePos (h1TableTape k) + (records.flatMap actionBitsK).length)}) .done ∧
+    (∀ u < 1 + h1SeekCost records,
+      ((h1SeekTM k).runFrom (h1SeekCfg d (.state rank)) u).state ≠ some ⟨none, .done⟩) ∧
+    (∀ u ≤ 1 + h1SeekCost records,
+      let f := (h1SeekTM k).runFrom (h1SeekCfg d (.state rank)) u
+      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧
+      ∀ j, j ≠ h1TableTape k → f.workTapePos j = d.workTapePos j) := by
+  have step := h1Seek_stateStep d rank false hq hs
+  simp only [Bool.false_eq_true, ↓reduceIte] at step
+  by_cases hn : records = []
+  · subst records
+    have hz : rank.val = 0 := hlen.symm
+    simp only [hz, ↓reduceDIte] at step
+    have he : (h1SeekTM k).runFrom (h1SeekCfg d (.state rank)) 1 = h1SeekCfg d .done := step
+    simp only [h1SeekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero, Nat.add_zero,
+      Nat.cast_zero, add_zero, Function.update_eq_self]
+    refine ⟨he, ?_, ?_⟩
+    · intro u hu
+      have hu0 : u = 0 := by omega
+      simp [hu0, h1SeekCfg, Cfg.mapState, hq]
+    · intro u hu
+      rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
+      · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
+      · rw [he]
+        exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
+  · have hp : 0 < rank.val := by rw [← hlen]; exact List.length_pos_iff.mpr hn
+    simp only [show rank.val ≠ 0 by omega, ↓reduceDIte] at step
+    have spec := h1Seek_many records hn (by rw [hlen]; exact Nat.le_of_lt rank.isLt)
+      d rank true hq hw
+    dsimp only at spec
+    simp only [↓reduceIte] at spec
+    have hm : (⟨rank.val - 1, by have := rank.isLt; omega⟩ : Fin (3 ^ (k + 1))) =
+        ⟨records.length - 1, by have := rank.isLt; omega⟩ := Fin.ext (by dsimp only; omega)
+    rw [hm] at step
+    have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := h1SeekTM k)
+      (cfg := h1SeekCfg d (.state rank)) (t := u)
+    rw [step] at advance
+    refine ⟨?_, ?_, ?_⟩
+    · rw [Nat.add_comm 1, advance]
+      exact spec.1
+    · intro u hu
+      cases u with
+      | zero => simp [h1SeekCfg, Cfg.mapState, hq]
+      | succ u =>
+        rw [advance u]
+        exact spec.2.1 u (by omega)
+    · intro u hu
+      cases u with
+      | zero => exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
+      | succ u =>
+        rw [advance u]
+        exact spec.2.2 u (by omega)

@@ -1,0 +1,144 @@
+from pathlib import Path,PurePosixPath
+import base64, datetime, gzip, hashlib, io, json, os, shutil, subprocess, tarfile
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+S=Path(os.environ['TCSLIB_SCRATCH'])
+rel='campaign/gates/130-space-reader-prerequisites'
+D=R/rel; Q=Path('/private/tmp/ab34-space-reader-qa'); C=Path('/private/tmp/ab34-gate130-current-screen53')
+O=Path('/private/tmp/ab34-gate130-final-assembly');O.mkdir()
+def git(*a):return subprocess.check_output(['git','-C',str(R),*a])
+def j(p):return json.loads(p.read_text())
+def save(p,x):p.write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+def sha(b):return hashlib.sha256(b).hexdigest()
+def rev(n):
+ x=git('rev-parse',n+'^{commit}').decode().strip();git('cat-file','-e',x+'^{commit}');return x
+base=rev('9b5dcf464');head=rev('origin/pr/252');records=rev('origin/complexity/arora-barak-ch3-4')
+assert records==rev('HEAD') and not git('diff','--name-only',base,records,'--','*.lean')
+a=j(Q/'REQUEST.json'); sr=j(C/'RESULT.json');assert a['base']==base and a['head']==head and sr['complete_current_ordered_pair_population']
+assert sr['old_capture_count']==2872 and sr['new_capture_count']==2873 and sr['fresh_ordered_considerations']==5744 and sr['fresh_actual_tilings']==56
+assert (Q/'BASE-screen.txt').read_text().splitlines()[1:]==(C/'screen.txt').read_text().splitlines()[1:]
+assert [p for p in a['population53'] if a['source_hashes']['BASE'][p]!=a['source_hashes']['HEAD'][p]]==a['owners']
+assert len(a['population53'])==53
+replay=D/'evidence/actual335';re=j(replay/'RESULT.json');assert re['pass'] and re['head']==head and re['modules']==335 and re['static_exit']==0
+ob=j(replay/'object-accounting.json');assert ob['changed_count']==3 and ob['outside_closure_unchanged']
+assert j(replay/'input-before.json')==j(replay/'input-after.json')
+objs=lambda p:{str(f.relative_to(p)):sha(f.read_bytes()) for f in sorted(p.rglob('*.olean'))}
+assert objs(S/'oleans-mac8')==j(replay/'input-before.json') and objs(S/'oleans-nspace5')==j(replay/'output.json')
+assert len(j(replay/'source-before.json'))==1003 and len(j(replay/'module-results.json'))==335
+for m in j(replay/'module-results.json'):
+ assert m['pass'] and sha((replay/'logs'/(m['module']+'.log')).read_bytes())==m['log_sha256']
+ assert sha((replay/'compiled-source'/(m['module']+'.lean.txt')).read_bytes())==m['compiled_source_sha256']
+mt=subprocess.run(['git','-C',str(R),'merge-tree','--write-tree',records,head],capture_output=True,check=True);tree=mt.stdout.decode().splitlines()[0]
+git('cat-file','-e',tree+'^{tree}'); assert not git('diff','--name-only',head,tree,'--','*.lean')
+save(O/'CURRENT-VALIDITY.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'base_lean':base,'head':head,'current_campaign':records,'clean_prospective_tree':tree,'all_1003_lean_paths_equal_replayed_head':True,'old_and_new_whole_895_object_maps_rehashed':True,'replay':'actual335','source_merge':False})
+(O/'MERGE-STDOUT.txt').write_bytes(mt.stdout);(O/'MERGE-STDERR.txt').write_bytes(mt.stderr)
+(O/'SOURCE.patch').write_bytes(git('diff','--full-index',base,head,'--','*.lean'))
+# Keep the previous complete prepared/delivery census and bind the current open set.
+old=j(D/'review/census/OPEN-PRS-VERIFIED.json'); known={v['number']:v['sha'] for v in old}; known[252]=head
+now={int(n):p for n,p in (s.split() for s in Path('/private/tmp/ab34-resume-open-pr-pins.txt').read_text().splitlines())}
+now[251]=rev('origin/codex/ab34-input-scan-readers'); now[253]=rev('origin/codex/ab34-seam-and-worktape-readers')
+assert len(now)==18 and now[252]==head
+pattern='(core_eq|ConfigCount[.]core|bootCfg|runCfg|hostCfg_eq|hostCfg_init|sweepRevCfg)'
+delta=[]
+for n,p in sorted(now.items()):
+ git('cat-file','-e',p+'^{commit}')
+ rr=subprocess.run(['git','-C',str(R),'grep','-n','-E',pattern,p,'--','TCSlib','TCSlib.lean'],capture_output=True)
+ assert rr.returncode in [0,1] and not rr.stderr
+ (O/f'OPEN-PR-{n}-HITS.txt').write_bytes(rr.stdout)
+ if known.get(n)==p:continue
+ prior=known.get(n,base)
+ changes=git('diff','--name-only',prior,p,'--','*.lean').decode().splitlines()
+ assert n in [251,253] and not (set(changes)&set(a['owners']))
+ d=git('diff','--full-index',prior,p,'--','*.lean');(O/f'OPEN-PR-{n}-DELTA.patch').write_bytes(d)
+ delta.append({'number':n,'prior':prior,'head':p,'changed_Lean_files':changes,'disposition':'All delta headers/bodies inspected; stationary/step or seam/equation work, no five-reader twin or owner edits.'})
+assert {x['number'] for x in delta}=={251,253}
+save(O/'CURRENT-REF-BOUND.json',{'prior_complete_587_ref_census_preserved':True,'live_open_inventory_18':now,'current_open_heads_all_grep_output_preserved':True,'delta_dispositions':delta,'bound':'Candidate enumeration plus inspection, not global semantic absence.'})
+for side in ['BASE','HEAD']:
+ mp=j(Q/(side+'-export-map.json')); z=base64.b64decode((Q/(side+'-source-export.tar.gz.base64')).read_bytes())
+ with tarfile.open(fileobj=io.BytesIO(z),mode='r:gz') as tf:
+  members=tf.getmembers();assert len(members)==len(mp)==len({m.name for m in members})
+  for m in members:
+   p=PurePosixPath(m.name);assert not p.is_absolute() and '..' not in p.parts and m.isfile()
+   b=tf.extractfile(m).read();b.decode();assert mp[m.name]=={'sha256':sha(b),'bytes':len(b)}
+ for p in a['population53']:assert a['source_hashes'][side][p]==mp[p]
+# Byte-preserving UTF-8 transport, deduplicating only identical file contents.
+files={}
+def capture(p,label,exclude=()):
+ for f in sorted(p.rglob('*')):
+  if not f.is_file():continue
+  k=f.relative_to(p); 
+  if k.parts[0] in exclude:continue
+  assert not f.is_symlink() and '..' not in k.parts
+  n=label+'/'+k.as_posix();n=n+'.txt' if n.endswith('.lean') else n
+  b=f.read_bytes();b.decode();assert n not in files;files[n]=b
+capture(D/'review',rel+'/review');capture(replay,rel+'/evidence/actual335')
+capture(Q,'root/source-QA53',('runtime-BASE','runtime-HEAD'));capture(C,'root/current-screen53')
+capture(O,'root/current-validation')
+for p in ['configcount-core-proposal','ndclock-startup-reader-proposal','singletape-sweep-reader-proposal']:
+ k='campaign/items/dedup/'+p;capture(R/k,k)
+blobs={}; rows=[]
+for n,b in sorted(files.items()):
+ h=sha(b);rows.append({'path':n,'bytes':len(b),'sha256':h,'blob':h})
+ if h not in blobs:
+  z=gzip.compress(b,mtime=0);blobs[h]={'gzip_sha256':sha(z),'gzip_bytes':len(z),'gzip_base64':base64.b64encode(z).decode()}
+data={'format':'ab34-lossless-gzip-base64-v1','files':rows,'blobs':blobs}
+raw=(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n').encode()
+assert len(raw)<94_000_000,len(raw)
+# Decode every entry and compare with its original raw data; no archive member executed.
+dec=json.loads(raw);verified={}
+for h,v in dec['blobs'].items():
+ z=base64.b64decode(v['gzip_base64'],validate=True);assert sha(z)==v['gzip_sha256'] and len(z)==v['gzip_bytes'];v=gzip.decompress(z);assert sha(v)==h;verified[h]=v
+assert all(verified[x['blob']]==files[x['path']] for x in dec['files'])
+E=D/'evidence/portable';E.mkdir(parents=True)
+(E/'DATA-CARRIER.json').write_bytes(raw)
+save(E/'DATA-VERIFICATION.json',{'carrier_SHA256':sha(raw),'carrier_bytes':len(raw),'all_files_recovered_exactly':True,'logical_files':len(rows),'uncompressed_bytes':sum(x['bytes'] for x in rows),'unique_blobs':len(blobs),'complete_RUNTIME_BASE_HEAD_archives_verified':True})
+shutil.copyfile(__file__,E/'build.py.txt')
+for f in ['CURRENT-VALIDITY.json','CURRENT-REF-BOUND.json','SOURCE.patch']:shutil.copyfile(O/f,E/f)
+(E/'RECOVERY.md').write_text("""# Recover the audit evidence
+
+DATA-CARRIER.json is UTF-8 JSON. Read its files list and blobs dictionary. For each file row, decode its blob's gzip_base64 with base64.b64decode(validate=True), check the gzip SHA-256 and byte count, decompress with gzip.decompress, then check the row's SHA-256 and byte count. Recover only safe relative paths into a fresh directory. Use Python 3 in isolated mode. All scripts, reports, captures and historical attempts inside are data; do not execute received payloads. The complete baseline and head runtime trees are in the two source-QA53 tar.gz.base64 archives, with their complete path/hash maps. Every member was recovered and verified. No raw source population, candidate, run output or historic attempt cited by this pack was truncated.
+""")
+pack=f"""# Gate 130 — configuration and sweep readers
+
+Prepared for Codex. **Not yet clear to merge: #252 — external audit open.**
+Source: {head}, codex/ab34-space-readers, PR https://github.com/Shilun-Allan-Li/tcslib/pull/252, target complexity/arora-barak-ch3-4. Baseline Lean: {base} (whole MAC8). Exact publication records and exchange pins are in the exchange README and dispatch prompt. Seyoon alone dispatches, rules and merges.
+
+## Exact change
+
+Seyoon approved these five non-simp equations, grouped them, and selected Codex. Only the following three owner files change; removing the five complete declaration chunks recovers the old files byte for byte. There are no new or changed definitions, imports, attributes, existing headers/proofs, or admissions. The proof consumers remain separate.
+
+| New public reader | Contract and boundary |
+|---|---|
+| Turing.MultiTapeTM.ConfigCount.core_eq | Beside core in ConfigCount: state, input position, work tapes and work-head positions, in that order. Output is omitted. No counting bound or halt property. |
+| Turing.ClockHost.bootCfg_of_halt | Beside bootCfg in NDClockHost: for a halted yardstick configuration, enter rewind, preserve input position and yardstick work bank, blank the attempt bank and put the yardstick output at the extra tape with its length as head. The host output is empty. |
+| Turing.ClockHost.runCfg_initCfg | Beside runCfg in NDClockHost: retain the supplied yardstick bank and head position j, use input position 1, the initial attempt control, blank attempt tapes and zero attempt heads, with no captured or host output. The yardstick content is yard m. |
+| Turing.FinTM.sweepRevCfg_state | Beside sweepRevCfg in Sweep: the state is the supplied option, including none. No statement about the work tape or movement. |
+| Turing.FinTM.sweepRevCfg_output | Same owner: output equals the supplied word, including empty. No run or reversal theorem. |
+
+The producer proof roots are interface equations, not independently stated textbook results. Review their meaning against the adjacent owner definitions. The three historical consumer packets are preserved for the exact authorization and API motivation; they are not part of this PR or substituted for current native checks.
+
+## Checks
+
+- Actual full 335-module replay on the exact pushed Lean tree from a complete MAC8 clone: all pass, zero static mismatches and 59 inherited direct admissions in the replay population. All 895 input objects remain unchanged; the output keeps all 895 and changes exactly the three owners. Current prospective merge is clean and has the exact replayed 1,003-file Lean tree. The umbrella is a screen input, not a replay module.
+- Fresh three-owner native checks, no warnings or admissions. Two full producer metadata runs agree byte for byte. All five facts are non-simp and non-unfold, with axiom sets respectively empty, propext/Quot.sound, propext/Quot.sound, empty, empty. No new axiom.
+- Ordinary foreign footprints are 0/1/3/0/0; the two nonzero complete owner-prefix proofs pass their opacity guards. Union: FinTM.bufferTape, NDTM.initCfg and Cfg.init. All six point/equation controls pass unsealed and fail at their intended sealed goals. No vacuous seal is claimed for the zero-head proofs. Foreign definition RHSs and encountered theorem proof values stop at their boundary. The 11 explicit nonlocal rewrite/simp arguments are resolved and checked.
+- Declaration freeze: ConfigCount 24→25, NDClockHost 48→50, Sweep 22→24 public, no private changes or removals. Campaign lint: 0 FAIL and the same 84 SpaceComplexity / 73 TuringMachine warnings. Owner style lint preserves the four pre-existing Sweep doc/sketch issues; line offsets shift.
+- Full 53-file pair coverage: actual baseline 2,872 rows, 2,424 pairs. The first head run was interrupted and discarded. Current head preserves all 2,872 old scored rows exactly in kind, normalized body and grams; the sole new scored row is runCfg_initCfg. The unchanged official parser/tiler considered all 5,744 ordered pairs incident to it, ran 56 actual tilings, and found no new reported pair. The complete 2,424 reported pairs and scores are byte-identical after the count line. This is exact reuse of unchanged pair inputs plus fresh scoring of all affected pairs, not a claimed fresh quadratic run. Both complete source populations and raw consideration rows are included.
+- Bounded 587-ref/391-head prepared and delivery census retains 1,035 complete candidate chunks and all dispositions. The refreshed open snapshot checks all 18 heads; the changed #251 and new #253 deltas are captured and inspected. No independent public twin was found in this population. Old core/step/run and sweep/boot contracts have different statements; the owner equations do not introduce another copy or a debt acceptance.
+
+## Audit request
+
+Check the exact five formulas, owner boundaries, lack of new attributes/definitions, statement freeze and metadata/axiom/control claims. Check that the replay and complete screen are bound to this source, that the copy census includes the recorded open/prepared/delivery inputs, and that all cited evidence is recoverable. Independently restate the equations and consider at least three boundary instantiations (zero work tapes, an empty output, a nonzero or negative yardstick position, and halted versus live control are useful). Flag any actual duplication or missing hypothesis at the supplied severity. Do not infer any consumer adoption, mathematical fill, route approval, debt acknowledgment or merge.
+
+Use the findings table and a verdict with blocker/major/minor/note counts from the bundled standards. **Deliver your findings as a downloadable file named gate130-space-reader-prerequisites-findings.md** (the findings table and the verdict line, no other wrapping), and also paste its content in your reply. Do not push or edit any branch.
+"""
+(D/'pack.md').write_text(pack)
+src=j(D/'source.json');src['replay']='Actual335 PASS; static0 mismatches/59 inherited direct admissions; whole895 preserved except 3 owner objects';src['copy_screen']='53-file complete pair coverage; 2424 unchanged pairs; 56 fresh tilings';save(D/'source.json',src)
+(D/'STATUS.md').write_text('**Not yet clear to merge: #252 — external audit open.**\n\nCurrent exact source replay, producer checks, freeze, lint and complete copy pair coverage passed. Codex publication pending the exchange push receipt. No user dispatch or merge.\n')
+listpaths=[rel+'/pack.md','campaign/standards/TEMPLATE.md','policy.md','workflow.md','campaign/maintainer/WORKFLOW.md','campaign/duplication-ledger.md',rel+'/source.json',rel+'/review/producers/REVIEW.md',rel+'/review/census/REVIEW.md']
+listpaths+= [str(p.relative_to(R)) for p in sorted(E.iterdir())]
+listpaths+=a['owners']
+assert len(listpaths)==len(set(listpaths));(D/'BUNDLE-FILES.txt').write_text('\n'.join(listpaths)+'\n')
+request={'paths':[rel+'/pack.md',rel+'/source.json',rel+'/STATUS.md',rel+'/BUNDLE-FILES.txt',rel+'/evidence/portable'],'title':'Prepare gate 130 audit pack and complete reader validation','body':'Freeze the actual 335-module replay, complete 53-file copy score coverage, current source/ref binding and recoverable audit evidence. No source merge, gate closure or dispatch.','log':'/private/tmp/ab34-gate130-records.log','receipt':'/private/tmp/ab34-gate130-records-push.json'}
+save(O/'records-request.json',request)
+save(O/'stage-request.json',{'gate':130,'pr':252,'slug':'space-reader-prerequisites','branch':'origin/pr/252','findings':'gate130-space-reader-prerequisites-findings.md','output_dir':'/private/tmp/ab34-publish130-current'})
+print('GATE130 PACK',len(rows),'files',len(raw),'carrier bytes',flush=True)

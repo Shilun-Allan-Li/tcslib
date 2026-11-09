@@ -1,0 +1,135 @@
+/-- **The input's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
+from its head, only the last end-flagged, at a control that follows the virtual configuration
+`c` whose input head is the native one, the input instance reaches an exit at some time `T`, at
+no exit before. It passes exactly when every record's input claim is checked along the decoded
+virtual run; then `T = (2k + 4)n`, its head on tape `0` is one cell past the stream, and only
+that head, the input head and the state have changed. Otherwise it rejects.
+
+**Proof sketch.** Induct over the records, one record at a time: a failed check rejects at the
+record's end; a passed check of the end-flagged record passes; a passed check of an unflagged
+record moves the input head as the virtual step does, keeps the control equal to the virtual
+run's state, and leaves the rest of the stream one record further on, where the induction
+hypothesis applies. -/
+private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
+    ∀ (rs : List (Fin (2 * N.k + 4) → Bool)) (d : Cfg 2 Bool (nf_LeafSt N) x)
+      (ctl : nf_Control N) (c : Cfg N.k Bool N.State x),
+    rs ≠ [] →
+    (∀ r (h : r < rs.length), rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length)) →
+    d.state = some (.read ((0, fun _ => none), ctl)) → ctl.1 = c.state →
+    d.inputPos = c.inputPos →
+    (∀ p : ℕ, p < (rs.flatMap List.ofFn).length →
+      d.workTapes 0 (d.workTapePos 0 + p) = (rs.flatMap List.ofFn)[p]?) →
+    ∃ T, (∀ u < T, ∀ s, ((nf_leaf N none).runFrom d u).state = some s →
+        nf_leafExit N s = none) ∧
+      ((∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] 0) →
+        T = (2 * N.k + 4) * rs.length ∧ ∃ ip, (nf_leaf N none).runFrom d T = { d with
+          state := some .pass
+          inputPos := ip
+          workTapePos := Function.update d.workTapePos 0
+            (d.workTapePos 0 + ((2 * N.k + 4) * rs.length : ℕ)) }) ∧
+      (¬ (∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] 0) →
+        ((nf_leaf N none).runFrom d T).state = some .rej)
+  | [], _, _, _, hne, _, _, _, _, _ => absurd rfl hne
+  | rec :: rs, d, ctl, c, _, hflag, hst, hc, hip, hA => by
+    obtain ⟨hA0, hA1⟩ := nf_stream_cons N.k rec rs (d.workTapes 0) (d.workTapePos 0) hA
+    obtain ⟨hpre, hpass, hrej⟩ := nf_leaf_record_in N d rec ctl hst hA0
+    have hinp : d.inputSymbol = c.inputSymbol := nf_inputSymbol_congr d c (by rw [hip])
+    have hall : (∀ r (h : r < (rec :: rs).length),
+        nf_ok N (((rec :: rs).take r).foldl (nf_vstep N) c) (rec :: rs)[r] 0) ↔
+        nf_ok N c rec 0 ∧ ∀ r (h : r < rs.length),
+          nf_ok N ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] 0 := by
+      constructor
+      · intro h
+        exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
+      · rintro ⟨h0, h⟩ r hr
+        cases r with
+        | zero => exact h0
+        | succ r => exact h r (by simp at hr; omega)
+    by_cases hok : nf_ok N c rec 0
+    · obtain ⟨hlive, hdec⟩ := hok
+      obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlive
+      have hdec' : nf_decode N.k (fun p => some (rec p)) 0 = d.inputSymbol := by
+        rw [hinp, hdec]; rfl
+      have hrun := hpass q (hc.trans hq) hdec'
+      cases rs with
+      | nil =>
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by
+          have := hflag 0 (by simp)
+          simpa using this
+        refine ⟨2 * N.k + 4, hpre, fun _ => ⟨by simp,
+          moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape, ?_⟩,
+          fun hn => absurd ?_ hn⟩
+        · rw [hrun, if_pos hl]
+          simp
+        · intro r hr
+          simp at hr
+          subst hr
+          exact ⟨hlive, hdec⟩
+      | cons rec' rs' =>
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by
+          have := hflag 0 (by simp)
+          simpa using this
+        rw [if_neg (by simp [hl])] at hrun
+        set d' : Cfg 2 Bool (nf_LeafSt N) x := { d with
+          state := some (.read ((0, fun _ => none),
+            nf_complete N (fun p => some (rec p)) ctl))
+          inputPos := moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape
+          workTapePos := Function.update d.workTapePos 0
+            (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) } with hd'
+        have hvc : (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state := by
+          obtain ⟨cs, o, f⟩ := ctl
+          simp only at hc
+          subst hc
+          simp only [nf_complete, nf_vstep, hq]
+          exact (Action.apply_state _ _).symm
+        have hvip : d'.inputPos = (nf_vstep N c rec).inputPos := by
+          show moveInputPos d.inputPos _ = _
+          simp only [nf_vstep, hq]
+          rw [Action.apply_inputPos, hip]
+        have hA' : ∀ p : ℕ, p < ((rec' :: rs').flatMap List.ofFn).length →
+            d'.workTapes 0 (d'.workTapePos 0 + p) = ((rec' :: rs').flatMap List.ofFn)[p]? := by
+          intro p hp
+          show d.workTapes 0 (Function.update d.workTapePos 0
+            (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) 0 + p) = _
+          rw [Function.update_self]
+          exact hA1 p hp
+        have hflag' : ∀ r (h : r < (rec' :: rs').length),
+            (rec' :: rs')[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = (rec' :: rs').length) := by
+          intro r hr
+          have := hflag (r + 1) (by simp at hr ⊢; omega)
+          simpa using this
+        obtain ⟨T', hpre', hpass', hrej'⟩ := nf_leaf_run_in N (rec' :: rs') d'
+          (nf_complete N (fun p => some (rec p)) ctl) (nf_vstep N c rec) (by simp) hflag' rfl hvc
+          hvip hA'
+        refine ⟨(2 * N.k + 4) + T', fun u hu s hs => ?_, fun h => ?_, fun h => ?_⟩
+        · by_cases hu1 : u < 2 * N.k + 4
+          · exact hpre u hu1 s hs
+          · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+            rw [MultiTapeTM.runFrom_add, hrun] at hs
+            exact hpre' v (by omega) s hs
+        · obtain ⟨hT, ip, hcfg⟩ := hpass' ((hall.mp h).2)
+          refine ⟨by rw [hT]; simp; ring, ip, ?_⟩
+          rw [MultiTapeTM.runFrom_add, hrun, hcfg]
+          apply Cfg.ext
+          · rfl
+          · rfl
+          · rfl
+          · funext i
+            by_cases hi : i = 0
+            · subst hi
+              simp only [hd', Function.update_self, List.length_cons]
+              push_cast
+              ring
+            · simp only [hd', Function.update_of_ne hi]
+          · rfl
+        · have hn : ¬ ∀ r (h : r < (rec' :: rs').length),
+              nf_ok N (((rec' :: rs').take r).foldl (nf_vstep N) (nf_vstep N c rec))
+                (rec' :: rs')[r] 0 := fun h' => h (hall.mpr ⟨⟨hlive, hdec⟩, h'⟩)
+          rw [MultiTapeTM.runFrom_add, hrun]
+          exact hrej' hn
+    · refine ⟨2 * N.k + 4, hpre, fun h => absurd ((hall.mp h).1) hok, fun _ => hrej ?_⟩
+      by_cases hl : c.state = none
+      · exact Or.inl (hc.trans hl)
+      · refine Or.inr fun hdec => hok ⟨hl, ?_⟩
+        rw [hdec, hinp]
+        rfl

@@ -1,0 +1,1 @@
+The original nword1 queue stopped at precheck after a records-only campaign advance. No output tree and no native Lean execution. This is neither a Lean failure nor a passing replay. Await the exact nword2 passing RESULT for HEAD metadata.

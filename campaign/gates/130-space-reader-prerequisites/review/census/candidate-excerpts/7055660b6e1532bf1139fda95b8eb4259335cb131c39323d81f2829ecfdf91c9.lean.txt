@@ -1,0 +1,126 @@
+/-- **The step-block contract** (host H2; `h1Round_effect`). Let `c` be a
+live configuration (state `q`) of a `k`-work-tape binary machine with transition table `tr` and
+`n + 1` states, on the same input `x`, and let `a` be the action `tr` takes at `c`. If the step
+block is at `entry` in a configuration `d` that represents `c`, then for some time `T` with
+`0 < T ≤ 50·(|tableBitsK tr| + 1)`, writing `e` for the configuration reached at `T`:
+* `e` is at `exit k a.state.isSome` (back at `entry` when `a` has a successor, at `halt`
+  otherwise) and represents `a.apply c`, the source's next configuration; its summary cell is
+  `summaryEmit` of `d`'s and `a`'s emission;
+* strictly between `0` and `T` the block is live and visits neither `entry` nor `halt`;
+* the physical output is `d`'s at every time up to `T` (the block is silent);
+* at every time up to `T`, the input head is at its start or its end position and has moved
+  at most one cell; each mirrored head is at its start or its end position; mirrored heads
+  move at most one cell and auxiliary heads at most `50·(|tableBitsK tr| + 1)` cells;
+* both auxiliary heads are at `0` at the start and at `T`.
+The bound depends on the table only, through its serialized length `|tableBitsK tr|` (and so
+indirectly on `k`, `n` and the table's actions); only the coefficient `50` is uniform. It does
+not depend on the input `x`, the tape contents or the simulated time.
+[AB09, §1.4.1, proof of Theorem 1.9, Figure 1.6: one step of the universal machine]
+
+Not stated: the exact value of `T` (it is the unique first time after `0` at `entry` or
+`halt`, by the cut: `roundTM_firstExit_unique`), though the endpoint itself is determined
+(`Rep` fixes every tape and head, the exit the control, silence the output); a space bound
+(derived from the envelope, `roundTM_visited`); an input device other than the native one
+(the simulated input is the block's own input `x`).
+
+**Proof sketch.** Unpack the representation into the canonical round frame and invoke the
+complete canonical round: the selector skips `q` whole state groups and the read-rank suffix
+(the serializer cut pays for it), the old state word is cleared, the fixed fields execute,
+the successor is installed, and the catalog scans return both auxiliary heads. Output-prefix
+monotonicity gives silence throughout. The phase window and the action head bound give the
+mirrored envelope; summing the unit step bound gives the auxiliary envelope; the input clamp
+handles both boundary blanks. -/
+theorem roundTM_effect {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      let e := (roundTM k).runFrom d T
+      e.state = some (exit k a.state.isSome) ∧ Rep tr (a.apply c) e ∧
+      e.workTapeSymbols (summaryTape k) = summaryEmit (d.workTapeSymbols (summaryTape k)) a.output ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom d u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output) ∧
+      (∀ u ≤ T,
+        let f := (roundTM k).runFrom d u
+        (f.inputPos = d.inputPos ∨ f.inputPos = e.inputPos) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) = d.workTapePos (Fin.castAdd 2 i) ∨
+          f.workTapePos (Fin.castAdd 2 i) = e.workTapePos (Fin.castAdd 2 i)) ∧
+        ∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (50 * ((tableBitsK tr).length + 1) : ℕ)) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → d.workTapePos j = 0 ∧ e.workTapePos j = 0 := by
+  let a := tr q c.inputSymbol c.workTapeSymbols
+  have canonical := rep_entry tr c q hq d entry rel
+  obtain ⟨T, positive, bound, run, cut, window⟩ := roundTM_canonical tr c q d.output
+  rw [← canonical] at run cut window
+  refine ⟨T, positive, bound, ?_, ?_, ?_, cut, ?_, ?_, ?_⟩
+  · rw [run]
+    rfl
+  · rw [run]
+    simp [Rep, roundData, Cfg.mapState, Action.apply, tableTape, summaryTape]
+  · have old : d.workTapeSymbols (summaryTape k) = outputSummary c.output := by
+      rw [canonical]
+      simp [atKey, roundData, Cfg.mapState, Cfg.workTapeSymbols, summaryTape, summaryCells]
+    rw [run, old]
+    simpa only [roundData, Cfg.mapState, Cfg.workTapeSymbols, summaryTape,
+      Fin.addCases_right, show (1 : Fin 2) ≠ 0 from by decide, ↓reduceIte, summaryCells] using
+      (outputSummary_append c.output a.output)
+  · intro u hu
+    have lo := (roundTM k).output_prefix d (Nat.zero_le u)
+    have hi := (roundTM k).output_prefix d hu
+    rw [run] at hi
+    exact hi.eq_of_length_le lo.length_le
+  · intro u hu
+    have frame := window u hu
+    have finalInput : ((roundTM k).runFrom d T).inputPos = (a.apply c).inputPos := by
+      rw [run]
+      rfl
+    have finalHead (i : Fin k) : ((roundTM k).runFrom d T).workTapePos (Fin.castAdd 2 i) =
+        (a.apply c).workTapePos i := by
+      rw [run]
+      simp only [roundData, Cfg.mapState, Fin.addCases_left]
+      rfl
+    have inputStep : |((a.apply c).inputPos.val : ℤ) - c.inputPos.val| ≤ 1 := by
+      change |((moveInputPos c.inputPos a.inputTape).val : ℤ) - c.inputPos.val| ≤ 1
+      apply abs_le.mpr
+      have hp := c.inputPos.isLt
+      cases h : a.inputTape <;> simp only [moveInputPos, SignType.cast] <;>
+        split <;> simp <;> omega
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · simpa only [rel.1, finalInput] using frame.1
+    · rw [rel.1]
+      rcases frame.1 with start | finish
+      · rw [start]; simp
+      · rw [finish]; exact inputStep
+    · intro i
+      simpa only [(rel.2.1 i).2, finalHead i] using frame.2 i
+    · intro j
+      by_cases hj : j.val < k
+      · let i : Fin k := ⟨j.val, hj⟩
+        have ji : j = Fin.castAdd 2 i := Fin.ext rfl
+        rw [if_pos hj, ji, (rel.2.1 i).2]
+        rcases frame.2 i with start | finish
+        · rw [start]; simp
+        · rw [finish]; exact workTapePos_apply_le a c i
+      · rw [if_neg hj]
+        exact (MultiTapeTM.abs_workTapePos_runFrom_sub_le (roundTM k) d u j).trans (by omega)
+  · intro j hj
+    have home (e : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+        (ht : e.workTapePos (tableTape k) = 0) (hs : e.workTapePos (summaryTape k) = 0) :
+          e.workTapePos j = 0 := by
+      have casesAux : j = tableTape k ∨ j = summaryTape k := by
+        have limit := j.isLt
+        have indices : j.val = k ∨ j.val = k + 1 := by omega
+        rcases indices with h | h
+        · left; apply Fin.ext; simpa [tableTape] using h
+        · right; apply Fin.ext; simpa [summaryTape] using h
+      rcases casesAux with rfl | rfl
+      · exact ht
+      · exact hs
+    refine ⟨home d rel.2.2.2.2.1 rel.2.2.2.2.2, ?_⟩
+    apply home
+    · rw [run]; simp [roundData, Cfg.mapState, tableTape]
+    · rw [run]; simp [roundData, Cfg.mapState, summaryTape]

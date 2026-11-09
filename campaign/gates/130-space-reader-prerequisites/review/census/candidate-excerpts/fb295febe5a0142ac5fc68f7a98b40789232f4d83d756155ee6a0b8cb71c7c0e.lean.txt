@@ -1,0 +1,15 @@
+/-- The core after a step depends only on the core before it. -/
+lemma core_step (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d) :
+    core (tm.step c) = core (tm.step d) := by
+  simp only [core, Prod.mk.injEq] at h
+  obtain ⟨hs, hi, hw, hp⟩ := h
+  have hsym : c.inputSymbol = d.inputSymbol := by
+    unfold Cfg.inputSymbol; simp only [hi]
+  have hws : c.workTapeSymbols = d.workTapeSymbols := by
+    funext i; simp only [Cfg.workTapeSymbols, hw, hp]
+  unfold step
+  rw [hs]
+  cases d.state with
+  | none => simp [core, hs, hi, hw, hp]
+  | some q =>
+    simp only [core, Action.apply, hsym, hws, hi, hw, hp]

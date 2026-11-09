@@ -1,0 +1,21 @@
+import TCSlib.Complexity.CookLevin.Hardness
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Complexity
+open private clLoadTM clPrepareTM from TCSlib.Complexity.CookLevin.Hardness
+section
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.FinTM.controlAction Turing.Action.apply Turing.moveInputPos
+private lemma clPrepare_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)
+    (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
+  change (FinTM.controlAction 0 (some (Sum.inr (Fin.last l, .inl 0)))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all
+end
+end Complexity

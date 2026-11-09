@@ -1,0 +1,12 @@
+/-- The actual finite controller. All modules use the same padded work bank,
+so the clean-call contracts restore scratch before each next call. `emitAction`
+forwards the halting transition as well as ordinary transitions. -/
+private def satHostTM (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K) : FinTM Bool where
+  k := K
+  State := SatHostState M
+  tm := {
+    q₀ := satHostEntry M 0
+    tr := fun q inp work => match q with
+      | .inl _ => FinTM.controlAction 0 (some (satHostEntry M 2))
+      | .inr ⟨i, s⟩ => emitAction (fun s => .inr ⟨i, s⟩) (satHostRet M i)
+          ((satPadTM (M i) K (hk i)).tm.tr s inp work) }

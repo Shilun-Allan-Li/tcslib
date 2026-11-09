@@ -1,0 +1,50 @@
+theorem PSem.of_areach {A : NARM m d Λ} {oracle : Fin d → List Bool → Bool}
+    {G : AConf m Λ → Prop} {l' : Λ} {v' : Fin m → ℕ} {p : ℚ}
+    (hp : PSem A oracle x G (some l', v', none) p) :
+    ∀ (T : ℕ) (a : AConf m Λ), arun (A.detPart false) oracle x a T = (some l', v', none) →
+      (∀ t < T, G (arun (A.detPart false) oracle x a t)) → PSem A oracle x G a p := by
+  intro T
+  induction T with
+  | zero => intro a ha _; rw [show a = _ from ha]; exact hp
+  | succ T ih =>
+    intro a ha hG
+    have hstuck : ∀ v res n, arun (A.detPart false) oracle x (none, v, res) n = (none, v, res) :=
+      fun v res n => Function.iterate_fixed rfl n
+    rcases a with ⟨_ | l, v, res⟩
+    · rw [hstuck] at ha; cases ha
+    · rw [arun, Function.iterate_succ_apply] at ha
+      rcases astep_cases (A.detPart false) oracle l v res with ⟨l'', v'', he⟩ | ⟨b, he⟩
+      · rw [he] at ha
+        have hres : res = none := by
+          have key : ∀ n (l₀ : Λ) (v₀ : Fin m → ℕ),
+              arun (A.detPart false) oracle x (some l₀, v₀, res) n = (some l', v', none) →
+                res = none := by
+            intro n
+            induction n with
+            | zero => intro l₀ v₀ h; simp only [arun, Function.iterate_zero, id] at h; cases h; rfl
+            | succ n ihn =>
+              intro l₀ v₀ h
+              rw [arun, Function.iterate_succ_apply] at h
+              rcases astep_cases (A.detPart false) oracle l₀ v₀ res with ⟨l₁, v₁, e⟩ | ⟨b, e⟩
+              · rw [e] at h; exact ihn l₁ v₁ h
+              · rw [e] at h; rw [show ((astep (A.detPart false) oracle x)^[n] (none, v₀, some b))
+                  = (none, v₀, some b) from Function.iterate_fixed rfl n] at h; cases h
+          exact key T l'' v'' ha
+        subst hres
+        cases hA : A l with
+        | choose l₁ l₀ =>
+          have : astep (A.detPart false) oracle x (some l, v, none) = (none, v, some false) := by
+            simp [astep_ret (NARM.detPart_choose hA false)]
+          rw [this] at he; cases he
+        | det i =>
+          have e : astep (A.detPart false) oracle x (some l, v, none) =
+              astep (fun _ => i) oracle x (some l, v, none) := by
+            rw [← nastep_det hA false false, nastep_det' hA]
+          refine PSem.det hA (hG 0 (by omega)) ?_
+          rw [← e, he]
+          refine ih _ ha fun t ht => ?_
+          have := hG (t + 1) (by omega)
+          rwa [arun, Function.iterate_succ_apply, he] at this
+      · rw [he, show ((astep (A.detPart false) oracle x)^[T] (none, v, some b)) = (none, v, some b)
+          from Function.iterate_fixed rfl T] at ha
+        cases ha

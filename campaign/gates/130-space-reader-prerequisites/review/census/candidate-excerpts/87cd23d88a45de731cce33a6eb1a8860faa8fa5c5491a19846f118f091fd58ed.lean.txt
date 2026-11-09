@@ -1,0 +1,25 @@
+/-- Rewind preserves the exact source bank and physical output. Its terminal
+state is cut before dispatch to the accepting emitter or rejecting cleanup.
+**Proof sketch.** Use the quantitative native rewind, then cut its absorbing
+return and embed that prefix while retaining the acceptance bit in control. -/
+private lemma splitBody_rewind (M : FinTM Bool) (start : M.State) (w : List Bool)
+    (ok : Bool) (c : Cfg (M.k + 1) Bool (Fin 3) w)
+    (hc : c.state = some 0) :
+    ∃ t ≤ c.inputPos.val + 2,
+      (splitBodyTM M start).tm.runFrom (c.mapState (SplitBodyState.rewind ok)) t =
+        ({c with state := some (2 : Fin 3), inputPos := 1}).mapState (SplitBodyState.rewind ok) ∧
+      splitSafe (splitBodyTM M start).tm .anchor (c.mapState (SplitBodyState.rewind ok)) t := by
+  obtain ⟨T, hT, he⟩ := catalogRewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
+    (fun _ _ => rfl) (fun _ _ => rfl) c hc
+  obtain ⟨t, ht, hend, hsafe⟩ := splitEmbed_cut (splitRewindTM M.k).tm
+    (splitBodyTM M start).tm (SplitBodyState.rewind ok) .anchor (fun q => q = (2 : Fin 3))
+    (by intro q; simp)
+    (by
+      rintro z ⟨q, hz, rfl⟩
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2 : Fin 3))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [splitBodyTM, hq])
+    c {c with state := some (2 : Fin 3), inputPos := 1} T ⟨(2 : Fin 3), rfl, rfl⟩ he
+  exact ⟨t, ht.trans hT, hend, hsafe⟩

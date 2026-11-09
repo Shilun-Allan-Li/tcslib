@@ -1,0 +1,18 @@
+/-- **R8.3, seek to the end of a table** (design §12.8a, decision O5). Move the
+head of tape `i` right across blank-separated fields until two consecutive
+blank cells, and stop on the second, where a further field would start.
+`run` crosses field cells, `gap` follows a single blank, and a second blank
+enters `done` without moving. Nothing is written. -/
+def seekEndTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => tapeAction i 0 none .pos .gap
+    | .gap =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => inputMoveAction 0 .done
+    | q => inputMoveAction 0 q

@@ -1,0 +1,57 @@
+{
+  "gate121_finding2": {
+    "status": "VALID_MINOR_RECORDS_ONLY",
+    "omitted_original_integrity4": [
+      {
+        "logical": "evidence/compact-census/MANIFEST.json",
+        "record_path": "campaign/gates/121-fe-live1-cleanup/review/evidence/compact-census/MANIFEST.json",
+        "bytes": 13373,
+        "sha256": "d36c119dc5aa2faa465f70ac0dea4b8da6e8267682f8f20a16745f8b1cf2706b",
+        "present_in_published_records": true,
+        "omitted_from_published817": true
+      },
+      {
+        "logical": "evidence/compact-census/SHA256SUMS.txt",
+        "record_path": "campaign/gates/121-fe-live1-cleanup/review/evidence/compact-census/SHA256SUMS.txt",
+        "bytes": 7697,
+        "sha256": "cb5a17e0df78236bce4e2592288739ba936d70820ff0223cf0a13e86cfdd5819",
+        "present_in_published_records": true,
+        "omitted_from_published817": true
+      },
+      {
+        "logical": "evidence/nine-boundary/MANIFEST.json",
+        "record_path": "campaign/gates/121-fe-live1-cleanup/review/evidence/nine-boundary/MANIFEST.json",
+        "bytes": 31768,
+        "sha256": "444094ecda12973d05dc02c4c05d59b4c959316ed4a2ac9563f33da9b02ccf19",
+        "present_in_published_records": true,
+        "omitted_from_published817": true
+      },
+      {
+        "logical": "evidence/nine-boundary/SHA256SUMS.txt",
+        "record_path": "campaign/gates/121-fe-live1-cleanup/review/evidence/nine-boundary/SHA256SUMS.txt",
+        "bytes": 19546,
+        "sha256": "522d3bcb9552b83f8ad8e81d8531fa1fae1a2a5722c79f08780072c805be2aac",
+        "present_in_published_records": true,
+        "omitted_from_published817": true
+      }
+    ],
+    "all78_plus176_payload_manifest_entries_reconciled": true,
+    "repair": "Add these four original files to portable BUNDLE-FILES and reissued binding; preserve all original component bytes and history."
+  },
+  "gate127_finding1": {
+    "status": "VALID_MINOR_RECORDS_ONLY",
+    "published_context": {
+      "static_helper_sha256": "2c2ed3d0a7343c883fe6225df147f9fcb50d7f1b1b2c2383bb654232d95db3df",
+      "replay_helper": "review/replay/leanelab-o.sh is self-contained",
+      "diagnostic_helper": "leanelab.sh",
+      "local_slots": 3,
+      "machine_slots": 5,
+      "threads": 4,
+      "nice": 10
+    },
+    "missing_old_path": "campaign/gates/127-nat-reader/review/replay/leanelab-o.sh",
+    "present_correct_path": "campaign/gates/127-nat-reader/review/replay/drivers/leanelab-o.sh",
+    "correct_helper_sha256": "46a295cdb7e6b15a3e95dbe9bde6ec5cebb9639fe33d0691ff03ef0aaabf46ec",
+    "repair": "Set replay_helper to review/replay/drivers/leanelab-o.sh is self-contained; update record bindings/context only, no source or replay needed for this typo."
+  }
+}

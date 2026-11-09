@@ -1,0 +1,7 @@
+∀ (M : Turing.FinTM Bool) (f : ℕ → List Bool) (T : ℕ → ℕ),
+  (∀ (n : ℕ), M.ComputesInTime (List.replicate n true) (f n) (T n)) →
+    ∃ τ,
+      ∀ (x : List Bool),
+        τ x.length ≤ T x.length ∧
+          (Complexity.b2UnaryTM✝ M).ComputesInTime x (f x.length) (τ x.length) ∧
+            ∀ s < τ x.length, (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) s).state ≠ none

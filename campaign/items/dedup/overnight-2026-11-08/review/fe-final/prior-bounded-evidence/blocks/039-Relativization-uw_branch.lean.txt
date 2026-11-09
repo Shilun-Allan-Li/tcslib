@@ -1,0 +1,55 @@
+private theorem uw_branch (B : Language Bool) (x w : List Bool) (hw : x.length + 3 ≤ w.length) :
+    (uwTable.runWith B w (uwTable.initCfg x)).state = none ∧
+    ((uwTable.runWith B w (uwTable.initCfg x)).output = [true] ↔
+      (∀ i (hi : i < x.length), x[i] = true) ∧ w.take x.length ∈ B) := by
+  by_cases hall : ∀ i (hi : i < x.length), x[i] = true
+  · have hsplit : w = w.take x.length ++ ([w[x.length]] ++
+        ([w[x.length + 1], w[x.length + 2]] ++ w.drop (x.length + 3))) := by
+      conv_lhs => rw [← List.take_append_drop x.length w]
+      congr 1
+      rw [List.drop_eq_getElem_cons (by omega), List.drop_eq_getElem_cons (by omega),
+        List.drop_eq_getElem_cons (by omega)]
+      rfl
+    have hscan := uw_scan_run B w x.length le_rfl (fun i hi => hall i hi) (by omega)
+    obtain ⟨hh, ho⟩ := uw_tail B (x := x) (w.take x.length) w[x.length + 1] w[x.length + 2]
+    have hrun : uwTable.runWith B w (uwTable.initCfg x) =
+        uwTable.runWith B [w[x.length + 1], w[x.length + 2]]
+          (uwQueryCfg (x := x) (w.take x.length)) := by
+      conv_lhs => rw [hsplit]
+      rw [OracleNDTM.runWith_append, OracleNDTM.runWith_append, OracleNDTM.runWith_append,
+        hscan, uw_runWith_single, uw_end_step, OracleNDTM.runWith_of_halt B _ hh]
+    rw [hrun]
+    refine ⟨hh, ?_⟩
+    rw [ho]
+    by_cases hb : w.take x.length ∈ B
+    · simp [hb, hall]
+    · simp [hb]
+  · push_neg at hall
+    let hex : ∃ j, ∃ hj : j < x.length, x[j] = false := by
+      obtain ⟨i, hi, hx⟩ := hall
+      exact ⟨i, hi, by simpa using hx⟩
+    obtain ⟨hjlt, hjx⟩ := Nat.find_spec hex
+    set j := Nat.find hex
+    have hpre : ∀ i (hi : i < j), x[i]'(by omega) = true := by
+      intro i hi
+      have := Nat.find_min hex hi
+      push_neg at this
+      have h2 := this (by omega)
+      simpa using h2
+    have hsplit : w = w.take j ++ ([w[j]'(by omega)] ++ w.drop (j + 1)) := by
+      conv_lhs => rw [← List.take_append_drop j w]
+      rw [List.drop_eq_getElem_cons (by omega)]
+      rfl
+    have hscan := uw_scan_run B w j hjlt.le hpre (by omega)
+    obtain ⟨hh, ho⟩ := uw_false_step B j hjlt hjx (w.take j) (w[j]'(by omega))
+    have hrun : uwTable.runWith B w (uwTable.initCfg x) =
+        uwTable.stepWith B (w[j]'(by omega)) (uwScanCfg j hjlt.le (w.take j)) := by
+      conv_lhs => rw [hsplit]
+      rw [OracleNDTM.runWith_append, OracleNDTM.runWith_append, hscan, uw_runWith_single,
+        OracleNDTM.runWith_of_halt B _ hh]
+    rw [hrun]
+    refine ⟨hh, ?_⟩
+    rw [ho]
+    simp only [List.cons.injEq, Bool.false_eq_true, and_true, false_iff, not_and]
+    intro hall'
+    exact absurd (hjx.symm.trans (hall' _ _)) Bool.false_ne_true

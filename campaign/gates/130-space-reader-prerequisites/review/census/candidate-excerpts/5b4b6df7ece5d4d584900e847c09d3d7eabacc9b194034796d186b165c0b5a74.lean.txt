@@ -1,0 +1,62 @@
+/-- From genuine native input, initialize the complete retained reference
+layout and run the banked recorder through the inclusive horizon.
+**Proof sketch.** Invoke native field preparation at its first completed
+return, dispatch once into the exact prepared recorder, then relocate the
+banked complete recording run. The total ledger charges native input
+copying, every field load/reset, dispatch, and all source/recording work. -/
+private lemma clRecord_complete (M : FinTM Bool) (y : List Bool) (T : ℕ)
+    (keep : Fin 4 → List Bool) (W : ℕ)
+    (hW : ∀ i : Fin ((clRecTM M).k + 4), ((Fin.addCases (clRecWords M y T) keep : Fin ((clRecTM M).k + 4) → List Bool) i).length ≤ W) :
+    let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ []
+    ∃ t ≤ 2 * x.length + 4 + ((clRecTM M).k + 4) * (3 * W + 7) +
+        (4 * clRecFields M + 7) * (T + 1) ^ 2,
+      (clRecordTM M).tm.runFrom ((clRecordTM M).tm.initCfg x) t =
+      clRecordCfg M x keep
+        (clRecCfg M (x := x) (.inr (.inr (.inr (.inr ()))))
+          (M.tm.runFrom (M.tm.initCfg y) T) (clCounts M y T) (clRecords M y (T + 1)) T T) := by
+  dsimp only
+  let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ []
+  have prep := clPrepare_first (Fin.addCases (clRecWords M y T) keep) [] W hW
+  obtain ⟨a, ha, _, hf, he⟩ := prep
+  have lift := clMap_run (clPrepareTM ((clRecTM M).k + 4)).tm (clRecordTM M).tm Sum.inl
+    (fun q => q ≠ .inr (Fin.last ((clRecTM M).k + 4), .inl 0))
+    (by intro q hq inp work; simp only [clRecordTM, if_neg hq])
+    ((clPrepareTM ((clRecTM M).k + 4)).tm.initCfg x) a
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have init : (((clPrepareTM ((clRecTM M).k + 4)).tm.initCfg x).mapState Sum.inl :
+      Cfg (clRecordTM M).k Bool (clRecordTM M).State x) = (clRecordTM M).tm.initCfg x := rfl
+  rw [init] at lift
+  have dispatch : (clRecordTM M).tm.step
+      (((clLoadCfg x 1 (Fin.last ((clRecTM M).k + 4)) (.inl 0)
+        (Fin.addCases (clRecWords M y T) keep) x
+        (clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep))).length).mapState Sum.inr).mapState Sum.inl) =
+      clRecordCfg M x keep
+        (clRecCfg M (x := x) (.inl (some M.tm.q₀, true, (0, 0)))
+          (M.tm.initCfg y) (fun _ => 0) [] T 0) := by
+    change ((clRecordTM M).tm.tr
+      (.inl (.inr (Fin.last ((clRecTM M).k + 4), .inl 0))) _ _).apply _ = _
+    simp only [clRecordTM, if_true]
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+    simpa only [x, List.length_append, List.length_nil, Nat.add_zero] using
+      clRecord_prepare_frame M x y T keep
+  obtain ⟨b, hb, hrec⟩ := clRec_complete M x y T
+  have liftRec := clSlot_run (clRecTM M).tm (clRecordTM M).tm
+    (clRecordIndex M) (clRecordSelect M) (clRecord_inverse M) Sum.inr (fun _ => True)
+    (by intros; rfl)
+    (Fin.addCases (Fin.addCases (fun _ _ => none) (fun i => FinTM.bufferTape (keep i)))
+      (fun _ : Fin 1 => FinTM.bufferTape x))
+    (Fin.addCases (fun _ => 0) (fun _ : Fin 1 => x.length))
+    (clRecCfg M (x := x) (.inl (some M.tm.q₀, true, (0, 0)))
+      (M.tm.initCfg y) (fun _ => 0) [] T 0) b (by intros; trivial)
+  rw [hrec] at liftRec
+  have arrived : (clRecordTM M).tm.runFrom ((clRecordTM M).tm.initCfg x) (a + 1) =
+      clRecordCfg M x keep
+        (clRecCfg M (x := x) (.inl (some M.tm.q₀, true, (0, 0)))
+          (M.tm.initCfg y) (fun _ => 0) [] T 0) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]
+  refine ⟨a + 1 + b, ?_, ?_⟩
+  · have hcost := clRec_cost_bound M T
+    omega
+  · rw [MultiTapeTM.runFrom_add, arrived]
+    exact liftRec

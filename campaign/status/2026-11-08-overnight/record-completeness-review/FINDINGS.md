@@ -1,0 +1,11 @@
+# Ignored data correction — independent read-only review
+
+PASS within the declared data scope. All 58 census paths are campaign `.lean.txt` evidence, physically present and exact to their adopted frozen manifests/maps. The groups are 50 FE121 raw QA captures, 4 current128 nested Mathlib copies and 4 prior Ladner copies. The original 132 ADOPTION mapping and FE121 `.lean`→`.lean.txt` evidence suffix mapping were applied explicitly; no file-content transformation was accepted.
+
+The complete 2837+777+132+149=3895 manifest-payload check found 0 physical missing paths, 0 hash/byte mismatches and 0 changed tracked blobs. At records 6ecfc83d603aa31d6346b7aa3db790d5f320331b, exactly 58 payload paths were uncommitted: the census 58, with no additional missing commit path. A global ignored-campaign inventory likewise contained exactly those 58 paths and no others.
+
+FE121’s two encoded archives were read from that committed records tree. Encoded/gzip/tar hashes and every 1115+1115 regular file member match the full member index. All 50 ignored raw `.claude` captures recover exactly in memory, match the frozen 2837 receipt and also match original pinned BASE 9b5/HEAD d64 source bytes. No archive was extracted to a filesystem and no captured code was executed. Portable 816 directly includes both encoded archives and their full member index; it excludes the raw 50 paths. The eight Ladner copies match their original/current manifests and the expected two distinct Mathlib payload hashes.
+
+This confirms a record-tracking defect, with no source, Lean, axiom or comparison failure observed. Root’s exact 58 data-only force-track action is supported. Root owns that Git mutation, the post-commit verification and corrected gate121 V2 publication/prompt/old-V1-VOID disposition. These receipts preserve the pre-correction commit and do not claim the correction was already committed or dispatch any packet.
+
+No other ignored or missing payload issue was found within the global ignored-campaign census and the four full adopted manifests checked here. This is not an audit of every unrelated historical manifest in the repository. Source branches and prior frozen outputs were not modified by this reviewer; no Lean or screen ran.

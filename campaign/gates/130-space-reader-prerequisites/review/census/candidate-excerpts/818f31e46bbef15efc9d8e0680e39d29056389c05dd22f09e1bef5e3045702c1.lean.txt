@@ -1,0 +1,9 @@
+private lemma rep_entry_orig {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    d = atKey (roundData c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 d.output) .entry () := by
+  sorry
+
+example : type_of% @rep_entry_orig = type_of% @rep_entry := by with_reducible rfl

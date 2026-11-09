@@ -1,0 +1,36 @@
+private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}
+    (y : List Bool) (b : Bool) (T : ℕ) (hV : V.ComputesInTime y [b] T)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (w : List Bool) (hw : w.length = T + 1) :
+    let out := (b2Host S V).tm.runWith w
+      (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)
+    out.state = none ∧ out.output = [b] := by
+  classical
+  have hex : ∃ t, (V.tm.runFrom (V.tm.initCfg y) t).state = none :=
+    ⟨T, ((computesInTime_iff _ _ _ _).mp hV).1⟩
+  let t := Nat.find hex
+  let c := V.tm.runFrom (V.tm.initCfg y) t
+  have ht : t ≤ T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1
+  have hc : c.state = none := Nat.find_spec hex
+  have hcomp : V.ComputesInTime y c.output t :=
+    (computesInTime_iff _ _ _ _).mpr ⟨hc, rfl⟩
+  have ho : c.output = [b] := hcomp.output_unique hV
+  have hp : (w.take t).length = t := List.length_take_of_le (by omega)
+  obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (w.take t)
+    (fun s hs => Nat.find_min hex (show s < t from hp ▸ hs))
+  rw [hp] at hr
+  have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega
+  cases hd : w.drop t with
+  | nil => simp [hd] at hlen
+  | cons bit rest =>
+    have hf := b2_verify_finish S V c hc tag p tapes heads bit
+    have hout : ((b2Host S V).tm.stepWith bit
+        (b2VerifyCfg S V c tag p tapes heads)).output = [b] := by
+      rw [hf.2, ho]
+      cases b <;> simp
+    have hsplit : w = w.take t ++ bit :: rest := by rw [← hd, List.take_append_drop]
+    dsimp only
+    rw [hsplit, NDTM.runWith_append, hr, NDTM.runWith_cons,
+      NDTM.runWith_of_halt _ hf.1]
+    exact ⟨hf.1, hout⟩

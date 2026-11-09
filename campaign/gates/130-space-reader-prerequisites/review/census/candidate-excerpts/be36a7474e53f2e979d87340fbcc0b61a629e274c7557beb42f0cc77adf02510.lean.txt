@@ -1,0 +1,10 @@
+/-- The completed input-fold machine's rejection has the decoder's true
+semantics. The only machine fact used is the public full-input fold contract. -/
+private theorem b4mValidation_reject {k : ℕ} {x : List Bool}
+    (d : Cfg k Bool (ScanPhase b4mSyntaxState) x)
+    (hs : d.state = some (.fwd (.inl none))) (hi : d.inputPos = 1)
+    (hr : ((inputFoldTM k b4mSyntaxStep (.inl none)).runFrom d
+      (2 * x.length + 2)).state ≠ some (.done (.inr 4))) : x ∈ TQBF := by
+  apply b4mReject_mem
+  rw [(inputFoldTM_run_ofCfg b4mSyntaxStep (.inl none) d hs hi).1] at hr
+  simpa [b4mValid] using hr

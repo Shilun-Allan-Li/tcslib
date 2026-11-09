@@ -1,0 +1,61 @@
+/-- The timed interpreter finishes from every checkpoint, within a uniform ledger.
+
+**Proof sketch.** Induct on the remaining numeric budget. Already-halted sources
+flush immediately. Otherwise the stopped lookup reaches a pending action; a zero
+budget times out without applying it, while a positive budget borrows once and
+applies it. The recursive call is made on the successor, including its halting
+state. Thus halting on the final allowed transition reaches the success branch.
+The emission-length increment is at most one, leaving two units of slack per
+transition in the displayed bound. -/
+private lemma timed_interpret_finishes (M : CodeTM) (α : List Bool) {x : List Bool}
+    (r : ℕ) : ∀ (src : Cfg 1 Bool (Fin (M.numStates + 1)) x) (p : ℕ) (bs : List Bool),
+    p ≤ M.serialize.length → timedValue bs = r →
+    ∃ d, d ≤ (3 * M.serialize.length + 5 * (M.numStates + 1) + 20 + 2 * bs.length + 8) * (r + 1) +
+        2 * src.output.length ∧
+      let dst := timedInterpreter.runFrom (timedLift (universalSimulationCfg M α src p) bs) d
+      dst.state = none ∧ dst.output = timedAnswer M src r := by
+  induction r with
+  | zero =>
+    intro src p bs hp hv
+    by_cases hs : src.state = none
+    · refine ⟨2 * src.output.length + 3, by omega, ?_⟩
+      have h := timed_flush (universalSimulationCfg M α src p) bs
+        (by simp [universalSimulationCfg, hs])
+      simpa only [universalSimulationCfg, timedAnswer, MultiTapeTM.runFrom_zero, hs, ↓reduceIte] using h
+    · obtain ⟨d, p', ready, hd, hp', ⟨bits, halt, hready⟩, he, ha⟩ := timedCut_live_block M α src p hp hs
+      have hreplay := timed_replay (universalSimulationCfg M α src p) bs d (by rw [he, hready]; simp)
+      rw [he] at hreplay
+      have htimeout := timed_clock_timeout ready bs bits halt hready hv
+      refine ⟨d + (2 * bs.length + 3), by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hreplay]
+      simpa only [timedAnswer, MultiTapeTM.runFrom_zero, if_neg hs] using htimeout
+  | succ r ih =>
+    intro src p bs hp hv
+    by_cases hs : src.state = none
+    · have hpos : 3 ≤
+          (3 * M.serialize.length + 5 * (M.numStates + 1) + 20 + 2 * bs.length + 8) * (r + 1 + 1) := by
+        have h := Nat.mul_le_mul_left
+          (3 * M.serialize.length + 5 * (M.numStates + 1) + 20 + 2 * bs.length + 8)
+          (show 1 ≤ r + 1 + 1 by omega)
+        omega
+      refine ⟨2 * src.output.length + 3, by omega, ?_⟩
+      have h := timed_flush (universalSimulationCfg M α src p) bs
+        (by simp [universalSimulationCfg, hs])
+      simpa only [universalSimulationCfg, timedAnswer, MultiTapeTM.runFrom_of_halt _ hs, hs, ↓reduceIte] using h
+    · obtain ⟨d, p', ready, hd, hp', ⟨bits, halt, hready⟩, he, ha⟩ := timedCut_live_block M α src p hp hs
+      have hreplay := timed_replay (universalSimulationCfg M α src p) bs d (by rw [he, hready]; simp)
+      rw [he] at hreplay
+      have hc := timed_clock_success ready bs bits halt hready (by omega)
+      rw [ha] at hc
+      have hv' : timedValue (timedBorrow true bs).2 = r := by
+        have h := timedBorrow_value bs (by omega); omega
+      obtain ⟨d', hd', hfinish⟩ := ih (M.tm.step src) p' (timedBorrow true bs).2 hp' hv'
+      have hlength : (M.tm.step src).output.length ≤ src.output.length + 1 := by
+        rw [MultiTapeTM.step_output, List.length_append]
+        cases M.tm.outputSymbol src <;> simp
+      rw [timedBorrow_length] at hd'
+      refine ⟨d + (2 * bs.length + 4) + d', ?_, ?_⟩
+      · rw [Nat.mul_succ]
+        omega
+      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hreplay, hc]
+        simpa only [timedAnswer, MultiTapeTM.runFrom_succ_eq_step] using hfinish

@@ -1,0 +1,80 @@
+{
+  "slug": "restart-reader",
+  "wt": "ab34-campaign",
+  "branch": "codex/ab34-restart-reader",
+  "title": "Read universal startup configuration through its shared equation",
+  "detail": "The local five-field hinit proof now cites MultiTapeTM.initCfg_eq_mapState from the existing UniversalParts import. All literal headers, the initial machine and the exact mapped configuration are preserved. This retires only this inspected RS-1 implementation; import-dependent sibling cases remain held.",
+  "gate": 126,
+  "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
+  "pr": 246,
+  "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/246",
+  "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "records_capture": "a65af49cbd8e720f267b6a16b6b4812d31be0904",
+  "owner": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+  "roots": [
+    "Turing.exists_selfStartupTMK",
+    "Turing.exists_selfUniversalK",
+    "Turing.universalK"
+  ],
+  "evidence_inputs": [
+    "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/items/dedup/overnight-2026-11-08/review/rs1"
+  ],
+  "replay_candidates": [
+    "nrs2",
+    "nrs1"
+  ],
+  "source_freeze": {
+    "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+    "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
+    "gate": 126,
+    "pr": 246,
+    "rows": [
+      {
+        "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+        "BASE_blob": "4c94bbe6651470bfd241f16f77c90d9171c5ecd3",
+        "HEAD_blob": "f259e781e3abe3d7768c564f3614267ca891389c",
+        "BASE_sha256": "d3ceb7ca08b1e7adad821127e3dcefd3135599e8fb798d718cec4935ea751a3f",
+        "HEAD_sha256": "5f1f0757335087b8bfd08da9fc6b7445bccb6033024e36746a33d3d82b09b032",
+        "changed_chunks": [
+          "Turing.exists_selfStartupTMK"
+        ],
+        "imports_exact": true,
+        "declaration_names_privacy_and_parser_headers_exact": true,
+        "full_chunk_freeze_scope": "declfreeze parser; exact full-header recovery and compiled evidence separately supplied"
+      }
+    ],
+    "allowed_targets": [
+      "exists_selfStartupTMK"
+    ]
+  },
+  "QA_export": "/private/tmp/ab34-overnight-qa/exports/126",
+  "lint_comparison": [
+    {
+      "kind": "style-lint.txt",
+      "BASE_bytes": 104,
+      "HEAD_bytes": 104,
+      "BASE_sha256": "372d74190c63f2c994bfca78532275993489a9aed1f82c26bb92271245997482",
+      "HEAD_sha256": "b5a661d9e815b4d3e498e71adbbf2773296315b0a1d9442d2adfbc8995d778f9",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "campaign-lint.txt",
+      "BASE_bytes": 134274,
+      "HEAD_bytes": 134274,
+      "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+      "HEAD_sha256": "447c5ef128ecc53bacddaf4a107049b1d85819bbeb31f07992df6b42e6388ebe",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "sizes.json",
+      "BASE_bytes": 62,
+      "HEAD_bytes": 62,
+      "BASE_sha256": "5f5a45cc1caf8cf6742efa43fc5786fd96eb4080d7a37526b007f2db55624dd7",
+      "HEAD_sha256": "dabb5e1dc64404322a7d6eb5074b2a8e9c5b60a1bf36cee2955bd369b093dd11",
+      "stdout_or_JSON_bytes_exact": false
+    }
+  ],
+  "status": "PREPARING; not ready to dispatch; root final binding required",
+  "screen_population_count": 33,
+  "no_source_Git_records_or_snapshot_writes": true
+}

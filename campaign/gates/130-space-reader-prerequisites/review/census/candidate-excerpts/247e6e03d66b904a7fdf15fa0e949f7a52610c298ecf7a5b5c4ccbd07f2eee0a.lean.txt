@@ -1,0 +1,10 @@
+/-- A native input-only leaf; its scan is handled by the published rewind contracts. -/
+private def ss_inputRewind (n : ℕ) : MultiTapeTM n Bool ss_RewindState where
+  q₀ := .enter
+  tr := fun q inp _ => match q with
+    | .enter => FinTM.controlAction .neg (some .scan)
+    | .scan => match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos (some .stop)
+    | .stop => FinTM.controlAction 0 (some .done)
+    | .done => FinTM.controlAction 0 (some .done)

@@ -1,0 +1,6 @@
+def zoneCascadeLeft {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  (zoneCascadeRight j z.swap).swap
+
+/-- The left cascade is the mirrored right cascade:
+`zoneCascadeLeft j z = (zoneCascadeRight j z.swap).swap`
+(the specification API, user 2026-10-16). -/

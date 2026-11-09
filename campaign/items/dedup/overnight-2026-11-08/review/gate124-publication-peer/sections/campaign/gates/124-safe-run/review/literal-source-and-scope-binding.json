@@ -1,0 +1,48 @@
+{
+  "gate": 124,
+  "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
+  "owner": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+  "BASE_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+  "HEAD_sha256": "e64bb55b65e76d234a316e01e9704df876592f3c3bf36857dc0df030a6dcadad",
+  "public_before": 18,
+  "public_after": 18,
+  "private_before": 0,
+  "private_after": 1,
+  "only_new_private_helper": "Turing.safeRun_iff_segment",
+  "new_public_API": false,
+  "new_import": false,
+  "all_existing_imports_definitions_attributes_docstrings_public_headers_names_and_outside_three_bodies_byte_exact": true,
+  "exact_reverse_of_one_new_helper_and_three_bodies_recovers_BASE": true,
+  "root_exact_adopted_proposal_manifest_sha256": "3175a0a808033488ed88ba5528123be2043349f5a024ab6dd568767353738604",
+  "public_three_selected_ABI_preflight_exact_old_head_and_BASE": true,
+  "actual_cfa_replay_HEAD_selected_metadata": "PASS actual cfa full80/static0 plus replay-bound selected4 query; public3 full fields exact BASE, newprivate1 standard non-simp",
+  "no_whole_owner_global_metadata_or_proof_value_equality_inferred": true,
+  "complete_three_chunks": [
+    {
+      "name": "Turing.SafeRun.zero",
+      "BASE_chunk": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=\n  ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩",
+      "HEAD_chunk": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by\n  exact safeRun_iff_segment.mpr (Segment.zero True.intro)",
+      "literal_public_header_and_docstring_exact": true,
+      "BASE_chunk_sha256": "351727acedaf49b42c02c6d3eeab28a3eac7f22f006ce2d6b1fafc8780e12c07",
+      "HEAD_chunk_sha256": "541048793ed57350edfc45c243c702a88efe6944a629b86dadd7bdf28ff4d2e6"
+    },
+    {
+      "name": "Turing.SafeRun.cons",
+      "BASE_chunk": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  have hone : H.runFrom c 1 = c₁ := by\n    simp [runFrom, hstep]\n  refine ⟨?_, ?_⟩\n  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]\n    exact h.1\n  · intro t' ht'\n    cases t' with\n    | zero => simpa using hc\n    | succ u =>\n      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]\n      exact h.2 u (by omega)",
+      "HEAD_chunk": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  apply safeRun_iff_segment.mpr\n  simpa only [Nat.add_comm 1 t] using\n    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)\n      True.intro (safeRun_iff_segment.mp h))",
+      "literal_public_header_and_docstring_exact": true,
+      "BASE_chunk_sha256": "c27733949ffe22cbf1c5c0fd640113231756172d401874b3a60a3e516752a905",
+      "HEAD_chunk_sha256": "517184e78f18d2c02796ede7fd933a6510af698e446f660d04b6d8ea86eefe80"
+    },
+    {
+      "name": "Turing.SafeRun.trans",
+      "BASE_chunk": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  refine ⟨?_, ?_⟩\n  · rw [runFrom_add, h₁.1]\n    exact h₂.1\n  · intro t' ht'\n    by_cases hlt : t' < t₁\n    · exact h₁.2 t' hlt\n    · obtain ⟨u, rfl⟩ : ∃ u, t' = t₁ + u := ⟨t' - t₁, by omega⟩\n      rw [runFrom_add, h₁.1]\n      exact h₂.2 u (by omega)",
+      "HEAD_chunk": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  exact safeRun_iff_segment.mpr\n    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))",
+      "literal_public_header_and_docstring_exact": true,
+      "BASE_chunk_sha256": "bb11ef1e684471da9e6ca8970ce231ea9588c1115574c0670ff5f9d113818bed",
+      "HEAD_chunk_sha256": "5dfb4cab1749acb42b5fcaf2ef61821e6027afd6d889413afb8860abe873568d"
+    }
+  ],
+  "complete_private_helper": "/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/\nprivate theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c' : Cfg k Bool B x} {t : ℕ} :\n    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by\n  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]\n"
+}

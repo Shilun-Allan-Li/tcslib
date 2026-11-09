@@ -1,0 +1,19 @@
+/-- H1's physical selected-record component: read the fixed fields, then
+execute their work/input actions and summary update. Its exit points at the
+successor field; selecting the record and installing its successor are separate
+remaining parts of the single interpreter block. [AB09, Theorem 1.9]
+
+No catalog row reads a fixed-length, non-delimited prefix into finite control:
+the two-pass scan requires delimiters. This small controller supplies that
+part, using `tapeAction` and the existing `codeReadActionK`, without a new
+grammar validator, host, or clock. -/
+private def h1RecordTM (k : ℕ) : MultiTapeTM (k + 2) Bool (h1RecordState k) where
+  q₀ := some (0, fun _ => false)
+  tr := fun q _ w => match q with
+    | none => inputMoveAction 0 none
+    | some (p, bits) =>
+      if h : p.val < h1RecordWidth k then
+        tapeAction (h1TableTape k) 0 none .pos
+          (some (⟨p.val + 1, by omega⟩,
+            Function.update bits ⟨p.val, h⟩ ((w (h1TableTape k)).getD false)))
+      else h1ApplyPayload (h1Payload k bits) (w (h1SummaryTape k))

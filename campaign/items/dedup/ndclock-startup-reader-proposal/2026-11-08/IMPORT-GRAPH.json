@@ -1,0 +1,94 @@
+{
+  "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+  "tracked_Lean_population": 1003,
+  "consumer_closure_count": 9,
+  "cycles": [],
+  "graph_changes": [],
+  "closure": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "sha256": "dde06db286d597d13602db2602c142782da536821c55529d73723eac0e348762",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Build.NDCombinators",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "Mathlib.Tactic.DeriveFintype"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "sha256": "c73fb4abdd261e140f066c05584a951c9fe161472766ae16f534fa84995e22cd",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Build.NDClockHost"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDCombinators.lean",
+      "sha256": "8896624aa91dbe44b119dd288f7690c313e14aa57996ed8d4f99714ccae1c9b8",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Nondeterministic",
+        "Mathlib.Data.Fintype.Option",
+        "Mathlib.Data.Fintype.Sum"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "imports": [
+        "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+        "Mathlib.Algebra.Order.Group.Abs",
+        "Mathlib.Algebra.Order.Group.Int",
+        "Mathlib.Data.Finset.Dedup",
+        "Mathlib.Data.Finset.Max",
+        "Mathlib.Data.Int.Interval",
+        "Mathlib.Data.Sign.Defs"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "imports": [
+        "Mathlib.Algebra.Order.Group.Abs",
+        "Mathlib.Algebra.Order.Group.Int",
+        "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+        "Mathlib.Data.Sign.Defs",
+        "Mathlib.Logic.Embedding.Basic",
+        "TCSlib.Complexity.TuringMachine.Configuration"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "imports": [
+        "Mathlib.Data.Fintype.Basic",
+        "TCSlib.Complexity.TuringMachine.Deterministic"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "sha256": "37181134c960c117e92e169f88174034df1bdcdac54046faac6686231774fb25",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Finite",
+        "TCSlib.Complexity.TuringMachine.StateRenaming"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "sha256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+      "imports": [
+        "Mathlib.Algebra.BigOperators.Fin",
+        "Mathlib.Data.Fintype.Sum",
+        "Mathlib.Data.Fintype.Prod",
+        "Mathlib.Data.Fintype.Option",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Deterministic",
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ]
+    }
+  ]
+}

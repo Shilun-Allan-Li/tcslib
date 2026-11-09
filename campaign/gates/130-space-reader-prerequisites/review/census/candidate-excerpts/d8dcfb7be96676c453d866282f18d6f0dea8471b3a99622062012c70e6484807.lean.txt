@@ -1,0 +1,10 @@
+theorem probeCounterLayout {S : Type} {x : List Bool} (q : Option (CounterLoopState S))
+    (c : Cfg 1 Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    (counterLoopCfg q c ct cp).workTapes (Fin.castSucc 0) = c.workTapes 0 ∧
+      (counterLoopCfg q c ct cp).workTapes (Fin.last 1) = ct ∧
+      (counterLoopCfg q c ct cp).workTapePos (Fin.castSucc 0) = c.workTapePos 0 ∧
+      (counterLoopCfg q c ct cp).workTapePos (Fin.last 1) = cp ∧
+      (counterLoopCfg q c ct cp).inputPos = c.inputPos ∧
+      (counterLoopCfg q c ct cp).output = c.output ∧ (counterLoopCfg q c ct cp).state = q := by
+  rw [counter_cfg_eq]
+  refine ⟨?_, ?_, ?_, ?_, rfl, rfl, rfl⟩ <;> simp only [Fin.lastCases_castSucc, Fin.lastCases_last]

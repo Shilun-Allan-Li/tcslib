@@ -1,0 +1,52 @@
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:185:4: error: unsolved goals
+case inl
+m d kD : ℕ
+Λ SD : Type
+x : List Bool
+l : Λ
+cs : CallSpec m d Λ
+W : Fin m → List Bool
+c0 : Cfg m Bool Λ x
+P : RProg m d Λ
+l₀ : Λ
+D : MultiTapeTM kD Bool SD
+q0 : Fin d → SD
+hl : c0.state = some l
+hcall : P.call l = some cs
+hW : ∀ r ∈ cs.args, c0.workTapes r = FinTM.bufferTape (W r)
+hW0 : ∀ r ∈ cs.args, c0.workTapePos r = 0
+hnd : cs.args.Nodup
+hin : ↑c0.inputPos = 1
+b : Bool
+B T : ℕ
+V : List Bool := vword (callSegs cs x W)
+hV : V = vword (callSegs cs x W)
+dc0 : Cfg kD Bool SD V := Cfg.init (q0 cs.dec) V
+hTh : (MultiTapeTM.runFrom dc0 T).state = none
+hTo : (MultiTapeTM.runFrom dc0 T).output = [b]
+hTt : (MultiTapeTM.runFrom dc0 T).workTapes = fun x x_1 => none
+hTp : (MultiTapeTM.runFrom dc0 T).workTapePos = fun x => 0
+hTb : ∀ t ≤ T, ∀ (i : Fin kD), |(MultiTapeTM.runFrom dc0 t).workTapePos i| ≤ ↑B
+hdc0 : dc0 = Cfg.init (q0 cs.dec) V
+hlen : cs.args.length ≤ m
+hsetup :
+  MultiTapeTM.step (seam c0) =
+    mkCfg (some (CSt.sim l (q0 cs.dec) 0 false true none)) c0.inputPos c0.workTapes
+      (fun r => c0.workTapePos r + ↑(if r ∈ cs.args then -1 else 0)) (fun x x_1 => none) (fun x => 0) c0.output
+T0 : ℕ
+hT0le : T0 ≤ T
+hlive : ∀ v < T0, ¬(MultiTapeTM.runFrom dc0 v).Halted
+hcut : MultiTapeTM.runFrom dc0 T0 = MultiTapeTM.runFrom dc0 T
+hfin : MultiTapeTM.runFrom dc0 T = MultiTapeTM.runFrom dc0 T0
+h : T0 = 0
+hT0 : (Cfg.init (q0 cs.dec) V).state = none
+⊢ 0 < T0
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:191:11: error: Invalid `⟨...⟩` notation: The expected type
+  SimRel c0 l cs W (MultiTapeTM.step (seam c0)) dc0
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:192:4: error: No goals to be solved
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:238:9: error: Tactic `rcases` failed: `x✝ : HaltRel c0 l cs W (MultiTapeTM.runFrom (MultiTapeTM.step (seam c0)) T0)
+  (MultiTapeTM.runFrom dc0 T0)` is not an inductive datatype
+GUARD_OK|50|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.bufferTape"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Cfg.init"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.vword"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.callSegs"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.RegBox"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.compileTM"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.seam"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.step"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.mkCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Action.apply"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Cfg.inputSymbol"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Cfg.workTapeSymbols"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.dIdle"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.moveInputPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.SimRel"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.wlen"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.TPos.Valid"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.Consistent"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.vpos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.inPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.regPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.Mode.seg0"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.seg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.off"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.trackPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.HaltRel"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.nextRet"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.retPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.leftSide"}]

@@ -1,0 +1,69 @@
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Controls_2_ConfigCount_sealed.lean:17:79: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom cfg n
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step^[n] cfg
+
+k : ℕ
+Symbol State : Type
+input : List Symbol
+tm : MultiTapeTM k Symbol State
+cfg : Cfg k Symbol State input
+n : ℕ
+⊢ MultiTapeTM.runFrom cfg n = MultiTapeTM.step^[n] cfg
+FH1_2_ConfigCount_run_point {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+  (cfg : Cfg k Symbol State input) (n : ℕ) : MultiTapeTM.runFrom cfg n = MultiTapeTM.step^[n] cfg
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Controls_2_ConfigCount_sealed.lean:21:41: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom
+is not definitionally equal to the right-hand side
+  fun cfg n => MultiTapeTM.step^[n] cfg
+
+k : ℕ
+Symbol State : Type
+input : List Symbol
+tm : MultiTapeTM k Symbol State
+⊢ MultiTapeTM.runFrom = fun cfg n => MultiTapeTM.step^[n] cfg
+FH1_2_ConfigCount_run_abstract {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State) :
+  MultiTapeTM.runFrom = fun cfg n => MultiTapeTM.step^[n] cfg
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Controls_2_ConfigCount_sealed.lean:26:81: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step cfg
+is not definitionally equal to the right-hand side
+  match cfg.state with
+  | none => cfg
+  | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+k : ℕ
+Symbol State : Type
+input : List Symbol
+tm : MultiTapeTM k Symbol State
+cfg : Cfg k Symbol State input
+⊢ MultiTapeTM.step cfg =
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+FH1_2_ConfigCount_step_point {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+  (cfg : Cfg k Symbol State input) :
+  MultiTapeTM.step cfg =
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Controls_2_ConfigCount_sealed.lean:32:82: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+is not definitionally equal to the right-hand side
+  fun cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+k : ℕ
+Symbol State : Type
+input : List Symbol
+tm : MultiTapeTM k Symbol State
+⊢ MultiTapeTM.step = fun cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+FH1_2_ConfigCount_step_abstract {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State) :
+  MultiTapeTM.step = fun cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg

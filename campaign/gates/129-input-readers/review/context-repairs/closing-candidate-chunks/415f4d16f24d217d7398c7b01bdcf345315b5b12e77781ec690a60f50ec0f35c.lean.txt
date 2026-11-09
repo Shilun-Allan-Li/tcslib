@@ -1,0 +1,50 @@
+/-- The virtual movement and arrival tag exactly implement native clamping.
+
+**Proof sketch.** Split into left boundary, right boundary, and interior. The
+buffer is blank exactly at the two boundaries in this range. The tag specifies
+which outward direction to suppress. The three movement cases then give the
+position equation and preserve the boundary-tag invariant, even on empty input. -/
+lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}
+    (c : Cfg k Bool S w) (b : Bool) (hb : VirtualTag c.inputPos b) (m : SignType) :
+    (c.inputPos.val : ℤ) - 1 + (virtualMove b c.inputSymbol m : ℤ) =
+      ((moveInputPos c.inputPos m).val : ℤ) - 1 ∧
+    VirtualTag (moveInputPos c.inputPos m)
+      (virtualNextTag b (virtualMove b c.inputSymbol m)) := by
+  have hp := c.inputPos.isLt
+  by_cases h0 : c.inputPos.val = 0
+  · have he : c.inputPos = 0 := Fin.ext h0
+    have hbf := hb.1 h0
+    subst b
+    cases m <;>
+      simp [virtualMove, virtualNextTag, Cfg.inputSymbol, he, VirtualTag,
+        moveInputPos, SignType.zero_eq_zero, SignType.neg_eq_neg_one,
+        SignType.pos_eq_one]
+  · have hne : c.inputPos ≠ 0 := fun h => h0 (congrArg Fin.val h)
+    by_cases hr : c.inputPos.val = w.length + 1
+    · have hbt := hb.2 hr
+      subst b
+      have he : c.inputPos = ⟨w.length + 1, by omega⟩ := Fin.ext hr
+      have hs : c.inputSymbol = none := by simp [Cfg.inputSymbol, he]
+      cases m with
+      | zero =>
+        simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using
+          (And.intro (show (c.inputPos.val : ℤ) - 1 = (c.inputPos.val : ℤ) - 1 from rfl) hb)
+      | pos =>
+        simp [virtualMove, virtualNextTag, hs, he, VirtualTag, SignType.pos_eq_one]
+      | neg =>
+        rw [moveInputPos_neg_of_ne_left _ hne]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, hr, SignType.neg_eq_neg_one]
+        omega
+    · have hs : c.inputSymbol = some (w[c.inputPos.val - 1]'(by omega)) :=
+        inputSymbolInner _ (by omega) (by omega)
+      cases m with
+      | zero =>
+        simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using
+          (And.intro (show (c.inputPos.val : ℤ) - 1 = (c.inputPos.val : ℤ) - 1 from rfl) hb)
+      | neg =>
+        rw [moveInputPos_neg_of_ne_left _ hne]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, SignType.neg_eq_neg_one]
+        constructor <;> omega
+      | pos =>
+        rw [moveInputPos_pos_of_ne_right _ hr]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, SignType.pos_eq_one]

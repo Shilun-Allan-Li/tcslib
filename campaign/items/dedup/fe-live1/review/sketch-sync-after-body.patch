@@ -1,0 +1,122 @@
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -1240,9 +1240,9 @@
+ /-- Cut the simultaneous bank at its observed first all-returned state.
+ This duration may be zero when no displacement needs a counter update;
+ the surrounding source-step/dispatch controller supplies positivity.
+-**Proof sketch.** Minimize the all-returned occurrence before the common
+-proved deadline. Absorption implies that its first occurrence already has
+-the exact endpoint and restored heads. -/
++**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
++all-returned state and the proved deadline. Whole-configuration stationarity
++preserves the exact endpoint and restored heads at that first entry. -/
+ private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+     (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)
+     (hW : ∀ i, (n i).bits.length ≤ W) :
+@@ -1710,7 +1710,10 @@
+ /-- The exact recorded field is available at the copier's observed first
+ positive return, with both the untouched source and the new record head
+ specified. This permits a host to dispatch without knowing field length.
+-**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/
++**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
++completed control and the exact copying bound. Its first entry preserves the
++final record and restored source head. Distinct initial and completed controls
++make the selected time positive. -/
+ private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
+     (w record : List Bool) :
+     ∃ t ≤ 3 * w.length + 3, 0 < t ∧
+@@ -2127,9 +2130,10 @@
+ 
+ /-- A row is completely stored at the actual first end-of-row return.
+ The fixed positive field count makes that return strictly positive.
+-**Proof sketch.** Minimize the completed-control occurrence below the
+-proved copying bound. The completed controller is absorbing, so its
+-first occurrence has the exact word and all the restored counter heads. -/
++**Proof sketch.** Apply the public fixed-stop first-entry theorem to the
++completed control and the proved copying bound. Stationarity preserves the
++exact word and restored counter heads. The nonzero field count excludes an
++initial completed control and makes the selected time positive. -/
+ private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+     (w : Fin l → List Bool) (record : List Bool) (W : ℕ)
+     (hW : ∀ i, (w i).length ≤ W) :
+@@ -2965,9 +2969,10 @@
+ 
+ /-- The native comparator returns at its first observed completion, within
+ its scan bound, with the correct arithmetic verdict and all four heads restored.
+-**Proof sketch.** Cut the exact completed run at its first completed-state
+-occurrence. Whole-configuration absorption preserves both the verdict and
+-all read-only words. The disjoint initial phase excludes zero duration. -/
++**Proof sketch.** Apply the public fixed-stop first-entry theorem with both
++completed verdicts in its stop predicate. It preserves the exact arithmetic
++verdict and all read-only words. The disjoint initial phase excludes zero
++duration. -/
+ private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
+     (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :
+     ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,
+@@ -3236,8 +3241,9 @@
+     omega
+ 
+ /-- Cut a proved bounded run to its first visit to a fresh absorbing return.
+-**Proof sketch.** Minimize the return-control occurrence. Absorption makes
+-its whole configuration identical to the known endpoint, not just its state. -/
++**Proof sketch.** Specialize the public fixed-stop first-entry theorem to the
++return control. It preserves the complete known endpoint; the initial-control
++exclusion makes the selected time positive. -/
+ private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)
+     (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)
+@@ -7172,9 +7178,10 @@
+ /-- Loading, comparing and returning one arithmetic bit is a native linear
+ computation on the complete encoded four-word argument.
+ **Proof sketch.** Consume the banked comparator and native loader, then cut
+-at the first completed verdict. Absorption of either completed source verdict
+-rules out an earlier different verdict. The replay wrapper follows every
+-preceding source transition and emits exactly one bit on its halting step. -/
++at the first completed verdict. The public fixed-stop first-entry theorem,
++with both verdicts in its predicate, supplies the wider guard at the same
++complete endpoint. The replay wrapper follows every preceding source
++transition and emits exactly one bit on its halting step. -/
+ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
+     let arg := clFields (List.ofFn w) ++ []
+     clA5CompareTM.ComputesInTime arg
+--- a/TCSlib/Complexity/TuringMachine/Build/InputCall.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputCall.lean
+@@ -156,8 +156,9 @@
+ 
+ /-- Rewind to the left marker, keeping all work heads fixed and excluding an earlier exit.
+ 
+-**Proof sketch.** Invoke the public rewind with exit `left`, then move left once. Since
+-`done` is stationary, reaching it before the public rewind's `left` endpoint is impossible. -/
++**Proof sketch.** Invoke the public rewind with exit `left`, then move left once.
++Apply the public fixed-stop first-entry theorem to the stationary `done` control,
++retaining the exact parked endpoint and the prefix work-head bounds. -/
+ private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)
+     (hd : d.state = some .start) :
+     ∃ r ≤ d.inputPos.val + 3,
+--- a/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+@@ -469,7 +469,9 @@
+ is being computed), so the fill proves the framed round induction for this
+ table directly and records the pair with `f2_counterTM` for 12.2c, which can
+ re-derive `Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` from this row.
+-The counter head stays in `[pos - 1, pos + |bits |x||]`. -/
++The counter head stays in `[pos - 1, pos + |bits |x||]`. The public fixed-stop
++first-entry theorem cuts the completed return without changing its exact framed
++endpoint or these head bounds. -/
+ theorem exists_inputLengthTM :
+     ∃ (K : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)
+       (entry exit : S) (C : ℕ),
+--- a/TCSlib/Complexity/ClassNP/EXP.lean
++++ b/TCSlib/Complexity/ClassNP/EXP.lean
+@@ -2026,7 +2026,10 @@
+ 
+ /-- The first visit to a stopped anchor transfers to the active machine with
+ the same full endpoint and no earlier anchor visit. Absorption identifies
+-the first endpoint with the supplied bounded endpoint. -/
++the first endpoint with the supplied bounded endpoint.
++**Proof sketch.** Apply the public fixed-stop first-entry theorem to the stopped
++machine, then use the off-anchor prefix agreement to transfer the cut and full
++endpoint to the active machine. -/
+ private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
+     (tm stop : MultiTapeTM k Bool S) (qa : S)
+     (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)

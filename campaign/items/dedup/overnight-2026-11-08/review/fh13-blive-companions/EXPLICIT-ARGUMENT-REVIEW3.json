@@ -1,0 +1,50 @@
+[
+  {
+    "id": "BLIVE1",
+    "name": "timedCut_live_before",
+    "body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedCutInterpreter cfg t ht s hst\n",
+    "body_sha256": "23e64d7496a0650e5f4e14059e1488640ca11a43bff4ad1310e9caccd18141ec",
+    "forced_definition_arguments": [],
+    "published_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "other_reader": null,
+    "ordinary_term_arguments": [
+      "timedCutInterpreter"
+    ],
+    "core_definition_unfold_arguments": [],
+    "arithmetic_tactic": null,
+    "review": "Only exact specialization of the published theorem; local penultimate theorem supplies the live endpoint. Definition names in terms/types are not passed as simp/rw/unfold/delta arguments. Projections/abbreviations are excluded from ordinary guard counts but no explicit forced unfold is used."
+  },
+  {
+    "id": "BLIVE2",
+    "name": "timedPrefix_live",
+    "body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm\n    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x))\n    (4 * bs.length + 2 * α.length + 5) (timedPrefix_penultimate bs α x) s (by omega)\n",
+    "body_sha256": "081238307c12c96c2083be7baa5482168f5dba24967a43e50e5fd006ec5f1c66",
+    "forced_definition_arguments": [],
+    "published_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "other_reader": "timedPrefix_penultimate",
+    "ordinary_term_arguments": [
+      "timedPrefixTM.tm",
+      "MultiTapeTM.initCfg",
+      "pairEncode"
+    ],
+    "core_definition_unfold_arguments": [],
+    "arithmetic_tactic": "omega for the original strict-to-predecessor bound",
+    "review": "Only exact specialization of the published theorem; local penultimate theorem supplies the live endpoint. Definition names in terms/types are not passed as simp/rw/unfold/delta arguments. Projections/abbreviations are excluded from ordinary guard counts but no explicit forced unfold is used."
+  },
+  {
+    "id": "BLIVE3",
+    "name": "universal_live_before",
+    "body": "\n  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst\n",
+    "body_sha256": "385aa8ab61e725a0041698bd2e9b52cbd2911baa3df290b7de6b06de8acb157e",
+    "forced_definition_arguments": [],
+    "published_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "other_reader": null,
+    "ordinary_term_arguments": [
+      "tm",
+      "cfg"
+    ],
+    "core_definition_unfold_arguments": [],
+    "arithmetic_tactic": null,
+    "review": "Only exact specialization of the published theorem; local penultimate theorem supplies the live endpoint. Definition names in terms/types are not passed as simp/rw/unfold/delta arguments. Projections/abbreviations are excluded from ordinary guard counts but no explicit forced unfold is used."
+  }
+]

@@ -1,0 +1,5 @@
+/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
+private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c' : Cfg k Bool B x} {t : ℕ} :
+    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
+  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, and_true]

@@ -1,0 +1,12 @@
+/private/tmp/ab34-overnight-fe1/project/FE1Sealed_InputCall.lean:160:94: error: unexpected token 'section'; expected 'lemma'
+/private/tmp/ab34-overnight-fe1/project/FE1Sealed_InputCall.lean:174:4: error: 'change' tactic failed, pattern
+  (FinTM.controlAction SignType.neg (some InputSeekRw.done)).apply
+      { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+        output := d.output } =
+    ?m.184
+is not definitionally equal to target
+  MultiTapeTM.step
+      { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+        output := d.output } =
+    { state := some InputSeekRw.done, inputPos := 0, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }

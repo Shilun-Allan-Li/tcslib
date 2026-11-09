@@ -1,0 +1,35 @@
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1991:103: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2002:99: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2128:74: error: Function expected at
+  hM
+but this term has type
+  M.ComputesFunInTime f T
+
+Note: Expected a function because this term is being applied to the argument
+  y
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2138:4: error: 'change' tactic failed, pattern
+  Option.map ?m.320 (MultiTapeTM.runFrom (MultiTapeTM.initCfg y) τ).state = none
+is not definitionally equal to target
+  final.state = none
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2146:6: error: 'change' tactic failed, pattern
+  List.map (⇑(sweepEmbed Γ M.k)) (MultiTapeTM.runFrom (MultiTapeTM.initCfg y) τ).output = ?m.367
+is not definitionally equal to target
+  (M.dgStart a₀ (MultiTapeTM.runFrom (MultiTapeTM.initCfg (List.map (dgRetract a₀) x)) τ) a n (a * ↑M.k - 1)).output =
+    List.map (⇑(sweepEmbed Γ M.k)) (f y)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2170:48: error: Application type mismatch: The argument
+  hj
+has type
+  j ∈ MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) v 0
+but is expected to have type
+  ?m.678 ∈ Finset.image ?m.676 ?m.677
+in the application
+  Finset.mem_image.mp hj
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2179:6: error: 'change' tactic failed, pattern
+  ∑ i, (MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) v i).card ≤ ?m.832
+is not definitionally equal to target
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) v ≤ n * M.k + 2
+GUARD_OK|84|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesFunInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.spaceUsed"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.sweepAct"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.indexedVisit"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Action.mapState"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.sweepRevCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.visitedByTapeHead"}]

@@ -1,0 +1,23 @@
+/-- Cut the eraser at its observed first return. No length is used as a
+native clock, and the return is positive even when the word is empty.
+**Proof sketch.** Cut the absorbing eraser exit at its least visit. Absorption preserves the full blank endpoint, and distinct initial/exit controls give positive time. -/
+private lemma emitterP2_erase_first (w u : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ 2 * (u.length + 1) ∧
+      (∀ j < t, (emitterP2EraseTM.tm.runFrom (emitterP2EraseCfg w u 0 0) j).state
+        ≠ some (2 : Fin 3)) ∧
+      emitterP2EraseTM.tm.runFrom (emitterP2EraseCfg w u 0 0) t =
+        emitterP2EraseCfg w [] 2 0 := by
+  obtain ⟨t, ht, hf, hr⟩ := emitter_first_entry emitterP2EraseTM.tm
+    (fun q : Fin 3 => q = 2) (emitterP2EraseCfg w u 0 0) (emitterP2EraseCfg w [] 2 0)
+    (2 * (u.length + 1)) (by
+      rintro z ⟨q, hz, rfl⟩
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2 : Fin 3))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    ⟨(2 : Fin 3), rfl, rfl⟩ (emitterP2_erase_run w u)
+  refine ⟨t, ?_, ht, fun j hj h => hf j hj ⟨(2 : Fin 3), h, rfl⟩, hr⟩
+  by_contra h
+  have hz : t = 0 := by omega
+  have he := congrArg Cfg.state hr
+  simp [hz, emitterP2EraseCfg] at he

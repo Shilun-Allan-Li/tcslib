@@ -1,0 +1,151 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6SeamPreship
+open Turing
+
+/-- Pure layout reconstruction for the last-ruler route. The three H2-F tapes
+occupy the first three of K+3 bank tapes; H5 adds the ruler last. No run/cut
+premise for the unfinished header/startup prefix is supplied by this equation. -/
+theorem last_ruler_layout (K n ℓ : ℕ) {P Q V : Type}
+    (finish : P) (entry : Q) (inj : Q → Bool → V)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x z : List Bool)
+    (hz : z.length = ℓ + x.length) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let ec := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    let bank : Cfg (K + 3) Bool P x :=
+      ⟨some finish, 1,
+        fun j => if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩
+    let physical : Cfg ((K + 3) + 1) Bool P z :=
+      ⟨some finish, ⟨ℓ + 1, by omega⟩,
+        Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes,
+        fun _ => 0, []⟩
+    physical.mapState (fun _ => inj entry false) =
+      rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+        (FinTM.bufferTape (List.replicate ℓ true)) 0 := by
+  intro σ ec bank physical
+  dsimp only [physical]
+  have h1 (j : Fin (K + 3)) : (j = 1) ↔ j.val = 1 := by
+    rw [Fin.ext_iff]
+    change j.val = 1 % (K + 3) ↔ j.val = 1
+    rw [Nat.mod_eq_of_lt (by omega : 1 < K + 3)]
+  have h2 (j : Fin (K + 3)) : (j = 2) ↔ j.val = 2 := by
+    rw [Fin.ext_iff]
+    change j.val = 2 % (K + 3) ↔ j.val = 2
+    rw [Nat.mod_eq_of_lt (by omega : 2 < K + 3)]
+  have hbank : ec = bank.mapState (fun _ => entry) := by
+    have h := embedEmitCfg_forwardLoop_init (k := 1) (K := K) finish entry M x
+    simpa only [ec, bank, σ, h1, h2] using h
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, rulerHostCfg_state, hbank, Cfg.mapState_state]
+    all_goals rfl
+  · apply Fin.ext
+    rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ ec _ 0).1,
+      hbank, Cfg.mapState_inputPos]
+    simp only [bank, Fin.val_one]
+  · funext i p
+    rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes, hbank]
+    change Fin.lastCases (motive := fun _ => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i p =
+      Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate ℓ true)) (bank.mapState (fun _ => entry)).workTapes i p
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simp only [Fin.lastCases_last]
+    · simp only [Fin.lastCases_castSucc, Cfg.mapState_workTapes]
+  · funext i
+    rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos, hbank]
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · rw [Fin.lastCases_last]
+    · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, rulerHostCfg_output, hbank, Cfg.mapState_output]
+
+
+/-- The full-bank emitting embedding at the zero-outer-frame specialization
+is reconstructed by the existing public configuration contract. -/
+theorem full_bank_embedding {m : ℕ} {Q : Type} {z : List Bool} (c : Cfg m Bool Q z) :
+    embedEmitCfg (Fin.castLEEmb (le_refl m)) (fun _ _ => none) (fun _ => 0) [] c = c := by
+  apply embedEmitCfg_eq
+  · rfl
+  · rfl
+  · exact List.nil_append _
+  · intro i
+    exact ⟨rfl, rfl⟩
+  · intro j hj
+    exact False.elim (hj ⟨j, rfl⟩)
+
+/-- Conditional consumer at the actual last-ruler endpoint. Prefix run/cut/space
+and the hosted loop's per-tape bound are explicit OWN inputs, not asserted facts. -/
+theorem conditional_final_seam (K n ℓ : ℕ) {P Q V : Type} [DecidableEq P]
+    (A : MultiTapeTM (K + 4) Bool P) (finish : P)
+    (H : MultiTapeTM (K + 4) Bool V) (entry : Q) (inj : Q → Bool → V)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x z : List Bool)
+    (hz : z.length = ℓ + x.length) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let ec := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    let bank : Cfg (K + 3) Bool P x :=
+      ⟨some finish, 1,
+        fun j => if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩
+    let d : Cfg (K + 4) Bool P z :=
+      ⟨some finish, ⟨ℓ + 1, by omega⟩,
+        Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes,
+        fun _ => 0, []⟩
+    let c := rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+      (FinTM.bufferTape (List.replicate ℓ true)) 0
+    ∀ (T t B S : ℕ),
+      (aRun : A.runFrom (A.initCfg z) T = d) →
+      (aCut : ∀ u < T, (A.runFrom (A.initCfg z) u).state ≠ some finish) →
+      (hB : A.spaceUsed (A.initCfg z) T ≤ B) →
+      (hS : 1 ≤ S) →
+      (hloop : ∀ i, H.spaceUsedByTape c t i ≤ S) →
+      let A0 : MultiTapeTM (0 + ((K + 2) + 2)) Bool P := by
+        simpa only [Nat.zero_add] using A
+      let U : MultiTapeTM (K + 4) Bool (P ⊕ V) := by
+        simpa only [Nat.zero_add] using
+          (startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false))
+      U.runFrom (U.initCfg z) (T + 1 + t) = (H.runFrom c t).mapState Sum.inr ∧
+        U.spaceUsed (U.initCfg z) (T + 1 + t) ≤ B + (K + 4) * S := by
+  intro σ ec bank d c T t B S aRun aCut hB hS hloop A0 U
+  have hexit : d.state = some finish := rfl
+  have hphysical : d.mapState (fun _ => inj entry false) = c :=
+    last_ruler_layout K n ℓ finish entry inj M x z hz
+  have hcfg : d.mapState (fun _ => inj entry false) =
+      embedEmitCfg (Fin.castLEEmb (le_refl (K + 4)))
+        (fun _ _ => none) (fun _ => 0) [] c :=
+    hphysical.trans (full_bank_embedding c).symm
+  let d0 : Cfg (0 + ((K + 2) + 2)) Bool P z := by
+    simpa only [Nat.zero_add] using d
+  have aRun0 : A0.runFrom (A0.initCfg z) T = d0 := by
+    simpa only [A0, d0, Nat.zero_add] using aRun
+  have hexit0 : d0.state = some finish := by
+    simpa only [d0, Nat.zero_add] using hexit
+  have aCut0 : ∀ u < T, (A0.runFrom (A0.initCfg z) u).state ≠ some finish := by
+    simpa only [A0, Nat.zero_add] using aCut
+  have hcfg0 : d0.mapState (fun _ => inj entry false) =
+      embedEmitCfg (Fin.castLEEmb (by omega : (K + 2) + 2 ≤ 0 + ((K + 2) + 2)))
+        (fun _ _ => none) (fun _ => 0) [] c := by
+    simpa only [d0, Nat.zero_add] using hcfg
+  have hB0 : A0.spaceUsed (A0.initCfg z) T ≤ B := by
+    simpa only [A0, Nat.zero_add] using hB
+  have hr := startupLoopTM_runFrom (k := K + 2) (K := 0)
+    A0 finish H (inj entry false) c d0 T aRun0 hexit0 aCut0 hcfg0 t
+  have hs := startupLoopTM_spaceUsed_le (k := K + 2) (K := 0)
+    A0 finish H (inj entry false) c d0 T aRun0 hexit0 aCut0 hcfg0 t B S hB0 hS hloop
+  constructor
+  · simpa only [U, A0, Nat.zero_add, full_bank_embedding] using hr
+  · simpa only [U, A0, Nat.zero_add] using hs
+
+end F6SeamPreship
+#print axioms F6SeamPreship.last_ruler_layout
+#print axioms F6SeamPreship.full_bank_embedding
+#print axioms F6SeamPreship.conditional_final_seam

@@ -1,0 +1,28 @@
+/-- **The redirect correspondence**. At every time `t`, the redirected machine's configuration on
+`x` has the source run's input position, work tapes and work heads, an empty output, and the state
+that the source state and the source's last emitted bit determine: the source state with that bit
+while the source is live; after the source halts, halted if the bit is `haltOn`, and the stationary
+live loop otherwise.
+
+**Proof sketch.** Rewrite with the private `redirect_run`, which states that the run is the
+image of the source run under the private `redirectCfg`; each conjunct is then a field of that
+image, by `rfl`. -/
+theorem redirectTM_runFrom (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+    ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).state =
+        (match (M.tm.runFrom (M.tm.initCfg x) t).state with
+          | some s => some (.inl (s, (M.tm.runFrom (M.tm.initCfg x) t).output.getLast?))
+          | none =>
+            if (M.tm.runFrom (M.tm.initCfg x) t).output.getLast? = some haltOn then none
+            else some (.inr ())) ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).inputPos =
+        (M.tm.runFrom (M.tm.initCfg x) t).inputPos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapes =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapes ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapePos =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapePos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).output = [] := by
+  rw [redirect_run]
+  refine ⟨?_, rfl, rfl, rfl, rfl⟩
+  generalize M.tm.runFrom (M.tm.initCfg x) t = c
+  rcases c with ⟨q, p, tapes, heads, out⟩
+  cases q <;> rfl

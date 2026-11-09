@@ -1,0 +1,11 @@
+theorem zonedTape_right {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : Fin ℓ) (p : ℕ)
+    (hp : p < zoneCapacity i) :
+    zonedTape z ((zoneStart i + p : ℕ) : ℤ) =
+      some (.inr fun t => ((z t).words true i)[p]?) := by
+  have h2 := two_le_zoneStart i
+  have ho := zoneOwner_of_mem (ℓ := ℓ) i (n := zoneStart i + p) (by omega) (by omega)
+  simp only [zonedTape, zoneCellAt]
+  rw [if_neg (by omega), if_pos (by omega), Int.toNat_natCast, ho]
+  simp
+
+/-- A left zone cell holds the zone words' cells at its offset. -/

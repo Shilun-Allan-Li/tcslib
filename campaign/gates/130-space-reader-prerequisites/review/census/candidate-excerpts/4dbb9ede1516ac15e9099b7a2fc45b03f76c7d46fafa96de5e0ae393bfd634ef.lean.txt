@@ -1,0 +1,1 @@
+theorem ReaderControl9 {k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl

@@ -1,0 +1,101 @@
+{
+  "four_complete_proof_roots": [
+    "Turing.safeRun_iff_segment",
+    "Turing.SafeRun.zero",
+    "Turing.SafeRun.cons",
+    "Turing.SafeRun.trans"
+  ],
+  "same_original_imports": [
+    "import TCSlib.Complexity.TuringMachine.Build.Loop",
+    "import TCSlib.Complexity.TuringMachine.Build.Primitives"
+  ],
+  "diagnostic_import": "Lean",
+  "guards": [
+    "Turing.Segment",
+    "Turing.moveInputPos",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.step"
+  ],
+  "default_simp_definitions_removed_in_both_modes": [
+    "Turing.Action.apply"
+  ],
+  "native_sealed_differ_only_by_guard_line": true,
+  "all_four_proof_chunks_exact": true,
+  "fresh_control_identities": [
+    {
+      "definition": "Turing.Segment",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_1_point"
+    },
+    {
+      "definition": "Turing.Segment",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_2_abstract"
+    },
+    {
+      "definition": "Turing.moveInputPos",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_3_point"
+    },
+    {
+      "definition": "Turing.moveInputPos",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_4_abstract"
+    },
+    {
+      "definition": "Turing.Action.apply",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_5_point"
+    },
+    {
+      "definition": "Turing.Action.apply",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_6_abstract"
+    },
+    {
+      "definition": "Turing.Cfg.inputSymbol",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_7_point"
+    },
+    {
+      "definition": "Turing.Cfg.inputSymbol",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_8_abstract"
+    },
+    {
+      "definition": "Turing.Cfg.workTapeSymbols",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_9_point"
+    },
+    {
+      "definition": "Turing.Cfg.workTapeSymbols",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_10_abstract"
+    },
+    {
+      "definition": "Turing.MultiTapeTM.runFrom",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_11_point"
+    },
+    {
+      "definition": "Turing.MultiTapeTM.runFrom",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_12_abstract"
+    },
+    {
+      "definition": "Turing.MultiTapeTM.step",
+      "mode": "point",
+      "kernel_name": "BridgeSafeRunRfl_13_point"
+    },
+    {
+      "definition": "Turing.MultiTapeTM.step",
+      "mode": "abstract",
+      "kernel_name": "BridgeSafeRunRfl_14_abstract"
+    }
+  ],
+  "fresh_positive_negative_count": 14,
+  "guard_line": "attribute [local irreducible] Turing.Segment Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step"
+}

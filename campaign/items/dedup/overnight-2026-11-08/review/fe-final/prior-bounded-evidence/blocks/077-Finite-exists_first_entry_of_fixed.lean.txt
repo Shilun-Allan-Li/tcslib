@@ -1,0 +1,23 @@
+theorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (stop : State → Prop) (c d : Cfg k Symbol State input) (T : ℕ)
+    (hfix : ∀ z : Cfg k Symbol State input,
+      (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+      tm.runFrom c t = d := by
+  classical
+  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
+    ⟨T, by rw [hT]; exact hd⟩
+  let t := Nat.find hh
+  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs
+  have hconst (n : ℕ) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by
+    induction n with
+    | zero => exact runFrom_zero
+    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih
+  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+  have he := tm.runFrom_add c t (T - t)
+  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+  exact he.symm

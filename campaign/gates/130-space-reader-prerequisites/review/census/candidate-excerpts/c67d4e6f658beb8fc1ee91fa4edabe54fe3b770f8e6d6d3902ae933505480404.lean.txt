@@ -1,0 +1,14 @@
+private lemma embedReturn_visited (N : MultiTapeTM k Symbol S)
+    (R : MultiTapeTM k Symbol (S ⊕ Unit))
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+
+    (c : Cfg k Symbol S x) (t : ℕ) (j : Fin k) :
+    R.visitedByTapeHead (c.mapState Sum.inl) t j = N.visitedByTapeHead c t j := by
+  unfold MultiTapeTM.visitedByTapeHead
+  congr 1
+
+handles initially halted and live starts separately. It uses neither
+through-halt contract nor a capture-separation hypothesis. -/

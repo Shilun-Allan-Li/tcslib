@@ -1,0 +1,6 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+section
+attribute [local irreducible] Nat.bit
+example (n : ℕ) : Nat.bit true n = 2 * n + 1 :=
+  (Nat.bit_val true n).trans (congrArg (fun m => 2 * n + m) Bool.toNat_true)
+end

@@ -1,0 +1,5 @@
+@Turing.Action.apply_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Turing.Action k Symbol State) (c : Turing.Cfg k Symbol State input) (i : Fin k),
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+'Turing.Action.apply_workTapes' depends on axioms: [propext, Classical.choice, Quot.sound]

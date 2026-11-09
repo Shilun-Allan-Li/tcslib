@@ -1,0 +1,13 @@
+from pathlib import Path
+import subprocess,sys,json
+O=Path(__file__).parent
+jobs=[
+ ('guard-boot',O/'guards/2/source.lean.txt','TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean',0,'run_probe.py.txt'),
+ ('guard-run',O/'guards/3/source.lean.txt','TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean',0,'run_probe.py.txt'),
+ ('explicit-arguments',O/'ExplicitArguments.lean.txt','Probe.lean',0,'run_probe.py.txt'),
+ ('controls-native',O/'controls/Native.lean.txt','Probe.lean',0,'run_probe.py.txt'),
+ ('controls-sealed',O/'controls/Sealed.lean.txt','Probe.lean',1,'run_probe.py.txt'),
+ ('foreign-identities-BASE',O/'ForeignDefinitions.lean.txt','Probe.lean',0,'run_probe-base.py.txt')]
+for label,source,relative,expected,runner in jobs:
+ r=subprocess.run(['python3','-I',str(O/runner),label,str(source),relative]);assert r.returncode==expected,(label,r.returncode,expected)
+print('ALL_PRODUCER_EVIDENCE_PHASE_JOBS_FINISHED_EXPECTED_EXITS',flush=True)

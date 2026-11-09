@@ -1,0 +1,158 @@
+{
+  "roots": [
+    {
+      "name": "Turing.FinTM.controlAction_apply",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [
+        "Classical.choice"
+      ],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.Action.apply",
+        "Turing.moveInputPos",
+        "Turing.Cfg.workTapeSymbols"
+      ]
+    },
+    {
+      "name": "Turing.step_of_tapeAction_move",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [
+        "Classical.choice"
+      ],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos",
+        "Turing.Action.apply"
+      ]
+    },
+    {
+      "name": "Turing.step_of_tapeAction_write",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [
+        "Classical.choice"
+      ],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos",
+        "Turing.Action.apply"
+      ]
+    },
+    {
+      "name": "Turing.step_of_inputMoveAction",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [
+        "Classical.choice"
+      ],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos",
+        "Turing.Action.apply"
+      ]
+    },
+    {
+      "name": "Turing.walkTM_run_ofCfg",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.Action.apply",
+        "Turing.moveInputPos"
+      ]
+    },
+    {
+      "name": "_private.TCSlib.Complexity.TuringMachine.Build.Scan.0.Turing.scan_fold_trace",
+      "full_raw_type_exact": true,
+      "universes_exact": true,
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "CANDIDATE_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+      ],
+      "added_existing_standard_axioms": [],
+      "removed_axioms": [],
+      "ordinary_heads": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.inputMoveAction",
+        "Turing.catalogTrace",
+        "Turing.MultiTapeTM.step",
+        "Turing.Cfg.inputSymbol",
+        "Turing.moveInputPos",
+        "Turing.Cfg.workTapeSymbols"
+      ]
+    }
+  ],
+  "all6_full_types_universes_exact": true,
+  "all_standard_only": true,
+  "four_existing_Choice_closure_additions_disclosed_not_new_axiom_declarations": true,
+  "no_AXIOM_equality_claim": true
+}

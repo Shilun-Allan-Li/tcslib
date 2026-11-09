@@ -1,0 +1,40 @@
+private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)
+    (hd : d.state = some .start) :
+    ∃ r ≤ d.inputPos.val + 3,
+      inputSeekRewind.runFrom d r = { d with state := some .done, inputPos := 0 } ∧
+      (∀ u < r, (inputSeekRewind.runFrom d u).state ≠ some .done) ∧
+      ∀ u ≤ r, (inputSeekRewind.runFrom d u).workTapePos = d.workTapePos := by
+  obtain ⟨r, hr, hrun, hheads⟩ := FinTM.rewind_heads inputSeekRewind .start .scan
+    (some .left) (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) d hd
+  have hcut (u : ℕ) (hu : u ≤ r) : (inputSeekRewind.runFrom d u).state ≠ some .done := by
+    intro hdone
+    have hfix : inputSeekRewind.step (inputSeekRewind.runFrom d u) =
+        inputSeekRewind.runFrom d u := by
+      rw [step_of_inputMoveAction _ _ 0 hdone rfl]
+      apply Cfg.ext
+      · exact hdone.symm
+      · simp
+      · rfl
+      · rfl
+      · rfl
+    have hsame : inputSeekRewind.runFrom d r = inputSeekRewind.runFrom d u := by
+      rw [show r = u + (r - u) by omega, MultiTapeTM.runFrom_add]
+      exact Function.iterate_fixed hfix _
+    have := congrArg Cfg.state hsame
+    simp [hrun, hdone] at this
+  have hend : inputSeekRewind.runFrom d (r + 1) =
+      { d with state := some .done, inputPos := 0 } := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hrun]
+    change (FinTM.controlAction SignType.neg (some InputSeekRw.done)).apply
+      ({ d with state := some .left, inputPos := 1 } : Cfg 2 Bool InputSeekRw x) = _
+    rw [FinTM.controlAction_apply]
+    apply Cfg.ext rfl _ rfl rfl rfl
+    apply Fin.ext
+    rw [FinTM.moveInputPos_neg_val]
+  refine ⟨r + 1, by omega, hend, (fun u hu => hcut u (by omega)), ?_⟩
+  intro u hu
+  by_cases hur : u ≤ r
+  · exact hheads u hur
+  · have : u = r + 1 := by omega
+    subst u
+    rw [hend]

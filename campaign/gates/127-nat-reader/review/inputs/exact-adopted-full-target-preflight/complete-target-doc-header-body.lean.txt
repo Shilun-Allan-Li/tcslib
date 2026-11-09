@@ -1,0 +1,21 @@
+/-- The offset word represents the actual native-input address and has
+length at most the original header length plus two.
+
+**Proof sketch.** The existing successor-word law gives the length plus
+one. Prepending a low one doubles that value and adds one. The public
+binary-size inequality bounds the length of the length counter. -/
+private lemma canonOffset_spec (w : List Bool) :
+    Nat.ofDigits 2 ((canonOffset w).map Bool.toNat) = 2 * w.length + 3 ∧
+      (canonOffset w).length ≤ w.length + 2 := by
+  constructor
+  · rw [← foldr_bit_eq_ofDigits]
+    change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _
+    rw [(canonCount_spec w.length.bits).2.2]
+    rw [← codeBitsNat_eq]
+    rw [codeBitsNat_bits]
+    simp only [Nat.bit_val, Bool.toNat_true]
+    omega
+  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+    simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
+    omega
+

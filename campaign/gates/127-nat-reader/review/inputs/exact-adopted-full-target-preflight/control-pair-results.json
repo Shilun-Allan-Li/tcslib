@@ -1,0 +1,46 @@
+[
+  {
+    "definition": "Nat.bit",
+    "mode": "point",
+    "kernel_name": "NatClosureRfl_1_point",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  },
+  {
+    "definition": "Nat.bit",
+    "mode": "abstract",
+    "kernel_name": "NatClosureRfl_2_abstract",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  },
+  {
+    "definition": "Turing.codeBitsNat",
+    "mode": "point",
+    "kernel_name": "NatClosureRfl_3_point",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  },
+  {
+    "definition": "Turing.codeBitsNat",
+    "mode": "abstract",
+    "kernel_name": "NatClosureRfl_4_abstract",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  },
+  {
+    "definition": "Turing.incFixed",
+    "mode": "nil_equation",
+    "kernel_name": "NatClosureIncFixed_nil",
+    "exact_control": "theorem NatClosureIncFixed_nil : Turing.incFixed [] = none := rfl",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  },
+  {
+    "definition": "Turing.incFixed",
+    "mode": "false_cons_equation",
+    "kernel_name": "NatClosureIncFixed_false_cons",
+    "exact_control": "theorem NatClosureIncFixed_false_cons (w : List Bool) :\n    Turing.incFixed (false :: w) = some (true :: w) := rfl",
+    "positive_kernel_checked": true,
+    "negative_same_identity_failed": true
+  }
+]

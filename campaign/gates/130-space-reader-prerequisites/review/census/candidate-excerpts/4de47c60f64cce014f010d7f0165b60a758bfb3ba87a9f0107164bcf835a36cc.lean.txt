@@ -1,0 +1,16 @@
+/-- The return sweep's entire trajectory follows from its generic API on
+prefixes, rather than from an estimate of its final position. -/
+private lemma dg_sweep_reverse_prefix {A Q R C : Type} (tm : MultiTapeTM 1 A Q)
+    (state : R → Q) (symbol : C → A) (visit : R → C → R × C)
+    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
+      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
+    {x : List A} (p : Fin (x.length + 2)) (out : List A)
+    (as : List C) (s : R) (z : ℤ) (l r : List (Option A))
+    (u : ℕ) (hu : u ≤ as.length) :
+    (tm.runFrom (sweepRevCfg (some (state s)) p z l
+      (as.map (fun a => some (symbol a)) ++ r) out) u).workTapePos 0 = z - u := by
+  have h := sweep_run_reverse tm state symbol visit htr p out (as.take u) s z l
+    ((as.drop u).map (fun a => some (symbol a)) ++ r)
+  rw [← List.append_assoc, ← List.map_append, List.take_append_drop] at h
+  simpa only [List.length_take, Nat.min_eq_left hu, sweepRevCfg] using
+    congrArg (fun c => c.workTapePos 0) h

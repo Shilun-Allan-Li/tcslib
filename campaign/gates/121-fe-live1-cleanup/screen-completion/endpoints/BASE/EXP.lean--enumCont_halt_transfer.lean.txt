@@ -1,0 +1,22 @@
+private lemma enumCont_halt_transfer {k : ℕ} {S : Type} {x : List Bool}
+    (tm stop : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
+    (hs : ∀ inp work, stop.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = none) :
+    tm.runFrom c T = stop.runFrom c T ∧
+      ∀ j ≤ T, (tm.runFrom c j).state ≠ some qa := by
+  have hn : ∀ j ≤ T, (stop.runFrom c j).state ≠ some qa := by
+    intro j hj hjq
+    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le hj
+    have he : stop.runFrom c T = stop.runFrom c j := by
+      rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hjq]
+    have he' := congrArg Cfg.state he
+    rw [hT, hjq] at he'
+    contradiction
+  refine ⟨enumCont_agree_run tm stop qa ha c T (fun j hj => hn j (by omega)), ?_⟩
+  intro j hj
+  rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
+  exact hn j hj
+
+/-- The active and stopped body have identical transitions away from the
+anchor. Their tape counts and finite state types are definitionally equal. -/

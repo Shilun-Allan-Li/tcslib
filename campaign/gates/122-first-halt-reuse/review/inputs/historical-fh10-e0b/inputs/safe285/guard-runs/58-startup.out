@@ -1,0 +1,33 @@
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:334:2: error: Tactic `rfl` failed: The left-hand side
+  hostCfg (some (ClockPhase.run (some A.tm.q₀) none)) 1 cS.workTapes cS.workTapePos (fun x x_1 => none) (fun x => 0)
+    (yard m) 0 []
+is not definitionally equal to the right-hand side
+  runCfg m (NDTM.initCfg x) 0 cS.workTapes cS.workTapePos
+
+S : FinTM Bool
+A : FinNDTM Bool
+loop : Bool
+x : List Bool
+m T : ℕ
+hS : S.ComputesInTime x (List.replicate m true) T
+hm : x.length ≤ m
+t : ℕ
+htS : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+hcut : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+cS : Cfg S.k Bool S.State x
+hcSdef : cS = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hcS : cS.state = none
+hout : cS.output = List.replicate m true
+w : List Bool
+hw : w.length = t + (m + 2)
+ht : (List.take t w).length = t
+hboot : NDTM.runWith (List.take t w) (bootCfg (MultiTapeTM.initCfg x)) = bootCfg cS
+hb :
+  bootCfg cS =
+    hostCfg (some ClockPhase.rew) cS.inputPos cS.workTapes cS.workTapePos (fun x x_1 => none) (fun x => 0) (yard m) ↑m
+      []
+⊢ hostCfg (some (ClockPhase.run (some A.tm.q₀) none)) 1 cS.workTapes cS.workTapePos (fun x x_1 => none) (fun x => 0)
+      (yard m) 0 [] =
+    runCfg m (NDTM.initCfg x) 0 cS.workTapes cS.workTapePos
+GUARD_OK|58|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.NDTM.runWith"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.ClockHost.hostTM"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.NDTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.ClockHost.runCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.ClockHost.bootCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.ClockHost.hostCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.bufferTape"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.moveInputPos"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.ClockHost.inLeft"}]

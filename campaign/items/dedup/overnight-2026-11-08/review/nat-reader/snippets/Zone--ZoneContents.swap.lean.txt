@@ -1,0 +1,10 @@
+def ZoneContents.swap {ℓ : ℕ} (z : ZoneContents ℓ) : ZoneContents ℓ where
+  home := z.home
+  left := z.right
+  right := z.left
+  left_le := z.right_le
+  right_le := z.left_le
+
+attribute [simps (config := { isSimp := false }) home left right] ZoneContents.swap
+
+/-- The mirror is an involution. -/

@@ -1,0 +1,122 @@
+RecordPlacedProbe.lean:28:16: error: Tactic `rfl` failed: The left-hand side
+  { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+        workTapes := fun j =>
+          match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+            Complexity.clPlacement.select✝ slots j with
+          | some i => d.workTapes i
+          | none => c.workTapes j,
+        workTapePos := fun j =>
+          match Complexity.clPlacement.select✝¹ slots j with
+          | some i => d.workTapePos i
+          | none => c.workTapePos j,
+        output := d.output }.workTapes
+    j
+is not definitionally equal to the right-hand side
+  c.workTapes j
+
+case refine_1.h.none
+M : FinTM Bool
+x : List Bool
+c : Cfg (Complexity.clRecordTM✝ M).k Bool (Complexity.clRecordTM✝¹ M).State x
+hc : c.state = some (Sum.inr (Sum.inr (Sum.inr (Sum.inr (Sum.inr ())))))
+slots : Complexity.clPlacement✝ (Complexity.clRecTM✝ M).k ((Complexity.clRecTM✝¹ M).k + 4 + 1) :=
+  Complexity.clRecordSelect✝ M
+q : (Complexity.clRecTM✝ M).State := Sum.inr (Sum.inr (Sum.inr (Sum.inr ())))
+d : Cfg (Complexity.clRecTM✝ M).k Bool (Complexity.clRecTM✝¹ M).State x :=
+  { state := some q, inputPos := c.inputPos,
+    workTapes := fun i => c.workTapes ((Complexity.clPlacement.index✝ slots) i),
+    workTapePos := fun i => c.workTapePos ((Complexity.clPlacement.index✝¹ slots) i), output := c.output }
+j : Fin ((Complexity.clRecTM✝ M).k + 4 + 1)
+hs : Complexity.clPlacement.select✝ slots j = none
+⊢ { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+          workTapes := fun j =>
+            match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+              Complexity.clPlacement.select✝ slots j with
+            | some i => d.workTapes i
+            | none => c.workTapes j,
+          workTapePos := fun j =>
+            match Complexity.clPlacement.select✝¹ slots j with
+            | some i => d.workTapePos i
+            | none => c.workTapePos j,
+          output := d.output }.workTapes
+      j =
+    c.workTapes j
+RecordPlacedProbe.lean:29:18: error: Type mismatch
+  congrArg c.workTapes ((Complexity.clPlacement.exact✝ slots i j).mp hs)
+has type
+  c.workTapes ((Complexity.clPlacement.index✝ slots) i) = c.workTapes j
+but is expected to have type
+  { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+          workTapes := fun j =>
+            match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+              Complexity.clPlacement.select✝ slots j with
+            | some i => d.workTapes i
+            | none => c.workTapes j,
+          workTapePos := fun j =>
+            match Complexity.clPlacement.select✝¹ slots j with
+            | some i => d.workTapePos i
+            | none => c.workTapePos j,
+          output := d.output }.workTapes
+      j =
+    c.workTapes j
+RecordPlacedProbe.lean:32:16: error: Tactic `rfl` failed: The left-hand side
+  { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+        workTapes := fun j =>
+          match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+            Complexity.clPlacement.select✝ slots j with
+          | some i => d.workTapes i
+          | none => c.workTapes j,
+        workTapePos := fun j =>
+          match Complexity.clPlacement.select✝¹ slots j with
+          | some i => d.workTapePos i
+          | none => c.workTapePos j,
+        output := d.output }.workTapePos
+    j
+is not definitionally equal to the right-hand side
+  c.workTapePos j
+
+case refine_2.h.none
+M : FinTM Bool
+x : List Bool
+c : Cfg (Complexity.clRecordTM✝ M).k Bool (Complexity.clRecordTM✝¹ M).State x
+hc : c.state = some (Sum.inr (Sum.inr (Sum.inr (Sum.inr (Sum.inr ())))))
+slots : Complexity.clPlacement✝ (Complexity.clRecTM✝ M).k ((Complexity.clRecTM✝¹ M).k + 4 + 1) :=
+  Complexity.clRecordSelect✝ M
+q : (Complexity.clRecTM✝ M).State := Sum.inr (Sum.inr (Sum.inr (Sum.inr ())))
+d : Cfg (Complexity.clRecTM✝ M).k Bool (Complexity.clRecTM✝¹ M).State x :=
+  { state := some q, inputPos := c.inputPos,
+    workTapes := fun i => c.workTapes ((Complexity.clPlacement.index✝ slots) i),
+    workTapePos := fun i => c.workTapePos ((Complexity.clPlacement.index✝¹ slots) i), output := c.output }
+j : Fin ((Complexity.clRecTM✝ M).k + 4 + 1)
+hs : Complexity.clPlacement.select✝ slots j = none
+⊢ { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+          workTapes := fun j =>
+            match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+              Complexity.clPlacement.select✝ slots j with
+            | some i => d.workTapes i
+            | none => c.workTapes j,
+          workTapePos := fun j =>
+            match Complexity.clPlacement.select✝¹ slots j with
+            | some i => d.workTapePos i
+            | none => c.workTapePos j,
+          output := d.output }.workTapePos
+      j =
+    c.workTapePos j
+RecordPlacedProbe.lean:33:18: error: Type mismatch
+  congrArg c.workTapePos ((Complexity.clPlacement.exact✝ slots i j).mp hs)
+has type
+  c.workTapePos ((Complexity.clPlacement.index✝ slots) i) = c.workTapePos j
+but is expected to have type
+  { state := Option.map Sum.inr d.state, inputPos := d.inputPos,
+          workTapes := fun j =>
+            match (motive := Option (Fin (Complexity.clRecTM✝ M).k) → ℤ → Option Bool)
+              Complexity.clPlacement.select✝ slots j with
+            | some i => d.workTapes i
+            | none => c.workTapes j,
+          workTapePos := fun j =>
+            match Complexity.clPlacement.select✝¹ slots j with
+            | some i => d.workTapePos i
+            | none => c.workTapePos j,
+          output := d.output }.workTapePos
+      j =
+    c.workTapePos j

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Turing.SafeRun.zero",
+    "old": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by\n  have hs : Segment H {some avoid} (fun _ => True) c c 0 := Segment.zero True.intro\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c 0).mp hs\n  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩",
+    "new": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by\n  exact safeRun_iff_segment.mpr (Segment.zero True.intro)",
+    "header_exact": true
+  },
+  {
+    "name": "Turing.SafeRun.cons",
+    "old": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  have hs : Segment H {some avoid} (fun _ => True) c₁ c' t :=\n    (segment_iff H {some avoid} (fun _ => True) c₁ c' t).mpr\n      ⟨h.1, fun j hj hq => h.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hg := Segment.cons hstep\n    (by simpa only [Set.mem_singleton_iff] using hc) True.intro hs\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (1 + t)).mp hg\n  refine ⟨?_, ?_⟩\n  · simpa only [Nat.add_comm 1 t] using hp.1\n  · intro j hj hq\n    exact hp.2.1 j (by omega) (Set.mem_singleton_iff.mpr hq)",
+    "new": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  apply safeRun_iff_segment.mpr\n  simpa only [Nat.add_comm 1 t] using\n    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)\n      True.intro (safeRun_iff_segment.mp h))",
+    "header_exact": true
+  },
+  {
+    "name": "Turing.SafeRun.trans",
+    "old": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  have hs₁ : Segment H {some avoid} (fun _ => True) c c₁ t₁ :=\n    (segment_iff H {some avoid} (fun _ => True) c c₁ t₁).mpr\n      ⟨h₁.1, fun j hj hq => h₁.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hs₂ : Segment H {some avoid} (fun _ => True) c₁ c' t₂ :=\n    (segment_iff H {some avoid} (fun _ => True) c₁ c' t₂).mpr\n      ⟨h₂.1, fun j hj hq => h₂.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (t₁ + t₂)).mp\n    (Segment.trans hs₁ hs₂)\n  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩",
+    "new": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  exact safeRun_iff_segment.mpr\n    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))",
+    "header_exact": true
+  }
+]

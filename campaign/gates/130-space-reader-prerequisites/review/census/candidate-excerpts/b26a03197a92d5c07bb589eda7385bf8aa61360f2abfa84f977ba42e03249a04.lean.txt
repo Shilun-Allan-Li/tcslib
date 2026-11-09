@@ -1,0 +1,6 @@
+/-- The join changes only the control state at the escape anchor. -/
+private theorem iw_join_step {z : List Bool} (c : Cfg 2 Bool (CounterLoopState Bool) z)
+    (hc : c.state = some .escape) :
+    iw_machine.runFrom c 1 = { c with state := some .done } := by
+  rw [iw_one iw_machine c .escape hc]
+  simp only [iw_machine, FinTM.controlAction_apply, moveInputPos_zero]

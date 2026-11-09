@@ -1,0 +1,29 @@
+/-- At the left blank, one choice-independent transition starts the scheduler
+at head one with blank source tapes and the preserved original input buffer. -/
+private lemma b2_rewind_done (S V : FinTM Bool) (x : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2LoadCfg S V (x := x) 1 0 x x.length) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) [] := by
+  have hr : (b2LoadCfg S V (x := x) 1 0 x x.length).inputSymbol = none := by
+    simp [b2LoadCfg, Cfg.inputSymbol]
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 1) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (1 : Fin 3) ≠ 0), if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · apply Fin.ext
+    simp [b2LoadCfg, b2GuessCfg, leftCfg, contGuessCfg, MultiTapeTM.initCfg,
+      Cfg.init, moveInputPos]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, h,
+          MultiTapeTM.initCfg, Cfg.init]
+    · by_cases h : i.val < V.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, h,
+          MultiTapeTM.initCfg, Cfg.init]
+    · by_cases h : i.val < V.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg]

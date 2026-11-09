@@ -1,0 +1,38 @@
+{
+  "result": "PASS4 hypothetical SAT declarations in1context;fresh positive and negative controls",
+  "jobs": [
+    {
+      "job": "SATProposal-scope-native",
+      "receipt": "SATProposal-scope-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SATProposal-scope-sealed",
+      "receipt": "SATProposal-scope-sealed-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SATProposal-controls-native",
+      "receipt": "SATProposal-controls-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SATProposal-controls-sealed",
+      "receipt": "SATProposal-controls-sealed-attempt1.json",
+      "exit": 1,
+      "errors": 30,
+      "expected": true
+    }
+  ],
+  "positive": 30,
+  "negative": 30,
+  "no_unsafe_transparency_or_reducibility_override": true,
+  "one_job_at_a_time": true,
+  "imported_theorem_values_not_traversed": true
+}

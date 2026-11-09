@@ -1,0 +1,27 @@
+/-- A boot step is a step of `S`, its emission appended to the yardstick tape.
+
+**Proof sketch.** The boot action is `S`'s action on its bank with its emission written on `Y`
+(`apply_hostCfg`); the appended cell is `FinTM.bufferTape_append`. -/
+theorem boot_step (b : Bool) (c : Cfg S.k Bool S.State x) {q : S.State}
+    (hq : c.state = some q) :
+    (hostTM S A loop).stepWith b (bootCfg (A := A) c) = bootCfg (S.tm.step c) := by
+  have hst : (bootCfg (A := A) c).state = some (.boot q) := by simp [bootCfg, hostCfg, hq]
+  rw [NDTM.stepWith_of_state _ b hst]
+  have hsym : ∀ i, (bootCfg (A := A) c).workTapeSymbols (sI i) = c.workTapeSymbols i :=
+    fun i => by simp [bootCfg, hostCfg, Cfg.workTapeSymbols]
+  have hin : (bootCfg (A := A) c).inputSymbol = c.inputSymbol := rfl
+  simp only [hostTM, clockTr, hsym, hin]
+  have hS : S.tm.step c = (S.tm.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+    simp [MultiTapeTM.step, hq]
+  rw [hS]
+  unfold bootCfg
+  rw [apply_hostCfg]
+  rcases ho : (S.tm.tr q c.inputSymbol c.workTapeSymbols).output with _ | e
+  · congr 1 <;> first
+      | rfl
+      | (funext i; simp; done)
+      | simp [tapeAfter, emitTo, Action.apply, ho]
+  · congr 1 <;> first
+      | rfl
+      | (funext i; simp; done)
+      | simp [tapeAfter, emitTo, Action.apply, ho, FinTM.bufferTape_append]

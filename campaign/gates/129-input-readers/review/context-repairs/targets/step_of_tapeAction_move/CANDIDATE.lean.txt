@@ -1,0 +1,32 @@
+/-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
+gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
+the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
+
+**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`; the work-tape fields are
+pointwise updates at `i`. -/
+theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp none m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, tapeAction]
+  · simp only [Action.apply_inputPos, tapeAction]
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    by_cases hj : j = i
+    · subst j
+      simp only [tapeAction, ↓reduceIte, Option.getD_none, Function.update_eq_self]
+    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self]
+  · funext j
+    by_cases hj : j = i
+    · subst j
+      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
+    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
+        add_zero, Function.update_of_ne hj]
+  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]

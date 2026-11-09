@@ -1,0 +1,17 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+attribute [local irreducible] Turing.Cfg.ofWords
+example {k : ℕ} {S : Type*} {x : List Bool} (q : S) (w : Fin k → List Bool) :
+    Cfg.ofWords (input := x) q w =
+      { state := some q, inputPos := 1, workTapes := fun i => FinTM.bufferTape (w i),
+        workTapePos := fun _ => 0, output := [] } := by
+  apply Cfg.ext
+  · exact Cfg.ofWords_state q w
+  · exact Cfg.ofWords_inputPos q w
+  · funext i
+    exact Cfg.ofWords_workTapes q w i
+  · funext i
+    exact Cfg.ofWords_workTapePos q w i
+  · exact Cfg.ofWords_output q w

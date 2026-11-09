@@ -1,0 +1,49 @@
+/-- One native guessing transition selects its physical choice exactly when
+the scheduler emits. It preserves the complete source configuration, apart
+from storing chosen rather than emitted data on the separate capture tape.
+**Proof sketch.** For a live source, instantiate the capture-action transformer
+with the emission replaced by the current choice. Check source and capture
+tapes separately. A halted source and the phase's return state both stutter. -/
+private lemma cont_guess_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (u : List Bool) (bit : Bool) :
+    (contGuessTM M).tm.stepWith bit (contGuessCfg M c u) =
+      contGuessCfg M (M.tm.step c)
+        (u ++ if (M.tm.outputSymbol c).isSome then [bit] else []) := by
+  cases hs : c.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs]
+    simp only [MultiTapeTM.outputSymbol, hs, Option.isSome_none, Bool.false_eq_true,
+      if_false, List.append_nil]
+    unfold NDTM.stepWith
+    simp only [contGuessCfg, hs]
+    change (controlAction 0 (some none)).apply _ = _
+    rw [controlAction_apply, moveInputPos_zero]
+  | some q =>
+    let a := M.tm.tr q c.inputSymbol c.workTapeSymbols
+    have hi : (contGuessCfg M c u).inputSymbol = c.inputSymbol := rfl
+    have hw : (fun i => (contGuessCfg M c u).workTapeSymbols i.castSucc) =
+        c.workTapeSymbols := by
+      funext i
+      simp [contGuessCfg, Cfg.workTapeSymbols, i.isLt]
+    have hstate : (contGuessCfg M c u).state = some (some q) := by simp [contGuessCfg, hs]
+    unfold NDTM.stepWith
+    rw [hstate]
+    dsimp only [contGuessTM]
+    rw [hi, hw]
+    change (captureAction some none {a with output := a.output.map (fun _ => bit)}).apply
+      (contGuessCfg M c u) = contGuessCfg M (M.tm.step c)
+        (u ++ if (M.tm.outputSymbol c).isSome then [bit] else [])
+    have hc : M.tm.step c = a.apply c := by simp [MultiTapeTM.step, hs, a]
+    have he : M.tm.outputSymbol c = a.output := by simp [MultiTapeTM.outputSymbol, hs, a]
+    rw [hc, he]
+    refine Cfg.ext ?_ rfl ?_ ?_ rfl
+    · cases ha : a.state <;> simp [captureAction, contGuessCfg, ha]
+    · funext i
+      by_cases h : i.val < M.k
+      · simp [captureAction, contGuessCfg, h]
+      · cases ho : a.output <;>
+          simp [captureAction, contGuessCfg, h, ho, bufferTape_append]
+    · funext i
+      by_cases h : i.val < M.k
+      · simp [captureAction, contGuessCfg, h]
+      · cases ho : a.output <;> simp [captureAction, contGuessCfg, h, ho]

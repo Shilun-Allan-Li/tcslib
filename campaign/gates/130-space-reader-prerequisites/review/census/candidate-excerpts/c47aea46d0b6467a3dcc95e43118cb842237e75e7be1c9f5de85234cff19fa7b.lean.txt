@@ -1,0 +1,98 @@
+/-- **The return of tape `0` after a replay.** From the head of tape `0` on the blank after the
+stream `s` (tape `0` holding `s` from cell `0`), the verifier's phases `aFwd j` (`Turing.skipTM`
+at `w := []`) and `aBack j` (`Turing.skipBackTM` at `u := s`) bring that head to cell `0` and
+redirect to `nf_aNext N L j`, in `|s| + 6` steps, with the tapes, the head of tape `1`, the input
+head and the output unchanged, and at no verdict on the way.
+
+**Proof sketch.** Chain the two framed seek runs through the phase lemma of the phase host,
+reading the redirected configuration as the second phase's start. Inside each phase the host's
+run is the phase's run tagged by that phase, which is not the park. -/
+private theorem nf_aReturn (N : FinNDTM Bool) {SL : Type}
+    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
+    (j : Option (Fin N.k)) (s : List Bool) (c : Cfg 2 Bool SeekPhase x)
+    (hst : c.state = some .run) (hpos : c.workTapePos 0 = s.length)
+    (htape : ∀ p, c.workTapes 0 p = FinTM.bufferTape s p) :
+    ∃ c₃ : Cfg 2 Bool SeekPhase x,
+      (nf_V N L exit).runFrom
+          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
+          (s.length + 6) = c₃.mapState (fun _ => nf_aNext N L j) ∧
+        c₃.state.isSome ∧
+        c₃.workTapePos 0 = 0 ∧ c₃.workTapePos 1 = c.workTapePos 1 ∧ c₃.workTapes = c.workTapes ∧
+        c₃.inputPos = c.inputPos ∧ c₃.output = c.output ∧
+        ∀ u < s.length + 6, ∀ b, ((nf_V N L exit).runFrom
+          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
+            u).state ≠ some ⟨.park, b⟩ := by
+  -- phase `aFwd j`: one step right, over the blank
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ (([] : List Bool).length : ℤ) →
+      c.workTapes 0 (c.workTapePos 0 + p) = FinTM.bufferTape [] p := by
+    intro p h0 h1
+    simp only [List.length_nil, Nat.cast_zero] at h1
+    obtain rfl : p = 0 := le_antisymm h1 h0
+    rw [htape, hpos, add_zero,
+      FinTM.bufferTape_eq_none_of_not_mem s (z := (s.length : ℤ)) (by omega),
+      FinTM.bufferTape_nil]
+  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (0 : Fin 2) [] c hst hw
+  set c₁ : Cfg 2 Bool SeekPhase x := { c with
+      state := some .done
+      workTapePos :=
+        Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
+    with hc₁
+  obtain ⟨hpA, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nf_red N L exit) (nf_Ph.aFwd j) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
+    SeekPhase.done rfl ⟨.aBack j, .run⟩ rfl (by
+      intro u hu q hq
+      obtain rfl : u = 0 := by simp at hu; omega
+      rw [MultiTapeTM.runFrom_zero, hst] at hq
+      cases hq
+      rfl)
+  -- the redirected configuration is phase `aBack j`'s start
+  have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.aFwd j)) c₁ (nf_Ph.aBack j)
+    SeekPhase.run (by simp [hc₁])
+  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
+  -- phase `aBack j`: back over the stream to cell `0`
+  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+      c₂.workTapes 0 (c₂.workTapePos 0 - s.length - 1 + p) = FinTM.bufferTape s p := by
+    intro p _ _
+    simp only [hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    rw [htape]
+    congr 1
+    ring
+  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (0 : Fin 2) s c₂ rfl hu
+  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
+      state := some .done
+      workTapePos := Function.update c₂.workTapePos 0 (c₂.workTapePos 0 - s.length - 1) }
+    with hc₃
+  have hred : nf_red N L exit (nf_Ph.aBack j) SeekPhase.done = some (nf_aNext N L j) := by
+    cases j <;> rfl
+  obtain ⟨hpB, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nf_red N L exit) (nf_Ph.aBack j) (c := c₂) (c' := c₃) (s.length + 3) h3
+    SeekPhase.done rfl (nf_aNext N L j) hred (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h4 u hu)
+      | run => cases j <;> rfl
+      | gap => cases j <;> rfl
+      | back => cases j <;> rfl)
+  have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+  refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [e, MultiTapeTM.runFrom_add]
+    unfold nf_V
+    rw [hA, hre]
+    exact hB
+  · simp [hc₃]
+  · simp only [hc₃, hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    ring
+  · simp only [hc₃, hc₂, hc₁]
+    rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]
+  · intro u hu b
+    unfold nf_V
+    by_cases hu1 : u ≤ ([] : List Bool).length + 1
+    · rw [hpA u hu1]
+      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+    · obtain ⟨v, rfl⟩ : ∃ v, u = (([] : List Bool).length + 1 + 1) + v :=
+        ⟨u - (([] : List Bool).length + 1 + 1), by omega⟩
+      rw [MultiTapeTM.runFrom_add, hA, hre, hpB v (by simp at hu ⊢; omega)]
+      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b

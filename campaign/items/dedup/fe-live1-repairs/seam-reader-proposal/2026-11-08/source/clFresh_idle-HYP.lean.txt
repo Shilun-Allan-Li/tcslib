@@ -1,0 +1,11 @@
+  let d : Cfg 2 Bool clReadTM.State x :=
+    ⟨some (.inr true), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
+  have hm : d.mapState Sum.inr = c :=
+    Cfg.mapState_eq_of_fields d Sum.inr c (by simpa only [d, Option.map_some] using hc.symm)
+      rfl rfl rfl rfl
+  rw [MultiTapeTM.step_of_some hc]
+  change ((seamCompTM clWipeTM.tm (2 : Fin 3) clReadTM.tm (.inl none)).tr
+    (.inr (.inr true)) c.inputSymbol c.workTapeSymbols).apply c = c
+  rw [seamCompTM_tr_inr]
+  change ((FinTM.controlAction 0 (some (.inr true))).mapState Sum.inr).apply c = c
+  rw [← hm, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]

@@ -1,0 +1,44 @@
+/-- The emit-iteration body: copy the input onto tape zero, then alternate
+the two clean-call modules under the anchored round discipline. -/
+private def emitIterBody (Em Gm : FinTM Bool) (hek : 0 < Em.k)
+    (ee ex : Em.State) (ge gx : Gm.State) : FinTM Bool where
+  k := max Em.k Gm.k
+  State := BodyState Em.State Gm.State
+  tm := {
+    q₀ := .copy
+    tr := fun q inp work => match q with
+      | .copy => match inp with
+        | some s => ⟨.pos,
+            fun i => if (i : ℕ) = 0 then (some (some s), 1) else (none, 0),
+            none, some .copy⟩
+        | none => ⟨0,
+            fun i => if (i : ℕ) = 0 then (none, -1) else (none, 0),
+            none, some .rwTape⟩
+      | .rwTape =>
+        match work ⟨0, Nat.lt_of_lt_of_le hek (Nat.le_max_left _ _)⟩ with
+        | some _ => ⟨0,
+            fun i => if (i : ℕ) = 0 then (none, -1) else (none, 0),
+            none, some .rwTape⟩
+        | none => ⟨0,
+            fun i => if (i : ℕ) = 0 then (none, 1) else (none, 0),
+            none, some .rwInput0⟩
+      | .rwInput0 => FinTM.controlAction .neg (some .rwInput)
+      | .rwInput => match inp with
+        | some _ => FinTM.controlAction .neg (some .rwInput)
+        | none => FinTM.controlAction .pos (some .anchor)
+      | .anchor =>
+        padAction (Nat.le_max_left _ _) (Option.map .callE)
+          (Em.tm.tr ee inp (fun i => work (Fin.castLE (Nat.le_max_left _ _) i)))
+      | .callE q =>
+        if q = ex then FinTM.controlAction 0 (some .gStart)
+        else
+          padAction (Nat.le_max_left _ _) (Option.map .callE)
+            (Em.tm.tr q inp (fun i => work (Fin.castLE (Nat.le_max_left _ _) i)))
+      | .gStart =>
+        padAction (Nat.le_max_right _ _) (Option.map .callG)
+          (Gm.tm.tr ge inp (fun i => work (Fin.castLE (Nat.le_max_right _ _) i)))
+      | .callG q =>
+        if q = gx then FinTM.controlAction 0 (some .anchor)
+        else
+          padAction (Nat.le_max_right _ _) (Option.map .callG)
+            (Gm.tm.tr q inp (fun i => work (Fin.castLE (Nat.le_max_right _ _) i))) }

@@ -1,0 +1,29 @@
+/-- **The R1 reconstruction lemma** (MIG-0b; backlog F6-1(i), F7-1(b)): an embedded
+configuration is determined by its selected bank and its ambient frame. If `d` has the state,
+input position and selected tapes and heads of `c`, its output is `pre` followed by `c`'s, and
+off the selection it holds the frame `tapes`, `heads`, then `d` is the forwarding embedding of `c`
+into that frame. It moves to `Build/Embed` at the layering split and replaces
+`OracleSim.oracleBankCfg_eq`, `CodeSimulator.canonEmbedEq`, `Primitives.emitterP2_frame` and the
+local `hframe` of `Loop.emCall_exit_fixed` (see the fit tests below).
+
+**Proof sketch.** Compare field by field. A selected tape or head is the source's
+(`Turing.embedEmitCfg_selected_tape`, `_pos`), which is `d`'s by hypothesis; an unselected one is
+the frame (`Turing.embedEmitCfg_unselected`), which is `d`'s by hypothesis. The state, the input
+position and the output are the hypotheses. -/
+theorem embedEmitCfg_eq {m : ℕ} {S : Type} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Cfg m Γ S x)
+    (d : Cfg k Γ S x) (hs : c.state = d.state) (hin : c.inputPos = d.inputPos)
+    (hout : pre ++ c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
+    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    embedEmitCfg σ tapes heads pre c = d := by
+  have fields (j : Fin k) :
+      (embedEmitCfg σ tapes heads pre c).workTapes j = d.workTapes j ∧
+        (embedEmitCfg σ tapes heads pre c).workTapePos j = d.workTapePos j := by
+    by_cases hj : j ∈ Set.range σ
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
+      exact selected i
+    · obtain ⟨ht, hp⟩ := embedEmitCfg_unselected σ tapes heads pre c j hj
+      exact ⟨ht.trans (outside j hj).1, hp.trans (outside j hj).2⟩
+  exact Cfg.ext hs hin (funext fun j => (fields j).1) (funext fun j => (fields j).2) hout

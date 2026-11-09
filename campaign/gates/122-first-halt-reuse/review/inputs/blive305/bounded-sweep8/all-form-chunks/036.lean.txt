@@ -1,0 +1,12 @@
+/-- Lockstep capture through the first halting transition. -/
+private lemma universalCapture_run {S : Type} [Fintype S] [DecidableEq S]
+    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) (t : ℕ)
+    (h : ∀ s, s < t → (M.tm.runFrom cfg s).state ≠ none) :
+    (universalCaptureTM M D).tm.runFrom (universalCaptureCfg M D cfg) t =
+      universalCaptureCfg M D (M.tm.runFrom cfg t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
+      universalCapture_step M D _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']

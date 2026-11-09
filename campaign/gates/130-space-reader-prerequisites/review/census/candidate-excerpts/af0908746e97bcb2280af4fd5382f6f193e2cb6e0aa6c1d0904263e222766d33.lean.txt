@@ -1,0 +1,32 @@
+/-- One input-rewind step over an input symbol.
+**Proof sketch.** At interior position `p ≥ 1` the input read is the
+`(p-1)`-st bit, so the rewind keeps moving left
+(`moveInputPos_neg_of_ne_left`); nothing else changes. -/
+private theorem rwInput_some (hek : 0 < Em.k) (x : List Bool) (p : ℕ)
+    (hp1 : 1 ≤ p) (hpn : p ≤ x.length) :
+    (emitIterBody Em Gm hek ee ex ge gx).tm.step
+        (fullCfg Em Gm x .rwInput p (by omega) 0) =
+      fullCfg Em Gm x .rwInput (p - 1) (by omega) 0 := by
+  have hinp : (fullCfg Em Gm x .rwInput p (by omega) 0).inputSymbol = some x[p - 1] :=
+    inputSymbolInner (p - 1) (by simp only [fullCfg]; omega) (by omega)
+  have h1 : (emitIterBody Em Gm hek ee ex ge gx).tm.step
+      (fullCfg Em Gm x .rwInput p (by omega) 0) =
+      ((emitIterBody Em Gm hek ee ex ge gx).tm.tr .rwInput
+        (fullCfg Em Gm x .rwInput p (by omega) 0).inputSymbol
+        (fullCfg Em Gm x .rwInput p (by omega) 0).workTapeSymbols).apply
+        (fullCfg Em Gm x .rwInput p (by omega) 0) := rfl
+  rw [h1, hinp]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · show moveInputPos (⟨p, by omega⟩ : Fin (x.length + 2)) .neg = _
+    rw [moveInputPos_neg_of_ne_left _ (by
+      intro h
+      have := congrArg Fin.val h
+      simp at this
+      omega)]
+    rfl
+  · funext i
+    by_cases hi : (i : ℕ) = 0 <;>
+      simp [emitIterBody, FinTM.controlAction, Action.apply, fullCfg, hi]
+  · funext i
+    by_cases hi : (i : ℕ) = 0 <;>
+      simp [emitIterBody, FinTM.controlAction, Action.apply, fullCfg, hi]

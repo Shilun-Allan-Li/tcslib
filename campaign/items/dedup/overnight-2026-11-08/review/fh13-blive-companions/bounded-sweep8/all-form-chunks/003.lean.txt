@@ -1,0 +1,26 @@
+/-- The captured restoration returns within `2t+1` steps with the original
+source work restored and its completed output retained separately.
+**Proof sketch.** Take the restoration machine's first halt below its proved
+exact bound, apply `capture_run`, and identify the returned configuration
+field by field. Its empty output appends nothing to the retained source word. -/
+private lemma enumCont_clean_restore (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    ∃ r ≤ 2 * t + 1,
+      (enumCont_cleanTM M).tm.runFrom
+        (captureCfg (fun q => .inr (.inr q)) (.inr (.inl 1))
+          (M.tm.runFrom c₀ t).output []
+          (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p)) r =
+        enumCont_cleanCfg M c₀ (M.tm.runFrom c₀ t).output
+          (some (.inr (.inl 1))) p ((M.tm.runFrom c₀ t).output.length : ℤ) := by
+  have hu := enumCont_undo_run M c₀ p t hlive
+  obtain ⟨r, hr, hl, he⟩ := enumCont_first_halt (enumCont_undoTM M.k).tm
+    (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p)
+    (2 * t + 1) (by rw [hu]; rfl)
+  refine ⟨r, hr, ?_⟩
+  rw [capture_run (enumCont_undoTM M.k).tm (enumCont_cleanTM M).tm
+    (fun q => .inr (.inr q)) (.inr (.inl 1)) (fun _ _ _ => rfl)
+    _ [] _ r hl, he, hu]
+  simp [captureCfg, enumCont_undoResult, enumCont_cleanCfg, enumCont_logCfg,
+    enumCont_logTM, enumCont_undoTM]
+  exact ⟨rfl, rfl⟩

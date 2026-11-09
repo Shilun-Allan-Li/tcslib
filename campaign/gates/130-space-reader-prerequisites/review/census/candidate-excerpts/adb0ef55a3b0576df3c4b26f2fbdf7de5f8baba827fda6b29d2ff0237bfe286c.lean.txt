@@ -1,0 +1,46 @@
+/-- `writeAdvTM_run_ofCfg` (statement copied from `Build/Scan.lean:162`). -/
+theorem probe_writeAdv_contract (i : Fin k)
+    (w₀ : List Symbol) (d : Cfg k Symbol (Fin (w₀.length + 1)) x)
+    (hstate : d.state = some 0) :
+    (writeAdvTM k i w₀).runFrom d (w₀.length + 1) =
+        { d with
+          state := some 0
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w₀.length : ℤ)
+              then FinTM.bufferTape w₀ (q - d.workTapePos j)
+            else d.workTapes j q
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i + (w₀.length : ℤ)) } ∧
+      (∀ t, 0 < t → t < w₀.length + 1 → ((writeAdvTM k i w₀).runFrom d t).state ≠ some 0) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ w₀.length + 1 →
+        if j = i then
+          ((writeAdvTM k i w₀).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j) (d.workTapePos j + (w₀.length : ℤ))
+        else ((writeAdvTM k i w₀).runFrom d t).workTapePos j = d.workTapePos j) := by
+  -- the last, stationary step returns state `|w₀|` to `0`
+  have hlast : (writeAdvTM k i w₀).runFrom d (w₀.length + 1) =
+      { probeWaF i w₀ d w₀.length with state := some 0 } := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', probe_wa_run i w₀ d hstate _ le_rfl]
+    change ((writeAdvTM k i w₀).tr _ _ _).apply _ = _
+    simp only [writeAdvTM, probeWaF, probeWriteCfg]
+    rw [dif_neg (show ¬ min w₀.length w₀.length < w₀.length by omega)]
+    apply Cfg.ext <;> simp [Action.apply, inputMoveAction]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hlast]
+    apply Cfg.ext
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i
+      · subst j; simp [probeWaF, probeWriteCfg]
+      · simp [probeWaF, probeWriteCfg, hj]
+    all_goals simp [probeWaF, probeWriteCfg]
+  · intro t ht0 ht
+    rw [probe_wa_run i w₀ d hstate t (by omega)]
+    simp only [probeWaF, probeWriteCfg, ne_eq, Option.some.injEq, Fin.ext_iff, Fin.val_zero]
+    omega
+  · intro j t ht
+    rcases Nat.lt_or_ge t (w₀.length + 1) with h | h
+    · rw [probe_wa_run i w₀ d hstate t (by omega)]
+      split_ifs with hj <;> simp [probeWaF, probeWriteCfg, hj, Finset.mem_Icc] <;> omega
+    · rw [show t = w₀.length + 1 by omega, hlast]
+      split_ifs with hj <;> simp [probeWaF, probeWriteCfg, hj, Finset.mem_Icc]

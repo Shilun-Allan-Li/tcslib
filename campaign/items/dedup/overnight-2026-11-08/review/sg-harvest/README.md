@@ -1,0 +1,28 @@
+# Overnight existing-API harvest — frozen eight-root tranche
+
+Eight exact mechanical proof repoints are prepared and pass actual full-owner hypothetical native checks against root-supplied current campaign `9b5dcf46408db681bcbc721930ef2203fa6bc47d`, whole MAC8. This folder makes no source/Git/canonical change and does not grant PR/gate/merge clearance. Seyoon retains all API/import/statement/name/home/debt/route decisions. Morning audit choice is Codex, per root's task steering; nothing is dispatched here.
+
+`mechanical-draft.patch` contains only these eight existing proof bodies plus the two obsolete first-halt descriptions. All original imports and complete public/private headers remain exact; no executable definition, declaration name/privacy/order, new API, import or assumption is introduced. `mechanical-chunk-mappings.json` preserves full before/after chunks and source/header/chunk hashes. `source/` holds complete original `.lean.txt` captures; `proposed-source/` holds full proposed owners; `probes/` holds the complete owner probes including the final axiom-print commands.
+
+| Owner | Existing declaration | Public API used | Supplied execution performed here |
+| --- | --- | --- | --- |
+| EmitIterEmbed | step_output_prefix | MultiTapeTM.step_output_prepend | Full owner exit0/errors0/sorries0 |
+| EmitIterEmbed | runFrom_output_prefix | MultiTapeTM.runFrom_output_prepend | Same actual owner check |
+| EmitIterEmbed | runFrom_output_extends | MultiTapeTM.output_prefix plus runFrom_zero | Same actual owner check |
+| EmitIterEmbed | runFrom_of_halted | MultiTapeTM.runFrom_of_halt | Same actual owner check |
+| EmitIterEmbed | state_isSome_of_runFrom | MultiTapeTM.runFrom_state_ne_none_of_le | Same actual owner check |
+| SAT | sat_first_halt | MultiTapeTM.exists_first_halt + computesInTime_iff | Full owner exit0/errors0/sorries0 |
+| SAT | sat_call_first_halt | MultiTapeTM.exists_first_halt | Same actual owner check |
+| Hardness | clA5_call_first_halt | MultiTapeTM.exists_first_halt | Full owner exit0/errors0/sorries0 |
+
+EmitIterEmbed's five AX results are exactly `[propext, Quot.sound]`. The three FH-1 roots use the standard three axioms `[propext, Classical.choice, Quot.sound]`. Complete raw diagnostics, timings/exits, probe hashes and receipts are preserved. Actual successful jobs took3.076s/18.791s/159.994s including slot wait and reported6/83/66 warnings respectively; warnings are disclosed and not called zero-warning runs. No admission warning or error occurred. These are full-owner hypothetical source checks, each against the unchanged imported MAC8 artifacts, not a new replay or combined compiled tree. Root must integrate/recheck the eventual combined cleanup PR and own its gate/replay/current readiness.
+
+The first EmitIterEmbed wrapper output was error-free but its exit receipt was lost because zsh's `status` variable is read-only. That attempt is preserved and NOT labeled PASS; the corrected independently run attempt2 has an actual exit0 receipt. The preparatory broad name query also attempted a nonexistent proposed Build/Clean.lean home; the actual file inventory corrected it. No claim of API absence or a source failure rests on that query. The bounded run-pattern inventory retains16 raw rows, including four comment-only neighboring-doc hits; the comment-aware classification keeps all rows and distinguishes the12 code hits. No failure or raw candidate was silently removed.
+
+No explicit proposed-body simp/rw/unfold argument unfolds a foreign definition. The only foreign rewrite equation is public `MultiTapeTM.runFrom_zero`; other rewrites are local equalities. Core/Mathlib constructor reduction is used only through rfl/cases or constructor lemmas. See `native-probe-verification.json`. This tranche has not run a whole-body opacity seal/paired controls, copy-screen tiling, lint CLI, full replay, full compiled metadata comparison, or global semantic duplicate census; those remain later validation, not fabricated completed checks.
+
+The source-only harvest is fully retained: all929 files under TCSlib have before/after source hashes and import headers;65 complete relevant source files are captured; all4,441 initial lexical declarations and141 broad public API name candidates are uncapped. This lexical inventory is not a general Lean AST. `retained-kind-dispositions.json` lists72 current names across the seven previously accepted SG1 kinds; that is a named family inventory, not72 confirmed retained copies or a replacement for the mixed54-name affected union. Concrete HostNext routing tables are excluded as data. All exact existing kind boundaries, maintainer ownership and next12.2c window remain unchanged.
+
+`PUBLIC-CONTRACT-DECISIONS.md` gives bounded existing-API comparisons and minimal unimplemented contract/home decisions for the seven structural kinds. Notable concrete limits are arbitrary K<k in current padding helper headers, optional final transducer emission, LIVE-release versus final-halting adapter timing/state shape, LIVE phase dispatch versus halt-transition forwarding, and arbitrary native unary clocks versus fixed-monomial/all-word orbit premises. No unavoidable API necessity is asserted. Class-image residuals retain their separate actual-image premise.
+
+Hardness5/XR2 fixed-LIVE first-entry work belongs exclusively to agent118 and is not duplicated. Root has now authorized a distinct follow-on extras folder for Hardness head/tail and possible same-home SafeRun proofs; those later results are not included in this frozen eight-root tranche. SAT head/tail counterparts stop at an import decision; no import is applied. The prior gate106 return-review files are untouched.

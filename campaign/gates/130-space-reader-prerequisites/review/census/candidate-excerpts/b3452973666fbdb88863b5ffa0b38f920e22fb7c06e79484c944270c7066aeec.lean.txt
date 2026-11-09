@@ -1,0 +1,31 @@
+/-- The transition table of the clocked runner (see the module docstring). -/
+def clockTr (K W : FinTM Bool) (q : ClockState K.State W.State) (inp : Option Bool)
+    (work : Fin (K.k + (1 + W.k)) → Option Bool) :
+    Action (K.k + (1 + W.k)) Bool (ClockState K.State W.State) :=
+  match q with
+  | .kRun (some q) =>
+    let a := K.tm.tr q inp (fun i => work (Fin.castAdd (1 + W.k) i))
+    ⟨a.inputTape, tapeBlocks a.workTapes
+      (a.output.map some, if a.output = none then 0 else .pos)
+      (fun _ => (none, 0)), none, some (.kRun a.state)⟩
+  | .kRun none => ctrAction none .neg (some .cScan)
+  | .cScan =>
+    if work (ctrIdx K.k W.k) = none then ctrAction none .pos (some .iStart)
+    else ctrAction none .neg (some .cScan)
+  | .iStart => controlAction .neg (some .iScan)
+  | .iScan =>
+    match inp with
+    | some _ => controlAction .neg (some .iScan)
+    | none => controlAction .pos (some (.dec W.tm.q₀ .empty))
+  | .dec q r =>
+    match work (ctrIdx K.k W.k) with
+    | none => ⟨0, fun _ => (none, 0), some true, none⟩
+    | some false => ctrAction (some (some true)) .pos (some (.dec q r))
+    | some true =>
+      let a := W.tm.tr q inp (fun i => work (Fin.natAdd K.k (Fin.natAdd 1 i)))
+      ⟨a.inputTape, tapeBlocks (fun _ => (none, 0)) (some (some false), .neg) a.workTapes,
+        (if a.state = none then some (decide (r.push a.output ≠ .one true)) else none),
+        a.state.map (fun q' => .ret q' (r.push a.output))⟩
+  | .ret q r =>
+    if work (ctrIdx K.k W.k) = none then ctrAction none .pos (some (.dec q r))
+    else ctrAction none .neg (some (.ret q r))

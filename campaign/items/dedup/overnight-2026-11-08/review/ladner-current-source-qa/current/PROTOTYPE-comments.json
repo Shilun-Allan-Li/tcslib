@@ -1,0 +1,97 @@
+[
+  {
+    "kind": "block",
+    "code_offset": 0,
+    "text": "/-\nCopyright (c) 2026 TCSlib contributors. All rights reserved.\nReleased under Apache 2.0 license as described in the file LICENSE.\nAuthors: Codex\n-/"
+  },
+  {
+    "kind": "module_doc",
+    "code_offset": 304,
+    "text": "/-!\n# Delayed diagonalization and intermediate languages\n\n## Main definitions\n\n* `Complexity.padSAT` is SAT padded by a variable exponent after a final separator.\n* `Complexity.ladnerMachine` is the uniformly timed enumeration used in the delayed diagonal.\n* `Complexity.ladnerH` is the least currently successful index, capped by a double logarithm.\n* `Complexity.SAT_H` is the language padded by that index function.\n\n## Main results\n\n* `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.\n* `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.\n* `Complexity.ladner` states the existence of an NP-intermediate language.\n\n## References\n\n* [AB09] S. Arora, B. Barak, Computational Complexity: A Modern Approach,\n  Cambridge University Press, 2009. Theorem 3.3 and its proof.\n-/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 364,
+    "text": "/-- `padSAT h` consists of a satisfiable word followed by a false separator and\n`|\u03c8| ^ h |\u03c8|` true bits. [AB09, Theorem 3.3 and its proof] -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 490,
+    "text": "/-- A word belongs to `padSAT h` exactly when it has the indicated satisfiable prefix\nand the prescribed separator and unary suffix. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 657,
+    "text": "/-- Padding-language membership at a word depends only on exponent values at shorter\nprefix lengths.\n\n**Proof sketch.** A padding witness is shorter than the whole word because the separator\ncontributes one position. Substitute equality of the exponent functions at that length. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 1375,
+    "text": "/-- The index `i` denotes the machine obtained by decoding its binary digits in the\nuniformly timed code scheme. [AB09, Theorem 3.3 and its proof] -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 1474,
+    "text": "/-- The enumeration uses `expCode` on the binary digits of its index. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 1581,
+    "text": "/-- The delayed index at `n` is the least index below the double logarithm that correctly\nrecognizes the padded language on words of length at most the logarithm, within its indexed\npolynomial deadline. If no such index exists, it is the double logarithm. Values used in a\nshort padded word depend only on smaller arguments, so strong recursion defines the index.\n[AB09, Theorem 3.3 and its proof] -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 2016,
+    "text": "/-- The delayed index satisfies its minimum-index equation, with the global padded\nlanguage in the bounded acceptance test.\n\n**Proof sketch.** Read the strong-recursion equation and use `padSAT_congr` to identify\nlocal and global exponents on every queried word. Handle zero before using logarithmic decrease. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4017,
+    "text": "/-- The delayed index never exceeds its double-logarithmic cap.\n\n**Proof sketch.** In the successful case, read the strict index bound of the least witness;\nin the fallback case, the index equals the cap. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4178,
+    "text": "/-- `SAT_H` is the language obtained by padding SAT with the delayed index function.\n[AB09, Theorem 3.3 and its proof] -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4239,
+    "text": "/-- The witness language is `padSAT ladnerH`. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4293,
+    "text": "/-- The binary digits of the delayed index at an input's length are polynomial-time\ncomputable. [AB09, Theorem 3.3 and its proof]\n\n**Proof sketch.** Maintain previously computed index values, simulate only the short\ninputs through the uniformly timed acceptance simulator, and test SAT on short words.\nPolynomially bounded iteration supplies the memo-table driver; the short-SAT search,\npoly-bounded simulator invocation and state-size ledger are separate route obligations. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4396,
+    "text": "/-- The padded SAT witness is in NP. [AB09, Theorem 3.3 and its proof]\n\n**Proof sketch.** Guess the satisfiable prefix and its SAT certificate. Compute the\nindex at that prefix length and check the separator and exactly prescribed unary suffix. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4444,
+    "text": "/-- A polynomial-time decider for the padded language forces its delayed index to be\nbounded. [AB09, Theorem 3.3 and its proof]\n\n**Proof sketch.** Choose a padded code of the decider whose enumeration index dominates\nits polynomial time degree. That index eventually passes every short acceptance test;\nabsorb the finitely many earlier index values into one bound. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4533,
+    "text": "/-- If the padded language is outside P, the delayed index eventually exceeds every\nconstant. [AB09, Theorem 3.3 and its proof]\n\n**Proof sketch.** Each fixed machine has a failing finite test, since a machine that passed\nall its indexed polynomial tests would decide the language in polynomial time. Once all\nfailing tests below a fixed cap are visible, none of those indices is selected. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4637,
+    "text": "/-- Polynomial-time computable, diverging padding cannot be NP-hard unless SAT belongs\nto P. The hypothesis uses NP-hardness, rather than NP-completeness.\n[AB09, Theorem 3.3 and its proof]\n\n**Proof sketch.** A polynomial reduction into the padded language eventually maps an\ninstance to a satisfiable-prefix candidate at most the square root of its length.\nRepeatedly shrink, with the finite small cases tabulated, to obtain a polynomial SAT decider. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4834,
+    "text": "/-- If P differs from NP, the explicit padded SAT language is in NP, outside P and\nnot NP-complete. [AB09, Theorem 3.3]\n\n**Proof sketch.** A P decider would bound the delayed index and make bounded padding a\npolynomial reduction from SAT. NP-hardness would instead combine divergence of the\nindex with the shrinking reduction. Each case would put SAT in P and collapse P and NP. -/"
+  },
+  {
+    "kind": "declaration_doc",
+    "code_offset": 4938,
+    "text": "/-- If P differs from NP, an NP-intermediate language exists. [AB09, Theorem 3.3] -/"
+  }
+]

@@ -1,0 +1,388 @@
+{
+  "source_basis": "f3c8c050ef98375bc237c72bde74f83d33833374",
+  "graph_population": 1003,
+  "consumer_TCSlib_closure_nodes": 51,
+  "cycles": [],
+  "candidate_import_changes": [],
+  "graph_exact_before_after": true,
+  "closure": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Composition"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/DTIME.lean",
+      "sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/P.lean",
+      "sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7",
+      "imports": [
+        "TCSlib.Complexity.ClassP.DTIME"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Basic.lean",
+      "sha256": "d5d080d8c96c8ad2fb6bb8fd196b279460d37368aa7baa734c8a152030a961c6",
+      "imports": [
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "sha256": "92245af1bfd7b284022e6b183b5e644615a5ce3975d7a538325b0d059d96c9cf",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Basic",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassNP.PolyTime"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean",
+      "sha256": "377cb9b34c85afd0e529f0d385429cd3c43ef87d0ddb1af7fb570da549819653",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Lib",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Bank",
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean",
+      "sha256": "782e5fed16d744289acb084872693d0f2a28152c24fe812314c20fd508ca0684",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.DblLang"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARM.lean",
+      "sha256": "2fbaffbb836b2d880d8d1716194ae7a0a437d514384d686e729a953a0efee853",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ParseCmp"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean",
+      "sha256": "febb26a61644d522c2d17cb6bbba7f8ee2794f11bae99efd0d6d395a45fe1504",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMProof",
+        "TCSlib.Complexity.SpaceComplexity.ImplicitPoly"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean",
+      "sha256": "0dfb7659a1b59231f74072fe20c59995760ed0da7e487f53fcd6b8ecc4364f12",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean",
+      "sha256": "fdefbffd1d2cd40ca7e391527e2963c45bcf320e5c0d9f0efbf69f91ca1759ad",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMRun",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Bank",
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean",
+      "sha256": "5bbaa672fa6b3e09e84af2d8bd78877864adf100cd57bcc11470e293dc818373",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMRun"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean",
+      "sha256": "47421208535162655d9a16c5d48bd6bab05083cd85abd02cbc311466b34ad491",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMSim"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean",
+      "sha256": "7ab02cb1e668b2eae5b17f1305b191f40febea2b6fe42c879b9b2efd6a8b66a9",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARM"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean",
+      "sha256": "779867cbaa97f6656a85f44a8564f3f5c5051d9f349739f3e8c50dbf54583efb",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Clean"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "sha256": "9db740d22be9ef6178f9d19ed1ece7494e70c6a4e5f25e409a3abbf1bf541818",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.NatBits"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "sha256": "44e479783baac69c6a10633b666f8abf90b3a9ba19ef76ed073fee98ee09b405",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "sha256": "d858432b2c4b2420c81577f19cd6634a2f8736fe9fb701af15c45401cf9ea8ac",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Sim"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "sha256": "89f3f21ee2fc567ec184ec43cac35f2e4637c6262c6868f4ab7339d40d588de0",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "sha256": "2c680a5a335f7195c467d09b8a1d8c46c6ecc646128d708eaecd15015ec6d730",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Compile",
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean",
+      "sha256": "78ee70f3e074ae2b7ca95aa04ff30968c83e06def0c4172fc9e8b58def3b3890",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Call"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean",
+      "sha256": "693d6e805aabf1c3ac10b3b2dcf9eada550ad908864487e4eecd9a65c41c57e1",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMKit"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+      "sha256": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean",
+      "sha256": "da7ea75872b0247759e5a7cd987967b8340b0bb1e85cfc0d245b9239a2a126b8",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Lib"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "sha256": "a521df6947264245e851a7a32de94b93c4c3ffda77b39bd2ff4ced766b90fb5e",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Encoding"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean",
+      "sha256": "c07e257ac3a7b46f3092c27f7c73b1cd5dce9cfff4a8915efbd8c4be8d952d1a",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Compile",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Bin"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean",
+      "sha256": "2571030d97ca6a4c6a11f358baab6256bc99f0655125cdfd9866850e7c22f286",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops",
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMReach"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean",
+      "sha256": "d5a89654a11d2f1f3ada1e081ee8ba66fc8c25f668d152e230a910288ec8de19",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.MARM",
+        "TCSlib.Complexity.SpaceComplexity.Machines.NARMCompile"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "sha256": "21a9d100868bfddd90c595bef78085e09a9af809dbcede702f67d1965517a647",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.MARMCompile",
+        "TCSlib.Complexity.ClassP.DTIME"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean",
+      "sha256": "10f8582f1dd14365d24f4781362c265c1714d682af44fb89d766b1fc847a2922",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMProof",
+        "TCSlib.Complexity.SpaceComplexity.Machines.ARMReach"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean",
+      "sha256": "6005f7f8a52cd8dd0ffc2b1b74eb40d1bd0c2d3bb31c8041dbf521d4be6a1211",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.NARM",
+        "TCSlib.Complexity.TuringMachine.NondeterministicSpace"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean",
+      "sha256": "3c563a9f2acd99f366f90222fb443addcb3116d5958612aa6fe344719f887a76",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.ParsePlain"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean",
+      "sha256": "58bee49a32b50423e2080aa89d895bb9fca2aed293284c196aa773aef1d34042",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Parse"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean",
+      "sha256": "1510e9ed726a52c60e42068ad21ca07ec190e17a333ad5d8aa976d061bc4bdd1",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Parse2"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean",
+      "sha256": "fa2feeb438733389cd913bbaf01427c597274a674ad8e75046c1a523ccf802a4",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Frag"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "sha256": "ad408e23dd8cd6f0dde31ec83f9c1c15e393eebdeb952903655afa5ac8e1fb17",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Layout"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "sha256": "6ed290d656d91aab07c96b8c04b5cfe8f49d8e84276b62548c870e1bc09bf5e3",
+      "imports": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Program"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+      "sha256": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.StateRenaming"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "sha256": "639a3ee6526cfe11b1d14a84d1da880207d888d0a7d968e538f95c8859fd3c50",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Configuration"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "sha256": "a2248f15e7fa00d70a2acb599afbde8fcb71447b1aaa5fadb2ae3d483d255bf5",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.NatBits",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Deterministic"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/NatBits.lean",
+      "sha256": "987f6197f653a4969987d8999e7aa0a8aeff1748d8b41835aaea7033ec2079c1",
+      "imports": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "sha256": "37181134c960c117e92e169f88174034df1bdcdac54046faac6686231774fb25",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Finite",
+        "TCSlib.Complexity.TuringMachine.StateRenaming"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean",
+      "sha256": "5519f3f061d87587a3a041567e7dfcc8906fae48389743f02a0ce96dbab90237",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Nondeterministic"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean",
+      "sha256": "3518e090b29613af714f2303925db3e54e9c182b396693afaa73b5a6da89e9bf",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "sha256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Deterministic",
+        "TCSlib.Complexity.TuringMachine.Simulation"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "imports": [
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ]
+    }
+  ],
+  "no_new_visibility_or_route_decision": true
+}

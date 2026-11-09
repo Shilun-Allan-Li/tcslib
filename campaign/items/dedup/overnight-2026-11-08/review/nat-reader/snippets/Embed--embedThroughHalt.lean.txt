@@ -1,0 +1,73 @@
+private lemma embedThroughHalt (M : MultiTapeTM m Symbol S)
+    (R : MultiTapeTM k Symbol (S ⊕ Unit))
+    (E : Cfg m Symbol S x → Cfg k Symbol S x)
+    (hstate : ∀ d, (E d).state = d.state)
+    (hstep : ∀ d, d.state ≠ none →
+      R.step ((E d).mapState Sum.inl) = embedReturnCfg (E (M.step d)))
+    (c : Cfg m Symbol S x) (T : ℕ) (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
+      (E (M.runFrom c t)).mapState Sum.inl) ∧
+    R.runFrom ((E c).mapState Sum.inl) T =
+      { E (M.runFrom c T) with state := some (Sum.inr ()) } ∧
+    ∀ t < T, (R.runFrom ((E c).mapState Sum.inl) t).state ≠
+      some (Sum.inr ()) := by
+  have hT : 0 < T := by
+    by_contra hn
+    have hz : T = 0 := by omega
+    subst T
+    exact hc (by simpa using hhalt)
+  have hrun : ∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
+      (E (M.runFrom c t)).mapState Sum.inl := by
+    intro t
+    induction t with
+    | zero => intro _; rfl
+    | succ t ih =>
+      intro ht
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+        hstep _ (hlive t (by omega)), ← MultiTapeTM.runFrom_succ_eq_step']
+      apply embedReturnCfg_live
+      rw [hstate]
+      exact hlive _ ht
+  refine ⟨hrun, ?_, ?_⟩
+  · have hlast : T - 1 + 1 = T := by omega
+    calc
+      R.runFrom ((E c).mapState Sum.inl) T =
+          R.step (R.runFrom ((E c).mapState Sum.inl) (T - 1)) :=
+        (congrArg (R.runFrom ((E c).mapState Sum.inl)) hlast).symm.trans
+          MultiTapeTM.runFrom_succ_eq_step'
+      _ = embedReturnCfg (E (M.runFrom c T)) := by
+        rw [hrun _ (by omega), hstep _ (hlive _ (by omega)),
+          ← MultiTapeTM.runFrom_succ_eq_step', hlast]
+      _ = _ := by simp [embedReturnCfg, hstate, hhalt]
+  · intro t ht
+    rw [hrun t ht]
+    simp only [Cfg.mapState, hstate]
+    cases (M.runFrom c t).state <;> simp
+
+/-- **R1′ through-halt contract, suppressing flavor**
+(round-1 repair R1): if the source first halts at time `T`, the returning
+embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
+sits at the **live return anchor** over the completed transport — the
+halting transition's emission recorded on `cap`, the source tape residue
+preserved on the selected bank, the frame untouched — having visited the
+anchor first exactly there. The start must be **live** (`hc` — round-2
+blocker: an initially halted `c` at `T = 0` satisfies the other hypotheses
+vacuously while the handover state projection would demand
+`none = some (Sum.inr ())`; under `hlive` **and** `hhalt` together, `hc` is
+equivalent to `0 < T` — the forward direction uses `hhalt`, the reverse
+`hlive 0` (round-3 finding 1 sharpened the earlier `hhalt`-only phrasing).
+The smallest case is the round-1 counterexample cured: a one-state source
+that emits and halts on its first transition lands at time `1` in
+`Sum.inr ()` with `pre ++ [b]` on the capture tape (the audit's S8 check).
+
+**Proof sketch.** Live times: the `Sum.inl` branch applies the very core of
+`Turing.embedSilentTM`, so `embedSilentTM_runFrom`'s one-step commutation
+transports verbatim under `Cfg.mapState Sum.inl` (`Cfg.mapState_apply`).
+At the halting step, the source action's tape and capture effects are those
+of the closed flavor — `Turing.FinTM.bufferTape_append` records the final
+emission — while the successor `Option.elim` lands in `Sum.inr ()` instead
+of `none`; the anchor cannot occur earlier because live source states map
+into `Sum.inl`. Fill obligations, named: the two `Option.elim` successor
+equations; the through-halt step case; the first-visit projection. -/

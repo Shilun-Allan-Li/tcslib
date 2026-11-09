@@ -1,0 +1,12 @@
+/-- **The input rewind leaf** (`Turing.FinTM.controlAction`): one unconditional left step, a
+left scan while the input head reads a symbol, one step right into the live park. No work
+tape, work head or output is touched. -/
+private def un_inRewTM (k : ℕ) : MultiTapeTM k Bool (Fin 3) where
+  q₀ := 0
+  tr := fun q inp _ =>
+    if q = 0 then FinTM.controlAction .neg (some 1)
+    else if q = 1 then
+      match inp with
+      | some _ => FinTM.controlAction .neg (some 1)
+      | none => FinTM.controlAction .pos (some 2)
+    else FinTM.controlAction 0 (some 2)

@@ -1,0 +1,39 @@
+private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
+    (hc : c.state = some 0) : clCountTM.tm.step c = c := by
+  simp only [MultiTapeTM.step, hc, clCountTM,
+
+
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+
+    (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)
+    (hc : c.state = some (fun _ => some (0 : Fin 4))) :
+    (clBankTM l).tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  refine Cfg.ext hc.symm (moveInputPos_zero _) ?_ ?_ ?_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  · funext i
+    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+
+
+  · funext i
+    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+  · simp [clBankTM, Action.apply]

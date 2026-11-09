@@ -1,0 +1,47 @@
+/-- Generic prepared computation reached from genuine native input.
+**Proof sketch.** Run the native loader to its first complete return and
+dispatch once. Relocate the supplied machine into the loaded bank while
+preserving the original input buffer. Its actual prepared run then gives
+the full endpoint; no cleanup or random access is assumed. -/
+private lemma clPrepared_run (A : FinTM Bool) (w : Fin A.k → List Bool) (tail : List Bool)
+    (W : ℕ) (hW : ∀ i, (w i).length ≤ W) (b : ℕ) :
+    let x := clFields (List.ofFn w) ++ tail
+    ∃ a ≤ 2 * x.length + 4 + A.k * (3 * W + 7),
+      (clPreparedTM A).tm.runFrom ((clPreparedTM A).tm.initCfg x) (a + b) =
+      clPreparedCfg A x (clFields (List.ofFn w)).length
+        (A.tm.runFrom (Cfg.ofWords (input := x) A.tm.q₀ w) b) := by
+  dsimp only
+  let x := clFields (List.ofFn w) ++ tail
+  obtain ⟨a, ha, _, hf, he⟩ := clPrepare_first w tail W hW
+  have lift := MultiTapeTM.runFrom_mapState_of_agreeOn (clPrepareTM A.k).tm (clPreparedTM A).tm ⟨Sum.inl, Sum.inl_injective⟩
+    (fun q => q ≠ .inr (Fin.last A.k, .inl 0))
+    (fun _ hq _ _ => if_neg hq)
+    ((clPrepareTM A.k).tm.initCfg x) a
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  dsimp only [Function.Embedding.coeFn_mk] at lift
+  rw [he] at lift
+  have init : (((clPrepareTM A.k).tm.initCfg x).mapState Sum.inl :
+      Cfg (clPreparedTM A).k Bool (clPreparedTM A).State x) = (clPreparedTM A).tm.initCfg x := rfl
+  rw [init] at lift
+  have dispatch : (clPreparedTM A).tm.step
+      (((clLoadCfg x 1 (Fin.last A.k) (.inl 0) w x (clFields (List.ofFn w)).length).mapState
+        Sum.inr).mapState Sum.inl) =
+      clPreparedCfg A x (clFields (List.ofFn w)).length (Cfg.ofWords (input := x) A.tm.q₀ w) := by
+    change ((clPreparedTM A).tm.tr (.inl (.inr (Fin.last A.k, .inl 0))) _ _).apply _ = _
+    simp only [clPreparedTM, seamCompTM, if_true]
+    erw [FinTM.controlAction_apply, moveInputPos_zero]
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    all_goals
+      funext i
+      refine Fin.addCases ?_ ?_ i <;> intro i <;>
+        simp [clPreparedCfg, clKeepLastPlacement, clLoadCfg, Cfg.mapState, Cfg.ofWords]
+  have run := clPlaced_run A.tm (clPreparedTM A).tm (clKeepLastPlacement _) Sum.inr (by intro a b h; cases h; rfl) (fun _ => True) (by intros; rfl)
+    (Fin.addCases (fun _ _ => none) (fun _ : Fin 1 => FinTM.bufferTape x))
+    (Fin.addCases (fun _ => 0) (fun _ : Fin 1 => ((clFields (List.ofFn w)).length : ℤ)))
+    (Cfg.ofWords (input := x) A.tm.q₀ w) b (by intros; trivial)
+  have arrived : (clPreparedTM A).tm.runFrom ((clPreparedTM A).tm.initCfg x) (a + 1) =
+      clPreparedCfg A x (clFields (List.ofFn w)).length (Cfg.ofWords (input := x) A.tm.q₀ w) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]
+  refine ⟨a + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, arrived]
+  exact run

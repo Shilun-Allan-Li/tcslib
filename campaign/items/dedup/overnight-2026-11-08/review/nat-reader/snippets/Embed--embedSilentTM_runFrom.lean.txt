@@ -1,0 +1,22 @@
+theorem embedSilentTM_runFrom (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) (t : ℕ) :
+    (embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t =
+      embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c t) := by
+  exact MultiTapeTM.runFrom_comm_of_step
+    (embedSilentCfg ι cap tapes heads pre out₀)
+    (embedSilent_step ι cap M tapes heads pre out₀) c t
+
+/-- **R1 frame, suppressing flavor** (design §12).
+Along the whole transported run, every host tape outside the selected bank
+and distinct from the capture tape is byte-identical to its ambient frame
+with its head unmoved; the input position tracks the source's; and the
+host's physical output stays `out₀` (output silence).
+
+**Proof sketch.** Project the lockstep equation
+`embedSilentTM_runFrom` componentwise: the transport's `workTapes`/
+`workTapePos` at an unselected `j ≠ cap` are the frame parameters by the
+`embedSlot` off-range equation, its `inputPos` is the source's, and its
+`output` is `out₀` by definition. -/

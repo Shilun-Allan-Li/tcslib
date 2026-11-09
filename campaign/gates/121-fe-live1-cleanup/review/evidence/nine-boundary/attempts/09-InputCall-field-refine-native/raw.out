@@ -1,0 +1,17 @@
+/private/tmp/ab34-fe241-rule10-peer/runtime/InputCallFieldRefine.lean:171:55: error: unsolved goals
+case h
+x : List Bool
+d : Cfg 2 Bool InputSeekRw x
+hd : d.state = some InputSeekRw.start
+r : ℕ
+hr : r ≤ ↑d.inputPos + 2
+hrun :
+  MultiTapeTM.runFrom d r =
+    { state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+hheads : ∀ u ≤ r, (MultiTapeTM.runFrom d u).workTapePos = d.workTapePos
+⊢ ↑{ state := some InputSeekRw.left, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output }.inputPos -
+      1 =
+    ↑{ state := some InputSeekRw.done, inputPos := 0, workTapes := d.workTapes, workTapePos := d.workTapePos,
+          output := d.output }.inputPos

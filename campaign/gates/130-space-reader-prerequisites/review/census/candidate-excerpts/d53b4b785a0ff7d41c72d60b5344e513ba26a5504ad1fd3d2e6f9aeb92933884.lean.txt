@@ -1,0 +1,27 @@
+/-- The cleanup's return seam is absorbing, so its exact restoration can be
+exported with positive duration and no earlier return-state visit. -/
+private lemma splitRestore_first (k : ℕ) (w s : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ 2 * s.length + w.length + 5 ∧
+      (∀ j < t, ((splitRestoreTM k).tm.runFrom (splitRestoreScan k w s 0) j).state
+        ≠ some (4, false)) ∧
+      (splitRestoreTM k).tm.runFrom (splitRestoreScan k w s 0) t =
+        Cfg.ofWords (4, false) (stateWord (k + 1) (splitStep w s)) := by
+  obtain ⟨T, hTle, hT⟩ := splitRestore_run k w s
+  have hfix (z : Cfg (k + 1) Bool (splitRestoreTM k).State w)
+      (hz : z.state = some (4, false)) : (splitRestoreTM k).tm.step z = z := by
+    unfold MultiTapeTM.step
+    rw [hz]
+    change (controlAction 0 (some (4, false))).apply z = z
+    rw [controlAction_apply, moveInputPos_zero]
+    cases z
+    simp_all
+  obtain ⟨t, ht, hi, he⟩ := catalogFirstEntry (splitRestoreTM k).tm (4, false)
+    (splitRestoreScan k w s 0) _ T hfix rfl hT
+  refine ⟨t, ?_, ht.trans hTle, hi, he⟩
+  by_contra h
+  have ht0 : t = 0 := by omega
+  have hstate := congrArg Cfg.state he
+  simp only [ht0, MultiTapeTM.runFrom_zero, splitRestoreScan, Cfg.ofWords,
+    Option.some.injEq, Prod.mk.injEq] at hstate
+  have hf := congrArg (fun q : (splitRestoreTM k).State => q.1.val) hstate
+  norm_num at hf

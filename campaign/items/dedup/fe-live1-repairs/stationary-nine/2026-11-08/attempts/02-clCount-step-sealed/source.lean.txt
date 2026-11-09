@@ -1,0 +1,20 @@
+import TCSlib.Complexity.CookLevin.Hardness
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Complexity
+open private clCountTM from TCSlib.Complexity.CookLevin.Hardness
+section
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.FinTM.controlAction Turing.Action.apply Turing.moveInputPos
+private lemma clCount_idle {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
+    (hc : c.state = some 0) : clCountTM.tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clCountTM,
+    show (0 : Fin 4) ≠ 1 from by decide, show (0 : Fin 4) ≠ 2 from by decide, if_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all
+end
+end Complexity

@@ -1,0 +1,13 @@
+theorem iterate_shStep (m : ℕ) :
+    ∀ (gs : List (AlgGate n)) (out : List Bool) (T : ℕ), gs.length ≤ T →
+      shStep^[T] (pairEncode (List.replicate m true) (pairEncode (encodeGates gs) out)) =
+        pairEncode (List.replicate m true) (pairEncode [false]
+          (out ++ gatesBody (gs.map (AlgGate.shift m))))
+  | [], out, T, _ => by
+    rw [Function.iterate_fixed (shStep_nil _ _)]
+    simp [encodeGates, gatesBody]
+  | g :: gs, out, T, hT => by
+    obtain ⟨T, rfl⟩ : ∃ T', T = T' + 1 := ⟨T - 1, by simp at hT; omega⟩
+    rw [Function.iterate_succ_apply, shStep_cons,
+      iterate_shStep m gs _ T (by simp at hT; omega)]
+    simp [gatesBody]

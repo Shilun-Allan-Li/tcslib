@@ -1,0 +1,102 @@
+/-- Comparison's exact framed invariant at a first differing or blank position.
+Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
+condition determines the turn and verdict, and both heads return to their entry positions. -/
+private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : List Symbol}
+    (fst snd : Fin k) (u v : List Symbol) (d : Cfg k Symbol FlagPhase x)
+    (hstate : d.state = some .run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p)
+    (hv : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p)
+    (δ : ℕ) (hδ : δ ≤ min u.length v.length)
+    (hp : ∀ r < δ, ∃ b, u[r]? = some b ∧ v[r]? = some b)
+    (hs : ¬∃ b, u[δ]? = some b ∧ v[δ]? = some b)
+    (he : (u[δ]? = v[δ]?) ↔ u = v) (t : ℕ) :
+    (compareTM k fst snd).runFrom d t =
+      catalogTrace (catalogCompareF fst snd d)
+        (catalogCompareR fst snd d (decide (u = v)))
+        { d with state := some (.done (decide (u = v))) } δ t := by
+  have h0 : catalogCompareF fst snd d 0 = d := by
+    apply Cfg.ext <;> simp [catalogCompareF, hstate]
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    obtain ⟨b, hf, hg⟩ := hp r hr
+    have hsf : (catalogCompareF fst snd d r).workTapeSymbols fst = some b := by
+      simpa [catalogCompareF, Cfg.workTapeSymbols, hf] using hu r (by omega) (by omega)
+    have hsg : (catalogCompareF fst snd d r).workTapeSymbols snd = some b := by
+      simpa [catalogCompareF, Cfg.workTapeSymbols, hg] using hv r (by omega) (by omega)
+    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+    simp only [compareTM, hsf, hsg, ↓reduceIte]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareF]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · have hreadf : (catalogCompareF fst snd d δ).workTapeSymbols fst = u[δ]? := by
+      simpa [catalogCompareF, Cfg.workTapeSymbols] using hu δ (by omega) (by omega)
+    have hreadg : (catalogCompareF fst snd d δ).workTapeSymbols snd = v[δ]? := by
+      simpa [catalogCompareF, Cfg.workTapeSymbols] using hv δ (by omega) (by omega)
+    have ht : (compareTM k fst snd).tr .run
+        (catalogCompareF fst snd d δ).inputSymbol
+        (catalogCompareF fst snd d δ).workTapeSymbols =
+        ⟨0, (fun j => if j = fst ∨ j = snd then (none, SignType.neg) else (none, 0)),
+          none, some (.rewind (decide (u = v)))⟩ := by
+      simp only [compareTM, hreadf, hreadg]
+      cases hf : u[δ]? with
+      | none =>
+        cases hg : v[δ]? with
+        | none =>
+          have heq : u = v := he.mp (by rw [hf, hg])
+          simp [heq]
+        | some b =>
+          have hneq : u ≠ v := by
+            intro h
+            have h' := he.mpr h
+            simp only [hf, hg, reduceCtorEq] at h'
+          simp [hneq]
+      | some a =>
+        cases hg : v[δ]? with
+        | none =>
+          have hneq : u ≠ v := by
+            intro h
+            have h' := he.mpr h
+            simp only [hf, hg, reduceCtorEq] at h'
+          simp [hneq]
+        | some b =>
+          have hab : a ≠ b := by
+            intro h
+            subst b
+            exact hs ⟨a, hf, hg⟩
+          have hneq : u ≠ v := by
+            intro h
+            have h' := he.mpr h
+            exact hab (by simpa only [hf, hg, Option.some.injEq] using h')
+          simp [hab, hneq]
+    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+    rw [ht]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCompareR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · intro r hr
+    obtain ⟨b, hf, _⟩ := hp r hr
+    have hread : (catalogCompareR fst snd d (decide (u = v)) (r + 1)).workTapeSymbols fst =
+        some b := by
+      simpa [catalogCompareR, Cfg.workTapeSymbols, hf,
+        show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using hu r (by omega) (by omega)
+    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _
+    simp only [compareTM, hread]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · have hread : (catalogCompareR fst snd d (decide (u = v)) 0).workTapeSymbols fst =
+        none := by
+      simpa [catalogCompareR, Cfg.workTapeSymbols] using hu (-1) (by omega) (by omega)
+    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _
+    simp only [compareTM, hread]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, compareTM, Action.apply]

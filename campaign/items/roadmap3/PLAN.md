@@ -1,6 +1,8 @@
 # Three roadmap tracks: F6, book-form Theorem 3.1, Ladner (planning note)
 
-**Current factual supplement (2026-11-08):** F6 is proved/merged#235; book-form T31 is proved/merged#223 at `72fcfbef3c1deb331aedc95d4a158a9ed4c56524` (gate113). Their planning/old line-number sections below are historical; do not repeat them. Ladner remains the independent statement front. The accepted LD1–7 choices and §(f) rulings stay unchanged. Current campaign after#233 is `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/MAC8.
+**Current factual supplement (2026-11-08):** F6 is proved/merged in #235 and book-form Theorem 3.1 is proved/merged in #223 (gate113). All 26 tracked headline proof closures and 19 supplemental results were rechecked on MAC8 with no sorryAx. See [current roadmap readiness](../../status/2026-11-08-roadmap-readiness/STATUS.md). The earlier plan and line numbers below are historical; the §(f) rulings remain binding.
+
+**Ladner statement phase:** gate128 is closed; #249 is **Clear to merge** at `1096e50b4e105392737ec52939b1db0cdbd9316d` as a statement scaffold. Four definitions and six readings are proved. The six direct mathematical targets and their dependent existential packaging are still open. The sharp SAT verifier interface and concrete selector/clock/memo/padding obligations remain a separate fill route; no fill is dispatched.
 
 **Status:** read-only planning (sub-agent, 2026-11-06). No tracked file was edited, and Lean was not run.
 **Base:** campaign `complexity/arora-barak-ch3-4` at `508781aa` (Lean as at #209/#191/#207's merges).

@@ -1,0 +1,66 @@
+{
+  "result": "PASS5 whole-body scopes in2contexts;44positive kernel declarations+44exact negative controls",
+  "jobs": [
+    {
+      "job": "SafeRun-scope-native",
+      "receipt": "SafeRun-scope-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SafeRun-scope-sealed",
+      "receipt": "SafeRun-scope-sealed-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SafeRun-controls-native",
+      "receipt": "SafeRun-controls-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "SafeRun-controls-sealed",
+      "receipt": "SafeRun-controls-sealed-attempt1.json",
+      "exit": 1,
+      "errors": 14,
+      "expected": true
+    },
+    {
+      "job": "HardnessLeaves-scope-native",
+      "receipt": "HardnessLeaves-scope-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "HardnessLeaves-scope-sealed",
+      "receipt": "HardnessLeaves-scope-sealed-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "HardnessLeaves-controls-native",
+      "receipt": "HardnessLeaves-controls-native-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "expected": true
+    },
+    {
+      "job": "HardnessLeaves-controls-sealed",
+      "receipt": "HardnessLeaves-controls-sealed-attempt1.json",
+      "exit": 1,
+      "errors": 30,
+      "expected": true
+    }
+  ],
+  "positive": 44,
+  "negative": 44,
+  "no_unsafe_transparency_or_reducibility_override": true,
+  "one_job_at_a_time": true,
+  "imported_theorem_values_not_traversed": true
+}
