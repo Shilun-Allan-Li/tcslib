@@ -435,7 +435,8 @@ private theorem scan_copy_trace {Symbol : Type*} {k : ℕ} {x : List Symbol}
     simp
     omega
   · have hs : (scanCopyF i d x.length).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanCopyF, scanWriteCfg]
+      apply Cfg.inputSymbol_of_end
+      simp [scanCopyF, scanWriteCfg]
     rw [step_of_tapeAction_move _ _ i (-1) .neg rfl (q' := .rewind)
       (by simp only [inputCopyTM, hs])]
     apply Cfg.ext
@@ -467,7 +468,8 @@ private theorem scan_copy_trace {Symbol : Type*} {k : ℕ} {x : List Symbol}
         simp [scanCopyR, scanWriteCfg, hj, Function.update_apply] <;> omega
     all_goals simp [scanCopyR, scanWriteCfg]
   · have hs : (scanCopyR i d 0).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanCopyR, scanWriteCfg]
+      apply Cfg.inputSymbol_of_zero
+      simp [scanCopyR, scanWriteCfg]
     rw [step_of_tapeAction_move _ _ i 1 .pos rfl (q' := .done)
       (by simp only [inputCopyTM, hs])]
     apply Cfg.ext
@@ -547,9 +549,9 @@ def inputFoldTM {Γ : Type*} {A : Type} (k : ℕ) (δ : A → Γ → A) (a₀ : 
       | none => inputMoveAction 1 (.done a)
     | .done a => inputMoveAction 0 (.done a)
 
-/-- In the backward phase the native fold moves left across an input symbol;
-at the left blank it moves right and enters the completed phase, preserving
-the accumulator. The work-tape reads do not affect this transition. -/
+/-- In the backward phase a symbol read requests a left move and keeps the
+backward state. A blank read requests a right move and enters the live completed
+state. Both rows preserve the accumulator and ignore the work-tape reads. -/
 theorem inputFoldTM_tr_bwd {Γ : Type*} {A : Type} (k : ℕ)
     (δ : A → Γ → A) (a₀ a : A) (inp : Option Γ) (work : Fin k → Option Γ) :
     (inputFoldTM k δ a₀).tr (.bwd a) inp work =

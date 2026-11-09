@@ -179,7 +179,8 @@ private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.lengt
     intro hi
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     have hlt : i < w.length := by omega
-    simp only [MultiTapeTM.step, catalogPrefixCfg, prependTM, dif_pos hlt, Action.apply]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [catalogPrefixCfg, prependTM, dif_pos hlt, Action.apply]
     apply Cfg.ext_zero_tapes
     · rfl
     · simp
@@ -211,6 +212,23 @@ private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.lengt
       rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
     · rw [List.take_succ, List.getElem?_eq_getElem (by omega), List.append_assoc]
 
+/-- A blank in the final copy state halts without moving or emitting. -/
+private lemma catalogPrefixTM_halt (w x : List Bool) (p : Fin (x.length + 2))
+    (hp : p.val = x.length + 1) (out : List Bool) :
+    (prependTM w).tm.step (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out) =
+      catalogPrefixCfg w x none p out := by
+  let c := catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out
+  have hblank : c.inputSymbol = none := Cfg.inputSymbol_of_end hp
+  change (prependTM w).tm.step c = _
+  rw [MultiTapeTM.step_of_some (by rfl), hblank]
+  simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte]
+  apply Cfg.ext_zero_tapes
+  · exact Action.apply_state _ _
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · rw [Action.apply_output]
+    exact List.append_nil _
+
 /-- **The prepending machine's time**. The prepending machine computes `x ↦ w ++ x` within
 `|w| + n + 1` steps.
 
@@ -226,7 +244,8 @@ theorem prependTM_computes (w : List Bool) :
     MultiTapeTM.runFrom_add, catalogPrefixTM_emit w x w.length (Nat.le_refl _)]
   simp only [List.take_length]
   rw [MultiTapeTM.runFrom_succ_eq_step', catalogPrefixTM_copy w x x.length (Nat.le_refl _)]
-  simp [prependTM, catalogPrefixCfg, MultiTapeTM.step, Cfg.inputSymbol, Fin.ext_iff, Action.apply]
+  rw [List.take_length, catalogPrefixTM_halt _ _ _ rfl]
+  exact ⟨rfl, rfl⟩
 
 
 /-- A zero-work-tape configuration indexed by the number of input bits passed. -/
@@ -243,7 +262,8 @@ private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
     exact inputSymbolInner i (by simp [scanCfg]; omega) h
   · have he : i = x.length := by omega
     subst i
-    simp [scanCfg, Cfg.inputSymbol, Fin.ext_iff]
+    rw [Cfg.inputSymbol_of_end (by simp [scanCfg])]
+    simp
 
 /-- A copy state emits the next `j` input bits after an arbitrary output prefix.
 **Proof sketch.** Induct on the number of copied cells; each transition appends
@@ -262,7 +282,7 @@ private lemma scanCopy_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (tm.tr q (scanCfg x (some q) j (by omega) (out ++ x.take j)).inputSymbol
       _).apply _ = _
     rw [htr, scanCfg_read, List.getElem?_eq_getElem (by omega)]
@@ -281,7 +301,7 @@ private lemma scanCopy_finish {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
     tm.runFrom (scanCfg x (some q) 0 (by omega) out) (x.length + 1) =
       scanCfg x none x.length (by omega) (out ++ x) := by
   rw [MultiTapeTM.runFrom_succ_eq_step', scanCopy_run tm q htr x out _ (by omega)]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change (tm.tr q (scanCfg x (some q) x.length (by omega)
     (out ++ x.take x.length)).inputSymbol _).apply _ = _
   rw [htr, scanCfg_read]
@@ -303,7 +323,7 @@ private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
     intro pre out hx
     subst x
     simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (tm.tr q _ _).apply _ = _
     rw [htr, scanCfg_read]
     apply Cfg.ext_zero_tapes <;> simp [Action.apply, scanCfg]
@@ -313,7 +333,7 @@ private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
     have hread : x[pre.length]? = some b := by simp [hx]
     have hs : tm.step (scanCfg x (some q) pre.length (by omega) out) =
         scanCfg x (some q) (pre ++ [b]).length (by simp [hx]) (out ++ [b]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change (tm.tr q _ _).apply _ = _
       rw [htr, scanCfg_read, hread]
       apply Cfg.ext_zero_tapes
@@ -350,7 +370,7 @@ private lemma scanTrues_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
       have h := congrArg (fun w : List Bool => w[j]?) hp
       simpa [List.getElem?_take, Nat.lt_succ_self] using h
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega) hshort]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (tm.tr q _ _).apply _ = _
     rw [scanCfg_read, hb, htr]
     apply Cfg.ext_zero_tapes
@@ -421,10 +441,12 @@ theorem incFixedTM_computes (x : List Bool) :
       rw [MultiTapeTM.runFrom_succ_eq_step', show incFixedTM.tm.initCfg x =
         scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
           by apply Cfg.ext_zero_tapes <;> simp [incFixedTM, scanCfg], hr]
-      unfold MultiTapeTM.step
-      change ((incFixedTM.tm.tr (0 : Fin 4) _ _).apply _).state = none ∧ _
-      rw [scanCfg_read]
-      simp [incFixedTM, controlAction, Action.apply, scanCfg]
+      have hblank : x[x.length]? = none := by simp
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hblank]
+      change ((controlAction 0 (none : Option (Fin 4))).apply _).state = none ∧
+        ((controlAction 0 (none : Option (Fin 4))).apply _).output = []
+      rw [controlAction_apply]
+      exact ⟨rfl, rfl⟩
     simpa only [hinc, Option.getD_none] using hh.mono (by omega)
   · have hj : j < x.length := by simp [hx]
     have hpre : x.take j = List.replicate j true := by simp [hx]
@@ -436,14 +458,13 @@ theorem incFixedTM_computes (x : List Bool) :
         scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
           by apply Cfg.ext_zero_tapes <;> simp [incFixedTM, scanCfg],
         scanTrues_run incFixedTM.tm (0 : Fin 4) false (fun _ => rfl) x j (by omega) hpre]
-      unfold MultiTapeTM.step
-      change (incFixedTM.tm.tr (0 : Fin 4) _ _).apply _ = _
-      rw [scanCfg_read, hread]
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
+      change (controlAction .neg (some (1 : Fin 4))).apply _ = c
+      rw [controlAction_apply]
       apply Cfg.ext_zero_tapes
       · rfl
-      · simpa [incFixedTM, controlAction, Action.apply, scanCfg, c] using
-          moveInputPos_neg_of_ne_left (⟨j + 1, by omega⟩ : Fin (x.length + 2))
-            (by simp [Fin.ext_iff])
+      · exact moveInputPos_neg_of_ne_left (⟨j + 1, by omega⟩ : Fin (x.length + 2))
+          (by simp [Fin.ext_iff])
       · rfl
     have hrew : incFixedTM.tm.runFrom (incFixedTM.tm.initCfg x) (j + 1 + (j + 1)) =
         scanCfg x (some (2 : Fin 4)) 0 (by omega) [] := by
@@ -455,13 +476,13 @@ theorem incFixedTM_computes (x : List Bool) :
           (List.replicate j false ++ [true]) := by
       rw [MultiTapeTM.runFrom_succ_eq_step',
         scanTrues_run incFixedTM.tm (2 : Fin 4) true (fun _ => rfl) x j (by omega) hpre]
-      unfold MultiTapeTM.step
-      change (incFixedTM.tm.tr (2 : Fin 4) _ _).apply _ = _
-      rw [scanCfg_read, hread]
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
+      change (Action.mk .pos (fun j => j.elim0) (some true) (some (3 : Fin 4))).apply _ = _
       apply Cfg.ext_zero_tapes
-      · rfl
-      · exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-      · rfl
+      · exact Action.apply_state _ _
+      · rw [Action.apply_inputPos]
+        exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+      · exact Action.apply_output _ _
     have hcopy := scanCopy_suffix incFixedTM.tm (3 : Fin 4) (fun _ _ => rfl)
       x rest (List.replicate j true ++ [false]) (List.replicate j false ++ [true])
       (by simpa [List.append_assoc] using hx)
@@ -483,7 +504,7 @@ private lemma scanStep_right {S : Type} (tm : MultiTapeTM 0 Bool S)
     (htr : ∀ work, tm.tr q x[i]? work = ⟨.pos, fun j => j.elim0, emit, q'⟩) :
     tm.step (scanCfg x (some q) i (by omega) out) =
       scanCfg x q' (i + 1) (by omega) (out ++ emit.toList) := by
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change (tm.tr q _ _).apply _ = _
   rw [scanCfg_read, htr]
   apply Cfg.ext_zero_tapes
@@ -549,7 +570,7 @@ private lemma pairValid_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest
     intro pre hx
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((pairValidTM.tm.tr none _ _).apply _).state = none ∧ _
     rw [scanCfg_read]
     simp [hx, pairValidTM, Action.apply, scanCfg, pairDecode]
@@ -561,7 +582,7 @@ private lemma pairValid_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest
     change (pairValidTM.tm.step (pairValidTM.tm.step _)).state = none ∧
       (pairValidTM.tm.step (pairValidTM.tm.step _)).output = _
     rw [h1]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((pairValidTM.tm.tr (some b) _ _).apply _).state = none ∧ _
     rw [scanCfg_read]
     cases b <;> simp [hx, pairValidTM, Action.apply, scanCfg, pairDecode]
@@ -645,7 +666,7 @@ private lemma extract_first (first second : Bool) (x pre rest a : List Bool) (b 
     (pairExtractTM first second).tm.step
       (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) =
       extractCfg x (some (.inl (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((pairExtractTM first second).tm.tr (.inl none) _ _).apply _ = _
   rw [extractCfg_read]
   have hr : x[pre.length]? = some b := by simp [hx]
@@ -666,7 +687,7 @@ private lemma extract_block (first second : Bool) (x pre rest a : List Bool) (b 
       else extractCfg x (some (.inr 0)) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
   change (pairExtractTM first second).tm.step ((pairExtractTM first second).tm.step _) = _
   rw [extract_first first second x pre (c :: rest) a b hx]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((pairExtractTM first second).tm.tr (.inl (some b)) _ _).apply _ = _
   rw [extractCfg_read]
   have hr : x[pre.length + 1]? = some c := by simp [hx]
@@ -694,7 +715,7 @@ private lemma extract_rewind (first second : Bool) (x a : List Bool)
   | zero =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols, Nat.cast_zero,
       zero_sub, bufferTape_left]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -706,7 +727,7 @@ private lemma extract_rewind (first second : Bool) (x a : List Bool)
         extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) [] := by
       have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
       rw [hz]
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols, bufferTape_nat,
         List.getElem?_eq_getElem (by omega : j < a.length)]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -785,7 +806,7 @@ private lemma extract_replay_finish (first second : Bool) (x a : List Bool)
       (extractCfg x (some (.inr 1)) i hi a 0 []) (a.length + 1) =
       extractCfg x (some (.inr 2)) i hi a a.length (if first then a else []) := by
   rw [MultiTapeTM.runFrom_succ_eq_step', extract_replay first second x a i hi _ (by omega)]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols, bufferTape_nat,
     List.getElem?_length, List.take_length]
   refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
@@ -806,7 +827,7 @@ private lemma extract_suffix (first : Bool) (x rest a : List Bool) :
   | nil =>
     intro pre out hx
     simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
     rw [extractCfg_read]
     have hr : x[pre.length]? = none := by simp [hx]
@@ -821,7 +842,7 @@ private lemma extract_suffix (first : Bool) (x rest a : List Bool) :
         (extractCfg x (some (.inr 2)) pre.length (by simp [hx]) a a.length out) =
         extractCfg x (some (.inr 2)) (pre ++ [b]).length (by simp [hx])
           a a.length (out ++ [b]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
       rw [extractCfg_read]
       have hr : x[pre.length]? = some b := by simp [hx]
@@ -858,7 +879,8 @@ private lemma extract_finish (first second : Bool) (x pre rest a : List Bool)
   | false =>
     refine ⟨(a.length + 1) + (a.length + 1) + 1, by omega, ?_⟩
     rw [MultiTapeTM.runFrom_succ_eq_step', hp]
-    simp [MultiTapeTM.step, pairExtractTM, extractCfg, Action.apply]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp [pairExtractTM, extractCfg, Action.apply]
   | true =>
     refine ⟨((a.length + 1) + (a.length + 1)) + (rest.length + 1), by omega, ?_⟩
     rw [MultiTapeTM.runFrom_add, hp, extract_suffix first x rest a pre _ hx]
@@ -885,7 +907,7 @@ private lemma extract_run (first second : Bool) (x rest : List Bool) :
     intro pre a hx
     refine ⟨1, by omega, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (((pairExtractTM first second).tm.tr (.inl none) _ _).apply _).state = none ∧ _
     rw [extractCfg_read]
     simp [hx, pairExtractTM, Action.apply, extractCfg, pairDecode]
@@ -895,7 +917,7 @@ private lemma extract_run (first second : Bool) (x rest : List Bool) :
     change ((pairExtractTM first second).tm.step ((pairExtractTM first second).tm.step _)).state = none ∧
       ((pairExtractTM first second).tm.step ((pairExtractTM first second).tm.step _)).output = _
     rw [extract_first first second x pre [] a b hx]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (((pairExtractTM first second).tm.tr (.inl (some b)) _ _).apply _).state = none ∧ _
     rw [extractCfg_read]
     cases b <;> simp [hx, pairExtractTM, Action.apply, extractCfg, pairDecode]
@@ -1232,13 +1254,15 @@ private lemma catalogPoly_emit {c C : ℕ} (x : List Bool) (q : ℕ)
   | zero =>
     intro hj o
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    apply Cfg.ext <;> simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
   | succ j ih =>
     intro hj o
     have hs : (catalogPolyUnaryTM c C).tm.step
         (catalogPolyCfg x q (.emit ⟨j + 1, by omega⟩) h o) =
         catalogPolyCfg x q (.emit ⟨j, by omega⟩) h (o ++ [true]) := by
-      apply Cfg.ext <;> simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      apply Cfg.ext <;> simp [catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs, ih (by omega)]
     simp [List.replicate_succ, List.append_assoc]
 
@@ -1282,7 +1306,8 @@ private lemma catalogPoly_advance {c C : ℕ} (x : List Bool) (q : ℕ)
     (catalogPolyUnaryTM c C).tm.step
       (catalogPolyCfg x q (.advance ⟨i.val, by omega⟩) h o) =
       catalogPolyCfg x q (.loop i) (Function.update h i (h i + 1)) o := by
-  simp only [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, i.isLt, ↓reduceDIte]
+  rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+  simp only [catalogPolyUnaryTM, catalogPolyCfg, i.isLt, ↓reduceDIte]
   simpa [catalogPolyCfg] using catalogPolyMove_apply x q
     (.advance ⟨i.val, by omega⟩) (.loop i) h o i .pos
 
@@ -1323,7 +1348,7 @@ private lemma catalogPoly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < 
       have hs : (catalogPolyUnaryTM c C).tm.step (catalogPolyCfg x q (.loop ⟨i, hi⟩) h' o) =
           catalogPolyCfg x q (if hz : i = 0 then .emit ⟨C, by omega⟩
             else .loop ⟨i - 1, by omega⟩) h' o := by
-        unfold MultiTapeTM.step
+        rw [MultiTapeTM.step_of_some (by rfl)]
         change ((catalogPolyUnaryTM c C).tm.tr (.loop ⟨i, hi⟩) _ _).apply _ = _
         simp only [catalogPolyUnaryTM, hread, reduceCtorEq, ↓reduceIte]
         apply Cfg.ext <;> simp [catalogPolyCfg, Action.apply]
@@ -1382,7 +1407,7 @@ private lemma catalogPoly_loop {c C : ℕ} (x : List Bool) (q : ℕ) (_hq : 0 < 
       have hs : (catalogPolyUnaryTM c C).tm.step
           (catalogPolyCfg x q (.loop ⟨i, hi⟩) (Function.update h ⟨i, hi⟩ (q : ℤ)) o) =
           catalogPolyCfg x q (.rewind ⟨i, hi⟩) (Function.update h ⟨i, hi⟩ ((q : ℤ) - 1)) o := by
-        unfold MultiTapeTM.step
+        rw [MultiTapeTM.step_of_some (by rfl)]
         change ((catalogPolyUnaryTM c C).tm.tr (.loop ⟨i, hi⟩) _ _).apply _ = _
         simp only [catalogPolyUnaryTM, Cfg.workTapeSymbols, catalogPolyCfg, Function.update_self,
           catalogPolyTape, lt_self_iff_false, and_false, ↓reduceIte]
@@ -1440,7 +1465,10 @@ private def catalogPolyCopyCfg (c C : ℕ) (x : List Bool) (i : ℕ) (hi : i ≤
     Cfg (c + 1) Bool (CatalogPolyControl c C) x :=
   ⟨some .copy, ⟨i + 1, by omega⟩, fun _ => catalogPolyTape i, fun _ => i, []⟩
 
-/-- One input scan copies its length, in unary, onto every loop tape at once. -/
+/-- One input scan copies its length, in unary, onto every loop tape at once.
+
+**Proof sketch.** Induct on the scanned prefix. Each live row writes a unary mark and
+advances all loop heads; the tape update extends the copied prefix by one. -/
 private lemma catalogPoly_copy (c C : ℕ) (x : List Bool) : ∀ i (hi : i ≤ x.length),
     (catalogPolyUnaryTM c C).tm.runFrom ((catalogPolyUnaryTM c C).tm.initCfg x) i =
       catalogPolyCopyCfg c C x i hi := by
@@ -1461,7 +1489,7 @@ private lemma catalogPoly_copy (c C : ℕ) (x : List Bool) : ∀ i (hi : i ≤ x
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     have hin : (catalogPolyCopyCfg c C x i (by omega)).inputSymbol = some x[i] :=
       inputSymbolInner i (by simp [catalogPolyCopyCfg, Nat.add_comm]) (by omega)
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((catalogPolyUnaryTM c C).tm.tr .copy _ _).apply _ = _
     rw [hin]
     apply Cfg.ext
@@ -1485,21 +1513,26 @@ private lemma catalogPoly_setup (c C : ℕ) (x : List Bool) (q : ℕ) : ∀ j (_
   | zero =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
     apply Cfg.ext <;>
-      simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Cfg.workTapeSymbols, catalogPolyTape, Action.apply]
+      simp [catalogPolyUnaryTM, catalogPolyCfg, Cfg.workTapeSymbols, catalogPolyTape, Action.apply]
   | succ j ih =>
     intro hj
     have hs : (catalogPolyUnaryTM c C).tm.step
         (catalogPolyCfg x q .setup (fun _ => ((j + 1 : ℕ) : ℤ) - 1) []) =
         catalogPolyCfg x q .setup (fun _ => (j : ℤ) - 1) [] := by
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
       apply Cfg.ext <;>
-        simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Cfg.workTapeSymbols, catalogPolyTape,
+        simp [catalogPolyUnaryTM, catalogPolyCfg, Cfg.workTapeSymbols, catalogPolyTape,
           show (j : ℤ) < q by omega, Action.apply, sub_eq_add_neg]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     exact ih (by omega)
 
 /-- Startup installs side length `|x|+1` and puts every loop head at zero.
-The final extra unary cell handles empty input without a special case. -/
+The final extra unary cell handles empty input without a special case.
+
+**Proof sketch.** Compose the copy run with the end-marker step that writes the extra
+cell, then use the simultaneous head rewind to reach the loop entry. -/
 private lemma catalogPoly_start (c C : ℕ) (x : List Bool) :
     (catalogPolyUnaryTM c C).tm.runFrom ((catalogPolyUnaryTM c C).tm.initCfg x)
       (2 * (x.length + 1)) =
@@ -1508,10 +1541,9 @@ private lemma catalogPoly_start (c C : ℕ) (x : List Bool) :
       (catalogPolyCopyCfg c C x x.length (le_refl _)) =
       catalogPolyCfg x (x.length + 1) .setup (fun _ => (x.length : ℤ) - 1) [] := by
     have hin : (catalogPolyCopyCfg c C x x.length (le_refl _)).inputSymbol = none := by
-      simp [catalogPolyCopyCfg, Cfg.inputSymbol]
-    unfold MultiTapeTM.step
-    change ((catalogPolyUnaryTM c C).tm.tr .copy _ _).apply _ = _
-    rw [hin]
+      apply Cfg.inputSymbol_of_end
+      simp [catalogPolyCopyCfg]
+    rw [MultiTapeTM.step_of_some (by rfl), hin]
     apply Cfg.ext
     · rfl
     · exact moveInputPos_zero _
@@ -1554,7 +1586,8 @@ private lemma catalogPoly_unary_computes (c C : ℕ) :
       (2 * (x.length + 1) + catalogPolyCost (x.length + 1) C (c + 1) + 1) := by
     apply (FinTM.computesInTime_iff _ _ _ _).mpr
     rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, catalogPoly_start, hloop]
-    simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp [catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
   apply hbase.mono
   have hp : x.length + 1 ≤ (x.length + 1) ^ (c + 1) := by
     simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
@@ -1667,7 +1700,7 @@ private lemma lenSuffix_run (M : FinTM Bool) {x : List Bool}
     intro pre hx r hr
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
     rw [lenCfg_read]
     simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply]
@@ -1677,7 +1710,7 @@ private lemma lenSuffix_run (M : FinTM Bool) {x : List Bool}
     | zero =>
       refine ⟨1, by simp, ?_⟩
       simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
       rw [lenCfg_read]
       simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Cfg.workTapeSymbols,
@@ -1686,7 +1719,7 @@ private lemma lenSuffix_run (M : FinTM Bool) {x : List Bool}
       have hs : (pairCountTM M).tm.step
           (lenCfg M c (some (.inr (.inl 3))) pre.length (by simp [hx]) (r + 1)) =
           lenCfg M c (some (.inr (.inl 3))) (pre.length + 1) (by simp [hx]) r := by
-        unfold MultiTapeTM.step
+        rw [MultiTapeTM.step_of_some (by rfl)]
         change ((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _ = _
         rw [lenCfg_read]
         have hin : x[pre.length]? = some b := by simp [hx]
@@ -1715,7 +1748,7 @@ private lemma lenParse_first (M : FinTM Bool) {x : List Bool}
     (pairCountTM M).tm.step
       (lenCfg M c (some (.inr (.inr none))) pre.length (by simp [hx]) r) =
       lenCfg M c (some (.inr (.inr (some b)))) (pre.length + 1) (by simp [hx]) r := by
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((pairCountTM M).tm.tr (.inr (.inr none)) _ _).apply _ = _
   rw [lenCfg_read]
   have hin : x[pre.length]? = some b := by simp [hx]
@@ -1737,7 +1770,7 @@ private lemma lenParse_block (M : FinTM Bool) {x : List Bool}
       else lenCfg M c (some (.inr (.inl 3))) (pre.length + 2) (by simp [hx]) r := by
   change (pairCountTM M).tm.step ((pairCountTM M).tm.step _) = _
   rw [lenParse_first M c pre (d :: rest) b r hx]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((pairCountTM M).tm.tr (.inr (.inr (some b))) _ _).apply _ = _
   rw [lenCfg_read]
   have hin : x[pre.length + 1]? = some d := by simp [hx]
@@ -1775,7 +1808,7 @@ private lemma lenParse_run (M : FinTM Bool) {x : List Bool}
     intro pre hx r hr
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (((pairCountTM M).tm.tr (.inr (.inr none)) _ _).apply _).state = none ∧ _
     rw [lenCfg_read]
     simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply, pairDecode]
@@ -1785,7 +1818,7 @@ private lemma lenParse_run (M : FinTM Bool) {x : List Bool}
     change ((pairCountTM M).tm.step ((pairCountTM M).tm.step _)).state = none ∧
       ((pairCountTM M).tm.step ((pairCountTM M).tm.step _)).output = _
     rw [lenParse_first M c pre [] b r hx]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (((pairCountTM M).tm.tr (.inr (.inr (some b))) _ _).apply _).state = none ∧ _
     rw [lenCfg_read]
     cases b <;> simp [hx, pairCountTM, lenAction, lenCfg, captureCfg, Action.apply, pairDecode]
@@ -1971,7 +2004,7 @@ private lemma rawStrip_copy (x : List Bool) : ∀ j (hj : j ≤ x.length),
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     have hin : (stripCfg x (some 0) j (by omega) (x.take j) j []).inputSymbol =
         some (x[j]'(by omega)) := inputSymbolInner j (by simp [stripCfg]; omega) (by omega)
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (rawStripTM.tm.tr (0 : Fin 4) _ _).apply _ = _
     rw [hin]
     refine Cfg.ext rfl (moveInputPos_pos_of_ne_right _ (by simp [stripCfg]; omega)) ?_ ?_ rfl
@@ -1996,7 +2029,7 @@ private lemma rawStrip_rewind (x a : List Bool)
   | zero =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     simp only [rawStripTM, stripCfg, Cfg.workTapeSymbols, Nat.cast_zero,
       zero_sub, bufferTape_left]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -2008,7 +2041,7 @@ private lemma rawStrip_rewind (x a : List Bool)
         stripCfg x (some 2) i hi a ((j : ℤ) - 1) [] := by
       have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
       rw [hz]
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       simp only [rawStripTM, stripCfg, Cfg.workTapeSymbols, bufferTape_nat,
         List.getElem?_eq_getElem (by omega : j < a.length)]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -2038,7 +2071,8 @@ private lemma rawStrip_finish (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) 
   have htime : 2 * (a.length + 1) = (a.length + 1) + (a.length + 1) := by omega
   rw [htime, MultiTapeTM.runFrom_add, rawStrip_rewind x a i hi a.length (le_refl _),
     MultiTapeTM.runFrom_succ_eq_step', rawStrip_replay x a i hi a.length (le_refl _)]
-  simp [MultiTapeTM.step, rawStripTM, stripCfg, Cfg.workTapeSymbols, Action.apply]
+  rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+  simp [rawStripTM, stripCfg, Cfg.workTapeSymbols, Action.apply]
 
 /-- The reverse phase erases the last cell and moves left, branching to
 replay preparation precisely when the erased bit is true. -/
@@ -2048,7 +2082,7 @@ private lemma rawStrip_erase (x w : List Bool) (i : ℕ) (hi : i ≤ x.length) (
       stripCfg x (some (if b then 2 else 1)) i hi w (w.length - 1) [] := by
   have hz : (((w ++ [b]).length : ℕ) : ℤ) - 1 = w.length := by simp
   rw [hz]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   simp only [stripCfg, rawStripTM, Cfg.workTapeSymbols, bufferTape_nat,
     List.getElem?_append_right (by omega : w.length ≤ w.length), Nat.sub_self,
     List.getElem?_cons_zero]
@@ -2069,8 +2103,9 @@ private lemma rawStrip_trim (x w : List Bool) (i : ℕ) (hi : i ≤ x.length) :
   induction w using List.reverseRecOn with
   | nil =>
     refine ⟨1, by simp, ?_⟩
-    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, rawStripTM, stripCfg,
-      Cfg.workTapeSymbols, Action.apply, splitAtLastTrue]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some (by rfl)]
+    simp [rawStripTM, stripCfg, Cfg.workTapeSymbols_eq, Action.apply, splitAtLastTrue]
   | append_singleton w b ih =>
     cases b with
     | false =>
@@ -2095,10 +2130,10 @@ private lemma rawStrip_computes : rawStripTM.ComputesFunInTime
       stripCfg x (some 1) x.length (le_refl _) x (x.length - 1) [] := by
     rw [MultiTapeTM.runFrom_succ_eq_step', rawStrip_copy x x.length (le_refl _)]
     have hin : (stripCfg x (some 0) x.length (le_refl _) (x.take x.length) x.length []).inputSymbol =
-        none := by simp [stripCfg, Cfg.inputSymbol]
-    unfold MultiTapeTM.step
-    change (rawStripTM.tm.tr (0 : Fin 4) _ _).apply _ = _
-    rw [hin]
+        none := by
+      apply Cfg.inputSymbol_of_end
+      simp [stripCfg]
+    rw [MultiTapeTM.step_of_some (by rfl), hin]
     apply Cfg.ext <;> simp [rawStripTM, stripCfg, Action.apply, sub_eq_add_neg]
   obtain ⟨t, ht, hs, ho⟩ := rawStrip_trim x x x.length (le_refl _)
   have hc : rawStripTM.ComputesInTime x ((splitAtLastTrue x).getD []) (x.length + 1 + t) := by
@@ -2137,7 +2172,7 @@ private lemma anyTrue_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest),
     intro pre hx
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((anyTrueTM.tm.tr () _ _).apply _).state = none ∧ _
     rw [scanCfg_read]
     simp [hx, anyTrueTM, Action.apply, scanCfg]
@@ -2147,7 +2182,7 @@ private lemma anyTrue_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest),
     | true =>
       refine ⟨1, by simp, ?_⟩
       simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change ((anyTrueTM.tm.tr () _ _).apply _).state = none ∧ _
       rw [scanCfg_read]
       simp [hx, anyTrueTM, Action.apply, scanCfg]
@@ -4156,7 +4191,8 @@ private lemma splitPos_read {k : ℕ} {S : Type} (w : List Bool)
     exact inputSymbolInner j
       (by simp [hp, splitPos, Nat.min_eq_left (by omega : j ≤ w.length), Nat.add_comm]) hj
   · rw [dif_neg hj]
-    simp [Cfg.inputSymbol, hp, splitPos, Nat.min_eq_right (by omega : w.length ≤ j)]
+    apply Cfg.inputSymbol_of_end
+    simp [hp, splitPos, Nat.min_eq_right (by omega : w.length ≤ j)]
 
 /-- A forward move increments a saturated unary countdown position. -/
 private lemma splitPos_succ (w : List Bool) (j : ℕ) :
@@ -4234,7 +4270,7 @@ private lemma splitRestore_scan (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.len
       simp [splitRestoreScan, Cfg.workTapeSymbols,
         List.getElem?_eq_getElem (by omega : j < s.length)]
     have hin := splitPos_read w (splitRestoreScan k w s j) j rfl
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((splitRestoreTM k).tm.tr (0, decide (w.length < j)) _ _).apply _ = _
     simp only [splitRestoreTM, hw]
     refine Cfg.ext ?_ (splitPos_succ w j) ?_ ?_ rfl
@@ -4259,14 +4295,18 @@ private def splitRestoreClean (k : ℕ) (w s : List Bool)
   ⟨some q, p, Fin.cases (bufferTape s) (fun _ => fun _ => none), fun _ => h, []⟩
 
 /-- The end-of-scan step clears the final extra scratch cell and appends to
-tape 0 exactly when the old candidate length is at most the input length. -/
+tape 0 exactly when the old candidate length is at most the input length.
+
+**Proof sketch.** Read the live end-of-scan row and split on the length test. The
+write at the candidate head is either an append or a no-op; the same scratch
+erasure equation handles both branches. -/
 private lemma splitRestore_append (k : ℕ) (w s : List Bool) :
     (splitRestoreTM k).tm.step (splitRestoreScan k w s s.length) =
       splitRestoreClean k w (splitStep w s) (1, false)
         (splitPos w s.length) (s.length - 1) := by
   have hw : (splitRestoreScan k w s s.length).workTapeSymbols 0 = none := by
     simp [splitRestoreScan, Cfg.workTapeSymbols]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((splitRestoreTM k).tm.tr (0, decide (w.length < s.length)) _ _).apply _ = _
   simp only [splitRestoreTM, hw]
   by_cases hs : s.length ≤ w.length
@@ -4296,7 +4336,11 @@ private lemma splitRestore_append (k : ℕ) (w s : List Bool) :
       refine Fin.cases ?_ (fun i => ?_) i <;> simp [Action.apply, splitRestoreScan, splitRestoreClean, sub_eq_add_neg]
 
 /-- Candidate-guided rewind restores every head, including heads on tapes
-that have already been cleared. No candidate bit is altered. -/
+that have already been cleared. No candidate bit is altered.
+
+**Proof sketch.** Induct on the remaining candidate prefix, distinguishing a
+readable cell from the blank. The rows preserve every tape and rewind the
+heads together until the blank requests the return step. -/
 private lemma splitRestore_rewind (k : ℕ) (w s : List Bool) (p : Fin (w.length + 2)) :
     ∀ j, j ≤ s.length →
       (splitRestoreTM k).tm.runFrom
@@ -4307,7 +4351,8 @@ private lemma splitRestore_rewind (k : ℕ) (w s : List Bool) (p : Fin (w.length
   | zero =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    simp only [MultiTapeTM.step, splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols,
       Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply, splitRestoreScan]
@@ -4318,7 +4363,8 @@ private lemma splitRestore_rewind (k : ℕ) (w s : List Bool) (p : Fin (w.length
         splitRestoreClean k w s (1, false) p ((j : ℤ) - 1) := by
       have he : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
       rw [he]
-      simp only [MultiTapeTM.step, splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols,
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols,
         Fin.cases_zero, bufferTape_nat, List.getElem?_eq_getElem (by omega : j < s.length)]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext i; simp [Action.apply, sub_eq_add_neg]
@@ -4441,20 +4487,17 @@ private lemma splitCount_run {k : ℕ} {S H : Type}
           some (emb q (decide (w.length < s.length + d.output.length))) := by
         simp [splitCountCfg, hq]
       have hsource : d.inputSymbol = none := by
-        unfold Cfg.inputSymbol
-        split_ifs with h₀ h₁
-        · rfl
-        · rfl
-        · have hp := d.inputPos.isLt
-          simp only [Fin.ext_iff, Fin.val_zero] at h₀
-          simp only [List.length_nil] at hp
-          simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.ext_iff, Fin.val_one] at h₁
+        by_cases hzero : d.inputPos = 0
+        · exact Cfg.inputSymbol_of_zero hzero
+        · apply Cfg.inputSymbol_of_end
+          have hp := d.inputPos.isLt
+          have hne : d.inputPos.val ≠ 0 := fun h => hzero (Fin.ext h)
+          simp only [List.length_nil] at hp ⊢
           omega
       have hwork : (fun i => (splitCountCfg emb ret w s d).workTapeSymbols i.succ) =
           d.workTapeSymbols := by
         funext i; simp [splitCountCfg, Cfg.workTapeSymbols]
-      simp only [MultiTapeTM.step, hstate, hq]
-      rw [hagree, hwork, hsource]
+      rw [MultiTapeTM.step_of_some hstate, MultiTapeTM.step_of_some hq, hagree, hwork, hsource]
       exact splitCount_apply emb ret w s d _
   induction t with
   | zero => rfl
@@ -4484,12 +4527,13 @@ private lemma splitPoly_loop_end (c C q : ℕ) (hq : 0 < q) :
         (List.replicate (C * q ^ (c + 1)) true) := by
     simpa [catalogPolyCost, hout] using hl
   rw [MultiTapeTM.runFrom_succ_eq_step', hloop]
-  simp only [MultiTapeTM.step, catalogPolyCfg, catalogPolyUnaryTM, Fin.val_last,
+  rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+  simp only [catalogPolyCfg, catalogPolyUnaryTM, Fin.val_last,
     Nat.lt_irrefl, ↓reduceDIte]
   refine Cfg.ext rfl ?_ rfl ?_ ?_
   · rfl
-  · funext i; simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
-  · simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+  · funext i; simp [catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+  · simp [catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
 
 /-- A run reaching an absorbing control state has a least such entry, and its
 configuration at that first entry is already the final configuration.
@@ -4521,8 +4565,7 @@ private lemma splitRestore_first (k : ℕ) (w s : List Bool) :
   obtain ⟨T, hTle, hT⟩ := splitRestore_run k w s
   have hfix (z : Cfg (k + 1) Bool (splitRestoreTM k).State w)
       (hz : z.state = some (4, false)) : (splitRestoreTM k).tm.step z = z := by
-    unfold MultiTapeTM.step
-    rw [hz]
+    rw [MultiTapeTM.step_of_some hz]
     change (controlAction 0 (some (4, false))).apply z = z
     rw [controlAction_apply, moveInputPos_zero]
     cases z
@@ -4578,7 +4621,11 @@ private def splitPrepareScan (k : ℕ) (w s : List Bool) (j : ℕ) :
     Fin.cases (bufferTape s) (fun _ => catalogPolyTape j), fun _ => j, []⟩
 
 /-- Preparation copies a unary side length without reading or changing any
-candidate bit value. The same induction covers a candidate past native EOF. -/
+candidate bit value. The same induction covers a candidate past native EOF.
+
+**Proof sketch.** Induct on the candidate prefix. At each step the native input
+position either advances or stays at the endpoint, while the loop row extends
+the unary contents on every scratch tape. -/
 private lemma splitPrepare_scan (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.length →
     (splitPrepareTM k).tm.runFrom (splitPrepareScan k w s 0) j =
       splitPrepareScan k w s j := by
@@ -4591,7 +4638,7 @@ private lemma splitPrepare_scan (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.len
     have hw : (splitPrepareScan k w s j).workTapeSymbols 0 = some (s[j]'(by omega)) := by
       simp [splitPrepareScan, Cfg.workTapeSymbols,
         List.getElem?_eq_getElem (by omega : j < s.length)]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((splitPrepareTM k).tm.tr (0, decide (w.length < j)) _ _).apply _ = _
     simp only [splitPrepareTM, hw]
     refine Cfg.ext ?_ (splitPos_succ w j) ?_ ?_ rfl
@@ -4617,7 +4664,7 @@ private lemma splitPrepare_extra (k : ℕ) (w s : List Bool) :
       splitPrepareReady k w s 1 (s.length - 1) := by
   have hw : (splitPrepareScan k w s s.length).workTapeSymbols 0 = none := by
     simp [splitPrepareScan, Cfg.workTapeSymbols]
-  unfold MultiTapeTM.step
+  rw [MultiTapeTM.step_of_some (by rfl)]
   change ((splitPrepareTM k).tm.tr (0, decide (w.length < s.length)) _ _).apply _ = _
   simp only [splitPrepareTM, hw]
   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
@@ -4630,7 +4677,11 @@ private lemma splitPrepare_extra (k : ℕ) (w s : List Bool) :
       simp [Action.apply, splitPrepareScan, splitPrepareReady, sub_eq_add_neg]
 
 /-- Rewind the synchronized bank along the preserved candidate; each scratch
-tape retains its extra cell even though the rewind uses the candidate length. -/
+tape retains its extra cell even though the rewind uses the candidate length.
+
+**Proof sketch.** At positive prefix length the candidate cell determines the
+rewind row. It moves the synchronized heads left without writing, so the
+induction hypothesis applies with one fewer cell. -/
 private lemma splitPrepare_rewind (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.length →
     (splitPrepareTM k).tm.runFrom (splitPrepareReady k w s 1 ((j : ℤ) - 1)) (j + 1) =
       splitPrepareReady k w s 2 0 := by
@@ -4639,7 +4690,8 @@ private lemma splitPrepare_rewind (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.l
   | zero =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    simp only [MultiTapeTM.step, splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols,
       Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply]
@@ -4649,7 +4701,8 @@ private lemma splitPrepare_rewind (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.l
         splitPrepareReady k w s 1 ((j : ℤ) - 1) := by
       have he : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
       rw [he]
-      simp only [MultiTapeTM.step, splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols,
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols,
         Fin.cases_zero, bufferTape_nat, List.getElem?_eq_getElem (by omega : j < s.length)]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext i; simp [Action.apply, sub_eq_add_neg]
@@ -4887,7 +4940,7 @@ private lemma splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List B
       rintro z ⟨⟨q, over⟩, hz, hq⟩
       change q = 2 at hq
       subst q
-      simp only [MultiTapeTM.step, hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some (2, over))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -4899,14 +4952,15 @@ private lemma splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List B
       ((splitPrepareReady M.k w s 2 0).mapState SplitBodyState.prepare) =
       splitCountCfg SplitBodyState.count SplitBodyState.check w s
         (splitBank M s (some start) []) := by
-    simp only [MultiTapeTM.step, Cfg.mapState, splitPrepareReady, Option.map_some,
-      splitBodyTM, ↓reduceIte]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [Cfg.mapState, splitPrepareReady, Option.map_some,
+      splitBodyTM, ↓reduceIte, controlAction_apply, moveInputPos_zero]
     refine Cfg.ext ?_ ?_ rfl ?_ rfl
-    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
-    · simp [Action.apply, controlAction, splitCountCfg, splitBank]
+    · simp [splitCountCfg, splitBank]
+    · simp [splitCountCfg, splitBank]
     · funext i
       refine Fin.cases ?_ (fun j => ?_) i <;>
-        simp [Action.apply, controlAction, splitCountCfg, splitBank]
+        simp [splitCountCfg, splitBank]
   have hinit : (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s)).mapState
       (SplitBodyState.prepare (S := M.State)) = Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s) := rfl
   rw [hinit] at he hsafe
@@ -4970,7 +5024,7 @@ private lemma splitBody_rewind (M : FinTM Bool) (start : M.State) (w : List Bool
     (by intro q; simp)
     (by
       rintro z ⟨q, hz, rfl⟩
-      simp only [MultiTapeTM.step, hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some (2 : Fin 3))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -4996,7 +5050,7 @@ private lemma splitBody_restore (M : FinTM Bool) (start : M.State) (w s : List B
     (by intro q; simp)
     (by
       rintro z ⟨q, hz, rfl⟩
-      simp only [MultiTapeTM.step, hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some (4, false))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -5039,13 +5093,13 @@ private lemma splitEmit_double (k : ℕ) (w s : List Bool) (hs : s.length ≤ w.
         (splitEmitCfg k w s (some 0) j j ((w.take j).flatMap fun b => [b, b])) =
         splitEmitCfg k w s (some 1) j j
           (((w.take j).flatMap fun b => [b, b]) ++ [w[j]'(by omega)]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change ((splitEmitTM k).tm.tr (0 : Fin 4) _ _).apply _ = _
       simp only [splitEmitTM, hwork, hread]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext i; simp [Action.apply, splitEmitCfg]
     rw [hfirst]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((splitEmitTM k).tm.tr (1 : Fin 4) _ _).apply _ = _
     simp only [splitEmitTM, hread]
     refine Cfg.ext rfl (splitPos_succ w j) ?_ ?_ ?_
@@ -5068,7 +5122,7 @@ private lemma splitEmit_separator (k : ℕ) (w s : List Bool) (out : List Bool) 
     simp [splitEmitCfg, Cfg.workTapeSymbols]
   have hf : (splitEmitTM k).tm.step (splitEmitCfg k w s (some 0) s.length s.length out) =
       splitEmitCfg k w s (some 2) s.length s.length (out ++ [false]) := by
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((splitEmitTM k).tm.tr (0 : Fin 4) _ _).apply _ = _
     simp only [splitEmitTM, hwork]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -5076,9 +5130,10 @@ private lemma splitEmit_separator (k : ℕ) (w s : List Bool) (out : List Bool) 
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step,
     show (splitEmitTM k).tm.step _ = _ from hf, MultiTapeTM.runFrom_succ_eq_step,
     MultiTapeTM.runFrom_zero]
+  rw [MultiTapeTM.step_of_some (by rfl)]
   refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-  · funext i; simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg]
-  · simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg, List.append_assoc]
+  · funext i; simp [splitEmitTM, Action.apply, splitEmitCfg]
+  · simp [splitEmitTM, Action.apply, splitEmitCfg, List.append_assoc]
 
 /-- The suffix-copy phase preserves all work tapes and copies native bits
 verbatim, including the empty suffix and its final blank-reading halt.
@@ -5099,10 +5154,12 @@ private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
       MultiTapeTM.runFrom_zero]
     have hr := splitPos_read pre (splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
     simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
     rw [hr]
-    simp [splitEmitTM, controlAction, splitEmitCfg]
+    change (controlAction 0 (none : Option (Fin 4))).apply _ = _
+    rw [controlAction_apply, moveInputPos_zero]
+    rfl
   | cons b rest ih =>
     intro pre out h hw
     have hread : (splitEmitCfg k w s (some 3) pre.length h out).inputSymbol = some b := by
@@ -5110,7 +5167,7 @@ private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
       simp [hw]
     have hstep : (splitEmitTM k).tm.step (splitEmitCfg k w s (some 3) pre.length h out) =
         splitEmitCfg k w s (some 3) (pre ++ [b]).length h (out ++ [b]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
       rw [hread]
       refine Cfg.ext rfl ?_ rfl ?_ rfl
@@ -5209,7 +5266,7 @@ private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List
   obtain ⟨b, hb, hcount, hcounts⟩ := splitBody_count M start w s out T hT
   obtain ⟨h1, hs1⟩ := splitSafe_join tm .anchor p _ d (a + 1) b hprep hpreps hcount hcounts
   have hcheck : tm.step d = c.mapState (SplitBodyState.rewind ok) := by
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (controlAction 0 (some (.rewind
       (!decide (w.length < s.length + out.length) && d.inputSymbol.isNone) 0))).apply d = _
     rw [controlAction_apply, moveInputPos_zero]
@@ -5232,8 +5289,8 @@ private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List
     let ed := splitEmitCfg M.k w s none w.length s.length
       (pairEncode (w.take s.length) (w.drop s.length))
     have hdispatch : tm.step r = ec.mapState SplitBodyState.emit := by
-      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
-        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_true]
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [r, c, Cfg.mapState, Option.map_some, tm, splitBodyTM, ↓reduceIte, ok, hok, decide_true]
       rw [controlAction_apply, moveInputPos_zero]
       refine Cfg.ext rfl ?_ rfl rfl rfl
       simp [ec, splitEmitCfg, splitPos]
@@ -5269,8 +5326,8 @@ private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List
       exact ⟨rfl, rfl⟩
   · let rc := (splitRestoreScan M.k w s 0).mapState (SplitBodyState.restore (S := M.State))
     have hdispatch : tm.step r = rc := by
-      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
-        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_false, Bool.false_eq_true]
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [r, c, Cfg.mapState, Option.map_some, tm, splitBodyTM, ↓reduceIte, ok, hok, decide_false, Bool.false_eq_true]
       rw [controlAction_apply, moveInputPos_zero]
       refine Cfg.ext ?_ ?_ ?_ ?_ rfl
       · simp [rc, splitRestoreScan, Cfg.mapState]
@@ -5385,9 +5442,10 @@ private lemma splitSource_constant (C : ℕ) (s : List Bool) :
   have he := catalogPrefixTM_emit (List.replicate C true) [] C (by simp)
   rw [he]
   simp only [List.take_replicate, Nat.min_self]
-  apply Cfg.ext_zero_tapes <;>
-    simp [MultiTapeTM.step, prependTM, catalogPrefixCfg, Cfg.inputSymbol,
-      Fin.ext_iff, Action.apply, splitBank]
+  have hq : (⟨C, by simp⟩ : Fin ((List.replicate C true).length + 1)) =
+      ⟨(List.replicate C true).length, by omega⟩ := Fin.ext (by simp)
+  rw [hq, catalogPrefixTM_halt _ _ _ rfl]
+  apply Cfg.ext_zero_tapes <;> rfl
 
 /-- The invariant bounds every candidate, including the one-past-end stall,
 inside one common body envelope. The factor `2^e` covers the prepared side
@@ -5840,7 +5898,8 @@ private lemma emitter_compare_scan (w u v : List Bool) (p : Fin (w.length + 2)) 
       apply Bool.eq_iff_iff.mpr
       simp only [Bool.and_eq_true, decide_eq_true_eq]
       exact (emitter_take_succ_eq u v j).symm
-    simp only [MultiTapeTM.step, emitterCompareCfg, emitterCompareTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [emitterCompareCfg, emitterCompareTM,
       Cfg.workTapeSymbols, Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_nat,
       if_neg hread]
     refine Cfg.ext ?_ (moveInputPos_zero _) rfl ?_ rfl
@@ -5860,8 +5919,8 @@ private lemma emitter_compare_rewind (w u v : List Bool) (p : Fin (w.length + 2)
   | zero =>
     intro _
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    simp only [Nat.cast_zero, zero_sub, MultiTapeTM.step,
-      emitterCompareCfg, emitterCompareTM, Cfg.workTapeSymbols,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [Nat.cast_zero, zero_sub, emitterCompareCfg, emitterCompareTM, Cfg.workTapeSymbols,
       Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_left, and_self, ↓reduceIte]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply]
@@ -5873,7 +5932,8 @@ private lemma emitter_compare_rewind (w u v : List Bool) (p : Fin (w.length + 2)
           emitterCompareCfg w u v p 1 b ((j : ℤ) - 1) := by
       have hpos : (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) := by omega
       rw [hpos]
-      simp only [MultiTapeTM.step, emitterCompareCfg, emitterCompareTM,
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [emitterCompareCfg, emitterCompareTM,
         Cfg.workTapeSymbols, Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_nat,
         if_neg hread]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -5897,7 +5957,8 @@ private lemma emitter_compare_run (w u v : List Bool) (p : Fin (w.length + 2)) :
   rw [List.take_of_length_le hu, List.take_of_length_le hv] at hscan
   have hturn : emitterCompareTM.tm.step (emitterCompareCfg w u v p 0 (decide (u = v)) l) =
       emitterCompareCfg w u v p 1 (decide (u = v)) ((l : ℤ) - 1) := by
-    simp only [MultiTapeTM.step, emitterCompareCfg, emitterCompareTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [emitterCompareCfg, emitterCompareTM,
       Cfg.workTapeSymbols, Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_nat,
       List.getElem?_eq_none hu, List.getElem?_eq_none hv, and_self, ↓reduceIte]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
@@ -5941,8 +6002,7 @@ private lemma emitter_compare_first (w u v : List Bool) (p : Fin (w.length + 2))
       rintro z ⟨⟨q, b⟩, hz, hq⟩
       change q = 2 at hq
       subst q
-      unfold MultiTapeTM.step
-      rw [hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some (2, b))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -6038,7 +6098,8 @@ private lemma emitterP2_erase_scan (w u : List Bool) : ∀ j, j ≤ u.length →
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    simp only [MultiTapeTM.step, emitterP2EraseCfg, emitterP2EraseTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [emitterP2EraseCfg, emitterP2EraseTM,
       Cfg.workTapeSymbols, bufferTape_nat, List.getElem?_eq_getElem (by omega : j < u.length)]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply]
@@ -6055,7 +6116,8 @@ private lemma emitterP2_erase_back (w u : List Bool) :
   | nil =>
     simp only [List.length_nil, Nat.cast_zero]
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    simp only [MultiTapeTM.step, emitterP2EraseCfg, emitterP2EraseTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [emitterP2EraseCfg, emitterP2EraseTM,
       Cfg.workTapeSymbols, bufferTape_nil]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply]
@@ -6065,7 +6127,8 @@ private lemma emitterP2_erase_back (w u : List Bool) :
           emitterP2EraseCfg w u 1 ((u.length : ℤ) - 1) := by
       have hp : (((u ++ [b]).length : ℤ) - 1) = (u.length : ℤ) := by simp
       rw [hp]
-      simp only [MultiTapeTM.step, emitterP2EraseCfg, emitterP2EraseTM,
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [emitterP2EraseCfg, emitterP2EraseTM,
         Cfg.workTapeSymbols, bufferTape_nat, List.getElem?_append_right (le_refl _),
         Nat.sub_self, List.getElem?_cons_zero]
       refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
@@ -6083,7 +6146,8 @@ private lemma emitterP2_erase_run (w u : List Bool) :
   have hs := emitterP2_erase_scan w u u.length (le_refl _)
   have ht : emitterP2EraseTM.tm.step (emitterP2EraseCfg w u 0 u.length) =
       emitterP2EraseCfg w u 1 ((u.length : ℤ) - 1) := by
-    simp only [MultiTapeTM.step, emitterP2EraseCfg, emitterP2EraseTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [emitterP2EraseCfg, emitterP2EraseTM,
       Cfg.workTapeSymbols, bufferTape_nat, List.getElem?_length]
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
     funext i; simp [Action.apply, sub_eq_add_neg]
@@ -6107,7 +6171,7 @@ private lemma emitterP2_erase_first (w u : List Bool) :
     (fun q : Fin 3 => q = 2) (emitterP2EraseCfg w u 0 0) (emitterP2EraseCfg w [] 2 0)
     (2 * (u.length + 1)) (by
       rintro z ⟨q, hz, rfl⟩
-      simp only [MultiTapeTM.step, hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some (2 : Fin 3))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -6189,7 +6253,8 @@ private lemma emitterP2_prepare_candidate (w s : List Bool) : ∀ j, j ≤ s.len
       rw [List.take_succ, List.getElem?_eq_getElem (by omega : j < s.length)]
       simpa only [Option.toList_some, hlen] using (bufferTape_append (s.take j) s[j]).symm
     change emitterP2PrepareTM.tm.step c = _
-    simp only [MultiTapeTM.step, c, emitterP2PrepareCfg, emitterP2PrepareTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [c, emitterP2PrepareCfg, emitterP2PrepareTM,
       Cfg.workTapeSymbols, Fin.reduceEq, ↓reduceIte, bufferTape_nat,
       List.getElem?_eq_getElem (by omega : j < s.length)]
     refine Cfg.ext ?_ (splitPos_succ w j) ?_ ?_ rfl
@@ -6224,7 +6289,8 @@ private lemma emitterP2_prepare_suffix (w s : List Bool) (over : Bool) :
       rw [List.take_succ, List.getElem?_eq_getElem (by dsimp [v]; omega : j < v.length)]
       simpa only [Option.toList_some, hlen] using (bufferTape_append (v.take j) v[j]).symm
     change emitterP2PrepareTM.tm.step c = _
-    simp only [MultiTapeTM.step, c, emitterP2PrepareCfg]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [c, emitterP2PrepareCfg]
     change (emitterP2PrepareTM.tm.tr (1, over) c.inputSymbol c.workTapeSymbols).apply c = _
     rw [hin]
     refine Cfg.ext rfl ?_ ?_ ?_ rfl
@@ -6360,7 +6426,8 @@ private lemma emitterP2_prepare_run (w s : List Bool) :
   have h1 : tm.runFrom (emitterP2PrepareCfg w s [] [] 0 false 1 0 0) (s.length + 1) =
       emitterP2PrepareCfg w s s [] 1 over (splitPos w s.length) s.length 0 := by
     rw [MultiTapeTM.runFrom_succ_eq_step', hcopy]
-    simp only [tm, MultiTapeTM.step, emitterP2PrepareCfg, emitterP2PrepareTM,
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [tm, emitterP2PrepareCfg, emitterP2PrepareTM,
       Cfg.workTapeSymbols, Fin.reduceEq, ↓reduceIte, bufferTape_nat, List.getElem?_length]
     rw [controlAction_apply, moveInputPos_zero]
   have hsuffix := emitterP2_prepare_suffix w s over v.length (le_refl _)
@@ -6370,11 +6437,11 @@ private lemma emitterP2_prepare_run (w s : List Bool) :
         emitterP2PrepareCfg w s s v 2 over p s.length v.length := by
     rw [MultiTapeTM.runFrom_succ_eq_step', hsuffix]
     let c := emitterP2PrepareCfg w s s v 1 over p s.length v.length
-    have hin : c.inputSymbol = none := by simp [Cfg.inputSymbol, c, emitterP2PrepareCfg, hp]
+    have hin : c.inputSymbol = none := by
+      apply Cfg.inputSymbol_of_end
+      simp [c, emitterP2PrepareCfg, hp]
     change tm.step c = _
-    simp only [MultiTapeTM.step, c, emitterP2PrepareCfg]
-    change (emitterP2PrepareTM.tm.tr (1, over) c.inputSymbol c.workTapeSymbols).apply c = _
-    rw [hin]
+    rw [MultiTapeTM.step_of_some (by rfl), hin]
     change (controlAction 0 (some ((2 : Fin 9), over))).apply c = _
     rw [controlAction_apply, moveInputPos_zero]
     rfl
@@ -6382,7 +6449,8 @@ private lemma emitterP2_prepare_run (w s : List Bool) :
       (1 + (s.length + 1)) = emitterP2PrepareCfg w s s v 4 over p 0 v.length := by
     have hstep : tm.step (emitterP2PrepareCfg w s s v 2 over p s.length v.length) =
         emitterP2PrepareCfg w s s v 3 over p ((s.length : ℤ) - 1) v.length := by
-      simp only [MultiTapeTM.step, emitterP2PrepareCfg, tm, emitterP2PrepareTM]
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [emitterP2PrepareCfg, tm, emitterP2PrepareTM]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
@@ -6391,7 +6459,8 @@ private lemma emitterP2_prepare_run (w s : List Bool) :
       (1 + (v.length + 1)) = emitterP2PrepareCfg w s s v 6 over p 0 0 := by
     have hstep : tm.step (emitterP2PrepareCfg w s s v 4 over p 0 v.length) =
         emitterP2PrepareCfg w s s v 5 over p 0 ((v.length : ℤ) - 1) := by
-      simp only [MultiTapeTM.step, emitterP2PrepareCfg, tm, emitterP2PrepareTM]
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+      simp only [emitterP2PrepareCfg, tm, emitterP2PrepareTM]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
@@ -6424,7 +6493,7 @@ private lemma emitterP2_prepare_first (w s : List Bool) :
       rintro z ⟨⟨q, b⟩, hz, hq⟩
       change q = 8 at hq
       subst q
-      simp only [MultiTapeTM.step, hz]
+      rw [MultiTapeTM.step_of_some hz]
       change (controlAction 0 (some ((8 : Fin 9), b))).apply z = z
       rw [controlAction_apply, moveInputPos_zero]
       cases z; simp_all)
@@ -6503,7 +6572,8 @@ private lemma emitterP2_call_phase {k l : ℕ} {S H : Type} {x : List Bool}
         (embedEmitCfg index tapes heads [] (src.step c)).mapState emb at r1
       rw [← r1]
       have control : ec.state = some entry := hc
-      simp only [MultiTapeTM.step, z, control, hstart]
+      rw [MultiTapeTM.step_of_some (cfg := z) (q := enter) (by rfl),
+        MultiTapeTM.step_of_some control, hstart]
       exact Cfg.mapState_apply emb _ ec
     obtain ⟨endpoint, safe⟩ := emitterP2_phase src host index emb anchor haway
       (fun q => q ≠ exit) hagree tapes heads (src.runFrom c 1) d t
@@ -6945,7 +7015,8 @@ private lemma emitterP2_control {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S)
     (q r : S) (h : ∀ inp work, tm.tr q inp work = controlAction 0 (some r))
     (w : List Bool) (words : Fin k → List Bool) :
     tm.step (Cfg.ofWords (input := w) q words) = Cfg.ofWords r words := by
-  simp only [MultiTapeTM.step, Cfg.ofWords, h]
+  rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+  simp only [Cfg.ofWords, h]
   rw [controlAction_apply, moveInputPos_zero]
 /-- Preparation embeds on exactly the three administrative tapes.
 **Proof sketch.** Relocate the first-return preparation trace using the three-slot inverse law. The initial and final frame identities give literal host seams; disjoint controls give anchor exclusion. -/
@@ -7703,20 +7774,20 @@ private lemma emitterToken_double (x pre rest out : List Bool) (b : Bool)
       (scanCfg x (some (0 : Fin 6)) pre.length (by omega) out) =
       scanCfg x (some (if b then (1 : Fin 6) else 2)) pre.length (by omega)
         (out ++ [b]) := by
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (unaryTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
     rw [scanCfg_read, hread]
     apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, Action.apply, scanCfg]
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst]
   cases b <;>
-    apply Cfg.ext_zero_tapes
+    rw [MultiTapeTM.step_of_some (by rfl)] <;> apply Cfg.ext_zero_tapes
   all_goals first
     | rfl
-    | simpa [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg] using
+    | simpa [unaryTokenTM, Action.apply, scanCfg] using
         moveInputPos_pos_of_ne_right
           (⟨pre.length + 1, by omega⟩ : Fin (x.length + 2)) (by simp; omega)
-    | simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+    | simp [unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
 
 /-- The two separator transitions preserve the input position and append the
 unique pair delimiter before entering the suffix copier. -/
@@ -7725,8 +7796,23 @@ private lemma emitterToken_separator (x out : List Bool) (i : ℕ) (hi : i ≤ x
       scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true]) := by
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
-  apply Cfg.ext_zero_tapes <;>
-    simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+  let c₃ := scanCfg x (some (3 : Fin 6)) i hi out
+  let c₄ := scanCfg x (some (4 : Fin 6)) i hi (out ++ [false])
+  have h₃ : unaryTokenTM.tm.step c₃ = c₄ := by
+    rw [MultiTapeTM.step_of_some (cfg := c₃) (q := (3 : Fin 6)) (by rfl)]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_zero _
+    · exact Action.apply_output _ _
+  change unaryTokenTM.tm.step (unaryTokenTM.tm.step c₃) = _
+  rw [h₃, MultiTapeTM.step_of_some (cfg := c₄) (q := (4 : Fin 6)) (by rfl)]
+  apply Cfg.ext_zero_tapes
+  · exact Action.apply_state _ _
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · rw [Action.apply_output]
+    simp [c₄, scanCfg, unaryTokenTM, List.append_assoc]
 
 /-- The streaming token encoder emits the exact recursive split, after any
 already-consumed prefix. Its time is twice the token length plus the remainder
@@ -7751,19 +7837,20 @@ private lemma emitterToken_run (x rest : List Bool) :
     have hfirst : unaryTokenTM.tm.step
         (scanCfg x (some (0 : Fin 6)) pre.length (by omega) out) =
         scanCfg x (some (4 : Fin 6)) pre.length (by omega) (out ++ [false]) := by
-      unfold MultiTapeTM.step
+      rw [MultiTapeTM.step_of_some (by rfl)]
       change (unaryTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
       rw [scanCfg_read, hread]
       apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, Action.apply, scanCfg]
     have hsecond : unaryTokenTM.tm.step
         (scanCfg x (some (4 : Fin 6)) pre.length (by omega) (out ++ [false])) =
         scanCfg x (some (5 : Fin 6)) pre.length (by omega) (out ++ [false, true]) := by
+      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
       apply Cfg.ext_zero_tapes <;>
-        simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+        simp [unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
     rw [show 3 = (0 + 1) + 1 + 1 by omega,
       MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
       MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst, hsecond]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change (unaryTokenTM.tm.tr (5 : Fin 6) _ _).apply _ = _
     rw [scanCfg_read, hread]
     apply Cfg.ext_zero_tapes <;>
@@ -7877,7 +7964,7 @@ private lemma emitterAppend_run (b : Bool) (x : List Bool) :
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    unfold MultiTapeTM.step
+    rw [MultiTapeTM.step_of_some (by rfl)]
     change ((appendBitTM b).tm.tr ()
       (scanCfg x (some ()) j (by omega) (x.take j)).inputSymbol _).apply _ = _
     rw [scanCfg_read, List.getElem?_eq_getElem (by omega)]

@@ -123,21 +123,21 @@ lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
   induction t with
   | zero =>
     intro ht
+    rw [MultiTapeTM.runFrom_zero]
     exact ⟨hs, by simp⟩
   | succ t ih =>
     intro ht
     obtain ⟨hstate, hout⟩ := ih (by omega)
     have hstep : tm.runFrom cfg (t + 1) =
         (emitAction w e ⟨t, by omega⟩).apply (tm.runFrom cfg t) := by
-      rw [MultiTapeTM.runFrom_succ_eq_step']
-      unfold MultiTapeTM.step
-      rw [hstate]
-      exact congrArg (fun a => a.apply (tm.runFrom cfg t)) (htr _ _ _)
+      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate, htr]
     rw [hstep]
-    simp only [emitAction, dif_pos (show t < w.length by omega), Action.apply]
-    refine ⟨True.intro, ?_⟩
-    rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
-    simp [List.append_assoc]
+    constructor
+    · simp only [Action.apply_state, emitAction, dif_pos (show t < w.length by omega)]
+    · simp only [Action.apply_output, emitAction, dif_pos (show t < w.length by omega),
+        Option.toList_some]
+      rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp [List.append_assoc]
 
 /-- One further, nonemitting step halts the fixed-word emission chain. -/
 lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
@@ -147,12 +147,8 @@ lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
     (tm.runFrom cfg (w.length + 1)).state = none ∧
       (tm.runFrom cfg (w.length + 1)).output = cfg.output ++ w := by
   obtain ⟨hstate, hout⟩ := emit_run tm w e htr cfg hs w.length (le_refl _)
-  rw [MultiTapeTM.runFrom_succ_eq_step']
-  unfold MultiTapeTM.step
-  rw [hstate]
-  dsimp only
-  rw [htr]
-  simp [emitAction, Action.apply, hout]
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate, htr]
+  simp [Action.apply_state, Action.apply_output, emitAction, hout]
 
 
 /-- An action that only moves the input head and changes the state. -/
@@ -173,11 +169,7 @@ lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}
   by_cases h : i < x.length
   · rw [inputSymbolInner i (by omega) h, List.getElem?_eq_getElem h]
   · have he : i = x.length := by omega
-    have hz : cfg.inputPos ≠ 0 := by
-      intro hz
-      rw [hz] at hp
-      simp at hp
-    simp only [Cfg.inputSymbol, dif_neg hz, dif_pos (show cfg.inputPos.val = x.length + 1 by omega)]
+    rw [Cfg.inputSymbol_of_end (show cfg.inputPos.val = x.length + 1 by omega)]
     simp [he]
 
 
@@ -261,18 +253,17 @@ lemma leftCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
       leftAction l f (tm.tr q inp (fun i => work (Fin.castAdd l i))))
     (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
     tm'.step (leftCfg f c tapes heads) = leftCfg f (tm.step c) tapes heads := by
-  unfold MultiTapeTM.step
   cases hs : c.state with
-  | none => simp [leftCfg, hs]
+  | none =>
+    have hs' : (leftCfg f c tapes heads).state = none := by simp [leftCfg, hs]
+    rw [MultiTapeTM.step_of_halt hs', MultiTapeTM.step_of_halt hs]
   | some q =>
     have hs' : (leftCfg f c tapes heads).state = some (f q) := by simp [leftCfg, hs]
-    rw [hs']
-    dsimp only
-    rw [htr]
+    rw [MultiTapeTM.step_of_some hs', MultiTapeTM.step_of_some hs, htr]
     have hr : (fun i => (leftCfg f c tapes heads).workTapeSymbols (Fin.castAdd l i)) =
         c.workTapeSymbols := by
       funext i
-      simp [Cfg.workTapeSymbols, leftCfg]
+      simp [Cfg.workTapeSymbols_eq, leftCfg]
     change (leftAction l f (tm.tr q c.inputSymbol _)).apply _ = _
     rw [hr]
     exact leftCfg_apply f _ c tapes heads
@@ -285,18 +276,17 @@ lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
       rightAction k f (tm.tr q inp (fun i => work (Fin.natAdd k i))))
     (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
     tm'.step (rightCfg f c tapes heads) = rightCfg f (tm.step c) tapes heads := by
-  unfold MultiTapeTM.step
   cases hs : c.state with
-  | none => simp [rightCfg, hs]
+  | none =>
+    have hs' : (rightCfg f c tapes heads).state = none := by simp [rightCfg, hs]
+    rw [MultiTapeTM.step_of_halt hs', MultiTapeTM.step_of_halt hs]
   | some q =>
     have hs' : (rightCfg f c tapes heads).state = some (f q) := by simp [rightCfg, hs]
-    rw [hs']
-    dsimp only
-    rw [htr]
+    rw [MultiTapeTM.step_of_some hs', MultiTapeTM.step_of_some hs, htr]
     have hr : (fun i => (rightCfg f c tapes heads).workTapeSymbols (Fin.natAdd k i)) =
         c.workTapeSymbols := by
       funext i
-      simp [Cfg.workTapeSymbols, rightCfg]
+      simp [Cfg.workTapeSymbols_eq, rightCfg]
     change (rightAction k f (tm.tr q c.inputSymbol _)).apply _ = _
     rw [hr]
     exact rightCfg_apply f _ c tapes heads
@@ -538,15 +528,9 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
     | zero =>
       intro cfg hs hj _
       have hz : cfg.inputPos = 0 := Fin.ext hj
-      have hsym : cfg.inputSymbol = none := by
-        unfold Cfg.inputSymbol
-        rw [dif_pos hz]
+      have hsym := Cfg.inputSymbol_of_zero hz
       change tm.step cfg = _
-      unfold MultiTapeTM.step
-      rw [hs]
-      dsimp only
-      rw [htr, hsym]
-      dsimp only
+      rw [MultiTapeTM.step_of_some hs, htr, hsym]
       rw [controlAction_apply]
       have hm : moveInputPos cfg.inputPos .pos = 1 := by
         apply Fin.ext
@@ -559,11 +543,7 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
         inputSymbolInner j (by omega) (by omega)
       have hstep : tm.step cfg =
           {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
-        unfold MultiTapeTM.step
-        rw [hs]
-        dsimp only
-        rw [htr, hsym]
-        dsimp only
+        rw [MultiTapeTM.step_of_some hs, htr, hsym]
         rw [controlAction_apply]
       have hp : (moveInputPos cfg.inputPos .neg).val = j := by
         rw [moveInputPos_neg_val]
@@ -637,21 +617,21 @@ theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
   | zero =>
     intro cfg hs hj hp u hu
     rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
-    · rfl
+    · rw [MultiTapeTM.runFrom_zero]
     · have hz : cfg.inputPos = 0 := Fin.ext hj
-      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]
-      change (tm.step cfg).workTapePos = _
-      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+      have hi := Cfg.inputSymbol_of_zero hz
+      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+        MultiTapeTM.step_of_some hs, htr, hi, controlAction_apply]
   | succ j ih =>
     intro cfg hs hj hp u hu
     cases u with
-    | zero => rfl
+    | zero => rw [MultiTapeTM.runFrom_zero]
     | succ u =>
       have hi : cfg.inputSymbol = some (x[j]'(by omega)) :=
         inputSymbolInner j (by omega) (by omega)
       have he : tm.step cfg =
           {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
-        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+        rw [MultiTapeTM.step_of_some hs, htr, hi, controlAction_apply]
       rw [MultiTapeTM.runFrom_succ_eq_step, he]
       apply ih _ rfl _ (by omega) u (by omega)
       simp only [moveInputPos_neg_val]
@@ -787,7 +767,7 @@ def virtualNextTag (b : Bool) (m : SignType) : Bool :=
 lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
     (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : ℤ) - 1) = c.inputSymbol := by
   by_cases h0 : c.inputPos = 0
-  · simp [Cfg.inputSymbol, h0]
+  · simp [Cfg.inputSymbol_of_zero h0, h0]
   · have hp : 0 < c.inputPos.val := by
       have : c.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
       omega
@@ -815,7 +795,7 @@ lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}
     have hbf := hb.1 h0
     subst b
     cases m <;>
-      simp [virtualMove, virtualNextTag, Cfg.inputSymbol, he, VirtualTag,
+      simp [virtualMove, virtualNextTag, Cfg.inputSymbol_of_zero he, he, VirtualTag,
         moveInputPos, SignType.zero_eq_zero, SignType.neg_eq_neg_one,
         SignType.pos_eq_one]
   · have hne : c.inputPos ≠ 0 := fun h => h0 (congrArg Fin.val h)
@@ -823,7 +803,7 @@ lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}
     · have hbt := hb.2 hr
       subst b
       have he : c.inputPos = ⟨w.length + 1, by omega⟩ := Fin.ext hr
-      have hs : c.inputSymbol = none := by simp [Cfg.inputSymbol, he]
+      have hs := Cfg.inputSymbol_of_end hr
       cases m with
       | zero =>
         simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using
@@ -921,18 +901,17 @@ lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
     (c : Cfg M₁.k Bool M₁.State x) (hs : c.state ≠ none) :
     (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
       bufferedFirstCfg M₁ M₂ (M₁.tm.step c) := by
-  unfold MultiTapeTM.step
   cases hq : c.state with
   | none => exact False.elim (hs hq)
   | some q =>
     have hs' : (bufferedFirstCfg M₁ M₂ c).state = some (.inl (some q)) := by
       simp [bufferedFirstCfg, hq]
-    rw [hs']
+    rw [MultiTapeTM.step_of_some hs', MultiTapeTM.step_of_some hq]
     dsimp only [bufferedCompTM]
     have hr : (fun i => (bufferedFirstCfg M₁ M₂ c).workTapeSymbols
         (Fin.castAdd (1 + M₂.k) i)) = c.workTapeSymbols := by
       funext i
-      simp [bufferedFirstCfg, Cfg.workTapeSymbols]
+      simp [bufferedFirstCfg, Cfg.workTapeSymbols_eq]
     have hi : (bufferedFirstCfg M₁ M₂ c).inputSymbol = c.inputSymbol := rfl
     rw [hr, hi]
     let a := M₁.tm.tr q c.inputSymbol c.workTapeSymbols
@@ -940,25 +919,32 @@ lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
       (a.output.map some, if a.output = none then 0 else .pos)
       (fun _ => (none, 0)), none, some (.inl a.state)⟩ :
       Action (M₁.k + (1 + M₂.k)) Bool _).apply _ = bufferedFirstCfg M₁ M₂ (a.apply c)
-    refine Cfg.ext rfl rfl ?_ ?_ ?_
+    have hblank : bufferTape c.output (c.output.length : ℤ) = none := by
+      rw [bufferTape_nat, List.getElem?_length]
+    have hupdate : Function.update (bufferTape c.output) (c.output.length : ℤ) none =
+        bufferTape c.output := by
+      rw [← hblank, Function.update_eq_self]
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · simp [-Action.apply, Action.apply_state, bufferedFirstCfg]
+    · simp [-Action.apply, Action.apply_inputPos, bufferedFirstCfg]
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j; simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq]
       · intro j
         refine Fin.addCases ?_ ?_ j
         · intro j
           cases ho : a.output <;>
-            simp [bufferedFirstCfg, Action.apply, ho, bufferTape_append]
-        · intro j; simp [bufferedFirstCfg, Action.apply]
+            simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq, Action.apply_output, ho, bufferTape_append, hupdate]
+        · intro j; simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq]
     · funext i
       refine Fin.addCases ?_ ?_ i
-      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j; simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapePos]
       · intro j
         refine Fin.addCases ?_ ?_ j
         · intro j
-          cases ho : a.output <;> simp [bufferedFirstCfg, Action.apply, ho]
-        · intro j; simp [bufferedFirstCfg, Action.apply]
-    · simp [bufferedFirstCfg, Action.apply]
+          cases ho : a.output <;> simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapePos, Action.apply_output, ho]
+        · intro j; simp [-Action.apply, bufferedFirstCfg, Action.apply_workTapePos]
+    · simp [-Action.apply, bufferedFirstCfg, Action.apply_output]
 
 /-- First-phase lockstep holds up to and including the first halting transition.
 The hypothesis deliberately excludes steps after the simulated halt. -/
@@ -1040,39 +1026,42 @@ lemma bufferedSecondCfg_step (M₁ M₂ : FinTM Bool) {x y : List Bool}
     let a := M₂.tm.tr q c.inputSymbol c.workTapeSymbols
     let m := virtualMove b c.inputSymbol a.inputTape
     have hm := virtualMove_correct c b hb a.inputTape
-    have hc : M₂.tm.step c = a.apply c := by
-      simp only [MultiTapeTM.step, hq, a]
+    have hc : M₂.tm.step c = a.apply c := MultiTapeTM.step_of_some hq
     refine ⟨virtualNextTag b m, ?_, ?_⟩
-    · simpa only [hc, Action.apply] using hm.2
+    · simpa only [hc, Action.apply_inputPos] using hm.2
     · have hs : (bufferedSecondCfg M₁ M₂ c b p tapes heads).state =
           some (.inr (.inr (q, b))) := by simp [bufferedSecondCfg, hq]
       have hv : (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
           (Fin.natAdd M₁.k (Fin.castAdd M₂.k (0 : Fin 1))) = c.inputSymbol := by
-        simp [bufferedSecondCfg, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols_eq, bufferTape_inputSymbol]
       have hr : (fun i => (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
           (Fin.natAdd M₁.k (Fin.natAdd 1 i))) = c.workTapeSymbols := by
         funext i
-        simp [bufferedSecondCfg, Cfg.workTapeSymbols]
-      unfold MultiTapeTM.step
-      rw [hs]
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols_eq]
+      rw [MultiTapeTM.step_of_some hs]
       dsimp only [bufferedCompTM]
-      rw [hv, hr, hq]
+      rw [hv, hr, hc]
       change (Action.apply _ _) = bufferedSecondCfg M₁ M₂ (a.apply c) _ p tapes heads
-      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · simp [-Action.apply, Action.apply_state, bufferedSecondCfg, a, m]
+      · rw [Action.apply_inputPos]
+        exact moveInputPos_zero _
       · funext i
         refine Fin.addCases ?_ ?_ i
-        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j; simp [-Action.apply, bufferedSecondCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq, a]
         · intro j
           refine Fin.addCases ?_ ?_ j <;> intro j <;>
-            simp [bufferedSecondCfg, Action.apply, a]
+            simp [-Action.apply, bufferedSecondCfg, Action.apply_workTapes, Cfg.workTapeSymbols_eq, a]
       · funext i
         refine Fin.addCases ?_ ?_ i
-        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j; simp [-Action.apply, bufferedSecondCfg, Action.apply_workTapePos, a]
         · intro j
           refine Fin.addCases ?_ ?_ j
           · intro j
-            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1
-          · intro j; simp [bufferedSecondCfg, Action.apply, a]
+            simpa only [bufferedSecondCfg, Action.apply_workTapePos,
+              Action.apply_inputPos, tapeBlocks_buffer] using hm.1
+          · intro j; simp [-Action.apply, bufferedSecondCfg, Action.apply_workTapePos, a]
+      · simp [-Action.apply, Action.apply_output, bufferedSecondCfg, a]
 
 /-- Every second-phase run has a matching virtual run at the same time and a
 valid arrival tag. This preserves completed outputs and absorbing halting.
@@ -1134,7 +1123,8 @@ lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Boo
   | zero =>
     intro _
     rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
-    simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    simp only [bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols_eq,
       tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
     · funext i
@@ -1156,7 +1146,8 @@ lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Boo
         bufferTape_nat, List.getElem?_eq_getElem (by omega)]
     have hstep : (bufferedCompTM M₁ M₂).tm.step (bufferedScanCfg M₁ M₂ y p tapes heads (j + 1)) =
         bufferedScanCfg M₁ M₂ y p tapes heads j := by
-      simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      simp only [bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols_eq,
         tapeBlocks_buffer, hread, Option.some_ne_none, if_false]
       refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
       · funext i
@@ -1184,7 +1175,10 @@ lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
       bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg c.output) true c.inputPos c.workTapes c.workTapePos := by
   have hstep : (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
       bufferedScanCfg M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos c.output.length := by
-    simp only [MultiTapeTM.step, bufferedFirstCfg, hs, bufferedCompTM]
+    have hstate : (bufferedFirstCfg M₁ M₂ c).state = some (.inl none) := by
+      simp [bufferedFirstCfg, hs]
+    rw [MultiTapeTM.step_of_some hstate]
+    simp only [bufferedFirstCfg, bufferedCompTM]
     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
     · funext i
       refine Fin.addCases ?_ ?_ i

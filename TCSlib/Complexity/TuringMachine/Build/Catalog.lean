@@ -568,7 +568,8 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [clearTM, Action.apply]
 
 /-- The framed forward phase of the mapped copy and transfer: after `r` forward steps the
 destination interval `[pos, pos + r)` holds the row's written values `v q`, every other cell is
@@ -657,7 +658,7 @@ the transfer's return pass writes back, at each source cell it leaves, the symbo
 there, which changes nothing; every other transition of the two tables is the same. So the two
 machines take the same step from every configuration.
 
-**Proof sketch.** Unfold one step and split on the phase and the scanned source cell. Only the
+**Proof sketch.** Read the step equations, then split on the phase and the scanned cell. Only the
 `rewind` phase over a nonblank source cell differs, where the transfer's write is
 `Function.update` of the tape at the head with the cell's own content. -/
 private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} (src dst : Fin k)
@@ -665,10 +666,10 @@ private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} 
     (c : Cfg k Symbol SweepPhase x) :
     (copyMapTM k src dst extract merge).step c =
       (transferMapTM k src dst extract merge some).step c := by
-  unfold MultiTapeTM.step
   cases hq : c.state with
-  | none => rfl
+  | none => simp only [MultiTapeTM.step_of_halt hq]
   | some q =>
+    simp only [MultiTapeTM.step_of_some hq]
     cases q with
     | sweep => rfl
     | done => rfl
@@ -676,7 +677,8 @@ private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} 
       cases hb : c.workTapeSymbols src with
       | none => simp only [copyMapTM, transferMapTM, hb]
       | some b =>
-        have hc : c.workTapes src (c.workTapePos src) = some b := hb
+        have hc : c.workTapes src (c.workTapePos src) = some b :=
+          (Cfg.workTapeSymbols_eq c src).symm.trans hb
         simp only [copyMapTM, transferMapTM, hb]
         apply Cfg.ext <;> simp only [Action.apply]
         · funext j
@@ -817,7 +819,8 @@ private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List 
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [transferMapTM, Action.apply]
 
 /-- The first unequal or terminating cells occur after a common nonblank
 prefix, and equality at those terminating cells is precisely word equality.
@@ -941,7 +944,7 @@ theorem compareStop_le {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol)
   exact (List.takeWhile_sublist _).length_le.trans (by simp)
 
 /-- Comparison's exact framed invariant at a first differing or blank position.
-Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
+**Proof sketch.** The delimited common prefix supplies both passes' reads. The stopping
 condition determines the turn and verdict, and both heads return to their entry positions. -/
 private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : List Symbol}
     (fst snd : Fin k) (u v : List Symbol) (d : Cfg k Symbol FlagPhase x)
@@ -1041,7 +1044,8 @@ private lemma catalog_compare_trace {Symbol : Type*} [DecidableEq Symbol] {x : L
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast]
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, compareTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [compareTM, Action.apply]
 
 /-- A word consists of its leading true bits followed by either a first false
 bit and its tail, or no remaining bits. -/
@@ -1209,7 +1213,8 @@ private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, incrementTM, Action.apply]
+  · rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [incrementTM, Action.apply]
 
 /-! ### Framed contracts (design §12.6)
 
