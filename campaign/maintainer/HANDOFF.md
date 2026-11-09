@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T00:35:35.076651-08:00; authoritative)
+## 0. Current state (2026-11-09T01:02:50.301272-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
@@ -19,7 +19,7 @@ See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD at `06abd00adf61c257fcd25ee9181a37ddec0a4c87` with two majors. Mechanical reuse and full revalidation underway. |
+| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD with two majors. Local documented proof candidate `bf8d502573a0ba945a04f7a9dfe827f55b2c840f` is replaying. Copy review and follow-up remain open. See the gate 129 repair checkpoint. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** Four native-checked #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared 121 reads and three distinct held roots remain. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Await the gate 129 provider, integrated repairs, replay and follow-up. |

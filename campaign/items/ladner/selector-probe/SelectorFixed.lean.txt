@@ -1,0 +1,54 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+
+set_option autoImplicit false
+
+namespace Complexity
+
+/-- A globally correct deadline index bounds every stage. If the cap
+does not yet admit the index, the cap itself supplies the same bound. -/
+private theorem checked_index_bound (i : ℕ)
+    (good : ∀ x : List Bool,
+      (ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH) :
+    ∀ n, ladnerH n ≤ i := by
+  classical
+  intro n
+  rw [ladnerH_eq]
+  split_ifs with h
+  · by_cases hcap : i < Nat.log 2 (Nat.log 2 n)
+    · exact Nat.find_min' h ⟨hcap, fun x _ => good x⟩
+    · exact (Nat.find_spec h).1.le.trans (Nat.le_of_not_gt hcap)
+  · apply Nat.le_of_not_gt
+    intro hcap
+    exact h ⟨i, hcap, fun x _ => good x⟩
+
+/-- Finitely many counterexamples become visible together once the logarithmic
+query window contains them and the index cap is large enough. -/
+private theorem checked_witness_threshold
+    (bad : ∀ i : ℕ, ∃ x : List Bool,
+      ¬ ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH)) :
+    ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n := by
+  classical
+  choose witness counterexample using bad
+  intro C
+  let B := (Finset.range C).sup fun i => (witness i).length
+  let M := max B (2 ^ C)
+  refine ⟨2 ^ M, ?_⟩
+  intro n hn
+  have hlog : M ≤ Nat.log 2 n := Nat.le_log_of_pow_le (by decide) hn
+  have hcap : C ≤ Nat.log 2 (Nat.log 2 n) :=
+    Nat.le_log_of_pow_le (by decide) ((le_max_right B (2 ^ C)).trans hlog)
+  rw [ladnerH_eq]
+  split_ifs with h
+  · by_contra! hi
+    have hlen : (witness (Nat.find h)).length ≤ B :=
+      Finset.le_sup (f := fun i => (witness i).length) (Finset.mem_range.mpr hi)
+    exact counterexample (Nat.find h)
+      ((Nat.find_spec h).2 _ (hlen.trans ((le_max_left B (2 ^ C)).trans hlog)))
+  · exact hcap
+
+#print axioms checked_index_bound
+#print axioms checked_witness_threshold
+
+end Complexity
