@@ -21,8 +21,8 @@ set_option autoImplicit false
 ## Main results
 
 Encoding respects integer casts and addition. Rounding recovers messages under a
-strict bounded integer perturbation. Digit injectivity follows from block packing.
-The positional digit and gadget multiplication proofs await the shared block reader.
+strict bounded integer perturbation. The gadget transpose reads the positional
+digits, and block packing makes the digit map injective.
 
 ## References
 
@@ -176,14 +176,36 @@ theorem digits_eq (b w : ℕ) (x : Fin (w * b) → Bool) :
 
 /-- Each digit equals its block's positional binary sum.
 
-**Proof sketch.** Apply the public `Randomized.blocksEquiv_apply` and the proposed
-owner-side `Randomized.blockVal_eq` reader, then the public binary-value equations.
-Match the product index with `finProdFinEquiv`. The shared reader is recorded but
-unapplied; this proof route waits for its coordination and landing before filling. -/
+**Proof sketch.** Read the selected slice through the shared block equation.
+Its length is exactly the block width. Evaluate its positional sum, then reindex
+by that width. Reading each slice coordinate gives the corresponding row-major
+input position. -/
 theorem digits_val (b w : ℕ) (x : Fin (w * b) → Bool) (j : Fin w) :
     (digits b w x j : ℕ) =
       ∑ k : Fin b, (x (finProdFinEquiv (j, k))).toNat * 2 ^ (k : ℕ) := by
-  sorry
+  rw [digits_eq, Randomized.blocksEquiv_apply, Randomized.blockVal_eq]
+  let slice := ((List.ofFn x).drop (j.val * b)).take b
+  have hcut : j.val * b + b ≤ w * b := by
+    rw [← Nat.succ_mul]
+    exact Nat.mul_le_mul_right b (Nat.succ_le_of_lt j.isLt)
+  have hlength : slice.length = b := by
+    dsimp only [slice]
+    rw [List.length_take, List.length_drop, List.length_ofFn]
+    omega
+  have hvalue : Complexity.LogProg.bitsVal slice =
+      ∑ k : Fin slice.length, (slice[k.val]'k.isLt).toNat * 2 ^ k.val := by
+    have h := Randomized.bitsVal_ofFn (fun k : Fin slice.length => slice[k.val]'k.isLt)
+    rwa [List.ofFn_getElem] at h
+  change Complexity.LogProg.bitsVal slice = _
+  rw [hvalue]
+  refine Fintype.sum_equiv (finCongr hlength) _ _ fun k => ?_
+  have hbit : slice[k.val]'k.isLt = x (finProdFinEquiv (j, finCongr hlength k)) := by
+    dsimp only [slice]
+    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+    apply congrArg x
+    apply Fin.ext
+    simp only [finProdFinEquiv_apply_val, finCongr_apply_coe, Nat.add_comm, Nat.mul_comm]
+  rw [hbit, finCongr_apply_coe]
 
 /-- The gadget transpose maps the binary input to its integer block digits.
 
@@ -192,7 +214,15 @@ off-block entries vanish and the surviving positional sum is `digits_val`. -/
 theorem gadget_mulVec (b w : ℕ) (x : Fin (w * b) → Bool) (j : Fin w) :
     (gadget b w).transpose.mulVec (fun i => ((x i).toNat : ℤ)) j =
       ((digits b w x j : ℕ) : ℤ) := by
-  sorry
+  classical
+  change (∑ i, gadget b w i j * ((x i).toNat : ℤ)) = _
+  rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type]
+  simp only [gadget_eq, Equiv.symm_apply_apply, ite_mul, zero_mul, Finset.sum_ite_irrel,
+    Finset.sum_const_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  rw [digits_val, Nat.cast_sum]
+  exact Finset.sum_congr rfl fun k _ => by
+    push_cast
+    ring
 
 /-- The full digit vector uniquely determines every binary input coordinate.
 

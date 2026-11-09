@@ -25,7 +25,8 @@ set_option autoImplicit false
 
 Concealed evaluation cancels the retained secret product. The remaining integer
 error vector has bounded coordinates, giving an explicit image-cardinality bound.
-The gadget residual and perfect-inversion proofs await the positional digit reader.
+Gadget evaluation leaves the encoded digits plus bounded errors, so rounding
+and block unpacking recover the binary input.
 
 ## References
 
@@ -146,7 +147,26 @@ theorem residual_injectiveKey (b a w d : ℕ)
     residual T (evaluate (injectiveKey b a w d A T E) x) j =
       encode b a (digits b w x j : ZMod (2 ^ b)) +
         ((∑ i, E i j * ((x i).toNat : ℤ) : ℤ) : ZMod (2 ^ (b + a))) := by
-  sorry
+  have hgadget :
+      (Matrix.of (fun i j => encode b a (gadget b w i j : ZMod (2 ^ b)))).transpose.mulVec
+        (fun i => ((x i).toNat : ZMod (2 ^ (b + a)))) j =
+        encode b a (digits b w x j : ZMod (2 ^ b)) := by
+    calc
+      _ = encode b a (((gadget b w).transpose.mulVec
+          (fun i => ((x i).toNat : ℤ)) j : ℤ) : ZMod (2 ^ b)) := by
+        change (∑ i, encode b a (gadget b w i j : ZMod (2 ^ b)) *
+          ((x i).toNat : ZMod (2 ^ (b + a)))) =
+          encode b a ((∑ i, gadget b w i j * ((x i).toNat : ℤ) : ℤ) : ZMod (2 ^ b))
+        rw [encode_intCast, Int.cast_sum, Finset.mul_sum]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [encode_intCast, Int.cast_mul, Int.cast_natCast, mul_assoc]
+      _ = _ := by rw [gadget_mulVec, Int.cast_natCast]
+  have hconceal := residual_conceal A T E x j
+  rw [residual_eq, evaluate_snd, evaluate_fst, Pi.sub_apply] at hconceal
+  rw [injectiveKey_eq, residual_eq, evaluate_snd, evaluate_fst,
+    Matrix.transpose_add, Matrix.add_mulVec, Pi.sub_apply, Pi.add_apply,
+    add_sub_right_comm, hconceal, hgadget]
+  exact add_comm _ _
 
 /-- A selected integer error column has absolute sum at most `N*B`.
 
@@ -170,7 +190,16 @@ theorem recover_evaluate (b a w d : ℕ) (ha : 0 < a)
     (hE : ∀ i j, (E i j).natAbs ≤ B) (hsep : 2 * (w * b * B) < 2 ^ a)
     (x : Fin (w * b) → Bool) :
     recover b a w d T (evaluate (injectiveKey b a w d A T E) x) = x := by
-  sorry
+  apply (Randomized.blocksEquiv w b).injective
+  rw [recover_eq, Equiv.apply_symm_apply]
+  funext j
+  have hsmall : 2 * (∑ i, E i j * ((x i).toNat : ℤ)).natAbs < 2 ^ a :=
+    (Nat.mul_le_mul_left 2 (error_sum_bound E x B hE j)).trans_lt hsep
+  rw [residual_injectiveKey, decode_encode_add b a ha _ _ hsmall, ← digits_eq]
+  change (ZMod.finEquiv (2 ^ b)).symm ((digits b w x j : ℕ) : ZMod (2 ^ b)) = _
+  letI : CommRing (Fin (2 ^ b)) := Fin.instCommRing _
+  rw [← map_natCast (ZMod.finEquiv (2 ^ b)), RingEquiv.symm_apply_apply]
+  exact Fin.cast_val_eq_self _
 
 /-- Every bounded-noise gadget key defines an injective function under the same
 separation condition [PW10, Section 6.3, perfect-inversion adaptation].
@@ -182,7 +211,9 @@ theorem evaluate_injective (b a w d : ℕ) (ha : 0 < a)
     (E : Matrix (Fin (w * b)) (Fin w) ℤ) (B : ℕ)
     (hE : ∀ i j, (E i j).natAbs ≤ B) (hsep : 2 * (w * b * B) < 2 ^ a) :
     Function.Injective (evaluate (injectiveKey b a w d A T E)) := by
-  sorry
+  intro x y hxy
+  simpa only [recover_evaluate b a w d ha A T E B hE hsep] using
+    congrArg (recover b a w d T) hxy
 
 /-- A key without the gadget has image size at most `q^d*(2*N*B+1)^w`
 [PW10, Section 6.3, explicit bounded-integer image adaptation].

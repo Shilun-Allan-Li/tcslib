@@ -23,8 +23,8 @@ set_option autoImplicit false
 ## Main results
 
 The designated branch cancels exactly to the lossy concealed map and inherits its
-quantitative image bound. The other-branch residual and injectivity obligations
-use strict bounded-noise separation and the larger message modulus.
+quantitative image bound. On every other branch, strict rounding separation and the
+larger message modulus recover the integer branch product and give injectivity.
 
 ## References
 
@@ -126,7 +126,52 @@ theorem residual_branch (b a u d : ℕ)
         (((antiCyclic (fun i => ((v i).toNat : ℤ) - ((vstar i).toNat : ℤ))).transpose.mulVec
           (fun i => ((digits b (2 ^ u) x i : ℕ) : ℤ)) j : ℤ) : ZMod (2 ^ (b + u + 1))) +
         ((∑ i, E i j * ((x i).toNat : ℤ) : ℤ) : ZMod (2 ^ (b + u + 1 + a))) := by
-  sorry
+  let small := b + u + 1
+  let difference : Fin (2 ^ u) → ℤ := fun i => ((v i).toNat : ℤ) - ((vstar i).toNat : ℤ)
+  let G := gadget b (2 ^ u) * antiCyclic difference
+  let encoded (branch : Fin (2 ^ u) → Bool) :
+      Matrix (Fin (2 ^ u * b)) (Fin (2 ^ u)) (ZMod (2 ^ (small + a))) :=
+    Matrix.of (fun i k => encode small a (branchGadget b u branch i k : ZMod (2 ^ small)))
+  have hgadget : branchGadget b u v - branchGadget b u vstar = G := by
+    rw [branchGadget_eq, branchGadget_eq, ← Matrix.mul_sub, ← antiCyclic_sub]
+    rfl
+  -- The two encoded branch terms give the scaled integer difference matrix.
+  have hshift : (encoded v - encoded vstar).transpose =
+      (2 ^ a : ZMod (2 ^ (small + a))) •
+        G.transpose.map (Int.castRingHom (ZMod (2 ^ (small + a)))) := by
+    ext k i
+    have hentry : branchGadget b u v i k - branchGadget b u vstar i k = G i k := by
+      exact congrArg (fun M : Matrix (Fin (2 ^ u * b)) (Fin (2 ^ u)) ℤ => M i k) hgadget
+    simp only [encoded, Matrix.transpose_apply, Matrix.sub_apply, Matrix.of_apply,
+      Matrix.smul_apply, Matrix.map_apply, Int.coe_castRingHom, smul_eq_mul]
+    rw [encode_intCast, encode_intCast, ← mul_sub, ← Int.cast_sub, hentry]
+  have hencoded : (encoded v - encoded vstar).transpose.mulVec
+      (fun i => ((x i).toNat : ZMod (2 ^ (small + a)))) j =
+      encode small a ((G.transpose.mulVec (fun i => ((x i).toNat : ℤ)) j : ℤ) :
+        ZMod (2 ^ small)) := by
+    rw [hshift, Matrix.smul_mulVec, Pi.smul_apply, smul_eq_mul, encode_intCast]
+    have hmap := RingHom.map_mulVec (Int.castRingHom (ZMod (2 ^ (small + a))))
+      G.transpose (fun i => ((x i).toNat : ℤ)) j
+    simpa only [Function.comp_def, Int.coe_castRingHom, Int.cast_natCast] using
+      congrArg (fun z : ZMod (2 ^ (small + a)) => (2 ^ a : ZMod (2 ^ (small + a))) * z)
+        hmap.symm
+  have hproduct : G.transpose.mulVec (fun i => ((x i).toNat : ℤ)) =
+      (antiCyclic difference).transpose.mulVec
+        (fun i => ((digits b (2 ^ u) x i : ℕ) : ℤ)) := by
+    change (gadget b (2 ^ u) * antiCyclic difference).transpose.mulVec _ = _
+    rw [Matrix.transpose_mul, ← Matrix.mulVec_mulVec]
+    exact congrArg (fun y => (antiCyclic difference).transpose.mulVec y)
+      (funext (gadget_mulVec b (2 ^ u) x))
+  -- Use the original concealed residual after separating the branch contribution.
+  have hconceal := residual_conceal A T E x j
+  rw [residual_eq, evaluate_snd, evaluate_fst, Pi.sub_apply] at hconceal
+  rw [evaluateBranch_eq, allButOneKey_eq]
+  change residual T (evaluate (A, conceal A T E - encoded vstar + encoded v) x) j = _
+  rw [sub_add_comm, add_comm (encoded v - encoded vstar) (conceal A T E),
+    residual_eq, evaluate_snd, evaluate_fst,
+    Matrix.transpose_add, Matrix.add_mulVec, Pi.sub_apply, Pi.add_apply,
+    add_sub_right_comm, hconceal, hencoded, hproduct]
+  exact add_comm _ _
 
 /-- Every other branch defines an injective map for every bounded-error key under
 strict rounding separation [PW10, Section 6.4, deterministic dyadic adaptation].
@@ -143,7 +188,54 @@ theorem evaluateBranch_injective (b a u d : ℕ) (ha : 0 < a)
     (vstar v : Fin (2 ^ u) → Bool) (hv : v ≠ vstar) (B : ℕ)
     (hE : ∀ i j, (E i j).natAbs ≤ B) (hsep : 2 * (2 ^ u * b * B) < 2 ^ a) :
     Function.Injective (evaluateBranch b a u d (allButOneKey b a u d A T E vstar) v) := by
-  sorry
+  let modulus : ℕ := 2 ^ (b + u + 1)
+  let message (x : Fin (2 ^ u * b) → Bool) : Fin (2 ^ u) → ℤ :=
+    (antiCyclic (fun i => ((v i).toNat : ℤ) - ((vstar i).toNat : ℤ))).transpose.mulVec
+      (fun i => ((digits b (2 ^ u) x i : ℕ) : ℤ))
+  have hdecode (x : Fin (2 ^ u * b) → Bool) (j : Fin (2 ^ u)) :
+      decode (b + u + 1) a (residual T
+        (evaluateBranch b a u d (allButOneKey b a u d A T E vstar) v x) j) =
+        (message x j : ZMod modulus) := by
+    rw [residual_branch]
+    exact decode_encode_add (b + u + 1) a ha _ _
+      ((Nat.mul_le_mul_left 2 (error_sum_bound E x B hE j)).trans_lt hsep)
+  have hbound (x : Fin (2 ^ u * b) → Bool) (j : Fin (2 ^ u)) :
+      2 * |message x j| < (modulus : ℤ) := by
+    have hhalf : (message x j).natAbs < 2 ^ (b + u) :=
+      (branch_message_bound b u v vstar (digits b (2 ^ u) x) j).trans_lt (by
+        rw [pow_add (2 : ℕ) b u, Nat.mul_comm (2 ^ b) (2 ^ u)]
+        exact Nat.mul_lt_mul_of_pos_left
+          (Nat.sub_lt (Nat.two_pow_pos b) Nat.zero_lt_one) (Nat.two_pow_pos u))
+    have hdouble : 2 * (message x j).natAbs < modulus := by
+      change 2 * (message x j).natAbs < 2 ^ (b + u + 1)
+      rw [pow_succ (2 : ℕ) (b + u), Nat.mul_comm (2 ^ (b + u)) 2]
+      exact Nat.mul_lt_mul_of_pos_left hhalf (by decide)
+    have hcast : (2 : ℤ) * ((message x j).natAbs : ℤ) < (modulus : ℤ) := by
+      exact_mod_cast hdouble
+    rwa [Int.natCast_natAbs] at hcast
+  -- The two lifted products differ by a multiple of the modulus within its strict radius.
+  intro x y hxy
+  have hmessage : message x = message y := by
+    funext j
+    have hresidue : (message x j : ZMod modulus) = (message y j : ZMod modulus) :=
+      (hdecode x j).symm.trans
+        ((congrArg (fun z => decode (b + u + 1) a (residual T z j)) hxy).trans (hdecode y j))
+    have hdvd := (ZMod.intCast_eq_intCast_iff_dvd_sub (message x j) (message y j) modulus).mp
+      hresidue
+    have htriangle : |message y j - message x j| ≤ |message y j| + |message x j| := by
+      simpa only [sub_zero, zero_sub, abs_neg] using abs_sub_le (message y j) 0 (message x j)
+    have hstrict : |message y j - message x j| < (modulus : ℤ) := by
+      have hx := hbound x j
+      have hy := hbound y j
+      omega
+    exact (sub_eq_zero.mp (Int.eq_zero_of_abs_lt_dvd hdvd hstrict)).symm
+  have hdigits : (fun i => ((digits b (2 ^ u) x i : ℕ) : ℤ)) =
+      (fun i => ((digits b (2 ^ u) y i : ℕ) : ℤ)) :=
+    branch_difference_injective u v vstar hv hmessage
+  apply digits_injective b (2 ^ u)
+  funext i
+  apply Fin.ext
+  exact_mod_cast congrFun hdigits i
 
 /-- The designated branch inherits the concealed map's explicit small-image bound.
 
