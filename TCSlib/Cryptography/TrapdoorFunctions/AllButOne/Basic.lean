@@ -29,7 +29,7 @@ use strict bounded-noise separation and the larger message modulus.
 ## References
 
 * [PW10] C. Peikert, B. Waters, *Lossy Trapdoor Functions and Their Applications*,
-  author version 4 June 2010, Section 6.4, printed pages 37--38.
+  author version 4 June 2010, Section 6.4, printed pages 37--39.
 
 This is a dyadic, bounded-noise mathematical adaptation, with branch width `2^u`,
 input length `2^u*b`, message modulus `2^(b+u+1)`, and larger modulus

@@ -29,12 +29,12 @@ The gadget residual and perfect-inversion proofs await the positional digit read
 ## References
 
 * [PW10] C. Peikert, B. Waters, *Lossy Trapdoor Functions and Their Applications*,
-  author version 4 June 2010, Sections 6.2--6.3, printed pages 33--36.
+  author version 4 June 2010, Sections 6.2--6.3, printed pages 33--37.
 
-This bounded-noise dyadic adaptation uses no short basis, Gaussian sampling or lattice
-reduction. The trapdoor is exactly the retained matrix `T`. Concealer pseudorandomness,
-its independent-secret column hybrids, polynomial machines and CCA2 consumers remain
-separate obligations. In particular no unproved hardness is inferred from image loss.
+This dyadic adaptation assumes bounded signed errors. The trapdoor is the
+retained matrix `T`. `Lossy.Experiments` proves the finite independent-secret
+column hybrids and their DLWE advantage bounds. Polynomial-time implementations
+and CCA2 consumers remain separate obligations.
 -/
 
 namespace TCSlib.Cryptography.TrapdoorFunctions.Lossy
