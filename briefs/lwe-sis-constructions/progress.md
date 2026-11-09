@@ -142,8 +142,9 @@ sections at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`.
 
 The counted-loop registration proposal pairs the existing FP contract with
 the H14 clean-install and head-envelope contracts. The Lean specialization
-passes using the existing owners. The one-row registry diff awaits
-maintainer coordination and its own review.
+passes using the existing owners. The maintainer approved the exact
+one-row diff, applied at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 reviews the host
+entry before the consumer fills.
 [Counted-loop proposal](prerequisites/02-counted-loop-registration/README.md)
 
 **Not yet clear to merge.** The nine counted-loop and CRH admissions,
