@@ -1,5 +1,9 @@
 # Source review for the declarations being landed
 
+The [first landing review](FIRST-LANDING-REVIEW.md) records the checked Pei16
+attributions for #236 and the exact one-entry shared registry proposal. It
+starts with #236 so the first integration uses only its consumed reference.
+
 On 2026-11-08 the user asked to postpone PDF-to-Markdown transcription of material
 we are not formalizing. The root agrees: requesting both entire documents in the
 first source job made bulk transcription an unnecessary dependency. Future work
