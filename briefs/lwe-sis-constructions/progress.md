@@ -107,6 +107,11 @@ PR #255 is merged. The live central tip is
 current #250 Lean tree, root, and pins.
 [Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
 
+The round two packet is checked and committed in the private publisher checkout.
+It awaits maintainer publication to the shared exchange.
+[Publication handoff](fills/07-sis-trapdoor/round2/review-preparation.json) ·
+[Codex dispatch prompt](fills/07-sis-trapdoor/round2/DISPATCH.md)
+
 **Not yet clear to merge.** Gate 12 round two awaits independent review.
 The 18 admissions, scoped source review, and landing checks remain open.
 The user approves all merges.
