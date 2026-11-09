@@ -1,0 +1,13 @@
+This draft develops the LWE/SIS construction layer for dyadic sampling, direct DLWE generators, Regev public-key encryption, SIS hashing, and the planned CCA2 construction. Its 19 mathematical modules contain 220 source declarations. Two proof waves discharge 37 obligations. Another 64 remain admitted.
+
+- The combined statement audit passed with one documentation minor. The separate loop wording repair is checked at `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c`.
+- The first 31-proof audit passed with one documentation minor. The separate flat-generator overview repair is checked at `af54d28f6d412bc56844e7371e2b0b9b394c494c`.
+- The six Regev hybrid support proofs passed with zero blockers, majors, or minors and four continuing notes. They cover the exact DLWE key hybrid, augmentation and ciphertext identities, uniform hash differences, and extraction error budgets. [Pinned audit packet](https://github.com/Shilun-Allan-Li/tcslib/tree/3be2879df1cb5d37fd7cd2275bb520598e8c41eb/lwe-sis-constructions/outbox/gates/10-regev-hybrids-proofs-r1)
+
+The fresh serial 144-module sweep at `8c6b23f5b69260acb66cc99e322a81c4c79f51bb` recorded zero errors, 64 owned admissions, and 17 inherited admission warnings. All six fills use only standard axioms. The 589-constant inventory and 276 explicit axiom prints reconcile. Style reports zero failures and two existing reader warnings across 41 files. Native verification covers the seven-facade closure. The auditor checked the records and source without rerunning Lean. [Verification evidence](https://github.com/Shilun-Allan-Li/tcslib/tree/0bdc04b518e1c45b11cdd7cf5f00c3cede10a12e/briefs/lwe-sis-constructions/fills/05-regev-hybrids/evidence)
+
+The target is `cryptography/lwe-sis-constructions` at the #239 merge `27f9ea89b72d84abaec8128f2abd826f24aaced4`. PRs #236 through #239 are merged. The six shared export overlaps are `TCSlib.lean` and the Encoding, LWE, Encryption, SIS hashing, and Pseudorandom facades. Their additions are in the separate export commit `17b2a282b545c6ebca3fccc88d518d18ae78f485`. Reconcile these imports at landing.
+
+The statistical hybrid and final fixed-bit Regev bound await the shared probability readers. The random-bit reader and counted-loop registry and host checks remain open for their consumers. Scoped source validation, ingestion, and approved matching remain open for the sources used by #250, including applicable PW10 material. Efficient samplers, primitive bridges, and CCA2 security remain separate work. SIS hardness is independent of LWE.
+
+**Not yet clear to merge.** The draft retains 64 proof obligations, shared-owner decisions, scoped source review, and landing checks. The user approves and merges PRs.
