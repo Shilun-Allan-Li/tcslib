@@ -139,7 +139,7 @@ theorem coinTable_ofFn_castLE {n T k c : ℕ} (h : n * T * k ≤ c) (t : Fin c �
 theorem samplePerm_ofFn_castLE {n c : ℕ} (h : permCoinLen n ≤ c) (t : Fin c → Bool) :
     samplePerm n (List.ofFn t) =
       samplePerm n (List.ofFn fun i : Fin (permCoinLen n) => t (Fin.castLE h i)) := by
-  simp only [samplePerm_def]
+  simp only [samplePerm_eq]
   rw [coinTable_ofFn_castLE h t]
   rfl
 
@@ -334,7 +334,7 @@ theorem attemptStr_ofFn (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : Lis
         (simAttempt G₀ G₁ (vstar V' (encInstance G₀ G₁) z)
           ((samplePerm n (List.ofFn (blockFields _ _ g).1.1), (blockFields _ _ g).1.2),
             (blockFields _ _ g).2)) := by
-  simp only [attemptStr_def, instanceG₀_def, instanceG₁_def, instanceVertexCount_def,
+  simp only [attemptStr_def, instanceG₀_eq, instanceG₁_eq, instanceVertexCount_eq,
       headD_ofFn_block,
     drop_one_take_ofFn_block, drop_ofFn_block]
   rw [show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _,
