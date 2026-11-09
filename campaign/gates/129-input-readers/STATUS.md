@@ -1,3 +1,3 @@
-**Not yet clear to merge: #251.** Gate 129 round 1 was HOLD. The repaired
-head 06abd00adf61c257fcd25ee9181a37ddec0a4c87 passes the actual395 current-base replay and selected guards. The
-Codex round 2 audit is being staged; no external audit result yet.
+**Ready to dispatch: gate 129 round 2 to Codex.** The repaired head 06abd00adf61c257fcd25ee9181a37ddec0a4c87
+passed the 395-module replay and 12 selected proof seals with 32 controls.
+Use prompt-r2.md. **Not yet clear to merge: #251**, pending the follow-up verdict.

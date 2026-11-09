@@ -18,7 +18,7 @@ whole `oleans-nspace5`; the pre-#252 snapshot is MAC8. Never compose them.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** First return HOLD. Repaired draft `06abd00adf61c257fcd25ee9181a37ddec0a4c87` in fresh 395-module replay. Final checks and Codex follow-up pending. |
+| #251 / 129 | **Ready to dispatch** to Codex. Head `06abd00adf61c257fcd25ee9181a37ddec0a4c87` passed the 395-module replay. **Not yet clear to merge** pending the round 2 verdict. |
 | #253 / 131 | **Not yet clear to merge.** Audited PASS; empty namespace minor fixed at `70312c51b658463bec68caab49ce281c21607a3f`. Current 404-module replay running before clearance. |
 | #242 / 122 | **Not yet clear to merge.** Four native-checked #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared 121 reads and three distinct held roots remain. |
 | #241 / 121 | **Not yet clear to merge.** Needs merged providers 129/131 and integrated repairs, replay and follow-up. |
