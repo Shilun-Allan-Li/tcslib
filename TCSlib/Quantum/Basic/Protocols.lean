@@ -48,9 +48,9 @@ Three first results about qubits, stated on registers with the gates of `Gates.l
   physical content (round-1 audit, finding 1).
 * `denseCode`'s message labels follow the decoder used here: `(b₀, b₁)` is encoded as
   `X^{b₁} Z^{b₀}` and decoded as the basis state `|b₀ b₁⟩`. [NC10, §2.3] sends `01` with `Z` and
-  `10` with `X`, the other way round, and its `11` operator `iY` differs from `X Z = -iY` by a global
-  sign. The protocols are the same up to relabelling the messages and a phase that no measurement
-  sees (round-1 audit, finding 3).
+  `10` with `X`, the other way round, and its `11` operator `iY` differs from `X Z = -iY` by a
+  global sign. The protocols are the same up to relabelling the messages and a phase that no
+  measurement sees (round-1 audit, finding 3).
 * States of one qubit are kets over `Reg 1`, the basis the gates of `Gates.lean` act on.
 
 ## References

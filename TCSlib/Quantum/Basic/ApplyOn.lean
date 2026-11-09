@@ -137,11 +137,13 @@ theorem applyOn_refl (U : Matrix (Reg n) (Reg n) ℂ) :
 
 **Proof sketch.** Both products have entry `(y, x)` equal to
 `U₁ (y ∘ w₁) (x ∘ w₁) · U₂ (y ∘ w₂) (x ∘ w₂)` when `y, x` agree off the union of the two ranges,
-and `0` otherwise. Each side reduces to this: its sum over intermediate registers `z` has a
-single nonzero term. In `applyOn w₁ U₁ * applyOn w₂ U₂`, that `z` agrees with `x` on `w₁`'s range
-and with `y` on `w₂`'s; in the reversed product it agrees with `y` on `w₁`'s range and with `x`
-on `w₂`'s. Off both ranges it is the common value of `y` and `x`. The two scalar products are
-then equal because complex multiplication commutes (round-1 audit, finding 4). -/
+and `0` otherwise. Each side reduces to this: its sum over intermediate registers `z` has at
+most one nonzero term, at the unique `z` satisfying the outside-wire constraints (the term itself
+may vanish; round-2 audit, finding 2). In `applyOn w₁ U₁ * applyOn w₂ U₂`, that `z` agrees with
+`x` on `w₁`'s range and with `y` on `w₂`'s; in the reversed product it agrees with `y` on `w₁`'s
+range and with `x` on `w₂`'s. Off both ranges it is the common value of `y` and `x`. The two
+scalar products are then equal because complex multiplication commutes (round-1 audit,
+finding 4). -/
 theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂ ↪ Fin n)
     (h : Disjoint (Set.range w₁) (Set.range w₂))
     (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) :

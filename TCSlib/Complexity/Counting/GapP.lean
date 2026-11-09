@@ -17,8 +17,12 @@ A *gap function* counts accepting minus rejecting computations: for a nondetermi
 [Wat08, §IV.5], [FR99, §2]. GapP is closed under sums, products and negation, which is what makes
 it the right tool for bounding quantum classes (plan item Q4.5). Gap functions are integer-valued,
 so the bridge goes through scaled numerators, not raw gate entries: the entries `1/√2` of `H` and
-`i` of `S` are not integers. For a circuit over the gate set of [Wat08, §III.2] with `h` Hadamard
-gates, every amplitude is `(1/√2)^h` times a sum of terms in `{±1, ±i}` (plan FD-10). The real and
+`i` of `S` are not integers. This account is for computational-basis inputs to the *unitary
+purification* of plan FD-4, in which every discarded wire is retained: erasure gates are excluded,
+since a state they produce, such as `I/2` from erasing half of a Bell pair, has no amplitude
+vector [Wat08, §§III.2–III.3] (round-2 audit, finding 1). For such a circuit over the gate set of
+[Wat08, §III.2] with `h` Hadamard gates, every amplitude is `(1/√2)^h` times a sum of terms in
+`{±1, ±i}` (plan FD-10). The real and
 imaginary parts of these sums are integers, and the acceptance probability, a sum of squared
 moduli, is `F(x) / 2^h` for an integer `F` built from them. It is such numerators `F`, with the
 denominator stated explicitly, that the later construction shows to be gap functions
@@ -193,7 +197,8 @@ theorem constVerifier_eq (b : Bool) (x r : List Bool) :
 where it abstains, answer the next random bit instead, or `false` if the string has no next bit.
 Later bits are ignored. On random strings of any length `m ≥ p |x| + 1`, so that the next bit
 exists, its acceptance probability is `1/2 + gap / 2^(p |x| + 1)` (`randProb_coinFill`). On
-shorter strings the `false` default applies and that formula fails (round-1 audit, finding 5). -/
+shorter strings, abstentions use the `false` default, and the formula need not hold (round-1
+audit, finding 5; round-2 audit, finding 3). -/
 def coinFill (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) :
     List Bool → List Bool → Bool := fun x r =>
   (M x (r.take (p x.length))).getD ((r.drop (p x.length)).headD false)
