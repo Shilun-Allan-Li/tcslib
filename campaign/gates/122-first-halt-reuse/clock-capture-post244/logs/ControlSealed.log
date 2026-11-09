@@ -1,0 +1,115 @@
+ControlSealed.lean:11:63: error: Tactic `rfl` failed: The left-hand side
+  (maskedClock W false).k
+is not definitionally equal to the right-hand side
+  W.k
+
+W : FinTM Bool
+⊢ (maskedClock W false).k = W.k
+ControlSealed.lean:12:78: error: Tactic `rfl` failed: The left-hand side
+  (maskedClock W b).State
+is not definitionally equal to the right-hand side
+  W.State
+
+W : FinTM Bool
+b : Bool
+⊢ (maskedClock W b).State = W.State
+ControlSealed.lean:14:77: error: Tactic `rfl` failed: The left-hand side
+  (obliviousSchedule W a).k
+is not definitionally equal to the right-hand side
+  W.k + 3
+
+W : FinTM Bool
+a : ℕ
+⊢ (obliviousSchedule W a).k = W.k + 3
+ControlSealed.lean:16:61: error: Tactic `rfl` failed: The left-hand side
+  (obliviousSchedule W a).State
+is not definitionally equal to the right-hand side
+  OblPhase W.State a
+
+W : FinTM Bool
+a : ℕ
+⊢ (obliviousSchedule W a).State = OblPhase W.State a
+ControlSealed.lean:18:51: error: Tactic `rfl` failed: The left-hand side
+  oblEmbed true
+is not definitionally equal to the right-hand side
+  OblSymbol.bit true
+
+⊢ oblEmbed true = OblSymbol.bit true
+ControlSealed.lean:19:54: error: Tactic `rfl` failed: The left-hand side
+  fun b => oblEmbed b
+is not definitionally equal to the right-hand side
+  OblSymbol.bit
+
+⊢ (fun b => oblEmbed b) = OblSymbol.bit
+ControlSealed.lean:22:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t ↔ ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+ControlSealed.lean:24:83: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime
+is not definitionally equal to the right-hand side
+  fun x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+⊢ M.ComputesInTime = fun x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+ControlSealed.lean:30:50: error: Tactic `rfl` failed: The left-hand side
+  M.tm.ComputesInTimeAndSpace x y t s
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = y ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = s
+
+M : FinTM Bool
+x y : List Bool
+t s : ℕ
+⊢ M.tm.ComputesInTimeAndSpace x y t s ↔
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = y ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = s
+ControlSealed.lean:34:48: error: Tactic `rfl` failed: The left-hand side
+  M.tm.ComputesInTimeAndSpace
+is not definitionally equal to the right-hand side
+  fun x y t s =>
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = y ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = s
+
+M : FinTM Bool
+⊢ M.tm.ComputesInTimeAndSpace = fun x y t s =>
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = y ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = s
+ControlSealed.lean:37:47: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c t
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step^[t] c
+
+M : FinTM Bool
+x : List Bool
+c : Cfg M.k Bool M.State x
+t : ℕ
+⊢ MultiTapeTM.runFrom c t = MultiTapeTM.step^[t] c
+ControlSealed.lean:40:41: error: Tactic `rfl` failed: The left-hand side
+  fun c t => MultiTapeTM.runFrom c t
+is not definitionally equal to the right-hand side
+  fun c t => MultiTapeTM.step^[t] c
+
+M : FinTM Bool
+x : List Bool
+⊢ (fun c t => MultiTapeTM.runFrom c t) = fun c t => MultiTapeTM.step^[t] c
+ControlSealed.lean:42:85: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init M.tm.q₀ x
+
+M : FinTM Bool
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init M.tm.q₀ x
+ControlSealed.lean:43:76: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg
+is not definitionally equal to the right-hand side
+  fun x => Cfg.init M.tm.q₀ x
+
+M : FinTM Bool
+⊢ MultiTapeTM.initCfg = fun x => Cfg.init M.tm.q₀ x
