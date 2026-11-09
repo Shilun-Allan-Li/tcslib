@@ -382,7 +382,7 @@ theorem seamCompTM_run [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
         Cfg.ofWords q₂ w₂ := by
     simpa only [Cfg.ofWords_mapState] using h₂
   simpa only [Cfg.ofWords_mapState] using
-    seamComp_run_general M₁ exit M₂ entry h₁ rfl hcut h₂'
+    seamComp_run_general M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut h₂'
 
 /-- **R2, the inherited first-return cut** (design
 §12). Under the hypotheses of `seamCompTM_run`, if additionally `M₂` does
@@ -418,7 +418,7 @@ theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S�
         t).state ≠ some q₂ := by
     simpa only [Cfg.ofWords_mapState] using hcut₂
   simpa only [Cfg.ofWords_mapState] using
-    seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ rfl hcut hcut₂'
+    seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ (Cfg.ofWords_state exit w₁) hcut hcut₂'
 
 /-- **R2 space, the per-tape headline** (design §12,
 frozen decision 12.1: the sharp per-tape form). On every work tape `i`,
@@ -452,7 +452,7 @@ theorem seamCompTM_visitedByTapeHead [DecidableEq S₁]
       M₁.visitedByTapeHead (Cfg.ofWords (input := x) start w₀) T₁ i ∪
         M₂.visitedByTapeHead (Cfg.ofWords (input := x) entry w₁) T₂ i := by
   simpa only [Cfg.ofWords_mapState] using
-    seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ rfl hcut i
+    seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ (Cfg.ofWords_state exit w₁) hcut i
 
 /-- **R2 space, the per-tape sum corollary** (design
 §12, decision 12.1). On every work tape, the composite's space usage is
