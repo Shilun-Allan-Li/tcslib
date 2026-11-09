@@ -31,9 +31,9 @@ bound with explicit dimension and sample parameters.
 
 No SIS or LWE hardness assumption is used here; the SIS norm field is irrelevant.
 The family is collision-universal, not pairwise independent: its zero input always
-hashes to zero. All nontrivial statements are admitted. Later proof fills must use
-approved owner-side readings of `IsUniversal` and `HasMinEntropy`; the existing
-shared-reader proposal remains unapplied in this draft.
+hashes to zero. The uniform difference law and extraction error budget are proved
+below. The universality, entropy and strong extraction proofs await owner-side
+readings of `IsUniversal` and `HasMinEntropy`.
 -/
 
 namespace TCSlib.Cryptography.Hashing.SIS
@@ -45,14 +45,61 @@ open TCSlib.Cryptography.SIS (Parameters)
 uniform matrix [Pei16, Section 5.2.1, regularity argument].
 
 **Proof sketch.** Choose a differing input coordinate. Its integer difference is
-`1` or `-1`, hence a unit modulo every allowed modulus. For any assignment of the
-other matrix columns, exactly one choice of this column realizes each target
-vector. The empty-column case has no distinct inputs. -/
+`1` or `-1`, hence a unit modulo every allowed modulus. Split the matrix into this
+column and the other columns. Once the other columns are fixed, multiplying the
+chosen column by the unit and translating is a bijection. Average the resulting
+singleton probability over the other columns. The differing coordinate exists
+whenever the inputs are distinct, so the empty-column case is vacuous. -/
 theorem hash_difference_probability (P : Parameters) (x y : Fin P.columns → Bool)
     (hxy : x ≠ y) (z : Fin P.dimension → ZMod P.modulus) :
     uprob (fun A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) =>
       hash P A x - hash P A y = z) = 1 / (P.modulus : ℝ) ^ P.dimension := by
-  sorry
+  classical
+  obtain ⟨j, hj⟩ := Function.ne_iff.mp hxy
+  let difference : Fin P.columns → ZMod P.modulus :=
+    fun k => ((x k).toNat : ZMod P.modulus) - ((y k).toNat : ZMod P.modulus)
+  have hpivot : difference j = 1 ∨ difference j = -1 := by
+    cases hx : x j <;> cases hy : y j <;> simp_all [difference]
+  have hunit : IsUnit (difference j) := by
+    rcases hpivot with h | h
+    · rw [h]
+      exact isUnit_one
+    · rw [h]
+      exact isUnit_neg_one
+  obtain ⟨unit, hunit⟩ := hunit
+  let Column := Fin P.dimension → ZMod P.modulus
+  let Other := {k : Fin P.columns // k ≠ j} → Column
+  let split : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus) ≃ Other × Column :=
+    (Equiv.piComm (fun _ _ => ZMod P.modulus)).trans
+      ((Equiv.funSplitAt j Column).trans (Equiv.prodComm Column Other))
+  -- For fixed other columns the difference is a unit scaling followed by a translation.
+  let move (a : Other) : Equiv.Perm Column :=
+    (Equiv.piCongrRight (fun _ : Fin P.dimension => unit.mulRight)).trans
+      (Equiv.addRight (fun i => ∑ k : {k : Fin P.columns // k ≠ j}, a k i * difference k))
+  have hhash (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus)) :
+      hash P A x - hash P A y = move (split A).1 (split A).2 := by
+    rw [hash_eq, hash_eq, ← Matrix.mulVec_sub]
+    funext i
+    change (∑ k, A i k * difference k) =
+      A i j * (unit : ZMod P.modulus) + ∑ k : {k : Fin P.columns // k ≠ j}, A i k * difference k
+    rw [hunit]
+    exact Fintype.sum_eq_add_sum_subtype_ne _ j
+  have huniform : uprob (fun c : Column => c = z) = 1 / (P.modulus : ℝ) ^ P.dimension := by
+    rw [uprob_eq_card_filter]
+    have hfilter : Finset.univ.filter (fun c : Column => c = z) = {z} := by
+      ext c
+      simp
+    rw [hfilter, Finset.card_singleton]
+    change ((1 : ℕ) : ℝ) / (Fintype.card (Fin P.dimension → ZMod P.modulus) : ℝ) = _
+    rw [Fintype.card_fun, Fintype.card_fin, ZMod.card, Nat.cast_one, Nat.cast_pow]
+  have hsection (a : Other) :
+      uprob (fun c : Column => move a c = z) = 1 / (P.modulus : ℝ) ^ P.dimension :=
+    (uprob_comp_equiv (move a) (· = z)).trans huniform
+  -- Every choice of the other columns gives the same singleton probability.
+  rw [← uprob_comp_equiv split.symm (fun A => hash P A x - hash P A y = z), uprob_prod]
+  simp only [hhash, Equiv.apply_symm_apply, hsection, uexp_def, Finset.sum_const,
+    Finset.card_univ, nsmul_eq_mul]
+  exact mul_div_cancel_left₀ _ (Nat.cast_ne_zero.2 Fintype.card_ne_zero)
 
 /-- The existing binary matrix hash is collision-universal over every allowed modulus
 [Pei16, Section 5.2.1; Vad12, Theorem 6.18].
@@ -107,12 +154,30 @@ theorem distAdv_hash_uniform_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
 extraction error [Pei16, Section 5.2.1, quantitative repository refinement].
 
 **Proof sketch.** Bound `q^dimension` by `2^(dimension*width)`. The sample budget
-then bounds their ratio by `2^(-2κ)`. Monotonicity of the square root gives the result,
-including parameter zero and empty output dimension. -/
+then bounds the ratio by `2^(-2κ)`, the square of the desired nonnegative bound
+before the factor of one half. Compare the square root with that bound, including
+parameter zero and empty output dimension. -/
 theorem leftover_error_le (P : Parameters) (width κ : ℕ)
     (hq : P.modulus ≤ 2 ^ width) (hm : P.dimension * width + 2 * κ ≤ P.columns) :
     (1 / 2 : ℝ) * Real.sqrt ((P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns) ≤
       (1 / 2 : ℝ) * ((2 : ℝ)⁻¹) ^ κ := by
-  sorry
+  have htwo : (0 : ℝ) < 2 := by norm_num
+  have hwidth : (P.modulus : ℝ) ≤ (2 : ℝ) ^ width := by exact_mod_cast hq
+  have hnum : (P.modulus : ℝ) ^ P.dimension ≤ (2 : ℝ) ^ (P.dimension * width) := by
+    rw [Nat.mul_comm P.dimension width, pow_mul]
+    exact pow_le_pow_left₀ (Nat.cast_nonneg _) hwidth _
+  have hratio : (P.modulus : ℝ) ^ P.dimension / (2 : ℝ) ^ P.columns ≤
+      1 / (2 : ℝ) ^ (2 * κ) := by
+    apply (div_le_div_iff₀ (pow_pos htwo _) (pow_pos htwo _)).2
+    rw [one_mul]
+    calc
+      _ ≤ (2 : ℝ) ^ (P.dimension * width) * (2 : ℝ) ^ (2 * κ) :=
+        mul_le_mul_of_nonneg_right hnum (pow_nonneg htwo.le _)
+      _ = (2 : ℝ) ^ (P.dimension * width + 2 * κ) := by rw [pow_add]
+      _ ≤ (2 : ℝ) ^ P.columns := pow_le_pow_right₀ (by norm_num) hm
+  have hsquare : 1 / (2 : ℝ) ^ (2 * κ) = (((2 : ℝ)⁻¹) ^ κ) ^ 2 := by
+    rw [one_div, ← inv_pow, ← pow_mul, Nat.mul_comm 2 κ]
+  apply mul_le_mul_of_nonneg_left _ (by norm_num)
+  exact Real.sqrt_le_iff.mpr ⟨pow_nonneg (inv_nonneg.mpr htwo.le) _, hratio.trans_eq hsquare⟩
 
 end TCSlib.Cryptography.Hashing.SIS

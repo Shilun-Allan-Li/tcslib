@@ -28,7 +28,9 @@ set_option autoImplicit false
 The real-to-uniform-key advantage equals one DLWE advantage. The uniform-key
 view is within the leftover-hash error of a fully independent uniform view.
 Two fixed bits' real views differ by at most two DLWE advantages plus twice
-that extraction error. All nontrivial claims are statement-phase admissions.
+that extraction error. The first hybrid, augmented-key identities and doubled
+error budget are proved below. The statistical hybrid and final bound remain
+admitted.
 
 ## References
 
@@ -132,7 +134,21 @@ theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
       ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool) :
     distAdv (realView P χ μ) (uniformKeyView P μ) D =
       LWE.decisionAdvantage P χ (reduction P μ D) := by
-  sorry
+  let PublicMatrix := Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus)
+  let PublicKey := PublicMatrix × (Fin P.samples → ZMod P.modulus)
+  let RealSeed := PublicMatrix × ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))
+  let SubsetSeed := Fin P.samples → Bool
+  have hreal : acceptProb (realView P χ μ) D =
+      acceptProb (LWE.sample P χ) (reduction P μ D) := by
+    simp only [acceptProb_def, realView_eq, reduction_eq]
+    exact uprob_comp_equiv (Equiv.prodAssoc RealSeed SubsetSeed ρ)
+      (fun r => D (view P μ (LWE.sample P χ r.1) r.2.1) r.2.2 = true)
+  have hkey : acceptProb (uniformKeyView P μ) D =
+      acceptProb (id : PublicKey → PublicKey) (reduction P μ D) := by
+    simp only [acceptProb_def, uniformKeyView_eq, reduction_eq, id_eq]
+    exact uprob_comp_equiv (Equiv.prodAssoc PublicKey SubsetSeed ρ)
+      (fun r => D (view P μ r.1 r.2.1) r.2.2 = true)
+  rw [LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, hreal, hkey]
 
 /-- Adapt the matrix-hash shape to `n+1` ciphertext coordinates and `m` subset bits.
 The norm budget is unused in this unconditional extraction application
@@ -166,7 +182,15 @@ theorem augmented_eq (P : Parameters)
 **Proof sketch.** Split the last row from the preceding rows, transpose those
 preceding rows back, and apply the public finite-vector snoc equations. -/
 theorem augmented_bijective (P : Parameters) : Function.Bijective (augmented P) := by
-  sorry
+  let split (A : Matrix (Fin (P.dimension + 1)) (Fin P.samples) (ZMod P.modulus)) :=
+    (Matrix.transpose (Fin.init A), A (Fin.last P.dimension))
+  have hleft : Function.LeftInverse split (augmented P) := by
+    intro pk
+    simp only [split, augmented_eq, Fin.init_snoc, Fin.snoc_last, Matrix.transpose_transpose]
+  have hright : Function.RightInverse split (augmented P) := by
+    intro A
+    simp only [split, augmented_eq, Matrix.transpose_transpose, Fin.snoc_init_self]
+  exact ⟨hleft.injective, hright.surjective⟩
 
 /-- The ciphertext is the existing binary matrix hash plus a last-coordinate message
 translation [Pei16, Section 5.2.1].
@@ -184,7 +208,21 @@ theorem encrypt_augmented (P : Parameters)
       hashed +
         Fin.snoc (α := fun _ : Fin (P.dimension + 1) => ZMod P.modulus)
           (0 : Fin P.dimension → ZMod P.modulus) (LWE.BitEncoding.codepoint P μ) := by
-  sorry
+  dsimp only
+  rw [Hashing.SIS.hash_eq, augmented_eq, encrypt_fst, encrypt_snd]
+  let v : Fin P.samples → ZMod P.modulus := fun j => ((r j).toNat : ZMod P.modulus)
+  let rows : Matrix (Fin (P.dimension + 1)) (Fin P.samples) (ZMod P.modulus) :=
+    Fin.snoc pk.1.transpose pk.2
+  funext i
+  refine Fin.lastCases ?_ ?_ i
+  · simp only [Pi.add_apply, Fin.snoc_last]
+    change (∑ j, pk.2 j * v j) + LWE.BitEncoding.codepoint P μ =
+      (∑ j, rows (Fin.last P.dimension) j * v j) + LWE.BitEncoding.codepoint P μ
+    simp only [rows, Fin.snoc_last]
+  · intro j
+    simp only [Pi.add_apply, Fin.snoc_castSucc, Pi.zero_apply, add_zero]
+    change dotProduct (pk.1.transpose j) v = dotProduct (rows j.castSucc) v
+    simp only [rows, Fin.snoc_castSucc]
 
 /-- The explicit strong-extraction error is half the square root of
 `q^(n+1)/2^m` [Pei16, Section 5.2.1; Vad12, Theorem 6.18]. -/
@@ -242,6 +280,11 @@ theorem two_extractionError_le (P : Parameters) (width κ : ℕ)
     (hq : P.modulus ≤ 2 ^ width)
     (hm : (P.dimension + 1) * width + 2 * κ ≤ P.samples) :
     2 * extractionError P ≤ ((2 : ℝ)⁻¹) ^ κ := by
-  sorry
+  have h := Hashing.SIS.leftover_error_le (hashParameters P) width κ
+    (by simpa only [hashParameters_modulus] using hq)
+    (by simpa only [hashParameters_dimension, hashParameters_columns] using hm)
+  rw [hashParameters_modulus, hashParameters_dimension, hashParameters_columns] at h
+  rw [extractionError_eq]
+  linarith only [h]
 
 end TCSlib.Cryptography.Encryption.PublicKey.Regev
