@@ -221,20 +221,16 @@ theorem runFrom_count_eq [Fintype St] (tm : MultiTapeTM (K + 1) Bool St) (B P T 
       (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2))) = tm.runFrom (tm.initCfg x) T := by
   classical
   set run := fun t => tm.runFrom (tm.initCfg x) t with hrun
-  have hex : ∃ t, (run t).state = none := ⟨T, hT⟩
-  set T₀ := Nat.find hex with hT₀
-  have hT0 : (run T₀).state = none := Nat.find_spec hex
-  have hT0T : T₀ ≤ T := Nat.find_min' hex hT
-  have hmin : ∀ t < T₀, (run t).state ≠ none := fun t ht => Nat.find_min hex ht
+  obtain ⟨T₀, hT0T, hmin, hfirst⟩ :=
+    MultiTapeTM.exists_first_halt tm (tm.initCfg x) hT
+  have hT0 : (run T₀).state = none := (congrArg Cfg.state hfirst).trans hT
   obtain ⟨hcells, hmono⟩ := last_tape_run (x := x) tm hwrite
   -- nonblank cells lie in the head ranges
   have hwin : ∀ t ≤ T, ∀ (i : Fin (K + 1)) (z : ℤ), (run t).workTapes i z ≠ none →
       ∃ t' ≤ t, (run t').workTapePos i = z := by
     intro t ht i z hz
     have := MultiTapeTM.mem_visited_of_ne_none tm x t i z hz
-    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at this
-    obtain ⟨t', ht', e⟩ := this
-    exact ⟨t', by omega, e⟩
+    exact (MultiTapeTM.mem_visitedByTapeHead_iff (tm := tm) (tm.initCfg x) t i z).mp this
   have hwinS : ∀ t ≤ T, ∀ (i : Fin K) (z : ℤ), (run t).workTapes i.castSucc z ≠ none →
       |z| ≤ B := by
     intro t ht i z hz
@@ -263,7 +259,7 @@ theorem runFrom_count_eq [Fintype St] (tm : MultiTapeTM (K + 1) Bool St) (B P T 
     intro a b hab hb h
     simp only [code, Prod.mk.injEq, Fin.mk.injEq] at h
     obtain ⟨hs, hi, hw, hp, hpl, hc⟩ := h
-    simp only [core, Prod.mk.injEq]
+    simp only [core_eq, Prod.mk.injEq]
     refine ⟨hs, hi, ?_, ?_⟩
     · funext i z
       refine Fin.lastCases ?_ (fun j => ?_) i
@@ -318,12 +314,15 @@ theorem runFrom_count_eq [Fintype St] (tm : MultiTapeTM (K + 1) Bool St) (B P T 
     refine this.trans (le_of_eq ?_)
     rw [← pow_mul, Nat.mul_comm (2 * B + 1) K]
     ring
-  rw [show (Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
-      (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2)) =
-      T₀ + ((Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
-      (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2)) - T₀) by omega,
-    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hT0,
-    show T = T₀ + (T - T₀) by omega, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hT0]
+  calc
+    tm.runFrom (tm.initCfg x) ((Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
+        (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2))) = tm.runFrom (tm.initCfg x) T₀ := by
+      rw [show (Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
+          (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2)) =
+          T₀ + ((Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *
+          (2 * B + 1) ^ K * ((2 * P + 1) * (2 * P + 2)) - T₀) by omega,
+        MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hT0]
+    _ = tm.runFrom (tm.initCfg x) T := hfirst
 
 end Count
 
