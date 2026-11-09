@@ -20,8 +20,8 @@ set_option autoImplicit false
 ## Main results
 
 The evaluator has an unconditional fixed output width, agrees with the modular binary
-matrix product on every canonical matrix and arbitrary raw domain word, and has a
-polynomial-time contract. All nontrivial proofs are admitted for the combined audit.
+matrix product on every canonical matrix and arbitrary raw domain word. Its
+efficiency proof awaits the polynomial-time expansion and matrix-loop proofs.
 
 ## References
 
@@ -61,7 +61,8 @@ theorem hashPoly_eq (N M W : PolyExpr) (z : List Bool) :
 first projection of the explicitly reconstructed outer pair. -/
 theorem hashPoly_length (N M W : PolyExpr) (z : List Bool) :
     (hashPoly N M W z).length = N.eval (pairFstD z).length * W.eval (pairFstD z).length := by
-  sorry
+  simp only [hashPoly_eq, Encoding.DyadicLinearAlgebra.matVecPoly_length,
+    pairFstD_pairEncode]
 
 /-- A canonical matrix and arbitrary raw domain word produce its exact padded binary
 matrix product [Pei16, Equation (4.1.1), representation correspondence].
@@ -76,7 +77,9 @@ theorem hashPoly_encodeMatrix {q : ℕ} [NeZero q] (N M W : PolyExpr) (u raw : L
       (pairEncode (Encoding.Modular.encodeMatrix (W.eval u.length) A) raw)) =
       Encoding.Modular.encodeVector (W.eval u.length)
         (A.mulVec (fun i => ((padFin (M.eval u.length) raw i).toNat : ZMod q))) := by
-  sorry
+  simp only [hashPoly_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    Encoding.BooleanVector.expandPoly_encode M W u raw hq,
+    Encoding.DyadicLinearAlgebra.matVecPoly_encodeMatrix N M W u hq]
 
 /-- The complete fixed-schedule hash evaluator is polynomial-time.
 

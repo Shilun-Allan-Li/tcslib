@@ -22,9 +22,9 @@ set_option autoImplicit false
 
 ## Main results
 
-The designated branch cancels exactly to the lossy concealed map. Other branches
-are injective under strict bounded-noise separation and an explicit larger message
-modulus. The designated branch inherits the quantitative image bound.
+The designated branch cancels exactly to the lossy concealed map and inherits its
+quantitative image bound. The other-branch residual and injectivity obligations
+use strict bounded-noise separation and the larger message modulus.
 
 ## References
 
@@ -36,7 +36,7 @@ input length `2^u*b`, message modulus `2^(b+u+1)`, and larger modulus
 `2^(b+u+1+a)`. The message modulus prevents signed branch products from aliasing.
 Integer injectivity is used after bounded lifting, never invertibility modulo `q`.
 No branch-inversion algorithm, concealer security, strong one-time signature,
-CCA2 game or efficient primitive bridge is asserted by these admitted statements.
+CCA2 game or efficient primitive bridge is asserted by this module.
 -/
 
 namespace TCSlib.Cryptography.TrapdoorFunctions.AllButOne
@@ -107,7 +107,8 @@ theorem evaluate_lossy_branch (b a u d : ℕ)
     (x : Fin (2 ^ u * b) → Bool) :
     evaluateBranch b a u d (allButOneKey b a u d A T E vstar) vstar x =
       evaluate (A, conceal A T E) x := by
-  sorry
+  rw [evaluateBranch_eq, allButOneKey_eq]
+  simp only [sub_add_cancel]
 
 /-- Cancellation leaves the encoded integer branch-difference product plus the
 original error subset sum [PW10, Section 6.4, exact dyadic adaptation].
@@ -156,6 +157,10 @@ theorem lossy_branch_range_card (b a u d : ℕ)
     (Finset.univ.image
       (evaluateBranch b a u d (allButOneKey b a u d A T E vstar) vstar)).card ≤
       (2 ^ (b + u + 1 + a)) ^ d * (2 * (2 ^ u * b) * B + 1) ^ (2 ^ u) := by
-  sorry
+  have h : evaluateBranch b a u d (allButOneKey b a u d A T E vstar) vstar =
+      evaluate (A, conceal A T E) :=
+    funext (evaluate_lossy_branch b a u d A T E vstar)
+  rw [h]
+  exact lossy_range_card A T E B hE
 
 end TCSlib.Cryptography.TrapdoorFunctions.AllButOne

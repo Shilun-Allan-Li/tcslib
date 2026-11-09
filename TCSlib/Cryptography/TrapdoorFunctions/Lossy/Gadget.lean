@@ -21,8 +21,8 @@ set_option autoImplicit false
 ## Main results
 
 Encoding respects integer casts and addition. Rounding recovers messages under a
-strict bounded integer perturbation. Gadget multiplication reads the original binary
-blocks. These are statement-phase obligations, not completed lattice or security proofs.
+strict bounded integer perturbation. Digit injectivity follows from block packing.
+The positional digit and gadget multiplication proofs await the shared block reader.
 
 ## References
 
@@ -66,7 +66,19 @@ of `2^b`. Multiplication by `2^a` makes that difference a multiple of the large 
 theorem encode_intCast (b a : ℕ) (z : ℤ) :
     encode b a (z : ZMod (2 ^ b)) =
       (2 ^ a : ZMod (2 ^ (b + a))) * (z : ZMod (2 ^ (b + a))) := by
-  sorry
+  have hrep : (((z : ZMod (2 ^ b)).val : ℤ) : ZMod (2 ^ b)) =
+      (z : ZMod (2 ^ b)) := by
+    rw [Int.cast_natCast, ZMod.natCast_zmod_val]
+  obtain ⟨t, ht⟩ := (ZMod.intCast_eq_intCast_iff_dvd_sub _ _ _).mp hrep
+  have hscaled : (↑(2 ^ (b + a) : ℕ) : ℤ) ∣
+      (2 : ℤ) ^ a * z - (2 : ℤ) ^ a * ((z : ZMod (2 ^ b)).val : ℤ) := by
+    refine ⟨t, ?_⟩
+    rw [← mul_sub, ht]
+    simp only [pow_add, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat]
+    ring
+  rw [encode_eq]
+  simpa only [Int.cast_mul, Int.cast_pow, Int.cast_ofNat, Int.cast_natCast] using
+    (ZMod.intCast_eq_intCast_iff_dvd_sub _ _ _).mpr hscaled
 
 /-- The exact dyadic encoder is additive, with wraparound included.
 
@@ -74,19 +86,71 @@ theorem encode_intCast (b a : ℕ) (z : ℤ) :
 Distribute the scale multiplication and use the public cast equations. -/
 theorem encode_add (b a : ℕ) (x y : ZMod (2 ^ b)) :
     encode b a (x + y) = encode b a x + encode b a y := by
-  sorry
+  have hx : ((x.val : ℤ) : ZMod (2 ^ b)) = x := by
+    rw [Int.cast_natCast, ZMod.natCast_zmod_val]
+  have hy : ((y.val : ℤ) : ZMod (2 ^ b)) = y := by
+    rw [Int.cast_natCast, ZMod.natCast_zmod_val]
+  rw [← hx, ← hy, ← Int.cast_add, encode_intCast, encode_intCast, encode_intCast,
+    Int.cast_add, mul_add]
 
 /-- A perturbation of magnitude strictly below half a scale step is decoded exactly
 [PW10, Section 6.3, deterministic bounded-noise adaptation].
 
 **Proof sketch.** Write the representative of the encoded point plus error as a
 multiple of the scale plus that error, up to a multiple of the full modulus.
-The strict bound places the half-shifted error in `[0,2^a)`. Natural division gives
-the original small representative modulo `2^b`, including wraparound and either sign. -/
+The strict bound places the half-shifted error in `[0,2^a)`. Transport the natural
+division to integer division and remove the multiple of `2^b` on casting back. -/
 theorem decode_encode_add (b a : ℕ) (ha : 0 < a) (m : ZMod (2 ^ b)) (e : ℤ)
     (he : 2 * e.natAbs < 2 ^ a) :
     decode b a (encode b a m + (e : ZMod (2 ^ (b + a)))) = m := by
-  sorry
+  let z := encode b a m + (e : ZMod (2 ^ (b + a)))
+  have hz : z = (((2 : ℤ) ^ a * (m.val : ℤ) + e : ℤ) : ZMod (2 ^ (b + a))) := by
+    dsimp only [z]
+    rw [encode_eq]
+    simp only [Int.cast_add, Int.cast_mul, Int.cast_pow, Int.cast_ofNat, Int.cast_natCast]
+  have hrep : ((z.val : ℤ) : ZMod (2 ^ (b + a))) = z := by
+    rw [Int.cast_natCast, ZMod.natCast_zmod_val]
+  obtain ⟨t, ht⟩ := (ZMod.intCast_eq_intCast_iff_dvd_sub _ _ _).mp (hz.symm.trans hrep.symm)
+  have hs : (2 : ℤ) ≤ 2 ^ a := by
+    calc
+      2 = (2 : ℤ) ^ (1 : ℕ) := (pow_one _).symm
+      _ ≤ 2 ^ a := pow_le_pow_right₀ (by decide) ha
+  have habs : (2 : ℤ) * |e| < (2 : ℤ) ^ a := by
+    have hcast : (2 : ℤ) * (e.natAbs : ℤ) < (2 : ℤ) ^ a := by exact_mod_cast he
+    simpa only [Int.natCast_natAbs] using hcast
+  have hlo : 0 ≤ e + (2 : ℤ) ^ a / 2 := by
+    have h := neg_abs_le e
+    omega
+  have hhi : e + (2 : ℤ) ^ a / 2 < (2 : ℤ) ^ a := by
+    have h := le_abs_self e
+    omega
+  have hval : (z.val : ℤ) = (2 : ℤ) ^ a * (m.val : ℤ) + e +
+      ((2 : ℤ) ^ b * (2 : ℤ) ^ a) * t := by
+    have hmodulus : (↑(2 ^ (b + a) : ℕ) : ℤ) = (2 : ℤ) ^ b * (2 : ℤ) ^ a := by
+      rw [pow_add (2 : ℕ) b a, Nat.cast_mul]
+      push_cast
+      rfl
+    have hdiff : (z.val : ℤ) - ((2 : ℤ) ^ a * (m.val : ℤ) + e) =
+        ((2 : ℤ) ^ b * (2 : ℤ) ^ a) * t :=
+      ht.trans (congrArg (fun scale : ℤ => scale * t) hmodulus)
+    omega
+  have hshift : (z.val : ℤ) + (2 : ℤ) ^ a / 2 =
+      (e + (2 : ℤ) ^ a / 2) + ((m.val : ℤ) + (2 : ℤ) ^ b * t) * (2 : ℤ) ^ a := by
+    rw [hval]
+    ring
+  have hdiv : (((z.val + 2 ^ a / 2) / 2 ^ a : ℕ) : ℤ) =
+      (m.val : ℤ) + (2 : ℤ) ^ b * t := by
+    simp only [Int.natCast_ediv, Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat]
+    rw [hshift, Int.add_mul_ediv_right _ _ (by omega : (2 : ℤ) ^ a ≠ 0),
+      Int.ediv_eq_zero_of_lt hlo hhi, zero_add]
+  have hmod : (↑((2 : ℤ) ^ b) : ZMod (2 ^ b)) = 0 := by
+    apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr
+    simp only [Nat.cast_pow, Nat.cast_ofNat]
+    exact dvd_refl _
+  change decode b a z = m
+  rw [decode_eq, ← Int.cast_natCast, hdiv]
+  simp only [Int.cast_add, Int.cast_mul, hmod, zero_mul, add_zero, Int.cast_natCast,
+    ZMod.natCast_zmod_val]
 
 /-- Put the powers of two for each little-endian block in that block's column
 [PW10, Section 6.3, transposed gadget convention]. -/
@@ -134,6 +198,8 @@ theorem gadget_mulVec (b w : ℕ) (x : Fin (w * b) → Bool) (j : Fin w) :
 
 **Proof sketch.** Read `digits_eq` and apply injectivity of the existing block equivalence. -/
 theorem digits_injective (b w : ℕ) : Function.Injective (digits b w) := by
-  sorry
+  intro x y h
+  rw [digits_eq, digits_eq] at h
+  exact (Randomized.blocksEquiv w b).injective h
 
 end TCSlib.Cryptography.TrapdoorFunctions.Lossy
