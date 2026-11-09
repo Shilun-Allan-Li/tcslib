@@ -227,7 +227,13 @@ theorem applyOn_refl (U : Matrix (Reg n) (Reg n) ℂ) :
 /-- The product of two operators on disjoint wires, entrywise: it is
 `U₁ (y ∘ w₁) (x ∘ w₁) · U₂ (y ∘ w₂) (x ∘ w₂)` when `y` and `x` agree off both ranges, and `0`
 otherwise. The only intermediate register that can contribute agrees with `x` on `w₁`'s range and
-with `y` elsewhere. -/
+with `y` elsewhere.
+
+**Proof sketch.** Let `z*` be `y` on `w₂`'s range and `x` elsewhere. Then `z* ∘ w₁ = x ∘ w₁`
+(the ranges are disjoint), `z* ∘ w₂ = y ∘ w₂`, `z*` agrees with `x` off `w₂`, and `z*` agrees with
+`y` off `w₁` exactly when `y` and `x` agree off both ranges. So the term at `z*` is the stated
+expression. Any other `z` with a nonzero term would agree with `y` off `w₁` and with `x` off `w₂`,
+which forces `z = z*` wire by wire (`Finset.sum_eq_single`). -/
 private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂ ↪ Fin n)
     (hd : ∀ j₁ j₂, w₁ j₁ ≠ w₂ j₂)
     (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) (y x : Reg n) :
@@ -289,7 +295,8 @@ theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂
     Set.disjoint_left.1 h ⟨j₁, rfl⟩ ⟨j₂, e.symm⟩
   show applyOn w₁ U₁ * applyOn w₂ U₂ = applyOn w₂ U₂ * applyOn w₁ U₁
   ext y x
-  rw [applyOn_mul_applyOn_of_disjoint w₁ w₂ hd, applyOn_mul_applyOn_of_disjoint w₂ w₁ (fun a b e => hd b a e.symm)]
+  rw [applyOn_mul_applyOn_of_disjoint w₁ w₂ hd,
+    applyOn_mul_applyOn_of_disjoint w₂ w₁ (fun a b e => hd b a e.symm)]
   by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
   · rw [if_pos hc, if_pos (fun i h2 h1 => hc i h1 h2), mul_comm]
   · rw [if_neg hc, if_neg (fun hc' => hc (fun i h1 h2 => hc' i h2 h1))]
@@ -360,7 +367,8 @@ theorem applyOn_of_fin_zero (w : Fin 0 ↪ Fin n) (U : Matrix (Reg 0) (Reg 0) �
 
 /-- A permutation gate placed on wires `w` maps `|x⟩` to the basis state that holds `σ (x ∘ w)`
 on the wires `w` and agrees with `x` elsewhere. -/
-private theorem applyOn_permMat_mulVec_basis (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k)) (x : Reg n) :
+private theorem applyOn_permMat_mulVec_basis (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k))
+    (x : Reg n) :
     applyOn w (permMat σ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (Function.extend w (σ (x ∘ w)) x)).vec := by
   rw [applyOn_mulVec_basis]

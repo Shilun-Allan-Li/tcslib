@@ -124,7 +124,8 @@ theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c • (ψ ⊗ᵠ ψ).vec := by
   rintro ⟨U, hU⟩
   obtain ⟨i, j, hij⟩ := exists_pair_ne d
-  let φ : Ket d := ⟨fun x => ((Real.sqrt 2 : ℂ))⁻¹ * ((if i = x then 1 else 0) + (if j = x then 1 else 0)), by
+  let φ : Ket d := ⟨fun x =>
+      ((Real.sqrt 2 : ℂ))⁻¹ * ((if i = x then 1 else 0) + (if j = x then 1 else 0)), by
     simp only [norm_mul, mul_pow, ← Finset.mul_sum]
     rw [Finset.sum_eq_add (s := Finset.univ) i j hij]
     · simp [hij, Ne.symm hij]
