@@ -29,4 +29,4 @@ and its concrete-advantage characterization to the generator module.
 contains the exact sources, native receipts, census, seal evidence, and lint
 comparison.
 
-**Clear to merge — the source, compatibility import, and affected checks pass.**
+Seyoon merged the verified source at `850d97de5dff2594d8cdf75f3d7705df4df27108`.
