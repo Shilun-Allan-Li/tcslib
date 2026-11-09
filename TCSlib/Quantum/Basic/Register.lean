@@ -129,6 +129,21 @@ theorem regAppendEquiv_apply_natAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fin
     regAppendEquiv k m (a, b) (Fin.natAdd k i) = b i := by
   simp [regAppendEquiv]
 
+/-- Splitting a register of `k + m` wires gives its first `k` wires and its last `m` wires:
+`(regAppendEquiv k m).symm y = (y ∘ castAdd m, y ∘ natAdd k)`. Promoted from a private lemma of
+`ApplyOn.lean` during fill epoch E1, so that `Protocols.lean` can use it without a copy.
+
+**Proof sketch.** Apply `regAppendEquiv k m` to both sides and compare wire by wire
+(`Fin.addCases`), using `regAppendEquiv_apply_castAdd` and `regAppendEquiv_apply_natAdd`. -/
+theorem regAppendEquiv_symm_apply (k m : ℕ) (y : Reg (k + m)) :
+    (regAppendEquiv k m).symm y = (fun i => y (Fin.castAdd m i), fun i => y (Fin.natAdd k i)) := by
+  apply (regAppendEquiv k m).injective
+  rw [Equiv.apply_symm_apply]
+  funext i
+  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+  · rw [regAppendEquiv_apply_castAdd]
+  · rw [regAppendEquiv_apply_natAdd]
+
 /-! ### Norm identities behind the constructions -/
 
 section Norms

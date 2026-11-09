@@ -71,6 +71,12 @@ open scoped Quantum
 
 /-! ### No-cloning -/
 
+/-- A unitary preserves the Hermitian inner product `star a ⬝ᵥ b`. -/
+private theorem inner_mulVec_of_mem_unitaryGroup {d : Type*} [Fintype d] [DecidableEq d] {U : Matrix d d ℂ}
+    (hU : U ∈ 𝐔[d]) (a b : d → ℂ) : star (U *ᵥ a) ⬝ᵥ (U *ᵥ b) = star a ⬝ᵥ b := by
+  rw [Matrix.mem_unitaryGroup_iff'] at hU
+  rw [star_mulVec, dotProduct_mulVec, vecMul_vecMul, ← star_eq_conjTranspose, hU, vecMul_one]
+
 /-- **No-cloning for two states.** Let `ψ` and `φ` be states whose overlap
 `t = |⟨ψ, φ⟩| = |∑ₓ conj (ψ x) φ x|` satisfies `0 < t < 1`. Then no unitary `U` maps `|ψ⟩|e⟩` to
 `c₁ |ψ⟩|ψ⟩` and `|φ⟩|e⟩` to `c₂ |φ⟩|φ⟩` for any phases `|c₁| = |c₂| = 1`, whatever the blank
@@ -85,7 +91,31 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (�
     ¬ ∃ (U : 𝐔[d × d]) (c₁ c₂ : ℂ), ‖c₁‖ = 1 ∧ ‖c₂‖ = 1 ∧
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c₁ • (ψ ⊗ᵠ ψ).vec ∧
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
-  sorry
+  rintro ⟨U, c₁, c₂, hc₁, hc₂, hψ, hφ⟩
+  set t := ∑ x, star (ψ.vec x) * φ.vec x with ht
+  have hin : star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec = t := by
+    simp only [dotProduct, Pi.star_apply, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type,
+      mul_ite, mul_one, mul_zero]
+    simp [Finset.sum_ite_eq, ht, mul_comm]
+  have hout : star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) = star c₁ * c₂ * t ^ 2 := by
+    simp only [dotProduct, Pi.star_apply, Pi.smul_apply, smul_eq_mul, Ket.prod_vec,
+      Fintype.sum_prod_type, star_mul']
+    rw [ht, sq, Finset.mul_sum, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun a _ => ?_
+    rw [Finset.sum_mul, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun b _ => ?_
+    ring
+  have heq : t = star c₁ * c₂ * t ^ 2 :=
+    calc t = star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec := hin.symm
+      _ = star ((U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec) ⬝ᵥ
+          ((U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec) :=
+            (inner_mulVec_of_mem_unitaryGroup U.2 _ _).symm
+      _ = star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) := by rw [hψ, hφ]
+      _ = star c₁ * c₂ * t ^ 2 := hout
+  have hn : ‖t‖ = ‖t‖ ^ 2 := by
+    conv_lhs => rw [heq]
+    rw [norm_mul, norm_mul, norm_star, hc₁, hc₂, norm_pow]; ring
+  nlinarith
 
 /-- **No-cloning theorem.** On a basis with at least two elements, no unitary `U` maps
 `|ψ⟩|e⟩` to `c_ψ |ψ⟩|ψ⟩` for every state `ψ`, even allowing a phase `|c_ψ| = 1` that depends on
@@ -98,7 +128,25 @@ forbids copying both. -/
 theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d) :
     ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d, ∃ c : ℂ, ‖c‖ = 1 ∧
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c • (ψ ⊗ᵠ ψ).vec := by
-  sorry
+  rintro ⟨U, hU⟩
+  obtain ⟨i, j, hij⟩ := exists_pair_ne d
+  let φ : Ket d := ⟨fun x => ((Real.sqrt 2 : ℂ))⁻¹ * ((if i = x then 1 else 0) + (if j = x then 1 else 0)), by
+    simp only [norm_mul, mul_pow, ← Finset.mul_sum]
+    rw [Finset.sum_eq_add (s := Finset.univ) i j hij]
+    · simp [hij, Ne.symm hij]
+      norm_num
+    · intro c _ hc; simp [Ne.symm hc.1, Ne.symm hc.2]
+    · simp
+    · simp⟩
+  have hov : ∑ x, star ((Ket.basis i).vec x) * φ.vec x = ((Real.sqrt 2 : ℂ))⁻¹ := by
+    simp [φ, Ket.basis_vec, Ne.symm hij]
+  obtain ⟨c₁, hc₁, h1⟩ := hU (Ket.basis i)
+  obtain ⟨c₂, hc₂, h2⟩ := hU φ
+  refine no_cloning_of_overlap e (Ket.basis i) φ ?_ ?_ ⟨U, c₁, c₂, hc₁, hc₂, h1, h2⟩
+  · rw [hov, norm_pos_iff]; simp
+  · rw [hov, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
+    rw [inv_lt_one_iff₀]; right
+    rw [Real.lt_sqrt (by norm_num)]; norm_num
 
 /-- **No exact cloning of vectors.** No unitary `U` maps `|ψ⟩|e⟩` to exactly `|ψ⟩|ψ⟩` for every
 ket `ψ`, on any basis. This is weaker than `no_cloning`: it forbids copying vector
@@ -111,7 +159,19 @@ physical state is trivially copied. Kept as a vector-level fact (round-1 audit, 
 theorem no_exact_cloning {d : Type*} [Fintype d] [DecidableEq d] (e : d) :
     ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d,
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = (ψ ⊗ᵠ ψ).vec := by
-  sorry
+  rintro ⟨U, hU⟩
+  let ψ := Ket.basis e
+  let ψn : Ket d := ⟨fun x => -ψ.vec x, by simpa using ψ.normalized'⟩
+  have h1 := hU ψ
+  have h2 := hU ψn
+  have hlin : (ψn ⊗ᵠ Ket.basis e).vec = -(ψ ⊗ᵠ Ket.basis e).vec := by
+    funext p; simp [ψn, Ket.prod_vec]
+  have hsq : (ψn ⊗ᵠ ψn).vec = (ψ ⊗ᵠ ψ).vec := by
+    funext p; simp [ψn, Ket.prod_vec]
+  rw [hlin, mulVec_neg, h1, hsq] at h2
+  have := congrFun h2 (e, e)
+  simp [ψ, Ket.prod_vec, Ket.basis_vec] at this
+  norm_num at this
 
 /-! ### The EPR pair -/
 
@@ -127,7 +187,9 @@ theorem bellVec_eq (x : Reg 2) :
 **Proof sketch.** Exactly two of the four basis states have equal wires, and
 `‖1/√2‖² = 1/2`. -/
 theorem sum_norm_sq_bellVec : ∑ x, ‖bellVec x‖ ^ 2 = 1 := by
-  sorry
+  rw [← (finTwoArrowEquiv Qubit).symm.sum_comp, Fintype.sum_prod_type]
+  simp [Fin.sum_univ_two, bellVec, finTwoArrowEquiv]
+  norm_num
 
 /-- The EPR pair `(|00⟩ + |11⟩)/√2`. [dW26, §1.5] -/
 def bell : Ket (Reg 2) := ⟨bellVec, sum_norm_sq_bellVec⟩
@@ -153,7 +215,10 @@ def teleportInit (ψ : Ket (Reg 1)) : Ket (Reg 3) := (ψ ⊗ᵠ bell).relabel (r
 `regAppendEquiv_apply_castAdd` and `regAppendEquiv_apply_natAdd`. -/
 theorem teleportInit_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
     (teleportInit ψ).vec y = ψ.vec (fun _ => y 0) * bellVec ![y 1, y 2] := by
-  sorry
+  rw [teleportInit, Ket.relabel_vec, Ket.prod_vec, regAppendEquiv_symm_apply, bell_vec]
+  congr 2
+  · funext i; fin_cases i; rfl
+  · funext i; fin_cases i <;> rfl
 
 /-- The state after Alice's gates: `CNOT` from wire `0` to wire `1`, then `H` on wire `0`.
 Alice then measures wires `0, 1`. [dW26, §1.5] -/
@@ -165,6 +230,55 @@ theorem teleportState_eq (ψ : Ket (Reg 1)) :
     teleportState ψ =
       ((teleportInit ψ).evolve (applyOnU wires01 Gate.CNOT)).evolve (applyOnU (wire 0) Gate.H) :=
   rfl
+
+/-- `(1/√2)² = 1/2` in `ℂ`. -/
+private theorem inv_sqrt_two_sq : ((Real.sqrt 2 : ℂ))⁻¹ ^ 2 = 1 / 2 := by
+  rw [sq, ← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]; norm_num
+
+/-- `CNOT` on wires `0, 1` of a three-wire register adds wire `0` into wire `1`. -/
+private theorem cnot_extend_wires01 (z : Reg 3) :
+    Function.extend wires01 (cnotMap (z ∘ wires01)) z = Function.update z 1 (z 1 + z 0) := by
+  funext j
+  fin_cases j
+  · exact (wires01.injective.extend_apply _ z 0).trans (by simp [cnotMap, wires01_apply])
+  · exact (wires01.injective.extend_apply _ z 1).trans (by simp [cnotMap, wires01_apply])
+  · rw [Function.extend_apply' _ _ _ (by decide)]; simp
+
+/-- The teleportation state after Alice's gates, as a two-term sum over the value `a` of wire `0`
+before the Hadamard gate. -/
+private theorem teleportState_vec_sum (ψ : Ket (Reg 1)) (y : Reg 3) :
+    (teleportState ψ).vec y = ∑ a : Qubit, hadamardMat (fun _ => y 0) (fun _ => a) *
+      (ψ.vec (fun _ => a) * bellVec ![y 1 + a, y 2]) := by
+  rw [teleportState, Ket.evolve_vec, Ket.evolve_vec, applyOnU_coe, applyOnU_coe,
+    applyOn_wire_mulVec_apply]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  rw [Gate.H_coe, Gate.CNOT_coe, applyOn_permMat_mulVec_apply, Function.Involutive.toPerm_symm,
+    Function.Involutive.coe_toPerm, cnot_extend_wires01, teleportInit_vec]
+  congr 2
+
+/-- A permutation matrix relabels a vector's entries: `(permMat σ v) c = v (σ⁻¹ c)`. -/
+private theorem permMat_mulVec_apply {d : Type*} [Fintype d] [DecidableEq d] (σ : Equiv.Perm d)
+    (w : d → ℂ) (c : d) : (permMat σ *ᵥ w) c = w (σ.symm c) := by
+  simp only [mulVec, dotProduct, permMat_apply, ite_mul, one_mul, zero_mul]
+  rw [Finset.sum_eq_single (σ.symm c)]
+  · rw [if_pos (by simp)]
+  · intro z _ hz; rw [if_neg (fun h => hz (by rw [h, Equiv.symm_apply_apply]))]
+  · intro h; exact absurd (Finset.mem_univ _) h
+
+/-- On one wire, `flipAt 0` adds `1` to the wire's value. -/
+private theorem flipAt_const (c : Qubit) : flipAt 0 (fun _ : Fin 1 => c) = fun _ => c + 1 := by
+  funext j; fin_cases j; simp [flipAt]
+
+/-- `X` flips the argument of a one-qubit amplitude vector. -/
+private theorem X_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
+    ((Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ w) (fun _ => c) = w (fun _ => c + 1) := by
+  rw [Gate.X_coe, permMat_mulVec_apply, Function.Involutive.toPerm_symm,
+    Function.Involutive.coe_toPerm, flipAt_const]
+
+/-- `Z` multiplies the amplitude at `|c⟩` by `(-1)^c`. -/
+private theorem Z_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
+    ((Gate.Z : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ w) (fun _ => c) = (-1) ^ (c : ℕ) * w (fun _ => c) := by
+  rw [Gate.Z_coe, mulVec_diagonal, zPhase_eq]
 
 /-- **Teleportation, the key identity.** After Alice's gates the state is
 `½ ∑_{m₀ m₁} |m₀ m₁⟩ ⊗ X^{m₁} Z^{m₀} |ψ⟩`: its amplitude at `y` is `½` times the amplitude of
@@ -181,7 +295,14 @@ theorem teleportState_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
       (1 / 2 : ℂ) *
         (((Gate.X ^ (y 1).val * Gate.Z ^ (y 0).val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
           ψ.vec) (fun _ => y 2) := by
-  sorry
+  rw [teleportState_vec_sum, Fin.sum_univ_two, Submonoid.coe_mul, SubmonoidClass.coe_pow,
+    SubmonoidClass.coe_pow, ← mulVec_mulVec]
+  generalize y 0 = c0
+  generalize y 1 = c1
+  generalize y 2 = c2
+  fin_cases c0 <;> fin_cases c1 <;> fin_cases c2 <;>
+    simp [hadamardMat, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
+    ring_nf <;> rw [inv_sqrt_two_sq] <;> ring
 
 /-- Each of Alice's four measurement outcomes `(m₀, m₁)` occurs with probability `1/4`,
 whatever `ψ` is. [dW26, §1.5]
@@ -192,7 +313,28 @@ whatever `ψ` is. [dW26, §1.5]
 theorem teleport_outcome_prob (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     ∑ y ∈ Finset.univ.filter (fun y : Reg 3 => y 0 = m₀ ∧ y 1 = m₁), (teleportState ψ).prob y =
       1 / 4 := by
-  sorry
+  set M : Matrix (Reg 1) (Reg 1) ℂ := ((Gate.X ^ m₁.val * Gate.Z ^ m₀.val : Gate 1) :
+    Matrix (Reg 1) (Reg 1) ℂ) with hM
+  have hU : M ∈ 𝐔[Reg 1] := (Gate.X ^ m₁.val * Gate.Z ^ m₀.val).2
+  rw [Finset.sum_nbij' (fun y => y 2) (fun c => ![m₀, m₁, c])
+    (t := Finset.univ) (g := fun c => ‖(1 / 2 : ℂ) * (M *ᵥ ψ.vec) (fun _ => c)‖ ^ 2)]
+  · simp only [norm_mul, mul_pow, ← Finset.mul_sum]
+    rw [← (Equiv.funUnique (Fin 1) Qubit).sum_comp]
+    have h1 : ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) (fun _ => (Equiv.funUnique (Fin 1) Qubit) x)‖ ^ 2 =
+        ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) x‖ ^ 2 := by
+      refine Finset.sum_congr rfl fun x _ => ?_
+      congr 3; funext j; fin_cases j; rfl
+    rw [h1, sum_norm_sq_mulVec_of_mem_unitaryGroup hU, ψ.normalized']
+    norm_num
+  · intros; exact Finset.mem_univ _
+  · intro c _; simp
+  · intro y hy
+    obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
+    funext j; fin_cases j <;> simp [h0, h1]
+  · intros; rfl
+  · intro y hy
+    obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
+    rw [Ket.prob_eq, teleportState_vec, h0, h1]
 
 /-- Bob's qubit after Alice measures `(m₀, m₁)`, unnormalized: the amplitudes of
 `teleportState ψ` with wires `0, 1` fixed to `m₀, m₁`. -/
@@ -202,6 +344,14 @@ def bobVec (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) : Reg 1 → ℂ :=
 /-- `bobVec ψ m₀ m₁ b` is the amplitude of `teleportState ψ` at `(m₀, m₁, b)`. -/
 theorem bobVec_apply (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) (b : Reg 1) :
     bobVec ψ m₀ m₁ b = (teleportState ψ).vec ![m₀, m₁, b 0] := rfl
+
+/-- `Xᵐ Xᵐ = 1`, from `X X = 1`. -/
+private theorem X_pow_mul_self (m : ℕ) : Gate.X ^ m * Gate.X ^ m = 1 := by
+  rw [← pow_add, ← two_mul, pow_mul, sq, Gate.X_mul_X, one_pow]
+
+/-- `Zᵐ Zᵐ = 1`, from `Z Z = 1`. -/
+private theorem Z_pow_mul_self (m : ℕ) : Gate.Z ^ m * Gate.Z ^ m = 1 := by
+  rw [← pow_add, ← two_mul, pow_mul, sq, Gate.Z_mul_Z, one_pow]
 
 /-- **Teleportation is correct.** After Alice's outcome `(m₀, m₁)`, Bob applies `X^{m₁}` and
 then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
@@ -213,7 +363,16 @@ theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
         bobVec ψ m₀ m₁ =
       (1 / 2 : ℂ) • ψ.vec := by
-  sorry
+  have hb : bobVec ψ m₀ m₁ = (1 / 2 : ℂ) •
+      (((Gate.X ^ m₁.val * Gate.Z ^ m₀.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ ψ.vec) := by
+    funext b
+    rw [bobVec_apply, teleportState_vec, Pi.smul_apply, smul_eq_mul]
+    have hb' : (fun _ : Fin 1 => b 0) = b := by funext j; fin_cases j; rfl
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+      Matrix.tail_cons, hb']
+  have key : (Gate.Z ^ m₀.val * Gate.X ^ m₁.val) * (Gate.X ^ m₁.val * Gate.Z ^ m₀.val) = 1 := by
+    rw [mul_assoc, ← mul_assoc (Gate.X ^ m₁.val), X_pow_mul_self, one_mul, Z_pow_mul_self]
+  rw [hb, mulVec_smul, mulVec_mulVec, ← Submonoid.coe_mul, key, Submonoid.coe_one, one_mulVec]
 
 /-! ### Superdense coding -/
 
@@ -239,6 +398,38 @@ theorem superdenseState_eq (b₀ b₁ : Qubit) :
       ((bell.evolve (applyOnU (wire 0) (denseCode b₀ b₁))).evolve Gate.CNOT).evolve
         (applyOnU (wire 0) Gate.H) := rfl
 
+/-- A two-term sum over a wire's value against a one-qubit matrix is that matrix applied to a
+vector, evaluated at a basis state. -/
+private theorem wire_sum_eq_mulVec (D : Matrix (Reg 1) (Reg 1) ℂ) (g : Qubit → ℂ) (c : Qubit) :
+    ∑ a : Qubit, D (fun _ => c) (fun _ => a) * g a = (D *ᵥ fun x => g (x 0)) (fun _ => c) := by
+  simp only [mulVec, dotProduct]
+  rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
+  rfl
+
+/-- `CNOT` relabels a two-qubit vector's entries by `cnotMap`. -/
+private theorem cnot_mulVec_apply (w : Reg 2 → ℂ) (z : Reg 2) :
+    ((Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ w) z = w (cnotMap z) := by
+  rw [Gate.CNOT_coe, permMat_mulVec_apply, Function.Involutive.toPerm_symm,
+    Function.Involutive.coe_toPerm]
+
+/-- The decoded superdense state, computed case by case; `superdenseState_vec` restates it. -/
+private theorem superdenseState_vec_aux (b₀ b₁ : Qubit) :
+    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec := by
+  funext y
+  rw [superdenseState, Ket.evolve_vec, Ket.evolve_vec, Ket.evolve_vec, applyOnU_coe,
+    applyOnU_coe, applyOn_wire_mulVec_apply, Fin.sum_univ_two, cnot_mulVec_apply,
+    cnot_mulVec_apply, applyOn_wire_mulVec_apply, applyOn_wire_mulVec_apply,
+    wire_sum_eq_mulVec, wire_sum_eq_mulVec, denseCode_eq, Submonoid.coe_mul,
+    SubmonoidClass.coe_pow, SubmonoidClass.coe_pow, ← mulVec_mulVec, ← mulVec_mulVec,
+    Pi.smul_apply, Ket.basis_vec, bell_vec]
+  have hy : y = ![y 0, y 1] := by funext j; fin_cases j <;> rfl
+  rw [hy]
+  generalize y 0 = c0
+  generalize y 1 = c1
+  fin_cases b₀ <;> fin_cases b₁ <;> fin_cases c0 <;> fin_cases c1 <;>
+    simp [Gate.H_coe, hadamardMat, cnotMap, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
+    ring_nf <;> first | rfl | (rw [inv_sqrt_two_sq]; ring)
+
 /-- **Superdense coding.** Measuring Bob's two qubits gives Alice's bits `(b₀, b₁)` with
 certainty: one qubit carries two classical bits, given shared entanglement. [NC10, §2.3]
 
@@ -247,7 +438,8 @@ certainty: one qubit carries two classical bits, given shared entanglement. [NC1
 `X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to `±|b₀ b₁⟩`. A global sign does not change the
 probability. -/
 theorem superdense_decode (b₀ b₁ : Qubit) : (superdenseState b₀ b₁).prob ![b₀, b₁] = 1 := by
-  sorry
+  rw [Ket.prob_eq, superdenseState_vec_aux]
+  simp [Ket.basis_vec]
 
 /-- **Superdense coding, exact state.** Bob's decoded state is the basis state `|b₀ b₁⟩` times the
 sign `(-1)^(b₀ b₁)`: it is `-|11⟩` for the message `11` and `+|b₀ b₁⟩` otherwise. This pins down
@@ -256,7 +448,7 @@ the phase that `superdense_decode` deliberately ignores (round-1 audit, sanity s
 **Proof sketch.** As for `superdense_decode`, computing the four cases: the sign comes from
 applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
 theorem superdenseState_vec (b₀ b₁ : Qubit) :
-    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec := by
-  sorry
+    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec :=
+  superdenseState_vec_aux b₀ b₁
 
 end Quantum

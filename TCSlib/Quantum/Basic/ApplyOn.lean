@@ -40,6 +40,9 @@ the gate sits on the first `k` wires.
 * `Quantum.applyOn_castAdd_eq_reindex_kronecker` — on the first `k` wires, `applyOn` is
   `U ⊗ I`, reindexed.
 * `Quantum.applyOn_mulVec_basis` — the image of a basis state.
+* `Quantum.applyOn_mulVec_apply`, `Quantum.applyOn_wire_mulVec_apply`,
+  `Quantum.applyOn_permMat_mulVec_apply` — the action on an arbitrary vector: in general, for a
+  one-wire gate, and for a permutation gate (added in fill epoch E1).
 * `Quantum.applyOn_wire_X_mulVec_basis` — sanity check: `X` on wire `i` flips wire `i`.
 
 ## References
@@ -291,16 +294,6 @@ theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂
   · rw [if_pos hc, if_pos (fun i h2 h1 => hc i h1 h2), mul_comm]
   · rw [if_neg hc, if_neg (fun hc' => hc (fun i h1 h2 => hc' i h2 h1))]
 
-/-- Splitting a register of `k + m` wires: its first `k` and last `m` wires. -/
-private theorem regAppendEquiv_symm_apply (k m : ℕ) (y : Reg (k + m)) :
-    (regAppendEquiv k m).symm y = (fun i => y (Fin.castAdd m i), fun i => y (Fin.natAdd k i)) := by
-  apply (regAppendEquiv k m).injective
-  rw [Equiv.apply_symm_apply]
-  funext i
-  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-  · rw [regAppendEquiv_apply_castAdd]
-  · rw [regAppendEquiv_apply_natAdd]
-
 /-- Two registers agree off the first `k` wires iff they agree on the last `m`. -/
 private theorem agreeOff_castAddEmb_iff (m : ℕ) (y x : Reg (k + m)) :
     AgreeOff (Fin.castAddEmb m) y x ↔
@@ -385,6 +378,71 @@ def wire (i : Fin n) : Fin 1 ↪ Fin n := ⟨fun _ => i, fun a b _ => Subsinglet
 
 /-- `wire i` sends the gate's only wire to `i`. -/
 theorem wire_apply (i : Fin n) (j : Fin 1) : wire i j = i := rfl
+
+/-! ### Action on arbitrary vectors -/
+
+/-- A placed gate acts on a vector `v` by summing over the gate's own basis: the amplitude at `y`
+is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. [dW26, §2.1.2]
+
+**Proof sketch.** Only registers `z` agreeing with `y` off `w` contribute to
+`∑_z applyOn w U y z · v z`, and they correspond to `u : Reg k` through `z ↦ z ∘ w`, with inverse
+"write `u` on `w`, copy `y` elsewhere" (`Function.extend`), as in `applyOn_mul`. -/
+theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
+    (y : Reg n) :
+    (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
+  simp only [mulVec, dotProduct, applyOn_apply]
+  have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
+      ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
+        (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
+    refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
+    by_contra h
+    exact hz (by rw [if_neg (fun h' => h (agreeOff_symm h')), zero_mul])
+  rw [key]
+  apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u y)
+  · intros; exact Finset.mem_univ _
+  · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u y⟩
+  · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
+  · intro u _; exact extend_comp w u y
+  · intro z hz
+    rw [if_pos (agreeOff_symm (Finset.mem_filter.1 hz).2), extend_self (Finset.mem_filter.1 hz).2]
+
+/-- A one-wire gate placed on wire `i` acts on a vector by a two-term sum over the new value `a`
+of wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`. [dW26, §1.4]
+
+**Proof sketch.** `applyOn_mulVec_apply`, with `Reg 1 ≃ Qubit` and the fact that writing `u` on
+the single wire `i` is `Function.update y i (u 0)`. -/
+theorem applyOn_wire_mulVec_apply (i : Fin n) (U : Matrix (Reg 1) (Reg 1) ℂ) (v : Reg n → ℂ)
+    (y : Reg n) :
+    (applyOn (wire i) U *ᵥ v) y =
+      ∑ a : Qubit, U (fun _ => y i) (fun _ => a) * v (Function.update y i a) := by
+  rw [applyOn_mulVec_apply, ← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  have hext : Function.extend (wire i) ((Equiv.funUnique (Fin 1) Qubit).symm a) y =
+      Function.update y i a := by
+    funext j
+    by_cases hj : j = i
+    · subst hj
+      exact (wire j).injective.extend_apply _ y 0 |>.trans (by simp)
+    · rw [Function.extend_apply' _ _ _ (fun ⟨b, hb⟩ => hj (by rw [← hb, wire_apply])),
+        Function.update_of_ne hj]
+  rw [hext]
+  rfl
+
+/-- A permutation gate placed on wires `w` relabels the amplitudes: the amplitude at `y` is `v`'s
+amplitude at the register holding `σ⁻¹ (y ∘ w)` on the wires `w` and agreeing with `y` elsewhere.
+
+**Proof sketch.** In `applyOn_mulVec_apply`, `permMat σ (y ∘ w) u` is `1` exactly when
+`u = σ⁻¹ (y ∘ w)` and `0` otherwise (`Finset.sum_ite_eq`). -/
+theorem applyOn_permMat_mulVec_apply (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k)) (v : Reg n → ℂ)
+    (y : Reg n) :
+    (applyOn w (permMat σ) *ᵥ v) y = v (Function.extend w (σ.symm (y ∘ w)) y) := by
+  rw [applyOn_mulVec_apply]
+  simp only [permMat_apply, ite_mul, one_mul, zero_mul]
+  rw [Finset.sum_eq_single (σ.symm (y ∘ w))]
+  · rw [if_pos (by simp)]
+  · intro u _ hu
+    rw [if_neg (fun h => hu (by rw [h, Equiv.symm_apply_apply]))]
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 /-- Sanity check for the definition of `applyOn`: the NOT gate placed on wire `i` maps the
 basis state `|x⟩` to `|x with wire i flipped⟩`. [dW26, §1.4]
