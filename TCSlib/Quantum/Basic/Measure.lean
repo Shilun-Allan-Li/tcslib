@@ -148,12 +148,11 @@ private theorem applyOn_mulVec_proj (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (R
 This is what makes measurements of separate registers independent of the gates applied to
 the others.
 
-**Proof sketch.** Partition `Reg n` into the classes of `AgreeOff w`: registers equal off the
-range of `w`. Wire `i` is off that range, so `x i` is constant on each class, and the event
-`x i = b` is a union of classes. `applyOn w U` maps vectors supported on a class into that
-same class (`applyOn_mulVec_basis`), where it acts as `U` under the bijection `x ↦ x ∘ w` of
-`applyOn_mul`'s sketch. Unitaries preserve squared norms
-(`sum_norm_sq_mulVec_of_mem_unitaryGroup`), so each class keeps its total probability. -/
+**Proof sketch.** Let `P` project onto the basis states with `x i = b`. Then
+`probQubit i b` is the squared norm of `P ψ` (`probQubit_eq_sum_norm_sq`). The placed gate never
+changes wire `i`, since `i` is off the range of `w`, so it commutes with `P`
+(`applyOn_mulVec_proj`). Hence the probability after the gate is `‖P (A ψ)‖² = ‖A (P ψ)‖²`, and
+unitaries preserve squared norms (`sum_norm_sq_mulVec_of_mem_unitaryGroup`). -/
 theorem probQubit_evolve_applyOnU_of_forall_ne (ψ : Ket (Reg n)) (w : Fin k ↪ Fin n)
     (U : Gate k) {i : Fin n} (hi : ∀ j, w j ≠ i) (b : Qubit) :
     (ψ.evolve (applyOnU w U)).probQubit i b = ψ.probQubit i b := by

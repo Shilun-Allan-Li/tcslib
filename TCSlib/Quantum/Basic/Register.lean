@@ -196,9 +196,8 @@ theorem inner_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ} (h
 /-- A unitary matrix preserves the squared norm of every vector: `∑ ‖(U v) x‖² = ∑ ‖v x‖²`.
 [dW26, §1.2.3, App. A.4]
 
-**Proof sketch.** Write the squared norm as `star v ⬝ᵥ v`. Then
-`star (U v) ⬝ᵥ (U v) = star v ⬝ᵥ ((star U * U) v)`, and `star U * U = 1` for `U` in the
-unitary group (`Matrix.mem_unitaryGroup_iff'`). -/
+**Proof sketch.** Write the squared norm, cast to `ℂ`, as `star v ⬝ᵥ v`. A unitary preserves this
+inner product (`inner_mulVec_of_mem_unitaryGroup`), and `ℂ`'s real embedding is injective. -/
 theorem sum_norm_sq_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ}
     (hU : U ∈ 𝐔[d]) (v : d → ℂ) :
     ∑ x, ‖(U *ᵥ v) x‖ ^ 2 = ∑ x, ‖v x‖ ^ 2 := by

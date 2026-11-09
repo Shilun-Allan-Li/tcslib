@@ -142,47 +142,56 @@ theorem applyOn_one (w : Fin k ↪ Fin n) : applyOn w (1 : Matrix (Reg k) (Reg k
     · rw [if_neg hw, if_neg (fun hyx => hw (by rw [hyx]))]
   · rw [if_neg h, if_neg (fun hyx => h (by subst hyx; exact fun _ _ => rfl))]
 
+/-- A placed gate acts on a vector `v` by summing over the gate's own basis: the amplitude at `y`
+is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. [dW26, §2.1.2]
+
+**Proof sketch.** Only registers `z` agreeing with `y` off `w` contribute to
+`∑_z applyOn w U y z · v z`, and they correspond to `u : Reg k` through `z ↦ z ∘ w`, with inverse
+"write `u` on `w`, copy `y` elsewhere" (`Function.extend`; `extend_comp`, `extend_self`). This
+bijection is the key step; `applyOn_mul` is derived from this lemma. -/
+theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
+    (y : Reg n) :
+    (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
+  simp only [mulVec, dotProduct, applyOn_apply]
+  have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
+      ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
+        (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
+    refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
+    by_contra h
+    exact hz (by rw [if_neg (fun h' => h (agreeOff_symm h')), zero_mul])
+  rw [key]
+  apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u y)
+  · intros; exact Finset.mem_univ _
+  · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u y⟩
+  · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
+  · intro u _; exact extend_comp w u y
+  · intro z hz
+    rw [if_pos (agreeOff_symm (Finset.mem_filter.1 hz).2), extend_self (Finset.mem_filter.1 hz).2]
+
 /-- Placing a product on wires `w` is the product of the placed factors:
 `applyOn w (U V) = applyOn w U · applyOn w V`.
 
-**Proof sketch.** Entry `(y, x)` of the right side is `∑_z applyOn w U y z · applyOn w V z x`.
-Only the `z` agreeing with `x` (equivalently `y`) off `w` contribute, and these are in bijection
-with `Reg k` through `z ↦ z ∘ w`, with inverse "write `u` on wires `w`, copy `x` elsewhere".
-The sum becomes `∑_u U (y ∘ w) u · V u (x ∘ w)`, entry `(y ∘ w, x ∘ w)` of `U V`. If `y, x`
-do not agree off `w`, every term vanishes. The bijection is the key lemma. -/
+**Proof sketch.** Entry `(y, x)` of the right side is `applyOn w U` applied to column `x` of
+`applyOn w V`, at `y`. By `applyOn_mulVec_apply` it is `∑_u U (y ∘ w) u · applyOn w V y_u x`, where
+`y_u` is `y` with `u` written on the wires `w`. Now `y_u` reads `u` on `w` (`extend_comp`) and
+agrees with `x` off `w` exactly when `y` does (`agreeOff_extend`). So the sum is
+`∑_u U (y ∘ w) u · V u (x ∘ w)`, entry `(y ∘ w, x ∘ w)` of `U V`, when `y, x` agree off `w`, and
+`0` otherwise. -/
 theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
     applyOn w (U * V) = applyOn w U * applyOn w V := by
   ext y x
-  simp only [applyOn_apply, Matrix.mul_apply]
+  have h := applyOn_mulVec_apply w U (fun z => applyOn w V z x) y
+  simp only [mulVec, dotProduct] at h
+  rw [Matrix.mul_apply, h]
+  simp only [applyOn_apply, extend_comp]
   by_cases hyx : AgreeOff w y x
-  · rw [if_pos hyx]
-    have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) *
-        (if AgreeOff w z x then V (z ∘ w) (x ∘ w) else 0)) =
-        ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z x),
-          (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) *
-          (if AgreeOff w z x then V (z ∘ w) (x ∘ w) else 0) := by
-      refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
-      by_contra h
-      exact hz (by rw [if_neg h, mul_zero])
-    rw [key]
-    symm
-    apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u x)
-    · intros; exact Finset.mem_univ _
-    · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u x⟩
-    · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
-    · intro u _; exact extend_comp w u x
-    · intro z hz
-      have hz' := (Finset.mem_filter.1 hz).2
-      rw [if_pos (agreeOff_trans hyx (agreeOff_symm hz')), if_pos hz']
+  · rw [if_pos hyx, Matrix.mul_apply]
+    refine Finset.sum_congr rfl fun u _ => ?_
+    rw [if_pos (agreeOff_trans (agreeOff_extend w u y) hyx)]
   · rw [if_neg hyx]
     symm
-    apply Finset.sum_eq_zero
-    intro z _
-    by_cases h1 : AgreeOff w y z
-    · by_cases h2 : AgreeOff w z x
-      · exact absurd (agreeOff_trans h1 h2) hyx
-      · rw [if_neg h2, mul_zero]
-    · rw [if_neg h1, zero_mul]
+    refine Finset.sum_eq_zero fun u _ => ?_
+    rw [if_neg (fun h => hyx (agreeOff_trans (agreeOff_symm (agreeOff_extend w u y)) h)), mul_zero]
 
 /-- Placing commutes with adjoints: `(applyOn w U)ᴴ = applyOn w Uᴴ`.
 
@@ -389,31 +398,6 @@ theorem wire_apply (i : Fin n) (j : Fin 1) : wire i j = i := rfl
 
 /-! ### Action on arbitrary vectors -/
 
-/-- A placed gate acts on a vector `v` by summing over the gate's own basis: the amplitude at `y`
-is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. [dW26, §2.1.2]
-
-**Proof sketch.** Only registers `z` agreeing with `y` off `w` contribute to
-`∑_z applyOn w U y z · v z`, and they correspond to `u : Reg k` through `z ↦ z ∘ w`, with inverse
-"write `u` on `w`, copy `y` elsewhere" (`Function.extend`), as in `applyOn_mul`. -/
-theorem applyOn_mulVec_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (v : Reg n → ℂ)
-    (y : Reg n) :
-    (applyOn w U *ᵥ v) y = ∑ u : Reg k, U (y ∘ w) u * v (Function.extend w u y) := by
-  simp only [mulVec, dotProduct, applyOn_apply]
-  have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z) =
-      ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z y),
-        (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) * v z := by
-    refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
-    by_contra h
-    exact hz (by rw [if_neg (fun h' => h (agreeOff_symm h')), zero_mul])
-  rw [key]
-  apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u y)
-  · intros; exact Finset.mem_univ _
-  · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u y⟩
-  · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
-  · intro u _; exact extend_comp w u y
-  · intro z hz
-    rw [if_pos (agreeOff_symm (Finset.mem_filter.1 hz).2), extend_self (Finset.mem_filter.1 hz).2]
-
 /-- A one-wire gate placed on wire `i` acts on a vector by a two-term sum over the new value `a`
 of wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`. [dW26, §1.4]
 
@@ -455,9 +439,9 @@ theorem applyOn_permMat_mulVec_apply (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg
 /-- Sanity check for the definition of `applyOn`: the NOT gate placed on wire `i` maps the
 basis state `|x⟩` to `|x with wire i flipped⟩`. [dW26, §1.4]
 
-**Proof sketch.** By `applyOn_mulVec_basis`, the amplitude at `y` is `X (y ∘ wire i) (x ∘ wire i)`
-when `y` agrees with `x` off `i`; that is `1` exactly when `y i = x i + 1`, i.e.
-`y = flipAt i x`. -/
+**Proof sketch.** A placed permutation gate maps `|x⟩` to the basis state holding `σ (x ∘ w)` on
+the wires `w` and agreeing with `x` elsewhere (`applyOn_permMat_mulVec_basis`). For `X` on
+`wire i`, that state is `x` with wire `i` changed to `x i + 1`, which is `flipAt i x`. -/
 theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
     applyOn (wire i) (Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (flipAt i x)).vec := by
@@ -483,9 +467,9 @@ register wire `2` and its target on register wire `0` maps `|x⟩` to the basis 
 replaced by `x 0 + x 2`, all other wires unchanged (round-1 audit, sanity statement 3; on the
 input `011` the output is `111`).
 
-**Proof sketch.** By `applyOn_mulVec_basis`, the amplitude at `y` is
-`CNOT (y ∘ wires20) (x ∘ wires20)` when `y 1 = x 1`; it is `1` exactly when
-`(y 2, y 0) = (x 2, x 0 + x 2)`. -/
+**Proof sketch.** By `applyOn_permMat_mulVec_basis`, the image is the basis state holding
+`cnotMap (x 2, x 0) = (x 2, x 0 + x 2)` on wires `(2, 0)` and `x 1` on wire `1`. Check it wire by
+wire against `Function.update x 0 (x 0 + x 2)`. -/
 theorem applyOn_wires20_CNOT_mulVec_basis (x : Reg 3) :
     applyOn wires20 (Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (Function.update x 0 (x 0 + x 2))).vec := by

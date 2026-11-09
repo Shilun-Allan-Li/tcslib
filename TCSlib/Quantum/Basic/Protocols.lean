@@ -206,8 +206,8 @@ def teleportInit (ψ : Ket (Reg 1)) : Ket (Reg 3) := (ψ ⊗ᵠ bell).relabel (r
 
 /-- The amplitude of the initial state at `y` is `ψ (y 0) · bell (y 1, y 2)`.
 
-**Proof sketch.** Unfold `relabel` and `prod`, and read `(regAppendEquiv 1 2).symm y` with
-`regAppendEquiv_apply_castAdd` and `regAppendEquiv_apply_natAdd`. -/
+**Proof sketch.** Unfold `relabel` and `prod`, and split `y` into its first wire and its last two
+with `regAppendEquiv_symm_apply`. -/
 theorem teleportInit_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
     (teleportInit ψ).vec y = ψ.vec (fun _ => y 0) * bellVec ![y 1, y 2] := by
   rw [teleportInit, Ket.relabel_vec, Ket.prod_vec, regAppendEquiv_symm_apply, bell_vec]
@@ -251,14 +251,14 @@ private theorem teleportState_vec_sum (ψ : Ket (Reg 1)) (y : Reg 3) :
     Function.Involutive.coe_toPerm, cnot_extend_wires01, teleportInit_vec]
   congr 2
 
-/-- A permutation matrix relabels a vector's entries: `(permMat σ v) c = v (σ⁻¹ c)`. -/
-private theorem permMat_mulVec_apply {d : Type*} [Fintype d] [DecidableEq d] (σ : Equiv.Perm d)
-    (w : d → ℂ) (c : d) : (permMat σ *ᵥ w) c = w (σ.symm c) := by
-  simp only [mulVec, dotProduct, permMat_apply, ite_mul, one_mul, zero_mul]
-  rw [Finset.sum_eq_single (σ.symm c)]
-  · rw [if_pos (by simp)]
-  · intro z _ hz; rw [if_neg (fun h => hz (by rw [h, Equiv.symm_apply_apply]))]
-  · intro h; exact absurd (Finset.mem_univ _) h
+/-- A permutation matrix relabels a register vector's entries: `(permMat σ v) c = v (σ⁻¹ c)`. It is
+`applyOn_permMat_mulVec_apply` on all wires in order (`applyOn_refl`). -/
+private theorem permMat_mulVec_apply {n : ℕ} (σ : Equiv.Perm (Reg n)) (w : Reg n → ℂ)
+    (c : Reg n) : (permMat σ *ᵥ w) c = w (σ.symm c) := by
+  rw [← applyOn_refl (permMat σ), applyOn_permMat_mulVec_apply]
+  congr 1
+  funext j
+  exact (Function.Embedding.refl (Fin n)).injective.extend_apply _ c j
 
 /-- On one wire, `flipAt 0` adds `1` to the wire's value. -/
 private theorem flipAt_const (c : Qubit) : flipAt 0 (fun _ : Fin 1 => c) = fun _ => c + 1 := by
@@ -279,12 +279,13 @@ private theorem Z_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
 `½ ∑_{m₀ m₁} |m₀ m₁⟩ ⊗ X^{m₁} Z^{m₀} |ψ⟩`: its amplitude at `y` is `½` times the amplitude of
 `X^{y 1} Z^{y 0} ψ` at Bob's wire value `y 2`. [dW26, §1.5]
 
-**Proof sketch.** Write `ψ = α|0⟩ + β|1⟩`. After `CNOT` on wires `0, 1`, the amplitude at
-`(a, b, c)` is `ψ(a) · [b + a = c] / √2`. After `H` on wire `0` it is
-`½ ∑_a (-1)^{a y₀} ψ(a) [y₁ + a = y₂]`. For each `(y₀, y₁)` the only surviving `a` is
-`a = y₂ + y₁`, which gives `½ (-1)^{(y₂ + y₁) y₀} ψ(y₂ + y₁)`: the amplitude of
-`X^{y₁} Z^{y₀} ψ` at `y₂`. Each step reads `applyOn` through `applyOn_mulVec_basis`, so the
-proof exercises `applyOn` on two different wire sets of one register. -/
+**Proof sketch.** `H` on wire `0` acts by a two-term sum over that wire's value `a`
+(`applyOn_wire_mulVec_apply`). `CNOT` on wires `0, 1` relabels amplitudes, adding wire `0` into
+wire `1` (`applyOn_permMat_mulVec_apply`; its permutation is its own inverse). With
+`teleportInit_vec` this gives `∑_a (-1)^{a y₀}/√2 · ψ(a) · bell(y₁ + a, y₂)`
+(`teleportState_vec_sum`). Compare with `½ (X^{y₁} Z^{y₀} ψ)(y₂)` in each of the eight cases of
+`(y₀, y₁, y₂)`, using `(1/√2)² = 1/2`. The proof exercises `applyOn` on two different wire sets
+of one register. -/
 theorem teleportState_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
     (teleportState ψ).vec y =
       (1 / 2 : ℂ) *
@@ -352,8 +353,8 @@ private theorem Z_pow_mul_self (m : ℕ) : Gate.Z ^ m * Gate.Z ^ m = 1 := by
 then `Z^{m₀}`, and holds `ψ` (scaled by `½`, the amplitude of the outcome). [dW26, §1.5]
 
 **Proof sketch.** By `teleportState_vec`, `bobVec ψ m₀ m₁ = ½ X^{m₁} Z^{m₀} ψ`. Then
-`Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1`, since `X X = 1` and `Z Z = 1` (from `H_mul_H`,
-`S_mul_S` and `H_mul_Z_mul_H`, or by computing the four entries). -/
+`Z^{m₀} X^{m₁} X^{m₁} Z^{m₀} = 1` in the unitary group, since `Xᵐ Xᵐ = 1` and `Zᵐ Zᵐ = 1`
+(from `Gate.X_mul_X` and `Gate.Z_mul_Z`). -/
 theorem teleport_correct (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
     ((Gate.Z ^ m₀.val * Gate.X ^ m₁.val : Gate 1) : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ
         bobVec ψ m₀ m₁ =
@@ -428,10 +429,9 @@ private theorem superdenseState_vec_aux (b₀ b₁ : Qubit) :
 /-- **Superdense coding.** Measuring Bob's two qubits gives Alice's bits `(b₀, b₁)` with
 certainty: one qubit carries two classical bits, given shared entanglement. [NC10, §2.3]
 
-**Proof sketch.** Compute the four cases. `Z` on wire `0` turns `|00⟩ + |11⟩` into
-`|00⟩ - |11⟩`, and `X` swaps the value of wire `0`; then `CNOT` and `H` map the four Bell states
-`X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to `±|b₀ b₁⟩`. A global sign does not change the
-probability. -/
+**Proof sketch.** The decoded state is `±|b₀ b₁⟩` (the computation behind `superdenseState_vec`,
+done once in a private lemma placed before this theorem). A global sign does not change the
+probability, which is `|±1|² = 1`. -/
 theorem superdense_decode (b₀ b₁ : Qubit) : (superdenseState b₀ b₁).prob ![b₀, b₁] = 1 := by
   rw [Ket.prob_eq, superdenseState_vec_aux]
   simp [Ket.basis_vec]
@@ -440,8 +440,11 @@ theorem superdense_decode (b₀ b₁ : Qubit) : (superdenseState b₀ b₁).prob
 sign `(-1)^(b₀ b₁)`: it is `-|11⟩` for the message `11` and `+|b₀ b₁⟩` otherwise. This pins down
 the phase that `superdense_decode` deliberately ignores (round-1 audit, sanity statement 10).
 
-**Proof sketch.** As for `superdense_decode`, computing the four cases: the sign comes from
-applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
+**Proof sketch.** `Z` on wire `0` turns `|00⟩ + |11⟩` into `|00⟩ - |11⟩`, and `X` swaps the value
+of wire `0`; then `CNOT` and `H` map the four Bell states `X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to
+`±|b₀ b₁⟩`. Each gate is read through `applyOn_wire_mulVec_apply` or
+`applyOn_permMat_mulVec_apply`, and the result is compared in the 16 cases of `(b₀, b₁, y₀, y₁)`.
+The sign comes from applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
 theorem superdenseState_vec (b₀ b₁ : Qubit) :
     (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec :=
   superdenseState_vec_aux b₀ b₁

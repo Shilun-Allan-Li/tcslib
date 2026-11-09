@@ -86,8 +86,8 @@ theorem permMat_apply (σ : Equiv.Perm d) (y x : d) :
 
 /-- A permutation matrix is unitary.
 
-**Proof sketch.** `(permMat σ)ᴴ = permMat σ⁻¹`, and `permMat σ * permMat τ = permMat (σ * τ)`,
-so `(permMat σ)ᴴ * permMat σ = permMat 1 = 1`. -/
+**Proof sketch.** Entry `(y, x)` of `(permMat σ)ᴴ · permMat σ` is
+`∑_z [z = σ y] [z = σ x] = [σ y = σ x]`, which is `[y = x]` because `σ` is injective. -/
 theorem permMat_mem_unitaryGroup (σ : Equiv.Perm d) : permMat σ ∈ 𝐔[d] := by
   rw [mem_unitaryGroup_iff']
   ext y x
@@ -299,35 +299,44 @@ theorem Toffoli_coe :
 
 /-! ### Gate identities -/
 
-/-- The Hadamard gate is its own inverse: `H H = 1`. [dW26, §1.4]
-
-**Proof sketch.** Entry `(y, x)` of `H H` is `(1/2) ∑_z (-1)^{z(x + y)}`, which is `1` if
-`x = y` and `0` otherwise. -/
-theorem H_mul_H : H * H = 1 := by
+/-- Two one-qubit gates are equal when their matrices agree on the four pairs of basis states
+`(|a⟩, |b⟩)`. -/
+private theorem gate1_ext {A B : Gate 1}
+    (h : ∀ a b : Qubit, (A : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b) =
+      (B : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => a) (fun _ => b)) : A = B := by
   apply Subtype.ext
   ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;> exact h _ _
+
+/-- The Hadamard gate is its own inverse: `H H = 1`. [dW26, §1.4]
+
+**Proof sketch.** Compare the four entries (`gate1_ext`). Each is a two-term sum over the middle
+basis state (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `1` if `x = y` and `0` otherwise
+(`inv_sqrt_two_mul_self`). -/
+theorem H_mul_H : H * H = 1 := by
+  refine gate1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Matrix.one_apply,
       inv_sqrt_two_mul_self] <;>
     first | decide | norm_num
 
 /-- The NOT gate is its own inverse: `X X = 1` (round-1 audit, sanity statement 3).
 
-**Proof sketch.** `X` is the permutation gate of the involution `flipAt 0`, and
-`permMat σ * permMat σ = permMat (σ * σ) = permMat 1 = 1`. -/
+**Proof sketch.** Compare the four entries (`gate1_ext`). `X` is the permutation matrix of the
+involution `flipAt 0`, so each entry of `X X` reduces to a decidable comparison of basis states
+that agrees with the identity. -/
 theorem X_mul_X : X * X = 1 := by
-  apply Subtype.ext
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  refine gate1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp (config := { decide := true }) [Matrix.mul_apply, X_coe, permMat, flipAt]
 
 /-- The phase flip is its own inverse: `Z Z = 1` (round-1 audit, sanity statement 3).
 
-**Proof sketch.** Diagonal matrices multiply entrywise, and `((-1)^a)² = 1`. -/
+**Proof sketch.** Compare the four entries (`gate1_ext`): diagonal matrices multiply entrywise,
+and `((-1)^a)² = 1`. -/
 theorem Z_mul_Z : Z * Z = 1 := by
-  apply Subtype.ext
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  refine gate1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp (config := { decide := true }) [Z_coe, zPhase]
 
 /-- The NOT gate is not the identity, so the gate definitions are not degenerate (round-1 audit,
@@ -342,22 +351,21 @@ theorem X_ne_one : X ≠ 1 := by
 
 /-- Two phase shifts make a phase flip: `S S = Z`.
 
-**Proof sketch.** Both are diagonal; `diagonal f * diagonal g = diagonal (f * g)`, and
-`iᵃ · iᵃ = (-1)ᵃ` for `a ∈ {0, 1}`. Compare as elements of the unitary group by `Subtype.ext`. -/
+**Proof sketch.** Compare the four entries (`gate1_ext`): both are diagonal, products of diagonal
+matrices are diagonal with the products of the entries, and `iᵃ · iᵃ = (-1)ᵃ` for `a ∈ {0, 1}`. -/
 theorem S_mul_S : S * S = Z := by
-  apply Subtype.ext
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  refine gate1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp (config := { decide := true }) [S_coe, Z_coe, sPhase, zPhase]
 
 /-- Conjugating a phase flip by Hadamards gives a bit flip: `H Z H = X`. [dW26, §1.4]
 
-**Proof sketch.** Entry `(y, x)` of `H Z H` is `(1/2) ∑_z (-1)^{z(x + y + 1)}`, which is `1`
-if `y = x + 1` and `0` otherwise: the entries of `X`. -/
+**Proof sketch.** Compare the four entries (`gate1_ext`). Entry `(y, x)` of `H Z H` is a two-term
+sum (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y + 1)}`, which is `1` if `y = x + 1` and `0` otherwise
+(`inv_sqrt_two_mul_self`): the entries of `X`. -/
 theorem H_mul_Z_mul_H : H * Z * H = X := by
-  apply Subtype.ext
-  ext y x
-  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+  refine gate1_ext fun a b => ?_
+  fin_cases a <;> fin_cases b <;>
     simp (config := { decide := true }) [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Z_coe,
       zPhase, X_coe, permMat] <;>
     (rw [inv_sqrt_two_mul_self]; norm_num)
@@ -380,9 +388,10 @@ states `y, x` with `y 0 = x 0 = 1`, entry `(y, x)` of `Toffoli` is entry `(y ∘
 of `CNOT`. This is the controlled-NOT construction of [Wat08, Fig. 4], with the constant `|1⟩`
 supplied on wire `0`.
 
-**Proof sketch.** With `x 0 = 1`, `toffoliMap x` changes wire `2` to `x 2 + x 1`, which is
-`cnotMap` on wires `1, 2`. Both entries are `1` exactly when `y` is the image of `x`, and `y 0`
-matches since neither map touches wire `0`. -/
+**Proof sketch.** Both entries are indicators: `[y = toffoliMap x]` and
+`[y ∘ succ = cnotMap (x ∘ succ)]`. With `x 0 = y 0 = 1`, `toffoliMap x` changes wire `2` to
+`x 2 + x 1`, which is `cnotMap` on wires `1, 2`, so the two conditions are equivalent. The
+equivalence is checked on all `64` pairs of basis states (`toffoli_cnot_slice`). -/
 theorem Toffoli_apply_of_control_one (y x : Reg 3) (hy : y 0 = 1) (hx : x 0 = 1) :
     (Toffoli : Matrix (Reg 3) (Reg 3) ℂ) y x =
       (CNOT : Matrix (Reg 2) (Reg 2) ℂ) (fun i => y i.succ) (fun i => x i.succ) := by
