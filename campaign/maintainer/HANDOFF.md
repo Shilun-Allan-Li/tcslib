@@ -17,9 +17,11 @@ Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` /wholeMAC8:1003
 
 All own jobs/subagents stopped. Read `campaign/status/2026-11-08-relocation-2154/RESUME.md` first on return.335 reader replay passes;403 interrupted snapshot invalid; successfulBASE53 retained,HEAD53 incomplete. Approved grouped Seam/home reader source is#253 at`86e52739282233aa992c36ca961d82d0657ff142`. Two new129 mechanical proof repairs are certified privately, unadopted. Next source/screen/compatibility steps and exact paths are in the checkpoint. No new dispatch prompt issued; no source merge.
 
-### Resumed reader gates (2026-11-09T03:45:39.809223+00:00; current)
+### Resumed reader gates (2026-11-09T03:57:49.863953+00:00; current)
 
-Gate130 bundle published, prompt issued; user dispatch pending. #252 is not yet clear. #251 exact source 2e2f415c9bbf654cd8a68bb02aa62ea291d91116: two mechanical repairs adopted, provider refresh/current copy coverage and four-owner compatibility pass; publication pending. #253 exact source d26b7340265ff1318d44838aaca2cd660f8528f3: approved single Seam import and proof re-point pushed, fresh403 replay active. No source merges.
+Gates129/#251 and130/#252 are **Ready to dispatch** for Codex. Both exact exchange bundles and full prompts are recorded under their gate folders; both await confirmation of Seyoon's dispatch, remain **Not yet clear to merge** and have no source merge. Gate129 final source is `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`: three approved equations, seven old proof repairs, actual394 plus actual3/actual2 owner refreshes and bounded compiled compatibility. Current 50-file screen and all candidate dispositions are preserved. Gate130 actual335, five producer checks and complete current 53-file score coverage pass.
+
+Gate131/#253 at `d26b7340265ff1318d44838aaca2cd660f8528f3`: approved single Seam import, right-step re-point and exact existing work-tape equation move. Actual403 replay active. Exact 56-file screen has no new reported pair and twelve gone; a required proof sketch remains to add and validate. Incomplete nseam1 invalid. The records under each gate supersede older running labels below.
 
 ### Active source and checks
 
@@ -27,8 +29,9 @@ Gate130 bundle published, prompt issued; user dispatch pending. #252 is not yet 
 |---|---:|---|---|
 |#241|121|`9936345ae64a4380bbec3ac6f3dad192f927420a`|Original9 +comparator +9stationary +EXP +Prepare=21 changed roots; one explicit approvedCfgFacts import. All formal headers/definitions exact. Fresh/Prepared seam proposal and InputLength prerequisites/final integrated replay/followup pending. **Not yet clear to merge** |
 |#242|122|`f3c8c050ef98375bc237c72bde74f83d33833374`|Selected13 externalPASS; separate rootM1 for overlapping121 reads/seven held operational/type-boundary fronts remains. Four held consumers have complete private reader repairs; source not adopted. **Not yet clear to merge** |
-|#251|129|`0f926779de590194f5222277dc038d2ad097ff91`|Three approved readers plus6 old proof repairs. Actual0201/394PASS/static59 and separate final3PASS/static0; root accepted strict compiled compatibility certificate and rehashed895 final objects. Final50-file screen rerunning after verified interrupted attempt; Codex pack not issued. **Not yet clear to merge** |
-|#252|130|`04b0b07d4ea836f52cb645f480b67cdc9e99ea59`|Five approved non-simp reader prerequisites in3 owners; actual335-module replay running. Fresh producer checks/census/QA pending. Consumer patches separate. Codex selected; no prompt issued. **Not yet clear to merge** |
+|#251|129|`2e2f415c9bbf654cd8a68bb02aa62ea291d91116`|Actual394 plus 3/2 owner refreshes and compiled compatibility pass. Bundle and prompt issued. **Not yet clear to merge**|
+|#252|130|`04b0b07d4ea836f52cb645f480b67cdc9e99ea59`|Actual335 and producer checks pass. Bundle and prompt issued. **Not yet clear to merge**|
+|#253|131|`d26b7340265ff1318d44838aaca2cd660f8528f3`|Actual403 active; exact source QA and proof sketch in progress. **Not yet clear to merge**|
 
 Six cleared PR heads are unchanged: #243 `7c4b1a3e15b800cc4a98624f71a3b27458a41340`; #244 `cfa6a3ee327b03e601b25fd5f0535e85fd18f897`; #245 `b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`; #246 `48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`; #247 `e16049ad20823b3e6abba171e328489746062080`; #249 `1096e50b4e105392737ec52939b1db0cdbd9316d`. Seyoon may merge these; rebind actual merged source before later validity/adoption claims.
 

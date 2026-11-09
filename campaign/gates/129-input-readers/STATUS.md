@@ -1,3 +1,3 @@
-**Not yet clear to merge: #251 — external audit open.**
+**Ready to dispatch: gate 129, Codex.**
 
-Source `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`. Three approved equations and seven old proof repairs, with the complete replay chain and compatibility, full selected checks, literal freeze and current pair coverage. Codex bundle prepared; exchange publication receipt pending. No source merge.
+**Not yet clear to merge: #251.** Exact source `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`. The external audit is open. Verified bundle published; full prompt issued in chat. User dispatch has not been confirmed. No source merge. See publication.json and prompt.md.
