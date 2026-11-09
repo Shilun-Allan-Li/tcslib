@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Asymptotic.Ensembles
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Asymptotic.BlockEncryptor
 import TCSlib.Cryptography.Asymptotic.PublicKeyLemmas
+import TCSlib.Cryptography.Encryption.PublicKey.Scheme
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -32,7 +33,8 @@ multi-value hiding of commitments in chapter 4) and the signed predictor identit
 exactly `1/2 + ε/2`, the indexed form of `owpPredictor`). *Asymptotic*: `PublicKeyScheme`
 and `BitPublicKeyScheme` with their security notions, the bitwise scheme
 `BitPublicKeyScheme.bitwise`, the scheme `TrapdoorCollection.tdpBitScheme` of Algorithm
-104.3 and the three theorems.
+104.3 and the three theorems. The scheme interfaces live in
+`TCSlib.Cryptography.Encryption.PublicKey.Scheme`.
 
 The honest iterated machines (`blockEncFun`, `decListFun`) live in
 `TCSlib.Cryptography.Asymptotic.BlockEncryptor`; with one-bit blocks they are the encryptor and
@@ -53,12 +55,12 @@ run-3 audit P3-1).
 
 ## Main definitions
 
-* `TCSlib.Cryptography.PublicKeyScheme` — [PS10, Definition 102.1]; `PublicKeyScheme.pkEncDist`
+* `TCSlib.Cryptography.PublicKeyScheme.pkEncDist`
   — `{(pk, sk) ← Gen(1^n) : (pk, Enc_pk(m))}`; `PublicKeyScheme.Secure` —
   [PS10, Definition 102.2]; `PublicKeyScheme.pkMultiEncDist`, `PublicKeyScheme.MultiMessageSecure`
   — multi-message security (p. 103).
 * `TCSlib.Cryptography.hybridPlant` — the `j`-th hybrid distinguisher with a shared public key.
-* `TCSlib.Cryptography.BitPublicKeyScheme`, `BitPublicKeyScheme.pkEncDist`,
+* `TCSlib.Cryptography.BitPublicKeyScheme.pkEncDist`,
   `BitPublicKeyScheme.SingleBitSecure` — single-bit schemes and single-bit security (p. 103);
   `BitPublicKeyScheme.bitwise` — the bitwise scheme (p. 103).
 * `TCSlib.Cryptography.Collection.PredEvaluator` — a polynomial-time evaluator of a predicate
@@ -97,33 +99,7 @@ namespace TCSlib.Cryptography
 open Complexity Turing Finset
 open PrivateKeyScheme (encodeList)
 
-/-! ## Public-key encryption schemes [PS10, Definition 102.1, 102.2] -/
-
-/-- A **public-key encryption scheme** [PS10, Definition 102.1]: a PPT key generator
-`Gen(1^n) = ⟨pk, sk⟩`, a PPT encryptor `Enc_pk(m)` for `m ∈ {0,1}^n` (activated on `⟨pk, m⟩`),
-a deterministic polynomial-time decryptor `Dec_sk(c)` (applied to `⟨sk, c⟩`, output decoded as an
-`n`-bit string, `⊥` = any other output), with perfect correctness (clause (5)) for every coin
-string.
-
-**Deviation:** `PublicKeyScheme`: clause (4) (message enumerator) dropped; `0^n` is the
-canonical message. -/
-structure PublicKeyScheme where
-  /-- The key generator `Gen(1^n) = ⟨pk, sk⟩`. -/
-  gen : NUPPT
-  /-- The encryptor `Enc_pk(m)`, activated on `⟨pk, m⟩`. -/
-  enc : NUPPT
-  /-- The deterministic decryptor on `⟨sk, c⟩`. -/
-  dec : List Bool → List Bool
-  /-- `Gen` is a PPT. -/
-  gen_uniform : gen.Uniform
-  /-- `Enc` is a PPT. -/
-  enc_uniform : enc.Uniform
-  /-- `Dec` is polynomial-time. -/
-  dec_poly : PolyTimeComputable dec
-  /-- Perfect correctness [PS10, Definition 102.1 (5)]. -/
-  correct : ∀ n (m : Fin n → Bool) (rg : gen.Coins n) (re : enc.Coins n),
-    decodeFin n (dec (pairEncode (pairSndD (gen.runAt n [] rg))
-      (enc.runAt n (pairEncode (pairFstD (gen.runAt n [] rg)) (List.ofFn m)) re))) = some m
+/-! ## Ensemble security [PS10, Definition 102.2] -/
 
 namespace PublicKeyScheme
 
@@ -211,29 +187,7 @@ theorem distAdv_multi_le_sum {κ π μ γ ρ ρ' : Type*} [Fintype κ] [Fintype 
       (fun z : κ × ρ => (P z.1, E (P z.1) (m' j) z.2)) (hybridPlant E m m' j D) :=
   distAdv_tuple_le_sum P E m m' D
 
-/-! ## Single-bit schemes and the bitwise scheme [PS10, p. 103] -/
-
-/-- A **single-bit public-key encryption scheme**: [PS10, Definition 102.1] with message space
-`{0,1}` (the message `b` is the string `[b]`), as used in [PS10, p. 103 and Algorithm 104.3]. The
-components and the conventions are those of `PublicKeyScheme`; correctness is `Dec_sk(Enc_pk(b)) = [b]`
-for every coin string. -/
-structure BitPublicKeyScheme where
-  /-- The key generator `Gen(1^n) = ⟨pk, sk⟩`. -/
-  gen : NUPPT
-  /-- The encryptor `Enc_pk(b)`, activated on `⟨pk, [b]⟩`. -/
-  enc : NUPPT
-  /-- The deterministic decryptor on `⟨sk, c⟩`. -/
-  dec : List Bool → List Bool
-  /-- `Gen` is a PPT. -/
-  gen_uniform : gen.Uniform
-  /-- `Enc` is a PPT. -/
-  enc_uniform : enc.Uniform
-  /-- `Dec` is polynomial-time. -/
-  dec_poly : PolyTimeComputable dec
-  /-- Perfect correctness on both bits, for every coin string. -/
-  correct : ∀ n (b : Bool) (rg : gen.Coins n) (re : enc.Coins n),
-    dec (pairEncode (pairSndD (gen.runAt n [] rg))
-      (enc.runAt n (pairEncode (pairFstD (gen.runAt n [] rg)) [b]) re)) = [b]
+/-! ## Single-bit security and the bitwise scheme [PS10, p. 103] -/
 
 namespace BitPublicKeyScheme
 

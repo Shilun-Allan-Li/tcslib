@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.PublicKey
+import TCSlib.Cryptography.Encryption.PublicKey.Scheme
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.ElGamal
@@ -33,6 +34,7 @@ multi-message security.
 
 ## Contents
 
+* `Scheme` defines the scheme interfaces and their correctness fields.
 * `Asymptotic.PublicKey` develops trapdoor bit encryption and the ensemble hybrid
   arguments [PS10, §3.10].
 * `Composability.PublicKey` provides the ciphertext codec and oracle games [PS10, §7.1.4].
