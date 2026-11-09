@@ -11,3 +11,17 @@
 
 The gate remains held. Current-source validation and the follow-up audit
 are required.
+
+## Round 5 checkpoint
+
+The three repaired owners are pinned at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`.
+All 116 whole-proof preflight checks and 60 paired controls passed on
+the scratch dependency closure. The 53-file copy screen and its
+197 exact span dispositions are complete. Pair 155's earlier
+score absence came from the donor cutoff. The actual Simulation replacement
+now cites the generated action equation. Round 5 will go to Codex as a
+Markdown return in chat.
+
+A fresh 395-module merged-tree replay is running on campaign Lean
+`ef98f1685ddfb8da40d8e97890c0fff6d145523b`. Its output snapshot
+`oleans-pr251-r5-current` remains provisional during the run.
