@@ -1,0 +1,91 @@
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import hashlib,json,os,runpy,subprocess,time
+
+e=Path('/private/tmp/ab34-integrated121-current')
+w=e/'runtime'
+q=json.loads((e/'REQUEST.json').read_bytes())
+replay=Path('/private/tmp/ab34-g129r3-final-replay')
+rp=json.loads((replay/'RESULT.json').read_bytes())
+src0=json.loads((replay/'source-before.json').read_bytes())
+objects0=json.loads((replay/'output.json').read_bytes())
+assert rp['pass'] and rp['head']==q['head251']
+assert rp['baseline']==q['campaign_Lean']
+s=Path(os.environ['TCSLIB_SCRATCH'])
+i=s/'oleans-pr251-r3-final'
+o=e/'oleans'
+sha=lambda b:hashlib.sha256(b).hexdigest()
+dump=lambda x:(json.dumps(x,ensure_ascii=False,indent=2)+'\n').encode()
+def object_map(root):
+ return {f.relative_to(root).as_posix():sha(f.read_bytes()) for f in sorted(root.rglob('*.olean'))}
+assert object_map(i)==objects0
+source={f.relative_to(w).as_posix():sha(f.read_bytes()) for f in w.rglob('*.lean')}
+owners=sorted(set(q['pr241_changed_paths'])|set(q['changed_owner_source_sha256']))
+assert sorted(p for p in source if src0[p]['sha256']!=source[p])==owners
+read_imports=runpy.run_path(str(w/'devtools/seyoon/graph.py'))['imports_of']
+dependencies={f:{m.replace('.','/')+'.lean' for m in read_imports(w/f)}&source.keys()
+              for f in source if f.startswith('TCSlib/')}
+def imports(f):
+ reached=set()
+ pending=[f]
+ while pending:
+  path=pending.pop()
+  if path not in reached:
+   reached.add(path)
+   pending.extend(dependencies[path])
+ return reached
+needed=set()
+for owner in owners:
+ for f in imports(owner):
+  if set(owners)&imports(f):
+   needed.add(f)
+assert set(owners)<=needed
+deps={f:dependencies[f]&needed for f in needed}
+assert all(f[:-5]+'.olean' in objects0 for f in needed)
+(e/'PLAN.json').write_bytes(dump({'providers_are_prospective':True,'owners':owners,
+ 'rebuilt_intermediate_importers':sorted(needed-set(owners)),'dependency_gates':{f:sorted(ds) for f,ds in deps.items()},
+ 'input_object_map_sha256':sha((replay/'output.json').read_bytes())}))
+subprocess.run(['cp','-cR',str(i),str(o)],check=True)
+assert object_map(o)==objects0
+started=time.monotonic()
+logs=e/'logs'
+def run(f):
+ module=f[:-5]
+ for suffix in ('olean','ilean','c','trace'):
+  (o/(module+'.'+suffix)).unlink(missing_ok=True)
+ cmd=['bash',str(w/'devtools/seyoon/leanelab-o.sh'),str(w),str(o),f,str(o)]
+ t=time.monotonic()
+ p=subprocess.run(cmd,capture_output=True)
+ raw=p.stdout+p.stderr
+ log=logs/(module+'.log')
+ log.parent.mkdir(parents=True,exist_ok=True)
+ log.write_bytes(raw)
+ out=o/(module+'.olean')
+ item={'path':f,'argv':cmd,'exit':p.returncode,'errors':raw.count(b'error:'),
+   'sorry_warnings':raw.count(b"declaration uses 'sorry'"),'source_sha256':source[f],
+   'log_sha256':sha(raw),'output_sha256':sha(out.read_bytes()) if out.is_file() else None,
+   'start':t-started,'end':time.monotonic()-started}
+ item['pass']=item['exit']==item['errors']==item['sorry_warnings']==0 and item['output_sha256'] is not None
+ print(f, 'PASS' if item['pass'] else 'FAIL',flush=True)
+ return item
+done={}
+while needed-done.keys() and not any(not x['pass'] for x in done.values()):
+ ready=sorted(f for f in needed-done.keys() if deps[f]<=done.keys())
+ assert ready
+ with ThreadPoolExecutor(max_workers=2) as pool:
+  for item in pool.map(run,ready):
+   assert all(done[f]['end']<=item['start'] for f in deps[item['path']])
+   done[item['path']]=item
+ (e/'PROGRESS.json').write_bytes(dump(list(done.values())))
+out=object_map(o)
+assert object_map(i)==objects0
+changed={p for p in set(objects0)|set(out) if objects0.get(p)!=out.get(p)}
+assert changed<={f[:-5]+'.olean' for f in needed}
+assert all(sha((w/f).read_bytes())==h for f,h in source.items())
+passed=set(done)==needed and all(x['pass'] for x in done.values())
+(e/'RESULT.json').write_bytes(dump({'pass':passed,'base':q['campaign_Lean'],'provider_head':q['head251'],
+ 'consumer_head':q['head241'],'native_preflight_only':True,'owners':owners,
+ 'objects_before':len(objects0),'objects_after':len(out),'recompiled':len(done),'runs':list(done.values()),
+ 'changed_objects':sorted(changed),'complete_input_unchanged':True}))
+if not passed:
+ raise SystemExit(1)

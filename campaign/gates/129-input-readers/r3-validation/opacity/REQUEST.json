@@ -1,0 +1,922 @@
+{
+  "input_object_tree": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-pr251-r3-final",
+  "source_tree": "/private/tmp/ab34-g129r3-final-replay/runtime",
+  "rows": [
+    {
+      "id": 1,
+      "root": "Turing.FinTM.emit_run",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard01.lean",
+      "probe_sha256": "4e19beded9e57eb2c3caa83668bc82d486470956bbefc0e3990663a71ca80359",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 2,
+      "root": "Turing.FinTM.emit_halts",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard02.lean",
+      "probe_sha256": "9bcf1840c0711f32c35fc796a7ad2d111d6a1d92e349070c9f9a347fdeb4c774",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 3,
+      "root": "Turing.FinTM.inputSymbol_at",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard03.lean",
+      "probe_sha256": "97b81f90fe9f1faf929d64d3c754b9eb838313ba162630c523968b94adb62a2b",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Cfg.inputSymbol"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 4,
+      "root": "Turing.FinTM.rewind_scan_heads",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard04.lean",
+      "probe_sha256": "2d1aa2a36f57401793a7946f23099ff0225e8e25563b9940858f293d80268e3c",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 5,
+      "root": "Turing.FinTM.bufferedSecondCfg_step",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard05.lean",
+      "probe_sha256": "f78e94beaee55b4a53fec1473bb202e327289dbcf7fab3847429e5a7f8260936",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 6,
+      "root": "Turing.FinTM.incFixedTM_computes",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard06.lean",
+      "probe_sha256": "f7c96214ced10bb13e439492aeb67a9b2716ef9ca52def21d64341d13a17959e",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.incFixed",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.incFixed",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 7,
+      "root": "Turing.FinTM.catalogPrefixTM_halt",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard07.lean",
+      "probe_sha256": "fb177feb474e281127ee210cf8fb93488867933c517c63c1fd8a297a9d0d6806",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 8,
+      "root": "Turing.FinTM.scanCfg_read",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard08.lean",
+      "probe_sha256": "53ad13de27e730f5b69da677a85d1cb793ece316f17fdc397cceb48bedeee8be",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Cfg.inputSymbol"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 9,
+      "root": "Turing.FinTM.extractCfg_read",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard09.lean",
+      "probe_sha256": "edb6d1d76164c72595cc2c80393b57aaf2a98542c6e2d7c317e1db21fc17c4c3",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.FinTM.bufferTape"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 10,
+      "root": "Turing.FinTM.emitterP2_control",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard10.lean",
+      "probe_sha256": "acf16dfa2c7a2eb8d6acd51ffa5ee2bab154fac824e72ae7430f8930c9a898c1",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.ofWords",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.ofWords",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 11,
+      "root": "Turing.scan_copy_trace",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+      "owner_sha256": "8a1613737a275fbf23f2e55e115fd0fad00c71ba0792f3c79a1cc6454c1225db",
+      "source": "Guard11.lean",
+      "probe_sha256": "9ed5c9fa87d62eb109b2d30feab0616c8306021b8278f2b9797ace45f881cec1",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.catalogTrace",
+        "Turing.inputMoveAction",
+        "Turing.moveInputPos",
+        "Turing.tapeAction"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.catalogTrace",
+        "Turing.inputMoveAction",
+        "Turing.moveInputPos",
+        "Turing.tapeAction"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 12,
+      "root": "Turing.inputFoldTM_tr_bwd",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Scan.lean",
+      "owner_sha256": "8a1613737a275fbf23f2e55e115fd0fad00c71ba0792f3c79a1cc6454c1225db",
+      "source": "Guard12.lean",
+      "probe_sha256": "f62328dfe85db2c2cdb30aaf34e7e7553070688f731868040be22ca978265054",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.inputMoveAction"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.inputMoveAction"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 13,
+      "root": "Turing.catalog_apply_record",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard13.lean",
+      "probe_sha256": "cfcc0750ed7ff58c14e5cf24a240eb267d4018a0cc23ca8a18feea85fce8141d",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 14,
+      "root": "Turing.catalog_clear_trace",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard14.lean",
+      "probe_sha256": "375ce789cb94b80cdfb712ca486d4ae1ef32f66eb5e0fb1ddfb9a81fe2648f8f",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 15,
+      "root": "Turing.copyMapTM_step_eq",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard15.lean",
+      "probe_sha256": "465c5732dfe2ab673e5a253b104830da845f532e06787ac1cea9d747e83d0e84",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 16,
+      "root": "Turing.catalog_transferMap_trace",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard16.lean",
+      "probe_sha256": "0e45146a51e1d6442462b68f1b748eb228bfc2e0d0eb1b46e844a946c072d3e1",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 17,
+      "root": "Turing.catalog_compare_trace",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard17.lean",
+      "probe_sha256": "f209e8afae2eb12dea86283be2f16e9dc31ede88c52cfc1b5cc6e55c86892e03",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 18,
+      "root": "Turing.catalog_increment_trace",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard18.lean",
+      "probe_sha256": "275729e0eb829d0a856a361b4429f9e60e13f981340f0143175f6c21a93351aa",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 19,
+      "root": "Turing.FinTM.catalogPrefixTM_emit",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard19.lean",
+      "probe_sha256": "33a6b6a82b1db3a6355c9d3d8f00830fae8ff2c417c3cf2d68e1a374d4a67d0e",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 20,
+      "root": "Turing.FinTM.catalogPrefixTM_copy",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard20.lean",
+      "probe_sha256": "b86dbd382caeace07c847deb0c9736a31747ec852cecc9119d3a075bde51909b",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 21,
+      "root": "Turing.FinTM.catalogPoly_rewind",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard21.lean",
+      "probe_sha256": "3fb8fd9acc7a7ab4f56306b361e9efd86583eee8154f17f394027a661542c2de",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 22,
+      "root": "Turing.FinTM.catalogPoly_copy",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard22.lean",
+      "probe_sha256": "ce331788cc9a711916a7ecd13cf4e11b5060ee1127b5f1e45f8cc1a6a3c0576a",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 23,
+      "root": "Turing.FinTM.emitterP2_erase_scan",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard23.lean",
+      "probe_sha256": "2be8a00d0c25135c5428cf3f8bcf7dbf6acdcfba6b7a9e79236558b6e5ab319d",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.runFrom"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 24,
+      "root": "Turing.FinTM.pairExtractTM_computes",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "owner_sha256": "034f3453aec016bf3c7ed60cb361c0a7ef7f8e7df1cc72a77368a79a80c1ce0d",
+      "source": "Guard24.lean",
+      "probe_sha256": "afbd238c932d1e341eb8c48979fcf2f555efedb56dac29301f6d68d57d2a4bd7",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.pairDecode"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Cfg.init",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.pairDecode"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 25,
+      "root": "Turing.FinTM.bufferedScanCfg_run",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard25.lean",
+      "probe_sha256": "c968de43aaa2a4e6dfab5cdf1a9c2a2d61868dabd50897fd20b8c6feac57449c",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 26,
+      "root": "Turing.FinTM.bufferedFirstCfg_rewind",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard26.lean",
+      "probe_sha256": "b152ced583654e4285db27ca3b8b8e813b113639cd74bb19f4e738f47c27f4ab",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "compiled_ordinary_foreign_heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.moveInputPos"
+      ],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 27,
+      "root": "Turing.FinTM.controlAction_def",
+      "owner": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "owner_sha256": "6c624c10df7d9a92e7a883dd4bc4610343de9b629b648b2a168181c048f18e97",
+      "source": "Guard27.lean",
+      "probe_sha256": "ca0554e5aa3b6f1a5cb912230ff1c816203f194c871d8c2c499f136352c38fcf",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "id": 28,
+      "root": "Turing.inputMoveAction_eq",
+      "owner": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "owner_sha256": "ae200c809c7fc54c1c7525dca21f503bb1ce9e20cc8f103ac4c9d9bda5e8a64b",
+      "source": "Guard28.lean",
+      "probe_sha256": "672fed524644bd471fb1b6b6f5b9b4a81f0d579df19d14d8021a422d779a536a",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "compiled_ordinary_foreign_heads": [],
+      "simp_removed": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "source": "Native.lean",
+      "control": true,
+      "expected_exit": 0,
+      "probe_sha256": "bbfac5fbb2319f77956ff741d26df16f671b3dc638f00820756fd6b17ff35475",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.ofWords",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.catalogTrace",
+        "Turing.incFixed",
+        "Turing.inputMoveAction",
+        "Turing.moveInputPos",
+        "Turing.pairDecode",
+        "Turing.tapeAction"
+      ]
+    },
+    {
+      "source": "Sealed.lean",
+      "control": true,
+      "expected_exit": 1,
+      "probe_sha256": "bca9cdf275ca3eea584d2e0ea28f5c03e20dd4a108bb35715dd9e435d4fd2f64",
+      "heads": [
+        "Turing.Action.apply",
+        "Turing.Cfg.init",
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.ofWords",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.bufferTape",
+        "Turing.FinTM.controlAction",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.catalogTrace",
+        "Turing.incFixed",
+        "Turing.inputMoveAction",
+        "Turing.moveInputPos",
+        "Turing.pairDecode",
+        "Turing.tapeAction"
+      ]
+    }
+  ],
+  "complete_selected_definition_footprint_by_root": true,
+  "other_proof_values_and_foreign_RHS_stopped": true,
+  "not_a_whole_owner_seal": true
+}

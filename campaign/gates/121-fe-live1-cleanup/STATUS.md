@@ -1,9 +1,13 @@
 **Not yet clear to merge: #241.**
 
-Gate121's valid imported-definition major remains open. The three InputLength readers
-were approved and their separate gate129 was dispatched. The approved Seam prerequisite
-is #253/gate131. The complete private InputLength and Fresh/Prepared patches have
-prior native/opacity checks and fit the current source in a text dry-run. They are
-not adopted. After the providers merge, refresh the exact integrated proof checks,
-copy governance and actual replay before the selected Codex follow-up. The previous
-817-section issued bundle remains immutable.
+The gate 131 provider is merged. The five edited owners and three
+intermediate importers for the private #241 combination all compile
+on the verified prospective gate 129 snapshot. See
+preflight-post245-247. The approved InputLength and Fresh/Prepared
+repairs are present in that combination. The four manifest files
+identified in the audit are verified in the follow-up staging list.
+
+After the gate 129 provider merges, refresh the exact integrated seals,
+copy dispositions and downstream replay for the selected Codex
+follow-up. The issued 817-section packet remains the historical
+audit input.

@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T00:35:35.076651-08:00; authoritative)
+## 0. Current state (2026-11-09T01:29:22.900599-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
@@ -19,10 +19,10 @@ See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD at `06abd00adf61c257fcd25ee9181a37ddec0a4c87` with two majors. Mechanical reuse and full revalidation underway. |
+| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD. Documented local repair bf8d502573a0ba945a04f7a9dfe827f55b2c840f passed the current-base 395-module replay and exact selected proof checks. The two reuse scopes and audit agent selection remain open. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
-| #242 / 122 | **Not yet clear to merge.** Four native-checked #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared 121 reads and three distinct held roots remain. |
-| #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Await the gate 129 provider, integrated repairs, replay and follow-up. |
+| #242 / 122 | **Not yet clear to merge.** Four #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared gate121 reads and Call/Clean remain held. The checked clock-capture transport proposal awaits a ruling. |
+| #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the prospective #251 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
 | #254 | **Clear to merge** as tooling only, no Lean diff. |

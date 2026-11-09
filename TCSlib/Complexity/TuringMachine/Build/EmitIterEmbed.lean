@@ -115,70 +115,39 @@ theorem step_output_prefix (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (pre : List Bool) :
     H.step { c with output := pre ++ c.output } =
       { H.step c with output := pre ++ (H.step c).output } := by
-  obtain ⟨st, pos, tapes, tpos, out⟩ := c
-  cases st with
-  | none => rfl
-  | some q =>
-    have hws : (⟨some q, pos, tapes, tpos, pre ++ out⟩ : Cfg k Bool B x).workTapeSymbols =
-        (⟨some q, pos, tapes, tpos, out⟩ : Cfg k Bool B x).workTapeSymbols := rfl
-    simp [MultiTapeTM.step, Action.apply, Cfg.inputSymbol, hws, List.append_assoc]
+  exact MultiTapeTM.step_output_prepend H c pre
 
 /-- A run commutes with an output prefix. -/
 theorem runFrom_output_prefix (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (pre : List Bool) (t : ℕ) :
     H.runFrom { c with output := pre ++ c.output } t =
       { H.runFrom c t with output := pre ++ (H.runFrom c t).output } := by
-  induction t generalizing c with
-  | zero => simp
-  | succ t ih =>
-    rw [runFrom_succ_eq_step, runFrom_succ_eq_step, step_output_prefix]
-    exact ih (H.step c)
+  exact MultiTapeTM.runFrom_output_prepend H c pre t
 
 /-- The output tape is append-only along a run. -/
 theorem runFrom_output_extends (H : MultiTapeTM k Bool B)
     (c : Cfg k Bool B x) (t : ℕ) :
     ∃ o, (H.runFrom c t).output = c.output ++ o := by
-  induction t generalizing c with
-  | zero => exact ⟨[], by simp⟩
-  | succ t ih =>
-    rw [runFrom_succ_eq_step]
-    obtain ⟨o, ho⟩ := ih (H.step c)
-    unfold MultiTapeTM.step at ho ⊢
-    cases hq : c.state with
-    | none =>
-      rw [hq] at ho
-      exact ⟨o, ho⟩
-    | some q =>
-      rw [hq] at ho
-      refine ⟨(H.tr q c.inputSymbol c.workTapeSymbols).output.toList ++ o, ?_⟩
-      rw [ho]
-      simp [Action.apply]
+  obtain ⟨o, ho⟩ := MultiTapeTM.output_prefix H c (Nat.zero_le t)
+  exact ⟨o, by simpa only [MultiTapeTM.runFrom_zero] using ho.symm⟩
 
 /-! ### Halted runs are stationary -/
 
 /-- A halted configuration never changes. -/
 theorem runFrom_of_halted (H : MultiTapeTM k Bool B)
     {c : Cfg k Bool B x} (h : c.state = none) (t : ℕ) : H.runFrom c t = c := by
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    rw [runFrom_add, ih]
-    simp [runFrom, step_of_halt h]
+  exact MultiTapeTM.runFrom_of_halt (tm := H) c h
 
 /-- Every configuration strictly before a live endpoint is live. -/
 theorem state_isSome_of_runFrom (H : MultiTapeTM k Bool B)
     {c : Cfg k Bool B x} {t : ℕ} {qf : B}
     (hf : (H.runFrom c t).state = some qf) {j : ℕ} (hj : j ≤ t) :
     ∃ q, (H.runFrom c j).state = some q := by
+  have hl := MultiTapeTM.runFrom_state_ne_none_of_le H c t
+    (by rw [hf]; exact Option.some_ne_none _) j hj
   cases hq : (H.runFrom c j).state with
   | some q => exact ⟨q, rfl⟩
-  | none =>
-    exfalso
-    have hstat : H.runFrom c t = H.runFrom c j := by
-      obtain ⟨u, rfl⟩ : ∃ u, t = j + u := ⟨t - j, by omega⟩
-      rw [runFrom_add, runFrom_of_halted H hq]
-    rw [hstat, hq] at hf
-    exact Option.noConfusion hf
+  | none => exact False.elim (hl hq)
 
 /-! ### Tape-padding, state-injecting embedding
 
