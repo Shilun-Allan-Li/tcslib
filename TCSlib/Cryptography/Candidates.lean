@@ -56,8 +56,8 @@ polynomial-time computability is an explicit hypothesis, never an axiom.
   [PS10, Lemma 84.1, Algorithm 84.2].
 * `DDH` gives the safe-prime group facts and decisional Diffie–Hellman experiments
   [PS10, Assumption 105.1].
-* `ElGamal` gives El Gamal encryption and its security theorem [PS10, Algorithm 106.2,
-  Theorem 107.3].
+* `ElGamal` re-exports the construction in `Encryption.PublicKey.ElGamal`
+  [PS10, Algorithm 106.2 and Theorem 107.3].
 
 ## References
 
