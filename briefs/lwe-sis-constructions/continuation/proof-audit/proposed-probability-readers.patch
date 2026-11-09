@@ -1,0 +1,30 @@
+--- a/TCSlib/InformationTheory/UniversalHashing.lean
++++ b/TCSlib/InformationTheory/UniversalHashing.lean
+@@ -47,6 +47,13 @@
+   ∀ x y : α, x ≠ y →
+     ((univ.filter (fun s => f s x = f s y)).card : ℝ) ≤ (Fintype.card S : ℝ) / Fintype.card β
+ 
++/-- Universality means that each distinct input pair collides under at most the
++seed count divided by the output count. This is the public reading of `IsUniversal`. -/
++theorem isUniversal_iff [DecidableEq β] (f : S → α → β) :
++    IsUniversal f ↔ ∀ x y : α, x ≠ y →
++      ((univ.filter (fun s => f s x = f s y)).card : ℝ) ≤
++        (Fintype.card S : ℝ) / Fintype.card β := Iff.rfl
++
+ /-- **The affine family is universal.** Over a field, `(a, b) ↦ (x ↦ a * x + b)` is a universal
+ family; two distinct points collide only when `a = 0`, which is a `1 / |F|` fraction of seeds.
+ [CW79], [Vad12, §3.5] -/
+--- a/TCSlib/InformationTheory/FinDist.lean
++++ b/TCSlib/InformationTheory/FinDist.lean
+@@ -141,6 +141,11 @@
+ hypotheses of the results that use it. [Vad12, §6.2] -/
+ def HasMinEntropy (p : FinDist α) (k : ℝ) : Prop := ∀ a, p a ≤ (2 : ℝ) ^ (-k)
+ 
++/-- Min-entropy at least `k` means every outcome has probability at most `2^(-k)`.
++This is the public reading of the point-probability bound `HasMinEntropy`. -/
++theorem hasMinEntropy_iff (p : FinDist α) (k : ℝ) :
++    HasMinEntropy p k ↔ ∀ a, p a ≤ (2 : ℝ) ^ (-k) := Iff.rfl
++
+ /-- Min-entropy `k` bounds the collision probability by `2 ^ (-k)`: the chance of a collision is
+ at most the chance of hitting any single most-likely point.
+ 
