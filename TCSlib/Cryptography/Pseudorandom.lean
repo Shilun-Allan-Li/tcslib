@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.Generators
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions
 import TCSlib.Cryptography.Pseudorandom.NextBit.Concrete
@@ -43,6 +45,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   [Gar26, Definition 3.5 and Theorem 3.1].
 * `Generators.Asymptotic.Defs` gives the length-regular PRG interface and security
   contract [PS10, Definition 77.1].
+* `Generators.Asymptotic.StretchMachine` implements the evaluator and hybrid reduction.
+* `Generators.Asymptotic.Stretch` proves secure expansion, truncation, and doubling.
 * `GeneratorFromPermutation` gives the reduction from distinguishing the generator
   to predicting a hard-concentrate bit [Gar26, Theorem 3.2].
 * `Functions` leads to the oracle adversary model, lazy sampling, and the finite GGM
@@ -65,16 +69,18 @@ advantage against the GGM keyed family by a sum of advantages against its genera
 * **One-way permutation to PRG.** In `TCSlib.Cryptography.Asymptotic.HardCore`,
   `TCSlib.Cryptography.owp_hardcore_prg` packages a secure one-bit-stretch generator
   from a one-way permutation family and its hard-core predicate [PS10, Theorem 79.4].
-* **Stretch extension.** In the same module, `TCSlib.Cryptography.prg_expand` lifts
+* **Stretch extension.** In
+  `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch`,
+  `TCSlib.Cryptography.prg_expand` lifts
   the finite hybrid argument to show that expanding a secure one-bit generator to any
   polynomial output length greater than the seed length preserves security
   [PS10, Lemma 80.5].
-  In `TCSlib.Cryptography.Asymptotic.HardCoreLemmas`,
+  In `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine`,
   `TCSlib.Cryptography.exists_expandEvaluator` provides the efficient evaluator
   for the extended generator and `TCSlib.Cryptography.expandRedMachine_distinguisher`
   identifies the efficient reduction's behavior with the finite distinguisher.
 * **PRG to PRF.** `TCSlib.Cryptography.Asymptotic.PRF` defines `TCSlib.Cryptography.PRF`
-  and supplies length doubling via `TCSlib.Cryptography.PRG.Secure.doubling`.
+  and uses `TCSlib.Cryptography.PRG.Secure.doubling` from `Stretch`.
   `TCSlib.Cryptography.exists_ggmPRF_evaluator` implements GGM in polynomial time,
   `TCSlib.Cryptography.exists_ggmBitsDist_nuppt` implements the finite hybrid
   reduction as a non-uniform polynomial-time adversary, and `TCSlib.Cryptography.ggmPRF_prf`

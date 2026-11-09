@@ -11,55 +11,29 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Proof infrastructure for pseudorandom functions: truncation and the GGM evaluator
+# Proof infrastructure for the GGM evaluator
 
-Machine-level and bit-string infrastructure for `TCSlib.Cryptography.Asymptotic.PRF`
-([PS10, §3.8, Theorem 97.3]): the reduction from an arbitrary generator to a length-doubling
-one (Cor-97.a, "without loss of generality") and the efficiency clause of the GGM family
-(Claim-97.c). Everything here is (i) a bit-string identity between `List.ofFn` encodings and
-`List.take`/`List.drop`, (ii) a machine of the closure calculus of
-`TCSlib.Complexity.Randomized` (foundation decision D2 of `PassShelatChapter2-4Plan.md`), or
-(iii) a probability identity on uniform strings.
-
-* **Truncation.** `Complexity.NUPPT.preComp` is the *parameter-aware* pre-processor: the
-  machine `A(1^n, pre ⟨1^n, y⟩; r)` with `A`'s coins and advice (the catalogue's
-  `NUPPT.exists_comp` pre-processes the argument without seeing `1^n`, which a truncation to
-  `n + 1` bits needs). `acceptProb_castLE` says that the first `m` bits of a uniform `ℓ`-bit
-  string are uniform, and `PRG.Secure.truncateTo_easy` / `PRG.Secure.truncateTo_negligible`
-  are the two clauses of "the first `m(n) ≤ ℓ(n)` output bits of a secure generator form a
-  secure generator", from which `PRG.Secure.truncate` and `PRG.Secure.doubling` follow.
-* **The GGM evaluator.** `ggmStep E` is one step of the walk down the GGM tree on the state
-  word `⟨y, rest⟩` (current label, remaining input bits): it replaces `y` by the half of
-  `E y` selected by the head bit of `rest` and drops that bit; `ggmEval E` iterates it
-  `|⟨s, x⟩|` times (`Complexity.polyTimeComputable_iterate`) and reads the label. The closed
-  form `ggmStep_iterate` and `ggmFrom_eq_walk` identify the result with `ggmBits G s x`.
+The evaluator follows a path in the GGM tree on a string state containing the
+current label and the remaining input. The bit-string identities connect this
+implementation to the finite GGM construction. The old import also provides
+PRG truncation through `Pseudorandom.Generators.Asymptotic.Stretch`.
 
 ## Main definitions
 
-* `Complexity.NUPPT.preComp` — parameter-aware polynomial-time pre-processing of an `NUPPT`;
-  `Complexity.NUPPT.preComp_coinsEquiv` — it runs on the coins of the original machine.
-* `TCSlib.Cryptography.selHalf`, `TCSlib.Cryptography.walk`, `TCSlib.Cryptography.ggmStep`,
-  `TCSlib.Cryptography.ggmEval` — half selection, the tree walk and the GGM evaluator.
+* `TCSlib.Cryptography.selHalf` selects a half of the next label.
+* `TCSlib.Cryptography.ggmStep` and `TCSlib.Cryptography.ggmEval` run the tree walk.
 
 ## Main results
 
-* `TCSlib.Cryptography.take_ofFn_castLE`, `drop_take_ofFn_blocks`, `ofFn_prefixAt`,
-  `take_ofFn_splitHalves`, `drop_ofFn_splitHalves`, `selHalf_ofFn` — the bit-string identities.
-* `Complexity.NUPPT.runAt_preComp` — the activation of the pre-processed machine, on the coins
-  carried over by `preComp_coinsEquiv`.
-* `TCSlib.Cryptography.acceptProb_castLE` — a prefix of a uniform string is uniform.
-* `TCSlib.Cryptography.PRG.Secure.truncateTo_easy`,
-  `TCSlib.Cryptography.PRG.Secure.truncateTo_negligible` — truncation of a secure generator.
-* `TCSlib.Cryptography.ggmFrom_eq_walk`, `TCSlib.Cryptography.ggmStep_iterate`,
-  `TCSlib.Cryptography.ggmEval_poly`, `TCSlib.Cryptography.ggmEval_ofFn` — the GGM
-  evaluator is polynomial-time and computes `ggmBits`.
+* `TCSlib.Cryptography.ggmEval_poly` and `TCSlib.Cryptography.ggmEval_ofFn` give
+  polynomial running time and agreement with the finite evaluator.
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
-  (§3.8: Theorem 97.3 and its proof; §3.3.5: Lemma 80.5.)
+  (§3.8, Theorem 97.3.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
-  draft of 22 January 2026, §3.4.2 (Construction 3.3, footnote 4).
+  draft of 22 January 2026, §3.4.2, Construction 3.3.
 -/
 
 namespace TCSlib.Cryptography
@@ -67,14 +41,6 @@ namespace TCSlib.Cryptography
 open Complexity Turing Finset
 
 /-! ## Bit-string identities -/
-
-/-- The first `m` bits of the encoding of an `ℓ`-bit string (`m ≤ ℓ`) encode its restriction
-along `Fin.castLE`. -/
-theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
-    (List.ofFn f).take m = List.ofFn fun i : Fin m => f (Fin.castLE h i) := by
-  refine List.ext_getElem (by simp [List.length_take, h]) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_take, List.getElem_ofFn]
-  rfl
 
 /-- Every bit of a `q·ℓ`-bit string is a bit of one of its blocks:
 `w k = FunFamily.blocks q ℓ w k.divNat k.modNat` (read off `FunFamily.blocks_symm_apply`). -/
@@ -154,146 +120,6 @@ theorem selHalf_poly {p : List Bool → Bool} {u v : List Bool → List Bool}
     (hp : PolyTimeComputable fun w => [p w]) (hu : PolyTimeComputable u)
     (hv : PolyTimeComputable v) : PolyTimeComputable fun w => selHalf (p w) (u w) (v w) :=
   polyTimeComputable_ite hp (takeLen_poly hu (dropLen_poly hu hv)) (takeLen_poly hu hv)
-
-end TCSlib.Cryptography
-
-namespace Complexity.NUPPT
-
-open Turing
-
-/-! ## Parameter-aware pre-processing -/
-
-/-- The raw function of the parameter-aware pre-processor on the layout `⟨⟨⟨1^n, y⟩, α⟩, r⟩`:
-run `A.output` on `⟨⟨⟨1^n, pre ⟨1^n, y⟩⟩, α⟩, r⟩`. -/
-def preFun (A : NUPPT) (pre : List Bool → List Bool) (z : List Bool) : List Bool :=
-  A.output (layout (inParam z) (pre (pairEncode (inParam z) (inArg z))) (inAdvice z) (inCoins z))
-
-/-- The raw function of the pre-processor is polynomial-time. -/
-theorem preFun_poly (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) :
-    PolyTimeComputable (A.preFun pre) :=
-  A.polyTimeComputable_output.comp (polyTimeComputable_layout polyTimeComputable_inParam
-    (hpre.comp (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
-    polyTimeComputable_inAdvice polyTimeComputable_inCoins)
-
-/-- **Parameter-aware pre-processing** [PS10, §2.1, the closure properties used implicitly]:
-the machine with `A`'s coins and advice computing `A(1^n, pre ⟨1^n, y⟩; r)`. Unlike
-`NUPPT.exists_comp`, the pre-processing sees the parameter (needed to truncate an input to
-`n + 1` bits). The coin type is definitionally `A.Coins n`. -/
-noncomputable def preComp (A : NUPPT) {pre : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) : NUPPT :=
-  ofPolyTime (A.preFun_poly hpre) A.coins A.adv A.advice A.advice_length
-
-/-- The coin polynomial of the pre-processed machine is `A`'s. -/
-@[simp] theorem coins_preComp (A : NUPPT) {pre : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) : (A.preComp hpre).coins = A.coins := by
-  unfold preComp
-  exact coins_ofPolyTime _ _ _ _ _
-
-/-- **The pre-processed machine runs on the coins of `A`**: the published equivalence
-`(A.preComp hpre).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_preComp`). -/
-noncomputable def preComp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (n : ℕ) : (A.preComp hpre).Coins n ≃ A.Coins n :=
-  coinsCongr (coins_preComp A hpre) n
-
-/-- The coin equivalence keeps the coin string:
-`List.ofFn (A.preComp_coinsEquiv hpre n r) = List.ofFn r`. -/
-theorem preComp_coinsEquiv_ofFn (A : NUPPT) {pre : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (n : ℕ) (r : (A.preComp hpre).Coins n) :
-    List.ofFn (A.preComp_coinsEquiv hpre n r) = List.ofFn r :=
-  coinsCongr_ofFn (coins_preComp A hpre) n r
-
-/-- The untyped activation of the pre-processed machine. -/
-theorem runAtL_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre)
-    (n : ℕ) (y r : List Bool) :
-    (A.preComp hpre).runAtL n y r = A.runAtL n (pre (pairEncode (List.replicate n true) y)) r := by
-  unfold preComp
-  rw [runAtL_ofPolyTime]
-  simp [preFun, runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
-
-/-- The typed activation of the pre-processed machine, on the coins of `A` carried over by
-`preComp_coinsEquiv`. -/
-theorem runAt_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre)
-    (n : ℕ) (y : List Bool) (r : (A.preComp hpre).Coins n) :
-    (A.preComp hpre).runAt n y r =
-      A.runAt n (pre (pairEncode (List.replicate n true) y)) (A.preComp_coinsEquiv hpre n r) := by
-  rw [runAt_eq, runAtL_preComp, runAt_eq, preComp_coinsEquiv_ofFn]
-
-end Complexity.NUPPT
-
-namespace TCSlib.Cryptography
-
-open Complexity Turing Finset
-
-/-! ## Truncation of a secure generator -/
-
-/-- **A prefix of a uniform string is uniform:** restricting a uniform `ℓ`-bit string to its
-first `m ≤ ℓ` bits gives a uniform `m`-bit string, so a distinguisher accepts the restriction
-with the probability with which it accepts a uniform `m`-bit string. (Split the string along
-`Fin ℓ ≃ Fin m ⊕ Fin (ℓ − m)` and forget the independent second half, `acceptProb_fst`.) -/
-theorem acceptProb_castLE {ℓ m : ℕ} (h : m ≤ ℓ) {ρ : Type*} [Fintype ρ]
-    (D : (Fin m → Bool) → ρ → Bool) :
-    acceptProb (fun t : Fin ℓ → Bool => fun i : Fin m => t (Fin.castLE h i)) D =
-      acceptProb (id : (Fin m → Bool) → Fin m → Bool) D := by
-  let e : (Fin ℓ → Bool) ≃ (Fin m → Bool) × (Fin (ℓ - m) → Bool) :=
-    ((Equiv.arrowCongr (finCongr (Nat.add_sub_cancel' h)).symm (Equiv.refl Bool)).trans
-      ((Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl Bool)).trans
-        (Equiv.sumArrowEquivProdArrow _ _ _)))
-  have he : (fun t : Fin ℓ → Bool => fun i : Fin m => t (Fin.castLE h i)) =
-      fun t => (e t).1 := by
-    funext t i
-    rfl
-  rw [he, acceptProb_comp_equiv e (fun p => p.1) D]
-  exact acceptProb_fst (τ := Fin (ℓ - m) → Bool) (id : (Fin m → Bool) → Fin m → Bool) D
-
-/-- **Truncation of a secure generator, efficiency clause:** the first `m(n) ≤ ℓ(n)` output
-bits of a secure generator are computed by a polynomial-time string function (the evaluator
-followed by the typed cut `Complexity.polyTimeComputable_pairTakePoly m`). -/
-theorem PRG.Secure.truncateTo_easy {P : PRG} (hP : P.Secure) (m : PolyExpr)
-    (hm : ∀ n, m.eval n ≤ P.stretch.eval n) :
-    ∃ E' : List Bool → List Bool, PolyTimeComputable E' ∧
-      ∀ n (s : Fin n → Bool),
-        E' (List.ofFn s) = List.ofFn fun i : Fin (m.eval n) => P.G n s (Fin.castLE (hm n) i) := by
-  obtain ⟨E, hE, hEs⟩ := (PRG.easy_iff P).1 ((PRG.secure_iff P).1 hP).1
-  refine ⟨fun w => (E w).take (m.eval w.length), ?_, fun n s => ?_⟩
-  · convert (polyTimeComputable_pairTakePoly m).comp (polyTimeComputable_id.pairEncode hE) using 1
-    funext w
-    simp
-  · simp only [List.length_ofFn]
-    rw [hEs, take_ofFn_castLE (hm n)]
-
-/-- **Truncation of a secure generator, pseudorandomness clause:** for every non-uniform PPT
-`D`, the PRG advantage of `D(1^n, ·)` against the first `m(n) ≤ ℓ(n)` output bits of a secure
-generator is negligible.
-
-**Proof sketch.** The machine `D' := D.preComp (take m)` truncates its `ℓ(n)`-bit input to
-`m(n)` bits and runs `D` (`Complexity.NUPPT.preComp`, `runAt_preComp`,
-`take_ofFn_castLE`), so `D'.distinguisher n ℓ(n) = D.distinguisher n m(n) ∘ castLE`. By the
-sunglass identity `distAdv_comp` its advantage against `G n` is the advantage of `D` between
-the truncated generator and the truncation of a uniform `ℓ(n)`-bit string, which is uniform
-(`acceptProb_castLE`). Security of `P` makes the former negligible. -/
-theorem PRG.Secure.truncateTo_negligible {P : PRG} (hP : P.Secure) (m : PolyExpr)
-    (hm : ∀ n, m.eval n ≤ P.stretch.eval n) (D : NUPPT) :
-    Negligible fun n =>
-      prgAdv (fun s : Fin n → Bool => fun i : Fin (m.eval n) => P.G n s (Fin.castLE (hm n) i))
-        (D.distinguisher n (m.eval n)) := by
-  have hpre : PolyTimeComputable fun w => (pairSndD w).take (m.eval (pairFstD w).length) :=
-    polyTimeComputable_pairTakePoly m
-  have hneg := ((PRG.secure_iff P).1 hP).2 (D.preComp hpre)
-  refine hneg.mono ⟨0, fun n _ => le_of_eq ?_⟩
-  congr 1
-  have hfun : ∀ t r, D.distinguisher n (m.eval n) (fun i => t (Fin.castLE (hm n) i))
-      (D.preComp_coinsEquiv hpre n r) = (D.preComp hpre).distinguisher n (P.stretch.eval n) t r := by
-    intro t r
-    rw [NUPPT.distinguisher_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
-      NUPPT.distinguisherL_eq, NUPPT.runAt_preComp]
-    simp only [pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate]
-    rw [take_ofFn_castLE (hm n)]
-  rw [← prgAdv_coins_equiv (P.G n) _ _ (D.preComp_coinsEquiv hpre n) hfun, prgAdv_eq, prgAdv_eq,
-    distAdv_comp (fun t : Fin (P.stretch.eval n) → Bool => fun i : Fin (m.eval n) =>
-      t (Fin.castLE (hm n) i)) (P.G n) id (D.distinguisher n (m.eval n)), distAdv_def,
-    distAdv_def]
-  congr 2
-  exact (acceptProb_castLE (hm n) _).symm
 
 /-! ## The GGM evaluator -/
 

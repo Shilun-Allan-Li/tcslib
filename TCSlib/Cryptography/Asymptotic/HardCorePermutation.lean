@@ -490,13 +490,6 @@ theorem Negligible.comp_div_two {ν : ℕ → ℝ} (hν : Negligible ν) :
 
 /-! ## Encodings and machines for the balanced permutation -/
 
-/-- The first `k` bits of an encoded string are the encoding of its restriction. -/
-private theorem take_ofFn_castLE {n k : ℕ} (h : k ≤ n) (z : Fin n → Bool) :
-    (List.ofFn z).take k = List.ofFn fun j : Fin k => z (Fin.castLE h j) := by
-  refine List.ext_getElem (by simp [h]) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_take, List.getElem_ofFn]
-  rfl
-
 /-- The `k` bits after the first `a` of an encoded string. -/
 private theorem take_drop_ofFn {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → Bool) :
     ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
