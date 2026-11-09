@@ -33,7 +33,7 @@ serial closures and reproduced both axiom probes. See
 | SIS collision-resistant hashing | Core hash/reduction/profile, strong extraction, raw evaluator and exact collision-to-SIS output proofs audited | Counted-loop efficiency, and the CRH interface under independent SIS hardness |
 | Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
-| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank checked | Positional digit reader, all-but-one inverse, strong one-time signatures and CCA2 |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank, injective-mode recovery and non-designated branch injectivity checked | Gate 13 audit, efficient all-but-one inversion, strong one-time signatures and CCA2 |
 
 The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
 seconds with zero errors, seventy owned and seventeen inherited admission
@@ -124,5 +124,14 @@ types, 216 match exactly and four have kernel-checked definitional equality. The
 use the same pinned Mathlib. This checkpoint enters the next combined
 proof review. [Rank report](fills/08-anti-cyclic-rank/REPORT.md)
 
-**Not yet clear to merge.** Sixteen admissions, the next proof audit, scoped
+## Gadget and inversion
+
+The approved shared reader is isolated at `2414fd3eae05c99474d1888609b01ac5989523a5`.
+Seven further fills at `713093c36ac66f7e56e9354581f0bb3f59772341` prove positional gadget evaluation,
+injective-mode recovery and non-designated branch injectivity. The fresh
+144-module sweep passes and leaves nine counted-loop and CRH admissions.
+The two rank proofs and this wave enter one Codex audit.
+[Proof report](fills/09-gadget-inversion/REPORT.md)
+
+**Not yet clear to merge.** The combined audit, nine admissions, scoped
 source matching, and landing checks remain open. The user approves all merges.
