@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Encryption.PublicKey.Scheme
 import TCSlib.Cryptography.Encryption.PublicKey.HybridMachine
 import TCSlib.Cryptography.Encryption.PublicKey.Hybrid
 import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.ElGamal
@@ -42,8 +43,9 @@ multi-message security.
 * `Hybrid` proves the shared-key bound on tuples of encryptions.
 * `EnsembleSecurity` gives the games, bitwise construction and fixed-vector security theorem.
 * `Asymptotic.PublicKey` develops trapdoor bit encryption [PS10, §3.10].
-* `Composability.PublicKey` provides the ciphertext codec and oracle games [PS10, §7.1.4].
+* `OracleSecurity` gives the fixed-length scheme, codecs and oracle games [PS10, §7.1.4].
   The proof of `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` is pending.
+* `Composability.PublicKey` re-exports the oracle games and gives the trapdoor CPA corollary.
 * `Candidates.RSA` constructs `TCSlib.Cryptography.Candidates.rsaTrapdoor`.
   `TCSlib.Cryptography.Candidates.rsaTrapdoor_oneWay` uses
   `TCSlib.Cryptography.Candidates.RSAAssumption`.
