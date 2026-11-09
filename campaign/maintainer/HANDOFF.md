@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-08T23:53:18.721508-08:00; authoritative)
+## 0. Current state (2026-11-08T23:55:23.879985-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #252, #249 and #253 have merged.
@@ -28,8 +28,8 @@ snapshot is `oleans-pr249-space-verified`. Keep each snapshot whole.
 
 Gates 123–127 stay closed. **Clear to merge:** #246 and #247 have current
 replays (19 and 24 modules). Merge #246 before #247 if landing both. The
-#247 owner has no dependency on the #246 change. Replays for #243–#245
-are queued or running against the same Lean base.
+#247 owner has no dependency on the #246 change. #245 is also clear after its 28-module replay. Replays for #243
+and #244 remain in the queue on the same Lean base.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
