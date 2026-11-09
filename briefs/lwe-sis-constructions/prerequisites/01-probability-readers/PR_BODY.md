@@ -4,9 +4,9 @@ leftover-hash theorem in the Regev statistical hybrid on draft #250.
 - `TCSlib.InformationTheory.isUniversal_iff` gives the collision count bound.
 - `TCSlib.InformationTheory.FinDist.hasMinEntropy_iff` gives the point probability bound.
 
-Both readers use `Iff.rfl` and have no simp attribute. The user approved the exact
-12-line proposal. The shared-file overlap is limited to `UniversalHashing.lean`
-and `FinDist.lean`. The Lean source is `c744076da5fbb6ea5e14ce7095eeaec33554c124`.
+Both readers use `Iff.rfl` and have no simp attribute. The user approved the two reader formulas. The patch adds one `omit` line to
+exclude the unused input-type `Fintype` instance from `isUniversal_iff`. The shared-file overlap is limited to `UniversalHashing.lean`
+and `FinDist.lean`. The Lean source is `004bd5b89e48dec52e045bba32439375b82eaead`.
 The target is `cryptography/lwe-sis-constructions` at
 `27f9ea89b72d84abaec8128f2abd826f24aaced4`.
 

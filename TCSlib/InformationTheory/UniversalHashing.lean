@@ -47,6 +47,7 @@ def IsUniversal [DecidableEq β] (f : S → α → β) : Prop :=
   ∀ x y : α, x ≠ y →
     ((univ.filter (fun s => f s x = f s y)).card : ℝ) ≤ (Fintype.card S : ℝ) / Fintype.card β
 
+omit [Fintype α] in
 /-- Universality means that each distinct input pair collides under at most the
 seed count divided by the output count. This is the public reading of `IsUniversal`. -/
 theorem isUniversal_iff [DecidableEq β] (f : S → α → β) :
