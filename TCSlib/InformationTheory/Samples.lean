@@ -49,10 +49,10 @@ variable {α β : Type*} [Fintype α] [Fintype β]
 /-! ### Expectation -/
 
 /-- The **expectation** `E_{a ← p}[f a] = ∑ a, p a · f a`. -/
-noncomputable def expect (p : FinDist α) (f : α → ℝ) : ℝ := ∑ a, p a * f a
+noncomputable def expect (p : FinDist α) (f : α → ℝ) : ℝ := ∑ a, p.prob a * f a
 
 /-- The expectation as a weighted sum: `E_{a ← p}[f a] = ∑ a, p a · f a`. -/
-theorem expect_eq (p : FinDist α) (f : α → ℝ) : p.expect f = ∑ a, p a * f a := rfl
+theorem expect_eq (p : FinDist α) (f : α → ℝ) : p.expect f = ∑ a, p.prob a * f a := rfl
 
 /-- The expectation of a constant is the constant: `E_p[c] = c`. -/
 theorem expect_const (p : FinDist α) (c : ℝ) : p.expect (fun _ => c) = c := by
@@ -137,17 +137,18 @@ theorem expect_le_add_of_le_one (p : FinDist α) {f : α → ℝ} (hf : ∀ a, f
 `Pr[s] = ∏ j, p (s j)`: the product sampling of [SSBD14, §2.3.1], used for the i.i.d. examples
 of [SSBD14, §3.1, Def 3.1]. -/
 def iid (p : FinDist α) (m : ℕ) : FinDist (Fin m → α) where
-  prob s := ∏ j, p (s j)
+  prob s := ∏ j, p.prob (s j)
   nonneg s := Finset.prod_nonneg fun j _ => p.nonneg (s j)
   sum_prob := by
-    have h := Finset.prod_univ_sum (fun _ : Fin m => (univ : Finset α)) (fun _ a => p a)
+    have h := Finset.prod_univ_sum (fun _ : Fin m => (univ : Finset α)) (fun _ a => p.prob a)
     rw [Fintype.piFinset_univ] at h
     rw [← h]
     simp only [p.sum_prob, Finset.prod_const_one]
 
 /-- The probability of a sample is the product of the probabilities of its entries:
 `Pr_{p^m}[s] = ∏ j, p (s j)`. -/
-theorem iid_apply (p : FinDist α) (m : ℕ) (s : Fin m → α) : p.iid m s = ∏ j, p (s j) := rfl
+theorem iid_apply (p : FinDist α) (m : ℕ) (s : Fin m → α) :
+    (p.iid m).prob s = ∏ j, p.prob (s j) := rfl
 
 end FinDist
 

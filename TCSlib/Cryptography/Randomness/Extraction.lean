@@ -67,7 +67,7 @@ noncomputable def samplerLaw (S : NUPPT) (n : ℕ) : FinDist (Fin n → Bool) :=
 /-- The probability of an `n`-bit word under `samplerLaw S n` is the sum of the uniform
 coin probabilities over tapes whose padded sampler output is that word. -/
 theorem samplerLaw_apply (S : NUPPT) (n : ℕ) (x : Fin n → Bool) :
-    samplerLaw S n x =
+    (samplerLaw S n).prob x =
       ∑ r ∈ (Finset.univ : Finset (S.Coins n)).filter
         (fun r => padFin n (S.runAt n [] r) = x), (Fintype.card (S.Coins n) : ℝ)⁻¹ := by
   rw [samplerLaw, FinDist.map_apply]
