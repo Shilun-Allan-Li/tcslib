@@ -178,7 +178,11 @@ private lemma seamComp_step_left {Symbol : Type*} {x : List Symbol} [DecidableEq
     rw [if_neg hq]
     rfl
 
-/-- Right steps commute with state mapping, even after a source halt. -/
+/-- Right steps commute with state mapping, even after a source halt.
+
+**Proof sketch.** Renaming preserves the input and work reads. A halted configuration
+stays fixed on both sides. For a live state, the right transition row and
+`Cfg.mapState_apply` identify the two steps. -/
 private lemma seamComp_step_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
     (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
     (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (c : Cfg k Symbol S₂ x) :
