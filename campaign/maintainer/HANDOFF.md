@@ -7,7 +7,7 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T00:17:33.311233-08:00; authoritative)
+## 0. Current state (2026-11-09T00:35:35.076651-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
 only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
@@ -29,8 +29,10 @@ See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
 
 Gates 123–127 stay closed. #245–#247 have merged. **Clear to merge:** #243.
 Its actual 82-module replay remains current under START-HERE §4 because the
-changed owner and its complete import source are byte-exact. #244 shares that
-owner and its prospective replay after #243 is running.
+changed owner and its complete import source are byte-exact. The combined
+#243 then #244 replay passed all 82 modules. After #243 merges, verify the
+actual current #244 prospective source against gate 124's saved Lean map
+and toolchain hashes before restoring #244 clearance.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
