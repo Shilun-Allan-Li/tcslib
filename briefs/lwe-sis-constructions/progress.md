@@ -33,35 +33,41 @@ all 575 previous elaborated level/type representations compare exactly. Style is
 0 FAIL/2 unchanged WARN over 41 files; other native warnings match the statement
 baseline. No whole-library root elaboration or complete security endpoint is claimed.
 
-Published dependency drafts #236, #237, #238 and #239, and current draft #250,
-all target `cryptography/lwe-sis-constructions`. Their integration stays with the
-user. At the preceding proof-audit intake, #250 head
-`ba903806484bcbe7b95a981b3e4dbb68b7f487fd` was remotely verified. The source-policy
-exchange commit `a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1` is now verified too;
-the current feature head was not freshly retrieved during this source intake.
-The returned-data intake and revised source-review plan are local records.
+PRs #236 through #239 have merged into `cryptography/lwe-sis-constructions`.
+The verified central tip is the #239 merge
+`27f9ea89b72d84abaec8128f2abd826f24aaced4`. Local #250 integration commit
+`6e230c9a518aadc30b1323a28be9ef96e5fd62c8` incorporates that exact target and
+preserves the checked Lean tree and pins. GitHub shows #250 as an open draft
+at `adf2442be0303be26158c2649f813668cd71bf35`.
 Original statement source `17b2a282b545c6ebca3fccc88d518d18ae78f485` and exchange
 `64e245b345d908d835030efede1c91312a4e6cce` remain immutable historical inputs.
 
-The exact random-bit/probability reader and counted-loop catalogue proposals
-remain unapplied, with affected fills paused under N04. Other remaining admissions
-include later independent work too. Source validation/ingestion/approved matching,
-physical/native attestations, landing checks and final consumer bridges remain.
-No short lattice basis, Gaussian preimage sampler or worst-case/search/decision/
-SIS–LWE reduction is introduced. See `fills/04-construction-independent/`.
+## Next proof batch
+
+Prioritize Regev PKE's fixed-bit security bound. The independent obligations
+cover the uniform hash difference, the extraction error budget, the exact
+real-to-uniform-key DLWE hybrid, the augmented-key bijection, the ciphertext
+identity, and the doubled error budget. These can use the existing public APIs.
+
+The strong leftover-hash step needs `isUniversal_iff` and `hasMinEntropy_iff`.
+The [two-reader proposal](continuation/proof-audit/proposed-probability-readers.patch)
+passes `git apply --check` at the integrated base. It needs shared-owner
+coordination through the user before either reader is added. The random-bit
+reader and counted-loop registry disposition remain separate holds for the
+trapdoor and machine proofs. Keep the completed Regev work together for the
+next proof audit, with the existing audited statements as the freeze.
 
 The source-policy job at `continuation/landing-source-policy/` returned partial
 work for the earlier #236–#239 stack, 161 declarations in 20 modules at
 `ec72ed773a690c17ac253707350935cc9e0acb34`. All returned checksums, four original
 assets, 191 frozen blobs and 703 typed matching records pass local intake. The
-59 proposed matches use seven already-repaired PDF pages and remain unapproved.
+59 proposed matches in that delivery use seven already-repaired PDF pages.
+The subsequent scoped approvals record 37 distinct attributions in
+`landing/01-foundations/` and `landing/02-construction-core/`, inherited by
+the merged adapter and scalar PRs.
 The user asked to postpone unrelated transcription; the root has narrowed future
 work to consumed source passages, accurate adaptation notes and reviewed matching.
-The remaining 186 transcription pages are not missing formalization or a landing
-prerequisite. Scoped reference integration/coordination and landing checks remain.
-PW10 and later source obligations stay separate. No shared registry, blueprint,
-dataset, code, paid pipeline or source approval is changed by intake.
+Source review for #250's new claims remains open, including PW10 where consumed.
 
-**Not yet clear to merge — source-policy closure and landing checks remain for
-the earlier PRs; #250 also retains seventy admissions and shared-owner holds.
-The user approves all merges.**
+**Not yet clear to merge.** #250 retains seventy admissions, shared-owner holds,
+scoped source review and landing checks. The user approves all merges.
