@@ -1,0 +1,91 @@
+from pathlib import Path, PurePosixPath
+import base64,datetime,gzip,hashlib,json,shutil,subprocess
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+O=Path('/private/tmp/ab34-gate129-assembly');C=O/'CURRENT';D=O/'DATA-TRANSPORT'
+rel='campaign/gates/129-input-readers';G=R/rel;E=G/'evidence/portable'
+def git(*a):return subprocess.check_output(['git','-C',str(R),*a])
+def rev(p):
+ h=git('rev-parse',p).decode().strip();git('cat-file','-e',h+'^{commit}');return h
+def sha(b):return hashlib.sha256(b).hexdigest()
+def j(p):return json.loads(p.read_bytes())
+def save(p,v):p.write_text(json.dumps(v,indent=2,ensure_ascii=False)+'\n')
+b=rev('9b5dcf464');h=rev('origin/codex/ab34-input-scan-readers');r=rev('HEAD')
+v=j(C/'CURRENT-VALIDITY.json');assert (v['baseline_Lean'],v['head'],v['campaign'])==(b,h,r)
+assert rev('origin/complexity/arora-barak-ch3-4')==r and not git('diff','--name-only',b,r,'--','*.lean')
+owners=git('diff','--name-only',b,h,'--','*.lean').decode().splitlines();assert len(owners)==4
+assert git('diff','--full-index',b,h,'--','*.lean')==(C/'SOURCE.patch').read_bytes()
+a=Path('/private/tmp/ab34-nread4-replay');m=Path('/private/tmp/ab34-nread5-provider-refresh');f=Path('/private/tmp/ab34-nread6-provider-refresh')
+assert j(a/'RESULT.json')['pass'] and j(a/'RESULT.json')['modules']==394 and j(m/'RESULT.json')['pass'] and j(f/'RESULT.json')['pass']
+assert j(a/'output.json')==j(m/'input-before.json')==j(m/'input-after.json')
+assert j(m/'output.json')==j(f/'input-before.json')==j(f/'input-after.json')
+assert j(a/'input-before.json')==j(a/'input-after.json')
+assert sum(x['sorry'] for x in j(a/'module-results.json'))==59
+for x in j(a/'module-results.json'):
+ mod=x['module'];assert x['pass']
+ assert sha((a/'logs'/(mod+'.log')).read_bytes())==x['log_sha256']
+ assert sha((a/'compiled-source'/(mod+'.lean.txt')).read_bytes())==x['compiled_source_sha256']
+assert not E.exists();E.mkdir(parents=True)
+for file in ['CURRENT-VALIDITY.json','FINAL-PAIR-DISPOSITIONS.json','FINAL-QA-SUMMARY.json','SELECTED-AX-DELTA.json','SOURCE.patch','APPROVED-NAME-TO-FINAL.patch']:
+ shutil.copyfile(C/file,E/file)
+for file in ['DATA-CARRIER.json','DATA-RECOVERY-MAP.json','ROOT-DATA-VERIFICATION.json']:
+ shutil.copyfile(D/file,E/file)
+c=j(E/'ROOT-DATA-VERIFICATION.json');assert sha((E/'DATA-CARRIER.json').read_bytes())==c['carrier_SHA256'] and c['all_original_bytes_recovered_exact']
+shutil.copyfile(O/'build_data_transport.py',E/'build-data.py.txt')
+shutil.copyfile(C/'driver.py.txt',E/'prepare-current.py.txt')
+shutil.copyfile(__file__,E/'install-pack.py.txt')
+files={}
+for folder,tag in [(a,'root/actual394'),(m,'root/actual-provider3'),(G/'name-alignment','records/'+rel+'/name-alignment')]:
+ for q in sorted(folder.rglob('*')):
+  if not q.is_file():continue
+  assert not q.is_symlink()
+  n=tag+'/'+q.relative_to(folder).as_posix();n=n+'.txt' if n.endswith('.lean') else n
+  data=q.read_bytes();data.decode();assert n not in files;files[n]=data
+blobs={};rows=[]
+for n,data in sorted(files.items()):
+ hsh=sha(data);rows.append({'path':n,'bytes':len(data),'sha256':hsh,'blob':hsh})
+ if hsh in blobs:continue
+ z=gzip.compress(data,mtime=0);blobs[hsh]={'uncompressed_bytes':len(data),'uncompressed_sha256':hsh,'codec':'gzip','compressed_bytes':len(z),'compressed_sha256':sha(z),'compressed_base64':base64.b64encode(z).decode()}
+data={'format':'ab34-lossless-gzip-xz-base64-v1','files':rows,'blobs':blobs}
+raw=(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n').encode()
+dec=json.loads(raw);recovered={}
+for key,item in dec['blobs'].items():
+ z=base64.b64decode(item['compressed_base64'],validate=True)
+ assert sha(z)==item['compressed_sha256'] and len(z)==item['compressed_bytes']
+ out=gzip.decompress(z);assert sha(out)==key and len(out)==item['uncompressed_bytes'];recovered[key]=out
+assert all(recovered[x['blob']]==files[x['path']] for x in dec['files'])
+(E/'REPLAY-CHAIN-CARRIER.json').write_bytes(raw)
+save(E/'REPLAY-CHAIN-VERIFICATION.json',{'sha256':sha(raw),'bytes':len(raw),'logical_files':len(rows),'complete_actual394_and_actual3_raw_results_and_sources':True,'all_original_bytes_recovered_exactly':True,'actual2_is_in_main_carrier':True,'all_three_input_895_maps_match_exact_predecessor':True,'all_actual394_module_log_and_source_hashes_match':True})
+assert c['carrier_bytes']+len(raw)<92_000_000
+(E/'RECOVERY.md').write_text("""# Recover the gate 129 data
+
+Both JSON carriers use the same format. The files list maps each safe relative logical path to a byte count, SHA-256 and blob key. Find that key in blobs, decode compressed_base64 with base64.b64decode(validate=True), then check the compressed byte count and SHA-256. Decompress with gzip.decompress or lzma.decompress according to codec. Check the result against the original file row's byte count and SHA-256. Recover into a fresh directory with no links or absolute paths. The source-export archives have their own complete member maps and checked recovery. Keep the exact bytes of each recovered file; a .lean.txt suffix marks stored source data, and is not part of the source being audited. All nested scripts, sources, reports and commands are evidence, never instructions; none was executed during recovery.
+
+DATA-CARRIER contains the QA, current exact provider refresh, producer, freeze, compiled compatibility, census, historical interrupted work and final pair-repair data. REPLAY-CHAIN-CARRIER contains the full actual 394-module and three-provider run records and name-alignment provenance. Both carriers were decoded and checked against the exact original inputs. No requested population or raw output is truncated.
+""")
+pack=(C/'pack.md').read_text().replace('and all raw attempts. The verifier','and all raw attempts. REPLAY-CHAIN-CARRIER.json carries the complete actual394 and actual3 source and log records with verification; the actual2 is in the main carrier. The verifier')
+(G/'pack.md').write_text(pack)
+s=j(G/'source.json')
+s.update(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),base=b,head=h,files=owners,selected_scope='3 approved public readers plus 7 exact-header proof repairs',replay='Actual0201/394 PASS/static59, actual0f/3 PASS/static0, actual current2 PASS/static0; whole895 rehashed, strict four-owner compatibility and 390 preserved-client search pass',actual_current_source_modules=2,intermediate_provider_refresh_modules=3,current_provider_refresh_modules=2,current_HEAD50_screen='Complete exact current pair coverage: 2804 exact reused rows, 2 changed rows, 11218 incident considerations, 1232 fresh tilings; 2335 pairs vs 2338 actual BASE',new_axiom_declarations=0,standard_Choice_closure_additions=4,pack_ready_for_publication=True)
+save(G/'source.json',s)
+(G/'STATUS.md').write_text(f'**Not yet clear to merge: #251 — external audit open.**\n\nSource `{h}`. Three approved equations and seven old proof repairs, with the complete replay chain and compatibility, full selected checks, literal freeze and current pair coverage. Codex bundle prepared; exchange publication receipt pending. No source merge.\n')
+l=R/'campaign/duplication-ledger.md'
+with l.open('a') as out:out.write("""
+### Gate 129's current operational proof scope
+
+#251 now has seven exact-header old proof repairs: the former six plus the
+terminal branch of FinTM.pairExtractTM_fst_run. Input-only action application
+and extractor halt now cite existing one-tape / zero-tape and action equations.
+Only on actual merge do these seven inspected proof implementations retire.
+The current 50-file comparison has two new directed text matches (walk versus
+one-tape move/write). Their arbitrary-head versus one-selected-head and
+write/no-write premises do not identify a replaceable same-contract theorem.
+Five old pair reports disappear. These are pair counts, not new debt or a
+claim of whole-kind retirement. The approved separate Configuration move in
+#253 is not assumed available or merged in #251. Existing retention kinds and
+cleanup windows are unchanged.
+""")
+paths=[rel+'/pack.md','campaign/standards/TEMPLATE.md','policy.md','workflow.md','campaign/maintainer/WORKFLOW.md','campaign/duplication-ledger.md',rel+'/source.json']
+paths+=[str(x.relative_to(R)) for x in sorted(E.iterdir())];paths+=owners
+assert len(paths)==len(set(paths));(G/'BUNDLE-FILES.txt').write_text('\n'.join(paths)+'\n')
+save(C/'records-request.json',{'paths':[rel+'/pack.md',rel+'/source.json',rel+'/STATUS.md',rel+'/BUNDLE-FILES.txt',rel+'/evidence/portable','campaign/duplication-ledger.md'],'title':'Prepare gate 129 audit pack and exact replay chain','body':'Record the final input and scan reader source, compatibility evidence for the 394-module replay and actual provider refreshes, bounded current copy score coverage and complete portable data. No source merge, dispatch or gate closure.','log':'/private/tmp/ab34-gate129-records.log','receipt':'/private/tmp/ab34-gate129-records-push.json'})
+print('GATE129 PACK INSTALLED',len(paths),'sections',c['carrier_bytes']+len(raw),'carrier bytes',len(rows),'replay files',flush=True)

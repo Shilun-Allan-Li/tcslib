@@ -1,0 +1,80 @@
+from pathlib import Path,PurePosixPath
+import base64,datetime,gzip,hashlib,io,json,lzma,tarfile
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');O=Path('/private/tmp/ab34-gate129-assembly/DATA-TRANSPORT');sha=lambda b:hashlib.sha256(b).hexdigest()
+assert Path('/private/tmp/ab34-reader-final-qa2e2f/COMPLETE.json').exists(),'Final exact screen coverage not complete'
+assert not O.exists();O.mkdir();files={};aliases=[];exclusions=[]
+def put(name,b,origin):
+ p=PurePosixPath(name);assert not p.is_absolute() and '..' not in p.parts and p.as_posix()==name
+ b.decode('utf8');assert name not in files or files[name]==b;files[name]=b;aliases.append({'logical_path':name,'original_path':str(origin),'bytes':len(b),'sha256':sha(b)})
+def capture(directory,label,exclude=()):
+ p=Path(directory)
+ assert p.is_dir(),p
+ for q in sorted(p.rglob('*')):
+  if not q.is_file():continue
+  relative=q.relative_to(p)
+  if any(relative.parts[0]==x for x in exclude):continue
+  assert not q.is_symlink(),q
+  name=label+'/'+relative.as_posix();name=name+'.txt' if name.endswith('.lean') else name
+  put(name,q.read_bytes(),q)
+def check_archive(q,label):
+ m=json.loads((q/(label+'-export-map.json')).read_bytes());z=base64.decodebytes((q/(label+'-source-export.tar.gz.base64')).read_bytes());tar=gzip.decompress(z)
+ with tarfile.open(fileobj=io.BytesIO(tar),mode='r:') as t:
+  members=t.getmembers();assert len({x.name for x in members})==len(members)
+  observed={}
+  for x in members:
+   n=PurePosixPath(x.name);assert not n.is_absolute() and '..' not in n.parts and x.isfile()
+   b=t.extractfile(x).read();b.decode('utf8');observed[x.name]={'sha256':sha(b),'bytes':len(b)}
+  assert observed==m
+ exclusions.append({'original_runtime':str(q/('runtime-exports/'+label if q.name=='ab34-reader-api-qa' else 'runtime-'+label)),'complete_recovery_archive':str(q/(label+'-source-export.tar.gz.base64')),'source_map':str(q/(label+'-export-map.json')),'all_members_bytes_SHA_verified':True,'members':len(m),'gzip_SHA256':sha(z),'archive_members_not_executed':True})
+for relative in ['campaign/gates/129-input-readers/review','campaign/gates/130-space-reader-prerequisites/review/census','campaign/items/dedup/inputlength-reader-proposal/RULING.md']:
+ p=R/relative
+ if p.is_dir():capture(p,'records/'+relative)
+ else:put('records/'+relative,p.read_bytes(),p)
+for directory,label,exclude in [
+ ('/private/tmp/ab34-reader-api-seals-v2','root/api-0201',()),
+ ('/private/tmp/ab34-reader-api-qa','root/source-QA-original',('runtime-exports',)),
+ ('/private/tmp/ab34-reader-final-qa','root/source-QA-interrupted',('runtime-HEAD',)),
+ ('/private/tmp/ab34-reader-final-qa-rerun','root/source-QA-final',('runtime-HEAD',)),
+ ('/private/tmp/ab34-reader-screen-transport','root/old-name-screen-transport',('runtime-current',)),
+ ('/private/tmp/ab34-nread3-replay','root/historical-invalid-nread3',()),
+ ('/private/tmp/ab34-reader-name-alignment','root/name-alignment',()),
+ ('/private/tmp/ab34-reader-current-merge-check/251','root/historical-0f-merge',()),
+ ('/private/tmp/ab34-gate129-assembly/CURRENT','root/current-merge',()),
+ ('/private/tmp/ab34-reader-final-qa2e2f','root/current-QA',('runtime-HEAD',)),
+ ('/private/tmp/ab34-nread6-provider-refresh','root/final-provider2',()),
+ ('/private/tmp/ab34-owner-compat4','root/final-owner-compatibility',()),
+ ('/private/tmp/ab34-owner-compat4-client','root/final-client-compatibility',()),
+ ('/private/tmp/ab34-final129-selected-axioms','root/final-selected-axioms',())]:capture(directory,label,exclude)
+for path in ['/private/tmp/ab34-owner-compat4.py','/private/tmp/ab34-owner-compat4-client.py','/private/tmp/ab34-gate129-screen-repair-c1kdvluh/CHECKPOINT.md','/private/tmp/ab34-gate129-screen-repair-c1kdvluh/ALL-PAIR-DISPOSITIONS.json']:
+ p=Path(path);put('root/extra/'+p.name,p.read_bytes(),p)
+p=R/'campaign/status/2026-11-08-relocation-2154/screen-pair-repairs-checkpoint.zip.base64';put('root/final-two-repair-evidence.zip.base64',p.read_bytes(),p)
+p=R/'campaign/gates/130-space-reader-prerequisites/evidence/portable/CURRENT-REF-BOUND.json';put('root/current-18-open-refs.json',p.read_bytes(),p)
+# Every omitted runtime is fully recovered by its exact map/archive, or an exact linear source capture.
+for q,label in [(Path('/private/tmp/ab34-reader-api-qa'),'BASE'),(Path('/private/tmp/ab34-reader-api-qa'),'HEAD'),(Path('/private/tmp/ab34-reader-final-qa'),'HEAD'),(Path('/private/tmp/ab34-reader-final-qa-rerun'),'HEAD'),(Path('/private/tmp/ab34-reader-final-qa2e2f'),'HEAD')]:check_archive(q,label)
+put('ROOT-ORIGINAL-PATH-MAP.json',json.dumps(aliases,indent=2).encode()+b'\n','root-generated')
+put('RUNTIME-ARCHIVE-RECOVERY.json',json.dumps(exclusions,indent=2).encode()+b'\n','root-generated')
+blobs={};rows=[]
+for name,b in sorted(files.items()):
+ key=sha(b);rows.append({'path':name,'bytes':len(b),'sha256':key,'blob':key})
+ if key not in blobs:
+  z=gzip.compress(b,mtime=0);codec='gzip'
+  if len(z)>=32_768:
+   x=lzma.compress(b,preset=3)
+   if len(x)<len(z):z=x;codec='xz'
+  blobs[key]={'uncompressed_bytes':len(b),'uncompressed_sha256':key,'codec':codec,'compressed_bytes':len(z),'compressed_sha256':sha(z),'compressed_base64':base64.b64encode(z).decode('ascii')}
+  if len(z)>1_000_000:print(codec,len(b),len(z),name,flush=True)
+c={'format':'ab34-lossless-gzip-xz-base64-v1','logical_file_count':len(rows),'logical_bytes':sum(x['bytes'] for x in rows),'unique_blob_count':len(blobs),'files':rows,'blobs':blobs,'scope':'Exact logical bytes; original component manifests/checksums and attempts retained; runtime exports have verified full source-archive recovery. No payload executed.'}
+raw=(json.dumps(c,ensure_ascii=False,separators=(',',':'))+'\n').encode();assert len(raw)<92_000_000,(len(raw),'Needs a lossless split, never truncation')
+(O/'DATA-CARRIER.json').write_bytes(raw)
+m={k:v for k,v in c.items() if k!='blobs'};m.update(carrier_sha256=sha(raw),carrier_bytes=len(raw));(O/'DATA-RECOVERY-MAP.json').write_text(json.dumps(m,indent=2)+'\n')
+# Own independent data-only recovery check, not an execution of received verifier code.
+again=json.loads(raw)
+by_digest={}
+for x in rows:by_digest.setdefault(x['blob'],[]).append(x)
+for k,v in again['blobs'].items():
+ z=base64.b64decode(v['compressed_base64'],validate=True);assert len(z)==v['compressed_bytes'] and sha(z)==v['compressed_sha256']
+ b={'gzip':gzip.decompress,'xz':lzma.decompress}[v['codec']](z);assert len(b)==v['uncompressed_bytes'] and sha(b)==k
+ assert all(b==files[x['path']] and k==x['sha256'] and len(b)==x['bytes'] for x in by_digest[k])
+assert set(again['blobs'])==set(by_digest)
+(O/'ROOT-DATA-VERIFICATION.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'logical_files':len(rows),'logical_bytes':c['logical_bytes'],'unique_blobs':len(blobs),'carrier_bytes':len(raw),'carrier_SHA256':sha(raw),'all_original_bytes_recovered_exact':True,'all_runtime_archives_source_maps_verified':True,'no_payload_executed':True},indent=2)+'\n')
+print('DATA READY',len(rows),'logical files,',len(raw),'carrier bytes')

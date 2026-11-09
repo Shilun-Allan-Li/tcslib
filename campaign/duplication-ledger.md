@@ -1846,3 +1846,17 @@ PR#251/gate129 adds the three explicitly approved non-simp readers (including th
 The wider complete closing-form census retains 39 source candidate chunks/69 raw lines. Unselected operational proofs and the foreign owner proof of published Action.apply_workTapes are not certified or acknowledged by the selected6 guard. Its possible exact owner-home move is being assessed separately and needs a human home ruling. Other candidates needing public readers, imports or statement decisions remain held. No legacy Rule10 exemption, future-copy permission or all-owner/global absence follows. Existing debt kinds/owner/window stay exact.
 
 PR#252/gate130 contains only the five explicitly approved core/NDClockHost/Sweep readers. Hypothetical MARMTime/Startup/SingleTape consumer repairs are independent feasibility evidence, not landed implementations or family retirements. No consumer source was adopted, mathematical hole filled or source gate closed.
+
+### Gate 129's current operational proof scope
+
+#251 now has seven exact-header old proof repairs: the former six plus the
+terminal branch of FinTM.pairExtractTM_fst_run. Input-only action application
+and extractor halt now cite existing one-tape / zero-tape and action equations.
+Only on actual merge do these seven inspected proof implementations retire.
+The current 50-file comparison has two new directed text matches (walk versus
+one-tape move/write). Their arbitrary-head versus one-selected-head and
+write/no-write premises do not identify a replaceable same-contract theorem.
+Five old pair reports disappear. These are pair counts, not new debt or a
+claim of whole-kind retirement. The approved separate Configuration move in
+#253 is not assumed available or merged in #251. Existing retention kinds and
+cleanup windows are unchanged.
