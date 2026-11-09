@@ -30,10 +30,10 @@ serial closures and reproduced both axiom probes. See
 |---|---|---|
 | DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
 | Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
-| SIS collision-resistant hashing | Core hash/reduction/profile and strong extraction audited. Raw evaluator and exact collision-to-SIS output proofs checked | Gate 12 disposition, counted-loop efficiency, and the CRH interface under independent SIS hardness |
+| SIS collision-resistant hashing | Core hash/reduction/profile, strong extraction, raw evaluator and exact collision-to-SIS output proofs audited | Counted-loop efficiency, and the CRH interface under independent SIS hardness |
 | Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
-| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation checked | Gate 12 disposition, positional digit reader, anti-cyclic rank, all-but-one inverse, strong one-time signatures and CCA2 |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank checked | Positional digit reader, all-but-one inverse, strong one-time signatures and CCA2 |
 
 The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
 seconds with zero errors, seventy owned and seventeen inherited admission
@@ -116,5 +116,13 @@ Intake verifies exchange `3d1d76833cf36a614559338dd31a2dc0459618d5`,
 the exact patch, all 260 indexed attachments, and the merge preview.
 [Verified intake](fills/07-sis-trapdoor/round2/review-intake.json)
 
-**Not yet clear to merge.** The 18 admissions, scoped source review, and landing
-checks remain open. The user approves all merges.
+## Anti-cyclic rank
+
+Both rank proofs are checked at `75a4214dc098cd6c363d00c34f569bac23eb4555`, leaving 16
+owned admissions. The affected closure and three probes pass. Of the 220
+types, 216 match exactly and four have kernel-checked definitional equality. The existing power basis and cyclotomic result
+use the same pinned Mathlib. This checkpoint enters the next combined
+proof review. [Rank report](fills/08-anti-cyclic-rank/REPORT.md)
+
+**Not yet clear to merge.** Sixteen admissions, the next proof audit, scoped
+source matching, and landing checks remain open. The user approves all merges.
