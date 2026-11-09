@@ -166,7 +166,11 @@ private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
   ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
 
 /-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
-and the input head has not moved. -/
+and the input head has not moved.
+
+**Proof sketch.** Read the initial configuration fields at time zero. At each
+live prefix state, the transition emits the next fixed bit and leaves the input
+head in place. The action fields identify the next prefix configuration. -/
 private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
     (prependTM w).tm.runFrom ((prependTM w).tm.initCfg x) i =
       catalogPrefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
@@ -1313,7 +1317,11 @@ private lemma catalogPolyMove_apply {c C : ℕ} (x : List Bool) (q : ℕ)
     by_cases hj : j = i <;> simp [catalogPolyMove, catalogPolyCfg, Action.apply, hj]
   · simp [catalogPolyMove, catalogPolyCfg, Action.apply]
 
-/-- The finite emission chain appends exactly its remaining number of true bits. -/
+/-- The finite emission chain appends exactly its remaining number of true bits.
+
+**Proof sketch.** Induct on the remaining emission count. At zero the machine
+enters the advance state without emission. A positive count appends one true
+bit and decreases the count, leaving the loop tapes and heads unchanged. -/
 private lemma catalogPoly_emit {c C : ℕ} (x : List Bool) (q : ℕ)
     (h : Fin (c + 1) → ℤ) : ∀ j (hj : j ≤ C) (o : List Bool),
     (catalogPolyUnaryTM c C).tm.runFrom
@@ -4863,7 +4871,11 @@ private def splitPrepareReady (k : ℕ) (w s : List Bool)
   ⟨some (q, decide (w.length < s.length)), splitPos w s.length,
     Fin.cases (bufferTape s) (fun _ => catalogPolyTape (s.length + 1)), fun _ => h, []⟩
 
-/-- Adding the extra side-length cell handles the empty candidate uniformly. -/
+/-- Adding the extra side-length cell handles the empty candidate uniformly.
+
+**Proof sketch.** Read the blank on tape zero at the end of the scan. The
+next row leaves that tape intact, writes the extra unary cell on each counter
+tape and moves the work heads left while the native input stays parked. -/
 private lemma splitPrepare_extra (k : ℕ) (w s : List Bool) :
     (splitPrepareTM k).tm.step (splitPrepareScan k w s s.length) =
       splitPrepareReady k w s 1 (s.length - 1) := by
@@ -5360,7 +5372,11 @@ private lemma splitEmit_double (k : ℕ) (w s : List Bool) (hs : s.length ≤ w.
         List.append_nil, List.append_assoc, List.cons_append, List.nil_append]
 
 /-- Once the counter is exhausted, emit the two separator bits without
-moving the native head away from the beginning of the suffix. -/
+moving the native head away from the beginning of the suffix.
+
+**Proof sketch.** Read the exhausted counter to select the row that
+emits false. The next state emits true at the same input position. Compose the
+two steps and read their frame and output fields. -/
 private lemma splitEmit_separator (k : ℕ) (w s : List Bool) (out : List Bool) :
     (splitEmitTM k).tm.runFrom (splitEmitCfg k w s (some 0) s.length s.length out) 2 =
       splitEmitCfg k w s (some 3) s.length s.length (out ++ [false, true]) := by
@@ -6445,7 +6461,11 @@ private lemma emitterP2_erase_back (w u : List Bool) :
     exact ih
 
 /-- The complete administrative-word erasure costs twice its length plus two.
-All cells, the head, physical output, and native input position are restored. -/
+All cells, the head, physical output, and native input position are restored.
+
+**Proof sketch.** Use the forward buffer replay to reach the right
+blank. Its transition enters the backward erasing state, and the backward
+run restores the empty buffer and its head at zero. -/
 private lemma emitterP2_erase_run (w u : List Bool) :
     emitterP2EraseTM.tm.runFrom (emitterP2EraseCfg w u 0 0) (2 * (u.length + 1)) =
       emitterP2EraseCfg w [] 2 0 := by
