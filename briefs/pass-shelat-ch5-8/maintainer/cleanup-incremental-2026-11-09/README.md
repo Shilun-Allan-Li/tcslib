@@ -1,5 +1,7 @@
 # Incremental cleanup checkpoint
 
+The [final verification](final-r1/README.md) records the repaired head and merge clearance.
+
 [PR #248](https://github.com/Shilun-Allan-Li/tcslib/pull/248) is draft. The
 [approved cleanup plan](../../CLEANUP-PLAN.md) specifies incremental
 acceptance and the deferred ledger.

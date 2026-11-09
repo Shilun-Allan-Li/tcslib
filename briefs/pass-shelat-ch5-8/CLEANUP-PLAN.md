@@ -41,6 +41,8 @@ contracts. The three proposed `ClassNP/PolyTime` provider proof changes remain
 separate scope decisions. [Checked intake and limits](fills/cleanup-part2/checkpoints/partial-r1/checked-repairs-r1/README.md)
 · [Issued brief and original criteria](fills/cleanup-part2/issued-r1/brief.md)
 
+The [incremental verification](maintainer/cleanup-incremental-2026-11-09/final-r1/README.md) records the exact #248 head and inherited-read dispositions.
+
 ## 2. Reorganize by primitive, starting with public-key encryption
 
 The construction map can be designed against the current source. Start the
