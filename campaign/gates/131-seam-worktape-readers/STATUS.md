@@ -1,3 +1,3 @@
-**Not yet clear to merge: #253 — external audit open.**
+**Ready to dispatch: gate 131, Codex.**
 
-Exact source `1d88037a8b2a0cd1858245a979ced7dea4a7172c`. Full downstream replay and actual final comment-only Seam refresh pass. Current source checks and complete bound screen pass. Codex bundle publication pending. No source merge.
+**Not yet clear to merge: #253.** Exact source `1d88037a8b2a0cd1858245a979ced7dea4a7172c`. User dispatch not confirmed. Full actual replay, final comment-only Seam refresh, current source checks and complete bound screen pass. Published and verified bundle; prompt issued in chat. No source merge.
