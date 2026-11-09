@@ -1860,3 +1860,14 @@ Five old pair reports disappear. These are pair counts, not new debt or a
 claim of whole-kind retirement. The approved separate Configuration move in
 #253 is not assumed available or merged in #251. Existing retention kinds and
 cleanup windows are unchanged.
+
+### Gate 131 seam and work-tape prerequisite
+
+#253's one new public right-transition reader is used by the existing private
+right-step proof. The repaired exact-header implementation's inline table
+reading retires only on merge. The existing optional-write normalization
+moves to its Configuration home with identical statement and proof; it is
+one theorem, with one new home, not a retained copy. The 56-file copy score
+comparison has no new pair and twelve disappear, all incident to the revised
+right-step proof. These are directed text scores, not family counts. No
+whole-kind retirement or debt acceptance is made.

@@ -1,3 +1,3 @@
-**Not yet clear to merge: #253 — fresh 403-module replay and external audit pending.**
+**Not yet clear to merge: #253 — external audit open.**
 
-Approved single import and proof re-point pushed at d26b7340265ff1318d44838aaca2cd660f8528f3. Full private native/6-head guard/12 controls passed. No user dispatch or merge.
+Exact source `1d88037a8b2a0cd1858245a979ced7dea4a7172c`. Full downstream replay and actual final comment-only Seam refresh pass. Current source checks and complete bound screen pass. Codex bundle publication pending. No source merge.
