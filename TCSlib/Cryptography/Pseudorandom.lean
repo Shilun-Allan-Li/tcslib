@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions
 
@@ -23,6 +24,7 @@ evaluators and reductions, and quantify security by negligible advantage.
 `TCSlib.Cryptography.prgAdv` compares a generator's output with a uniform draw
 from its output type.
 `TCSlib.Cryptography.prfAdv` compares a keyed oracle with a random function.
+`TCSlib.Cryptography.PRG` describes a length-regular generator.
 
 ## Main results
 
@@ -37,6 +39,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   [Gar26, Lemmas 3.2 and 3.3].
 * `Generators` gives the generator advantage, iteration, and the stretch reduction
   [Gar26, Definition 3.5 and Theorem 3.1].
+* `Generators.Asymptotic.Defs` gives the length-regular PRG interface and security
+  contract [PS10, Definition 77.1].
 * `GeneratorFromPermutation` gives the reduction from distinguishing the generator
   to predicting a hard-concentrate bit [Gar26, Theorem 3.2].
 * `Functions` leads to the oracle adversary model, lazy sampling, and the finite GGM
@@ -45,9 +49,11 @@ advantage against the GGM keyed family by a sum of advantages against its genera
 ## Asymptotic routes
 
 * **Ensembles and next-bit prediction.** `TCSlib.Cryptography.Asymptotic.Ensembles`
-  supplies the shared ensemble model. `TCSlib.Cryptography.Asymptotic.Pseudorandom`
-  defines `TCSlib.Cryptography.Ensemble.Pseudorandom` and `TCSlib.Cryptography.PRG.Secure`,
-  which packages efficiency and pseudorandomness.
+  defines `TCSlib.Cryptography.Ensemble.Pseudorandom` in the shared ensemble model.
+  `TCSlib.Cryptography.Ensemble.pseudorandom_iff_prgAdv` in
+  `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs` characterizes it by
+  negligible concrete PRG advantage. `TCSlib.Cryptography.PRG.Secure` packages efficiency
+  and pseudorandomness for a generator.
   In `TCSlib.Cryptography.Asymptotic.NextBit`,
   `TCSlib.Cryptography.Ensemble.NextBitUnpredictable.pseudorandom` proves
   the next-bit test complete [PS10, Theorem 75.4] and
