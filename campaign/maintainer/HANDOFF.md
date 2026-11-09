@@ -7,40 +7,41 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T05:18:50.670574+00:00; authoritative)
+## 0. Current state (2026-11-09T05:29:26.489160+00:00; authoritative)
 
-Seyoon alone dispatches, rules on design/debt and merges source PRs. Records
-only go directly, after fetch/rebase. #252 merged at `6e43b7a237481d0d03ff3ef47116918e1e835559`; the campaign
-uses whole `oleans-nspace5` (1,003 tracked Lean paths, 895 objects) from its
-actual335 PASS, verified in campaign/status/2026-11-08-space-reader-merge/.
-MAC8 is the earlier pre-#252 snapshot. Never compose these snapshots.
+Seyoon alone merges source, dispatches and rules on design or debt. Records
+only go directly after fetch/rebase. #252 and #249 have merged. Campaign Lean
+is `770a4488e1bb770a3b7c9c878327fc2d468dd7f2`, using `oleans-pr249-space-verified` (1,004 tracked Lean paths,
+896 compiled objects). Exact proof of adoption is in
+campaign/status/2026-11-08-ladner-scaffold-merge/. The pre-#249 snapshot is
+whole `oleans-nspace5`; the pre-#252 snapshot is MAC8. Never compose them.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** First return HOLD. Mechanical repairs on the draft branch; final guards and full current-base replay before Codex follow-up. |
-| #252 / 130 | **Merged.** Gate closed before merge, snapshot adopted as above. |
-| #253 / 131 | **Not yet clear to merge.** Seyoon dispatched the pinned Codex audit. Older replay validity checked after #252. Waiting for findings. |
-| #241 / 121 | **Not yet clear to merge.** InputLength/Seam providers and integrated replay/follow-up remain. |
-| #242 / 122 | **Not yet clear to merge.** Selected13 external PASS preserved. #252 unlocks the four prepared consumer repairs. Shared 121 reads and three separate held roots remain. |
-| #254 | **Clear to merge** as tooling only. No Lean change or Lean gate. |
+| #251 / 129 | **Not yet clear to merge.** First return HOLD. Repaired draft `06abd00adf61c257fcd25ee9181a37ddec0a4c87` in fresh 395-module replay. Final checks and Codex follow-up pending. |
+| #253 / 131 | **Not yet clear to merge.** Audited PASS; empty namespace minor fixed at `70312c51b658463bec68caab49ce281c21607a3f`. Current 404-module replay running before clearance. |
+| #242 / 122 | **Not yet clear to merge.** Four native-checked #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared 121 reads and three distinct held roots remain. |
+| #241 / 121 | **Not yet clear to merge.** Needs merged providers 129/131 and integrated repairs, replay and follow-up. |
+| #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
+| #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
+| #254 | **Clear to merge** as tooling only, no Lean diff. |
 
-Gates123–128 remain closed. #243–#247 and #249 have clean prospective
-trees after #252 but need refreshed replay evidence, because their owners
-reach the changed modules. #249 is the Ladner statement scaffold with six
-approved holes; the current small replay is running. Never merge source here.
+Gates 123–127 stay closed. #243–#247 still need post-#252 replay refreshes
+because their changed owners import the new providers. Run on the current
+#249 tree; don't reuse the earlier exact-MAC8 clearance. Never merge for Seyoon.
 
-The audited roadmap snapshot records 26/26 earlier headlines and 19 other
-results without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6 are
-proved and merged. Ladner remains the main open theorem; no fill is dispatched.
-RD-2/H6 remains held (41 known direct admissions across the recorded scopes,
-independent of the merged TQBF proof). See campaign/status/2026-11-08-roadmap-readiness/.
+Roadmap: 26/26 previously tracked headlines and 19 additional checked
+closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6
+are proved and merged. Ladner's six mathematical holes and packaging remain
+the main open theorem. No fill is dispatched. RD-2/H6 remains separately
+held (41 direct admissions in the recorded scopes, outside the merged TQBF
+proof). See campaign/status/2026-11-08-roadmap-readiness/.
 
-Pending design decisions: SAT PolyTimeBlockLoop import, sharp SAT verifier
-interface and RO1 home; preserve the intentionally dirty RO1 worktree. Keep
-the approved Hardness CfgFacts import separate. The next free gate is 132.
-Whole clones, approved wrappers only, local3/machine5 slots, one copy screen.
-Keep the original 3sumapsp_example.lean and shared inbox files intact. Do not
-discard partial/invalid snapshots without a separate check and record.
+Pending design: sharp SAT verifier interface, SAT PolyTimeBlockLoop import
+and RO1 home. Leave the intentionally dirty RO1 worktree intact. The approved
+Hardness CfgFacts import stays separate. Next free gate 132. Use complete
+snapshots, approved wrappers, local3/machine5 and one screen lock. Preserve
+the original campaign checkout's example and all shared inbox originals.
 
 ## 1. Starting a session on a new machine
 

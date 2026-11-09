@@ -1,0 +1,102 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+index e9b8e0726..572106e33 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -256,14 +256,8 @@ private def scanCfg {S : Type} (x : List Bool) (q : Option S)
+ /-- Reading at the indexed input position returns the optional list entry. -/
+ private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
+     (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+-    (scanCfg x q i hi out).inputSymbol = x[i]? := by
+-  by_cases h : i < x.length
+-  · rw [List.getElem?_eq_getElem h]
+-    exact inputSymbolInner i (by simp [scanCfg]; omega) h
+-  · have he : i = x.length := by omega
+-    subst i
+-    rw [Cfg.inputSymbol_of_end (by simp [scanCfg])]
+-    simp
++    (scanCfg x q i hi out).inputSymbol = x[i]? :=
++  inputSymbol_at _ i hi rfl
+ 
+ /-- A copy state emits the next `j` input bits after an arbitrary output prefix.
+ **Proof sketch.** Induct on the number of copied cells; each transition appends
+@@ -440,7 +434,10 @@ theorem incFixedTM_computes (x : List Bool) :
+       apply (computesInTime_iff _ _ _ _).mpr
+       rw [MultiTapeTM.runFrom_succ_eq_step', show incFixedTM.tm.initCfg x =
+         scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+-          by apply Cfg.ext_zero_tapes <;> simp [incFixedTM, scanCfg], hr]
++          by
++            rw [MultiTapeTM.initCfg_eq]
++            apply Cfg.ext_zero_tapes <;>
++              simp [Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, incFixedTM, scanCfg], hr]
+       have hblank : x[x.length]? = none := by simp
+       rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hblank]
+       change ((controlAction 0 (none : Option (Fin 4))).apply _).state = none ∧
+@@ -456,7 +453,10 @@ theorem incFixedTM_computes (x : List Bool) :
+     have hdet : incFixedTM.tm.runFrom (incFixedTM.tm.initCfg x) (j + 1) = c := by
+       rw [MultiTapeTM.runFrom_succ_eq_step', show incFixedTM.tm.initCfg x =
+         scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+-          by apply Cfg.ext_zero_tapes <;> simp [incFixedTM, scanCfg],
++          by
++            rw [MultiTapeTM.initCfg_eq]
++            apply Cfg.ext_zero_tapes <;>
++              simp [Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, incFixedTM, scanCfg],
+         scanTrues_run incFixedTM.tm (0 : Fin 4) false (fun _ => rfl) x j (by omega) hpre]
+       rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
+       change (controlAction .neg (some (1 : Fin 4))).apply _ = c
+@@ -658,7 +658,7 @@ private def extractCfg (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+ private lemma extractCfg_read (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+     (i : ℕ) (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
+     (extractCfg x q i hi a z out).inputSymbol = x[i]? :=
+-  scanCfg_read x q i hi out
++  inputSymbol_at _ i hi rfl
+ 
+ /-- Reading the first half of an aligned block preserves the buffer silently. -/
+ private lemma extract_first (first second : Bool) (x pre rest a : List Bool) (b : Bool)
+@@ -7015,9 +7015,16 @@ private lemma emitterP2_control {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S)
+     (q r : S) (h : ∀ inp work, tm.tr q inp work = controlAction 0 (some r))
+     (w : List Bool) (words : Fin k → List Bool) :
+     tm.step (Cfg.ofWords (input := w) q words) = Cfg.ofWords r words := by
+-  rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-  simp only [Cfg.ofWords, h]
+-  rw [controlAction_apply, moveInputPos_zero]
++  rw [MultiTapeTM.step_of_some (Cfg.ofWords_state q words), h, controlAction_apply,
++    moveInputPos_zero]
++  apply Cfg.ext
++  · simp only [Cfg.ofWords_state]
++  · simp only [Cfg.ofWords_inputPos]
++  · funext i
++    simp only [Cfg.ofWords_workTapes]
++  · funext i
++    simp only [Cfg.ofWords_workTapePos]
++  · simp only [Cfg.ofWords_output]
+ /-- Preparation embeds on exactly the three administrative tapes.
+ **Proof sketch.** Relocate the first-return preparation trace using the three-slot inverse law. The initial and final frame identities give literal host seams; disjoint controls give anchor exclusion. -/
+ private lemma emitterP2_body_prepare (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k)
+@@ -7790,7 +7797,10 @@ private lemma emitterToken_double (x pre rest out : List Bool) (b : Bool)
+     | simp [unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+ 
+ /-- The two separator transitions preserve the input position and append the
+-unique pair delimiter before entering the suffix copier. -/
++unique pair delimiter before entering the suffix copier.
++
++**Proof sketch.** Apply the live-step equation twice and compare the state,
++input position, and output after each write-free transition. -/
+ private lemma emitterToken_separator (x out : List Bool) (i : ℕ) (hi : i ≤ x.length) :
+     unaryTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =
+       scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true]) := by
+diff --git a/TCSlib/Complexity/TuringMachine/Simulation.lean b/TCSlib/Complexity/TuringMachine/Simulation.lean
+index 876e0b6d4..b27fc11af 100644
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -110,7 +110,10 @@ def emitAction {k : ℕ} {S : Type} (w : List Bool)
+     ⟨0, fun _ => (none, 0), none, none⟩
+ 
+ /-- After `t` emission steps the state is the `t`-th chain state and exactly the
+-first `t` symbols have been appended. The induction uses no tape invariant because
++first `t` symbols have been appended.
++
++**Proof sketch.** Induct on the number of steps, using the transition equation
++and the state and output readers. No tape invariant is needed because the
+ emission transitions ignore all reads. -/
+ lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
