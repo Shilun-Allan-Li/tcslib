@@ -260,6 +260,11 @@ theorem relabelAt_replicate (n : ℕ) (w p : List Bool) :
 string (`samplePerm` at `√|w|`). -/
 noncomputable def sampleStr (w r : List Bool) : List Bool := encPerm (samplePerm (Nat.sqrt w.length) r)
 
+/-- Sampling a graph word's vertex permutation returns the encoding of the permutation
+sampled on `√|w|` points from the supplied tape. -/
+theorem sampleStr_eq (w r : List Bool) :
+    sampleStr w r = encPerm (samplePerm (Nat.sqrt w.length) r) := rfl
+
 /-- The product `π σ⁻¹` of the permutations decoded from `p` and `y` on `√|p|` points, as a
 string (the function of `polyTimeComputable_encPermMulInv`). -/
 noncomputable def mulInvStr (p y : List Bool) : List Bool :=

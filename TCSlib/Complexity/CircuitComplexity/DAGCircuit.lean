@@ -121,6 +121,14 @@ def eval (g : DAGGate) (vals : List Bool) : Bool :=
   | .or => g.args.any fun a => vals.getD a false
   | .not => !(g.args.all fun a => vals.getD a false)
 
+/-- A gate evaluates its argument values by conjunction, disjunction, or negated
+conjunction according to its kind. -/
+theorem eval_eq (g : DAGGate) (vals : List Bool) :
+    eval g vals = match g.kind with
+      | .and => g.args.all fun a => vals.getD a false
+      | .or => g.args.any fun a => vals.getD a false
+      | .not => !(g.args.all fun a => vals.getD a false) := rfl
+
 /-- The depth of a gate: one more than the deepest vertex it reads, vertex `v`'s depth
 being `ds.getD v 0`. -/
 def depth (g : DAGGate) (ds : List ℕ) : ℕ :=
@@ -461,9 +469,17 @@ variable {n : ℕ} (C : DAGCircuit n)
 def values (x : Fin n → Bool) : List Bool :=
   runWith DAGGate.eval C.gates (List.ofFn x)
 
+/-- The vertex-value equation [AB09, Def 6.1]: `C.values x` runs the gates from `List.ofFn x`. -/
+theorem values_eq (x : Fin n → Bool) :
+    C.values x = runWith DAGGate.eval C.gates (List.ofFn x) := rfl
+
 /-- The circuit's output on input `x`. -/
 def eval (x : Fin n → Bool) : Bool :=
   (C.values x).getD C.output false
+
+/-- The output equation [AB09, Def 6.1]: `C.eval x = (C.values x).getD C.output false`. -/
+theorem eval_eq (x : Fin n → Bool) :
+    C.eval x = (C.values x).getD C.output false := rfl
 
 /-- The depths of all vertices: `0` at the inputs, one more than the deepest input at a
 gate. -/
@@ -479,6 +495,9 @@ def depth : ℕ := C.depthAt C.output
 
 /-- The size of the circuit: its number of vertices, inputs included.  [AB09, Def 6.1] -/
 def size : ℕ := n + C.gates.length
+
+/-- The size equation [AB09, Def 6.1]: `C.size = n + C.gates.length`. -/
+theorem size_eq : C.size = n + C.gates.length := rfl
 
 /-- `¬` gates have exactly one input, and no gate reads a vertex twice. -/
 def IsWellFormed : Prop :=

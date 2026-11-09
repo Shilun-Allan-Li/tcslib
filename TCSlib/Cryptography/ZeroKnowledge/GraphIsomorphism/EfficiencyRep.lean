@@ -355,17 +355,17 @@ theorem unaryMul_comp {f g : List Bool → ℕ} (hf : PolyTimeComputable fun w =
     PolyTimeComputable fun w => List.replicate (f w * g w) true :=
   ptc_congr (unaryMul_poly.comp (hf.pairEncode hg)) fun w => by simp [pairDecode_pairEncode]
 
-/-- The coin block `coinSlice c i r` for a block length `c = p(|u|)` and an index `i` given in
+/-- The coin block `coinBlock c i r` for a block length `c = p(|u|)` and an index `i` given in
 unary by polynomial-time maps (`polyTimeComputable_pairDropPoly`, `polyTimeComputable_pairTakePoly`). -/
 theorem coinSlice_poly (p : PolyExpr) {u i r : List Bool → List Bool} (hu : PolyTimeComputable u)
     (hi : PolyTimeComputable i) (hr : PolyTimeComputable r) :
-    PolyTimeComputable fun w => coinSlice (p.eval (u w).length) (i w).length (r w) := by
+    PolyTimeComputable fun w => coinBlock (p.eval (u w).length) (i w).length (r w) := by
   have hic : PolyTimeComputable fun w => List.replicate ((i w).length * p.eval (u w).length) true :=
     unaryMul_comp (ptc_congr (polyTimeComputable_unary.comp hi) fun w => rfl) (unaryPoly_comp p hu)
   have hdrop : PolyTimeComputable fun w => (r w).drop ((i w).length * p.eval (u w).length) :=
     ptc_congr ((polyTimeComputable_pairDropPoly .var).comp (hic.pairEncode hr)) fun w => by simp
   refine ptc_congr ((polyTimeComputable_pairTakePoly p).comp (hu.pairEncode hdrop)) fun w => ?_
-  simp [coinSlice]
+  simp [coinBlock_eq]
 
 /-! ### Iterating a step a unary number of times -/
 
@@ -447,9 +447,9 @@ theorem gniBlock_eval (N : ℕ) : gniBlock.eval N = 1 + (N + 1) ^ 2 := by
   simp [gniBlock, PolyExpr.eval_normal]
 
 /-- The coin block of the current iteration of the `|x|`-fold graph non-isomorphism verifier:
-`coinSlice (1 + (|x|+1)²) |hist| r`. -/
+`coinBlock (1 + (|x|+1)²) |hist| r`. -/
 theorem gniSlice_poly : PolyTimeComputable fun w =>
-    coinSlice (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w) :=
+    coinBlock (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w) :=
   ptc_congr (coinSlice_poly gniBlock NUPPT.polyTimeComputable_inParam cnt_poly
     NUPPT.polyTimeComputable_inCoins) fun w => by simp
 
@@ -576,12 +576,12 @@ theorem getD_eq_headD_drop {α : Type*} (l : List α) (j : ℕ) (d : α) : l.get
 scan: message `j` is `pairFstD (pairSndD^[j] msgs)` and the first bit of coin block `j` is the
 first bit of `r.drop (j c)`. -/
 theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (hc : 0 < c) :
-    (∀ j : Fin N, (hist.getD j []).headD false = (coinSlice c j r).headD false) ↔
+    (∀ j : Fin N, (hist.getD j []).headD false = (coinBlock c j r).headD false) ↔
       ∀ j < N, (pairFstD (pairSndD^[j] (Strategy.encodeMsgs hist))).headD false =
         (r.drop (j * c)).headD false := by
   rw [Fin.forall_iff]
   refine forall_congr' fun j => forall_congr' fun _ => ?_
-  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinSlice, headD_take hc, Fin.val_mk,
+  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinBlock_eq, headD_take hc, Fin.val_mk,
     getD_eq_headD_drop]
 
 /-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
@@ -590,27 +590,27 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
 test `|hist| < |x|` (`ltLen_poly`), the coin block of the current iteration (`gniSlice_poly`)
 and the message `relabel_poly` of `G_b` by the sampled permutation on the one hand, the
 well-formedness test conjoined with the verdict scan (`gniScan_poly`) on the other; the
-equation with `gniVerifierRep.next` is `msgCount_encodeMsgs`, `gniBlock_eval` and
-`gni_verdict_iff`. -/
+equation with `gniVerifierRep.next` first reads `gniVerifierRep_next`, then uses
+`msgCount_encodeMsgs`, `gniBlock_eval` and `gni_verdict_iff`. -/
 theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   have hri := gniSlice_poly
   have hsel : PolyTimeComputable fun w =>
-      if (coinSlice (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).headD false
+      if (coinBlock (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).headD false
         then pairSndD (argX w) else pairFstD (argX w) :=
     polyTimeComputable_ite (headBit_poly.comp hri) w₁_poly w₀_poly
   have hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w))
-      (coinSlice (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).tail :=
+      (coinBlock (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).tail :=
     ptc_congr (sampleStr_poly.comp (w₀_poly.pairEncode (tail_poly.comp hri))) fun w => by simp
   have hmsg := relabel_poly hsel hσ
   have hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)] := wellFormed_poly.comp argX_poly
   have hverdict := polyTimeComputable_and hwf gniScan_poly
   refine efficient_of_polyTime gniVerifierRep (polyTimeComputable_ite ltLen_poly hmsg hverdict) ?_
   intro x z r hist
-  show (if hist.length < x.length then _ else _) = _
+  rw [gniVerifierRep_next]
   simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
     argX_ilayout, vcount_ilayout, gniBlock_eval, decide_eq_true_eq]
   by_cases hlt : hist.length < x.length
-  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr, decPerm_encPerm, List.drop_one]
+  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr_eq, decPerm_encPerm, List.drop_one]
     split_ifs <;> rfl
   · rw [if_neg hlt, if_neg hlt, Bool.decide_and, Bool.decide_eq_true]
     congr 2

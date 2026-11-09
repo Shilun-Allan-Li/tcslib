@@ -24,7 +24,7 @@ The frozen string definitions of the main file (`giSimBlockLen`, `giSimCoins`,
 `GIZK.attemptStr`, `GIZK.sim` with identical bodies, so that the machine can be built before
 the main file; the main file identifies each shadow with its original by `rfl`.
 
-One attempt at index `t` reads the `t`-th coin block (`coinSlice`, cut by the typed coin
+One attempt at index `t` reads the `t`-th coin block (`coinBlock`, cut by the typed coin
 cuts `Complexity.polyTimeComputable_pairTakePoly`/`pairDropPoly` with the block length in
 unary), samples the permutation (`polyTimeComputable_encPermFromCoins`), relabels the guessed
 graph (`polyTimeComputable_encPermGraph` on the padded graph word), runs the cheating
@@ -113,12 +113,12 @@ noncomputable def attemptStr (V' : Strategy) (x z c : List Bool) : Option (List 
 the first successful view, or `[]`. -/
 noncomputable def sim (V' : Strategy) (x z r : List Bool) : List Bool :=
   ((List.range (instanceVertexCount x)).findSome? fun t =>
-    attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
+    attemptStr V' x z (coinBlock (blockLen V' x.length) t r)).getD []
 
 /-- The defining equation of `sim`: the first successful attempt on consecutive coin blocks. -/
 theorem sim_eq (V' : Strategy) (x z r : List Bool) :
     sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t =>
-      attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD [] := rfl
+      attemptStr V' x z (coinBlock (blockLen V' x.length) t r)).getD [] := rfl
 
 /-! ### An FP toolkit -/
 
@@ -235,7 +235,7 @@ private theorem getD_ite_some_none {α : Type*} (c : Prop) [Decidable c] (v d : 
 
 /-- The attempt of the simulator at index `t` on the layout `w`. -/
 noncomputable def attemptAt (V' : Strategy) (w : List Bool) (t : ℕ) : Option (List Bool) :=
-  attemptStr V' (simX w) (simZ w) (coinSlice (blockLen V' (simX w).length) t (simR w))
+  attemptStr V' (simX w) (simZ w) (coinBlock (blockLen V' (simX w).length) t (simR w))
 
 /-- **One attempt is polynomial-time.** On the indexed layout `u = ⟨1^t, w⟩`, both the
 success test of the `t`-th attempt and its (defaulted) view are polynomial-time functions.
@@ -250,11 +250,12 @@ at `(|x|+1)²`) and the tape (`pairDropPoly`); the permutation word is
 `polyTimeComputable_encPermFromCoins` on `⟨fst x, coins⟩`, the graph `H` is
 `encPermGraphAt_poly` on `⟨1^n, ⟨G_{b'}, encPerm π⟩⟩` (`decPerm_encPerm`), the comparison is
 `polyTimeComputable_pairEq` on the two one-bit words, and the view is assembled by
-`PolyTimeComputable.pairEncode`. -/
+`PolyTimeComputable.pairEncode`. The public efficiency, graph-decoding, sampler, uniform-advice
+and view/history equations identify each compositional function without foreign unfolding. -/
 theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
     PolyTimeComputable (fun u => [(attemptAt V' (pairSndD u) (pairFstD u).length).isSome]) ∧
     PolyTimeComputable (fun u => (attemptAt V' (pairSndD u) (pairFstD u).length).getD []) := by
-  obtain ⟨A, hA, -, hnext⟩ := hV'
+  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').mp hV'
   have hx : PolyTimeComputable fun u => simX (pairSndD u) := simX_poly.comp polyTimeComputable_pairSndD
   have hz : PolyTimeComputable fun u => simZ (pairSndD u) := simZ_poly.comp polyTimeComputable_pairSndD
   have hr : PolyTimeComputable fun u => simR (pairSndD u) := simR_poly.comp polyTimeComputable_pairSndD
@@ -271,11 +272,11 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
     refine ptc_congr this fun u => ?_
     simp
   have hc : PolyTimeComputable fun u =>
-      coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)) :=
-    truncate_poly hdrop hL
+      coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)) :=
+    ptc_congr (truncate_poly hdrop hL) fun u => coinBlock_eq _ _ _
   -- the guessed bit
   have hb : PolyTimeComputable fun u =>
-      [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+      [(coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false] :=
     headBit_poly.comp hc
   -- `(|x| + 1)²` in unary
@@ -284,16 +285,16 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
     simpa only [PolyExpr.eval_normal, one_mul] using this
   -- the permutation coins
   have hpc : PolyTimeComputable fun u =>
-      ((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1).take
+      ((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1).take
         (((simX (pairSndD u)).length + 1) ^ 2) := by
     have htail : PolyTimeComputable fun u =>
-        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1 := by
+        (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1 := by
       have := tail_poly.comp hc
       simpa only [List.drop_one] using this
     exact truncate_poly htail hP
   -- the verifier's tape
   have hrV : PolyTimeComputable fun u =>
-      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+      (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
         (1 + ((simX (pairSndD u)).length + 1) ^ 2) := by
     have h1P : PolyTimeComputable fun u =>
         List.replicate (1 + ((simX (pairSndD u)).length + 1) ^ 2) true :=
@@ -303,82 +304,101 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
     simp
   -- the vertex count in unary
   have hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true :=
-    unarySqrt_poly (unaryLength_poly (polyTimeComputable_pairFstD.comp hx))
+    ptc_congr (unarySqrt_poly (unaryLength_poly (polyTimeComputable_pairFstD.comp hx))) fun u =>
+      congrArg (fun n : ℕ => List.replicate n true) (instanceVertexCount_eq _)
   -- the sampled permutation as a word
   have hπ : PolyTimeComputable fun u => encPerm (samplePerm (instanceVertexCount (simX (pairSndD u)))
-      (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1).take
+      (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1).take
         (((simX (pairSndD u)).length + 1) ^ 2))) := by
     have := polyTimeComputable_encPermFromCoins.comp ((polyTimeComputable_pairFstD.comp hx).pairEncode hpc)
     refine ptc_congr this fun u => ?_
     simp only [Function.comp_apply]
     rw [pairFstD_pairEncode, pairSndD_pairEncode]
-    rfl
+    let graphWord : List Bool := pairFstD (simX (pairSndD u))
+    let tape : List Bool :=
+      List.take (((simX (pairSndD u)).length + 1) ^ 2)
+        (List.drop 1 (coinBlock (blockLen V' (simX (pairSndD u)).length)
+          (pairFstD u).length (simR (pairSndD u))))
+    have hcount : (decGraph graphWord).1 = instanceVertexCount (simX (pairSndD u)) :=
+      (congrArg (fun d : Σ k, Graph k => d.1) (decGraph_eq graphWord)).trans
+        (instanceVertexCount_eq (simX (pairSndD u))).symm
+    exact
+      ((congrArg (fun π : Equiv.Perm (Fin ((decGraph graphWord).1)) => encPerm π)
+        (samplePerm_eq ((decGraph graphWord).1) tape).symm).trans
+      (congrArg (fun k : ℕ => encPerm (samplePerm k tape)) hcount)).symm
   -- the guessed graph's word
   have hGb : PolyTimeComputable fun u =>
-      if (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+      if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false then pairSndD (simX (pairSndD u)) else pairFstD (simX (pairSndD u)) :=
     polyTimeComputable_ite hb (polyTimeComputable_pairSndD.comp hx) (polyTimeComputable_pairFstD.comp hx)
   -- the message `H`
   have hH : PolyTimeComputable fun u => encGraph (permGraph
-      (if (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+      (if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false then instanceG₁ (simX (pairSndD u)) else instanceG₀ (simX (pairSndD u)))
       (samplePerm (instanceVertexCount (simX (pairSndD u)))
-        (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+        (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
           1).take (((simX (pairSndD u)).length + 1) ^ 2)))) := by
     have := encPermGraphAt_poly.comp (hn.pairEncode (hGb.pairEncode hπ))
     refine ptc_congr this fun u => ?_
     simp only [Function.comp_apply]
     rw [pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode,
       List.length_replicate, decPerm_encPerm]
+    simp only [instanceG₀_eq, instanceG₁_eq]
     split_ifs <;> rfl
   -- the verifier's reply
   have hmsg : PolyTimeComputable fun u => V'.next (simX (pairSndD u)) (simZ (pairSndD u))
-      ((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+      ((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
         (1 + ((simX (pairSndD u)).length + 1) ^ 2))
       [encGraph (permGraph
-        (if (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+        (if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
           false then instanceG₁ (simX (pairSndD u)) else instanceG₀ (simX (pairSndD u)))
         (samplePerm (instanceVertexCount (simX (pairSndD u)))
-          (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+          (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
             1).take (((simX (pairSndD u)).length + 1) ^ 2))))] := by
     have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hx)
       ((hx.pairEncode hz).pairEncode (hH.pairEncode (polyTimeComputable_const [])))
       (polyTimeComputable_const []) hrV
     have := A.polyTimeComputable_output.comp hlay
-    have hadv : ∀ k, A.advice k = [] := hA
+    have hadv : ∀ k, A.advice k = [] := fun k => hA.advice_eq k
     refine ptc_congr this fun u => ?_
     rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hadv]
-    rfl
+    simp only [Function.comp_apply, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
   -- the success test
   have htest : PolyTimeComputable fun u => [decide ((V'.next (simX (pairSndD u)) (simZ (pairSndD u))
-      ((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+      ((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
         (1 + ((simX (pairSndD u)).length + 1) ^ 2))
       [encGraph (permGraph
-        (if (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+        (if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
           false then instanceG₁ (simX (pairSndD u)) else instanceG₀ (simX (pairSndD u)))
         (samplePerm (instanceVertexCount (simX (pairSndD u)))
-          (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+          (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
             1).take (((simX (pairSndD u)).length + 1) ^ 2))))]).headD false =
-      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+      (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false)] := by
     have := polyTimeComputable_pairEq.comp ((headBit_poly.comp hmsg).pairEncode hb)
     refine ptc_congr this fun u => ?_
     simp
   -- the view
   have hview : PolyTimeComputable fun u => View.encode ⟨simX (pairSndD u), simZ (pairSndD u),
-      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+      (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
         (1 + ((simX (pairSndD u)).length + 1) ^ 2),
       [encGraph (permGraph
-        (if (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+        (if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
           false then instanceG₁ (simX (pairSndD u)) else instanceG₀ (simX (pairSndD u)))
         (samplePerm (instanceVertexCount (simX (pairSndD u)))
-          (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+          (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
             1).take (((simX (pairSndD u)).length + 1) ^ 2)))),
         encPerm (samplePerm (instanceVertexCount (simX (pairSndD u)))
-          (((coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+          (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
             1).take (((simX (pairSndD u)).length + 1) ^ 2)))]⟩ :=
     ptc_congr ((hx.pairEncode hz).pairEncode (hrV.pairEncode (hH.pairEncode
-      (hπ.pairEncode (polyTimeComputable_const []))))) fun u => rfl
+      (hπ.pairEncode (polyTimeComputable_const []))))) fun u =>
+        (View.encode_mk _ _ _ _).trans
+          (congrArg (fun msgs : List Bool => pairEncode _ (pairEncode _ msgs))
+            ((Strategy.encodeMsgs_cons _ _).trans
+              (congrArg (pairEncode _)
+                ((Strategy.encodeMsgs_cons _ _).trans
+                  (congrArg (pairEncode _) Strategy.encodeMsgs_nil)))))
   refine ⟨?_, ?_⟩
   · refine ptc_congr htest fun u => ?_
     simp only [attemptAt, attemptStr]

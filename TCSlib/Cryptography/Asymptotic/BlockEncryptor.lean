@@ -30,7 +30,7 @@ instances of `Complexity.polyTimeComputable_iterateEmit` (D11), with the unfoldi
 
 * `TCSlib.Cryptography.blockState`, `blockStep`, `blockEmit`, `blockEncFun`, `blockList` — the
   block encryptor, its step, emission and ideal output.
-* `TCSlib.Cryptography.coinBlock` — the `i`-th coin segment.
+* The common `TCSlib.Cryptography.coinBlock` from `Asymptotic.Adversary` supplies coin segments.
 * `TCSlib.Cryptography.decListStep`, `decListEmit`, `decListFun` — the tuple decryptor.
 
 ## Main results
@@ -76,6 +76,10 @@ theorem length_le_length_encodeList (l : List (List Bool)) :
 `pk`, remaining message `m`, remaining coins `r`. -/
 def blockState (u pk m r : List Bool) : List Bool := pairEncode u (pairEncode pk (pairEncode m r))
 
+/-- A block state is the nested pair encoding of its parameter, key, message and coins. -/
+theorem blockState_eq (u pk m r : List Bool) :
+    blockState u pk m r = pairEncode u (pairEncode pk (pairEncode m r)) := rfl
+
 /-- One step of the block encryptor: drop `L(|u|)` message bits and `B(|u|)` coins. -/
 def blockStep (L B : PolyExpr) (w : List Bool) : List Bool :=
   blockState (pairFstD w) (pairFstD (pairSndD w))
@@ -99,6 +103,11 @@ emissions along `|x| + 1` steps — the nested-pair tuple of the encryptions of 
 `L(|u|)`-bit blocks of `m` under `pk`, each with a fresh `B(|u|)`-coin segment of `r`. -/
 def blockEncFun (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) : List Bool :=
   (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)
+
+/-- The block encryptor concatenates the emissions of rounds `0, …, |x|` from `x`. -/
+theorem blockEncFun_eq (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) :
+    blockEncFun E L B x =
+      (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x) := rfl
 
 /-- The ideal list of block encryptions with fuel `k`: `[]` once the message is empty. -/
 def blockList (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) :
@@ -351,12 +360,6 @@ theorem decListFun_poly {Dc : List Bool → List Bool} (hD : PolyTimeComputable 
       nlinarith)
   exact h
 
-/-- The `i`-th segment of `B` coins of a coin string. -/
-def coinBlock (B i : ℕ) (r : List Bool) : List Bool := (r.drop (i * B)).take B
-
-/-- The defining equation of `coinBlock`: `coinBlock B i r = (r.drop (i·B)).take B`. -/
-theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B := rfl
-
 /-- `blockList` with one-bit blocks and enough fuel on an `n`-bit message is the list of the `n`
 bit encryptions with the consecutive coin segments.
 
@@ -376,12 +379,12 @@ theorem blockList_ofFn (E : List Bool → List Bool) (B : ℕ) (u pk : List Bool
     obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
     rw [List.ofFn_succ, List.ofFn_succ]
     simp only [blockList, List.cons_ne_nil, if_false, List.take_succ_cons, List.take_zero,
-      List.drop_succ_cons, List.drop_zero, coinBlock, Fin.val_zero, zero_mul, List.cons.injEq,
+      List.drop_succ_cons, List.drop_zero, coinBlock_eq, Fin.val_zero, zero_mul, List.cons.injEq,
       true_and]
     rw [ih (fun i => m i.succ) (r.drop B) k (by omega)]
     congr 1
     funext i
-    simp only [coinBlock, Fin.val_succ, List.drop_drop]
+    simp only [coinBlock_eq, Fin.val_succ, List.drop_drop]
     rw [show (B + ↑i * B) = (↑i + 1) * B by ring]
 
 end TCSlib.Cryptography
