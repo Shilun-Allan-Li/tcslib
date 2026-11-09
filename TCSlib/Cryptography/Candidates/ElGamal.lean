@@ -3,25 +3,22 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Cryptography.Candidates.DiscreteLog
-import TCSlib.Cryptography.NumberTheory.QuadraticResidues
-import TCSlib.Cryptography.Asymptotic.Ensembles
-import Mathlib.NumberTheory.LegendreSymbol.Basic
-import Mathlib.GroupTheory.SpecificGroups.Cyclic
+import TCSlib.Cryptography.Candidates.DDH
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# The DDH assumption and El Gamal encryption
+# El Gamal encryption
 
 [PS10, §3.11]: the *decisional Diffie–Hellman assumption* in the order-`q` subgroup `G_q` of
 `Z_p^*` for a safe prime `p = 2q + 1` [PS10, Assumption 105.1], the group facts behind it
 (p. 106: `G_q` is the subgroup of squares, cyclic of prime order, every element `≠ 1`
 generates, squaring is `2`-to-`1` onto it), the El Gamal public-key encryption scheme
 [PS10, Algorithm 106.2] and its security under DDH [PS10, Theorem 107.3, "we leave the formal
-proof as an exercise"].
+proof as an exercise"]. The group facts and assumption live in
+`TCSlib.Cryptography.Candidates.DDH`.
 
 **Instances and the two generators.** Safe primes come from a safe-prime instance generator
 `G : SafePrimeGen` (`TCSlib.Cryptography.Candidates.DiscreteLog`; the text's "pick a safe
@@ -66,8 +63,6 @@ with the exponents read by `ddhExpo`. P8-2: `elGamal_secure`'s hypothesis `G.Ful
 
 ## Main definitions
 
-* `TCSlib.Cryptography.Candidates.ddhTuple`, `ddhLen`, `ddhExpo`, `ddhReal`, `ddhRandom`,
-  `TCSlib.Cryptography.Candidates.DDHAssumption` — [PS10, Assumption 105.1].
 * `TCSlib.Cryptography.Candidates.GroupPKScheme`, `GroupPKScheme.challenge`,
   `GroupPKScheme.Secure`, `constSelector` — public-key schemes with a key-dependent message
   space and their security (the form of [PS10, Definition 102.2] for `G_q`).
@@ -78,13 +73,6 @@ with the exponents read by `ddhExpo`. P8-2: `elGamal_secure`'s hypothesis `G.Ful
 
 ## Main results
 
-* `TCSlib.Cryptography.Candidates.card_QR_safe`, `mem_QR_iff_pow_eq_one`,
-  `orderOf_eq_of_mem_QR`, `zpowers_eq_QR`, `eq_QR_of_card`, `card_sqrt_safe`,
-  `pushesUniform_sqTo_safe` — the group facts of p. 106 (NT-105.a, proved).
-* `TCSlib.Cryptography.Candidates.uprob_sq_eq_one`, `statClose_of_uprob_ne`,
-  `statClose_sq_generator` — the generator-versus-square term `1/q` (Claim-107.a).
-* `TCSlib.Cryptography.Candidates.ddhExpo_statClose` — the DDH exponents are within `(1/2)^n`
-  of uniform at a generated instance (D10).
 * `TCSlib.Cryptography.Candidates.egSquareGen_valid` — the derived generator is valid
   (proved); `egGroupGen_runAt`, `egGen_runAt`, `egEnc_runAt`, `egDecStr_apply` — unfolding.
 * `TCSlib.Cryptography.Candidates.elGamal_correct` — correctness of [PS10, Algorithm 106.2].
@@ -104,311 +92,6 @@ with the exponents read by `ddhExpo`. P8-2: `elGamal_secure`'s hypothesis `G.Ful
 namespace TCSlib.Cryptography.Candidates
 
 open Complexity Turing NumberTheory Finset
-
-/-! ## The group `G_q` of a safe prime (NT-105.a, [PS10, p. 106]) -/
-
-section SafePrime
-
-variable {p q : ℕ} [hp : Fact p.Prime] [hq : Fact q.Prime]
-
-/-- A safe prime `p = 2q + 1` is odd. -/
-theorem safe_ne_two (hpq : p = 2 * q + 1) : p ≠ 2 := by
-  have := hq.out.two_le
-  omega
-
-/-- `5 ≤ p` for a safe prime `p = 2q + 1`. -/
-theorem five_le_safe (hpq : p = 2 * q + 1) : 5 ≤ p := by
-  have := hq.out.two_le
-  omega
-
-/-- `(p − 1)/2 = q` and `p/2 = q` for `p = 2q + 1`. -/
-theorem safe_half (hpq : p = 2 * q + 1) : (p - 1) / 2 = q ∧ p / 2 = q := by omega
-
-/-- **`|G_q| = q`** [PS10, p. 106, "`G` has a subgroup `G_q` of order `q`"]: the subgroup of
-squares of `Z_p^*` has `(p − 1)/2 = q` elements (`NumberTheory.card_QR_prime`). -/
-theorem card_QR_safe (hpq : p = 2 * q + 1) : Nat.card (QR p) = q := by
-  rw [card_QR_prime (safe_ne_two hpq), (safe_half hpq).1]
-
-/-- **`x ∈ G_q ↔ x^q = 1`** [PS10, p. 106, "the subgroup `G_q` consists of all of the squares
-modulo `p`"]: Euler's criterion with `p/2 = q`. -/
-theorem mem_QR_iff_pow_eq_one (hpq : p = 2 * q + 1) (x : (ZMod p)ˣ) : x ∈ QR p ↔ x ^ q = 1 := by
-  rw [mem_QR_iff, ZMod.euler_criterion_units, (safe_half hpq).2]
-
-/-- **Every element `≠ 1` of `G_q` has order `q`** [PS10, p. 106, "since `q` is prime, `G_q`
-will be a cyclic group … every element is a generator"]. -/
-theorem orderOf_eq_of_mem_QR (hpq : p = 2 * q + 1) {x : (ZMod p)ˣ} (hx : x ∈ QR p) (hx1 : x ≠ 1) :
-    orderOf x = q :=
-  orderOf_eq_prime ((mem_QR_iff_pow_eq_one hpq x).1 hx) hx1
-
-/-- **Every element `≠ 1` of `G_q` generates `G_q`** [PS10, p. 106]. -/
-theorem zpowers_eq_QR (hpq : p = 2 * q + 1) {x : (ZMod p)ˣ} (hx : x ∈ QR p) (hx1 : x ≠ 1) :
-    Subgroup.zpowers x = QR p := by
-  apply Subgroup.eq_of_le_of_card_ge (Subgroup.zpowers_le.2 hx)
-  rw [Nat.card_zpowers, orderOf_eq_of_mem_QR hpq hx hx1, card_QR_safe hpq]
-
-/-- **`G_q` is the unique subgroup of order `q`** of `Z_p^*` [PS10, p. 106]: a subgroup of
-order `q` consists of `q`-th roots of unity, hence lies in `G_q`, and has its size. -/
-theorem eq_QR_of_card (hpq : p = 2 * q + 1) (K : Subgroup (ZMod p)ˣ) (hK : Nat.card K = q) :
-    K = QR p := by
-  apply Subgroup.eq_of_le_of_card_ge
-  · intro x hx
-    rw [mem_QR_iff_pow_eq_one hpq]
-    have h1 := pow_card_eq_one' (G := K) (x := ⟨x, hx⟩)
-    rw [hK] at h1
-    have h2 := congrArg Subtype.val h1
-    simpa using h2
-  · rw [hK, card_QR_safe hpq]
-
-/-- **Squaring is `2`-to-`1` onto `G_q`** [PS10, p. 106, "choosing a generator involves simply
-picking a random element `a ∈ G` and computing `a²`"]: every square has exactly two roots. -/
-theorem card_sqrt_safe (hpq : p = 2 * q + 1) {x : (ZMod p)ˣ} (hx : x ∈ QR p) :
-    (univ.filter fun y : (ZMod p)ˣ => y ^ 2 = x).card = 2 :=
-  card_sqrt_eq_two (safe_ne_two hpq) hx
-
-/-- **The square of a uniform unit is a uniform element of `G_q`** (Claim-107.a, first part; inventory lemma
-C5 of chapter 2). -/
-theorem pushesUniform_sqTo_safe (hpq : p = 2 * q + 1) : HardcoreBit.PushesUniform (sqTo p) := by
-  refine pushesUniform_of_card_fiber (sqTo p) (c := 2) (by norm_num) fun y => ?_
-  rw [← card_sqrt_safe hpq y.2]
-  congr 1
-  ext x
-  simp only [mem_filter, mem_univ, true_and]
-  rw [Subtype.ext_iff, coe_sqTo]
-
-/-- **`g² = 1` with probability `1/q`** for a uniform unit `g` (Claim-107.a): the two roots
-`±1` among the `p − 1 = 2q` units. -/
-theorem uprob_sq_eq_one (hpq : p = 2 * q + 1) :
-    uprob (fun g : (ZMod p)ˣ => g ^ 2 = 1) = 1 / (q : ℝ) := by
-  rw [uprob_eq_card_filter, card_sqrt_safe hpq (one_mem _), ZMod.card_units]
-  have h : p - 1 = 2 * q := by omega
-  have hq0 : (q : ℝ) ≠ 0 := by exact_mod_cast hq.out.ne_zero
-  rw [h]
-  push_cast
-  field_simp
-
-end SafePrime
-
-/-- **Two samplers on the same seeds are statistically close within the probability that they
-differ**: `|Pr[T(X)] − Pr[T(Y)]| ≤ Pr[X ≠ Y]` (the device for the `1/q` term of
-Theorem 107.3: the scheme's `h = g²` and the derived generator's `h` differ only on `g² = 1`). -/
-theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
-    StatClose X Y (uprob fun s => X s ≠ Y s) := by
-  rw [statClose_iff]
-  intro T
-  have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
-      uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
-    intro X Y
-    refine (uprob_mono fun s h => ?_).trans (uprob_or_le (fun s => T (Y s)) (fun s => X s ≠ Y s))
-    by_cases hxy : X s = Y s
-    · exact Or.inl (hxy ▸ h)
-    · exact Or.inr hxy
-  have h1 := key X Y
-  have h2 := key Y X
-  have hsymm : uprob (fun s => Y s ≠ X s) = uprob (fun s => X s ≠ Y s) :=
-    OneWay.uprob_congr fun s => ne_comm
-  rw [hsymm] at h2
-  rw [abs_sub_le_iff]
-  constructor <;> linarith
-
-/-- **Removing one point moves every probability by at most `1/|α|`** (the counting step of
-`statClose_sq_generator`): the uniform element of `α` and the uniform element of `α ∖ {a}` give
-an event probabilities `t/N` and `s/(N − 1)` with `s ≤ t ≤ s + 1` and `s ≤ N − 1`.
-
-**Proof sketch.** Count (`uprob_eq_card_filter`, `Fintype.card_subtype_compl`): `s` is the number of
-points of `T ∖ {a}` (`Equiv.subtypeSubtypeEquivSubtypeInter`), so `s ≤ t ≤ s + 1` (`card_insert_le`)
-and `s ≤ N − 1`. For `N = 1` the punctured side is `0` and `t ≤ 1`. Otherwise `t/N ≤ (s + 1)/N ≤
-s/(N − 1) + 1/N` and `s/(N − 1) ≤ (s + 1)/N ≤ t/N + 1/N`, the step `s/(N − 1) ≤ (s + 1)/N` being `s
-≤ N − 1`. -/
-private theorem dlc_abs_uprob_sub_uprob_ne_le {α : Type*} [Fintype α] [DecidableEq α] (a : α)
-    (T : α → Prop) :
-    |uprob T - uprob (fun y : {y : α // y ≠ a} => T y)| ≤ 1 / (Fintype.card α : ℝ) := by
-  classical
-  have hcs : Fintype.card {y : α // y ≠ a} = Fintype.card α - 1 := by
-    rw [Fintype.card_subtype_compl, Fintype.card_subtype_eq]
-  rw [uprob_eq_card_filter, uprob_eq_card_filter, hcs]
-  set N := Fintype.card α with hN
-  set t := (univ.filter T).card with ht
-  set s := (univ.filter fun y : {y : α // y ≠ a} => T y).card with hs
-  -- `s` counts `T ∖ {a}`
-  have hs' : s = (univ.filter fun y : α => T y ∧ y ≠ a).card := by
-    rw [hs, ← Fintype.card_subtype, ← Fintype.card_subtype]
-    exact Fintype.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter (fun y => y ≠ a) T |>.trans
-      (Equiv.subtypeEquivRight fun y => and_comm))
-  have hst : s ≤ t := by
-    rw [hs']
-    exact card_le_card fun y hy => by simp only [mem_filter] at hy ⊢; exact ⟨hy.1, hy.2.1⟩
-  have hts : t ≤ s + 1 := by
-    rw [hs']
-    have hsub : univ.filter T ⊆ insert a (univ.filter fun y : α => T y ∧ y ≠ a) := by
-      intro y hy
-      simp only [mem_filter, mem_univ, true_and, mem_insert] at hy ⊢
-      by_cases h : y = a
-      · exact Or.inl h
-      · exact Or.inr ⟨hy, h⟩
-    exact (card_le_card hsub).trans (card_insert_le _ _)
-  have hN1 : 1 ≤ N := Fintype.card_pos_iff.2 ⟨a⟩
-  have hsN : s ≤ N - 1 := by
-    rw [hs, ← hcs]
-    exact card_le_univ _
-  rcases Nat.lt_or_ge N 2 with h2 | h2
-  · -- `N = 1`: the punctured type is empty
-    have h1 : N = 1 := by omega
-    rw [h1, Nat.sub_self, Nat.cast_zero, div_zero, sub_zero, Nat.cast_one, div_one, div_one,
-      abs_of_nonneg (Nat.cast_nonneg _)]
-    have : t ≤ 1 := by
-      rw [ht]
-      exact (card_le_univ _).trans h1.le
-    exact_mod_cast this
-  · have hNr : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
-    have hN1r : (0 : ℝ) < ((N - 1 : ℕ) : ℝ) := by exact_mod_cast (show 0 < N - 1 by omega)
-    have hcast : ((N - 1 : ℕ) : ℝ) = (N : ℝ) - 1 := by rw [Nat.cast_sub hN1, Nat.cast_one]
-    have hstr : (s : ℝ) ≤ t := by exact_mod_cast hst
-    have htsr : (t : ℝ) ≤ s + 1 := by exact_mod_cast hts
-    have hsNr : (s : ℝ) ≤ (N : ℝ) - 1 := by rw [← hcast]; exact_mod_cast hsN
-    rw [abs_sub_le_iff]
-    constructor
-    · -- `t/N ≤ (s+1)/N ≤ s/(N−1) + 1/N`
-      have h1 : (t : ℝ) / N ≤ (s + 1) / N := div_le_div_of_nonneg_right htsr hNr.le
-      have h2 : (s : ℝ) / N ≤ s / ((N - 1 : ℕ) : ℝ) := by
-        rw [hcast] at hN1r ⊢
-        exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hN1r (by linarith)
-      rw [add_div] at h1
-      linarith
-    · -- `s/(N−1) ≤ (s+1)/N ≤ t/N + 1/N`
-      have h1 : (s : ℝ) / ((N - 1 : ℕ) : ℝ) ≤ (s + 1) / N := by
-        rw [hcast] at hN1r ⊢
-        rw [div_le_div_iff₀ hN1r hNr]
-        nlinarith
-      have h2 : ((s : ℝ) + 1) / N ≤ t / N + 1 / N := by
-        rw [← add_div]
-        exact div_le_div_of_nonneg_right (by linarith) hNr.le
-      linarith
-
-/-- **The square of a uniform unit is within `1/q` of a uniform generator of `G_q`**
-(Claim-107.a, missing in the text): the uniform element of `G_q` (`pushesUniform_sqTo_safe`)
-and the uniform element of `G_q ∖ {1}` (the text's "`y ← Gen_q`") are within statistical
-distance `1/q`.
-
-**Proof sketch.** For a test set `S ⊆ G_q`, the two probabilities are `|S|/q` and
-`|S ∖ {1}|/(q − 1)`; both lie between `|S ∖ {1}|/q` and `|S ∖ {1}|/q + 1/q`
-(`uprob_eq_card_filter`, `card_QR_safe`, `Fintype.card_subtype_compl`); transport the first
-along `pushesUniform_sqTo_safe` (`PushesUniform.uprob_eq`). -/
-theorem statClose_sq_generator {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hpq : p = 2 * q + 1) :
-    StatClose (sqTo p) (fun y : {y : QR p // y ≠ 1} => (y : QR p)) (1 / (q : ℝ)) := by
-  rw [statClose_iff]
-  intro T
-  rw [(pushesUniform_sqTo_safe hpq).uprob_eq T]
-  have h := dlc_abs_uprob_sub_uprob_ne_le (1 : QR p) T
-  rwa [← Nat.card_eq_fintype_card, card_QR_safe hpq] at h
-
-/-! ## The DDH assumption [PS10, Assumption 105.1] -/
-
-/-- The DDH tuple `⟨⟨p, ⟨q, y⟩⟩, ⟨y^a, ⟨y^b, y^c⟩⟩⟩` at the instance `i` with exponents
-`a, b, c ∈ Z_q` (the text's `(p, y, y^a, y^b, y^c)`), with `n`-bit numerals. -/
-noncomputable def ddhTuple (i : List Bool) (a b c : ZMod (expOrd i)) : List Bool :=
-  pairEncode i (pairEncode (expF i a) (pairEncode (expF i b) (expF i c)))
-
-/-- The length `15n + 14` of a DDH tuple of `n`-bit numerals. -/
-def ddhLen : PolyExpr := .add (.mul (.const 15) .var) (.const 14)
-
-/-- `ddhLen.eval n = 15n + 14`. -/
-@[simp] theorem eval_ddhLen (n : ℕ) : ddhLen.eval n = 15 * n + 14 := rfl
-
-/-- A DDH tuple at a well-formed index has length exactly `15n + 14` (the padding of the
-ensembles is lossless). -/
-theorem length_ddhTuple {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) (a b c : ZMod (expOrd i)) :
-    (ddhTuple i a b c).length = 15 * n + 14 := by
-  have hw := h.dlW_eq
-  simp only [ddhTuple, expF_eq, length_pairEncode, length_natToList, h.length_eq, hw]
-  ring
-
-/-- **An exponent of `Z_{expOrd i}` from a block of `n · n` coins** by rejection: `n` trials of
-`n`-bit blocks, each reading the bit length of `expOrd i` bits (`sampleBelowL`), with the
-fallback `0` — the exponent sampler of El Gamal's `Gen` and `Enc` (`egGenParts`, `egEncParts`:
-`sampleBelowL (dlM i) (Nat.size (dlM i)) n n` on an `n · n`-bit coin segment, the same numbers
-at a valid index by `expOrd_of_valid`) on typed coins. Its law is within `(1/2)^n` of uniform
-at a valid well-formed index (`ddhExpo_statClose`, D10).
-
-Repair (run-3 audit P8-1): the exponents of the DDH ensembles are read from fixed-length coin
-blocks instead of being ideal coordinates of a dependent-sum seed (module docstring). -/
-noncomputable def ddhExpo (n : ℕ) (i : List Bool) (b : Fin (n * n) → Bool) : ZMod (expOrd i) :=
-  (((sampleBelowL (expOrd i) (Nat.size (expOrd i)) n n (List.ofFn b)).getD 0 : ℕ) : ZMod (expOrd i))
-
-/-- `((x : ℕ) : ZMod m) = x` for `x : ZMod m` read through `ZMod.finEquiv` (the identification
-of the uniform `Fin m` with the uniform `ZMod m` used by `ddhExpo_statClose`). -/
-private theorem natCast_val_finEquiv_symm {m : ℕ} [NeZero m] (t : ZMod m) :
-    ((((ZMod.finEquiv m).symm t : Fin m) : ℕ) : ZMod m) = t := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (NeZero.ne m)
-  exact ZMod.natCast_zmod_val t
-
-/-- **The DDH exponents are close to uniform**: at a valid index of `n`-bit numerals,
-`ddhExpo n i` is within statistical distance `(1/2)^n` of the uniform element of
-`Z_{expOrd i}` (D10).
-
-**Proof sketch.** `0 < expOrd i = dlM i < dlP i < 2^n` (`expOrd_of_valid`, `dlP_lt_two_pow`,
-`WellFormedIndex.dlW_eq`), so `statClose_sampleBelowL` applies; map both samplers by
-`Nat.cast : ℕ → ZMod (expOrd i)` (`StatClose.map`) and identify the image of the uniform
-`Fin (expOrd i)` with the uniform `ZMod (expOrd i)` along `ZMod.finEquiv`
-(`StatClose.comp_equiv_right`, `natCast_val_finEquiv_symm`). -/
-theorem ddhExpo_statClose {n : ℕ} {i : List Bool} (hv : ExpValid i) (hw : WellFormedIndex n i) :
-    StatClose (ddhExpo n i) (id : ZMod (expOrd i) → ZMod (expOrd i)) ((1 / 2 : ℝ) ^ n) := by
-  have hm : 0 < expOrd i := NeZero.pos _
-  have hmn : expOrd i < 2 ^ n := by
-    rw [expOrd_of_valid hv, ← hw.dlW_eq]
-    exact ((expValid_iff i).1 hv).2.2.1.trans (dlP_lt_two_pow i)
-  have h := ((statClose_sampleBelowL hm hmn).map fun v : ℕ => (v : ZMod (expOrd i))).comp_equiv_right
-    (ZMod.finEquiv (expOrd i)).symm.toEquiv
-  have hY : (fun t : ZMod (expOrd i) =>
-      ((((ZMod.finEquiv (expOrd i)).symm.toEquiv t : Fin (expOrd i)) : ℕ) : ZMod (expOrd i))) = id :=
-    funext fun t => natCast_val_finEquiv_symm t
-  rw [hY] at h
-  exact h
-
-/-- **The DDH ensemble** `{p ← Π̃_n; y ← Gen_q; a, b ← Z_q : (p, y, y^a, y^b, y^{ab})}` of
-[PS10, Assumption 105.1]: a seed is the generator's coin string together with two blocks of
-`n · n` coins from which the exponents `a, b ∈ Z_q` of the generated instance are read by
-rejection (`ddhExpo`); the sample is the DDH tuple padded to `15n + 14` bits (exactly its
-length from `n₀` on, `length_ddhTuple`). The seed type is a product of coin types, so the
-uniform seed gives the generator uniform coins (D6) and is nonempty (`Ensemble.nonempty`,
-run-3 audit P2-2, by instance resolution).
-
-Repair (run-3 audit P8-1): the run-2 seed type `Σ r : G.gen.Coins n, Z_{q_r} × Z_{q_r}` gave
-the coin string `r` probability `q_r² / Σ_r q_r²` under the uniform seed, so the instance law
-depended on the fibre sizes and differed from `ddhRandom`'s (cubes), which could make
-`DDHAssumption` false for reasons unrelated to DDH (DESIGN §5 item 20). -/
-noncomputable def ddhReal (G : SafePrimeGen) : Ensemble ddhLen where
-  σ n := G.gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))
-  X n z := padFin (ddhLen.eval n) (ddhTuple (G.gen.runAt n [] z.1)
-    (ddhExpo n (G.gen.runAt n [] z.1) z.2.1) (ddhExpo n (G.gen.runAt n [] z.1) z.2.2)
-    (ddhExpo n (G.gen.runAt n [] z.1) z.2.1 * ddhExpo n (G.gen.runAt n [] z.1) z.2.2))
-
-/-- **The random ensemble** `{p ← Π̃_n; y ← Gen_q; a, b, z ← Z_q : (p, y, y^a, y^b, y^z)}` of
-[PS10, Assumption 105.1]: the generator's coins and three blocks of `n · n` coins for the
-exponents `a, b, z` (`ddhExpo`); seeds nonempty by instance resolution (run-3 audit P2-2).
-
-Repair (run-3 audit P8-1): product seeds instead of the dependent sum (see `ddhReal`). -/
-noncomputable def ddhRandom (G : SafePrimeGen) : Ensemble ddhLen where
-  σ n := G.gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool) × (Fin (n * n) → Bool))
-  X n z := padFin (ddhLen.eval n) (ddhTuple (G.gen.runAt n [] z.1)
-    (ddhExpo n (G.gen.runAt n [] z.1) z.2.1) (ddhExpo n (G.gen.runAt n [] z.1) z.2.2.1)
-    (ddhExpo n (G.gen.runAt n [] z.1) z.2.2.2))
-
-/-- **The decisional Diffie–Hellman assumption** [PS10, Assumption 105.1] relative to a
-safe-prime instance generator `G`: the ensembles `{(p, y, y^a, y^b, y^{ab})}` and
-`{(p, y, y^a, y^b, y^z)}` are computationally indistinguishable (`Ensemble.Indist`,
-[PS10, Definition 69.4]).
-
-**Deviation:** the instance law is the generator's (the text's ideal `p ← Π̃_n; y ← Gen_q`);
-the exponents are read from `n · n`-bit seed blocks by rejection, within `2^{-n}` of uniform
-in `Z_q` (`ddhExpo`, D10; run-3 audit P8-1 — equivalent to the ideal-exponent form up to a
-negligible statistical term); the tuple is a bit string of `15n + 14` bits; the
-distinguisher receives `1^n` (D5). -/
-def DDHAssumption (G : SafePrimeGen) : Prop := (ddhReal G).Indist (ddhRandom G)
-
-/-- Unfolding: the DDH assumption is the indistinguishability of `ddhReal G` and
-`ddhRandom G`. -/
-theorem ddhAssumption_iff (G : SafePrimeGen) :
-    DDHAssumption G ↔ (ddhReal G).Indist (ddhRandom G) := Iff.rfl
 
 /-! ## Public-key schemes with a key-dependent message space -/
 
@@ -1765,9 +1448,11 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
     D.distinguisherL n
         ((elGamal H G).challenge n M b (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃))) rD =
       Db.distinguisher n (ddhLen.eval n)
-        ((ddhReal (egGroupGen H G)).X n (dlc_grpEquiv H G n (r, u₁), (u₂, u₃))) (e (rM, rD)) := by
+        ((ddhReal (egGroupGen H G)).X n
+          (cast (ddhReal_σ (egGroupGen H G) n).symm (dlc_grpEquiv H G n (r, u₁), (u₂, u₃)))) (e (rM, rD)) := by
   rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, he, dlc_challenge_eq]
-  dsimp only [ddhReal]
+  rw [ddhReal_X]
+  dsimp only
   -- the index of the derived generator: valid and well formed
   have hvi : SafePrimeValid ((egGroupGen H G).gen.runAt n [] (dlc_grpEquiv H G n (r, u₁))) :=
     (egGroupGen H G).valid n _ hn
@@ -1800,7 +1485,8 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
   generalize egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a = h at hord hi hhp ⊢
   -- the tuple
   rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
-  unfold dlc_ddhInput dlc_tuplePk ddhTuple
+  unfold dlc_ddhInput dlc_tuplePk
+  rw [ddhTuple_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
   have hsamp : ∀ u : Fin (n * n) → Bool,
       (sampleBelowL (listToNat bq) (Nat.size (listToNat bq)) n n (List.ofFn u)).getD 0 < listToNat bq := by
@@ -1820,7 +1506,7 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
   have hval : ∀ u : Fin (n * n) → Bool, (ddhExpo n i u).val =
       (sampleBelowL (listToNat bq) (Nat.size (listToNat bq)) n n (List.ofFn u)).getD 0 := by
     intro u
-    unfold ddhExpo
+    rw [ddhExpo_eq]
     rw [ZMod.val_natCast, hE, Nat.mod_eq_of_lt (hsamp u)]
   rw [hexpF, hexpF, hexpF, ZMod.val_mul, hval, hval, hE, hP, hM, hi]
   have key : ∀ x y c : ℕ, (h ^ x % listToNat a) ^ y * c % listToNat a =
@@ -1842,7 +1528,8 @@ real ensemble of the derived generator are accepted with probabilities within
 
 **Proof sketch.** Relabel both acceptance probabilities over the common coin space `((r, u₁), (u₂,
 (u₃, (r_M, r_D))))` (`acceptProb_def`, `uprob_comp_equiv` with `E₁`, built from `dlc_genEquiv` and
-`dlc_encEquiv`, and `E₂`, built from `dlc_grpEquiv` and `e`). Off the event `g² ≡ 1 (mod p)` the two
+`dlc_encEquiv`, and `E₂`, built from `dlc_grpEquiv`, `e` and the seed equation
+`ddhReal_σ`). Off the event `g² ≡ 1 (mod p)` the two
 events coincide (`dlc_hyb1_point`), so the gap is at most the probability of the event
 (`dlc_abs_uprob_sub_le_of_iff`), which depends on `(r, u₁)` only (`uprob_fst`) and is at most `δ n +
 9 · (1/2)^n` (`dlc_uprob_bad_le`). -/
@@ -1862,13 +1549,16 @@ private theorem dlc_hyb1 (H : ArithmeticFP) (G : SafePrimeGen) {δ : ℕ → ℝ
         ((dlc_encEquiv H n).symm s.1.2.2, (s.1.2.1, s.2))))
       left_inv := fun ω => by simp
       right_inv := fun s => by simp }
-  let E₂ : (G.gen.Coins n × (Fin (n * n) → Bool)) × ((Fin (n * n) → Bool) ×
+  let E₂seed : (G.gen.Coins n × (Fin (n * n) → Bool)) × ((Fin (n * n) → Bool) ×
       ((Fin (n * n) → Bool) × (M.Coins n × D.Coins n))) ≃
-      (ddhReal (egGroupGen H G)).σ n × Db.Coins n :=
+      ((egGroupGen H G).gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))) ×
+        Db.Coins n :=
     { toFun := fun ω => ((dlc_grpEquiv H G n ω.1, (ω.2.1, ω.2.2.1)), e ω.2.2.2)
       invFun := fun s => ((dlc_grpEquiv H G n).symm s.1.1, (s.1.2.1, (s.1.2.2, e.symm s.2)))
       left_inv := fun ω => by simp
       right_inv := fun s => by simp }
+  let E₂ := E₂seed.trans
+    ((Equiv.cast (ddhReal_σ (egGroupGen H G) n).symm).prodCongr (Equiv.refl _))
   rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv E₁, ← uprob_comp_equiv E₂]
   refine (dlc_abs_uprob_sub_le_of_iff (C := fun ω => egUnit n (dlP (G.gen.runAt n [] ω.1.1))
     (List.ofFn ω.1.2) ^ 2 % dlP (G.gen.runAt n [] ω.1.1) = 1) fun ω hω => ?_).trans ?_
@@ -1876,7 +1566,8 @@ private theorem dlc_hyb1 (H : ArithmeticFP) (G : SafePrimeGen) {δ : ℕ → ℝ
     show D.distinguisherL n ((elGamal H G).challenge n M b
         (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃))) rD = true ↔
       Db.distinguisher n (ddhLen.eval n)
-        ((ddhReal (egGroupGen H G)).X n (dlc_grpEquiv H G n (r, u₁), (u₂, u₃))) (e (rM, rD)) = true
+        ((ddhReal (egGroupGen H G)).X n
+          (cast (ddhReal_σ (egGroupGen H G) n).symm (dlc_grpEquiv H G n (r, u₁), (u₂, u₃)))) (e (rM, rD)) = true
     rw [dlc_hyb1_point H G M D Db b hn e he r u₁ u₂ u₃ rM rD hω]
   · exact (uprob_fst (fun z : G.gen.Coins n × (Fin (n * n) → Bool) =>
       egUnit n (dlP (G.gen.runAt n [] z.1)) (List.ofFn z.2) ^ 2 % dlP (G.gen.runAt n [] z.1) = 1)).le.trans
@@ -1933,7 +1624,8 @@ private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : 
     (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
       Db.runAt n w (e (rM, rD)) = D.runAt n (dlc_ddhInput n b w (M.runAt n (dlc_tuplePk w) rM)) rD)
     (r : (egGroupGen H G).gen.Coins n) (u₁ u₂ u₃ : Fin (n * n) → Bool) (rM : M.Coins n) (rD : D.Coins n) :
-    (Db.distinguisher n (ddhLen.eval n) ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃))))
+    (Db.distinguisher n (ddhLen.eval n) ((ddhRandom (egGroupGen H G)).X n
+          (cast (ddhRandom_σ (egGroupGen H G) n).symm (r, (u₁, (u₂, u₃)))))
         (e (rM, rD)) = true) ↔
       (fun W => D.runAt n (pairEncode (pairEncode ((egGroupGen H G).gen.runAt n [] r)
           (expF ((egGroupGen H G).gen.runAt n [] r) (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₁)))
@@ -1952,11 +1644,13 @@ private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : 
   have hvi : SafePrimeValid ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).valid n r hn
   have hwi : WellFormedIndex n ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).wellFormed n r hn
   rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, he, decide_eq_true_iff]
-  dsimp only [ddhRandom]
+  rw [ddhRandom_X]
+  dsimp only
   generalize (egGroupGen H G).gen.runAt n [] r = i at hvi hwi ⊢
   have hp0 : 0 < dlP i := ((expValid_iff i).1 hvi.expValid).1.pos
   rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
-  unfold dlc_ddhInput dlc_tuplePk ddhTuple
+  unfold dlc_ddhInput dlc_tuplePk
+  rw [ddhTuple_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
   rw [expF_eq i (ddhExpo n i u₃), listToNat_natToList ((Nat.mod_lt _ hp0).trans (dlP_lt_two_pow i))]
 
@@ -1977,9 +1671,11 @@ private theorem dlc_hyb3_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ 
       Db₁.runAt n w (e₁ (rM, rD)) = D.runAt n (dlc_ddhInput n true w (M.runAt n (dlc_tuplePk w) rM)) rD)
     (r : (egGroupGen H G).gen.Coins n) (u₁ u₂ : Fin (n * n) → Bool) (rM : M.Coins n) (rD : D.Coins n) :
     |uprob (fun u₃ : Fin (n * n) → Bool => Db₀.distinguisher n (ddhLen.eval n)
-        ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃)))) (e₀ (rM, rD)) = true) -
+        ((ddhRandom (egGroupGen H G)).X n
+          (cast (ddhRandom_σ (egGroupGen H G) n).symm (r, (u₁, (u₂, u₃))))) (e₀ (rM, rD)) = true) -
       uprob (fun u₃ : Fin (n * n) → Bool => Db₁.distinguisher n (ddhLen.eval n)
-        ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃)))) (e₁ (rM, rD)) = true)| ≤
+        ((ddhRandom (egGroupGen H G)).X n
+          (cast (ddhRandom_σ (egGroupGen H G) n).symm (r, (u₁, (u₂, u₃))))) (e₁ (rM, rD)) = true)| ≤
       2 * (1 / 2) ^ n := by
   rw [OneWay.uprob_congr fun u₃ => dlc_rand_accept H G M D Db₀ false hn e₀ he₀ r u₁ u₂ u₃ rM rD,
     OneWay.uprob_congr fun u₃ => dlc_rand_accept H G M D Db₁ true hn e₁ he₁ r u₁ u₂ u₃ rM rD]
@@ -2000,7 +1696,8 @@ private theorem dlc_hyb3_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ 
 probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other coins).
 
 **Proof sketch.** Relabel the seeds and the coins of `D_b` so that the coins `u₃` of `z` come last
-(`acceptProb_def`, `uprob_comp_equiv` with `E e_b`), split them off (`uprob_prod`), and bound the
+(`acceptProb_def`, `uprob_comp_equiv` with `E e_b` using `ddhRandom_σ`), split them off
+(`uprob_prod`), and bound the
 gap of the averages by the pointwise gap (`abs_uexp_sub_le`, `dlc_hyb3_point`). -/
 private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
     (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
@@ -2012,14 +1709,18 @@ private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ 
     |acceptProb ((ddhRandom (egGroupGen H G)).X n) (Db₀.distinguisher n (ddhLen.eval n)) -
       acceptProb ((ddhRandom (egGroupGen H G)).X n) (Db₁.distinguisher n (ddhLen.eval n))| ≤
       2 * (1 / 2) ^ n := by
-  let E : ∀ {Db : NUPPT}, (M.Coins n × D.Coins n ≃ Db.Coins n) →
+  let Eseed : ∀ {Db : NUPPT}, (M.Coins n × D.Coins n ≃ Db.Coins n) →
       ((((egGroupGen H G).gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))) ×
         (M.Coins n × D.Coins n)) × (Fin (n * n) → Bool)) ≃
-      (ddhRandom (egGroupGen H G)).σ n × Db.Coins n := fun e =>
+      ((egGroupGen H G).gen.Coins n ×
+        ((Fin (n * n) → Bool) × (Fin (n * n) → Bool) × (Fin (n * n) → Bool))) × Db.Coins n := fun e =>
     { toFun := fun ω => ((ω.1.1.1, (ω.1.1.2.1, (ω.1.1.2.2, ω.2))), e ω.1.2)
       invFun := fun s => (((s.1.1, (s.1.2.1, s.1.2.2.1)), e.symm s.2), s.1.2.2.2)
       left_inv := fun ω => by simp
       right_inv := fun s => by simp }
+  let E {Db : NUPPT} (e : M.Coins n × D.Coins n ≃ Db.Coins n) :=
+    (Eseed (Db := Db) e).trans
+      ((Equiv.cast (ddhRandom_σ (egGroupGen H G) n).symm).prodCongr (Equiv.refl _))
   rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
     uprob_prod, uprob_prod]
   refine abs_uexp_sub_le (by positivity) fun ρ => ?_
