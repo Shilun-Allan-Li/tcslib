@@ -26,4 +26,6 @@ record arrives.
 
 ## Gates
 
-None yet. The first is `quantum-phase1` (plan §5, *Phase gates and fill epochs*).
+| Folder | Files | Status |
+|---|---|---|
+| `gates/01-quantum-phase1/` | `pack.md`, `findings.md`, `pack-r2.md`, `findings-r2.md`, `resolutions.md`, `kickoff.md`, `kickoff-r2.md`, `evidence/`, `evidence-r2/`, `evidence-close/` | **closed** 2026-11-09, round 2 (closing commit `13c8664b`) |

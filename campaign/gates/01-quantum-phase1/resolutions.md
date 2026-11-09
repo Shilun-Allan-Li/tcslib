@@ -59,3 +59,53 @@ becomes plan item Q1.7.
 | Lints | `style_lint.py`: 0 findings over 14 files. `campaign_style_lint.py`: 0 FAIL, 0 WARN over **all 14** files |
 | Numerical checks | 37, 0 failures (27 from round 1 plus 10 for the new statements) |
 | Pack | `pack-r2.md` |
+
+## Round 2
+
+| Item | Value |
+|---|---|
+| Commit audited | `4b2c72b3aea92bbe05cb3c2d1af9d1e51310e896` |
+| Pack | `pack-r2.md` |
+| Bundle | not committed; SHA-256 `c3ef871efc1e3bdf7f81699947c843e660e7c98d09490823614660c68ad0480b`, 40 sections, built by `evidence-r2/scripts/make_bundle_r2.sh` |
+| Auditor | an external model from a different vendor, in a fresh chat, with the bundle and the [Wat08] and [dW26] PDFs |
+| Findings | `findings-r2.md`, verbatim: **0 blockers, 0 majors, 3 minors**. Every round-1 finding verified repaired; all 14 new or changed sorried statements argued true; the one new definition restated; 8 new adversarial instantiations; all 7 questions answered; the drift claim confirmed, with an independent body-level comparison |
+
+### Dispositions
+
+| # | Severity | Finding | Disposition |
+|---|---|---|---|
+| 1 | minor | `GapP.lean`'s scaled-numerator account names [Wat08, §III.2]'s gate set, which includes erasure, without restricting to the unitary purification of plan FD-4 | **Repaired** in the closing commit: the account is stated for computational-basis inputs to the unitary purification, with every discarded wire retained, and the erasure example (`I/2`) is given |
+| 2 | minor | `applyOn_commute_of_disjoint`'s sketch said the sum has "a single nonzero term"; the surviving term may vanish | **Repaired** in the closing commit: "at most one nonzero term, at the unique `z` satisfying the outside-wire constraints" |
+| 3 | minor | `coinFill`'s docstring said the formula "fails" on short strings; it need not | **Repaired** in the closing commit: "abstentions use the `false` default, and the formula need not hold" |
+
+The auditor's other observations, recorded for later phases:
+- **The drift script compared signatures only** (answer 3). The closing evidence uses an extended
+  `drift.py` that compares full comment-stripped bodies too. Re-run on rounds 1 → 2, it agrees with
+  the auditor's body comparison: the 193 carried-over declarations are unchanged in body as well
+  as in signature.
+- **The no-cloning blank is a computational-basis ket** (answer 1). This is sufficient: any fixed
+  pure blank is reached from it by a unitary on the blank register. A channel-with-environment
+  formulation is not stated, and no P1 statement needs one.
+- **Polynomial size and uniform generation** remain necessary for the later claim that a circuit's
+  numerator function is in GapP (answer 2). This belongs to plan item Q4.5's statement phase.
+- **Deferrals** (answer 5). Q0.10, Q0.11, Q1.7, the empty-seed regression lemmas and product-basis
+  factorization are all accepted as not holding the gate.
+
+## Closing
+
+Round 2 reported zero blockers and zero majors, so **the gate `quantum-phase1` is closed**. Its
+three minors were swept in the closing commit and re-verified, as `workflow.md` §3 allows.
+
+| Item | Value |
+|---|---|
+| Closing commit | `13c8664b44f2550a66a8fb2c94c73069614f072f` (docstring-only changes from `4b2c72b3`; the Lean of the closing commit is the audited baseline for P1's fill epochs) |
+| Drift from round 2 (`evidence-close/logs/drift.log`) | 212 → 212 declarations; **0 removed, 0 added, 0 signatures changed, 0 bodies changed** |
+| Sweep (`evidence-close/logs/sweep.log`) | 14 modules pass; 85 `sorry` warnings, no other diagnostic |
+| Axiom census (`evidence-close/logs/axioms.log`) | 246 constants, as in round 2: 85 theorems with their own `sorry`, 19 inheriting it, 19 definitions inheriting it through proof fields; no axiom beyond `propext`, `Classical.choice`, `Quot.sound`, `sorryAx` |
+| Lints | `style_lint.py`: 0 findings over 14 files. `campaign_style_lint.py`: 0 FAIL, 0 WARN over all 14. No line over 100 characters |
+| Open human-review questions | Unchanged by the gate: OQ-1 (the Mathlib bump and the Physlib dependency, which Tier B's quantum-information items wait on) is still for the maintainers |
+
+**Next.** The 85 sorried statements are now audited-true fill targets, under the statement freeze
+(`workflow.md` §4): fill work may not rename, re-sign or re-state them. Plan §5 orders the fills
+as epoch E1 (the pure-math `Quantum/Basic` lemmas) before E2 (the counting layer against an
+abstract model) and E3 (the polynomial-time closure facts of `Counting/PolyTime.lean`).
