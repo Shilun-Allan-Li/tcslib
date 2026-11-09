@@ -2648,22 +2648,27 @@ theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symb
 head by `inp`, enters `q'`, and changes nothing else. At `inp = 0` (with
 `moveInputPos_zero`) this is every live anchor's stationarity.
 
-**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`. -/
+**Proof sketch.** With no work tapes, compare the state, input and output fields.
+Otherwise use the non-writing one-tape step with zero work-head movement;
+its head update is the identity. -/
 theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbol}
     (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State}
     (inp : SignType) (hq : c.state = some q)
     (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
     M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
-  rw [MultiTapeTM.step_of_some hq, htr]
-  apply Cfg.ext
-  · simp only [Action.apply_state, inputMoveAction_eq]
-  · simp only [Action.apply_inputPos, inputMoveAction_eq]
-  · funext j
-    rw [Action.apply_workTapes, inputMoveAction_eq, Option.getD_none,
-      Cfg.workTapeSymbols_eq, Function.update_eq_self]
-  · funext j
-    simp only [Action.apply_workTapePos, inputMoveAction_eq, SignType.coe_zero, add_zero]
-  · simp only [Action.apply_output, inputMoveAction_eq, Option.toList_none, List.append_nil]
+  cases k with
+  | zero =>
+    rw [MultiTapeTM.step_of_some hq, htr]
+    apply Cfg.ext_zero_tapes
+    · simp only [Action.apply_state, inputMoveAction_eq]
+    · simp only [Action.apply_inputPos, inputMoveAction_eq]
+    · simp only [Action.apply_output, inputMoveAction_eq, Option.toList_none, List.append_nil]
+  | succ k =>
+    have ha : inputMoveAction (k := k + 1) (Symbol := Symbol) inp q' =
+        tapeAction (0 : Fin (k + 1)) inp none 0 q' := by
+      simp only [inputMoveAction_eq, tapeAction, ite_self]
+    rw [step_of_tapeAction_move M c (0 : Fin (k + 1)) inp 0 hq (htr.trans ha)]
+    simp only [SignType.coe_zero, add_zero, Function.update_eq_self]
 
 /-! ### The field layout -/
 

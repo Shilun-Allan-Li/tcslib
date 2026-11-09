@@ -1075,14 +1075,9 @@ theorem pairExtractTM_fst_run (a b : List Bool) :
       extractCfg x none ((dbl a).length + 2) (by omega) a a.length a := by
     rw [MultiTapeTM.step_of_some rfl]
     simp only [pairExtractTM, ↓reduceIte, Bool.false_eq_true]
-    apply Cfg.ext
-    · rw [Action.apply_state]; rfl
-    · rw [Action.apply_inputPos]; exact moveInputPos_zero _
-    · funext k
-      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
-      rfl
-    · funext k; rw [Action.apply_workTapePos]; simp [extractCfg]
-    · rw [Action.apply_output, Option.toList_none, List.append_nil]; rfl
+    rw [← controlAction_def (k := 1) (S := Option Bool ⊕ Fin 3) 0 none,
+      controlAction_apply, moveInputPos_zero]
+    rfl
   have hmid : (pairExtractTM true false).tm.runFrom
       ((pairExtractTM true false).tm.initCfg x)
         (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) =
