@@ -7,32 +7,26 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-09T01:29:22.900599-08:00; authoritative)
+## 0. Current state (2026-11-09T09:26:37.373384-08:00; authoritative)
 
 Seyoon alone merges source, dispatches and rules on design or debt. Records
-only go directly after fetch/rebase. #246, #247 and #245 merged after #253.
-Campaign Lean is `967bc00f00637312676f438c7f61b14219fa943b`. The complete post-#246 snapshot
-`oleans-pr246-post253` matches 1,004 source blobs and 896 object hashes.
-The 49-module post-#247/#245 replay passed. Use the verified whole snapshot
-`oleans-campaign-post245-247` (1,004 source blobs, 896 object hashes).
-See campaign/status/2026-11-09-merge-245-247/merge-chain.json.
+only go directly after fetch/rebase. #243 and #244 merged after #245–#247.
+Campaign Lean is `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. The 82-module
+combined replay matches the actual #244 merge at all 1,004 Lean blobs and
+896 physical object hashes. Use the whole `oleans-pr243-244-current`
+snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD. Documented local repair bf8d502573a0ba945a04f7a9dfe827f55b2c840f passed the current-base 395-module replay and exact selected proof checks. The two reuse scopes and audit agent selection remain open. |
+| #251 / 129 | **Not yet clear to merge.** Round 2 HOLD. Approved scope is committed locally at `ead826bc6b1900c4209717aafc14244745106d7d`; the 395-module replay and refresh checks are running. Codex selected for round 3. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
-| #242 / 122 | **Not yet clear to merge.** Four #252 consumer repairs pushed at `f6d8f0f3d7212ab97cd6994fc1d55e02c15e0833`. Shared gate121 reads and Call/Clean remain held. The checked clock-capture transport proposal awaits a ruling. |
+| #242 / 122 | **Not yet clear to merge.** Approved clock repair is locally committed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249` and rechecking. Shared gate121 reads and Call/Clean remain held. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the prospective #251 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |
 | #254 | **Clear to merge** as tooling only, no Lean diff. |
 
-Gates 123–127 stay closed. #245–#247 have merged. **Clear to merge:** #243.
-Its actual 82-module replay remains current under START-HERE §4 because the
-changed owner and its complete import source are byte-exact. The combined
-#243 then #244 replay passed all 82 modules. After #243 merges, verify the
-actual current #244 prospective source against gate 124's saved Lean map
-and toolchain hashes before restoring #244 clearance.
+Gates 123–127 are closed and #243–#247 have merged.
 
 Roadmap: 26/26 previously tracked headlines and 19 additional checked
 closures without sorryAx. Book-form Theorem 3.1, SPACE(n+1) ≠ NP and F6

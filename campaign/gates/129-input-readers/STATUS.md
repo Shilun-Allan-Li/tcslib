@@ -1,6 +1,5 @@
-**Not yet clear to merge: #251.** The current external verdict is round 2
-HOLD at 06abd00adf61c257fcd25ee9181a37ddec0a4c87. The documented local
-repair candidate bf8d502573a0ba945a04f7a9dfe827f55b2c840f passed its current-base
-395-module replay and exact selected proof checks. The copy review,
-scope decisions and audit agent selection remain open. See
-r3-repair-checkpoint.md and r3-proposals.
+**Not yet clear to merge: #251.** Round 2 returned HOLD on
+06abd00adf61c257fcd25ee9181a37ddec0a4c87. The local round 3
+head ead826bc6b1900c4209717aafc14244745106d7d includes both approved reuse patches.
+The 395-module replay on the actual #244 campaign snapshot, refreshed
+copy and proof checks, and the Codex follow-up are in preparation.

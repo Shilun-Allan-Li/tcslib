@@ -1884,3 +1884,15 @@ authorize retained or future foreign reads elsewhere.
 The short rewrite of runFrom at one in the rewind head base case and the
 final strip case is RO-1 accounting under the existing schedule. The general
 home decision stays parked; no new public reader is added for this law.
+
+## Actual gates 123 and 124 merges (2026-11-09)
+
+Seyoon merged #243 at `e4b1664011a40256a0ea52fb63079f28233b98dd` and
+#244 at `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. Their exact combined replay passed
+82 modules and supplies the adopted campaign snapshot.
+
+The five inspected Bool-facing run-law implementations now cite the
+generic public contracts. The three inspected SafeRun zero, cons and
+trans implementations cite the public Segment operations through their
+private conversion. These scoped retirements preserve the existing
+declaration headers. The RO1 home ruling remains separate.
