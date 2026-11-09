@@ -2,17 +2,15 @@
 
 === TCSlib-InformationTheory-StatisticalDistance.log | 0 bytes | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ===
 
-=== TCSlib-InformationTheory-UniversalHashing.log | 417 bytes | 87f02f17573239ea77416f8e32e355ce3acb3c694afc762d27399b04442cc179 ===
-TCSlib/InformationTheory/UniversalHashing.lean:52:0: warning: automatically included section variable(s) unused in theorem `TCSlib.InformationTheory.isUniversal_iff`:
-  [Fintype α]
-consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
-  omit [Fintype α] in theorem ...
-
-Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+=== TCSlib-InformationTheory-UniversalHashing.log | 0 bytes | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ===
 
 === TCSlib-InformationTheory-LeftoverHash.log | 0 bytes | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ===
 
-=== .lake-reader-scoped-checks-Checks.log | 314 bytes | d80d23c441fb21cf648ef765f828f42bc86d11acbb86ad0ba6fb715c677686d4 ===
+=== .lake-reader-corrected-checks-Checks.log | 638 bytes | 6fc3a2c6f744092c6585eba260148e459815233372e9107b2cbf99549db07d28 ===
+TCSlib.InformationTheory.isUniversal_iff.{u_1, u_2, u_3} {S : Type u_1} {α : Type u_2} {β : Type u_3} [Fintype S]
+  [Fintype β] [DecidableEq β] (f : S → α → β) :
+  TCSlib.InformationTheory.IsUniversal f ↔
+    ∀ (x y : α), x ≠ y → ↑{s | f s x = f s y}.card ≤ ↑(Fintype.card S) / ↑(Fintype.card β)
 'TCSlib.InformationTheory.isUniversal_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TCSlib.InformationTheory.FinDist.hasMinEntropy_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TCSlib.InformationTheory.leftover_hash' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -44,7 +42,7 @@ INFO  .lake/reader-style-base/TCSlib/InformationTheory/UniversalHashing.lean    
 
 style_lint: 14 FAIL, 3 WARN over 6 files
 
-=== style.log | 3127 bytes | 361d05cc1dcafd40c62d54011d90cd3170ceaf9a11b8b5905e2577ae99f64301 ===
+=== style.log | 3128 bytes | acf555778e8e9e5ff1f71c9da390157912d40eef6c80c9c3db6611927bf9fb7e ===
 FAIL  TCSlib/InformationTheory/FinDist.lean              line 62: public theorem `coe_mk` has no preceding docstring (policy section 2, statement prose)
 FAIL  TCSlib/InformationTheory/FinDist.lean              line 65: public theorem `ext` has no preceding docstring (policy section 2, statement prose)
 FAIL  TCSlib/InformationTheory/FinDist.lean              line 68: public theorem `le_one` has no preceding docstring (policy section 2, statement prose)
@@ -66,9 +64,17 @@ INFO  TCSlib/InformationTheory/Extractors.lean           240 lines; 18 public / 
 INFO  TCSlib/InformationTheory/FinDist.lean              162 lines; 18 public / 0 private declarations
 INFO  TCSlib/InformationTheory/LeftoverHash.lean         180 lines; 5 public / 0 private declarations
 INFO  TCSlib/InformationTheory/StatisticalDistance.lean  101 lines; 7 public / 0 private declarations
-INFO  TCSlib/InformationTheory/UniversalHashing.lean     99 lines; 4 public / 0 private declarations
+INFO  TCSlib/InformationTheory/UniversalHashing.lean     100 lines; 4 public / 0 private declarations
 
 style_lint: 14 FAIL, 2 WARN over 6 files
+
+=== initial-TCSlib-InformationTheory-UniversalHashing.log | 417 bytes | 87f02f17573239ea77416f8e32e355ce3acb3c694afc762d27399b04442cc179 ===
+TCSlib/InformationTheory/UniversalHashing.lean:52:0: warning: automatically included section variable(s) unused in theorem `TCSlib.InformationTheory.isUniversal_iff`:
+  [Fintype α]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype α] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
 
 === TCSlib-InformationTheory-Entropy.log | 519 bytes | 90b33a539efdd02a4ef917293d6be9ca6595161dbefc62046b3481e3a9138706 ===
 TCSlib/InformationTheory/Entropy.lean:5:0: error: object file '/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-probability-readers/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/SpecialFunctions/Log/NegMulLog.olean' of module Mathlib.Analysis.SpecialFunctions.Log.NegMulLog does not exist
