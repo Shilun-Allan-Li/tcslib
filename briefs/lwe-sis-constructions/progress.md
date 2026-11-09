@@ -7,24 +7,31 @@ minors are corrected separately and checked. Ten scoped gates now pass; none
 approves a merge.
 
 The audited independent proof fill completes **31 obligations in seven modules** at
-`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, leaving **70 owned admissions**. The
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`. The
 same isolated branch/worktree is used; no additional PR branch is created.
 The fills are published and their combined Codex proof audit passes. Its sole
 F02 overview repair is checked at
 `af54d28f6d412bc56844e7371e2b0b9b394c494c`. The user
 dispatches source work, approves matching and approves all merges.
 
+The next six Regev hybrid support proofs are checked at
+`8c6b23f5b69260acb66cc99e322a81c4c79f51bb`, leaving **64 owned admissions**.
+The fresh 144-module sweep records zero errors and the same 17 inherited
+admission warnings. All six fills use only standard axioms, with the 589-constant
+inventory reconciled. See [the proof report](fills/05-regev-hybrids/REPORT.md).
+
 | Part | Current progress | Remaining work |
 |---|---|---|
 | DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
 | Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
 | SIS collision-resistant hashing | Core hash/reduction/profile audited; universality, raw collision, evaluator and asymptotic statements pass | New proof fills, pending probability readers/loop disposition, final CRH interface under independent SIS hardness |
-| Regev CPA PKE | Algorithms/concrete security statements pass; all four every-coin correctness obligations proved and audited | Concrete-security fills, efficiency and final CPA interface |
+| Regev CPA PKE | Every-coin correctness audited. Exact DLWE key hybrid, augmentation identities and extraction error budget checked | Statistical hybrid, final fixed-bit bound, efficiency and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
 | CCA2 PKE | Secret-matrix lossy/all-but-one mathematics and DLWE column-hybrid statements pass | Supporting fills, pending reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 proof |
 
-The final fresh 144-module scoped sweep passes: zero errors, seventy owned and
-seventeen inherited admission warnings, 303.792 seconds. The final axiom probe
+The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
+seconds with zero errors, seventy owned and seventeen inherited admission
+warnings. Its axiom probe
 records 53.149 seconds. All 31 selected targets and 48 backing contracts use only
 standard axioms. Exactly the other seventy source obligations retain `sorryAx`.
 The full inventory has 589 constants, including fourteen new compiler auxiliaries.
@@ -42,20 +49,18 @@ at `adf2442be0303be26158c2649f813668cd71bf35`.
 Original statement source `17b2a282b545c6ebca3fccc88d518d18ae78f485` and exchange
 `64e245b345d908d835030efede1c91312a4e6cce` remain immutable historical inputs.
 
-## Next proof batch
+## Regev hybrid support
 
-Prioritize Regev PKE's fixed-bit security bound. The independent obligations
-cover the uniform hash difference, the extraction error budget, the exact
-real-to-uniform-key DLWE hybrid, the augmented-key bijection, the ciphertext
-identity, and the doubled error budget. These can use the existing public APIs.
+The combined proof review covers the uniform hash difference, extraction error
+budget, exact real-to-uniform-key DLWE hybrid, augmented-key bijection,
+ciphertext identity, and doubled error budget.
 
 The strong leftover-hash step needs `isUniversal_iff` and `hasMinEntropy_iff`.
 The [two-reader proposal](continuation/proof-audit/proposed-probability-readers.patch)
 passes `git apply --check` at the integrated base. It needs shared-owner
 coordination through the user before either reader is added. The random-bit
 reader and counted-loop registry disposition remain separate holds for the
-trapdoor and machine proofs. Keep the completed Regev work together for the
-next proof audit, with the existing audited statements as the freeze.
+trapdoor and machine proofs.
 
 The source-policy job at `continuation/landing-source-policy/` returned partial
 work for the earlier #236–#239 stack, 161 declarations in 20 modules at
@@ -69,5 +74,6 @@ The user asked to postpone unrelated transcription; the root has narrowed future
 work to consumed source passages, accurate adaptation notes and reviewed matching.
 Source review for #250's new claims remains open, including PW10 where consumed.
 
-**Not yet clear to merge.** #250 retains seventy admissions, shared-owner holds,
-scoped source review and landing checks. The user approves all merges.
+**Not yet clear to merge.** The six fills await their combined audit. #250
+retains 64 admissions, shared-owner holds, scoped source review and landing
+checks. The user approves all merges.

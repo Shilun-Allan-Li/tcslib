@@ -1,0 +1,288 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import TCSlib.Cryptography.Encryption.PublicKey.Regev.Basic
+import TCSlib.Cryptography.Hashing.SIS.Universality
+import TCSlib.Cryptography.LWE.Experiments
+import Mathlib.Data.Fin.Tuple.Basic
+
+import Mathlib.Tactic.Simps.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Regev PKE: explicit concrete security hybrids
+
+## Main definitions
+
+* `view`, `realView`, `uniformKeyView`: publish the key and one encryption.
+* `reduction`: a DLWE test that encrypts with independent binary coins.
+* `hashParameters`, `augmented`: adapt the existing binary matrix hash to the ciphertext.
+* `extractionError`: the explicit strong leftover-hash error.
+
+## Main results
+
+The real-to-uniform-key advantage equals one DLWE advantage. The uniform-key
+view is within the leftover-hash error of a fully independent uniform view.
+Two fixed bits' real views differ by at most two DLWE advantages plus twice
+that extraction error. All nontrivial claims are statement-phase admissions.
+
+## References
+
+* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016,
+  Section 5.2.1 (Regev encryption's lossiness hybrids).
+* [Wu24] D. Wu, CS395T *Topics in Cryptography*, Spring 2024 notes, Lecture 21.
+* [Vad12] S. Vadhan, *Pseudorandomness*, 2012, Theorem 6.18.
+
+The statements are concrete, fixed-bit indistinguishability claims. Efficient
+preprocessing, uniform asymptotic message quantifiers and the existing CPA primitive
+bridge remain additional obligations. The reused hash's numeric SIS record is only
+a shape adapter; neither SIS hardness nor a bridge between SIS and LWE is used.
+-/
+
+namespace TCSlib.Cryptography.Encryption.PublicKey.Regev
+
+open LWE (Parameters Noise)
+
+/-- Publish a public key together with an encryption of a fixed bit
+[Pei16, Section 5.2.1, passive-view formulation]. -/
+@[simps! (config := { isSimp := false }) fst snd]
+def view (P : Parameters) (μ : Bool)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) (r : Fin P.samples → Bool) :
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus) :=
+  (pk, encrypt P pk μ r)
+
+/-- The complete view is the original key paired with its subset-sum ciphertext. -/
+theorem view_eq (P : Parameters) (μ : Bool)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) (r : Fin P.samples → Bool) :
+    view P μ pk r = (pk, encrypt P pk μ r) := rfl
+
+/-- The real view uses the actual finite-noise LWE public key and independent
+binary encryption coins [Pei16, Section 5.2.1]. -/
+@[simps! (config := { isSimp := false }) fst snd]
+def realView (P : Parameters) (χ : Noise) (μ : Bool)
+    (r : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))) ×
+        (Fin P.samples → Bool)) :
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus) :=
+  view P μ (LWE.sample P χ r.1) r.2
+
+/-- The real sampler applies `view` to the existing common-secret LWE sample. -/
+theorem realView_eq (P : Parameters) (χ : Noise) (μ : Bool)
+    (r : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))) ×
+        (Fin P.samples → Bool)) :
+    realView P χ μ r = view P μ (LWE.sample P χ r.1) r.2 := rfl
+
+/-- The first hybrid encrypts under an independently uniform public key
+[Pei16, Section 5.2.1]. -/
+@[simps! (config := { isSimp := false }) fst snd]
+def uniformKeyView (P : Parameters) (μ : Bool)
+    (r : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) × (Fin P.samples → Bool)) :
+    (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus) :=
+  view P μ r.1 r.2
+
+/-- The uniform-key hybrid applies the same view map to its uniform key seed. -/
+theorem uniformKeyView_eq (P : Parameters) (μ : Bool)
+    (r : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) × (Fin P.samples → Bool)) :
+    uniformKeyView P μ r = view P μ r.1 r.2 := rfl
+
+/-- The DLWE reduction encrypts its fixed bit under the challenge key before running
+the view distinguisher [Pei16, Section 5.2.1]. Its subset coins and test coins are separate. -/
+def reduction {ρ : Type*} (P : Parameters) (μ : Bool)
+    (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) (r : (Fin P.samples → Bool) × ρ) : Bool :=
+  D (view P μ pk r.1) r.2
+
+/-- The reduction calls the original distinguisher on exactly one simulated view. -/
+theorem reduction_eq {ρ : Type*} (P : Parameters) (μ : Bool)
+    (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) (r : (Fin P.samples → Bool) × ρ) :
+    reduction P μ D pk r = D (view P μ pk r.1) r.2 := rfl
+
+/-- The first hybrid has exactly the DLWE advantage of the encryption reduction
+[Pei16, Section 5.2.1].
+
+**Proof sketch.** Reassociate the independent keygen, encryption and distinguisher
+seed factors in both experiments. The real side retains the original matrix,
+common secret and all row errors; the ideal side retains the full uniform key. -/
+theorem real_uniformKey_advantage {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (χ : Noise) (μ : Bool)
+    (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool) :
+    distAdv (realView P χ μ) (uniformKeyView P μ) D =
+      LWE.decisionAdvantage P χ (reduction P μ D) := by
+  let PublicMatrix := Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus)
+  let PublicKey := PublicMatrix × (Fin P.samples → ZMod P.modulus)
+  let RealSeed := PublicMatrix × ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))
+  let SubsetSeed := Fin P.samples → Bool
+  have hreal : acceptProb (realView P χ μ) D =
+      acceptProb (LWE.sample P χ) (reduction P μ D) := by
+    simp only [acceptProb_def, realView_eq, reduction_eq]
+    exact uprob_comp_equiv (Equiv.prodAssoc RealSeed SubsetSeed ρ)
+      (fun r => D (view P μ (LWE.sample P χ r.1) r.2.1) r.2.2 = true)
+  have hkey : acceptProb (uniformKeyView P μ) D =
+      acceptProb (id : PublicKey → PublicKey) (reduction P μ D) := by
+    simp only [acceptProb_def, uniformKeyView_eq, reduction_eq, id_eq]
+    exact uprob_comp_equiv (Equiv.prodAssoc PublicKey SubsetSeed ρ)
+      (fun r => D (view P μ r.1 r.2.1) r.2.2 = true)
+  rw [LWE.decisionAdvantage_eq, distAdv_def, distAdv_def, hreal, hkey]
+
+/-- Adapt the matrix-hash shape to `n+1` ciphertext coordinates and `m` subset bits.
+The norm budget is unused in this unconditional extraction application
+[Pei16, Section 5.2.1]. -/
+def hashParameters (P : Parameters) : TCSlib.Cryptography.SIS.Parameters where
+  dimension := P.dimension + 1
+  columns := P.samples
+  modulus := P.modulus
+  sqNormBound := P.samples
+  modulus_ge_two := P.modulus_ge_two
+
+attribute [simps (config := { isSimp := false }) dimension columns modulus sqNormBound]
+  hashParameters
+
+/-- Augment the public matrix transpose by its public value vector as the last row
+[Pei16, Section 5.2.1, transposed sample convention]. -/
+def augmented (P : Parameters)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) :
+    Matrix (Fin (P.dimension + 1)) (Fin P.samples) (ZMod P.modulus) :=
+  Fin.snoc pk.1.transpose pk.2
+
+/-- The augmented matrix consists of the transpose rows followed by the value row. -/
+theorem augmented_eq (P : Parameters)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) :
+    augmented P pk = Fin.snoc pk.1.transpose pk.2 := rfl
+
+/-- Augmentation is a bijection from all public keys to all augmented matrices.
+
+**Proof sketch.** Split the last row from the preceding rows, transpose those
+preceding rows back, and apply the public finite-vector snoc equations. -/
+theorem augmented_bijective (P : Parameters) : Function.Bijective (augmented P) := by
+  let split (A : Matrix (Fin (P.dimension + 1)) (Fin P.samples) (ZMod P.modulus)) :=
+    (Matrix.transpose (Fin.init A), A (Fin.last P.dimension))
+  have hleft : Function.LeftInverse split (augmented P) := by
+    intro pk
+    simp only [split, augmented_eq, Fin.init_snoc, Fin.snoc_last, Matrix.transpose_transpose]
+  have hright : Function.RightInverse split (augmented P) := by
+    intro A
+    simp only [split, augmented_eq, Matrix.transpose_transpose, Fin.snoc_init_self]
+  exact ⟨hleft.injective, hright.surjective⟩
+
+/-- The ciphertext is the existing binary matrix hash plus a last-coordinate message
+translation [Pei16, Section 5.2.1].
+
+**Proof sketch.** Read the two encryption projections, the augmented matrix equation
+and the existing `Hashing.SIS.hash_eq`. Each preceding coordinate is the selected
+matrix-column sum; the last coordinate is the selected value sum plus the codepoint. -/
+theorem encrypt_augmented (P : Parameters)
+    (pk : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) (μ : Bool) (r : Fin P.samples → Bool) :
+    let hashed : Fin (P.dimension + 1) → ZMod P.modulus :=
+      Hashing.SIS.hash (hashParameters P) (augmented P pk) r
+    Fin.snoc (α := fun _ : Fin (P.dimension + 1) => ZMod P.modulus)
+      (encrypt P pk μ r).1 (encrypt P pk μ r).2 =
+      hashed +
+        Fin.snoc (α := fun _ : Fin (P.dimension + 1) => ZMod P.modulus)
+          (0 : Fin P.dimension → ZMod P.modulus) (LWE.BitEncoding.codepoint P μ) := by
+  dsimp only
+  rw [Hashing.SIS.hash_eq, augmented_eq, encrypt_fst, encrypt_snd]
+  let v : Fin P.samples → ZMod P.modulus := fun j => ((r j).toNat : ZMod P.modulus)
+  funext i
+  refine Fin.lastCases ?_ ?_ i
+  · simp only [Pi.add_apply, Fin.snoc_last]
+    change (∑ j, pk.2 j * v j) + LWE.BitEncoding.codepoint P μ =
+      (∑ j, Fin.snoc pk.1.transpose pk.2 (Fin.last P.dimension) j * v j) +
+        LWE.BitEncoding.codepoint P μ
+    rw [Fin.snoc_last]
+  · intro j
+    simp only [Pi.add_apply, Fin.snoc_castSucc, Pi.zero_apply, add_zero]
+    change dotProduct (pk.1.transpose j) v =
+      dotProduct (Fin.snoc pk.1.transpose pk.2 j.castSucc) v
+    rw [Fin.snoc_castSucc]
+
+/-- The explicit strong-extraction error is half the square root of
+`q^(n+1)/2^m` [Pei16, Section 5.2.1; Vad12, Theorem 6.18]. -/
+noncomputable def extractionError (P : Parameters) : ℝ :=
+  (1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ (P.dimension + 1) / (2 : ℝ) ^ P.samples)
+
+/-- The error includes the additional public-value coordinate as well as the matrix
+coordinates; its denominator is the cardinality of the binary subset coins. -/
+theorem extractionError_eq (P : Parameters) :
+    extractionError P =
+      (1 / 2) * Real.sqrt ((P.modulus : ℝ) ^ (P.dimension + 1) / (2 : ℝ) ^ P.samples) := rfl
+
+/-- The uniform-key encryption view is within `extractionError P` of a fully uniform,
+independent public-key/ciphertext pair [Pei16, Section 5.2.1].
+
+**Proof sketch.** Relabel the public key by `augmented_bijective` and the ciphertext
+by finite-vector snoc. Read `encrypt_augmented` and apply the strong leftover-hash
+advantage bound to the original distinguisher with message translation composed in.
+Translation is bijective and hence leaves the comparison ciphertext uniform. -/
+theorem uniformKey_uniform_advantage_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (μ : Bool)
+    (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool) :
+    distAdv (uniformKeyView P μ)
+      (id : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+        (Fin P.samples → ZMod P.modulus)) ×
+        ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → _) D ≤
+      extractionError P := by
+  sorry
+
+/-- Two fixed bits' real encryption views differ by at most two DLWE advantages
+plus twice the explicit leftover-hash error [Pei16, Section 5.2.1, quantitative form].
+
+**Proof sketch.** Insert each uniform-key view and a common fully independent
+uniform view between the two real views. The real absolute-value triangle
+inequality gives two exact DLWE terms and two extraction errors. This uses one
+common-secret DLWE instance with exactly `P.samples` rows, not a stronger oracle. -/
+theorem distAdv_encrypt_le {ρ : Type*} [Fintype ρ] [Nonempty ρ]
+    (P : Parameters) (χ : Noise) (μ₀ μ₁ : Bool)
+    (D : ((Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ×
+      ((Fin P.dimension → ZMod P.modulus) × ZMod P.modulus)) → ρ → Bool) :
+    distAdv (realView P χ μ₀) (realView P χ μ₁) D ≤
+      LWE.decisionAdvantage P χ (reduction P μ₀ D) +
+      LWE.decisionAdvantage P χ (reduction P μ₁ D) + 2 * extractionError P := by
+  sorry
+
+/-- A width bound and `2κ` sample slack make twice the extraction error at most
+`2^(-κ)` [Pei16, Section 5.2.1, explicit sufficient parameter budget].
+
+**Proof sketch.** Apply `Hashing.SIS.leftover_error_le` at the augmented hash
+parameters, then multiply its half-error bound by two. -/
+theorem two_extractionError_le (P : Parameters) (width κ : ℕ)
+    (hq : P.modulus ≤ 2 ^ width)
+    (hm : (P.dimension + 1) * width + 2 * κ ≤ P.samples) :
+    2 * extractionError P ≤ ((2 : ℝ)⁻¹) ^ κ := by
+  have h := Hashing.SIS.leftover_error_le (hashParameters P) width κ
+    (by simpa only [hashParameters_modulus] using hq)
+    (by simpa only [hashParameters_dimension, hashParameters_columns] using hm)
+  rw [hashParameters_modulus, hashParameters_dimension, hashParameters_columns] at h
+  rw [extractionError_eq]
+  linarith only [h]
+
+end TCSlib.Cryptography.Encryption.PublicKey.Regev
