@@ -1592,21 +1592,8 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
   have hwcut := seamCompTM_firstReturn_ofCfg A (Sum.inr ()) D (Sum.inl entry)
     (Sum.inr (Sum.inr .done)) rfl hs₁ hcut hd
     (by rw [Cfg.mapState_state, Cfg.mapState_state]; rfl) hdcut
-  have hinit : R.initCfg (pairEncode α w) = d₀.mapState Sum.inl := by
-    apply Cfg.ext
-    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_state, Cfg.mapState_state,
-        d₀, Option.map_some]
-      rfl
-    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_inputPos, Cfg.mapState_inputPos,
-        d₀]
-    · funext j q
-      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes, Cfg.mapState_workTapes,
-        d₀]
-    · funext j
-      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos,
-        Cfg.mapState_workTapePos, d₀]
-    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_output, Cfg.mapState_output,
-        d₀]
+  have hinit : R.initCfg (pairEncode α w) = d₀.mapState Sum.inl :=
+    MultiTapeTM.initCfg_eq_mapState A R Sum.inl rfl (pairEncode α w)
   have htfinal : Function.update d₃.workTapes code (fun _ => none) =
       fun j => if j.val = k then FinTM.bufferTape (tableBitsK (E.machine α).tr)
         else if j.val = k + 1 then
