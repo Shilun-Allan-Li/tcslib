@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Cryptography.Asymptotic.PRFLemmas
 
 set_option maxHeartbeats 0
@@ -273,7 +274,7 @@ theorem length_tblEnc_tblOf {i : ℕ} (val : ℕ → List Bool) {v : ℕ}
 
 /-! ## State loops with a retained input -/
 
-/-- **The state-loop function** (the function form of the private
+/-- **The state-loop function** (a data function, unlike the computability statement
 `Complexity.polyTimeComputable_stateFind` of `TCSlib.Complexity.Randomized.Repetition`): on the
 input `x`, run the length-guarded step `Complexity.StateLoop.gstep step B` from `⟨x, start x⟩`
 for at most `R|⟨x, start x⟩|` rounds and return `out` of the first state word accepted by `acc`
@@ -356,23 +357,23 @@ theorem lookStep_poly : PolyTimeComputable lookStep :=
   polyTimeComputable_pairFstD.pairEncode
     (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The lookup test is polynomial-time (`StateLoop.isNil_poly`, `polyTimeComputable_pairEq`,
-`StateLoop.or_poly`). -/
+/-- The lookup test is polynomial-time (`polyTimeComputable_isNil`, `polyTimeComputable_pairEq`,
+`polyTimeComputable_or`). -/
 theorem lookAcc_poly : PolyTimeComputable fun v => [lookAcc v] := by
   have h1 : PolyTimeComputable fun v => [decide (pairSndD v = [])] :=
-    StateLoop.isNil_poly.comp polyTimeComputable_pairSndD
+    polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   have h2 : PolyTimeComputable fun v => [decide (pairFstD (pairFstD (pairSndD v)) = pairFstD v)] := by
     convert polyTimeComputable_pairEq.comp
       ((polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp
         polyTimeComputable_pairSndD)).pairEncode polyTimeComputable_pairFstD) using 1
     funext v
     simp
-  exact StateLoop.or_poly h1 h2
+  exact polyTimeComputable_or h1 h2
 
 /-- The lookup output is polynomial-time. -/
 theorem lookOut_poly : PolyTimeComputable lookOut := by
   have h1 : PolyTimeComputable fun v => [decide (pairSndD v = [])] :=
-    StateLoop.isNil_poly.comp polyTimeComputable_pairSndD
+    polyTimeComputable_isNil.comp polyTimeComputable_pairSndD
   convert polyTimeComputable_ite h1 (polyTimeComputable_const [])
     ((polyTimeComputable_const []).pairEncode (polyTimeComputable_pairSndD.comp
       (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))) using 1
@@ -390,13 +391,13 @@ theorem length_lookStep_iterate_le (v : List Bool) (k : ℕ) :
     intro a b
     unfold lookStep
     rw [pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode, length_pairEncode]
-    have h1 := StateLoop.length_pairFstD_add_pairSndD_le b
+    have h1 := length_pair_components_le b
     omega
   have hone : (lookStep v).length ≤ v.length + 2 := by
     cases hd : pairDecode v with
     | none =>
-      have h1 : pairFstD v = [] := by simp [pairFstD, hd]
-      have h2 : pairSndD v = [] := by simp [pairSndD, hd]
+      have h1 : pairFstD v = [] := by simp [pairFstD_eq, hd]
+      have h2 : pairSndD v = [] := by simp [pairSndD_eq, hd]
       have h3 : pairSndD ([] : List Bool) = [] := rfl
       unfold lookStep
       rw [h1, h2, h3, length_pairEncode]
@@ -543,90 +544,230 @@ variable (E : List Bool → List Bool) (D : NUPPT) (q : PolyExpr)
 /-- The retained raw input of the state word `⟨X, S⟩`. -/
 def inX (w : List Bool) : List Bool := pairFstD w
 
+/-- The defining equation of `inX`: `inX w = pairFstD w`. -/
+theorem inX_def (w : List Bool) :
+    inX w =
+      (pairFstD w) := rfl
+
 /-- The state of the state word `⟨X, S⟩`. -/
 def inS (w : List Bool) : List Bool := pairSndD w
+
+/-- The defining equation of `inS`: `inS w = pairSndD w`. -/
+theorem inS_def (w : List Bool) :
+    inS w =
+      (pairSndD w) := rfl
 
 /-- The unary parameter `1^n` of the raw input. -/
 def paramU (w : List Bool) : List Bool := NUPPT.inParam (inX w)
 
+/-- The defining equation of `paramU`: `paramU w = NUPPT.inParam (inX w)`. -/
+theorem paramU_def (w : List Bool) :
+    paramU w =
+      (NUPPT.inParam (inX w)) := rfl
+
 /-- The challenge `z` (the argument of the raw input). -/
 def chal (w : List Bool) : List Bool := NUPPT.inArg (inX w)
+
+/-- The defining equation of `chal`: `chal w = NUPPT.inArg (inX w)`. -/
+theorem chal_def (w : List Bool) :
+    chal w =
+      (NUPPT.inArg (inX w)) := rfl
 
 /-- The level index `1^i` (first half of the first advice component). -/
 def unI (w : List Bool) : List Bool := pairFstD (pairFstD (NUPPT.inAdvice (inX w)))
 
+/-- The defining equation of `unI`: `unI w = pairFstD (pairFstD (NUPPT.inAdvice (inX w)))`. -/
+theorem unI_def (w : List Bool) :
+    unI w =
+      (pairFstD (pairFstD (NUPPT.inAdvice (inX w)))) := rfl
+
 /-- The sub-hybrid index `1^j` (second half of the first advice component). -/
 def unJ (w : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inAdvice (inX w)))
+
+/-- The defining equation of `unJ`: `unJ w = pairSndD (pairFstD (NUPPT.inAdvice (inX w)))`. -/
+theorem unJ_def (w : List Bool) :
+    unJ w =
+      (pairSndD (pairFstD (NUPPT.inAdvice (inX w)))) := rfl
 
 /-- `D`'s advice (second advice component). -/
 def advD (w : List Bool) : List Bool := pairSndD (NUPPT.inAdvice (inX w))
 
+/-- The defining equation of `advD`: `advD w = pairSndD (NUPPT.inAdvice (inX w))`. -/
+theorem advD_def (w : List Bool) :
+    advD w =
+      (pairSndD (NUPPT.inAdvice (inX w))) := rfl
+
 /-- The whole coin string `W₀ ‖ W₁ ‖ r`. -/
 def coinsAll (w : List Bool) : List Bool := NUPPT.inCoins (inX w)
+
+/-- The defining equation of `coinsAll`: `coinsAll w = NUPPT.inCoins (inX w)`. -/
+theorem coinsAll_def (w : List Bool) :
+    coinsAll w =
+      (NUPPT.inCoins (inX w)) := rfl
 
 /-- The `q(n)` fresh `n`-bit seeds `W₀` (the first `q(n)·n` coins). -/
 def seeds (w : List Bool) : List Bool :=
   (coinsAll w).take ((PolyExpr.mul q .var).eval (paramU w).length)
 
+/-- The defining equation of `seeds`: `seeds w = (coinsAll w).take
+((PolyExpr.mul q .var).eval (paramU w).length)`. -/
+theorem seeds_def (w : List Bool) :
+    seeds q w =
+      ((coinsAll w).take ((PolyExpr.mul q .var).eval (paramU w).length)) := rfl
+
 /-- The coins after the seeds. -/
 def coinsRest (w : List Bool) : List Bool :=
   (coinsAll w).drop ((PolyExpr.mul q .var).eval (paramU w).length)
+
+/-- The defining equation of `coinsRest`: `coinsRest w = (coinsAll w).drop
+((PolyExpr.mul q .var).eval (paramU w).length)`. -/
+theorem coinsRest_def (w : List Bool) :
+    coinsRest q w =
+      ((coinsAll w).drop ((PolyExpr.mul q .var).eval (paramU w).length)) := rfl
 
 /-- The `q(n)` fresh `2n`-bit pairs `W₁` (the next `q(n)·2n` coins). -/
 def pairs (w : List Bool) : List Bool :=
   (coinsRest q w).take ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)
 
+/-- The defining equation of `pairs`: `pairs w = (coinsRest q w).take
+((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)`. -/
+theorem pairs_def (w : List Bool) :
+    pairs q w =
+      ((coinsRest q w).take ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)) := rfl
+
 /-- `D`'s coins (the remaining coins). -/
 def coinsD (w : List Bool) : List Bool :=
   (coinsRest q w).drop ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)
 
+/-- The defining equation of `coinsD`: `coinsD w = (coinsRest q w).drop
+((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)`. -/
+theorem coinsD_def (w : List Bool) :
+    coinsD q w =
+      ((coinsRest q w).drop ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length)) := rfl
+
 /-- The encoded history in the state. -/
 def hist (w : List Bool) : List Bool := pairFstD (inS w)
+
+/-- The defining equation of `hist`: `hist w = pairFstD (inS w)`. -/
+theorem hist_def (w : List Bool) :
+    hist w =
+      (pairFstD (inS w)) := rfl
 
 /-- The encoded table in the state. -/
 def tbl (w : List Bool) : List Bool := pairFstD (pairSndD (inS w))
 
+/-- The defining equation of `tbl`: `tbl w = pairFstD (pairSndD (inS w))`. -/
+theorem tbl_def (w : List Bool) :
+    tbl w =
+      (pairFstD (pairSndD (inS w))) := rfl
+
 /-- The table size `1^{|T|}` in the state. -/
 def cnt (w : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (inS w)))
+
+/-- The defining equation of `cnt`: `cnt w = pairFstD (pairSndD (pairSndD (inS w)))`. -/
+theorem cnt_def (w : List Bool) :
+    cnt w =
+      (pairFstD (pairSndD (pairSndD (inS w)))) := rfl
 
 /-- The round counter `1^t` in the state. -/
 def rnd (w : List Bool) : List Bool := pairSndD (pairSndD (pairSndD (inS w)))
 
+/-- The defining equation of `rnd`: `rnd w = pairSndD (pairSndD (pairSndD (inS w)))`. -/
+theorem rnd_def (w : List Bool) :
+    rnd w =
+      (pairSndD (pairSndD (pairSndD (inS w)))) := rfl
+
 /-- `D`'s move on the current history: `D(1^n, H; r)` with `D`'s advice. -/
 def move (w : List Bool) : List Bool :=
   D.output (NUPPT.layout (paramU w) (hist w) (advD w) (coinsD q w))
+
+/-- The defining equation of `move`: `move w = D.output
+(NUPPT.layout (paramU w) (hist w) (advD w) (coinsD q w))`. -/
+theorem move_def (w : List Bool) :
+    move D q w =
+      (D.output (NUPPT.layout (paramU w) (hist w) (advD w) (coinsD q w))) := rfl
 
 /-- The move is a query: `⟨[false], x⟩` with `|x| = n`. -/
 def isQ (w : List Bool) : Bool :=
   decide (pairFstD (move D q w) = [false]) &&
     decide ((pairSndD (move D q w)).length = (paramU w).length)
 
+/-- The defining equation of `isQ`: `isQ w = decide (pairFstD (move D q w) = [false]) && decide
+((pairSndD (move D q w)).length = (paramU w).length)`. -/
+theorem isQ_def (w : List Bool) :
+    isQ D q w =
+      (decide (pairFstD (move D q w) = [false]) &&
+        decide ((pairSndD (move D q w)).length = (paramU w).length)) := rfl
+
 /-- The query string `x`. -/
 def query (w : List Bool) : List Bool := pairSndD (move D q w)
+
+/-- The defining equation of `query`: `query w = pairSndD (move D q w)`. -/
+theorem query_def (w : List Bool) :
+    query D q w =
+      (pairSndD (move D q w)) := rfl
 
 /-- The `i`-bit prefix of the query. -/
 def pfx (w : List Bool) : List Bool := (query D q w).take (unI w).length
 
+/-- The defining equation of `pfx`: `pfx w = (query D q w).take (unI w).length`. -/
+theorem pfx_def (w : List Bool) :
+    pfx D q w =
+      ((query D q w).take (unI w).length) := rfl
+
 /-- The table lookup of the prefix. -/
 def look (w : List Bool) : List Bool := lookup (pairEncode (pfx D q w) (tbl w))
+
+/-- The defining equation of `look`: `look w = lookup (pairEncode (pfx D q w) (tbl w))`. -/
+theorem look_def (w : List Bool) :
+    look D q w =
+      (lookup (pairEncode (pfx D q w) (tbl w))) := rfl
 
 /-- The unary string `1^{2n}`. -/
 def un2 (w : List Bool) : List Bool :=
   List.replicate ((PolyExpr.mul (.const 2) .var).eval (paramU w).length) true
 
+/-- The defining equation of `un2`: `un2 w = List.replicate
+((PolyExpr.mul (.const 2) .var).eval (paramU w).length) true`. -/
+theorem un2_def (w : List Bool) :
+    un2 w =
+      (List.replicate ((PolyExpr.mul (.const 2) .var).eval (paramU w).length) true) := rfl
+
 /-- The unary product `1^{n·|T|}` (offset of seed number `|T|`). -/
 def mul1 (w : List Bool) : List Bool :=
   List.replicate ((paramU w).length * (cnt w).length) true
+
+/-- The defining equation of `mul1`: `mul1 w = List.replicate ((paramU w).length * (cnt w).length)
+true`. -/
+theorem mul1_def (w : List Bool) :
+    mul1 w =
+      (List.replicate ((paramU w).length * (cnt w).length) true) := rfl
 
 /-- The unary product `1^{2n·|T|}` (offset of pair number `|T|`). -/
 def mul2 (w : List Bool) : List Bool :=
   List.replicate ((un2 w).length * (cnt w).length) true
 
+/-- The defining equation of `mul2`: `mul2 w = List.replicate ((un2 w).length * (cnt w).length)
+true`. -/
+theorem mul2_def (w : List Bool) :
+    mul2 w =
+      (List.replicate ((un2 w).length * (cnt w).length) true) := rfl
+
 /-- The test `|T| < j`. -/
 def ltJ (w : List Bool) : Bool := !decide ((unJ w).length ≤ (cnt w).length)
 
+/-- The defining equation of `ltJ`: `ltJ w = !decide ((unJ w).length ≤ (cnt w).length)`. -/
+theorem ltJ_def (w : List Bool) :
+    ltJ w =
+      (!decide ((unJ w).length ≤ (cnt w).length)) := rfl
+
 /-- The test `|T| = j`. -/
 def eqJ (w : List Bool) : Bool := decide ((cnt w).length = (unJ w).length)
+
+/-- The defining equation of `eqJ`: `eqJ w = decide ((cnt w).length = (unJ w).length)`. -/
+theorem eqJ_def (w : List Bool) :
+    eqJ w =
+      (decide ((cnt w).length = (unJ w).length)) := rfl
 
 /-- The value of a new (the `|T|`-th distinct) prefix: the pair `W₁ |T|` if `|T| < j`, the
 challenge if `|T| = j`, `E(W₀ |T|)` otherwise (`challengeStream`). -/
@@ -635,44 +776,116 @@ def fresh (w : List Bool) : List Bool :=
   else if eqJ w then chal w
   else E (((seeds q w).drop (mul1 w).length).take (paramU w).length)
 
+/-- The defining equation of `fresh` (its body, unfolded once). -/
+theorem fresh_def (w : List Bool) :
+    fresh E q w =
+      (if ltJ w then ((pairs q w).drop (mul2 w).length).take (un2 w).length
+        else if eqJ w then chal w
+        else E (((seeds q w).drop (mul1 w).length).take (paramU w).length)) := rfl
+
 /-- The prefix is not in the table. -/
 def notFound (w : List Bool) : Bool := decide (look D q w = [])
+
+/-- The defining equation of `notFound`: `notFound w = decide (look D q w = [])`. -/
+theorem notFound_def (w : List Bool) :
+    notFound D q w =
+      (decide (look D q w = [])) := rfl
 
 /-- The value of the query's prefix: looked up, or fresh. -/
 def vstr (w : List Bool) : List Bool :=
   if notFound D q w then fresh E q w else pairSndD (look D q w)
 
+/-- The defining equation of `vstr`: `vstr w = if notFound D q w then fresh E q w else pairSndD
+(look D q w)`. -/
+theorem vstr_def (w : List Bool) :
+    vstr E D q w =
+      (if notFound D q w then fresh E q w else pairSndD (look D q w)) := rfl
+
 /-- The updated table: a new prefix is appended with its fresh value. -/
 def tbl' (w : List Bool) : List Bool :=
   if notFound D q w then tbl w ++ pairEncode (pairEncode (pfx D q w) (fresh E q w)) [] else tbl w
 
+/-- The defining equation of `tbl'`: `tbl' w = if notFound D q w then tbl w ++ pairEncode
+(pairEncode (pfx D q w) (fresh E q w)) [] else tbl w`. -/
+theorem tbl'_def (w : List Bool) :
+    tbl' E D q w =
+      (if notFound D q w then tbl w ++ pairEncode (pairEncode (pfx D q w) (fresh E q w)) [] else
+          tbl w) := rfl
+
 /-- The updated table size. -/
 def cnt' (w : List Bool) : List Bool := if notFound D q w then true :: cnt w else cnt w
+
+/-- The defining equation of `cnt'`: `cnt' w = if notFound D q w then true :: cnt w else cnt w`. -/
+theorem cnt'_def (w : List Bool) :
+    cnt' D q w =
+      (if notFound D q w then true :: cnt w else cnt w) := rfl
 
 /-- The label at level `i + 1`: the half of the value selected by bit `x_{i+1}` of the query. -/
 def lab (w : List Bool) : List Bool :=
   selHalf (((query D q w).drop (unI w).length).headD false) (paramU w) (vstr E D q w)
 
+/-- The defining equation of `lab`: `lab w = selHalf
+(((query D q w).drop (unI w).length).headD false) (paramU w) (vstr E D q w)`. -/
+theorem lab_def (w : List Bool) :
+    lab E D q w =
+      (selHalf (((query D q w).drop (unI w).length).headD false) (paramU w) (vstr E D q w)) := rfl
+
 /-- The answer: the walk down the tree from the label along the remaining bits of the query. -/
 def ans (w : List Bool) : List Bool :=
   ggmEval E (pairEncode (lab E D q w) ((query D q w).drop (unI w).length).tail)
+
+/-- The defining equation of `ans`: `ans w = ggmEval E
+(pairEncode (lab E D q w) ((query D q w).drop (unI w).length).tail)`. -/
+theorem ans_def (w : List Bool) :
+    ans E D q w =
+      (ggmEval E (pairEncode (lab E D q w) ((query D q w).drop (unI w).length).tail)) := rfl
 
 /-- The updated history. -/
 def hist' (w : List Bool) : List Bool :=
   hist w ++ pairEncode (pairEncode (query D q w) (ans E D q w)) []
 
+/-- The defining equation of `hist'`: `hist' w = hist w ++ pairEncode
+(pairEncode (query D q w) (ans E D q w)) []`. -/
+theorem hist'_def (w : List Bool) :
+    hist' E D q w =
+      (hist w ++ pairEncode (pairEncode (query D q w) (ans E D q w)) []) := rfl
+
 /-- **One round of the reduction machine** on the state word `⟨X, S⟩`. -/
 def step (w : List Bool) : List Bool :=
   pairEncode (hist' E D q w) (pairEncode (tbl' E D q w) (pairEncode (cnt' D q w) (true :: rnd w)))
 
+/-- The defining equation of `step`: `step w = pairEncode (hist' E D q w)
+(pairEncode (tbl' E D q w) (pairEncode (cnt' D q w) (true :: rnd w)))`. -/
+theorem step_def (w : List Bool) :
+    step E D q w =
+      (pairEncode (hist' E D q w)
+          (pairEncode (tbl' E D q w) (pairEncode (cnt' D q w) (true :: rnd w)))) := rfl
+
 /-- The query budget `1^{q(n)}`. -/
 def unQ (w : List Bool) : List Bool := List.replicate (q.eval (paramU w).length) true
+
+/-- The defining equation of `unQ`: `unQ w = List.replicate (q.eval (paramU w).length) true`. -/
+theorem unQ_def (w : List Bool) :
+    unQ q w =
+      (List.replicate (q.eval (paramU w).length) true) := rfl
 
 /-- The stopping test: the move is a verdict, or the budget is exhausted. -/
 def acc (w : List Bool) : Bool := !(isQ D q w) || decide ((unQ q w).length ≤ (rnd w).length)
 
+/-- The defining equation of `acc`: `acc w = !(isQ D q w) || decide
+((unQ q w).length ≤ (rnd w).length)`. -/
+theorem acc_def (w : List Bool) :
+    acc D q w =
+      (!(isQ D q w) || decide ((unQ q w).length ≤ (rnd w).length)) := rfl
+
 /-- The output: the forced verdict `false` on a query (budget exhausted), else `D`'s verdict. -/
 def out (w : List Bool) : List Bool := if isQ D q w then [false] else [verdictOf (move D q w)]
+
+/-- The defining equation of `out`: `out w = if isQ D q w then [false] else
+[verdictOf (move D q w)]`. -/
+theorem out_def (w : List Bool) :
+    out D q w =
+      (if isQ D q w then [false] else [verdictOf (move D q w)]) := rfl
 
 /-- The initial state: empty history, empty table, zero counters. -/
 def start (_X : List Bool) : List Bool := pairEncode [] (pairEncode [] (pairEncode [] []))
@@ -680,24 +893,33 @@ def start (_X : List Bool) : List Bool := pairEncode [] (pairEncode [] (pairEnco
 /-- The orbit bound of the state loop: `q(n)(28n + 27) + 6`. -/
 def bound : PolyExpr := .add (.mul q (.add (.mul (.const 28) .var) (.const 27))) (.const 6)
 
+/-- The defining equation of `bound`: `bound = .add
+(.mul q (.add (.mul (.const 28) .var) (.const 27))) (.const 6)`. -/
+theorem bound_def :
+    bound q =
+      (.add (.mul q (.add (.mul (.const 28) .var) (.const 27))) (.const 6)) := rfl
+
 /-- **The raw function of the reduction machine:** the state loop with at most `q(|X|)`
 rounds. -/
 def rawFun : List Bool → List Bool := stateLoopFun start (step E D q) (acc D q) (out D q) q (bound q)
 
+/-- The defining equation of `rawFun`: `rawFun = stateLoopFun start (step E D q) (acc D q) (out D q)
+q (bound q)`. -/
+theorem rawFun_def :
+    rawFun E D q =
+      (stateLoopFun start (step E D q) (acc D q) (out D q) q (bound q)) := rfl
+
 /-! ### Polynomial time -/
 
-/-- Unary multiplication of two polynomial-time unary lengths
-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
+/-- Unary multiplication of two polynomial-time word lengths: pair the words,
+apply `BinArith.mulU`, and normalize by the unary length map (`BinArith.length_mulU`). -/
 theorem unaryMul_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
     (hg : PolyTimeComputable g) :
     PolyTimeComputable fun w => List.replicate ((f w).length * (g w).length) true := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  have hmul : PolyTimeComputable (fun z => match pairDecode z with
-      | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := ⟨M, c, 2, hM⟩
-  convert hmul.comp (hf.pairEncode hg) using 1
-  funext w
-  simp [pairDecode_pairEncode]
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp (hf.pairEncode hg))
+  refine h.congr fun w => ?_
+  simp only [Function.comp_apply, BinArith.length_mulU]
 
 /-- The retained input of the state word is polynomial-time. -/
 theorem inX_poly : PolyTimeComputable inX := polyTimeComputable_pairFstD
@@ -798,7 +1020,7 @@ theorem mul1_poly : PolyTimeComputable mul1 := unaryMul_poly paramU_poly cnt_pol
 theorem mul2_poly : PolyTimeComputable mul2 := unaryMul_poly un2_poly cnt_poly
 /-- The test `|T| < j` is polynomial-time. -/
 theorem ltJ_poly : PolyTimeComputable fun w => [ltJ w] :=
-  StateLoop.not_poly (StateLoop.lenLe_comp cnt_poly unJ_poly)
+  polyTimeComputable_not (StateLoop.lenLe_comp cnt_poly unJ_poly)
 
 /-- The test `|T| = j` is polynomial-time. -/
 theorem eqJ_poly : PolyTimeComputable fun w => [eqJ w] := by
@@ -814,7 +1036,7 @@ theorem fresh_poly (hE : PolyTimeComputable E) : PolyTimeComputable (fresh E q) 
 
 /-- The not-found test is polynomial-time. -/
 theorem notFound_poly : PolyTimeComputable fun w => [notFound D q w] :=
-  StateLoop.isNil_poly.comp (look_poly D q)
+  polyTimeComputable_isNil.comp (look_poly D q)
 
 /-- The value of the prefix is polynomial-time. -/
 theorem vstr_poly (hE : PolyTimeComputable E) : PolyTimeComputable (vstr E D q) :=
@@ -833,13 +1055,14 @@ theorem cnt'_poly : PolyTimeComputable (cnt' D q) :=
 
 /-- The label is polynomial-time (`selHalf_poly`). -/
 theorem lab_poly (hE : PolyTimeComputable E) : PolyTimeComputable (lab E D q) :=
-  selHalf_poly (StateLoop.headBit_poly.comp (dropLen_poly unI_poly (query_poly D q))) paramU_poly
+  selHalf_poly (polyTimeComputable_headD.comp (dropLen_poly unI_poly (query_poly D q))) paramU_poly
     (vstr_poly E D q hE)
 
 /-- The answer is polynomial-time (`ggmEval_poly`). -/
 theorem ans_poly (hE : PolyTimeComputable E) : PolyTimeComputable (ans E D q) :=
   (ggmEval_poly hE).comp ((lab_poly E D q hE).pairEncode
-    (StateLoop.tail_poly.comp (dropLen_poly unI_poly (query_poly D q))))
+    ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+        (dropLen_poly unI_poly (query_poly D q))))
 
 /-- The updated history is polynomial-time. -/
 theorem hist'_poly (hE : PolyTimeComputable E) : PolyTimeComputable (hist' E D q) :=
@@ -856,7 +1079,8 @@ theorem unQ_poly : PolyTimeComputable (unQ q) := StateLoop.unaryPoly_comp q para
 
 /-- The stopping test is polynomial-time. -/
 theorem acc_poly : PolyTimeComputable fun w => [acc D q w] :=
-  StateLoop.or_poly (StateLoop.not_poly (isQ_poly D q)) (StateLoop.lenLe_comp rnd_poly (unQ_poly q))
+  polyTimeComputable_or (polyTimeComputable_not (isQ_poly D q)) (StateLoop.lenLe_comp rnd_poly
+      (unQ_poly q))
 
 /-- The output is polynomial-time (`polyTimeComputable_pairEq` for the verdict). -/
 theorem out_poly : PolyTimeComputable (out D q) := by

@@ -68,6 +68,15 @@ def VerifierHasCircuits (M : List Bool → List Bool → Bool) (p : ℕ → ℕ)
       D.IsWellFormed ∧ D.IsFaninTwo ∧ D.size ≤ a * (n + 1) ^ k ∧
       ∀ v : Fin n → Bool, D.eval v = M (List.ofFn v) r
 
+/-- The defining property of `VerifierHasCircuits`: one size bound `a (n + 1)^k` uniform in the
+fixed random string `r`, with a well-formed fan-in-two circuit computing `x ↦ M x r`. -/
+theorem verifierHasCircuits_iff (M : List Bool → List Bool → Bool) (p : ℕ → ℕ) :
+    VerifierHasCircuits M p ↔ ∃ a k : ℕ, ∀ (n : ℕ) (r : List Bool), r.length = p n →
+      ∃ D : DAGCircuit n,
+        D.IsWellFormed ∧ D.IsFaninTwo ∧ D.size ≤ a * (n + 1) ^ k ∧
+        ∀ v : Fin n → Bool, D.eval v = M (List.ofFn v) r :=
+  Iff.rfl
+
 /-- **Adleman's theorem: `BPP ⊆ P/poly`** ([AB09, Thm 7.14]).  Relative to
 the efficiency notion `E`: if `L ∈ BPP` and `E`-verifiers have circuits when
 their random string is fixed (`hCirc`, the residue of [AB09, Thm 6.6]), then

@@ -469,6 +469,14 @@ open Classical in
 noncomputable def indicator {α : Type*} (L : Set α) : α → Bool :=
   fun x => if x ∈ L then true else false
 
+open Classical in
+/-- The defining equation of `indicator`: `indicator L = fun x => if x ∈ L then true else false`
+(classical decidability, as in the definition). -/
+theorem indicator_def {α : Type*} (L : Set α) :
+    (indicator L : α → Bool) =
+      (fun x => if x ∈ L then true else false :
+        α → Bool) := rfl
+
 /-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
 def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
     (t s : α → ℕ) : Prop :=

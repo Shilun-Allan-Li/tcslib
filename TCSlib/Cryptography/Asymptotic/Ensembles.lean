@@ -208,10 +208,14 @@ def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
   σ n := X.σ n × M.Coins n
   X n z := padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X.X n z.1)) z.2)
 
-/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q` (private copy of the frozen
-`FunFamily.blocks` of `Asymptotic/OneWay.lean`, which this file does not import). -/
+/-- The blockwise bijection `{0,1}^{q·ℓ} ≃ ({0,1}^ℓ)^q`: a load-bearing private alias of the
+canonical `FunFamily.blocks` of `Asymptotic/Adversary.lean`, kept so that the body of
+`Ensemble.copies` stays unchanged. -/
 private def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
+  FunFamily.blocks q ℓ
+
+/-- The private alias is the canonical block bijection. -/
+private theorem blocks_eq (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ := rfl
 
 /-- `t(n)` independent copies of `X_n`, concatenated into one `t(n)·ℓ(n)`-bit string: the
 ensemble `{X_n^{(1)} ‖ ⋯ ‖ X_n^{(t(n))}}` of the multicopy corollary of the hybrid lemma
@@ -221,11 +225,15 @@ def copies (t : PolyExpr) (X : Ensemble ℓ) : Ensemble (.mul t ℓ) where
   X n s := (blocks (t.eval n) (ℓ.eval n)).symm (TCSlib.Cryptography.copies (t.eval n) (X.X n) s)
 
 /-- Unfolding of `copies`: bit `i` of the concatenation is bit `i mod ℓ` of copy `i / ℓ`
-(through `finProdFinEquiv`). -/
+(through `finProdFinEquiv`).
+
+**Proof sketch.** Expand the copied ensemble's sample field and apply the inverse block
+and copy family equations. -/
 theorem copies_X (t : PolyExpr) (X : Ensemble ℓ) (n : ℕ) (s : Fin (t.eval n) → X.σ n)
     (i : Fin (t.eval n * ℓ.eval n)) :
-    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 :=
-  rfl
+    (X.copies t).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2 := by
+  simp only [copies, blocks_eq, FunFamily.blocks_symm_apply, TCSlib.Cryptography.copies_def,
+    finProdFinEquiv_symm_apply]
 
 /-- The uniform ensemble is efficiently samplable: `s := ℓ` and the sampler returns its coins
 (`pairSndD` of `⟨1^n, r⟩`). Non-vacuity of `Samplable` (the case `U_n` of D6). -/
@@ -234,7 +242,7 @@ theorem uniform_samplable (ℓ : PolyExpr) : (uniform ℓ).Samplable := by
   have h : (fun r : Fin (ℓ.eval n) → Bool =>
       padFin (ℓ.eval n) (pairSndD (NUPPT.advInput n (List.ofFn r)))) = (uniform ℓ).X n := by
     funext r
-    simp [NUPPT.advInput, padFin_ofFn, uniform]
+    simp [NUPPT.advInput_eq, padFin_ofFn, uniform]
   rw [h]
   exact StatClose.refl _
 
@@ -322,7 +330,7 @@ theorem Ensemble.Indist.refl {ℓ : PolyExpr} (X : Ensemble ℓ) : X.Indist X :=
   have h : (fun n => distAdv (X.X n) (X.X n) (D.distinguisher n (ℓ.eval n))) =
       fun _ => (0 : ℝ) := by
     funext n
-    simp [distAdv]
+    simp [distAdv_def]
   rw [h]
   exact negligible_zero
 
@@ -353,7 +361,7 @@ theorem Ensemble.Indist.toLit {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indis
   obtain ⟨B, hBc, -, hB⟩ := D.exists_reparam ℓ
   refine (h B).mono ⟨0, fun n _ => le_of_eq ?_⟩
   congr 1
-  unfold distAdv
+  simp only [distAdv_def]
   rw [EnsembleLemmas.acceptProb_reparam hBc hB, EnsembleLemmas.acceptProb_reparam hBc hB]
 
 /-- **Bridge from the literal form to the `1^n` form** for injective `ℓ` (every ensemble of
@@ -401,7 +409,7 @@ theorem Ensemble.IndistLit.toIndist {ℓ : PolyExpr} {X Y : Ensemble ℓ}
   have hle' : D.coinLen (φ (ℓ.eval n)) ≤ D.coinLen (PolyExpr.var.eval (ℓ.eval n)) := by
     rw [hφn, PolyExpr.eval_var]
     exact D.coins.eval_mono (hle n)
-  unfold distAdv
+  simp only [distAdv_def]
   rw [EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle',
     EnsembleLemmas.acceptProb_reparam_advice hAc hA (ℓ.eval n) hle', hφn]
 
@@ -428,7 +436,7 @@ theorem Ensemble.Indist.push {ℓ ℓ' : PolyExpr} {X Y : Ensemble ℓ} (h : X.I
   obtain ⟨B, hBc, hB⟩ := EnsembleLemmas.exists_pushRed M D ℓ'
   refine (h B).mono ⟨0, fun n _ => le_of_eq ?_⟩
   congr 1
-  unfold distAdv
+  simp only [distAdv_def]
   rw [EnsembleLemmas.acceptProb_pushRed hBc hB (X := X.X n),
     EnsembleLemmas.acceptProb_pushRed hBc hB (X := Y.X n)]
   rfl
@@ -458,7 +466,7 @@ theorem Ensemble.Indist.trans {ℓ : PolyExpr} {X Y Z : Ensemble ℓ} (h₁ : X.
       distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n)) :=
     add_nonneg (abs_nonneg _) (abs_nonneg _)
   rw [abs_of_nonneg h0]
-  unfold distAdv
+  simp only [distAdv_def]
   rw [abs_abs]
   exact abs_sub_le _ _ _
 
@@ -516,7 +524,7 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
       refine OneWay.uprob_congr fun z => ?_
       rw [hD']
       exact Iff.rfl
-    unfold distAdv
+    simp only [distAdv_def]
     rw [e, e]
   -- the hybrid index at each `n` (any index when `t(n) = 0`)
   have hex : ∀ n, ∃ k, k ≤ t.eval n ∧ (0 < t.eval n → k < t.eval n ∧
@@ -535,7 +543,7 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
       distAdv (X.X n) (Y.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
     intro n
     have hlen : B.coinLen n = (t.eval n * sX.eval n + t.eval n * sY.eval n) + D.coinLen n := by
-      simp [NUPPT.coinLen, hBc]
+      simp [NUPPT.coinLen_eq, hBc]
     obtain ⟨e, he⟩ : ∃ e : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) ×
         (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n ≃ B.Coins n,
         ∀ c, e c = EnsembleLemmas.coinsEquiv hlen
@@ -551,8 +559,9 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
           (t.eval n) (k n) (D' n) z c := by
       intro z c
       rw [he]
-      simp only [NUPPT.distinguisher, NUPPT.runAt_eq, EnsembleLemmas.ofFn_coinsEquiv, hB,
-        multicopyRed, hD']
+      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+          EnsembleLemmas.ofFn_coinsEquiv, hB,
+        multicopyRed_def, hD']
     have hdist : ∀ Z : Ensemble ℓ, acceptProb (Z.X n) (B.distinguisher n (ℓ.eval n)) =
         acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by
       intro Z
@@ -561,7 +570,7 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
       congr 1
       funext z c
       exact hpt z c
-    unfold distAdv
+    simp only [distAdv_def]
     rw [hdist, hdist]
   -- the hybrid bound at each `n`
   have hbound : ∀ n, distAdv ((X.copies t).X n) ((Y.copies t).X n)
@@ -620,7 +629,7 @@ theorem predict_eq {ℓ : ℕ} {σ₀ σ₁ ρ : Type*} [Fintype σ₀] [Fintype
   rw [← uprob_comp_equiv (Equiv.prodAssoc Bool (σ₀ × σ₁) ρ).symm, uprob_bool_prod]
   have hA : uprob (fun c : (σ₀ × σ₁) × ρ => D (X₀ c.1.1) c.2 = false) =
       1 - acceptProb X₀ D := by
-    rw [← acceptProb_fst (τ := σ₁) X₀ D, acceptProb, ← uprob_not]
+    rw [← acceptProb_fst (τ := σ₁) X₀ D, acceptProb_def, ← uprob_not]
     congr 1
     funext c
     simp

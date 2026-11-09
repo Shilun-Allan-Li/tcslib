@@ -178,9 +178,9 @@ theorem colVerify_honest (Com : List Bool → List Bool) {n ℓn : ℕ} {G : Gra
   rw [hp]
   simp only [colOpen, pairFstD_pairEncode, pairSndD_pairEncode, decColor_encColor,
     List.length_ofFn, decide_eq_true_eq]
-  refine ⟨trivial, trivial, ?_, ?_, fun h => hc _ _ hadj (π.injective h)⟩
-  · rw [colCommit, multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
-  · rw [colCommit, multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+  refine ⟨trivial, trivial, ?_, ?_, fun h => (ProperColoring_iff G c).1 hc _ _ hadj (π.injective h)⟩
+  · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+  · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
 
 /-! ### The committed colouring (Lem-127.f) -/
 
@@ -236,7 +236,8 @@ theorem exists_bad_edge {n : ℕ} {G : Graph n} (hG : ¬ ThreeColorable G)
       ct (edgeOf G e).1 = ct (edgeOf G e).2 := by
   by_contra hcon
   push_neg at hcon
-  refine hG ⟨fun i => (ct i).getD 0, fun u v huv heq => ?_⟩
+  refine hG ((threeColorable_iff G).2
+    ⟨fun i => (ct i).getD 0, (ProperColoring_iff G _).2 fun u v huv heq => ?_⟩)
   obtain ⟨e, he⟩ := exists_edgeOf_eq G huv
   obtain ⟨h1, h2, h3⟩ := hcon e
   simp only [he] at h1 h2 h3
@@ -608,7 +609,7 @@ theorem length_multiCom_le {Com : List Bool → List Bool} {C c : ℕ}
     (hC : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ c) {q n m : ℕ} (v : Fin q → Fin n → Bool)
     (r : Fin q → Fin m → Bool) :
     (multiCom Com v r).length ≤ q * (2 * (C * (2 * n + 3 + m) ^ c) + 2) := by
-  unfold multiCom
+  simp only [multiCom_def]
   refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
     fun msg hmsg => ?_).trans (by simp)
   obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hmsg
@@ -639,7 +640,7 @@ theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComp
   split
   · exact (length_multiCom_le hC _ _).trans (hcom.trans (Nat.le_add_right _ _))
   · split
-    · simp only [colOpen, length_pairEncode, List.length_ofFn, encColor, length_encColoring]
+    · simp only [colOpen, length_pairEncode, List.length_ofFn, encColor_def, length_encColoring]
       omega
     · simp
 
@@ -863,7 +864,7 @@ private theorem colProtocol_sound {Com : List Bool → List Bool} {ℓ : PolyExp
       have hbound := hclose.uprob_le_add fun e : Fin (edgeCount G) =>
         colVerify Com (ℓ.eval n) G e (P'.next x [] (List.ofFn rP) [])
           (P'.next x [] (List.ofFn rP) [edgeMsg e]) = true
-      simp only [id] at hbound
+      simp only [id_eq] at hbound
       have hev : ∀ rV : (colVerifier Com ℓ).Coins x.length,
           (colVerify Com (ℓ.eval n) G (sampleEdgeIdx (edgeCount G) x.length (List.ofFn (rP, rV).2))
             (P'.next x [] (List.ofFn (rP, rV).1) [])
@@ -965,15 +966,18 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
   complete := by
     obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
     refine ⟨B, fun x hx => ?_⟩
-    obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
+    obtain ⟨y, hy⟩ := (mem_L3COL_iff x).1 hx
+    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff _ _).1 hy
     exact ⟨encColoring c,
-      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist
+        ((R3COL_iff _ _).2 ⟨n, G, c, rfl, rfl, hc⟩),
       fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
   efficientP := colProver_efficient hC.easy ℓ
   boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
   completeWitness := by
-    rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
+    intro x y hxy z
+    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff x y).1 hxy
     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
 
 /-! ### The `n|E|`-fold protocol: the parties unfolded -/

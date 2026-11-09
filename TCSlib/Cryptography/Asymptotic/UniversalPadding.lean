@@ -173,10 +173,10 @@ theorem easy_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {d : ℕ}
     (h : ∃ (M' : FinTM Bool) (c' : ℕ), M'.ComputesFunInTime (gStr F ℓ d) fun m => c' * (m + 1)) :
     (family F ℓ d).Easy := by
   have hg : PolyTimeComputable (gStr F ℓ d) := polyTimeComputable_of_linear h
-  refine ⟨fun z => gStr F ℓ d (pairSndD z), hg.comp polyTimeComputable_pairSndD, fun m x => ?_⟩
-  rw [ofFn_family_f]
-  show gStr F ℓ d (pairSndD (pairEncode (List.replicate m true) (List.ofFn x))) = _
-  rw [pairSndD_pairEncode]
+  refine (FunFamily.easy_iff _).2
+    ⟨fun z => gStr F ℓ d (pairSndD z), hg.comp polyTimeComputable_pairSndD, fun m x => ?_⟩
+  rw [ofFn_family_f, NUPPT.advInput_eq]
+  exact congrArg (gStr F ℓ d) (pairSndD_pairEncode _ _)
 
 /-- **`g'` is computable by a coded machine in quadratic time** from a linear-time multitape
 evaluator: `Turing.FinTM.one_work_tape_binary` gives a one-work-tape binary machine within
@@ -268,7 +268,8 @@ theorem padStr_eq_gStr {n m : ℕ} (hnu : nu d m = n) (hℓ : 𝓕.inLen.eval n 
   have hlen : (List.ofFn b ++ List.ofFn a).length = m := by
     simp only [List.length_append, List.length_ofFn]
     omega
-  unfold padStr gStr
+  unfold gStr
+  simp only [padStr_eq]
   rw [raw_eq hFx hnu hℓ b a, hlen]
   simp
 
@@ -315,7 +316,7 @@ theorem invProbAt_family_le (A' A : NUPPT) {n m : ℕ} (hnu : nu d m = n)
   have hcast₃ : A'.coinLen m + (A'.coinLen (p.eval n) - A'.coinLen m) = A'.coinLen (p.eval n) := by
     omega
   have hcast₄ : p.eval n + A'.coinLen (p.eval n) = A.coinLen n := by
-    simp [NUPPT.coinLen, hAc, PolyExpr.eval_subst]
+    simp [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst]
   let eA : (Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) ≃
       (Fin (p.eval n) → Bool) :=
     (splitCoins _ _).symm.trans (Equiv.arrowCongr (finCongr hcast₂) (Equiv.refl Bool))
@@ -460,7 +461,7 @@ theorem strongOneWay (h : 𝓕.StrongOneWay) {n₁ : ℕ}
       rw [hA, hB]
       simp [β]
     -- the contradiction with the one-wayness of `𝓕` at degree `d e + 1`
-    obtain ⟨n₀, hn₀⟩ := h.hard A (d * e + 1)
+    obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard A) (d * e + 1)
     obtain ⟨m, hm, hgm⟩ := he (max (max n₀ (2 ^ (d * e))) 1 ^ d + n₁ ^ d + 1)
     have hNd : max (max n₀ (2 ^ (d * e))) 1 ^ d ≤ m := by omega
     have hN : max (max n₀ (2 ^ (d * e))) 1 ≤ nu d m := le_nu hd hNd
@@ -524,7 +525,8 @@ theorem exists_family (h : ∃ 𝓕 : FunFamily, 𝓕.StrongOneWay) :
         M.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn (𝓖.f n x))
           (c₀ * (𝓖.inLen.eval n + 1) ^ 2) := by
   obtain ⟨𝓕, h⟩ := h
-  obtain ⟨F, ⟨M, C, c, hM⟩, hFx⟩ := h.easy
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
+  obtain ⟨M, C, c, hM⟩ := (polyTimeComputable_iff F).1 hF
   obtain ⟨d, n₁, hd, hdom⟩ := exists_pow_dominates
     (.add (.add 𝓕.inLen 𝓕.outLen)
       ((PolyExpr.normal C c).subst (.add (.mul (.const 2) .var) (.add (.const 2) 𝓕.inLen))))

@@ -122,7 +122,7 @@ theorem padToLen_pairEncode_ofFn (a : List Bool) {L : ℕ} (ρ : Fin L → Bool)
   simp only [padToLen, pairFstD_pairEncode, pairSndD_pairEncode, List.length_ofFn]
   refine List.ext_getElem (by simp) fun j hj₁ hj₂ => ?_
   simp only [List.length_ofFn] at hj₂
-  simp only [List.getElem_take, List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
+  simp only [List.getElem_take, List.getElem_ofFn, padFin_def, List.getD_eq_getElem?_getD]
   by_cases h : j < a.length
   · rw [List.getElem_append_left h, List.getElem?_eq_getElem h]
     rfl
@@ -134,7 +134,7 @@ theorem padToLen_pairEncode_ofFn (a : List Bool) {L : ℕ} (ρ : Fin L → Bool)
 theorem ofFn_padFin_of_length {L : ℕ} {w : List Bool} (hw : w.length = L) :
     List.ofFn (padFin L w) = w := by
   refine List.ext_getElem (by simp [hw]) fun j hj₁ hj₂ => ?_
-  simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
 
 /-- **The evaluator of the hard-core bit of the padded collection** `⟨padFin(encD_i x), r⟩` on
 `⟨i, ⟨encD_i x, r⟩⟩` [PS10, Theorem 87.3, collection form, efficiency clause]. -/
@@ -144,8 +144,9 @@ theorem exists_glBitCollEvaluator (F : Collection) :
         H (pairEncode i (pairEncode (F.encD i x) (List.ofFn ρ))) =
           [HardcoreBit.ip (padFin L (F.encD i x)) ρ] := by
   refine ⟨fun w => ipFun (pairEncode (padToLen (pairSndD w)) (pairSndD (pairSndD w))),
-    ptcComp (g := ipFun) ipFun_poly ((ptcComp (g := padToLen) padToLen_poly polyTimeComputable_pairSndD).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)), fun i x L ρ => ?_⟩
+    PolyTimeComputable.comp' (g := ipFun) ipFun_poly
+      ((PolyTimeComputable.comp' (g := padToLen) padToLen_poly polyTimeComputable_pairSndD).pairEncode
+        (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)), fun i x L ρ => ?_⟩
   simp only [pairSndD_pairEncode, padToLen_pairEncode_ofFn, ipFun_ofFn]
 
 /-- The inner product is invariant under transport along an equality of lengths (private copy
@@ -267,7 +268,7 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨⟨x, ρ⟩, g⟩, ex⟩ := w
   simp only [Equiv.trans_apply, Equiv.prodAssoc_apply, Equiv.prodCongr_apply, Prod.map_apply,
-    Equiv.coe_refl, id, hrec] at hw ⊢
+    Equiv.coe_refl, id_eq, hrec] at hw ⊢
   rw [glCollMachine_runAt A mP K k hk n i (F.f i x) (List.ofFn (finCastEquiv hL.symm ρ))
         ((glMachine_coinsEquiv (A.precomp collPre_poly) mP K k hk n).symm
         (glCoinsEquiv (A.precomp collPre_poly) n (mP.eval n) (k n) _
@@ -319,7 +320,7 @@ theorem glColl_negligible (F : Collection) (mP : PolyExpr) (L : ∀ n, F.gen.Coi
   set K := glKcBound mP c with hK
   set B := glCollMachine A mP K (glKc mP c) (two_pow_glKc_le mP c) with hB
   obtain ⟨C, d, hCd⟩ := K.eval_le
-  obtain ⟨n₀, hn₀⟩ := hhard B (2 * c + d + 1)
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (hhard B) (2 * c + d + 1)
   obtain ⟨n, hn, hgap⟩ := hc (max n₀ (max 1 (16 * C * 2 ^ d)))
   have hn1 : 1 ≤ n := le_of_max_le_left (le_of_max_le_right hn)
   have hnC : 16 * C * 2 ^ d ≤ n := le_of_max_le_right (le_of_max_le_right hn)
@@ -361,9 +362,9 @@ theorem glColl_negligible (F : Collection) (mP : PolyExpr) (L : ∀ n, F.gen.Coi
         (((Equiv.refl (F.D (F.index n r))).prodCongr (finCastEquiv (hL n r))).prodCongr
           (Equiv.refl (A.Coins n))) _)
       obtain ⟨⟨x, ρ⟩, cc⟩ := z
-      simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, ofFn_finCastEquiv]
+      simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, ofFn_finCastEquiv]
       rw [ip_cast' (hL n r) (padFin (L n r) (F.encD (F.index n r) x)) ρ]
-      exact Iff.rfl
+      simp only [padFin_def, coe_finCastEquiv, Fin.coe_cast]
     have hGL := HardcoreBit.invProb_guessInverter_enc_pad
       (fun x : F.D (F.index n r) => padFin (mP.eval n) (F.encD (F.index n r) x)) (F.f (F.index n r))
       (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (cc : A.Coins n) =>
@@ -376,7 +377,7 @@ theorem glColl_negligible (F : Collection) (mP : PolyExpr) (L : ∀ n, F.gen.Coi
     (fun r => uprob_nonneg _) hinner
   have hsmall := hn₀ n (le_of_max_le_left hn)
   have hnn : 0 ≤ uexp inner := by
-    unfold uexp
+    simp only [uexp_def]
     exact div_nonneg (Finset.sum_nonneg fun r _ => uprob_nonneg _) (Nat.cast_nonneg _)
   rw [abs_of_nonneg hnn] at hsmall
   have hprod : ε * (ε / (4 * 2 ^ glKc mP c n)) ≤ uexp inner :=

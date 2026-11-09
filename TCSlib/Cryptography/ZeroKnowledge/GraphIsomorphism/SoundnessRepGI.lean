@@ -71,7 +71,7 @@ def repViews (P' V : Strategy) (x y z rP rV : List Bool) : ℕ → List (List Bo
 at `4i + 1` and `4i + 3`). -/
 theorem exec_repViews (P' V : Strategy) (x y z rP rV : List Bool) :
     ∀ i, exec P' V false x y z rP rV (4 * i) = repViews P' V x y z rP rV i
-  | 0 => rfl
+  | 0 => by rw [Nat.mul_zero, exec_zero]; rfl
   | i + 1 => by
     have h0 : moverIsV false (4 * i) = false := by
       simp only [moverIsV_false, decide_eq_false_iff_not]
@@ -146,7 +146,7 @@ theorem PsOfFin_prefixLT {m : ℕ} (b : Fin m → Bool) (i : Fin m) :
     PsOfFin (prefixLT b i) = PsOf (fun k => (List.ofFn b).getD k false) i := by
   unfold PsOfFin
   refine PsOf_congr i fun k hk => ?_
-  rw [dif_pos hk, getD_ofFn_lt' b (by omega)]
+  rw [dif_pos hk, getD_ofFn_lt' b (by omega), prefixLT_apply]
   rfl
 
 /-- The prover's view from the initial segment of a challenge prefix is its view from the tape. -/
@@ -155,24 +155,26 @@ theorem PsOfFin_init_prefixLE {m : ℕ} (b : Fin m → Bool) (i : Fin m) :
   unfold PsOfFin
   refine PsOf_congr i fun k hk => ?_
   rw [dif_pos hk, getD_ofFn_lt' b (by omega)]
+  show prefixLE b i (Fin.castSucc _) = _
+  rw [prefixLE_apply]
   rfl
 
 /-- The last challenge of a prefix `b_0, …, b_i` is `b_i`. -/
-theorem prefixLE_last {m : ℕ} (b : Fin m → Bool) (i : Fin m) : prefixLE b i (Fin.last i) = b i := rfl
+theorem prefixLE_last {m : ℕ} (b : Fin m → Bool) (i : Fin m) : prefixLE b i (Fin.last i) = b i := by
+  rw [prefixLE_apply]
+  rfl
 
 /-! ### The `|x|`-fold graph isomorphism verifier and prover, unfolded -/
 
 /-- The `|x|`-fold verifier's challenge on an odd history: its coin `|hist| / 2`. -/
 theorem giVerifierRep_next_odd (x z r : List Bool) (hist : List (List Bool)) (h : hist.length % 2 = 1) :
     giVerifierRep.next x z r hist = [r.getD (hist.length / 2) false] := by
-  show (if hist.length % 2 = 1 then _ else _) = _
-  rw [if_pos h]
+  rw [giVerifierRep_next, if_pos h]
 
 /-- The `|x|`-fold verifier's empty message on an even history of fewer than `2|x|` messages. -/
 theorem giVerifierRep_next_mid (x z r : List Bool) (hist : List (List Bool)) (h1 : hist.length % 2 ≠ 1)
     (h2 : hist.length < 2 * x.length) : giVerifierRep.next x z r hist = [] := by
-  show (if hist.length % 2 = 1 then _ else if hist.length < 2 * x.length then _ else _) = _
-  rw [if_neg h1, if_pos h2]
+  rw [giVerifierRep_next, if_neg h1, if_pos h2]
 
 /-- The `|x|`-fold verifier's verdict on an even complete history. -/
 theorem giVerifierRep_next_end (x z r : List Bool) (hist : List (List Bool)) (h1 : hist.length % 2 ≠ 1)
@@ -181,8 +183,7 @@ theorem giVerifierRep_next_end (x z r : List Bool) (hist : List (List Bool)) (h1
       [decide (wellFormedInstance x = true ∧ ∀ j : Fin x.length,
         encGraph (permGraph (if r.getD j false then instanceG₁ x else instanceG₀ x)
           (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) [])] := by
-  show (if hist.length % 2 = 1 then _ else if hist.length < 2 * x.length then _ else _) = _
-  rw [if_neg h1, if_neg h2]
+  rw [giVerifierRep_next, if_neg h1, if_neg h2]
 
 /-- The `|x|`-fold verifier's verdict on an encoded instance: `γ_j(G_{b_j}) = H_j` for every
 iteration, with the graphs read on `n` vertices. -/
@@ -194,11 +195,7 @@ theorem giVerifierRep_next_end_enc {n : ℕ} (G₀ G₁ : Graph n) (z r : List B
           hist.getD (2 * j) [])] := by
   rw [giVerifierRep_next_end _ _ _ _ h1 h2, wellFormedInstance_encInstance]
   simp only [true_and]
-  show [decide (∀ j : Fin (encInstance G₀ G₁).length, encGraph (permGraph
-    (if r.getD j false then decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairSndD (encInstance G₀ G₁))
-      else decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
-    (decPerm (instanceVertexCount (encInstance G₀ G₁)) (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) [])] = _
-  rw [show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _,
+  rw [instanceG₀_def, instanceG₁_def, show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _,
     show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
   rw [instanceVertexCount_encInstance] at hm
@@ -240,7 +237,9 @@ the `4|x|`-move execution. -/
 theorem giProtocolRep_outV (P' : Strategy) (x y z : List Bool) (r : giProtocolRep.ExecCoins P' x) :
     giProtocolRep.outV P' x y z r =
       giVerifierRep.next x z (List.ofFn r.2)
-        (exec P' giVerifierRep false x y z (List.ofFn r.1) (List.ofFn r.2) (4 * x.length)).2 := rfl
+        (exec P' giVerifierRep false x y z (List.ofFn r.1) (List.ofFn r.2) (4 * x.length)).2 := by
+  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, giProtocolRep_V, giProtocolRep_rounds,
+    giProtocolRep_verifierFirst, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
 
 /-! ### The views against the honest verifier -/
 
@@ -438,10 +437,11 @@ soundness error `2^{-|x|}` and efficient prover with respect to `R_iso`**
 and the outright rejection of malformed inputs (`giVerifierRep_next_end`). -/
 theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVerifierRep.Efficient) :
     EfficientProverProofErr giProtocolRep Liso Riso (fun N => (2 : ℝ)⁻¹ ^ N) where
-  efficientV := hV
+  efficientV := by rw [giProtocolRep_V]; exact hV
   complete := by
     refine ⟨.var, ?_⟩
-    rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
+    intro x hx
+    obtain ⟨n, G₀, G₁, σ, rfl, hσ⟩ := (mem_Liso_iff x).1 hx
     exact ⟨encPerm σ, giProverRep_length_le _ _, fun z => giRep_complete hσ z⟩
   sound := by
     intro x hx P' z
@@ -467,11 +467,16 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
       rw [HardcoreBit.uprob_eq_one_of_forall hall]
       have : (0 : ℝ) ≤ (2 : ℝ)⁻¹ ^ x.length := by positivity
       linarith
-  efficientP := hP
-  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
-    giProverRep_length_le x y r hist⟩
+  efficientP := by rw [giProtocolRep_P]; exact hP
+  boundedP := by
+    refine ⟨.var, ?_⟩
+    rw [Protocol.proverBounded_iff]
+    intro x y r hist _
+    rw [giProtocolRep_P]
+    exact giProverRep_length_le x y r hist
   completeWitness := by
-    rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+    intro x y hxy z
+    obtain ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ := (riso_iff x y).1 hxy
     exact giRep_complete hσ z
 
 /-- **[PS10, Proposition 120.7], repeated:** the `|x|`-fold graph isomorphism protocol is an

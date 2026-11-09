@@ -64,12 +64,12 @@ theorem halfRem_poly : PolyTimeComputable fun w =>
 /-- The parity test "an even number of messages" of the layout. -/
 theorem even_poly : PolyTimeComputable fun w =>
     [decide ((fun v => pairSndD (pairSndD v))^[halfCount (argM w)] (argM w) = [])] :=
-  isNil_poly.comp halfRem_poly
+  polyTimeComputable_isNil.comp halfRem_poly
 
 /-- The parity test "an odd number of messages" of the layout. -/
 theorem odd_poly : PolyTimeComputable fun w =>
     [decide (¬ (fun v => pairSndD (pairSndD v))^[halfCount (argM w)] (argM w) = [])] :=
-  ptc_congr (not_poly even_poly) fun w => by simp only [decide_not]
+  ptc_congr (polyTimeComputable_not even_poly) fun w => by simp only [decide_not]
 
 /-- The remainder of the half loop on `encodeMsgs hist` (after `|hist| / 2` rounds) is empty iff
 `|hist|` is even. -/
@@ -96,7 +96,7 @@ theorem giSlice_poly : PolyTimeComputable fun w =>
 /-- The first bit of the last message of the layout's history. -/
 theorem lastBit_poly : PolyTimeComputable fun w =>
     [(pairFstD (pairSndD^[lastSteps (argM w)] (argM w))).headD false] :=
-  headBit_poly.comp (lastMsg_poly.comp argM_poly)
+  polyTimeComputable_headD.comp (lastMsg_poly.comp argM_poly)
 
 /-- The prover of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
 
@@ -131,7 +131,7 @@ theorem giProverRep_efficient : giProverRep.Efficient := by
 /-- The test `|hist| < 2|x|` (the iterations are not over). -/
 theorem ltLen2_poly : PolyTimeComputable fun w =>
     [decide (msgCount (argM w) < (PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam w).length)] := by
-  refine ptc_congr (not_poly (lenLe_comp cnt_poly
+  refine ptc_congr (polyTimeComputable_not (lenLe_comp cnt_poly
     (unaryPoly_comp (.mul (.const 2) .var) NUPPT.polyTimeComputable_inParam))) fun w => ?_
   simp only [List.length_replicate]
   exact congrArg (fun b => [b]) (by rw [← decide_not]; exact decide_eq_decide.2 not_le.symm)
@@ -139,7 +139,7 @@ theorem ltLen2_poly : PolyTimeComputable fun w =>
 /-- The challenge of the `|x|`-fold graph isomorphism verifier: coin `|hist| / 2`. -/
 theorem challenge_poly : PolyTimeComputable fun w =>
     [((NUPPT.inCoins w).drop (halfCount (argM w))).headD false] :=
-  ptc_congr (headBit_poly.comp ((polyTimeComputable_pairDropPoly .var).comp
+  ptc_congr (polyTimeComputable_headD.comp ((polyTimeComputable_pairDropPoly .var).comp
     (halfCnt_poly.pairEncode NUPPT.polyTimeComputable_inCoins))) fun w => by simp
 
 /-- One round of the verdict scan of the `|x|`-fold graph isomorphism verifier, on the state
@@ -176,7 +176,7 @@ theorem giStep_poly : PolyTimeComputable giStep := by
   have hsel : PolyTimeComputable fun st =>
       if (pairFstD (pairSndD (pairSndD (pairSndD st)))).headD false then
         pairSndD (pairSndD (pairFstD (pairSndD st))) else pairFstD (pairSndD (pairFstD (pairSndD st))) :=
-    polyTimeComputable_ite (headBit_poly.comp hC)
+    polyTimeComputable_ite (polyTimeComputable_headD.comp hC)
       (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hS))
       (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hS))
   have hcheck : PolyTimeComputable fun st => [decide (relabelAt (pairFstD (pairFstD (pairSndD st)))
@@ -188,7 +188,8 @@ theorem giStep_poly : PolyTimeComputable giStep := by
         (hsel.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hM))))).pairEncode
       (polyTimeComputable_pairFstD.comp hM))) fun st => by simp
   exact hS.pairEncode ((polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM)).pairEncode
-    ((tail_poly.comp hC).pairEncode (polyTimeComputable_and (headBit_poly.comp hB) hcheck)))
+    (((polyTimeComputable_tail.congr fun _ => List.drop_one).comp hC).pairEncode
+        (polyTimeComputable_and (polyTimeComputable_headD.comp hB) hcheck)))
 
 /-- The scan after `k` rounds from the input `⟨u, ⟨S, ⟨M, ⟨R, [b]⟩⟩⟩⟩`: the static data, the
 remaining messages (two peeled per round), the remaining coins and the conjunction of the first
@@ -250,7 +251,7 @@ theorem giIter_bound (x₀ : List Bool) (k : ℕ) :
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · have := length_pairSndD_le x₀
-    simp only [Function.iterate_zero, id]
+    simp only [Function.iterate_zero, id_eq]
     omega
   · obtain ⟨b, hb⟩ := giIter_shape x₀ k hk
     rw [hb, length_pairEncode, length_pairEncode, length_pairEncode, List.length_singleton]

@@ -84,7 +84,7 @@ theorem abs_probTrue_sub_le_statDist (p q : FinDist α) (D : α → Bool) :
   have hc : ∑ a ∈ univ.filter (fun a => ¬ D a = true), (p a - q a)
       = -∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by linarith
   rw [hc, abs_neg] at h2
-  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
+  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := statDist_eq p q
   linarith
 
 /-- **The optimal distinguisher attains statistical distance.** If every test has advantage at
@@ -117,7 +117,7 @@ theorem statDist_le_of_epsClose {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p
       simp only [mem_filter, mem_univ, true_and, decide_eq_true_eq] at ha
       linarith
   rw [abs_of_nonneg hnn] at key
-  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
+  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := statDist_eq p q
   linarith
 
 /-- **`ε`-closeness is a statistical-distance bound.** `p ≈_ε q` in the distinguisher form of
@@ -199,6 +199,7 @@ theorem IsStrongExtractor.isExtractor_seeded [DecidableEq S] [DecidableEq α] [D
     (h : IsStrongExtractor C ε f) :
     IsExtractor (seededSources (S := S) C) ε (fun p : S × α => (p.1, f p.1 p.2)) := by
   rintro Y ⟨X, hX, rfl⟩
+  rw [← hashPair_eq]
   exact h X hX
 
 /-- **The leftover hash lemma as an extractor.** A universal hash family `f : S → α → β` is a

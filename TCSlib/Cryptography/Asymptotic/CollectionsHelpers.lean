@@ -39,6 +39,8 @@ field `Collection.encD_decD`).
   the coin split is `List.take`/`List.drop` on the encoded coin string.
 * `TCSlib.Cryptography.Collection.ofFn_padFin_of_le`,
   `TCSlib.Cryptography.Collection.padFin_append_true_injective` — marker padding is lossless.
+* `TCSlib.Cryptography.ofFn_drop_take` — a window of a tape is the tape of the window (the
+  relocated contract of `ColZK.ofFn_drop_take`, shared by the block/window users below it).
 * `TCSlib.Cryptography.ofFn_of_decodeFin_eq_some` — `decodeFin` is canonical.
 
 ## References
@@ -101,12 +103,15 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List 
     (r : A.Coins n) :
     (A.runAt n y r).length ≤
       A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct := by
+  rw [NUPPT.runAt_eq, NUPPT.runAtL_eq]
   refine (A.output_length_le _).trans ?_
-  unfold NUPPT.timeBound
+  simp only [NUPPT.timeBound_def]
   apply Nat.mul_le_mul_left
   apply Nat.pow_le_pow_left
   have := A.advice_length n
-  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen]
+  have hr : (List.ofFn r).length = A.coins.eval n := by
+    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  simp only [length_pairEncode, NUPPT.length_advInput, hr]
   omega
 
 /-- The syntactic polynomial bounding `|A(1^n, y)|` when `|y| ≤ Y(n)` (`length_runAt_le`). -/
@@ -148,7 +153,8 @@ theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_take,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.castAdd, Fin.castLE]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+        Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castAdd, Fin.coe_castLE]
 
 /-- The second half of `splitCoins a b r` is the encoding of `r` after its first `a` bits. -/
 theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
@@ -158,7 +164,8 @@ theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_drop,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.natAdd]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+        Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_natAdd]
 
 /-- The encoding of the coin string assembled from two halves is the concatenation of the
 encodings of the halves. -/
@@ -175,7 +182,7 @@ namespace Collection
 theorem ofFn_padFin_of_le {ℓ : ℕ} {w : List Bool} (hw : w.length ≤ ℓ) :
     List.ofFn (padFin ℓ w) = w ++ List.replicate (ℓ - w.length) false := by
   refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
+  simp only [List.getElem_ofFn, padFin_def, List.getD_eq_getElem?_getD]
   rw [List.getElem_append]
   split_ifs with h
   · rw [List.getElem?_eq_getElem h]
@@ -196,20 +203,25 @@ theorem padFin_append_true_injective {ℓ : ℕ} {s s' : List Bool} (hs : s.leng
 
 end Collection
 
+/-! ## Windows of a tape -/
+
+/-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`
+(the contract of `ColZK.ofFn_drop_take`, relocated here for the lower block/window users). -/
+theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+  apply List.ext_getElem
+  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+    omega
+  · intro i h₁ h₂
+    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+
 /-! ## Canonicity of the fixed-width decoder -/
 
 /-- **Decoding as an `ℓ`-bit string is canonical**: a string that `decodeFin ℓ` decodes to `x`
 is `List.ofFn x` (the field `Collection.encD_decD` of the collections whose elements are
-encoded by `List.ofFn`). It has length `ℓ` (`length_eq_of_decodeFin_eq_some`), so padding it to
-`ℓ` bits is the identity (`Collection.ofFn_padFin_of_le`), and `decodeFin_ofFn` reads `x` off
-the padding. -/
+encoded by `List.ofFn`): the reversed-direction corollary of `decodeFin_eq_some_iff`. -/
 theorem ofFn_of_decodeFin_eq_some {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}
-    (h : decodeFin ℓ w = some x) : List.ofFn x = w := by
-  have hw := length_eq_of_decodeFin_eq_some h
-  have hpad : List.ofFn (padFin ℓ w) = w := by
-    rw [Collection.ofFn_padFin_of_le hw.le, hw, Nat.sub_self, List.replicate_zero,
-      List.append_nil]
-  rw [← hpad, decodeFin_ofFn, Option.some.injEq] at h
-  rw [← h, hpad]
+    (h : decodeFin ℓ w = some x) : List.ofFn x = w :=
+  ((decodeFin_eq_some_iff ℓ w x).1 h).symm
 
 end TCSlib.Cryptography

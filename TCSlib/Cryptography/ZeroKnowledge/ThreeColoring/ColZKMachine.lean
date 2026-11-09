@@ -190,21 +190,12 @@ theorem hidingView_plantedAdv_none (V' : Strategy) (x z ρ : List Bool) (n p₁ 
 
 /-- **One activation of an efficient strategy is polynomial-time**: for an efficient `V'` and
 polynomial-time `X, Z, R, C`, the reply `V'.next (X w) (Z w) (R w) [C w]` is polynomial-time
-(`Strategy.efficient_iff`, `Strategy.ofNUPPT_next`, `NUPPT.runAtL_eq_output_layout` and the
-machine's `polyTimeComputable_output`; the generic form of `ColSimMachine.reply_poly`, whose
-tape is a block of the simulator's layout). -/
+(the compatibility alias of `ColSimMachine.polyTimeComputable_next`). -/
 theorem polyTimeComputable_next {V' : Strategy} (hV' : V'.Efficient)
     {X Z R C : List Bool → List Bool} (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z)
     (hR : PolyTimeComputable R) (hC : PolyTimeComputable C) :
-    PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w] := by
-  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
-  have hlay := NUPPT.polyTimeComputable_layout (polyTimeComputable_unary.comp hX)
-    ((hX.pairEncode hZ).pairEncode (hC.pairEncode (polyTimeComputable_const [])))
-    (polyTimeComputable_const []) hR
-  refine ColSimMachine.ptc_congr (A.polyTimeComputable_output.comp hlay) fun w => ?_
-  rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hA.advice_eq,
-    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
-  rfl
+    PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w] :=
+  ColSimMachine.polyTimeComputable_next hV' hX hZ hR hC
 
 /-- Field `i` of a polynomial-time word is polynomial-time, for a constant `i`. -/
 private theorem colZK_field_poly {W : List Bool → List Bool} (hW : PolyTimeComputable W) (i : ℕ) :
@@ -218,7 +209,7 @@ spliced commitment message is the concatenation loop `ColMachines.polyTimeComput
 over `i < |field 5|` with the entry chosen by two unary comparisons (`eqTest_poly`) and the
 challenge's entry `pairFstD (pairSndD^[i] cv)` (`iterSnd_poly` at the unary index); the
 verifier's reply is `polyTimeComputable_next`; the test is `modNum_poly`, `eqTest_poly`; the
-views are pairings; the three cases are `polyTimeComputable_ite` on `isNil_poly`. -/
+views are pairings; the three cases are `polyTimeComputable_ite` on `polyTimeComputable_isNil`. -/
 theorem polyTimeComputable_hidingView {V' : Strategy} (hV' : V'.Efficient)
     {ADV CV : List Bool → List Bool} (hA : PolyTimeComputable ADV) (hC : PolyTimeComputable CV) :
     PolyTimeComputable fun w => hidingView V' (ADV w) (CV w) := by
@@ -253,8 +244,8 @@ theorem polyTimeComputable_hidingView {V' : Strategy} (hV' : V'.Efficient)
     (EncodingMachines.unaryLength_poly (hf 11))
   have hview := ColSimMachine.view_poly hx (hf 1) (hf 2) hcom (hf 12)
   have hview0 := ColSimMachine.view_poly hx (hf 1) (hf 2) hC (polyTimeComputable_const [])
-  have h := polyTimeComputable_ite (StateLoop.isNil_poly.comp (hf 3)) hview0
-    (polyTimeComputable_ite (StateLoop.isNil_poly.comp (hf 4))
+  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp (hf 3)) hview0
+    (polyTimeComputable_ite (polyTimeComputable_isNil.comp (hf 4))
       (polyTimeComputable_ite htest hview (hf 13)) (hf 14))
   refine ColSimMachine.ptc_congr h fun w => ?_
   simp only [decide_eq_true_eq, EncodingMachines.modNum_eq]

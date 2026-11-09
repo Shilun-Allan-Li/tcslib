@@ -13,14 +13,14 @@ set_option autoImplicit false
 /-!
 # State loops for the hard-core predicate theorems
 
-The loop machines behind the Goldreich–Levin theorem [PS10, Theorem 87.3]: the guarded state
-iteration `polyTimeComputable_stateIterate` (an instance of
-`Complexity.polyTimeComputable_iterate` on the length-guarded step
-`Complexity.StateLoop.gstep`), the block encoding `blocksStr` of a tuple of equal-length bit
-strings, the **selective block XOR** `selXorFun` computing `⊕_{t : β_t = 1} s_t` on
-`⟨⟨1^m, β⟩, s⟩` — the subset XOR `S_L` of [PS10, Algorithm 89.6] and, with one-bit blocks, the
-inner product `⟨x, r⟩` of [PS10, Fact 88.4] (`ipFun`) — and unary halving `1^n ↦ 1^{⌊n/2⌋}`
-(`unaryHalf`, for the balanced permutation of `Asymptotic/HardCorePermutation.lean`).
+The loop machines behind the Goldreich–Levin theorem [PS10, Theorem 87.3], run by the guarded state
+iteration `Complexity.StateLoop.polyTimeComputable_stateIterate` of `Randomized/Repetition.lean` (an
+instance of `Complexity.polyTimeComputable_iterate` on the length-guarded step
+`Complexity.StateLoop.gstep`): the block encoding `blocksStr` of a tuple of equal-length bit
+strings, the **selective block XOR** `selXorFun` computing `⊕_{t : β_t = 1} s_t` on `⟨⟨1^m, β⟩, s⟩`
+— the subset XOR `S_L` of [PS10, Algorithm 89.6] and, with one-bit blocks, the inner product
+`⟨x, r⟩` of [PS10, Fact 88.4] (`ipFun`) — and unary halving `1^n ↦ 1^{⌊n/2⌋}` (`unaryHalf`, for the
+balanced permutation of `Asymptotic/HardCorePermutation.lean`).
 
 Each loop is specified by the closed form of its orbit on well-formed inputs
 (`SelXor.orbit_eq`), its stabilisation (`SelXor.orbit_stable`) and the length bound that
@@ -37,8 +37,6 @@ keeps the guard of `gstep` from firing (`SelXor.orbit_length_le`).
 
 ## Main results
 
-* `TCSlib.Cryptography.polyTimeComputable_stateIterate` — guarded state iteration is
-  polynomial-time.
 * `TCSlib.Cryptography.selXorFun_poly`, `TCSlib.Cryptography.selXorFun_input` — the selective
   block XOR is polynomial-time and computes the subset XOR.
 * `TCSlib.Cryptography.ipFun_poly`, `TCSlib.Cryptography.ipFun_ofFn` — the inner-product
@@ -57,27 +55,6 @@ namespace TCSlib.Cryptography
 
 open Complexity Turing Finset Complexity.StateLoop
 
-/-! ## State loops run for a fixed number of rounds -/
-
-/-- **Guarded state iteration.** A state word `⟨x, s⟩` retains the input `x` and evolves its
-state from `start x` by the length-guarded step `Complexity.StateLoop.gstep step B`; running it
-for `|⟨x, start x⟩|` rounds and reading `out` is polynomial-time (instance of
-`Complexity.polyTimeComputable_iterate`, the orbit bound being `StateLoop.length_gstep_iterate_le`).
-On inputs whose genuine orbit stays within `B|x|` the guard never fires
-(`StateLoop.gstep_iterate_eq`), which is how each loop below is identified with its closed
-form. (A variant of the public state-loop form `Complexity.polyTimeComputable_stateFind` of
-`Randomized/Repetition.lean`, with a fixed round count instead of an acceptance test.) -/
-theorem polyTimeComputable_stateIterate {start step out : List Bool → List Bool}
-    (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
-    (hout : PolyTimeComputable out) (B : PolyExpr) :
-    PolyTimeComputable fun x =>
-      out ((gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) := by
-  have hF := polyTimeComputable_iterate (gstep_poly hstep B) .var (gstepBound B)
-    (fun w i _ => length_gstep_iterate_le step B w i)
-  have hpre : PolyTimeComputable fun x => pairEncode x (start x) :=
-    polyTimeComputable_id.pairEncode hstart
-  exact hout.comp (hF.comp hpre)
-
 /-- Bitwise XOR of two polynomial-time maps is polynomial-time
 (`Complexity.polyTimeComputable_pairXor` on the pair). -/
 theorem zipXor_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
@@ -88,18 +65,28 @@ theorem zipXor_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
 
 /-! ## Blocks of bit strings -/
 
-/-- A string of `q · ℓ` bits as `q` consecutive blocks of `ℓ` bits (private copy of
-`FunFamily.blocks`, `Asymptotic/OneWay.lean`). -/
+/-- A string of `q · ℓ` bits as `q` consecutive blocks of `ℓ` bits: a compatibility alias of
+the canonical Bool block bijection `FunFamily.blocks` of `Asymptotic/Adversary.lean`. -/
 def blocksEquiv (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
-  (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
+  FunFamily.blocks q ℓ
 
-/-- The inverse of `blocksEquiv` reads block `p.divNat`, position `p.modNat`. -/
+/-- `blocksEquiv` is the canonical block bijection: `blocksEquiv q ℓ = FunFamily.blocks q ℓ`. -/
+theorem blocksEquiv_eq (q ℓ : ℕ) : blocksEquiv q ℓ = FunFamily.blocks q ℓ := rfl
+
+/-- The inverse of `blocksEquiv` reads block `p.divNat`, position `p.modNat`
+(`FunFamily.blocks_symm_apply`). -/
 theorem blocksEquiv_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (p : Fin (q * ℓ)) :
-    (blocksEquiv q ℓ).symm t p = t p.divNat p.modNat := rfl
+    (blocksEquiv q ℓ).symm t p = t p.divNat p.modNat :=
+  FunFamily.blocks_symm_apply q ℓ t p
 
 /-- The encoding of a tuple of `k` blocks of `m` bits as one string of `k · m` bits. -/
 def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
   List.ofFn ((blocksEquiv k m).symm s)
+
+/-- The defining equation of `blocksStr`: `blocksStr s = List.ofFn ((blocksEquiv k m).symm s)`. -/
+theorem blocksStr_def {k m : ℕ} (s : Fin k → Fin m → Bool) :
+    (blocksStr s : List Bool) =
+      (List.ofFn ((blocksEquiv k m).symm s)) := rfl
 
 /-- The length of the block encoding. -/
 @[simp] theorem length_blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) :
@@ -227,7 +214,10 @@ theorem start_poly : PolyTimeComputable start :=
 /-- The step is polynomial-time (`polyTimeComputable_ite` on the emptiness test, the FP
 toolkit of `Complexity.StateLoop`, `takeLen_poly`/`dropLen_poly` and `zipXor_poly`). 
 
-**Proof sketch.** The branch on `β' = []` is `polyTimeComputable_ite` with `isNil_poly`; the body pairs `tail_poly` with the dropped block (`dropLen_poly`) and the conditional XOR (`polyTimeComputable_ite` on `headBit_poly`, `zipXor_poly` with `takeLen_poly`). -/
+**Proof sketch.** The branch on `β' = []` is `polyTimeComputable_ite` with
+`polyTimeComputable_isNil`; the body pairs `Complexity.polyTimeComputable_tail` with the dropped
+block (`dropLen_poly`) and the conditional XOR (`polyTimeComputable_ite` on
+`polyTimeComputable_headD`, `zipXor_poly` with `takeLen_poly`). -/
 theorem step_poly : PolyTimeComputable step := by
   have hβ : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
@@ -237,9 +227,10 @@ theorem step_poly : PolyTimeComputable step := by
     polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
   have hacc : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
-  have htest : PolyTimeComputable fun w => [decide (pairFstD (pairSndD w) = [])] := isNil_poly.comp hβ
+  have htest : PolyTimeComputable fun w => [decide (pairFstD (pairSndD w) = [])] :=
+    polyTimeComputable_isNil.comp hβ
   have hhead : PolyTimeComputable fun w => [(pairFstD (pairSndD w)).headD false] :=
-    headBit_poly.comp hβ
+    polyTimeComputable_headD.comp hβ
   have hbody : PolyTimeComputable fun w =>
       pairEncode (pairFstD (pairSndD w)).tail
         (pairEncode ((pairFstD (pairSndD (pairSndD w))).drop (pairFstD (pairFstD (pairFstD w))).length)
@@ -247,7 +238,8 @@ theorem step_poly : PolyTimeComputable step := by
             List.zipWith xor (pairSndD (pairSndD (pairSndD w)))
               ((pairFstD (pairSndD (pairSndD w))).take (pairFstD (pairFstD (pairFstD w))).length)
           else pairSndD (pairSndD (pairSndD w)))) :=
-    (tail_poly.comp hβ).pairEncode ((dropLen_poly hu hs).pairEncode
+    ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+        hβ).pairEncode ((dropLen_poly hu hs).pairEncode
       (polyTimeComputable_ite hhead (zipXor_poly hacc (takeLen_poly hu hs)) hacc))
   convert polyTimeComputable_ite htest polyTimeComputable_pairSndD hbody using 1
   funext w
@@ -282,7 +274,7 @@ theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m 
     unfold step
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, input, List.length_replicate]
     have hne : (List.ofFn β).drop i ≠ [] := by
-      rw [Ne, List.drop_eq_nil_iff, List.length_ofFn]; omega
+      rw [ne_eq, List.drop_eq_nil_iff, List.length_ofFn]; omega
     rw [if_neg hne, List.tail_drop, List.drop_drop,
       List.drop_eq_getElem_cons (i := i) (l := List.ofFn β) (by rw [List.length_ofFn]; exact hi'),
       List.headD_cons, List.getElem_ofFn, take_drop_blocksStr s ⟨i, hi'⟩]
@@ -366,11 +358,11 @@ def ipFun (z : List Bool) : List Bool :=
 unfolds the outer function; private copy of `ptc_comp` in `Randomized/Closure.lean`). -/
 theorem ptcComp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
     (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
+  PolyTimeComputable.comp' hg hf
 
 /-- The inner-product evaluator is polynomial-time. -/
 theorem ipFun_poly : PolyTimeComputable ipFun := by
-  have h := ptcComp (g := selXorFun) selXorFun_poly
+  have h := PolyTimeComputable.comp' (g := selXorFun) selXorFun_poly
     (((polyTimeComputable_const [true]).pairEncode polyTimeComputable_pairFstD).pairEncode
       polyTimeComputable_pairSndD)
   exact h
@@ -378,7 +370,7 @@ theorem ipFun_poly : PolyTimeComputable ipFun := by
 /-- `⟨x, r⟩ = ∑_{t : x_t = 1} r_t` in the Boolean ring `Bool`. -/
 theorem ip_eq_sum_filter {k : ℕ} (x r : Fin k → Bool) :
     HardcoreBit.ip x r = ∑ t ∈ univ.filter (fun t : Fin k => x t = true), r t := by
-  rw [HardcoreBit.ip, Finset.sum_filter]
+  rw [HardcoreBit.ip_def, Finset.sum_filter]
   refine Finset.sum_congr rfl fun t _ => ?_
   cases x t <;> cases r t <;> rfl
 
@@ -396,13 +388,18 @@ theorem ipFun_ofFn {k : ℕ} (x r : Fin k → Bool) :
 /-- Unary halving `1^n ↦ 1^{⌊n/2⌋}`. -/
 def unaryHalf (u : List Bool) : List Bool := List.replicate (u.length / 2) true
 
+/-- The defining equation of `unaryHalf`: `unaryHalf u = List.replicate (u.length / 2) true`. -/
+theorem unaryHalf_def (u : List Bool) :
+    unaryHalf u =
+      (List.replicate (u.length / 2) true) := rfl
+
 /-- Unary halving is polynomial-time: the block map with blocks of two symbols and the constant
 emission `[true]` (`Complexity.polyTimeComputable_blockMap`) emits one `true` per full block. -/
 theorem unaryHalf_poly : PolyTimeComputable unaryHalf := by
   convert (polyTimeComputable_blockMap (.const 2) (polyTimeComputable_const [true])).comp
     ((polyTimeComputable_const []).pairEncode polyTimeComputable_id) using 1
   funext u
-  simp only [Function.comp_apply, pairSndD_pairEncode, PolyExpr.eval_const, unaryHalf, id]
+  simp only [Function.comp_apply, pairSndD_pairEncode, PolyExpr.eval_const, unaryHalf, id_eq]
   rw [← List.map_eq_flatMap, List.map_const', List.length_range]
 
 end TCSlib.Cryptography

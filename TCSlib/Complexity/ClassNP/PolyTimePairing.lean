@@ -65,7 +65,7 @@ theorem polyTimeComputable_of_linear {f : List Bool → List Bool}
     (h : ∃ (M : FinTM Bool) (a : ℕ), M.ComputesFunInTime f (fun n => a * (n + 1))) :
     PolyTimeComputable f := by
   obtain ⟨M, a, hM⟩ := h
-  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+  exact (polyTimeComputable_iff f).2 ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
 
 /-- Every constant function `fun _ => w` is polynomial-time computable. -/
 theorem polyTimeComputable_const (w : List Bool) : PolyTimeComputable (fun _ => w) :=
@@ -93,12 +93,13 @@ majorant `C (n+1)^c` of `g`'s bound gives a budget `K (n + 1 + C (n+1)^c)`, whic
 most `K (C + 1) (n+1)^(c+1)`. -/
 theorem PolyTimeComputable.pairMapSnd {g : List Bool → List Bool}
     (hg : PolyTimeComputable g) : PolyTimeComputable (Complexity.pairMapSnd g) := by
-  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨G, C, c, hG⟩ := (polyTimeComputable_iff g).1 hg
   obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
     (by
       intro m n h
       exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) c))
-  refine ⟨M, K * (C + 1), c + 1, fun x => (hM x).mono ?_⟩
+  refine (polyTimeComputable_iff _).2 ⟨M, K * (C + 1), c + 1, (FinTM.computesFunInTime_iff _ _ _).2
+    fun x => ((FinTM.computesFunInTime_iff _ _ _).1 hM x).mono ?_⟩
   have hn : x.length + 1 ≤ (x.length + 1) ^ (c + 1) := by
     simpa only [Nat.pow_one] using
       Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ c + 1 by omega)
@@ -112,7 +113,7 @@ theorem PolyTimeComputable.pairMapSnd {g : List Bool → List Bool}
 /-- Appending to a pair appends to its second component. -/
 private lemma pairEncode_append (a b c : List Bool) :
     pairEncode a b ++ c = pairEncode a (b ++ c) := by
-  simp [pairEncode, List.append_assoc]
+  simp [pairEncode_eq, List.append_assoc]
 
 /-- **Pairing two polynomial-time functions is polynomial-time**: if `f` and `g` are
 polynomial-time computable, so is `x ↦ pairEncode (f x) (g x)`.
@@ -148,8 +149,8 @@ theorem PolyTimeComputable.pairEncode {f g : List Bool → List Bool}
 /-- The last `true` of `1^(n+1)` is its last letter: stripping it leaves `1ⁿ`. -/
 private lemma splitAtLastTrue_replicate_succ (n : ℕ) :
     splitAtLastTrue (List.replicate (n + 1) true) = some (List.replicate n true) := by
-  rw [splitAtLastTrue, List.reverse_replicate, List.replicate_succ]
-  simp [List.reverse_replicate]
+  rw [splitAtLastTrue_of_dropWhile_eq_true_cons (rest := List.replicate n true)
+    (by rw [List.reverse_replicate, List.replicate_succ]; rfl), List.reverse_replicate]
 
 /-- **The unary length map is polynomial-time**: `x ↦ 1^|x|` is polynomial-time
 computable. (This is how the input `1ⁿ` of a uniformity machine [AB09, Def 6.12] is
@@ -163,7 +164,7 @@ theorem polyTimeComputable_unary :
     PolyTimeComputable (fun x => List.replicate x.length true) := by
   have hu : PolyTimeComputable (fun x => List.replicate (1 * (x.length + 1) ^ 1) true) := by
     obtain ⟨M, c, hM⟩ := FinTM.computesFunInTime_polyUnary 1 1
-    exact ⟨M, c, 2, hM⟩
+    exact (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
   have hpair := polyTimeComputable_id.pairEncode hu
   have hstrip : PolyTimeComputable (fun x => match pairDecode x with
       | some (a, v) =>
@@ -172,11 +173,11 @@ theorem polyTimeComputable_unary :
         | none => []
       | none => []) := by
     obtain ⟨M, c, hM⟩ := FinTM.computesFunInTime_stripLast
-    exact ⟨M, c, 2, hM⟩
+    exact (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
   have hs := polyTimeComputable_of_linear FinTM.computesFunInTime_pairSnd
   convert hs.comp (hstrip.comp hpair) using 1
   funext x
-  simp only [Function.comp_apply, id, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
+  simp only [Function.comp_apply, id_eq, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
     splitAtLastTrue_replicate_succ, Option.map_some, Option.getD_some]
 
 /-- **FP is closed under concatenation**: if `f` and `g` are polynomial-time computable,
@@ -194,7 +195,7 @@ theorem PolyTimeComputable.append {f g : List Bool → List Bool}
 theorem polyTimeComputable_polyUnary (C d : ℕ) :
     PolyTimeComputable fun x => List.replicate (C * (x.length + 1) ^ d) true := by
   obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyUnary C d
-  exact ⟨M, a, d + 1, hM⟩
+  exact (polyTimeComputable_iff _).2 ⟨M, a, d + 1, hM⟩
 
 /-- Prepending a fixed word is polynomial-time. -/
 theorem polyTimeComputable_prepend (w : List Bool) : PolyTimeComputable (fun x => w ++ x) :=
@@ -290,12 +291,13 @@ theorem polyTimeComputable_ite {p : List Bool → Bool} {f g : List Bool → Lis
     (hp : PolyTimeComputable (fun x => [p x]))
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => if p x then f x else g x) := by
-  obtain ⟨D, A, a, hD⟩ := hp
-  obtain ⟨F, B, b, hF⟩ := hf
-  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨D, A, a, hD⟩ := (polyTimeComputable_iff _).1 hp
+  obtain ⟨F, B, b, hF⟩ := (polyTimeComputable_iff _).1 hf
+  obtain ⟨G, C, c, hG⟩ := (polyTimeComputable_iff _).1 hg
   obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hD hF hG
   let e := max a (max b c)
-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
+  refine (polyTimeComputable_iff _).2 ⟨M, K * (A + B + C + 1), e,
+    (FinTM.computesFunInTime_iff _ _ _).2 fun x => ((FinTM.computesFunInTime_iff _ _ _).1 hM x).mono ?_⟩
   have hpow (d : ℕ) (hd : d ≤ e) : (x.length + 1) ^ d ≤ (x.length + 1) ^ e :=
     Nat.pow_le_pow_right (Nat.succ_pos _) hd
   have ha := Nat.mul_le_mul_left A (hpow a (Nat.le_max_left _ _))
@@ -332,7 +334,7 @@ theorem polyTimeComputable_lenLe :
       | some (a, b) => decide (b.length ≤ 1 * (a.length + 1) ^ 1)
       | none => false]) := by
     obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairLenCheck 1 1
-    exact ⟨M, a, 2, hM⟩
+    exact (polyTimeComputable_iff _).2 ⟨M, a, 2, hM⟩
   have hpair : PolyTimeComputable (fun z => pairEncode (pairFstD z) (true :: pairSndD z)) :=
     polyTimeComputable_pairFstD.pairEncode
       ((polyTimeComputable_prepend [true]).comp polyTimeComputable_pairSndD)

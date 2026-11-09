@@ -70,11 +70,9 @@ open Nat
 /-- The elements of `Z_N^*` are residues in `[1, N−1]` [PS10, Theorem 46.8, the description
 `Z_N^* = {x ∈ [1, N−1] | gcd(x, N) = 1}`; the coprimality is `ZMod.unitsEquivCoprime`]. -/
 theorem units_val_mem {N : ℕ} [Fact (1 < N)] (u : (ZMod N)ˣ) :
-    1 ≤ (u : ZMod N).val ∧ (u : ZMod N).val ≤ N - 1 := by
-  have hne : (u : ZMod N) ≠ 0 := u.ne_zero
-  have hlt := (u : ZMod N).val_lt
-  have hpos : (u : ZMod N).val ≠ 0 := fun h => hne (ZMod.val_eq_zero _ |>.1 h)
-  omega
+    1 ≤ (u : ZMod N).val ∧ (u : ZMod N).val ≤ N - 1 :=
+  ⟨Nat.one_le_iff_ne_zero.2 ((ZMod.val_ne_zero _).2 u.ne_zero),
+    Nat.le_sub_one_of_lt (u : ZMod N).val_lt⟩
 
 /-- **The totient of a product of two distinct primes** [PS10, Claim 47.2 and p. 47]:
 `Φ(pq) = (p−1)(q−1)`; also `Φ(p) = p − 1` (`Nat.totient_prime`).

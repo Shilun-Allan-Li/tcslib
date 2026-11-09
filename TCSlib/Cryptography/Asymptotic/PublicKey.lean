@@ -271,10 +271,10 @@ theorem singleBitSecure_iff (S : BitPublicKeyScheme) : S.SingleBitSecure ↔
   · intro h D
     refine ⟨_, h D, fun n b₀ b₁ => ?_⟩
     cases b₀ <;> cases b₁
-    · simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+    · simp only [distAdv_def, sub_self, abs_zero]; exact abs_nonneg _
     · exact le_rfl
     · exact (abs_sub_comm _ _).le
-    · simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+    · simp only [distAdv_def, sub_self, abs_zero]; exact abs_nonneg _
 
 /-- The raw encryptor of the bitwise scheme on the layout `⟨⟨⟨1^n, ⟨pk, m⟩⟩, []⟩, r⟩`: the block
 encryptor with one-bit blocks on the state `⟨1^n, ⟨pk, ⟨m, r⟩⟩⟩`. -/
@@ -318,15 +318,15 @@ theorem bitwise_enc_runAtL (S : BitPublicKeyScheme) (n : ℕ) (pk : List Bool) (
       encodeList (List.ofFn fun i : Fin n =>
         S.enc.runAtL n (pairEncode pk [m i]) (coinBlock (S.enc.coinLen n) i r)) := by
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [bitwiseEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
-    pairFstD_pairEncode, pairSndD_pairEncode, blockEncFun]
+  simp only [bitwiseEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, blockEncFun_eq]
   rw [blockEncFun_spec S.enc.output (.const 1) S.enc.coins (List.replicate n true) pk
     _ (List.ofFn m) r (by
-      simp only [blockState, length_pairEncode, List.length_ofFn, PolyExpr.eval_const, mul_one]
+      simp only [blockState_eq, length_pairEncode, List.length_ofFn, PolyExpr.eval_const, mul_one]
       omega)]
   simp only [PolyExpr.eval_const, List.length_replicate]
   rw [blockList_ofFn S.enc.output _ _ _ n m r _ (by
-    simp only [blockState, length_pairEncode, List.length_ofFn]; omega)]
+    simp only [blockState_eq, length_pairEncode, List.length_ofFn]; omega)]
   congr 1
   refine congrArg List.ofFn (funext fun i => ?_)
   rw [S.enc_uniform.runAtL_eq]
@@ -409,7 +409,7 @@ theorem bitwiseEncCoins_ofFn (S : BitPublicKeyScheme) (n : ℕ) (v : Fin n → S
 private theorem pkEncDist_eq_singleDist (S : BitPublicKeyScheme) (n : ℕ) (b : Bool) :
     S.pkEncDist n b = singleDist S.gen S.enc n 1 (fun _ => b) := by
   funext r
-  simp only [BitPublicKeyScheme.pkEncDist, singleDist, ofFn_fin_one]
+  simp only [BitPublicKeyScheme.pkEncDist, singleDist_def, ofFn_fin_one]
 
 /-- The ciphertext of the bitwise scheme on the coin blocks `v` is the tuple of the single-bit
 encryptions with coins `v_i` (`bitwise_enc_runAt`, `coinBlock_ofFn_coinBlocks`): the sampler
@@ -441,7 +441,7 @@ private theorem acceptProb_bitwise_pkEncDist (S : BitPublicKeyScheme) (n : ℕ) 
   congr 1
   funext z
   obtain ⟨⟨r, v⟩, ρ'⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply]
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply]
   rw [bitwise_pkEncDist_coinBlocks]
 
 /-- **Bitwise encryption under a single-bit secure scheme is secure** [PS10, p. 103, "the security
@@ -622,7 +622,7 @@ theorem tdpEncFun_poly {H : List Bool → List Bool} (hH : PolyTimeComputable H)
     ((hH.comp hiw).pairEncode (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg)))
   convert h using 1
   funext z
-  simp only [tdpEncFun, Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [tdpEncFun, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- The raw decryptor of [PS10, Algorithm 104.3] on `⟨⟨u, ⟨i, t⟩⟩, ⟨c₁, c₂⟩⟩`: run the trapdoor
 inverter `Inv(u, ⟨t, c₁⟩)` on the all-`true` coin string of length `coins(|u|)` and output
@@ -650,7 +650,7 @@ theorem tdpDecFun_poly {H : List Bool → List Bool} (hH : PolyTimeComputable H)
   have h := polyTimeComputable_pairXor.comp ((hH.comp (hi.pairEncode hw)).pairEncode hc₂)
   convert h using 1
   funext z
-  simp only [tdpDecFun, Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [tdpDecFun, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- The key generator of [PS10, Algorithm 104.3]: `Gen_T`'s coins, output `⟨i, ⟨1^n, ⟨i, t⟩⟩⟩`. -/
 noncomputable def tdpGen : NUPPT := NUPPT.ofPolyTimeUniform T.tdpGenFun_poly T.gen.coins
@@ -788,7 +788,7 @@ private theorem predProb_pkPredictor_eq {α ρ : Type*} [Fintype α] [Fintype ρ
     predProb f B (pkPredictor D flip) =
       predProb (owpPair (β := Unit) f) (fun w => B w.1)
         (owpPredictor (fun v : α × Unit × Bool => fun r => D (v.1, v.2.2) r) flip) := by
-  unfold predProb
+  simp only [predProb_def]
   exact uprob_eq_of_equiv ((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl _)) fun _ => Iff.rfl
 
 /-- `acceptProb` of the generator `owpGen` on `α × Unit` is that of `(f(x), B(x))`. -/
@@ -796,7 +796,7 @@ private theorem acceptProb_owpGen_unit {α ρ : Type*} [Fintype α] [Fintype ρ]
     (B : α → Bool) (D : α × Bool → ρ → Bool) :
     acceptProb (owpGen (β := Unit) f fun w => B w.1) (fun v : α × Unit × Bool => fun r => D (v.1, v.2.2) r) =
       acceptProb (fun x => (f x, B x)) D := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   exact uprob_eq_of_equiv ((Equiv.prodPUnit α).prodCongr (Equiv.refl _)) fun _ => Iff.rfl
 
 /-- `acceptProb` of `owpGenNot` on `α × Unit` is that of `(f(x), ¬B(x))`. -/
@@ -804,7 +804,7 @@ private theorem acceptProb_owpGenNot_unit {α ρ : Type*} [Fintype α] [Fintype 
     (B : α → Bool) (D : α × Bool → ρ → Bool) :
     acceptProb (owpGenNot (β := Unit) f fun w => B w.1) (fun v : α × Unit × Bool => fun r => D (v.1, v.2.2) r) =
       acceptProb (fun x => (f x, !B x)) D := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   exact uprob_eq_of_equiv ((Equiv.prodPUnit α).prodCongr (Equiv.refl _)) fun _ => Iff.rfl
 
 /-- **The predictor `pkPredictor D false` predicts `B` from `f(x)` with probability exactly
@@ -838,7 +838,7 @@ theorem exists_pkPredictor {α ρ : Type*} [Fintype α] [Fintype ρ] [Nonempty �
     (f : α ≃ α) (B : α → Bool) (D : α × Bool → ρ → Bool) :
     ∃ flip : Bool, predProb f B (pkPredictor D flip) =
       1 / 2 + distAdv (fun x => (f x, B x)) (fun x => (f x, !B x)) D / 2 := by
-  unfold distAdv
+  simp only [distAdv_def]
   rcases le_total 0 (acceptProb (fun x => (f x, B x)) D - acceptProb (fun x => (f x, !B x)) D) with
     h | h
   · exact ⟨false, by rw [predProb_pkPredictor_false, abs_of_nonneg h]⟩

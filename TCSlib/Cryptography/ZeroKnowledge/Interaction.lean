@@ -234,6 +234,12 @@ it moves first, at the odd ones otherwise. -/
 def moverIsV (vFirst : Bool) (k : ℕ) : Bool :=
   if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)
 
+/-- The defining equation of `moverIsV`: `moverIsV vFirst k = if vFirst then decide (k % 2 = 0) else
+decide (k % 2 = 1)`. -/
+theorem moverIsV_def (vFirst : Bool) (k : ℕ) :
+    moverIsV vFirst k =
+      (if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)) := rfl
+
 /-- With the verifier first, it moves at the even positions. -/
 @[simp] theorem moverIsV_true (k : ℕ) : moverIsV true k = decide (k % 2 = 0) := rfl
 
@@ -406,7 +412,12 @@ def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.E
     List (List Bool) × List (List Bool) :=
   exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 
-/-- The defining equation of `transcriptWith`: the execution `exec` on the two tapes. -/
+/-- The defining equation of `transcriptWith`: the execution of the prover `P'` against the
+verifier `π.V`, with the verifier-first flag `π.verifierFirst`, on the common input `x`, the
+prover's input `y`, the verifier's auxiliary input `z`, the prover's tape `List.ofFn r.1` and the
+verifier's tape `List.ofFn r.2`, for `π.rounds.eval |x|` moves:
+`π.transcriptWith P' x y z r =
+exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)`. -/
 theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
     (r : π.ExecCoins P' x) : π.transcriptWith P' x y z r =
       exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length) :=
@@ -431,7 +442,10 @@ last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
 def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
   π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
 
-/-- The defining equation of `outV`: the verifier's next message on the received messages. -/
+/-- The defining equation of `outV`: the verifier `π.V`'s next message on the common input `x`,
+its auxiliary input `z`, its tape `List.ofFn r.2` and the messages it received in the execution
+against `P'` on `x, y, z` with the tapes `r`:
+`π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2`. -/
 theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
     π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2 := rfl
 

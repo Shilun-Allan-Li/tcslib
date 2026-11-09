@@ -46,10 +46,20 @@ malformed inputs return the empty string. -/
 def take (z : List Bool) : List Bool :=
   (pairSndD z).take (pairFstD z).length
 
+/-- The defining equation of `take`: `take z = (pairSndD z).take (pairFstD z).length`. -/
+theorem take_def (z : List Bool) :
+    take z =
+      ((pairSndD z).take (pairFstD z).length) := rfl
+
 /-- Drop a prefix of the second component of a pair as long as its first component;
 malformed inputs return the empty string. -/
 def drop (z : List Bool) : List Bool :=
   (pairSndD z).drop (pairFstD z).length
+
+/-- The defining equation of `drop`: `drop z = (pairSndD z).drop (pairFstD z).length`. -/
+theorem drop_def (z : List Bool) :
+    drop z =
+      ((pairSndD z).drop (pairFstD z).length) := rfl
 
 /-- Control states of the shared prefix-copying program. -/
 private inductive Label where

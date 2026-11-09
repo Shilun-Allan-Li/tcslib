@@ -198,11 +198,8 @@ theorem drop_take_ofFn_blockRead (b K C : ℕ) (h : K * b ≤ C) (r : Fin C → 
     calc (t : ℕ) * b + b = ((t : ℕ) + 1) * b := by ring
       _ ≤ K * b := Nat.mul_le_mul_right b t.isLt
       _ ≤ C := h
-  apply List.ext_getElem
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · intro k h1 h2
-    rw [List.getElem_take, List.getElem_drop, List.getElem_ofFn, List.getElem_ofFn, blockRead_eq]
+  rw [TCSlib.Cryptography.ofFn_drop_take r _ b hle]
+  exact congrArg List.ofFn (funext fun j => (blockRead_eq b K C h r t j).symm)
 
 /-! ### Independent edge samplers -/
 

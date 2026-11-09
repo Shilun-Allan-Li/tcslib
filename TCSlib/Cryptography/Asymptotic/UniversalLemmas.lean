@@ -61,12 +61,6 @@ namespace TCSlib.Cryptography
 
 open Complexity Turing
 
-/-- Composition of polynomial-time functions, in applied form (private copy of the helper
-of `TCSlib.Complexity.Randomized.Closure`). -/
-private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
-
 /-! ## The closure lemma -/
 
 /-- **Parameter change with advice-dependent pre-processing and post-processing**
@@ -89,17 +83,17 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post (A : NUPPT) (φ : ℕ �
     ∃ B : NUPPT, B.coins = A.coins.subst p ∧ ∀ m y r, B.runAtL m y r =
       post (A.runAtL (φ m) (pre (pairEncode (β m) y)) (r.take (A.coinLen (φ m)))) := by
   have hw : PolyTimeComputable fun z => pairFstD (pairFstD (NUPPT.inAdvice z)) :=
-    ptc_comp polyTimeComputable_pairFstD
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
   have hαA : PolyTimeComputable fun z => pairSndD (pairFstD (NUPPT.inAdvice z)) :=
-    ptc_comp polyTimeComputable_pairSndD
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
   have hβm : PolyTimeComputable fun z => pairSndD (NUPPT.inAdvice z) :=
-    ptc_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice
-  have hF := ptc_comp hpost (ptc_comp A.polyTimeComputable_output
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice
+  have hF := PolyTimeComputable.comp' hpost (PolyTimeComputable.comp' A.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout hw
-      (ptc_comp hpre (hβm.pairEncode NUPPT.polyTimeComputable_inArg)) hαA
-      (ptc_comp (polyTimeComputable_pairTakePoly A.coins)
+      (PolyTimeComputable.comp' hpre (hβm.pairEncode NUPPT.polyTimeComputable_inArg)) hαA
+      (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins)
         (hw.pairEncode NUPPT.polyTimeComputable_inCoins))))
   have hadv : ∀ m, (pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m)))
       (β m)).length ≤
@@ -117,8 +111,9 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post (A : NUPPT) (φ : ℕ �
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
     rfl, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.advInput, NUPPT.coinLen, NUPPT.layout, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins]
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq,
+      NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq]
 
 /-- **Parameter change with advice-dependent pre- and post-processing**: as
 `exists_reparam_pre_post`, but the post-processing also reads the advice: `B(1^m, y; r) =
@@ -135,17 +130,18 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post_adv (A : NUPPT) (φ : �
       post (pairEncode (β m)
         (A.runAtL (φ m) (pre (pairEncode (β m) y)) (r.take (A.coinLen (φ m))))) := by
   have hw : PolyTimeComputable fun z => pairFstD (pairFstD (NUPPT.inAdvice z)) :=
-    ptc_comp polyTimeComputable_pairFstD
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
   have hαA : PolyTimeComputable fun z => pairSndD (pairFstD (NUPPT.inAdvice z)) :=
-    ptc_comp polyTimeComputable_pairSndD
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inAdvice)
   have hβm : PolyTimeComputable fun z => pairSndD (NUPPT.inAdvice z) :=
-    ptc_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice
-  have hF := ptc_comp hpost (hβm.pairEncode (ptc_comp A.polyTimeComputable_output
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inAdvice
+  have hF := PolyTimeComputable.comp' hpost (hβm.pairEncode
+      (PolyTimeComputable.comp' A.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout hw
-      (ptc_comp hpre (hβm.pairEncode NUPPT.polyTimeComputable_inArg)) hαA
-      (ptc_comp (polyTimeComputable_pairTakePoly A.coins)
+      (PolyTimeComputable.comp' hpre (hβm.pairEncode NUPPT.polyTimeComputable_inArg)) hαA
+      (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins)
         (hw.pairEncode NUPPT.polyTimeComputable_inCoins)))))
   have hadv : ∀ m, (pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m)))
       (β m)).length ≤
@@ -163,8 +159,9 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post_adv (A : NUPPT) (φ : �
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
     rfl, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.advInput, NUPPT.coinLen, NUPPT.layout, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins]
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq,
+      NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq]
 
 /-! ## The split marker and the budget of Algorithm 64.2 -/
 
@@ -180,18 +177,19 @@ theorem length_tail_bits (m : ℕ) : (Nat.bits m).tail.length = Nat.log 2 m := b
     omega
 
 /-- The marker `(bits |y|).tail`, a string of `⌊log₂ |y|⌋` bits, is polynomial-time in `y`
-(`Turing.FinTM.computesFunInTime_lengthBits`, `Complexity.StateLoop.tail_poly`). -/
+(`Turing.FinTM.computesFunInTime_lengthBits`, `Complexity.polyTimeComputable_tail`). -/
 theorem polyTimeComputable_logMarker :
     PolyTimeComputable fun y : List Bool => (Nat.bits y.length).tail :=
-  StateLoop.tail_poly.comp (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits)
+  (polyTimeComputable_tail.congr fun _ => List.drop_one).comp (polyTimeComputable_of_linear
+      FinTM.computesFunInTime_lengthBits)
 
 /-- The binary budget `bits ((|y| + 1)³)` of [PS10, Algorithm 64.2] is polynomial-time
 (`Turing.FinTM.computesFunInTime_polyBits 1 3`). -/
 theorem polyTimeComputable_univBudget :
     PolyTimeComputable fun y : List Bool => Nat.bits ((y.length + 1) ^ 3) := by
   obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyBits 1 3
-  refine ⟨M, a, 4, fun y => ?_⟩
-  simpa using hM y
+  refine (polyTimeComputable_iff _).2 ⟨M, a, 4, ?_⟩
+  simpa using hM
 
 /-! ## Serialization lengths of coded machines -/
 
@@ -199,7 +197,7 @@ theorem polyTimeComputable_univBudget :
 code (output length is at most the number of steps). -/
 theorem length_serialize_decode_le (c : EffectiveMachineCode) (α : List Bool) :
     (c.decode α).serialize.length ≤ c.canonizerTime α.length := by
-  have h := c.canonizer_computes α
+  have h := (FinTM.computesFunInTime_iff _ _ _).1 c.canonizer_computes α
   obtain ⟨-, ho⟩ := (FinTM.computesInTime_iff _ _ _ _).mp h
   have ho' : (c.canonizer.tm.runFrom (c.canonizer.tm.initCfg α) (c.canonizerTime α.length)).output =
       (c.decode α).serialize := ho
@@ -212,7 +210,7 @@ theorem length_signBits (s : SignType) : (signBits s).length = 2 := by cases s <
 /-- The serialization of a transition record has at least two bits (its sign field). -/
 theorem two_le_length_actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :
     2 ≤ (actionBits a).length := by
-  simp only [actionBits, List.length_append, length_signBits]
+  simp only [actionBits_def, List.length_append, length_signBits]
   omega
 
 /-- A `flatMap` whose pieces are all nonempty is at least as long as the index list. -/
@@ -237,7 +235,7 @@ theorem numStates_add_one_le_length_serialize (M : CodeTM) :
     omega
   have h2 := length_le_length_flatMap (List.finRange (M.numStates + 1)) _ h1
   rw [List.length_finRange] at h2
-  rw [CodeTM.serialize, length_pairEncode, List.length_append]
+  rw [CodeTM.serialize_def, length_pairEncode, List.length_append]
   omega
 
 /-! ## Arithmetic and list facts -/

@@ -75,9 +75,19 @@ seen before challenge `i`). -/
 def prefixLT {m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) : Fin i → α :=
   fun j => b (Fin.castLE i.isLt.le j)
 
+/-- The defining equation of `prefixLT`: entry `j < i` is `b j`. -/
+theorem prefixLT_apply {m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) (j : Fin i) :
+    prefixLT b i j = b (Fin.castLE i.isLt.le j) :=
+  rfl
+
 /-- The prefix `b_0, …, b_i` of a tuple (the history including the current challenge). -/
 def prefixLE {m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) : Fin (i + 1) → α :=
   fun j => b (Fin.castLE i.isLt j)
+
+/-- The defining equation of `prefixLE`: entry `j ≤ i` is `b j`. -/
+theorem prefixLE_apply {m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) (j : Fin (i + 1)) :
+    prefixLE b i j = b (Fin.castLE i.isLt j) :=
+  rfl
 
 /-- The adaptive guess map `b ↦ (i ↦ b_i xor g_i(b_{<i}, w))` of Lem-119.c: triangular with
 identity diagonal, hence a bijection of `Fin m → Bool` for every `w` (`adaptiveXorEquiv`); it

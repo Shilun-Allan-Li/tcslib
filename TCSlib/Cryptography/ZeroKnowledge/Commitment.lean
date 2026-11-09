@@ -212,7 +212,7 @@ theorem acceptProb_pairRed_right [Nonempty τ] (X : Fin t → σ → γ) (Y : Fi
   congr 1
   funext w i
   simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
-    Equiv.coe_refl, Equiv.prodComm_apply, Prod.map, Prod.fst_swap, Prod.snd_swap, id]
+    Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, Prod.snd_swap, id_eq]
   rcases lt_trichotomy (i : ℕ) k with hlt | heq | hgt
   · simp [hlt, Nat.lt_succ_of_lt hlt, hlt.ne]
   · have hik : i = k := Fin.ext heq
@@ -235,7 +235,7 @@ theorem exists_pairRed_ge [Nonempty σ] [Nonempty τ] (X : Fin t → σ → γ) 
       distAdv (X k) (Y k) (pairRed X Y k D) := by
   obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun i => acceptProb (pairHybrid X Y i) D) ht
   refine ⟨⟨k, hk⟩, ?_⟩
-  unfold distAdv
+  simp only [distAdv_def]
   rw [acceptProb_pairRed_left, acceptProb_pairRed_right, ← acceptProb_pairHybrid_zero X Y D,
     ← acceptProb_pairHybrid_self X Y D]
   exact hgap
@@ -250,6 +250,13 @@ end Hybrids
 def multiCom (Com : List Bool → List Bool) {q n m : ℕ} (v : Fin q → Fin n → Bool)
     (r : Fin q → Fin m → Bool) : List Bool :=
   Strategy.encodeMsgs (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))
+
+/-- The defining equation of `multiCom`: `multiCom Com v r = Strategy.encodeMsgs
+(List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))`. -/
+theorem multiCom_def (Com : List Bool → List Bool) {q n m : ℕ} (v : Fin q → Fin n → Bool) (r : Fin q → Fin m → Bool) :
+    (multiCom Com v r : List Bool) =
+      (Strategy.encodeMsgs
+          (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))) := rfl
 
 /-- The advice bound of the multi-value hiding reduction: `3 q(n) (2 C (2n + 3 + ℓ(n))^c + 2) + 2`,
 where `C (|x|+1)^c` bounds `|Com x|` — the length of the pair `⟨pre_n, suf_n⟩` of the two
@@ -296,7 +303,7 @@ private theorem exists_multiRed_bound {Com : List Bool → List Bool} (ℓ q : P
   · refine ⟨[], [], fun _ => false, fun _ => false, by simp, fun v v' => ?_⟩
     have hvv : v = v' := funext fun i => absurd i.2 (by omega)
     rw [hvv]
-    simp only [distAdv, sub_self, abs_zero]
+    simp only [distAdv_def, sub_self, abs_zero]
     positivity
   set cm : (Fin t → Fin n → Bool) → Fin t → (Fin (ℓ.eval n) → Bool) → List Bool :=
     fun v i s => Com (pairEncode (List.ofFn (v i)) (List.ofFn s)) with hcm
@@ -404,7 +411,7 @@ theorem Commitment.multiHiding {Com : List Bool → List Bool} {ℓ : PolyExpr}
   refine ⟨fun n => q.eval n * ε n, EnsembleLemmas.negligible_polyExpr_mul q hε, fun n v v' => ?_⟩
   refine (hkey n v v').trans (mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _))
   have hε' := hεB n (a n) (a' n)
-  unfold distAdv at hε' ⊢
+  simp only [distAdv_def] at hε' ⊢
   rwa [CommitmentLemmas.acceptProb_distinguisherL_of_runAtL hBc _
     (fun y => pre n ++ pairEncode y (suf n)) (hB n),
     CommitmentLemmas.acceptProb_distinguisherL_of_runAtL hBc _
@@ -531,7 +538,7 @@ private theorem padFin_inj {n : ℕ} {v₀ v₁ : List Bool} (hv₀ : v₀.lengt
     (h : padFin n v₀ = padFin n v₁) : v₀ = v₁ := by
   refine List.ext_getElem (hv₀.trans hv₁.symm) fun i h₁ h₂ => ?_
   have := congrFun h ⟨i, hv₀ ▸ h₁⟩
-  simpa [padFin, List.getD_eq_getElem, h₁, h₂] using this
+  simpa [padFin_def, List.getD_eq_getElem, h₁, h₂] using this
 
 /-- **Binding of `owpComAt`** (Claim-127.b, string form at a parameter): equal commitment
 strings of two `n`-bit values force the values to be equal.
@@ -586,7 +593,7 @@ theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
   have h1 : ∀ flip, predProb f h (owpPredictorSnoc D flip) =
       predProb (owpPair f) (fun w : (Fin n → Bool) × Unit => h w.1)
         (owpPredictor (fun z r => D (e z) r) flip) := fun flip => by
-    unfold predProb
+    simp only [predProb_def]
     exact uprob_eq_of_equiv
       ({ toFun := fun z : (Fin n → Bool) × (Bool × ρ) => ((z.1, ()), z.2)
          invFun := fun z => (z.1.1, z.2)
@@ -605,9 +612,9 @@ theorem exists_bitComPredictor {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ}
   rcases le_total 0 (acceptProb (bitCom f h false) D - acceptProb (bitCom f h true) D) with
     hs | hs
   · refine ⟨false, ?_⟩
-    rw [h1, predProb_owpPredictor_false, h0, h0', distAdv, abs_of_nonneg hs]
+    rw [h1, predProb_owpPredictor_false, h0, h0', distAdv_def, abs_of_nonneg hs]
   · refine ⟨true, ?_⟩
-    rw [h1, predProb_owpPredictor_true, h0, h0', distAdv, abs_of_nonpos hs]
+    rw [h1, predProb_owpPredictor_true, h0, h0', distAdv_def, abs_of_nonpos hs]
     ring
 
 /-- **Hiding of the one-bit scheme against non-uniform PPTs**: for every `NUPPT` `D` there is
@@ -693,7 +700,7 @@ private theorem exists_bitRed_bound (P : PermFamily) (h : ∀ n, (Fin n → Bool
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · refine ⟨[], [], by simp, fun v₀ v₁ => ?_⟩
     rw [Subsingleton.elim v₀ v₁]
-    simp [distAdv]
+    simp [distAdv_def]
   set D' : (Fin n → Fin (n + 1) → Bool) → D.Coins n → Bool :=
     fun w c => D.distinguisherL n (List.ofFn ((FunFamily.blocks n (n + 1)).symm w)) c with hD'
   set bc : (Fin n → Bool) → Fin n → (Fin n → Bool) → Fin (n + 1) → Bool :=
@@ -706,7 +713,7 @@ private theorem exists_bitRed_bound (P : PermFamily) (h : ∀ n, (Fin n → Bool
         (D.distinguisherL n) = distAdv (pairTuple (bc v₀)) (pairTuple (bc v₁)) D' := by
     intro v₀ v₁
     simp only [owpComStr_ofFn]
-    unfold distAdv
+    simp only [distAdv_def]
     rw [← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₀)) D',
       ← acceptProb_comp_equiv (FunFamily.blocks n n) (pairTuple (bc v₁)) D']
     rfl
@@ -758,10 +765,10 @@ private theorem exists_bitRed_bound (P : PermFamily) (h : ∀ n, (Fin n → Bool
       from funext fun z => funext fun c => hred z c]
     simp only [hbc]
     cases v k <;> cases v' k
-    · simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+    · simp only [distAdv_def, sub_self, abs_zero]; exact abs_nonneg _
     · exact le_rfl
     · rw [distAdv_comm]
-    · simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+    · simp only [distAdv_def, sub_self, abs_zero]; exact abs_nonneg _
 
 /-- **Hiding of the bitwise scheme by the hybrid lemma** [PS10, proof of Theorem 126.4, "the
 security of the full-fledged construction follows as a simple application of the
@@ -804,7 +811,7 @@ theorem BitHiding.owpComStr_hides {P : PermFamily} {h : ∀ n, (Fin n → Bool) 
     fun n v₀ v₁ => ?_⟩
   refine (hkey n v₀ v₁).trans (mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg n))
   have hε' := hεB n
-  unfold distAdv at hε' ⊢
+  simp only [distAdv_def] at hε' ⊢
   rwa [CommitmentLemmas.acceptProb_distinguisher_of_runAtL hBc _ (fun y => pre n ++ y ++ suf n)
     (hB n), CommitmentLemmas.acceptProb_distinguisher_of_runAtL hBc _
     (fun y => pre n ++ y ++ suf n) (hB n)] at hε'
@@ -858,7 +865,7 @@ polynomial-time computable.
 commitment loop `CommitmentLemmas.ComLoop` — and run the loop `ComLoop.loopOut F H`
 (`polyTimeComputable_iterateEmit`, state `⟨1^n, ⟨v.drop i, rest⟩⟩`: each round drops one value
 bit and one `n`-bit block and emits `F ⟨1^n, r_i⟩ ++ [v_i ⊕ H ⟨1^n, r_i⟩]`, nothing once the
-value bits are exhausted; `StateLoop.headBit_poly`, `StateLoop.xor_poly`,
+value bits are exhausted; `polyTimeComputable_headD`, `BinArith.polyTimeComputable_xor`,
 `PolyTimeComputable.append`, `pairTakePoly/pairDropPoly`). The result equals `owpComStr P h w`
 by `owpComStr_eq_loopOut` (`hF`, `hH`, `List.ofFn` of `(blocks n (n+1)).symm` being the
 concatenation of the blocks, and `padFin` matching the padding). -/
@@ -867,7 +874,7 @@ theorem owpComStr_polyTimeComputable (P : PermFamily) (h : ∀ n, (Fin n → Boo
     (hH : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
       ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) :
     PolyTimeComputable (owpComStr P h) := by
-  obtain ⟨F, hF, hFx⟩ := hF
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 hF
   obtain ⟨H, hH, hHx⟩ := hH
   convert (CommitmentLemmas.ComLoop.loopOut_poly F H hF hH).comp
     CommitmentLemmas.ComLoop.init_poly using 1

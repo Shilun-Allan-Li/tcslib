@@ -235,6 +235,12 @@ are `true`, `false` otherwise (ties go to `false`). -/
 def majority {κ : Type*} [Fintype κ] (v : κ → Bool) : Bool :=
   decide (Fintype.card κ < 2 * #{i | v i = true})
 
+/-- The defining equation of `majority`: `majority v = decide
+(Fintype.card κ < 2 * #{i | v i = true})`. -/
+theorem majority_def {κ : Type*} [Fintype κ] (v : κ → Bool) :
+    (majority v : Bool) =
+      (decide (Fintype.card κ < 2 * #{i | v i = true})) := rfl
+
 /-- If the majority of `v` is not `b`, then at most half of the entries of `v` equal `b`. -/
 theorem two_mul_card_le_of_majority_ne {κ : Type*} [Fintype κ] (v : κ → Bool) (b : Bool)
     (h : majority v ≠ b) : 2 * #{i | v i = b} ≤ Fintype.card κ := by

@@ -185,11 +185,6 @@ theorem polyTimeComputable_layout {f₁ f₂ f₃ f₄ : List Bool → List Bool
     PolyTimeComputable fun z => layout (f₁ z) (f₂ z) (f₃ z) (f₄ z) :=
   ((h₁.pairEncode h₂).pairEncode h₃).pairEncode h₄
 
-/-- Composition of polynomial-time functions, in applied form. -/
-private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
-
 /-! ### Combined advice -/
 
 /-- Two advice strings as one: `⟨a, b⟩`, except that two empty strings combine to `[]`
@@ -203,7 +198,7 @@ def combineAdvice (a b : List Bool) : List Bool :=
   unfold combineAdvice
   split_ifs with h
   · obtain ⟨rfl, rfl⟩ := h
-    rfl
+    exact pairFstD_of_pairDecode_eq_none Turing.pairDecode_nil
   · simp
 
 /-- Decoding the second combined advice string. -/
@@ -211,7 +206,7 @@ def combineAdvice (a b : List Bool) : List Bool :=
   unfold combineAdvice
   split_ifs with h
   · obtain ⟨rfl, rfl⟩ := h
-    rfl
+    exact pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil
   · simp
 
 /-- Two empty advice strings combine to the empty string. -/
@@ -248,9 +243,11 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
     ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
       ∀ n y r, B.runAtL n y r =
         post (pairEncode (List.replicate n true) (A.runAtL n (pre (advInput n y)) r)) := by
-  have hF := ptc_comp hpost (polyTimeComputable_inParam.pairEncode
-    (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
-      (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
+  have hF := PolyTimeComputable.comp' hpost (polyTimeComputable_inParam.pairEncode
+    (PolyTimeComputable.comp' A.polyTimeComputable_output
+        (polyTimeComputable_layout polyTimeComputable_inParam
+      (PolyTimeComputable.comp' hpre
+          (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
   refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
     adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
@@ -276,8 +273,8 @@ theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
     ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
       ∀ n y r, B.runAtL n y r = post (A.runAtL n (pre y) r) := by
-  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (ptc_comp hpre polyTimeComputable_pairSndD)
-    (ptc_comp hpost polyTimeComputable_pairSndD)
+  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (PolyTimeComputable.comp' hpre polyTimeComputable_pairSndD)
+    (PolyTimeComputable.comp' hpost polyTimeComputable_pairSndD)
   refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
   rw [hB, pairSndD_pairEncode]
   simp [advInput_eq]
@@ -295,9 +292,9 @@ plus the projection identities and `List.length_replicate`. -/
 theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
     ∃ B : NUPPT, B.coins = A.coins.subst p ∧ (A.Uniform → B.Uniform) ∧
       ∀ n y r, B.runAtL n y r = A.runAtL (p.eval n) y r := by
-  have hF := ptc_comp A.polyTimeComputable_output
+  have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout
-      (ptc_comp (polyTimeComputable_unaryPoly p) polyTimeComputable_inParam)
+      (PolyTimeComputable.comp' (polyTimeComputable_unaryPoly p) polyTimeComputable_inParam)
       polyTimeComputable_inArg polyTimeComputable_inAdvice polyTimeComputable_inCoins)
   have hadv : ∀ n, (A.advice (p.eval n)).length ≤ (A.adv.subst p).eval n := fun n => by
     rw [PolyExpr.eval_subst]
@@ -329,11 +326,12 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
     (hφ : ∀ n, φ n ≤ p.eval n) :
     ∃ B : NUPPT, B.coins = A.coins.subst p ∧
       ∀ n y r, B.runAtL n y r = A.runAtL (φ n) y (r.take (A.coinLen (φ n))) := by
-  have hw := ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice
-  have hF := ptc_comp A.polyTimeComputable_output
+  have hw := PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_inAdvice
+  have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout hw polyTimeComputable_inArg
-      (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice)
-      (ptc_comp (polyTimeComputable_pairTakePoly A.coins) (hw.pairEncode polyTimeComputable_inCoins)))
+      (PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_inAdvice)
+      (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins)
+          (hw.pairEncode polyTimeComputable_inCoins)))
   have hadv : ∀ n, (pairEncode (List.replicate (φ n) true) (A.advice (φ n))).length ≤
       (PolyExpr.add (.add (.mul (.const 2) p) (.const 2)) (A.adv.subst p)).eval n := fun n => by
     rw [length_pairEncode, List.length_replicate]
@@ -361,11 +359,12 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
     (hβ : ∀ n, (β n).length ≤ b.eval n) :
     ∃ B : NUPPT, B.coins = A.coins ∧
       ∀ n y r, B.runAtL n y r = A.runAtL n (pairEncode y (β n)) r := by
-  have hF := ptc_comp A.polyTimeComputable_output
+  have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout polyTimeComputable_inParam
       (polyTimeComputable_inArg.pairEncode
-        (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice))
-      (ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice) polyTimeComputable_inCoins)
+        (PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_inAdvice))
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD
+          polyTimeComputable_inAdvice) polyTimeComputable_inCoins)
   have hadv : ∀ n, (pairEncode (A.advice n) (β n)).length ≤
       (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) b).eval n := fun n => by
     rw [length_pairEncode]
@@ -393,10 +392,12 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
       ∀ n y r, B.runAtL n y r =
         A.runAtL n (pairEncode y (r.take (p.eval n))) (r.drop (p.eval n)) := by
   have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
-  have hF := ptc_comp A.polyTimeComputable_output
+  have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout polyTimeComputable_inParam
-      (polyTimeComputable_inArg.pairEncode (ptc_comp (polyTimeComputable_pairTakePoly p) hcut))
-      polyTimeComputable_inAdvice (ptc_comp (polyTimeComputable_pairDropPoly p) hcut))
+      (polyTimeComputable_inArg.pairEncode
+          (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly p) hcut))
+      polyTimeComputable_inAdvice (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly p)
+          hcut))
   refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
     coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
@@ -422,14 +423,14 @@ theorem exists_seq (A B : NUPPT) :
       ∀ n y r, C.runAtL n y r =
         B.runAtL n (pairEncode y (A.runAtL n y (r.take (A.coinLen n)))) (r.drop (A.coinLen n)) := by
   have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
-  have hr₁ := ptc_comp (polyTimeComputable_pairTakePoly A.coins) hcut
-  have hr₂ := ptc_comp (polyTimeComputable_pairDropPoly A.coins) hcut
-  have ha := ptc_comp A.polyTimeComputable_output
+  have hr₁ := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins) hcut
+  have hr₂ := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly A.coins) hcut
+  have ha := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout polyTimeComputable_inParam polyTimeComputable_inArg
-      (ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice) hr₁)
-  have hF := ptc_comp B.polyTimeComputable_output
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_inAdvice) hr₁)
+  have hF := PolyTimeComputable.comp' B.polyTimeComputable_output
     (polyTimeComputable_layout polyTimeComputable_inParam (polyTimeComputable_inArg.pairEncode ha)
-      (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice) hr₂)
+      (PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_inAdvice) hr₂)
   have hadv : ∀ n, (combineAdvice (A.advice n) (B.advice n)).length ≤
       (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) B.adv).eval n := fun n => by
     have h₁ := length_combineAdvice_le (A.advice n) (B.advice n)
@@ -457,10 +458,11 @@ the constant coin string `fun _ => true` (`List.ofFn_const`), it equals
 theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (hA : A.Uniform)
     (h : A.Computes f) :
     PolyTimeComputable fun z => f (advInput (pairFstD z).length (pairSndD z)) := by
-  have hF := ptc_comp A.polyTimeComputable_output
-    (polyTimeComputable_layout (ptc_comp polyTimeComputable_unary polyTimeComputable_pairFstD)
+  have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
+    (polyTimeComputable_layout
+        (PolyTimeComputable.comp' polyTimeComputable_unary polyTimeComputable_pairFstD)
       polyTimeComputable_pairSndD (polyTimeComputable_const [])
-      (ptc_comp (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
+      (PolyTimeComputable.comp' (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
   convert hF using 1
   funext z
   have hz := Computes.runAt_eq A h (pairFstD z).length (pairSndD z) (fun _ => true)

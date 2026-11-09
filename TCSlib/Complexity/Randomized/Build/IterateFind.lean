@@ -157,7 +157,7 @@ private def outWord (out : List Bool → List Bool) (w' : List Bool) : List Bool
 /-- The first cell of a verdict word is the verdict. -/
 private theorem verdictWord_head (acc : List Bool → Bool) (w : List Bool) :
     (verdictWord acc w)[0]? = some (acc (pairSndD w)) := by
-  simp [verdictWord, pairEncode]
+  simp [verdictWord, pairEncode_eq]
 
 /-- The length of a verdict word. -/
 private theorem verdictWord_length (acc : List Bool → Bool) (w : List Bool) :
@@ -343,12 +343,13 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
   obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
   obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
   obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
-  obtain ⟨F, aF, dF, hF⟩ : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
+  have hbits : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
     have h := (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits).comp
       (polyTimeComputable_unaryPoly R)
     convert h using 1
     funext x
     simp
+  obtain ⟨F, aF, dF, hF⟩ := (polyTimeComputable_iff _).1 hbits
   let M : Fin 5 → FinTM Bool := fun i => match i.val with
     | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
   let K := S.k + V.k + I.k + E.k
@@ -380,7 +381,8 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
       · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
           (ModuleHost.entry M 0))
       funext i z
-      simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord]
+      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes,
+          Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
     change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
       (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
     rw [hostRet_zero] at hcEnd
@@ -444,7 +446,7 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
       intro v hv
       have hv0 : v = 0 := by omega
       subst hv0
-      simp [Cfg.ofWords, anchor]
+      simp [Cfg.ofWords_def, anchor]
     by_cases hb : acc s = true
     · -- accepting round: the payload call, then the halt
       rw [if_pos hb] at hseg
@@ -476,7 +478,7 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
         · intro v hv
           have hv0 : v = 0 := by omega
           subst hv0
-          simp [Cfg.ofWords, anchor]
+          simp [Cfg.ofWords_def, anchor]
       refine ⟨tv + 1 + te + 1 + 1, by omega, ?_, ?_, ?_⟩
       · dsimp only [T, A, pow]
         simp only [Nat.add_mul]

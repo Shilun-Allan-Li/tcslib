@@ -113,12 +113,12 @@ probability `1/(2p(n))`" is this two-step chain (`abs_sub_le`, `Negligible.const
 theorem ZeroKnowledge.singleMessageSecure {S : PrivateKeyScheme} (h : S.ZeroKnowledge) :
     S.SingleMessageSecure := by
   obtain ⟨Sim, -, hSim⟩ := h
-  intro D
+  refine (PrivateKeyScheme.singleMessageSecure_iff S).2 fun D => ?_
   obtain ⟨ε, hε, hD⟩ := hSim D
   refine ⟨fun n => 2 * ε n, hε.const_mul 2, fun n m₀ m₁ => ?_⟩
   have h₀ := hD n m₀
   have h₁ := hD n m₁
-  unfold distAdv at h₀ h₁ ⊢
+  simp only [distAdv_def] at h₀ h₁ ⊢
   calc |acceptProb (S.encDist n m₀) (D.distinguisherL n) -
         acceptProb (S.encDist n m₁) (D.distinguisherL n)|
       ≤ |acceptProb (S.encDist n m₀) (D.distinguisherL n) -
@@ -167,20 +167,20 @@ private theorem polyTimeComputable_zkSimFun (S : PrivateKeyScheme) :
     have := (polyTimeComputable_pairTakePoly S.gen.coins).comp hcut
     convert this using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have hr₂ : PolyTimeComputable fun z =>
       (NUPPT.inCoins z).drop (S.gen.coins.eval (NUPPT.inParam z).length) := by
     have := (polyTimeComputable_pairDropPoly S.gen.coins).comp hcut
     convert this using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have hzero : PolyTimeComputable fun z =>
       List.zipWith xor (NUPPT.inParam z) (NUPPT.inParam z) := by
     have := polyTimeComputable_pairXor.comp
       (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inParam)
     convert this using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have hk := S.gen.polyTimeComputable_output.comp
     (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam (polyTimeComputable_const [])
       (polyTimeComputable_const []) hr₁)
@@ -281,10 +281,10 @@ projections `polyTimeComputable_inParam`/`_inCoins`, `polyTimeComputable_pairTak
 theorem SingleMessageSecure.zeroKnowledge {S : PrivateKeyScheme} (h : S.SingleMessageSecure) :
     S.ZeroKnowledge := by
   refine ⟨zkSim S, NUPPT.ofPolyTimeUniform_uniform _ _, fun D => ?_⟩
-  obtain ⟨ε, hε, hD⟩ := h D
+  obtain ⟨ε, hε, hD⟩ := (PrivateKeyScheme.singleMessageSecure_iff S).1 h D
   refine ⟨ε, hε, fun n m => ?_⟩
   have := hD n m (fun _ => false)
-  unfold distAdv at this ⊢
+  simp only [distAdv_def] at this ⊢
   rwa [acceptProb_zkSim]
 
 /-- **[PS10, Theorem 112.2]: a private-key encryption scheme is single-message secure iff it

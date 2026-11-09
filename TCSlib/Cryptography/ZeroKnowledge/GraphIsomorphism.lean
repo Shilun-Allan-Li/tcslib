@@ -374,6 +374,11 @@ def permCoinLen (n : ℕ) : ℕ := n * permTrials n * permBits n
 the closed form `n · 2^{-n}` is owned by `Asymptotic/Permutations.lean`. -/
 noncomputable def permFailBound (n : ℕ) : ℝ := n * (2 : ℝ)⁻¹ ^ n
 
+/-- The defining equation of `permFailBound`: `permFailBound n = n * (2 : ℝ)⁻¹ ^ n`. -/
+theorem permFailBound_def (n : ℕ) :
+    permFailBound n =
+      (n * (2 : ℝ)⁻¹ ^ n) := rfl
+
 /-- The sampler consumes at most `(N + 1)²` tape bits whenever `2n² ≤ N` (every encoded
 instance on `n` vertices has length `3n² + 2`, `length_encInstance`), so the coin polynomial
 `normal 1 2` of the parties suffices: `n · 2n² · permBits n ≤ 2n⁴ ≤ N² ≤ (N + 1)²`.

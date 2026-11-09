@@ -128,6 +128,11 @@ def prod (p : FinDist α) (q : FinDist β) : FinDist (α × β) where
 are equal. [Vad12, §6.1] -/
 def collision (p : FinDist α) : ℝ := ∑ a, p a ^ 2
 
+/-- The defining equation of `collision`: `collision p = ∑ a, p a ^ 2`. -/
+theorem collision_def (p : FinDist α) :
+    collision p =
+      (∑ a, p a ^ 2) := rfl
+
 /-- The collision probability is nonnegative. -/
 theorem collision_nonneg (p : FinDist α) : 0 ≤ collision p :=
   sum_nonneg fun _ _ => sq_nonneg _

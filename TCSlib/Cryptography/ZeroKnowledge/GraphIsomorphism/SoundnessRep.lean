@@ -81,7 +81,7 @@ theorem exec_vfirst_length (P' V : Strategy) (x zP zV rP rV : List Bool) :
   induction k with
   | zero => simp
   | succ k ih =>
-    have h1 : moverIsV true (2 * k) = true := by simp [moverIsV]
+    have h1 : moverIsV true (2 * k) = true := by simp [moverIsV_def]
     have h2 : moverIsV true (2 * k + 1) = false := by
       simp only [moverIsV_true, decide_eq_false_iff_not]
       omega
@@ -108,7 +108,7 @@ theorem exec_vfirst_eq (P' V : Strategy) (x zP zV rP rV : List Bool) (m : ℕ) (
   | succ i ih =>
     intro hi
     have hrec := ih (by omega)
-    have h1 : moverIsV true (2 * i) = true := by simp [moverIsV]
+    have h1 : moverIsV true (2 * i) = true := by simp [moverIsV_def]
     have h2 : moverIsV true (2 * i + 1) = false := by
       simp only [moverIsV_true, decide_eq_false_iff_not]
       omega
@@ -212,14 +212,19 @@ theorem gniRep_complete {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀ 
 /-! ### Tapes as blocks -/
 
 /-- A tape of `m · c` bits as `m` blocks of `c` bits (`finProdFinEquiv`: block `i` occupies
-the positions `i c, …, i c + c - 1`). -/
+the positions `i c, …, i c + c - 1`): the inverse of the canonical block bijection
+`FunFamily.blocks`, kept as a compatibility alias with its reverse orientation. -/
 def blocksEquiv (m c : ℕ) : (Fin m → Fin c → Bool) ≃ (Fin (m * c) → Bool) :=
-  (Equiv.curry (Fin m) (Fin c) Bool).symm.trans (Equiv.arrowCongr finProdFinEquiv (Equiv.refl Bool))
+  (FunFamily.blocks m c).symm
+
+/-- `blocksEquiv` is the inverse of the canonical block bijection `FunFamily.blocks` of
+`Asymptotic/Adversary.lean`: `blocksEquiv m c = (FunFamily.blocks m c).symm`. -/
+theorem blocksEquiv_eq (m c : ℕ) : blocksEquiv m c = (FunFamily.blocks m c).symm := rfl
 
 /-- Entry `k` of the tape of blocks is entry `k mod c` of block `k / c`. -/
 theorem blocksEquiv_apply (m c : ℕ) (F : Fin m → Fin c → Bool) (k : Fin (m * c)) :
-    blocksEquiv m c F k = F k.divNat k.modNat := by
-  simp [blocksEquiv, Equiv.arrowCongr_apply, finProdFinEquiv_symm_apply, Function.uncurry]
+    blocksEquiv m c F k = F k.divNat k.modNat :=
+  FunFamily.blocks_symm_apply m c F k
 
 /-- Block `j < m` of the tape of blocks is the `j`-th block.
 
@@ -317,7 +322,7 @@ theorem statClose_pi {σ γ : Type*} [Fintype σ] [Fintype γ] {X : σ → γ} {
       | succ k => rfl
     have e2 : ∀ s : Fin (m + 1) → γ, (Fin.cons (s 0) (Fin.tail s) : Fin (m + 1) → γ) = s :=
       fun s => Fin.cons_self_tail s
-    simp only [Fin.consEquiv_symm_apply, id] at this
+    simp only [Fin.consEquiv_symm_apply, id_eq] at this
     simp only [e1, e2] at this
     rw [show ((m + 1 : ℕ) : ℝ) * δ = δ + m * δ by push_cast; ring]
     exact this

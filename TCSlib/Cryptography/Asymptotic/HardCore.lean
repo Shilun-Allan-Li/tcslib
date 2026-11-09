@@ -202,7 +202,8 @@ theorem PermFamily.predProb_toFunFamily (P : PermFamily) (h : ∀ n, (Fin n → 
   rw [predProb_def, predProb_def]
   refine uprob_eq_of_equiv ((P.toFunFamily_domEquiv n).prodCongr (Equiv.refl _)) fun z => ?_
   obtain ⟨x, r⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, NUPPT.predictor_eq,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, NUPPT.predictor_eq,
+      NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
     NUPPT.distinguisher_eq]
   rw [← P.toFunFamily_codEquiv_ofFn, P.toFunFamily_f_domEquiv]
 
@@ -261,10 +262,10 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
       (NUPPT.ofPolyTimeUniform (polyTimeComputable_const [b]) (.const 0)).Coins n) :=
       ⟨(fun _ => false, fun _ => false)⟩
     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
-    simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt, NUPPT.ofPolyTimeUniform,
-      NUPPT.output_ofPolyTime]
+    simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+        NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
     cases b <;> simp
-  obtain ⟨n₀, hn₀⟩ := hε 1
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff ε).1 hε 1
   have h1 := h (max n₀ 2)
   rw [hone] at h1
   have h2 := hn₀ (max n₀ 2) (le_max_left _ _)
@@ -379,7 +380,7 @@ theorem exists_owpPredictorSnoc {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ
   have h1 : predProb f B (owpPredictorSnoc D flip) =
       predProb (owpPair f) (fun w : (Fin n → Bool) × Unit => B w.1)
         (owpPredictor (fun z r => D (e z) r) flip) := by
-    unfold predProb
+    simp only [predProb_def]
     exact uprob_eq_of_equiv
       ({ toFun := fun z : (Fin n → Bool) × (Bool × ρ) => ((z.1, ()), z.2)
          invFun := fun z => (z.1.1, z.2)
@@ -390,7 +391,7 @@ theorem exists_owpPredictorSnoc {ρ : Type*} [Fintype ρ] [Nonempty ρ] {n : ℕ
   have h2 : prgAdv (fun s => Fin.snoc (f s) (B s)) D =
       prgAdv (owpGen f fun w : (Fin n → Bool) × Unit => B w.1) (fun z r => D (e z) r) := by
     rw [← prgAdv_comp_equiv e]
-    unfold prgAdv distAdv
+    simp only [prgAdv_eq, distAdv_def]
     rw [← acceptProb_fst (τ := Unit) (fun s => Fin.snoc (f s) (B s)) D]
     rfl
   rw [h1, h2, hflip]
@@ -524,7 +525,7 @@ post-processing and the projection of a uniform pair is uniform). -/
 theorem prgAdv_fst {σ γ δ ρ : Type*} [Fintype σ] [Fintype γ] [Fintype δ] [Nonempty δ]
     [Fintype ρ] (X : σ → γ × δ) (D : γ → ρ → Bool) :
     prgAdv (fun s => (X s).1) D = prgAdv X (fun z r => D z.1 r) := by
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   rw [← acceptProb_fst (τ := δ) (id : γ → γ) D]
   rfl
 
@@ -586,11 +587,12 @@ with `c : M.Coins n ≃ (Fin (ℓ n) → Bool) × D.Coins n` (`Fin.appendEquiv`)
 theorem prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
     (hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure := by
   rw [PRG.secure_iff] at h ⊢
-  obtain ⟨⟨F, hF, hFs⟩, hsec⟩ := h
+  obtain ⟨hE1, hsec⟩ := h
+  obtain ⟨F, hF, hFs⟩ := (PRG.easy_iff _).1 hE1
   have hFs' : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s) := hFs
   refine ⟨?_, fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_expandEvaluator G hFs' hF ℓ
-    exact ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
+    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
   · have hk : ∀ n, ∃ k < ℓ.eval n,
         prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n)) /
           ℓ.eval n ≤
@@ -649,7 +651,7 @@ theorem PermFamily.iterPRG_eq_expand (P : PermFamily) (h : ∀ n, (Fin n → Boo
     funext fun x => by
       show Fin.init (Fin.snoc (P.f n x) (h n x) : Fin (n + 1) → Bool) = P.f n x
       exact Fin.init_snoc _ _
-  simp only [prgExt]
+  simp only [prgExt_def]
   rw [hstep]
   simp only [oneBitStep, Fin.snoc_last]
 
@@ -774,9 +776,10 @@ theorem invProb_glInverter {γ : Type*} [Fintype γ] (n : ℕ)
     (R : (Fin (𝓕.outLen.eval n) → Bool) → γ → Fin (𝓕.inLen.eval n) → Bool) :
     invProb (𝓕.glPad.f n) (𝓕.glInverter n R) =
       invProb (HardcoreBit.glPad (𝓕.f n)) (HardcoreBit.glInverter R) := by
-  unfold invProb
+  simp only [invProb_def]
   refine uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) γ) fun z => ?_
-  simp only [glPad, glInverter, splitPair, Equiv.coe_fn_mk, Equiv.symm_apply_apply]
+  simp only [glPad, glInverter, splitPair_apply, splitPair_symm_apply, Equiv.coe_fn_mk,
+      Equiv.symm_apply_apply]
   exact Equiv.apply_eq_iff_eq _
 
 /-- **`g` is a permutation when `f` is** ([PS10, Theorem 87.3], the "(OWP)" clause): the
@@ -812,10 +815,10 @@ definitionally): `𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt B n` by `invProbAt
 `x' ‖ r'` satisfies `f(x') ‖ r' = f(x) ‖ r` then `f(x') = f(x)`, `Fin.append` injective in
 its first argument); then `Negligible.mono` with `h.hard B`. -/
 theorem StrongOneWay.glPad {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.glPad.StrongOneWay := by
-  obtain ⟨F, hF, hFx⟩ := h.easy
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
   refine ⟨?_, fun A => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_glPadEvaluator 𝓕 hF hFx
-    refine ⟨E, hE, fun n z => ?_⟩
+    refine (FunFamily.easy_iff _).2 ⟨E, hE, fun n z => ?_⟩
     obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
     show E (NUPPT.advInput n (List.ofFn (Fin.append x r))) = List.ofFn (𝓕.glPad.f n (Fin.append x r))
     rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]
@@ -871,7 +874,7 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
       (two_pow_glK_le 𝓕.inLen c) with hB
     have hBneg := (h.glPad).hard B
     obtain ⟨C, d, hCd⟩ := K.eval_le
-    obtain ⟨n₀, hn₀⟩ := hBneg (c + d + 1)
+    obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 hBneg (c + d + 1)
     obtain ⟨n, hn, hgap⟩ := hc (max n₀ (max 1 (4 * C * 2 ^ d)))
     have hn1 : 1 ≤ n := le_of_max_le_left (le_of_max_le_right hn)
     have hnC : 4 * C * 2 ^ d ≤ n := le_of_max_le_right (le_of_max_le_right hn)

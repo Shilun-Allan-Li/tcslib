@@ -107,6 +107,11 @@ def subst : PolyExpr → PolyExpr → PolyExpr
 time bounds of `Complexity.PolyTimeComputable`. -/
 def normal (C c : ℕ) : PolyExpr := mul (const C) (pow (add var (const 1)) c)
 
+/-- The defining equation of `normal`: `normal C c = mul (const C) (pow (add var (const 1)) c)`. -/
+theorem normal_def (C c : ℕ) :
+    normal C c =
+      (mul (const C) (pow (add var (const 1)) c)) := rfl
+
 /-- Evaluating a constant. -/
 @[simp] theorem eval_const (c n : ℕ) : (const c).eval n = c := rfl
 
@@ -184,7 +189,7 @@ theorem eval_le (p : PolyExpr) : ∃ C c : ℕ, ∀ n, p.eval n ≤ C * (n + 1) 
 
 /-- The evaluation of a syntactic polynomial is a `Complexity.PolyBound` (the library's
 numerical majorant predicate), by `eval_le`. -/
-theorem polyBound_eval (p : PolyExpr) : PolyBound p.eval := p.eval_le
+theorem polyBound_eval (p : PolyExpr) : PolyBound p.eval := (polyBound_iff _).2 p.eval_le
 
 /-- A syntactic polynomial is bounded by its own normal-form majorant *as an expression*:
 there are `C, c` with `p.eval n ≤ (normal C c).eval n` for every `n`. -/

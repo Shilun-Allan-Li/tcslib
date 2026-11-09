@@ -275,7 +275,8 @@ theorem encD_injective (F : Collection) (i : List Bool) : Function.Injective (F.
 
 /-- The inversion probability is nonnegative. -/
 theorem invProbAt_nonneg (F : Collection) (A : NUPPT) (n : ℕ) : 0 ≤ F.invProbAt A n := by
-  unfold invProbAt uexp
+  unfold invProbAt
+  simp only [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun r _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The inversion probability is at most one. -/
@@ -567,19 +568,6 @@ theorem toCollection_sampleClose : (𝓕.toCollection F hF hspec).SampleClose fu
   rw [hX]
   exact StatClose.refl _
 
-/-- A string decodes to `x'` iff it is `List.ofFn x'` (private copy, cf. `inverter_eq_some_iff`). -/
-private theorem decodeFin_eq_some_iff {ℓ : ℕ} (w : List Bool) (x' : Fin ℓ → Bool) :
-    decodeFin ℓ w = some x' ↔ w = List.ofFn x' := by
-  constructor
-  · intro h
-    have hw : w.length = ℓ := length_eq_of_decodeFin_eq_some h
-    simp only [decodeFin, dif_pos hw, Option.some.injEq] at h
-    subst h
-    refine List.ext_get (by simp [hw]) fun i h₁ h₂ => ?_
-    simp
-  · intro h
-    rw [h, decodeFin_ofFn]
-
 /-- **The inversion experiment of `toCollection` is that of `𝓕`** against the machine
 `withIndexParam A`, which prepends the index `1^n` to its argument.
 
@@ -620,10 +608,7 @@ inversion probability is `𝓕.invProbAt (withIndexParam A) n` (`toCollection_in
 negligible by `h.hard`. -/
 theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
     (𝓕.toCollection F hF hspec).OneWay where
-  sampleClose := ⟨fun _ => 0, fun c => ⟨1, fun n hn => by
-      rw [abs_zero]
-      exact one_div_pos.mpr (pow_pos (Nat.cast_pos.mpr hn) c)⟩,
-    toCollection_sampleClose 𝓕 F hF hspec⟩
+  sampleClose := ⟨fun _ => 0, negligible_zero, toCollection_sampleClose 𝓕 F hF hspec⟩
   hard A := by
     simpa only [toCollection_invProbAt] using h.hard A.withIndexParam
 
@@ -631,7 +616,7 @@ theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
 [PS10, Theorem 42.2 ⇐]: the collection `toCollection` built from the evaluator of `h.easy`. -/
 theorem StrongOneWay.exists_collection_oneWay {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
     ∃ G : Collection, G.OneWay := by
-  obtain ⟨F, hF, hspec⟩ := h.easy
+  obtain ⟨F, hF, hspec⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
   exact ⟨_, FunFamily.StrongOneWay.toCollection_oneWay 𝓕 F hF hspec h⟩
 
 end FunFamily
@@ -767,12 +752,6 @@ theorem exists_outLenBound : ∃ L : PolyExpr, G.OutLenBound L := by
 
 /-! ### The evaluator of `g` -/
 
-/-- Composition of polynomial-time functions, in applied form (private copy of the helper
-of `TCSlib.Complexity.Randomized.Closure`). -/
-private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
-  hg.comp hf
-
 /-- The index `i = Gen(1^n; r₁)` computed from the unary parameter `u = 1^n` and the coin
 string `r`: `Gen`'s output on the layout `⟨⟨⟨u, []⟩, []⟩, r.take (gen.coins |u|)⟩`, first
 component. -/
@@ -790,7 +769,8 @@ private def owfRawStr (u r : List Bool) : List Bool :=
 `NUPPT.polyTimeComputable_layout`, `NUPPT.polyTimeComputable_output`). -/
 private theorem owfIndexStr_poly :
     PolyTimeComputable fun z => G.owfIndexStr (pairFstD z) (pairSndD z) :=
-  ptc_comp polyTimeComputable_pairFstD (ptc_comp G.gen.polyTimeComputable_output
+  PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp'
+      G.gen.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD (polyTimeComputable_const [])
       (polyTimeComputable_const []) (polyTimeComputable_pairTakePoly G.gen.coins)))
 
@@ -801,26 +781,29 @@ private theorem owfRawStr_poly :
   have hw : PolyTimeComputable fun z => G.sample.output (NUPPT.layout (pairFstD z)
       (G.owfIndexStr (pairFstD z) (pairSndD z)) []
       ((pairSndD z).drop (G.gen.coins.eval (pairFstD z).length))) :=
-    ptc_comp G.sample.polyTimeComputable_output
+    PolyTimeComputable.comp' G.sample.polyTimeComputable_output
       (NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD G.owfIndexStr_poly
         (polyTimeComputable_const []) (polyTimeComputable_pairDropPoly G.gen.coins))
-  G.owfIndexStr_poly.pairEncode (ptc_comp G.eval_poly (G.owfIndexStr_poly.pairEncode hw))
+  G.owfIndexStr_poly.pairEncode (PolyTimeComputable.comp' G.eval_poly
+      (G.owfIndexStr_poly.pairEncode hw))
 
 /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the index computation is `index n r₁`
 (`Gen` is uniform, so its advice is `[]`; the cut at `gen.coins n` is `List.take_left'`). -/
 private theorem owfIndexStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
     G.owfIndexStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.index n r₁ := by
-  unfold owfIndexStr Collection.index NUPPT.runAt NUPPT.layout NUPPT.advInput
-  rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen]), G.gen_uniform n]
+  simp only [owfIndexStr, Collection.index, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq,
+    NUPPT.advInput_eq]
+  rw [List.length_replicate, List.take_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq]),
+    (NUPPT.uniform_iff G.gen).1 G.gen_uniform n]
 
 /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the raw string of `g` is `owfRaw n r₁ r₂`
 (`Sample` is uniform; the cut at `gen.coins n` is `List.drop_left'`). -/
 private theorem owfRawStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
     G.owfRawStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.owfRaw n r₁ r₂ := by
   unfold owfRawStr owfRaw
-  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen])]
-  unfold NUPPT.runAt NUPPT.layout NUPPT.advInput
-  rw [G.sample_uniform n]
+  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])]
+  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
+  rw [(NUPPT.uniform_iff G.sample).1 G.sample_uniform n]
 
 /-- **`g` is easy to compute** [PS10, Theorem 42.2 ⇒, "`g` is easy"]: the evaluator on
 `⟨1^n, r⟩` pads `owfRawStr 1^n r ++ [true]` to `L n` bits (`polyTimeComputable_padStr`);
@@ -829,7 +812,7 @@ its value on `⟨1^n, List.ofFn r⟩` is `List.ofFn (g n r)` by `owfRawStr_eq`,
 private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
   have hF : PolyTimeComputable fun z =>
       padStr L (pairFstD z) (G.owfRawStr (pairFstD z) (pairSndD z) ++ [true]) := by
-    have h := ptc_comp (polyTimeComputable_padStr L)
+    have h := PolyTimeComputable.comp' (polyTimeComputable_padStr L)
       (polyTimeComputable_pairFstD.pairEncode (G.owfRawStr_poly.append (polyTimeComputable_const [true])))
     convert h using 1
     funext z
@@ -869,7 +852,7 @@ private theorem collInvRaw_poly (L : PolyExpr) (A' : NUPPT) :
     PolyTimeComputable (G.collInvRaw L A') := by
   have hpad : PolyTimeComputable fun z =>
       padStr L (NUPPT.inParam z) (NUPPT.inArg z ++ [true]) := by
-    have h := ptc_comp (polyTimeComputable_padStr L)
+    have h := PolyTimeComputable.comp' (polyTimeComputable_padStr L)
       (NUPPT.polyTimeComputable_inParam.pairEncode
         (NUPPT.polyTimeComputable_inArg.append (polyTimeComputable_const [true])))
     convert h using 1
@@ -878,20 +861,20 @@ private theorem collInvRaw_poly (L : PolyExpr) (A' : NUPPT) :
   have hA : PolyTimeComputable fun z => A'.output (NUPPT.layout (NUPPT.inParam z)
       (padStr L (NUPPT.inParam z) (NUPPT.inArg z ++ [true])) (NUPPT.inAdvice z)
       (NUPPT.inCoins z)) :=
-    ptc_comp A'.polyTimeComputable_output
+    PolyTimeComputable.comp' A'.polyTimeComputable_output
       (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam hpad
         NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
   have hdrop : PolyTimeComputable fun z => (A'.output (NUPPT.layout (NUPPT.inParam z)
       (padStr L (NUPPT.inParam z) (NUPPT.inArg z ++ [true])) (NUPPT.inAdvice z)
       (NUPPT.inCoins z))).drop (G.gen.coins.eval (NUPPT.inParam z).length) := by
-    have h := ptc_comp (polyTimeComputable_pairDropPoly G.gen.coins)
+    have h := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly G.gen.coins)
       (NUPPT.polyTimeComputable_inParam.pairEncode hA)
     convert h using 1
     funext z
     simp
-  have h := ptc_comp G.sample.polyTimeComputable_output
+  have h := PolyTimeComputable.comp' G.sample.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam
-      (ptc_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
       (polyTimeComputable_const []) hdrop)
   exact h
 

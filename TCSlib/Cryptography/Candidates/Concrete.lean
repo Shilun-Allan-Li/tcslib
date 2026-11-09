@@ -341,7 +341,8 @@ noncomputable def primesPairEquiv (n : ℕ) :
     (z : {z : (Fin n → Bool) × (Fin n → Bool) // (bitsToNat z.1).Prime ∧ (bitsToNat z.2).Prime}) :
     ((primesPairEquiv n z).1.1 : ℕ) = bitsToNat z.1.1 ∧
       ((primesPairEquiv n z).2.1 : ℕ) = bitsToNat z.1.2 := by
-  simp [primesPairEquiv, Equiv.subtypeProdEquivProd]
+  show ((bitsEquiv n z.1.1 : Fin (2 ^ n)) : ℕ) = _ ∧ ((bitsEquiv n z.1.2 : Fin (2 ^ n)) : ℕ) = _
+  exact ⟨bitsEquiv_val _, bitsEquiv_val _⟩
 
 /-- `1/|Π_n| ≤ 2n/2^n` for `n ≥ 2` (`NumberTheory.two_pow_le_two_mul_card_primes`): the
 probability that two independent uniform primes coincide is negligible. -/
@@ -670,8 +671,8 @@ private theorem rbl_step_iterate (h c s : List Bool) (i : ℕ) :
 
 /-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
 private theorem rbl_length_step_le (x : List Bool) : (rbl_step x).length ≤ 2 * x.length + 4 := by
-  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
+  have h1 := length_pair_components_le x
+  have h2 := length_pair_components_le (pairSndD x)
   simp only [rbl_step, length_pairEncode, List.length_drop]
   omega
 
@@ -798,7 +799,7 @@ truncated sampler on strings.
   (`PolyTimeComputable.comp'`).
 - **Polynomial time.** One step at most doubles the length (`|step x| ≤ 2|x| + 4`), and from the
   second step on the state is a well-formed pair that only shrinks
-  (`StateLoop.length_pairFstD_add_pairSndD_le`), so every orbit point has length at most
+  (`length_pair_components_le`), so every orbit point has length at most
   `2|x| + 4`. The repetition host `Complexity.polyTimeComputable_iterateFind`, with `R = var` and
   orbit bound `2n + 4`, therefore makes the loop polynomial-time. Its `match` on the search
   result is split by `split` (its equation lemmas), never matched by definitional unfolding.
@@ -826,32 +827,19 @@ theorem polyTimeComputable_rejectBlocksL (E : ℕ → ℕ → Prop) [∀ a, Deci
       (((hbw.pairEncode hkw).pairEncode hpar).pairEncode (htw.pairEncode hc)),
     fun z => rbl_loop_spec E hspec (par z) (kw z) (bw z) (tw z) (c z)⟩
 
-/-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
-`t · B + j`. -/
+/-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`): the
+canonical block index `finProdFinEquiv (t, j) = j + B·t` of the block bit `j` (`Fin.castLE`). -/
 private def dla_blockPos {k B T : ℕ} (hkB : k ≤ B) (p : Fin T × Fin k) : Fin (T * B) :=
-  ⟨p.1.val * B + p.2.val, by
-    have h1 := p.1.2
-    have h2 := p.2.2
-    calc p.1.val * B + p.2.val < p.1.val * B + B := by omega
-      _ = (p.1.val + 1) * B := by ring
-      _ ≤ T * B := Nat.mul_le_mul_right _ h1⟩
+  finProdFinEquiv (p.1, Fin.castLE hkB p.2)
 
-/-- Distinct (block, bit) pairs sit at distinct coin positions (`j < k ≤ B`). -/
+/-- Distinct (block, bit) pairs sit at distinct coin positions (`finProdFinEquiv` and
+`Fin.castLE` are injective). -/
 private theorem dla_blockPos_injective {k B T : ℕ} (hkB : k ≤ B) :
-    Function.Injective (dla_blockPos (T := T) hkB) := by
-  rintro ⟨t, j⟩ ⟨t', j'⟩ h
-  have h' : t.val * B + j.val = t'.val * B + j'.val := congrArg Fin.val h
-  have hj := j.2
-  have hj' := j'.2
-  have hB : 0 < B := lt_of_lt_of_le (Nat.zero_lt_of_lt hj) hkB
-  have ht : t.val = t'.val := by
-    have e1 : (t.val * B + j.val) / B = t.val := by
-      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hB, Nat.div_eq_of_lt (by omega), zero_add]
-    have e2 : (t'.val * B + j'.val) / B = t'.val := by
-      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hB, Nat.div_eq_of_lt (by omega), zero_add]
-    rw [← e1, ← e2, h']
-  have hj2 : j.val = j'.val := by rw [ht] at h'; omega
-  rw [Fin.ext ht, Fin.ext hj2]
+    Function.Injective (dla_blockPos (T := T) hkB) := fun p p' h => by
+  have h' := finProdFinEquiv.injective (show finProdFinEquiv (p.1, Fin.castLE hkB p.2) =
+    finProdFinEquiv (p'.1, Fin.castLE hkB p'.2) from h)
+  rw [Prod.mk.injEq] at h'
+  exact Prod.ext h'.1 (Fin.castLE_injective hkB h'.2)
 
 /-- The `k`-bit prefix of block `t` of a coin string, read off the list: for `t < T` and
 `k ≤ B`, `((List.ofFn r).drop (t · B)).take k = List.ofFn (fun j => r (t · B + j))`. -/
@@ -863,12 +851,10 @@ private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B
     calc t.val * B + k ≤ t.val * B + B := by omega
       _ = (t.val + 1) * B := by ring
       _ ≤ T * B := Nat.mul_le_mul_right _ this
-  apply List.ext_getElem
-  · rw [List.length_take, List.length_drop, List.length_ofFn, List.length_ofFn]
-    omega
-  · intro j h1 h2
-    rw [List.getElem_take, List.getElem_drop, List.getElem_ofFn, List.getElem_ofFn]
-    rfl
+  rw [ofFn_drop_take r _ k hlen]
+  refine congrArg List.ofFn (funext fun j => congrArg r (Fin.ext ?_))
+  simp only [dla_blockPos, finProdFinEquiv_apply_val, Fin.coe_castLE]
+  ring
 
 /-- **Block rejection sampling is close to uniform on `E`** (lemma C4 of the chapter 2
 inventory on coin lists; the sampling clauses of [PS10, Theorems 52.3, 53.2, 61.7, 63.10]):

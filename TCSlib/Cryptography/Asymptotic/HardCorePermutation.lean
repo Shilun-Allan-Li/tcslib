@@ -307,7 +307,7 @@ theorem predProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ
   rw [predProb_def, predProb_def]
   refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
   obtain ⟨z, r⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id]
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq]
   rw [PermFamily.glHalf_f_even, glHalfBit_even]
 
 /-- **Inversion experiments at even length**: inverting `g_{m+m}` is inverting `glPad f` at
@@ -319,7 +319,7 @@ theorem invProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
   rw [invProb_def, invProb_def]
   refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
   obtain ⟨z, r⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq,
     PermFamily.glHalf_f_even, Equiv.apply_symm_apply]
   exact (P.glPad_outEquiv m).apply_eq_iff_eq
 
@@ -416,7 +416,7 @@ theorem predProb_glHalf_odd {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (((P.glPad_inEquiv m).prodCongr (Equiv.refl (Bool × ρ))).trans (snocCoins m ρ))
     fun w => ?_).symm
   obtain ⟨z, e, c⟩ := w
-  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq,
     snocCoins, Equiv.coe_fn_mk]
   rw [PermFamily.glHalf_f_odd, glHalfBit_odd P, Equiv.symm_apply_apply]
 
@@ -443,7 +443,7 @@ theorem invProb_glHalf_odd_le {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : �
   refine uprob_mono fun w hw => ?_
   obtain ⟨z, e, c⟩ := w
   simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
-    id, PermFamily.glHalf_f_odd, Equiv.apply_symm_apply] at hw ⊢
+    id_eq, PermFamily.glHalf_f_odd, Equiv.apply_symm_apply] at hw ⊢
   have hw' : P.glHalf.f (m + m + 1)
       (Fin.snoc (Fin.init (A (Fin.snoc (P.glPad_outEquiv m
           (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e) c))
@@ -467,8 +467,8 @@ at parameter `⌊n/2⌋`).
 `n^c ≤ 3^c m^c ≤ m^{c+1}` and `|ν m| < 1/m^{c+1} ≤ 1/n^c`. -/
 theorem Negligible.comp_div_two {ν : ℕ → ℝ} (hν : Negligible ν) :
     Negligible fun n => ν (n / 2) := by
-  intro c
-  obtain ⟨n₀, hn₀⟩ := hν (c + 1)
+  refine (negligible_iff _).2 fun c => ?_
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff ν).1 hν (c + 1)
   refine ⟨2 * (n₀ + 3 ^ c + 1), fun n hn => ?_⟩
   have hd : 0 < 3 ^ c := by positivity
   obtain ⟨hm, h3, hpos⟩ : n₀ ≤ n / 2 ∧ 3 ^ c ≤ n / 2 ∧ 0 < n / 2 := by
@@ -522,24 +522,38 @@ theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool)
 
 /-- **The balanced permutation is easy to compute** from an evaluator `F` of `f` on `⟨1^n, x⟩`:
 on `⟨1^n, z⟩` halve the parameter (`unaryHalf`), cut `z` after `⌊n/2⌋` bits, apply `F` to the
-first block at parameter `⌊n/2⌋` and copy the rest. -/
+first block at parameter `⌊n/2⌋` and copy the rest.
+
+**Proof sketch.** The evaluator `w ↦ F ⟨1^{⌊n/2⌋}, z.take ⌊n/2⌋⟩ ++ z.drop ⌊n/2⌋` is
+polynomial-time (`unaryHalf_poly`, `takeLen_poly`, `dropLen_poly`). On `⟨1^n, ofFn z⟩` the
+input of the family is read through its domain equivalence (`toFunFamily_domEquiv_ofFn`) and
+the output through its range equivalence (`toFunFamily_codEquiv_ofFn`,
+`toFunFamily_f_domEquiv`); the first block is `ofFn` of the restriction of `z`
+(`take_ofFn_castLE`), where `F` computes `f (⌊n/2⌋)`, and `ofFn_glHalf_f` is the same
+concatenation. -/
 theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
     (hF : PolyTimeComputable F)
     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x)) :
     P.glHalf.toFunFamily.Easy := by
   have huh : PolyTimeComputable fun w => unaryHalf (pairFstD w) :=
-    ptcComp unaryHalf_poly polyTimeComputable_pairFstD
-  refine ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
+    PolyTimeComputable.comp' unaryHalf_poly polyTimeComputable_pairFstD
+  refine (FunFamily.easy_iff _).2 ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
       ((pairSndD w).take (unaryHalf (pairFstD w)).length)) ++
       (pairSndD w).drop (unaryHalf (pairFstD w)).length,
-    (ptcComp hF (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
+    (PolyTimeComputable.comp' hF
+        (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
       (dropLen_poly huh polyTimeComputable_pairSndD), fun n z => ?_⟩
   have hFx' : ∀ n (x : Fin n → Bool),
-      F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := hFx
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+      F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := fun n x => by
+    rw [← NUPPT.advInput_eq]
+    exact hFx n x
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf_def,
     List.length_replicate]
-  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx', PermFamily.toFunFamily_f]
-  exact (P.ofFn_glHalf_f n z).symm
+  rw [← P.glHalf.toFunFamily_codEquiv_ofFn n (P.glHalf.toFunFamily.f n z),
+    P.glHalf.toFunFamily_f_domEquiv, ← P.glHalf.toFunFamily_domEquiv_ofFn n z]
+  generalize P.glHalf.toFunFamily_domEquiv n z = x
+  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx']
+  exact (P.ofFn_glHalf_f n x).symm
 
 /-- **The hard-core bit of the balanced permutation is easy to compute**: on `⟨1^n, z⟩` halve
 the parameter, cut the two blocks of `⌊n/2⌋` bits and apply the inner-product evaluator
@@ -547,12 +561,12 @@ the parameter, cut the two blocks of `⌊n/2⌋` bits and apply the inner-produc
 theorem glHalfBit_easy : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
     ∀ n (z : Fin n → Bool), H (NUPPT.advInput n (List.ofFn z)) = [glHalfBit n z] := by
   have huh : PolyTimeComputable fun w => unaryHalf (pairFstD w) :=
-    ptcComp unaryHalf_poly polyTimeComputable_pairFstD
+    PolyTimeComputable.comp' unaryHalf_poly polyTimeComputable_pairFstD
   refine ⟨fun w => ipFun (pairEncode ((pairSndD w).take (unaryHalf (pairFstD w)).length)
       (((pairSndD w).drop (unaryHalf (pairFstD w)).length).take (unaryHalf (pairFstD w)).length)),
-    ptcComp ipFun_poly ((takeLen_poly huh polyTimeComputable_pairSndD).pairEncode
+    PolyTimeComputable.comp' ipFun_poly ((takeLen_poly huh polyTimeComputable_pairSndD).pairEncode
       (takeLen_poly huh (dropLen_poly huh polyTimeComputable_pairSndD))), fun n z => ?_⟩
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf_def,
     List.length_replicate]
   rw [take_ofFn_castLE (Nat.div_le_self n 2), take_drop_ofFn (by omega), ipFun_ofFn]
   rfl
@@ -615,7 +629,7 @@ private theorem glHalfOddInv_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : Bo
     (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
     (NUPPT.reparamCoins A oddParam m c) (oddCoins A m glHalfInvPost_poly (e, c))
     (ofFn_oddCoins A m glHalfInvPost_poly e c)]
-  simp only [glHalfInvPost, owpPredPre, pairSndD_pairEncode, pairFstD_pairEncode,
+  simp only [glHalfInvPost, owpPredPre_def, pairSndD_pairEncode, pairFstD_pairEncode,
     NUPPT.inArg_layout, NUPPT.inAdvice_layout, NUPPT.runAt_reparam]
   rfl
 
@@ -629,7 +643,7 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
     (fun _ => []) (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
     (NUPPT.reparamCoins A oddParam m c) (oddCoins A m polyTimeComputable_pairSndD (e, c))
     (ofFn_oddCoins A m polyTimeComputable_pairSndD e c)]
-  simp only [owpPredPre, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
+  simp only [owpPredPre_def, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
     NUPPT.runAt_reparam]
   rfl
 

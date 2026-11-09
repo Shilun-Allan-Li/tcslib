@@ -392,7 +392,7 @@ theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUn
 (`Nat.gcd_rec`). -/
 private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
   refine ⟨Nat.mod_lt _ hN, ?_⟩
-  rw [Nat.Coprime, ← Nat.gcd_rec]
+  rw [Nat.coprime_iff_gcd_eq_one, ← Nat.gcd_rec]
   exact Nat.gcd_one_right N
 
 /-- **The total unit sampler gives a unit**: for `0 < N`, the value
@@ -1689,7 +1689,7 @@ private theorem rsa_inner_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 �
   rw [← uprob_comp_equiv (Equiv.prodCongr φ.symm (Equiv.refl (A.Coins n)))]
   apply uprob_mono
   rintro ⟨u, ω⟩ h
-  simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply, rsaCollection_f,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, rsaCollection_f,
     rsaCollection_decD] at h ⊢
   obtain ⟨x', hx', hf⟩ := h
   rw [Option.map_eq_some_iff] at hx'
@@ -1888,21 +1888,13 @@ private theorem rsa_step_i (A : NUPPT) {n : ℕ} (z : DistinctPrimes n) :
 private abbrev rsa_Aux (A : NUPPT) (n : ℕ) (z : DistinctPrimes n) : Type :=
   (ZMod (Nat.totient (z.p * z.q)))ˣ × ((ZMod (z.p * z.q))ˣ × A.Coins n)
 
-/-- Reading one coordinate of a uniform family of independent auxiliary coins is uniform:
-`Pr_{ω ∈ Π_z Aux z}[Q (ω c)] = Pr_{a ∈ Aux c}[Q a]` (`Equiv.piSplitAt`, `uprob_fst`). -/
-private theorem rsa_uprob_pi_eval (A : NUPPT) (n : ℕ) (c : DistinctPrimes n) (Q : rsa_Aux A n c → Prop) :
-    uprob (fun ω : (z : DistinctPrimes n) → rsa_Aux A n z => Q (ω c)) = uprob Q := by
-  have h := uprob_comp_equiv (Equiv.piSplitAt c (rsa_Aux A n)) (fun w => Q w.1)
-  rw [uprob_fst] at h
-  exact h
-
 /-- **Step (ii): the prime sampler** (S2): the average of `rsa_F` over the prime segment, at the
 selected pair, exceeds its average over a uniform pair by at most `2 (1/2)^n + 2n/2^n`.
 
 **Proof sketch.** S2 mapped through the selection `rsa_zOf` (`StatClose.map`; a uniform pair is
-its own selection, `rsa_zOf_self`); `rsa_F z` is a probability over the auxiliary coins
-`ω z` of a uniform family `ω ∈ Π_z Aux z` (`rsa_uprob_pi_eval`, `uprob_prod`), so
-`StatClose.abs_uprob_sub_le_prod` applies with `ω` as the auxiliary coins. -/
+its own selection, `rsa_zOf_self`); `rsa_F z` is the probability over the auxiliary coins
+`rsa_Aux A n z` of the RSA event at `z`, so the public average-switch theorem
+`uexp_le_of_statClose` applies. -/
 private theorem rsa_step_ii (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     uexp (fun s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool => rsa_F A n (rsa_zOf hn (rsa_pr n s₁))) ≤
       uexp (rsa_F A n) + (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
@@ -1911,29 +1903,14 @@ private theorem rsa_step_ii (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     funext (rsa_zOf_self hn)] at hX
   have hX' : StatClose (fun s₁ => rsa_zOf hn (rsa_pr n s₁)) (fun z : DistinctPrimes n => z)
       (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := hX
-  let R : DistinctPrimes n → ((z : DistinctPrimes n) → rsa_Aux A n z) → Prop := fun γ ω =>
-    rsa_T A n (γ.p * γ.q) ((ω γ).1 : ZMod (Nat.totient (γ.p * γ.q))).val (ω γ).2
-  have hF : ∀ z, rsa_F A n z = uprob (fun ω : (z : DistinctPrimes n) → rsa_Aux A n z => R z ω) := by
-    intro z
-    rw [rsa_uprob_pi_eval A n z (fun a => rsa_T A n (z.p * z.q)
-      (a.1 : ZMod (Nat.totient (z.p * z.q))).val a.2), uprob_prod]
-    rfl
-  have h := hX'.abs_uprob_sub_le_prod R
-  have e1 : uprob (fun w : (Fin (2 * (2 * n ^ 2 * n)) → Bool) × ((z : DistinctPrimes n) → rsa_Aux A n z) =>
-      R (rsa_zOf hn (rsa_pr n w.1)) w.2) =
-      uexp (fun s₁ => rsa_F A n (rsa_zOf hn (rsa_pr n s₁))) := by
-    rw [uprob_prod]
-    congr 1
-    funext s₁
-    rw [hF]
-  have e2 : uprob (fun w : DistinctPrimes n × ((z : DistinctPrimes n) → rsa_Aux A n z) => R w.1 w.2) =
-      uexp (rsa_F A n) := by
-    rw [uprob_prod]
-    congr 1
+  have hF : rsa_F A n = fun z => uprob (fun a : rsa_Aux A n z =>
+      rsa_T A n (z.p * z.q) (a.1 : ZMod (Nat.totient (z.p * z.q))).val a.2) := by
     funext z
-    rw [hF]
-  rw [e1, e2] at h
-  linarith [(abs_le.1 h).2]
+    rw [uprob_prod]
+    rfl
+  rw [hF]
+  exact uexp_le_of_statClose hX' (rsa_Aux A n) fun z a =>
+    rsa_T A n (z.p * z.q) (a.1 : ZMod (Nat.totient (z.p * z.q))).val a.2
 
 /-- **Inverting the RSA collection breaks the RSA assumption** [PS10, proof of Theorem 53.2]:
 for `n ≥ 2`, the inversion probability of `A` against the RSA collection is at most the RSA
@@ -2026,7 +2003,7 @@ of trapdoor permutations: clauses (1)–(4) and (6) are the data of `rsaTrapdoor
 (`rsaPermAt` [Theorem 54.3], `rsaGen`, `rsaSampler`, `rsaEval`, `rsaInv_spec`), and the
 hardness clause (5) is `rsaCollection_oneWay`. -/
 theorem rsaTrapdoor_oneWay (H : ArithmeticFP) (hR : RSAAssumption) : (rsaTrapdoor H).OneWay :=
-  rsaCollection_oneWay H hR
+  (TrapdoorCollection.oneWay_iff _).2 (rsaCollection_oneWay H hR)
 
 /-! ## RSA implies factoring [PS10, Theorem 55.2, Algorithm 55.3] -/
 
@@ -2069,7 +2046,6 @@ theorem rsaFromFactorStep_correct {n : ℕ} (z : DistinctPrimes n) {s : List Boo
     rw [hpq.2]; exact he
   have hed : e * ((e : ZMod ((listToNat s - 1) * (z.p * z.q / listToNat s - 1)))⁻¹).val ≡ 1
       [MOD Nat.totient (z.p * z.q)] := by
-    unfold Nat.ModEq
     rw [← hpq.2]
     exact mul_inv_val_modEq e _ he'
   set d := ((e : ZMod ((listToNat s - 1) * (z.p * z.q / listToNat s - 1)))⁻¹).val

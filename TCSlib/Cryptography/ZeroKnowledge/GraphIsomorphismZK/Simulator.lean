@@ -88,7 +88,9 @@ def blockPoly (V' : Strategy) : PolyExpr := .add (.add (.const 1) (.normal 1 2))
 
 /-- `blockPoly` evaluates to `blockLen`. -/
 theorem blockPoly_eval (V' : Strategy) (N : ℕ) : (blockPoly V').eval N = blockLen V' N := by
-  simp [blockPoly, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+  simp [blockPoly, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def,
+          Strategy.coinLen_eq]
 
 /-- Shadow of `giSimCoins`: `|x|` blocks of `blockLen V' |x|` bits. -/
 def simCoins (V' : Strategy) : PolyExpr :=
@@ -96,7 +98,9 @@ def simCoins (V' : Strategy) : PolyExpr :=
 
 /-- The coin polynomial evaluates to `N` blocks of `blockLen V' N` bits. -/
 theorem simCoins_eval (V' : Strategy) (N : ℕ) : (simCoins V').eval N = N * blockLen V' N := by
-  simp [simCoins, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+  simp [simCoins, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def,
+          Strategy.coinLen_eq]
 
 /-- Shadow of `giSimAttemptStr`: one attempt of [PS10, Algorithm 123.4] on the coin block
 `c = b' :: (permutation coins ++ V'`'s tape)`. -/
@@ -108,6 +112,17 @@ noncomputable def attemptStr (V' : Strategy) (x z c : List Bool) : Option (List 
   let H := encGraph (permGraph (if b' then instanceG₁ x else instanceG₀ x) π)
   if (V'.next x z rV [H]).headD false = b' then some (View.encode ⟨x, z, rV, [H, encPerm π]⟩)
   else none
+
+/-- The defining equation of `attemptStr` (its body, unfolded once). -/
+theorem attemptStr_def (V' : Strategy) (x z c : List Bool) :
+    attemptStr V' x z c =
+      (let n := instanceVertexCount x
+        let b' := c.headD false
+        let π := samplePerm n ((c.drop 1).take ((x.length + 1) ^ 2))
+        let rV := c.drop (1 + (x.length + 1) ^ 2)
+        let H := encGraph (permGraph (if b' then instanceG₁ x else instanceG₀ x) π)
+        if (V'.next x z rV [H]).headD false = b' then some (View.encode ⟨x, z, rV, [H, encPerm π]⟩)
+        else none) := rfl
 
 /-- Shadow of `giSim`: up to `n = instanceVertexCount x` attempts on consecutive coin blocks,
 the first successful view, or `[]`. -/
@@ -122,12 +137,11 @@ theorem sim_eq (V' : Strategy) (x z r : List Bool) :
 
 /-! ### An FP toolkit -/
 
-/-- Polynomial-time computability transfers along pointwise equality. -/
+/-- Polynomial-time computability transfers along pointwise equality (the reversed-equality
+form of `PolyTimeComputable.congr`). -/
 private theorem ptc_congr {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
-    (h : ∀ w, g w = f w) : PolyTimeComputable g := by
-  have : g = f := funext h
-  rw [this]
-  exact hf
+    (h : ∀ w, g w = f w) : PolyTimeComputable g :=
+  hf.congr fun w => (h w).symm
 
 /-- Bitwise exclusive-or of a word with itself is the all-`false` word of its length. -/
 theorem zipWith_xor_self (l : List Bool) : List.zipWith xor l l = List.replicate l.length false := by
@@ -240,14 +254,14 @@ noncomputable def attemptAt (V' : Strategy) (w : List Bool) (t : ℕ) : Option (
 /-- **One attempt is polynomial-time.** On the indexed layout `u = ⟨1^t, w⟩`, both the
 success test of the `t`-th attempt and its (defaulted) view are polynomial-time functions.
 
-**Proof sketch.** `V'.Efficient` gives a uniform machine `A` with `V'.next x z rV [H] =
-A.output ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨H, []⟩⟩⟩, []⟩, rV⟩` (`Strategy.ofNUPPT_next`,
+**Proof sketch.** `V'.Efficient` gives a uniform machine `A` with `V'.next x z rV [H] = A.output
+⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, ⟨H, []⟩⟩⟩, []⟩, rV⟩` (`Strategy.ofNUPPT_next`,
 `NUPPT.runAtL_eq_output_layout`), polynomial-time by `A.polyTimeComputable_output` and
 `NUPPT.polyTimeComputable_layout`. The block is `(r.drop (t · L)).take L` with `L` in unary
-(`unaryPoly_comp (blockPoly V')`, `unaryMul_poly`, `pairDropPoly`, `truncate_poly`); its
-fields are the head bit (`headBit_poly`), the permutation coins (`tail_poly`, `truncate_poly`
-at `(|x|+1)²`) and the tape (`pairDropPoly`); the permutation word is
-`polyTimeComputable_encPermFromCoins` on `⟨fst x, coins⟩`, the graph `H` is
+(`unaryPoly_comp (blockPoly V')`, `unaryMul_poly`, `pairDropPoly`, `truncate_poly`); its fields are
+the head bit (`polyTimeComputable_headD`), the permutation coins
+(`Complexity.polyTimeComputable_tail`, `truncate_poly` at `(|x|+1)²`) and the tape (`pairDropPoly`);
+the permutation word is `polyTimeComputable_encPermFromCoins` on `⟨fst x, coins⟩`, the graph `H` is
 `encPermGraphAt_poly` on `⟨1^n, ⟨G_{b'}, encPerm π⟩⟩` (`decPerm_encPerm`), the comparison is
 `polyTimeComputable_pairEq` on the two one-bit words, and the view is assembled by
 `PolyTimeComputable.pairEncode`. The public efficiency, graph-decoding, sampler, uniform-advice
@@ -278,7 +292,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
   have hb : PolyTimeComputable fun u =>
       [(coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false] :=
-    headBit_poly.comp hc
+    polyTimeComputable_headD.comp hc
   -- `(|x| + 1)²` in unary
   have hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true := by
     have := unaryPoly_comp (.normal 1 2) hx
@@ -289,7 +303,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
         (((simX (pairSndD u)).length + 1) ^ 2) := by
     have htail : PolyTimeComputable fun u =>
         (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1 := by
-      have := tail_poly.comp hc
+      have := (polyTimeComputable_tail.congr fun _ => List.drop_one).comp hc
       simpa only [List.drop_one] using this
     exact truncate_poly htail hP
   -- the verifier's tape
@@ -375,7 +389,7 @@ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
             1).take (((simX (pairSndD u)).length + 1) ^ 2))))]).headD false =
       (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
         false)] := by
-    have := polyTimeComputable_pairEq.comp ((headBit_poly.comp hmsg).pairEncode hb)
+    have := polyTimeComputable_pairEq.comp ((polyTimeComputable_headD.comp hmsg).pairEncode hb)
     refine ptc_congr this fun u => ?_
     simp
   -- the view
@@ -479,6 +493,6 @@ theorem exists_simulator (V' : Strategy) (hV' : V'.Efficient) :
   refine ⟨NUPPT.ofPolyTimeUniform hF (simCoins V'), NUPPT.ofPolyTimeUniform_uniform _ _, rfl, ?_⟩
   intro x z r
   rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [simX, simZ, simR, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 end TCSlib.Cryptography.GIZK

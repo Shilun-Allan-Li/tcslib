@@ -56,6 +56,11 @@ open Turing
 `P = ⋃ c, DTIME (n^c + 1)`. [AB09, Definition 1.13] -/
 def P : Set (Language Bool) := ⋃ c : ℕ, DTIME fun n => n ^ c + 1
 
+/-- The defining equation of `P`: `P = ⋃ c : ℕ, DTIME fun n => n ^ c + 1`. -/
+theorem P_def :
+    P =
+      (⋃ c : ℕ, DTIME fun n => n ^ c + 1) := rfl
+
 /-- Every fixed-degree polynomial time class is contained in `P`. -/
 theorem dtime_poly_subset_P (c : ℕ) : DTIME (fun n => n ^ c + 1) ⊆ P :=
   Set.subset_iUnion (fun c : ℕ => DTIME fun n => n ^ c + 1) c

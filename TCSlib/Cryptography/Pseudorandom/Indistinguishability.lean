@@ -75,7 +75,7 @@ theorem acceptProb_fst [Nonempty τ] (X : σ → γ) (D : γ → ρ → Bool) :
   let e : (σ × τ) × ρ ≃ (σ × ρ) × τ :=
     { toFun := fun w => ((w.1.1, w.2), w.1.2), invFun := fun z => ((z.1.1, z.2), z.1.2),
       left_inv := fun _ => rfl, right_inv := fun _ => rfl }
-  unfold acceptProb
+  simp only [acceptProb_def]
   exact (uprob_eq_of_equiv e (q := fun w : (σ × ρ) × τ => D (X w.1.1) w.1.2 = true)
     fun _ => Iff.rfl).trans (uprob_fst (fun y : σ × ρ => D (X y.1) y.2 = true))
 
@@ -90,8 +90,9 @@ feeds `P z c` to `D` accepts a sample of `X` with the probability that `D` accep
 of the composite sampler `(s, c) ↦ P (X s) c`. -/
 theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
     acceptProb X (fun z (c : κ × ρ) => D (P z c.1) c.2) =
-      acceptProb (fun s : σ × κ => P (X s.1) s.2) D :=
-  uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
+      acceptProb (fun s : σ × κ => P (X s.1) s.2) D := by
+  simp only [acceptProb_def]
+  exact uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
 
 /-- Overwriting one coordinate of a uniform tuple with an independent uniform value leaves
 the tuple uniform: a sampler fed `update u k x` for uniform `x` and `u` accepts with the
@@ -130,15 +131,16 @@ post-processing `P` may be randomized, with coins from `κ`. -/
 theorem distAdv_sunglassRed (P : γ → κ → δ) (X : σ → γ) (Y : τ → γ)
     (D : δ → ρ → Bool) :
     distAdv X Y (sunglassRed P D) = distAdv (pushSampler P X) (pushSampler P Y) D := by
-  unfold distAdv sunglassRed pushSampler
+  unfold sunglassRed pushSampler
+  simp only [distAdv_def]
   rw [acceptProb_bind, acceptProb_bind]
 
 /-- The sunglass lemma for a deterministic post-processing map `P`: the distinguisher
 `D ∘ P` has the advantage between `X` and `Y` that `D` has between `P ∘ X` and `P ∘ Y`.
 [Gar26, Lemma 3.2]. -/
 theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
-    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D :=
-  rfl
+    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D := by
+  simp only [distAdv_def, acceptProb_def]
 
 /-! ### Mixing over an index -/
 
@@ -155,7 +157,8 @@ theorem acceptProb_mixDist [Fintype ι] (X : σ → γ) (D : ι → γ → ρ �
   let e : σ × (ι × ρ) ≃ ι × (σ × ρ) :=
     { toFun := fun w => (w.2.1, (w.1, w.2.2)), invFun := fun v => (v.2.1, (v.1, v.2.2)),
       left_inv := fun _ => rfl, right_inv := fun _ => rfl }
-  unfold acceptProb mixDist
+  unfold mixDist
+  simp only [acceptProb_def]
   exact (uprob_eq_of_equiv e (q := fun w : ι × (σ × ρ) => D w.1 (X w.2.1) w.2.2 = true)
     fun _ => Iff.rfl).trans (uprob_prod _)
 
@@ -169,9 +172,9 @@ theorem distAdv_mixDist_eq {t : ℕ} (X : σ → γ) (Y : τ → γ) (D : Fin t 
     (P : ℕ → ℝ) (hX : ∀ k : Fin t, acceptProb X (D k) = P k)
     (hY : ∀ k : Fin t, acceptProb Y (D k) = P (k + 1)) :
     distAdv X Y (mixDist D) = |P 0 - P t| / t := by
-  unfold distAdv
+  simp only [distAdv_def]
   rw [acceptProb_mixDist, acceptProb_mixDist]
-  simp only [hX, hY, uexp, Fintype.card_fin]
+  simp only [hX, hY, uexp_def, Fintype.card_fin]
   rw [← sub_div, ← Finset.sum_sub_distrib,
     Fin.sum_univ_eq_sum_range (fun i => P i - P (i + 1)), Finset.sum_range_sub', abs_div,
     Nat.abs_cast]
@@ -182,6 +185,12 @@ theorem distAdv_mixDist_eq {t : ℕ} (X : σ → γ) (Y : τ → γ) (D : Fin t 
 independent seeds. [Gar26, Lemma 3.3]. -/
 def copies (t : ℕ) (X : σ → γ) : (Fin t → σ) → Fin t → γ :=
   fun s i => X (s i)
+
+/-- The defining equation of `copies`: `copies t X = fun s i => X (s i)`. -/
+theorem copies_def (t : ℕ) (X : σ → γ) :
+    copies t X =
+      (fun s i => X (s i) :
+        (Fin t → σ) → Fin t → γ) := rfl
 
 /-- The `k`-th hybrid of the multicopy lemma: the first `k` coordinates are copies of `Y`,
 the remaining `t - k` copies of `X`, all independent. [Gar26, proof of Lemma 3.3], the
@@ -203,6 +212,14 @@ def multicopyRed (X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ)
     γ → ((Fin t → σ) × (Fin t → τ)) × ρ → Bool :=
   fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z
     else X (c.1.1 i)) c.2
+
+/-- The defining equation of `multicopyRed`: `multicopyRed X Y t k D = fun z c => D
+(fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z else X (c.1.1 i)) c.2`. -/
+theorem multicopyRed_def (X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ) → ρ → Bool) :
+    multicopyRed X Y t k D =
+      (fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z
+        else X (c.1.1 i)) c.2 :
+        γ → ((Fin t → σ) × (Fin t → τ)) × ρ → Bool) := rfl
 
 /-- The zeroth hybrid is the `t`-product of `X`. -/
 theorem acceptProb_multicopyHybrid_zero [Nonempty τ] (X : σ → γ) (Y : τ → γ) (t : ℕ)
@@ -260,7 +277,7 @@ theorem acceptProb_multicopyRed_right [Nonempty τ] (X : σ → γ) (Y : τ → 
   congr 1
   funext w i
   simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
-    Equiv.coe_refl, Equiv.prodComm_apply, Prod.map, Prod.fst_swap, Prod.snd_swap, id]
+    Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, Prod.snd_swap, id_eq]
   rcases lt_trichotomy (i : ℕ) k with h | h | h
   · simp [h, Nat.lt_succ_of_lt h, h.ne]
   · simp [h]
@@ -281,7 +298,7 @@ theorem exists_multicopyRed_ge [Nonempty σ] [Nonempty τ] (X : σ → γ) (Y : 
   obtain ⟨k, hk, hgap⟩ :=
     exists_hybrid_gap (fun i => acceptProb (multicopyHybrid X Y t i) D) ht
   refine ⟨k, hk, ?_⟩
-  unfold distAdv
+  simp only [distAdv_def]
   rw [acceptProb_multicopyRed_left X Y hk, acceptProb_multicopyRed_right X Y hk,
     ← acceptProb_multicopyHybrid_zero X Y, ← acceptProb_multicopyHybrid_self X Y]
   exact hgap
@@ -303,7 +320,7 @@ theorem distAdv_multicopyAvgRed [Nonempty σ] [Nonempty τ] (X : σ → γ) (Y :
     distAdv X Y (multicopyAvgRed X Y t D) = distAdv (copies t X) (copies t Y) D / t := by
   rw [multicopyAvgRed, distAdv_mixDist_eq X Y _ (fun i => acceptProb (multicopyHybrid X Y t i) D)
     (fun k => acceptProb_multicopyRed_left X Y k.isLt D)
-    (fun k => acceptProb_multicopyRed_right X Y k.isLt D), distAdv,
+    (fun k => acceptProb_multicopyRed_right X Y k.isLt D), distAdv_def,
     acceptProb_multicopyHybrid_zero, acceptProb_multicopyHybrid_self]
 
 end TCSlib.Cryptography

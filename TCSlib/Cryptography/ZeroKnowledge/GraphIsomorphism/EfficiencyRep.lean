@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
 
 set_option maxHeartbeats 0
@@ -59,7 +60,7 @@ open Complexity Turing Complexity.StateLoop
 theorem length_pairSndD_lt {w : List Bool} (h : w ≠ []) : (pairSndD w).length < w.length := by
   cases hw : pairDecode w with
   | none =>
-    simp only [pairSndD, hw, Option.map_none, Option.getD_none, List.length_nil]
+    simp only [pairSndD_eq, hw, Option.map_none, Option.getD_none, List.length_nil]
     exact List.length_pos_of_ne_nil h
   | some ab =>
     obtain ⟨a, b⟩ := ab
@@ -191,7 +192,7 @@ theorem peelLoop_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f)
         pairEncode (f^[k] w) (List.replicate k true) := by
     intro w k
     induction k with
-    | zero => rfl
+    | zero => exact (orbit_zero _ _ _).trans rfl
     | succ k ih =>
       rw [orbit_succ, ih, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode,
         Function.iterate_succ_apply', List.replicate_succ]
@@ -244,7 +245,8 @@ theorem msgCount_encodeMsgs (hist : List (List Bool)) : msgCount (Strategy.encod
 /-- The number of messages in unary is polynomial-time (`peelLoop_poly`). -/
 theorem msgCount_poly : PolyTimeComputable fun w => List.replicate (msgCount w) true :=
   ptc_congr (polyTimeComputable_pairSndD.comp
-    (peelLoop_poly polyTimeComputable_pairSndD length_pairSndD_le isNil_poly dec_sndD_nil))
+    (peelLoop_poly polyTimeComputable_pairSndD length_pairSndD_le polyTimeComputable_isNil
+        dec_sndD_nil))
     fun w => by simp [msgCount]
 
 /-- Peeling two messages at a time until at most one is left shortens every unstopped word. -/
@@ -302,7 +304,8 @@ theorem halfLoop_poly : PolyTimeComputable fun w =>
     pairEncode ((fun v => pairSndD (pairSndD v))^[halfCount w] w) (List.replicate (halfCount w) true) :=
   peelLoop_poly (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
     (fun w => (length_pairSndD_le _).trans (length_pairSndD_le w))
-    (or_poly isNil_poly (isNil_poly.comp polyTimeComputable_pairSndD)) dec_sndD_two
+    (polyTimeComputable_or polyTimeComputable_isNil
+        (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)) dec_sndD_two
 
 /-- Peeling until the second component is empty shortens every unstopped word. -/
 theorem dec_sndD_last : ∀ w : List Bool, decide (pairSndD w = []) = false → (pairSndD w).length < w.length := by
@@ -336,18 +339,30 @@ theorem lastMsg_encodeMsgs (hist : List (List Bool)) :
 /-- The last message of an encoded history is polynomial-time (`peelLoop_poly`). -/
 theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps w] w) :=
   ptc_congr (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp
-    (peelLoop_poly polyTimeComputable_pairSndD length_pairSndD_le (isNil_poly.comp polyTimeComputable_pairSndD)
+    (peelLoop_poly polyTimeComputable_pairSndD length_pairSndD_le
+        (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)
       dec_sndD_last))) fun w => by simp [lastSteps]
 
 /-! ### Unary multiplication and coin blocks -/
 
-/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time
-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
+/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time.
+Pair the total projections, apply `BinArith.mulU`, and normalize by unary length
+(`BinArith.length_mulU`); public projection equations give `[]` on malformed words. -/
 theorem unaryMul_poly : PolyTimeComputable fun z => match pairDecode z with
     | some (u, v) => List.replicate (u.length * v.length) true
     | none => [] := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  exact ⟨M, c, 2, hM⟩
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp
+      (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD))
+  refine h.congr fun z => ?_
+  cases hz : pairDecode z with
+  | none =>
+    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
+      Option.map_none, Option.getD_none, List.length_nil, Nat.zero_mul, List.replicate_zero]
+  | some ab =>
+    rcases ab with ⟨a, b⟩
+    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
+      Option.map_some, Option.getD_some]
 
 /-- The product of two unary counts given by polynomial-time maps. -/
 theorem unaryMul_comp {f g : List Bool → ℕ} (hf : PolyTimeComputable fun w => List.replicate (f w) true)
@@ -385,7 +400,7 @@ theorem iterUnary_poly {step : List Bool → List Bool} (hstep : PolyTimeComputa
         pairEncode ((fun s => step (pairEncode x₀ s))^[k] (pairSndD x₀)) (List.replicate k true) := by
     intro x₀ k
     induction k with
-    | zero => rfl
+    | zero => exact (orbit_zero _ _ _).trans rfl
     | succ k ih =>
       rw [orbit_succ, ih, pairSndD_pairEncode, pairFstD_pairEncode, pairFstD_pairEncode,
         pairSndD_pairEncode, Function.iterate_succ_apply', List.replicate_succ]
@@ -434,7 +449,8 @@ theorem cnt_poly : PolyTimeComputable fun w => List.replicate (msgCount (argM w)
 /-- The test `|hist| < |x|` (the protocol is not over), as the negated length comparison of
 `1^{|x|}` with the message count. -/
 theorem ltLen_poly : PolyTimeComputable fun w => [decide (msgCount (argM w) < (NUPPT.inParam w).length)] := by
-  refine ptc_congr (not_poly (lenLe_comp cnt_poly NUPPT.polyTimeComputable_inParam)) fun w => ?_
+  refine ptc_congr (polyTimeComputable_not
+      (lenLe_comp cnt_poly NUPPT.polyTimeComputable_inParam)) fun w => ?_
   simp only [List.length_replicate]
   exact congrArg (fun b => [b]) (by rw [← decide_not]; exact decide_eq_decide.2 not_le.symm)
 
@@ -479,9 +495,10 @@ theorem gniStep_poly : PolyTimeComputable gniStep := by
     ptc_congr ((polyTimeComputable_pairDropPoly gniBlock).comp (hu.pairEncode hR)) fun st => by simp
   have hbit : PolyTimeComputable fun st => [(pairSndD (pairSndD (pairSndD st))).headD false &&
       decide ((pairFstD (pairFstD (pairSndD st))).headD false = (pairFstD (pairSndD (pairSndD st))).headD false)] :=
-    polyTimeComputable_and (headBit_poly.comp hB)
+    polyTimeComputable_and (polyTimeComputable_headD.comp hB)
       (ptc_congr (polyTimeComputable_pairEq.comp
-        ((headBit_poly.comp (polyTimeComputable_pairFstD.comp hM)).pairEncode (headBit_poly.comp hR)))
+        ((polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp hM)).pairEncode
+            (polyTimeComputable_headD.comp hR)))
         fun st => by simp)
   exact (polyTimeComputable_pairSndD.comp hM).pairEncode (hdrop.pairEncode hbit)
 
@@ -529,7 +546,7 @@ theorem gniIter_bound (x₀ : List Bool) (k : ℕ) :
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · have := length_pairSndD_le x₀
-    simp only [Function.iterate_zero, id]
+    simp only [Function.iterate_zero, id_eq]
     omega
   · obtain ⟨b, hb⟩ := gniIter_shape x₀ k hk
     rw [hb, length_pairEncode, length_pairEncode, List.length_singleton]
@@ -597,10 +614,13 @@ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   have hsel : PolyTimeComputable fun w =>
       if (coinBlock (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).headD false
         then pairSndD (argX w) else pairFstD (argX w) :=
-    polyTimeComputable_ite (headBit_poly.comp hri) w₁_poly w₀_poly
+    polyTimeComputable_ite (polyTimeComputable_headD.comp hri) w₁_poly w₀_poly
   have hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w))
       (coinBlock (gniBlock.eval (NUPPT.inParam w).length) (msgCount (argM w)) (NUPPT.inCoins w)).tail :=
-    ptc_congr (sampleStr_poly.comp (w₀_poly.pairEncode (tail_poly.comp hri))) fun w => by simp
+    ptc_congr (sampleStr_poly.comp
+        (w₀_poly.pairEncode
+            ((polyTimeComputable_tail.congr fun _ => List.drop_one).comp
+                hri))) fun w => by simp
   have hmsg := relabel_poly hsel hσ
   have hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)] := wellFormed_poly.comp argX_poly
   have hverdict := polyTimeComputable_and hwf gniScan_poly

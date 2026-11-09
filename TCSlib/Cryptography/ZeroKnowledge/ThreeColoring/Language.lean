@@ -103,6 +103,10 @@ instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColori
 /-- A graph is 3-colourable when it has a proper 3-colouring [PS10, §4.7] (Def-124.f, typed). -/
 def ThreeColorable {n : ℕ} (G : Graph n) : Prop := ∃ c, ProperColoring G c
 
+/-- The defining property of `ThreeColorable`: `G` has a proper 3-colouring. -/
+theorem threeColorable_iff {n : ℕ} (G : Graph n) : ThreeColorable G ↔ ∃ c, ProperColoring G c :=
+  Iff.rfl
+
 /-- The graph of a Mathlib simple graph on `Fin n` as a Boolean relation. -/
 def Graph.ofSimpleGraph {n : ℕ} (H : SimpleGraph (Fin n)) [DecidableRel H.Adj] : Graph n :=
   fun u v => decide (H.Adj u v)
@@ -169,6 +173,12 @@ edge and makes the graph non-colourable, as it should. -/
 def edgeList {n : ℕ} (G : Graph n) : List (Fin n × Fin n) :=
   (List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2
 
+/-- The defining equation of `edgeList`: `edgeList G = (List.finRange n ×ˢ List.finRange n).filter
+fun p => G p.1 p.2`. -/
+theorem edgeList_def {n : ℕ} (G : Graph n) :
+    (edgeList G : List (Fin n × Fin n)) =
+      ((List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2) := rfl
+
 /-- The number `m` of (ordered) edge pairs of `G`, written `|E|` in the docstrings of
 `ThreeColoring/` — for a symmetric loopless graph twice the `|E| = m` of
 [PS10, Protocol 127.5] (see `edgeList`; run-3 audit P11-3). -/
@@ -182,6 +192,10 @@ theorem mem_edgeList_iff {n : ℕ} (G : Graph n) (p : Fin n × Fin n) :
 
 /-- The edge of index `e : Fin |E|`. -/
 def edgeOf {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : Fin n × Fin n := (edgeList G).get e
+
+/-- The defining equation of `edgeOf`: `edgeOf G e = (edgeList G).get e`. -/
+theorem edgeOf_eq {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : edgeOf G e = (edgeList G).get e :=
+  rfl
 
 /-- The endpoints of `edgeOf G e` are adjacent. -/
 theorem edgeOf_adj {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) :
@@ -197,6 +211,11 @@ theorem exists_edgeOf_eq {n : ℕ} (G : Graph n) {u v : Fin n} (h : G u v = true
 /-- The edge of the (arbitrary) index `e : ℕ`, reduced modulo `|E|`; `none` iff `E = ∅`
 (the total decoding of the verifier's challenge). -/
 def edgeAt {n : ℕ} (G : Graph n) (e : ℕ) : Option (Fin n × Fin n) := (edgeList G)[e % edgeCount G]?
+
+/-- The defining equation of `edgeAt`: `edgeAt G e = (edgeList G)[e % edgeCount G]?`. -/
+theorem edgeAt_def {n : ℕ} (G : Graph n) (e : ℕ) :
+    (edgeAt G e : Option (Fin n × Fin n)) =
+      ((edgeList G)[e % edgeCount G]?) := rfl
 
 /-- On an in-range index `edgeAt` is `edgeOf`. -/
 theorem edgeAt_eq_some_edgeOf {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) :
@@ -270,8 +289,18 @@ theorem exp_neg_le_inv_two_pow (n : ℕ) : Real.exp (-(n : ℝ)) ≤ (2 : ℝ)�
 /-- The two-bit encoding of a colour (`encColoring` of a one-vertex colouring). -/
 def encColor (a : Fin 3) : List Bool := encColoring fun _ : Fin 1 => a
 
+/-- The defining equation of `encColor`: `encColor a = encColoring fun _ : Fin 1 => a`. -/
+theorem encColor_def (a : Fin 3) :
+    encColor a =
+      (encColoring fun _ : Fin 1 => a) := rfl
+
 /-- The total decoding of a colour from a string (`decColoring` at one vertex). -/
 def decColor (w : List Bool) : Fin 3 := decColoring 1 w 0
+
+/-- The defining equation of `decColor`: `decColor w = decColoring 1 w 0`. -/
+theorem decColor_def (w : List Bool) :
+    decColor w =
+      (decColoring 1 w 0) := rfl
 
 /-- Decoding an encoded colour gives the colour back. -/
 @[simp] theorem decColor_encColor (a : Fin 3) : decColor (encColor a) = a :=
@@ -282,11 +311,17 @@ zeros. The value committed to by the prover of [PS10, Protocol 127.5] at securit
 `n`. -/
 def padColor (n : ℕ) (a : Fin 3) : Fin n → Bool := padFin n (encColor a)
 
+/-- The defining equation of `padColor`: `padColor n a = padFin n (encColor a)`. -/
+theorem padColor_def (n : ℕ) (a : Fin 3) :
+    padColor n a =
+      (padFin n (encColor a)) := rfl
+
 /-- The two-bit encodings of distinct colours differ in one of the two bits. -/
 theorem encColor_getD_ne {a b : Fin 3} (hab : a ≠ b) :
     (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨
       (encColor a).getD 1 false ≠ (encColor b).getD 1 false := by
   revert a b
+  simp only [encColor_def, encColoring_eq]
   decide
 
 /-- Padding to `n ≥ 2` bits is injective on colours. -/
@@ -295,7 +330,7 @@ theorem padColor_injective {n : ℕ} (hn : 2 ≤ n) : Function.Injective (padCol
   by_contra hab
   have h0 := congrFun h ⟨0, by omega⟩
   have h1 := congrFun h ⟨1, by omega⟩
-  simp only [padColor, padFin] at h0 h1
+  simp only [padColor, padFin_def] at h0 h1
   rcases encColor_getD_ne hab with hne | hne
   · exact hne h0
   · exact hne h1
@@ -306,6 +341,12 @@ theorem padColor_injective {n : ℕ} (hn : 2 ≤ n) : Function.Injective (padCol
 position `t k + j`), the first accepted value in `Fin m` (`rejectionSample`, D10). -/
 def sampleIdx (m k T : ℕ) (r : List Bool) : Option (Fin m) :=
   rejectionSample m k T fun t j => r.getD (t * k + j) false
+
+/-- The defining equation of `sampleIdx`: `sampleIdx m k T r = rejectionSample m k T fun t j =>
+r.getD (t * k + j) false`. -/
+theorem sampleIdx_def (m k T : ℕ) (r : List Bool) :
+    sampleIdx m k T r =
+      (rejectionSample m k T fun t j => r.getD (t * k + j) false) := rfl
 
 /-- The defining equation of `sampleIdx`: `rejectionSample` on the trials
 `(t, j) ↦ r.getD (t k + j) false`. -/
@@ -322,12 +363,24 @@ the identity on failure (D10). -/
 noncomputable def samplePerm3 (T : ℕ) (r : List Bool) : Equiv.Perm (Fin 3) :=
   ((sampleIdx 6 3 T r).map perm3Equiv).getD 1
 
+/-- The defining equation of `samplePerm3`: `samplePerm3 T r =
+((sampleIdx 6 3 T r).map perm3Equiv).getD 1`. -/
+theorem samplePerm3_def (T : ℕ) (r : List Bool) :
+    samplePerm3 T r =
+      (((sampleIdx 6 3 T r).map perm3Equiv).getD 1) := rfl
+
 /-- The verifier's random edge `e ← E` of [PS10, Protocol 127.5] as an index in `[m]`: `T`
 rejection trials of `k = Nat.size m` bits (for `m > 0`, `m < 2^k ≤ 2m`, so each trial succeeds
 with probability `≥ 1/2`; for `m = 0` the sampler returns the default), the index `0` on
 failure (D10). -/
 def sampleEdgeIdx (m T : ℕ) (r : List Bool) : ℕ :=
   ((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0
+
+/-- The defining equation of `sampleEdgeIdx`: `sampleEdgeIdx m T r =
+((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0`. -/
+theorem sampleEdgeIdx_def (m T : ℕ) (r : List Bool) :
+    sampleEdgeIdx m T r =
+      (((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0) := rfl
 
 /-- With at least one edge the sampled index is in range. -/
 theorem sampleEdgeIdx_lt {m : ℕ} (hm : 0 < m) (T : ℕ) (r : List Bool) : sampleEdgeIdx m T r < m := by
@@ -417,7 +470,7 @@ theorem statClose_samplePerm3 (T : ℕ) :
 
 **Proof sketch.** `statClose_rejectionSample m (Nat.size m) T` with `m ≤ 2^{size m}`
 (`Nat.lt_size_self`) gives closeness `(1 - m/2^{size m})^T`; since `2^{size m} ≤ 2m` for
-`m ≥ 1` (`Nat.size_le`, `Nat.lt_size`), `1 - m/2^{size m} ≤ 1/2` and `pow_le_pow_left₀`;
+`m ≥ 1` (`two_pow_size_le_two_mul`), `1 - m/2^{size m} ≤ 1/2` and `pow_le_pow_left₀`;
 the tape-to-trials map is the curried `finProdFinEquiv` (`StatClose.comp_equiv_left`), and
 `sampleEdgeIdx` is `Fin.val` of the sampler's `getD ⟨0, hm⟩`. -/
 theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
@@ -425,14 +478,7 @@ theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
         (⟨sampleEdgeIdx m T (List.ofFn r), sampleEdgeIdx_lt hm T _⟩ : Fin m))
       (id : Fin m → Fin m) ((1 / 2 : ℝ) ^ T) := by
   have hk : m ≤ 2 ^ Nat.size m := (Nat.lt_size_self m).le
-  have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
-  have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
-  have h2 : 2 ^ Nat.size m ≤ 2 * m := by
-    have : 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
-      rw [← pow_succ']
-      congr 1
-      omega
-    omega
+  have h2 : 2 ^ Nat.size m ≤ 2 * m := two_pow_size_le_two_mul hm
   have h := (statClose_rejectionSample m (Nat.size m) T hm hk ⟨0, hm⟩).comp_equiv_left
     (tapeEquiv T (Nat.size m))
   have h2k : (0 : ℝ) < 2 ^ Nat.size m := by positivity

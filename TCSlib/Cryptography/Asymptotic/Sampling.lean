@@ -249,7 +249,7 @@ distance bound `distAdv_le_statDist` [Gar26, Lemma 3.1], in the form used by eve
 theorem distAdv_le_of_statClose {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ]
     (X : σ → γ) (Y : τ → γ) {δ : ℝ} (h : StatClose X Y δ) (D : γ → ρ → Bool) :
     distAdv X Y D ≤ δ := by
-  unfold distAdv acceptProb
+  simp only [distAdv_def, acceptProb_def]
   exact h.abs_uprob_sub_le_prod fun g r => D g r = true
 
 /-- Closeness bounds add under independent products: if `X` is `δ`-close to `X'` and `Y` is
@@ -272,6 +272,43 @@ theorem StatClose.prod {σ σ' τ τ' γ γ' : Type*} [Fintype σ] [Fintype σ']
 
 end StatClose
 
+/-- **Averages along close laws** (the conditional-expectation step of the reductions): if `X`
+is `δ`-close to `Y` in a finite type `γ`, the average of `c ↦ Pr[Q c]` (a probability over
+auxiliary coins `Aux c` depending on `c`) under `X` exceeds its average under `Y` by at most
+`δ`: `E_s Pr[Q (X s)] ≤ E_t Pr[Q (Y t)] + δ`. The seed types `σ`, `τ` may be empty.
+
+**Proof sketch.** Read `Pr[Q c]` as a probability over a uniform family
+`ω ∈ Π_c Aux c` at the coordinate `c` (`Equiv.piSplitAt`, `uprob_fst`), so both averages are
+probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
+`ω` as the auxiliary coins. -/
+theorem uexp_le_of_statClose {σ τ γ : Type*}
+    [Fintype σ] [Fintype τ] [Fintype γ] [DecidableEq γ]
+    {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+    (Aux : γ → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)]
+    (Q : ∀ c, Aux c → Prop) :
+    uexp (fun s => uprob (Q (X s))) ≤
+      uexp (fun t => uprob (Q (Y t))) + δ := by
+  have hpi : ∀ c, uprob (Q c) = uprob (fun ω : (∀ c', Aux c') => Q c (ω c)) := by
+    intro c
+    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
+    rw [uprob_fst] at h
+    exact h.symm
+  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
+  have e1 : uprob (fun w : σ × (∀ c', Aux c') => Q (X w.1) (w.2 (X w.1))) =
+      uexp (fun s => uprob (Q (X s))) := by
+    rw [uprob_prod]
+    congr 1
+    funext s
+    rw [hpi]
+  have e2 : uprob (fun w : τ × (∀ c', Aux c') => Q (Y w.1) (w.2 (Y w.1))) =
+      uexp (fun t => uprob (Q (Y t))) := by
+    rw [uprob_prod]
+    congr 1
+    funext t
+    rw [hpi]
+  rw [e1, e2] at hh
+  linarith [(abs_le.1 hh).2]
+
 /-! ### Equal fibres push uniform to uniform (C5) -/
 
 /-- A map all of whose fibres have the same positive size `c` pushes the uniform distribution
@@ -284,7 +321,7 @@ squaring a uniform unit, the squaring map being `4`-to-`1` on `Z_N^*` for `N = p
 theorem pushesUniform_of_card_fiber {Ω γ : Type*} [Fintype Ω] [Fintype γ] [DecidableEq γ]
     (π : Ω → γ) {c : ℕ} (hc : 0 < c)
     (hfib : ∀ g : γ, (univ.filter fun ω => π ω = g).card = c) : HardcoreBit.PushesUniform π := by
-  intro F
+  refine (HardcoreBit.pushesUniform_iff π).2 fun F => ?_
   have hsum : ∑ ω, F (π ω) = (c : ℝ) * ∑ g, F g := by
     rw [← Finset.sum_fiberwise' univ π F, mul_sum]
     refine sum_congr rfl fun g _ => ?_
@@ -293,7 +330,7 @@ theorem pushesUniform_of_card_fiber {Ω γ : Type*} [Fintype Ω] [Fintype γ] [D
     rw [← card_univ, card_eq_sum_card_fiberwise (f := π) (t := univ) (fun _ _ => mem_univ _)]
     simp only [hfib, sum_const, card_univ, smul_eq_mul, mul_comm]
   have hpos : (c : ℝ) ≠ 0 := by exact_mod_cast hc.ne'
-  simp only [uexp, hsum, hcard, Nat.cast_mul]
+  simp only [uexp_def, hsum, hcard, Nat.cast_mul]
   rw [mul_div_mul_left _ _ hpos]
 
 /-- Pigeonhole for fibres: if every fibre of `π` has at most `c` elements and the domain has
@@ -326,6 +363,12 @@ theorem pushesUniform_of_card_fiber_le {Ω γ : Type*} [Fintype Ω] [Fintype γ]
 /-- The number with the given binary digits (most significant first). -/
 def bitsToNat {k : ℕ} (b : Fin k → Bool) : ℕ :=
   (List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0
+
+/-- The defining equation of `bitsToNat`: `bitsToNat b = (List.ofFn b).foldl
+(fun a c => 2 * a + (if c then 1 else 0)) 0`. -/
+theorem bitsToNat_def {k : ℕ} (b : Fin k → Bool) :
+    (bitsToNat b : ℕ) =
+      ((List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0) := rfl
 
 /-- **The binary fold with an accumulator**: the fold of `listToNat` started at `a` is
 `a · 2^{|l|}` plus the fold started at `0`,
@@ -397,7 +440,7 @@ theorem uprob_bitsToNat_lt {m k : ℕ} (hk : m ≤ 2 ^ k) :
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
   rw [show (fun b : Fin k → Bool => bitsToNat b < m) = fun b => (bitsEquiv k b).val < m from rfl,
-    uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m), uprob, Fintype.card_fin,
+    uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m), uprob_def, Fintype.card_fin,
     Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_fin]
   push_cast
   rfl
@@ -414,6 +457,12 @@ theorem two_pow_size_le_two_mul {m : ℕ} (hm : 0 < m) : 2 ^ Nat.size m ≤ 2 * 
 /-- One rejection trial: `k` bits read as a number, accepted iff below `m`. -/
 def uniformFromBits (m k : ℕ) (b : Fin k → Bool) : Option (Fin m) :=
   if h : bitsToNat b < m then some ⟨_, h⟩ else none
+
+/-- The defining equation of `uniformFromBits`: `uniformFromBits m k b = if h : bitsToNat b < m then
+some ⟨_, h⟩ else none`. -/
+theorem uniformFromBits_def (m k : ℕ) (b : Fin k → Bool) :
+    uniformFromBits m k b =
+      (if h : bitsToNat b < m then some ⟨_, h⟩ else none) := rfl
 
 /-- A trial yields `i` exactly when the bits read as `i`. -/
 theorem uniformFromBits_eq_some_iff {m k : ℕ} (b : Fin k → Bool) (i : Fin m) :
@@ -609,7 +658,8 @@ theorem statClose_firstHit [DecidableEq α] [Nonempty α] (T : ℕ) {d : α} (hd
   simp only [uprob_true, if_true, and_true] at htot
   have hideal : uprob (fun e : {a // E a} => S e.val) =
       ((univ.filter fun a => E a ∧ S a).card : ℝ) / (univ.filter E).card := by
-    rw [uprob, Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S), Nat.card_eq_fintype_card,
+    rw [uprob_def, Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S),
+        Nat.card_eq_fintype_card,
       Fintype.card_subtype, Fintype.card_subtype]
   rw [h1, hideal]
   -- arithmetic: with `N = |E|`, `M = |E ∩ S|`, `q N = 1 - f`, the difference is `f ([d ∈ S] - M/N)`
@@ -653,6 +703,12 @@ position `i ∈ [m]` of [PS10, Theorem 35.1] and of the residues of [PS10, §2.6
 def rejectionSample (m k T : ℕ) (b : Fin T → Fin k → Bool) : Option (Fin m) :=
   (List.finRange T).findSome? fun t => uniformFromBits m k (b t)
 
+/-- The defining equation of `rejectionSample`: `rejectionSample m k T b =
+(List.finRange T).findSome? fun t => uniformFromBits m k (b t)`. -/
+theorem rejectionSample_def (m k T : ℕ) (b : Fin T → Fin k → Bool) :
+    rejectionSample m k T b =
+      ((List.finRange T).findSome? fun t => uniformFromBits m k (b t)) := rfl
+
 /-- The rejection sampler fails exactly when every trial fails. -/
 theorem rejectionSample_eq_none_iff (m k T : ℕ) (b : Fin T → Fin k → Bool) :
     rejectionSample m k T b = none ↔ ∀ t, uniformFromBits m k (b t) = none := by
@@ -669,7 +725,7 @@ theorem map_rejectionSample_eq_firstHit {m k T : ℕ} (hk : m ≤ 2 ^ k) (b : Fi
   rw [List.map_findSome?]
   congr 1
   funext t
-  simp only [Function.comp, uniformFromBits, bitsEquiv_val]
+  simp only [Function.comp_apply, uniformFromBits, bitsEquiv_val]
   split_ifs <;> rfl
 
 /-- Lemma C4 for the rejection sampler: conditioned on success the output is uniform — any two

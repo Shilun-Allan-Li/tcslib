@@ -173,10 +173,10 @@ theorem glPad_sample_runAtL (m : PolyExpr)
     (n : ℕ) (i r : List Bool) :
     (F.glPad m henc).sample.runAtL n i r =
       pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
-  simp only [glPad, NUPPT.runAtL, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
-    glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform,
+    glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
-    NUPPT.coinLen]
+    NUPPT.coinLen_eq]
 
 variable {F} in
 /-- Unfolding: the decoder of the padded collection is `glPadDecode` at the padding length
@@ -185,8 +185,9 @@ theorem glPad_decD_eq (m : PolyExpr)
     (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
     (i : List Bool) : (F.glPad m henc).decD i = glPadDecode F i (F.encD i default).length := by
   funext w
-  unfold Collection.glPad glPadDecode
+  unfold Collection.glPad
   dsimp only
+  rw [glPadDecode_def]
   cases pairDecode w with
   | none => rfl
   | some ab =>
@@ -360,7 +361,7 @@ theorem OneWay.glPad_hardCore {F : Collection} (m : PolyExpr)
     refine ⟨_, glColl_negligible F m (fun n r => (F.encD (F.index n r) default).length)
       (fun n r => henc n r default) henc A (fun B => ?_), fun n => hmax _⟩
     have key := (OneWay.glPad m henc h).hard B
-    unfold Collection.invProbAt at key
+    simp only [Collection.invProbAt_eq] at key
     simp only [glPad_decD_eq] at key
     exact key
 
