@@ -124,9 +124,7 @@ tape by $f$, and placing its head at $p$, the symbol scanned by register $r$ is 
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{4}
-For Boolean words $\mathrm{pre}$ and $w$ and bits $b,b'$, overwrite the tape storing
-$\mathrm{pre}\mathbin{+}b\mathbin{+}w$ at cell $|\mathrm{pre}|$ with $b'$. The
-resulting tape is exactly the tape storing $\mathrm{pre}\mathbin{+}b'\mathbin{+}w$.
+Using juxtaposition for concatenation, let $\mathrm{pre}$ and $w$ be Boolean words and $b,b'$ bits. If a tape stores $\mathrm{pre}bw$, overwriting the cell at position $|\mathrm{pre}|$ with $b'$ makes it store $\mathrm{pre}b'w$.
 \end{lemma}
 
 \begin{lemma}[Appending a Bit to a Tape]
@@ -167,15 +165,7 @@ leaves tape $r$ unchanged and moves its head one cell right, entering $n$.
 \leanok
 \uses{Complexity.LogProg.apply_regAct, Complexity.LogProg.incCAct, Complexity.LogProg.incW, Complexity.LogProg.regCfg, Complexity.LogProg.regCfg_read, Complexity.LogProg.regCfg_state, Complexity.LogProg.rrun, Complexity.LogProg.rrun_add, Complexity.LogProg.rrun_one, Complexity.LogProg.rstep_noncall, Complexity.LogProg.update_bufferTape_cons, Complexity.LogProg.update_bufferTape_end, Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step}
 \difficulty{6}
-Let $P$ be a register program with oracle, and suppose its transition at label $c_C$ is
-the carry-in action for incrementing register $r$, with the next state determined by the
-scanned bit; suppose also that $c_C$ is not an oracle-call label. For any configuration
-$c$ and Boolean words $w$ and $pre$, there are a time $T$ and an integer head position
-$p$ such that $-1\le p<|pre\mathbin{+}incW(w)|$, and the run from state $c_C$, with
-tape $pre\mathbin{+}w$ and head at $|pre|$, reaches state $c_B$ with tape
-$pre\mathbin{+}incW(w)$ and head at $p$. At every earlier time, the state is $c_C$, the
-tape is some word $f$, and the head position $q$ satisfies $|pre|\le q\le
-|pre\mathbin{+}w|$.
+Using juxtaposition for concatenation, let $P$ be a register program with an oracle, and suppose its transition at label $c_C$ is the carry-in action for incrementing register $r$, with the next state determined by the scanned bit; assume $c_C$ is not an oracle-call label. For any configuration $c$ and Boolean words $w$ and $\mathrm{pre}$, there are a time $T$ and head position $p$ with $-1\le p<|\mathrm{pre}\,\mathrm{incW}(w)|$ such that the run from state $c_C$, with tape contents $\mathrm{pre}w$ and head at $|\mathrm{pre}|$, reaches state $c_B$ with tape contents $\mathrm{pre}\mathrm{incW}(w)$ and head at $p$. At every earlier time, the state is $c_C$, the tape contains some word $f$, and the head position $q$ satisfies $|\mathrm{pre}|\le q\le|\mathrm{pre}w|$.
 \end{lemma}
 
 \begin{lemma}[Run of the increment carry phase]

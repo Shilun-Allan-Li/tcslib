@@ -105,11 +105,11 @@ For each natural number $L$, the power-table time is $17L+8$.
 \label{Light.PowTable.Filled}
 \leanok
 \uses{Light.SameOutside, Light.State, Light.frame}
-A state satisfies the filled power-table condition for an initial memory $[?25lμ$,
-destination $dst$, length $L$, base $b$, list $t$, and index $j$ if there is a memory
-$[?25lμ'$ such that its location map is the frame formed from $dst,L,b,j,b^j,t$, its
-memory map is $[?25lμ'$, every cell $dst+i$ for $i<j$ contains $b^i$, and $[?25lμ'$
-agrees with $[?25lμ$ outside the destination region of length $L$.
+For initial memory $\mu$, destination $dst$, table length $L$, base $b$, a list $t$ of
+additional local values, and index $j$, the filled power-table condition on a state means
+that for some memory $\mu\prime$ the local frame is
+$[dst,L,b,j,b^j]$ followed by $t$, every cell $dst+i$ with $i<j$ contains $b^i$, and
+$\mu\prime$ agrees with $\mu$ outside the destination interval of length $L$.
 \end{definition}
 
 \begin{theorem}[Power table construction]

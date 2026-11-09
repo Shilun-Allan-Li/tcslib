@@ -162,16 +162,7 @@ that nested projection is empty, the step leaves $S$ unchanged.
 \leanok
 \uses{Complexity.BinArith.DivInv, Complexity.length_pair_components_le, Turing.length_pairEncode}
 \difficulty{3}
-Let $z$ and $S$ be finite bit strings. Suppose there are finite bit strings $R,r,q$ such
-that $S$ is the nested self-delimiting encoding of the second decoded component of $z$,
-paired with the encoding of $R$ paired with the encoding of $r$ and $q$. Suppose also
-that $|r|+|R|≤||$ and $|q|+|R|≤||$, where $||$ denotes the length of the first
-decoded component of $z$ (taken to be empty if parsing fails). If the binary value of
-the second decoded component of $z$ is positive, then
-$(\operatorname{val}(q)\operatorname{val}(b)+\operatorname{val}(r))2^{|R|}+\operatorname{val}(R^{\mathrm{rev}})=\operatorname{val}(a)$
-and $\operatorname{val}(r)<\operatorname{val}(b)$, where $a$ and $b$ are respectively
-the first and second decoded components of $z$ and $\operatorname{val}$ is the binary
-value of a bit string. Then $|S|≤7(|z|+1)$.
+Whenever the binary-division invariant holds for finite Boolean words $z,S$, the state word satisfies $|S|\le7(|z|+1)$.
 \end{theorem}
 
 \begin{definition}[Iterated division step]

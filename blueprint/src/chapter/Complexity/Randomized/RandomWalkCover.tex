@@ -76,12 +76,10 @@ $(x,b)$ in the same sense.
 \leanok
 \uses{Randomized.RegularMultigraph.Adj, Randomized.RegularMultigraph.coverAdj}
 \difficulty{5}
-Let $G$ be a regular multigraph on $V$, and suppose there is a finite sequence of
-neighbor steps from $v$ to $w$. Then there is a Boolean value $	ext{(parity)}$ such
-that, for either starting label $b$, the corresponding lifted walk goes from $(v,b)$ to
-$(w,b
-e 	ext{parity})$, where $b
-e 	ext{parity}$ denotes Boolean exclusive-or.
+Let $G$ be a regular multigraph on $V$, and suppose there is a finite walk in $G$ from
+$v$ to $w$. There is a Boolean value $\pi$ such that, for every starting sheet label
+$b$, the lifted walk in the two-sheeted graph goes from $(v,b)$ to
+$(w,b\mathbin{\mathrm{xor}}\pi)$.
 \end{theorem}
 
 \begin{theorem}[Reachability in the lifted graph]

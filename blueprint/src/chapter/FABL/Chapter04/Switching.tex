@@ -18,8 +18,8 @@ Declarations of the Lean module \texttt{FABL.Chapter04.Switching}.
 \leanok
 \uses{FABL.BooleanFunction, FABL.FixedSignCube, FABL.Sign, FABL.binaryCubeSignEquiv, FABL.extendedSignRestriction}
 Let $n$ be a nonnegative integer, let $f$ be a function from the sign cube
-$\\{−1,1\\}^n$ to $\\{−1,1\\}$, let $J\\subseteq\\{1,\\ldots,n\\}$, and fix signs on the
-coordinates outside $J$. The associated function on the binary cube $\\mathbb F_2^n$
+$\{−1,1\}^n$ to $\{−1,1\}$, let $J\subseteq\{1,\ldots,n\}$, and fix signs on the
+coordinates outside $J$. The associated function on the binary cube $\mathbb F_2^n$
 sends each binary input to its sign-cube encoding, extends the fixed signs on the
 coordinates outside $J$, and evaluates $f$ on the resulting sign vector.
 \end{definition}
@@ -43,7 +43,7 @@ $f$ according to these choices.
 \leanok
 \uses{FABL.BooleanFunction, FABL.FixedSignCube, FABL.restrictedDecisionTreeDepth}
 Let $n$ be a nonnegative integer, let $f$ be a Boolean function on $n$ sign coordinates,
-let $k$ be a nonnegative integer, let $J\\subseteq\\{1,\\ldots,n\\}$, and fix signs on
+let $k$ be a nonnegative integer, let $J\subseteq\{1,\ldots,n\}$, and fix signs on
 the coordinates outside $J$. The switching failure indicator is $1$ if the restricted
 decision tree for $f$ has depth at least $k$, and is $0$ otherwise.
 \end{definition}
@@ -56,9 +56,9 @@ decision tree for $f$ has depth at least $k$, and is $0$ otherwise.
 \leanok
 \uses{FABL.BooleanFunction, FABL.expectRandomRestriction, FABL.switchingFailureIndicator}
 Let $n$ be a nonnegative integer, let $f$ be a Boolean function on $n$ sign coordinates,
-let $\\delta\\in\\mathbb R$, and let $k$ be a nonnegative integer. The switching failure
+let $\delta\in\mathbb R$, and let $k$ be a nonnegative integer. The switching failure
 probability is the expected value, under the random restriction with parameter
-$\\delta$, of the switching failure indicator at threshold $k$.
+$\delta$, of the switching failure indicator at threshold $k$.
 \end{definition}
 
 \begin{theorem}[Nonnegativity of the switching failure indicator]
@@ -104,8 +104,8 @@ the restriction of $f$ to those fixed signs is at least zero equals one.
 \leanok
 \uses{FABL.BooleanFunction, FABL.expectRandomRestriction, FABL.sum_deltaRandomSubsetWeight, FABL.switchingFailureIndicator, FABL.switchingFailureProbability}
 \difficulty{1}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function and let
-$\\delta\\in\\mathbb R$. The switching-failure probability at parameter $\\delta$ and
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function and let
+$\delta\in\mathbb R$. The switching-failure probability at parameter $\delta$ and
 threshold $0$ is $1$.
 \end{theorem}
 
@@ -115,9 +115,9 @@ threshold $0$ is $1$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.deltaRandomSubsetWeight_nonneg, FABL.expectRandomRestriction, FABL.switchingFailureIndicator_nonneg, FABL.switchingFailureProbability}
 \difficulty{3}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let $k\\in\\mathbb
-N$, and suppose $0\\le\\delta\\le 1$. The switching-failure probability at parameter
-$\\delta$ and threshold $k$ is nonnegative.
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let $k\in\mathbb
+N$, and suppose $0\le\delta\le 1$. The switching-failure probability at parameter
+$\delta$ and threshold $k$ is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Upper bound for switching failure]
@@ -126,8 +126,8 @@ $\\delta$ and threshold $k$ is nonnegative.
 \leanok
 \uses{FABL.BooleanFunction, FABL.FixedSignCube, FABL.deltaRandomSubsetWeight, FABL.deltaRandomSubsetWeight_nonneg, FABL.expectRandomRestriction, FABL.sum_deltaRandomSubsetWeight, FABL.switchingFailureIndicator, FABL.switchingFailureIndicator_le_one, FABL.switchingFailureProbability}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let $k\\in\\mathbb
-N$, and suppose $0\\le\\delta\\le 1$. The switching-failure probability, the weighted
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let $k\in\mathbb
+N$, and suppose $0\le\delta\le 1$. The switching-failure probability, the weighted
 average over random restrictions of the indicator that the restricted function has
 decision-tree depth at least $k$, is at most $1$.
 \end{theorem}
@@ -231,7 +231,7 @@ coordinates of $\rho$ if and only if $\rho(i)$ is free.
 \leanok
 \uses{FABL.CoordRestriction, FABL.signEncode}
 Let $n$ be a nonnegative integer, assign each coordinate one of the statuses free, fixed
-to $1$, or fixed to $-1$, and let $x\\in\\mathbb F_2^n$. The completed sign vector has,
+to $1$, or fixed to $-1$, and let $x\in\mathbb F_2^n$. The completed sign vector has,
 at each free coordinate, the sign encoding of the corresponding bit of $x$; at
 coordinates fixed to $1$ or $-1$, it has that prescribed sign.
 \end{definition}
@@ -248,8 +248,8 @@ coordinates fixed to $1$ or $-1$, it has that prescribed sign.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.CoordRestriction.complete, FABL.Sign}
 Let $n$ be a nonnegative integer, let $f$ be a function from the sign cube
-$\\{−1,1\\}^n$ to $\\{−1,1\\}$, and assign each coordinate one of the statuses free,
-fixed to $1$, or fixed to $-1$. The restricted function on $\\mathbb F_2^n$ evaluates
+$\{−1,1\}^n$ to $\{−1,1\}$, and assign each coordinate one of the statuses free,
+fixed to $1$, or fixed to $-1$. The restricted function on $\mathbb F_2^n$ evaluates
 $f$ at the sign vector obtained by completing that coordinate restriction using the
 input bits.
 \end{definition}
@@ -284,10 +284,10 @@ otherwise.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.coordSwitchingFailureIndicator, FABL.restrictionAssignmentWeightAt}
 Let $n$ be a nonnegative integer, let $f$ be a Boolean function on $n$ sign coordinates,
-let $\\delta\\in\\mathbb R$, and let $k$ be a nonnegative integer. The coordinate
+let $\delta\in\mathbb R$, and let $k$ be a nonnegative integer. The coordinate
 switching failure probability is the sum over all assignments of the three restriction
 statuses to the $n$ coordinates, with each assignment weighted by its
-restriction-assignment weight at parameter $\\delta$, of the corresponding coordinate
+restriction-assignment weight at parameter $\delta$, of the corresponding coordinate
 switching failure indicator at threshold $k$.
 \end{definition}
 
@@ -297,10 +297,10 @@ switching failure indicator at threshold $k$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.coordSwitchingFailureIndicator}
 \difficulty{4}
-For a Boolean function $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$, a nonnegative integer $k$, and a
-coordinate restriction $\\rho:[n]\\to\\{\\text{free},\\text{fixed }1,\\text{fixed
-}-1\\}$, the coordinate-switching failure indicator is nonnegative. Here the indicator
-equals $1$ when the decision-tree depth of the function obtained by applying $\\rho$ is
+For a Boolean function $f:\{-1,1\}^n\to\{\pm1\}$, a nonnegative integer $k$, and a
+coordinate restriction $\rho:[n]\to\{\text{free},\text{fixed }1,\text{fixed
+}-1\}$, the coordinate-switching failure indicator is nonnegative. Here the indicator
+equals $1$ when the decision-tree depth of the function obtained by applying $\rho$ is
 at least $k$, and equals $0$ otherwise.
 \end{theorem}
 
@@ -310,9 +310,9 @@ at least $k$, and equals $0$ otherwise.
 \leanok
 \uses{FABL.BooleanFunction, FABL.coordSwitchingFailureIndicator_nonneg, FABL.coordSwitchingFailureProbability, FABL.restrictionAssignmentWeightAt_nonneg}
 \difficulty{3}
-Let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ be a Boolean function, let $k$ be a natural number,
-and let $\\delta\\in\\mathbb R$ satisfy $0\\le\\delta\\le1$. Then the
-coordinate-switching failure probability of $f$ at parameter $\\delta$ and threshold $k$
+Let $f:\{-1,1\}^n\to\{\pm1\}$ be a Boolean function, let $k$ be a natural number,
+and let $\delta\in\mathbb R$ satisfy $0\le\delta\le1$. Then the
+coordinate-switching failure probability of $f$ at parameter $\delta$ and threshold $k$
 is nonnegative.
 \end{theorem}
 
@@ -322,9 +322,9 @@ is nonnegative.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureProbability, FABL.restrictionAssignmentWeightAt, FABL.restrictionAssignmentWeightAt_nonneg, FABL.sum_restrictionAssignmentWeightAt}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ be a Boolean function, let $k$ be a natural number,
-and let $\\delta\\in\\mathbb R$ satisfy $0\\le\\delta\\le1$. Then the
-coordinate-switching failure probability of $f$ at parameter $\\delta$ and threshold $k$
+Let $f:\{-1,1\}^n\to\{\pm1\}$ be a Boolean function, let $k$ be a natural number,
+and let $\delta\in\mathbb R$ satisfy $0\le\delta\le1$. Then the
+coordinate-switching failure probability of $f$ at parameter $\delta$ and threshold $k$
 is at most $1$.
 \end{theorem}
 
@@ -351,8 +351,8 @@ outside $J$ to $+1$ when its assigned sign is $+1$, and fixing it to $-1$ otherw
 \leanok
 \uses{FABL.FixedSignCube, FABL.coordRestrictionOf}
 \difficulty{1}
-Let $n$ be a natural number, let $J\\subseteq\\{0,\\ldots,n-1\\}$, and assign a sign in
-$\\{1,-1\\}$ to each coordinate outside $J$. The coordinate restriction determined by
+Let $n$ be a natural number, let $J\subseteq\{0,\ldots,n-1\}$, and assign a sign in
+$\{1,-1\}$ to each coordinate outside $J$. The coordinate restriction determined by
 these data is free at every coordinate in $J$.
 \end{theorem}
 
@@ -362,8 +362,8 @@ these data is free at every coordinate in $J$.
 \leanok
 \uses{FABL.FixedSignCube, FABL.Sign, FABL.coordRestrictionOf}
 \difficulty{1}
-Let $n$ be a natural number, let $J\\subseteq\\{0,\\ldots,n-1\\}$, and assign a sign in
-$\\{1,-1\\}$ to each coordinate outside $J$. At any coordinate $i\\notin J$, the
+Let $n$ be a natural number, let $J\subseteq\{0,\ldots,n-1\}$, and assign a sign in
+$\{1,-1\}$ to each coordinate outside $J$. At any coordinate $i\notin J$, the
 determined coordinate restriction fixes the coordinate to $1$ when its assigned sign is
 $1$, and to $-1$ otherwise.
 \end{theorem}
@@ -450,10 +450,10 @@ $+1$, and $-1$ everywhere else.
 \leanok
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.fixedSign, FABL.CoordRestriction.freeCoordinates, FABL.CoordRestriction.mem_freeCoordinates_iff, FABL.coordRestrictionOf}
 \difficulty{4}
-Let $n$ be a natural number and let $\\rho$ assign to each of the $n$ coordinates one of
+Let $n$ be a natural number and let $\rho$ assign to each of the $n$ coordinates one of
 three states: free, fixed to $1$, or fixed to $-1$. If $J$ is the set of free
-coordinates and each coordinate outside $J$ is assigned the sign specified by $\\rho$,
-then the restriction determined by $J$ and those signs is exactly $\\rho$.
+coordinates and each coordinate outside $J$ is assigned the sign specified by $\rho$,
+then the restriction determined by $J$ and those signs is exactly $\rho$.
 \end{theorem}
 
 \begin{definition}[Random restriction atom]
@@ -509,12 +509,12 @@ coordinates outside $J$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.FixedSignCube, FABL.RandomRestrictionAtom, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureIndicator_coordRestrictionOf, FABL.coordSwitchingFailureProbability, FABL.deltaRandomSubsetWeight, FABL.expectRandomRestriction, FABL.randomRestrictionAtomEquiv, FABL.restrictionAssignmentWeightAt, FABL.restrictionAssignmentWeightAt_coordRestrictionOf_eq_div, FABL.switchingFailureIndicator, FABL.switchingFailureProbability}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ be a Boolean function, let $\\delta\\in\\mathbb R$,
+Let $f:\{-1,1\}^n\to\{\pm1\}$ be a Boolean function, let $\delta\in\mathbb R$,
 and let $k$ be a natural number. The coordinate-switching failure probability, summed
-over coordinate restrictions with each free coordinate assigned weight $\\delta$ and
-each of the two fixed states assigned weight $(1-\\delta)/2$, equals the expected
+over coordinate restrictions with each free coordinate assigned weight $\delta$ and
+each of the two fixed states assigned weight $(1-\delta)/2$, equals the expected
 failure indicator obtained by first choosing a free-coordinate set with weight
-$\\delta^{|J|}(1-\\delta)^{n-|J|}$ and then choosing signs on the remaining coordinates
+$\delta^{|J|}(1-\delta)^{n-|J|}$ and then choosing signs on the remaining coordinates
 uniformly.
 \end{theorem}
 
@@ -1097,7 +1097,7 @@ $T$ has the same evaluation on every two inputs $x,y\in\{0,1\}^n$.
 \leanok
 \uses{FABL.DecisionTree, FABL.F₂DecisionTree.Computes, FABL.F₂DecisionTree.computes_iff, FABL.F₂DecisionTree.decisionTreeDepth, FABL.F₂DecisionTree.decisionTreeDepth_le_of_computes, FABL.F₂DecisionTree.depth, FABL.F₂DecisionTree.eval, FABL.F₂DecisionTree.eval_eq_of_depth_eq_zero, FABL.F₂DecisionTree.exists_computingTree_depth_eq_decisionTreeDepth, FABL.Sign}
 \difficulty{5}
-Let $f:\\{0,1\}^n\to\{−1,1\}$ be a Boolean function on the $n$-dimensional Boolean cube.
+Let $f:\{0,1\}^n\to\{−1,1\}$ be a Boolean function on the $n$-dimensional Boolean cube.
 Its minimum decision tree depth is at least $1$ if and only if there exist inputs $x$
 and $y$ such that $f(x)\ne f(y)$.
 \end{theorem}
@@ -1108,10 +1108,10 @@ and $y$ such that $f(x)\ne f(y)$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.restrict, FABL.DNFFormula, FABL.DNFFormula.IsBadRestriction, FABL.DNFFormula.toBooleanFunction, FABL.coordSwitchingFailureIndicator, FABL.one_le_decisionTreeDepth_iff_nonconstant}
 \difficulty{4}
-Let $\\phi$ be a disjunctive normal form on the sign cube $\\{-1,1\\}^n$, and let
-$\\rho:[n]\\to\\{\\text{free},\\text{fixed }1,\\text{fixed }-1\\}$ be a coordinate
+Let $\phi$ be a disjunctive normal form on the sign cube $\{-1,1\}^n$, and let
+$\rho:[n]\to\{\text{free},\text{fixed }1,\text{fixed }-1\}$ be a coordinate
 restriction. The coordinate-switching failure indicator at threshold $1$ for the
-restriction of $\\phi$ equals $1$ if there are two Boolean inputs on which the
+restriction of $\phi$ equals $1$ if there are two Boolean inputs on which the
 restricted function takes different values, and equals $0$ otherwise.
 \end{theorem}
 
@@ -1232,7 +1232,7 @@ queried coordinate and the available set.
 \uses{FABL.F₂DecisionTree, FABL.F₂DecisionTree.complementInputs, FABL.F₂DecisionTree.eval}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $I$ be a set of coordinates among
-$1,[0m\ldots,n$, let $\alpha$ be a type, and let $T$ be a binary decision tree with
+$1,\ldots,n$, let $\alpha$ be a type, and let $T$ be a binary decision tree with
 output values in $\alpha$ that may query only coordinates in $I$. For every Boolean
 input $x\in\{0,1\}^n$, evaluating the tree with its zero and one branches interchanged
 at each query gives the same result as evaluating the original tree on the
@@ -1457,10 +1457,10 @@ threshold $k$ and assignment $-\rho$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CNFFormula.booleanDual, FABL.CoordRestriction, FABL.CoordRestriction.negateAssignment, FABL.coordRestrictionNegationEquiv, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureIndicator_booleanDual, FABL.coordSwitchingFailureProbability, FABL.restrictionAssignmentWeightAt, FABL.restrictionAssignmentWeightAt_negateAssignment}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ be a Boolean function, let $\\delta\\in\\mathbb R$,
+Let $f:\{-1,1\}^n\to\{\pm1\}$ be a Boolean function, let $\delta\in\mathbb R$,
 and let $k$ be a natural number. The coordinate-switching failure probability at
-parameter $\\delta$ and threshold $k$ is unchanged when $f$ is replaced by its Boolean
-dual, the function $x\\mapsto -f(-x)$.
+parameter $\delta$ and threshold $k$ is unchanged when $f$ is replaced by its Boolean
+dual, the function $x\mapsto -f(-x)$.
 \end{theorem}
 
 \begin{theorem}[Dual invariance of switching failure]
@@ -1469,11 +1469,11 @@ dual, the function $x\\mapsto -f(-x)$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CNFFormula.booleanDual, FABL.coordSwitchingFailureProbability_booleanDual, FABL.coordSwitchingFailureProbability_eq, FABL.switchingFailureProbability}
 \difficulty{3}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let
-$\\delta\\in\\mathbb R$, and let $k\\in\\mathbb N$. Define its Boolean dual by
-$f^*(x)=-f(-x)$. The switching-failure probability at parameters $\\delta,k$ is
-unchanged by dualization: $P_{\\delta,k}(f^*)=P_{\\delta,k}(f)$, where
-$P_{\\delta,k}(f)$ is the weighted average over random restrictions of the indicator
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let
+$\delta\in\mathbb R$, and let $k\in\mathbb N$. Define its Boolean dual by
+$f^*(x)=-f(-x)$. The switching-failure probability at parameters $\delta,k$ is
+unchanged by dualization: $P_{\delta,k}(f^*)=P_{\delta,k}(f)$, where
+$P_{\delta,k}(f)$ is the weighted average over random restrictions of the indicator
 that the restricted function has decision-tree depth at least $k$.
 \end{theorem}
 
@@ -1650,12 +1650,12 @@ $i$, the status assigned to $e(i)$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.coordSwitchingFailureIndicator, FABL.reindexBooleanFunction, FABL.restrictedDecisionTreeDepth_reindexBooleanFunction}
 \difficulty{3}
-Let $m,n$ be natural numbers, let $e:[m]\\to[n]$ be a bijection, let
-$f:\\{-1,1\\}^m\\to\\{\\pm1\\}$ be a Boolean function, let $k$ be a natural number, and
-let $\\rho:[n]\\to\\{\\text{free},\\text{fixed }1,\\text{fixed }-1\\}$ be a coordinate
-restriction. Reindexing $f$ along $e$ and then restricting by $\\rho$ gives the same
+Let $m,n$ be natural numbers, let $e:[m]\to[n]$ be a bijection, let
+$f:\{-1,1\}^m\to\{\pm1\}$ be a Boolean function, let $k$ be a natural number, and
+let $\rho:[n]\to\{\text{free},\text{fixed }1,\text{fixed }-1\}$ be a coordinate
+restriction. Reindexing $f$ along $e$ and then restricting by $\rho$ gives the same
 coordinate-switching failure indicator at threshold $k$ as restricting $f$ by the
-restriction $i\\mapsto\\rho(e(i))$.
+restriction $i\mapsto\rho(e(i))$.
 \end{theorem}
 
 \begin{theorem}[Reindexing assignment weights]
@@ -1677,10 +1677,10 @@ state.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureIndicator_reindexBooleanFunction, FABL.coordSwitchingFailureProbability, FABL.reindexBooleanFunction, FABL.restrictionAssignmentWeightAt, FABL.restrictionAssignmentWeightAt_reindex}
 \difficulty{4}
-Let $m,n$ be natural numbers, let $e:[m]\\to[n]$ be a bijection, let
-$f:\\{-1,1\\}^m\\to\\{\\pm1\\}$ be a Boolean function, let $\\delta\\in\\mathbb R$, and
+Let $m,n$ be natural numbers, let $e:[m]\to[n]$ be a bijection, let
+$f:\{-1,1\}^m\to\{\pm1\}$ be a Boolean function, let $\delta\in\mathbb R$, and
 let $k$ be a natural number. The coordinate-switching failure probability at parameter
-$\\delta$ and threshold $k$ is the same for $f$ and for the function on $[n]$ obtained
+$\delta$ and threshold $k$ is the same for $f$ and for the function on $[n]$ obtained
 by reindexing its coordinates along $e$.
 \end{theorem}
 
@@ -1690,11 +1690,11 @@ by reindexing its coordinates along $e$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.coordSwitchingFailureProbability, FABL.coordSwitchingFailureProbability_eq, FABL.coordSwitchingFailureProbability_reindexBooleanFunction, FABL.reindexBooleanFunction, FABL.switchingFailureProbability}
 \difficulty{3}
-Let $m,n\\in\\mathbb N$, let $e:[m]\\to[n]$ be a bijection, let
-$f:\\{-1,1\\}^m\\to\\{-1,1\\}$ be a sign-valued Boolean function, and let
-$\\delta\\in\\mathbb R$ and $k\\in\\mathbb N$. Relabel the coordinates of $f$ using $e$
-to obtain the function $g(x)=f(i\\mapsto x(e(i)))$ on $\\{-1,1\\}^n$. Then
-$P_{\\delta,k}(g)=P_{\\delta,k}(f)$.
+Let $m,n\in\mathbb N$, let $e:[m]\to[n]$ be a bijection, let
+$f:\{-1,1\}^m\to\{-1,1\}$ be a sign-valued Boolean function, and let
+$\delta\in\mathbb R$ and $k\in\mathbb N$. Relabel the coordinates of $f$ using $e$
+to obtain the function $g(x)=f(i\mapsto x(e(i)))$ on $\{-1,1\}^n$. Then
+$P_{\delta,k}(g)=P_{\delta,k}(f)$.
 \end{theorem}
 
 \begin{definition}[Free coordinate embedding]
@@ -1810,11 +1810,11 @@ $\rho(i)$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.coordRestrictionProductWeight, FABL.restrictionAssignmentWeightAt}
 \difficulty{1}
-Let $n$ be a natural number, let $\\delta\\in\\mathbb{R}$, and assign one of the states
+Let $n$ be a natural number, let $\delta\in\mathbb{R}$, and assign one of the states
 free, fixed to $1$, or fixed to $-1$ to each of the $n$ coordinates. The product of the
 coordinate weights over these coordinates equals the restriction assignment weight: each
-free coordinate contributes $\\delta$, and each fixed coordinate contributes
-$(1-\\delta)/2$.
+free coordinate contributes $\delta$, and each fixed coordinate contributes
+$(1-\delta)/2$.
 \end{theorem}
 
 \begin{theorem}[Total weight of coordinate restrictions]
@@ -1823,10 +1823,10 @@ $(1-\\delta)/2$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.coordRestrictionProductWeight, FABL.coordRestrictionWeightAt, FABL.sum_coordRestrictionWeightAt}
 \difficulty{3}
-Let $\\iota$ be a finite set, and assign to each coordinate restriction one of the
-weights $\\delta$ for a free coordinate and $(1-\\delta)/2$ for either fixed sign, for
-any real $\\delta$. The sum, over all assignments of restrictions to the coordinates in
-$\\iota$, of the product of their coordinate weights is $1$.
+Let $\iota$ be a finite set, and assign to each coordinate restriction one of the
+weights $\delta$ for a free coordinate and $(1-\delta)/2$ for either fixed sign, for
+any real $\delta$. The sum, over all assignments of restrictions to the coordinates in
+$\iota$, of the product of their coordinate weights is $1$.
 \end{theorem}
 
 \begin{theorem}[Invariance of product weight under reindexing]
@@ -1835,8 +1835,8 @@ $\\iota$, of the product of their coordinate weights is $1$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.coordRestrictionProductWeight, FABL.coordRestrictionWeightAt}
 \difficulty{3}
-Let $I$ and $K$ be finite sets, let $e:I\\to K$ be a bijection, let
-$\\delta\\in\\mathbb{R}$, and assign one of the states free, fixed to $1$, or fixed to
+Let $I$ and $K$ be finite sets, let $e:I\to K$ be a bijection, let
+$\delta\in\mathbb{R}$, and assign one of the states free, fixed to $1$, or fixed to
 $-1$ to each element of $I$. The product of the corresponding coordinate weights is
 unchanged when the assignment is transported to $K$ along $e$.
 \end{theorem}
@@ -1860,8 +1860,8 @@ over $J$ and its complement.
 \leanok
 \uses{FABL.CoordRestriction, FABL.FixedIndex, FABL.coordRestrictionProductWeight, FABL.coordRestrictionProductWeight_split, FABL.restrictionAssignmentWeightAt, FABL.sum_coordRestrictionProductWeight}
 \difficulty{5}
-Let $n$ be a nonnegative integer, let $\\delta$ be real, let
-$J\\subseteq\\{1,\\ldots,n\\}$, and let $g$ be a real-valued function on assignments of
+Let $n$ be a nonnegative integer, let $\delta$ be real, let
+$J\subseteq\{1,\ldots,n\}$, and let $g$ be a real-valued function on assignments of
 coordinate restrictions to $J$. Sum over all assignments of restrictions to the $n$
 coordinates, weighting each by the product of its coordinate weights and evaluating $g$
 on the restriction to $J$. This sum equals the sum over assignments on $J$ alone of the
@@ -1923,11 +1923,11 @@ at $\delta_1\delta_2$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.compose, FABL.coordRestrictionWeightAt, FABL.restrictionAssignmentWeightAt, FABL.sum_twoStageCoordRestrictionWeight_localFiber, FABL.twoStageCoordRestriction, FABL.twoStageCoordRestrictionWeight}
 \difficulty{5}
-Let $n$ be a natural number, let $\\delta_1,\\delta_2\\in\\mathbb R$, and fix a
+Let $n$ be a natural number, let $\delta_1,\delta_2\in\mathbb R$, and fix a
 coordinate restriction assignment on $n$ coordinates. Sum the two-stage weights over all
 pairs of restriction assignments whose coordinatewise composition is the fixed
 assignment. This sum equals the weight of the fixed assignment with parameter
-$\\delta_1\\delta_2$.
+$\delta_1\delta_2$.
 \end{theorem}
 
 \begin{theorem}[Composition of weighted restrictions]
@@ -2013,15 +2013,15 @@ given by $\sigma$ on the coordinates in $J$ via their increasing enumeration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.FixedSignCube, FABL.composeCoordRestrictions, FABL.coordRestrictionOf, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureIndicator_compose_coordRestrictionOf, FABL.coordSwitchingFailureProbability, FABL.coordSwitchingFailureProbability_eq, FABL.reindexedSignRestriction, FABL.restrictionAssignmentWeightAt, FABL.sum_restrictionAssignmentWeightAt_comp_freeCoordinateEmbedding, FABL.switchingFailureProbability}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let
-$J\\subseteq[n]$, let $z\\in\\{-1,1\\}^{[n]\\setminus J}$ specify the fixed signs
-outside $J$, and let $\\delta\\in\\mathbb R$ and $k\\in\\mathbb N$. The
-switching-failure probability at parameter $\\delta$ and threshold $k$ for the
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let
+$J\subseteq[n]$, let $z\in\{-1,1\}^{[n]\setminus J}$ specify the fixed signs
+outside $J$, and let $\delta\in\mathbb R$ and $k\in\mathbb N$. The
+switching-failure probability at parameter $\delta$ and threshold $k$ for the
 restriction of $f$ to $J$ equals the sum over all coordinate assignments
-$\\rho:[n]\\to\\{\\text{free},+1,-1\\}$ of their product weights times the indicator
+$\rho:[n]\to\{\text{free},+1,-1\}$ of their product weights times the indicator
 that the function obtained by composing the restriction specified by $(J,z)$ with
-$\\rho$ has decision-tree depth at least $k$. Each coordinate's weight is $\\delta$ when
-free and $(1-\\delta)/2$ when fixed to either sign.
+$\rho$ has decision-tree depth at least $k$. Each coordinate's weight is $\delta$ when
+free and $(1-\delta)/2$ when fixed to either sign.
 \end{theorem}
 
 \begin{definition}[Restriction atom from an assignment]
@@ -2046,9 +2046,9 @@ $J$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.coordRestrictionOf, FABL.randomRestrictionAtomEquiv, FABL.restrictionAtomOfAssignment}
 \difficulty{1}
-Let $n$ be a natural number and let $\\rho$ assign to each of the $n$ coordinates one of
+Let $n$ be a natural number and let $\rho$ assign to each of the $n$ coordinates one of
 three states: free, fixed to $1$, or fixed to $-1$. The restriction atom associated to
-$\\rho$ determines exactly the coordinate restriction $\\rho$.
+$\rho$ determines exactly the coordinate restriction $\rho$.
 \end{theorem}
 
 \begin{theorem}[Random restriction expectation as an assignment sum]
@@ -2072,11 +2072,11 @@ $(1-\delta)/2$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.coordRestrictionOf_restrictionAtomOfAssignment, FABL.coordSwitchingFailureIndicator, FABL.coordSwitchingFailureProbability, FABL.coordSwitchingFailureProbability_eq, FABL.expectRandomRestriction, FABL.expectRandomRestriction_eq_sum_assignment, FABL.reindexedSignRestriction, FABL.sum_restrictionAssignmentWeightAt_compose, FABL.switchingFailureProbability, FABL.switchingFailureProbability_reindexedSignRestriction}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let
-$\\delta_1,\\delta_2\\in\\mathbb R$, and let $k\\in\\mathbb N$. The switching-failure
-probability of $f$ at parameter $\\delta_1\\delta_2$ and threshold $k$ equals the
-average over first restrictions at parameter $\\delta_1$ of the switching-failure
-probabilities at parameter $\\delta_2$ and threshold $k$ for the corresponding functions
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let
+$\delta_1,\delta_2\in\mathbb R$, and let $k\in\mathbb N$. The switching-failure
+probability of $f$ at parameter $\delta_1\delta_2$ and threshold $k$ equals the
+average over first restrictions at parameter $\delta_1$ of the switching-failure
+probabilities at parameter $\delta_2$ and threshold $k$ for the corresponding functions
 on the free coordinates.
 \end{theorem}
 
@@ -2086,9 +2086,9 @@ on the free coordinates.
 \leanok
 \uses{FABL.BooleanFunction, FABL.expectRandomRestriction, FABL.reindexedSignRestriction, FABL.switchingFailureProbability, FABL.switchingFailureProbability_mul_algebraic}
 \difficulty{3}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a sign-valued Boolean function, let $k\\in\\mathbb
-N$, and let $0\\le\\delta_1,\\delta_2\\le 1$. Then $P_{\\delta_1\\delta_2,k}(f)$ equals
-the average, over a first random restriction at parameter $\\delta_1$, of the
-switching-failure probability at parameter $\\delta_2$ and threshold $k$ for the
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a sign-valued Boolean function, let $k\in\mathbb
+N$, and let $0\le\delta_1,\delta_2\le 1$. Then $P_{\delta_1\delta_2,k}(f)$ equals
+the average, over a first random restriction at parameter $\delta_1$, of the
+switching-failure probability at parameter $\delta_2$ and threshold $k$ for the
 resulting function on its free coordinates.
 \end{theorem}

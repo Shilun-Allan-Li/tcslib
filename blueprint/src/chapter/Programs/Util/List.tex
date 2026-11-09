@@ -202,9 +202,8 @@ l$ is at most $\text{length}(l)c$.
 \label{List.sum_map_range}
 \leanok
 \difficulty{1}
-Let $M$ be a commutative additive monoid, let $f:br	o M$ be a function on the natural
-numbers, and let $nbr$. The sum of the list obtained by applying $f$ to $0,1,n-1$
-equals the sum of $f(i)$ over all natural numbers $i<n$.
+Let $M$ be a commutative additive monoid, $f:\mathbb{N}\to M$ a function, and $n$ a
+natural number. The sum of the list $[f(0),f(1),\ldots,f(n-1)]$ equals $\sum_{i<n}f(i)$.
 \end{theorem}
 
 \begin{theorem}[Monotonicity of initial range sums]
@@ -212,8 +211,8 @@ equals the sum of $f(i)$ over all natural numbers $i<n$.
 \label{List.sum_map_range_mono}
 \leanok
 \difficulty{4}
-Let $g:br	obr$ take natural-number values, and let $a,b$ be natural numbers with $ab
-b$. The sum of $g(i)$ for $0b i<a$ is at most the sum of $g(i)$ for $0b i<b$.
+Let $g:\mathbb{N}\to\mathbb{N}$ and natural numbers $a\le b$ be given. Then the sum of
+$g(i)$ over $i<a$ is at most the sum of $g(i)$ over $i<b$.
 \end{theorem}
 
 \begin{theorem}[Successive partial sums of a list]
@@ -233,8 +232,8 @@ such position.
 \leanok
 \uses{List.getD_map_range, List.sum_take_succ_getD}
 \difficulty{3}
-Let $M$ be an additive monoid, let $f:br	o M$, and let $n,j$ be natural numbers with
-$j<n$. The sum of the first $j+1$ terms of the list $[f(0),f(1),\ldots,f(n-1)]$ equals
+Let $M$ be an additive monoid, $f:\mathbb{N}\to M$, and natural numbers $n,j$ with
+$j<n$ be given. The sum of the first $j+1$ terms of $[f(0),f(1),\ldots,f(n-1)]$ equals
 the sum of its first $j$ terms plus $f(j)$.
 \end{theorem}
 
@@ -481,7 +480,7 @@ not occur among the first $i$ entries of $l$.
 \label{Light.AbsLe}
 \leanok
 A list $l$ of integers is bounded in absolute value by an integer $U$ if every entry $x$
-of $l$ satisfies $|x|le U$.
+of $l$ satisfies $|x|\le U$.
 \end{definition}
 
 \begin{theorem}[Bound on an in-range list entry]

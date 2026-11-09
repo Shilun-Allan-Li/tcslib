@@ -69,10 +69,10 @@ assignment is an SDP assignment if every assigned vector has Euclidean norm $1$.
 \label{BooleanAnalysis.GaussianSpace.MaxCut.sdpValue}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.WeightedDigraph}
-Let $G$ be a weighted directed graph on the vertex set $\\{0,\\ldots,n-1\\}$, and assign
-a vector $U_v\\in\\mathbb{R}^n$ to each vertex. The semidefinite objective value of this
-assignment is $\\displaystyle \\sum_{v,w} w(v,w)\\,\\frac{1-\\langle
-U_v,U_w\\rangle}{2}$, where the sum ranges over all ordered pairs of vertices.
+Let $G$ be a weighted directed graph on the vertex set $\{0,\ldots,n-1\}$, and assign
+a vector $U_v\in\mathbb{R}^n$ to each vertex. The semidefinite objective value of this
+assignment is $\displaystyle \sum_{v,w} w(v,w)\\,\frac{1-\langle
+U_v,U_w\rangle}{2}$, where the sum ranges over all ordered pairs of vertices.
 \end{definition}
 
 \begin{definition}[Semidefinite optimum]
@@ -81,9 +81,9 @@ U_v,U_w\\rangle}{2}$, where the sum ranges over all ordered pairs of vertices.
 \label{BooleanAnalysis.GaussianSpace.MaxCut.sdpOptimum}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.MaxCut.IsSDPAssignment, BooleanAnalysis.GaussianSpace.MaxCut.sdpValue, BooleanAnalysis.Hypercontractivity.WeightedDigraph}
-Let $G$ be a weighted directed graph on the vertex set $\\{0,\\ldots,n-1\\}$. Its
+Let $G$ be a weighted directed graph on the vertex set $\{0,\ldots,n-1\}$. Its
 semidefinite optimum is the supremum of the objective values attained by assignments
-$U_v\\in\\mathbb{R}^n$ that satisfy the semidefinite-program assignment condition.
+$U_v\in\mathbb{R}^n$ that satisfy the semidefinite-program assignment condition.
 \end{definition}
 
 \begin{definition}[Gaussian hyperplane rounding]
@@ -97,9 +97,9 @@ $U_v\\in\\mathbb{R}^n$ that satisfy the semidefinite-program assignment conditio
 \statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p009-b007}
 \label{BooleanAnalysis.GaussianSpace.MaxCut.gaussianRounding}
 \leanok
-Let $U_v\\in\\mathbb{R}^n$ be a vector for each vertex $v\\in\\{0,\\ldots,n-1\\}$, and
-let $g\\in\\mathbb{R}^n$. The Gaussian rounding of this assignment labels $v$ by true
-exactly when $\\langle U_v,g\\rangle\\ge 0$, and by false otherwise.
+Let $U_v\in\mathbb{R}^n$ be a vector for each vertex $v\in\{0,\ldots,n-1\}$, and
+let $g\in\mathbb{R}^n$. The Gaussian rounding of this assignment labels $v$ by true
+exactly when $\langle U_v,g\rangle\ge 0$, and by false otherwise.
 \end{definition}
 
 \begin{definition}[Goemans–Williamson constant]
@@ -117,8 +117,8 @@ exactly when $\\langle U_v,g\\rangle\\ge 0$, and by false otherwise.
 \statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p009-b007}
 \label{BooleanAnalysis.GaussianSpace.MaxCut.gwConstant}
 \leanok
-The Goemans–Williamson constant is the infimum, over $0<\\theta\\le\\pi$, of
-$\\displaystyle\\frac{\\theta/\\pi}{(1-\\cos\\theta)/2}$.
+The Goemans–Williamson constant is the infimum, over $0<\theta\le\pi$, of
+$\displaystyle\frac{\theta/\pi}{(1-\cos\theta)/2}$.
 \end{definition}
 
 \begin{definition}[Goemans–Williamson angle]
@@ -131,8 +131,8 @@ $\\displaystyle\\frac{\\theta/\\pi}{(1-\\cos\\theta)/2}$.
 \statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p009-b007}
 \label{BooleanAnalysis.GaussianSpace.MaxCut.gwAngle}
 \leanok
-The Goemans–Williamson angle is the infimum of the angles $\\theta$ satisfying
-$0<\\theta<\\pi$ and $\\tan(\\theta/2)=\\theta$.
+The Goemans–Williamson angle is the infimum of the angles $\theta$ satisfying
+$0<\theta<\pi$ and $\tan(\theta/2)=\theta$.
 \end{definition}
 
 \begin{definition}[Weighted five-cycle]
@@ -140,7 +140,7 @@ $0<\\theta<\\pi$ and $\\tan(\\theta/2)=\\theta$.
 \label{BooleanAnalysis.GaussianSpace.MaxCut.fiveCycle}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.WeightedDigraph}
-On the vertex set $in 5=0,1,2,3,4$, join two vertices $v,w$ when they are consecutive
+On the vertex set $\in 5=\{0,1,2,3,4\}$, join two vertices $v,w$ when they are consecutive
 modulo $5$, in either order. Give each such ordered pair weight $1/10$ and every other
 ordered pair weight $0$; the underlying directed graph has precisely these same ordered
 pairs as edges.
@@ -150,7 +150,7 @@ pairs as edges.
 \lean{BooleanAnalysis.GaussianSpace.MaxCut.fiveCycleSDP}
 \label{BooleanAnalysis.GaussianSpace.MaxCut.fiveCycleSDP}
 \leanok
-For each $v\inin 5$, define a vector in $br^5$ whose first two coordinates are
-$igl(\cos(4\pi v/5),\sin(4\pi v/5)igr)$ and whose remaining three coordinates are
+For each $v\in\in 5$, define a vector in $\bbr^5$ whose first two coordinates are
+$\bigl(\cos(4\pi v/5),\sin(4\pi v/5)\bigr)$ and whose remaining three coordinates are
 zero.
 \end{definition}

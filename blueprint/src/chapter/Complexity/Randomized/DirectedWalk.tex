@@ -86,10 +86,10 @@ path, allowing a path of length zero, from $0$ to $n$.
 \leanok
 \uses{Randomized.avgOut, Randomized.chainDigraph, Randomized.outNbrs}
 \difficulty{4}
-Let $n$ be a natural number, let $f:	ext{Fin}(n+1)	obr$, and let $i	ext{ in Fin}(n+1)$
-satisfy $i<n$. In the digraph on $	ext{Fin}(n+1)$ where $j$ is an out-neighbour of $i$
-exactly when $j=0$ or $j=i+1$, the average of $f$ over the out-neighbours of $i$ is
-$(f(0)+f(i+1))/2$.
+Let $n$ be a natural number, let $f:\mathrm{Fin}(n+1)\to\mathbb{Q}$, and let
+$i\in\mathrm{Fin}(n+1)$ satisfy $i<n$. In the digraph on $\mathrm{Fin}(n+1)$
+where $j$ is an out-neighbour of $i$ exactly when $j=0$ or $j=i+1$, the average of
+$f$ over the out-neighbours of $i$ is $(f(0)+f(i+1))/2$.
 \end{theorem}
 
 \begin{theorem}[Pointwise hitting-probability bound on a chain]
@@ -99,7 +99,7 @@ $(f(0)+f(i+1))/2$.
 \uses{Randomized.avgOut_chainDigraph, Randomized.chainDigraph, Randomized.hitProb}
 \difficulty{6}
 For all natural numbers $n$ and $k$ and every vertex $i\in\text{Fin}(n+1)$, consider the
-digraph on $text{Fin}(n+1)$ with an edge from $u$ to $v$ when $v=0$ or $v=u+1$. The
+digraph on $\text{Fin}(n+1)$ with an edge from $u$ to $v$ when $v=0$ or $v=u+1$. The
 $k$-step probability of hitting the target vertex $n$ when starting at $i$, multiplied
 by $2^n$, is at most $2^i+k$.
 \end{theorem}

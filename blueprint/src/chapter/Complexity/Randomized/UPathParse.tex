@@ -25,15 +25,14 @@ $\sigma$ has probabilistic semantics with acceptance probability $q$.
 \uses{Complexity.LogProg.PSem.call_neg, Complexity.LogProg.PSem.call_pos, Complexity.LogProg.PSem.inc, Complexity.LogProg.UPS, Complexity.LogProg.UPS.of_eq, Complexity.LogProg.UReg, Complexity.LogProg.UReg.Le, Complexity.LogProg.UReg.reg, Complexity.LogProg.UReg.v_0, Complexity.LogProg.pathOr_bit, Complexity.LogProg.ups_rej, Complexity.UnaryRest, Complexity.lt_of_getD_true}
 \difficulty{6}
 Let $x$ be a Boolean word, $B$ a natural number, $q$ a rational number, $d$ a natural
-number, and $[?]$ a register state $[?]$ with fields
-$p,n,a,b,cur,t,tmp,st,nx,q_0,L,u,w,e,f$. Suppose $|x|-p=d$, every register field is at
-most $B$, $2|x|+2\le B$, $p=2n$, and $p\le |x|$. Assume that for every $n'\ge n$ for
-which the bits of $x$ at positions $2i,2i+1$ are both $1$ for all $n\le i<n'$, and the
-bits at positions $2n',2n'+1$ are $0,1$, respectively, the program started at state $m0$
-with the same register state except with $p=2n'+2$ and $n=n'$ has probabilistic
-semantics with acceptance probability $q$. If there is no such $n'$, assume $q=0$. Then
-the program started at state $u0$ with the given register state has probabilistic
-semantics with acceptance probability $q$.
+number, and $\sigma$ a register state with fields $p,n,a,b,cur,t,tmp,st,nx,q_{\mathrm{reg}},L,u,w,e,f$.
+Suppose $|x|-\sigma.p=d$, every field of $\sigma$ is at most $B$,
+$2|x|+2\le B$, $\sigma.p=2\sigma.n$, and $\sigma.p\le |x|$. For every $n\prime\ge\sigma.n$
+whose unary suffix consists of aligned $11$ pairs from index $\sigma.n$ through $n\prime-1$,
+followed by the terminator pair $01$, suppose the program from label $m0$ and the state
+obtained by setting $p=2n\prime+2$ and $n=n\prime$ has acceptance probability $q$.
+If there is no such $n\prime$, suppose $q=0$. Then the program from label $u0$ and state
+\sigma has acceptance probability $q$.
 \end{lemma}
 
 \begin{lemma}[Matrix-checking program semantics]
@@ -80,7 +79,7 @@ semantics with acceptance probability $q$.
 \uses{Complexity.LogProg.PSem.clr, Complexity.LogProg.PSem.inc, Complexity.LogProg.PSem.jeq_neg, Complexity.LogProg.PSem.jeq_pos, Complexity.LogProg.UPS, Complexity.LogProg.UPS.of_eq, Complexity.LogProg.UReg, Complexity.LogProg.UReg.Le, Complexity.LogProg.UReg.reg, Complexity.LogProg.ups_ycol, Complexity.pathEdge}
 \difficulty{6}
 Let $x$ be a Boolean word, $B$ a natural number, and $q$ a rational number. Suppose
-$\sigma$ is a register state and $dd$ is a natural number such that
+$\sigma$ is a register state and $dd$ is a natural number such that
 $\sigma.n-\sigma.u=dd$, each register of $\sigma$ is at most $B$,
 $2\sigma.n+2+2\sigma.n^2\le B$, and $\sigma.u\le\sigma.n$. If every encoded edge from a
 row $u'$ with $\sigma.u\le u'<\sigma.n$ to a column $w'<\sigma.n$ is present exactly

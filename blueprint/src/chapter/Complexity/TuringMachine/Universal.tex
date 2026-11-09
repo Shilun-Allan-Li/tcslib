@@ -177,8 +177,8 @@ For every natural number $n$, the unary state tape encoding $n$ is blank at cell
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour}
 \difficulty{4}
 Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter
-controls. Let the state tape $sigma:\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ satisfy
-$sigma(0)=0$ and $sigma(j)\ne0$ for every positive natural number $j$. Suppose that in
+controls. Let the state tape $\sigma:\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ satisfy
+$\sigma(0)=0$ and $\sigma(j)\ne0$ for every positive natural number $j$. Suppose that in
 control $q$, reading $0$ on work tape $1$ causes a transition to $q'$ with a one-cell
 right state-head move, while any other read causes the machine to remain in $q$ with a
 one-cell left move. Then, for every $j\in\mathbb{N}$, from the interpreter configuration
@@ -193,11 +193,11 @@ $1$.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{4}
 Let $x$ be a Boolean word, let $b$ be a four-tape interpreter configuration for input
-$x$, let $i$ be an index in $\\{0,\\ldots,8\\}$, let $T$ be a Boolean table, let
-$\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$ be a state tape, and let
-$s\\in\\mathbb{Z}$. If $T=l\\,1^n\\,0\\,r$ for Boolean words $l,r$ and
-$n\\in\\mathbb{N}$, then after exactly $n+1$ steps the stopped interpreter, started in
-the initial-state-skipping phase with table cursor $|l|$ and state tape $\\sigma$ with
+$x$, let $i$ be an index in $\{0,\ldots,8\}$, let $T$ be a Boolean table, let
+$\sigma\colon\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ be a state tape, and let
+$s\in\mathbb{Z}$. If $T=l\\,1^n\\,0\\,r$ for Boolean words $l,r$ and
+$n\in\mathbb{N}$, then after exactly $n+1$ steps the stopped interpreter, started in
+the initial-state-skipping phase with table cursor $|l|$ and state tape $\sigma$ with
 cursor $s$, is in the record-group selection phase with index $i$ and table cursor
 $|l|+n+1$, with all other configuration fields as specified by the interpreter
 evaluation configuration.
@@ -366,10 +366,10 @@ consumed and none remaining, and its state cursor is $j+|G|+1$.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{5}
 Let $x$ be a Boolean input word, $b$ a four-tape interpreter configuration on input $x$,
-$T$ a Boolean table, $\\sigma$ an integer-indexed optional Boolean state tape with
+$T$ a Boolean table, $\sigma$ an integer-indexed optional Boolean state tape with
 cursor $s$, and $a$ a function assigning a Boolean bit to each of the eight fixed
-action-bit positions. Suppose $T=l\\,a(0)a(1)\\cdots a(7)\\,r$. For every
-$n\\in\\mathbb{N}$, field index $i\\in\\{0,\\ldots,7\\}$, and accumulated register $a_0$
+action-bit positions. Suppose $T=l\\,a(0)a(1)\cdots a(7)\\,r$. For every
+$n\in\mathbb{N}$, field index $i\in\{0,\ldots,7\}$, and accumulated register $a_0$
 satisfying $i+n=7$ and $a_0(j)=a(j)$ for every index $j<i$, the stopped interpreter
 starting in the action-reading phase with register $a_0$ and table cursor $|l|+i$
 reaches the successor-decoding phase carrying all of $a$ after exactly $n+1$ steps, with
@@ -395,7 +395,7 @@ halting successor, and $2q + 4$ for a live successor of index $q$.
 Let $x$ be a Boolean word, $b$ a four-tape interpreter configuration on input $x$, $T$ a
 Boolean table, $a$ a function assigning a Boolean bit to each of the eight fixed
 action-bit positions, and $v$ either no successor state or a state index in
-$\\{0,\\ldots,n\\}$. If $T=l\\,1^m\\,0\\,r$, where $m$ is the unary length associated
+$\{0,\ldots,n\}$. If $T=l\\,1^m\\,0\\,r$, where $m$ is the unary length associated
 with $v$, then after the successor-preparation duration (one step when $v$ is absent and
 $2q+4$ steps when $v=q$ is present), the stopped interpreter is in the pending-action
 phase carrying $a$ and the flag indicating that $v$ is absent. Its table cursor is
@@ -530,13 +530,13 @@ to $\mathrm{src}$ at table position $p$.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.pairEncode, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_Header, Turing.timedCut_NextCost, Turing.timedCut_count_run, Turing.timedCut_initial_skip, Turing.timedCut_lookup_parts, Turing.timedCut_prepare_next, Turing.timedCut_read_fixed, Turing.timedCut_run_join, Turing.timedCut_select, Turing.timedCut_table_rewind, Turing.timed_apply_record, Turing.universalActionBits, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalInput_read, Turing.universalInterpreter, Turing.universalNextOnes, Turing.universalRecordBits, Turing.universalRecordIndex, Turing.universalSimulationCfg, Turing.universalStateTape, Turing.universal_pair_length, Turing.universal_record_shape}
 \difficulty{6}
-Let $M$ be a coded machine with serialization length $L$, let $\\alpha$ and $x$ be
+Let $M$ be a coded machine with serialization length $L$, let $\alpha$ and $x$ be
 Boolean words, and let $c$ be a configuration of $M$ on input $x$ whose state is
-present. If $p\\in\\mathbb{N}$ satisfies $p\\le L$, then there are natural numbers
+present. If $p\in\mathbb{N}$ satisfies $p\le L$, then there are natural numbers
 $d,p'$, and a four-tape interpreter configuration $r$ on the paired input
-$\\langle\\alpha,x\\rangle$ such that $d\\le 3L+5(N+1)+20$, $p'\\le L$, the control
+$\langle\alpha,x\rangle$ such that $d\le 3L+5(N+1)+20$, $p'\le L$, the control
 state of $r$ is a pending-action state, the stopped interpreter reaches $r$ from the
-simulation configuration for $M,\\alpha,c,p$ in exactly $d$ steps, and one step of the
+simulation configuration for $M,\alpha,c,p$ in exactly $d$ steps, and one step of the
 ordinary interpreter from $r$ equals the simulation configuration for the result of one
 step of $M$ from $c$ with table cursor $p'$. Here $N$ is the state-count parameter of
 $M$.
@@ -908,7 +908,7 @@ the original interpreter have the same transition action.
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.UniversalControl, Turing.timedCutInterpreter}
 \difficulty{3}
 Let $x$ be a Boolean input word and $c$ a configuration of the stopped four-tape
-interpreter on input $x$. For natural numbers $s\\le t$, if the interpreter has not
+interpreter on input $x$. For natural numbers $s\le t$, if the interpreter has not
 halted after $t$ steps from $c$, then it has not halted after $s$ steps from $c$.
 \end{lemma}
 
@@ -1076,7 +1076,7 @@ Let $x$ be a Boolean word, let $c$ be a base configuration of the timed interpre
 input $x$, let $u$ assign eight Boolean action bits, and let $h$ and $r$ be Boolean
 flags. For every Boolean word $b_s$, integer frontier $z$, and finite lists $l,r_s$ of
 possibly blank bits, running the interpreter for $|b_s|$ steps from the borrow phase
-with flag $r$ and zipper state $(z,l,b_s\mathbin{+}r_s)$ yields the borrow phase with
+with flag $r$ and zipper state $(z,l,b_s\mathbin{+\!\!+}r_s)$ yields the borrow phase with
 flag equal to the final borrow from subtracting $r$ from $b_s$, frontier $z+|b_s|$,
 processed stack the reversed resulting word followed by $l$, and unprocessed list $r_s$.
 \end{lemma}

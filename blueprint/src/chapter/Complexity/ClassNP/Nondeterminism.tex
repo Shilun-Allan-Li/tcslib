@@ -1239,7 +1239,7 @@ and is live at every time $s<T$; suppose also that $M$ decides $V$ within time
 $A(m+1)^d$ on every input of length $m$. Set
 $H=2|x|+2+T+(|x|+|v|+2+(A(|x|+|v|+1)^d+1))$. Every Boolean choice word $w$ of length $H$
 makes the host built from $S$ and $M$ halt on input $x$ with output the one-bit
-indicator of $x\mathbin{+ }u\in V$ for some Boolean word $u$ of length $|v|$;
+indicator of $x\mathbin{+\!\!+}u\in V$ for some Boolean word $u$ of length $|v|$;
 conversely, for every such $u$, some choice word $w$ of length $H$ makes that host halt
 with that output.
 \end{lemma}
@@ -1510,7 +1510,7 @@ $C,c,A,r$ be natural numbers. If a finite deterministic Turing machine computes 
 split-emitter function in time $A(n+1)^{r+1}$ on every binary input of length $n$, then
 the language of words $y$ for which there are binary strings $x,u$ with $y=xu$,
 $|u|=C\cdot 2^{(|x|+1)^c}$, and the computation of $N$ on input $x$ using choice string
-$u$ halts with output $1$ belongs to $mathrm{P}$.
+$u$ halts with output $1$ belongs to $\mathrm{P}$.
 \end{lemma}
 
 \begin{definition}[One round of the bounded unary search]
@@ -2316,10 +2316,10 @@ $C2^{(|x|+1)^c}$ belongs to the padded language of $L$ if and only if $x\in L$.
 \uses{Complexity.NP, Complexity.P, Complexity.a3nPadLanguage, Complexity.a3nVerifier, Complexity.a3n_pair_inverse, Complexity.a3n_verifier_mem_P, Complexity.mem_NP_iff_exists_length_le, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
 Let $L$ and $V$ be languages of finite Boolean words, and let $C,c$ be natural numbers.
-Suppose $V$ belongs to $ \mathrm{P}$ and, for every word $x$, membership $x\in L$ is
+Suppose $V$ belongs to $\mathrm{P}$ and, for every word $x$, membership $x\in L$ is
 equivalent to the existence of a word $u$ of length $C(2^{|x|+1})^c$ such that $xu\in
 V$. Then the language of pair encodings of $x$ with the all-ones word of length
-$C2^{(|x|+1)^c}$, for $x\in L$, belongs to $ \mathrm{NP}$.
+$C2^{(|x|+1)^c}$, for $x\in L$, belongs to $\mathrm{NP}$.
 \end{lemma}
 
 \begin{lemma}[Bounds from successful pair decoding]

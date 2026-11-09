@@ -111,7 +111,7 @@ coordinate set and frequency prefix by less than $\tau^2/4$.
 \leanok
 \uses{FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.Matches}
 Let $n$ be a natural number, let a trace be a finite list of estimate records, let $J$
-be a subset of the $n$ coordinates, and let $[4mfrequencies[0m$ be a finite family of
+be a subset of the $n$ coordinates, and let $frequencies$ be a finite family of
 subsets of those coordinates. The trace covers this family at $J$ if, for every member
 of the family, it contains a record whose coordinate set is $J$ and whose frequency
 prefix is that member.
@@ -123,14 +123,14 @@ prefix is that member.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.IsAccurate, FABL.GoldreichLevinEstimateRecord.Matches, FABL.GoldreichLevinEstimateTrace.Covers, FABL.GoldreichLevinEstimateTrace.IsAccurate, FABL.GoldreichLevinThreshold, FABL.freeFrequencyPart, FABL.goldreichLevinTraceEstimate, FABL.liftFreeFrequency_freeFrequencyPart_eq_of_subset, FABL.restrictedFourierWeight}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $0<\\tau\\le1$, and let $f$ map the
+Let $n$ be a nonnegative integer, let $0<\tau\le1$, and let $f$ map the
 $n$-dimensional sign cube to signs. Suppose every record in a finite trace has estimate
-within strictly less than $\\tau^2/4$ of its corresponding restricted Fourier weight.
+within strictly less than $\tau^2/4$ of its corresponding restricted Fourier weight.
 Let $J$ be a set of coordinates, let $F$ be a finite family of coordinate subsets
-covered by the trace (each $U\\in F$ has a record with coordinate set $J$ and frequency
-prefix $U$), and take $U\\in F$ with $U\\subseteq J$. The trace estimate at $J$ and the
+covered by the trace (each $U\in F$ has a record with coordinate set $J$ and frequency
+prefix $U$), and take $U\in F$ with $U\subseteq J$. The trace estimate at $J$ and the
 free part of $U$ differs from the restricted Fourier weight of $f$ at that same
-coordinate set and free part by strictly less than $\\tau^2/4$.
+coordinate set and free part by strictly less than $\tau^2/4$.
 \end{theorem}
 
 \begin{definition}[Candidate estimate program]
@@ -226,8 +226,8 @@ returned.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.key, FABL.GoldreichLevinThreshold, FABL.LearningCost, FABL.LearningProgram.map_output_eq_of_mem_support_sequence, FABL.LearningProgram.runWithCost, FABL.goldreichLevinCandidateEstimateProgram, FABL.goldreichLevinCandidateEstimateProgram_key, FABL.goldreichLevinCandidates, FABL.goldreichLevinStageEstimateProgram, FABL.prefixCoordinates}
 \difficulty{1}
 Let $n$ be a nonnegative integer, let $f$ map the $n$-dimensional sign cube to signs,
-let $0<\\tau\\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, set
-$C=\\bigcup_{S\\in A}\\{S,S\\cup\\{k\\}\\}$ and $J=\\{0,\\ldots,k\\}$. In every possible
+let $0<\tau\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, set
+$C=\bigcup_{S\in A}\{S,S\cup\{k\}\}$ and $J=\{0,\ldots,k\}$. In every possible
 output trace of the stage run with target $f$, the sequence of pairs consisting of each
 record's coordinate set and frequency prefix is exactly the list of pairs $(J,U)$ as $U$
 ranges over the list of elements of $C$.
@@ -240,11 +240,11 @@ ranges over the list of elements of $C$.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.Matches, FABL.GoldreichLevinEstimateRecord.key, FABL.GoldreichLevinEstimateTrace.Covers, FABL.GoldreichLevinThreshold, FABL.LearningCost, FABL.LearningProgram.runWithCost, FABL.goldreichLevinCandidates, FABL.goldreichLevinStageEstimateProgram, FABL.goldreichLevinStageEstimateProgram_output_keys, FABL.prefixCoordinates}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ be a function from the $n$-dimensional sign
-cube to $\\{ -1,1 \\}$, let $0<\\tau\\le 1$, and let $k<n$. For any finite family $A$ of
+cube to $\{ -1,1 \}$, let $0<\tau\le 1$, and let $k<n$. For any finite family $A$ of
 subsets of the coordinate set, consider the stage that estimates the frequencies in
-$C=\\bigcup_{S\\in A}\\{S,S\\cup\\{k\\}\\}$ using the coordinate prefix
-$J=\\{0,\\ldots,k\\}$. Every possible output trace of this randomized stage contains,
-for each $U\\in C$, a record whose coordinate set is $J$ and whose frequency prefix is
+$C=\bigcup_{S\in A}\{S,S\cup\{k\}\}$ using the coordinate prefix
+$J=\{0,\ldots,k\}$. Every possible output trace of this randomized stage contains,
+for each $U\in C$, a record whose coordinate set is $J$ and whose frequency prefix is
 $U$.
 \end{theorem}
 
@@ -1804,11 +1804,11 @@ $U$.
     pdf-ffbe9c7b3306-p085-b004}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ map the $n$-dimensional sign cube to signs,
-let $0<\\tau\\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
-$C=\\bigcup_{S\\in A}\\{S,S\\cup\\{k\\}\\}$, and let $m$ be the sample count used by the
-stage with accuracy parameter $\\tau^2/4$ and confidence parameter
-$1/[40(n+1)(\\lceil4/\\tau^2\\rceil+1)]$. Every possible outcome of this stage uses at
-most $|C|\\cdot 2m$ membership queries to the target.
+let $0<\tau\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
+$C=\bigcup_{S\in A}\{S,S\cup\{k\}\}$, and let $m$ be the sample count used by the
+stage with accuracy parameter $\tau^2/4$ and confidence parameter
+$1/[40(n+1)(\lceil4/\tau^2\rceil+1)]$. Every possible outcome of this stage uses at
+most $|C|\cdot 2m$ membership queries to the target.
 \end{theorem}
 
 \begin{theorem}[Stage Work Bound]
@@ -1818,11 +1818,11 @@ most $|C|\\cdot 2m$ membership queries to the target.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinThreshold, FABL.LearningCost, FABL.LearningProgram.costProjection_le_of_mem_support_sequence, FABL.LearningProgram.runWithCost, FABL.fourierEstimatorSampleCount, FABL.goldreichLevinCallConfidence, FABL.goldreichLevinCandidateEstimateProgram, FABL.goldreichLevinCandidateEstimateProgram_work_le, FABL.goldreichLevinCandidates, FABL.goldreichLevinStageEstimateProgram, FABL.goldreichLevinWeightAccuracy, FABL.prefixCoordinates}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ map the $n$-dimensional sign cube to signs,
-let $0<\\tau\\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
-$C=\\bigcup_{S\\in A}\\{S,S\\cup\\{k\\}\\}$, and let $m$ be the sample count used by the
-stage with accuracy parameter $\\tau^2/4$ and confidence parameter
-$1/[40(n+1)(\\lceil4/\\tau^2\\rceil+1)]$. Every possible outcome of this stage has
-charged local work at most $|C|\\cdot 8(m+1)(n+1)$.
+let $0<\tau\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
+$C=\bigcup_{S\in A}\{S,S\cup\{k\}\}$, and let $m$ be the sample count used by the
+stage with accuracy parameter $\tau^2/4$ and confidence parameter
+$1/[40(n+1)(\lceil4/\tau^2\rceil+1)]$. Every possible outcome of this stage has
+charged local work at most $|C|\cdot 8(m+1)(n+1)$.
 \end{theorem}
 
 \begin{theorem}[Goldreich levin candidate estimate program outer failure probability le]
@@ -1844,11 +1844,11 @@ Statement pending regeneration.
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinEstimateRecord.IsAccurate, FABL.GoldreichLevinThreshold, FABL.LearningProgram.outerEventProbability, FABL.LearningProgram.outerEventProbability_sequence_exists_le_nsmul, FABL.goldreichLevinCallConfidence, FABL.goldreichLevinCandidateEstimateProgram, FABL.goldreichLevinCandidateEstimateProgram_outerFailureProbability_le, FABL.goldreichLevinCandidates, FABL.goldreichLevinStageEstimateProgram, FABL.prefixCoordinates}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ map the $n$-dimensional sign cube to signs,
-let $0<\\tau\\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
-$C=\\bigcup_{S\\in A}\\{S,S\\cup\\{k\\}\\}$. Run the stage that estimates the restricted
-Fourier weight for each $U\\in C$ on the prefix $J=\\{0,\\ldots,k\\}$, using accuracy
-parameter $\\tau^2/4$ and per-estimate failure parameter
-$\\delta=1/[40(n+1)(\\lceil4/\\tau^2\\rceil+1)]$. The outer probability that the output
+let $0<\tau\le1$, and let $k<n$. For a finite family $A$ of coordinate subsets, put
+$C=\bigcup_{S\in A}\{S,S\cup\{k\}\}$. Run the stage that estimates the restricted
+Fourier weight for each $U\in C$ on the prefix $J=\{0,\ldots,k\}$, using accuracy
+parameter $\tau^2/4$ and per-estimate failure parameter
+$\delta=1/[40(n+1)(\lceil4/\tau^2\rceil+1)]$. The outer probability that the output
 trace contains any record whose estimate differs from its corresponding restricted
-Fourier weight by at least $\\tau^2/4$ is at most $|C|\\delta$.
+Fourier weight by at least $\tau^2/4$ is at most $|C|\delta$.
 \end{theorem}

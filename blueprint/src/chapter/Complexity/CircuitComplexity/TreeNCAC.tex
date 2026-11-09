@@ -71,7 +71,7 @@ every gate in its circuit has at most two inputs.
 \uses{BoolCircuit.TreeCircuit.depth}
 For a natural number $d$, a Boolean tree circuit family has depth bounded by a
 degree-$d$ polynomial in $\log_2 n+1$ if there is a natural number $b$ such that, for
-every input length $n$, its circuit depth is at most $b(loor{\log_2 n}+1)^d$.
+every input length $n$, its circuit depth is at most $b(\lfloor\log_2 n\rfloor+1)^d$.
 \end{definition}
 
 \begin{definition}[Tree circuit complexity class]
@@ -80,10 +80,10 @@ every input length $n$, its circuit depth is at most $b(loor{\log_2 n}+1)^d$.
 \leanok
 \uses{BoolCircuit.TreeCircuitFamily, BoolCircuit.TreeCircuitFamily.HasFaninTwo, BoolCircuit.TreeCircuitFamily.HasPolylogDepth, BoolCircuit.TreeCircuitFamily.IsPolySize, BoolCircuit.TreeCircuitFamily.language}
 For a natural number $d$, a Boolean language belongs to the tree circuit class with
-polynomial size and depth bounded by a degree-$d$ polynomial in $loor{\log_2 n}+1$ if
+polynomial size and depth bounded by a degree-$d$ polynomial in $\lfloor\log_2 n\rfloor+1$ if
 there is a family of Boolean tree circuits that recognizes the language, has fan-in at
 most two at every input length, has polynomial size, and has depth at most a degree-$d$
-polynomial in $loor{\log_2 n}+1$.
+polynomial in $\lfloor\log_2 n\rfloor+1$.
 \end{definition}
 
 \begin{definition}[Polynomial-size tree-AC language]
@@ -119,7 +119,7 @@ languages that belong to tree-AC at parameter $d$.
 \label{BoolCircuit.TreeNC}
 \leanok
 \uses{BoolCircuit.TreeNCLevel}
-The tree-NC class is the union, over all integer parameters $i \\ge 1$, of the tree-NC
+The tree-NC class is the union, over all integer parameters $i \ge 1$, of the tree-NC
 levels at parameter $i$.
 \end{definition}
 
@@ -425,7 +425,7 @@ fan-in bounds is at most $m$, where the maximum for an empty list is $0$.
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.toBinary, BoolCircuit.combine_eval, BoolCircuit.eval_node_map}
 \difficulty{4}
 For every natural number $n$, every Boolean circuit tree $c$ on $n$ variables, and every
-assignment $x : br^n \to \{0,1\}$, the binary conversion of $c$ has the same evaluation
+assignment $x : \bbr^n \to \{0,1\}$, the binary conversion of $c$ has the same evaluation
 at $x$ as $c$.
 \end{theorem}
 

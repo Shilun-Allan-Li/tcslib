@@ -3438,11 +3438,12 @@ Statement pending regeneration.
 \leanok
 \uses{Complexity.NP, Complexity.P, Complexity.PolyTimeComputable.comp, Complexity.inter_mem_P, Complexity.lenEq_preimage_mem_P, Complexity.mem_NP_iff_exists_length_le, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Complexity.polyTimeComputable_polyUnary, Randomized.InRP, Randomized.boolVerifier, Randomized.exists_ofFn_eq, Randomized.exists_ofFn_of_randProb_pos, Randomized.polyLen, Randomized.polyTimeModel, Turing.pairEncode}
 \difficulty{5}
-Let $L$ be a language of bit strings. If a polynomial-time verifier using a polynomial
-number of uniformly random bits accepts each member with probability at least $2/3$ and
-never accepts a nonmember, then $L$ belongs to $	extsf{NP}$: there are constants
-$C,c\in\mathbb{N}$ and a polynomial-time decidable language $V$ such that $x\in L$
-exactly when some string $u$ of length $C(|x|+1)^c$ has $x\mathbin{++}u\in V$.
+Let $L$ be a language of bit strings. Suppose a polynomial-time verifier uses a
+polynomial number of uniformly random bits, accepts each member with probability at
+least $2/3$, and never accepts a nonmember. Then $L\in\mathrm{NP}$. In particular,
+there are natural numbers $C,c$ and a polynomial-time decidable language $V$ such
+that $x\in L$ exactly when there exists a string $u$ of length $C(|x|+1)^c$ with
+$\operatorname{pairEncode}(x,u)\in V$.
 \end{theorem}
 
 \begin{theorem}[Mem exp of in bpp poly time model]
@@ -3592,7 +3593,7 @@ random bits.
 Let $E$ be a verifier model that is closed under testing whether any of a polynomial
 number of consecutive random blocks is accepted. Suppose a language $L$ has an
 $E$-efficient verifier with polynomially many random bits, perfect rejection on inputs
-outside $L$, and acceptance probability at least $\min(2/3,(|x|+1)^{-c})$ on each input
+outside $L$, and acceptance probability at least $\min(2/3,(|x|+1)^{-c})$ on each input
 $x\in L$, for some natural number $c$. Then, for every natural number $d$, $L$ has an
 $E$-efficient verifier with polynomially many random bits, perfect rejection outside
 $L$, and acceptance probability at least $1-2^{-((|x|+1)^d+1)}$ on every $x\in L$.
@@ -3621,7 +3622,7 @@ $L$.
 \difficulty{1}
 Suppose a language $L$ has a polynomial-time randomized verifier with polynomially many
 random bits, perfect rejection on inputs outside $L$, and acceptance probability at
-least $\min(2/3,(|x|+1)^{-c})$ on each input $x\in L$, for some natural number $c$.
+least $\min(2/3,(|x|+1)^{-c})$ on each input $x\in L$, for some natural number $c$.
 Then, for every natural number $d$, it has a polynomial-time randomized verifier with
 polynomially many random bits, perfect rejection outside $L$, and acceptance probability
 at least $1-2^{-((|x|+1)^d+1)}$ on every $x\in L$.

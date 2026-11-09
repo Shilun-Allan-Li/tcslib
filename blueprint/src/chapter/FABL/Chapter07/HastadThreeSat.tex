@@ -303,8 +303,8 @@ corresponding coordinates of $\mu$.
 }
 \label{FABL.oddPart}
 \leanok
-For a real-valued function $f$ on the sign cube $\\{-1,1\\}^n$, its odd part is the
-function $x\\mapsto (f(x)-f(-x))/2$.
+For a real-valued function $f$ on the sign cube $\{-1,1\}^n$, its odd part is the
+function $x\mapsto (f(x)-f(-x))/2$.
 \end{definition}
 
 \begin{definition}[Odd part of a bounded cube function]
@@ -318,7 +318,7 @@ function $x\\mapsto (f(x)-f(-x))/2$.
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.oddPart}
 For a bounded real-valued function $f$ on the sign cube $\{-1,1\}^n$, its odd part is
-the bounded function $x\\mapsto (f(x)-f(-x))/2$.
+the bounded function $x\mapsto (f(x)-f(-x))/2$.
 \end{definition}
 
 \begin{theorem}[Extensionality of bounded cube functions]
@@ -361,7 +361,7 @@ value at $-x$ is the negative of its value at $x$.
 \leanok
 \uses{FABL.BoundedCubeFunction.ext, FABL.BoundedCubeFunction.oddPart, FABL.BoundedCubeFunction.ofBoolean, FABL.dictator, FABL.signValue, FABL.signValue_neg}
 \difficulty{3}
-For a natural number $n$ and a coordinate $i\in\{0,[0m\ldots,n-1\}$, the odd part of
+For a natural number $n$ and a coordinate $i\in\{0,\ldots,n-1\}$, the odd part of
 the bounded real-valued function induced by the $i$th coordinate function on the sign
 cube equals that function.
 \end{theorem}
@@ -499,10 +499,10 @@ odd part $x\mapsto (f(x)-f(-x))/2$ is $\bigl(1-(-1)^{|S|}\bigr)\widehat f(S)/2$.
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierCoeff_oddPart, FABL.oddPart}
 \difficulty{2}
-Let $n$ be a nonnegative integer, let $f$ be a real-valued function on $\\{-1,1\\}^n$,
-and let $S\\subseteq\\{1,\\ldots,n\\}$ have even cardinality. Define the odd part of $f$
-by $f_{\\mathrm{odd}}(x)=(f(x)-f(-x))/2$. Its Fourier coefficient at $S$, computed with
-respect to the uniform measure on the cube and the character $\\prod_{i\\in S}x_i$, is
+Let $n$ be a nonnegative integer, let $f$ be a real-valued function on $\{-1,1\}^n$,
+and let $S\subseteq\{1,\ldots,n\}$ have even cardinality. Define the odd part of $f$
+by $f_{\mathrm{odd}}(x)=(f(x)-f(-x))/2$. Its Fourier coefficient at $S$, computed with
+respect to the uniform measure on the cube and the character $\prod_{i\in S}x_i$, is
 zero.
 \end{theorem}
 
@@ -513,10 +513,10 @@ zero.
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierCoeff_oddPart, FABL.oddPart}
 \difficulty{2}
-Let $n$ be a nonnegative integer, let $f$ be a real-valued function on $\\{-1,1\\}^n$,
-and let $S\\subseteq\\{1,\\ldots,n\\}$ have odd cardinality. Define
-$f_{\\mathrm{odd}}(x)=(f(x)-f(-x))/2$. The Fourier coefficient of $f_{\\mathrm{odd}}$ at
-$S$, with respect to the uniform measure on the cube and the character $\\prod_{i\\in
+Let $n$ be a nonnegative integer, let $f$ be a real-valued function on $\{-1,1\}^n$,
+and let $S\subseteq\{1,\ldots,n\}$ have odd cardinality. Define
+$f_{\mathrm{odd}}(x)=(f(x)-f(-x))/2$. The Fourier coefficient of $f_{\mathrm{odd}}$ at
+$S$, with respect to the uniform measure on the cube and the character $\prod_{i\in
 S}x_i$, equals the Fourier coefficient of $f$ at $S$.
 \end{theorem}
 
@@ -526,9 +526,9 @@ S}x_i$, equals the Fourier coefficient of $f$ at $S$.
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierCoeff_oddPart_of_even, FABL.fourierCoeff_oddPart_of_odd, FABL.oddPart, FABL.stableInfluence}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{−1,1\\}^n\\to\\mathbb R$, and let $i$ be a
-coordinate. Define the odd part of $f$ by $f_{\\mathrm{odd}}(x)=(f(x)-f(-x))/2$. For
-every $\\rho\\in[0,1]$, the stable influence of $f_{\\mathrm{odd}}$ at parameter $\\rho$
+Let $n$ be a natural number, let $f:\{−1,1\}^n\to\mathbb R$, and let $i$ be a
+coordinate. Define the odd part of $f$ by $f_{\mathrm{odd}}(x)=(f(x)-f(-x))/2$. For
+every $\rho\in[0,1]$, the stable influence of $f_{\mathrm{odd}}$ at parameter $\rho$
 and coordinate $i$ is at most the stable influence of $f$ there.
 \end{theorem}
 
@@ -563,7 +563,7 @@ tester with probability at most $B$.
 \uses{FABL.BoundedCubeFunction, FABL.BoundedCubeFunction.ofBoolean, FABL.HasSmallStableInfluences, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.SignTester.oddSymmetrization_preserves_parameters_of_property, FABL.SignTester.oddSymmetrizedAcceptanceProbability, FABL.dictator, FABL.oddPart, FABL.stableInfluence, FABL.stableInfluence_oddPart_le}
 \difficulty{4}
 Let $n$ be a natural number, let $T$ be a randomized sign tester on the $n$-dimensional
-Boolean cube, and let $eta,[0m\varepsilon,\delta, B\in\mathbb{R}$ with
+Boolean cube, and let $\eta,\varepsilon,\delta, B\in\mathbb{R}$ with
 $0\leq\delta\leq1$. Suppose every coordinate dictator is accepted by $T$ with
 probability at least $\beta$, and every odd function $f$ valued in $[-1,1]$ whose stable
 influences at parameter $1-\delta$ are all at most $\varepsilon$ is accepted with
@@ -597,10 +597,10 @@ their coordinatewise product scaled by $1$.
 \uses{FABL.BoundedCubeFunction, FABL.Sign, FABL.SignPredicate.randomizedValue, FABL.SignQueryCheck.randomizedValue, FABL.SignTester.acceptanceProbability, FABL.e3LinPredicate, FABL.e3LinPredicate_randomizedValue, FABL.expect_hastadCore_eq_fourierSum, FABL.fourierCoeff, FABL.fourier_expansion, FABL.monomial, FABL.noiseOperator, FABL.noiseOperator_fourier_expansion, FABL.originalBLRTester, FABL.pmfExpectation, FABL.pmfExpectation_bind, FABL.pmfExpectation_map, FABL.pmfExpectation_uniformPMF_eq_expect, FABL.scaledPointwiseProduct, FABL.signValue, FABL.signValue_one, FABL.uniformPMF}
 \difficulty{6}
 Let $n$ be a nonnegative integer and let $f$ be a real-valued function on the sign cube
-$\\{-1,1\\}^n$ taking values in $[-1,1]$. For each subset $S$ of the coordinates, let
-$\\widehat f(S)$ be the uniform average of $f(x)\\prod_{i\\in S}x_i$ over the sign cube.
+$\{-1,1\}^n$ taking values in $[-1,1]$. For each subset $S$ of the coordinates, let
+$\widehat f(S)$ be the uniform average of $f(x)\prod_{i\in S}x_i$ over the sign cube.
 The acceptance probability of the original three-query BLR tester on $f$ is
-$\\frac12+\\frac12\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}\\widehat f(S)^3$.
+$\frac12+\frac12\sum_{S\subseteq\{0,\ldots,n-1\}}\widehat f(S)^3$.
 \end{theorem}
 
 \begin{theorem}[Dictator acceptance by the BLR tester]
@@ -792,13 +792,13 @@ parameters equal to $\varepsilon$.
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.BoundedCubeFunction.noise_oddPart, FABL.BoundedCubeFunction.oddPart, FABL.IsNoiseOfSmallStableInfluences, FABL.oddPart, FABL.stableInfluence, FABL.stableInfluence_oddPart_le}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $\\rho\\in[-1,1]$, and let
-$\\varepsilon\\in[0,1]$. Suppose $g:\\{-1,1\\}^n\\to\\mathbb R$ takes values in $[-1,1]$
-and is the noise transform at correlation $\\rho$ of some function $f$ taking values in
-$[-1,1]$ whose stable influence at parameter $1-\\varepsilon$ is at most $\\varepsilon$
-at every coordinate. Then the odd part $x\\mapsto(g(x)-g(-x))/2$ is also the noise
-transform at correlation $\\rho$ of a function taking values in $[-1,1]$ whose stable
-influence at parameter $1-\\varepsilon$ is at most $\\varepsilon$ at every coordinate.
+Let $n$ be a nonnegative integer, let $\rho\in[-1,1]$, and let
+$\varepsilon\in[0,1]$. Suppose $g:\{-1,1\}^n\to\mathbb R$ takes values in $[-1,1]$
+and is the noise transform at correlation $\rho$ of some function $f$ taking values in
+$[-1,1]$ whose stable influence at parameter $1-\varepsilon$ is at most $\varepsilon$
+at every coordinate. Then the odd part $x\mapsto(g(x)-g(-x))/2$ is also the noise
+transform at correlation $\rho$ of a function taking values in $[-1,1]$ whose stable
+influence at parameter $1-\varepsilon$ is at most $\varepsilon$ at every coordinate.
 \end{theorem}
 
 \begin{theorem}[Odd noisy-function acceptance bound]
@@ -807,14 +807,14 @@ influence at parameter $1-\\varepsilon$ is at most $\\varepsilon$ at every coord
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.BoundedCubeFunction.noise, FABL.BoundedCubeFunction.oddPart, FABL.BoundedCubeFunction.sum_sq_fourierCoeff_le_one, FABL.HasSmallStableInfluences, FABL.SignTester.acceptanceProbability, FABL.fourierCoeff, FABL.fourierCoeff_noiseOperator, FABL.fourierCoeff_oddPart_of_even, FABL.fourierCoeff_oddPart_of_odd, FABL.noiseOperator, FABL.oddPart, FABL.originalBLRTester, FABL.originalBLRTester_acceptanceProbability_eq_fourierSum, FABL.stableInfluence}
 \difficulty{6}
-Let $n$ be a nonnegative integer, let $\\varepsilon\\in[0,1]$, let $\\rho\\in[-1,1]$
-with $\\rho\\ge 0$, and suppose $\\varepsilon\\le 1-\\rho^2$. Let $f$ be a real-valued
+Let $n$ be a nonnegative integer, let $\varepsilon\in[0,1]$, let $\rho\in[-1,1]$
+with $\rho\ge 0$, and suppose $\varepsilon\le 1-\rho^2$. Let $f$ be a real-valued
 function on the sign cube with values in $[-1,1]$. For each coordinate $i$, define its
-stable influence at parameter $1-\\varepsilon$ by $\\sum_{S\\ni
-i}(1-\\varepsilon)^{|S|-1}\\widehat f(S)^2$, where $\\widehat f(S)$ is the uniform
-Fourier coefficient. If every such stable influence is at most $\\varepsilon$, then the
-original three-query BLR tester accepts the odd part of the $\\rho$-noise of $f$ with
-probability at most $\\frac12+\\frac{\\sqrt{\\varepsilon}}2$.
+stable influence at parameter $1-\varepsilon$ by $\sum_{S\ni
+i}(1-\varepsilon)^{|S|-1}\widehat f(S)^2$, where $\widehat f(S)$ is the uniform
+Fourier coefficient. If every such stable influence is at most $\varepsilon$, then the
+original three-query BLR tester accepts the odd part of the $\rho$-noise of $f$ with
+probability at most $\frac12+\frac{\sqrt{\varepsilon}}2$.
 \end{theorem}
 
 \begin{theorem}[Noise Stability Bound for Odd BLR]
@@ -828,12 +828,12 @@ probability at most $\\frac12+\\frac{\\sqrt{\\varepsilon}}2$.
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.BoundedCubeFunction.ext, FABL.BoundedCubeFunction.noise, FABL.BoundedCubeFunction.oddPart, FABL.HasSmallStableInfluences, FABL.IsNoiseOfSmallStableInfluences, FABL.IsNoiseOfSmallStableInfluences.oddPart, FABL.SignTester.oddSymmetrization_preserves_parameters_of_property, FABL.noiseOperator, FABL.oddBLRAcceptanceProbability, FABL.oddPart, FABL.originalBLRTester, FABL.originalBLRTester_acceptanceProbability_dictator, FABL.originalBLRTester_acceptanceProbability_odd_noise_le, FABL.originalBLRTester_oddSymmetrizedAcceptanceProbability_eq_oddBLR}
 \difficulty{5}
-Let $n$ be a natural number, let $\\varepsilon\\in[0,1]$, let $\\rho\\in[0,1]$, and
-suppose $\\varepsilon\\le 1-\\rho^2$. For every function $f:\\{-1,1\\}^n\\to\\mathbb R$
-taking values in $[-1,1]$, if for each coordinate $i$ the sum $\\sum_{S\\ni
-i}(1-\\varepsilon)^{|S|-1}\\widehat f(S)^2$ is at most $\\varepsilon$, then the odd BLR
-acceptance probability of the noise-smoothed function at noise parameter $\\rho$ is at
-most $\\frac12+\\frac{\\sqrt{\\varepsilon}}2$.
+Let $n$ be a natural number, let $\varepsilon\in[0,1]$, let $\rho\in[0,1]$, and
+suppose $\varepsilon\le 1-\rho^2$. For every function $f:\{-1,1\}^n\to\mathbb R$
+taking values in $[-1,1]$, if for each coordinate $i$ the sum $\sum_{S\ni
+i}(1-\varepsilon)^{|S|-1}\widehat f(S)^2$ is at most $\varepsilon$, then the odd BLR
+acceptance probability of the noise-smoothed function at noise parameter $\rho$ is at
+most $\frac12+\frac{\sqrt{\varepsilon}}2$.
 \end{theorem}
 
 \begin{theorem}[Probability of retaining a sign]
@@ -1836,8 +1836,8 @@ parameters $t$ and $\varepsilon$ lies in $[0,1]$.
 \leanok
 \uses{FABL.hastadThreeSatOXRError}
 \difficulty{4}
-For each natural number $t$, the function $\\varepsilon \\mapsto
-\\mathrm{hastadThreeSatOXRError}(t,\\varepsilon)$ tends to $0$ as $\\varepsilon$ tends
+For each natural number $t$, the function $\varepsilon \mapsto
+\mathrm{hastadThreeSatOXRError}(t,\varepsilon)$ tends to $0$ as $\varepsilon$ tends
 to $0$ through positive real values.
 \end{theorem}
 

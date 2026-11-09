@@ -340,11 +340,11 @@ with probability at least $2/3$ on every input.
 \leanok
 \uses{Turing.FinNDTM, Turing.FinNDTM.outputProb, Turing.FinNDTM.outputWith, Turing.NDTM.HaltsWithin}
 Let $N$ be a finite-state nondeterministic Turing machine over the Boolean alphabet, let
-$L$ be a language of Boolean strings, let $T:bn	obn$ be a time bound, and let
-$p:bn	obq$. For every input string $x$, the machine halts within $T(|x|)$ steps; if $x
-otin L$, every choice string of length exactly $T(|x|)$ makes its output the one-symbol
-string consisting of false; and if $x\in L$, the probability that its output is the
-one-symbol string consisting of true after $T(|x|)$ steps is at least $p(|x|)$.
+$L$ be a language of Boolean strings, let $T:\mathbb{N}\to\mathbb{N}$ be a time bound,
+and let $p:\mathbb{N}\to\mathbb{Q}$. For every input $x$, $N$ halts within
+$T(|x|)$ steps. If $x\in L$, its output is the one-symbol string $[\mathrm{true}]$
+with probability at least $p(|x|)$ after $T(|x|)$ steps. If $x\notin L$, every choice
+string of length exactly $T(|x|)$ produces the one-symbol output $[\mathrm{false}]$.
 \end{definition}
 
 \begin{theorem}[Equivalent randomized time criteria]
@@ -369,11 +369,11 @@ the same conditions with the member probability bound written as $2/3\leq
 \label{Randomized.RP_PTMWith}
 \leanok
 \uses{Turing.FinNDTM, Turing.FinNDTM.RDecidesInTimeWith}
-For a function $p:bn\to\bbq$, let $\mathrm{RP}_{p}$ be the union, over all exponents
-$e\in\bbn$, of the languages $L$ for which there are a constant $K\in\bbn$ and a
-finite-state nondeterministic Turing machine over Boolean symbols that decides $L$ with
-the preceding one-sided error guarantees within time $K(n^e+1)$ on inputs of length $n$,
-using threshold $p(n)$.
+For a function $p:\mathbb{N}\to\mathbb{Q}$, let $\mathrm{RP}_{p}$ be the union, over all
+natural-number exponents $e$, of the languages $L$ for which there are a natural
+number $K$ and a finite-state nondeterministic Turing machine over Boolean symbols
+that decides $L$ with the preceding one-sided error guarantees within time
+$K(n^e+1)$ on inputs of length $n$, using threshold $p(n)$.
 \end{definition}
 
 \begin{theorem}[Equivalent Definitions of One-Sided Randomized Polynomial Time]

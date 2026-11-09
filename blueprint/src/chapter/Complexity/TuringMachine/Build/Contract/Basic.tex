@@ -44,7 +44,7 @@ Let $M$ be a machine and $C$ a contract for $M$. For any data value $i$, configu
 $d$, and work-tape index $j$, the number of distinct cells visited by tape $j$ from time
 zero through time $C$’s assigned time is at most the natural-number part of $C$’s upper
 bound plus one minus its lower bound for that tape; for an integer $z$, this
-natural-number part is $\\max(z,0)$.
+natural-number part is $\max(z,0)$.
 \end{theorem}
 
 \begin{definition}[Positive running time]
@@ -463,7 +463,7 @@ preconditions, times, endpoints, and bounds.
 \uses{Turing.Cfg, Turing.Contract, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc}
 \difficulty{3}
 Let $M$ be a machine and $C$ a contract for $M$. For any data value $i$, configuration
-$d$, natural number $u$ with $u\\le C$’s assigned running time at $(i,d)$, and work-tape
+$d$, natural number $u$ with $u\le C$’s assigned running time at $(i,d)$, and work-tape
 index $j$, the head position of tape $j$ after $u$ steps lies in the interval from its
 initial position minus $C$’s assigned running time to its initial position plus that
 running time, inclusive.
@@ -499,7 +499,7 @@ Let $M$ be a $k$-work-tape Turing machine, let $a$ be a state, let $E$ be a set 
 optional states, and let $P$ be a predicate on work-tape head positions. For
 configurations $c$ and $c'$ on a fixed input and a natural number $t$, require that $c$
 starts in state $a$, that $t>0$, and that after exactly $t$ steps the machine reaches
-$c'$ with state in $igl\{a\bigr\}\cup E$. At every intermediate time $u$ with $0<u<t$,
+$c'$ with state in $\bigl\{a\bigr\}\cup E$. At every intermediate time $u$ with $0<u<t$,
 the state must lie outside the union of $E$, the state $a$, and the halting state;
 throughout times $0$ through $t$, the work-tape head positions must satisfy $P$.
 \end{definition}
@@ -881,7 +881,7 @@ running time is zero if and only if the state $e$ belongs to $E$.
 \uses{Turing.Contract, Turing.Contract.Positive, Turing.Contract.time_eq_zero_iff}
 \difficulty{1}
 Let $C$ be a contract with entry state $e$ and exit set $X$. If
-$\\mathrm{some}(e)\\notin X$, then every admissible start configuration in state $e$ has
+$\mathrm{some}(e)\notin X$, then every admissible start configuration in state $e$ has
 strictly positive assigned running time.
 \end{theorem}
 
@@ -893,7 +893,7 @@ strictly positive assigned running time.
 \difficulty{1}
 Let $C$ be a contract with entry state $e$ and exit set $X$. If every admissible start
 configuration in state $e$ has strictly positive assigned running time, then the
-optional state $\\mathrm{some}(e)$ does not belong to $X$.
+optional state $\mathrm{some}(e)$ does not belong to $X$.
 \end{theorem}
 
 \begin{theorem}[Positivity of the Composed Running Time]
@@ -920,17 +920,17 @@ every admissible start.
 \difficulty{4}
 Let $M$ and $N$ be machines with the same number of work tapes and input alphabet, with
 state sets $S$ and $H$, and let $C$ be a contract for $M$ with entry state $e$ and exit
-set $X$. Let $\\mathrm{emb}:S\\hookrightarrow H$ be an injective map, and let
-$\\mathrm{good}$ be a property of states in $S$. Suppose that whenever $q$ is good, the
-transition of $N$ at $\\mathrm{emb}(q)$ is the transition of $M$ at $q$ with its
-successor state mapped by $\\mathrm{emb}$. Suppose also that, for every data value $i$
+set $X$. Let $\mathrm{emb}:S\hookrightarrow H$ be an injective map, and let
+$\mathrm{good}$ be a property of states in $S$. Suppose that whenever $q$ is good, the
+transition of $N$ at $\mathrm{emb}(q)$ is the transition of $M$ at $q$ with its
+successor state mapped by $\mathrm{emb}$. Suppose also that, for every data value $i$
 and admissible start configuration $c$ in state $e$, every state visited by $M$ at a
 time strictly less than $C$’s assigned time is good. Then for every $i$ and every
-configuration $d$ of $N$ whose state is $\\mathrm{emb}(e)$, if the configuration
+configuration $d$ of $N$ whose state is $\mathrm{emb}(e)$, if the configuration
 obtained from $d$ by replacing its state with $e$ satisfies $C$’s precondition, the run
 of $N$ from $d$ agrees, at every time up to and including that assigned time, with the
 run of $M$ from the state-replaced configuration after mapping its state by
-$\\mathrm{emb}$.
+$\mathrm{emb}$.
 \end{lemma}
 
 \begin{definition}[Transporting a contract through a state embedding]

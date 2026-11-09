@@ -130,12 +130,12 @@ index $r$ when $r<5$, and to be false when $r\ge 5$.
 \leanok
 \uses{Complexity.LogProg.AHalt, Complexity.LogProg.GuardLe, Complexity.PathHard.A, Complexity.PathHard.St, Complexity.PathHard.St.Bd, Complexity.PathHard.St.toV, Complexity.PathHard.ans_halt, Complexity.PathHard.stepH_of, Complexity.PathHard.tailVal}
 \difficulty{6}
-Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean value, let $o$ be a function
-assigning a Boolean value to each index in ${0,1,2,3,4}$ and each finite Boolean word,
-and let $y$ be a finite Boolean word. For any fifteen-register configuration $st$ whose
-register values are all at most $B$, the abstract program started in its tail phase with
-register values given by $st$ and no result halts with answer $tailAns(m,st.i)$; every
-configuration strictly before halting satisfies the program guard.
+Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let
+$o:\mathrm{Fin}(5)	o\{0,1\}^*	o\{0,1\}$ be an oracle, and let $y$ be a finite
+Boolean word. For any fifteen-register configuration $st$ whose register values are all
+at most $B$, the abstract program started in its tail phase with register values given by
+$st$ and no result halts with answer $\mathrm{tailVal}(m,st.i)$; every configuration
+strictly before halting satisfies the program guard.
 \end{theorem}
 
 \begin{theorem}[Halting of the matrix computation]

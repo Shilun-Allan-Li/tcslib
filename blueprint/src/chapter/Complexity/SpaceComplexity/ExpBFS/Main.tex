@@ -209,10 +209,9 @@ the number of elements of $[0,K)$ satisfying $p$ is at most $K$.
 \uses{Complexity.Codec.codeK, Complexity.LogProg.ExpBFS.kb, Complexity.LogProg.ExpBFS.lgv, Turing.FinNDTM}
 \difficulty{1}
 Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let
-$n,s$ be natural numbers. If $K$ is the integer $2^{c(N)(s+1+h(n)+1)}$, where $c(N)$ is
-twice the quantity $|igl(	ext{Option}(	ext{State}(N))\times	ext{Fin}(3)igr)|+3k(N)+1$
-and $h(n)=0$ when $n=0$ and otherwise $loor{	ext{the base-2 logarithm of }n}+1$, then
-$c(N)(s+1+h(n)+1)<K$.
+$n,s$ be natural numbers. Set $c_N=2W_N+2$ and define $h(0)=0$, while for $n>0$ set
+$h(n)=\lfloor\log_2 n\rfloor+1$. If $K=2^{c_N(s+h(n)+2)}$, then
+$c_N(s+h(n)+2)<K$.
 \end{lemma}
 
 \begin{definition}[Initial search state]

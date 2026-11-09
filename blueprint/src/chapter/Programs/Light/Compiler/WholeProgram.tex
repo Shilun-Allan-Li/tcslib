@@ -112,13 +112,12 @@ and every procedure body of width at most the frame size.
 \leanok
 \uses{Light.Compiler.Rel, Light.Compiler.Start, Light.Compiler.codeAt_mainStmt, Light.Compiler.codeLayout, Light.Compiler.frame_le_stackCells, Light.Compiler.mainFrame, Light.Compiler.mainPos, Light.Compiler.setting, Light.Compiler.size_mainStmt, Light.Compiler.stackCells, Light.Compiler.three_le_frameSize, Light.Compiler.two_mul_frameSize_add_le_dispPos, Light.Compiler.width_mainStmt, Light.State, Light.State.Bounded, Light.mainStmt}
 \difficulty{4}
-Let $W$ be a word width, let $lim$ be a resource limit, let $P$ be a program, let $p_0$
-be a procedure index, and let $dec$ be a Boolean. Suppose the word width fits the
-limits, the dispatcher position determined by $P$ and $dec$, and the stack capacity
-determined by $P$ and $lim$. For every state $σ$ bounded by $lim$ and every word memory
-$m$ related to $σ$ at stack position $4$, the statement that calls procedure $p_0$ with
-the first two variables as arguments satisfies the starting conditions at depth $0$,
-code position $4$, and stack position $4$.
+Let $lim$ be resource limits, $P$ a light program, $p_0$ a procedure index, and $dec$ a
+Boolean. Assume the word size fits the dispatcher and stack bounds determined by $P$, $dec$,
+and $lim$. If a light state $\sigma$ is bounded by $lim$ and memory $m$ represents $\sigma$
+in the compiler layout at the main-frame position, then the compiler start condition holds
+at depth $0$ for the main statement that calls $p_0$, with code at the main position and
+the stack frame at the main-frame position.
 \end{theorem}
 
 \begin{theorem}[Addresses outside the reserved regions]
@@ -185,20 +184,18 @@ or above the space limit is unchanged.
 \leanok
 \uses{Light.Compiler.Fits, Light.Compiler.Fits.inRange, Light.Compiler.Input, Light.Compiler.Outcome, Light.Compiler.Sizes.inRange_neg_one, Light.Compiler.agreeOutside_startMem, Light.Compiler.codeAt_tailCode, Light.Compiler.codeLayout, Light.Compiler.dispPos, Light.Compiler.frameSize, Light.Compiler.mainFrame, Light.Compiler.mainPos, Light.Compiler.not_mem_of_far, Light.Compiler.rel_startMem, Light.Compiler.setting, Light.Compiler.sim, Light.Compiler.size_mainStmt, Light.Compiler.stackCells, Light.Compiler.startCost, Light.Compiler.start_mainStmt, Light.Compiler.stepsPerStep, Light.Compiler.steps_start, Light.Compiler.steps_tail, Light.Compiler.tailPos, Light.Compiler.three_le_frameSize, Light.Compiler.two_mul_frameSize_add_le_dispPos, Light.Exec, Light.Exec.bounded, Light.Exec.mem_outside, Light.Limits, Light.Program, Light.State, Light.State.Bounded, Light.bounded_frame, Light.compileProgram, Light.frame, Light.mainStmt, Light.ramSteps, Light.verdictOf, WordRAM.AgreeOutside.cell, WordRAM.AgreeOutside.read, WordRAM.AgreeOutside.trans_union, WordRAM.Steps.cast_pos, WordRAM.Steps.trans, WordRAM.exec, WordRAM.exec_mono, WordRAM.exec_of_steps, WordRAM.toInt_wd}
 \difficulty{6}
-Let $P$ be a program, let $	ext{lim}$ specify word, space, and depth limits, let $p_0$
-be a procedure index, and let $	ext{dec}$ be a Boolean. Suppose that the main call to
-procedure $p_0$, executed in $P$ at depth $0$ from the state whose local values are
-$(0,i,j)$ and whose memory is $ \mu$, reaches a state $ \sigma'$ with cost $c$. Suppose
-the word width $W$ satisfies $2(2\,\text{lim.word}+2)<2^W$, $2\,\text{lim.space}<2^W$,
-$4Q<2^W$ for $Q=\mathrm{stackCells}(P,\text{lim})$, and $2N<2^W$ for
-$N=\mathrm{dispPos}(P,\text{dec})$. Suppose also that the initial word-RAM memory
-represents $ \mu$ in every nonnegative cell, every value of $ \mu$ has absolute value at
-most $\text{lim.word}$, and its two argument cells contain $i$ and $j$, respectively,
-with $|i|,|j|\le\text{lim.word}$. Then running the compiled program from position $0$
-for $\mathrm{ramSteps}(P,\text{dec},c)$ steps returns true exactly when $\text{dec}$ is
-false or $0<\sigma'.\mathrm{loc}(0)$. Moreover, some resulting word-RAM memory
-represents the final memory of $ \sigma'$ in every nonnegative cell, has
-$ \sigma'.\mathrm{loc}(0)$ in its result cell, preserves both argument cells, and agrees
-with the initial memory at every address below
-$-\mathrm{lowCell}(P,\text{dec},\text{lim})$ or at least $\text{lim.space$.}
+Let $lim$ be resource limits, $P$ a light program, $p_0$ a procedure index, $dec$ a
+Boolean, $\mu$ a memory over natural-number addresses, and $i,j$ integer inputs. Suppose
+the call to $p_0$ from the initial light state with local frame $[0,i,j]$ and memory $\mu$
+ends in state $\sigma\prime$ after $c$ steps. Let $W$ be a word width that fits the
+word, space, stack, and dispatcher bounds: $2(2\,lim.word+2)<2^W$,
+$2\,lim.space<2^W$, $4\,stackCells(P,lim)<2^W$, and
+$2\,dispPos(P,dec)<2^W$. Suppose the initial word-RAM memory $m$ represents $\mu$
+at all nonnegative addresses, stores $i$ and $j$ in the two argument cells, and
+$|i|,|j|\le lim.word$. Then the compiled program, run from position $0$ for
+$ramSteps(P,dec,c)$ steps, returns $verdictOf(dec,\sigma\prime.loc(0))$ and some final
+memory $m\prime$. This memory represents $\sigma\prime.mem$ at every nonnegative
+address, stores $\sigma\prime.loc(0)$ in the result cell, preserves both argument
+cells, and agrees with $m$ at addresses below $-lowCell(P,dec,lim)$ or at least
+$lim.space$.
 \end{theorem}

@@ -78,7 +78,7 @@ gives the same final list as evaluating the original gates.
 \difficulty{4}
 Let $l$ be a list of natural numbers of length $m$, and let $f$ map natural numbers to
 Booleans. The list obtained by applying $f$ to the entries of $l$ is the list of values
-$f(l_i)$ for indices $i=0,\\ldots,m-1$, where each entry is read with default value $0$.
+$f(l_i)$ for indices $i=0,\ldots,m-1$, where each entry is read with default value $0$.
 \end{theorem}
 
 \begin{theorem}[Mapping Commutes with List Lookup]
@@ -247,7 +247,7 @@ total embedding width of the list.
 \leanok
 \uses{BoolCircuit.DAGCircuit, BoolCircuit.DAGCircuit.eval, BoolCircuit.DAGGate.eval, BoolCircuit.embedAll, BoolCircuit.embedGates, BoolCircuit.embedOffset, BoolCircuit.getD_src_lt, BoolCircuit.runWith, BoolCircuit.runWith_append, BoolCircuit.runWith_embedGates_getD, BoolCircuit.runWith_getD_of_lt}
 \difficulty{6}
-Let $D_1,ots,D_k$ be a finite list of directed acyclic Boolean circuits, each with $m$
+Let $D_1,\ldots,D_k$ be a finite list of directed acyclic Boolean circuits, each with $m$
 inputs, and let $s$ be a list of $m$ indices into an initial Boolean list $I$. Assume
 every index in $s$ is less than the length of $I$. For any $j<k$, after executing the
 gates obtained by embedding all the circuits using $s$, starting from $I$, the value at

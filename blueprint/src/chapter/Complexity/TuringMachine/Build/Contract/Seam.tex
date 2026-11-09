@@ -38,7 +38,7 @@ is exactly $d$.
 Let $M_1$ and $M_2$ be multi-tape Turing machines with the same number of work tapes and
 symbol alphabet, with state sets $S_1$ and $S_2$. Fix an entry state $e_1$ and an exit
 state $f_1$ of $M_1$, an entry state $e_2$ of $M_2$, and a contract $C_1$ for $M_1$
-whose entry is $e_1$ and whose exit set is exactly $some(f_1)$. For a parameter $i$
+whose entry is $e_1$ and whose exit set is exactly $\{\mathrm{some}(f_1)\}$. For a parameter $i$
 and a configuration $d$ of the machine with state set $S_1\oplus S_2$, suppose $d$ is in
 state $(e_1,\mathrm{inl})$ and replacing its state by $e_1$ gives a configuration
 satisfying $C_1$'s precondition for $i$. At every time $u$ up to and including the
@@ -280,11 +280,11 @@ selected branch: $R_1$ if the $C_0$ endpoint has state $e_1$, and $R_2$ otherwis
 \difficulty{1}
 Let $M_1,M_2$ be machines with the same number of work tapes and input alphabet, and
 state sets $S_1,S_2$. Let $C_1$ be a contract for $M_1$ from entry state $e_1$ with exit
-set $\\{\\mathrm{some}(f_1)\\}$, and let $C_2$ be a contract for $M_2$ from entry state
-$e_2$ with exit set $X_2$. Let $\\ell$ map the data values of $C_1$ to those of $C_2$,
+set $\{\mathrm{some}(f_1)\}$, and let $C_2$ be a contract for $M_2$ from entry state
+$e_2$ with exit set $X_2$. Let $\ell$ map the data values of $C_1$ to those of $C_2$,
 and suppose that for every admissible $C_1$ start in state $e_1$, the endpoint of $C_1$,
 with its state replaced by $e_2$, satisfies the $C_2$ precondition at data value
-$\\ell(i)$. Then the sequentially composed contract, which runs $C_1$, takes one
+$\ell(i)$. Then the sequentially composed contract, which runs $C_1$, takes one
 transition to switch machines, and then runs $C_2$, has strictly positive assigned
 running time for every admissible start in its entry state.
 \end{theorem}

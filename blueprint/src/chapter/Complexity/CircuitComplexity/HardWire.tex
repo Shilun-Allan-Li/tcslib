@@ -34,7 +34,7 @@ copies of $1$.
 \label{BoolCircuit.foldr_max_le_succ}
 \leanok
 \difficulty{5}
-Let $l$ be a finite list of natural numbers and let $p,q:br	obr$ be functions on the
+Let $l$ be a finite list of natural numbers and let $p,q:\bbr	o\bbr$ be functions on the
 natural numbers. If $p(a)\le q(a)+1$ for every $a$ in $l$, then the maximum of the
 values $p(a)$ over $a$ in $l$, taken to be $0$ when $l$ is empty, is at most one plus
 the corresponding maximum of the values $q(a)$.
@@ -47,8 +47,8 @@ the corresponding maximum of the values $q(a)$.
 \uses{BoolCircuit.DAGGate, BoolCircuit.DAGGate.depth, BoolCircuit.DAGGate.remap, BoolCircuit.foldr_max_le_succ}
 \difficulty{3}
 Let $g$ be a Boolean circuit gate, let $ds,ds'$ be lists of natural numbers, and let
-$[?]$ be a map from natural numbers to natural numbers. Suppose that for every argument
-$a$ of $g$, the defaulted lookup in $ds$ at index $[?](a)$ is at most the defaulted
+$\sigma$ be a map from natural numbers to natural numbers. Suppose that for every argument
+$a$ of $g$, the defaulted lookup in $ds$ at index $\sigma(a)$ is at most the defaulted
 lookup in $ds'$ at index $a$, plus $1$. Then the depth of the remapped gate computed
 from $ds$ is at most the depth of $g$ computed from $ds'$, plus $1$.
 \end{theorem}

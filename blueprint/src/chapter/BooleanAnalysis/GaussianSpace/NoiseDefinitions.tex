@@ -13,10 +13,10 @@ Declarations of the Lean module \texttt{TCSlib.BooleanAnalysis.GaussianSpace.Noi
 \label{BooleanAnalysis.GaussianSpace.correlatedGaussianMeasure}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
-For a natural number $n$ and real number $\\rho$, take two independent vectors
-$Z_1,Z_2\\in\\mathbb{R}^n$ whose coordinates are independent standard Gaussian random
-variables. The correlated Gaussian measure with parameter $\\rho$ is the distribution of
-$\\bigl(Z_1,\\,\\rho Z_1+\\sqrt{1-\\rho^2}Z_2\\bigr)$.
+For a natural number $n$ and real number $\rho$, take two independent vectors
+$Z_1,Z_2\in\mathbb{R}^n$ whose coordinates are independent standard Gaussian random
+variables. The correlated Gaussian measure with parameter $\rho$ is the distribution of
+$\bigl(Z_1,\\,\rho Z_1+\sqrt{1-\rho^2}Z_2\bigr)$.
 \end{definition}
 
 \begin{definition}[Gaussian noise operator]
@@ -26,9 +26,9 @@ $\\bigl(Z_1,\\,\\rho Z_1+\\sqrt{1-\\rho^2}Z_2\\bigr)$.
 \label{BooleanAnalysis.GaussianSpace.gaussianNoise}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
-For a natural number $n$, a real parameter $\\rho$, a function
-$f:\\mathbb{R}^n\\to\\mathbb{R}$, and $x\\in\\mathbb{R}^n$, the Gaussian noise operator
-at $x$ is the Gaussian average of $f\\bigl(\\rho x+\\sqrt{1-\\rho^2}Y\\bigr)$, where $Y$
+For a natural number $n$, a real parameter $\rho$, a function
+$f:\mathbb{R}^n\to\mathbb{R}$, and $x\in\mathbb{R}^n$, the Gaussian noise operator
+at $x$ is the Gaussian average of $f\bigl(\rho x+\sqrt{1-\rho^2}Y\bigr)$, where $Y$
 has independent standard Gaussian coordinates.
 \end{definition}
 
@@ -42,9 +42,9 @@ has independent standard Gaussian coordinates.
 \label{BooleanAnalysis.GaussianSpace.gaussianNoiseStability}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.gaussianNoise, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
-For a natural number $n$, a real parameter $\\rho$, and a function
-$f:\\mathbb{R}^n\\to\\mathbb{R}$, its Gaussian noise stability is
-$\\displaystyle\\mathbb{E}[f(X)\\,T_\\rho f(X)]$, where $X$ has independent standard
-Gaussian coordinates and $T_\\rho f$ is the Gaussian noise operator with parameter
-$\\rho$.
+For a natural number $n$, a real parameter $\rho$, and a function
+$f:\mathbb{R}^n\to\mathbb{R}$, its Gaussian noise stability is
+$\displaystyle\mathbb{E}[f(X)\,T_\rho f(X)]$, where $X$ has independent standard
+Gaussian coordinates and $T_\rho f$ is the Gaussian noise operator with parameter
+$\rho$.
 \end{definition}

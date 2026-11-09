@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.ExpBFS
 \label{Complexity.LogProg.ExpBFS.rN}
 \leanok
 The first register index is the element $0$ of the 17-element index set
-$\\{0,1,\\ldots,16\\}$.
+$\{0,1,\ldots,16\}$.
 \end{definition}
 
 \begin{definition}[Second register index]
@@ -581,8 +581,8 @@ There are three phases: the first search, the second search, and the final scan.
 \label{Complexity.LogProg.ExpBFS.rad}
 \leanok
 \uses{Complexity.LogProg.ExpBFS.Ph3, Complexity.LogProg.ExpBFS.rs, Complexity.LogProg.ExpBFS.rs1}
-For the three search phases, assign radius $3$ in the second search and radius $2$ in
-the first search and final scan, with radii viewed as elements of $\mathrm{Fin}(17)$.
+Map the second search phase to radius $3$ and the first search and final scan phases to
+radius $2$, with these radii in $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Boolean phase assignment]
@@ -610,7 +610,7 @@ final-scan site carries none.
 \leanok
 \uses{Complexity.LogProg.ExpBFS.Site, Complexity.LogProg.ExpBFS.rU, Complexity.LogProg.ExpBFS.rV}
 Assign index $9$ to sites that read the mark of $V$ or mark $V$ in a relaxation round,
-and index $8$ to every other site, with indices in $\mathrm{Fin}(17)$.
+and index $8$ to every other site, with indices in $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Marked sites]

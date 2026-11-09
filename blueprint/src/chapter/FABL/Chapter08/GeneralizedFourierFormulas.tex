@@ -13444,13 +13444,13 @@ $w_i=\rho_i$ otherwise.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.fourierCoeff, FABL.FiniteFourierBasis.fourierCoeff_anisotropicProductNoiseOperator, FABL.FiniteFourierBasis.fourierCoeff_injective, FABL.FiniteFourierBasis.fourier_expansion_unique, FABL.FiniteFourierBasis.productFunction, FABL.MultiIndex, FABL.ProductL2, FABL.anisotropicProductNoiseOperator, FABL.multiIndexOrder, FABL.multiIndexSupport, FABL.spectralProductNoiseOperator}
 \difficulty{5}
-Let $\\Omega$ be a finite nonempty set with a probability mass function $\\pi$, and let
-$\\iota$ be a finite nonempty index set. Suppose $B$ is a basis of real-valued functions
-on $\\Omega$, indexed by $\\iota$, whose distinguished basis vector is constant $1$ and
-whose vectors are orthonormal for the inner product weighted by $\\pi$. For any natural
-number $n$, real parameter $\\rho$, and real-valued function $f$ on $\\Omega^n$, the
-anisotropic product noise operator with parameter equal to $\\rho$ in every coordinate
-agrees with the spectral product noise operator with parameter $\\rho$.
+Let $\Omega$ be a finite nonempty set with a probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose $B$ is a basis of real-valued functions
+on $\Omega$, indexed by $\iota$, whose distinguished basis vector is constant $1$ and
+whose vectors are orthonormal for the inner product weighted by $\pi$. For any natural
+number $n$, real parameter $\rho$, and real-valued function $f$ on $\Omega^n$, the
+anisotropic product noise operator with parameter equal to $\rho$ in every coordinate
+agrees with the spectral product noise operator with parameter $\rho$.
 \end{theorem}
 
 \begin{theorem}[Single-coordinate product noise]
@@ -13575,11 +13575,11 @@ $f$ and to $g$.
 \leanok
 \uses{FABL.ProductL2, FABL.pmfExpectation_const_mul, FABL.productNoiseOperator}
 \difficulty{3}
-Let $[0m\Omega$ be a finite set, let $[0m\pi$ be a probability mass function on it,
-let $n$ be a natural number, and let $[0m\rho\in[0,1]$. For every real scalar $c$ and
-every real-valued function $f$ on $[0m\Omega^n$, the product noise operator that
-independently retains each coordinate with probability $[0m\rho$ and otherwise
-resamples from $[0m\pi$ satisfies $T_\rho(cf)=cT_\rho f$.
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on it,
+let $n$ be a natural number, and let $\rho\in[0,1]$. For every real scalar $c$ and
+every real-valued function $f$ on $\Omega^n$, the product noise operator that
+independently retains each coordinate with probability $\rho$ and otherwise
+resamples from $\pi$ satisfies $T_\rho(cf)=cT_\rho f$.
 \end{theorem}
 
 \begin{theorem}[Fourier expansion of the product noise operator]
@@ -14288,15 +14288,15 @@ $d$ is the number of coordinates where $a$ differs from the constant index.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.fourierCoeff_productNoiseOperator, FABL.FiniteFourierBasis.plancherel, FABL.ProductL2, FABL.productInner, FABL.productNoiseOperator}
 \difficulty{3}
-Let $[0m\Omega$ be a finite nonempty set, let $[0m\pi$ be a probability mass function
-on $[0m\Omega$, and let $[0m\iota$ be a finite nonempty index set. Suppose a basis of
-the real-valued functions on $[0m\Omega$ is given whose distinguished vector is the
+Let $\Omega$ be a finite nonempty set, let $\pi$ be a probability mass function
+on $\Omega$, and let $\iota$ be a finite nonempty index set. Suppose a basis of
+the real-valued functions on $\Omega$ is given whose distinguished vector is the
 constant-one function and which is orthonormal for the inner product weighted by
-$[0m\pi$. For any natural number $[0m n$, any $[0m\rho\in[0,1]$, and any real-valued
-functions $f,g$ on $[0m\Omega^n$, the product noise operator that independently retains
-each input coordinate with probability $[0m\rho$ and otherwise resamples it from
-$[0m\pi$ is self-adjoint for the product inner product weighted by $[0m\pi^n$:
-$[0m\langle f,T_\rho g\rangle=[0m\langle T_\rho f,g\rangle$.
+$\pi$. For any natural number $ n$, any $\rho\in[0,1]$, and any real-valued
+functions $f,g$ on $\Omega^n$, the product noise operator that independently retains
+each input coordinate with probability $\rho$ and otherwise resamples it from
+$\pi$ is self-adjoint for the product inner product weighted by $\pi^n$:
+$\langle f,T_\rho g\rangle=\langle T_\rho f,g\rangle$.
 \end{theorem}
 
 \begin{definition}[Product noise stability]
@@ -15154,12 +15154,12 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.ProductL2, FABL.stableInfluencePolynomial}
 \difficulty{1}
-Let $\\Omega$ and $I$ be finite nonempty sets, let $\\pi$ be a probability mass function
-on $\\Omega$, and let $B$ be a basis of real-valued functions on $\\Omega$ indexed by
+Let $\Omega$ and $I$ be finite nonempty sets, let $\pi$ be a probability mass function
+on $\Omega$, and let $B$ be a basis of real-valued functions on $\Omega$ indexed by
 $I$, with one distinguished index whose basis function is constant $1$, and whose basis
-functions are orthonormal for the inner product weighted by $\\pi$. For any natural
-number $n$, function $f:(\\Omega^n)\\to\\bbr$, and coordinate $i\\in\\{1,\\ldots,n\\}$,
-the stable influence polynomial in the real parameter $\\rho$ is continuous.
+functions are orthonormal for the inner product weighted by $\pi$. For any natural
+number $n$, function $f:(\Omega^n)\to\bbr$, and coordinate $i\in\{1,\ldots,n\}$,
+the stable influence polynomial in the real parameter $\rho$ is continuous.
 \end{theorem}
 
 \begin{theorem}[Zero parameter influence polynomial]
@@ -26626,11 +26626,11 @@ $\rho$ and input $x$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p214-b005,
     pdf-ffbe9c7b3306-p053-b003}
-Let $n$ be a natural number and let $[0m\rho\in[0,1]$. On the cube $[0m\{-1,1\}^n$
+Let $n$ be a natural number and let $\rho\in[0,1]$. On the cube $\{-1,1\}^n$
 with uniform measure, the product noise operator that retains each input sign with
-probability $[0m\rho$ and otherwise resamples an independent uniform sign agrees, on
+probability $\rho$ and otherwise resamples an independent uniform sign agrees, on
 every real-valued function $f$, with the Walsh noise operator: it multiplies the Fourier
-coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $[0m\rho^{|S|}$.
+coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $\rho^{|S|}$.
 \end{theorem}
 
 \begin{theorem}[Product noise stability on the uniform sign cube]
@@ -26639,12 +26639,12 @@ coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $[0m\rho^{|S|}$.
 \leanok
 \uses{FABL.Sign, FABL.noiseStability, FABL.noiseStability_eq_uniformInner_noiseOperator, FABL.productInner_uniformSign, FABL.productNoiseOperator_uniformSign_eq_noiseOperator, FABL.productNoiseStability, FABL.uniformPMF}
 \difficulty{3}
-Let $n$ be a natural number, let $[0m\rho\in[0,1]$, and let $f$ be a real-valued
-function on $[0m\{-1,1\}^n$. Choose $X$ uniformly from the sign cube, and form $Y$ by
+Let $n$ be a natural number, let $\rho\in[0,1]$, and let $f$ be a real-valued
+function on $\{-1,1\}^n$. Choose $X$ uniformly from the sign cube, and form $Y$ by
 independently retaining each coordinate of $X$ with probability $(1+ho)/2$ and flipping
 it otherwise. The expected product $\mathbb{E}[f(X)f(Y)]$ equals the product noise
 stability obtained by independently retaining each coordinate with probability
-$[0m\rho$ and otherwise resampling it as a uniform sign.
+$\rho$ and otherwise resampling it as a uniform sign.
 \end{theorem}
 
 \begin{theorem}[Influence of the two-coordinate indicator]

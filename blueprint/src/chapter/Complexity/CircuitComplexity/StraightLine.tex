@@ -218,7 +218,7 @@ ordered list.
 \leanok
 \uses{BoolCircuit.StraightLine.runLines}
 Given a straight-line Boolean program $P$ on $n$ input bits and an input
-$x\\in\\{0,1\\}^n$, the list of values produced by its statements is the result of
+$x\in\{0,1\}^n$, the list of values produced by its statements is the result of
 executing those statements in order on $x$.
 \end{definition}
 
@@ -228,7 +228,7 @@ executing those statements in order on $x$.
 \leanok
 \uses{BoolCircuit.StraightLineProgram.length, BoolCircuit.StraightLineProgram.values}
 Given a straight-line Boolean program $P$ on $n$ input bits and an input
-$x\\in\\{0,1\\}^n$, its output is the value at position $|P|-1$ in the list of statement
+$x\in\{0,1\}^n$, its output is the value at position $|P|-1$ in the list of statement
 values, using $0$ if that position is unavailable.
 \end{definition}
 
@@ -320,9 +320,9 @@ list for $ss$ with the gate representing $s$ appended.
 \leanok
 \uses{BoolCircuit.DAGGate.eval, BoolCircuit.SLOp.apply, BoolCircuit.SLOp.kind, BoolCircuit.SLOperand.vertex, BoolCircuit.SLStmt, BoolCircuit.SLStmt.toGate}
 \difficulty{4}
-Let $s$ be a straight-line statement, with operation $ullet$ (conjunction or
+Let $s$ be a straight-line statement, with operation $\bullet$ (conjunction or
 disjunction) and operands $a$ and $b$, and let $vals$ be a list of Boolean vertex
-values. The gate associated with $s$ evaluates to $ullet(vals[v_a],vals[v_b])$, where
+values. The gate associated with $s$ evaluates to $\bullet(vals[v_a],vals[v_b])$, where
 $v_a$ and $v_b$ are the vertices associated with its two operands and any out-of-range
 list lookup is taken to be false.
 \end{theorem}
@@ -334,7 +334,7 @@ list lookup is taken to be false.
 \uses{BoolCircuit.GatesAcyclic, BoolCircuit.StraightLine.length_negGates, BoolCircuit.StraightLine.negGates}
 \difficulty{3}
 For every natural number $n$, the list of $n$ gates that negate the input vertices
-$0,1,\\ldots,n-1$ is acyclic: for each gate at position $i$ and each vertex it reads,
+$0,1,\ldots,n-1$ is acyclic: for each gate at position $i$ and each vertex it reads,
 that vertex has index less than $n+i$.
 \end{theorem}
 

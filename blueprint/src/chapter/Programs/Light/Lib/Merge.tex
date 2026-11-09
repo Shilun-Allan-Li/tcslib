@@ -145,12 +145,11 @@ one list has remaining elements, it takes the next element from that list.
 \label{Light.Merge.Pre}
 \leanok
 \uses{Light.Apart, Light.Limits, Light.Seg}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map from natural-number
-addresses to integers, and let $a,b,d$ be natural-number addresses. Suppose the
-memory-space limit is at most the word-size limit, $L$ and $R$ occupy memory segments
-beginning at $a$ and $b$, respectively, and the regions beginning at $a$, $b$, and $d$
-have lengths $|L|$, $|R|$, and $|L|+|R|$, respectively, all ending within the space
-limit. Suppose also that each input region is apart from the destination region.
+For lists $L,R$ of integers, memory $\mu$, and addresses $a,b,d$, the merge precondition
+requires that memory stores $L$ and $R$ on the segments beginning at $a$ and $b$, all
+input and destination segments fit within the space bound, the space bound is no greater
+than the word bound, and each input segment is disjoint from the destination segment of
+length $|L|+|R|$ beginning at $d$.
 \end{definition}
 
 \begin{definition}[Merge loop invariant]
@@ -158,14 +157,12 @@ limit. Suppose also that each input region is apart from the destination region.
 \label{Light.Merge.Inv}
 \leanok
 \uses{Light.SameOutside, Light.Seg, Light.State, Light.frame}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map, let $a,b,d$ be
-natural-number addresses, and let $i,j$ be natural numbers. A state satisfies the
-invariant if there are a memory map $[?]'$ and an output list $O$ such that its
-location component is the frame determined by $a,|L|,b,|R|,d,i,j$ and its memory
-component is $[?]'$; moreover, $i\le |L|$, $j\le |R|$, the two maps agree outside the
-destination region of length $|L|+|R|$, $|O|=i+j$, $O$ occupies a memory segment
-beginning at $d$, and concatenating $O$ with the merge of the unconsumed tails of $L$
-and $R$ gives the merge of $L$ and $R$.
+For lists $L,R$, memory $\mu$, addresses $a,b,d$, and indices $i,j$, the merge invariant
+says that the state has local frame $[a,|L|,b,|R|,d,i,j]$ and some memory $\mu\prime$;
+$i\le |L|$ and $j\le |R|$; $\mu\prime$ agrees with $\mu$ outside the destination
+segment of length $|L|+|R|$; and an output list of length $i+j$ is stored at $d$ such
+that this output followed by the merge of the unconsumed suffixes $L.drop(i)$ and
+$R.drop(j)$ equals $L.merge(R)$.
 \end{definition}
 
 \begin{definition}[Number of elements already taken]
@@ -173,10 +170,9 @@ and $R$ gives the merge of $L$ and $R$.
 \label{Light.Merge.Taken}
 \leanok
 \uses{Light.Merge.Inv, Light.State}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map, let $a,b,d,t$ be
-natural numbers, and let $\sigma$ be a state. The state has taken $t$ elements if there
-exist natural numbers $i,j$ with $i+j=t$ such that $\sigma$ satisfies the merge loop
-invariant at indices $i,j$.
+For lists $L,R$, initial memory $\mu$, addresses $a,b,d$, a natural number $t$, and state $\sigma$,
+the state has taken $t$ elements when there exist natural numbers $i,j$ with $i+j=t$ such
+that $\sigma$ satisfies the merge invariant at indices $i,j$.
 \end{definition}
 
 \begin{theorem}[Merge step taking the left entry]

@@ -95,7 +95,7 @@ $C(\eta)=(2/\eta+1)^{1+\eta}$. Then $C(\eta)=\rho(\eta)^{-(1+\eta)}$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.lowDegreeCoordinateMass, FABL.stableInfluence}
 \difficulty{5}
 Let $f$ be a sign-valued Boolean function on the $n$-dimensional Boolean cube, let $i$
-be a coordinate, and let $k$ be a natural number. For any real $[0m\rho$ with
+be a coordinate, and let $k$ be a natural number. For any real $\rho$ with
 $0<\rho\leq 1$, the low-degree coordinate mass of $f$ at $i$ through degree $k$ is at
 most $\rho^{-k}$ times the stable influence of the real-valued version of $f$ at $i$
 with parameter $\rho$.
@@ -171,7 +171,7 @@ total influence of $f$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.improvedFriedgutRho, FABL.improvedFriedgutRho_pos, FABL.improvedFriedgutThreshold, FABL.improvedFriedgutThreshold_pos, FABL.improvedFriedgutThreshold_rpow, FABL.lowDegreeOutsideInfluentialMass, FABL.lowDegreeOutsideInfluentialMass_le_improved, FABL.totalInfluence}
 \difficulty{4}
-Let $f$ be a function from the $n$-dimensional Boolean cube to $\\{-1,1\\}$, let
+Let $f$ be a function from the $n$-dimensional Boolean cube to $\{-1,1\}$, let
 $\epsilon,\eta>0$, and let $k$ be a nonnegative integer. If the total influence $I(f)$
 is positive, set $\tau=(\epsilon I(f)^{-1}(\eta/(2+\eta))^k)^{1+\eta}$. The sum of the
 squared Fourier coefficients over sets $S$ with $|S|\le k$ that are not contained in the
@@ -270,12 +270,12 @@ Then $$\frac{I(f)}{T}=\frac{I(f)^{2+\eta}}{\epsilon^{1+\eta}C^k}.$$
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.card_influentialCoordinates_le_div, FABL.improvedFriedgutGeneralJuntaSizeTerm, FABL.improvedFriedgutThreshold, FABL.improvedFriedgutThreshold_pos, FABL.improvedFriedgut_generalDenominator_identity, FABL.influentialCoordinates, FABL.totalInfluence}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$, and let
-$\\epsilon,\\eta$ be positive real numbers. Let $k$ be a natural number, and suppose the
+Let $n$ be a natural number, let $f:\{-1,1\}^n\to\{-1,1\}$, and let
+$\epsilon,\eta$ be positive real numbers. Let $k$ be a natural number, and suppose the
 total influence $I$ of the associated real-valued function is positive. Define
-$\\rho=\\eta/(2+\\eta)$, and include in $S$ every coordinate whose influence is at least
-$\\left((\\epsilon/I)\\rho^k\\right)^{1+\\eta}$. Then $|S|$ is at most
-$I^{2+\\eta}\\epsilon^{-(1+\\eta)}(2/\\eta+1)^{(1+\\eta)k}$.
+$\rho=\eta/(2+\eta)$, and include in $S$ every coordinate whose influence is at least
+$\left((\epsilon/I)\rho^k\right)^{1+\eta}$. Then $|S|$ is at most
+$I^{2+\eta}\epsilon^{-(1+\eta)}(2/\eta+1)^{(1+\eta)k}$.
 \end{theorem}
 
 \begin{theorem}[Lower Bound for the Threshold]
@@ -310,12 +310,12 @@ $$\frac{I(f)}{\left(\frac{\epsilon}{I(f)}\right)^{1+\eta}(\rho^k)^2}=\frac{I(f)^
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.card_influentialCoordinates_le_div, FABL.improvedFriedgutJuntaSizeTerm, FABL.improvedFriedgutRho, FABL.improvedFriedgutRho_pos, FABL.improvedFriedgutThreshold, FABL.improvedFriedgutThreshold_lower, FABL.improvedFriedgutThreshold_pos, FABL.improvedFriedgut_bookDenominator_identity, FABL.influentialCoordinates, FABL.totalInfluence, FABL.totalInfluence_nonneg}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$, and let
-$\\epsilon,\\eta$ be real numbers with $\\epsilon>0$ and $0<\\eta\\leq1$. Let $k$ be a
+Let $n$ be a natural number, let $f:\{-1,1\}^n\to\{-1,1\}$, and let
+$\epsilon,\eta$ be real numbers with $\epsilon>0$ and $0<\eta\leq1$. Let $k$ be a
 natural number, and suppose the total influence $I$ of the associated real-valued
-function is positive. Define $\\rho=\\eta/(2+\\eta)$, and include in $S$ every
-coordinate whose influence is at least $\\left((\\epsilon/I)\\rho^k\\right)^{1+\\eta}$.
-Then $|S|$ is at most $I^{2+\\eta}\\epsilon^{-(1+\\eta)}(2/\\eta+1)^{2k}$.
+function is positive. Define $\rho=\eta/(2+\eta)$, and include in $S$ every
+coordinate whose influence is at least $\left((\epsilon/I)\rho^k\right)^{1+\eta}$.
+Then $|S|$ is at most $I^{2+\eta}\epsilon^{-(1+\eta)}(2/\eta+1)^{2k}$.
 \end{theorem}
 
 \begin{definition}[Improved Friedgut small family]

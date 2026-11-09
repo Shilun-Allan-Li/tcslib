@@ -106,11 +106,12 @@ all such descriptors is injective.
 \uses{Complexity.Codec.CellV, Complexity.Codec.hH, Complexity.Codec.hdNum}
 Let $N$ be a finite nondeterministic Turing machine with $k$ work tapes, and let a cell
 value contain an optional head descriptor and, for each tape, an optional Boolean symbol
-and a Boolean marker. For each natural number $t$, define its encoded bit as follows: if
-$t<h$, it records whether the head descriptor's index is $t$; otherwise, for tape index
-$i=rac{t-h}{3}$ when $i<k$, the remainder of $t-h$ upon division by $3$ selects,
-respectively, whether that tape's symbol is present, its symbol with absence interpreted
-as false, or its marker. If the resulting tape index is at least $k$, the bit is true.
+and a Boolean marker. For each natural number $t$, define the encoded bit as follows:
+if $t<h_H(N)$, it records whether the head descriptor has index $t$. Otherwise set
+$i=\lfloor(t-h_H(N))/3\rfloor$. If $i<k$, the remainder of $t-h_H(N)$ upon division
+by $3$ selects, for tape $i$, the symbol-presence bit, its Boolean value (false if
+absent), or its marker, for remainders $0,1,2$, respectively. If $i\ge k$,
+the bit is true.
 \end{definition}
 
 \begin{definition}[Encoding one cell as a bit string]

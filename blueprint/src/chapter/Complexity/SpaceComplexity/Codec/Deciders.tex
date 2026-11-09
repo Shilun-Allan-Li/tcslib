@@ -187,15 +187,15 @@ tape position $0$, and its final Boolean component is true.
 \uses{Complexity.Codec.CA, Complexity.Codec.InitScan, Complexity.Codec.Lab, Complexity.Codec.Reach, Complexity.Codec.Reach.cast, Complexity.Codec.Reach.single', Complexity.Codec.Reach.trans, Complexity.Codec.Regs, Complexity.Codec.Regs.Bd, Complexity.Codec.Regs.Bd.val_le, Complexity.Codec.Regs.val, Complexity.Codec.VAd, Complexity.Codec.W, Complexity.Codec.bnd, Complexity.Codec.bnd_ge, Complexity.Codec.cpDst, Complexity.Codec.cpSrc, Complexity.Codec.cp_run, Complexity.Codec.gd_of, Complexity.Codec.getD_w, Complexity.Codec.goto, Complexity.Codec.hH, Complexity.Codec.icCount, Complexity.Codec.icL, Complexity.Codec.icReg, Complexity.Codec.ic_run, Complexity.Codec.orc, Complexity.Codec.orc_bit, Complexity.Codec.scDst, Complexity.Codec.scFactor, Complexity.Codec.scSrc, Complexity.Codec.sc_run, Complexity.LogProg.AHalt, Complexity.LogProg.AHalt.ret, Complexity.LogProg.AReach.halt, Complexity.LogProg.GuardLe, Complexity.LogProg.PreS, Complexity.LogProg.astep, Complexity.LogProg.vword_whole₁, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{7}
 Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet, and
-write $y$ as the paired encoding of Boolean words $x$ and the paired encoding of Boolean
-words $w$ and $r$. Let $R$ be a register assignment, $s$ a natural number, and $st$ a
-verifier-and-accumulator state. Suppose every register of $R$ is at most
-$(8W_N+8)(|y|+1)$, $R_A=2|x|+2$, $R_S=s$, and $R_T=0$; also suppose $s2|y|$ and
-$W_N(2s+1)w|$. Then the initialization-mode codec program, started at its verifier
-state $st$ with register values $R$, no answer yet, and input $y$, halts while
-satisfying the same register bound at every earlier time, and returns true exactly when
-the scan state passes the initialization checks, $R_{Pos}=1$, and either $N$ has no work
-tapes or the indicated bit of $w$ is true.
+write $y$ for the paired encoding of $x$ and the paired encoding of $w$ and $r$. Let
+$R$ be a register assignment, $s$ a natural number, and $st$ a verifier-and-accumulator
+state. Suppose every register of $R$ is at most $(8W_N+8)(|y|+1)$,
+$R_A=2|x|+2$, $R_S=s$, $R_T=0$, $s\le 2|y|$, and $W_N(2s+1)\le |w|$. Then the
+initialization-mode codec program, started at state $st$ with register values $R$, no
+answer yet, and input $y$, halts with every earlier configuration satisfying the same
+register bound. It returns true exactly when the scan state passes the initialization
+checks, $R_{Pos}=1$, and either $N$ has no work tapes or the bit of $w$ at index
+$W_Ns+(h_H(N)+2)$ is true.
 \end{theorem}
 
 \begin{theorem}[Logarithmic-space decidability of the initial language]

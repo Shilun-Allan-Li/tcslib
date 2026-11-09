@@ -223,7 +223,7 @@ $\sum_{i=0}^{\ell-1}a_iX^i$ is $a_d$ when $d<\ell$, and is $0$ when $d\ge\ell$.
 \leanok
 \uses{FABL.binaryLowPolynomial, FABL.binaryOneCoefficients, FABL.coeff_binaryLowPolynomial}
 \difficulty{4}
-Let $\ell$ be a positive integer, and let $a\in\mathbb F_2^\ell$ have value $1$ at
+Let $\ell$ be a positive integer, and let $a\in\mathbb F_2^\ell$ have value $1$ at
 coordinate $0$ and value $0$ at every other coordinate. The polynomial
 $\sum_{i=0}^{\ell-1} a_iX^i$ is the constant polynomial $1$.
 \end{theorem}
@@ -318,9 +318,9 @@ specified by $m$ in every degree from $0$ through $2\ell$.
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryHasProperFactor, FABL.binaryLowPolynomial, FABL.binaryMonicPolynomial, FABL.binaryProperFactorWitness_eq_true_iff, FABL.mem_allBinaryVectors}
 \difficulty{1}
-Let $\ell$ be a positive integer, and let $m$ be a vector of $$-ary coefficients of
+Let $\ell$ be a positive integer, and let $m$ be a vector of coefficients in $\mathbb{F}_2$ of
 length $\ell$. The finite search for a proper factor of the monic polynomial determined
-by $m$ returns true if and only if there are two vectors $a,b$ of $$-ary coefficients
+by $m$ returns true if and only if there are two vectors $a,b$ of coefficients in $\mathbb{F}_2$
 of length $\ell$ such that their associated low-degree polynomials are each different
 from $1$ and their product is the monic polynomial determined by $m$.
 \end{theorem}
@@ -343,13 +343,9 @@ specified by $m$ in every degree from $0$ through $2\ell$.
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryHasProperFactor, FABL.binaryHasProperFactor_eq_true_iff, FABL.binaryLowPolynomial, FABL.binaryLowPolynomial_coefficients, FABL.binaryMonicIrreducibleTest, FABL.binaryMonicPolynomial, FABL.binaryMonicPolynomial_monic, FABL.binaryMonicPolynomial_natDegree, FABL.isUnit_f₂Polynomial_iff_eq_one}
 \difficulty{5}
-Let $[?]$ No. Need actual LaTex F_2. statement: For every positive integer $[?]$ avoid
-weird. `Let ` no. JSON strings with backslash escaping. We can write plain math as
-$\mathbb{F}_2$. Need be certain field. “For every ℓ>0 and every coefficient vector
-m∈F2^ℓ, the binary monic irreducibility test returns true iff the monic polynomial X^ℓ +
-sum ... is irreducible over F2.” But definitions say polynomial. Explicit to make stand
-alone. Coeffs vector m. Correct algorithm test true exactly irreducible. Title.
-hypotheses covered positive ℓ. The implicit finite vector folded dimensions.
+Let $\ell$ be a positive integer and let $m\in(\mathbb{F}_2)^\ell$. The binary monic
+irreducibility test on $m$ returns true if and only if the monic polynomial
+$X^\ell+\sum_{i=0}^{\ell-1}m_iX^i$ is irreducible over $\mathbb{F}_2$.
 \end{theorem}
 
 \begin{definition}[Search for an irreducible binary modulus]
@@ -367,8 +363,8 @@ one exists, and return no vector otherwise.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.binaryExtensionField_finrank, FABL.binaryLowPolynomial, FABL.binaryMonicPolynomial, FABL.𝔽₂}
 \difficulty{4}
-For every positive integer $\\ell$, there is a polynomial over $\\mathbb{F}_2$ of the
-form $X^\\ell+\\sum_{i=0}^{\\ell-1}a_iX^i$, with coefficients $a_i\\in\\mathbb{F}_2$,
+For every positive integer $\ell$, there is a polynomial over $\mathbb{F}_2$ of the
+form $X^\ell+\sum_{i=0}^{\ell-1}a_iX^i$, with coefficients $a_i\in\mathbb{F}_2$,
 that is irreducible.
 \end{theorem}
 
@@ -520,9 +516,9 @@ scale-add of $p$ by $u$ to $c$ is $c_i+u p_i$.
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryCoefficientAt, FABL.binaryLowPolynomial, FABL.coeff_binaryLowPolynomial}
 \difficulty{1}
-Let $$ be a natural number, let $a$ be a binary vector of length $$, and let $d$ be a
-natural number. Form the polynomial $P(X)=\sum_{i=0}^{-1}a_iX^i$ over the field of two
-elements, and define $a_d=0$ for $d\ge$. Then $a_d$ equals the coefficient of $X^d$ in
+Let $\ell$ be a natural number, let $a$ be a binary vector of length $\ell$, and let $d$ be a
+natural number. Form the polynomial $P(X)=\sum_{i=0}^{\ell-1}a_iX^i$ over the field of two
+elements, and define $a_d=0$ for $d\ge\ell$. Then $a_d$ equals the coefficient of $X^d$ in
 $P$.
 \end{theorem}
 
@@ -544,13 +540,13 @@ $A(X)$ in degree $d-1$ (taken to be $0$ when $d-1\ge\ell$).
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryCoefficientAt, FABL.binaryMonicCoefficient, FABL.binaryShiftUpCoefficient, FABL.binaryTopCoefficient, FABL.binaryXMulMod}
 \difficulty{5}
-Let $>0$, let $m$ and $a$ be binary vectors of length $$, and let $d$ be a natural
+Let $\ell>0$, let $m$ and $a$ be binary vectors of length $\ell$, and let $d$ be a natural
 number. Write $a_d$ for the $d$th coefficient of $a$, taking it to be zero when $d\ge
-$; write $a_{d-1}$ for the shifted coefficient, taking it to be zero when $d=0$; and
-let $a_{-1}$ be the top coefficient of $a$. Extend $m$ by setting its coefficient at
-degree $$ to $1$ and all coefficients above that to $0$. Then the $d$th coefficient of
+\ell$; write $a_{d-1}$ for the shifted coefficient, taking it to be zero when $d=0$; and
+let $a_{\ell-1}$ be the top coefficient of $a$. Extend $m$ by setting its coefficient at
+degree $\ell$ to $1$ and all coefficients above that to $0$. Then the $d$th coefficient of
 the vector obtained by multiplying by the indeterminate modulo this monic polynomial is
-$a_{d-1}+a_{-1}m_d$, with arithmetic in the field of two elements.
+$a_{d-1}+a_{\ell-1}m_d$, with arithmetic in the field of two elements.
 \end{theorem}
 
 \begin{theorem}[Polynomial of the shifted coefficients]
@@ -630,8 +626,8 @@ of $v$ plus $b$ times the encoding of $u$ in the corresponding quotient algebra.
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryAdjoinRootEncode, FABL.binaryLowPolynomial_binaryXMulMod, FABL.binaryMonicPolynomial, FABL.binaryXMulMod}
 \difficulty{3}
-Let $ell>0$ and let $m,a$ be length-$ell$ vectors over $mathbb F_2$. Form the monic
-polynomial $X^{ell}+\sum_{i<\ell}m_iX^i$ and encode a vector by its low-coefficient
+Let $\ell>0$ and let $m,a$ be length-$\ell$ vectors over $\mathbb F_2$. Form the monic
+polynomial $X^{\ell}+\sum_{i<\ell}m_iX^i$ and encode a vector by its low-coefficient
 polynomial in the quotient obtained by adjoining a root of this monic polynomial. If
 $a'$ is obtained by shifting the coefficients of $a$ up one degree, with constant
 coefficient zero, and adding $a_{\ell-1}m$, then the encoding of $a'$ equals the
@@ -704,7 +700,7 @@ then $E(u_r)=E(x)P_r(y)$ and $E(v_r)=\alpha^rE(x)$.
 \leanok
 \uses{FABL.CertifiedBinaryFieldImplementation, FABL.F₂Cube, FABL.binaryAdjoinRootEncode, FABL.binaryAdjoinRootEncode_eq_prefix, FABL.binaryLowPolynomial, FABL.binaryMonicPolynomial, FABL.binaryMulMod, FABL.binaryMulModState_correct}
 \difficulty{3}
-Let $[?m\ell[0m$ be a positive integer, and let $m,x,y\in(\mathbb{F}_2)^\ell$, where
+Let $\ell$ be a positive integer, and let $m,x,y\in(\mathbb{F}_2)^\ell$, where
 $\mathbb{F}_2$ is the field with two elements. Suppose the monic polynomial
 $X^\ell+\sum_{i=0}^{\ell-1}m_iX^i$ is irreducible over $\mathbb{F}_2$. The residue class
 of the polynomial encoded by the modular product of $x$ and $y$ equals the product of
@@ -828,7 +824,7 @@ binary vectors of that dimension.
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryAdd, FABL.binaryMulMod, FABL.buildCertifiedBinaryFieldImplementation, FABL.buildExecutableBinaryFieldModel, FABL.mem_allBinaryVectors, FABL.mem_binaryAdditionTable, FABL.mem_binaryMultiplicationTable}
 \difficulty{1}
-Let $[?m\ell[?m>0$, and let $x,y$ be binary vectors of length $[?m\ell[?m$ over the
+Let $\ell>0$, and let $x,y$ be binary vectors of length $\ell$ over the
 field with two elements. In the constructed executable binary field model, $x$ occurs in
 the element list, the triple consisting of $x$, $y$, and their coordinatewise sum occurs
 in the addition table, and the triple consisting of $x$, $y$, and their modular product
@@ -977,7 +973,7 @@ $\ell(6\ell+2)$.
 \leanok
 \uses{FABL.binaryAddWork_eq, FABL.binaryArithmeticWork, FABL.binaryMulModWork_eq}
 \difficulty{3}
-For every natural number $$, the binary arithmetic work is at most $8(+1)^2$.
+For every natural number $\ell$, the binary arithmetic work is at most $8(\ell+1)^2$.
 \end{theorem}
 
 \begin{definition}[Binary product comparison work]
@@ -1241,7 +1237,7 @@ $2^{8(\ell+1)}$.
 \leanok
 \uses{FABL.binaryArithmeticWork, FABL.binaryArithmeticWork_le}
 \difficulty{3}
-As the natural number $$ tends to infinity, the binary arithmetic work is $O((+1)^2)$.
+As the natural number $\ell$ tends to infinity, the binary arithmetic work is $O((\ell+1)^2)$.
 \end{theorem}
 
 \begin{theorem}[Asymptotic preprocessing work bound]
@@ -1260,9 +1256,9 @@ work is $O(2^{8\ell})$.
 \leanok
 \uses{FABL.binaryArithmeticWork, FABL.binaryArithmeticWork_le, FABL.binaryFieldPreprocessingWork, FABL.binaryFieldPreprocessingWork_le, FABL.binaryFieldRepresentationBits, FABL.binaryFieldRepresentationBits_le_preprocessingWork, FABL.buildCertifiedBinaryFieldImplementation, FABL.buildExecutableBinaryFieldModel, FABL.length_allBinaryVectors, FABL.length_binaryAdditionTable, FABL.length_binaryMultiplicationTable}
 \difficulty{3}
-For every positive integer $[?m\ell[?m$, the constructed model has $2^[?m\ell[?m$
-elements and each of its addition and multiplication tables has $2^{2[?m\ell[?m}$
+For every positive integer $\ell$, the constructed model has $2^\ell$
+elements and each of its addition and multiplication tables has $2^{2\ell}$
 entries. The number of bits in its field representation is at most the preprocessing
-work, which is at most $2^{8([?m\ell[?m+1)}$, and its arithmetic work is at most
-$8([?m\ell[?m+1)^2$.
+work, which is at most $2^{8(\ell+1)}$, and its arithmetic work is at most
+$8(\ell+1)^2$.
 \end{theorem}

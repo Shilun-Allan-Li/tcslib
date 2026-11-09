@@ -825,11 +825,11 @@ configuration.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.lenParse_run, Turing.FinTM.lenStart, Turing.FinTM.pairCountTM, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode}
 \difficulty{3}
-Let $M$ be a finite Turing machine over $\\{0,1\\}$, let $g$ be a function from finite
+Let $M$ be a finite Turing machine over $\{0,1\}$, let $g$ be a function from finite
 bit strings to finite bit strings, and let $T$ be a time bound such that $M$ computes
 $g(x)$ within $T(|x|)$ steps for every input $x$. Then the captured-length checker built
 over $M$ computes, within $T(|x|)+2|x|+5$ steps on every input $x$, the one-bit function
-that outputs $1$ exactly when $x$ decodes as a pair $(a,b)$ and $|b|\\le |g(x)|$, and
+that outputs $1$ exactly when $x$ decodes as a pair $(a,b)$ and $|b|\le |g(x)|$, and
 outputs $0$ otherwise.
 \end{lemma}
 
@@ -2290,7 +2290,7 @@ For all natural numbers $C$ and $e$, there exist a finite Turing machine $M$ and
 natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within
 $c(n+1)^{e+2}$ steps. Its output is the encoding that doubles each bit of the prefix of
 $w$ of length $i$, appends the separator $01$, and then appends the remaining suffix,
-where $i$ is the least integer in $0,\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such
+where $i$ is the least integer in $\{0,\ldots,n\}$ satisfying $i+C(i+1)^e=n$; if no such
 $i$ exists, its output is the empty word.
 \end{theorem}
 
@@ -4072,7 +4072,7 @@ of $f(|s|)$. Then there exist a finite Turing machine $M$ and a natural number $
 that, on every Boolean input $w$ of length $n$, $M$ halts within $c(n+1)(T_E(n+1)+n+2)$
 steps and outputs the encoding that doubles each bit of the prefix of $w$ of length $i$,
 appends $01$, and then appends the remaining suffix, where $i$ is the least integer in
-$0,\ldots,n$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the empty
+$\{0,\ldots,n\}$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the empty
 word.
 \end{theorem}
 

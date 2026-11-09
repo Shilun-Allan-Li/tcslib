@@ -98,11 +98,11 @@ outside a word yielding no symbol.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape}
 Let $K$ be a natural number, let $y$ and $z$ be finite Boolean strings, let $d$ be a
 configuration of a $K$-tape machine on input $z$, let $r$ be one of its work-tape
-indices, let $i$ be an input-head position among the $|y|+2$ positions, and let $$ be a
-natural number. The ruler condition holds if $0<\le |z|$, the string obtained from $z$
-by deleting its first $$ symbols is $y$, and the input head is at position $+i$. In
-addition, for every integer $p$ with $-1\le p\le $, the selected work tape at offset
-$p$ from its head agrees with the tape encoding a string of $$ true symbols.
+indices, let $i$ be an input-head position among the $|y|+2$ positions, and let $\ell$ be a
+natural number. The ruler condition holds if $0<\ell\le |z|$, the string obtained from $z$
+by deleting its first $\ell$ symbols is $y$, and the input head is at position $\ell+i$. In
+addition, for every integer $p$ with $-1\le p\le \ell$, the selected work tape at offset
+$p$ from its head agrees with the tape encoding a string of $\ell$ true symbols.
 \end{definition}
 
 \begin{theorem}[Length of a nested pair encoding]

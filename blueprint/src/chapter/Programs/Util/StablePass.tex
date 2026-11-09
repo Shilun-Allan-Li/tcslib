@@ -10,9 +10,9 @@ Declarations of the Lean module \texttt{TCSlib.Programs.Util.StablePass}.
 \lean{Light.keyAt}
 \label{Light.keyAt}
 \leanok
-For a function $k:br	obr$, a list $pi$ of natural numbers, and a natural number $j$,
-the key at position $j$ is $k$ applied to the entry at index $j$, taking that entry to
-be zero if the index is out of range.
+For a key function $k:\mathbb{N}\to\mathbb{N}$, a list $\pi$ of natural numbers, and an
+index $j$, the key at position $j$ is $k$ applied to the list entry there, using $0$ as
+the entry when $j$ is out of range.
 \end{definition}
 
 \begin{theorem}[Key at a list index]
@@ -30,10 +30,10 @@ $j<|\pi|$. The value of $kd$ at the entry of $\pi$ indexed by $j$ is $kd(\pi_j)$
 \label{Light.IsStablePass}
 \leanok
 \uses{Light.keyAt, Light.sortPos}
-Let $k:br	obr$ be a key function and let $pi$ and $pi'$ be lists of natural numbers.
-The list $pi'$ is a stable pass of $pi$ if the two lists have the same length and, for
-every $j<|pi|$, the entry of $pi'$ at the position determined by sorting the keys
-$k(pi_i)$ in $pi$ (with ties ordered by their original positions) equals $pi_j$.
+For a key function $k:\mathbb{N}\to\mathbb{N}$ and lists $\pi,\pi\prime$ of natural
+numbers, $\pi\prime$ is a stable pass of $\pi$ when the lists have the same length and,
+for every index $j<|\pi|$, the item $\pi_j$ appears in $\pi\prime$ at the position
+given by sorting items by key $k$ and preserving their original order when keys tie.
 \end{definition}
 
 \begin{theorem}[Permutation from a stable pass]

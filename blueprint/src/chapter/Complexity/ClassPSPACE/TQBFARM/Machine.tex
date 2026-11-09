@@ -103,7 +103,7 @@ Define $r_C$ to be the element $5$ of the set of integers from $0$ through $6$.
 \lean{Complexity.LogProg.TQBFARM.rV}
 \label{Complexity.LogProg.TQBFARM.rV}
 \leanok
-Let the seven register positions be indexed by $0,1,ots,6$. The variable register is
+Let the seven register positions be indexed by $0,1,\ldots,6$. The variable register is
 assigned index $6$.
 \end{definition}
 
@@ -570,9 +570,9 @@ and $incK$ when $b$ is false, with state $(K,S+T,P,0,Z,C,V)$.
 \difficulty{3}
 Let $x$ be a finite bit string, let $B$ be a natural number, let $b$ be a Boolean value,
 and let $st$ be a seven-register state whose registers $K,S,P,T,Z,C,V$ are all at most
-$B$. The program has a finite run from label $	ext{sb}(b,0)$ with registers initialized
-from $st$ to label $	ext{jzC}(b)$, with the same registers as $st$ except that $V$ is
-set to $0$ and $C$ is set to the truncated difference $	ext{max}(C-V,0)$; every
+$B$. The program has a finite run from label $\text{sb}(b,0)$ with registers initialized
+from $st$ to label $\text{jzC}(b)$, with the same registers as $st$ except that $V$ is
+set to $0$ and $C$ is set to the truncated difference $\text{max}(C-V,0)$; every
 configuration before the endpoint satisfies the program guard and has all registers at
 most $B$.
 \end{theorem}
@@ -585,7 +585,7 @@ most $B$.
 \difficulty{3}
 Let $x$ be a finite bit string, $B$ a natural number, $b$ a Boolean, and $s$ a machine
 state whose seven register values are at most $B$. The machine has a run on input $x$
-from label $	ext{hv}(b,0)$ and state $s$ to label $	ext{od}(b)$ and state obtained from
-$s$ by setting $C=0$ and $T=iglloor{s.T/2^{s.C}igrfloor}$, with the run guard
+from label $\text{hv}(b,0)$ and state $s$ to label $\text{od}(b)$ and state obtained from
+$s$ by setting $C=0$ and $T=\left\lfloor s.T/2^{s.C}\right\rfloor$, with the run guard
 satisfied at every configuration before its endpoint.
 \end{theorem}

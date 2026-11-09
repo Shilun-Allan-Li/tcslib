@@ -262,7 +262,7 @@ original run with tag $b'$.
 \difficulty{5}
 Let $M$ be an oracle Turing machine with $m$ ordinary work tapes over the Boolean
 alphabet, let $O$ be a language of Boolean words, and let $P$ be a Turing machine with
-$k$ work tapes and state set $H$. Suppose $\\iota$ is an injection from the $m+2$ tape
+$k$ work tapes and state set $H$. Suppose $\iota$ is an injection from the $m+2$ tape
 indices of the shadow simulation into the $k$ tapes of $P$, and $emb$ is an injection
 from pairs $(q,b)$, where $q$ is a state of $M$ and
 $b\in\{\mathrm{false},\mathrm{true}\}$, into $H$. Fix arbitrary contents and head
@@ -287,7 +287,7 @@ $b'$.
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.embedEmitCfg, Turing.embedEmitCfg_selected_pos, Turing.embedEmitCfg_selected_tape, Turing.embedEmitTM_frame}
 \difficulty{4}
 Let $m,k$ be natural numbers, let $S$ be a state type, let $x$ be a finite Boolean
-input, and let $A$ be an $m$-work-tape Turing machine. Suppose $[0m[0m\iota$ embeds
+input, and let $A$ be an $m$-work-tape Turing machine. Suppose $\iota$ embeds
 the $m$ work-tape indices into the $k$ work-tape indices, and let $c$ and $d$ be
 configurations on $m$ and $k$ work tapes, respectively, for the same input. If their
 states, input-head positions, and output strings agree, and for every work-tape index
@@ -426,8 +426,8 @@ configuration obtained by setting both positions to $p+mu$.
 \leanok
 \uses{Turing.oracleOrigin}
 \difficulty{4}
-Let the oracle origin be the function from $\mathbb{Z}$ to
-$\mathrm{Option}(\mathrm{Bool})$ that takes the value $\mathrm{some}(\mathrm{true})$ at
+Let the oracle origin be the function from $\mathbb{Z}$ to
+$\mathrm{Option}(\mathrm{Bool})$ that takes the value $\mathrm{some}(\mathrm{true})$ at
 $0$ and $\mathrm{none}$ elsewhere. For any integers $p$ and $z$ with $z \ne 0$, changing
 the oracle's value at $p$ to $\mathrm{some}(\mathrm{false})$ leaves its value at $z$
 different from $\mathrm{some}(\mathrm{true})$.
@@ -803,7 +803,7 @@ position $0$, and the output empty.
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.FinOracleTM, Turing.FinTM, Turing.oracleHostTapes, Turing.oraclePhaseState, Turing.oracleSourceCfg}
 Let $M$ be a finite Boolean oracle Turing machine with $k$ ordinary work tapes, let $C$
 be a finite Boolean Turing machine, let $x$ be a finite Boolean input, and let $c$ be a
-configuration of $M$ on $x$; choose a side in $\\{\mathrm{false},\mathrm{true}\}$. The
+configuration of $M$ on $x$; choose a side in $\{\mathrm{false},\mathrm{true}\}$. The
 construction takes the associated source configuration and tags its state with the
 source phase, leaving the remaining configuration data unchanged.
 \end{definition}
@@ -956,7 +956,7 @@ configuration with its state replaced by $q$.
 \uses{Turing.Cfg, Turing.FinOracleTM, Turing.FinTM, Turing.OracleDispatch, Turing.embedEmitCfg, Turing.oracleHostTapes, Turing.oracleSlots, Turing.oracleSlots_injective, Turing.oracleSourceCfg}
 Let $M$ be a finite Boolean oracle Turing machine and $C$ a finite Boolean Turing
 machine with $C$ having at least one work tape. For any Boolean input $x$, any
-configuration $c$ of $M$ on $x$, any side in $\\{\\mathrm{false},\\mathrm{true}\\}$, and
+configuration $c$ of $M$ on $x$, any side in $\{\mathrm{false},\mathrm{true}\}$, and
 any configuration $d$ with four work tapes and an oracle-dispatch state on $x$, the
 construction returns a configuration of $M.k+ C.k+3$ work tapes on $x$, with the
 oracle-dispatch state type, obtained by embedding the work-tape contents and head

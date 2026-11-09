@@ -112,8 +112,8 @@ second layer applies NOT, so the output is constantly $0$.
 \leanok
 \uses{BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.constZeroCircuit}
 \difficulty{1}
-For every natural number $n$ and every input assignment $x : \\mathrm{Fin}(n) \\to
-\\mathrm{Fin}(2)$, the two-layer circuit with $n$ input nodes and a single output node
+For every natural number $n$ and every input assignment $x : \mathrm{Fin}(n) \to
+\mathrm{Fin}(2)$, the two-layer circuit with $n$ input nodes and a single output node
 evaluates to $0$.
 \end{theorem}
 
@@ -142,10 +142,10 @@ finite set of nodes.
 \leanok
 \uses{BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.andGateOp_mem_stdGateOps, BoolCircuit.constZeroCircuit, BoolCircuit.notGateOp_mem_stdGateOps, BoolCircuit.stdGateOps}
 \difficulty{4}
-For every natural number $n$, the depth-two circuit from $br^n$ to a singleton output
+For every natural number $n$, the depth-two circuit from $\bbr^n$ to a singleton output
 whose first gate layer consists of the empty-input AND gate and whose second gate layer
 consists of a NOT gate uses only gate operations from the set comprising the identity,
-NOT, and unbounded fan-in AND gates on $\\mathrm{Fin}\,2$.
+NOT, and unbounded fan-in AND gates on $\mathrm{Fin}\,2$.
 \end{theorem}
 
 \begin{definition}[Unary language circuit family]

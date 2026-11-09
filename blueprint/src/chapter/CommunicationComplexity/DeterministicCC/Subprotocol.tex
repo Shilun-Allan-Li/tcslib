@@ -817,9 +817,9 @@ on $(x, y)$ yields the same output as executing $q_{\mathrm{out}}$ on $(x, y)$.
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
 \difficulty{4}
-Let $X,Y,	ext{ and }[0m\alpha$ be types, let $f:X\to\{0,1\}$, and let $P$ assign a
-protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a
-subprotocol of the Alice node determined by $f$ and $P$.
+Let $X,Y,\alpha$ be types, let $f:X\to\{0,1\}$, and let $P$ map each bit to a protocol
+over these types. For every bit $b$, $P(b)$ is a subprotocol of the protocol node
+$\operatorname{alice}(f,P)$.
 \end{lemma}
 
 \begin{lemma}[Bob node children are subprotocols]
@@ -828,9 +828,9 @@ subprotocol of the Alice node determined by $f$ and $P$.
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
 \difficulty{4}
-Let $X,Y,	ext{ and }[0m\alpha$ be types, let $f:Y\to\{0,1\}$, and let $P$ assign a
-protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a
-subprotocol of the Bob node determined by $f$ and $P$.
+Let $X,Y,\alpha$ be types, let $f:Y\to\{0,1\}$, and let $P$ map each bit to a protocol
+over these types. For every bit $b$, $P(b)$ is a subprotocol of the protocol node
+$\operatorname{bob}(f,P)$.
 \end{lemma}
 
 \begin{lemma}[Balanced subprotocol selection]

@@ -3643,7 +3643,7 @@ fraction of false entries and the fraction of true entries in $w$.
 \uses{FABL.uniformProbability}
 \difficulty{3}
 Let $n$ be a positive integer and let
-$w:\\operatorname{Fin}(n)\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a Boolean-valued
+$w:\operatorname{Fin}(n)\to\{\mathrm{false},\mathrm{true}\}$ be a Boolean-valued
 function. The uniform probabilities that $w(i)$ is false and that $w(i)$ is true sum to
 $1$.
 \end{theorem}
@@ -5217,7 +5217,7 @@ length $j+2$.
 \leanok
 \uses{FABL.pcppBoolF₂Equiv}
 For a triple of possibly missing Boolean values, accept exactly when all three values
-are present and, after identifying Booleans with elements of $[1m\mathbb{F}_2[0m$, the
+are present and, after identifying Booleans with elements of $\mathbb{F}_2$, the
 third equals the sum of the first two.
 \end{definition}
 
@@ -5227,11 +5227,11 @@ third equals the sum of the first two.
 \label{FABL.oddWeightPartialSumTranscriptAccept}
 \leanok
 \uses{FABL.OddWeightPartialSumCheckSeed, FABL.linearTripleTranscriptAccept, FABL.pcppBoolF₂Equiv}
-Let the seed be either a Boolean or an index in $[1m\{0,\ldots,m-1\}[0m$, and let a
+Let the seed be either a Boolean or an index in $\{0,\ldots,m-1\}$, and let a
 transcript assign an optional Boolean to each of three positions. If the seed is false,
 or is an index, accept exactly when all three answers are present and the third equals
-the sum of the first two in $[1m\mathbb{F}_2[0m$. If the seed is true, accept exactly
-when the first answer is present and equals $1$ in $[1m\mathbb{F}_2[0m$.
+the sum of the first two in $\mathbb{F}_2$. If the seed is true, accept exactly
+when the first answer is present and equals $1$ in $\mathbb{F}_2$.
 \end{definition}
 
 \begin{definition}[Odd weight partial sum check]
@@ -5242,9 +5242,9 @@ when the first answer is present and equals $1$ in $[1m\mathbb{F}_2[0m$.
 \uses{FABL.OddWeightPartialSumCheckSeed, FABL.pcppBoolF₂Equiv}
 Let $m$ be a natural number, let the seed be either a Boolean or an index $k<m$, let $w$
 assign Booleans to the $m+2$ input positions, and let $p$ assign Booleans to the $m+1$
-proof positions. If the seed is false, then $p_0=w_0+w_1$ in $[1m\mathbb{F}_2[0m$. If
-the seed is true, then the last proof bit is $1$ in $[1m\mathbb{F}_2[0m$. If the seed
-is $k$, then $p_{k+1}=p_k+w_{k+2}$ in $[1m\mathbb{F}_2[0m$.
+proof positions. If the seed is false, then $p_0=w_0+w_1$ in $\mathbb{F}_2$. If
+the seed is true, then the last proof bit is $1$ in $\mathbb{F}_2$. If the seed
+is $k$, then $p_{k+1}=p_k+w_{k+2}$ in $\mathbb{F}_2$.
 \end{definition}
 
 \begin{definition}[Odd weight partial sum verifier]
@@ -8884,7 +8884,7 @@ and the integers from $0$ through $2^n-1$.
 \leanok
 \uses{FABL.SignCube}
 For each natural number $N$, there is an equivalence between the set of length-$N$ sign
-vectors, with entries in $[1m\{ -1,1\}[0m$, and the set of integers from $0$ through
+vectors, with entries in $\{ -1,1\}$, and the set of integers from $0$ through
 $2^N-1$.
 \end{definition}
 
@@ -9870,7 +9870,7 @@ product of the proof signs at $y$ and at its translate by the coordinate truth t
 \uses{FABL.F₂Cube, FABL.binaryCubeSignEquiv, FABL.booleanStringIndexEquiv, FABL.coordinateTruthTable, FABL.coordinateTruthTable_apply_index, FABL.dictator, FABL.localCorrection, FABL.pcppBoolSignEquiv, FABL.signEncode, FABL.signEncode_add}
 \difficulty{4}
 Let $n$ be a natural number, let $w:\{0,1\}^n$ be a Boolean string, let $j$ be a
-coordinate, and let $y$ be an $[0m\mathbb F_2$-valued vector indexed by the Boolean
+coordinate, and let $y$ be an $\mathbb F_2$-valued vector indexed by the Boolean
 strings of length $n$. Encode each Boolean string as a sign vector coordinatewise, and
 use the truth table of the $j$th bit as the input to the local correction of the
 dictator that reads the coordinate indexed by $w$. The resulting sign is the encoding of
@@ -10693,7 +10693,7 @@ that rejection rate.
 For every natural number $n>0$ and every property $P$ of Boolean strings of length $n$,
 there is a probabilistically checkable proof system with proof length $2^{2^n}$ and a
 verifier making three nonadaptive queries, such that every string satisfying $P$ has a
-proof accepted with probability $1$. Moreover, for every $[0m\varepsilon\in[0,1]$, any
+proof accepted with probability $1$. Moreover, for every $\varepsilon\in[0,1]$, any
 input whose relative Hamming distance from every string satisfying $P$ is greater than
 $\varepsilon$ is rejected, for every proof, with probability greater than
 $\varepsilon/1000$.

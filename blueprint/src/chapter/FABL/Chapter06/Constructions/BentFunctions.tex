@@ -46,9 +46,9 @@ Fourier coefficient of $f$ has absolute value $(2^{loor{n/2}})^{-1}$.
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.vectorFourierCoeff, FABL.vector_plancherel}
 \difficulty{4}
 Let $n$ be a natural number and let $f$ be a real-valued function on the $n$-dimensional
-vector space over $\\mathbb F_2$. Suppose $|f(x)|=1$ for every input $x$. Then the sum,
-over all vectors $\\gamma$ in that space, of the squares of the Fourier coefficients
-indexed by the support of $\\gamma$ is $1$.
+vector space over $\mathbb F_2$. Suppose $|f(x)|=1$ for every input $x$. Then the sum,
+over all vectors $\gamma$ in that space, of the squares of the Fourier coefficients
+indexed by the support of $\gamma$ is $1$.
 \end{theorem}
 
 \begin{theorem}[A large binary Fourier coefficient]
@@ -57,7 +57,7 @@ indexed by the support of $\\gamma$ is $1$.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.sum_sq_vectorFourierCoeff_eq_one, FABL.vectorFourierCoeff, FABL.𝔽₂}
 \difficulty{5}
-Let $n$ be a nonnegative integer, and let $f:(\\mathbb{F}_2)^n\\to\\mathbb{R}$ satisfy
+Let $n$ be a nonnegative integer, and let $f:(\mathbb{F}_2)^n\to\mathbb{R}$ satisfy
 $|f(x)|=1$ for every $x$. Then some binary Fourier coefficient of $f$ has square at
 least $2^{-n}$.
 \end{theorem}
@@ -94,8 +94,8 @@ the $2n$-dimensional binary cube: every Fourier coefficient has absolute value $
 \leanok
 \uses{FABL.IsSignValued, FABL.f₂CubeBlockEquiv, FABL.f₂DotProduct, FABL.innerProductModTwo, FABL.innerProductModTwo_joinF₂CubeBlocks, FABL.joinF₂CubeBlocks}
 \difficulty{5}
-For every natural number $n$, the function on pairs $x,y\\in\\mathbb F_2^n$ given by
-$(-1)^{\\sum_{j=1}^n x_jy_j}$, with the exponent computed modulo $2$, has absolute value
+For every natural number $n$, the function on pairs $x,y\in\mathbb F_2^n$ given by
+$(-1)^{\sum_{j=1}^n x_jy_j}$, with the exponent computed modulo $2$, has absolute value
 $1$ at every pair.
 \end{theorem}
 
@@ -221,7 +221,7 @@ Fourier coefficient of $f$ at $a+\gamma$.
 \label{FABL.bentAffineModulation}
 \leanok
 \uses{FABL.F₂Cube, FABL.Sign, FABL.signValue, FABL.vectorWalshCharacter}
-Given a sign $[0m\sigma\in\{\pm1\}$, a vector $a$ in the $n$-dimensional Boolean cube,
+Given a sign $\sigma\in\{\pm1\}$, a vector $a$ in the $n$-dimensional Boolean cube,
 and a real-valued function $f$ on that cube, define the modulated function at $x$ as the
 product of the sign, the Walsh character indexed by $a$ evaluated at $x$, and $f(x)$.
 \end{definition}
@@ -259,9 +259,9 @@ $a$.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.Sign, FABL.abs_vectorWalshCharacter, FABL.bentAffineModulation, FABL.signValue_eq_neg_one_or_one}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $f:\\mathbb F_2^n\\to\\mathbb R$ satisfy
-$|f(x)|=1$ for every $x$, let $\\sigma\\in\\{-1,1\\}$, and let $a\\in\\mathbb F_2^n$.
-Then the function $x\\mapsto\\sigma(-1)^{\\sum_i a_i x_i}f(x)$ also has absolute value
+Let $n$ be a nonnegative integer, let $f:\mathbb F_2^n\to\mathbb R$ satisfy
+$|f(x)|=1$ for every $x$, let $\sigma\in\{-1,1\}$, and let $a\in\mathbb F_2^n$.
+Then the function $x\mapsto\sigma(-1)^{\sum_i a_i x_i}f(x)$ also has absolute value
 $1$ at every input.
 \end{theorem}
 
@@ -304,9 +304,9 @@ where $\chi_a$ is the Walsh character associated with $a$.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.Sign, FABL.abs_vectorWalshCharacter, FABL.affineSignFunction, FABL.affineSignFunction_apply, FABL.signValue_eq_neg_one_or_one}
 \difficulty{4}
-For every natural number $n$, every sign $\\sigma\\in\\{−1,1\\}$, and every vector
-$\\gamma\\in\\mathbb F_2^n$, the function on $\\mathbb F_2^n$ given by
-$x\\mapsto\\sigma(-1)^{\\sum_{j=1}^n\\gamma_jx_j}$ takes only values of absolute value
+For every natural number $n$, every sign $\sigma\in\{−1,1\}$, and every vector
+$\gamma\in\mathbb F_2^n$, the function on $\mathbb F_2^n$ given by
+$x\mapsto\sigma(-1)^{\sum_{j=1}^n\gamma_jx_j}$ takes only values of absolute value
 $1$.
 \end{theorem}
 

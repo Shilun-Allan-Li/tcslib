@@ -259,11 +259,11 @@ reachability set.
 \uses{Complexity.ExpBFS.recode_injOn, Complexity.ExpBFS.recode_mem, Complexity.ExpBFS.rset}
 \difficulty{1}
 Let $N$ be a finite-state nondeterministic Turing machine over the binary alphabet, let
-$x$ be a binary input, and let $s$ be a nonnegative integer. For each $t$, let $R_t$ be
-the set of natural numbers below $2^{K(N)(t+loor{rac{\log_2 |x|}{1}}+2)}$ that can be
-reached from the code of the initial configuration on $x$ by zero or more encoded
-machine steps that stay within work-tape window $t$, where $K(N)$ is the fixed
-code-length parameter of $N$. Then $|R_s|\le |R_{s+1}|$.
+$x$ be a binary input, and let $s$ be a natural number. For each $t$, let $R_t$ be the
+set of codes of configurations reachable from the initial configuration of $N$ on $x$
+by zero or more steps that stay within work-tape window $t$. These codes lie below
+$2^{K(N)(t+\operatorname{logSpace}(|x|)+1)}$, where $K(N)$ is the code-length parameter
+of $N$. Then $|R_s|\le |R_{s+1}|$.
 \end{theorem}
 
 \begin{lemma}[Image of reachable codes under recoding]
@@ -287,18 +287,12 @@ this recoding is exactly the window-$(s+1)$ reachable-code set.
 \leanok
 \uses{Complexity.Codec.cfgCode, Complexity.ExpBFS.WinRun, Complexity.ExpBFS.WinRun.last, Complexity.ExpBFS.WinRun.mono, Complexity.ExpBFS.WinRun.snoc, Complexity.ExpBFS.coreSum_eq_of_code_eq, Complexity.ExpBFS.image_recode_of_card_eq, Complexity.ExpBFS.inWin_init, Complexity.ExpBFS.inWin_stepWith, Complexity.ExpBFS.mem_rset, Complexity.ExpBFS.rcode_iff, Complexity.ExpBFS.recode_spec, Complexity.ExpBFS.rset, Turing.Cfg.InWindow, Turing.NDTM.inWindow_of_coreSum_eq, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.runWith_cons, Turing.NDTM.runWith_nil}
 \difficulty{5}
-Let $N$ be a nondeterministic Turing machine with a finite state set, a fixed finite
-number $k$ of work tapes, and binary input $x$. For each space bound $s$, encode
-configurations using the state, output summary, work-tape contents and head positions in
-the window $[-s,s]$, together with the input-head position. Let $R_s$ be the set of
-codes below $2^{(2W+2)(s+
-u(|x|)+1)}$ reachable from the initial configuration by a finite sequence of valid
-one-step transitions whose source and target configurations use only work-tape cells in
-$[-s,s]$, where $W=3|	ext{states}|+3k+4$ and $
-u(n)=loor{
-log_2 n}+1$. If $|R_s|=|R_{s+1}|$, then every finite sequence of nondeterministic
-choices, when run on $x$, has every prefix configuration using only work-tape cells in
-$[-s,s]$.
+Let $N$ be a finite-state nondeterministic Turing machine with $k$ work tapes and binary
+input $x$. For each $t$, let $R_t$ be the set of radius-$t$ configuration codes
+reachable from the initial configuration by a finite sequence of choices whose every
+prefix configuration uses only work-tape cells in $[-t,t]$. If $|R_s|=|R_{s+1}|$,
+then every finite sequence of choices has all its prefix configurations within the
+work-tape window $[-s,s]$.
 \end{theorem}
 
 \begin{theorem}[Acceptance from equal reachability counts]

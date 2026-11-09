@@ -181,7 +181,7 @@ numbers in this set and $0$ otherwise, and define the halting prefix by $h(0)=0$
 $h(J+1)=4h(J)+	ext{halting digit}(J)$. For a binary string $x$, let $N(x)$ be the length
 of the output of the specified head transducer on $x$, and let $J(x)$ be the base-$4$
 logarithm, rounded down, of the length of the output of the specified rest transducer on
-$x$. The language consists of strings $x$ satisfying $1\\le J(x)$, $N(x)=h(J(x)-1)$, and
+$x$. The language consists of strings $x$ satisfying $1\le J(x)$, $N(x)=h(J(x)-1)$, and
 membership of $J(x)-1$ in the halting set; this language is not computable.
 \end{theorem}
 
@@ -268,13 +268,10 @@ decoded component.
 \leanok
 \uses{Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, Randomized.lenLeB, Randomized.pow4Step, Turing.pairEncode}
 \difficulty{6}
-For every bit string $m$ and every natural number $t$, there is a bit string $w$ such
-that iterating the fourth-power step $t$ times on the encoding of $m$ paired with the
-one-bit string $[1]$ yields the encoding of $m$ paired with $w$, and $w$ has length
-$4^{\min(t,loor{
-rac{
-	ext{(not valid)}
-}{}})}$.
+For every bit string $m$ and natural number $t$, there is a bit string $w$ such that
+after applying the fourth-power step $t$ times to the encoding of $m$ paired with
+$[1]$, the result is the encoding of $m$ paired with $w$, and
+$|w|=4^{\min(t,\operatorname{Nat.log}(4,|m|))}$.
 \end{theorem}
 
 \begin{definition}[Halting-word transformation]

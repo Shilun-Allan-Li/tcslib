@@ -257,13 +257,7 @@ identified with $0$ or $1$.
 \label{Complexity.ConfigCodec.portOf}
 \leanok
 \uses{Complexity.ConfigCodec.Port}
-For a machine with $k$ work tapes, encode each natural-number index $j$ as follows:
-indices $0,1,2$ represent the state, input-head, and input-symbol ports; indices $3$
-through $2+k$ represent work-head ports; and indices from $3+k$ up to but not including
-$3+3k$ represent work-symbol ports, with tape number $iglloor{(j-3-k)/2}igrfloor$
-and Boolean label given by whether $(j-3-k)$ is odd. The next two indices represent the
-false and true summary ports, followed by the old-bit and new-bit ports; every remaining
-index also represents the new-bit port.
+For a machine with $k$ work tapes, indices $0,1,2$ denote the state, input-head, and input-symbol ports; indices $3$ through $2+k$ denote work-head ports. Indices $j$ with $3+k\le j<3+3k$ denote work-symbol ports: the tape number is $\left\lfloor(j-3-k)/2\right\rfloor$, and the Boolean label is true exactly when $j-3-k$ is odd. The next two indices denote the false and true summary ports, followed by the old-bit and new-bit ports; all larger indices also denote the new-bit port.
 \end{definition}
 
 \begin{definition}[Expected output categories]
@@ -349,7 +343,7 @@ true exactly when the guard for that case and flag is false, or the value at the
 port equals the bit prescribed by the case’s machine action and expectation.
 \end{definition}
 
-\begin{definition}[Base-(2s+1) quotient remainder]
+\begin{definition}[Base-(2s+1) quotient remainder]
 \lean{Complexity.ConfigCodec.headOf}
 \label{Complexity.ConfigCodec.headOf}
 \leanok

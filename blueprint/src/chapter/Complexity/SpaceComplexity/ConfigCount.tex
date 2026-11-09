@@ -60,10 +60,10 @@ $t_1<t_2<T$, the cores of the configurations at times $t_1$ and $t_2$ are distin
 \label{Turing.MultiTapeTM.ConfigCount.exists_eq_of_between}
 \leanok
 \difficulty{4}
-Let $p:br	obz$ be a sequence of integers with $p(0)=0$ and $|p(j+1)-p(j)|le 1$ for
-every natural number $j$. For every natural number $t$ and integer $y$ lying between $0$
-and $p(t)$, inclusive, in either order, there is an integer index $jle t$ such that
-$p(j)=y$.
+Let $p:\mathbb{N}\to\mathbb{Z}$ be a sequence of integers with $p(0)=0$ and
+$|p(j+1)-p(j)|\le 1$ for every natural number $j$. For every natural number $t$ and
+integer $y$ lying between $0$ and $p(t)$, inclusive, in either order, there is an index
+$j\le t$ such that $p(j)=y$.
 \end{lemma}
 
 \begin{lemma}[Position bounded by the number of visited cells]
@@ -86,8 +86,8 @@ occupied by that head during those times.
 \uses{Turing.Cfg.init, Turing.MultiTapeTM, Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.visitedByTapeHead}
 \difficulty{4}
 Let $tm$ be a multi-tape Turing machine with Boolean symbols and state set $S$, let $x$
-be a Boolean input word, and let $t\\in\\mathbb{N}$, $i$ be a work-tape index, and
-$z\\in\\mathbb{Z}$. If cell $z$ of work tape $i$ contains a symbol after $tm$ runs for
+be a Boolean input word, and let $t\in\mathbb{N}$, $i$ be a work-tape index, and
+$z\in\mathbb{Z}$. If cell $z$ of work tape $i$ contains a symbol after $tm$ runs for
 $t$ steps from its initial configuration on $x$, then the head of work tape $i$ occupied
 cell $z$ at some time from $0$ through $t$, inclusive.
 \end{lemma}
@@ -201,7 +201,7 @@ from $c$ through step $t$ is contained in the set visited through step $t'$.
 \label{Turing.MultiTapeTM.ConfigCount.posCode}
 \leanok
 For a natural number $B$ and an integer $z$, encode $z$ as the element of
-$	ext{Fin}(2B+1)$ with value $\\min(\,(z+B).toNat,\,2B\,)$, where $(z+B).toNat$ is the
+$\mathrm{Fin}(2B+1)$ with value $\min(\,(z+B).toNat,\,2B\,)$, where $(z+B).toNat$ is the
 natural-number conversion of $z+B$.
 \end{definition}
 

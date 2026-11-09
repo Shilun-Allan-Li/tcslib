@@ -146,9 +146,9 @@ with the image of $(0,y)$ under the identification.
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.restrictionFunctional, FABL.F₂Cube, FABL.𝔽₂}
 Let $H$ be a subspace of the binary cube $br^n$ over $br/2br$, let a split of $H$
 identify $H$ together with a complementary binary cube of dimension $d$ with the full
-cube, and let $[0m\eta$ be a frequency in the full cube. The restricted frequency is
+cube, and let $\eta$ be a frequency in the full cube. The restricted frequency is
 the vector in the complementary cube whose dot-product functional corresponds, under
-this identification, to the restriction functional of $[0m\eta$.
+this identification, to the restriction functional of $\eta$.
 \end{definition}
 
 \begin{theorem}[Dot product of the restricted frequency]
@@ -279,7 +279,7 @@ $(1+ (a) (b) (c))/2$.
 \uses{FABL.BinarySubspaceSplit, FABL.BinarySubspaceSplit.point, FABL.F₂Cube, FABL.Sign, FABL.signValue, FABL.𝔽₂}
 Let $n$ be a natural number, let $H$ be a linear subspace of $(br/	ext{?})^n$ over the
 two-element field, and let a binary subspace split of $H$ have complementary dimension
-$d$. For a function $f$ from the $n$-dimensional binary cube to the signs $\\{\pm1\}$,
+$d$. For a function $f$ from the $n$-dimensional binary cube to the signs $\{\pm1\}$,
 its split character correlation is the average over independent uniform $a,b$ in the
 $d$-dimensional binary cube and uniform $h\in H$ of the product of the sign values of
 $f$ at the three points corresponding to $(h,a)$, $(0,b)$, and $(0,a+b)$ under the split
@@ -908,7 +908,7 @@ the Boolean encoding of the affine subspace $a+V$.
 \leanok
 \uses{FABL.F₂Cube, FABL.NonadaptiveFunctionTester, FABL.affineCharacterFunctionTester, FABL.f₂TruthTableLiftTester, FABL.𝔽₂}
 Let $n$ be a natural number, let $V$ be a linear subspace of the Boolean cube
-$\\mathbb{F}_2^n$, and let $a\in\mathbb{F}_2^n$. The tester on Boolean functions over
+$\mathbb{F}_2^n$, and let $a\in\mathbb{F}_2^n$. The tester on Boolean functions over
 the disjoint union of the $n$ input positions and $2^n$ proof positions is the
 truth-table lift of the tester associated with the affine coset $a+V$, and makes three
 queries.
@@ -1013,7 +1013,7 @@ and $p$ is at least one half the relative Hamming distance between $w$ and $w_0$
 \uses{FABL.pcppBoolCubeEquiv, FABL.pcppBoolF₂Equiv, FABL.relativeHammingDist}
 \difficulty{3}
 Let $n$ be a positive integer, and let $w,w_0$ be Boolean strings of length $n$. Encode
-each bit as the corresponding element of $\\mathbb F_2$ coordinate by coordinate. The
+each bit as the corresponding element of $\mathbb F_2$ coordinate by coordinate. The
 relative Hamming distance between the encoded strings equals the relative Hamming
 distance between the original strings.
 \end{theorem}
@@ -1184,7 +1184,7 @@ use the Boolean value associated with the corresponding prefix-bit of $w$.
 \label{FABL.InnerProductLinearCheckSeed}
 \leanok
 For a natural number $m$, the seed space consists of either a Boolean value or a pair
-$(i,b)$, where $i$ is an index in $\\{0,\ldots,m-1\}$ and $b$ is a Boolean value.
+$(i,b)$, where $i$ is an index in $\{0,\ldots,m-1\}$ and $b$ is a Boolean value.
 \end{definition}
 
 \begin{definition}[Linear proof check conditions]
@@ -1401,8 +1401,8 @@ $\mathbb F_2$, then the inner product of the two blocks in the neighboring word 
 \uses{FABL.hammingDist_innerProductFlipNeighborBinary_le_two, FABL.innerProductFlipNeighbor, FABL.innerProductFlipNeighborBinary, FABL.pcppBoolCubeEquiv, FABL.pcppBoolCubeEquiv_innerProductFlipNeighbor, FABL.relativeHammingDist, FABL.relativeHammingDist_pcppBoolCubeEquiv}
 \difficulty{3}
 Let $m$ be a positive integer and let $w$ be a Boolean string of length $2m$. Split its
-coordinates into two blocks, interpret the bits as elements of $\\mathbb F_2$, and let
-$x,y\\in\\mathbb F_2^m$ be those blocks. Form a new string by replacing the coordinate
+coordinates into two blocks, interpret the bits as elements of $\mathbb F_2$, and let
+$x,y\in\mathbb F_2^m$ be those blocks. Form a new string by replacing the coordinate
 $x_0$ with $x_0y_0+1$ and $y_0$ with $1$, leaving all other coordinates unchanged, and
 then interpreting the resulting bits as Boolean values. The relative Hamming distance
 from $w$ to this new string is at most $1/m$.
@@ -1475,8 +1475,8 @@ description for the Boolean words of length $2m$ whose inner product modulo two 
 \label{FABL.IsCompleteQuadraticOne}
 \leanok
 \uses{FABL.completeQuadraticBit, FABL.pcppBoolCubeEquiv}
-For a Boolean vector $w \\colon \\mathrm{Fin}(n) \\to
-\\{\\mathrm{false},\\mathrm{true}\\}$, say that it has complete quadratic value one
+For a Boolean vector $w \colon \mathrm{Fin}(n) \to
+\{\mathrm{false},\mathrm{true}\}$, say that it has complete quadratic value one
 exactly when the complete quadratic bit of its image under the Boolean cube encoding
 determined by $w$ is equal to $1$.
 \end{definition}
@@ -1656,8 +1656,8 @@ at most $2/n$.
 \label{FABL.completeQuadraticTruncation}
 \leanok
 \uses{FABL.F₂Cube, FABL.pcppBoolF₂Equiv}
-For a Boolean vector $w \\colon \\mathrm{Fin}(n) \\to
-\\{\\mathrm{false},\\mathrm{true}\\}$ and a natural number $k$, define its truncation
+For a Boolean vector $w \colon \mathrm{Fin}(n) \to
+\{\mathrm{false},\mathrm{true}\}$ and a natural number $k$, define its truncation
 through coordinate $k$ to have coordinate $i$ equal to the encoded value of $w_i$ when
 $i<k$, and equal to $0$ otherwise.
 \end{definition}
@@ -1671,9 +1671,9 @@ $i<k$, and equal to $0$ otherwise.
 \label{FABL.completeQuadraticLinearPrefixBit}
 \leanok
 \uses{FABL.pcppBoolF₂Equiv, FABL.𝔽₂}
-For a Boolean vector $w \\colon \\mathrm{Fin}(n) \\to
-\\{\\mathrm{false},\\mathrm{true}\\}$ and a natural number $k$, define its linear prefix
-bit to be the sum in $\\mathbb{F}_2$ of the encoded values $w_i$ over all coordinates
+For a Boolean vector $w \colon \mathrm{Fin}(n) \to
+\{\mathrm{false},\mathrm{true}\}$ and a natural number $k$, define its linear prefix
+bit to be the sum in $\mathbb{F}_2$ of the encoded values $w_i$ over all coordinates
 $i<k$.
 \end{definition}
 
@@ -1686,8 +1686,8 @@ $i<k$.
 \label{FABL.completeQuadraticPrefixBit}
 \leanok
 \uses{FABL.completeQuadraticBit, FABL.completeQuadraticTruncation, FABL.𝔽₂}
-For a Boolean vector $w \\colon \\mathrm{Fin}(n) \\to
-\\{\\mathrm{false},\\mathrm{true}\\}$ and a natural number $k$, define its complete
+For a Boolean vector $w \colon \mathrm{Fin}(n) \to
+\{\mathrm{false},\mathrm{true}\}$ and a natural number $k$, define its complete
 quadratic prefix bit to be the complete quadratic bit of the vector obtained by
 truncating $w$ through coordinate $k$.
 \end{definition}
@@ -1903,7 +1903,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.CompleteQuadraticLinearCheckHolds, FABL.completeQuadraticLinearPrefixBit, FABL.completeQuadraticLinearPrefixBit_succ, FABL.completeQuadraticLinearPrefixProofIndex, FABL.pcppBoolF₂Equiv}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $w_0,[0m\ldots,w_{n-1}$ be Boolean values, and
+Let $n$ be a nonnegative integer, let $w_0,\ldots,w_{n-1}$ be Boolean values, and
 let a Boolean table assign values to the indices for linear prefixes, quadratic
 prefixes, and coordinate products. Suppose the table satisfies all of the following
 checks: the linear prefix at $0$ is false; the quadratic prefix at $0$ is false and at
@@ -1955,7 +1955,7 @@ $2$. Then the sum of $w_iw_j$ over $i<j$ equals $1$ in $br/2br$.
 \leanok
 \uses{FABL.CompleteQuadraticEndpointCheck, FABL.CompleteQuadraticLinearCheckHolds, FABL.CompleteQuadraticLinearCheckSeed, FABL.CompleteQuadraticTransitionCheck, FABL.one_div_card_le_uniformProbability_of_mem, FABL.uniformProbability}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $w_0,\\ldots,w_{n-1}$ be Boolean values, and let
+Let $n$ be a nonnegative integer, let $w_0,\ldots,w_{n-1}$ be Boolean values, and let
 $P$ assign Boolean values to product positions $X_0,\ldots,X_{n-1}$ and prefix positions
 $L_0,\ldots,L_n$ and $Q_0,\ldots,Q_n$. Consider the $3n+3$ checks consisting of $L_0=0$,
 $Q_0=0$, and $Q_n=1$, together with, for each $i<n$, the checks $L_i+w_i=L_{i+1}$ modulo
@@ -2045,10 +2045,10 @@ the event that the form evaluated at $(x,y)$ is nonzero.
 \leanok
 \uses{FABL.F₂Cube, FABL.expect_vectorWalshCharacter, FABL.f₂DotProduct, FABL.f₂ZeroIndicator_eq, FABL.uniformProbability, FABL.vectorWalshCharacter, FABL.vectorWalshCharacter_apply}
 \difficulty{5}
-Let $n$ be a nonnegative integer, and let $\\gamma\\in\\mathbb{F}_2^n$, where
-$\\mathbb{F}_2$ is the field with two elements. The uniform probability that the dot
-product over $\\mathbb{F}_2$ of $\\gamma$ with a uniformly chosen $x\\in\\mathbb{F}_2^n$
-is nonzero is $0$ if $\\gamma=0$ and $1/2$ otherwise.
+Let $n$ be a nonnegative integer, and let $\gamma\in\mathbb{F}_2^n$, where
+$\mathbb{F}_2$ is the field with two elements. The uniform probability that the dot
+product over $\mathbb{F}_2$ of $\gamma$ with a uniformly chosen $x\in\mathbb{F}_2^n$
+is nonzero is $0$ if $\gamma=0$ and $1/2$ otherwise.
 \end{theorem}
 
 \begin{theorem}[Nonzero matrix image probability]

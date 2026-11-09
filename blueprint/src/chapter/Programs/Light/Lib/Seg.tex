@@ -478,9 +478,8 @@ the integer represented by $I(k)$.
 \leanok
 \uses{Light.Inside, Light.SameOn, Light.VecAt}
 \difficulty{3}
-Let $t,n$ be natural numbers, let $I:	ext{Fin}(t)	o	ext{Fin}(n)$, and let $[?]$ and
-$[?]'$ be integer-valued sequences indexed by the natural numbers. If $[?]$ represents
-$I$ starting at index $a$, so that its value at $a+k$ equals the natural-number value of
-$I(k)$ for every $k<t$, and the two sequences agree at every index $b$ with $a\le
-b<a+t$, then $[?]'$ also represents $I$ starting at $a$.
+Let $t,n$ be natural numbers, $I:\mathrm{Fin}(t)\to\mathrm{Fin}(n)$, and $\mu,\mu\prime:\mathbb{N}\to\mathbb{Z}$.
+If for every $k<t$ the value $\mu(a+k)$ is the natural-number value of $I(k)$, and
+$\mu\prime$ agrees with $\mu$ at every index in the interval $[a,a+t)$, then $\mu\prime$
+also represents $I$ starting at $a$.
 \end{theorem}

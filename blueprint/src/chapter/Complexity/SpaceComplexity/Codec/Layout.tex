@@ -56,9 +56,9 @@ $b(y)=(8W+8)(|y|+1)$, then $|y|+2W(2s+1)+2(|y|+1)+4\le b(y)$.
 \leanok
 \uses{Complexity.Codec.Regs, Complexity.Codec.Regs.val}
 \difficulty{1}
-For every register record $R$, proposition $c$ with a decision procedure, and indices
-$r,r' 	ext{in }in 21$, the coordinate value at the index selected by the condition is
-the corresponding conditional value: $R(r)$ if $c$ holds, and $R(r')$ otherwise.
+For every register record $R$, decidable proposition $c$, and indices $r,r\prime\in\mathrm{Fin}(21)$,
+the value of $R$ at the conditionally selected index is the corresponding conditional
+value: $R(r)$ if $c$ holds, and $R(r\prime)$ otherwise.
 \end{lemma}
 
 \begin{definition}[Register layout for a scan]
@@ -122,7 +122,7 @@ symbols, and fix any codec mode. Let $y,x,w,r$ be finite bit strings with $y$ eq
 the self-delimiting pair encoding of $x$ and the pair encoding of $w$ with $r$. Let $R$
 be a register assignment whose 21 register values are all at most $B=(8W_N+8)(|y|+1)$,
 and suppose its registers $A$ and $E$ have values $2|x|+2$ and $2|x|+2+4W_Ns+2W_N$,
-respectively. If $W_N(2s+1)|w|$, then there is an accumulator state whose scan
+respectively. If $W_N(2s+1)\le |w|$, then there is an accumulator state whose scan
 component equals the result of scanning the first $W_N(2s+1)$ bits of $w$, and the codec
 program in the chosen mode can reach its completion state from the register state
 obtained by clearing $Q_1$, while keeping every register at most $B$ throughout the run;

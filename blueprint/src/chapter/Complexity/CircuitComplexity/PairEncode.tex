@@ -138,10 +138,7 @@ returns its entry at the corresponding position.
 \leanok
 \uses{BoolCircuit.vectorOfList}
 \difficulty{3}
-Let $m$ be a natural number, let $l$ be a list of elements of a type, and suppose its
-length is $m$. Form the function from indices $0,m$ to elements of the type by reading
-the corresponding entries of $l$; applying the list constructor indexed by that function
-recovers $l$.
+Let $\alpha$ be a type, let $m$ be a natural number, and let $l$ be a list of elements of $\alpha$ with length $m$. Regard $l$ as a function from $\mathrm{Fin}(m)$ to $\alpha$ by reading its entry at each index. Constructing a list from that function recovers $l$.
 \end{theorem}
 
 \begin{definition}[Paired wire assignment]

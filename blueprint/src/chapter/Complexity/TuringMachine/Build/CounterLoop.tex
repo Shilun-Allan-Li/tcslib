@@ -33,7 +33,7 @@ preserved.
 \label{Turing.MultiTapeTM.mapWorkSymbols}
 \leanok
 \uses{Turing.Action.mapWorkSymbols, Turing.MultiTapeTM}
-Given a deterministic multi-tape Turing machine with alphabet $[1mSymbol[0m$ and a
+Given a deterministic multi-tape Turing machine with alphabet $Symbol$ and a
 bijection $e$ of that alphabet, define a machine over the same alphabet and state set
 with the same initial state. Its transition first translates each scanned work-tape
 symbol back along $e$, applies the original transition, and then relabels every symbol
@@ -61,9 +61,9 @@ relabelling the work-tape symbols by $e$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapWorkSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.mapWorkSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.counter_work_step}
 \difficulty{1}
-Let $M$ be a multi-tape Turing machine with symbol set $S$, and let $e:S\\simeq S$ be a
+Let $M$ be a multi-tape Turing machine with symbol set $S$, and let $e:S\simeq S$ be a
 bijection. For any input word $x$, configuration $c$ on $x$, and number of steps
-$t\\in\\mathbb{N}$, the configuration reached in $t$ steps by the machine whose
+$t\in\mathbb{N}$, the configuration reached in $t$ steps by the machine whose
 work-tape symbols are relabelled by $e$, starting from $c$ with its work-tape symbols
 relabelled by $e$, is the configuration reached by $M$ from $c$ in $t$ steps with its
 work-tape symbols relabelled by $e$.
@@ -187,7 +187,7 @@ is the same for every choice of optional Boolean input symbol.
 \leanok
 \uses{Turing.Action.mapWorkSymbols, Turing.FlagPhase, Turing.MultiTapeTM.mapWorkSymbols, Turing.decrementTM, Turing.incrementTM}
 \difficulty{4}
-For any natural number $k$, any work-tape index $i in k$, any phase $q$ of the machine,
+For any natural number $k$, any work-tape index $i\in\mathrm{Fin}(k)$, any phase $q$ of the machine,
 any optional Boolean input symbol, and any assignment of an optional Boolean symbol to
 each work tape, the decrement machine's transition action leaves the input head
 stationary, and on every work tape its write instruction is never the instruction to
@@ -219,7 +219,7 @@ For every Boolean word $w$, applying the counter-word operation zero times retur
 \leanok
 \uses{Turing.counterWord}
 For a finite Boolean word $w$ and a natural number $r$, define its counter overhead to
-be the sum over $j=0,[1m\ldots[0m,r-1$ of twice the length of the initial run of false
+be the sum over $j=0,\ldots,r-1$ of twice the length of the initial run of false
 bits in the counter word after $j$ steps, plus two.
 \end{definition}
 
@@ -687,18 +687,18 @@ at some time within one of the first $n$ rounds, or at time zero of round $n$.
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state $a$, and let
 $exit$ be an optional state. Let $w$ be a Boolean word with binary value $d$, and
 suppose the extra tape initially agrees with the word buffer at cells $cp+p$ for all
-integers $p$ with $-1\\le p\\le |w|$. Given an initial configuration $c$ and a
-run-length function $\\tau$, suppose that for every $r<d$, the $r$th round configuration
+integers $p$ with $-1\le p\le |w|$. Given an initial configuration $c$ and a
+run-length function $\tau$, suppose that for every $r<d$, the $r$th round configuration
 is in state $a$, its run length is positive, every intermediate configuration at a
 positive time strictly before the round endpoint has a state different from $a$ and is
 not the designated exit, and the next round configuration is again in state $a$. If $T$
-equals the sum of these round lengths plus $\\operatorname{overhead}(w,d+1)$, then the
+equals the sum of these round lengths plus $\operatorname{overhead}(w,d+1)$, then the
 counter-loop machine reaches the done configuration at time $T$, with the extra tape
 filled with true symbols on cells $cp$ through $cp+|w|-1$. At all earlier times it is
 neither done nor escape; through time $T$ the extra head lies in $[cp-1,cp+|w|]$, and
 the first $k$ work-head positions at each time coincide with those in a run of $M$ from
 some round configuration $c_r$, at a time $u$ satisfying either $r<d$ and
-$u\\le\\tau(c_r)$ or $r=d$ and $u=0$.
+$u\le\tau(c_r)$ or $r=d$ and $u=0$.
 \end{theorem}
 
 \begin{theorem}[Counter loop run to escape]
@@ -709,18 +709,18 @@ $u\\le\\tau(c_r)$ or $r=d$ and $u=0$.
 \difficulty{3}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and distinct states $a$
 and $e$. Let $w$ be a Boolean word, and suppose the extra tape initially agrees with the
-word buffer at cells $cp+p$ for all integers $p$ with $-1\\le p\\le |w|$. Given an
-initial configuration $c$, a run-length function $\\tau$, and an index $r_0$ strictly
-below the binary value of $w$, suppose each round $r\\le r_0$ starts in state $a$, has
+word buffer at cells $cp+p$ for all integers $p$ with $-1\le p\le |w|$. Given an
+initial configuration $c$, a run-length function $\tau$, and an index $r_0$ strictly
+below the binary value of $w$, suppose each round $r\le r_0$ starts in state $a$, has
 positive length, and at every positive intermediate time has a state different from both
 $a$ and $e$. Suppose also that the configuration after round $r_0$ is in state $e$. If
-$T$ is the sum of the round lengths for $r\\le r_0$ plus
-$\\operatorname{overhead}(w,r_0+1)$, then the counter-loop machine reaches its escape
+$T$ is the sum of the round lengths for $r\le r_0$ plus
+$\operatorname{overhead}(w,r_0+1)$, then the counter-loop machine reaches its escape
 configuration at time $T$, with its extra tape on the word cells equal to the counter
 word after $r_0+1$ decrements. Before $T$ the state is neither done nor escape; through
 $T$ the extra head lies in $[cp-1,cp+|w|]$, and the first $k$ head positions at each
-time agree with those of a run of $M$ from some round configuration, either with $r\\le
-r_0$ and $u\\le\\tau(c_r)$ or with $r=r_0+1$ and $u=0$.
+time agree with those of a run of $M$ from some round configuration, either with $r\le
+r_0$ and $u\le\tau(c_r)$ or with $r=r_0+1$ and $u=0$.
 \end{theorem}
 
 \begin{theorem}[Boolean counter loop run to completion]
@@ -732,17 +732,17 @@ r_0$ and $u\\le\\tau(c_r)$ or with $r=r_0+1$ and $u=0$.
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and state $a$, and let
 $exit$ be an optional state. Let $w$ be a Boolean word with binary value $d$, and
 suppose the extra tape initially agrees with the word buffer at cells $cp+p$ for every
-integer $p$ with $-1\\le p\\le |w|$. Given an initial configuration $c$ and a run-length
-function $\\tau$, suppose each round $r<d$ starts in state $a$, has positive length, and
+integer $p$ with $-1\le p\le |w|$. Given an initial configuration $c$ and a run-length
+function $\tau$, suppose each round $r<d$ starts in state $a$, has positive length, and
 at every positive time strictly before its endpoint has a state different from $a$ and
 not equal to the designated exit; also suppose each next round configuration is in state
 $a$. If $T$ equals the sum of these round lengths plus
-$\\operatorname{overhead}(w,d+1)$, the Boolean counter-loop machine reaches its done
+$\operatorname{overhead}(w,d+1)$, the Boolean counter-loop machine reaches its done
 configuration at time $T$, with the extra tape set to true on cells $cp$ through
 $cp+|w|-1$. Before time $T$ its state is neither done nor escape; through $T$ the extra
 head remains in $[cp-1,cp+|w|]$, and the first $k$ work-head positions at each time
 match a run of $M$ from some round configuration, with either $r<d$ and
-$u\\le\\tau(c_r)$ or $r=d$ and $u=0$.
+$u\le\tau(c_r)$ or $r=d$ and $u=0$.
 \end{theorem}
 
 \begin{theorem}[Boolean counter loop run to escape]
@@ -753,17 +753,17 @@ $u\\le\\tau(c_r)$ or $r=d$ and $u=0$.
 \difficulty{3}
 Let $M$ be a deterministic machine with $k$ Boolean work tapes and distinct states $a$
 and $e$. Let $w$ be a Boolean word, and suppose the extra tape initially agrees with the
-word buffer at cells $cp+p$ for every integer $p$ with $-1\\le p\\le |w|$. Given an
-initial configuration $c$, a run-length function $\\tau$, and an index $r_0$ strictly
-below the binary value of $w$, suppose every round $r\\le r_0$ starts in state $a$, has
+word buffer at cells $cp+p$ for every integer $p$ with $-1\le p\le |w|$. Given an
+initial configuration $c$, a run-length function $\tau$, and an index $r_0$ strictly
+below the binary value of $w$, suppose every round $r\le r_0$ starts in state $a$, has
 positive length, and all positive-time intermediate states differ from both $a$ and $e$.
 Suppose the configuration after round $r_0$ has state $e$. If $T$ is the sum of the
-round lengths for $r\\le r_0$ plus $\\operatorname{overhead}(w,r_0+1)$, then the Boolean
+round lengths for $r\le r_0$ plus $\operatorname{overhead}(w,r_0+1)$, then the Boolean
 counter-loop machine reaches its escape configuration at time $T$, with the extra tape
 holding the counter word after $r_0+1$ decrements. Before $T$ its state is neither done
 nor escape; through $T$ its extra head lies in $[cp-1,cp+|w|]$, and its first $k$ head
-positions match those of some run of $M$ from a round configuration, with either $r\\le
-r_0$ and $u\\le\\tau(c_r)$ or $r=r_0+1$ and $u=0$.
+positions match those of some run of $M$ from a round configuration, with either $r\le
+r_0$ and $u\le\tau(c_r)$ or $r=r_0+1$ and $u=0$.
 \end{theorem}
 
 \begin{theorem}[Time bound for the counter loop]
@@ -822,19 +822,19 @@ $d|\mathrm{pat}|$ on tape $i$, while every other simulated tape head remains fix
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Round, Turing.Round.cut_some, Turing.Segment, Turing.Segment.live, Turing.counterLoopCfg, Turing.counterLoopTMVia, Turing.counterLoopTMVia_run_done, Turing.counterOverhead, Turing.roundOrbit}
 \difficulty{4}
 Let $M$ be a deterministic machine with $k$ work tapes and state $a$, and let
-$e:\\{0,1\\}\\hookrightarrow\\Gamma$ encode Boolean symbols. Let $w$ be a Boolean word
+$e:\{0,1\}\hookrightarrow\Gamma$ encode Boolean symbols. Let $w$ be a Boolean word
 with binary value $d$, and suppose the extra tape initially agrees with the encoded word
-buffer at every cell $cp+p$ for integers $p$ satisfying $-1\\le p\\le |w|$. For an
-initial configuration $c$, a run-length function $\\tau$, and a property $P$ of the
+buffer at every cell $cp+p$ for integers $p$ satisfying $-1\le p\le |w|$. For an
+initial configuration $c$, a run-length function $\tau$, and a property $P$ of the
 first $k$ work-head positions, suppose that every round $r<d$ satisfies the round
-conditions for exit set $\\{exit\\}$ and property $P$, and that its next round
+conditions for exit set $\{exit\}$ and property $P$, and that its next round
 configuration is in state $a$. Then the counter-loop machine reaches its done
-configuration after $\\sum_{r<d}\\tau(c_r)+\\operatorname{overhead}(w,d+1)$ steps, where
+configuration after $\sum_{r<d}\tau(c_r)+\operatorname{overhead}(w,d+1)$ steps, where
 $c_r$ is the $r$th round configuration and the extra tape contains encoded true symbols
 on cells $cp$ through $cp+|w|-1$. Before that time the machine's state is never halting,
 done, or escape. At every time through the endpoint, the extra head lies in
 $[cp-1,cp+|w|]$, and there are round index $r$ and within-round time $u$ such that
-either $r<d$ and $u\\le\\tau(c_r)$, or $r=d$ and $u=0$, with the first $k$ head
+either $r<d$ and $u\le\tau(c_r)$, or $r=d$ and $u=0$, with the first $k$ head
 positions equal to those in the corresponding run of $M$.
 \end{theorem}
 
@@ -845,22 +845,22 @@ positions equal to those in the corresponding run of $M$.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Round, Turing.Segment, Turing.Segment.mono, Turing.counterLoopCfg, Turing.counterLoopTMVia, Turing.counterLoopTMVia_done_witness, Turing.counterOverhead, Turing.roundOrbit}
 \difficulty{5}
 Let $M$ be a deterministic machine with $k$ work tapes, state $a$, designated exit state
-or halting exit, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ encode Boolean symbols in
+or halting exit, and let $e:\{0,1\}\hookrightarrow\Gamma$ encode Boolean symbols in
 its alphabet. Let $w$ be a Boolean word whose binary value is $d$, and suppose the extra
 tape initially stores the encoded word at cells $cp$ through $cp+|w|-1$: for every
-integer $p$ with $-1\\le p\\le |w|$, its content at $cp+p$ equals the word-buffer
+integer $p$ with $-1\le p\le |w|$, its content at $cp+p$ equals the word-buffer
 content at $p$. Let $c$ be an initial configuration and let $P$ be a property of the $k$
 work-head positions, with $P$ true at $c$. Suppose that for each $r<d$, the $r$th
 iterate of the variable-length run of $M$ from $c$ to its next round has a round of
-length $\\tau$, satisfies the round conditions for exit set $\\{exit\\}$ and property
+length $\tau$, satisfies the round conditions for exit set $\{exit\}$ and property
 $P$, and ends in state $a$. Then the counter-loop machine that runs $M$ on the first $k$
 tapes and uses the encoded extra tape for its counter reaches its done configuration
-after $\\sum_{r<d}\\tau(c_r)+\\operatorname{overhead}(w,d+1)$ steps, where $c_r$ is the
+after $\sum_{r<d}\tau(c_r)+\operatorname{overhead}(w,d+1)$ steps, where $c_r$ is the
 $r$th round configuration and the counter tape has been filled with encoded true symbols
 on the cells $cp$ through $cp+|w|-1$. Before that time its state is neither done nor
 escape; throughout the segment the extra head stays in $[cp-1,cp+|w|]$, and $P$ holds
 for the first $k$ head positions. Here a segment means the stated endpoint is reached,
-no state in $\\{done,escape\\}$ occurs earlier, and the position condition holds at
+no state in $\{done,escape\}$ occurs earlier, and the position condition holds at
 every time up to and including the endpoint.
 \end{theorem}
 
@@ -871,19 +871,19 @@ every time up to and including the endpoint.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Round, Turing.Round.cut_some, Turing.Segment, Turing.Segment.live, Turing.counterLoopCfg, Turing.counterLoopTMVia, Turing.counterLoopTMVia_run_escape, Turing.counterOverhead, Turing.counterWord, Turing.roundOrbit}
 \difficulty{5}
 Let $M$ be a deterministic machine with $k$ work tapes and distinct states $a$ and $ex$,
-and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ encode Boolean symbols. Let $w$ be a
+and let $e:\{0,1\}\hookrightarrow\Gamma$ encode Boolean symbols. Let $w$ be a
 Boolean word and suppose the extra tape initially agrees with its encoded word buffer at
-cells $cp+p$ for every integer $p$ with $-1\\le p\\le |w|$. For an initial configuration
-$c$, run-length function $\\tau$, and property $P$ of the first $k$ work-head positions,
-choose $r_0$ strictly below the binary value of $w$. Suppose every round $r\\le r_0$
-satisfies the round conditions for exit set $\\{some\\ ex\\}$ and property $P$, and the
-configuration after round $r_0$ is in state $ex$. Then after $\\sum_{r\\le
-r_0}\\tau(c_r)+\\operatorname{overhead}(w,r_0+1)$ steps, the counter-loop machine is in
+cells $cp+p$ for every integer $p$ with $-1\le p\le |w|$. For an initial configuration
+$c$, run-length function $\tau$, and property $P$ of the first $k$ work-head positions,
+choose $r_0$ strictly below the binary value of $w$. Suppose every round $r\le r_0$
+satisfies the round conditions for exit set $\{some\\ ex\}$ and property $P$, and the
+configuration after round $r_0$ is in state $ex$. Then after $\sum_{r\le
+r_0}\tau(c_r)+\operatorname{overhead}(w,r_0+1)$ steps, the counter-loop machine is in
 its escape configuration, with the extra tape on the word cells holding the encoded
 buffer of the counter word after $r_0+1$ decrements. Before the endpoint its state is
 never halting, done, or escape; through the endpoint the extra head remains in
 $[cp-1,cp+|w|]$, and at each time the first $k$ head positions match those of some run
-of $M$ from a round configuration, with either $r\\le r_0$ and $u\\le\\tau(c_r)$ or
+of $M$ from a round configuration, with either $r\le r_0$ and $u\le\tau(c_r)$ or
 $r=r_0+1$ and $u=0$.
 \end{theorem}
 
@@ -894,15 +894,15 @@ $r=r_0+1$ and $u=0$.
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Round, Turing.Segment, Turing.Segment.mono, Turing.counterLoopCfg, Turing.counterLoopTMVia, Turing.counterLoopTMVia_escape_witness, Turing.counterOverhead, Turing.counterWord, Turing.roundOrbit}
 \difficulty{4}
 Let $M$ be a deterministic machine with $k$ work tapes, distinct states $a$ and $ex$,
-and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ encode Boolean symbols. Let $w$ be a
+and let $e:\{0,1\}\hookrightarrow\Gamma$ encode Boolean symbols. Let $w$ be a
 Boolean word, and suppose the extra tape initially agrees with the encoded word buffer
-at cells $cp+p$ for every integer $p$ with $-1\\le p\\le |w|$. For an initial
-configuration $c$, a run-length function $\\tau$, and a property $P$ of the first $k$
+at cells $cp+p$ for every integer $p$ with $-1\le p\le |w|$. For an initial
+configuration $c$, a run-length function $\tau$, and a property $P$ of the first $k$
 work-head positions, choose $r_0$ strictly below the binary value of $w$. Suppose each
-round $r\\le r_0$ satisfies the round conditions for exit set $\\{some\\ ex\\}$ and
+round $r\le r_0$ satisfies the round conditions for exit set $\{some\\ ex\}$ and
 property $P$, and the configuration after round $r_0$ is in state $ex$. Then the
-counter-loop machine reaches its escape configuration after $\\sum_{r\\le
-r_0}\\tau(c_r)+\\operatorname{overhead}(w,r_0+1)$ steps, where $c_r$ is the $r$th round
+counter-loop machine reaches its escape configuration after $\sum_{r\le
+r_0}\tau(c_r)+\operatorname{overhead}(w,r_0+1)$ steps, where $c_r$ is the $r$th round
 configuration; its extra tape on the word cells agrees with the encoded counter word
 after $r_0+1$ decrements. Before that time its state is neither done nor escape.
 Throughout the segment the extra head lies in $[cp-1,cp+|w|]$, and $P$ holds for the
@@ -1008,9 +1008,9 @@ position plus the counter-word length.
 \leanok
 \uses{Turing.Contract.Traj, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RoundContract, Turing.RoundContract.counterLoopDone, Turing.RoundContract.orbit_anchor, Turing.RoundContract.orbit_round, Turing.counterLoopBody, Turing.counterLoopCfg_body, Turing.counterLoopTMVia_done_witness, Turing.counterValue, Turing.roundOrbit, Turing.roundOrbit_succ}
 \difficulty{5}
-Let $k$ be a natural number, let $S$ and $amma$ be types with decidable equality, let
-$e:\{\mathrm{false},\mathrm{true}\}\hookrightarrow\Gamma$ be an injection, let $M$ be a
-$k$-tape Turing machine, and let $ain S$ and $\mathrm{exit}:\mathrm{Option}(S)$. Let
+Let $k$ be a natural number, let $S$ and $\Gamma$ be types with decidable equality, let
+$e:\mathrm{Bool}\hookrightarrow\Gamma$ be an injection, let $M$ be a
+$k$-tape Turing machine, and let $a\in S$ and $\mathrm{exit}:\mathrm{Option}(S)$. Let
 $R$ be a round contract for $M$ with anchor $a$ and escape set $\{\mathrm{exit}\}$, and
 fix an input $x$. For $p=(i,w)$ and a configuration $d$ of the counter-loop machine,
 suppose the last tape of $d$ stores the encoded word $w$ at offsets $q$ for $-1\le q\le

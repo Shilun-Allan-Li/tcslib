@@ -17,7 +17,7 @@ For natural numbers $b,w,t,i$, the block variable index is $b+tw+i$.
 \lean{Complexity.FormulaKit.bitsOf}
 \label{Complexity.FormulaKit.bitsOf}
 \leanok
-For natural numbers $ell$ and $r$, the function on indices $i<ell$ whose value at $i$
+For natural numbers $\ell$ and $r$, the function on indices $i<\ell$ whose value at $i$
 is the $i$th binary digit of $r$.
 \end{definition}
 
@@ -25,8 +25,8 @@ is the $i$th binary digit of $r$.
 \lean{Complexity.FormulaKit.excludeClause}
 \label{Complexity.FormulaKit.excludeClause}
 \leanok
-For a natural number $ell$ and a Boolean assignment $v$ on the indices
-$0,dots,ell-1$, form the clause containing, in index order, the literal on variable
+For a natural number $\ell$ and a Boolean assignment $v$ on the indices
+$0,\ldots,\ell-1$, form the clause containing, in index order, the literal on variable
 $i$ with Boolean value opposite to $v(i)$.
 \end{definition}
 
@@ -35,8 +35,8 @@ $i$ with Boolean value opposite to $v(i)$.
 \label{Complexity.FormulaKit.template}
 \leanok
 \uses{Complexity.FormulaKit.bitsOf, Complexity.FormulaKit.excludeClause}
-For a natural number $ell$ and a Boolean function $p$ on assignments to the indices
-below $ell$, form a CNF formula by considering each natural number $r<2^ell$ in
+For a natural number $\ell$ and a Boolean function $p$ on assignments to the indices
+below $\ell$, form a CNF formula by considering each natural number $r<2^\ell$ in
 increasing order: include the clause excluding the assignment given by the binary digits
 of $r$ exactly when $p$ is false on that assignment.
 \end{definition}
@@ -95,8 +95,8 @@ then the variable count of $\varphi$ is at most $N$.
 \label{Complexity.FormulaKit.gate}
 \leanok
 \uses{Complexity.FormulaKit.template}
-For a natural number $ell$, a Boolean function $p$ on assignments to the indices below
-$ell$, and a map $w$ from natural-number variables to natural-number variables, the
+For a natural number $\ell$, a Boolean function $p$ on assignments to the indices below
+$\ell$, and a map $w$ from natural-number variables to natural-number variables, the
 gate formula is the template formula for $p$ with each variable relabelled by $w$.
 \end{definition}
 
@@ -116,8 +116,8 @@ vector whose value at index $i$ is $a(\mathrm{wire}(i))$.
 \lean{Complexity.FormulaKit.readBit}
 \label{Complexity.FormulaKit.readBit}
 \leanok
-For a natural number $ell$, a Boolean assignment $v$ on indices below $ell$, and a
-natural number $j$, read the value $v(j)$ when $j<ell$, and return false otherwise.
+For a natural number $\ell$, a Boolean assignment $v$ on indices below $\ell$, and a
+natural number $j$, read the value $v(j)$ when $j<\ell$, and return false otherwise.
 \end{definition}
 
 \begin{definition}[Exactly-one constraint formula]

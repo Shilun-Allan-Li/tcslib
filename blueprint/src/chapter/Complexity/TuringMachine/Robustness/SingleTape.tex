@@ -570,7 +570,7 @@ the backward-sweep configuration with the same $p,z,l,r,out$ and state $q'$.
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.SweepAlphabet, Turing.FinTM.blankRow, Turing.FinTM.headAt, Turing.FinTM.readState, Turing.FinTM.readVisit, Turing.FinTM.read_zone, Turing.FinTM.sweepBoundary, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_stay, Turing.FinTM.sweepFold, Turing.FinTM.sweepPos, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepStart, Turing.FinTM.sweepSymbol, Turing.FinTM.sweepTM, Turing.FinTM.sweepTape_read, Turing.FinTM.sweep_grow_left_block, Turing.FinTM.sweep_run, Turing.FinTM.sweep_turn_right, Turing.FinTM.tapeRow, Turing.FinTM.tapeRow_blank, Turing.FinTM.tapeZone, Turing.FinTM.tapeZone_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{6}
 Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, and let
-$c$ be a configuration whose state is $q$. Suppose $a\\le c_i$ for every work-tape head
+$c$ be a configuration whose state is $q$. Suppose $a\le c_i$ for every work-tape head
 position $c_i$, and every work tape is blank at coordinate $a-1$. For any natural number
 $n$ and integer $z$, after $k+1+(n+1)k+1$ steps from the canonical sweep configuration
 for $c$ with zone starting at $a$ and of size $n$, the simulator is in the
@@ -937,7 +937,7 @@ right, entering state $s(i+1)$. For any input-head position $p$, output word $o$
 integer $z$, and zipper lists $l,r$, and any natural number $n\le |w|$, after $n$ steps
 from the forward-sweep configuration with state $s(0)$ and frontier $z$, the machine is
 in state $s(n)$ with frontier $z+n$ and zipper lists
-$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{++}l$ and $r$
+$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{+\!\!+}l$ and $r$
 with its first $n$ entries removed; throughout these steps the work-head position lies
 in $[z,z+n]$.
 \end{lemma}
@@ -956,7 +956,7 @@ entering state $s(i+1)$. For any input-head position $p$, output word $o$, integ
 zipper lists $l,r$, and natural number $n\le |w|$, after $n$ steps from the
 backward-sweep configuration with state $s(0)$ and frontier $z$, the machine is in state
 $s(n)$ with frontier $z-n$ and zipper lists
-$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{++}l$ and $r$
+$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{+\!\!+}l$ and $r$
 with its first $n$ entries removed; throughout these steps the work-head position lies
 in $[z-n,z]$.
 \end{lemma}

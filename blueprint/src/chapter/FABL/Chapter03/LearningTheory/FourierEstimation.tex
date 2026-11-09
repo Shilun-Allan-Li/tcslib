@@ -85,7 +85,7 @@ $\frac{1}{m}\sum_{j=0}^{m-1} f(x_j)\prod_{i\in S}(x_j)_i$.
 \uses{FABL.BooleanFunction, FABL.empiricalFourierCoeff, FABL.rationalFourierObservation_cast, FABL.realEmpiricalFourierCoeff}
 \difficulty{1}
 Let $n$ and $m$ be natural numbers, let $f$ be a function from the sign cube
-$\\{-1,1\\}^n$ to the signs, let $S$ be a subset of the $n$ coordinates, and let
+$\{-1,1\}^n$ to the signs, let $S$ be a subset of the $n$ coordinates, and let
 $x_1,\ldots,x_m$ be sign vectors in the cube. The rational empirical Fourier coefficient
 computed from the labeled samples $(x_i,f(x_i))$, viewed as a real number, equals the
 real empirical Fourier coefficient of $f$ on these inputs.
@@ -146,13 +146,7 @@ cost $(m,0,m+m(|S|+1))$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.LearningProgram.runWithCost, FABL.PositiveLearningParameter, FABL.empiricalFourierCoeff, FABL.fourierEstimatorSampleCount, FABL.runWithCost_fourierCoeffEstimatorProgram, FABL.scheduledFourierCoeffEstimatorProgram, FABL.uniformPMF}
 \difficulty{1}
-Let $n$ be a natural number, let $S$ be a finite subset of $	ext{Fin}(n)$, and let
-$psilon,delta$ be rational parameters satisfying $0<psilon,delta	ext{ and
-}epsilon,delta	ext{ are at most }1/2$. For any Boolean target on the $n$-dimensional
-sign cube, the estimator’s run has the distribution obtained by drawing uniformly a
-batch of $m$ cube inputs, where $m$ is the prescribed sample count, and returning the
-empirical Fourier coefficient of their target labels together with cost
-$(m,0,m+m(|S|+1))$.
+Let $n$ be a natural number, let $S$ be a finite subset of $\mathrm{Fin}(n)$, and let rational parameters $\varepsilon,\delta$ satisfy $0<\varepsilon,\delta\le 1/2$. For any Boolean target on the $n$-dimensional sign cube, the estimator draws a batch of $m$ inputs uniformly, where $m$ is the prescribed sample count, and returns the empirical Fourier coefficient of their target labels. Its run has cost $(m,0,m+m(|S|+1))$.
 \end{theorem}
 
 \begin{theorem}[Scheduled Fourier estimator cost]
@@ -162,7 +156,7 @@ $(m,0,m+m(|S|+1))$.
 \uses{FABL.BooleanFunction, FABL.LearningCost, FABL.LearningProgram.runWithCost, FABL.PositiveLearningParameter, FABL.fourierEstimatorSampleCount, FABL.runWithCost_scheduledFourierCoeffEstimatorProgram, FABL.scheduledFourierCoeffEstimatorProgram}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ be a Boolean function on the sign cube
-$\\{-1,1\\}^n$, let $S\subseteq\{1,\ldots,n\}$, and let $\varepsilon,\delta\in\mathbb Q$
+$\{-1,1\}^n$, let $S\subseteq\{1,\ldots,n\}$, and let $\varepsilon,\delta\in\mathbb Q$
 satisfy $0<\varepsilon,\delta\le 1/2$. Every outcome in the support of the scheduled
 Fourier coefficient estimator, when run on $f$, has cost $(m,0,m+m(|S|+1))$, where
 $m=\lceil 2b(\delta)/\varepsilon^2\rceil$ and $b(\delta)=\lceil\log_2\lceil
@@ -196,8 +190,8 @@ with uniform random elements of $\{−1,1\}^n$.
 \lean{FABL.finiteUniformEmpiricalMean}
 \label{FABL.finiteUniformEmpiricalMean}
 \leanok
-Let $[4m[0m$ be a finite nonempty set, let $m$ be a natural number, let $o$ be a
-real-valued observation on that set, and let $x_0,[4m\ldots[0m,x_{m-1}$ be a sample
+Let $$ be a finite nonempty set, let $m$ be a natural number, let $o$ be a
+real-valued observation on that set, and let $x_0,\ldots,x_{m-1}$ be a sample
 from the set, with repetitions allowed. The finite uniform empirical mean is
 $\frac{1}{m}\sum_{i=0}^{m-1}o(x_i)$.
 \end{definition}
@@ -208,12 +202,12 @@ $\frac{1}{m}\sum_{i=0}^{m-1}o(x_i)$.
 \leanok
 \uses{FABL.finiteUniformEmpiricalMean, FABL.integral_uniformPMF_eq_expect, FABL.uniformPMF, FABL.uniformSample_toMeasure_eq_pi}
 \difficulty{5}
-Let $\\Omega$ be a finite nonempty set equipped with a measurable space in which every
-singleton is measurable, and let $g:\\Omega\\to\\mathbb R$ take values in $[-1,1]$. For
-a positive integer $m$ and $\\varepsilon\\ge0$, choose uniformly an $m$-tuple of
-elements of $\\Omega$. The probability that the empirical mean of $g$ on this tuple
-differs from the uniform expectation of $g$ on $\\Omega$ by at least $\\varepsilon$ is
-at most $2\\exp(-m\\varepsilon^2/2)$.
+Let $\Omega$ be a finite nonempty set equipped with a measurable space in which every
+singleton is measurable, and let $g:\Omega\to\mathbb R$ take values in $[-1,1]$. For
+a positive integer $m$ and $\varepsilon\ge0$, choose uniformly an $m$-tuple of
+elements of $\Omega$. The probability that the empirical mean of $g$ on this tuple
+differs from the uniform expectation of $g$ on $\Omega$ by at least $\varepsilon$ is
+at most $2\exp(-m\varepsilon^2/2)$.
 \end{theorem}
 
 \begin{theorem}[Range of a Fourier observation]
@@ -1089,7 +1083,7 @@ parameter $1$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.fourierObservation, FABL.fourierObservation_mem_Icc, FABL.integral_fourierObservation_uniformPMF, FABL.uniformPMF}
 \difficulty{4}
-Let $n,m$ be natural numbers, let $S$ be a finite subset of $	ext{Fin}(n)$, let
+Let $n,m$ be natural numbers, let $S$ be a finite subset of $\mathrm{Fin}(n)$, let
 $i\in\text{Fin}(m)$, and let the target be a Boolean function on the $n$-dimensional
 sign cube. Under the product law of $m$ independent uniform cube inputs, the centered
 Fourier observation at coordinate $i$ has subgaussian moment-generating-function bound
@@ -1131,13 +1125,13 @@ Statement pending regeneration.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.fourierObservation, FABL.realEmpiricalFourierCoeff}
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $f$ be a function from the Boolean cube
-$\\{-1,1\\}^n$ to the signs $\\{-1,1\\}$, and let $S$ be a subset of
-$\\{1,\\ldots,n\\}$. For a positive integer $m$ and a sample $x_1,\\ldots,x_m$ in the
+$\{-1,1\}^n$ to the signs $\{-1,1\}$, and let $S$ be a subset of
+$\{1,\ldots,n\}$. For a positive integer $m$ and a sample $x_1,\ldots,x_m$ in the
 cube, the sum of the centered Fourier observations equals $m$ times the difference
-between their empirical average and the Fourier coefficient: $\\sum_{j=1}^m
-(f(x_j)\\chi_S(x_j)-\\widehat f(S))=m(\\frac{1}{m}\\sum_{j=1}^m
-f(x_j)\\chi_S(x_j)-\\widehat f(S))$, where $\\chi_S$ is the monomial indexed by $S$ and
-$\\widehat f(S)$ is the uniform Fourier coefficient.
+between their empirical average and the Fourier coefficient: $\sum_{j=1}^m
+(f(x_j)\chi_S(x_j)-\widehat f(S))=m(\frac{1}{m}\sum_{j=1}^m
+f(x_j)\chi_S(x_j)-\widehat f(S))$, where $\chi_S$ is the monomial indexed by $S$ and
+$\widehat f(S)$ is the uniform Fourier coefficient.
 \end{theorem}
 
 \begin{theorem}[Measure real empirical fourier coeff sub ge le]

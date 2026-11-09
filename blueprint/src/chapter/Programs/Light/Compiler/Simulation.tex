@@ -137,19 +137,13 @@ $b\le 2nk$. Then $size+b+r+2(pos+size+1)+2\le 2n(a+2+k)$.
 \label{Light.Compiler.Start}
 \leanok
 \uses{Light.Compiler.Framed, Light.Compiler.compileStmt, Light.State, Light.State.Bounded, Light.Stmt, Light.Stmt.size, Light.Stmt.width, WordRAM.CodeAt}
-Let $W$ be a word size and let $S$ be a compiler setting with frame size $F$, dispatcher
-position $D$, stack capacity $Q$, limits $	ext{lim}$, code, and code layout. For a
-statement $s$, state $σ$, code position $p$, stack-frame index $q$, and machine memory
-map $m:\mathbb{Z}\to\mathrm{BitVec}(W)$, suppose the distinguished memory locations
-encode $1$, $0$, and $-1$ at addresses $-5$, $-7$, and $-9$, respectively; for every
-$n\le D$, address $-(25+4n)$ encodes $n$; address $-11$ encodes the stack pointer $-2q$;
-each frame-local address $-2(q+x)$ encodes $σ.loc(x)$ for $x<F$; and each address $a$
-encodes $σ.mem(a)$ for $a<\text{lim.space}$, with all integers represented as $W$-bit
-words. Assume also that $1\le q$, $q+F\le Q$, the compiled code for $s$ in the setting's
-code layout is located at $p$ and its size fits before $D$, the width of $s$ is at most
-$F$, and $σ$ is bounded by the limits. Then the stack has room for the current frame
-and for $F+1$ additional cells at each of the remaining $\text{lim.depth}-d$ call
-levels: $q+F+(F+1)(\text{lim.depth}-d)\le Q$.
+Let $S$ be a compiler setting with word size $W$, and let $d$ be a call depth, $s$ a
+statement, $\sigma$ a language state, $pos,q$ natural numbers, and $m$ a word-RAM memory.
+The start condition holds when $m$ represents $\sigma$ in frame $q$; the compiled code
+for $s$ in the setting is located at $pos$ and ends by the dispatcher; $s$ has width at
+most $S.F$; $\sigma$ is bounded by $S.\mathrm{lim}$; and the stack has room for this frame
+and all further call levels, namely
+$q+S.F+(S.F+1)(S.\mathrm{lim.depth}-d)\le S.Q$.
 \end{definition}
 
 \begin{definition}[Completed execution of a statement]
@@ -346,16 +340,16 @@ $\sigma_2$ with cost $\operatorname{cost}(c)+1+k_1+k_2$.
 \leanok
 \uses{Light.Compiler.Framed.same, Light.Compiler.Rel, Light.Compiler.Sizes.inRange_neg_one, Light.Compiler.Start, Light.Compiler.Start.room_succ, Light.Compiler.Writable, Light.Compiler.cStack, Light.Compiler.callSize, Light.Compiler.codeAt_call, Light.Compiler.effects_argsCode, Light.Compiler.effects_newFrame, Light.Compiler.length_argsCode, Light.Compiler.length_newFrame, Light.Compiler.scratch_subset_writable, Light.Compiler.steps_jump, Light.Compiler.straight_argsCode, Light.Compiler.straight_newFrame, Light.Compiler.temps_subset_scratch, Light.Expr.Safe, Light.Expr.val, Light.Stmt.width_call_le_iff, Light.frame, WordRAM.AgreeOutside, WordRAM.AgreeOutside.mono, WordRAM.AgreeOutside.trans, WordRAM.Steps, WordRAM.Steps.cast_count, WordRAM.Steps.trans, WordRAM.effects_append, WordRAM.steps_straight, WordRAM.wd}
 \difficulty{4}
-Let $S$ be a compiler setting, and suppose a call statement with procedure index $p$,
-argument expressions $args$, and return-variable index $x$ starts at depth $d$, code
-position $pos$, stack base $q$, state $σ$, and word memory $m$. Assume the starting
-conditions hold, every argument expression is safe in $σ$, $d$ is less than the depth
-limit, and procedure $p$ has entry position $e$. Then there is a word memory $m_2$ such
-that the compiled machine takes exactly the call-size number of steps from $(pos,m)$ to
-position $e$ with memory $m_2$. This memory represents the callee state whose local
-frame consists of the argument values and whose ordinary memory is inherited from $σ$;
-its stack cell at index $q+F$ contains the return position $pos$ plus the call size; and
-it agrees with $m$ outside the cells writable from stack base $q+F$.
+Let $S$ be a compiler setting, and consider a call to procedure $p$ with argument list
+$args$ and return-variable index $x$, starting at depth $d$, code position $pos$, stack base
+$q$, language state $\sigma$, and word-RAM memory $m$. Suppose the start conditions hold,
+every argument is safe in $\sigma$, $d<S.\mathrm{lim.depth}$, and procedure $p$ has entry
+position $e$. Then the compiled machine takes exactly $\mathrm{callSize}(S.F,args)$ steps
+from $(pos,m)$ to $(e,m_2)$ for some memory $m_2$ representing the callee state with
+local frame initialized from the argument values and ordinary memory inherited from
+$\sigma$. The return-address cell at stack index $q+S.F$ contains
+$pos+\mathrm{callSize}(S.F,args)$, and $m_2$ agrees with $m$ outside the cells writable
+from stack base $q+S.F$.
 \end{theorem}
 
 \begin{theorem}[Return from a procedure call]
@@ -382,16 +376,16 @@ union of the frame-pointer address and the scratch-address set for $F$.
 \uses{Light.Compiler.Framed, Light.Compiler.Rel.of_agreeOutside, Light.Compiler.Simulates, Light.Compiler.Start.room_succ, Light.Compiler.Writable, Light.Compiler.cStack, Light.Compiler.callSize, Light.Compiler.call_le_stepsPerStep_mul, Light.Compiler.codeAt_call, Light.Compiler.length_compileStmt, Light.Compiler.scratch_subset_writable, Light.Compiler.steps_callEnter, Light.Compiler.steps_callLeave, Light.Compiler.steps_setVar, Light.Compiler.writable_subset_writable, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.Stmt, Light.Stmt.size, Light.Stmt.width_call_le_iff, Light.bounded_callFrame, Light.frame, WordRAM.AgreeOutside, WordRAM.AgreeOutside.mono, WordRAM.AgreeOutside.read, WordRAM.AgreeOutside.trans, WordRAM.CodeAt.cast_pos, WordRAM.CodeAt.left, WordRAM.CodeAt.right, WordRAM.Steps.cast_pos, WordRAM.Steps.trans}
 \difficulty{6}
 Let $S$ be a compiler setting, let $d,p,x,k$ be natural numbers, let
-$[0m\sigma,[0m\sigma'$ be program states, and let $[0m\mathrm{args}$ be a finite list
-of expressions. Suppose every argument expression is safe in $[0m\sigma$, procedure $p$
-has body $[0m\mathrm{body}$ in $S$, and $d$ is less than the depth limit. If
-$[0m\mathrm{body}$ simulates execution from depth $d+1$ and the state whose variable
+$\sigma,\sigma'$ be program states, and let $\mathrm{args}$ be a finite list
+of expressions. Suppose every argument expression is safe in $\sigma$, procedure $p$
+has body $\mathrm{body}$ in $S$, and $d$ is less than the depth limit. If
+$\mathrm{body}$ simulates execution from depth $d+1$ and the state whose variable
 values are the argument values (with missing arguments set to zero) and whose memory is
-that of $[0m\sigma$, to $[0m\sigma'$ in $k$ steps, then the call to $p$ with arguments
-$[0m\mathrm{args}$, assigning its result to variable $x$, simulates execution from
-$[0m\sigma$ to the state obtained by updating variable $x$ to
-$[0m\sigma'.[0m\mathrm{loc}(0)$ and using memory $[0m\sigma'.[0m\mathrm{mem}$, in
-$[0m\sum_{e\in\mathrm{args}}\mathrm{cost}(e)+2+k$ steps.
+that of $\sigma$, to $\sigma'$ in $k$ steps, then the call to $p$ with arguments
+$\mathrm{args}$, assigning its result to variable $x$, simulates execution from
+$\sigma$ to the state obtained by updating variable $x$ to
+$\sigma'.\mathrm{loc}(0)$ and using memory $\sigma'.\mathrm{mem}$, in
+$\sum_{e\in\mathrm{args}}\mathrm{cost}(e)+2+k$ steps.
 \end{theorem}
 
 \begin{theorem}[Simulation of Executions]

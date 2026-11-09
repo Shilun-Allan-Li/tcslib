@@ -50,12 +50,12 @@ finite sequence of encoded transitions at space bound $s$.
 \uses{Complexity.Codec.StepRel, Complexity.Codec.codeK, Complexity.ExpBFS.card_filter_rcode, Complexity.ExpBFS.rcode_lt, Complexity.ExpBFS.rset, Complexity.LogProg.ISCount.ball, Complexity.LogProg.ISGen.InitM, Complexity.LogProg.ISGen.mem_ball_iff_rcode, Complexity.logSpace}
 \difficulty{3}
 Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $x$
-be a finite bit string, and let $s,K$ be natural numbers. If $2^{	ext{code
-length}	imes(s+	ext{logarithmic space of }|x|+1)}le K$, where the code length is the
-machine's configuration-code bound, then the set of numbers in the $K$-bounded ball at
-level $K$, formed using the step relation at window radius $s$ and the corresponding
-initial-code predicate, has the same cardinality as the finite set of codes reachable
-from the initial configuration code within the stated code bound.
+be a finite bit string, and let $s,K\in\mathbb{N}$. If
+$2^{\mathrm{codeK}(N)(s+\mathrm{logSpace}(|x|)+1)}\le K$, then
+\[
+\bigl|\mathrm{ball}(K,\mathrm{StepRel}(N,x,s),\mathrm{InitM}(N,x,s),K)\bigr|
+= |\mathrm{rset}(N,x,s)|.
+\]
 \end{theorem}
 
 \begin{theorem}[Ball cardinality at zero code]
@@ -65,11 +65,11 @@ from the initial configuration code within the stated code bound.
 \uses{Complexity.Codec.StepRel, Complexity.Codec.cfgCode_lt, Complexity.Codec.codeK, Complexity.Codec.mem_initLang, Complexity.LogProg.ISCount.ball, Complexity.LogProg.ISCount.card_ball_zero, Complexity.LogProg.ISGen.InitM, Complexity.logSpace, Turing.NDTM.initCfg}
 \difficulty{2}
 Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $x$
-be a finite bit string, and let $s,K$ be natural numbers. If $2^{	ext{code
-length}	imes(s+	ext{logarithmic space of }|x|+1)}le K$, where the code length is the
-machine's configuration-code bound, then the $K$-bounded ball at level zero, formed
-using the step relation at window radius $s$ and the corresponding initial-code
-predicate, has cardinality one.
+be a finite bit string, and let $s,K\in\mathbb{N}$. If
+$2^{\mathrm{codeK}(N)(s+\mathrm{logSpace}(|x|)+1)}\le K$, then
+\[
+\bigl|\mathrm{ball}(K,\mathrm{StepRel}(N,x,s),\mathrm{InitM}(N,x,s),0)\bigr|=1.
+\]
 \end{theorem}
 
 \begin{theorem}[Nonempty set of reachable configuration codes]

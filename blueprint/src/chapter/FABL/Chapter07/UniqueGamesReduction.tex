@@ -416,7 +416,7 @@ compatibility condition for every constraint whose source lies in $C$.
 \difficulty{3}
 Let $G$ be a finite unique game with nonempty finite vertex and constraint sets,
 distinct endpoints for each constraint, and a permutation of the label set
-$\\{0,\\ldots,q-1\\}$ attached to each constraint. For any connected component, the
+$\{0,\ldots,q-1\}$ attached to each constraint. For any connected component, the
 number of labels at its chosen root that, when transported along the chosen paths from
 that root, satisfy every constraint in the component is at most $q$.
 \end{theorem}
@@ -731,7 +731,7 @@ to each vertex of $G$ a bounded function on the $q$-dimensional Boolean cube.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.permuteInput}
 Let $G$ be a regular Unique Games instance with $q$ labels, and assign to each variable
-a real-valued function on the sign cube $\\{-1,1\\}^q$ whose values lie in $[-1,1]$. For
+a real-valued function on the sign cube $\{-1,1\}^q$ whose values lie in $[-1,1]$. For
 a variable and one of its neighbors, the bounded twisted long-code function is the
 neighbor's function evaluated after permuting its input by the permutation on that
 variable-neighbor pair.
@@ -796,8 +796,8 @@ permuted according to the constraint on $(v,w)$. This function takes values in $
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.dictator}
 Let $G$ be a regular unique game with alphabet size $q$, and let $ho$ assign a label in
-$\\{0,\\ldots,q-1\\}$ to each vertex. The dictator long code table assigns to each
-vertex the dictator function indexed by its label under $\\rho$.
+$\{0,\ldots,q-1\}$ to each vertex. The dictator long code table assigns to each
+vertex the dictator function indexed by its label under $\rho$.
 \end{definition}
 
 \begin{definition}[Long code value]
@@ -969,7 +969,7 @@ unique-game constraint instance under $\ell$.
 \leanok
 \uses{FABL.CSPInstance.optimalAssignment, FABL.FiniteUniqueGame.toCSPInstance, FABL.RegularUniqueGame.toFiniteUniqueGame}
 Let $G$ be a regular unique game with alphabet size $q$, and suppose the label set
-$\\{0,\\ldots,q-1\\}$ is nonempty. An optimal labeling of $G$ assigns a label from this
+$\{0,\ldots,q-1\}$ is nonempty. An optimal labeling of $G$ assigns a label from this
 set to every vertex, according to an assignment maximizing the associated constraint
 satisfaction objective.
 \end{definition}
@@ -1117,9 +1117,9 @@ input positions.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.Sign}
 Let $G$ be a regular unique game with alphabet size $q$, and let a table assign to each
-vertex a Boolean function on $\\{ -1,1 \\}^q$ with values in the sign set $\\{ -1,1
-\\}$. The long-code assignment maps each pair consisting of a vertex and an input in
-$\\{ -1,1 \\}^q$ to the value of that vertex's function at the input.
+vertex a Boolean function on $\{ -1,1 \}^q$ with values in the sign set $\{ -1,1
+\}$. The long-code assignment maps each pair consisting of a vertex and an input in
+$\{ -1,1 \}^q$ to the value of that vertex's function at the input.
 \end{definition}
 
 \begin{definition}[Long-code experiment value]
@@ -1252,10 +1252,10 @@ to $\pi$ at $i$ equals the stable influence of $f$ at $\pi^{-1}(i)$.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.averagedNeighborFunction, FABL.stableInfluence}
 Let $G$ be a regular unique game with alphabet size $q$, let $T$ be a long code table,
-let $\\varepsilon\\in\\mathbb R$, and let $v$ be a vertex of $G$. The neighbor notable
-coordinates at $v$ are the coordinates $i\\in\\{0,\\ldots,q-1\\}$ for which
-$\\varepsilon$ is strictly less than the stable influence, at noise parameter
-$1-\\varepsilon$, of coordinate $i$ in the averaged neighbor function of $T$ at $v$.
+let $\varepsilon\in\mathbb R$, and let $v$ be a vertex of $G$. The neighbor notable
+coordinates at $v$ are the coordinates $i\in\{0,\ldots,q-1\}$ for which
+$\varepsilon$ is strictly less than the stable influence, at noise parameter
+$1-\varepsilon$, of coordinate $i$ in the averaged neighbor function of $T$ at $v$.
 \end{definition}
 
 \begin{definition}[Notable coordinates]
@@ -1270,10 +1270,10 @@ $1-\\varepsilon$, of coordinate $i$ in the averaged neighbor function of $T$ at 
 \leanok
 \uses{FABL.BooleanFunction.toReal, FABL.RegularUniqueGame.LongCodeTable, FABL.stableInfluence}
 Let $G$ be a regular unique game with alphabet size $q$, let $T$ be a long code table,
-let $\\varepsilon\\in\\mathbb R$, and let $v$ be a vertex of $G$. The notable
-coordinates at $v$ are the coordinates $i\\in\\{0,\\ldots,q-1\\}$ for which the stable
-influence, at noise parameter $1-\\varepsilon$, of coordinate $i$ in the real-valued
-version of $T(v)$ is at least $\\varepsilon/2$.
+let $\varepsilon\in\mathbb R$, and let $v$ be a vertex of $G$. The notable
+coordinates at $v$ are the coordinates $i\in\{0,\ldots,q-1\}$ for which the stable
+influence, at noise parameter $1-\varepsilon$, of coordinate $i$ in the real-valued
+version of $T(v)$ is at least $\varepsilon/2$.
 \end{definition}
 
 \begin{theorem}[Stable Influence of an Averaged Neighbor Function]
@@ -1296,7 +1296,7 @@ under the inverse permutation on the edge from $v$ to $w$.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.neighborNotableCoordinates}
 Let $G$ be a regular unique game with alphabet size $q$, let a long-code table and a
-real parameter $\\varepsilon$ be given, and choose a vertex uniformly from $G$. The
+real parameter $\varepsilon$ be given, and choose a vertex uniformly from $G$. The
 neighbor notable vertex fraction is the probability that the set of notable coordinates
 at that vertex's neighbors is nonempty.
 \end{definition}
@@ -1353,7 +1353,7 @@ which $v_i\ge\varepsilon/2$ is strictly greater than $\varepsilon/2$.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.notableCoordinates}
 Let $G$ be a regular unique game with alphabet size $q$, let a long-code table and a
-real parameter $\\varepsilon$ be given, and fix a vertex $v$ and coordinate $i\\in[q]$.
+real parameter $\varepsilon$ be given, and fix a vertex $v$ and coordinate $i\in[q]$.
 The notable neighbor probability is the probability, for a uniformly chosen neighbor $w$
 of $v$, that the coordinate obtained by applying the inverse edge permutation to $i$ is
 notable at $w$.
@@ -1408,7 +1408,7 @@ $1-\varepsilon$ is at least $\varepsilon/2$ is at most $2/\varepsilon^2$.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.neighborNotableCoordinates, FABL.RegularUniqueGame.notableCoordinates}
 Let $G$ be a regular unique game with alphabet size $q$, let a long-code table and a
-real parameter $\\varepsilon$ be given, and fix a vertex $v$. The decoding candidate set
+real parameter $\varepsilon$ be given, and fix a vertex $v$. The decoding candidate set
 at $v$ is the union of the notable-coordinate set at $v$ and the neighbor
 notable-coordinate set at $v$.
 \end{definition}
@@ -1484,7 +1484,7 @@ $1/(|A||B|)$.
 \leanok
 \uses{FABL.RegularUniqueGame.finiteCandidateExpectation}
 Let $G$ be a regular unique game with alphabet size $q$, let each vertex be assigned a
-finite set of candidate labels in $[q]$, and let $a_0\\in[q]$ be a default label. For a
+finite set of candidate labels in $[q]$, and let $a_0\in[q]$ be a default label. For a
 vertex $v$ and a neighbor $w$ of $v$, the candidate decoding edge value is the iterated
 finite candidate expectation of the indicator that the edge permutation maps the target
 label at $w$ to the source label at $v$, using the respective candidate sets and default
@@ -1723,7 +1723,7 @@ $\mathrm{error}()^5/18$.
 \lean{FABL.CloneRest}
 \label{FABL.CloneRest}
 \leanok
-For a natural number $r$ and indices $i,j$ in the finite set $\\{0,\ldots,r-1\}$, let
+For a natural number $r$ and indices $i,j$ in the finite set $\{0,\ldots,r-1\}$, let
 the remaining coordinate set consist of those indices $k$ in that set for which $k\ne i$
 and $k\ne j$. The indices $i$ and $j$ are allowed to be equal.
 \end{definition}
@@ -1842,7 +1842,7 @@ chosen at multiple positions.
 \label{FABL.RepeatedQueryScope.clonedQuery}
 \leanok
 Let a repeated query scope on $X$ have $r$ positions. For a natural number $M$ and an
-assignment of a clone index in $\\{0,\\ldots,M-1\\}$ to each position, the cloned query
+assignment of a clone index in $\{0,\ldots,M-1\}$ to each position, the cloned query
 at each position is the ordered pair consisting of its queried element of $X$ and its
 assigned clone index.
 \end{definition}
@@ -1902,7 +1902,7 @@ elements of $\Omega$ outside $G$.
 \label{FABL.WeightedConstraintExperiment.CloneOutcome}
 \leanok
 Let $E$ be a weighted constraint experiment over a constraint template with predicate
-family $[0m[0m\Psi$ and outcome space $\mathrm{Outcome}(E)$. For a natural number $M$,
+family $\Psi$ and outcome space $\mathrm{Outcome}(E)$. For a natural number $M$,
 a clone outcome is a pair consisting of an experiment outcome and a choice of a label in
 $\text{Fin}(M)$ for each query position of the predicate selected by that outcome.
 \end{definition}
@@ -2367,9 +2367,9 @@ at every vertex the number of bounded decoding candidates is at most $3/	ext{�
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedDecodingCandidates, FABL.RegularUniqueGame.candidateDecodingEdgeValue}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$, a default symbol in
-$\\{0,\\ldots,q-1\\}$, a vertex, and a neighboring edge, the bounded decoding edge value
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$, a default symbol in
+$\{0,\ldots,q-1\}$, a vertex, and a neighboring edge, the bounded decoding edge value
 is the candidate decoding edge value obtained from the table’s bounded decoding
 candidates, using that default symbol.
 \end{definition}
@@ -2392,9 +2392,9 @@ value determined by the table, threshold, and default label is nonnegative.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedDecodingCandidates, FABL.RegularUniqueGame.candidateDecodingValue}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$ and a default symbol in
-$\\{0,\\ldots,q-1\\}$, the bounded decoding value is the candidate decoding value formed
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$ and a default symbol in
+$\{0,\ldots,q-1\}$, the bounded decoding value is the candidate decoding value formed
 from the table’s bounded decoding candidates and that default symbol.
 \end{definition}
 
@@ -2432,9 +2432,9 @@ decoding value on this directed edge is at least $\varepsilon^4/9$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedDecodingEdgeValue}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$, a default symbol in
-$\\{0,\\ldots,q-1\\}$, and a vertex $v$, the bounded decoding vertex value is the
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$, a default symbol in
+$\{0,\ldots,q-1\}$, and a vertex $v$, the bounded decoding vertex value is the
 expectation, over a neighbor of $v$, of the bounded decoding edge value on the edge from
 $v$ to that neighbor.
 \end{definition}
@@ -2523,11 +2523,11 @@ in coordinate $i$, is at most $1$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedAveragedNeighborFunction, FABL.influence}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real threshold $\\varepsilon$ and a vertex $v$, the bounded neighbor
-influential coordinates are the coordinates $i\\in\\{0,\\ldots,q-1\\}$ for which the
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real threshold $\varepsilon$ and a vertex $v$, the bounded neighbor
+influential coordinates are the coordinates $i\in\{0,\ldots,q-1\}$ for which the
 influence of coordinate $i$ in the averaged neighbor function at $v$ is strictly greater
-than $\\varepsilon$.
+than $\varepsilon$.
 \end{definition}
 
 \begin{definition}[Bounded influential coordinates]
@@ -2536,10 +2536,10 @@ than $\\varepsilon$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.influence}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$ and a vertex $v$, the bounded influential
-coordinates are those coordinates $i\\in\\{0,\\ldots,q-1\\}$ whose influence in the
-function assigned to $v$ is at least $\\varepsilon/2$.
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$ and a vertex $v$, the bounded influential
+coordinates are those coordinates $i\in\{0,\ldots,q-1\}$ whose influence in the
+function assigned to $v$ is at least $\varepsilon/2$.
 \end{definition}
 
 \begin{theorem}[Influence of the averaged neighbor function]
@@ -2562,8 +2562,8 @@ where $\pi_{v,w}$ is the edge permutation.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedNeighborInfluentialCoordinates}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$, and let $\\varepsilon$ be real. The bounded neighbor influential vertex
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$, and let $\varepsilon$ be real. The bounded neighbor influential vertex
 fraction is the expectation over vertices of the indicator that the vertex has at least
 one bounded neighbor influential coordinate.
 \end{definition}
@@ -2589,9 +2589,9 @@ neighbor function has some coordinate with influence greater than $$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedInfluentialCoordinates}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$, a vertex $v$, and a coordinate
-$i\\in\\{0,\\ldots,q-1\\}$, the bounded influential neighbor probability is the
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$, a vertex $v$, and a coordinate
+$i\in\{0,\ldots,q-1\}$, the bounded influential neighbor probability is the
 expectation over neighbors $w$ of $v$ of the indicator that the coordinate obtained by
 applying the inverse edge permutation to $i$ is a bounded influential coordinate at $w$.
 \end{definition}
@@ -2616,8 +2616,8 @@ neighbor has the corresponding permuted coordinate among its influential coordin
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedInfluentialCoordinates, FABL.RegularUniqueGame.boundedNeighborInfluentialCoordinates}
 Let $q$ be a positive integer and let $G$ be a regular unique game over $q$ symbols. Let
-the table assign to each vertex a function from the Boolean cube $\\{−1,1\\}^{q}$ to
-$[-1,1]$. For a real parameter $\\varepsilon$ and a vertex $v$, the bounded ordinary
+the table assign to each vertex a function from the Boolean cube $\{−1,1\}^{q}$ to
+$[-1,1]$. For a real parameter $\varepsilon$ and a vertex $v$, the bounded ordinary
 decoding candidates are the union of the bounded influential coordinates at $v$ and the
 bounded neighbor influential coordinates at $v$.
 \end{definition}
@@ -2648,11 +2648,11 @@ $	ext{Fin}(q)$. If $|C|\le 2q$, then $\frac{1}{2q}\le \frac{1}{|C|}$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedOrdinaryDecodingCandidates, FABL.RegularUniqueGame.candidateDecodingEdgeValue}
 Let $G$ be a regular unique game with alphabet size $q$, let each vertex be assigned a
-real-valued function on the sign cube $\\{-1,1\\}^q$ taking values in $[-1,1]$, and let
-$\\varepsilon\\in\\mathbb R$, a default symbol in $\\mathrm{Fin}(q)$, a vertex $v$, and
+real-valued function on the sign cube $\{-1,1\}^q$ taking values in $[-1,1]$, and let
+$\varepsilon\in\mathbb R$, a default symbol in $\mathrm{Fin}(q)$, a vertex $v$, and
 a neighbor of $v$ be given. The bounded decoding edge value is the candidate-decoding
 edge value at that vertex and neighbor, using the candidates produced from this table
-and $\\varepsilon$ and the specified default symbol.
+and $\varepsilon$ and the specified default symbol.
 \end{definition}
 
 \begin{theorem}[Nonnegative ordinary decoding edge value]
@@ -2688,8 +2688,8 @@ candidate-decoding edge value is at least $1/(4q^2)$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedOrdinaryDecodingEdgeValue}
 Let $G$ be a regular unique game with alphabet size $q$, let each vertex be assigned a
-real-valued function on the sign cube $\\{-1,1\\}^q$ taking values in $[-1,1]$, and let
-$\\varepsilon\\in\\mathbb R$, a default symbol in $\\mathrm{Fin}(q)$, and a vertex $v$
+real-valued function on the sign cube $\{-1,1\}^q$ taking values in $[-1,1]$, and let
+$\varepsilon\in\mathbb R$, a default symbol in $\mathrm{Fin}(q)$, and a vertex $v$
 be given. The bounded decoding vertex value is the expectation, over a neighbor of $v$,
 of the bounded decoding edge value for that neighbor.
 \end{definition}
@@ -2714,10 +2714,10 @@ $\varepsilon/(8q^2)$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedOrdinaryDecodingCandidates, FABL.RegularUniqueGame.candidateDecodingValue}
 Let $G$ be a regular unique game with alphabet size $q$, let each vertex be assigned a
-real-valued function on the sign cube $\\{-1,1\\}^q$ taking values in $[-1,1]$, and let
-$\\varepsilon\\in\\mathbb R$ and a default symbol in $\\mathrm{Fin}(q)$ be given. The
+real-valued function on the sign cube $\{-1,1\}^q$ taking values in $[-1,1]$, and let
+$\varepsilon\in\mathbb R$ and a default symbol in $\mathrm{Fin}(q)$ be given. The
 bounded ordinary decoding value is the candidate-decoding value computed from the
-candidates produced by this table and $\\varepsilon$, using the specified default
+candidates produced by this table and $\varepsilon$, using the specified default
 symbol.
 \end{definition}
 
@@ -2845,7 +2845,7 @@ multiplicity.
 \uses{FABL.RawCSPInstance.ParticipatingVariable}
 Let $P$ be a constraint instance with variable set $V$ and domain $D$. Its participating
 variables are those that occur in the scope of at least one constraint of $P$. Given an
-assignment $a:V\\to D$, its restriction to the participating variables sends each such
+assignment $a:V\to D$, its restriction to the participating variables sends each such
 variable to its value under $a$.
 \end{definition}
 
@@ -2916,7 +2916,7 @@ isolated variables.
 \leanok
 \uses{FABL.RawCSPInstance.value}
 Let $P$ be a constraint instance with finite, nonempty domain $D$ and finite variable
-set $V$. An optimal assignment is an assignment $V\\to D$ chosen to maximize the value
+set $V$. An optimal assignment is an assignment $V\to D$ chosen to maximize the value
 of $P$.
 \end{definition}
 
@@ -3159,7 +3159,7 @@ Let $E$ be a weighted constraint experiment over a CSP template with domain $D$ 
 variable set $V$, and let $R$ be a uniform refinement of $E$. Suppose $D$ is finite and
 nonempty and $V$ is finite. For natural numbers $r$ and $M$, assume every predicate
 selected by an outcome has arity at most $r$. An optimal padded clone assignment is an
-assignment $(v,i)\\mapsto d$ from $V\\times\\mathrm{Fin}(M)$ to $D$ chosen to maximize
+assignment $(v,i)\mapsto d$ from $V\times\mathrm{Fin}(M)$ to $D$ chosen to maximize
 the padded clone value determined by $E$, $R$, $r$, $M$, and this arity bound.
 \end{definition}
 

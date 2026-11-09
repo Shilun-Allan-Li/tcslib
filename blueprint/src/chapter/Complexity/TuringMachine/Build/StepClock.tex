@@ -35,10 +35,10 @@ and agrees with $c_t$ at every other cell.
 \label{Turing.Cfg.Stopped}
 \leanok
 \uses{Turing.Cfg}
-Let $k$ be a nonnegative integer, let $[?]$ be an input string over an alphabet $[?]$,
-and let $c$ be a configuration of a $k$-tape Turing machine with that input and state
-set $S$. Given a Boolean-valued stopping rule on $S$, the configuration is stopped if it
-has no internal state, or if its state is some $s\in S$ for which the rule returns true.
+For a natural number $k$, types $\Gamma$ and $S$, an input word $x\in\Gamma^*$, a
+stopping predicate $\mathrm{stopAt}:S\to\{\mathrm{false},\mathrm{true}\}$, and a
+configuration $c$ of type $\mathrm{Cfg}(k,\Gamma,S,x)$, say that $c$ is stopped when
+either its state is absent or its state is $s\in S$ and $\mathrm{stopAt}(s)=\mathrm{true}$.
 \end{definition}
 
 \begin{definition}[Clock simulation states]
@@ -402,16 +402,16 @@ particular its state lies outside $F$ at every time strictly before $t$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Segment, Turing.clockCfg, Turing.decFixed, Turing.sc_agree, Turing.sc_clockTM, Turing.sc_debit, Turing.sc_decExit, Turing.sc_decExit_injective, Turing.sc_exits, Turing.sc_observedSegment, Turing.wordPatch}
 \difficulty{5}
-Let $e$ be an embedding of $\\{0,1\\}$ into an alphabet $\\Gamma$, let $M$ be a
-$k$-work-tape machine over $\\Gamma$ with state set $S$, and let
-$\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Fix an input word $x$ over
-$\\Gamma$, a configuration $c$ of $M$ on $x$, a state $s\\in S$ with
-$\\mathrm{stopAt}(s)=\\mathrm{false}$, a Boolean word $w$, and a counter tape
-$ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$ with head position $cp\\in\\mathbb Z$ such
+Let $e$ be an embedding of $\{0,1\}$ into an alphabet $\Gamma$, let $M$ be a
+$k$-work-tape machine over $\Gamma$ with state set $S$, and let
+$\mathrm{stopAt}:S\to\{\mathrm{false},\mathrm{true}\}$. Fix an input word $x$ over
+$\Gamma$, a configuration $c$ of $M$ on $x$, a state $s\in S$ with
+$\mathrm{stopAt}(s)=\mathrm{false}$, a Boolean word $w$, and a counter tape
+$ct:\mathbb Z\to\mathrm{Option}(\Gamma)$ with head position $cp\in\mathbb Z$ such
 that $ct(cp+p)$ contains the symbol of $w$ at offset $p$, mapped through $e$, for every
-integer $p$ with $-1\\le p\\le |w|$ (and is blank where that word has no symbol). Form
-the clocked machine $H$ from $M$, $e$, and $\\mathrm{stopAt}$, and set
-$t=2|w\\mathbin{\\mathrm{takeWhile}}(\\mathrm{not})|+2$. After $t$ steps from the clock
+integer $p$ with $-1\le p\le |w|$ (and is blank where that word has no symbol). Form
+the clocked machine $H$ from $M$, $e$, and $\mathrm{stopAt}$, and set
+$t=2|w\mathbin{\mathrm{takeWhile}}(\mathrm{not})|+2$. After $t$ steps from the clock
 configuration over $c$ with state recording the decrement phase for $s$ and counter tape
 $ct$ at $cp$, the machine is in the clock configuration over $c$ with state determined
 by whether the decrement of $w$ is defined, and counter tape obtained by patching $ct$
@@ -441,23 +441,23 @@ $\mathrm{stopAt}(s)=\mathrm{false}$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.Segment, Turing.Segment.one, Turing.Segment.trans, Turing.Segment.zero, Turing.clockCfg, Turing.counterOverhead, Turing.counterOverhead_succ, Turing.counterOverhead_zero, Turing.counterWord, Turing.counterWord_length, Turing.counterWord_zero, Turing.counter_word_decrement, Turing.sc_body_step, Turing.sc_clockDebit, Turing.sc_clockTM, Turing.sc_decExit, Turing.sc_exits, Turing.sc_live, Turing.sc_resume, Turing.sc_wordPatch_frame, Turing.sc_wordPatch_self, Turing.sc_wordPatch_twice, Turing.wordPatch}
 \difficulty{6}
-Let $e$ be an injection from $\\{\\mathrm{false},\\mathrm{true}\\}$ into an alphabet
-$\\Gamma$, let $M$ be a $k$-work-tape Turing machine with state set $S$, and let
-$\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Fix an input word $x$, a
-configuration $c$ of $M$ on $x$, and a state $q\\in S$ such that $c$ has state $q$; let
-$w$ be a Boolean word, $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$ a tape, and
-$cp\\in\\mathbb Z$. Assume that for every integer $p$ with $-1\\le p\\le |w|$, the tape
+Let $e$ be an injection from $\{\mathrm{false},\mathrm{true}\}$ into an alphabet
+$\Gamma$, let $M$ be a $k$-work-tape Turing machine with state set $S$, and let
+$\mathrm{stopAt}:S\to\{\mathrm{false},\mathrm{true}\}$. Fix an input word $x$, a
+configuration $c$ of $M$ on $x$, and a state $q\in S$ such that $c$ has state $q$; let
+$w$ be a Boolean word, $ct:\mathbb Z\to\mathrm{Option}(\Gamma)$ a tape, and
+$cp\in\mathbb Z$. Assume that for every integer $p$ with $-1\le p\le |w|$, the tape
 cell $ct(cp+p)$ contains the symbol of $w$ at offset $p$ after encoding by $e$ (with
-blank cells represented by absence). Let $n\\in\\mathbb N$ be at most the integer
+blank cells represented by absence). Let $n\in\mathbb N$ be at most the integer
 represented by the binary digits of $w$, and suppose the run of $M$ from $c$ is not
-stopped at any time $v<n$. Then, after $\\mathrm{counterOverhead}(w,n)+n$ steps, the
+stopped at any time $v<n$. Then, after $\mathrm{counterOverhead}(w,n)+n$ steps, the
 clocked machine reaches the clock configuration whose body component is the
 configuration of $M$ after $n$ steps, whose clock tape is patched with the encoded
 counter word for round $n$, and whose clock head is at $cp$. The run segment up to that
 time avoids the exit states before its endpoint and keeps the clock head in
-$[cp-1,cp+|w|]$ throughout. Moreover, at every time $u\\le
-\\mathrm{counterOverhead}(w,n)+n$, the clocked configuration consists of a clock state,
-the body configuration of $M$ at some time $v\\le n$, a tape, and a head position in
+$[cp-1,cp+|w|]$ throughout. Moreover, at every time $u\le
+\mathrm{counterOverhead}(w,n)+n$, the clocked configuration consists of a clock state,
+the body configuration of $M$ at some time $v\le n$, a tape, and a head position in
 $[cp-1,cp+|w|]$.
 \end{theorem}
 
@@ -467,7 +467,7 @@ $[cp-1,cp+|w|]$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.Segment, Turing.clockCfg, Turing.sc_State, Turing.sc_clockTM, Turing.sc_exits, Turing.sc_firstExit, Turing.wordPatch}
 \difficulty{4}
-Let $e:\\{\mathrm{false},\mathrm{true}\}\\hookrightarrow\Gamma$ be an embedding, let $M$
+Let $e:\{\mathrm{false},\mathrm{true}\}\hookrightarrow\Gamma$ be an embedding, let $M$
 be a machine with $k$ work tapes over $\Gamma$ and state set $S$, and let
 $\mathrm{stopAt}:S\to\{\mathrm{false},\mathrm{true}\}$. Fix an input word $x$, a
 configuration $c$ of $M$, a state $q\in S$, Boolean words $w,w'$, a tape content
@@ -551,7 +551,24 @@ $[cp-1,cp+|w|]$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.clockCfg, Turing.sc_State, Turing.sc_clockTM, Turing.sc_finish, Turing.sc_timeout, Turing.wordPatch}
 \difficulty{3}
-Let $S$ be a finite state set, let $[?]$ nope
+Let $\Gamma$ and $S$ be types, let $e:\{\mathrm{false},\mathrm{true}\}\hookrightarrow\Gamma$
+be an embedding, let $M$ be a deterministic Turing machine with $k$ work tapes over
+$\Gamma$ and state set $S$, and let $\mathrm{stopAt}:S\to\{\mathrm{false},\mathrm{true}\}$.
+There exist a finite state set $Q$, a machine $H$ with $k+1$ work tapes over $\Gamma$,
+an injective map $\mathrm{inj}:S\to Q$, and maps
+$\mathrm{finish},\mathrm{timeout}:\mathrm{Option}(S)\to Q$ whose images are disjoint
+and disjoint from the image of $\mathrm{inj}$. For every input $x\in\Gamma^*$,
+configuration $c$ with state $q$, and Boolean word $w$ encoded on the clock tape at
+offset $cp$ (with the specified one-cell margins), the construction has two behaviors.
+If the body first reaches a configuration stopped by $\mathrm{stopAt}$ at time $\tau$
+no later than the integer encoded by $w$, then within $5\tau+2|w|+2$ host steps it
+reaches a finish state carrying the body's state, with the body configuration preserved
+and the clock tape changed only on the encoded word's interval. Before that endpoint it
+has not entered either exit state. At every time up to the endpoint, its body tapes,
+head positions, input head, and output agree with the body machine at some time at most
+$\tau$, and the clock head stays in $[cp-1,cp+|w|]$. If the body never reaches a
+stopped configuration by the value encoded by $w$, the analogous conclusion holds with
+a timeout state and the body configuration at that encoded time.
 \end{theorem}
 
 \begin{theorem}[Finite-time clock simulation]

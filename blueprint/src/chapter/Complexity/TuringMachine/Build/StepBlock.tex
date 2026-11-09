@@ -343,7 +343,7 @@ to a cell containing true.
 \uses{Turing.StepBlock.inputRank, Turing.StepBlock.workRank}
 For a machine reading an input symbol that is either a Boolean value or blank, together
 with Boolean-or-blank symbols on each of its $k$ work tapes, the read rank is the
-element of ${0,\ldots,3^{k+1}-1}$ obtained by encoding the input symbol in base $3$ as
+element of $\{0,\ldots,3^{k+1}-1\}$ obtained by encoding the input symbol in base $3$ as
 the leading digit and the work-tape symbols as the remaining rank.
 \end{definition}
 
@@ -643,7 +643,7 @@ Boolean value indicating whether $a$ has a successor state.
 Let $k,n$ be natural numbers, let $x$ be a finite Boolean word, and let $d$ be a
 configuration of the recording machine with $k+2$ work tapes and Boolean symbols. Let
 $b$ assign a bit to each of the $4k+4$ record positions, and let $s$ be either an index
-in $\\{0,\ldots,n-1\}$ or absent. Suppose $d$ is in the recording machine's initial
+in $\{0,\ldots,n-1\}$ or absent. Suppose $d$ is in the recording machine's initial
 state, its table tape contains $b(i)$ at the cell offset by $i$ from its head for each
 record position $i$, and the cells immediately following the record contain the bit
 serialization of $s$. For every natural number $u\le

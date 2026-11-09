@@ -104,11 +104,11 @@ $\sigma$ with cost at most $T$ and end in a state satisfying $Q$.
 \leanok
 \uses{Light.Ends, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.State}
 \difficulty{1}
-Let $lim$ be resource limits, $P$ a program, $d$ a call depth, $x$ a local index, $e$
-an expression, $T$ a time bound, and $Q$ a postcondition. If $e$ is safe in state
-$sigma$, its cost plus one is at most $T$, and $Q$ holds after updating local $x$ to
-the value of $e$ in $sigma$, then the assignment of $e$ to $x$ ends from $sigma$
-within time $T$ satisfying $Q$.
+Let $\mathrm{lim}$ be resource limits, $P$ a program, $d$ a call depth, $x$ a local index,
+state, and procedure index $p$ whose body in $P$ is $body$. Let $args$ be a list of argument
+$\sigma$, $\mathrm{cost}(e)+1\le T$, and $Q$ holds in the state obtained by updating the
+local map of $\sigma$ at $x$ to $e$ evaluated in $\sigma$, then assigning $e$ to $x$
+from $\sigma$ ends within time $T$ in a state satisfying $Q$.
 \end{theorem}
 
 \begin{theorem}[Store statement]
@@ -132,11 +132,11 @@ execute from $\sigma$ with cost at most $T$ and end in a state satisfying $Q$.
 \leanok
 \uses{Light.Ends, Light.State}
 \difficulty{4}
-Let $lim$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2$
-statements. If, from a state $sigma$, the first statement ends within $T_1$ in a state
-from which the second statement ends within $T_2$ satisfying $Q$, and $T_1+T_2\le T$,
-then the sequential composition $s_1;s_2$ ends from $sigma$ within time $T$ satisfying
-$Q$.
+Let $\mathrm{lim}$ be resource limits, $P$ a program, $d$ a call depth, and $s_1,s_2$
+statements. If $s_1$ executes from state $\sigma$ within time $T_1$ to a state from which
+$s_2$ executes within time $T_2$ and ends in a state satisfying $Q$, and $T_1+T_2\le T$,
+then the sequential composition $s_1;s_2$ executes from $\sigma$ within time $T$ and ends
+in a state satisfying $Q$.
 \end{theorem}
 
 \begin{theorem}[Bounded execution of a conditional]
@@ -233,7 +233,15 @@ then the loop terminates within cost $T$ and its final state satisfies $Q$.
 \leanok
 \uses{Light.Ends, Light.Expr.Safe, Light.Expr.cost, Light.Expr.val, Light.State, Light.frame}
 \difficulty{2}
-Let $L$ be a set of machine limits, $P$ a program, $d$ a natural number, $[?]$
+Let $\mathrm{lim}$ be resource limits, $P$ a program, $d$ a call depth, $\sigma$ an initial
+state, $p$ a procedure index with body $body$, $args$ a list of argument expressions, and
+$x$ the local variable that receives the result. Suppose each argument is safe in $\sigma$,
+$d<\mathrm{lim.depth}$, and the body executes at depth $d+1$ from the state whose local
+frame is initialized with the evaluated arguments and whose memory is $\sigma.mem$, within
+time $T\prime$, ending in a state $\sigma\prime$ such that updating local $x$ of $\sigma$
+to $\sigma\prime.loc(0)$ and using memory $\sigma\prime.mem$ satisfies $Q$. If the sum
+of argument evaluation costs plus $2+T\prime$ is at most $T$, then calling $p$ with
+$args$ from $\sigma$ ends within time $T$ in a state satisfying $Q$.
 \end{theorem}
 
 \begin{definition}[Variable expression]

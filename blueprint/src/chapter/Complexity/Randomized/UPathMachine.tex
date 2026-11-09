@@ -81,8 +81,8 @@ $t4$, $ttt$, $lc(0)$, $c0$, $c4$, and $stay$.
 \label{Complexity.LogProg.ixRow}
 \leanok
 \uses{Complexity.LogProg.IxSite}
-Let the index-site set be $\{y_0,y_1,y_2,w\}$. Define a position in
-$\{0,1,\ldots,14\}$ by assigning $y_0$ to $11$, $y_1$ and $y_2$ to $12$, and $w$ to
+Let the index-site set be $\{y_0,y_1,y_2,w\}$. Define a position in
+$\{0,1,\ldots,14\}$ by assigning $y_0$ to $11$, $y_1$ and $y_2$ to $12$, and $w$ to
 $4$.
 \end{definition}
 
@@ -91,9 +91,9 @@ $4$.
 \label{Complexity.LogProg.ixCol}
 \leanok
 \uses{Complexity.LogProg.IxSite}
-Let the four index sites be $y_0$, $y_1$, $y_2$, and $w$. Define a map from these sites
-to the column indices $0,,,,,,,,,	,,,,,$ by sending $y_0$ to $12$, both
-$y_1$ and $y_2$ to $11$, and $w$ to $8$.
+Let the four index sites be $y_0,y_1,y_2,w$. Map them to column indices in
+$\{0,\ldots,14\}$ by sending $y_0$ to $12$, $y_1$ and $y_2$ to $11$, and $w$ to
+$8$.
 \end{definition}
 
 \begin{definition}[Index site label assignment]
@@ -217,7 +217,7 @@ scratch sum, and scratch product.
 \label{Complexity.LogProg.UReg.v}
 \leanok
 \uses{Complexity.LogProg.UReg}
-For a register state, define its value vector on the indices $0,$ by listing, in order,
+For a register state, define its value vector on the indices $\{0,\ldots,14\}$ by listing, in order,
 its fifteen fields $p,n,a,b,cur,t,tmp,st,nx,q,L,u,w,e,f$.
 \end{definition}
 

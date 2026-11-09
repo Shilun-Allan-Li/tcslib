@@ -13,13 +13,13 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.Codec.
 \uses{Complexity.LogProg.ARM, Complexity.LogProg.AReach, Complexity.LogProg.GuardLe, Complexity.LogProg.arm_chain}
 \difficulty{1}
 Let $A$ be a register program with $m$ registers and $d$ Boolean-oracle queries, let $y$
-be its input, let $r$ be a register, and let $(3_i4)_{i\in\mathbb N}$ be a sequence of
-labels. Suppose that for every $i<k$, the instruction at label $3_i4$ increments
-register $r$ and proceeds to $3_{i+1}4$. If the initial register assignment $v$ has
-all values at most $B$ and $v(r)+k\le B$, then the program reaches $3_k4$ from
-$3_04$, with register $r$ increased by $k$ and all other registers unchanged;
-throughout the run, the prescribed safety condition holds and every register remains at
-most $B$.
+be its input, let $r$ be a register, and let $(\ell_i)_{i\in\mathbb{N}}$ be a sequence of
+labels. Suppose that for every $i<k$, the instruction at label $\ell_i$ increments
+register $r$ and proceeds to $\ell_{i+1}$. If the initial register assignment $v$ has
+all values at most $B$ and $v(r)+k\le B$, then the program reaches $\ell_k$ from
+$\ell_0$, with register $r$ increased by $k$ and every other register unchanged.
+Throughout the run the prescribed safety condition holds and every register remains
+at most $B$.
 \end{theorem}
 
 \begin{theorem}[Repeated decrement execution]
@@ -45,22 +45,23 @@ register remains at most $B$.
 \leanok
 \uses{Complexity.Codec.incChain, Complexity.LogProg.ARM, Complexity.LogProg.AReach, Complexity.LogProg.AReach.refl, Complexity.LogProg.AReach.single, Complexity.LogProg.AReach.step, Complexity.LogProg.AReach.trans, Complexity.LogProg.GuardLe, Complexity.LogProg.PreS, Complexity.LogProg.astep, Complexity.LogProg.register_update_le, Complexity.LogProg.vword_whole₁, Turing.pairEncode}
 \difficulty{6}
-Let $A$ be a register program with oracle, let $y$ be a bit string, and choose distinct
-registers $p,q,	ext{lim}$ and an oracle index $j$. Let $delta$ update a state using a
-pair of bits, and suppose the program's test state compares register $p$ with
-$	ext{lim}$, its first read queries oracle $j$ on the whole input paired with the binary
-representation of $p$, and its second read queries the same oracle using $q$ and updates
-the state by $delta$. Suppose each advance phase increments its respective register by
-one for exactly $	ext{stride}$ steps before returning to the next phase, where
-$	ext{stride}>0$. Given equal-length bit strings $u,u'$, an initial state $st_0$, and a
-valuation $v$ bounded by $B$, assume $v(	ext{lim})=v(p)+	ext{stride}|u|$,
-$v(q)+	ext{stride}|u|\le B$, and for each $i<|u|$ the oracle answers at the two
-corresponding paired inputs are the $i$th bits of $u$ and $u'$ (with out-of-range bits
-false). Then the program has a finite execution from the test state with state $st_0$ to
-the done state with state obtained by folding $\delta$ over the zipped lists $u,u'$. The
-final valuation advances $p$ and $q$ by $\text{stride}|u|$ and leaves all other
-registers unchanged; the guard conditions hold throughout, and all registers remain at
-most $B$.
+Let $A$ be a register program with $m$ registers, $d$ Boolean-oracle queries, and label
+type $\Lambda$. Let $y$ be its input, let $p,q,\mathrm{lim}$ be distinct registers, let
+$j$ be an oracle index, and let $\delta$ be a transition function on a state and a pair
+of bits. Suppose the program tests whether $p=\mathrm{lim}$, reads the first bit by
+querying oracle $j$ on $y$ paired with the binary representation of $p$, reads the
+second bit in the same way using $q$, applies $\delta$ to this pair, and then advances
+$p$ and $q$ by increment chains of $\mathrm{stride}$ steps before returning to the test.
+Assume $\mathrm{stride}>0$. Let $u,u\prime$ be equal-length bit strings, $st_0$ an
+initial state, and $v$ an initial register assignment bounded by $B$. Suppose
+$v(\mathrm{lim})=v(p)+\mathrm{stride}|u|$, $v(q)+\mathrm{stride}|u|\le B$, and, for each
+$i<|u|$, the oracle answers at the paired inputs with binary indices
+$v(p)+\mathrm{stride}i$ and $v(q)+\mathrm{stride}i$ are respectively the $i$th bits of
+$u$ and $u\prime$ (taking an out-of-range bit to be false). Then the program has a
+finite execution from the test label and state $st_0$ to the done label with state
+obtained by folding $\delta$ over the zipped lists $u,u\prime$. The final valuation
+adds $\mathrm{stride}|u|$ to registers $p$ and $q$ and leaves all other registers
+unchanged; the guard holds throughout, and every register stays at most $B$.
 \end{theorem}
 
 \begin{theorem}[Stride-based decoding loop]
@@ -101,15 +102,15 @@ configuration satisfies the program's safety condition and register bound.
 \leanok
 \uses{Complexity.LogProg.ARM, Complexity.LogProg.AReach, Complexity.LogProg.AReach.single, Complexity.LogProg.AReach.step, Complexity.LogProg.GuardLe, Complexity.LogProg.PreS, Complexity.LogProg.access_width_half, Complexity.LogProg.astep, Complexity.LogProg.register_update_le}
 \difficulty{6}
-Let $A$ be a register program with state set $Lambda$, let $oracle$ be an oracle, and
-let $y$ be an input bit string. Choose distinct registers $t$ and $c$ and states
-$test$, $halve$, $bump$, and $done$, such that the instructions at these states
-respectively test whether register $t$ is zero (proceeding to $done$ if so and
-otherwise to $halve$), replace $t$ by $floor(t/2)$ and proceed to $bump$, and
-increment $c$ and return to $test$. If all registers initially have values at most $B$
-and the initial value of $c$ plus the binary length of the initial value of $t$ is at
-most $B$, then the program reaches $done$ with $t=0$ and $c$ equal to its initial value
-plus that binary length; every configuration before reaching $done$ satisfies the
+Let $A$ be a register program with $m$ registers and an oracle, and let $y$ be an input
+bit string. Choose distinct registers $t,c$ and labels $\mathrm{test},\mathrm{halve},
+\mathrm{bump},\mathrm{done}$. Suppose the test label branches to $\mathrm{done}$ when
+$t=0$ and otherwise to $\mathrm{halve}$; the halve label replaces $t$ by
+$\lfloor t/2\rfloor$ and proceeds to $\mathrm{bump}$; and the bump label increments
+$c$ and returns to $\mathrm{test}$. Let $B$ be a natural number and $v$ an initial
+register assignment, with every register at most $B$. If $v(c)+|\operatorname{bits}(v(t))|
+\le B$, then the program reaches $\mathrm{done}$ with $t=0$ and $c$ increased by
+$|\operatorname{bits}(v(t))|$. Every configuration before the endpoint satisfies the
 execution guard for bound $B$.
 \end{theorem}
 

@@ -1763,11 +1763,11 @@ and set $\sigma_i=\sqrt{4p_i(1-p_i)}$. Then
 \leanok
 \uses{FABL.biasSigma, FABL.heterogeneousBiasedFourierCoeff, FABL.heterogeneousBiasedMonomial, FABL.heterogeneousBiasedSignPMF, FABL.pmfExpectation, FABL.pmfExpectation_abs_heterogeneousBiasedMonomial, FABL.pmfExpectation_const_mul, FABL.pmfExpectation_mono}
 \difficulty{4}
-Let $p_i\\in(0,1)$ for each coordinate $i$, let $f$ be a real-valued function on the
+Let $p_i\in(0,1)$ for each coordinate $i$, let $f$ be a real-valued function on the
 sign cube, and let $S$ be a set of coordinates. The absolute value of the Fourier
 coefficient of $f$ under the independent biased sign distribution, using the
-standardized coordinate monomials, is at most $\\left(\\prod_{i\\in
-S}\\sqrt{4p_i(1-p_i)}\\right)\\|f\\|_\\infty$.
+standardized coordinate monomials, is at most $\left(\prod_{i\in
+S}\sqrt{4p_i(1-p_i)}\right)\\|f\\|_\infty$.
 \end{theorem}
 
 \begin{theorem}[Expected biased-cube monomial]
@@ -3429,7 +3429,7 @@ $f$ on the singleton set $\{i\}$.
 \uses{FABL.heterogeneousBiasedInfluence}
 Let $n$ be a natural number, let $p=(p_i)_{i=0}^{n-1}$ be a sequence of real numbers
 with $0<p_i<1$ for every $i$, and let $f$ be a real-valued function on the sign cube
-$\\{-1,1\}^n$. The heterogeneous biased total influence of $f$ at bias vector $p$ is the
+$\{-1,1\}^n$. The heterogeneous biased total influence of $f$ at bias vector $p$ is the
 sum, over all coordinates $i$, of the heterogeneous biased influence of $f$ in
 coordinate $i$.
 \end{definition}
@@ -7587,7 +7587,7 @@ properties.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.biasedSignPMF, FABL.outputPivotalCount, FABL.pmfExpectation_const, FABL.pmfExpectation_mono, FABL.productInfluence_eq_four_mul_complement_mul_negOnePivotalProbability_of_monotone, FABL.productProbabilityPMF, FABL.productTotalInfluence, FABL.sum_biasedOutputPivotalProbability}
 \difficulty{4}
-Let $p\\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
+Let $p\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
 cube, and let $w$ be a natural number. If at every input at most $w$ coordinates are
 pivotal while the output is $-1$, then the total influence of $f$ under the product
 distribution with bias parameter $p$ is at most $4(1-p)w$.
@@ -7603,7 +7603,7 @@ distribution with bias parameter $p$ is at most $4(1-p)w$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.DNFFormula.toBooleanFunction, FABL.HasDNFWidthLE, FABL.IsNegOnePivotal, FABL.biasedSignPMF, FABL.card_negOnePivotal_le_width, FABL.productTotalInfluence, FABL.productTotalInfluence_le_four_mul_complement_mul_of_negOnePivotalCount_le}
 \difficulty{4}
-Let $p\\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
+Let $p\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
 cube, and let $w$ be a natural number. If $f$ is represented by a disjunctive normal
 form whose width is at most $w$, then its total influence under the product distribution
 with bias parameter $p$ is at most $4(1-p)w$.
@@ -9722,7 +9722,7 @@ $w$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.biasedSignPMF, FABL.outputPivotalCount, FABL.pmfExpectation_const, FABL.pmfExpectation_mono, FABL.productInfluence_eq_four_mul_bias_mul_onePivotalProbability_of_monotone, FABL.productProbabilityPMF, FABL.productTotalInfluence, FABL.sum_biasedOutputPivotalProbability}
 \difficulty{4}
-Let $p\\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
+Let $p\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
 cube, and let $w$ be a natural number. If at every input at most $w$ coordinates are
 pivotal while the output is $+1$, then the total influence of $f$ under the product
 distribution with bias parameter $p$ is at most $4pw$.
@@ -9734,7 +9734,7 @@ distribution with bias parameter $p$ is at most $4pw$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.HasCNFWidthLE, FABL.biasedSignPMF, FABL.outputPivotalCount_one_le_of_hasCNFWidthLE, FABL.productTotalInfluence, FABL.productTotalInfluence_le_four_mul_bias_mul_of_onePivotalCount_le}
 \difficulty{1}
-Let $p\\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
+Let $p\in(0,1)$, let $f$ be a monotone sign-valued function on the $n$-dimensional sign
 cube, and let $w$ be a natural number. If $f$ is represented by a conjunctive normal
 form whose width is at most $w$, then its total influence under the product distribution
 with bias parameter $p$ is at most $4pw$.
@@ -11958,12 +11958,12 @@ there.
 \leanok
 \uses{FABL.BooleanFunction, FABL.biasedMinusProbabilityPolynomial, FABL.biasedMinusProbabilityPolynomial_mem_Ioo, FABL.weakUpperThresholdLogRatio, FABL.weakUpperThresholdLogRatio_monotoneOn}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a monotone, nonconstant Boolean function. For
-$S\\subseteq[n]$, write $\\widehat f(S)=\\mathbb E_x[f(x)\\prod_{i\\in S}x_i]$ for its
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a monotone, nonconstant Boolean function. For
+$S\subseteq[n]$, write $\widehat f(S)=\mathbb E_x[f(x)\prod_{i\in S}x_i]$ for its
 uniform Fourier coefficient, and set
-$P_f(q)=\\bigl(1-\\sum_{S\\subseteq[n]}(1-2q)^{|S|}\\widehat f(S)\\bigr)/2$. If
-$0<p_c<1/2$, $p_c\\le p\\le1/2$, and $P_f(p_c)=1/2$, then
-$1-P_f(p)\\le\\frac12\\sqrt{p_c/p}$.
+$P_f(q)=\bigl(1-\sum_{S\subseteq[n]}(1-2q)^{|S|}\widehat f(S)\bigr)/2$. If
+$0<p_c<1/2$, $p_c\le p\le1/2$, and $P_f(p_c)=1/2$, then
+$1-P_f(p)\le\frac12\sqrt{p_c/p}$.
 \end{theorem}
 
 \begin{theorem}[Biased minus probability bound]
@@ -11973,12 +11973,12 @@ $1-P_f(p)\\le\\frac12\\sqrt{p_c/p}$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.biasedMinusProbabilityPolynomial, FABL.one_sub_biasedMinusProbabilityPolynomial_le_half_mul_sqrt_critical_div}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a monotone, nonconstant Boolean function. For
-$S\\subseteq[n]$, write $\\widehat f(S)=\\mathbb E_x[f(x)\\prod_{i\\in S}x_i]$ for its
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a monotone, nonconstant Boolean function. For
+$S\subseteq[n]$, write $\widehat f(S)=\mathbb E_x[f(x)\prod_{i\in S}x_i]$ for its
 uniform Fourier coefficient, and set
-$P_f(q)=\\bigl(1-\\sum_{S\\subseteq[n]}(1-2q)^{|S|}\\widehat f(S)\\bigr)/2$. Suppose
-$\\epsilon>0$, $0<p_c<1/2$, $p_c\\le p\\le1/2$, $P_f(p_c)=1/2$, and
-$p_c/(2\\epsilon)^2\\le p$. Then $1-P_f(p)\\le\\epsilon$.
+$P_f(q)=\bigl(1-\sum_{S\subseteq[n]}(1-2q)^{|S|}\widehat f(S)\bigr)/2$. Suppose
+$\epsilon>0$, $0<p_c<1/2$, $p_c\le p\le1/2$, $P_f(p_c)=1/2$, and
+$p_c/(2\epsilon)^2\le p$. Then $1-P_f(p)\le\epsilon$.
 \end{theorem}
 
 \begin{theorem}[Square-root bound at half bias]
@@ -11988,11 +11988,11 @@ $p_c/(2\\epsilon)^2\\le p$. Then $1-P_f(p)\\le\\epsilon$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.biasedMinusProbabilityPolynomial, FABL.one_sub_biasedMinusProbabilityPolynomial_le_half_mul_sqrt_critical_div}
 \difficulty{3}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a monotone, nonconstant Boolean function. For
-$S\\subseteq[n]$, write $\\widehat f(S)=\\mathbb E_x[f(x)\\prod_{i\\in S}x_i]$ for its
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a monotone, nonconstant Boolean function. For
+$S\subseteq[n]$, write $\widehat f(S)=\mathbb E_x[f(x)\prod_{i\in S}x_i]$ for its
 uniform Fourier coefficient, and set
-$P_f(q)=\\bigl(1-\\sum_{S\\subseteq[n]}(1-2q)^{|S|}\\widehat f(S)\\bigr)/2$. If
-$0<p_c<1/2$ and $P_f(p_c)=1/2$, then $1-P_f(1/2)\\le\\sqrt{p_c/2}$.
+$P_f(q)=\bigl(1-\sum_{S\subseteq[n]}(1-2q)^{|S|}\widehat f(S)\bigr)/2$. If
+$0<p_c<1/2$ and $P_f(p_c)=1/2$, then $1-P_f(1/2)\le\sqrt{p_c/2}$.
 \end{theorem}
 
 \begin{definition}[Biased sign average]
@@ -12010,7 +12010,7 @@ the sign values of the coordinates of $x$, divided by $n$.
 \leanok
 \uses{FABL.biasedSignPMF, FABL.independentProductPMF_toMeasure, FABL.productProbabilityPMF}
 \difficulty{1}
-Let $n$ be a natural number and let $p\in[0,1]$. On the sign set $[0m\{-1,1\}$, take
+Let $n$ be a natural number and let $p\in[0,1]$. On the sign set $\{-1,1\}$, take
 the probability law that assigns probability $p$ to $-1$ and probability $1-p$ to $1$.
 The measure associated with its $n$-fold independent product distribution equals the
 product measure whose coordinate marginals are this same sign law.
@@ -16937,7 +16937,7 @@ $k$-element subsets of an $n$-element set is nonempty.
 \label{FABL.shapleySubsetPMF}
 \leanok
 \uses{FABL.powersetCard_univ_nonempty}
-For each natural number $n$, let $S$ be a random subset of $\\{0,1,\\ldots,n-1\\}$. Its
+For each natural number $n$, let $S$ be a random subset of $\{0,1,\ldots,n-1\}$. Its
 distribution is obtained by choosing a size uniformly from $0$ through $n$, then
 choosing uniformly among all subsets of that size.
 \end{definition}
@@ -17034,7 +17034,7 @@ difference $f(S\cup\{i\})-f(S\setminus\{i\})$.
 \lean{FABL.subsetPointIndicator}
 \label{FABL.subsetPointIndicator}
 \leanok
-Let $n$ be a natural number, and let $A$ and $S$ be subsets of $\\{0,\ldots,n-1\}$. The
+Let $n$ be a natural number, and let $A$ and $S$ be subsets of $\{0,\ldots,n-1\}$. The
 subset point indicator at $A$ is $1$ if $S=A$ and $0$ otherwise.
 \end{definition}
 

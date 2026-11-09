@@ -6850,8 +6850,8 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.DNFFormula.size, FABL.IsBalanced, FABL.Sign, FABL.mintermDNF, FABL.uniformProbability, FABL.uniformProbability_neg_one_eq_half_of_isBalanced}
 \difficulty{4}
-Let $n$ be a positive integer, and let $f$ map the $n$-dimensional sign cube to $\\{
--1,1\\}$. If the uniform mean of the real-valued sign of $f$ is zero, then the minterm
+Let $n$ be a positive integer, and let $f$ map the $n$-dimensional sign cube to $\{
+-1,1\}$. If the uniform mean of the real-valued sign of $f$ is zero, then the minterm
 disjunctive normal form formed from the inputs on which $f$ equals $-1$ has size
 $2^{n-1}$.
 \end{theorem}
@@ -10170,8 +10170,8 @@ coordinates. Every term $T$ in $\varphi$ has width $n$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p023-b004}
 \difficulty{3}
-Let $\\psi$ be a CNF formula on $n$ variables whose Boolean function equals the parity
-function on all $n$ coordinates. Every clause appearing in $\\psi$ has width exactly
+Let $\psi$ be a CNF formula on $n$ variables whose Boolean function equals the parity
+function on all $n$ coordinates. Every clause appearing in $\psi$ has width exactly
 $n$.
 \end{theorem}
 
@@ -11984,7 +11984,7 @@ of the $r$ coordinates a sign, viewed as a unit of the integers.
 \leanok
 \uses{FABL.ParityBlockAssignment}
 \difficulty{1}
-For every natural number $r$, the set of assignments of a sign in $\{ -1,1 \}$ to each
+For every natural number $r$, the set of assignments of a sign in $\{ -1,1 \}$ to each
 of $r$ positions has cardinality $2^r$.
 \end{theorem}
 
@@ -12671,7 +12671,7 @@ internal node count of $T$.
 Let $m,k$ be natural numbers with $m=k$, let $T$ be a circuit tail indexed by $m$, let
 $g$ be an AND or OR gate, and let $v:	ext{Fin}(k)	o	ext{Sign}$ assign a sign to each
 input. Evaluating the transported tail $T$ on $v$ gives the same sign as evaluating $T$
-on the assignment $i	ext{ }[0m[0m[0m\mapsto v(i\text{ cast along }m=k)$.
+on the assignment $i	ext{ }\mapsto v(i\text{ cast along }m=k)$.
 \end{theorem}
 
 \begin{theorem}[Evaluation of the next parity layer]
@@ -14415,7 +14415,7 @@ Statement pending regeneration.
 \label{FABL.parityTreeIndexEquiv}
 \leanok
 For natural numbers $r$ and $t$, there is a bijection between pairs consisting of an
-index in $\\{0,\ldots,r-1\}$ and an index in $\{0,\ldots,r^t-1\}$, and indices in
+index in $\{0,\ldots,r-1\}$ and an index in $\{0,\ldots,r^t-1\}$, and indices in
 $\{0,\ldots,r^{t+1}-1\}$.
 \end{definition}
 
@@ -17670,7 +17670,7 @@ $(q+2)r^{q+1}2^r$.
 \label{FABL.parityRealRoot}
 \leanok
 For natural numbers $n$ and $h$, define the real number $r(n,h)=n^{1/h}$, where the
-exponent is the reciprocal of $h$ in $br$.
+exponent is the reciprocal of $h$ in $\mathbb{R}$.
 \end{definition}
 
 \begin{definition}[Parity block side length]
@@ -17759,10 +17759,10 @@ maximum number of literals in any first-layer term is at most $n$.
 \leanok
 \uses{FABL.DepthCircuit.HasDepthCircuit, FABL.DepthCircuit.width_le_dimension, FABL.depth_parityDepthCircuitFromBlocks, FABL.one_le_parityBlockSide, FABL.parityBlockSide, FABL.parityBlockSide_pow_covers, FABL.parityDepthCircuitFromBlocks, FABL.parityFunction, FABL.size_parityDepthCircuitFromBlocks_le, FABL.toBooleanFunction_parityDepthCircuitFromBlocks}
 \difficulty{4}
-For every pair of natural numbers $n$ and $q$, the parity function on $\\{-1,1\\}^n$,
+For every pair of natural numbers $n$ and $q$, the parity function on $\{-1,1\}^n$,
 given by the product of all $n$ coordinates, has a depth circuit of depth exactly $q+3$,
-size at most $(q+2)\\,b^{q+1}2^b$, and width at most $n$, where $b=\\max\\{1,\\lceil
-n^{1/(q+2)}\\rceil\\}$.
+size at most $(q+2)\\,b^{q+1}2^b$, and width at most $n$, where $b=\max\{1,\lceil
+n^{1/(q+2)}\rceil\}$.
 \end{theorem}
 
 \begin{theorem}[Canonical parity circuit size bound]
@@ -19547,9 +19547,9 @@ $(q+2)(n^{1/(q+2)}+1)^{q+1}2^{n^{1/(q+2)}+1}$.
     pdf-ffbe9c7b3306-p103-b002,
     pdf-ffbe9c7b3306-p104-b001}
 \difficulty{1}
-For every natural number $n$, the parity function on $\\{-1,1\\}^n$, given by the
+For every natural number $n$, the parity function on $\{-1,1\}^n$, given by the
 product of all $n$ coordinates, has a depth circuit of depth exactly $3$, size at most
-$2b\\,2^b$, and width at most $n$, where $b=\\max\\{1,\\lceil n^{1/2}\\rceil\\}$.
+$2b\\,2^b$, and width at most $n$, where $b=\max\{1,\lceil n^{1/2}\rceil\}$.
 \end{theorem}
 
 \begin{theorem}[Has depth circuit parity depth two]
@@ -19570,10 +19570,10 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.DepthCircuit.HasDepthCircuit, FABL.hasDepthCircuit_parity_canonical, FABL.hasDepthCircuit_parity_depth_two, FABL.parityBlockSide, FABL.parityFunction}
 \difficulty{4}
-For every pair of natural numbers $n$ and $d$ with $2\\le d$, the parity function on
-$\\{-1,1\\}^n$, given by the product of all $n$ coordinates, has a depth circuit of
+For every pair of natural numbers $n$ and $d$ with $2\le d$, the parity function on
+$\{-1,1\}^n$, given by the product of all $n$ coordinates, has a depth circuit of
 depth exactly $d$, size at most $(d-1)b^{d-2}2^b$, and width at most $n$, where
-$b=\\max\\{1,\\lceil n^{1/(d-1)}\\rceil\\}$.
+$b=\max\{1,\lceil n^{1/(d-1)}\rceil\}$.
 \end{theorem}
 
 \begin{theorem}[Agreement and disagreement probabilities]
@@ -19583,7 +19583,7 @@ $b=\\max\\{1,\\lceil n^{1/(d-1)}\\rceil\\}$.
 \uses{FABL.BooleanFunction, FABL.uniformProbability}
 \difficulty{4}
 Let $n$ be a nonnegative integer, and let $f,g$ be sign-valued functions on
-$\\{-1,1\\}^n$. The uniform probabilities that $f$ and $g$ agree and that they disagree
+$\{-1,1\}^n$. The uniform probabilities that $f$ and $g$ agree and that they disagree
 sum to $1$.
 \end{theorem}
 

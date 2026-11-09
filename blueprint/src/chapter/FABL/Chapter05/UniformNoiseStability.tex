@@ -210,11 +210,11 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.independentProductPMF, FABL.independentProductPMF_apply, FABL.uniformPMF}
 \difficulty{5}
-Let $\\iota$, $\\alpha$, and $\\beta$ be finite sets, with $\\alpha$ nonempty, and let
-$\\varphi_i:\\alpha\\to\\beta$ be given for each $i\\in\\iota$. Choose a function
-$a:\\iota\\to\\alpha$ uniformly and map it to the function $i\\mapsto\\varphi_i(a(i))$.
-Its distribution is the product, over $i\\in\\iota$, of the distributions obtained by
-choosing uniformly from $\\alpha$ and applying $\\varphi_i$.
+Let $\iota$, $\alpha$, and $\beta$ be finite sets, with $\alpha$ nonempty, and let
+$\varphi_i:\alpha\to\beta$ be given for each $i\in\iota$. Choose a function
+$a:\iota\to\alpha$ uniformly and map it to the function $i\mapsto\varphi_i(a(i))$.
+Its distribution is the product, over $i\in\iota$, of the distributions obtained by
+choosing uniformly from $\alpha$ and applying $\varphi_i$.
 \end{theorem}
 
 \begin{theorem}[Reciprocal dimension in the unit interval]
@@ -1103,8 +1103,8 @@ obtaining $-x$ from $x$ is $1-(1+\rho)/2$.
 \leanok
 \uses{FABL.Sign, FABL.coordinateNoisePMF, FABL.coordinateNoisePMF_apply_neg', FABL.coordinateNoisePMF_apply_self', FABL.correlationKeepProbability, FABL.correlationKeepProbability_le_one, FABL.inverseDimension_mem_Icc, FABL.one_sub_two_mul_mem_Icc, FABL.sum_fin_ite_ne, FABL.uniformPMF}
 \difficulty{5}
-Let $m$ be a positive natural number, let $j\\in\\{1,\\ldots,m\\}$, and let
-$x\\in\\{-1,1\\}$. Choose $a$ uniformly from $\\{1,\\ldots,m\\}$ and output $-x$ if
+Let $m$ be a positive natural number, let $j\in\{1,\ldots,m\}$, and let
+$x\in\{-1,1\}$. Choose $a$ uniformly from $\{1,\ldots,m\}$ and output $-x$ if
 $a=j$, and $x$ otherwise. The resulting probability distribution is the coordinate noise
 distribution at $x$ with correlation parameter $1-2/m$.
 \end{theorem}
@@ -1165,7 +1165,7 @@ choices, equals the noise sensitivity of $f$ at noise rate $1/m$.
 \uses{FABL.BooleanFunction, FABL.averageCoordinateFlipProbability, FABL.expect_flipPartitionFiber_eq_noiseSensitivity, FABL.expect_partitionFunction_flip, FABL.flipCoordinate, FABL.flipPartitionFiber, FABL.inverseDimension_mem_Icc, FABL.noiseSensitivity, FABL.partitionFunction, FABL.uniformProbability}
 \difficulty{5}
 Let $n,m$ be natural numbers with $m>0$, and let $f\colon\{\pm1\}^n\to\{\pm1\}$. Choose
-a sign vector $z$ uniformly and a map $\pi\colon\{1,\ldots,n\}\to\{1,[0m1\ldots,m\}$
+a sign vector $z$ uniformly and a map $\pi\colon\{1,\ldots,n\}\to\{1,1\ldots,m\}$
 uniformly and independently. The expected average, over the input coordinates, of the
 uniform probability that the partitioned function $w\mapsto f((z_iw_{\pi(i)})_{i=1}^n)$
 changes when one coordinate of $w$ is flipped equals the noise sensitivity of $f$ at

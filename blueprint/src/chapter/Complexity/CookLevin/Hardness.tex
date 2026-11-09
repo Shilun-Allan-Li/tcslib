@@ -502,7 +502,7 @@ for $0\le i\le R(|x|)$ is computable in polynomial time.
 \leanok
 \uses{Complexity.NP, Complexity.clObliviousVerifier, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.Oblivious}
 \difficulty{1}
-Let $L$ be a language in $bb{NP}$. There exist natural numbers $C,e,c,A,d$, a Boolean
+Let $L$ be a language in $\mathbb{NP}$. There exist natural numbers $C,e,c,A,d$, a Boolean
 language $V$, and a finite Turing machine $M$ over the Boolean alphabet such that, for
 every binary word $x$, membership $x\in L$ is equivalent to the existence of a word $u$
 of length exactly $C(|x|+1)^e$ with $xu\in V$. The numbers $c,A,d$ are positive, $M$ is
@@ -4565,8 +4565,8 @@ $result$ and $emit$ with budget $n\mapsto B(n)+1$.
 \label{Complexity.clA5_bridge_bound}
 \leanok
 \difficulty{4}
-Let $c,A,d,n, ell$ be natural numbers, and suppose that $ ell  le A(n+1)^d$. Then
-$c\bigl(A(n+1)^d+n+ ell+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}$.
+Let $c,A,d,n,\ell$ be natural numbers, and suppose that $\ell \le A(n+1)^d$. Then
+$c\bigl(A(n+1)^d+n+\ell+1\bigr)+1\le \bigl(c(2A+1)+1\bigr)(n+1)^{d+1}$.
 \end{lemma}
 
 \begin{lemma}[Clean installation of a polynomial-time function]
@@ -5566,7 +5566,7 @@ $|x|+C(|x|+1)^e$.
 \difficulty{4}
 Let $f$ be a function from binary words to natural numbers whose unary representation is
 polynomial-time computable. For every natural number $k$, the function that maps $x$ to
-the unary representation of $ f(x)/k $ is polynomial-time computable, where division is
+the unary representation of $f(x)/k$ is polynomial-time computable, where division is
 natural-number division and in particular $f(x)/0=0$.
 \end{lemma}
 
@@ -6015,7 +6015,7 @@ formed by the first $m$ assigned bits, in order, is $a(j)$.
 \leanok
 \uses{Complexity.clA5ReadInput, Complexity.clA5ReadInput_get}
 \difficulty{4}
-Let $C,e\in\mathbb{N}$, let $x$ be a binary word, and let $a:\mathbb{N}\to\{0,1\\}$
+Let $C,e\in\mathbb{N}$, let $x$ be a binary word, and let $a:\mathbb{N}\to\{0,1\}$
 agree with $x$ on every index $j<|x|$, using false as the default bit beyond the indexed
 word. Then there is a binary word $u$ of length $C(|x|+1)^e$ such that the first
 $|x|+C(|x|+1)^e$ bits assigned by $a$ form the concatenation $xu$.

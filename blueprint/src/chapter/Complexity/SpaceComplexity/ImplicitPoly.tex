@@ -204,13 +204,7 @@ than $N$ has shape bounded by $F$ and $W$.
 \leanok
 \uses{Complexity.ImplicitEnum.cfg, Complexity.ImplicitEnum.cfg_state, Complexity.ImplicitEnum.prog, Complexity.ImplicitEnum.run, Complexity.ImplicitEnum.vword_call, Complexity.ImplicitlyLogspaceComputable, Complexity.LogProg.CallOK, Complexity.LogProg.CleanRun.mono, Complexity.LogProg.bankK, Complexity.LogProg.bankStart, Complexity.LogProg.bankTM, Complexity.LogProg.bank_cleanRun, Complexity.LogProg.callSegs, Complexity.LogProg.compileFinTM, Complexity.LogProg.compile_space, Complexity.LogProg.length_bits_le_log, Complexity.LogProg.log_poly_bound, Complexity.LogProg.regWords, Complexity.LogProg.rrun, Complexity.LogProg.tapeWord_bufferTape, Complexity.LogProg.vword, Complexity.indexLang, Complexity.logSpace, Complexity.logSpace_mono, Complexity.pairEncode_mem_indexLang, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInSpace, Turing.FinTM.DecidesInSpace, Turing.MultiTapeTM.indicator, Turing.pairEncode}
 \difficulty{7}
-Let $f:\{0,1	ext{	extasciicircum*}	oacks lash	extbackslash{0,1	extasciicircum*}$ have
-polynomially bounded output length, and suppose that both languages of encoded pairs
-$(x,i)$ for which the $i$th output bit of $f(x)$ is $1$, and for which $i<|f(x)|$,
-belong to $	ext{LOGSPACE}$. Then there are a finite-state deterministic Turing machine
-$M$ and a constant $c	ext{ in }acks lash	extbackslash N$ such that, on every input $x$,
-$M$ outputs $f(x)$ and uses at most $c(acks lash	extbackslash log |x|)$ work-tape
-cells.
+Let $f:\{0,1\}^*\to\{0,1\}^*$ have polynomially bounded output length. Suppose the languages $\{\langle x,i\rangle : f(x)_i=1\}$ and $\{\langle x,i\rangle : i<|f(x)|\}$ both belong to $\mathsf{L}$, where indices $i$ are written in binary. Then there are a deterministic finite-state Turing machine $M$ and a constant $c$ such that, on every input $x$, $M$ outputs $f(x)$ using at most $c(\lfloor\log_2 |x|\rfloor+1)$ work-tape cells (with $\lfloor\log_2 0\rfloor$ interpreted as $0$).
 \end{theorem}
 
 \begin{theorem}[Polynomial-time computability from implicit logspace]
@@ -219,11 +213,5 @@ cells.
 \leanok
 \uses{Complexity.ImplicitlyLogspaceComputable, Complexity.ImplicitlyLogspaceComputable.computesInSpace, Complexity.PolyTimeComputable, Complexity.polyTimeComputable_of_computesInSpace}
 \difficulty{1}
-Let $f:acks lash	extbackslash{0,1	extasciicircum*}	oacks
-lash	extbackslash{0,1	extasciicircum*}$ have polynomially bounded output length, and
-suppose that both languages of encoded pairs $(x,i)$ for which the $i$th output bit of
-$f(x)$ is $1$, and for which $i<|f(x)|$, belong to $	ext{LOGSPACE}$. Then there are a
-finite-state deterministic Turing machine $M$ and constants $C,c	ext{ in }acks
-lash	extbackslash N$ such that on every input of length $n$, $M$ outputs $f(x)$ within
-$C(n+1)^c$ steps.
+Let $f:\{0,1\}^*\to\{0,1\}^*$ have polynomially bounded output length, and suppose the languages $\{\langle x,i\rangle : f(x)_i=1\}$ and $\{\langle x,i\rangle : i<|f(x)|\}$ both belong to $\mathsf{L}$, with indices $i$ written in binary. Then $f$ is computable by a deterministic Turing machine in polynomial time: there are constants $C,c$ such that on each input $x$ of length $n$, the machine outputs $f(x)$ within $C(n+1)^c$ steps.
 \end{theorem}

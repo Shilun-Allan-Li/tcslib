@@ -218,9 +218,9 @@ prescribed nested pair-decoding projections to $z$.
 \leanok
 \uses{Complexity.P, Complexity.inter_mem_P}
 \difficulty{1}
-Let $p$ and $q$ be predicates on finite binary strings. If the languages $\\{z :
-p(z)\\}$ and $\\{z : q(z)\\}$ both belong to $\\mathsf{P}$, then their intersection
-language $\\{z : p(z) \\text{ and } q(z)\\}$ belongs to $\\mathsf{P}$.
+Let $p$ and $q$ be predicates on finite binary strings. If the languages $\{z :
+p(z)\}$ and $\{z : q(z)\}$ both belong to $\mathsf{P}$, then their intersection
+language $\{z : p(z) \text{ and } q(z)\}$ belongs to $\mathsf{P}$.
 \end{theorem}
 
 \begin{theorem}[Closure of Polynomial Time Under Union]
@@ -229,9 +229,9 @@ language $\\{z : p(z) \\text{ and } q(z)\\}$ belongs to $\\mathsf{P}$.
 \leanok
 \uses{Complexity.P, Complexity.union_mem_P}
 \difficulty{1}
-Let $p$ and $q$ be predicates on finite binary strings. If the languages $\\{z :
-p(z)\\}$ and $\\{z : q(z)\\}$ both belong to $\\mathsf{P}$, then their union language
-$\\{z : p(z) \\text{ or } q(z)\\}$ belongs to $\\mathsf{P}$.
+Let $p$ and $q$ be predicates on finite binary strings. If the languages $\{z :
+p(z)\}$ and $\{z : q(z)\}$ both belong to $\mathsf{P}$, then their union language
+$\{z : p(z) \text{ or } q(z)\}$ belongs to $\mathsf{P}$.
 \end{theorem}
 
 \begin{theorem}[Closure of Polynomial Time Under Complement]
@@ -240,9 +240,9 @@ $\\{z : p(z) \\text{ or } q(z)\\}$ belongs to $\\mathsf{P}$.
 \leanok
 \uses{Complexity.P, Complexity.compl_mem_P}
 \difficulty{1}
-Let $p$ be a predicate on finite binary strings. If the language $\\{z : p(z)\\}$
-belongs to $\\mathsf{P}$, then its complement language $\\{z : \\neg p(z)\\}$ also
-belongs to $\\mathsf{P}$.
+Let $p$ be a predicate on finite binary strings. If the language $\{z : p(z)\}$
+belongs to $\mathsf{P}$, then its complement language $\{z : \neg p(z)\}$ also
+belongs to $\mathsf{P}$.
 \end{theorem}
 
 \begin{theorem}[Polynomial-Time Circuit Satisfiability Queries]
@@ -252,10 +252,8 @@ belongs to $\\mathsf{P}$.
 \uses{BoolCircuit.CVAL_mem_P, Complexity.KarpLipton.Query, Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.preimage_mem_P}
 \difficulty{1}
 Let $d,y,e$ be polynomial-time computable functions from finite binary strings to finite
-binary strings. The language of strings $z$ for which the pair encoding $\\langle d(z),
-\\langle y(z),e(z)\\rangle\\rangle$ is a yes-instance of circuit satisfiability belongs
-to $\\mathsf{P}$; here a yes-instance encodes a fan-in-two Boolean circuit together with
-an input on which the circuit evaluates to true.
+binary strings. The language of strings $z$ for which the circuit with code $d(z)$ accepts
+the input encoding of $(y(z),e(z))$ belongs to $\mathsf{P}$.
 \end{theorem}
 
 \begin{theorem}[Polynomial-Time Length Equality Language]
@@ -264,11 +262,12 @@ an input on which the circuit evaluates to true.
 \leanok
 \uses{Complexity.KarpLipton.gx, Complexity.KarpLipton.polyTimeComputable_gx, Complexity.P, Complexity.PolyHierarchy.unaryPT_poly, Complexity.PolyTimeComputable, Complexity.lenEq_preimage_mem_P}
 \difficulty{3}
-Let $C,c$ be natural numbers and let $f$ be a polynomial-time computable function from
-finite binary strings to finite binary strings. The language of strings $z$ satisfying
-$|f(z)| = C\,(|g(z)|+1)^c$, where $g$ takes the first component of a parsed
-self-delimiting pair and returns the empty string if parsing fails, belongs to
-$\\mathsf{P}$.
+Let $C,c$ be natural numbers and let $f$ be a polynomial-time computable function on
+finite binary strings. The language of strings $z$ satisfying
+$|f(z)| = C\,(|x(z)|+1)^c$ belongs to $\mathsf{P}$, where $x(z)$ is obtained by
+taking the first component of $z$ as a self-delimiting pair and then the first component
+of that result. Each projection returns the empty string if its input does not parse as a
+pair.
 \end{theorem}
 
 \begin{theorem}[Polynomial-Time Length Bound Language]
@@ -277,11 +276,12 @@ $\\mathsf{P}$.
 \leanok
 \uses{Complexity.KarpLipton.gx, Complexity.KarpLipton.polyTimeComputable_gx, Complexity.P, Complexity.PolyHierarchy.unaryPT_poly, Complexity.PolyTimeComputable, Complexity.lenLe_preimage_mem_P}
 \difficulty{3}
-Let $C,c$ be natural numbers and let $f$ be a polynomial-time computable function from
-finite binary strings to finite binary strings. The language of strings $z$ satisfying
-$|f(z)| \\le C\,(|g(z)|+1)^c$, where $g$ takes the first component of a parsed
-self-delimiting pair and returns the empty string if parsing fails, belongs to
-$\\mathsf{P}$.
+Let $C,c$ be natural numbers and let $f$ be a polynomial-time computable function on
+finite binary strings. The language of strings $z$ satisfying
+$|f(z)| \le C\,(|x(z)|+1)^c$ belongs to $\mathsf{P}$, where $x(z)$ is obtained by
+taking the first component of $z$ as a self-delimiting pair and then the first component
+of that result. Each projection returns the empty string if its input does not parse as a
+pair.
 \end{theorem}
 
 \begin{theorem}[Polynomial-time closure for the bad-specification language]
@@ -290,16 +290,15 @@ $\\mathsf{P}$.
 \leanok
 \uses{Complexity.KarpLipton.badLang, Complexity.KarpLipton.dropMarker, Complexity.KarpLipton.gU, Complexity.KarpLipton.gj, Complexity.KarpLipton.gp, Complexity.KarpLipton.gu, Complexity.KarpLipton.gx, Complexity.KarpLipton.polyTimeComputable_dropMarker, Complexity.KarpLipton.polyTimeComputable_gU, Complexity.KarpLipton.polyTimeComputable_gj, Complexity.KarpLipton.polyTimeComputable_gp, Complexity.KarpLipton.polyTimeComputable_gu, Complexity.KarpLipton.polyTimeComputable_gx, Complexity.KarpLipton.pred_and, Complexity.KarpLipton.pred_len_eq, Complexity.KarpLipton.pred_len_le, Complexity.KarpLipton.pred_not, Complexity.KarpLipton.pred_or, Complexity.KarpLipton.pred_query, Complexity.P, Complexity.PolyHierarchy.unaryPT_poly, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.append, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_prepend, Complexity.polyTimeComputable_unary, Complexity.preimage_mem_P, Turing.pairEncode}
 \difficulty{5}
-Let $C,c	ext{ in }acks lash	extbackslash N$, and let $V$ be a language of bit strings
-in $P$. Form the language of strings $z$ for which the five decoded components
-$x,U,u,j,p$ satisfy the following: $|u|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, and $|p|\le
-C(|x|+1)^c$; and at least one of the following holds. The circuit encoded by the
-marker-deleted $U$, queried on $g x,ug$ with the all-ones marker of length
-$C(|x|+1)^c$ followed by $0$, rejects; or $|p|=C(|x|+1)^c$, that circuit accepts the
-query with suffix $0p$, and $gg x,pg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the
-circuit accepts the query with suffix $1 0 p$ preceded by $|j|$ ones, and rejects both
-queries with suffixes $0(p0)$ and $0(p1)$ preceded by $|j|$ ones. Then this language is
-in $P$.
+Let $C,c$ be natural numbers and let $V$ be a language in $\mathsf{P}$. Decode each
+input $z$ by the total nested pair projections into $(x,U,u,j,p)$, using empty strings
+when a required pair parse fails, and put $B=C(|x|+1)^c$. The language of inputs
+satisfying $|u|=B$, $|j|\le B$, and $|p|\le B$, together with at least one of the
+following conditions, belongs to $\mathsf{P}$: the circuit whose code is obtained by
+removing the marker from $U$ rejects the input encoding of $(x,u)$ with certificate
+$1^B0$; or $|p|=B$, that circuit accepts certificate $0p$, and the encoding of
+$((x,u),p)$ is not in $V$; or $|j|+|p|+1=B$, that circuit accepts certificate
+$1^{|j|}10p$ and rejects both certificates $1^{|j|}0p0$ and $1^{|j|}0p1$.
 \end{theorem}
 
 \begin{definition}[Inner language]
@@ -318,8 +317,8 @@ does not belong to the bad-specification language determined by $C$, $c$, and $V
 \leanok
 \uses{Complexity.KarpLipton.BadSpec, Complexity.KarpLipton.gU_pair, Complexity.KarpLipton.gx_pair, Complexity.KarpLipton.innerLang, Complexity.KarpLipton.mem_badLang, Turing.pairEncode}
 \difficulty{4}
-Let $C,c$ be natural numbers, let $V$ be a language of bit strings, and let $x,U$ be bit
-strings. Write $B=C(|x|+1)^c$, and say that a query $(d,y,e)$ succeeds when the encoding
+Let $C,c\in\mathbb{N}$, let $V$ be a language of bit strings, and let $x,U$ be
+bit strings. Write $B=C(|x|+1)^c$, and say that a query $(d,y,e)$ succeeds when the encoding
 of $d$ paired with the encoding of $y$ and $e$ belongs to the circuit-satisfiability
 language. The encoding of $x$ paired with $U$ belongs to the language of strings $w$
 such that every bit string $t$ has the encoding of $w$ paired with $t$ outside the bad
@@ -339,10 +338,9 @@ certificates consisting of $|j|$ ones followed respectively by $0,p,0$ and $0,p,
 \leanok
 \uses{Complexity.KarpLipton.badLang, Complexity.KarpLipton.badLang_mem_P, Complexity.KarpLipton.gU, Complexity.KarpLipton.gj, Complexity.KarpLipton.gp, Complexity.KarpLipton.gu, Complexity.KarpLipton.gx, Complexity.KarpLipton.innerLang, Complexity.KarpLipton.mem_badLang, Complexity.NP, Complexity.P, Complexity.coNP, Complexity.length_pairFstD_le, Complexity.mem_NP_iff_exists_length_le, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{5}
-Let $C,c\in\mathbb{N}$ and let $V$ be a language of bit strings belonging to
-$\mathrm{P}$. The language consisting of those bit strings $w$ for which, for every bit
-string $t$, the pairing of $w$ and $t$ does not belong to the language defined by the
-bad-specification condition with parameters $C,c,V$ belongs to $\mathrm{coNP}$.
+Let $C,c$ be natural numbers and let $V$ be a language in $\mathsf{P}$. The language of
+strings $w$ such that, for every bit string $t$, the encoding of $(w,t)$ is outside the
+bad-specification language defined by $C,c,V$ belongs to $\mathsf{coNP}$.
 \end{theorem}
 
 \begin{theorem}[Witness existence from good specifications]
@@ -351,15 +349,14 @@ bad-specification condition with parameters $C,c,V$ belongs to $\mathrm{coNP}$.
 \leanok
 \uses{Complexity.KarpLipton.BadSpec, Complexity.KarpLipton.Query, Complexity.KarpLipton.dropMarker, Turing.pairEncode}
 \difficulty{6}
-Let $C,c	ext{ in }acks lash	extbackslash N$, let $V$ be a language of bit strings, and
-let $x,U$ be bit strings. Suppose that for every triple of bit strings $u',j,p$, the
-length bounds $|u'|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, and $|p|\le C(|x|+1)^c$ do not
-hold together with any of the three bad cases: the corresponding circuit query rejects
-the all-ones marker; or $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $gg
-x,pg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$
-ones accepts, and both queries on $0(p0)$ and $0(p1)$ preceded by $|j|$ ones reject.
-Then for every $u$ of length $C(|x|+1)^c$, there is a string $v$ of that length such
-that $gg x,ug,vg$ belongs to $V$.
+Let $C,c$ be natural numbers, let $V$ be a language of bit strings, and let $x,U$ be bit
+strings. Put $B=C(|x|+1)^c$. Suppose there is no triple of bit strings $u,j,p$ satisfying
+$|u|=B$, $|j|\le B$, and $|p|\le B$ together with any of these conditions, where each
+query uses the circuit whose code is obtained by deleting the marker from $U$ and input
+encoding $(x,u)$: it rejects certificate $1^B0$; or $|p|=B$, it accepts certificate $0p$,
+and $((x,u),p)\notin V$; or $|j|+|p|+1=B$, it accepts certificate $1^{|j|}10p$ and
+rejects both $1^{|j|}0p0$ and $1^{|j|}0p1$. Then for every $u$ of length $B$, there is a
+bit string $v$ of length $B$ such that $((x,u),v)\in V$.
 \end{theorem}
 
 \begin{theorem}[Circuit query and family language equivalence]
@@ -400,24 +397,18 @@ $q(C,c,x)=2\bigl(2|x|+2+C(|x|+1)^c\bigr)+2+C(|x|+1)^c+1$.
 \leanok
 \uses{BoolCircuit.DAGCircuit.encode, BoolCircuit.DAGCircuitFamily, BoolCircuit.DAGCircuitFamily.HasFaninTwo, BoolCircuit.DAGCircuitFamily.language, Complexity.KarpLipton.BadSpec, Complexity.KarpLipton.Query, Complexity.KarpLipton.dropMarker, Complexity.KarpLipton.length_query, Complexity.KarpLipton.mem_prefixLang_iff, Complexity.KarpLipton.prefixLang, Complexity.KarpLipton.qlen, Complexity.KarpLipton.query_iff_mem_language, Complexity.KarpLipton.wLen_pairEncode, Turing.pairEncode}
 \difficulty{6}
-Let $C,c	ext{ in }acks lash	extbackslash N$, let $V$ be a language of bit strings, and
-let $F$ be a family of acyclic Boolean circuits with at most two inputs per gate, with
-well-formed gates, one circuit for each input length. Suppose the language accepted by
-$F$ is the language of strings $q$ for which, writing $(x,y)$ for the decoded pair
-components of $q$, there is a suffix $s$ such that $|y' s|=C(|x|+1)^c$ and $g
-x,y'sg	ext{ belongs to }V$, where $y'$ is obtained by deleting the marker from $y$. For
-bit strings $x,U$, suppose deleting the marker from $U$ gives the encoding of the
-circuit in $F$ on input length $2(2|x|+2+C(|x|+1)^c)+2+(C(|x|+1)^c+1)$. Suppose also
-that for every $u$ of length $C(|x|+1)^c$ there is a $v$ of that same length with $gg
-x,ug,vg	ext{ belongs to }V$. Then for every bit strings $u,j,p$ it is not the case
-that all three length bounds $|u|=C(|x|+1)^c$, $|j|\le C(|x|+1)^c$, $|p|\le C(|x|+1)^c$
-hold together with at least one of these: the corresponding circuit query on $g x,ug$
-rejects the all-ones marker; $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $gg
-x,pg
-otin V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$ ones accepts,
-and both queries formed by preceding $0(p0)$ and $0(p1)$ by $|j|$ ones reject. Here $g
-a,bg$ denotes the encoding of a pair, and each query uses the circuit code obtained by
-deleting the marker from $U$.
+Let $C,c$ be natural numbers, let $V$ be a language of bit strings, and let $F$ be a
+family of acyclic Boolean circuits with fan-in at most two. Suppose $F$ decides the prefix
+language for $V$ with witness length $C(|y|+1)^c$: an input encoding $(y,e)$ is accepted
+exactly when, after deleting the leading marker $1^k0$ from $e$ to obtain $p$, some suffix
+$s$ makes $ps$ a string of length $C(|y|+1)^c$ with $(y,ps)\in V$. Let $x,U$ be bit
+strings such that deleting the marker from $U$ gives the code of $F$'s circuit at input
+length $2(2|x|+2+B)+2+(B+1)$, where $B=C(|x|+1)^c$. Suppose also that for every $u$ of
+length $B$, there is a $v$ of length $B$ with $((x,u),v)\in V$. Then no triple $u,j,p$
+with $|u|=B$, $|j|\le B$, and $|p|\le B$ satisfies any of these conditions: the circuit
+rejects certificate $1^B0$; $|p|=B$ and it accepts certificate $0p$ while
+$((x,u),p)\notin V$; or $|j|+|p|+1=B$ and it accepts certificate $1^{|j|}10p$ while
+rejecting both $1^{|j|}0p0$ and $1^{|j|}0p1$.
 \end{theorem}
 
 \begin{theorem}[Polynomial bound on circuit encoding length]

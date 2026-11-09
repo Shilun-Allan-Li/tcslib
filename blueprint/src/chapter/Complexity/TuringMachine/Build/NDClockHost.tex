@@ -50,28 +50,27 @@ value containing $v$ exactly when $o$ is the singleton word $[v]$.
 \lean{Turing.ClockPhase}
 \label{Turing.ClockPhase}
 \leanok
-For state types $SS$ and $AS$, define the clock phase to be one of: a boot phase
-carrying a yardstick machine state; either of two rewind phases; a run phase carrying an
-optional attempt-machine state and an optional captured value in $none, none,
-some	ext{-valued Boolean}$; or one of three reset-sweep phases, in leftward,
-rightward, then leftward order.
+For state types $SS$ and $AS$, the clock phase is a boot phase carrying a yardstick
+machine state; one of two rewind phases; a run phase carrying an optional attempt state
+and a captured value of type $\mathrm{Option}(\mathrm{Option}(\mathrm{Bool}))$; or one
+of three reset-sweep phases, in leftward, rightward, then leftward order.
 \end{definition}
 
 \begin{definition}[Combined tape slots]
 \lean{Turing.ClockHost.slots}
 \label{Turing.ClockHost.slots}
 \leanok
-Given a type $α$, nonnegative integers $s$ and $a$, functions $f:Fin(s)	o α$ and
-$g:Fin(a)	o α$, and an element $y	o α$, define a function on $s+a+1$ slots by placing
-the values of $f$ first, then the values of $g$, and then the constant value $y$ in the
-final slot.
+Given a type $\alpha$, nonnegative integers $s,a$, functions
+$f:\mathrm{Fin}(s)\to\alpha$ and $g:\mathrm{Fin}(a)\to\alpha$, and an element
+$y\in\alpha$, define a function on $s+a+1$ slots by placing the values of $f$ first,
+then the values of $g$, and then the constant value $y$ in the final slot.
 \end{definition}
 
 \begin{definition}[State-machine slot indices]
 \lean{Turing.ClockHost.sI}
 \label{Turing.ClockHost.sI}
 \leanok
-For nonnegative integers $s$ and $a$, the index associated to $i	o Fin(s)$ is the
+For nonnegative integers $s,a$ and $i\in\mathrm{Fin}(s)$, the associated index is the
 corresponding position among the first $s$ slots of a list of $s+a+1$ slots.
 \end{definition}
 
@@ -79,7 +78,7 @@ corresponding position among the first $s$ slots of a list of $s+a+1$ slots.
 \lean{Turing.ClockHost.aI}
 \label{Turing.ClockHost.aI}
 \leanok
-For nonnegative integers $s$ and $a$, the index associated to $i	o Fin(a)$ is the
+For nonnegative integers $s,a$ and $i\in\mathrm{Fin}(a)$, the associated index is
 position $s+i$ among the $a$ slots following the first $s$ slots of a list of $s+a+1$
 slots.
 \end{definition}
@@ -144,12 +143,10 @@ combined set.
 \lean{Turing.ClockHost.tapeAfter}
 \label{Turing.ClockHost.tapeAfter}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg}
-Given an action consisting of a captured output value and a head movement, a work tape
-$t:ℤ	oOption(Bool)$, and a head position $p	oℤ$, define the resulting tape as the
-work tape obtained by applying that action to a one-tape configuration whose state is
-absent, whose output is empty, and whose sole work tape and head position are $t$ and
-$p$.
+Given an action consisting of a captured output value and a head movement, a tape
+$t:\mathbb{Z}\to\mathrm{Option}(\mathrm{Bool})$, and a head position $p\in\mathbb{Z}$,
+define the resulting tape by applying the action to a one-tape configuration with absent
+state, empty output, and sole work tape and head position $t$ and $p$.
 \end{definition}
 
 \begin{definition}[Clocked host configuration]

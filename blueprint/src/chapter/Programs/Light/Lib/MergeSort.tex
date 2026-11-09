@@ -209,13 +209,13 @@ beginning at $a$ is sorted and the required memory outside it is preserved.
 \leanok
 \uses{Light.Meets, Light.Meets.of_body, Light.MergeSort.Procs, Light.MergeSort.Sorted, Light.MergeSort.body_ends, Light.Seg, Light.sortTime}
 \difficulty{6}
-Let a program contain the specified sort, halving, merge, and copy procedures. Suppose
-its word limit is at least both the address-space size and $1$. Let $L$ be a list of
-integers, and let $[?25h[?25l[?25l[?25l$ be a memory function whose values on the
-interval starting at $a$ agree with $L$; assume $a+|L|\le fr$ and $fr+|L|\le$ the
-address-space size. For every recursion depth $d$ with $d+\lceil\log_2 |L|\rceil+1$ at
-most the depth limit, the sort procedure, given $|L|$, $a$, and $fr$, runs within
-$61|L|\lceil\log_2 |L|\rceil+74\max(|L|-1,0)+4$ steps and returns a list that is a
-sorted permutation of $L$ in the interval starting at $a$, while preserving memory at
-every address below $fr$ outside that interval.
+Let $lim$ be resource limits, and let $P$ contain the sort, halving, merge, and copy procedures.
+Suppose $lim.space\le lim.word$ and $1\le lim.word$. Let $L$ be a list of integers,
+$a$ its starting address, $fr$ a scratch-space address, and $\mu$ a memory storing $L$
+at $a$. Assume $a+|L|\le fr$ and $fr+|L|\le lim.space$. For every recursion depth $d$
+with $d+\mathrm{clog}_2(|L|)+1\le lim.depth$, sorting the $|L|$ items at $a$ using
+$fr$ terminates within
+$61|L|\,\mathrm{clog}_2(|L|)+74(|L|-1)+4$ steps (with natural-number subtraction),
+and leaves at $a$ a sorted permutation of $L$. Among addresses below $fr$, only the
+interval from $a$ of length $|L|$ may have changed.
 \end{theorem}

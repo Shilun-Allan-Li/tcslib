@@ -59,11 +59,11 @@ $x$ has the form $\langle 1^n,w\rangle$ for some $n$ and some canonical binary w
 \leanok
 \uses{Complexity.LogProg.NARM.detPart, Complexity.LogProg.NPreS, Complexity.LogProg.PreS, Complexity.LogProg.guessValidA, Complexity.LogProg.guessValidA_ans, Complexity.LogProg.guessValidA_halts, Complexity.LogProg.length_bits_le, Complexity.LogProg.narm_decides, Complexity.LogProg.validPlainLang, Complexity.NL, Complexity.logSpace}
 \difficulty{4}
-Let $L$ consist of the Boolean words of the form $[?]$; more precisely, words that
-encode a pair whose first component is a string of $n$ ones for some $n\in\mathbb N$,
-and whose second component is a canonical Boolean word (empty or ending in $1$), using
-the encoding that doubles each bit of the first component and then appends $01$ and the
-second component. Then $L$ belongs to nondeterministic logarithmic space: there is a
+Let $L$ be the language of Boolean words $x$ for which there exist $n\in\mathbb{N}$ and
+a canonical Boolean word $w$ such that $x=\mathrm{pairEncode}((1^n),w)$, where $(1^n)$
+denotes the length-$n$ word of ones. Here $\mathrm{pairEncode}$ doubles each bit of its
+first component, then appends $01$ and its second component. Then $L$ belongs to
+nondeterministic logarithmic space: there is a
 finite-state nondeterministic Turing machine with a fixed finite number of work tapes
 and a constant $c\in\mathbb N$ that halts on every input along every choice sequence of
 a common length for that input, uses at most $c(\lfloor\log_2 |x|\rfloor+1)$ work-tape

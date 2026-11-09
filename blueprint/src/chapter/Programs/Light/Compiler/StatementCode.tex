@@ -335,9 +335,9 @@ The epilogue size is $5$.
 \label{Light.Compiler.dispatcher}
 \leanok
 \uses{Light.Compiler.cONE, Light.Compiler.cRR, WordRAM.Instr}
-For each integer $j$ with $0  le j<n$, the dispatcher appends two instructions:
-decrement the return register by one, then branch to code position $j$ if that register
-is negative. Thus the dispatcher is the concatenation of these pairs in increasing order
+For each natural number $j<n$, the dispatcher appends two instructions: subtract one
+from register $c_{\mathrm{RR}}$, then branch to code position $j$ if that register is
+negative. The dispatcher concatenates these pairs in increasing order of $j$.
 of $j$.
 \end{definition}
 

@@ -313,12 +313,11 @@ $Z,\sigma,q$.
 \leanok
 \uses{Light.Compiler.Rel, Light.Compiler.Rel.of_agreeOutside, Light.Compiler.Scratch, Light.Compiler.Stack, WordRAM.AgreeOutside, WordRAM.AgreeOutside.read}
 \difficulty{2}
-Let $W$ be a word size, let $Z$ be a size specification with $F$ local variables per
-frame, stack capacity $Q$, and space limit, and let $c3e$ be a state. Suppose a memory
-map $m$ satisfies the relation for $Z$, $c3$, and a frame pointer index $q$, where $1
-cleq q$. If another memory map $m'$ agrees with $m$ outside the union of the scratch
-addresses and the stack addresses indexed by $q+F cleq j<Q$, then $m'$ also satisfies
-the relation for $Z$, $c3$, and $q$.
+Let $W$ be a word size, $Z$ a layout with $F$ local variables per frame, stack capacity $Q$,
+and space limit, and let $\sigma$ be a light state. If memory $m$ represents $\sigma$ at
+frame pointer $q$ and $1\le q$, then any memory $m\prime$ agreeing with $m$ outside the
+union of the scratch cells and stack cells at indices $j$ with $q+F\le j<Q$ also
+represents $\sigma$ at frame pointer $q$.
 \end{theorem}
 
 \begin{theorem}[Updating a local variable]
@@ -341,7 +340,7 @@ $v$, satisfies the same storage relation at frame pointer $q$.
 \leanok
 \uses{Light.Compiler.Rel, Light.Compiler.Rel.of_agreeOutside, Light.Limits.Addr, WordRAM.AgreeOutside.refl, WordRAM.AgreeOutside.update, WordRAM.wd}
 \difficulty{4}
-Let $W$ be a word width, $Z$ a size configuration, and let a light state $[0m\sigma$
+Let $W$ be a word width, $Z$ a size configuration, and let a light state $\sigma$
 and a word-RAM memory $m$ satisfy the stated relation at stack position $q$. If $1\le q$
 and $a$ is a valid address, meaning $0\le a<Z.\mathrm{lim}.\mathrm{space}$, then for
 every integer $v$, updating the light state's memory at the natural-number address

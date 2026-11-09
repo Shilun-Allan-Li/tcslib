@@ -1180,7 +1180,7 @@ $\operatorname{NS}_{\delta}(f)\le\eta(\delta)$ for all such $n,f$ and $0<\delta\
   {pdf-ffbe9c7b3306-p044-b005}
 \difficulty{1}
 For every natural number $n$, every function $f$ in the linear threshold class on the
-Boolean cube $\\{0,1\\}^n$ takes only the values $-1$ and $1$.
+Boolean cube $\{0,1\}^n$ takes only the values $-1$ and $1$.
 \end{lemma}
 
 \begin{lemma}[Closure under negation and identification]
@@ -1188,10 +1188,10 @@ Boolean cube $\\{0,1\\}^n$ takes only the values $-1$ and $1$.
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification, BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.isLinearThreshold_affine, BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign, BooleanAnalysis.ThresholdFunctions.linearThresholdClass, BooleanAnalysis.ThresholdFunctions.thresholdSign, BooleanAnalysis.boolToSign}
 \difficulty{5}
-For all natural numbers $n,m$, if $f$ is a $\pm 1$-valued linear threshold function on
-$\{0,1\}^n$, then for every $z\in\{0,1\}^n$ and every map
+For all natural numbers $n,m$, if $f$ is a $\pm 1$-valued linear threshold function on
+$\{0,1\}^n$, then for every $z\in\{0,1\}^n$ and every map
 $\pi:\{0,\ldots,n-1\}\to\{0,\ldots,m-1\}$, the function $g:\{0,1\}^m\to\mathbb R$
-defined by $g(w)=f((z_i+w_{\pi(i)}\bmod 2)_{i=0}^{n-1})$ is a $\pm 1$-valued linear
+defined by $g(w)=f((z_i+w_{\pi(i)}\bmod 2)_{i=0}^{n-1})$ is a $\pm 1$-valued linear
 threshold function.
 \end{lemma}
 
@@ -4246,10 +4246,10 @@ $1-2\delta$ by $\operatorname{NS}_\delta(f)=(1-\operatorname{Stab}_{1-2\delta}(f
     pdf-ffbe9c7b3306-p132-b002}
 \difficulty{4}
 The family of linear threshold classes is uniformly noise-stable: every function in the
-family is $\pm 1$-valued, and there exists a function $\varepsilon:\mathbb R\to\mathbb
+family is $\pm 1$-valued, and there exists a function $\varepsilon:\mathbb R\to\mathbb
 R$ such that $0\leq\varepsilon(\delta)\leq1$ for $0\leq\delta\leq\tfrac12$, with
 $\varepsilon(\delta)\to0$ as $\delta\to0^+$. For every dimension $n$, every function $f$
-in the linear threshold class on $\{0,1\}^n$, and every $0<\delta\leq\tfrac12$, its
+in the linear threshold class on $\{0,1\}^n$, and every $0<\delta\leq\tfrac12$, its
 noise sensitivity satisfies $\operatorname{NS}_{\delta}(f)\leq\varepsilon(\delta)$,
 where $\operatorname{NS}_{\delta}(f)=(1-\operatorname{Stab}_{1-2\delta}(f))/2$ and
 stability is computed using the uniform measure on the Boolean cube.

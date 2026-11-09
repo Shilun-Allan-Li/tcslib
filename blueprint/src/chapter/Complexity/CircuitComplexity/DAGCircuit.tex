@@ -175,7 +175,7 @@ index after evaluating all of $G$, using any default value $d$ when an index is 
 \label{BoolCircuit.all_congr_mem}
 \leanok
 \difficulty{4}
-Let $l$ be a list in a type $[0m[0m\alpha$, and let
+Let $l$ be a list in a type $\alpha$, and let
 $p,q:\alpha\to\{\mathrm{false},\mathrm{true}\}$. If $p(a)=q(a)$ for every entry $a$ of
 $l$, then the Boolean test that every entry of $l$ satisfies $p$ equals the
 corresponding test for $q$.
@@ -387,7 +387,7 @@ starting at $n$.
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.GatesAcyclic}
 \difficulty{4}
-Let $n$ be the number of input vertices and let $g_0, \ldots,g_{r-1}$ be an ordered list
+Let $n$ be the number of input vertices and let $g_0,\ldots,g_{r-1}$ be an ordered list
 of gates such that every source of gate $g_i$ has index less than $n+i$. If every source
 of a further gate $g$ has index less than $n+r$, then the list obtained by appending $g$
 has the same property.
@@ -571,7 +571,7 @@ $i<n$ has depth zero.
 \uses{BoolCircuit.DAGCircuit.values, BoolCircuit.DAGGate.eval, BoolCircuit.DAGGate.eval_congr, BoolCircuit.runWith_getD_gate, BoolCircuit.runWith_getD_take}
 \difficulty{4}
 Let $C$ be a Boolean directed acyclic circuit with $n$ inputs, and let $x$ be an
-assignment to its inputs. For every gate index $i<|C.	ext{gates}|$, the computed value
+assignment to its inputs. For every gate index $i<|C.\text{gates}|$, the computed value
 at vertex $n+i$ equals the evaluation of gate $i$ on the list of values computed by the
 circuit.
 \end{theorem}
@@ -699,7 +699,7 @@ gates.
 \uses{BoolCircuit.DAGCircuit.depth}
 For a natural number $d$, a family of directed acyclic circuits has depth bounded by a
 degree-$d$ polylogarithm if there is a natural number $b$ such that, for every input
-size $n$, its circuit has depth at most $b(loor{	ext{log}_2 n}+1)^d$.
+size $n$, its circuit has depth at most $b(\lfloor{\text{log}_2 n}+1)^d$.
 \end{definition}
 
 \begin{theorem}[Fanin two implies well formedness]
