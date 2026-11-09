@@ -90,9 +90,8 @@ zero errors. The 220 elaborated type comparisons agree with Gate 11, and all
 in the [proof report](fills/07-sis-trapdoor/REPORT.md). The scoped PW10 preflight
 pins the author PDF and the consumed passages.
 
-The Gate 12 audit passes the mathematics and axiom checks for all 40 fills and
-reproduces both native sweeps. The gate is **HOLD on policy** because the lossy
-column bound duplicates the existing Regev subset-sum bound. The PW10 reference
+Gate 12 round one passed the mathematics and axiom checks for all 40 fills and
+reproduced both native sweeps. It held on the duplicate subset-sum proof. The PW10 reference
 ranges and overview are corrected in `d3bb52db5aaf249a35e83506371a3c86e76cb69a`.
 The user approved the exact shared-owner patch. The repair at
 `93dc88648f117877e42aaf58ba7b911c76a4b63a` places the common proof in `LWE.Basic`
@@ -107,11 +106,15 @@ PR #255 is merged. The live central tip is
 current #250 Lean tree, root, and pins.
 [Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
 
-The round two packet is checked and committed in the private publisher checkout.
-It awaits maintainer publication to the shared exchange.
-[Publication handoff](fills/07-sis-trapdoor/round2/review-preparation.json) ·
-[Codex dispatch prompt](fills/07-sis-trapdoor/round2/DISPATCH.md)
+Gate 12 round two **passes the 40-fill proof gate** with zero blockers, majors,
+and minors. The independent replay reproduces all 144 module logs and both
+probes. F01 and F02 are closed. Four continuing notes remain.
+[Round two findings](../../audits/lwe-sis-trapdoor-proofs-r2-findings.md) ·
+[Audit disposition](../../audits/lwe-sis-trapdoor-proofs-resolutions.md)
 
-**Not yet clear to merge.** Gate 12 round two awaits independent review.
-The 18 admissions, scoped source review, and landing checks remain open.
-The user approves all merges.
+Intake verifies exchange `3d1d76833cf36a614559338dd31a2dc0459618d5`,
+the exact patch, all 260 indexed attachments, and the merge preview.
+[Verified intake](fills/07-sis-trapdoor/round2/review-intake.json)
+
+**Not yet clear to merge.** The 18 admissions, scoped source review, and landing
+checks remain open. The user approves all merges.

@@ -1,25 +1,31 @@
 # Gate 12 audit disposition
 
-The audit is **HOLD on policy**, with zero blockers, one major, one minor,
-and four continuing notes. All 40 fills pass the mathematical and axiom
-checks. The auditor replayed both 144-module closures and reproduced the 308
-axiom prints, 609-constant inventory, and all 220 elaborated type fingerprints.
-The [verbatim findings](lwe-sis-trapdoor-proofs-findings.md) and
-[intake record](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/intake-r1/intake.json)
-preserve the audited pins and evidence.
+Round two **passes the 40-fill proof gate** with zero blockers, majors, and
+minors. Four continuing notes remain open. The auditor independently reran
+the 144-module closure and both probes, reproduced the 220 elaborated type
+fingerprints, and reconciled the 309 axiom prints and 610-constant inventory.
+The audited Lean revision is `93dc88648f117877e42aaf58ba7b911c76a4b63a`.
+[Round two findings](lwe-sis-trapdoor-proofs-r2-findings.md) ·
+[Verified intake](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/round2/review-intake.json)
+
+Round one accepted the 40 proofs mathematically and held on the duplicate
+subset-sum proof. Both rounds' findings are archived verbatim.
+[Round one findings](lwe-sis-trapdoor-proofs-findings.md) ·
+[Round one intake](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/intake-r1/intake.json)
 
 | ID | Status | Disposition |
 |---|---|---|
-| F01 | Approved and applied, pending re-audit | `Lossy.error_sum_bound` duplicates `Regev.subsetError_bound`. The [proposed diff](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/intake-r1/proposed-binary-error-sum.patch) moves the existing Regev proof to `LWE.binaryErrorSum_bound` in `LWE.Basic` and uses it from both existing theorem signatures. This adds one theorem to a shared owner module. The isolated proposal passed the affected module checks and the axiom probe. The user approved the exact diff. It is applied at `93dc88648f117877e42aaf58ba7b911c76a4b63a` and queued for independent re-audit in round two. |
-| F02 | Repaired, pending re-audit | Commit `d3bb52db5aaf249a35e83506371a3c86e76cb69a` extends the PW10 references through pp. 37 and 39 respectively and points the concealer overview to the finite column hybrids in `Lossy.Experiments`. Both affected modules passed and the comment-stripped Lean source matches the audited source. |
-| N01 | Open | The 18 owned admissions comprise nine counted-loop consumers, seven gadget and positional-reader obligations, and two anti-cyclic rank obligations. Carry the owner and host coordination forward. `Cyclotomic.Roots` is outside the current scoped cache. The 17 inherited admission warnings are tracked separately. |
-| N02 | Open | The auditor independently verified the exact PW10 PDF and the seven consumed page hashes. Complete scoped ingestion and approved matching for the passages used. |
+| F01 | Closed in round two | The user approved the exact [patch](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/intake-r1/proposed-binary-error-sum.patch). `LWE.binaryErrorSum_bound` now owns the proof. Both existing theorems use it with their original signatures. The auditor verified the committed diff and the proof, ownership, and attribution. |
+| F02 | Closed in round two | Commit `d3bb52db5aaf249a35e83506371a3c86e76cb69a` corrects the PW10 ranges and points the lossy overview to the proved finite column hybrids. The auditor verified the page coverage and the comment-only diff. |
+| N01 | Open | The 18 owned admissions comprise nine counted-loop consumers, seven gadget and positional-reader obligations, and two anti-cyclic rank obligations. The registry and head-envelope decision and `Randomized.blockVal_eq` remain pending. `Cyclotomic.Roots` lies outside the scoped cache. The 17 inherited admission warnings are tracked separately. |
+| N02 | Open | The auditor verified the exact PW10 PDF and all seven consumed page hashes. Complete scoped ingestion and approved matching for the passages used. |
 | N03 | Open | Efficient samplers and schedules, asymptotic and game bridges, other-branch inversion, strong one-time signatures, and CCA2 are separate obligations. SIS hardness remains an independent assumption. |
-| N04 | Reader prerequisite merged | #255 is merged. The preview against central tip `41aaf0a1acf29318fa8d741dadd9f5f585e43c93` preserves the #250 Lean tree, root, and pins. Repeat the exact-target and six export checks at landing. |
+| N04 | Open at landing | #255 is merged. The audited merge preview and live #250 merge ref preserve the repaired Lean tree, root, and pins at target `41aaf0a1acf29318fa8d741dadd9f5f585e43c93`. Repeat exact-target and export checks at landing. |
 
-The repaired revision passed the fresh native checks, source and type
-comparisons, and axiom reconciliation. The 40-fill scope carries forward
-into round two. [Repair report](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/round2/REPORT.md)
+Intake verified the published exchange pin `3d1d76833cf36a614559338dd31a2dc0459618d5`,
+seven payload hashes, 260 indexed attachments, and 44 nested evidence checksums.
+The repaired Lean, root, and build pins match the published draft.
+[Repair report](../briefs/lwe-sis-constructions/fills/07-sis-trapdoor/round2/REPORT.md)
 
-**Not yet clear to merge.** Round two, the 18 owned admissions, scoped source
-review, and landing checks remain open.
+**Not yet clear to merge.** The 18 owned admissions, scoped source review,
+and landing checks remain open.
