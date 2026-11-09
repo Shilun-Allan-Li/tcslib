@@ -7,6 +7,8 @@ import TCSlib.Cryptography.Pseudorandom.Generators
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions
+import TCSlib.Cryptography.Pseudorandom.NextBit.Concrete
+import TCSlib.Cryptography.Pseudorandom.NextBit
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,6 +47,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   to predicting a hard-concentrate bit [Gar26, Theorem 3.2].
 * `Functions` leads to the oracle adversary model, lazy sampling, and the finite GGM
   proof in `TCSlib.Cryptography.Pseudorandom.Functions.GGM` [Gar26, Theorem 3.3].
+* `NextBit.Concrete` gives the finite next-bit experiment and both quantitative reductions.
+* `NextBit` implements the reductions as machines and characterizes pseudorandom ensembles.
 
 ## Asymptotic routes
 
@@ -54,7 +58,7 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs` characterizes it by
   negligible concrete PRG advantage. `TCSlib.Cryptography.PRG.Secure` packages efficiency
   and pseudorandomness for a generator.
-  In `TCSlib.Cryptography.Asymptotic.NextBit`,
+  In `TCSlib.Cryptography.Pseudorandom.NextBit`,
   `TCSlib.Cryptography.Ensemble.NextBitUnpredictable.pseudorandom` proves
   the next-bit test complete [PS10, Theorem 75.4] and
   `TCSlib.Cryptography.Ensemble.Pseudorandom.nextBitUnpredictable` gives the converse.
