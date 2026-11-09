@@ -16,3 +16,9 @@ Zero blockers, zero majors, one minor and nine notes.
 - Row 10: the earlier clean prospective tree predates #252 and #249. Run a
   fresh complete current merged-tree replay from the adopted #249 snapshot.
   No current replay result or merge clearance is claimed until it finishes.
+
+**Current replay complete.** Row 10 is dispositioned at 70312c51b658463bec68caab49ce281c21607a3f:
+404 fresh module receipts, exact clean merge tree, strict static check with
+zero mismatches. The 65 direct admission
+warnings are inherited. Row 4's only source change removes the empty
+namespace. Gate closed with no unresolved blockers, majors or minors.
