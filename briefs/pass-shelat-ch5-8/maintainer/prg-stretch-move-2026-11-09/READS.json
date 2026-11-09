@@ -1,0 +1,351 @@
+{
+  "base": "8fae4be42ba253578165e8449f0aa65cac71edf0",
+  "head": "bcb6f33a120dd663d363afe21f6214465578d990",
+  "ledger_head": "7750947a65d262b8a4e4e557b6dae2a48865807a",
+  "ledger_archive_sha256": "7eb1dbea30829ba69117e756623d61d12c14395cf8cfdc41a51a4e17ea588d8f",
+  "ledger_observations_checked_for_moved_providers": 813,
+  "diagnostics": [
+    {
+      "id": "SEAL-0220",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 264,
+      "old_diagnostic": {
+        "column": 11,
+        "source": "    refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_",
+        "message": "typeclass instance problem is stuck, it is often due to metavariables\n  Nonempty ?m.68"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 259,
+      "new_diagnostic": {
+        "column": 11,
+        "source": "    refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_",
+        "message": "typeclass instance problem is stuck, it is often due to metavariables\n  Nonempty ?m.68"
+      }
+    },
+    {
+      "id": "SEAL-0221",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 390,
+      "old_diagnostic": {
+        "column": 15,
+        "source": "      fun _ => Iff.rfl",
+        "message": "Type mismatch\n  Iff.rfl\nhas type\n  ?m.185 ↔ ?m.185\nbut is expected to have type\n  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔\n    owpPredictor (fun z r => D (e z) r) flip\n        (owpPair f\n          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)\n        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =\n      B ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 360,
+      "new_diagnostic": {
+        "column": 15,
+        "source": "      fun _ => Iff.rfl",
+        "message": "Type mismatch\n  Iff.rfl\nhas type\n  ?m.185 ↔ ?m.185\nbut is expected to have type\n  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔\n    owpPredictor (fun z r => D (e z) r) flip\n        (owpPair f\n          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)\n        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =\n      B ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1"
+      }
+    },
+    {
+      "id": "SEAL-0222",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 396,
+      "old_diagnostic": {
+        "column": 4,
+        "source": "    rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|\nis not definitionally equal to the right-hand side\n  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|\n\nρ : Type u_1\ninst✝¹ : Fintype ρ\ninst✝ : Nonempty ρ\nn : ℕ\nf : (Fin n → Bool) ≃ (Fin n → Bool)\nB : (Fin n → Bool) → Bool\nD : (Fin (n + 1) → Bool) → ρ → Bool\ne : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=\n  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,\n    right_inv := ⋯ }\nflip : Bool\nhflip :\n  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =\n    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r\nh1 :\n  predProb (⇑f) B (owpPredictorSnoc D flip) =\n    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)\n⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =\n    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 366,
+      "new_diagnostic": {
+        "column": 4,
+        "source": "    rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|\nis not definitionally equal to the right-hand side\n  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|\n\nρ : Type u_1\ninst✝¹ : Fintype ρ\ninst✝ : Nonempty ρ\nn : ℕ\nf : (Fin n → Bool) ≃ (Fin n → Bool)\nB : (Fin n → Bool) → Bool\nD : (Fin (n + 1) → Bool) → ρ → Bool\ne : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=\n  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,\n    right_inv := ⋯ }\nflip : Bool\nhflip :\n  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =\n    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r\nh1 :\n  predProb (⇑f) B (owpPredictorSnoc D flip) =\n    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)\n⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =\n    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|"
+      }
+    },
+    {
+      "id": "SEAL-0223",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 494,
+      "old_diagnostic": {
+        "column": 90,
+        "source": "    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl",
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.20 = ?m.20\nbut is expected to have type\n  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)"
+      },
+      "disposition": "relocated",
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean",
+      "new_line": 116,
+      "new_diagnostic": {
+        "column": 90,
+        "source": "    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl",
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.20 = ?m.20\nbut is expected to have type\n  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)"
+      }
+    },
+    {
+      "id": "SEAL-0224",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 530,
+      "old_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  |acceptProb.{u_4, u_1, u_2} (fun s => (X s).1) D - acceptProb (fun z => id z.1) D|\nis not definitionally equal to the right-hand side\n  |(acceptProb.{u_4, u_1, max u_2 u_3} X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|\n\nσ : Type u_1\nγ : Type u_2\nδ : Type u_3\nρ : Type u_4\ninst✝⁴ : Fintype σ\ninst✝³ : Fintype γ\ninst✝² : Fintype δ\ninst✝¹ : Nonempty δ\ninst✝ : Fintype ρ\nX : σ → γ × δ\nD : γ → ρ → Bool\n⊢ |acceptProb (fun s => (X s).1) D - acceptProb (fun z => id z.1) D| =\n    |(acceptProb X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|"
+      },
+      "disposition": "relocated",
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean",
+      "new_line": 152,
+      "new_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  |acceptProb.{u_4, u_1, u_2} (fun s => (X s).1) D - acceptProb (fun z => id z.1) D|\nis not definitionally equal to the right-hand side\n  |(acceptProb.{u_4, u_1, max u_2 u_3} X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|\n\nσ : Type u_1\nγ : Type u_2\nδ : Type u_3\nρ : Type u_4\ninst✝⁴ : Fintype σ\ninst✝³ : Fintype γ\ninst✝² : Fintype δ\ninst✝¹ : Nonempty δ\ninst✝ : Fintype ρ\nX : σ → γ × δ\nD : γ → ρ → Bool\n⊢ |acceptProb (fun s => (X s).1) D - acceptProb (fun z => id z.1) D| =\n    |(acceptProb X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|"
+      }
+    },
+    {
+      "id": "SEAL-0225",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 595,
+      "old_diagnostic": {
+        "column": 61,
+        "source": "    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩",
+        "message": "Tactic `rfl` failed: The left-hand side\n  List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)\nis not definitionally equal to the right-hand side\n  List.ofFn ((PRG.expand G ℓ hℓ).G n s)\n\nG : (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool\nℓ : PolyExpr\nhℓ : ∀ (n : ℕ), n < ℓ.eval n\nhE1 : (PRG.oneBit G).Easy\nhsec :\n  ∀ (D : NUPPT), Negligible fun n => prgAdv ((PRG.oneBit G).G n) (D.distinguisher n ((PRG.oneBit G).stretch.eval n))\nF : List Bool → List Bool\nhF : PolyTimeComputable F\nhFs : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((PRG.oneBit G).G n s)\nhFs' : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)\nE : List Bool → List Bool\nhE : PolyTimeComputable E\nhEs :\n  ∀ (n : ℕ) (s : Fin n → Bool),\n    E (List.ofFn s) = List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)\nn : ℕ\ns : Fin n → Bool\n⊢ (List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)) = List.ofFn ((PRG.expand G ℓ hℓ).G n s)"
+      },
+      "disposition": "relocated",
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean",
+      "new_line": 217,
+      "new_diagnostic": {
+        "column": 61,
+        "source": "    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩",
+        "message": "Tactic `rfl` failed: The left-hand side\n  List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)\nis not definitionally equal to the right-hand side\n  List.ofFn ((PRG.expand G ℓ hℓ).G n s)\n\nG : (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool\nℓ : PolyExpr\nhℓ : ∀ (n : ℕ), n < ℓ.eval n\nhE1 : (PRG.oneBit G).Easy\nhsec :\n  ∀ (D : NUPPT), Negligible fun n => prgAdv ((PRG.oneBit G).G n) (D.distinguisher n ((PRG.oneBit G).stretch.eval n))\nF : List Bool → List Bool\nhF : PolyTimeComputable F\nhFs : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((PRG.oneBit G).G n s)\nhFs' : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)\nE : List Bool → List Bool\nhE : PolyTimeComputable E\nhEs :\n  ∀ (n : ℕ) (s : Fin n → Bool),\n    E (List.ofFn s) = List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)\nn : ℕ\ns : Fin n → Bool\n⊢ (List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)) = List.ofFn ((PRG.expand G ℓ hℓ).G n s)"
+      }
+    },
+    {
+      "id": "SEAL-0226",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 608,
+      "old_diagnostic": {
+        "column": 38,
+        "source": "      refine prgAdv_coins_equiv _ _ _ (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)) fun T c => ?_",
+        "message": "Application type mismatch: The argument\n  Fin.appendEquiv (ℓ.eval n) (D.coinLen n)\nhas type\n  (Fin (ℓ.eval n) → ?m.203) × (Fin (D.coinLen n) → ?m.203) ≃ (Fin (ℓ.eval n + D.coinLen n) → ?m.203)\nbut is expected to have type\n  (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ (expandRedMachine D hF ℓ k hk).Coins n\nin the application\n  prgAdv_coins_equiv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1))\n    (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n))) (Fin.appendEquiv (ℓ.eval n) (D.coinLen n))"
+      },
+      "disposition": "relocated",
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean",
+      "new_line": 230,
+      "new_diagnostic": {
+        "column": 38,
+        "source": "      refine prgAdv_coins_equiv _ _ _ (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)) fun T c => ?_",
+        "message": "Application type mismatch: The argument\n  Fin.appendEquiv (ℓ.eval n) (D.coinLen n)\nhas type\n  (Fin (ℓ.eval n) → ?m.203) × (Fin (D.coinLen n) → ?m.203) ≃ (Fin (ℓ.eval n + D.coinLen n) → ?m.203)\nbut is expected to have type\n  (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ (expandRedMachine D hF ℓ k hk).Coins n\nin the application\n  prgAdv_coins_equiv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1))\n    (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n))) (Fin.appendEquiv (ℓ.eval n) (D.coinLen n))"
+      }
+    },
+    {
+      "id": "SEAL-0227",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 619,
+      "old_diagnostic": {
+        "column": 42,
+        "source": "        (D.distinguisher n (ℓ.eval n)) := abs_nonneg _",
+        "message": "Type mismatch\n  abs_nonneg ?m.301\nhas type\n  0 ≤ |?m.301|\nbut is expected to have type\n  0 ≤ prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n))"
+      },
+      "disposition": "relocated",
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/Stretch.lean",
+      "new_line": 241,
+      "new_diagnostic": {
+        "column": 42,
+        "source": "        (D.distinguisher n (ℓ.eval n)) := abs_nonneg _",
+        "message": "Type mismatch\n  abs_nonneg ?m.301\nhas type\n  0 ≤ |?m.301|\nbut is expected to have type\n  0 ≤ prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n))"
+      }
+    },
+    {
+      "id": "SEAL-0228",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 652,
+      "old_diagnostic": {
+        "column": 6,
+        "source": "      show Fin.init (Fin.snoc (P.f n x) (h n x) : Fin (n + 1) → Bool) = P.f n x",
+        "message": "'show' tactic failed, pattern\n  Fin.init (Fin.snoc ((P.f n) x) (h n x)) = (P.f n) x\nis not definitionally equal to target\n  prgStep (oneBitStep fun x => Fin.snoc ((P.f n) x) (h n x)) x = (P.f n) x"
+      },
+      "disposition": "closed_by_reader_transport",
+      "proof_change": "Compare the two generators through PRG.expand_stretch and PRG.expand_G_stretch."
+    },
+    {
+      "id": "SEAL-0229",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 737,
+      "old_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r))\nis not definitionally equal to the right-hand side\n  Fin.append (𝓕.f n x) r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r)) = Fin.append (𝓕.f n x) r"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 552,
+      "new_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r))\nis not definitionally equal to the right-hand side\n  Fin.append (𝓕.f n x) r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r)) = Fin.append (𝓕.f n x) r"
+      }
+    },
+    {
+      "id": "SEAL-0230",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 744,
+      "old_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glBit (x, r)\nis not definitionally equal to the right-hand side\n  HardcoreBit.ip x r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ HardcoreBit.glBit (x, r) = HardcoreBit.ip x r"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 559,
+      "new_diagnostic": {
+        "column": 2,
+        "source": "  rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glBit (x, r)\nis not definitionally equal to the right-hand side\n  HardcoreBit.ip x r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ HardcoreBit.glBit (x, r) = HardcoreBit.ip x r"
+      }
+    },
+    {
+      "id": "SEAL-0231",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 795,
+      "old_diagnostic": {
+        "column": 14,
+        "source": "    funext z; rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glPad (𝓕.f n) z\nis not definitionally equal to the right-hand side\n  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z\n\ncase h\n𝓕 : FunFamily\nn : ℕ\nhf : Function.Bijective (𝓕.f n)\nz : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)\n⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 610,
+      "new_diagnostic": {
+        "column": 14,
+        "source": "    funext z; rfl",
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glPad (𝓕.f n) z\nis not definitionally equal to the right-hand side\n  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z\n\ncase h\n𝓕 : FunFamily\nn : ℕ\nhf : Function.Bijective (𝓕.f n)\nz : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)\n⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z"
+      }
+    },
+    {
+      "id": "SEAL-0232",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 827,
+      "old_diagnostic": {
+        "column": 4,
+        "source": "    exact invProbOpt_glPad_le 𝓕 A n",
+        "message": "Type mismatch\n  invProbOpt_glPad_le 𝓕 A n\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤\n    invProbOpt (𝓕.f n) ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n))\nbut is expected to have type\n  𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt (glPadInvMachine A 𝓕.inLen) n"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 642,
+      "new_diagnostic": {
+        "column": 4,
+        "source": "    exact invProbOpt_glPad_le 𝓕 A n",
+        "message": "Type mismatch\n  invProbOpt_glPad_le 𝓕 A n\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤\n    invProbOpt (𝓕.f n) ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n))\nbut is expected to have type\n  𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt (glPadInvMachine A 𝓕.inLen) n"
+      }
+    },
+    {
+      "id": "SEAL-0233",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 897,
+      "old_diagnostic": {
+        "column": 6,
+        "source": "      invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n",
+        "message": "Type mismatch\n  invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n (glK_pos_or 𝓕.inLen c n hn1)\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      ((glFamMachine (A.precomp concatPre_poly) 𝓕.inLen 𝓕.outLen K (glK 𝓕.inLen c) ⋯).inverter n\n        (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))\nbut is expected to have type\n  𝓕.glPad.invProbAt B n =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "new_line": 712,
+      "new_diagnostic": {
+        "column": 6,
+        "source": "      invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n",
+        "message": "Type mismatch\n  invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n (glK_pos_or 𝓕.inLen c n hn1)\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      ((glFamMachine (A.precomp concatPre_poly) 𝓕.inLen 𝓕.outLen K (glK 𝓕.inLen c) ⋯).inverter n\n        (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))\nbut is expected to have type\n  𝓕.glPad.invProbAt B n =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))"
+      }
+    },
+    {
+      "id": "SEAL-0246",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "old_line": 371,
+      "old_diagnostic": {
+        "column": 6,
+        "source": "      (Fin.appendEquiv 1 (D.coinLen n))) fun y c => ?_",
+        "message": "Application type mismatch: The argument\n  Fin.appendEquiv 1 (D.coinLen n)\nhas type\n  (Fin 1 → ?m.54) × (Fin (D.coinLen n) → ?m.54) ≃ (Fin (1 + D.coinLen n) → ?m.54)\nbut is expected to have type\n  (Fin 1 → Bool) × D.Coins n ≃ (owpPredMachine D flip).Coins n\nin the application\n  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))"
+      },
+      "disposition": "closed_by_reader_transport",
+      "proof_change": "Transport predictor coins through the equality read from NUPPT.coins_wrap."
+    },
+    {
+      "id": "SEAL-0247",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "old_line": 722,
+      "old_diagnostic": {
+        "column": 4,
+        "source": "    (uprob_comp_equiv ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr",
+        "message": "Application type mismatch: The argument\n  uprob_comp_equiv\n    ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79\nhas type\n  (uprob fun a =>\n      ?m.79\n        (((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) a)) =\n    uprob ?m.79\nbut is expected to have type\n  uprob ?m.65 =\n    uprob fun z =>\n      ∃ x',\n        (glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n) (𝓕.f n z.1) z.2 = some x' ∧\n          𝓕.f n x' = 𝓕.f n z.1\nin the application\n  Eq.trans\n    (uprob_comp_equiv (Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool) (Fin (𝓕.inLen.eval n) → Bool) (A.Coins n)) ?m.65)\n    (uprob_comp_equiv\n      ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79)"
+      },
+      "disposition": "closed_by_reader_transport",
+      "proof_change": "Transport the padding inverter coins and use ofFn_finCastEquiv at the run boundary."
+    },
+    {
+      "id": "SEAL-0248",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "old_line": 809,
+      "old_diagnostic": {
+        "column": 4,
+        "source": "    show F.sample.coinLen n + L = S.coins.eval n",
+        "message": "'show' tactic failed, pattern\n  F.sample.coinLen n + L = S.coins.eval n\nis not definitionally equal to target\n  F.sample.coinLen n + L = S.coinLen n"
+      },
+      "disposition": "retained_same_step",
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "new_line": 336,
+      "new_diagnostic": {
+        "column": 4,
+        "source": "    show F.sample.coinLen n + L = S.coins.eval n",
+        "message": "'show' tactic failed, pattern\n  F.sample.coinLen n + L = S.coins.eval n\nis not definitionally equal to target\n  F.sample.coinLen n + L = S.coinLen n"
+      }
+    },
+    {
+      "id": "SEAL-0249",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "old_line": 892,
+      "old_diagnostic": {
+        "column": 4,
+        "source": "    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr",
+        "message": "Application type mismatch: The argument\n  uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102\nhas type\n  (uprob fun a => ?m.102 (((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) a)) =\n    uprob ?m.102\nbut is expected to have type\n  uprob ?m.88 =\n    uprob fun z =>\n      ∃ x',\n        F.decD (F.index n r)\n              ((glPadCollInvMachine A m).runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) =\n            some x' ∧\n          F.f (F.index n r) x' = F.f (F.index n r) z.1\nin the application\n  Eq.trans (uprob_comp_equiv (Equiv.prodAssoc (F.D (F.index n r)) (Fin (m.eval n) → Bool) (A.Coins n)) ?m.88)\n    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102)"
+      },
+      "disposition": "closed_by_reader_transport",
+      "proof_change": "Transport the collection inverter coins and use ofFn_finCastEquiv at the run boundary."
+    }
+  ],
+  "relocated_provider_links": [
+    {
+      "id": "SEAL-0225",
+      "name": "TCSlib.Cryptography.expandRedMachine",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCoreLemmas",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine",
+      "paired_provider": false,
+      "common_native_reference": true
+    },
+    {
+      "id": "SEAL-0226",
+      "name": "TCSlib.Cryptography.expandRedMachine",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCoreLemmas",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine",
+      "paired_provider": true,
+      "common_native_reference": true
+    },
+    {
+      "id": "SEAL-0227",
+      "name": "TCSlib.Cryptography.expandRedMachine",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCoreLemmas",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine",
+      "paired_provider": true,
+      "common_native_reference": true
+    },
+    {
+      "id": "SEAL-0245",
+      "name": "TCSlib.Cryptography.finCastEquiv",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCoreLemmas",
+      "new_home": "TCSlib.Cryptography.Asymptotic.ReductionSupport",
+      "paired_provider": true,
+      "common_native_reference": true
+    }
+  ],
+  "explicit_foreign_definition_reads_in_owner_files": {
+    "base": 0,
+    "head": 0
+  },
+  "foreign_generated_equation_references_in_owner_terms": {
+    "base": 0,
+    "head": 0
+  }
+}

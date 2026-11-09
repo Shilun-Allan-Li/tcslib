@@ -33,4 +33,4 @@ legacy `Asymptotic.NextBit` import re-exports both layers. [PR #265](https://git
 
 `next-bit-checks.zip` has SHA-256 `d1ec25d22f2ef745a611b5a9ecda1c08409e4531f6d67363ae0c8031e43798a7`.
 
-**Clear to merge — both layers, the compatibility import, and the affected checks pass.**
+Seyoon merged this slice at `8fae4be42ba253578165e8449f0aa65cac71edf0`. The Lean sources and checker inputs match the verified head. The stretch relocation follows in [PR #266](https://github.com/Shilun-Allan-Li/tcslib/pull/266).
