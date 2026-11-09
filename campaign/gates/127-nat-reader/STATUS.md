@@ -1,7 +1,3 @@
-# Gate127
-
-Gate CLOSED; pointer minor fixed and all notes dispositioned.
-
-**Clear to merge: #247.**
-
-Exact source `e16049ad20823b3e6abba171e328489746062080`; current clean merge/source/package/MAC8 validity is recorded in closure.json. No source merge, unrelated debt waiver or whole-owner seal is inferred.
+**Not yet clear to merge: #247.** Gate 127 is closed at
+e16049ad20823b3e6abba171e328489746062080. A replay refresh on the merged #253 tree is queued.
+The previous replay and original gate closure remain in closure.json.
