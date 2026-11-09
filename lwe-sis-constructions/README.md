@@ -1,17 +1,15 @@
 # LWE/SIS construction campaign exchange
 
-Only the user dispatches jobs and approves code merges. Codex is preselected for
-the morning reviews. Other exchange namespaces are outside scope; never merge
-this orphan exchange into code. Central target: cryptography/lwe-sis-constructions.
+The user dispatches external jobs and approves code merges. Codex reads pinned
+GitHub inputs and returns findings as Markdown in chat. Other namespaces remain
+outside this campaign. Central PR target: `cryptography/lwe-sis-constructions`.
 
-Ten scoped audits pass. The combined statement and independent 31-proof reviews
-each returned one documentation minor; both are corrected and checked separately.
-Seventy #250 construction obligations and all source/landing/readiness notes
-remain. Original gate packets are preserved.
+PRs #236 through #239 have merged. The #250 statement audit and earlier
+31-proof audit pass with their separate documentation repairs checked.
+The prepared audit for the next six Regev hybrid support proofs is in
+`outbox/gates/10-regev-hybrids-proofs-r1/README.md`.
 
-Next prepared job: outbox/source-policy/01-earlier-stack-r1/README.md.
-It targets the earlier #236–#239 source-policy work: 161 declarations/20 modules,
-Pei16 and Wu24, 196 pages. Lean source `ec72ed773a690c17ac253707350935cc9e0acb34`, records `e88f9ecc36033e468f8c345f2d1088b59ba50e08`.
-The user dispatches Codex to return proposed reference pairs/matching in a ZIP
-plus a Markdown report in chat. Preparation is not dispatch/publication, approved
-matching, registry integration, source-policy closure or merge approval.
+Filled source `8c6b23f5b69260acb66cc99e322a81c4c79f51bb`, bundled records `0bdc04b518e1c45b11cdd7cf5f00c3cede10a12e`. Sixty-four owned
+obligations, shared-reader and host decisions, scoped source review, and landing
+checks remain on #250. The earlier source-policy inputs and gate packets stay
+at their pinned revisions.
