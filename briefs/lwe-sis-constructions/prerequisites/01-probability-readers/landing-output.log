@@ -1,0 +1,22 @@
+===== TCSlib/InformationTheory/FinDist (0 bytes) =====
+
+===== TCSlib/InformationTheory/StatisticalDistance (0 bytes) =====
+
+===== TCSlib/InformationTheory/UniversalHashing (0 bytes) =====
+
+===== TCSlib/InformationTheory/LeftoverHash (0 bytes) =====
+
+===== TCSlib/InformationTheory/Entropy (0 bytes) =====
+
+===== TCSlib/InformationTheory/Extractors (0 bytes) =====
+
+===== TCSlib/InformationTheory (0 bytes) =====
+
+===== briefs/lwe-sis-constructions/prerequisites/01-probability-readers/Checks (638 bytes) =====
+TCSlib.InformationTheory.isUniversal_iff.{u_1, u_2, u_3} {S : Type u_1} {α : Type u_2} {β : Type u_3} [Fintype S]
+  [Fintype β] [DecidableEq β] (f : S → α → β) :
+  TCSlib.InformationTheory.IsUniversal f ↔
+    ∀ (x y : α), x ≠ y → ↑{s | f s x = f s y}.card ≤ ↑(Fintype.card S) / ↑(Fintype.card β)
+'TCSlib.InformationTheory.isUniversal_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.InformationTheory.FinDist.hasMinEntropy_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.InformationTheory.leftover_hash' depends on axioms: [propext, Classical.choice, Quot.sound]
