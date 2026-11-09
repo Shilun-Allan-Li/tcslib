@@ -1,3 +1,3 @@
-**Not yet clear to merge: #252.**
+**Not yet clear to merge: #252 — external audit open.**
 
-Five explicitly approved non-simp facts are pushed. Fresh actual producer3 native checks pass without warnings/admissions;5 full metadata captures are byte-equal in two executions, footprints0/1/3/0/0 with6 effective paired control identities. Fresh587-ref/391-head bounded census and1035 complete candidate dispositions are frozen. The full335 replay is still running; QA53 is queued behind the global129 screen. No external prompt, gate closure, source merge or consumer-patch adoption.
+Current exact source replay, producer checks, freeze, lint and complete copy pair coverage passed. Codex publication pending the exchange push receipt. No user dispatch or merge.
