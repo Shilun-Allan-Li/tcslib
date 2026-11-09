@@ -33,7 +33,7 @@ serial closures and reproduced both axiom probes. See
 | SIS collision-resistant hashing | Core hash/reduction/profile, strong extraction, raw evaluator and exact collision-to-SIS output proofs audited | Counted-loop efficiency, and the CRH interface under independent SIS hardness |
 | Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
-| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank, injective-mode recovery and non-designated branch injectivity checked | Gate 13 audit, efficient all-but-one inversion, strong one-time signatures and CCA2 |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank, injective-mode recovery and non-designated branch injectivity checked | Efficient all-but-one inversion, strong one-time signatures and CCA2 |
 
 The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
 seconds with zero errors, seventy owned and seventeen inherited admission
@@ -133,5 +133,12 @@ injective-mode recovery and non-designated branch injectivity. The fresh
 The two rank proofs and this wave enter one Codex audit.
 [Proof report](fills/09-gadget-inversion/REPORT.md)
 
-**Not yet clear to merge.** The combined audit, nine admissions, scoped
-source matching, and landing checks remain open. The user approves all merges.
+Gate 13 **passes** the two rank fills, seven gadget and recovery fills,
+and the approved reader with zero blockers, majors, and minors. The auditor
+replayed the 144-module closure and both probes. Intake verified the 247
+sections at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`.
+[Findings](../../audits/lwe-sis-gadget-inversion-proofs-findings.md) ·
+[Disposition](../../audits/lwe-sis-gadget-inversion-proofs-resolutions.md)
+
+**Not yet clear to merge.** The nine counted-loop and CRH admissions,
+scoped source matching, and landing checks remain open. The user approves all merges.
