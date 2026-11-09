@@ -25,8 +25,10 @@ semantics and RD-2b uniformity work, held by Seyoon on 2026-10-14 after
 the ARM-based TQBF proof landed through a different route. The older
 `exists_adjacency_codec_cnf` result passes in its documented polynomial
 form. The 21 admissions do not enter TQBF membership, hardness or
-completeness. Shared TuringMachine and other out-of-scope modules are not
-part of this direct-admission count. RD-2 needs an explicit resume or
+completeness. The separate H6 supporting modules FormulaKit.Gate and FormulaKit.Emit also
+have 20 direct admissions (10 each), verified against the same snapshot and
+source. The held RD-2 route therefore has 41 known direct holes across these
+two scopes. This is not a repository-wide admission count. RD-2 needs an explicit resume or
 scope decision before a chapter-wide zero-admission closeout.
 
 Two of the three later priority tracks are proved and merged: book-form Theorem 3.1 and F6.
