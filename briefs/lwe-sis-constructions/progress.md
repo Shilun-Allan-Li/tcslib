@@ -94,8 +94,11 @@ The Gate 12 audit passes the mathematics and axiom checks for all 40 fills and
 reproduces both native sweeps. The gate is **HOLD on policy** because the lossy
 column bound duplicates the existing Regev subset-sum bound. The PW10 reference
 ranges and overview are corrected in `d3bb52db5aaf249a35e83506371a3c86e76cb69a`.
-An isolated Lean check passed the proposed shared bound and both wrappers.
-The proposal awaits approval because it adds a theorem to the shared LWE owner.
+The user approved the exact shared-owner patch. The repair at
+`93dc88648f117877e42aaf58ba7b911c76a4b63a` places the common proof in `LWE.Basic`
+and preserves both theorem signatures. The 144-module fresh sweep, axiom
+probe, and all 220 elaborated type comparisons pass.
+[Round two repair report](fills/07-sis-trapdoor/round2/REPORT.md)
 [Gate 12 findings](../../audits/lwe-sis-trapdoor-proofs-findings.md) ·
 [Exact proposed diff](fills/07-sis-trapdoor/intake-r1/proposed-binary-error-sum.patch)
 
@@ -104,6 +107,6 @@ PR #255 is merged. The live central tip is
 current #250 Lean tree, root, and pins.
 [Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
 
-**Not yet clear to merge.** The shared bound needs approval and re-audit.
+**Not yet clear to merge.** Gate 12 round two awaits independent review.
 The 18 admissions, scoped source review, and landing checks remain open.
 The user approves all merges.
