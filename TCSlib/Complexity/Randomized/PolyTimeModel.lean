@@ -81,6 +81,15 @@ noncomputable def polyTimeModel : VerifierModel where
     ∀ x u v : List Bool,
       (N x u v = true ↔ Turing.pairEncode (Turing.pairEncode x u) v ∈ V)
 
+/-- A verifier is efficient in the polynomial-time model exactly when its `some true` and
+`some false` sets, on encoded input/random-string pairs, are languages in `P`. -/
+theorem polyTimeModel_eff_iff (M : List Bool → List Bool → Option Bool) :
+    polyTimeModel.Eff M ↔
+      ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧
+        ∀ x r : List Bool,
+          (M x r = some true ↔ Turing.pairEncode x r ∈ V₁) ∧
+          (M x r = some false ↔ Turing.pairEncode x r ∈ V₀) := Iff.rfl
+
 /-- Keep the input `x` and the first `polyLen a k |x|` bits of the random
 string: the pair-level reindexing behind the race and shifted constructions.
 On `Turing.pairEncode x r` it returns `Turing.pairEncode x (r.take (polyLen a k |x|))`. -/
@@ -133,7 +142,7 @@ theorem polyTimeComputable_sliceTake (a k : ℕ) :
     PolyTimeComputable (sliceTake a k) := by
   have hu : PolyTimeComputable
       (fun z => List.replicate (polyLen a k (pairFstD z).length) true) := by
-    rw [polyLen_def]
+    simp only [polyLen_eq]
     exact (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
   have henc : PolyTimeComputable (fun z => Turing.pairEncode
       (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
@@ -157,7 +166,7 @@ theorem polyTimeComputable_sliceDrop (a k : ℕ) :
     PolyTimeComputable (sliceDrop a k) := by
   have hu : PolyTimeComputable
       (fun z => List.replicate (polyLen a k (pairFstD z).length) true) := by
-    rw [polyLen_def]
+    simp only [polyLen_eq]
     exact (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
   have henc : PolyTimeComputable (fun z => Turing.pairEncode
       (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
@@ -196,13 +205,13 @@ theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
       M₁ x (r.take (polyLen a k x.length)) = true := by
     simp only [Set.mem_preimage, sliceTake, pairFstD_pairEncode, pairSndD_pairEncode]
     have h := (hM₁ x (r.take (polyLen a k x.length))).1
-    simp only [boolVerifier_def, Option.some.injEq] at h
+    simp only [boolVerifier_apply, Option.some.injEq] at h
     exact h.symm
   have hv2 : (Turing.pairEncode x r ∈ sliceDrop a k ⁻¹' V₂) ↔
       M₂ x (r.drop (polyLen a k x.length)) = true := by
     simp only [Set.mem_preimage, sliceDrop, pairFstD_pairEncode, pairSndD_pairEncode]
     have h := (hM₂ x (r.drop (polyLen a k x.length))).1
-    simp only [boolVerifier_def, Option.some.injEq] at h
+    simp only [boolVerifier_apply, Option.some.injEq] at h
     exact h.symm
   refine ⟨?_, ?_⟩
   · rw [hv1]
@@ -261,7 +270,7 @@ theorem polyTimeModel_closedUnderMajority :
   have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
     intro s
     have h := (hM x s).1
-    simpa only [boolVerifier_def, Option.some.injEq] using h
+    simpa only [boolVerifier_apply, Option.some.injEq] using h
   have hcount : ∀ l : List ℕ,
       l.countP (fun i => Turing.MultiTapeTM.indicator V₁
           (Turing.pairEncode x ((r.drop (i * (a * (x.length + 1) ^ k))).take
@@ -285,19 +294,19 @@ theorem polyTimeModel_closedUnderMajority :
             (Turing.pairEncode (pairFstD z) (blockAt a k z i)))} ↔
       majorityVerifier M (polyLen a k) (polyLen a' k') x r = true := by
     simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,
-      majorityVerifier_def, polyLen_def, blockAt_def, decide_eq_true_eq]
+      majorityVerifier_def, polyLen_eq, blockAt_def, decide_eq_true_eq]
     rw [hcount]
   constructor
   · constructor
     · intro h
-      exact hmem.mpr (by simpa only [boolVerifier_def, Option.some.injEq] using h)
+      exact hmem.mpr (by simpa only [boolVerifier_apply, Option.some.injEq] using h)
     · intro hw
       exact congrArg some (hmem.mp hw)
   · constructor
     · intro h hw
       have ht := hmem.mp hw
       have hf : majorityVerifier M (polyLen a k) (polyLen a' k') x r = false := by
-        simpa only [boolVerifier_def, Option.some.injEq] using h
+        simpa only [boolVerifier_apply, Option.some.injEq] using h
       exact absurd (ht.symm.trans hf) (by decide)
     · intro hc
       cases hb : majorityVerifier M (polyLen a k) (polyLen a' k') x r with
@@ -318,13 +327,13 @@ theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
   have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
     intro s
     have h := (hM x s).1
-    simpa only [boolVerifier_def, Option.some.injEq] using h
+    simpa only [boolVerifier_apply, Option.some.injEq] using h
   have hmem : Turing.pairEncode x r ∈
       {z : List Bool | ∃ i < a' * ((pairFstD z).length + 1) ^ k',
         Turing.pairEncode (pairFstD z) (blockAt a k z i) ∈ V₁} ↔
       anyVerifier M (polyLen a k) (polyLen a' k') x r = true := by
     simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,
-      anyVerifier_def, polyLen_def, blockAt_def, List.any_eq_true, List.mem_range]
+      anyVerifier_def, polyLen_eq, blockAt_def, List.any_eq_true, List.mem_range]
     constructor
     · rintro ⟨i, hi, hv⟩
       exact ⟨i, hi, (hMt _).mpr hv⟩
@@ -333,14 +342,14 @@ theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
   constructor
   · constructor
     · intro h
-      exact hmem.mpr (by simpa only [boolVerifier_def, Option.some.injEq] using h)
+      exact hmem.mpr (by simpa only [boolVerifier_apply, Option.some.injEq] using h)
     · intro hw
       exact congrArg some (hmem.mp hw)
   · constructor
     · intro h hw
       have ht := hmem.mp hw
       have hf : anyVerifier M (polyLen a k) (polyLen a' k') x r = false := by
-        simpa only [boolVerifier_def, Option.some.injEq] using h
+        simpa only [boolVerifier_apply, Option.some.injEq] using h
       exact absurd (ht.symm.trans hf) (by decide)
     · intro hc
       cases hb : anyVerifier M (polyLen a k) (polyLen a' k') x r with
@@ -354,7 +363,7 @@ theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by
   rintro M ⟨V₁, V₀, hV₁, hV₀, hM⟩
   refine ⟨V₀, V₁, hV₀, hV₁, fun x r => ?_⟩
   have h := hM x r
-  simp only [boolVerifier_def, Option.some.injEq] at h ⊢
+  simp only [boolVerifier_apply, Option.some.injEq] at h ⊢
   rw [Bool.not_eq_true', Bool.not_eq_false']
   exact ⟨h.2, h.1⟩
 
@@ -378,7 +387,7 @@ theorem polyTimeModel_closedUnderShiftOr :
   have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
     intro s
     have h := (hM x s).1
-    simpa only [boolVerifier_def, Option.some.injEq] using h
+    simpa only [boolVerifier_apply, Option.some.injEq] using h
   have hbridge : Turing.pairEncode (Turing.pairEncode x u) v ∈
       {w : List Bool | ∃ i < a' * ((pairFstD (pairFstD w)).length + 1) ^ k',
         Turing.pairEncode (pairFstD (pairFstD w))
@@ -391,7 +400,7 @@ theorem polyTimeModel_closedUnderShiftOr :
       ∃ i < a' * (x.length + 1) ^ k',
         Turing.pairEncode x (List.zipWith xor v
           ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))) ∈ V₁ := by
-    simp only [shiftOrVerifier_def, polyLen_def, List.any_eq_true, List.mem_range]
+    simp only [shiftOrVerifier_def, polyLen_eq, List.any_eq_true, List.mem_range]
     constructor
     · rintro ⟨i, hi, hv⟩
       exact ⟨i, hi, (hMt _).mp hv⟩
@@ -438,7 +447,7 @@ theorem polyTimeModel_verifierHasCircuits :
     have hLen : ell + 1 ≤ (a + 3) * (n + 1) ^ (k + 1) := by
       dsimp only [ell]
       rw [hr]
-      simp only [polyLen_def]
+      simp only [polyLen_eq]
       nlinarith [Nat.mul_le_mul_left a hkPow]
     have hCircuit : C.size ≤
         b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
@@ -474,7 +483,7 @@ theorem polyTimeModel_verifierHasCircuits :
       rw [← hLanguage]
       exact BoolCircuit.DAGCircuitFamily.pairEncode_eval_eq_true_iff F r v
     have hVerifier := (hM (List.ofFn v) r).1
-    simp only [boolVerifier_def, Option.some.injEq] at hVerifier
+    simp only [boolVerifier_apply, Option.some.injEq] at hVerifier
     have hCorrect := hAccept.trans hVerifier.symm
     cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>
       cases hV : M (List.ofFn v) r <;> simp_all
@@ -503,11 +512,11 @@ theorem inSigma2_polyTimeModel_iff (L : Language Bool) :
     have h₁ : PolyHierarchy.UnaryPT
         (fun y : List Bool => polyLen a₁ k₁ y.length) := by
       have h := PolyHierarchy.unaryPT_poly a₁ k₁ polyTimeComputable_id
-      simpa [polyLen_def] using h
+      simpa [polyLen_eq] using h
     have h₂ : PolyHierarchy.UnaryPT
         (fun y : List Bool => polyLen a₂ k₂ y.length) := by
       have h := PolyHierarchy.unaryPT_poly a₂ k₂ polyTimeComputable_id
-      simpa [polyLen_def] using h
+      simpa [polyLen_eq] using h
     have hmem := PolyHierarchy.mem_altClass_of_normal (b := true) (i := 1)
       hV polyTimeComputable_id h₁ h₂
     have hkey : L = {y | qStep true (polyLen a₁ k₁ y.length)

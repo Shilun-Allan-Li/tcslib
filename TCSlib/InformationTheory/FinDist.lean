@@ -26,6 +26,7 @@ probability, the `ℓ¹`–`ℓ²` bound, the leftover hash lemma) are all diffe
 * `FinDist.collision`: the collision probability `∑ p a ^ 2`, i.e. the chance that two
   independent samples agree.
 * `FinDist.HasMinEntropy p k`: every outcome has probability at most `2 ^ (-k)`.
+* `FinDist.probTrue p D`: the probability that the test `D` accepts a sample of `p`.
 
 ## Main results
 
@@ -59,16 +60,21 @@ variable {α β : Type*} [Fintype α] [Fintype β]
 
 instance : CoeFun (FinDist α) (fun _ => α → ℝ) := ⟨FinDist.prob⟩
 
+/-- The distribution built from weights `f` gives each outcome its weight:
+`⟨f, h₁, h₂⟩ a = f a`. -/
 @[simp] theorem coe_mk (f : α → ℝ) (h₁ : ∀ a, 0 ≤ f a) (h₂ : ∑ a, f a = 1) (a : α) :
     (⟨f, h₁, h₂⟩ : FinDist α) a = f a := rfl
 
+/-- Two distributions are equal when they give every outcome the same probability. -/
 @[ext] theorem ext {p q : FinDist α} (h : ∀ a, p a = q a) : p = q := by
   cases p; cases q; simpa using funext h
 
+/-- Every outcome has probability at most `1`. -/
 theorem le_one (p : FinDist α) (a : α) : p a ≤ 1 := by
   rw [← p.sum_prob]
   exact single_le_sum (fun b _ => p.nonneg b) (mem_univ a)
 
+/-- A finite type that carries a distribution has positive cardinality. -/
 theorem card_pos (p : FinDist α) : 0 < Fintype.card α := by
   by_contra hcon
   have hzero : Fintype.card α = 0 := by omega
@@ -88,6 +94,7 @@ noncomputable def uniform (α : Type*) [Fintype α] [Nonempty α] : FinDist α w
     rw [Finset.sum_const, card_univ, nsmul_eq_mul]
     field_simp
 
+/-- The uniform distribution gives every outcome probability `|α|⁻¹`. -/
 @[simp] theorem uniform_apply [Nonempty α] (a : α) :
     uniform α a = (Fintype.card α : ℝ)⁻¹ := rfl
 
@@ -99,6 +106,8 @@ def map [DecidableEq β] (f : α → β) (p : FinDist α) : FinDist β where
     rw [← p.sum_prob]
     exact sum_fiberwise_eq_sum_filter univ univ f p.prob ▸ (sum_fiberwise _ _ _)
 
+/-- The pushforward of `p` along `f` gives `b` the total probability of its preimage:
+`map f p b = ∑_{a : f a = b} p a`. -/
 @[simp] theorem map_apply [DecidableEq β] (f : α → β) (p : FinDist α) (b : β) :
     map f p b = ∑ a ∈ univ.filter (fun a => f a = b), p a := rfl
 
@@ -110,6 +119,8 @@ def prod (p : FinDist α) (q : FinDist β) : FinDist (α × β) where
     rw [Fintype.sum_prod_type]
     simp [← Finset.mul_sum, p.sum_prob, q.sum_prob]
 
+/-- The product distribution gives a pair the product of its coordinates' probabilities:
+`prod p q (a, b) = p a · q b`. -/
 @[simp] theorem prod_apply (p : FinDist α) (q : FinDist β) (x : α × β) :
     prod p q x = p x.1 * q x.2 := rfl
 
@@ -122,9 +133,11 @@ theorem collision_def (p : FinDist α) :
     collision p =
       (∑ a, p a ^ 2) := rfl
 
+/-- The collision probability is nonnegative. -/
 theorem collision_nonneg (p : FinDist α) : 0 ≤ collision p :=
   sum_nonneg fun _ _ => sq_nonneg _
 
+/-- The uniform distribution has collision probability `|α|⁻¹`. -/
 @[simp] theorem collision_uniform [Nonempty α] :
     collision (uniform α) = (Fintype.card α : ℝ)⁻¹ := by
   have hc : (Fintype.card α : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
@@ -158,5 +171,25 @@ theorem collision_le_of_hasMinEntropy {p : FinDist α} {k : ℝ} (h : HasMinEntr
     _ = (2 : ℝ) ^ (-k) := by rw [← Finset.mul_sum, p.sum_prob, mul_one]
 
 end FinDist
+
+/-! ### Acceptance probability of a test -/
+
+variable {α : Type*} [Fintype α]
+
+/-- The probability that the test `D` outputs `1` (`true`) on a sample of `p`:
+`Pr[x ← p : D(x) = 1]`. -/
+noncomputable def FinDist.probTrue (p : FinDist α) (D : α → Bool) : ℝ :=
+  ∑ a ∈ univ.filter (fun a => D a = true), p a
+
+/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the
+sum of the probability differences `p a - q a` over the points `D` accepts. -/
+theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
+    p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by
+  simp only [FinDist.probTrue, sum_sub_distrib]
+
+/-- `probTrue p D` is the total probability of the points that `D` accepts. -/
+theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
+    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
+  rfl
 
 end TCSlib.InformationTheory

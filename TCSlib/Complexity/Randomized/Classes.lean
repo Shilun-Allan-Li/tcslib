@@ -110,6 +110,12 @@ event `A` holds of `r` (as a list): the counting ratio `#{r : A r}/2^m`.
 def randProb (m : ℕ) (A : List Bool → Prop) [DecidablePred A] : ℚ :=
   ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m
 
+/-- The probability of an event is the cardinality of its accepted bit tuples divided
+by the number `2 ^ m` of all length-`m` bit tuples. -/
+theorem randProb_eq (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :
+    randProb m A =
+      ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m := rfl
+
 /-- Two events that agree on every random string have the same
 probability. -/
 theorem randProb_congr {m : ℕ} {A B : List Bool → Prop} [DecidablePred A]
@@ -247,11 +253,8 @@ strings — a concrete, computable stand-in for [AB09, Def 7.3]'s "polynomial
 decide undecidable languages). -/
 def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
 
-/-- The defining equation of `polyLen`: `polyLen a k = fun n => a * (n + 1) ^ k`. -/
-theorem polyLen_def (a k : ℕ) :
-    polyLen a k =
-      (fun n => a * (n + 1) ^ k :
-        ℕ → ℕ) := rfl
+/-- The canonical polynomial length schedule at `n` is `a * (n + 1) ^ k`. -/
+theorem polyLen_eq (a k n : ℕ) : polyLen a k n = a * (n + 1) ^ k := rfl
 
 /-- An abstract *efficiency notion* for verifiers, standing in for
 "polynomial-time Turing machine" in [AB09, Def 7.3] (see the module
@@ -272,11 +275,9 @@ def boolVerifier (M : List Bool → List Bool → Bool) :
     List Bool → List Bool → Option Bool :=
   fun x r => some (M x r)
 
-/-- The defining equation of `boolVerifier`: `boolVerifier M = fun x r => some (M x r)`. -/
-theorem boolVerifier_def (M : List Bool → List Bool → Bool) :
-    boolVerifier M =
-      (fun x r => some (M x r) :
-        List Bool → List Bool → Option Bool) := rfl
+/-- The Boolean verifier viewed as an optional verifier returns `some (M x r)`. -/
+theorem boolVerifier_apply (M : List Bool → List Bool → Bool) (x r : List Bool) :
+    boolVerifier M x r = some (M x r) := rfl
 
 variable (E : VerifierModel)
 

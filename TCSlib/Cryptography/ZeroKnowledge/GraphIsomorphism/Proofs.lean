@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.Encoding
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 
@@ -40,7 +41,8 @@ need (Lem-119.a, Lem-120.b–c, the honest replies).
 * `TCSlib.Cryptography.GI.Isomorphic`, `GI.decGraphAt`, `GI.encInstance`,
   `GI.instanceVertexCount`, `GI.instanceG₀`, `GI.instanceG₁`, `GI.wellFormedInstance`,
   `GI.instanceVertices`, `GI.Liso`, `GI.Lniso`, `GI.Riso`, `GI.samplePerm`, `GI.permCoinLen`,
-  `GI.permFailBound`, `GI.coinSlice` — shadows of the definitions of the main file.
+  `GI.permFailBound` — shadows of the definitions of the main file. Coin segments use
+  the shared `TCSlib.Cryptography.coinBlock`.
 * `TCSlib.Cryptography.GI.gniProver`, `GI.gniVerifier`, `GI.gniProtocol`, `GI.gniVerifierRep`,
   `GI.gniProtocolRep`, `GI.giProver`, `GI.giVerifier`, `GI.giProtocol`, `GI.giProverRep`,
   `GI.giVerifierRep`, `GI.giProtocolRep` — shadows of the strategies and protocols.
@@ -100,10 +102,10 @@ theorem decGraphAt_apply (n : ℕ) (w : List Bool) (u v : Fin n) :
   rfl
 
 /-- The total graph decoder is `decGraphAt` on `⌊√|w|⌋` vertices:
-`decGraph w = ⟨⌊√|w|⌋, decGraphAt ⌊√|w|⌋ w⟩` (`decGraph_def`). -/
+`decGraph w = ⟨⌊√|w|⌋, decGraphAt ⌊√|w|⌋ w⟩` (`decGraph_eq`). -/
 theorem decGraph_eq_decGraphAt (w : List Bool) :
     decGraph w = ⟨Nat.sqrt w.length, decGraphAt (Nat.sqrt w.length) w⟩ := by
-  rw [decGraph_def]
+  rw [decGraph_eq]
   rfl
 
 /-- Shadow of `TCSlib.Cryptography.encInstance`. -/
@@ -201,14 +203,6 @@ def permCoinLen (n : ℕ) : ℕ := n * permTrials n * permBits n
 /-- Shadow of `TCSlib.Cryptography.permFailBound`. -/
 noncomputable def permFailBound (n : ℕ) : ℝ := n * (2 : ℝ)⁻¹ ^ n
 
-/-- Shadow of `TCSlib.Cryptography.coinSlice`. -/
-def coinSlice (c i : ℕ) (r : List Bool) : List Bool := (r.drop (i * c)).take c
-
-/-- The defining equation of `coinSlice`: `coinSlice c i r = (r.drop (i * c)).take c`. -/
-theorem coinSlice_def (c i : ℕ) (r : List Bool) :
-    coinSlice c i r =
-      ((r.drop (i * c)).take c) := rfl
-
 /-- Shadow of `TCSlib.Cryptography.gniProver` [PS10, Protocol 118.3]. -/
 def gniProver : Strategy where
   coins := .const 0
@@ -252,12 +246,39 @@ noncomputable def gniVerifierRep : Strategy where
   next x _ r hist :=
     let c := 1 + (x.length + 1) ^ 2
     if hist.length < x.length then
-      let ri := coinSlice c hist.length r
+      let ri := coinBlock c hist.length r
       encGraph (permGraph (if ri.headD false then instanceG₁ x else instanceG₀ x)
         (samplePerm (instanceVertexCount x) (ri.drop 1)))
     else
       [decide (wellFormedInstance x = true ∧
-        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinSlice c j r).headD false)]
+        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinBlock c j r).headD false)]
+
+/-- The repeated GNI verifier uses one challenge-and-permutation coin block per input bit. -/
+theorem gniVerifierRep_coins :
+    gniVerifierRep.coins = .mul .var (.add (.const 1) (.normal 1 2)) := rfl
+
+/-- Before `|x|` replies, the repeated GNI verifier sends the graph selected and relabelled
+using the current coin block; afterwards it tests well-formedness and every reply's challenge bit. -/
+theorem gniVerifierRep_next (x z r : List Bool) (hist : List (List Bool)) :
+    gniVerifierRep.next x z r hist =
+      if hist.length < x.length then
+        let ri := coinBlock (1 + (x.length + 1) ^ 2) hist.length r
+        encGraph (permGraph
+          (if ri.headD false then decGraphAt (Nat.sqrt (pairFstD x).length) (pairSndD x)
+            else decGraphAt (Nat.sqrt (pairFstD x).length) (pairFstD x))
+          (samplePerm (Nat.sqrt (pairFstD x).length) (ri.drop 1)))
+      else
+        [decide (wellFormedInstance x = true ∧
+          ∀ j : Fin x.length, (hist.getD j []).headD false =
+            (coinBlock (1 + (x.length + 1) ^ 2) j r).headD false)] := rfl
+
+/-- While waiting for a reply, the repeated GNI verifier's message is the single verifier's
+first message on the current challenge-and-permutation coin block. -/
+theorem gniVerifierRep_next_run (x z r : List Bool) (hist : List (List Bool))
+    (h : hist.length < x.length) :
+    gniVerifierRep.next x z r hist =
+      gniVerifier.next x z (coinBlock (1 + (x.length + 1) ^ 2) hist.length r) [] :=
+  (gniVerifierRep_next x z r hist).trans (if_pos h)
 
 /-- Shadow of `TCSlib.Cryptography.gniProtocolRep` (Prot-118.3). -/
 noncomputable def gniProtocolRep : Protocol where
@@ -314,24 +335,22 @@ noncomputable def giProverRep : Strategy where
   next x y r hist :=
     let n := instanceVertexCount x
     let σ := decPerm n y
-    let π := samplePerm n (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)
+    let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
     if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) π)
     else encPerm (if (hist.getLastD []).headD false then π * σ⁻¹ else π)
 
-/-- The next-message function of `giProverRep`: with
-`π = samplePerm n (coinSlice (|x|+1)² ⌊|hist|/2⌋ r)` and `n = instanceVertexCount x`, the graph
-`π(G₀)` on an even history, else `encPerm (π σ⁻¹)` or `encPerm π` by the latest challenge,
-`σ = decPerm n y`. -/
+/-- The repeated GI prover uses one permutation coin block per input bit. -/
+theorem giProverRep_coins : giProverRep.coins = .mul .var (.normal 1 2) := rfl
+
+/-- At an even message count the repeated GI prover sends the relabelled first graph;
+at an odd count it returns the sampled permutation, multiplied by the inverse witness
+exactly when the last challenge bit is true. -/
 theorem giProverRep_next (x y r : List Bool) (hist : List (List Bool)) :
     giProverRep.next x y r hist =
-      if hist.length % 2 = 0 then
-        encGraph (permGraph (instanceG₀ x) (samplePerm (instanceVertexCount x)
-          (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)))
-      else encPerm (if (hist.getLastD []).headD false then
-          samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r) *
-            (decPerm (instanceVertexCount x) y)⁻¹
-        else samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)) :=
-  rfl
+      let n := Nat.sqrt (pairFstD x).length
+      let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
+      if hist.length % 2 = 0 then encGraph (permGraph (decGraphAt n (pairFstD x)) π)
+      else encPerm (if (hist.getLastD []).headD false then π * (decPerm n y)⁻¹ else π) := rfl
 
 /-- Shadow of `TCSlib.Cryptography.giVerifierRep`. -/
 noncomputable def giVerifierRep : Strategy where
@@ -385,7 +404,7 @@ theorem giProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
     (giProver.next x y r hist).length ≤ x.length := by
   have h : (giProver.next x y r hist).length =
       Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
-    cases hist <;> simp [giProver, decGraph_def]
+    cases hist <;> simp [giProver, decGraph_eq]
   rw [h]
   exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
 
@@ -674,6 +693,44 @@ theorem giProver_next_cons' (x y r m : List Bool) (h : List (List Bool)) :
       encPerm (if m.headD false then
         samplePerm (decGraph (pairFstD x)).1 r * (decPerm (decGraph (pairFstD x)).1 y)⁻¹
       else samplePerm (decGraph (pairFstD x)).1 r) := rfl
+
+/-- On an even history, the repeated GI prover sends the single prover's first message
+on the current permutation tape.
+
+**Proof sketch.** Read the even branch, map the decoded-graph equation through its graph
+message, then reverse the single prover's first-message equation. -/
+theorem giProverRep_next_graph (x y r : List Bool) (hist : List (List Bool))
+    (h : hist.length % 2 = 0) :
+    giProverRep.next x y r hist =
+      giProver.next x y (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r) [] :=
+  let tape := coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r
+  let F : (Σ n : ℕ, Graph n) → List Bool :=
+    fun d => encGraph (permGraph d.2 (samplePerm d.1 tape))
+  (giProverRep_next x y r hist).trans
+    ((if_pos h).trans
+      ((congrArg F (decGraph_eq_of_sqrt (w := pairFstD x)
+          (n := Nat.sqrt (pairFstD x).length) rfl)).symm.trans
+        (giProver_next_nil' x y tape).symm))
+
+/-- On an odd history, the repeated GI prover sends the single prover's reply to the
+last challenge, using the current permutation tape.
+
+**Proof sketch.** Read the odd branch, map the decoded-graph equation through its permutation
+reply, then reverse the single prover's one-challenge equation. -/
+theorem giProverRep_next_reply (x y r : List Bool) (hist : List (List Bool))
+    (h : hist.length % 2 ≠ 0) :
+    giProverRep.next x y r hist =
+      giProver.next x y (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
+        [hist.getLastD []] :=
+  let tape := coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r
+  let F : (Σ n : ℕ, Graph n) → List Bool := fun d =>
+    encPerm (if (hist.getLastD []).headD false then
+      samplePerm d.1 tape * (decPerm d.1 y)⁻¹ else samplePerm d.1 tape)
+  (giProverRep_next x y r hist).trans
+    ((if_neg h).trans
+      ((congrArg F (decGraph_eq_of_sqrt (w := pairFstD x)
+          (n := Nat.sqrt (pairFstD x).length) rfl)).symm.trans
+        (giProver_next_cons' x y tape (hist.getLastD []) []).symm))
 
 /-- The graph isomorphism verifier's verdict, unfolded. -/
 theorem giVerifier_next_two' (x z r H γ : List Bool) :

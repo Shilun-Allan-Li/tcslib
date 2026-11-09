@@ -1,0 +1,37 @@
+{
+  "status": "STATIC_AST_AND_PIN_CHECK_PASS_NO_GUARD_EXECUTION",
+  "guard_sha256": "6775ba1b6f7480d94930c18e036b23611dc84e5e7fbf9f55092b4f2560d5fabb",
+  "proposal_manifest_sha256": "18a9859d3cbca4da2b4e79643c2f641ae2434221c42123ea9608a9f0c3116011",
+  "source_head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "input_pins": {
+    "ENGINE": "64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95",
+    "PARALLEL": "24731171b60eb8da0ce731b633f60bc175c424d877e45fa357a0883d02ce83c5",
+    "APPROVAL": "3f0730086b324c2773bcf5239eadfdb86f7c026bbbb5bf2f344283372fa7f9fa",
+    "SETUP": "8a9a6db13d4b6b9af51e7ea1d9e108a5c59d89a7bbcd5326a2576723789ec3e7"
+  },
+  "source_inventory_sha256": "7f606ceb1c33a018ef833ee779457f0e447d334b442acab746b4a8899f82191c",
+  "allowed_tools": [
+    "check_probe_v2.py",
+    "run_gate06_final_native.py"
+  ],
+  "full_validation_stages": [
+    "initial",
+    "after-child",
+    "after-idle-prelaunch"
+  ],
+  "child_session_inheritance": [
+    {
+      "tool": "check_probe_v2.py",
+      "line": 35,
+      "call": "subprocess.Popen"
+    },
+    {
+      "tool": "run_gate06_final_native.py",
+      "line": 290,
+      "call": "subprocess.run"
+    }
+  ],
+  "future_LOCAL_receipt_not_consumed": true,
+  "programs_imported_or_executed": false,
+  "native_or_process_simulation": false
+}

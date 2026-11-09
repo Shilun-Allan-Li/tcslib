@@ -1,0 +1,22 @@
+import TCSlib.Complexity.TuringMachine.Configuration
+import Lean
+
+open Lean Lean.Meta in
+run_cmd do
+  let n := `Turing.instInhabitedCfg
+  let env ← getEnv
+  let info ← getConstInfo n
+  unless info.isDefinition && isInstanceCore env n do
+    throwError "Expected the exact imported definition-instance"
+  unless (← getReducibilityStatus n) matches .semireducible do
+    throwError "Expected semireducible before local attribute"
+  logInfo m!"INSTANCE-ELIGIBILITY before name={n.toString} kind=definition instance=true status=semireducible"
+
+attribute [local irreducible] Turing.instInhabitedCfg
+
+open Lean Lean.Meta in
+run_cmd do
+  let n := `Turing.instInhabitedCfg
+  unless (← getReducibilityStatus n) matches .irreducible do
+    throwError "Local irreducibility was not installed"
+  logInfo m!"INSTANCE-ELIGIBILITY after name={n.toString} status=irreducible; EOF"

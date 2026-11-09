@@ -218,6 +218,9 @@ def uRest (w : List Bool) : List Bool := transduce restδ restO false w
 /-- Whether a word contains a `0`. -/
 def hasFalse (w : List Bool) : Bool := (w.map not).any id
 
+/-- `hasFalse w` tests whether the list of negated bits contains `true`. -/
+theorem hasFalse_eq (w : List Bool) : hasFalse w = (w.map not).any id := rfl
+
 /-- The `uHead` transducer emits nothing once off. -/
 private theorem transduce_head_false (w : List Bool) : transduce headδ headO false w = [] := by
   induction w with

@@ -21,7 +21,6 @@ universal hash family is a *strong* extractor for every class of `k`-sources.
 
 ## Main definitions
 
-* `FinDist.probTrue p D`: the probability that the test `D` accepts a sample of `p`.
 * `EpsClose ε p q`: `p` and `q` are `ε`-close.
 * `IsExtractor C ε Ext`: `Ext` is an `ε`-extractor for the class of sources `C`.
 * `IsStrongExtractor C ε f`: the seeded family `f` is a strong `ε`-extractor for `C`: the pair
@@ -57,27 +56,11 @@ variable {α β S : Type*} [Fintype α] [Fintype β] [Fintype S]
 
 /-! ### Closeness -/
 
-/-- The probability that the test `D` outputs `1` (`true`) on a sample of `p`:
-`Pr[x ← p : D(x) = 1]`. -/
-noncomputable def FinDist.probTrue (p : FinDist α) (D : α → Bool) : ℝ :=
-  ∑ a ∈ univ.filter (fun a => D a = true), p a
-
 /-- `p` and `q` are **`ε`-close**, written `p ≈_ε q`: every deterministic distinguisher `D`, with
 no bound on its running time, has advantage at most `ε`,
 `|Pr[x ← p : D(x) = 1] - Pr[y ← q : D(y) = 1]| ≤ ε`. [PS10, Def 181.1] -/
 def EpsClose (ε : ℝ) (p q : FinDist α) : Prop :=
   ∀ D : α → Bool, |p.probTrue D - q.probTrue D| ≤ ε
-
-/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the
-sum of the probability differences `p a - q a` over the points `D` accepts. -/
-theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
-    p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by
-  simp only [FinDist.probTrue, sum_sub_distrib]
-
-/-- `probTrue p D` is the total probability of the points that `D` accepts. -/
-theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
-    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
-  rfl
 
 /-- The probability differences of two distributions sum to zero. -/
 private theorem sum_sub_eq_zero (p q : FinDist α) : ∑ a, (p a - q a) = 0 := by

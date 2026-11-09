@@ -1,0 +1,17 @@
+{
+  "status": "ARCHIVAL_GUARD_DEFER_BEFORE_ANY_ARCHIVE_WRITE_NOT_NATIVE_ATTEMPT",
+  "recorded_utc": "2026-11-08T21:43:24.387051+00:00",
+  "builder_sha256": "24bc98b993f5a23de741239812eecae3556020c29df1de859d2244b2b5e58847",
+  "reason": "Global lease had moved to a later R3 collector after LOCAL completed; original archive guard incorrectly required global absence.",
+  "observed_later_lease": {
+    "pid": 24586,
+    "label": "collector-r1",
+    "utc": "2026-11-08T21:39:06.781145+00:00",
+    "guard_sha256": "6775ba1b6f7480d94930c18e036b23611dc84e5e7fbf9f55092b4f2560d5fabb",
+    "reviewed_local_result_sha256": "6a019e8051ef7deceae8fec3fd9ac53698e43985c7fe9f86d4e7b1d0ab12e656"
+  },
+  "source_or_live_phase_mutated": false,
+  "zip_written": false,
+  "native_execution": false,
+  "resolution": "Root explicitly permits a distinct later R3 lease bound to this exact closed LOCAL result; local-continuation leases remain forbidden."
+}

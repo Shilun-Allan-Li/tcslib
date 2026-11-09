@@ -1,0 +1,48 @@
+{
+  "status": "READ_ONLY_STATIC_REVIEW_OF_ARCHIVED_R1_NOT_RUNTIME_TEST",
+  "reviewed_source_sha256": "b48a00179b04a0bc52a4e04995d50cd0c15505117c2b3dc1928d5da9719b5123",
+  "reviewed_source": "preparation-checkpoint-r1/preparation-checkpoint.zip:payload/guard_native_command_r1.py",
+  "source_lines": 119,
+  "dependency_hashes": {
+    "native-runtime-proposal/run_combined_native.py": "64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95",
+    "rule10-prep/proposed-tools/check_probe_v2.py": "c685d6aa01b1b7e44115e88781d1634b3b3cdda512acc702eeba5e810f767179",
+    "rule10-prep/proposed-tools/run_gate06_final_native.py": "0a8b5ebc13d5b2cd4f613fbecb83a357daad285ef84e29774180378f3430a52b"
+  },
+  "findings": [
+    {
+      "id": "G-01",
+      "class": "ROUTINE_FIX_BEFORE_USE",
+      "lines": [
+        13,
+        87
+      ],
+      "finding": "No SIGTERM/SIGHUP handlers are installed. The imported native module defines handlers only inside its uncalled main. Default SIGTERM/HUP can exit this guard without entering its cleanup path while the separately sessioned child remains active.",
+      "minimal_fix": "Install signal.SIGTERM and signal.SIGHUP handlers that raise InterruptedError before entering the protected lifecycle. Keep existing BaseException cleanup/own-group-only signaling. No signal to a host-inventory PID."
+    },
+    {
+      "id": "G-02",
+      "class": "ROUTINE_FIX_BEFORE_USE",
+      "lines": [
+        56,
+        70,
+        87
+      ],
+      "finding": "Program/source pins are checked before a potentially unbounded host wait. They are not rechecked just before Popen; generic check_probe has no live HEAD check. The post-command tool hash catches a change only after the changed program has already executed, and HEAD/clean state is not rechecked afterward.",
+      "minimal_fix": "After wait_idle/resources and immediately before Popen, repeat allowed tool/native-helper hashes and live HEAD/clean checks. Repeat HEAD/clean after the child together with existing tool hashes. Preserve raw command rc separately from guard failure."
+    }
+  ],
+  "positive_findings": [
+    "Pinned import does not launch the native runner main and disables bytecode writes.",
+    "Nested allowed final-driver/checker subprocess calls inherit the newly sessioned guard child PGID; no nested start_new_session/preexec_fn was found.",
+    "Collision path calls only stop_own_group on the just-created child, never a PID from host inventory.",
+    "Actual command status is returned; expected native rc1 is not converted into success, and outcome_interpreted stays false.",
+    "Ordinary PATH and no PFR configuration are used."
+  ],
+  "limits": [
+    "No import/execution of the guard, native helper, checker, final runner or probe.",
+    "No signal/process simulation, native/cache/app operation or source/Git mutation.",
+    "This is a host-guard review; source/Name/seal outcomes remain the underlying driver and final-evidence review responsibility."
+  ],
+  "user_ruling_required": false,
+  "checkpoint_unchanged": true
+}

@@ -1,0 +1,88 @@
+{
+  "status": "AST_DATA_AND_INDEPENDENT_FILTER_MODEL_ONLY_UNEXECUTED_COORDINATOR",
+  "code_sha256": "24731171b60eb8da0ce731b633f60bc175c424d877e45fa357a0883d02ce83c5",
+  "base_sha256": "921959c0d81c4ffb7e2cedd38e540be69e19e8d62ec8f3743b7bd0ad6117369c",
+  "lines": 350,
+  "approval_sha256": "3f0730086b324c2773bcf5239eadfdb86f7c026bbbb5bf2f344283372fa7f9fa",
+  "BOOT_result_sha256": "e1fa6d0282b1e683f971a3e4088ec5e36228615b279634745e1ff4ea1ace8cca",
+  "BOOT_manifest_sha256": "f26e727bea498ad3287c5d928ccb09dce11b3e36bec1574b13f10d36880bc70c",
+  "old_methods_AST_identical_outside_narrow_change_set": [
+    "add_pfr",
+    "adopt_r1",
+    "append",
+    "bootstrap_continuation",
+    "cache_spec",
+    "collision_message",
+    "ledger",
+    "load",
+    "need",
+    "owner_markers",
+    "pfr_spec",
+    "prefix",
+    "r1_files",
+    "receipt",
+    "required_specs",
+    "save",
+    "sha",
+    "spec",
+    "stop_signal"
+  ],
+  "filter_model_fixtures": [
+    {
+      "name": "own_output",
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "other_tree",
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "prefix_lookalike",
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "quoted_own",
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "tree_exact",
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "embedded_other_prefix",
+      "expected": false,
+      "passed": true
+    },
+    {
+      "name": "env_not_in_argv",
+      "expected": false,
+      "passed": true
+    }
+  ],
+  "checks": {
+    "local_only_entrypoint": true,
+    "exact_original_boot9219_pinned_not_newself": true,
+    "R1_fingerprints_unchanged": true,
+    "canonical_and_copied_user_approval_bytes_identical": true,
+    "per_tree_actual_argv_filter_no_environment_dump": true,
+    "initial_halfsecond_own_tree_idle": true,
+    "percall_and_final_scope_approval_metadata": true,
+    "resource_and_owned_cleanup_helpers_unchanged": true,
+    "no_new_native_launch_or_signal_implementation": true,
+    "future_LOCAL_output_not_created": true
+  },
+  "execution_scope_digest": "No separate scope digest; exact scope metadata plus approvalSHA and coordinatorSHA bind the policy.",
+  "native_execution": false,
+  "coordinator_or_engine_import_execution": false,
+  "source_tree_config_or_old_evidence_mutation": false,
+  "limits": [
+    "Synthetic lexical argv model only, not a live process simulation.",
+    "Approved checker uses absolute -o ownTree paths; unrelated aliases/environment-only tree references are outside the lexical detector.",
+    "Global4GiB resource floor remains mandatory."
+  ]
+}

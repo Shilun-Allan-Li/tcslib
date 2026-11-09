@@ -1,0 +1,53 @@
+{
+  "status": "STATIC_AST_AND_RAW_DATA_VALIDATION_PASS_NO_PROGRAM_EXECUTION",
+  "head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "pins": {
+    "continue_native.py": "921959c0d81c4ffb7e2cedd38e540be69e19e8d62ec8f3743b7bd0ad6117369c",
+    "R1-FINGERPRINTS.json": "47c3740c7e5abaf68fe9a82cdb0eba405ea9acdf51a7c14248a16b5817e7beaa",
+    "PROPOSAL-MANIFEST.json": "2de8a659bf2c4f3e7306d09132272111fe69d497d3aef73c266529558e35ddaa",
+    "README.md": "e6f69e8bc0700f7b51981d824ab749d70e4d0ee14bb92d19bfd1155b15d56f5e",
+    "validation.json": "37d91cb937a7da27461e1df3e22495e9305f03bccd8e6e38af6d9a33e00f464b"
+  },
+  "engine_sha256": "64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95",
+  "R1_raw_files_verified": 21,
+  "R1_attempts": [
+    {
+      "label": "CacheProbe",
+      "module": ".lake/ps-maintainer/gate06-combined-20261108/native-bootstrap-r1/CacheProbe",
+      "rc": 0,
+      "passed": true,
+      "object_sha256": "61bb2a3d4f1ec0a9abae3c58378946ca5ae5b0895b74e17bf06749699a565df9",
+      "interrupted": null
+    },
+    {
+      "label": "PFR_Mathlib_MeasureTheory_Constructions_Pi",
+      "module": ".lake/packages/PFR/PFR/Mathlib/MeasureTheory/Constructions/Pi",
+      "rc": 0,
+      "passed": true,
+      "object_sha256": "34034827b4553e466a5d8024056712bcbb2ad18dd45533d14b4b5f8b5595fc0f",
+      "interrupted": null
+    },
+    {
+      "label": "PFR_Mathlib_Probability_Independence_Kernel",
+      "module": ".lake/packages/PFR/PFR/Mathlib/Probability/Independence/Kernel",
+      "rc": -15,
+      "passed": false,
+      "object_sha256": null,
+      "interrupted": "RuntimeError('HOST_COLLISION: another native operation started: [{\"pid\": 66535, \"pgid\": 45821, \"command\": \"/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/bin/lean\"}]')"
+    }
+  ],
+  "required_bootstrap_successes": 36,
+  "R1_reused_successes": 2,
+  "R1_retained_failures": 1,
+  "minimum_new_bootstrap_native_calls": 34,
+  "minimum_total_history_native_attempts_bootstrap": 37,
+  "required_fresh_local_successes": 638,
+  "minimum_total_history_native_attempts_final": 675,
+  "warm_objects": 437,
+  "final_local_objects": 1075,
+  "limits": [
+    "No coordinator or engine import/execution; no native/process simulation.",
+    "Full 146 historical and 3810 external object rehashes are runtime guards, not independently executed by this static review.",
+    "Current objects for the two R1 successful native attempts alone were independently hashed."
+  ]
+}

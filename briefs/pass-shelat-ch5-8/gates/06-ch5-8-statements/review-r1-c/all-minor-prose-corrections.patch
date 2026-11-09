@@ -1,0 +1,476 @@
+--- a/TCSlib/Cryptography/Authentication/DLHash.lean
++++ b/TCSlib/Cryptography/Authentication/DLHash.lean
+@@ -21,8 +21,8 @@
+ **The construction on the ch. 2–4 layer.** The group comes from an instance generator
+ `G : ExpGroupGen V` through the collection's generator `expGen` (indices `⟨p, ⟨m, g⟩⟩`, valid at
+ every parameter, D10). `y = g^w` for `w` drawn by the collection's domain sampler
+-(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`), so `y` is uniform in `⟨g⟩`; with
+-`m = p − 1` (hypothesis `hV` of the theorem) that is `Z_p^*`. Arithmetic is through the bundle
++(`expSampleRaw`, within `2^{-n}` of uniform on `Z_m`). Consequently `y` is within `2^{-n}`
++of uniform on `⟨g⟩`, and, when `m = p − 1` (hypothesis `hV` of the theorem), on `Z_p^*`. Arithmetic is through the bundle
+ `ArithmeticFP` (D11), as for every ch. 2–4 candidate.
+ 
+ **Source notes.**
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -549,22 +549,30 @@
+ /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
+ (strong) one-way function.
+ 
+-**Proof sketch** (the source's).
+-1. Fix a forger `A` with one signing query, and let `ε(n)` be its forgery probability. The
+-   inverter `B` gets `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
+-2. `B` picks `i ← [n]` and `c ← {0, 1}`, generates a key pair, and replaces `f(x_i^c)` by `y`.
+-   It runs `A` on the public key. It answers `A`'s query `m` when `m_i = 1 − c`, and aborts
+-   otherwise (it does not know `f^{-1}(y)`).
+-3. If `A` outputs a valid `(m', σ')` with `m'_i = c`, then `f(σ'_i) = y`, and `B` outputs `σ'_i`.
+-4. The planted `y` is distributed as every other entry of the public key, so `(i, c)` is
+-   independent of `A`'s view. The query avoids the abort with probability `1/2`. A forgery
+-   differs from the query in some position, which is `i` with probability at least `1/n`.
+-   Altogether `B` inverts with probability at least `ε(n)/(2n)`.
+-5. `f` is one-way, so `ε(n)/(2n)` is negligible, and so is `ε`. `B` is a machine by T1
+-   (`Games.exists_handlerMachine`): `advIn` builds the public key from `y = z` and the seed,
+-   the handler answers or aborts, and `out` returns the planted signature component `σ′_i`.
+-
+-If `A` makes no query, the abort never happens and the bound improves to `ε(n)/(2n)` as well. -/
++**Proof sketch** (the source's reduction, with its probability coupling explicit).
++1. Fix a forger `A` making at most one signing query, and let `ε(n)` be its forgery probability.
++   Work at `n ≥ 1`; the zero parameter is a finite exception for negligibility. The inverter
++   `B` receives `1^n` and `y = f(x)` for a uniform `n`-bit `x`.
++2. For the averaging argument, choose `i ← [n]` and a fair bit `c`, generate the other key
++   entries, and put `y` at position `(i,c)`. Answer query `m` only when `m_i ≠ c`; otherwise
++   abort, since the planted preimage is unknown. A valid forgery with `m'_i = c` reveals
++   `σ'_i` with `f(σ'_i) = y`.
++3. Couple this experiment to an honest execution, choosing `(i,c)` independently of that
++   honest execution. The reduction agrees with it whenever it avoids revealing the planted
++   preimage. For a successful honest run with query `m` and fresh forged message `m'`, the
++   jointly favorable pairs satisfy `m_i ≠ c = m'_i`. Their fraction is
++   `#{i : m_i ≠ m'_i}/(2n) ≥ 1/(2n)`. With no query, their fraction is exactly `1/2`.
++   This counts the joint event without asserting independence after conditioning on non-abort.
++4. Averaging over successful honest runs gives inversion probability at least `ε(n)/(2n)`.
++   A best position at each length is at least as good as the uniform-position average; supply
++   it as `O(log n)` bits of non-uniform advice and sample only the fair bit `c`. Thus the
++   machine need not sample an exactly uniform element of `[n]` from a fixed finite coin tape.
++5. `f` is one-way, so this lower bound is negligible, and polynomial-factor closure makes `ε`
++   negligible. Apply T1 (`Games.exists_handlerMachine`) to the extended input `⟨y,i(n)⟩`, then
++   `NUPPT.exists_withAdvice` supplies the bounded advised position. `advIn` builds the public
++   key from that input and the seed, the handler answers or aborts, and `out` extracts `σ′_i`.
++
++For zero-query successful runs the extraction fraction is `1/2`, rather than just `1/(2n)`. -/
+ theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :
+     (lamport L f E hE hfE).OneTimeSecure := by
+   sorry
+--- a/TCSlib/Cryptography/Randomness.lean
++++ b/TCSlib/Cryptography/Randomness.lean
+@@ -27,10 +27,10 @@
+ 
+ ## Contents
+ 
+-* `Extraction` — unbiased extraction from a biased source.
+-* `Learning` — the Occam bound in the PAC layer.
++* `Extraction` — no efficient one-bit extractor for the stated efficient-source class.
++* `Learning` — PRFs give a hard-to-predict concept class.
+ * `BPPBridge` — the public bridge from BPP computations to distinguishers.
+-* `Derandomization` — learning and derandomization statements.
++* `Derandomization` — PRGs give the BPP deterministic-time inclusion.
+ 
+ ## References
+ 
+--- a/TCSlib/Cryptography/Randomness/BPPBridge.lean
++++ b/TCSlib/Cryptography/Randomness/BPPBridge.lean
+@@ -69,8 +69,9 @@
+ /-- **A verifier of `main`'s polynomial-time model, with hard-wired inputs, is a non-uniform
+ machine** (the S3c bridge, lemma 1). Let `M` be an efficient Boolean verifier
+ (`polyTimeModel.Eff (boolVerifier M)`: its true-set and false-set on `⟨x, r⟩` are in `P`), and
+-`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs`, no coins,
+-that at parameter `n` on the string `y` outputs `[M (xs n) y]`.
++`xs n` inputs of length at most `p(n)`. Then there is a machine `D` with advice `xs` whose
++output at parameter `n` on `y` is `[M (xs n) y]` for every coin tape. The conclusion exposes
++coin-independent behavior; the proof chooses a witness with zero coin schedule.
+ 
+ **Proof sketch.** The true-set `V₁` of `M` is in `P`, so its indicator is polynomial-time
+ (`mem_P_iff_polyTimeComputable`). Compose it with the projection
+--- a/TCSlib/Cryptography/Randomness/Derandomization.lean
++++ b/TCSlib/Cryptography/Randomness/Derandomization.lean
+@@ -29,7 +29,8 @@
+ - **"PRGs exist"** is `∃ G : PRG, G.Secure`, the ch. 2–4 layer's [PS10, Definition 77.1], secure
+   against non-uniform distinguishers. A PRG of any stretch `ℓ(n) > n` gives one with any polynomial
+   stretch by the ch. 2–4 expansion theorems (`PRG.Secure.truncate`, `prg_expand`), which the proof
+-  needs (seed length `n^{ε/2}`, output length `polyLen a k n`).
++  needs with a computable integer-root seed schedule and a syntactic polynomial output
++  envelope, as specified in the proof sketch below.
+ 
+ ## Main definitions
+ 
+@@ -69,21 +70,26 @@
+ `DTIME(2^{n^ε})` for every `ε > 0`.
+ 
+ **Proof sketch** (the source's, with the steps it leaves implicit; route note S3c).
+-1. Let `L ∈ BPP` with verifier `M` and randomness `m(n) = polyLen a k n`. Fix `ε' = ε/2`. By the
+-   expansion theorems, there is a secure PRG `G` with seed length `s` and output length at least
+-   `a (s^{1/ε'} + 1)^k` (a polynomial in `s`, `ε` being fixed). Let `ℓ(n) = ⌈n^{ε'}⌉`.
+-2. Let `M'(x; s) = M(x; G(s)↾m(|x|))` use `ℓ(|x|)` random bits. Suppose that for infinitely many
+-   `n` some input `x` of length `n` has `|Pr_r[M(x; r) = 1] − Pr_s[M'(x; s) = 1]| > 1/6`. With `x`
+-   hard-wired as advice at seed length `ℓ(n)`, the machine of `verifier_toNUPPT` (composed with
+-   the truncation of `G`'s output) distinguishes `G` with advantage `> 1/6` at infinitely many seed
+-   lengths. The two probabilities are compared through `randProb_eq_uprob`. It runs in time
+-   polynomial in `n`, which is polynomial in `ℓ(n)`. That contradicts the security of `G`.
+-3. So for all `n ≥ n₀`, `M'` decides `L` with error `< 1/2` on every input of length `n`, and the
+-   majority over all `2^{ℓ(n)}` seeds is correct. The finitely many inputs of length `< n₀` are
+-   decided by a finite table.
+-4. The machine-level obligation: a deterministic multi-tape machine that enumerates the seeds,
+-   runs `G` and `M`, and counts, in time `2^{ℓ(n)} · poly(n) ≤ c · 2^{n^ε}` for a constant `c`, on
+-   `main`'s TM library (`DTIME`). It is the largest single construction of prong D. -/
++1. Let `L ∈ BPP` have verifier `M` and randomness `m(n) = a(n+1)^k`. Fix an integer `d ≥ 2`
++   with `1/d < min(ε,1)`. Compute `ℓ(n)` as the least natural `t` with `n ≤ t^d`, using integer
++   comparisons and powers. Then `n ≤ ℓ(n)^d` and `ℓ(n) ≤ n^{1/d}+1`. No computation of an
++   arbitrary real exponent is required. Expand the PRG to the syntactic polynomial envelope
++   `P(s) = a(s^d+1)^k+s+1`, which exceeds `s` and covers `m(n)` whenever `s = ℓ(n)`.
++2. Let `M'(x; u) = M(x; G(u)↾m(|x|))`, with seed length `ℓ(|x|)`. If infinitely many lengths
++   have an input with acceptance-probability gap `> 1/12`, choose one corresponding bad input
++   at each bad seed length. Its advice length is at most `s^d`. The verifier bridge, composed
++   with prefix truncation, is therefore a distinguisher polynomial in `s`; the probabilities
++   agree through `randProb_eq_uprob`. Each seed length has only finitely many corresponding
++   input lengths, so infinitely many bad input lengths give infinitely many bad seed lengths,
++   contradicting PRG security. The fixed `1/12` threshold leaves an explicit majority margin.
++3. Eventually every input has probability gap at most `1/12`. Since `M` is correct with
++   probability at least `2/3`, `M'` is correct with probability at least `7/12 > 1/2`.
++   The majority over all seeds is correct. A finite table handles the remaining input lengths.
++4. Construct a deterministic multi-tape machine enumerating the seeds, running `G` and `M`,
++   and counting, using the shared TM construction layer. For some constants `C,C'`, its time
++   is at most `2^{ℓ(n)} · poly(n) ≤ 2^{n^{1/d}+1+C log₂(n+1)+C'}`. Since `1/d < ε`, this is
++   eventually at most `2^{n^ε}`; a constant factor absorbs the finite exceptions. This machine
++   construction is the substantive remaining fill obligation, not supplied by the sketch. -/
+ theorem bpp_subset_dtime_subexp (hPRG : ∃ G : PRG, G.Secure) (ε : ℝ) (hε : 0 < ε) :
+     {L | Randomized.InBPP Randomized.polyTimeModel L} ⊆ DTIME (subexpBound ε) := by
+   sorry
+--- a/TCSlib/Cryptography/Randomness/Learning.lean
++++ b/TCSlib/Cryptography/Randomness/Learning.lean
+@@ -38,7 +38,9 @@
+   source's sketch): every efficient learner's prediction advantage is negligible.
+ * `Randomness.not_weakLearnsUnder_prfConcept` (Thm 179.1, part (c), proved from (b) and the PAC
+   layer's bridge): no efficient learner weakly PAC-learns the class under the uniform distribution
+-  with a constant edge.
++  with a constant edge `γ` at fixed failure probability `δ < γ`. Amplifying a KV94-style
++  weak learner changes the learner and its resources; that amplification and its resource
++  bridge are additional results, not a construction already supplied by part (c).
+ 
+ ## References
+ 
+--- a/TCSlib/Cryptography/SecureComputation/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+@@ -44,7 +44,11 @@
+   constant gates included); [PS10] describes the two-input case.
+ - **The row order.** A table lists its rows in a fixed enumeration of the assignments, composed
+   with the gate's random permutation.
+-- **The evaluator** opens the first row that decrypts (`List.findSome?`).
++- **The evaluator** opens the first row that decrypts (`List.findSome?`). The formal `Good`
++  invariant and the probability theorems below assert correctness of that first opening for
++  every assignment. They do not assert the source's stronger unique-opening conclusion.
++  Several rows may open to the same correct label, for example when wire labels coincide.
++  The cross-opening union-bound sketch proves a sufficient stronger event for this target.
+ 
+ ## Main definitions
+ 
+@@ -52,7 +56,8 @@
+ * `SecureComputation.gateOut`: a gate's output on an assignment of its argument positions.
+ * `SecureComputation.GarbleSeed`, `garbledTable`, `inputKeys`, `garbledValues`,
+   `garbledOutput`: Construction 158.a and its evaluation.
+-* `SecureComputation.Good`: every table opens, under every assignment's keys, to the right key.
++* `SecureComputation.Good`: every table's first successful opening, under every assignment's
++  keys, gives the right key; uniqueness is not part of this invariant.
+ 
+ ## Main results
+ 
+@@ -332,7 +337,8 @@
+       (garbledValues M Cc s (inputKeys Cc s x)).getD Cc.output default := rfl
+ 
+ /-- **A good garbling**: at every gate, under the keys of every assignment of its arguments, the
+-first row of the table that decrypts gives the key of the gate's output on that assignment. -/
++first row of the table that decrypts gives the key of the gate's output on that assignment.
++This is first-success correctness, not uniqueness of the row that can decrypt. -/
+ def Good (s : GarbleSeed Cc K ρ) : Prop :=
+   ∀ (i : Fin Cc.gates.length) (a : Fin (Cc.gates[i]).args.length → Bool),
+     (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
+@@ -400,7 +406,8 @@
+ /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
+ "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
+ that is correct and has the wrong-key property with error `δ`, a uniformly random garbling fails
+-to be good with probability at most `12 · |gates| · δ`.
++to be good with probability at most `12 · |gates| · δ`. The formal conclusion bounds failure
++of first-success correctness; it does not state the source's stronger unique-opening claim.
+ 
+ **Proof sketch.** Fix a gate `i` and an assignment `a`.
+ 1. By correctness, the row of `a` decrypts under `a`'s keys to the right key. So `Good` can fail
+--- a/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
+@@ -73,7 +73,8 @@
+ row will evaluate to `⊥`"]: with the nested special encryption from two PRFs, there is a
+ negligible `δ` such that, for every parameter `n` and every fan-in-two circuit, a uniformly
+ random garbling is good, and so evaluates correctly (`garbledOutput_eq`), except with
+-probability at most `12 · |gates| · δ(n)`. -/
++probability at most `12 · |gates| · δ(n)`. Goodness here concerns the first successful opening
++for every assignment; the stronger source assertion of unique opening is not this conclusion. -/
+ theorem garbling_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ (n m : ℕ) (Cc : DAGCircuit m), Cc.IsFaninTwo →
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -23,9 +23,11 @@
+ [PS10, Proposition 161.5]: the protocol is an honest-but-curious one-out-of-two oblivious transfer
+ (Definition 155.1 for `otFunctionality`).
+ 
+-**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it:
+-`Gen`, the domain sampler, the evaluator `eval`, and the trapdoor inverter run on the all-`true`
+-coin string. The hard-core predicate is evaluated by a polynomial-time `H`, specified by
++**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it.
++`Gen` uses Alice's fresh generator coins, and the two domain samples use separate fresh blocks
++of Bob's tape. The evaluator `eval` is deterministic. Only the trapdoor inverter uses a fixed
++all-`true` tape, justified by its correctness on every inverter tape. The hard-core predicate
++is evaluated by a polynomial-time `H`, specified by
+ `H ⟨i, encD i x⟩ = [h i x]` on canonical encodings. Canonical decoding extends this specification
+ to every string decoding to `x` (`Collection.apply_of_decD`). The evaluator and its polynomial
+ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
+@@ -48,8 +50,9 @@
+   `a_{1−b}`; the hard-core property of [PS10] (from `⟨i, f_i(u)⟩` alone) does not exclude this,
+   and the proposition is not provable under it. Proposition 161.5 therefore assumes that `h` is
+   **enhanced** hard-core (`EnhancedHardCore`): unpredictable on the preimage of a sampled element
+-  even given the sampler's coins. This is the standard repair of this protocol (enhanced trapdoor
+-  permutations, [Gol04, Appendix C.1]).
++  even given the sampler's coins. Enhanced inversion is motivated in [Gol04, Appendix C.1];
++  the predicate and OT argument are in [Gol04, §7.3.2]. The Boolean prediction experiment here
++  is an explicit hypothesis, not a literal transcription of the inversion condition C.1.1.
+ 
+ ## Main definitions
+ 
+@@ -77,7 +80,10 @@
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+   §6.2.4, Protocol 160.4 and Proposition 161.5 (book pp. 160–162).
+ * [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2*, Cambridge University Press,
+-  2004, Appendix C.1 (enhanced trapdoor permutations).
++  2004, Appendix C.1 (enhanced inversion) and §7.3.2 (enhanced predicates and OT). The audit
++  consulted the author drafts: Appendix revised third version, 15 June 2003; Chapter 7
++  version 3.2, 2 July 2003, draft pp. 639–641 for the predicate/OT argument. No text/page
++  identity with the published edition is asserted.
+ -/
+ 
+ namespace TCSlib.Cryptography.SecureComputation
+@@ -213,8 +219,11 @@
+       T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x :=
+   T.toCollection.sample_eq_encD
+ 
+-/-- **An enhanced hard-core predicate** [Gol04, Appendix C.1] (a declared strengthening of
+-[PS10, Proposition 161.5]'s hypothesis; see the module docstring): for every non-uniform PPT `A`,
++/-- **An enhanced hard-core predicate**, the explicit Boolean prediction hypothesis used for
++the OT argument of [Gol04, §7.3.2] (a declared strengthening of [PS10, Proposition 161.5]'s
++hypothesis; see the module docstring). Appendix C.1 motivates enhanced inversion; its
++Definition C.1.1 is an inversion condition, not this prediction definition. For every
++non-uniform PPT `A`,
+ predicting `h(f_i⁻¹(y))` for a sampled element `y`, given the index `i` and **the sampler's
+ coins** that produced `y`, succeeds with probability at most `½` plus a negligible amount, on
+ average over the generated indices. The element `y` is read through the decoder (a sampled
+@@ -612,8 +621,9 @@
+      `exists_pkPredictor` of Algorithm 104.3).
+    - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
+      sampler's coins, which the plain hard-core property would not allow).
+-   - The predictor depends on `(b, a_{1−b})`, four cases, so the bound is uniform over the
+-     inputs: take the maximum of the four negligible functions.
++   - Building the selected mask also uses `a_b`, so take all eight triples `(b,a₀,a₁)`.
++     The maximum of their eight negligible bounds is negligible and uniform over the inputs;
++     fixing only the choice and unselected sender bit would not specify the complete view.
+ 4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
+    composition (`NUPPT.exists_comp`).
+ 
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean
+@@ -31,8 +31,11 @@
+ - `x` for `m`: a source typo, read as `m`.
+ - `(0^n ‖ m) ⊕ p` is computed as `p_{<n} ‖ (m ⊕ p_{≥n})` for the pad `p = f_k(r)`. The test
+   "`m₀ = 0^n`" is computed as `c₂,_{<n} = p_{<n}`. Both are equalities of strings.
+-- `Dec` refuses malformed ciphertexts and keys (length checks first). The evaluator `E` agrees
+-  with `f` only on `n`-bit keys and inputs, the lesson of Algorithm 99.1's guard.
++- `Dec` checks the key, nonce-component and body-component lengths before evaluating `E`,
++  then checks the pad prefix. It uses total pair projections and does not separately require
++  successful pair parsing. At `n = ℓ = 0`, the malformed empty ciphertext with an empty key
++  therefore returns `some []`. The length checks protect the stated `n`-bit evaluator domain;
++  universal malformed-input rejection is not claimed.
+ - `⊥` of the machine `Dec` is the `(n + 1)`-bit string `1^{n+1}`, which decodes to no message.
+ 
+ ## Main definitions
+@@ -73,7 +76,9 @@
+ 
+ /-- **`Dec_k(c)`** [PS10, Algorithm 157.2] at parameter `n` for `ℓ`-bit messages: `none` (`⊥`)
+ unless `k` and `r` have `n` bits and `c₂` has `n + ℓ`; then, with the pad `p = E(⟨k, r⟩)`, the
+-message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise. -/
++message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise.
++Here `r` and `c₂` are the total pair projections; successful parsing is not an additional
++test. In particular `n = ℓ = 0`, `k = c = []` returns `some []`. -/
+ def spDecStr (E : List Bool → List Bool) (n ℓ : ℕ) (k c : List Bool) : Option (List Bool) :=
+   if k.length = n ∧ (pairFstD c).length = n ∧ (pairSndD c).length = n + ℓ then
+     if (pairSndD c).take n = (E (pairEncode k (pairFstD c))).take n then
+--- a/TCSlib/Cryptography/Composability/CCA2Scheme.lean
++++ b/TCSlib/Cryptography/Composability/CCA2Scheme.lean
+@@ -27,16 +27,25 @@
+ - The algorithm box outputs `(r, c₁, f_{k₂}(c))`, with `c` undefined, while `Dec′` tests
+   `f_{k₂}(c₁)`. The proof tags `c₁ ← Enc_{s₁}(m)`, which there names the whole §3.9 ciphertext.
+   So the tag covers `(r, c₁)`.
+-- **Tagging `c₁` alone would not be CCA2-secure.** Take the challenge `(r*, c₁*, t*)` and an
+-  encryption `(r₁, f_{k₁}(r₁), t₁)` of `0^n`, and ask `Dec′` for `(r*, f_{k₁}(r₁), t₁)`. Its tag is
+-  valid and it is not the challenge. The answer `f_{k₁}(r₁) ⊕ f_{k₁}(r*)` reveals `f_{k₁}(r*)`,
+-  and with it `m_b`.
++- **Tagging `c₁` alone would not be CCA2-secure.** For positive `n`, choose challenge messages
++  `0^n` and `1^n`, obtain `(r*, c₁*, t*)`, and obtain an encryption
++  `(r₁, f_{k₁}(r₁), t₁)` of `0^n`. In this short-tag variant the query
++  `(r*, f_{k₁}(r₁), t₁)` has a valid tag. If it equals the challenge, do not query it and count
++  that branch as attack failure; otherwise its answer `f_{k₁}(r₁) ⊕ f_{k₁}(r*)` reveals the pad
++  `f_{k₁}(r*)` and hence `m_b`. Equality can occur, in particular when `r₁ = r*` and `m_b = 0^n`.
++  In the random-pad hybrid, nonce equality and accidental masked-message equality have total
++  probability at most `2 / 2^n`; the real PRF setting adds a negligible reduction error.
++  The attack is therefore overwhelmingly successful, rather than unconditionally query-distinct.
+ - The input `r ‖ c₁` has `2n` bits. The source's families are length-preserving on `|s|`-bit
+   keys, so the tag key `k₂` has `2n` bits and the tag `2n` bits. One family `F` serves both keys,
+   at parameters `n` and `2n` (the source names two families, `f` and `g`).
+-- `Dec′` is defined by the source on well-formed triples. On any other string it outputs `⊥`. The
+-  guard matters for the same reason as for the §3.9 scheme: the evaluator `E` agrees with `F` only
+-  on `⟨s, x⟩` with `|s| = |x|`.
++- `Dec′` is specified on well-formed triples. Here total pair projections and the two length
++  guards enforce malformed rejection for generated keys when `n > 0`: both ciphertext pair layers
++  must parse, and evaluator agreement then forces the valid tag to have `2n` bits. The evaluator
++  `E` agrees with `F` only on `⟨s, x⟩` with `|s| = |x|`. At `n = 0`, failed projections can all be
++  empty: the malformed four-bit word `0000`, for example, decrypts to the valid empty message.
++  This finite-prefix behavior is retained; the malformed-rejection claim is only for positive
++  parameters. There is only one plaintext at zero, so this does not change the security statement.
+ 
+ **The encoding.** The key is `⟨k₁, k₂⟩`; `Gen′` reads its `3n` coins as `k₁` (the first `n`)
+ followed by `k₂`. A ciphertext is `⟨r, ⟨c₁, t⟩⟩`, of `6n + 4` bits.
+@@ -366,17 +375,22 @@
+    in its seed, the input-free companion supplies its machine input, and T4
+    (`Games.exists_toOracleAdversary_of_bitCodec`) provides the oracle adversary at length
+    `2n`.
+-2. In the resulting game, call a `Dec′` query `(r, c₁, t)` *fresh* if `(r, c₁)` is not the
+-   ciphertext part of an earlier `Enc′` or challenge answer. A fresh query has a valid tag with
+-   probability `2^{-2n}` (a fresh value of `RF`), so by the union bound all fresh queries are
+-   refused except with probability `q(n)/2^{2n}`. A query that is not fresh and has a valid tag
+-   is an earlier answer itself, since the tag is a function of `(r, c₁)`: refused if it is the
+-   challenge, and otherwise an encryption whose message the adversary chose.
+-3. Off that bad event, the CCA2 adversary is simulated by a CPA adversary against the §3.9 scheme
+-   under `k₁` (the source's simulator): `Enc′` answers come from the CPA encryption oracle,
+-   tagged by a lazily sampled `RF`; `Dec′` answers come from the table of earlier answers, or
+-   are `⊥`. So its advantage is at most the CPA advantage (`prfFixedScheme_cpa`), plus
+-   `q(n)/2^{2n}`, plus the PRF advantage: negligible.
++2. For positive `n`, call a `Dec′` query `(r, c₁, t)` *fresh* if `(r, c₁)` is not the
++   ciphertext part of an earlier `Enc′` or challenge answer. Compare with a game that always
++   rejects fresh-pair queries. Couple both games with the same tapes and `RF`: they agree until
++   the first fresh-pair query with a valid tag. In the always-reject game, prior rejected guesses
++   reveal no value of `RF` at such a pair. Each guess therefore hits that unrevealed uniform
++   `2n`-bit value with probability at most `2^{-2n}`, even if the pair was queried before. The union bound
++   gives a first-discrepancy probability at most `q(n)/2^{2n}` in each bit-game. This does not
++   assert the same conditional probability after failed guesses in the original game.
++   A nonfresh valid-tag query is an earlier answer itself: canonical parsing and the tag's
++   dependence on `(r, c₁)` make it the refused challenge or an encryption of a chosen message.
++3. The always-reject game is simulated by a CPA adversary against the §3.9 scheme under `k₁`:
++   `Enc′` answers come from the CPA encryption oracle, tagged by a lazily sampled `RF`; `Dec′`
++   answers come from the table of earlier answers, or are `⊥`. Up to fixed constant factors
++   when combining the two bit-games, the advantage is bounded by the CPA advantage
++   (`prfFixedScheme_cpa`), the first-discrepancy term `q(n)/2^{2n}`, and the PRF advantage.
++   Each is negligible; the zero-parameter behavior described above changes no asymptotic claim.
+ 
+ The source's simulator tags with fresh uniform strings rather than a lazily sampled `RF`. The two
+ differ only when two answers share `(r, c₁)`, a collision of the `n`-bit `r`, of probability at
+--- a/TCSlib/Cryptography/Composability/SequentialZK.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK.lean
+@@ -372,23 +372,39 @@
+ zero-knowledge protocol with a bounded prover is zero-knowledge.
+ 
+ **Proof sketch** ([Gol01, §4.3.4], with the hybrids made explicit).
+-1. Given an efficient `V_Q*`, let `V*` be the verifier of one run of `π` whose auxiliary input
+-   is `⟨z, r, m̄₁, …, m̄_i⟩`: it runs `V_Q*` on the random tape `r`, feeds it the messages
+-   `m̄₁, …, m̄_i` of the first `i` phases (fillers `[]` included), and plays phase `i + 1` as
+-   `V_Q*` does. It is efficient, and it reads `i` from its auxiliary input. Let `S` be its
+-   simulator (`ZK π R`).
+-2. `S_Q(x, z)`: pick `r`; for `i = 0, …, Q − 1` run `S(x, ⟨z, r, m̄₁, …, m̄_i⟩)` and take the
+-   prover's messages of its output as `m̄_{i+1}`. Messages longer than `B(|x|)` are truncated;
+-   real ones never are (`ProverBounded`). Output `V_Q*`'s view `(x, z, r, m̄₁ … m̄_Q)`. The
+-   auxiliary inputs stay below `|z| + |r| + Q · k · (2B + 2)`, a polynomial `Lz'` in `|x|`, so
+-   `S_Q` is a strict PPT.
+-3. Hybrid `H_i`: the first `i` phases real, the rest simulated as in `S_Q`. `H_Q` is the real
+-   view, and `H_0` is `S_Q`'s output. A distinguisher between `H_i` and `H_{i+1}` gives one
+-   between the real and the simulated phase `i + 1`, with the first `i` real phases as auxiliary
+-   input (of length at most `Lz'`). It reads `i` and those phases from the sample, and completes
+-   phases `i + 2, …` with `S`. So it does not need the possibly inefficient prover.
+-4. By `ZK π R` at the bound `Lz'` the advantage is at most `Q(|x|) · ε(|x|)`, which is
+-   negligible. -/
++1. Put `n = |x|`, `k = π.rounds.eval n` and `p = proverMoves π.verifierFirst k`. Each padded
++   phase contributes `p` real prover messages and `k - p` empty prover fillers to the
++   verifier's received history. If `k = 0` or `Q(n) = 0`, sample the cheating verifier's tape
++   and output its exact empty-history view directly.
++2. Given an efficient `V_Q*`, use one deterministic efficient wrapped verifier `V*` for a
++   run of `π`. Its auxiliary input contains the original `z`, the global verifier tape `r`,
++   the phase index and the bounded received-prover prefix of earlier padded phases. It runs
++   `V_Q*` on `r` with that prefix followed by this phase's real prover messages. Its own tape
++   is empty. Only the honest prover's fillers are fixed to `[]`; no restriction is imposed
++   on a cheating verifier's filler replies. Let `S` be the simulator supplied by `ZK π R`.
++3. `S_Q(x, z)` samples `r` once and calls `S` with fresh coins for each phase. Normalize each
++   output before extending the prefix: syntactically parse its view and message-list
++   encoding, take at most `p` real prover messages, truncate each to `B(n)` bits, and pad
++   missing real messages with `[]`. Use the known phase input/auxiliary data and empty
++   wrapper tape as the view fields. A bad/noncanonical encoding or unexpected view fields
++   maps to that canonical phase view with `p` empty real messages. Append the `k - p`
++   honest-prover fillers, all `[]`, and retain only these `k` prover-message slots.
++   Every real phase view is fixed by this normalization: its count is exactly `p`, its
++   metadata is the known phase data, and every real prover message is bounded by `hB`.
++   No assumption that simulated outputs already have a valid shape is made.
++4. On every simulator tape, the accumulated prefix has at most `Q(n) * k` messages of at
++   most `B(n)` bits. Its message-list encoding has length at most `Q(n) * k * (2B(n) + 2)`.
++   Including the original auxiliary input, verifier tape, phase index and fixed pairing
++   overhead gives a polynomial bound in `n + |z|`; for `|z| ≤ Lz(n)` choose a polynomial
++   `Lz'` bounding the phase auxiliary inputs. Thus the same `S_Q` is a uniform strict PPT.
++   Its final output is the canonical view with fields `(x, z, r)` and the accumulated prefix.
++5. In hybrid `H_i`, the first `i` phases are real and the rest use these normalized simulated
++   phases. Normalization fixes real phases, so `H_Q` is the real view and `H_0` is `S_Q`.
++   Apply the same normalization and simulated-suffix computation on both sides of each
++   phase comparison. A nonuniform reduction may fix a maximizing phase and bounded prefix,
++   together with `x`, `z` and `r`, as polynomial-length advice; it needs neither the witness
++   nor an efficient honest prover, and need not trust metadata in an arbitrary simulator
++   output. By `ZK π R` at `Lz'`, summing the `Q(n)` gaps gives `Q(n) * ε(n)`, negligible. -/
+ theorem ZK.seqRep {B : PolyExpr} (h : ZK π R) (hB : π.ProverBounded R B) (Q : PolyExpr) :
+     ZK (π.seqRep Q) R := by
+   sorry
+@@ -396,11 +412,16 @@
+ /-- **Theorem 175.1, statistical case**: statistical error `δ` composes to `Q · δ`, under the
+ same prover bound.
+ 
+-**Proof sketch.** As for `ZK.seqRep`, with statistical distance instead of a distinguisher.
+-Each hybrid step changes one phase from real to simulated for a fixed auxiliary input, at
+-distance at most `δ(|x|)` (`StatZK π R δ` holds for every auxiliary input). The common
+-post-processing, which completes the later phases and truncates the messages, does not increase
+-the distance. Summing the `Q(|x|)` steps by the triangle inequality gives `Q(|x|) · δ(|x|)`. -/
++**Proof sketch.** Use the same phase-shape normalization as `ZK.seqRep`: exactly
++`proverMoves π.verifierFirst k` bounded real prover messages, the canonical empty prover
++fillers giving `k` received slots per padded phase, and the fixed canonical fallback for a
++malformed simulated view. This fixes every real phase view and bounds every simulated
++prefix, so it also gives a strict-PPT simulator without an output-shape premise.
++For a fixed earlier prefix, change one phase from real to simulated at distance at most
++`δ(|x|)` (`StatZK π R δ` holds for every auxiliary input). The common normalization and
++simulated-suffix computation do not increase statistical distance. Average over prefixes
++and sum the `Q(|x|)` gaps by the triangle inequality, giving exactly `Q(|x|) · δ(|x|)`.
++The empty-history construction handles `k = 0` or `Q(|x|) = 0` directly. -/
+ theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
+     (hB : π.ProverBounded R B) (Q : PolyExpr) :
+     StatZK (π.seqRep Q) R (fun n => Q.eval n * δ n) := by
+--- a/TCSlib/Cryptography/Composability/ThreeColoring.lean
++++ b/TCSlib/Cryptography/Composability/ThreeColoring.lean
+@@ -116,7 +116,12 @@
+ explicit one-run soundness error. The preceding estimate makes the repeated error negligible,
+ so the error-parametric proof gives an interactive proof. The original proof's bounded honest
+ prover messages supply the hypothesis of zero-knowledge composition, which applies to
+-`col_zk`. The generic repetition statements remain the campaign's admitted fill targets. -/
++`col_zk`. Here the prover-first base protocol has three moves: each padded six-move phase
++contributes two real prover messages and one empty prover filler to the verifier's view.
++The composition sketch normalizes simulated phases to that prescribed shape and message
++bound, with a canonical fallback for malformed phase views; it assumes no new simulator
++output guarantee. The generic repetition statements remain the campaign's admitted fill
++targets. -/
+ theorem colSeq_efficientProverProof_zk {Com : List Bool → List Bool} {ℓ : PolyExpr}
+     (hC : Commitment Com ℓ) :
+     EfficientProverProof ((colProtocol Com ℓ).seqRep (.normal 2 2)) L3COL R3COL ∧

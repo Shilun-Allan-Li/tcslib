@@ -43,6 +43,7 @@ by `ifEq`).
 
 ## Main definitions
 
+* `TCSlib.Cryptography.coinBlock` — the common indexed coin-tape segment.
 * `TCSlib.Cryptography.decodeFin` — decode a string as an `ℓ`-bit string, failure on a wrong
   length; `TCSlib.Cryptography.padFin` — pad/truncate (for samplers).
 * `TCSlib.Cryptography.blocksEquivX`, `TCSlib.Cryptography.FunFamily.blocks` — the canonical
@@ -57,6 +58,8 @@ by `ifEq`).
 
 ## Main results
 
+* `TCSlib.Cryptography.coinBlock_eq`, `TCSlib.Cryptography.length_coinBlock` — the segment
+  equation and its full-length condition.
 * `TCSlib.Cryptography.decodeFin_ofFn`, `TCSlib.Cryptography.padFin_ofFn` — decoding and
   padding invert `List.ofFn`; `TCSlib.Cryptography.decodeFin_eq_some_iff` — decoding succeeds
   exactly on the encoding.
@@ -77,6 +80,19 @@ by `ifEq`).
 namespace TCSlib.Cryptography
 
 open Complexity Turing Finset
+
+/-- The `i`-th segment of `B` bits of a coin string; a short final segment is truncated. -/
+def coinBlock (B i : ℕ) (r : List Bool) : List Bool := (r.drop (i * B)).take B
+
+/-- The defining equation of `coinBlock`: `coinBlock B i r = (r.drop (i·B)).take B`. -/
+theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B := rfl
+
+/-- A coin segment has exactly `B` bits when its end lies within the input tape. -/
+theorem length_coinBlock {B i : ℕ} {r : List Bool} (h : (i + 1) * B ≤ r.length) :
+    (coinBlock B i r).length = B := by
+  simp only [coinBlock_eq, List.length_take, List.length_drop]
+  rw [Nat.add_mul, Nat.one_mul] at h
+  omega
 
 /-- Decode a string as an `ℓ`-bit string: `some` of its bits if the length is exactly `ℓ`,
 `none` otherwise (a wrong-length answer of an inverter is a failure, D5). -/

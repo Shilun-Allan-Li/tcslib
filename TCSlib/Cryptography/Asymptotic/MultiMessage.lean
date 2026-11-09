@@ -518,6 +518,23 @@ noncomputable def prfScheme (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) �
     rw [h, runAt_prfDec hE _ _ _ _ _ hre (by simp), h,
       zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
 
+/-- The key generator of `prfScheme` is the uniform machine returning its coin string
+[PS10, Algorithm 99.1]. -/
+theorem prfScheme_gen (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (F n s x)) :
+    (prfScheme F E hE hFE).gen = NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var := rfl
+
+/-- The encryptor of `prfScheme` uses its raw encryption function and `n` coins
+[PS10, Algorithm 99.1]. -/
+theorem prfScheme_enc (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (F n s x)) :
+    (prfScheme F E hE hFE).enc =
+      NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var := rfl
+
 /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
 distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
 def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : List Bool :=

@@ -319,14 +319,14 @@ theorem bitwise_enc_runAtL (S : BitPublicKeyScheme) (n : ℕ) (pk : List Bool) (
         S.enc.runAtL n (pairEncode pk [m i]) (coinBlock (S.enc.coinLen n) i r)) := by
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   simp only [bitwiseEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
-    pairFstD_pairEncode, pairSndD_pairEncode, blockEncFun_def]
+    pairFstD_pairEncode, pairSndD_pairEncode, blockEncFun_eq]
   rw [blockEncFun_spec S.enc.output (.const 1) S.enc.coins (List.replicate n true) pk
     _ (List.ofFn m) r (by
-      simp only [blockState_def, length_pairEncode, List.length_ofFn, PolyExpr.eval_const, mul_one]
+      simp only [blockState_eq, length_pairEncode, List.length_ofFn, PolyExpr.eval_const, mul_one]
       omega)]
   simp only [PolyExpr.eval_const, List.length_replicate]
   rw [blockList_ofFn S.enc.output _ _ _ n m r _ (by
-    simp only [blockState_def, length_pairEncode, List.length_ofFn]; omega)]
+    simp only [blockState_eq, length_pairEncode, List.length_ofFn]; omega)]
   congr 1
   refine congrArg List.ofFn (funext fun i => ?_)
   rw [S.enc_uniform.runAtL_eq]

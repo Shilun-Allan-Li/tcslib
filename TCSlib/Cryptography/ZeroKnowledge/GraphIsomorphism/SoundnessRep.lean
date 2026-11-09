@@ -139,39 +139,25 @@ theorem gniProver_next_enc {n : ℕ} (G₀ G₁ : Graph n) (y r : List Bool) (hi
 /-- The `|x|`-fold verifier's graph of iteration `|hist|` on an encoded instance, while the
 protocol is not over: `σ(G_b)` for the bit `b` and the sampler coins of the coin block.
 
-**Proof sketch.** Unfold the strategy on the branch `|hist| < |x|`, read the two graph words
-off the encoded instance (`pairFstD_pairEncode`, `pairSndD_pairEncode`) and transport the vertex
-count `instanceVertexCount (encInstance G₀ G₁) = n` (`generalize`/`subst`, then
-`decGraphAt_encGraph`). -/
+**Proof sketch.** Read the repeated message as the single verifier's first message on the
+current coin block (`gniVerifierRep_next_run`), then apply its public encoded-instance
+message equation (`gniVerifier_next_nil`). -/
 theorem gniVerifierRep_next_lt {n : ℕ} (G₀ G₁ : Graph n) (z r : List Bool) (hist : List (List Bool))
     (h : hist.length < (encInstance G₀ G₁).length) :
     gniVerifierRep.next (encInstance G₀ G₁) z r hist =
       encGraph (permGraph
-        (cond ((coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false) G₁ G₀)
-        (samplePerm n ((coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) := by
-  show (if hist.length < (encInstance G₀ G₁).length then _ else _) = _
-  rw [if_pos h]
-  show encGraph (permGraph
-    (if (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false then
-      decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairSndD (encInstance G₀ G₁)) else
-      decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
-    (samplePerm (instanceVertexCount (encInstance G₀ G₁))
-      ((coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) = _
-  rw [show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _,
-    show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
-  generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
-  rw [instanceVertexCount_encInstance] at hm
-  subst hm
-  simp only [decGraphAt_encGraph]
-  cases (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false <;> rfl
+        (cond ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false) G₁ G₀)
+        (samplePerm n ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) :=
+  (gniVerifierRep_next_run (encInstance G₀ G₁) z r hist h).trans
+    (gniVerifier_next_nil G₀ G₁ z
+      (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r))
 
 /-- The `|x|`-fold verifier's verdict once `|x|` replies are in. -/
 theorem gniVerifierRep_next_ge (x z r : List Bool) (hist : List (List Bool)) (h : x.length ≤ hist.length) :
     gniVerifierRep.next x z r hist =
       [decide (wellFormedInstance x = true ∧ ∀ j : Fin x.length,
-        (hist.getD j []).headD false = (coinSlice (1 + (x.length + 1) ^ 2) j r).headD false)] := by
-  show (if hist.length < x.length then _ else _) = _
-  rw [if_neg (not_lt.2 h)]
+        (hist.getD j []).headD false = (coinBlock (1 + (x.length + 1) ^ 2) j r).headD false)] :=
+  (gniVerifierRep_next x z r hist).trans (if_neg (not_lt.2 h))
 
 /-- The verdict of the `|x|`-fold protocol against a prover `P'`: the verifier's next-message
 function on the `2|x|`-move execution. -/
@@ -184,8 +170,8 @@ theorem gniProtocolRep_outV (P' : Strategy) (x y z : List Bool) (r : gniProtocol
 iteration index. -/
 noncomputable def gniGraphs {n : ℕ} (G₀ G₁ : Graph n) (rV : List Bool) (j : ℕ) : List Bool :=
   encGraph (permGraph
-    (cond ((coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j rV).headD false) G₁ G₀)
-    (samplePerm n ((coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j rV).drop 1)))
+    (cond ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j rV).headD false) G₁ G₀)
+    (samplePerm n ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j rV).drop 1)))
 
 /-- The verdict of the `|x|`-fold protocol against `P'` on an encoded instance: every reply's
 first bit equals the corresponding bit of the verifier's tape, the `j`-th reply being `P'`'s
@@ -196,7 +182,7 @@ theorem gniRep_outV_eq (P' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (y z : Li
       [decide (∀ j : Fin (encInstance G₀ G₁).length,
         (P'.next (encInstance G₀ G₁) y (List.ofFn r.1)
           (List.map (gniGraphs G₀ G₁ (List.ofFn r.2)) (List.range (j + 1)))).headD false =
-        (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false)] := by
+        (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false)] := by
   rw [gniProtocolRep_outV, exec_vfirst_eq P' gniVerifierRep (encInstance G₀ G₁) y z (List.ofFn r.1)
     (List.ofFn r.2) (encInstance G₀ G₁).length (gniGraphs G₀ G₁ (List.ofFn r.2))
     (fun hist hh => gniVerifierRep_next_lt G₀ G₁ z (List.ofFn r.2) hist hh) _ le_rfl,
@@ -217,7 +203,7 @@ theorem gniRep_complete {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀ 
   have hj : ∀ j : Fin (encInstance G₀ G₁).length,
       (gniProver.next (encInstance G₀ G₁) y (List.ofFn r.1)
         (List.map (gniGraphs G₀ G₁ (List.ofFn r.2)) (List.range (j + 1)))).headD false =
-      (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false := by
+      (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) j (List.ofFn r.2)).headD false := by
     intro j
     rw [gniProver_next_enc, List.headD_cons, List.range_succ, List.map_append, List.map_singleton,
       List.getLastD_concat, gniGraphs, decGraphAt_encGraph, gni_honest_reply h]
@@ -246,10 +232,10 @@ theorem blocksEquiv_apply (m c : ℕ) (F : Fin m → Fin c → Bool) (k : Fin (m
 `j c + t` of the tape, which `blocksEquiv_apply` reads as entry `(j c + t) mod c = t` of block
 `(j c + t) / c = j`; entries `t ≥ c` are absent on both sides. -/
 theorem coinSlice_blocksEquiv (m c : ℕ) (F : Fin m → Fin c → Bool) {j : ℕ} (hj : j < m) :
-    coinSlice c j (List.ofFn (blocksEquiv m c F)) = List.ofFn (F ⟨j, hj⟩) := by
+    coinBlock c j (List.ofFn (blocksEquiv m c F)) = List.ofFn (F ⟨j, hj⟩) := by
   apply List.ext_getElem?
   intro t
-  simp only [coinSlice_def, List.getElem?_take, List.getElem?_drop, List.getElem?_ofFn]
+  simp only [coinBlock_eq, List.getElem?_take, List.getElem?_drop, List.getElem?_ofFn]
   by_cases ht : t < c
   · have hc : 0 < c := by omega
     have hlt : j * c + t < m * c := by
@@ -289,7 +275,7 @@ theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * 
 `ts_j`. -/
 theorem coinSlice_gniTapes (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool))
     {j : ℕ} (hj : j < N) :
-    coinSlice (1 + (N + 1) ^ 2) j (List.ofFn (gniTapes N (b, ts))) = b ⟨j, hj⟩ :: List.ofFn (ts ⟨j, hj⟩) := by
+    coinBlock (1 + (N + 1) ^ 2) j (List.ofFn (gniTapes N (b, ts))) = b ⟨j, hj⟩ :: List.ofFn (ts ⟨j, hj⟩) := by
   rw [gniTapes_apply, show 1 + (N + 1) ^ 2 = 1 + 1 * (N + 1) ^ 2 by ring, coinSlice_blocksEquiv _ _ _ hj,
     ofFn_tapeSplit]
 

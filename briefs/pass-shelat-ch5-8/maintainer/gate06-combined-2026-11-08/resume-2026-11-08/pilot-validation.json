@@ -1,0 +1,91 @@
+{
+  "status": "ISOLATED_INSTANCE_SENSITIVITY_VERIFIED",
+  "head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "utc": "2026-11-09T03:36:56.529628+00:00",
+  "pilot_preparation_sha256": "e8f92964e2ed54d737fc37b0b970fe9506e4c0f5c574f4509185291451aa242f",
+  "native_result_sha256": "dc908c76381a83b99290d454606da0d23c95761dc5fd00a65ddc5f9d7fe80f43",
+  "probe_checks": [
+    {
+      "probe": "InstanceUnsealed",
+      "rc": 0,
+      "receipt_sha256": "a8c5c6e00030ef70583b11dc195343384163e6cc5238ace803d4972100b03ae9",
+      "log_sha256": "b17629acc60c4c0b83dbf762775f14ea45bc6f8831ab73c87fd9bbd629695d56",
+      "object_sha256": "83761cd90231bdc418674cbb9f4d24df9a86f56a0a4106baaa10e83556dda9b6",
+      "error_locations": [],
+      "fresh_lean_result_verified": true,
+      "required_markers_verified": [
+        "INSTANCE-CATALOG-VERIFIED",
+        "INSTANCE-INSTALL-VERIFIED",
+        "INSTANCE-SCOPE-PUSH-VERIFIED",
+        "INSTANCE-SCOPE-ACTIVATION-VERIFIED",
+        "INSTANCE-SCOPE-POP-VERIFIED",
+        "INSTANCE-EOF-VERIFIED",
+        "INSTANCE-BODY-BEGIN",
+        "INSTANCE-BODY-END",
+        "INSTANCE-LOOKUP-VERIFIED"
+      ],
+      "unfolding_flags": "masked=false default=true instances=true"
+    },
+    {
+      "probe": "InstanceMaskedNegative",
+      "rc": 1,
+      "receipt_sha256": "8f7355bb7b45451983d7287d45b251c1c411c3832b448b7f623e74d6e95f233b",
+      "log_sha256": "7143cbc9e030b42203267eae61bb297ac8c8286955b249b5c2772b8cbf382ddf",
+      "object_sha256": null,
+      "error_locations": [
+        [
+          ".lake/ps-maintainer/gate06-combined-20261108/instance-prototype-r3/InstanceMaskedNegative.lean",
+          "116",
+          "56"
+        ]
+      ],
+      "fresh_lean_result_verified": true,
+      "required_markers_verified": [
+        "INSTANCE-CATALOG-VERIFIED",
+        "INSTANCE-INSTALL-VERIFIED",
+        "INSTANCE-SCOPE-PUSH-VERIFIED",
+        "INSTANCE-SCOPE-ACTIVATION-VERIFIED",
+        "INSTANCE-SCOPE-POP-VERIFIED",
+        "INSTANCE-EOF-VERIFIED",
+        "INSTANCE-BODY-BEGIN",
+        "INSTANCE-BODY-END",
+        "INSTANCE-SCOPE-GUARD-VERIFIED",
+        "INSTANCE-LOOKUP-VERIFIED"
+      ],
+      "unfolding_flags": "masked=true default=false instances=false"
+    },
+    {
+      "probe": "InstanceMaskedPositive",
+      "rc": 0,
+      "receipt_sha256": "fc97e6dfddc0c2bf6c897a7667445cf934a7452cba8f4c1898730cf1d91a6ceb",
+      "log_sha256": "45427ad3213b64f2bb4ace699bbd197a68e083626e794c2fa796da416e00384d",
+      "object_sha256": "124457af3b7f2f39f6c692dbb65edd10263fe210b2c1d642f046d040b83562ab",
+      "error_locations": [],
+      "fresh_lean_result_verified": true,
+      "required_markers_verified": [
+        "INSTANCE-CATALOG-VERIFIED",
+        "INSTANCE-INSTALL-VERIFIED",
+        "INSTANCE-SCOPE-PUSH-VERIFIED",
+        "INSTANCE-SCOPE-ACTIVATION-VERIFIED",
+        "INSTANCE-SCOPE-POP-VERIFIED",
+        "INSTANCE-EOF-VERIFIED",
+        "INSTANCE-TC-ONLY-BEGIN",
+        "INSTANCE-TC-ONLY-END",
+        "INSTANCE-READER-BEGIN",
+        "INSTANCE-READER-END",
+        "INSTANCE-SCOPE-GUARD-VERIFIED",
+        "INSTANCE-LOOKUP-VERIFIED"
+      ],
+      "unfolding_flags": "masked=true default=false instances=false"
+    }
+  ],
+  "local_replay_receipt_sha256": "6a019e8051ef7deceae8fec3fd9ac53698e43985c7fe9f86d4e7b1d0ab12e656",
+  "earlier_attempts": {
+    "r2_setup_failure_sha256": "f5a6237e8c5c46f8f620091701ca8733e5272960f13df01b1a4018fde57aebd6",
+    "r3_sandbox_timing_failure_sha256": "1b24e99f4c800511f6ff09a52beed710fc646637f0de13f9767b50cd6e8d4ab8"
+  },
+  "limits": [
+    "One target, Turing.instInhabitedCfg. Exact synthesis and complete lookup equality at installation. Fresh target synthesis and mask status at nested scope entry, activation, exit and EOF.",
+    "Configuration copied by bytes to a distinct pilot olean tree. No full-closure seal or general typeclass selection claim."
+  ]
+}

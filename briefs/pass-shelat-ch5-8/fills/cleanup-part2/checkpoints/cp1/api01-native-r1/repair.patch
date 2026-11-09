@@ -1,0 +1,77 @@
+From 8c047b8bcd3a2793795a02afd6d2d955c80e1806 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 8 Nov 2026 02:39:49 -0800
+Subject: [PATCH] Use operational output contracts for uniform PPT machines
+
+Remove the newly introduced whole-machine equality alias and use the existing
+output_ofPolyTimeUniform contract in its three consumers. Existing theorem
+headers and machine algorithms are unchanged.
+
+Checked all 101 prerequisite/consumer modules serially into a fresh object
+tree through scripts/lean_check_tree.sh. The three repaired proofs and three
+selected machine API constants have only the standard axioms, no sorryAx.
+This bounded repair does not complete the wider cleanup or its final seals.
+---
+ TCSlib/Complexity/Randomized/PPT.lean                  | 6 ------
+ TCSlib/Cryptography/Asymptotic/HardCore.lean           | 3 +--
+ TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean | 2 +-
+ TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean     | 2 +-
+ 4 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index df0712b4a..6e8339be5 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -390,12 +390,6 @@ noncomputable def ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTime
+     (coins : PolyExpr) : NUPPT :=
+   ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)
+ 
+-/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins
+-(.const 0) (fun _ => []) (fun _ => by simp)`. -/
+-theorem ofPolyTimeUniform_def {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) :
+-    (ofPolyTimeUniform hf coins : NUPPT) =
+-      (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)) := rfl
+-
+ /-- `ofPolyTimeUniform hf coins` is uniform. -/
+ theorem ofPolyTimeUniform_uniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+     (coins : PolyExpr) : (ofPolyTimeUniform hf coins).Uniform := fun _ => rfl
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCore.lean b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+index d76fb695f..adc5dd030 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCore.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+@@ -263,8 +263,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
+       ⟨(fun _ => false, fun _ => false)⟩
+     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
+     simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+-        NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def,
+-      NUPPT.output_ofPolyTime]
++        NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
+     cases b <;> simp
+   obtain ⟨n₀, hn₀⟩ := hε 1
+   have h1 := h (max n₀ 2)
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+index 0af98108c..9e0339e89 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+@@ -173,7 +173,7 @@ theorem glPad_sample_runAtL (m : PolyExpr)
+     (n : ℕ) (i r : List Bool) :
+     (F.glPad m henc).sample.runAtL n i r =
+       pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
+-  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
++  simp only [glPad, NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform,
+     glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+     NUPPT.coinLen_eq]
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+index 02537810f..17c85eeb6 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+@@ -1002,7 +1002,7 @@ theorem glPadSample_runAt (m : PolyExpr) (n : ℕ) (i : List Bool)
+     (NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)).runAt n i s =
+       pairEncode (F.sample.runAtL n i ((List.ofFn s).take (F.sample.coinLen n)))
+         ((List.ofFn s).drop (F.sample.coinLen n)) := by
+-  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
++  simp only [NUPPT.runAt_eq, NUPPT.output_ofPolyTimeUniform,
+     glPadSampleFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+     NUPPT.coinLen_eq, NUPPT.runAtL_eq]

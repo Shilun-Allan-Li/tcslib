@@ -1,0 +1,275 @@
+{
+  "review": "cleanup-part2 CP1 focused mathematical/API source review",
+  "verdict": "PARTIAL_CHECKPOINT_ONE_ROUTINE_API_ROUTE_REPAIR",
+  "severity_counts": {
+    "blockers": 0,
+    "majors": 1,
+    "minors": 0
+  },
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "reported_worker_head": "51c245389deed467d75bcb1625627d8a4f97c4f8",
+  "REPORT_sha256": "9268a2db072f183db8a1b9eaca67dfaa6485f7eadeac212ceb49e78a33c62119",
+  "validation_sha256": "cea4549a2309ebcf2699762b124995b95c256653f382ef1464e9f503f2191463",
+  "validator_sha256": "29929bd93fdb887ea496f69585b8dc7afec70185fa21332f744ae14e3a9d9148",
+  "findings": [
+    {
+      "id": "API-01",
+      "severity": "major",
+      "title": "Read the uniform machine through its existing output/run contract, not a whole-machine body alias",
+      "contract": [
+        {
+          "path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/fills/cleanup-part2/issued-r1/public-exceptions.md",
+          "lines": [
+            11,
+            157
+          ]
+        },
+        {
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/policy.md",
+          "lines": [
+            55,
+            65
+          ]
+        }
+      ],
+      "definition": {
+        "path": "src/TCSlib/Complexity/Randomized/PPT.lean",
+        "line": 395,
+        "name": "Complexity.NUPPT.ofPolyTimeUniform_def"
+      },
+      "uses": [
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCore.lean",
+          "line": 266,
+          "declaration": "TCSlib.Cryptography.not_hardCore_const"
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+          "line": 1005,
+          "declaration": "TCSlib.Cryptography.Collection.glPadSample_runAt"
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean",
+          "line": 176,
+          "declaration": "TCSlib.Cryptography.Collection.glPad_sample_runAtL"
+        }
+      ],
+      "reason": "The new theorem equates an NUPPT-valued definition with its complete defining expression and consumers rewrite the machine before accessing output. That is the expressly excluded machine-body-alias route, although the equation is mathematically true. Existing output_ofPolyTimeUniform (PPT:404), runAtL_ofPolyTimeUniform (PPT:426), and coin readers already expose the intended behavior.",
+      "minimal_repair": "In each cited simp list, replace NUPPT.ofPolyTimeUniform_def plus NUPPT.output_ofPolyTime by NUPPT.output_ofPolyTimeUniform; retain the surrounding runAt/runAtL and layout readers. Alternatively use runAtL_ofPolyTimeUniform before unfolding runAtL where appropriate. Remove the added alias once no uses remain. Check each existing proof separately, with the final required seal/scan, without changing machine data, premises or theorem headers.",
+      "routine_within_scope": true,
+      "needs_new_user_ruling": false,
+      "native_replacement_tested": false,
+      "acceptance_effect": "A concrete interface/route correction before treating milestone 1 interfaces as complete or making final acceptance claims; no claim that the mathematical security theorem is false."
+    }
+  ],
+  "reviewed_routes": [
+    {
+      "id": "blocks",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          141,
+          168
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+          207,
+          213
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Concrete.lean",
+          832,
+          857
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean",
+          386,
+          388
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+          364,
+          402
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Factoring.lean",
+          198,
+          209
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Factoring.lean",
+          1162,
+          1164
+        ],
+        [
+          "TCSlib/Cryptography/NumberTheory/Primality.lean",
+          780,
+          784
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean",
+          190,
+          207
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean",
+          195,
+          202
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+          231,
+          241
+        ]
+      ],
+      "reason": "Original generic Type* construction copied exactly; flat index j+ell*i and inverse divNat/modNat retained. Bool forward aliases and GI inverse alias retain orientation. Window has original a+k<=L contract and only Bool codomain. q=0/ell=0/k=0 are handled without extra positivity/nonemptiness. Concrete castLE index retains j+B*t."
+    },
+    {
+      "id": "decoder",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+          118,
+          129
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/PRF.lean",
+          190,
+          265
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/PRF.lean",
+          676,
+          705
+        ]
+      ],
+      "reason": "Shared iff is equality with the entire list, not a length-only or prefix condition. Existing false-tag query equation/true-two verdict equation plus new ofFn, wrong-length and default readers cover all words. Default excludes every false-tag pair and both verdict words; malformed query payloads are covered separately. At ell=0 the empty payload is a query and every nonempty query payload is rejected."
+    },
+    {
+      "id": "state_loops",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Complexity/Randomized/Repetition.lean",
+          241,
+          269
+        ],
+        [
+          "TCSlib/Complexity/Randomized/Repetition.lean",
+          282,
+          335
+        ],
+        [
+          "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+          281,
+          315
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean",
+          1112,
+          1117
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+          86,
+          95
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+          476,
+          485
+        ]
+      ],
+      "reason": "Acceptance-test stateFind remains distinct from fixed length-guarded round iteration. Fixed-round statement is the old type with authorized fullname/namespace spelling, below iterate in Repetition. GGM stateLoopFun complete data body and eval header are byte-identical to ancestor. GI/Encoding alias headers are unchanged; dlb specializes output to pairSndD. No upper import from Build/StateLoop is introduced."
+    },
+    {
+      "id": "average_switch",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+          284,
+          310
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/RSA.lean",
+          1888,
+          1913
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Rabin.lean",
+          2207,
+          2210
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Rabin.lean",
+          3140,
+          3176
+        ]
+      ],
+      "reason": "Promotion matches old rabin_uexp_le full type modulo name/private and whitespace, including Type* source/codomain universes, Aux:gamma->Type, every Fintype/Nonempty Aux assumption, and unchanged additive delta. No Nonempty source/codomain added. The proof uses uniform coordinates of the dependent product; empty source behavior is preserved. RSA keeps exponent/challenge/adversary coins in the same dependent Aux; Rabin keeps domain/adversary coins and symmetric uses."
+    },
+    {
+      "id": "strategy_next",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean",
+          6,
+          8
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean",
+          449,
+          470
+        ],
+        [
+          "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean",
+          194,
+          198
+        ]
+      ],
+      "reason": "Lower generic theorem retains efficient-strategy premise and all four polynomial-time maps. reply_poly instantiates it, and old ColZK theorem remains an exact-header alias. Static mixed payload/ancestor reachability has no cycle; SimulatorMachine has no direct/transitive ColZKMachine import."
+    },
+    {
+      "id": "M",
+      "status": "NO_SEMANTIC_DEFECT_IDENTIFIED_IN_REVIEWED_ROUTE",
+      "refs": [
+        [
+          "TCSlib/Cryptography/NumberTheory/Units.lean",
+          72,
+          75
+        ],
+        [
+          "TCSlib/Cryptography/NumberTheory/Primality.lean",
+          191,
+          221
+        ],
+        [
+          "TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean",
+          168,
+          186
+        ],
+        [
+          "TCSlib/Cryptography/Candidates/Factoring.lean",
+          110,
+          132
+        ]
+      ],
+      "reason": "All seven explicit declaration types match ancestor; the subgroup implementation changes from record to the authorized powMonoidHom kernel. Finite Group proper-subgroup assumptions, p!=2, p%4=3/QR membership, Fact(1<N), prime factors and fmult exceptional-unit case remain. No p!=q/Nonempty/new general host is added. m=0 kernel gives top as before."
+    }
+  ],
+  "no_user_ruling_identified_for_reviewed_repairs": true,
+  "limits": [
+    "No incoming program imported or executed.",
+    "No Lean/native/build/cache/app invocation; no Git mutations.",
+    "This does not reproduce patches, validate all payload hashes, prove native success or cover every declaration.",
+    "Header checks concern the explicit targets listed; source inspection includes the reported line ranges, not full security proof audits.",
+    "Finite arithmetic checks are independent sanity tests, not formal theorem checks.",
+    "No final/merge/gate ruling. CP1 explicitly remains partial; remaining inherited reads, axiom census, admission freeze, source freeze, patch reproduction, final controls/C3 and native results are separate review/acceptance work.",
+    "All 162 added headers in worker surface data were classified as theorem declarations; this is a metadata observation, not an independently elaborated complete declaration census. The 134 _def header scan isolated the machine alias finding, not a proof that all other J/N reads are closed.",
+    "No independent new textbook/paper source-access claim. Mathematical comparison is against the exact issued contract, ancestor source and supplied final source."
+  ]
+}

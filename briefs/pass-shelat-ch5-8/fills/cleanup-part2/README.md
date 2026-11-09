@@ -1,6 +1,34 @@
 # Cleanup part 2
 
-The single Claude job is active. The issued [prompt](dispatch.md) is retained for provenance; [CP0](checkpoints/cp0/README.md) and [CP1](checkpoints/cp1/README.md) are received, with independent CP1 reviews underway. The user requested30-minute checks for the next partial delivery.
+**Continuation deferred at the user's request (2026-11-08 PST), roughly a week.**
+Keep #248 draft and resume when the user is ready; worker/scope choices can wait.
+The [independent-front triage](../../maintainer/cleanup-deferral-2026-11-08.md)
+records narrow Gate06B/D options and the fronts that still require cleanup.
+
+Claude's [final-PARTIAL delivery](checkpoints/partial-r1/README.md) arrived during
+the requested30-minute watch. The [incoming review](checkpoints/partial-r1/review-r1/README.md)
+records five unique majors and three minors; it remains immutable history.
+The [checked local follow-up](checkpoints/partial-r1/checked-repairs-r1/README.md)
+at `32b827c017bc321ea40577bc8f27131df2c35e1a` removes the new raw-machine equality,
+uses operational contracts and repairs four unary efficiency proofs through
+existing APIs. Its124-module closure and ten selected actual axiom sets pass;
+bounded independent static review is0B/0M/0m and local style adds no findings.
+The broader partial cleanup and four workflow majors remain open. The earlier
+[CP0](checkpoints/cp0/README.md), [CP1](checkpoints/cp1/README.md),
+[CP1 review](checkpoints/cp1/review-r1/README.md),
+[101-module CP1 repair](checkpoints/cp1/api01-native-r1/README.md) and
+[509-key provisional index](checkpoints/cp1/dispositions-r1/README.md) are retained;
+the final delivery resolves the old ledger denominator gap for its measured variant.
+
+The [123-owner request plan](checkpoints/partial-r1/corrected-seal-plan-r1/README.md)
+is unrun received-source DATA. [Three provider proof proposals](checkpoints/partial-r1/provider-proposals-r1/README.md)
+remain unapplied. Continuation worker choice and provider scope ruling are pending;
+no new job or worker permission is inferred. [Draft PR #248](https://github.com/Shilun-Allan-Li/tcslib/pull/248)
+is published at the checked head; its [publication receipt](checkpoints/partial-r1/draft-pr-r1/README.md)
+binds the exact description and live draft/head/base verification. Full cleanup
+acceptance is not granted by these checks. The expected partial delivery has
+arrived; no future background watch is claimed.
+
 The immutable [issued brief](issued-r1/brief.md) and public exceptions bind source
 `1aa5506f58f77c215e56d24311ec33bd931cacf1`. The complete payload is staged at
 `outbox/fills/cleanup-part2/` on exchange/pass-shelat-ch5-8.
@@ -24,4 +52,4 @@ The worker pushes only complete checkpoints/final to inbox/fills/cleanup-part2/.
 The user dispatches and later approves/merges the maintainer's Lean PR. Gate06C
 remains pending independently; efficiency waits for these cleanup interfaces.
 
-**Not yet clear to merge — CP1 is intermediate; review, inherited-read repair and final evidence remain.**
+**Not yet clear to merge — bounded repairs pass; full cleanup and corrected seal evidence remain incomplete.**

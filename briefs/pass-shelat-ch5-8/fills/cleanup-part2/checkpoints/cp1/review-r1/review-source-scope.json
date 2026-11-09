@@ -1,0 +1,121 @@
+{
+  "status": "INTERNAL_SOURCE_SCOPE_REVIEW_PARTIAL_CHECKPOINT_NOT_MERGE_CLEARANCE",
+  "delivery_commit": "8b133945c3ba4aa7abb3b896bec38441535959b2",
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "verdict": {
+    "blockers": 0,
+    "majors": 1,
+    "minors": 0
+  },
+  "findings": [
+    {
+      "id": "CP1-SRC-01",
+      "severity": "major",
+      "category": "machine_reader_contract",
+      "title": "Replace the new whole-NUPPT body equality with operational readers",
+      "source": "src/TCSlib/Complexity/Randomized/PPT.lean",
+      "range": [
+        393,
+        397
+      ],
+      "declaration": "Complexity.NUPPT.ofPolyTimeUniform_def",
+      "contract": "public-exceptions.md General freeze/representation discipline: a machine gets public run/coin/field contracts, not a raw machine-body alias; X10 requests owner field/run readers.",
+      "evidence": "The new theorem equates the entire ofPolyTimeUniform NUPPT value to the ofPolyTime constructor specialization. It is used in three downstream proof lists to expose that construction before reading its output.",
+      "uses": [
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCore.lean",
+          "line": 266,
+          "declaration": "TCSlib.Cryptography.not_hardCore_const"
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean",
+          "line": 176,
+          "declaration": "TCSlib.Cryptography.Collection.glPad_sample_runAtL"
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+          "line": 1005,
+          "declaration": "TCSlib.Cryptography.Collection.glPadSample_runAt"
+        }
+      ],
+      "smallest_repair": "Use existing NUPPT.output_ofPolyTimeUniform / runAtL_ofPolyTimeUniform (and existing coin/advice readers) at those sites; remove the new body-equality interface. Publish an ordinary operational reader only if a precise existing contract is insufficient.",
+      "mathematical_limit": "No counterexample or machine-behavior change was found; this is the explicit API discipline, not a mathematical unsoundness claim. Native applicability of the proposed existing readers is not checked here."
+    }
+  ],
+  "verified": {
+    "payload": {
+      "intake_sha256": "14883f08f09fd655eb1fc369cea2f24a08e1a3bfe3348fda89a5dda1d21cfacd",
+      "files_sha256": "5c269dc14c9797018223179057e5e52069ed1ff40be2e244eae429ef15572f94",
+      "delivery_commit": "8b133945c3ba4aa7abb3b896bec38441535959b2",
+      "files_checked": 2914,
+      "bytes_checked": 32239080,
+      "owned_snapshots": 221,
+      "all_file_hashes_sizes_git_blobs_match": true,
+      "all_patch_paths_owned": true,
+      "seven_patch_replay_reproduces_all_snapshots": true
+    },
+    "scope": {
+      "changed_files": 113,
+      "changed_by_role": {
+        "PROVIDER_ONLY": 21,
+        "CONSUMER": 92
+      },
+      "declaration_diff_flags": {
+        "ADDED": 162,
+        "BODY_CHANGED": 563,
+        "MOVED": 9,
+        "REMOVED": 23,
+        "HEADER_CHANGED": 3
+      },
+      "old_declarations": 8433,
+      "new_declarations": 8572,
+      "baseline_owned_lexical_counts": {
+        "sorry": 20
+      },
+      "head_owned_lexical_counts": {
+        "sorry": 20
+      },
+      "per_declaration_admission_multisets_equal": true
+    },
+    "provider_existing_changes": 0,
+    "all_existing_owned_admission_headers_bodies_identical": true,
+    "global_lexical_admissions": {
+      "BASE": {
+        "sorry": 510,
+        "sorryAx": 1
+      },
+      "HEAD": {
+        "sorry": 510,
+        "sorryAx": 1
+      }
+    },
+    "all_other_public_data_bodies_byte_identical": true,
+    "graph_modules": 1071,
+    "import_cycle_or_missing_local": false,
+    "new_attribute_commands": [],
+    "same_chosen_machine_source_analysis": {
+      "old_range": [
+        321,
+        331
+      ],
+      "new_range": [
+        328,
+        340
+      ],
+      "header_identical": true,
+      "source_substitution_only": "Every changed occurrence replaces hf by ((polyTimeComputable_iff f).1 hf), with no other body edit after whitespace normalization.",
+      "owner_reader": "ClassNP/PolyTime.lean:75\u201378 has exactly the unchanged existential predicate body and proof Iff.rfl.",
+      "reason": "hf and the reader-extracted proof inhabit definitionally equal propositions. Lean proof irrelevance identifies those proof arguments; repeated Classical.choose/choose_spec therefore select the same M/Ct/ct, not merely an equivalent machine. Other data/cost/advice fields are literal-identical.",
+      "native_equality_or_owner_probe": "NOT_RUN"
+    }
+  },
+  "not_verified": [
+    "Native Lean elaboration or applicability of proposed repair",
+    "Kernel/elaborated type, universe/instance or actual generated/private Name equality",
+    "All-stored consumed-axiom/C3/full-seal/control evidence or native source/object freshness",
+    "Worker invocation sequencing and full final per-row disposition ledger"
+  ],
+  "received_programs_executed": false,
+  "native_cache_build_apps": false,
+  "source_git_main_exchange_mutations": false
+}

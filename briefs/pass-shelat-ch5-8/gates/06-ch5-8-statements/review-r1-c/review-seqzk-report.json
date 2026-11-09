@@ -1,0 +1,115 @@
+{
+  "review": "Gate06C C-03 bounded sequential-ZK/3COL source review",
+  "source_head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "received_report_sha256": "577621ca9f6fa665dbc6bd3150f4625ddf2b05d19b9f6021bf652c30c8580ac4",
+  "received_report_archived_records_commit": "636609a032bd48899dd5adbc3752353a3b2efc66",
+  "scope": "C-03, relevant sequential composition definitions/claims and the 3COL application only; other C findings are not re-audited.",
+  "finding_disposition": {
+    "id": "C-03",
+    "severity": "minor",
+    "confirmed": true,
+    "conclusion": "Length truncation alone does not bound the number/encoded size of phase messages on every simulator tape. A total canonical phase normalization within the existential simulator proof plan suffices without changing the current theorem premises.",
+    "additional_blocker_or_major_identified": false,
+    "new_ruling_required_by_this_review": false
+  },
+  "exact_phase_shape": {
+    "k": "π.rounds.eval |x|",
+    "p": "proverMoves π.verifierFirst k = number of prover turns among first k moves",
+    "phase_total_moves": "2*k",
+    "verifier_received_slots_per_phase": "k",
+    "real_prover_messages": "p",
+    "honest_prover_empty_fillers": "k-p",
+    "cheating_verifier_fillers": "Unrestricted; never normalize them to [] or include them in the verifier received-prover list.",
+    "view_fields": "View stores x,z,verifier tape and received messages only."
+  },
+  "normalization_plan": {
+    "malformed_or_bad_metadata": "Fixed canonical phase view using known x/phase auxiliary data/empty deterministic-wrapper tape and p empty real-prover messages; this is syntactic checking only, not witness or transcript-consistency checking.",
+    "well_parsed_output": "Take at most p received real-prover messages, truncate each to B(n), pad missing entries with [], then append k-p honest-prover [] fillers.",
+    "real_view_fixed_reason": "Fixed k-step execution has exactly p prover sends, real metadata is known and hB bounds every honest prover output for all tapes/histories on R-witnessed instances.",
+    "strict_bound": "Every retained phase contributes exactly k messages, each at most B(n); encoded prefix length ≤ Q(n)*k*(2*B(n)+2). Original auxiliary input/tape/index/fixed pairing overhead add only polynomial cost.",
+    "zero_cases": "k=0 or Q(n)=0: sample verifier tape and output canonical empty-history view directly. B(n)=0 and zero coin lengths require no added positivity/nonemptiness premise.",
+    "computational_comparison": "Use same normalization and simulated suffix on both sides. Existing nonuniform D can hardwire maximizing phase/prefix and polynomially bounded x,z,r as advice, without an efficient honest prover or witness.",
+    "statistical_comparison": "For fixed prefix, total normalization fixes real distribution and cannot increase StatClose; average over prefixes and sum Q gaps. Error remains Q*δ, including δ=0."
+  },
+  "three_coloring": {
+    "actual_base": "colProtocol has rounds=.const3 and verifierFirst=false (Protocol:468-472).",
+    "phase": "Six moves; verifier receives two real prover messages plus one honest-prover empty filler.",
+    "existing_premises": "col_efficientProverProofErr hC supplies boundedP; ThreeColoring:130 extracts it and :132 passes it to ZK.seqRep with col_zk hC.",
+    "count_and_numerics_unchanged": "Q=.normal2 2=2(N+1)^2, eventual negligible_colSeqSound and all proof bytes untouched; no probability estimate at N=0 added.",
+    "proof_status": "Generic repetition statements remain admitted; comments do not discharge those dependencies."
+  },
+  "source_refs": {
+    "SequentialZK.lean": [
+      "22-38 phase/filler layout",
+      "121 proverMoves",
+      "200-210 seqProver",
+      "236-258 seqVerifier/seqRep",
+      "392-407 ZK/StatZK claims",
+      "409-434 perfect/abort specializations"
+    ],
+    "ZeroKnowledge/Interaction.lean": [
+      "131-140 encodeMsgs",
+      "162-185 Efficient",
+      "243-264 exec",
+      "279-298 View",
+      "355-363 ProverBounded",
+      "450-467 viewV"
+    ],
+    "ZeroKnowledge/Defs.lean": [
+      "141-182 ZK/StatZK quantifiers and strict simulator semantics"
+    ],
+    "ThreeColoring/Protocol.lean": [
+      "468-472 base rounds/first mover",
+      "960-977 efficient-prover error interface/boundedP"
+    ],
+    "Composability/ThreeColoring.lean": [
+      "55-104 existing numerical proof",
+      "120-132 derived corollary"
+    ]
+  },
+  "proposal": {
+    "status": "UNAPPLIED_COMMENT_ONLY",
+    "patch": "seqzk-phase-normalization-comments.patch",
+    "patch_sha256": "5292416d91d6c1be5b06307d130a601f2b8e0d5b58e264e9c453e37c48e3099e",
+    "modules": [
+      {
+        "path": "TCSlib/Cryptography/Composability/SequentialZK.lean",
+        "source_sha256": "f7c9a99f7cc657e83205e7f37063ac232fb3fecd6ce61f422829845e2d8a7a72",
+        "result_sha256": "3a15b44447787b36d20acde11590f0c1bd4788a81f833a48f1ede9915d2a70b8",
+        "source_bytes": 27010,
+        "result_bytes": 28924,
+        "noncomment_sha256_unchanged": "bfc41052061ba9c91493d311bebf59624c06e5b76d073738d22743a9143be570",
+        "direct_admissions": [
+          "sorry",
+          "sorry",
+          "sorry",
+          "sorry",
+          "sorry"
+        ],
+        "comment_blocks_modified": 2
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/ThreeColoring.lean",
+        "source_sha256": "15b9126c8f80c400103204862b7743eea583f84eb74944984926d0f0c4e29a0f",
+        "result_sha256": "e27e52df5c76974ae935bb5996b2aaef2e7283cedb21042ab9f0915225a6bfea",
+        "source_bytes": 6361,
+        "result_bytes": 6724,
+        "noncomment_sha256_unchanged": "213d6389cbaed5c63ee1af5f519655956a6417dcf87c4441884a65bad2ad5409",
+        "direct_admissions": [],
+        "comment_blocks_modified": 1
+      }
+    ],
+    "changed_comment_blocks": 3,
+    "new_public_APIs_algorithms_statements_premises_or_proof_changes": false
+  },
+  "validation_sha256": "d4f673e8b620bdd6896f5a9a6f63ded5215b5e94d8a70067dda67e1fdaa5cb4b",
+  "limits": [
+    "No Lean/native/build/cache/apps command or incoming program execution.",
+    "No tracked source/records/main/exchange/Git mutation.",
+    "Own finite tests concern schedule/message-shape arithmetic only, not the simulator or security theorem.",
+    "All exact claims, algorithms, imports, proof bodies and admissions are unchanged after comment removal.",
+    "Generic repetition admissions remain; no gate/merge clearance or independent primary-PDF fidelity claim.",
+    "Received audit assertions outside C-03 and the corresponding source paths are not independently revalidated.",
+    "No independent PS10/Goldreich PDF access/fidelity claim; this is a frozen actual-source/model review."
+  ]
+}

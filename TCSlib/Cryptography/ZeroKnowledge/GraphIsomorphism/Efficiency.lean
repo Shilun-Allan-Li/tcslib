@@ -240,11 +240,10 @@ theorem relabelAt_replicate (n : ℕ) (w p : List Bool) :
 string (`samplePerm` at `√|w|`). -/
 noncomputable def sampleStr (w r : List Bool) : List Bool := encPerm (samplePerm (Nat.sqrt w.length) r)
 
-/-- The defining equation of `sampleStr`: `sampleStr w r = encPerm
-(samplePerm (Nat.sqrt w.length) r)`. -/
-theorem sampleStr_def (w r : List Bool) :
-    sampleStr w r =
-      (encPerm (samplePerm (Nat.sqrt w.length) r)) := rfl
+/-- Sampling a graph word's vertex permutation returns the encoding of the permutation
+sampled on `√|w|` points from the supplied tape. -/
+theorem sampleStr_eq (w r : List Bool) :
+    sampleStr w r = encPerm (samplePerm (Nat.sqrt w.length) r) := rfl
 
 /-- The product `π σ⁻¹` of the permutations decoded from `p` and `y` on `√|p|` points, as a
 string (the function of `polyTimeComputable_encPermMulInv`). -/
@@ -264,7 +263,7 @@ theorem mulInvStr_encPerm {n : ℕ} (π : Equiv.Perm (Fin n)) (y : List Bool) :
 vertex count `(decGraph w).1` is `√|w|`). -/
 theorem sampleStr_poly : PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z) :=
   polyTimeComputable_encPermFromCoins.congr fun z => by
-    rw [sampleStr_def, samplePerm_def, TCSlib.Cryptography.decGraph_fst]
+    rw [sampleStr_eq, samplePerm_def, TCSlib.Cryptography.decGraph_fst]
 
 /-- The permutation product is polynomial-time (`polyTimeComputable_encPermMulInv`). -/
 theorem mulInvStr_poly : PolyTimeComputable fun z => mulInvStr (pairFstD z) (pairSndD z) :=

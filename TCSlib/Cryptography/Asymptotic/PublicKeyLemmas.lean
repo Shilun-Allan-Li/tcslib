@@ -203,10 +203,10 @@ theorem blockEncFun_flatten (Enc : NUPPT) (hEnc : Enc.Uniform) (L : PolyExpr) (n
         Enc.runAtL n (pairEncode pk (List.ofFn (msg i))) (coinBlock (Enc.coinLen n) i r)) := by
   have hk : k ≤ (blockState (List.replicate n true) pk
       (List.ofFn fun i => List.ofFn (msg i)).flatten r).length := by
-    simp only [blockState_def, length_pairEncode, length_flatten_ofFn]
+    simp only [blockState_eq, length_pairEncode, length_flatten_ofFn]
     have := Nat.le_mul_of_pos_right k hL
     omega
-  simp only [blockEncFun_def]
+  simp only [blockEncFun_eq]
   rw [blockEncFun_spec Enc.output L Enc.coins (List.replicate n true) pk _ _ r (by
     rw [length_flatten_ofFn, List.length_replicate]
     exact Nat.mul_le_mul_right _ hk)]
@@ -297,7 +297,7 @@ theorem hybridPre_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E)
   have h := hpk.pairEncode (hT₁.append (hc.pairEncode hT₂))
   convert h using 1
   funext y
-  simp only [hybridPre, blockState_def, Function.comp_apply, pairFstD_pairEncode,
+  simp only [hybridPre, blockState_eq, Function.comp_apply, pairFstD_pairEncode,
       pairSndD_pairEncode,
     PolyExpr.eval_var]
 

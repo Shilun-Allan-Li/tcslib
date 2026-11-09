@@ -1,0 +1,145 @@
+{
+  "status": "SOURCE_SCOPE_REVIEWED_NATIVE_DISJOINT_GUARD_REQUIRED",
+  "head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "owners": 59,
+  "foreign_closure_paths": 260,
+  "checked_unique_paths": 274,
+  "inputs": {
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06-combined-20261108/rule10-evidence-r1/modules.json": "1a72185781a29f5799a973919f4771654f901d661bbe2a4599c64028779599fe",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06-combined-20261108/rule10-evidence-r1/closures.json": "a0c09bb91bfd219dbc421c9eb00ae68838759b94ba60b86a5d97c5de8bbddd92",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06-combined-20261108/rule10-prep/proposed-tools/build_seals.py": "ecb8ff2359d36e9182b83ae318eabe4dd9d23c3dec4b0bbe8406ad9787421fb5",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06-combined-20261108/rule10-failure-review-prep-r2/preflight/source-snapshots.json": "a337959ec037377383cdea114e29101c60cca56808d620649ff83904516cf213",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/Open.lean": "77106f782db404b6b9435d0d8b5773c08b40e593be1eba1d4072bcf011fe4630",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/BuiltinCommand.lean": "bb1bf0a2b5baa897ac08552048490391a66a6ba077739c52587e6b302e033331",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/Tactic/BuiltinTactic.lean": "11172fed1f78b5dd67cc9b44b805fc0489b47500f70f604b1f38568e7bf4005b",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/ScopedEnvExtension.lean": "6ccce0cfd6a093a2a84d92c832bcc890b51b48ec2ba8feca0b947c1c214760e9",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Meta/GlobalInstances.lean": "02bb806a4244dec02f752414b68eeae48aa4e4a2247fe9c9e9a72a8d813f37af",
+    "/Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Meta/Instances.lean": "b417b38e070acee20d821ac27ef058a55e45dc617b4be16cb0ba12353837491b"
+  },
+  "counts": {
+    "top_open": 71,
+    "top_namespace": 90,
+    "top_section": 19,
+    "top_end": 109,
+    "temporary_open": 8,
+    "attribute": 9,
+    "scoped": 3,
+    "set_option": 177,
+    "metaprogramming": 0
+  },
+  "observations": {
+    "temporary_open": [
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Defs.lean",
+        583,
+        "open AbortRetry in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        394,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        435,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        453,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        466,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        523,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        576,
+        "open EncodingMachines in"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+        645,
+        "open EncodingMachines in"
+      ]
+    ],
+    "attribute": [
+      [
+        "TCSlib/Cryptography/Authentication/DLHash.lean",
+        215,
+        "attribute [simps (config := { isSimp := false }) domLen rangeLen gen eval inDom inRange] dlHash"
+      ],
+      [
+        "TCSlib/Cryptography/Authentication/Defs.lean",
+        67,
+        "attribute [simps (config := { isSimp := false }) fst snd] splitBits"
+      ],
+      [
+        "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+        114,
+        "attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfMAC"
+      ],
+      [
+        "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+        365,
+        "attribute [simps (config := { isSimp := false }) gen enc dec ctLen] ccaScheme"
+      ],
+      [
+        "TCSlib/Cryptography/Composability/PRFScheme.lean",
+        79,
+        "attribute [simps (config := { isSimp := false }) toPrivateKeyScheme ctLen] prfFixedScheme"
+      ],
+      [
+        "TCSlib/Cryptography/Composability/SimNonMalleable.lean",
+        410,
+        "attribute [simps (config := { isSimp := false }) fst snd] simEntry"
+      ],
+      [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean",
+        228,
+        "attribute [simps (config := { isSimp := false }) inA inB outA outB f] yaoFunctionality"
+      ],
+      [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean",
+        541,
+        "attribute [simps (config := { isSimp := false }) P V rounds verifierFirst] yaoMain"
+      ],
+      [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean",
+        591,
+        "attribute [simps (config := { isSimp := false }) main calls] yaoHybrid"
+      ]
+    ],
+    "scoped": [
+      [
+        "TCSlib/Complexity/CircuitComplexity/UnaryLanguages.lean",
+        148,
+        "open scoped Classical in"
+      ],
+      [
+        "TCSlib/Complexity/ClassNP/Reductions.lean",
+        58,
+        "@[inherit_doc] scoped infix:50        => PolyTimeReducible"
+      ],
+      [
+        "TCSlib/Complexity/TuringMachine/Configuration.lean",
+        134,
+        "@[scoped grind =]"
+      ]
+    ],
+    "metaprogramming": []
+  },
+  "required_native_guard": "At installation require a singleton unfolding extension state stack. Test every actual requested Name for disjointness from all current imported scoped-entry payloads. Check every requested Name has false unfolding membership after masking and again at EOF.",
+  "limits": [
+    "Source scan is bounded to the frozen 59 owner sources and their local closures.",
+    "Native disjointness is required even for requests whose scope entries are dormant at installation.",
+    "Full lookup-state preservation at installation and the isolated TC synthesis sample do not prove universal synthesis feasibility under reduced transparency."
+  ]
+}

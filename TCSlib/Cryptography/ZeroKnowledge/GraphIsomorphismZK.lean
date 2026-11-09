@@ -509,7 +509,7 @@ or `⊥ = []` after `n` failures.
 success. -/
 noncomputable def giSim (V' : Strategy) (x z r : List Bool) : List Bool :=
   ((List.range (instanceVertexCount x)).findSome? fun t =>
-    giSimAttemptStr V' x z (coinSlice (giSimBlockLen V' x.length) t r)).getD []
+    giSimAttemptStr V' x z (coinBlock (giSimBlockLen V' x.length) t r)).getD []
 
 /-- The string simulator is a uniform PPT [PS10, proof of Theorem 122.3, "`S` runs in
 (expected) polynomial time"] (Claim-123.d): for every efficient `V'` there is a uniform
@@ -552,7 +552,7 @@ permFailBound (instanceVertices N)`, negligible by `negligible_two_pow_neg_sqrt_
 with `π = samplePerm n (List.ofFn r₁)` (`exec_succ` three times, `decPerm_encPerm`,
 `decGraph_encGraph`), and `giSim V' x z (List.ofFn r)` is `(Option.map enc (giSimTrunc G₀ G₁
 V* n c)).getD []` with the `t`-th attempt's coins `c t = ((samplePerm n …, b'_t), rV_t)` read
-from the `t`-th block (`giSimCoins_eval`, `coinSlice`). Chain of `StatClose` steps:
+from the `t`-th block (`giSimCoins_eval`, `coinBlock`). Chain of `StatClose` steps:
 (1) real view with sampled `π` ≈ real view with uniform `π` within `permFailBound n`
 (`statClose_samplePerm`, `StatClose.prod` with `StatClose.refl` for `r₂`, `StatClose.map`);
 (2) `statClose_giSimTrunc` within `2^{-n}`, mapped by `v ↦ (Option.map enc v).getD []`

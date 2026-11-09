@@ -1,0 +1,12 @@
+--- a/TCSlib/Complexity/ClassNP/PolyTime.lean
++++ b/TCSlib/Complexity/ClassNP/PolyTime.lean
+@@ -89,7 +89,8 @@
+ `ComputesFunInTime`-level monotonicity lemma — phase-1 audit, finding 9). -/
+ theorem polyTimeComputable_id : PolyTimeComputable id := by
+   obtain ⟨M, C, hM⟩ := FinTM.computesFunInTime_id
+-  refine ⟨M, C, 1, fun x => (hM x).mono ?_⟩
++  refine ⟨M, C, 1, (FinTM.computesFunInTime_iff _ _ _).2
++    fun x => ((FinTM.computesFunInTime_iff _ _ _).1 hM x).mono ?_⟩
+   simp only [Nat.pow_one]
+   exact Nat.le_refl _
+ 
