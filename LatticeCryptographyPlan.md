@@ -23,7 +23,8 @@ All work belongs to this PR branch:
 | Item | Identity |
 |---|---|
 | Worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-crypto-parallel-kickoff` |
-| Branch | `cryptography/lwe-sis-constructions` |
+| Current PR branch | `cryptography/lwe-sis-encoding-proofs` |
+| Earlier published topic snapshot | `cryptography/lwe-sis-constructions` (left unchanged) |
 | Target | `cryptography/pass-shelat-ch2-4` |
 | Original kickoff baseline | `9db11986edfce462d91958856a763577ee15457f` |
 | Implementation baseline | `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49` |
@@ -276,15 +277,22 @@ unfiltered cache download, no package changes in another checkout, no borrowed s
 oleans, and no killing another job. Only required Mathlib roots at the manifest pin are
 eligible for the isolated cache. Python commands use `python3 -I`.
 
-Phase 0 now has a fresh, serial 55-module dependency sweep with zero errors, followed
-by rechecks of both renamed assumption modules and both facades. There are 14 new
-admitted representation statements and 17 inherited admission warnings in unchanged
-dependencies. The full library root has not been swept. Gate evidence preserves the
-exact scope, order and logs; admitted statements are not completed proofs.
+The original statement phase had 14 admitted representation statements and 17 inherited
+warnings. Its external audit passed. All 14 proofs are now filled at
+`893e921bf2afeca293be9da9d495613bb1486796`; a new fresh 55-module sweep has zero errors,
+zero new admissions and the same 17 inherited warnings. All 166 elaborated constants
+use only standard axioms. The full library root has not been swept. Original statement
+evidence is unchanged; the proof fill has its own source freeze and evidence.
 
-Shell fetch/push remains blocked by DNS. Creating this branch through the GitHub
-connector returns HTTP 403, `Resource not accessible by integration`. Local commits
-and a portable delivery can be prepared; no published branch or PR is claimed.
+Shell fetch/push remains blocked by DNS, and connector PR creation previously returned
+HTTP 403. The user completed client publication: draft
+[PR #236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) targets the campaign
+base from `cryptography/lwe-sis-encoding-proofs`, and Codex reviewed the exchange
+input at `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. The returned representation-proof
+audit passes with 0 blockers, 0 majors, 0 minors and 3 continuing notes. Its report
+is preserved verbatim under `audits/lwe-sis-encoding-proofs-findings.md`; the separate
+resolutions close only this proof gate. Source archival and relevant integration
+checks remain open. The earlier published topic ref and all issued snapshots are unchanged.
 
 ## Decision log
 
@@ -302,3 +310,12 @@ and a portable delivery can be prepared; no published branch or PR is claimed.
 | 2026-11-07 | Foundation source frozen in `458d178ab23d06d7cb04f6672af9f8e23eac0b4b`; three root imports isolated in `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`. Final 61-declaration axiom probe passes; 14 admitted statements, 164 elaborated constants. | Prepared external review; no verdict |
 | 2026-11-07 | Final style: zero FAIL, two check-8 acronym-reader heuristic WARNs. Actual `dlweAssumption_iff` and `sisAssumption_iff` readers follow RSA/DDH convention; no shared lint edit or zero-WARN claim. | Explicit review item |
 | 2026-11-07 | User selects Codex for phase-0 external review and offers to publish the own PR branch. The delivered round-1 pack/source freeze stays unchanged; the separate Codex kickoff records the selection. Publication is only to `cryptography/lwe-sis-constructions`; no campaign push or merge is authorized. | Codex selected; user dispatch/publication pending |
+| 2026-11-07 | User corrects the audit input transport: Codex reads pinned inputs from GitHub on the exchange branch and returns Markdown in chat. Prepare only `lwe-sis-constructions/outbox/gates/00-foundations-r1/` plus its namespace README in a separate sparse publisher clone; leave the shared exchange checkout/index and all other namespaces alone. The frozen bundle is unchanged. | Supersedes ZIP-attachment kickoff; publication pending |
+| 2026-11-07 | User dispatched the phase-0 audit at exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`; report retained verbatim with SHA-256 `87ce303895f81064891eb7ab1401b4be601dbc3671d02e28428b5acd4386a906`. Verdict PASS, 0 blockers / 0 majors / 0 minors / 3 notes. | Statement gate closed; N01–N03 retained |
+| 2026-11-07 | User requires future Lean updates through PRs for approval; maintainer records may be pushed directly. User pauses for relocation, then explicitly resumes work after the audit returns. | Binding / resumed |
+| 2026-11-07 | All 14 representation proofs filled at `893e921bf2afeca293be9da9d495613bb1486796`. Fresh 55-module sweep passes with zero new admissions and 17 inherited warnings; all 166 constants use only standard axioms. Signatures and non-theorem bodies remain invariant. | Proofs checked; external proof gate pending |
+| 2026-11-07 | User freshly selects Codex for representation-proof review at `lwe-sis-constructions/outbox/gates/01-encoding-proofs-r1/`: GitHub inputs, Markdown output in chat, user dispatch only. | Selected; publication/dispatch pending |
+| 2026-11-07 | Shell GitHub/source-host access still fails DNS. Connector draft-PR creation returns HTTP 403, `Resource not accessible by integration`. | Client publication required; no PR claimed yet |
+| 2026-11-07 | To enforce user-approved Lean updates, continue the verified proof fill on fresh PR branch `cryptography/lwe-sis-encoding-proofs`, from source commit `893e921bf2afeca293be9da9d495613bb1486796`, targeting the original campaign base. Leave the published `cryptography/lwe-sis-constructions` ref unchanged. Only the own checkout is switched. | Active PR route |
+| 2026-11-08 | Client publication remotely verified: draft PR #236 at `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`, targeting the campaign base. User dispatched Codex against exchange `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. | Supersedes earlier publication/dispatch pending status |
+| 2026-11-08 | Representation-proof report received verbatim, SHA-256 `21783a113298e880cfb7cc272607c787b0bf908cbaac9e23a646236e8bfb4857`. PASS 0 blockers / 0 majors / 0 minors / 3 continuing notes. Intake reverified all 63 frozen source files, 86 current evidence hashes, 82 historical hashes and 5 exchange-gate hashes; no Lean or pin change. | Proof gate closed; N01–N03 retained; no merge approval |

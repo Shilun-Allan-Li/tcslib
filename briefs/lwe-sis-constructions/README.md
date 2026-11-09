@@ -1,67 +1,78 @@
 # LWE/SIS construction campaign
 
-Approved scope, directories, source anchors, parameter decisions and gates are in
+Scope, sources, parameter decisions, directories and gates are in
 [LatticeCryptographyPlan.md](../../LatticeCryptographyPlan.md).
 
 ## Current checkpoint
 
-Phase 0 contains finite-seed scalar noise, numeric LWE/SIS parameters, a common-secret
-LWE sample map, the integer SIS relation, concrete experiments, binary encodings and
-asymptotic families with polynomial representation budgets. The public hypotheses are
-`TCSlib.Cryptography.LWE.DLWEAssumption` and
-`TCSlib.Cryptography.SIS.SISAssumption`. Every new public definition has an owner-side
-reader. These define hypotheses; they do not assert axioms or prove hardness.
+The phase-0 statement audit passed with 0 blockers, 0 majors, 0 minors and 3 notes.
+The report is retained verbatim under `audits/lwe-sis-phase0-findings.md`, with its
+dispositions in `audits/lwe-sis-phase0-resolutions.md`.
 
-The 13 new Lean files comprise ten mathematical modules and three facades. At source
-they introduce 61 public declarations: 19 definitions, five structures, 35 theorems and
-two anonymous instances. Fourteen representation statements remain admitted, with
-sketches beside them. Other proof terms are defining equations, one parser case reader
-and the nonzero-modulus instances. All are part of the review surface. No construction
-security proof has started.
+The representation-proof audit also passed with 0 blockers, 0 majors, 0 minors
+and the same 3 continuing notes. Its verbatim report is
+`audits/lwe-sis-encoding-proofs-findings.md`; its gate closure and retained
+obligations are in `audits/lwe-sis-encoding-proofs-resolutions.md`. No Lean repair
+was required. Maintainer intake reverified all 63 frozen source files and the
+current, historical and exchange checksums; it did not rerun native checks.
+
+All 14 audited representation lemmas are now proved at
+`893e921bf2afeca293be9da9d495613bb1486796`: modular vector/matrix lengths and
+injectivity, LWE/SIS challenge lengths and faithfulness, signed SIS decoding completeness,
+and polynomial input/output bounds. The 61 public declarations and their signatures,
+definition/instance bodies, attributes and namespaces are unchanged. No helper was added.
+
+The public hypotheses remain `TCSlib.Cryptography.LWE.DLWEAssumption` and
+`TCSlib.Cryptography.SIS.SISAssumption`. They define hardness propositions; no hardness
+axiom, efficient sampler or primitive construction/security theorem is asserted.
 
 ## Verification
 
-A fresh serial sweep checked the facades' complete 55-module transitive TCSlib dependency
-tree through `scripts/lean_check_tree.sh`, with zero errors. Both renamed assumption
-modules and both facades then passed rechecks. This scoped check is not a whole-library
-check of `TCSlib.lean`. Logs contain 14 new and 17 inherited admission warnings.
+A fresh serial 55-module dependency sweep through `scripts/lean_check_tree.sh` passes
+with zero errors, zero new admissions and the same 17 inherited warnings. It uses a newly
+created own olean tree and is not a whole-library root check.
 
-The final probe imports all three facades, prints axioms for all 61 source declarations
-and enumerates their modules' elaborated constants. Neither assumption nor its reader
-depends on `sorryAx`. Exact results, style logs and order are under
-`gates/00-foundations/evidence/`. Admitted statements are not completed proofs.
-Style reports zero FAIL and two acronym-reader heuristic WARNs; the actual `_iff`
-readers follow the existing RSA/DDH convention. No zero-WARN claim is made.
+All 61 source declarations and all 166 elaborated constants use only standard axioms,
+with no `sorryAx`. Two new compiler-generated congruence constants are inventoried.
+Source signatures and all other frozen code are checked by `verify_freeze.py`.
+Style reports zero FAIL and the same two acronym-reader false positives accepted by the
+statement audit. No linter edit or reader rename was made.
 
-`check_finite_models.py` and `finite-model-results.json` record independent exact
-small-instance calculations. They check conventions and boundaries; they do not execute
-the Lean definitions or prove security. `phase0-source-review.md` records internal
-review, which does not close the external gate.
+Current proof evidence is under `fills/00-encodings/evidence/`. Historical statement
+evidence under `gates/00-foundations/evidence/` remains unchanged and records 14 admissions
+at its earlier freeze. Independent finite-model calculations remain supporting checks;
+they do not execute Lean or prove security.
 
-## Isolation and delivery
+## Ownership and publication
 
 Worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-crypto-parallel-kickoff`.
-Branch: `cryptography/lwe-sis-constructions`.
-Implementation baseline: `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49`.
+Current PR branch: `cryptography/lwe-sis-encoding-proofs`.
+Earlier published topic snapshot: `cryptography/lwe-sis-constructions` (left unchanged).
+Baseline: `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49`.
 PR target: `cryptography/pass-shelat-ch2-4`.
 
-The only existing shared-file change is three root imports, kept in a separate commit.
-Existing cryptography APIs, dependency pins, Pass--Shelat records, other worktrees and
-exchange files are unchanged. All package/cache/build work is isolated here. Selected
-official pinned Mathlib archives were extracted into the own package tree; no other
-chat's TCSlib scratch objects were borrowed. The approved two-job increase lifted the
-earlier scheduling hold. Root ran native/cache work serially.
+All Lean updates go through a user-approved PR. The only existing shared-file overlap
+is still three root imports, isolated in export commit
+`4364d0e0fe9accd649b6acb4751e8684aa93ad1e`. This fill adds no root edit. Existing
+owner APIs, pins, other campaigns' records and other maintainers' checkouts are unchanged.
+Builds use only the own pinned packages and scratch objects; root native/cache jobs are serial.
 
-Shell GitHub access fails DNS; own remote branch creation through the connector fails
-HTTP 403, `Resource not accessible by integration`. No published branch or PR is claimed.
-No external audit/fill job has been dispatched or exchange namespace selected. Source
-PDFs were inspected through browsing; exact PDF archival, ingestion and proofmatch
-remain open and are disclosed in the review packet.
+The user selected and dispatched Codex for proof review. Inputs were published under
+`lwe-sis-constructions/outbox/gates/01-encoding-proofs-r1/` on the orphan exchange;
+the exact audited exchange commit is
+`ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. Codex returned Markdown in chat.
+The separate sparse publisher clone changes only this namespace, leaving the shared
+exchange checkout, index and original inbox reports alone. The previous statement
+input is published at exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`.
 
-The user selected Codex for the external phase-0 audit. The selected-worker kickoff is
-`gates/00-foundations/dispatch-codex.md`; the already delivered round-1 ZIP and pack remain
-unchanged. The user dispatches the audit and may publish only this own PR branch. No
-campaign branch push or merge is authorized by that publication.
+Draft PR [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) is published
+from `cryptography/lwe-sis-encoding-proofs` to the campaign target; its head before
+this records-only intake is `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`.
+The earlier `cryptography/lwe-sis-constructions` ref remains unchanged at
+`2c37f3f486822a52f4a9e337c6b742e995ebb118`. Client publication resolved the earlier
+connector/DNS block; historical preparation records remain unchanged. Source PDF
+archival/ingestion, landing checks and future sampler/profile/machine obligations
+remain open under N01–N03. Live source checks do not close archival provenance.
 
-**Not yet clear to merge — the external foundation gate and source archival are pending;
-14 representation proof obligations remain admitted.**
+**Not yet clear to merge — statement and representation-proof gates pass; source
+archival and relevant integration checks remain open. The user approves merges.**

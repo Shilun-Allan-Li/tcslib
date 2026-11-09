@@ -18,7 +18,7 @@ set_option autoImplicit false
 
 * `Basic`: numeric parameters and the nonzero short integer kernel relation.
 * `Experiments`: the concrete success probability of an optional integer-vector solver.
-* `Encoding`: matrix encodings, signed solver outputs, and admitted representation statements.
+* `Encoding`: matrix encodings and signed outputs with proved representation guarantees.
 * `Assumption`: polynomial representation budgets and success hardness against `NUPPT`.
 
 ## References

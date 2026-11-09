@@ -14,7 +14,7 @@ set_option autoImplicit false
 ## Contents
 
 * `Modular`: fixed-width modular vector and row-major matrix encodings, their
-  defining equations, and the admitted length/injectivity statements for the foundation gate.
+  defining equations, and their proved length/injectivity guarantees.
 
 ## References
 
