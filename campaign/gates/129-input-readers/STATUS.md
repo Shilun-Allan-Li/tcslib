@@ -1,3 +1,3 @@
 **Not yet clear to merge: #251.**
 
-Seyoon confirmed dispatch of Codex gate 129 at exact source `2e2f415c9bbf654cd8a68bb02aa62ea291d91116`. Awaiting findings Markdown. No gate closure or source merge. Exact audit pins are in publication.json.
+Gate129 first return HOLD at `2e2f415c9bbf654cd8a68bb02aa62ea291d91116` (0 blockers, 3 majors, 2 minors, 8 notes). Mechanical endpoint/action fixes and closing-form review in progress. The Scan replay gap needs a fresh replay at repaired source. Codex selected for the follow-up. No source merge.
