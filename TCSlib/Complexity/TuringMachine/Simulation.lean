@@ -52,9 +52,8 @@ Each gadget carries only the finiteness assumptions it needs.
   space plus one origin cell per idle tape.
 * **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
   that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
-* **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
-  action-application identity for work tapes, promoted at the epoch-2/epoch-3
-  boundary.
+* **Optional-write normalization** (`Turing.Action.apply_workTapes`, from
+  `Configuration`): the raw action-application identity for work tapes.
 * **Buffered sequential simulator** (`Turing.FinTM.bufferedCompTM`): the
   three-block tape partition, contiguous buffer representation, virtual-input
   reads and clamping invariant, first- and second-phase run correspondence,
@@ -77,26 +76,6 @@ equations.
   Cambridge University Press, 2009. (§1.2-§1.3; the "high-level description"
   convention on p. 14.)
 -/
-
-namespace Turing
-
-/-- **Optional-write normalization** (promoted from the epoch-2 fill per the
-epoch-2 audit, promotion recommendation 1): applying an action rewrites each
-work tape at its head with the proposed write, defaulting to the existing read
-when the action declines to write. An explicit `some none` write remains an
-erase, while an outer `none` writes back the scanned symbol unchanged. Holds
-for every alphabet, state type, action, configuration, and tape index — no
-finiteness, liveness, or computation hypothesis. -/
-lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}
-    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
-    (a.apply c).workTapes i =
-      Function.update (c.workTapes i) (c.workTapePos i)
-        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
-  cases hw : (a.workTapes i).1 with
-  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]
-  | some w => simp [Action.apply, hw]
-
-end Turing
 
 namespace Turing.FinTM
 

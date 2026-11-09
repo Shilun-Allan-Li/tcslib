@@ -1871,3 +1871,16 @@ one theorem, with one new home, not a retained copy. The 56-file copy score
 comparison has no new pair and twelve disappear, all incident to the revised
 right-step proof. These are directed text scores, not family counts. No
 whole-kind retirement or debt acceptance is made.
+
+
+**Gate 129, round 2: endpoint and live action proof reuse.**
+The current #251 candidate (06abd00adf61c257fcd25ee9181a37ddec0a4c87) cites the published endpoint blank equations
+and the indexed Boolean inputSymbol_at reader for the matching local read
+proofs. It also replaces the matched raw step reading with step_of_some and
+uses the published control-action, initialization and field equations at the
+named action sites. The scoped family sweep and full selected seals are in
+gate129 round 2. These inspected copies retire on merge. The scopes do not
+authorize retained or future foreign reads elsewhere.
+The short rewrite of runFrom at one in the rewind head base case and the
+final strip case is RO-1 accounting under the existing schedule. The general
+home decision stays parked; no new public reader is added for this law.

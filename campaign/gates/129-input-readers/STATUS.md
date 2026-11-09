@@ -1,7 +1,6 @@
-**Not yet clear to merge: #251.**
-
-Gate 129 first return HOLD at `2e2f415c9bbf654cd8a68bb02aa62ea291d91116` (0 blockers, 3 majors, 2 minors,
-8 notes). The first repaired candidate was pushed at `31aecdf5e5d6a7d9fe0adf06406a7f37d3e62e88`; the
-full opacity check found two further mechanical initialization reads in the
-incrementer. Final scope checks and a fresh merged-tree replay from the adopted
-#252 snapshot are required before the Codex follow-up can be dispatched.
+**Not yet clear to merge: #251.** Gate 129 round 2 returned HOLD on
+06abd00adf61c257fcd25ee9181a37ddec0a4c87. The two majors cover live-step, action and initialization
+reader use and reuse of the same-owner buffer replay in the eraser.
+Both are in mechanical repair and verification. The issued bundle and
+pinned source remain intact. The post-#253 trial of the audited head was
+stopped after the HOLD. See findings-r2.md and resolutions-r3-in-progress.md.

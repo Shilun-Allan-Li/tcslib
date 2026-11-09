@@ -1,0 +1,71 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+
+open Turing
+
+private theorem logIndex_triangular (k : ℕ) : k * (k + 1) ≤ 2 ^ (k + 1) := by
+  induction k using Nat.strong_induction_on with
+  | h k ih =>
+    by_cases hs : k ≤ 2
+    · interval_cases k <;> decide
+    · obtain ⟨l, rfl⟩ : ∃ l, k = l + 3 := ⟨k - 3, by omega⟩
+      have hsmall := ih (l + 2) (by omega)
+      have hmul : (l + 3) * (l + 4) ≤ 2 * ((l + 2) * (l + 3)) := by nlinarith
+      calc
+        (l + 3) * (l + 3 + 1) ≤ 2 * ((l + 2) * (l + 3)) := hmul
+        _ ≤ 2 * 2 ^ (l + 2 + 1) := Nat.mul_le_mul_left 2 hsmall
+        _ = 2 ^ (l + 3 + 1) := by rw [show l + 3 + 1 = (l + 2 + 1) + 1 by omega, pow_succ, Nat.mul_comm]
+
+private theorem shortDeadline_le (n i m : ℕ)
+    (hi : i < Nat.log 2 (Nat.log 2 n)) (hm : m ≤ Nat.log 2 n) : i * m ^ i ≤ n ^ 3 := by
+  let a := Nat.log 2 n
+  let k := Nat.log 2 a
+  change i < k at hi
+  change m ≤ a at hm
+  have ha : a ≠ 0 := by
+    intro hz
+    simp [k, hz] at hi
+  have hn : n ≠ 0 := by
+    intro hz
+    simp [a, hz] at ha
+  have hib : i ≤ n := hi.le.trans ((Nat.log_le_self 2 a).trans (Nat.log_le_self 2 n))
+  have hexp : (k + 1) * i ≤ 2 * a := calc
+    (k + 1) * i ≤ (k + 1) * k := Nat.mul_le_mul_left _ hi.le
+    _ = k * (k + 1) := Nat.mul_comm _ _
+    _ ≤ 2 ^ (k + 1) := logIndex_triangular k
+    _ = 2 * 2 ^ k := by rw [pow_succ, Nat.mul_comm]
+    _ ≤ 2 * a := Nat.mul_le_mul_left _ (Nat.pow_log_le_self 2 ha)
+  have hpow : m ^ i ≤ n ^ 2 := calc
+    m ^ i ≤ a ^ i := Nat.pow_le_pow_left hm _
+    _ ≤ (2 ^ (k + 1)) ^ i :=
+      Nat.pow_le_pow_left (Nat.lt_pow_succ_log_self (by decide : 1 < 2) a).le _
+    _ = 2 ^ ((k + 1) * i) := (pow_mul 2 _ _).symm
+    _ ≤ 2 ^ (2 * a) := pow_le_pow_right' (by decide) hexp
+    _ = (2 ^ a) ^ 2 := by rw [Nat.mul_comm 2 a, pow_mul]
+    _ ≤ n ^ 2 := Nat.pow_le_pow_left (Nat.pow_log_le_self 2 hn) _
+  calc
+    i * m ^ i ≤ n * n ^ 2 := Nat.mul_le_mul hib hpow
+    _ = n ^ 3 := by ring
+
+/-- Scratch route probe: numerical bound for the approved short-query clock. -/
+theorem ladnerNumericEnvelopeProbe (d : ℕ) :
+    ∀ n i (x : List Bool), i < Nat.log 2 (Nat.log 2 n) →
+      x.length ≤ Nat.log 2 n →
+      d * ((Nat.bits i).length + x.length + i * x.length ^ i + 1) ^ d ≤
+        (d * 4 ^ d) * (n + 1) ^ (3 * d) := by
+  intro n i x hi hx
+  have hi' : i ≤ n :=
+    hi.le.trans ((Nat.log_le_self 2 (Nat.log 2 n)).trans (Nat.log_le_self 2 n))
+  have hbits := (Turing.length_bits_le_self i).trans hi'
+  have hlen := hx.trans (Nat.log_le_self 2 n)
+  have ht := shortDeadline_le n i x.length hi hx
+  have htn : n ^ 3 ≤ (n + 1) ^ 3 := Nat.pow_le_pow_left (Nat.le_succ _) _
+  have hbase : n + 1 ≤ (n + 1) ^ 3 := calc
+    n + 1 = (n + 1) ^ 1 := (pow_one _).symm
+    _ ≤ (n + 1) ^ 3 := pow_le_pow_right' (by omega) (by decide)
+  have hsum : (Nat.bits i).length + x.length + i * x.length ^ i + 1 ≤
+      4 * (n + 1) ^ 3 := by omega
+  calc
+    _ ≤ d * (4 * (n + 1) ^ 3) ^ d := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hsum _)
+    _ = _ := by simp only [mul_pow, ← pow_mul, Nat.mul_assoc]
+
+#print axioms ladnerNumericEnvelopeProbe

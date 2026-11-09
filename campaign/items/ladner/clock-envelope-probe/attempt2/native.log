@@ -1,0 +1,8 @@
+Envelope.lean:18:31: error: unsolved goals
+l : ℕ
+ih : ∀ m < l + 3, m * (m + 1) ≤ 2 ^ (m + 1)
+hs : ¬l + 3 ≤ 2
+hsmall : (l + 2) * (l + 2 + 1) ≤ 2 ^ (l + 2 + 1)
+hmul : (l + 3) * (l + 4) ≤ 2 * ((l + 2) * (l + 3))
+⊢ 2 ^ (l + 2) * 2 * 2 = 2 ^ (l + 2 + 1 + 1)
+'ladnerNumericEnvelopeProbe' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

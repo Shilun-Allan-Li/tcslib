@@ -1,0 +1,41 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+
+theorem ladnerShortSATEnvelopeProbe (a b d n m : ℕ)
+    (hm : m ≤ Nat.log 2 n) :
+    b * 2 ^ (m + 1) * (a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2) ≤
+      (2 * b * (a * 2 ^ d + 4)) * (n + 1) ^ (d + 3) := by
+  let t := n + 1
+  have ht : 1 ≤ t := by dsimp [t]; omega
+  have hmn : m ≤ n := hm.trans (Nat.log_le_self 2 n)
+  have hpow : (2 : ℕ) ^ m ≤ t := by
+    by_cases hn : n = 0
+    · subst n
+      have hzero : m = 0 := by omega
+      simp [t, hzero]
+    · exact (Nat.pow_le_of_le_log hn hm).trans (Nat.le_succ n)
+  have hwords : (2 : ℕ) ^ (m + 1) ≤ 2 * t := calc
+    _ = 2 ^ m * 2 := pow_succ 2 m
+    _ ≤ t * 2 := Nat.mul_le_mul_right 2 hpow
+    _ = _ := Nat.mul_comm _ _
+  have hsize : 2 * m + 2 ≤ 2 * t := by dsimp [t]; omega
+  have hdegree : t ^ d ≤ t ^ (d + 2) := pow_le_pow_right' ht (by omega)
+  have hsquare : t ^ 2 ≤ t ^ (d + 2) := pow_le_pow_right' ht (by omega)
+  have hcheck : a * (2 * m + 2) ^ d + (2 * m + 2) ^ 2 ≤
+      (a * 2 ^ d + 4) * t ^ (d + 2) := calc
+    _ ≤ a * (2 * t) ^ d + (2 * t) ^ 2 :=
+      Nat.add_le_add
+        (Nat.mul_le_mul_left a (Nat.pow_le_pow_left hsize d))
+        (Nat.pow_le_pow_left hsize 2)
+    _ = (a * 2 ^ d) * t ^ d + 4 * t ^ 2 := by simp only [mul_pow]; ring
+    _ ≤ (a * 2 ^ d) * t ^ (d + 2) + 4 * t ^ (d + 2) :=
+      Nat.add_le_add (Nat.mul_le_mul_left _ hdegree) (Nat.mul_le_mul_left _ hsquare)
+    _ = _ := by rw [Nat.add_mul]
+  calc
+    _ ≤ (b * (2 * t)) * ((a * 2 ^ d + 4) * t ^ (d + 2)) :=
+      Nat.mul_le_mul (Nat.mul_le_mul_left b hwords) hcheck
+    _ = _ := by
+      change _ = (2 * b * (a * 2 ^ d + 4)) * t ^ (d + 3)
+      rw [show d + 3 = 1 + (d + 2) by omega, pow_add t 1 (d + 2), pow_one]
+      ring
+
+#print axioms ladnerShortSATEnvelopeProbe

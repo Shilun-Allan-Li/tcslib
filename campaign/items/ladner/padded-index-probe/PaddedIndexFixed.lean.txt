@@ -1,0 +1,53 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+
+set_option autoImplicit false
+
+namespace Complexity
+
+open Turing
+
+/-- Trailing ones give arbitrarily large canonical binary indices for a fixed
+machine. The suffix remains positive while the encoded prefix is prepended
+bit by bit, so the canonical representation retains the entire word. -/
+private theorem checked_padded_index (M : CodeTM) (B : ℕ) :
+    ∃ i, B < i ∧ ladnerMachine i = M.toFinTM := by
+  have ones : ∀ b : ℕ, ∃ j, b + 1 ≤ j ∧ j.bits = List.replicate (b + 1) true := by
+    intro b
+    induction b with
+    | zero => exact ⟨1, le_rfl, Nat.one_bits⟩
+    | succ b ih =>
+      obtain ⟨j, hj, hbits⟩ := ih
+      refine ⟨Nat.bit true j, ?_, ?_⟩
+      · rw [Nat.bit_val]
+        omega
+      · rw [Nat.bits_append_bit j true (fun _ => rfl), hbits, List.replicate_succ (n := b + 1)]
+  have prepend (u : List Bool) (j : ℕ) (hj : 0 < j) :
+      ∃ i, j ≤ i ∧ i.bits = u ++ j.bits := by
+    induction u with
+    | nil => exact ⟨j, le_rfl, rfl⟩
+    | cons b u ih =>
+      obtain ⟨i, hi, hbits⟩ := ih
+      refine ⟨Nat.bit b i, ?_, ?_⟩
+      · rw [Nat.bit_val]
+        omega
+      · rw [Nat.bits_append_bit i b (fun hz => by omega), hbits, List.cons_append]
+  obtain ⟨j, hj, hbits⟩ := ones B
+  obtain ⟨i, hi, hi_bits⟩ := prepend (expCode.encode M) j (by omega)
+  refine ⟨i, by omega, ?_⟩
+  rw [ladnerMachine_eq, hi_bits, hbits, expCode.toMachineCode.decode_encode_pad]
+
+#print axioms checked_padded_index
+
+/-- An indexed deadline dominates any fixed polynomial bound on nonempty
+inputs once the index dominates the degree and the scaled coefficient. -/
+private theorem checked_indexed_deadline (a d i m : ℕ)
+    (hd : d ≤ i) (ha : a * 2 ^ d ≤ i) (hm : 1 ≤ m) :
+    a * (m + 1) ^ d ≤ i * m ^ i := calc
+  a * (m + 1) ^ d ≤ a * (2 * m) ^ d :=
+    Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by omega) _)
+  _ = (a * 2 ^ d) * m ^ d := by rw [mul_pow, mul_assoc]
+  _ ≤ i * m ^ i := Nat.mul_le_mul ha (Nat.pow_le_pow_right hm hd)
+
+#print axioms checked_indexed_deadline
+
+end Complexity
