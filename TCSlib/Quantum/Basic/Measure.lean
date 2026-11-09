@@ -41,6 +41,8 @@ noncomputable section
 
 namespace Quantum
 
+open Matrix
+
 namespace Ket
 
 variable {d : Type*} [Fintype d] {k n : ℕ}
@@ -56,7 +58,8 @@ theorem prob_eq (ψ : Ket d) (x : d) : ψ.prob x = ‖ψ.vec x‖ ^ 2 := rfl
 
 **Proof sketch.** A square of a real number is nonnegative (`sq_nonneg`). -/
 theorem prob_nonneg (ψ : Ket d) (x : d) : 0 ≤ ψ.prob x := by
-  sorry
+  rw [prob_eq]
+  positivity
 
 /-- Outcome probabilities sum to `1`: this is the normalization of `ψ`. [dW26, §1.2.2] -/
 theorem sum_prob (ψ : Ket d) : ∑ x, ψ.prob x = 1 := ψ.normalized'
@@ -66,7 +69,8 @@ theorem sum_prob (ψ : Ket d) : ∑ x, ψ.prob x = 1 := ψ.normalized'
 **Proof sketch.** It is one nonnegative term of a sum equal to `1` (`sum_prob`,
 `prob_nonneg`). -/
 theorem prob_le_one (ψ : Ket d) (x : d) : ψ.prob x ≤ 1 := by
-  sorry
+  rw [← ψ.sum_prob]
+  exact Finset.single_le_sum (fun y _ => prob_nonneg ψ y) (Finset.mem_univ x)
 
 /-- The probability that measuring wire `i` of the register state `ψ` gives `b`: the total
 probability of the basis states `x` with `x i = b`. [dW26, §1.2.2] -/
@@ -81,7 +85,8 @@ theorem probQubit_eq (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) :
 
 **Proof sketch.** A sum of nonnegative terms (`Finset.sum_nonneg`, `prob_nonneg`). -/
 theorem probQubit_nonneg (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) : 0 ≤ ψ.probQubit i b := by
-  sorry
+  rw [probQubit_eq]
+  exact Finset.sum_nonneg fun y _ => prob_nonneg ψ y
 
 /-- The two outcomes of measuring wire `i` have total probability `1`.
 
@@ -90,7 +95,18 @@ theorem probQubit_nonneg (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) : 0 ≤ ψ.p
 sum is `1` (`sum_prob`). -/
 theorem probQubit_zero_add_one (ψ : Ket (Reg n)) (i : Fin n) :
     ψ.probQubit i 0 + ψ.probQubit i 1 = 1 := by
-  sorry
+  rw [probQubit_eq, probQubit_eq, ← ψ.sum_prob]
+  rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (fun x : Reg n => x i = 0)]
+  congr 1
+  apply Finset.sum_congr _ (fun _ _ => rfl)
+  ext x
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  generalize x i = a
+  revert a; decide
+example (x : Reg n) (i : Fin n) (b : Qubit) :
+    (basis x).probQubit i b = if x i = b then 1 else 0 := by
+  rw [probQubit_eq]
+  simp [prob_eq, basis_vec, apply_ite, Finset.sum_ite_eq]
 
 /-- Measuring wire `i` of the basis state `|x⟩` gives `x i` with certainty.
 
@@ -98,7 +114,35 @@ theorem probQubit_zero_add_one (ψ : Ket (Reg n)) (i : Fin n) :
 is `1` if `x i = b` and `0` otherwise. -/
 theorem probQubit_basis (x : Reg n) (i : Fin n) (b : Qubit) :
     (basis x).probQubit i b = if x i = b then 1 else 0 := by
-  sorry
+  rw [probQubit_eq]
+  simp [prob_eq, basis_vec, apply_ite, Finset.sum_ite_eq]
+
+/-- The probability that wire `i` reads `b` is the squared norm of `ψ` projected onto the basis
+states with `x i = b`. -/
+private theorem probQubit_eq_sum_norm_sq (ψ : Ket (Reg n)) (i : Fin n) (b : Qubit) :
+    ψ.probQubit i b = ∑ x, ‖(if x i = b then ψ.vec x else 0)‖ ^ 2 := by
+  rw [probQubit_eq, Finset.sum_filter]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  split_ifs <;> simp [prob_eq]
+
+/-- A gate on wires avoiding `i` commutes with the projection onto "wire `i` reads `b`": it never
+changes wire `i`. -/
+private theorem applyOn_mulVec_proj (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) {i : Fin n}
+    (hi : ∀ j, w j ≠ i) (b : Qubit) (v : Reg n → ℂ) :
+    (fun x => if x i = b then (applyOn w U *ᵥ v) x else 0) =
+      applyOn w U *ᵥ (fun x => if x i = b then v x else 0) := by
+  funext x
+  simp only [mulVec, dotProduct]
+  split_ifs with hx
+  · refine Finset.sum_congr rfl fun z _ => ?_
+    by_cases hA : AgreeOff w x z
+    · rw [if_pos (by rw [← hA i hi, hx])]
+    · rw [applyOn_apply, if_neg hA, zero_mul, zero_mul]
+  · symm
+    refine Finset.sum_eq_zero fun z _ => ?_
+    by_cases hA : AgreeOff w x z
+    · rw [if_neg (by rw [← hA i hi]; exact hx), mul_zero]
+    · rw [applyOn_apply, if_neg hA, zero_mul]
 
 /-- A gate placed on wires that avoid `i` does not change the statistics of measuring wire `i`.
 This is what makes measurements of separate registers independent of the gates applied to
@@ -113,7 +157,14 @@ same class (`applyOn_mulVec_basis`), where it acts as `U` under the bijection `x
 theorem probQubit_evolve_applyOnU_of_forall_ne (ψ : Ket (Reg n)) (w : Fin k ↪ Fin n)
     (U : Gate k) {i : Fin n} (hi : ∀ j, w j ≠ i) (b : Qubit) :
     (ψ.evolve (applyOnU w U)).probQubit i b = ψ.probQubit i b := by
-  sorry
+  rw [probQubit_eq_sum_norm_sq, probQubit_eq_sum_norm_sq, evolve_vec, applyOnU_coe]
+  calc ∑ x, ‖(if x i = b then (applyOn w (U : Matrix (Reg k) (Reg k) ℂ) *ᵥ ψ.vec) x else 0)‖ ^ 2
+      = ∑ x, ‖(applyOn w (U : Matrix (Reg k) (Reg k) ℂ) *ᵥ
+          fun x => if x i = b then ψ.vec x else 0) x‖ ^ 2 := by
+        refine Finset.sum_congr rfl fun x _ => ?_
+        rw [← congrFun (applyOn_mulVec_proj w U hi b ψ.vec) x]
+    _ = ∑ x, ‖(if x i = b then ψ.vec x else 0)‖ ^ 2 :=
+        sum_norm_sq_mulVec_of_mem_unitaryGroup (applyOn_mem_unitaryGroup w U.2) _
 
 end Ket
 
