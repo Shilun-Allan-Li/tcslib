@@ -80,6 +80,49 @@ otherwise. -/
 theorem applyOn_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (y x : Reg n) :
     applyOn w U y x = if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := rfl
 
+/-! ### Reconstructing a register from its gate wires -/
+
+/-- `AgreeOff w` is symmetric. -/
+private theorem agreeOff_symm {w : Fin k ↪ Fin n} {y x : Reg n} (h : AgreeOff w y x) :
+    AgreeOff w x y :=
+  fun i hi => (h i hi).symm
+
+/-- `AgreeOff w` is transitive. -/
+private theorem agreeOff_trans {w : Fin k ↪ Fin n} {y z x : Reg n} (h₁ : AgreeOff w y z)
+    (h₂ : AgreeOff w z x) : AgreeOff w y x :=
+  fun i hi => (h₁ i hi).trans (h₂ i hi)
+
+/-- Writing `u` on the wires `w` and copying `x` elsewhere, then reading the wires `w`, gives
+back `u`. -/
+private theorem extend_comp (w : Fin k ↪ Fin n) (u : Reg k) (x : Reg n) :
+    Function.extend w u x ∘ w = u := by
+  funext j
+  exact w.injective.extend_apply u x j
+
+/-- Writing `u` on the wires `w` and copying `x` elsewhere agrees with `x` off `w`. -/
+private theorem agreeOff_extend (w : Fin k ↪ Fin n) (u : Reg k) (x : Reg n) :
+    AgreeOff w (Function.extend w u x) x := by
+  intro i hi
+  exact Function.extend_apply' u x i (fun ⟨j, hj⟩ => hi j hj)
+
+/-- A register agreeing with `x` off `w` is recovered from its values on `w` and from `x`: the
+two maps of the bijection behind `applyOn_mul` are inverse. -/
+private theorem extend_self {w : Fin k ↪ Fin n} {z x : Reg n} (h : AgreeOff w z x) :
+    Function.extend w (z ∘ w) x = z := by
+  funext i
+  by_cases hi : ∃ j, w j = i
+  · obtain ⟨j, rfl⟩ := hi
+    exact w.injective.extend_apply (z ∘ w) x j
+  · rw [Function.extend_apply' _ _ _ hi]
+    exact (h i fun j hj => hi ⟨j, hj⟩).symm
+
+/-- Registers that agree off `w` and on `w` are equal. -/
+private theorem eq_of_agreeOff {w : Fin k ↪ Fin n} {y x : Reg n} (h : AgreeOff w y x)
+    (hw : y ∘ w = x ∘ w) : y = x :=
+  calc y = Function.extend w (y ∘ w) x := (extend_self h).symm
+    _ = Function.extend w (x ∘ w) x := by rw [hw]
+    _ = x := extend_self fun _ _ => rfl
+
 /-! ### Algebraic properties -/
 
 /-- Placing the identity on any wires gives the identity.
@@ -87,7 +130,14 @@ theorem applyOn_apply (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (y 
 **Proof sketch.** Entry `(y, x)` is `[y ∘ w = x ∘ w]` when `y, x` agree off `w`, and `0`
 otherwise; both cases together say `[y = x]`. -/
 theorem applyOn_one (w : Fin k ↪ Fin n) : applyOn w (1 : Matrix (Reg k) (Reg k) ℂ) = 1 := by
-  sorry
+  ext y x
+  rw [applyOn_apply, Matrix.one_apply, Matrix.one_apply]
+  by_cases h : AgreeOff w y x
+  · rw [if_pos h]
+    by_cases hw : y ∘ w = x ∘ w
+    · rw [if_pos hw, if_pos (eq_of_agreeOff h hw)]
+    · rw [if_neg hw, if_neg (fun hyx => hw (by rw [hyx]))]
+  · rw [if_neg h, if_neg (fun hyx => h (by subst hyx; exact fun _ _ => rfl))]
 
 /-- Placing a product on wires `w` is the product of the placed factors:
 `applyOn w (U V) = applyOn w U · applyOn w V`.
@@ -99,7 +149,37 @@ The sum becomes `∑_u U (y ∘ w) u · V u (x ∘ w)`, entry `(y ∘ w, x ∘ w
 do not agree off `w`, every term vanishes. The bijection is the key lemma. -/
 theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
     applyOn w (U * V) = applyOn w U * applyOn w V := by
-  sorry
+  ext y x
+  simp only [applyOn_apply, Matrix.mul_apply]
+  by_cases hyx : AgreeOff w y x
+  · rw [if_pos hyx]
+    have key : (∑ z, (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) *
+        (if AgreeOff w z x then V (z ∘ w) (x ∘ w) else 0)) =
+        ∑ z ∈ Finset.univ.filter (fun z => AgreeOff w z x),
+          (if AgreeOff w y z then U (y ∘ w) (z ∘ w) else 0) *
+          (if AgreeOff w z x then V (z ∘ w) (x ∘ w) else 0) := by
+      refine (Finset.sum_filter_of_ne fun z _ hz => ?_).symm
+      by_contra h
+      exact hz (by rw [if_neg h, mul_zero])
+    rw [key]
+    symm
+    apply Finset.sum_nbij' (fun z => z ∘ w) (fun u => Function.extend w u x)
+    · intros; exact Finset.mem_univ _
+    · intro u _; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, agreeOff_extend w u x⟩
+    · intro z hz; exact extend_self (Finset.mem_filter.1 hz).2
+    · intro u _; exact extend_comp w u x
+    · intro z hz
+      have hz' := (Finset.mem_filter.1 hz).2
+      rw [if_pos (agreeOff_trans hyx (agreeOff_symm hz')), if_pos hz']
+  · rw [if_neg hyx]
+    symm
+    apply Finset.sum_eq_zero
+    intro z _
+    by_cases h1 : AgreeOff w y z
+    · by_cases h2 : AgreeOff w z x
+      · exact absurd (agreeOff_trans h1 h2) hyx
+      · rw [if_neg h2, mul_zero]
+    · rw [if_neg h1, zero_mul]
 
 /-- Placing commutes with adjoints: `(applyOn w U)ᴴ = applyOn w Uᴴ`.
 
@@ -107,7 +187,11 @@ theorem applyOn_mul (w : Fin k ↪ Fin n) (U V : Matrix (Reg k) (Reg k) ℂ) :
 `conj (U x y)`. -/
 theorem applyOn_conjTranspose (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) :
     (applyOn w U)ᴴ = applyOn w Uᴴ := by
-  sorry
+  ext y x
+  simp only [conjTranspose_apply, applyOn_apply]
+  by_cases h : AgreeOff w x y
+  · rw [if_pos h, if_pos (agreeOff_symm h)]
+  · rw [if_neg h, if_neg (fun h' => h (agreeOff_symm h')), star_zero]
 
 /-- Placing a unitary on any wires gives a unitary.
 
@@ -115,7 +199,9 @@ theorem applyOn_conjTranspose (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) 
 `applyOn_conjTranspose`, `applyOn_mul` and `applyOn_one`. -/
 theorem applyOn_mem_unitaryGroup (w : Fin k ↪ Fin n) {U : Matrix (Reg k) (Reg k) ℂ}
     (hU : U ∈ 𝐔[Reg k]) : applyOn w U ∈ 𝐔[Reg n] := by
-  sorry
+  rw [mem_unitaryGroup_iff'] at hU ⊢
+  rw [star_eq_conjTranspose, applyOn_conjTranspose, ← applyOn_mul, ← star_eq_conjTranspose, hU,
+    applyOn_one]
 
 /-- The gate `U` placed on wires `w`, as an element of `𝐔[Reg n]`. -/
 def applyOnU (w : Fin k ↪ Fin n) (U : Gate k) : 𝐔[Reg n] :=
@@ -131,7 +217,55 @@ theorem applyOnU_coe (w : Fin k ↪ Fin n) (U : Gate k) :
 `y ∘ id = y`. -/
 theorem applyOn_refl (U : Matrix (Reg n) (Reg n) ℂ) :
     applyOn (Function.Embedding.refl (Fin n)) U = U := by
-  sorry
+  ext y x
+  rw [applyOn_apply, if_pos (show AgreeOff _ y x from fun i hi => absurd rfl (hi i))]
+  rfl
+
+/-- The product of two operators on disjoint wires, entrywise: it is
+`U₁ (y ∘ w₁) (x ∘ w₁) · U₂ (y ∘ w₂) (x ∘ w₂)` when `y` and `x` agree off both ranges, and `0`
+otherwise. The only intermediate register that can contribute agrees with `x` on `w₁`'s range and
+with `y` elsewhere. -/
+private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂ ↪ Fin n)
+    (hd : ∀ j₁ j₂, w₁ j₁ ≠ w₂ j₂)
+    (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) (y x : Reg n) :
+    (applyOn w₁ U₁ * applyOn w₂ U₂) y x =
+      if (∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i) then
+        U₁ (y ∘ w₁) (x ∘ w₁) * U₂ (y ∘ w₂) (x ∘ w₂) else 0 := by
+  set zs : Reg n := fun i => if ∃ j, w₂ j = i then y i else x i with hzs
+  have hz1 : zs ∘ w₁ = x ∘ w₁ := by
+    funext j; simp only [Function.comp, hzs]
+    rw [if_neg (fun ⟨j', hj'⟩ => hd j j' hj'.symm)]
+  have hz2 : zs ∘ w₂ = y ∘ w₂ := by
+    funext j; simp only [Function.comp, hzs]; rw [if_pos ⟨j, rfl⟩]
+  have hA2 : AgreeOff w₂ zs x := by
+    intro i hi; simp only [hzs]; rw [if_neg (fun ⟨j, hj⟩ => hi j hj)]
+  have hA1 : AgreeOff w₁ y zs ↔ ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i := by
+    constructor
+    · intro h i h1 h2
+      have := h i h1; simp only [hzs] at this; rwa [if_neg (fun ⟨j, hj⟩ => h2 j hj)] at this
+    · intro h i h1
+      simp only [hzs]
+      by_cases hi : ∃ j, w₂ j = i
+      · rw [if_pos hi]
+      · rw [if_neg hi]; exact h i h1 (fun j hj => hi ⟨j, hj⟩)
+  rw [Matrix.mul_apply, Finset.sum_eq_single zs]
+  · simp only [applyOn_apply]
+    rw [if_pos hA2, hz1, hz2]
+    by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
+    · rw [if_pos (hA1.2 hc), if_pos hc]
+    · rw [if_neg (fun h => hc (hA1.1 h)), if_neg hc, zero_mul]
+  · intro z _ hz
+    simp only [applyOn_apply]
+    by_cases h1 : AgreeOff w₁ y z
+    · by_cases h2 : AgreeOff w₂ z x
+      · exfalso; apply hz; funext i; simp only [hzs]
+        by_cases hi : ∃ j, w₂ j = i
+        · rw [if_pos hi]; obtain ⟨j, rfl⟩ := hi
+          exact (h1 (w₂ j) (fun j' hj' => hd j' j hj')).symm
+        · rw [if_neg hi]; exact h2 i (fun j hj => hi ⟨j, hj⟩)
+      · rw [if_neg h2, mul_zero]
+    · rw [if_neg h1, zero_mul]
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 /-- Operators on disjoint sets of wires commute. [NC10, §4.5]
 
@@ -148,7 +282,39 @@ theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂
     (h : Disjoint (Set.range w₁) (Set.range w₂))
     (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) :
     Commute (applyOn w₁ U₁) (applyOn w₂ U₂) := by
-  sorry
+  have hd : ∀ j₁ j₂, w₁ j₁ ≠ w₂ j₂ := fun j₁ j₂ e =>
+    Set.disjoint_left.1 h ⟨j₁, rfl⟩ ⟨j₂, e.symm⟩
+  show applyOn w₁ U₁ * applyOn w₂ U₂ = applyOn w₂ U₂ * applyOn w₁ U₁
+  ext y x
+  rw [applyOn_mul_applyOn_of_disjoint w₁ w₂ hd, applyOn_mul_applyOn_of_disjoint w₂ w₁ (fun a b e => hd b a e.symm)]
+  by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
+  · rw [if_pos hc, if_pos (fun i h2 h1 => hc i h1 h2), mul_comm]
+  · rw [if_neg hc, if_neg (fun hc' => hc (fun i h1 h2 => hc' i h2 h1))]
+
+/-- Splitting a register of `k + m` wires: its first `k` and last `m` wires. -/
+private theorem regAppendEquiv_symm_apply (k m : ℕ) (y : Reg (k + m)) :
+    (regAppendEquiv k m).symm y = (fun i => y (Fin.castAdd m i), fun i => y (Fin.natAdd k i)) := by
+  apply (regAppendEquiv k m).injective
+  rw [Equiv.apply_symm_apply]
+  funext i
+  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+  · rw [regAppendEquiv_apply_castAdd]
+  · rw [regAppendEquiv_apply_natAdd]
+
+/-- Two registers agree off the first `k` wires iff they agree on the last `m`. -/
+private theorem agreeOff_castAddEmb_iff (m : ℕ) (y x : Reg (k + m)) :
+    AgreeOff (Fin.castAddEmb m) y x ↔
+      (fun i => y (Fin.natAdd k i)) = (fun i => x (Fin.natAdd k i)) := by
+  constructor
+  · intro h; funext i
+    apply h (Fin.natAdd k i)
+    intro j hj
+    have := congrArg Fin.val hj; simp at this; omega
+  · intro H i hi
+    by_cases hik : (i : ℕ) < k
+    · exact absurd (Fin.ext rfl) (hi ⟨i, hik⟩)
+    · have : i = Fin.natAdd k ⟨i - k, by omega⟩ := Fin.ext (by simp; omega)
+      rw [this]; exact congrFun H _
 
 /-- On the first `k` wires, `applyOn` is the Kronecker product `U ⊗ I`, reindexed along
 `regAppendEquiv k m`. This ties `applyOn` to the tensor-product description of placing a gate.
@@ -163,7 +329,12 @@ theorem applyOn_castAdd_eq_reindex_kronecker (m : ℕ) (U : Matrix (Reg k) (Reg 
     applyOn (Fin.castAddEmb m) U =
       reindex (regAppendEquiv k m) (regAppendEquiv k m)
         (kroneckerMap (· * ·) U (1 : Matrix (Reg m) (Reg m) ℂ)) := by
-  sorry
+  ext y x
+  simp only [reindex_apply, submatrix_apply, regAppendEquiv_symm_apply, kroneckerMap_apply,
+    applyOn_apply, Matrix.one_apply]
+  by_cases hA : AgreeOff (Fin.castAddEmb m) y x
+  · rw [if_pos hA, if_pos ((agreeOff_castAddEmb_iff m y x).1 hA), mul_one]; rfl
+  · rw [if_neg hA, if_neg (fun h => hA ((agreeOff_castAddEmb_iff m y x).2 h)), mul_zero]
 
 /-! ### Action on basis states -/
 
@@ -176,7 +347,8 @@ agreeing with `x` off `w`, and `0` elsewhere.
 theorem applyOn_mulVec_basis (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) ℂ) (x : Reg n) :
     applyOn w U *ᵥ (Ket.basis x).vec =
       fun y => if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := by
-  sorry
+  ext y
+  simp [mulVec, dotProduct, applyOn_apply, Ket.basis_vec]
 
 /-- With no wires (`k = 0`), `applyOn` scales the identity by the single entry of the `1 × 1`
 matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity statement 2).
@@ -186,7 +358,27 @@ matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity
 `y ∘ w = x ∘ w` is the unique element of `Reg 0`. -/
 theorem applyOn_of_fin_zero (w : Fin 0 ↪ Fin n) (U : Matrix (Reg 0) (Reg 0) ℂ) :
     applyOn w U = U Fin.elim0 Fin.elim0 • (1 : Matrix (Reg n) (Reg n) ℂ) := by
-  sorry
+  ext y x
+  rw [applyOn_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
+  have h0 : ∀ z : Reg n, z ∘ w = Fin.elim0 := fun z => funext fun j => j.elim0
+  by_cases h : y = x
+  · rw [if_pos (by subst h; exact fun _ _ => rfl), if_pos h, h0, h0, mul_one]
+  · rw [if_neg (fun h' => h (funext fun i => h' i (fun j => j.elim0))), if_neg h, mul_zero]
+
+/-- A permutation gate placed on wires `w` maps `|x⟩` to the basis state that holds `σ (x ∘ w)`
+on the wires `w` and agrees with `x` elsewhere. -/
+private theorem applyOn_permMat_mulVec_basis (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k)) (x : Reg n) :
+    applyOn w (permMat σ) *ᵥ (Ket.basis x).vec =
+      (Ket.basis (Function.extend w (σ (x ∘ w)) x)).vec := by
+  rw [applyOn_mulVec_basis]
+  funext y
+  simp only [Ket.basis_vec, permMat_apply]
+  by_cases hA : AgreeOff w y x
+  · rw [if_pos hA]
+    by_cases hy : y ∘ w = σ (x ∘ w)
+    · rw [if_pos hy, if_pos (by rw [← hy, extend_self hA])]
+    · rw [if_neg hy, if_neg (fun he => hy (by rw [← he, extend_comp]))]
+  · rw [if_neg hA, if_neg (fun he => hA (by rw [← he]; exact agreeOff_extend w _ x))]
 
 /-- The embedding `Fin 1 ↪ Fin n` naming the single wire `i`. -/
 def wire (i : Fin n) : Fin 1 ↪ Fin n := ⟨fun _ => i, fun a b _ => Subsingleton.elim a b⟩
@@ -203,7 +395,15 @@ when `y` agrees with `x` off `i`; that is `1` exactly when `y i = x i + 1`, i.e.
 theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
     applyOn (wire i) (Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (flipAt i x)).vec := by
-  sorry
+  rw [Gate.X_coe, applyOn_permMat_mulVec_basis]
+  congr 2
+  funext j
+  by_cases hj : j = i
+  · subst hj
+    refine ((wire j).injective.extend_apply _ x 0).trans ?_
+    simp [flipAt, wire_apply]
+  · rw [Function.extend_apply' _ _ _ (fun ⟨a, ha⟩ => hj (by rw [← ha, wire_apply]))]
+    simp [flipAt, hj]
 
 /-- The embedding `Fin 2 ↪ Fin 3` sending gate wire `0` to register wire `2` and gate wire `1`
 to register wire `0`: a reversed, non-contiguous placement, used as a sanity check. -/
@@ -223,6 +423,15 @@ input `011` the output is `111`).
 theorem applyOn_wires20_CNOT_mulVec_basis (x : Reg 3) :
     applyOn wires20 (Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (Function.update x 0 (x 0 + x 2))).vec := by
-  sorry
+  rw [Gate.CNOT_coe, applyOn_permMat_mulVec_basis]
+  congr 2
+  funext j
+  fin_cases j
+  · rw [show ((⟨0, by decide⟩ : Fin 3)) = wires20 1 from rfl, wires20.injective.extend_apply]
+    simp [cnotMap, wires20_apply]
+  · rw [Function.extend_apply' _ _ _ (by decide)]
+    simp
+  · rw [show ((⟨2, by decide⟩ : Fin 3)) = wires20 0 from rfl, wires20.injective.extend_apply]
+    simp [cnotMap, wires20_apply]
 
 end Quantum
