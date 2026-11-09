@@ -1,6 +1,6 @@
 # Chapters 3–4 roadmap readiness, 2026-11-08
 
-The merged campaign Lean tree is `9b5dcf46408db681bcbc721930ef2203fa6bc47d` (MAC8). Fresh Lean checks through
+At the time of these checks, the merged campaign Lean tree was `9b5dcf46408db681bcbc721930ef2203fa6bc47d` (MAC8). Fresh Lean checks through
 leanelab.sh found no sorryAx in all 26 previously tracked headline closures
 (9 for chapter 3, 17 for chapter 4) or in 19 additional roadmap results. The
 same 26-probe was 19/26 on 2026-11-05. Exact probe sources and outputs are
@@ -32,7 +32,7 @@ two scopes. This is not a repository-wide admission count. RD-2 needs an explici
 scope decision before a chapter-wide zero-admission closeout.
 
 Two of the three later priority tracks are proved and merged: book-form Theorem 3.1 and F6.
-Ladner is the remaining active major theorem track. RD-2 remains a separate held proof front. Its six open proof obligations cover
+Ladner is the remaining active major theorem track. RD-2 remains a separate held proof front. Ladner’s six open proof obligations cover
 the polynomial-time selector, NP membership, eventual boundedness/divergence, the padding-hardness
 implication, and the final witness. The recorded sharp SAT verifier interface awaits a separate
 ruling, and the memo/clock/size and simulation obligations still need concrete routes before a

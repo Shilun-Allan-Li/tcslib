@@ -1,3 +1,4 @@
-**Clear to merge: #252.**
-
-Gate130 closed at exact source `04b0b07d4ea836f52cb645f480b67cdc9e99ea59`. Returned PASS, with the static-checker minor fixed in the active scratch API and the archived 335 rows strictly verified (59 inherited, zero mismatches). Current prospective merge is exact to the passed Lean tree. Seyoon merges; no source merge yet.
+**Merged: #252.** Gate 130 closed before Seyoon merged it at `6e43b7a237481d0d03ff3ef47116918e1e835559`.
+The whole 335-module snapshot is verified against the merged Lean tree and
+adopted as `oleans-nspace5`. Canonical strict replay-checker synchronization
+is separate tooling PR #254.
