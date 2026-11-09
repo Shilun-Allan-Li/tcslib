@@ -3,12 +3,12 @@ DLWE generators, Regev public-key encryption, SIS hashing, and the planned CCA2
 construction. Its 19 mathematical modules contain 220 source declarations.
 Three proof waves discharge 43 obligations. Another 58 remain admitted.
 
-The statement audit and first two proof audits cover the frozen statements and
-37 fills. The earlier loop wording and flat-generator documentation repairs
-remain separately checked. The latest six fills give the strong leftover-hash
-bound and the final finite fixed-bit Regev advantage bound. They use the two
-owner-side readers on prerequisite [PR #255](https://github.com/Shilun-Allan-Li/tcslib/pull/255),
-which has its own review verdict in the combined audit.
+The statement audit covers the frozen declarations. Three proof reviews cover
+all 43 fills. Gate 11 passes separately for the two owner readers and the six
+statistical fills, with zero blockers, majors, and minors in both scopes.
+The six fills give the strong leftover-hash bound and the final finite fixed-bit
+Regev advantage bound. The auditor reran both serial closures and reproduced
+both axiom probes. The owner readers are in [PR #255](https://github.com/Shilun-Allan-Li/tcslib/pull/255).
 
 The serial 144-module verification at `f49ea765eb22ea49c0be978e26741e3b721bb162` recorded zero errors, 58 owned
 admissions and 17 inherited admission warnings. The nine affected modules were
@@ -28,5 +28,6 @@ Scoped source validation and matching, efficient sampling and schedules, the
 asymptotic and CPA game bridges, the remaining shared-owner holds, and CCA2
 remain separate work. SIS hardness is independent of LWE.
 
-**Not yet clear to merge.** The newest six proofs await audit and the draft
-retains 58 other obligations. The user approves and merges PRs.
+**Not yet clear to merge.** The draft retains 58 admissions and needs scoped
+source review, the remaining shared-owner decisions, and landing checks. The
+user approves and merges PRs.

@@ -3,7 +3,7 @@
 The combined statement and independent 31-proof audits each pass **0 blockers,
 0 majors, 1 documentation minor and 4 notes** on draft
 [#250](https://github.com/Shilun-Allan-Li/tcslib/pull/250). Both documentation
-minors are corrected separately and checked. Eleven scoped gates now pass.
+minors are corrected separately and checked. The combined Gate 11 audit also passes both scopes.
 
 The audited independent proof fill completes **31 obligations in seven modules** at
 `f293b63200ee3c6de6e709925f67c4d60fdc7b4a`. The
@@ -22,16 +22,16 @@ inventory reconciled. See [the proof report](fills/05-regev-hybrids/REPORT.md).
 
 The user approved the two shared probability readers on [draft #255](https://github.com/Shilun-Allan-Li/tcslib/pull/255).
 With those readers, six more proofs complete the finite fixed-bit Regev security
-bound and leave **58 owned admissions**. The combined audit reviews the two
-reader equations and the six proofs as separate scopes. See
-[the statistical hybrid report](fills/06-regev-statistical/REPORT.md).
+bound and leave **58 owned admissions**. Both scopes pass with zero blockers, majors, and minors. The auditor reran both
+serial closures and reproduced both axiom probes. See
+[the Gate 11 findings](../../audits/lwe-sis-regev-statistical-proofs-findings.md).
 
 | Part | Current progress | Remaining work |
 |---|---|---|
 | DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
 | Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
-| SIS collision-resistant hashing | Core hash/reduction/profile audited. Universality and strong extraction checked on the new stack | Raw collision and evaluator proofs, counted-loop disposition, final CRH interface under independent SIS hardness |
-| Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound checked | Combined proof audit, efficiency and CPA interface |
+| SIS collision-resistant hashing | Core hash/reduction/profile audited. Universality and strong extraction proved and audited | Raw collision and evaluator proofs, counted-loop disposition, final CRH interface under independent SIS hardness |
+| Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
 | CCA2 PKE | Secret-matrix lossy/all-but-one mathematics and DLWE column-hybrid statements pass | Supporting fills, pending reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 proof |
 
@@ -81,6 +81,6 @@ The user asked to postpone unrelated transcription; the root has narrowed future
 work to consumed source passages, accurate adaptation notes and reviewed matching.
 Source review for #250's new claims remains open, including PW10 where consumed.
 
-**Not yet clear to merge.** The new reader and consumer scopes await audit.
-#250 retains 58 admissions, other shared-owner holds, scoped source review
-and landing checks. The user approves all merges.
+**Not yet clear to merge.** #250 retains 58 admissions, other shared-owner
+holds, scoped source review and landing checks. #255 is a separately reviewed
+prerequisite. The user approves all merges.
