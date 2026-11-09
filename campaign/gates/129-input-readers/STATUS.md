@@ -1,6 +1,6 @@
-**Not yet clear to merge: #251.** Gate 129 round 3 returned HOLD
-at ead826bc6b1900c4209717aafc14244745106d7d with three majors covering
-reader discipline, Simulation input reads and exact proof reuse.
-The prior replay and issued bundle remain the evidence at their
-pinned source. Codex is selected for the round 4 follow-up.
-See findings-r3.md and resolutions-r4-in-progress.md.
+**Not yet clear to merge** · PR #251 is a draft at
+4918ebe696fe55b0f2cbd2efeb6381ff2b02235f. The round 3 return remains HOLD with three majors.
+The source applies the mechanical fixes and the approved word-seam equation.
+The current-base replay and complete proof checks are in progress. The
+superseded partial replay is recorded as interrupted. Codex is selected
+for round 4. See findings-r3.md and r4-source-checkpoint.json.
