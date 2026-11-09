@@ -94,7 +94,7 @@ zero-qubit state space is one-dimensional, not empty (round-1 audit, sanity stat
 
 **Proof sketch.** `Fintype.card_fun`, `Fintype.card_fin`. -/
 theorem card_reg (n : ℕ) : Fintype.card (Reg n) = 2 ^ n := by
-  sorry
+  simp
 
 /-- The register basis state spelling out a `Bool` string: wire `i` holds the qubit
 corresponding to `x i`. -/
@@ -119,7 +119,7 @@ def regAppendEquiv (k m : ℕ) : Reg k × Reg m ≃ Reg (k + m) :=
 (`finSumFinEquiv_symm_apply_castAdd`), and `Sum.elim a b (inl i) = a i`. -/
 theorem regAppendEquiv_apply_castAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fin k) :
     regAppendEquiv k m (a, b) (Fin.castAdd m i) = a i := by
-  sorry
+  simp [regAppendEquiv]
 
 /-- On the last `m` wires, `regAppendEquiv k m (a, b)` reads `b`.
 
@@ -127,7 +127,7 @@ theorem regAppendEquiv_apply_castAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fi
 `finSumFinEquiv.symm (natAdd k i) = inr i`. -/
 theorem regAppendEquiv_apply_natAdd (k m : ℕ) (a : Reg k) (b : Reg m) (i : Fin m) :
     regAppendEquiv k m (a, b) (Fin.natAdd k i) = b i := by
-  sorry
+  simp [regAppendEquiv]
 
 /-! ### Norm identities behind the constructions -/
 
@@ -141,14 +141,14 @@ variable {d d₁ d₂ : Type*} [Fintype d] [Fintype d₁] [Fintype d₂]
 `‖1‖² = 1`. -/
 theorem sum_norm_sq_basisVec [DecidableEq d] (i : d) :
     ∑ j, ‖(if i = j then (1 : ℂ) else 0)‖ ^ 2 = 1 := by
-  sorry
+  simp [apply_ite]
 
 /-- Relabelling the basis along an equivalence does not change the squared norm.
 
 **Proof sketch.** Reindex the sum along `e` (`Equiv.sum_comp`). -/
 theorem sum_norm_sq_comp_equiv (v : d₁ → ℂ) (e : d₂ ≃ d₁) :
-    ∑ i, ‖v (e i)‖ ^ 2 = ∑ j, ‖v j‖ ^ 2 := by
-  sorry
+    ∑ i, ‖v (e i)‖ ^ 2 = ∑ j, ‖v j‖ ^ 2 :=
+  Equiv.sum_comp e (fun j => ‖v j‖ ^ 2)
 
 /-- The squared norm is multiplicative on tensor products:
 `∑_{(i,j)} ‖v i · w j‖² = (∑ᵢ ‖v i‖²)(∑ⱼ ‖w j‖²)`. [dW26, App. A.6]
@@ -156,7 +156,14 @@ theorem sum_norm_sq_comp_equiv (v : d₁ → ℂ) (e : d₂ ≃ d₁) :
 **Proof sketch.** Split the sum over the product type, use `‖ab‖² = ‖a‖²‖b‖²`, and factor. -/
 theorem sum_norm_sq_mul_prod (v : d₁ → ℂ) (w : d₂ → ℂ) :
     ∑ p : d₁ × d₂, ‖v p.1 * w p.2‖ ^ 2 = (∑ i, ‖v i‖ ^ 2) * (∑ j, ‖w j‖ ^ 2) := by
-  sorry
+  simp only [Fintype.sum_prod_type, norm_mul, mul_pow, Finset.sum_mul_sum]
+
+/-- The squared norm of a vector, cast to `ℂ`, is its Hermitian dot product with itself:
+`∑ₓ ‖w x‖² = star w ⬝ᵥ w`. -/
+private theorem sum_norm_sq_eq_dotProduct (w : d → ℂ) :
+    ((∑ x, ‖w x‖ ^ 2 : ℝ) : ℂ) = star w ⬝ᵥ w := by
+  push_cast
+  simp [dotProduct, Complex.conj_mul']
 
 /-- A unitary matrix preserves the squared norm of every vector: `∑ ‖(U v) x‖² = ∑ ‖v x‖²`.
 [dW26, §1.2.3, App. A.4]
@@ -167,7 +174,11 @@ unitary group (`Matrix.mem_unitaryGroup_iff'`). -/
 theorem sum_norm_sq_mulVec_of_mem_unitaryGroup [DecidableEq d] {U : Matrix d d ℂ}
     (hU : U ∈ 𝐔[d]) (v : d → ℂ) :
     ∑ x, ‖(U *ᵥ v) x‖ ^ 2 = ∑ x, ‖v x‖ ^ 2 := by
-  sorry
+  apply Complex.ofReal_injective
+  rw [sum_norm_sq_eq_dotProduct, sum_norm_sq_eq_dotProduct, star_mulVec, dotProduct_mulVec,
+    vecMul_vecMul]
+  rw [Matrix.mem_unitaryGroup_iff'] at hU
+  rw [← star_eq_conjTranspose, hU, vecMul_one]
 
 end Norms
 
@@ -230,13 +241,15 @@ theorem evolve_vec [DecidableEq d] (U : 𝐔[d]) (ψ : Ket d) :
 **Proof sketch.** `(U * V) *ᵥ v = U *ᵥ (V *ᵥ v)` (`Matrix.mulVec_mulVec`), then `Ket.ext`. -/
 theorem evolve_mul [DecidableEq d] (U V : 𝐔[d]) (ψ : Ket d) :
     ψ.evolve (U * V) = (ψ.evolve V).evolve U := by
-  sorry
+  ext x
+  simp [evolve_vec, Matrix.mulVec_mulVec]
 
 /-- Applying the identity does nothing.
 
 **Proof sketch.** `1 *ᵥ v = v` (`Matrix.one_mulVec`), then `Ket.ext`. -/
 theorem evolve_one [DecidableEq d] (ψ : Ket d) : ψ.evolve 1 = ψ := by
-  sorry
+  ext x
+  simp [evolve_vec]
 
 /-- There is no state on an empty basis: the empty sum of squared norms is `0`, not `1`. This
 distinguishes an empty basis from the one-element basis `Reg 0` (round-1 audit, sanity
@@ -244,8 +257,8 @@ statement 1).
 
 **Proof sketch.** For a ket on an empty basis, `normalized'` says `0 = 1`
 (`Finset.univ_eq_empty`, `Finset.sum_empty`). -/
-theorem isEmpty_of_isEmpty [IsEmpty d] : IsEmpty (Ket d) := by
-  sorry
+theorem isEmpty_of_isEmpty [IsEmpty d] : IsEmpty (Ket d) :=
+  ⟨fun ψ => by have := ψ.normalized'; simp at this⟩
 
 /-- The zero-qubit register carries a state: the basis state of its unique basis element. -/
 theorem nonempty_reg_zero : Nonempty (Ket (Reg 0)) := ⟨basis Fin.elim0⟩

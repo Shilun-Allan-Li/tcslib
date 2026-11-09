@@ -88,14 +88,18 @@ theorem permMat_apply (σ : Equiv.Perm d) (y x : d) :
 **Proof sketch.** `(permMat σ)ᴴ = permMat σ⁻¹`, and `permMat σ * permMat τ = permMat (σ * τ)`,
 so `(permMat σ)ᴴ * permMat σ = permMat 1 = 1`. -/
 theorem permMat_mem_unitaryGroup (σ : Equiv.Perm d) : permMat σ ∈ 𝐔[d] := by
-  sorry
+  rw [mem_unitaryGroup_iff']
+  ext y x
+  simp [Matrix.mul_apply, permMat, Matrix.one_apply, apply_ite, Finset.sum_ite_eq',
+    σ.injective.eq_iff, eq_comm]
 
 /-- A classical gate maps the basis state `|x⟩` to `|σ x⟩`. [dW26, §1.4]
 
 **Proof sketch.** Entry `y` of `permMat σ *ᵥ |x⟩` is `permMat σ y x = [y = σ x]`. -/
 theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
     permMat σ *ᵥ (Ket.basis x).vec = (Ket.basis (σ x)).vec := by
-  sorry
+  ext y
+  simp [mulVec, dotProduct, permMat, Ket.basis_vec, eq_comm]
 
 /-- A diagonal matrix whose entries all have norm `1` is unitary. [dW26, App. A.4]
 
@@ -103,7 +107,11 @@ theorem permMat_mulVec_basis (σ : Equiv.Perm d) (x : d) :
 `conj z * z = ‖z‖² = 1`. -/
 theorem diagonal_mem_unitaryGroup (f : d → ℂ) (hf : ∀ x, ‖f x‖ = 1) :
     diagonal f ∈ 𝐔[d] := by
-  sorry
+  rw [mem_unitaryGroup_iff', star_eq_conjTranspose, diagonal_conjTranspose, diagonal_mul_diagonal,
+    ← diagonal_one]
+  congr 1
+  funext x
+  simp [Complex.conj_mul', hf]
 
 end Constructions
 
@@ -145,7 +153,15 @@ theorem flipAt_eq {n : ℕ} (i : Fin n) (x : Reg n) :
 **Proof sketch.** Pointwise: at wire `i` the value is `x i + 1 + 1 = x i` in `Fin 2`; elsewhere
 `Function.update` leaves `x` unchanged. -/
 theorem flipAt_involutive {n : ℕ} (i : Fin n) : Function.Involutive (flipAt i) := by
-  sorry
+  intro x
+  funext j
+  by_cases h : j = i
+  · subst h
+    simp only [flipAt, Function.update_self]
+    generalize x j = a
+    revert a
+    decide
+  · simp [flipAt, h]
 
 /-- The bit map of `CNOT`: `(a, b) ↦ (a, b ⊕ a)`, control wire `0`, target wire `1`. -/
 def cnotMap (x : Reg 2) : Reg 2 := Function.update x 1 (x 1 + x 0)
@@ -183,12 +199,31 @@ def hadamardMat : Matrix (Reg 1) (Reg 1) ℂ :=
 theorem hadamardMat_apply (y x : Reg 1) :
     hadamardMat y x = ((Real.sqrt 2)⁻¹ : ℂ) * (-1) ^ ((x 0 * y 0 : Qubit) : ℕ) := rfl
 
+/-- Every one-qubit basis state is one of the two constant registers. -/
+private theorem reg1_cases : ∀ x : Reg 1, x = (fun _ => 0) ∨ x = (fun _ => 1) := by
+  decide
+
+/-- A sum over the one-qubit basis has two terms. -/
+private theorem sum_reg1 (f : Reg 1 → ℂ) : ∑ z, f z = f (fun _ => 0) + f (fun _ => 1) := by
+  rw [← (Equiv.funUnique (Fin 1) Qubit).symm.sum_comp, Fin.sum_univ_two]
+  rfl
+
+/-- `(1/√2)² = 1/2` in `ℂ`. -/
+private theorem inv_sqrt_two_mul_self :
+    ((Real.sqrt 2 : ℂ))⁻¹ * ((Real.sqrt 2 : ℂ))⁻¹ = 1 / 2 := by
+  rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]
+  norm_num
+
 /-- The Hadamard matrix is unitary.
 
 **Proof sketch.** It is real and symmetric, so its adjoint is itself; its square is the identity
 by direct computation of the four entries (`(1 + 1)/2 = 1`, `(1 - 1)/2 = 0`). -/
 theorem hadamardMat_mem_unitaryGroup : hadamardMat ∈ 𝐔[Reg 1] := by
-  sorry
+  rw [mem_unitaryGroup_iff']
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp [Matrix.mul_apply, sum_reg1, hadamardMat, Matrix.one_apply, inv_sqrt_two_mul_self] <;>
+    first | decide | norm_num
 
 /-- The phase of `Z`: `(-1)^a` on `|a⟩`. -/
 def zPhase (x : Reg 1) : ℂ := (-1) ^ ((x 0 : Qubit) : ℕ)
@@ -200,7 +235,7 @@ theorem zPhase_eq (x : Reg 1) : zPhase x = (-1) ^ ((x 0 : Qubit) : ℕ) := rfl
 
 **Proof sketch.** `‖(-1)ⁿ‖ = ‖-1‖ⁿ = 1` (`norm_pow`, `norm_neg`, `norm_one`). -/
 theorem norm_zPhase (x : Reg 1) : ‖zPhase x‖ = 1 := by
-  sorry
+  simp [zPhase]
 
 /-- The phase of `S` (Watrous's `P`): `iᵃ` on `|a⟩`. [Wat08, §III.2] -/
 def sPhase (x : Reg 1) : ℂ := Complex.I ^ ((x 0 : Qubit) : ℕ)
@@ -212,7 +247,7 @@ theorem sPhase_eq (x : Reg 1) : sPhase x = Complex.I ^ ((x 0 : Qubit) : ℕ) := 
 
 **Proof sketch.** `‖iⁿ‖ = ‖i‖ⁿ = 1` (`norm_pow`, `Complex.norm_I`). -/
 theorem norm_sPhase (x : Reg 1) : ‖sPhase x‖ = 1 := by
-  sorry
+  simp [sPhase]
 
 /-! ### The named gates -/
 
@@ -267,20 +302,31 @@ theorem Toffoli_coe :
 **Proof sketch.** Entry `(y, x)` of `H H` is `(1/2) ∑_z (-1)^{z(x + y)}`, which is `1` if
 `x = y` and `0` otherwise. -/
 theorem H_mul_H : H * H = 1 := by
-  sorry
+  apply Subtype.ext
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Matrix.one_apply,
+      inv_sqrt_two_mul_self] <;>
+    first | decide | norm_num
 
 /-- The NOT gate is its own inverse: `X X = 1` (round-1 audit, sanity statement 3).
 
 **Proof sketch.** `X` is the permutation gate of the involution `flipAt 0`, and
 `permMat σ * permMat σ = permMat (σ * σ) = permMat 1 = 1`. -/
 theorem X_mul_X : X * X = 1 := by
-  sorry
+  apply Subtype.ext
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp (config := { decide := true }) [Matrix.mul_apply, X_coe, permMat, flipAt]
 
 /-- The phase flip is its own inverse: `Z Z = 1` (round-1 audit, sanity statement 3).
 
 **Proof sketch.** Diagonal matrices multiply entrywise, and `((-1)^a)² = 1`. -/
 theorem Z_mul_Z : Z * Z = 1 := by
-  sorry
+  apply Subtype.ext
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp (config := { decide := true }) [Z_coe, zPhase]
 
 /-- The NOT gate is not the identity, so the gate definitions are not degenerate (round-1 audit,
 sanity statement 3).
@@ -288,28 +334,44 @@ sanity statement 3).
 **Proof sketch.** Entry `(|1⟩, |0⟩)` of `X` is `1` (`permMat_apply`, since `flipAt 0` sends the
 register `0` to `1`), while that entry of the identity is `0`. -/
 theorem X_ne_one : X ≠ 1 := by
-  sorry
+  intro h
+  have := congrArg (fun U : Gate 1 => (U : Matrix (Reg 1) (Reg 1) ℂ) (fun _ => 1) (fun _ => 0)) h
+  simp (config := { decide := true }) [X_coe, permMat] at this
 
 /-- Two phase shifts make a phase flip: `S S = Z`.
 
 **Proof sketch.** Both are diagonal; `diagonal f * diagonal g = diagonal (f * g)`, and
 `iᵃ · iᵃ = (-1)ᵃ` for `a ∈ {0, 1}`. Compare as elements of the unitary group by `Subtype.ext`. -/
 theorem S_mul_S : S * S = Z := by
-  sorry
+  apply Subtype.ext
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp (config := { decide := true }) [S_coe, Z_coe, sPhase, zPhase]
 
 /-- Conjugating a phase flip by Hadamards gives a bit flip: `H Z H = X`. [dW26, §1.4]
 
 **Proof sketch.** Entry `(y, x)` of `H Z H` is `(1/2) ∑_z (-1)^{z(x + y + 1)}`, which is `1`
 if `y = x + 1` and `0` otherwise: the entries of `X`. -/
 theorem H_mul_Z_mul_H : H * Z * H = X := by
-  sorry
+  apply Subtype.ext
+  ext y x
+  rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
+    simp (config := { decide := true }) [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Z_coe,
+      zPhase, X_coe, permMat] <;>
+    (rw [inv_sqrt_two_mul_self]; norm_num)
 
 /-- The NOT gate is built from Hadamard and phase gates: `X = H P P H`. [Wat08, Fig. 4]
 
 **Proof sketch.** `S S = Z` (`S_mul_S`) and `H Z H = X` (`H_mul_Z_mul_H`), with
 associativity. -/
 theorem X_eq_H_mul_S_mul_S_mul_H : X = H * S * S * H := by
-  sorry
+  rw [mul_assoc H S S, S_mul_S, H_mul_Z_mul_H]
+
+/-- On the slice where wire `0` is `1` in both input and output, `toffoliMap` acts as `cnotMap`
+on wires `1, 2` (checked on all `64` pairs of basis states). -/
+private theorem toffoli_cnot_slice : ∀ y x : Reg 3, y 0 = 1 → x 0 = 1 →
+    (y = toffoliMap x ↔ (fun i => y i.succ) = cnotMap (fun i => x i.succ)) := by
+  decide
 
 /-- A Toffoli gate whose first control is `|1⟩` acts as `CNOT` on wires `1, 2`: for basis
 states `y, x` with `y 0 = x 0 = 1`, entry `(y, x)` of `Toffoli` is entry `(y ∘ succ, x ∘ succ)`
@@ -322,7 +384,8 @@ matches since neither map touches wire `0`. -/
 theorem Toffoli_apply_of_control_one (y x : Reg 3) (hy : y 0 = 1) (hx : x 0 = 1) :
     (Toffoli : Matrix (Reg 3) (Reg 3) ℂ) y x =
       (CNOT : Matrix (Reg 2) (Reg 2) ℂ) (fun i => y i.succ) (fun i => x i.succ) := by
-  sorry
+  simp only [Toffoli_coe, CNOT_coe, permMat_apply, Function.Involutive.coe_toPerm]
+  exact if_congr (toffoli_cnot_slice y x hy hx) rfl rfl
 
 end Gate
 
