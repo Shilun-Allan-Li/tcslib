@@ -30,10 +30,10 @@ serial closures and reproduced both axiom probes. See
 |---|---|---|
 | DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
 | Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
-| SIS collision-resistant hashing | Core hash/reduction/profile audited. Universality and strong extraction proved and audited | Raw collision and evaluator proofs, counted-loop disposition, final CRH interface under independent SIS hardness |
+| SIS collision-resistant hashing | Core hash/reduction/profile and strong extraction audited. Raw evaluator and exact collision-to-SIS output proofs checked | Review of the new fills, counted-loop efficiency, and the CRH interface under independent SIS hardness |
 | Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
 | PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
-| CCA2 PKE | Secret-matrix lossy/all-but-one mathematics and DLWE column-hybrid statements pass | Supporting fills, pending reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 proof |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation checked | Review of the new fills, positional digit reader, anti-cyclic rank, all-but-one inverse, strong one-time signatures and CCA2 |
 
 The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
 seconds with zero errors, seventy owned and seventeen inherited admission
@@ -81,6 +81,18 @@ The user asked to postpone unrelated transcription; the root has narrowed future
 work to consumed source passages, accurate adaptation notes and reviewed matching.
 Source review for #250's new claims remains open, including PW10 where consumed.
 
-**Not yet clear to merge.** #250 retains 58 admissions, other shared-owner
-holds, scoped source review and landing checks. #255 is a separately reviewed
-prerequisite. The user approves all merges.
+## SIS encoding and finite trapdoors
+
+The new wave fills 40 audited obligations in nine modules at
+`3bf1cb424b10abef3ae7a438c6b7d0e1916d0800`. The 144-module sweep passes with
+zero errors. The 220 elaborated type comparisons agree with Gate 11, and all
+40 proofs use only standard axioms. The 18 remaining admissions are listed
+in the [proof report](fills/07-sis-trapdoor/REPORT.md). The scoped PW10 preflight
+pins the author PDF and the consumed passages.
+
+PR #255 passed its exact-target landing checks, including the full
+InformationTheory facade. [Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
+
+**Not yet clear to merge.** #250 awaits the 40-proof audit and retains 18
+admissions, shared-owner decisions, scoped source review and landing checks.
+The user approves all merges.
