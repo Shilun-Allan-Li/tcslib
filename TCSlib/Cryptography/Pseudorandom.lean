@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.Generators
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
@@ -45,6 +46,7 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   [Gar26, Definition 3.5 and Theorem 3.1].
 * `Generators.Asymptotic.Defs` gives the length-regular PRG interface and security
   contract [PS10, Definition 77.1].
+* `Generators.Asymptotic.FromPermutation` builds secure generators from one-way permutations.
 * `Generators.Asymptotic.StretchMachine` implements the evaluator and hybrid reduction.
 * `Generators.Asymptotic.Stretch` proves secure expansion, truncation, and doubling.
 * `GeneratorFromPermutation` gives the reduction from distinguishing the generator
@@ -66,9 +68,13 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   `TCSlib.Cryptography.Ensemble.NextBitUnpredictable.pseudorandom` proves
   the next-bit test complete [PS10, Theorem 75.4] and
   `TCSlib.Cryptography.Ensemble.Pseudorandom.nextBitUnpredictable` gives the converse.
-* **One-way permutation to PRG.** In `TCSlib.Cryptography.Asymptotic.HardCore`,
-  `TCSlib.Cryptography.owp_hardcore_prg` packages a secure one-bit-stretch generator
-  from a one-way permutation family and its hard-core predicate [PS10, Theorem 79.4].
+* **One-way permutation to PRG.** In
+  `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation`,
+  `TCSlib.Cryptography.owp_hardcore_prg` proves security of `s ↦ f(s) ‖ h(s)` given a
+  hard-core predicate [PS10, Theorem 79.4]. `TCSlib.Cryptography.cor_81_7` applies
+  stretch extension to get the iterated generator.
+  `TCSlib.Cryptography.exists_securePRG_of_owp` starts from a one-way permutation
+  alone by using the balanced Goldreich–Levin construction [PS10, Theorem 87.3].
 * **Stretch extension.** In
   `TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch`,
   `TCSlib.Cryptography.prg_expand` lifts

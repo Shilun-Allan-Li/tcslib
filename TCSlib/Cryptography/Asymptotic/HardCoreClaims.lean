@@ -18,7 +18,7 @@ claims about Algorithm 89.6, and the final bound — each a re-export of the cor
 concrete lemma of the Garg layer (`TCSlib/Cryptography/HardcoreBit/*`). The claims about
 the prediction and inversion experiments of `g` (`thm_87_3_1`, `thm_87_3_2`, `thm_87_3_3`,
 `thm_87_3_9`) are stated at the family level (`FunFamily.glPad`, `FunFamily.glBit`,
-`FunFamily.glInverter` of `TCSlib.Cryptography.Asymptotic.HardCore`), through the bridges
+`FunFamily.glInverter` in `TCSlib.Cryptography.Asymptotic.HardCore.Functions`), through the bridges
 `FunFamily.predProb_glPad` and `FunFamily.invProb_glInverter`; the claims about the inner
 product and the samples of Algorithm 89.6 (`fact_88_4`, `thm_87_3_6`, `thm_87_3_7`,
 `thm_87_3_8`) do not involve the family and are stated concretely, for an arbitrary
