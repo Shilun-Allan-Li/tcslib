@@ -102,6 +102,16 @@ precise support-file splits follow the import and seal checks for each move.
   encryption families narrow imports of their shared definitions and preserve
   the existing Lean names and compatibility imports.
 
+### Encryption umbrella and public-key security
+
+[PR #281](https://github.com/Shilun-Allan-Li/tcslib/pull/281) indexes the Pass–shelat and Regev private-key routes
+and the public-key constructions in `Encryption.lean`. The RSA and Rabin
+candidate documentation links to the shared trapdoor construction. The
+CPA corollary lives in `PublicKey/TrapdoorCPA`, and the two non-malleability
+formulations live in `PublicKey/NonMalleability`. The old imports supply
+the previous exports.
+[Verification](maintainer/encryption-umbrella-pke-security-2026-11-10/README.md)
+
 ### Authentication and hashing
 
 `Authentication.lean` indexes the MAC and signature constructions. `MAC/Defs`
