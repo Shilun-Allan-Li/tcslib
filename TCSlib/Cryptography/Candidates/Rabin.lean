@@ -63,6 +63,12 @@ hypothesis `BlumDensity`; the generators work at `max n 3`.
 * `TCSlib.Cryptography.Candidates.blumFactoring_of_rabinBlum_oneWay` [PS10, Theorem 61.8 ⇐].
 * `TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_oneWay` [PS10, Theorem 63.10].
 
+## Public-key encryption route
+
+The `TCSlib.Cryptography.Encryption.PublicKey` map links the Blum-domain Rabin trapdoor collection
+to the shared trapdoor bit-encryption construction. The Goldreich–Levin bridge for that
+construction takes an exact polynomial encoding width at generated indices.
+
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.

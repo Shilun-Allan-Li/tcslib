@@ -70,6 +70,12 @@ trapdoor only), and at the degenerate parameters `n < 2` the generator works at 
   `rsaFromFactorStep_correct` — Algorithm 55.3 inverts whenever the factor is right (proved).
 * `TCSlib.Cryptography.Candidates.rsaTrapdoor_oneWay` [PS10, Theorem 57.2].
 
+## Public-key encryption route
+
+The `TCSlib.Cryptography.Encryption.PublicKey` map links the RSA trapdoor collection
+to the shared trapdoor bit-encryption construction. The Goldreich–Levin bridge for that
+construction takes an exact polynomial encoding width at generated indices.
+
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.

@@ -34,9 +34,9 @@ See the theorem statements and correctness results in the constituent modules.
 * `Defs` — private-key CPA, CCA1 and CCA2 security games.
 * `PRFScheme` — the PRF-based encryption construction under chosen-ciphertext attacks.
 * `CCA2Scheme` — encrypt-then-tag and its CCA2 security statement.
-* `PublicKey` — padded public-key encryption and chosen-ciphertext games.
-* `NonMalleable` — indistinguishability-based non-malleability.
-* `SimNonMalleable` — simulation-based non-malleability in the cited repaired formulation.
+* `PublicKey` — compatibility import for the public-key oracle games and trapdoor CPA corollary.
+* `NonMalleable` — compatibility import for indistinguishability-based non-malleability.
+* `SimNonMalleable` — compatibility import for simulation-based non-malleability.
 * `SequentialZK` — sequential repetition and zero-knowledge composition statements.
 * `ThreeColoring` — the quadratic soundness estimate and sequential zero-knowledge corollary.
 
