@@ -78,8 +78,8 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
   [PS10, Theorem 87.3 "(OWP)"].
 * `Encryption` — private-key encryption, single-message security and the one-time-pad-like
   scheme from a PRG [PS10, Definitions 24.7, 91.1, 93.1; Algorithm 92.1; Theorem 92.2].
-* `PRF` — oracle ensembles, pseudorandom functions and the GGM construction
-  [PS10, Definitions 96.1, 96.2; Theorem 97.3].
+* `PRF` re-exports the oracle and PRF contracts and the construction in
+  `Pseudorandom.Functions.Asymptotic.GGM` [PS10, Definitions 96.1, 96.2 and Theorem 97.3].
 * `MultiMessage` — multi-message secure private-key encryption from a PRF
   [PS10, Definition 93.1; Algorithm 99.1; Theorem 99.2].
 * `BlockEncryptor` — the block-wise encryptor machine and its efficiency, the machine

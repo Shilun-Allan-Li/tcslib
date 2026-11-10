@@ -11,6 +11,10 @@ import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Evaluator
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Cryptography.Pseudorandom.NextBit.Concrete
 import TCSlib.Cryptography.Pseudorandom.NextBit
 
@@ -55,6 +59,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
 * `Functions` leads to the oracle adversary model, lazy sampling, and the finite GGM
   proof in `TCSlib.Cryptography.Pseudorandom.Functions.GGM` [Gar26, Theorem 3.3].
 * `Functions.Asymptotic.Defs` gives the asymptotic oracle and PRF contracts.
+* `Functions.Asymptotic.GGM` proves the PRG-to-PRF implication, with its evaluator
+  and reduction machine in the child modules.
 * `NextBit.Concrete` gives the finite next-bit experiment and both quantitative reductions.
 * `NextBit` implements the reductions as machines and characterizes pseudorandom ensembles.
 
@@ -88,8 +94,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   for the extended generator and `TCSlib.Cryptography.expandRedMachine_distinguisher`
   identifies the efficient reduction's behavior with the finite distinguisher.
 * **PRG to PRF.** `TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs`
-  defines the oracle and PRF contracts. `TCSlib.Cryptography.Asymptotic.PRF` gives
-  the GGM construction and uses `TCSlib.Cryptography.PRG.Secure.doubling` from `Stretch`.
+  defines the oracle and PRF contracts.
+  `TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM` gives the construction and uses `TCSlib.Cryptography.PRG.Secure.doubling` from `Stretch`.
   `TCSlib.Cryptography.exists_ggmPRF_evaluator` implements GGM in polynomial time,
   `TCSlib.Cryptography.exists_ggmBitsDist_nuppt` implements the finite hybrid
   reduction as a non-uniform polynomial-time adversary, and `TCSlib.Cryptography.ggmPRF_prf`

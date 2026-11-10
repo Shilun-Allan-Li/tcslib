@@ -9,6 +9,10 @@ import TCSlib.Cryptography.Pseudorandom.Functions.Defs
 import TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids
 import TCSlib.Cryptography.Pseudorandom.Functions.GGM
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Evaluator
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -34,6 +38,10 @@ machines and polynomial query budgets [PS10, Definitions 96.1 and 96.2].
 * `Functions/GGM.lean`: the GGM construction and its security (Construction 3.3,
   Theorem 3.3).
 * `Functions/Asymptotic/Defs.lean` gives the oracle ensemble and PRF contracts.
+* `Functions/Asymptotic/GGM.lean` proves the asymptotic PRG-to-PRF implication.
+* `Functions/Asymptotic/GGM/Evaluator.lean` implements the tree walk.
+* `Functions/Asymptotic/GGM/Reduction.lean` implements the lazy table and reduction.
+* `Functions/Asymptotic/GGM/Run.lean` gives the machine and its run agreement.
 
 ## References
 
