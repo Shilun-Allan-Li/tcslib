@@ -42,3 +42,5 @@ The cleanup ledger was compared against the relocated providers.
 [Verification hashes](VERIFICATION.json)
 
 **Clear to merge — the combined replay, public import probes and six seals pass.**
+
+Seyoon merged #281 at `43f986c1c84d7c97d67477bd8d1511ed8bd5852c`. Its Lean sources and checker inputs match the verified head.
