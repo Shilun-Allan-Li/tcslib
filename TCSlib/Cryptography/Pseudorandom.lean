@@ -102,7 +102,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   proves security. `TCSlib.Cryptography.exists_prf_of_exists_prg` composes the steps
   [PS10, Theorem 97.3].
 * **Encryption.** The secure PRG feeds the single-message scheme in
-  `TCSlib.Cryptography.Asymptotic.Encryption` via `TCSlib.Cryptography.prgScheme_singleMessageSecure`.
+  `TCSlib.Cryptography.Encryption.PrivateKey.FromPRG` via
+  `TCSlib.Cryptography.prgScheme_singleMessageSecure`.
   The PRF feeds the fixed-vector multi-message scheme in
   `TCSlib.Cryptography.Asymptotic.MultiMessage` via `TCSlib.Cryptography.prfScheme_multiMessageSecure`
   [PS10, Theorems 92.2 and 99.2]. Both scheme proofs take a matching polynomial-time evaluator.
