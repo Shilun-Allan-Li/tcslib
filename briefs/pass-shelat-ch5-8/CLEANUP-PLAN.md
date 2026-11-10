@@ -7,6 +7,9 @@ and merges the Lean PRs. This ruling supersedes the requirement to close the
 full inherited-read ledger before the #248 merge. The final cleanup still
 closes that ledger on the reorganized source.
 
+The [proof and Implications plan](PROOFS-AND-IMPLICATIONS-PLAN.md) tracks the
+post-#282 proof batches and public-key endpoints on the campaign branch.
+
 ## 1. Land the checked cleanup increment
 
 Reconcile the checked #248 head and its attributed worker commits with the
