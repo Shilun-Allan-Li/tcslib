@@ -20,9 +20,9 @@ oracle pairs are `[·, ·]` (CPA), `[Dec, ·]` (CCA1) and `[Dec, Dec*]` (CCA2), 
 every query except the challenge. There is no encryption oracle: the adversary holds `pk`.
 The trapdoor application of Claim 172.a is in `Composability.PublicKey`.
 
-**Its encoding.** As for Definition 168.1 (`Composability/Defs.lean`): one machine, here run on
-the input `pk`, plays both phases against two bit-string oracles, `Dec` and `Challenge`. The
-oracles' state is the challenge, once asked, and it gates `Dec` by phase (`decOpen`).
+**Its encoding.** As in the private-key game (`Encryption/PrivateKey/OracleSecurity.lean`), one
+machine plays both phases. It takes `pk` and queries the bit-string oracles `Dec` and `Challenge`.
+The oracle state records the challenge and uses it to gate `Dec` by phase (`decOpen`).
 
 **Fixed lengths by canonical padding** (ruling of 2026-11-05). The codec's oracles take and return
 fixed-length strings. Public-key schemes of the ch. 2–4 layer have ciphertexts of varying length,
