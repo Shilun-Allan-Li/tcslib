@@ -577,6 +577,11 @@ theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Boo
       else .pure (zeroBits _, s) := by
   simpa only [cast_eq] using S.indImpl_dec atk b n pk sk c s
 
+/-- The challenge oracle returns a ciphertext at the scheme's encoded width. -/
+theorem indSpec_challengeRng (n : ℕ) :
+    (S.indSpec n).rng 1 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_rng, S.outLens_one]
+
 /-- A challenge query contains two messages at the scheme's message width. -/
 theorem indSpec_challengeDom (n : ℕ) :
     (S.indSpec n).dom 1 = (Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) := by
@@ -591,15 +596,15 @@ theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk
         let halves := FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)
         let c := padFin (S.ctLen.eval n) (S.enc.runAt n
           (pairEncode pk (List.ofFn (if b then halves.2 else halves.1))) r)
-        .pure (c, some c) := by
+        .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
   simpa only [cast_eq] using S.indImpl_challenge_none atk b n pk sk mm
 
 /-- Repeating the challenge preserves the previous state for a query of the specification's
 type. -/
 theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
     (mm : (S.indSpec n).dom 1) (c : Fin (S.ctLen.eval n) → Bool) :
-    S.indImpl atk b n pk sk 1 mm (some c) = .pure (c, some c) :=
-  S.indImpl_challenge_repeat atk b n pk sk mm c
+    S.indImpl atk b n pk sk 1 mm (some c) = .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
+  simpa only [cast_eq] using S.indImpl_challenge_repeat atk b n pk sk mm c
 
 /-- Under CPA, `Dec` never answers. -/
 theorem indImpl_dec_cpa (b : Bool) (n : ℕ) (pk sk : List Bool)

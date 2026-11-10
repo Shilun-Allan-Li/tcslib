@@ -90,7 +90,7 @@ theorem adaptiveIndImpl_challenge_encrypt (atk : Attack) (b : Bool) (n : ℕ)
         let halves := FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)
         let c := padFin (S.ctLen.eval n) (S.enc.runAt n
           (pairEncode pk (List.ofFn (if b then halves.2 else halves.1))) r)
-        .pure (c, c :: history) := by
+        .pure (cast (S.indSpec_challengeRng n).symm c, c :: history) := by
   rw [S.adaptiveIndImpl_challenge_fresh atk b n pk sk cap mm history h,
     S.indImpl_challenge_none_onSpec, OracleComp.bind_assoc]
   simp only [OracleComp.pure_bind, Option.toList_some, List.singleton_append]

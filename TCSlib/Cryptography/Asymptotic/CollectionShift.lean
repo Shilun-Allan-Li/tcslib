@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -254,7 +255,7 @@ theorem shiftParameter_exists_invProbAt (T : TrapdoorCollection) (c : ℕ) (A : 
   exact (uprob_fst _).symm
 
 /-- Constant right shifts preserve one-wayness for trapdoor permutation collections
-[PS10, Definitions 41.1 and 56.1; parameter-change consequence].
+This is a parameter-change consequence of [PS10, Definitions 41.1 and 56.1].
 
 **Proof sketch.** Shift the sampler error by the same offset. Apply the inversion
 probability equality to each adversary, then use negligibility along n ↦ n+c in both
