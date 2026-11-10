@@ -1,0 +1,468 @@
+{
+  "status": "approved",
+  "lean_source": "8b3187bdaf0c634c086313a727a7210dca14bfeb",
+  "target_at_review": "41aaf0a1acf29318fa8d741dadd9f5f585e43c93",
+  "pdf_sha256": "74f48b0eff6f4a0afd52ffe2bfddc6bef006c241c458812bfe085ce85059752c",
+  "verified_pages": [
+    {
+      "physical_page": 33,
+      "printed_page": 33,
+      "layout_text_bytes": 3443,
+      "layout_text_sha256": "5d3bb650395884ab50e4014ac5cdfbcbbdc1e463730af72158f232389865b66d"
+    },
+    {
+      "physical_page": 34,
+      "printed_page": 34,
+      "layout_text_bytes": 4677,
+      "layout_text_sha256": "fefe2b68d532ea05d7fa2d4b6aff1d9cef2beacc593a679828dce9ae86c6eba0"
+    },
+    {
+      "physical_page": 35,
+      "printed_page": 35,
+      "layout_text_bytes": 4333,
+      "layout_text_sha256": "401d65df8c8e7b9a4e4b934c42a46cb5c04d20273875e284bec14c863bf8f8c4"
+    },
+    {
+      "physical_page": 36,
+      "printed_page": 36,
+      "layout_text_bytes": 3421,
+      "layout_text_sha256": "ed5e497ac37c7303cd21087c13f3138c785e554c6f4808c500175c69b659c788"
+    },
+    {
+      "physical_page": 37,
+      "printed_page": 37,
+      "layout_text_bytes": 3939,
+      "layout_text_sha256": "2bea67ca8970f7a8ddc48583947dc50d45abb9218c69580da4ad1beca46f0217"
+    },
+    {
+      "physical_page": 38,
+      "printed_page": 38,
+      "layout_text_bytes": 4228,
+      "layout_text_sha256": "63a724eb821241ade5fe8923a1809205d53796a9fb9bf2ad38c7824eb696ce4f"
+    },
+    {
+      "physical_page": 39,
+      "printed_page": 39,
+      "layout_text_bytes": 3697,
+      "layout_text_sha256": "15a10a0c52f50ddf161d1cf911066be3a7a102cd5bfab7e5e160892b48d09028"
+    }
+  ],
+  "scoped_reference_sha256": "8171af594603cd6af260617a2eae5220e796be4cd3a406be764fe5bb0b1986d0",
+  "registry_before_sha256": "a22d148b9b81a4fa03729286dee0357f6dda774391c169cb6e4da7df8ffb2fe5",
+  "registry_proposed_sha256": "23f8865a2677598096704799112997628519cf89ec3cb32a56c28b830a8f50dd",
+  "reviewed_matches": [
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.conceal",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 46,
+      "lean_citation": "Section 6.2, transposed convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p033-b001",
+        "pdf-74f48b0eff6f-p034-b001"
+      ],
+      "scope": "The concealed block is the public matrix times the transposed secret plus the modular image of the integer error. The secret has one row per concealed column.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealedSampler",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 50,
+      "lean_citation": "Section 6.2, transposed convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p033-b001",
+        "pdf-74f48b0eff6f-p034-b001"
+      ],
+      "scope": "The public pair uses one common public matrix, independent secret rows and independent error seeds. Lean gives the public projection of the sampler using its finite noise law.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnHybrid",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 82,
+      "lean_citation": "Section 6.2, explicit hybrid convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p034-b001"
+      ],
+      "scope": "The first $k$ columns are real and the remainder uniform, with $k=0$ the uniform endpoint. The public matrix is common to all columns.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnTest",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 106,
+      "lean_citation": "Section 6.2",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p034-b001"
+      ],
+      "scope": "Insert a common-secret $h$-sample challenge as zero-based column $k$, with earlier real and later uniform columns. Lean threads the test's finite coin type through the experiment.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealed_advantage_le",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 234,
+      "lean_citation": "Section 6.2",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p033-b001",
+        "pdf-74f48b0eff6f-p034-b001"
+      ],
+      "scope": "Quantify the adjacent-hybrid proof as a sum of fixed-sample DLWE advantages for a finite test.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.shiftedSampler",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 290,
+      "lean_citation": "Sections 6.2--6.4",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b002",
+        "pdf-74f48b0eff6f-p038-b002",
+        "pdf-74f48b0eff6f-p039-b002"
+      ],
+      "scope": "Translate the second block by a fixed matrix. The gadget, zero shift and negative designated-branch shift are the source's key-mode instances.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.shifted_advantage_le",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Experiments.lean",
+      "line": 315,
+      "lean_citation": "Sections 6.2--6.4, explicit two-mode bound",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p034-b001",
+        "pdf-74f48b0eff6f-p037-b001",
+        "pdf-74f48b0eff6f-p039-b002"
+      ],
+      "scope": "Uniform translation gives a common ideal. Lean compares two arbitrary fixed shifts by one finite column-hybrid sum per shift.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 44,
+      "lean_citation": "Section 6.3, exact-divisibility adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b001"
+      ],
+      "scope": "With $p=2^b$ and $q=p2^a$, the source's rounded scaling is exact multiplication by $2^a$.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 54,
+      "lean_citation": "Section 6.3, explicit dyadic convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b001"
+      ],
+      "scope": "Nearest-scale decoding uses the canonical representative, a half-scale offset, and quotient reduction modulo $p$. The implementation fixes the tie convention.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_intCast",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 66,
+      "lean_citation": "Section 6.3, dyadic refinement",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b001"
+      ],
+      "scope": "Exact-divisibility refinement. Changing an integer representative by $p$ changes its scaled image by $q$, including for signed representatives.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode_encode_add",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 103,
+      "lean_citation": "Section 6.3, deterministic bounded-noise adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p034-b002",
+        "pdf-74f48b0eff6f-p036-b001",
+        "pdf-74f48b0eff6f-p037-b001"
+      ],
+      "scope": "Replace the probabilistic noise and encoding-rounding estimates with exact divisibility and the deterministic premise $a>0,\\ 2\\lvert e\\rvert<2^a$.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 157,
+      "lean_citation": "Section 6.3, transposed gadget convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p035-b001"
+      ],
+      "scope": "Each binary block contributes its powers of two in its own column. Lean uses the same row shape with a transpose action on column inputs.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 170,
+      "lean_citation": "Section 6.3, explicit digit convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p035-b001",
+        "pdf-74f48b0eff6f-p036-b003"
+      ],
+      "scope": "The finite block equivalence reads the little-endian positional integer in $[0,p-1]$. This is the digit map unpacked in the source inversion.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget_mulVec",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Gadget.lean",
+      "line": 214,
+      "lean_citation": null,
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p035-b001",
+        "pdf-74f48b0eff6f-p036-b003"
+      ],
+      "scope": "Extract the coordinate identity $G^\\mathsf{T}x=\\operatorname{digits}(x)$ over the integers.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.injectiveKey",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 92,
+      "lean_citation": "Section 6.3, deterministic dyadic adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b002"
+      ],
+      "scope": "Add the exact dyadic encoding of the gadget to the concealed block. The Lean function takes the finite key ingredients as inputs.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 60,
+      "lean_citation": "Section 6.3, transposed convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b002"
+      ],
+      "scope": "Read the two blocks of the row product $xY$ as a pair of transpose actions on the binary input.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 80,
+      "lean_citation": "Section 6.3",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b003"
+      ],
+      "scope": "Cancel the secret product by subtracting $Tz_1$ from the second output coordinate vector.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 110,
+      "lean_citation": "Section 6.3, dyadic adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b001",
+        "pdf-74f48b0eff6f-p036-b003"
+      ],
+      "scope": "Decode the residual and unpack its positional representatives through the finite block equivalence. This is the finite recovery map.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_conceal",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 127,
+      "lean_citation": null,
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b002",
+        "pdf-74f48b0eff6f-p036-b003",
+        "pdf-74f48b0eff6f-p037-b002"
+      ],
+      "scope": "Extract the lossy-mode cancellation identity. The resulting residue is the cast of the signed error subset sum.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_injectiveKey",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 143,
+      "lean_citation": "Section 6.3, exact-divisibility adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b002",
+        "pdf-74f48b0eff6f-p036-b003",
+        "pdf-74f48b0eff6f-p037-b001"
+      ],
+      "scope": "The injective residual is the scaled digit plus the signed error sum. Exact scaling allows the gadget sum inside the encoder.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover_evaluate",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 186,
+      "lean_citation": "Section 6.3, refinement",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p034-b002",
+        "pdf-74f48b0eff6f-p036-b003",
+        "pdf-74f48b0eff6f-p037-b001"
+      ],
+      "scope": "The source proves recovery with overwhelming probability over errors. Lean proves recovery on every binary input for a fixed key with entrywise bound $B$, $a>0$, and $2wbB<2^a$.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate_injective",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 208,
+      "lean_citation": "Section 6.3, perfect-inversion adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p036-b003",
+        "pdf-74f48b0eff6f-p037-b001"
+      ],
+      "scope": "Extract injectivity from the same deterministic left inverse on the finite domain.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_range_card",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 225,
+      "lean_citation": "Section 6.3, explicit bounded-integer image adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p037-b002"
+      ],
+      "scope": "Count the first output and the bounded integer error vector. The interval $[-NB,NB]$ gives the deterministic image bound $q^d(2NB+1)^w$.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_bits",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean",
+      "line": 281,
+      "lean_citation": null,
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p037-b002"
+      ],
+      "scope": "Express residual leakage as an image-size inequality after multiplication by $2^k$. Lean assumes the separate numerical budget $q^d(2NB+1)^w2^k\\le 2^N$.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean",
+      "line": 41,
+      "lean_citation": "Section 6.4",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b001"
+      ],
+      "scope": "Each row is a signed wrapped shift of the integer coefficient vector.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_mulVec_injective",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean",
+      "line": 70,
+      "lean_citation": "Section 6.4",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b001"
+      ],
+      "scope": "Use the cyclotomic power-basis argument for a nonzero integer coefficient vector. Lean concludes injectivity of the transpose action and also covers width one.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_difference_injective",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean",
+      "line": 179,
+      "lean_citation": "Section 6.4",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b001",
+        "pdf-74f48b0eff6f-p039-b001"
+      ],
+      "scope": "Apply full rank to the nonzero integer difference of two distinct binary branches.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_message_bound",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/AntiCyclic.lean",
+      "line": 198,
+      "lean_citation": "Section 6.4, explicit integer bound",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b001",
+        "pdf-74f48b0eff6f-p039-b001",
+        "pdf-74f48b0eff6f-p039-b003"
+      ],
+      "scope": "The dot product has $w$ terms of magnitude at most $p-1$, giving $w(p-1)$ for each coordinate of the signed integer product of the packed digits.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branchGadget",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 48,
+      "lean_citation": "Section 6.4, transposed convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p035-b001",
+        "pdf-74f48b0eff6f-p038-b002"
+      ],
+      "scope": "Multiplying the binary gadget by the anti-cyclic matrix gives the expanded branch matrix, with each branch coefficient weighted by its block power of two.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.allButOneKey",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 59,
+      "lean_citation": "Section 6.4, exact dyadic adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b002"
+      ],
+      "scope": "Subtract the encoded designated-branch gadget. Lean uses $p'=2pw$ and $q=2^a p'$ on supplied finite key ingredients.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 80,
+      "lean_citation": "Section 6.4, transposed convention",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p039-b001"
+      ],
+      "scope": "Add the queried branch's encoded shift and use the two-block evaluator.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluate_lossy_branch",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 103,
+      "lean_citation": null,
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p039-b001"
+      ],
+      "scope": "Extract the exact cancellation when the queried and designated branches agree.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.residual_branch",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 119,
+      "lean_citation": "Section 6.4, exact dyadic adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p039-b003"
+      ],
+      "scope": "After cancelling the secret product, exact dyadic scaling turns the difference of encoded shifts into the encoding of the signed branch product. The original integer error sum remains.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch_injective",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 184,
+      "lean_citation": "Section 6.4, deterministic dyadic adaptation",
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p038-b001",
+        "pdf-74f48b0eff6f-p039-b001",
+        "pdf-74f48b0eff6f-p039-b003"
+      ],
+      "scope": "The source uses rounding, signed lifting and a full-rank solve. Lean uses deterministic separation $a>0,\\ 2(2^u b B)<2^a$, the signed lift and integer rank to prove finite injectivity.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.TrapdoorFunctions.AllButOne.lossy_branch_range_card",
+      "path": "TCSlib/Cryptography/TrapdoorFunctions/AllButOne/Basic.lean",
+      "line": 244,
+      "lean_citation": null,
+      "document_blocks": [
+        "pdf-74f48b0eff6f-p037-b002",
+        "pdf-74f48b0eff6f-p039-b001",
+        "pdf-74f48b0eff6f-p039-b004"
+      ],
+      "scope": "At the designated branch the shifts cancel. Apply the finite concealed-map count $q^d(2NB+1)^w$ at the enlarged dyadic modulus.",
+      "status": "approved attribution"
+    }
+  ],
+  "other_census_entries": 25
+}
