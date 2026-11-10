@@ -1,0 +1,445 @@
+{
+  "base": "acf3abe4734a709b529e38ee96baff42a3f434e8",
+  "head": "f9753af6eff8a786ada92a06d019bb41ab8d1c39",
+  "passed": true,
+  "retired": 23,
+  "affected": 73,
+  "native_checks": 73,
+  "fresh_checks_after_amendment": 4,
+  "verified_unchanged_transfers": 1078,
+  "total_checked_objects": 1151,
+  "native_pass_shelat_checks": true,
+  "native_garg_checks": true,
+  "ordered_provider_source_comparisons": 1188,
+  "active_dangling_paths": [],
+  "runtime_facade_comparisons": [
+    {
+      "module": "TCSlib.Cryptography.Asymptotic",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 4023
+    },
+    {
+      "module": "TCSlib.Cryptography.Asymptotic.HardCore",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [
+        "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation",
+        "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch"
+      ],
+      "probe_constants": {
+        "goldreich_levin": true,
+        "goldreich_levin_coll": true,
+        "exists_owp_hardCore": true,
+        "exists_securePRG_of_owp": false
+      },
+      "substantive_provider_count": 3925
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 4236
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Defs",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {
+        "Authentication.MAC": true,
+        "Authentication.SignatureScheme": true,
+        "Authentication.CRH": true
+      },
+      "substantive_provider_count": 3845
+    },
+    {
+      "module": "TCSlib.Cryptography.Candidates",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {
+        "Candidates.elGamal_secure": true
+      },
+      "substantive_provider_count": 4199
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 4042
+    },
+    {
+      "module": "TCSlib.Cryptography.Encryption",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 4274
+    },
+    {
+      "module": "TCSlib.Cryptography.Encryption.PrivateKey",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {
+        "exists_securePRG_of_owp": true,
+        "Composability.FixedLengthScheme": true
+      },
+      "substantive_provider_count": 3954
+    },
+    {
+      "module": "TCSlib.Cryptography.Encryption.PublicKey",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {
+        "Candidates.elGamal_secure": true
+      },
+      "substantive_provider_count": 4252
+    },
+    {
+      "module": "TCSlib.Cryptography.Pseudorandom",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 4232
+    },
+    {
+      "module": "TCSlib.Cryptography.Pseudorandom.Functions",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 3912
+    },
+    {
+      "module": "TCSlib",
+      "unchanged_provider_order": true,
+      "deliberate_scope_removals": [],
+      "probe_constants": {},
+      "substantive_provider_count": 6534
+    }
+  ],
+  "matched_declaration_modules": 72,
+  "matched_declarations": 3385,
+  "existing_sorry_label_locations_changed": [
+    "TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa",
+    "TCSlib.Cryptography.Randomness.predictAdv_prfConcept_negligible",
+    "TCSlib.Cryptography.SecureComputation.specialScheme_multiMessageSecure",
+    "TCSlib.Cryptography.SecureComputation.spDecStr_wrongKey",
+    "TCSlib.Cryptography.SecureComputation.specialScheme_wrongKey"
+  ],
+  "introduced_style_findings": [],
+  "plan_sha256": "5219679016519d1b111b79829f588fdbe47a8566354cd619f88390c8ff04d420",
+  "products_sha256": "d6b189de01abcde6c74d2e3a16abe47162d6a226234e5ea9631a241191945d80",
+  "pr": {
+    "baseRefName": "cryptography/pass-shelat-ch2-4",
+    "baseRefOid": "acf3abe4734a709b529e38ee96baff42a3f434e8",
+    "files": [
+      {
+        "path": "TCSlib/Cryptography/Asymptotic.lean",
+        "additions": 33,
+        "deletions": 30,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/Encryption.lean",
+        "additions": 0,
+        "deletions": 31,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "additions": 0,
+        "deletions": 36,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "additions": 0,
+        "deletions": 36,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+        "additions": 12,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+        "additions": 5,
+        "deletions": 3,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean",
+        "additions": 1,
+        "deletions": 0,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean",
+        "additions": 0,
+        "deletions": 32,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/HardCorePermutation/GoldreichLevin.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/MultiMessage.lean",
+        "additions": 0,
+        "deletions": 34,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean",
+        "additions": 0,
+        "deletions": 35,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/NextBit.lean",
+        "additions": 0,
+        "deletions": 29,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/PRF.lean",
+        "additions": 0,
+        "deletions": 36,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/PRFLemmas.lean",
+        "additions": 0,
+        "deletions": 36,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/Pseudorandom.lean",
+        "additions": 0,
+        "deletions": 29,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/PublicKey.lean",
+        "additions": 0,
+        "deletions": 31,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean",
+        "additions": 0,
+        "deletions": 28,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication.lean",
+        "additions": 8,
+        "deletions": 9,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/DLHash.lean",
+        "additions": 0,
+        "deletions": 29,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/Defs.lean",
+        "additions": 11,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+        "additions": 0,
+        "deletions": 28,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/Lamport.lean",
+        "additions": 0,
+        "deletions": 31,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+        "additions": 0,
+        "deletions": 30,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/ElGamal.lean",
+        "additions": 0,
+        "deletions": 29,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability.lean",
+        "additions": 22,
+        "deletions": 12,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+        "additions": 0,
+        "deletions": 31,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/Defs.lean",
+        "additions": 0,
+        "deletions": 29,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/NonMalleable.lean",
+        "additions": 0,
+        "deletions": 27,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/PRFScheme.lean",
+        "additions": 0,
+        "deletions": 30,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/PublicKey.lean",
+        "additions": 0,
+        "deletions": 28,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Composability/SimNonMalleable.lean",
+        "additions": 0,
+        "deletions": 28,
+        "changeType": "DELETED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Encryption/PrivateKey.lean",
+        "additions": 2,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Encryption/PublicKey.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Indistinguishability.lean",
+        "additions": 2,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean",
+        "additions": 3,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Games/Bridges/Machines.lean",
+        "additions": 3,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness/Derandomization.lean",
+        "additions": 1,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/Randomness/Learning.lean",
+        "additions": 3,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+        "additions": 4,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+        "additions": 3,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean",
+        "additions": 2,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "TCSlib/Cryptography/ZeroKnowledge/Encryption.lean",
+        "additions": 2,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "headRefName": "codex/pass-shelat-retire-import-shims",
+    "headRefOid": "f9753af6eff8a786ada92a06d019bb41ab8d1c39",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "number": 282,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/282"
+  },
+  "archive": {
+    "name": "cryptography-import-shim-retirement-evidence.zip",
+    "sha256": "8b4c0d4c618a17596325f3bab99f36c47b9c869796d3b10413239954b6bbfc22"
+  }
+}
