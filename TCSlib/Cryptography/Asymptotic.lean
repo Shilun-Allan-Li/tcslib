@@ -16,7 +16,9 @@ import TCSlib.Cryptography.Asymptotic.Pseudorandom
 import TCSlib.Cryptography.Asymptotic.NextBit
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
 import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.HardCore.Functions
 import TCSlib.Cryptography.Asymptotic.HardCore
+import TCSlib.Cryptography.Asymptotic.HardCorePermutation.GoldreichLevin
 import TCSlib.Cryptography.Asymptotic.HardCorePermutation
 import TCSlib.Cryptography.Asymptotic.Encryption
 import TCSlib.Cryptography.Asymptotic.PRF
@@ -68,11 +70,12 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
   finite domain (the collection form of [PS10, Theorem 87.3]; run-3 audit P4-2).
 * `HardCoreCollection` — Goldreich–Levin for collections of one-way functions and of
   (trapdoor) permutations [PS10, Theorem 87.3, collection form, as used in Theorem 104.4].
-* `HardCore` — hard-core predicates, the PRG from a one-way permutation, expansion and
-  Goldreich–Levin [PS10, Definition 78.3, Theorems 79.4, 87.3, Lemma 80.5, Corollary 81.7].
-* `HardCorePermutation` — the balanced Goldreich–Levin permutation `PermFamily.glHalf`:
-  one-way permutations have a hard-core bit, PRGs from any one-way permutation
-  [PS10, Theorem 87.3 "(OWP)", §3.4 pp. 84, 86; run-3 audit P4-1].
+* `HardCore` preserves the hard-core and permutation-to-PRG import.
+* `HardCore.Functions` defines hard-core predicates and proves Goldreich–Levin for
+  function families [PS10, Definition 78.3 and Theorem 87.3].
+* `HardCorePermutation` preserves the balanced permutation and PRG existence import.
+* `HardCorePermutation.GoldreichLevin` proves the balanced permutation has a hard-core bit
+  [PS10, Theorem 87.3 "(OWP)"].
 * `Encryption` — private-key encryption, single-message security and the one-time-pad-like
   scheme from a PRG [PS10, Definitions 24.7, 91.1, 93.1; Algorithm 92.1; Theorem 92.2].
 * `PRF` — oracle ensembles, pseudorandom functions and the GGM construction
