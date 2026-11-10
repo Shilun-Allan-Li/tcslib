@@ -20,6 +20,7 @@ The seven efficiency fills can use the existing FP calculus, with the two
 SIS CRH proofs downstream of the collision-output postprocessor.
 
 The maintainer approved the exact diff. The registry row is applied on
-draft #250 at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 reviews the entry and its existing
-contracts before the counted-loop consumer proofs are integrated.
-[Approval and verification](approval.json)
+draft #250 at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 passed the entry and its existing
+contracts after an independent 45-module replay. The consumer proofs enter
+their own fill wave.
+[Approval and verification](approval.json) · [Disposition](../../../../audits/lwe-sis-counted-loop-registration-resolutions.md)

@@ -143,9 +143,11 @@ sections at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`.
 The counted-loop registration proposal pairs the existing FP contract with
 the H14 clean-install and head-envelope contracts. The Lean specialization
 passes using the existing owners. The maintainer approved the exact
-one-row diff, applied at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 reviews the host
-entry before the consumer fills.
-[Counted-loop proposal](prerequisites/02-counted-loop-registration/README.md)
+one-row diff, applied at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 passed the host
+entry with zero blockers, majors, and minors. The reviewer replayed the
+45-module closure and both specializations. The seven efficiency fills
+and two SIS CRH fills are the next proof wave.
+[Counted-loop disposition](../../audits/lwe-sis-counted-loop-registration-resolutions.md)
 
 **Not yet clear to merge.** The nine counted-loop and CRH admissions,
 scoped source matching, and landing checks remain open. The user approves all merges.
