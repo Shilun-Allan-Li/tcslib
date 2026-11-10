@@ -105,7 +105,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   `TCSlib.Cryptography.Encryption.PrivateKey.FromPRG` via
   `TCSlib.Cryptography.prgScheme_singleMessageSecure`.
   The PRF feeds the fixed-vector multi-message scheme in
-  `TCSlib.Cryptography.Asymptotic.MultiMessage` via `TCSlib.Cryptography.prfScheme_multiMessageSecure`
+  `TCSlib.Cryptography.Encryption.PrivateKey.FromPRF` via
+  `TCSlib.Cryptography.prfScheme_multiMessageSecure`
   [PS10, Theorems 92.2 and 99.2]. Both scheme proofs take a matching polynomial-time evaluator.
   `TCSlib.Cryptography.exists_multiMessageSecure_of_exists_prg` composes GGM with the
   PRF-based scheme, using the evaluator supplied by the PRF efficiency proof.
