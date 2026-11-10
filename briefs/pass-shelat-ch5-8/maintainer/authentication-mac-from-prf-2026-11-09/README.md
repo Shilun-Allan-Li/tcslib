@@ -30,3 +30,5 @@ The cleanup ledger was compared against the relocated providers.
 [Verification hashes](VERIFICATION.json)
 
 **Clear to merge — the affected modules, both import paths and seals pass.**
+
+Seyoon merged #278 at `96987c36b5fd72347a005edebce59367673603c3`. The Lean sources and checker inputs match the verified head.
