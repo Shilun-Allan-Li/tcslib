@@ -11,7 +11,7 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
-import TCSlib.Cryptography.Composability.PRFScheme
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
 import TCSlib.Cryptography.Composability.CCA2Scheme
 
 set_option maxHeartbeats 0
@@ -58,7 +58,7 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
 * `Encryption.PrivateKey.FromPRF.HybridLemmas` gives its probability and coin lemmas.
 * `Encryption.PrivateKey.FromPRF.ReductionMachine` implements the next-query reduction.
 * `Encryption.PrivateKey.OracleSecurity` gives the fixed-length interface and adaptive oracle games.
-* `Composability.PRFScheme` gives the fixed-length version of the PRF scheme.
+* `Encryption.PrivateKey.OracleFromPRF` gives the fixed-length PRF scheme and its oracle claims.
   The CPA and CCA1 proofs `prfFixedScheme_cpa` and `prfFixedScheme_cca1` are pending
   [PS10, Theorem 168.2]. The CCA2 counterexample `prfFixedScheme_not_cca2` is also
   pending, and `not_prfFixedScheme_cca2` depends on it.
