@@ -12,19 +12,23 @@ import TCSlib.Cryptography.Asymptotic.Ensembles
 import TCSlib.Cryptography.Asymptotic.OneWay
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.Universal
-import TCSlib.Cryptography.Asymptotic.Pseudorandom
-import TCSlib.Cryptography.Asymptotic.NextBit
+import TCSlib.Cryptography.Pseudorandom.NextBit
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
 import TCSlib.Cryptography.Asymptotic.HardCoreCollection
 import TCSlib.Cryptography.Asymptotic.HardCore.Functions
 import TCSlib.Cryptography.Asymptotic.HardCore
 import TCSlib.Cryptography.Asymptotic.HardCorePermutation.GoldreichLevin
-import TCSlib.Cryptography.Asymptotic.HardCorePermutation
-import TCSlib.Cryptography.Asymptotic.Encryption
-import TCSlib.Cryptography.Asymptotic.PRF
-import TCSlib.Cryptography.Asymptotic.MultiMessage
+import TCSlib.Cryptography.Asymptotic.HardCoreClaims
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF
 import TCSlib.Cryptography.Asymptotic.BlockEncryptor
-import TCSlib.Cryptography.Asymptotic.PublicKey
+import TCSlib.Cryptography.Encryption.PublicKey.Hybrid
+import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
+import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -63,29 +67,28 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
 * `Collections` — collections of one-way functions, one-way and trapdoor permutations
   [PS10, Definitions 41.1, 55.1, 56.1; Theorem 42.2].
 * `Universal` — Levin's universal one-way function [PS10, Theorem 63.1, Algorithm 64.2].
-* `Pseudorandom` — pseudorandom ensembles and generators [PS10, Definitions 74.1, 77.1].
-* `NextBit` — the next-bit test and its completeness [PS10, Definition 75.2, Theorem 75.4,
-  Algorithm 76.5].
-* `GoldreichLevinDomain` — the concrete Goldreich–Levin bound for `x` uniform on an encoded
-  finite domain (the collection form of [PS10, Theorem 87.3]; run-3 audit P4-2).
-* `HardCoreCollection` — Goldreich–Levin for collections of one-way functions and of
-  (trapdoor) permutations [PS10, Theorem 87.3, collection form, as used in Theorem 104.4].
-* `HardCore` preserves the hard-core and permutation-to-PRG import.
-* `HardCore.Functions` defines hard-core predicates and proves Goldreich–Levin for
-  function families [PS10, Definition 78.3 and Theorem 87.3].
-* `HardCorePermutation` preserves the balanced permutation and PRG existence import.
-* `HardCorePermutation.GoldreichLevin` proves the balanced permutation has a hard-core bit
-  [PS10, Theorem 87.3 "(OWP)"].
-* `Encryption` — private-key encryption, single-message security and the one-time-pad-like
-  scheme from a PRG [PS10, Definitions 24.7, 91.1, 93.1; Algorithm 92.1; Theorem 92.2].
-* `PRF` re-exports the oracle and PRF contracts and the construction in
-  `Pseudorandom.Functions.Asymptotic.GGM` [PS10, Definitions 96.1, 96.2 and Theorem 97.3].
-* `MultiMessage` — multi-message secure private-key encryption from a PRF
-  [PS10, Definition 93.1; Algorithm 99.1; Theorem 99.2].
-* `BlockEncryptor` — the block-wise encryptor machine and its efficiency, the machine
-  behind the bitwise public-key scheme [PS10, p. 103, Theorem 103.d of the inventory].
-* `PublicKey` — public-key encryption, security and the scheme from a trapdoor permutation
-  [PS10, Definitions 102.1, 102.2; Algorithm 104.3; Theorem 104.4].
+* `Pseudorandom.Generators.Asymptotic.Defs` gives the PRG interface and relates it to
+  pseudorandom ensembles [PS10, Definitions 74.1 and 77.1].
+* `Pseudorandom.NextBit` gives the next-bit test and its completeness
+  [PS10, Definition 75.2, Theorem 75.4, Algorithm 76.5].
+* `GoldreichLevinDomain` gives the concrete Goldreich–Levin bound for `x` uniform on an
+  encoded finite domain (the collection form of [PS10, Theorem 87.3]; run-3 audit P4-2).
+* `HardCore` collects the Goldreich–Levin results for function families, collections,
+  and balanced permutations [PS10, Definition 78.3 and Theorem 87.3].
+* `HardCoreClaims` supplies the concrete claims used in the Goldreich–Levin proof.
+* `Pseudorandom.Generators.Asymptotic.FromPermutation` builds a secure PRG from a
+  one-way permutation [PS10, §3.4].
+* `Encryption.PrivateKey.FromPRG` gives the pad scheme and single-message security
+  [PS10, Definitions 24.7, 91.1, 93.1; Algorithm 92.1; Theorem 92.2].
+* `Pseudorandom.Functions.Asymptotic.Defs` gives the oracle and PRF contracts.
+  `Pseudorandom.Functions.Asymptotic.GGM` gives the PRF construction and its security
+  [PS10, Definitions 96.1, 96.2 and Theorem 97.3].
+* `Encryption.PrivateKey.FromPRF` gives multi-message secure private-key encryption
+  from a PRF [PS10, Definition 93.1; Algorithm 99.1; Theorem 99.2].
+* `BlockEncryptor` gives the block-wise encryptor machine and its efficiency
+  [PS10, p. 103, Theorem 103.d of the inventory].
+* `Encryption.PublicKey.Trapdoor` gives the public-key scheme from a trapdoor permutation
+  and its security [PS10, Definitions 102.1, 102.2; Algorithm 104.3; Theorem 104.4].
 
 ## References
 

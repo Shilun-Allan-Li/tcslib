@@ -182,7 +182,7 @@ theorem PermFamily.glPad_outLen_eval (P : PermFamily) (m : ℕ) :
 
 /-- **The inputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
 equivalence `{0,1}^{inLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along `PermFamily.glPad_inLen_eval`),
-through which the balanced permutation of `Asymptotic/HardCorePermutation.lean` reads `g`. -/
+through which the balanced permutation reads `g`. -/
 def PermFamily.glPad_inEquiv (P : PermFamily) (m : ℕ) :
     (Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
   Equiv.arrowCongr (finCongr (P.glPad_inLen_eval m)) (Equiv.refl Bool)

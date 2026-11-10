@@ -150,7 +150,7 @@ theorem exists_glBitCollEvaluator (F : Collection) :
   simp only [pairSndD_pairEncode, padToLen_pairEncode_ofFn, ipFun_ofFn]
 
 /-- The inner product is invariant under transport along an equality of lengths (private copy
-of `HardcoreBit.ip_cast`, `Asymptotic/HardCorePermutation.lean`). -/
+of `HardcoreBit.ip_cast`, `Asymptotic/HardCorePermutation/GoldreichLevin.lean`). -/
 private theorem ip_cast' {k m : ℕ} (h : k = m) (x r : Fin k → Bool) :
     HardcoreBit.ip x r =
       HardcoreBit.ip (fun j => x (Fin.cast h.symm j)) (fun j => r (Fin.cast h.symm j)) := by

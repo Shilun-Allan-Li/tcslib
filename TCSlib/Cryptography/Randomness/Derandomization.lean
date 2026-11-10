@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Randomness.BPPBridge
-import TCSlib.Cryptography.Asymptotic.Pseudorandom
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Complexity.ClassP.DTIME
 
 set_option maxHeartbeats 0

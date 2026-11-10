@@ -11,7 +11,7 @@ import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DiscreteLog
 import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
 import TCSlib.Cryptography.Candidates.DDH
-import TCSlib.Cryptography.Candidates.ElGamal
+import TCSlib.Cryptography.Encryption.PublicKey.ElGamal
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

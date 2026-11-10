@@ -13,8 +13,8 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
 import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag
--- This compatibility import also preserves the facade's earlier hard-core exports.
-import TCSlib.Cryptography.Composability.CCA2Scheme
+-- Preserve the facade's existing permutation-to-PRG and hard-core exports.
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

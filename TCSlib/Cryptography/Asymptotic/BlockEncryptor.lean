@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Complexity.Randomized.Repetition
-import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

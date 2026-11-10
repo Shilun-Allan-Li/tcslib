@@ -12,7 +12,7 @@ set_option autoImplicit false
 # Non-malleable encryption (statement phase)
 
 [PS10, Definition 172.6] and Theorem 175.9, over the public-key experiment of Definition 171.5
-(`Composability/PublicKey.lean`).
+(`Encryption/PublicKey/OracleSecurity.lean`).
 
 **The experiment** `NM_b(Π, A, n)`: `(pk, sk) ← Gen(1^n)`; `(m₀, m₁, state) ← A^{O₁}(1^n, pk)`;
 `c ← Enc_pk(m_b)`; `(c'₁, …, c'_ℓ) ← A^{O₂}(c, state)`; output `(m'₁, …, m'_ℓ)` with
@@ -43,7 +43,7 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
   exports each copy flag. This is a security comparison of the one-challenge conventions;
   no many-challenge bridge is claimed here.
 - Definition 173.7 and Theorem 174.8 follow [PSV07] (same ruling), in
-  `Composability/SimNonMalleable.lean`.
+  `Encryption/PublicKey/NonMalleability/Simulation.lean`.
 
 ## Main definitions
 

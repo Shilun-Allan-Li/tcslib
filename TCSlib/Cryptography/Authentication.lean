@@ -6,12 +6,13 @@ import TCSlib.Cryptography.Authentication.Defs
 import TCSlib.Cryptography.Authentication.Signatures.Defs
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Authentication.MAC.Defs
-import TCSlib.Cryptography.Authentication.PRFMAC
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 import TCSlib.Cryptography.Authentication.MAC.FromPRF
-import TCSlib.Cryptography.Authentication.Lamport
 import TCSlib.Cryptography.Authentication.Signatures.Lamport
-import TCSlib.Cryptography.Authentication.DLHash
-import TCSlib.Cryptography.Authentication.HashAndSign
+import TCSlib.Cryptography.Hashing.FromDiscreteLog
 import TCSlib.Cryptography.Authentication.Signatures.HashAndSign
 
 set_option maxHeartbeats 0
@@ -41,11 +42,9 @@ See the theorem statements and correctness results in the constituent modules.
 * `Signatures.Defs` — the signature interface and forgery games.
 * `Signatures.Lamport` — the one-time signature construction from a strong one-way function.
 * `Signatures.HashAndSign` — signatures for the hash family's full domain when the digest width fits.
-* `Defs` — compatibility import for the authentication and hashing interfaces.
-* `PRFMAC` — compatibility import for the PRF-based MAC.
-* `Lamport` — compatibility import for Lamport signatures.
-* `DLHash` — compatibility import for the discrete-log hash.
-* `HashAndSign` — compatibility import for hash-and-sign.
+* `Defs` — shared facade for the MAC, signature, and hash interfaces.
+* `Hashing.FromDiscreteLog` — the discrete-log hash family used alongside these
+  constructions.
 
 ## References
 

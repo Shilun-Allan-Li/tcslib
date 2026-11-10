@@ -8,7 +8,7 @@ import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas
 import TCSlib.Cryptography.ZeroKnowledge.Interaction
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
-import TCSlib.Cryptography.Asymptotic.HardCorePermutation
+import TCSlib.Cryptography.Asymptotic.HardCoreClaims
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -33,7 +33,8 @@ the bits (Claim-127.d, Claim-126.a with single-bit values).
 Two layers (foundation decision D2). The *concrete* layer reuses the frozen Garg development:
 the one-bit scheme `Com(b, ·)` is `owpGen`/`owpGenNot` with `β := Unit`
 (`Pseudorandom/GeneratorFromPermutation.lean`), its predictor is `owpPredictorSnoc` of
-`Asymptotic/HardCore.lean`, and `predProb_owpPredictor_false/true` **are** Claim-127.c; the
+`Pseudorandom.Generators.Asymptotic.FromPermutation`, and
+`predProb_owpPredictor_false/true` **are** Claim-127.c; the
 coordinatewise hybrid lemma `exists_pairRed_ge` (new, concrete) generalises
 `exists_multicopyRed_ge` and carries Claim-126.a and Claim-127.d. The *asymptotic* layer states
 the frozen `Commitment` structure, multi-value hiding and Theorem 126.4 for `NUPPT`

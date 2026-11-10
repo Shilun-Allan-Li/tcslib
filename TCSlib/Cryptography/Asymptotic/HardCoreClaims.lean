@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.HardCore
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
