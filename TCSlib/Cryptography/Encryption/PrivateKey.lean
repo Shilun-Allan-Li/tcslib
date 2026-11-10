@@ -12,6 +12,8 @@ import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
 import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag
+-- This compatibility import also preserves the facade's earlier hard-core exports.
 import TCSlib.Cryptography.Composability.CCA2Scheme
 
 set_option maxHeartbeats 0
@@ -62,7 +64,7 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
   The CPA and CCA1 proofs `prfFixedScheme_cpa` and `prfFixedScheme_cca1` are pending
   [PS10, Theorem 168.2]. The CCA2 counterexample `prfFixedScheme_not_cca2` is also
   pending, and `not_prfFixedScheme_cca2` depends on it.
-* `Composability.CCA2Scheme` gives the encrypt-then-tag scheme, which tags the
+* `Encryption.PrivateKey.EncryptThenTag` gives the encrypt-then-tag scheme, which tags the
   whole ciphertext under an independent key [PS10, Algorithm 169.3].
   The CCA2 proof `ccaScheme_cca2` is pending [PS10, Theorem 170.4].
 
