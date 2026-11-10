@@ -29,3 +29,5 @@ two-module reduction at `Asymptotic.HardCore`. The 23 retired paths all fail loo
 facade comparisons and declaration comparison.
 
 **Clear to merge — native replay, declaration comparison and facade probes pass.**
+
+Seyoon merged #282 at `e6a5bed7d5f373ac6c68c9ac7645ee910219bd88`. The merged Lean sources and checker inputs match the verified head.
