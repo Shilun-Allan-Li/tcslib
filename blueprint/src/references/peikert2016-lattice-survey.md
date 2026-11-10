@@ -67,3 +67,48 @@ $(\mathbf a,b=\langle\mathbf s,\mathbf a\rangle+e\bmod q)$.
 **Definition 4.2.3 (Decision-$\mathrm{LWE}_{n,q,\chi,m}$).** Given $m$ independent samples $(\mathbf a_i,b_i)\in\mathbb Z_q^n\times\mathbb Z_q$ where every
 sample is distributed according to either: (1) $A_{\mathbf s,\chi}$ for a uniformly random $\mathbf s\in\mathbb Z_q^n$ (fixed for all samples), or
 (2) the uniform distribution, distinguish which is the case (with non-negligible advantage).
+
+<a id="pdf-1a9802b66031-p036-b001"></a>
+<!-- pdf-source: page=36; block=1; confidence=1.00 -->
+
+**Section 5.1, SIS hashing.** The opening paragraph recalls that the
+binary matrix map of Equation (4.1.1) is collision resistant under the
+hardness of the corresponding SIS problem. A collision yields the short
+nonzero difference described in the earlier section.
+
+<a id="pdf-1a9802b66031-p037-b001"></a>
+<!-- pdf-source: page=37; block=1; confidence=1.00 -->
+
+**Section 5.2.1, Regev public-key encryption.** The public key collects
+LWE samples under a uniform common secret as columns of an augmented
+matrix. Equation (5.2.1) gives the augmented matrix and Equation (5.2.2)
+cancels the secret product to expose the errors. Equation (5.2.3) forms
+a binary subset sum and adds the message's half-modulus codepoint to its
+last coordinate. Decryption cancels the secret contribution and compares
+the residual with the two codepoints modulo the modulus.
+
+<a id="pdf-1a9802b66031-p038-b001"></a>
+<!-- pdf-source: page=38; block=1; confidence=1.00 -->
+
+**Section 5.2.1, correctness.** The accumulated integer error is the
+inner product of the key error vector and the binary subset. The source
+uses a quarter-modulus separation and discusses choosing the noise law
+and modulus to make decryption correct with overwhelming probability.
+
+<a id="pdf-1a9802b66031-p038-b002"></a>
+<!-- pdf-source: page=38; block=2; confidence=1.00 -->
+
+**Section 5.2.1, first security hybrid.** Compare the fixed-bit view
+of the public key and ciphertext with the experiment that uses a uniform
+public key. A decision-LWE test forms its challenge matrix, encrypts the
+fixed bit, and runs the view distinguisher. The simulation is exact for
+both challenge laws.
+
+<a id="pdf-1a9802b66031-p038-b003"></a>
+<!-- pdf-source: page=38; block=3; confidence=1.00 -->
+
+**Section 5.2.1, second security hybrid.** For a uniform augmented
+key matrix and an independent uniform binary subset, the leftover hash
+lemma makes the seed-published matrix product close to a uniform independent
+ciphertext. Adding a fixed message vector preserves that ideal uniform law.
+This hybrid and the first hybrid compare the two fixed-bit views.
