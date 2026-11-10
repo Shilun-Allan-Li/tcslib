@@ -14,6 +14,7 @@ import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DDH
 import TCSlib.Cryptography.Encryption.PublicKey.ElGamal
+import TCSlib.Cryptography.Encryption.PublicKey.Regev
 import TCSlib.Cryptography.Composability.PublicKey
 
 set_option maxHeartbeats 0
@@ -62,6 +63,8 @@ multi-message security.
   `TCSlib.Cryptography.Candidates.elGamal_secure` uses
   `TCSlib.Cryptography.Candidates.DDHAssumption` for `TCSlib.Cryptography.Candidates.egGroupGen`
   and a negligible full-length exception bound for the safe-prime generator.
+* `Regev` proves finite subset-sum encryption correctness and an explicit DLWE security bound
+  with a leftover-hash error [Pei16, §5.2.1].
 
 The three candidate routes take arithmetic efficiency as
 `TCSlib.Cryptography.Candidates.ArithmeticFP`. RSA and Rabin share the trapdoor-bit route.
@@ -71,4 +74,5 @@ requires the encoding-width premise `henc`. ElGamal uses its own group-message g
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016.
 -/

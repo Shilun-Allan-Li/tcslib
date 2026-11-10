@@ -47,6 +47,14 @@ def IsUniversal [DecidableEq β] (f : S → α → β) : Prop :=
   ∀ x y : α, x ≠ y →
     ((univ.filter (fun s => f s x = f s y)).card : ℝ) ≤ (Fintype.card S : ℝ) / Fintype.card β
 
+omit [Fintype α] in
+/-- Universality means that each distinct input pair collides under at most the
+seed count divided by the output count. This is the public reading of `IsUniversal`. -/
+theorem isUniversal_iff [DecidableEq β] (f : S → α → β) :
+    IsUniversal f ↔ ∀ x y : α, x ≠ y →
+      ((univ.filter (fun s => f s x = f s y)).card : ℝ) ≤
+        (Fintype.card S : ℝ) / Fintype.card β := Iff.rfl
+
 /-- **The affine family is universal.** Over a field, `(a, b) ↦ (x ↦ a * x + b)` is a universal
 family; two distinct points collide only when `a = 0`, which is a `1 / |F|` fraction of seeds.
 [CW79], [Vad12, §3.5] -/

@@ -1,0 +1,544 @@
+[
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_length",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_length",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_injective",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/Encoding/Modular",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_injective",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "structure",
+    "name": "TCSlib.Cryptography.LWE.Family",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.Family.inputBitsBound",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.Family.inputBitsBound_eq",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.Family.encodeChallenge_length_le",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.Family.advantageAt",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.Family.advantageAt_eq",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.DLWEAssumption",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.dlweAssumption_iff",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "structure",
+    "name": "TCSlib.Cryptography.LWE.Parameters",
+    "axioms": []
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "instance",
+    "name": "TCSlib.Cryptography.LWE.instNeZeroNatModulus",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.noisyValues",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.noisyValues_apply",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.sample",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.sample_fst",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Basic",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.sample_snd",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Encoding",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.encodeChallenge",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.encodeChallenge_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.encodeChallenge_length",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.encodeChallenge_injective",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Experiments",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.decisionAdvantage",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Experiments",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.decisionAdvantage_eq",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Noise",
+    "kind": "structure",
+    "name": "TCSlib.Cryptography.LWE.Noise",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Noise",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.LWE.Noise.Bounded",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/LWE/Noise",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.LWE.Noise.bounded_iff",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "structure",
+    "name": "TCSlib.Cryptography.SIS.Family",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.Family.inputBitsBound",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.Family.inputBitsBound_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.Family.outputBitsBound",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.Family.outputBitsBound_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.Family.encodeChallenge_length_le",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.Family.encodeSolution_length_le",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.Family.successAt",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.Family.successAt_eq",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.SISAssumption",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Assumption",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.sisAssumption_iff",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Basic",
+    "kind": "structure",
+    "name": "TCSlib.Cryptography.SIS.Parameters",
+    "axioms": []
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Basic",
+    "kind": "instance",
+    "name": "TCSlib.Cryptography.SIS.instNeZeroNatModulus",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Basic",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.IsSolution",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Basic",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.isSolution_iff",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.encodeChallenge",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.encodeChallenge_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.decodeSolution",
+    "axioms": []
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.decodeSolution_eq",
+    "axioms": []
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.decodeSolution_of_length_ne",
+    "axioms": []
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.encodeSolution",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.encodeSolution_eq",
+    "axioms": [
+      "propext"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.encodeChallenge_length",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.encodeChallenge_injective",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.encodeSolution_length",
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.decodeSolution_encodeSolution",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Encoding",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.decodeSolution_encodeSolution_of_isSolution",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Experiments",
+    "kind": "def",
+    "name": "TCSlib.Cryptography.SIS.successProbability",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SIS/Experiments",
+    "kind": "theorem",
+    "name": "TCSlib.Cryptography.SIS.successProbability_eq",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  }
+]

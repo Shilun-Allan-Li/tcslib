@@ -1,0 +1,57 @@
+TCSlib/Cryptography/Encoding/ModularDecode.lean:87:71: error: unsolved goals
+q length : ℕ
+inst✝ : NeZero q
+width : ℕ
+hwidth : q ≤ 2 ^ width
+v : Fin length → ZMod q
+blocks : Fin length → List Bool := fun i => Candidates.natToList width (v i).val
+j : ℕ
+hj : j ≤ length
+⊢ (List.take j (List.ofFn (List.length ∘ fun i => Candidates.natToList width (v i).val))).sum = j * width
+TCSlib/Cryptography/Encoding/ModularDecode.lean:88:38: warning: This simp argument is unused:
+  Candidates.length_natToList
+
+Hint: Omit it from the simp argument list.
+  simp only [List.map_ofFn, blocks, C̵a̵n̵d̵i̵d̵a̵t̵e̵s̵.̵l̵e̵n̵g̵t̵h̵_̵n̵a̵t̵T̵o̵L̵i̵s̵t̵,̵ ̵List.ofFn_const, List.take_replicate, Nat.min_eq_left hj,
+  ̲  ̲ ̲ ̲ ̲ ̲List.sum_replicate_nat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:88:67: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [List.map_ofFn, blocks, Candidates.length_natToList, L̵i̵s̵t̵.̵o̵f̵F̵n̵_̵c̵o̵n̵s̵t̵,̵List.take_replicate,
+        Nat.min_eq_left hj, List.sum_replicate_nat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:89:6: warning: This simp argument is unused:
+  List.take_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [List.map_ofFn, blocks, Candidates.length_natToList, List.ofFn_const,
+        L̵i̵s̵t̵.̵t̵a̵k̵e̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵Nat.min_eq_left hj, List.sum_replicate_nat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:89:27: warning: This simp argument is unused:
+  Nat.min_eq_left hj
+
+Hint: Omit it from the simp argument list.
+  simp only [List.map_ofFn, blocks, Candidates.length_natToList, List.ofFn_const,
+        List.take_replicate, N̵a̵t̵.̵m̵i̵n̵_̵e̵q̵_̵l̵e̵f̵t̵ ̵h̵j̵,̵ ̵List.sum_replicate_nat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:89:47: warning: This simp argument is unused:
+  List.sum_replicate_nat
+
+Hint: Omit it from the simp argument list.
+  simp only [List.map_ofFn, blocks, Candidates.length_natToList, List.ofFn_const,
+        List.take_replicate, Nat.min_eq_left hj,̵ ̵L̵i̵s̵t̵.̵s̵u̵m̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵_̵n̵a̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encoding/ModularDecode.lean:118:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encoding/ModularDecode.lean:148:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encoding/ModularDecode.lean:158:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encoding/ModularDecode.lean:168:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): no fresh .olean produced

@@ -1,0 +1,42 @@
+TCSlib/Cryptography/Encoding/ModularDecode.lean:128:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (?n + ?m) * ?k
+in the target expression
+  (↑i).succ * width ≤ length * width
+
+q length : ℕ
+inst✝ : NeZero q
+width : ℕ
+w : List Bool
+v : Fin length → ZMod q
+hg : w.length = length * width ∧ ∀ (i : Fin length), listToNat (List.take width (List.drop (↑i * width) w)) < q
+h : (some fun i => ↑(listToNat (List.take width (List.drop (↑i * width) w)))) = some v
+hv : (fun i => ↑(listToNat (List.take width (List.drop (↑i * width) w)))) = v
+i : Fin length
+j : Fin width
+hb : (↑i).succ * width ≤ length * width
+⊢ ↑i * width + ↑j < length * width
+TCSlib/Cryptography/Encoding/ModularDecode.lean:135:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (?n + ?m) * ?k
+in the target expression
+  (↑i).succ * width ≤ length * width
+
+case h
+q length : ℕ
+inst✝ : NeZero q
+width : ℕ
+w : List Bool
+v : Fin length → ZMod q
+hg : w.length = length * width ∧ ∀ (i : Fin length), listToNat (List.take width (List.drop (↑i * width) w)) < q
+h : (some fun i => ↑(listToNat (List.take width (List.drop (↑i * width) w)))) = some v
+hv : (fun i => ↑(listToNat (List.take width (List.drop (↑i * width) w)))) = v
+hindex : ∀ (i : Fin length) (j : Fin width), ↑i * width + ↑j < length * width
+i : Fin length
+hb : (↑i).succ * width ≤ length * width
+⊢ width ≤ length * width - ↑i * width
+TCSlib/Cryptography/Encoding/ModularDecode.lean:164:2: error: No goals to be solved
+TCSlib/Cryptography/Encoding/ModularDecode.lean:191:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encoding/ModularDecode.lean:201:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encoding/ModularDecode.lean:211:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encoding/ModularDecode): no fresh .olean produced

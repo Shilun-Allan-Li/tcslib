@@ -1,0 +1,611 @@
+{
+  "status": "approved",
+  "lean_source": "8b3187bdaf0c634c086313a727a7210dca14bfeb",
+  "target": "41aaf0a1acf29318fa8d741dadd9f5f585e43c93",
+  "existing_approvals": [
+    "TCSlib.Cryptography.LWE.Parameters",
+    "TCSlib.Cryptography.LWE.noisyValues",
+    "TCSlib.Cryptography.LWE.sample"
+  ],
+  "documents": [
+    {
+      "path": "blueprint/src/references/peikert2016-lattice-survey.md",
+      "before_sha256": "ebf435f1ce09b7b65947ea5a1d271a01168aecbe73c4b4d82b52502c3570f76b",
+      "proposed_sha256": "eea2fbc23a0b3aea18feedcf7e02874746ce42d99292453371314db6dd33b8f4"
+    },
+    {
+      "path": "blueprint/src/references/wu2024-topics-cryptography.md",
+      "before_sha256": "4aab98cdaba30933eb4b9ae2e47a04ba2d43d08cab722cf9990168e36b416aed",
+      "proposed_sha256": "c892784a3b6db557653389a9a7239aa7cc70e3da77bbf9c472ad98adb75afedb"
+    }
+  ],
+  "source_pages": {
+    "Pei16": {
+      "filename": "peikert2016-lattice-survey.pdf",
+      "pdf_sha256": "1a9802b66031a2b863fd498a5de4a71cdb1bd46ac1d47dc1f4a67ae341357488",
+      "consumed_pages": [
+        {
+          "physical_page": 20,
+          "page_bytes": 2340,
+          "layout_sha256": "b9e71148a01b3fd5b6cadeb49a463c5a75eaa6c9b9c2241c62f1c91f4ceb5b18",
+          "citation_scope": "Definition 4.1.1 and binary-collision argument"
+        },
+        {
+          "physical_page": 21,
+          "page_bytes": 3972,
+          "layout_sha256": "c9ed4504fc0c3bfd9913bf3d020225b1836c1174fcc76849140e517f250787ad",
+          "citation_scope": "Definition 4.1.1 and binary-collision argument"
+        },
+        {
+          "physical_page": 24,
+          "page_bytes": 3404,
+          "layout_sha256": "591007dc975b7ac924500af136a9db020045e097aaf08e19463ff7168119cf94",
+          "citation_scope": "Definitions 4.2.1 and 4.2.3"
+        },
+        {
+          "physical_page": 36,
+          "page_bytes": 2321,
+          "layout_sha256": "83d06d52be1ed77e0d5e663fd45ee4573f0512d48b0567fac5ed3820c75ca1e8",
+          "citation_scope": "Section 5.1, SIS hashing"
+        },
+        {
+          "physical_page": 37,
+          "page_bytes": 3589,
+          "layout_sha256": "2eda7c9984a4d83cf82975a99a1573d1219cdbdf4fbeb9baee86b010542b90cc",
+          "citation_scope": "Section 5.2.1, Regev PKE, error bound and regularity"
+        },
+        {
+          "physical_page": 38,
+          "page_bytes": 4627,
+          "layout_sha256": "d92962c04d053d33ecc45ec006ca62c5bce0bca4098a36581677d52bcc6353a0",
+          "citation_scope": "Section 5.2.1, Regev PKE, error bound and regularity"
+        }
+      ]
+    },
+    "Wu24": {
+      "filename": "wu2024-topics-cryptography.pdf",
+      "pdf_sha256": "c0f87bf2e871180d62b2b27d38b916bce1a7b2228dbb68de72341597341d6d87",
+      "consumed_pages": [
+        {
+          "physical_page": 85,
+          "page_bytes": 3591,
+          "layout_sha256": "c73ea2ff2b345b6cf45662455a549ef4a43810a66af66d5034ecf5adfce3aebc",
+          "citation_scope": "Lecture 21, transition from symmetric to public-key encryption, correctness and security"
+        },
+        {
+          "physical_page": 86,
+          "page_bytes": 3302,
+          "layout_sha256": "90d28ec3d069023b3a7e4d0ae9f518feede602dd93c9bd85876ecadcf95cb004",
+          "citation_scope": "Lecture 21, transition from symmetric to public-key encryption, correctness and security"
+        }
+      ]
+    }
+  },
+  "reviewed_matches": [
+    {
+      "lean_name": "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_encodeVector",
+      "lean_path": "TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean",
+      "lean_line": 201,
+      "document_blocks": [
+        "pdf-1a9802b66031-p020-b001",
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Representation correspondence. The source uses modular products and inner products. Lean checks that the scheduled word loops produce those products on canonical inputs.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_encodeMatrix",
+      "lean_path": "TCSlib/Cryptography/Encoding/DyadicLinearAlgebra.lean",
+      "lean_line": 395,
+      "document_blocks": [
+        "pdf-1a9802b66031-p020-b001",
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Representation correspondence. The source uses modular products and inner products. Lean checks that the scheduled word loops produce those products on canonical inputs.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encoding.DyadicUniform.bitsToResidue",
+      "lean_path": "TCSlib/Cryptography/Encoding/DyadicUniform.lean",
+      "lean_line": 46,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Representation adaptation for the uniform residue objects in the LWE experiments. The source supplies the target law. The MSB-first blocks and dyadic restrictions are repository choices.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encoding.DyadicUniform.bitsToVector",
+      "lean_path": "TCSlib/Cryptography/Encoding/DyadicUniform.lean",
+      "lean_line": 115,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Representation adaptation for the uniform residue objects in the LWE experiments. The source supplies the target law. The MSB-first blocks and dyadic restrictions are repository choices.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encoding.DyadicUniform.bitsToMatrix",
+      "lean_path": "TCSlib/Cryptography/Encoding/DyadicUniform.lean",
+      "lean_line": 179,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Representation adaptation for the uniform residue objects in the LWE experiments. The source supplies the target law. The MSB-first blocks and dyadic restrictions are repository choices.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 45,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "The same common-secret key and binary subset-sum ciphertext formulas, with the sample matrix transposed and noise drawn from an explicit finite law.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 66,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "The same common-secret key and binary subset-sum ciphertext formulas, with the sample matrix transposed and noise drawn from an explicit finite law.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 89,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "Cancel the secret inner product. The residue is the bit codepoint plus the integer error subset sum. Lean specifies the nearest-codepoint decoder.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_residual",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 105,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "Cancel the secret inner product. The residue is the bit codepoint plus the integer error subset sum. Lean specifies the nearest-codepoint decoder.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.subsetError_bound",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 136,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "Extract the deterministic integer subset-sum estimate $mB$ under an entrywise error bound.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.binaryErrorSum_bound",
+      "lean_path": "TCSlib/Cryptography/LWE/Basic.lean",
+      "lean_line": 79,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "Extract the deterministic integer subset-sum estimate $mB$ under an entrywise error bound.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt_encrypt",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 146,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-1a9802b66031-p038-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "The source gives bounded-error correctness. Lean assumes strict $2mB<\\lfloor q/2\\rfloor$ and proves correctness for every relevant finite seed and subset.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt_keygen_encrypt",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean",
+      "lean_line": 161,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-1a9802b66031-p038-b001",
+        "pdf-c0f87bf2e871-p086-b001"
+      ],
+      "scope": "The source gives bounded-error correctness. Lean assumes strict $2mB<\\lfloor q/2\\rfloor$ and proves correctness for every relevant finite seed and subset.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.view",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 53,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The fixed-bit passive view and the exact first-hybrid simulation. Lean compares finite advantages and threads independent subset and test coins.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.realView",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 70,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The fixed-bit passive view and the exact first-hybrid simulation. Lean compares finite advantages and threads independent subset and test coins.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKeyView",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 89,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The fixed-bit passive view and the exact first-hybrid simulation. Lean compares finite advantages and threads independent subset and test coins.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.reduction",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 105,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The fixed-bit passive view and the exact first-hybrid simulation. Lean compares finite advantages and threads independent subset and test coins.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.real_uniformKey_advantage",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 128,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The fixed-bit passive view and the exact first-hybrid simulation. Lean compares finite advantages and threads independent subset and test coins.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.hashParameters",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 154,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The augmented key has $n+1$ output coordinates and $m$ input bits. Lean reuses its binary matrix hash and expresses the ciphertext as the hash plus a last-coordinate shift.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.augmented",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 166,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The augmented key has $n+1$ output coordinates and $m$ input bits. Lean reuses its binary matrix hash and expresses the ciphertext as the hash plus a last-coordinate shift.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_augmented",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 199,
+      "document_blocks": [
+        "pdf-1a9802b66031-p037-b001",
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "The augmented key has $n+1$ output coordinates and $m$ input bits. Lean reuses its binary matrix hash and expresses the ciphertext as the hash plus a last-coordinate shift.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 227,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "Finite strong leftover-hash specialization with an explicit error. The ideal key and ciphertext are independent, and fixed translation preserves the ideal.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKey_uniform_advantage_le",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 244,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "Finite strong leftover-hash specialization with an explicit error. The ideal key and ciphertext are independent, and fixed translation preserves the ideal.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.distAdv_encrypt_le",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 301,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "Quantify the two-bit hybrid comparison by two decision-LWE terms and two extraction terms. The explicit width and security slack are repository bounds.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Encryption.PublicKey.Regev.two_extractionError_le",
+      "lean_path": "TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean",
+      "lean_line": 334,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b002",
+        "pdf-1a9802b66031-p038-b003",
+        "pdf-c0f87bf2e871-p086-b002"
+      ],
+      "scope": "Quantify the two-bit hybrid comparison by two decision-LWE terms and two extraction terms. The explicit width and security slack are repository bounds.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.collisionAt",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean",
+      "lean_line": 47,
+      "document_blocks": [
+        "pdf-1a9802b66031-p021-b001",
+        "pdf-1a9802b66031-p036-b001"
+      ],
+      "scope": "The collision-to-SIS argument and its asymptotic consequence under the corresponding independent SIS assumption. The raw padded machine domain, uniform coin transport and dyadic profile are disclosed Lean adaptations.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.negligible_collisions_of_SIS",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean",
+      "lean_line": 71,
+      "document_blocks": [
+        "pdf-1a9802b66031-p021-b001",
+        "pdf-1a9802b66031-p036-b001"
+      ],
+      "scope": "The collision-to-SIS argument and its asymptotic consequence under the corresponding independent SIS assumption. The raw padded machine domain, uniform coin transport and dyadic profile are disclosed Lean adaptations.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.dyadic_collision_negligible",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Asymptotic.lean",
+      "lean_line": 116,
+      "document_blocks": [
+        "pdf-1a9802b66031-p021-b001",
+        "pdf-1a9802b66031-p036-b001"
+      ],
+      "scope": "The collision-to-SIS argument and its asymptotic consequence under the corresponding independent SIS assumption. The raw padded machine domain, uniform coin transport and dyadic profile are disclosed Lean adaptations.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.rawCollisionProbability_le_successProbability",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/CollisionOutput.lean",
+      "lean_line": 308,
+      "document_blocks": [
+        "pdf-1a9802b66031-p020-b001",
+        "pdf-1a9802b66031-p021-b001"
+      ],
+      "scope": "Use the binary matrix map and signed collision difference. Lean proves the raw word implementation and a same-coin finite comparison to its decoded SIS witness.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.hashPoly_encodeMatrix",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Implementation.lean",
+      "lean_line": 73,
+      "document_blocks": [
+        "pdf-1a9802b66031-p020-b001",
+        "pdf-1a9802b66031-p021-b001"
+      ],
+      "scope": "Use the binary matrix map and signed collision difference. Lean proves the raw word implementation and a same-coin finite comparison to its decoded SIS witness.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.hash_difference_probability",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "lean_line": 52,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003"
+      ],
+      "scope": "Support the regularity argument by showing the difference of distinct binary hashes is uniform. The exact finite collision count and use of a unit coefficient for every allowed modulus are Lean subclaims.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.isUniversal_hash",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "lean_line": 109,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003"
+      ],
+      "scope": "Support the regularity argument by showing the difference of distinct binary hashes is uniform. The exact finite collision count and use of a unit coefficient for every allowed modulus are Lean subclaims.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.strong_leftover_hash",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "lean_line": 147,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003"
+      ],
+      "scope": "The seed-published matrix product uses the leftover hash lemma. Lean gives an explicit finite error, a bound for randomized tests, and sufficient entropy slack.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.distAdv_hash_uniform_le",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "lean_line": 166,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003"
+      ],
+      "scope": "The seed-published matrix product uses the leftover hash lemma. Lean gives an explicit finite error, a bound for randomized tests, and sufficient entropy slack.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Hashing.SIS.leftover_error_le",
+      "lean_path": "TCSlib/Cryptography/Hashing/SIS/Universality.lean",
+      "lean_line": 221,
+      "document_blocks": [
+        "pdf-1a9802b66031-p038-b003"
+      ],
+      "scope": "The seed-published matrix product uses the leftover hash lemma. Lean gives an explicit finite error, a bound for randomized tests, and sufficient entropy slack.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.bitNoise",
+      "lean_path": "TCSlib/Cryptography/LWE/BitNoise.lean",
+      "lean_line": 40,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "The source specifies an integer-valued error law. Lean instantiates that slot with a finite sampler, keeps preimage multiplicities, and gives a local centered bit-difference profile.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.bitNoise_probability",
+      "lean_path": "TCSlib/Cryptography/LWE/BitNoise.lean",
+      "lean_line": 58,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "The source specifies an integer-valued error law. Lean instantiates that slot with a finite sampler, keeps preimage multiplicities, and gives a local centered bit-difference profile.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.centeredValue",
+      "lean_path": "TCSlib/Cryptography/LWE/BitNoise.lean",
+      "lean_line": 68,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "The source specifies an integer-valued error law. Lean instantiates that slot with a finite sampler, keeps preimage multiplicities, and gives a local centered bit-difference profile.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.sampleFromBits",
+      "lean_path": "TCSlib/Cryptography/LWE/Sampling.lean",
+      "lean_line": 48,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "The real common-secret batch and uniform comparison are encoded using disjoint full-width bits. Lean supplies the exact dyadic representation and finite noise seeds.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.LWE.uniformFromBits",
+      "lean_path": "TCSlib/Cryptography/LWE/Sampling.lean",
+      "lean_line": 116,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "The real common-secret batch and uniform comparison are encoded using disjoint full-width bits. Lean supplies the exact dyadic representation and finite noise seeds.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.generate",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "lean_line": 52,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Reuse the common-secret sample map as a generator. The exact finite advantage identity and encoded adversary consequence use the repository's fixed-sample DLWE formulation.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.prgAdv_generate",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "lean_line": 70,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Reuse the common-secret sample map as a generator. The exact finite advantage identity and encoded adversary consequence use the repository's fixed-sample DLWE formulation.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.pseudorandom_under_DLWE",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "lean_line": 85,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Reuse the common-secret sample map as a generator. The exact finite advantage identity and encoded adversary consequence use the repository's fixed-sample DLWE formulation.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.seedBitLength",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "lean_line": 96,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Count the bits for the public matrix, one secret, and the independent error seeds in the encoded common-secret experiment.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.seed_cardinality",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean",
+      "lean_line": 117,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Count the bits for the public matrix, one secret, and the independent error seeds in the encoded common-secret experiment.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean",
+      "lean_line": 44,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Pack and unpack the same common-secret sample experiment without changing its noise law. The source supplies the real and ideal experiments. The exact word equivalence and advantage transport are Lean representation results.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits_advantage",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Bits.lean",
+      "lean_line": 92,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Pack and unpack the same common-secret sample experiment without changing its noise law. The source supplies the real and ideal experiments. The exact word equivalence and advantage transport are Lean representation results.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.flatSeedEquiv",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Flat.lean",
+      "lean_line": 95,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Pack and unpack the same common-secret sample experiment without changing its noise law. The source supplies the real and ideal experiments. The exact word equivalence and advantage transport are Lean representation results.",
+      "status": "approved attribution"
+    },
+    {
+      "lean_name": "TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateFlat",
+      "lean_path": "TCSlib/Cryptography/Pseudorandom/Generators/LWE/Flat.lean",
+      "lean_line": 133,
+      "document_blocks": [
+        "pdf-1a9802b66031-p024-b001"
+      ],
+      "scope": "Pack and unpack the same common-secret sample experiment without changing its noise law. The source supplies the real and ideal experiments. The exact word equivalence and advantage transport are Lean representation results.",
+      "status": "approved attribution"
+    }
+  ],
+  "proposed_patch_sha256": "425c71e0b64dcef85b959899937a003ba5992b11df824498ec9937bae01304c9"
+}

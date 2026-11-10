@@ -201,6 +201,10 @@ theorem blockCount_add_not (q K : ℕ) (B : List Bool → Bool) (l : List Bool) 
 def blockVal (b : ℕ) (r : List Bool) (i : ℕ) : ℕ :=
   bitsVal ((r.drop (i * b)).take b)
 
+/-- The block reader is the little-endian value of the width-bit slice at offset `i*b`. -/
+theorem blockVal_eq (b : ℕ) (r : List Bool) (i : ℕ) :
+    blockVal b r i = Complexity.LogProg.bitsVal ((r.drop (i * b)).take b) := rfl
+
 /-- Every block value is below `2^b`. -/
 theorem blockVal_lt (b : ℕ) (r : List Bool) (i : ℕ) : blockVal b r i < 2 ^ b :=
   (bitsVal_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _))

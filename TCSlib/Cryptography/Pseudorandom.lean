@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.Cryptography.Pseudorandom.Generators.LWE
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Defs
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine
@@ -49,6 +50,8 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   [Gar26, Lemmas 3.2 and 3.3].
 * `Generators` gives the generator advantage, iteration, and the stretch reduction
   [Gar26, Definition 3.5 and Theorem 3.1].
+* `Generators.LWE` gives direct DLWE generators with explicit bit encodings and stretch bounds
+  [Pei16, Definition 4.2.3].
 * `Generators.Asymptotic.Defs` gives the length-regular PRG interface and security
   contract [PS10, Definition 77.1].
 * `Generators.Asymptotic.FromPermutation` builds secure generators from one-way permutations.
@@ -117,4 +120,5 @@ advantage against the GGM keyed family by a sum of advantages against its genera
   draft of 22 January 2026, Chapter 3.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
   January 2010, §§3.1–3.9.
+* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016.
 -/

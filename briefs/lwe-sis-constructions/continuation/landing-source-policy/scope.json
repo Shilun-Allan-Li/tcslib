@@ -1,0 +1,1712 @@
+{
+  "purpose": "Source-policy validation and proposed matching for the first four audited PRs; no source approval, registration or merge",
+  "lean_source_pin": "ec72ed773a690c17ac253707350935cc9e0acb34",
+  "publication_lean_pin": "af54d28f6d412bc56844e7371e2b0b9b394c494c",
+  "target_prs": [
+    236,
+    237,
+    238,
+    239
+  ],
+  "source_declarations": 161,
+  "source_modules": 20,
+  "source_declaration_kinds": {
+    "def": 42,
+    "theorem": 112,
+    "structure": 5,
+    "instance": 2
+  },
+  "new_source_documents": [
+    "Pei16",
+    "Wu24"
+  ],
+  "existing_context_tags": [
+    "PS10",
+    "AB09"
+  ],
+  "deferred_source_scope": [
+    "PW10 and the later PR #250 construction additions"
+  ],
+  "primary_pages": 196,
+  "inventory_inputs": [
+    {
+      "path": "briefs/lwe-sis-constructions/gates/00-foundations/evidence/source-declarations.json",
+      "sha256": "fcc965decea3b22c269e6bef3bdc6e76ddd9bc7bfb4e4039dacf8b4bb46ebaa6",
+      "declarations": 61
+    },
+    {
+      "path": "briefs/lwe-sis-constructions/gates/02-construction-core/evidence/new-source-declarations.json",
+      "sha256": "c4c92b07bd4bed42e4cdffc4ca6cc7e617ceb4e144b42e22699405c48191e453",
+      "declarations": 62
+    },
+    {
+      "path": "briefs/lwe-sis-constructions/gates/04-encoding-adapters/evidence/source-declarations.json",
+      "sha256": "05b3e6a297ca1536633de5c9de5ac36c5840cf6204b2df3be89cae076cf596a3",
+      "declarations": 20
+    },
+    {
+      "path": "briefs/lwe-sis-constructions/gates/06-dyadic-arithmetic/evidence/source-declarations.json",
+      "sha256": "c4a3951c0393358e87be0cf512af00eab0640336a5697016dcb6d76f8910ef80",
+      "declarations": 18
+    }
+  ],
+  "modules": [
+    {
+      "path": "TCSlib/Cryptography/Encoding/BinaryArith.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 14357,
+      "sha256": "1b7cee2f2adcf718257ea50cf048255b7bf71df684af1a816fa7cfff74b8b635",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.toLE",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.toLE_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.toLE_eq_natBits",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.bitsVal_toLE",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.length_toLE_le",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_toLE",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.normalizeWidthPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.normalizeWidthPoly_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.normalizeWidthPoly_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.normalizeWidthPoly_length",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.normalizeWidthPoly_of_length_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_normalizeWidthPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly_length",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly_toLE",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.fromLEPoly_toLE_of_length_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.toLE_fromLEPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_fromLEPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.BinaryArith"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 32
+        },
+        {
+          "tag": "AB09",
+          "text": "[AB09]",
+          "line": 34
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, repository representation adaptation]",
+          "line": 59
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, explicit polynomial-width adaptation]",
+          "line": 125
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, repository representation adaptation]",
+          "line": 199
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/DyadicArithmetic.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 17293,
+      "sha256": "0222d51364a74c3fa5c361056fb01cb9c2436ddbbbb9c11bf5f3956dd5c1814a",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.addPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.addPoly_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.addPoly_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.addPoly_length",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.addPoly_natCast_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.polyTimeComputable_addPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.mulPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.mulPoly_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.mulPoly_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.mulPoly_length",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.mulPoly_natCast_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.polyTimeComputable_mulPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.subPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.subPoly_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.subPoly_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.subPoly_length",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.subPoly_natCast_pairEncode",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.DyadicArithmetic.polyTimeComputable_subPoly",
+          "source_module": "TCSlib.Cryptography.Encoding.DyadicArithmetic"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 32
+        },
+        {
+          "tag": "AB09",
+          "text": "[AB09]",
+          "line": 34
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, repository adaptation]",
+          "line": 59
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, repository adaptation]",
+          "line": 144
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Section 2.1, repository adaptation]",
+          "line": 227
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/Modular.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 6869,
+      "sha256": "b6c9022a65d70bf021cd91e31623b0703dd307098fd67aa676cee57b556cccca",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_length",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_length",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_injective",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/Modular",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_injective",
+          "source_module": "TCSlib.Cryptography.Encoding.Modular"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 28
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 30
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definitions 4.1.1 and 4.2.3]",
+          "line": 50
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definitions 4.1.1 and 4.2.3]",
+          "line": 64
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Encoding/ModularDecode.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 12861,
+      "sha256": "1c56a77c6b059a440a807ff979ad733ee98b359c7fefa91e135d740780ebafd3",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeVector",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeVector_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeVector_of_length_ne",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeVector_of_outOfRange",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeVector_encodeVector",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeVector_decodeVector",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeMatrix",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_eq",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_of_length_ne",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_of_outOfRange",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.decodeMatrix_encodeMatrix",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encoding.Modular.encodeMatrix_decodeMatrix",
+          "source_module": "TCSlib.Cryptography.Encoding.ModularDecode"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 29
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 31
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definitions 4.1.1 and 4.2.3]",
+          "line": 46
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 5833,
+      "sha256": "01672b5b9fc91b14de71199d6b272d0128a1f666205a7007e05367074e283e04",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.shift",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.encrypt",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt_apply",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt_encrypt",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.decrypt_encrypt_noise",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Basic"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Wu24",
+          "text": "[Wu24]",
+          "line": 29
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5, batched formulation]",
+          "line": 45
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5]",
+          "line": 56
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5, specified nearest-codepoint convention]",
+          "line": 68
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5 and Lecture 21,\nbounded-error refinement]",
+          "line": 81
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5, finite-noise\nspecialization]",
+          "line": 102
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 6641,
+      "sha256": "f018bc556efe37126ed67e2855a2c30fc4001cd43c86132fd81d5878caa15ae5",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.encryptDist_eq_shift_sample",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.acceptProb_uniform_shift",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Encryption.Symmetric.Regev.distAdv_encrypt_le",
+          "source_module": "TCSlib.Cryptography.Encryption.Symmetric.Regev.Experiments"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Wu24",
+          "text": "[Wu24]",
+          "line": 27
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 29
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5;\nPei16, Definition 4.2.3, finite-seed specialization]",
+          "line": 45
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5; Pei16, Definition 4.2.3]",
+          "line": 57
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Lecture 21, ideal hybrid]",
+          "line": 72
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5 and Lecture 21, explicit two-hybrid bound]",
+          "line": 109
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Basic.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 7438,
+      "sha256": "9a95ce0621be8245a02bcb1e7c8fa387a0d414b7ce727ddea0da477c8aa8df2e",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Hashing.SIS.hash",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.hash_eq",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionDifference",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionDifference_apply",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionDifference_ne_zero",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionDifference_sqNorm_le",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionDifference_isSolution",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.cardinal_compression",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.exists_collision",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.exists_solution",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Basic"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 27
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Equation (4.1.1), binary-domain restriction]",
+          "line": 42
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 55
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 66
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 81
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 96
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 119
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 131
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 148
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Experiments.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 3567,
+      "sha256": "66cadbfdb9c40f3f553dcf230e750c15dd1ecf583cf5fc59d145ec13a54e14a8",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Experiments",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionProbability",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionProbability_eq",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.collisionProbability_le_successProbability",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Experiments"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 26
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1)]",
+          "line": 41
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1), explicit probability bound]",
+          "line": 62
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Hashing/SIS/Profiles.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 9349,
+      "sha256": "41cc987cfaf76384714b5037cbb677e2f4b63a4bd8cf126a68e12228d963d2ad",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_modulus_ge_two",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_magnitude_fits",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadicParameters",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadicFamily",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_sqNormBound_lt_modulus_sq",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_cardinal_compression",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_exists_solution",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_not_isSolution_of_modulus_dvd",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_inputBitsBound_eval",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        },
+        {
+          "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.Hashing.SIS.dyadic_outputBitsBound_eval",
+          "source_module": "TCSlib.Cryptography.Hashing.SIS.Profiles"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 32
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, local dyadic specialization]",
+          "line": 64
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, local specialization]",
+          "line": 76
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1), local profile check]",
+          "line": 101
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1), local profile check]",
+          "line": 119
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1), local specialization]",
+          "line": 133
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, observations after Equation (4.1.1), local check]",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Assumption.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 7354,
+      "sha256": "43be481ecc2ea2ad4e559ca21a50e0c6295f9d1d1d1ffec640832070186c19d6",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "structure",
+          "name": "TCSlib.Cryptography.LWE.Family",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.Family.inputBitsBound",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.Family.inputBitsBound_eq",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.Family.encodeChallenge_length_le",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.Family.advantageAt",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.Family.advantageAt_eq",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.DLWEAssumption",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.dlweAssumption_iff",
+          "source_module": "TCSlib.Cryptography.LWE.Assumption"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 32
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 34
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 58
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Definition 26.8]",
+          "line": 59
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 87
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3; PS10, Definition 26.8]",
+          "line": 115
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3; PS10, Definition 26.8]",
+          "line": 132
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Basic.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 4262,
+      "sha256": "215198380b295a4f482578a8f3e28df2bce672b5869a0a594a6ebca3322edcf2",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "structure",
+          "name": "TCSlib.Cryptography.LWE.Parameters",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "instance",
+          "name": "TCSlib.Cryptography.LWE.instNeZeroNatModulus",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.noisyValues",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.noisyValues_apply",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.sample",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.sample_fst",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.sample_snd",
+          "source_module": "TCSlib.Cryptography.LWE.Basic"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 28
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 32
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definitions 4.2.1 and 4.2.3]",
+          "line": 40
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.1, transposed convention]",
+          "line": 56
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/BitEncoding.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 6507,
+      "sha256": "341fadb151a36feb97b3f052ecb6d0c7c2cdcd55bde24c6bd921e27cabccf147",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.codepoint",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.codepoint_eq",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_eq",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_symm",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_triangle",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_add_right",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_codepoints",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.distance_intCast_zero_le",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.decode",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.decode_eq",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/BitEncoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.BitEncoding.decode_codepoint_add",
+          "source_module": "TCSlib.Cryptography.LWE.BitEncoding"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Wu24",
+          "text": "[Wu24]",
+          "line": 29
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5]",
+          "line": 41
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5, exact separation]",
+          "line": 84
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5, specified tie convention]",
+          "line": 107
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24, Definition 20.5 and Lecture 21, bounded-error refinement]",
+          "line": 117
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Encoding.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 3587,
+      "sha256": "49dc02f02d1751882df60469e16e0297227a624cbc431ebbdfad7fd912902f25",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/Encoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.encodeChallenge",
+          "source_module": "TCSlib.Cryptography.LWE.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.encodeChallenge_eq",
+          "source_module": "TCSlib.Cryptography.LWE.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.encodeChallenge_length",
+          "source_module": "TCSlib.Cryptography.LWE.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.encodeChallenge_injective",
+          "source_module": "TCSlib.Cryptography.LWE.Encoding"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 26
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 39
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3, bit accounting]",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Experiments.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 2505,
+      "sha256": "d38c177a1ffc7600947fa57442f4b545ddb3563b8d0b5780981916a30431c037",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/Experiments",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.decisionAdvantage",
+          "source_module": "TCSlib.Cryptography.LWE.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.decisionAdvantage_eq",
+          "source_module": "TCSlib.Cryptography.LWE.Experiments"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 27
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/Noise.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 2479,
+      "sha256": "07f408771e912672d331f78cb9a05ef19dc48fcb753cd37daac1e821c66a063b",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/Noise",
+          "kind": "structure",
+          "name": "TCSlib.Cryptography.LWE.Noise",
+          "source_module": "TCSlib.Cryptography.LWE.Noise"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Noise",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.Noise.Bounded",
+          "source_module": "TCSlib.Cryptography.LWE.Noise"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/Noise",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.Noise.bounded_iff",
+          "source_module": "TCSlib.Cryptography.LWE.Noise"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 26
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.1, finite-seed specialization]",
+          "line": 38
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16,\nDefinition 4.2.1, bounded-noise specialization used for perfect correctness]",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/LWE/SampleSchedules.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 3697,
+      "sha256": "ef0a7374ef06298f7dade397b454ec4f06cfe92c029501ae80fad5800bd9263f",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.Parameters.withSamples",
+          "source_module": "TCSlib.Cryptography.LWE.SampleSchedules"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.Family.withSamples",
+          "source_module": "TCSlib.Cryptography.LWE.SampleSchedules"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.LWE.multiMessageSamples",
+          "source_module": "TCSlib.Cryptography.LWE.SampleSchedules"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.multiMessageSamples_eq",
+          "source_module": "TCSlib.Cryptography.LWE.SampleSchedules"
+        },
+        {
+          "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.LWE.multiMessageSamples_eval",
+          "source_module": "TCSlib.Cryptography.LWE.SampleSchedules"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 28
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 30
+        },
+        {
+          "tag": "Wu24",
+          "text": "[Wu24]",
+          "line": 32
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3, parameter bookkeeping]",
+          "line": 48
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.2.3]",
+          "line": 62
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10, Definition 93.1; Wu24, Definition 20.5,\nbitwise batching]",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Assumption.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 8350,
+      "sha256": "159e13ea8359827c2fd92d5b5a81de61fc9b7397e07c23439d2282b3e1b9c3d5",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "structure",
+          "name": "TCSlib.Cryptography.SIS.Family",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.Family.inputBitsBound",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.Family.inputBitsBound_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.Family.outputBitsBound",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.Family.outputBitsBound_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.Family.encodeChallenge_length_le",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.Family.encodeSolution_length_le",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.Family.successAt",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.Family.successAt_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.SISAssumption",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Assumption",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.sisAssumption_iff",
+          "source_module": "TCSlib.Cryptography.SIS.Assumption"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 33
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 35
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1; PS10, Definition 26.8]",
+          "line": 60
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, representation accounting]",
+          "line": 90
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, representation accounting]",
+          "line": 100
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1; PS10, Definition 26.8]",
+          "line": 133
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1; PS10, Definition 26.8]",
+          "line": 153
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Basic.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 2945,
+      "sha256": "ae3427a4392dbdad45a4bd686a484651eba5889aca968e0efdac5bb38f3fefb6",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/SIS/Basic",
+          "kind": "structure",
+          "name": "TCSlib.Cryptography.SIS.Parameters",
+          "source_module": "TCSlib.Cryptography.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Basic",
+          "kind": "instance",
+          "name": "TCSlib.Cryptography.SIS.instNeZeroNatModulus",
+          "source_module": "TCSlib.Cryptography.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Basic",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.IsSolution",
+          "source_module": "TCSlib.Cryptography.SIS.Basic"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Basic",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.isSolution_iff",
+          "source_module": "TCSlib.Cryptography.SIS.Basic"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 26
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, squared-bound formulation]",
+          "line": 39
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, squared-bound formulation]",
+          "line": 57
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Encoding.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 12397,
+      "sha256": "5ab3511446d1abd2fdf29231585e7877ef7fff2d2185146c7bfbaf9aacf352b7",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.encodeChallenge",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.encodeChallenge_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.decodeSolution",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.decodeSolution_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.decodeSolution_of_length_ne",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.encodeSolution",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.encodeSolution_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.encodeChallenge_length",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.encodeChallenge_injective",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.encodeSolution_length",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.decodeSolution_encodeSolution",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Encoding",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.decodeSolution_encodeSolution_of_isSolution",
+          "source_module": "TCSlib.Cryptography.SIS.Encoding"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 32
+        },
+        {
+          "tag": "PS10",
+          "text": "[PS10]",
+          "line": 34
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1]",
+          "line": 53
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1; PS10, Section 2.1]",
+          "line": 66
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1]",
+          "line": 107
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1,\nsquared-bound representation]",
+          "line": 228
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/SIS/Experiments.lean",
+      "source_revision": "ec72ed773a690c17ac253707350935cc9e0acb34",
+      "bytes": 2384,
+      "sha256": "baa956040177e67435f09bcfa5c8adad1c0c81ad9043420e951612cf7c10eca8",
+      "declarations": [
+        {
+          "module": "TCSlib/Cryptography/SIS/Experiments",
+          "kind": "def",
+          "name": "TCSlib.Cryptography.SIS.successProbability",
+          "source_module": "TCSlib.Cryptography.SIS.Experiments"
+        },
+        {
+          "module": "TCSlib/Cryptography/SIS/Experiments",
+          "kind": "theorem",
+          "name": "TCSlib.Cryptography.SIS.successProbability_eq",
+          "source_module": "TCSlib.Cryptography.SIS.Experiments"
+        }
+      ],
+      "literal_citations": [
+        {
+          "tag": "Pei16",
+          "text": "[Pei16]",
+          "line": 27
+        },
+        {
+          "tag": "Pei16",
+          "text": "[Pei16, Definition 4.1.1, squared-bound formulation]",
+          "line": 42
+        }
+      ]
+    }
+  ],
+  "source_policy_closed": false,
+  "approved_matching": false,
+  "shared_registry_applied": false,
+  "external_worker": "codex",
+  "external_worker_selection_basis": "User preselected Codex for morning reviews; user dispatch still required",
+  "external_job_dispatched": false
+}

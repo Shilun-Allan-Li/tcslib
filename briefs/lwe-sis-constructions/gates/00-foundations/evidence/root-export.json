@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "show",
+    "--format=fuller",
+    "--no-ext-diff",
+    "4364d0e0fe9accd649b6acb4751e8684aa93ad1e",
+    "--",
+    "TCSlib.lean"
+  ],
+  "stdout": "commit 4364d0e0fe9accd649b6acb4751e8684aa93ad1e\nAuthor:     Seyoon Ragavan <complexzetaprime@gmail.com>\nAuthorDate: Sat Nov 7 14:12:06 2026 -0800\nCommit:     Seyoon Ragavan <complexzetaprime@gmail.com>\nCommitDate: Sat Nov 7 14:12:06 2026 -0800\n\n    Export LWE and SIS foundation facades\n    \n    Keep the three root imports separate for reconciliation with parallel campaign work. The new facades and their dependencies are checked; no whole-library root sweep is claimed.\n\ndiff --git a/TCSlib.lean b/TCSlib.lean\nindex 9a96ec094..e67420ce1 100644\n--- a/TCSlib.lean\n+++ b/TCSlib.lean\n@@ -56,6 +56,9 @@ import TCSlib.Cryptography.Pseudorandom\n import TCSlib.Cryptography.Asymptotic\n import TCSlib.Cryptography.Candidates\n import TCSlib.Cryptography.NumberTheory\n+import TCSlib.Cryptography.Encoding\n+import TCSlib.Cryptography.LWE\n+import TCSlib.Cryptography.SIS\n import TCSlib.Cryptography.ZeroKnowledge\n import TCSlib.Cryptography.Games\n import TCSlib.Cryptography.Games.Bridges\n"
+}
