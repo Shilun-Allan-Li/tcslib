@@ -1,70 +1,171 @@
 # Campaign pulse
 
-Checkpoint: eight scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
-notes each. The construction-core proof gate closes all 31 core obligations;
-all 263 constants in that audited core have only standard axioms. The latest
-adapter statement gate approves its 20-declaration surface. All 14 adapter proof
-obligations are now filled, checked and approved by their separate scoped proof audit.
-It does not certify the entire five-primitive campaign.
+The combined statement and independent 31-proof audits each pass **0 blockers,
+0 majors, 1 documentation minor and 4 notes** on draft
+[#250](https://github.com/Shilun-Allan-Li/tcslib/pull/250). Both documentation
+minors are corrected separately and checked. The combined Gate 11 audit also passes both scopes.
+
+The audited independent proof fill completes **31 obligations in seven modules** at
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`. The
+same isolated branch/worktree is used; no additional PR branch is created.
+The fills are published and their combined Codex proof audit passes. Its sole
+F02 overview repair is checked at
+`af54d28f6d412bc56844e7371e2b0b9b394c494c`. The user
+dispatches source work, approves matching and approves all merges.
+
+The six Regev hybrid support proofs pass their audit with 0 blockers, 0 majors,
+0 minors and 4 continuing notes. The checked source is
+`8c6b23f5b69260acb66cc99e322a81c4c79f51bb`, leaving **64 owned admissions**.
+The fresh 144-module sweep records zero errors and the same 17 inherited
+admission warnings. All six fills use only standard axioms, with the 589-constant
+inventory reconciled. See [the proof report](fills/05-regev-hybrids/REPORT.md).
+
+The user approved the two shared probability readers on [draft #255](https://github.com/Shilun-Allan-Li/tcslib/pull/255).
+With those readers, six more proofs complete the finite fixed-bit Regev security
+bound and leave **58 owned admissions**. Both scopes pass with zero blockers, majors, and minors. The auditor reran both
+serial closures and reproduced both axiom probes. See
+[the Gate 11 findings](../../audits/lwe-sis-regev-statistical-proofs-findings.md).
 
 | Part | Current progress | Remaining work |
 |---|---|---|
-| DLWE/SIS foundations | Parameterized assumptions, actual finite-noise law, experiments, faithful encodings and parsers are defined; representation/core proofs pass their audits | Source-policy completion, honest samplers and implemented parameter schedules |
-| Direct Regev symmetric encryption | Mathematical algorithms, every-seed bounded-error correctness and the concrete two-DLWE-advantage bound are proved and audited | Efficient machine/encoding implementations, uniform message bounds and existing primitive/game bridges |
-| SIS collision-resistant hashing | Binary matrix hash, collision-to-SIS reduction, compression/solution existence, dyadic profile and bit budgets are proved and audited | Efficient implementation and exact raw collision-output/CRH bridge, under the independent SIS assumption |
-| Regev CPA PKE | Source comparison, quantitative correctness and strong leftover-hash preflight are recorded | Formal algorithm/universality/security statement gates, proofs and machine/primitive bridge |
-| PRGs | Seed-allocation, noise entropy and indexing obligations are planned | Formal construction, quantitative/efficiency proofs and existing API bridge |
-| CCA2 PKE | Peikert–Waters route and supporting cryptographic trapdoors/strong one-time signature dependencies are planned | Supporting statement/proof gates and the final construction/security bridge |
+| DLWE/SIS foundations and sampling | Foundations, exact dyadic laws, bit-noise probability/support/symmetry/mean and common-secret sampling/test laws proved and audited | Efficient uniform family samplers and schedules, source policy |
+| Direct Regev symmetric encryption | Algorithms, bounded-error correctness and concrete two-DLWE bound proved and audited | Efficient implementations, uniform message bounds and final existing-game bridge |
+| SIS collision-resistant hashing | Core hash/reduction/profile, strong extraction, raw evaluator and exact collision-to-SIS output proofs audited | Counted-loop efficiency, and the CRH interface under independent SIS hardness |
+| Regev CPA PKE | Every-coin correctness and hybrid support audited. Statistical hybrid and final finite fixed-bit bound proved and audited | Efficiency, asymptotic bounds, and CPA interface |
+| PRGs | All eleven structured/MSB/flat generator obligations proved and audited with complete seed budgets | Efficient family schedules and standard exact-seed asymptotic PRG integration |
+| CCA2 PKE | Finite concealer hybrids, signed rounding, lossy image bound, and designated-branch cancellation audited. Anti-cyclic rank, injective-mode recovery and non-designated branch injectivity checked | Efficient all-but-one inversion, strong one-time signatures and CCA2 |
 
-The binary representation adapter module has 20 unchanged source declarations
-and all 14 audited obligations proved. Its fresh 93-module check passes, all 284
-owned constants use only standard axioms, and the nine public machine contracts
-it consumes are axiom-clean. The separate proof audit passes 0/0/0/3. The next
-implementation slice is scalar modular arithmetic using these adapters and
-the existing public arithmetic machines. Its isolated statement draft now
-typechecks at `dbacd91218c19f0df106d316ce4ff0e22b869e66`: eighteen declarations,
-twelve admissions, 94 fresh modules and sixteen axiom-clean backing contracts.
-This branch is published as draft PR #239; the returned scalar statement audit
-passes 0/0/0/3. Its twelve audited obligations are now filled and locally checked.
-The statements and their proof fill are kept separate from the audited #237 code.
+The earlier independent proof audit's fresh 144-module scoped sweep took 303.792
+seconds with zero errors, seventy owned and seventeen inherited admission
+warnings. Its axiom probe
+records 53.149 seconds. All 31 selected targets and 48 backing contracts use only
+standard axioms. Exactly the other seventy source obligations retain `sorryAx`.
+The full inventory has 589 constants, including fourteen new compiler auxiliaries.
+Two old congruence helpers have earlier originating modules, explicitly recorded;
+all 575 previous elaborated level/type representations compare exactly. Style is
+0 FAIL/2 unchanged WARN over 41 files; other native warnings match the statement
+baseline. No whole-library root elaboration or complete security endpoint is claimed.
 
-## PRs and user action
+PRs #236 through #239 have merged into `cryptography/lwe-sis-constructions`.
+The verified central tip is the #239 merge
+`27f9ea89b72d84abaec8128f2abd826f24aaced4`. Local #250 integration commit
+`6e230c9a518aadc30b1323a28be9ef96e5fd62c8` incorporates that exact target and
+preserves the checked Lean tree and pins. Intake verified GitHub draft #250
+at `b07abbb3b69a89b95fbc76c18ed0cf7bc13c638b` and the published Regev audit packet
+at exchange `3be2879df1cb5d37fd7cd2275bb520598e8c41eb`.
+Original statement source `17b2a282b545c6ebca3fccc88d518d18ae78f485` and exchange
+`64e245b345d908d835030efede1c91312a4e6cce` remain immutable historical inputs.
 
-The four campaign draft PRs target
-`cryptography/lwe-sis-constructions`:
+## Regev hybrid support
 
-* [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236): representation proofs.
-* [#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237): direct Regev/SIS
-  mathematical core, now with a passing proof audit.
-* [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238): binary representation
-  adapter proofs; both Codex statement and proof audits pass, with all 14
-  obligations discharged.
-* [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic;
-  its statement audit passes, with all twelve proof obligations now filled
-  and approved by their separate scoped proof audit.
+The passed proof review covers the uniform hash difference, extraction error
+budget, exact real-to-uniform-key DLWE hybrid, augmented-key bijection,
+ciphertext identity, and doubled error budget.
 
-All four have passing scoped statement audits, but none is marked clear to merge: source
-validation/ingestion/matching and applicable landing checks remain. No merge
-action is requested now. The user alone approves and merges. The adapter's exact
-published proof-review exchange input is `228c265d642013da76afa6cec976eaf11a8eb1b9`;
-its statement freeze remains `6eec97be8f54d9990340900a5595dab32fb477f5`.
-The filled Lean/root is `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`;
-its published draft head is `3350700f054ba07b31bcf23cab9f590afd998e28`.
-The separate 1009-section proof-review packet was published and dispatched to
-Codex, whose returned report now passes. See `fills/02-encoding-adapters/`.
+The statistical proof fill uses `isUniversal_iff` and `hasMinEntropy_iff` from
+the approved owner-side patch on #255. A one-line `omit` in the universality
+reader removes the unused input `Fintype` instance found by Lean. The corrected
+four-module owner check and the dependent replay on #250 pass. The random-bit
+reader and counted-loop registry disposition remain separate holds for the
+trapdoor and machine proofs.
 
-No search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice
-basis or Gaussian preimage sampling has been introduced. The exact proposed
-shared probability-reader and source-registry diffs remain unapplied.
+The source-policy job at `continuation/landing-source-policy/` returned partial
+work for the earlier #236–#239 stack, 161 declarations in 20 modules at
+`ec72ed773a690c17ac253707350935cc9e0acb34`. All returned checksums, four original
+assets, 191 frozen blobs and 703 typed matching records pass local intake. The
+59 proposed matches in that delivery use seven already-repaired PDF pages.
+The subsequent scoped approvals record 37 distinct attributions in
+`landing/01-foundations/` and `landing/02-construction-core/`, inherited by
+the merged adapter and scalar PRs.
+The user asked to postpone unrelated transcription; the root has narrowed future
+work to consumed source passages, accurate adaptation notes and reviewed matching.
+Source review for #250's new claims remains open, including PW10 where consumed.
 
-The current scalar proof source is `ec72ed773a690c17ac253707350935cc9e0acb34`: a
-fresh 94-module sweep has zero owned admissions and seventeen inherited warnings;
-all 302 owned constants and sixteen backing contracts have only standard axioms.
-The returned Codex scalar proof audit passes 0/0/0/3 at exchange
-`083448cef9229dc95b96ef45686ce7f3768992ab`. No proof repair is required.
-The user authorizes a larger combined overnight statement draft with sorries
-for later fills, and preselects Codex for all morning external audits.
+## SIS encoding and finite trapdoors
 
-**Not yet clear to merge — scoped audits pass; source-policy work, landing checks
-and user approval remain. Both adapter and scalar proof gates are closed;
-the next combined statement draft needs its own audit.**
+The new wave fills 40 audited obligations in nine modules at
+`3bf1cb424b10abef3ae7a438c6b7d0e1916d0800`. The 144-module sweep passes with
+zero errors. The 220 elaborated type comparisons agree with Gate 11, and all
+40 proofs use only standard axioms. The 18 remaining admissions are listed
+in the [proof report](fills/07-sis-trapdoor/REPORT.md). The scoped PW10 preflight
+pins the author PDF and the consumed passages.
+
+Gate 12 round one passed the mathematics and axiom checks for all 40 fills and
+reproduced both native sweeps. It held on the duplicate subset-sum proof. The PW10 reference
+ranges and overview are corrected in `d3bb52db5aaf249a35e83506371a3c86e76cb69a`.
+The user approved the exact shared-owner patch. The repair at
+`93dc88648f117877e42aaf58ba7b911c76a4b63a` places the common proof in `LWE.Basic`
+and preserves both theorem signatures. The 144-module fresh sweep, axiom
+probe, and all 220 elaborated type comparisons pass.
+[Round two repair report](fills/07-sis-trapdoor/round2/REPORT.md)
+[Gate 12 findings](../../audits/lwe-sis-trapdoor-proofs-findings.md) ·
+[Exact proposed diff](fills/07-sis-trapdoor/intake-r1/proposed-binary-error-sum.patch)
+
+PR #255 is merged. The live central tip is
+`41aaf0a1acf29318fa8d741dadd9f5f585e43c93`. The merge preview preserves the
+current #250 Lean tree, root, and pins.
+[Reader landing record](https://github.com/Shilun-Allan-Li/tcslib/blob/6410ad6375afe46dcea23b882dcf7eab302fe78e/briefs/lwe-sis-constructions/prerequisites/01-probability-readers/LANDING.md)
+
+Gate 12 round two **passes the 40-fill proof gate** with zero blockers, majors,
+and minors. The independent replay reproduces all 144 module logs and both
+probes. F01 and F02 are closed. Four continuing notes remain.
+[Round two findings](../../audits/lwe-sis-trapdoor-proofs-r2-findings.md) ·
+[Audit disposition](../../audits/lwe-sis-trapdoor-proofs-resolutions.md)
+
+Intake verifies exchange `3d1d76833cf36a614559338dd31a2dc0459618d5`,
+the exact patch, all 260 indexed attachments, and the merge preview.
+[Verified intake](fills/07-sis-trapdoor/round2/review-intake.json)
+
+## Anti-cyclic rank
+
+Both rank proofs are checked at `75a4214dc098cd6c363d00c34f569bac23eb4555`, leaving 16
+owned admissions. The affected closure and three probes pass. Of the 220
+types, 216 match exactly and four have kernel-checked definitional equality. The existing power basis and cyclotomic result
+use the same pinned Mathlib. This checkpoint enters the next combined
+proof review. [Rank report](fills/08-anti-cyclic-rank/REPORT.md)
+
+## Gadget and inversion
+
+The approved shared reader is isolated at `2414fd3eae05c99474d1888609b01ac5989523a5`.
+Seven further fills at `713093c36ac66f7e56e9354581f0bb3f59772341` prove positional gadget evaluation,
+injective-mode recovery and non-designated branch injectivity. The fresh
+144-module sweep passes and leaves nine counted-loop and CRH admissions.
+The two rank proofs and this wave enter one Codex audit.
+[Proof report](fills/09-gadget-inversion/REPORT.md)
+
+Gate 13 **passes** the two rank fills, seven gadget and recovery fills,
+and the approved reader with zero blockers, majors, and minors. The auditor
+replayed the 144-module closure and both probes. Intake verified the 247
+sections at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`.
+[Findings](../../audits/lwe-sis-gadget-inversion-proofs-findings.md) ·
+[Disposition](../../audits/lwe-sis-gadget-inversion-proofs-resolutions.md)
+
+The counted-loop registration proposal pairs the existing FP contract with
+the H14 clean-install and head-envelope contracts. The Lean specialization
+passes using the existing owners. The maintainer approved the exact
+one-row diff, applied at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11`. Gate 14 passed the host
+entry with zero blockers, majors, and minors. The reviewer replayed the
+45-module closure and both specializations. The seven efficiency fills
+and two SIS CRH fills are the next proof wave.
+[Counted-loop disposition](../../audits/lwe-sis-counted-loop-registration-resolutions.md)
+
+## Counted-loop consumers and SIS collision resistance
+
+The final seven efficiency and two asymptotic SIS proofs are filled at
+`8b3187bdaf0c634c086313a727a7210dca14bfeb`. The 144-module replay passes with zero owned admissions and
+17 inherited admission warnings. All 220 elaborated types match Gate 13.
+The axiom inventory closes the nine admissions and records four compiler
+auxiliaries. Gate 15 passed with zero blockers, zero majors, one documentation
+minor, and four continuing notes. The auditor replayed the full 144-module
+closure and both probes. F01 corrects the axiom description in the proof report.
+[Proof report](fills/10-counted-loop-consumers/REPORT.md) · [Audit disposition](../../audits/lwe-sis-counted-loop-consumer-proofs-resolutions.md)
+
+The approved scoped source updates attach 35 PW10 and 49 Pei16 and Wu24
+attributions. Three foundation attributions carry forward. The exact-target
+preview passes the 1,089-module library closure, including the root, with
+zero errors and zero campaign-owned admissions. Its 198 inherited admission
+warnings include the 17 scoped warnings. The export checks match the target.
+[Landing verification](landing/05-construction-statements/LANDING.md)
+
+The final publication check verifies the live GitHub merge preview. The user
+approves and performs the merge.

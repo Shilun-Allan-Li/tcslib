@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.Cryptography.Pseudorandom.Generators.LWE
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 import TCSlib.Cryptography.Pseudorandom.Functions
 
@@ -23,6 +24,7 @@ construction). Each theorem is an explicit reduction with an exact bound on adva
 
 * `Indistinguishability`: the sunglass and multicopy lemmas (Lemmas 3.2 and 3.3).
 * `Generators`: the PRG advantage (Definition 3.5) and PRG extension (Theorem 3.1).
+* `Generators.LWE`: direct DLWE generators, explicit bit packings and stretch-budget statements.
 * `GeneratorFromPermutation`: a PRG from a one-way permutation (Theorem 3.2).
 * `Functions`: oracle adversaries, pseudorandom functions and GGM (Theorem 3.3).
 
@@ -30,4 +32,6 @@ construction). Each theorem is an explicit reduction with an exact bound on adva
 
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, Chapter 3.
+* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016,
+  Definition 4.2.3 (the direct DLWE generator statements).
 -/

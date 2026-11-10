@@ -1,0 +1,135 @@
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean b/TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean
+index 3c2e6ce..c0b4fb6 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean
+@@ -131,26 +131,12 @@ theorem encrypt_residual (P : Parameters)
+ /-- Any binary subset of errors bounded by `B` has absolute sum at most `m*B`
+ [Pei16, Section 5.2.1, worst-case bounded-support specialization].
+ 
+-**Proof sketch.** Apply the integer triangle inequality. A selected coordinate has
+-absolute value at most `B`, and an unselected coordinate is zero; sum over all rows. -/
++**Proof sketch.** Use the shared binary subset-sum bound with the original error
++vector and subset coins. -/
+ theorem subsetError_bound (P : Parameters) (e : Fin P.samples → ℤ)
+     (r : Fin P.samples → Bool) (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B) :
+     (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤ P.samples * B := by
+-  calc
+-    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤
+-        ∑ i : Fin P.samples, (e i * ((r i).toNat : ℤ)).natAbs :=
+-      Finset.le_sum_of_subadditive Int.natAbs (by decide)
+-        (fun x y => Int.natAbs_add_le x y) Finset.univ _
+-    _ ≤ ∑ _i : Fin P.samples, B := by
+-      apply Finset.sum_le_sum
+-      intro i _
+-      cases r i
+-      · simp only [Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
+-        exact Nat.zero_le B
+-      · simpa only [Bool.toNat_true, Nat.cast_one, mul_one] using he i
+-    _ = P.samples * B := by
+-      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+-        Nat.cast_id]
++  exact LWE.binaryErrorSum_bound e r B he
+ 
+ /-- Bounded errors give correctness for every public matrix, secret, bit and subset
+ coin vector when `2*(m*B) < floor(q/2)` [Pei16, Section 5.2.1, strict refinement].
+diff --git a/TCSlib/Cryptography/LWE/Basic.lean b/TCSlib/Cryptography/LWE/Basic.lean
+index c68ea4e..8b23008 100644
+--- a/TCSlib/Cryptography/LWE/Basic.lean
++++ b/TCSlib/Cryptography/LWE/Basic.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.LWE.Noise
++import Mathlib.Algebra.Order.BigOperators.Group.Finset
+ import Mathlib.Data.Matrix.Mul
+ import Mathlib.Data.ZMod.Basic
+ 
+@@ -22,11 +23,12 @@ set_option autoImplicit false
+ ## Main results
+ 
+ * `noisyValues_apply`, `sample_fst`, `sample_snd` are the owner-side readings of the maps.
++* `binaryErrorSum_bound` bounds a binary subset sum of magnitude-bounded errors.
+ 
+ ## References
+ 
+ * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
+-  17 February 2016, Definitions 4.2.1 and 4.2.3.
++  17 February 2016, Definitions 4.2.1 and 4.2.3 and Section 5.2.1.
+ 
+ **Convention.** Rows are samples, so `A` is `m` by `n` and secrets multiply on the right.
+ This is the transpose of the row-secret convention in [Pei16]. A uniform seed for `sample`
+@@ -67,6 +69,32 @@ theorem noisyValues_apply (P : Parameters)
+     (s : Fin P.dimension → ZMod P.modulus) (e : Fin P.samples → ℤ) (i : Fin P.samples) :
+     noisyValues P A s e i = (∑ j, A i j * s j) + (e i : ZMod P.modulus) := rfl
+ 
++/-- A subset selected by a binary mask has absolute sum at most `m*B` when
++each of the `m` integer errors has magnitude at most `B`
++[Pei16, Section 5.2.1, deterministic bounded-support specialization].
++
++**Proof sketch.** Apply the triangle inequality to the sum. Every selected error
++has magnitude at most `B`, and every unselected term is zero. Sum the uniform
++bound over all coordinates. -/
++theorem binaryErrorSum_bound {m : ℕ} (e : Fin m → ℤ) (r : Fin m → Bool)
++    (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B) :
++    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤ m * B := by
++  calc
++    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤
++        ∑ i : Fin m, (e i * ((r i).toNat : ℤ)).natAbs :=
++      Finset.le_sum_of_subadditive Int.natAbs (by decide)
++        (fun x y => Int.natAbs_add_le x y) Finset.univ _
++    _ ≤ ∑ _i : Fin m, B := by
++      apply Finset.sum_le_sum
++      intro i _
++      cases r i
++      · simp only [Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
++        exact Nat.zero_le B
++      · simpa only [Bool.toNat_true, Nat.cast_one, mul_one] using he i
++    _ = m * B := by
++      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
++        Nat.cast_id]
++
+ /-- The LWE sampler publishes `(A, A s + e)` with one common secret for all rows
+ [Pei16, Definition 4.2.3]. A uniform input chooses the matrix and secret independently
+ and supplies independent scalar-noise seeds to the rows. -/
+diff --git a/TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean b/TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean
+index aaeeace..3cd8d5d 100644
+--- a/TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean
++++ b/TCSlib/Cryptography/TrapdoorFunctions/Lossy/Matrix.lean
+@@ -2,6 +2,7 @@
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
++import TCSlib.Cryptography.LWE.Basic
+ import TCSlib.Cryptography.TrapdoorFunctions.Lossy.Gadget
+ import Mathlib.Data.Finset.Image
+ 
+@@ -149,26 +150,12 @@ theorem residual_injectiveKey (b a w d : ℕ)
+ 
+ /-- A selected integer error column has absolute sum at most `N*B`.
+ 
+-**Proof sketch.** Each binary multiplier is zero or one. Apply the integer triangle
+-inequality and add the `N` coordinatewise bounds. -/
++**Proof sketch.** Use the shared binary subset-sum bound with column `j`
++and the original selection bits. -/
+ theorem error_sum_bound {N w : ℕ} (E : Matrix (Fin N) (Fin w) ℤ)
+     (x : Fin N → Bool) (B : ℕ) (hE : ∀ i j, (E i j).natAbs ≤ B) (j : Fin w) :
+     (∑ i, E i j * ((x i).toNat : ℤ)).natAbs ≤ N * B := by
+-  have hterm (i : Fin N) : |E i j * ((x i).toNat : ℤ)| ≤ (B : ℤ) := by
+-    have hi : ((E i j).natAbs : ℤ) ≤ (B : ℤ) := by exact_mod_cast hE i j
+-    rw [Int.natCast_natAbs] at hi
+-    cases hx : x i
+-    · simp
+-    · simpa using hi
+-  have hsum : |∑ i, E i j * ((x i).toNat : ℤ)| ≤ (N : ℤ) * B := by
+-    calc
+-      _ ≤ ∑ i : Fin N, |E i j * ((x i).toNat : ℤ)| :=
+-        Finset.abs_sum_le_sum_abs _ _
+-      _ ≤ ∑ _i : Fin N, (B : ℤ) := Finset.sum_le_sum (fun i _ => hterm i)
+-      _ = _ := by simp
+-  have hcast : ((∑ i, E i j * ((x i).toNat : ℤ)).natAbs : ℤ) ≤ ((N * B : ℕ) : ℤ) := by
+-    simpa only [Int.natCast_natAbs, Nat.cast_mul] using hsum
+-  exact_mod_cast hcast
++  exact LWE.binaryErrorSum_bound (fun i => E i j) x B (fun i => hE i j)
+ 
+ /-- The retained ordinary secret matrix perfectly recovers every input for every
+ bounded-error key under strict rounding separation [PW10, Section 6.3, refinement].

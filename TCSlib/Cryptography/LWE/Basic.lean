@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.LWE.Noise
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Matrix.Mul
 import Mathlib.Data.ZMod.Basic
 
@@ -22,11 +23,12 @@ set_option autoImplicit false
 ## Main results
 
 * `noisyValues_apply`, `sample_fst`, `sample_snd` are the owner-side readings of the maps.
+* `binaryErrorSum_bound` bounds a binary subset sum of magnitude-bounded errors.
 
 ## References
 
 * [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, author version dated
-  17 February 2016, Definitions 4.2.1 and 4.2.3.
+  17 February 2016, Definitions 4.2.1 and 4.2.3 and Section 5.2.1.
 
 **Convention.** Rows are samples, so `A` is `m` by `n` and secrets multiply on the right.
 This is the transpose of the row-secret convention in [Pei16]. A uniform seed for `sample`
@@ -66,6 +68,32 @@ theorem noisyValues_apply (P : Parameters)
     (A : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus))
     (s : Fin P.dimension → ZMod P.modulus) (e : Fin P.samples → ℤ) (i : Fin P.samples) :
     noisyValues P A s e i = (∑ j, A i j * s j) + (e i : ZMod P.modulus) := rfl
+
+/-- A subset selected by a binary mask has absolute sum at most `m*B` when
+each of the `m` integer errors has magnitude at most `B`
+[Pei16, Section 5.2.1, deterministic bounded-support specialization].
+
+**Proof sketch.** Apply the triangle inequality to the sum. Every selected error
+has magnitude at most `B`, and every unselected term is zero. Sum the uniform
+bound over all coordinates. -/
+theorem binaryErrorSum_bound {m : ℕ} (e : Fin m → ℤ) (r : Fin m → Bool)
+    (B : ℕ) (he : ∀ i, (e i).natAbs ≤ B) :
+    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤ m * B := by
+  calc
+    (∑ i, e i * ((r i).toNat : ℤ)).natAbs ≤
+        ∑ i : Fin m, (e i * ((r i).toNat : ℤ)).natAbs :=
+      Finset.le_sum_of_subadditive Int.natAbs (by decide)
+        (fun x y => Int.natAbs_add_le x y) Finset.univ _
+    _ ≤ ∑ _i : Fin m, B := by
+      apply Finset.sum_le_sum
+      intro i _
+      cases r i
+      · simp only [Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
+        exact Nat.zero_le B
+      · simpa only [Bool.toNat_true, Nat.cast_one, mul_one] using he i
+    _ = m * B := by
+      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_id]
 
 /-- The LWE sampler publishes `(A, A s + e)` with one common secret for all rows
 [Pei16, Definition 4.2.3]. A uniform input chooses the matrix and secret independently

@@ -5,7 +5,38 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-The active dyadic arithmetic draft is locally proved on PR #239's branch,
+**Ten scoped gates pass.** The independent 31-proof Codex review passes
+0 blockers/0 majors/1 documentation minor/4 notes at source
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a` and exchange
+`8efc0e669ed3ed004616c4aab81317ebf5fa17e6`, on existing draft PR #250.
+Its F02 flat-generator overview is corrected separately at
+`af54d28f6d412bc56844e7371e2b0b9b394c494c`, with identical code and a passing
+module/style check. No mathematical repair is required. Seventy owned admissions
+and all N01–N04 obligations remain. No merge is clear yet.
+
+The source-policy job for the earlier #236–#239 stack has returned a partial
+delivery at exchange `a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1`. Its local intake
+verifies 58 delivery checksums, 191 frozen source/record blobs, four primary
+assets and 703 typed matching records. All 161 declarations have dispositions;
+59 proposed matches cite seven already-repaired pages. They remain unapproved.
+
+Following the user's feedback, bulk PDF-to-Markdown transcription is postponed.
+Review now targets the consumed PDF passages, adaptations and matching records;
+the 186 other unvalidated transcription pages are not missing Lean work or an
+additional landing requirement. See `continuation/landing-source-policy/SCOPED-REVIEW.md`
+and its `intake-r1/` records. Applicable scoped reference integration and landing
+checks remain. Later #250/PW10 source work stays separate. No shared registry,
+blueprint/dataset or code is changed by this intake or scope decision.
+
+The current code remains on the same isolated #250 worktree/branch. The 31 fills,
+589-constant axiom inventory and fresh 144-module scope pass; all 575 earlier
+elaborated types agree, with two compiler-origin changes disclosed. Full primitive
+interfaces, efficient family sampling/schedules and final CPA/CCA2 integration
+remain separate. The pending readers and loop catalogue/host-gate routes stay paused.
+
+## Audited dependency stack
+
+The dyadic arithmetic dependency is proved on PR #239's branch,
 `cryptography/lwe-sis-dyadic-arithmetic`, in `tcslib-lwe-sis-dyadic-arithmetic`.
 Filled source `ec72ed773a690c17ac253707350935cc9e0acb34` discharges all twelve
 scalar obligations with the same eighteen declarations. A fresh 94-module sweep
@@ -43,10 +74,11 @@ machine/primitive bridges remain open.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
-The active draft is `cryptography/lwe-sis-dyadic-arithmetic` in the separate
-`tcslib-lwe-sis-dyadic-arithmetic` worktree. Its audited dependencies are
-#236/#237/#238. The only new existing-file overlap is the Encoding facade import;
-it is isolated in its own export commit. Its published draft PR is #239.
+The current draft is `cryptography/lwe-sis-construction-statements` in the separate
+`tcslib-lwe-sis-construction-statements` worktree. Its audited dependencies are
+#236/#237/#238/#239, stacked through
+`307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. Integration of those PRs remains
+user-controlled; this draft does not merge them into the central branch.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations with all 31 former admissions filled: sample schedules, modular
@@ -97,18 +129,20 @@ they do not execute Lean or prove security.
 
 ## Ownership and publication
 
-Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic`.
-Draft branch: `cryptography/lwe-sis-dyadic-arithmetic`.
+Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-construction-statements`.
+Draft branch: `cryptography/lwe-sis-construction-statements`.
 Central PR target: `cryptography/lwe-sis-constructions`.
-Audited dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
+Audited stack and intake: `307cfdd1d6cadfda2ae9cca5367705ad770c5f42` (PRs #236–#239).
+Historical foundation dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
 Phase-1 Lean/root freeze: `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`.
 The original campaign context and older source/audit identities remain historical.
 
 All Lean updates go through a user-approved PR. The foundation's three root imports
 remain isolated in export commit `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`.
-The next phase adds two root imports and small Encoding/LWE facade additions in
-its separate export commit. Those are the only existing-file Lean changes relative
-to the audited dependency. Existing owner APIs, pins, other campaigns' records and
+The combined phase changes six existing root/facade export files in its separate
+export commit, as enumerated in `gates/08-construction-statements/REPORT.md`.
+Those are the only existing-file Lean changes relative to its audited stack.
+Existing owner APIs, pins, other campaigns' records and
 other maintainers' checkouts are unchanged.
 Builds use only the own pinned packages and scratch objects; root native/cache jobs are serial.
 
@@ -131,6 +165,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — all seven scoped gates pass. Scalar proof review,
-source ingestion/matching and relevant integration checks remain open.
-The user approves and merges PRs.**
+**Not yet clear to merge — ten scoped gates pass. Source-policy closure and
+exact-target landing checks remain for the earlier PRs; #250 also retains
+seventy admissions, shared-owner holds and user-controlled integration.**

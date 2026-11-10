@@ -25,10 +25,14 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 
 | Item | Identity |
 |---|---|
-| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic` |
-| Active draft PR branch | `cryptography/lwe-sis-dyadic-arithmetic` |
+| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-construction-statements` |
+| Active draft PR branch | `cryptography/lwe-sis-construction-statements` |
 | Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
+| Current audited stack / intake baseline | `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`, PRs #236/#237/#238/#239 |
+| Combined statement Lean / root freeze | `17b2a282b545c6ebca3fccc88d518d18ae78f485` |
+| Current independent proof source | `f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, existing draft PR #250 |
+| Checked F02 comment repair | `af54d28f6d412bc56844e7371e2b0b9b394c494c` |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
 | Phase-1 statement freeze | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
 | Construction-core proof freeze | `690217cc1aaefe411158808a8b0797fd887a8abc` |
@@ -43,7 +47,7 @@ through the GitHub connector and fast-forwarded in this worktree only. Its Lean 
 root exports, toolchain and manifest match the original baseline. Shell GitHub fetch is
 blocked by DNS restrictions; no successful shell fetch is claimed.
 
-The active draft was initially created from the remote-verified campaign context and
+The phase-1 draft was initially created from the remote-verified campaign context and
 the audited foundation. When the user selected a central LWE/SIS integration branch,
 its two unpublished code/export commits were replayed onto the audited dependency,
 removing unrelated campaign-record ancestry. Every checked Lean/pin byte was unchanged.
@@ -59,7 +63,56 @@ metadata. The returned construction-core proof audit now passes 0/0/0/3; the
 pasted report and separate gate resolutions are preserved under `audits/`. No
 proof repair was needed, and the issued input packet remains unchanged.
 
-## Current construction-core proof phase (passed)
+## Passed combined statements and current independent fill
+
+The combined statement audit passes 0/0/1/4 on #250; its F01 documentation minor
+is corrected at `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c`. The subsequent independent
+fill completes 31 obligations in seven modules at
+`f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, with all definitions/statements/imports
+frozen. Seventy owned admissions remain. A fresh 144-module sweep (303.792 s),
+589-constant axiom probe (53.149 s) and scoped style 0/2/41 pass. All selected
+targets are standard-axiom only. Two older compiler helpers change emitting module;
+all 575 earlier elaborated type representations compare exactly. See
+`briefs/lwe-sis-constructions/fills/04-construction-independent/` for the separate
+proof gate. N01–N04 and user-controlled integration remain open.
+
+The larger overnight draft has 19 mathematical modules and 220 source declarations:
+57 definitions, 163 theorems, 62 closed `rfl` readers and 101 explicit admissions
+for later fills. Its mathematical commit is
+`2bf9dd52882bcafbce9eab48a5bab796275f2094`; the separate export commit and frozen
+Lean/root are `17b2a282b545c6ebca3fccc88d518d18ae78f485`. It covers exact dyadic
+sampling and bit-noise laws, encoded matrix arithmetic, SIS universality/raw-output
+and asymptotic adapters, Regev PKE algorithms/concrete bounds, direct DLWE generators,
+and secret-matrix lossy/all-but-one trapdoor mathematics for the later CCA2 endpoint.
+
+The final fresh serial seven-facade sweep covers 144 modules with zero errors,
+101 new and 17 inherited admission warnings. All 575 owned constants reconcile:
+302 earlier constants, 220 source declarations, 40 generated non-simp projection
+readers and 13 compiler auxiliaries. Exactly the intended 101 admissions use
+`sorryAx`; all 48 selected backing contracts are standard-axiom only. Scoped style
+is 0 FAIL/2 unchanged WARN over 41 files. No whole-library root elaboration or
+completed primitive endpoint is claimed.
+
+Six existing export files overlap with shared facades, in the separate export
+commit. No old mathematical declaration or shared owner API changes. Exact proposals
+for a random-bit reading lemma and registration of the existing public counted
+loop remain data only; dependent proof routes await coordination. The user
+preselected Codex and dispatched the combined statement audit. Publication is
+verified as draft PR #250 at exchange `64e245b345d908d835030efede1c91312a4e6cce`.
+The independent proof fill was published at exchange
+`8efc0e669ed3ed004616c4aab81317ebf5fa17e6` and its Codex audit passes
+0 blockers/0 majors/1 documentation minor/4 notes. The F02 overview repair at
+`af54d28f6d412bc56844e7371e2b0b9b394c494c` is checked. The earlier-stack
+source-policy inputs were published at exchange
+`a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1`; their partial return is preserved
+and verified under `continuation/landing-source-policy/intake-r1/` in the briefs.
+Following the user's feedback, review targets consumed PDF passages and proposed
+matches. Unrelated whole-document transcription is postponed and does not expand
+the formalization scope or block independent work. Matching/source integration
+and landing checks remain; full-reference validation is not claimed.
+See `briefs/lwe-sis-constructions/gates/08-construction-statements/`.
+
+## Historical construction-core and arithmetic gates (passed)
 
 The separate phase-1 draft contains eight mathematical modules: explicit polynomial
 sample replacement, canonical modular parsing, bounded-error bit decoding, direct
@@ -439,3 +492,15 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | Filled all twelve audited scalar proofs at `ec72ed773a690c17ac253707350935cc9e0acb34`, with eighteen declarations and all definitions/signatures fixed. Fresh 94-module sweep (251.162 s), 302 constants and sixteen backing contracts only standard axioms; no new compiler auxiliary. Three passing development runs retained. | Separate proof audit prepared next on existing PR #239; no export/shared API/pin edit, push or merge; N01–N03 retained |
 | 2026-11-08 | User freshly selects Codex for the separate scalar proof audit. Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, bundled records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110` and the 1301-section packet remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
 | 2026-11-08 | Scalar proof audit PASS 0/0/0/3 at `ec72ed773a690c17ac253707350935cc9e0acb34`; full pasted report retained, 102 frozen sources and all nine nested checksum sets rehashed. Published #239 head and exact exchange input verified. User authorizes a larger combined overnight statement draft with sorries for later fills and preselects Codex for morning audits. | Eight scoped gates pass; no merge; pause only dependent fronts requiring user input and continue independent work |
+| 2026-11-08 (UTC) | Isolated combined draft from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. Mathematics `2bf9dd52882bcafbce9eab48a5bab796275f2094`, separate exports/freeze `17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 modules, 220 declarations, 101 admissions; final fresh 144-module sweep (288.743 s), 575 constants and 48 backing contracts reconciled, style 0/2/41, finite models pass. Two internal agents supplied read-only research; root native work stayed serial. | Combined Codex statement review prepared; no external dispatch, central push or merge; shared reader/catalogue proposals remain unapplied and dependent fills paused; N01–N03 retained |
+| 2026-11-08 (Pacific) | Combined statement audit PASS 0/0/1/4 at exchange `64e245b345d908d835030efede1c91312a4e6cce`, PR #250 verified open/draft. F01 comment-only repair `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c` passes native/style/source invariance checks. Independent fill `f293b63200ee3c6de6e709925f67c4d60fdc7b4a` closes 31 obligations in seven modules; 70 remain. Fresh 144-module sweep 303.792 s, 589 constants and 48 backing contracts reconciled, selected fills sorry-free; all 575 prior elaborated types preserved, two compiler-origin migrations disclosed. | One combined Codex proof review prepared on existing #250; no shared proposal, external dispatch, central push or merge; N01–N04 retained |
+| 2026-11-08 (Pacific) | Independent 31-proof audit PASS 0/0/1/4 at exchange `8efc0e669ed3ed004616c4aab81317ebf5fa17e6`, PR #250 verified open/draft. F02 overview-only repair `af54d28f6d412bc56844e7371e2b0b9b394c494c` passes module/style and unchanged-code checks. Rehashed 153 sources, 2796 attachments and all 12 nested checksum sets (2411 entries). Prepared first-landing source-policy job: 161 declarations/20 modules at audited earlier-stack source `ec72ed773a690c17ac253707350935cc9e0acb34`, Pei16/Wu24 PDFs/raws, 196 pages. | Ten gates pass; user dispatch and source/matching review required. No new proof wave, registry/dataset edit, paid pipeline, external dispatch or merge; N01–N04 retained |
+| 2026-11-08 (Pacific) | User supplies the source-policy ZIP locally. Intake verifies 58 delivery and 10 input checksums, four exact primary assets, 191 frozen blobs and 703 typed matching records; all 161 names are accounted for. Original PARTIAL report and bytes are preserved. User asks to defer PDF-to-Markdown work for material not being formalized; root narrows review to consumed passages. All 59 proposed matches cite seven already-repaired pages. | Bulk transcription deferred, not an additional landing prerequisite. No whole-reference validation, approved matching, registry/blueprint/dataset or Lean edit, new dispatch, push or merge; scoped source integration and landing checks remain |
+| 2026-11-09 (UTC) | Gate 12 round one accepts the mathematics of all 40 fills and holds on a duplicated subset-sum bound. F02 is repaired in `d3bb52db5aaf249a35e83506371a3c86e76cb69a`. The user approves the exact F01 patch, applied at `93dc88648f117877e42aaf58ba7b911c76a4b63a` on #250. A fresh 144-module sweep, 220 type comparisons and 309 axiom prints reconcile. | Round two includes the shared owner theorem and both existing wrappers. The 18 admissions, scoped source review, and landing checks remain open. |
+| 2026-11-09 (Pacific) | Gate 12 round two passes the 40-fill proof gate with zero blockers, majors, and minors. Both repairs are closed at Lean `93dc88648f117877e42aaf58ba7b911c76a4b63a`. Intake verifies published exchange `3d1d76833cf36a614559338dd31a2dc0459618d5`, 260 attachments, and 44 nested evidence checksums. | Four continuing notes remain. The 18 admissions, scoped source review, and landing checks are open. |
+| 2026-11-09 (Pacific) | Filled both anti-cyclic rank obligations at `75a4214dc098cd6c363d00c34f569bac23eb4555`. All four affected modules and three probes pass. 216 types match exactly and four have kernel-checked definitional equality. Restored 178 missing official archives for the pinned cyclotomic import. | Sixteen admissions remain. The next combined proof audit requires a fresh scoped sweep. The shared positional reader still awaits approval. |
+| 2026-11-09 (Pacific) | Applied the user-approved block reader at `2414fd3eae05c99474d1888609b01ac5989523a5` and checked seven gadget and inversion fills at `713093c36ac66f7e56e9354581f0bb3f59772341`. The fresh 144-module scope passes. | Nine owned admissions remain. The combined rank and gadget review awaits maintainer publication. |
+| 2026-11-09 (Pacific) | Gate 13 round one PASS with zero blockers, majors, and minors at exchange `4cd97c861b80fb7d3ea7f40a772657c7aad367eb`. The auditor independently replayed the 144 modules and both probes for Lean `713093c36ac66f7e56e9354581f0bb3f59772341`. | The four continuing notes, nine counted-loop and CRH admissions, and landing checks remain open. |
+| 2026-11-09 (Pacific) | Checked the existing counted-loop FP host composed with H14 clean installation and its head envelope. Prepared the exact one-row H16 proposal against the common registry blob. | The shared registry awaits maintainer coordination and Gate 14 review. |
+| 2026-11-09 (Pacific) | The maintainer approved the exact H16 row. Applied the registry-only change at `2055a7425549d9d0e9cbd1f4c2bb9b9a7a8aeb11` and pinned the 45-module head-envelope probe closure. | Gate 14 independent host review precedes the consumer fills. |
+| 2026-11-09 (Pacific) | Gate 14 round one PASS with zero blockers, majors, and minors and one scope note. The 45-module replay and both public-contract specializations pass at exchange `20436a1bea0ebeb636c2a0ca39acfa9969a4caae`. | The approved H16 registration is cleared for the seven efficiency fills and two dependent SIS CRH fills. Scoped source matching and landing remain open. |

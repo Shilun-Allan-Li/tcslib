@@ -1,0 +1,313 @@
+import TCSlib.Cryptography.Encoding
+import TCSlib.Cryptography.LWE
+import TCSlib.Cryptography.SIS
+import TCSlib.Cryptography.Encryption
+import TCSlib.Cryptography.Hashing
+import TCSlib.Cryptography.Pseudorandom
+import TCSlib.Cryptography.TrapdoorFunctions
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandStep
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandStep_eq
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandStep_fst
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandStep_length_le
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.polyTimeComputable_expandStep
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandPoly
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandPoly_eq
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandPoly_length
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.expandPoly_encode
+#print axioms TCSlib.Cryptography.Encoding.BooleanVector.polyTimeComputable_expandPoly
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep_fst
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotStep_length_le
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotStep
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotWords
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotWords_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotWords_length
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotWords
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_length
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.dotPoly_encodeVector
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_dotPoly
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep_fst
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecStep_length_le
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_matVecStep
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_length
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.matVecPoly_encodeMatrix
+#print axioms TCSlib.Cryptography.Encoding.DyadicLinearAlgebra.polyTimeComputable_matVecPoly
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToResidue
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToResidue_eq
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToResidue_bijective
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToResidue_uniform
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.encode_bitsToResidue
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToVector
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToVector_apply
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToVector_bijective
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToVector_uniform
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.encode_bitsToVector
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToMatrix
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToMatrix_apply
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToMatrix_bijective
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.bitsToMatrix_uniform
+#print axioms TCSlib.Cryptography.Encoding.DyadicUniform.encode_bitsToMatrix
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen_fst
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.keygen_snd
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_fst
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_snd
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_residual
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.subsetError_bound
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt_encrypt
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.decrypt_keygen_encrypt
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.view
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.view_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.realView
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.realView_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKeyView
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKeyView_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.reduction
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.reduction_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.real_uniformKey_advantage
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.hashParameters
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.augmented
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.augmented_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.augmented_bijective
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.encrypt_augmented
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.extractionError_eq
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.uniformKey_uniform_advantage_le
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.distAdv_encrypt_le
+#print axioms TCSlib.Cryptography.Encryption.PublicKey.Regev.two_extractionError_le
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionAt
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionAt_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.negligible_collisions_of_SIS
+#print axioms TCSlib.Cryptography.Hashing.SIS.dyadic_collision_negligible
+#print axioms TCSlib.Cryptography.Hashing.SIS.rawCollisionInputs
+#print axioms TCSlib.Cryptography.Hashing.SIS.rawCollisionInputs_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputStep
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputStep_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputStep_fst
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputStep_length_le
+#print axioms TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_collisionOutputStep
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly_length
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionOutputPoly_pairEncode
+#print axioms TCSlib.Cryptography.Hashing.SIS.decode_collisionOutputPoly
+#print axioms TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_collisionOutputPoly
+#print axioms TCSlib.Cryptography.Hashing.SIS.rawCollisionProbability_le_successProbability
+#print axioms TCSlib.Cryptography.Hashing.SIS.hashPoly
+#print axioms TCSlib.Cryptography.Hashing.SIS.hashPoly_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.hashPoly_length
+#print axioms TCSlib.Cryptography.Hashing.SIS.hashPoly_encodeMatrix
+#print axioms TCSlib.Cryptography.Hashing.SIS.polyTimeComputable_hashPoly
+#print axioms TCSlib.Cryptography.Hashing.SIS.hash_difference_probability
+#print axioms TCSlib.Cryptography.Hashing.SIS.isUniversal_hash
+#print axioms TCSlib.Cryptography.Hashing.SIS.uniform_bits_hasMinEntropy
+#print axioms TCSlib.Cryptography.Hashing.SIS.strong_leftover_hash
+#print axioms TCSlib.Cryptography.Hashing.SIS.distAdv_hash_uniform_le
+#print axioms TCSlib.Cryptography.Hashing.SIS.leftover_error_le
+#print axioms TCSlib.Cryptography.LWE.bitNoise
+#print axioms TCSlib.Cryptography.LWE.bitNoise_Coins
+#print axioms TCSlib.Cryptography.LWE.bitNoise_sample
+#print axioms TCSlib.Cryptography.LWE.bitNoise_probability
+#print axioms TCSlib.Cryptography.LWE.centeredValue
+#print axioms TCSlib.Cryptography.LWE.centeredValue_eq
+#print axioms TCSlib.Cryptography.LWE.centeredNoise
+#print axioms TCSlib.Cryptography.LWE.centeredNoise_eq
+#print axioms TCSlib.Cryptography.LWE.centeredNoise_Coins
+#print axioms TCSlib.Cryptography.LWE.centeredNoise_sample
+#print axioms TCSlib.Cryptography.LWE.centeredNoise_bounded
+#print axioms TCSlib.Cryptography.LWE.centeredValue_symmetric
+#print axioms TCSlib.Cryptography.LWE.centeredValue_mean
+#print axioms TCSlib.Cryptography.LWE.sampleFromBits
+#print axioms TCSlib.Cryptography.LWE.sampleFromBits_eq
+#print axioms TCSlib.Cryptography.LWE.sampleFromBits_law
+#print axioms TCSlib.Cryptography.LWE.acceptProb_sampleFromBits
+#print axioms TCSlib.Cryptography.LWE.uniformFromBits
+#print axioms TCSlib.Cryptography.LWE.uniformFromBits_eq
+#print axioms TCSlib.Cryptography.LWE.uniformFromBits_law
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generate
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generate_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.prgAdv_generate
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.pseudorandom_under_DLWE
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.seedBitLength
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.seedBitLength_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.outputBitLength
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.outputBitLength_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.seed_cardinality
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.output_cardinality
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.stretch_iff
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits_length
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.bit_seed_cardinality
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateBits_advantage
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.vectorBitsEquiv
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.vectorBitsEquiv_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.matrixBitsEquiv
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.matrixBitsEquiv_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.noiseBitsEquiv
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.noiseBitsEquiv_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flatSeedEquiv
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flatSeedEquiv_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flatOutputEquiv
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flatOutputEquiv_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateFlat
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateFlat_eq
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.generateFlat_advantage
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flat_seed_length
+#print axioms TCSlib.Cryptography.Pseudorandom.Generators.LWE.flat_output_length
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_apply
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_sub
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.antiCyclic_mulVec_injective
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_difference_injective
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branch_message_bound
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branchGadget
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.branchGadget_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.allButOneKey
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.allButOneKey_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluate_lossy_branch
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.residual_branch
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.evaluateBranch_injective
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.AllButOne.lossy_branch_range_card
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealedSampler
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealedSampler_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.conceal_column
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnHybrid
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnHybrid_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnTest
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.columnTest_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.column_gap
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.concealed_advantage_le
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.shiftedSampler
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.shiftedSampler_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.shifted_advantage_le
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_intCast
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.encode_add
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.decode_encode_add
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits_val
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.gadget_mulVec
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.digits_injective
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.conceal
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.conceal_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate_fst
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate_snd
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.injectiveKey
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.injectiveKey_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover_eq
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_conceal
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.residual_injectiveKey
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.error_sum_bound
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.recover_evaluate
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.evaluate_injective
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_range_card
+#print axioms TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_bits
+#print axioms Complexity.BinArith.polyTimeComputable_reverse
+#print axioms Complexity.BinArith.polyTimeComputable_normBits
+#print axioms TCSlib.Cryptography.EnsembleLemmas.polyTimeComputable_zeros
+#print axioms Complexity.polyTimeComputable_pairDropPoly
+#print axioms Complexity.polyTimeComputable_pairFstD
+#print axioms Complexity.polyTimeComputable_pairSndD
+#print axioms Complexity.PolyTimeComputable.comp
+#print axioms Complexity.PolyTimeComputable.pairEncode
+#print axioms Complexity.PolyTimeComputable.append
+#print axioms Complexity.BinArith.polyTimeComputable_add
+#print axioms Complexity.BinArith.polyTimeComputable_mul
+#print axioms Complexity.BinArith.polyTimeComputable_sub
+#print axioms Complexity.polyTimeComputable_const
+#print axioms TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_toLE
+#print axioms TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_normalizeWidthPoly
+#print axioms TCSlib.Cryptography.Encoding.BinaryArith.polyTimeComputable_fromLEPoly
+#print axioms Complexity.BinArith.forLoop_pairEncode
+#print axioms Complexity.BinArith.forLoop_bound_of_ctx
+#print axioms Complexity.BinArith.polyTimeComputable_forLoop
+#print axioms Complexity.BinArith.polyTimeComputable_mulU
+#print axioms Complexity.BinArith.length_mulU
+#print axioms Complexity.polyTimeComputable_pairTakePoly
+#print axioms Complexity.polyTimeComputable_unaryPoly
+#print axioms Complexity.polyTimeComputable_headD
+#print axioms Complexity.polyTimeComputable_not
+#print axioms Complexity.polyTimeComputable_and
+#print axioms Complexity.BinArith.polyTimeComputable_xor
+#print axioms Complexity.BinArith.polyTimeComputable_cons
+#print axioms Complexity.NUPPT.exists_compParam
+#print axioms TCSlib.Cryptography.ofFn_padFin_eq_padStr
+#print axioms TCSlib.Cryptography.ofFn_splitCoins_fst
+#print axioms TCSlib.Cryptography.ofFn_splitCoins_snd
+#print axioms TCSlib.Cryptography.acceptProb_comp_equiv
+#print axioms TCSlib.Cryptography.distAdv_le_statDist
+#print axioms TCSlib.InformationTheory.leftover_hash
+#print axioms TCSlib.InformationTheory.hashPair_apply
+#print axioms TCSlib.InformationTheory.FinDist.map_apply
+#print axioms TCSlib.InformationTheory.FinDist.uniform_apply
+#print axioms TCSlib.InformationTheory.IsUniversal
+#print axioms TCSlib.InformationTheory.FinDist.HasMinEntropy
+#print axioms Randomized.blocksEquiv
+#print axioms Randomized.blocksEquiv_apply
+#print axioms Randomized.bitsEquiv
+#print axioms ZMod.finEquiv
+#print axioms TCSlib.Cryptography.prgAdv_eq
+#print axioms TCSlib.Cryptography.prgAdv_comp_equiv
+#print axioms TCSlib.Cryptography.Hashing.SIS.collisionProbability_le_successProbability
+#print axioms TCSlib.Cryptography.SIS.decodeSolution_encodeSolution
+#print axioms TCSlib.Cryptography.uprob_comp_equiv
+#print axioms TCSlib.Cryptography.uprob_prod
+#print axioms TCSlib.Cryptography.uprob_eq_card_filter
+#print axioms TCSlib.Cryptography.uexp_def
+#print axioms TCSlib.Cryptography.acceptProb_def
+#print axioms TCSlib.Cryptography.distAdv_def
+#print axioms TCSlib.Cryptography.LWE.decisionAdvantage_eq
+#print axioms TCSlib.Cryptography.Hashing.SIS.hash_eq
+#print axioms TCSlib.InformationTheory.isUniversal_iff
+#print axioms TCSlib.InformationTheory.FinDist.hasMinEntropy_iff
+open Lean in
+run_cmd do
+  let env ← getEnv
+  for (n, ci) in env.constants.toList do
+    if let some idx := env.getModuleIdxFor? n then
+      let mod := env.header.moduleNames[idx.toNat]!
+      if mod.toString.startsWith "TCSlib.Cryptography.Encoding." ||
+          mod.toString.startsWith "TCSlib.Cryptography.LWE." ||
+          mod.toString.startsWith "TCSlib.Cryptography.SIS." ||
+          mod.toString.startsWith "TCSlib.Cryptography.Encryption.Symmetric.Regev." ||
+          mod.toString.startsWith "TCSlib.Cryptography.Hashing.SIS." ||
+          mod.toString.startsWith "TCSlib.Cryptography.Encryption.PublicKey.Regev." ||
+          mod.toString.startsWith "TCSlib.Cryptography.Pseudorandom.Generators.LWE." ||
+          mod.toString.startsWith "TCSlib.Cryptography.TrapdoorFunctions.Lossy." ||
+          mod.toString.startsWith "TCSlib.Cryptography.TrapdoorFunctions.AllButOne." then
+        let kind := match ci with
+          | .axiomInfo _ => "axiom"
+          | .defnInfo _ => "definition"
+          | .thmInfo _ => "theorem"
+          | .opaqueInfo _ => "opaque"
+          | .quotInfo _ => "quotient"
+          | .inductInfo _ => "inductive"
+          | .ctorInfo _ => "constructor"
+          | .recInfo _ => "recursor"
+        logInfo m!"COMBINED_CONSTANT|{mod}|{n}|{kind}|{isPrivateName n}"
+        let axs ← Lean.collectAxioms n
+        let labels := String.intercalate "," (axs.toList.map fun a => a.toString)
+        logInfo m!"COMBINED_AXIOMS|{n}|{labels}"

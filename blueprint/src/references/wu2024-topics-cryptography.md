@@ -45,3 +45,21 @@ $(a,u)$.
 
 By this assumption, in the security argument, we can replace the ciphertexts with $(a,u+\mu\lfloor q/2\rfloor)$. Then,
 the encryption scheme becomes a one-time pad.
+
+<a id="pdf-c0f87bf2e871-p086-b001"></a>
+<!-- pdf-source: page=86; block=1; confidence=1.00 -->
+
+**Lecture 21, Regev public-key encryption and Definition 21.3.** The
+public key contains zero encryptions under one secret. To encrypt, take a
+random binary subset and shift its second component by the message
+codepoint. Decryption subtracts the secret product. The bounded error law
+gives an absolute subset-error bound of $mB$. The formalization uses strict
+separation for its chosen decoder.
+
+<a id="pdf-c0f87bf2e871-p086-b002"></a>
+<!-- pdf-source: page=86; block=2; confidence=1.00 -->
+
+**Lecture 21, Regev public-key security.** The first comparison replaces
+the LWE public key by a uniform matrix and vector. The second uses the
+leftover hash lemma for the uniform augmented matrix and binary subset to
+hide the fixed message shift statistically.

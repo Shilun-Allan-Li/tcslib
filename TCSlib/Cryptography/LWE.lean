@@ -9,6 +9,8 @@ import TCSlib.Cryptography.LWE.Encoding
 import TCSlib.Cryptography.LWE.Assumption
 import TCSlib.Cryptography.LWE.SampleSchedules
 import TCSlib.Cryptography.LWE.BitEncoding
+import TCSlib.Cryptography.LWE.BitNoise
+import TCSlib.Cryptography.LWE.Sampling
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,6 +28,8 @@ set_option autoImplicit false
 * `Assumption`: polynomial representation budgets and fixed-sample hardness against `NUPPT`.
 * `SampleSchedules`: explicit sample-count substitution and multi-message row accounting.
 * `BitEncoding`: bit codepoints, exact tie conventions and bounded-error decoding statements.
+* `BitNoise`: explicit bit-seed laws and centered finite-noise profile statements.
+* `Sampling`: actual-law fair-bit implementations of the real and uniform experiments.
 
 ## References
 
