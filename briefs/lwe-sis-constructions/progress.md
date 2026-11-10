@@ -149,5 +149,14 @@ entry with zero blockers, majors, and minors. The reviewer replayed the
 and two SIS CRH fills are the next proof wave.
 [Counted-loop disposition](../../audits/lwe-sis-counted-loop-registration-resolutions.md)
 
-**Not yet clear to merge.** The nine counted-loop and CRH admissions,
-scoped source matching, and landing checks remain open. The user approves all merges.
+## Counted-loop consumers and SIS collision resistance
+
+The final seven efficiency and two asymptotic SIS proofs are filled at
+`8b3187bdaf0c634c086313a727a7210dca14bfeb`. The 144-module replay passes with zero owned admissions and
+17 inherited admission warnings. All 220 elaborated types match Gate 13.
+The axiom inventory closes the nine admissions and records four compiler
+auxiliaries. The nine proof bodies are ready for independent Gate 15 review.
+[Proof report](fills/10-counted-loop-consumers/REPORT.md)
+
+Merge clearance requires a passing Gate 15 review, scoped source matching,
+and exact-target landing checks. The user approves all merges.
