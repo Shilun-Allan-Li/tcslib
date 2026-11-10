@@ -30,4 +30,4 @@ The cleanup ledger was checked against the relocated definition provider.
 `private-key-oracle-from-prf-checks.zip` has SHA-256 `5ad9f897c11a388b8b68d4e6497ff58df1e0f54f66c6ecdf7ec4d5c827c65823`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the affected modules, both imports and seals pass.**
+Seyoon merged #275 at `899b14f707c6a08f2515076096aebbd7a71eb721`. The Lean sources and checker inputs match the verified head.
