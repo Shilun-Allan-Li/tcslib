@@ -20,7 +20,7 @@ instance of `Complexity.polyTimeComputable_iterate` on the length-guarded step
 strings, the **selective block XOR** `selXorFun` computing `⊕_{t : β_t = 1} s_t` on `⟨⟨1^m, β⟩, s⟩`
 — the subset XOR `S_L` of [PS10, Algorithm 89.6] and, with one-bit blocks, the inner product
 `⟨x, r⟩` of [PS10, Fact 88.4] (`ipFun`) — and unary halving `1^n ↦ 1^{⌊n/2⌋}` (`unaryHalf`, for the
-balanced permutation of `Asymptotic/HardCorePermutation.lean`).
+balanced permutation of `Asymptotic/HardCorePermutation/GoldreichLevin.lean`).
 
 Each loop is specified by the closed form of its orbit on well-formed inputs
 (`SelXor.orbit_eq`), its stabilisation (`SelXor.orbit_stable`) and the length bound that

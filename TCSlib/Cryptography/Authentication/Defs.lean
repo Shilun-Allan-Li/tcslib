@@ -15,7 +15,10 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Compatibility import for authentication and hashing definitions
+# Authentication and hashing interfaces
+
+This facade collects the MAC and signature contracts and the collision-resistant
+hash interface used by hash-and-sign.
 
 ## Main definitions
 
@@ -25,6 +28,13 @@ The MAC, signature and collision-resistant hash interfaces are defined in
 ## Main results
 
 The experiment equations and security characterizations accompany those interfaces.
+
+## Contents
+
+* `Authentication.Encoding` gives the shared encodings for the games.
+* `Authentication.MAC.Defs` gives the MAC interface and unforgeability game.
+* `Authentication.Signatures.Defs` gives the signature interface and forgery games.
+* `Hashing.CollisionResistant` gives the collision-resistant hash interface and game.
 
 ## References
 

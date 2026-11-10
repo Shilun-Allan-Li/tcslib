@@ -2,12 +2,20 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import TCSlib.Cryptography.Composability.Defs
-import TCSlib.Cryptography.Composability.PRFScheme
-import TCSlib.Cryptography.Composability.CCA2Scheme
-import TCSlib.Cryptography.Composability.PublicKey
-import TCSlib.Cryptography.Composability.NonMalleable
-import TCSlib.Cryptography.Composability.SimNonMalleable
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
+import TCSlib.Cryptography.Encryption.PrivateKey.EncryptThenTag
+import TCSlib.Cryptography.Encryption.PublicKey.Hybrid
+import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
+import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
+import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorCPA
+import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation
 import TCSlib.Cryptography.Composability.SequentialZK
 import TCSlib.Cryptography.Composability.ThreeColoring
 
@@ -31,12 +39,14 @@ See the theorem statements and correctness results in the constituent modules.
 
 ## Contents
 
-* `Defs` — private-key CPA, CCA1 and CCA2 security games.
-* `PRFScheme` — the PRF-based encryption construction under chosen-ciphertext attacks.
-* `CCA2Scheme` — encrypt-then-tag and its CCA2 security statement.
-* `PublicKey` — compatibility import for the public-key oracle games and trapdoor CPA corollary.
-* `NonMalleable` — compatibility import for indistinguishability-based non-malleability.
-* `SimNonMalleable` — compatibility import for simulation-based non-malleability.
+* `Encryption.PrivateKey.OracleSecurity` gives the private-key CPA, CCA1 and CCA2 games.
+* `Encryption.PrivateKey.OracleFromPRF` gives the fixed-length PRF construction and its
+  oracle security statements.
+* `Encryption.PrivateKey.EncryptThenTag` gives encrypt-then-tag and its CCA2 security statement.
+* `Encryption.PublicKey.OracleSecurity` gives the public-key oracle games.
+* `Encryption.PublicKey.TrapdoorCPA` gives the trapdoor CPA corollary.
+* `Encryption.PublicKey.NonMalleability.Indistinguishability` and
+  `Encryption.PublicKey.NonMalleability.Simulation` give the two notions of non-malleability.
 * `SequentialZK` — sequential repetition and zero-knowledge composition statements.
 * `ThreeColoring` — the quadratic soundness estimate and sequential zero-knowledge corollary.
 

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.HardCore
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.ZeroKnowledge.Interaction
 
 set_option maxHeartbeats 0
@@ -156,7 +157,7 @@ theorem acceptProb_distinguisherL_of_runAtL {σ : Type*} [Fintype σ] {B D : NUP
 
 /-- Splitting `List.ofFn F` at position `j`: the first `j` entries, the entry `j`, the rest
 (`List.ext_getElem` with `List.getElem_append`, `List.getElem_cons`; private copy of
-`ofFn_eq_append_cons` of `Asymptotic/PublicKeyLemmas.lean`, which this file does not import). -/
+`ofFn_eq_append_cons` of `Encryption/PublicKey/HybridMachine.lean`, which this file does not import). -/
 theorem ofFn_eq_append_cons {α : Type*} {N : ℕ} (F : Fin N → α) (j : Fin N) :
     List.ofFn F = (List.ofFn fun i : Fin j => F (Fin.castLE j.2.le i)) ++
       F j :: List.ofFn fun i : Fin (N - j - 1) => F ⟨j + 1 + i, by omega⟩ := by

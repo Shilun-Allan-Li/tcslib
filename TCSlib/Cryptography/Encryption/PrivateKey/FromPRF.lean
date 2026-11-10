@@ -166,7 +166,7 @@ theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : Pol
   simp [decodeFin_eq, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- Masking twice with the same pad (at least as long as the message) is the identity
-(private copy of the helper of `Asymptotic/Encryption.lean`). -/
+(private copy of the helper of `Encryption/PrivateKey/FromPRG.lean`). -/
 private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
     List.zipWith xor (List.zipWith xor m p) p = m
   | [], _, _ => by simp

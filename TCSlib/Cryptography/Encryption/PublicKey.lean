@@ -15,7 +15,7 @@ import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DDH
 import TCSlib.Cryptography.Encryption.PublicKey.ElGamal
 import TCSlib.Cryptography.Encryption.PublicKey.Regev
-import TCSlib.Cryptography.Composability.PublicKey
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
 import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorCPA
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Indistinguishability
 import TCSlib.Cryptography.Encryption.PublicKey.NonMalleability.Simulation

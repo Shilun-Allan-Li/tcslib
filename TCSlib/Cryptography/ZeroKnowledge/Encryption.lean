@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,7 +26,7 @@ knowledge gives security by the two-step hybrid `Enc_k(m₀) ≈ S(1^n) ≈ Enc_
 computational one.
 
 The scheme, the ciphertext distribution `PrivateKeyScheme.encDist` and single-message
-security are those of `TCSlib.Cryptography.Asymptotic.Encryption`; the simulator is a uniform
+security are those of `TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity`. The simulator is a uniform
 `Complexity.NUPPT` activated at parameter `n` on the empty argument (`Sim.runAt n []`), and
 the distinguisher a non-uniform PPT on the ciphertext string (`Complexity.NUPPT.distinguisherL`).
 

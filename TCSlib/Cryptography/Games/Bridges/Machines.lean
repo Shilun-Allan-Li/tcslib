@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Games.Bridges.QueryTree
-import TCSlib.Cryptography.Asymptotic.PRF
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

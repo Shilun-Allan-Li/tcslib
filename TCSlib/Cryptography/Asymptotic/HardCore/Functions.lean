@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Cryptography.Asymptotic.NextBit
+import TCSlib.Cryptography.Pseudorandom.NextBit
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
 import TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -327,7 +327,8 @@ family `g(x, r) = (f(x), r)` is bijective at every `n` at which `f` is.
 
 Note (run-3 audit P4-1): bijectivity of a `FunFamily` of input length `var + var` (even
 lengths only) does not make `𝓕.glPad` a `PermFamily`; that form is `PermFamily.glHalf` /
-`OneWayPermutation.glHalf` (`Asymptotic/HardCorePermutation.lean`, `glHalf_f_even`). -/
+`OneWayPermutation.glHalf` (`Asymptotic/HardCorePermutation/GoldreichLevin.lean`,
+`glHalf_f_even`). -/
 theorem glPad_f_bijective (n : ℕ) (hf : Function.Bijective (𝓕.f n)) :
     Function.Bijective (𝓕.glPad.f n) := by
   have e : HardcoreBit.glPad (𝓕.f n) =
@@ -467,7 +468,8 @@ Repair (run-3 audit P4-1): statement unchanged. The text's "(OWP)" reading — "
 of OWPs implies the existence of OWPs with a hard-core bit" (p. 86), i.e. a `PermFamily` with
 a `HardCore` predicate feeding `owp_hardcore_prg`, `cor_81_7` and `Commitment.owp_commitment` —
 is **not** derivable from this theorem: `𝓕.glPad` has input length `var + var` and is never a
-`PermFamily`. That route is `OneWayPermutation.glHalf` (`Asymptotic/HardCorePermutation.lean`):
+`PermFamily`. That route is `OneWayPermutation.glHalf`
+(`Asymptotic/HardCorePermutation/GoldreichLevin.lean`):
 the balanced permutation `PermFamily.glHalf`, `x ‖ w ↦ f_{⌊n/2⌋}(x) ‖ w`, whose one-wayness and
 hard-core bit reduce to `StrongOneWay.glPad` and `StrongOneWay.glPad_hardCore` at parameter
 `⌊n/2⌋` through `predProb_glHalf_even`/`predProb_glHalf_odd`, `invProb_glHalf_even`/

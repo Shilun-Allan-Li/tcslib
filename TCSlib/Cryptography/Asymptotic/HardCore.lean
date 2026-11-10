@@ -4,24 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.HardCore.Functions
-import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.HardCorePermutation.GoldreichLevin
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Hard-core predicates and the permutation-to-PRG route
+# Asymptotic hard-core predicates and Goldreich–Levin
 
-This compatibility import brings the function-family form of Goldreich–Levin
-and the asymptotic PRG construction into scope [PS10, Theorems 79.4 and 87.3].
+The Goldreich–Levin theorem gives an efficiently computable hard-core bit for
+the padded one-way function [PS10, Theorem 87.3]. This facade collects its
+function-family, collection, and balanced-permutation forms.
 
 ## Contents
 
 * `HardCore.Functions` defines hard-core predicates and proves Goldreich–Levin
   for function families.
-* `Pseudorandom.Generators.Asymptotic.FromPermutation` defines and verifies
-  the one-bit and iterated PRG constructions.
+* `HardCoreCollection` proves the theorem for collections, including
+  collections of trapdoor permutations.
+* `HardCorePermutation.GoldreichLevin` proves the balanced-permutation version.
+
+The generator constructions and their security proofs are in
+`Pseudorandom.Generators.Asymptotic.FromPermutation`.
 
 ## References
 

@@ -2,7 +2,8 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import TCSlib.Cryptography.Composability.Defs
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+import TCSlib.Cryptography.Encryption.PrivateKey.OracleSecurity
 import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
 import TCSlib.Complexity.ClassP.BinaryArith.Loops
@@ -18,7 +19,7 @@ set_option autoImplicit false
 `(m₀, m₁, state) ← A^{O₁(sk)}(1^n, pk)`; `c ← Enc_pk(m_b)`; output `A^{O₂(sk)}(c, state)`. The
 oracle pairs are `[·, ·]` (CPA), `[Dec, ·]` (CCA1) and `[Dec, Dec*]` (CCA2), where `Dec*` answers
 every query except the challenge. There is no encryption oracle: the adversary holds `pk`.
-The trapdoor application of Claim 172.a is in `Composability.PublicKey`.
+The trapdoor application of Claim 172.a is in `Encryption.PublicKey.TrapdoorCPA`.
 
 **Its encoding.** As in the private-key game (`Encryption/PrivateKey/OracleSecurity.lean`), one
 machine plays both phases. It takes `pk` and queries the bit-string oracles `Dec` and `Challenge`.

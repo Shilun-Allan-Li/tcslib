@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Cryptography.Asymptotic.NextBit
+import TCSlib.Cryptography.Pseudorandom.NextBit
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
 import TCSlib.Cryptography.HardcoreBit.GoldreichLevin

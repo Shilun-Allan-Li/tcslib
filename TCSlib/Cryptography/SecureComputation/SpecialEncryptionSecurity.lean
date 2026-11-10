@@ -3,8 +3,10 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.SecureComputation.SpecialEncryption
-import TCSlib.Cryptography.Asymptotic.Encryption
-import TCSlib.Cryptography.Asymptotic.PRF
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
