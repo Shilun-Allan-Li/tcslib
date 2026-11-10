@@ -10,252 +10,40 @@ import TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 import TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 import TCSlib.Cryptography.OneWayFunctions.OutputLength
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.StretchMachine
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Machine infrastructure for the hard-core predicate theorems
+# Machine reductions for hard-core predicates
 
-Proof infrastructure for `TCSlib.Cryptography.Asymptotic.HardCore` and
-`TCSlib.Cryptography.Asymptotic.HardCorePermutation` ([PS10, Theorems 79.4 and 87.3,
-Lemma 80.5]): the reductions of those theorems as `Complexity.NUPPT`s, built by the closure
-calculus of `TCSlib.Complexity.Randomized` (foundation decision D2 of
-`PassShelatChapter2-4Plan.md`), together with the bit-string identities and the probability
-bookkeeping that identify each machine with the concrete reduction of the Garg layer.
-
-* `Complexity.NUPPT.wrap` — the **one-call wrapper**: for a machine `A`, polynomial-time
-  `pre`/`post`, an advice family `β` and a coin polynomial `p`, the machine that reads its
-  first `p(n)` coins as data, pre-processes `⟨⟨⟨1^n, y⟩, coins⟩, β n⟩`, calls `A` once with
-  the remaining coins and post-processes the answer. It packages every single-call reduction
-  of the hard-core chapter (the predictor of Theorem 79.4, the hybrid distinguisher of
-  Lemma 80.5, the padding inverters of Theorem 87.3, the pass-through-bit reductions of the
-  balanced permutation).
-* `TCSlib.Cryptography.prgIterFun` — the iterated evaluation of a one-bit-stretch generator
-  (`Complexity.polyTimeComputable_iterateEmit`), for the expansion of Lemma 80.5.
-* The small `List.ofFn` identities (`ofFn_snoc_eq`, `ofFn_appendEquiv`) and coin-split
-  bijections used by all of them.
+This file constructs the predictor used for the permutation generator and
+the inverters for the Goldreich–Levin padding. The shared wrapper and the stretch
+machine are available through the existing import.
 
 ## Main definitions
 
-* `Complexity.NUPPT.wrap`, `Complexity.NUPPT.wrapFun` — the one-call wrapper machine and
-  its raw function.
-* `TCSlib.Cryptography.prgIterStep`, `TCSlib.Cryptography.prgIterFun` — the iterated
-  generator evaluation.
+* `TCSlib.Cryptography.owpPredMachine` gives the predictor from a distinguisher.
+* `TCSlib.Cryptography.glPadInvMachine` gives the padding inverter.
 
 ## Main results
 
-* `Complexity.NUPPT.runAt_wrap` — the activation of the one-call wrapper on split coins.
-* `TCSlib.Cryptography.prgIterFun_poly`, `TCSlib.Cryptography.prgIterFun_ofFn` — the
-  iterated evaluation is polynomial-time and computes the output bits of the expansion.
+* `TCSlib.Cryptography.owpPredMachine_predictor` identifies the machine's verdict.
+* `TCSlib.Cryptography.glPadInvMachine_runAt` gives the padding inverter's run.
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
-  (§3.3.4: Theorem 79.4; §3.3.5: Lemma 80.5; §3.4.2–3.4.3: Theorem 87.3.)
+  (§3.3.4, Theorem 79.4, and §3.4.2–3.4.3, Theorem 87.3.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
-  draft of 22 January 2026, §2.5 (Theorem 2.3), §3.3 (Theorems 3.1, 3.2).
+  draft of 22 January 2026, §2.5 and §3.3.
 -/
 
 namespace TCSlib.Cryptography
 
 open Complexity Turing Finset
-
-/-! ## Bit-string identities -/
-
-/-- `List.ofFn (Fin.snoc v b) = List.ofFn v ++ [b]`. -/
-theorem ofFn_snoc_eq {n : ℕ} (v : Fin n → Bool) (b : Bool) :
-    List.ofFn (Fin.snoc v b : Fin (n + 1) → Bool) = List.ofFn v ++ [b] := by
-  rw [List.ofFn_succ', List.concat_eq_append]
-  simp [Fin.snoc_castSucc, Fin.snoc_last]
-
-/-- `List.ofFn v = List.ofFn (Fin.init v) ++ [v (Fin.last n)]`. -/
-theorem ofFn_eq_init_append {n : ℕ} (v : Fin (n + 1) → Bool) :
-    List.ofFn v = List.ofFn (Fin.init v) ++ [v (Fin.last n)] := by
-  have h := ofFn_snoc_eq (Fin.init v) (v (Fin.last n))
-  rwa [Fin.snoc_init_self] at h
-
-/-- `List.ofFn` of an appended pair is the concatenation of the encodings. -/
-theorem ofFn_appendEquiv {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
-    List.ofFn (Fin.appendEquiv a b (x, y)) = List.ofFn x ++ List.ofFn y :=
-  List.ofFn_fin_append x y
-
-/-- The first `a` bits of `List.ofFn x ++ List.ofFn y` with `|x| = a`. -/
-theorem take_ofFn_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
-    (List.ofFn x ++ List.ofFn y).take a = List.ofFn x :=
-  List.take_left' (List.length_ofFn)
-
-/-- The bits after the first `a` of `List.ofFn x ++ List.ofFn y` with `|x| = a`. -/
-theorem drop_ofFn_append {a b : ℕ} (x : Fin a → Bool) (y : Fin b → Bool) :
-    (List.ofFn x ++ List.ofFn y).drop a = List.ofFn y :=
-  List.drop_left' (List.length_ofFn)
-
-/-- Transport of bit strings along an equality of lengths (`Fin.cast` on the index). -/
-def finCastEquiv {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) where
-  toFun f j := f (Fin.cast h.symm j)
-  invFun f i := f (Fin.cast h i)
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- The forward reader of `finCastEquiv`: bit `j` of the transported string is bit
-`Fin.cast h.symm j` of `f`. -/
-theorem finCastEquiv_apply {a b : ℕ} (h : a = b) (f : Fin a → Bool) (j : Fin b) :
-    finCastEquiv h f j = f (Fin.cast h.symm j) :=
-  rfl
-
-/-- The function of `finCastEquiv h`: `f ↦ (j ↦ f (Fin.cast h.symm j))`. -/
-theorem coe_finCastEquiv {a b : ℕ} (h : a = b) :
-    ⇑(finCastEquiv h) = fun f j => f (Fin.cast h.symm j) :=
-  rfl
-
-/-- Transport along an equality of lengths does not change the encoding. -/
-theorem ofFn_finCastEquiv {a b : ℕ} (h : a = b) (f : Fin a → Bool) :
-    List.ofFn (finCastEquiv h f) = List.ofFn f :=
-  (List.ofFn_congr h f).symm
-
-end TCSlib.Cryptography
-
-namespace Complexity.NUPPT
-
-open Turing
-
-/-! ## The one-call wrapper -/
-
-/-- The raw function of the one-call wrapper on the layout `⟨⟨⟨1^n, y⟩, ⟨β, α⟩⟩, r⟩`: cut the
-coins at `p(n)`, form the view `w := ⟨⟨⟨1^n, y⟩, r.take (p n)⟩, β⟩`, run `A` on `pre w` with
-advice `α` and the remaining coins, and return `post ⟨w, answer⟩`. -/
-def wrapFun (A : NUPPT) (pre post : List Bool → List Bool) (p : PolyExpr) (z : List Bool) :
-    List Bool :=
-  post (pairEncode
-    (layout (inParam z) (inArg z)
-      ((pairSndD (pairEncode (inParam z) (inCoins z))).take
-        (p.eval (pairFstD (pairEncode (inParam z) (inCoins z))).length))
-      (pairFstD (inAdvice z)))
-    (A.output (layout (inParam z)
-      (pre (layout (inParam z) (inArg z)
-        ((pairSndD (pairEncode (inParam z) (inCoins z))).take
-          (p.eval (pairFstD (pairEncode (inParam z) (inCoins z))).length))
-        (pairFstD (inAdvice z))))
-      (pairSndD (inAdvice z))
-      ((pairSndD (pairEncode (inParam z) (inCoins z))).drop
-        (p.eval (pairFstD (pairEncode (inParam z) (inCoins z))).length)))))
-
-/-- The raw function of the one-call wrapper is polynomial-time (the pairing calculus, the
-typed coin cuts `polyTimeComputable_pairTakePoly`/`pairDropPoly`, and `A.output`). -/
-theorem wrapFun_poly (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (p : PolyExpr) :
-    PolyTimeComputable (A.wrapFun pre post p) := by
-  have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
-  have htake := (polyTimeComputable_pairTakePoly p).comp hcut
-  have hdrop := (polyTimeComputable_pairDropPoly p).comp hcut
-  have hw := polyTimeComputable_layout polyTimeComputable_inParam polyTimeComputable_inArg htake
-    (polyTimeComputable_pairFstD.comp polyTimeComputable_inAdvice)
-  have hA := A.polyTimeComputable_output.comp
-    (polyTimeComputable_layout polyTimeComputable_inParam (hpre.comp hw)
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_inAdvice) hdrop)
-  exact hpost.comp (hw.pairEncode hA)
-
-/-- **The one-call wrapper** [PS10, §2.1, the closure properties used implicitly]: the
-machine with coins `p + A.coins` and advice `⟨β n, A.advice n⟩` that, on `⟨1^n, y⟩` with coins
-`r`, forms the view `w = ⟨⟨⟨1^n, y⟩, r.take (p n)⟩, β n⟩`, calls `A(1^n, pre w)` once with the
-remaining coins and returns `post ⟨w, answer⟩`. Every single-call reduction of the hard-core
-chapter is an instance (`runAtL_wrap`, `runAt_wrap`). -/
-noncomputable def wrap (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) : NUPPT :=
-  ofPolyTime (A.wrapFun_poly hpre hpost p) (.add p A.coins)
-    (.add (.add (.mul (.const 2) b) (.const 2)) A.adv)
-    (fun n => pairEncode (β n) (A.advice n)) (fun n => by
-      rw [length_pairEncode]
-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
-      have h₁ := hβ n
-      have h₂ := A.advice_length n
-      omega)
-
-/-- The coin polynomial of the one-call wrapper is `p + A.coins`. -/
-@[simp] theorem coins_wrap (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) :
-    (A.wrap hpre hpost β b hβ p).coins = .add p A.coins :=
-  NUPPT.coins_ofPolyTime _ _ _ _ _
-
-/-- **The coins of the one-call wrapper**: the published equivalence `(A.wrap …).Coins n ≃
-{0,1}^{p(n) + |A's coins at n|}` (data coins, then `A`'s coins; `finCongr` along the coin count). -/
-noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) :
-    (A.wrap hpre hpost β b hβ p).Coins n ≃ (Fin (p.eval n + A.coinLen n) → Bool) :=
-  Equiv.arrowCongr (finCongr
-    (by rw [coinLen_eq, coins_wrap, PolyExpr.eval_add, coinLen_eq])) (Equiv.refl Bool)
-
-/-- The inverse coin equivalence of the wrapper keeps the coin string:
-`List.ofFn ((wrapCoinsEquiv … n).symm w) = List.ofFn w`. -/
-theorem wrapCoinsEquiv_symm_ofFn (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ)
-    (w : Fin (p.eval n + A.coinLen n) → Bool) :
-    List.ofFn ((A.wrapCoinsEquiv hpre hpost β b hβ p n).symm w) = List.ofFn w :=
-  List.ofFn_congr (by rw [coinLen_eq, coins_wrap, PolyExpr.eval_add, coinLen_eq]) _
-
-/-- The untyped activation of the one-call wrapper. -/
-theorem runAtL_wrap (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) (y r : List Bool) :
-    (A.wrap hpre hpost β b hβ p).runAtL n y r =
-      post (pairEncode (layout (List.replicate n true) y (r.take (p.eval n)) (β n))
-        (A.runAtL n (pre (layout (List.replicate n true) y (r.take (p.eval n)) (β n)))
-          (r.drop (p.eval n)))) := by
-  unfold wrap
-  rw [runAtL_ofPolyTime]
-  simp [wrapFun, runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
-
-/-- The typed activation of the one-call wrapper on coins `r` that split as `a ++ c`: the
-data coins `a` (`p(n)` bits) and the coins `c` of `A`. (Stated for any coin string `r` whose
-encoding is `List.ofFn a ++ List.ofFn c`, so that any coin bijection can be used.) -/
-theorem runAt_wrap (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) (y : List Bool)
-    {m : ℕ} (hm : m = p.eval n) (a : Fin m → Bool) (c : A.Coins n)
-    (r : (A.wrap hpre hpost β b hβ p).Coins n) (hr : List.ofFn r = List.ofFn a ++ List.ofFn c) :
-    (A.wrap hpre hpost β b hβ p).runAt n y r =
-      post (pairEncode (layout (List.replicate n true) y (List.ofFn a) (β n))
-        (A.runAt n (pre (layout (List.replicate n true) y (List.ofFn a) (β n))) c)) := by
-  rw [runAt_eq, runAtL_wrap, hr, List.take_left' (by simp [hm]), List.drop_left' (by simp [hm]),
-    runAt_eq]
-
-end Complexity.NUPPT
-
-namespace TCSlib.Cryptography
-
-open Complexity Turing Finset
-
-/-! ## Reindexing the coins of an adversary -/
-
-/-- Reindexing the coins of a distinguisher by a bijection does not change acceptance
-probabilities. -/
-theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
-    (X : σ → γ) (D : γ → ρ → Bool) (D' : γ → ρ' → Bool) (e : ρ' ≃ ρ)
-    (h : ∀ x c, D x (e c) = D' x c) : acceptProb X D = acceptProb X D' := by
-  simp only [acceptProb_def]
-  rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
-  exact OneWay.uprob_congr fun z => by simp [h]
-
-/-- Reindexing the coins of a distinguisher by a bijection does not change PRG advantages. -/
-theorem prgAdv_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype γ] [Fintype ρ] [Fintype ρ']
-    (G : σ → γ) (D : γ → ρ → Bool) (D' : γ → ρ' → Bool) (e : ρ' ≃ ρ)
-    (h : ∀ x c, D x (e c) = D' x c) : prgAdv G D = prgAdv G D' := by
-  simp only [prgAdv_eq, distAdv_def]
-  rw [acceptProb_coins_equiv G D D' e h, acceptProb_coins_equiv id D D' e h]
-
-/-- Reindexing the coins of a predictor by a bijection does not change prediction
-probabilities. -/
-theorem predProb_coins_equiv {α β ρ ρ' : Type*} [Fintype α] [Fintype ρ] [Fintype ρ']
-    (f : α → β) (B : α → Bool) (A : β → ρ → Bool) (A' : β → ρ' → Bool) (e : ρ' ≃ ρ)
-    (h : ∀ y c, A y (e c) = A' y c) : predProb f B A = predProb f B A' := by
-  simp only [predProb_def]
-  rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr e)]
-  exact OneWay.uprob_congr fun z => by simp [h]
 
 /-! ## Theorem 79.4: the generator `f(s) ‖ h(s)` and its predictor -/
 
@@ -366,280 +154,17 @@ theorem owpPredMachine_predProb (D : NUPPT) (flip : ℕ → Bool) {n : ℕ}
     predProb f B ((owpPredMachine D flip).predictor n n) =
       predProb f B (fun y (c : Bool × D.Coins n) =>
         xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := by
+  have hcoinLen : 1 + D.coinLen n = (owpPredMachine D flip).coinLen n := by
+    simp only [NUPPT.coinLen_eq, owpPredMachine, NUPPT.coins_wrap, PolyExpr.eval_add, PolyExpr.eval_const]
   refine predProb_coins_equiv f B _ _
     (((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans
-      (Fin.appendEquiv 1 (D.coinLen n))) fun y c => ?_
+      ((Fin.appendEquiv 1 (D.coinLen n)).trans (finCastEquiv hcoinLen))) fun y c => ?_
   obtain ⟨σ, c⟩ := c
   refine owpPredMachine_predictor D flip n y σ c _ ?_
-  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq]
+  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq,
+    ofFn_finCastEquiv]
   exact (ofFn_appendEquiv ((Equiv.funUnique (Fin 1) Bool).symm σ) c).trans
     (congrArg (· ++ List.ofFn c) (by simp [List.ofFn_succ]))
-
-end TCSlib.Cryptography
-
-namespace TCSlib.Cryptography
-
-open Complexity Turing Finset
-
-/-! ## Lemma 80.5: the iterated evaluation of a one-bit-stretch generator -/
-
-/-- The seed update of the iterated evaluation: `w ↦ (F w).take |w|` (the first `|w|` bits of
-the generator's output, the next seed `X_{i+1}` of [PS10, Lemma 80.5]). -/
-def prgIterStep (F : List Bool → List Bool) (w : List Bool) : List Bool := (F w).take w.length
-
-/-- The emitted bit of the iterated evaluation: `w ↦ (F w).drop |w|` (the last bit of the
-generator's output, the bit `b_{i+1}` of [PS10, Lemma 80.5]). -/
-def prgIterEmit (F : List Bool → List Bool) (w : List Bool) : List Bool := (F w).drop w.length
-
-/-- The iterated evaluation: the output bits of `ℓ(|s|) + 1` rounds of the generator from the
-seed `s`, concatenated (`Complexity.polyTimeComputable_iterateEmit`). -/
-def prgIterFun (F : List Bool → List Bool) (ℓ : PolyExpr) (s : List Bool) : List Bool :=
-  (List.range (ℓ.eval s.length + 1)).flatMap fun i => prgIterEmit F ((prgIterStep F)^[i] s)
-
-/-- The seed update is polynomial-time (`polyTimeComputable_pairTakePoly var` on `⟨w, F w⟩`). -/
-theorem prgIterStep_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
-    PolyTimeComputable (prgIterStep F) := by
-  convert (polyTimeComputable_pairTakePoly .var).comp (polyTimeComputable_id.pairEncode hF) using 1
-  funext w
-  simp [prgIterStep]
-
-/-- The emitted bit is polynomial-time (`polyTimeComputable_pairDropPoly var` on `⟨w, F w⟩`). -/
-theorem prgIterEmit_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) :
-    PolyTimeComputable (prgIterEmit F) := by
-  convert (polyTimeComputable_pairDropPoly .var).comp (polyTimeComputable_id.pairEncode hF) using 1
-  funext w
-  simp [prgIterEmit]
-
-/-- The seed update never lengthens a word, so its orbit stays within the input length. -/
-theorem length_prgIterStep_iterate_le (F : List Bool → List Bool) (w : List Bool) (i : ℕ) :
-    ((prgIterStep F)^[i] w).length ≤ w.length := by
-  induction i with
-  | zero => exact le_rfl
-  | succ i ih =>
-    rw [Function.iterate_succ_apply']
-    exact (List.length_take_le _ _).trans ih
-
-/-- **The iterated evaluation is polynomial-time** (instance of
-`Complexity.polyTimeComputable_iterateEmit` with `R := ℓ` and orbit bound `P := var`). -/
-theorem prgIterFun_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) (ℓ : PolyExpr) :
-    PolyTimeComputable (prgIterFun F ℓ) :=
-  polyTimeComputable_iterateEmit (prgIterStep_poly hF) (prgIterEmit_poly hF) ℓ .var
-    (fun x i _ => length_prgIterStep_iterate_le F x i)
-
-section Generator
-
-variable (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) {F : List Bool → List Bool}
-  (hFs : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s))
-
-include hFs
-
-/-- On an encoded seed the seed update computes the first `n` bits of `G(s)`. -/
-theorem prgIterStep_ofFn (n : ℕ) (s : Fin n → Bool) :
-    prgIterStep F (List.ofFn s) = List.ofFn (Fin.init (G n s)) := by
-  unfold prgIterStep
-  rw [hFs, List.length_ofFn, ofFn_eq_init_append, List.take_left' List.length_ofFn]
-
-/-- On an encoded seed the emitted bit is the last bit of `G(s)`. -/
-theorem prgIterEmit_ofFn (n : ℕ) (s : Fin n → Bool) :
-    prgIterEmit F (List.ofFn s) = [G n s (Fin.last n)] := by
-  unfold prgIterEmit
-  rw [hFs, List.length_ofFn, ofFn_eq_init_append, List.drop_left' List.length_ofFn]
-
-/-- The iterates of the seed update on an encoded seed are the encoded iterates of
-`s ↦ init (G s)`. -/
-theorem prgIterStep_iterate_ofFn (n : ℕ) (s : Fin n → Bool) (i : ℕ) :
-    (prgIterStep F)^[i] (List.ofFn s) = List.ofFn ((fun x => Fin.init (G n x))^[i] s) := by
-  induction i with
-  | zero => rfl
-  | succ i ih =>
-    rw [Function.iterate_succ_apply', ih, prgIterStep_ofFn G hFs, Function.iterate_succ_apply']
-
-/-- **The iterated evaluation on an encoded seed** is the string of the `ℓ(n) + 1` output bits
-`G(X_i)_{last}`, `X_i` the `i`-th iterate of `s ↦ init (G s)`. -/
-theorem prgIterFun_ofFn (ℓ : PolyExpr) (n : ℕ) (s : Fin n → Bool) :
-    prgIterFun F ℓ (List.ofFn s) =
-      List.ofFn fun i : Fin (ℓ.eval n + 1) => G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := by
-  unfold prgIterFun
-  rw [List.length_ofFn]
-  refine List.ext_getElem (by simp [List.length_flatMap, prgIterStep_iterate_ofFn G hFs,
-    prgIterEmit_ofFn G hFs]) fun j hj₁ hj₂ => ?_
-  have hmap : ((List.range (ℓ.eval n + 1)).flatMap fun i =>
-      prgIterEmit F ((prgIterStep F)^[i] (List.ofFn s))) =
-      (List.range (ℓ.eval n + 1)).map fun i => G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := by
-    rw [List.map_eq_flatMap]
-    congr 1
-    funext i
-    rw [prgIterStep_iterate_ofFn G hFs, prgIterEmit_ofFn G hFs]
-  simp only [hmap, List.getElem_map, List.getElem_range, List.getElem_ofFn]
-
-/-- The first `ℓ(n)` bits of the iterated evaluation: the output of the expansion `G'` of
-[PS10, Lemma 80.5]. -/
-theorem take_prgIterFun_ofFn (ℓ : PolyExpr) (n : ℕ) (s : Fin n → Bool) :
-    (prgIterFun F ℓ (List.ofFn s)).take (ℓ.eval n) =
-      List.ofFn fun i : Fin (ℓ.eval n) => G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := by
-  rw [prgIterFun_ofFn G hFs, List.ofFn_succ', List.concat_eq_append,
-    List.take_left' List.length_ofFn]
-  rfl
-
-/-- **The evaluator of the expansion `G'`** [PS10, Lemma 80.5, "`G'` is efficiently
-computable"]: `s ↦ (prgIterFun F ℓ s).take (ℓ |s|)` is polynomial-time and computes the
-`ℓ(n)` output bits. -/
-theorem exists_expandEvaluator (hF : PolyTimeComputable F) (ℓ : PolyExpr) :
-    ∃ E : List Bool → List Bool, PolyTimeComputable E ∧ ∀ n (s : Fin n → Bool),
-      E (List.ofFn s) =
-        List.ofFn fun i : Fin (ℓ.eval n) => G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := by
-  refine ⟨fun w => (prgIterFun F ℓ w).take (ℓ.eval w.length), ?_, fun n s => ?_⟩
-  · convert (polyTimeComputable_pairTakePoly ℓ).comp
-      (polyTimeComputable_id.pairEncode (prgIterFun_poly hF ℓ)) using 1
-    funext w
-    simp
-  · dsimp only
-    rw [List.length_ofFn, take_prgIterFun_ofFn G hFs]
-
-end Generator
-
-end TCSlib.Cryptography
-
-namespace TCSlib.Cryptography
-
-open Complexity Turing Finset
-
-/-! ## FP glue: cutting a string at the length of another -/
-
-/-- `w ↦ (b w).take |a w|` is polynomial-time (`polyTimeComputable_pairTakePoly var` on
-`⟨a w, b w⟩`). -/
-theorem takeLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
-    (hb : PolyTimeComputable b) : PolyTimeComputable fun w => (b w).take (a w).length := by
-  convert (polyTimeComputable_pairTakePoly .var).comp (ha.pairEncode hb) using 1
-  funext w
-  simp
-
-/-- `w ↦ (b w).drop |a w|` is polynomial-time (`polyTimeComputable_pairDropPoly var` on
-`⟨a w, b w⟩`). -/
-theorem dropLen_poly {a b : List Bool → List Bool} (ha : PolyTimeComputable a)
-    (hb : PolyTimeComputable b) : PolyTimeComputable fun w => (b w).drop (a w).length := by
-  convert (polyTimeComputable_pairDropPoly .var).comp (ha.pairEncode hb) using 1
-  funext w
-  simp
-
-/-! ## Negligible functions times polynomials -/
-
-/-- A syntactic polynomial times a negligible function is negligible
-([Gar26, §1.2]; `Negligible.mul_pow` and `Negligible.const_mul` through the normal-form
-majorant `C (n+1)^c ≤ C 2^c n^c` of `PolyExpr.eval_le`). -/
-theorem Negligible.polyExpr_mul {μ : ℕ → ℝ} (hμ : Negligible μ) (p : PolyExpr) :
-    Negligible fun n => (p.eval n : ℝ) * μ n := by
-  obtain ⟨C, c, hC⟩ := p.eval_le
-  refine ((hμ.mul_pow c).const_mul ((C : ℝ) * 2 ^ c)).mono ⟨1, fun n hn => ?_⟩
-  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
-  have h1 : (p.eval n : ℝ) ≤ C * ((n : ℝ) + 1) ^ c := by exact_mod_cast hC n
-  have h2 : ((n : ℝ) + 1) ^ c ≤ (2 * (n : ℝ)) ^ c :=
-    pow_le_pow_left₀ (by positivity) (by linarith) c
-  have hp : (p.eval n : ℝ) ≤ (C : ℝ) * 2 ^ c * (n : ℝ) ^ c :=
-    calc (p.eval n : ℝ) ≤ C * ((n : ℝ) + 1) ^ c := h1
-      _ ≤ C * (2 * (n : ℝ)) ^ c := mul_le_mul_of_nonneg_left h2 (Nat.cast_nonneg _)
-      _ = (C : ℝ) * 2 ^ c * (n : ℝ) ^ c := by rw [_root_.mul_pow, mul_assoc]
-  calc |(p.eval n : ℝ) * μ n| = (p.eval n : ℝ) * |μ n| := by rw [abs_mul, Nat.abs_cast]
-    _ ≤ (C : ℝ) * 2 ^ c * (n : ℝ) ^ c * |μ n| := mul_le_mul_of_nonneg_right hp (abs_nonneg _)
-    _ = |(C : ℝ) * 2 ^ c * ((n : ℝ) ^ c * μ n)| := by
-        rw [abs_mul ((C : ℝ) * 2 ^ c) ((n : ℝ) ^ c * μ n), abs_mul ((n : ℝ) ^ c) (μ n),
-          abs_of_nonneg (by positivity : (0 : ℝ) ≤ (C : ℝ) * 2 ^ c),
-          abs_of_nonneg (by positivity : (0 : ℝ) ≤ (n : ℝ) ^ c), mul_assoc]
-
-/-! ## Lemma 80.5: the hybrid distinguisher -/
-
-/-- The pre-processing of the hybrid-`k` reduction of [PS10, Lemma 80.5] on the view
-`⟨⟨⟨1^n, T⟩, c⟩, ⟨1^k, 1^{ℓ−k−1}⟩⟩`: the `ℓ`-bit string
-`c.take k ++ T.drop n ++ (prgIterFun F ℓ (T.take n)).take (ℓ − k − 1)` — `k` uniform bits,
-the given bit `T_{n+1}`, and `ℓ − k − 1` bits generated from the given seed `T_1 ⋯ T_n`. -/
-def expandRedPre (F : List Bool → List Bool) (ℓ : PolyExpr) (w : List Bool) : List Bool :=
-  (NUPPT.inAdvice w).take (pairFstD (NUPPT.inCoins w)).length ++
-    (NUPPT.inArg w).drop (NUPPT.inParam w).length ++
-    (prgIterFun F ℓ ((NUPPT.inArg w).take (NUPPT.inParam w).length)).take
-      (pairSndD (NUPPT.inCoins w)).length
-
-/-- The pre-processing of the hybrid reduction is polynomial-time. -/
-theorem expandRedPre_poly {F : List Bool → List Bool} (hF : PolyTimeComputable F) (ℓ : PolyExpr) :
-    PolyTimeComputable (expandRedPre F ℓ) :=
-  ((takeLen_poly (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inCoins)
-    NUPPT.polyTimeComputable_inAdvice).append
-      (dropLen_poly NUPPT.polyTimeComputable_inParam NUPPT.polyTimeComputable_inArg)).append
-    (takeLen_poly (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inCoins)
-      ((prgIterFun_poly hF ℓ).comp
-        (takeLen_poly NUPPT.polyTimeComputable_inParam NUPPT.polyTimeComputable_inArg)))
-
-/-- **The hybrid-`k` distinguisher machine of [PS10, Lemma 80.5]** for a distinguisher `D` of
-the expansion, a hybrid index family `k n < ℓ(n)` and the evaluator `F` of the generator:
-advice `⟨⟨1^{k n}, 1^{ℓ(n) − k n − 1}⟩, D.advice n⟩`, coins `ℓ + D.coins`; on `⟨1^n, T⟩` it forms
-the `ℓ(n)`-bit hybrid string (`expandRedPre`) and returns `D`'s verdict on it
-(`Complexity.NUPPT.wrap`). -/
-noncomputable def expandRedMachine (D : NUPPT) {F : List Bool → List Bool}
-    (hF : PolyTimeComputable F) (ℓ : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, k n < ℓ.eval n) : NUPPT :=
-  D.wrap (expandRedPre_poly hF ℓ) polyTimeComputable_pairSndD
-    (fun n => pairEncode (List.replicate (k n) true) (List.replicate (ℓ.eval n - k n - 1) true))
-    (.add (.mul (.const 3) ℓ) (.const 2)) (fun n => by
-      rw [length_pairEncode, List.length_replicate, List.length_replicate]
-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
-      have := hk n
-      omega) ℓ
-
-section Generator
-
-variable (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) {F : List Bool → List Bool}
-  (hFs : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s))
-
-include hFs
-
-/-- **The hybrid string** formed by `expandRedPre` on the view of `⟨1^n, T⟩` with data coins
-`a` and advice `⟨1^k, 1^{ℓ−k−1}⟩` is the input of the concrete hybrid distinguisher
-[Gar26, Theorem 3.1]: bit `i` is `a_i` for `i < k`, the given bit `T_{last}` at `i = k`, and
-`G(X_{i−k−1})_{last}` beyond, with `X_j` the `j`-th iterate of `s ↦ init (G s)` on `init T`. 
-
-**Proof sketch.** Unfold the projections of the view; `T` splits as `init T ‖ [T_last]` (`ofFn_eq_init_append`) and the iterated evaluation is `prgIterFun_ofFn`; then `List.ext_getElem` with the three index ranges `i < k`, `i = k`, `i > k` (`List.getElem_append_left/right`, `List.getElem_take`, `List.getElem_ofFn`). -/
-theorem expandRedPre_layout (ℓ : PolyExpr) (n k : ℕ) (hk : k < ℓ.eval n) (T : Fin (n + 1) → Bool)
-    (a : Fin (ℓ.eval n) → Bool) :
-    expandRedPre F ℓ (NUPPT.layout (List.replicate n true) (List.ofFn T) (List.ofFn a)
-      (pairEncode (List.replicate k true) (List.replicate (ℓ.eval n - k - 1) true))) =
-    List.ofFn fun i : Fin (ℓ.eval n) => if (i : ℕ) < k then a i else if (i : ℕ) = k then T (Fin.last n)
-      else G n ((fun x => Fin.init (G n x))^[i - k - 1] (Fin.init T)) (Fin.last n) := by
-  simp only [expandRedPre, NUPPT.inAdvice_layout, NUPPT.inCoins_layout, NUPPT.inArg_layout,
-    NUPPT.inParam_layout, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
-  rw [ofFn_eq_init_append T, List.take_left' List.length_ofFn, List.drop_left' List.length_ofFn,
-    prgIterFun_ofFn G hFs]
-  refine List.ext_getElem ?_ fun j hj₁ hj₂ => ?_
-  · simp only [List.length_append, List.length_take, List.length_ofFn, List.length_singleton]
-    omega
-  · simp only [List.length_ofFn] at hj₂
-    simp only [List.getElem_ofFn]
-    by_cases h1 : j < k
-    · rw [List.getElem_append_left (by simp; omega), List.getElem_append_left (by simp; omega),
-        List.getElem_take, List.getElem_ofFn]
-      simp [h1]
-    · by_cases h2 : j = k
-      · rw [List.getElem_append_left (by simp; omega), List.getElem_append_right (by simp; omega)]
-        simp [h2]
-      · rw [List.getElem_append_right (by simp; omega), List.getElem_take, List.getElem_ofFn]
-        simp only [h1, h2, if_false, List.length_append, List.length_take, List.length_ofFn,
-          List.length_singleton]
-        rw [show j - (min k (ℓ.eval n) + 1) = j - k - 1 by omega]
-
-/-- **The hybrid distinguisher machine computes the concrete hybrid reduction**: on coins
-`r = a ++ c` its verdict on `T` is `D`'s verdict on the hybrid string with uniform bits `a`
-and coins `c`. -/
-theorem expandRedMachine_distinguisher (D : NUPPT) (hF : PolyTimeComputable F) (ℓ : PolyExpr)
-    (k : ℕ → ℕ) (hk : ∀ n, k n < ℓ.eval n) (n : ℕ) (T : Fin (n + 1) → Bool)
-    (a : Fin (ℓ.eval n) → Bool) (c : D.Coins n) (r : (expandRedMachine D hF ℓ k hk).Coins n)
-    (hr : List.ofFn r = List.ofFn a ++ List.ofFn c) :
-    (expandRedMachine D hF ℓ k hk).distinguisher n (n + 1) T r =
-      D.distinguisher n (ℓ.eval n) (fun i => if (i : ℕ) < k n then a i
-        else if (i : ℕ) = k n then T (Fin.last n)
-        else G n ((fun x => Fin.init (G n x))^[i - k n - 1] (Fin.init T)) (Fin.last n)) c := by
-  unfold expandRedMachine
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
-  rw [NUPPT.runAt_wrap D (expandRedPre_poly hF ℓ) polyTimeComputable_pairSndD _ _ _ ℓ n
-    (List.ofFn T) rfl a c r hr, pairSndD_pairEncode, expandRedPre_layout G hFs ℓ n (k n) (hk n) T a]
-
-end Generator
 
 end TCSlib.Cryptography
 
@@ -714,18 +239,20 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
       (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤
     invProbOpt (𝓕.f n)
       ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n)) := by
+  have hcoinLen : 𝓕.inLen.eval n + A.coinLen n = (glPadInvMachine A 𝓕.inLen).coinLen n := by
+    simp only [NUPPT.coinLen_eq, glPadInvMachine, NUPPT.coins_wrap, PolyExpr.eval_add]
   simp only [invProbOpt_def]
   refine le_of_eq_of_le (uprob_comp_equiv
     ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).prodCongr (Equiv.refl (A.Coins n))) _).symm ?_
   refine le_of_le_of_eq ?_ ((uprob_comp_equiv
     (Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool) (Fin (𝓕.inLen.eval n) → Bool) (A.Coins n)) _).trans
     (uprob_comp_equiv ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr
-      (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) _))
+      ((Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n)).trans (finCastEquiv hcoinLen))) _))
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨x, r⟩, c⟩ := w
   obtain ⟨x', hx', hfx'⟩ := hw
   simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, Equiv.symm_apply_apply,
-    Equiv.prodAssoc_apply, NUPPT.inverter_eq_some_iff] at hx' hfx' ⊢
+    Equiv.prodAssoc_apply, Equiv.trans_apply, NUPPT.inverter_eq_some_iff] at hx' hfx' ⊢
   obtain ⟨⟨x'', r''⟩, rfl⟩ := (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).surjective x'
   simp only [Equiv.symm_apply_apply] at hfx' hx'
   have hpair := (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).injective
@@ -733,7 +260,7 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
       Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n) (x, r)) from hfx')
   simp only [HardcoreBit.glPad_apply, Prod.mk.injEq] at hpair
   refine ⟨x'', ?_, hpair.1⟩
-  rw [glPadInvMachine_runAt A 𝓕.inLen n _ r c _ (ofFn_appendEquiv r c)]
+  rw [glPadInvMachine_runAt A 𝓕.inLen n _ r c _ (by rw [ofFn_finCastEquiv, ofFn_appendEquiv])]
   simp only [HardcoreBit.glPad_apply] at hx'
   rw [ofFn_appendEquiv, ofFn_appendEquiv] at hx'
   rw [hx', take_ofFn_append]
@@ -882,6 +409,8 @@ theorem glPad_invProbAt_le (F : Collection) (m : PolyExpr) (A : NUPPT) (n : ℕ)
           pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
             pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)) ≤
     F.invProbAt (glPadCollInvMachine A m) n := by
+  have hcoinLen : m.eval n + A.coinLen n = (glPadCollInvMachine A m).coinLen n := by
+    simp only [NUPPT.coinLen_eq, glPadCollInvMachine, NUPPT.coins_wrap, PolyExpr.eval_add]
   simp only [Collection.invProbAt_eq]
   refine OneWay.uexp_mono fun r => ?_
   refine le_of_eq_of_le (uprob_comp_equiv
@@ -890,19 +419,20 @@ theorem glPad_invProbAt_le (F : Collection) (m : PolyExpr) (A : NUPPT) (n : ℕ)
   refine le_of_le_of_eq ?_ ((uprob_comp_equiv
     (Equiv.prodAssoc (F.D (F.index n r)) (Fin (m.eval n) → Bool) (A.Coins n)) _).trans
     (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr
-      (Fin.appendEquiv (m.eval n) (A.coinLen n))) _))
+      ((Fin.appendEquiv (m.eval n) (A.coinLen n)).trans (finCastEquiv hcoinLen))) _))
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨x, ρ⟩, c⟩ := w
   obtain ⟨⟨x', ρ'⟩, hx', hfx'⟩ := hw
   simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, Equiv.prodAssoc_apply,
-    ofFn_finCastEquiv] at hx' hfx' ⊢
+    Equiv.trans_apply, ofFn_finCastEquiv] at hx' hfx' ⊢
   have hf : F.f (F.index n r) x' = F.f (F.index n r) x := by
     have := congrArg pairDecode hfx'
     simp only [pairDecode_pairEncode, Option.some.injEq, Prod.mk.injEq] at this
     exact this.1
   obtain ⟨a, b, hab, ha, -⟩ := glPadDecode_eq_some F (F.index n r) _ hx'
   refine ⟨x', ?_, hf⟩
-  rw [glPadCollInvMachine_runAt A m n _ _ ρ c _ (ofFn_appendEquiv ρ c), hab, pairFstD_pairEncode, ha]
+  rw [glPadCollInvMachine_runAt A m n _ _ ρ c _ (by rw [ofFn_finCastEquiv, ofFn_appendEquiv]),
+    hab, pairFstD_pairEncode, ha]
 
 end TCSlib.Cryptography
 

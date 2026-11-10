@@ -7,6 +7,7 @@ import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.Cryptography.Asymptotic.SamplingFinDist
 import TCSlib.Cryptography.Asymptotic.Permutations
 import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.ReductionSupport
 import TCSlib.Cryptography.Asymptotic.Ensembles
 import TCSlib.Cryptography.Asymptotic.OneWay
 import TCSlib.Cryptography.Asymptotic.Collections
@@ -49,6 +50,7 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
 * `Adversary` — an `NUPPT` as an inverter, distinguisher or predictor of the concrete
   experiments (`decodeFin`, `padFin`, `invProbOpt`; [PS10, Definitions 24.6, 26.1, 27.3, 69.4,
   75.2, 78.3]).
+* `ReductionSupport` gives shared adversary wrappers and their coin and run equations.
 * `Ensembles` — ensembles and computational indistinguishability [PS10, Definitions 69.3,
   69.4], closure under efficient operations [PS10, Lemma 71.5], the hybrid lemma
   [PS10, Lemma 71.6], the prediction lemma [PS10, Lemma 73.8], the pairwise-independent

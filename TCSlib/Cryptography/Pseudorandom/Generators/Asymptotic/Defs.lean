@@ -38,7 +38,7 @@ concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* →
 **Deviation:** the expansion clause `PRG.expands` holds at every seed length, `n = 0` included
 (the text's `|G(x)| > |x|` read literally at `x = ε`), so no `PolyExpr` stretch with `ℓ(0) = 0`
 (exactly `2n`) or `ℓ(1) = 1` (`n^c`) is a `PRG`; the length-doubling generators of the text are
-`DoublingPRG` (`Asymptotic/PRF.lean`). See `PRG` (gate 03c, finding 1; ruling G3-2).
+`DoublingPRG` (`Pseudorandom.Generators.Asymptotic.Stretch`). See `PRG` (gate 03c, finding 1; ruling G3-2).
 
 **Deviation:** `PRG.Easy`: a deterministic polynomial-time evaluator on the seed string
 instead of a PPT computing `G` with probability one (equivalent by `Complexity.NUPPT.Computes`
@@ -122,9 +122,9 @@ concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* →
 in ℕ, so a stretch with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) is not a `PRG`, although
 the text uses such generators (the length-doubling `G` of Algorithm 92.1 and Theorem 97.3;
 Lemma 80.5's "for any polynomial `ℓ`"). They are reached up to one bit (`2n + 1`, `n^c + 1`, by
-`prg_expand` from the one-bit truncation `PRG.truncate` of `Asymptotic/PRF.lean`) or by truncation
-(`PRG.Secure.truncateTo_easy`/`_negligible`, `Asymptotic/PRFLemmas.lean`); the length-doubling
-generator of Theorem 97.3 is the separate predicate `DoublingPRG` (`Asymptotic/PRF.lean`),
+`prg_expand` from the one-bit truncation `PRG.truncate` of `Pseudorandom.Generators.Asymptotic.Stretch`) or by truncation
+(`PRG.Secure.truncateTo_easy`/`_negligible`, `Pseudorandom.Generators.Asymptotic.Stretch`); the length-doubling
+generator of Theorem 97.3 is the separate predicate `DoublingPRG` (`Pseudorandom.Generators.Asymptotic.Stretch`),
 produced from any secure `PRG` by `PRG.doubling` (`PRG.Secure.doubling`). "PRGs exist" means the
 same under either reading, since a generator expanding only from some `n₀` on is made to expand
 everywhere by truncating to `n + 1` bits and changing it below `n₀` (a remark, not formalized).

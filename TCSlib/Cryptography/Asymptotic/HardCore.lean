@@ -14,6 +14,7 @@ import TCSlib.Cryptography.Asymptotic.HardCoreLoops
 import TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 import TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 import TCSlib.Cryptography.OneWayFunctions.OutputLength
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -24,8 +25,7 @@ set_option autoImplicit false
 
 The material of [PS10, §3.3.3–§3.3.5 and §3.4.2–§3.4.3]: hard-core predicates
 [PS10, Definition 78.3]; the one-bit-stretch generator `G(s) = f(s) ‖ h(s)` from a one-way
-permutation `f` with hard-core predicate `h` [PS10, Theorem 79.4]; the expansion of a
-one-bit-stretch generator to `ℓ(n)` bits [PS10, Lemma 80.5]; the iterated generator
+permutation `f` with hard-core predicate `h` [PS10, Theorem 79.4]; the iterated generator
 `h(x) ‖ h(f(x)) ‖ ⋯ ‖ h(f^{ℓ(n)}(x))` [PS10, Corollary 81.7]; and the Goldreich–Levin theorem:
 for every one-way function `f`, `g(x, r) = (f(x), r)` is one-way and `⟨x, r⟩` is hard-core for
 `g` [PS10, Theorem 87.3], together with the concrete claims of its proof (the oversimplified
@@ -40,7 +40,7 @@ the frozen Garg development reused verbatim: `owpPredictor`/`exists_owpPredictor
 (`Pseudorandom/GeneratorFromPermutation.lean`), `prgExt`/`prgExtRed`/`exists_prgExtRed_ge`
 (`Pseudorandom/Generators.lean`), `HardcoreBit.glPad`, `glBit`, `guessInverter`,
 `invProb_guessInverter` (`HardcoreBit/*`); this file adds the bit-string re-encodings the
-text's conventions require (`owpPredictorSnoc`, `oneBitStep`, `expandRed`, `prgAdv_fst`) and
+text's conventions require (`owpPredictorSnoc`) and
 the typed-family bridges (`FunFamily.predProb_glPad`, `FunFamily.invProb_glInverter`). The
 *asymptotic* layer states the theorems over `Complexity.NUPPT` and `FunFamily`/`PRG`/
 `Collection`; every asymptotic theorem is (i) the concrete reduction at each `n`, (ii) a
@@ -85,11 +85,9 @@ certainty (`predProb_positionBit`) and each fixed input bit `x_i` with advantage
 
 * `TCSlib.Cryptography.HardCore` — hard-core predicate for a function family
   [PS10, Definition 78.3] (frozen signature).
-* `TCSlib.Cryptography.PRG.oneBit`, `TCSlib.Cryptography.owpGenPRG` — the one-bit-stretch
+* `TCSlib.Cryptography.owpGenPRG` — the one-bit-stretch
   generator `f(s) ‖ h(s)` [PS10, Theorem 79.4]; `TCSlib.Cryptography.owpPredictorSnoc` — its
   predictor.
-* `TCSlib.Cryptography.oneBitStep`, `TCSlib.Cryptography.PRG.expand`,
-  `TCSlib.Cryptography.expandRed` — the expansion `G'` of [PS10, Lemma 80.5] and its reduction.
 * `TCSlib.Cryptography.PermFamily.iterPRG` — `h(x) ‖ h(f(x)) ‖ ⋯ ‖ h(f^{ℓ(n)}(x))`
   [PS10, Corollary 81.7].
 * `TCSlib.Cryptography.FunFamily.glPad`, `FunFamily.glBit`, `FunFamily.glInverter` — the
@@ -101,10 +99,9 @@ certainty (`predProb_positionBit`) and each fixed input bit `x_i` with advantage
 
 * `TCSlib.Cryptography.owp_hardcore_prg` [PS10, Theorem 79.4];
   `TCSlib.Cryptography.exists_owpPredictorSnoc` (concrete, proved).
-* `TCSlib.Cryptography.prg_expand` [PS10, Lemma 80.5]; `TCSlib.Cryptography.exists_expandRed_ge`
-  (concrete, proved).
-* `TCSlib.Cryptography.cor_81_7` [PS10, Corollary 81.7] (proved from the two above and the
-  closed form `PermFamily.iterPRG_eq_expand`).
+* `TCSlib.Cryptography.cor_81_7` [PS10, Corollary 81.7] combines Theorem 79.4 with
+  `prg_expand` from `Pseudorandom.Generators.Asymptotic.Stretch` through the closed form
+  `PermFamily.iterPRG_eq_expand`.
 * `TCSlib.Cryptography.goldreich_levin`, `FunFamily.StrongOneWay.glPad`,
   `FunFamily.StrongOneWay.glPad_hardCore` [PS10, Theorem 87.3]; the concrete claims
   `thm_87_3_1`, `thm_87_3_2`, `thm_87_3_3`, `fact_88_4`, `thm_87_3_6`, `thm_87_3_7`,
@@ -120,9 +117,7 @@ certainty (`predProb_positionBit`) and each fixed input bit `x_i` with advantage
   `Asymptotic/HardCoreCollection.lean`).
 * `TCSlib.Cryptography.not_hardCore_const` — a constant predicate is never hard-core
   (non-vacuity of the hardness clause of Definition 78.3).
-* `TCSlib.Cryptography.hardCore_iff`, `PRG.oneBit_stretch`, `PRG.oneBit_G`,
-  `owpPredictorSnoc_eq`, `oneBitStep_eq`, `expandRed_eq` — the unfoldings of the definitions
-  of this file (gate 03c, finding 11).
+* `TCSlib.Cryptography.hardCore_iff` and `owpPredictorSnoc_eq` give the defining equations.
 
 ## References
 
@@ -277,37 +272,12 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
 
 /-! ## The generator `f(s) ‖ h(s)` [PS10, Theorem 79.4] -/
 
-/-- A one-bit-stretch generator `G n : {0,1}^n → {0,1}^{n+1}` as a `PRG` with stretch
-`n + 1` ("Let `G : {0,1}^n → {0,1}^{n+1}` be a PRG", [PS10, Lemma 80.5]). -/
-def PRG.oneBit (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) : PRG where
-  stretch := .add .var (.const 1)
-  G := G
-  expands n := Nat.lt_succ_self n
-
-/-- Field equation: the stretch of `PRG.oneBit G` is `n + 1`. -/
-theorem PRG.oneBit_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) :
-    (PRG.oneBit G).stretch = .add .var (.const 1) := rfl
-
-/-- Field equation: the generator of `PRG.oneBit G` at seed length `n` is `G n`. -/
-theorem PRG.oneBit_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (n : ℕ)
-    (s : Fin n → Bool) : (PRG.oneBit G).G n s = G n s := rfl
-
-/-- **Security of `PRG.oneBit G` unfolded**: it is secure iff some polynomial-time string
-function computes `G n s` from the seed string, and for every non-uniform PPT `D` the PRG
-advantage `prgAdv (G n) (D(1^n, ·))` on `n + 1` bits is negligible (`PRG.secure_iff` at
-`oneBit`, where the generator's type depends on the stretch). -/
-theorem PRG.oneBit_secure_iff (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) :
-    (PRG.oneBit G).Secure ↔
-      (∃ F : List Bool → List Bool, PolyTimeComputable F ∧
-        ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)) ∧
-      ∀ D : NUPPT, Negligible fun n => prgAdv (G n) (D.distinguisher n (n + 1)) := by
-  rw [PRG.secure_iff, PRG.easy_iff]
-  rfl
-
 /-- The generator `G(s) = f(s) ‖ h(s)` of [PS10, Theorem 79.4] for a permutation family `f`
 and a predicate `h`: output length `n + 1`, the bit `h(s)` in the last position. -/
 def owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) : PRG :=
-  PRG.oneBit fun n s => Fin.snoc (P.f n s) (h n s)
+  { stretch := .add .var (.const 1)
+    G := fun n s => Fin.snoc (P.f n s) (h n s)
+    expands := fun n => Nat.lt_succ_self n }
 
 /-- **The outputs of the generator of Theorem 79.4 are `{0,1}^{n+1}`**: the published
 equivalence `{0,1}^{stretch(n)} ≃ {0,1}^{n+1}` (the identity on the definition). -/
@@ -329,12 +299,12 @@ theorem owpGenPRG_outEquiv_ofFn (P : PermFamily) (h : ∀ n, (Fin n → Bool) �
 /-- Unfolding: the generator of Theorem 79.4 outputs `f(s)` on the first `n` positions. -/
 theorem owpGenPRG_G_castSucc (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
     (s : Fin n → Bool) (i : Fin n) : (owpGenPRG P h).G n s i.castSucc = P.f n s i := by
-  simp [owpGenPRG, PRG.oneBit]
+  simp [owpGenPRG]
 
 /-- Unfolding: the generator of Theorem 79.4 outputs `h(s)` in the last position. -/
 theorem owpGenPRG_G_last (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
     (s : Fin n → Bool) : (owpGenPRG P h).G n s (Fin.last n) = h n s := by
-  simp [owpGenPRG, PRG.oneBit]
+  simp [owpGenPRG]
 
 /-- The predictor of [Gar26, proof of Theorem 3.2] for a distinguisher of `f(s) ‖ h(s)`: on
 input `y = f(s)` it draws a bit `σ` and coins for `D`, outputs `σ` if `D(y ‖ σ) = 1` and
@@ -451,177 +421,6 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
   rw [abs_of_nonneg h4]
   exact le_trans (by linarith) (le_abs_self _)
 
-/-! ## Expansion of a one-bit-stretch generator [PS10, Lemma 80.5] -/
-
-/-- A one-bit-stretch generator read in the text's order `X_{i+1} ‖ b_{i+1} ← G(X_i)`
-[PS10, Lemma 80.5]: the output bit is the last bit of `G(s)` and the next seed is its first
-`n` bits (`(Fin.snocEquiv _).symm (G s)`); this is the `S → Bool × S` form of
-[Gar26, Construction 3.1], which reads the bit first. -/
-def oneBitStep {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) :
-    (Fin n → Bool) → Bool × (Fin n → Bool) :=
-  fun s => (G s (Fin.last n), Fin.init (G s))
-
-/-- Unfolding: one step outputs the last bit of `G(s)` and the next seed `init G(s)`. -/
-theorem oneBitStep_eq {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) (s : Fin n → Bool) :
-    oneBitStep G s = (G s (Fin.last n), Fin.init (G s)) := rfl
-
-/-- The **expanded generator** `G'(s) = b_1 ⋯ b_{ℓ(n)}` of [PS10, Lemma 80.5]: `X_0 = s`,
-`X_{i+1} ‖ b_{i+1} ← G(X_i)`, output the `ℓ(n)` bits (the final seed is dropped). Formally
-the first component of the concrete `prgExt (oneBitStep (G n)) (ℓ n)` [Gar26,
-Construction 3.1]; the expansion clause `n < ℓ(n)`, at every `n` (see `PRG`), is the
-hypothesis `hℓ`.
-
-**Deviation:** `G(X_i)` is read seed-first/bit-last as in the text; the output drops the
-final seed (as in the text), the concrete `prgExt` keeps it. The text's "for any polynomial
-`ℓ`" is restricted to `ℓ(n) > n` at every `n`, `n = 0` included (the cost of `PRG.expands`:
-`2n` and `n^c` are excluded, `2n + 1` and `n^c + 1` are not; gate 03c, finding 1, ruling
-G3-2). -/
-def PRG.expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n < ℓ.eval n) : PRG where
-  stretch := ℓ
-  G n s := (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1
-  expands := hℓ
-
-/-- Field equation: the stretch of `PRG.expand G ℓ hℓ` is `ℓ`. -/
-theorem PRG.expand_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n < ℓ.eval n) : (PRG.expand G ℓ hℓ).stretch = ℓ := rfl
-
-/-- Closed form of the expansion: output bit `i` is the last bit of `G(X_i)`, where
-`X_i` is the `i`-th iterate of `s ↦ init (G s)` on the seed (`b_{i+1}` in the text's
-1-indexed notation). -/
-theorem PRG.expand_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool) (i : Fin (ℓ.eval n)) :
-    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
-
-/-- Closed form of the expansion with the output index typed by the stretch:
-`G'(s)_i = last bit of G((s ↦ init G(s))^i (s))` for
-`i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)` (`PRG.expand_G` on the PRG's own output space). -/
-theorem PRG.expand_G_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool)
-    (i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)) :
-    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) :=
-  PRG.expand_G G ℓ hℓ n s i
-
-/-- The hybrid-`k` reduction of [PS10, Lemma 80.5] (the machine `M(y)` of the proof) in the
-text's seed-first convention: on `T ∈ {0,1}^{n+1}` read `(b, X) := (T_{n+1}, T_1 ⋯ T_n)`, draw
-`k` uniform bits `b_prev`, put `b` at position `k`, iterate `G` on `X` for the remaining
-positions and call `D` once on the `ℓ` bits. Cost: that of `prgExtRed` (`l − k − 1` calls to
-`G`, one to `D`, `l` coins of which `k` are used). -/
-def expandRed {ρ : Type*} {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) (l k : ℕ)
-    (D : (Fin l → Bool) → ρ → Bool) : (Fin (n + 1) → Bool) → (Fin l → Bool) × ρ → Bool :=
-  fun T c => prgExtRed (oneBitStep G) l k (fun z r => D z.1 r) (T (Fin.last n), Fin.init T) c
-
-/-- Unfolding: `expandRed G l k D` on `T` is the concrete hybrid-`k` reduction `prgExtRed`
-[Gar26, Theorem 3.1] of `oneBitStep G` against `D ∘ fst`, on the re-encoded input
-`(T_{n+1}, T_1 ⋯ T_n)`. -/
-theorem expandRed_eq {ρ : Type*} {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) (l k : ℕ)
-    (D : (Fin l → Bool) → ρ → Bool) (T : Fin (n + 1) → Bool) (c : (Fin l → Bool) × ρ) :
-    expandRed G l k D T c =
-      prgExtRed (oneBitStep G) l k (fun z r => D z.1 r) (T (Fin.last n), Fin.init T) c := rfl
-
-/-- Dropping an independent uniform component from a generator's output does not change
-PRG advantages: `prgAdv (fst ∘ X) D = prgAdv X (D ∘ fst)` (the projection is a deterministic
-post-processing and the projection of a uniform pair is uniform). -/
-theorem prgAdv_fst {σ γ δ ρ : Type*} [Fintype σ] [Fintype γ] [Fintype δ] [Nonempty δ]
-    [Fintype ρ] (X : σ → γ × δ) (D : γ → ρ → Bool) :
-    prgAdv (fun s => (X s).1) D = prgAdv X (fun z r => D z.1 r) := by
-  simp only [prgAdv_eq, distAdv_def]
-  rw [← acceptProb_fst (τ := δ) (id : γ → γ) D]
-  rfl
-
-/-- **Expansion, concrete form** [PS10, Lemma 80.5; Gar26, Theorem 3.1]: if `D` distinguishes
-the `l`-bit expansion of `G` (`l ≥ 1`, bits only) from a uniform `l`-bit string with advantage
-`ε`, then for some hybrid index `k < l` the reduction `expandRed G l k D` distinguishes
-`G` from a uniform `(n+1)`-bit string with advantage at least `ε / l`.
-
-**Proof sketch.** `prgAdv_fst` moves the projection onto the distinguisher;
-`exists_prgExtRed_ge` for `oneBitStep G` gives `k`; `prgAdv_comp_equiv` with the bijection
-`(Fin.snocEquiv _).symm : {0,1}^{n+1} ≃ Bool × {0,1}^n` re-encodes the reduction's input. -/
-theorem exists_expandRed_ge {ρ : Type*} [Fintype ρ] {n : ℕ}
-    (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) {l : ℕ} (hl : 0 < l)
-    (D : (Fin l → Bool) → ρ → Bool) :
-    ∃ k < l, prgAdv (fun s => (prgExt (oneBitStep G) l s).1) D / l ≤
-      prgAdv G (expandRed G l k D) := by
-  obtain ⟨k, hk, h⟩ := exists_prgExtRed_ge (oneBitStep G) hl (fun z r => D z.1 r)
-  refine ⟨k, hk, ?_⟩
-  rw [prgAdv_fst]
-  refine h.trans_eq ?_
-  exact prgAdv_comp_equiv (Fin.snocEquiv fun _ => Bool).symm G
-    (prgExtRed (oneBitStep G) l k fun z r => D z.1 r)
-
-/-- **Expansion of a PRG** [PS10, Lemma 80.5]: if the one-bit-stretch generator `G` is a PRG
-then so is its `ℓ(n)`-bit expansion `G'` (`ℓ(n) > n` at every `n`, see `PRG`).
-
-The input is a one-bit-stretch `G : {0,1}^n → {0,1}^{n+1}`, as in the text ("Let
-`G : {0,1}^n → {0,1}^{n+1}` be a PRG"), not a general `P : PRG` (the shape recorded at DESIGN
-§2.12); a general secure `P` reaches it through its truncation to `n + 1` bits, `PRG.truncate`
-with `PRG.Secure.truncate : (PRG.oneBit P.truncate).Secure` (`Asymptotic/PRF.lean`; gate 03c,
-finding 4).
-
-**Deviation:** `G'` drops the final seed and reads `G(X_i)` seed-first, as the text; the
-text's proof interchanges `m(n)` and `ℓ(n)`, starts the hybrids at `i = 1` (they must start
-at `0`) and reads `M(y)` bit-first against the construction (source error 34). The text's
-"for any polynomial `ℓ`" is restricted to `ℓ(n) > n` at every `n`, `n = 0` included (the cost
-of `PRG.expands`; gate 03c, finding 1, ruling G3-2); the security half uses only `ℓ(n) > 0`.
-
-**Proof sketch.** *Easy:* from `h.1 = ⟨F, hF, hFs⟩`, `G'` is computed by
-`polyTimeComputable_iterateEmit` with step `x ↦ (F x).dropLast` (the next seed,
-`Turing.FinTM.computesFunInTime_stripLast`) and emission `x ↦ [(F x).getLast]`, `R := ℓ`,
-orbit bound `P := var` (all seeds have length `n`), truncated to the first `ℓ(n)` bits
-(`polyTimeComputable_pairTakePoly ℓ` on `⟨1^{|s|}, ·⟩`); the identity with
-`PRG.expand_G` is `List.ofFn_succ'`. *Pseudorandom* (`PRG.secure_iff`): fix `D : NUPPT`.
-At every `n`, `exists_expandRed_ge (G n) (hl := Nat.lt_of_le_of_lt (Nat.zero_le n) (hℓ n))`
-with `D.distinguisher n (ℓ n)` gives a hybrid index `k_n < ℓ(n)`. The reduction machine
-`M`: advice `⟨⟨1^{k_n}, 1^{ℓ(n) − k_n − 1}⟩, D.advice n⟩` (`NUPPT.exists_withAdvice`,
-length `≤ 2ℓ + D.adv + 8`), coins `ℓ + D.coins` (`NUPPT.exists_split ℓ`), on `⟨1^n, T⟩` it
-takes the first `k_n` coins as `b_prev` (`pairTakePoly`), the last bit of `T` as `b` and its
-first `n` bits as `X` (`stripLast`, `pairDropPoly`), iterates `F` `ℓ(n) − k_n − 1` times
-emitting the last bits (`polyTimeComputable_iterateEmit` with the unary advice as fuel),
-concatenates `b_prev ++ [b] ++ b_next` and calls `D` once (`NUPPT.exists_seq`). Functional
-identity: `M.distinguisher n (n+1) T r = expandRed (G n) (ℓ n) k_n (D.distinguisher n (ℓ n)) T (c r)`
-with `c : M.Coins n ≃ (Fin (ℓ n) → Bool) × D.Coins n` (`Fin.appendEquiv`), hence
-`prgAdv (G n) (M.distinguisher n (n+1)) ≥ prgAdv ((PRG.expand G ℓ hℓ).G n) (D.distinguisher n (ℓ n)) / ℓ(n)`
-(`uprob_comp_equiv`). By `h.2 M` the left side is negligible; `ℓ(n) ≤ C (n+1)^c`
-(`PolyExpr.eval_le`), so the right side is negligible by `Negligible.mul_pow`,
-`Negligible.const_mul` and `Negligible.mono`. -/
-theorem prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure := by
-  rw [PRG.secure_iff] at h ⊢
-  obtain ⟨hE1, hsec⟩ := h
-  obtain ⟨F, hF, hFs⟩ := (PRG.easy_iff _).1 hE1
-  have hFs' : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s) := hFs
-  refine ⟨?_, fun D => ?_⟩
-  · obtain ⟨E, hE, hEs⟩ := exists_expandEvaluator G hFs' hF ℓ
-    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
-  · have hk : ∀ n, ∃ k < ℓ.eval n,
-        prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n)) /
-          ℓ.eval n ≤
-        prgAdv (G n) (expandRed (G n) (ℓ.eval n) k (D.distinguisher n (ℓ.eval n))) :=
-      fun n => exists_expandRed_ge (G n) (Nat.lt_of_le_of_lt (Nat.zero_le n) (hℓ n)) _
-    choose k hk hle using hk
-    have hneg : Negligible fun n =>
-        prgAdv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1)) :=
-      hsec (expandRedMachine D hF ℓ k hk)
-    have hred : ∀ n, prgAdv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1)) =
-        prgAdv (G n) (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n))) := by
-      intro n
-      refine prgAdv_coins_equiv _ _ _ (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)) fun T c => ?_
-      obtain ⟨a, c⟩ := c
-      exact expandRedMachine_distinguisher G hFs' D hF ℓ k hk n T a c _ (ofFn_appendEquiv a c)
-    simp only [hred] at hneg
-    refine (hneg.polyExpr_mul ℓ).mono ⟨0, fun n _ => ?_⟩
-    have hpos : (0 : ℝ) < ℓ.eval n := by exact_mod_cast Nat.lt_of_le_of_lt (Nat.zero_le n) (hℓ n)
-    have h1 := hle n
-    rw [div_le_iff₀ hpos] at h1
-    show |prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n))| ≤
-      |(ℓ.eval n : ℝ) * prgAdv (G n) (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n)))|
-    have h2 : 0 ≤ prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1)
-        (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
-    have h3 : 0 ≤ prgAdv (G n) (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n))) :=
-      abs_nonneg _
-    rw [abs_of_nonneg h2, abs_of_nonneg (mul_nonneg hpos.le h3)]
-    linarith
-
 /-! ## The iterated generator [PS10, Corollary 81.7] -/
 
 /-- The generator `G(x) = h(x) ‖ h(f(x)) ‖ h(f^{(2)}(x)) ‖ ⋯ ‖ h(f^{ℓ(n)}(x))` of
@@ -639,21 +438,34 @@ def PermFamily.iterPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (
 /-- **The closed form of Corollary 81.7**: the iterated generator is the `(ℓ(n) + 1)`-bit
 expansion (Lemma 80.5) of the one-bit generator `f(s) ‖ h(s)` (Theorem 79.4), since the seed
 update of `oneBitStep (f(s) ‖ h(s))` is `f` (`Fin.init_snoc`) and its output bit is `h`
-(`Fin.snoc_last`). -/
+(`Fin.snoc_last`).
+
+**Proof sketch.** Read the expanded generator’s stretch and output from its field equations.
+The seed update and emitted bit simplify to `f` and `h`. Rewrite the stretch first to
+align the dependent output types, then compare the generators pointwise. -/
 theorem PermFamily.iterPRG_eq_expand (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (ℓ : PolyExpr) (hℓ : ∀ n, n ≤ ℓ.eval n) :
     P.iterPRG h ℓ hℓ = PRG.expand (fun n s => Fin.snoc (P.f n s) (h n s)) (.add ℓ (.const 1))
       (fun n => Nat.lt_succ_of_le (hℓ n)) := by
-  unfold PermFamily.iterPRG PRG.expand
-  congr 1
-  funext n s i
-  have hstep : prgStep (oneBitStep fun x => Fin.snoc (P.f n x) (h n x)) = ⇑(P.f n) :=
-    funext fun x => by
-      show Fin.init (Fin.snoc (P.f n x) (h n x) : Fin (n + 1) → Bool) = P.f n x
-      exact Fin.init_snoc _ _
-  simp only [prgExt_def]
-  rw [hstep]
-  simp only [oneBitStep, Fin.snoc_last]
+  let G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool) :=
+    fun n s => Fin.snoc (P.f n s) (h n s)
+  let Q := PRG.expand G (.add ℓ (.const 1)) (fun n => Nat.lt_succ_of_le (hℓ n))
+  have hlen : Q.stretch = .add ℓ (.const 1) := PRG.expand_stretch _ _ _
+  have hclosed (n : ℕ) (s : Fin n → Bool) (i : Fin (Q.stretch.eval n)) :
+      Q.G n s i = h n ((⇑(P.f n))^[i] s) := by
+    change (PRG.expand G _ _).G n s i = _
+    rw [PRG.expand_G_stretch]
+    simp only [G, Fin.init_snoc, Fin.snoc_last]
+  change P.iterPRG h ℓ hℓ = Q
+  generalize Q = R at hlen hclosed ⊢
+  cases R with
+  | mk len out expands =>
+    change len = .add ℓ (.const 1) at hlen
+    subst len
+    unfold PermFamily.iterPRG
+    congr 1
+    funext n s i
+    exact (hclosed n s i).symm
 
 /-- **The iterated generator is a PRG** [PS10, Corollary 81.7]: for a one-way permutation `f`
 with hard-core predicate `h`, `G(x) = h(x) ‖ h(f(x)) ‖ ⋯ ‖ h(f^{ℓ(n)}(x))` is a PRG, by
@@ -663,7 +475,10 @@ theorem cor_81_7 (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (ℓ : 
     (hℓ : ∀ n, n ≤ ℓ.eval n) (hP : OneWayPermutation P) (hh : P.HardCore h) :
     (P.iterPRG h ℓ hℓ).Secure := by
   rw [PermFamily.iterPRG_eq_expand]
-  exact prg_expand _ _ _ (owp_hardcore_prg P h hP hh)
+  apply prg_expand
+  have hgen := owp_hardcore_prg P h hP hh
+  rw [PRG.secure_iff, PRG.easy_iff] at hgen
+  exact (PRG.oneBit_secure_iff _).2 hgen
 
 /-! ## Goldreich–Levin for function families [PS10, Theorem 87.3] -/
 

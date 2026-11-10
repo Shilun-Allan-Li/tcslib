@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Asymptotic.GGMReductionEval
 import TCSlib.Cryptography.Asymptotic.HardCore
 import TCSlib.Cryptography.Asymptotic.PRFLemmas
 import TCSlib.Cryptography.Pseudorandom.Functions.GGM
+import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -67,7 +68,7 @@ lazily sampled tables, and its functional identity with `ggmBitsDist`).
 * `TCSlib.Cryptography.OracleEnsemble.Indist` — oracle indistinguishability
   [PS10, Definition 96.1].
 * `TCSlib.Cryptography.PRF` — pseudorandom function families [PS10, Definition 96.2].
-* `TCSlib.Cryptography.DoublingPRG`, `PRG.truncate`, `PRG.doubling` — length-doubling
+* `TCSlib.Cryptography.DoublingPRG`, `PRG.truncate`, `PRG.doubling` from `Stretch` — length-doubling
   generators and the reduction from an arbitrary generator (Cor-97.a).
 * `TCSlib.Cryptography.ggmPRF` — the GGM family `f_s(b₁ … b_n) = g_{b_n}(⋯ g_{b₁}(s) ⋯)`
   [PS10, Theorem 97.3, construction].
@@ -82,7 +83,7 @@ lazily sampled tables, and its functional identity with `ggmBitsDist`).
   hybrid lemma for oracle ensembles (Claim-96.b).
 * `TCSlib.Cryptography.prfAdv_toOracleAdversary` — the advantage of a next-query machine
   against a keyed family is the concrete `prfAdv`.
-* `TCSlib.Cryptography.PRG.Secure.doubling` — every PRG yields a length-doubling PRG
+* `TCSlib.Cryptography.PRG.Secure.doubling` in `Stretch` — every PRG yields a length-doubling PRG
   (Cor-97.a).
 * `TCSlib.Cryptography.thm_97_3_1`, `thm_97_3_2`, `exists_ggmBitsDist_nuppt` — the level
   hybrids, the query sub-hybrids and the emulation of a sub-hybrid by a non-uniform PPT.
@@ -478,122 +479,6 @@ theorem PRF.negligible_prfAdv {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) 
     Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) := by
   exact (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary F D n (q.eval n))).mp
     (hF.pseudorandom D q)
-
-/-! ### Length-doubling generators (Cor-97.a) -/
-
-/-- The output ensemble `{s ← U_n : G(s)}` of a length-doubling generator
-`G : {0,1}^n → {0,1}^{2n}`, with the stretch `2n` as the syntactic polynomial `2 · var` (D9). -/
-def doublingEnsemble (G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)) :
-    Ensemble (.mul (.const 2) .var) where
-  σ n := Fin n → Bool
-  X := G
-
-/-- **A length-doubling pseudorandom generator** `g : {0,1}^n → {0,1}^{2n}` [PS10, proof of
-Theorem 97.3, "let `g` be a length-doubling pseudorandom generator"]: efficiently computable
-and with a pseudorandom output ensemble, exactly as `PRG.Secure` [PS10, Definition 77.1] but
-with the stretch `2n`.
-
-**Deviation:** a length-doubling generator is not a `PRG` of this library (the expansion
-clause `n < 2n` fails at `n = 0`), hence this separate predicate; `PRG.Secure.doubling`
-(Cor-97.a) produces one from any `PRG`. -/
-structure DoublingPRG (G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)) : Prop where
-  /-- Efficiency: a polynomial-time string function computes `G n s` from the seed string. -/
-  easy : ∃ E : List Bool → List Bool, PolyTimeComputable E ∧
-    ∀ n (s : Fin n → Bool), E (List.ofFn s) = List.ofFn (G n s)
-  /-- Pseudorandomness of the output ensemble [PS10, Definition 74.1]. -/
-  pseudorandom : (doublingEnsemble G).Pseudorandom
-
-/-- **Pseudorandomness of a length-doubling generator unfolded**: for every non-uniform PPT
-`D` the concrete PRG advantage `prgAdv (G n) (D(1^n, ·))` [Gar26, Definition 3.5] between
-`G(U_n)` and `U_{2n}` is negligible (definitional, `Ensemble.pseudorandom_iff_prgAdv`). -/
-theorem DoublingPRG.negligible_prgAdv {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)}
-    (hG : DoublingPRG G) (D : NUPPT) :
-    Negligible fun n => prgAdv (G n) (D.distinguisher n (2 * n)) :=
-  (Ensemble.pseudorandom_iff_prgAdv (doublingEnsemble G)).1 hG.pseudorandom D
-
-/-- **Truncation of a generator to `n + 1` bits** (first step of Cor-97.a): the first `n + 1`
-output bits of `G n` (the stretch `ℓ(n) > n` makes them available). -/
-def PRG.truncate (P : PRG) : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool) :=
-  fun n s i => P.G n s (Fin.castLE (P.expands n) i)
-
-/-- The stretch `2n + 1` used to produce a length-doubling generator from a one-bit-stretch
-generator by [PS10, Lemma 80.5]: it exceeds `n` at every `n` (unlike `2n`). -/
-theorem two_mul_add_one_expands (n : ℕ) :
-    n < (PolyExpr.add (.mul (.const 2) .var) (.const 1)).eval n := by
-  rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
-    PolyExpr.eval_const]
-  omega
-
-/-- **The length-doubling generator obtained from an arbitrary PRG** (Cor-97.a, the "without
-loss of generality" of [PS10, proof of Theorem 97.3]): truncate `G` to `n + 1` bits
-(`PRG.truncate`), expand the one-bit-stretch generator to `2n + 1` bits by the construction of
-[PS10, Lemma 80.5] (`PRG.expand`), and keep the first `2n` bits. -/
-def PRG.doubling (P : PRG) : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool) :=
-  fun n s i => (PRG.expand P.truncate (.add (.mul (.const 2) .var) (.const 1))
-    two_mul_add_one_expands).G n s (Fin.cast (by
-      rw [PRG.expand_stretch]
-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var])
-      (Fin.castLE (Nat.le_succ (2 * n)) i))
-
-/-- Closed form of the length-doubling generator: bit `i` of `P.doubling n s` is the last bit
-of the truncated generator applied to the `i`-th iterate of `s ↦ init (G₁(s))` on `s`
-(`PRG.expand_G`). -/
-theorem PRG.doubling_apply (P : PRG) (n : ℕ) (s : Fin n → Bool) (i : Fin (2 * n)) :
-    P.doubling n s i =
-      P.truncate n ((fun x => Fin.init (P.truncate n x))^[i] s) (Fin.last n) := by
-  unfold PRG.doubling
-  exact PRG.expand_G_stretch P.truncate _ two_mul_add_one_expands n s _
-
-/-- **Truncation preserves pseudorandomness** (first half of Cor-97.a): if `G` is a secure
-PRG then its truncation to `n + 1` bits is a secure one-bit-stretch PRG.
-
-**Proof sketch.** *Easy:* the evaluator of `G` followed by `List.take (n + 1)`
-(`Complexity.polyTimeComputable_pairTakePoly (.add .var (.const 1))` on `⟨1^n, G(s)⟩`, with
-`1^n = replicate |s| true` by `polyTimeComputable_unaryPoly .var`); `List.take` of `ofFn` is
-`ofFn` of the restriction (`List.ofFn_castLE`-style, `List.take_ofFn`). *Pseudorandom:* for a
-distinguisher `D` of the truncation, the machine `D'` that truncates its `ℓ(n)`-bit input to
-`n + 1` bits and runs `D` (`NUPPT.exists_comp` with `pre := pairTakePoly`) satisfies
-`prgAdv (G n) (D'.distinguisher n (ℓ n)) = prgAdv (P.truncate n) (D.distinguisher n (n+1))` by
-the sunglass identity `distAdv_comp` with the projection `t ↦ t ∘ castLE` (a uniform
-`ℓ(n)`-bit string projects to a uniform `(n+1)`-bit string, `uprob_comp_equiv` on
-`Fin.appendEquiv`/`Equiv.funSplitAt`), and `PRG.secure_iff` applied to `hP` gives the
-negligible bound; `Negligible.mono` with the equality. -/
-theorem PRG.Secure.truncate {P : PRG} (hP : P.Secure) : (PRG.oneBit P.truncate).Secure := by
-  have hm : ∀ n, (PolyExpr.add .var (.const 1)).eval n ≤ P.stretch.eval n := fun n => by
-    rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
-    exact P.expands n
-  refine (PRG.oneBit_secure_iff _).2 ⟨?_, fun D => ?_⟩
-  · obtain ⟨E, hE, hEs⟩ := hP.truncateTo_easy _ hm
-    exact ⟨E, hE, fun n s => hEs n s⟩
-  · exact hP.truncateTo_negligible _ hm D
-
-/-- **Any PRG yields a length-doubling PRG** (Cor-97.a, [PS10, proof of Theorem 97.3, first
-paragraph]): if `G` is a secure PRG then `P.doubling : {0,1}^n → {0,1}^{2n}` is a secure
-length-doubling generator.
-
-**Proof sketch.** By `PRG.Secure.truncate` the one-bit-stretch generator `P.truncate` is
-secure, so by [PS10, Lemma 80.5] (`prg_expand` with `ℓ := 2 · var + 1`) the expansion to
-`2n + 1` bits is a secure `PRG`; `P.doubling` is its truncation to `2n` bits
-(`PRG.doubling_apply`, `PRG.expand_G`). *Easy:* the evaluator of the expansion followed by
-`List.take (2n)` (`polyTimeComputable_pairTakePoly (.mul (.const 2) .var)`). *Pseudorandom:*
-exactly as in `PRG.Secure.truncate`: a distinguisher `D` of `P.doubling` becomes the
-distinguisher `D ∘ take (2n)` of the expansion (`NUPPT.exists_comp`), `distAdv_comp` with the
-projection `Fin (2n + 1) → Fin (2n)` and `uprob_comp_equiv` identify the advantages, and the
-pseudorandomness of the expansion (`PRG.secure_iff`) gives the negligible bound. -/
-theorem PRG.Secure.doubling {P : PRG} (hP : P.Secure) : DoublingPRG P.doubling := by
-  have hQ : (PRG.expand P.truncate (.add (.mul (.const 2) .var) (.const 1))
-      two_mul_add_one_expands).Secure :=
-    prg_expand P.truncate _ two_mul_add_one_expands hP.truncate
-  have hm : ∀ n, (PolyExpr.mul (.const 2) .var).eval n ≤
-      (PRG.expand P.truncate (.add (.mul (.const 2) .var) (.const 1))
-        two_mul_add_one_expands).stretch.eval n := fun n => by
-    rw [PRG.expand_stretch]
-    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-    omega
-  refine ⟨?_, (Ensemble.pseudorandom_iff_prgAdv _).2 fun D => ?_⟩
-  · obtain ⟨E, hE, hEs⟩ := hQ.truncateTo_easy _ hm
-    exact ⟨E, hE, fun n s => hEs n s⟩
-  · exact hQ.truncateTo_negligible _ hm D
 
 /-! ### The GGM construction [PS10, Theorem 97.3] -/
 
