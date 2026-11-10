@@ -160,5 +160,12 @@ minor, and four continuing notes. The auditor replayed the full 144-module
 closure and both probes. F01 corrects the axiom description in the proof report.
 [Proof report](fills/10-counted-loop-consumers/REPORT.md) · [Audit disposition](../../audits/lwe-sis-counted-loop-consumer-proofs-resolutions.md)
 
-Merge clearance requires approved scoped source matching and completed
-exact-target landing checks. The user approves all merges.
+The approved scoped source updates attach 35 PW10 and 49 Pei16 and Wu24
+attributions. Three foundation attributions carry forward. The exact-target
+preview passes the 1,089-module library closure, including the root, with
+zero errors and zero campaign-owned admissions. Its 198 inherited admission
+warnings include the 17 scoped warnings. The export checks match the target.
+[Landing verification](landing/05-construction-statements/LANDING.md)
+
+The final publication check verifies the live GitHub merge preview. The user
+approves and performs the merge.
