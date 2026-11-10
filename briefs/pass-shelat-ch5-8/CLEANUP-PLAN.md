@@ -102,6 +102,25 @@ precise support-file splits follow the import and seal checks for each move.
   encryption families narrow imports of their shared definitions and preserve
   the existing Lean names and compatibility imports.
 
+### Authentication and hashing
+
+`Authentication.lean` indexes the MAC and signature constructions. `MAC/Defs`
+owns the MAC interface and game, and `MAC/FromPRF` owns the PRF-based
+construction. `Authentication/Encoding` supplies the shared encodings.
+
+[PR #279](https://github.com/Shilun-Allan-Li/tcslib/pull/279) puts the signature interface and games in
+`Authentication/Signatures/Defs`, with `Lamport` and `HashAndSign` next to
+them. `Hashing.lean` indexes `Hashing/CollisionResistant` and
+`Hashing/FromDiscreteLog`. The existing Lean names and compatibility
+imports are preserved. Hash-and-sign consumes the CRH interface and states
+the full-domain and digest-width conditions on that route.
+
+The LWE/SIS campaign owns `Hashing/SIS`. On branch reconciliation, keep
+`Hashing.CollisionResistant`, `Hashing.FromDiscreteLog` and `Hashing.SIS`
+in the shared hashing facade. The Pass–shelat `Authentication.CRH` contract
+and collision parser provide the future bridge's interface.
+[Verification and branch comparison](maintainer/authentication-signatures-hashing-2026-11-09/README.md)
+
 ## 3. Close the inherited seal ledger on the new layout
 
 Regenerate the full inventory on the settled import graph. Resolve the
