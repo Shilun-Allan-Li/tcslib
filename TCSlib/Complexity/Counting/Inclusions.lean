@@ -50,7 +50,12 @@ probability at least `2/3 > 1/2`, and non-members with probability at most `1/3 
 For `x ∉ L`, `Pr[reject] ≥ 2/3`, so `Pr[accept] = 1 - Pr[reject] ≤ 1/3`
 (`Randomized.randProb_bool_false`), which is not above `1/2`. -/
 theorem InBPP.inPP {L : Language Bool} (h : InBPP E L) : InPP E L := by
-  sorry
+  obtain ⟨M, a, k, hE, h⟩ := h
+  refine ⟨M, a, k, hE, fun x => ⟨fun hx => by linarith [(h x).1 hx], fun hp => ?_⟩⟩
+  by_contra hx
+  have h2 := (h x).2 hx
+  have e := randProb_bool_false (m := polyLen a k x.length) (M x)
+  linarith
 
 /-- **`PP` is closed under complement.** [AB09, ch. 17], [FR99, §2]
 
@@ -61,7 +66,13 @@ Then `g = 1 + (-f) + (-f) = 1 - 2f` is a gap function (`isGapP_one`, `IsGapP.neg
 theorem InPP.compl (hC : ClosedUnderCoinFill E) (hP : ClosedUnderPad E)
     (hN : ClosedUnderGapNeg E) (hS : ClosedUnderGapSum E) (hK : HasConstVerifiers E)
     {L : Language Bool} (h : InPP E L) : InPP E Lᶜ := by
-  sorry
+  rw [inPP_iff_exists_isGapP hC] at h ⊢
+  obtain ⟨f, hf, hL⟩ := h
+  refine ⟨fun x => 1 + -f x + -f x,
+    ((isGapP_one hK).add hP hS (hf.neg hN)).add hP hS (hf.neg hN), fun x => ?_⟩
+  show x ∉ L ↔ 0 < 1 + -f x + -f x
+  rw [hL x]
+  omega
 
 /-- `PP` is closed under complement in polynomial time.
 

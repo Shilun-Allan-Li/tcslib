@@ -100,6 +100,73 @@ theorem isGapP_iff (E : VerifierModel) (f : List Bool → ℤ) :
       ∃ (M : List Bool → List Bool → Option Bool) (a k : ℕ),
         E.Eff M ∧ ∀ x : List Bool, f x = gap M (polyLen a k x.length) x := Iff.rfl
 
+/-! ### The gap as a signed sum, and splitting random strings -/
+
+/-- The sign of an answer: `1` for accept, `-1` for reject, `0` for abstain. -/
+private def sgn : Option Bool → ℤ
+  | some true => 1
+  | some false => -1
+  | none => 0
+
+/-- The sign is the indicator of acceptance minus the indicator of rejection. -/
+private theorem sgn_eq (o : Option Bool) :
+    sgn o = (if o = some true then 1 else 0) - (if o = some false then 1 else 0) := by
+  rcases o with _ | _ | _ <;> rfl
+
+/-- The gap is the sum of the signs of the answers over all random strings of the given length. -/
+private theorem gap_eq_sum (M : List Bool → List Bool → Option Bool) (m : ℕ) (x : List Bool) :
+    gap M m x = ∑ r : Fin m → Bool, sgn (M x (List.ofFn r)) := by
+  simp only [sgn_eq, Finset.sum_sub_distrib, Finset.sum_boole, gap_eq]
+
+/-- A sum over strings of length `a + b` is a double sum over a prefix of length `a` and a suffix of
+length `b` (`Fin.appendEquiv`). -/
+private theorem sum_append {a b : ℕ} (f : List Bool → ℤ) :
+    ∑ r : Fin (a + b) → Bool, f (List.ofFn r) =
+      ∑ r₁ : Fin a → Bool, ∑ r₂ : Fin b → Bool, f (List.ofFn r₁ ++ List.ofFn r₂) := by
+  rw [← (Fin.appendEquiv a b).sum_comp, Fintype.sum_prod_type]
+  refine Finset.sum_congr rfl fun r₁ _ => Finset.sum_congr rfl fun r₂ _ => ?_
+  rw [← List.ofFn_fin_append]
+  rfl
+
+/-- A sum over strings of length `m + 1` splits by the first bit (`Fin.consEquiv`). -/
+private theorem sum_cons {m : ℕ} (f : List Bool → ℤ) :
+    ∑ r : Fin (m + 1) → Bool, f (List.ofFn r) =
+      ∑ t : Fin m → Bool, (f (true :: List.ofFn t) + f (false :: List.ofFn t)) := by
+  rw [← (Fin.consEquiv fun _ => Bool).sum_comp, Fintype.sum_prod_type, Fintype.sum_bool,
+    ← Finset.sum_add_distrib]
+  simp [List.ofFn_succ]
+
+/-- A string is all `false` iff it is the constant `false` string. -/
+private theorem all_not_ofFn {b : ℕ} (r : Fin b → Bool) :
+    (List.ofFn r).all (fun c => !c) = true ↔ r = fun _ => false := by
+  rw [List.all_eq_true]
+  constructor
+  · intro h; funext i; simpa using h (r i) ((List.mem_ofFn ..).2 ⟨i, rfl⟩)
+  · rintro rfl c hc
+    obtain ⟨i, rfl⟩ := (List.mem_ofFn ..).1 hc
+    rfl
+
+/-- The integer gap of a Boolean verifier (the proof behind `gap_boolVerifier_int`, placed before
+`gap_boolVerifier`, which uses it). -/
+private theorem gap_boolVerifier_int_aux (M : List Bool → List Bool → Bool) (m : ℕ)
+    (x : List Bool) :
+    gap (boolVerifier M) m x =
+      2 * ((univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true).card : ℤ) - 2 ^ m := by
+  have hsum := Finset.filter_card_add_filter_neg_card_eq_card
+    (s := (univ : Finset (Fin m → Bool))) (fun r => M x (List.ofFn r) = true)
+  rw [card_univ_bitstrings] at hsum
+  have hF : (univ.filter fun r : Fin m → Bool => ¬ M x (List.ofFn r) = true) =
+      univ.filter fun r : Fin m → Bool => boolVerifier M x (List.ofFn r) = some false := by
+    ext r; simp [boolVerifier]
+  have hT : (univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true) =
+      univ.filter fun r : Fin m → Bool => boolVerifier M x (List.ofFn r) = some true := by
+    ext r; simp [boolVerifier]
+  rw [gap_eq, ← hT, ← hF]
+  have : ((univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true).card : ℤ) +
+      ((univ.filter fun r : Fin m → Bool => ¬ M x (List.ofFn r) = true).card : ℤ) = 2 ^ m := by
+    exact_mod_cast hsum
+  linarith
+
 /-- The gap of a Boolean verifier (one that never abstains) is determined by its acceptance
 probability: `gap = 2^m · (2 · Pr[accept] - 1)`.
 
@@ -108,7 +175,9 @@ probability: `gap = 2^m · (2 · Pr[accept] - 1)`.
 `2 · #accept - 2^m`; and `randProb m _ = #accept / 2^m` by definition. -/
 theorem gap_boolVerifier (M : List Bool → List Bool → Bool) (m : ℕ) (x : List Bool) :
     (gap (boolVerifier M) m x : ℚ) = 2 ^ m * (2 * randProb m (fun r => M x r = true) - 1) := by
-  sorry
+  rw [gap_boolVerifier_int_aux, randProb]
+  push_cast
+  field_simp
 
 /-- The gap of a Boolean verifier, in integers: twice the number of accepted strings minus `2^m`
 (round-1 audit, sanity statement 5).
@@ -116,16 +185,22 @@ theorem gap_boolVerifier (M : List Bool → List Bool → Bool) (m : ℕ) (x : L
 **Proof sketch.** With no abstentions, `#reject = 2^m - #accept`, as in `gap_boolVerifier`. -/
 theorem gap_boolVerifier_int (M : List Bool → List Bool → Bool) (m : ℕ) (x : List Bool) :
     gap (boolVerifier M) m x =
-      2 * ((univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true).card : ℤ) - 2 ^ m := by
-  sorry
+      2 * ((univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true).card : ℤ) - 2 ^ m :=
+  gap_boolVerifier_int_aux M m x
 
 /-- A gap on length `m` is at most `2^m` in absolute value (round-1 audit, sanity statement 5).
 
-**Proof sketch.** The accepted and rejected strings are disjoint sets of the `2^m` strings, so
-each count is between `0` and `2^m`, and their difference is too. -/
+**Proof sketch.** The gap is the sum over the `2^m` strings of the answer's sign, `1`, `-1` or `0`
+(`gap_eq_sum`). Its absolute value is at most the sum of the absolute values of the signs, each at
+most `1`. -/
 theorem abs_gap_le (M : List Bool → List Bool → Option Bool) (m : ℕ) (x : List Bool) :
     |gap M m x| ≤ 2 ^ m := by
-  sorry
+  rw [gap_eq_sum]
+  calc |∑ r : Fin m → Bool, sgn (M x (List.ofFn r))|
+      ≤ ∑ r : Fin m → Bool, |sgn (M x (List.ofFn r))| := Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ _r : Fin m → Bool, (1 : ℤ) := Finset.sum_le_sum fun r _ => by
+        rcases M x (List.ofFn r) with _ | _ | _ <;> simp [sgn]
+    _ = 2 ^ m := by simp
 
 /-! ### Verifier combinators -/
 
@@ -213,11 +288,14 @@ theorem coinFill_eq (M : List Bool → List Bool → Option Bool) (p : ℕ → �
 
 /-- Negating a verifier negates its gap.
 
-**Proof sketch.** `negVerifier M x r = some true` iff `M x r = some false`, and vice versa, so
-the two counts swap. -/
+**Proof sketch.** In the gap as a sum of signs (`gap_eq_sum`), negating the verifier negates every
+sign (accept and reject swap, abstention stays `0`). -/
 theorem gap_negVerifier (M : List Bool → List Bool → Option Bool) (m : ℕ) (x : List Bool) :
     gap (negVerifier M) m x = - gap M m x := by
-  sorry
+  rw [gap_eq_sum, gap_eq_sum, ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun r _ => ?_
+  rw [negVerifier_eq]
+  rcases M x (List.ofFn r) with _ | _ | _ <;> rfl
 
 /-- Padding does not change the gap: on any length `m ≥ p |x|`, `padVerifier M p` has the gap of
 `M` on length `p |x|`.
@@ -229,7 +307,16 @@ on length `p |x|`. -/
 theorem gap_padVerifier (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) {m : ℕ}
     (x : List Bool) (h : p x.length ≤ m) :
     gap (padVerifier M p) m x = gap M (p x.length) x := by
-  sorry
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  rw [gap_eq_sum, sum_append (fun l => sgn (padVerifier M p x l)), gap_eq_sum]
+  refine Finset.sum_congr rfl fun r₁ _ => ?_
+  rw [Finset.sum_eq_single (fun _ => false)]
+  · rw [padVerifier_eq, List.drop_left' (List.length_ofFn), List.take_left' (List.length_ofFn),
+      if_pos ((all_not_ofFn _).2 rfl)]
+  · intro r₂ _ hr
+    rw [padVerifier_eq, List.drop_left' (List.length_ofFn),
+      if_neg (fun h => hr ((all_not_ofFn r₂).1 h))]; rfl
+  · intro h; exact absurd (Finset.mem_univ _) h
 
 /-- The sum verifier adds gaps: on length `m + 1`, its gap is the gap of `M₁` plus the gap of
 `M₂`, both on length `m`.
@@ -239,7 +326,9 @@ starting with `true` contribute `M₁`'s counts on the tail and strings starting
 contribute `M₂`'s. -/
 theorem gap_sumVerifier (M₁ M₂ : List Bool → List Bool → Option Bool) (m : ℕ) (x : List Bool) :
     gap (sumVerifier M₁ M₂) (m + 1) x = gap M₁ m x + gap M₂ m x := by
-  sorry
+  rw [gap_eq_sum, sum_cons (fun l => sgn (sumVerifier M₁ M₂ x l)), Finset.sum_add_distrib,
+    gap_eq_sum, gap_eq_sum]
+  rfl
 
 /-- The product verifier multiplies gaps: on length `p |x| + m`, its gap is the gap of `M₁` on
 length `p |x|` times the gap of `M₂` on length `m`.
@@ -250,7 +339,11 @@ the two answers agree and reject when they differ, so with `s(true) = 1`, `s(fal
 theorem gap_prodVerifier (M₁ M₂ : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) (m : ℕ)
     (x : List Bool) :
     gap (prodVerifier M₁ M₂ p) (p x.length + m) x = gap M₁ (p x.length) x * gap M₂ m x := by
-  sorry
+  rw [gap_eq_sum, sum_append (fun l => sgn (prodVerifier M₁ M₂ p x l)), gap_eq_sum,
+    gap_eq_sum, Finset.sum_mul_sum]
+  refine Finset.sum_congr rfl fun r₁ _ => Finset.sum_congr rfl fun r₂ _ => ?_
+  rw [prodVerifier_eq, List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)]
+  rcases M₁ x (List.ofFn r₁) with _ | _ | _ <;> rcases M₂ x (List.ofFn r₂) with _ | _ | _ <;> rfl
 
 /-- The constant verifier with answer `b` has gap `1` if `b = true` and `-1` if `b = false`, on
 every length.
@@ -259,21 +352,56 @@ every length.
 which the verifier answers. -/
 theorem gap_constVerifier (b : Bool) (m : ℕ) (x : List Bool) :
     gap (constVerifier b) m x = if b then 1 else -1 := by
-  sorry
+  rw [gap_eq_sum, Finset.sum_eq_single (fun _ => false)]
+  · rw [constVerifier_eq, if_pos ((all_not_ofFn _).2 rfl)]; cases b <;> rfl
+  · intro r _ hr; rw [constVerifier_eq, if_neg (fun h => hr ((all_not_ofFn r).1 h))]; rfl
+  · intro h; exact absurd (Finset.mem_univ _) h
+
+/-- The gap of `coinFill M p` on length `p |x| + (d + 1)` is `2^(d + 1)` times the gap of `M` on
+length `p |x|`: an abstaining string contributes `+1` and `-1` for the two coin values. -/
+private theorem gap_coinFill (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) (d : ℕ)
+    (x : List Bool) :
+    gap (boolVerifier (coinFill M p)) (p x.length + (d + 1)) x =
+      2 ^ (d + 1) * gap M (p x.length) x := by
+  rw [gap_eq_sum, sum_append (fun l => sgn (boolVerifier (coinFill M p) x l)), gap_eq_sum,
+    Finset.mul_sum]
+  refine Finset.sum_congr rfl fun r₁ _ => ?_
+  rw [sum_cons (fun l => sgn (boolVerifier (coinFill M p) x (List.ofFn r₁ ++ l)))]
+  simp only [boolVerifier, coinFill_eq, List.take_left' (List.length_ofFn),
+    List.drop_left' (List.length_ofFn), List.headD_cons, Finset.sum_const, card_univ_bitstrings,
+    nsmul_eq_mul]
+  push_cast
+  rcases M x (List.ofFn r₁) with _ | _ | _ <;> simp [sgn] <;> ring
 
 /-- The acceptance probability of `coinFill M p` on any length `m ≥ p |x| + 1` is
 `1/2 + gap / 2^(p |x| + 1)`, where `gap` is the gap of `M` on length `p |x|`. In particular it is
 above `1/2` exactly when the gap is positive.
 
-**Proof sketch.** Bits after position `p |x|` are ignored, so reduce to `m = p |x| + 1`. With
-`T`, `F`, `N` the numbers of accepting, rejecting and abstaining strings of length `p |x|`, the
-accepting strings of length `p |x| + 1` number `2T + N`, and `T + F + N = 2^(p |x|)`; so the
-probability is `(2T + N) / 2^(p |x| + 1) = 1/2 + (T - F) / 2^(p |x| + 1)`. -/
+**Proof sketch.** Write `m = p |x| + (d + 1)`. As a Boolean verifier, `coinFill M p` has gap
+`2^(d + 1)` times `M`'s gap on length `p |x|` (`gap_coinFill`): splitting a string as prefix, coin
+bit and rest, a string `M` accepts or rejects keeps its sign for both coins, an abstaining string
+contributes `+1` and `-1`, and the rest repeats each case `2^d` times. Then `gap_boolVerifier`
+relates that gap to the acceptance probability, `gap = 2^m (2 Pr - 1)`; solving for `Pr` gives
+`1/2 + gap / 2^(p |x| + 1)`. -/
 theorem randProb_coinFill (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) {m : ℕ}
     (x : List Bool) (h : p x.length + 1 ≤ m) :
     randProb m (fun r => coinFill M p x r = true) =
       1/2 + (gap M (p x.length) x : ℚ) / 2 ^ (p x.length + 1) := by
-  sorry
+  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le h
+  have hm : m = p x.length + (d + 1) := by omega
+  subst hm
+  have h1 := gap_boolVerifier (coinFill M p) (p x.length + (d + 1)) x
+  rw [gap_coinFill] at h1
+  push_cast at h1
+  have h4 : (gap M (p x.length) x : ℚ) =
+      2 ^ p x.length *
+        (2 * randProb (p x.length + (d + 1)) (fun r => coinFill M p x r = true) - 1) := by
+    apply mul_left_cancel₀ (pow_ne_zero (d + 1) (two_ne_zero : (2 : ℚ) ≠ 0))
+    rw [h1]
+    ring
+  rw [h4]
+  field_simp
+  ring
 
 /-! ### Closure hypotheses on a verifier model -/
 
@@ -340,7 +468,42 @@ variable {E : VerifierModel}
 **Proof sketch.** Use `negVerifier M` on the same schedule (`gap_negVerifier`). -/
 theorem IsGapP.neg (hN : ClosedUnderGapNeg E) {f : List Bool → ℤ} (hf : IsGapP E f) :
     IsGapP E fun x => - f x := by
-  sorry
+  obtain ⟨M, a, k, hM, hf⟩ := hf
+  exact ⟨negVerifier M, a, k, hN M hM, fun x => by rw [gap_negVerifier, ← hf x]⟩
+
+/-- A schedule is dominated by the schedule with the summed coefficient and the larger degree. -/
+private theorem polyLen_le_polyLen (a₁ k₁ a₂ k₂ n : ℕ) :
+    polyLen a₁ k₁ n ≤ polyLen (a₁ + a₂) (max k₁ k₂) n := by
+  simp only [polyLen]
+  exact Nat.mul_le_mul (Nat.le_add_right _ _)
+    (Nat.pow_le_pow_right (Nat.succ_pos _) (le_max_left _ _))
+
+/-- Raising the coefficient by one adds at least one bit. -/
+private theorem polyLen_succ_le (a k n : ℕ) : polyLen a k n + 1 ≤ polyLen (a + 1) k n := by
+  simp only [polyLen, add_mul, one_mul]
+  exact Nat.add_le_add_left (Nat.one_le_pow _ _ (Nat.succ_pos _)) _
+
+/-- Two gap functions have witnesses on one common schedule `polyLen A K`: pad each witness to
+`polyLen (a₁ + a₂) (max k₁ k₂)`, which dominates both schedules. Shared by `IsGapP.add` and
+`IsGapP.mul`. -/
+private theorem IsGapP.common_schedule (hP : ClosedUnderPad E) {f g : List Bool → ℤ}
+    (hf : IsGapP E f) (hg : IsGapP E g) :
+    ∃ (M₁ M₂ : List Bool → List Bool → Option Bool) (A K : ℕ), E.Eff M₁ ∧ E.Eff M₂ ∧
+      ∀ x, f x = gap M₁ (polyLen A K x.length) x ∧ g x = gap M₂ (polyLen A K x.length) x := by
+  obtain ⟨M₁, a₁, k₁, h₁, hf⟩ := hf
+  obtain ⟨M₂, a₂, k₂, h₂, hg⟩ := hg
+  refine ⟨padVerifier M₁ fun n => polyLen a₁ k₁ n + 0, padVerifier M₂ fun n => polyLen a₂ k₂ n + 0,
+    a₁ + a₂, max k₁ k₂, hP M₁ a₁ k₁ 0 h₁, hP M₂ a₂ k₂ 0 h₂, fun x => ⟨?_, ?_⟩⟩
+  · have b : polyLen a₁ k₁ x.length + 0 ≤ polyLen (a₁ + a₂) (max k₁ k₂) x.length := by
+      simpa using polyLen_le_polyLen a₁ k₁ a₂ k₂ x.length
+    rw [gap_padVerifier _ _ x b, Nat.add_zero]
+    exact hf x
+  · have b : polyLen a₂ k₂ x.length + 0 ≤ polyLen (a₁ + a₂) (max k₁ k₂) x.length := by
+      have := polyLen_le_polyLen a₂ k₂ a₁ k₁ x.length
+      rw [add_comm a₂, max_comm k₂] at this
+      simpa using this
+    rw [gap_padVerifier _ _ x b, Nat.add_zero]
+    exact hg x
 
 /-- GapP is closed under sums. [FR99, §2]
 
@@ -351,7 +514,10 @@ both to the common schedule `q = polyLen (a₁ + a₂) (max k₁ k₂)`, which d
 `polyLen (a₁ + a₂ + 1) (max k₁ k₂) ≥ q + 1`. -/
 theorem IsGapP.add (hP : ClosedUnderPad E) (hS : ClosedUnderGapSum E) {f g : List Bool → ℤ}
     (hf : IsGapP E f) (hg : IsGapP E g) : IsGapP E fun x => f x + g x := by
-  sorry
+  obtain ⟨M₁, M₂, A, K, h₁, h₂, h⟩ := hf.common_schedule hP hg
+  refine ⟨padVerifier (sumVerifier M₁ M₂) (fun n => polyLen A K n + 1), A + 1, K,
+    hP _ A K 1 (hS _ _ h₁ h₂), fun x => ?_⟩
+  rw [gap_padVerifier _ _ x (polyLen_succ_le _ _ _), gap_sumVerifier, ← (h x).1, ← (h x).2]
 
 /-- GapP is closed under products. [FR99, §2]
 
@@ -360,20 +526,25 @@ Their `prodVerifier` split at `q` has gap `f · g` on length `q n + q n = polyLe
 (`gap_prodVerifier`, `ClosedUnderGapProd`). -/
 theorem IsGapP.mul (hP : ClosedUnderPad E) (hM : ClosedUnderGapProd E) {f g : List Bool → ℤ}
     (hf : IsGapP E f) (hg : IsGapP E g) : IsGapP E fun x => f x * g x := by
-  sorry
+  obtain ⟨M₁, M₂, A, K, h₁, h₂, h⟩ := hf.common_schedule hP hg
+  refine ⟨prodVerifier M₁ M₂ (polyLen A K), 2 * A, K, hM _ _ A K h₁ h₂, fun x => ?_⟩
+  have e : polyLen (2 * A) K x.length = polyLen A K x.length + polyLen A K x.length := by
+    simp only [polyLen]
+    ring
+  rw [e, gap_prodVerifier, ← (h x).1, ← (h x).2]
 
 /-- The constant function `1` is in GapP.
 
 **Proof sketch.** `constVerifier true` on the schedule `polyLen 0 0 = 0` (`gap_constVerifier`). -/
-theorem isGapP_one (hK : HasConstVerifiers E) : IsGapP E fun _ => 1 := by
-  sorry
+theorem isGapP_one (hK : HasConstVerifiers E) : IsGapP E fun _ => 1 :=
+  ⟨constVerifier true, 0, 0, hK true, fun x => by rw [gap_constVerifier]; rfl⟩
 
 /-- The constant function `-1` is in GapP.
 
 **Proof sketch.** `constVerifier false` on the schedule `polyLen 0 0 = 0`
 (`gap_constVerifier`). -/
-theorem isGapP_neg_one (hK : HasConstVerifiers E) : IsGapP E fun _ => -1 := by
-  sorry
+theorem isGapP_neg_one (hK : HasConstVerifiers E) : IsGapP E fun _ => -1 :=
+  ⟨constVerifier false, 0, 0, hK false, fun x => by rw [gap_constVerifier]; rfl⟩
 
 /-! ### PP through gap functions -/
 
@@ -388,6 +559,37 @@ verifier (`ClosedUnderCoinFill`) whose acceptance probability on the schedule
 `1/2` exactly when `f x > 0`. -/
 theorem inPP_iff_exists_isGapP (hC : ClosedUnderCoinFill E) (L : Language Bool) :
     InPP E L ↔ ∃ f : List Bool → ℤ, IsGapP E f ∧ ∀ x, x ∈ L ↔ 0 < f x := by
-  sorry
+  constructor
+  · rintro ⟨M, a, k, hE, h⟩
+    refine ⟨fun x => gap (boolVerifier M) (polyLen a k x.length) x,
+      ⟨boolVerifier M, a, k, hE, fun _ => rfl⟩, fun x => ?_⟩
+    rw [h x]
+    have e := gap_boolVerifier M (polyLen a k x.length) x
+    have hp : (0 : ℚ) < 2 ^ polyLen a k x.length := by positivity
+    constructor
+    · intro hlt
+      have : (0 : ℚ) < (gap (boolVerifier M) (polyLen a k x.length) x : ℚ) := by
+        rw [e]; exact mul_pos hp (by linarith)
+      exact_mod_cast this
+    · intro hpos
+      have : (0 : ℚ) < (gap (boolVerifier M) (polyLen a k x.length) x : ℚ) := by exact_mod_cast hpos
+      rw [e] at this
+      have := (pos_iff_pos_of_mul_pos this).1 hp
+      linarith
+  · rintro ⟨f, ⟨M, a, k, hE, hf⟩, hL⟩
+    refine ⟨coinFill M (polyLen a k), a + 1, k, hC M a k hE, fun x => ?_⟩
+    rw [hL x, randProb_coinFill M (polyLen a k) x (polyLen_succ_le a k x.length), hf x]
+    have hp : (0 : ℚ) < 2 ^ (polyLen a k x.length + 1) := by positivity
+    constructor
+    · intro h
+      have : (0 : ℚ) <
+          (gap M (polyLen a k x.length) x : ℚ) / 2 ^ (polyLen a k x.length + 1) :=
+        div_pos (by exact_mod_cast h) hp
+      linarith
+    · intro h
+      have : (0 : ℚ) <
+          (gap M (polyLen a k x.length) x : ℚ) / 2 ^ (polyLen a k x.length + 1) := by
+        linarith
+      exact_mod_cast (div_pos_iff_of_pos_right hp).1 this
 
 end Counting

@@ -101,18 +101,28 @@ theorem inPromisePP_iff (E : VerifierModel) (A : Promise.Problem) :
 `x ∉ L → Pr ≤ 1/2`; together, with `not_lt`, they are the equivalence `x ∈ L ↔ 1/2 < Pr`. -/
 theorem inPromisePP_ofLanguage_iff (E : VerifierModel) (L : Language Bool) :
     InPromisePP E (Promise.ofLanguage L) ↔ InPP E L := by
-  sorry
+  constructor
+  · rintro ⟨M, a, k, hE, h⟩
+    refine ⟨M, a, k, hE, fun x => ⟨fun hx => (h x).1 hx, fun hp => ?_⟩⟩
+    by_contra hx
+    exact absurd ((h x).2 hx) (not_le.2 hp)
+  · rintro ⟨M, a, k, hE, h⟩
+    refine ⟨M, a, k, hE, fun x => ⟨fun hx => (h x).1 hx, fun hx => ?_⟩⟩
+    exact le_of_not_gt fun hp => hx ((h x).2 hp)
 
 /-- `randProb` as a real-valued uniform average: the probability of `A` over `m` random bits is
 `∑_r [A r] / 2^m`, summed over all `2^m` strings. This is the form a quantum circuit's
 acceptance probability takes when its random bits come from Hadamard gates (plan FD-11).
 
-**Proof sketch.** `randProb m A` is `#{r : A r} / 2^m` in `ℚ`; cast to `ℝ` (`Rat.cast_div`,
-`Rat.cast_natCast`) and write the count as a sum of indicators (`Finset.sum_boole`), then move
-the division inside the sum (`Finset.sum_div`). -/
+**Proof sketch.** `randProb m A` is `#{r : A r} / 2^m` in `ℚ`; cast to `ℝ` (`push_cast`), write
+the division as multiplication by `(2^m)⁻¹`, factor it out of the sum (`Finset.sum_mul`), and read
+the count as a sum of indicators (`Finset.sum_boole`). -/
 theorem randProb_cast_eq_sum (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :
     ((randProb m A : ℚ) : ℝ) =
       ∑ r : Fin m → Bool, (if A (List.ofFn r) then (1 : ℝ) else 0) / 2 ^ m := by
-  sorry
+  rw [randProb]
+  push_cast
+  simp only [div_eq_mul_inv]
+  rw [← Finset.sum_mul, Finset.sum_boole]
 
 end Counting

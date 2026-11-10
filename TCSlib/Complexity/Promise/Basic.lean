@@ -92,8 +92,8 @@ theorem Problem.isTotal_iff (A : Problem) : A.IsTotal ↔ ∀ x, x ∈ A.yes ∨
 /-- A language, viewed as a promise problem, is total.
 
 **Proof sketch.** Every string is in `L` or not (`em`). -/
-theorem ofLanguage_isTotal (L : Language Bool) : (ofLanguage L).IsTotal := by
-  sorry
+theorem ofLanguage_isTotal (L : Language Bool) : (ofLanguage L).IsTotal :=
+  fun x => em (x ∈ L)
 
 /-- The promise problem `A` is in (promise) `P`: some language in `P` contains every
 yes-instance and no no-instance. [Wat08, §II.1], in the separator form described in the module
@@ -110,7 +110,19 @@ theorem inPromiseP_iff (A : Problem) :
 **Proof sketch.** (⇐) `L` separates itself from its complement. (⇒) A separator `L'` contains
 `L` and avoids `Lᶜ`, so `L' = L`. -/
 theorem inPromiseP_ofLanguage_iff (L : Language Bool) : InPromiseP (ofLanguage L) ↔ L ∈ P := by
-  sorry
+  constructor
+  · rintro ⟨L', hL', h1, h2⟩
+    have : L' = L := by
+      ext x
+      constructor
+      · intro hx
+        by_contra hn
+        exact h2 hn hx
+      · intro hx
+        exact h1 hx
+    exact this ▸ hL'
+  · intro h
+    exact ⟨L, h, fun _ hx => hx, fun _ hx => hx⟩
 
 /-- The promise problem `A` is in (promise) `BPP` relative to the verifier model `E`: some
 efficient verifier `M` with random strings of length `polyLen a k |x|` accepts every
@@ -140,7 +152,7 @@ theorem inPromiseBPP_iff (E : VerifierModel) (A : Problem) :
 **Proof sketch.** Membership in `(ofLanguage L).yes` is `x ∈ L` and membership in
 `(ofLanguage L).no` is `x ∉ L`, so the two definitions coincide clause by clause. -/
 theorem inPromiseBPP_ofLanguage_iff (E : VerifierModel) (L : Language Bool) :
-    InPromiseBPP E (ofLanguage L) ↔ InBPP E L := by
-  sorry
+    InPromiseBPP E (ofLanguage L) ↔ InBPP E L :=
+  Iff.rfl
 
 end Promise
