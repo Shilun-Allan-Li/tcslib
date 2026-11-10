@@ -77,17 +77,6 @@ noncomputable def subHybridStream {q : ℕ} (G : S → V) (j : ℕ)
     (W : (Fin q → S) × (Fin q → V)) : ℕ → V :=
   fun k => if k < j then extendStream W.2 k else G (extendStream W.1 k)
 
-/-- The oracle adversary `A` run with lazily sampled answers given by an answer stream. -/
-def lazyDist (A : OracleAdversary ρ P V) : (ℕ → V) → ρ → Bool :=
-  fun a r => (A r).evalLazy a []
-
-omit [Fintype P] [Fintype V] [Nonempty V] [Fintype ρ] in
-/-- On the answer stream `a` and coins `r`, `lazyDist A` is the lazy run of `A r` from the empty
-list of distinct queries: `lazyDist A a r = (A r).evalLazy a []`. -/
-theorem lazyDist_apply (A : OracleAdversary ρ P V) (a : ℕ → V) (r : ρ) :
-    lazyDist A a r = (A r).evalLazy a [] :=
-  rfl
-
 /-- The probability that `A` accepts in the sub-hybrid `H_j`: `j` uniform values and
 `q - j` generator outputs answer the distinct queries in order. [Gar26, proof of
 Theorem 3.3, `H_{i,j}`] with the level `i` abstracted away; see the module docstring for
@@ -156,6 +145,7 @@ theorem acceptProb_tableDist_prg (G : S → V) (A : OracleAdversary ρ P V) {q j
   have h2 : subHybridProb G A q j = uprob (fun z : (Fin q → S) × ((Fin q → V) × ρ) => E z.1 z.2) := by
     rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm
       (fun z : ((Fin q → S) × (Fin q → V)) × ρ => lazyDist A (subHybridStream G j z.1) z.2 = true)]
+    simp only [lazyDist_apply]
     rfl
   rw [h1, h2]
   exact uprob_update_absorb _ E
@@ -205,6 +195,7 @@ theorem acceptProb_tableDist_uniform (G : S → V) (A : OracleAdversary ρ P V) 
     rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv e'
       (fun z : ((Fin q → S) × (Fin q → V)) × ρ =>
         lazyDist A (subHybridStream G (j + 1) z.1) z.2 = true)]
+    simp only [lazyDist_apply]
     rfl
   rw [h1, h2]
   exact uprob_update_absorb _ E
@@ -226,7 +217,7 @@ theorem subHybridProb_zero (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
       (uprob_congr fun z => iff_of_eq ?_)
     have hs : subHybridStream G 0 z.2 = G ∘ extendStream z.2.1 := by
       funext k; simp [subHybridStream]
-    rw [lazyDist, hs, evalLazy_comp]
+    rw [lazyDist_apply, hs, evalLazy_comp]
   have h2 : acceptProb (fun R : P → S => G ∘ R) (oracleDist A) =
       uprob (fun z : ρ × (P → S) => ((A z.1).simulate id (fun _ => G)).eval z.2 = true) := by
     rw [acceptProb_def]
@@ -258,7 +249,7 @@ theorem subHybridProb_top (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
     rw [subHybridProb, acceptProb_def]
     refine (uprob_prod_comm (fun W r => lazyDist A (subHybridStream G q W) r = true)).trans
       (uprob_congr fun z => iff_of_eq ?_)
-    rw [lazyDist]
+    rw [lazyDist_apply]
     congr 1
     exact evalLazy_congr ((OracleAdversary.boundedBy_iff A q).1 hA z.1) [] fun k hk =>
       if_pos (by simpa using hk)

@@ -8,6 +8,7 @@ import TCSlib.Cryptography.Pseudorandom.Functions.LazySampling
 import TCSlib.Cryptography.Pseudorandom.Functions.Defs
 import TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids
 import TCSlib.Cryptography.Pseudorandom.Functions.GGM
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -16,9 +17,9 @@ set_option autoImplicit false
 /-!
 # Pseudorandom functions
 
-Concrete-layer formalization of [Gar26, §3.4]: adaptive oracle adversaries, pseudorandom
-functions, and the Goldreich–Goldwasser–Micali construction from a length-doubling
-pseudorandom generator.
+The finite oracle games and Goldreich–Goldwasser–Micali construction come
+from [Gar26, §3.4]. The asymptotic contracts quantify over polynomial-time
+machines and polynomial query budgets [PS10, Definitions 96.1 and 96.2].
 
 ## Contents
 
@@ -32,9 +33,12 @@ pseudorandom generator.
   adversary (the sub-hybrids of the GGM proof).
 * `Functions/GGM.lean`: the GGM construction and its security (Construction 3.3,
   Theorem 3.3).
+* `Functions/Asymptotic/Defs.lean` gives the oracle ensemble and PRF contracts.
 
 ## References
 
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
+  January 2010, §3.8.
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, §3.4.
 -/
