@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Cryptography.Encryption.PrivateKey.Scheme
+import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
 import TCSlib.Cryptography.Asymptotic.Encryption
 import TCSlib.Cryptography.Asymptotic.MultiMessageLemmas
 import TCSlib.Cryptography.Asymptotic.MultiMessage
@@ -45,8 +47,9 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
 
 ## Contents
 
-* `Asymptotic.Encryption` gives the scheme interface, the ensemble games, and the
-  single-message construction from a PRG.
+* `Encryption.PrivateKey.Scheme` gives the uniform polynomial-time scheme interface.
+* `Encryption.PrivateKey.EnsembleSecurity` gives the ensemble games and their relations.
+* `Asymptotic.Encryption` gives the single-message construction from a PRG.
 * `Asymptotic.MultiMessageLemmas` gives the encoding identities and reduction machine
   for the PRF scheme.
 * `Asymptotic.MultiMessage` gives the PRF construction, its finite hybrid bound
