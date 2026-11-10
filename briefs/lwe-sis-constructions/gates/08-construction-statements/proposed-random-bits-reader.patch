@@ -1,0 +1,13 @@
+--- a/TCSlib/Complexity/Randomized/RandomBits.lean
++++ b/TCSlib/Complexity/Randomized/RandomBits.lean
+@@ -200,6 +200,10 @@
+ /-- The number written in the `i`-th length-`b` block of `r`. -/
+ def blockVal (b : ℕ) (r : List Bool) (i : ℕ) : ℕ :=
+   bitsVal ((r.drop (i * b)).take b)
++
++/-- The block reader is the little-endian value of the width-bit slice at offset `i*b`. -/
++theorem blockVal_eq (b : ℕ) (r : List Bool) (i : ℕ) :
++    blockVal b r i = Complexity.LogProg.bitsVal ((r.drop (i * b)).take b) := rfl
+ 
+ /-- Every block value is below `2^b`. -/
+ theorem blockVal_lt (b : ℕ) (r : List Bool) (i : ℕ) : blockVal b r i < 2 ^ b :=

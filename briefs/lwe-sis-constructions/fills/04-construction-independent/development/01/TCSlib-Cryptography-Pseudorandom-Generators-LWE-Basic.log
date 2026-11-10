@@ -1,0 +1,49 @@
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:128:2: error: Tactic `rfl` failed: equality lhs
+  Fintype.card (Matrix (Fin P.samples) (Fin P.dimension) (ZMod (2 ^ width))) * 2 ^ (width * P.dimension + t * P.samples)
+is not definitionally equal to rhs
+  2 ^ (width * P.dimension + (width * (P.dimension * P.samples) + t * P.samples))
+
+P : Parameters
+width t : ℕ
+hq : P.modulus = 2 ^ width
+f : (Fin t → Bool) → ℤ
+⊢ Fintype.card (Matrix (Fin P.samples) (Fin P.dimension) (ZMod (2 ^ width))) *
+      2 ^ (width * P.dimension + t * P.samples) =
+    2 ^ (width * P.dimension + (width * (P.dimension * P.samples) + t * P.samples))
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:143:2: error: Tactic `rfl` failed: equality lhs
+  Fintype.card (Matrix (Fin P.samples) (Fin P.dimension) (ZMod (2 ^ width))) * 2 ^ (width * P.samples)
+is not definitionally equal to rhs
+  2 ^ (width * P.samples + width * (P.dimension * P.samples))
+
+P : Parameters
+width : ℕ
+hq : P.modulus = 2 ^ width
+⊢ Fintype.card (Matrix (Fin P.samples) (Fin P.dimension) (ZMod (2 ^ width))) * 2 ^ (width * P.samples) =
+    2 ^ (width * P.samples + width * (P.dimension * P.samples))
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:140:24: warning: This simp argument is unused:
+  ← pow_add
+
+Hint: Omit it from the simp argument list.
+  simp only [← pow_mul,̵ ̵←̵ ̵p̵o̵w̵_̵a̵d̵d̵]
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:142:52: warning: This simp argument is unused:
+  Nat.one_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one,̵ ̵N̵a̵t̵.̵o̵n̵e̵_̵m̵u̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic.lean:154:52: warning: This simp argument is unused:
+  Nat.one_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one, Nat.o̵n̵e̵_̵m̵u̵l̵,̵
+  ̵ ̵ ̵ ̵ ̵N̵at̵.̵a̵dd_assoc, Nat.add_lt_add_iff_left]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic): lean exited with status 1
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic): error diagnostics reported
+FAIL(TCSlib/Cryptography/Pseudorandom/Generators/LWE/Basic): no fresh .olean produced

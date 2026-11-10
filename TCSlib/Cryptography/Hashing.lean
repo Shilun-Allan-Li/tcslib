@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Hashing.CollisionResistant
 import TCSlib.Cryptography.Hashing.FromDiscreteLog
+import TCSlib.Cryptography.Hashing.SIS
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -16,6 +17,8 @@ set_option autoImplicit false
 
 * `CollisionResistant` — the machine-level hash family interface, compression, and collision game.
 * `FromDiscreteLog` — the discrete-log hash family, efficient evaluator and security statement.
+* `SIS` — binary matrix hashing, its encoded evaluator, and the negligible raw-collision bound
+  for the dyadic profile under the independent SIS assumption [Pei16, §5.1].
 
 `Authentication.Signatures.HashAndSign` consumes the hash interface to extend a signature
 scheme's message space. The hash domain and digest width conditions are stated there.
@@ -24,4 +27,5 @@ scheme's message space. The hash domain and digest width conditions are stated t
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   Definition 140.1, Protocol 142.2 and Theorem 142.3.
+* [Pei16] C. Peikert, *A Decade of Lattice Cryptography*, 17 February 2016.
 -/

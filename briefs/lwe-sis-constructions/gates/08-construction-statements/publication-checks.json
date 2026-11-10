@@ -1,0 +1,40 @@
+{
+  "method": "Run the real helper entry point with in-memory gh and mutating-git stubs. Real local read guards and source hashes run; clean status is simulated because handoff records are not committed yet.",
+  "actual_network_calls": 0,
+  "actual_pushes": 0,
+  "actual_pr_writes": 0,
+  "actual_rebases": 0,
+  "actual_merges": 0,
+  "results": [
+    {
+      "scenario": "check-only",
+      "passed": true,
+      "simulated_pushes": 0,
+      "expected_rejection": false
+    },
+    {
+      "scenario": "create-draft",
+      "passed": true,
+      "simulated_pushes": 2,
+      "expected_rejection": false
+    },
+    {
+      "scenario": "update-draft",
+      "passed": true,
+      "simulated_pushes": 2,
+      "expected_rejection": false
+    },
+    {
+      "scenario": "reject-non-draft",
+      "passed": true,
+      "simulated_pushes": 0,
+      "expected_rejection": true
+    },
+    {
+      "scenario": "reject-foreign-exchange-path",
+      "passed": true,
+      "simulated_pushes": 1,
+      "expected_rejection": true
+    }
+  ]
+}

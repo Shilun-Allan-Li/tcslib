@@ -1,0 +1,679 @@
+{
+  "pr": 239,
+  "checked_source_head": "307cfdd1d6cadfda2ae9cca5367705ad770c5f42",
+  "audited_lean_head": "ec72ed773a690c17ac253707350935cc9e0acb34",
+  "lean_predecessor": "8627edde9892607a699cf997c8dd5a8a2a700e26",
+  "branch": "cryptography/lwe-sis-dyadic-arithmetic",
+  "worktree": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic",
+  "owned_audit_cache": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic/.lake/dyadic-proof-final-oleans",
+  "owned_landing_oleans": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic/.lake/lwe-sis-pr239-landing-20261108/oleans",
+  "lean_version": "Lean (version 4.25.0, arm64-apple-darwin24.6.0, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release)",
+  "packages": {
+    "mathlib": "029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e",
+    "plausible": "2503bfb5e2d4d8202165f5bd2cc39e44a3be31c3",
+    "proofwidgets": "fb8ed0a85a96e3176f6e94b20d413ea72d92576d",
+    "batteries": "39260e31b7b3f7f05643da95242463b462dc05f1",
+    "aesop": "26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349",
+    "importGraph": "009064c21bad4d7f421f2901c5e817c8bf3468cb",
+    "LeanSearchClient": "2ed4ba69b6127de8f5c2af83cccacd3c988b06bf",
+    "Qq": "2781d8ad404303b2fe03710ac7db946ddfe3539f"
+  },
+  "no_workspace_build_fallback": true,
+  "memory_before": "The system has 19327352832 (1179648 pages with a page size of 16384).\nSystem-wide memory free percentage: 48%\n",
+  "disk_free_before": 315532763136,
+  "process_visibility_limit": "System process enumeration was unavailable in this session. This check launched one native module at a time.",
+  "audited_closure_modules": 94,
+  "audited_closure_records": [
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Configuration",
+      "source_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Configuration.log",
+      "cached_olean_sha256": "ce9ee2e58b28c9226eeaa3e8733b57f698ece429a22c614edb107b2bbbc326b3"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Deterministic",
+      "source_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Deterministic.log",
+      "cached_olean_sha256": "d5059e1bbbfae5f5c95c2cbaa157d3bb7129859c5bc387d99ae968dd6d4c5a38"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Finite",
+      "source_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Finite.log",
+      "cached_olean_sha256": "dc9e88160da06cba4b8c5214caf9ea517a6ae67f54c70f17c3f4a53b9ec1335a"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Simulation",
+      "source_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Simulation.log",
+      "cached_olean_sha256": "dea3383ae9ab96838f78fb795136d3316761d64522ea43371e90526c30caaac0"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Composition",
+      "source_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Composition.log",
+      "cached_olean_sha256": "6c4add455df46c06c56c6e563000799fd4be57d39afa706af75891d30d964cf0"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTime",
+      "source_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTime.log",
+      "cached_olean_sha256": "6bdaf3a6ce7906c38ab16c3c2a5236e8de1a75f5c307f5f88603a32f05dd0606"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/StateRenaming",
+      "source_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-StateRenaming.log",
+      "cached_olean_sha256": "50b350669fb1b82782ba0c0771a9dbb7a03ab4027816ba46b4102a499b1d77b0"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction",
+      "source_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Robustness-AlphabetReduction.log",
+      "cached_olean_sha256": "b5ea1e8f588b7aea32779cd6603da27a4e2c428dcf396ed59e403bb54c5e9adb"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Sweep",
+      "source_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Sweep.log",
+      "cached_olean_sha256": "1615718b1145577a5b0d3d5fb697858acf95f1f8a7790bfcd1389eec2a7abe4b"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape",
+      "source_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Robustness-SingleTape.log",
+      "cached_olean_sha256": "1aafbf9041b538db9ebc692295906f7a50fe7dffee595d46e0894df838a1803c"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Encoding",
+      "source_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Encoding.log",
+      "cached_olean_sha256": "4150be5b394b2230fedb3eff2dccc2ca54a63a58bb7bf09b7904aa82791e915e"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/TimeConstructible",
+      "source_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-TimeConstructible.log",
+      "cached_olean_sha256": "589a938db9e2a251191f4fa52a0bb26066c396bee5b4b860b11ac113971d720c"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Convention",
+      "source_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-Convention.log",
+      "cached_olean_sha256": "800a2a88e38a75386281bf1181b8581c72e5e38ddaec03499a7d63a5ea6d8a89"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Wrappers",
+      "source_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-Wrappers.log",
+      "cached_olean_sha256": "97082697d2ef8860c9f01b02f31b21d57076ba34816b0dcbf3bcfbbfe2543947"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Embed",
+      "source_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-Embed.log",
+      "cached_olean_sha256": "8d9efd3966f147d1b525ab2a52e0afa110032292f5449422bca5182b8304bd47"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Loop",
+      "source_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-Loop.log",
+      "cached_olean_sha256": "ddcc738075b9cc03515e7b058e7fe7684bc18304b33d99dcd5fe98c8a42638b3"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "source_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-Primitives.log",
+      "cached_olean_sha256": "72795fd684543fdea9e94b67e08581dcc6f04fd8611152be692c926c92758fb9"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "source_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTimePairing.log",
+      "cached_olean_sha256": "41d000310b42e035f7b41e88d3f2f76601e4ef584d2665b382bffbfac1957930"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Probability",
+      "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Foundations-Probability.log",
+      "cached_olean_sha256": "339604cd349d7cf1e3d3e1e262f4ffac2fe3a74aabb6d7b923df0e7cc6f83410"
+    },
+    {
+      "module": "TCSlib/InformationTheory/FinDist",
+      "source_sha256": "868c2211ee852e556e2b828a5edfd8d01817f6f82cbbfef3b271e903be9136a9",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-InformationTheory-FinDist.log",
+      "cached_olean_sha256": "e9a4c06298cf6a1b49891ee7fddd808291930cb351a940ce4132c245faf6b071"
+    },
+    {
+      "module": "TCSlib/InformationTheory/StatisticalDistance",
+      "source_sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-InformationTheory-StatisticalDistance.log",
+      "cached_olean_sha256": "e52d2e19b168165931479ab34a90ce98f5572faa519ea2382b76dbfeba38b2ae"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Experiments",
+      "source_sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Foundations-Experiments.log",
+      "cached_olean_sha256": "2eaeb274ded66f8168654d11b5a8ec3f11430a41feea7333b7f078d6c4f15384"
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/Basic",
+      "source_sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-OneWayFunctions-Basic.log",
+      "cached_olean_sha256": "ed30356b86e3f228f5925202503e065d447ed91b14a631595d04c79bde2aea89"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/Basic",
+      "source_sha256": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-HardcoreBit-Basic.log",
+      "cached_olean_sha256": "6e47bc7966e5bc8810d82cfa423d171206278d74f419710d62e0d3cc54771a40"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Sampling",
+      "source_sha256": "9860769695ceada5454be8b9012183d015083cd2e5a1c916b3f9f6b68a4f50f3",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Asymptotic-Sampling.log",
+      "cached_olean_sha256": "235171d25088a8e867b1a88714ceb38aa04ea004b03240f566c357e51e91dde0"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Chebyshev",
+      "source_sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-NumberTheory-Chebyshev.log",
+      "cached_olean_sha256": "2e8467b6f4171bd700b2c14fbcff4c1e23b6b7b3716908df577252a0c4113985"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PolyExpr",
+      "source_sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-PolyExpr.log",
+      "cached_olean_sha256": "a0b693ceca37f588bad554b2ba9d3aa87ec4be6292b41fbc3f651d4781a8eaa4"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PPT",
+      "source_sha256": "1766685ee73e2221d7cdecffe8a8cafedc43dc46af2d1b06da8c750973a453f4",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-PPT.log",
+      "cached_olean_sha256": "6264cf52e8fdaf136531ccbe93de9bec0b9b0acadc4740c3bc1a22e54cae3a5b"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/ModuleHost",
+      "source_sha256": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-ModuleHost.log",
+      "cached_olean_sha256": "07732014f229a303d83393a4638203cabb8c52d889bb8bf9b7259df28c67307b"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFindHost",
+      "source_sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-IterateFindHost.log",
+      "cached_olean_sha256": "78adafa1c46b0a391868eaa246deb9780c06e400b23a7be272548d4b07686e2d"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/PairSplit",
+      "source_sha256": "c7fcf877294a8a11a88bcd5803059b88aea71033a359f6c00e0a0334bbe59cf7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-PairSplit.log",
+      "cached_olean_sha256": "0c064a77c60d64f47d3ea5ee6f19cac636e0db0ce03818e982b0e0ce6ed39104"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/UnaryMul",
+      "source_sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-UnaryMul.log",
+      "cached_olean_sha256": "cfc227f6908b84478e1cac468c7ae2241571daf2b60513efcd46130a3c86d59e"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Primitives",
+      "source_sha256": "806389a7b0492af8836938156f0424b0a374791fd576cca6bf6018c00534823b",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Primitives.log",
+      "cached_olean_sha256": "bb2d57d9e86792bacb68ade96da281bdf7fb75c6aa3dfd715885092af7f8841f"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFind",
+      "source_sha256": "81e21a15b6ee3da6d1a788ecdab5213aca7ec853d9a8b3ec5dc4cf22da00a7b7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-IterateFind.log",
+      "cached_olean_sha256": "9db6b99cbb62e1902ef2b0eed7e07f9710937ccca66a119035e8a03253d61b71"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StateLoop",
+      "source_sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-StateLoop.log",
+      "cached_olean_sha256": "e231904de3cb98f874a8d23c0188c2896c5c4702fda1041b813fe2001533840d"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StringLoops",
+      "source_sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Build-StringLoops.log",
+      "cached_olean_sha256": "c4f7d074cc51a16a056cc00751ea78e731c8ca3a712dd43d6da067dd367fb182"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Repetition",
+      "source_sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Repetition.log",
+      "cached_olean_sha256": "c6d27e95ccf5011d63fdc9cf235185f8d41a26e76a74c327118fb11ae312d1a5"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Closure",
+      "source_sha256": "6c00fec9cd9c2c86b6584eb921b910baf50b8c2cfe000928aa734fe56121d50d",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-Randomized-Closure.log",
+      "cached_olean_sha256": "4cd83c9e674bc711b32db509bd7ae2d5783751bca4d30faa2835454009996182"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Primality",
+      "source_sha256": "c1aabf599529e54b4f092e800bb53d46a53346007b11bde4631a0a8e907a9d58",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-NumberTheory-Primality.log",
+      "cached_olean_sha256": "9ecccd2771094ee443e6746c97649c38daa3399e92bf1ded2d76896b58968d72"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Arithmetic",
+      "source_sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Candidates-Arithmetic.log",
+      "cached_olean_sha256": "2f2f04a58ea27180b834228074626f24f009a94d5bc284107e38aa51814cd3cf"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding/Modular",
+      "source_sha256": "b6c9022a65d70bf021cd91e31623b0703dd307098fd67aa676cee57b556cccca",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encoding-Modular.log",
+      "cached_olean_sha256": "16326eb5783ad360dbfb18862de99059f8f1a44f296bf46fa34bb54e6a1e7c5e"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding/ModularDecode",
+      "source_sha256": "1c56a77c6b059a440a807ff979ad733ee98b359c7fefa91e135d740780ebafd3",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encoding-ModularDecode.log",
+      "cached_olean_sha256": "bb6350a384fd1aec13ccc151dcada2bfd52a04cdd82e85bb796f8d42146ec487"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Adversary",
+      "source_sha256": "4e9b47534922e6397b823173b00ab6ed2cb393b4e88ad4bc81a9065d4656cb0d",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Asymptotic-Adversary.log",
+      "cached_olean_sha256": "d400d3768b0a0c083d4da2746e1b444b4dfb1b6e6b07ab38fb4b079898dd871a"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Negligible",
+      "source_sha256": "5e6d2c9e69dbfe012c36a92bad05ec27e691c044dae73a7277b9599902074e1a",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Foundations-Negligible.log",
+      "cached_olean_sha256": "8a8e6630a66733a58a3058ee6cd431553f9134cb214e0a6c16e1bed6bf87ef2f"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Indistinguishability",
+      "source_sha256": "ad14d4e190a56344860a856a1b9ff0eaeb66286c1c1c1b46312a870f50dd22eb",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Pseudorandom-Indistinguishability.log",
+      "cached_olean_sha256": "cf242cb2cb5ed796446282a87e72132e133d88beeaa7e76a8cfd7e60295fa466"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas",
+      "source_sha256": "ab6aa036e7d2e8f4311162ffa33de06b8a9252b6a8b1150e9c34e5f5164ce934",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Asymptotic-EnsemblesLemmas.log",
+      "cached_olean_sha256": "4c025ccae4b76e6d8589bbdf3b714cb6b361b520d7805d65e289685207fb265e"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/UnaryTape",
+      "source_sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-UnaryTape.log",
+      "cached_olean_sha256": "c4fca9a3bc6fa4ff043057b1054db236617f67ac211528461e8108dd4d0521be"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProg",
+      "source_sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-CounterProg.log",
+      "cached_olean_sha256": "8e212501f3b03676f1a6a13820320eea5f478df2db7b1ea5588e8b52e24255b3"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgRun",
+      "source_sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-CounterProgRun.log",
+      "cached_olean_sha256": "51ed7d55c15427f7f2a48b29750d1c7c18a82cede66b8a76e5cf0332b66b52da"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+      "source_sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-CounterProgPolyTime.log",
+      "cached_olean_sha256": "fd05df7282f4ee25b2ba959a6ab1e39449259dafb58da52eb760cba5565cb955"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgInput",
+      "source_sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-CounterProgInput.log",
+      "cached_olean_sha256": "c56d7549fd8b1eff10e08516638cd920604936d4fce718b1e241b6156374182c"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "source_sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTimePrefix.log",
+      "cached_olean_sha256": "119cbdb2c971457f6f931538571d020281931ea941faeab729564ac00963a3aa"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed",
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-EmitIterEmbed.log",
+      "cached_olean_sha256": "a8b8ba17e5bc7eb1992681a50122968e16ecf139fceef96246e677af7971ec3e"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody",
+      "source_sha256": "bc35c3485cad1755dcfdb43d2c77c3a21af390c4201db1d15c2ccfe77e3bd3fe",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-TuringMachine-Build-EmitIterBody.log",
+      "cached_olean_sha256": "ff902d2499427039248b65c20d27ad4058a5267933236864dd52779b50450361"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "source_sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTimeBlockLoop.log",
+      "cached_olean_sha256": "e5edf7e34fabca6fdc96f62cf19e25ce9b80d0db0d5e11541a770e3dbd0639f7"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Iterate",
+      "source_sha256": "9e4b133ba94c552dec10a5aea4b3ced2f372411ccdc65107db5b4937a8aac487",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-BinaryArith-Iterate.log",
+      "cached_olean_sha256": "936a0510fc89fcacdf5ba94a9bf0b9fc0d9a2ec5c926186231772c9a193ce699"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/Transducer",
+      "source_sha256": "b5161060c58754b13439d2397356e16640ba0b046fe6ebd2d3f5efea1efcea83",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-Transducer.log",
+      "cached_olean_sha256": "a5eeaefaa1c4a7185fb43c65654495ec3942fba38624468a974a5cf8b62ed361"
+    },
+    {
+      "module": "TCSlib/Complexity/SpaceComplexity/Machines/Bin",
+      "source_sha256": "d045d7ec07a252220812dfccd42e02175fcb081286c884c508f5e84f5d4ab72c",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-SpaceComplexity-Machines-Bin.log",
+      "cached_olean_sha256": "397c802cee47c0130e8dc4783c4c1ca4a832b6e166e9818a11616aa2a78f998f"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Basic",
+      "source_sha256": "1864fec060a1e0b6703acde827906baef9b9ca1cf1214a19ebf4144eab4f36ab",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-BinaryArith-Basic.log",
+      "cached_olean_sha256": "ba938210d7fc02de70242e15997a657bfb3111aabccaa9e6e1ec9c7c85fb7adc"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/DTIME",
+      "source_sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-DTIME.log",
+      "cached_olean_sha256": "517d1cb340b855bde31e38e3f00dfb789ecdc16b6c7c4a26b7d3d2eaee4c2ae2"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/P",
+      "source_sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-P.log",
+      "cached_olean_sha256": "5ed8450b54b197f7107946f3ba49533a322cac9711de063b1645e18655b697f2"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/NP",
+      "source_sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-NP.log",
+      "cached_olean_sha256": "ed875d39cd1eaff913e73195e6ca2c77237c519c8002a2fec86f67e4f62f9aa5"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CoNP",
+      "source_sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-CoNP.log",
+      "cached_olean_sha256": "01583fb8bf0afe961fb80a6f85f489c776b630280eb1891f44e6eee61771d503"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests",
+      "source_sha256": "c5d091944b891adcf4cae2ffadd532e39a84e5deffb0c7045ab10afa6a829def",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTimeBlockTests.log",
+      "cached_olean_sha256": "0915f0fea6b2641db1ab3a337011b6c5b52cf2b17059005895b0180cbd9b0618"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority",
+      "source_sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PolyTimeBlockMajority.log",
+      "cached_olean_sha256": "26a77aa4cf00f4b59b1ea9335da4f8cdf80d19488d9484085dd2d988b445aaff"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PClosure",
+      "source_sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassNP-PClosure.log",
+      "cached_olean_sha256": "c27f219c0331c18387353c1b8fef60869c43a6d8243db0ba4ac024b963a6bd0c"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/AddSub",
+      "source_sha256": "36f37a2212cbe21ed026bdee8586f37828f660fc7a62592ca2bff46b4db0e3e5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-BinaryArith-AddSub.log",
+      "cached_olean_sha256": "29351bfbdc81d8ac6b76f1621f734166d9726a79a10edcc6f13a41f1575a31bb"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/BinaryArith/Mul",
+      "source_sha256": "6897ee8ccb8fcdac67d38585feeea29bb6d3e7f3f42b3e70b02a247af03f5e38",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Complexity-ClassP-BinaryArith-Mul.log",
+      "cached_olean_sha256": "fef94feab107d897ea90da87a0a1c3307adcfeabd8db322c8b8fce3c14933af4"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding/BinaryArith",
+      "source_sha256": "1b7cee2f2adcf718257ea50cf048255b7bf71df684af1a816fa7cfff74b8b635",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encoding-BinaryArith.log",
+      "cached_olean_sha256": "fa5c07cf3ed16fdc170993b4a12cac704311522675f18313597b615ccd80c5f1"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+      "source_sha256": "0222d51364a74c3fa5c361056fb01cb9c2436ddbbbb9c11bf5f3956dd5c1814a",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encoding-DyadicArithmetic.log",
+      "cached_olean_sha256": "9966164176101c70fe2b18464cbe5a5b84bce82b41c8379e6b5c901e4393e96d"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding",
+      "source_sha256": "3340f88e2c2f4fbc84e86215e810650bd8ec5aa2aeb047463230a1d3f414c77d",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encoding.log",
+      "cached_olean_sha256": "a4fee3d85fef392f73d5f9ab56fddd24cff8a585c044623084edddd2364dc6da"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/Noise",
+      "source_sha256": "07f408771e912672d331f78cb9a05ef19dc48fcb753cd37daac1e821c66a063b",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-Noise.log",
+      "cached_olean_sha256": "2e981f57a0367812578745eec53486d53d79d2d5e429bd9a5e1bb8a8869be5eb"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/Basic",
+      "source_sha256": "215198380b295a4f482578a8f3e28df2bce672b5869a0a594a6ebca3322edcf2",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-Basic.log",
+      "cached_olean_sha256": "f6d70e89d64ee30a8abbd4775575b565f350b2137c4edef86ae09b565084c266"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/Experiments",
+      "source_sha256": "d38c177a1ffc7600947fa57442f4b545ddb3563b8d0b5780981916a30431c037",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-Experiments.log",
+      "cached_olean_sha256": "a7b0b2f854f9987665b43bc78af6ff994ab7aba504099fbb22816ae5a740e7b9"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/Encoding",
+      "source_sha256": "49dc02f02d1751882df60469e16e0297227a624cbc431ebbdfad7fd912902f25",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-Encoding.log",
+      "cached_olean_sha256": "e36d8d4d28f062cfca884ff6f40fa92f747d304ebed8b6a0d361ab8965536cc6"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/Assumption",
+      "source_sha256": "43be481ecc2ea2ad4e559ca21a50e0c6295f9d1d1d1ffec640832070186c19d6",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-Assumption.log",
+      "cached_olean_sha256": "621d4c1736b98f35a31436ab43ad92c40d3fcf17b1174ecfca582ebe066a7be5"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/SampleSchedules",
+      "source_sha256": "ef0a7374ef06298f7dade397b454ec4f06cfe92c029501ae80fad5800bd9263f",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-SampleSchedules.log",
+      "cached_olean_sha256": "8a85275ea537b25c4593b3767035a9757c27ba01414cb917844147ba010730a0"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE/BitEncoding",
+      "source_sha256": "341fadb151a36feb97b3f052ecb6d0c7c2cdcd55bde24c6bd921e27cabccf147",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE-BitEncoding.log",
+      "cached_olean_sha256": "cc28efb19668fae84ea6df9487798544d7a8ffe1510a629976bb6dfac2ab1a53"
+    },
+    {
+      "module": "TCSlib/Cryptography/LWE",
+      "source_sha256": "317b77955805c241b6ccb4ce065a6ebea8fa543c12472dfeca8af3d8b166554a",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-LWE.log",
+      "cached_olean_sha256": "0e60e54ca6ca8260e0c200b71d9d171ba722e46b2b33cad182ccaaf2bde1fe9f"
+    },
+    {
+      "module": "TCSlib/Cryptography/SIS/Basic",
+      "source_sha256": "ae3427a4392dbdad45a4bd686a484651eba5889aca968e0efdac5bb38f3fefb6",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-SIS-Basic.log",
+      "cached_olean_sha256": "5d657f62b6b1bde01eafbb2b0f7d30bedf7e81ff6876a4bc1511373b5ea81168"
+    },
+    {
+      "module": "TCSlib/Cryptography/SIS/Experiments",
+      "source_sha256": "baa956040177e67435f09bcfa5c8adad1c0c81ad9043420e951612cf7c10eca8",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-SIS-Experiments.log",
+      "cached_olean_sha256": "76777092389f9c60ff64f99892f904890c8c8657a7e2f71e0dfc4a865fdad0a8"
+    },
+    {
+      "module": "TCSlib/Cryptography/SIS/Encoding",
+      "source_sha256": "5ab3511446d1abd2fdf29231585e7877ef7fff2d2185146c7bfbaf9aacf352b7",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-SIS-Encoding.log",
+      "cached_olean_sha256": "beaba9d1ca199582fd159c9ac77d517e1dfbdc950db2c0b21fd05613caf85106"
+    },
+    {
+      "module": "TCSlib/Cryptography/SIS/Assumption",
+      "source_sha256": "159e13ea8359827c2fd92d5b5a81de61fc9b7397e07c23439d2282b3e1b9c3d5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-SIS-Assumption.log",
+      "cached_olean_sha256": "4870e05dd07cb0a7fbc8f0cbbeb604bf50f65d29669d64a75850dfda8d8e330b"
+    },
+    {
+      "module": "TCSlib/Cryptography/SIS",
+      "source_sha256": "b1501c9ce5781b5d353034293161d13cc5194f8b7622f74bf62e48f2d2182ecc",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-SIS.log",
+      "cached_olean_sha256": "067bfb83dfc9a7c27c9f8a425ce8e333925b67f57eec5539a4ee5ffe6c66278f"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Basic",
+      "source_sha256": "01672b5b9fc91b14de71199d6b272d0128a1f666205a7007e05367074e283e04",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encryption-Symmetric-Regev-Basic.log",
+      "cached_olean_sha256": "2e00c11e648d702a8d696012344a7e2e5f888f738463014f2794c481214cdc96"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev/Experiments",
+      "source_sha256": "f018bc556efe37126ed67e2855a2c30fc4001cd43c86132fd81d5878caa15ae5",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encryption-Symmetric-Regev-Experiments.log",
+      "cached_olean_sha256": "210fabf95daecfab36cf2b5dd2eabc83942ddf6d5723a62804d4504e754ab471"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption/Symmetric/Regev",
+      "source_sha256": "b8406ff9cfbdef04ba330341ca726c96598c6492b10f2c4eaf266eec4ba636dd",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encryption-Symmetric-Regev.log",
+      "cached_olean_sha256": "64f94d2d7f57b8f43f16ea10e5807b4cbd992c4ceb389b3ec2b99470cfc23f10"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption/Symmetric",
+      "source_sha256": "6f5bf6659e26d264a20dca1424c5e690d3201591676762007f4e86a38af2e5d9",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encryption-Symmetric.log",
+      "cached_olean_sha256": "de803980cad66c718fe53b0c64e1f74b833927909762fe77f97f6967e65c74c9"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encryption",
+      "source_sha256": "0dadeaec917fc32a0784e6f9530f09be9a5b65e4ddb3b368e2e93e49ffc4a21d",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Encryption.log",
+      "cached_olean_sha256": "9f90bd9c735ac8291cd3394bea34cf255ffc5a39649b4133b227475172a88a73"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Basic",
+      "source_sha256": "9a95ce0621be8245a02bcb1e7c8fa387a0d414b7ce727ddea0da477c8aa8df2e",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Hashing-SIS-Basic.log",
+      "cached_olean_sha256": "597712d0cc5393cf468470b13f0683ad915380d791e4f98efdf25e416003d1c4"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Experiments",
+      "source_sha256": "66cadbfdb9c40f3f553dcf230e750c15dd1ecf583cf5fc59d145ec13a54e14a8",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Hashing-SIS-Experiments.log",
+      "cached_olean_sha256": "13c98e9859d05e394d04193096463a24017fa8c70ee58d0528fd297d3df32eac"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS/Profiles",
+      "source_sha256": "41cc987cfaf76384714b5037cbb677e2f4b63a4bd8cf126a68e12228d963d2ad",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Hashing-SIS-Profiles.log",
+      "cached_olean_sha256": "fa2e5a09e9fa2de37bed45866d6d9dc8e8596b94dea93f51426cd11690318dbb"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing/SIS",
+      "source_sha256": "2cff2599c88c6dee8ee02f7ceb50b6dd042f7d6499bdd1e88e07e9bad9fcb0b0",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Hashing-SIS.log",
+      "cached_olean_sha256": "6a396a0f6a409b9ae6bbd6973d71ae5a793fdee1ee762d1d624ffa67257717a4"
+    },
+    {
+      "module": "TCSlib/Cryptography/Hashing",
+      "source_sha256": "f2056c6df3e6d3e275558c9d9dfcf6e4def7392a59459bdc0130785b31c9b36b",
+      "audited_log": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/fresh-sweep/TCSlib-Cryptography-Hashing.log",
+      "cached_olean_sha256": "dca4d0588b55692ad86170c8b93915ba943bbc662804e0be512e03b0e05e6159"
+    }
+  ],
+  "audited_inherited_admissions": 17,
+  "changed_lean_modules": [
+    "TCSlib/Cryptography/Encoding",
+    "TCSlib/Cryptography/Encoding/DyadicArithmetic"
+  ],
+  "fresh_replay_modules": [
+    "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+    "TCSlib/Cryptography/Encoding"
+  ],
+  "reused_dependency_modules": 92,
+  "fresh_checks": [
+    {
+      "module": "TCSlib/Cryptography/Encoding/DyadicArithmetic",
+      "command": [
+        "bash",
+        "scripts/lean_check_tree.sh",
+        "TCSlib/Cryptography/Encoding/DyadicArithmetic"
+      ],
+      "pid": 64645,
+      "log": "01-TCSlib-Cryptography-Encoding-DyadicArithmetic.log",
+      "source_sha256": "0222d51364a74c3fa5c361056fb01cb9c2436ddbbbb9c11bf5f3956dd5c1814a",
+      "exit_code": 0,
+      "seconds": 8.941,
+      "fresh_olean": true,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "module": "TCSlib/Cryptography/Encoding",
+      "command": [
+        "bash",
+        "scripts/lean_check_tree.sh",
+        "TCSlib/Cryptography/Encoding"
+      ],
+      "pid": 64691,
+      "log": "02-TCSlib-Cryptography-Encoding.log",
+      "source_sha256": "3340f88e2c2f4fbc84e86215e810650bd8ec5aa2aeb047463230a1d3f414c77d",
+      "exit_code": 0,
+      "seconds": 2.202,
+      "fresh_olean": true,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "module": "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/Checks",
+      "command": [
+        "bash",
+        "scripts/lean_check_tree.sh",
+        "briefs/lwe-sis-constructions/fills/03-dyadic-arithmetic/evidence/Checks"
+      ],
+      "pid": 64715,
+      "log": "03-briefs-lwe-sis-constructions-fills-03-dyadic-arithmetic-evidence-Checks.log",
+      "source_sha256": "8ba9a27f6225821b0989f8a0edfc6f380cc4e996b07005bec82137fd289fed0f",
+      "exit_code": 0,
+      "seconds": 40.182,
+      "fresh_olean": true,
+      "error_lines": 0,
+      "admission_warnings": 0,
+      "log_sha256": "8363c213de5a48a27272a96ad7cf6b65579a74e8aa9615df964565c70325b2f3"
+    }
+  ],
+  "started_utc": "2026-11-09T04:27:10.282731+00:00",
+  "axiom_inventory_matches_audit": true,
+  "owned_constants": 302,
+  "explicit_axiom_prints": 34,
+  "completed_utc": "2026-11-09T04:28:01.620665+00:00",
+  "integrated_target": "0126e4de9ee28c84acd8ddf29974adb5109b0f4e",
+  "checked_adapter_head_with_identical_target_tree": "c466c52bf0edb226f43800fc893c5d24d6b29605",
+  "merge_commit": "d1ffc443dda8652492e9dc8d59ff72835291c682",
+  "merge_tree": "03ffcabbef07c601dbf5e2319165794ea1cc579d",
+  "native_replay_preceded_target_merge": true,
+  "audited_source_and_pins_match_merge": true,
+  "audited_module_hashes_match_merge": true,
+  "proof_audit": "audits/lwe-sis-dyadic-arithmetic-proofs-findings.md",
+  "proof_audit_sha256": "ad64967b07f8bb4277baa983b57a312c5f964ad2a7c6d9324dc6f1ab57b62578",
+  "inherited_approved_attributions": 37,
+  "new_source_attributions": 0,
+  "new_blueprint_dataset_registry_or_script_changes": 0,
+  "encoding_style": {
+    "files": 4,
+    "failures": 0,
+    "warnings": 0,
+    "sha256": "bcf1d05b3231253c7645ea58b2639f21c5479942ab93dee350e272ba6a1d084b"
+  },
+  "whole_library_root_checked": false
+}

@@ -1,0 +1,44 @@
+TCSlib/Cryptography/LWE/Sampling.lean:96:42: error: unsolved goals
+P : Parameters
+width t : ℕ
+hq : P.modulus = 2 ^ width
+f : (Fin t → Bool) → ℤ
+eA : (Fin P.samples → Fin P.dimension → Fin width → Bool) ≃ Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) :=
+  Equiv.ofBijective (bitsToMatrix width) ⋯
+eS : (Fin P.dimension → Fin width → Bool) ≃ (Fin P.dimension → ZMod P.modulus) :=
+  Equiv.ofBijective (bitsToVector width) ⋯
+e : (Fin P.samples → Fin P.dimension → Fin width → Bool) ×
+    (Fin P.dimension → Fin width → Bool) × (Fin P.samples → Fin t → Bool) ≃
+  Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+    (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → Fin t → Bool) :=
+  eA.prodCongr (eS.prodCongr (Equiv.refl (Fin P.samples → Fin t → Bool)))
+he :
+  ∀
+    (r :
+      (Fin P.samples → Fin P.dimension → Fin width → Bool) ×
+        (Fin P.dimension → Fin width → Bool) × (Fin P.samples → Fin t → Bool)),
+    sampleFromBits P width t f r = sample P (bitNoise t f) (e r)
+hc :
+  Fintype.card
+      ((Fin P.samples → Fin P.dimension → Fin width → Bool) ×
+        (Fin P.dimension → Fin width → Bool) × (Fin P.samples → Fin t → Bool)) =
+    Fintype.card
+      (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+        (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → Fin t → Bool))
+y : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) × (Fin P.samples → ZMod P.modulus)
+r :
+  (Fin P.samples → Fin P.dimension → Fin width → Bool) ×
+    (Fin P.dimension → Fin width → Bool) × (Fin P.samples → Fin t → Bool)
+⊢ (if sample P (bitNoise t f) (e r) = y then
+      (↑(Fintype.card
+            (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+              (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → Fin t → Bool))))⁻¹
+    else 0) =
+    if sample P (bitNoise t f) (e r) = y then
+      (↑(Fintype.card
+            (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+              (Fin P.dimension → ZMod P.modulus) × (Fin P.samples → (bitNoise t f).Coins))))⁻¹
+    else 0
+FAIL(TCSlib/Cryptography/LWE/Sampling): lean exited with status 1
+FAIL(TCSlib/Cryptography/LWE/Sampling): error diagnostics reported
+FAIL(TCSlib/Cryptography/LWE/Sampling): no fresh .olean produced

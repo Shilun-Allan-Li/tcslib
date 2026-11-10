@@ -1,0 +1,16 @@
+TCSlib/Cryptography/Encoding/BinaryArith.lean:253:2: error: Tactic `apply` failed: could not unify the conclusion of `normalizeWidthPoly_of_length_eq`
+  normalizeWidthPoly ?p ?z = pairSndD ?z
+with the goal
+  normalizeWidthPoly p (pairEncode u w) = w
+
+Note: The full type of `normalizeWidthPoly_of_length_eq` is
+  ∀ (p : PolyExpr) (z : List Bool),
+    (pairSndD z).length = p.eval (pairFstD z).length → normalizeWidthPoly p z = pairSndD z
+
+p : PolyExpr
+u w : List Bool
+h : w.length = p.eval u.length
+⊢ normalizeWidthPoly p (pairEncode u w) = w
+FAIL(TCSlib/Cryptography/Encoding/BinaryArith): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encoding/BinaryArith): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encoding/BinaryArith): no fresh .olean produced

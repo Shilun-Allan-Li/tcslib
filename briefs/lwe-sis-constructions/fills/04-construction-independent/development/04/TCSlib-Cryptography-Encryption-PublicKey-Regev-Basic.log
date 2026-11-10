@@ -1,0 +1,17 @@
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:151:25: error: unsolved goals
+P : Parameters
+e : Fin P.samples → ℤ
+r : Fin P.samples → Bool
+B : ℕ
+he : ∀ (i : Fin P.samples), (e i).natAbs ≤ B
+⊢ ↑P.samples * B = P.samples * B
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic.lean:148:19: warning: This simp argument is unused:
+  hri
+
+Hint: Omit it from the simp argument list.
+  simp only [h̵r̵i̵,̵ ̵Bool.toNat_false, Nat.cast_zero, mul_zero, Int.natAbs_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Basic): no fresh .olean produced

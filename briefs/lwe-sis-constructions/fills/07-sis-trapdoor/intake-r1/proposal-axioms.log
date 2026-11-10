@@ -1,0 +1,15 @@
+TCSlib.Cryptography.LWE.binaryErrorSum_bound {m : ℕ} (e : Fin m → ℤ) (r : Fin m → Bool) (B : ℕ)
+  (he : ∀ (i : Fin m), (e i).natAbs ≤ B) : (∑ i, e i * ↑(r i).toNat).natAbs ≤ m * B
+TCSlib.Cryptography.Encryption.PublicKey.Regev.subsetError_bound (P : TCSlib.Cryptography.LWE.Parameters)
+  (e : Fin P.samples → ℤ) (r : Fin P.samples → Bool) (B : ℕ) (he : ∀ (i : Fin P.samples), (e i).natAbs ≤ B) :
+  (∑ i, e i * ↑(r i).toNat).natAbs ≤ P.samples * B
+TCSlib.Cryptography.TrapdoorFunctions.Lossy.error_sum_bound {N w : ℕ} (E : Matrix (Fin N) (Fin w) ℤ) (x : Fin N → Bool)
+  (B : ℕ) (hE : ∀ (i : Fin N) (j : Fin w), (E i j).natAbs ≤ B) (j : Fin w) : (∑ i, E i j * ↑(x i).toNat).natAbs ≤ N * B
+'TCSlib.Cryptography.LWE.binaryErrorSum_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Encryption.PublicKey.Regev.subsetError_bound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.TrapdoorFunctions.Lossy.error_sum_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.TrapdoorFunctions.Lossy.lossy_range_card' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

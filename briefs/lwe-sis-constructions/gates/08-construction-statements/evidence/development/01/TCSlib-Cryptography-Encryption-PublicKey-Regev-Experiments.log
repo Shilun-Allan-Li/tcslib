@@ -1,0 +1,20 @@
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:123:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:163:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:176:6: error: failed to synthesize
+  HAdd (Fin (hashParameters P).dimension → ZMod (hashParameters P).modulus) ((i : Fin (?m.11 + 1)) → ?m.12 i) ?m.22
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:177:56: error: Application type mismatch: The argument
+  LWE.BitEncoding.codepoint P μ
+has type
+  ZMod P.modulus
+but is expected to have type
+  ?m.12 (Fin.last ?m.11)
+in the application
+  Fin.snoc ?m.16 (LWE.BitEncoding.codepoint P μ)
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:198:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:217:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments.lean:232:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/Regev/Experiments): no fresh .olean produced
