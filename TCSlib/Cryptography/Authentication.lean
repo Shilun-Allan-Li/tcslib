@@ -6,6 +6,7 @@ import TCSlib.Cryptography.Authentication.Defs
 import TCSlib.Cryptography.Authentication.Encoding
 import TCSlib.Cryptography.Authentication.MAC.Defs
 import TCSlib.Cryptography.Authentication.PRFMAC
+import TCSlib.Cryptography.Authentication.MAC.FromPRF
 import TCSlib.Cryptography.Authentication.Lamport
 import TCSlib.Cryptography.Authentication.DLHash
 import TCSlib.Cryptography.Authentication.HashAndSign
@@ -33,7 +34,8 @@ See the theorem statements and correctness results in the constituent modules.
 * `Encoding` — shared encodings for the games and algorithms.
 * `MAC.Defs` — the MAC interface and unforgeability game.
 * `Defs` — signature schemes, collision-resistant hashing and their games.
-* `PRFMAC` — the PRF MAC construction and its security statement.
+* `MAC.FromPRF` — the PRF MAC construction, correctness proof and security statement.
+* `PRFMAC` — compatibility import for the PRF MAC.
 * `Lamport` — Lamport one-time signatures and their security statement.
 * `DLHash` — the discrete-log collision-resistant hash construction.
 * `HashAndSign` — hash-and-sign and the one-time security statement.
