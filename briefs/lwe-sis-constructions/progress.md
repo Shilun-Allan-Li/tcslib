@@ -155,8 +155,10 @@ The final seven efficiency and two asymptotic SIS proofs are filled at
 `8b3187bdaf0c634c086313a727a7210dca14bfeb`. The 144-module replay passes with zero owned admissions and
 17 inherited admission warnings. All 220 elaborated types match Gate 13.
 The axiom inventory closes the nine admissions and records four compiler
-auxiliaries. The nine proof bodies are ready for independent Gate 15 review.
-[Proof report](fills/10-counted-loop-consumers/REPORT.md)
+auxiliaries. Gate 15 passed with zero blockers, zero majors, one documentation
+minor, and four continuing notes. The auditor replayed the full 144-module
+closure and both probes. F01 corrects the axiom description in the proof report.
+[Proof report](fills/10-counted-loop-consumers/REPORT.md) · [Audit disposition](../../audits/lwe-sis-counted-loop-consumer-proofs-resolutions.md)
 
-Merge clearance requires a passing Gate 15 review, scoped source matching,
-and exact-target landing checks. The user approves all merges.
+Merge clearance requires approved scoped source matching and completed
+exact-target landing checks. The user approves all merges.

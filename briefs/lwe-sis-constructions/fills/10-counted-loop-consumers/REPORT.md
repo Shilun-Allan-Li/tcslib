@@ -43,7 +43,13 @@ and those documentation passages.
 | Style | Zero failures and two inherited warnings over 41 files. |
 | Merge preview | Tree `6d2744bad4a023158d262bdeb7c50412b0efb4b2` preserves the checked library, registry, root and build pins. |
 
-Lean emits four auxiliaries in `Hashing.SIS.Asymptotic`. `Complexity.NUPPT.coinsCongr.congr_simp` is the congruence theorem, and three private constants are the two match equations and splitter for the SIS success predicate. All 616 Gate 13 constant identities are preserved. Of those, 607 retain their full inventory entries and the nine fills replace `sorryAx` with `Classical.choice`, `Quot.sound`, and `propext`. [Axiom delta](evidence/axiom-delta.json)
+Lean emits four auxiliaries in `Hashing.SIS.Asymptotic`. They comprise
+`Complexity.NUPPT.coinsCongr.congr_simp` and the two private match equations
+and splitter for the SIS success predicate. All 616 Gate 13 constant
+identities are preserved. Of those, 607 retain their full inventory entries.
+Each of the nine fills removes `sorryAx` from its axiom set and retains
+`Classical.choice`, `Quot.sound`, and `propext`.
+[Axiom delta](evidence/axiom-delta.json)
 
 | Inherited module under `TCSlib` | Admission warnings |
 |---|---:|
@@ -62,9 +68,13 @@ The 178 rank cache fingerprints were rechecked. Whole-library elaboration
 and the exact-target integration checks remain landing work.
 [Cache receipt](evidence/cache-provenance.json) · [Native receipts](evidence/native-checks.json)
 
-Scoped source matching and landing checks follow the independent proof review.
+Gate 15 passed independent review. The auditor reproduced all 144 module
+logs and both probes. The documentation minor is resolved in the axiom
+description above. Scoped source matching and landing checks remain open.
+[Audit disposition](../../../../audits/lwe-sis-counted-loop-consumer-proofs-resolutions.md)
+
 The generic SIS primitive bridge, efficient trapdoor recovery, family-level
 security, and the final CPA and CCA2 bridges are separate obligations.
 
-Merge clearance requires a passing Gate 15 review, scoped source matching,
-and exact-target landing checks.
+Merge clearance requires approved scoped source matching and completed
+exact-target landing checks.
