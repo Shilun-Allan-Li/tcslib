@@ -35,4 +35,4 @@ The ledger maps 5 deferred provider links to the new owners.
 `private-key-interface-checks.zip` has SHA-256 `7334d2d7f9c8901e2ef13011af0e888e63b3a0829da0ab52e922f5c99da98761`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the affected modules, import probes and seals pass.**
+Seyoon merged #271 at `816738e8edf5968e93a1db0790124955994f21da`. The Lean sources and checker inputs match the verified head.
