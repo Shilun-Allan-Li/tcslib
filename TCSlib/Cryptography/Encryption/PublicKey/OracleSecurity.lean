@@ -509,6 +509,10 @@ theorem indSpec_dom (n : ℕ) (i : Fin 2) :
     (S.indSpec n).dom i = (Fin (S.inLens n i) → Bool) :=
   bitSpec_dom (S.inLens n) (S.outLens n) i
 
+/-- The decryption oracle accepts a ciphertext at the scheme's encoded width. -/
+theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 0 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_dom, S.inLens_zero]
+
 /-- Oracle `i` returns bit strings of length `S.outLens n i`. -/
 theorem indSpec_rng (n : ℕ) (i : Fin 2) :
     (S.indSpec n).rng i = (Fin (S.outLens n i) → Bool) :=
@@ -561,6 +565,41 @@ theorem indImpl_challenge_none (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List
 theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
     (mm : Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
     S.indImpl atk b n pk sk 1 mm (some c) = .pure (c, some c) := rfl
+
+/-- The decryption equation on the query specification's type. Read the ciphertext through
+the width equality before checking challenge refusal and decrypting. -/
+theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (c : (S.indSpec n).dom 0) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n pk sk 0 c s =
+      if FixedLengthScheme.decOpen atk s.isSome && !decide (s = some (cast (S.indSpec_decDom n) c))
+      then .pure (FixedLengthScheme.decAnswer
+        (decodeFin _ (S.dec (pairEncode sk (List.ofFn (cast (S.indSpec_decDom n) c))))), s)
+      else .pure (zeroBits _, s) := by
+  simpa only [cast_eq] using S.indImpl_dec atk b n pk sk c s
+
+/-- A challenge query contains two messages at the scheme's message width. -/
+theorem indSpec_challengeDom (n : ℕ) :
+    (S.indSpec n).dom 1 = (Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) := by
+  rw [S.indSpec_dom, S.inLens_one]
+
+/-- The fresh challenge equation on the query specification's type. Draw new encryption
+coins, encrypt the selected half of the query, and record the resulting ciphertext. -/
+theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (mm : (S.indSpec n).dom 1) :
+    S.indImpl atk b n pk sk 1 mm none =
+      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
+        let halves := FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)
+        let c := padFin (S.ctLen.eval n) (S.enc.runAt n
+          (pairEncode pk (List.ofFn (if b then halves.2 else halves.1))) r)
+        .pure (c, some c) := by
+  simpa only [cast_eq] using S.indImpl_challenge_none atk b n pk sk mm
+
+/-- Repeating the challenge preserves the previous state for a query of the specification's
+type. -/
+theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (mm : (S.indSpec n).dom 1) (c : Fin (S.ctLen.eval n) → Bool) :
+    S.indImpl atk b n pk sk 1 mm (some c) = .pure (c, some c) :=
+  S.indImpl_challenge_repeat atk b n pk sk mm c
 
 /-- Under CPA, `Dec` never answers. -/
 theorem indImpl_dec_cpa (b : Bool) (n : ℕ) (pk sk : List Bool)

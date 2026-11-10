@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Cryptography.Asymptotic.CollectionShift
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.NumberTheory.QuadraticResidues
 
@@ -2918,6 +2919,35 @@ theorem rabinBlumTrapdoor_index (H : ArithmeticFP) (n : ℕ) (r : (rabinBlumTrap
   rw [Collection.index_eq]
   show pairFstD ((blumGen H).runAt n [] r) = _
   rw [blumGen_runAt, rabinGenOut, pairFstD_pairEncode]
+
+/-- Every encoding in the Blum Rabin domain at a generated index has width `2 * max n 3`
+[PS10, Theorem 63.10]. This includes the fallback generation branch.
+
+**Proof sketch.** The generation equation supplies a modulus numeral of the stated
+width. The domain encoder writes the residue using the width of that numeral. -/
+theorem rabinBlumTrapdoor_encD_length (H : ArithmeticFP) (n : ℕ)
+    (r : (rabinBlumTrapdoor H).gen.Coins n)
+    (x : (rabinBlumTrapdoor H).D ((rabinBlumTrapdoor H).index n r)) :
+    ((rabinBlumTrapdoor H).encD ((rabinBlumTrapdoor H).index n r) x).length = 2 * max n 3 := by
+  rw [rabinBlumTrapdoor_encD, blumEnc, length_natToList, rabinBlumTrapdoor_index,
+    rabinIndexOf, length_natToList]
+
+/-- At parameter `n + 3`, the Rabin encoding width is exactly the polynomial
+`2 * (n + 3)`.
+
+**Proof sketch.** Transport the generated-domain width to the shifted collection.
+Since `3 ≤ n + 3`, the maximum in the original width is `n + 3`. -/
+theorem rabinBlumTrapdoor_shiftParameter_encD_length (H : ArithmeticFP) (n : ℕ)
+    (r : ((rabinBlumTrapdoor H).shiftParameter 3).gen.Coins n)
+    (x : ((rabinBlumTrapdoor H).shiftParameter 3).D
+      (((rabinBlumTrapdoor H).shiftParameter 3).index n r)) :
+    (((rabinBlumTrapdoor H).shiftParameter 3).encD
+      (((rabinBlumTrapdoor H).shiftParameter 3).index n r) x).length =
+      (PolyExpr.mul (.const 2) (.add .var (.const 3))).eval n := by
+  rw [TrapdoorCollection.shiftParameter_encD_length (rabinBlumTrapdoor H) 3
+    (fun m => 2 * max m 3) (rabinBlumTrapdoor_encD_length H)]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_var,
+    max_eq_left (by omega : 3 ≤ n + 3)]
 
 /-- The Blum sampler has `T(n) B(n)` coins. -/
 private theorem rabin_coins_blumSampler (H : ArithmeticFP) : (blumSampler H).coins = rsaSampleCoins := by

@@ -10,6 +10,7 @@ import TCSlib.Cryptography.Encryption.PublicKey.EnsembleSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
 import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DDH
@@ -53,6 +54,7 @@ multi-message security.
   the Goldreich–Levin bridge [PS10, §3.10].
 * `OracleSecurity` gives the fixed-length scheme, codecs and oracle games [PS10, §7.1.4].
   The proof of `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` is pending.
+* `AdaptiveSecurity` gives the multi-challenge game and its cap-one correspondence.
 * `TrapdoorCPA` specializes the oracle CPA bridge to trapdoor bit encryption.
 * `NonMalleability.Indistinguishability` gives the indistinguishability-based game.
 * `NonMalleability.Simulation` gives the simulation-based game and its relations.

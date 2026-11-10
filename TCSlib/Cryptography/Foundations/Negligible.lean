@@ -231,4 +231,18 @@ theorem exists_not_negligible_not_noticeable :
     rw [abs_of_pos (by positivity)] at h'
     linarith
 
+/-- A negligible function composed with a map `φ ≥ id` is negligible: for `N ≥ max n₀ 1`,
+`φ N ≥ N ≥ n₀` so `|μ (φ N)| < 1 / (φ N)^c ≤ 1 / N^c` (the bookkeeping for the error bounds
+`ε(|f x|) = ε(p(|x|))` of the pulled-back protocol, Claim-124.d). -/
+theorem Negligible.comp_of_le {μ : ℕ → ℝ} (hμ : Negligible μ) (φ : ℕ → ℕ) (hφ : ∀ N, N ≤ φ N) :
+    Negligible fun N => μ (φ N) := by
+  intro c
+  obtain ⟨n₀, h₀⟩ := hμ c
+  refine ⟨max n₀ 1, fun N hN => ?_⟩
+  have hN1 : 1 ≤ N := le_trans (le_max_right _ _) hN
+  have hφN : n₀ ≤ φ N := le_trans (le_trans (le_max_left _ _) hN) (hφ N)
+  refine lt_of_lt_of_le (h₀ (φ N) hφN) ?_
+  have hNpos : (0 : ℝ) < (N : ℝ) ^ c := pow_pos (by exact_mod_cast hN1) c
+  exact one_div_le_one_div_of_le hNpos (pow_le_pow_left₀ (by positivity) (by exact_mod_cast hφ N) c)
+
 end TCSlib.Cryptography

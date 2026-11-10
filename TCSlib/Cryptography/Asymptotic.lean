@@ -11,6 +11,7 @@ import TCSlib.Cryptography.Asymptotic.ReductionSupport
 import TCSlib.Cryptography.Asymptotic.Ensembles
 import TCSlib.Cryptography.Asymptotic.OneWay
 import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.Asymptotic.CollectionShift
 import TCSlib.Cryptography.Asymptotic.Universal
 import TCSlib.Cryptography.Pseudorandom.NextBit
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
@@ -89,6 +90,7 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
   [PS10, p. 103, Theorem 103.d of the inventory].
 * `Encryption.PublicKey.Trapdoor` gives the public-key scheme from a trapdoor permutation
   and its security [PS10, Definitions 102.1, 102.2; Algorithm 104.3; Theorem 104.4].
+* `Asymptotic.CollectionShift` shifts trapdoor collections and transports widths and one-wayness.
 
 ## References
 

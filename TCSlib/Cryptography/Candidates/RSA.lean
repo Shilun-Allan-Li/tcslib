@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Cryptography.Asymptotic.CollectionShift
 import TCSlib.Cryptography.Candidates.Factoring
 import TCSlib.Cryptography.NumberTheory.Units
 import Mathlib.Data.Nat.Size
@@ -1377,6 +1378,38 @@ theorem rsaTrapdoor_eval (H : ArithmeticFP) : (rsaTrapdoor H).eval = rsaEval := 
 
 /-- The trapdoor inverter of the RSA trapdoor collection is `rsaInv H`. -/
 theorem rsaTrapdoor_inv (H : ArithmeticFP) : (rsaTrapdoor H).inv = rsaInv H := rfl
+
+/-- Every encoding in the RSA domain at a generated index has width `2 * max n 2`
+[PS10, Theorems 53.2 and 57.2]. This includes the fallback generation branch.
+
+**Proof sketch.** The generation equation gives the modulus component as a numeral
+with width `2 * max n 2`. The domain encoder uses the width of that component,
+regardless of the residue being encoded. -/
+theorem rsaTrapdoor_encD_length (H : ArithmeticFP) (n : ℕ)
+    (r : (rsaTrapdoor H).gen.Coins n) (x : (rsaTrapdoor H).D ((rsaTrapdoor H).index n r)) :
+    ((rsaTrapdoor H).encD ((rsaTrapdoor H).index n r) x).length = 2 * max n 2 := by
+  have hi : (rsaTrapdoor H).index n r = rsaIndexOf _ (rsaGenParams n (List.ofFn r)) := by
+    rw [Collection.index_eq]
+    change pairFstD ((rsaGen H).runAt n [] r) = _
+    rw [rsaGen_runAt, rsaGenOut, pairFstD_pairEncode]
+  rw [rsaTrapdoor_encD, rsaEnc, length_natToList, hi, rsaIndexOf, pairFstD_pairEncode, length_natToList]
+
+/-- At parameter `n + 2`, the RSA encoding width is exactly the polynomial
+`2 * (n + 2)`.
+
+**Proof sketch.** Transport the generated-domain width to the shifted collection.
+Since `2 ≤ n + 2`, the maximum in the original width is `n + 2`. -/
+theorem rsaTrapdoor_shiftParameter_encD_length (H : ArithmeticFP) (n : ℕ)
+    (r : ((rsaTrapdoor H).shiftParameter 2).gen.Coins n)
+    (x : ((rsaTrapdoor H).shiftParameter 2).D
+      (((rsaTrapdoor H).shiftParameter 2).index n r)) :
+    (((rsaTrapdoor H).shiftParameter 2).encD
+      (((rsaTrapdoor H).shiftParameter 2).index n r) x).length =
+      (PolyExpr.mul (.const 2) (.add .var (.const 2))).eval n := by
+  rw [TrapdoorCollection.shiftParameter_encD_length (rsaTrapdoor H) 2
+    (fun m => 2 * max m 2) (rsaTrapdoor_encD_length H)]
+  simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_var,
+    max_eq_left (by omega : 2 ≤ n + 2)]
 
 /-- **The RSA collection** [PS10, Theorem 53.2]: the collection underlying `rsaTrapdoor`. -/
 noncomputable def rsaCollection (H : ArithmeticFP) : Collection := (rsaTrapdoor H).toCollection
