@@ -28,8 +28,7 @@ set_option autoImplicit false
 The raw postprocessor has an exact unconditional output width, writes the existing
 signed encoder's output, and parses to the actual integer difference whenever one
 magnitude bit fits. A same-coin probability bound retains arbitrary finder outputs.
-The leaf step is polynomial-time. The whole postprocessor's efficiency proof
-awaits the counted-loop registry and head-envelope disposition.
+The polynomial-time postprocessor composes its leaf step with the registered counted loop.
 
 ## References
 
@@ -286,7 +285,19 @@ contract to the retained-context step. Generate the fixed polynomial templates,
 cut the two raw suffixes with `pairTakePoly M` and `pairDropPoly M`, and project the result. -/
 theorem polyTimeComputable_collisionOutputPoly (M B : PolyExpr) :
     PolyTimeComputable (collisionOutputPoly M B) := by
-  sorry
+  have hloop := BinArith.polyTimeComputable_forLoop polyTimeComputable_collisionOutputStep 9 2
+    (BinArith.forLoop_bound_of_ctx 8 collisionOutputStep_fst collisionOutputStep_length_le)
+  have hu := polyTimeComputable_pairFstD
+  have hc := EnsembleLemmas.polyTimeComputable_zeros B hu
+  have hm := (polyTimeComputable_unaryPoly M).comp hu
+  have hxs := polyTimeComputable_pairTakePoly M
+  have hys := polyTimeComputable_pairDropPoly M
+  have hinit := hc.pairEncode (hxs.pairEncode (hys.pairEncode (polyTimeComputable_const [])))
+  have hcomposed := (polyTimeComputable_pairSndD.comp BinArith.polyTimeComputable_slot4).comp
+    (hloop.comp (hm.pairEncode hinit))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [collisionOutputPoly_eq, Function.comp_apply]
 
 /-- Arbitrary raw collision outputs have success probability at most that of their
 actual parsed signed SIS output [Pei16, observations after Equation (4.1.1)].

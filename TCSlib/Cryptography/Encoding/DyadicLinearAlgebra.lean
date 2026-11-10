@@ -22,7 +22,7 @@ set_option autoImplicit false
 
 Raw output widths are unconditional. Canonical encodings correspond to modular dot
 products and matrix-vector multiplication. The dot leaf step is polynomial-time.
-The loop-dependent efficiency proofs await the registry and head-envelope disposition.
+The efficiency proofs compose the registered counted loop with the existing word operations.
 
 ## References
 
@@ -157,7 +157,19 @@ Initialize zeros and compose the final projections with the existing FP calculus
 theorem polyTimeComputable_dotWords : PolyTimeComputable
     (fun z => dotWords (pairFstD z) (pairFstD (pairSndD z))
       (pairFstD (pairSndD (pairSndD z))) (pairSndD (pairSndD (pairSndD z)))) := by
-  sorry
+  have hloop := BinArith.polyTimeComputable_forLoop polyTimeComputable_dotStep 9 2
+    (BinArith.forLoop_bound_of_ctx 8 dotStep_fst dotStep_length_le)
+  have hc := polyTimeComputable_pairFstD
+  have hn := BinArith.polyTimeComputable_slot2
+  have hx := polyTimeComputable_pairFstD.comp BinArith.polyTimeComputable_slot3
+  have hy := BinArith.polyTimeComputable_slot4
+  have hzero := EnsembleLemmas.polyTimeComputable_zeros .var hc
+  have hinit := hc.pairEncode (hx.pairEncode (hy.pairEncode hzero))
+  have hcomposed := (polyTimeComputable_pairSndD.comp BinArith.polyTimeComputable_slot4).comp
+    (hloop.comp (hn.pairEncode hinit))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [dotWords_eq, Function.comp_apply, PolyExpr.eval_var]
 
 /-- Fix polynomial coordinate and residue-width schedules before selecting a dot machine. -/
 def dotPoly (N W : PolyExpr) (z : List Bool) : List Bool :=
@@ -245,7 +257,14 @@ theorem dotPoly_encodeVector {q : ℕ} [NeZero q] (N W : PolyExpr) (u : List Boo
 zero-word machine and the counter with `polyTimeComputable_unaryPoly`, then compose the
 packed `dotWords` machine. The polynomials are fixed outside the machine choice. -/
 theorem polyTimeComputable_dotPoly (N W : PolyExpr) : PolyTimeComputable (dotPoly N W) := by
-  sorry
+  have hc := EnsembleLemmas.polyTimeComputable_zeros W polyTimeComputable_pairFstD
+  have hn := (polyTimeComputable_unaryPoly N).comp polyTimeComputable_pairFstD
+  have hx := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hy := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
+  have hcomposed := polyTimeComputable_dotWords.comp (hc.pairEncode (hn.pairEncode (hx.pairEncode hy)))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [dotPoly_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- Consume one matrix row, append its modular dot product, and retain width, column
 count and the full input vector as the outer loop's context. -/
@@ -300,7 +319,23 @@ machine `BinArith.mulU`, whose length is `|n|*|c|`. Compose `pairTakePoly .var`
 and `pairDropPoly .var` on that row template,
 the packed dot loop, append and total projections. No matrix traversal is rebuilt. -/
 theorem polyTimeComputable_matVecStep : PolyTimeComputable matVecStep := by
-  sorry
+  have hctx := polyTimeComputable_pairFstD
+  have hctxTail := polyTimeComputable_pairSndD.comp hctx
+  have hc := polyTimeComputable_pairFstD.comp hctx
+  have hn := polyTimeComputable_pairFstD.comp hctxTail
+  have hv := polyTimeComputable_pairSndD.comp hctxTail
+  have hrows := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hout := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
+  have htemplate := BinArith.polyTimeComputable_mulU.comp (hn.pairEncode hc)
+  have hpair := htemplate.pairEncode hrows
+  have hrow := (polyTimeComputable_pairTakePoly .var).comp hpair
+  have hrest := (polyTimeComputable_pairDropPoly .var).comp hpair
+  have hvalue := polyTimeComputable_dotWords.comp (hc.pairEncode (hn.pairEncode (hrow.pairEncode hv)))
+  have hcomposed := hctx.pairEncode (hrest.pairEncode (hout.append hvalue))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [matVecStep_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+    PolyExpr.eval_var, BinArith.length_mulU]
 
 /-- Multiply a row-major matrix by a vector using fixed polynomial row, column and
 residue-width schedules and the existing counted-loop host. -/
@@ -409,6 +444,19 @@ to `matVecStep`, obtaining the nine/two polynomial bound. Generate the fixed sch
 templates with existing polynomial unary-word machines and compose final projections. -/
 theorem polyTimeComputable_matVecPoly (M N W : PolyExpr) :
     PolyTimeComputable (matVecPoly M N W) := by
-  sorry
+  have hloop := BinArith.polyTimeComputable_forLoop polyTimeComputable_matVecStep 9 2
+    (BinArith.forLoop_bound_of_ctx 8 matVecStep_fst matVecStep_length_le)
+  have hu := polyTimeComputable_pairFstD
+  have hc := EnsembleLemmas.polyTimeComputable_zeros W hu
+  have hn := (polyTimeComputable_unaryPoly N).comp hu
+  have hm := (polyTimeComputable_unaryPoly M).comp hu
+  have hctx := hc.pairEncode (hn.pairEncode BinArith.polyTimeComputable_slot3)
+  have hinit := hctx.pairEncode
+    (BinArith.polyTimeComputable_slot2.pairEncode (polyTimeComputable_const []))
+  have hcomposed := BinArith.polyTimeComputable_slot4.comp
+    (hloop.comp (hm.pairEncode hinit))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [matVecPoly_eq, Function.comp_apply]
 
 end TCSlib.Cryptography.Encoding.DyadicLinearAlgebra

@@ -20,8 +20,8 @@ set_option autoImplicit false
 ## Main results
 
 The evaluator has an unconditional fixed output width, agrees with the modular binary
-matrix product on every canonical matrix and arbitrary raw domain word. Its
-efficiency proof awaits the polynomial-time expansion and matrix-loop proofs.
+matrix product on every canonical matrix and arbitrary raw domain word. The
+polynomial-time proof composes the expansion and matrix-vector contracts.
 
 ## References
 
@@ -83,10 +83,18 @@ theorem hashPoly_encodeMatrix {q : ℕ} [NeZero q] (N M W : PolyExpr) (u raw : L
 
 /-- The complete fixed-schedule hash evaluator is polynomial-time.
 
-**Proof sketch.** Compose the proved-modulo-statement contracts for bit expansion
+**Proof sketch.** Compose the polynomial-time contracts for bit expansion
 and matrix-vector multiplication with existing total projection/pairing contracts.
 Their underlying loops are the existing public `BinArith.forLoop` host. -/
 theorem polyTimeComputable_hashPoly (N M W : PolyExpr) : PolyTimeComputable (hashPoly N M W) := by
-  sorry
+  have hu := polyTimeComputable_pairFstD
+  have hmatrixWord := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hraw := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
+  have hvector := (Encoding.BooleanVector.polyTimeComputable_expandPoly M W).comp (hu.pairEncode hraw)
+  have hmatrix := Encoding.DyadicLinearAlgebra.polyTimeComputable_matVecPoly N M W
+  have hcomposed := hmatrix.comp (hu.pairEncode (hmatrixWord.pairEncode hvector))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [hashPoly_eq, Function.comp_apply]
 
 end TCSlib.Cryptography.Hashing.SIS

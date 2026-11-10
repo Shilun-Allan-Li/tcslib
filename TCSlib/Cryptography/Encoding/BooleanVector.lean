@@ -24,7 +24,7 @@ set_option autoImplicit false
 The raw output length is exact. Its values are the modular zero/one vector of the
 original prefix, with false defaults and excess bits ignored. The efficiency sketch
 uses existing leaf contracts and the public counted loop. The step is polynomial-time.
-The wrapper's efficiency proof awaits the loop registry and head-envelope disposition.
+The wrapper composes the registered counted loop with the schedule templates and projections.
 
 ## References
 
@@ -187,6 +187,17 @@ theorem expandPoly_encode {q : ℕ} [NeZero q] (M W : PolyExpr) (u raw : List Bo
 and `polyTimeComputable_forLoop`, generate templates with existing zero/unary polynomial
 machines, and compose total projections. No new host or runtime polynomial is needed. -/
 theorem polyTimeComputable_expandPoly (M W : PolyExpr) : PolyTimeComputable (expandPoly M W) := by
-  sorry
+  have hloop := BinArith.polyTimeComputable_forLoop polyTimeComputable_expandStep 9 2
+    (BinArith.forLoop_bound_of_ctx 8 expandStep_fst expandStep_length_le)
+  have hu := polyTimeComputable_pairFstD
+  have hc := EnsembleLemmas.polyTimeComputable_zeros W hu
+  have hm := (polyTimeComputable_unaryPoly M).comp hu
+  have hinit := hc.pairEncode
+    (polyTimeComputable_pairSndD.pairEncode (polyTimeComputable_const []))
+  have hcomposed := BinArith.polyTimeComputable_slot4.comp
+    (hloop.comp (hm.pairEncode hinit))
+  refine Eq.mp (congrArg PolyTimeComputable ?_) hcomposed
+  funext z
+  simp only [expandPoly_eq, Function.comp_apply]
 
 end TCSlib.Cryptography.Encoding.BooleanVector
