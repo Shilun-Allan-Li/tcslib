@@ -30,6 +30,7 @@ answers index by index.
 * `QueryTree.noteQuery L x`: the list of distinct queries after querying `x`.
 * `QueryTree.evalLazy a t L`: run `t`, answering the `k`-th distinct query by `a k`.
 * `extendStream W`: a finite list of values `W : Fin q → O` as an answer stream.
+* `lazyDist A` evaluates the oracle adversary against an answer stream.
 
 ## Main results
 
@@ -401,5 +402,21 @@ theorem uprob_evalLazy [Fintype I] [Fintype O] [Nonempty O] (φ : α → Prop)
   simpa only [h1, h2] using h
 
 end QueryTree
+
+section LazyDistinguisher
+
+variable {P V : Type} {ρ : Type*} [DecidableEq P]
+
+/-- The oracle adversary `A` run with lazily sampled answers given by an answer stream. -/
+def lazyDist (A : OracleAdversary ρ P V) : (ℕ → V) → ρ → Bool :=
+  fun a r => (A r).evalLazy a []
+
+/-- On the answer stream `a` and coins `r`, `lazyDist A` is the lazy run of `A r` from the empty
+list of distinct queries: `lazyDist A a r = (A r).evalLazy a []`. -/
+theorem lazyDist_apply (A : OracleAdversary ρ P V) (a : ℕ → V) (r : ρ) :
+    lazyDist A a r = (A r).evalLazy a [] :=
+  rfl
+
+end LazyDistinguisher
 
 end TCSlib.Cryptography

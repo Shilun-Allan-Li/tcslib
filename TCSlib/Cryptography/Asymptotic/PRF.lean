@@ -9,476 +9,52 @@ import TCSlib.Cryptography.Asymptotic.HardCore
 import TCSlib.Cryptography.Asymptotic.PRFLemmas
 import TCSlib.Cryptography.Pseudorandom.Functions.GGM
 import TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.Stretch
+import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.Defs
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# Oracle indistinguishability, pseudorandom functions and the GGM construction
+# The asymptotic Goldreich–Goldwasser–Micali construction
 
-The material of [PS10, §3.8]: random functions `RF_n` in their two descriptions (the function
-table and the lazily sampled machine, §3.8.1); oracle indistinguishability of ensembles of
-distributions over functions `{0,1}^{ℓ₁(n)} → {0,1}^{ℓ₂(n)}` against non-uniform PPT oracle
-machines [PS10, Definition 96.1]; pseudorandom functions [PS10, Definition 96.2]; and the
-Goldreich–Goldwasser–Micali theorem that a pseudorandom generator yields a pseudorandom
-function [PS10, Theorem 97.3] through the tree construction
-`f_s(b₁ … b_n) = g_{b_n}(⋯ g_{b₁}(s) ⋯)`.
+The GGM tree of [PS10, Theorem 97.3] builds a pseudorandom function from a
+length-doubling generator. The oracle and PRF contracts live in
+`Pseudorandom.Functions.Asymptotic.Defs` and are available through this import.
+`Pseudorandom.Generators.Asymptotic.Stretch` reduces an arbitrary secure PRG to
+the length-doubling case.
 
-Two layers (foundation decision D2 of `PassShelatChapter2-4Plan.md`). The *concrete* layer is
-the frozen Garg development reused verbatim: query trees and oracle adversaries
-(`Pseudorandom/Functions/OracleAdversary.lean`), lazy sampling (`LazySampling.lean`), random
-functions and the PRF advantage `prfAdv` (`Defs.lean`), the level hybrids, the query
-sub-hybrids and the GGM security bound `exists_ggmBits_dist` (`SubHybrids.lean`, `GGM.lean`).
-The *asymptotic* layer is the oracle-adversary model of foundation decision D7: an oracle
-machine is a *next-query* `Complexity.NUPPT`, activated once per query on the encoded history
-of (query, answer) pairs with one random tape per parameter, with an explicit query budget
-quantified universally; `Complexity.NUPPT.toOracleAdversary` unfolds it into a concrete
-`OracleAdversary` making at most `q` queries. The theorems are (i) the concrete reduction at
-each `n`, (ii) a machine built by the closure calculus of `TCSlib/Complexity/Randomized/`,
-(iii) negligible-function arithmetic.
+The evaluator uses `Asymptotic.PRFLemmas`. The reduction machine and its run
+agreement are in `Asymptotic.GGMReduction` and `Asymptotic.GGMReductionEval`.
+The finite level and query hybrids come from [Gar26, Theorem 3.3].
 
-**Deviation:** `OracleEnsemble.Indist`: next-query machines with an explicit universally
-quantified budget; no oracle tapes; forced verdict `false` after `q n` queries.
-
-**Deviation:** the GGM tree of [PS10, Theorem 97.3] is built from a *length-doubling*
-generator `G : {0,1}^n → {0,1}^{2n}`, which the text obtains "without loss of generality"; a
-length-doubling generator is not a `PRG` of this library (the stretch `2n` does not exceed `n`
-at `n = 0`), so it is the separate predicate `DoublingPRG`, and the reduction from an arbitrary
-`PRG` is the explicit `PRG.doubling` (truncate to `n + 1` bits, expand by [PS10, Lemma 80.5] to
-`2n + 1` bits, truncate to `2n`).
-
-**Deviation:** the level hybrids of the formal proof are indexed `HF⁰ = f_s, …, HFⁿ = RF_n`
-(`n` gaps, loss `1/n`) where the text writes `HF¹ = f_s, …, HFⁿ = RF_n`; the query sub-hybrids
-are indexed by distinct prefixes in order of first appearance (`SubHybrids.lean`).
-
-Proof infrastructure lives in three sibling files: `TCSlib.Cryptography.Asymptotic.PRFLemmas`
-(truncation of a generator, the GGM evaluator `ggmEval`), and
-`TCSlib.Cryptography.Asymptotic.GGMReduction` / `GGMReductionEval` (the reduction machine
-`GGMRed.ggmRedMachine` of Thm-97.3.3: a state loop hosting `D`'s next-query function with the
-lazily sampled tables, and its functional identity with `ggmBitsDist`).
+**Deviation.** The level hybrids are indexed `HF⁰ = f_s, …, HFⁿ = RF_n` with
+`n` gaps. The query sub-hybrids are indexed by distinct prefixes in order of
+first appearance.
 
 ## Main definitions
 
-* `TCSlib.Cryptography.OracleEnsemble` — an ensemble of distributions over functions
-  [PS10, Definition 96.1]; `OracleEnsemble.random` — the random functions `RF_n`
-  [PS10, §3.8.1]; `OracleEnsemble.keyed` — `{s ← U_n : f_s}`.
-* `TCSlib.Cryptography.OracleMove`, `decodeOracleMove`, `encodeHist`, `buildTree`,
-  `Complexity.NUPPT.toOracleAdversary` — next-query machines as oracle adversaries (D7).
-* `TCSlib.Cryptography.OracleEnsemble.Indist` — oracle indistinguishability
-  [PS10, Definition 96.1].
-* `TCSlib.Cryptography.PRF` — pseudorandom function families [PS10, Definition 96.2].
-* `TCSlib.Cryptography.DoublingPRG`, `PRG.truncate`, `PRG.doubling` from `Stretch` — length-doubling
-  generators and the reduction from an arbitrary generator (Cor-97.a).
-* `TCSlib.Cryptography.ggmPRF` — the GGM family `f_s(b₁ … b_n) = g_{b_n}(⋯ g_{b₁}(s) ⋯)`
-  [PS10, Theorem 97.3, construction].
+* `TCSlib.Cryptography.ggmPRF` is the GGM family `f_s(b₁ … b_n) = g_{b_n}(⋯ g_{b₁}(s) ⋯)`.
 
 ## Main results
 
-* `Complexity.NUPPT.toOracleAdversary_boundedBy` — the unfolded tree makes at most `q` queries.
-* `TCSlib.Cryptography.acceptProb_random_eq_lazy` — the table and the lazy descriptions of a
-  random function give the same acceptance probabilities (Claim-95.b).
-* `TCSlib.Cryptography.OracleEnsemble.Indist.refl`, `.symm`, `.trans`,
-  `TCSlib.Cryptography.oracle_hybrid_lemma` — reflexivity, symmetry, transitivity and the
-  hybrid lemma for oracle ensembles (Claim-96.b).
-* `TCSlib.Cryptography.prfAdv_toOracleAdversary` — the advantage of a next-query machine
-  against a keyed family is the concrete `prfAdv`.
-* `TCSlib.Cryptography.PRG.Secure.doubling` in `Stretch` — every PRG yields a length-doubling PRG
-  (Cor-97.a).
-* `TCSlib.Cryptography.thm_97_3_1`, `thm_97_3_2`, `exists_ggmBitsDist_nuppt` — the level
-  hybrids, the query sub-hybrids and the emulation of a sub-hybrid by a non-uniform PPT.
-* `TCSlib.Cryptography.ggmPRF_prf` — the GGM family of a length-doubling PRG is a PRF
-  [PS10, Theorem 97.3]; `exists_prf_of_exists_prg` — "if a PRG exists then a PRF exists".
+* `TCSlib.Cryptography.exists_ggmPRF_evaluator` computes the GGM family in polynomial time.
+* `TCSlib.Cryptography.thm_97_3_1` and `thm_97_3_2` give the level hybrids and query
+  sub-hybrid bound. `exists_ggmBitsDist_nuppt` implements the reduction as a machine.
+* `TCSlib.Cryptography.ggmPRF_prf` proves security, and `exists_prf_of_exists_prg`
+  composes it with PRG stretch extension.
 
 ## References
 
-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
-  (§3.8: Definitions 96.1, 96.2; Theorem 97.3.)
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
+  January 2010, §3.8, Theorem 97.3.
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
-  draft of 22 January 2026, §3.4 (Definitions 3.6–3.9, Construction 3.3, Theorem 3.3).
+  draft of 22 January 2026, §3.4, Construction 3.3 and Theorem 3.3.
 -/
 
 namespace TCSlib.Cryptography
 
 open Complexity Turing Finset
-
-/-! ### Oracle ensembles and random functions [PS10, §3.8.1, Definition 96.1] -/
-
-/-- An **oracle ensemble** [PS10, Definition 96.1]: for every parameter `n` a probability
-distribution over functions `{0,1}^{ℓ₁(n)} → {0,1}^{ℓ₂(n)}`, given (D6/D7) as the pushforward
-of the uniform distribution on a finite seed type `σ n` along a sampler `O n`. For the
-random-function ensemble the seed is the function table itself (exponentially long, which is
-immaterial at the concrete level); for a keyed family the seed is the key.
-
-**Deviation:** `OracleEnsemble.Indist`: next-query machines with an explicit universally
-quantified budget; no oracle tapes; forced verdict `false` after `q n` queries. -/
-structure OracleEnsemble (ℓ₁ ℓ₂ : PolyExpr) where
-  /-- The seed type at parameter `n`. -/
-  σ : ℕ → Type
-  /-- The seed types are finite. -/
-  [fintype : ∀ n, Fintype (σ n)]
-  /-- The sampler: the oracle determined by a seed. -/
-  O : ∀ n, σ n → (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)
-
-attribute [instance] OracleEnsemble.fintype
-
-/-- **The random function ensemble** `RF_n` [PS10, §3.8.1, combinatorial description]: the
-uniform distribution on functions `{0,1}^{ℓ₁(n)} → {0,1}^{ℓ₂(n)}`, sampled by its function
-table (the "long array" of the text; `randomFunction I O = id`). The text's count
-`2^{n 2^n}` of random functions is `Fintype.card_fun`. -/
-def OracleEnsemble.random (ℓ₁ ℓ₂ : PolyExpr) : OracleEnsemble ℓ₁ ℓ₂ where
-  σ n := (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)
-  O _ := randomFunction _ _
-
-/-- **A keyed family as an oracle ensemble**: `{s ← U_n : f_s}` for a family
-`F n : {0,1}^n → {0,1}^{ℓ₁(n)} → {0,1}^{ℓ₂(n)}` (the first clause of the pseudorandomness
-condition of [PS10, Definition 96.2]); the seed is the `n`-bit key. -/
-def OracleEnsemble.keyed {ℓ₁ ℓ₂ : PolyExpr}
-    (F : ∀ n, (Fin n → Bool) → (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)) :
-    OracleEnsemble ℓ₁ ℓ₂ where
-  σ n := Fin n → Bool
-  O n := F n
-
-/-- Unfolding: the random-function ensemble samples by the identity on tables. -/
-@[simp] theorem OracleEnsemble.random_O (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
-    (R : (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)) :
-    (OracleEnsemble.random ℓ₁ ℓ₂).O n R = R :=
-  randomFunction_apply _ _ R
-
-/-- Unfolding: the keyed ensemble samples by `F n`. -/
-@[simp] theorem OracleEnsemble.keyed_O {ℓ₁ ℓ₂ : PolyExpr}
-    (F : ∀ n, (Fin n → Bool) → (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)) (n : ℕ)
-    (s : Fin n → Bool) : (OracleEnsemble.keyed F).O n s = F n s := rfl
-
-/-- **The two descriptions of a random function agree** [PS10, §3.8.1, "both of the above
-descriptions of a random function give rise to identical distributions"] (Claim-95.b): for an
-oracle adversary making at most `q` queries, the probability of accepting with the function
-table `RF_n` as oracle equals the probability of accepting when every *new* query is answered
-by a fresh uniform value and repeated queries by the recorded answer (the computational
-description, `QueryTree.evalLazy` with `q` fresh values `extendStream W`).
-
-**Proof sketch.** Both sides are averages over the adversary's coins `r` (Fubini,
-`uprob_prod` after swapping the factors with `uprob_prod_comm`); for each fixed `r` the two
-inner probabilities agree by the concrete lazy-sampling theorem `QueryTree.uprob_evalLazy`
-applied to the tree `A r`. -/
-theorem acceptProb_random_eq_lazy {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
-    (A : OracleAdversary ρ (Fin (ℓ₁.eval n) → Bool) (Fin (ℓ₂.eval n) → Bool)) {q : ℕ}
-    (hA : A.BoundedBy q) :
-    acceptProb ((OracleEnsemble.random ℓ₁ ℓ₂).O n) (oracleDist A) =
-      acceptProb (fun W : Fin q → (Fin (ℓ₂.eval n) → Bool) => extendStream W) (lazyDist A) := by
-  rw [acceptProb_def, acceptProb_def,
-    uprob_prod_comm (fun R (r : ρ) => oracleDist A ((OracleEnsemble.random ℓ₁ ℓ₂).O n R) r = true),
-    uprob_prod_comm (fun W (r : ρ) => lazyDist A (extendStream W) r = true),
-    uprob_prod, uprob_prod]
-  congr 1
-  funext r
-  simp only [OracleEnsemble.random_O, oracleDist_apply, lazyDist_apply]
-  exact (QueryTree.uprob_evalLazy (· = true) ((OracleAdversary.boundedBy_iff A q).1 hA r)).symm
-
-/-! ### Next-query machines as oracle adversaries (D7) -/
-
-/-- A move of a next-query oracle machine: either the next query `x ∈ {0,1}^{ℓ₁}` or the
-final verdict `b`. -/
-inductive OracleMove (ℓ₁ : ℕ)
-  /-- Ask the oracle at `x`. -/
-  | query (x : Fin ℓ₁ → Bool)
-  /-- Stop with the verdict `b`. -/
-  | ret (b : Bool)
-
-/-- Decoding of a machine output as a move: `⟨[false], x⟩` with `x` an `ℓ₁`-bit string is the
-query `x`; the two-bit string `[true, b]` is the verdict `b`; any other output is the verdict
-`false` (D7: ill-formed outputs count as rejection). -/
-def decodeOracleMove (ℓ₁ : ℕ) (w : List Bool) : OracleMove ℓ₁ :=
-  match pairDecode w, w with
-  | some ([false], x), _ => match decodeFin ℓ₁ x with
-    | some x => .query x
-    | none => .ret false
-  | _, [true, b] => .ret b
-  | _, _ => .ret false
-
-/-- The two-bit word `[true, b]` is not a pair: its decoding would start with a doubled bit
-(at least four bits) or with the separator `01`. -/
-private theorem pairDecode_true_two (b : Bool) : pairDecode [true, b] = none := by
-  cases h : pairDecode [true, b] with
-  | none => rfl
-  | some p =>
-    obtain ⟨u, v⟩ := p
-    have hz := eq_pairEncode_of_pairDecode _ u v h
-    rw [pairEncode_eq] at hz
-    cases u with
-    | nil => simp at hz
-    | cons x u =>
-      have hl := congrArg List.length hz
-      simp only [List.length_cons, List.length_append, List.flatMap_cons, List.length_nil] at hl
-      omega
-
-/-- Decoding a pair `⟨[false], x⟩`: the query `x` when `x` has `ℓ₁` bits, else the verdict
-`false`: `decodeOracleMove ℓ₁ (pairEncode [false] x) =
-match decodeFin ℓ₁ x with | some y => .query y | none => .ret false`. -/
-theorem decodeOracleMove_pairEncode_false (ℓ₁ : ℕ) (x : List Bool) :
-    decodeOracleMove ℓ₁ (pairEncode [false] x) =
-      match decodeFin ℓ₁ x with
-      | some y => .query y
-      | none => .ret false := by
-  unfold decodeOracleMove
-  rw [pairDecode_pairEncode, pairEncode_eq]
-  rfl
-
-/-- Decoding the two-bit word `[true, b]`: the verdict `b`,
-`decodeOracleMove ℓ₁ [true, b] = .ret b`. -/
-theorem decodeOracleMove_true_two (ℓ₁ : ℕ) (b : Bool) :
-    decodeOracleMove ℓ₁ [true, b] = .ret b := by
-  unfold decodeOracleMove
-  rw [pairDecode_true_two]
-
-/-- Decoding a well-formed query word: for every `ℓ₁`-bit string `x` (`ℓ₁ = 0` included),
-`decodeOracleMove ℓ₁ (pairEncode [false] (List.ofFn x)) = .query x`. -/
-theorem decodeOracleMove_pairEncode_ofFn (ℓ₁ : ℕ) (x : Fin ℓ₁ → Bool) :
-    decodeOracleMove ℓ₁ (pairEncode [false] (List.ofFn x)) = .query x := by
-  rw [decodeOracleMove_pairEncode_false, decodeFin_ofFn]
-
-/-- Decoding a query-shaped word of the wrong length: if `|x| ≠ ℓ₁` then
-`decodeOracleMove ℓ₁ (pairEncode [false] x) = .ret false`. -/
-theorem decodeOracleMove_pairEncode_false_of_length_ne (ℓ₁ : ℕ) {x : List Bool}
-    (hx : x.length ≠ ℓ₁) : decodeOracleMove ℓ₁ (pairEncode [false] x) = .ret false := by
-  rw [decodeOracleMove_pairEncode_false]
-  cases h : decodeFin ℓ₁ x with
-  | none => rfl
-  | some y => exact absurd (length_eq_of_decodeFin_eq_some h) hx
-
-/-- **The malformed branch**: a word that is neither a query-shaped pair `⟨[false], x⟩` (for any
-string `x`) nor a two-bit verdict word `[true, b]` decodes to the verdict `false`:
-`decodeOracleMove ℓ₁ w = .ret false`. Together with `decodeOracleMove_pairEncode_ofFn`,
-`decodeOracleMove_pairEncode_false_of_length_ne` and `decodeOracleMove_true_two` this covers every
-word, for every `ℓ₁`.
-
-**Proof sketch.** Along the match of `decodeOracleMove`: a decoding
-`pairDecode w = some ([false], x)` gives `w = ⟨[false], x⟩` (`eq_pairEncode_of_pairDecode`),
-excluded; the word `[true, b]` is excluded; the remaining branch is `.ret false`. -/
-theorem decodeOracleMove_of_ne (ℓ₁ : ℕ) {w : List Bool} (hq : ∀ x, w ≠ pairEncode [false] x)
-    (hv : ∀ b, w ≠ [true, b]) : decodeOracleMove ℓ₁ w = .ret false := by
-  unfold decodeOracleMove
-  split
-  · rename_i w' o w'' x hx
-    exact absurd (eq_pairEncode_of_pairDecode w' _ _ hx) (hq x)
-  · rename_i o w' b hp
-    exact absurd rfl (hv b)
-  · rfl
-
-/-- The encoding of the history of (query, answer) pairs handed to a next-query machine: the
-nested pair `⟨⟨x₁, y₁⟩, ⟨⟨x₂, y₂⟩, ⟨…, []⟩⟩⟩`. -/
-def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
-  h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) []
-
-/-- The empty history is encoded as the empty string: `encodeHist [] = []`. -/
-theorem encodeHist_nil {ℓ₁ ℓ₂ : ℕ} :
-    encodeHist ([] : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) = [] :=
-  rfl
-
-/-- The history encoding is `TCSlib.Cryptography.GGMRed.histEnc`:
-`encodeHist h = GGMRed.histEnc h`. -/
-theorem encodeHist_eq_histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
-    encodeHist h = GGMRed.histEnc h := by
-  rw [GGMRed.histEnc_eq]
-  rfl
-
-/-- A history is encoded pair by pair:
-`encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h)`. -/
-theorem encodeHist_cons {ℓ₁ ℓ₂ : ℕ} (p : (Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))
-    (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
-    encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h) :=
-  rfl
-
-/-- The query tree of a next-query function `next` (the machine's move on a history) with the
-query budget `q`, started from the history `hist`: a verdict stops; a query within budget
-becomes a `query` node whose continuation appends the answer to the history; a query when the
-budget is exhausted is the forced verdict `false` (D7). -/
-def buildTree {ℓ₁ ℓ₂ : ℕ} (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
-    ℕ → List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → QueryTree (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool) Bool
-  | 0, hist => match next hist with
-    | .ret b => .ret b
-    | .query _ => .ret false
-  | q + 1, hist => match next hist with
-    | .ret b => .ret b
-    | .query x => .query x (fun o => buildTree next q (hist ++ [(x, o)]))
-
-section BuildTree
-
-variable {ℓ₁ ℓ₂ : ℕ} {next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁}
-  {hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))}
-
-/-- With the budget spent, a verdict stops the tree: `buildTree next 0 hist = ret b` when
-`next hist = ret b`. -/
-theorem buildTree_zero_of_ret {b : Bool} (h : next hist = .ret b) :
-    buildTree next 0 hist = .ret b := by
-  rw [buildTree, h]
-
-/-- With the budget spent, a query gives the forced verdict `false`:
-`buildTree next 0 hist = ret false` when `next hist = query x`. -/
-theorem buildTree_zero_of_query {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
-    buildTree next 0 hist = .ret false := by
-  rw [buildTree, h]
-
-/-- Within budget, a verdict stops the tree: `buildTree next (q + 1) hist = ret b` when
-`next hist = ret b`. -/
-theorem buildTree_succ_of_ret {q : ℕ} {b : Bool} (h : next hist = .ret b) :
-    buildTree next (q + 1) hist = .ret b := by
-  rw [buildTree, h]
-
-/-- Within budget, a query becomes a query node whose continuation appends the answer:
-`buildTree next (q + 1) hist = query x (fun o => buildTree next q (hist ++ [(x, o)]))` when
-`next hist = query x`. -/
-theorem buildTree_succ_of_query {q : ℕ} {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
-    buildTree next (q + 1) hist = .query x (fun o => buildTree next q (hist ++ [(x, o)])) := by
-  rw [buildTree, h]
-
-end BuildTree
-
-/-- The tree built with budget `q` makes at most `q` queries, from every starting history. -/
-theorem buildTree_boundedBy {ℓ₁ ℓ₂ : ℕ}
-    (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
-    ∀ (q : ℕ) (hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))),
-      (buildTree next q hist).BoundedBy q
-  | 0, hist => by
-    cases h : next hist with
-    | ret b => rw [buildTree_zero_of_ret h]; exact QueryTree.boundedBy_ret b 0
-    | query x => rw [buildTree_zero_of_query h]; exact QueryTree.boundedBy_ret false 0
-  | q + 1, hist => by
-    cases h : next hist with
-    | ret b => rw [buildTree_succ_of_ret h]; exact QueryTree.boundedBy_ret b (q + 1)
-    | query x =>
-      rw [buildTree_succ_of_query h]
-      exact (QueryTree.boundedBy_query_succ x _ q).2
-        fun o => buildTree_boundedBy next q (hist ++ [(x, o)])
-
-/-- The query tree of the next-query machine `D` at parameter `n` with budget `q`
-([PS10, Definition 96.1]; D7: no oracle tapes, one activation per query on the history). The
-machine `D(1^n, ·)` is run, with one random tape `r` for the whole interaction, on the
-encoded history; its output is decoded as a query or a verdict. -/
-def _root_.Complexity.NUPPT.toOracleAdversary (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) :
-    OracleAdversary (D.Coins n) (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool) :=
-  fun r => buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []
-
-/-- The tree of `D` on the coins `r` is built from the empty history, the next move being `D`'s
-output on the encoded history, decoded:
-`D.toOracleAdversary n ℓ₁ ℓ₂ q r =
-buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []`. -/
-theorem _root_.Complexity.NUPPT.toOracleAdversary_eq (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ)
-    (r : D.Coins n) :
-    D.toOracleAdversary n ℓ₁ ℓ₂ q r =
-      buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q [] :=
-  rfl
-
-/-- The oracle adversary of a next-query machine with budget `q` makes at most `q` queries on
-every coin string (the hypothesis `BoundedBy` of `ggm_prfAdv_le` and `exists_ggmBits_dist`).
-Induction on the budget (`buildTree_boundedBy`). -/
-theorem _root_.Complexity.NUPPT.toOracleAdversary_boundedBy (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) :
-    (D.toOracleAdversary n ℓ₁ ℓ₂ q).BoundedBy q :=
-  (OracleAdversary.boundedBy_iff _ q).2 fun r => by
-    rw [NUPPT.toOracleAdversary_eq]
-    exact buildTree_boundedBy _ q []
-
-/-! ### Oracle indistinguishability [PS10, Definition 96.1] -/
-
-/-- **Oracle indistinguishability** [PS10, Definition 96.1]: `{O_n} ≈ {O'_n}` iff for every
-non-uniform PPT oracle machine `D` (a next-query `NUPPT`) and every polynomial query budget
-`q`, the function `n ↦ |Pr[F ← O_n : D^F(1^n) = 1] − Pr[F ← O'_n : D^F(1^n) = 1]|` is
-negligible, where `D^F(1^n)` is the run of the query tree `D.toOracleAdversary n ℓ₁(n) ℓ₂(n) q(n)`
-against `F`. (The text writes `{O'_n} ≈ {O'_n}`, a typo.)
-
-**Deviation:** `OracleEnsemble.Indist`: next-query machines with an explicit universally
-quantified budget; no oracle tapes; forced verdict `false` after `q n` queries. -/
-def OracleEnsemble.Indist {ℓ₁ ℓ₂ : PolyExpr} (O O' : OracleEnsemble ℓ₁ ℓ₂) : Prop :=
-  ∀ (D : NUPPT) (q : PolyExpr), Negligible fun n =>
-    distAdv (O.O n) (O'.O n) (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n)))
-
-/-- **Reflexivity of oracle indistinguishability** (non-vacuity of
-[PS10, Definition 96.1]): every oracle ensemble is indistinguishable from itself, the
-advantage being identically `0`. -/
-theorem OracleEnsemble.Indist.refl {ℓ₁ ℓ₂ : PolyExpr} (O : OracleEnsemble ℓ₁ ℓ₂) : O.Indist O := by
-  intro D q
-  have h : (fun n => distAdv (O.O n) (O.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n)))) = fun _ => 0 := by
-    funext n
-    simp [distAdv_def]
-  rw [h]
-  exact negligible_zero
-
-/-- **Symmetry of oracle indistinguishability**: the advantage is symmetric in the two
-ensembles (`abs_sub_comm`). -/
-theorem OracleEnsemble.Indist.symm {ℓ₁ ℓ₂ : PolyExpr} {O O' : OracleEnsemble ℓ₁ ℓ₂}
-    (h : O.Indist O') : O'.Indist O := by
-  intro D q
-  have e : (fun n => distAdv (O'.O n) (O.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n)))) =
-      fun n => distAdv (O.O n) (O'.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))) := by
-    funext n
-    rw [distAdv_def, distAdv_def]
-    exact abs_sub_comm _ _
-  rw [e]
-  exact h D q
-
-/-- **Transitivity of oracle indistinguishability** (the two-step case of the hybrid lemma
-for oracles, [PS10, §3.8.2, "oracle indistinguishability satisfies … the Hybrid Lemma"]): the
-advantage between `O` and `O''` is at most the sum of the advantages between `O, O'` and
-`O', O''` (triangle inequality `abs_sub_le`), and sums of negligible functions are negligible
-(`Negligible.add`, `Negligible.mono`). -/
-theorem OracleEnsemble.Indist.trans {ℓ₁ ℓ₂ : PolyExpr} {O O' O'' : OracleEnsemble ℓ₁ ℓ₂}
-    (h₁ : O.Indist O') (h₂ : O'.Indist O'') : O.Indist O'' := by
-  intro D q
-  refine ((h₁ D q).add (h₂ D q)).mono ⟨0, fun n _ => ?_⟩
-  simp only [distAdv_def, abs_abs]
-  exact (abs_sub_le _ _ _).trans (le_abs_self _)
-
-/-- **The hybrid lemma for oracles** [PS10, §3.8.2, "oracle indistinguishability satisfies …
-the Hybrid Lemma"] (Claim-96.b), at one parameter: if the oracle adversary `A` distinguishes
-the oracle distributions `H 0` and `H m` with advantage `ε`, then it distinguishes some
-consecutive pair `H i, H (i+1)` (`i < m`) with advantage at least `ε / m`. This is the
-concrete `hybrid_lemma` (`exists_hybrid_gap`) applied to the distinguisher `oracleDist A`. -/
-theorem oracle_hybrid_lemma {σ : Type*} {I O : Type} {ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm : 0 < m)
-    (H : ℕ → σ → (I → O)) (A : OracleAdversary ρ I O) :
-    ∃ i < m, distAdv (H 0) (H m) (oracleDist A) / m ≤ distAdv (H i) (H (i + 1)) (oracleDist A) :=
-  hybrid_lemma hm H (oracleDist A)
-
-/-! ### Pseudorandom functions [PS10, Definition 96.2] -/
-
-/-- **Pseudorandom function family** [PS10, Definition 96.2]: a family
-`{f_s : {0,1}^{|s|} → {0,1}^{|s|}}` given as `F n : {0,1}^n → {0,1}^n → {0,1}^n` (key, input,
-output) is pseudorandom iff (1) *easy to compute*: a polynomial-time string function computes
-`f_s(x)` from the pair `⟨s, x⟩`; (2) *pseudorandom*: the keyed oracle ensemble `{s ← U_n : f_s}`
-is oracle-indistinguishable from the random functions `{F ← RF_n : F}`.
-
-**Deviation:** clause (1) is a deterministic polynomial-time evaluator on `⟨s, x⟩` instead of
-a PPT computing `f_s(x)` with probability one (equivalent by `Complexity.NUPPT.Computes` and
-`ofPolyTimeUniform`, as for `FunFamily.Easy`); the key length is the parameter `n`
-(`{0,1}^{|s|}` with `|s| = n`). -/
-structure PRF (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) : Prop where
-  /-- Clause (1): `f_s(x)` is polynomial-time computable from `⟨s, x⟩`. -/
-  easy : ∃ E : List Bool → List Bool, PolyTimeComputable E ∧
-    ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
-  /-- Clause (2): `{s ← U_n : f_s} ≈ {F ← RF_n : F}` as oracle ensembles. -/
-  pseudorandom : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).Indist (OracleEnsemble.random .var .var)
-
-/-- The advantage of the next-query machine `D` with budget `q` between the keyed family `F`
-and the random functions is the concrete PRF advantage `prfAdv` of [Gar26, Definition 3.9]
-(definitional: `prfAdv F A = distAdv F (randomFunction I O) (oracleDist A)`). -/
-theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
-    (D : NUPPT) (n q : ℕ) :
-    distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).O n) ((OracleEnsemble.random .var .var).O n)
-        (oracleDist (D.toOracleAdversary n n n q)) =
-      prfAdv (F n) (D.toOracleAdversary n n n q) := by
-  rw [prfAdv_def]
-  rfl
-
-/-- **Pseudorandomness unfolded**: for a PRF `F`, every next-query machine `D` with every
-polynomial budget `q` has negligible concrete PRF advantage `prfAdv (F n) (D^{(q n)})` — the
-form in which the Garg-layer reductions consume [PS10, Definition 96.2]. -/
-theorem PRF.negligible_prfAdv {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)}
-    (hF : PRF F) (D : NUPPT) (q : PolyExpr) :
-    Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) := by
-  exact (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary F D n (q.eval n))).mp
-    (hF.pseudorandom D q)
 
 /-! ### The GGM construction [PS10, Theorem 97.3] -/
 
@@ -529,7 +105,9 @@ theorem thm_97_3_1 {ρ : Type*} [Fintype ρ] (G : ∀ n, (Fin n → Bool) → (F
     hybridProb (splitHalves ∘ G n) A 0 = acceptProb (ggmPRF G n) (oracleDist A) ∧
       hybridProb (splitHalves ∘ G n) A n =
         acceptProb ((OracleEnsemble.random .var .var).O n) (oracleDist A) :=
-  ⟨by rw [ggmPRF_apply, ggmBits_def]; exact hybridProb_zero _ A, hybridProb_top _ A⟩
+  ⟨by rw [ggmPRF_apply, ggmBits_def]; exact hybridProb_zero _ A, by
+    rw [OracleEnsemble.acceptProb_random_eq]
+    exact hybridProb_top _ A⟩
 
 /-- **The query sub-hybrids** `HHF^j` of [PS10, proof of Theorem 97.3] (Thm-97.3.2): for an
 adversary making at most `q` queries, the gap between the consecutive level hybrids `HF^i` and
@@ -547,6 +125,15 @@ theorem thm_97_3_2 {ρ : Type*} [Fintype ρ] (G : ∀ n, (Fin n → Bool) → (F
       ∑ j : Fin q, prgAdv (G n) (ggmBitsDist (G n) A q i j) := by
   have h := hybridProb_level (splitHalves ∘ G n) A hA i
   simpa only [prgAdv_eq, distAdv_ggmBitsDist] using h
+
+/-- The history encoding is `TCSlib.Cryptography.GGMRed.histEnc`:
+`encodeHist h = GGMRed.histEnc h`. -/
+theorem encodeHist_eq_histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
+    encodeHist h = GGMRed.histEnc h := by
+  rw [GGMRed.histEnc_eq]
+  induction h with
+  | nil => exact encodeHist_nil
+  | cons p h ih => rw [encodeHist_cons, ih, List.foldr_cons]
 
 /-- `decodeOracleMove` in terms of the `Option` form of `TCSlib.Cryptography.GGMRed`: the
 query `queryOf` if there is one, else the verdict `verdictOf` (`[true, true]` is the only
@@ -589,23 +176,35 @@ private theorem decodeOracleMove_eq (ℓ₁ : ℕ) (w : List Bool) :
       simp only [OracleMove.ret.injEq, GGMRed.verdictOf_eq]
       exact (decide_eq_false_iff_not.2 fun h => hv true h).symm
 
-/-- `buildTree` of the decoded moves is `buildTreeQ` of the raw outputs. -/
+/-- `buildTree` of the decoded moves is `buildTreeQ` of the raw outputs.
+
+**Proof sketch.** Induct on the budget. A verdict stops both trees. A query with
+budget zero rejects in both. With budget remaining, both query the same string and
+their continuations agree by the induction hypothesis. -/
 private theorem buildTree_eq_buildTreeQ {ℓ₁ ℓ₂ : ℕ}
     (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → List Bool) :
     ∀ (b : ℕ) (hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))),
       buildTree (fun h => decodeOracleMove ℓ₁ (next h)) b hist = GGMRed.buildTreeQ next b hist
   | 0, hist => by
     rw [GGMRed.buildTreeQ_zero]
-    unfold buildTree
-    rw [decodeOracleMove_eq]
-    cases GGMRed.queryOf ℓ₁ (next hist) <;> rfl
+    have hmove := decodeOracleMove_eq ℓ₁ (next hist)
+    cases h : GGMRed.queryOf ℓ₁ (next hist) with
+    | none =>
+      rw [h] at hmove
+      exact buildTree_zero_of_ret hmove
+    | some x =>
+      rw [h] at hmove
+      exact buildTree_zero_of_query hmove
   | b + 1, hist => by
     rw [GGMRed.buildTreeQ_succ]
-    unfold buildTree
-    rw [decodeOracleMove_eq]
-    cases GGMRed.queryOf ℓ₁ (next hist) with
-    | none => rfl
+    have hmove := decodeOracleMove_eq ℓ₁ (next hist)
+    cases h : GGMRed.queryOf ℓ₁ (next hist) with
+    | none =>
+      rw [h] at hmove
+      exact buildTree_succ_of_ret hmove
     | some x =>
+      rw [h] at hmove
+      rw [buildTree_succ_of_query (next := fun h => decodeOracleMove ℓ₁ (next h)) (hist := hist) hmove]
       simp only
       congr 1
       funext o
@@ -685,10 +284,10 @@ private theorem prfAdv_toOracleAdversary_zero
     prfAdv (F n) (D.toOracleAdversary n n n 0) = 0 := by
   have hA : ∀ r, ∃ b : Bool, D.toOracleAdversary n n n 0 r = .ret b := by
     intro r
-    unfold NUPPT.toOracleAdversary buildTree
-    cases decodeOracleMove n (D.runAt n (encodeHist []) r) with
-    | ret b => exact ⟨b, rfl⟩
-    | query x => exact ⟨false, rfl⟩
+    rw [NUPPT.toOracleAdversary_eq]
+    cases h : decodeOracleMove n (D.runAt n (encodeHist []) r) with
+    | ret b => exact ⟨b, buildTree_zero_of_ret h⟩
+    | query x => exact ⟨false, buildTree_zero_of_query h⟩
   choose b hb using hA
   have key : ∀ {σ : Type} [Fintype σ] [Nonempty σ] (X : σ → (Fin n → Bool) → (Fin n → Bool)),
       uprob (fun z : σ × D.Coins n => (D.toOracleAdversary n n n 0 z.2).eval (X z.1) = true) =
@@ -703,8 +302,8 @@ private theorem prfAdv_toOracleAdversary_zero
 pseudorandom generator is a pseudorandom function.**
 
 **Proof sketch.** *Easy:* `exists_ggmPRF_evaluator` from `hG.easy`. *Pseudorandom:* fix a
-next-query machine `D` and a budget `q`; we show `μ n := prfAdv (G n) (D^{(q n)})` is
-negligible (`prfAdv_toOracleAdversary`). Suppose not; by `not_negligible_iff` there is `c` with
+next-query machine `D` and a budget `q` using `OracleEnsemble.indist_iff`. We show
+`μ n := prfAdv (ggmPRF G n) (D^{(q n)})` is negligible (`prfAdv_toOracleAdversary`). Suppose not; by `not_negligible_iff` there is `c` with
 `μ n > 1/n^c` for infinitely many `n`. *Concrete step* (Thm-97.3.1, Thm-97.3.2): at every `n` with
 `0 < n` and `0 < q n`, `exists_ggmBits_dist (G n) (D^{(q n)}) (toOracleAdversary_boundedBy …)`
 gives indices `(i n, j n)` with `μ n / (n · q n) ≤ prgAdv (G n) (ggmBitsDist … (i n) (j n))`
@@ -714,13 +313,15 @@ gives indices `(i n, j n)` with `μ n / (n · q n) ≤ prgAdv (G n) (ggmBitsDist
 *Asymptotic step:* `hG.negligible_prgAdv B` says `ν n := prgAdv (G n) (B.distinguisher n (2n))`
 is negligible, hence so is `n · q n · ν n` (`Negligible.mul_pow` with `q n ≤ C (n+1)^d` from
 `PolyExpr.eval_le`, `Negligible.const_mul`, `Negligible.mono`), while `μ n ≤ n · q n · ν n`
-infinitely often contradicts `μ n > 1/n^c` (`not_negligible_iff`); at the finitely many `n` with
+infinitely often contradicts `μ n > 1/n^c` (`not_negligible_iff`). At parameters with
 `q n = 0` the adversary makes no query and `μ n = 0` (`buildTree` with budget `0` is a leaf
 whose verdict does not depend on the oracle, `distAdv` of a constant distinguisher is `0`). -/
 theorem ggmPRF_prf {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)} (hG : DoublingPRG G) :
     PRF (ggmPRF G) := by
   obtain ⟨E, hE, hGE⟩ := hG.easy
-  refine ⟨exists_ggmPRF_evaluator hE hGE, fun D q => ?_⟩
+  refine ⟨exists_ggmPRF_evaluator hE hGE, ?_⟩
+  rw [OracleEnsemble.indist_iff]
+  intro D q
   suffices hμ : Negligible fun n => prfAdv (ggmPRF G n) (D.toOracleAdversary n n n (q.eval n)) from
     (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary (ggmPRF G) D n (q.eval n))).mpr hμ
   by_contra hneg
