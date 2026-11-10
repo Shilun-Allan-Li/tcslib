@@ -62,6 +62,7 @@ import TCSlib.Cryptography.Games.Bridges
 import TCSlib.Cryptography.Authentication
 import TCSlib.Cryptography.SecureComputation
 import TCSlib.Cryptography.Composability
+import TCSlib.Cryptography.Encryption.PrivateKey
 import TCSlib.Cryptography.Encryption.PublicKey
 import TCSlib.Cryptography.Randomness
 
