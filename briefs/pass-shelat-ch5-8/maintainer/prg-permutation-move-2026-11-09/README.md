@@ -38,4 +38,4 @@ import cycles with the `HardCore` and `HardCorePermutation` compatibility import
 `from-permutation-checks.zip` has SHA-256 `9c50663351fd8ffab1e8a76faf3bd098c3327be2c4a26734a65a29a9a3d7c7be`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the legacy imports, affected modules and seal comparison pass.**
+Seyoon merged this slice at `757f7fbaf80acd847feffb5d57f28322ce2d6beb`. The Lean sources and checker inputs match the verified head. The oracle and PRF contract move follows in [PR #268](https://github.com/Shilun-Allan-Li/tcslib/pull/268).
