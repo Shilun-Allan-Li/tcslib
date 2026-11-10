@@ -43,4 +43,4 @@ hard-core construction and GGM. The old imports re-export the moved declarations
 `stretch-checks.zip` has SHA-256 `17ee3d72536ddf9695802e6e42ef482aee3094ef1c7fba045478b77e21cb4247`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the affected modules and compatibility imports pass, with no new seal diagnostics.**
+Seyoon merged this slice at `6387f775c8848e5a1e3be7c36f73be56371c63a3`. The Lean sources and checker inputs match the verified head. The permutation-to-PRG move follows in [PR #267](https://github.com/Shilun-Allan-Li/tcslib/pull/267).

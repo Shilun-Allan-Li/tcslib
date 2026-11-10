@@ -1,0 +1,153 @@
+{
+  "base": "6387f775c8848e5a1e3be7c36f73be56371c63a3",
+  "head": "fbed01a2bb841ab557396cebb2609cca3de8b06d",
+  "ledger_head": "7750947a65d262b8a4e4e557b6dae2a48865807a",
+  "ledger_archive_sha256": "7eb1dbea30829ba69117e756623d61d12c14395cf8cfdc41a51a4e17ea588d8f",
+  "prior_relocation_ledger_sha256": "7773b10df2a6b8b8205c725a2e5c7ea8bb83d1c86446dce9b1fb5b55e91808ed",
+  "moved_diagnostics": [
+    {
+      "id": "SEAL-0220",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 259,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 194,
+      "diagnostic": {
+        "source": "    refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_",
+        "column": 11,
+        "message": "typeclass instance problem is stuck, it is often due to metavariables\n  Nonempty ?m.68"
+      }
+    },
+    {
+      "id": "SEAL-0221",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 360,
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean",
+      "new_line": 153,
+      "diagnostic": {
+        "source": "      fun _ => Iff.rfl",
+        "column": 15,
+        "message": "Type mismatch\n  Iff.rfl\nhas type\n  ?m.185 ↔ ?m.185\nbut is expected to have type\n  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔\n    owpPredictor (fun z r => D (e z) r) flip\n        (owpPair f\n          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)\n        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =\n      B ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1"
+      }
+    },
+    {
+      "id": "SEAL-0222",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 366,
+      "new_path": "TCSlib/Cryptography/Pseudorandom/Generators/Asymptotic/FromPermutation.lean",
+      "new_line": 159,
+      "diagnostic": {
+        "source": "    rfl",
+        "column": 4,
+        "message": "Tactic `rfl` failed: The left-hand side\n  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|\nis not definitionally equal to the right-hand side\n  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|\n\nρ : Type u_1\ninst✝¹ : Fintype ρ\ninst✝ : Nonempty ρ\nn : ℕ\nf : (Fin n → Bool) ≃ (Fin n → Bool)\nB : (Fin n → Bool) → Bool\nD : (Fin (n + 1) → Bool) → ρ → Bool\ne : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=\n  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,\n    right_inv := ⋯ }\nflip : Bool\nhflip :\n  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =\n    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r\nh1 :\n  predProb (⇑f) B (owpPredictorSnoc D flip) =\n    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)\n⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =\n    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|"
+      }
+    },
+    {
+      "id": "SEAL-0229",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 552,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 277,
+      "diagnostic": {
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r))\nis not definitionally equal to the right-hand side\n  Fin.append (𝓕.f n x) r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r)) = Fin.append (𝓕.f n x) r"
+      }
+    },
+    {
+      "id": "SEAL-0230",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 559,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 284,
+      "diagnostic": {
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glBit (x, r)\nis not definitionally equal to the right-hand side\n  HardcoreBit.ip x r\n\n𝓕 : FunFamily\nn : ℕ\nx r : Fin (𝓕.inLen.eval n) → Bool\n⊢ HardcoreBit.glBit (x, r) = HardcoreBit.ip x r"
+      }
+    },
+    {
+      "id": "SEAL-0231",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 610,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 335,
+      "diagnostic": {
+        "source": "    funext z; rfl",
+        "column": 14,
+        "message": "Tactic `rfl` failed: The left-hand side\n  HardcoreBit.glPad (𝓕.f n) z\nis not definitionally equal to the right-hand side\n  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z\n\ncase h\n𝓕 : FunFamily\nn : ℕ\nhf : Function.Bijective (𝓕.f n)\nz : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)\n⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z"
+      }
+    },
+    {
+      "id": "SEAL-0232",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 642,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 367,
+      "diagnostic": {
+        "source": "    exact invProbOpt_glPad_le 𝓕 A n",
+        "column": 4,
+        "message": "Type mismatch\n  invProbOpt_glPad_le 𝓕 A n\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤\n    invProbOpt (𝓕.f n) ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n))\nbut is expected to have type\n  𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt (glPadInvMachine A 𝓕.inLen) n"
+      }
+    },
+    {
+      "id": "SEAL-0233",
+      "disposition": "same_proof_step_new_home",
+      "old_path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+      "old_line": 712,
+      "new_path": "TCSlib/Cryptography/Asymptotic/HardCore/Functions.lean",
+      "new_line": 437,
+      "diagnostic": {
+        "source": "      invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n",
+        "column": 6,
+        "message": "Type mismatch\n  invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n (glK_pos_or 𝓕.inLen c n hn1)\nhas type\n  invProbOpt\n      (fun z =>\n        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))\n          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))\n      ((glFamMachine (A.precomp concatPre_poly) 𝓕.inLen 𝓕.outLen K (glK 𝓕.inLen c) ⋯).inverter n\n        (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))\nbut is expected to have type\n  𝓕.glPad.invProbAt B n =\n    invProb (HardcoreBit.glPad (𝓕.f n))\n      (HardcoreBit.guessInverter\n        (fun y c =>\n          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)\n        (glK 𝓕.inLen c n))"
+      }
+    }
+  ],
+  "relocated_provider_links": [
+    {
+      "id": "SEAL-0309",
+      "path": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+      "line": 603,
+      "old_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "new_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCore",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation",
+      "evidence": "native reference or paired provider from the deferred ledger"
+    },
+    {
+      "id": "SEAL-0310",
+      "path": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+      "line": 607,
+      "old_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "new_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCore",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation",
+      "evidence": "native reference or paired provider from the deferred ledger"
+    },
+    {
+      "id": "SEAL-0311",
+      "path": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+      "line": 611,
+      "old_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "new_name": "TCSlib.Cryptography.owpPredictorSnoc",
+      "old_home": "TCSlib.Cryptography.Asymptotic.HardCore",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Generators.Asymptotic.FromPermutation",
+      "evidence": "native reference or paired provider from the deferred ledger"
+    }
+  ],
+  "explicit_foreign_definition_reads": {
+    "base": 0,
+    "head": 0
+  },
+  "foreign_generated_equation_references": {
+    "base": 0,
+    "head": 0
+  }
+}
