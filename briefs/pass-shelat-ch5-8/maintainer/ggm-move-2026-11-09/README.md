@@ -35,4 +35,4 @@ re-export the moved results and preserve their prior import closures.
 `ggm-checks.zip` has SHA-256 `e8e59d09a78e875c79092a5a60c4a3b1897f9bd1cb47437a485f2c6ba5e02ca9`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the legacy imports, affected modules and seal comparison pass.**
+Seyoon merged #269 at `88befb0df9c2cd295dfc5d6d5a5e861ea4024314`. The Lean sources and checker inputs match the verified head.
