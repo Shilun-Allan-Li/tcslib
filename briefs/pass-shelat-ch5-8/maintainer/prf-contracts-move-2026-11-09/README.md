@@ -36,4 +36,4 @@ definition. The generic `lazyDist` helper moves to `Functions.LazySampling`.
 `prf-contracts-checks.zip` has SHA-256 `c34ebd50a9da72c2279d7d2b1f2f8e01f72ce82be992836b0b9c9a6f245e7f5d`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the compatibility imports, affected modules and seal comparison pass.**
+Seyoon merged this slice at `7e3a4b21e835cfc951000015a1f049f82a654abb`. The Lean sources and checker inputs match the verified head. The GGM move follows in [PR #269](https://github.com/Shilun-Allan-Li/tcslib/pull/269).

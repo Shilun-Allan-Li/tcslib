@@ -1,0 +1,538 @@
+{
+  "base": "7e3a4b21e835cfc951000015a1f049f82a654abb",
+  "head": "39e3a1b167aabe26151f2906e1505d32b8c79dfa",
+  "ledger_head": "7750947a65d262b8a4e4e557b6dae2a48865807a",
+  "ledger_archive_sha256": "7eb1dbea30829ba69117e756623d61d12c14395cf8cfdc41a51a4e17ea588d8f",
+  "moved_seal_diagnostics": [
+    {
+      "id": "SEAL-0207",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "line": 300,
+        "source": "  exact hF.comp hpre",
+        "column": 2,
+        "message": "Type mismatch\n  PolyTimeComputable.comp hF hpre\nhas type\n  PolyTimeComputable\n    ((fun x =>\n        match List.find? (fun i => acc ((StateLoop.gstep step B)^[i] x)) (List.range (R.eval x.length + 1)) with\n        | some i => out ((StateLoop.gstep step B)^[i] x)\n        | none => []) ∘\n      fun x => pairEncode x (start x))\nbut is expected to have type\n  PolyTimeComputable (stateLoopFun start step acc out R B)"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean",
+        "line": 299,
+        "source": "  exact hF.comp hpre",
+        "column": 2,
+        "message": "Type mismatch\n  PolyTimeComputable.comp hF hpre\nhas type\n  PolyTimeComputable\n    ((fun x =>\n        match List.find? (fun i => acc ((StateLoop.gstep step B)^[i] x)) (List.range (R.eval x.length + 1)) with\n        | some i => out ((StateLoop.gstep step B)^[i] x)\n        | none => []) ∘\n      fun x => pairEncode x (start x))\nbut is expected to have type\n  PolyTimeComputable (stateLoopFun start step acc out R B)"
+      }
+    },
+    {
+      "id": "SEAL-0208",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "line": 401,
+        "source": "      have h3 : pairSndD ([] : List Bool) = [] := rfl",
+        "column": 50,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.97 = ?m.97\nbut is expected to have type\n  pairSndD [] = []"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean",
+        "line": 400,
+        "source": "      have h3 : pairSndD ([] : List Bool) = [] := rfl",
+        "column": 50,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.97 = ?m.97\nbut is expected to have type\n  pairSndD [] = []"
+      }
+    },
+    {
+      "id": "SEAL-0209",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "line": 423,
+        "source": "  polyTimeComputable_iterateFind lookStep_poly lookAcc_poly lookOut_poly .var",
+        "column": 2,
+        "message": "Type mismatch\n  polyTimeComputable_iterateFind lookStep_poly lookAcc_poly lookOut_poly PolyExpr.var\n    (PolyExpr.var.add (PolyExpr.const 2)) fun v k x => ?m.9\nhas type\n  PolyTimeComputable fun x =>\n    match List.find? (fun i => lookAcc (lookStep^[i] x)) (List.range (PolyExpr.var.eval x.length + 1)) with\n    | some i => lookOut (lookStep^[i] x)\n    | none => []\nbut is expected to have type\n  PolyTimeComputable lookup"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean",
+        "line": 422,
+        "source": "  polyTimeComputable_iterateFind lookStep_poly lookAcc_poly lookOut_poly .var",
+        "column": 2,
+        "message": "Type mismatch\n  polyTimeComputable_iterateFind lookStep_poly lookAcc_poly lookOut_poly PolyExpr.var\n    (PolyExpr.var.add (PolyExpr.const 2)) fun v k x => ?m.9\nhas type\n  PolyTimeComputable fun x =>\n    match List.find? (fun i => lookAcc (lookStep^[i] x)) (List.range (PolyExpr.var.eval x.length + 1)) with\n    | some i => lookOut (lookStep^[i] x)\n    | none => []\nbut is expected to have type\n  PolyTimeComputable lookup"
+      }
+    },
+    {
+      "id": "SEAL-0210",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "line": 440,
+        "source": "        rfl",
+        "column": 8,
+        "message": "Tactic `rfl` failed: The left-hand side\n  pairEncode p (pairSndD (tblEnc []))\nis not definitionally equal to the right-hand side\n  pairEncode p (tblEnc [])\n\np : List Bool\nk : ℕ\n⊢ pairEncode p (pairSndD (tblEnc [])) = pairEncode p (tblEnc [])"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Reduction.lean",
+        "line": 439,
+        "source": "        rfl",
+        "column": 8,
+        "message": "Tactic `rfl` failed: The left-hand side\n  pairEncode p (pairSndD (tblEnc []))\nis not definitionally equal to the right-hand side\n  pairEncode p (tblEnc [])\n\np : List Bool\nk : ℕ\n⊢ pairEncode p (pairSndD (tblEnc [])) = pairEncode p (tblEnc [])"
+      }
+    },
+    {
+      "id": "SEAL-0211",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 101,
+        "source": "  cases queryOf n (next s.1) <;> rfl",
+        "column": 33,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match none with\n      | some val => ret false\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match none with\n  | some val => false\n  | none => verdictOf (next s.1)\n\ncase none\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\ns : PureState n P\n⊢ evalLazy a\n      (simulate π ans\n        (match none with\n        | some val => ret false\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match none with\n    | some val => false\n    | none => verdictOf (next s.1)"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 101,
+        "source": "  cases queryOf n (next s.1) <;> rfl",
+        "column": 33,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match none with\n      | some val => ret false\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match none with\n  | some val => false\n  | none => verdictOf (next s.1)\n\ncase none\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\ns : PureState n P\n⊢ evalLazy a\n      (simulate π ans\n        (match none with\n        | some val => ret false\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match none with\n    | some val => false\n    | none => verdictOf (next s.1)"
+      }
+    },
+    {
+      "id": "SEAL-0212",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 101,
+        "source": "  cases queryOf n (next s.1) <;> rfl",
+        "column": 33,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match some val✝ with\n      | some val => ret false\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match some val✝ with\n  | some val => false\n  | none => verdictOf (next s.1)\n\ncase some\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\ns : PureState n P\nval✝ : Fin n → Bool\n⊢ evalLazy a\n      (simulate π ans\n        (match some val✝ with\n        | some val => ret false\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match some val✝ with\n    | some val => false\n    | none => verdictOf (next s.1)"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 101,
+        "source": "  cases queryOf n (next s.1) <;> rfl",
+        "column": 33,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match some val✝ with\n      | some val => ret false\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match some val✝ with\n  | some val => false\n  | none => verdictOf (next s.1)\n\ncase some\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\ns : PureState n P\nval✝ : Fin n → Bool\n⊢ evalLazy a\n      (simulate π ans\n        (match some val✝ with\n        | some val => ret false\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match some val✝ with\n    | some val => false\n    | none => verdictOf (next s.1)"
+      }
+    },
+    {
+      "id": "SEAL-0213",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 112,
+        "source": "  | none => rfl",
+        "column": 12,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match none with\n      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match none with\n  | some val =>\n    evalLazy a\n      (simulate π ans\n        (buildTreeQ next b\n          (match none with\n            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n            | none => s).1))\n      (match none with\n        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n        | none => s).2\n  | none => verdictOf (next s.1)\n\ncase none\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\nb : ℕ\ns : PureState n P\n⊢ evalLazy a\n      (simulate π ans\n        (match none with\n        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match none with\n    | some val =>\n      evalLazy a\n        (simulate π ans\n          (buildTreeQ next b\n            (match none with\n              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n              | none => s).1))\n        (match none with\n          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n          | none => s).2\n    | none => verdictOf (next s.1)"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 112,
+        "source": "  | none => rfl",
+        "column": 12,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match none with\n      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match none with\n  | some val =>\n    evalLazy a\n      (simulate π ans\n        (buildTreeQ next b\n          (match none with\n            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n            | none => s).1))\n      (match none with\n        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n        | none => s).2\n  | none => verdictOf (next s.1)\n\ncase none\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\nb : ℕ\ns : PureState n P\n⊢ evalLazy a\n      (simulate π ans\n        (match none with\n        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match none with\n    | some val =>\n      evalLazy a\n        (simulate π ans\n          (buildTreeQ next b\n            (match none with\n              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n              | none => s).1))\n        (match none with\n          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n          | none => s).2\n    | none => verdictOf (next s.1)"
+      }
+    },
+    {
+      "id": "SEAL-0214",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 113,
+        "source": "  | some x => rfl",
+        "column": 14,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match some x with\n      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match some x with\n  | some val =>\n    evalLazy a\n      (simulate π ans\n        (buildTreeQ next b\n          (match some x with\n            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n            | none => s).1))\n      (match some x with\n        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n        | none => s).2\n  | none => verdictOf (next s.1)\n\ncase some\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\nb : ℕ\ns : PureState n P\nx : Fin n → Bool\n⊢ evalLazy a\n      (simulate π ans\n        (match some x with\n        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match some x with\n    | some val =>\n      evalLazy a\n        (simulate π ans\n          (buildTreeQ next b\n            (match some x with\n              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n              | none => s).1))\n        (match some x with\n          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n          | none => s).2\n    | none => verdictOf (next s.1)"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 113,
+        "source": "  | some x => rfl",
+        "column": 14,
+        "message": "Tactic `rfl` failed: The left-hand side\n  evalLazy a\n    (simulate π ans\n      (match some x with\n      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n      | none => ret (verdictOf (next s.1))))\n    s.2\nis not definitionally equal to the right-hand side\n  match some x with\n  | some val =>\n    evalLazy a\n      (simulate π ans\n        (buildTreeQ next b\n          (match some x with\n            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n            | none => s).1))\n      (match some x with\n        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n        | none => s).2\n  | none => verdictOf (next s.1)\n\ncase some\nn : ℕ\nnext : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool\nP : Type\ninst✝ : DecidableEq P\nπ : (Fin n → Bool) → P\nans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool\na : ℕ → (Fin n → Bool) × (Fin n → Bool)\nb : ℕ\ns : PureState n P\nx : Fin n → Bool\n⊢ evalLazy a\n      (simulate π ans\n        (match some x with\n        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])\n        | none => ret (verdictOf (next s.1))))\n      s.2 =\n    match some x with\n    | some val =>\n      evalLazy a\n        (simulate π ans\n          (buildTreeQ next b\n            (match some x with\n              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n              | none => s).1))\n        (match some x with\n          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))\n          | none => s).2\n    | none => verdictOf (next s.1)"
+      }
+    },
+    {
+      "id": "SEAL-0215",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 278,
+        "source": "theorem start_rawInput : start (rawInput d) = encState d ([], []) 0 := rfl",
+        "column": 71,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.15 = ?m.15\nbut is expected to have type\n  start (rawInput d) = encState d ([], []) 0"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 278,
+        "source": "theorem start_rawInput : start (rawInput d) = encState d ([], []) 0 := rfl",
+        "column": 71,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.15 = ?m.15\nbut is expected to have type\n  start (rawInput d) = encState d ([], []) 0"
+      }
+    },
+    {
+      "id": "SEAL-0216",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 368,
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r))\nis not definitionally equal to the right-hand side\n  nextQ d s.1\n\nD : NUPPT\nq : PolyExpr\nn : ℕ\nd : Data D q n\ns : PureState n (Fin d.i → Bool)\nt : ℕ\n⊢ D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r)) = nextQ d s.1"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 368,
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r))\nis not definitionally equal to the right-hand side\n  nextQ d s.1\n\nD : NUPPT\nq : PolyExpr\nn : ℕ\nd : Data D q n\ns : PureState n (Fin d.i → Bool)\nt : ℕ\n⊢ D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r)) = nextQ d s.1"
+      }
+    },
+    {
+      "id": "SEAL-0217",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 530,
+        "source": "  | 0, _ => start_rawInput d",
+        "column": 2,
+        "message": "Type mismatch\n  start_rawInput d\nhas type\n  start (rawInput d) = encState d ([], []) 0\nbut is expected to have type\n  StateLoop.orbit start (step E D q) (rawInput d) 0 = encState d (pureAt d hi 0) 0"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 530,
+        "source": "  | 0, _ => start_rawInput d",
+        "column": 2,
+        "message": "Type mismatch\n  start_rawInput d\nhas type\n  start (rawInput d) = encState d ([], []) 0\nbut is expected to have type\n  StateLoop.orbit start (step E D q) (rawInput d) 0 = encState d (pureAt d hi 0) 0"
+      }
+    },
+    {
+      "id": "SEAL-0218",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 742,
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c))\nis not definitionally equal to the right-hand side\n  rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))\n\nE : List Bool → List Bool\nhE : PolyTimeComputable E\nD : NUPPT\nq : PolyExpr\ni j : ℕ → ℕ\nn : ℕ\ny : List Bool\nc : (ggmRedMachine hE D q i j).Coins n\n⊢ rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c)) =\n    rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 742,
+        "source": "  rfl",
+        "column": 2,
+        "message": "Tactic `rfl` failed: The left-hand side\n  rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c))\nis not definitionally equal to the right-hand side\n  rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))\n\nE : List Bool → List Bool\nhE : PolyTimeComputable E\nD : NUPPT\nq : PolyExpr\ni j : ℕ → ℕ\nn : ℕ\ny : List Bool\nc : (ggmRedMachine hE D q i j).Coins n\n⊢ rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c)) =\n    rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))"
+      }
+    },
+    {
+      "id": "SEAL-0219",
+      "disposition": "same_proof_step_new_home",
+      "before": {
+        "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "line": 775,
+        "source": "        concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], []) := rfl",
+        "column": 87,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.214 = ?m.214\nbut is expected to have type\n  ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r) (q.eval n) []) (q.eval n) ⟨i n, hi⟩\n      ⟨j n, hj⟩ z (W, r) =\n    concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])"
+      },
+      "after": {
+        "path": "TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean",
+        "line": 775,
+        "source": "        concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], []) := rfl",
+        "column": 87,
+        "message": "Type mismatch\n  rfl\nhas type\n  ?m.214 = ?m.214\nbut is expected to have type\n  ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r) (q.eval n) []) (q.eval n) ⟨i n, hi⟩\n      ⟨j n, hj⟩ z (W, r) =\n    concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])"
+      }
+    }
+  ],
+  "moved_generated_references": [
+    {
+      "id": "C3-0002",
+      "before": [
+        "TCSlib.Cryptography.Asymptotic.GGMReductionEval",
+        "TCSlib.Cryptography.GGMRed.queryOf_eq_some_iff",
+        "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+        "_private.TCSlib.Cryptography.Asymptotic.GGMReductionEval.0.TCSlib.Cryptography.GGMRed.queryOf.match_1.eq_2",
+        "TCSlib.Cryptography.Asymptotic.GGMReduction",
+        "TCSlib.Cryptography.Asymptotic.GGMReductionEval"
+      ],
+      "after": [
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+        "TCSlib.Cryptography.GGMRed.queryOf_eq_some_iff",
+        "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+        "_private.TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run.0.TCSlib.Cryptography.GGMRed.queryOf.match_1.eq_2",
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run"
+      ],
+      "kind": [
+        "family=eq_index",
+        "kind=theorem",
+        "abbrev=false"
+      ],
+      "disposition": "same_generated_reference_new_home"
+    },
+    {
+      "id": "C3-0003",
+      "before": [
+        "TCSlib.Cryptography.Asymptotic.GGMReductionEval",
+        "TCSlib.Cryptography.GGMRed.queryOf_eq_some_iff",
+        "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+        "_private.TCSlib.Cryptography.Asymptotic.GGMReductionEval.0.TCSlib.Cryptography.GGMRed.queryOf.match_1.splitter",
+        "TCSlib.Cryptography.Asymptotic.GGMReduction",
+        "TCSlib.Cryptography.Asymptotic.GGMReductionEval"
+      ],
+      "after": [
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run",
+        "TCSlib.Cryptography.GGMRed.queryOf_eq_some_iff",
+        "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+        "_private.TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run.0.TCSlib.Cryptography.GGMRed.queryOf.match_1.splitter",
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+        "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run"
+      ],
+      "kind": [
+        "family=matcher_splitter",
+        "kind=def",
+        "abbrev=true"
+      ],
+      "disposition": "same_generated_reference_new_home"
+    }
+  ],
+  "relocated_provider_links": [
+    {
+      "id": "SEAL-0211",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ"
+    },
+    {
+      "id": "SEAL-0211",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1"
+    },
+    {
+      "id": "SEAL-0211",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf"
+    },
+    {
+      "id": "SEAL-0211",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.verdictOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.verdictOf"
+    },
+    {
+      "id": "SEAL-0212",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ"
+    },
+    {
+      "id": "SEAL-0212",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1"
+    },
+    {
+      "id": "SEAL-0212",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf"
+    },
+    {
+      "id": "SEAL-0212",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.verdictOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.verdictOf"
+    },
+    {
+      "id": "SEAL-0213",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ"
+    },
+    {
+      "id": "SEAL-0213",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1"
+    },
+    {
+      "id": "SEAL-0213",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf"
+    },
+    {
+      "id": "SEAL-0213",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.verdictOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.verdictOf"
+    },
+    {
+      "id": "SEAL-0214",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ"
+    },
+    {
+      "id": "SEAL-0214",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ.match_1"
+    },
+    {
+      "id": "SEAL-0214",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf"
+    },
+    {
+      "id": "SEAL-0214",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.verdictOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.verdictOf"
+    },
+    {
+      "id": "SEAL-0215",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.start",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.start"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.advD",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.advD"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.coinsD",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.coinsD"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.hist",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.hist"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.histEnc",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.histEnc"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.move",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.move"
+    },
+    {
+      "id": "SEAL-0216",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.paramU",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.paramU"
+    },
+    {
+      "id": "SEAL-0217",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.acc",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.acc"
+    },
+    {
+      "id": "SEAL-0217",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.isQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.isQ"
+    },
+    {
+      "id": "SEAL-0217",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf"
+    },
+    {
+      "id": "SEAL-0217",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.start",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.start"
+    },
+    {
+      "id": "SEAL-0217",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.step",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.step"
+    },
+    {
+      "id": "SEAL-0218",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.rawFun",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.rawFun"
+    },
+    {
+      "id": "SEAL-0219",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.buildTreeQ",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.buildTreeQ"
+    },
+    {
+      "id": "SEAL-0219",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.histEnc",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.histEnc"
+    },
+    {
+      "id": "SEAL-0219",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.rawFun",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.rawFun"
+    },
+    {
+      "id": "C3-0002",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf.match_1"
+    },
+    {
+      "id": "C3-0003",
+      "old_home": "TCSlib.Cryptography.Asymptotic.GGMReduction",
+      "old_name": "TCSlib.Cryptography.GGMRed.queryOf.match_1",
+      "new_home": "TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction",
+      "new_name": "TCSlib.Cryptography.GGMRed.queryOf.match_1"
+    }
+  ],
+  "explicit_foreign_definition_reads": {
+    "base": 0,
+    "head": 0
+  }
+}
