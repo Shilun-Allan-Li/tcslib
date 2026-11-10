@@ -24,4 +24,4 @@ The old import paths and all definitions, statements and proofs stay in place.
 `private-key-facade-checks.zip` has SHA-256 `b843a14dc7dffddfe6e8ea209e783004030e2086b4876bb56a2df3287b6dc04b`.
 [Verification hashes](VERIFICATION.json)
 
-**Clear to merge — the facade, campaign checks and standalone imports pass.**
+Seyoon merged #270 at `afa745102f0f83530f6459a1f78992125be18dd5`. The Lean sources and checker inputs match the verified head.
