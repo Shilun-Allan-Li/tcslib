@@ -115,9 +115,9 @@ them. `Hashing.lean` indexes `Hashing/CollisionResistant` and
 imports are preserved. Hash-and-sign consumes the CRH interface and states
 the full-domain and digest-width conditions on that route.
 
-The LWE/SIS campaign owns `Hashing/SIS`. On branch reconciliation, keep
-`Hashing.CollisionResistant`, `Hashing.FromDiscreteLog` and `Hashing.SIS`
-in the shared hashing facade. The Pass–shelat `Authentication.CRH` contract
+The LWE/SIS campaign owns `Hashing/SIS`. [PR #280](https://github.com/Shilun-Allan-Li/tcslib/pull/280)
+reconciled the shared hashing facade with imports of `Hashing.CollisionResistant`,
+`Hashing.FromDiscreteLog` and `Hashing.SIS`. The Pass–shelat `Authentication.CRH` contract
 and collision parser provide the future bridge's interface.
 [Verification and branch comparison](maintainer/authentication-signatures-hashing-2026-11-09/README.md)
 

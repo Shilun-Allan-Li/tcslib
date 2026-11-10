@@ -46,3 +46,5 @@ The cleanup ledger was compared against the relocated providers.
 [Verification hashes](VERIFICATION.json)
 
 **Clear to merge — declarations, legacy imports, the affected modules and seals pass.**
+
+Seyoon merged #279 at `58088b82c2a936ce60379aade791f9e10b7bec71`. The Lean sources and checker inputs of that merge match the verified head. The subsequent [#280 integration](https://github.com/Shilun-Allan-Li/tcslib/pull/280) at `f967299b6a0bde5b7efa4062b2b55046ebd21387` reconciles the shared hashing facade with all three imports.
