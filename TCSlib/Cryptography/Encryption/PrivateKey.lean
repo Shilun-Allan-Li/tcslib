@@ -6,8 +6,10 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.Encryption.PrivateKey.Scheme
 import TCSlib.Cryptography.Encryption.PrivateKey.EnsembleSecurity
 import TCSlib.Cryptography.Encryption.PrivateKey.FromPRG
-import TCSlib.Cryptography.Asymptotic.MultiMessageLemmas
-import TCSlib.Cryptography.Asymptotic.MultiMessage
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.Hybrid
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.HybridLemmas
+import TCSlib.Cryptography.Encryption.PrivateKey.FromPRF.ReductionMachine
 import TCSlib.Cryptography.Composability.Defs
 import TCSlib.Cryptography.Composability.PRFScheme
 import TCSlib.Cryptography.Composability.CCA2Scheme
@@ -50,10 +52,11 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
 * `Encryption.PrivateKey.Scheme` gives the uniform polynomial-time scheme interface.
 * `Encryption.PrivateKey.EnsembleSecurity` gives the ensemble games and their relations.
 * `Encryption.PrivateKey.FromPRG` gives the PRG pad construction and its security proof.
-* `Asymptotic.MultiMessageLemmas` gives the encoding identities and reduction machine
-  for the PRF scheme.
-* `Asymptotic.MultiMessage` gives the PRF construction, its finite hybrid bound
-  and its fixed-vector security proof [PS10, Algorithm 99.1 and Theorem 99.2].
+* `Encryption.PrivateKey.FromPRF` gives the PRF scheme and its fixed-vector security proof
+  [PS10, Algorithm 99.1 and Theorem 99.2].
+* `Encryption.PrivateKey.FromPRF.Hybrid` proves the finite six-hybrid bound.
+* `Encryption.PrivateKey.FromPRF.HybridLemmas` gives its probability and coin lemmas.
+* `Encryption.PrivateKey.FromPRF.ReductionMachine` implements the next-query reduction.
 * `Composability.Defs` gives the fixed-length interface and adaptive oracle games.
 * `Composability.PRFScheme` gives the fixed-length version of the PRF scheme.
   The CPA and CCA1 proofs `prfFixedScheme_cpa` and `prfFixedScheme_cca1` are pending
