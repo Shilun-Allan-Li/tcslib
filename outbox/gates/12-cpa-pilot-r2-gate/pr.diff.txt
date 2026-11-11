@@ -1,0 +1,231 @@
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey.lean b/TCSlib/Cryptography/Encryption/PublicKey.lean
+index 7888e506c..24445cebd 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey.lean
+@@ -11,6 +11,8 @@ import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
+ import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
+ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
++import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA
+ import TCSlib.Cryptography.Candidates.RSA
+ import TCSlib.Cryptography.Candidates.Rabin
+ import TCSlib.Cryptography.Candidates.DDH
+@@ -55,6 +57,9 @@ multi-message security.
+ * `OracleSecurity` gives the fixed-length scheme, codecs and oracle games [PS10, §7.1.4].
+   The proof of `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` is pending.
+ * `AdaptiveSecurity` gives the multi-challenge game and its cap-one correspondence.
++* `AdaptiveCPA` lifts single-challenge CPA security to the adaptive game (stated).
++* `BitwiseCPA` gives CPA and adaptive CPA security of the padded bitwise scheme (the first
++  stated; the adaptive form and an existence form with `n`-bit messages follow).
+ * `TrapdoorCPA` specializes the oracle CPA bridge to trapdoor bit encryption.
+ * `NonMalleability.Indistinguishability` gives the indistinguishability-based game.
+ * `NonMalleability.Simulation` gives the simulation-based game and its relations.
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+new file mode 100644
+index 000000000..9a7d92e6d
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+@@ -0,0 +1,69 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# From one challenge to adaptively many under chosen-plaintext attack
++
++For a public-key scheme, security in the single-challenge CPA game of [PS10, Definition 171.5]
++implies security in the adaptive left-or-right game with a polynomial number of fresh
++challenges (`FixedLengthPKScheme.AdaptiveINDSecure`). The argument is the single-to-many hybrid
++lifting of [PS10, p. 103] and [Pas09, Theorem 2], stated there for fixed message vectors and
++extended here to adaptively chosen challenges: the adversary holds the public key, so a
++reduction can produce every challenge but one itself.
++
++## Main results
++
++* `Composability.FixedLengthPKScheme.INDSecure.adaptive_cpa` (stated; a `sorry` under its
++  sketch): single-challenge CPA security gives adaptive multi-challenge CPA security.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 171.5 (book p. 171) and the single-to-many hybrid argument (book p. 103).
++* [Pas09] R. Pass, *Cornell CS 6830, lecture 13* (2009), §1 and Theorem 2.
++-/
++
++namespace TCSlib.Cryptography.Composability.FixedLengthPKScheme
++
++open Complexity Turing TCSlib.Cryptography.Games
++
++/-- **Single-challenge CPA security gives adaptive multi-challenge CPA security**: if every
++efficient adversary has negligible advantage in the CPA game with one challenge, then every
++efficient adversary has negligible advantage in the adaptive left-or-right CPA game with a
++polynomial challenge cap `cap(n)` and query budget `q(n)` [PS10, Definition 171.5; the
++single-to-many hybrid argument of p. 103, extended to adaptive challenges].
++
++**Proof sketch.**
++1. Fix `A`, `q` and `cap`. For `i ≤ cap(n)` let `H_i` be the adaptive CPA experiment in which the
++   first `i` fresh challenges encrypt the right message and the later ones the left message. Then
++   `H_0` is the experiment with `b = false` and `H_{cap(n)}` the one with `b = true`: a challenge
++   past the cap only repeats the latest ciphertext (`adaptiveIndImpl_challenge_full`), and under CPA
++   `Dec` answers `⊥` whatever the history (`indImpl_dec_cpa`, `adaptiveIndImpl_dec_issued`).
++2. By `Games.exists_advantage_hybrid_gap`, at each `n` with `cap(n) > 0` some `i⋆(n) < cap(n)`
++   has `advantage(H_{i⋆}, H_{i⋆+1}) ≥ advantage(H_0, H_{cap(n)}) / cap(n)`; the case `cap(n) = 0`
++   has advantage `0`.
++3. The single-challenge adversary `B` takes `i⋆(n)` as advice. On `pk` it runs `A`, answers `Dec`
++   with `⊥`, answers the first `i⋆` fresh challenges with encryptions of the right message and
++   the fresh challenges after the `(i⋆+1)`-st with encryptions of the left message, computed with
++   `Enc` on `pk` and its own coins, forwards the `(i⋆+1)`-st to its own `Challenge` oracle, repeats
++   the latest ciphertext past the cap, and outputs `A`'s bit. Then `B`'s game with bit `b` is
++   `H_{i⋆+b}`. `B` is a non-uniform PPT playing the outer game by
++   `Games.exists_interactiveHandlerMachine` (T2): the handler's state holds the challenge count,
++   the latest ciphertext and `i⋆(n)` (its initial state, an arbitrary function of `n`), its seed
++   is `cap(n)` encryption tapes, its one outer call is the `(i⋆+1)`-st challenge, and its run is
++   polynomial-time because `Enc` is uniform and polynomial-time.
++4. `B` makes at most `q(n)·perCall + finCall` outer queries, a polynomial, so `h` bounds its
++   advantage by a negligible `ε`. Hence `A`'s advantage is at most `cap(n) · ε(n)`, negligible
++   by `Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport`) with the polynomial `cap`. -/
++theorem INDSecure.adaptive_cpa {S : FixedLengthPKScheme} (h : S.INDSecure .cpa) :
++    S.AdaptiveINDSecure .cpa := by
++  sorry
++
++end TCSlib.Cryptography.Composability.FixedLengthPKScheme
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+new file mode 100644
+index 000000000..da2cd7656
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+@@ -0,0 +1,105 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The bitwise scheme under chosen-plaintext attack
++
++The bitwise scheme of [PS10, p. 103] encrypts an `n`-bit message one bit at a time with a
++single-bit scheme (such as the trapdoor scheme of Algorithm 104.3, secure by Theorem 104.4).
++Padded to fixed-length ciphertexts (`PublicKeyScheme.padded`), it is a fixed-length scheme with
++`n`-bit messages. If the single-bit scheme is secure, the padded bitwise scheme is CPA-secure in
++the game of [PS10, Definition 171.5], where the adversary chooses its two messages after seeing
++the public key, and hence secure in the adaptive multi-challenge game.
++
++Ensemble security of the bitwise scheme for message pairs fixed in advance
++(`BitPublicKeyScheme.SingleBitSecure.bitwise`) is not enough here: there the messages cannot
++depend on the public key. The proof below therefore goes back to single-bit security.
++
++## Main results
++
++* `BitPublicKeyScheme.SingleBitSecure.bitwise_padded_cpa` (stated; a `sorry` under its sketch):
++  the padded bitwise scheme is CPA-secure.
++* `BitPublicKeyScheme.SingleBitSecure.bitwise_padded_adaptive_cpa`: and adaptively CPA-secure.
++* `BitPublicKeyScheme.SingleBitSecure.exists_adaptive_cpa`: a fixed-length scheme with `n`-bit
++  messages and the same key generator is adaptively CPA-secure.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  p. 103 (the bitwise scheme and the hybrid argument); Algorithm 104.3 and Theorem 104.4 (the
++  single-bit trapdoor scheme, book pp. 104–105); Definition 171.5 (book p. 171).
++-/
++
++namespace TCSlib.Cryptography.Composability
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
++
++/-- **The padded bitwise scheme is CPA-secure** when its single-bit scheme is secure
++[PS10, the hybrid argument of p. 103, in the CPA game of Definition 171.5]. The bound `hL`
++covers every ciphertext of the bitwise scheme, so `S.bitwise.padded L hL hmsg` has `n`-bit
++messages and `L(n)`-bit ciphertexts.
++
++**Proof sketch.**
++1. Fix `A` and `q`. For `j ≤ n` let `H_j` be the CPA experiment whose challenge encrypts, bit by
++   bit with independent coins, the first `j` bits of the right message and the remaining bits of
++   the left message; `H_0` and `H_n` are the experiments with `b = false` and `b = true`.
++2. By `Games.exists_advantage_hybrid_gap`, at each `n > 0` some `j⋆(n) < n` has
++   `advantage(H_{j⋆}, H_{j⋆+1}) ≥ advantage(H_0, H_n) / n`; at `n = 0` the messages are empty and
++   the advantage is `0`.
++3. `H_{j⋆}` and `H_{j⋆+1}` differ only in the plaintext bit of block `j⋆`. As in
++   `BitPublicKeyScheme.SingleBitSecure.padded_cpa`, the distinguisher `D` on `⟨pk, c⟩` runs `A` on
++   `pk`, answers the challenge `⟨m₀, m₁⟩` with the padded bitwise ciphertext whose block `j⋆` is
++   `c` and whose other blocks it encrypts itself (bits of `m₁` before `j⋆`, of `m₀` after) on
++   `pk` and its own coins, and outputs `A`'s bit, flipped when `(m₀_{j⋆}, m₁_{j⋆}) = (1, 0)` and
++   replaced by `0` when the two bits agree or no challenge was asked. Then
++   `advantage(H_{j⋆}, H_{j⋆+1})` equals `D`'s single-bit advantage between `⟨pk, Enc_pk(0)⟩` and
++   `⟨pk, Enc_pk(1)⟩` exactly (the first-challenge congruence and eager coins of `padded_cpa`). `D`
++   is a non-uniform PPT by `Games.exists_handlerMachine` (T1), with `j⋆(n)` in the handler's
++   initial state and `n` single-bit encryption tapes as its seed; the bitwise ciphertext layout is
++   read through `bitwise_enc_runAt` and `bitwiseEncCoins_ofFn`.
++4. So `A`'s advantage is at most `n` times a negligible function (`singleBitSecure_iff`),
++   negligible by `Negligible.polyExpr_mul` with `PolyExpr.var`. -/
++theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.bitwise_padded_cpa
++    {S : BitPublicKeyScheme} (h : S.SingleBitSecure) (L : PolyExpr)
++    (hL : ∀ n (rg : S.bitwise.gen.Coins n) (m : Fin n → Bool) (re : S.bitwise.enc.Coins n),
++      2 * (S.bitwise.enc.runAt n (pairEncode (pairFstD (S.bitwise.gen.runAt n [] rg))
++        (List.ofFn m)) re).length + 2 ≤ L.eval n)
++    (hmsg : ∀ n, n ≤ L.eval n) : (S.bitwise.padded L hL hmsg).INDSecure .cpa := by
++  sorry
++
++/-- **The padded bitwise scheme is adaptively CPA-secure** when its single-bit scheme is secure:
++`bitwise_padded_cpa` followed by the hybrid lifting
++`Composability.FixedLengthPKScheme.INDSecure.adaptive_cpa`. -/
++theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.bitwise_padded_adaptive_cpa
++    {S : BitPublicKeyScheme} (h : S.SingleBitSecure) (L : PolyExpr)
++    (hL : ∀ n (rg : S.bitwise.gen.Coins n) (m : Fin n → Bool) (re : S.bitwise.enc.Coins n),
++      2 * (S.bitwise.enc.runAt n (pairEncode (pairFstD (S.bitwise.gen.runAt n [] rg))
++        (List.ofFn m)) re).length + 2 ≤ L.eval n)
++    (hmsg : ∀ n, n ≤ L.eval n) : (S.bitwise.padded L hL hmsg).AdaptiveINDSecure .cpa :=
++  (h.bitwise_padded_cpa L hL hmsg).adaptive_cpa
++
++/-- **A secure single-bit scheme yields an adaptively CPA-secure scheme with `n`-bit messages**:
++some fixed-length scheme with message length `PolyExpr.var` and the same key generator is
++secure in the adaptive multi-challenge CPA game. The padding bound comes from
++`PublicKeyScheme.exists_padBound`.
++
++**Proof sketch.** Take `L`, `hL` and `hmsg` from `S.bitwise.exists_padBound`; the witness is
++`S.bitwise.padded L hL hmsg` (`PublicKeyScheme.padded_msgLen`, `PublicKeyScheme.padded_gen`, and
++the generator of `S.bitwise` is `S.gen`), secure by `bitwise_padded_adaptive_cpa`. -/
++theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.exists_adaptive_cpa
++    {S : BitPublicKeyScheme} (h : S.SingleBitSecure) :
++    ∃ S' : FixedLengthPKScheme, S'.msgLen = .var ∧ S'.gen = S.gen ∧
++      S'.AdaptiveINDSecure .cpa := by
++  obtain ⟨L, hL, hmsg⟩ := S.bitwise.exists_padBound
++  exact ⟨S.bitwise.padded L hL hmsg, PublicKeyScheme.padded_msgLen _ _ _ _,
++    (PublicKeyScheme.padded_gen _ _ _ _).trans (BitPublicKeyScheme.bitwise_gen S),
++    h.bitwise_padded_adaptive_cpa L hL hmsg⟩
++
++end TCSlib.Cryptography.Composability
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean b/TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean
+index 77b468183..3e39a03c5 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/EnsembleSecurity.lean
+@@ -295,6 +295,17 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
+       rw [NUPPT.runAt_eq (A := S.enc), hre'] at this
+       exact this
+ 
++/-- The bitwise scheme keeps the key generator: `S.bitwise.gen = S.gen`. -/
++theorem bitwise_gen (S : BitPublicKeyScheme) : S.bitwise.gen = S.gen := rfl
++
++/-- The bitwise encryptor is the uniform machine of `bitwiseEncFun` with `n · B(n)` coins:
++`S.bitwise.enc = NUPPT.ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins)`. -/
++theorem bitwise_enc (S : BitPublicKeyScheme) :
++    S.bitwise.enc = NUPPT.ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins) := rfl
++
++/-- The bitwise decryptor decrypts block by block: `S.bitwise.dec = decListFun S.dec`. -/
++theorem bitwise_dec (S : BitPublicKeyScheme) : S.bitwise.dec = decListFun S.dec := rfl
++
+ /-- The coin count of the bitwise encryptor: `n · B(n)`. -/
+ theorem bitwise_enc_coinLen (S : BitPublicKeyScheme) (n : ℕ) :
+     n * S.enc.coinLen n = (PolyExpr.mul .var S.enc.coins).eval n := by
