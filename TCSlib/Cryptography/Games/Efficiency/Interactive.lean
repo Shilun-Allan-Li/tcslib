@@ -92,6 +92,38 @@ def gC (S : List Bool) : List Bool :=
 def gO (S : List Bool) : List Bool :=
   pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD S))))))
 
+/-- The projection gPh on every raw state word is its nested pair projection. -/
+theorem gPh_eq (S : List Bool) : gPh S = pairFstD (S) :=
+  rfl
+
+/-- The projection gLin on every raw state word is its nested pair projection. -/
+theorem gLin_eq (S : List Bool) : gLin S = pairFstD (pairSndD (S)) :=
+  rfl
+
+/-- The projection gS on every raw state word is its nested pair projection. -/
+theorem gS_eq (S : List Bool) : gS S = pairFstD (pairSndD (pairSndD (S))) :=
+  rfl
+
+/-- The projection gB on every raw state word is its nested pair projection. -/
+theorem gB_eq (S : List Bool) : gB S = pairFstD (pairSndD (pairSndD (pairSndD (S)))) :=
+  rfl
+
+/-- The projection gCur on every raw state word is its nested pair projection. -/
+theorem gCur_eq (S : List Bool) : gCur S = pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (S))))) :=
+  rfl
+
+/-- The projection gLc on every raw state word is its nested pair projection. -/
+theorem gLc_eq (S : List Bool) : gLc S = pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (S)))))) :=
+  rfl
+
+/-- The projection gC on every raw state word is its nested pair projection. -/
+theorem gC_eq (S : List Bool) : gC S = pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (S))))))) :=
+  rfl
+
+/-- The projection gO on every raw state word is its nested pair projection. -/
+theorem gO_eq (S : List Bool) : gO S = pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (S))))))) :=
+  rfl
+
 section Read
 
 variable (ph L s bA cur L' c O' : List Bool)

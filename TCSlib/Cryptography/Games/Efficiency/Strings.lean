@@ -196,6 +196,15 @@ theorem selLen_eq : ∀ {k : ℕ} (d : Fin k → PolyExpr) (n : ℕ) (i : Fin k)
     · rw [Fin.val_succ]
       exact selLen_eq (fun i => d i.succ) n j
 
+/-- A selected index outside the oracle family has length zero.
+Together with the finite-index reader this covers every natural index. -/
+theorem selLen_of_ge : ∀ {k : ℕ} (d : Fin k → PolyExpr) (n m : ℕ),
+    k ≤ m → selLen d n m = 0
+  | 0, _, _, _, _ => rfl
+  | _ + 1, _, _, 0, h => by omega
+  | _ + 1, d, n, m + 1, h =>
+      selLen_of_ge (fun i => d i.succ) n m (Nat.le_of_succ_le_succ h)
+
 /-- The selected length in unary, `⟨u, iw⟩ ↦ 1^{selLen d |u| |iw|}`, is polynomial-time (a `k`-way
 case split, by induction on `k`). -/
 theorem selLen_poly : ∀ {k : ℕ} (d : Fin k → PolyExpr),
@@ -225,6 +234,10 @@ def sumPoly : {k : ℕ} → (Fin k → PolyExpr) → PolyExpr
 `sumPoly d = .add (d 0) (sumPoly (d ∘ Fin.succ))`. -/
 theorem sumPoly_succ {k : ℕ} (d : Fin (k + 1) → PolyExpr) :
     sumPoly d = .add (d 0) (sumPoly fun i => d i.succ) :=
+  rfl
+
+/-- Summing an empty family of length polynomials gives the constant zero. -/
+theorem sumPoly_zero (d : Fin 0 → PolyExpr) : sumPoly d = .const 0 :=
   rfl
 
 /-- Each summand is below the sum: `(d i).eval n ≤ (sumPoly d).eval n`. -/
@@ -378,6 +391,14 @@ theorem canonWord_eq (din : Fin k → PolyExpr) (dout : Fin k → ℕ) (n dα : 
 /-- The canonical decoder as a function of `⟨1^n, ⟨1^dα, w⟩⟩`. -/
 def canonFun (din : Fin k → PolyExpr) (z : List Bool) : List Bool :=
   canonWord din (pairFstD z).length (pairFstD (pairSndD z)).length (pairSndD (pairSndD z))
+
+/-- On every raw word the canonical decoder reads its three inputs through
+the total pair projections. -/
+theorem canonFun_def (din : Fin k → PolyExpr) (z : List Bool) :
+    canonFun din z =
+      canonWord din (pairFstD z).length (pairFstD (pairSndD z)).length
+        (pairSndD (pairSndD z)) :=
+  rfl
 
 /-- The canonical decoder reads `n` and `dα` in unary:
 `canonFun din ⟨1^n, ⟨1^dα, w⟩⟩ = canonWord din n dα w`. -/
