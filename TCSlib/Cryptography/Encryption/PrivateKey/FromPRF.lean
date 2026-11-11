@@ -223,6 +223,15 @@ theorem prfScheme_enc (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin
     (prfScheme F E hE hFE).enc =
       NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var := rfl
 
+/-- The decryption machine of `prfScheme F E hE hFE` is
+`NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) (.const 0)`. -/
+theorem prfScheme_dec (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
+      List.ofFn (F n s x)) :
+    (prfScheme F E hE hFE).dec =
+      NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) (.const 0) := rfl
+
 /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
 distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
 def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
