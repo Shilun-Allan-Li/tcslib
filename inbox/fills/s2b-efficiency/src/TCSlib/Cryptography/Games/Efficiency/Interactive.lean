@@ -658,9 +658,9 @@ theorem iAct_adv_query (hXu : NUPPT.inParam X = List.replicate n true)
         (pairEncode X (iSt [] L s (true :: bA) cur L' c O')) =
       pairEncode [false] (iSt [true] L s bA m [] (List.replicate (perCall.eval n) true) O') := by
   rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_pos rfl, iAdvAct_eq, hm, pairFstD_pairEncode,
-    if_neg (by decide)]
-  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gO_iSt, hXu,
-    List.length_replicate, reduceCtorEq, if_false, List.drop_one, List.tail_cons]
+    if_neg (by decide), pairSndD_pairEncode, gB_iSt, if_neg (List.cons_ne_nil _ _)]
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gO_iSt, hXu,
+    List.length_replicate, List.drop_one, List.tail_cons]
 
 /-- The handler's move word in a call on the pending query `⟨iw, xw⟩`: the canonical decoder, with
 result length `selLen dout n |iw| + stateLen(n)`, of `run ⟨ctx, ⟨s, ⟨⟨iw, xw⟩, L'⟩⟩⟩`. -/

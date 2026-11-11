@@ -1,0 +1,47 @@
+From bc53a51865103bc20bb4dfbbf2ad302078a9a363 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:16:36 +0000
+Subject: [PATCH 5/5] fill s2b-efficiency: read core definitions through their
+ lemmas only
+
+Replace the core definition id passed to simp by id_eq (OracleBridge), and the
+simproc reduceCtorEq by List.cons_ne_nil (Interactive), found by the
+explicit-unfold scan.
+---
+ TCSlib/Cryptography/Games/Efficiency/Interactive.lean  | 6 +++---
+ TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Interactive.lean b/TCSlib/Cryptography/Games/Efficiency/Interactive.lean
+index 6901f47d1..093199b77 100644
+--- a/TCSlib/Cryptography/Games/Efficiency/Interactive.lean
++++ b/TCSlib/Cryptography/Games/Efficiency/Interactive.lean
+@@ -658,9 +658,9 @@ theorem iAct_adv_query (hXu : NUPPT.inParam X = List.replicate n true)
+         (pairEncode X (iSt [] L s (true :: bA) cur L' c O')) =
+       pairEncode [false] (iSt [true] L s bA m [] (List.replicate (perCall.eval n) true) O') := by
+   rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_pos rfl, iAdvAct_eq, hm, pairFstD_pairEncode,
+-    if_neg (by decide)]
+-  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gO_iSt, hXu,
+-    List.length_replicate, reduceCtorEq, if_false, List.drop_one, List.tail_cons]
++    if_neg (by decide), pairSndD_pairEncode, gB_iSt, if_neg (List.cons_ne_nil _ _)]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gO_iSt, hXu,
++    List.length_replicate, List.drop_one, List.tail_cons]
+ 
+ /-- The handler's move word in a call on the pending query `⟨iw, xw⟩`: the canonical decoder, with
+ result length `selLen dout n |iw| + stateLen(n)`, of `run ⟨ctx, ⟨s, ⟨⟨iw, xw⟩, L'⟩⟩⟩`. -/
+diff --git a/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean b/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
+index d11d6bd90..ddd335704 100644
+--- a/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
++++ b/TCSlib/Cryptography/Games/Efficiency/OracleBridge.lean
+@@ -206,7 +206,7 @@ theorem bridgePost_poly : PolyTimeComputable bridgePost := by
+     (polyTimeComputable_ite h2 (polyTimeComputable_const [true, true])
+       (polyTimeComputable_const [true, false]))).congr fun w => ?_
+   rw [bridgePost_eq]
+-  simp only [id, decide_eq_true_eq]
++  simp only [id_eq, decide_eq_true_eq]
+ 
+ /-- **The translated move is the decoded move.** For every word `w`, either `decodeBitMove`
+ reads the query `x` (to the only oracle) and `decodeOracleMove` reads the query `x` off
+-- 
+2.43.0
+

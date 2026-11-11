@@ -1,0 +1,78 @@
+# sealed copies at proof-branch bc53a51865103bc20bb4dfbbf2ad302078a9a363, 2026-11-11T01:17:29Z
+=== lean_proof/s2b/seal/SealStrings
+start 2026-11-11T01:17:29Z
+time: elapsed=2.43 s, maxrss=2578336 KiB, exit=0
+end 2026-11-11T01:17:32Z status=0
+=== lean_proof/s2b/seal/SealReplay
+start 2026-11-11T01:17:32Z
+time: elapsed=1.37 s, maxrss=1758272 KiB, exit=0
+end 2026-11-11T01:17:33Z status=0
+=== lean_proof/s2b/seal/SealHandler
+start 2026-11-11T01:17:33Z
+time: elapsed=2.98 s, maxrss=2587776 KiB, exit=0
+end 2026-11-11T01:17:36Z status=0
+=== lean_proof/s2b/seal/SealOracleBridge
+start 2026-11-11T01:17:36Z
+time: elapsed=2.15 s, maxrss=2569808 KiB, exit=0
+end 2026-11-11T01:17:38Z status=0
+=== lean_proof/s2b/seal/SealInteractive
+start 2026-11-11T01:17:38Z
+time: elapsed=2.76 s, maxrss=2590480 KiB, exit=0
+end 2026-11-11T01:17:41Z status=0
+=== lean_proof/s2b/seal/SealInteractiveSpec
+start 2026-11-11T01:17:41Z
+time: elapsed=6.92 s, maxrss=2668412 KiB, exit=0
+end 2026-11-11T01:17:48Z status=0
+=== lean_proof/s2b/seal/SealEfficiency
+start 2026-11-11T01:17:48Z
+time: elapsed=2.53 s, maxrss=2613824 KiB, exit=0
+end 2026-11-11T01:17:51Z status=0
+# controls: SealControlsUnsealed must pass; SealControlsSealed must fail at each of the six examples (C1-C6)
+=== lean_proof/s2b/seal/SealControlsUnsealed
+start 2026-11-11T01:17:51Z
+time: elapsed=2.01 s, maxrss=2574124 KiB, exit=0
+end 2026-11-11T01:17:53Z status=0
+=== lean_proof/s2b/seal/SealControlsSealed
+start 2026-11-11T01:17:53Z
+lean_proof/s2b/seal/SealControlsSealed.lean:18:2: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  pairEncode a b = List.flatMap (fun x => [x, x]) a ++ [false, true] ++ b
+lean_proof/s2b/seal/SealControlsSealed.lean:21:64: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (bitCodec d d 3).encodeLog [] = []
+lean_proof/s2b/seal/SealControlsSealed.lean:24:93: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  EffFill.fixLen 2 w = if w.length = 2 then w else [false, false]
+lean_proof/s2b/seal/SealControlsSealed.lean:27:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+lean_proof/s2b/seal/SealControlsSealed.lean:31:50: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  buildComp (fun x => Move.ret a) false 0 [] = OracleComp.pure a
+lean_proof/s2b/seal/SealControlsSealed.lean:36:33: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  EffFill.actLoop s a R B = GGMRed.stateLoopFun s (EffFill.actStep a) (EffFill.actAcc a) (EffFill.actStep a) R B
+FAIL(lean_proof/s2b/seal/SealControlsSealed): lean exited with status 1
+FAIL(lean_proof/s2b/seal/SealControlsSealed): error diagnostics reported
+FAIL(lean_proof/s2b/seal/SealControlsSealed): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=1.99 s, maxrss=2566100 KiB, exit=1
+end 2026-11-11T01:17:55Z status=1
