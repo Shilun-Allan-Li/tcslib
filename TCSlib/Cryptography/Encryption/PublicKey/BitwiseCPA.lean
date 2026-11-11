@@ -11,12 +11,12 @@ set_option autoImplicit false
 /-!
 # The bitwise scheme under chosen-plaintext attack
 
-The bitwise scheme of [PS10, Algorithm 104.3 and p. 103] encrypts an `n`-bit message one bit at
-a time with a single-bit scheme. Padded to fixed-length ciphertexts (`PublicKeyScheme.padded`),
-it is a fixed-length scheme with `n`-bit messages. If the single-bit scheme is secure, the padded
-bitwise scheme is CPA-secure in the game of [PS10, Definition 171.5], where the adversary chooses
-its two messages after seeing the public key, and hence secure in the adaptive multi-challenge
-game.
+The bitwise scheme of [PS10, p. 103] encrypts an `n`-bit message one bit at a time with a
+single-bit scheme (such as the trapdoor scheme of Algorithm 104.3, secure by Theorem 104.4).
+Padded to fixed-length ciphertexts (`PublicKeyScheme.padded`), it is a fixed-length scheme with
+`n`-bit messages. If the single-bit scheme is secure, the padded bitwise scheme is CPA-secure in
+the game of [PS10, Definition 171.5], where the adversary chooses its two messages after seeing
+the public key, and hence secure in the adaptive multi-challenge game.
 
 Ensemble security of the bitwise scheme for message pairs fixed in advance
 (`BitPublicKeyScheme.SingleBitSecure.bitwise`) is not enough here: there the messages cannot
@@ -33,7 +33,8 @@ depend on the public key. The proof below therefore goes back to single-bit secu
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
-  Algorithm 104.3, Theorem 104.4 and p. 103; Definition 171.5 (book pp. 103–104, 171).
+  p. 103 (the bitwise scheme and the hybrid argument); Algorithm 104.3 and Theorem 104.4 (the
+  single-bit trapdoor scheme, book pp. 104–105); Definition 171.5 (book p. 171).
 -/
 
 namespace TCSlib.Cryptography.Composability
@@ -41,7 +42,7 @@ namespace TCSlib.Cryptography.Composability
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 
 /-- **The padded bitwise scheme is CPA-secure** when its single-bit scheme is secure
-[PS10, Theorem 104.4's hybrid argument, in the CPA game of Definition 171.5]. The bound `hL`
+[PS10, the hybrid argument of p. 103, in the CPA game of Definition 171.5]. The bound `hL`
 covers every ciphertext of the bitwise scheme, so `S.bitwise.padded L hL hmsg` has `n`-bit
 messages and `L(n)`-bit ciphertexts.
 

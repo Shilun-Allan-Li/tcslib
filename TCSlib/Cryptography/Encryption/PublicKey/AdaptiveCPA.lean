@@ -13,9 +13,10 @@ set_option autoImplicit false
 
 For a public-key scheme, security in the single-challenge CPA game of [PS10, Definition 171.5]
 implies security in the adaptive left-or-right game with a polynomial number of fresh
-challenges (`FixedLengthPKScheme.AdaptiveINDSecure`). The argument is the hybrid lifting of
-[PS10, Theorem 104.4's proof] and of [Pas09, Theorem 2]: the adversary holds the public key, so
-a reduction can produce every challenge but one itself.
+challenges (`FixedLengthPKScheme.AdaptiveINDSecure`). The argument is the single-to-many hybrid
+lifting of [PS10, p. 103] and [Pas09, Theorem 2], stated there for fixed message vectors and
+extended here to adaptively chosen challenges: the adversary holds the public key, so a
+reduction can produce every challenge but one itself.
 
 ## Main results
 
@@ -25,7 +26,7 @@ a reduction can produce every challenge but one itself.
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
-  Definition 171.5 (book p. 171) and the hybrid argument of Theorem 104.4 (book p. 104).
+  Definition 171.5 (book p. 171) and the single-to-many hybrid argument (book p. 103).
 * [Pas09] R. Pass, *Cornell CS 6830, lecture 13* (2009), §1 and Theorem 2.
 -/
 
@@ -36,8 +37,8 @@ open Complexity Turing TCSlib.Cryptography.Games
 /-- **Single-challenge CPA security gives adaptive multi-challenge CPA security**: if every
 efficient adversary has negligible advantage in the CPA game with one challenge, then every
 efficient adversary has negligible advantage in the adaptive left-or-right CPA game with a
-polynomial challenge cap `cap(n)` and query budget `q(n)` [PS10, Definition 171.5; the hybrid
-argument of Theorem 104.4].
+polynomial challenge cap `cap(n)` and query budget `q(n)` [PS10, Definition 171.5; the
+single-to-many hybrid argument of p. 103, extended to adaptive challenges].
 
 **Proof sketch.**
 1. Fix `A`, `q` and `cap`. For `i ≤ cap(n)` let `H_i` be the adaptive CPA experiment in which the
