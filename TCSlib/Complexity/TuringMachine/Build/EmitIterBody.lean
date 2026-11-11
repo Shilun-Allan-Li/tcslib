@@ -36,6 +36,7 @@ private to this file.
 
 ## Main results
 
+* `Turing.FinTM.exists_emitIterTM_withFuel` — emitting iteration with a supplied fuel machine and a separate round-count bound.
 * `Turing.FinTM.exists_emitIterTM` — the finite machine computing the
   concatenated chunks of a polynomially clocked iteration, within a
   polynomial budget in the `C·(n+1)^c` normal form.
@@ -708,60 +709,54 @@ private theorem body_start (hek : 0 < Em.k) :
 
 end Body
 
-/-- **The emit-iteration machine** ([AB09] §7.3–§7.4 folklore: simulate a
-machine on polynomially many rounds and concatenate the outcomes).  Given
-machines computing the step `g` and the chunk `e` within polynomial budgets,
-and a polynomial length envelope for the orbit of `g`, one finite machine
-computes the concatenation of the chunks `e (g^[i] w)` for
-`i = 0, …, a'·(|w|+1)^k'`, within a polynomial budget in the `C·(n+1)^c`
-normal form.
+/-- Emit and concatenate the chunks of a bounded word iteration. The caller
+supplies a machine computing the binary iteration bound `R n` in polynomial
+time. The startup and per-round costs are polynomial in the input length, and
+the total time includes a separate factor `R n + 2`.
 
-**Proof sketch.** Instantiate `Turing.FinTM.exists_emitLoopTM` at the body
-machine `emitIterBody` built from the two clean-call modules
-(`exists_emitCallTM` for `e`, `exists_installCallTM` for `g`), the
-polynomial-bits fuel machine (`computesFunInTime_polyBits`), the orbit
-invariant `∃ i, s = g^[i] w`, and the budget `T` summing the fuel, startup,
-and round envelopes; `body_start` and `body_round` discharge the startup and
-round obligations, with the call budgets bounded through the orbit envelope
-and the one-symbol-per-step output bound.  The loop host's
-`c·(T+1)·(R+2)` budget is then absorbed into the polynomial normal form. -/
-theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Bool)
-    (CG cG CE cE : ℕ)
+**Proof sketch.** Use the existing emitting loop with clean calls to the step
+and chunk machines. The orbit envelope bounds the length of each call's input
+and hence the call time, including scratch cleanup. The startup and fuel
+costs and both round calls are bounded by a polynomial, which leaves the
+number of rounds as a separate factor. -/
+theorem FinTM.exists_emitIterTM_withFuel (G E F : FinTM Bool) (g e : List Bool → List Bool)
+    (CG cG CE cE CF cF : ℕ) (R : ℕ → ℕ)
     (hG : G.ComputesFunInTime g (fun n => CG * (n + 1) ^ cG))
     (hE : E.ComputesFunInTime e (fun n => CE * (n + 1) ^ cE))
-    (a' k' b l : ℕ)
+    (hF : F.ComputesFunInTime (fun w => Nat.bits (R w.length)) (fun n => CF * (n + 1) ^ cF))
+    (b l : ℕ)
     (horbit : ∀ (w : List Bool) (i : ℕ), (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
     ∃ (M : FinTM Bool) (C c : ℕ),
       M.ComputesFunInTime
-        (fun w => (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap
-          (fun i => e (g^[i] w)))
-        (fun n => C * (n + 1) ^ c) := by
+        (fun w => (List.range (R w.length + 1)).flatMap (fun i => e (g^[i] w)))
+        (fun n => C * (n + 1) ^ c * (R n + 2)) := by
   classical
   obtain ⟨Ce, eentry, eexit, cEcall, hke, hEcall⟩ :=
     FinTM.exists_emitCallTM E e _ hE
   obtain ⟨Cg, gentry, gexit, cGcall, hkg, hGcall⟩ :=
     FinTM.exists_installCallTM G g _ hG
-  obtain ⟨F, cF, hF⟩ := FinTM.computesFunInTime_polyBits a' k'
   -- output-length bounds from the one-symbol-per-step discipline
   have hElen : ∀ s : List Bool, (e s).length ≤ CE * (s.length + 1) ^ cE := by
     intro s
-    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hE s)).2
+    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp
+      ((FinTM.computesFunInTime_iff _ _ _).1 hE s)).2
     simpa only [hout] using E.tm.output_length_le s (CE * (s.length + 1) ^ cE)
   have hGlen : ∀ s : List Bool, (g s).length ≤ CG * (s.length + 1) ^ cG := by
     intro s
-    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hG s)).2
+    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp
+      ((FinTM.computesFunInTime_iff _ _ _).1 hG s)).2
     simpa only [hout] using G.tm.output_length_le s (CG * (s.length + 1) ^ cG)
   -- the budget
   set L : ℕ → ℕ := fun n => b * (n + 1) ^ l with hL
   set TEb : ℕ → ℕ := fun n => CE * (L n + 1) ^ cE with hTEb
   set TGb : ℕ → ℕ := fun n => CG * (L n + 1) ^ cG with hTGb
-  set T : ℕ → ℕ := fun n => cF * (n + 1) ^ (k' + 1) + (3 * n + 4) +
+  set T : ℕ → ℕ := fun n => CF * (n + 1) ^ cF + (3 * n + 4) +
     (cEcall * (2 * TEb n + L n + 1) + cGcall * (2 * TGb n + L n + 1) + 2) with hT
   set body := emitIterBody Ce Cg hke eentry eexit gentry gexit with hbody
   have hF' : F.ComputesFunInTime
-      (fun x => Nat.bits (a' * (x.length + 1) ^ k')) T := by
-    intro x
-    refine (hF x).mono ?_
+      (fun x => Nat.bits (R x.length)) T := by
+    refine (FinTM.computesFunInTime_iff _ _ _).2 fun x => ?_
+    refine ((FinTM.computesFunInTime_iff _ _ _).1 hF x).mono ?_
     simp only [hT]
     omega
   have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
@@ -770,7 +765,7 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
       body.tm.runFrom (body.tm.initCfg x) t =
         Cfg.ofWords .anchor (stateWord body.k x) := by
     intro x
-    obtain ⟨hrun, hsafe⟩ := body_start Ce Cg eentry eexit gentry gexit hke (x := x)
+    obtain ⟨hrun, hsafe⟩ := safeRun_iff.1 <| body_start Ce Cg eentry eexit gentry gexit hke (x := x)
     exact ⟨3 * x.length + 4, by simp only [hT]; omega, hsafe, hrun⟩
   have hround : ∀ (x s : List Bool), (∃ i, s = g^[i] x) →
       ∃ t, 0 < t ∧ t ≤ T x.length ∧
@@ -804,17 +799,17 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
     omega
   obtain ⟨M, c, hM⟩ := FinTM.exists_emitLoopTM body F .anchor
     (fun w s => ∃ i, s = g^[i] w) (fun _ s => g s) (fun _ s => e s)
-    (fun w => w) (fun n => a' * (n + 1) ^ k') T hF'
+    (fun w => w) R T hF'
     (fun w => ⟨0, rfl⟩)
     (fun w s hs => by
       obtain ⟨i, rfl⟩ := hs
       exact ⟨i + 1, (Function.iterate_succ_apply' g i w).symm⟩)
     hstart hround
   -- polynomial normal form
-  set D : ℕ := k' + 1 + l * cE + l * cG + l + 1 with hD
+  set D : ℕ := cF + l * cE + l * cG + l + 1 with hD
   have honeD : ∀ n : ℕ, 1 ≤ (n + 1) ^ D := fun n => Nat.one_le_pow _ _ (by omega)
   have hTle : ∀ n, T n ≤
-      (cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+      (CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
         cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2) * (n + 1) ^ D := by
     intro n
     have hone : 1 ≤ (n + 1) ^ l := Nat.one_le_pow _ _ (by omega)
@@ -838,8 +833,8 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
         _ = CG * (b + 1) ^ cG * (n + 1) ^ (l * cG) := by
             rw [mul_pow, ← pow_mul]
             ring
-    have h1 : cF * (n + 1) ^ (k' + 1) ≤ cF * (n + 1) ^ D :=
-      Nat.mul_le_mul_left cF (hpowD _ (by omega))
+    have h1 : CF * (n + 1) ^ cF ≤ CF * (n + 1) ^ D :=
+      Nat.mul_le_mul_left CF (hpowD _ (by omega))
     have h2 : 3 * n + 4 ≤ 4 * (n + 1) ^ D := by
       have : n + 1 ≤ (n + 1) ^ D := le_trans (by omega)
         (Nat.le_self_pow (by omega) (n + 1))
@@ -874,20 +869,20 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
       have := honeD n
       omega
     simp only [hT]
-    calc cF * (n + 1) ^ (k' + 1) + (3 * n + 4) +
+    calc CF * (n + 1) ^ cF + (3 * n + 4) +
           (cEcall * (2 * TEb n + L n + 1) + cGcall * (2 * TGb n + L n + 1) + 2) ≤
-        cF * (n + 1) ^ D + 4 * (n + 1) ^ D +
+        CF * (n + 1) ^ D + 4 * (n + 1) ^ D +
           (cEcall * (2 * CE * (b + 1) ^ cE + b + 2) * (n + 1) ^ D +
             cGcall * (2 * CG * (b + 1) ^ cG + b + 2) * (n + 1) ^ D +
             2 * (n + 1) ^ D) :=
           Nat.add_le_add (Nat.add_le_add h1 h2)
             (Nat.add_le_add (Nat.add_le_add hE3 hG3) h6)
-      _ = (cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+      _ = (CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
             cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2) * (n + 1) ^ D := by ring
-  set K₀ : ℕ := cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+  set K₀ : ℕ := CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
     cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2 with hK₀
-  refine ⟨M, c * (K₀ + 1) * (a' + 2), D + k', fun w => ?_⟩
-  have hMw := hM w
+  refine ⟨M, c * (K₀ + 1), D, (FinTM.computesFunInTime_iff _ _ _).2 fun w => ?_⟩
+  have hMw := (FinTM.computesFunInTime_iff _ _ _).1 hM w
   refine hMw.mono ?_
   set n := w.length
   have hT1 : T n + 1 ≤ (K₀ + 1) * (n + 1) ^ D := by
@@ -895,15 +890,45 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
     have h1 := honeD n
     calc T n + 1 ≤ K₀ * (n + 1) ^ D + (n + 1) ^ D := by omega
       _ = (K₀ + 1) * (n + 1) ^ D := by ring
-  have hR2 : a' * (n + 1) ^ k' + 2 ≤ (a' + 2) * (n + 1) ^ k' := by
-    have h1 : 1 ≤ (n + 1) ^ k' := Nat.one_le_pow _ _ (by omega)
-    calc a' * (n + 1) ^ k' + 2 ≤ a' * (n + 1) ^ k' + 2 * (n + 1) ^ k' := by omega
-      _ = (a' + 2) * (n + 1) ^ k' := by ring
-  calc c * (T n + 1) * (a' * (n + 1) ^ k' + 2) ≤
-        c * ((K₀ + 1) * (n + 1) ^ D) * ((a' + 2) * (n + 1) ^ k') :=
-      Nat.mul_le_mul (Nat.mul_le_mul_left c hT1) hR2
-    _ = c * (K₀ + 1) * (a' + 2) * (n + 1) ^ (D + k') := by
-      rw [pow_add]
-      ring
+  calc c * (T n + 1) * (R n + 2) ≤ c * ((K₀ + 1) * (n + 1) ^ D) * (R n + 2) :=
+      Nat.mul_le_mul_right _ (Nat.mul_le_mul_left c hT1)
+    _ = c * (K₀ + 1) * (n + 1) ^ D * (R n + 2) := by ring
+
+/-- **The emit-iteration machine** ([AB09] §7.3–§7.4 folklore: simulate a
+machine on polynomially many rounds and concatenate the outcomes).  Given
+machines computing the step `g` and the chunk `e` within polynomial budgets,
+and a polynomial length envelope for the orbit of `g`, one finite machine
+computes the concatenation of the chunks `e (g^[i] w)` for
+`i = 0, …, a'·(|w|+1)^k'`, within a polynomial budget in the `C·(n+1)^c`
+normal form.
+
+**Proof sketch.** Apply the fuel-machine version to the polynomial-bits
+machine, then bound the product of the per-round polynomial and the number
+of rounds by one normal-form polynomial. -/
+theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Bool)
+    (CG cG CE cE : ℕ)
+    (hG : G.ComputesFunInTime g (fun n => CG * (n + 1) ^ cG))
+    (hE : E.ComputesFunInTime e (fun n => CE * (n + 1) ^ cE))
+    (a' k' b l : ℕ)
+    (horbit : ∀ (w : List Bool) (i : ℕ), (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
+    ∃ (M : FinTM Bool) (C c : ℕ),
+      M.ComputesFunInTime
+        (fun w => (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap
+          (fun i => e (g^[i] w)))
+        (fun n => C * (n + 1) ^ c) := by
+  obtain ⟨F, cF, hF⟩ := FinTM.computesFunInTime_polyBits a' k'
+  obtain ⟨M, C, D, hM⟩ :=
+    FinTM.exists_emitIterTM_withFuel G E F g e CG cG CE cE cF (k' + 1)
+      (fun n => a' * (n + 1) ^ k') hG hE hF b l horbit
+  refine ⟨M, C * (a' + 2), D + k', (FinTM.computesFunInTime_iff _ _ _).2 fun w => ?_⟩
+  refine ((FinTM.computesFunInTime_iff _ _ _).1 hM w).mono ?_
+  let n := w.length
+  have hR : a' * (n + 1) ^ k' + 2 ≤ (a' + 2) * (n + 1) ^ k' := by
+    have hpos : 1 ≤ (n + 1) ^ k' := Nat.one_le_pow _ _ (by omega)
+    rw [Nat.add_mul]
+    omega
+  calc C * (n + 1) ^ D * (a' * (n + 1) ^ k' + 2)
+      ≤ C * (n + 1) ^ D * ((a' + 2) * (n + 1) ^ k') := Nat.mul_le_mul_left _ hR
+    _ = C * (a' + 2) * (n + 1) ^ (D + k') := by rw [pow_add]; ring
 
 end Turing

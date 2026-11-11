@@ -53,15 +53,17 @@ the parser at its states (namespace `Turing.PairParse`): the unary-multiplicatio
 
 ## Main definitions
 
+* `Turing.pairSplitAt` — the split function `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (`[]` off pairs),
+  read through `Turing.pairSplitAt_pairEncode`, `Turing.pairSplitAt_of_pairDecode_eq_some` and
+  `Turing.pairSplitAt_of_pairDecode_eq_none`.
 * `Turing.PairParse.cfg` — the one-buffer configurations of a one-tape machine (field equations
   by `simps`). The machine itself is private; its result is an existence statement over
   `Turing.FinTM Bool`.
 
 ## Main results
 
-* `Turing.FinTM.exists_pairSplitTM` — a finite machine computes
-  `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (and `[]` on malformed words) within `5 (n + 1)`
-  steps.
+* `Turing.FinTM.exists_pairSplitTM` — a finite machine computes `Turing.pairSplitAt`,
+  `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (and `[]` on malformed words), within `5 (n + 1)` steps.
 * `Turing.PairParse.parse_first`, `parse_block`, `rewind_run` — the buffered aligned parser:
   one half block, one aligned block, and the rewind of the buffer, for every one-tape machine
   whose table agrees with the parser; `Turing.PairParse.cfg_inputSymbol`,
@@ -249,6 +251,33 @@ theorem rewind_run {S : Type} (tm : MultiTapeTM 1 Bool S) (r n : S)
     exact ih (by omega)
 
 end Turing.PairParse
+
+namespace Turing
+
+/-- **The unary split** computed by the machine of `Turing.FinTM.exists_pairSplitTM`:
+`pairSplitAt ⟨u, b⟩ = ⟨b.take |u|, b.drop |u|⟩`, and `pairSplitAt z = []` when
+`pairDecode z = none`. -/
+def pairSplitAt (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
+  | none => []
+
+/-- `pairDecode z = some (u, b) → pairSplitAt z = pairEncode (b.take |u|) (b.drop |u|)`. -/
+theorem pairSplitAt_of_pairDecode_eq_some {z u b : List Bool} (h : pairDecode z = some (u, b)) :
+    pairSplitAt z = pairEncode (b.take u.length) (b.drop u.length) := by
+  simp only [pairSplitAt, h]
+
+/-- `pairDecode z = none → pairSplitAt z = []`. -/
+theorem pairSplitAt_of_pairDecode_eq_none {z : List Bool} (h : pairDecode z = none) :
+    pairSplitAt z = [] := by
+  simp only [pairSplitAt, h]
+
+/-- `pairSplitAt ⟨u, b⟩ = ⟨b.take |u|, b.drop |u|⟩`. -/
+theorem pairSplitAt_pairEncode (u b : List Bool) :
+    pairSplitAt (pairEncode u b) = pairEncode (b.take u.length) (b.drop u.length) :=
+  pairSplitAt_of_pairDecode_eq_some (pairDecode_pairEncode u b)
+
+end Turing
 
 namespace Turing.FinTM
 
@@ -638,11 +667,7 @@ ledger `split_run`: `3 |x| + 5 ≤ 5 (|x| + 1)` steps from the initial configura
 (`Turing.pairEncode_eq_dbl`). -/
 theorem exists_pairSplitTM :
     ∃ M : FinTM Bool,
-      M.ComputesFunInTime
-        (fun z => match pairDecode z with
-          | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
-          | none => [])
-        fun n => 5 * (n + 1) :=
-  ⟨pairSplitTM, fun x => split_computes x⟩
+      M.ComputesFunInTime pairSplitAt fun n => 5 * (n + 1) :=
+  ⟨pairSplitTM, (computesFunInTime_iff _ _ _).2 fun x => split_computes x⟩
 
 end Turing.FinTM
