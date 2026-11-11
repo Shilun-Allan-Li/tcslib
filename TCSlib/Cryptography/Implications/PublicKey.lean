@@ -24,8 +24,10 @@ short composition of published results. The endpoint here is **adaptive multi-me
 `FixedLengthPKScheme` packages uniform polynomial-time key generation and encryption,
 polynomial-time decryption, fixed-length ciphertexts and perfect correctness. `msgLen = .var`
 makes the message space `{0,1}^n`, so the existential cannot be met by an empty-message scheme.
-`AdaptiveINDSecure .cpa` is the left-or-right game of [PS10, Definition 171.5] with one public
-key, one hidden bit and a polynomial number of adaptively chosen challenges.
+`AdaptiveINDSecure .cpa` is the adaptive multi-challenge extension of the left-or-right game of
+[PS10, Definition 171.5]: one public key, one hidden bit and a polynomial number of adaptively
+chosen challenges (the definition itself has a single challenge; `INDSecure.adaptive_cpa` proves
+the lift).
 
 ## Main results
 
