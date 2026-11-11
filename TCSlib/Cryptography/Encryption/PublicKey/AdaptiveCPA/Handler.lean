@@ -113,6 +113,13 @@ def acTapes (n : ℕ) :
   (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)).trans
     (Equiv.arrowCongr (Equiv.refl _) (NUPPT.coinsEquivPoly rfl n).symm)
 
+/-- `acTapes S cap n ω j = (coinsEquivPoly rfl n).symm (FunFamily.blocks _ _ ω j)`. -/
+theorem acTapes_apply (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
+    (j : Fin (cap.eval n)) :
+    acTapes S cap n ω j =
+      (NUPPT.coinsEquivPoly rfl n).symm (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n) ω j) :=
+  rfl
+
 /-- **Tape `j` is the `j`-th block of the seed:**
 `⟦acTapes S cap n ω j⟧ = (⟦ω⟧.drop (j·ρ(n))).take ρ(n)`.
 
