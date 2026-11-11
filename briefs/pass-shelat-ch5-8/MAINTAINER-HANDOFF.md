@@ -48,7 +48,7 @@ in this folder (identical).
 10. **Other campaign.** Do not touch branch `complexity/arora-barak-ch3-4`, nor the
     `arora-barak-ch3-4/` folder on the exchange branch (another campaign).
 11. **Delivery route (user update, 2026-11-06 PST; supersedes the blanket D-0c push route).**
-    - **Ask Codex or Claude before preparing each audit or fill**, and record the user's choice.
+    - **Ask Codex or Claude before preparing each audit or fill**, and record the user's choice. **Standing ruling (Seyoon, 2026-11-11): Codex for audits and reviews; Claude for fills and all other external jobs; no per-job question unless a job fits neither.**
     - **Codex:** cannot push to GitHub; returns an md or ZIP in the chat. The maintainer intakes
       it verbatim with SHA-256 and records its actual local/chat provenance.
     - **Claude:** may commit and push its assigned delivery path to the exchange branch, with
