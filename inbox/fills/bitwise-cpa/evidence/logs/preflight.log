@@ -1,0 +1,67 @@
+# preflight 2026-11-11T19:40:14Z
+nproc: 4
+-- /proc/meminfo
+MemTotal:       16472084 kB
+MemFree:        15668028 kB
+MemAvailable:   15935248 kB
+Buffers:           66128 kB
+Cached:           349292 kB
+-- df
+/home/user/fill: /dev/vda       ext4 270553174016 20886958080 20396576768  51% /
+/home/user/fill/.lake: /dev/vda       ext4 270553174016 20886958080 20396576768  51% /
+/tmp: /dev/vda       ext4 270553174016 20886958080 20396576768  51% /
+/tmp/claude-0: /dev/vda       ext4 270553174016 20886958080 20396576768  51% /
+-- computation
+ls: cannot access '/sys/fs/cgroup/memory.max': No such file or directory
+/sys/fs/cgroup/memory/memory.limit_in_bytes
+no cgroup memory limit file: headroom = MemAvailable = 15939212 kB = 15.20 GiB (floor 4 GiB): PASS
+free on clone fs = 20396564480 B = 19.00 GiB (floor 12 GiB): PASS
+-- cgroup v1
+memory.limit_in_bytes: 9223372036854771712
+memory.usage_in_bytes: 603967488
+-- memory.stat (v1)
+cache 18509824
+rss 544768
+rss_huge 0
+shmem 17121280
+mapped_file 9474048
+dirty 16384
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 7706
+pgpgout 3053
+pgfault 2105
+pgmajfault 0
+inactive_anon 3272704
+active_anon 0
+inactive_file 20480
+active_file 1368064
+unevictable 14393344
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 425934848
+total_rss 178294784
+total_rss_huge 0
+total_shmem 17121280
+total_mapped_file 144093184
+total_dirty 40058880
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 292849
+total_pgpgout 168791
+total_pgfault 242927
+total_pgmajfault 1967
+total_inactive_anon 180158464
+total_active_anon 40960
+total_inactive_file 291598336
+total_active_file 117219328
+total_unevictable 15056896
+in use = usage 604270592 - total_cache 425934848 + total_shmem 17121280 = 195457024
+headroom (v1) = limit - in use = 9223372036659314688 B = 8589934591.82 GiB
+note: the v1 limit is the unlimited sentinel (2^63-4096), so there is no effective cgroup limit; the binding headroom is MemAvailable 15.20 GiB >= 4 GiB: PASS
