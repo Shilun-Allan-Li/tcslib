@@ -530,17 +530,25 @@ stated for adversaries with input, cover adversaries without one.
 
 **Proof sketch.** `A'` is `NUPPT.exists_comp` of `A` with `pre = pairSndD` and `post = id`, so
 `A'.coins = A.coins` and `A'.runAtL n ⟨x, L⟩ r = A.runAtL n L r` (`pairSndD_pairEncode`). The
-bijection `φ` transports the coins along `A.coinLen n = A'.coinLen n` (`finCongr`), so
-`List.ofFn (φ r) = List.ofFn r` (`List.ofFn_congr`); with `runAt_eq` the next-move functions of
+bijection `φ` is `NUPPT.coinsCongr`, which transports the coins along the equal coin polynomials
+and keeps the coin string (`NUPPT.runAt_coinsCongr`); with `runAt_eq` the next-move functions of
 `A'.toCompOn codec n q x (φ r)` and `A.toComp codec n q r` agree on every log, and
-`toCompOn_eq`, `toComp_eq` conclude. The length equation needs an equation of `NUPPT.coinLen`,
-published beside its definition. -/
+`toCompOn_eq`, `toComp_eq` conclude. -/
 theorem exists_toCompOn_of_toComp (A : NUPPT) :
     ∃ A' : NUPPT, A'.coins = A.coins ∧ ∀ n : ℕ, ∃ φ : A.Coins n ≃ A'.Coins n,
       ∀ {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α) (q : ℕ)
         (x : List Bool) (r : A.Coins n),
         A'.toCompOn codec n q x (φ r) = A.toComp codec n q r := by
-  sorry
+  obtain ⟨A', hc, -, -, hA'⟩ :=
+    NUPPT.exists_comp A polyTimeComputable_pairSndD polyTimeComputable_id
+  refine ⟨A', hc, fun n => ⟨NUPPT.coinsCongr hc.symm n, ?_⟩⟩
+  intro ι α spec codec q x r
+  have hnext : (fun hist => codec.decodeMove
+      (A'.runAt n (pairEncode x (codec.encodeLog hist)) (NUPPT.coinsCongr hc.symm n r))) =
+      fun hist => codec.decodeMove (A.runAt n (codec.encodeLog hist) r) := by
+    funext hist
+    rw [NUPPT.runAt_coinsCongr, hA', pairSndD_pairEncode, id_eq, ← NUPPT.runAt_eq]
+  rw [NUPPT.toCompOn_eq, NUPPT.toComp_eq, hnext]
 
 /-- **T4 (the efficiency fill's target; the bridge to pseudorandom functions).** An oracle
 machine `B` against one `bitCodec` oracle (`ℓ₁(n)`-bit queries, `ℓ₂(n)`-bit answers) with a
