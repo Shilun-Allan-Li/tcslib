@@ -1,0 +1,24 @@
+START 2026-11-11T17:49:27.472795+00:00
+MODULE NotCca2Probe/ControlOracleSecurityAfter
+SEALED|Complexity.NUPPT.coinLen|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAt|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.ProbComp.sample|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.zeroBits|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.decodeFin|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+NotCca2Probe/ControlOracleSecurityAfter.lean:35:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.Games.zeroBits d j
+is not definitionally equal to the right-hand side
+  false
+
+d : ℕ
+j : Fin d
+⊢ TCSlib.Cryptography.Games.zeroBits d j = false
+FAIL(NotCca2Probe/ControlOracleSecurityAfter): lean exited with status 1
+FAIL(NotCca2Probe/ControlOracleSecurityAfter): error diagnostics reported
+FAIL(NotCca2Probe/ControlOracleSecurityAfter): no fresh .olean produced
+END 2026-11-11T17:49:29.932310+00:00
+Elapsed seconds: 2.5
+Maximum child RSS (KiB): 2649972
+EXIT 1

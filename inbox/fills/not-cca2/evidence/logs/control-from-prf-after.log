@@ -1,0 +1,19 @@
+START 2026-11-11T17:49:19.836171+00:00
+MODULE NotCca2Probe/ControlFromPRFAfter
+SEALED|Complexity.NUPPT.ofPolyTimeUniform|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.PolyTimeComputable|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+NotCca2Probe/ControlFromPRFAfter.lean:34:2: error: Tactic `rfl` failed: The left-hand side
+  Turing.pairEncode x a
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+
+x a : List Bool
+⊢ Turing.pairEncode x a = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ a
+FAIL(NotCca2Probe/ControlFromPRFAfter): lean exited with status 1
+FAIL(NotCca2Probe/ControlFromPRFAfter): error diagnostics reported
+FAIL(NotCca2Probe/ControlFromPRFAfter): no fresh .olean produced
+END 2026-11-11T17:49:22.542901+00:00
+Elapsed seconds: 2.7
+Maximum child RSS (KiB): 2707520
+EXIT 1
