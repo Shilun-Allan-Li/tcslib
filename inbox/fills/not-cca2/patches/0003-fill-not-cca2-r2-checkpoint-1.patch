@@ -1,0 +1,246 @@
+From 1e61d862f90fbfb3c25f076a277c400ba066a020 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 17:46:08 +0000
+Subject: [PATCH 3/3] fill not-cca2: r2 checkpoint 1
+
+Add the authorized private-key oracle readers (indSpec_decDom/_decRng,
+indSpec_challengeDom/_challengeRng, indImpl_dec_onSpec,
+indImpl_challenge_none_onSpec) to PrivateKey/OracleSecurity.lean, and prove
+Composability.prfFixedScheme_not_cca2 in PrivateKey/OracleFromPRF.lean via the
+general simulation lemma cca2Run and the decryption reader cca2Decrypt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTm8SAfk12DMX1esC2g
+---
+ .../Encryption/PrivateKey/OracleFromPRF.lean  | 143 +++++++++++++++++-
+ .../Encryption/PrivateKey/OracleSecurity.lean |  46 ++++++
+ 2 files changed, 186 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index e5f555330..108af3fc3 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -420,6 +420,124 @@ private theorem cca2Cipher (n : ℕ) (hn : 0 < n) (k m : Fin n → Bool)
+   refine ⟨x, hc, ?_, cca2Alter_ne hd _⟩
+   rw [cca2Alter_ofFn hd, hc, cca2FlipLast_pair _ _ hp, cca2FlipLast_ofFn hn]
+ 
++/-- Decrypting a pair `⟨x, v⟩` of `n`-bit words under the key `k` unmasks it:
++`Dec_k(⟨x, v⟩) = v ⊕ F n k x`, read as an `n`-bit message. -/
++private theorem cca2Decrypt (n : ℕ) (k x v : Fin n → Bool)
++    (rd : (prfFixedScheme F E hE hFE).dec.Coins n) :
++    decodeFin n ((prfFixedScheme F E hE hFE).dec.runAt n
++      (pairEncode (List.ofFn k) (pairEncode (List.ofFn x) (List.ofFn v))) rd) =
++        some (v + F n k x) := by
++  revert rd
++  rw [prfFixedScheme_dec, prfScheme_dec]
++  intro rd
++  rw [runAt_prfDec hE _ n _ _ _ List.length_ofFn List.length_ofFn, hFE, zipWith_xor_ofFn_add,
++    decodeFin_ofFn]
++
++/-- Transporting a bit vector along a width equality does not change its word:
++`List.ofFn (cast h f) = List.ofFn f` when `h` comes from `a = b`. -/
++private theorem cca2OfFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
++    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
++  subst hab
++  rfl
++
++/-- At `n > 0`, the valid answer `⟨1, b^n ⊕ e_{n-1}⟩` ends in `!b`. -/
++private theorem cca2LastBit {n : ℕ} (hn : 0 < n) (b : Bool) :
++    (List.ofFn (Fin.cons (α := fun _ => Bool) true (cca2FlipBits (n := n) fun _ => b))).getLastD
++      false = !b := by
++  rw [List.ofFn_succ, Fin.cons_zero]
++  simp only [Fin.cons_succ]
++  rw [← cca2FlipLast_ofFn hn, List.ofFn_const]
++  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
++  rw [List.replicate_succ', cca2FlipLast_snoc, ← List.cons_append, List.getLastD_concat]
++
++/-- **The attack against any fixed-length scheme.** Let `A = cca2Adversary` run with budget `2`
++in `IND_b` under CCA2 with the key `k`. Suppose ciphertexts are nonempty and, for every challenge
++`c = Enc_k(b^n)`, every decryption of `c` with its last bit flipped is a message `v` with
++`⟨1, v⟩` ending in `!b`. Then `A` outputs `b` with probability one.
++
++**Proof sketch.** Follow the three activations through `buildComp` and `simulate`.
++1. On the empty log `A` asks `Challenge ⟨0^n, 1^n⟩`; the oracle samples `re`, answers
++   `c = Enc_k(b^n)` (`cca2Messages_choice`) and records it.
++2. On the one-entry log `A` asks `Dec` on `c'`, the flip of `c`; `c' ≠ c` (`cca2Alter_ne`), so
++   CCA2's `Dec` samples `rd` and answers `⟨1, v⟩`.
++3. On the two-entry log `A` outputs `¬(last bit of ⟨1, v⟩) = b`, within the budget.
++Each sampled step is averaged by `expect_const`. -/
++private theorem cca2Run (S : FixedLengthScheme) (n : ℕ) (hd : 0 < S.ctLen.eval n)
++    (b : Bool) (k : List Bool)
++    (hdec : ∀ (re : S.enc.Coins n) (rd : S.dec.Coins n), ∃ v : Fin n → Bool,
++      decodeFin n (S.dec.runAt n (pairEncode k (List.ofFn
++        (cca2Alter (S.encryptAt n k (fun _ => b) re)))) rd) = some v ∧
++      (List.ofFn (Fin.cons (α := fun _ => Bool) true v)).getLastD false = !b)
++    (r : cca2Adversary.Coins n) :
++    ProbComp.prob ((simulate (S.indImpl .cca2 b n k) (cca2Adversary.toComp (S.indCodec n) n 2 r)
++      none).bind fun res => .pure (res.1 0)) (· = true) = if b = true then 1 else 0 := by
++  obtain ⟨x, hx⟩ : ∃ x : (S.indSpec n).dom 2,
++      x = cast (S.indSpec_challengeDom n).symm (cca2Messages n) := ⟨_, rfl⟩
++  have h1 : (S.indCodec n).decodeMove
++      (cca2Adversary.runAt n ((S.indCodec n).encodeLog []) r) = .query 2 x := by
++    rw [MachineCodec.encodeLog_nil, cca2Adversary_run, if_pos rfl,
++      FixedLengthScheme.indCodec_decodeMove]
++    have hw : List.ofFn x = List.replicate n false ++ List.replicate n true := by
++      rw [hx, cca2OfFn_cast (S.inLens_two n).symm, cca2Messages_ofFn]
++    rw [← hw]
++    exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 2 x
++  rw [NUPPT.toComp_eq, buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
++    (cca2Adversary.runAt n ((S.indCodec n).encodeLog hist) r)) h1, simulate_query,
++    FixedLengthScheme.indImpl_challenge_none_onSpec]
++  have hxc : cast (S.indSpec_challengeDom n) x = cca2Messages n := by
++    rw [hx, cast_cast, cast_eq]
++  simp only [hxc, cca2Messages_choice, OracleComp.bind_assoc, OracleComp.pure_bind,
++    List.nil_append]
++  rw [ProbComp.prob_bind]
++  refine (congrArg (ProbComp.expect _) (funext fun re => ?_)).trans (ProbComp.expect_const _ _)
++  have hne := cca2Alter_ne hd (S.encryptAt n k (fun _ => b) re)
++  have h2 : (S.indCodec n).decodeMove (cca2Adversary.runAt n ((S.indCodec n).encodeLog
++      [⟨2, x, cast (S.indSpec_challengeRng n).symm (S.encryptAt n k (fun _ => b) re)⟩]) r) =
++      .query 1 (cast (S.indSpec_decDom n).symm
++        (cca2Alter (S.encryptAt n k (fun _ => b) re))) := by
++    simp only [MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
++      FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_one,
++      FixedLengthScheme.indCodec_decodeMove]
++    rw [cca2OfFn_cast (S.outLens_two n).symm, ← cca2Alter_ofFn hd,
++      ← cca2OfFn_cast (S.inLens_one n).symm (S.indSpec_decDom n).symm]
++    exact decodeBitMove_query (S.inLens n) (S.outLens n) 1 1 _
++  rw [buildComp_succ_of_query (next := fun hist => (S.indCodec n).decodeMove
++    (cca2Adversary.runAt n ((S.indCodec n).encodeLog hist) r)) h2, simulate_query,
++    FixedLengthScheme.indImpl_dec_onSpec]
++  have hcc : cast (S.indSpec_decDom n) (cast (S.indSpec_decDom n).symm
++      (cca2Alter (S.encryptAt n k (fun _ => b) re))) =
++        cca2Alter (S.encryptAt n k (fun _ => b) re) := by
++    rw [cast_cast, cast_eq]
++  have hopen : (FixedLengthScheme.decOpen .cca2
++      (some (S.encryptAt n k (fun _ => b) re)).isSome && !decide
++        (some (S.encryptAt n k (fun _ => b) re) =
++          some (cca2Alter (S.encryptAt n k (fun _ => b) re)))) = true := by
++    simp only [FixedLengthScheme.decOpen_cca2, Option.some.injEq,
++      Bool.true_and, Bool.not_eq_eq_eq_not, Bool.not_true, decide_eq_false_iff_not]
++    exact fun h => hne h.symm
++  rw [hcc, if_pos hopen]
++  simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
++  rw [ProbComp.prob_bind]
++  refine (congrArg (ProbComp.expect _) (funext fun rd => ?_)).trans (ProbComp.expect_const _ _)
++  obtain ⟨v, hv, hlast⟩ := hdec re rd
++  rw [hv, FixedLengthScheme.decAnswer_some]
++  have h3 : (S.indCodec n).decodeMove (cca2Adversary.runAt n ((S.indCodec n).encodeLog
++      ([⟨2, x, cast (S.indSpec_challengeRng n).symm (S.encryptAt n k (fun _ => b) re)⟩] ++
++        [⟨1, cast (S.indSpec_decDom n).symm (cca2Alter (S.encryptAt n k (fun _ => b) re)),
++          cast (S.indSpec_decRng n).symm (Fin.cons (α := fun _ => Bool) true v)⟩])) r) =
++      .ret fun _ => b := by
++    simp only [List.singleton_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil,
++      FixedLengthScheme.indCodec_encodeEntry, cca2Adversary_two,
++      FixedLengthScheme.indCodec_decodeMove]
++    rw [cca2OfFn_cast (S.outLens_one n).symm, hlast, Bool.not_not]
++    have hb : [b] = List.ofFn (fun _ : Fin 1 => b) := by
++      rw [List.ofFn_const, List.replicate_one]
++    rw [hb]
++    exact decodeBitMove_ret (S.inLens n) (S.outLens n) 1 _
++  rw [buildComp_zero_of_ret (next := fun hist => (S.indCodec n).decodeMove
++    (cca2Adversary.runAt n ((S.indCodec n).encodeLog hist) r)) h3, simulate_pure,
++    OracleComp.pure_bind, ProbComp.prob_pure]
++
+ /-- **Claim 169.a: the §3.9 scheme is not CCA2-secure** [PS10, §7.1.3, p. 169], whatever the
+ family `F`. Some adversary, with a constant query budget, has advantage `1` at every `n > 0`.
+ 
+@@ -431,16 +549,35 @@ well-formed ciphertext, which CCA2's `Dec` therefore answers.
+ 1. The machine `A` reads its log. With an empty log, it asks the challenge on `⟨0^n, 1^n⟩`. With
+    one entry, the challenge answer `c`, it asks `Dec` on `c` with its last bit flipped. With two
+    entries, the second a `Dec` answer `⟨v, m'⟩`, it outputs `¬ m'_{n-1}`. It is polynomial-time
+-   (`NUPPT.ofPolyTimeUniform`).
++   (`NUPPT.ofPolyTimeUniform`); its query budget is `2`, so the third activation's output is read.
+ 2. In `IND_b` the challenge is `c = ⟨r, b^n ⊕ f_k(r)⟩`. For `n > 0` its last bit lies in the
+    second component, so the flipped string `c'` is `⟨r, b^n ⊕ e_{n-1} ⊕ f_k(r)⟩`: well-formed,
+    and not `c`. CCA2's `Dec` answers `⟨1, b^n ⊕ e_{n-1}⟩` (`runAt_prfDec`).
+-3. So `A` outputs `b` with probability `1`, and the advantage is `|0 − 1| = 1`. -/
++3. So, for every key and all coins, `A` outputs `b` (`cca2Run`): `IND_b` accepts with probability
++   `1` if `b = 1` and `0` if `b = 0`, and the advantage is `|0 − 1| = 1`. -/
+ theorem prfFixedScheme_not_cca2 :
+     ∃ (A : NUPPT) (q : PolyExpr), ∀ n, 0 < n →
+       advantage ((prfFixedScheme F E hE hFE).indGame .cca2 A (q.eval n) false n)
+         ((prfFixedScheme F E hE hFE).indGame .cca2 A (q.eval n) true n) = 1 := by
+-  sorry
++  refine ⟨cca2Adversary, .const 2, fun n hn => ?_⟩
++  have hd : 0 < (prfFixedScheme F E hE hFE).ctLen.eval n := by
++    rw [cca2CtLen]
++    omega
++  have hacc : ∀ b : Bool, accept ((prfFixedScheme F E hE hFE).indGame .cca2 cca2Adversary
++      ((PolyExpr.const 2).eval n) b n) = if b = true then 1 else 0 := by
++    intro b
++    rw [PolyExpr.eval_const, accept_eq, FixedLengthScheme.indGame_eq, ProbComp.prob_bind]
++    refine (congrArg (ProbComp.expect _) (funext fun rg => ?_)).trans (ProbComp.expect_const _ _)
++    obtain ⟨kv, hk⟩ := cca2Gen F E hE hFE n rg
++    rw [ProbComp.prob_bind]
++    refine (congrArg (ProbComp.expect _) (funext fun r => ?_)).trans (ProbComp.expect_const _ _)
++    rw [hk]
++    refine cca2Run _ n hd b _ (fun re rd => ?_) r
++    obtain ⟨xr, -, hc, -⟩ := cca2Cipher F E hE hFE n hn kv (fun _ => b) re
++    refine ⟨cca2FlipBits (fun _ => b), ?_, cca2LastBit hn b⟩
++    rw [hc, cca2Decrypt, cca2FlipBits_unmask]
++  rw [advantage_eq, hacc, hacc]
++  norm_num
+ 
+ /-- **The §3.9 scheme is not CCA2-secure** in the sense of Definition 168.1: an advantage equal
+ to `1` at every positive `n` is not negligible (Claim 169.a). -/
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+index 3d3381c8b..42e6dac1e 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+@@ -242,6 +242,52 @@ theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (k : List B
+     (mm : Fin (n + n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
+     S.indImpl atk b n k 2 mm (some c) = .pure (c, some c) := rfl
+ 
++/-- The decryption oracle accepts a ciphertext at the fixed ciphertext width:
++`(S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool)`. -/
++theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool) := by
++  rw [S.indSpec_eq, bitSpec_dom, S.inLens_one]
++
++/-- The decryption oracle answers a validity bit followed by an `n`-bit message:
++`(S.indSpec n).rng 1 = (Fin (n + 1) → Bool)`. -/
++theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 1 = (Fin (n + 1) → Bool) := by
++  rw [S.indSpec_eq, bitSpec_rng, S.outLens_one]
++
++/-- A challenge query contains two `n`-bit messages:
++`(S.indSpec n).dom 2 = (Fin (n + n) → Bool)`. -/
++theorem indSpec_challengeDom (n : ℕ) : (S.indSpec n).dom 2 = (Fin (n + n) → Bool) := by
++  rw [S.indSpec_eq, bitSpec_dom, S.inLens_two]
++
++/-- The challenge oracle answers a ciphertext at the fixed ciphertext width:
++`(S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool)`. -/
++theorem indSpec_challengeRng (n : ℕ) : (S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool) := by
++  rw [S.indSpec_eq, bitSpec_rng, S.outLens_two]
++
++/-- The decryption equation on the query specification's type: with `c' = cast _ c` the
++ciphertext read at width `ct(n)`, `S.indImpl atk b n k 1 c st` is
++`if decOpen atk st.isSome && !decide (st = some c')` then a fresh `r ← Dec.Coins n` and the answer
++`cast _ (decAnswer (decodeFin n (Dec.runAt n ⟨k, c'⟩ r)))` with state `st`, else `⊥` with `st`. -/
++theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
++    (c : (S.indSpec n).dom 1) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
++    S.indImpl atk b n k 1 c st =
++      if decOpen atk st.isSome && !decide (st = some (cast (S.indSpec_decDom n) c)) then
++        (ProbComp.sample (S.dec.Coins n)).bind fun r =>
++          .pure (cast (S.indSpec_decRng n).symm (decAnswer (decodeFin n
++            (S.dec.runAt n (pairEncode k (List.ofFn (cast (S.indSpec_decDom n) c))) r))), st)
++      else .pure (zeroBits _, st) := by
++  simpa only [cast_eq] using S.indImpl_dec atk b n k c st
++
++/-- The fresh challenge equation on the query specification's type: with
++`⟨m₀, m₁⟩ = splitHalf (cast _ mm)`, `S.indImpl atk b n k 2 mm none` draws `r ← Enc.Coins n`,
++sets `c = S.encryptAt n k m_b r`, and returns `cast _ c` with the state `some c`. -/
++theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
++    (mm : (S.indSpec n).dom 2) :
++    S.indImpl atk b n k 2 mm none =
++      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
++        let halves := splitHalf (cast (S.indSpec_challengeDom n) mm)
++        let c := S.encryptAt n k (if b then halves.2 else halves.1) r
++        .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
++  simpa only [cast_eq] using S.indImpl_challenge_none atk b n k mm
++
+ /-- The codec of the adversary: the three oracles, and a one-bit final output. -/
+ def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=
+   bitCodec (S.inLens n) (S.outLens n) 1
+-- 
+2.43.0
+

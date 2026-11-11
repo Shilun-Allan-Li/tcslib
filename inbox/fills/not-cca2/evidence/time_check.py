@@ -1,4 +1,4 @@
-"""Check one module using the issued script, recording time and child maximum RSS."""
+"""Check one module through scripts/lean_check_tree.sh; log UTC start/end, elapsed, max child RSS."""
 import datetime
 import resource
 import subprocess
@@ -11,8 +11,7 @@ start = time.monotonic()
 result = subprocess.run(['bash', 'scripts/lean_check_tree.sh', sys.argv[1]])
 usage = resource.getrusage(resource.RUSAGE_CHILDREN)
 print('END', datetime.datetime.now(datetime.timezone.utc).isoformat())
-print('Elapsed seconds:', time.monotonic() - start)
+print('Elapsed seconds: %.1f' % (time.monotonic() - start))
 print('Maximum child RSS (KiB):', usage.ru_maxrss)
-print('User seconds:', usage.ru_utime, 'System seconds:', usage.ru_stime)
 print('EXIT', result.returncode)
 sys.exit(result.returncode)

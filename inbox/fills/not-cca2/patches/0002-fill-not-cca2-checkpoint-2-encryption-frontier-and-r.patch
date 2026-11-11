@@ -1,7 +1,7 @@
-From 9f057f65bbb1b1795dd30a179c47b5b670a01452 Mon Sep 17 00:00:00 2001
+From 94115f54a56cf8c6431066597f0da9fb5705c8b1 Mon Sep 17 00:00:00 2001
 From: Codex <codex@openai.com>
 Date: Wed, 11 Nov 2026 01:21:48 -0800
-Subject: [PATCH 2/2] fill not-cca2: checkpoint 2 encryption frontier and
+Subject: [PATCH 2/3] fill not-cca2: checkpoint 2 encryption frontier and
  reader escalation
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 2/2] fill not-cca2: checkpoint 2 encryption frontier and
  1 file changed, 112 insertions(+)
 
 diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
-index d88168ee..e5f55533 100644
+index d88168eee..e5f555330 100644
 --- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
 +++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
 @@ -308,6 +308,118 @@ private theorem cca2Adversary_two (n : ℕ) (i x c j y d : List Bool)
@@ -132,5 +132,5 @@ index d88168ee..e5f55533 100644
  family `F`. Some adversary, with a constant query budget, has advantage `1` at every `n > 0`.
  
 -- 
-2.52.0
+2.43.0
 

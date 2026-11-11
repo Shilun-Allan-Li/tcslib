@@ -3,3 +3,9 @@ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF
 #print axioms TCSlib.Cryptography.Composability.prfFixedScheme_not_cca2
 #print axioms TCSlib.Cryptography.Composability.not_prfFixedScheme_cca2
 #print axioms TCSlib.Cryptography.prfScheme_dec
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indSpec_decDom
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indSpec_decRng
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indSpec_challengeDom
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indSpec_challengeRng
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indImpl_dec_onSpec
+#print axioms TCSlib.Cryptography.Composability.FixedLengthScheme.indImpl_challenge_none_onSpec

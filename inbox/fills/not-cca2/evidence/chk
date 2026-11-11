@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# chk <module-path-without-.lean> <logfile> : one module, one Lean process
+cd /home/user/fill && export PATH=/home/user/toolchain/lean-4.25.0-linux/bin:$PATH
+python3 -I /home/user/tools/time_check.py "$1" 2>&1 | tee "$2"
+exit ${PIPESTATUS[0]}
