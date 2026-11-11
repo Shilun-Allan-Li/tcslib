@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Encryption.PrivateKey
 import TCSlib.Cryptography.Encryption.Symmetric
 import TCSlib.Cryptography.Encryption.PublicKey
+import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
