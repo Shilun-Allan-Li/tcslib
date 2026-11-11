@@ -1,0 +1,1989 @@
+From 4a04a943be6c23b4207eaa543315bf931d55a214 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:02:03 +0000
+Subject: [PATCH 4/4] fill s2b-efficiency: prove
+ exists_interactiveHandlerMachine (T2)
+
+New helper modules under Games/Efficiency/:
+- Replay: ReplaysFrom and buildComp_of_replaysFrom (S3), and the cost
+  scaling lemma costBoundedBy_mul.
+- Interactive: the replay machine iRaw of an interactive handler (adversary,
+  call and finalization phases, one activation per round, the unreplayed
+  outer log in the state), its polynomial time and its round lemmas.
+- InteractiveSpec: the raw call/implementation/finalization (iCall, iImpl,
+  iFinish), the replay invariant and the phase inductions (fin_phase,
+  call_phase, adv_phase), and the functional equation iRaw_spec.
+T2's sketch and the module docstring (status, Contents) are updated.
+---
+ TCSlib/Cryptography/Games/Efficiency.lean     |  98 +-
+ .../Games/Efficiency/Interactive.lean         | 838 +++++++++++++++++
+ .../Games/Efficiency/InteractiveSpec.lean     | 849 ++++++++++++++++++
+ .../Cryptography/Games/Efficiency/Replay.lean | 117 +++
+ 4 files changed, 1880 insertions(+), 22 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Games/Efficiency/Interactive.lean
+ create mode 100644 TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean
+ create mode 100644 TCSlib/Cryptography/Games/Efficiency/Replay.lean
+
+diff --git a/TCSlib/Cryptography/Games/Efficiency.lean b/TCSlib/Cryptography/Games/Efficiency.lean
+index 0428fffb7..139d77324 100644
+--- a/TCSlib/Cryptography/Games/Efficiency.lean
++++ b/TCSlib/Cryptography/Games/Efficiency.lean
+@@ -6,15 +6,18 @@ import TCSlib.Cryptography.Games.BitCodec
+ import TCSlib.Cryptography.Games.Probability
+ import TCSlib.Cryptography.Games.Bridges.Machines
+ import TCSlib.Cryptography.Games.Efficiency.Strings
++import TCSlib.Cryptography.Games.Efficiency.Replay
+ import TCSlib.Cryptography.Games.Efficiency.Handler
+ import TCSlib.Cryptography.Games.Efficiency.OracleBridge
++import TCSlib.Cryptography.Games.Efficiency.Interactive
++import TCSlib.Cryptography.Games.Efficiency.InteractiveSpec
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The efficiency of reductions (skeleton for the efficiency fill)
++# The efficiency of reductions
+ 
+ A reduction runs a machine adversary `A` and answers `A`'s queries with a polynomial-time
+ **handler**. Proved once, the targets below say that the result is again a machine, so the
+@@ -22,9 +25,20 @@ hardness assumptions, which quantify over machines (`Complexity.NUPPT`), apply t
+ `briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`. The template is Frederick Dehmel's GGM
+ reduction machine (`Asymptotic/GGMReduction*.lean`), whose loop `GGMRed.stateLoopFun` is reused.
+ 
+-**Status: skeleton.** The definitions (T0) are final. The statements of T1, T2 and T4 and of the
+-companion `exists_toCompOn_of_toComp` are frozen at the issue of the fill brief
+-(`briefs/pass-shelat-ch5-8/fills/efficiency/`). Their proofs are the fill's.
++**Status: proved.** The definitions (T0) are final. The statements of T1, T2 and T4 and of the
++companion `exists_toCompOn_of_toComp` were frozen at the issue of the fill brief
++(`briefs/pass-shelat-ch5-8/fills/efficiency/`); the efficiency fill (`s2b-efficiency`) proved them,
++with the helper modules below (namespace `TCSlib.Cryptography.Games.EffFill`).
++
++## Contents
++
++* `Games.Efficiency.Strings`: the string layer (log append, fixed-length decoding, the canonical
++  decoder, the activation loop over `GGMRed.stateLoopFun`, the machine glue).
++* `Games.Efficiency.Replay`: replaying a computation with a next-move function; cost scaling.
++* `Games.Efficiency.Handler`: the machine of a non-interactive handler (T1).
++* `Games.Efficiency.OracleBridge`: the translators to next-query machines (T4).
++* `Games.Efficiency.Interactive`: the replay machine of an interactive handler (T2).
++* `Games.Efficiency.InteractiveSpec`: its functional equation (T2).
+ 
+ ## The shape of a reduction
+ 
+@@ -541,23 +555,29 @@ with coins `φ (ω, r)` is, as an oracle computation, exactly the reduction: `A`
+ `H.advInput n z ω`, its queries answered by `H` (input `z`, seed `ω`) from `H`'s initial state,
+ followed by `H`'s finalization on the final state and `A`'s output.
+ 
+-**Proof sketch** (the fill's; route note §"The route", with the log replay).
+-1. `B`'s next-move function, on `⟨z, outer log⟩` with coins `(ω, r)`, first computes `A`'s input
+-   `H.advIn (seedIn n z ω)` (`H.advIn_poly`). It then replays: it splits the outer log into the
+-   calls of `H` and the finalization. Within each call it reruns `H.run` round by round, and
+-   between calls it reruns `A`'s next-move function on `⟨A's input, inner log⟩`, the inner log
+-   rebuilt from the calls' answers. Once `A` returns `a` (or meets its own budget), it reruns
+-   `H.finRun` on `⟨seedIn n z ω, ⟨s, ⟨a, L⟩⟩⟩` with the rest `L` of the log. It stops at the first
+-   pending outer query (and asks it) or at the finalization's output (and returns its canonical
+-   word, `encodeBitMove`). Every length is fixed, so each replay is polynomial
+-   (`stateLoopFun_poly`, as in T1).
+-2. `B`'s budget suffices: each of `A`'s at most `q(n)` queries costs at most `perCall(n)` outer
+-   queries and the finalization at most `finCall(n)` (`buildComp_costBoundedBy`,
+-   `simulate_costBoundedBy`, `CostBoundedBy.bind`), so `B` never meets its own timeout before
+-   the reduction ends, and it mirrors every default of `A`, of a call and of the finalization.
+-3. The functional equation: by induction on the outer log, the two computation trees agree node
+-   by node (`simulate_query`, `impl_apply`, `call_eq`, `finish_eq`, `toCompOn_eq`, `buildComp`'s
+-   case lemmas, `decodeBitMove_encodeBitMove`). Coins split as `(ω, r)` by `exists_split`. -/
++**Proof sketch** (the fill's; route note §"T2", with the log replay).
++1. `B`'s next-move function, on `⟨z, O⟩` (`O` its encoded outer log) with the seed `ω`, `A`'s coins
++   `r` and the advice `⟨α_A, s₀⟩` (`s₀ = H.init n`, as in T1), is the activation loop
++   `EffFill.iRaw`, which **replays** the whole reduction, one activation per round: a round of `A`
++   opens a call (a query within budget) or the finalization (an output, or a query at budget `0`
++   with the all-`false` output); a round of a call reruns `H.run` on
++   `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, its answer (or the joint default at budget `0`) appending
++   the entry to `A`'s log; a round of the finalization reruns `H.finRun`. An outer query within
++   budget is answered by the next entry of `O`; when `O` is exhausted it is `B`'s next move, its
++   canonical word (`EffFill.canonWord_eq`), and so is the finalization's output.
++2. At most `2 + finCall(n) + q(n)(perCall(n) + 2)` rounds, with states of polynomial length
++   (the unreplayed part of `O` is bounded by the input), so the raw function is polynomial-time
++   (`EffFill.iRaw_poly`, from `GGMRed.stateLoopFun_poly`).
++3. The reduction tree makes at most `q(n) · perCall(n) + finCall(n)` queries
++   (`toCompOn_costBoundedBy`, `buildComp_costBoundedBy`, `EffFill.costBoundedBy_mul`,
++   `simulate_costBoundedBy`, `CostBoundedBy.bind`), so `B`'s budget never cuts the replay short.
++4. The functional equation (`EffFill.iRaw_spec`): `B`'s next-move function replays the reduction
++   tree from the empty log (`EffFill.ReplaysFrom`), by induction along the phases
++   (`EffFill.adv_phase`, `call_phase`, `fin_phase`) on every branch, since the outer answers are
++   arbitrary; then `EffFill.buildComp_of_replaysFrom` gives the equality of trees. The handler's
++   calls and finalization are read through `impl_apply`, `call_eq`, `input_eq`, `finish_eq` and
++   `finInput_eq`.
++5. Coins and advice as in T1 (`EffFill.exists_splitMachine`). -/
+ theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
+     (din dout : Fin k → PolyExpr) (din' dout' : Fin k' → PolyExpr) (dα : PolyExpr)
+     (H : InteractiveHandler k din dout k' din' dout') :
+@@ -570,7 +590,41 @@ theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
+           B.toCompOn
+             (bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (H.outLen.eval n))
+             n (q.eval n * H.perCall.eval n + H.finCall.eval n) z (φ (ω, r)) := by
+-  sorry
++  -- The machine: the replay loop of `EffFill.iRaw`, with `⟨A.advice n, s₀⟩` as advice and the
++  -- seed passed as data.
++  obtain ⟨B, hB⟩ := EffFill.exists_splitMachine A
++    (EffFill.iRaw_poly A q dα din dout din' H.stateLen H.perCall H.outLen H.finCall dout' H.poly
++      H.advIn_poly H.finRun_poly)
++    (.add (.add (.mul (.const 2) A.adv) (.const 2)) H.stateLen)
++    (fun n => pairEncode (A.advice n) (List.ofFn (H.init n))) (fun n => by
++      rw [length_pairEncode, List.length_ofFn]
++      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++      have := A.advice_length n
++      omega) H.seedLen
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  refine ⟨φ, fun z ω r => ?_⟩
++  -- The handler's calls and finalization are the raw ones of `EffFill`.
++  have himpl : H.impl n z ω =
++      EffFill.iImpl din dout din' dout' H.stateLen H.perCall H.run n z (List.ofFn ω) := by
++    funext i x s
++    rw [InteractiveHandler.impl_apply, EffFill.iImpl_apply, InteractiveHandler.call_eq,
++      EffFill.iCall_eq]
++    simp only [InteractiveHandler.input_eq]
++  have hfin : ∀ (s : Fin (H.stateLen.eval n) → Bool) (a : Fin (dα.eval n) → Bool),
++      H.finish n z ω s a =
++        EffFill.iFinish din' dout' H.stateLen H.outLen H.finCall H.finRun n z (List.ofFn ω) s a :=
++            by
++    intro s a
++    rw [InteractiveHandler.finish_eq, EffFill.iFinish_eq]
++    simp only [InteractiveHandler.finInput_eq, seedIn_eq]
++  rw [himpl, InteractiveHandler.advInput_eq, seedIn_eq]
++  simp only [hfin]
++  rw [← EffFill.iRaw_spec A q dα din dout din' dout' H.stateLen H.perCall H.outLen H.finCall H.run
++    H.advIn H.finRun n z (List.ofFn ω) r (H.init n), NUPPT.toCompOn_eq, bitCodec_timeout]
++  congr 1
++  funext O
++  rw [bitCodec_decodeMove, hφ, EffFill.iX_eq]
+ 
+ /-! ### Companions: adversaries without input, and the bridge to pseudorandom functions (T4) -/
+ 
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Interactive.lean b/TCSlib/Cryptography/Games/Efficiency/Interactive.lean
+new file mode 100644
+index 000000000..6901f47d1
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Efficiency/Interactive.lean
+@@ -0,0 +1,838 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency.Strings
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The replay machine of an interactive handler (efficiency fill, T2)
++
++The raw function behind `Games.exists_interactiveHandlerMachine` (route note
++`briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`, §"T2"), over the raw ingredients of an
++interactive handler. Its functional equation is in
++`TCSlib.Cryptography.Games.Efficiency.InteractiveSpec`.
++
++The machine is an oracle machine against the outer oracles. On the raw layout
++`X = ⟨⟨⟨1^n, ⟨⟨z, O⟩, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩`, where `O` is its own encoded outer log, it replays the
++whole reduction in an activation loop (`EffFill.actLoop`), one activation per round, on the state
++`⟨ph, ⟨L, ⟨s, ⟨1^b, ⟨cur, ⟨L', ⟨1^c, O'⟩⟩⟩⟩⟩⟩⟩` (`iSt`):
++- the phase `ph`: `[]` the adversary, `[true]` a call of the handler, `[false]` the finalization;
++- the adversary's encoded log `L`, the handler's state `s` and the adversary's remaining budget `b`;
++- in a call, the pending inner query `cur = ⟨1^i, x⟩`; in the finalization, the adversary's output
++  `cur = a`;
++- the outer log `L'` of the current call or finalization, and its remaining budget `c`;
++- the part `O'` of `O` not yet replayed.
++
++A round of the adversary runs `A` and opens a call (a query within budget) or the finalization (an
++output, or a query at budget `0` with the all-`false` output). A round of a call runs `run` on
++`⟨ctx, ⟨s, ⟨cur, L'⟩⟩⟩`: its answer `⟨y, s'⟩` (or the joint default at budget `0`) appends the
++entry to `L` and returns to the adversary; an outer query is answered by the next entry of `O'`,
++or, if `O'` is exhausted, **is the machine's next move**. The finalization runs `finRun` the same
++way and stops with its output.
++
++## Main definitions
++
++* `EffFill.iSt`: the state word; `EffFill.iAct`, `EffFill.iStart`, `EffFill.iRaw`: the round, the
++  initial state and the raw function; `EffFill.iRounds`, `EffFill.iBound`: the bounds.
++
++## Main results
++
++* `EffFill.iRaw_poly`: the raw function is polynomial-time.
++* `EffFill.iAct_adv_ret`, …, `EffFill.iAct_fin_ask`: the round on each kind of state.
++* `EffFill.length_iSt_le`: the state bound.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (closure of p.p.t. machines under efficient operations; for example the reductions of the
++  proofs of Theorems 135.4 and 168.2).
++-/
++
++namespace TCSlib.Cryptography.Games.EffFill
++
++open Complexity Turing
++
++variable {k k' : ℕ}
++
++/-! ### The state word -/
++
++/-- The state word `⟨ph, ⟨L, ⟨s, ⟨bA, ⟨cur, ⟨L', ⟨c, O'⟩⟩⟩⟩⟩⟩⟩` of the replay machine. -/
++def iSt (ph L s bA cur L' c O' : List Bool) : List Bool :=
++  pairEncode ph (pairEncode L (pairEncode s (pairEncode bA (pairEncode cur
++    (pairEncode L' (pairEncode c O'))))))
++
++/-- The defining equation of `iSt`. -/
++theorem iSt_eq (ph L s bA cur L' c O' : List Bool) :
++    iSt ph L s bA cur L' c O' = pairEncode ph (pairEncode L (pairEncode s (pairEncode bA
++      (pairEncode cur (pairEncode L' (pairEncode c O')))))) :=
++  rfl
++
++/-- The phase of a state word. -/
++def gPh (S : List Bool) : List Bool := pairFstD S
++/-- The adversary's log of a state word. -/
++def gLin (S : List Bool) : List Bool := pairFstD (pairSndD S)
++/-- The handler's state of a state word. -/
++def gS (S : List Bool) : List Bool := pairFstD (pairSndD (pairSndD S))
++/-- The adversary's remaining budget of a state word. -/
++def gB (S : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (pairSndD S)))
++/-- The pending query or output of a state word. -/
++def gCur (S : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (pairSndD (pairSndD S))))
++/-- The outer log of the current call or finalization. -/
++def gLc (S : List Bool) : List Bool :=
++  pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD S)))))
++/-- The remaining budget of the current call or finalization. -/
++def gC (S : List Bool) : List Bool :=
++  pairFstD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD S))))))
++/-- The part of the outer log not yet replayed. -/
++def gO (S : List Bool) : List Bool :=
++  pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD (pairSndD S))))))
++
++section Read
++
++variable (ph L s bA cur L' c O' : List Bool)
++
++/-- `gPh (iSt ph …) = ph`. -/
++theorem gPh_iSt : gPh (iSt ph L s bA cur L' c O') = ph := by
++  simp only [gPh, iSt_eq, pairFstD_pairEncode]
++/-- `gLin (iSt ph L …) = L`. -/
++theorem gLin_iSt : gLin (iSt ph L s bA cur L' c O') = L := by
++  simp only [gLin, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gS (iSt ph L s …) = s`. -/
++theorem gS_iSt : gS (iSt ph L s bA cur L' c O') = s := by
++  simp only [gS, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gB (iSt … bA …) = bA`. -/
++theorem gB_iSt : gB (iSt ph L s bA cur L' c O') = bA := by
++  simp only [gB, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gCur (iSt … cur …) = cur`. -/
++theorem gCur_iSt : gCur (iSt ph L s bA cur L' c O') = cur := by
++  simp only [gCur, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gLc (iSt … L' …) = L'`. -/
++theorem gLc_iSt : gLc (iSt ph L s bA cur L' c O') = L' := by
++  simp only [gLc, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gC (iSt … c O') = c`. -/
++theorem gC_iSt : gC (iSt ph L s bA cur L' c O') = c := by
++  simp only [gC, iSt_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++/-- `gO (iSt … O') = O'`. -/
++theorem gO_iSt : gO (iSt ph L s bA cur L' c O') = O' := by
++  simp only [gO, iSt_eq, pairSndD_pairEncode]
++
++end Read
++
++/-- The context `⟨1^n, ⟨z, ω⟩⟩` read off the raw layout `⟨⟨⟨1^n, ⟨⟨z, O⟩, ω⟩⟩, α⟩, r⟩`. -/
++def iCtx (X : List Bool) : List Bool :=
++  pairEncode (NUPPT.inParam X)
++    (pairEncode (pairFstD (pairFstD (NUPPT.inArg X))) (pairSndD (NUPPT.inArg X)))
++
++/-- The defining equation of `iCtx`. -/
++theorem iCtx_eq (X : List Bool) : iCtx X = pairEncode (NUPPT.inParam X)
++    (pairEncode (pairFstD (pairFstD (NUPPT.inArg X))) (pairSndD (NUPPT.inArg X))) :=
++  rfl
++
++/-- The machine's own outer log `O`, read off the raw layout. -/
++def iOuter (X : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inArg X))
++
++/-- `iOuter X = snd (fst (inArg X))`. -/
++theorem iOuter_eq (X : List Bool) : iOuter X = pairSndD (pairFstD (NUPPT.inArg X)) := rfl
++
++/-! ### The rounds -/
++
++section Raw
++
++variable (A : NUPPT) (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (din' : Fin k' → PolyExpr)
++  (stateLen perCall outLen finCall : PolyExpr) (run advIn finRun : List Bool → List Bool)
++
++/-- The adversary's canonical move word in a round of the adversary phase. -/
++def iAdvMove (w : List Bool) : List Bool :=
++  canonFun din (pairEncode (NUPPT.inParam (pairFstD w))
++    (pairEncode (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) true)
++      (A.output (NUPPT.layout (NUPPT.inParam (pairFstD w))
++        (pairEncode (advIn (iCtx (pairFstD w))) (gLin (pairSndD w)))
++        (pairFstD (NUPPT.inAdvice (pairFstD w))) (NUPPT.inCoins (pairFstD w))))))
++
++/-- The defining equation of `iAdvMove`. -/
++theorem iAdvMove_eq (w : List Bool) :
++    iAdvMove A dα din advIn w =
++      canonFun din (pairEncode (NUPPT.inParam (pairFstD w))
++        (pairEncode (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (A.output (NUPPT.layout (NUPPT.inParam (pairFstD w))
++            (pairEncode (advIn (iCtx (pairFstD w))) (gLin (pairSndD w)))
++            (pairFstD (NUPPT.inAdvice (pairFstD w))) (NUPPT.inCoins (pairFstD w)))))) :=
++  rfl
++
++/-- **A round of the adversary:** an output `a` opens the finalization with `cur = a`; a query at
++budget `0` opens it with `0^{dα(n)}`; a query within budget opens a call with `cur = ⟨1^i, x⟩`. -/
++def iAdvAct (w : List Bool) : List Bool :=
++  if pairFstD (iAdvMove A dα din advIn w) = [true] then
++    pairEncode [false] (iSt [false] (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w))
++      (pairSndD (iAdvMove A dα din advIn w)) []
++      (List.replicate (finCall.eval (NUPPT.inParam (pairFstD w)).length) true) (gO (pairSndD w)))
++  else if gB (pairSndD w) = [] then
++    pairEncode [false] (iSt [false] (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w))
++      (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false) []
++      (List.replicate (finCall.eval (NUPPT.inParam (pairFstD w)).length) true) (gO (pairSndD w)))
++  else
++    pairEncode [false] (iSt [true] (gLin (pairSndD w)) (gS (pairSndD w)) ((gB (pairSndD w)).drop 1)
++      (pairSndD (iAdvMove A dα din advIn w)) []
++      (List.replicate (perCall.eval (NUPPT.inParam (pairFstD w)).length) true) (gO (pairSndD w)))
++
++/-- The defining equation of `iAdvAct`. -/
++theorem iAdvAct_eq (w : List Bool) :
++    iAdvAct A dα din perCall finCall advIn w =
++      if pairFstD (iAdvMove A dα din advIn w) = [true] then
++        pairEncode [false] (iSt [false] (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w))
++          (pairSndD (iAdvMove A dα din advIn w)) []
++          (List.replicate (finCall.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (gO (pairSndD w)))
++      else if gB (pairSndD w) = [] then
++        pairEncode [false] (iSt [false] (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w))
++          (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false) []
++          (List.replicate (finCall.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (gO (pairSndD w)))
++      else
++        pairEncode [false] (iSt [true] (gLin (pairSndD w)) (gS (pairSndD w))
++          ((gB (pairSndD w)).drop 1) (pairSndD (iAdvMove A dα din advIn w)) []
++          (List.replicate (perCall.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (gO (pairSndD w))) :=
++  rfl
++
++/-- The length `dout i (n)` of the answer to the pending query `cur = ⟨1^i, x⟩`. -/
++def iAnsLen (w : List Bool) : ℕ :=
++  selLen dout (NUPPT.inParam (pairFstD w)).length (pairFstD (gCur (pairSndD w))).length
++
++/-- `iAnsLen w = selLen dout n |fst cur|`. -/
++theorem iAnsLen_eq (w : List Bool) : iAnsLen dout w =
++    selLen dout (NUPPT.inParam (pairFstD w)).length (pairFstD (gCur (pairSndD w))).length :=
++  rfl
++
++/-- The handler's canonical move word in a round of a call (result length `dout i + stateLen`). -/
++def iCallMove (w : List Bool) : List Bool :=
++  canonFun din' (pairEncode (NUPPT.inParam (pairFstD w))
++    (pairEncode (List.replicate (iAnsLen dout w + stateLen.eval (NUPPT.inParam (pairFstD w)).length)
++      true)
++      (run (pairEncode (iCtx (pairFstD w)) (pairEncode (gS (pairSndD w))
++        (pairEncode (gCur (pairSndD w)) (gLc (pairSndD w))))))))
++
++/-- The defining equation of `iCallMove`. -/
++theorem iCallMove_eq (w : List Bool) :
++    iCallMove dout din' stateLen run w =
++      canonFun din' (pairEncode (NUPPT.inParam (pairFstD w))
++        (pairEncode (List.replicate (iAnsLen dout w +
++            stateLen.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (run (pairEncode (iCtx (pairFstD w)) (pairEncode (gS (pairSndD w))
++            (pairEncode (gCur (pairSndD w)) (gLc (pairSndD w)))))))) :=
++  rfl
++
++/-- The end of a call with result `W = y ‖ s'`: the entry `⟨1^i, ⟨x, y⟩⟩` is appended to the
++adversary's log, the state becomes `s'`, and the phase returns to the adversary. -/
++def iCallEnd (w W : List Bool) : List Bool :=
++  iSt [] (gLin (pairSndD w) ++ pairEncode (pairEncode (pairFstD (gCur (pairSndD w)))
++      (pairEncode (pairSndD (gCur (pairSndD w))) (W.take (iAnsLen dout w)))) [])
++    (W.drop (iAnsLen dout w)) (gB (pairSndD w)) [] [] [] (gO (pairSndD w))
++
++/-- The defining equation of `iCallEnd`. -/
++theorem iCallEnd_eq (w W : List Bool) :
++    iCallEnd dout w W =
++      iSt [] (gLin (pairSndD w) ++ pairEncode (pairEncode (pairFstD (gCur (pairSndD w)))
++          (pairEncode (pairSndD (gCur (pairSndD w))) (W.take (iAnsLen dout w)))) [])
++        (W.drop (iAnsLen dout w)) (gB (pairSndD w)) [] [] [] (gO (pairSndD w)) :=
++  rfl
++
++/-- An outer query answered from the replayed log: the next entry of `O'` is appended to the
++current outer log, its budget decreases, and the phase `ph` continues. -/
++def iAsk (ph w : List Bool) : List Bool :=
++  iSt ph (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w)) (gCur (pairSndD w))
++    (gLc (pairSndD w) ++ pairEncode (pairFstD (gO (pairSndD w))) []) ((gC (pairSndD w)).drop 1)
++    (pairSndD (gO (pairSndD w)))
++
++/-- The defining equation of `iAsk`. -/
++theorem iAsk_eq (ph w : List Bool) :
++    iAsk ph w = iSt ph (gLin (pairSndD w)) (gS (pairSndD w)) (gB (pairSndD w)) (gCur (pairSndD w))
++      (gLc (pairSndD w) ++ pairEncode (pairFstD (gO (pairSndD w))) []) ((gC (pairSndD w)).drop 1)
++      (pairSndD (gO (pairSndD w))) :=
++  rfl
++
++/-- **A round of a call:** an answer ends the call; a query at budget `0` ends it with the joint
++all-`false` default; a query within budget is answered from the replayed log or, when that is
++exhausted, is the machine's move. -/
++def iCallAct (w : List Bool) : List Bool :=
++  if pairFstD (iCallMove dout din' stateLen run w) = [true] then
++    pairEncode [false] (iCallEnd dout w (pairSndD (iCallMove dout din' stateLen run w)))
++  else if gC (pairSndD w) = [] then
++    pairEncode [false] (iCallEnd dout w (List.replicate
++      (iAnsLen dout w + stateLen.eval (NUPPT.inParam (pairFstD w)).length) false))
++  else if gO (pairSndD w) = [] then pairEncode [true] (iCallMove dout din' stateLen run w)
++  else pairEncode [false] (iAsk [true] w)
++
++/-- The defining equation of `iCallAct`. -/
++theorem iCallAct_eq (w : List Bool) :
++    iCallAct dout din' stateLen run w =
++      if pairFstD (iCallMove dout din' stateLen run w) = [true] then
++        pairEncode [false] (iCallEnd dout w (pairSndD (iCallMove dout din' stateLen run w)))
++      else if gC (pairSndD w) = [] then
++        pairEncode [false] (iCallEnd dout w (List.replicate
++          (iAnsLen dout w + stateLen.eval (NUPPT.inParam (pairFstD w)).length) false))
++      else if gO (pairSndD w) = [] then pairEncode [true] (iCallMove dout din' stateLen run w)
++      else pairEncode [false] (iAsk [true] w) :=
++  rfl
++
++/-- The finalization's canonical move word in a round of the finalization. -/
++def iFinMove (w : List Bool) : List Bool :=
++  canonFun din' (pairEncode (NUPPT.inParam (pairFstD w))
++    (pairEncode (List.replicate (outLen.eval (NUPPT.inParam (pairFstD w)).length) true)
++      (finRun (pairEncode (iCtx (pairFstD w)) (pairEncode (gS (pairSndD w))
++        (pairEncode (gCur (pairSndD w)) (gLc (pairSndD w))))))))
++
++/-- The defining equation of `iFinMove`. -/
++theorem iFinMove_eq (w : List Bool) :
++    iFinMove din' outLen finRun w =
++      canonFun din' (pairEncode (NUPPT.inParam (pairFstD w))
++        (pairEncode (List.replicate (outLen.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (finRun (pairEncode (iCtx (pairFstD w)) (pairEncode (gS (pairSndD w))
++            (pairEncode (gCur (pairSndD w)) (gLc (pairSndD w)))))))) :=
++  rfl
++
++/-- **A round of the finalization:** an output stops with its word; a query at budget `0` stops
++with `⟨[true], 0^{outLen(n)}⟩`; a query within budget is answered from the replayed log or, when
++that is exhausted, is the machine's move. -/
++def iFinAct (w : List Bool) : List Bool :=
++  if pairFstD (iFinMove din' outLen finRun w) = [true] then
++    pairEncode [true] (iFinMove din' outLen finRun w)
++  else if gC (pairSndD w) = [] then
++    pairEncode [true] (pairEncode [true]
++      (List.replicate (outLen.eval (NUPPT.inParam (pairFstD w)).length) false))
++  else if gO (pairSndD w) = [] then pairEncode [true] (iFinMove din' outLen finRun w)
++  else pairEncode [false] (iAsk [false] w)
++
++/-- The defining equation of `iFinAct`. -/
++theorem iFinAct_eq (w : List Bool) :
++    iFinAct din' outLen finRun w =
++      if pairFstD (iFinMove din' outLen finRun w) = [true] then
++        pairEncode [true] (iFinMove din' outLen finRun w)
++      else if gC (pairSndD w) = [] then
++        pairEncode [true] (pairEncode [true]
++          (List.replicate (outLen.eval (NUPPT.inParam (pairFstD w)).length) false))
++      else if gO (pairSndD w) = [] then pairEncode [true] (iFinMove din' outLen finRun w)
++      else pairEncode [false] (iAsk [false] w) :=
++  rfl
++
++/-- **One round of the replay machine**, by phase. -/
++def iAct (w : List Bool) : List Bool :=
++  if gPh (pairSndD w) = [] then iAdvAct A dα din perCall finCall advIn w
++  else if gPh (pairSndD w) = [true] then iCallAct dout din' stateLen run w
++  else iFinAct din' outLen finRun w
++
++/-- The defining equation of `iAct`. -/
++theorem iAct_eq (w : List Bool) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun w =
++      if gPh (pairSndD w) = [] then iAdvAct A dα din perCall finCall advIn w
++      else if gPh (pairSndD w) = [true] then iCallAct dout din' stateLen run w
++      else iFinAct din' outLen finRun w :=
++  rfl
++
++/-- The initial state: the adversary's phase, empty log, the initial state `s₀` read off the
++advice, the budget `1^{q(n)}`, and the whole outer log `O` still to replay. -/
++def iStart (X : List Bool) : List Bool :=
++  iSt [] [] (pairSndD (NUPPT.inAdvice X)) (List.replicate (q.eval (NUPPT.inParam X).length) true)
++    [] [] [] (iOuter X)
++
++/-- The defining equation of `iStart`. -/
++theorem iStart_eq (X : List Bool) :
++    iStart q X = iSt [] [] (pairSndD (NUPPT.inAdvice X))
++      (List.replicate (q.eval (NUPPT.inParam X).length) true) [] [] [] (iOuter X) :=
++  rfl
++
++/-- The round bound `2 + finCall + q (perCall + 2)`: at most `q + 1` rounds of the adversary,
++`perCall + 1` rounds per call and `finCall + 1` rounds of the finalization. -/
++def iRounds : PolyExpr := .add (.add (.const 2) finCall) (.mul q (.add perCall (.const 2)))
++
++/-- The defining equation of `iRounds`. -/
++theorem iRounds_eq : iRounds q perCall finCall =
++    .add (.add (.const 2) finCall) (.mul q (.add perCall (.const 2))) :=
++  rfl
++
++/-- The bound on the pending query or output: `2k + 2 + 2 Σ din + dα`. -/
++def iCurBound : PolyExpr := .add (.const (2 * k + 2)) (.add (.mul (.const 2) (sumPoly din)) dα)
++
++/-- The defining equation of `iCurBound`. -/
++theorem iCurBound_eq : iCurBound dα din =
++    .add (.const (2 * k + 2)) (.add (.mul (.const 2) (sumPoly din)) dα) :=
++  rfl
++
++/-- The fixed-length part of the state bound:
++`16 + 2 (q E + stateLen + q + cur + (perCall + finCall)(E' + 1))`, with the entry bounds `E`, `E'`
++of the inner and outer logs and the bound `cur` on the pending query or output. -/
++def iFixBound (dout' : Fin k' → PolyExpr) : PolyExpr :=
++  .add (.const 16) (.mul (.const 2) (.add (.mul q (entryPoly din dout)) (.add stateLen (.add q
++    (.add (iCurBound dα din) (.mul (.add perCall finCall) (.add (entryPoly din' dout') (.const
++        1))))))))
++
++/-- The defining equation of `iFixBound`. -/
++theorem iFixBound_eq (dout' : Fin k' → PolyExpr) :
++    iFixBound q dα din dout din' stateLen perCall finCall dout' =
++      .add (.const 16) (.mul (.const 2) (.add (.mul q (entryPoly din dout)) (.add stateLen (.add q
++        (.add (iCurBound dα din)
++          (.mul (.add perCall finCall) (.add (entryPoly din' dout') (.const 1)))))))) :=
++  rfl
++
++/-- The state bound: the fixed-length part plus `|X|` for the part of the outer log not yet
++replayed. -/
++def iBound (dout' : Fin k' → PolyExpr) : PolyExpr :=
++  .add (iFixBound q dα din dout din' stateLen perCall finCall dout') .var
++
++/-- `iBound = iFixBound + var`. -/
++theorem iBound_eq (dout' : Fin k' → PolyExpr) :
++    iBound q dα din dout din' stateLen perCall finCall dout' =
++      .add (iFixBound q dα din dout din' stateLen perCall finCall dout') .var :=
++  rfl
++
++/-- **The raw function of the replay machine:** the activation loop of `iAct` from `iStart`. -/
++def iRaw (dout' : Fin k' → PolyExpr) : List Bool → List Bool :=
++  actLoop (iStart q) (iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun)
++    (iRounds q perCall finCall) (iBound q dα din dout din' stateLen perCall finCall dout')
++
++/-- `iRaw = actLoop iStart iAct iRounds iBound`. -/
++theorem iRaw_eq (dout' : Fin k' → PolyExpr) :
++    iRaw A q dα din dout din' stateLen perCall outLen finCall run advIn finRun dout' =
++      actLoop (iStart q) (iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun)
++        (iRounds q perCall finCall) (iBound q dα din dout din' stateLen perCall finCall dout') :=
++  rfl
++
++/-! ### Polynomial time -/
++
++variable {run advIn finRun}
++
++/-- The state word of polynomial-time components is polynomial-time. -/
++theorem iSt_poly {f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ : List Bool → List Bool} (h₁ : PolyTimeComputable f₁)
++    (h₂ : PolyTimeComputable f₂) (h₃ : PolyTimeComputable f₃) (h₄ : PolyTimeComputable f₄)
++    (h₅ : PolyTimeComputable f₅) (h₆ : PolyTimeComputable f₆) (h₇ : PolyTimeComputable f₇)
++    (h₈ : PolyTimeComputable f₈) :
++    PolyTimeComputable fun w => iSt (f₁ w) (f₂ w) (f₃ w) (f₄ w) (f₅ w) (f₆ w) (f₇ w) (f₈ w) :=
++  (h₁.pairEncode (h₂.pairEncode (h₃.pairEncode (h₄.pairEncode (h₅.pairEncode
++    (h₆.pairEncode (h₇.pairEncode h₈))))))).congr fun _ => (iSt_eq _ _ _ _ _ _ _ _).symm
++
++/-- The components of the state word of `w = ⟨X, S⟩` are polynomial-time in `w`. -/
++theorem gS_comps_poly :
++    PolyTimeComputable (fun w => gPh (pairSndD w)) ∧ PolyTimeComputable (fun w => gLin (pairSndD w))
++        ∧
++    PolyTimeComputable (fun w => gS (pairSndD w)) ∧ PolyTimeComputable (fun w => gB (pairSndD w)) ∧
++    PolyTimeComputable (fun w => gCur (pairSndD w)) ∧ PolyTimeComputable (fun w => gLc (pairSndD w))
++        ∧
++    PolyTimeComputable (fun w => gC (pairSndD w)) ∧ PolyTimeComputable (fun w => gO (pairSndD w)) :=
++        by
++  have f := polyTimeComputable_pairFstD
++  have g := polyTimeComputable_pairSndD
++  refine ⟨f.comp' g, f.comp' (g.comp' g), f.comp' (g.comp' (g.comp' g)),
++    f.comp' (g.comp' (g.comp' (g.comp' g))), f.comp' (g.comp' (g.comp' (g.comp' (g.comp' g)))),
++    f.comp' (g.comp' (g.comp' (g.comp' (g.comp' (g.comp' g))))),
++    f.comp' (g.comp' (g.comp' (g.comp' (g.comp' (g.comp' (g.comp' g)))))),
++    g.comp' (g.comp' (g.comp' (g.comp' (g.comp' (g.comp' (g.comp' g))))))⟩
++
++/-- The context is polynomial-time. -/
++theorem iCtx_poly : PolyTimeComputable iCtx :=
++  NUPPT.polyTimeComputable_inParam.pairEncode
++    ((polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairFstD.comp'
++      NUPPT.polyTimeComputable_inArg)).pairEncode
++      (polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inArg))
++
++/-- The adversary's move word is polynomial-time. -/
++theorem iAdvMove_poly (hadvIn : PolyTimeComputable advIn) :
++    PolyTimeComputable (iAdvMove A dα din advIn) := by
++  have hX := polyTimeComputable_pairFstD
++  have hu := NUPPT.polyTimeComputable_inParam.comp' hX
++  have hout := A.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hu
++    ((hadvIn.comp' (iCtx_poly.comp' hX)).pairEncode gS_comps_poly.2.1)
++    (polyTimeComputable_pairFstD.comp' (NUPPT.polyTimeComputable_inAdvice.comp' hX))
++    (NUPPT.polyTimeComputable_inCoins.comp' hX))
++  exact (canonFun_poly din).comp' (hu.pairEncode ((StateLoop.unaryPoly_comp dα hu).pairEncode hout))
++
++/-- A round of the adversary is polynomial-time. -/
++theorem iAdvAct_poly (hadvIn : PolyTimeComputable advIn) :
++    PolyTimeComputable (iAdvAct A dα din perCall finCall advIn) := by
++  obtain ⟨-, hL, hs, hb, -, -, -, hO⟩ := gS_comps_poly
++  have hu := NUPPT.polyTimeComputable_inParam.comp' polyTimeComputable_pairFstD
++  have hm := iAdvMove_poly A dα din hadvIn
++  have hfin := StateLoop.unaryPoly_comp finCall hu
++  have hz : PolyTimeComputable fun w =>
++      List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false :=
++    (zeros_poly (StateLoop.unaryPoly_comp dα hu)).congr fun w => by rw [List.length_replicate]
++  have h := polyTimeComputable_ite (eq_poly (polyTimeComputable_pairFstD.comp' hm)
++      (polyTimeComputable_const [true]))
++    ((polyTimeComputable_const [false]).pairEncode (iSt_poly (polyTimeComputable_const [false]) hL
++        hs
++      hb (polyTimeComputable_pairSndD.comp' hm) (polyTimeComputable_const []) hfin hO))
++    (polyTimeComputable_ite (polyTimeComputable_isNil.comp' hb)
++      ((polyTimeComputable_const [false]).pairEncode (iSt_poly (polyTimeComputable_const [false])
++        hL hs hb hz (polyTimeComputable_const []) hfin hO))
++      ((polyTimeComputable_const [false]).pairEncode (iSt_poly (polyTimeComputable_const [true])
++        hL hs (polyTimeComputable_tail.comp' hb) (polyTimeComputable_pairSndD.comp' hm)
++        (polyTimeComputable_const []) (StateLoop.unaryPoly_comp perCall hu) hO)))
++  refine h.congr fun w => ?_
++  rw [iAdvAct_eq]
++  simp only [decide_eq_true_eq]
++
++/-- The answer length `dout i (n)`, in unary, is polynomial-time. -/
++theorem iAnsLen_poly : PolyTimeComputable fun w => List.replicate (iAnsLen dout w) true :=
++  ((selLen_poly dout).comp' ((NUPPT.polyTimeComputable_inParam.comp'
++      polyTimeComputable_pairFstD).pairEncode
++    (polyTimeComputable_pairFstD.comp' gS_comps_poly.2.2.2.2.1))).congr fun w => by
++    rw [iAnsLen_eq, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- The result length `dout i (n) + stateLen(n)`, in unary, is polynomial-time. -/
++theorem iResLen_poly : PolyTimeComputable fun w => List.replicate
++    (iAnsLen dout w + stateLen.eval (NUPPT.inParam (pairFstD w)).length) true :=
++  ((iAnsLen_poly dout).append (StateLoop.unaryPoly_comp stateLen
++    (NUPPT.polyTimeComputable_inParam.comp' polyTimeComputable_pairFstD))).congr fun w => by
++    rw [List.replicate_add]
++
++/-- The handler's input `⟨ctx, ⟨s, ⟨cur, L'⟩⟩⟩` is polynomial-time. -/
++theorem iHInput_poly : PolyTimeComputable fun w => pairEncode (iCtx (pairFstD w))
++    (pairEncode (gS (pairSndD w)) (pairEncode (gCur (pairSndD w)) (gLc (pairSndD w)))) :=
++  (iCtx_poly.comp' polyTimeComputable_pairFstD).pairEncode (gS_comps_poly.2.2.1.pairEncode
++    (gS_comps_poly.2.2.2.2.1.pairEncode gS_comps_poly.2.2.2.2.2.1))
++
++/-- The handler's move word in a call is polynomial-time. -/
++theorem iCallMove_poly (hrun : PolyTimeComputable run) :
++    PolyTimeComputable (iCallMove dout din' stateLen run) :=
++  (canonFun_poly din').comp' ((NUPPT.polyTimeComputable_inParam.comp'
++    polyTimeComputable_pairFstD).pairEncode ((iResLen_poly dout stateLen).pairEncode
++      (hrun.comp' iHInput_poly)))
++
++/-- The end of a call with a polynomial-time result is polynomial-time. -/
++theorem iCallEnd_poly {W : List Bool → List Bool} (hW : PolyTimeComputable W) :
++    PolyTimeComputable fun w => iCallEnd dout w (W w) := by
++  obtain ⟨-, hL, -, hb, hcur, -, -, hO⟩ := gS_comps_poly
++  have hdl := iAnsLen_poly dout
++  have h := iSt_poly (polyTimeComputable_const []) (hL.append
++      (((polyTimeComputable_pairFstD.comp' hcur).pairEncode
++        ((polyTimeComputable_pairSndD.comp' hcur).pairEncode (takeLen_poly hdl hW))).pairEncode
++        (polyTimeComputable_const [])))
++    (dropLen_poly hdl hW) hb (polyTimeComputable_const []) (polyTimeComputable_const [])
++    (polyTimeComputable_const []) hO
++  refine h.congr fun w => ?_
++  rw [iCallEnd_eq, List.length_replicate]
++
++/-- Answering an outer query from the replayed log is polynomial-time. -/
++theorem iAsk_poly (ph : List Bool) : PolyTimeComputable (iAsk ph) := by
++  obtain ⟨-, hL, hs, hb, hcur, hLc, hc, hO⟩ := gS_comps_poly
++  exact (iSt_poly (polyTimeComputable_const ph) hL hs hb hcur
++    (hLc.append ((polyTimeComputable_pairFstD.comp' hO).pairEncode (polyTimeComputable_const [])))
++    (polyTimeComputable_tail.comp' hc) (polyTimeComputable_pairSndD.comp' hO)).congr fun w =>
++    (iAsk_eq ph w).symm
++
++/-- A round of a call is polynomial-time. -/
++theorem iCallAct_poly (hrun : PolyTimeComputable run) :
++    PolyTimeComputable (iCallAct dout din' stateLen run) := by
++  have hm := iCallMove_poly dout din' stateLen hrun
++  have h := polyTimeComputable_ite (eq_poly (polyTimeComputable_pairFstD.comp' hm)
++      (polyTimeComputable_const [true]))
++    ((polyTimeComputable_const [false]).pairEncode
++      (iCallEnd_poly dout (polyTimeComputable_pairSndD.comp' hm)))
++    (polyTimeComputable_ite (polyTimeComputable_isNil.comp' gS_comps_poly.2.2.2.2.2.2.1)
++      ((polyTimeComputable_const [false]).pairEncode
++        (iCallEnd_poly dout ((zeros_poly (iResLen_poly dout stateLen)).congr fun w => by
++          rw [List.length_replicate])))
++      (polyTimeComputable_ite (polyTimeComputable_isNil.comp' gS_comps_poly.2.2.2.2.2.2.2)
++        ((polyTimeComputable_const [true]).pairEncode hm)
++        ((polyTimeComputable_const [false]).pairEncode (iAsk_poly [true]))))
++  refine h.congr fun w => ?_
++  rw [iCallAct_eq]
++  simp only [decide_eq_true_eq]
++
++/-- The finalization's move word is polynomial-time. -/
++theorem iFinMove_poly (hfinRun : PolyTimeComputable finRun) :
++    PolyTimeComputable (iFinMove din' outLen finRun) :=
++  (canonFun_poly din').comp' ((NUPPT.polyTimeComputable_inParam.comp'
++    polyTimeComputable_pairFstD).pairEncode ((StateLoop.unaryPoly_comp outLen
++      (NUPPT.polyTimeComputable_inParam.comp' polyTimeComputable_pairFstD)).pairEncode
++      (hfinRun.comp' iHInput_poly)))
++
++/-- A round of the finalization is polynomial-time. -/
++theorem iFinAct_poly (hfinRun : PolyTimeComputable finRun) :
++    PolyTimeComputable (iFinAct din' outLen finRun) := by
++  have hm := iFinMove_poly din' outLen hfinRun
++  have hu := NUPPT.polyTimeComputable_inParam.comp' polyTimeComputable_pairFstD
++  have hz : PolyTimeComputable fun w =>
++      List.replicate (outLen.eval (NUPPT.inParam (pairFstD w)).length) false :=
++    (zeros_poly (StateLoop.unaryPoly_comp outLen hu)).congr fun w => by rw [List.length_replicate]
++  have h := polyTimeComputable_ite (eq_poly (polyTimeComputable_pairFstD.comp' hm)
++      (polyTimeComputable_const [true]))
++    ((polyTimeComputable_const [true]).pairEncode hm)
++    (polyTimeComputable_ite (polyTimeComputable_isNil.comp' gS_comps_poly.2.2.2.2.2.2.1)
++      ((polyTimeComputable_const [true]).pairEncode ((polyTimeComputable_const [true]).pairEncode
++          hz))
++      (polyTimeComputable_ite (polyTimeComputable_isNil.comp' gS_comps_poly.2.2.2.2.2.2.2)
++        ((polyTimeComputable_const [true]).pairEncode hm)
++        ((polyTimeComputable_const [false]).pairEncode (iAsk_poly [false]))))
++  refine h.congr fun w => ?_
++  rw [iFinAct_eq]
++  simp only [decide_eq_true_eq]
++
++/-- **One round of the replay machine is polynomial-time.** -/
++theorem iAct_poly (hrun : PolyTimeComputable run) (hadvIn : PolyTimeComputable advIn)
++    (hfinRun : PolyTimeComputable finRun) :
++    PolyTimeComputable (iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun) :=
++        by
++  have hph := gS_comps_poly.1
++  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp' hph)
++    (iAdvAct_poly A dα din perCall finCall hadvIn)
++    (polyTimeComputable_ite (eq_poly hph (polyTimeComputable_const [true]))
++      (iCallAct_poly dout din' stateLen hrun) (iFinAct_poly din' outLen hfinRun))
++  refine h.congr fun w => ?_
++  rw [iAct_eq]
++  simp only [decide_eq_true_eq]
++
++/-- **The raw function of the replay machine is polynomial-time** (`actLoop_poly`). -/
++theorem iRaw_poly (dout' : Fin k' → PolyExpr) (hrun : PolyTimeComputable run)
++    (hadvIn : PolyTimeComputable advIn) (hfinRun : PolyTimeComputable finRun) :
++    PolyTimeComputable (iRaw A q dα din dout din' stateLen perCall outLen finCall run advIn finRun
++      dout') := by
++  have hstart : PolyTimeComputable (iStart q) :=
++    (iSt_poly (polyTimeComputable_const []) (polyTimeComputable_const [])
++      (polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inAdvice)
++      (StateLoop.unaryPoly_comp q NUPPT.polyTimeComputable_inParam) (polyTimeComputable_const [])
++      (polyTimeComputable_const []) (polyTimeComputable_const [])
++      (polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairFstD.comp'
++        NUPPT.polyTimeComputable_inArg))).congr fun X => (iStart_eq q X).symm
++  exact actLoop_poly hstart (iAct_poly A dα din dout din' stateLen perCall outLen finCall hrun
++    hadvIn hfinRun) _ _
++
++end Raw
++
++/-! ### The rounds on state words -/
++
++section Rounds
++
++variable (A : NUPPT) (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (din' : Fin k' → PolyExpr)
++  (stateLen perCall outLen finCall : PolyExpr) (run advIn finRun : List Bool → List Bool)
++  {X : List Bool} {n : ℕ}
++
++/-- The adversary's move word on a state word: the canonical decoder of `A`'s output on
++`⟨advIn ctx, L⟩` with the advice and coins of the layout. -/
++theorem iAdvMove_iSt (hXu : NUPPT.inParam X = List.replicate n true)
++    (ph L s bA cur L' c O' : List Bool) :
++    iAdvMove A dα din advIn (pairEncode X (iSt ph L s bA cur L' c O')) =
++      canonWord din n (dα.eval n) (A.output (NUPPT.layout (List.replicate n true)
++        (pairEncode (advIn (iCtx X)) L) (pairFstD (NUPPT.inAdvice X)) (NUPPT.inCoins X))) := by
++  rw [iAdvMove_eq, pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, hXu, List.length_replicate]
++  exact canonFun_eq din n (dα.eval n) _
++
++/-- **The adversary outputs:** the finalization opens with `cur = a` and budget `finCall(n)`. -/
++theorem iAct_adv_ret (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s bA cur L' c O' a : List Bool}
++    (hm : iAdvMove A dα din advIn (pairEncode X (iSt [] L s bA cur L' c O')) = pairEncode [true] a)
++        :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [] L s bA cur L' c O')) =
++      pairEncode [false] (iSt [false] L s bA a [] (List.replicate (finCall.eval n) true) O') := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_pos rfl, iAdvAct_eq, hm,
++    if_pos (pairFstD_pairEncode _ _)]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gO_iSt, hXu,
++    List.length_replicate]
++
++/-- **The adversary queries at budget `0`:** the finalization opens with `cur = 0^{dα(n)}`. -/
++theorem iAct_adv_timeout (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s cur L' c O' m : List Bool}
++    (hm : iAdvMove A dα din advIn (pairEncode X (iSt [] L s [] cur L' c O')) = pairEncode [false] m)
++        :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [] L s [] cur L' c O')) =
++      pairEncode [false] (iSt [false] L s [] (List.replicate (dα.eval n) false) []
++        (List.replicate (finCall.eval n) true) O') := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_pos rfl, iAdvAct_eq, hm, pairFstD_pairEncode,
++    if_neg (by decide)]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gO_iSt, hXu,
++    List.length_replicate, if_true]
++
++/-- **The adversary queries within budget:** a call opens with `cur = m` (the query `⟨1^i, x⟩`),
++an empty outer log and budget `perCall(n)`. -/
++theorem iAct_adv_query (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s bA cur L' c O' m : List Bool}
++    (hm : iAdvMove A dα din advIn (pairEncode X (iSt [] L s (true :: bA) cur L' c O')) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [] L s (true :: bA) cur L' c O')) =
++      pairEncode [false] (iSt [true] L s bA m [] (List.replicate (perCall.eval n) true) O') := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_pos rfl, iAdvAct_eq, hm, pairFstD_pairEncode,
++    if_neg (by decide)]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gO_iSt, hXu,
++    List.length_replicate, reduceCtorEq, if_false, List.drop_one, List.tail_cons]
++
++/-- The handler's move word in a call on the pending query `⟨iw, xw⟩`: the canonical decoder, with
++result length `selLen dout n |iw| + stateLen(n)`, of `run ⟨ctx, ⟨s, ⟨⟨iw, xw⟩, L'⟩⟩⟩`. -/
++theorem iCallMove_iSt (hXu : NUPPT.inParam X = List.replicate n true)
++    (ph L s bA iw xw L' c O' : List Bool) :
++    iCallMove dout din' stateLen run (pairEncode X (iSt ph L s bA (pairEncode iw xw) L' c O')) =
++      canonWord din' n (selLen dout n iw.length + stateLen.eval n)
++        (run (pairEncode (iCtx X) (pairEncode s (pairEncode (pairEncode iw xw) L')))) := by
++  rw [iCallMove_eq, iAnsLen_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gS_iSt, gCur_iSt, gLc_iSt, hXu,
++    List.length_replicate]
++  exact canonFun_eq din' n _ _
++
++/-- **A call ends** with the result `W`: the entry `⟨iw, ⟨xw, y⟩⟩` is appended to the adversary's
++log and the state becomes `s'`, where `W = y ‖ s'` is cut at `dout i (n)`. Both the handler's answer
++and the joint default end a call this way (`iAct_call_ret`, `iAct_call_timeout`). -/
++theorem iCallEnd_iSt (hXu : NUPPT.inParam X = List.replicate n true)
++    (ph L s bA iw xw L' c O' W : List Bool) :
++    iCallEnd dout (pairEncode X (iSt ph L s bA (pairEncode iw xw) L' c O')) W =
++      iSt [] (L ++ pairEncode (pairEncode iw (pairEncode xw
++          (W.take (selLen dout n iw.length)))) [])
++        (W.drop (selLen dout n iw.length)) bA [] [] [] O' := by
++  rw [iCallEnd_eq, iAnsLen_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gB_iSt, gCur_iSt, gO_iSt, hXu,
++    List.length_replicate]
++
++/-- **The handler answers:** the call ends with the answer word `W` (`iCallEnd_iSt`). -/
++theorem iAct_call_ret {L s bA iw xw L' c O' W : List Bool}
++    (hm : iCallMove dout din' stateLen run (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' c
++        O')) =
++      pairEncode [true] W) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' c O')) =
++      pairEncode [false] (iCallEnd dout (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' c
++          O'))
++        W) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_pos rfl, iCallAct_eq, hm,
++    if_pos (pairFstD_pairEncode _ _), pairSndD_pairEncode]
++
++/-- **The handler queries at budget `0`:** the call ends with the joint all-`false` default. -/
++theorem iAct_call_timeout (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s bA iw xw L' O' m : List Bool}
++    (hm : iCallMove dout din' stateLen run (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' []
++        O')) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' [] O')) =
++      pairEncode [false] (iCallEnd dout (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' []
++          O'))
++        (List.replicate (selLen dout n iw.length + stateLen.eval n) false)) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_pos rfl, iCallAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt, if_pos rfl, iAnsLen_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gCur_iSt, hXu, List.length_replicate]
++
++/-- **The handler queries within budget and the replayed log is exhausted:** the machine stops,
++and its move is the handler's query word. -/
++theorem iAct_call_stop {L s bA iw xw L' c m : List Bool}
++    (hm : iCallMove dout din' stateLen run
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' (true :: c) [])) = pairEncode [false]
++            m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' (true :: c) [])) =
++      pairEncode [true] (pairEncode [false] m) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_pos rfl, iCallAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt, if_neg (List.cons_ne_nil _
++        _),
++    gO_iSt, if_pos rfl]
++
++/-- **The handler queries within budget and the replayed log has an entry `e`:** `e` is appended
++to the call's outer log, and the budget decreases. -/
++theorem iAct_call_ask {L s bA iw xw L' c e O' m : List Bool}
++    (hm : iCallMove dout din' stateLen run
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' (true :: c) (pairEncode e O'))) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [true] L s bA (pairEncode iw xw) L' (true :: c) (pairEncode e O'))) =
++      pairEncode [false] (iSt [true] L s bA (pairEncode iw xw) (L' ++ pairEncode e []) c O') := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_pos rfl, iCallAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt, if_neg (List.cons_ne_nil _
++        _),
++    gO_iSt, if_neg (pairEncode_ne_nil _ _), iAsk_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gCur_iSt, gLc_iSt,
++    gC_iSt, gO_iSt, List.drop_one, List.tail_cons]
++
++/-- The finalization's move word on a state word: the canonical decoder, with result length
++`outLen(n)`, of `finRun ⟨ctx, ⟨s, ⟨cur, L'⟩⟩⟩`. -/
++theorem iFinMove_iSt (hXu : NUPPT.inParam X = List.replicate n true)
++    (ph L s bA cur L' c O' : List Bool) :
++    iFinMove din' outLen finRun (pairEncode X (iSt ph L s bA cur L' c O')) =
++      canonWord din' n (outLen.eval n)
++        (finRun (pairEncode (iCtx X) (pairEncode s (pairEncode cur L')))) := by
++  rw [iFinMove_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gS_iSt, gCur_iSt, gLc_iSt, hXu,
++    List.length_replicate]
++  exact canonFun_eq din' n _ _
++
++/-- **The finalization outputs:** the machine stops with the output word. -/
++theorem iAct_fin_ret {L s bA cur L' c O' W : List Bool}
++    (hm : iFinMove din' outLen finRun (pairEncode X (iSt [false] L s bA cur L' c O')) =
++      pairEncode [true] W) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [false] L s bA cur L' c O')) =
++      pairEncode [true] (pairEncode [true] W) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_neg (by decide), iFinAct_eq, hm,
++    if_pos (pairFstD_pairEncode _ _)]
++
++/-- **The finalization queries at budget `0`:** the machine stops with `⟨[true], 0^{outLen(n)}⟩`. -/
++theorem iAct_fin_timeout (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s bA cur L' O' m : List Bool}
++    (hm : iFinMove din' outLen finRun (pairEncode X (iSt [false] L s bA cur L' [] O')) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [false] L s bA cur L' [] O')) =
++      pairEncode [true] (pairEncode [true] (List.replicate (outLen.eval n) false)) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_neg (by decide), iFinAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt, if_pos rfl,
++    pairFstD_pairEncode, hXu,
++    List.length_replicate]
++
++/-- **The finalization queries within budget and the replayed log is exhausted:** the machine
++stops, and its move is the finalization's query word. -/
++theorem iAct_fin_stop {L s bA cur L' c m : List Bool}
++    (hm : iFinMove din' outLen finRun (pairEncode X (iSt [false] L s bA cur L' (true :: c) [])) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [false] L s bA cur L' (true :: c) [])) =
++      pairEncode [true] (pairEncode [false] m) := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_neg (by decide), iFinAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt,
++    if_neg (List.cons_ne_nil _ _), gO_iSt, if_pos rfl]
++
++/-- **The finalization queries within budget and the replayed log has an entry `e`:** `e` is
++appended to the finalization's outer log, and the budget decreases. -/
++theorem iAct_fin_ask {L s bA cur L' c e O' m : List Bool}
++    (hm : iFinMove din' outLen finRun
++        (pairEncode X (iSt [false] L s bA cur L' (true :: c) (pairEncode e O'))) =
++      pairEncode [false] m) :
++    iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++        (pairEncode X (iSt [false] L s bA cur L' (true :: c) (pairEncode e O'))) =
++      pairEncode [false] (iSt [false] L s bA cur (L' ++ pairEncode e []) c O') := by
++  rw [iAct_eq, pairSndD_pairEncode, gPh_iSt, if_neg (by decide), if_neg (by decide), iFinAct_eq, hm,
++    pairFstD_pairEncode, if_neg (by decide), pairSndD_pairEncode, gC_iSt,
++    if_neg (List.cons_ne_nil _ _), gO_iSt, if_neg (pairEncode_ne_nil _ _), iAsk_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, gLin_iSt, gS_iSt, gB_iSt, gCur_iSt, gLc_iSt,
++    gC_iSt, gO_iSt, List.drop_one, List.tail_cons]
++
++end Rounds
++
++/-! ### The state bound -/
++
++/-- **The state bound:** a state word whose components are within their bounds at parameter
++`n ≤ |X|`, and whose unreplayed log is at most `|X|` long, is within `iBound` at `|X|`. -/
++theorem length_iSt_le (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (din' dout' : Fin k' →
++    PolyExpr)
++    (stateLen perCall finCall : PolyExpr) {n m : ℕ} (hn : n ≤ m) {ph L s bA cur L' c O' : List Bool}
++    (hph : ph.length ≤ 1) (hL : L.length ≤ q.eval n * (entryPoly din dout).eval n)
++    (hs : s.length ≤ stateLen.eval n) (hbA : bA.length ≤ q.eval n)
++    (hcur : cur.length ≤ (iCurBound dα din).eval n)
++    (hL' : L'.length ≤ (perCall.eval n + finCall.eval n) * (entryPoly din' dout').eval n)
++    (hc : c.length ≤ perCall.eval n + finCall.eval n) (hO : O'.length ≤ m) :
++    (iSt ph L s bA cur L' c O').length ≤
++      (iBound q dα din dout din' stateLen perCall finCall dout').eval m := by
++  have hmono := (iFixBound q dα din dout din' stateLen perCall finCall dout').eval_mono hn
++  rw [iBound_eq, PolyExpr.eval_add, PolyExpr.eval_var]
++  refine le_trans ?_ (Nat.add_le_add_right hmono m)
++  rw [iSt_eq]
++  simp only [length_pairEncode, iFixBound_eq, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_const]
++  have : L'.length + c.length ≤
++      (perCall.eval n + finCall.eval n) * ((entryPoly din' dout').eval n + 1) := by
++    rw [Nat.mul_add, Nat.mul_one]
++    omega
++  omega
++
++end TCSlib.Cryptography.Games.EffFill
+diff --git a/TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean b/TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean
+new file mode 100644
+index 000000000..a0ae35b77
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Efficiency/InteractiveSpec.lean
+@@ -0,0 +1,849 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency.Interactive
++import TCSlib.Cryptography.Games.Efficiency.Handler
++import TCSlib.Cryptography.Games.Efficiency.Replay
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The functional equation of the replay machine (efficiency fill, T2)
++
++The replay machine of `TCSlib.Cryptography.Games.Efficiency.Interactive`, run as an oracle machine
++against the outer oracles, **is** the reduction: its computation tree equals the simulation of the
++adversary by the interactive handler followed by the finalization (`iRaw_spec`). Route note
++`briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`, §"T2", steps 4 and 5.
++
++The proof shows that the machine's next-move function replays the reduction tree
++(`EffFill.ReplaysFrom`), by three nested inductions along the phases of the reduction, the
++finalization (`fin_phase`), a call (`call_phase`) and the adversary (`adv_phase`). The invariant
++(`IInv`) says that, on every outer log extending the replayed prefix, the activation loop has
++reached the state word encoding the current position. The tree makes at most
++`q(n) · perCall(n) + finCall(n)` queries (`costBoundedBy_mul`, `simulate_costBoundedBy`), so the
++machine's budget never cuts the replay short (`buildComp_of_replaysFrom`).
++
++## Main definitions
++
++* `EffFill.iCall`, `EffFill.iImpl`, `EffFill.iFinish`: one call of the handler, the handler as an
++  implementation, and the finalization, over the raw ingredients.
++* `EffFill.iX`: the raw layout on the outer log `O`; `EffFill.IInv`: the replay invariant.
++
++## Main results
++
++* `EffFill.iRaw_spec`: the machine's computation is the reduction.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (closure of p.p.t. machines under efficient operations; for example the reductions of the
++  proofs of Theorems 135.4 and 168.2).
++-/
++
++namespace TCSlib.Cryptography.Games.EffFill
++
++open Complexity Turing
++
++variable {k k' : ℕ}
++
++/-- Cutting the string of a `(a + b)`-bit word at `a` gives its two parts:
++`(ofFn w).take a = ofFn (w ∘ castAdd b)` and `(ofFn w).drop a = ofFn (w ∘ natAdd a)`. -/
++theorem ofFn_take_drop_add {a b : ℕ} (w : Fin (a + b) → Bool) :
++    (List.ofFn w).take a = List.ofFn (fun j => w (Fin.castAdd b j)) ∧
++      (List.ofFn w).drop a = List.ofFn (fun j => w (Fin.natAdd a j)) := by
++  rw [List.ofFn_add]
++  exact ⟨List.take_left' List.length_ofFn, List.drop_left' List.length_ofFn⟩
++
++section Spec
++
++variable (A : NUPPT) (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (din' dout' : Fin k' →
++    PolyExpr)
++  (stateLen perCall outLen finCall : PolyExpr) (run advIn finRun : List Bool → List Bool)
++
++/-- The next-move function of one call of the interactive handler on the inner query `x` to
++oracle `i` in state `s`, at parameter `n` with the reduction's input `z` and seed `ω`: `run` on
++`⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, decoded with result length `dout i + stateLen`. -/
++def iCallNext (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool)
++    (L : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    Move (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin ((dout i).eval n + stateLen.eval n) → Bool) :=
++  decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++    ((dout i).eval n + stateLen.eval n)
++    (run (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++      (pairEncode (List.ofFn s) (pairEncode (pairEncode (List.replicate i true) (List.ofFn x))
++        ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L)))))
++
++/-- The defining equation of `iCallNext`. -/
++theorem iCallNext_eq (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool)
++    (L : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    iCallNext din dout din' dout' stateLen run n z ω s i x L =
++      decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++        ((dout i).eval n + stateLen.eval n)
++        (run (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++          (pairEncode (List.ofFn s) (pairEncode (pairEncode (List.replicate i true) (List.ofFn x))
++            ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))) :=
++  rfl
++
++/-- **One call** of the interactive handler: `buildComp` of `iCallNext` from the empty outer log
++with budget `perCall(n)` and the joint all-`false` default (the term of
++`InteractiveHandler.call`). -/
++def iCall (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool) :
++    OracleComp (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin ((dout i).eval n + stateLen.eval n) → Bool) :=
++  buildComp (iCallNext din dout din' dout' stateLen run n z ω s i x) (zeroBits _) (perCall.eval n)
++      []
++
++/-- `iCall … = buildComp (iCallNext …) (zeroBits _) (perCall n) []`. -/
++theorem iCall_eq_buildComp (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool) :
++    iCall din dout din' dout' stateLen perCall run n z ω s i x =
++      buildComp (iCallNext din dout din' dout' stateLen run n z ω s i x) (zeroBits _)
++        (perCall.eval n) [] :=
++  rfl
++
++/-- The defining equation of `iCall`, with the next-move function written out. -/
++theorem iCall_eq (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool) :
++    iCall din dout din' dout' stateLen perCall run n z ω s i x =
++      buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          ((dout i).eval n + stateLen.eval n)
++          (run (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++            (pairEncode (List.ofFn s) (pairEncode (pairEncode (List.replicate i true) (List.ofFn x))
++              ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))))
++        (zeroBits _) (perCall.eval n) [] :=
++  rfl
++
++/-- **The handler as an implementation** of the inner oracles by the outer ones: one call per
++inner query, its result split into the answer and the new state (the term of
++`InteractiveHandler.impl`). -/
++def iImpl (n : ℕ) (z ω : List Bool) :
++    QueryImpl (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n))
++      (Fin (stateLen.eval n) → Bool) (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval
++          n)) :=
++  fun i x s => (iCall din dout din' dout' stateLen perCall run n z ω s i x).bind fun w =>
++    .pure (fun j => w (Fin.castAdd (stateLen.eval n) j), fun j => w (Fin.natAdd ((dout i).eval n)
++        j))
++
++/-- The defining equation of `iImpl`. -/
++theorem iImpl_apply (n : ℕ) (z ω : List Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
++    (s : Fin (stateLen.eval n) → Bool) :
++    iImpl din dout din' dout' stateLen perCall run n z ω i x s =
++      (iCall din dout din' dout' stateLen perCall run n z ω s i x).bind fun w =>
++        .pure (fun j => w (Fin.castAdd (stateLen.eval n) j), fun j => w (Fin.natAdd ((dout i).eval
++            n) j)) :=
++  rfl
++
++/-- The next-move function of the finalization in state `s` after the adversary's output `a`:
++`finRun` on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`, decoded with result length `outLen(n)`. -/
++def iFinNext (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool)
++    (L : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    Move (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin (outLen.eval n) → Bool) :=
++  decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)
++    (finRun (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++      (pairEncode (List.ofFn s) (pairEncode (List.ofFn a)
++        ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L)))))
++
++/-- The defining equation of `iFinNext`. -/
++theorem iFinNext_eq (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool)
++    (L : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    iFinNext din' dout' stateLen outLen finRun n z ω s a L =
++      decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)
++        (finRun (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++          (pairEncode (List.ofFn s) (pairEncode (List.ofFn a)
++            ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))) :=
++  rfl
++
++/-- **The finalization** in state `s` after the adversary's output `a`: `buildComp` of
++`iFinNext` with budget `finCall(n)` (the term of `InteractiveHandler.finish`). -/
++def iFinish (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) {d : ℕ} (a : Fin d → Bool)
++    :
++    OracleComp (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin (outLen.eval n) → Bool) :=
++  buildComp (iFinNext din' dout' stateLen outLen finRun n z ω s a) (zeroBits _) (finCall.eval n) []
++
++/-- `iFinish … = buildComp (iFinNext …) (zeroBits _) (finCall n) []`. -/
++theorem iFinish_eq_buildComp (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) :
++    iFinish din' dout' stateLen outLen finCall finRun n z ω s a =
++      buildComp (iFinNext din' dout' stateLen outLen finRun n z ω s a) (zeroBits _)
++        (finCall.eval n) [] :=
++  rfl
++
++/-- The defining equation of `iFinish`, with the next-move function written out. -/
++theorem iFinish_eq (n : ℕ) (z ω : List Bool) (s : Fin (stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) :
++    iFinish din' dout' stateLen outLen finCall finRun n z ω s a =
++      buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          (outLen.eval n)
++          (finRun (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++            (pairEncode (List.ofFn s) (pairEncode (List.ofFn a)
++              ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))))
++        (zeroBits _) (finCall.eval n) [] :=
++  rfl
++
++/-- The raw layout of the machine on its outer log `O`:
++`⟨⟨⟨1^n, ⟨⟨z, encodeLog O⟩, ω⟩⟩, ⟨A.advice n, s₀⟩⟩, r⟩`. -/
++def iX (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool)
++    (O : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) : List Bool :=
++  NUPPT.layout (List.replicate n true)
++    (pairEncode (pairEncode z
++      ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)).encodeLog
++          O))
++      ω)
++    (pairEncode (A.advice n) (List.ofFn init)) (List.ofFn r)
++
++/-- The defining equation of `iX`. -/
++theorem iX_eq (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool)
++    (O : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    iX A din' dout' stateLen outLen n z ω r init O =
++      NUPPT.layout (List.replicate n true)
++        (pairEncode (pairEncode z
++          ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++            (outLen.eval n)).encodeLog O)) ω)
++        (pairEncode (A.advice n) (List.ofFn init)) (List.ofFn r) :=
++  rfl
++
++/-- **The replay invariant:** on every outer log `P ++ O'` extending the replayed prefix `P`, the
++activation loop has run `t` rounds without stopping, within the state bound, and reached the
++state word `S O'`. -/
++def IInv (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool) (t : ℕ)
++    (P : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)))
++    (S : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)) → List Bool) :
++    Prop :=
++  ∀ O', RunsTo (iStart q) (iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun)
++    (iBound q dα din dout din' stateLen perCall finCall dout')
++    (iX A din' dout' stateLen outLen n z ω r init (P ++ O')) t (S O')
++
++/-- `IInv … t P S ↔ ∀ O', RunsTo … (iX (P ++ O')) t (S O')`. -/
++theorem iInv_iff (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool)
++    (t : ℕ) (P : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)))
++    (S : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)) → List Bool) :
++    IInv A q dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun n z ω r init t
++        P S ↔
++      ∀ O', RunsTo (iStart q)
++        (iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun)
++        (iBound q dα din dout din' stateLen perCall finCall dout')
++        (iX A din' dout' stateLen outLen n z ω r init (P ++ O')) t (S O') :=
++  Iff.rfl
++
++/-- The machine's next move on the outer log `O`: its output on the layout `iX O`, decoded with
++the machine's codec. -/
++def iNext (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool)
++    (O : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    Move (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin (outLen.eval n) → Bool) :=
++  decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)
++    (iRaw A q dα din dout din' stateLen perCall outLen finCall run advIn finRun dout'
++      (iX A din' dout' stateLen outLen n z ω r init O))
++
++/-- The defining equation of `iNext`. -/
++theorem iNext_eq (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool)
++    (O : QueryLog (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))) :
++    iNext A q dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun n z ω r init O
++        =
++      decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)
++        (iRaw A q dα din dout din' stateLen perCall outLen finCall run advIn finRun dout'
++          (iX A din' dout' stateLen outLen n z ω r init O)) :=
++  rfl
++
++/-- **The rest of the reduction** from an adversary's position: the simulation, by the handler from
++state `s`, of the adversary's computation from its log `hist` with remaining budget `b`, followed
++by the finalization. -/
++def iTree (n : ℕ) (z ω : List Bool) (r : A.Coins n)
++    (hist : QueryLog (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)))
++    (s : Fin (stateLen.eval n) → Bool) (b : ℕ) :
++    OracleComp (bitSpec (fun j => (din' j).eval n) (fun j => (dout' j).eval n))
++      (Fin (outLen.eval n) → Bool) :=
++  (simulate (iImpl din dout din' dout' stateLen perCall run n z ω)
++    (buildComp (advNext A (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval
++        n))
++      n (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r) (zeroBits _) b hist)
++          s).bind
++    fun res => iFinish din' dout' stateLen outLen finCall finRun n z ω res.2 res.1
++
++/-- The defining equation of `iTree`. -/
++theorem iTree_eq (n : ℕ) (z ω : List Bool) (r : A.Coins n)
++    (hist : QueryLog (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)))
++    (s : Fin (stateLen.eval n) → Bool) (b : ℕ) :
++    iTree A dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun n z ω r hist s b
++        =
++      (simulate (iImpl din dout din' dout' stateLen perCall run n z ω)
++        (buildComp (advNext A (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n)
++          (dα.eval n)) n (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r)
++          (zeroBits _) b hist) s).bind
++        fun res => iFinish din' dout' stateLen outLen finCall finRun n z ω res.2 res.1 :=
++  rfl
++
++section Phases
++
++variable {A q dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun}
++  {n : ℕ} {z ω : List Bool} {r : A.Coins n} {init : Fin (stateLen.eval n) → Bool}
++
++local notation "INNER" => bitSpec (fun i => PolyExpr.eval (din i) n) (fun i => PolyExpr.eval (dout
++    i) n)
++local notation "OUTER" => bitSpec (fun j => PolyExpr.eval (din' j) n) (fun j => PolyExpr.eval (dout'
++    j) n)
++local notation "CIN" => bitCodec (fun i => PolyExpr.eval (din i) n) (fun i => PolyExpr.eval (dout i)
++    n)
++  (PolyExpr.eval dα n)
++local notation "COUT" => bitCodec (fun j => PolyExpr.eval (din' j) n) (fun j => PolyExpr.eval (dout'
++    j) n)
++  (PolyExpr.eval outLen n)
++local notation "XOF" => iX A din' dout' stateLen outLen n z ω r init
++local notation "INV" => IInv A q dα din dout din' dout' stateLen perCall outLen finCall run advIn
++  finRun n z ω r init
++local notation "NEXT" => iNext A q dα din dout din' dout' stateLen perCall outLen finCall run advIn
++  finRun n z ω r init
++local notation "ACT" => iAct A dα din dout din' stateLen perCall outLen finCall run advIn finRun
++local notation "BND" => iBound q dα din dout din' stateLen perCall finCall dout'
++local notation "CTX" => pairEncode (List.replicate n true) (pairEncode z ω)
++local notation "TREE" => iTree A dα din dout din' dout' stateLen perCall outLen finCall run advIn
++  finRun n z ω r
++
++/-- The parameter of the layout `iX O` is `1^n`. -/
++theorem iX_inParam (O : QueryLog OUTER) : NUPPT.inParam (XOF O) = List.replicate n true := by
++  rw [iX_eq, NUPPT.inParam_layout]
++
++/-- The context read off the layout `iX O` is `⟨1^n, ⟨z, ω⟩⟩`. -/
++theorem iX_ctx (O : QueryLog OUTER) : iCtx (XOF O) = CTX := by
++  rw [iCtx_eq, iX_inParam, iX_eq, NUPPT.inArg_layout, pairFstD_pairEncode, pairFstD_pairEncode,
++    pairSndD_pairEncode]
++
++/-- The advice of the layout `iX O` is `⟨A.advice n, s₀⟩`. -/
++theorem iX_inAdvice (O : QueryLog OUTER) :
++    NUPPT.inAdvice (XOF O) = pairEncode (A.advice n) (List.ofFn init) := by
++  rw [iX_eq, NUPPT.inAdvice_layout]
++
++/-- The coins of the layout `iX O` are `A`'s coins `r`. -/
++theorem iX_inCoins (O : QueryLog OUTER) : NUPPT.inCoins (XOF O) = List.ofFn r := by
++  rw [iX_eq, NUPPT.inCoins_layout]
++
++/-- The outer log read off the layout `iX O` is the encoding of `O`. -/
++theorem iX_outer (O : QueryLog OUTER) : iOuter (XOF O) = (COUT).encodeLog O := by
++  rw [iOuter_eq, iX_eq, NUPPT.inArg_layout, pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- The parameter is at most the length of the layout. -/
++theorem le_length_iX (O : QueryLog OUTER) : n ≤ (XOF O).length := by
++  rw [iX_eq]
++  exact le_length_layout n _ _ _
++
++/-- The encoded outer log is at most the length of the layout. -/
++theorem length_encodeLog_le_iX (O : QueryLog OUTER) : ((COUT).encodeLog O).length ≤ (XOF O).length
++    := by
++  rw [iX_eq, NUPPT.layout_eq]
++  simp only [length_pairEncode]
++  omega
++
++/-- A continuing round on every extension preserves the invariant (`runsTo_succ`). -/
++theorem iInv_succ {t : ℕ} {P : QueryLog OUTER} {S S' : QueryLog OUTER → List Bool} (h : INV t P S)
++    (hact : ∀ O', ACT (pairEncode (XOF (P ++ O')) (S O')) = pairEncode [false] (S' O'))
++    (hb : ∀ O', (S' O').length ≤ (BND).eval (XOF (P ++ O')).length) : INV (t + 1) P S' :=
++  fun O' => runsTo_succ (h O') (hact O') (hb O')
++
++/-- **Replaying an entry:** if, on every extension `e :: O'`, the round continues with the state
++`S' O'` (the entry `e` consumed), the invariant holds one round later with `e` replayed. -/
++theorem iInv_consume {t : ℕ} {P : QueryLog OUTER} {S S' : QueryLog OUTER → List Bool}
++    (e : Σ j, (OUTER).dom j × (OUTER).rng j) (h : INV t P S)
++    (hact : ∀ O', ACT (pairEncode (XOF (P ++ e :: O')) (S (e :: O'))) = pairEncode [false] (S' O'))
++    (hb : ∀ O', (S' O').length ≤ (BND).eval (XOF ((P ++ [e]) ++ O')).length) :
++    INV (t + 1) (P ++ [e]) S' := by
++  intro O'
++  have hO : (P ++ [e]) ++ O' = P ++ e :: O' := by rw [List.append_assoc, List.singleton_append]
++  have hb' := hb O'
++  rw [hO] at hb' ⊢
++  exact runsTo_succ (h (e :: O')) (hact O') hb'
++
++/-- **A stopping round** on the replayed prefix `P` itself is the machine's next move on `P`
++(`runsTo_stop`). -/
++theorem iInv_stop {t : ℕ} {P : QueryLog OUTER} {S : QueryLog OUTER → List Bool} {W : List Bool}
++    (h : INV t P S) (hact : ACT (pairEncode (XOF P) (S [])) = pairEncode [true] W)
++    (ht : t ≤ (iRounds q perCall finCall).eval n) :
++    NEXT P = decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n) W
++        := by
++  have h0 := h []
++  rw [List.append_nil] at h0
++  rw [iNext_eq, iRaw_eq, runsTo_stop h0 hact
++    (ht.trans ((iRounds q perCall finCall).eval_mono (le_length_iX P)))]
++
++/-- **The typed state bound:** a state word built from an inner log of at most `q(n)` entries, the
++handler's state, a budget of at most `q(n)`, and components within their bounds, is within
++`iBound` on every layout extending the replayed prefix. -/
++theorem iSt_le_iBound (P O' : QueryLog OUTER) (ph cur Lc cw : List Bool) (hist : QueryLog INNER)
++    (s : Fin (stateLen.eval n) → Bool) (b : ℕ) (hph : ph.length ≤ 1) (hhist : hist.length ≤ q.eval
++        n)
++    (hb : b ≤ q.eval n) (hcur : cur.length ≤ (iCurBound dα din).eval n)
++    (hLc : Lc.length ≤ (perCall.eval n + finCall.eval n) * (entryPoly din' dout').eval n)
++    (hcw : cw.length ≤ perCall.eval n + finCall.eval n) :
++    (iSt ph ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true) cur Lc cw
++      ((COUT).encodeLog O')).length ≤ (BND).eval (XOF (P ++ O')).length :=
++  length_iSt_le q dα din dout din' dout' stateLen perCall finCall (le_length_iX _) hph
++    ((length_encodeLog_le CIN _ hist (fun e _ => entry_le_entryPoly din dout n e _)).trans
++      (Nat.mul_le_mul_right _ hhist))
++    (by rw [List.length_ofFn]) (by rw [List.length_replicate]; exact hb) hcur hLc hcw
++    ((length_encodeLog_le_append COUT O' P).trans (length_encodeLog_le_iX _))
++
++/-- An outer log of at most `c` entries is at most `c · E'` bits. -/
++theorem outLog_le (L : QueryLog OUTER) {c : ℕ} (hL : L.length ≤ c) :
++    ((COUT).encodeLog L).length ≤ c * (entryPoly din' dout').eval n :=
++  (length_encodeLog_le COUT _ L (fun e _ => entry_le_entryPoly din' dout' n e _)).trans
++    (Nat.mul_le_mul_right _ hL)
++
++/-- A pending inner query `⟨1^i, x⟩` is within the bound `iCurBound`. -/
++theorem query_le_iCurBound (i : Fin k) (x : Fin ((din i).eval n) → Bool) :
++    (pairEncode (List.replicate i true) (List.ofFn x)).length ≤ (iCurBound dα din).eval n := by
++  rw [length_pairEncode, List.length_replicate, List.length_ofFn, iCurBound_eq]
++  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  have h1 := i.isLt
++  have h2 := eval_le_sumPoly din i n
++  omega
++
++/-- An adversary's output is within the bound `iCurBound`. -/
++theorem output_le_iCurBound (a : Fin (dα.eval n) → Bool) :
++    (List.ofFn a).length ≤ (iCurBound dα din).eval n := by
++  rw [List.length_ofFn, iCurBound_eq]
++  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  omega
++
++/-- The adversary's move word on the layout `iX O` and a state word with log `hist` is the
++canonical word of its next move (`canonWord_eq`). -/
++theorem iAdvMove_iX (O : QueryLog OUTER) (hist : QueryLog INNER) (sw bw cur Lc cw Ow : List Bool) :
++    iAdvMove A dα din advIn (pairEncode (XOF O) (iSt [] ((CIN).encodeLog hist) sw bw cur Lc cw Ow))
++        =
++      encodeBitMove (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)
++        (advNext A CIN n (advIn CTX) r hist) := by
++  rw [iAdvMove_iSt A dα din advIn (iX_inParam O), iX_ctx, iX_inAdvice, iX_inCoins,
++    pairFstD_pairEncode, ← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq,
++    canonWord_eq din (fun i => (dout i).eval n), advNext_eq, bitCodec_decodeMove]
++
++/-- The handler's move word in a call on the layout `iX O` is the canonical word of the call's
++next move (`canonWord_eq`, `encodeLog_bitCodec`). -/
++theorem iCallMove_iX (O : QueryLog OUTER) (ph Lin : List Bool) (s : Fin (stateLen.eval n) → Bool)
++    (bw : List Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool) (L : QueryLog OUTER)
++    (cw Ow : List Bool) :
++    iCallMove dout din' stateLen run (pairEncode (XOF O) (iSt ph Lin (List.ofFn s) bw
++        (pairEncode (List.replicate i true) (List.ofFn x)) ((COUT).encodeLog L) cw Ow)) =
++      encodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++        ((dout i).eval n + stateLen.eval n)
++        (iCallNext din dout din' dout' stateLen run n z ω s i x L) := by
++  rw [iCallMove_iSt dout din' stateLen run (iX_inParam O), iX_ctx, List.length_replicate, selLen_eq,
++    encodeLog_bitCodec _ _ (outLen.eval n) 0 L, canonWord_eq din' (fun j => (dout' j).eval n),
++    iCallNext_eq]
++
++/-- The finalization's move word on the layout `iX O` is the canonical word of its next move. -/
++theorem iFinMove_iX (O : QueryLog OUTER) (ph Lin : List Bool) (s : Fin (stateLen.eval n) → Bool)
++    (bw : List Bool) {d : ℕ} (a : Fin d → Bool) (L : QueryLog OUTER) (cw Ow : List Bool) :
++    iFinMove din' outLen finRun (pairEncode (XOF O) (iSt ph Lin (List.ofFn s) bw (List.ofFn a)
++        ((COUT).encodeLog L) cw Ow)) =
++      encodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (outLen.eval n)
++        (iFinNext din' dout' stateLen outLen finRun n z ω s a L) := by
++  rw [iFinMove_iSt din' outLen finRun (iX_inParam O), iX_ctx,
++    encodeLog_bitCodec _ _ (outLen.eval n) 0 L, canonWord_eq din' (fun j => (dout' j).eval n),
++    iFinNext_eq]
++
++/-- **The finalization is replayed.** From a state word of the finalization with outer log `L`
++and remaining budget `c`, reached after `t` rounds on every extension of the replayed prefix `P`,
++the machine's next-move function replays `buildComp` of the finalization's rounds.
++
++**Proof sketch.** Induction on `c`. The finalization's move word is the canonical word of its
++next move (`iFinMove_iX`). An output `W` stops the machine with the word `⟨[true], W⟩`
++(`iAct_fin_ret`, `iInv_stop`). A query at budget `0` stops it with the default
++(`iAct_fin_timeout`). A query within budget is, on the prefix itself, the machine's next move
++(`iAct_fin_stop`); on an extension by an entry with answer `y`, the entry is replayed
++(`iAct_fin_ask`, `iInv_consume`, `encodeLog_append_single`) and the induction hypothesis applies to
++the continuation. -/
++theorem fin_phase (hist : QueryLog INNER) (s : Fin (stateLen.eval n) → Bool) (b : ℕ)
++    (a : Fin (dα.eval n) → Bool) (hhist : hist.length ≤ q.eval n) (hb : b ≤ q.eval n) :
++    ∀ (c : ℕ) (L : QueryLog OUTER) (t : ℕ) (P : QueryLog OUTER), L.length + c = finCall.eval n →
++      INV t P (fun O' => iSt [false] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++        (List.ofFn a) ((COUT).encodeLog L) (List.replicate c true) ((COUT).encodeLog O')) →
++      t + c + 1 ≤ (iRounds q perCall finCall).eval n →
++      ReplaysFrom (buildComp (iFinNext din' dout' stateLen outLen finRun n z ω s a) (zeroBits _) c
++          L)
++        (fun O' => NEXT (P ++ O')) := by
++  intro c
++  induction c with
++  | zero =>
++    intro L t P hL hinv ht
++    cases hm : iFinNext din' dout' stateLen outLen finRun n z ω s a L with
++    | ret W =>
++      have hact : ACT (pairEncode (XOF P) (iSt [false] ((CIN).encodeLog hist) (List.ofFn s)
++          (List.replicate b true) (List.ofFn a) ((COUT).encodeLog L) (List.replicate 0 true)
++          ((COUT).encodeLog []))) = pairEncode [true] (pairEncode [true] (List.ofFn W)) :=
++        iAct_fin_ret _ _ _ _ _ _ _ _ _ _ _ _ (by rw [iFinMove_iX, hm, encodeBitMove_ret])
++      rw [buildComp_zero_of_ret hm, replaysFrom_pure_iff, List.append_nil,
++        iInv_stop hinv hact (by omega), decodeBitMove_ret]
++    | query j x' =>
++      have hact : ACT (pairEncode (XOF P) (iSt [false] ((CIN).encodeLog hist) (List.ofFn s)
++          (List.replicate b true) (List.ofFn a) ((COUT).encodeLog L) (List.replicate 0 true)
++          ((COUT).encodeLog []))) =
++          pairEncode [true] (pairEncode [true] (List.ofFn (zeroBits (outLen.eval n)))) := by
++        rw [List.replicate_zero, ofFn_zeroBits]
++        exact iAct_fin_timeout _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam P)
++          (by rw [iFinMove_iX, hm, encodeBitMove_query])
++      rw [buildComp_zero_of_query hm, replaysFrom_pure_iff, List.append_nil,
++        iInv_stop hinv hact (by omega), decodeBitMove_ret]
++  | succ c ih =>
++    intro L t P hL hinv ht
++    cases hm : iFinNext din' dout' stateLen outLen finRun n z ω s a L with
++    | ret W =>
++      have hact : ACT (pairEncode (XOF P) (iSt [false] ((CIN).encodeLog hist) (List.ofFn s)
++          (List.replicate b true) (List.ofFn a) ((COUT).encodeLog L) (List.replicate (c + 1) true)
++          ((COUT).encodeLog []))) = pairEncode [true] (pairEncode [true] (List.ofFn W)) :=
++        iAct_fin_ret _ _ _ _ _ _ _ _ _ _ _ _ (by rw [iFinMove_iX, hm, encodeBitMove_ret])
++      rw [buildComp_succ_of_ret hm, replaysFrom_pure_iff, List.append_nil,
++        iInv_stop hinv hact (by omega), decodeBitMove_ret]
++    | query j x' =>
++      rw [buildComp_succ_of_query hm, replaysFrom_query_iff]
++      refine ⟨?_, fun y => ?_⟩
++      · have hact : ACT (pairEncode (XOF P) (iSt [false] ((CIN).encodeLog hist) (List.ofFn s)
++            (List.replicate b true) (List.ofFn a) ((COUT).encodeLog L) (List.replicate (c + 1) true)
++            ((COUT).encodeLog []))) = pairEncode [true] (pairEncode [false]
++              (pairEncode (List.replicate j true) (List.ofFn x'))) := by
++          rw [List.replicate_succ, MachineCodec.encodeLog_nil]
++          exact iAct_fin_stop _ _ _ _ _ _ _ _ _ _ _ _
++            (by rw [iFinMove_iX, hm, encodeBitMove_query])
++        rw [List.append_nil, iInv_stop hinv hact (by omega), decodeBitMove_query]
++      · have hinv' : INV (t + 1) (P ++ [⟨j, x', y⟩]) (fun O' => iSt [false] ((CIN).encodeLog hist)
++            (List.ofFn s) (List.replicate b true) (List.ofFn a)
++            ((COUT).encodeLog (L ++ [⟨j, x', y⟩])) (List.replicate c true) ((COUT).encodeLog O')) :=
++                by
++          intro O'
++          have hb0 := iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din) (dout := dout)
++              (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
++              (outLen := outLen) (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++            (P ++ [⟨j, x', y⟩]) O' [false] (List.ofFn a) ((COUT).encodeLog (L ++ [⟨j, x', y⟩]))
++            (List.replicate c true) hist s b (by decide) hhist hb (output_le_iCurBound a)
++            (outLog_le _ (by rw [List.length_append, List.length_singleton]; omega))
++            (by rw [List.length_replicate]; omega)
++          rw [List.append_assoc, List.singleton_append] at hb0 ⊢
++          refine runsTo_succ (hinv (⟨j, x', y⟩ :: O')) ?_ hb0
++          beta_reduce
++          rw [List.replicate_succ, MachineCodec.encodeLog_cons, encodeLog_append_single]
++          exact iAct_fin_ask _ _ _ _ _ _ _ _ _ _ _ _ (by rw [iFinMove_iX, hm, encodeBitMove_query])
++        have h := ih _ (t + 1) _ (by rw [List.length_append, List.length_singleton]; omega) hinv'
++          (by omega)
++        simp only [List.append_assoc, List.singleton_append] at h
++        exact h
++
++
++/-- **A call is replayed.** From a state word of a call on the inner query `x` to oracle `i`,
++with outer log `L` and remaining budget `c`, the machine's next-move function replays `buildComp`
++of the call's rounds followed by the rest of the reduction, given that the rest of the reduction
++is replayed from every state word of the adversary after the call (`K`).
++
++**Proof sketch.** Induction on `c`. The handler's move word is the canonical word of the call's
++next move (`iCallMove_iX`). An answer `W = y ‖ s'`, or the joint default at budget `0`, ends the
++call (`iAct_call_ret`, `iAct_call_timeout`, `iCallEnd_iSt`): the entry `⟨i, x, y⟩` is appended to
++the adversary's log (`ofFn_take_drop_add`, `encodeLog_append_single`) and `K` applies, after the
++monad law `pure_bind`. A query within budget is replayed as in the finalization (`iAct_call_stop`,
++`iAct_call_ask`, `iInv_consume`, `query_bind`). -/
++theorem call_phase (hist : QueryLog INNER) (s : Fin (stateLen.eval n) → Bool) (b : ℕ) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool) (hlen : hist.length + b + 1 = q.eval n)
++    (K : ∀ (y : Fin ((dout i).eval n) → Bool) (s' : Fin (stateLen.eval n) → Bool) (t : ℕ)
++      (P : QueryLog OUTER),
++      INV t P (fun O' => iSt [] ((CIN).encodeLog (hist ++ [⟨i, x, y⟩])) (List.ofFn s')
++        (List.replicate b true) [] [] [] ((COUT).encodeLog O')) →
++      t + (2 + finCall.eval n + b * (perCall.eval n + 2)) ≤ (iRounds q perCall finCall).eval n →
++      ReplaysFrom (TREE (hist ++ [⟨i, x, y⟩]) s' b) (fun O' => NEXT (P ++ O'))) :
++    ∀ (c : ℕ) (L : QueryLog OUTER) (t : ℕ) (P : QueryLog OUTER), L.length + c = perCall.eval n →
++      INV t P (fun O' => iSt [true] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++        (pairEncode (List.replicate i true) (List.ofFn x)) ((COUT).encodeLog L)
++        (List.replicate c true) ((COUT).encodeLog O')) →
++      t + c + 1 + (2 + finCall.eval n + b * (perCall.eval n + 2)) ≤
++        (iRounds q perCall finCall).eval n →
++      ReplaysFrom ((buildComp (iCallNext din dout din' dout' stateLen run n z ω s i x) (zeroBits _)
++          c
++          L).bind fun w => TREE (hist ++ [⟨i, x, fun j => w (Fin.castAdd (stateLen.eval n) j)⟩])
++            (fun j => w (Fin.natAdd ((dout i).eval n) j)) b)
++        (fun O' => NEXT (P ++ O')) := by
++  -- The end of a call with the result `w`, at any budget word `cw`.
++  have hend : ∀ (t : ℕ) (P : QueryLog OUTER) (L : QueryLog OUTER) (cw : List Bool)
++      (w : Fin ((dout i).eval n + stateLen.eval n) → Bool),
++      INV t P (fun O' => iSt [true] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++        (pairEncode (List.replicate i true) (List.ofFn x)) ((COUT).encodeLog L) cw
++        ((COUT).encodeLog O')) →
++      (∀ O', ACT (pairEncode (XOF (P ++ O')) (iSt [true] ((CIN).encodeLog hist) (List.ofFn s)
++        (List.replicate b true) (pairEncode (List.replicate i true) (List.ofFn x))
++        ((COUT).encodeLog L) cw ((COUT).encodeLog O'))) =
++        pairEncode [false] (iCallEnd dout (pairEncode (XOF (P ++ O')) (iSt [true]
++          ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++          (pairEncode (List.replicate i true) (List.ofFn x)) ((COUT).encodeLog L) cw
++          ((COUT).encodeLog O'))) (List.ofFn w))) →
++      t + 1 + (2 + finCall.eval n + b * (perCall.eval n + 2)) ≤ (iRounds q perCall finCall).eval n →
++      ReplaysFrom (TREE (hist ++ [⟨i, x, fun j => w (Fin.castAdd (stateLen.eval n) j)⟩])
++        (fun j => w (Fin.natAdd ((dout i).eval n) j)) b) (fun O' => NEXT (P ++ O')) := by
++    intro t P L cw w hinv hact ht
++    refine K _ _ (t + 1) P (fun O' => ?_) ht
++    refine runsTo_succ (hinv O') ?_ ?_
++    · beta_reduce
++      rw [hact, iCallEnd_iSt dout (iX_inParam _), List.length_replicate, selLen_eq,
++        (ofFn_take_drop_add w).1, (ofFn_take_drop_add w).2, encodeLog_append_single,
++        bitCodec_encodeEntry]
++    · exact iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din) (dout := dout) (din' := din')
++        (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
++        (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++        P O' [] [] [] [] _ _ b (by decide)
++            (by rw [List.length_append, List.length_singleton]; omega) (by omega) (Nat.zero_le _)
++        (Nat.zero_le _) (Nat.zero_le _)
++  intro c
++  induction c with
++  | zero =>
++    intro L t P hL hinv ht
++    cases hm : iCallNext din dout din' dout' stateLen run n z ω s i x L with
++    | ret W =>
++      rw [buildComp_zero_of_ret hm, OracleComp.pure_bind]
++      refine hend t P L _ W hinv (fun O' => ?_) (by omega)
++      exact iAct_call_ret _ _ _ _ _ _ _ _ _ _ _ _ (by rw [iCallMove_iX, hm, encodeBitMove_ret])
++    | query j x' =>
++      rw [buildComp_zero_of_query hm, OracleComp.pure_bind]
++      refine hend t P L _ (zeroBits _) hinv (fun O' => ?_) (by omega)
++      have hact : ACT (pairEncode (XOF (P ++ O')) (iSt [true] ((CIN).encodeLog hist) (List.ofFn s)
++          (List.replicate b true) (pairEncode (List.replicate i true) (List.ofFn x))
++          ((COUT).encodeLog L) [] ((COUT).encodeLog O'))) =
++          pairEncode [false] (iCallEnd dout (pairEncode (XOF (P ++ O')) (iSt [true]
++            ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++            (pairEncode (List.replicate i true) (List.ofFn x)) ((COUT).encodeLog L) []
++            ((COUT).encodeLog O')))
++            (List.replicate (selLen dout n (List.replicate (↑i) true).length + stateLen.eval n)
++              false)) :=
++        iAct_call_timeout _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam _)
++          (by rw [iCallMove_iX, hm, encodeBitMove_query])
++      rw [List.length_replicate, selLen_eq, ← ofFn_zeroBits] at hact
++      rw [List.replicate_zero]
++      exact hact
++  | succ c ih =>
++    intro L t P hL hinv ht
++    cases hm : iCallNext din dout din' dout' stateLen run n z ω s i x L with
++    | ret W =>
++      rw [buildComp_succ_of_ret hm, OracleComp.pure_bind]
++      refine hend t P L _ W hinv (fun O' => ?_) (by omega)
++      exact iAct_call_ret _ _ _ _ _ _ _ _ _ _ _ _ (by rw [iCallMove_iX, hm, encodeBitMove_ret])
++    | query j x' =>
++      rw [buildComp_succ_of_query hm, OracleComp.query_bind, replaysFrom_query_iff]
++      refine ⟨?_, fun y => ?_⟩
++      · have hact : ACT (pairEncode (XOF P) (iSt [true] ((CIN).encodeLog hist) (List.ofFn s)
++            (List.replicate b true) (pairEncode (List.replicate i true) (List.ofFn x))
++            ((COUT).encodeLog L) (List.replicate (c + 1) true) ((COUT).encodeLog []))) =
++            pairEncode [true] (pairEncode [false]
++              (pairEncode (List.replicate j true) (List.ofFn x'))) := by
++          rw [List.replicate_succ, MachineCodec.encodeLog_nil]
++          exact iAct_call_stop _ _ _ _ _ _ _ _ _ _ _ _
++            (by rw [iCallMove_iX, hm, encodeBitMove_query])
++        rw [List.append_nil, iInv_stop hinv hact (by omega), decodeBitMove_query]
++      · have hinv' : INV (t + 1) (P ++ [⟨j, x', y⟩]) (fun O' => iSt [true] ((CIN).encodeLog hist)
++            (List.ofFn s) (List.replicate b true) (pairEncode (List.replicate i true) (List.ofFn x))
++            ((COUT).encodeLog (L ++ [⟨j, x', y⟩])) (List.replicate c true) ((COUT).encodeLog O')) :=
++                by
++          intro O'
++          have hb0 := iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din) (dout := dout)
++              (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
++              (outLen := outLen) (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++            (P ++ [⟨j, x', y⟩]) O' [true] (pairEncode (List.replicate i true) (List.ofFn x))
++            ((COUT).encodeLog (L ++ [⟨j, x', y⟩])) (List.replicate c true) hist s b (by decide)
++            (by omega) (by omega) (query_le_iCurBound i x)
++            (outLog_le _ (by rw [List.length_append, List.length_singleton]; omega))
++            (by rw [List.length_replicate]; omega)
++          rw [List.append_assoc, List.singleton_append] at hb0 ⊢
++          refine runsTo_succ (hinv (⟨j, x', y⟩ :: O')) ?_ hb0
++          beta_reduce
++          rw [List.replicate_succ, MachineCodec.encodeLog_cons, encodeLog_append_single]
++          exact iAct_call_ask _ _ _ _ _ _ _ _ _ _ _ _
++              (by rw [iCallMove_iX, hm, encodeBitMove_query])
++        have h := ih _ (t + 1) _ (by rw [List.length_append, List.length_singleton]; omega) hinv'
++          (by omega)
++        simp only [List.append_assoc, List.singleton_append] at h
++        exact h
++
++/-- **The rest of the reduction is replayed.** From a state word of the adversary with log
++`hist` and remaining budget `b` (with `|hist| + b = q(n)`), reached after `t` rounds on every
++extension of the replayed prefix `P`, the machine's next-move function replays `iTree`.
++
++**Proof sketch.** Induction on `b`. The adversary's move word is the canonical word of its next
++move (`iAdvMove_iX`). An output `a`, or a query at budget `0` (output `0^{dα(n)}`), opens the
++finalization (`iAct_adv_ret`, `iAct_adv_timeout`), and `fin_phase` applies after
++`buildComp_*_of_ret`/`_of_query`, `simulate_pure` and `pure_bind`. A query `x` to oracle `i`
++within budget opens a call (`iAct_adv_query`); the simulation unfolds into the call followed by
++the rest of the reduction (`simulate_query`, `iImpl_apply`, `bind_assoc`, `pure_bind`), and
++`call_phase` applies with the induction hypothesis as its continuation. The round count decreases
++along the way: `2 + finCall + b (perCall + 2)` rounds suffice. -/
++theorem adv_phase : ∀ (b : ℕ) (hist : QueryLog INNER) (s : Fin (stateLen.eval n) → Bool) (t : ℕ)
++    (P : QueryLog OUTER), hist.length + b = q.eval n →
++    INV t P (fun O' => iSt [] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true) [] [] []
++      ((COUT).encodeLog O')) →
++    t + (2 + finCall.eval n + b * (perCall.eval n + 2)) ≤ (iRounds q perCall finCall).eval n →
++    ReplaysFrom (TREE hist s b) (fun O' => NEXT (P ++ O')) := by
++  -- Opening the finalization with the adversary's output `a`.
++  have hfin : ∀ (b : ℕ) (hist : QueryLog INNER) (s : Fin (stateLen.eval n) → Bool) (t : ℕ)
++      (P : QueryLog OUTER) (a : Fin (dα.eval n) → Bool), hist.length + b = q.eval n →
++      INV t P (fun O' => iSt [] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true) [] []
++          []
++        ((COUT).encodeLog O')) →
++      (∀ O', ACT (pairEncode (XOF (P ++ O')) (iSt [] ((CIN).encodeLog hist) (List.ofFn s)
++        (List.replicate b true) [] [] [] ((COUT).encodeLog O'))) =
++        pairEncode [false] (iSt [false] ((CIN).encodeLog hist) (List.ofFn s) (List.replicate b true)
++          (List.ofFn a) ((COUT).encodeLog []) (List.replicate (finCall.eval n) true)
++          ((COUT).encodeLog O'))) →
++      t + 1 + (finCall.eval n) + 1 ≤ (iRounds q perCall finCall).eval n →
++      ReplaysFrom (iFinish din' dout' stateLen outLen finCall finRun n z ω s a)
++        (fun O' => NEXT (P ++ O')) := by
++    intro b hist s t P a hlen hinv hact ht
++    rw [iFinish_eq_buildComp]
++    refine fin_phase hist s b a (by omega) (by omega) (finCall.eval n) [] (t + 1) P
++      (by rw [List.length_nil, Nat.zero_add]) (fun O' => ?_) ht
++    exact runsTo_succ (hinv O') (hact O') (iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din)
++        (dout := dout) (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
++        (outLen := outLen) (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++      P O' [false] (List.ofFn a) ((COUT).encodeLog [])
++      (List.replicate (finCall.eval n) true) hist s b (by decide) (by omega) (by omega)
++      (output_le_iCurBound a) (by rw [MachineCodec.encodeLog_nil]; exact Nat.zero_le _)
++      (by rw [List.length_replicate]; omega))
++  intro b
++  induction b with
++  | zero =>
++    intro hist s t P hlen hinv ht
++    cases hm : advNext A CIN n (advIn CTX) r hist with
++    | ret a =>
++      rw [iTree_eq, buildComp_zero_of_ret hm, simulate_pure, OracleComp.pure_bind]
++      refine hfin 0 hist s t P a hlen hinv (fun O' => ?_) (by omega)
++      rw [MachineCodec.encodeLog_nil]
++      exact iAct_adv_ret _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam _)
++        (by rw [iAdvMove_iX, hm, encodeBitMove_ret])
++    | query i x =>
++      rw [iTree_eq, buildComp_zero_of_query hm, simulate_pure, OracleComp.pure_bind]
++      refine hfin 0 hist s t P _ hlen hinv (fun O' => ?_) (by omega)
++      rw [MachineCodec.encodeLog_nil, List.replicate_zero, ofFn_zeroBits]
++      exact iAct_adv_timeout _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam _)
++        (by rw [iAdvMove_iX, hm, encodeBitMove_query])
++  | succ b ih =>
++    intro hist s t P hlen hinv ht
++    cases hm : advNext A CIN n (advIn CTX) r hist with
++    | ret a =>
++      rw [iTree_eq, buildComp_succ_of_ret hm, simulate_pure, OracleComp.pure_bind]
++      refine hfin (b + 1) hist s t P a hlen hinv (fun O' => ?_) (by rw [Nat.add_mul] at ht; omega)
++      rw [MachineCodec.encodeLog_nil]
++      exact iAct_adv_ret _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam _)
++        (by rw [iAdvMove_iX, hm, encodeBitMove_ret])
++    | query i x =>
++      rw [iTree_eq, buildComp_succ_of_query hm, simulate_query, iImpl_apply]
++      simp only [OracleComp.bind_assoc, OracleComp.pure_bind]
++      rw [iCall_eq_buildComp]
++      refine call_phase hist s b i x (by omega)
++        (fun y s' t' P' hinv' ht' => ih _ s' t' P'
++          (by rw [List.length_append, List.length_singleton]; omega) hinv' ht')
++        (perCall.eval n) [] (t + 1) P (by rw [List.length_nil, Nat.zero_add])
++        (fun O' => ?_) (by rw [Nat.add_mul] at ht; omega)
++      refine runsTo_succ (hinv O') ?_ (iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din)
++          (dout := dout) (din' := din') (dout' := dout') (stateLen := stateLen) (perCall := perCall)
++          (outLen := outLen) (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++        P O' [true] (pairEncode (List.replicate i true) (List.ofFn x))
++        ((COUT).encodeLog []) (List.replicate (perCall.eval n) true) hist s b (by decide) (by omega)
++        (by omega) (query_le_iCurBound i x)
++            (by rw [MachineCodec.encodeLog_nil]; exact Nat.zero_le _)
++        (by rw [List.length_replicate]; omega))
++      beta_reduce
++      rw [MachineCodec.encodeLog_nil, List.replicate_succ]
++      exact iAct_adv_query _ _ _ _ _ _ _ _ _ _ _ _ (iX_inParam _)
++        (by rw [iAdvMove_iX, hm, encodeBitMove_query])
++
++end Phases
++
++/-- **The functional equation of the replay machine.** At parameter `n`, with the reduction's
++input `z`, seed `ω`, the adversary's coins `r` and the initial state `s₀`, the computation of the
++next-move function `O ↦ decodeBitMove (iRaw (iX O))` with budget `q(n) · perCall(n) + finCall(n)`
++is the simulation of `A` on `advIn ⟨1^n, ⟨z, ω⟩⟩` by the handler, followed by the finalization.
++
++**Proof sketch.** The reduction tree is `iTree [] s₀ q(n)` (`toCompOn_eq_advNext`). It makes at
++most `q(n) · perCall(n) + finCall(n)` queries: `A` makes at most `q(n)` (`toCompOn_costBoundedBy`),
++each answered by at most `perCall(n)` outer queries (`buildComp_costBoundedBy`,
++`costBoundedBy_mul`, `simulate_costBoundedBy`), and the finalization makes at most `finCall(n)`
++(`CostBoundedBy.bind`). The machine's next-move function replays it from the empty log
++(`adv_phase` from the initial state, `runsTo_zero`), so `buildComp_of_replaysFrom` gives the
++equality of trees. -/
++theorem iRaw_spec (n : ℕ) (z ω : List Bool) (r : A.Coins n) (init : Fin (stateLen.eval n) → Bool) :
++    buildComp (fun O => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++        (outLen.eval n) (iRaw A q dα din dout din' stateLen perCall outLen finCall run advIn finRun
++            dout'
++          (iX A din' dout' stateLen outLen n z ω r init O)))
++      (zeroBits _) (q.eval n * perCall.eval n + finCall.eval n) [] =
++      (simulate (iImpl din dout din' dout' stateLen perCall run n z ω)
++          (A.toCompOn (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
++            n (q.eval n) (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r) init).bind
++        fun res => iFinish din' dout' stateLen outLen finCall finRun n z ω res.2 res.1 := by
++  have hT : (simulate (iImpl din dout din' dout' stateLen perCall run n z ω)
++      (A.toCompOn (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
++        n (q.eval n) (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r) init).bind
++      (fun res => iFinish din' dout' stateLen outLen finCall finRun n z ω res.2 res.1) =
++      iTree A dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun n z ω r []
++        init (q.eval n) := by
++    rw [toCompOn_eq_advNext, bitCodec_timeout, iTree_eq]
++  rw [hT]
++  -- The reduction makes at most `q · perCall + finCall` queries.
++  have hcost : (iTree A dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun n z
++      ω r
++      [] init (q.eval n)).CostBoundedBy (fun _ => 1) (q.eval n * perCall.eval n + finCall.eval n) :=
++          by
++    rw [← hT]
++    have himpl : ∀ i x s, OracleComp.CostBoundedBy (fun _ => 1)
++        (iImpl din dout din' dout' stateLen perCall run n z ω i x s) ((fun _ => perCall.eval n) i)
++            := by
++      intro i x s
++      have h := (buildComp_costBoundedBy (iCallNext din dout din' dout' stateLen run n z ω s i x)
++        (zeroBits _) (perCall.eval n) []).bind
++        (f := fun w => OracleComp.pure (spec := bitSpec (fun j => (din' j).eval n)
++          (fun j => (dout' j).eval n))
++          ((fun j => w (Fin.castAdd (stateLen.eval n) j), fun j => w (Fin.natAdd ((dout i).eval n)
++              j)) :
++            (Fin ((dout i).eval n) → Bool) × (Fin (stateLen.eval n) → Bool)))
++        (q₂ := 0) (fun _ => OracleComp.costBoundedBy_pure _ _ _)
++      rw [Nat.add_zero] at h
++      rw [iImpl_apply, iCall_eq_buildComp]
++      exact h
++    have hA := costBoundedBy_mul (NUPPT.toCompOn_costBoundedBy A
++      (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)) n (q.eval n)
++      (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r) (perCall.eval n)
++    exact (simulate_costBoundedBy himpl hA init).bind fun res => by
++      rw [iFinish_eq_buildComp]
++      exact buildComp_costBoundedBy _ _ _ _
++  -- The machine replays the reduction from the empty log.
++  have hinv : IInv A q dα din dout din' dout' stateLen perCall outLen finCall run advIn finRun
++      n z ω r init 0 [] (fun O' => iSt []
++        ((bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)).encodeLog [])
++        (List.ofFn init) (List.replicate (q.eval n) true) [] [] []
++        ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          (outLen.eval n)).encodeLog O')) := by
++    intro O'
++    have hs : iStart q (iX A din' dout' stateLen outLen n z ω r init ([] ++ O')) = iSt []
++        ((bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)).encodeLog [])
++        (List.ofFn init) (List.replicate (q.eval n) true) [] [] []
++        ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          (outLen.eval n)).encodeLog O') := by
++      rw [iStart_eq, iX_inAdvice, pairSndD_pairEncode, iX_inParam, List.length_replicate, iX_outer,
++        List.nil_append, MachineCodec.encodeLog_nil]
++    beta_reduce
++    rw [← hs]
++    exact runsTo_zero (by
++      rw [hs]
++      exact iSt_le_iBound (A := A) (q := q) (dα := dα) (din := din) (dout := dout) (din' := din')
++          (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
++          (finCall := finCall) (r := r) (init := init) (z := z) (ω := ω)
++        [] O' [] [] [] [] [] init (q.eval n) (by decide) (Nat.zero_le _) le_rfl
++        (Nat.zero_le _) (Nat.zero_le _) (Nat.zero_le _))
++  have hrep := adv_phase (A := A) (q := q) (dα := dα) (din := din) (dout := dout) (din' := din')
++    (dout' := dout') (stateLen := stateLen) (perCall := perCall) (outLen := outLen)
++    (finCall := finCall) (run := run) (advIn := advIn) (finRun := finRun) (init := init)
++    (q.eval n) [] init 0 [] (by rw [List.length_nil, Nat.zero_add]) hinv (by
++      rw [iRounds_eq]
++      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++      omega)
++  exact buildComp_of_replaysFrom _ _ _ [] _ hrep hcost
++end Spec
++
++end TCSlib.Cryptography.Games.EffFill
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Replay.lean b/TCSlib/Cryptography/Games/Efficiency/Replay.lean
+new file mode 100644
+index 000000000..5d8c25040
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Efficiency/Replay.lean
+@@ -0,0 +1,117 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Machines
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Replaying a computation with a next-move function (efficiency fill, S3)
++
++A next-move function `f` (of the log so far) **replays** an oracle computation `t` when `f []` is
++`t`'s first move and, at a query, `f` extended by the query and any answer replays the
++continuation (`ReplaysFrom`). If it does and `t` makes at most `b` queries, then `buildComp` of `f`
++with budget `b` is `t` itself (`buildComp_of_replaysFrom`): the budget never cuts the replay
++short. The interactive efficiency target (`Games.exists_interactiveHandlerMachine`) uses it, with
++the cost scaling lemma `costBoundedBy_mul` (route note
++`briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`, §"Shared pieces", S3, and §"T2", step 4).
++
++## Main definitions
++
++* `EffFill.ReplaysFrom t f`: the next-move function `f` replays `t`.
++
++## Main results
++
++* `EffFill.buildComp_of_replaysFrom`: a replay within budget builds the computation.
++* `EffFill.costBoundedBy_mul`: charging `p` per query multiplies a query bound by `p`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §3.8.1 (oracle machines).
++-/
++
++namespace TCSlib.Cryptography.Games.EffFill
++
++variable {ι α : Type} {spec : OracleSpec ι}
++
++/-- **`f` replays `t`:** at a return `a`, `f []` is the output `a`; at a query `x` to oracle `i`
++with continuation `k`, `f []` is that query and, for every answer `y`, the function
++`O ↦ f (⟨i, x, y⟩ :: O)` replays `k y`. (The argument of `f` is the log after the current
++position.) -/
++def ReplaysFrom : OracleComp spec α → (QueryLog spec → Move spec α) → Prop
++  | .pure a, f => f [] = .ret a
++  | .query i x k, f => f [] = .query i x ∧ ∀ y, ReplaysFrom (k y) fun O => f (⟨i, x, y⟩ :: O)
++
++/-- A return is replayed when the function outputs it: `ReplaysFrom (pure a) f ↔ f [] = ret a`. -/
++theorem replaysFrom_pure_iff (a : α) (f : QueryLog spec → Move spec α) :
++    ReplaysFrom (.pure a) f ↔ f [] = .ret a :=
++  Iff.rfl
++
++/-- A query is replayed when the function asks it and replays every continuation:
++`ReplaysFrom (query i x k) f ↔ f [] = query i x ∧ ∀ y, ReplaysFrom (k y) (f ∘ (⟨i, x, y⟩ :: ·))`. -/
++theorem replaysFrom_query_iff (i : ι) (x : spec.dom i) (k : spec.rng i → OracleComp spec α)
++    (f : QueryLog spec → Move spec α) :
++    ReplaysFrom (.query i x k) f ↔
++      f [] = .query i x ∧ ∀ y, ReplaysFrom (k y) fun O => f (⟨i, x, y⟩ :: O) :=
++  Iff.rfl
++
++/-- **A replay within budget builds the computation.** If `O ↦ next (hist ++ O)` replays `t` and
++`t` makes at most `b` queries, then `buildComp next timeout b hist = t`.
++
++**Proof sketch.** Induction on `t`, generalizing the log and the budget. A return `a` is
++`next hist = ret a`, and `buildComp` returns `a` at every budget (`buildComp_zero_of_ret`,
++`buildComp_succ_of_ret`). A query costs `1 ≤ b`, so `b = b' + 1`, and `buildComp` asks the same
++query (`buildComp_succ_of_query`); each continuation is replayed from `hist ++ [⟨i, x, y⟩]`
++(`List.append_assoc`) within `b'`, and agrees by induction. -/
++theorem buildComp_of_replaysFrom (next : QueryLog spec → Move spec α) (timeout : α) :
++    ∀ (t : OracleComp spec α) (hist : QueryLog spec) (b : ℕ),
++      ReplaysFrom t (fun O => next (hist ++ O)) → t.CostBoundedBy (fun _ => 1) b →
++        buildComp next timeout b hist = t := by
++  intro t
++  induction t with
++  | pure a =>
++    intro hist b h _
++    have h' : next hist = .ret a := by
++      have := (replaysFrom_pure_iff a _).1 h
++      rwa [List.append_nil] at this
++    cases b with
++    | zero => exact buildComp_zero_of_ret h'
++    | succ b => exact buildComp_succ_of_ret h'
++  | query i x k ih =>
++    intro hist b h hc
++    obtain ⟨h1, h2⟩ := (replaysFrom_query_iff i x k _).1 h
++    rw [List.append_nil] at h1
++    obtain ⟨hb, hk⟩ := (OracleComp.costBoundedBy_query _ i x k b).1 hc
++    obtain ⟨b, rfl⟩ : ∃ b', b = b' + 1 := ⟨b - 1, by omega⟩
++    rw [buildComp_succ_of_query h1]
++    refine congrArg (OracleComp.query i x) (funext fun y => ih y _ b ?_ ?_)
++    · have e : (fun O => next ((hist ++ [⟨i, x, y⟩]) ++ O)) =
++          fun O => next (hist ++ ⟨i, x, y⟩ :: O) := by
++        funext O
++        rw [List.append_assoc, List.singleton_append]
++      rw [e]
++      exact h2 y
++    · have := hk y
++      rwa [Nat.add_sub_cancel] at this
++
++/-- **Charging `p` per query multiplies the bound by `p`:** a computation with at most `q` queries
++is cost-bounded by `q · p` when every query costs `p`.
++
++**Proof sketch.** Induction on the computation: a query needs `1 ≤ q`, so `p ≤ q · p`, and the
++continuation's bound `(q − 1) · p` is `q · p − p` (`Nat.sub_one_mul`). -/
++theorem costBoundedBy_mul {c : OracleComp spec α} {q : ℕ}
++    (h : c.CostBoundedBy (fun _ => 1) q) (p : ℕ) : c.CostBoundedBy (fun _ => p) (q * p) := by
++  induction c generalizing q with
++  | pure a => exact OracleComp.costBoundedBy_pure _ _ _
++  | query i x k ih =>
++    obtain ⟨hq, hk⟩ := (OracleComp.costBoundedBy_query _ i x k q).1 h
++    refine (OracleComp.costBoundedBy_query _ i x k _).2 ⟨?_, fun y => ?_⟩
++    · exact Nat.le_mul_of_pos_left p hq
++    · rw [← Nat.sub_one_mul]
++      exact ih y (hk y)
++
++end TCSlib.Cryptography.Games.EffFill
+-- 
+2.43.0
+

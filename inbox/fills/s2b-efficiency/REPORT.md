@@ -1,4 +1,4 @@
-# Fill s2b-efficiency — checkpoint 3 (T4)
+# Fill s2b-efficiency — checkpoint 4 (T2)
 
 **Worker** Claude. **Issue base** `b50f0a416cbf0a9f05acf14a254ba53cd97a7701` on
 `cryptography/pass-shelat-ch2-4`. **Package** read at exchange commit
@@ -12,8 +12,8 @@
 |---|---|
 | Companion `exists_toCompOn_of_toComp` | **proved** (checkpoint 1) |
 | T1 `exists_handlerMachine` | **proved** (checkpoint 2) |
-| T2 `exists_interactiveHandlerMachine` | admitted (unchanged) |
-| T4 `exists_toOracleAdversary_of_bitCodec` | **proved** (no `sorry`) |
+| T2 `exists_interactiveHandlerMachine` | **proved** (no `sorry`) |
+| T4 `exists_toOracleAdversary_of_bitCodec` | **proved** (checkpoint 3) |
 
 Companion (checkpoint 1): `NUPPT.exists_comp A polyTimeComputable_pairSndD
 polyTimeComputable_id`; `φ` is `NUPPT.coinsCongr`.
@@ -38,17 +38,28 @@ the two decoders read corresponding moves on every word (wrong payload length, `
 the default verdict included). `eval_buildTree_bridge` (induction on the budget) gives the
 equality of evaluations; at the timeout the verdict `false` is bit `0` of `zeroBits 1`.
 
+T2: `B` is `EffFill.exists_splitMachine` of the replay machine `EffFill.iRaw` (advice
+`⟨A.advice n, H.init n⟩`, as in T1). `iRaw` replays the reduction from `B`'s own outer log, one
+activation per round (adversary / call / finalization), and its first unanswerable outer query
+or the finalization's output is `B`'s move. The reduction tree makes at most
+`q·perCall + finCall` queries (`costBoundedBy_mul`, `simulate_costBoundedBy`,
+`CostBoundedBy.bind`); the machine replays it (`EffFill.ReplaysFrom`, phase inductions
+`adv_phase`/`call_phase`/`fin_phase`), so `buildComp_of_replaysFrom` gives the equality of trees on
+every branch. Round bound: `2 + finCall + q(perCall + 2)`, the design's
+`(q + 1) + q(perCall + 1) + finCall + 1`.
+
 ## Changed files
 
-- `TCSlib/Cryptography/Games/Efficiency.lean` (three proof bodies, three sketches, three imports).
+- `TCSlib/Cryptography/Games/Efficiency.lean` (four proof bodies, four sketches, six imports, module docstring status and `## Contents`).
 - New: `TCSlib/Cryptography/Games/Efficiency/Strings.lean`, `…/Efficiency/Handler.lean`,
-  `…/Efficiency/OracleBridge.lean` (EF-1; namespace `TCSlib.Cryptography.Games.EffFill`; `Strings` imports
+  `…/Efficiency/OracleBridge.lean`, `…/Efficiency/Replay.lean`, `…/Efficiency/Interactive.lean`,
+  `…/Efficiency/InteractiveSpec.lean` (EF-1; namespace `TCSlib.Cryptography.Games.EffFill`; `Strings` imports
   `Pseudorandom.Functions.Asymptotic.GGM.Reduction` directly).
 
 ## Checks at this checkpoint
 
-`OracleBridge`, `Efficiency`: exit 0; one `sorry` warning (T2) (`evidence/logs/checks-cp3.log`;
-`Strings` and `Handler` unchanged since `checks-cp2.log`). `campaign_style_lint.py TCSlib/Cryptography/Games --check8b`:
+`Replay`, `Interactive`, `InteractiveSpec`, `Efficiency`: exit 0, **no `sorry` warning**
+(`evidence/logs/checks-cp4.log`; the other helpers unchanged since `checks-cp2/3.log`). `campaign_style_lint.py TCSlib/Cryptography/Games --check8b`:
 0 FAIL, 0 WARN.
 
 ## Environment (addendum v1)
@@ -67,4 +78,4 @@ equality of evaluations; at the timeout the verdict `false` is bit `0` of `zeroB
   (`bootstrap.log`). The detached background sweep was terminated by the session twice (no OOM
   event); the rest ran in the foreground in chunks, as recorded in the log.
 
-**Checkpoint 3 delivered — continuing with T2**
+**Checkpoint 4 delivered — final checks (sweep, axioms, seal) follow in the final payload**
