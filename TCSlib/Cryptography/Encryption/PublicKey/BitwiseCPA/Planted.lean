@@ -121,7 +121,10 @@ def plantTuple (Enc : NUPPT) (w : List Bool) : List Bool :=
           ((pairSndD (pairSndD (pairFstD w))).drop
             (pairFstD (pairSndD (pairFstD (pairSndD w)))).length)))
 
-/-- The defining equation of `plantTuple`. -/
+/-- The defining equation of `plantTuple`: on
+`⟨⟨1^n, ⟨⟨pk, c⟩, ω⟩⟩, ⟨⟨1^j, ⟨1^{(j+1)B}, Z⟩⟩, m₀ ‖ m₁⟩⟩` it is `T₁ ++ ⟨c, T₂⟩`, with `T₁` the
+one-bit block encryption of the first `j` bits of `m₁` on `ω` and `T₂` that of the bits of `m₀`
+after the first `j + 1` on `ω.drop ((j+1)B)`. -/
 theorem plantTuple_eq (Enc : NUPPT) (w : List Bool) :
     plantTuple Enc w =
       blockEncFun Enc.output (.const 1) Enc.coins
@@ -221,7 +224,8 @@ from the unary parameter. -/
 def plantAns (Enc : NUPPT) (L : PolyExpr) (w : List Bool) : List Bool :=
   padCt (L.eval (pairFstD (pairFstD w)).length) (plantTuple Enc w)
 
-/-- The defining equation of `plantAns`. -/
+/-- The defining equation of `plantAns`: `plantAns Enc L w = padCt (L(n)) (plantTuple Enc w)`,
+with `n` the length of the unary parameter `pairFstD (pairFstD w)`. -/
 theorem plantAns_eq (Enc : NUPPT) (L : PolyExpr) (w : List Bool) :
     plantAns Enc L w = padCt (L.eval (pairFstD (pairFstD w)).length) (plantTuple Enc w) := rfl
 
@@ -256,7 +260,9 @@ def plantOut (w : List Bool) : List Bool :=
       else [false]
   else [false]
 
-/-- The defining equation of `plantOut`. -/
+/-- The defining equation of `plantOut`: on `⟨ctx, ⟨⟨aux, t⟩, a⟩⟩` with `t = asked :: x`,
+`b₀ = x_j` and `b₁ = x_{n+j}`, the output is `[a]` if `(b₀, b₁) = (0, 1)`, `[¬a]` if
+`(b₀, b₁) = (1, 0)`, and `[0]` if `b₀ = b₁` or no challenge was asked. -/
 theorem plantOut_eq (w : List Bool) :
     plantOut w =
       if (pairSndD (pairFstD (pairSndD w))).headD false then

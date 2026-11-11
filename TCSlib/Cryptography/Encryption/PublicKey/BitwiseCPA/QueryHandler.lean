@@ -90,7 +90,9 @@ def qRun (ans : List Bool → List Bool) (w : List Bool) : List Bool :=
         (pairEncode (pairFstD (pairFstD (pairSndD w))) (true :: pairSndD (pairSndD (pairSndD w))))
   else pairEncode [] (pairFstD (pairSndD w))
 
-/-- The defining equation of `qRun`. -/
+/-- The defining equation of `qRun`: on `⟨ctx, ⟨⟨aux, t⟩, ⟨1^i, x⟩⟩⟩`, a challenge query (`i = 1`)
+returns `⟨ans ⟨ctx, ⟨aux, t.drop 1⟩⟩, ⟨aux, t⟩⟩` when the flag `t.headD false` is set, and
+`⟨ans ⟨ctx, ⟨aux, x⟩⟩, ⟨aux, 1 :: x⟩⟩` otherwise; a decryption query returns `⟨[], ⟨aux, t⟩⟩`. -/
 theorem qRun_eq (ans : List Bool → List Bool) (w : List Bool) :
     qRun ans w =
       if (pairFstD (pairSndD (pairSndD w))).headD false then
