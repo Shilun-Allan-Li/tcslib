@@ -54,3 +54,7 @@ consumers too.
 covers 2,679 files and is indexed by the `DISPOSITIONS*.txt` files).
 [362-module source closure at the head](sources.zip) (SHA-256
 `cf96a5ba6e886760abc871743699311929720fd5397fde61eb2c2fb228cfc4a9`).
+
+**Post-audit note (Gate 11 N1).** The trial-merge build includes one campaign file that differs from
+the PR head's closure: `Foundations/Negligible.lean`, which gained `Negligible.comp_of_le` through
+#284 (merged at `4a09f399`). The padding proof does not use it.
