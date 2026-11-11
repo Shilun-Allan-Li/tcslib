@@ -9,12 +9,11 @@ is unchanged there.
   threshold. It bounds the output unary length plus the original
   machine's call cost by `B * (|z| + 1)`. The proof uses
   `PadQuad.nu_pow_le`, `NUPPT.length_advInput` and monotonicity of
-  the length polynomial. The remaining machine obligations are
-  recovering the unary floor root in linear time and computing the
-  arbitrary unary `PolyExpr` within the needed bound. The existing
-  `polyTimeComputable_unaryPoly` gives polynomial time. The target
-  needs the tighter cost before the checked composition and split
-  combinators can finish the proof.
+  the length polynomial. The complete word formula now checks in an
+  isolated tree, including the linear-time shifted unary root and the
+  output-sensitive unary polynomial evaluator. See the
+  [Levin padding checkpoint](levin-padding-checkpoint.md) for the checked
+  proof and its dependency screen.
 - **`exists_canonizerExp`.** The existing `EffectiveMachineCode` witness
   has a canonizer bound obtained by a finite maximum of halting
   times. The concrete decoder and padded round-trip theorem are
@@ -25,4 +24,4 @@ is unchanged there.
 
 [Checked image-bound probe and diagnostics](levin-probe.zip)
 
-**Not yet clear to merge — the Levin machine constructions are open.**
+**Not yet clear to merge — the padding proof awaits integration and audit, and the canonizer bound remains open.**
