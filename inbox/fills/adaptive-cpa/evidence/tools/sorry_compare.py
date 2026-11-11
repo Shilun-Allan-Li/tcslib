@@ -1,7 +1,8 @@
-"""Compare the sweep's `declaration uses 'sorry'` warnings with base-sorries.txt.
+"""Compare a sweep's `declaration uses 'sorry'` warnings with base-sorries.txt.
 
 Each warning's line is mapped to the declaration name written on that source line.
 Usage (from the clone): python3 -I sorry_compare.py <sweep.tsv> <sweep-log-dir> <base-sorries.txt>
+(sweep.tsv rows: module, exit, seconds, max RSS, sorry count; logs named <module with dots>.log)
 """
 import re
 import sys
@@ -16,8 +17,8 @@ for line in basefile.read_text().splitlines():
     base[mod] = sorted(n.strip() for n in names.split(','))
 now = {}
 for row in tsv.read_text().splitlines():
-    idx, mod, rc = row.split('\t')
-    log = next(logdir.glob(f'{idx}-*.log'))
+    mod = row.split('\t')[0]
+    log = logdir / (mod.replace('/', '.') + '.log')
     src = Path(mod + '.lean').read_text(encoding='utf-8').splitlines()
     names = []
     for m in re.finditer(r"^" + re.escape(mod) + r"\.lean:(\d+):\d+: warning: declaration uses 'sorry'",
@@ -34,16 +35,18 @@ def key(mod):
     return None
 total_now = sum(len(v) for v in now.values())
 total_base = sum(len(v) for v in base.values())
-matched = set()
 print(f'base admissions: {total_base}; sweep admissions: {total_now}')
-for mod, names in now.items():
+seen = set()
+removed, added = [], []
+for mod, names in sorted(now.items()):
     b = key(mod)
-    matched.add(b)
-    old = base.get(b, [])
-    removed = sorted(set(n.split('.')[-1] for n in old) - set(n.split('.')[-1] for n in names))
-    added = sorted(set(n.split('.')[-1] for n in names) - set(n.split('.')[-1] for n in old))
-    status = 'same' if not removed and not added and len(old) == len(names) else f'removed={removed} added={added}'
-    print(f'{mod}: {len(names)} (base {len(old)}) {status}')
-for b in base:
-    if b not in matched:
-        print(f'{b}: 0 (base {len(base[b])}) removed={base[b]}')
+    bn = base.get(b, [])
+    seen.add(b)
+    print(f'{mod}: {len(names)}: {", ".join(names)}')
+    added += [(mod, n) for n in names if n not in bn]
+    removed += [(mod, n) for n in bn if n not in names]
+for b, bn in base.items():
+    if b not in seen:
+        removed += [(b, n) for n in bn]
+print('removed relative to base:', removed)
+print('added relative to base:', added)

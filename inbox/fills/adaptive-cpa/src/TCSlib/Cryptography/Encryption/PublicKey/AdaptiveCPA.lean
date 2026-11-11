@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Hybrid
+import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Reduction
 import TCSlib.Cryptography.Games.Advantage

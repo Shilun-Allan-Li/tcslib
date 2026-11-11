@@ -1,0 +1,45 @@
+START 2026-11-11T20:45:49.989917+00:00
+MODULE AcpaProbe/ControlGamesAfter
+SEALED|Complexity.NUPPT.coinLen|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAt|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.toCompOn|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairFstD|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairSndD|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acDin|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acDout|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.castImpl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.hybImpl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.msgOf|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.adaptiveIndGame|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.adaptiveIndImpl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.inLens|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.indCodec|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.indImpl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.outLens|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.decAnswer|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.decOpen|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.ProbComp.sample|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.bitCodec|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.decodeBitMove|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.simulate|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.zeroBits|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.decodeFin|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.padFin|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+AcpaProbe/ControlGamesAfter.lean:56:2: error: Tactic `rfl` failed: The left-hand side
+  S.inLens n 0
+is not definitionally equal to the right-hand side
+  S.ctLen.eval n
+
+S : TCSlib.Cryptography.Composability.FixedLengthPKScheme
+n : ℕ
+⊢ S.inLens n 0 = S.ctLen.eval n
+FAIL(AcpaProbe/ControlGamesAfter): lean exited with status 1
+FAIL(AcpaProbe/ControlGamesAfter): error diagnostics reported
+FAIL(AcpaProbe/ControlGamesAfter): no fresh .olean produced
+END 2026-11-11T20:45:52.670600+00:00
+Elapsed seconds: 2.7
+Maximum child RSS (KiB): 2601056
+EXIT 1

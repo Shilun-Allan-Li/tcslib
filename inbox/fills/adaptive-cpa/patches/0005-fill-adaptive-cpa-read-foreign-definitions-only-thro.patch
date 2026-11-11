@@ -1,0 +1,111 @@
+From 52f3e3a1c22bb5abb2100b8e3328640edf1716c3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 20:45:05 +0000
+Subject: [PATCH 5/5] fill adaptive-cpa: read foreign definitions only through
+ readers (seal fixes)
+
+simulate_pure instead of rfl in simulate_tapeImpl_congr; the outLens cast read in the
+right direction; acHandler_finish stated at the handler's output width; the composite's
+final return read through simulate_pure and expect_pure.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTm8SAfk12DMX1esC2g
+---
+ .../Encryption/PublicKey/AdaptiveCPA/Games.lean       |  4 ++--
+ .../Encryption/PublicKey/AdaptiveCPA/Handler.lean     | 11 ++++++++---
+ .../Encryption/PublicKey/AdaptiveCPA/Hybrid.lean      |  2 +-
+ .../Encryption/PublicKey/AdaptiveCPA/Reduction.lean   |  5 +++--
+ 4 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+index fad1f74a7..62248fc0e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+@@ -226,7 +226,7 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ :
+       congr 1
+       funext r
+       dsimp only
+-      rw [OracleComp.pure_bind, acEnc_eq, ofFn_select, ofFn_cast (S.outLens_one n)]
++      rw [OracleComp.pure_bind, acEnc_eq, ofFn_select, ofFn_cast (S.outLens_one n).symm]
+     · cases h with
+       | nil =>
+         have hκ : κ = 0 := by
+@@ -243,7 +243,7 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ :
+             (Nat.le_of_not_lt hh) c rfl, S.indImpl_challenge_repeat_onSpec, OracleComp.pure_bind,
+           OracleComp.pure_bind, hybImpl_full (ins := fun i => (acDin S i).eval n)
+           (outs := fun i => (acDout S i).eval n) κ _ _ x (c :: t) (Nat.le_of_not_lt hh),
+-          List.headD_cons, ofFn_cast (S.outLens_one n)]
++          List.headD_cons, ofFn_cast (S.outLens_one n).symm]
+ 
+ /-- **The adaptive game is the hybrid game with a constant selector:**
+ `S.adaptiveIndGame .cpa A q κ b n = acHyb S A q κ n (fun _ => b)`.
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+index c29caacd8..baa5fa26b 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+@@ -392,18 +392,23 @@ theorem acHandler_advInput (n : ℕ) (z : List Bool)
+     pairFstD_pairEncode]
+ 
+ /-- The finalization outputs the adversary's bit and asks nothing:
+-`(acHandler S cap ist).finish n z ω s a = pure a`. -/
++`(acHandler S cap ist).finish n z ω s a = pure (padFin _ ⟦a⟧)`, the bit `a` read at the output
++width. -/
+ theorem acHandler_finish (n : ℕ) (z : List Bool)
+     (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
+     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool)
+     (a : Fin ((PolyExpr.const 1).eval n) → Bool) :
+-    (acHandler S cap ist).finish n z ω s a = .pure a := by
++    (acHandler S cap ist).finish n z ω s a =
++      .pure (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) := by
+   rw [InteractiveHandler.finish_eq]
+   refine buildComp_zero_of_ret ?_
+   show decodeBitMove _ _ _ (acFin _) = _
+   rw [acFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
+     pairFstD_pairEncode]
+-  exact decodeBitMove_ret _ _ _ a
++  have hw : List.ofFn (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
++    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
++  exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
++    (decodeBitMove_ret _ _ _ _)
+ 
+ /-! ### Answers of the handler -/
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+index 6535a6891..f318a12fd 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+@@ -262,7 +262,7 @@ theorem simulate_tapeImpl_congr {α : Type} (T' : ℕ → C) (c : OracleComp (bi
+     (h : List (Fin L → Bool)) (hT : ∀ m, h.length ≤ m → T m = T' m) :
+     simulate (tapeImpl κ E sel T kst) c h = simulate (tapeImpl κ E sel T' kst) c h := by
+   induction c generalizing h with
+-  | pure a => rfl
++  | pure a => rw [simulate_pure, simulate_pure]
+   | query i x k ih =>
+     match i, x, k, ih with
+     | 0, x, k, ih =>
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+index a56d185c2..42f096262 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+@@ -55,7 +55,7 @@ theorem castImpl_indImpl_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
+   congr 1
+   funext r
+   dsimp only
+-  rw [OracleComp.pure_bind, ofFn_cast (S.outLens_one n), acEnc_eq, ofFn_select]
++  rw [OracleComp.pure_bind, ofFn_cast (S.outLens_one n).symm, acEnc_eq, ofFn_select]
+ 
+ /-- The `i`-th issued ciphertext after one more: `(c :: h).reverse[i]?` is `c` at `i = |h|` and
+ `h.reverse[i]?` otherwise. -/
+@@ -224,7 +224,8 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
+   rw [init_acAbs,
+     simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
+     expect_bind]
+-  simp only [expect_pure]
++  refine congrArg _ (funext fun a => ?_)
++  rw [expect_pure, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
+ 
+ /-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
+ `acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s
+-- 
+2.43.0
+

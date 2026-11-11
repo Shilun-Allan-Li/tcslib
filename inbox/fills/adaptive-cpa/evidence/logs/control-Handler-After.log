@@ -1,0 +1,48 @@
+START 2026-11-11T20:45:42.404253+00:00
+MODULE AcpaProbe/ControlHandlerAfter
+SEALED|Complexity.NUPPT.advInput|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.coinLen|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.coinsEquivPoly|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.output|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAt|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.PolyTimeComputable|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.PrefixByLength.drop|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairFstD|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairSndD|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.EnsembleLemmas.padL|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.FunFamily.blocks|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.advInput|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.call|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.finInput|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.finish|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.impl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.input|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.MachineCodec.encodeLog|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.bitCodec|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.buildComp|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.decodeBitMove|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.seedIn|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.zeroBits|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.padFin|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+AcpaProbe/ControlHandlerAfter.lean:61:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.Games.InteractiveHandler.input n z ω s i x L
+is not definitionally equal to the right-hand side
+  Turing.pairEncode (Turing.pairEncode (List.replicate n true) (Turing.pairEncode z ω))
+    (Turing.pairEncode s (Turing.pairEncode (Turing.pairEncode (List.replicate (↑i) true) x) L))
+
+n : ℕ
+z ω s : List Bool
+i : Fin 2
+x L : List Bool
+⊢ TCSlib.Cryptography.Games.InteractiveHandler.input n z ω s i x L =
+    Turing.pairEncode (Turing.pairEncode (List.replicate n true) (Turing.pairEncode z ω))
+      (Turing.pairEncode s (Turing.pairEncode (Turing.pairEncode (List.replicate (↑i) true) x) L))
+FAIL(AcpaProbe/ControlHandlerAfter): lean exited with status 1
+FAIL(AcpaProbe/ControlHandlerAfter): error diagnostics reported
+FAIL(AcpaProbe/ControlHandlerAfter): no fresh .olean produced
+END 2026-11-11T20:45:45.173432+00:00
+Elapsed seconds: 2.8
+Maximum child RSS (KiB): 2596312
+EXIT 1

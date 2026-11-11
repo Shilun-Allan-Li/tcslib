@@ -1,0 +1,36 @@
+START 2026-11-11T20:46:05.104886+00:00
+MODULE AcpaProbe/ControlOwnedAfter
+SEALED|Complexity.NUPPT.toCompOn|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acDin|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acDout|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acHandler|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.AdaptiveCPA.acHyb|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.AdaptiveINDSecure|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.INDSecure|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.adaptiveIndGame|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthPKScheme.indGame|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.advInput|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.finish|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.InteractiveHandler.impl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.accept|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.advantage|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.bitCodec|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.simulate|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Negligible|Lean.ReducibilityStatus.irreducible
+AcpaProbe/ControlOwnedAfter.lean:52:2: error: Tactic `rfl` failed: The left-hand side
+  (TCSlib.Cryptography.Composability.AdaptiveCPA.acHandler S cap ist).perCall
+is not definitionally equal to the right-hand side
+  Complexity.PolyExpr.const 1
+
+S : TCSlib.Cryptography.Composability.FixedLengthPKScheme
+cap : Complexity.PolyExpr
+ist : ℕ → ℕ
+⊢ (TCSlib.Cryptography.Composability.AdaptiveCPA.acHandler S cap ist).perCall = Complexity.PolyExpr.const 1
+FAIL(AcpaProbe/ControlOwnedAfter): lean exited with status 1
+FAIL(AcpaProbe/ControlOwnedAfter): error diagnostics reported
+FAIL(AcpaProbe/ControlOwnedAfter): no fresh .olean produced
+END 2026-11-11T20:46:07.755478+00:00
+Elapsed seconds: 2.7
+Maximum child RSS (KiB): 2603748
+EXIT 1

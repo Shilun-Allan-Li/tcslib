@@ -55,7 +55,7 @@ theorem castImpl_indImpl_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
   congr 1
   funext r
   dsimp only
-  rw [OracleComp.pure_bind, ofFn_cast (S.outLens_one n), acEnc_eq, ofFn_select]
+  rw [OracleComp.pure_bind, ofFn_cast (S.outLens_one n).symm, acEnc_eq, ofFn_select]
 
 /-- The `i`-th issued ciphertext after one more: `(c :: h).reverse[i]?` is `c` at `i = |h|` and
 `h.reverse[i]?` otherwise. -/
@@ -224,7 +224,8 @@ private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
   rw [init_acAbs,
     simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
     expect_bind]
-  simp only [expect_pure]
+  refine congrArg _ (funext fun a => ?_)
+  rw [expect_pure, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])]
 
 /-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
 `acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s

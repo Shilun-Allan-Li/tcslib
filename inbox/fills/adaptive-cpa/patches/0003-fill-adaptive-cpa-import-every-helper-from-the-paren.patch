@@ -1,0 +1,47 @@
+From 00061b1b9446d1d003d4f1985c405c2d54b693bf Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 20:23:02 +0000
+Subject: [PATCH 3/5] fill adaptive-cpa: import every helper from the parent
+ file; acTapes_apply reader
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTm8SAfk12DMX1esC2g
+---
+ TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean  | 2 ++
+ .../Encryption/PublicKey/AdaptiveCPA/Handler.lean          | 7 +++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+index b457b8d9a..3bc011f94 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+@@ -3,6 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Hybrid
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Handler
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Reduction
+ import TCSlib.Cryptography.Games.Advantage
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+index c7b88a317..1b08ca8fc 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+@@ -113,6 +113,13 @@ def acTapes (n : ℕ) :
+   (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)).trans
+     (Equiv.arrowCongr (Equiv.refl _) (NUPPT.coinsEquivPoly rfl n).symm)
+ 
++/-- `acTapes S cap n ω j = (coinsEquivPoly rfl n).symm (FunFamily.blocks _ _ ω j)`. -/
++theorem acTapes_apply (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
++    (j : Fin (cap.eval n)) :
++    acTapes S cap n ω j =
++      (NUPPT.coinsEquivPoly rfl n).symm (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n) ω j) :=
++  rfl
++
+ /-- **Tape `j` is the `j`-th block of the seed:**
+ `⟦acTapes S cap n ω j⟧ = (⟦ω⟧.drop (j·ρ(n))).take ρ(n)`.
+ 
+-- 
+2.43.0
+

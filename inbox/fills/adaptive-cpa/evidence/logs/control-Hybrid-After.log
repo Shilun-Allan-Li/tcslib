@@ -1,0 +1,26 @@
+START 2026-11-11T20:45:34.486654+00:00
+MODULE AcpaProbe/ControlHybridAfter
+SEALED|Complexity.NUPPT.toCompOn|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.ProbComp.expect|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.ProbComp.sample|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.bitCodec|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.simulate|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.zeroBits|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.padFin|Lean.ReducibilityStatus.irreducible
+AcpaProbe/ControlHybridAfter.lean:34:2: error: Tactic `rfl` failed: The left-hand side
+  TCSlib.Cryptography.padFin ℓ w i
+is not definitionally equal to the right-hand side
+  w.getD (↑i) false
+
+ℓ : ℕ
+w : List Bool
+i : Fin ℓ
+⊢ TCSlib.Cryptography.padFin ℓ w i = w.getD (↑i) false
+FAIL(AcpaProbe/ControlHybridAfter): lean exited with status 1
+FAIL(AcpaProbe/ControlHybridAfter): error diagnostics reported
+FAIL(AcpaProbe/ControlHybridAfter): no fresh .olean produced
+END 2026-11-11T20:45:37.089535+00:00
+Elapsed seconds: 2.6
+Maximum child RSS (KiB): 2527540
+EXIT 1

@@ -1,0 +1,7 @@
+{
+ "Hybrid": "example (ℓ : ℕ) (w : List Bool) (i : Fin ℓ) :\n    TCSlib.Cryptography.padFin ℓ w i = w.getD i false := by\n  rfl\n",
+ "Handler": "example (n : ℕ) (z ω s : List Bool) (i : Fin 2) (x L : List Bool) :\n    TCSlib.Cryptography.Games.InteractiveHandler.input n z ω s i x L =\n      Turing.pairEncode (Turing.pairEncode (List.replicate n true) (Turing.pairEncode z ω))\n        (Turing.pairEncode s (Turing.pairEncode (Turing.pairEncode (List.replicate i true) x) L)) := by\n  rfl\n",
+ "Games": "example (S : TCSlib.Cryptography.Composability.FixedLengthPKScheme) (n : ℕ) :\n    S.inLens n 0 = S.ctLen.eval n := by\n  rfl\n",
+ "Reduction": "example (S : TCSlib.Cryptography.Composability.FixedLengthPKScheme) :\n    TCSlib.Cryptography.Composability.AdaptiveCPA.acDout S 1 = S.ctLen := by\n  rfl\n",
+ "Owned": "example (S : TCSlib.Cryptography.Composability.FixedLengthPKScheme) (cap : Complexity.PolyExpr)\n    (ist : ℕ → ℕ) :\n    (TCSlib.Cryptography.Composability.AdaptiveCPA.acHandler S cap ist).perCall = .const 1 := by\n  rfl\n"
+}

@@ -6,6 +6,8 @@ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Games.Efficiency
 import TCSlib.Cryptography.Asymptotic.OneWayLemmas
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
+import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Complexity.ClassNP.PolyTimePrefix
 
@@ -113,6 +115,13 @@ def acTapes (n : ℕ) :
   (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)).trans
     (Equiv.arrowCongr (Equiv.refl _) (NUPPT.coinsEquivPoly rfl n).symm)
 
+/-- `acTapes S cap n ω j = (coinsEquivPoly rfl n).symm (FunFamily.blocks _ _ ω j)`. -/
+theorem acTapes_apply (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
+    (j : Fin (cap.eval n)) :
+    acTapes S cap n ω j =
+      (NUPPT.coinsEquivPoly rfl n).symm (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n) ω j) :=
+  rfl
+
 /-- **Tape `j` is the `j`-th block of the seed:**
 `⟦acTapes S cap n ω j⟧ = (⟦ω⟧.drop (j·ρ(n))).take ρ(n)`.
 
@@ -145,32 +154,10 @@ theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool
 
 /-! ### Strings -/
 
-/-- Reading a padding: `⟦padFin k a⟧ = a ++ 0^{k - |a|}` when `|a| ≤ k`. -/
-theorem ofFn_padFin_of_le {k : ℕ} {a : List Bool} (h : a.length ≤ k) :
-    List.ofFn (padFin k a) = a ++ List.replicate (k - a.length) false := by
-  have hl : (List.ofFn (padFin k a)).length =
-      (a ++ List.replicate (k - a.length) false).length := by
-    simp only [List.length_ofFn, List.length_append, List.length_replicate]
-    omega
-  refine List.ext_getElem hl fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, padFin_apply, List.getElem_append]
-  split_ifs with hi
-  · exact List.getD_eq_getElem _ _ hi
-  · rw [List.getD_eq_default _ _ (Nat.le_of_not_lt hi), List.getElem_replicate]
-
-/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k`. -/
-theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k` (`ofFn_padFin_eq_take`). -/
+private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
     List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
-  rw [EnsembleLemmas.padL_eq]
-  have hl : (List.ofFn (padFin k a)).length =
-      ((a ++ List.replicate k false).take k).length := by
-    simp only [List.length_ofFn, List.length_take, List.length_append, List.length_replicate]
-    omega
-  refine List.ext_getElem hl fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, padFin_apply, List.getElem_take, List.getElem_append]
-  split_ifs with hi
-  · exact List.getD_eq_getElem _ _ hi
-  · rw [List.getD_eq_default _ _ (Nat.le_of_not_lt hi), List.getElem_replicate]
+  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
 
 /-- Appending to a pair appends to its second component. -/
 private theorem pairEncode_append (u v t : List Bool) :
@@ -190,7 +177,7 @@ private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (
     simp only [length_pairEncode, List.length_replicate, List.length_ofFn, acStLen_eq,
       PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
-  rw [acState_eq, ofFn_padFin_of_le hlen, pairEncode_append, pairEncode_append]
+  rw [acState_eq, Collection.ofFn_padFin_of_le hlen, pairEncode_append, pairEncode_append]
   refine ⟨by rw [pairFstD_pairEncode], by rw [pairSndD_pairEncode, pairFstD_pairEncode], ?_⟩
   rw [pairSndD_pairEncode, pairSndD_pairEncode]
   exact List.take_left' List.length_ofFn
@@ -405,18 +392,23 @@ theorem acHandler_advInput (n : ℕ) (z : List Bool)
     pairFstD_pairEncode]
 
 /-- The finalization outputs the adversary's bit and asks nothing:
-`(acHandler S cap ist).finish n z ω s a = pure a`. -/
+`(acHandler S cap ist).finish n z ω s a = pure (padFin _ ⟦a⟧)`, the bit `a` read at the output
+width. -/
 theorem acHandler_finish (n : ℕ) (z : List Bool)
     (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool)
     (a : Fin ((PolyExpr.const 1).eval n) → Bool) :
-    (acHandler S cap ist).finish n z ω s a = .pure a := by
+    (acHandler S cap ist).finish n z ω s a =
+      .pure (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) := by
   rw [InteractiveHandler.finish_eq]
   refine buildComp_zero_of_ret ?_
   show decodeBitMove _ _ _ (acFin _) = _
   rw [acFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
     pairFstD_pairEncode]
-  exact decodeBitMove_ret _ _ _ a
+  have hw : List.ofFn (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
+    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
+  exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+    (decodeBitMove_ret _ _ _ _)
 
 /-! ### Answers of the handler -/
 
