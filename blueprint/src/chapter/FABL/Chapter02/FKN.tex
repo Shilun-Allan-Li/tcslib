@@ -21,9 +21,9 @@ form with coefficients $a_i$ evaluated at $x$ is $\sum_{i=1}^n a_i x_i$.
 \label{FABL.centeredLinearSquare}
 \leanok
 \uses{FABL.linearForm}
-Let $n$ be a nonnegative integer, let $a_1,dots,a_n$ be real numbers, and let
-$xadicalc{-1,1}^n$. The centered square associated with $a$ and $x$ is
-$(linearForm(a,x))^2-sum_{i=1}^n a_i^2$.
+Let $n$ be a nonnegative integer, let $a_1,\dots,a_n$ be real numbers, and let
+$x\in\{-1,1\}^n$. The centered square associated with $a$ and $x$ is
+$(\sum_{i=1}^n a_i x_i)^2-\sum_{i=1}^n a_i^2$.
 \end{definition}
 
 \begin{theorem}[Linear form on a prefixed sign vector]
@@ -70,10 +70,10 @@ over the cube on which its function is defined.
 \leanok
 \uses{FABL.expect_fin_cons, FABL.signValue}
 \difficulty{4}
-Let $d,e:\\{-1,1\\}^n\\to\\mathbb R$ and $f:\\{-1,1\\}^{n+1}\\to\\mathbb R$. Suppose
-that for every sign $b\\in\\{-1,1\\}$ and every $x\\in\\{-1,1\\}^n$, adjoining $b$ as
-the first coordinate gives $f(b,x)=b d(x)+e(x)$. Then $\\mathbb E[f^4]=\\mathbb
-E[d^4]+6\\mathbb E[d^2e^2]+\\mathbb E[e^4]$, where each expectation is uniform over the
+Let $d,e:\{-1,1\}^n\to\mathbb R$ and $f:\{-1,1\}^{n+1}\to\mathbb R$. Suppose
+that for every sign $b\in\{-1,1\}$ and every $x\in\{-1,1\}^n$, adjoining $b$ as
+the first coordinate gives $f(b,x)=b d(x)+e(x)$. Then $\mathbb E[f^4]=\mathbb
+E[d^4]+6\mathbb E[d^2e^2]+\mathbb E[e^4]$, where each expectation is uniform over the
 corresponding sign cube.
 \end{theorem}
 
@@ -102,7 +102,7 @@ $n$-dimensional sign cube. The uniform expectation of $f(x)^2$ is nonnegative.
 \leanok
 \difficulty{3}
 For every real-valued function $f$ on the $n$-dimensional sign cube, its uniform fourth
-moment is nonnegative: $\\mathbb E[f^4]\\ge 0$.
+moment is nonnegative: $\mathbb E[f^4]\ge 0$.
 \end{theorem}
 
 \begin{theorem}[Nonnegativity of a product of squares]
@@ -1670,7 +1670,7 @@ a_i^2\right)^2-\sum_{i=1}^n a_i^4$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.fourierWeight, FABL.fourierWeightAtLevel, FABL.sum_sq_fourierCoeff_eq_one}
 \difficulty{4}
-Let $f$ be a function from the $n$-dimensional sign cube to $\\{-1,1\\}$. The sum of the
+Let $f$ be a function from the $n$-dimensional sign cube to $\{-1,1\}$. The sum of the
 squared Fourier coefficients of its real-valued sign representation over singleton
 subsets lies in $[0,1]$.
 \end{theorem}
@@ -1680,8 +1680,8 @@ subsets lies in $[0,1]$.
 \label{FABL.sq_sq_sub_one_le_nine_mul_sq_sub}
 \leanok
 \difficulty{5}
-Let $s,t\\in\\mathbb R$ satisfy $s^2=1$ and $(s-t)^2\\le1$. Then
-$(t^2-1)^2\\le9(s-t)^2$.
+Let $s,t\in\mathbb R$ satisfy $s^2=1$ and $(s-t)^2\le1$. Then
+$(t^2-1)^2\le9(s-t)^2$.
 \end{theorem}
 
 \begin{theorem}[Separation under a distance condition]
@@ -1957,11 +1957,11 @@ $1/144$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.centeredLinearSquare, FABL.centeredLinearSquare_fourthMoment_le, FABL.centeredLinearSquare_singletonCoeffs, FABL.degreePart, FABL.exercise9_5, FABL.expect_toReal_sub_degreePart_one_sq, FABL.fourierCoeff, FABL.fourierWeightAtLevel, FABL.one_div_144_le_uniformProbability_four_mul_sq_ge_secondMoment, FABL.sq_sub_one_far_of_centered_far, FABL.uniformProbability}
 \difficulty{5}
 Let $n$ be a nonnegative integer, and let $f$ be a function from the sign cube
-$\\{-1,1\\}^n$ to $\\{-1,1\\}$. For each subset $S\\subseteq\\{1,\\ldots,n\\}$, let
-$\\widehat f(S)$ be its Fourier coefficient, and let $W_1(f)=\\sum_{|S|=1}\\widehat
-f(S)^2$. If $0\\le\\delta\\le 1/1600$ and $W_1(f)=1-\\delta$, then, for a uniformly
-random $x\\in\\{-1,1\\}^n$, the expected square of $\\bigl(\\sum_{i=1}^n\\widehat
-f(\\{i\\})x_i\\bigr)^2-\\sum_{i=1}^n\\widehat f(\\{i\\})^2$ is at most $6400\\delta$.
+$\{-1,1\}^n$ to $\{-1,1\}$. For each subset $S\subseteq\{1,\ldots,n\}$, let
+$\widehat f(S)$ be its Fourier coefficient, and let $W_1(f)=\sum_{|S|=1}\widehat
+f(S)^2$. If $0\le\delta\le 1/1600$ and $W_1(f)=1-\delta$, then, for a uniformly
+random $x\in\{-1,1\}^n$, the expected square of $\bigl(\sum_{i=1}^n\widehat
+f(\{i\})x_i\bigr)^2-\sum_{i=1}^n\widehat f(\{i\})^2$ is at most $6400\delta$.
 \end{theorem}
 
 \begin{theorem}[Fourth powers of singleton Fourier coefficients]
@@ -1970,11 +1970,11 @@ f(\\{i\\})x_i\\bigr)^2-\\sum_{i=1}^n\\widehat f(\\{i\\})^2$ is at most $6400\\de
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.centeredLinearSquare, FABL.expect_centeredLinearSquare_sq, FABL.expect_centeredSingletonSquare_sq_le, FABL.fourierCoeff, FABL.fourierWeightAtLevel, FABL.fourierWeightAtLevel_one_eq_sum_singleton}
 \difficulty{4}
-Let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a Boolean function, and let $\\widehat
-f(S)=\\mathbb E_x[f(x)\\prod_{j\\in S}x_j]$ denote its Fourier coefficient on the
-uniform Boolean cube. If $0\\le\\delta\\le 1/1600$ and the total Fourier weight at level
-$1$, namely $\\sum_{|S|=1}\\widehat f(S)^2$, equals $1-\\delta$, then
-$1-3202\\delta\\le\\sum_{i=1}^n\\widehat f(\\{i\\})^4$.
+Let $f:\{-1,1\}^n\to\{-1,1\}$ be a Boolean function, and let $\widehat
+f(S)=\mathbb E_x[f(x)\prod_{j\in S}x_j]$ denote its Fourier coefficient on the
+uniform Boolean cube. If $0\le\delta\le 1/1600$ and the total Fourier weight at level
+$1$, namely $\sum_{|S|=1}\widehat f(S)^2$, equals $1-\delta$, then
+$1-3202\delta\le\sum_{i=1}^n\widehat f(\{i\})^4$.
 \end{theorem}
 
 \begin{theorem}[A large singleton Fourier coefficient from level-one weight]
@@ -2512,8 +2512,8 @@ version of $f$ equals $1-\delta$, then some coordinate $i$ satisfies $1-3202\del
 \leanok
 \uses{FABL.relativeHammingDist}
 \difficulty{3}
-Let $\\Omega$ be a finite nonempty set, let $\\beta$ be a set with decidable equality,
-and let $f,g:\\Omega\\to\\beta$. Their relative Hamming distance is at most $1$.
+Let $\Omega$ be a finite nonempty set, let $\beta$ be a set with decidable equality,
+and let $f,g:\Omega\to\beta$. Their relative Hamming distance is at most $1$.
 \end{theorem}
 
 \begin{theorem}[Nonnegativity of relative Hamming distance]
@@ -2522,8 +2522,8 @@ and let $f,g:\\Omega\\to\\beta$. Their relative Hamming distance is at most $1$.
 \leanok
 \uses{FABL.relativeHammingDist}
 \difficulty{2}
-Let $\\Omega$ be a finite nonempty set, let $\\beta$ be a set with decidable equality,
-and let $f,g:\\Omega\\to\\beta$. Their relative Hamming distance is nonnegative.
+Let $\Omega$ be a finite nonempty set, let $\beta$ be a set with decidable equality,
+and let $f,g:\Omega\to\beta$. Their relative Hamming distance is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Small Fourier Deficit Implies Closeness to a Dictator]

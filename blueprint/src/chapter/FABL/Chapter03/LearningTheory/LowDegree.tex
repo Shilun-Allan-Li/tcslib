@@ -28,7 +28,7 @@ of the $n$ coordinates whose cardinality is at most $k$.
 \uses{FABL.lowDegreeFourierFamily}
 \difficulty{1}
 Let $n$ and $k$ be natural numbers, and let $S$ be a subset of the $n$ coordinates. Then
-$S$ belongs to the family of sets of size at most $k$ if and only if $|S|\\le k$.
+$S$ belongs to the family of sets of size at most $k$ if and only if $|S|\le k$.
 \end{theorem}
 
 \begin{theorem}[Nonemptiness of the low degree family]
@@ -2070,11 +2070,11 @@ subsets whose cardinality is greater than $a$.
 \leanok
 \uses{FABL.IsFourierSpectrumConcentratedUpTo, FABL.fourierWeightAboveReal_antitone}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $f:\\{−1,1\\}^n\\to\\mathbb R$, and let
-$\\varepsilon,a,b\\in\\mathbb R$ with $a\\le b$. If the sum of squared Fourier
+Let $n$ be a nonnegative integer, let $f:\{−1,1\}^n\to\mathbb R$, and let
+$\varepsilon,a,b\in\mathbb R$ with $a\le b$. If the sum of squared Fourier
 coefficients over coordinate sets whose size is strictly greater than $a$ is at most
-$\\varepsilon$, then the corresponding sum over sets whose size is strictly greater than
-$b$ is also at most $\\varepsilon$.
+$\varepsilon$, then the corresponding sum over sets whose size is strictly greater than
+$b$ is also at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Monotonicity in the error bound]
@@ -2083,10 +2083,10 @@ $b$ is also at most $\\varepsilon$.
 \leanok
 \uses{FABL.IsFourierSpectrumConcentratedUpTo}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $f:\\{−1,1\\}^n\\to\\mathbb R$, and let
-$\\varepsilon,\\varepsilon',k\\in\\mathbb R$ with $\\varepsilon\\le\\varepsilon'$. If
+Let $n$ be a nonnegative integer, let $f:\{−1,1\}^n\to\mathbb R$, and let
+$\varepsilon,\varepsilon',k\in\mathbb R$ with $\varepsilon\le\varepsilon'$. If
 the sum of squared Fourier coefficients over coordinate sets whose size is strictly
-greater than $k$ is at most $\\varepsilon$, then that sum is at most $\\varepsilon'$ as
+greater than $k$ is at most $\varepsilon$, then that sum is at most $\varepsilon'$ as
 well.
 \end{theorem}
 
@@ -2142,12 +2142,12 @@ greater than or equal to $1/\delta$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsFourierSpectrumConcentratedUpTo, FABL.IsFourierSpectrumConcentratedUpTo.mono_cutoff, FABL.IsFourierSpectrumConcentratedUpTo.mono_error, FABL.PositiveLearningParameter, FABL.isFourierSpectrumConcentratedUpTo_noiseSensitivity, FABL.noiseSensitivity, FABL.noiseSensitivityLearningDegree, FABL.two_div_one_sub_exp_neg_two_mul_noiseSensitivity_le_three}
 \difficulty{4}
-Let $f$ be a Boolean function on the sign cube $ {-1,1}^{n}$, let $ delta$ be a real
-number with $0< delta le 1/2$, and let $ varepsilon in mathbb{Q}$ satisfy
-$0< varepsilon<1/2$. If the probability that $f$ changes when each coordinate is
-independently flipped with probability $ delta$ is at most $ varepsilon/6$, then the sum
-of squared Fourier coefficients indexed by subsets $S$ with $|S|> lceil 1/ delta rceil$
-is at most $ varepsilon/2$.
+Let $f$ be a Boolean function on the sign cube $\{-1,1\}^{n}$, let $\delta$ be a real
+number with $0<\delta\le 1/2$, and let $\varepsilon\in\mathbb{Q}$ satisfy
+$0<\varepsilon<1/2$. If the probability that $f$ changes when each coordinate is
+independently flipped with probability $\delta$ is at most $\varepsilon/6$, then the sum
+of squared Fourier coefficients indexed by subsets $S$ with $|S|>\lceil 1/\delta\rceil$
+is at most $\varepsilon/2$.
 \end{theorem}
 
 \begin{definition}[Low-degree Fourier estimator program]
@@ -2388,7 +2388,7 @@ coordinates and its stated nonemptiness witness.
 \label{FABL.exactDegreeFourierEstimatorOutput}
 \leanok
 \uses{FABL.BooleanFunction, FABL.SparseFourierHypothesis, FABL.SparseFourierHypothesis.ofCoefficients, FABL.empiricalFourierCoeff, FABL.exactDegreeSamplesPerCoefficient, FABL.lowDegreeFourierFamily, FABL.roundToDegreeFourierGranularity}
-Let $n$ and $k$ be natural numbers, and let $f$ assign a sign in $\{-1,1\\}$ to each
+Let $n$ and $k$ be natural numbers, and let $f$ assign a sign in $\{-1,1\}$ to each
 point of the $n$-dimensional Boolean cube. For each set of coordinates of size at most
 $k$, provide the prescribed number of cube inputs, and form their labels by evaluating
 $f$ on those inputs. The estimator returns a sparse Fourier hypothesis supported on the

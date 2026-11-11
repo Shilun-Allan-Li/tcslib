@@ -5,7 +5,7 @@
 
 # Closure under negation and identification
 
-**Claim.** Negating selected inputs and identifying coordinates of a $7$-valued linear threshold function produces another $7$-valued linear threshold function.
+**Claim.** Negating selected inputs and identifying coordinates of a $\{-1,1\}$-valued linear threshold function produces another $\{-1,1\}$-valued linear threshold function.
 
 **Proof.** Take an affine representation $f(x)=\operatorname{thresholdSign}(c+\sum_i a_i\,\operatorname{boolToSign}(x_i))$ of the given linear threshold function; such a representation exists by `IsLinearThreshold.exists_affine`. After the prescribed input negations, each signed input satisfies
 \[\operatorname{boolToSign}(z_i\mathbin{\mathrm{xor}}w_{\pi(i)})=\operatorname{boolToSign}(z_i)\operatorname{boolToSign}(w_{\pi(i)}),\]

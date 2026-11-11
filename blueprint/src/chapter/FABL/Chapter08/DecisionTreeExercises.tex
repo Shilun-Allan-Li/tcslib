@@ -33,7 +33,7 @@ coordinates in the empty set are $1$ is the constant function with value $1$.
 \uses{FABL.orFunction, FABL.orOnCoordinates}
 \difficulty{3}
 For every nonnegative integer $n$, the function that returns $1$ exactly when all
-coordinates in the full set $\\{0,\\ldots,n-1\\}$ are $1$ agrees with the function that
+coordinates in the full set $\{0,\ldots,n-1\}$ are $1$ agrees with the function that
 returns $1$ exactly when every coordinate is $1$.
 \end{theorem}
 
@@ -42,7 +42,7 @@ returns $1$ exactly when every coordinate is $1$.
 \label{FABL.sequentialOrTreeAux}
 \leanok
 \uses{FABL.FiniteDecisionTree, FABL.Sign}
-For a finite set of available coordinates in $\\{0,\\ldots,n-1\\}$, define a decision
+For a finite set of available coordinates in $\{0,\ldots,n-1\}$, define a decision
 tree that queries the least available coordinate. If its value is $-1$, the tree returns
 $-1$; otherwise it continues recursively on the remaining coordinates. If no coordinates
 are available, it returns $1$.
@@ -65,7 +65,7 @@ $-1$, and returns $1$ if every input value is different from $-1$.
 \uses{FABL.FiniteDecisionTree.Computes, FABL.FiniteDecisionTree.eval, FABL.orOnCoordinates, FABL.sequentialOrTreeAux}
 \difficulty{6}
 Let $n$ be a nonnegative integer, let $A$ be a set of coordinates in $	ext{Fin }n$, and
-let $x$ assign a sign in $\\{ -1,1 \\}$ to each coordinate. The decision tree that
+let $x$ assign a sign in $\{ -1,1 \}$ to each coordinate. The decision tree that
 queries the available coordinates in increasing order, returns $-1$ as soon as it finds
 a coordinate with value $-1$, and returns $1$ if all queried coordinates have value $1$
 computes the function that is $1$ exactly when every coordinate in $A$ has value $1$,
@@ -3487,8 +3487,8 @@ of queried coordinates in the specified randomized decision tree is at most $3/2
 \leanok
 \uses{FABL.FiniteDecisionTree, FABL.FiniteDecisionTree.eval, FABL.FiniteDecisionTree.queryTrace}
 \difficulty{4}
-Let $T$ be a finite decision tree on $n$ coordinates with query alphabet $Ω$ and output
-labels $α$, and let $x,y:Fin(n)toΩ$ agree at every coordinate other than $i$. If $T$
+Let $T$ be a finite decision tree on $n$ coordinates with query alphabet $\Omega$ and output
+labels $\alpha$, and let $x,y:\mathrm{Fin}(n)\to\Omega$ agree at every coordinate other than $i$. If $T$
 returns different outputs on $x$ and $y$, then the query trace of $T$ on $x$ contains
 $i$.
 \end{theorem}
@@ -3520,7 +3520,7 @@ coordinates equal to $-1$, the tree makes exactly two queries.
 \leanok
 \uses{FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryCount_nandAllTrue_eq_two, FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.Sign, FABL.nandAllTrue, FABL.nandFunction, FABL.pmfExpectation_const}
 \difficulty{3}
-Let $Sign$ be the group of units of the integers, identified with the two signs $-1$
+Let $\mathrm{Sign}$ be the group of units of the integers, identified with the two signs $-1$
 and $1$. Define NAND on two sign inputs to return $1$ exactly when both coordinates are
 $-1$, and to return $-1$ otherwise. Every zero-error randomized decision tree computing
 this function has expected query count exactly $2$ on the input whose two coordinates
@@ -3708,8 +3708,8 @@ Let $r=(1+\sqrt{33})/4$ be the NAND growth rate. Then $2/r+1/2=r$.
 \uses{FABL.nandGrowthRate, FABL.nandGrowthRate_pos, FABL.nandGrowthRate_sq, FABL.recursiveNandFalseCost, FABL.recursiveNandFalseCost_succ, FABL.recursiveNandFalseCost_zero, FABL.recursiveNandTrueCost, FABL.recursiveNandTrueCost_succ, FABL.two_div_nandGrowthRate_add_half}
 \difficulty{5}
 Define $F_0=T_0=1$, $F_{d+1}=2T_d$, and $T_{d+1}=F_d+T_d/2$, and let
-$ho=(1+\sqrt{33})/4$. For every natural number $d$, $F_drac{2}{ho}ho^d$ and
-$T_dho^d$.
+$\rho=(1+\sqrt{33})/4$. For every natural number $d$, $F_d\leq\frac{2}{\rho}\rho^d$ and
+$T_d\leq\rho^d$.
 \end{theorem}
 
 \begin{theorem}[Maximum recursive NAND cost bound]
@@ -3719,8 +3719,8 @@ $T_dho^d$.
 \uses{FABL.nandGrowthRate, FABL.nandGrowthRate_pos, FABL.recursiveNandFalseCost, FABL.recursiveNandTrueCost, FABL.recursiveNand_conditionalCost_bounds}
 \difficulty{4}
 Define $F_0=T_0=1$, $F_{d+1}=2T_d$, and $T_{d+1}=F_d+T_d/2$, and let
-$ho=(1+	ext{sqrt}(33))/4$. For every natural number $d$,
-$	ext{max}(F_d,T_d)rac{2}{ho}ho^d$.
+$\rho=(1+\sqrt{33})/4$. For every natural number $d$,
+$\max(F_d,T_d)\leq\frac{2}{\rho}\rho^d$.
 \end{theorem}
 
 \begin{theorem}[Logarithmic inequality for a sum]
@@ -3760,7 +3760,7 @@ queries made by $T$ is at most $\log_2 L$, where $L$ is the number of leaves of 
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.auxiliaryAverageCost_complete, FABL.FiniteDecisionTree.auxiliaryAverageCost_uniform_le_log_leafCount, FABL.FiniteDecisionTree.leafCount, FABL.RandomizedDecisionTree.deterministicAverageCost, FABL.Sign, FABL.uniformPMF}
 \difficulty{1}
 Let a deterministic decision tree query coordinates of an input in the finite sign
-alphabet $\{\pm 1\}^n$, branching according to each queried sign, and let its number of
+alphabet $\{\pm 1\}^n$, branching according to each queried sign, and let its number of
 leaves be $L$. Under the uniform product distribution on inputs, its average number of
 queries is at most $\log_2 L$.
 \end{theorem}
@@ -4023,7 +4023,7 @@ Its influence at coordinate $1$ is $\operatorname{Inf}_1(g_t)=\frac{t^2-t+1}{8}$
 \leanok
 \uses{FABL.discreteDerivative_osssCounterexampleAt_two, FABL.expect_signCube_three_eq, FABL.influence, FABL.osssCounterexampleAt, FABL.signValue, FABL.sum_sign_eq}
 \difficulty{3}
-For each real $t$, let $f_t$ be the function on $\\{−1,1\\}^3$ given, for
+For each real $t$, let $f_t$ be the function on $\{−1,1\}^3$ given, for
 $x=(x_0,x_1,x_2)$, by
 $f_t(x)=(t+1)/4+(t/4)x_1+(t/4)x_2-(1/4)x_0x_1+(1/4)x_0x_2+((t-1)/4)x_1x_2$. Its
 influence at the third coordinate, defined as the uniform average of the squared
@@ -4120,7 +4120,7 @@ variance under the uniform distribution on the cube is $11/8+5\sqrt{33}/24$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_zero, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on $\{-1,1\}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.
@@ -4135,7 +4135,7 @@ difference between $F$ and its average over coordinate $0$ is $\frac18$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_one, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on $\{-1,1\}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.
@@ -4151,7 +4151,7 @@ $\frac56+\frac{\sqrt{33}}8$.
 \leanok
 \uses{FABL.Sign, FABL.influence_osssCounterexampleAt_two, FABL.osssCounterexample, FABL.osssCounterexampleParameter, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{3}
-Let $F$ be the function on ${-1,1}^3$ given, for $x=(x_0,x_1,x_2)$, by
+Let $F$ be the function on $\{-1,1\}^3$ given, for $x=(x_0,x_1,x_2)$, by
 \[
 F(x)=\frac{t+1}{4}+\frac{t}{4}x_1+\frac{t}{4}x_2-\frac14x_0x_1+\frac14x_0x_2+\frac{t-1}{4}x_1x_2,
 \qquad t=2+\frac{\sqrt{33}}{3}.
@@ -6413,10 +6413,10 @@ under the uniform distribution on the cube is $(20+10\sqrt{3})/16$.
 \uses{FABL.RandomizedDecisionTree.queryProbability, FABL.Sign, FABL.influence_osssCounterexampleAt_one, FABL.influence_osssCounterexampleAt_two, FABL.influence_osssCounterexampleAt_zero, FABL.osssBookCounterexample, FABL.osssBookCounterexampleParameter, FABL.osssBookCounterexampleTree, FABL.osssCounterexampleAt, FABL.osssCounterexampleRandomizedTreeAt, FABL.osssCounterexampleRandomizedTreeAt_queryProbability_one, FABL.osssCounterexampleRandomizedTreeAt_queryProbability_two, FABL.osssCounterexampleRandomizedTreeAt_queryProbability_zero, FABL.productInfluence, FABL.productInfluence_uniformSign_eq_influence, FABL.uniformPMF}
 \difficulty{4}
 For the specified function $F$ on the three-dimensional sign cube and its specified
-randomized decision tree $T$, let $\\operatorname{Inf}_i(F)$ be the squared $L^2$ norm
+randomized decision tree $T$, let $\operatorname{Inf}_i(F)$ be the squared $L^2$ norm
 of the coordinate-$i$ product Laplacian, and let $q_i$ be the probability that $T$
-queries coordinate $i$ on a uniformly random input. Then $\\sum_{i=0}^2
-q_i\\operatorname{Inf}_i(F)=(20+9\\sqrt3)/16$.
+queries coordinate $i$ on a uniformly random input. Then $\sum_{i=0}^2
+q_i\operatorname{Inf}_i(F)=(20+9\sqrt3)/16$.
 \end{theorem}
 
 \begin{theorem}[Exact counterexample variance ratio]
@@ -6426,11 +6426,11 @@ q_i\\operatorname{Inf}_i(F)=(20+9\\sqrt3)/16$.
 \uses{FABL.RandomizedDecisionTree.queryProbability, FABL.Sign, FABL.osssBookCounterexample, FABL.osssBookCounterexampleTree, FABL.osssBookCounterexample_weightedInfluenceSum, FABL.productInfluence, FABL.productVariance, FABL.productVariance_osssBookCounterexample, FABL.uniformPMF}
 \difficulty{3}
 For the specified function $F$ on the three-dimensional sign cube and its specified
-randomized decision tree $T$, let $\\operatorname{Var}(F)$ be the variance under the
-uniform sign distribution, let $\\operatorname{Inf}_i(F)$ be the squared $L^2$ norm of
+randomized decision tree $T$, let $\operatorname{Var}(F)$ be the variance under the
+uniform sign distribution, let $\operatorname{Inf}_i(F)$ be the squared $L^2$ norm of
 the coordinate-$i$ product Laplacian, and let $q_i$ be the probability that $T$ queries
-coordinate $i$ on a uniformly random input. Then $\\operatorname{Var}(F)/(\\sum_{i=0}^2
-q_i\\operatorname{Inf}_i(F))=(130+20\\sqrt3)/157$.
+coordinate $i$ on a uniformly random input. Then $\operatorname{Var}(F)/(\sum_{i=0}^2
+q_i\operatorname{Inf}_i(F))=(130+20\sqrt3)/157$.
 \end{theorem}
 
 \begin{theorem}[Strict comparison of counterexample ratios]

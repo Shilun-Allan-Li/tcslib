@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{FABL.Chapter05.SparsePolynomialApproxima
 \uses{FABL.abs_apply_le_fourierOneNorm, FABL.fourierOneNorm}
 \difficulty{3}
 Let $n$ be a nonnegative integer and let $f$ be a real-valued function on the sign cube
-$\\{-1,1\\}^n$. If $f$ is not identically zero, then its Fourier one-norm is strictly
+$\{-1,1\}^n$. If $f$ is not identically zero, then its Fourier one-norm is strictly
 positive.
 \end{theorem}
 
@@ -23,12 +23,12 @@ positive.
 \leanok
 \uses{FABL.finiteUniformEmpiricalMean, FABL.independentProductPMF, FABL.independentProductPMF_toMeasure}
 \difficulty{5}
-Let $\\Omega$ be a finite nonempty set equipped with a measurable space in which every
-singleton is measurable. Let $p$ be a probability mass function on $\\Omega$, and let
-$g:\\Omega\\to\\mathbb R$ take values in $[-1,1]$. For a positive integer $m$ and
-$\\varepsilon\\ge 0$, draw $m$ independent samples from $p$. The probability that their
+Let $\Omega$ be a finite nonempty set equipped with a measurable space in which every
+singleton is measurable. Let $p$ be a probability mass function on $\Omega$, and let
+$g:\Omega\to\mathbb R$ take values in $[-1,1]$. For a positive integer $m$ and
+$\varepsilon\ge 0$, draw $m$ independent samples from $p$. The probability that their
 empirical mean differs from the integral of $g$ with respect to $p$ by at least
-$\\varepsilon$ is at most $2\\exp(-m\\varepsilon^2/2)$.
+$\varepsilon$ is at most $2\exp(-m\varepsilon^2/2)$.
 \end{theorem}
 
 \begin{definition}[Fourier atom probability distribution]
@@ -148,7 +148,7 @@ Statement pending regeneration.
 \uses{FABL.fourierCoeff_sparseFourierApproximation, FABL.fourierSupport, FABL.mem_fourierSupport, FABL.polynomialSparsity, FABL.sampledFourierFamily, FABL.sampledFourierPolynomial}
 \difficulty{3}
 Let $n,s$ be natural numbers, let $f$ be a real-valued function on the $n$-dimensional
-sign cube, and choose a set of coordinates $S_i$ for each $imod s$. The number of
+sign cube, and choose a set of coordinates $S_i$ for each $i\mod s$. The number of
 nonzero Fourier coefficients of the Fourier polynomial formed from the distinct sampled
 sets $S_i$ is at most $s$.
 \end{theorem}
@@ -240,10 +240,10 @@ input.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsPolynomialThresholdRepresentation, FABL.exists_sparsePolynomial_uniformApproximation, FABL.fourierOneNorm, FABL.polynomialSparsity, FABL.signValue_neg_one, FABL.signValue_one, FABL.thresholdSign_of_neg, FABL.thresholdSign_of_nonneg}
 \difficulty{4}
-Let $n>0$ and let $f:\\{−1,1\\}^n\\to\\{−1,1\\}$. There is a real-valued function $p$ on
+Let $n>0$ and let $f:\{−1,1\}^n\to\{−1,1\}$. There is a real-valued function $p$ on
 the cube whose threshold signs equal $f$ at every input, and whose Fourier support has
 size at most
-$\\left\\lceil4n\\left(\\sum_{S\\subseteq[n]}|\\widehat{f}(S)|\\right)^2\\right\\rceil$.
+$\left\lceil4n\left(\sum_{S\subseteq[n]}|\widehat{f}(S)|\right)^2\right\rceil$.
 \end{theorem}
 
 \begin{theorem}[Exists parity majority representation]

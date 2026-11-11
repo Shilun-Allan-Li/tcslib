@@ -264,7 +264,7 @@ the length of the concatenation of the lists $f(a)$ as $a$ ranges through $l$.
 \uses{Turing.Action, Turing.actionBits, Turing.optBoolBits, Turing.optOptBoolBits, Turing.optStateBits, Turing.signBits}
 \difficulty{3}
 For every natural number $n$ and every action of a one-work-tape binary Turing machine
-with state set $\\{0,\\dots,n\\}$, the serialization of the action has length at least
+with state set $\{0,\dots,n\}$, the serialization of the action has length at least
 $1$.
 \end{lemma}
 
@@ -410,7 +410,7 @@ and $(|yw|-1)/2=|y|$.
 \uses{Complexity.TMSAT, Complexity.tmsatVerifier, Complexity.tmsat_quad_bounds, Turing.MachineCode}
 \difficulty{5}
 Let $c$ be a machine representation scheme and let $y$ be a bit string. Then
-$y\\in\\mathrm{TMSAT}_c$ if and only if there is a bit string $w$ of length $|y|+1$ such
+$y\in\mathrm{TMSAT}_c$ if and only if there is a bit string $w$ of length $|y|+1$ such
 that $yw$ belongs to the verifier language $V_c$.
 \end{lemma}
 
@@ -806,8 +806,8 @@ outputs the single bit $1$, belongs to NP.
 \label{Complexity.tmsat_deadline_bound}
 \leanok
 \difficulty{4}
-For all $K,B,e,C,c,n\\in\\mathbb{N}$, $K\\bigl(B(2n+2+C(n+1)^c+1)^e+1\\bigr)^2\\le
-((K+1)(B+1)^2(C+3)^{2e})(n+1)^{2e\\max(1,c)}$.
+For all $K,B,e,C,c,n\in\mathbb{N}$, $K\bigl(B(2n+2+C(n+1)^c+1)^e+1\bigr)^2\le
+((K+1)(B+1)^2(C+3)^{2e})(n+1)^{2e\max(1,c)}$.
 \end{lemma}
 
 \begin{lemma}[Constant functions are polynomial-time]
@@ -826,7 +826,7 @@ polynomial-time computable.
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.timeConstructible_poly, Complexity.tmsat_constant_poly, Turing.FinTM.ComputesInTime.mono}
 \difficulty{4}
-For all $C,c\\in\\mathbb{N}$, the function sending a bit string $x$ to the bit-list
+For all $C,c\in\mathbb{N}$, the function sending a bit string $x$ to the bit-list
 representation of the natural number $C(|x|+1)^c$ is polynomial-time computable.
 \end{lemma}
 
@@ -872,7 +872,7 @@ to $\mathrm{TMSAT}_c$.
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_const, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{3}
-For all $C,c\\in\\mathbb{N}$, the function on bit strings sending $x$ to the word
+For all $C,c\in\mathbb{N}$, the function on bit strings sending $x$ to the word
 consisting of $C(|x|+1)^c$ copies of $1$ is polynomial-time computable.
 \end{lemma}
 

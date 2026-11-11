@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{FABL.Chapter02.NoiseStability.Correlated
 \statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p120-b003}
 \label{FABL.CorrelationPlane}
 \leanok
-The correlation plane is $\mathbb R^2$ equipped with its usual Euclidean norm.
+The correlation plane is $\mathbb R^2$ equipped with its usual Euclidean norm.
 \end{definition}
 
 \begin{definition}[Correlated sign vector]
@@ -33,9 +33,11 @@ are the real values of those signs.
 \label{FABL.correlatedSignProjection}
 \leanok
 \uses{FABL.CorrelationPlane, FABL.Sign, FABL.signValue}
-For $t=(t_1,t_2)bR^2$ and signs $,inbz^{	imes}$, the correlated sign projection
-of $t$ at $(,)$ is $t_1+t_2$.
+For $t=(t_1,t_2)\in\mathbb{R}^2$ and signs $x,y\in\mathbb{Z}^{\times}$, the correlated sign projection
+of $t$ at $(x,y)$ is $xt_1+yt_2$.
 \end{definition}
+
+
 
 \begin{theorem}[Scaling the sign projection]
 \lean{FABL.correlatedSignProjection_smul}
@@ -187,8 +189,8 @@ sending $(u,v)$ to $(u,\rho u+\sqrt{1-\rho^2}\,v)$.
 \leanok
 \uses{FABL.gaussianCorrelationMap}
 \difficulty{1}
-For each real number $\\rho$, define a map on the real plane equipped with the $2$-norm
-by $(u,v)\\mapsto (u,\\rho u+\\sqrt{1-\\rho^2}\\,v)$. This map is continuous.
+For each real number $\rho$, define a map on the real plane equipped with the $2$-norm
+by $(u,v)\mapsto (u,\rho u+\sqrt{1-\rho^2}\,v)$. This map is continuous.
 \end{theorem}
 
 \begin{definition}[Correlated Gaussian measure]

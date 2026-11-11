@@ -372,7 +372,7 @@ symmetric difference with that set.
 \leanok
 \uses{FABL.listSymmDiff}
 Given a natural number $q$ and a family of finite subsets indexed by
-$\\{0,\\ldots,q-1\\}$, define their symmetric difference to be the symmetric difference
+$\{0,\ldots,q-1\}$, define their symmetric difference to be the symmetric difference
 of the list formed from that family in index order.
 \end{definition}
 
@@ -405,9 +405,9 @@ $x$ is even.
 \label{FABL.sum_ite_eq_countP_ofFn}
 \leanok
 \difficulty{6}
-Let $q$ be a nonnegative integer and let $P$ be a predicate on $\\{0,\\ldots,q-1\\}$.
+Let $q$ be a nonnegative integer and let $P$ be a predicate on $\{0,\ldots,q-1\}$.
 The sum, over these indices, of $1$ when $P(i)$ holds and $0$ otherwise equals the
-number of entries satisfying $P$ in the ordered list $0,1,\\ldots,q-1$. 
+number of entries satisfying $P$ in the ordered list $0,1,\ldots,q-1$.
 \end{theorem}
 
 \begin{theorem}[Counting elements satisfying a predicate]
@@ -515,8 +515,8 @@ complete multipartite graph with $q$ parts of size $k$ that is a perfect matchin
 \label{FABL.MatchingCompatibleLabeling}
 \leanok
 \uses{FABL.BookPartiteVertex, FABL.bookPartiteGraph}
-Let $q$ and $k$ be natural numbers, let $\\beta$ be a type, let each vertex of the
-complete multipartite graph on $q$ parts of size $k$ receive a label in $\\beta$, and
+Let $q$ and $k$ be natural numbers, let $\beta$ be a type, let each vertex of the
+complete multipartite graph on $q$ parts of size $k$ receive a label in $\beta$, and
 let $M$ be a subgraph of that graph. The labeling is compatible with $M$ when the
 endpoints of every edge of $M$ have equal labels.
 \end{definition}
@@ -720,8 +720,8 @@ $t$ ordered, pairwise disjoint $d$-element subsets of $R$.
 \label{FABL.SixDisjointBlockChoice.block}
 \leanok
 \uses{FABL.DisjointBlockChoices.blocks, FABL.DisjointBlockChoices.blocks_length, FABL.SixDisjointBlockChoice}
-For natural numbers $n$ and $d$, a six-block choice of $d$-element subsets of $in n$,
-and an index $irom in 6$, define its $i$th block to be the entry at position $i$ in
+For natural numbers $n$ and $d$, a six-block choice of $d$-element subsets of $\in n$,
+and an index $i\from \in 6$, define its $i$th block to be the entry at position $i$ in
 the choice’s list of six blocks.
 \end{definition}
 
@@ -905,7 +905,7 @@ support is the union of the blocks indexed by edges incident to that vertex.
 \leanok
 \uses{FABL.monomial}
 For natural numbers $n$ and $k$, define a real-valued function on the Boolean cube
-$\\{-1,1\\}^n$ by summing the monomial associated with each $k$-element subset of the
+$\{-1,1\}^n$ by summing the monomial associated with each $k$-element subset of the
 $n$ coordinates.
 \end{definition}
 
@@ -916,7 +916,7 @@ $n$ coordinates.
 \uses{FABL.expect_monomial_mul, FABL.fourierCoeff, FABL.levelKPolynomial, FABL.monomial}
 \difficulty{4}
 Let $n$ and $k$ be nonnegative integers, and let $T$ be a finite set of coordinates in
-$\\{0,\\ldots,n-1\\}$. On the $n$-dimensional Boolean cube, form the polynomial by
+$\{0,\ldots,n-1\}$. On the $n$-dimensional Boolean cube, form the polynomial by
 summing the coordinate monomials over all $k$-element coordinate sets. Its Fourier
 coefficient at $T$ is $1$ if $|T|=k$, and is $0$ otherwise.
 \end{theorem}
@@ -928,9 +928,9 @@ coefficient at $T$ is $1$ if $|T|=k$, and is $0$ otherwise.
 \uses{FABL.fourierCoeff_levelKPolynomial, FABL.levelKPolynomial, FABL.parseval, FABL.uniformInner}
 \difficulty{5}
 For nonnegative integers $n$ and $k$, let $L_k$ be the sum, over all $k$-element subsets
-of $\\{0,\\ldots,n-1\\}$, of the corresponding sign monomials on the $n$-dimensional
-sign cube. Under the uniform distribution on that cube, $\\mathbb
-E[L_k(x)^2]=\\binom{n}{k}$.
+of $\{0,\ldots,n-1\}$, of the corresponding sign monomials on the $n$-dimensional
+sign cube. Under the uniform distribution on that cube, $\mathbb
+E[L_k(x)^2]=\binom{n}{k}$.
 \end{theorem}
 
 \begin{definition}[Balanced parity tuple]
@@ -1019,11 +1019,11 @@ vertices labeled $x$ is even.
 \leanok
 \uses{FABL.GraphPartitePerfectMatching, FABL.LevelKParityTuple, FABL.LevelKParityTuple.assignedVertexLabel, FABL.LevelKParityTuple.assignedVertexLabel_even_fiber, FABL.LevelKParityTuple.assignedVertexLabel_injective_on_part, FABL.MatchingCompatibleLabeling, FABL.ParityTupleReordering, FABL.exists_graphPartitePerfectMatching_compatible}
 \difficulty{1}
-Let $n,k,q$ be natural numbers, and let $(S_i)_{i=1}^q$ be finite subsets of $in n$
+Let $n,k,q$ be natural numbers, and let $(S_i)_{i=1}^q$ be finite subsets of $\in n$
 whose symmetric difference is empty and each of which has cardinality $k$. Choose any
 permutation of the $k$ positions for each part. In the complete $q$-partite graph with
 $k$ vertices in each part, there is a perfect matching such that the two endpoints of
-every matching edge receive the same label in $in n$, where the label of a vertex is
+every matching edge receive the same label in $\in n$, where the label of a vertex is
 the element of its part’s set selected by the chosen permutation and an enumeration of
 that set.
 \end{theorem}
@@ -1045,7 +1045,7 @@ the set of labels attained by its $k$ positions.
 \leanok
 \uses{FABL.LevelKParityTuple, FABL.LevelKParityTuple.assignedVertexLabel, FABL.LevelKParityTuple.enumeration, FABL.ParityTupleReordering, FABL.matchingLabelSet}
 \difficulty{4}
-Let $n,k,q$ be natural numbers, and let $(S_i)_{i=1}^q$ be finite subsets of $in n$,
+Let $n,k,q$ be natural numbers, and let $(S_i)_{i=1}^q$ be finite subsets of $\in n$,
 each of cardinality $k$. Choose any permutation of the $k$ positions for each part, and
 label each position by the corresponding element under an enumeration of that part’s
 set. For every part, the set of labels assigned to its $k$ positions is exactly that
@@ -1307,7 +1307,7 @@ Let $q$ and $k$ be natural numbers, and let a perfect matching be given in the c
 $q$-partite graph with $k$ vertices in each part. For any part $p$ and any edge of the
 matching, that edge belongs to the subfamily of matching edges incident to a vertex in
 part $p$ if and only if it contains a vertex of the form $(p,r)$ for some
-$r\\in\\{0,\\ldots,k-1\\}$.
+$r\in\{0,\ldots,k-1\}$.
 \end{theorem}
 
 \begin{definition}[Matching edge at a part position]
@@ -1317,8 +1317,8 @@ $r\\in\\{0,\\ldots,k-1\\}$.
 \leanok
 \uses{FABL.GraphPartitePerfectMatching}
 Let $q$ and $k$ be natural numbers, and let a perfect matching be given in the complete
-multipartite graph with $q$ parts of size $k$. For a part $i in bbr q$ and a position
-$j in bbr k$, the matching edge selected at the vertex $(i,j)$ is an edge of the
+multipartite graph with $q$ parts of size $k$. For a part $i \in \bbr q$ and a position
+$j \in \bbr k$, the matching edge selected at the vertex $(i,j)$ is an edge of the
 matching.
 \end{definition}
 
@@ -1402,7 +1402,7 @@ $k$ positions to the $n$ labels.
 \leanok
 \uses{FABL.InjectiveLabelTuple, FABL.LevelKSubset}
 Let $n$ and $k$ be natural numbers, and let $a:	ext{Fin }k	o	ext{Fin }n$ be injective.
-The image of $a$ is the $k$-element subset $igl|	ext{range}(a)igr|$ of $	ext{Fin }n$.
+The image of $a$ is the $k$-element subset $\bigl|	ext{range}(a)\bigr|$ of $	ext{Fin }n$.
 \end{definition}
 
 \begin{definition}[Indexing the image of an injective tuple]
@@ -1466,10 +1466,10 @@ $S$. This sum equals $k!$ times the sum of $w(S)$ over all subsets $S$ of size $
 \uses{FABL.InjectiveLabelCodeTarget, FABL.InjectiveLabelTuple, FABL.InjectiveLabelTuple.code, FABL.InjectiveLabelTuple.image, FABL.LevelKSubset, FABL.injectiveLabelTuple_code_injective, FABL.sum_injectiveLabelCodeTarget}
 \difficulty{4}
 Let $n,k$ be nonnegative integers, and let $w$ assign a real weight to each subset of
-$\\{0,\\ldots,n-1\\}$, with $w(S)\\ge 0$ for every subset $S$. The sum of the weights of
-the image sets of all injective maps from $\\{0,\\ldots,k-1\\}$ to $\\{0,\\ldots,n-1\\}$
+$\{0,\ldots,n-1\}$, with $w(S)\ge 0$ for every subset $S$. The sum of the weights of
+the image sets of all injective maps from $\{0,\ldots,k-1\}$ to $\{0,\ldots,n-1\}$
 is at most $k!$ times the sum of the weights of all $k$-element subsets of
-$\\{0,\\ldots,n-1\\}$. 
+$\{0,\ldots,n-1\}$.
 \end{theorem}
 
 \begin{theorem}[Fourier coefficient sum over label tuples]
@@ -1572,11 +1572,11 @@ those edges give the same squared factor.
 Let $q,k,n$ be natural numbers with $n>0$, let $f$ be a real-valued function on the
 $n$-dimensional sign cube, and let a perfect matching of the complete $q$-partite graph
 with $k$ vertices in each part be given, together with a part of that graph. Assign each
-matching edge independently and uniformly a label from $\\{1,\\ldots,n\\}$. For each
+matching edge independently and uniformly a label from $\{1,\ldots,n\}$. For each
 assignment, take the absolute value of the Fourier coefficient of $f$ indexed by the set
 of labels on the matching edges incident with the specified part. The expected square of
 this quantity equals the expected square of the Fourier coefficient indexed by the set
-of values of a uniformly random map from $\\{1,\\ldots,k\\}$ to $\\{1,\\ldots,n\\}$.
+of values of a uniformly random map from $\{1,\ldots,k\}$ to $\{1,\ldots,n\}$.
 \end{theorem}
 
 \begin{theorem}[Bound on a matching Fourier factor]
@@ -1589,9 +1589,9 @@ Let $q,k,n$ be natural numbers with $n>0$. Let $f$ be a real-valued function on 
 $n$-dimensional sign cube whose nonzero Fourier coefficients are supported only on
 subsets of size $k$. Given a perfect matching of the complete $q$-partite graph with $k$
 vertices in each part and a specified part, assign each matching edge independently and
-uniformly a label from $\\{1,\\ldots,n\\}$. The expected square of the absolute Fourier
+uniformly a label from $\{1,\ldots,n\}$. The expected square of the absolute Fourier
 coefficient indexed by the set of labels on the matching edges incident with that part
-is at most $\\frac{k!}{n^k}\\sum_{|S|=k}\\widehat f(S)^2$, where $\\widehat f(S)$
+is at most $\frac{k!}{n^k}\sum_{|S|=k}\widehat f(S)^2$, where $\widehat f(S)$
 denotes the Fourier coefficient of $f$ indexed by $S$.
 \end{theorem}
 
@@ -1603,7 +1603,7 @@ denotes the Fourier coefficient of $f$ indexed by $S$.
 \uses{FABL.GraphPartitePerfectMatching, FABL.graphMatchingEdgeFourierFactor, FABL.graphMatchingEdgeFourierFactor_dependsOn, FABL.graphMatchingEdgeFourierFactor_nonneg, FABL.graphMatchingPartEdges, FABL.graphMatchingPartEdges_degree_two, FABL.uniform_expect_prod_le_prod_sqrt_expect_sq_twoRegular_finite}
 \difficulty{1}
 Let $q,k,n$ be nonnegative integers with $n>0$, let $f$ be any real-valued function on
-the Boolean cube $\\{-1,1\\}^n$, and let $M$ be a perfect matching in the complete
+the Boolean cube $\{-1,1\}^n$, and let $M$ be a perfect matching in the complete
 $q$-partite graph with $k$ vertices in each part. Assign independently and uniformly a
 label from $[n]=\{0,\ldots,n-1\}$ to each edge of $M$. For each part, form the set of
 labels on its incident matching edges, and let its factor be the absolute value of the
@@ -2241,7 +2241,7 @@ vertices yield distinct associated permutations.
 \label{FABL.PairingPerm}
 \leanok
 For a natural number $m$, a pairing permutation of $2m$ elements is a permutation of
-$0,\ldots,2m-1$ whose cycle type consists of exactly $m$ cycles, each of length $2$.
+$\{0,\ldots,2m-1\}$ whose cycle type consists of exactly $m$ cycles, each of length $2$.
 \end{definition}
 
 \begin{theorem}[Cycle type of the matching permutation]
@@ -2564,7 +2564,7 @@ join vertices from different parts.
 \uses{FABL.IsFourierHomogeneous, FABL.PartitePerfectMatching, FABL.card_graphPartitePerfectMatching_eq_partitePerfectMatching, FABL.fourierWeightAtLevel, FABL.homogeneous_evenMoment_le_graphMatching_count}
 \difficulty{1}
 Let $n>0$ and let $r,k$ be nonnegative integers. Let $f$ be a real-valued function on
-the sign cube $\\{-1,1\\}^n$ whose nonzero Fourier coefficients are supported only on
+the sign cube $\{-1,1\}^n$ whose nonzero Fourier coefficients are supported only on
 sets of size $k$. Let $M_{r,k}$ be the finite set of codes of length $rk$ whose decoded
 list of pairs on the labels $0,\ldots,2rk-1$ has every pair joining labels in different
 consecutive blocks of $k$ labels. Then
@@ -2714,7 +2714,7 @@ whose part differs from the part containing the selected pivot.
 \uses{FABL.BookPartiteVertex, FABL.greedyLargestPart, FABL.greedyPartnerChoices, FABL.greedyPivot_part, FABL.remainingPartSlice}
 \difficulty{3}
 Let $r,k$ be natural numbers with $r>0$, and let $R$ be a nonempty finite set of
-vertices $(a,j)$ with $a\\in\\{0,\\ldots,2r-1\\}$ and $j\\in\\{0,\\ldots,k-1\\}$. Choose
+vertices $(a,j)$ with $a\in\{0,\ldots,2r-1\}$ and $j\in\{0,\ldots,k-1\}$. Choose
 a part of largest size among the $2r$ parts, and let $P$ be the vertex chosen from that
 part by the greedy pivot rule. The number of vertices of $R$ whose part differs from the
 part of $P$, plus the number of vertices of $R$ in the chosen largest part, equals
@@ -3094,7 +3094,7 @@ $x\in\{−1,1\}^n$ of the fourth power of the level-$k$ polynomial evaluated at 
 \leanok
 \uses{FABL.SixDisjointBlockChoice, FABL.SixDisjointBlockChoice.toParityTuple, FABL.SixDisjointBlockChoice.toParityTuple_injective, FABL.levelKPolynomial, FABL.natCard_le_fourthMoment_levelKPolynomial_of_injective, FABL.natCard_sixDisjointBlockChoice_eq_multinomial, FABL.sixBlockMultinomial}
 \difficulty{3}
-Let $n$ and $d$ be nonnegative integers with $6d\\le n$. The multinomial coefficient
+Let $n$ and $d$ be nonnegative integers with $6d\le n$. The multinomial coefficient
 with six parts of size $d$ and a seventh part of size $n-6d$ is at most the fourth
 moment, under the uniform probability distribution on the $n$-dimensional sign cube, of
 the sum of all degree-$3d$ monomials.

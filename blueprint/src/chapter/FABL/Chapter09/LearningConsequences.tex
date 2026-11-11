@@ -280,11 +280,11 @@ Statement pending regeneration.
 \uses{FABL.BooleanFunction, FABL.LearningCost, FABL.LearningProgram.runWithCost, FABL.PositiveInfluenceBound, FABL.PositiveLearningParameter, FABL.SparseFourierHypothesis, FABL.boundedInfluenceQueryLearningProgram, FABL.kushilevitzMansourProgramForBound_queries_polynomial_cast_le, FABL.learningConsequencesFamilyBound}
 \difficulty{1}
 Let $n$ be a nonnegative integer, let $f$ be a Boolean function on the $n$-dimensional
-sign cube, let $t$ be a positive rational influence bound, and let $epsilon$ be a
-rational learning parameter with $0<epsilonle 1/2$. For every hypothesis and cost pair
+sign cube, let $t$ be a positive rational influence bound, and let $\epsilon$ be a
+rational learning parameter with $0<\epsilon\le 1/2$. For every hypothesis and cost pair
 in the support of the query-learning program run with target $f$, the number of
-membership queries is at most $2^{40}(n+1)^2(B+1)^8/epsilon^{10}$, where $B$ is the
-family bound determined by $t$ and $epsilon$.
+membership queries is at most $2^{40}(n+1)^2(B+1)^8/\epsilon^{10}$, where $B$ is the
+family bound determined by $t$ and $\epsilon$.
 \end{theorem}
 
 \begin{theorem}[Bounded influence query learning program work le]
@@ -312,9 +312,9 @@ subsets of the coordinate set $\{0,\ldots,n-1\}$.
 \leanok
 \uses{FABL.singletonFourierFamily}
 \difficulty{1}
-For every nonnegative integer $n$ and every coordinate $i$ in $\\{0,\\dots,n-1\\}$, the
-singleton set $\\{i\\}$ belongs to the family of all singleton subsets of the coordinate
-set $\\{0,\\dots,n-1\\}$.
+For every nonnegative integer $n$ and every coordinate $i$ in $\{0,\dots,n-1\}$, the
+singleton set $\{i\}$ belongs to the family of all singleton subsets of the coordinate
+set $\{0,\dots,n-1\}$.
 \end{theorem}
 
 \begin{theorem}[Size of the singleton Fourier family]
@@ -471,10 +471,10 @@ singleton-influence sample count for these parameters.
 \uses{FABL.PositiveInfluenceBound, FABL.PositiveLearningParameter, FABL.Sign, FABL.card_empiricalInfluentialCoordinates_le, FABL.card_lowDegreeSubsets_le, FABL.empiricalInfluentialCoordinates, FABL.learningConsequencesCoordinateCap, FABL.learningConsequencesDegree, FABL.learningConsequencesFamilyBound, FABL.lowDegreeSubsets, FABL.singletonFourierFamily, FABL.singletonInfluenceSampleCount}
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $t$ be a positive rational number, and let
-$arepsilon$ be a rational number with $0<arepsilon\le 1/2$. From any assignment of
+$\varepsilon$ be a rational number with $0<\varepsilon\le 1/2$. From any assignment of
 samples to each singleton coordinate set, form the empirically influential coordinates
 using the given threshold and cap. The number of subsets of those coordinates of size at
-most the degree determined by $t$ and $arepsilon$ is at most the corresponding family
+most the degree determined by $t$ and $\varepsilon$ is at most the corresponding family
 bound.
 \end{theorem}
 
@@ -484,14 +484,14 @@ bound.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.PositiveInfluenceBound, FABL.PositiveLearningParameter, FABL.card_influentialCoordinates_le_div, FABL.influentialCoordinates, FABL.learningConsequencesCoordinateCap, FABL.learningConsequencesThreshold, FABL.learningConsequencesThreshold_pos, FABL.totalInfluence}
 \difficulty{4}
-Let $n$ be a natural number and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a Boolean
-function. Let $t$ be a positive rational and let $\\varepsilon$ be a rational with
-$0<\\varepsilon\\leq\\frac12$. For each coordinate $i$, let its influence be the uniform
+Let $n$ be a natural number and let $f:\{-1,1\}^n\to\{-1,1\}$ be a Boolean
+function. Let $t$ be a positive rational and let $\varepsilon$ be a rational with
+$0<\varepsilon\leq\frac12$. For each coordinate $i$, let its influence be the uniform
 probability that flipping $i$ changes $f$, and let the total influence be the sum of the
 squared discrete derivatives of the associated real-valued function. If this total
 influence is at most $t$, then the number of coordinates whose influence is at least
-half of $\\theta=\\frac12(\\varepsilon/8)^2t^{-2}(1/9)^{\\lceil t/
-(\\varepsilon/8)\\rceil}$ is at most $\\left\\lceil 2t/\\theta\\right\\rceil$.
+half of $\theta=\frac12(\varepsilon/8)^2t^{-2}(1/9)^{\lceil t/
+(\varepsilon/8)\rceil}$ is at most $\left\lceil 2t/\theta\right\rceil$.
 \end{theorem}
 
 \begin{theorem}[Singleton Fourier coefficient and influence]
@@ -504,9 +504,9 @@ half of $\\theta=\\frac12(\\varepsilon/8)^2t^{-2}(1/9)^{\\lceil t/
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.booleanInfluence, FABL.booleanInfluence_eq_influence_toReal, FABL.fourierCoeff, FABL.influence_eq_fourierCoeff_singleton_of_monotone}
 \difficulty{1}
-Let $n$ be a natural number, let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be monotone in the
-coordinatewise order, and choose a coordinate $i\\in\\{1,\\ldots,n\\}$. Then the Fourier
-coefficient of $f$ at the singleton $\\{i\\}$ equals the probability, under the uniform
+Let $n$ be a natural number, let $f:\{-1,1\}^n\to\{-1,1\}$ be monotone in the
+coordinatewise order, and choose a coordinate $i\in\{1,\ldots,n\}$. Then the Fourier
+coefficient of $f$ at the singleton $\{i\}$ equals the probability, under the uniform
 distribution on the cube, that flipping coordinate $i$ changes the value of $f$.
 \end{theorem}
 
@@ -848,9 +848,9 @@ $g$ to every leaf label has the same number of leaves as $T$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.Computes, FABL.FiniteDecisionTree.eval_mapOutput, FABL.FiniteDecisionTree.mapOutput, FABL.Sign, FABL.signValue}
 \difficulty{3}
-Let $n$ be a natural number, let $f : \\{-1,1\\}^n \\to \\{\\pm1\\}$ be a Boolean
+Let $n$ be a natural number, let $f : \{-1,1\}^n \to \{\pm1\}$ be a Boolean
 function, and let $T$ be a finite decision tree that queries coordinates of inputs in
-$\\{\\pm1\\}^n$ and outputs signs. If $T$ computes $f$, then the tree obtained by
+$\{\pm1\}^n$ and outputs signs. If $T$ computes $f$, then the tree obtained by
 replacing each leaf sign with its corresponding real value computes the real-valued
 function obtained by viewing each value of $f$ as a real number.
 \end{theorem}

@@ -1341,10 +1341,10 @@ coefficient of $f$ on $S$ is at least $a$.
     pdf-ffbe9c7b3306-p080-b003}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a sign-valued function on the Boolean cube, and
-let $\\mathcal F$ be a finite family of subsets of $[n]$. Let the accuracy and
+let $\mathcal F$ be a finite family of subsets of $[n]$. Let the accuracy and
 confidence parameters each be rational numbers in $(0,1/2]$, and choose any
-$S\\in\\mathcal F$. Draw uniformly an array of independent Boolean-cube inputs indexed
-by $\\mathcal F$ and by the estimator's sample indices, whose sample count is determined
+$S\in\mathcal F$. Draw uniformly an array of independent Boolean-cube inputs indexed
+by $\mathcal F$ and by the estimator's sample indices, whose sample count is determined
 by those accuracy and confidence parameters. The probability that the empirical Fourier
 coefficient at $S$ differs from the Fourier coefficient of $f$ at $S$ by at least the
 accuracy parameter is at most the confidence parameter.
@@ -1357,12 +1357,12 @@ accuracy parameter is at most the confidence parameter.
 \uses{FABL.BooleanFunction, FABL.LearningProgram.randomExampleMatrixInputLaw, FABL.PositiveLearningParameter, FABL.finiteFamilyCoefficientBadSetWithParameters, FABL.fourierEstimatorSampleCount, FABL.measure_finiteFamilyCoefficientBadSetWithParameters_le}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a sign-valued function on the Boolean cube, let
-$\\mathcal F$ be a finite family of subsets of $[n]$, and let the accuracy and
+$\mathcal F$ be a finite family of subsets of $[n]$, and let the accuracy and
 confidence parameters be rational numbers in $(0,1/2]$. Draw uniformly an array of
-Boolean-cube samples indexed by $\\mathcal F$, with sample count determined by those
+Boolean-cube samples indexed by $\mathcal F$, with sample count determined by those
 parameters. The probability that at least one empirical Fourier coefficient indexed by
-$S\\in\\mathcal F$ differs from its true coefficient by at least the accuracy parameter
-is at most $|\\mathcal F|$ times the confidence parameter.
+$S\in\mathcal F$ differs from its true coefficient by at least the accuracy parameter
+is at most $|\mathcal F|$ times the confidence parameter.
 \end{theorem}
 
 \begin{theorem}[Measure finite family some coefficient bad set with parameters le one tenth]
@@ -2498,13 +2498,13 @@ its true coefficient by at least $\varepsilon/(2|\mathcal F|)$.
     pdf-ffbe9c7b3306-p080-b006}
 \difficulty{1}
 Let $n$ be a natural number, let $f$ be a sign-valued function on the Boolean cube, and
-let $\\mathcal F$ be a nonempty finite family of subsets of $[n]$. Let $\\varepsilon$ be
-a rational accuracy parameter in $(0,1/2]$, and choose any $S\\in\\mathcal F$. Draw
-uniformly an array of Boolean-cube samples indexed by $\\mathcal F$, with the sample
-count specified by $\\mathcal F$ and $\\varepsilon$. The probability that the empirical
+let $\mathcal F$ be a nonempty finite family of subsets of $[n]$. Let $\varepsilon$ be
+a rational accuracy parameter in $(0,1/2]$, and choose any $S\in\mathcal F$. Draw
+uniformly an array of Boolean-cube samples indexed by $\mathcal F$, with the sample
+count specified by $\mathcal F$ and $\varepsilon$. The probability that the empirical
 Fourier coefficient at $S$ differs from its true Fourier coefficient by at least the
-accuracy assigned to $\\mathcal F$ and $\\varepsilon$ is at most the confidence assigned
-to $\\mathcal F$.
+accuracy assigned to $\mathcal F$ and $\varepsilon$ is at most the confidence assigned
+to $\mathcal F$.
 \end{theorem}
 
 \begin{theorem}[Measure finite family some coefficient bad le one tenth]
@@ -3671,15 +3671,15 @@ Hamming distance at most $\varepsilon$ from $f$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsFourierSpectrumConcentratedOn, FABL.PositiveLearningParameter, FABL.SparseFourierHypothesis.evaluate, FABL.SparseFourierHypothesis.ofCoefficients, FABL.empiricalFourierCoeff, FABL.empiricalFourierCoeff_cast, FABL.finiteFamilyCoefficientAccuracy, FABL.finiteFamilyCoefficientBadSet, FABL.finiteFamilyFourierEstimatorOutput, FABL.finiteFamilySamplesPerCoefficient, FABL.fourierCoeff, FABL.realEmpiricalFourierCoeff, FABL.relativeHammingDist, FABL.relativeHammingDist_sparseFourierHypothesis_of_coefficients_le}
 \difficulty{3}
-Let $f$ be a Boolean function on the sign cube $\\{−1,1\\}^n$, let $\\mathcal H$ be a
-nonempty finite family of subsets of $\\{1,\\ldots,n\\}$, and let $0<\\varepsilon\\le
-1/2$. For each $S\\in\\mathcal H$, take the prescribed number of sample inputs, and form
+Let $f$ be a Boolean function on the sign cube $\{−1,1\}^n$, let $\mathcal H$ be a
+nonempty finite family of subsets of $\{1,\ldots,n\}$, and let $0<\varepsilon\le
+1/2$. For each $S\in\mathcal H$, take the prescribed number of sample inputs, and form
 the Fourier estimator whose coefficient at $S$ is the empirical average of
-$f(x)\\prod_{i\\in S}x_i$. If the Fourier weight of $f$ outside $\\mathcal H$ is at most
-$\\varepsilon/2$, and every estimated coefficient differs from its true Fourier
-coefficient by strictly less than $\\varepsilon/(2|\\mathcal H|)$, then the Boolean
+$f(x)\prod_{i\in S}x_i$. If the Fourier weight of $f$ outside $\mathcal H$ is at most
+$\varepsilon/2$, and every estimated coefficient differs from its true Fourier
+coefficient by strictly less than $\varepsilon/(2|\mathcal H|)$, then the Boolean
 function obtained by taking the sign of the estimated Fourier sum has relative Hamming
-distance at most $\\varepsilon$ from $f$.
+distance at most $\varepsilon$ from $f$.
 \end{theorem}
 
 \begin{theorem}[Measure finite family fourier estimator output failure le one tenth]

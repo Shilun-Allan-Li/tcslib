@@ -1362,7 +1362,7 @@ For any \(n,d\in\mathbb N\), let \(G_{n,d}=(V_{n,d},E_{n,d})\) be the graph whos
 
 <a id="pdf-b53c1a5aa27d-p043-b005"></a>
 <!-- pdf-source: page=43; block=5; confidence=0.87 -->
-**Lemma 8.6.** If [0mX,Y are distributed according to [0mQ_{d/n}, then every rounding scheme [0mR satisfies
+**Lemma 8.6.** If X,Y are distributed according to Q_{d/n}, then every rounding scheme R satisfies
 \[
 \operatorname{Cut}(G_{n,d},R)\le \frac{|E_{n,d}|}{2}\,\mathbb{E}_{X,Y,R}\bigl[|R(X)-R(Y)|\bigr].
 \]

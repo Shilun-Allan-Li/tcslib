@@ -111,14 +111,13 @@ $1$.
 \label{FABL.IsLocalTester}
 \leanok
 \uses{FABL.IsFar, FABL.NonadaptiveFunctionTester, FABL.NonadaptiveFunctionTester.acceptanceProbability, FABL.NonadaptiveFunctionTester.rejectionProbability}
-Let $[?mT[?m$ be a nonadaptive tester on a finite nonempty domain with codomain
-$[?m[?meta$, where equality in the codomain is decidable, and let $P$ be a property
-of functions from the domain to the codomain. A real number $ho$ is a local testing
-rate if $ho>0$, every function satisfying $P$ is accepted with probability $1$, and for
-every $[?m[?m	ext{ real }[?m[?m\,[?m[?m	ext{ with }0\le [?m\varepsilon\le
-1[?m[?m$, any function that is $[?m\varepsilon[?m$-far from every function
-satisfying $P$ is rejected with probability strictly greater than
-$[?m\rho\varepsilon[?m$.
+Let $T$ be a nonadaptive tester on a finite nonempty domain with codomain $\eta$, where
+equality in the codomain is decidable, and let $P$ be a property of functions from the
+domain to the codomain. A real number $\rho$ is a local testing rate if $\rho>0$, every
+function satisfying $P$ is accepted with probability $1$, and for every real
+$\varepsilon$ with $0\leq\varepsilon\leq1$, any function that is $\varepsilon$-far from
+every function satisfying $P$ is rejected with probability strictly greater than
+$\rho\varepsilon$.
 \end{definition}
 
 \begin{theorem}[Acceptance implies proximity to the property]
@@ -1240,8 +1239,8 @@ $\varepsilon\in[0,1]$.
 \label{FABL.blrTranscriptAccept}
 \leanok
 \uses{FABL.𝔽₂}
-Given three possibly absent answers from $[?m[?m\mathbb{F}_2$, accept if all three are
-present and the first two sum to the third; reject if any answer is absent.
+Given three possibly absent answers from $\mathbb{F}_2$, accept if all three are present
+and the first two sum to the third; reject if any answer is absent.
 \end{definition}
 
 \begin{definition}[Binary Linearity Function Tester]
@@ -1255,9 +1254,9 @@ present and the first two sum to the third; reject if any answer is absent.
 \leanok
 \uses{FABL.F₂Cube, FABL.NonadaptiveFunctionTester, FABL.blrTranscriptAccept, FABL.uniformPMF, FABL.𝔽₂}
 For a nonnegative integer $n$, choose a pair $(x,y)$ uniformly from
-$([?m[?m\mathbb{F}_2^n)^2$. Query a function $f:[?m[?m\mathbb{F}_2^n\to\mathbb{F}_2$
-at $x$, $y$, and $x+y$, and accept exactly when all three answers are present and the
-first two sum to the third.
+$(\mathbb{F}_2^n)^2$. Query a function $f:\mathbb{F}_2^n\to\mathbb{F}_2$ at $x$, $y$,
+and $x+y$, and accept exactly when all three answers are present and the first two sum
+to the third.
 \end{definition}
 
 \begin{theorem}[Blr function tester acceptance probability]
@@ -1864,9 +1863,9 @@ Statement pending regeneration.
 \label{FABL.IsDictator}
 \leanok
 \uses{FABL.BooleanFunction, FABL.dictator}
-Let $f$ be a function from the $n$-dimensional sign cube to $[?m[?m	ext{ the signs
-}[?m[?m\\{\pm1\}$. It is a dictator if there is a coordinate $i\in\\{1,\ldots,n\}$
-such that $f$ is the $i$th coordinate projection.
+Let $f$ be a function from the $n$-dimensional sign cube to $\{\pm1\}$. It is a
+dictator if there is a coordinate $i\in\{1,\ldots,n\}$ such that $f$ is the $i$th
+coordinate projection.
 \end{definition}
 
 \begin{definition}[Dictator on a Specified Coordinate Set]
@@ -1876,8 +1875,8 @@ such that $f$ is the $i$th coordinate projection.
 \leanok
 \uses{FABL.BooleanFunction, FABL.dictator}
 Let $S$ be a subset of the $n$ coordinate indices, and let $f$ be a function from the
-$n$-dimensional sign cube to $[?m[?m\{\pm1\}$. The function $f$ is a dictator on $S$
-if it is the coordinate projection for some index in $S$.
+$n$-dimensional sign cube to $\{\pm1\}$. The function $f$ is a dictator on $S$ if it
+is the coordinate projection for some index in $S$.
 \end{definition}
 
 \begin{definition}[Sign Linearity Transcript Acceptance]
@@ -1890,9 +1889,8 @@ if it is the coordinate projection for some index in $S$.
 \label{FABL.signBlrTranscriptAccept}
 \leanok
 \uses{FABL.Sign}
-Given three possibly absent answers from $[?m[?m\{\pm1\}$, accept if all three are
-present and the product of the first two equals the third; reject if any answer is
-absent.
+Given three possibly absent answers from $\{\pm1\}$, accept if all three are present
+and the product of the first two equals the third; reject if any answer is absent.
 \end{definition}
 
 \begin{definition}[Sign-valued BLR tester]
@@ -1945,8 +1943,8 @@ coordinatewise sign encoding.
 \uses{FABL.F₂Cube, FABL.coordinateSum, FABL.signEncode, FABL.signEncode_add}
 \difficulty{4}
 Let $n$ be a natural number, let $S$ be a subset of the coordinates
-$\\{0,\\ldots,n-1\\}$, and let $x$ assign an element of $\\mathbb{F}_2$ to each
-coordinate. The sign encoding of the sum in $\\mathbb{F}_2$ of the coordinates of $x$ in
+$\{0,\ldots,n-1\}$, and let $x$ assign an element of $\mathbb{F}_2$ to each
+coordinate. The sign encoding of the sum in $\mathbb{F}_2$ of the coordinates of $x$ in
 $S$ equals the product of their sign encodings.
 \end{theorem}
 
@@ -3343,9 +3341,9 @@ between $f$ and the product of the sign coordinates in $S$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p026-b004,
     pdf-ffbe9c7b3306-p031-b002}
-Let $f:\\{−1,1\\}^n\\to\\{−1,1\\}$ and $\\eta\\in\\mathbb R$. If the sign-valued BLR
-tester accepts $f$ with probability at least $1-\\eta$, then some parity function on the
-cube differs from $f$ on at most an $\\eta$ fraction of inputs.
+Let $f:\{−1,1\}^n\to\{−1,1\}$ and $\eta\in\mathbb R$. If the sign-valued BLR
+tester accepts $f$ with probability at least $1-\eta$, then some parity function on the
+cube differs from $f$ on at most an $\eta$ fraction of inputs.
 \end{theorem}
 
 \begin{theorem}[Dictators are accepted by the sign BLR tester]
@@ -6439,7 +6437,7 @@ Statement pending regeneration.
 \label{FABL.subsetIndicatorSign}
 \leanok
 \uses{FABL.SignCube}
-For a subset $S$ of $\\{1,\\ldots,n\\}$, define a sign vector on $n$ coordinates by
+For a subset $S$ of $\{1,\ldots,n\}$, define a sign vector on $n$ coordinates by
 assigning $-1$ to coordinates in $S$ and $1$ to coordinates outside $S$.
 \end{definition}
 

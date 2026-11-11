@@ -277,11 +277,11 @@ $\gamma_i r^{i+1}$ in $\mathbb F_2^\ell$ is zero, and $0$ otherwise.
 \leanok
 \uses{FABL.CertifiedBinaryFieldImplementation, FABL.F₂Cube, FABL.binaryAdjoinRootEncode, FABL.binaryAdjoinRootEncode_executableSmallBiasPowerSum, FABL.binaryAdjoinRootEncode_injective, FABL.binaryAdjoinRootEncode_zero, FABL.binaryMonicPolynomial, FABL.executableSmallBiasPolynomial, FABL.executableSmallBiasPolynomial_natDegree_le, FABL.executableSmallBiasPolynomial_ne_zero, FABL.executableSmallBiasPowerSum, FABL.ncard_rootSet_le_natDegree}
 \difficulty{4}
-Let $n$ be a natural number and let $ℓ$ be a positive natural number. Choose a monic
-binary polynomial of degree $ℓ$ that is irreducible, and let $γ$ be a nonzero binary
+Let $n$ be a natural number and let $\ell$ be a positive natural number. Choose a monic
+binary polynomial of degree $\ell$ that is irreducible, and let $\gamma$ be a nonzero binary
 vector of length $n$. Using the chosen polynomial to perform multiplication modulo it,
-form the sum of $γ_i r^{i+1}$ over $0\le i<n$ for each binary vector $r$ of length
-$ℓ$. At most $n$ such vectors make this sum zero.
+form the sum of $\gamma_i r^{i+1}$ over $0\le i<n$ for each binary vector $r$ of length
+$\ell$. At most $n$ such vectors make this sum zero.
 \end{theorem}
 
 \begin{theorem}[Character expectation as a root probability]
@@ -465,8 +465,8 @@ in the fixed ordered-pair seed order.
 \label{FABL.buildExecutableSmallBiasConstruction}
 \leanok
 \uses{FABL.ExecutableSmallBiasConstruction, FABL.buildExecutableBinaryFieldModel, FABL.executableSmallBiasGeneratorList}
-For natural numbers $n$ and $[?]$ with $[?] > 0$, define an executable small-bias
-construction on $n$ coordinates whose field degree is $[?]$, whose field model is a
+For natural numbers $n$ and $\varepsilon$ with $\varepsilon > 0$, define an executable small-bias
+construction on $n$ coordinates whose field degree is $\varepsilon$, whose field model is a
 certified binary field model of that degree with complete ordered addition and
 multiplication tables, and whose output list consists of the generator outputs in the
 fixed ordered-pair seed order.
@@ -478,10 +478,10 @@ fixed ordered-pair seed order.
 \leanok
 \uses{FABL.binaryFieldPreprocessingWork, FABL.binaryFieldPreprocessingWork_le, FABL.binaryFieldRepresentationBits, FABL.binaryFieldRepresentationBits_le_preprocessingWork, FABL.buildExecutableBinaryFieldModel, FABL.buildExecutableSmallBiasConstruction, FABL.executableSmallBiasConstructionWork, FABL.executableSmallBiasConstructionWork_eq, FABL.executableSmallBiasRowWork, FABL.length_executableSmallBiasGeneratorList}
 \difficulty{1}
-Let $n$ be a natural number and let $[?m\ell[?m>0$. The constructed small-bias
-construction has $2^{2[?m\ell[?m}$ outputs. Its field representation size is at most
-its field preprocessing work, which is at most $2^{8([?m\ell[?m+1)}$, and its
-construction work equals the field preprocessing work plus $2^{2[?m\ell[?m}$ times one
+Let $n$ be a natural number and let $\ell>0$. The constructed small-bias
+construction has $2^{2\ell}$ outputs. Its field representation size is at most
+its field preprocessing work, which is at most $2^{8(\ell+1)}$, and its
+construction work equals the field preprocessing work plus $2^{2\ell}$ times one
 more than the row work.
 \end{theorem}
 
@@ -660,7 +660,7 @@ and $D=\max(1,\lceil\log_2 S\rceil)$. Then $2^D\le 2S$.
 \leanok
 \uses{FABL.SmallBiasInput, FABL.SmallBiasInput.epsilon, FABL.SmallBiasInput.fieldDegree, FABL.SmallBiasInput.scale, FABL.SmallBiasInput.scale_le_fieldSize}
 \difficulty{4}
-For a small-bias input with dimension $n$, bias $[?]$, and field degree $r$, the real
+For a small-bias input with dimension $n$, bias $\varepsilon$, and field degree $r$, the real
 inequality $n\leq \epsilon 2^r$ holds.
 \end{theorem}
 

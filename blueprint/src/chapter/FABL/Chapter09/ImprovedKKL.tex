@@ -17,7 +17,7 @@ Declarations of the Lean module \texttt{FABL.Chapter09.ImprovedKKL}.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.totalInfluence, FABL.totalInfluence_eq_sum_card_mul_sq_fourierCoeff, FABL.totalStableInfluence, FABL.totalStableInfluence_eq_sum_card_mul_rho_pow_mul_sq_fourierCoeff, FABL.variance, FABL.variance_eq_sum_sq_fourierCoeff}
 \difficulty{6}
 Let $n$ be a natural number and let $f:\{−1,1\}^n\to\{−1,1\}$ be a Boolean function with
-positive variance. For every $\rho\in(0,1]$, its variance multiplied by
+positive variance. For every $\rho\in(0,1]$, its variance multiplied by
 $\rho^{I(f)/\operatorname{Var}(f)-1}$ is at most its total stable influence at parameter
 $\rho$, where $I(f)$ denotes its total influence.
 \end{theorem}
@@ -28,13 +28,13 @@ $\rho$, where $I(f)$ denotes its total influence.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.booleanInfluence, FABL.booleanInfluence_eq_influence_toReal, FABL.booleanInfluence_le_maximumInfluence, FABL.influence, FABL.influence_nonneg, FABL.maximumInfluence, FABL.maximumInfluence_nonneg, FABL.stableInfluence_le_booleanInfluence_rpow, FABL.totalInfluence, FABL.totalStableInfluence}
 \difficulty{4}
-Let $n$ be a nonnegative integer and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a Boolean
-function. If $\\delta\\ge 0$, $0\\le\\rho\\le 1$, and $2/(1+\\rho)=1+\\delta$, then the
+Let $n$ be a nonnegative integer and let $f:\{-1,1\}^n\to\{-1,1\}$ be a Boolean
+function. If $\delta\ge 0$, $0\le\rho\le 1$, and $2/(1+\rho)=1+\delta$, then the
 total stable influence of the real-valued sign representation of $f$ at parameter
-$\\rho$ is at most
-$\\operatorname{Inf}_{\\max}(f)^\\delta\\,\\operatorname{Inf}_{\\mathrm{tot}}(f)$, where
-$\\operatorname{Inf}_{\\max}$ is the maximum coordinate influence and
-$\\operatorname{Inf}_{\\mathrm{tot}}$ is the total influence of that sign
+$\rho$ is at most
+$\operatorname{Inf}_{\max}(f)^\delta\,\operatorname{Inf}_{\mathrm{tot}}(f)$, where
+$\operatorname{Inf}_{\max}$ is the maximum coordinate influence and
+$\operatorname{Inf}_{\mathrm{tot}}$ is the total influence of that sign
 representation.
 \end{theorem}
 

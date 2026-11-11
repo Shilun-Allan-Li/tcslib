@@ -16,9 +16,9 @@ Declarations of the Lean module \texttt{FABL.Chapter03.GoldreichLevin.Restricted
 \label{FABL.fourierOneNorm}
 \leanok
 \uses{FABL.fourierCoeff}
-For a natural number $n$ and a real-valued function $f$ on the sign cube $\\{−1,1\\}^n$,
+For a natural number $n$ and a real-valued function $f$ on the sign cube $\{−1,1\}^n$,
 its Fourier one-norm is the sum, over all subsets $S$ of the $n$ coordinates, of the
-absolute values of its Fourier coefficients: $\\sum_{S\\subseteq[n]} |\\widehat f(S)|$.
+absolute values of its Fourier coefficients: $\sum_{S\subseteq[n]} |\widehat f(S)|$.
 \end{definition}
 
 \begin{theorem}[Nonnegativity of the Fourier one-norm]
@@ -51,10 +51,10 @@ $f$ with the coordinatewise map from bits to signs.
 \label{FABL.l1ConcentratingFourierFamily}
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierOneNorm}
-For a natural number $n$, a real-valued function $f$ on the sign cube $\\{−1,1\\}^n$,
-and a real number $\\varepsilon$, the concentrating Fourier family consists of those
-subsets $S\\subseteq[n]$ for which $\\varepsilon\\leq \\|\\widehat f\\|_1 |\\widehat
-f(S)|$, where $\\|\\widehat f\\|_1$ is the sum of the absolute values of all Fourier
+For a natural number $n$, a real-valued function $f$ on the sign cube $\{−1,1\}^n$,
+and a real number $\varepsilon$, the concentrating Fourier family consists of those
+subsets $S\subseteq[n]$ for which $\varepsilon\leq \|\widehat f\|_1 |\widehat
+f(S)|$, where $\|\widehat f\|_1$ is the sum of the absolute values of all Fourier
 coefficients of $f$.
 \end{definition}
 
@@ -65,10 +65,10 @@ coefficients of $f$.
 \uses{FABL.fourierCoeff, FABL.fourierOneNorm, FABL.l1ConcentratingFourierFamily}
 \difficulty{1}
 Let $n$ be a natural number, let $f$ be a real-valued function on the $n$-dimensional
-Boolean cube, let $\\varepsilon\\in\\mathbb{R}$, and let $S$ be a set of coordinates.
+Boolean cube, let $\varepsilon\in\mathbb{R}$, and let $S$ be a set of coordinates.
 Then $S$ belongs to the family concentrating the Fourier coefficients of $f$ in the
-$1$-norm if and only if $\\varepsilon\\le \\|\\widehat f\\|_1\\,|\\widehat f(S)|$, where
-$\\|\\widehat f\\|_1$ is the sum of the absolute values of all Fourier coefficients of
+$1$-norm if and only if $\varepsilon\le \|\widehat f\|_1\,|\widehat f(S)|$, where
+$\|\widehat f\|_1$ is the sum of the absolute values of all Fourier coefficients of
 $f$.
 \end{theorem}
 
@@ -126,8 +126,8 @@ $\alpha\times\alpha\times\alpha$.
 \label{FABL.restrictedFourierWeight}
 \leanok
 \uses{FABL.FixedIndex, FABL.fourierCoeff, FABL.liftFixedFrequency, FABL.liftFreeFrequency}
-Let $n$ be a natural number, let $f$ be a real-valued function on $\\{−1,1\\}^n$, let
-$J\\subseteq[n]$, and let $S\\subseteq J$. The restricted Fourier weight at $S$ is the
+Let $n$ be a natural number, let $f$ be a real-valued function on $\{−1,1\}^n$, let
+$J\subseteq[n]$, and let $S\subseteq J$. The restricted Fourier weight at $S$ is the
 sum, over all subsets $T$ of the coordinates outside $J$, of the squares of the Fourier
 coefficients of $f$ indexed by the union of $S$ and $T$.
 \end{definition}
@@ -166,8 +166,8 @@ Fourier coefficient of the restriction of $f$.
 \label{FABL.restrictionCoefficientObservation}
 \leanok
 \uses{FABL.FixedSignCube, FABL.FreeSignCube, FABL.combineSignCube, FABL.indexedMonomial}
-Let $n$ be a natural number, let $f$ be a real-valued function on $\\{−1,1\\}^n$, and
-let $J\\subseteq[n]$ and $S\\subseteq J$. Fix signs $z$ on the coordinates outside $J$
+Let $n$ be a natural number, let $f$ be a real-valued function on $\{−1,1\}^n$, and
+let $J\subseteq[n]$ and $S\subseteq J$. Fix signs $z$ on the coordinates outside $J$
 and signs $y$ on $J$. The restriction coefficient observation is the value of $f$ on the
 combined sign assignment, multiplied by the character indexed by $S$ evaluated at $y$.
 \end{definition}
@@ -1423,8 +1423,8 @@ obtained by fixing the outside coordinates to $z$.
 \label{FABL.restrictedFourierWeightObservation}
 \leanok
 \uses{FABL.FixedSignCube, FABL.FreeSignCube, FABL.restrictionCoefficientObservation}
-Let $n$ be a natural number, let $f$ be a real-valued function on $\\{−1,1\\}^n$, and
-let $J\\subseteq[n]$ and $S\\subseteq J$. Fix signs $z$ outside $J$ and signs $y,y'$ on
+Let $n$ be a natural number, let $f$ be a real-valued function on $\{−1,1\}^n$, and
+let $J\subseteq[n]$ and $S\subseteq J$. Fix signs $z$ outside $J$ and signs $y,y'$ on
 $J$. The restricted Fourier weight observation is the product of the restriction
 coefficient observations at $y$ and at $y'$, using the same $f,J,S,z$.
 \end{definition}
@@ -2712,7 +2712,7 @@ square of the real monomial on $S$ is $1$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.FixedSignCube, FABL.FreeSignCube, FABL.indexedMonomial_sq, FABL.restrictedFourierWeightObservation, FABL.restrictionCoefficientObservation, FABL.signValue_eq_neg_one_or_one}
 \difficulty{4}
-Let $n$ be a natural number, let $J$ be a finite set of coordinates in $br^n$, and let
+Let $n$ be a natural number, let $J$ be a finite set of coordinates in $\bbr^n$, and let
 $S$ be a finite subset of $J$. For every Boolean target function, every assignment of
 signs to the coordinates outside $J$, and every two assignments of signs to the
 coordinates in $J$, the restricted Fourier weight observation lies in $[-1,1]$.
@@ -2804,7 +2804,7 @@ over all sign assignments on the complement.
 \leanok
 \uses{FABL.FixedSignCube, FABL.FreeSignCube, FABL.signCubeSplitEquiv}
 \difficulty{4}
-Let $J$ be a subset of the coordinate indices $\\{1,\\ldots,n\\}$, and let $g$ be any
+Let $J$ be a subset of the coordinate indices $\{1,\ldots,n\}$, and let $g$ be any
 real-valued function on sign assignments to $J$. Under a uniformly random sign
 assignment to all $n$ coordinates, the restriction to $J$ is uniform; consequently, the
 expected value of $g$ on that restriction equals the uniform expectation of $g$ over
@@ -4213,7 +4213,7 @@ restricted Fourier weight of that real-valued function at $J,S$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.restrictedFourierWeightObservationFromInputs, FABL.restrictedFourierWeightObservation_mem_Icc, FABL.signCubeSplitEquiv}
 \difficulty{1}
-Let $n$ be a natural number, let $J$ be a finite set of coordinates in $br^n$, and let
+Let $n$ be a natural number, let $J$ be a finite set of coordinates in $\bbr^n$, and let
 $S$ be a finite subset of $J$. For every Boolean target function and every three inputs
 in the $n$-dimensional sign cube, the restricted Fourier weight observation formed from
 these inputs lies in $[-1,1]$.

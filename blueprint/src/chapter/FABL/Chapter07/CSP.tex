@@ -191,7 +191,7 @@ over its constraints, counting multiplicities.
 \leanok
 \uses{FABL.CSPConstraint, FABL.CSPConstraint.satisfiedIndicator, FABL.CSPConstraint.satisfiedIndicator_add_unsatisfiedIndicator, FABL.CSPConstraint.unsatisfiedIndicator}
 \difficulty{4}
-Let $D$ be a domain, let $[?]$
+Let $D$ be a domain and let $I$ be a finite multiset of constraints over $D$. For every assignment to the variables of $I$, the sum of the satisfied indicators and the sum of the unsatisfied indicators equal the cardinality of $I$.
 \end{theorem}
 
 \begin{theorem}[Satisfied Count and Unsatisfied Cost]
@@ -656,7 +656,7 @@ where the instance counts each seed’s constraint with its multiplicity.
 \label{FABL.maxCutTemplate}
 \leanok
 \uses{FABL.CSPTemplate, FABL.Sign}
-The max-cut template has a single binary predicate on signs in $bbZ^{\times}$, and
+The max-cut template has a single binary predicate on signs in $\bbZ^{\times}$, and
 accepts exactly when its two inputs are unequal.
 \end{definition}
 
@@ -666,7 +666,7 @@ accepts exactly when its two inputs are unequal.
 \label{FABL.maxThreeColoringTemplate}
 \leanok
 \uses{FABL.CSPTemplate}
-The max-three-coloring template has a single binary predicate on the three colors $bbN$
+The max-three-coloring template has a single binary predicate on the three colors $\bbN$
 modulo $3$, and accepts exactly when its two inputs are unequal.
 \end{definition}
 

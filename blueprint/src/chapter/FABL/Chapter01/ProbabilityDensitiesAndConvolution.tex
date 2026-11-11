@@ -403,8 +403,8 @@ $\widehat f(S)=\mathbb E_x[f(x)(-1)^{\sum_{i\in S}x_i}]$ and likewise for $g$.
 }
 \label{FABL.ProbabilityDensity}
 \leanok
-A probability density on the Boolean cube $\\mathbb{F}_2^n$ is a function
-$\\phi:\\mathbb{F}_2^n\\to\\mathbb{R}$ that is nonnegative at every point and has
+A probability density on the Boolean cube $\mathbb{F}_2^n$ is a function
+$\phi:\mathbb{F}_2^n\to\mathbb{R}$ that is nonnegative at every point and has
 uniform expectation $1$.
 \end{definition}
 
@@ -545,8 +545,8 @@ Statement pending regeneration.
 \label{FABL.ProbabilityDensity.toPMF}
 \leanok
 \uses{FABL.ProbabilityDensity, FABL.ProbabilityDensity.expect_eq_one, FABL.ProbabilityDensity.nonneg}
-Given a probability density $\\phi$ on $\\mathbb{F}_2^n$, assign each point $x$
-probability $2^{-n}\\phi(x)$. These point probabilities define a probability mass
+Given a probability density $\phi$ on $\mathbb{F}_2^n$, assign each point $x$
+probability $2^{-n}\phi(x)$. These point probabilities define a probability mass
 function on the Boolean cube.
 \end{definition}
 
@@ -686,9 +686,9 @@ standard map from nonnegative real numbers to nonnegative extended real numbers.
 \label{FABL.ProbabilityDensity.expectation}
 \leanok
 \uses{FABL.ProbabilityDensity}
-Given a probability density $\\phi$ on $\\mathbb{F}_2^n$ and a function
-$g:\\mathbb{F}_2^n\\to\\mathbb{R}$, define the expectation of $g$ under $\\phi$ to be
-the uniform expectation of the product $x\\mapsto\\phi(x)g(x)$.
+Given a probability density $\phi$ on $\mathbb{F}_2^n$ and a function
+$g:\mathbb{F}_2^n\to\mathbb{R}$, define the expectation of $g$ under $\phi$ to be
+the uniform expectation of the product $x\mapsto\phi(x)g(x)$.
 \end{definition}
 
 \begin{theorem}[Integration against a density]
@@ -821,10 +821,10 @@ the uniform expectation of the product $x\\mapsto\\phi(x)g(x)$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p029-b004}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $ho$ be a nonnegative function on the binary cube
-$br_2^n$ with uniform mean $1$, and let $g:br_2^n\to\bbr$ be any function. The
+Let $n$ be a nonnegative integer, let $\rho$ be a nonnegative function on the binary cube
+$\bbr_2^n$ with uniform mean $1$, and let $g:\bbr_2^n\to\bbr$ be any function. The
 integral of $g$ with respect to the probability measure whose density relative to
-uniform measure is $ho$ equals the uniform mean of $\rho g$.
+uniform measure is $\rho$ equals the uniform mean of $\rho g$.
 \end{theorem}
 
 \begin{theorem}[Density expectation and uniform inner product]
@@ -971,7 +971,7 @@ $\varphi$ equals the uniform inner product of $\varphi$ and $g$.
 \statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p029-b004}
 \label{FABL.setIndicator}
 \leanok
-For a subset $A\\subseteq\\mathbb{F}_2^n$, its indicator function is the function that
+For a subset $A\subseteq\mathbb{F}_2^n$, its indicator function is the function that
 equals $1$ on $A$ and $0$ outside $A$.
 \end{definition}
 
@@ -981,8 +981,8 @@ equals $1$ on $A$ and $0$ outside $A$.
 \label{FABL.subsetDensityValue}
 \leanok
 \uses{FABL.setIndicator, FABL.uniformProbability}
-For a subset $A\\subseteq\\mathbb{F}_2^n$, define its normalized indicator at $x$ to be
-$\\mathbf{1}_A(x)$ divided by the uniform probability of $A$.
+For a subset $A\subseteq\mathbb{F}_2^n$, define its normalized indicator at $x$ to be
+$\mathbf{1}_A(x)$ divided by the uniform probability of $A$.
 \end{definition}
 
 \begin{definition}[Density uniform on a subset]
@@ -991,7 +991,7 @@ $\\mathbf{1}_A(x)$ divided by the uniform probability of $A$.
 \label{FABL.subsetDensity}
 \leanok
 \uses{FABL.ProbabilityDensity, FABL.setIndicator, FABL.subsetDensityValue, FABL.uniformProbability}
-Let $A$ be a nonempty subset of $\\mathbb{F}_2^n$. The density uniform on $A$ is the
+Let $A$ be a nonempty subset of $\mathbb{F}_2^n$. The density uniform on $A$ is the
 normalized indicator of $A$, giving a probability density on the Boolean cube.
 \end{definition}
 
@@ -2210,7 +2210,7 @@ Statement pending regeneration.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p030-b001}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\mathbb{F}_2^n$ be the Boolean cube, and let
+Let $n$ be a nonnegative integer, let $\mathbb{F}_2^n$ be the Boolean cube, and let
 $\varphi:\mathbb{F}_2^n\to\mathbb{R}$ be pointwise nonnegative with uniform expectation
 $1$. For every function $g:\mathbb{F}_2^n\to\mathbb{R}$ and every $x\in\mathbb{F}_2^n$,
 the convolution of $\varphi$ and $g$ at $x$ equals both the $\varphi$-weighted
@@ -2376,9 +2376,9 @@ convolution of $\phi$ and $g$ evaluated at the zero vector.
 \label{FABL.ProbabilityDensity.convolution}
 \leanok
 \uses{FABL.ProbabilityDensity, FABL.ProbabilityDensity.expect_eq_one, FABL.ProbabilityDensity.nonneg, FABL.convolution, FABL.convolution_apply}
-Let $\\phi$ and $\\psi$ be probability densities on $\\mathbb{F}_2^n$. Their convolution
-is the probability density obtained by averaging $\\phi(y)\\psi(x-y)$ uniformly over
-$y\\in\\mathbb{F}_2^n$ at each point $x$.
+Let $\phi$ and $\psi$ be probability densities on $\mathbb{F}_2^n$. Their convolution
+is the probability density obtained by averaging $\phi(y)\psi(x-y)$ uniformly over
+$y\in\mathbb{F}_2^n$ at each point $x$.
 \end{definition}
 
 \begin{theorem}[Convolution of probability measures]
@@ -2531,9 +2531,9 @@ $\phi$ and $\psi$.
 \label{FABL.ProbabilityDensity.probability}
 \leanok
 \uses{FABL.ProbabilityDensity, FABL.ProbabilityDensity.expectation, FABL.setIndicator}
-Let $n$ be a nonnegative integer, let $phi$ be a nonnegative function on the Boolean
-cube $bbF_2^n$ whose uniform expectation is $1$, and let $A$ be a subset of that cube.
-The probability assigned to $A$ is the uniform expectation of $phi$ times the indicator
+Let $n$ be a nonnegative integer, let $\phi$ be a nonnegative function on the Boolean
+cube $\bbF_2^n$ whose uniform expectation is $1$, and let $A$ be a subset of that cube.
+The probability assigned to $A$ is the uniform expectation of $\phi$ times the indicator
 of $A$.
 \end{definition}
 
@@ -2681,11 +2681,11 @@ of $A$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p029-b002}
 \difficulty{4}
-Let $n$ be a natural number, and let $\\phi,\\psi:(\\mathbb{F}_2)^n\\to\\mathbb{R}$ be
+Let $n$ be a natural number, and let $\phi,\psi:(\mathbb{F}_2)^n\to\mathbb{R}$ be
 pointwise nonnegative functions, each having uniform expectation $1$. For every subset
-$A\\subseteq(\\mathbb{F}_2)^n$, the probability assigned to $A$ by the convolution of
-these densities is $\\mathbb{E}_{y}\\mathbb{E}_{z}[\\phi(y)\\psi(z)\\mathbf{1}_A(y+z)]$,
-where both expectations are uniform on $(\\mathbb{F}_2)^n$.
+$A\subseteq(\mathbb{F}_2)^n$, the probability assigned to $A$ by the convolution of
+these densities is $\mathbb{E}_{y}\mathbb{E}_{z}[\phi(y)\psi(z)\mathbf{1}_A(y+z)]$,
+where both expectations are uniform on $(\mathbb{F}_2)^n$.
 \end{theorem}
 
 \begin{theorem}[Fourier coefficient of a convolution]

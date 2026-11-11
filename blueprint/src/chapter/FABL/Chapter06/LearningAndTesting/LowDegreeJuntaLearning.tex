@@ -39,7 +39,7 @@ $k-c(k)$, where $c(k)$ denotes the low-degree junta cutoff at $k$.
 \leanok
 \uses{FABL.lowDegreeJuntaCutoff}
 \difficulty{2}
-For every natural number $k$, the cutoff $rac{3k}{4}$ rounded down satisfies
+For every natural number $k$, the cutoff $\frac{3k}{4}$ rounded down satisfies
 $\left\lfloor\frac{3k}{4}\right\rfloor\le k$.
 \end{theorem}
 
@@ -242,7 +242,7 @@ nonempty.
 Let $n$ and $k$ be natural numbers, let $P$ be a set of coordinates, and let $S$ be a
 subset of the coordinates outside $P$, represented in the corresponding restriction
 dimension. Then $S$ belongs to the low-degree Fourier family for that restriction if and
-only if $|S|\\le\\lfloor 3k/4\\rfloor$.
+only if $|S|\le\lfloor 3k/4\rfloor$.
 \end{theorem}
 
 \begin{definition}[Coefficient confidence parameter]
@@ -256,8 +256,8 @@ only if $|S|\\le\\lfloor 3k/4\\rfloor$.
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.dividePositiveLearningParameter, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaFourierFamily_nonempty, FABL.lowDegreeJuntaQuarterFailure}
 Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
-}n$, and let $ailure	ext{-parameter}$ be a rational number in $(0,1/2]$. Form the
-family of subsets of the coordinates outside $P$ having size at most $rac{3k}{4}$, with
+}n$, and let $\failure	ext{-parameter}$ be a rational number in $(0,1/2]$. Form the
+family of subsets of the coordinates outside $P$ having size at most $\frac{3k}{4}$, with
 the cutoff rounded down, and let $N$ be its cardinality. The coefficient confidence
 parameter is the failure parameter divided by $4N$.
 \end{definition}
@@ -330,7 +330,7 @@ count, plus the junta polynomial sample count.
 \uses{FABL.lowDegreeJuntaFourierFamily}
 Let $n$ and $k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$,
 and let $S$ be a member of the family of subsets of the coordinates outside $P$ having
-size at most $rac{3k}{4}$ rounded down. Its rank is its position in the canonical
+size at most $\frac{3k}{4}$ rounded down. Its rank is its position in the canonical
 enumeration of that finite family, represented by an element of $	ext{Fin}$ whose size
 is the cardinality of the family.
 \end{definition}
@@ -387,7 +387,7 @@ coefficient-estimation samples across the low-degree junta Fourier family.
 \label{FABL.juntaFreeInputBatchEquiv}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.fixedSignCubeEquiv, FABL.juntaRestrictionDimension}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $\\{0,\\ldots,n-1\\}$,
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\{0,\ldots,n-1\}$,
 and let $M$ be a natural number. There is a bijection between batches of $M$ assignments
 to the coordinates outside $P$ and batches of $M$ sign vectors of length equal to the
 number of coordinates outside $P$, obtained by converting each assignment to its
@@ -413,7 +413,7 @@ coordinates.
 \label{FABL.lowDegreeJuntaPolynomialInputRow}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.fixedSignCubeEquiv, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaPolynomialSampleEmbedding, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $0,\\ldots,n-1$, let
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\{0,\ldots,n-1\}$, let
 $k$ be a natural number, and let the failure parameter lie in $(0,1/2]$. Given a batch
 of the prescribed restricted sample size, the polynomial estimation input row is the
 sequence of sign vectors obtained by converting the inputs at the sample positions
@@ -526,7 +526,7 @@ $k$.
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.Sign, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaDetectedFrequencies, FABL.lowDegreeJuntaRestrictedSampleCount}
 Let $n$ and $k$ be nonnegative integers, let $P$ be a subset of the $n$ coordinates, and
-let the failure parameter $ailure$ be a rational number in $(0,1/2]$. Given a batch of
+let the failure parameter $\failure$ be a rational number in $(0,1/2]$. Given a batch of
 the prescribed size, whose entries pair an assignment to the coordinates outside $P$
 with a sign, the construction returns no frequency when the set of detected frequencies
 is empty; otherwise it returns a nonempty frequency from that set.
@@ -547,7 +547,7 @@ Let $n,k$ be nonnegative integers, let $P\subseteq\{0,\ldots,n-1\}$, and let the
 parameter lie in $(0,1/2]$. Given a batch of the prescribed restricted sample size,
 consisting of a free-coordinate sign assignment and a label for each sample, apply the
 low-degree polynomial learner to the prescribed polynomial-learning portion of the
-batch. The result is an $\mathbb{F}_2$-coefficient hypothesis on the free-coordinate
+batch. The result is an $\mathbb{F}_2$-coefficient hypothesis on the free-coordinate
 space, with degree bound $k-\lfloor 3k/4\rfloor$.
 \end{definition}
 
@@ -720,7 +720,7 @@ coordinate of the first nonconstant monomial selected by the specified rule.
 \label{FABL.juntaFreeCoordinateOfFin}
 \leanok
 \uses{FABL.FixedIndex, FABL.JuntaFreeIndex, FABL.juntaRestrictionDimension}
-Let $n$ be a natural number and let $P$ be a set of coordinates in $0,\\ldots,n-1$.
+Let $n$ be a natural number and let $P$ be a set of coordinates in $\{0,\ldots,n-1\}$.
 The $i$-th coordinate in the enumeration of the coordinates outside $P$ is the
 coordinate represented by index $i$, for $i$ ranging from zero to one less than the
 number of coordinates outside $P$.
@@ -958,7 +958,7 @@ remaining coordinates is a $k$-junta.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.FixedIndex, FABL.IsRelevant, FABL.IsRelevantJuntaRestriction, FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.fixedSignCubeEquiv, FABL.isRelevant_iff_exists_setCoordinate_ne, FABL.juntaFreeCoordinateOfFin, FABL.juntaRestriction, FABL.juntaRestrictionDimension, FABL.reindexedJuntaRestriction, FABL.setCoordinate, FABL.signValue}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a Boolean function on the sign cube
-$\\{−1,1\\}^n$, let $P\\subseteq\\{1,\\ldots,n\\}$ be a set of fixed coordinates, and
+$\{−1,1\}^n$, let $P\subseteq\{1,\ldots,n\}$ be a set of fixed coordinates, and
 fix signs on $P$. Reindex the restriction of $f$ to the remaining coordinates as a
 function on a sign cube of dimension equal to the number of remaining coordinates. If
 this reindexed function has positive influence in coordinate $i$, then the restricted
@@ -1123,7 +1123,7 @@ size at most $\lfloor 3k/4\rfloor$ is zero.
 \lean{FABL.juntaWitnessCoordinateEmbedding}
 \label{FABL.juntaWitnessCoordinateEmbedding}
 \leanok
-Let $r$ be a natural number and let $J$ be a set of coordinates in $0,\\ldots,r-1$.
+Let $r$ be a natural number and let $J$ be a set of coordinates in $\{0,\ldots,r-1\}$.
 Enumerating the elements of $J$ gives an embedding of the set of indices from zero to
 $|J|-1$ into the coordinates from zero to $r-1$, with image exactly $J$.
 \end{definition}
@@ -1557,7 +1557,7 @@ bounds at parameters $n,k,q$.
 \leanok
 \uses{FABL.juntaRestrictionDimension}
 \difficulty{3}
-For every natural number $n$ and every finite set $P$ of coordinates among $n$, the
+For every natural number $n$ and every finite set $P$ of coordinates among $[n]$, the
 number of coordinates outside $P$ is at most $n$.
 \end{theorem}
 
@@ -1650,7 +1650,7 @@ The positive matrix exponents are the positive rational numbers.
 \leanok
 \uses{FABL.PositiveMatrixExponent}
 \difficulty{3}
-If $\\omega$ is a positive rational number, then $\\omega+1>0$.
+If $\omega$ is a positive rational number, then $\omega+1>0$.
 \end{theorem}
 
 \begin{definition}[Balanced junta exponent]
@@ -1702,7 +1702,7 @@ $\omega\bigl(k-\operatorname{cutoff}(\omega,k)\bigr)$.
 \leanok
 \uses{FABL.PositiveMatrixExponent, FABL.matrixExponentJuntaBalancedExponent, FABL.positiveMatrixExponent_add_one_pos}
 \difficulty{3}
-Let $[?]$ be a positive rational matrix exponent and let $k$ be a natural number. The
+Let $\omega$ be a positive rational matrix exponent and let $k$ be a natural number. The
 balanced exponent is nonnegative.
 \end{theorem}
 
@@ -1712,7 +1712,7 @@ balanced exponent is nonnegative.
 \leanok
 \uses{FABL.PositiveMatrixExponent, FABL.matrixExponentJuntaBalancedExponent, FABL.positiveMatrixExponent_add_one_pos}
 \difficulty{3}
-Let $[?]$ be a positive rational matrix exponent and let $k$ be a natural number. The
+Let $\omega$ be a positive rational matrix exponent and let $k$ be a natural number. The
 balanced exponent is at most $k$.
 \end{theorem}
 
@@ -1723,8 +1723,8 @@ balanced exponent is at most $k$.
 \leanok
 \uses{FABL.PositiveMatrixExponent, FABL.matrixExponentJuntaBalancedExponent, FABL.positiveMatrixExponent_add_one_pos}
 \difficulty{3}
-Let $[?]$ be a positive rational matrix exponent and let $k$ be a natural number. The
-balanced exponent $[?]k/([?]+1)$ satisfies $[?](k-[?]k/([?]+1))=[?]k/([?]+1)$.
+Let $\omega$ be a positive rational matrix exponent and let $k$ be a natural number. The
+balanced exponent $\omegak/(\omega+1)$ satisfies $\omega(k-\omegak/(\omega+1))=\omegak/(\omega+1)$.
 \end{theorem}
 
 \begin{theorem}[Balanced exponent as a fraction]
@@ -1733,8 +1733,8 @@ balanced exponent $[?]k/([?]+1)$ satisfies $[?](k-[?]k/([?]+1))=[?]k/([?]
 \leanok
 \uses{FABL.PositiveMatrixExponent, FABL.matrixExponentJuntaBalancedExponent}
 \difficulty{3}
-Let $[?]$ be a positive rational matrix exponent and let $k$ be a natural number. The
-balanced exponent equals $([?]/([?]+1))k$.
+Let $\omega$ be a positive rational matrix exponent and let $k$ be a natural number. The
+balanced exponent equals $(\omega/(\omega+1))k$.
 \end{theorem}
 
 \begin{theorem}[Balanced exponent bounded by cutoff]
@@ -1743,7 +1743,7 @@ balanced exponent equals $([?]/([?]+1))k$.
 \leanok
 \uses{FABL.PositiveMatrixExponent, FABL.matrixExponentJuntaBalancedExponent, FABL.matrixExponentJuntaCutoff}
 \difficulty{1}
-Let $[?]$ be a positive rational matrix exponent and let $k$ be a natural number. The
+Let $\omega$ be a positive rational matrix exponent and let $k$ be a natural number. The
 balanced exponent is at most its ceiling, the integer cutoff.
 \end{theorem}
 

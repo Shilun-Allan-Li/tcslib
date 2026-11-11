@@ -256,7 +256,7 @@ query trace of $T$ on $x$ equals the length of that trace, which is the query co
 \uses{FABL.FiniteDecisionTree, FABL.F₂DecisionTree}
 For any finite set of available coordinates, a decision tree whose queries have two
 children, labelled by the bit values $0$ and $1$, determines a decision tree over the
-alphabet $br/br?$. Here the child for $0$ is selected when the queried value is zero,
+alphabet $\bbr/\bbr?$. Here the child for $0$ is selected when the queried value is zero,
 and the child for $1$ otherwise.
 \end{definition}
 
@@ -276,7 +276,7 @@ same label as evaluating $T$ at $x$.
 \label{FABL.FiniteDecisionTree.completeTreeAux}
 \leanok
 \uses{FABL.FiniteDecisionTree}
-Let $a9$ be a nonempty alphabet, let $f:(	ext{Fin }n	oa9)	ob1$ be a function, and let
+Let $\Omega$ be a nonempty alphabet, let $f:(	ext{Fin }n	o\Omega)	o\alpha$ be a function, and let
 $x$ be a partial input and $A$ a finite set of available coordinates. The recursively
 defined tree queries the least coordinate of $A$, branching on each alphabet value and
 continuing with that coordinate updated in $x$; when $A$ is empty, it returns $f(x)$.
@@ -300,7 +300,7 @@ to $f(x)$.
 \label{FABL.FiniteDecisionTree.completeTree}
 \leanok
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.completeTreeAux}
-Let $a9$ be a nonempty alphabet and let $f:(	ext{Fin }n	oa9)	ob1$. The complete
+Let $\Omega$ be a nonempty alphabet and let $f:(	ext{Fin }n	o\Omega)	o\alpha$. The complete
 decision tree queries all coordinates, in increasing order, branching on their alphabet
 values, and returns the value of $f$ on the resulting input.
 \end{definition}
@@ -1561,8 +1561,8 @@ the input cost of the deterministic tree selected by that seed.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.RandomizedDecisionTree.worstCaseCost}
 \difficulty{1}
-Let $Omega$ be a finite nonempty set, let $alpha$ be a type, let $n$ be a nonnegative
-integer, and let $f:(Fin ntoOmega)toalpha$. For every zero-error randomized
+Let $\Omega$ be a finite nonempty set, let $\alpha$ be a type, let $n$ be a nonnegative
+integer, and let $f:(\mathrm{Fin} n\to\Omega)\to\alpha$. For every zero-error randomized
 decision tree $T$ computing $f$ and every input $x$, the expected number of queries on
 $x$ is at most the maximum expected query count over all inputs.
 \end{theorem}
@@ -1573,9 +1573,8 @@ $x$ is at most the maximum expected query count over all inputs.
 \leanok
 \uses{FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryCount_le_dimension, FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.pmfExpectation}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $Omega$ and $alpha$ be types, let $f:(Fin
-ntoOmega)toalpha$, and let $T$ be a zero-error randomized decision tree computing
-$f$. For every input $x:(Fin ntoOmega)$, the expected number of coordinates queried
+Let $n$ be a nonnegative integer, let $\Omega$ and $\alpha$ be types, let $f:(\mathrm{Fin}\nn\to\Omega)\to\alpha$, and let $T$ be a zero-error randomized decision tree computing
+$f$. For every input $x:(\mathrm{Fin} n\to\Omega)$, the expected number of coordinates queried
 by $T$ on $x$ is at most $n$.
 \end{theorem}
 
@@ -1624,8 +1623,7 @@ input coordinates are sampled independently from $\pi$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.pmfExpectation_nonneg}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $Omega$ and $alpha$ be types, let $f:(Fin
-ntoOmega)toalpha$, and let $T$ be a zero-error randomized decision tree computing
+Let $n$ be a nonnegative integer, let $\Omega$ and $\alpha$ be types, let $f:(\mathrm{Fin}\nn\to\Omega)\to\alpha$, and let $T$ be a zero-error randomized decision tree computing
 $f$. For every input $x$, the expected number of queries made by $T$ on $x$ is
 nonnegative.
 \end{theorem}
@@ -1694,10 +1692,10 @@ when there are no coordinates.
 \leanok
 \uses{FABL.FiniteDecisionTree.Queries, FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.sum_queryIndicator_eq_queryCount, FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.RandomizedDecisionTree.queryProbabilityOnInput, FABL.pmfExpectation, FABL.pmfExpectation_sum}
 \difficulty{4}
-Let $n$ be a natural number, let $Omega$ and $alpha$ be types, let
-$f:Omega^n\toalpha$, and let $T$ be a randomized decision tree computing $f$, with a
+Let $n$ be a natural number, let $\Omega$ and $\alpha$ be types, let
+$f:\Omega^n\to\alpha$, and let $T$ be a randomized decision tree computing $f$, with a
 finite nonempty seed space and a probability law on its seeds. For every input
-$x\inOmega^n$, the sum over all coordinates of the probability that $T$ queries that
+$x\in\Omega^n$, the sum over all coordinates of the probability that $T$ queries that
 coordinate on $x$ equals the expected number of queries made on $x$.
 \end{theorem}
 
@@ -1718,10 +1716,10 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.inputCost_le_worstCaseCost, FABL.RandomizedDecisionTree.worstCaseCost, FABL.pmfExpectation, FABL.pmfExpectation_const, FABL.pmfExpectation_mono, FABL.productProbabilityPMF}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite nonempty input alphabet with
-probability distribution $\\pi$, let $\\alpha$ be an output set, and let
-$f:\\Omega^n\\to\\alpha$. For any randomized decision tree $T$ computing $f$, its
-average query cost under independent inputs drawn from $\\pi$ is at most its worst-case
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite nonempty input alphabet with
+probability distribution $\pi$, let $\alpha$ be an output set, and let
+$f:\Omega^n\to\alpha$. For any randomized decision tree $T$ computing $f$, its
+average query cost under independent inputs drawn from $\pi$ is at most its worst-case
 query cost over all inputs.
 \end{theorem}
 
@@ -1731,10 +1729,10 @@ query cost over all inputs.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.averageCost_nonneg, FABL.RandomizedDecisionTree.queryProbability, FABL.RandomizedDecisionTree.queryProbability_nonneg, FABL.RandomizedDecisionTree.revealment, FABL.RandomizedDecisionTree.sum_queryProbability_eq_averageCost}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $Omega$ be a finite input alphabet, and let $T$
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite input alphabet, and let $T$
 be a randomized decision tree on $n$ coordinates with a finite nonempty seed space and a
 probability law on its seeds, such that every seed selects a tree computing the same
-function. For any probability distribution $pi$ on $Omega$, the largest, over
+function. For any probability distribution $\pi$ on $\Omega$, the largest, over
 coordinates, of the probability that the tree queries that coordinate on an independent
 product-distributed input is at most the expected number of queries under that input
 distribution.
@@ -1759,8 +1757,8 @@ coordinates, or $0$ if there are no coordinates.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.queryProbability, FABL.RandomizedDecisionTree.queryProbability_le_revealment, FABL.RandomizedDecisionTree.revealment, FABL.RandomizedDecisionTree.sum_queryProbability_eq_averageCost}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite input alphabet with
-probability distribution $\\pi$, and let $T$ be a randomized decision tree on $n$
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite input alphabet with
+probability distribution $\pi$, and let $T$ be a randomized decision tree on $n$
 coordinates. For each coordinate, consider the probability—over both the product input
 distribution and the tree's random seed—that the tree queries it, and let the largest
 such probability be zero if there are no coordinates. The average query cost is at most
@@ -1773,8 +1771,8 @@ $n$ times this largest probability.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.queryProbability}
 For a randomized decision tree over a finite alphabet and a probability distribution
-$c0$ on that alphabet, equal query probabilities means that every pair of coordinates
-has the same query probability under $c0$.
+$\pi$ on that alphabet, equal query probabilities means that every pair of coordinates
+has the same query probability under $\pi$.
 \end{definition}
 
 \begin{theorem}[Revealment under equal query probabilities]
@@ -1807,10 +1805,10 @@ $\pi$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.deterministicAverageCost, FABL.RandomizedDecisionTree.inputCost, FABL.pmfExpectation}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite input alphabet with
-probability distribution $\\pi$, let $\\alpha$ be an output set, and let
-$f:\\Omega^n\\to\\alpha$. For any randomized decision tree $T$ computing $f$, its
-average query cost under independent inputs drawn from $\\pi$ equals the expectation,
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite input alphabet with
+probability distribution $\pi$, let $\alpha$ be an output set, and let
+$f:\Omega^n\to\alpha$. For any randomized decision tree $T$ computing $f$, its
+average query cost under independent inputs drawn from $\pi$ equals the expectation,
 over the random seed of $T$, of the selected deterministic tree's average query cost
 under that same input distribution.
 \end{theorem}
@@ -3044,10 +3042,10 @@ of $f$ is at most the least depth of a deterministic decision tree computing $f$
 \leanok
 \uses{FABL.FiniteDecisionTree.completeTree, FABL.FiniteDecisionTree.completeTree_computes, FABL.RandomizedDecisionTree.averageComplexity, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.averageCost_nonneg, FABL.RandomizedDecisionTree.ofDeterministic}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite input alphabet with
-probability distribution $\\pi$, let $\\alpha$ be an output set, and let
-$f:\\Omega^n\\to\\alpha$. The infimum of the average query costs, under independent
-inputs drawn from $\\pi$, of all finite randomized decision trees that compute $f$ is
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite input alphabet with
+probability distribution $\pi$, let $\alpha$ be an output set, and let
+$f:\Omega^n\to\alpha$. The infimum of the average query costs, under independent
+inputs drawn from $\pi$, of all finite randomized decision trees that compute $f$ is
 nonnegative.
 \end{theorem}
 
@@ -3067,7 +3065,7 @@ take values in $\{-1,1	he same as sign	ext{?}$
 \label{FABL.majorityThreeTree01}
 \leanok
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.Sign, FABL.majorityThreePairTree}
-For inputs in $	ext{Fin}(3)$ with values in $ $, define the tree that queries coordinate
+For inputs in $	ext{Fin}(3)$ with values in $\Omega$, define the tree that queries coordinate
 $0$, then coordinate $1$, and returns their common value if they agree; otherwise it
 queries coordinate $2$ and returns that value.
 \end{definition}
@@ -6196,7 +6194,7 @@ with a nonnegative sum assigned the value $1$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.Sign, FABL.majority, FABL.majorityThreeTreeBySeed, FABL.majorityThreeTreeBySeed_computes, FABL.uniformPMF}
 There is a randomized decision tree for majority on three inputs taking values in
-$\\{-1,1\}$. Its seed is uniform on the three-element set $	ext{Fin}(3)$, and each seed
+$\{-1,1\}$. Its seed is uniform on the three-element set $	ext{Fin}(3)$, and each seed
 selects the corresponding pair-first tree; every selected tree computes majority exactly
 on every input.
 \end{definition}
@@ -10708,7 +10706,7 @@ query cost of a zero-error randomized decision tree computing majority is at mos
 \label{FABL.orAverageQueryCost}
 \leanok
 For a natural number $n$ and a real number $p$, define the average query-cost expression
-by $ \sum_{k=0}^{n-1}(1-p)^k$.
+by $\sum_{k=0}^{n-1}(1-p)^k$.
 \end{definition}
 
 \begin{theorem}[A geometric sum formula]
@@ -11722,7 +11720,7 @@ $\sum_{k=0}^{n-1}(1-p)^k=\frac{1-(1-p)^n}{p}$.
 \uses{FABL.orAverageQueryCost}
 \difficulty{3}
 For every natural number $n$ and real number $p$, the average query cost at $n+1$
-satisfies $C_{n+1}(p)=1+(1-p)C_n(p)$, where $C_n(p)=\\sum_{k=0}^{n-1}(1-p)^k$.
+satisfies $C_{n+1}(p)=1+(1-p)C_n(p)$, where $C_n(p)=\sum_{k=0}^{n-1}(1-p)^k$.
 \end{theorem}
 
 \begin{theorem}[Average query cost at the critical parameter]

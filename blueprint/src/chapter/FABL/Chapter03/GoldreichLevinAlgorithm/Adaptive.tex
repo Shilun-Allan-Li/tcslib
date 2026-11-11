@@ -57,12 +57,12 @@ target, at the record's coordinates and frequency prefix, is at least $	au^2/4$.
 \label{FABL.GoldreichLevinQueryState.SatisfiesInvariant}
 \leanok
 \uses{FABL.BooleanFunction, FABL.GoldreichLevinActiveInvariant, FABL.GoldreichLevinQueryState, FABL.GoldreichLevinThreshold, FABL.goldreichLevinActiveCap}
-Let $n$ be a natural number, let a target Boolean function on $\\{−1,1\\}^n$ be given,
-let $\\tau$ be rational with $0<\\tau\\leq1$, and let $k$ be a natural number. A query
+Let $n$ be a natural number, let a target Boolean function on $\{−1,1\}^n$ be given,
+let $\tau$ be rational with $0<\tau\leq1$, and let $k$ be a natural number. A query
 state satisfies the invariant if there is a finite family $A$ of subsets of $[n]$ such
 that its active family is exactly $A$, $A$ satisfies the Goldreich–Levin active
-invariant for the target, $\\tau$, and $k$, and $|A|$ is at most the active-family cap
-for $\\tau$.
+invariant for the target, $\tau$, and $k$, and $|A|$ is at most the active-family cap
+for $\tau$.
 \end{definition}
 
 \begin{theorem}[Positivity of the active cap]
@@ -114,7 +114,7 @@ less than $\tau^2/4$.
 \label{FABL.goldreichLevinQueryStep}
 \leanok
 \uses{FABL.GoldreichLevinEstimateRecord, FABL.GoldreichLevinQueryState, FABL.GoldreichLevinThreshold, FABL.goldreichLevinRefine, FABL.goldreichLevinTraceEstimate}
-Let $n$ be a natural number, let $\\tau$ be rational with $0<\\tau\\leq1$, and let $k$
+Let $n$ be a natural number, let $\tau$ be rational with $0<\tau\leq1$, and let $k$
 be a natural number with $k<n$. Given a query state and a finite list of estimate
 records, append the records to the state's trace. The new active family is obtained by
 applying the Goldreich–Levin refinement at level $k$ to the old active family, using the

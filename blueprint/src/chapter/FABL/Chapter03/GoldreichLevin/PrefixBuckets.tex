@@ -23,10 +23,10 @@ $J$, and subsets of $\mathrm{Fin}(n)$.
 \leanok
 \uses{FABL.FixedIndex, FABL.frequencySplitEquiv, FABL.liftFixedFrequency, FABL.liftFreeFrequency}
 \difficulty{5}
-Let $n$ be a natural number, let $J$ be a set of indices in $in$, and let $S$ be a
+Let $n$ be a natural number, let $J$ be a set of indices in $\in$, and let $S$ be a
 subset of $J$ and $T$ a subset of the indices outside $J$. Under the frequency split
 equivalence, the pair $(S,T)$ corresponds to the union of $S$ and $T$, each viewed as a
-subset of $in$.
+subset of $\in$.
 \end{theorem}
 
 \begin{theorem}[Total restricted Fourier weight]
@@ -1351,7 +1351,7 @@ $S\in\mathcal A$ is at most $1$.
 \leanok
 \uses{FABL.FixedIndex, FABL.fixedFrequencyPart, FABL.fourierCoeff, FABL.freeFrequencyPart, FABL.liftFixedFrequency, FABL.liftFreeFrequency, FABL.liftFreeFrequencyPart_union_liftFixedFrequencyPart, FABL.restrictedFourierWeight}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $f:\\{-1,1\\}^n\\to\\mathbb R$, and let $J$ and
+Let $n$ be a nonnegative integer, let $f:\{-1,1\}^n\to\mathbb R$, and let $J$ and
 $U$ be sets of coordinates. Let $S$ be a subset of $J$ equal to the part of $U$ lying in
 $J$. Then the square of the Fourier coefficient of $f$ at $U$ is at most the restricted
 Fourier weight of $f$ on $J$ at $S$.
@@ -1368,7 +1368,7 @@ Fourier weight of $f$ on $J$ at $S$.
 \uses{FABL.FixedIndex, FABL.fixedFrequencyPart, FABL.fourierCoeff, FABL.freeFrequencyPart, FABL.liftFreeFrequencyPart_union_liftFixedFrequencyPart, FABL.restrictedFourierWeight}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a real-valued function on the sign cube
-$\\{\\pm1\\}^n$, and let $U$ be a set of coordinates. When all coordinates are free, the
+$\{\pm1\}^n$, and let $U$ be a set of coordinates. When all coordinates are free, the
 restricted Fourier weight indexed by the part of $U$ in the free coordinates equals the
 square of the Fourier coefficient of $f$ at $U$.
 \end{theorem}
@@ -4047,8 +4047,8 @@ coordinates.
 \leanok
 \uses{FABL.freeFrequencyPart, FABL.liftFreeFrequency, FABL.mem_freeFrequencyPart}
 \difficulty{4}
-Let $n$ be a natural number and let $J,S$ be subsets of $in n$ with $S\subseteq J$.
-Regard the elements of $S$ as elements indexed by $J$ and then as elements of $in n$;
+Let $n$ be a natural number and let $J,S$ be subsets of $\in n$ with $S\subseteq J$.
+Regard the elements of $S$ as elements indexed by $J$ and then as elements of $\in n$;
 the resulting subset is exactly $S$.
 \end{theorem}
 
@@ -4058,7 +4058,7 @@ the resulting subset is exactly $S$.
 \leanok
 \uses{FABL.freeFrequencyPart, FABL.liftFreeFrequency, FABL.liftFreeFrequency_freeFrequencyPart_eq_of_subset}
 \difficulty{4}
-Let $n$ be a natural number, let $J$ be a subset of the coordinates $\\{0,\ldots,n-1\}$,
+Let $n$ be a natural number, let $J$ be a subset of the coordinates $\{0,\ldots,n-1\}$,
 and let $\mathcal A$ be a finite family of coordinate subsets, each contained in $J$.
 The map sending each $U\in\mathcal A$ to its part inside $J$ is injective on $\mathcal
 A$.
@@ -4107,10 +4107,10 @@ number greater than or equal to $4/\tau^{2}$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.GoldreichLevinThreshold, FABL.card_prefixes_mul_minWeight_le_one, FABL.freeFrequencyPart, FABL.goldreichLevinActiveCap, FABL.restrictedFourierWeight}
 \difficulty{4}
-Let $n$ be a natural number, let $f$ be a function from the Boolean cube $\{-1,1\}^n$
-to $\{-1,1\}$, let $J$ be a set of coordinates, and let $\mathcal A$ be a family of
-subsets of the coordinates. Choose a rational threshold $\tau$ with $0<\tau\le 1$. If
-each $S\in\mathcal A$ is contained in $J$, and its restricted Fourier weight on $J$ is
-at least $\tau^2/4$, then $\mathcal A$ has cardinality at most $\lceil
-4/\tau^2\rceil$.
+Let $n$ be a natural number, let $f$ be a function from the Boolean cube $\{-1,1\}^n$
+to $\{-1,1\}$, let $J$ be a set of coordinates, and let $\mathcal A$ be a family of
+subsets of the coordinates. Choose a rational threshold $\tau$ with $0<\tau\le 1$. If
+each $S\in\mathcal A$ is contained in $J$, and its restricted Fourier weight on $J$ is
+at least $\tau^2/4$, then $\mathcal A$ has cardinality at most $\lceil
+4/\tau^2\rceil$.
 \end{theorem}

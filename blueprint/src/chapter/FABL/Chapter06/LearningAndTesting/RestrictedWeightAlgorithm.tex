@@ -133,7 +133,7 @@ positive.
 \label{FABL.freeSignCubeEquiv}
 \leanok
 \uses{FABL.FreeSignCube}
-Let $J$ be a finite subset of $\\{0,\ldots,n-1\}$. The set of sign-valued functions on
+Let $J$ be a finite subset of $\{0,\ldots,n-1\}$. The set of sign-valued functions on
 $J$ is equivalent to the sign cube of dimension $|J|$, by reindexing coordinates using
 the increasing enumeration of $J$.
 \end{definition}
@@ -142,9 +142,9 @@ the increasing enumeration of $J$.
 \lean{FABL.freeFrequencyReindex}
 \label{FABL.freeFrequencyReindex}
 \leanok
-Let $J$ be a finite subset of $Fin(n)$, and let $S$ be a finite subset of $J$.
+Let $J$ be a finite subset of $\Fin(n)$, and let $S$ be a finite subset of $J$.
 Reindexing the elements of $S$ through the increasing enumeration of $J$ gives a finite
-subset of $Fin(|J|)$.
+subset of $\Fin(|J|)$.
 \end{definition}
 
 \begin{theorem}[Monomial under frequency reindexing]
@@ -165,8 +165,8 @@ $S$ evaluated at the transferred assignment.
 \label{FABL.fixedCoordinateProjectionLinear}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.𝔽₂}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate projection
-is the linear map from $Fin(n)\to\mathbb{F}_2$ to $Fin(|Fin(n)\setminus
+Let $J$ be a finite subset of the coordinates $\Fin(n)$. The fixed-coordinate projection
+is the linear map from $\Fin(n)\to\mathbb{F}_2$ to $\Fin(|\Fin(n)\setminus
 J|)\to\mathbb{F}_2$ that records, in reindexed order, the coordinates outside $J$.
 \end{definition}
 
@@ -176,10 +176,10 @@ J|)\to\mathbb{F}_2$ that records, in reindexed order, the coordinates outside $J
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateProjectionLinear}
 \difficulty{1}
-Let $n$ be a natural number, let $J$ be a set of indices in $in n$, and let $x$ be a
-function from $in n$ to the field with two elements. For any position $q$ among the
+Let $n$ be a natural number, let $J$ be a set of indices in $\in n$, and let $x$ be a
+function from $\in n$ to the field with two elements. For any position $q$ among the
 indices outside $J$, the coordinate of the projection of $x$ at $q$ equals the
-coordinate of $x$ indexed by the corresponding element of $in n \setminus J$.
+coordinate of $x$ indexed by the corresponding element of $\in n \setminus J$.
 \end{theorem}
 
 \begin{definition}[Fixed-coordinate extension]
@@ -187,7 +187,7 @@ coordinate of $x$ indexed by the corresponding element of $in n \setminus J$.
 \label{FABL.fixedCoordinateExtension}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. Extend a function from the
+Let $J$ be a finite subset of the coordinates $\Fin(n)$. Extend a function from the
 coordinates outside $J$ to all coordinates by retaining its values outside $J$ and
 assigning $0$ on $J$, with the outside coordinates reindexed in increasing order.
 \end{definition}
@@ -198,9 +198,9 @@ assigning $0$ on $J$, with the outside coordinates reindexed in increasing order
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateExtension, FABL.fixedCoordinateProjectionLinear}
 \difficulty{3}
-Let $n$ be a natural number, let $J$ be a set of indices in $in n$, and let $z$ assign
+Let $n$ be a natural number, let $J$ be a set of indices in $\in n$, and let $z$ assign
 a value in the field with two elements to each index outside $J$. Extend $z$ to all
-indices in $in n$ by assigning zero on $J$. Projecting this extension onto the indices
+indices in $\in n$ by assigning zero on $J$. Projecting this extension onto the indices
 outside $J$ recovers $z$.
 \end{theorem}
 
@@ -209,10 +209,10 @@ outside $J$ recovers $z$.
 \label{FABL.fixedCoordinateFrequencyLift}
 \leanok
 \uses{FABL.FixedIndex, FABL.F₂Cube, FABL.fixedCoordinateProjectionLinear, FABL.𝔽₂}
-Let $J$ be a finite subset of the coordinates $Fin(n)$. The fixed-coordinate frequency
-lift sends a function $gamma$ on the reindexed coordinates outside $J$ to the unique
+Let $J$ be a finite subset of the coordinates $\Fin(n)$. The fixed-coordinate frequency
+lift sends a function $\gamma$ on the reindexed coordinates outside $J$ to the unique
 coefficient vector on all $n$ coordinates whose dot product with any vector over
-$mathbb{F}_2$ equals the dot product of $gamma$ with that vector's restriction to the
+$\mathbb{F}_2$ equals the dot product of $\gamma$ with that vector's restriction to the
 coordinates outside $J$.
 \end{definition}
 
@@ -377,7 +377,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.FixedSignCube, FABL.combineSignCube, FABL.fourierCoeff_reindexedSignRestriction, FABL.fourierOneNorm, FABL.freeSignCubeEquiv, FABL.indexedFourierCoeff, FABL.signRestriction}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\\{-1,1\\}^n$,
+Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\{-1,1\}^n$,
 let $J$ be a set of coordinates, and fix a sign assignment $z$ on the coordinates
 outside $J$. The Fourier one-norm of the restriction of $h$, viewed as a real-valued
 function on a cube indexed by $J$, equals the sum of the absolute values of its Fourier
@@ -390,7 +390,7 @@ coefficients indexed by subsets of $J$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.FixedSignCube, FABL.combineSignCube, FABL.fourierOneNorm, FABL.fourierOneNorm_reindexedSignRestriction_eq, FABL.freeSignCubeEquiv, FABL.sum_abs_indexedFourierCoeff_signRestriction_le_fourierOneNorm}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\\{-1,1\\}^n$,
+Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\{-1,1\}^n$,
 let $J$ be a set of coordinates, and fix a sign assignment $z$ outside $J$. The Fourier
 one-norm of the restriction of $h$ to the coordinates in $J$ is at most the Fourier
 one-norm of $h$.
@@ -453,8 +453,8 @@ For every sign $s\in\{ -1,1\}$, its real value has absolute value $1$.
 \leanok
 \uses{FABL.IndexedSignCube, FABL.indexedMonomial, FABL.indexedMonomial_sq}
 \difficulty{4}
-Let $\\iota$ be an index set, let $S\\subseteq\\iota$ be finite, and assign a sign to
-each index in $\\iota$. The absolute value of the product of the signs indexed by $S$ is
+Let $\iota$ be an index set, let $S\subseteq\iota$ be finite, and assign a sign to
+each index in $\iota$. The absolute value of the product of the signs indexed by $S$ is
 $1$.
 \end{theorem}
 
@@ -598,9 +598,9 @@ ranges.
 \label{FABL.deterministicRestrictedWeightQueryPoint}
 \leanok
 \uses{FABL.RestrictedWeightInput, FABL.combineSignCube, FABL.deterministicRestrictedWeightQueryCount, FABL.deterministicRestrictedWeightQueryPair, FABL.restrictedWeightFixedAssignment, FABL.restrictedWeightFreeAssignment}
-Given a restricted-weight input, a set $J$ of coordinates in $in{n}$, and a query index
+Given a restricted-weight input, a set $J$ of coordinates in $\in{n}$, and a query index
 $q$ from the set of all queries, the deterministic query point is the sign vector in
-$\\{-1,1\\}^n$ obtained by combining the free assignment for the second component of the
+$\{-1,1\}^n$ obtained by combining the free assignment for the second component of the
 query pair with the fixed assignment for its first component, using $J$.
 \end{definition}
 
@@ -624,7 +624,7 @@ with $i$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.RestrictedWeightInput, FABL.deterministicRestrictedWeightEstimateFromAnswers, FABL.deterministicRestrictedWeightQueryPair, FABL.deterministicRestrictedWeightQueryPoint, FABL.restrictedFourierCoefficientEstimate, FABL.restrictedFourierWeightEstimate}
 \difficulty{1}
 Let the dimension and accuracy data satisfy $n>0$, $0<	ext{numerator}$, and $2	ext{
-numerator} le	ext{denominator}$, and let the Fourier bound be at least $1$. For a
+numerator}\le	ext{denominator}$, and let the Fourier bound be at least $1$. For a
 Boolean function $f$ on the sign cube, a coordinate set $J$, and a subset $S\subseteq
 J$, the expected squared empirical Fourier coefficient obtained by querying $f$ at every
 point of the prescribed product sample equals the restricted Fourier weight of $f$ on

@@ -17,7 +17,7 @@ Declarations of the Lean module \texttt{FABL.Chapter02.TotalInfluence.LaplacianA
 \leanok
 \uses{FABL.discreteDerivative}
 Let $f$ be a real-valued function on the $n$-dimensional sign cube, and let $x$ be an
-input. The discrete gradient of $f$ at $x$ is the vector in $br^n$ whose coordinate in
+input. The discrete gradient of $f$ at $x$ is the vector in $\bbr^n$ whose coordinate in
 direction $i$ is the discrete derivative of $f$ in that direction at $x$.
 \end{definition}
 
@@ -578,11 +578,11 @@ $f$ at $x$, namely the number of coordinates whose flip changes the value of $f$
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p051-b006}
 \difficulty{3}
-For every natural number $n$ and every real-valued function $f$ on $\\{-1,1\\}^n$, its
+For every natural number $n$ and every real-valued function $f$ on $\{-1,1\}^n$, its
 total influence is the uniform expectation of the squared Euclidean norm of its discrete
 gradient:
-$\\operatorname{Inf}_{\\mathrm{tot}}(f)=\\mathbb{E}_{x\\sim\\mathrm{Unif}(\\{-1,1\\}^n)}\\lVert\\nabla
-f(x)\\rVert^2$.
+$\operatorname{Inf}_{\mathrm{tot}}(f)=\mathbb{E}_{x\sim\mathrm{Unif}(\{-1,1\}^n)}\lVert\nabla
+f(x)\rVert^2$.
 \end{theorem}
 
 \begin{definition}[Cube Laplacian]
@@ -2566,7 +2566,7 @@ its spectral sample.
   {pdf-ffbe9c7b3306-p052-b002,
     pdf-ffbe9c7b3306-p052-b003}
 \difficulty{4}
-Let $n$ be a nonnegative integer and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be any Boolean
+Let $n$ be a nonnegative integer and let $f:\{-1,1\}^n\to\{-1,1\}$ be any Boolean
 function. Its total influence lies in the interval $[0,n]$.
 \end{theorem}
 
@@ -4030,7 +4030,7 @@ the uniform second moment of $f$, namely $\mathbb{E}[f(x)^2]$.
   {pdf-ffbe9c7b3306-p051-b006,
     pdf-ffbe9c7b3306-p051-b007}
 \difficulty{5}
-Let $n$ be a nonnegative integer, and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ depend on at
+Let $n$ be a nonnegative integer, and let $f:\{-1,1\}^n\to\{-1,1\}$ depend on at
 most one coordinate; that is, there is a set of at most one coordinate on which its
 value depends. Then either $f$ is constantly $1$, constantly $-1$, or there is a
 coordinate $i$ such that $f(x)=x_i$ for every $x$, or $f(x)=-x_i$ for every $x$.

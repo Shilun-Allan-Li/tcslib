@@ -277,9 +277,9 @@ $|\alpha|$.
 \difficulty{4}
 For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean
 alphabet with at least one work tape, entry and exit states, and a constant
-$a\\in\\mathbb N$. For every Boolean input $\\alpha$, there is a time $t$ with $0<t\\le
-a(|\\alpha|+1)$ such that the configuration at time $t$ has the exit state, the
-canonical header of $\\alpha$ on tape zero, and empty words on the other work tapes,
+$a\in\mathbb N$. For every Boolean input $\alpha$, there is a time $t$ with $0<t\le
+a(|\alpha|+1)$ such that the configuration at time $t$ has the exit state, the
+canonical header of $\alpha$ on tape zero, and empty words on the other work tapes,
 with input head at position $1$ and empty output; at each intermediate time $0<u<t$ the
 state is not the exit state.
 \end{lemma}
@@ -576,9 +576,9 @@ $(\mathrm{done},b)$ for any Boolean value $b$.
 \difficulty{5}
 For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean
 alphabet with at least one work tape, entry and exit states, and a constant
-$a\\in\\mathbb N$. On every Boolean input $\\alpha$, it reaches within $t\\le
-a(|\\alpha|+1)$ steps, where $t>0$, the configuration with the exit state, the canonical
-header of $\\alpha$ on tape zero, and empty words on all other tapes; the input head is
+$a\in\mathbb N$. On every Boolean input $\alpha$, it reaches within $t\le
+a(|\alpha|+1)$ steps, where $t>0$, the configuration with the exit state, the canonical
+header of $\alpha$ on tape zero, and empty words on all other tapes; the input head is
 at position $1$ and the output is empty. At every earlier time $u<t$ its state is not
 the exit state.
 \end{lemma}
@@ -627,8 +627,8 @@ $w(i)$, or $1$ if $w(i)$ is empty.
 \uses{Turing.Cfg.init, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferTape_nil, Turing.FinTM.computesInTime_iff, Turing.MachineFormat.canonBitsOK, Turing.MachineFormat.canonHeader, Turing.MachineFormat.canonHeader_length, Turing.MachineFormat.canonVerdictTM, Turing.MachineFormat.canonVerdictTM_run, Turing.MachineFormat.exists_canonHeaderSeam, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.ScanPhase, Turing.seamCompTM, Turing.seamCompTM_run_ofCfg, Turing.stateWord}
 \difficulty{5}
 For every machine format $F$, there exist a finite Turing machine $M$ over the Boolean
-alphabet and a constant $a\\in\\mathbb N$ such that, on every Boolean word $\\alpha$,
-$M$ halts after exactly $a(|\\alpha|+1)$ steps and outputs the one-bit word whose bit is
+alphabet and a constant $a\in\mathbb N$ such that, on every Boolean word $\alpha$,
+$M$ halts after exactly $a(|\alpha|+1)$ steps and outputs the one-bit word whose bit is
 true exactly when the last bit of the parsed header (defaulting to true if that header
 is empty) is true.
 \end{lemma}
@@ -671,9 +671,9 @@ header treated as passing this last-bit check), then scanning $\alpha$ fails.
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_cond, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_pairValid, Turing.MachineFormat.canonBitsOK, Turing.MachineFormat.canonHeader, Turing.MachineFormat.canonHeaderOK, Turing.MachineFormat.exists_canonHeaderBitsTM, Turing.pairDecode}
 \difficulty{5}
 For every machine format $F$, there exist a finite Turing machine $M$ over the Boolean
-alphabet and a constant $a\\in\\mathbb N$ such that, on every Boolean input $\\alpha$,
-$M$ halts after exactly $a(|\\alpha|+1)$ steps and outputs the one-bit word indicating
-whether $\\alpha$ has a valid pair parse and its parsed header is canonical, meaning its
+alphabet and a constant $a\in\mathbb N$ such that, on every Boolean input $\alpha$,
+$M$ halts after exactly $a(|\alpha|+1)$ steps and outputs the one-bit word indicating
+whether $\alpha$ has a valid pair parse and its parsed header is canonical, meaning its
 last bit is true (with the empty header accepted).
 \end{lemma}
 
@@ -805,9 +805,9 @@ reached at any earlier time.
 \difficulty{6}
 For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean
 alphabet, a work-tape index $d$ whose index is $1$, entry and exit states, and a
-constant $a\\in\\mathbb N$. For every Boolean input $\\alpha$, at some time $t\\le
-a(|\\alpha|+1)$ the machine reaches the exit state with the canonical header of
-$\\alpha$ on tape zero, its fixed-width increment (with overflow replaced by the empty
+constant $a\in\mathbb N$. For every Boolean input $\alpha$, at some time $t\le
+a(|\alpha|+1)$ the machine reaches the exit state with the canonical header of
+$\alpha$ on tape zero, its fixed-width increment (with overflow replaced by the empty
 word) on tape $d$, and empty words on all other tapes; at every earlier time $u<t$ its
 state is not the exit state.
 \end{lemma}
@@ -957,7 +957,7 @@ exit state.
 \difficulty{1}
 For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean
 alphabet with at least one work tape, an entry state, an exit state, and a constant
-$a\\in\\mathbb N$. On every Boolean input $x$, it reaches within $t\\le a(|x|+1)$ steps,
+$a\in\mathbb N$. On every Boolean input $x$, it reaches within $t\le a(|x|+1)$ steps,
 with $t>0$, the configuration in the exit state whose tape words consist of the
 canonical header of $x$ on tape zero and empty words on all other tapes; the input head
 is at position $1$ and the output is empty. At every time $u<t$ its state is not the
@@ -1028,13 +1028,13 @@ are unchanged from $d$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.CounterLoopState, Turing.FinTM.bufferTape, Turing.MachineFormat, Turing.MachineFormat.binaryGuardTM, Turing.MachineFormat.canonCounterBank, Turing.MachineFormat.canonGuardBlock, Turing.MachineFormat.canonGuard_onBank, Turing.MachineFormat.canonHeader, Turing.MachineFormat.canonHeader_length, Turing.MachineFormat.canonOffset, Turing.MachineFormat.canonOffset_spec, Turing.MachineFormat.canonReadyWords, Turing.MachineFormat.canonSeam_avoids, Turing.MachineFormat.exists_canonSeekOnBank, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.codeBitsNat, Turing.embedEmitTM, Turing.eq_pairEncode_of_pairDecode, Turing.length_pairEncode, Turing.pairDecode, Turing.seamCompTM, Turing.seamCompTM_runFrom_left, Turing.seamCompTM_run_ofCfg}
 \difficulty{7}
-For every machine format $F$, every $k\\ge4$, there exist a finite state set $S$, a
+For every machine format $F$, every $k\ge4$, there exist a finite state set $S$, a
 deterministic Turing machine with $k$ work tapes and states $S$, an entry state, an
-injective map from the Boolean values to states, and a constant $a\\in\\mathbb N$. For
+injective map from the Boolean values to states, and a constant $a\in\mathbb N$. For
 all Boolean words $x,bits,rest$ parsed from $x$ as $(bits,rest)$, the machine, started
-on $x$ with the prescribed ready words on its tapes, reaches within $t\\le a(|x|+1)$
-steps the exit state indexed by whether $B_F(\\operatorname{val}(bits)+1)\\le |rest|$,
-where $B_F=\\max(\\operatorname{guard}(F),(4k+5)3^{k+1})$; at that time its output is
+on $x$ with the prescribed ready words on its tapes, reaches within $t\le a(|x|+1)$
+steps the exit state indexed by whether $B_F(\operatorname{val}(bits)+1)\le |rest|$,
+where $B_F=\max(\operatorname{guard}(F),(4k+5)3^{k+1})$; at that time its output is
 empty, its input-head position is $2|bits|+3$ when the inequality holds and $|x|+1$
 otherwise, and every tape except tape $1$ retains its prescribed ready word with its
 head at zero. No earlier time is in either exit state.
@@ -1048,12 +1048,12 @@ head at zero. No earlier time is in either exit state.
 \difficulty{5}
 For every machine format $F$, there exist a finite-state Turing machine $C$ over the
 Boolean alphabet, with at least four work tapes, an entry state, an injective map from
-$\\{0,1\\}$ to its states, and a constant $a\\in\\mathbb N$, such that the following
+$\{0,1\}$ to its states, and a constant $a\in\mathbb N$, such that the following
 holds. Whenever bit strings $x,bits,rest$ satisfy that the aligned pair parser applied
-to $x$ returns $(bits,rest)$, there is a time $t\\le a(|x|+1)$ at which, starting on
+to $x$ returns $(bits,rest)$, there is a time $t\le a(|x|+1)$ at which, starting on
 input $x$ in the entry state with all work tapes blank, the machine is in the exit state
-indexed by whether $B_F(\\operatorname{val}(bits)+1)\\le |rest|$, where
-$B_F=\\max(\\operatorname{guard}(F),(4k+5)3^{k+1})$ and $\\operatorname{val}(bits)$ is
+indexed by whether $B_F(\operatorname{val}(bits)+1)\le |rest|$, where
+$B_F=\max(\operatorname{guard}(F),(4k+5)3^{k+1})$ and $\operatorname{val}(bits)$ is
 the least-significant-bit-first binary value of $bits$. At that time its output is
 empty, its input-head position is $2|bits|+3$ if the inequality holds and $|x|+1$
 otherwise, and every work tape except tape $1$ contains its prescribed ready word with

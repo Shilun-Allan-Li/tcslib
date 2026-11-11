@@ -154,8 +154,19 @@ def is_tautology(text: str) -> bool:
 #: statement derails every entry after it.
 _ESCAPED = re.compile(r"\\[\$&%#_{}]")
 
+# Generated JSON can decode escaped bytes into literal terminal/control codes.
+# Delimiter and macro checks alone do not see these (e.g. a backspace in \bbr).
+_CORRUPT_CHAR = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\ufffd]")
+
+
+def corrupt_characters(text: str) -> bool:
+    """Whether text contains non-typesetting controls or a replacement character."""
+    return bool(_CORRUPT_CHAR.search(text))
+
 
 def latex_unsafe(text: str) -> bool:
+    if corrupt_characters(text):
+        return True
     body = _ESCAPED.sub("", text)
     body = re.sub(r"\\\\\[", "", body)          # `\\[4pt]` is a line break
     return (
@@ -235,7 +246,27 @@ def known_macros() -> frozenset[str]:
     return frozenset(names)
 
 
-_USED_RE = re.compile(r"\\([a-zA-Z]+)")
+# Consume control symbols too: in a matrix row break `\\c`, c is a
+# variable, not the command `\c` starting at the second backslash.
+_USED_RE = re.compile(r"\\([a-zA-Z]+)|\\[^a-zA-Z]")
+
+_BACKSLASH_RUN = re.compile(r"(\\{2,})([A-Za-z]+|[,;:!$%#_{}])")
+
+
+def overescaped_latex(text: str) -> bool:
+    r"""Detect an extra escaping layer on TeX commands, such as ``\\rho``.
+
+    An odd run can be a row break followed by a command (``\\\rho``).
+    Bare row breaks, optional row spacing and rows beginning with ordinary
+    variables remain valid. Never globally unescape text: that destroys those
+    row breaks and can interpret commands like ``\beta`` as control bytes.
+    """
+    macros = known_macros()
+    return any(
+        len(match[1]) % 2 == 0
+        and (match[2] in macros or not match[2].isalpha())
+        for match in _BACKSLASH_RUN.finditer(text)
+    )
 
 
 def unknown_macros(text: str) -> list[str]:
@@ -246,7 +277,7 @@ def unknown_macros(text: str) -> list[str]:
     single invented macro would take the whole document down.
     """
     allowed = known_macros()
-    return sorted({m.group(1) for m in _USED_RE.finditer(text)} - allowed)
+    return sorted({m.group(1) for m in _USED_RE.finditer(text) if m.group(1)} - allowed)
 
 
 @functools.lru_cache(maxsize=1)
@@ -290,7 +321,8 @@ def typesets(text: str) -> bool:
     The single predicate both `check` and `blueprint_restate.py` use, so a
     statement can never be rejected by one and accepted by the other.
     """
-    return (not latex_unsafe(text) and not unknown_macros(text)
+    return (not latex_unsafe(text) and not overescaped_latex(text)
+            and not unknown_macros(text)
             and not unbraced_script(text))
 
 
@@ -337,6 +369,9 @@ def check(statement: str, title: str = "", strict: bool = False) -> list[str]:
 
     if uses_variables(flat) and not BINDER.search(flat) and not NULLARY.search(flat):
         found.append("unbound-variable")
+
+    if title and not typesets(title):
+        found.append("title-unsafe")
 
     if title:
         head = re.sub(r"\s+", " ", title).strip().rstrip(".:")

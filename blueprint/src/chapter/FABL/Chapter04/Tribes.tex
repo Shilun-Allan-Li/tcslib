@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{FABL.Chapter04.Tribes}.
 \uses{FABL.Sign, FABL.andFunction, FABL.uniformProbability}
 \difficulty{4}
 For every nonnegative integer $w$, the uniform probability that the AND function on the
-sign cube $\\{-1,1\\}^w$ outputs $-1$ is $2^{-w}$.
+sign cube $\{-1,1\}^w$ outputs $-1$ is $2^{-w}$.
 \end{theorem}
 
 \begin{theorem}[Probability of a positive AND output]
@@ -23,7 +23,7 @@ sign cube $\\{-1,1\\}^w$ outputs $-1$ is $2^{-w}$.
 \uses{FABL.andFunction, FABL.uniformProbability, FABL.uniformProbability_andFunction_eq_neg_one, FABL.uniformProbability_one_add_neg_one_eq_one}
 \difficulty{2}
 For every nonnegative integer $w$, the uniform probability that the AND function on the
-sign cube $\\{-1,1\\}^w$ outputs $1$ is $1-2^{-w}$.
+sign cube $\{-1,1\}^w$ outputs $1$ is $1-2^{-w}$.
 \end{theorem}
 
 \begin{theorem}[Tribes with zero blocks]
@@ -4035,8 +4035,8 @@ greatest integer not exceeding the logarithmic threshold $\log
 \leanok
 \uses{FABL.criticalInverse_mem_Ioc}
 \difficulty{4}
-For every positive integer $w$, rac{1}{2^w}+rac{1}{2}igl(rac{1}{2^w}igr)^2 \le
--\log(1-2^{-w}).
+For every positive integer $w$, $\frac{1}{2^w}+\frac{1}{2}\bigl(\frac{1}{2^w}\bigr)^2$ \le
+-\log(1-2^{-w})$.
 \end{theorem}
 
 \begin{theorem}[Upper bound for a critical logarithm]
@@ -14827,9 +14827,9 @@ the remaining $n$ indices.
 \leanok
 \uses{FABL.finArrowConsEquiv}
 \difficulty{5}
-Let $alpha$ be a finite type, let $s$ be a natural number, and for each $i<s$ let
-$f_i:alphatobbr$ be a real-valued function. The uniform expectation over tuples
-$(y_i)_{i<s}$ of the product $prod_{i<s} f_i(y_i)$ equals the product, over $i<s$, of
+Let $\alpha$ be a finite type, let $s$ be a natural number, and for each $i<s$ let
+$f_i:\alpha\to\bbr$ be a real-valued function. The uniform expectation over tuples
+$(y_i)_{i<s}$ of the product $\prod_{i<s} f_i(y_i)$ equals the product, over $i<s$, of
 the uniform expectations of $f_i$.
 \end{theorem}
 

@@ -3894,7 +3894,7 @@ when $a=b$ and $0$ otherwise.
 \leanok
 \uses{FABL.Sign, FABL.biasedSiteFourierFunction, FABL.biasedSiteFourierFunction_orthonormal, FABL.linearIndependent_of_pmf_orthonormal}
 For each real number $p$ with $0<p<1$, the two biased site Fourier functions on the sign
-space $\\{-1,1\\}$ form a basis over $\\mathbb{R}$ of all real-valued functions on that
+space $\{-1,1\}$ form a basis over $\mathbb{R}$ of all real-valued functions on that
 space.
 \end{definition}
 
@@ -4701,8 +4701,8 @@ $0$ elsewhere equals $a$.
 \label{FABL.finsetEquivBinaryMultiIndex}
 \leanok
 \uses{FABL.MultiIndex, FABL.signMultiIndexSupport, FABL.signMultiIndexSupport_subsetMultiIndex, FABL.subsetMultiIndex, FABL.subsetMultiIndex_signMultiIndexSupport}
-For each natural number $n$, the subsets of $in{n}$ are in bijection with functions
-from $in{n}$ to $in{2}$, by recording the binary membership value at each coordinate.
+For each natural number $n$, the subsets of $\in{n}$ are in bijection with functions
+from $\in{n}$ to $\in{2}$, by recording the binary membership value at each coordinate.
 \end{definition}
 
 \begin{definition}[Biased monomial]
@@ -14765,8 +14765,8 @@ flipping that coordinate changes the value of $f$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p017-b008,
     pdf-ffbe9c7b3306-p046-b002}
-Let $p\\in(0,1)$ and let $f$ be a function from the sign cube on $n$ coordinates to
-$\\{\\pm1\\}$. Under the product distribution in which each coordinate has bias
+Let $p\in(0,1)$ and let $f$ be a function from the sign cube on $n$ coordinates to
+$\{\pm1\}$. Under the product distribution in which each coordinate has bias
 parameter $p$, the total influence of the real-valued sign representation of $f$ equals
 $4p(1-p)$ times the expected number of coordinates whose flip changes the value of $f$.
 \end{theorem}
@@ -17466,7 +17466,7 @@ representation indexed by the singleton $\{i\}$.
 \lean{FABL.GraphEdge}
 \label{FABL.GraphEdge}
 \leanok
-For a natural number $v$, an edge on the vertex set $\\{0,1,\ldots,v-1\}$ is a subset
+For a natural number $v$, an edge on the vertex set $\{0,1,\ldots,v-1\}$ is a subset
 containing exactly two vertices.
 \end{definition}
 
@@ -17476,7 +17476,7 @@ containing exactly two vertices.
 \label{FABL.EncodedGraph}
 \leanok
 \uses{FABL.GraphEdge}
-For a natural number $v$, an encoded graph on the vertex set $\{0,1,\ldots,v-1\\}$ is a
+For a natural number $v$, an encoded graph on the vertex set $\{0,1,\ldots,v-1\}$ is a
 Boolean-valued function on the set of its two-element vertex subsets; the value records
 whether each such pair is an edge.
 \end{definition}
@@ -17486,9 +17486,9 @@ whether each such pair is an edge.
 \label{FABL.graphEdgePermEquiv}
 \leanok
 \uses{FABL.GraphEdge}
-For a natural number $v$, let a graph edge be a two-element subset of $in{v}$. Every
-permutation $sigma$ of $in{v}$ induces a bijection on graph edges by sending each edge
-to its image under $sigma$.
+For a natural number $v$, let a graph edge be a two-element subset of $\in{v}$. Every
+permutation $\sigma$ of $\in{v}$ induces a bijection on graph edges by sending each edge
+to its image under $\sigma$.
 \end{definition}
 
 \begin{definition}[Relabeling an encoded graph]
@@ -17497,10 +17497,10 @@ to its image under $sigma$.
 \label{FABL.permuteEncodedGraph}
 \leanok
 \uses{FABL.EncodedGraph, FABL.graphEdgePermEquiv}
-Let $v$ be a natural number, let $sigma$ be a permutation of the vertex set
-${0,1,ldots,v-1}$, and let $G$ be an encoded graph on that set. The relabeled graph
+Let $v$ be a natural number, let $\sigma$ be a permutation of the vertex set
+$\{0,1,\ldots,v-1\}$, and let $G$ be an encoded graph on that set. The relabeled graph
 assigns to each pair of vertices the edge status in $G$ of the pair obtained by applying
-$sigma^{-1}$.
+$\sigma^{-1}$.
 \end{definition}
 
 \begin{definition}[Invariant graph property]
@@ -17543,7 +17543,7 @@ monotone if whenever $G\le H$ and the property holds for $G$, it also holds for 
 \leanok
 \uses{FABL.EncodedGraph}
 Let $v$ be a natural number, and let $G$ assign a Boolean value to each two-element
-subset of $in{v}$. The encoded edge count of $G$ is the number of these subsets on
+subset of $\in{v}$. The encoded edge count of $G$ is the number of these subsets on
 which $G$ takes the value true.
 \end{definition}
 
@@ -20051,10 +20051,10 @@ biased sign distribution with parameter $p$.
 \leanok
 \uses{FABL.biasedExpectationPolynomial, FABL.fourierCoeff}
 \difficulty{3}
-For every real-valued function $f$ on $\\{-1,1\\}^n$ and every real number $\\mu$, the
-biased expectation polynomial $P_f(\\mu)=\\sum_{S\\subseteq[n]}\\mu^{|S|}\\widehat f(S)$
-is differentiable at $\\mu$ with derivative
-$\\sum_{S\\subseteq[n]}|S|\\mu^{|S|-1}\\widehat f(S)$.
+For every real-valued function $f$ on $\{-1,1\}^n$ and every real number $\mu$, the
+biased expectation polynomial $P_f(\mu)=\sum_{S\subseteq[n]}\mu^{|S|}\widehat f(S)$
+is differentiable at $\mu$ with derivative
+$\sum_{S\subseteq[n]}|S|\mu^{|S|-1}\widehat f(S)$.
 \end{theorem}
 
 \begin{theorem}[Mean of a biased discrete derivative]
@@ -20091,10 +20091,10 @@ where $\widehat f(S)$ is the uniform Fourier coefficient of $f$ at $S$.
 \leanok
 \uses{FABL.biasMean, FABL.biasSigma, FABL.biasSigma_pos, FABL.biasedExpectationPolynomial, FABL.biasedFourierCoeff, FABL.biasedFourierCoeff_singleton_eq_sigma_mul_expect_discreteDerivative, FABL.hasDerivAt_biasedExpectationPolynomial, FABL.sum_productMean_biasedSignPMF_discreteDerivative}
 \difficulty{4}
-Let $p\\in(0,1$, and let $f$ be a real-valued function on $\\{-1,1\\}^n$. The biased
+Let $p\in(0,1$, and let $f$ be a real-valued function on $\{-1,1\}^n$. The biased
 expectation polynomial $P_f$ is differentiable at $1-2p$, with derivative
-$\\sigma(p)^{-1}\\sum_{i=1}^n\\widehat f_p(\\{i\\})$, where $\\sigma(p)=\\sqrt{4p(1-p)}$
-and $\\widehat f_p$ denotes the Fourier coefficient for the biased product measure with
+$\sigma(p)^{-1}\sum_{i=1}^n\widehat f_p(\{i\})$, where $\sigma(p)=\sqrt{4p(1-p)}$
+and $\widehat f_p$ denotes the Fourier coefficient for the biased product measure with
 parameter $p$.
 \end{theorem}
 
@@ -20148,11 +20148,11 @@ corresponding bias.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.biasMean, FABL.biasSigma, FABL.biasedExpectationPolynomial, FABL.biasedFourierCoeff, FABL.biasedMinusProbabilityPolynomial, FABL.hasDerivAt_biasedExpectationPolynomial_eq_singletons}
 \difficulty{4}
-Let $p\\in(0,1)$ and let $f$ be a function from $\\{-1,1\\}^n$ to $\\{-1,1\\}$. The
-polynomial $Q_f(p)=(1-P_{f_{\\mathbb R}}(1-2p))/2$, where $f_{\\mathbb R}$ is the
+Let $p\in(0,1)$ and let $f$ be a function from $\{-1,1\}^n$ to $\{-1,1\}$. The
+polynomial $Q_f(p)=(1-P_{f_{\mathbb R}}(1-2p))/2$, where $f_{\mathbb R}$ is the
 real-valued sign representation of $f$, is differentiable at $p$ with derivative
-$\\sigma(p)^{-1}\\sum_{i=1}^n\\widehat {f_{\\mathbb R}}_p(\\{i\\})$, where
-$\\sigma(p)=\\sqrt{4p(1-p)}$ and the coefficients are for the biased product measure
+$\sigma(p)^{-1}\sum_{i=1}^n\widehat {f_{\mathbb R}}_p(\{i\})$, where
+$\sigma(p)=\sqrt{4p(1-p)}$ and the coefficients are for the biased product measure
 with parameter $p$.
 \end{theorem}
 
@@ -21279,11 +21279,11 @@ with parameter $p$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p224-b003,
     pdf-ffbe9c7b3306-p225-b001}
-Let $p\\in(0,1)$, and let $f$ be a monotone function from $\\{-1,1\\}^n$ to
-$\\{-1,1\\}$. The biased minus-probability polynomial $Q_f$ is differentiable at $p$
-with derivative $\\mathrm{Inf}_p(f)/\\sigma(p)^2$, where $\\mathrm{Inf}_p(f)$ is the
+Let $p\in(0,1)$, and let $f$ be a monotone function from $\{-1,1\}^n$ to
+$\{-1,1\}$. The biased minus-probability polynomial $Q_f$ is differentiable at $p$
+with derivative $\mathrm{Inf}_p(f)/\sigma(p)^2$, where $\mathrm{Inf}_p(f)$ is the
 total influence of the real-valued sign representation of $f$ under the biased product
-measure with parameter $p$, and $\\sigma(p)=\\sqrt{4p(1-p)}$.
+measure with parameter $p$, and $\sigma(p)=\sqrt{4p(1-p)}$.
 \end{theorem}
 
 \begin{theorem}[Biased variance bounded by total influence]
@@ -21315,7 +21315,7 @@ $\Pr[X_i=-1]=p$ independently for each coordinate is strictly positive.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.biasedSignPMF, FABL.productTotalInfluence, FABL.productVariance_biased_pos_of_nonconstant, FABL.productVariance_le_productTotalInfluence_biased}
 \difficulty{1}
-Let $p\\in(0,1)$ and let $f$ be a sign-valued function on the $n$-dimensional sign cube.
+Let $p\in(0,1)$ and let $f$ be a sign-valued function on the $n$-dimensional sign cube.
 If $f$ is nonconstant, then its total influence under the product distribution with bias
 parameter $p$ is strictly positive.
 \end{theorem}
@@ -21327,10 +21327,10 @@ parameter $p$ is strictly positive.
 \uses{FABL.BooleanFunction, FABL.biasMean, FABL.biasedExpectationPolynomial, FABL.biasedMinusProbabilityPolynomial}
 \difficulty{3}
 Let $n$ be a natural number and let $f$ be a Boolean-valued function on the sign cube
-$\\{-1,1\\}^n$. For each real $p$, form the polynomial $(1-P_f(1-2p))/2$, where
-$P_f(\\mu)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}\\mu^{|S|}\\widehat f(S)$ and $\\widehat
+$\{-1,1\}^n$. For each real $p$, form the polynomial $(1-P_f(1-2p))/2$, where
+$P_f(\mu)=\sum_{S\subseteq\{1,\ldots,n\}}\mu^{|S|}\widehat f(S)$ and $\widehat
 f(S)$ is the uniform Fourier coefficient of the real-valued sign representation of $f$.
-This function of $p$ is continuous on $\\bbr$.
+This function of $p$ is continuous on $\bbr$.
 \end{theorem}
 
 \begin{theorem}[Strict increase of biased minus probability]
@@ -21377,7 +21377,7 @@ and $f((1,\ldots,1))=1$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.Sign, FABL.biasMean, FABL.biasedExpectationPolynomial, FABL.biasedMinusProbabilityPolynomial, FABL.fourierCoeff, FABL.fourier_expansion, FABL.monomial, FABL.monotone_nonconstant_extreme_values, FABL.signValue}
 \difficulty{4}
 Let $n$ be a nonnegative integer and let $f$ be a monotone, nonconstant function from
-the $n$-dimensional sign cube to $\\{\pm1\}$. The biased minus-probability polynomial
+the $n$-dimensional sign cube to $\{\pm1\}$. The biased minus-probability polynomial
 associated with $f$ equals $0$ at parameter $p=0$ and equals $1$ at parameter $p=1$.
 \end{theorem}
 

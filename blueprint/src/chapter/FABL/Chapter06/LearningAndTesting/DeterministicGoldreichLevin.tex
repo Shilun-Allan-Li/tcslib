@@ -975,7 +975,7 @@ $s=\lceil nc/a\rceil$. Then $s\leq n/\varepsilon+1$.
 \leanok
 \uses{FABL.DeterministicGoldreichLevinInput, FABL.DeterministicGoldreichLevinInput.learningParameter}
 For a deterministic Goldreich–Levin input with dimension $n$, Fourier bound $B$, and
-learning parameter $ho$, define its runtime scale to be $\frac{(n+1)(B+1)}{\rho}$.
+learning parameter $\rho$, define its runtime scale to be $\frac{(n+1)(B+1)}{\rho}$.
 \end{definition}
 
 \begin{theorem}[Runtime scale factor bounds]
@@ -1192,7 +1192,7 @@ $s$ uses at most $2^{170}\bigl((n+1)(s+1)/(a/b)\bigr)^{100}$ membership queries.
 \leanok
 \uses{FABL.BooleanFunction, FABL.DeterministicGoldreichLevinInput, FABL.DeterministicGoldreichLevinInput.polynomialRuntimeBound, FABL.DeterministicGoldreichLevinInput.workBudget_cast_le_polynomialRuntimeBound, FABL.DeterministicQueryProgram.runWithCost, FABL.deterministicGoldreichLevinLearner, FABL.deterministicGoldreichLevinLearner_resource_bounds, FABL.deterministicGoldreichLevinWorkBudget}
 \difficulty{3}
-Let the dimension be $n>0$, let the accuracy be $ho=a/b$ for positive integers $a,b$
+Let the dimension be $n>0$, let the accuracy be $\rho=a/b$ for positive integers $a,b$
 with $2a\le b$, and let $M\ge1$ be an integer Fourier $1$-norm bound. For every
 sign-valued Boolean target on the $n$-dimensional cube, the learner's charged work,
 viewed as a real number, is at most $2^{170}\left((n+1)(M+1)/\rho\right)^{100}$.

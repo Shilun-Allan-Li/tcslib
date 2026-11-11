@@ -3951,7 +3951,7 @@ Peres’s theorem appeared in 2004 after being mentioned in 1999; the earlier wo
 
 <a id="pdf-ffbe9c7b3306-p143-b002"></a>
 <!-- pdf-source: page=143; block=2; confidence=0.89 -->
-The chapter studies pseudorandom properties of Boolean functions, small-support pseudorandom densities, and connections between real and [?2004l[?2004lover \(\mathbb F_2\)[?2004l[?2004l polynomial representations.
+The chapter studies pseudorandom properties of Boolean functions, small-support pseudorandom densities, and connections between real and over \(\mathbb F_2\) polynomial representations.
 
 <a id="pdf-ffbe9c7b3306-p143-b003"></a>
 <!-- pdf-source: page=143; block=3; confidence=0.99 -->
@@ -5651,7 +5651,7 @@ The text points to Exercise 2.21 for additional useful formulas; those formulas 
 \[
 \operatorname{Inf}_i[f]=\mathbb E_{x\sim\pi^{\otimes n}}\!\left[\operatorname{Var}_{x_i'\sim\pi}\big[f(x_1,\ldots,x_{i-1},x_i',x_{i+1},\ldots,x_n)\big]\right].
 \]
-If $f$ is $-1,1$-valued, then $\operatorname{Inf}_i[f]=\mathbb E[|L_i f|]=2\Pr[f(x)\ne f(x_{-i},x_i')]$, where $x\sim\pi^{\otimes n}$ and $x_i'\sim\pi$.
+If $f$ is $\{-1,1\}$-valued, then $\operatorname{Inf}_i[f]=\mathbb E[|L_i f|]=2\Pr[f(x)\ne f(x_{-i},x_i')]$, where $x\sim\pi^{\otimes n}$ and $x_i'\sim\pi$.
 
 <a id="pdf-ffbe9c7b3306-p214-b003"></a>
 <!-- pdf-source: page=214; block=3; confidence=0.00 -->
@@ -6906,7 +6906,7 @@ The weak two-function theorem yields the $(p,2)$ theorem by setting $g=f$ and $r
 
 <a id="pdf-ffbe9c7b3306-p262-b003"></a>
 <!-- pdf-source: page=262; block=3; confidence=0.94 -->
-**Theorem 9.21.** If  f:\{-1,1\}^n\to\mathbb R  has degree at most  k , then for every  q\ge2 ,  \|f\|_q\le(q-1)^{k/2}\|f\|_2 .
+**Theorem 9.21.** If $ has degree at most $, then for every $, $.
 
 <a id="pdf-ffbe9c7b3306-p262-b004"></a>
 <!-- pdf-source: page=262; block=4; confidence=0.00 -->
@@ -6914,7 +6914,7 @@ The weak two-function theorem yields the $(p,2)$ theorem by setting $g=f$ and $r
 
 <a id="pdf-ffbe9c7b3306-p262-b005"></a>
 <!-- pdf-source: page=262; block=5; confidence=0.91 -->
-Theorem 9.21 also yields a degree- k  bound from  L_p  to  L_2  for  1\le p\le2 , though a different argument gives the stronger finite endpoint bound below. For linear forms, Theorems 9.21 and 9.22 imply Khintchine’s inequality:  c_p\|\sum_i a_ix_i\|_2\le\|\sum_i a_ix_i\|_p\le C_p\|\sum_i a_ix_i\|_2 , with positive constants depending only on  p\in[1,\infty) .
+Theorem 9.21 also yields a degree-$ bound from $ to $ for $, though a different argument gives the stronger finite endpoint bound below. For linear forms, Theorems 9.21 and 9.22 imply Khintchine’s inequality: $, with positive constants depending only on $.
 
 <a id="pdf-ffbe9c7b3306-p262-b006"></a>
 <!-- pdf-source: page=262; block=6; confidence=0.98 -->
@@ -6926,11 +6926,11 @@ Theorem 9.21 also yields a degree- k  bound from  L_p  to  L_2  for  1\le p\le2 
 
 <a id="pdf-ffbe9c7b3306-p262-b008"></a>
 <!-- pdf-source: page=262; block=8; confidence=0.94 -->
-Theorem 9.21 is introduced as a route to a degree- k  concentration bound, generalizing the exponential-square tail for linear forms.
+Theorem 9.21 is introduced as a route to a degree-$ concentration bound, generalizing the exponential-square tail for linear forms.
 
 <a id="pdf-ffbe9c7b3306-p263-b001"></a>
 <!-- pdf-source: page=263; block=1; confidence=0.95 -->
-The stated tail decay for degree- k  forms is of order  \exp(-\Theta(t^{2/k}))\u0000.
+The stated tail decay for degree-$k$ forms is of order $\exp(-\Theta(t^{2/k}))$.
 
 <a id="pdf-ffbe9c7b3306-p263-b002"></a>
 <!-- pdf-source: page=263; block=2; confidence=0.99 -->
@@ -6938,7 +6938,7 @@ The stated tail decay for degree- k  forms is of order  \exp(-\Theta(t^{2/k}))\u
 
 <a id="pdf-ffbe9c7b3306-p263-b003"></a>
 <!-- pdf-source: page=263; block=3; confidence=0.95 -->
-**Proof.** Normalize  \|f\|_2=1 . For  q\ge2 , Markov gives  \Pr[|f|\ge t]\le\mathbb E|f|^q/t^q . By Theorem 9.21,  \mathbb E|f|^q\le(q-1)^{kq/2}\le q^{kq/2} . Choose  q=t^{2/k}/e\ge2 ; then the bound is at most  \exp(-kq/2)=\exp(-\frac{k}{2e}t^{2/k}) .
+**Proof.** Normalize $. For $, Markov gives $. By Theorem 9.21, $. Choose $; then the bound is at most $.
 
 <a id="pdf-ffbe9c7b3306-p263-b004"></a>
 <!-- pdf-source: page=263; block=4; confidence=0.95 -->
@@ -6950,11 +6950,11 @@ Theorem 9.22 is used to bound below the probability that a nonconstant low-degre
 
 <a id="pdf-ffbe9c7b3306-p263-b006"></a>
 <!-- pdf-source: page=263; block=6; confidence=0.98 -->
-**Proof.** Subtract the mean so  \mathbb E f=0 . Then  \frac12\|f\|_1=\mathbb E[f\mathbf1_{\{f>0\}}] . By Cauchy–Schwarz and Theorem 9.22,  \frac14\|f\|_1^2\le\mathbb E[f^2]\Pr[f>0]\le e^{2k}\|f\|_1^2\Pr[f>0] , yielding the claimed lower bound.
+**Proof.** Subtract the mean so $. Then $. By Cauchy–Schwarz and Theorem 9.22, $, yielding the claimed lower bound.
 
 <a id="pdf-ffbe9c7b3306-p263-b007"></a>
 <!-- pdf-source: page=263; block=7; confidence=0.96 -->
-The text next applies  (p,2)  hypercontractivity to noise stability.
+The text next applies $ hypercontractivity to noise stability.
 
 <a id="pdf-ffbe9c7b3306-p264-b001"></a>
 <!-- pdf-source: page=264; block=1; confidence=0.99 -->
@@ -6974,7 +6974,7 @@ Small-set expansion implies that indicators of small sets have limited noise sta
 
 <a id="pdf-ffbe9c7b3306-p264-b005"></a>
 <!-- pdf-source: page=264; block=5; confidence=0.94 -->
-**Level-k Inequalities.** If  f:\{-1,1\}^n\to\{0,1\}  has mean  \alpha  and integer  k\le2\ln(1/\alpha) , then  W_{\le k}[f]\le\left(\frac{2e}{k}\ln\frac1\alpha\right)^k\alpha^2 .
+**Level-k Inequalities.** If $ has mean $ and integer $, then $.
 
 <a id="pdf-ffbe9c7b3306-p264-b006"></a>
 <!-- pdf-source: page=264; block=6; confidence=0.96 -->
@@ -6982,7 +6982,7 @@ For \(0<\rho\le1\), \(W^{\le k}[f]\le\rho^{-k}\operatorname{Stab}_\rho[f]\le\rho
 
 <a id="pdf-ffbe9c7b3306-p264-b007"></a>
 <!-- pdf-source: page=264; block=7; confidence=0.99 -->
-For  k=1 , Exercise 9.18 gives the sharper bound  W_1[f]\le2\alpha^2\ln(1/\alpha) .
+For $, Exercise 9.18 gives the sharper bound $.
 
 <a id="pdf-ffbe9c7b3306-p264-b008"></a>
 <!-- pdf-source: page=264; block=8; confidence=1.00 -->
@@ -6990,7 +6990,7 @@ For  k=1 , Exercise 9.18 gives the sharper bound  W_1[f]\le2\alpha^2\ln(1/\alpha
 
 <a id="pdf-ffbe9c7b3306-p264-b009"></a>
 <!-- pdf-source: page=264; block=9; confidence=0.95 -->
-The section recalls a two-candidate election with  n  voters and a monotone rule  f:\{-1,1\}^n\to\{-1,1\}  under independent uniform votes; the setup continues beyond the supplied page.
+The section recalls a two-candidate election with $ voters and a monotone rule $ under independent uniform votes; the setup continues beyond the supplied page.
 
 <a id="pdf-ffbe9c7b3306-p265-b001"></a>
 <!-- pdf-source: page=265; block=1; confidence=1.00 -->

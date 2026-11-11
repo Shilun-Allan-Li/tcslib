@@ -63,9 +63,9 @@ earlier gates, and its output is a vertex of the circuit.
 \leanok
 \uses{BoolCircuit.DAGCircuit.eval, BoolCircuit.Lupanov.any_comb, BoolCircuit.Lupanov.lupDAG, BoolCircuit.Lupanov.lupGates, BoolCircuit.Lupanov.lupGates_spec, BoolCircuit.vertexValue}
 \difficulty{3}
-Let $n$ be a natural number, let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function, and
-let $k$ be a natural number with $k\\le n$. The circuit constructed from $f$ and $k$
-computes $f$: on every input $x\\in\\{0,1\\}^n$, its output is $f(x)$.
+Let $n$ be a natural number, let $f:\{0,1\}^n\to\{0,1\}$ be a Boolean function, and
+let $k$ be a natural number with $k\le n$. The circuit constructed from $f$ and $k$
+computes $f$: on every input $x\in\{0,1\}^n$, its output is $f(x)$.
 \end{theorem}
 
 \begin{theorem}[Fan-in bound for the constructed circuit]
@@ -75,7 +75,7 @@ computes $f$: on every input $x\\in\\{0,1\\}^n$, its output is $f(x)$.
 \uses{BoolCircuit.DAGCircuit.IsFaninTwo, BoolCircuit.DAGGate.FaninTwo, BoolCircuit.Lupanov.gateAt_faninTwo, BoolCircuit.Lupanov.gates, BoolCircuit.Lupanov.lupDAG, BoolCircuit.Lupanov.lupGates, BoolCircuit.Lupanov.lupGates_spec}
 \difficulty{5}
 Let $n$ be a natural number, let $f$ be a Boolean function on $n$ bits, and let $k$ be a
-natural number with $k\\le n$. The circuit constructed from $f$ and $k$ is well formed,
+natural number with $k\le n$. The circuit constructed from $f$ and $k$ is well formed,
 and every gate reads at most two vertices.
 \end{theorem}
 
@@ -86,8 +86,8 @@ and every gate reads at most two vertices.
 \uses{BoolCircuit.DAGCircuit.size, BoolCircuit.Lupanov.combRoots, BoolCircuit.Lupanov.length_gates, BoolCircuit.Lupanov.lupDAG, BoolCircuit.Lupanov.lupGates, BoolCircuit.Lupanov.lupGates_spec, BoolCircuit.Lupanov.offsets, BoolCircuit.treeCost}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a Boolean function on $n$ bits, and let $k$ be a
-natural number with $k\\le n$. The size of the circuit constructed from $f$ and $k$ is
-at most $2n+4\\cdot 2^{n-k}+2\\cdot 2^k+2^{2^k}$.
+natural number with $k\le n$. The size of the circuit constructed from $f$ and $k$ is
+at most $2n+4\cdot 2^{n-k}+2\cdot 2^k+2^{2^k}$.
 \end{theorem}
 
 \begin{theorem}[Exponential bound for a square]

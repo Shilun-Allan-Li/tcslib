@@ -7,4 +7,4 @@
 
 **Claim.** Every point of $	ext{Fin }n$ has mass $1/n$ under the uniform law.
 
-**Proof.** For the uniform measure on $	ext{Fin }n$, the singleton-measure formula for a uniform law gives the mass of $i as the reciprocal of the ambient cardinality. Since $	ext{Fin }n$ has $n$ elements, this is $1/n$.
+**Proof.** For the uniform measure on $	ext{Fin }n$, the singleton-measure formula for a uniform law gives the mass of $\{i\} as the reciprocal of the ambient cardinality. Since $	ext{Fin }n$ has $n$ elements, this is $1/n$.

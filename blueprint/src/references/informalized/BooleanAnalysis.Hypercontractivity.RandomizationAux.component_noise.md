@@ -5,7 +5,7 @@
 
 # Noise multiplier on components
 
-**Claim.** For every coordinate set $S$ and outcome $x$, the $S$-component of the noise transform of $f$ is $[?]$ times the $S$-component of $f$, namely $[?]$.
+**Claim.** For every coordinate set $S$ and outcome $x$, the $S$-component of the noise transform of $f$ is $\rho^{|S|}$ times the $S$-component of $f$, namely $\rho^{|S|}P.\mathrm{component}\,S f(x)$ on the finite product.
 
 **Proof.** Expand the noise transform inside the definition of the component. Linearity of product expectation moves its finite sum outside the expectation, and interchanging the two finite sums gives
 \[

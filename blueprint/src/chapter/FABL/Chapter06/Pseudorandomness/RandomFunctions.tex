@@ -16,7 +16,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Pseudorandomness.RandomFu
 \label{FABL.ZeroOneFunction}
 \leanok
 For a natural number $n$, a zero-one function on the sign cube of length $n$ is a
-function from that cube to $\\{\text{true},\text{false}\}$.
+function from that cube to $\{\text{true},\text{false}\}$.
 \end{definition}
 
 \begin{definition}[Real encoding of a Boolean value]
@@ -152,10 +152,10 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.ZeroOneFunction, FABL.ZeroOneFunction.toReal, FABL.expect_monomial, FABL.fourierCoeff, FABL.monomial, FABL.zeroOneValue}
 \difficulty{4}
-Let $n$ be a natural number, let $p\\in\\mathbb R$, let $S$ be a subset of the $n$
-coordinates, and let $f:\\{-1,1\\}^n\\to\\{0,1\\}$. Its Fourier coefficient, computed
+Let $n$ be a natural number, let $p\in\mathbb R$, let $S$ be a subset of the $n$
+coordinates, and let $f:\{-1,1\}^n\to\{0,1\}$. Its Fourier coefficient, computed
 using the real-valued version of $f$, minus $p$ when $S$ is empty and minus zero
-otherwise, equals the sum over all cube points $x$ of $\\frac{\\prod_{i\\in
+otherwise, equals the sum over all cube points $x$ of $\frac{\prod_{i\in
 S}x_i}{2^n}(f(x)-p)$.
 \end{theorem}
 
@@ -232,7 +232,7 @@ nonempty coordinate set $S$ satisfies $|\widehat f_{\mathbb R}(S)|>\tau_n$, then
 is a coordinate set $S$ such that
 \[
 \left|\widehat f_{\mathbb
-R}(S)-\begin{cases}p,&S=\varnothing,\\0,&S\ne\varnothing\end{cases}\right|\ge\tau_n.
+R}(S)-\begin{cases}p,&S=\varnothing,\0,&S\ne\varnothing\end{cases}\right|\ge\tau_n.
 \]
 \end{theorem}
 
@@ -268,7 +268,7 @@ most $2^{-n}$.
 Let $n$ be an integer with $1<n$, and let $p\in[0,1]$. Choose a Boolean function on the
 $n$-dimensional sign cube by assigning each input an independent Bernoulli-$p$ bit, and
 regard its values as real numbers $0$ and $1$. The probability that its nonempty Fourier
-coefficients do not all have absolute value at most $2\\sqrt{n}\,2^{-n/2}$ is at most
+coefficients do not all have absolute value at most $2\sqrt{n}\,2^{-n/2}$ is at most
 $2^{-n}$.
 \end{theorem}
 
@@ -309,7 +309,7 @@ S}x_i$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.fourierCoeff, FABL.monomial, FABL.randomBooleanModulationEquiv, FABL.randomBooleanParitySign, FABL.signValue, FABL.signValue_randomBooleanParitySign}
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $S$ be a subset of the $n$ coordinates, and let
-$f$ be a function from the sign cube $\\{−1,1\\}^n$ to $\\{−1,1\\}$. Multiplying $f$
+$f$ be a function from the sign cube $\{−1,1\}^n$ to $\{−1,1\}$. Multiplying $f$
 pointwise by the parity character on $S$ makes its Fourier coefficient at the empty set
 equal to the Fourier coefficient of $f$ at $S$.
 \end{theorem}

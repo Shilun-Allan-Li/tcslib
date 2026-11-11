@@ -52,14 +52,14 @@ inequality for every pair of real scalars.
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.HasAtomLowerBound, BooleanAnalysis.Hypercontractivity.IsHypercontractive, BooleanAnalysis.Hypercontractivity.IsHypercontractive.conjugate, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_law_sharp_forward, BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
 \difficulty{3}
-Let $(\\Omega,\\mu)$ be a probability space, and let $X:\\Omega\\to\\mathbb R$ be
-measurable with mean zero. Suppose $q>2$, $0<\\lambda<1/2$, and there is a finite set
+Let $(\Omega,\mu)$ be a probability space, and let $X:\Omega\to\mathbb R$ be
+measurable with mean zero. Suppose $q>2$, $0<\lambda<1/2$, and there is a finite set
 supporting $X$ almost surely such that each of its points has probability at least
-$\\lambda$. Set $\\rho=\\sqrt{\\sinh(u/q)/\\sinh(u/(q/(q-1)))}$, where
-$u=\\log((1-\\lambda)/\\lambda)$. Then for every $a,b\\in\\mathbb R$, the $L^q$ norm of
-$a+\\rho bX$ is at most the $L^2$ norm of $a+bX$, and the $L^2$ norm of $a+\\rho bX$ is
+$\lambda$. Set $\rho=\sqrt{\sinh(u/q)/\sinh(u/(q/(q-1)))}$, where
+$u=\log((1-\lambda)/\lambda)$. Then for every $a,b\in\mathbb R$, the $L^q$ norm of
+$a+\rho bX$ is at most the $L^2$ norm of $a+bX$, and the $L^2$ norm of $a+\rho bX$ is
 at most the $L^{q/(q-1)}$ norm of $a+bX$; in both cases $X$ belongs to the output
-exponent's $L^p$ space, and the exponents satisfy $1\\le p\\le q$ with $0\\le\\rho<1$.
+exponent's $L^p$ space, and the exponents satisfy $1\le p\le q$ with $0\le\rho<1$.
 \end{theorem}
 
 \begin{theorem}[Optimal radius for a two-point law]
@@ -67,11 +67,11 @@ exponent's $L^p$ space, and the exponents satisfy $1\\le p\\le q$ with $0\\le\\r
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteLaw.centered_two_point_moments, BooleanAnalysis.Hypercontractivity.IsHypercontractive, BooleanAnalysis.Hypercontractivity.IsHypercontractive.conjugate, BooleanAnalysis.Hypercontractivity.IsHypercontractive.mono_radius, BooleanAnalysis.Hypercontractivity.SharpDiscrete.two_point_conjugate_radius_le, BooleanAnalysis.Hypercontractivity.SharpDiscrete.two_point_conjugate_sharp, BooleanAnalysis.Hypercontractivity.SharpDiscrete.two_point_forward_sharp, BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
 \difficulty{4}
-Let $(\\Omega,\\mu)$ be a probability space, let $X:\\Omega\\to\\mathbb R$ be
-measurable, and suppose $q>2$, $0<\\lambda<1/2$, and $0\\le\\rho<1$. Assume
-$\\mu(X=1-\\lambda)=\\lambda$ and $\\mu(X=-\\lambda)=1-\\lambda$. Set
-$u=\\log((1-\\lambda)/\\lambda)$ and $\\rho_*=\\sqrt{\\sinh(u/q)/\\sinh(u/(q/(q-1)))}$.
-Then the inequality $\\|a+\\rho bX\\|_q\\le\\|a+bX\\|_2$ holds for all real $a,b$ if and
-only if $\\rho\\le\\rho_*$; likewise, $\\|a+\\rho bX\\|_2\\le\\|a+bX\\|_{q/(q-1)}$ holds
-for all real $a,b$ if and only if $\\rho\\le\\rho_*$.
+Let $(\Omega,\mu)$ be a probability space, let $X:\Omega\to\mathbb R$ be
+measurable, and suppose $q>2$, $0<\lambda<1/2$, and $0\le\rho<1$. Assume
+$\mu(X=1-\lambda)=\lambda$ and $\mu(X=-\lambda)=1-\lambda$. Set
+$u=\log((1-\lambda)/\lambda)$ and $\rho_*=\sqrt{\sinh(u/q)/\sinh(u/(q/(q-1)))}$.
+Then the inequality $\|a+\rho bX\|_q\le\|a+bX\|_2$ holds for all real $a,b$ if and
+only if $\rho\le\rho_*$; likewise, $\|a+\rho bX\|_2\le\|a+bX\|_{q/(q-1)}$ holds
+for all real $a,b$ if and only if $\rho\le\rho_*$.
 \end{theorem}

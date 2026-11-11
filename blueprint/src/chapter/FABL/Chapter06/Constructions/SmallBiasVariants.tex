@@ -11,11 +11,12 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Constructions.SmallBiasVa
 \label{FABL.fieldPairingCoefficient}
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube}
-Let $$ be a binary vector of length $d$, and let $a$ assign an element of the binary
-extension field of degree $$ to each index in $$. Define their field pairing
+Let $\gamma$ be a binary vector of length $d$, and let $a$ assign an element of the binary
+extension field of degree $\ell$ to each index in $\mathrm{Fin}(d)$. Define their field pairing
 coefficient to be the sum over all indices $i$ of the scalar multiple of $a_i$ by the
-binary coefficient $_i$.
+binary coefficient $\gamma_i$.
 \end{definition}
+
 
 \begin{definition}[Field pairing generator]
 \lean{FABL.fieldPairingGenerator}
@@ -282,11 +283,12 @@ this quantity.
 \label{FABL.binaryExtensionBasisVector}
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.binaryExtensionEncode}
-Let $$ be a nonzero natural number and let $j$ be an index from $0$ to $-1$. Define
-the corresponding basis vector in the binary extension field of degree $$ as the
+Let $\ell$ be a nonzero natural number and let $j$ be an index from $0$ to $\ell-1$. Define
+the corresponding basis vector in the binary extension field of degree $\ell$ as the
 inverse image, under the binary extension encoding, of the coordinate vector that is $1$
 at $j$ and $0$ elsewhere.
 \end{definition}
+
 
 \begin{theorem}[Encoding a basis vector]
 \lean{FABL.binaryExtensionEncode_basisVector}
@@ -305,12 +307,13 @@ coordinate vector that is $1$ at $j$ and $0$ elsewhere.
 \label{FABL.basisExpandedGroupedCoefficient}
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.binaryExtensionEncode}
-Let $$ be nonzero, let $$ be a binary vector of length $n$, and let $i$ be an index
+Let $\ell$ be nonzero, let $\gamma$ be a binary vector of length $n\ell$, and let $i$ be an index
 from $0$ to $n-1$. Define the grouped coefficient in the binary extension field of
-degree $$ to be the inverse image, under the binary extension encoding, of the
-length-$$ vector whose $j$th coordinate is the coordinate of $$ indexed by the pair
+degree $\ell$ to be the inverse image, under the binary extension encoding, of the
+length-$\ell$ vector whose $j$th coordinate is the coordinate of $\gamma$ indexed by the pair
 $(i,j)$.
 \end{definition}
+
 
 \begin{theorem}[Grouped coefficient basis expansion]
 \lean{FABL.basisExpandedGroupedCoefficient_eq_sum}
@@ -391,10 +394,10 @@ $\sum_{i=0}^{n-1} a_i X^{i+1}$ over the binary extension field is nonzero.
 \leanok
 \uses{FABL.F₂Cube, FABL.basisExpandedSmallBiasPolynomial}
 \difficulty{3}
-Let $n$ and $ ell$ be natural numbers with $ ell \ne 0$, and let $\gamma$ be a function
-from the $n ell$ coordinates to $\mathbb{F}_2$. Form a polynomial over the degree-$ ell$
+Let $n$ and $\ell$ be natural numbers with $\ell \ne 0$, and let $\gamma$ be a function
+from the $n\ell$ coordinates to $\mathbb{F}_2$. Form a polynomial over the degree-$\ell$
 extension field of $\mathbb{F}_2$ by grouping the coordinates of $\gamma$ into $n$
-blocks of length $ ell$, interpreting each block in the extension field using its chosen
+blocks of length $\ell$, interpreting each block in the extension field using its chosen
 basis, and using these values as the coefficients of $X, X^2, \ldots, X^n$,
 respectively. The natural degree of this polynomial is at most $n$.
 \end{theorem}
@@ -418,12 +421,7 @@ small bias field family at $r$, with second parameter $s$.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.basisExpandedSmallBiasFieldFamily, FABL.basisExpandedSmallBiasGenerator, FABL.binaryExtensionBasisVector, FABL.binaryExtensionEncode, FABL.fieldPairingGenerator, FABL.f₂DotProduct}
 \difficulty{1}
-Let $n$ be a natural number and let $[?]$ be a positive integer. In the binary
-extension field $K$ of degree $[?]$ over $[?]$, let $E:K\to\mathbb{F}_2^{\ell}$ be the
-coordinate isomorphism and let $b_j$ be the basis vector corresponding to $j$. For every
-$r,s\in K$, $i\in\{0,\ldots,n-1\}$, and $j\in\{0,\ldots,\ell-1\}$, the $(i,j)$
-coordinate of the basis-expanded generator is the $[?]$ dot product of $E(b_j r^{i+1})$
-and $E(s)$.
+Let $n$ be a natural number and let $\ell$ be a positive integer. In the binary extension field $K$ of degree $\ell$ over $\mathbb{F}_2$, let $E:K\to\mathbb{F}_2^{\ell}$ be the coordinate isomorphism and let $b_j$ be the basis vector corresponding to $j$. For every $r,s\in K$, $i\in\{0,\ldots,n-1\}$, and $j\in\{0,\ldots,\ell-1\}$, the $(i,j)$ coordinate of the basis-expanded generator is the $\mathbb{F}_2$ dot product of $E(b_jr^{i+1})$ and $E(s)$.
 \end{theorem}
 
 \begin{theorem}[Basis expanded small bias generator character expectation eq root probability]

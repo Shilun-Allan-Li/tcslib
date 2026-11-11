@@ -12,9 +12,9 @@ Declarations of the Lean module \texttt{FABL.Chapter03.LearningTheory.Program}.
 \leanok
 \uses{FABL.uniformPMF}
 \difficulty{4}
-Let $\\alpha$ and $\\beta$ be finite nonempty sets, and let $e:\\alpha\\to\\beta$ be a
-bijection. Mapping a uniformly chosen element of $\\alpha$ through $e$ gives the uniform
-distribution on $\\beta$.
+Let $\alpha$ and $\beta$ be finite nonempty sets, and let $e:\alpha\to\beta$ be a
+bijection. Mapping a uniformly chosen element of $\alpha$ through $e$ gives the uniform
+distribution on $\beta$.
 \end{theorem}
 
 \begin{definition}[Learning accuracy range]
@@ -26,7 +26,7 @@ distribution on $\\beta$.
 }
 \label{FABL.LearningAccuracy}
 \leanok
-Learning accuracy is the set of rational numbers $[0,1/2]$.
+Learning accuracy is the set of rational numbers $\varepsilon\in[0,1/2]$.
 \end{definition}
 
 \begin{definition}[Positive learning parameter range]
@@ -44,8 +44,8 @@ $1/2$.
 \leanok
 \uses{FABL.PositiveLearningParameter}
 \difficulty{3}
-If a rational learning parameter $\\varepsilon$ satisfies $0<\\varepsilon\\leq
-\\tfrac12$, then its image in $\\mathbb R$ also lies in $(0,\\tfrac12]$.
+If a rational learning parameter $\varepsilon$ satisfies $0<\varepsilon\leq
+\tfrac12$, then its image in $\mathbb R$ also lies in $(0,\tfrac12]$.
 \end{theorem}
 
 \begin{theorem}[Rational learning parameter approximation]
@@ -64,8 +64,8 @@ that $\tfrac12\min\{x,\tfrac12\}<q<\min\{x,\tfrac12\}$.
 \label{FABL.fourierEstimatorFailureBits}
 \leanok
 \uses{FABL.PositiveLearningParameter}
-For a positive learning parameter $$, define the failure-bit count to be the base-$2$
-ceiling logarithm of the ceiling of $2/$.
+For a positive learning parameter $\varepsilon$, define the failure-bit count to be the base-$2$
+ceiling logarithm of the ceiling of $2/\varepsilon$.
 \end{definition}
 
 \begin{definition}[Fourier estimator sample count]
@@ -143,8 +143,8 @@ $0<\varepsilon,\delta\le 1/2$. Define $b(\delta)=\lceil\log_2\lceil
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.fourierEstimatorFailureBits, FABL.fourierEstimatorFailureBits_le_sampleExponent, FABL.fourierEstimatorSampleCount, FABL.two_div_pow_fourierEstimatorFailureBits_le}
 \difficulty{5}
-Let $bbr$-valued learning parameters $bfepsilon,bfd$ lie in $(0,1/2]$. Let $B$ be the
-least integer $m$ such that $2^ma0	ext{?}$
+Let $\bbr$-valued learning parameters $\bfepsilon,\bfd$ lie in $(0,1/2]$. Let $B$ be the
+least integer $m$ such that $2^m\fa0	ext{?}$
 \end{theorem}
 
 \begin{theorem}[Real interval for learning accuracy]
@@ -529,12 +529,12 @@ equals the measure under $\mu$ of the set of $x$ for which $f(x)$ satisfies $E$.
 \label{FABL.PMF.toOuterMeasure_bind_le_add}
 \leanok
 \difficulty{5}
-Let $p$ be a probability mass function on a type $ alpha$, let $q$ assign a probability
-mass function on $ beta$ to each element of $ alpha$, and let $A$ and $B$ be bad-event
-sets in the respective spaces. If $p$ assigns outer measure at most $ delta_1$ to $A$,
-and for every $a$ outside $A$, $q(a)$ assigns outer measure at most $ delta_2$ to $B$,
+Let $p$ be a probability mass function on a type $\alpha$, let $q$ assign a probability
+mass function on $\beta$ to each element of $\alpha$, and let $A$ and $B$ be bad-event
+sets in the respective spaces. If $p$ assigns outer measure at most $\delta_1$ to $A$,
+and for every $a$ outside $A$, $q(a)$ assigns outer measure at most $\delta_2$ to $B$,
 then the probability mass function obtained by sampling first from $p$ and then from $q$
-assigns outer measure at most $ delta_1+ delta_2$ to $B$.
+assigns outer measure at most $\delta_1+\delta_2$ to $B$.
 \end{theorem}
 
 \begin{definition}[Outer probability of an event]

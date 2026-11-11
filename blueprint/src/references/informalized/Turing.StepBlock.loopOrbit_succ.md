@@ -7,6 +7,6 @@
 
 **Claim.** For every compiled-machine configuration $d$ and natural number $r$, the configuration after $r+1$ exit-delimited rounds is obtained by running the compiled machine from the configuration after $r$ rounds for exactly the duration assigned to that next round.
 
-**Proof.** By definition, the loop orbit is the $r$-fold iterate of the map sending a configuration $c$ to the result of running the round machine for $[?]$ (namely, $[?]$) steps. The successor law for round orbits states that the $(r+1)$st iterate is one more application of this map to the $r$th iterate: run the machine from that intermediate configuration for its assigned duration. Applying this law with the round machine and its duration function gives the claim.
+**Proof.** By the definition of counterLoopOrbit and the successor law for round orbits, the $(r+1)$-round configuration is obtained by running the round machine from the $r$-round configuration for the duration assigned to that configuration. This is exactly the stated equation.
 
 **Key facts.** `Turing.roundOrbit_succ`.

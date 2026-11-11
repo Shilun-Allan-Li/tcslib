@@ -178,10 +178,10 @@ over all coordinates of the corresponding coordinate restriction weights at $\de
 \leanok
 \uses{FABL.CoordRestriction, FABL.coordRestrictionWeightAt_nonneg, FABL.restrictionAssignmentWeightAt}
 \difficulty{1}
-Let $n$ be a natural number, let $b4$ be a real number with $0\leq b4\leq 1$, and
+Let $n$ be a natural number, let $\delta$ be a real number with $0\leq \delta\leq 1$, and
 assign to each of the $n$ coordinates one of the states “free,” “fixed to $1$,” or
-“fixed to $-1$.” The product of the coordinate weights, which are $b4$ for a free state
-and $(1-b4)/2$ for either fixed state, is nonnegative.
+“fixed to $-1$.” The product of the coordinate weights, which are $\delta$ for a free state
+and $(1-\delta)/2$ for either fixed state, is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Parameterized total restriction weight]
@@ -387,7 +387,7 @@ of free coordinates of this restriction is exactly $J$.
 \uses{FABL.CoordRestriction.complete, FABL.FixedSignCube, FABL.combineSignCube, FABL.combineSignCube_apply_fixed, FABL.combineSignCube_apply_free, FABL.coordRestrictionOf, FABL.signEncode}
 \difficulty{4}
 Let $n$ be a natural number, let $J$ be a subset of $	ext{Fin}(n)$, let $z$ assign a
-sign in ${  1,1}$ to every coordinate outside $J$, and let $x	ext{in }F_2^n$.
+sign in $\{-1,1\}$ to every coordinate outside $J$, and let $x	ext{in }\F_2^n$.
 Completing the coordinate restriction that leaves $J$ free and fixes the other
 coordinates according to $z$ gives the sign vector equal to $x$ encoded as signs on $J$
 and to $z$ on the complement of $J$.
@@ -1018,7 +1018,7 @@ the restriction that fixes the coordinate to $s$ is $(1-\delta)/2$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.fixCoordinate_apply_of_ne, FABL.CoordRestriction.fixedState, FABL.DNFFormula, FABL.DNFFormula.IsBadRestriction, FABL.DNFFormula.badExtension, FABL.DNFFormula.firstBadCoordinate, FABL.DNFFormula.firstBadCoordinate_free, FABL.DNFFormula.firstBadRequiredSign, FABL.coordRestrictionWeightAt, FABL.coordRestrictionWeightAt_fixedState, FABL.restrictionAssignmentWeightAt}
 \difficulty{5}
-Let $n$ be a nonnegative integer, let $\varphi$ be a disjunctive normal form on $n$
+Let $n$ be a nonnegative integer, let $\varphi$ be a disjunctive normal form on $n$
 coordinates, let $\delta\in\mathbb R$ with $\delta\ne1$, and let $\rho$ be a coordinate
 restriction for which the restricted formula is nonconstant. If $\rho'$ is obtained by
 fixing the first free coordinate in the support of the first term compatible with $\rho$
@@ -1192,7 +1192,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.𝔽₂}
 \difficulty{1}
-In the field $br/2br$, the sum $1+1$ is $0$.
+In the field $\bbr/2\bbr$, the sum $1+1$ is $0$.
 \end{theorem}
 
 \begin{theorem}[Involution of the binary-cube complement]
@@ -1263,9 +1263,9 @@ query and its two child subtrees, producing a tree with leaf values in $\beta$.
 \leanok
 \uses{FABL.F₂DecisionTree, FABL.F₂DecisionTree.eval, FABL.F₂DecisionTree.mapOutputs}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $alpha$ and $beta$ be types, let
-$g:alpha\tobeta$, and let $T$ be a binary decision tree on $n$ coordinates with
-outputs in $alpha$. For every input $x\in(\mathbb{F}_2)^n$, evaluating the tree
+Let $n$ be a nonnegative integer, let $\alpha$ and $\beta$ be types, let
+$g:\alpha\to\beta$, and let $T$ be a binary decision tree on $n$ coordinates with
+outputs in $\alpha$. For every input $x\in(\mathbb{F}_2)^n$, evaluating the tree
 obtained by applying $g$ to each leaf output gives $g$ applied to the evaluation of $T$
 at $x$.
 \end{theorem}
@@ -1310,7 +1310,7 @@ of one computing $f$.
 \uses{FABL.Sign, FABL.binaryBooleanDual}
 \difficulty{3}
 Let $n$ be a natural number and let $f$ map binary vectors of length $n$ to the signs
-$71$. Define its dual by negating the value of $f$ at the coordinatewise complement of
+$\{-1,1\}$. Define its dual by negating the value of $f$ at the coordinatewise complement of
 the input. Taking the dual twice returns $f$.
 \end{theorem}
 
@@ -1390,11 +1390,11 @@ $c$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.negateAssignment, FABL.restrictionAssignmentWeightAt}
 \difficulty{1}
-Let $n$ be a natural number, let $ho$ assign to each of the $n$ coordinates one of the
-states “free,” “fixed to $1$,” or “fixed to $-1$,” and let $ho^{-}$ be obtained by
+Let $n$ be a natural number, let $\rho$ assign to each of the $n$ coordinates one of the
+states “free,” “fixed to $1$,” or “fixed to $-1$,” and let $\rho^{-}$ be obtained by
 exchanging the two fixed states while leaving free states unchanged. For every real
-parameter $b4$, the product weight of $ho^{-}$, using coordinate weights $b4$ for a
-free state and $(1-b4)/2$ for either fixed state, equals the product weight of $ho$.
+parameter $\delta$, the product weight of $\rho^{-}$, using coordinate weights $\delta$ for a
+free state and $(1-\delta)/2$ for either fixed state, equals the product weight of $\rho$.
 \end{theorem}
 
 \begin{theorem}[Completion under negated restrictions]
@@ -1665,9 +1665,9 @@ restriction $i\mapsto\rho(e(i))$.
 \uses{FABL.CoordRestriction, FABL.coordRestrictionWeightAt, FABL.restrictionAssignmentWeightAt}
 \difficulty{3}
 Let $m,n$ be natural numbers, let $e$ be a bijection from the $m$ coordinates to the $n$
-coordinates, let $b4$ be real, and assign a restriction state to each of the $n$
+coordinates, let $\delta$ be real, and assign a restriction state to each of the $n$
 coordinates. Pulling the assignment back along $e$ leaves its product weight unchanged,
-when each coordinate weight is $b4$ for a free state and $(1-b4)/2$ for either fixed
+when each coordinate weight is $\delta$ for a free state and $(1-\delta)/2$ for either fixed
 state.
 \end{theorem}
 
@@ -1847,7 +1847,7 @@ unchanged when the assignment is transported to $K$ along $e$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.FixedIndex, FABL.coordRestrictionProductWeight, FABL.coordRestrictionWeightAt}
 \difficulty{4}
-Let $n$ be a natural number, let $J$ be a set of coordinates in $br^n$ indexed by
+Let $n$ be a natural number, let $J$ be a set of coordinates in $\bbr^n$ indexed by
 $	ext{Fin}(n)$, and assign a coordinate restriction to each index in $J$ and to each
 index outside $J$. The product of the coordinate weights over all indices, using these
 assignments on their respective parts, equals the product of the two separate weights
@@ -1952,9 +1952,9 @@ over single-stage assignments with parameter $\delta_1\delta_2$.
 \uses{FABL.CoordRestriction, FABL.CoordRestriction.complete, FABL.CoordRestriction.compose, FABL.FixedSignCube, FABL.combineSignCube, FABL.combineSignCube_apply_fixed, FABL.combineSignCube_apply_free, FABL.composeCoordRestrictions, FABL.coordRestrictionOf, FABL.freeCoordinateEmbedding}
 \difficulty{4}
 Let $n$ be a natural number, let $J$ be a subset of the coordinates $	ext{Fin}(n)$, let
-$z$ assign a sign in ${  1,1}$ to each coordinate outside $J$, let $ho$ be a
-coordinate restriction on $	ext{Fin}(n)$, and let $x	ext{in }F_2^n$. Completing the
-coordinatewise composition of the restriction determined by $J,z$ with $ho$ at $x$
+$z$ assign a sign in $\{-1,1\}$ to each coordinate outside $J$, let $\rho$ be a
+coordinate restriction on $	ext{Fin}(n)$, and let $x	ext{in }\F_2^n$. Completing the
+coordinatewise composition of the restriction determined by $J,z$ with $\rho$ at $x$
 gives the sign vector whose coordinates in $J$ are obtained by completing the
 restriction reindexed to $J$ at the corresponding reindexed coordinates of $x$, and
 whose coordinates outside $J$ are given by $z$.

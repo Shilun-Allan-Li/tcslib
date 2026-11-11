@@ -12,7 +12,7 @@ Declarations of the Lean module \texttt{FABL.Chapter09.FriedgutNecessity}.
 \leanok
 \uses{FABL.Sign, FABL.SignCube}
 For each natural number $m$, there is a bijection between the set of length-$m$ vectors
-with entries in $,1\}$ and the set of integers $0,1,\ldots,2^m-1$.
+with entries in $\{-1,1\}$ and the set of integers $0,1,\ldots,2^m-1$.
 \end{definition}
 
 \begin{definition}[Addressing input decomposition]
@@ -115,7 +115,7 @@ coordinate is flipped.
 \difficulty{4}
 Let $m$ be a natural number and let $x$ be a sign vector with $m+2^m$ coordinates,
 divided into $m$ address coordinates and $2^m$ data coordinates. Use a bijection from
-sign vectors of length $m$ to the indices $in{2^m}$ to select an index from the address
+sign vectors of length $m$ to the indices $\in{2^m}$ to select an index from the address
 coordinates; the addressing function returns the data sign at that index. Flipping the
 data coordinate selected by $x$ changes the addressing function's value at $x$ to its
 negative.
@@ -249,7 +249,7 @@ define their addressing error indicator to be $1$ if $f(x)\ne g(x)$ and $0$ othe
 \uses{FABL.BooleanFunction, FABL.SignCube, FABL.addressingErrorIndicator, FABL.addressingFlipEquiv, FABL.addressingFlipEquiv_apply, FABL.addressingFunction, FABL.addressingFunction_flip_selected, FABL.addressingSelectedCoordinate, FABL.eq_addressingFlip_of_dependsOn}
 \difficulty{5}
 Let $m$ be a nonnegative integer, let $J$ be a set of coordinates in the cube
-$\\{−1,1\\}^{m+2^m}$, and let $g:\\{−1,1\\}^{m+2^m}\\to\\{−1,1\}$ depend only on the
+$\{−1,1\}^{m+2^m}$, and let $g:\{−1,1\}^{m+2^m}\to\{−1,1\}$ depend only on the
 coordinates in $J$. For any input $x$ whose address-selected coordinate lies outside
 $J$, the sum of the error indicators of the addressing function and $g$, evaluated at
 $x$ and at the input obtained by flipping that selected coordinate, is at least $1$.

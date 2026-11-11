@@ -51,10 +51,11 @@ the extension field.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.smallBiasPolynomial}
 \difficulty{1}
-Let $n$ and $[?]$ be nonnegative integers, let $[?]$ be a vector in the
+Let $n$ and $\ell$ be nonnegative integers, let $\gamma$ be a vector in the
 $n$-dimensional binary cube, and let $r$ belong to the binary extension field of degree
-$[?]$. Evaluating the polynomial whose coefficient of $X^{i+1}$ is the image of the
-$i$th coordinate of $[?]$ in that field gives $\sum_{i=0}^{n-1}\gamma_i r^{i+1}$.
+$\ell$. Evaluating the polynomial whose coefficient of $X^{i+1}$ is the image of the
+$i$th coordinate of $\gamma$ in that field gives
+$\sum_{i=0}^{n-1}\gamma_i r^{i+1}$.
 \end{theorem}
 
 \begin{theorem}[Small bias polynomial ne zero]
@@ -146,11 +147,12 @@ each $\gamma_i$ is viewed in $\mathbb{F}$ via the natural inclusion.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.binaryExtensionField_natCard, FABL.expect_smallBiasGenerator_fixed_first, FABL.smallBiasGenerator, FABL.smallBiasPolynomial, FABL.smallBiasPolynomial_ne_zero, FABL.vectorWalshCharacter}
 \difficulty{5}
-Let $n$ be a nonnegative integer, let $[?]$ be a positive integer, and let $[?]$ be a
-nonzero vector in the $n$-dimensional binary cube. For independent uniformly sampled
-elements $r,s$ of the binary extension field of degree $[?]$, the expected value of the
-Walsh character indexed by $[?]$ on the generator output equals the number of roots in
-that field of the polynomial associated with $[?]$, divided by $2^{[?]}$.
+Let $n$ be a nonnegative integer, let $\ell$ be a positive integer, and let $\gamma$
+be a nonzero vector in the $n$-dimensional binary cube. For independent uniformly
+sampled elements $r,s$ of the binary extension field of degree $\ell$, the expected
+value of the Walsh character indexed by $\gamma$ on the generator output equals the
+number of roots in that field of the polynomial associated with $\gamma$, divided by
+$2^\ell$.
 \end{theorem}
 
 \begin{theorem}[Nonnegative character expectation]
@@ -160,10 +162,10 @@ that field of the polynomial associated with $[?]$, divided by $2^{[?]}$.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.smallBiasGenerator, FABL.smallBiasGenerator_characterExpectation_eq_rootProbability, FABL.vectorWalshCharacter}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $[?]$ be a positive integer, and let $[?]$ be a
-nonzero vector in the $n$-dimensional binary cube. The expected value of its Walsh
+Let $n$ be a nonnegative integer, let $\ell$ be a positive integer, and let $\gamma$
+be a nonzero vector in the $n$-dimensional binary cube. The expected value of its Walsh
 character on the small-bias generator output, for a uniformly sampled pair from the
-binary extension field of degree $[?]$, is nonnegative.
+binary extension field of degree $\ell$, is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Upper bound on character expectation]
@@ -173,10 +175,10 @@ binary extension field of degree $[?]$, is nonnegative.
 \leanok
 \uses{FABL.BinaryExtensionField, FABL.F₂Cube, FABL.ncard_rootSet_le_natDegree, FABL.smallBiasGenerator, FABL.smallBiasGenerator_characterExpectation_eq_rootProbability, FABL.smallBiasPolynomial, FABL.smallBiasPolynomial_natDegree_le, FABL.vectorWalshCharacter}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $[?]$ be a positive integer, and let $[?]$ be a
-nonzero vector in the $n$-dimensional binary cube. The expected value of its Walsh
+Let $n$ be a nonnegative integer, let $\ell$ be a positive integer, and let $\gamma$
+be a nonzero vector in the $n$-dimensional binary cube. The expected value of its Walsh
 character on the small-bias generator output, for a uniformly sampled pair from the
-binary extension field of degree $[?]$, is at most $n/2^{[?]}$.
+binary extension field of degree $\ell$, is at most $n/2^\ell$.
 \end{theorem}
 
 \begin{definition}[Small-bias generator multiset]
@@ -198,9 +200,9 @@ including repetitions.
 \leanok
 \uses{FABL.binaryExtensionField_natCard, FABL.smallBiasGeneratorMultiset}
 \difficulty{1}
-Let $n$ be a nonnegative integer and let $[?]$ be a positive integer. The multiset
+Let $n$ be a nonnegative integer and let $\ell$ be a positive integer. The multiset
 obtained by applying the small-bias generator to every ordered pair of elements of the
-binary extension field of degree $[?]$ has cardinality $(2^{[?]})^2$.
+binary extension field of degree $\ell$ has cardinality $(2^\ell)^2$.
 \end{theorem}
 
 \begin{definition}[Small bias generator density]
@@ -242,10 +244,11 @@ field of the polynomial $\sum_{i=0}^{n-1}\gamma_i X^{i+1}$, divided by $2^\ell$.
 \leanok
 \uses{FABL.ProbabilityDensity.IsBiased, FABL.smallBiasGeneratorDensity, FABL.smallBiasGenerator_characterExpectation_eq_rootProbability, FABL.smallBiasGenerator_characterExpectation_le, FABL.vectorFourierCoeff_smallBiasGeneratorDensity}
 \difficulty{3}
-Let $n$ and $$ be natural numbers with $\ne 0$, and let $$ be a real number
-satisfying $n/2^{}\le $. The density generated by the small-bias generator over the
-binary extension field of degree $$ is $$-biased: every nonzero frequency has Fourier
-coefficient of absolute value at most $$.
+Let $n$ and $\ell$ be natural numbers with $\ell\ne0$, and let $\varepsilon$ be a
+real number satisfying $n/2^\ell\leq\varepsilon$. The density generated by the
+small-bias generator over the binary extension field of degree $\ell$ is
+$\varepsilon$-biased: every nonzero frequency has Fourier coefficient of absolute value
+at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Small-bias generator bounds]

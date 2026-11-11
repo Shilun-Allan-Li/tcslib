@@ -24,7 +24,7 @@ $\{\pm1\}^n$ has Fourier degree at most $1$.
 \leanok
 \uses{FABL.thresholdSign, FABL.thresholdSign_of_neg}
 \difficulty{3}
-For every real number $t$, if its threshold sign is $1$, then $0\\le t$.
+For every real number $t$, if its threshold sign is $1$, then $0\le t$.
 \end{theorem}
 
 \begin{theorem}[Negative threshold sign implies a negative input]
@@ -108,9 +108,9 @@ as real) times the sign monomial on that subset.
 \uses{FABL.BooleanFunction, FABL.IsLinearThreshold, FABL.exists_integer_coefficients_of_strict_representation, FABL.exists_positive_strict_shift, FABL.representation_and_ne_zero_of_strict, FABL.signValue, FABL.thresholdSign}
 \difficulty{5}
 Let $n$ be a nonnegative integer and let $f$ be a function from the Boolean cube
-$\\{-1,1\\}^n$ to $\\{\\pm1\\}$. If $f$ is represented as the sign of a real affine
-linear form, then there are integer coefficients $a_0,a_1,\\ldots,a_n$ such that, for
-every $x\\in\\{-1,1\\}^n$, $f(x)$ is the sign of $a_0+\\sum_{i=1}^n a_i x_i$, and this
+$\{-1,1\}^n$ to $\{\pm1\}$. If $f$ is represented as the sign of a real affine
+linear form, then there are integer coefficients $a_0,a_1,\ldots,a_n$ such that, for
+every $x\in\{-1,1\}^n$, $f(x)$ is the sign of $a_0+\sum_{i=1}^n a_i x_i$, and this
 integer-coefficient affine form is nonzero at every point of the cube.
 \end{theorem}
 
@@ -121,9 +121,9 @@ integer-coefficient affine form is nonzero at every point of the cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsPolynomialThreshold, FABL.IsPolynomialThresholdRepresentation, FABL.exists_integer_coefficients_of_strict_representation, FABL.exists_positive_strict_shift, FABL.fourierCoeff, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.fourier_expansion_unique, FABL.lowDegreeFourierFamily, FABL.monomial, FABL.multilinearPolynomial, FABL.multilinearPolynomial_eq_sum_lowDegree, FABL.representation_and_ne_zero_of_strict, FABL.signValue, FABL.sum_lowDegree_fourierCoeff_eq}
 \difficulty{6}
-Let $n$ and $d$ be nonnegative integers, and let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ be a
+Let $n$ and $d$ be nonnegative integers, and let $f:\{-1,1\}^n\to\{\pm1\}$ be a
 Boolean function that has a polynomial threshold representation of Fourier degree at
 most $d$. Then there is a real-valued function $p$ on the cube such that $f(x)$ is the
 sign of $p(x)$ for every $x$, the Fourier degree of $p$ is at most $d$, every Fourier
-coefficient of $p$ is an integer, and $p(x)\\ne 0$ for every $x\\in\\{-1,1\\}^n$.
+coefficient of $p$ is an integer, and $p(x)\ne 0$ for every $x\in\{-1,1\}^n$.
 \end{theorem}

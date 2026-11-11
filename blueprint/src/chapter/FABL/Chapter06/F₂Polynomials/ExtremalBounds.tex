@@ -14,8 +14,8 @@ Declarations of the Lean module \texttt{FABL.Chapter06.F₂Polynomials.ExtremalB
   pdf-ffbe9c7b3306-p071-b001,
   pdf-ffbe9c7b3306-p086-b004
 }
-For a function $f:\\mathbb F_2^{n+1}\\to\\mathbb F_2$ and $b\\in\\mathbb F_2$, define
-its slice at first coordinate $b$ to be the function on $\\mathbb F_2^n$ sending $x$ to
+For a function $f:\mathbb F_2^{n+1}\to\mathbb F_2$ and $b\in\mathbb F_2$, define
+its slice at first coordinate $b$ to be the function on $\mathbb F_2^n$ sending $x$ to
 $f(b,x)$.
 \end{definition}
 
@@ -60,11 +60,11 @@ $S^+$.
 \leanok
 \uses{FABL.F₂BooleanFunction, FABL.anfCoeff, FABL.anfCoeff_firstCoordinateSlice_zero, FABL.f₂CubeOfFinset, FABL.f₂CubeOfFinset_insert_zero_tailFrequency, FABL.f₂FirstCoordinateSlice, FABL.tailFrequency, FABL.zero_notMem_tailFrequency}
 \difficulty{5}
-Let $n$ be a natural number, let $f:\{0,1\}^{n+1}\to\mathbb F_2$, and let
+Let $n$ be a natural number, let $f:\{0,1\}^{n+1}\to\mathbb{F}_2$, and let
 $S\subseteq\{0,\ldots,n-1\}$. Write $S^+$ for the corresponding set of tail coordinates
 in the $(n+1)$-dimensional cube. The algebraic normal form coefficient indexed by $S$ of
-the slice of $f$ whose first coordinate is $1$ equals the sum over $4\mathbb F_2$ of
-the coefficients of $f$ indexed by $S^+$ and by $S^+\cup\{0\}$.
+the slice of $f$ whose first coordinate is $1$ equals the sum of the coefficients of $f$
+indexed by $S^+$ and $S^+\cup\{0\}$.
 \end{theorem}
 
 \begin{theorem}[Hamming norm of coordinate slices]
@@ -432,7 +432,7 @@ Statement pending regeneration.
 \uses{FABL.F₂BooleanFunction, FABL.f₂FirstCoordinateSlice}
 \difficulty{4}
 Let $n$ be a nonnegative integer and let $f$ be a function from the $(n+1)$-dimensional
-Boolean cube over $\mathbb{F}_2$ to $\mathbb{F}_2$. If both functions on the
+Boolean cube over $\mathbb{F}_2$ to $\mathbb{F}_2$. If both functions on the
 $n$-dimensional cube obtained by fixing the first coordinate of $f$ to $0$ and to $1$
 are identically zero, then $f$ is identically zero.
 \end{theorem}
@@ -923,8 +923,8 @@ is nonzero.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p026-b004,
     pdf-ffbe9c7b3306-p018-b002}
-Let $n$ and $k$ be nonnegative integers, and let $f:\\mathbb F_2^n\\to\\mathbb F_2$ be
-nonzero with algebraic degree at most $k$. Under the uniform distribution on $\\mathbb
+Let $n$ and $k$ be nonnegative integers, and let $f:\mathbb F_2^n\to\mathbb F_2$ be
+nonzero with algebraic degree at most $k$. Under the uniform distribution on $\mathbb
 F_2^n$, the probability that $f$ is nonzero is at least $2^{-k}$.
 \end{theorem}
 
@@ -943,8 +943,8 @@ inputs in the cube.
 \leanok
 \uses{FABL.F₂BooleanFunction, FABL.F₂Cube, FABL.f₂OneSupport, FABL.𝔽₂}
 \difficulty{4}
-Let $f$ be a function from the binary cube of dimension $n$ to $\\mathbb F_2$. The sum
-of $f$ over all inputs equals, in $\\mathbb F_2$, the cardinality of the set of inputs
+Let $f$ be a function from the binary cube of dimension $n$ to $\mathbb F_2$. The sum
+of $f$ over all inputs equals, in $\mathbb F_2$, the cardinality of the set of inputs
 on which $f$ equals $1$.
 \end{theorem}
 

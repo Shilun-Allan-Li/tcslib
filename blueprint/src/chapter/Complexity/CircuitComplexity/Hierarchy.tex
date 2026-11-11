@@ -94,7 +94,7 @@ indices $i\ge m$.
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.size, BoolCircuit.restrictCircuit}
 \difficulty{4}
-Let $m,n$ be natural numbers, let $p : \\mathrm{Fin}\,n \\to \\bbf_2$ be a Boolean
+Let $m,n$ be natural numbers, let $p : \mathrm{Fin}\,n \to \bbf_2$ be a Boolean
 assignment, and let $C$ be a Boolean circuit on $n$ variables. Restrict each literal
 whose variable index is less than $m$ to the corresponding variable among the first $m$
 variables; replace each other literal by a constant gate with value given by that
@@ -116,7 +116,7 @@ its extension to $n$ inputs by applying $f$ to the first $m$ coordinates of each
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.extendBy, BoolCircuit.onFirst, BoolCircuit.restrictCircuit, BoolCircuit.restrictCircuit_eval}
 \difficulty{3}
-Let $m\\le n$, let $p$ be an assignment to $n$ variables, and let $C$ be a circuit on
+Let $m\le n$, let $p$ be an assignment to $n$ variables, and let $C$ be a circuit on
 $n$ variables whose evaluation on every assignment $x$ equals $f$ applied to the
 restriction of $x$ to its first $m$ variables. Then, for every assignment $y$ to those
 $m$ variables, the circuit obtained by restricting $C$ to the first $m$ variables and

@@ -123,9 +123,9 @@ over the complement of $A$.
 \label{FABL.expect_prod_type}
 \leanok
 \difficulty{3}
-Let $alpha$ and $beta$ be finite types and let $f:alphatimesbetatobbr$. The
+Let $\alpha$ and $\beta$ be finite types and let $f:\alpha\times\beta\to\bbr$. The
 uniform expectation of $f$ over pairs $(a,b)$ equals the iterated uniform expectation,
-first over $binbeta$ and then over $ainalpha$.
+first over $b\in\beta$ and then over $a\in\alpha$.
 \end{theorem}
 
 \begin{theorem}[Expectation of a translated product]
@@ -170,9 +170,7 @@ all points $x$ of that cube, of the Gowers half product at $x$ for the chosen $F
 \label{FABL.gowersHalfExpectation}
 \leanok
 \uses{FABL.F₂Cube, FABL.GowersFamily, FABL.gowersHalfExpectationAt, FABL.𝔽₂}
-For a family $F:([?]$ and a bit $b\in\mathbb F_2$, with $y$ a $k$-tuple of points of
-$\mathbb F_2^n$, define its half expectation to be the half-expectation functional for
-$F$ at the last coordinate of the $(k+1)$-cube, evaluated at $b$ and $y$.
+For a Gowers family $F$ of order $k+1$ on $\mathbb{F}_2^n$, a bit $b\in\mathbb{F}_2$, and a $k$-tuple $y$ of points of $\mathbb{F}_2^n$, define its half expectation to be the half-expectation functional for $F$ at the last coordinate of the $(k+1)$-cube, evaluated at $b$ and $y$.
 \end{definition}
 
 \begin{theorem}[Factorization of a Gowers cube product]
@@ -491,8 +489,7 @@ $(0,b)$ and $(1,b)$, evaluated at $y(0)$.
 \leanok
 \uses{FABL.F₂Cube, FABL.GowersFamily, FABL.convolution, FABL.gowersHalfExpectation_two_eq_convolution, FABL.gowersInner, FABL.gowersInner_succ, FABL.gowersPair, FABL.vectorFourierCoeff, FABL.vectorFourierCoeff_convolution, FABL.vector_plancherel}
 \difficulty{4}
-Let $n\in\mathbb N$ and let $F$ be a real-valued family indexed by $F_2^2$ with values
-that are functions on $F_2^n$. Its Gowers inner product equals the sum, over all $[?]$
+Let $n\in\mathbb{N}$ and let $F$ be a real-valued family indexed by $\mathbb{F}_2^2$ with values that are functions on $\mathbb{F}_2^n$. Its Gowers inner product equals $\sum_{\xi\in\mathbb{F}_2^n}\prod_{s\in\mathbb{F}_2^2}\widehat{F_s}(\xi)$.
 \end{theorem}
 
 \begin{theorem}[Fourth power of the order-two Gowers norm]

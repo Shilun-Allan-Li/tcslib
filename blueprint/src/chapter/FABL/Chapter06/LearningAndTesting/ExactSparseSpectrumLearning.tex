@@ -96,9 +96,9 @@ Fourier granularity at degree $k+1$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.binaryCubeSignEquiv, FABL.fourierOneNorm, FABL.fourierOneNorm_eq_spectralPNorm_one, FABL.signValue, FABL.spectralPNorm_one_eq_sum_abs, FABL.spectralSparsity, FABL.spectralSparsity_eq_card_vectorFourierSupport, FABL.sum_sq_vectorFourierCoeff_signValue_eq_one, FABL.vectorFourierCoeff, FABL.vectorFourierSupport}
 \difficulty{5}
-Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\\{-1,1\\}^n$,
+Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\{-1,1\}^n$,
 and let $S$ be a nonnegative integer. Regard $h$ as a real-valued function via its sign
-values and as a function on the binary cube $\\mathbb F_2^n$ via the coordinatewise
+values and as a function on the binary cube $\mathbb F_2^n$ via the coordinatewise
 identification of binary values with signs. If at most $S$ of its binary Fourier
 coefficients are nonzero, then its Fourier one-norm on the sign cube is at most $S$.
 \end{theorem}
@@ -252,8 +252,8 @@ spectrum input and rounds its output to a sparse Fourier hypothesis in dimension
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.DeterministicGoldreichLevinInput.coefficientInput, FABL.DeterministicQueryProgram.map, FABL.DeterministicQueryProgram.runWithCost, FABL.DeterministicQueryProgram.runWithCost_bind, FABL.DeterministicQueryProgram.runWithCost_deterministicGoldreichLevinCoefficientProgram, FABL.DeterministicQueryProgram.runWithCost_map, FABL.SmallBiasFourierInput.sample, FABL.SparseFourierHypothesis.evaluate, FABL.binaryCubeSignEquiv, FABL.deterministicGoldreichLevinHypothesisFromAnswers, FABL.deterministicGoldreichLevinLearner, FABL.deterministicGoldreichLevinProgram, FABL.deterministicGoldreichLevinProgram_isCorrectOutput, FABL.deterministicGoldreichLevinSecondStage, FABL.exactSparseSpectrumGoldreichLevinInput, FABL.exactSparseSpectrumSparsityBound, FABL.fourierOneNorm, FABL.fourierOneNorm_toReal_le_of_spectralSparsity_le, FABL.positiveExactSparseSpectrumLearner, FABL.roundSparseSpectrumHypothesis, FABL.roundedDeterministicGoldreichLevinHypothesis_evaluate_eq, FABL.signValue, FABL.spectralSparsity}
 \difficulty{5}
-Let $n,k$ be natural numbers with $n>0$, and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$. Regard
-$f$ as a function on $\\mathbb F_2^n$ using the coordinatewise binary-to-sign encoding.
+Let $n,k$ be natural numbers with $n>0$, and let $f:\{-1,1\}^n\to\{-1,1\}$. Regard
+$f$ as a function on $\mathbb F_2^n$ using the coordinatewise binary-to-sign encoding.
 If at most $2^{k+1}$ of its Fourier coefficients are nonzero, then running the positive
 exact sparse spectrum learner with parameters $n,k$ and oracle $f$ produces a hypothesis
 whose evaluation equals $f$ at every input.
@@ -501,7 +501,7 @@ the target is at most $1+2^{171}\bigl(12(n+1)(2^k+1)^2\bigr)^{100}$.
 \uses{FABL.BooleanFunction, FABL.binaryCubeSignEquiv, FABL.exactSparseSpectrumSparsityBound, FABL.signValue, FABL.spectralSparsity}
 For natural numbers $n$ and $k$, the exact sparse spectrum concept class consists of the
 sign-valued Boolean functions on the $n$-dimensional cube for which the spectral
-sparsity of the associated $71$-valued function on the binary cube is at most
+sparsity of the associated $\{-1,1\}$-valued function on the binary cube is at most
 $2^{k+1}$.
 \end{definition}
 
@@ -517,9 +517,9 @@ $2^{k+1}$.
 \uses{FABL.LearningAlgorithm, FABL.LearningCost, FABL.LearningProgram.eventProbability, FABL.SparseFourierHypothesis, FABL.SparseFourierHypothesis.evaluate, FABL.SparseFourierHypothesis.finiteRepresentation, FABL.exactSparseSpectrumLearner_resource_bounds, FABL.exactSparseSpectrumLearningProgram, FABL.exactSparseSpectrumQueryBudget, FABL.exactSparseSpectrumWorkBudget, FABL.relativeHammingDist, FABL.runWithCost_exactSparseSpectrumLearningProgram}
 For each dimension $n$ and sparsity parameter $k$, the construction assigns a
 membership-query learning algorithm for sparse Fourier hypotheses. For every requested
-accuracy $psilon\in[0,1/2]$, its program is the exact sparse-spectrum learner for $n$
+accuracy $\epsilon\in[0,1/2]$, its program is the exact sparse-spectrum learner for $n$
 and $k$; on every Boolean target, its advertised success probability is the probability
-that the output hypothesis has relative Hamming distance at most $psilon$ from the
+that the output hypothesis has relative Hamming distance at most $\epsilon$ from the
 target. Every execution uses zero random examples, and its membership queries and local
 work are bounded by the corresponding query and work budgets for that learner.
 \end{definition}

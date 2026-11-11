@@ -9,7 +9,7 @@
 
 **Proof.** The logarithm estimate $\log 4<7/5$ (\texttt{FABL.log\_four\_lt\_seven\_fifths}) and the positivity of $373/1000$ imply
 \[
-\frac85-\frac{373}{1000}\log 4>rac85-\frac{373}{1000}\cdot\frac75=\frac{1120-2611/5}{1000}=\frac{21}{20}.
+\frac85-\frac{373}{1000}\log 4>\frac85-\frac{373}{1000}\cdot\frac75=\frac{1120-2611/5}{1000}=\frac{21}{20}.
 \]
 In particular, the claimed weak inequality holds.
 

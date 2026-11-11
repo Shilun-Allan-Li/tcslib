@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{FABL.Chapter07.PCPP}.
 \leanok
 \uses{FABL.NonadaptiveFunctionTester}
 For an alphabet $A$ and natural numbers $n$ and $r$, a nonadaptive string tester is a
-nonadaptive function tester whose domain is the set of positions $\\{0,\\ldots,n-1\\}$
+nonadaptive function tester whose domain is the set of positions $\{0,\ldots,n-1\}$
 and whose codomain is $A$, with $r$ query positions.
 \end{definition}
 
@@ -25,8 +25,8 @@ and whose codomain is $A$, with $r$ query positions.
 \uses{FABL.IsLocalTester, FABL.NonadaptiveStringTester}
 Let $A$ be a type with decidable equality, let $n$ be a positive natural number, and let
 $r$ be a natural number. For a nonadaptive string tester over $A$ with $n$ positions and
-$r$ query positions, a property $P$ of strings in $A^n$, and a real number $[?]$, the
-assertion is that this tester is a local tester for $P$ at rate $[?]$.
+$r$ query positions, a property $P$ of strings in $A^n$, and a real number $\rho$, the
+assertion is that this tester is a local tester for $P$ at rate $\rho$.
 \end{definition}
 
 \begin{definition}[Combined input and proof word]
@@ -84,7 +84,7 @@ given the combined input and proof word.
 \leanok
 \uses{FABL.PCPPSystem, FABL.PCPPSystem.acceptanceProbability}
 For a PCPP system $V$ with input alphabet $	ext{Alphabet}$, input length $n$, proof
-length $ℓ$, and query count $r$, and for an input word $w$ and proof word $\pi$, the
+length $\ell$, and query count $r$, and for an input word $w$ and proof word $\pi$, the
 rejection probability is $1$ minus the probability that $V$ accepts $(w,\pi)$.
 \end{definition}
 
@@ -663,14 +663,14 @@ greater than $\rho\varepsilon$.
   {direct}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p180-b001}
-Let $A$ be a finite alphabet, let $n\\ge1$, and let $V$ be a probabilistically checkable
-proof of proximity system on words of length $n$, with proof length $\\ell$ and a
+Let $A$ be a finite alphabet, let $n\ge1$, and let $V$ be a probabilistically checkable
+proof of proximity system on words of length $n$, with proof length $\ell$ and a
 positive soundness rate $r$. Let $P$ be a property of length-$n$ words, and suppose $V$
 has perfect completeness and rejects every word whose relative Hamming distance from
-every word satisfying $P$ is greater than any given $\\delta\\in[0,1]$ with probability
-strictly greater than $r\\delta$. If a word $w$ and proof cause $V$ to accept with
-probability at least $1-r\\varepsilon$ for some $\\varepsilon\\in[0,1]$, then there is a
-word satisfying $P$ at relative Hamming distance at most $\\varepsilon$ from $w$.
+every word satisfying $P$ is greater than any given $\delta\in[0,1]$ with probability
+strictly greater than $r\delta$. If a word $w$ and proof cause $V$ to accept with
+probability at least $1-r\varepsilon$ for some $\varepsilon\in[0,1]$, then there is a
+word satisfying $P$ at relative Hamming distance at most $\varepsilon$ from $w$.
 \end{theorem}
 
 \begin{theorem}[PCPP from completeness and close acceptance]

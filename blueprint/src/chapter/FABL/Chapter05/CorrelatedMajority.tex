@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{FABL.Chapter05.CorrelatedMajority}.
 \uses{FABL.correlatedPairPMF, FABL.noiseKernel, FABL.pmfExpectation, FABL.pmfExpectation_bind, FABL.pmfExpectation_const, FABL.pmfExpectation_map, FABL.uniformPMF}
 \difficulty{4}
 Let $n$ be a natural number, let $-1\leq\rho\leq1$, and let $X$ be uniform on the set of
-sign vectors ${-1,1}^n$. Given $X$, form $Y$ by independently at each coordinate
+sign vectors $\{-1,1\}^n$. Given $X$, form $Y$ by independently at each coordinate
 keeping $X_i$ with probability $(1+\rho)/2$ and replacing it by $-X_i$ otherwise. For
 every real-valued function $f$ on the sign vectors, the expectation of $f(X)$ under the
 resulting joint distribution of $(X,Y)$ equals its expectation under the uniform
@@ -27,7 +27,7 @@ distribution.
 \uses{FABL.correlatedPairPMF, FABL.correlatedPairPMF_map_swap, FABL.pmfExpectation, FABL.pmfExpectation_correlatedPairPMF_fst, FABL.pmfExpectation_map, FABL.uniformPMF}
 \difficulty{4}
 Let $n$ be a natural number, let $-1\leq\rho\leq1$, and let $X$ be uniform on the set of
-sign vectors ${-1,1}^n$. Given $X$, form $Y$ by independently at each coordinate
+sign vectors $\{-1,1\}^n$. Given $X$, form $Y$ by independently at each coordinate
 keeping $X_i$ with probability $(1+\rho)/2$ and replacing it by $-X_i$ otherwise. For
 every real-valued function $f$ on the sign vectors, the expectation of $f(Y)$ under the
 resulting joint distribution of $(X,Y)$ equals its expectation under the uniform
@@ -54,10 +54,10 @@ $\rho\sum_{i=0}^{n-1}a_ix_i$.
 \uses{FABL.correlatedPairPMF, FABL.expect_linearForm_sq, FABL.linearForm, FABL.noiseKernel, FABL.pmfExpectation, FABL.pmfExpectation_bind, FABL.pmfExpectation_const_mul, FABL.pmfExpectation_map, FABL.pmfExpectation_noiseKernel_linearForm, FABL.pmfExpectation_uniformPMF_eq_expect}
 \difficulty{4}
 Let $n$ be a natural number, let $-1\leq\rho\leq1$, and let $a_1,\ldots,a_n\in\bbr$.
-Choose $X$ uniformly from ${-1,1}^n$ and, independently at each coordinate conditional
+Choose $X$ uniformly from $\{-1,1\}^n$ and, independently at each coordinate conditional
 on $X$, form $Y$ by keeping $X_i$ with probability $(1+\rho)/2$ and flipping its sign
 otherwise. Then the expectation of $(\sum_{i=1}^n a_iX_i)(\sum_{i=1}^n a_iY_i)$ is
-$rho\sum_{i=1}^n a_i^2$.
+$\rho\sum_{i=1}^n a_i^2$.
 \end{theorem}
 
 \begin{theorem}[Normalized margin as a linear form]

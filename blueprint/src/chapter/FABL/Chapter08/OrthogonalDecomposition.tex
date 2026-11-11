@@ -4463,12 +4463,12 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.fourierCoeff_injective, FABL.FiniteFourierBasis.fourierCoeff_ite, FABL.FiniteFourierBasis.fourierCoeff_orthogonalComponent, FABL.FiniteFourierBasis.fourierCoeff_projectOnCoordinates, FABL.FiniteFourierBasis.fourierCoeff_zero, FABL.FiniteFourierBasis.orthogonalComponent, FABL.ProductL2, FABL.multiIndexSupport, FABL.projectOnCoordinates}
 \difficulty{5}
-Let $ mathcal{X}$ be a finite nonempty set with probability mass function $ pi$, and let
+Let $\mathcal{X}$ be a finite nonempty set with probability mass function $\pi$, and let
 a finite nonempty index set carry an orthonormal basis of real-valued functions on
-$ mathcal{X}$ that includes the constant-one function. For any number $n$ of
-coordinates, function $f$ on $ mathcal{X}^n$, and coordinate subsets $S,T$, projecting
+$\mathcal{X}$ that includes the constant-one function. For any number $n$ of
+coordinates, function $f$ on $\mathcal{X}^n$, and coordinate subsets $S,T$, projecting
 the Fourier component of $f$ supported exactly on $S$ onto the coordinates in $T$ gives
-that component if $S subseteq T$, and gives the zero function otherwise.
+that component if $S\subseteq T$, and gives the zero function otherwise.
 \end{theorem}
 
 \begin{definition}[Initial set of coordinates]
@@ -5231,12 +5231,12 @@ $s$ coordinates gives the Doob martingale at time $s$.
 \label{FABL.FiniteFourierBasis.orthogonalDoobDifference}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalDoobMartingale, FABL.ProductL2}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on  -valued strings of length   and a coordinate  , its orthogonal Doob
-difference is the function obtained by subtracting the orthogonal Doob martingale at
-time   from that at time  .
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a coordinate $t$, its orthogonal Doob difference is the function obtained
+by subtracting the orthogonal Doob martingale at time $t$ from that at time $t+1$.
 \end{definition}
 
 \begin{theorem}[Projection of a Doob difference vanishes]
@@ -6748,12 +6748,12 @@ first $t$.
 \label{FABL.FiniteFourierBasis.orthogonalDegreePart}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalComponent, FABL.ProductL2}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on strings of length   and a natural number  , its orthogonal degree-  part
-is the sum of its orthogonal components over all subsets of the coordinates having
-cardinality exactly  .
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a natural number $k$, its orthogonal degree-$k$ part is the sum of its
+orthogonal components over all subsets of the coordinates having cardinality exactly $k$.
 \end{definition}
 
 \begin{definition}[Orthogonal weight at a degree]
@@ -6767,12 +6767,12 @@ cardinality exactly  .
 \label{FABL.FiniteFourierBasis.orthogonalWeightAtDegree}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalDegreePart, FABL.ProductL2, FABL.productInner}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on strings of length   and a natural number  , the orthogonal weight at
-degree   is the inner product of its orthogonal degree-  part with itself under the
-product probability measure.
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a natural number $k$, the orthogonal weight at degree $k$ is the inner
+product of its orthogonal degree-$k$ part with itself under the product probability measure.
 \end{definition}
 
 \begin{definition}[Orthogonal low-degree part]
@@ -6789,12 +6789,12 @@ product probability measure.
 \label{FABL.FiniteFourierBasis.orthogonalLowDegreePart}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalComponent, FABL.ProductL2}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on strings of length   and a natural number  , its orthogonal low-degree
-part is the sum of its orthogonal components over all subsets of the coordinates having
-cardinality at most  .
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a natural number $k$, its orthogonal low-degree part is the sum of its
+orthogonal components over all subsets of the coordinates having cardinality at most $k$.
 \end{definition}
 
 \begin{definition}[Orthogonal weight above a degree]
@@ -6813,13 +6813,13 @@ cardinality at most  .
 \label{FABL.FiniteFourierBasis.orthogonalWeightAboveDegree}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalComponent, FABL.ProductL2, FABL.productInner}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on strings of length   and a natural number  , its orthogonal weight above
-degree   is the sum, over coordinate subsets of cardinality greater than  , of the
-squared norm of the corresponding orthogonal component under the product probability
-measure.
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a natural number $k$, its orthogonal weight above degree $k$ is the sum,
+over coordinate subsets of cardinality greater than $k$, of the squared norm of the
+corresponding orthogonal component under the product probability measure.
 \end{definition}
 
 \begin{theorem}[Fourier coefficient of a degree part]
@@ -10572,10 +10572,10 @@ orthogonal component of $f$ supported on $S$.
   {context}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p045-b002}
-Let $ mathcal{X}$ be a finite nonempty set with probability mass function $ pi$, and let
+Let $\mathcal{X}$ be a finite nonempty set with probability mass function $\pi$, and let
 a finite nonempty index set carry an orthonormal basis of real-valued functions on
-$ mathcal{X}$ that includes the constant-one function. For any number $n$ of coordinates
-and function $f$ on $ mathcal{X}^n$, the total influence of $f$ equals $ sum_{k=0}^{n} k
+$\mathcal{X}$ that includes the constant-one function. For any number $n$ of coordinates
+and function $f$ on $\mathcal{X}^n$, the total influence of $f$ equals $\sum_{k=0}^{n} k
 W_k(f)$, where $W_k(f)$ is the squared norm of its degree-$k$ component under the
 product measure.
 \end{theorem}
@@ -12930,11 +12930,11 @@ supported on $S$ gives $\rho^{|S|}$ times the Fourier component of $f$ supported
   {context}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p210-b003}
-Let $ mathcal{X}$ be a finite nonempty set with probability mass function $ pi$, and let
-$ iota$ be a finite nonempty index set with a distinguished constant basis vector.
-Suppose a basis of real-valued functions on $ mathcal{X}$ is orthonormal for expectation
-under $ pi$. For any number $n$ of coordinates, function $f$ on $ mathcal{X}^n$, and
-noise parameter $ rho in[0,1]$, its noise stability is $ sum_{k=0}^{n} rho^k W_k(f)$,
+Let $\mathcal{X}$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set with a distinguished constant basis vector.
+Suppose a basis of real-valued functions on $\mathcal{X}$ is orthonormal for expectation
+under $\pi$. For any number $n$ of coordinates, function $f$ on $\mathcal{X}^n$, and
+noise parameter $\rho\in[0,1]$, its noise stability is $\sum_{k=0}^{n}\rho^k W_k(f)$,
 where $W_k(f)$ is the squared norm of its degree-$k$ component under the product
 measure.
 \end{theorem}
@@ -12955,9 +12955,9 @@ $|f(x)|$ over all inputs $x\in\Omega^n$.
 \leanok
 \uses{FABL.ProductL2, FABL.productSupNorm}
 \difficulty{1}
-Let $\\Omega$ be a finite nonempty set and let $n$ be a natural number. For any
-real-valued function $f$ on $\\Omega^n$ and any $x\\in\\Omega^n$, $|f(x)|$ is at most
-the supremum of $|f|$ over $\\Omega^n$.
+Let $\Omega$ be a finite nonempty set and let $n$ be a natural number. For any
+real-valued function $f$ on $\Omega^n$ and any $x\in\Omega^n$, $|f(x)|$ is at most
+the supremum of $|f|$ over $\Omega^n$.
 \end{theorem}
 
 \begin{theorem}[Coordinate projection sup norm bound]
@@ -12995,10 +12995,10 @@ $2^{|S|}\max_{y\in\Omega^n}|f(y)|$.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.abs_orthogonalComponent_le, FABL.FiniteFourierBasis.orthogonalComponent, FABL.ProductL2, FABL.productSupNorm}
 \difficulty{3}
-Let $ mathcal{X}$ be a finite nonempty set with probability mass function $ pi$, and let
+Let $\mathcal{X}$ be a finite nonempty set with probability mass function $\pi$, and let
 a finite nonempty index set carry an orthonormal basis of real-valued functions on
-$ mathcal{X}$ that includes the constant-one function. For any number $n$ of
-coordinates, function $f$ on $ mathcal{X}^n$, and subset $S$ of the coordinate set, the
+$\mathcal{X}$ that includes the constant-one function. For any number $n$ of
+coordinates, function $f$ on $\mathcal{X}^n$, and subset $S$ of the coordinate set, the
 supremum norm of the Fourier component supported exactly on $S$ is at most $2^{|S|}$
 times the supremum norm of $f$.
 \end{theorem}
@@ -13009,10 +13009,10 @@ times the supremum norm of $f$.
 \label{FABL.restrictProductCoordinate}
 \leanok
 \uses{FABL.ProductL2, FABL.replaceCoordinate}
-Let   be a set, let   be a natural number, and let   be a real-valued function on
-strings in   of length  . For a coordinate   and a state  , restricting the function at
-that coordinate gives the function that evaluates the original function after replacing
-coordinate   by  .
+Let $\Omega$ be a set, let $n$ be a natural number, and let $f$ be a real-valued
+function on strings in $\Omega$ of length $n$. For a coordinate $i$ and a state $a\in\Omega$,
+restricting $f$ at coordinate $i$ by $a$ gives the function on the remaining coordinates
+obtained by fixing coordinate $i$ to $a$.
 \end{definition}
 
 \begin{theorem}[Coordinate restriction and coordinate dependence]
@@ -13021,7 +13021,7 @@ coordinate   by  .
 \leanok
 \uses{FABL.DependsOnlyOnCoordinates, FABL.ProductL2, FABL.replaceCoordinate, FABL.restrictProductCoordinate}
 \difficulty{4}
-Let $f$ be a real-valued function on $Omega^n$ that depends only on the coordinates in
+Let $f$ be a real-valued function on $\Omega^n$ that depends only on the coordinates in
 a finite set $S\subseteq\{0,\ldots,n-1\}$. For any coordinate $i$ and value
 $\omega\in\Omega$, the function obtained by replacing coordinate $i$ of each input by
 $\omega$ depends only on the coordinates in $S\setminus\{i\}$.
@@ -13033,11 +13033,11 @@ $\omega$ depends only on the coordinates in $S\setminus\{i\}$.
 \leanok
 \uses{FABL.ProductL2, FABL.coordinateProjection, FABL.mergeOnCoordinates, FABL.pmfExpectation, FABL.productProbabilityPMF, FABL.projectOnCoordinates, FABL.replaceCoordinate, FABL.restrictProductCoordinate}
 \difficulty{5}
-Let $ $ be a finite set, let $ $ be a probability mass function on it, and let $n$ be a
-natural number. For any real-valued function $f$ on $ ^n$, distinct coordinates
-$i,j 	o	ext{Fin} $, and value $ 	ext{ in } $, projecting $f$ by averaging over all
-coordinates except $j$ commutes with fixing coordinate $i$ to $ $: the two resulting
-functions on $ ^n$ are equal.
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on it, and let
+$n$ be a natural number. For any real-valued function $f$ on $\Omega^n$, distinct
+coordinates $i,j\in\operatorname{Fin}(n)$, and value $a\in\Omega$, projecting $f$ by
+averaging over all coordinates except $j$ commutes with fixing coordinate $i$ to $a$:
+the two resulting functions on $\Omega^n$ are equal.
 \end{theorem}
 
 \begin{theorem}[Coordinate projection orthogonal component eq zero]
@@ -13117,9 +13117,9 @@ coordinate is $x(\sigma(i))$.
 \leanok
 \uses{FABL.ProductL2, FABL.permuteProductFunction, FABL.permuteProductInput}
 \difficulty{3}
-Let $a9$ be a type, let $n$ be a nonnegative integer, let $c3$ be a permutation of the
-$n$ coordinates, and let $f:(bFin n\toa9)\to\mathbb R$. Permuting the inputs of $f$ by
-the inverse of $c3$ and then by $c3$ leaves $f$ unchanged.
+Let $\Omega$ be a type, let $n$ be a nonnegative integer, let $\sigma$ be a permutation of the
+$n$ coordinates, and let $f:(\mathrm{Fin}(n)\to\Omega)\to\mathbb R$. Permuting the inputs of $f$ by
+the inverse of $\sigma$ and then by $\sigma$ leaves $f$ unchanged.
 \end{theorem}
 
 \begin{theorem}[Inverse action on product functions]
@@ -13128,9 +13128,9 @@ the inverse of $c3$ and then by $c3$ leaves $f$ unchanged.
 \leanok
 \uses{FABL.ProductL2, FABL.permuteProductFunction, FABL.permuteProductInput}
 \difficulty{3}
-Let $a9$ be a type, let $n$ be a nonnegative integer, let $c3$ be a permutation of the
-$n$ coordinates, and let $f:(bFin n\toa9)\to\mathbb R$. Permuting the inputs of $f$ by
-$c3$ and then by its inverse leaves $f$ unchanged.
+Let $\Omega$ be a type, let $n$ be a nonnegative integer, let $\sigma$ be a permutation of the
+$n$ coordinates, and let $f:(\mathrm{Fin}(n)\to\Omega)\to\mathbb R$. Permuting the inputs of $f$ by
+$\sigma$ and then by its inverse leaves $f$ unchanged.
 \end{theorem}
 
 \begin{theorem}[Permutation invariance of product inputs]
@@ -13165,10 +13165,10 @@ functions are composed with the same coordinate permutation.
 \leanok
 \uses{FABL.DependsOnlyOnCoordinates, FABL.ProductL2, FABL.permuteProductFunction}
 \difficulty{3}
-Let $a9$ be a type, let $n$ be a nonnegative integer, let $c3$ be a permutation of the
+Let $\Omega$ be a type, let $n$ be a nonnegative integer, let $\sigma$ be a permutation of the
 $n$ coordinates, and let $S$ be a finite set of coordinates. If a real-valued function
-on $a9$-valued inputs depends only on the coordinates in $S$, then the function
-obtained by permuting its inputs by $c3$ depends only on the coordinates in $c3(S)$.
+on $\Omega$-valued inputs depends only on the coordinates in $S$, then the function
+obtained by permuting its inputs by $\sigma$ depends only on the coordinates in $\sigma(S)$.
 \end{theorem}
 
 \begin{definition}[Symmetry under coordinate permutations]
@@ -13288,12 +13288,12 @@ coordinates among $n$ coordinates has cardinality $k$.
 \label{FABL.FiniteFourierBasis.symmetricLevelEnergy}
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalComponentEnergy, FABL.ProductL2, FABL.firstCoordinates}
-Let   be a finite nonempty set with probability mass function  , and let   be a finite
-nonempty index set. Suppose a basis of real-valued functions on   is orthonormal for
-expectation under   and contains the constant-one function at a distinguished index. For
-a function   on strings of length   and a natural number  , the symmetric level energy
-is zero when   is zero; otherwise it is the orthogonal component energy on the first  
-coordinates.
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose a basis of real-valued functions on
+$\Omega$ is orthonormal for expectation under $\pi$ and contains the constant-one
+function at a distinguished index. For a function $f$ on $\Omega$-valued strings of
+length $n$ and a natural number $k$, the symmetric level energy is zero when $k$ is zero;
+otherwise it is the orthogonal component energy on the first $k$ coordinates.
 \end{definition}
 
 \begin{theorem}[Nonnegativity of symmetric level energy]
@@ -13302,11 +13302,12 @@ coordinates.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.orthogonalComponentEnergy_nonneg, FABL.FiniteFourierBasis.symmetricLevelEnergy, FABL.ProductL2}
 \difficulty{3}
-Let $ $ be a finite nonempty set with probability mass function $ $, and let $ $ be a
-finite nonempty index set. Suppose $ $ is a basis of real-valued functions on $ $, with
-one basis vector equal to the constant-one function and with the basis orthonormal for
-expectation under $ $. For every natural number $n$, every function $f: ^n	obR$, and
-every natural number $k$, the symmetric level energy of $f$ at level $k$ is nonnegative.
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let
+$\iota$ be a finite nonempty index set. Suppose $B$ is a basis of real-valued functions
+on $\Omega$, with one basis vector equal to the constant-one function and with the basis
+orthonormal for expectation under $\pi$. For every natural number $n$, every function
+$f:\Omega^n\to\mathbb{R}$, and every natural number $k$, the symmetric level energy of
+$f$ at level $k$ is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Symmetric energy over a powerset]
@@ -13451,7 +13452,7 @@ $x_i=c$ and $-1/9$ otherwise.
 \leanok
 \uses{FABL.FiniteFourierBasis.orthogonalComponent, FABL.FiniteFourierBasis.orthogonalComponent_eq_mobius, FABL.projectOnCoordinates_threePointBothCIndicator, FABL.sum_finset_finTwo, FABL.threePointBothCIndicator, FABL.threePointCIndicator, FABL.threePointFourierBasis, FABL.threePointPairOrthogonalValue}
 \difficulty{4}
-For every pair $x=(x_0,x_1)\\in\{a,b,c\}^2$, the component of the indicator of the event
+For every pair $x=(x_0,x_1)\in\{a,b,c\}^2$, the component of the indicator of the event
 that both coordinates equal $c$, at the full coordinate set $\{0,1\}$ in the three-point
 product Fourier basis, equals $4/9$ if $x_0=x_1=c$, equals $-2/9$ if exactly one
 coordinate is $c$, and equals $1/9$ if neither coordinate is $c$.

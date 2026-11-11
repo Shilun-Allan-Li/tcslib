@@ -328,7 +328,7 @@ indexed by the remaining coordinates.
 \leanok
 \uses{FABL.CoordinateDecisionTree, FABL.CoordinateDecisionTree.WellFormed, FABL.CoordinateDecisionTree.eval, FABL.CoordinateDecisionTree.toF₂DecisionTree, FABL.F₂DecisionTree.eval}
 \difficulty{4}
-Let $T$ be a coordinate decision tree on the Boolean cube $\mathbb{F}_2^n$, with values
+Let $T$ be a coordinate decision tree on the Boolean cube $\mathbb{F}_2^n$, with values
 in a type $\alpha$, and let $A$ be a set of available coordinates. If every query made
 by $T$ uses a coordinate in $A$ and each child tree satisfies the same condition after
 that coordinate is removed, then converting $T$ to a decision tree whose queries
@@ -393,7 +393,7 @@ evaluated at $x$.
 \uses{FABL.CoordinateDecisionTree.assignCoordinates}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $L$ be a list of coordinates in $	ext{Fin}(n)$,
-and let $s,x$ be assignments of bits in $[2]$ to those coordinates. If $i$ is a
+and let $s,x$ be assignments of bits in $\{0,1\}$ to those coordinates. If $i$ is a
 coordinate not in $L$, then after successively assigning to $s$ the values of $x$ at the
 coordinates in $L$, the value at $i$ is still $s(i)$.
 \end{theorem}
@@ -765,7 +765,7 @@ position outside $S$ has bit zero.
 \uses{FABL.SwitchingBlockCode.ofPositionBits, FABL.SwitchingBlockCode.restrictBits, FABL.𝔽₂}
 \difficulty{3}
 Let $w$ be a natural number, let $S$ be a finite set of positions in a width-$w$ block,
-and assign a bit in $bf_2$ to each position in $S$. The function obtained by
+and assign a bit in $\bbf_2$ to each position in $S$. The function obtained by
 restricting the code constructed from $S$ and these bits to its designated positions
 equals the given assignment.
 \end{theorem}
@@ -1011,10 +1011,10 @@ index $k$ is at most $\left(\frac{9w}{4}\right)^k$.
 \label{FABL.CoordRestriction.Extends}
 \leanok
 \uses{FABL.CoordRestriction}
-Let $n$ be a natural number, and let $ho,eta$ be coordinate restrictions on
-${0,1,-1}^n$, where each coordinate is free, fixed to $1$, or fixed to $-1$. Say that
-$eta$ extends $rho$ if every coordinate that $rho$ fixes has the same value in
-$eta$.
+Let $n$ be a natural number, and let $\rho,\eta$ be coordinate restrictions on
+$\{0,1,-1\}^n$, where each coordinate is free, fixed to $1$, or fixed to $-1$. Say that
+$\eta$ extends $\rho$ if every coordinate that $\rho$ fixes has the same value in
+$\eta$.
 \end{definition}
 
 \begin{theorem}[Reflexivity of extension]
@@ -1496,10 +1496,10 @@ required sign.
 \uses{FABL.DNFTerm, FABL.DNFTerm.relativeBit, FABL.DNFTerm.satisfyingAssignment, FABL.DNFTerm.satisfyingAssignment_literal}
 \difficulty{3}
 Let $n$ be a natural number and let $T$ be a DNF term on $n$ coordinates. Define an
-assignment in $ oldsymbol{F}_2^n$ by setting each coordinate in the support of $T$ to
+assignment in $\boldsymbol{F}_2^n$ by setting each coordinate in the support of $T$ to
 the bit corresponding to the required sign of its literal, and each coordinate outside
 the support to $0$. Then, at every literal position in $T$, the assignment's coordinate
-plus the bit corresponding to that literal's required sign is $0$ in $ oldsymbol{F}_2$.
+plus the bit corresponding to that literal's required sign is $0$ in $\boldsymbol{F}_2$.
 \end{theorem}
 
 \begin{definition}[Satisfying extension]
@@ -1561,7 +1561,7 @@ position whose bit is $1$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFTerm, FABL.DNFTerm.Compatible, FABL.DNFTerm.compatible_fix_freeLiteralPositions, FABL.DNFTerm.freeLiteralPositions, FABL.DNFTerm.relativeBit_satisfyingAssignment, FABL.DNFTerm.satisfyingAssignment, FABL.DNFTerm.satisfyingExtension}
 \difficulty{3}
-Let $T$ be a DNF term on $n$ coordinates and let $ho$ be a coordinate restriction
+Let $T$ be a DNF term on $n$ coordinates and let $\rho$ be a coordinate restriction
 compatible with $T$, meaning that some completion of its free coordinates makes $T$
 evaluate to $-1$. Then the restriction obtained by fixing the coordinates at the free
 literal positions to the values prescribed by the satisfying assignment of $T$ is also

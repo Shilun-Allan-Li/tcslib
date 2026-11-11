@@ -13,8 +13,8 @@ Declarations of the Lean module \texttt{FABL.Chapter06.F₂Polynomials.Examples}
 \leanok
 \uses{FABL.fourierCoeff_monomial, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.mem_fourierSupport, FABL.monomial}
 \difficulty{4}
-For every subset $S\\subseteq[n]$, the Fourier degree of the monomial
-$x\\mapsto\\prod_{i\\in S}x_i$ on the Boolean cube is exactly $|S|$.
+For every subset $S\subseteq[n]$, the Fourier degree of the monomial
+$x\mapsto\prod_{i\in S}x_i$ on the Boolean cube is exactly $|S|$.
 \end{theorem}
 
 \begin{theorem}[Degree of full parity]
@@ -29,7 +29,7 @@ $x\\mapsto\\prod_{i\\in S}x_i$ on the Boolean cube is exactly $|S|$.
 \uses{FABL.BooleanFunction.toReal, FABL.fourierDegree, FABL.fourierDegree_monomial, FABL.parityFunction, FABL.parityFunction_toReal}
 \difficulty{3}
 For every natural number $n$, the function on the Boolean cube given by the product of
-all its coordinates, $x\\mapsto\\prod_{i=1}^n x_i$, has Fourier degree exactly $n$.
+all its coordinates, $x\mapsto\prod_{i=1}^n x_i$, has Fourier degree exactly $n$.
 \end{theorem}
 
 \begin{theorem}[Sign of a coordinate sum]
@@ -39,10 +39,10 @@ all its coordinates, $x\\mapsto\\prod_{i=1}^n x_i$, has Fourier degree exactly $
 \leanok
 \uses{FABL.F₂Cube, FABL.coordinateSum, FABL.signEncode, FABL.signEncode_add}
 \difficulty{4}
-Let $n$ be a natural number, let $S$ be a subset of $\\{0,\\ldots,n-1\\}$, and let
-$x=(x_0,\\ldots,x_{n-1})\\in\\mathbb{F}_2^n$. Define $\\sigma(b)=(-1)^b\\in\\{\\pm1\\}$
-for $b\\in\\mathbb{F}_2$. Then $\\sigma\\left(\\sum_{i\\in S}x_i\\right)=\\prod_{i\\in
-S}\\sigma(x_i)$, where the sum is taken in $\\mathbb{F}_2$.
+Let $n$ be a natural number, let $S$ be a subset of $\{0,\ldots,n-1\}$, and let
+$x=(x_0,\ldots,x_{n-1})\in\mathbb{F}_2^n$. Define $\sigma(b)=(-1)^b\in\{\pm1\}$
+for $b\in\mathbb{F}_2$. Then $\sigma\left(\sum_{i\in S}x_i\right)=\prod_{i\in
+S}\sigma(x_i)$, where the sum is taken in $\mathbb{F}_2$.
 \end{theorem}
 
 \begin{theorem}[Encoding a parity function]
@@ -99,8 +99,8 @@ all coordinates, is exactly $1$.
   pdf-ffbe9c7b3306-p013-b008,
   pdf-ffbe9c7b3306-p149-b003
 }
-For each $n\\ge 0$, define the function on $\\mathbb F_2^n$ given by the monomial
-containing every coordinate, namely $x\\mapsto\\prod_{i=1}^n x_i$ in $\\mathbb F_2$.
+For each $n\ge 0$, define the function on $\mathbb F_2^n$ given by the monomial
+containing every coordinate, namely $x\mapsto\prod_{i=1}^n x_i$ in $\mathbb F_2$.
 \end{definition}
 
 \begin{theorem}[Product formula for the AND function]

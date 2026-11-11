@@ -101,9 +101,9 @@ leaves the queried coordinates and branching structure unchanged.
 \leanok
 \uses{FABL.FiniteDecisionTree, FABL.FiniteDecisionTree.eval, FABL.FiniteDecisionTree.mapOutput}
 \difficulty{4}
-Let $T$ be a finite decision tree with input alphabet $a9$, output labels in $b1$, and
+Let $T$ be a finite decision tree with input alphabet $\Omega$, output labels in $\alpha$, and
 available coordinates $A\subseteq\{0,\ldots,n-1\}$. For any function $g$ from its
-output-label set to a set $b2$, and any input $x$ assigning an alphabet symbol to each
+output-label set to a set $\beta$, and any input $x$ assigning an alphabet symbol to each
 of the $n$ coordinates, evaluating the tree obtained by applying $g$ to every leaf label
 gives $g$ applied to the evaluation of $T$ at $x$.
 \end{theorem}
@@ -347,7 +347,7 @@ continuation of the second tree, yielding a tree on $A\cup B$.
 \difficulty{1}
 Let $n$ be a natural number, and let $A$ and $B$ be disjoint sets of coordinates in
 $	ext{Fin}(n)$. Given two decision trees on these coordinate sets, with inputs and
-outputs in $\\{ -1,1\\}$, their ordered composition evaluates on every input to $-1$
+outputs in $\{ -1,1\}$, their ordered composition evaluates on every input to $-1$
 exactly when both tree outputs are $-1$, and to $1$ otherwise.
 \end{theorem}
 
@@ -370,7 +370,7 @@ tree.
 \label{FABL.RecursiveNandSeed}
 \leanok
 Define the seed space at depth $0$ to be a singleton. At depth $d+1$, a seed consists of
-an element of $\\{0,1\\}$ together with an ordered pair of depth-$d$ seeds.
+an element of $\{0,1\}$ together with an ordered pair of depth-$d$ seeds.
 \end{definition}
 
 \begin{definition}[Decision tree on a recursive block]
@@ -403,7 +403,7 @@ the same output as evaluating $T$ on the restriction of $x$ to that block.
 \leanok
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryTrace_reindex_length, FABL.Sign, FABL.SignCube, FABL.recursiveInputBlock, FABL.recursiveNandBlockCoordinates, FABL.recursiveNandTreeInBlock}
 \difficulty{3}
-Let $d$ be a nonnegative integer, let $i\\in\\{0,1\\}$, and let $T$ be a finite decision
+Let $d$ be a nonnegative integer, let $i\in\{0,1\}$, and let $T$ be a finite decision
 tree on sign inputs with $2^d$ coordinates. Embed those coordinates as block $i$ among
 the $2^{d+1}$ coordinates, and let $x$ be a sign assignment on the larger cube. The
 number of queries made by the reindexed tree on $x$ equals the number made by $T$ on the
@@ -439,7 +439,7 @@ $\{\pm1\}^{2^d}$.
 \leanok
 \uses{FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryCount_castAvailable, FABL.RecursiveNandSeed, FABL.SignCube, FABL.eval_recursiveNandTreeInBlock, FABL.queryCount_orderedNandTree, FABL.queryCount_recursiveNandTreeInBlock, FABL.recursiveInputBlock, FABL.recursiveNAND, FABL.recursiveNandTree, FABL.recursiveNandTree_computes}
 \difficulty{4}
-Let $d$ be a nonnegative integer, let $o\\in\\{0,1\\}$, choose left and right seeds for
+Let $d$ be a nonnegative integer, let $o\in\{0,1\}$, choose left and right seeds for
 depth $d$, and let $x$ be a sign assignment on $2^{d+1}$ coordinates. If $o=0$, the
 recursive NAND tree's query count is the left tree's query count on block $0$, plus zero
 when the recursive NAND value on block $0$ is $1$ and otherwise the right tree's query
@@ -477,8 +477,8 @@ recursive NAND tree.
 \leanok
 \uses{FABL.pmfExpectation, FABL.pmfExpectation_add_fun, FABL.pmfExpectation_const}
 \difficulty{3}
-Let $Omega$ be a finite set, let $pi$ be a probability mass function on $Omega$, let
-$c\in\bbr$, and let $f:Omega\tobr$. The expectation of the function $x\mapsto c+f(x)$
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on $\Omega$, let
+$c\in\bbr$, and let $f:\Omega\to\bbr$. The expectation of the function $x\mapsto c+f(x)$
 equals $c$ plus the expectation of $f$.
 \end{theorem}
 
@@ -541,9 +541,9 @@ $a\in\alpha$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.RandomizedDecisionTree.outputConditionalCost}
 \difficulty{3}
-Let $Omega$ be a finite nonempty set, let $alpha$ be a type with decidable equality,
-let $n$ be a nonnegative integer, and let $f:(Fin ntoOmega)toalpha$. For a
-zero-error randomized decision tree $T$ computing $f$, an output value $ainalpha$, and
+Let $\Omega$ be a finite nonempty set, let $\alpha$ be a type with decidable equality,
+let $n$ be a nonnegative integer, and let $f:(\mathrm{Fin} n\to\Omega)\to\alpha$. For a
+zero-error randomized decision tree $T$ computing $f$, an output value $a\in\alpha$, and
 an input $x$ satisfying $f(x)=a$, the expected number of queries on $x$ is at most the
 maximum of that expected query count over all inputs on which $f$ equals $a$, with the
 count taken to be zero on inputs producing another value.
@@ -816,9 +816,9 @@ $e$.
 \leanok
 \uses{FABL.Sign, FABL.SignCube, FABL.expect_monomial, FABL.monomial, FABL.piReindexEquiv, FABL.signValue}
 \difficulty{5}
-Let $\\iota$ be a finite, nonempty set, and choose independent uniform signs
-$x_i\\in\\{-1,1\\}$ for each $i\\in\\iota$. The expected value of their product is zero:
-$\\mathbb E\\prod_{i\\in\\iota}x_i=0$.
+Let $\iota$ be a finite, nonempty set, and choose independent uniform signs
+$x_i\in\{-1,1\}$ for each $i\in\iota$. The expected value of their product is zero:
+$\mathbb E\prod_{i\in\iota}x_i=0$.
 \end{theorem}
 
 \begin{definition}[Top coefficient of recursive NAND]
@@ -877,8 +877,8 @@ the product of the uniform expectations of $f$ on $A$ and $g$ on $B$.
 \label{FABL.expect_div_const}
 \leanok
 \difficulty{3}
-Let $A$ be a finite set, let $f:A\\to\\mathbb R$, and let $c\\in\\mathbb R$. The uniform
-average of $a\\mapsto f(a)/c$ equals the uniform average of $f$ divided by $c$.
+Let $A$ be a finite set, let $f:A\to\mathbb R$, and let $c\in\mathbb R$. The uniform
+average of $a\mapsto f(a)/c$ equals the uniform average of $f$ divided by $c$.
 \end{theorem}
 
 \begin{theorem}[Averaged NAND parity identity]

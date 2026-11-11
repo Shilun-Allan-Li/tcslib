@@ -5,7 +5,7 @@
 
 # Sign–standardized sign expectation
 
-**Claim.** For a sign chosen with mean $1-2p$, the expectation of the sign times its standardized value is $[?]$
+**Claim.** For a sign chosen with mean $1-2p$, the expectation of the sign times its standardized value is $\sigma$
 
 **Proof.** Pointwise, write the sign as its mean plus its deviation from that mean. Since the standardized sign is the deviation divided by $\sigma$, this gives $X Z=(1-2p)Z+\sigma Z^2$. Taking expectations and using that the standardized sign has mean zero and second moment one yields $\mathbb{E}[XZ]=(1-2p)\cdot 0+\sigma\cdot 1=\sigma$. The division is valid because $0<p<1$ implies $\sigma>0$.
 

@@ -5,7 +5,7 @@
 
 # Taylor Remainder Bound
 
-**Claim.** For every natural number $m$, if $\\psi$ is $(m+1)$ times continuously differentiable and its $(m+1)$st derivative is bounded in absolute value by $C$, then the error after the degree-$m$ Taylor polynomial at $a$, evaluated at $a+b$, is at most $\frac{C}{(m+1)!}|b|^{m+1}$.
+**Claim.** For every natural number $m$, if $\psi$ is $(m+1)$ times continuously differentiable and its $(m+1)$st derivative is bounded in absolute value by $C$, then the error after the degree-$m$ Taylor polynomial at $a$, evaluated at $a+b$, is at most $\frac{C}{(m+1)!}|b|^{m+1}$.
 
 **Proof.** 1. Fix $a,b$ and reparameterize the line segment from $a$ to $a+b$ by $g(t)=\psi(a+bt)$. Repeated differentiation gives $g^{(j)}(t)=b^j\psi^{(j)}(a+bt)$ for every $j\le m+1$.
 

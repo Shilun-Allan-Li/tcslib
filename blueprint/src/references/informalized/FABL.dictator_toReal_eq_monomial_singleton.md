@@ -7,4 +7,4 @@
 
 **Claim.** The real-valued dictator on coordinate $i$ equals the monomial indexed by the singleton set containing $i$.
 
-**Proof.** The real-valued dictator at $x$ is the real value of $x_i$. The monomial over the singleton $i$ is the product with its sole factor equal to that same real value. Hence the two expressions agree.
+**Proof.** The real-valued dictator at $x$ is the real value of $x_i$. The monomial over the singleton $\{i\}$ is the product with its sole factor equal to that same real value. Hence the two expressions agree.

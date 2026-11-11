@@ -5,7 +5,7 @@
 
 # Unary Decrementing Run Invariant
 
-**Claim.** Starting with the register containing $\mathrm{pre}\mathbin{+}w$ and its head at the end of $\mathrm{pre}$, the decrement routine reaches its designated state with the register containing $\mathrm{pre}\mathbin{+}\mathrm{decW}(w)$ and the head in the stated range; all earlier configurations remain in the prescribed decrement phases and head interval.
+**Claim.** Starting with the register containing $\mathrm{pre}\mathbin{+}w$ and its head at the end of $\mathrm{pre}$, the decrement routine reaches its designated state with the register containing $\mathrm{pre}\mathbin{+}\mathrm{decW}(w)$ and the head in the stated range; all earlier configurations remain in the prescribed decrement phases and head interval.
 
 **Proof.** Induct on the word $w$, retaining the arbitrary prefix $\mathrm{pre}$ throughout. If $w$ is empty, the head reads the blank immediately after the prefix. The decrement transition moves left into the designated state without changing the tape; the resulting head is at $|\mathrm{pre}|-1$. The only earlier time is the initial configuration, which has the required state and head position.
 

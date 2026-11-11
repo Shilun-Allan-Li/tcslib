@@ -7,6 +7,6 @@
 
 **Claim.** For a nonempty finite set, the collision probability of its uniform distribution is the reciprocal of its cardinality.
 
-**Proof.** Every outcome under the uniform distribution has probability $1/|[$. In the collision sum, each of the $|[$ terms is therefore $(1/|[|)^2$. Summing gives $|[|/|[|^2=1/|[|$; the nonemptiness assumption ensures the cardinality is nonzero.
+**Proof.** Let $N$ be the cardinality of the finite type. Uniformity gives every outcome probability $1/N$, so the collision sum over the $N$ outcomes is $N(1/N)^2=1/N$. The nonemptiness assumption ensures $N>0.
 
 **Key facts.** `TCSlib.InformationTheory.FinDist.uniform_apply`.

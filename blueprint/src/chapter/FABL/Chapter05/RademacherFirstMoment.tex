@@ -54,8 +54,8 @@ linear form $\sum_{i=1}^n a_i x_i$.
 \uses{FABL.Sign, FABL.rademacherMeasure, FABL.uniformPMF, FABL.uniformSample_toMeasure_eq_pi}
 \difficulty{1}
 For every nonnegative integer $n$, the uniform probability measure on the finite cube
-$\\{-1,1\\}^n$ equals the product, over its $n$ coordinates, of the uniform probability
-measure on $\\{-1,1\\}$.
+$\{-1,1\}^n$ equals the product, over its $n$ coordinates, of the uniform probability
+measure on $\{-1,1\}$.
 \end{theorem}
 
 \begin{theorem}[Mean of a sign coordinate]
@@ -76,7 +76,7 @@ coordinate is zero.
 \uses{FABL.integral_signCoordinate_eq_zero, FABL.rademacherMeasure, FABL.rademacherSummand}
 \difficulty{1}
 Let $n$ be a natural number, let $a=(a_i)_{i=1}^n$ be real coefficients, and let
-$i\in\{1,\\ldots,n	heta$ be a coordinate. For a uniformly distributed sign vector
+$i\in\{1,\ldots,n	heta$ be a coordinate. For a uniformly distributed sign vector
 $x\in\{-1,1\}^n$, the expected value of $a_i x_i$ is zero.
 \end{theorem}
 
@@ -1856,11 +1856,11 @@ $(0,\infty)$.
 \leanok
 \uses{FABL.absoluteTail, FABL.integrableOn_absoluteTail}
 \difficulty{4}
-Let $\\nu$ and $\\tau$ be finite measures on $\\mathbb R$ with integrable absolute-value
-functions, and let $B:\\mathbb R\\to\\mathbb R$ be integrable on $(0,\\infty)$. If for
-every $t>0$ the absolute difference between $\\nu(\\{x:|x|>t\\})$ and
-$\\tau(\\{x:|x|>t\\})$ is at most $B(t)$, then the absolute difference between their
-first absolute moments is at most $\\int_0^\\infty B(t)\\,dt$.
+Let $\nu$ and $\tau$ be finite measures on $\mathbb R$ with integrable absolute-value
+functions, and let $B:\mathbb R\to\mathbb R$ be integrable on $(0,\infty)$. If for
+every $t>0$ the absolute difference between $\nu(\{x:|x|>t\})$ and
+$\tau(\{x:|x|>t\})$ is at most $B(t)$, then the absolute difference between their
+first absolute moments is at most $\int_0^\infty B(t)\,dt$.
 \end{theorem}
 
 \begin{theorem}[Absolute tail as a complement probability]
@@ -1893,7 +1893,7 @@ probabilities of $\nu$ and $\tau$ at $t$ differ by at most $B$.
 Let $\nu$ be a probability measure on $\mathbb{R}$, and let $K\in\mathbb{R}$. If for
 every $y\in\mathbb{R}$ the difference between the distribution functions of $\nu$ and
 the standard Gaussian is bounded in absolute value by $K/(1+|y|^3)$, then for every
-$x\in\mathbb{R}$, $\left|\nu((- \infty,x))-\Phi(x)\right|\le K/(1+|x|^3)$, where $\Phi$
+$x\in\mathbb{R}$, $\left|\nu((-\infty,x))-\Phi(x)\right|\le K/(1+|x|^3)$, where $\Phi$
 is the standard Gaussian distribution function.
 \end{lemma}
 
@@ -2777,7 +2777,7 @@ For every real number $K\ge0$,
 \leanok
 \difficulty{1}
 If $\nu$ is a probability measure on $\mathbb{R}$, then for every $t\in\mathbb{R}$,
-$\nu((t,\infty))=1-F_\nu(t)$, where $F_\nu(t)=\nu((- \infty,t])$ is its cumulative
+$\nu((t,\infty))=1-F_\nu(t)$, where $F_\nu(t)=\nu((-\infty,t])$ is its cumulative
 distribution function.
 \end{theorem}
 
@@ -4827,7 +4827,7 @@ where $x$ is uniform on the sign cube and $\gamma$ is the standard Gaussian meas
   {pdf-ffbe9c7b3306-p128-b001,
     pdf-ffbe9c7b3306-p128-b002}
 \difficulty{5}
-Let $n$ be a natural number and let $a_1,dots,a_n\in\mathbb R$ satisfy $\sum_{i=1}^n
+Let $n$ be a natural number and let $a_1,\dots,a_n\in\mathbb R$ satisfy $\sum_{i=1}^n
 a_i^2=1$ and $|a_i|\le\varepsilon$ for every $i$. If $T\ge1$, then for independent
 uniform signs $X_1,\dots,X_n\in\{-1,1\}$,
 \[

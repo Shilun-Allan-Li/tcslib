@@ -34,8 +34,8 @@ sum of the absolute values of all Fourier coefficients of $f$.
 \label{FABL.IsPolynomialThresholdRepresentation}
 \leanok
 \uses{FABL.BooleanFunction, FABL.thresholdSign}
-Let $n$ be a natural number, let $f$ map the $n$-dimensional Boolean cube $\\{-1,1\\}^n$
-to the signs, and let $p:\\{-1,1\\}^n\\to\\mathbb R$. The function $f$ is represented by
+Let $n$ be a natural number, let $f$ map the $n$-dimensional Boolean cube $\{-1,1\}^n$
+to the signs, and let $p:\{-1,1\}^n\to\mathbb R$. The function $f$ is represented by
 the polynomial threshold of $p$ if, at every input $x$, its value is the threshold sign
 of $p(x)$.
 \end{definition}
@@ -81,7 +81,7 @@ and $-1$ otherwise.
 \label{FABL.fourBitEqualityPolynomial}
 \leanok
 \uses{FABL.monomial}
-For a sign vector $x=(x_0,x_1,x_2,x_3)\\in\{-1,1\}^4$, define $p(x)=-3+\sum_{0\le
+For a sign vector $x=(x_0,x_1,x_2,x_3)\in\{-1,1\}^4$, define $p(x)=-3+\sum_{0\le
 i<j<4}x_i x_j$.
 \end{definition}
 
@@ -121,7 +121,7 @@ two-element subset of the four coordinates, and $0$ for every other subset.
 \leanok
 \uses{FABL.fourBitEqualityPolynomial, FABL.fourBitEqualityPolynomialCoefficients, FABL.fourBitEqualityPolynomial_expansion, FABL.fourierCoeff, FABL.fourier_expansion_unique}
 \difficulty{1}
-On the sign cube $\{\pm1\}^4$, define $P(x)=-3+\sum_{0\le j<k<4}x_jx_k$. For every
+On the sign cube $\{\pm1\}^4$, define $P(x)=-3+\sum_{0\le j<k<4}x_jx_k$. For every
 subset $S\subseteq\{0,1,2,3\}$, the Fourier coefficient of $P$ at $S$ is $-3$ if $S$ is
 empty, $1$ if $S$ has two elements, and $0$ otherwise.
 \end{theorem}
@@ -192,11 +192,11 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsPolynomialThreshold, FABL.fourierCoeff_lowDegreePart, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.fourierWeightAbove, FABL.fourierWeightAboveReal, FABL.isFourierSpectrumConcentratedUpTo_noiseSensitivity, FABL.lowDegreePart, FABL.noiseSensitivity, FABL.relativeHammingDist, FABL.relativeHammingDist_thresholdSign_le_of_uniformLpNorm_two_sq_le, FABL.thresholdSign, FABL.two_div_one_sub_exp_neg_two_mul_noiseSensitivity_le_three, FABL.uniformLpNorm, FABL.uniformLpNorm_sub_lowDegreePart_sq}
 \difficulty{5}
-Let $f:\\{−1,1\\}^n\\to\\{−1,1\\}$ and let $0<\\delta\\le1/2$. There is a Boolean
+Let $f:\{−1,1\}^n\to\{−1,1\}$ and let $0<\delta\le1/2$. There is a Boolean
 function $g$ with a polynomial threshold representation of Fourier degree at most
-$\\lfloor1/\\delta\\rfloor$, such that $\\lfloor1/\\delta\\rfloor\\le1/\\delta$ and the
+$\lfloor1/\delta\rfloor$, such that $\lfloor1/\delta\rfloor\le1/\delta$ and the
 relative Hamming distance between $f$ and $g$ is at most three times the noise
-sensitivity of $f$ at noise rate $\\delta$.
+sensitivity of $f$ at noise rate $\delta$.
 \end{theorem}
 
 \begin{theorem}[Fourier coefficient mass of a threshold function]
@@ -209,7 +209,7 @@ sensitivity of $f$ at noise rate $\\delta$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsPolynomialThresholdRepresentation, FABL.abs_fourierCoeff_le_uniformLpNorm_one, FABL.fourierCoeff, FABL.fourierSupport, FABL.mem_fourierSupport, FABL.plancherel, FABL.thresholdSign_of_neg, FABL.thresholdSign_of_nonneg, FABL.uniformInner, FABL.uniformLpNorm}
 \difficulty{6}
-Let $f:\\{−1,1\\}^n\to\{−1,1\}$ be a Boolean function, let $p:\\{−1,1\\}^n\to\mathbb R$
+Let $f:\{−1,1\}^n\to\{−1,1\}$ be a Boolean function, let $p:\{−1,1\}^n\to\mathbb R$
 be a nonzero function, and let $\mathcal F$ be a family of subsets of $[n]$. Suppose
 $f(x)$ is the sign of $p(x)$, with zero assigned the positive sign, for every input $x$,
 and every set with a nonzero Fourier coefficient of $p$ belongs to $\mathcal F$. Then

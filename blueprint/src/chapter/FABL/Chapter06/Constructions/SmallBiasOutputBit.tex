@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Constructions.SmallBiasOu
 \label{FABL.executableBinaryDotProductState}
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryCoefficientAt, FABL.𝔽₂}
-For two binary vectors $a,b$ of length $$ and each natural number $k$, define a state
+For two binary vectors $a,b$ of length $\ell$ and each natural number $k$, define a state
 recursively by $S_0=0$ and $S_{k+1}=S_k+a_kb_k$, where a coefficient at an index outside
 the vectors' range is interpreted as zero.
 \end{definition}
@@ -79,8 +79,8 @@ from $r$ and $s$.
 \label{FABL.executableBinaryDotProductWork}
 \leanok
 \uses{FABL.binaryConstructorTraversalWork}
-For a natural number $$, define the work count to be the binary constructor traversal
-work with parameter $2$ on the list of natural numbers from $0$ through $-1$.
+For a natural number $\ell$, define the work count to be the binary constructor traversal
+work with parameter $2$ on the list of natural numbers from $0$ through $\ell-1$.
 \end{definition}
 
 \begin{theorem}[Binary dot product work]

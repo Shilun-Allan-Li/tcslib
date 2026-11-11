@@ -14,6 +14,9 @@ HARD (exit 1 with --strict)
                     `:= sorry`
     proof-flag      `proof_complete` disagrees with whether `proof` contains `sorry`
     stub-prose      the informal statement is a blueprint_stub.py placeholder
+    corrupt-text    prose or inherited definitions contain nonprinting controls
+                    or Unicode replacement characters
+    latex-escape    prose contains doubled backslashes before TeX commands
     informal-source `statement_source` is not `citation` / `lean`, `proof_source` is not
                     `citation` / `lean` / `none`, `informal_statement` is empty, or
                     `informal_proof` is empty exactly when `proof_source` is not `none`
@@ -68,6 +71,7 @@ sys.path.insert(0, str(BASE))
 from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
 from scripts import dataset_projects as dp  # noqa: E402
 from scripts.informal_sources import is_tactic_transcript, statement_part  # noqa: E402
+from scripts.statement_quality import corrupt_characters, overescaped_latex  # noqa: E402
 
 DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 LEAN_CHECK = BASE / "scripts" / "lean_check.sh"
@@ -97,7 +101,25 @@ SCHEMA: dict[str, tuple[type, ...]] = {
 }
 
 HARD = {"schema", "duplicate-id", "formal-leak", "formal-shape", "proof-flag",
-        "stub-prose", "informal-source", "row-loss", "lean-error"}
+        "stub-prose", "informal-source", "row-loss", "lean-error", "corrupt-text",
+        "latex-escape"}
+
+
+def corrupt_prose_fields(record: dict, predicate=corrupt_characters) -> list[str]:
+    """Locate corrupt prose, including definitions inherited by a theorem."""
+    found = []
+    for key in ("title", "informal_statement", "informal_proof"):
+        text = record.get(key)
+        if isinstance(text, str) and predicate(text):
+            found.append(key)
+    for i, definition in enumerate(record.get("definitions", [])):
+        if not isinstance(definition, dict):
+            continue
+        for key in ("title", "informal"):
+            text = definition.get(key)
+            if isinstance(text, str) and predicate(text):
+                found.append(f"definitions[{i}].{key}")
+    return found
 STATEMENT_SOURCES = {"citation", "lean"}
 PROOF_SOURCES = {"citation", "lean", "none"}
 
@@ -233,6 +255,10 @@ def main() -> int:
         if rid in seen:
             findings["duplicate-id"].append(rid)
         seen.add(rid)
+        for field in corrupt_prose_fields(record):
+            findings["corrupt-text"].append(f"{rid}: {field}")
+        for field in corrupt_prose_fields(record, overescaped_latex):
+            findings["latex-escape"].append(f"{rid}: {field}")
 
     # formal statements
     for record in records:

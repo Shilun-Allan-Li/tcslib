@@ -5,6 +5,6 @@
 
 # Fourier Support Characterization
 
-**Claim.** A vector $[200m\gamma[0m$ belongs to the vector Fourier support of $f$ exactly when its vector Fourier coefficient is nonzero.
+**Claim.** A vector $\gamma$ belongs to the vector Fourier support of $f$ exactly when its vector Fourier coefficient is nonzero.
 
-**Proof.** The vector Fourier support is defined as the set of vectors whose vector Fourier coefficient is nonzero. Since $[200m\gamma[0m$ is one of the vectors in the ambient space, its membership in this filtered set is equivalent to the coefficient being nonzero.
+**Proof.** The vector Fourier support is defined as the set of vectors whose vector Fourier coefficient is nonzero. Since $\gamma$ is one of the vectors in the ambient space, its membership in this filtered set is equivalent to the coefficient being nonzero.

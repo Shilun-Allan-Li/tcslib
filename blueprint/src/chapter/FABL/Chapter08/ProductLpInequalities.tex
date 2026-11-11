@@ -784,12 +784,12 @@ with all other coordinates fixed at $x$.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.productMean_projectOnCoordinates, FABL.ProductL2, FABL.coordinateConditionalAbsMoment, FABL.coordinateConditionalAbsMoment_eq_coordinateProjection, FABL.coordinateProjection, FABL.productCoordinateLaplacian, FABL.productMean}
 \difficulty{3}
-Let $[?]$ be a finite nonempty set with probability mass function $[?]$, and let a
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let a
 finite nonempty index set label an orthonormal basis of real functions on that set
 containing the constant-one function. For a positive integer $n$, a real exponent $p$, a
-function $f$ on $[?]^n$, and a coordinate $i$, define the conditional centered $p$th
+function $f$ on $\Omega^n$, and a coordinate $i$, define the conditional centered $p$th
 absolute moment at $x$ by averaging
-$|f(x_{-i},\omega)-\mathbb{E}_{\omega'}f(x_{-i},\omega')|^p$ over $[?]$, where $x_{-i}$
+$|f(x_{-i},\omega)-\mathbb{E}_{\omega'}f(x_{-i},\omega')|^p$ over $\pi$, where $x_{-i}$
 denotes all coordinates other than $i$. Then the product-measure mean of $|L_i f|^p$,
 where $L_i f$ is $f$ minus its average over coordinate $i$, equals the product-measure
 mean of this conditional centered moment.
@@ -859,10 +859,10 @@ mean of $|f|^p$.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.productMean_abs_laplacian_rpow_le_two_rpow_influence, FABL.HasSignRange, FABL.ProductL2, FABL.productCoordinateLaplacian, FABL.productInfluence, FABL.productLpNorm, FABL.productLpNorm_rpow_eq_productMean_abs_rpow}
 \difficulty{3}
-Let $[?]$ be a finite nonempty set with probability mass function $[?]$, and let a
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let a
 finite nonempty index set label an orthonormal basis of real functions on that set
 containing the constant-one function. For a positive integer $n$, let $f$ be a function
-on $[?]^n$ taking values only in $[?]$, and let $L_i f$ be $f$ minus its average over
+on $\Omega^n$ taking values only in $\{-1,1\}$, and let $L_i f$ be $f$ minus its average over
 coordinate $i$. For every real $p\geq1$, the $p$th power of the product-measure $L^p$
 norm of $L_i f$ is at most $2^p$ times the coordinate influence $\langle L_i f,L_i
 f\rangle$.
@@ -874,10 +874,10 @@ f\rangle$.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.productMean_abs_laplacian_rpow_le_influence, FABL.HasSignRange, FABL.ProductL2, FABL.productCoordinateLaplacian, FABL.productInfluence, FABL.productLpNorm, FABL.productLpNorm_rpow_eq_productMean_abs_rpow}
 \difficulty{3}
-Let $[?]$ be a finite nonempty set with probability mass function $[?]$, and let a
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let a
 finite nonempty index set label an orthonormal basis of real functions on that set
 containing the constant-one function. For a positive integer $n$, let $f$ be a function
-on $[?]^n$ taking values only in $[?]$, and let $L_i f$ be $f$ minus its average over
+on $\Omega^n$ taking values only in $\{-1,1\}$, and let $L_i f$ be $f$ minus its average over
 coordinate $i$. For every real $p$ with $1\leq p\leq2$, the $p$th power of the
 product-measure $L^p$ norm of $L_i f$ is at most the coordinate influence $\langle L_i
 f,L_i f\rangle$.
@@ -975,13 +975,13 @@ $x\in\Omega^n$.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.abs_anisotropicProductNoiseOperator_rpow_le, FABL.FiniteFourierBasis.productMean_anisotropicProductNoiseOperator, FABL.ProductL2, FABL.anisotropicProductNoiseOperator, FABL.pmfExpectation_mono, FABL.productMean}
 \difficulty{4}
-Let $[?]$ be a finite nonempty set with probability mass function $[?]$, and let a
+Let $\Omega$ be a finite nonempty set with probability mass function $\pi$, and let a
 finite nonempty index set label an orthonormal basis of real functions on that set
 containing the constant-one function. For a positive integer $n$, choose real noise
 parameters $\rho_i\in[0,1]$ for each coordinate, and let $T_\rho f$ be the Fourier
-operator that multiplies each product-basis coefficient by the product of the $[?]$
+operator that multiplies each product-basis coefficient by the product of the $\rho_i$
 over coordinates where its basis index is nonconstant. Then for every real-valued
-function $f$ on $[?]^n$ and every real $p\geq1$, the product-measure mean of $|T_\rho
+function $f$ on $\Omega^n$ and every real $p\geq1$, the product-measure mean of $|T_\rho
 f|^p$ is at most the product-measure mean of $|f|^p$.
 \end{theorem}
 

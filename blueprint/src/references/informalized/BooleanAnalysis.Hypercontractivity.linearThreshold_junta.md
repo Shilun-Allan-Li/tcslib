@@ -5,7 +5,7 @@
 
 # Linear-Threshold Junta Approximation
 
-**Claim.** There is a universal positive constant $C$ such that every $7$-valued linear threshold function has, for the stated error and parameter ranges, a junta approximant with error at most $\varepsilon$ and size at most $I[f]^{2+\eta}(1/\eta)^{C/\varepsilon^2}$.
+**Claim.** There is a universal positive constant $C$ such that every $\{-1,1\}$-valued linear threshold function has, for the stated error and parameter ranges, a junta approximant with error at most $\varepsilon$ and size at most $I[f]^{2+\eta}(1/\eta)^{C/\varepsilon^2}$.
 
 **Proof.** Choose a constant $B\geq1$ from the Fourier-tail cutoff theorem and set $C=200B$. For the given $f,\varepsilon,\eta$, total influence $I[f]$ is nonnegative, since it equals a sum of nonnegative squared Fourier coefficients weighted by degrees. Split into two cases.
 

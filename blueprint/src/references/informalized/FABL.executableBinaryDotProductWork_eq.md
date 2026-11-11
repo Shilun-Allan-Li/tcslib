@@ -5,7 +5,7 @@
 
 # Work of the binary dot product
 
-**Claim.** For every $$-length input, the assigned work of the executable binary dot product is $2\ell$.
+**Claim.** For every $\ell$-length input, the assigned work of the executable binary dot product is $2\ell$.
 
 **Proof.** The traversal processes the list of indices from $0$ through $\ell-1$, charging work $2$ for each item. The traversal-work formula (\texttt{binaryConstructorTraversalWork\_eq}) says that total work is list length times per-item work. The list has length $\ell$, so the total is $\ell\cdot2=2\ell$.
 

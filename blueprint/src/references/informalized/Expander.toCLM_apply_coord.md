@@ -5,8 +5,8 @@
 
 # Matrix Operator Coordinates
 
-**Claim.** For a real matrix $A$ indexed by $	ext{Fin}(n)$ and a vector $v$ in Euclidean space, the $i$th coordinate of the operator associated with $A$ applied to $v$ is $[?]$
+**Claim.** For a real matrix $A$ indexed by $\mathrm{Fin}(n)$ and a vector $v$, the $i$th coordinate of the operator associated with $A$ applied to $v$ is $\sum_j A_{ij}v_j$.
 
-**Proof.** By the definition of the operator associated with $A$, its action is the matrix–vector product. Evaluating that product at coordinate $i$ gives the finite sum $[?]$.
+**Proof.** By the definition of the operator associated with $A$, its action is the matrix–vector product. Evaluating that product at coordinate $i$ gives $\sum_j A_{ij}v_j$.
 
 **Caveat.** The supplied informal statement specifies the sum as $\sum_j A_{ij}v_j$, but the output schema payload appears to have corrupted mathematical text in the claim field; the proof source itself is definitional.

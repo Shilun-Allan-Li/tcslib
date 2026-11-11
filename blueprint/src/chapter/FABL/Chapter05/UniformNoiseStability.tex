@@ -80,7 +80,7 @@ $w$ to $f$ evaluated at the vector whose $i$th coordinate is $z_i w_{\pi(i)}$.
 \uses{FABL.BooleanClass, FABL.BooleanFunction, FABL.IsClosedUnderIdentifyingInputVariables, FABL.IsClosedUnderNegatingInputVariables, FABL.identifyInputVariables, FABL.negateInputVariables, FABL.partitionFunction}
 \difficulty{3}
 Let $B$ assign to each dimension $k$ a class of functions from the $k$-dimensional sign
-cube to ${-1,1}$. Suppose $B$ is closed under independently negating input coordinates
+cube to $\{-1,1\}$. Suppose $B$ is closed under independently negating input coordinates
 and under identifying input coordinates. Then for every $f\in B_n$, every sign vector
 $z\in\{-1,1\}^n$, and every map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, the function
 $w\mapsto f\bigl((z_iw_{\pi(i)})_{i=1}^n\bigr)$ belongs to $B_m$.
@@ -1138,11 +1138,11 @@ new sign vector by reversing $x_i$ when $\pi(i)=j$ and leaving it unchanged othe
 \uses{FABL.BooleanFunction, FABL.flipCoordinate, FABL.flipPartitionFiber, FABL.partitionFunction, FABL.setCoordinate, FABL.uniformProbability}
 \difficulty{4}
 Let $n,m$ be natural numbers, let $f$ map sign vectors of length $n$ to signs, let
-$pi:bfntobfm$ be a coordinate map, and choose a sign vector $w$ of length $m$ and an
+$\pi:\bfn\to\bfm$ be a coordinate map, and choose a sign vector $w$ of length $m$ and an
 index $j<m$. The uniform probability over sign vectors $z$ of length $n$ that the values
 of the partition function at $w$ and at the vector obtained by flipping coordinate $j$
 differ equals the uniform probability over sign vectors $x$ of length $n$ that $f(x)$
-differs from its value after flipping every coordinate $i$ for which $pi(i)=j$.
+differs from its value after flipping every coordinate $i$ for which $\pi(i)=j$.
 \end{theorem}
 
 \begin{theorem}[Partition flips and noise sensitivity]

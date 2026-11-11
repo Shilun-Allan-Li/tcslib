@@ -5,6 +5,6 @@
 
 # Boolean input encoding identity
 
-**Claim.** For every input index, encoding the Boolean value obtained by decoding its coordinate in $z$ recovers that coordinate in $[?]$.
+**Claim.** For every input index, encoding the Boolean value obtained by decoding its coordinate in $z$ recovers that coordinate in $\mathbb{F}_2$.
 
 **Proof.** The circuit's input assignment is defined by decoding the coordinate of $z$ corresponding to the chosen input index. Since the encoding and decoding maps are inverse equivalences, encoding that decoded value returns the original coordinate.

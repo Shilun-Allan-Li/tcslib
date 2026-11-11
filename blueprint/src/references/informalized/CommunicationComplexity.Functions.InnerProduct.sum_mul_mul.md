@@ -5,6 +5,6 @@
 
 # Factoring constants from a sum
 
-**Claim.** For finite lphalpha and real-valued functions  and g, the sum of a f(x) times b g(x) equals a b times the sum of f(x)g(x).
+**Claim.** Let $\alpha$ be a finite type, let $a,b\in\mathbb R$, and let $f,g:\alpha\to\mathbb R$. Then $\sum_{x:\alpha}(a f(x))(b g(x))=ab\sum_{x:\alpha}f(x)g(x)$.
 
 **Proof.** For each index $x$, commutativity and associativity of real multiplication give $(a f(x))(b g(x))=(ab)(f(x)g(x))$. Summing these terms factors the constant $ab$ out of the finite sum, yielding the stated identity.

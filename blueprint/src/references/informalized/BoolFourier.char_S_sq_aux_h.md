@@ -7,6 +7,6 @@
 
 **Claim.** For every subset of coordinates and every point of the Boolean hypercube, the square of the Walsh character is $1$.
 
-**Proof.** This is the identity for $[1mchi_S[0m$ supplied by the Boolean-cube character lemma `chiS_sq_eq_one`: the product of the character with itself at any point equals $1$.
+**Proof.** This is the identity for $chi_S$ supplied by the Boolean-cube character lemma `chiS_sq_eq_one`: the product of the character with itself at any point equals $1$.
 
 **Key facts.** `BooleanAnalysis.chiS_sq_eq_one`.

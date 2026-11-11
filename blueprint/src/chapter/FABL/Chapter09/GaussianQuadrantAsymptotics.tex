@@ -281,7 +281,7 @@ For a real parameter $0<\rho<1$, define the Gaussian conditional slope by $\disp
 \leanok
 \uses{FABL.correlationResidualVariance_pos, FABL.gaussianConditionalSlope}
 \difficulty{3}
-For every $ho\in(0,1)$, the Gaussian conditional slope $rac{1-ho}{\sqrt{1-ho^2}}$ is
+For every $\rho\in(0,1)$, the Gaussian conditional slope $\frac{1-\rho}{\sqrt{1-\rho^2}}$ is
 positive.
 \end{theorem}
 
@@ -365,8 +365,8 @@ $e^{-3/2}/t$, is at most the standard Gaussian probability of the interval $(t,t
 \leanok
 \uses{FABL.correlationResidualVariance_pos, FABL.gaussianConditionalSlope}
 \difficulty{4}
-For every $ho\in(0,1)$, the square of the Gaussian conditional slope satisfies
-$igl(rac{1-ho}{\sqrt{1-ho^2}}igr)^2=rac{1-ho}{1+ho}$.
+For every $\rho\in(0,1)$, the square of the Gaussian conditional slope satisfies
+$\bigl(\frac{1-\rho}{\sqrt{1-\rho^2}}\bigr)^2=\frac{1-\rho}{1+\rho}$.
 \end{theorem}
 
 \begin{theorem}[Squared Gaussian conditional slope identity]
@@ -411,8 +411,8 @@ $(2\pi)^{-1}\exp\!\left(-t^2/(1+\rho)\right)$.
 \leanok
 \uses{FABL.gaussianConditionalSlope, FABL.gaussianConditionalSlope_pos}
 \difficulty{4}
-Let $ho\in(0,1)$ and $t\inbR$ with $1\le t$. If $s=(1-ho)/\sqrt{1-ho^2}$ is the
-Gaussian conditional slope, then $rac{s}{(1+s^2)t^2}\lerac{s}{1+s^2t^2}$.
+Let $\rho\in(0,1)$ and $t\in\bbR$ with $1\le t$. If $s=(1-\rho)/\sqrt{1-\rho^2}$ is the
+Gaussian conditional slope, then $\frac{s}{(1+s^2)t^2}\le\frac{s}{1+s^2t^2}$.
 \end{theorem}
 
 \begin{definition}[Gaussian quadrant lower constant]
@@ -603,9 +603,9 @@ that quantile and $C_\rho$ is the stated positive constant depending on $\rho$.
 \label{FABL.gaussianBadTailAtThreshold}
 \leanok
 \uses{FABL.standardGaussianUpperTail}
-Let $Z$ be a standard normal random variable. For $ho	ext{ with }0<ho<1$ and $t	ext{
-in }br$, define the Gaussian bad tail at threshold $t$ to be
-$bP\bigl(Z>(t-1)/\rho\bigr)$.
+Let $Z$ be a standard normal random variable. For $\rho	ext{ with }0<\rho<1$ and $t	ext{
+in }\bbr$, define the Gaussian bad tail at threshold $t$ to be
+$\bbP\bigl(Z>(t-1)/\rho\bigr)$.
 \end{definition}
 
 \begin{theorem}[Shifted correlation quotient tends to infinity]
@@ -663,10 +663,10 @@ tail at threshold equal to the standard Gaussian upper quantile of $\mu$.
 \leanok
 \uses{FABL.HasSoftPowerAtZero, FABL.gaussianBadTailProbability, FABL.standardGaussianUpperTail_quantile, FABL.tendsto_log_gaussianBadTail_div_tailLog, FABL.tendsto_standardGaussianUpperQuantile_atBot}
 \difficulty{3}
-For every $ho\in(0,1)$, as $\mu	o0$ through $(0,1)$, the logarithmic ratio of the
-Gaussian bad-tail probability to $\log\mu$ tends to $1/ho^2$; that is, $rac{\log
-P_ho(\mu)}{\log\mu}	o1/ho^2$, where $P_ho(\mu)$ is the Gaussian bad-tail probability
-defined using the standard Gaussian upper quantile and threshold $(t-1)/ho$.
+For every $\rho\in(0,1)$, as $\mu	o0$ through $(0,1)$, the logarithmic ratio of the
+Gaussian bad-tail probability to $\log\mu$ tends to $1/\rho^2$; that is, $\frac{\log
+P_\rho(\mu)}{\log\mu}	o1/\rho^2$, where $P_\rho(\mu)$ is the Gaussian bad-tail probability
+defined using the standard Gaussian upper quantile and threshold $(t-1)/\rho$.
 \end{theorem}
 
 \begin{theorem}[Comparison of two powers]
@@ -684,7 +684,7 @@ For every real number $\rho$ with $0<\rho<1$, one has
 \leanok
 \uses{FABL.gaussianBadTailProbability, FABL.gaussianBadTailProbability_hasSoftPower, FABL.mainPower_lt_badTailPower, FABL.standardGaussianUpperTail_pos}
 \difficulty{6}
-For every $ho\in(0,1)$, as $\mu	o0$ through $(0,1)$, the Gaussian bad-tail probability
-$P_ho(\mu)$ is little-o of $\mu^{2/(1+ho)}$; equivalently,
-$rac{P_ho(\mu)}{\mu^{2/(1+ho)}}	o0$.
+For every $\rho\in(0,1)$, as $\mu	o0$ through $(0,1)$, the Gaussian bad-tail probability
+$P_\rho(\mu)$ is little-o of $\mu^{2/(1+\rho)}$; equivalently,
+$\frac{P_\rho(\mu)}{\mu^{2/(1+\rho)}}	o0$.
 \end{theorem}

@@ -222,7 +222,7 @@ The text notes that perfect matching has deterministic polynomial-time algorithm
 
 <a id="pdf-bf2ce5422088-p019-b001"></a>
 <!-- pdf-source: page=19; block=1; confidence=0.98 -->
-**Algorithm 2.7.** For a bipartite graph with both sides indexed by [n] and edge set \(E\subseteq[n]\times[n]\), form the matrix \(A(x)\) with \(A_{i,j}(x)=x_{i,j}\) when \((i,j)\in E\), and \(A_{i,j}(x)=0\) otherwise.
+**Algorithm 2.7.** For a bipartite graph with both sides indexed by $[n]$ and edge set \(E\subseteq[n]\times[n]\), form the matrix \(A(x)\) with \(A_{i,j}(x)=x_{i,j}\) when \((i,j)\in E\), and \(A_{i,j}(x)=0\) otherwise.
 
 <a id="pdf-bf2ce5422088-p019-b002"></a>
 <!-- pdf-source: page=19; block=2; confidence=0.99 -->
@@ -917,7 +917,7 @@ The text begins introducing MA as a relaxation of NP in which the verifier $V$ i
 
 <a id="pdf-bf2ce5422088-p049-b001"></a>
 <!-- pdf-source: page=49; block=1; confidence=0.97 -->
-For a promise problem [Π=(Π_Y,Π_N) where verifier [V] accepts yes instances with probability at least [2/3] and no instances with probability at most [1/3], assume a randomized polynomial-time algorithm outputs a witness [y∈{0,1}^{p(n)}] with [(x,y)∈Π_Y] with probability at least [2/3]. Show that [\mathrm{prBPP}=\mathrm{prP}] implies a deterministic polynomial-time algorithm always outputs [y] with [(x,y)∉Π_N]. For languages, this is equivalent to finding a yes witness; for general promise problems it is weaker.
+For a promise problem $Π=(Π_Y,Π_N)$ where the verifier accepts yes instances with probability at least $2/3$ and no instances with probability at most $1/3$, assume a randomized polynomial-time algorithm outputs a witness $y\in\{0,1\}^{p(n)}$ with $(x,y)\in Π_Y$ with probability at least $2/3$. Show that $\mathrm{prBPP}=\mathrm{prP}$ implies a deterministic polynomial-time algorithm always outputs a string $y$ with $(x,y)\notin Π_N$. For languages, this is equivalent to finding a yes witness; for general promise problems it is weaker.
 
 <a id="pdf-bf2ce5422088-p049-b002"></a>
 <!-- pdf-source: page=49; block=2; confidence=0.99 -->
@@ -945,7 +945,7 @@ The computational view of sampling is surveyed in cited work; sampling illustrat
 
 <a id="pdf-bf2ce5422088-p050-b004"></a>
 <!-- pdf-source: page=50; block=4; confidence=0.98 -->
-Promise problems are attributed to Even, Selman, and Yacobi; a survey discusses their role in complexity theory. Problem 2.11, concerning consequences of [\mathrm{prBPP}=\mathrm{prP}], is attributed to a cited source.
+Promise problems are attributed to Even, Selman, and Yacobi; a survey discusses their role in complexity theory. Problem 2.11, concerning consequences of $\mathrm{prBPP}=\mathrm{prP}$, is attributed to a cited source.
 
 <a id="pdf-bf2ce5422088-p051-b001"></a>
 <!-- pdf-source: page=51; block=1; confidence=0.94 -->
@@ -953,7 +953,7 @@ The randomized algorithm for `[(1 + ε)]`-Approx #DNF is due to Karp and Luby [2
 
 <a id="pdf-bf2ce5422088-p051-b002"></a>
 <!-- pdf-source: page=51; block=2; confidence=0.98 -->
-Savitch’s [O(\log^2 n)]-space algorithm for directed [S\text{-}T] connectivity, together with its completeness for [\mathrm{NL}], gives [\mathrm{NL}\subseteq\mathrm{L}^2], where [\mathrm{L}^c] denotes deterministic space [O(\log^c n)]. Its general form is [\mathrm{NSPACE}(s(n))\subseteq\mathrm{DSPACE}(s(n)^2)]. The notes credit the randomized undirected-connectivity algorithm to Aleliunas et al. and its derandomization to Reingold.
+Savitch’s $\log^2 n$-space algorithm for directed $s$-$t$ connectivity, together with its completeness for $\mathrm{NL}$, gives $\mathrm{NL}\subseteq\mathrm{DSPACE}(\log^2 n)$, where $\mathrm{DSPACE}(\log^c n)$ denotes deterministic space $\log^c n$. Its general form is $\mathrm{NSPACE}(s(n))\subseteq\mathrm{DSPACE}(s(n)^2)$. The notes credit the randomized undirected-connectivity algorithm to Aleliunas et al. and its derandomization to Reingold.
 
 <a id="pdf-bf2ce5422088-p051-b003"></a>
 <!-- pdf-source: page=51; block=3; confidence=0.98 -->
@@ -961,7 +961,7 @@ For background on random walks, mixing, and Markov chain Monte Carlo, the notes 
 
 <a id="pdf-bf2ce5422088-p051-b004"></a>
 <!-- pdf-source: page=51; block=4; confidence=0.98 -->
-The bound in Theorem 2.49 is not sharp in general; for simple regular graphs it can be improved to [\Theta(n^2)].
+The bound in Theorem 2.49 is not sharp in general; for simple regular graphs it can be improved to $\Theta(n^2)$.
 
 <a id="pdf-bf2ce5422088-p051-b005"></a>
 <!-- pdf-source: page=51; block=5; confidence=0.98 -->
@@ -969,7 +969,7 @@ Although the exposition emphasizes undirected graphs, many results extend to reg
 
 <a id="pdf-bf2ce5422088-p051-b006"></a>
 <!-- pdf-source: page=51; block=6; confidence=0.90 -->
-The Spectral Theorem (Theorem 2.54) is standard linear algebra. A cited strengthening of Problem 2.9 gives [\gamma(G)=\Omega(1/(dD n))], implying the tight lower bound [\gamma(G)=\Omega(1/n^2)] for simple graphs when [D=O(n/d)]. The notes direct readers to a survey for broader spectral graph theory.
+The Spectral Theorem (Theorem 2.54) is standard linear algebra. A cited strengthening of Problem 2.9 gives $\gamma(G)=\Omega(1/(dD n))$, implying the tight lower bound $\gamma(G)=\Omega(1/n^2)$ for simple graphs when $D=O(n/d)$. The notes direct readers to a survey for broader spectral graph theory.
 
 <a id="pdf-bf2ce5422088-p052-b001"></a>
 <!-- pdf-source: page=52; block=1; confidence=1.00 -->
@@ -3022,7 +3022,7 @@ Adjacent symbols overlap in all but one component, suggesting that roughly one i
 
 <a id="pdf-bf2ce5422088-p151-b001"></a>
 <!-- pdf-source: page=151; block=1; confidence=0.98 -->
-The folded Reed–Solomon construction is introduced after noting its rate is  rho=d/q, as for Reed–Solomon codes.
+The folded Reed–Solomon construction is introduced after noting its rate is $\rho=d/q$, as for Reed–Solomon codes.
 
 <a id="pdf-bf2ce5422088-p151-b002"></a>
 <!-- pdf-source: page=151; block=2; confidence=0.99 -->
@@ -3845,7 +3845,7 @@ The proposition does not give an exact list-decoding characterization of extract
 
 <a id="pdf-bf2ce5422088-p190-b002"></a>
 <!-- pdf-source: page=190; block=2; confidence=0.92 -->
-Extractor and averaging-sampler formulations differ mainly in perspective: sampler error is delta=K/N=2^k/2^n, while extractors emphasize the min-entropy threshold k. The sampler view is useful when delta is relatively large versus 1/N; the extractor view is useful near 1/N. When k=o(n), the corresponding sampler error is delta=2^{-(1-o(1))n}, so each of its n random bits nearly halves the error.
+Extractor and averaging-sampler formulations differ mainly in perspective: sampler error is $delta=K/N=2^k/2^n$, while extractors emphasize the min-entropy threshold $k$. The sampler view is useful when $delta$ is relatively large versus $1/N$; the extractor view is useful near $1/N$. When $k=o(n)$, the corresponding sampler error is $delta=2^{-(1-o(1))n}$, so each of its $n$ random bits nearly halves the error.
 
 <a id="pdf-bf2ce5422088-p190-b003"></a>
 <!-- pdf-source: page=190; block=3; confidence=0.98 -->
@@ -3853,7 +3853,7 @@ Strong extractors are closely related to list-decodable codes when the output al
 
 <a id="pdf-bf2ce5422088-p190-b004"></a>
 <!-- pdf-source: page=190; block=4; confidence=0.99 -->
-**Proposition 6.25.** Suppose \mathrm{Ext}:[N]\times[D]\to[M] and \mathrm{Enc}:[N]	o[M]^D satisfy \mathrm{Ext}(x,y)=\mathrm{Enc}(x)_y, and let K=2^k\in\mathbb N. (1) If \mathrm{Ext} is a strong (k,\varepsilon) extractor, then \mathrm{Enc} is (1-1/M-\varepsilon,K) list-decodable. (2) If \mathrm{Enc} is (1-1/M-\varepsilon,K) list-decodable, then \mathrm{Ext} is a strong (k+\log(1/\varepsilon),M\varepsilon) extractor.
+**Proposition 6.25.** Suppose $\mathrm{Ext}:[N]\times[D]\to[M]$ and $\mathrm{Enc}:[N]	o[M]^D$ satisfy $\mathrm{Ext}(x,y)=\mathrm{Enc}(x)_y$, and let $K=2^k\in\mathbb N$. (1) If $\mathrm{Ext}$ is a strong $(k,\varepsilon)$ extractor, then $\mathrm{Enc}$ is $(1-1/M-\varepsilon,K)$ list-decodable. (2) If $\mathrm{Enc}$ is $(1-1/M-\varepsilon,K)$ list-decodable, then $\mathrm{Ext}$ is a strong $(k+\log(1/\varepsilon),M\varepsilon)$ extractor.
 
 <a id="pdf-bf2ce5422088-p190-b005"></a>
 <!-- pdf-source: page=190; block=5; confidence=0.99 -->
@@ -3901,7 +3901,7 @@ The section introduces a structured source model to facilitate extractor constru
 
 <a id="pdf-bf2ce5422088-p192-b001"></a>
 <!-- pdf-source: page=192; block=1; confidence=0.99 -->
-**Definition 6.26.** A tuple-valued random variable X=(X_1,\ldots,X_t) is a (k_1,\ldots,k_t) block source if for each i and every preceding block assignment x_1,\ldots,x_{i-1}, the conditional variable X_i\mid X_1=x_1,\ldots,X_{i-1}=x_{i-1} is a k_i-source. When all k_i=k, it is called a t\times k block source.
+**Definition 6.26.** A tuple-valued random variable $X=(X_1,\ldots,X_t)$ is a $(k_1,\ldots,k_t)$ block source if for each $i$ and every preceding block assignment $x_1,\ldots,x_{i-1}$, the conditional variable $X_i\mid X_1=x_1,\ldots,X_{i-1}=x_{i-1}$ is a $k_i$-source. When all $k_i=k$, it is called a $t\times k$ block source.
 
 <a id="pdf-bf2ce5422088-p192-b002"></a>
 <!-- pdf-source: page=192; block=2; confidence=0.99 -->
@@ -3913,7 +3913,7 @@ For two blocks, extract nearly uniform bits from the later block, which are esse
 
 <a id="pdf-bf2ce5422088-p192-b004"></a>
 <!-- pdf-source: page=192; block=4; confidence=0.99 -->
-**Lemma 6.27.** Let \mathrm{Ext}_1:\{0,1\}^{n_1}\times\{0,1\}^{d_1}\to\{0,1\}^{m_1} be a (k_1,\varepsilon_1)-extractor and \mathrm{Ext}_2:\{0,1\}^{n_2}\times\{0,1\}^{d_2}\to\{0,1\}^{m_2} a (k_2,\varepsilon_2)-extractor, with m_2\ge d_1. Define \mathrm{Ext}'((x_1,x_2),y_2)=(\mathrm{Ext}_1(x_1,y_1),z_2), where (y_1,z_2) splits \mathrm{Ext}_2(x_2,y_2) into a prefix of length d_1 and a suffix of length m_2-d_1. For every (k_1,k_2) block source X=(X_1,X_2) on \{0,1\}^{n_1}\times\{0,1\}^{n_2}, the output \mathrm{Ext}'(X,U_{d_2}) is (\varepsilon_1+\varepsilon_2)-close to U_{m_1}\times U_{m_2-d_1}.
+**Lemma 6.27.** Let $\mathrm{Ext}_1:\{0,1\}^{n_1}\times\{0,1\}^{d_1}\to\{0,1\}^{m_1}$ be a $(k_1,\varepsilon_1)$-extractor and $\mathrm{Ext}_2:\{0,1\}^{n_2}\times\{0,1\}^{d_2}\to\{0,1\}^{m_2}$ a $(k_2,\varepsilon_2)$-extractor, with $m_2\ge d_1$. Define $\mathrm{Ext}'((x_1,x_2),y_2)=(\mathrm{Ext}_1(x_1,y_1),z_2)$, where $(y_1,z_2)$ splits $\mathrm{Ext}_2(x_2,y_2)$ into a prefix of length $d_1$ and a suffix of length $m_2-d_1$. For every $(k_1,k_2)$ block source $X=(X_1,X_2)$ on $\{0,1\}^{n_1}\times\{0,1\}^{n_2}$, the output $\mathrm{Ext}'(X,U_{d_2})$ is $(\varepsilon_1+\varepsilon_2)$-close to $U_{m_1}\times U_{m_2-d_1}$.
 
 <a id="pdf-bf2ce5422088-p193-b001"></a>
 <!-- pdf-source: page=193; block=1; confidence=0.99 -->
@@ -4237,7 +4237,7 @@ Show that if $\mathrm{Ext}:\{0,1\}^n\times\{0,1\}^d\to\{0,1\}^m$ is a $(k,1)$ R�
 
 <a id="pdf-bf2ce5422088-p208-b003"></a>
 <!-- pdf-source: page=208; block=3; confidence=0.98 -->
-For constants \varepsilon,\alpha>0, show that some constant \beta<1 allows, for every n, an explicit (\beta n,\varepsilon) extractor with seed length d\le\log n and output length m\ge(1-\alpha)n.
+For constants $\varepsilon,\alpha>0$, show that some constant $\beta<1$ allows, for every $n$, an explicit $(\beta n,\varepsilon)$ extractor with seed length $d\le\log n$ and output length $m\ge(1-\alpha)n$.
 
 <a id="pdf-bf2ce5422088-p208-b004"></a>
 <!-- pdf-source: page=208; block=4; confidence=0.96 -->
@@ -4253,7 +4253,7 @@ Suppose we are given a constant-error BPP algorithm that uses $r=r(n)$ random bi
 
 <a id="pdf-bf2ce5422088-p208-b007"></a>
 <!-- pdf-source: page=208; block=7; confidence=0.94 -->
-If a source X\in\{0,1\}^n satisfies \Pr[X=x]/\Pr[X=y]\le(1-\delta)/\delta for all x,y, show that X\in\mathrm{UnpredBits}_{n,\delta}.
+If a source $X\in\{0,1\}^n$ satisfies $\Pr[X=x]/\Pr[X=y]\le(1-\delta)/\delta$ for all $x,y$, show that $X\in\mathrm{UnpredBits}_{n,\delta}$.
 
 <a id="pdf-bf2ce5422088-p208-b008"></a>
 <!-- pdf-source: page=208; block=8; confidence=0.99 -->
@@ -4261,11 +4261,11 @@ For every function $\mathrm{Ext}:\{0,1\}^n\to\{0,1\}$ and every $\delta>0$, ther
 
 <a id="pdf-bf2ce5422088-p209-b001"></a>
 <!-- pdf-source: page=209; block=1; confidence=0.98 -->
-Show how to extract from \mathrm{UnpredBits}_{n,\delta} sources using a seeded extractor whose seed length depends on \delta and the target statistical error \varepsilon, but not on source length n, while extracting \Omega(\delta n) bits.
+Show how to extract from $\mathrm{UnpredBits}_{n,\delta}$ sources using a seeded extractor whose seed length depends on $\delta$ and the target statistical error $\varepsilon$, but not on source length $n$, while extracting $\Omega(\delta n)$ bits.
 
 <a id="pdf-bf2ce5422088-p209-b002"></a>
 <!-- pdf-source: page=209; block=2; confidence=0.99 -->
-**Problem 6.7 (Average Min-Entropy).** For jointly distributed (X,Y), define average conditional min-entropy by
+**Problem 6.7 (Average Min-Entropy).** For jointly distributed $(X,Y)$, define average conditional min-entropy by
 \[
 H_\infty(Y\mid X)=\log\frac{1}{\mathbb E_{x\sim X}[\max_y\Pr[Y=y\mid X=x]]}.
 \]
@@ -4276,11 +4276,11 @@ Prove
 \[
 H_\infty(Y\mid X)=\log\frac{1}{\max_P\Pr[P(X)=Y]},
 \]
-where the maximum ranges over functions from the domain of X to that of Y.
+where the maximum ranges over functions from the domain of $X$ to that of $Y$.
 
 <a id="pdf-bf2ce5422088-p209-b004"></a>
 <!-- pdf-source: page=209; block=4; confidence=0.99 -->
-If H_\infty(Y\mid X)\ge k, show that with probability at least 1-\varepsilon over x\sim X, H_\infty(Y\mid X=x)\ge k-\log(1/\varepsilon).
+If $H_\infty(Y\mid X)\ge k$, show that with probability at least $1-\varepsilon$ over $x\sim X$, $H_\infty(Y\mid X=x)\ge k-\log(1/\varepsilon)$.
 
 <a id="pdf-bf2ce5422088-p209-b005"></a>
 <!-- pdf-source: page=209; block=5; confidence=0.99 -->
@@ -4292,7 +4292,7 @@ Use the previous two items to deduce Problem 6.1, Part 6.1.
 
 <a id="pdf-bf2ce5422088-p209-b007"></a>
 <!-- pdf-source: page=209; block=7; confidence=0.99 -->
-Construct n-bit random variables with H_\infty(Y)=n while both H_\infty(Y\mid X) and H_\infty(X) are O(1).
+Construct $n$-bit random variables with $H_\infty(Y)=n$ while both $H_\infty(Y\mid X)$ and $H_\infty(X)$ are $O(1)$.
 
 <a id="pdf-bf2ce5422088-p209-b008"></a>
 <!-- pdf-source: page=209; block=8; confidence=0.99 -->
@@ -4300,27 +4300,27 @@ Construct n-bit random variables with H_\infty(Y)=n while both H_\infty(Y\m
 
 <a id="pdf-bf2ce5422088-p210-b001"></a>
 <!-- pdf-source: page=210; block=1; confidence=0.99 -->
-**Definition.** A function \mathrm{Ext}:\{0,1\}^n\times\{0,1\}^d\to\{0,1\}^m is a (k,\varepsilon) average min-entropy extractor if, for every jointly distributed (X,Y) with X\in\{0,1\}^n and H_\infty(X\mid Y)\ge k,
+**Definition.** A function $\mathrm{Ext}:\{0,1\}^n\times\{0,1\}^d\to\{0,1\}^m$ is a $(k,\varepsilon)$ average min-entropy extractor if, for every jointly distributed $(X,Y)$ with $X\in\{0,1\}^n$ and $H_\infty(X\mid Y)\ge k$,
 \[
 (\mathrm{Ext}(X,U_d),Y)\quad\text{is }\varepsilon\text{-close to }(U_m,Y),
 \]
-where U_d,U_m are independent of (X,Y).
+where $U_d,U_m$ are independent of $(X,Y)$.
 
 <a id="pdf-bf2ce5422088-p210-b002"></a>
 <!-- pdf-source: page=210; block=2; confidence=0.97 -->
-The text notes that a (k,\varepsilon) extractor gives a (k+\log(1/\varepsilon),2\varepsilon) average min-entropy extractor via Problem 6.7(2), then poses a route to remove the entropy loss.
+The text notes that a $(k,\varepsilon)$ extractor gives a $(k+\log(1/\varepsilon),2\varepsilon)$ average min-entropy extractor via Problem 6.7(2), then poses a route to remove the entropy loss.
 
 <a id="pdf-bf2ce5422088-p210-b003"></a>
 <!-- pdf-source: page=210; block=3; confidence=0.99 -->
-Assuming k\le n-1, show that if \mathrm{Ext} is a (k,\varepsilon) extractor, then for every t>0 it is a (k-t,2^{t+1}\varepsilon) extractor. The hint compares, for each test T\subseteq\{0,1\}^m, the largest distinguishing advantage among (k-t)-sources and among k-sources.
+Assuming $k\le n-1$, show that if $\mathrm{Ext}$ is a $(k,\varepsilon)$ extractor, then for every $t>0$ it is a $(k-t,2^{t+1}\varepsilon)$ extractor. The hint compares, for each test $T\subseteq\{0,1\}^m$, the largest distinguishing advantage among $(k-t)$-sources and among $k$-sources.
 
 <a id="pdf-bf2ce5422088-p210-b004"></a>
 <!-- pdf-source: page=210; block=4; confidence=0.99 -->
-Show that every (k,\varepsilon) extractor is a (k,3\varepsilon) average min-entropy extractor.
+Show that every $(k,\varepsilon)$ extractor is a $(k,3\varepsilon)$ average min-entropy extractor.
 
 <a id="pdf-bf2ce5422088-p210-b005"></a>
 <!-- pdf-source: page=210; block=5; confidence=0.98 -->
-Using these results and Problem 6.3, construct, for every n\in\mathbb N, k\le n, and \varepsilon>0, an explicit (k,\varepsilon) extractor with
+Using these results and Problem 6.3, construct, for every $n\in\mathbb N$, $k\le n$, and $\varepsilon>0$, an explicit $(k,\varepsilon)$ extractor with
 \[
 d=O((\log k)(\log(n/\varepsilon))),\qquad m=k+d-2\log(1/\varepsilon)-O(1).
 \]
@@ -4526,19 +4526,19 @@ A cryptographic PRG has parameters $(m^{\omega(1)},1/m^{\omega(1)})$: for each c
 
 <a id="pdf-bf2ce5422088-p223-b002"></a>
 <!-- pdf-source: page=223; block=2; confidence=0.99 -->
-**Definition 7.10.** A family  f_n:\{0,1\}^n\to\{0,1\}^n  is one-way if (1) some constant  b  gives an  n^b -time algorithm computing  f_n  for all sufficiently large  n , and (2) for every constant  c  and every nonuniform algorithm  A  running in time  n^c , \(\Pr[A(f_n(U_n))\in f_n^{-1}(f_n(U_n))]\le 1/n^c\) for all sufficiently large  n .
+**Definition 7.10.** A family $f_n:\{0,1\}^n\to\{0,1\}^n$ is one-way if (1) some constant $b$ gives an $n^b$-time algorithm computing $f_n$ for all sufficiently large $n$, and (2) for every constant $c$ and every nonuniform algorithm $A$ running in time $n^c$, \(\Pr[A(f_n(U_n))\in f_n^{-1}(f_n(U_n))]\le 1/n^c\) for all sufficiently large $n$.
 
 <a id="pdf-bf2ce5422088-p223-b003"></a>
 <!-- pdf-source: page=223; block=3; confidence=0.97 -->
-One-wayness is an average-case assumption stronger in flavor than  \mathrm{NP}\not\subseteq\mathrm{P/poly} . Integer multiplication of two  n/2 -bit integers is given as a candidate; inversion requires factoring.
+One-wayness is an average-case assumption stronger in flavor than $\mathrm{NP}\not\subseteq\mathrm{P/poly}$. Integer multiplication of two $n/2$-bit integers is given as a candidate; inversion requires factoring.
 
 <a id="pdf-bf2ce5422088-p224-b001"></a>
 <!-- pdf-source: page=224; block=1; confidence=0.99 -->
-**Theorem 7.11.** The following are equivalent: (1) one-way functions exist; (2) cryptographic PRGs exist with seed length  d(m)=m-1 ; (3) for every constant  \varepsilon>0 , cryptographic PRGs exist with seed length  d(m)=m^\varepsilon .
+**Theorem 7.11.** The following are equivalent: (1) one-way functions exist; (2) cryptographic PRGs exist with seed length $d(m)=m-1$; (3) for every constant $\varepsilon>0$, cryptographic PRGs exist with seed length $d(m)=m^\varepsilon$.
 
 <a id="pdf-bf2ce5422088-p224-b002"></a>
 <!-- pdf-source: page=224; block=2; confidence=0.99 -->
-**Corollary 7.12.** If one-way functions exist, then  \mathrm{BPP}\subseteq\mathrm{SUBEXP} .
+**Corollary 7.12.** If one-way functions exist, then $\mathrm{BPP}\subseteq\mathrm{SUBEXP}$.
 
 <a id="pdf-bf2ce5422088-p224-b003"></a>
 <!-- pdf-source: page=224; block=3; confidence=0.98 -->
@@ -4550,7 +4550,7 @@ If $f_\ell$ is hard to invert by algorithms running in time $s(\ell)$ and we tak
 
 <a id="pdf-bf2ce5422088-p224-b005"></a>
 <!-- pdf-source: page=224; block=5; confidence=0.96 -->
-If  s(\ell)=\ell^{\omega(1)} , the construction yields seed length  m^\varepsilon  for any constant  \varepsilon>0  and implies  \mathrm{BPP}\subseteq\mathrm{SUBEXP} .
+If $s(\ell)=\ell^{\omega(1)}$, the construction yields seed length $m^\varepsilon$ for any constant $\varepsilon>0$ and implies $\mathrm{BPP}\subseteq\mathrm{SUBEXP}$.
 
 <a id="pdf-bf2ce5422088-p225-b001"></a>
 <!-- pdf-source: page=225; block=1; confidence=0.97 -->
@@ -4849,7 +4849,7 @@ We now follow the steps of the proof of Theorem 7.19 to go from an adversary $T$
 
 <a id="pdf-bf2ce5422088-p241-b002"></a>
 <!-- pdf-source: page=241; block=2; confidence=0.97 -->
-**Corollary 7.30.** \mathrm{BPAC}^0\subseteq\widetilde{\mathrm P}.
+**Corollary 7.30.** $\mathrm{BPAC}^0\subseteq\widetilde{\mathrm P}$.
 
 <a id="pdf-bf2ce5422088-p241-b003"></a>
 <!-- pdf-source: page=241; block=3; confidence=0.91 -->
@@ -4857,7 +4857,7 @@ With additional work, the inclusion can be strengthened to uniform constant-dept
 
 <a id="pdf-bf2ce5422088-p241-b004"></a>
 <!-- pdf-source: page=241; block=4; confidence=0.95 -->
-**Open Problem 7.31.** Show that \mathrm{BPAC}^0=\mathrm{AC}^0, or even that \mathrm{BPAC}^0\subseteq\mathrm P.
+**Open Problem 7.31.** Show that $\mathrm{BPAC}^0=\mathrm{AC}^0$, or even that $\mathrm{BPAC}^0\subseteq\mathrm P$.
 
 <a id="pdf-bf2ce5422088-p241-b005"></a>
 <!-- pdf-source: page=241; block=5; confidence=0.96 -->
@@ -4881,7 +4881,7 @@ The section shifts from constructions based on strong average-case hardness to c
 
 <a id="pdf-bf2ce5422088-p242-b005"></a>
 <!-- pdf-source: page=242; block=5; confidence=0.98 -->
-**Definition 7.34.** A Boolean function f:\{0,1\}^n\to\{0,1\} is worst-case hard for time t if every nonuniform probabilistic algorithm A running in time t has some input x such that \Pr[A(x)\ne f(x)]>1/3, over A's random coins.
+**Definition 7.34.** A Boolean function $f:\{0,1\}^n\to\{0,1\}$ is worst-case hard for time $t$ if every nonuniform probabilistic algorithm $A$ running in time $t$ has some input $x$ such that $\Pr[A(x)\ne f(x)]>1/3$, over $A$'s random coins.
 
 <a id="pdf-bf2ce5422088-p242-b006"></a>
 <!-- pdf-source: page=242; block=6; confidence=0.91 -->
@@ -4893,15 +4893,15 @@ More formally, given a function $f:\{0,1\}^\ell\to\{0,1\}$ that is worst-case ha
 
 <a id="pdf-bf2ce5422088-p243-b002"></a>
 <!-- pdf-source: page=243; block=2; confidence=0.91 -->
-Treat f as a message of length L=2^n and encode it by \mathrm{Enc}:\{0,1\}^L\to\Sigma^{\hat L}. Set \hat f=\mathrm{Enc}(f), viewed as a function \{0,1\}^{\hat n}\to\Sigma with \hat n=\log\hat L; the intended final alphabet is binary, though larger alphabets may be used in the development.
+Treat $f$ as a message of length $L=2^n$ and encode it by $\mathrm{Enc}:\{0,1\}^L\to\Sigma^{\hat L}$. Set $\hat f=\mathrm{Enc}(f)$, viewed as a function $\{0,1\}^{\hat n}\to\Sigma$ with $\hat n=\log\hat L$; the intended final alphabet is binary, though larger alphabets may be used in the development.
 
 <a id="pdf-bf2ce5422088-p243-b003"></a>
 <!-- pdf-source: page=243; block=3; confidence=0.93 -->
-Assume an efficient algorithm A agrees with \hat f on a random coordinate with probability greater than 1-\delta. Fixing its coins makes A a received word with d_H(A,\hat f)<\delta. If \mathrm{Dec} is an efficient \delta-decoder for \mathrm{Enc}, then \mathrm{Dec}(A)=f, yielding an efficient everywhere-computation algorithm for f and contradicting its worst-case hardness, provided decoding fits the assumed time bound.
+Assume an efficient algorithm $A$ agrees with $\hat f$ on a random coordinate with probability greater than $1-\delta$. Fixing its coins makes $A$ a received word with $d_H(A,\hat f)<\delta$. If $\mathrm{Dec}$ is an efficient $\delta$-decoder for $\mathrm{Enc}$, then $\mathrm{Dec}(A)=f$, yielding an efficient everywhere-computation algorithm for $f$ and contradicting its worst-case hardness, provided decoding fits the assumed time bound.
 
 <a id="pdf-bf2ce5422088-p243-b004"></a>
 <!-- pdf-source: page=243; block=4; confidence=0.93 -->
-Standard decoding reads all 2^{\hat n} received symbols and outputs all 2^n message bits; the source continues beyond this page.
+Standard decoding reads all $2^{\hat n}$ received symbols and outputs all $2^n$ message bits; the source continues beyond this page.
 
 <a id="pdf-bf2ce5422088-p244-b001"></a>
 <!-- pdf-source: page=244; block=1; confidence=0.98 -->
@@ -5133,7 +5133,7 @@ Define $f'(x_1,\ldots,x_k)=(\hat f(x_1),\ldots,\hat f(x_k))$ by evaluating $\hat
 
 <a id="pdf-bf2ce5422088-p256-b001"></a>
 <!-- pdf-source: page=256; block=1; confidence=0.84 -->
-Independent products and XOR can amplify average-case hardness, but increase input length by a factor of the repetition parameter. The section instead pursues local list-decoding to obtain a function that is [?](1/2-\varepsilon)[?]-hard while keeping input length linear; hardness amplification also has coding-theoretic applications.
+Independent products and XOR can amplify average-case hardness, but increase input length by a factor of the repetition parameter. The section instead pursues local list-decoding to obtain a function that is $?](1/2-\varepsilon)$?]-hard while keeping input length linear; hardness amplification also has coding-theoretic applications.
 
 <a id="pdf-bf2ce5422088-p256-b002"></a>
 <!-- pdf-source: page=256; block=2; confidence=0.99 -->

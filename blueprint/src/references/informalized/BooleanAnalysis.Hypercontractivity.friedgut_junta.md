@@ -5,7 +5,7 @@
 
 # Friedgut’s Junta Theorem
 
-**Claim.** There is an absolute constant $C>0$ such that every Boolean $71$-valued function and every $0<\epsilon\leq1$ admit a junta whose coordinate set has size at most $\exp(C I[f]/\epsilon)$, and whose Fourier spectrum outside subsets of that set of degree at most $I[f]/\epsilon$ has squared weight at most $2\epsilon$; the junta is itself Boolean-valued and is $\epsilon$-close to the original function.
+**Claim.** There is an absolute constant $C>0$ such that every Boolean $\{-1,1\}1$-valued function and every $0<\epsilon\leq1$ admit a junta whose coordinate set has size at most $\exp(C I[f]/\epsilon)$, and whose Fourier spectrum outside subsets of that set of degree at most $I[f]/\epsilon$ has squared weight at most $2\epsilon$; the junta is itself Boolean-valued and is $\epsilon$-close to the original function.
 
 **Proof.** 1. Choose $C=11$, write $I=I[f]$, and set $t=I/\epsilon$. The identity expressing total influence as the sum of degree-weighted squared Fourier coefficients, `totalInfluence_eq_sum_sq_deg`, shows that $I\geq0$. Let $k=\lfloor t\rfloor$. Then $k\leq t<k+1$, and the integer degree of a set is at most $t$ exactly when it is at most $k$.
 

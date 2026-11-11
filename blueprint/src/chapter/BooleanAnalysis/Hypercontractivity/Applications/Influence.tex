@@ -1419,11 +1419,11 @@ coordinate $i$.
   {pdf-ffbe9c7b3306-p047-b003,
     pdf-ffbe9c7b3306-p047-b004}
 \difficulty{4}
-Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$,
-let $i\\in[n]$, and let $0\\le\\rho\\le1$. Then the noisy coordinate influence satisfies
-$I_i^{(\\rho)}(f)\\le\\mathrm{Inf}_i(f)^{2/(1+\\rho)}$, where
-$I_i^{(\\rho)}(f)=\\sum_{S\\ni i}\\rho^{|S|-1}\\widehat f(S)^2$ and
-$\\mathrm{Inf}_i(f)=\\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measure.
+Let $n\in\mathbb N$, let $f:\{0,1\}^n\to\mathbb R$ take values in $\{-1,1\}$,
+let $i\in[n]$, and let $0\le\rho\le1$. Then the noisy coordinate influence satisfies
+$I_i^{(\rho)}(f)\le\mathrm{Inf}_i(f)^{2/(1+\rho)}$, where
+$I_i^{(\rho)}(f)=\sum_{S\ni i}\rho^{|S|-1}\widehat f(S)^2$ and
+$\mathrm{Inf}_i(f)=\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measure.
 \end{theorem}
 
 \begin{theorem}[One-third stable influence bound]
@@ -2323,10 +2323,10 @@ $\\mathrm{Inf}_i(f)=\\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measur
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p264-b003}
 \difficulty{1}
-Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$,
-and let $i\\in[n]$. Then $I_i^{(1/3)}(f)\\le\\mathrm{Inf}_i(f)^{3/2}$, where
-$I_i^{(1/3)}(f)=\\sum_{S\\ni i}(1/3)^{|S|-1}\\widehat f(S)^2$ and
-$\\mathrm{Inf}_i(f)=\\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measure.
+Let $n\in\mathbb N$, let $f:\{0,1\}^n\to\mathbb R$ take values in $\{-1,1\}$,
+and let $i\in[n]$. Then $I_i^{(1/3)}(f)\le\mathrm{Inf}_i(f)^{3/2}$, where
+$I_i^{(1/3)}(f)=\sum_{S\ni i}(1/3)^{|S|-1}\widehat f(S)^2$ and
+$\mathrm{Inf}_i(f)=\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measure.
 \end{theorem}
 
 \begin{lemma}[Weighted low-level Fourier bound]
@@ -2796,7 +2796,7 @@ $\\mathrm{Inf}_i(f)=\\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measur
 Let $n,k\in\mathbb N$, let $f:\{0,1\}^n\to\bbr$, and let $\rho\in\bbr$ satisfy
 $0\le\rho\le1$. If $\widehat f(S)$ denotes the Walsh–Fourier coefficient of $f$ at
 $S\subseteq[n]$ and $T_\rho$ is the noise operator, then
-\[\rho^k\sum_{\substack{S\subseteq[n]\\|S|\le k}}\widehat f(S)^2\le\langle f,T_\rho
+\[\rho^k\sum_{\substack{S\subseteq[n]\|S|\le k}}\widehat f(S)^2\le\langle f,T_\rho
 f\rangle.\]
 \end{lemma}
 

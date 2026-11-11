@@ -738,9 +738,9 @@ queries the vectors $x,y,z$ in that order.
 \label{FABL.hastadAcceptanceProbability}
 \leanok
 \uses{FABL.BoundedCubeFunction, FABL.SignTester.acceptanceProbability, FABL.hastadTester}
-Let $n$ be a nonnegative integer, let $ $ be a real number in $[0,1]$, and let $f$ be a
+Let $n$ be a nonnegative integer, let $\delta$ be a real number in $[0,1]$, and let $f$ be a
 real-valued function on the $n$-dimensional sign cube whose values lie in $[-1,1]$. The
-Håstad tester with parameter $ $ has an acceptance probability on input function $f$,
+Håstad tester with parameter $\delta$ has an acceptance probability on input function $f$,
 which defines a real number.
 \end{definition}
 
@@ -1371,8 +1371,8 @@ $1-\delta$.
 \leanok
 \uses{FABL.Sign, FABL.expect_signValue_eq_zero, FABL.signValue}
 \difficulty{4}
-Let $b$ be uniform on $\\{-1,1\}$, and let $k$ be a nonnegative integer. Then
-$\\mathbb{E}[b^{k+1}]$ is $1$ if $k$ is odd and $0$ if $k$ is even.
+Let $b$ be uniform on $\{-1,1\}$, and let $k$ be a nonnegative integer. Then
+$\mathbb{E}[b^{k+1}]$ is $1$ if $k$ is odd and $0$ if $k$ is even.
 \end{theorem}
 
 \begin{theorem}[Affine rule for iterated finite averages]
@@ -2909,10 +2909,10 @@ probability on $f$ defines a real number.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p193-b003,
     pdf-ffbe9c7b3306-p193-b004}
-Let $n$ be a natural number and let $f$ map the sign cube $\\{-1,1\\}^n$ to $\\{ -1,1
-\\}$. The acceptance probability of the odd BLR test on $f$ is
-$\\frac12+\\frac12\\sum_{S\\subseteq[n],\,|S|\\text{ odd}}\\widehat f(S)^3$, where
-$\\widehat f(S)$ is the Fourier coefficient of $f$ at $S$.
+Let $n$ be a natural number and let $f$ map the sign cube $\{-1,1\}^n$ to $\{ -1,1
+\}$. The acceptance probability of the odd BLR test on $f$ is
+$\frac12+\frac12\sum_{S\subseteq[n],\,|S|\text{ odd}}\widehat f(S)^3$, where
+$\widehat f(S)$ is the Fourier coefficient of $f$ at $S$.
 \end{theorem}
 
 \begin{definition}[Odd-cardinality Fourier frequencies]
@@ -2920,7 +2920,7 @@ $\\widehat f(S)$ is the Fourier coefficient of $f$ at $S$.
 \label{FABL.oddFourierFrequencies}
 \leanok
 For a positive integer $n$, the odd Fourier frequencies are the subsets of
-$\{1,\\ldots,n\\}$ having odd cardinality.
+$\{1,\ldots,n\}$ having odd cardinality.
 \end{definition}
 
 \begin{theorem}[Nonempty odd Fourier frequencies]
@@ -2930,7 +2930,7 @@ $\{1,\\ldots,n\\}$ having odd cardinality.
 \uses{FABL.oddFourierFrequencies}
 \difficulty{1}
 For every positive natural number $n$, there is an odd-cardinality subset of
-${0,1,ots,n-1}$.
+$\{0,1,\ldots,n-1\}$.
 \end{theorem}
 
 \begin{definition}[Maximum odd Fourier coefficient]
@@ -3002,10 +3002,10 @@ zero and its Fourier coefficients indexed by odd-cardinality subsets is zero.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.BoundedCubeFunction.ofBoolean, FABL.fourierCoeff, FABL.fourierCoeff_le_nonnegativeOddFourierMaximum, FABL.nonnegativeOddFourierMaximum, FABL.nonnegativeOddFourierMaximum_zero_le, FABL.oddBLRAcceptanceProbability, FABL.oddBLRAcceptanceProbability_eq_fourierSum, FABL.sum_sq_fourierCoeff_eq_one}
 \difficulty{5}
-Let $n$ be a natural number and let $f$ map the sign cube $\\{-1,1\\}^n$ to
-$\\{-1,1\\}$. The odd BLR acceptance probability is at most $\\frac12+\\frac12 M$, where
-$M$ is the maximum of $0$ and the Fourier coefficients $\\widehat f(S)$ over all
-odd-cardinality subsets $S\\subseteq[n]$.
+Let $n$ be a natural number and let $f$ map the sign cube $\{-1,1\}^n$ to
+$\{-1,1\}$. The odd BLR acceptance probability is at most $\frac12+\frac12 M$, where
+$M$ is the maximum of $0$ and the Fourier coefficients $\widehat f(S)$ over all
+odd-cardinality subsets $S\subseteq[n]$.
 \end{theorem}
 
 \begin{definition}[Negated OR function]
@@ -3070,7 +3070,7 @@ $\{1\}$ is $-1/2$.
 \leanok
 \uses{FABL.oddFourierFrequencies}
 \difficulty{1}
-The odd-cardinality subsets of ${0,1}$ are exactly ${0}$ and ${1}$.
+The odd-cardinality subsets of $\{0,1\}$ are exactly $\{0\}$ and $\{1\}$.
 \end{theorem}
 
 \begin{theorem}[Odd blr book bound counterexample acceptance]
@@ -3553,10 +3553,10 @@ coordinates, of the squares of the uniform Fourier coefficients of $f$ is at mos
 \leanok
 \uses{FABL.SignCube, FABL.fourierCoeff, FABL.stableInfluence}
 \difficulty{3}
-Let $n$ be a natural number, let $f:\\{−1,1\\}^n\\to\\mathbb R$, and let $\\rho\\ge0$.
-For any subset $S$ of the coordinates containing $i$, the summand $\\rho^{|S|-1}$ times
+Let $n$ be a natural number, let $f:\{−1,1\}^n\to\mathbb R$, and let $\rho\ge0$.
+For any subset $S$ of the coordinates containing $i$, the summand $\rho^{|S|-1}$ times
 the square of the uniform Fourier coefficient of $f$ on $S$ is at most the stable
-influence of $f$ at parameter $\\rho$ and coordinate $i$.
+influence of $f$ at parameter $\rho$ and coordinate $i$.
 \end{theorem}
 
 \begin{theorem}[Weighted Fourier coefficient bound]

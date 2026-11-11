@@ -130,7 +130,7 @@ vectors $x\in\{-1,1\}^n$, that flipping coordinate $i$ changes the value of $f$.
 \label{FABL.DimensionEdge}
 \leanok
 Let $n$ be a nonnegative integer and let $i$ be one of its coordinates. The dimension
-edge at $i$ is the set of sign vectors in ${-1,1}^n$ whose $i$th coordinate equals $1$.
+edge at $i$ is the set of sign vectors in $\{-1,1\}^n$ whose $i$th coordinate equals $1$.
 \end{definition}
 
 \begin{definition}[Sign and coordinate face parametrization]
@@ -139,9 +139,9 @@ edge at $i$ is the set of sign vectors in ${-1,1}^n$ whose $i$th coordinate equ
 \leanok
 \uses{FABL.DimensionEdge, FABL.Sign, FABL.setCoordinate, FABL.setCoordinate_apply_self, FABL.setCoordinate_eq_self, FABL.setCoordinate_setCoordinate}
 Let $n$ be a nonnegative integer and let $i$ be one of its coordinates. Every sign
-vector in ${-1,1}^n$ is uniquely specified by its sign at coordinate $i$ together with
+vector in $\{-1,1\}^n$ is uniquely specified by its sign at coordinate $i$ together with
 a sign vector whose $i$th coordinate is $1$; equivalently, the product of the two
-element sign set and the dimension edge at $i$ is in bijection with ${-1,1}^n$.
+element sign set and the dimension edge at $i$ is in bijection with $\{-1,1\}^n$.
 \end{definition}
 
 \begin{theorem}[Cardinality of a sign-cube face]
@@ -150,8 +150,8 @@ element sign set and the dimension edge at $i$ is in bijection with ${-1,1}^n$.
 \leanok
 \uses{FABL.DimensionEdge, FABL.Sign, FABL.SignCube, FABL.signProdDimensionEdgeEquiv}
 \difficulty{4}
-Let $n$ be a natural number and let $i$ be a coordinate with $0\\le i<n$. Among the sign
-vectors in $\\{-1,1\\}^n$, the vectors whose $i$th coordinate is $1$ form a set of
+Let $n$ be a natural number and let $i$ be a coordinate with $0\le i<n$. Among the sign
+vectors in $\{-1,1\}^n$, the vectors whose $i$th coordinate is $1$ form a set of
 cardinality $2^{n-1}$.
 \end{theorem}
 
@@ -161,8 +161,8 @@ cardinality $2^{n-1}$.
 \leanok
 \uses{FABL.uniformProbability}
 \difficulty{3}
-Let $\\Omega$ be a finite nonempty set and let $a\\in\\Omega$. The uniform probability
-of the event consisting only of $a$ is $1/|\\Omega|$.
+Let $\Omega$ be a finite nonempty set and let $a\in\Omega$. The uniform probability
+of the event consisting only of $a$ is $1/|\Omega|$.
 \end{theorem}
 
 \begin{definition}[Boundary edge]
@@ -1107,7 +1107,7 @@ in coordinate $i$ if and only if $f$ is pivotal there.
 \leanok
 \uses{FABL.BooleanFunction, FABL.booleanInfluence, FABL.isPivotal_neg_iff, FABL.uniformProbability}
 \difficulty{3}
-Let $n$ be a natural number, let $f$ map the $n$-dimensional sign cube to $\\{−1,1\\}$,
+Let $n$ be a natural number, let $f$ map the $n$-dimensional sign cube to $\{−1,1\}$,
 and let $i$ be one of its coordinates. The probability that flipping coordinate $i$
 changes the value of $f$ is unchanged when every output of $f$ is negated.
 \end{theorem}
@@ -1600,7 +1600,7 @@ dimension edge where coordinate $i$ is fixed at $1$.
 \leanok
 \uses{FABL.DimensionEdge, FABL.IsBoundaryDimensionEdge, FABL.allOneDimensionEdge, FABL.flipCoordinate, FABL.orFunction, FABL.setCoordinate}
 \difficulty{4}
-Let $n$ be a natural number, let $i$ be a coordinate of the sign cube $\\{-1,1\\}^n$,
+Let $n$ be a natural number, let $i$ be a coordinate of the sign cube $\{-1,1\}^n$,
 and let $e$ be an edge in direction $i$ whose endpoint has coordinate $i$ equal to $1$.
 The OR function takes different values at the two endpoints of $e$ if and only if every
 coordinate of its endpoint is $1$.
@@ -2240,7 +2240,7 @@ only if, among the other $2m$ coordinates, exactly $m$ are equal to $1$.
 \difficulty{4}
 For every nonnegative integer $m$ and every coordinate $i$ of the $(2m+1)$-dimensional
 Boolean cube, the influence of coordinate $i$ for majority on that cube is
-$$\\frac{\\binom{2m}{m}}{2^{2m}}.$$
+$$\frac{\binom{2m}{m}}{2^{2m}}.$$
 \end{theorem}
 
 \begin{theorem}[Influence of three-bit majority]

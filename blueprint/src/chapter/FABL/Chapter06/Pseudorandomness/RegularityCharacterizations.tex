@@ -20,7 +20,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Pseudorandomness.Regulari
 \uses{FABL.FixedIndex, FABL.FixedSignCube, FABL.expect_eq_indexedFourierCoeff_empty, FABL.fourierCoeff, FABL.indexedMonomial, FABL.liftFixedFrequency, FABL.liftFreeFrequency, FABL.mean, FABL.mean_eq_fourierCoeff_empty, FABL.restrictionFourierCoeff, FABL.restrictionFourierCoeff_eq_sum, FABL.signRestriction}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ be a real-valued function on the sign cube
-$\\{−1,1\\}^n$, let $J\subseteq\{1,\ldots,n\}$, and fix signs $z_i\in\{−1,1\}$ for
+$\{−1,1\}^n$, let $J\subseteq\{1,\ldots,n\}$, and fix signs $z_i\in\{−1,1\}$ for
 $i\notin J$. The mean of $f$ over the cube with these fixed signs, minus its mean over
 the full cube, equals the sum over all nonempty subsets $T\subseteq J^c$ of the Fourier
 coefficient of $f$ at $T$, multiplied by $\prod_{i\in T}z_i$.
@@ -36,12 +36,12 @@ coefficient of $f$ at $T$, multiplied by $\prod_{i\in T}z_i$.
 \leanok
 \uses{FABL.FixedIndex, FABL.FixedSignCube, FABL.IsLowDegreeFourierRegular, FABL.fourierCoeff, FABL.indexedMonomial, FABL.indexedMonomial_sq, FABL.liftFixedFrequency, FABL.mean, FABL.mean_signRestriction_sub_mean_eq_sum_nonempty, FABL.signRestriction}
 \difficulty{5}
-Let $n,k$ be nonnegative integers, let $f:\\{-1,1\\}^n\\to\\mathbb R$ be Fourier-regular
-at level $k$ with bound $\\varepsilon\\ge0$, let $J\\subseteq\\{1,\\ldots,n\\}$, and fix
+Let $n,k$ be nonnegative integers, let $f:\{-1,1\}^n\to\mathbb R$ be Fourier-regular
+at level $k$ with bound $\varepsilon\ge0$, let $J\subseteq\{1,\ldots,n\}$, and fix
 signs on the coordinates outside $J$. If the number of coordinates outside $J$ is at
 most $k$, then the absolute difference between the mean of the resulting restriction of
 $f$ (averaged over the free coordinates in $J$) and the mean of $f$ on the full cube is
-at most $2^k\\varepsilon$.
+at most $2^k\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Mean change under a sign restriction]
@@ -95,7 +95,7 @@ sign function is at most $k$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsKJunta, FABL.dependsOn_toReal_iff, FABL.fourierCoeff, FABL.fourierCoeff_eq_zero_of_dependsOn_of_not_subset, FABL.fourierOneNorm, FABL.sum_sq_fourierCoeff_eq_one}
 \difficulty{6}
-Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\\{-1,1\\}^n$,
+Let $n$ be a nonnegative integer, let $h$ be a sign-valued function on $\{-1,1\}^n$,
 and let $k$ be a nonnegative integer. If $h$ depends only on some set of at most $k$
 coordinates, then the Fourier one-norm of its real-valued sign representation is at most
 $2^{k/2}$.
@@ -109,10 +109,10 @@ $2^{k/2}$.
 \uses{FABL.IsLowDegreeFourierRegular, FABL.covariance, FABL.covariance_eq_sum_fourierCoeff_mul, FABL.fourierCoeff, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.fourierOneNorm}
 \difficulty{5}
 Let $n,k$ be nonnegative integers, let $f,h$ be real-valued functions on the sign cube
-$\\{-1,1\\}^n$, and let $\\varepsilon\\in\\mathbb R$. Suppose every nonempty set of at
+$\{-1,1\}^n$, and let $\varepsilon\in\mathbb R$. Suppose every nonempty set of at
 most $k$ coordinates has Fourier coefficient of $f$ with absolute value at most
-$\\varepsilon$, the Fourier degree of $h$ is at most $k$, and $\\varepsilon\\ge 0$. Then
-$|\\operatorname{Cov}(f,h)|\\le \\|\\widehat h\\|_1\\,\\varepsilon$, where the
+$\varepsilon$, the Fourier degree of $h$ is at most $k$, and $\varepsilon\ge 0$. Then
+$|\operatorname{Cov}(f,h)|\le \|\widehat h\|_1\,\varepsilon$, where the
 covariance and Fourier one-norm are taken with respect to the uniform measure on the
 cube.
 \end{theorem}
@@ -125,10 +125,10 @@ cube.
 \uses{FABL.IsLowDegreeFourierRegular, FABL.IsLowDegreeFourierRegular.abs_covariance_le_fourierOneNorm_mul, FABL.covariance, FABL.fourierDegree, FABL.fourierOneNorm}
 \difficulty{1}
 Let $n,k$ be nonnegative integers, let $f,h$ be real-valued functions on the sign cube
-$\\{-1,1\\}^n$, and let $\\varepsilon\\in\\mathbb R$. Suppose every nonempty set of at
+$\{-1,1\}^n$, and let $\varepsilon\in\mathbb R$. Suppose every nonempty set of at
 most $k$ coordinates has Fourier coefficient of $f$ with absolute value at most
-$\\varepsilon$, the Fourier degree of $h$ is at most $k$, and $\\varepsilon\\ge0$. Then
-$\\operatorname{Cov}(f,h)\\le \\|\\widehat h\\|_1\\,\\varepsilon$, where the covariance
+$\varepsilon$, the Fourier degree of $h$ is at most $k$, and $\varepsilon\ge0$. Then
+$\operatorname{Cov}(f,h)\le \|\widehat h\|_1\,\varepsilon$, where the covariance
 and Fourier one-norm are taken with respect to the uniform measure on the cube.
 \end{theorem}
 
@@ -139,10 +139,10 @@ and Fourier one-norm are taken with respect to the uniform measure on the cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsKJunta, FABL.IsLowDegreeFourierRegular, FABL.IsLowDegreeFourierRegular.covariance_le_fourierOneNorm_mul, FABL.covariance, FABL.fourierDegree_toReal_le_of_isKJunta, FABL.fourierOneNorm, FABL.fourierOneNorm_toReal_le_two_rpow_half_of_isKJunta}
 \difficulty{3}
-Let $n,k$ be nonnegative integers, and let $f:\\{-1,1\\}^n\\to\\mathbb R$ be
-Fourier-regular at level $k$ with bound $\\varepsilon\\ge0$. If
-$h:\\{-1,1\\}^n\\to\\{-1,1\\}$ depends on at most $k$ coordinates, then
-$\\operatorname{Cov}(f,h)\\le 2^{k/2}\\varepsilon$, with covariance taken under the
+Let $n,k$ be nonnegative integers, and let $f:\{-1,1\}^n\to\mathbb R$ be
+Fourier-regular at level $k$ with bound $\varepsilon\ge0$. If
+$h:\{-1,1\}^n\to\{-1,1\}$ depends on at most $k$ coordinates, then
+$\operatorname{Cov}(f,h)\le 2^{k/2}\varepsilon$, with covariance taken under the
 uniform measure on the cube.
 \end{theorem}
 
@@ -189,7 +189,7 @@ in $J$ equals the mean of $f$ on the full cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsKJunta, FABL.IsLowDegreeFourierRegular, FABL.IsLowDegreeFourierRegular.abs_covariance_le_fourierOneNorm_mul, FABL.covariance, FABL.exists_booleanJunta_covariance_gt_of_not_isLowDegreeFourierRegular, FABL.fourierDegree_toReal_le_of_isKJunta}
 \difficulty{4}
-Let $n$ and $k$ be nonnegative integers, and let $f:{-1,1}^n\to\mathbb R$. The Fourier
+Let $n$ and $k$ be nonnegative integers, and let $f:\{−1,1\}^n\to\mathbb R$. The Fourier
 coefficients of $f$ vanish on every nonempty set of at most $k$ coordinates if and only
 if $f$ has covariance zero with every sign-valued function on the $n$-dimensional
 Boolean cube that depends on at most $k$ coordinates.

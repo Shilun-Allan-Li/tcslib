@@ -16,10 +16,10 @@ Declarations of the Lean module \texttt{FABL.Chapter05.ThresholdCircuits}.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsLinearThreshold}
 Let $n$ and $s$ be nonnegative integers, and let $f$ be a Boolean function on
-$\\{-1,1\\}^n$ with values in $\\{-1,1\\}$. The function $f$ is a real sum of at most
-$s$ linear threshold functions if there are linear threshold functions $g_1,\\ldots,g_s$
+$\{-1,1\}^n$ with values in $\{-1,1\}$. The function $f$ is a real sum of at most
+$s$ linear threshold functions if there are linear threshold functions $g_1,\ldots,g_s$
 and a real constant $c$ such that, at every input $x$, the real encoding of $f(x)$
-equals $c+\\sum_{i=1}^s g_i(x)$, with each $g_i(x)$ interpreted by its real encoding.
+equals $c+\sum_{i=1}^s g_i(x)$, with each $g_i(x)$ interpreted by its real encoding.
 \end{definition}
 
 \begin{definition}[Real-sum size bound]
@@ -29,7 +29,7 @@ equals $c+\\sum_{i=1}^s g_i(x)$, with each $g_i(x)$ interpreted by its real enco
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsRealSumOfLinearThresholds}
 Let $n$ and $s$ be natural numbers, and let $f$ be a function from the $n$-dimensional
-Boolean cube to $\\{ -1,1 \\}$. We say that $f$ has real-sum size at most $s$ if there
+Boolean cube to $\{ -1,1 \}$. We say that $f$ has real-sum size at most $s$ if there
 is a natural number $t\le s$ such that $f$ is a real sum of $t$ linear threshold
 functions.
 \end{definition}
@@ -41,10 +41,10 @@ functions.
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsLinearThreshold, FABL.signValue, FABL.thresholdSign}
 Let $n$ and $s$ be nonnegative integers, and let $f$ be a Boolean function on
-$\\{-1,1\\}^n$ with values in $\\{-1,1\\}$. The function $f$ is a threshold of $s$
-linear threshold functions if there are linear threshold functions $g_1,\\ldots,g_s$,
-real coefficients $a_0,a_1,\\ldots,a_s$, and, at every input $x$, $f(x)$ equals the sign
-threshold of $a_0+\\sum_{i=1}^s a_i g_i(x)$, where each $g_i(x)$ is viewed as a sign.
+$\{-1,1\}^n$ with values in $\{-1,1\}$. The function $f$ is a threshold of $s$
+linear threshold functions if there are linear threshold functions $g_1,\ldots,g_s$,
+real coefficients $a_0,a_1,\ldots,a_s$, and, at every input $x$, $f(x)$ equals the sign
+threshold of $a_0+\sum_{i=1}^s a_i g_i(x)$, where each $g_i(x)$ is viewed as a sign.
 \end{definition}
 
 \begin{definition}[Threshold-of-thresholds size bound]
@@ -67,7 +67,7 @@ is a natural number $t\le s$ such that $f$ is a threshold of thresholds of size 
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsPolynomialThresholdRepresentation, FABL.polynomialSparsity}
 Let $n$ and $s$ be nonnegative integers, and let $f$ be a Boolean function on
-$\\{-1,1\\}^n$ with values in $\\{-1,1\\}$. There is a real-valued polynomial on the
+$\{-1,1\}^n$ with values in $\{-1,1\}$. There is a real-valued polynomial on the
 Boolean cube that represents $f$ as a polynomial threshold function and has sparsity at
 most $s$.
 \end{definition}
@@ -86,7 +86,7 @@ positive-coordinate count on $S$ is the number of indices $i\in S$ for which $x_
 \leanok
 \uses{FABL.positiveCoordinateCountOn}
 \difficulty{1}
-Let $S$ be a subset of the coordinates $in n$, and let $x\\in\\{-1,1\\}^n$. The number
+Let $S$ be a subset of the coordinates $\in n$, and let $x\in\{-1,1\}^n$. The number
 of coordinates in $S$ where $x$ equals $1$ is at most $|S|$.
 \end{theorem}
 
@@ -303,11 +303,11 @@ linear threshold functions on the cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.HasRealSumOfLinearThresholdsSizeAtMost, FABL.IsSymmetric, FABL.Sign, FABL.canonicalCountInput, FABL.isRealSumOfLinearThresholds_of_count_profile, FABL.isSymmetric_iff_eq_of_positiveCoordinateCount_eq, FABL.positiveCoordinateCount, FABL.positiveCoordinateCountOn, FABL.positiveCoordinateCount_canonicalCountInput, FABL.positiveCoordinateCount_le}
 \difficulty{4}
-Let $f$ be a function from the $n$-dimensional sign cube to $\\{−1,1\\}$ that is
+Let $f$ be a function from the $n$-dimensional sign cube to $\{−1,1\}$ that is
 invariant under every permutation of its input coordinates. Then there are an integer
-$t\\le 2n$, a real constant $c$, and $t$ linear threshold functions $g_1,\\ldots,g_t$ on
+$t\le 2n$, a real constant $c$, and $t$ linear threshold functions $g_1,\ldots,g_t$ on
 the same cube such that, for every input $x$, the real-valued version of $f$ satisfies
-$f(x)=c+\\sum_{j=1}^t g_j(x)$, where each $g_j(x)$ is interpreted as its real sign
+$f(x)=c+\sum_{j=1}^t g_j(x)$, where each $g_j(x)$ is interpreted as its real sign
 value.
 \end{theorem}
 
@@ -356,7 +356,7 @@ in $S$ where $x$ is $+1$ plus the number where it is $-1$ equals $|S|$.
 \uses{FABL.Sign, FABL.negativeCoordinateCountOn, FABL.parityFunction}
 \difficulty{5}
 Let $n$ be a natural number, let $S$ be a subset of the coordinates
-$\\{0,\\ldots,n-1\\}$, and let $x\\in\\{ -1,1\\}^n$. The parity function associated to
+$\{0,\ldots,n-1\}$, and let $x\in\{ -1,1\}^n$. The parity function associated to
 $S$, evaluated at $x$, equals $(-1)^m$, where $m$ is the number of coordinates in $S$ at
 which $x$ equals $-1$.
 \end{theorem}
@@ -377,9 +377,9 @@ the sign $(-1)^{\max(|S|-k,0)}$.
 \uses{FABL.negativeCoordinateCountOn, FABL.parityCountProfile, FABL.parityFunction, FABL.parityFunction_eq_neg_one_pow_negativeCoordinateCountOn, FABL.positiveCoordinateCountOn, FABL.positiveCoordinateCountOn_add_negativeCoordinateCountOn}
 \difficulty{3}
 Let $n$ be a natural number, let $S$ be a subset of the coordinates
-$\\{0,\\ldots,n-1\\}$, and let $x\\in\\{ -1,1\\}^n$. If $k$ is the number of coordinates
+$\{0,\ldots,n-1\}$, and let $x\in\{ -1,1\}^n$. If $k$ is the number of coordinates
 in $S$ at which $x$ equals $1$, then the parity function associated to $S$, evaluated at
-$x$, is $(-1)^{\\max(|S|-k,0)}$.
+$x$, is $(-1)^{\max(|S|-k,0)}$.
 \end{theorem}
 
 \begin{theorem}[Parity as a sum of linear thresholds]
@@ -454,8 +454,8 @@ then $f$ is a threshold of at most $2ns$ linear threshold functions.
 \label{FABL.completeQuadraticBit}
 \leanok
 \uses{FABL.𝔽₂}
-Let $n$ be a nonnegative integer and let $x=(x_1,\\ldots,x_n)\\in\\mathbb F_2^n$. The
-complete quadratic bit of $x$ is $\\sum_{1\\le i<j\\le n}x_i x_j$ in $\\mathbb F_2$.
+Let $n$ be a nonnegative integer and let $x=(x_1,\ldots,x_n)\in\mathbb F_2^n$. The
+complete quadratic bit of $x$ is $\sum_{1\le i<j\le n}x_i x_j$ in $\mathbb F_2$.
 \end{definition}
 
 \begin{definition}[Complete quadratic polar form]
@@ -518,7 +518,7 @@ $\mathbb F_2$ of all coordinates $z_j$ with $j\ne i$ is zero, then $z=0$.
 \label{FABL.completeQuadratic}
 \leanok
 \uses{FABL.completeQuadraticBit, FABL.realSignEncodedFunction}
-For each nonnegative integer $n$, define a real-valued function on $\\mathbb F_2^n$ by
+For each nonnegative integer $n$, define a real-valued function on $\mathbb F_2^n$ by
 applying the real sign encoding to the complete quadratic bit.
 \end{definition}
 
@@ -531,9 +531,9 @@ applying the real sign encoding to the complete quadratic bit.
 \label{FABL.completeQuadraticBoolean}
 \leanok
 \uses{FABL.BooleanFunction, FABL.binaryCubeSignEquiv, FABL.completeQuadraticBit, FABL.signEncode}
-For each nonnegative integer $n$, define a Boolean function on $\\{-1,1\\}^n$ by
-converting each input to its corresponding vector in $\\mathbb F_2^n$, evaluating the
-complete quadratic bit, and encoding the result as a sign in $\\{-1,1\\}$.
+For each nonnegative integer $n$, define a Boolean function on $\{-1,1\}^n$ by
+converting each input to its corresponding vector in $\mathbb F_2^n$, evaluating the
+complete quadratic bit, and encoding the result as a sign in $\{-1,1\}$.
 \end{definition}
 
 \begin{definition}[Symmetric coordinate product]
@@ -574,9 +574,9 @@ coordinate $i$ is $x_{\pi(i)}$ equals the complete quadratic bit of $x$.
 \leanok
 \uses{FABL.binarySign, FABL.completeQuadratic, FABL.completeQuadraticBit, FABL.realSignEncodedFunction, FABL.signEncodedFunction, FABL.signValue_signEncode_eq_binarySign}
 \difficulty{1}
-For every natural number $n$ and every $x	ext{in }F_2^n$, the real sign encoding of
-$(-1)^{	ext{sum}_{i<j}x_i x_j}$ equals the binary sign character evaluated at
-$	ext{sum}_{i<j}x_i x_j$. Here the sums and products are taken in $F_2$.
+For every natural number $n$ and every $x	ext{in }\F_2^n$, the real sign encoding of
+$(-1)^{\text{sum}_{i<j}x_i x_j}$ equals the binary sign character evaluated at
+$\text{sum}_{i<j}x_i x_j$. Here the sums and products are taken in $\F_2$.
 \end{theorem}
 
 \begin{theorem}[Quadratic Boolean function under sign encoding]
@@ -640,11 +640,11 @@ is the zero vector.
 \leanok
 \uses{FABL.binarySign, FABL.completeQuadratic, FABL.completeQuadraticBit, FABL.completeQuadraticBit_add, FABL.completeQuadraticPolarFrequency, FABL.completeQuadraticPolar_eq_dotProduct, FABL.completeQuadratic_apply, FABL.f₂DotProduct, FABL.vectorWalshCharacter, FABL.vectorWalshCharacter_apply}
 \difficulty{4}
-For every natural number $n$ and all $y,z	ext{in }F_2^n$, the product of the complete
+For every natural number $n$ and all $y,z	ext{in }\F_2^n$, the product of the complete
 quadratic signs at $y$ and $z+y$ equals the binary sign character of the complete
 quadratic bit at $z$, multiplied by the Walsh character at $y$ whose frequency has
-coordinate $i$ equal to $	ext{sum}_{j
-e i}z_j$. All vector sums and coordinate sums are over $F_2$.
+coordinate $i$ equal to $\text{sum}_{j
+e i}z_j$. All vector sums and coordinate sums are over $\F_2$.
 \end{theorem}
 
 \begin{theorem}[Self-convolution of a quadratic sign function]
@@ -653,9 +653,9 @@ e i}z_j$. All vector sums and coordinate sums are over $F_2$.
 \leanok
 \uses{FABL.completeQuadratic, FABL.completeQuadraticPolarFrequency, FABL.completeQuadraticPolarFrequency_eq_zero_of_even, FABL.completeQuadratic_mul_translate, FABL.convolution, FABL.convolution_apply_add, FABL.expect_vectorWalshCharacter}
 \difficulty{4}
-Let $n$ be an even natural number, and let $z\\in (\\mathbb{F}_2)^n$. Define
-$q(x)=\\sum_{0\\le i<j<n}x_i x_j$ in $\\mathbb{F}_2$, and set $f(x)=(-1)^{q(x)}$. With
-convolution normalized by the uniform average on $(\\mathbb{F}_2)^n$, the
+Let $n$ be an even natural number, and let $z\in (\mathbb{F}_2)^n$. Define
+$q(x)=\sum_{0\le i<j<n}x_i x_j$ in $\mathbb{F}_2$, and set $f(x)=(-1)^{q(x)}$. With
+convolution normalized by the uniform average on $(\mathbb{F}_2)^n$, the
 self-convolution satisfies $(f*f)(z)=1$ if $z=0$, and $(f*f)(z)=0$ otherwise.
 \end{theorem}
 
@@ -746,7 +746,7 @@ coordinates is not the constant function with value $1$.
 \uses{FABL.IsPolynomialThresholdRepresentation, FABL.completeQuadraticBoolean, FABL.completeQuadraticBoolean_ne_one_of_pos_even, FABL.polynomialSparsity, FABL.pow_two_half_le_polynomialSparsity_completeQuadraticBoolean, FABL.thresholdSign}
 \difficulty{4}
 Let $n$ be a positive even integer, and let $p$ be a real-valued function on
-$\\{-1,1\\}^n$ whose threshold sign agrees everywhere with the complete quadratic
+$\{-1,1\}^n$ whose threshold sign agrees everywhere with the complete quadratic
 Boolean function $x\mapsto (-1)^{\sum_{i<j}x_i x_j}$, using the identification of signs
 with bits in $\mathbb F_2$. Then the number of nonzero Fourier coefficients of $p$ is at
 least $2^{n/2}$.

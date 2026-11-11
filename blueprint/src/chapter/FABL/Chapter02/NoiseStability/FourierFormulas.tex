@@ -1099,7 +1099,7 @@ Let $n$ be a nonnegative integer, let $\rho\in[-1,1]$, and let $f:\{-1,1\}^n\to\
 R$. Choose $x$ uniformly from the sign cube, then obtain $y$ by independently keeping
 each coordinate of $x$ with probability $(1+\rho)/2$ and flipping it otherwise. The
 expected product $\mathbb E[f(x)f(y)]$ equals
-$\displaystyle\sum_{k=0}^{n}\rho^k\sum_{\egin{subarray}{c}S\subseteq\{1,\ldots,n\}\\|S|=k\end{subarray}}\widehat
+$\displaystyle\sum_{k=0}^{n}\rho^k\sum_{\begin{subarray}{c}S\subseteq\{1,\ldots,n\}\|S|=k\end{subarray}}\widehat
 f(S)^2$, where $\widehat f(S)=\mathbb E_x\!\left[f(x)\prod_{i\in S}x_i\right]$.
 \end{theorem}
 
@@ -1671,9 +1671,9 @@ drawn from the spectral sample of $f$.
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierWeight, FABL.fourierWeightAtLevel}
 \difficulty{4}
-For every function $f$ from the sign cube $\\{-1,1\\}^n$ to $\\mathbb R$, the sum of its
+For every function $f$ from the sign cube $\{-1,1\}^n$ to $\mathbb R$, the sum of its
 Fourier weights over levels $0$ through $n$ equals the sum of the squared Fourier
-coefficients over all subsets of $\\{1,\\ldots,n\\}$.
+coefficients over all subsets of $\{1,\ldots,n\}$.
 \end{theorem}
 
 \begin{theorem}[Noise sensitivity by Fourier level]
@@ -2625,7 +2625,7 @@ Statement pending regeneration.
   {pdf-ffbe9c7b3306-p054-b003,
     pdf-ffbe9c7b3306-p054-b004}
 \difficulty{3}
-For every nonnegative integer $n$ and every $ho\in[-1,1]$, the noise stability of the
+For every nonnegative integer $n$ and every $\rho\in[-1,1]$, the noise stability of the
 constant function $1$ on the $n$-dimensional sign cube is equal to $1$.
 \end{theorem}
 
@@ -3039,7 +3039,7 @@ constant function $1$ on the $n$-dimensional sign cube is equal to $1$.
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $-1\leq\rho\leq1$, and let $f$ be the constant
 function equal to $-1$ on the $n$-dimensional sign cube. Its noise stability at
-correlation $\rho$—the expectation of $f(X)f(Y)$ when $(X,Y)$ is a $[?]$ pair with the
+correlation $\rho$—the expectation of $f(X)f(Y)$ when $(X,Y)$ is a $\rho$-correlated pair with the
 correlated sign distribution—is $1$.
 \end{theorem}
 

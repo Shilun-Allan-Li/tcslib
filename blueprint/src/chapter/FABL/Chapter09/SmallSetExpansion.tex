@@ -106,12 +106,12 @@ $f$ at the frequency obtained by shifting every index in $S$ up by one.
 \leanok
 \uses{FABL.Sign, FABL.firstCoordinateSlice, FABL.fourierCoeff, FABL.fourierCoeff_insert_zero_tailFrequency, FABL.fourierCoeff_tailFrequency, FABL.signValue, FABL.signValue_neg_one, FABL.signValue_one, FABL.tailFrequency}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{-1,1\\}^{n+1}\\to\\mathbb R$, let
-$b\\in\\{-1,1\\}$, and let $S\\subseteq\\{1,\\ldots,n\\}$. Write
-$S^+\\subseteq\\{1,\\ldots,n+1\\}$ for the set obtained by shifting every coordinate in
+Let $n$ be a natural number, let $f:\{-1,1\}^{n+1}\to\mathbb R$, let
+$b\in\{-1,1\}$, and let $S\subseteq\{1,\ldots,n\}$. Write
+$S^+\subseteq\{1,\ldots,n+1\}$ for the set obtained by shifting every coordinate in
 $S$ up by one. The Fourier coefficient of the slice of $f$ with first coordinate fixed
 to $b$, at $S$, equals the Fourier coefficient of $f$ at $S^+$ plus $b$ times its
-coefficient at $S^+\\cup\\{1\\}$.
+coefficient at $S^+\cup\{1\}$.
 \end{theorem}
 
 \begin{theorem}[First-coordinate slice of the noise operator]
@@ -192,8 +192,8 @@ where $x$ is uniform on $\{-1,1\}^n$.
 \leanok
 \uses{FABL.uniformLpNorm}
 \difficulty{4}
-Let $\\Omega$ be a finite set and let $f:\\Omega\\to\\mathbb R$. The fourth power of the
-uniform $L^4$ norm of $f$ equals the uniform mean of the function $x\\mapsto f(x)^4$.
+Let $\Omega$ be a finite set and let $f:\Omega\to\mathbb R$. The fourth power of the
+uniform $L^4$ norm of $f$ equals the uniform mean of the function $x\mapsto f(x)^4$.
 \end{theorem}
 
 \begin{theorem}[Nonnegativity of the uniform norm]
@@ -291,7 +291,7 @@ component evaluated at $x$.
 \leanok
 \uses{FABL.uniformLpNorm, FABL.uniformLpNorm_four_pow_eq_expect_fourth, FABL.uniformLpNorm_nonneg}
 \difficulty{5}
-Let $\\Omega$ be a finite set, let $c\\ge 0$, and let $f:\\Omega\\to\\mathbb R$. The
+Let $\Omega$ be a finite set, let $c\ge 0$, and let $f:\Omega\to\mathbb R$. The
 uniform $L^4$ norm of $cf$ equals $c$ times the uniform $L^4$ norm of $f$.
 \end{theorem}
 
@@ -301,8 +301,8 @@ uniform $L^4$ norm of $cf$ equals $c$ times the uniform $L^4$ norm of $f$.
 \leanok
 \uses{FABL.uniformLpNorm}
 \difficulty{3}
-Let $\\Omega$ be a finite nonempty set and let $f:\\Omega\\to\\mathbb R$. Its uniform
-$L^4$ norm equals $\\bigl(\\sum_{x\\in\\Omega}|f(x)|^4\\bigr)^{1/4}/|\\Omega|^{1/4}$.
+Let $\Omega$ be a finite nonempty set and let $f:\Omega\to\mathbb R$. Its uniform
+$L^4$ norm equals $\bigl(\sum_{x\in\Omega}|f(x)|^4\bigr)^{1/4}/|\Omega|^{1/4}$.
 \end{theorem}
 
 \begin{theorem}[Triangle inequality for the fourth norm]
@@ -311,7 +311,7 @@ $L^4$ norm equals $\\bigl(\\sum_{x\\in\\Omega}|f(x)|^4\\bigr)^{1/4}/|\\Omega|^{1
 \leanok
 \uses{FABL.uniformLpNorm, FABL.uniformLpNorm_four_eq_sum_rpow_div_cardRoot}
 \difficulty{4}
-Let $\\Omega$ be a finite nonempty set, and let $f,g:\\Omega\\to\\mathbb R$. The uniform
+Let $\Omega$ be a finite nonempty set, and let $f,g:\Omega\to\mathbb R$. The uniform
 $L^4$ norm of $f+g$ is at most the sum of the uniform $L^4$ norms of $f$ and $g$.
 \end{theorem}
 
@@ -321,10 +321,10 @@ $L^4$ norm of $f+g$ is at most the sum of the uniform $L^4$ norms of $f$ and $g$
 \leanok
 \uses{FABL.uniformLpNorm, FABL.uniformLpNorm_four_add_le}
 \difficulty{4}
-Let $\\Omega$ be a finite nonempty set, let $\\iota$ be a type, let $s$ be a finite
-subset of $\\iota$, and let $f_i:\\Omega\\to\\mathbb R$ for each $i\\in\\iota$. The
-uniform $L^4$ norm of $x\\mapsto\\sum_{i\\in s}f_i(x)$ is at most $\\sum_{i\\in
-s}\\|f_i\\|_4$, where each norm is the uniform $L^4$ norm on $\\Omega$.
+Let $\Omega$ be a finite nonempty set, let $\iota$ be a type, let $s$ be a finite
+subset of $\iota$, and let $f_i:\Omega\to\mathbb R$ for each $i\in\iota$. The
+uniform $L^4$ norm of $x\mapsto\sum_{i\in s}f_i(x)$ is at most $\sum_{i\in
+s}\|f_i\|_4$, where each norm is the uniform $L^4$ norm on $\Omega$.
 \end{theorem}
 
 \begin{theorem}[Two-to-four noise estimate]
@@ -351,8 +351,8 @@ this quantity is at most the uniform second norm of $f_k$.
 \uses{FABL.mean, FABL.uniformLpNorm}
 \difficulty{4}
 Let $n$ be a natural number, and let $f$ be a real-valued function on the Boolean cube
-$\\{-1,1\\}^n$. Suppose $f$ takes only the values $0$ and $1$, and its uniform mean is
-$\\alpha$. Then the square of its uniform $L^{4/3}$ norm is $\\alpha^{3/2}$.
+$\{-1,1\}^n$. Suppose $f$ takes only the values $0$ and $1$, and its uniform mean is
+$\alpha$. Then the square of its uniform $L^{4/3}$ norm is $\alpha^{3/2}$.
 \end{theorem}
 
 \begin{theorem}[One-third noise stability bound]
@@ -527,7 +527,7 @@ assigns to $y$.
 \leanok
 \uses{FABL.correlatedPairPMF, FABL.pmfExpectation, FABL.pmfExpectation_const_one, FABL.stableHypercubeEdgeWeight}
 \difficulty{1}
-Let $n$ be a natural number and let $\\rho\\in[-1,1]$. The sum of the stable hypercube
+Let $n$ be a natural number and let $\rho\in[-1,1]$. The sum of the stable hypercube
 edge weights over all ordered pairs of points in the $n$-dimensional sign cube is $1$.
 \end{theorem}
 
@@ -576,7 +576,7 @@ stable hypercube edge weight from $x$ to $y$.
 \leanok
 \uses{FABL.Sign, FABL.correlatedPairPMF_apply, FABL.noiseKernel, FABL.pmfExpectation, FABL.pmfExpectation_const_one, FABL.stableHypercubeEdgeWeight, FABL.uniformPMF}
 \difficulty{5}
-Let $n$ be a natural number, let $\\rho\\in[-1,1]$, and fix a point $x$ in the
+Let $n$ be a natural number, let $\rho\in[-1,1]$, and fix a point $x$ in the
 $n$-dimensional sign cube. The sum of the stable hypercube edge weights over all points
 $y$ paired with this fixed $x$ is $2^{-n}$.
 \end{theorem}
@@ -588,7 +588,7 @@ $y$ paired with this fixed $x$ is $2^{-n}$.
 \leanok
 \uses{FABL.stableHypercubeEdgeWeight, FABL.stableHypercubeEdgeWeight_comm, FABL.sum_stableHypercubeEdgeWeight_outgoing}
 \difficulty{4}
-Let $n$ be a natural number, let $\\rho\\in[-1,1]$, and fix a point $y$ in the
+Let $n$ be a natural number, let $\rho\in[-1,1]$, and fix a point $y$ in the
 $n$-dimensional sign cube. The sum of the stable hypercube edge weights over all points
 $x$ paired with this fixed $y$ is $2^{-n}$.
 \end{theorem}
@@ -735,8 +735,8 @@ operator that multiplies each Walsh coefficient indexed by a set $S$ by $\rho^{|
 \leanok
 \uses{FABL.uniformLpNorm, FABL.uniformLpNorm_four_pow_eq_expect_fourth, FABL.uniformLpNorm_nonneg}
 \difficulty{4}
-Let $\\Omega$ be a finite set, and let $f,g:\\Omega\\to\\mathbb R$. If $|f(x)|\\le g(x)$
-for every $x\\in\\Omega$, then the uniform $L^4$ norm of $f$ is at most that of $g$.
+Let $\Omega$ be a finite set, and let $f,g:\Omega\to\mathbb R$. If $|f(x)|\le g(x)$
+for every $x\in\Omega$, then the uniform $L^4$ norm of $f$ is at most that of $g$.
 \end{theorem}
 
 \begin{theorem}[Two-to-four inequality from nonnegative functions]

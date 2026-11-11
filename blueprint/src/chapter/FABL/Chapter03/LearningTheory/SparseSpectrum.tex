@@ -17,8 +17,8 @@ Declarations of the Lean module \texttt{FABL.Chapter03.LearningTheory.SparseSpec
 \label{FABL.dualWalshCharacter}
 \leanok
 \uses{FABL.binarySign, FABL.𝔽₂}
-Let $V$ be an abelian group equipped with a vector space structure over $br/br$
-replaced here by the two-element field $br?$. For each linear functional
+Let $V$ be an abelian group equipped with a vector space structure over $\bbr/\bbr$
+replaced here by the two-element field $\bbr?$. For each linear functional
 $\psi:V\to\mathbb{F}_2$, the associated additive character is the map
 $x\mapsto(-1)^{\psi(x)}$.
 \end{definition}
@@ -1356,9 +1356,9 @@ Statement pending regeneration.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p071-b009}
 \difficulty{4}
-Let $V$ be a finite-dimensional vector space over $bbf_2$, and let $psi,phi$ be
-linear functionals from $V$ to $bbf_2$. The uniform average over $x\in V$ of the
-product of their associated sign characters is $1$ if $psi=phi$ and $0$ otherwise.
+Let $V$ be a finite-dimensional vector space over $\bbf_2$, and let $\psi,\phi$ be
+linear functionals from $V$ to $\bbf_2$. The uniform average over $x\in V$ of the
+product of their associated sign characters is $1$ if $\psi=\phi$ and $0$ otherwise.
 \end{theorem}
 
 \begin{definition}[Dual Walsh basis]
@@ -2814,7 +2814,7 @@ function $x\mapsto f(x)$ on the dual group of $V$ is an integer multiple of $1$.
 \leanok
 \uses{FABL.dualWalshCharacter, FABL.𝔽₂}
 \difficulty{1}
-Let $V$ be a vector space over $br/	ext{?}$—more precisely, over the field with two
+Let $V$ be a vector space over $\bbr/	ext{?}$—more precisely, over the field with two
 elements—and let $H$ be a subspace of $V$. For every linear functional
 $\psi:V\to\mathbb{F}_2$ and every $h\in H$, the Walsh character on $H$ obtained by
 restricting $\psi$ takes at $h$ the same value as the Walsh character on $V$ takes at
@@ -4373,7 +4373,7 @@ $\varepsilon$.
 \leanok
 \uses{FABL.IsVectorFourierGranular, FABL.Sign, FABL.dualSpectralSparsity_eq_spectralSparsity, FABL.isDualFourierGranular_iff_isVectorFourierGranular, FABL.isDualFourierGranular_signValue_of_dualSpectralSparsity_le, FABL.signValue, FABL.spectralSparsity, FABL.spectralSparsityGranularity}
 \difficulty{3}
-Let $S\ge 2$ be an integer and let $f$ map the $n$-dimensional cube over $bf_2$ to
+Let $S\ge 2$ be an integer and let $f$ map the $n$-dimensional cube over $\bbf_2$ to
 signs. If the number of nonzero vector Fourier coefficients of the real-valued function
 $x\mapsto f(x)$ is at most $S$, then this function is vector Fourier granular with
 granularity $2^{1-\lfloor\log_2 S\rfloor}$; that is, each Fourier coefficient on the
@@ -5824,7 +5824,7 @@ sign cube is an integer multiple of this number.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p089-b003}
 \difficulty{1}
-Let $f$ map the $n$-dimensional cube over $bf_2$ to signs, and suppose the spectral
+Let $f$ map the $n$-dimensional cube over $\bbf_2$ to signs, and suppose the spectral
 sparsity $s$ of the real-valued function $x\mapsto f(x)$ is greater than $1$. Then this
 function is vector Fourier granular with granularity $2^{1-\lfloor\log_2 s\rfloor}$;
 each Fourier coefficient on the sign cube is an integer multiple of this number.
@@ -5838,8 +5838,8 @@ each Fourier coefficient on the sign cube is an integer multiple of this number.
 \uses{FABL.Sign, FABL.signValue, FABL.signValue_eq_neg_one_or_one, FABL.vectorFourierCoeff, FABL.vector_plancherel}
 \difficulty{4}
 Let $n$ be a natural number, and let $f$ map the $n$-dimensional vector space over
-$\\mathbb F_2$ to signs. Then the sum, over all vectors $\\gamma$ in that space, of the
-squares of the binary Fourier coefficients of the real-valued function $x\\mapsto f(x)$
+$\mathbb F_2$ to signs. Then the sum, over all vectors $\gamma$ in that space, of the
+squares of the binary Fourier coefficients of the real-valued function $x\mapsto f(x)$
 is $1$.
 \end{theorem}
 

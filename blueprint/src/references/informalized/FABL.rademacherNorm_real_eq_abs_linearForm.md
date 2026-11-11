@@ -7,4 +7,4 @@
 
 **Claim.** For a real coefficient vector $a$ and sign vector $x$, the Rademacher norm of $a$ at $x$ equals the absolute value of the associated linear form.
 
-**Proof.** In the real normed space $[31m\mathbb R[0m$, scalar multiplication satisfies $x_i\,a_i=a_i x_i$. Hence the vector sum inside the norm is exactly the scalar linear form $[31m\sum_i a_i x_i[0m$. The norm on the reals is absolute value, so its norm is $\left|\sum_i a_i x_i\right|$.
+**Proof.** In the real normed space $\mathbb R$, scalar multiplication satisfies $x_i\,a_i=a_i x_i$. Hence the vector sum inside the norm is exactly the scalar linear form $\sum_i a_i x_i$. The norm on the reals is absolute value, so its norm is $\left|\sum_i a_i x_i\right|$.

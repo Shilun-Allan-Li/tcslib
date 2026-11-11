@@ -553,12 +553,12 @@ subset of the last $n$ coordinates.
 \leanok
 \uses{FABL.Sign, FABL.firstCoordinateSlice, FABL.fourierCoeff, FABL.fourierCoeff_insert_zero_tailFrequency, FABL.fourierCoeff_tailFrequency, FABL.signValue, FABL.signValue_neg_one, FABL.signValue_one, FABL.tailFrequency}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{-1,1\\}^{n+1}\\to\\mathbb R$, let
-$b\\in\\{-1,1\\}$, and let $S\\subseteq\\{1,\\ldots,n\\}$. Write
-$S^+\\subseteq\\{1,\\ldots,n+1\\}$ for the set obtained by shifting every coordinate in
+Let $n$ be a natural number, let $f:\{-1,1\}^{n+1}\to\mathbb R$, let
+$b\in\{-1,1\}$, and let $S\subseteq\{1,\ldots,n\}$. Write
+$S^+\subseteq\{1,\ldots,n+1\}$ for the set obtained by shifting every coordinate in
 $S$ up by one. The Fourier coefficient of the slice of $f$ with first coordinate fixed
 to $b$, at $S$, equals the Fourier coefficient of $f$ at $S^+$ plus $b$ times its
-coefficient at $S^+\\cup\\{1\\}$.
+coefficient at $S^+\cup\{1\}$.
 \end{theorem}
 
 \begin{theorem}[Noise operator on a coordinate slice]
@@ -1620,7 +1620,7 @@ expectations are uniform averages over the cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.discreteDerivative, FABL.discreteDerivative_apply, FABL.setCoordinate}
 \difficulty{4}
-Let $f$ be a function from the $n$-dimensional sign cube to $\\{\pm1\}$, let $i$ be a
+Let $f$ be a function from the $n$-dimensional sign cube to $\{\pm1\}$, let $i$ be a
 coordinate, and let $x$ be a point of the cube. The discrete derivative of the
 real-valued version of $f$ in coordinate $i$ at $x$ has cube equal to itself.
 \end{theorem}
@@ -2480,7 +2480,7 @@ derivative of the real-valued version of $f$ in coordinate $i$ at $x$ equals its
   {pdf-ffbe9c7b3306-p047-b002,
     pdf-ffbe9c7b3306-p047-b003}
 \difficulty{5}
-Let $n$ be a natural number and let $f:\\{−1,1\\}^n\\to\\{−1,1\\}$ be a Boolean
+Let $n$ be a natural number and let $f:\{−1,1\}^n\to\{−1,1\}$ be a Boolean
 function. For each coordinate $i$, the square of the stable influence of its real-valued
 version at parameter $1/3$ is at most the cube of its Boolean influence, where Boolean
 influence is the uniform probability that flipping coordinate $i$ changes the value of
@@ -2517,7 +2517,7 @@ coordinate influence is nonnegative.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.booleanInfluence, FABL.booleanInfluence_eq_influence_toReal, FABL.influence_nonneg, FABL.maximumInfluence}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$, and let $i$ be a
+Let $n$ be a nonnegative integer, let $f:\{-1,1\}^n\to\{\pm1\}$, and let $i$ be a
 coordinate. The influence of coordinate $i$ is at most the maximum influence of $f$ over
 all coordinates.
 \end{theorem}
@@ -3435,7 +3435,7 @@ Statement pending regeneration.
   {pdf-ffbe9c7b3306-p255-b005,
     pdf-ffbe9c7b3306-p267-b005}
 \difficulty{4}
-Let $n$ be a nonnegative integer and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a Boolean
+Let $n$ be a nonnegative integer and let $f:\{-1,1\}^n\to\{-1,1\}$ be a Boolean
 function. The square of the total stable influence of its real-valued sign
 representation at parameter $1/3$ is at most the maximum coordinate influence of $f$
 times the square of the total influence of that sign representation.

@@ -59,7 +59,7 @@ real bias parameter is $a/b$.
 \uses{FABL.SmallBiasFourierInput, FABL.SmallBiasInput}
 Given a small-bias Fourier input with bias numerator $a$, denominator $b$, and Fourier
 bound $B$, its associated generator input has output dimension $n$, numerator $a$, and
-denominator $bB$. It retains the hypotheses $n>0$, $a>0$, and $2a\\le bB$.
+denominator $bB$. It retains the hypotheses $n>0$, $a>0$, and $2a\le bB$.
 \end{definition}
 
 \begin{theorem}[Generator bias scaling]
@@ -68,7 +68,7 @@ denominator $bB$. It retains the hypotheses $n>0$, $a>0$, and $2a\\le bB$.
 \leanok
 \uses{FABL.SmallBiasFourierInput, FABL.SmallBiasFourierInput.epsilon, FABL.SmallBiasFourierInput.generatorInput, FABL.SmallBiasInput.epsilon}
 \difficulty{4}
-For a small-bias Fourier input with target bias $[?]$ and Fourier bound $B$, the bias
+For a small-bias Fourier input with target bias $\varepsilon$ and Fourier bound $B$, the bias
 parameter of its associated generator input equals the target bias divided by $B$.
 \end{theorem}
 
@@ -82,7 +82,7 @@ parameter of its associated generator input equals the target bias divided by $B
 \leanok
 \uses{FABL.SmallBiasFourierInput, FABL.SmallBiasFourierInput.generatorInput, FABL.SmallBiasInput.fieldDegree}
 For a small-bias Fourier input, let $k$ be the field degree of its associated generator
-input. Its sample count is $2^k\\cdot 2^k$.
+input. Its sample count is $2^k\cdot 2^k$.
 \end{definition}
 
 \begin{theorem}[Positivity of the sample count]

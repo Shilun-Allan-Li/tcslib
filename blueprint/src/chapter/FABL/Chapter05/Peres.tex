@@ -54,11 +54,11 @@ $f(x)=-1$ otherwise, for some real coefficients $a_0,a_1,\ldots,a_n$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.isUnate_of_isLinearThreshold, FABL.linearThresholdClass, FABL.totalInfluence, FABL.totalInfluence_toReal_le_sqrt_card_of_unate}
 \difficulty{1}
-Let $r$ be a positive integer and let $f:\\{-1,1\\}^r\\to\\{-1,1\\}$ be a linear
-threshold function: there are real weights $a_1,\\ldots,a_r$ and a real threshold offset
-$a_0$ such that $f(x)$ is the sign of $a_0+\\sum_{i=1}^r a_i x_i$, with a nonnegative
+Let $r$ be a positive integer and let $f:\{-1,1\}^r\to\{-1,1\}$ be a linear
+threshold function: there are real weights $a_1,\ldots,a_r$ and a real threshold offset
+$a_0$ such that $f(x)$ is the sign of $a_0+\sum_{i=1}^r a_i x_i$, with a nonnegative
 input sent to $1$ and a negative input sent to $-1$. Then the total influence of $f$ is
-at most $\\sqrt{r}$.
+at most $\sqrt{r}$.
 \end{theorem}
 
 \begin{theorem}[Square-root noise bound for threshold functions]
@@ -215,9 +215,9 @@ $\sqrt{2/\pi}\sqrt{1/\lfloor1/\delta\rfloor}+4(1/\lfloor1/\delta\rfloor)^{3/2}$.
 \leanok
 \uses{FABL.reciprocal_natFloor_one_div_bounds}
 \difficulty{4}
-As $delta$ tends to $0$ through positive real values, the reciprocal of $lfloor
-1/delta rfloor$ is $O(delta)$; that is, the function $delta mapsto 1/lfloor
-1/delta rfloor$ is bounded in magnitude by a constant multiple of $delta$ on some
+As $\delta$ tends to $0$ through positive real values, the reciprocal of $\lfloor
+1/\delta \rfloor$ is $O(\delta)$; that is, the function $\delta \mapsto 1/\lfloor
+1/\delta \rfloor$ is bounded in magnitude by a constant multiple of $\delta$ on some
 right neighborhood of zero.
 \end{theorem}
 
@@ -227,6 +227,6 @@ right neighborhood of zero.
 \leanok
 \uses{FABL.one_div_natFloor_one_div_isBigO, FABL.peresMajorityUpperBound, FABL.sqrt_one_div_natFloor_one_div_sub_sqrt_isBigO}
 \difficulty{4}
-As $ delta$ tends to $0$ through nonnegative values, the difference between the Peres
-majority upper bound at $ delta$ and $ sqrt{2/\pi}\,\sqrt{\delta}$ is $O(\delta^{3/2})$.
+As $\delta$ tends to $0$ through nonnegative values, the difference between the Peres
+majority upper bound at $\delta$ and $\sqrt{2/\pi}\,\sqrt{\delta}$ is $O(\delta^{3/2})$.
 \end{theorem}

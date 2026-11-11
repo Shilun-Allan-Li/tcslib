@@ -91,7 +91,7 @@ to each coordinate in the query trace of $T$ on the input $i\mapsto x(\sigma(i))
 \leanok
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.Queries, FABL.FiniteDecisionTree.permuteCoordinates, FABL.FiniteDecisionTree.queryTrace_permuteCoordinates}
 \difficulty{4}
-Let $n$ be a natural number, let $\Omega$ and $\alpha$ be types, let $\sigma$ be a
+Let $n$ be a natural number, let $\Omega$ and $\alpha$ be types, let $\sigma$ be a
 permutation of the $n$ coordinates, and let $T$ be a finite decision tree whose
 available coordinates are all of $\{0,\ldots,n-1\}$. For any coordinate $i$ and input
 $x:\{0,\ldots,n-1\}\to\Omega$, the permuted tree queries $i$ on $x$ if and only if $T$
@@ -251,9 +251,9 @@ probability for each deterministic tree selected by the seed.
 \leanok
 \uses{FABL.FiniteDecisionTree.deterministicAverageCost_permuteCoordinates, FABL.FiniteDecisionTree.permuteCoordinates, FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.averageCost_eq_seedExpectation, FABL.RandomizedDecisionTree.deterministicAverageCost, FABL.RandomizedDecisionTree.pmfExpectation_symmetrizedSeedLaw, FABL.RandomizedDecisionTree.symmetrization, FABL.RandomizedDecisionTree.symmetrizedSeedLaw, FABL.Sign, FABL.pmfExpectation, FABL.pmfExpectation_const}
 \difficulty{4}
-Let $n$ be a natural number, let $f$ be a Boolean function on the sign cube ${\pm1}^n$,
+Let $n$ be a natural number, let $f$ be a Boolean function on the sign cube $\{\pm1\}^n$,
 and let $T$ be a randomized decision tree computing $f$ whose input and output alphabets
-are ${\pm1}$. For any probability distribution $pi$ on ${\pm1}$, the average cost of
+are $\{\pm1\}$. For any probability distribution $\pi$ on $\{\pm1\}$, the average cost of
 the symmetrized tree under the independent product input distribution equals the average
 cost of $T$ under that distribution.
 \end{theorem}
@@ -2430,7 +2430,7 @@ cost of $T$ under that distribution.
     pdf-ffbe9c7b3306-p231-b005}
 Let $n$ be a natural number, let $f$ be a Boolean function on the sign cube, let $T$ be
 a randomized decision tree computing $f$ with sign-valued inputs and outputs, and let
-$pi$ be a probability distribution on the sign alphabet. For each coordinate $i$, the
+$\pi$ be a probability distribution on the sign alphabet. For each coordinate $i$, the
 probability that the symmetrized tree queries $i$ under the independent product input
 distribution is the average, over the uniform distribution on the permutation group
 preserving $f$, of the query probability of $T$ at the coordinate obtained by applying
@@ -4570,7 +4570,7 @@ with marginal $\pi$, are equal.
 Let $n$ be a natural number, let $f$ be a Boolean function on the sign cube whose
 symmetries act transitively on the coordinates, and let $T$ be a randomized decision
 tree computing $f$ with sign-valued inputs and outputs. For any probability distribution
-$pi$ on the sign alphabet, the symmetrized tree has the same query probability at every
+$\pi$ on the sign alphabet, the symmetrized tree has the same query probability at every
 coordinate under the independent product input distribution.
 \end{theorem}
 
@@ -6839,7 +6839,7 @@ coordinate under the independent product input distribution.
     pdf-ffbe9c7b3306-p241-b006}
 Let $n>0$, let $f$ be a Boolean function on the sign cube whose symmetries act
 transitively on the coordinates, and let $T$ be a randomized decision tree computing $f$
-with sign-valued inputs and outputs. For any probability distribution $pi$ on the sign
+with sign-valued inputs and outputs. For any probability distribution $\pi$ on the sign
 alphabet and any coordinate $i$, the probability that the symmetrized tree queries $i$
 under the independent product input distribution equals the average cost of $T$ divided
 by $n$.
@@ -9097,10 +9097,10 @@ marginal $\pi$ equals the average cost of $T$ under that distribution divided by
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.queryProbability, FABL.RandomizedDecisionTree.queryProbability_nonneg, FABL.RandomizedDecisionTree.revealment}
 \difficulty{4}
-Let $n$ be a natural number, let $Omega$ be a finite input alphabet, and let $T$ be a
+Let $n$ be a natural number, let $\Omega$ be a finite input alphabet, and let $T$ be a
 randomized decision tree on $n$ coordinates with a finite nonempty seed space and a
 probability law on its seeds, such that every seed-selected tree computes the same
-function. For any probability distribution $pi$ on $Omega$, the revealment of $T$
+function. For any probability distribution $\pi$ on $\Omega$, the revealment of $T$
 under the independent product input distribution is nonnegative.
 \end{theorem}
 
@@ -9121,9 +9121,9 @@ distribution on the input alphabet, its average query cost is zero.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.revealment}
 \difficulty{1}
-Let $Omega$ be a finite alphabet, let $T$ be a randomized decision tree on zero
+Let $\Omega$ be a finite alphabet, let $T$ be a randomized decision tree on zero
 coordinates with a finite nonempty seed space and a probability law on its seeds, and
-let $pi$ be any probability distribution on $Omega$. Then the revealment of $T$ under
+let $\pi$ be any probability distribution on $\Omega$. Then the revealment of $T$ under
 the independent product input distribution is zero.
 \end{theorem}
 
@@ -9159,11 +9159,10 @@ distribution with marginal $\pi$.
 \leanok
 \uses{FABL.FiniteDecisionTree.completeTree, FABL.FiniteDecisionTree.completeTree_computes, FABL.RandomizedDecisionTree.functionRevealment, FABL.RandomizedDecisionTree.ofDeterministic, FABL.RandomizedDecisionTree.revealment, FABL.RandomizedDecisionTree.revealment_nonneg}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $Omega$ be a finite set, let $alpha$ be a type,
-let $pi$ be a probability mass function on $Omega$, and let $g:(Fin
-ntoOmega)toalpha$ be any function. The infimum, over all zero-error randomized
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite set, let $\alpha$ be a type,
+let $\pi$ be a probability mass function on $\Omega$, and let $g:(\mathrm{Fin}\nn\to\Omega)\to\alpha$ be any function. The infimum, over all zero-error randomized
 decision trees computing $g$, of their revealment under the product input distribution
-induced by $pi$ is nonnegative.
+induced by $\pi$ is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Zero complexity in dimension zero]
@@ -9172,8 +9171,8 @@ induced by $pi$ is nonnegative.
 \leanok
 \uses{FABL.FiniteDecisionTree.completeTree, FABL.FiniteDecisionTree.completeTree_computes, FABL.RandomizedDecisionTree.averageComplexity, FABL.RandomizedDecisionTree.averageComplexity_le_averageCost, FABL.RandomizedDecisionTree.averageComplexity_nonneg, FABL.RandomizedDecisionTree.averageCost_zero_dimension, FABL.RandomizedDecisionTree.ofDeterministic}
 \difficulty{4}
-Let $\\Omega$ be a finite alphabet with probability distribution $\\pi$, let $\\alpha$
-be any output set, and let $g:(\\mathrm{Fin}\,0\\to\\Omega)\\to\\alpha$. The minimum
+Let $\Omega$ be a finite alphabet with probability distribution $\pi$, let $\alpha$
+be any output set, and let $g:(\mathrm{Fin}\,0\to\Omega)\to\alpha$. The minimum
 average query complexity of a finite randomized decision tree computing $g$ is zero.
 \end{theorem}
 
@@ -9183,8 +9182,8 @@ average query complexity of a finite randomized decision tree computing $g$ is z
 \leanok
 \uses{FABL.FiniteDecisionTree.completeTree, FABL.FiniteDecisionTree.completeTree_computes, FABL.RandomizedDecisionTree.functionRevealment, FABL.RandomizedDecisionTree.functionRevealment_le_revealment, FABL.RandomizedDecisionTree.functionRevealment_nonneg, FABL.RandomizedDecisionTree.ofDeterministic, FABL.RandomizedDecisionTree.revealment_zero_dimension}
 \difficulty{4}
-Let $Omega$ be a finite set, let $alpha$ be a type, let $pi$ be a probability mass
-function on $Omega$, and let $g:(Fin 0toOmega)toalpha$ be any function. The
+Let $\Omega$ be a finite set, let $\alpha$ be a type, let $\pi$ be a probability mass
+function on $\Omega$, and let $g:(\mathrm{Fin} 0\to\Omega)\to\alpha$ be any function. The
 infimum of the revealments of zero-error randomized decision trees computing $g$ is $0$.
 \end{theorem}
 

@@ -32,8 +32,8 @@ $J\subseteq\{0,\ldots,n-1\}$. Then $\delta^{|J|}(1-\delta)^{n-|J|}\ge0$.
 \leanok
 \uses{FABL.deltaRandomSubsetWeight}
 \difficulty{4}
-For every nonnegative integer $n$ and every real number $\\delta$, the sum over all
-subsets $J$ of $\\{1,\\ldots,n\\}$ of $\\delta^{|J|}(1-\\delta)^{n-|J|}$ is $1$.
+For every nonnegative integer $n$ and every real number $\delta$, the sum over all
+subsets $J$ of $\{1,\ldots,n\}$ of $\delta^{|J|}(1-\delta)^{n-|J|}$ is $1$.
 \end{theorem}
 
 \begin{definition}[Weighted subset sum]
@@ -193,7 +193,7 @@ weight of the restriction assigned there.
 \difficulty{1}
 Let $n$ be a natural number and assign to each of the $n$ coordinates one of the states
 “free,” “fixed to $1$,” or “fixed to $-1$.” The product of the coordinate weights, which
-are $rac12$ for a free state and $rac14$ for either fixed state, is nonnegative.
+are $\frac12$ for a free state and $\frac14$ for either fixed state, is nonnegative.
 \end{theorem}
 
 \begin{theorem}[Total weight of restriction assignments]
@@ -214,8 +214,8 @@ of its coordinate weights. The sum of the weights of all restriction assignments
 \label{FABL.Literal.isFalsified}
 \leanok
 \uses{FABL.CoordRestriction, FABL.Literal, FABL.Sign}
-Let $n$ be a natural number, let a literal specify a coordinate $i\\in\\mathrm{Fin}(n)$
-and a required sign $s\\in\\{\\pm1\\}$, and let $\\rho$ assign each coordinate either no
+Let $n$ be a natural number, let a literal specify a coordinate $i\in\mathrm{Fin}(n)$
+and a required sign $s\in\{\pm1\}$, and let $\rho$ assign each coordinate either no
 restriction or a fixed sign. The literal is falsified exactly when its coordinate is
 fixed to a sign different from $s$; a free coordinate does not falsify it.
 \end{definition}
@@ -230,8 +230,8 @@ fixed to a sign different from $s$; a free coordinate does not falsify it.
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFTerm, FABL.Literal.isFalsified}
 Let $n$ be a natural number, let $T$ be a conjunction of literals with pairwise distinct
-coordinates, and let $\\rho$ assign each coordinate either no restriction or a fixed
-sign. If any literal is falsified by $\\rho$, define the restricted width of $T$ to be
+coordinates, and let $\rho$ assign each coordinate either no restriction or a fixed
+sign. If any literal is falsified by $\rho$, define the restricted width of $T$ to be
 $0$; otherwise, it is the number of literals whose coordinates are unrestricted.
 \end{definition}
 
@@ -256,8 +256,8 @@ literals in $T$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFTerm, FABL.Literal.isFalsified}
 Let $n$ be a natural number, let $T$ be a conjunction of literals with pairwise distinct
-coordinates, and let $\\rho$ assign each coordinate either no restriction or a fixed
-sign. The term is not falsified when none of its literals is falsified by $\\rho$.
+coordinates, and let $\rho$ assign each coordinate either no restriction or a fixed
+sign. The term is not falsified when none of its literals is falsified by $\rho$.
 \end{definition}
 
 \begin{theorem}[Characterization of a nonfalsified term]
@@ -1700,10 +1700,10 @@ function equals the empty-set Fourier coefficient of $f$.
 \leanok
 \uses{FABL.deltaRandomSubsetWeight}
 \difficulty{6}
-Let $n$ be a natural number, let $b4$ be a real number, and let $S$ be a subset of
-$bbrange{n}=bbrange{n}$ (the indices $0,bbrdots,n-1$). For each subset $J$ of these
-indices, assign weight $b4^{|J|}(1-b4)^{n-|J|}$. The sum of the weights over all $J$
-containing $S$ is $b4^{|S|}$.
+Let $n$ be a natural number, let $\delta$ be a real number, and let $S$ be a subset of
+$\bbrange{n}=\bbrange{n}$ (the indices $0,\bbrdots,n-1$). For each subset $J$ of these
+indices, assign weight $\delta^{|J|}(1-\delta)^{n-|J|}$. The sum of the weights over all $J$
+containing $S$ is $\delta^{|S|}$.
 \end{theorem}
 
 \begin{definition}[Ambient restriction Fourier coefficient]
@@ -1717,10 +1717,10 @@ containing $S$ is $b4^{|S|}$.
 \leanok
 \uses{FABL.FixedSignCube, FABL.freeFrequencyPart, FABL.restrictionFourierCoeff}
 Let $n$ be a natural number, let $f$ be a real-valued function on the sign cube
-$\\{\\pm1\\}^n$, let $J,S\\subseteq\\mathrm{Fin}(n)$, and let $z$ assign signs to the
+$\{\pm1\}^n$, let $J,S\subseteq\mathrm{Fin}(n)$, and let $z$ assign signs to the
 coordinates outside $J$. Define the ambient restriction Fourier coefficient at $S$ and
 $z$ to be the restriction Fourier coefficient at the free-frequency part of $S$ when
-$S\\subseteq J$, and $0$ otherwise.
+$S\subseteq J$, and $0$ otherwise.
 \end{definition}
 
 \begin{theorem}[Ambient restriction coefficient formula]
@@ -3175,8 +3175,8 @@ times the Fourier coefficient of $f$ at $S$.
 \leanok
 \uses{FABL.freeFrequencyPart, FABL.liftFreeFrequency}
 \difficulty{4}
-Let $n$ be a natural number and let $J,S$ be finite subsets of $in n$ such that
-$S\subseteq J$. Viewing the elements of $S$ as elements indexed by $J$ and then in $in
+Let $n$ be a natural number and let $J,S$ be finite subsets of $\in n$ such that
+$S\subseteq J$. Viewing the elements of $S$ as elements indexed by $J$ and then in $\in
 n$ recovers exactly $S$.
 \end{theorem}
 
@@ -4670,10 +4670,10 @@ then $S\subseteq U$.
 \leanok
 \uses{FABL.deltaRandomSubsetWeight, FABL.subset_of_inter_eq, FABL.subset_of_inter_eq_left}
 \difficulty{6}
-Let $n$ be a nonnegative integer, let $\\delta$ be real, and let $S,U$ be subsets of
-$\\{1,\\ldots,n\\}$. The sum over all subsets $J$ of $\\{1,\\ldots,n\\}$ of the weight
-$\\delta^{|J|}(1-\\delta)^{n-|J|}$ when $U\\cap J=S$ (and zero otherwise) equals
-$\\delta^{|S|}(1-\\delta)^{|U\\setminus S|}$ if $S\\subseteq U$, and equals zero
+Let $n$ be a nonnegative integer, let $\delta$ be real, and let $S,U$ be subsets of
+$\{1,\ldots,n\}$. The sum over all subsets $J$ of $\{1,\ldots,n\}$ of the weight
+$\delta^{|J|}(1-\delta)^{n-|J|}$ when $U\cap J=S$ (and zero otherwise) equals
+$\delta^{|S|}(1-\delta)^{|U\setminus S|}$ if $S\subseteq U$, and equals zero
 otherwise.
 \end{theorem}
 
@@ -7533,9 +7533,9 @@ the uniform Fourier coefficient of $f$ at $U$.
 \leanok
 \uses{FABL.deltaRandomSubsetWeight}
 \difficulty{5}
-Let $n$ be a nonnegative integer, let $\\delta$ be real, and let $i$ be a coordinate in
-$\\{1,\\ldots,n\\}$. The sum over subsets $J$ containing $i$ of
-$\\delta^{|J|}(1-\\delta)^{n-|J|}$ is $\\delta$.
+Let $n$ be a nonnegative integer, let $\delta$ be real, and let $i$ be a coordinate in
+$\{1,\ldots,n\}$. The sum over subsets $J$ containing $i$ of
+$\delta^{|J|}(1-\delta)^{n-|J|}$ is $\delta$.
 \end{theorem}
 
 \begin{theorem}[Derivative of an extended sign restriction]
@@ -7559,9 +7559,9 @@ signs outside $J$.
 \label{FABL.freePart}
 \leanok
 \uses{FABL.FreeSignCube}
-Let $n$ be a natural number, let $J\\subseteq\\mathrm{Fin}(n)$, and let
-$x\\in\\{\\pm1\\}^n$. The free part of $x$ on $J$ is the assignment on $J$ given by
-$j\\mapsto x_j$.
+Let $n$ be a natural number, let $J\subseteq\mathrm{Fin}(n)$, and let
+$x\in\{\pm1\}^n$. The free part of $x$ on $J$ is the assignment on $J$ given by
+$j\mapsto x_j$.
 \end{definition}
 
 \begin{theorem}[Free component of the sign cube split]
@@ -10388,7 +10388,7 @@ The total weight of restrictions under which $\ell$ is not falsified is $3/4$.
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFTerm, FABL.DNFTerm.literalAt, FABL.DNFTerm.support, FABL.Literal.isFalsified}
 Let $n$ be a natural number, let $T$ be a conjunction of literals with pairwise distinct
-coordinates, let $i\\in\\mathrm{Fin}(n)$, and let $c$ be a coordinate restriction. If
+coordinates, let $i\in\mathrm{Fin}(n)$, and let $c$ be a coordinate restriction. If
 $i$ is in the support of $T$, the local nonfalsification factor is $0$ when the literal
 at $i$ is falsified by the constant restriction $c$, and is $1$ otherwise; if $i$ is
 outside the support, the factor is $1$.
@@ -13362,8 +13362,8 @@ probability that the restricted width of $T$ is at least $w$ is at most $(3/4)^w
 \label{FABL.sum_inverse_two_pow_succ_Ico_le}
 \leanok
 \difficulty{4}
-For all nonnegative integers $m,n$, $\\sum_{k=m}^{n-1}2^{-(k+1)}\\le 2^{-m}$, where the
-sum is empty when $n\\le m$. 
+For all nonnegative integers $m,n$, $\sum_{k=m}^{n-1}2^{-(k+1)}\le 2^{-m}$, where the
+sum is empty when $n\le m$.
 \end{theorem}
 
 \begin{definition}[Selected term of a DNF formula]
@@ -13372,9 +13372,9 @@ sum is empty when $n\\le m$. 
 \label{FABL.DNFFormula.selectedTerm}
 \leanok
 \uses{FABL.DNFFormula, FABL.DNFFormula.eval, FABL.DNFFormula.eval_eq_neg_one_iff, FABL.DNFTerm, FABL.DNFTerm.empty}
-Let $n$ be a natural number, let $\\varphi$ be a disjunction of conjunctions of
-literals, and let $x\\in\\{\\pm1\\}^n$. If $\\varphi(x)=-1$, select a term of $\\varphi$
-that evaluates to $-1$ at $x$; if $\\varphi(x)\\ne-1$, select the empty term.
+Let $n$ be a natural number, let $\varphi$ be a disjunction of conjunctions of
+literals, and let $x\in\{\pm1\}^n$. If $\varphi(x)=-1$, select a term of $\varphi$
+that evaluates to $-1$ at $x$; if $\varphi(x)\ne-1$, select the empty term.
 \end{definition}
 
 \begin{definition}[Width of the selected term]
@@ -13383,8 +13383,8 @@ that evaluates to $-1$ at $x$; if $\\varphi(x)\\ne-1$, select the empty term.
 \label{FABL.DNFFormula.selectedWidth}
 \leanok
 \uses{FABL.DNFFormula, FABL.DNFFormula.selectedTerm, FABL.DNFTerm.width}
-Let $n$ be a natural number, let $\\varphi$ be a disjunction of conjunctions of
-literals, and let $x\\in\\{\\pm1\\}^n$. The selected width of $\\varphi$ at $x$ is the
+Let $n$ be a natural number, let $\varphi$ be a disjunction of conjunctions of
+literals, and let $x\in\{\pm1\}^n$. The selected width of $\varphi$ at $x$ is the
 width of the term selected at $x$.
 \end{definition}
 

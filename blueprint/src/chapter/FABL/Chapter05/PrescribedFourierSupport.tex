@@ -130,9 +130,9 @@ where $K_{\mathcal F}$ is the prescribed Fourier kernel.
 \leanok
 \uses{FABL.BooleanFunction, FABL.Sign, FABL.uniformPMF}
 \difficulty{3}
-For every natural number $n$, choose uniformly at random a function from ${pm1}^n$ to
-$pm1$. Its probability measure is the product, over all inputs in ${pm1}^n$, of the
-uniform probability measure on $pm1$.
+For every natural number $n$, choose uniformly at random a function from $\{\pm1\}^n$ to
+$\pm1$. Its probability measure is the product, over all inputs in $\{\pm1\}^n$, of the
+uniform probability measure on $\pm1$.
 \end{theorem}
 
 \begin{theorem}[Mean of a uniform sign]
@@ -152,10 +152,10 @@ value is zero.
 \uses{FABL.BooleanFunction, FABL.Sign, FABL.integral_signValue_uniformPMF, FABL.signValue, FABL.signValue_eq_neg_one_or_one, FABL.uniformBooleanFunction_toMeasure_eq_pi, FABL.uniformPMF}
 \difficulty{6}
 Let $n$ be a natural number, let $w$ assign a real weight to each point of the Boolean
-cube $\\{-1,1\\}^n$, and let $t\\ge 0$. Choose a function
-$f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ uniformly at random, and write $f(a)$ for its sign
-value. The probability that $\\left|\\sum_{a\\in\\{-1,1\\}^n} w(a)f(a)\\right|\\ge t$ is
-at most $2\\exp\\left(-\\frac{t^2}{2\\sum_a w(a)^2}\\right)$.
+cube $\{-1,1\}^n$, and let $t\ge 0$. Choose a function
+$f:\{-1,1\}^n\to\{\pm1\}$ uniformly at random, and write $f(a)$ for its sign
+value. The probability that $\left|\sum_{a\in\{-1,1\}^n} w(a)f(a)\right|\ge t$ is
+at most $2\exp\left(-\frac{t^2}{2\sum_a w(a)^2}\right)$.
 \end{theorem}
 
 \begin{theorem}[Off-center sum as a weighted sum]
@@ -233,12 +233,12 @@ where $K_{\mathcal F}$ is the prescribed Fourier kernel.
 \leanok
 \uses{FABL.BooleanFunction, FABL.fourierCoeff, FABL.fourierCoeff_prescribedFourierKernel, FABL.monomial, FABL.prescribedFourierApproximation, FABL.prescribedFourierKernel, FABL.signValue}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $\\mathcal F$ be a nonempty finite family of
-subsets of $\\{1,\\ldots,n\\}$, let $f:\\{-1,1\\}^n\\to\\{\\pm1\\}$, and let
-$T\\subseteq\\{1,\\ldots,n\\}$ with $T\\notin\\mathcal F$. For $a,x\\in\\{-1,1\\}^n$,
-set $I_a(x)=\\prod_{i=1}^n(1+a_ix_i)/2$, and define $P_a(x)=\\sum_{S\\in\\mathcal
-F}\\widehat I_a(S)\\prod_{i\\in S}x_i$ and $K_a(x)=2^n|\\mathcal F|^{-1}P_a(x)$. The
-function $A_f(x)=\\sum_{a\\in\\{-1,1\\}^n}f(a)K_a(x)$ has Fourier coefficient zero at
+Let $n$ be a nonnegative integer, let $\mathcal F$ be a nonempty finite family of
+subsets of $\{1,\ldots,n\}$, let $f:\{-1,1\}^n\to\{\pm1\}$, and let
+$T\subseteq\{1,\ldots,n\}$ with $T\notin\mathcal F$. For $a,x\in\{-1,1\}^n$,
+set $I_a(x)=\prod_{i=1}^n(1+a_ix_i)/2$, and define $P_a(x)=\sum_{S\in\mathcal
+F}\widehat I_a(S)\prod_{i\in S}x_i$ and $K_a(x)=2^n|\mathcal F|^{-1}P_a(x)$. The
+function $A_f(x)=\sum_{a\in\{-1,1\}^n}f(a)K_a(x)$ has Fourier coefficient zero at
 $T$.
 \end{theorem}
 
@@ -273,12 +273,12 @@ outside $\mathcal F$ is zero and $|f(x)-q(x)|<\varepsilon$ for every $x\in\{-1,1
 \leanok
 \uses{FABL.BooleanFunction, FABL.Sign, FABL.measure_prescribedFourierOffCenterSum_abs_ge_le, FABL.prescribedFourierOffCenterSum, FABL.uniformPMF}
 \difficulty{4}
-Let $n$ be a natural number, let $\\mathcal F$ be a nonempty family of subsets of $[n]$,
-and let $0<\\varepsilon<1$ satisfy $\\left(1-\\frac{\\varepsilon^2}{6n}\\right)2^n\\le
-|\\mathcal F|$. Choose uniformly at random a sign-valued function $f$ on the Boolean
+Let $n$ be a natural number, let $\mathcal F$ be a nonempty family of subsets of $[n]$,
+and let $0<\varepsilon<1$ satisfy $\left(1-\frac{\varepsilon^2}{6n}\right)2^n\le
+|\mathcal F|$. Choose uniformly at random a sign-valued function $f$ on the Boolean
 cube. The probability that there exists a point $x$ of the cube for which the absolute
-value of the prescribed Fourier off-center sum associated to $\\mathcal F$, $x$, and $f$
-is at least $\\varepsilon$ is at most $2^{-n}$.
+value of the prescribed Fourier off-center sum associated to $\mathcal F$, $x$, and $f$
+is at least $\varepsilon$ is at most $2^{-n}$.
 \end{theorem}
 
 \begin{theorem}[Typical approximation with prescribed Fourier support]
@@ -337,7 +337,7 @@ $|A|$ denotes the cardinality of $A$.
 \leanok
 \uses{FABL.Sign, FABL.signValue}
 \difficulty{1}
-For a uniform random sign $s\in\{-1,1\}$, its mean is $\\mathbb{E}[s]=0$.
+For a uniform random sign $s\in\{-1,1\}$, its mean is $\mathbb{E}[s]=0$.
 \end{theorem}
 
 \begin{theorem}[Upper tail of the positive-coordinate count]

@@ -26,11 +26,11 @@ origin, and the input head and output tape as in the standard word configuration
 \uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.exists_installCallTM, Turing.FinTM.inputCall_copy, Turing.MultiTapeTM.runFrom, Turing.SweepPhase, Turing.inputCopyTM, Turing.inputCopyTM_run_ofCfg, Turing.seamCompTM, Turing.seamCompTM_firstReturn_ofCfg, Turing.seamCompTM_run_ofCfg, Turing.seamReleaseTM, Turing.seamReleaseTM_firstReturn, Turing.stateWord}
 \difficulty{6}
 Let $M$ be a finite Turing machine over Boolean words, let $f$ map Boolean words to
-Boolean words, and let $T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $M$ computes $f$
+Boolean words, and let $T : \mathbb{N} \to \mathbb{N}$. Suppose $M$ computes $f$
 within $T(|x|)$ steps on every input $x$. Then there are a finite Turing machine $C$,
 entry and exit states of $C$, and a natural number $c$ with at least one work tape, such
 that for every input $x$, starting from the clean seam in the entry state with all work
-tapes blank, there is a positive time $t\\le c(T(|x|)+|x|+|f(x)|+1)$ at which $C$
+tapes blank, there is a positive time $t\le c(T(|x|)+|x|+|f(x)|+1)$ at which $C$
 reaches the clean seam in the exit state with $f(x)$ on its first work tape and all
 other work tapes blank; the exit state is not visited at any earlier positive time
 before $t$.

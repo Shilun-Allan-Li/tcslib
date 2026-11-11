@@ -52,7 +52,7 @@ functions’ values at each input point.
 \uses{FABL.BooleanFunction, FABL.CircuitGate, FABL.CircuitGate.evalFinset, FABL.CircuitGate.evalFinsetFunction}
 \difficulty{1}
 Let $m,n$ be natural numbers, let a logical AND or OR gate be given, and let $m$ Boolean
-functions on the $n$-dimensional sign cube take values in $\\{ -1,1 \\}$. For any subset
+functions on the $n$-dimensional sign cube take values in $\{ -1,1 \}$. For any subset
 of the $m$ input indices, evaluating the gate pointwise at a cube point $x$ gives the
 same result as applying the gate to the values of those functions at $x$.
 \end{theorem}
@@ -201,9 +201,9 @@ Statement pending regeneration.
 \uses{FABL.BooleanFunction, FABL.CircuitGate, FABL.CircuitGate.dual, FABL.CircuitGate.evalFinset, FABL.CircuitGate.evalFinsetFunction, FABL.CircuitTail, FABL.CircuitTail.eval, FABL.CircuitTail.evalFunction, FABL.CircuitTail.evalFunction_layer, FABL.Sign}
 \difficulty{4}
 Let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or OR gate, and let each
-input be assigned a Boolean function on $-1,1^n$ taking values in $	ext{Sign}$.
+input be assigned a Boolean function on $\{-1,1\}^n$ taking values in $	ext{Sign}$.
 Suppose each such function is constant, with its own constant sign. Then evaluating the
-tail pointwise gives a constant Boolean function on $-1,1^n$.
+tail pointwise gives a constant Boolean function on $\{-1,1\}^n$.
 \end{theorem}
 
 \begin{theorem}[Zero influence for width-zero inputs]
@@ -447,9 +447,9 @@ fixed to $1$ equal to $1$, and setting coordinates fixed to $-1$ equal to $-1$.
 \label{FABL.CoordRestriction.restrictSign}
 \leanok
 \uses{FABL.BooleanFunction, FABL.CoordRestriction, FABL.CoordRestriction.completeSign}
-Given a Boolean function $f$ on $n$ coordinates and a coordinate restriction $ho$ that
+Given a Boolean function $f$ on $n$ coordinates and a coordinate restriction $\rho$ that
 either leaves each coordinate free or fixes it to $1$ or $-1$, the restricted function
-sends an input $x$ to the value of $f$ at the completion of $x$ specified by $ho$.
+sends an input $x$ to the value of $f$ at the completion of $x$ specified by $\rho$.
 \end{definition}
 
 \begin{theorem}[Completion from a fixed sign assignment]
@@ -498,7 +498,7 @@ the coordinatewise negation of the completion of $\rho$ using $x$.
 \uses{FABL.BooleanFunction, FABL.CNFFormula.booleanDual, FABL.CoordRestriction, FABL.CoordRestriction.completeSign_negateAssignment, FABL.CoordRestriction.negateAssignment, FABL.CoordRestriction.restrictSign}
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $f$ be a function from the $n$-dimensional sign
-cube to $\\{\pm1\}$, and let $\rho$ assign to each coordinate one of three states: free,
+cube to $\{\pm1\}$, and let $\rho$ assign to each coordinate one of three states: free,
 fixed to $1$, or fixed to $-1$. Restricting the Boolean dual of $f$ using $\rho$ gives
 the Boolean dual of $f$ restricted using the coordinatewise negation of $\rho$.
 \end{theorem}
@@ -512,9 +512,9 @@ the Boolean dual of $f$ restricted using the coordinatewise negation of $\rho$.
 \label{FABL.DNFTerm.freeRestriction}
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFTerm}
-Given a DNF term $T$ on $n$ coordinates and a coordinate restriction $ho$, the free
+Given a DNF term $T$ on $n$ coordinates and a coordinate restriction $\rho$, the free
 restriction of $T$ is the term consisting of precisely those literals of $T$ whose
-coordinates are left free by $ho$.
+coordinates are left free by $\rho$.
 \end{definition}
 
 \begin{definition}[Formula induced by a restricted term]
@@ -526,7 +526,7 @@ coordinates are left free by $ho$.
 \label{FABL.DNFTerm.restrictionFormula}
 \leanok
 \uses{FABL.CoordRestriction, FABL.DNFFormula, FABL.DNFFormula.empty, FABL.DNFTerm, FABL.DNFTerm.freeRestriction, FABL.DNFTerm.notFalsified}
-Given a DNF term $T$ on $n$ coordinates and a coordinate restriction $ho$, its
+Given a DNF term $T$ on $n$ coordinates and a coordinate restriction $\rho$, its
 restriction formula is the one-term DNF consisting of the free restriction of $T$ if the
 restriction does not falsify $T$, and is the empty DNF otherwise.
 \end{definition}
@@ -687,8 +687,8 @@ first-layer gates under this coordinate restriction.
 \difficulty{4}
 For any natural number $n$ and any assignment of one of the three states “free,” “fixed
 to $1$,” or “fixed to $-1$” to each of the $n$ coordinates, its product weight at
-parameter $rac12$ equals its ordinary product weight, where the ordinary coordinate
-weights are $rac12$ for a free coordinate and $rac14$ for either fixed coordinate.
+parameter $\frac12$ equals its ordinary product weight, where the ordinary coordinate
+weights are $\frac12$ for a free coordinate and $\frac14$ for either fixed coordinate.
 \end{theorem}
 
 \begin{theorem}[Negation invariance of assignment weight]
@@ -700,7 +700,7 @@ weights are $rac12$ for a free coordinate and $rac14$ for either fixed coordin
 Let $n$ be a natural number and assign to each of the $n$ coordinates one of the states
 “free,” “fixed to $1$,” or “fixed to $-1$.” Exchanging the two fixed states in every
 coordinate leaves the product weight unchanged, where the coordinate weights are
-$rac12$ for a free state and $rac14$ for either fixed state.
+$\frac12$ for a free state and $\frac14$ for either fixed state.
 \end{theorem}
 
 \begin{definition}[Blocked restricted gate width]

@@ -52,9 +52,9 @@ times the heterogeneous biased monomial indexed by $S$, evaluated at $x$.
 \leanok
 \uses{FABL.fourierCoeff}
 Let $f:\{−1,1\}^n\to\mathbb R$, let $S$ be a subset of the $n$ coordinates, and let
-$mu:\{1,\ldots,n\}\to\mathbb R$. Define the partial derivative associated with $S$,
-evaluated at $mu$, by summing over all coordinate sets $T$ containing $S$: the Fourier
-coefficient of $f$ at $T$ multiplied by the product of $mu_i$ over $i\in T\setminus S$.
+$\mu:\{1,\ldots,n\}\to\mathbb R$. Define the partial derivative associated with $S$,
+evaluated at $\mu$, by summing over all coordinate sets $T$ containing $S$: the Fourier
+coefficient of $f$ at $T$ multiplied by the product of $\mu_i$ over $i\in T\setminus S$.
 \end{definition}
 
 \begin{definition}[Heterogeneous basis partial derivative]
@@ -1767,7 +1767,7 @@ Let $p_i\in(0,1)$ for each coordinate $i$, let $f$ be a real-valued function on 
 sign cube, and let $S$ be a set of coordinates. The absolute value of the Fourier
 coefficient of $f$ under the independent biased sign distribution, using the
 standardized coordinate monomials, is at most $\left(\prod_{i\in
-S}\sqrt{4p_i(1-p_i)}\right)\\|f\\|_\infty$.
+S}\sqrt{4p_i(1-p_i)}\right)\|f\|_\infty$.
 \end{theorem}
 
 \begin{theorem}[Expected biased-cube monomial]
@@ -16950,7 +16950,7 @@ choosing uniformly among all subsets of that size.
 For each natural number $n$, define a probability mass function on the $n$-dimensional
 Boolean cube by transporting the Shapley subset distribution on subsets of
 $	ext{Fin}(n)$ through the inverse of the correspondence between subsets and functions
-from $	ext{Fin}(n)$ to $br/br 2bz$.
+from $	ext{Fin}(n)$ to $\bbr/\bbr 2\bbz$.
 \end{definition}
 
 \begin{definition}[Subset cardinality index]
@@ -17016,7 +17016,7 @@ the indicator vector of $S$, under the corresponding subset distribution.
 \difficulty{1}
 For any real-valued function on the subsets of an $n$-element set, its Shapley
 expectation equals the expectation obtained by first choosing a cardinality uniformly
-from $0,1,\ldots,n$ and then choosing uniformly among the subsets of that cardinality.
+from $\{0,1,\ldots,n\}$ and then choosing uniformly among the subsets of that cardinality.
 \end{theorem}
 
 \begin{definition}[Shapley value]
@@ -17629,7 +17629,7 @@ $a_0=\mathrm{next}(0)$ and $a_{k+1}=\mathrm{next}(a_k+1)$ for every $k\in\mathbb
 \uses{FABL.strictSubsequenceOfNext}
 \difficulty{5}
 Let $(a_k)_{k\in\mathbb N}$ be a sequence of nonnegative real numbers that does not
-converge to $0$. Then there are $eta>0$ and a strictly increasing map $\phi:\mathbb
+converge to $0$. Then there are $\eta>0$ and a strictly increasing map $\phi:\mathbb
 N\to\mathbb N$ such that $a_{\phi(k)}\geq\eta$ for every $k$.
 \end{theorem}
 
@@ -17677,7 +17677,7 @@ does not have a sharp threshold.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.HasCoarseThreshold, FABL.biasVarianceScale, FABL.biasVarianceScale_nonneg, FABL.biasedMinusProbabilityPolynomial, FABL.biasedProbabilityLevel_mem_Ioo, FABL.biasedSignPMF, FABL.criticalProbability, FABL.criticalProbability_mem_Ioo, FABL.exists_pos_le_along_strictMono_of_nonneg_of_not_tendsto_zero, FABL.exists_thresholdInterval_probability_and_influence_le, FABL.normalizedThresholdWidth, FABL.productTotalInfluence, FABL.thresholdLowerParameter, FABL.thresholdUpperParameter, FABL.thresholdWidth, FABL.thresholdWidth_pos}
 \difficulty{4}
-Let $d_k$ be a sequence of dimensions, and let $f_k:\{-1,1\}^{d_k}\to\{\pm1\}$ be a
+Let $d_k$ be a sequence of dimensions, and let $f_k:\{-1,1\}^{d_k}\to\{\pm1\}$ be a
 monotone, nonconstant Boolean function for each $k$. Fix $0<\epsilon<1/2$, and suppose
 the normalized threshold widths of this family do not tend to zero. Then there are a
 constant $C\in\mathbb R$, a strictly increasing sequence of indices $\phi(k)$, and, for

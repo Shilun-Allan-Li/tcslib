@@ -45,7 +45,7 @@ reorientation.
 \uses{FABL.BooleanFunction, FABL.IsPivotal, FABL.booleanInfluence, FABL.flipCoordinate, FABL.reorientInputEquiv, FABL.reorientInput_flipCoordinate, FABL.uniformProbability}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $f$ be a function from the $n$-dimensional sign
-cube to $\{\pm1\}$, let $\sigma$ be a sign vector in that cube, and let $i$ be a
+cube to $\{\pm1\}$, let $\sigma$ be a sign vector in that cube, and let $i$ be a
 coordinate. The influence of $f$ in coordinate $i$ is unchanged when the input is
 reoriented by $\sigma$.
 \end{theorem}
@@ -107,7 +107,7 @@ A Boolean function on $n$ coordinates is unate if it is unate in each coordinate
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.discreteDerivative, FABL.discreteDerivative_apply, FABL.setCoordinate}
 \difficulty{4}
-Let $f$ be a Boolean function on the sign cube $\\{−1,1\\}^n$, let $i$ be a coordinate,
+Let $f$ be a Boolean function on the sign cube $\{−1,1\}^n$, let $i$ be a coordinate,
 and let $x$ be a point of the cube. The absolute value of the discrete derivative of the
 real-valued version of $f$ at $x$ in coordinate $i$ equals the square of that
 derivative.
@@ -119,8 +119,8 @@ derivative.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.abs_discreteDerivative_toReal_eq_sq, FABL.discreteDerivative, FABL.fourierCoeff, FABL.influence, FABL.mean, FABL.mean_discreteDerivative_eq_fourierCoeff_singleton}
 \difficulty{4}
-For any Boolean function $f$ on the sign cube $\\{-1,1\\}^n$ and any coordinate $i$, the
-absolute value of its Fourier coefficient at $\\{i\\}$ is at most its influence at $i$.
+For any Boolean function $f$ on the sign cube $\{-1,1\}^n$ and any coordinate $i$, the
+absolute value of its Fourier coefficient at $\{i\}$ is at most its influence at $i$.
 \end{theorem}
 
 \begin{theorem}[Nonnegativity of the derivative square minus derivative]
@@ -181,7 +181,7 @@ the majority function on the same cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsUnate, FABL.abs_fourierCoeff_singleton_eq_influence_iff_isUnateInCoordinate, FABL.fourierCoeff, FABL.influence, FABL.majority, FABL.sum_abs_fourierCoeff_singleton_le_totalInfluence_majority, FABL.totalInfluence}
 \difficulty{3}
-Let $n$ be a nonnegative integer, and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be unate,
+Let $n$ be a nonnegative integer, and let $f:\{-1,1\}^n\to\{-1,1\}$ be unate,
 meaning that in each coordinate it is either nondecreasing or nonincreasing when that
 coordinate changes from $-1$ to $1$. Then the total influence of $f$ is at most the
 total influence of majority on $n$ signs.
@@ -194,9 +194,9 @@ total influence of majority on $n$ signs.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsUnate, FABL.abs_fourierCoeff_singleton_eq_influence_iff_isUnateInCoordinate, FABL.fourierCoeff, FABL.fourierWeight, FABL.fourierWeightAtLevel, FABL.fourierWeightAtLevel_one_eq_sum_singleton, FABL.influence, FABL.sum_sq_fourierCoeff_eq_one, FABL.totalInfluence}
 \difficulty{4}
-Let $n$ be a nonnegative integer, and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be unate in
+Let $n$ be a nonnegative integer, and let $f:\{-1,1\}^n\to\{-1,1\}$ be unate in
 every coordinate, meaning that each coordinate is either nondecreasing or nonincreasing.
-The total influence of $f$ is at most $\\sqrt{n}$.
+The total influence of $f$ is at most $\sqrt{n}$.
 \end{theorem}
 
 \begin{theorem}[Unateness of linear threshold functions]

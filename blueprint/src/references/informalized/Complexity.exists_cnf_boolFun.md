@@ -7,7 +7,7 @@
 
 **Claim.** Every Boolean function on $\{0,1\}^{\ell}$ is computed by a CNF with at most $2^\ell$ clauses, at most $\ell$ variables, and clause width at most $\ell$.
 
-**Proof.** Use the falsifying CNF of $f$, formed so that each input on which $f$ is false contributes a clause excluding that input. The four properties of this construction are supplied directly by `falsifyingCNF_numVars`, `falsifyingCNF_length`, `falsifyingCNF_width`, and `falsifyingCNF_eval`: it uses at most the $[0m$-coordinate variables, has at most $2^\ell$ clauses, each clause has width at most $\ell$, and its evaluation at any assignment is $f$ on the first $[0m$ coordinates. Here each occurrence of the malformed glyph is intended to be the parameter $\ell$.
+**Proof.** Use the falsifying CNF of $f$, formed so that each input on which $f$ is false contributes a clause excluding that input. The four properties of this construction are supplied directly by `falsifyingCNF_numVars`, `falsifyingCNF_length`, `falsifyingCNF_width`, and `falsifyingCNF_eval`: it uses at most the $$-coordinate variables, has at most $2^\ell$ clauses, each clause has width at most $\ell$, and its evaluation at any assignment is $f$ on the first $$ coordinates. Here each occurrence of the malformed glyph is intended to be the parameter $\ell$.
 
 **Key facts.** `Complexity.falsifyingCNF_numVars`, `Complexity.falsifyingCNF_length`, `Complexity.falsifyingCNF_width`, `Complexity.falsifyingCNF_eval`.
 

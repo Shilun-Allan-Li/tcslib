@@ -51,7 +51,7 @@ Statement pending regeneration.
 \label{FABL.twoVertexMaxCutConstraint}
 \leanok
 \uses{FABL.CSPConstraint, FABL.maxCutTemplate}
-On the vertex set $\\{0,1\\}$, the two vertex max cut constraint uses the unique max cut
+On the vertex set $\{0,1\}$, the two vertex max cut constraint uses the unique max cut
 predicate and has scope equal to the identity map. It is satisfied exactly when the
 labels at the two vertices differ.
 \end{definition}
@@ -65,7 +65,7 @@ labels at the two vertices differ.
 \label{FABL.parallelEdgeMaxCutInstance}
 \leanok
 \uses{FABL.CSPInstance, FABL.maxCutTemplate, FABL.twoVertexMaxCutConstraint}
-On the vertex set $\\{0,1\\}$, take the max cut instance consisting of two copies of the
+On the vertex set $\{0,1\}$, take the max cut instance consisting of two copies of the
 constraint joining the two vertices. The constraint multiset is nonempty, and each
 vertex occurs in the scope of a constraint.
 \end{definition}
@@ -99,7 +99,7 @@ assignment with label $b$ is the function on $V$ that assigns $b$ to every varia
 \leanok
 \uses{FABL.CSPConstraint, FABL.CSPConstraint.satisfiedIndicator, FABL.e3LinConstantAssignment, FABL.maxE3LinTemplate, FABL.𝔽₂}
 \difficulty{5}
-Let $c$ be a constraint over $mathbb{F}_2$ that requires the sum of the values on its
+Let $c$ be a constraint over $\mathbb{F}_2$ that requires the sum of the values on its
 three pairwise-distinct variables to equal its right-hand side $b$. Under the assignment
 giving every variable the same value $b$, the satisfaction indicator of $c$ is $1$ if
 the constraint's right-hand side is $b$, and $0$ otherwise.
@@ -137,7 +137,7 @@ every variable value $1$, equals the total number of constraints in $\mathcal C$
 \leanok
 \uses{FABL.CSPInstance, FABL.CSPInstance.satisfiedCount, FABL.e3LinConstantAssignment, FABL.maxE3LinTemplate, FABL.sum_satisfiedIndicators_zero_add_one_e3Lin}
 \difficulty{1}
-Let $P$ be a finite constraint instance over $mathbb{F}_2$ whose constraints are
+Let $P$ be a finite constraint instance over $\mathbb{F}_2$ whose constraints are
 equations on three pairwise-distinct variables, with at least one constraint and every
 variable occurring in some constraint. For each constraint, satisfaction means that the
 sum of its three assigned values equals its right-hand side. The total numbers of
@@ -177,7 +177,7 @@ assignment, and is $0$ otherwise.
 \leanok
 \uses{FABL.CSPInstance, FABL.betterE3LinConstantLabel, FABL.e3LinConstantAssignment, FABL.maxE3LinTemplate, FABL.𝔽₂}
 Let $V$ be a type and let $P$ be a nonempty finite multiset of constraints from the
-template of equations $x_1+x_2+x_3=b$ over $br/	ext{?}$. Define the better constant
+template of equations $x_1+x_2+x_3=b$ over $\bbr/	ext{?}$. Define the better constant
 assignment of $P$ by assigning each variable the value selected by the construction
 `betterE3LinConstantLabel` followed by `e3LinConstantAssignment`.
 \end{definition}

@@ -794,11 +794,11 @@ $\sum_{S\subseteq\{1,\ldots,n\}}\bigl(\prod_{i\in S}x_i\bigr)\rho^{|S|}$.
 \leanok
 \uses{FABL.krawtchoukValue, FABL.monomial}
 \difficulty{5}
-Let $n$ be a nonnegative integer, $x\\in\\{\\pm1\\}^n$, and $\\rho\\in\\mathbb R$. For
-each $j$, sum $\\prod_{i\\in S}x_i$ over all $j$-element subsets
-$S\\subseteq\\{0,\\ldots,n-1\\}$; the sum of these values weighted by $\\rho^j$, for
-$j=0,\\ldots,n$, equals $\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}\\left(\\prod_{i\\in
-S}x_i\\right)\\rho^{|S|}$. 
+Let $n$ be a nonnegative integer, $x\in\{\pm1\}^n$, and $\rho\in\mathbb R$. For
+each $j$, sum $\prod_{i\in S}x_i$ over all $j$-element subsets
+$S\subseteq\{0,\ldots,n-1\}$; the sum of these values weighted by $\rho^j$, for
+$j=0,\ldots,n$, equals $\sum_{S\subseteq\{0,\ldots,n-1\}}\left(\prod_{i\in
+S}x_i\right)\rho^{|S|}$.
 \end{theorem}
 
 \begin{theorem}[Sum of sign monomials]
@@ -817,10 +817,10 @@ $S\subseteq[n]$ of the monomial $\prod_{i\in S}x_i$ equals $2^n\prod_{i=1}^n(1+x
 \leanok
 \uses{FABL.indicatorPolynomial, FABL.krawtchoukValue, FABL.monomial, FABL.sum_krawtchoukValue_mul_pow, FABL.sum_monomial_eq_point_indicator}
 \difficulty{3}
-Let $n$ be a nonnegative integer and let $x\\in\\{\\pm1\\}^n$. For each $j$, sum the
-monomials $\\prod_{i\\in S}x_i$ over all $j$-element subsets
-$S\\subseteq\\{0,\\ldots,n-1\\}$, and then sum these values over $j=0,\\ldots,n$. The
-result is $2^n\\prod_{i=0}^{n-1}(1+x_i)/2$. 
+Let $n$ be a nonnegative integer and let $x\in\{\pm1\}^n$. For each $j$, sum the
+monomials $\prod_{i\in S}x_i$ over all $j$-element subsets
+$S\subseteq\{0,\ldots,n-1\}$, and then sum these values over $j=0,\ldots,n$. The
+result is $2^n\prod_{i=0}^{n-1}(1+x_i)/2$.
 \end{theorem}
 
 \begin{theorem}[Expectation of a finite sum]
@@ -932,8 +932,7 @@ natural degree $k$, where the empty product is $1$ when $k=0$.
 \label{FABL.chooseFactor_leadingCoeff}
 \leanok
 \difficulty{3}
-For every natural number $k$, let $(X)_{k}=X(X-1)	ext{ more precisely,
-}\prod_{j=0}^{k-1}(X-j)$ be the falling-factorial polynomial. The leading coefficient of
+For every natural number $k$, let $(X)_k=\prod_{j=0}^{k-1}(X-j)$ be the falling-factorial polynomial. The leading coefficient of
 $\frac{1}{k!}(X)_{k}$ is $\frac{1}{k!}$, with the empty product interpreted as $1$ when
 $k=0$.
 \end{theorem}
@@ -1006,10 +1005,10 @@ $$(-1)^k\frac{1}{k!}\frac{1}{(j-k)!}(-1)^{j-k}=(-1)^j\binom{j}{k}\frac{1}{j!}.$$
 \leanok
 \uses{FABL.krawtchoukSummand_leadingCoeff, FABL.signed_factorial_inverse_identity}
 \difficulty{4}
-For nonnegative integers $n,j$, let $(t)_r=\\prod_{s=0}^{r-1}(t-s)$ denote the falling
-factorial polynomial, with $(t)_0=1$. The sum, for $k=0,\\ldots,j$, of the leading
-coefficients of the polynomials $\\frac{(-1)^k}{k!}(t)_k\\,\\frac{1}{(j-k)!}(n-t)_{j-k}$
-is $(-1)^j2^j/j!$. 
+For nonnegative integers $n,j$, let $(t)_r=\prod_{s=0}^{r-1}(t-s)$ denote the falling
+factorial polynomial, with $(t)_0=1$. The sum, for $k=0,\ldots,j$, of the leading
+coefficients of the polynomials $\frac{(-1)^k}{k!}(t)_k\,\frac{1}{(j-k)!}(n-t)_{j-k}$
+is $(-1)^j2^j/j!$.
 \end{theorem}
 
 \begin{theorem}[Degree of a Krawtchouk polynomial]
@@ -1029,7 +1028,7 @@ polynomial $K_{n,j}$ is $j$.
 \difficulty{3}
 For natural numbers $z$ and $k$, evaluating the polynomial
 $(k!)^{-1}(X(X-1)	imes	ext{etc.}	imes(X-k+1))$ at $z$ gives the binomial coefficient:
-its value is $inom{z}{k}$.
+its value is $\binom{z}{k}$.
 \end{theorem}
 
 \begin{theorem}[Complementary binomial coefficient evaluation]

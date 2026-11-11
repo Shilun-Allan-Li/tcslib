@@ -114,8 +114,8 @@ The majority function on this input equals $s$.
 \leanok
 \uses{FABL.Sign, FABL.majorityThreeHardInput}
 \difficulty{4}
-Choose $i\\in\\{0,1,2\\}$ and a map $j:\\{-1,1\\}\\to\\{0,1,2\\}$ such that $j(a)\\ne i$
-for both signs $a$. Choose a sign $s$ and an index $r\\in\\{0,1,2\\}$ independently and
+Choose $i\in\{0,1,2\}$ and a map $j:\{-1,1\}\to\{0,1,2\}$ such that $j(a)\ne i$
+for both signs $a$. Choose a sign $s$ and an index $r\in\{0,1,2\}$ independently and
 uniformly, and form the three-coordinate sign vector whose coordinate $r$ is $-s$ and
 whose other coordinates are $s$. The probability that this vector differs from the
 vector obtained by applying the same construction with sign equal to its $i$th
@@ -153,11 +153,11 @@ an input drawn from $\mu$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCostUnder, FABL.RandomizedDecisionTree.deterministicAverageCostUnder, FABL.RandomizedDecisionTree.inputCost, FABL.pmfExpectation}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite input alphabet, let
-$\\alpha$ be an output set, and let $f:\\Omega^n\\to\\alpha$. For a finite randomized
-decision tree $T$ computing $f$ and any probability distribution $\\mu$ on the input
-space, the average query cost of $T$ under $\\mu$ equals the expectation, over the
-random seed of $T$, of the deterministic tree's average query cost under $\\mu$.
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite input alphabet, let
+$\alpha$ be an output set, and let $f:\Omega^n\to\alpha$. For a finite randomized
+decision tree $T$ computing $f$ and any probability distribution $\mu$ on the input
+space, the average query cost of $T$ under $\mu$ equals the expectation, over the
+random seed of $T$, of the deterministic tree's average query cost under $\mu$.
 \end{theorem}
 
 \begin{theorem}[Average cost bounded by worst-case cost]
@@ -166,10 +166,10 @@ random seed of $T$, of the deterministic tree's average query cost under $\\mu$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCostUnder, FABL.RandomizedDecisionTree.inputCost, FABL.RandomizedDecisionTree.inputCost_le_worstCaseCost, FABL.RandomizedDecisionTree.worstCaseCost, FABL.pmfExpectation, FABL.pmfExpectation_const, FABL.pmfExpectation_mono}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $\\Omega$ be a finite nonempty input alphabet, let
-$\\alpha$ be an output set, and let $f:\\Omega^n\\to\\alpha$. For any randomized
-decision tree $T$ computing $f$ and any probability distribution $\\mu$ on the input
-space, the average query cost of $T$ under $\\mu$ is at most its worst-case query cost
+Let $n$ be a nonnegative integer, let $\Omega$ be a finite nonempty input alphabet, let
+$\alpha$ be an output set, and let $f:\Omega^n\to\alpha$. For any randomized
+decision tree $T$ computing $f$ and any probability distribution $\mu$ on the input
+space, the average query cost of $T$ under $\mu$ is at most its worst-case query cost
 over all inputs.
 \end{theorem}
 
@@ -2636,7 +2636,7 @@ Statement pending regeneration.
 \uses{FABL.FiniteDecisionTree.majorityThree_uniform_averageCost_ge, FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.averageCost, FABL.RandomizedDecisionTree.averageCost_eq_seedExpectation, FABL.RandomizedDecisionTree.deterministicAverageCost, FABL.Sign, FABL.majority, FABL.pmfExpectation, FABL.pmfExpectation_const, FABL.pmfExpectation_mono, FABL.uniformPMF}
 \difficulty{4}
 Every zero-error randomized decision tree computing majority on three signs, with each
-input coordinate sampled independently and uniformly from $\\{-1,1\\}$, has average
+input coordinate sampled independently and uniformly from $\{-1,1\}$, has average
 query cost at least $5/2$.
 \end{theorem}
 
@@ -5188,7 +5188,7 @@ the $(d+1)$st recursive three-way construction associated with $i$ and $j$ are d
 \uses{FABL.recursiveMajorityThreeBlockCoordinates, FABL.recursiveMajorityThreeBlockEmbedding}
 \difficulty{5}
 For every natural number $d$, the three coordinate blocks obtained by fixing the first
-coordinate to $0$, $1$, and $2$ partition the coordinates indexed by $br^{3^{d+1}}$; in
+coordinate to $0$, $1$, and $2$ partition the coordinates indexed by $\bbr^{3^{d+1}}$; in
 particular, their union is all of $	ext{Fin}(3^{d+1})$.
 \end{theorem}
 
@@ -9984,7 +9984,7 @@ coordinates are $A\cup(B\cup C)$.
     pdf-ffbe9c7b3306-p044-b007}
 Let $n$ be a natural number, and let $A,B,C$ be pairwise disjoint sets of coordinates in
 $	ext{Fin}(n)$, with $A$ disjoint from $B\cup C$ and $B$ disjoint from $C$. Given three
-decision trees on these coordinate sets, with inputs and outputs in $\\{ -1,1\\}$, their
+decision trees on these coordinate sets, with inputs and outputs in $\{ -1,1\}$, their
 ordered composition evaluates on every input to the majority of the three tree outputs
 (the common value of the first two when they agree, and otherwise the third).
 \end{theorem}
@@ -10032,7 +10032,7 @@ the same output as evaluating $T$ on the restriction of $x$ to that block.
 \leanok
 \uses{FABL.FiniteAlphabetDecisionTree, FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryTrace_reindex_length, FABL.Sign, FABL.SignCube, FABL.recursiveInputBlock, FABL.recursiveMajorityThreeBlockCoordinates, FABL.recursiveMajorityThreeTreeInBlock}
 \difficulty{3}
-Let $d$ be a nonnegative integer, let $i\\in\\{0,1,2\\}$, and let $T$ be a finite
+Let $d$ be a nonnegative integer, let $i\in\{0,1,2\}$, and let $T$ be a finite
 decision tree on sign inputs with $3^d$ coordinates. Embed those coordinates as block
 $i$ among the $3^{d+1}$ coordinates, and let $x$ be a sign assignment on the larger
 cube. The number of queries made by the reindexed tree on $x$ equals the number made by
@@ -10078,7 +10078,7 @@ majority on inputs of length $3^d$.
 \leanok
 \uses{FABL.FiniteDecisionTree.queryCount, FABL.FiniteDecisionTree.queryCount_castAvailable, FABL.RecursiveMajorityThreeSeed, FABL.SignCube, FABL.eval_recursiveMajorityThreeTreeInBlock, FABL.queryCount_orderedMajorityThreeTree, FABL.queryCount_recursiveMajorityThreeTreeInBlock, FABL.recursiveInputBlock, FABL.recursiveMajority, FABL.recursiveMajorityThreeTree, FABL.recursiveMajorityThreeTree_computes}
 \difficulty{5}
-Let $d$ be a nonnegative integer, let $o\\in\\{0,1,2\\}$, choose three seeds for depth
+Let $d$ be a nonnegative integer, let $o\in\{0,1,2\}$, choose three seeds for depth
 $d$, and let $x$ be a sign assignment on $3^{d+1}$ coordinates. The query count of the
 depth-$d+1$ recursive majority tree is given by the following rule: if $o=0$, it is the
 query count of the first depth-$d$ tree on block $0$, plus that of the second on block
@@ -17743,7 +17743,7 @@ coordinates in that block.
 \leanok
 \uses{FABL.depthTwoInitial_union_remaining, FABL.depthTwoRemainingCoordinates, FABL.recursiveMajorityThreeBlockCoordinates}
 \difficulty{1}
-For any block and seed in $\{0,1,2\}$, the coordinates in that block other than the one
+For any block and seed in $\{0,1,2\}$, the coordinates in that block other than the one
 selected first by the seed are contained in the block's full set of coordinates.
 \end{theorem}
 
@@ -17915,7 +17915,7 @@ cyclic-majority third coordinate.
 \leanok
 \uses{FABL.depthTwoTopFirst, FABL.depthTwoTopSecond}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the first and second positions selected by
+For every ordering parameter in $\{0,1,2\}$, the first and second positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17925,7 +17925,7 @@ its associated cyclic order are distinct.
 \leanok
 \uses{FABL.depthTwoTopFirst, FABL.depthTwoTopThird}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the first and third positions selected by
+For every ordering parameter in $\{0,1,2\}$, the first and third positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17935,7 +17935,7 @@ its associated cyclic order are distinct.
 \leanok
 \uses{FABL.depthTwoTopSecond, FABL.depthTwoTopThird}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the second and third positions selected by
+For every ordering parameter in $\{0,1,2\}$, the second and third positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17977,7 +17977,7 @@ resulting tree is the ordered interleaving of the three block trees.
 \leanok
 \uses{FABL.DepthTwoInterleavedSeed, FABL.FiniteDecisionTree.Computes, FABL.depthTwoInterleavedTreeBySeed, FABL.depthTwoInterleavedTreeOrdered_computes, FABL.recursiveMajority}
 \difficulty{3}
-For every choice of four indices in $\{0,1,2\}$, the associated decision tree on nine
+For every choice of four indices in $\{0,1,2\}$, the associated decision tree on nine
 sign-valued coordinates computes the recursive three-way majority function of depth two.
 \end{theorem}
 
@@ -18067,7 +18067,7 @@ formed input for block $b$.
 \leanok
 \uses{FABL.SignCube, FABL.depthTwoBlockModelValue, FABL.majority, FABL.majorityThreePairValue_eq_majority, FABL.recursiveInputBlock}
 \difficulty{3}
-Let $x$ assign a sign in $\\{ -1,1 \\}$ to each of nine coordinates, and let $i$ be one
+Let $x$ assign a sign in $\{ -1,1 \}$ to each of nine coordinates, and let $i$ be one
 of three block indices. The value of the depth-two block model at $i$ equals the
 majority sign of the three entries in the $i$th recursive input block: it is $+1$ when
 their sum is nonnegative and $-1$ otherwise.

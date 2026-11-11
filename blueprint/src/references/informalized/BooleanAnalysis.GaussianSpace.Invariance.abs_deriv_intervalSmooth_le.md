@@ -5,7 +5,7 @@
 
 # Derivative bound for interval smoothing
 
-**Claim.** For $eta>0$, a $c$-Lipschitz function has interval smoothing whose derivative has absolute value at most $c$ at every point.
+**Claim.** For $\eta>0$, a $c$-Lipschitz function has interval smoothing whose derivative has absolute value at most $c$ at every point.
 
 **Proof.** The derivative formula for interval smoothing gives $(S_\eta\psi)'(x)=(\psi(x+\eta)-\psi(x))/\eta$. The Lipschitz condition bounds the numerator in absolute value by $c\,|(x+\eta)-x|=c\eta$. Since $\eta>0$, division by $\eta$ yields the claimed bound.
 

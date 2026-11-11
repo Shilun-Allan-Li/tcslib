@@ -5,7 +5,7 @@
 
 # Product Gaussian Hessian Integral Bound
 
-**Claim.** For a bounded function with $|f|[0m\le 1$, the absolute value of its integral against the product Gaussian Hessian score is at most $2/v$.
+**Claim.** For a bounded function with $|f|\le 1$, the absolute value of its integral against the product Gaussian Hessian score is at most $2/v$.
 
 **Proof.** First, the pointwise estimate `abs_productHessian_mul_le` bounds the absolute value of the score times $f(z)$ by the sum of a quadratic term and $1/v$. The quadratic term uses $| (z_i-c_i)(z_j-c_j) |\le ((z_i-c_i)^2+(z_j-c_j)^2)/2$, while the diagonal correction contributes at most $1/v$. The majorant is integrable under the product Gaussian measure (`integrable_productHessian_bound`), so the absolute value of the integral is bounded by the integral of this majorant. Its integral is exactly $2/v$ (`integral_productHessian_bound`), proving the result.
 

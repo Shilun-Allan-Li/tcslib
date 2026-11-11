@@ -233,7 +233,7 @@ list of terms, with the formula interpreted as the disjunction of those terms.
 \label{FABL.DNFFormula.size}
 \leanok
 \uses{FABL.DNFFormula}
-For a disjunctive normal form formula $$n, its size is the number of terms in the
+For a disjunctive normal form formula $\varphi$n, its size is the number of terms in the
 formula.
 \end{definition}
 
@@ -247,7 +247,7 @@ formula.
 \label{FABL.DNFFormula.width}
 \leanok
 \uses{FABL.DNFFormula, FABL.DNFTerm.width}
-For a disjunctive normal form formula $$n, its width is the maximum number of literals
+For a disjunctive normal form formula $\varphi$n, its width is the maximum number of literals
 in any term, with width $0$ when the formula has no terms.
 \end{definition}
 
@@ -366,8 +366,8 @@ disjunctive normal form with no terms evaluates to $1$ at $x$.
 \label{FABL.DNFFormula.toBooleanFunction}
 \leanok
 \uses{FABL.BooleanFunction, FABL.DNFFormula, FABL.DNFFormula.eval}
-For a disjunctive normal form formula $$n, its associated Boolean function maps each
-assignment in $^n$ to the sign determined by evaluating the formula on that assignment.
+For a disjunctive normal form formula $\varphi$n, its associated Boolean function maps each
+assignment in $\varphi^n$ to the sign determined by evaluating the formula on that assignment.
 \end{definition}
 
 \begin{definition}[Width truncation]
@@ -379,7 +379,7 @@ assignment in $^n$ to the sign determined by evaluating the formula on that ass
 \label{FABL.DNFFormula.truncateWidth}
 \leanok
 \uses{FABL.DNFFormula, FABL.DNFTerm.width}
-Given a disjunctive normal form formula $$n and a natural number $w$, width truncation
+Given a disjunctive normal form formula $\varphi$n and a natural number $w$, width truncation
 retains exactly those terms containing at most $w$ literals, preserving their order.
 \end{definition}
 
@@ -432,7 +432,7 @@ coordinate $x_i$ to $-x_i$ is an equivalence from the sign cube to itself.
 \label{FABL.CNFFormula.size}
 \leanok
 \uses{FABL.CNFFormula}
-For a conjunctive normal form formula $$n, its size is the number of clauses in the
+For a conjunctive normal form formula $\varphi$n, its size is the number of clauses in the
 formula.
 \end{definition}
 
@@ -444,7 +444,7 @@ formula.
 \label{FABL.CNFFormula.width}
 \leanok
 \uses{FABL.CNFFormula, FABL.DNFFormula.width}
-For a conjunctive normal form formula $$n, its width is the maximum number of literals
+For a conjunctive normal form formula $\varphi$n, its width is the maximum number of literals
 in any clause, with width $0$ when the formula has no clauses.
 \end{definition}
 
@@ -517,7 +517,7 @@ formula has exactly the same list of terms as the CNF formula has clauses.
 \leanok
 \uses{FABL.CNFFormula.clauseEval, FABL.CNFFormula.sign_eq_of_ne_neg, FABL.DNFTerm, FABL.DNFTerm.eval, FABL.DNFTerm.eval_eq_neg_one_iff, FABL.Literal.eval}
 \difficulty{5}
-Let $n$ be a natural number, let $C$ be a term on the sign cube $\\{−1,1\\}^n$, and let
+Let $n$ be a natural number, let $C$ be a term on the sign cube $\{−1,1\}^n$, and let
 $x$ be a point of that cube. The clause evaluation of $C$ at the coordinatewise negation
 of $x$ equals $1$ if and only if the term evaluation of $C$ at $x$ equals $-1$.
 \end{theorem}
@@ -1760,7 +1760,7 @@ constructed from that input.
 \uses{FABL.BooleanFunction, FABL.DNFFormula.size, FABL.Sign, FABL.mintermDNF}
 \difficulty{3}
 Let $n$ be a nonnegative integer and let $f$ be a function from the $n$-dimensional sign
-cube to $\\{ -1,1\\}$. The size of the minterm disjunctive normal form formed from the
+cube to $\{ -1,1\}$. The size of the minterm disjunctive normal form formed from the
 inputs on which $f$ equals $-1$ is at most $2^n$.
 \end{theorem}
 
@@ -3031,8 +3031,8 @@ computing it in which each term contains at most $n$ literals.
 \leanok
 \uses{FABL.BooleanFunction, FABL.HasDNFSizeLE}
 For a Boolean function $f$ on the $n$-dimensional Boolean cube, define its DNF size to
-be the infimum in $br$-valued notation of the natural numbers $s$ for which $f$ has a
-DNF of size at most $s$; since this is an infimum in $br$ over a subset of $br$, it is
+be the infimum in $\bbr$-valued notation of the natural numbers $s$ for which $f$ has a
+DNF of size at most $s$; since this is an infimum in $\bbr$ over a subset of $\bbr$, it is
 the greatest lower bound of those admissible sizes.
 \end{definition}
 
@@ -6622,7 +6622,7 @@ Statement pending regeneration.
 \uses{FABL.DNFTerm, FABL.Literal}
 \difficulty{1}
 Let $n$ be a natural number, and let a literal on $n$ coordinates consist of a
-coordinate and a required sign in $\bz^\times$. A conjunction term is a list of such
+coordinate and a required sign in $\bbz^\times$. A conjunction term is a list of such
 literals whose coordinates are pairwise distinct. If two literals in the same term have
 the same coordinate, then they are equal.
 \end{theorem}
@@ -12864,7 +12864,7 @@ Hamming distance between $f$ and $g$ is at most $\varepsilon$.
 \leanok
 \uses{FABL.fourierCoeff, FABL.monomial}
 \difficulty{3}
-Let $n$ be a natural number, let $f,g:\\{-1,1\\}^n\\to\\mathbb R$, and let $S$ be a
+Let $n$ be a natural number, let $f,g:\{-1,1\}^n\to\mathbb R$, and let $S$ be a
 subset of the coordinates. The Fourier coefficient of $f-g$ at $S$ equals the Fourier
 coefficient of $f$ at $S$ minus that of $g$ at $S$.
 \end{theorem}
@@ -12875,12 +12875,12 @@ coefficient of $f$ at $S$ minus that of $g$ at $S$.
 \leanok
 \uses{FABL.IsFourierSpectrumConcentratedOn, FABL.fourierCoeff, FABL.fourierCoeff_sub, FABL.fourierWeight, FABL.fourierWeightOutside, FABL.parseval, FABL.uniformLpNorm, FABL.uniformLpNorm_two_sq_eq_uniformInner}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $f,g:\\{−1,1\\}^n\\to\\mathbb R$, and let
-$\\mathcal F$ be any family of subsets of the $n$ coordinates. If the sum of the squared
-Fourier coefficients of $f$ over sets outside $\\mathcal F$ is at most $\\varepsilon_1$,
-and the square of the uniform $L^2$ norm of $f-g$ is at most $\\varepsilon_2$, then the
-sum of the squared Fourier coefficients of $g$ over sets outside $\\mathcal F$ is at
-most $2(\\varepsilon_1+\\varepsilon_2)$.
+Let $n$ be a nonnegative integer, let $f,g:\{−1,1\}^n\to\mathbb R$, and let
+$\mathcal F$ be any family of subsets of the $n$ coordinates. If the sum of the squared
+Fourier coefficients of $f$ over sets outside $\mathcal F$ is at most $\varepsilon_1$,
+and the square of the uniform $L^2$ norm of $f-g$ is at most $\varepsilon_2$, then the
+sum of the squared Fourier coefficients of $g$ over sets outside $\mathcal F$ is at
+most $2(\varepsilon_1+\varepsilon_2)$.
 \end{theorem}
 
 \begin{definition}[Boolean function on the binary cube]
@@ -17567,7 +17567,7 @@ agrees with every value assigned by the path.
     pdf-ffbe9c7b3306-p022-b004}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let a path on the $n$ binary coordinates fix values on
-some coordinates, and let $x$ be a sign vector in $\\{-1,1\\}^n$. The clause formed by
+some coordinates, and let $x$ be a sign vector in $\{-1,1\}^n$. The clause formed by
 negating the literals for the path's fixed coordinates evaluates to $1$ at $x$ if and
 only if the binary vector corresponding coordinatewise to $x$ agrees with every value
 fixed by the path.
@@ -17584,7 +17584,7 @@ fixed by the path.
   pdf-ffbe9c7b3306-p094-b006,
   pdf-ffbe9c7b3306-p094-b007
 }
-Let $T$ be a decision tree on $n$ Boolean coordinates with outputs in $\\{\pm1\}$. Form
+Let $T$ be a decision tree on $n$ Boolean coordinates with outputs in $\{\pm1\}$. Form
 a disjunctive normal form whose terms are the path terms for exactly those paths of $T$
 whose terminal output is $-1$.
 \end{definition}
@@ -23941,7 +23941,7 @@ literals.
 \uses{FABL.BooleanFunction, FABL.DecisionTree, FABL.F₂DecisionTree.Computes, FABL.F₂DecisionTree.depth, FABL.F₂DecisionTree.eval, FABL.F₂DecisionTree.hasCNFSizeWidth_of_decisionTree, FABL.F₂DecisionTree.leafCount, FABL.HasCNFSizeLE, FABL.HasCNFWidthLE, FABL.Sign, FABL.binaryCubeSignEquiv, FABL.binaryOfBooleanFunction, FABL.booleanFunctionOfBinary}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $T$ be a decision tree on the Boolean cube
-$\mathbb{F}_2^n$ with sign-valued outputs, and let $f:\{−1,1\}^n\to\{−1,1\}$ be a
+$\mathbb{F}_2^n$ with sign-valued outputs, and let $f:\{−1,1\}^n\to\{−1,1\}$ be a
 Boolean function. If evaluating $T$ on the coordinatewise binary encoding of each sign
 vector computes $f$, then $f$ has a conjunctive normal form with at most as many clauses
 as $T$ has leaves and with every clause containing at most $\mathrm{depth}(T)$ literals.
@@ -27922,7 +27922,7 @@ nondecreasing or nonincreasing order, and returns $1$ otherwise.
 \leanok
 \uses{FABL.BooleanFunction, FABL.CNFFormula.booleanDual}
 \difficulty{3}
-Let $f$ be a function from the sign cube $\\{-1,1\\}^n$ to $\\{\\pm1\\}$. Define its
+Let $f$ be a function from the sign cube $\{-1,1\}^n$ to $\{\pm1\}$. Define its
 dual by negating both the input and the output. Applying this duality twice returns $f$.
 \end{theorem}
 

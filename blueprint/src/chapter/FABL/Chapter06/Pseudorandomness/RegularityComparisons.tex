@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.Pseudorandomness.Regulari
 \leanok
 \uses{FABL.fourierCoeff, FABL.influence, FABL.influence_eq_sum_sq_fourierCoeff}
 \difficulty{3}
-Let $n$ be a nonnegative integer, let $f:\\{-1,1\\}^n\\to\\mathbb R$, and let $S$ be a
+Let $n$ be a nonnegative integer, let $f:\{-1,1\}^n\to\mathbb R$, and let $S$ be a
 set of coordinates containing $i$. Then the square of the Fourier coefficient of $f$ at
 $S$ is at most the influence of coordinate $i$ on $f$.
 \end{theorem}
@@ -61,9 +61,9 @@ coordinate $i\in\{1,\ldots,2m\}$, the influence of $F$ at $i$ is $1/2$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.HasSmallInfluences, FABL.IsFourierRegular, FABL.hasSmallInfluences_iff, FABL.influence_innerProductModTwoBoolean_eq_half, FABL.innerProductModTwoBoolean, FABL.isFourierRegular_innerProductModTwoBoolean}
 \difficulty{5}
 For every positive even integer $n$, there is a Boolean function
-$f:\\{-1,1\\}^n\\to\\{\\pm1\\}$ whose nonempty-set Fourier coefficients all have
-absolute value at most $2^{-n/2}$. For every real $\\varepsilon<1/2$, this function does
-not have all its influences at most $\\varepsilon$.
+$f:\{-1,1\}^n\to\{\pm1\}$ whose nonempty-set Fourier coefficients all have
+absolute value at most $2^{-n/2}$. For every real $\varepsilon<1/2$, this function does
+not have all its influences at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Small stable influences without Fourier regularity]
@@ -94,9 +94,9 @@ $\{0,\ldots,n-1\}$ consisting of those $i$ for which $i+1\in T$.
 \leanok
 \uses{FABL.frequencyTail, FABL.tailFrequency}
 \difficulty{4}
-Let $T$ be a subset of $\\{0,1,\\ldots,n\\}$ that does not contain $0$. Delete the
+Let $T$ be a subset of $\{0,1,\ldots,n\}$ that does not contain $0$. Delete the
 initial coordinate from the indices in $T$ to obtain a subset of
-$\\{0,1,\\ldots,n-1\\}$, then shift those indices up by one; the resulting set is
+$\{0,1,\ldots,n-1\}$, then shift those indices up by one; the resulting set is
 exactly $T$.
 \end{theorem}
 
@@ -118,7 +118,7 @@ $0$ is exactly $T$.
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.firstCoordinateSlice, FABL.fourierCoeff, FABL.fourierCoeff_tailFrequency, FABL.leadingCoordinateTimes, FABL.monomial, FABL.signValue, FABL.tailFrequency}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $g$ be a function from the $n$-dimensional Boolean
-cube to $\\{−1,1\\}$, and let $S$ be a set of coordinates in $\\{0,\\ldots,n-1\\}$. Form
+cube to $\{−1,1\}$, and let $S$ be a set of coordinates in $\{0,\ldots,n-1\}$. Form
 a function on the $(n+1)$-dimensional cube by multiplying the first coordinate by $g$
 evaluated on the remaining coordinates. Its Fourier coefficient at the set obtained by
 shifting every coordinate of $S$ up by one is zero.
@@ -181,13 +181,13 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsBalanced, FABL.IsFourierRegular, FABL.fourierCoeff_leadingCoordinateTimes_insert_zero_tailFrequency, FABL.fourierCoeff_leadingCoordinateTimes_tailFrequency_eq_zero, FABL.frequencyTail, FABL.insert_zero_tailFrequency_frequencyTail_eq, FABL.isBalanced_iff_fourierCoeff_empty_eq_zero, FABL.leadingCoordinateTimes, FABL.tailFrequency, FABL.tailFrequency_frequencyTail_eq}
 \difficulty{5}
-Let $n$ be a nonnegative integer and let $g:\\{−1,1\\}^n\\to\\{−1,1\\}$ be a sign-valued
+Let $n$ be a nonnegative integer and let $g:\{−1,1\}^n\to\{−1,1\}$ be a sign-valued
 function. Suppose $g$ has mean zero and every nonempty Fourier coefficient of its
-real-valued sign representation has absolute value at most $\\varepsilon$, where
-$\\varepsilon\\ge 0$. Define a function on $\\{−1,1\\}^{n+1}$ by multiplying the first
+real-valued sign representation has absolute value at most $\varepsilon$, where
+$\varepsilon\ge 0$. Define a function on $\{−1,1\}^{n+1}$ by multiplying the first
 input coordinate by the value of $g$ on the remaining coordinates. Every nonempty
 Fourier coefficient of this function's real-valued sign representation then has absolute
-value at most $\\varepsilon$.
+value at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Regularity of a Coordinate-Times-Majority Function]
@@ -238,9 +238,9 @@ with $|S|\le k$ satisfies $|\widehat f(S)|\le\sqrt{\epsilon/(1-\delta)^{\max(k-1
 \leanok
 \uses{FABL.fourierCoeff, FABL.stableInfluence}
 \difficulty{4}
-Let $n$ be a natural number, let $f:\\{−1,1\\}^n\\to\\mathbb R$, and let $i$ be a
+Let $n$ be a natural number, let $f:\{−1,1\}^n\to\mathbb R$, and let $i$ be a
 coordinate. The stable influence of $f$ at parameter $0$ and coordinate $i$ equals the
-square of the uniform Fourier coefficient of $f$ on the singleton subset $\\{i\\}$.
+square of the uniform Fourier coefficient of $f$ on the singleton subset $\{i\}$.
 \end{theorem}
 
 \begin{theorem}[Unit-noise influences and first-level regularity]

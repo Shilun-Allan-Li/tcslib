@@ -1273,19 +1273,19 @@ g(x,s)$ starting at $s_0(x)$.
 Let $B$ and $F$ be finite Turing machines over Boolean words, let $q$ be a state of $B$,
 let $I$ be a predicate on pairs of Boolean words, let $u$ map pairs of Boolean words to
 Boolean words, let $A$ map such pairs to Boolean values, let $s_0$ map Boolean words to
-Boolean words, and let $R,T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $F$ computes the
+Boolean words, and let $R,T : \mathbb{N} \to \mathbb{N}$. Suppose $F$ computes the
 binary digits of $R(|x|)$ within $T(|x|)$ steps; $I(x,s_0(x))$ holds and is preserved
 when $s$ is replaced by $u(x,s)$; and the computation of $B$ on each input $x$ reaches
 the clean seam with word $s_0(x)$ within $T(|x|)$ steps without visiting $q$ earlier.
 For every $x,s$ satisfying $I(x,s)$, suppose a round from the clean seam with word $s$
 takes positive time at most $T(|x|)$ and has no intermediate positive-time visit to $q$;
-if $A(x,s)$ is true, it halts with output $[\\mathrm{true}]$, and otherwise it reaches
+if $A(x,s)$ is true, it halts with output $[\mathrm{true}]$, and otherwise it reaches
 the clean seam with word $u(x,s)$. Then there are a finite Turing machine $E$ and a
 natural number $c$ such that, for every input $x$, there is a sequence of configurations
-$(C_i)_{i\\ge0}$ and a startup time at most $c(T(|x|)+1)$ reaching $C_0$, with empty
-output in $C_0,\\ldots,C_{R(|x|)}$, and with $C_{R(|x|)+1}$ halted and having output
-$[\\mathrm{false}]$. For each $i\\le R(|x|)$, within at most $c(T(|x|)+1)$ steps from
-$C_i$, the machine halts with output $[\\mathrm{true}]$ if $A(x,u^i(s_0(x)))$ holds, and
+$(C_i)_{i\ge0}$ and a startup time at most $c(T(|x|)+1)$ reaching $C_0$, with empty
+output in $C_0,\ldots,C_{R(|x|)}$, and with $C_{R(|x|)+1}$ halted and having output
+$[\mathrm{false}]$. For each $i\le R(|x|)$, within at most $c(T(|x|)+1)$ steps from
+$C_i$, the machine halts with output $[\mathrm{true}]$ if $A(x,u^i(s_0(x)))$ holds, and
 otherwise reaches $C_{i+1}$.
 \end{theorem}
 
@@ -1314,15 +1314,15 @@ whose value is true exactly when $a(j)$ is true for some $j<N$.
 Let $B$ and $F$ be finite Turing machines over Boolean words, let $q$ be a state of $B$,
 let $I$ be a predicate on pairs of Boolean words, let $u$ map such pairs to Boolean
 words, let $A$ be Boolean-valued on such pairs, let $s_0$ map Boolean words to Boolean
-words, and let $R,T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $F$ computes the binary
+words, and let $R,T : \mathbb{N} \to \mathbb{N}$. Suppose $F$ computes the binary
 digits of $R(|x|)$ within $T(|x|)$ steps, $I(x,s_0(x))$ holds, and $I(x,s)$ implies
 $I(x,u(x,s))$. Suppose startup on each input $x$ reaches the clean seam with word
 $s_0(x)$ within $T(|x|)$ steps without visiting $q$ earlier. For every $x,s$ satisfying
 $I(x,s)$, suppose a round takes positive time at most $T(|x|)$ with no intermediate
-positive-time visit to $q$; it halts with output $[\\mathrm{true}]$ if $A(x,s)$ holds,
+positive-time visit to $q$; it halts with output $[\mathrm{true}]$ if $A(x,s)$ holds,
 and otherwise reaches the clean seam with word $u(x,s)$. Then there are a finite Turing
 machine $E$ and a natural number $c$ such that $E$ computes the one-bit word indicating
-whether $A(x,u^i(x,s_0(x)))$ holds for some $i\\le R(|x|)$, within $c(T(n)+1)(R(n)+2)$
+whether $A(x,u^i(x,s_0(x)))$ holds for some $i\le R(|x|)$, within $c(T(n)+1)(R(n)+2)$
 steps on inputs of length $n$.
 \end{theorem}
 
@@ -1352,7 +1352,7 @@ $a(i)$ true, if such an index exists, and with empty output if none exists.
 Let $B$ and $F$ be finite Turing machines over Boolean words, let $q$ be a state of $B$,
 let $I$ be a predicate on pairs of Boolean words, let $u,A,o$ be functions on pairs of
 Boolean words, where $A$ is Boolean-valued and $o$ is word-valued, and let $s_0$ map
-Boolean words to Boolean words. Let $R,T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $F$
+Boolean words to Boolean words. Let $R,T : \mathbb{N} \to \mathbb{N}$. Suppose $F$
 computes the binary digits of $R(|x|)$ within $T(|x|)$ steps, $I(x,s_0(x))$ holds, and
 $I(x,s)$ implies $I(x,u(x,s))$. Suppose startup on each $x$ reaches the clean seam with
 word $s_0(x)$ within $T(|x|)$ steps without visiting $q$ earlier. For every $x,s$ with
@@ -1360,7 +1360,7 @@ $I(x,s)$, suppose a round takes positive time at most $T(|x|)$ without an interm
 positive-time visit to $q$; if $A(x,s)$ holds, it halts with output $o(x,s)$, and
 otherwise it reaches the clean seam with word $u(x,s)$. Then there are a finite Turing
 machine $E$ and a natural number $c$ such that $E$ computes within $c(T(n)+1)(R(n)+2)$
-steps the word $o(x,u^i(x,s_0(x)))$ for the least $i\\le R(|x|)$ with
+steps the word $o(x,u^i(x,s_0(x)))$ for the least $i\le R(|x|)$ with
 $A(x,u^i(x,s_0(x)))$, if such an index exists, and the empty word if none exists.
 \end{theorem}
 
@@ -2886,7 +2886,7 @@ $p$ halts within $NB$ steps and its output is $p$ followed by $u_0u_1\cdots u_{N
 Let $B$ and $F$ be finite Turing machines on Boolean words, let $q$ be a state of $B$,
 and let $I$ be a predicate on pairs of Boolean words. Let $u$ and $v$ be functions on
 pairs of Boolean words, let $s_0$ be a function on Boolean words, and let $R,T :
-\\mathbb{N} \\to \\mathbb{N}$. Suppose $F$ computes the little-endian binary digits of
+\mathbb{N} \to \mathbb{N}$. Suppose $F$ computes the little-endian binary digits of
 $R(|x|)$ within $T(|x|)$ steps on every input $x$; $I(x,s_0(x))$ holds and $I(x,s)$
 implies $I(x,u(x,s))$; and, for every $x$, the computation of $B$ from its initial
 configuration reaches the clean seam with state $q$ and tape word $s_0(x)$ at some time
@@ -2895,7 +2895,7 @@ $I(x,s)$, the computation from the clean seam with word $s$ takes a positive num
 steps at most $T(|x|)$ without an intermediate return to $q$, and ends at the clean seam
 with word $u(x,s)$ and output appended as $v(x,s)$. Then there are a finite Turing
 machine $E$ and a natural number $c$ such that $E$ computes the concatenation of
-$v(x,s_0(x)),v(x,u(x,s_0(x))),\\ldots,v(x,u^ {R(|x|)}(s_0(x)))$ within
+$v(x,s_0(x)),v(x,u(x,s_0(x))),\ldots,v(x,u^ {R(|x|)}(s_0(x)))$ within
 $c(T(n)+1)(R(n)+2)$ steps on inputs of length $n$.
 \end{theorem}
 
@@ -2906,13 +2906,13 @@ $c(T(n)+1)(R(n)+2)$ steps on inputs of length $n$.
 \uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.callTM, Turing.FinTM.emCall_first, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{2}
 Let $M$ be a finite Turing machine over Boolean words, let $f$ map Boolean words to
-Boolean words, and let $T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $M$ computes $f$
+Boolean words, and let $T : \mathbb{N} \to \mathbb{N}$. Suppose $M$ computes $f$
 within $T(|a|)$ steps on every input $a$. Then there are a finite Turing machine $C$,
 entry and exit states of $C$, and a natural number $c$ with at least one work tape such
 that, for every pair of Boolean words $x,a$, starting from the clean seam on native
 input $x$ with $a$ on the first work tape and the other work tapes blank, $C$ reaches
 the clean seam with $f(a)$ on the first work tape and the other work tapes blank at some
-positive time $t\\le c(T(|a|)+|a|+|f(a)|+1)$. The exit state is not visited at any
+positive time $t\le c(T(|a|)+|a|+|f(a)|+1)$. The exit state is not visited at any
 earlier positive time before $t$.
 \end{theorem}
 

@@ -47,8 +47,8 @@ the set of all $i\in	ext{Fin}(m)$ such that $e(i)\in I$.
 \leanok
 \uses{FABL.embeddingPreimage}
 \difficulty{1}
-Let $m,n$ be natural numbers, let $e:br^{m}\tobr^{n}$ be an injective map between the
-index sets $br^{m}$ and $br^{n}$, and let $A$ be a set of indices in $br^{n}$. An
+Let $m,n$ be natural numbers, let $e:\bbr^{m}\to\bbr^{n}$ be an injective map between the
+index sets $\bbr^{m}$ and $\bbr^{n}$, and let $A$ be a set of indices in $\bbr^{n}$. An
 index $i$ belongs to the preimage of $A$ under $e$ if and only if $e(i)$ belongs to $A$.
 \end{theorem}
 
@@ -486,10 +486,10 @@ same selected inputs.
 \uses{FABL.BooleanFunction, FABL.CircuitGate, FABL.CircuitGate.HasWidthLE, FABL.CircuitGate.hasWidthLE_decisionTreeDepth, FABL.CircuitGate.hasWidthLE_mono, FABL.FixedSignCube, FABL.F₂DecisionTree.decisionTreeDepth, FABL.binaryOfBooleanFunction, FABL.reindexedSignRestriction, FABL.restrictedDecisionTreeDepth, FABL.restrictedDecisionTreeDepth_eq_reindexedSignRestriction}
 \difficulty{4}
 Let $n$ be a natural number, let $f$ be a function from the $n$-dimensional sign cube to
-$\\{−1,1\\}$, let $J$ be a set of coordinates, and fix signs on the coordinates outside
+$\{−1,1\}$, let $J$ be a set of coordinates, and fix signs on the coordinates outside
 $J$. If the resulting restriction of $f$, reindexed on the $|J|$ free coordinates, has
-decision-tree depth at most $\\ell$, then for either gate choice it has a representation
-of width at most $\\ell$: a CNF when the gate is AND, or a DNF when the gate is OR.
+decision-tree depth at most $\ell$, then for either gate choice it has a representation
+of width at most $\ell$: a CNF when the gate is AND, or a DNF when the gate is OR.
 \end{theorem}
 
 \begin{theorem}[Restriction commutes with circuit evaluation]
@@ -498,7 +498,7 @@ of width at most $\\ell$: a CNF when the gate is AND, or a DNF when the gate is 
 \leanok
 \uses{FABL.BooleanFunction, FABL.CircuitGate, FABL.CircuitTail, FABL.CircuitTail.evalFunction, FABL.FixedSignCube, FABL.reindexedSignRestriction}
 \difficulty{1}
-Let $n,m \in\mathbb{N}$, let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or
+Let $n,m\in\mathbb{N}$, let $T$ be a circuit tail with $m$ inputs, let $g$ be an AND or
 OR gate, and assign a sign-valued Boolean function on the $n$-dimensional sign cube to
 each input of $T$. For a set $J$ of coordinates and a fixed sign assignment $z$ on its
 complement, reindex the free coordinates of each restricted function by the $|J|$
@@ -706,11 +706,9 @@ truncated subtraction, so $d-2=\max(d-2,0)$.
 \uses{FABL.DepthCircuit, FABL.DepthCircuit.relativeHammingDist_truncateWidth_le, FABL.DepthCircuit.size, FABL.DepthCircuit.toBooleanFunction, FABL.DepthCircuit.truncateWidth, FABL.lmnWidthCutoff, FABL.mul_inv_two_pow_dnfWidthTruncationCutoff_le, FABL.relativeHammingDist}
 \difficulty{4}
 Let $n$ be a natural number, let $C$ be a depth circuit on the $n$-dimensional Boolean
-cube, and let $s$ be a positive natural number with circuit size at most $s$. For every
-$[?]$ positive real number $[?]$, truncating the widths of its first-layer terms at
-$[?]$ gives a Boolean function whose relative Hamming distance from the function
-computed by $C$ is at most $[?]$. Here the cutoff is $[?]$, the ceiling of the
-base-$2$ logarithm of $16s/[?]$.
+cube, and let $s$ be a positive natural number with circuit size at most $s$. For every positive real number $\varepsilon$, truncating the widths of its first-layer terms at
+$\lceil\log_2(16s/\varepsilon)\rceil$ gives a Boolean function whose relative Hamming
+distance from the function computed by $C$ is at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Lmn theorem of half switching]
@@ -765,7 +763,7 @@ samples per coefficient for that family and parameter.
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeLearnerRandomExampleCost}
 For natural numbers $n$ and $k$ and a rational parameter $	frac12 
 obreak< 
-obreakrac12$?
+obreak\frac12$?
 \end{definition}
 
 \begin{theorem}[Cost of the low-degree estimator]

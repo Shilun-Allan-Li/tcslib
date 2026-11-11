@@ -5,7 +5,7 @@
 
 # Binary multiplication table size
 
-**Claim.** For positive $[?]ell$, the binary multiplication table has length $2^{2\ell}$.
+**Claim.** For positive $\ell$, the binary multiplication table has length $2^{2\ell}$.
 
 **Proof.** The table is formed by applying the multiplication operation to every ordered pair from the list of all binary vectors of length $\ell$. The length of a binary operation table is the square of the length of its input list (\texttt{length_binaryOperationTable}). Since the list of all binary vectors has length $2^\ell$ (\texttt{length_allBinaryVectors}), the table has length $(2^\ell)^2$. The exponent law gives $(2^\ell)^2=2^{\ell+\ell}=2^{2\ell}$.
 

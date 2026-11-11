@@ -142,13 +142,13 @@ Boolean.
 \label{Turing.guessRunRed}
 \leanok
 \uses{Turing.GuessRunPhase, Turing.GuessRunPhase.State}
-Let $p_{m exit}$ be a setup state, and let $q_{m entry}$, $q_{m acc}$, and $q_{m
+Let $p_{\rm exit}$ be a setup state, and let $q_{\rm entry}$, $q_{\rm acc}$, and $q_{\rm
 rej}$ be states of the deterministic run machine. From the setup phase, the designated
 exit state transitions to the initial guessing state, while other states have no phase
 transition. The completed writer transitions to the initial skipping state; completion
 of the skip transitions to the initial rewind state; and completion of the rewind
-transitions to the run phase at $q_{m entry}$. In the run phase, $q_{m acc}$
-transitions to the output phase with verdict true, and otherwise $q_{m rej}$
+transitions to the run phase at $q_{\rm entry}$. In the run phase, $q_{\rm acc}$
+transitions to the output phase with verdict true, and otherwise $q_{\rm rej}$
 transitions there with verdict false; all other states, including every state in the
 output phase, have no phase transition.
 \end{definition}
@@ -159,12 +159,12 @@ output phase, have no phase transition.
 \leanok
 \uses{Turing.GuessRunPhase.State, Turing.MultiTapeTM, Turing.NDTM, Turing.NDTM.phaseHostND, Turing.guessRunPhases, Turing.guessRunRed}
 Let $P$ and $Q$ be deterministic $k$-work-tape Turing machines over Booleans, with state
-types $S_P$ and $S_Q$. Choose a setup exit state $p_{m exit}$, a work tape $j$, and run
-states $q_{m entry}$, $q_{m acc}$, and $q_{m rej}$; the nondeterministic machine with
+types $S_P$ and $S_Q$. Choose a setup exit state $p_{\rm exit}$, a work tape $j$, and run
+states $q_{\rm entry}$, $q_{\rm acc}$, and $q_{\rm rej}$; the nondeterministic machine with
 states tagged by computation phase starts in $P$'s initial state in the setup phase and
 combines the phase machines with transitions at these designated states: it writes a
 bounded guessed block on tape $j$, skips past the following blank, rewinds that tape,
-runs $Q$ from $q_{m entry}$, and emits true at $q_{m acc}$ or false at $q_{m rej}$.
+runs $Q$ from $q_{\rm entry}$, and emits true at $q_{\rm acc}$ or false at $q_{\rm rej}$.
 \end{definition}
 
 \begin{definition}[Configuration with a guessed tape block]

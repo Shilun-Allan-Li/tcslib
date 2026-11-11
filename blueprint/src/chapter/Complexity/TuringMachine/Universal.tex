@@ -195,7 +195,7 @@ $1$.
 Let $x$ be a Boolean word, let $b$ be a four-tape interpreter configuration for input
 $x$, let $i$ be an index in $\{0,\ldots,8\}$, let $T$ be a Boolean table, let
 $\sigma\colon\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ be a state tape, and let
-$s\in\mathbb{Z}$. If $T=l\\,1^n\\,0\\,r$ for Boolean words $l,r$ and
+$s\in\mathbb{Z}$. If $T=l\,1^n\,0\,r$ for Boolean words $l,r$ and
 $n\in\mathbb{N}$, then after exactly $n+1$ steps the stopped interpreter, started in
 the initial-state-skipping phase with table cursor $|l|$ and state tape $\sigma$ with
 cursor $s$, is in the record-group selection phase with index $i$ and table cursor
@@ -368,7 +368,7 @@ consumed and none remaining, and its state cursor is $j+|G|+1$.
 Let $x$ be a Boolean input word, $b$ a four-tape interpreter configuration on input $x$,
 $T$ a Boolean table, $\sigma$ an integer-indexed optional Boolean state tape with
 cursor $s$, and $a$ a function assigning a Boolean bit to each of the eight fixed
-action-bit positions. Suppose $T=l\\,a(0)a(1)\cdots a(7)\\,r$. For every
+action-bit positions. Suppose $T=l\,a(0)a(1)\cdots a(7)\,r$. For every
 $n\in\mathbb{N}$, field index $i\in\{0,\ldots,7\}$, and accumulated register $a_0$
 satisfying $i+n=7$ and $a_0(j)=a(j)$ for every index $j<i$, the stopped interpreter
 starting in the action-reading phase with register $a_0$ and table cursor $|l|+i$
@@ -395,7 +395,7 @@ halting successor, and $2q + 4$ for a live successor of index $q$.
 Let $x$ be a Boolean word, $b$ a four-tape interpreter configuration on input $x$, $T$ a
 Boolean table, $a$ a function assigning a Boolean bit to each of the eight fixed
 action-bit positions, and $v$ either no successor state or a state index in
-$\{0,\ldots,n\}$. If $T=l\\,1^m\\,0\\,r$, where $m$ is the unary length associated
+$\{0,\ldots,n\}$. If $T=l\,1^m\,0\,r$, where $m$ is the unary length associated
 with $v$, then after the successor-preparation duration (one step when $v$ is absent and
 $2q+4$ steps when $v=q$ is present), the stopped interpreter is in the pending-action
 phase carrying $a$ and the flag indicating that $v$ is absent. Its table cursor is

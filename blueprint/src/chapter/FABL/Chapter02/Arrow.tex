@@ -1401,7 +1401,7 @@ candidate and $-1$ otherwise.
 \leanok
 \uses{FABL.BooleanFunction, FABL.PairwiseContest, FABL.RankingProfile, FABL.Sign, FABL.pairwiseVotes}
 Let $n$ be a natural number, let $f$ be a Boolean function from sign profiles of length
-$n$ to $\\{ -1,+1 \\}$, and let $p$ be a profile of $n$ voters' strict rankings of
+$n$ to $\{ -1,+1 \}$, and let $p$ be a profile of $n$ voters' strict rankings of
 candidates $a,b,c$. The societal outcome assigns to each of the three cyclic pairwise
 contests the sign obtained by applying $f$ to the voters' signs in that contest.
 \end{definition}
@@ -1413,7 +1413,7 @@ contests the sign obtained by applying $f$ to the voters' signs in that contest.
 \uses{FABL.PairwiseContest, FABL.RankingProfile, FABL.Sign, FABL.pairwiseVotes}
 Let $n$ be a nonnegative integer, and let a ranking profile assign one of the six strict
 rankings of three candidates to each of $n$ voters. A rule $F$ assigns a sign in
-$bbZ^$ to each profile and each of the three candidate pairs. The rule satisfies
+$\bbZ^\times$ to each profile and each of the three candidate pairs. The rule satisfies
 independence of irrelevant alternatives if, for every candidate pair and every two
 profiles with the same pairwise votes for that pair, the rule returns the same sign for
 that pair.
@@ -2398,8 +2398,8 @@ has a Condorcet winner.
   {pdf-ffbe9c7b3306-p058-b002,
     pdf-ffbe9c7b3306-p058-b003}
 \difficulty{4}
-Let $n$ be a natural number, let $f$ map the $n$-dimensional sign cube to $\\{ -1,1
-\\}$, and let $p$ assign one of the six strict rankings of three candidates to each of
+Let $n$ be a natural number, let $f$ map the $n$-dimensional sign cube to $\{ -1,1
+\}$, and let $p$ assign one of the six strict rankings of three candidates to each of
 $n$ voters. For each of the three pairwise contests, let the societal outcome be the
 sign returned by $f$ on the voters’ pairwise preferences. The indicator that this
 outcome has a Condorcet winner equals $1$ precisely when its three signs are not all
@@ -4615,7 +4615,7 @@ pairwise preferences on every profile.
 \label{FABL.neg_three_fourths_mul_neg_one_third_pow_le}
 \leanok
 \difficulty{5}
-For every natural number $k$, $(-3/4)(-1/3)^k\le 1/36+(2/9)\mathbf{1}_{\{k=1\\}}$, where
+For every natural number $k$, $(-3/4)(-1/3)^k\le 1/36+(2/9)\mathbf{1}_{\{k=1\}}$, where
 the indicator is $1$ when $k=1$ and $0$ otherwise.
 \end{theorem}
 
@@ -6412,7 +6412,7 @@ of the constant sequence $1$; equivalently, $(2/3)/n\to 0$.
 \uses{FABL.BooleanFunction, FABL.HasEqualSingletonFourierCoefficients, FABL.condorcetWinnerProbability, FABL.condorcetWinnerProbability_le_of_equalSingletonFourierCoefficients, FABL.two_thirds_div_nat_isLittleO_one}
 \difficulty{3}
 Let $f_n$ be a Boolean function on $n$ voters’ pairwise vote vectors, with values in
-$\\{\pm1\}$. Suppose that for every $n$, all singleton Fourier coefficients of $f_n$ are
+$\{\pm1\}$. Suppose that for every $n$, all singleton Fourier coefficients of $f_n$ are
 equal. Then there is a real sequence $r_n=o(1)$ such that, for all sufficiently large
 $n$, the probability that the societal outcome has a Condorcet winner is at most
 $\frac79+\frac{4}{9\pi}+r_n$, when the voters’ rankings are chosen uniformly and

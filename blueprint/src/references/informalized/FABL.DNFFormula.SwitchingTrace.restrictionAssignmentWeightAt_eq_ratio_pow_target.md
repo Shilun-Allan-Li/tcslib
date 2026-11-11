@@ -5,7 +5,7 @@
 
 # Restriction Weight Along a Trace
 
-**Claim.** For a switching trace of length $k$ and any $\delta<1$, the initial restriction’s weight equals $\left(\frac{2\delta}{1-\delta}\right)^k$ times the target restriction’s weight.
+**Claim.** For a switching trace of length $k$ and any $\forall \delta<1$, the initial restriction’s weight equals $\left(\frac{2\delta}{1-\delta}\right)^k$ times the target restriction’s weight.
 
 **Proof.** Proceed by induction on the trace. In the final case, let $T$ be the canonical term and take the coordinates indexed by the chosen positions. Each is free in the initial restriction, by the position-subset condition and the characterisation of free literal positions. Fixing these distinct coordinates with the term’s satisfying assignment multiplies the restriction weight by the switching ratio once per coordinate. Their number is $k+1$, as required for this terminal trace.
 

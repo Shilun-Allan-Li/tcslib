@@ -17,7 +17,7 @@ Declarations of the Lean module \texttt{FABL.Chapter06.F₂Polynomials.FourierTo
 \leanok
 \uses{FABL.NumericalCoefficients}
 For a family of real coefficients $c(S)$ indexed by subsets $S$ of $[n]$, define its
-support to be the collection of subsets $S\\subseteq[n]$ for which $c(S)\\ne0$.
+support to be the collection of subsets $S\subseteq[n]$ for which $c(S)\ne0$.
 \end{definition}
 
 \begin{theorem}[Membership in numerical support]
@@ -135,7 +135,7 @@ subset with nonzero coefficient has cardinality at most $D$.
 \label{FABL.functionNumericalDegree}
 \leanok
 \uses{FABL.PseudoBooleanFunction, FABL.numericalCoeff, FABL.numericalDegree}
-For a real-valued function $\\varphi$ on $\\mathbb F_2^n$, define its numerical degree
+For a real-valued function $\varphi$ on $\mathbb F_2^n$, define its numerical degree
 to be the numerical degree of its numerical coefficient family.
 \end{definition}
 
@@ -149,8 +149,8 @@ to be the numerical degree of its numerical coefficient family.
 \label{FABL.fourierSubstitutionCoeff}
 \leanok
 \uses{FABL.NumericalCoefficients, FABL.fourierCoeff}
-Let $p:\\{-1,1\\}^n\\to\\mathbb R$. For each $T\\subseteq[n]$, define its substitution
-coefficient by $(-2)^{|T|}\\sum_{S\\supseteq T}\\widehat p(S)$, where $\\widehat p(S)$
+Let $p:\{-1,1\}^n\to\mathbb R$. For each $T\subseteq[n]$, define its substitution
+coefficient by $(-2)^{|T|}\sum_{S\supseteq T}\widehat p(S)$, where $\widehat p(S)$
 is the Fourier coefficient of $p$ at $S$.
 \end{definition}
 
@@ -164,7 +164,7 @@ is the Fourier coefficient of $p$ at $S$.
 \label{FABL.fourierSubstitution}
 \leanok
 \uses{FABL.PseudoBooleanFunction, FABL.binaryCubeSignEquiv}
-For a function $p$ on the sign cube $\\{-1,1\\}^n$, define its substitution on the
+For a function $p$ on the sign cube $\{-1,1\}^n$, define its substitution on the
 $n$-dimensional binary cube by evaluating $p$ at the sign vector corresponding to each
 binary input.
 \end{definition}
@@ -179,7 +179,7 @@ binary input.
   pdf-ffbe9c7b3306-p149-b004,
   pdf-ffbe9c7b3306-p150-b001
 }
-For a function $p$ on the sign cube $\\{-1,1\\}^n$, define a real-valued function on the
+For a function $p$ on the sign cube $\{-1,1\}^n$, define a real-valued function on the
 $n$-dimensional binary cube by assigning to each input $x$ the value $(1-p(s(x)))/2$,
 where $s(x)$ is the corresponding sign vector.
 \end{definition}
@@ -194,7 +194,7 @@ where $s(x)$ is the corresponding sign vector.
   pdf-ffbe9c7b3306-p036-b001,
   pdf-ffbe9c7b3306-p150-b001
 }
-For a function $p$ on the sign cube $\\{-1,1\\}^n$, define a real coefficient for each
+For a function $p$ on the sign cube $\{-1,1\}^n$, define a real coefficient for each
 subset $T\subseteq\{1,\ldots,n\}$ as one half of the difference between the indicator
 that $T$ is empty and the Fourier coefficient of $p$ at $T$.
 \end{definition}
@@ -305,10 +305,10 @@ of bits by signs, the real value of the sign at coordinate $i$ is $1-2\mathbf
 \leanok
 \uses{FABL.F₂Cube, FABL.binaryCubeSignEquiv, FABL.monomial, FABL.numericalMonomial, FABL.signValue, FABL.signValue_binaryCubeSignEquiv_eq_one_sub_two}
 \difficulty{4}
-Let $n$ be a natural number, let $S$ be a set of coordinates in $\\{0,\\ldots,n-1\\}$,
-and let $x$ assign a bit in $\\mathbb{F}_2$ to each coordinate. Encode each bit as the
-sign $(-1)^b$. The sign monomial on $S$ equals $\\displaystyle\\sum_{T\\subseteq
-S}(-2)^{|T|}\\prod_{i\\in T}\\mathbf{1}_{\\{x_i=1\\}}$, where the product over the empty
+Let $n$ be a natural number, let $S$ be a set of coordinates in $\{0,\ldots,n-1\}$,
+and let $x$ assign a bit in $\mathbb{F}_2$ to each coordinate. Encode each bit as the
+sign $(-1)^b$. The sign monomial on $S$ equals $\displaystyle\sum_{T\subseteq
+S}(-2)^{|T|}\prod_{i\in T}\mathbf{1}_{\{x_i=1\}}$, where the product over the empty
 set is $1$.
 \end{theorem}
 
@@ -343,12 +343,12 @@ $S$.
 \leanok
 \uses{FABL.binaryCubeSignEquiv, FABL.fourierSubstitutionCoeff, FABL.fourierToF₂Coeff, FABL.fourierToF₂Polynomial, FABL.numericalEval, FABL.numericalEval_fourierSubstitutionCoeff, FABL.numericalMonomial}
 \difficulty{4}
-For each natural number $n$ and each function $p$ from the sign cube $\\{-1,1\\}^n$ to
-$\\mathbb R$, evaluate on the binary cube the polynomial whose coefficient at a subset
-$T\\subseteq\\{1,\\ldots,n\\}$ is half the difference between the indicator of
-$T=\\varnothing$ and $(-2)^{|T|}$ times the sum of the Fourier coefficients of $p$ over
+For each natural number $n$ and each function $p$ from the sign cube $\{-1,1\}^n$ to
+$\mathbb R$, evaluate on the binary cube the polynomial whose coefficient at a subset
+$T\subseteq\{1,\ldots,n\}$ is half the difference between the indicator of
+$T=\varnothing$ and $(-2)^{|T|}$ times the sum of the Fourier coefficients of $p$ over
 all subsets containing $T$. This evaluation equals the function on the binary cube given
-by $x\\mapsto (1-p(\\sigma(x)))/2$, where $\\sigma$ sends each binary coordinate to its
+by $x\mapsto (1-p(\sigma(x)))/2$, where $\sigma$ sends each binary coordinate to its
 corresponding sign.
 \end{theorem}
 
@@ -581,7 +581,7 @@ Fourier degree of $p$.
 \uses{FABL.fourierDegree, FABL.fourierSubstitution, FABL.functionNumericalDegree, FABL.numericalCoeff_fourierSubstitution, FABL.numericalDegree_fourierSubstitutionCoeff}
 \difficulty{1}
 For every nonnegative integer $n$ and every real-valued function $p$ on the sign cube
-$\{ -1,1\}^n$, the numerical degree of the function obtained by substituting the
+$\{ -1,1\}^n$, the numerical degree of the function obtained by substituting the
 coordinatewise sign encoding of a binary input into $p$ equals the Fourier degree of
 $p$.
 \end{theorem}

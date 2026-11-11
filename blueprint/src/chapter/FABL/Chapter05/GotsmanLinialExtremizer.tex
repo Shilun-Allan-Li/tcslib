@@ -111,8 +111,8 @@ $i\in\{0,\ldots,n-1\}$. Then $|S|\leq |S\mathbin{\triangle}\{i\}|+1$.
 \uses{FABL.card_le_card_symmDiff_singleton_add_one, FABL.fourierCoeff, FABL.fourierCoeff_mul_signValue, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.monomial, FABL.signValue}
 \difficulty{5}
 Let $q$ be a real-valued function on the Boolean cube with Fourier degree at most $d$,
-and let $r\\in\\mathbb R$. The function $x\\mapsto q(x)\\bigl(\\sum_{i=1}^n
-x_i-r\\bigr)$ has Fourier degree at most $d+1$.
+and let $r\in\mathbb R$. The function $x\mapsto q(x)\bigl(\sum_{i=1}^n
+x_i-r\bigr)$ has Fourier degree at most $d+1$.
 \end{theorem}
 
 \begin{definition}[Gotsman–Linial product on the cube]
@@ -201,7 +201,7 @@ For all nonnegative integers $j$ and $d$, $\displaystyle
 \uses{FABL.centralProduct_signed_pos, FABL.thresholdSign, FABL.thresholdSign_of_neg, FABL.thresholdSign_of_nonneg}
 \difficulty{4}
 For all natural numbers $j$ and $d$, the threshold sign of
-$\\prod_{t=0}^{j+d-1}(2j-2t-1)$ is $1$ when $d$ is even and $-1$ when $d$ is odd.
+$\prod_{t=0}^{j+d-1}(2j-2t-1)$ is $1$ when $d$ is even and $-1$ when $d$ is odd.
 \end{theorem}
 
 \begin{theorem}[Gotsman linial extremizer central layer]
@@ -261,8 +261,8 @@ product at $(a,k,c)$ is $\prod_{j=0}^{k-1}\bigl(2c-2(a+j)-1\bigr)$.
 \leanok
 \uses{FABL.gotsmanLinialLayerValue, FABL.gotsmanLinialLayerValue_ne_zero, FABL.gotsmanLinialLayerValue_succ_count, FABL.gotsmanLinialLayerValue_succ_degree, FABL.thresholdSign, FABL.thresholdSign_of_neg, FABL.thresholdSign_of_nonneg}
 \difficulty{6}
-For natural numbers $a,s,c$, define $V(a,k,c)=\\prod_{j=0}^{k-1}(2c-2(a+j)-1)$. The
-threshold signs of $V(a,s+1,c+1)$ and $V(a,s+1,c)$ differ if and only if $a\\le
+For natural numbers $a,s,c$, define $V(a,k,c)=\prod_{j=0}^{k-1}(2c-2(a+j)-1)$. The
+threshold signs of $V(a,s+1,c+1)$ and $V(a,s+1,c)$ differ if and only if $a\le
 c<a+s+1$.
 \end{theorem}
 
@@ -312,8 +312,8 @@ $(m-s)_+=\max(m-s,0)$.
 \uses{FABL.positiveCoordinateCount, FABL.uniformProbability, FABL.uniformProbability_positiveCoordinateCount_eq}
 \difficulty{5}
 For nonnegative integers $m,a,k$, the uniform probability that a sign vector
-$y\\in\\{-1,1\\}^m$ has between $a$ and $a+k-1$ positive coordinates, inclusive, is
-$\\displaystyle\\sum_{j=0}^{k-1}\\frac{\\binom{m}{a+j}}{2^m}$.
+$y\in\{-1,1\}^m$ has between $a$ and $a+k-1$ positive coordinates, inclusive, is
+$\displaystyle\sum_{j=0}^{k-1}\frac{\binom{m}{a+j}}{2^m}$.
 \end{theorem}
 
 \begin{theorem}[Influence of the Gotsman–Linial extremizer]
@@ -325,7 +325,7 @@ $\\displaystyle\\sum_{j=0}^{k-1}\\frac{\\binom{m}{a+j}}{2^m}$.
 For nonnegative integers $m$ and $k$, and any coordinate $i$ of the $(m+1)$-dimensional
 Boolean cube, the influence of coordinate $i$ for the Gotsman–Linial extremizer with
 parameters $m+1$ and $k$ is
-$$\\sum_{j=0}^{k-1}\\frac{\\binom{m}{\\lfloor((m+1)-k)/2\\rfloor+j}}{2^m}.$$
+$$\sum_{j=0}^{k-1}\frac{\binom{m}{\lfloor((m+1)-k)/2\rfloor+j}}{2^m}.$$
 \end{theorem}
 
 \begin{theorem}[Total influence gotsman linial extremizer]

@@ -7,6 +7,6 @@
 
 **Claim.** Any assignment satisfying the circuit’s homogeneous quadratic system has constant coordinate equal to one.
 
-**Proof.** The constant equation is one of the equations in the system, so the assumed system satisfaction implies that this equation is satisfied. The criterion for satisfaction of an equation defined by terms (FABL.homogeneousQuadraticEquationOfTerms_satisfiedBy_iff) reduces it here to the square of the constant coordinate being one. In , every element is its own square, since the field has two elements. Therefore the constant coordinate itself equals one.
+**Proof.** The constant equation is one of the equations in the system, so the assumed system satisfaction implies that this equation is satisfied. The criterion for satisfaction of an equation defined by terms (FABL.homogeneousQuadraticEquationOfTerms_satisfiedBy_iff) reduces it here to the square of the constant coordinate being one. In \mathbb{F}_2, every element is its own square, since the field has two elements. Therefore the constant coordinate itself equals one.
 
 **Key facts.** `FABL.homogeneousQuadraticEquationOfTerms_satisfiedBy_iff`.

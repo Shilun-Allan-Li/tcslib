@@ -3424,7 +3424,7 @@ conjunction is $1/2$.
 \difficulty{2}
 Let $a$ and $b$ be independent uniform random signs in $\{-1,1\}$, and define
 $a\mathbin{\&}b$ to be $-1$ when both signs are $-1$, and $1$ otherwise. Then
-$\\mathbb{E}[b(a\mathbin{\&}b)]=\frac12$.
+$\mathbb{E}[b(a\mathbin{\&}b)]=\frac12$.
 \end{theorem}
 
 \begin{theorem}[Triple sign moment with a conjunction]
@@ -3537,8 +3537,8 @@ coordinatewise by $(x\wedge y)_i=x_i\land y_i$ for every coordinate $i$.
 \leanok
 \uses{FABL.pcppBoolSignEquiv, FABL.signAnd}
 \difficulty{4}
-For Booleans $a$ and $b$, encode each as a sign in $\\{ -1,1 \\}$ using the given
-Boolean-to-sign equivalence. The encoding of $a \\land b$ is $-1$ exactly when both
+For Booleans $a$ and $b$, encode each as a sign in $\{ -1,1 \}$ using the given
+Boolean-to-sign equivalence. The encoding of $a \land b$ is $-1$ exactly when both
 encoded signs are $-1$, and is $1$ otherwise.
 \end{theorem}
 
@@ -5169,7 +5169,7 @@ Statement pending regeneration.
 \uses{FABL.relativeHammingDist}
 \difficulty{4}
 Let $D$ be a finite nonempty set, let $C$ be a type with decidable equality, and let
-$f,g:D\\to C$. If the number of inputs on which $f$ and $g$ differ, divided by the
+$f,g:D\to C$. If the number of inputs on which $f$ and $g$ differ, divided by the
 cardinality of $D$, is zero, then $f=g$.
 \end{theorem}
 
@@ -5179,10 +5179,10 @@ cardinality of $D$, is zero, then $f=g$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.BoundedCubeFunction.ofBoolean, FABL.eq_of_relativeHammingDist_eq_zero_amplification, FABL.fourierCoeff, FABL.fourierCoeff_eq_uniformInner, FABL.fourierCoeff_monomial, FABL.nonnegativeOddFourierMaximum, FABL.nonnegativeOddFourierMaximum_le_one_amplification, FABL.oddBLRAcceptanceProbability, FABL.oddBLRAcceptanceProbability_eq_fourierSum, FABL.oddBLRAcceptanceProbability_le_correctedMaximum, FABL.oddFourierFrequencies, FABL.parityFunction, FABL.parityFunction_toReal, FABL.relativeHammingDist, FABL.uniformInner_eq_one_sub_two_mul_relativeHammingDist}
 \difficulty{6}
-Let $n$ be a natural number and let $f$ map the sign cube $\\{-1,1\\}^n$ to
-$\\{-1,1\\}$. The odd BLR test accepts $f$ with probability one if and only if there is
-a subset $S\\subseteq[n]$ of odd cardinality such that $f(x)=\\prod_{i\\in S}x_i$ for
-every $x\\in\\{-1,1\\}^n$.
+Let $n$ be a natural number and let $f$ map the sign cube $\{-1,1\}^n$ to
+$\{-1,1\}$. The odd BLR test accepts $f$ with probability one if and only if there is
+a subset $S\subseteq[n]$ of odd cardinality such that $f(x)=\prod_{i\in S}x_i$ for
+every $x\in\{-1,1\}^n$.
 \end{theorem}
 
 \begin{theorem}[Parity acceptance probability is below one]
@@ -5215,10 +5215,10 @@ $n$-dimensional sign cube.
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsDictator, FABL.NonadaptiveFunctionTester.acceptanceProbability, FABL.NonadaptiveFunctionTester.acceptanceProbability_le_one, FABL.dictator, FABL.oddBLRAcceptanceProbability_eq_one_iff_oddParity, FABL.oddBLRAndAndFunctionTester, FABL.oddBLREquationFunctionTester, FABL.oddBLREquationFunctionTester_eq_oddBLRAcceptanceProbability, FABL.parityAndAcceptanceProbability_lt_one_of_two_le, FABL.parityFunction, FABL.signAndFunctionTester, FABL.signAndFunctionTester_parity_acceptanceProbability, FABL.uniformMixtureFunctionTester_acceptanceProbability}
 \difficulty{5}
-Let $n$ be a natural number and let $f$ map the sign cube $\\{-1,1\\}^n$ to
-$\\{-1,1\\}$. The tester that chooses uniformly between the odd BLR equation test and
+Let $n$ be a natural number and let $f$ map the sign cube $\{-1,1\}^n$ to
+$\{-1,1\}$. The tester that chooses uniformly between the odd BLR equation test and
 the sign-AND test accepts $f$ with probability one if and only if $f$ is a dictator;
-that is, there is a coordinate $i\\in[n]$ such that $f(x)=x_i$ for every $x$.
+that is, there is a coordinate $i\in[n]$ such that $f(x)=x_i$ for every $x$.
 \end{theorem}
 
 \begin{definition}[Non-dictator Boolean functions]

@@ -5,6 +5,6 @@
 
 # Alice’s special bit under mixing
 
-**Claim.** The mixed sample’s special-$X$ value equals the original $[?2004h\omega_X$ sample’s special-$X$ value.
+**Claim.** The mixed sample’s special-$X$ value equals the original $\omega_X$ sample’s special-$X$ value.
 
 **Proof.** The mixed sample takes its special coordinate and its $x_T$ field from $\omega_X$. Since special-$X$ reads that field, mixing preserves the stated value.

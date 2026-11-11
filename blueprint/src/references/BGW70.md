@@ -35,7 +35,7 @@ Section heading; the authors introduce their multitape Turing-acceptor model.
 
 <a id="pdf-b9fb35a232af-p004-b001"></a>
 <!-- pdf-source: page=4; block=1; confidence=0.85 -->
-A configuration reaches itself, and \(C_0\overset{m}{\longrightarrow} C_m\) when it reaches \(C_m\) by a chain of \(m\) one-step transitions. A chain from the initial configuration on input \(w\) is an \(m\)-step computation; it is accepting if its last configuration has empty tapes, zero storage-tape positions, and a state in \(F\). Write \(C_1\longrightarrow^* C_2\) when \(C_1\) reaches \(C_2\) in some number of steps. During a computation, the machine visits at most \(k\) squares on each storage tape if every represented storage-tape word has length at most \(k\).
+A configuration reaches itself, and \(C_0\overset{m}{\longrightarrow} C_m\) when it reaches \(C_m\) by a chain of \(m\) one-step transitions. A chain from the initial configuration on input \(w\) is an \(m\)-step computation; it is accepting if its last configuration has empty tapes, zero storage-tape positions, and a state in \(F\). Write \(C_1\longrightarrow^* C_2\) when \(C_1\) reaches \(C_2\) in some number of steps. During a computation, the machine visits at most \(k\) squares on each storage tape if every represented storage-tape word has length at most \(k\).
 
 <a id="pdf-b9fb35a232af-p004-b002"></a>
 <!-- pdf-source: page=4; block=2; confidence=0.88 -->

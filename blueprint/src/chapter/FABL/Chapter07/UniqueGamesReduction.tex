@@ -56,7 +56,7 @@ accepts an ordered pair $(a,b)$ exactly when the permutation sends $b$ to $a$.
 \lean{FABL.binaryInjectiveScope}
 \label{FABL.binaryInjectiveScope}
 \leanok
-Let $V$ be a type, and let $u,v\in V$ be distinct. The map from $in 2$ to $V$ sending
+Let $V$ be a type, and let $u,v\in V$ be distinct. The map from $\in 2$ to $V$ sending
 $0$ to $u$ and $1$ to $v$ is an injection.
 \end{definition}
 
@@ -204,7 +204,7 @@ traversal is reversed, and the order of concatenated walks is reversed.
 \leanok
 \uses{FABL.FiniteUniqueGame.Walk}
 In a finite Unique Games instance, a walk from one variable to another transports labels
-in $in q$. A length-zero walk leaves a label unchanged; traversing a constraint from
+in $\in q$. A length-zero walk leaves a label unchanged; traversing a constraint from
 source to target applies the inverse of its permutation, traversing it backward applies
 its permutation, and concatenated walks transport labels in the order in which the walks
 are traversed.
@@ -795,7 +795,7 @@ permuted according to the constraint on $(v,w)$. This function takes values in $
 \label{FABL.RegularUniqueGame.dictatorLongCode}
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.dictator}
-Let $G$ be a regular unique game with alphabet size $q$, and let $ho$ assign a label in
+Let $G$ be a regular unique game with alphabet size $q$, and let $\rho$ assign a label in
 $\{0,\ldots,q-1\}$ to each vertex. The dictator long code table assigns to each
 vertex the dictator function indexed by its label under $\rho$.
 \end{definition}
@@ -980,10 +980,7 @@ satisfaction objective.
 \leanok
 \uses{FABL.CSPInstance.optimum, FABL.FiniteUniqueGame.toCSPInstance, FABL.RegularUniqueGame.edgeError, FABL.RegularUniqueGame.edgeError_eq_one_sub_value, FABL.RegularUniqueGame.edgeError_nonneg, FABL.RegularUniqueGame.optimalLabel, FABL.RegularUniqueGame.toFiniteUniqueGame}
 \difficulty{3}
-Let $G$ be a regular unique game with $q>0$ labels, and let $-\delta$ be a lower bound
-for the maximum fraction of constraints satisfiable by a labeling of its vertices. Then
-the expected fraction of violated constraints under an optimal labeling is at most
-$\delta$.
+Let $G$ be a regular unique game with $q>0$ labels. If the maximum fraction of constraints satisfiable by a labeling is at least $1-\delta$, then the expected fraction of violated constraints under an optimal labeling is at most $\delta$.
 \end{theorem}
 
 \begin{theorem}[Dictator response under a satisfied constraint]
@@ -992,10 +989,10 @@ $\delta$.
 \leanok
 \uses{FABL.RegularUniqueGame.dictatorLongCode, FABL.RegularUniqueGame.neighborResponse, FABL.dictator, FABL.permuteInput}
 \difficulty{1}
-Let $G$ be a regular unique game, let $ho$ assign an alphabet coordinate to each
+Let $G$ be a regular unique game, let $\rho$ assign an alphabet coordinate to each
 vertex, and choose a vertex $v$, a neighbour $w$ of $v$, and a query $x$ in the Boolean
 cube. If the permutation on this constraint sends the coordinate assigned to $w$ to the
-coordinate assigned to $v$, then the response of the dictator code induced by $ho$ at
+coordinate assigned to $v$, then the response of the dictator code induced by $\rho$ at
 $v$ on query $x$ and neighbour $w$ equals the dictator response at $v$ on $x$.
 \end{theorem}
 
@@ -1103,7 +1100,7 @@ positions.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeExperimentSample, FABL.RegularUniqueGame.longCodeExperimentLaw, FABL.RegularUniqueGame.longCodeExperimentVariable, FABL.Sign, FABL.SignPredicate, FABL.SignTester, FABL.SignTester.UsesPredicates, FABL.WeightedConstraintExperiment, FABL.signPredicateSetTemplate}
 Let $G$ be a regular unique game with alphabet size $q$, let a sign tester have a finite
-seed set and a probability law, and let $[?]$ be a finite set of sign predicates.
+seed set and a probability law, and let $\Psi$ be a finite set of sign predicates.
 Suppose every check selected by the tester uses a predicate in this set. The associated
 weighted constraint experiment has as outcomes the long code experiment samples,
 distributed according to the experiment law; each outcome selects its check's predicate,
@@ -1211,7 +1208,7 @@ $\beta-r\delta$.
 Let $G$ be a regular unique game with a nonempty alphabet, let $T$ be a finite
 randomised tester, and let $r$ be a natural number such that every test selected by a
 seed has arity at most $r$. Suppose that for every alphabet coordinate, the tester's
-acceptance probability on the corresponding dictator function is at least $eta$, and
+acceptance probability on the corresponding dictator function is at least $\eta$, and
 that the optimum value of the unique-game constraint instance associated with $G$ is at
 least $1-\delta$. Then the experiment value of the dictator code induced by an optimal
 labeling of $G$ is at least $\beta-r\delta$.
@@ -1307,12 +1304,7 @@ at that vertex's neighbors is nonempty.
 \leanok
 \uses{FABL.HasSmallStableInfluences, FABL.IsDictatorVsNoNotablesTest, FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.averagedNeighborFunction, FABL.RegularUniqueGame.longCodeValue, FABL.RegularUniqueGame.neighborNotableCoordinates, FABL.RegularUniqueGame.neighborNotableVertexFraction, FABL.SignPredicate, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.SignTester.acceptanceProbability_mem_Icc}
 \difficulty{5}
-Let $G$ be a regular unique game with alphabet size $q$, let $$ be a
-dictator-versus-no-notables test family with predicate set $$, parameters $,$, error
-function $$, and testers $(T_n)_{n>0}$, and let $f$ be a long-code table for $G$. If
-$q>0$, $0\le \le1$, and the long-code value of $f$ under the tester $T_q$ is at least
-$+2()$, then $()$ is at most the fraction of vertices whose averaged neighbor
-functions have a coordinate with stable influence greater than $$.
+Let $G$ be a regular unique game with alphabet size $q$, and let a dictator-versus-no-notables test family have predicate set $\Psi$, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. Let $f$ be a long-code table for $G$. If $q>0$, $0\leq\varepsilon\leq1$, and the value of $f$ under $T_q$ is at least $\alpha+2\operatorname{error}(\varepsilon)$, then $\operatorname{error}(\varepsilon)$ is at most the fraction of vertices whose averaged neighbor functions have a coordinate with stable influence greater than $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Variance bound for bounded functions]
@@ -1419,7 +1411,7 @@ notable-coordinate set at $v$.
 \leanok
 \uses{FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.card_neighborNotableCoordinates_le, FABL.RegularUniqueGame.card_notableCoordinates_le, FABL.RegularUniqueGame.decodingCandidates, FABL.RegularUniqueGame.neighborNotableCoordinates, FABL.RegularUniqueGame.notableCoordinates}
 \difficulty{3}
-Let $G$ be a regular unique game with label set $in q$, and assign to each vertex a
+Let $G$ be a regular unique game with label set $\in q$, and assign to each vertex a
 Boolean-valued function on the Boolean cube. If $0<ε≤1$, then at every vertex the number
 of decoding candidates is at most $3/ε^2$.
 \end{theorem}
@@ -1497,7 +1489,7 @@ label.
 \leanok
 \uses{FABL.RegularUniqueGame.candidateDecodingEdgeValue, FABL.RegularUniqueGame.finiteCandidateExpectation_nonneg}
 \difficulty{3}
-Let $G$ be a regular unique game with label set $in q$. For any family of finite
+Let $G$ be a regular unique game with label set $\in q$. For any family of finite
 candidate-label sets, any default label, and any vertex and one of its neighbors, the
 expected agreement value obtained by independently choosing labels from the two
 candidate sets (using the default for an empty set) is nonnegative.
@@ -1613,7 +1605,7 @@ candidate subsets, using the default for any empty subset.
 \leanok
 \uses{FABL.CSPInstance.optimum, FABL.CSPInstance.value, FABL.CSPInstance.value_le_optimum, FABL.FiniteUniqueGame.toCSPInstance, FABL.RegularUniqueGame.candidateDecodingAssignmentLaw, FABL.RegularUniqueGame.candidateDecodingValue, FABL.RegularUniqueGame.pmfExpectation_candidateDecodingAssignmentLaw_value, FABL.RegularUniqueGame.toFiniteUniqueGame, FABL.pmfExpectation, FABL.pmfExpectation_const, FABL.pmfExpectation_mono}
 \difficulty{4}
-Let $G$ be a regular unique game with label set $in q$, where $q>0$. For any family of
+Let $G$ be a regular unique game with label set $\in q$, where $q>0$. For any family of
 finite candidate-label sets and any default label, the expected edge agreement from
 independently choosing labels at the vertices, using the default whenever a candidate
 set is empty, is at most the optimum value of the associated constraint satisfaction
@@ -1648,8 +1640,7 @@ the finite unique-game constraint instance associated with $G$.
 \label{FABL.RegularUniqueGame.epsilon_sq_div_three_le_inv_card}
 \leanok
 \difficulty{4}
-Let $C$ be a nonempty finite set and let $$ be a positive real number. If $|C| 
-3/^2$, then $^2/3  1/|C|$.
+Let $C$ be a nonempty finite set and let $\varepsilon>0$. If $|C|\leq3/\varepsilon^2$, then $\varepsilon^2/3\leq1/|C|$.
 \end{theorem}
 
 \begin{theorem}[Lower bound for edge decoding]
@@ -1697,12 +1688,7 @@ at the vertex is at least $\varepsilon^5/18$.
 \leanok
 \uses{FABL.IsDictatorVsNoNotablesTest, FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.decodingEdgeValue, FABL.RegularUniqueGame.decodingEdgeValue_nonneg, FABL.RegularUniqueGame.decodingValue, FABL.RegularUniqueGame.decodingVertexValue, FABL.RegularUniqueGame.epsilon_pow_five_div_eighteen_le_decodingVertexValue, FABL.RegularUniqueGame.error_le_neighborNotableVertexFraction, FABL.RegularUniqueGame.longCodeValue, FABL.RegularUniqueGame.neighborNotableCoordinates, FABL.RegularUniqueGame.neighborNotableVertexFraction, FABL.SignPredicate, FABL.SignTester}
 \difficulty{6}
-Let $G$ be a regular unique game with alphabet size $q$, and let a
-dictator-versus-no-notables test family have predicate set $$, parameters $,$, error
-function $$, and testers $(T_n)_{n>0}$. For a long-code table $f$, suppose $q>0$,
-$0<\le1$, and its long-code value under $T_q$ is at least $+2()$. Then the decoding
-value obtained from the notable-coordinate candidates at threshold $$, with default
-label $0$, is at least $\mathrm{error}()^5/18$.
+Let $G$ be a regular unique game with alphabet size $q$, and let a dictator-versus-no-notables test family have predicate set $\Psi$, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. For a long-code table $f$, suppose $q>0$, $0<\varepsilon\leq1$, and its value under $T_q$ is at least $\alpha+2\operatorname{error}(\varepsilon)$. Then the decoding value obtained from the notable-coordinate candidates at threshold $\varepsilon$, with default label $0$, is at least $\operatorname{error}(\varepsilon)\varepsilon^5/18$.
 \end{theorem}
 
 \begin{theorem}[Optimum lower bound from decoding]
@@ -1711,12 +1697,7 @@ label $0$, is at least $\mathrm{error}()^5/18$.
 \leanok
 \uses{FABL.CSPInstance.optimum, FABL.FiniteUniqueGame.toCSPInstance, FABL.IsDictatorVsNoNotablesTest, FABL.RegularUniqueGame.LongCodeTable, FABL.RegularUniqueGame.decodingValue_le_optimum, FABL.RegularUniqueGame.error_mul_epsilon_pow_five_div_eighteen_le_decodingValue, FABL.RegularUniqueGame.longCodeValue, FABL.RegularUniqueGame.toFiniteUniqueGame, FABL.SignPredicate, FABL.SignTester}
 \difficulty{1}
-Let $G$ be a regular unique game with alphabet size $q$, where $q>0$, and assume the
-label set is nonempty. Let a dictator-versus-no-notables test family have predicate set,
-parameters $,$, error function $$, and testers $(T_n)_{n>0}$. For a long-code table
-$f$, if $0<\le1$ and its long-code value under $T_q$ is at least $+2()$, then the
-optimum value of the constraint satisfaction instance associated with $G$ is at least
-$\mathrm{error}()^5/18$.
+Let $G$ be a regular unique game with alphabet size $q>0$, and assume its label set is nonempty. Let a dictator-versus-no-notables test family have predicate set, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. For a long-code table $f$, if $0<\varepsilon\leq1$ and its value under $T_q$ is at least $\alpha+2\operatorname{error}(\varepsilon)$, then the optimum value of the constraint satisfaction instance associated with $G$ is at least $\operatorname{error}(\varepsilon)\varepsilon^5/18$.
 \end{theorem}
 
 \begin{definition}[Coordinates outside a selected pair]
@@ -1801,9 +1782,7 @@ expectation of $f$ over functions on the first $a$ positions.
 \leanok
 \uses{FABL.CloneRest, FABL.clonePairEquiv, FABL.fintype_expect_prod}
 \difficulty{5}
-Let $r$ and $M$ be natural numbers with $M>0$, and let $i,j\in\{0,ldots,r-1\}$ be
-distinct. If a tuple of length $r$ is chosen uniformly from ${0,ldots,M-1}^r$, the
-probability that its entries at $i$ and $j$ agree is $1/M$.
+Let $r,M$ be natural numbers with $M>0$, and let $i,j\in\{0,\ldots,r-1\}$ be distinct. If a tuple of length $r$ is chosen uniformly from $\{0,\ldots,M-1\}^r$, the probability that its entries at $i$ and $j$ agree is $1/M$.
 \end{theorem}
 
 \begin{definition}[Tuple collision probability]
@@ -2054,8 +2033,7 @@ query positions refer to the sole variable.
 \leanok
 \uses{FABL.Sign, FABL.SignTester.cspTemplate, FABL.WeightedConstraintExperiment.payoff, FABL.WeightedConstraintExperiment.repeatedNotEqualCheck, FABL.WeightedConstraintExperiment.repeatedNotEqualExperiment, FABL.WeightedConstraintExperiment.repeatedNotEqualPredicate, FABL.WeightedConstraintExperiment.repeatedNotEqualTester, FABL.WeightedConstraintExperiment.value, FABL.pmfExpectation}
 \difficulty{3}
-For every assignment of a sign in ${\pm1}$ to the single variable, the value of the
-repeated-not-equal experiment is $0$.
+For every assignment of a sign in $\{-1,1\}$ to the single variable, the value of the repeated-not-equal experiment is $0$.
 \end{theorem}
 
 \begin{theorem}[Repeated not-equal experiment optimum]
@@ -2281,13 +2259,7 @@ nonempty.
 \leanok
 \uses{FABL.HasSmallStableInfluences, FABL.IsDictatorVsNoNotablesTest, FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedAveragedNeighborFunction, FABL.RegularUniqueGame.boundedLongCodeValue, FABL.RegularUniqueGame.boundedNeighborNotableCoordinates, FABL.RegularUniqueGame.boundedNeighborNotableVertexFraction, FABL.SignPredicate, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.SignTester.acceptanceProbability_mem_Icc}
 \difficulty{5}
-Let $G$ be a regular unique game with alphabet size $q$, let $$ be a
-dictator-versus-no-notables test family with predicate set, parameters $,$, error
-function $$, and testers $(T_n)_{n>0}$, and let $f$ be a bounded long-code table for
-$G$. If $q>0$, $0\le\le1$, and the value of $f$ under the averaged-neighbor tester
-$T_q$ is at least $+\mathrm{error}()+$, then $$ is at most the fraction of vertices
-whose averaged neighbor function has a coordinate with stable influence greater than
-$$.
+Let $G$ be a regular unique game with alphabet size $q$, and let a dictator-versus-no-notables test family have predicate set $\Psi$, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. Let $f$ be a bounded long-code table for $G$. If $q>0$, $0\leq\varepsilon\leq1$, and the value of $f$ under the averaged-neighbor tester $T_q$ is at least $\alpha+\operatorname{error}(\varepsilon)+\tau$, then $\tau$ is at most the fraction of vertices whose averaged neighbor function has a coordinate with stable influence greater than $\varepsilon$.
 \end{theorem}
 
 \begin{definition}[Notable neighbor probability]
@@ -2322,7 +2294,7 @@ influence at parameter $1-\epsilon$ at least $\epsilon/2$) is at least $\epsilon
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedAveragedNeighborFunction, FABL.RegularUniqueGame.boundedCubeFunction_variance_le_one, FABL.RegularUniqueGame.boundedNeighborNotableCoordinates, FABL.card_stableInfluence_ge_le, FABL.stableInfluence}
 \difficulty{4}
-Let $G$ be a regular unique game with label set $in q$, and assign to each vertex a
+Let $G$ be a regular unique game with label set $\in q$, and assign to each vertex a
 function on the Boolean cube taking values in $[-1,1]$. If $0<ε≤1$, then at every vertex
 the number of coordinates whose stable influence in the averaged neighbor function
 exceeds $ε$ is at most $1/ε^2$.
@@ -2334,7 +2306,7 @@ exceeds $ε$ is at most $1/ε^2$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedCubeFunction_variance_le_one, FABL.RegularUniqueGame.boundedNotableCoordinates, FABL.card_stableInfluence_ge_le, FABL.stableInfluence}
 \difficulty{3}
-Let $G$ be a regular unique game with label set $in q$, and assign to each vertex a
+Let $G$ be a regular unique game with label set $\in q$, and assign to each vertex a
 function on the Boolean cube taking values in $[-1,1]$. If $0<ε≤1$, then at every vertex
 the number of coordinates whose stable influence is at least $ε/2$ is at most $2/ε^2$.
 \end{theorem}
@@ -2356,9 +2328,7 @@ $T(v)$ and the notable coordinates of its averaged neighbor function.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedDecodingCandidates, FABL.RegularUniqueGame.boundedNeighborNotableCoordinates, FABL.RegularUniqueGame.boundedNotableCoordinates, FABL.RegularUniqueGame.card_boundedNeighborNotableCoordinates_le, FABL.RegularUniqueGame.card_boundedNotableCoordinates_le}
 \difficulty{3}
-Let $G$ be a regular unique game with label set $in q$, and assign to each vertex a
-function on the Boolean cube taking values in $[-1,1]$. If $0<	ext{ε}	ext{≤}1$, then
-at every vertex the number of bounded decoding candidates is at most $3/	ext{ε}^2$.
+Let $G$ be a regular unique game with alphabet size $q$, and assign to each vertex a function on the Boolean cube taking values in $[-1,1]$. If $0<\varepsilon\leq1$, then at every vertex the number of bounded decoding candidates is at most $3/\varepsilon^2$.
 \end{theorem}
 
 \begin{definition}[Bounded decoding edge value]
@@ -2458,13 +2428,7 @@ then the bounded decoding value at the vertex is at least $\varepsilon^5/18$.
 \leanok
 \uses{FABL.IsDictatorVsNoNotablesTest, FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedDecodingEdgeValue, FABL.RegularUniqueGame.boundedDecodingEdgeValue_nonneg, FABL.RegularUniqueGame.boundedDecodingValue, FABL.RegularUniqueGame.boundedDecodingVertexValue, FABL.RegularUniqueGame.boundedLongCodeValue, FABL.RegularUniqueGame.boundedNeighborNotableCoordinates, FABL.RegularUniqueGame.boundedNeighborNotableVertexFraction, FABL.RegularUniqueGame.candidateDecodingValue, FABL.RegularUniqueGame.epsilon_pow_five_div_eighteen_le_boundedDecodingVertexValue, FABL.RegularUniqueGame.excess_le_boundedNeighborNotableVertexFraction, FABL.SignPredicate, FABL.SignTester}
 \difficulty{5}
-Let $G$ be a regular unique game with label set $br^q$ in the sense of labels indexed
-by $	ext{Fin}(q)$, and let a tester family satisfy the dictator-versus-no-notables
-conditions with parameters $4alpha$ and $4beta$ and error function $4error$. If
-$q>0$, $T$ is a table of functions on the $q$-dimensional Boolean cube taking values in
-$[-1,1]$, $0<4epsilon\le 1$, and $\alpha+\operatorname{error}(\epsilon)+\tau$ is at
-most the tester’s averaged acceptance value on $T$, then $\tau\epsilon^5/18$ is at most
-the decoding value of $T$ at threshold $\epsilon$, using label $0$ as the default.
+Let $G$ be a regular unique game with alphabet size $q$, and let a dictator-versus-no-notables test family have predicate set $\Psi$, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. If $q>0$, $0<\varepsilon\leq1$, $f$ is a bounded long-code table, and $\alpha+\operatorname{error}(\varepsilon)+\tau$ is at most its value under the averaged-neighbor tester $T_q$, then $\tau\varepsilon^5/18$ is at most the decoding value of $f$ at threshold $\varepsilon$, using label $0$ as the default.
 \end{theorem}
 
 \begin{theorem}[Excess and game optimum]
@@ -2574,13 +2538,7 @@ one bounded neighbor influential coordinate.
 \leanok
 \uses{FABL.HasSmallInfluences, FABL.IsDictatorVsNoInfluentialsTest, FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedAveragedNeighborFunction, FABL.RegularUniqueGame.boundedLongCodeValue, FABL.RegularUniqueGame.boundedNeighborInfluentialCoordinates, FABL.RegularUniqueGame.boundedNeighborInfluentialVertexFraction, FABL.SignPredicate, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.SignTester.acceptanceProbability_mem_Icc, FABL.hasSmallInfluences_iff}
 \difficulty{5}
-Let $G$ be a regular unique game with alphabet size $q$, let $$ be a
-dictator-versus-no-influentials test family with predicate set, parameters $,$, error
-function $$, and testers $(T_n)_{n>0}$, and let $f$ be a table of functions from the
-$q$-dimensional Boolean cube to $[-1,1]$, indexed by the vertices of $G$. If $q>0$,
-$0\le\le1$, and the value of $f$ under the averaged-neighbor tester $T_q$ is at least
-$+\mathrm{error}()+$, then $$ is at most the fraction of vertices whose averaged
-neighbor function has some coordinate with influence greater than $$.
+Let $G$ be a regular unique game with alphabet size $q$, and let a dictator-versus-no-influentials test family have predicate set $\Psi$, parameters $\alpha,\beta$, error function $\operatorname{error}$, and testers $(T_n)_{n>0}$. Let $f$ be a table of functions from the $q$-dimensional Boolean cube to $[-1,1]$, indexed by vertices of $G$. If $q>0$, $0\leq\varepsilon\leq1$, and the value of $f$ under the averaged-neighbor tester $T_q$ is at least $\alpha+\operatorname{error}(\varepsilon)+\tau$, then $\tau$ is at most the fraction of vertices whose averaged neighbor function has a coordinate with influence greater than $\varepsilon$.
 \end{theorem}
 
 \begin{definition}[Bounded influential neighbor probability]
@@ -2628,7 +2586,7 @@ bounded neighbor influential coordinates at $v$.
 \leanok
 \uses{FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedInfluentialCoordinates, FABL.RegularUniqueGame.boundedNeighborInfluentialCoordinates, FABL.RegularUniqueGame.boundedOrdinaryDecodingCandidates}
 \difficulty{4}
-Let $G$ be a regular unique game with label set $in q$, and assign to each vertex a
+Let $G$ be a regular unique game with label set $\in q$, and assign to each vertex a
 function on the Boolean cube taking values in $[-1,1]$. At every vertex, the number of
 ordinary decoding candidates is at most $2q$.
 \end{theorem}
@@ -2727,12 +2685,7 @@ symbol.
 \leanok
 \uses{FABL.CSPInstance.optimum, FABL.FiniteUniqueGame.toCSPInstance, FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.boundedOrdinaryDecodingCandidates, FABL.RegularUniqueGame.boundedOrdinaryDecodingValue, FABL.RegularUniqueGame.candidateDecodingValue_le_optimum, FABL.RegularUniqueGame.toFiniteUniqueGame}
 \difficulty{1}
-Let $G$ be a regular unique game with label set $in q$, where $q>0$, and let each
-vertex be assigned a function on the Boolean cube taking values in $[-1,1]$. For any
-threshold $	ext{ε}$ and default label, the expected edge agreement obtained by
-choosing uniformly from each vertex’s ordinary decoding candidates (using the default
-when a candidate set is empty) is at most the optimum value of the associated constraint
-satisfaction instance.
+Let $G$ be a regular unique game with label set $\operatorname{Fin}(q)$, where $q>0$, and assign to each vertex a function on the Boolean cube taking values in $[-1,1]$. For any threshold $\varepsilon$ and default label, the expected edge agreement obtained by choosing uniformly from each vertex's ordinary decoding candidates (using the default when a candidate set is empty) is at most the optimum value of the associated constraint satisfaction instance.
 \end{theorem}
 
 \begin{theorem}[Ordinary decoding value lower bound]
@@ -3006,7 +2959,7 @@ the positions of that outcome.
 \label{FABL.WeightedConstraintExperiment.UniformRefinement.paddedCloneValue}
 \leanok
 \uses{FABL.WeightedConstraintExperiment.UniformRefinement.PaddedCloneOccurrence, FABL.WeightedConstraintExperiment.UniformRefinement.paddedClonePayoff}
-Let $E$ be a weighted constraint experiment with constraint template $[?]$ over
+Let $E$ be a weighted constraint experiment with constraint template $\Psi$ over
 variables $V$, and let $R$ be a uniform refinement of $E$. For natural numbers $r,M$,
 suppose every predicate selected by an outcome has arity at most $r$, and let
 $a:V\times\{0,\ldots,M-1\}\to D$ be an assignment. The padded clone value of $a$ is the
@@ -3514,26 +3467,17 @@ the encoding and these thresholds.
 \leanok
 \uses{FABL.BoundedCubeFunction.ofBoolean, FABL.CSPInstance.optimum, FABL.EncodedMaximizationProblem.gapPromiseReal, FABL.EncodedRegularUniqueGamesFamily.LongCodeFiniteTransform, FABL.EncodedRegularUniqueGamesFamily.LongCodeFiniteTransform.uniformRefinement, FABL.EncodedRegularUniqueGamesFamily.LongCodeOutputCodec, FABL.EncodedRegularUniqueGamesFamily.LongCodeTransformMachine, FABL.EncodedRegularUniqueGamesFamily.OptimizationEncoding, FABL.EncodedRegularUniqueGamesFamily.filteredLongCodeOptimum_eq, FABL.FiniteUniqueGame.toCSPInstance, FABL.LongCodeTestBoundary, FABL.PromiseKarpReducible, FABL.RegularUniqueGame.BoundedLongCodeTable, FABL.RegularUniqueGame.beta_sub_edgeError_sub_collision_le_globallyFilteredLongCodeCSP_optimum, FABL.RegularUniqueGame.boundedLongCodeValue, FABL.RegularUniqueGame.globallyFilteredLongCodeCSP_optimum_le_of_boundedSoundness, FABL.RegularUniqueGame.toFiniteUniqueGame, FABL.SignPredicate, FABL.SignTester, FABL.SignTester.acceptanceProbability, FABL.dictator}
 \difficulty{5}
-Let $q>0$, let a finite family of encoded regular unique games with $q$ labels be
-equipped with a finite family of sign predicates and a tester whose checks all use
-predicates from that family. Suppose $eta$ is a lower bound on the tester's acceptance
-probability on every coordinate dictator, and let an optimization encoding, a finite
-long-code transform, an output codec, and a polynomial-time machine satisfy their stated
-encoding and output properties. For real parameters
-$	ext{ugSoundness}<	ext{ugCompleteness}$ and
-$	ext{targetSoundness}<	ext{targetCompleteness}$, suppose
-$1-	ext{δUG} 	ext{ugCompleteness}$, $	ext{ugSoundness}<	ext{decodedLower}$,
-$	ext{targetCompleteness} eta-r	ext{δUG}-r^2/M$, and $ 	ext{targetSoundness}$, where
-the last two inequalities are respectively
-$	ext{targetCompleteness}\le\beta-r\,\text{δUG}-r^2/M$ and
-$\alpha+\mathrm{error}(\varepsilon)+\tau+r^2/M\le\text{targetSoundness}$. Assume also
-that, for every semantic game instance and bounded long-code table, a long-code value at
-least $\alpha+\mathrm{error}(\varepsilon)+\tau$ implies that the finite unique game's
-optimum is at least $\text{decodedLower}$. Then the machine gives a polynomial-time Karp
-reduction from the encoded unique-games promise problem with completeness threshold
-$\text{ugCompleteness}$ and soundness threshold $\text{ugSoundness}$ to the encoded
-target maximization promise problem with completeness threshold
-$\text{targetCompleteness}$ and soundness threshold $\text{targetSoundness}$.
+Let $q>0$, and let a finite family of encoded regular unique games with $q$ labels have a finite family of sign predicates and a tester whose checks all use predicates from that family. Suppose $\beta$ is a lower bound on the tester's acceptance probability on every coordinate dictator, and let an optimization encoding, finite long-code transform, output codec, and polynomial-time machine satisfy their stated encoding and output properties. For real parameters with $\text{ugSoundness}<\text{ugCompleteness}$ and $\text{targetSoundness}<\text{targetCompleteness}$, suppose
+\[
+1-\delta_{\rm UG}\leq\text{ugCompleteness},\qquad
+\text{ugSoundness}<\text{decodedLower},
+\]
+\[
+\text{targetCompleteness}\leq\beta-r\delta_{\rm UG}-r^2/M,
+\qquad
+\alpha+\operatorname{error}(\varepsilon)+\tau+r^2/M\leq\text{targetSoundness},
+\]
+and every bounded long-code table with value at least $\alpha+\operatorname{error}(\varepsilon)+\tau$ under the tester has associated constraint-satisfaction optimum at least $\text{decodedLower}$. Then the finite long-code transform is a promise-Karp reduction from the unique-game gap promise to the target gap promise.
 \end{theorem}
 
 \begin{theorem}[Long code finite transform reduces gap]

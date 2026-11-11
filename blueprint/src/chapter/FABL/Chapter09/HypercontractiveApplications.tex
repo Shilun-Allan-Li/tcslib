@@ -59,7 +59,7 @@ is at most $k$. For $1\le p<2$ and $\varepsilon>0$, its uniform $L^2$ norm satis
 \label{FABL.interpolation_constant_le_exp}
 \leanok
 \difficulty{3}
-Let $c,psilon\in\mathbb{R}$ satisfy $c\ge 0$ and $\varepsilon>0$. Then
+Let $c,\epsilon\in\mathbb{R}$ satisfy $c\ge 0$ and $\varepsilon>0$. Then
 \[
 (1+\varepsilon)^{c(1/\varepsilon+1/2)}\le \exp\bigl(c(1+\varepsilon/2)\bigr).
 \]
@@ -107,7 +107,7 @@ R$. Then the uniform $L^p$ norm of $f$ is at most its uniform $L^q$ norm.
 \uses{FABL.expect_monomial_mul, FABL.fourierCoeff, FABL.fourierDegree, FABL.fourierDegree_le_iff, FABL.linearForm, FABL.monomial, FABL.signValue}
 \difficulty{5}
 For every real coefficient vector $a=(a_i)_{i=1}^n$, the Fourier degree of the linear
-form $x\\mapsto\\sum_{i=1}^n a_i x_i$ on the Boolean cube is at most $1$.
+form $x\mapsto\sum_{i=1}^n a_i x_i$ on the Boolean cube is at most $1$.
 \end{theorem}
 
 \begin{theorem}[Khintchine of le two]
@@ -268,7 +268,7 @@ $\Pr[f(X)=f(Y)]\le (1/m)^{(1-\rho)/(1+\rho)}$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsPivotal, FABL.discreteDerivative, FABL.pivotalIndicator, FABL.sq_discreteDerivative_toReal_eq_pivotalIndicator}
 \difficulty{4}
-Let $f$ be a Boolean function on the sign cube $\\{−1,1\\}^n$, let $i$ be a coordinate,
+Let $f$ be a Boolean function on the sign cube $\{−1,1\}^n$, let $i$ be a coordinate,
 and let $x$ be a point of the cube. The absolute value of the discrete derivative of the
 real-valued version of $f$ at $x$ in coordinate $i$ equals the indicator that flipping
 coordinate $i$ changes $f(x)$.
@@ -297,7 +297,7 @@ at most the Boolean influence of $f$ at $i$ raised to the power $2/(1+\rho)$.
 \leanok
 \uses{FABL.fourierCoeff, FABL.fourierWeightAtLevel, FABL.variance, FABL.variance_eq_sum_sq_fourierCoeff}
 \difficulty{3}
-For any function $f$ from the $n$-dimensional sign cube to $br$, the sum of the squared
+For any function $f$ from the $n$-dimensional sign cube to $\bbr$, the sum of the squared
 Fourier coefficients indexed by singleton subsets is at most the variance of $f$ under
 the uniform distribution on the cube.
 \end{theorem}

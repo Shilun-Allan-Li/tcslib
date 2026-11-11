@@ -49,10 +49,10 @@ and equals zero otherwise.
 \uses{FABL.FixedSignCube, FABL.ambientRestrictionFourierCoeff, FABL.extendedSignRestriction, FABL.fourierCoeff_extendedSignRestriction, FABL.fourierOneNorm}
 \difficulty{3}
 Let $n$ be a nonnegative integer, let $f$ be a real-valued function on the sign cube
-$\\{-1,1\\}^n$, let $J\\subseteq\\{1,\\ldots,n\\}$, and fix signs $z$ on the coordinates
+$\{-1,1\}^n$, let $J\subseteq\{1,\ldots,n\}$, and fix signs $z$ on the coordinates
 outside $J$. Extend the restriction of $f$ obtained by fixing those coordinates to a
 function on the whole cube that ignores coordinates outside $J$. For each set of
-coordinates $S$, take the Fourier coefficient of this extension when $S\\subseteq J$,
+coordinates $S$, take the Fourier coefficient of this extension when $S\subseteq J$,
 and set it to zero otherwise; the sum of the absolute values of these coefficients over
 all $S$ equals the Fourier one-norm of the extended function.
 \end{theorem}
@@ -141,9 +141,9 @@ delta random subset weight of $J$.
 \label{FABL.card_inter_eq_sum_memIndicator}
 \leanok
 \difficulty{4}
-Let $n$ be a natural number and let $U,J$ be finite subsets of $\\{0,\\ldots,n-1\\}$.
-The cardinality of their intersection, viewed as a real number, is $\\sum_{i\\in
-U}\\mathbf{1}_{J}(i)$, where $\\mathbf{1}_{J}(i)$ is $1$ if $i\\in J$ and $0$ otherwise.
+Let $n$ be a natural number and let $U,J$ be finite subsets of $\{0,\ldots,n-1\}$.
+The cardinality of their intersection, viewed as a real number, is $\sum_{i\in
+U}\mathbf{1}_{J}(i)$, where $\mathbf{1}_{J}(i)$ is $1$ if $i\in J$ and $0$ otherwise.
 \end{theorem}
 
 \begin{theorem}[Weight of subsets containing a pair]
@@ -152,10 +152,10 @@ U}\\mathbf{1}_{J}(i)$, where $\\mathbf{1}_{J}(i)$ is $1$ if $i\\in J$ and $0$ ot
 \leanok
 \uses{FABL.deltaRandomSubsetWeight, FABL.sum_deltaRandomSubsetWeight_supset}
 \difficulty{4}
-Let $n$ be a natural number, let $b4\in\mathbb{R}$, and let $i,j$ be elements of the
+Let $n$ be a natural number, let $\delta\in\mathbb{R}$, and let $i,j$ be elements of the
 $n$-element set $\{0,\ldots,n-1\}$. Give each subset $J$ of this set weight
-$w(J)=b4^{|J|}(1-b4)^{n-|J|}$. The sum of the weights of subsets containing both $i$
-and $j$ is $b4$ if $i=j$, and $b4^2$ otherwise.
+$w(J)=\delta^{|J|}(1-\delta)^{n-|J|}$. The sum of the weights of subsets containing both $i$
+and $j$ is $\delta$ if $i=j$, and $\delta^2$ otherwise.
 \end{theorem}
 
 \begin{theorem}[Expected subset intersection size]
@@ -426,7 +426,7 @@ powers interpreted as real numbers.
 \uses{FABL.two_pow_eq_one_add_sum_range}
 \difficulty{4}
 Let $d$ and $N$ be natural numbers with $d\le N$. Then
-$2^d=1+\sum_{j=0}^{N-1}2^j\,oldsymbol{1}_{\\{j+1\le d\	ext	ext{}}$, where each
+$2^d=1+\sum_{j=0}^{N-1}2^j\,\boldsymbol{1}_{\{j+1\le d\	ext	ext{}}$, where each
 natural-number power is interpreted as a real number and the indicator is $1$ when
 $j+1\le d$ and $0$ otherwise.
 \end{theorem}
@@ -589,7 +589,7 @@ Statement pending regeneration.
 Let $n$ and $k$ be nonnegative integers, let $f$ be a real-valued function on the
 $n$-dimensional Boolean cube, and let $T$ be a finite set of its coordinates. The
 Fourier coefficient at $T$ of the sum of the Fourier terms of $f$ supported on sets of
-size at most $k$ equals the Fourier coefficient of $f$ at $T$ when $|T|\\le k$, and
+size at most $k$ equals the Fourier coefficient of $f$ at $T$ when $|T|\le k$, and
 equals $0$ otherwise.
 \end{theorem}
 
@@ -773,9 +773,9 @@ is at most $(1/4)^d$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.IsFourierSpectrumConcentratedUpTo, FABL.expect_monomial, FABL.fourierCoeff, FABL.fourierWeight, FABL.fourierWeightAboveReal}
 \difficulty{4}
-Let $f$ be a Boolean function on the sign cube that is constant, and let $ varepsilon ge
+Let $f$ be a Boolean function on the sign cube that is constant, and let $\varepsilon\ge
 0$. The sum of squared Fourier coefficients indexed by nonempty subsets of coordinates
-is at most $ varepsilon$.
+is at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Fourier concentration for bounded-width DNF]
