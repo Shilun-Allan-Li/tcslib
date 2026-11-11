@@ -1,0 +1,1275 @@
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim start 2026-11-11T08:35:51Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:241:2: error: No goals to be solved
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:65: error(lean.unknownIdentifier): Unknown identifier `bne_false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:76: error(lean.unknownIdentifier): Unknown identifier `bne_true`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:65: error(lean.unknownIdentifier): Unknown identifier `bne_false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:76: error(lean.unknownIdentifier): Unknown identifier `bne_true`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:4: error: `simp` made no progress
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:65: error(lean.unknownIdentifier): Unknown identifier `bne_false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:76: error(lean.unknownIdentifier): Unknown identifier `bne_true`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:4: error: `simp` made no progress
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:65: error(lean.unknownIdentifier): Unknown identifier `bne_false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:76: error(lean.unknownIdentifier): Unknown identifier `bne_true`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:261:50: warning: This simp argument is unused:
+  Bool.true_and
+
+Hint: Omit it from the simp argument list.
+  simp only [bne_self_eq_false, Bool.false_and, B̵o̵o̵l̵.̵t̵r̵u̵e̵_̵a̵n̵d̵,̵ ̵bne_false, bne_true,
+  ̵  ̵ ̵ ̵ ̵ ̵Bool.false_eq_true, if_false,
+  ̲  ̲ ̲ ̲ ̲ ̲expect_const, sub_self, hnot, expect_sub]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:262:60: warning: This simp argument is unused:
+  hnot
+
+Hint: Omit it from the simp argument list.
+  simp only [bne_self_eq_false, Bool.false_and, Bool.true_and, bne_false, bne_true,
+        Bool.false_eq_true, if_false, expect_const, sub_self, h̵n̵o̵t̵,̵ ̵expect_sub]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean:262:66: warning: This simp argument is unused:
+  expect_sub
+
+Hint: Omit it from the simp argument list.
+  simp only [bne_self_eq_false, Bool.false_and, Bool.true_and, bne_false, bne_true,
+        Bool.false_eq_true, if_false, expect_const, sub_self, hnot,̵ ̵e̵x̵p̵e̵c̵t̵_̵s̵u̵b̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim): no fresh .olean produced
+elapsed 2.5s; max RSS of children 2593 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim end 2026-11-11T08:35:53Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim start 2026-11-11T08:36:05Z
+elapsed 2.9s; max RSS of children 2604 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim end 2026-11-11T08:36:08Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:36:13Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:288:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (recHandler ?Lc ?ans ?hans).init ?x✝ ?a✝
+in the target expression
+  List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false]
+
+α : Type
+Lc : PolyExpr
+ans : List Bool → List Bool
+hans : PolyTimeComputable ans
+n : ℕ
+z : List Bool
+ω : Fin ((recHandler Lc ans hans).seedLen.eval n) → Bool
+hw : (ans (seedIn n z (List.ofFn ω))).length = Lc.eval n
+c : OracleComp (bitSpecAt (recDin Lc) (recDout Lc) n) α
+⊢ List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false]
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean:308:69: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  recDin ?Lc 1
+in the target expression
+  (fun i => (recDin Lc i).eval n) 1 + 1 = (PolyExpr.const 3).eval n
+
+α : Type
+Lc : PolyExpr
+ans : List Bool → List Bool
+hans : PolyTimeComputable ans
+n : ℕ
+z : List Bool
+ω : Fin ((recHandler Lc ans hans).seedLen.eval n) → Bool
+hw : (ans (seedIn n z (List.ofFn ω))).length = Lc.eval n
+hinit : List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false]
+i : Fin 2
+x✝¹ : (bitSpecAt (recDin Lc) (recDout Lc) n).dom i
+k✝ : (bitSpecAt (recDin Lc) (recDout Lc) n).rng i → OracleComp (bitSpecAt (recDin Lc) (recDout Lc) n) α
+ih :
+  ∀ (a : (bitSpecAt (recDin Lc) (recDout Lc) n).rng i),
+    ∃ s,
+      simulate ((recHandler Lc ans hans).impl n z ω) (k✝ a) ((recHandler Lc ans hans).init n) =
+          OracleComp.pure ((chRun (fun x => ans (seedIn n z (List.ofFn ω))) (k✝ a) none).1, s) ∧
+        List.ofFn s = (firstQ (k✝ a)).elim [false, false, false] fun x => true :: x
+x : (bitSpecAt (recDin Lc) (recDout Lc) n).dom 1
+k : (bitSpecAt (recDin Lc) (recDout Lc) n).rng 1 → OracleComp (bitSpecAt (recDin Lc) (recDout Lc) n) α
+x✝ :
+  ∀ (a : (bitSpecAt (recDin Lc) (recDout Lc) n).rng 1),
+    ∃ s,
+      simulate ((recHandler Lc ans hans).impl n z ω) (k a) ((recHandler Lc ans hans).init n) =
+          OracleComp.pure ((chRun (fun x => ans (seedIn n z (List.ofFn ω))) (k a) none).1, s) ∧
+        List.ofFn s = (firstQ (k a)).elim [false, false, false] fun x => true :: x
+⊢ (fun i => (recDin Lc i).eval n) 1 + 1 = (PolyExpr.const 3).eval n
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler): no fresh .olean produced
+elapsed 3.2s; max RSS of children 2663 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:36:16Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:36:29Z
+elapsed 3.6s; max RSS of children 2671 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:36:33Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:36:37Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:731:4: error(lean.unknownIdentifier): Unknown identifier `expect`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:732:6: error(lean.unknownIdentifier): Unknown identifier `expect`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:819:6: error(lean.unknownIdentifier): Unknown identifier `expect`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:825:51: error(lean.unknownIdentifier): Unknown identifier `prob_bind`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:895:6: error(lean.unknownIdentifier): Unknown identifier `expect`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:902:63: error(lean.unknownIdentifier): Unknown identifier `prob_bind`
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:910:2: error: No goals to be solved
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 6.2s; max RSS of children 2693 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:36:43Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:36:47Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:737:46: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  expect ?c fun x => ?r
+in the target expression
+  G (a, s).1 =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.pure a) s).1
+
+case pure
+S : FixedLengthPKScheme
+b : Bool
+n : ℕ
+pk sk : List Bool
+α : Type
+G : α → ℝ
+a : α
+s : Option (Fin (S.ctLen.eval n) → Bool)
+⊢ G (a, s).1 =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.pure a) s).1
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:754:46: error: Application type mismatch: The argument
+  mm
+has type
+  Fin (?m.421 1) → Bool
+but is expected to have type
+  Fin (?m.441 mm + ?m.441 mm) → Bool
+in the application
+  FixedLengthScheme.splitHalf mm
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:755:8: error: Type mismatch
+  expect_const ?m.423 ?m.424
+has type
+  (expect ?m.423 fun x => ?m.424) = ?m.424
+but is expected to have type
+  ((sample (S.enc.Coins n)).expect fun re_1 =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re_1)
+            (k
+              (padFin (S.ctLen.eval n)
+                (S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf x).2 else (FixedLengthScheme.splitHalf x).1)))
+                  re)))
+            (some
+              (padFin (S.ctLen.eval n)
+                (S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf x).2 else (FixedLengthScheme.splitHalf x).1)))
+                  re)))).1) =
+    G
+      (chRun
+          (fun mm =>
+            S.enc.runAt n
+              (pairEncode pk
+                (List.ofFn
+                  (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+              re)
+          (k
+            (padFin (S.outLens n 1)
+              (S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf x).2 else (FixedLengthScheme.splitHalf x).1)))
+                re)))
+          (some
+            (padFin (S.outLens n 1)
+              (S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf x).2 else (FixedLengthScheme.splitHalf x).1)))
+                re)))).1
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:836:30: error: Function expected at
+  p.1
+but this term has type
+  ?m.745
+
+Note: Expected a function because this term is being applied to the argument
+  0
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:836:4: error: Type mismatch
+  congrArg (fun p => ?m.731) (chRun_congr ?m.736 ?m.737 ?m.738 fun mm hmm => ?m.741)
+has type
+  ?m.732 (chRun ?m.736 ?m.738 none) = ?m.732 (chRun ?m.737 ?m.738 none)
+but is expected to have type
+  (chRun
+          (fun mm =>
+            S'.enc.runAt n
+              (pairEncode (pairFstD (S'.gen.runAt n [] rg))
+                (List.ofFn
+                  (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+              re')
+          (comp rg r) none).1
+      0 =
+    F rg r
+      ((firstQ (comp rg r)).elim [] fun l =>
+        W (l.getD (if b = true then 1 else 0) false) rg ((NUPPT.coinsCongr ⋯ n) re'))
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:905:73: error: failed to synthesize
+  Unique (Fin (H.seedLen.eval n) → Bool)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:907:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  B.distinguisherL n (S.pkEncDist n β (rg, re)) (φ (default, r))
+in the target expression
+  (if B.distinguisherL n (S.pkEncDist n β (rg, re)) (φ (default, r)) = true then 1 else 0) =
+    if
+        ((firstQ (comp rg r)).elim false fun l =>
+            l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false) =
+          true then
+      1
+    else 0
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ✝ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ✝ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+H : PolyHandler 2 (recDin L) (recDout L) := recHandler L (cpaAns L) ⋯
+φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hH : H = recHandler L (cpaAns L) ⋯
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+hG :
+  ∀ (b : Bool),
+    accept (S'.indGame Attack.cpa A (q.eval n) b n) =
+      (sample (S.gen.Coins n)).expect fun rg =>
+        (sample (A.Coins n)).expect fun r =>
+          (sample (S.enc.Coins n)).expect fun re =>
+            if
+                F rg r ((firstQ (comp rg r)).elim [] fun l => W (l.getD (if b = true then 1 else 0) false) rg re) =
+                  true then
+              1
+            else 0
+hpt :
+  ∀ (β : Bool) (rg : S.gen.Coins n) (r : A.Coins n) (re : S.enc.Coins n),
+    B.distinguisherL n (S.pkEncDist n β (rg, re)) (φ (default, r)) =
+      (firstQ (comp rg r)).elim false fun l => l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false
+β : Bool
+rg : S.gen.Coins n
+r : A.Coins n
+re : S.enc.Coins n
+⊢ (if B.distinguisherL n (S.pkEncDist n β (rg, re)) (φ (default, r)) = true then 1 else 0) =
+    if
+        ((firstQ (comp rg r)).elim false fun l =>
+            l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false) =
+          true then
+      1
+    else 0
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 26.1s; max RSS of children 2717 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:37:13Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:38:09Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:841:56: error: unsolved goals
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ✝ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ✝ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+H : PolyHandler 2 (recDin L) (recDout L) := recHandler L (cpaAns L) ⋯
+φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hH : H = recHandler L (cpaAns L) ⋯
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+b : Bool
+rg : S'.gen.Coins n
+r : A.Coins n
+re' : S'.enc.Coins n
+mm : Fin (S'.inLens n 1) → Bool
+hmm : firstQ (comp rg r) = some (List.ofFn mm)
+⊢ padCt (L.eval n)
+      (S.enc.runAt n
+        (pairEncode (pairFstD (S'.gen.runAt n [] rg)) [(List.ofFn mm).getD (if b = true then 1 else 0) false])
+        ((NUPPT.coinsCongr ⋯ n) re')) =
+    W ((List.ofFn mm).getD (if b = true then 1 else 0) false) rg ((NUPPT.coinsCongr ⋯ n) re')
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:869:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  firstQ
+    (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+      (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+in the target expression
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)).elim
+      [false, false, false] fun x => true :: x
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ✝ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ✝ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+H : PolyHandler 2 (recDin L) (recDout L) := recHandler L (cpaAns L) ⋯
+φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hH : H = recHandler L (cpaAns L) ⋯
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+hG :
+  ∀ (b : Bool),
+    accept (S'.indGame Attack.cpa A (q.eval n) b n) =
+      (sample (S.gen.Coins n)).expect fun rg =>
+        (sample (A.Coins n)).expect fun r =>
+          (sample (S.enc.Coins n)).expect fun re =>
+            if
+                F rg r ((firstQ (comp rg r)).elim [] fun l => W (l.getD (if b = true then 1 else 0) false) rg re) =
+                  true then
+              1
+            else 0
+β : Bool
+rg : S.gen.Coins n
+r : A.Coins n
+re : S.enc.Coins n
+ω : Fin (H.seedLen.eval n) → Bool
+s : Fin ((recHandler L (cpaAns L) ⋯).stateLen.eval n) → Bool
+hadv : H.advInput n (S.pkEncDist n β (rg, re)) ω = pairFstD (S.gen.runAt n [] rg)
+hans : cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)) = W β rg re
+hw : (cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))).length = L.eval n
+hsim :
+  simulate ((recHandler L (cpaAns L) ⋯).impl n (S.pkEncDist n β (rg, re)) ω)
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+      ((recHandler L (cpaAns L) ⋯).init n) =
+    OracleComp.pure
+      ((chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+            none).1,
+        s)
+hrun :
+  B.runAt n (S.pkEncDist n β (rg, re)) (φ✝ (ω, r)) =
+    (recHandler L (cpaAns L) ⋯).result n (S.pkEncDist n β (rg, re)) ω s
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1
+hs' :
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)).elim
+      [false, false, false] fun x => true :: x
+h₁ :
+  List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1 =
+    List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1
+h₂ :
+  firstQ
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) =
+    firstQ
+      (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+        (pairFstD (S.gen.runAt n [] rg)) r)
+⊢ B.distinguisherL n (S.pkEncDist n β (rg, re)) (φ (ω, r)) =
+    (firstQ (comp rg r)).elim false fun l => l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 25.8s; max RSS of children 2723 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:38:35Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:38:49Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:877:12: error: Function expected at
+  List.ofFn_succ
+but this term has type
+  List.ofFn ?m.1085 = ?m.1085 0 :: List.ofFn fun i => ?m.1085 i.succ
+
+Note: Expected a function because this term is being applied to the argument
+  _
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:883:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+in the target expression
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)).elim
+      [false, false, false] fun x => true :: x
+
+case none
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+hG :
+  ∀ (b : Bool),
+    accept (S'.indGame Attack.cpa A (q.eval n) b n) =
+      (sample (S.gen.Coins n)).expect fun rg =>
+        (sample (A.Coins n)).expect fun r =>
+          (sample (S.enc.Coins n)).expect fun re =>
+            if
+                F rg r ((firstQ (comp rg r)).elim [] fun l => W (l.getD (if b = true then 1 else 0) false) rg re) =
+                  true then
+              1
+            else 0
+β : Bool
+rg : S.gen.Coins n
+r : A.Coins n
+re : S.enc.Coins n
+ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool
+s : Fin ((recHandler L (cpaAns L) ⋯).stateLen.eval n) → Bool
+hadv : (recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω = pairFstD (S.gen.runAt n [] rg)
+hans : cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)) = W β rg re
+hw : (cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))).length = L.eval n
+hsim :
+  simulate ((recHandler L (cpaAns L) ⋯).impl n (S.pkEncDist n β (rg, re)) ω)
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+      ((recHandler L (cpaAns L) ⋯).init n) =
+    OracleComp.pure
+      ((chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+            none).1,
+        s)
+hrun :
+  B.runAt n (S.pkEncDist n β (rg, re)) (φ (ω, r)) =
+    (recHandler L (cpaAns L) ⋯).result n (S.pkEncDist n β (rg, re)) ω s
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1
+hs' :
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)).elim
+      [false, false, false] fun x => true :: x
+h₁ :
+  List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1 =
+    List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1
+h₂ :
+  firstQ
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) =
+    firstQ
+      (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+        (pairFstD (S.gen.runAt n [] rg)) r)
+ha :
+  List.ofFn
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1 =
+    [F rg r (W β rg re)]
+hq : firstQ (comp rg r) = none
+hq' :
+  firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) = none
+⊢ decide
+      (recOut
+          (pairEncode (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))
+            (pairEncode (List.ofFn s) [F rg r (W β rg re)])) =
+        [true]) =
+    none.elim false fun l => l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:894:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+in the target expression
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)).elim
+      [false, false, false] fun x => true :: x
+
+case some
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+hG :
+  ∀ (b : Bool),
+    accept (S'.indGame Attack.cpa A (q.eval n) b n) =
+      (sample (S.gen.Coins n)).expect fun rg =>
+        (sample (A.Coins n)).expect fun r =>
+          (sample (S.enc.Coins n)).expect fun re =>
+            if
+                F rg r ((firstQ (comp rg r)).elim [] fun l => W (l.getD (if b = true then 1 else 0) false) rg re) =
+                  true then
+              1
+            else 0
+β : Bool
+rg : S.gen.Coins n
+r : A.Coins n
+re : S.enc.Coins n
+ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool
+s : Fin ((recHandler L (cpaAns L) ⋯).stateLen.eval n) → Bool
+hadv : (recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω = pairFstD (S.gen.runAt n [] rg)
+hans : cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)) = W β rg re
+hw : (cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))).length = L.eval n
+hsim :
+  simulate ((recHandler L (cpaAns L) ⋯).impl n (S.pkEncDist n β (rg, re)) ω)
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+      ((recHandler L (cpaAns L) ⋯).init n) =
+    OracleComp.pure
+      ((chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+            none).1,
+        s)
+hrun :
+  B.runAt n (S.pkEncDist n β (rg, re)) (φ (ω, r)) =
+    (recHandler L (cpaAns L) ⋯).result n (S.pkEncDist n β (rg, re)) ω s
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1
+hs' :
+  List.ofFn s =
+    (firstQ
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)).elim
+      [false, false, false] fun x => true :: x
+h₁ :
+  List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1 =
+    List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1
+h₂ :
+  firstQ
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) =
+    firstQ
+      (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+        (pairFstD (S.gen.runAt n [] rg)) r)
+ha :
+  List.ofFn
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1 =
+    [F rg r (W β rg re)]
+m₀ m₁ : Bool
+hq : firstQ (comp rg r) = some [m₀, m₁]
+hq' :
+  firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) =
+    some [m₀, m₁]
+hl : [m₀, m₁].length = 2
+⊢ decide
+      (recOut
+          (pairEncode (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))
+            (pairEncode (List.ofFn s) [F rg r (W β rg re)])) =
+        [true]) =
+    (some [m₀, m₁]).elim false fun l => l.getD 0 false != l.getD 1 false && F rg r (W β rg re) != l.getD 0 false
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 26.2s; max RSS of children 2722 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:39:15Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:39:27Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:887:13: error: unsolved goals
+case some
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+A : NUPPT
+q : PolyExpr
+B : NUPPT
+n : ℕ
+φ : (Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n
+hφ :
+  ∀ (z : List Bool) (ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool) (r : A.Coins n),
+    ∃ a s,
+      simulate ((recHandler L (cpaAns L) ⋯).impl n z ω)
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n z ω) r)
+            ((recHandler L (cpaAns L) ⋯).init n) =
+          OracleComp.pure (a, s) ∧
+        B.runAt n z (φ (ω, r)) = (recHandler L (cpaAns L) ⋯).result n z ω s a
+S' : FixedLengthPKScheme := S.padded L hL hmsg
+hS' : S' = S.padded L hL hmsg
+comp : S.gen.Coins n → A.Coins n → OracleComp (S'.indSpec n) (Fin 1 → Bool) :=
+  fun rg r => A.toCompOn (S'.indCodec n) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r
+W : Bool → S.gen.Coins n → S.enc.Coins n → List Bool :=
+  fun β rg re => padCt (L.eval n) (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [β]) re)
+F : S.gen.Coins n → A.Coins n → List Bool → Bool := fun rg r w => (chRun (fun x => w) (comp rg r) none).1 0
+hins : (fun i => (recDin L i).eval n) = S'.inLens n
+houts : (fun i => (recDout L i).eval n) = S'.outLens n
+hG :
+  ∀ (b : Bool),
+    accept (S'.indGame Attack.cpa A (q.eval n) b n) =
+      (sample (S.gen.Coins n)).expect fun rg =>
+        (sample (A.Coins n)).expect fun r =>
+          (sample (S.enc.Coins n)).expect fun re =>
+            if
+                F rg r ((firstQ (comp rg r)).elim [] fun l => W (l.getD (if b = true then 1 else 0) false) rg re) =
+                  true then
+              1
+            else 0
+β : Bool
+rg : S.gen.Coins n
+r : A.Coins n
+re : S.enc.Coins n
+ω : Fin ((recHandler L (cpaAns L) ⋯).seedLen.eval n) → Bool
+s : Fin ((recHandler L (cpaAns L) ⋯).stateLen.eval n) → Bool
+hadv : (recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω = pairFstD (S.gen.runAt n [] rg)
+hans : cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)) = W β rg re
+hw : (cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω))).length = L.eval n
+hsim :
+  simulate ((recHandler L (cpaAns L) ⋯).impl n (S.pkEncDist n β (rg, re)) ω)
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+      ((recHandler L (cpaAns L) ⋯).init n) =
+    OracleComp.pure
+      ((chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+            (A.toCompOn
+              (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+              (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+            none).1,
+        s)
+hrun :
+  B.runAt n (S.pkEncDist n β (rg, re)) (φ (ω, r)) =
+    (recHandler L (cpaAns L) ⋯).result n (S.pkEncDist n β (rg, re)) ω s
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1
+h₁ :
+  List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1 =
+    List.ofFn
+      (chRun (fun x => W β rg re)
+          (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+            (pairFstD (S.gen.runAt n [] rg)) r)
+          none).1
+h₂ :
+  firstQ
+      (A.toCompOn (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n))
+        n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) =
+    firstQ
+      (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+        (pairFstD (S.gen.runAt n [] rg)) r)
+ha :
+  List.ofFn
+      (chRun (fun x => cpaAns L (seedIn n (S.pkEncDist n β (rg, re)) (List.ofFn ω)))
+          (A.toCompOn
+            (bitCodec (fun i => (recDin L i).eval n) (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n
+            (q.eval n) ((recHandler L (cpaAns L) ⋯).advInput n (S.pkEncDist n β (rg, re)) ω) r)
+          none).1 =
+    [F rg r (W β rg re)]
+m₀ m₁ : Bool
+hs' : List.ofFn s = [true, m₀, m₁]
+hq : firstQ (comp rg r) = some [m₀, m₁]
+hq' :
+  firstQ
+      (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+        (pairFstD (S.gen.runAt n [] rg)) r) =
+    some [m₀, m₁]
+hl : [m₀, m₁].length = 2
+⊢ decide ((m₀ != m₁ && F rg r (W β rg re) != m₀) = true) = (m₀ != m₁ && F rg r (W β rg re) != m₀)
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:899:18: warning: This simp argument is unused:
+  decide_eq_true_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [List.headD_cons, List.getD_cons_zero, List.getD_cons_succ, List.cons.injEq,
+          and_true,̵ ̵d̵e̵c̵i̵d̵e̵_̵e̵q̵_̵t̵r̵u̵e̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 25.4s; max RSS of children 2722 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:39:52Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:40:03Z
+elapsed 25.2s; max RSS of children 2738 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:40:29Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:41:19Z
+elapsed 26.0s; max RSS of children 2737 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:41:45Z status 0
+== TCSlib/Complexity/TuringMachine/Build/Primitives start 2026-11-11T08:45:02Z
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2379:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2772:42: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2778:72: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2772:42: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2778:72: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2770:82: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2800:72: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2800:72: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2788:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2792:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2850:29: warning: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte,̵ ̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2813:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2818:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2821:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2860:46: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2884:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3311:25: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3311:25: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3403:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3551:34: warning: This simp argument is unused:
+  splitRestoreScan
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵s̵p̵l̵i̵t̵R̵e̵s̵t̵o̵r̵e̵S̵c̵a̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3581:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3581:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3644:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3689:52: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵,̵ ̵Fin.ext_iff, Fin.val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3689:66: warning: This simp argument is unused:
+  Fin.ext_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.e̵x̵t̵_̵i̵f̵f̵,̵ ̵F̵i̵n̵.̵val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3689:79: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.ext_iff,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3729:20: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3729:38: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3729:72: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3730:10: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3730:28: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3730:62: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3777:23: warning: This simp argument is unused:
+  Prod.mk.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [ht0, MultiTapeTM.runFrom_zero, splitRestoreScan, Cfg.ofWords,
+      Option.some.injEq,̵ ̵P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵] at hstate
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5441:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵hwrite]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5442:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5477:37: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5497:50: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5508:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5527:50: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5538:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5888:67: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5938:74: warning: This simp argument is unused:
+  emitterP2RightIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2LeftIndex,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵R̵i̵g̵h̵t̵I̵n̵d̵e̵x̵] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5952:54: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5959:56: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6820:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6820:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6823:6: warning: 'simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6823:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6874:61: warning: This simp argument is unused:
+  List.append_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [unaryTokenTM, Action.apply, scanCfg, pairEncode, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵hlen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6914:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6996:8: warning: declaration uses 'sorry'
+elapsed 34.1s; max RSS of children 2461 MiB
+== TCSlib/Complexity/TuringMachine/Build/Primitives end 2026-11-11T08:45:36Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim start 2026-11-11T08:45:36Z
+elapsed 2.5s; max RSS of children 2602 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim end 2026-11-11T08:45:39Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:45:39Z
+elapsed 2.7s; max RSS of children 2674 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:45:42Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:45:42Z
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:743:67: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  chRun ?g (OracleComp.query 0 ?x ?k) ?s
+in the target expression
+  (expect
+      (simulate (S.indImpl Attack.cpa b n pk sk) (k (zeroBits (S.outLens n 0), s).1) (zeroBits (S.outLens n 0), s).2)
+      fun p => G p.1) =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.query 0 x k) s).1
+
+S : FixedLengthPKScheme
+b : Bool
+n : ℕ
+pk sk : List Bool
+α : Type
+G : α → ℝ
+i : Fin 2
+x✝ : (S.indSpec n).dom i
+k✝ : (S.indSpec n).rng i → OracleComp (S.indSpec n) α
+ih✝ :
+  ∀ (a : (S.indSpec n).rng i) (s : Option (Fin (S.ctLen.eval n) → Bool)),
+    (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k✝ a) s) fun p => G p.1) =
+      (sample (S.enc.Coins n)).expect fun re =>
+        G
+          (chRun
+              (fun mm =>
+                S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                  re)
+              (k✝ a) s).1
+s : Option (Fin (S.ctLen.eval n) → Bool)
+x : (S.indSpec n).dom 0
+k : (S.indSpec n).rng 0 → OracleComp (S.indSpec n) α
+ih :
+  ∀ (a : (S.indSpec n).rng 0) (s : Option (Fin (S.ctLen.eval n) → Bool)),
+    (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k a) s) fun p => G p.1) =
+      (sample (S.enc.Coins n)).expect fun re =>
+        G
+          (chRun
+              (fun mm =>
+                S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                  re)
+              (k a) s).1
+⊢ (expect
+      (simulate (S.indImpl Attack.cpa b n pk sk) (k (zeroBits (S.outLens n 0), s).1) (zeroBits (S.outLens n 0), s).2)
+      fun p => G p.1) =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.query 0 x k) s).1
+TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean:748:78: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  chRun ?g (OracleComp.query 1 ?mm ?k) (some ?c)
+in the target expression
+  (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k (C, some C).1) (C, some C).2) fun p => G p.1) =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.query 1 x k) (some C)).1
+
+case some
+S : FixedLengthPKScheme
+b : Bool
+n : ℕ
+pk sk : List Bool
+α : Type
+G : α → ℝ
+i : Fin 2
+x✝ : (S.indSpec n).dom i
+k✝ : (S.indSpec n).rng i → OracleComp (S.indSpec n) α
+ih✝ :
+  ∀ (a : (S.indSpec n).rng i) (s : Option (Fin (S.ctLen.eval n) → Bool)),
+    (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k✝ a) s) fun p => G p.1) =
+      (sample (S.enc.Coins n)).expect fun re =>
+        G
+          (chRun
+              (fun mm =>
+                S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                  re)
+              (k✝ a) s).1
+x : (S.indSpec n).dom 1
+k : (S.indSpec n).rng 1 → OracleComp (S.indSpec n) α
+ih :
+  ∀ (a : (S.indSpec n).rng 1) (s : Option (Fin (S.ctLen.eval n) → Bool)),
+    (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k a) s) fun p => G p.1) =
+      (sample (S.enc.Coins n)).expect fun re =>
+        G
+          (chRun
+              (fun mm =>
+                S.enc.runAt n
+                  (pairEncode pk
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                  re)
+              (k a) s).1
+C : Fin (S.ctLen.eval n) → Bool
+⊢ (expect (simulate (S.indImpl Attack.cpa b n pk sk) (k (C, some C).1) (C, some C).2) fun p => G p.1) =
+    (sample (S.enc.Coins n)).expect fun re =>
+      G
+        (chRun
+            (fun mm =>
+              S.enc.runAt n
+                (pairEncode pk
+                  (List.ofFn
+                    (if b = true then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+                re)
+            (OracleComp.query 1 x k) (some C)).1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity): no fresh .olean produced
+elapsed 25.3s; max RSS of children 2725 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:46:07Z status 1
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:46:19Z
+elapsed 26.4s; max RSS of children 2737 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:46:45Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:49:20Z
+elapsed 3.1s; max RSS of children 2666 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:49:23Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:50:28Z
+elapsed 25.7s; max RSS of children 2736 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:50:54Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim start 2026-11-11T08:51:13Z
+elapsed 2.9s; max RSS of children 2601 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim end 2026-11-11T08:51:16Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:51:16Z
+elapsed 2.7s; max RSS of children 2676 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:51:19Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:51:19Z
+elapsed 25.9s; max RSS of children 2742 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:51:45Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim start 2026-11-11T08:52:20Z
+elapsed 3.0s; max RSS of children 2601 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim end 2026-11-11T08:52:23Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler start 2026-11-11T08:52:23Z
+elapsed 2.7s; max RSS of children 2670 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler end 2026-11-11T08:52:25Z status 0
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity start 2026-11-11T08:52:25Z
+elapsed 25.1s; max RSS of children 2735 MiB
+== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity end 2026-11-11T08:52:50Z status 0

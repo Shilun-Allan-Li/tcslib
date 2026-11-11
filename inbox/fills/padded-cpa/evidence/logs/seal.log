@@ -1,0 +1,60 @@
+== evidence/seal/SealChallengeSim start 2026-11-11T09:11:05Z
+elapsed 2.7s; max RSS of children 2604 MiB
+== evidence/seal/SealChallengeSim end 2026-11-11T09:11:08Z status 0
+== evidence/seal/SealRecordHandler start 2026-11-11T09:11:08Z
+elapsed 2.8s; max RSS of children 2671 MiB
+== evidence/seal/SealRecordHandler end 2026-11-11T09:11:10Z status 0
+== evidence/seal/SealOracleSecurity start 2026-11-11T09:11:10Z
+elapsed 4.9s; max RSS of children 2719 MiB
+== evidence/seal/SealOracleSecurity end 2026-11-11T09:11:15Z status 0
+== evidence/seal/SealControlsUnsealed start 2026-11-11T09:11:15Z
+elapsed 2.4s; max RSS of children 2641 MiB
+== evidence/seal/SealControlsUnsealed end 2026-11-11T09:11:18Z status 0
+== evidence/seal/SealControlsSealed start 2026-11-11T09:11:18Z
+evidence/seal/SealControlsSealed.lean:11:51: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+evidence/seal/SealControlsSealed.lean:13:54: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  zeroBits d j = false
+evidence/seal/SealControlsSealed.lean:15:79: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  padFin ℓ w i = w.getD (↑i) false
+evidence/seal/SealControlsSealed.lean:18:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)
+evidence/seal/SealControlsSealed.lean:21:48: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  simulate impl (OracleComp.pure a) s = OracleComp.pure (a, s)
+evidence/seal/SealControlsSealed.lean:24:73: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  chRun g (OracleComp.pure a) s = (a, s)
+evidence/seal/SealControlsSealed.lean:26:50: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  recDin L 1 = PolyExpr.const 2
+FAIL(evidence/seal/SealControlsSealed): lean exited with status 1
+FAIL(evidence/seal/SealControlsSealed): error diagnostics reported
+FAIL(evidence/seal/SealControlsSealed): no fresh .olean produced
+elapsed 2.4s; max RSS of children 2633 MiB
+== evidence/seal/SealControlsSealed end 2026-11-11T09:11:20Z status 1

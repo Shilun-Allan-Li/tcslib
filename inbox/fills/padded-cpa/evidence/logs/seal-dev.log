@@ -1,0 +1,132 @@
+== evidence/seal/SealChallengeSim start 2026-11-11T08:48:29Z
+elapsed 2.8s; max RSS of children 2605 MiB
+== evidence/seal/SealChallengeSim end 2026-11-11T08:48:32Z status 0
+== evidence/seal/SealRecordHandler start 2026-11-11T08:48:32Z
+evidence/seal/SealRecordHandler.lean:273:8: error: Type mismatch
+  recRun_recorded ans ?m.399 (List.ofFn s) ?m.401 hs
+has type
+  recRun ans (pairEncode ?m.399 (pairEncode (List.ofFn s) (pairEncode [true] ?m.401))) =
+    pairEncode (ans ?m.399) (List.ofFn s)
+but is expected to have type
+  recRun ans
+      (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+        (pairEncode (List.ofFn s) (pairEncode (List.replicate (↑1) true) (List.ofFn x)))) =
+    pairEncode (ans (seedIn n z (List.ofFn ω))) (List.ofFn s)
+evidence/seal/SealRecordHandler.lean:316:8: error: 'show' tactic failed, pattern
+  (recDin Lc 1).eval n + 1 = ?m.459
+is not definitionally equal to target
+  (true :: List.ofFn x).length = (recHandler Lc ans hans).stateLen.eval n
+evidence/seal/SealRecordHandler.lean:323:8: error: Type mismatch
+  recRun_fresh ans ?m.522 ?m.523 ?m.524 ?m.525
+has type
+  recRun ans (pairEncode ?m.522 (pairEncode ?m.523 (pairEncode [true] ?m.524))) =
+    pairEncode (ans ?m.522) (true :: ?m.524)
+but is expected to have type
+  recRun ans
+      (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+        (pairEncode (List.ofFn ((recHandler Lc ans hans).init n))
+          (pairEncode (List.replicate (↑1) true) (List.ofFn x)))) =
+    pairEncode (ans (seedIn n z (List.ofFn ω))) (true :: List.ofFn x)
+FAIL(evidence/seal/SealRecordHandler): lean exited with status 1
+FAIL(evidence/seal/SealRecordHandler): error diagnostics reported
+FAIL(evidence/seal/SealRecordHandler): no fresh .olean produced
+elapsed 2.3s; max RSS of children 2661 MiB
+== evidence/seal/SealRecordHandler end 2026-11-11T08:48:34Z status 1
+== evidence/seal/SealOracleSecurity start 2026-11-11T08:48:34Z
+elapsed 5.3s; max RSS of children 2717 MiB
+== evidence/seal/SealOracleSecurity end 2026-11-11T08:48:40Z status 0
+== evidence/seal/SealControlsUnsealed start 2026-11-11T08:48:40Z
+elapsed 1.9s; max RSS of children 2640 MiB
+== evidence/seal/SealControlsUnsealed end 2026-11-11T08:48:41Z status 0
+== evidence/seal/SealControlsSealed start 2026-11-11T08:48:42Z
+evidence/seal/SealControlsSealed.lean:11:51: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+evidence/seal/SealControlsSealed.lean:13:54: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  zeroBits d j = false
+evidence/seal/SealControlsSealed.lean:15:79: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  padFin ℓ w i = w.getD (↑i) false
+evidence/seal/SealControlsSealed.lean:18:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)
+evidence/seal/SealControlsSealed.lean:21:48: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  simulate impl (OracleComp.pure a) s = OracleComp.pure (a, s)
+evidence/seal/SealControlsSealed.lean:24:73: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  chRun g (OracleComp.pure a) s = (a, s)
+evidence/seal/SealControlsSealed.lean:26:50: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  recDin L 1 = PolyExpr.const 2
+FAIL(evidence/seal/SealControlsSealed): lean exited with status 1
+FAIL(evidence/seal/SealControlsSealed): error diagnostics reported
+FAIL(evidence/seal/SealControlsSealed): no fresh .olean produced
+elapsed 2.5s; max RSS of children 2633 MiB
+== evidence/seal/SealControlsSealed end 2026-11-11T08:48:44Z status 1
+== evidence/seal/SealRecordHandler start 2026-11-11T08:49:23Z
+evidence/seal/SealRecordHandler.lean:315:93: error: unsolved goals
+α : Type
+Lc : PolyExpr
+ans : List Bool → List Bool
+hans : PolyTimeComputable ans
+n : ℕ
+z : List Bool
+ω : Fin ((recHandler Lc ans hans).seedLen.eval n) → Bool
+hw : (ans (seedIn n z (List.ofFn ω))).length = Lc.eval n
+hinit : List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false]
+i : Fin 2
+x✝¹ : (bitSpecAt (recDin Lc) (recDout Lc) n).dom i
+k✝ : (bitSpecAt (recDin Lc) (recDout Lc) n).rng i → OracleComp (bitSpecAt (recDin Lc) (recDout Lc) n) α
+ih :
+  ∀ (a : (bitSpecAt (recDin Lc) (recDout Lc) n).rng i),
+    ∃ s,
+      simulate ((recHandler Lc ans hans).impl n z ω) (k✝ a) ((recHandler Lc ans hans).init n) =
+          OracleComp.pure ((chRun (fun x => ans (seedIn n z (List.ofFn ω))) (k✝ a) none).1, s) ∧
+        List.ofFn s = (firstQ (k✝ a)).elim [false, false, false] fun x => true :: x
+x : (bitSpecAt (recDin Lc) (recDout Lc) n).dom 1
+k : (bitSpecAt (recDin Lc) (recDout Lc) n).rng 1 → OracleComp (bitSpecAt (recDin Lc) (recDout Lc) n) α
+x✝ :
+  ∀ (a : (bitSpecAt (recDin Lc) (recDout Lc) n).rng 1),
+    ∃ s,
+      simulate ((recHandler Lc ans hans).impl n z ω) (k a) ((recHandler Lc ans hans).init n) =
+          OracleComp.pure ((chRun (fun x => ans (seedIn n z (List.ofFn ω))) (k a) none).1, s) ∧
+        List.ofFn s = (firstQ (k a)).elim [false, false, false] fun x => true :: x
+⊢ (List.ofFn x).length + 1 = 3
+evidence/seal/SealRecordHandler.lean:316:37: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_cons, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵,̵ ̵recHandler_stateLen, recDin_one, PolyExpr.eval_const]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(evidence/seal/SealRecordHandler): lean exited with status 1
+FAIL(evidence/seal/SealRecordHandler): error diagnostics reported
+FAIL(evidence/seal/SealRecordHandler): no fresh .olean produced
+elapsed 2.6s; max RSS of children 2666 MiB
+== evidence/seal/SealRecordHandler end 2026-11-11T08:49:26Z status 1
+== evidence/seal/SealRecordHandler start 2026-11-11T08:49:48Z
+elapsed 3.0s; max RSS of children 2674 MiB
+== evidence/seal/SealRecordHandler end 2026-11-11T08:49:51Z status 0

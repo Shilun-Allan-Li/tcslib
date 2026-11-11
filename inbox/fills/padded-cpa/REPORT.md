@@ -227,6 +227,13 @@ cache fetch was needed.
 
 ## 7. Payload
 
+**Delivery commits.** The commit `fill padded-cpa: final` (`06bc7b21d`) and checkpoint 1 omitted
+`evidence/`: a local Git exclude entry (`evidence/`, added for the proof worktree, which shares
+the object store with the exchange checkout) hid it. The exclude entry was removed and the
+following commit, also titled `fill padded-cpa: final`, adds `evidence/` and this note; the
+delivery is the path at that commit. Nothing else changed: `REPORT.md` differs only by this
+paragraph, and `patches/` and `src/` are identical.
+
 `REPORT.md`; `patches/` = `git format-patch 4a09f399..24747c9d8` (4 patches); `src/` = the three
 owned paths at `24747c9d8`; `evidence/{logs,seal,tools}`. `PAYLOAD-SHA256SUMS` covers every file. Applying the 4 patches with `git am` to a clean base
 worktree reproduces `src/` byte for byte and the proof branch's tree (`logs/patch-reproduce.log`).
