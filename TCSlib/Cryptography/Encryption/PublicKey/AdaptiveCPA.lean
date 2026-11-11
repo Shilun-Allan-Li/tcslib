@@ -27,8 +27,16 @@ reduction can produce every challenge but one itself.
 
 ## Main results
 
-* `Composability.FixedLengthPKScheme.INDSecure.adaptive_cpa` (stated; a `sorry` under its
-  sketch): single-challenge CPA security gives adaptive multi-challenge CPA security.
+* `Composability.FixedLengthPKScheme.INDSecure.adaptive_cpa`: single-challenge CPA security
+  gives adaptive multi-challenge CPA security.
+
+## Contents
+
+* `AdaptiveCPA/Hybrid`: the hybrid challenge oracles, transport along equal lengths, simulation
+  through a state abstraction, and coins in advance against lazy coins.
+* `AdaptiveCPA/Handler`: the reduction's handler for T2 and its call equations.
+* `AdaptiveCPA/Games`: the hybrid games; the end hybrids are the adaptive games.
+* `AdaptiveCPA/Reduction`: the reduction's single-challenge game is a hybrid.
 
 ## References
 

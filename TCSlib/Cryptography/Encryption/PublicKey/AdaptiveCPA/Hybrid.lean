@@ -168,7 +168,8 @@ noncomputable def hybImpl (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C 
 
 variable (κ : ℕ) (E : Bool → (Fin (ins 1) → Bool) → C → (Fin L → Bool)) (sel : ℕ → Bool)
 
-/-- Decryption answers all-`false` and keeps the history. -/
+/-- Decryption answers all-`false` and keeps the history:
+`hybImpl κ E sel 0 x h = pure (0, h)`. -/
 theorem hybImpl_zero (x : Fin (ins 0) → Bool) (h : List (Fin L → Bool)) :
     hybImpl (outs := outs) κ E sel 0 x h = .pure (zeroBits _, h) :=
   rfl
@@ -221,7 +222,8 @@ noncomputable def tapeImpl (T : ℕ → C) (kst : ℕ) :
 
 variable (T : ℕ → C) (kst : ℕ)
 
-/-- With coins in advance, decryption answers all-`false` and keeps the history. -/
+/-- With coins in advance, decryption answers all-`false` and keeps the history:
+`tapeImpl κ E sel T kst 0 x h = pure (0, h)`. -/
 theorem tapeImpl_zero (x : Fin (ins 0) → Bool) (h : List (Fin L → Bool)) :
     tapeImpl (outs := outs) κ E sel T kst 0 x h = .pure (zeroBits _, h) :=
   rfl
@@ -247,7 +249,8 @@ theorem tapeImpl_eager (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (
         E (sel h.length) mm (T h.length) :: h) := by
   rw [tapeImpl, if_pos hh, if_neg hk]
 
-/-- At the cap a challenge repeats the latest ciphertext, as in `hybImpl_full`. -/
+/-- At the cap a challenge repeats the latest ciphertext, as in `hybImpl_full`:
+`tapeImpl κ E sel T kst 1 mm h = pure (padFin (outs 1) ⟦h.headD 0⟧, h)` when `κ ≤ |h|`. -/
 theorem tapeImpl_full (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : κ ≤ h.length) :
     tapeImpl (outs := outs) κ E sel T kst 1 mm h =
       .pure (padFin (outs 1) (List.ofFn (h.headD (zeroBits L))), h) := by
@@ -307,7 +310,8 @@ theorem extTape_of_lt {κ : ℕ} (T : Fin κ → C) {m : ℕ} (hm : m < κ) :
     extTape T m = T ⟨m, hm⟩ := by
   rw [extTape, dif_pos hm]
 
-/-- Changing one coordinate `j` of `T` changes its extension only at `j`. -/
+/-- Changing one coordinate `j` of `T` changes its extension only at `j`:
+`extTape (T[j ↦ r]) m = extTape T m` for `m ≠ j`. -/
 theorem extTape_update {κ : ℕ} (T : Fin κ → C) (j : Fin κ) (r : C) {m : ℕ} (hm : m ≠ j) :
     extTape (Function.update T j r) m = extTape T m := by
   by_cases h : m < κ

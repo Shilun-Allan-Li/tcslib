@@ -88,7 +88,8 @@ theorem acDout_eval (n : ℕ) : (fun i => (acDout S i).eval n) = S.outLens n := 
 
 /-! ### Strings of the oracles -/
 
-/-- Reading a bit vector across an equality of widths keeps its string. -/
+/-- Reading a bit vector across an equality of widths keeps its string:
+`⟦cast h f⟧ = ⟦f⟧` when `a = b`. -/
 theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
     (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
   subst hab
@@ -114,7 +115,8 @@ theorem ofFn_splitHalf_snd {m : ℕ} (y : Fin (m + m) → Bool) :
   rw [List.getElem_ofFn, List.getElem_drop, List.getElem_ofFn]
   rfl
 
-/-- The all-`false` answer, read at any width, is all-`false`. -/
+/-- The all-`false` answer, read at any width, is all-`false`:
+`padFin d ⟦zeroBits m⟧ = zeroBits d`. -/
 theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = zeroBits d := by
   funext i
   rw [padFin_apply, ofFn_zeroBits, zeroBits_apply]
@@ -122,7 +124,7 @@ theorem padFin_ofFn_zeroBits (d m : ℕ) : padFin d (List.ofFn (zeroBits m)) = z
   · rw [List.getD_eq_getElem _ _ (by rw [List.length_replicate]; exact hi), List.getElem_replicate]
   · rw [List.getD_eq_default _ _ (by rw [List.length_replicate]; omega)]
 
-/-- The bit of a one-bit output is the head of its string. -/
+/-- The bit of a one-bit output is the head of its string: `⟦f⟧.headD false = f 0`. -/
 theorem headD_ofFn_one (f : Fin 1 → Bool) : (List.ofFn f).headD false = f 0 := by
   rw [List.ofFn_succ, List.headD_cons]
 
@@ -153,7 +155,9 @@ noncomputable def acHyb (A : NUPPT) (q κ n : ℕ) (sel : ℕ → Bool) : ProbCo
         ((PolyExpr.const 1).eval n)) n q (pairFstD (S.gen.runAt n [] rg)) r) []).bind
     fun res => .pure ((List.ofFn res.1).headD false)
 
-/-- The defining equation of `acHyb`. -/
+/-- The defining equation of `acHyb`: sample `rg` and `r`, let `pk = ⟨S.gen.runAt n [] rg⟩₁`,
+simulate `hybImpl κ (acEnc S n pk) sel` from `[]` on `A.toCompOn` (T2's codec) at `pk`, and
+return `⟦output⟧.headD false`. -/
 theorem acHyb_eq (A : NUPPT) (q κ n : ℕ) (sel : ℕ → Bool) :
     acHyb S A q κ n sel =
       (ProbComp.sample (S.gen.Coins n)).bind fun rg =>
@@ -165,7 +169,8 @@ theorem acHyb_eq (A : NUPPT) (q κ n : ℕ) (sel : ℕ → Bool) :
         fun res => .pure ((List.ofFn res.1).headD false) :=
   rfl
 
-/-- **Only the selector below the cap matters** (`hybImpl_congr`). -/
+/-- **Only the selector below the cap matters** (`hybImpl_congr`): if `sel j = sel' j` for every
+`j < κ`, then `acHyb S A q κ n sel = acHyb S A q κ n sel'`. -/
 theorem acHyb_congr (A : NUPPT) (q κ n : ℕ) {sel sel' : ℕ → Bool}
     (hsel : ∀ j < κ, sel j = sel' j) : acHyb S A q κ n sel = acHyb S A q κ n sel' := by
   rw [acHyb_eq, acHyb_eq]

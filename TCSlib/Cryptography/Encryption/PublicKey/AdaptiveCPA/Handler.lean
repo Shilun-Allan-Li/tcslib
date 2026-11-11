@@ -159,11 +159,6 @@ private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
     List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
   rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
 
-/-- Appending to a pair appends to its second component. -/
-private theorem pairEncode_append (u v t : List Bool) :
-    pairEncode u v ++ t = pairEncode u (v ++ t) := by
-  rw [pairEncode_eq, pairEncode_eq, List.append_assoc]
-
 /-- The fields of an encoded state. -/
 private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (hj : j ≤ cap.eval n)
     (hi : ist n ≤ cap.eval n) :
@@ -177,7 +172,8 @@ private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (
     simp only [length_pairEncode, List.length_replicate, List.length_ofFn, acStLen_eq,
       PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
-  rw [acState_eq, Collection.ofFn_padFin_of_le hlen, pairEncode_append, pairEncode_append]
+  rw [acState_eq, Collection.ofFn_padFin_of_le hlen, ← GGMRed.pairEncode_append_right,
+    ← GGMRed.pairEncode_append_right]
   refine ⟨by rw [pairFstD_pairEncode], by rw [pairSndD_pairEncode, pairFstD_pairEncode], ?_⟩
   rw [pairSndD_pairEncode, pairSndD_pairEncode]
   exact List.take_left' List.length_ofFn
@@ -263,8 +259,7 @@ private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := b
   have hLt : PolyTimeComputable fun w => [decide ((rCnt w).length < (rIst w).length)] :=
     (polyTimeComputable_not (polyTimeComputable_lenLe.comp (hCnt.pairEncode hIst))).congr
       fun w => by
-        simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, List.cons.injEq,
-          and_true]
+        simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.cons.injEq, and_true]
         by_cases h : (rCnt w).length < (rIst w).length
         · rw [decide_eq_true h, decide_eq_false (by omega)]
           rfl
