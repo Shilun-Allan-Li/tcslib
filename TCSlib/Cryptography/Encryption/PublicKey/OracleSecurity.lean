@@ -57,6 +57,8 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
   canonical strings.
 * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
 * `BitPublicKeyScheme.SingleBitSecure.padded_cpa`: single-bit security gives CPA security.
+  Its helpers are `OracleSecurity.ChallengeSim` (the deterministic CPA run and first-challenge
+  congruence) and `OracleSecurity.RecordHandler` (the recording handler for T1).
 
 ## References
 
@@ -681,6 +683,8 @@ end FixedLengthPKScheme
 
 /-! ### From ensemble security to CPA -/
 
+section PaddedCPA
+
 open ChallengeSim ProbComp
 
 /-- The reduction's challenge answer, read from its context `⟨1^n, ⟨⟨pk, c⟩, ω⟩⟩`: the padding
@@ -972,5 +976,7 @@ theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa
   -- Step 4: the advantages are equal.
   obtain ⟨φ, hφ⟩ := hB n
   exact padded_cpa_advantage_eq L hL hmsg A q B n φ hφ
+
+end PaddedCPA
 
 end TCSlib.Cryptography.Composability

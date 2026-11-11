@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.BitCodec
 import TCSlib.Cryptography.Games.Machines
 import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.Games.Bridges.Experiments
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -170,9 +171,11 @@ theorem length_of_firstQ_eq_some (c : OracleComp (bitSpec ins outs) α) {l : Lis
       rw [firstQ_query_one, Option.some.injEq] at h
       rw [← h, List.length_ofFn]
 
-/-- **Transport along equal lengths:** for a machine adversary run through `bitCodec`, the
-output (as a list) of the run with a constant challenge answer `w`, and the first challenge
-query, are the same for equal length functions and equal output lengths.
+/-- **Transport along equal lengths:** for a machine adversary run through `bitCodec`, if
+`ins = ins'`, `outs = outs'` and `d = d'`, then
+`List.ofFn (chRun (fun _ => w) (A.toCompOn (bitCodec ins outs d) n q x r) none).1 =
+List.ofFn (chRun (fun _ => w) (A.toCompOn (bitCodec ins' outs' d') n q x r) none).1` and the
+two runs have the same `firstQ`.
 
 **Proof sketch.** Substitute the equalities; both sides become identical. -/
 theorem chRun_toCompOn_transport {ins' outs' : Fin 2 → ℕ} {d d' : ℕ} (hi : ins = ins')
@@ -206,10 +209,8 @@ theorem expect_sample_equiv [Fintype α] [Nonempty α] [Fintype β] [Nonempty β
 theorem expect_sample_prod [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
     (g : α × β → ℝ) :
     expect (sample (α × β)) g = expect (sample α) fun a => expect (sample β) fun b => g (a, b) := by
-  simp only [expect_sample, Fintype.card_prod, Fintype.sum_prod_type, Finset.mul_sum,
-    Nat.cast_mul, mul_inv]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  ring
+  rw [← Bridge.expect_sample_pair]
+  simp only [expect_bind, expect_pure]
 
 /-- **Independent samples commute:**
 `𝔼_{a ← α} 𝔼_{b ← β} g a b = 𝔼_{b ← β} 𝔼_{a ← α} g a b`.
