@@ -119,7 +119,8 @@ def acTapes (n : ℕ) :
 **Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`); position `k`
 of block `j` is position `k + ρ·j` of `ω` (`FunFamily.blocks_apply`), which is position `k` of the
 dropped and truncated list. -/
-theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool) (j : Fin (cap.eval n)) :
+theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
+    (j : Fin (cap.eval n)) :
     List.ofFn (acTapes S cap n ω j) =
       ((List.ofFn ω).drop (j * S.enc.coins.eval n)).take (S.enc.coins.eval n) := by
   rw [acTapes, Equiv.trans_apply, Equiv.arrowCongr_apply, Function.comp_apply, Function.comp_apply,
@@ -147,7 +148,8 @@ theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool
 /-- Reading a padding: `⟦padFin k a⟧ = a ++ 0^{k - |a|}` when `|a| ≤ k`. -/
 theorem ofFn_padFin_of_le {k : ℕ} {a : List Bool} (h : a.length ≤ k) :
     List.ofFn (padFin k a) = a ++ List.replicate (k - a.length) false := by
-  have hl : (List.ofFn (padFin k a)).length = (a ++ List.replicate (k - a.length) false).length := by
+  have hl : (List.ofFn (padFin k a)).length =
+      (a ++ List.replicate (k - a.length) false).length := by
     simp only [List.length_ofFn, List.length_append, List.length_replicate]
     omega
   refine List.ext_getElem hl fun i h₁ h₂ => ?_
@@ -324,19 +326,21 @@ private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := b
     (polyTimeComputable_ite cFull (hRet (hLat.append hS))
       (polyTimeComputable_ite cEq
         (polyTimeComputable_ite cNil
-          ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const [true]).pairEncode
-            hX))
+          ((polyTimeComputable_const [false]).pairEncode
+            ((polyTimeComputable_const [true]).pairEncode hX))
           (hRet (hFwd.append (hNew hFwd))))
         (hRet (hEnc.append (hNew hEnc)))))
     (hRet (hZeros.append hS))
 
 /-- The finalization's round: output `A`'s bit, `⟨[true], a⟩` on `⟨ctx, ⟨s, ⟨a, L⟩⟩⟩`. -/
-private def acFin (w : List Bool) : List Bool := pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
+private def acFin (w : List Bool) : List Bool :=
+  pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
 
 /-- The finalization's round is polynomial-time. -/
 private theorem polyTimeComputable_acFin : PolyTimeComputable acFin :=
   (polyTimeComputable_const [true]).pairEncode
-    (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+    (polyTimeComputable_pairFstD.comp
+      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
 
 /-! ### The handler -/
 
@@ -459,14 +463,17 @@ theorem acHandler_impl_dec (x : Fin ((acDin S 0).eval n) → Bool)
     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool) :
     (acHandler S cap ist).impl n z ω 0 x s = .pure (zeroBits _, s) := by
   refine impl_of_ret S cap ist n z ω x s _ _ ?_
-  have hI : rI (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
+  have hI : rI (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
+      []) =
       [] := by
     simp only [InteractiveHandler.input_eq, rI, pairFstD_pairEncode, pairSndD_pairEncode]
     rfl
-  have hU : rU (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
+  have hU : rU (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
+      []) =
       List.replicate n true := by
     simp only [InteractiveHandler.input_eq, rU, pairFstD_pairEncode]
-  have hS : rS (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
+  have hS : rS (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
+      []) =
       List.ofFn s := by
     simp only [InteractiveHandler.input_eq, rS, pairFstD_pairEncode, pairSndD_pairEncode]
   rw [acRun, hI, List.headD_nil, if_neg Bool.false_ne_true, hU, hS, List.length_replicate,
