@@ -12,6 +12,7 @@ import TCSlib.Complexity.ClassP.BinaryArith.ModPow
 import TCSlib.Complexity.ClassP.BinaryArith.Jacobi
 import TCSlib.Complexity.ClassP.BinaryArith.Words
 import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.ClassP.BinaryArith.Unary
 import TCSlib.Complexity.ClassP.BinaryArith.PrimeFind
 import TCSlib.Complexity.ClassP.BinaryArith.DetModMath
 import TCSlib.Complexity.ClassP.BinaryArith.DetMod
@@ -34,6 +35,7 @@ functions: infrastructure for [AB09 §7.2], plus [AB09, Exercise 7.3] and [AB09,
 * `Words` — lists of words: map, zip and count loops.
 * `Loops` — the counted loop, unary numbers, list lookup, word equality, unary multiplication
   and cutting into blocks.
+* `Unary` — canonical binary width bounds and a finite binary-to-unary converter.
 * `PrimeFind` — the least prime above `2^{⌈log₂ 2n⌉}`, for unary `n`.
 * `DetModMath` — the elimination, rotation and zero-column identities over `ZMod p`.
 * `DetMod` — the determinant over `ZMod p` by Gaussian elimination.

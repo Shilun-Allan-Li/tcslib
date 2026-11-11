@@ -2942,24 +2942,23 @@ source's captured result, rejecting malformed inputs without any emission.
 encoded-prefix replay, and captured-payload replay. Source output length is
 at most its running time. The two replay lengths and all input scans therefore
 fit `4 (T(n) + n + 3)`; no running time is evaluated at a padded input length. -/
-private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
-    {T : ℕ → ℕ} (hM : M.ComputesFunInTime f T) :
-    (pairMapTM M).ComputesFunInTime
-      (fun x => match pairDecode x with
-        | some (a, _) => pairEncode a (f x)
-        | none => []) (fun n => 4 * (T n + n + 3)) := by
-  intro x
-  have hlen : (f x).length ≤ T x.length := by
-    have hout := ((computesInTime_iff _ _ _ _).mp (hM x)).2
-    simpa only [hout] using M.tm.output_length_le x (T x.length)
-  obtain ⟨t, ht, c, ho, hstart⟩ := mapStart M x (f x) (T x.length) (hM x)
+private lemma pairMap_computes_at {M : FinTM Bool} {x y : List Bool} {time : ℕ}
+    (hM : M.ComputesInTime x y time) :
+    (pairMapTM M).ComputesInTime x
+      (match pairDecode x with
+        | some (a, _) => pairEncode a y
+        | none => []) (4 * (time + x.length + 3)) := by
+  have hlen : y.length ≤ time := by
+    have hout := ((computesInTime_iff _ _ _ _).mp hM).2
+    simpa only [hout] using M.tm.output_length_le x (time)
+  obtain ⟨t, ht, c, ho, hstart⟩ := mapStart M x y (time) hM
   obtain ⟨u, hu, hval⟩ := mapValidate M c x [] (by simp)
   simp only [List.length_nil, Nat.zero_add] at hval
   have hpos : (⟨1, by omega⟩ : Fin (x.length + 2)) = 1 := by
     apply Fin.ext
     simp
   rw [hpos] at hval
-  have hclen : c.output.length = (f x).length := congrArg List.length ho
+  have hclen : c.output.length = y.length := congrArg List.length ho
   cases hd : pairDecode x with
   | none =>
     simp only [hd, Option.isSome_none, Bool.false_eq_true, ↓reduceIte] at hval ⊢
@@ -2989,19 +2988,51 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
       rw [MultiTapeTM.runFrom_add _ _ (2 * a.length + 2),
         MultiTapeTM.runFrom_add _ _ r, MultiTapeTM.runFrom_add _ t u,
         hstart, hp, hr', hp']
-    have hc : (pairMapTM M).ComputesInTime x (pairEncode a (f x))
+    have hc : (pairMapTM M).ComputesInTime x (pairEncode a y)
         (((t + u + r) + (2 * a.length + 2)) + (c.output.length + 1)) := by
       apply (computesInTime_iff _ _ _ _).mpr
       rw [MultiTapeTM.runFrom_add _ _ (c.output.length + 1), hprefix]
       obtain ⟨hs, hout⟩ := mapPayload_finish M c p' (pairEncode a [])
       refine ⟨hs, ?_⟩
-      simpa [ho, pairEncode, List.append_assoc] using hout
+      simpa only [ho, pairEncode_eq, List.append_assoc] using hout
     apply hc.mono
     have hpbound := p.isLt
     change r ≤ p.val + 2 at hrle
     have hxlen : x.length = 2 * a.length + 2 + b.length := by
       rw [Turing.eq_pairEncode_of_pairDecode x a b hd, Turing.length_pairEncode]
     omega
+
+/-- The threaded map's total contract from a bound on each source activation. -/
+private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
+    {T : ℕ → ℕ} (hM : M.ComputesFunInTime f T) :
+    (pairMapTM M).ComputesFunInTime
+      (fun x => match pairDecode x with
+        | some (a, _) => pairEncode a (f x)
+        | none => []) (fun n => 4 * (T n + n + 3)) :=
+  (computesFunInTime_iff _ _ _).2 fun x =>
+    pairMap_computes_at ((computesFunInTime_iff _ _ _).1 hM x)
+
+/-- On a pair, a threaded map can charge the actual time of the payload machine.
+For each computation sending `b` to `y` in `time` steps, the same wrapper
+sends `⟨a,b⟩` to `⟨a,y⟩` in at most `40 (time + |⟨a,b⟩| + 1)` steps.
+
+**Proof sketch.** The pair reader extracts the payload. Buffered composition
+runs the supplied computation on that payload. The existing threaded map
+retains the prefix and emits the captured result. Both encoding passes and
+the rewind are linear in the pair and captured output lengths. -/
+theorem exists_pairMapSnd_computesInTime (G : FinTM Bool) :
+    ∃ M : FinTM Bool, ∀ (a b y : List Bool) (time : ℕ), G.ComputesInTime b y time →
+      M.ComputesInTime (pairEncode a b) (pairEncode a y)
+        (40 * (time + (pairEncode a b).length + 1)) := by
+  refine ⟨pairMapTM (bufferedCompTM (pairExtractTM false true) G), fun a b y time hg => ?_⟩
+  have hb : (pairExtractTM false true).ComputesInTime (pairEncode a b) b
+      (5 * ((pairEncode a b).length + 1)) := by
+    simpa only [pairDecode_pairEncode, Bool.false_eq_true, ↓reduceIte, List.nil_append] using
+      pairExtractTM_computes false true (pairEncode a b)
+  have hcall := bufferedCompTM_computesInTime (pairExtractTM false true) G hb hg
+  have hmap := pairMap_computes_at hcall
+  rw [pairDecode_pairEncode] at hmap
+  exact hmap.mono (by rw [length_pairEncode]; omega)
 
 /-- **C1, the threaded map combinator** (round-2
 addition per round-1 finding 3 — the data-retaining assembly the

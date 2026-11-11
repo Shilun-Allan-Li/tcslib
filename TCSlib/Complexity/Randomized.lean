@@ -72,6 +72,7 @@ import TCSlib.Complexity.Randomized.PolyExpr
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Complexity.Randomized.NonUniform
 import TCSlib.Complexity.Randomized.Primitives
+import TCSlib.Complexity.Randomized.UnaryPolynomial
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Complexity.Randomized.Repetition
 
@@ -189,6 +190,8 @@ closure calculus, and the repetition lemma.
   the bridge from `Turing.FinTM.DecidesWithAdviceInTime`.
 - `Randomized.Primitives`: coin splitting, unary multiplication, the unary evaluator and the
   typed coin cuts.
+- `Randomized.UnaryPolynomial` — unary polynomial evaluation in time proportional
+  to the input and output lengths.
 - `Randomized.Closure`: the closure calculus of non-uniform PPTs.
 - `Randomized.Repetition`: the repetition lemma `polyTimeComputable_iterateFind` and its
   iteration variants.

@@ -79,15 +79,14 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
   `TCSlib.Cryptography.Asymptotic.UniversalLemmas`).
 * `TCSlib.Cryptography.lemma_64_3` — a strong one-way function computable in quadratic time
   [PS10, Lemma 64.3] (from `PadQuad.exists_family` of
-  `TCSlib.Cryptography.Asymptotic.UniversalPadding`; one machine admission remains, see the
-  fill note).
+  `TCSlib.Cryptography.Asymptotic.UniversalPadding`, with its linear-time evaluator).
 * `TCSlib.Cryptography.claim_65_1`, `claim_65_2`, `claim_65_2_cond` — `PickG` and the union
   bound [PS10, p. 65].
 * `TCSlib.Cryptography.fUniversal_hard`, `TCSlib.Cryptography.fUniversal_weakOneWay`,
   `TCSlib.Cryptography.theorem_63_1` — `f_universal` is weakly one-way with `q(n) = n³`, hence
   (after amplification) strongly one-way [PS10, Theorem 63.1] (`fUniversal_hard` and
   `fUniversal_weakOneWay` are proved from the hypothesis of `lemma_64_3`; `theorem_63_1`
-  depends on `lemma_64_3`, which is sorried, see its fill note).
+  uses the quadratic-time strong one-way family supplied by `lemma_64_3`).
 
 ## References
 
@@ -466,9 +465,9 @@ length (`inLen = var`) computable by a coded machine in time `c₀ (n + 1)²` on
 
 **Deviation:** the text defines `g'(⟨a, b⟩) = ⟨a, g(b)⟩` on lengths `m = n^c` only and
 leaves the recovery of `n` from `m` implicit; the formal `g'` is defined at every length `m`
-with the parameter `ν(m) := max {n : P(n) ≤ m}` recovered from the input length, and the
-output `a ++ g_{ν m}(b)` is padded with `false` to the syntactic length `2·var` (which it never
-exceeds from `P(0)` on; truncated at the finitely many smaller `m`).
+with `ν(m) := max {n ≤ m : n^d ≤ m}` recovered from the input length for a fixed
+dominating degree d. The output `a ++ g_{ν m}(b)` is padded with `false` to the syntactic
+length `2·var` and is truncated on smaller parameters before domination applies.
 
 Repair (run-3 audit P3-3): the sketch's family is `𝓖 := ⟨var, mul (const 2) var, g'⟩`, not
 `⟨var, add var outLen, g'⟩` — padding to `m + outLen(m)` bits is not computable within the
@@ -476,49 +475,26 @@ quadratic one-tape budget when `deg outLen ≥ 2`; the raw output has at most `2
 "non-constant input length" sub-lemma is unnecessary (`P` is strictly increasing because of its
 summand `n`). Statement unchanged.
 
-**Proof sketch.** Let `𝓕` be strong one-way with input length `ℓ := 𝓕.inLen`, evaluator `F`
-(`h.easy`) within `C(k + 1)^c`, and `T_F(n) := C(2n + 3 + ℓ(n))^c` its time on `⟨1^n, x⟩`.
-*Padding:* `P(n) := ℓ(n) + T_F(n) + n`, strictly increasing (its summand `n`), so
-`ν(m) := max {n : P(n) ≤ m}` (`0` below `P(0)`) is well defined, `P(ν m) ≤ m < P(ν m + 1)` for
-`m ≥ P(0)`, and `ν` is unbounded; `g'_m(y) := y.take (m - ℓ(ν m)) ++ F ⟨1^{ν m}, y.drop (m - ℓ(ν m))⟩`
-padded with `false` to `2m` bits (`𝓖 := ⟨var, mul (const 2) var, g'⟩`): for `m ≥ P(0)` the raw
-output has `(m − ℓ(ν m)) + |F ⟨1^{ν m}, b⟩| ≤ m + T_F(ν m) ≤ m + P(ν m) ≤ 2m` bits, an
-evaluator's output being no longer than its running time (`PolyTimeComputable.output_length_le`,
-as in `Collection.exists_outLenBound`), so the padding is lossless (`ofFn_padFin_of_le`).
-*Hardness:* an inverter `A'` of `𝓖` with `1/m^d ≤ invProbAt A' m` infinitely often
-(`not_negligible_iff`) gives an inverter of `𝓕` at `n := ν(m)` by `OneWay.invProb_pad_le`
-[Gar26, Lemma 2.3] (`OneWay.pad`, `OneWay.padInverter`): sample the padding `a` from the
-coins (`NUPPT.exists_split`), call `A'` at the length `m < P(n + 1)` hard-wired as advice
-(`NUPPT.exists_reparam_advice` with the majorant `P.subst (add var (const 1))`), project the
-`b`-part (`NUPPT.exists_comp`). Two inputs `a ++ b`, `a' ++ b'` of length `m` with equal padded
-outputs have equal raw outputs (both raw outputs have length `(m − ℓ(n)) + outLen(n)`, so the
-zero-padding to `2m` bits is injective on them, `List.append` of equal-length prefixes), hence
-`a' = a` and `f_n(b') = f_n(b)`; `1/m^d ≥ 1/P(n+1)^d` and `not_negligible_iff` contradict
-`h.hard`. *Quadratic time:* a multi-tape machine computing `g'` in linear time `O(m)` — the
-parameter `1^{ν m}` by incremental unary counting (the powers `(n+1)^j`, `j ≤ deg P`, kept on
-`deg P` tapes and updated by the binomial identity, total cost
-`∑_{n ≤ ν m} O((n+1)^{deg P - 1}) = O(m)`), then `1^{ℓ(ν m)}`
-(`Turing.FinTM.computesFunInTime_polyUnary`, cost `O(P(ν m)) = O(m)`), the split and the copy
-(`pairSplitAt`, `pairConcat`), the call of `F` (cost `T_F(ν m) ≤ m`), the padding to `2m` bits
-(`O(m)` steps); then `Turing.FinTM.one_work_tape_binary` gives a one-work-tape binary machine
-within `c (O(m) + 1)² = O(m²)` and `Turing.exists_codeTM` a `CodeTM` with the same runs.
-Sub-obligations: the identification of `g'` with `OneWay.pad`, and the linear-time
-parameter-recovery machine (the only new machine; `Turing.FinTM.computesFunInTime_splitSolve`
-solves the same length equation in time `(m+1)^{e+2}`, too slow for a quadratic one-tape
-bound).
+**Proof sketch.** Extract an evaluator F of the strong one-way family and
+its polynomial running time. Choose a fixed degree d that eventually dominates
+the input length, output length and the cost of F on an encoded parameter
+and input. The family PadQuad.family uses the recovered parameter
+ν(m) = max {n ≤ m : n^d ≤ m}. Its output is the retained suffix followed by
+F on the encoded parameter and data prefix, padded and truncated to twice m.
 
-**Fill note (run 4).** Proved in `TCSlib.Cryptography.Asymptotic.UniversalPadding`
-(`PadQuad.exists_family`: the padded family `PadQuad.family` with `ν m = max {n : n^d ≤ m}`,
-its one-wayness `PadQuad.strongOneWay` and `PadQuad.quadraticCode_of_linear`) **modulo one
-machine admission**, `PadQuad.exists_linearTime_gStr`: a *linear-time multitape* evaluator of
-the padded function (`one_work_tape_binary` squares the time, so quadratic one-tape time needs
-linear multitape time). No assembly of the timed catalogue is output-linear for the parameter
-recovery `1^m ↦ 1^{ν m}`: `computesFunInTime_polyUnary C e` costs `(n+1)^{e+1}` for an output of
-length `C(n+1)^e`, `computesFunInTime_comp` evaluates the second bound at the *time* of the
-first stage (only `exists_comp_on_image` avoids this), `pairMapSnd` charges the whole pair, and
-the loop combinators charge rounds × maximal round cost; the missing primitive is a bespoke
-linear-time unary root (or an output-linear binary-to-unary converter), see the construction
-sketch of `PadQuad.exists_linearTime_gStr`. -/
+The padding inverter samples the retained suffix and uses the supplied
+padded-family inverter at a length selected as advice. Equality of padded
+outputs gives equality of the retained suffix and equality of the original
+family's outputs once the dominating bound holds. This proves the padded
+family's strong one-wayness.
+
+For time, the binary parameter search followed by unary emission computes
+the shifted root in linear multitape time. The sharp unary polynomial
+evaluator and the source call are charged at their actual short arguments.
+The pairing, splitting and padding stages have linear overhead. The existing
+one-work-tape binary conversion squares that linear bound, and the code
+representation transports the runs. This is PadQuad.exists_family.
+-/
 theorem lemma_64_3 (h : ∃ 𝓕 : FunFamily, 𝓕.StrongOneWay) :
     ∃ 𝓖 : FunFamily, 𝓖.inLen = .var ∧ 𝓖.StrongOneWay ∧ 𝓖.QuadraticCode :=
   PadQuad.exists_family h

@@ -6,7 +6,9 @@ Authors: TCSlib contributors
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Cryptography.Asymptotic.Collections
 import TCSlib.Cryptography.Asymptotic.UniversalLemmas
-import Mathlib.Data.Nat.Find
+import TCSlib.Cryptography.Asymptotic.UniversalPadding.Parameter
+import TCSlib.Cryptography.Asymptotic.UniversalPadding.BinaryRoot
+import TCSlib.Cryptography.Asymptotic.UniversalPadding.Machine
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,13 +28,18 @@ length. For `d` dominating `ℓ`, `𝓕.outLen` and the running time of `F` (`ex
 the data block and the `F`-call fit in the input (`ℓ(ν m) + L(ν m) ≤ (ν m)^d ≤ m`), so the
 padding is lossless and `g'` inherits one-wayness (`PadQuad.strongOneWay`, the reduction
 `B(1^n, f(b)) = A'(1^m, ⟨a, f(b)⟩ padded).take ℓ(n)` with the padding sampled from the coins,
-[Gar26, Lemma 2.3]); a linear-time multitape evaluator (`PadQuad.exists_linearTime_gStr`, the
-only new machine, **admitted**) gives a quadratic-time one-work-tape binary machine through
+[Gar26, Lemma 2.3]); a linear-time multitape evaluator (`PadQuad.exists_linearTime_gStr`) gives a quadratic-time one-work-tape binary machine through
 `Turing.FinTM.one_work_tape_binary` and `Turing.exists_codeTM` (`PadQuad.quadraticCode_of_linear`).
 
 **Deviation:** the text defines `g'` on lengths `m = n^c` only; here every length `m` is
 handled through `ν` (data first, padding after, zero-filled to `2m` bits), see the docstring of
 `TCSlib.Cryptography.lemma_64_3`.
+
+## Contents
+
+* `UniversalPadding.Parameter` — the recovered parameter and its bounds.
+* `UniversalPadding.BinaryRoot` — the binary computation of the shifted parameter.
+* `UniversalPadding.Machine` — the linear-time word evaluator.
 
 ## Main definitions
 
@@ -44,7 +51,7 @@ handled through `ν` (data first, padding after, zero-filled to `2m` bits), see 
 * `TCSlib.Cryptography.PadQuad.exists_pow_dominates` — `p(n) ≤ n^d` eventually.
 * `TCSlib.Cryptography.PadQuad.easy_of_linear`, `PadQuad.quadraticCode_of_linear` — the two
   computability clauses from the linear-time evaluator.
-* `TCSlib.Cryptography.PadQuad.exists_linearTime_gStr` — the linear-time evaluator (admitted).
+* `TCSlib.Cryptography.PadQuad.exists_linearTime_gStr` — the linear-time evaluator.
 * `TCSlib.Cryptography.PadQuad.strongOneWay`, `TCSlib.Cryptography.PadQuad.exists_family` —
   one-wayness of the padded family and the statement of [PS10, Lemma 64.3] with
   `QuadraticCode` unfolded.
@@ -61,7 +68,7 @@ namespace TCSlib.Cryptography.PadQuad
 
 open Complexity Turing TCSlib.Cryptography
 
-/-! ## Polynomial domination and the parameter recovery -/
+/-! ## Polynomial domination -/
 
 /-- Every syntactic polynomial is eventually dominated by a power: `p(n) ≤ n^d` for
 `n ≥ n₁`, with `d ≥ 1` (`d := c + 1` and `n₁ := C 2^c + 1` for the majorant `C (n + 1)^c`). -/
@@ -73,32 +80,6 @@ theorem exists_pow_dominates (p : PolyExpr) : ∃ d n₁ : ℕ, 1 ≤ d ∧ ∀ 
     _ = (C * 2 ^ c) * n ^ c := by rw [mul_pow]; ring
     _ ≤ n * n ^ c := Nat.mul_le_mul_right _ (by omega)
     _ = n ^ (c + 1) := by ring
-
-/-- The parameter recovered from the input length `m`: the largest `n ≤ m` with `n^d ≤ m`
-(`ν m = ⌊m^{1/d}⌋`). -/
-def nu (d m : ℕ) : ℕ := Nat.findGreatest (fun n => n ^ d ≤ m) m
-
-/-- `ν(m)^d ≤ m`. -/
-theorem nu_pow_le {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : nu d m ^ d ≤ m :=
-  Nat.findGreatest_spec (P := fun n => n ^ d ≤ m) (Nat.zero_le m)
-    (by show 0 ^ d ≤ m; rw [Nat.zero_pow hd]; exact Nat.zero_le m)
-
-/-- `ν(m) ≤ m`. -/
-theorem nu_le (d m : ℕ) : nu d m ≤ m := Nat.findGreatest_le m
-
-/-- `m < (ν(m) + 1)^d`: the recovered parameter is maximal. -/
-theorem lt_succ_nu_pow {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : m < (nu d m + 1) ^ d := by
-  by_cases h : nu d m < m
-  · have := Nat.findGreatest_is_greatest (P := fun n => n ^ d ≤ m) (n := m) (k := nu d m + 1)
-      (Nat.lt_succ_self _) (by omega)
-    exact not_le.mp this
-  · have hm : nu d m = m := le_antisymm (nu_le d m) (not_lt.mp h)
-    rw [hm]
-    exact lt_of_lt_of_le (Nat.lt_succ_self m) (Nat.le_self_pow (by omega) _)
-
-/-- `n ≤ ν(m)` whenever `n^d ≤ m`. -/
-theorem le_nu {d : ℕ} (hd : 1 ≤ d) {n m : ℕ} (h : n ^ d ≤ m) : n ≤ nu d m :=
-  Nat.le_findGreatest ((Nat.le_self_pow (by omega) n).trans h) h
 
 /-! ## The padded function -/
 
@@ -141,31 +122,26 @@ theorem ofFn_family_f (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (
 
 /-! ## The computability clauses -/
 
-/-- **The linear-time evaluator of the padded family** [PS10, Lemma 64.3, "`g'` is computable
-in time `O(n²)`"; the only new machine of the lemma] — **admitted**. Given a machine `M` for
-`F` within `C (k + 1)^c` and `d` dominating the data length and the running time of `F` on
-`⟨1^n, b⟩` (`hdom`), some multitape machine computes `gStr F ℓ d` in linear time.
+/-- The padded family has a linear-time multitape evaluator.
+[PS10, Lemma 64.3, the quadratic-time computation of the padded function]
+Given a machine for F within C (k + 1)^c and a fixed degree dominating the
+data length and the call cost, the evaluator computes gStr in linear time.
 
-**Proof sketch (construction).** On input `z` of length `m`: (1) the parameter `1^{ν m}` by
-incremental unary counting — maintain `1^n` and the powers `1^{(n+1)^j}`, `j ≤ d`, on `d + 1`
-tapes, advancing `n` while `1^{(n+1)^d}` fits in the input (the powers are updated by the
-binomial identity, total cost `∑_{n ≤ ν m} O((n+1)^{d-1}) = O(m)`), or equivalently `d`-th root
-extraction by consuming the input in chunks of sizes `(n+1)^d − n^d`; (2) `1^{ℓ(ν m)}` by
-`Turing.FinTM.computesFunInTime_polyUnary` on the short string `1^{ν m}`, of cost
-`O((ν m + 1)^{deg ℓ + 1}) ≤ O(m)` by `hdom` (through `Turing.FinTM.exists_comp_on_image`, which
-charges the second stage at the original input length); (3) the split
-`Turing.FinTM.computesFunInTime_pairSplitAt` on `⟨1^{ℓ(ν m)}, z⟩`; (4) the call of `M` on
-`⟨1^{ν m}, z.take ℓ(ν m)⟩`, of cost `C (2 ν m + 3 + ℓ(ν m))^c ≤ (ν m)^d ≤ m` for `ν m ≥ n₁`
-(finitely many smaller `m` are absorbed in the linear constant), again on the image; (5) the
-concatenation `Turing.FinTM.computesFunInTime_pairConcat`, the zero filling (a one-state scan
-of the input emitting two `false` per cell) and the cut to `2m` bits
-(`pairSplitAt` on `⟨z ++ z, ·⟩`, `computesFunInTime_pairDup`/`pairConcat`). All stages are
-linear or charged on short images, so the total is `c' (m + 1)`. -/
+**Proof sketch.** Compute the input length in binary and recover the shifted
+root by interval halving. At degree one, a single transducer suffices.
+At larger degrees, the emitting loop converts the canonical binary root
+to unary within a quadratic bound in the root, which fits the input length.
+Evaluate the syntactic length polynomial on the shifted unary word using
+the sharp monomial emitter. Restore the root's token and split the data.
+The timed payload map retains the suffix while applying F to its actual
+encoded argument. Concatenate the suffix, result and zeros, and cut to
+twice the input length. The image bounds cover every length, including
+the empty word and parameters below the domination threshold. -/
 theorem exists_linearTime_gStr {F : List Bool → List Bool} {M : FinTM Bool} {C c : ℕ}
     (hM : M.ComputesFunInTime F fun k => C * (k + 1) ^ c) (ℓ : PolyExpr) {d n₁ : ℕ}
     (hd : 1 ≤ d) (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d) :
     ∃ (M' : FinTM Bool) (c' : ℕ), M'.ComputesFunInTime (gStr F ℓ d) fun m => c' * (m + 1) := by
-  sorry
+  simpa only [gStr, raw] using exists_linearTime_padded hM ℓ hd hdom
 
 /-- **`g'` is easy to compute** from a linear-time evaluator: the evaluator on `⟨1^m, y⟩`
 applies `gStr` to the second component (`ofFn_family_f`). -/
@@ -511,8 +487,8 @@ end Hardness
 /-- **[PS10, Lemma 64.3] with `QuadraticCode` unfolded**: from a strong one-way family, a
 strong one-way family with `inLen = var` computable by a coded machine in time `c₀ (m + 1)²`
 on the bare input — the padded family at the degree `d` of `exists_pow_dominates` applied to
-`ℓ + L + (running time of the evaluator)`, given its linear-time evaluator
-(`exists_linearTime_gStr`, admitted).
+`ℓ + L + (running time of the evaluator)`, using its linear-time evaluator
+(`exists_linearTime_gStr`).
 
 **Proof sketch.** `h.easy` gives `F` with machine `M` within `C (k + 1)^c`; dominate
 `ℓ + L + C (2n + 3 + ℓ(n))^c` by `n^d` from `n₁` on (`exists_pow_dominates` on the syntactic
