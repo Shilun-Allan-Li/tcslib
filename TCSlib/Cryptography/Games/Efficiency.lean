@@ -5,13 +5,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.BitCodec
 import TCSlib.Cryptography.Games.Probability
 import TCSlib.Cryptography.Games.Bridges.Machines
+import TCSlib.Cryptography.Games.Efficiency.Strings
+import TCSlib.Cryptography.Games.Efficiency.Replay
+import TCSlib.Cryptography.Games.Efficiency.Handler
+import TCSlib.Cryptography.Games.Efficiency.OracleBridge
+import TCSlib.Cryptography.Games.Efficiency.Interactive
+import TCSlib.Cryptography.Games.Efficiency.InteractiveSpec
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# The efficiency of reductions (skeleton for the efficiency fill)
+# The efficiency of reductions
 
 A reduction runs a machine adversary `A` and answers `A`'s queries with a polynomial-time
 **handler**. Proved once, the targets below say that the result is again a machine, so the
@@ -19,9 +25,20 @@ hardness assumptions, which quantify over machines (`Complexity.NUPPT`), apply t
 `briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`. The template is Frederick Dehmel's GGM
 reduction machine (`Asymptotic/GGMReduction*.lean`), whose loop `GGMRed.stateLoopFun` is reused.
 
-**Status: skeleton.** The definitions (T0) are final. The statements of T1, T2 and T4 and of the
-companion `exists_toCompOn_of_toComp` are frozen at the issue of the fill brief
-(`briefs/pass-shelat-ch5-8/fills/efficiency/`). Their proofs are the fill's.
+**Status: proved.** The definitions (T0) are final. The statements of T1, T2 and T4 and of the
+companion `exists_toCompOn_of_toComp` were frozen at the issue of the fill brief
+(`briefs/pass-shelat-ch5-8/fills/efficiency/`); the efficiency fill (`s2b-efficiency`) proved them,
+with the helper modules below (namespace `TCSlib.Cryptography.Games.EffFill`).
+
+## Contents
+
+* `Games.Efficiency.Strings`: the string layer (log append, fixed-length decoding, the canonical
+  decoder, the activation loop over `GGMRed.stateLoopFun`, the machine glue).
+* `Games.Efficiency.Replay`: replaying a computation with a next-move function; cost scaling.
+* `Games.Efficiency.Handler`: the machine of a non-interactive handler (T1).
+* `Games.Efficiency.OracleBridge`: the translators to next-query machines (T4).
+* `Games.Efficiency.Interactive`: the replay machine of an interactive handler (T2).
+* `Games.Efficiency.InteractiveSpec`: its functional equation (T2).
 
 ## The shape of a reduction
 
@@ -279,24 +296,28 @@ seed, `A`'s coins) to `B`'s coins, with the following property. Run `A` on the i
 let `a` be `A`'s output and `s` the final state. Then `B`'s output on input `z` with coins
 `φ (ω, r)` is exactly the reduction's output `H.result n z ω s a`.
 
-**Proof sketch** (the fill's; route note §"The route", steps 1–4 without the log replay):
-1. `B`'s first step computes `A`'s input `H.advIn (seedIn n z ω)` (polynomial-time by
-   `H.advIn_poly`; so its length is polynomial in `n + |z|`), and keeps it in the loop state.
-2. `B`'s round function, on `⟨1^n, z, ω, r, A's input, history, state⟩`, runs `A`'s next-move
-   function on `⟨A's input, encoded history⟩` (`NUPPT.polyTimeComputable_output`), decodes the
-   move (`decodeBitMove`, read through `decodeBitMove_eq_query_iff` and
-   `decodeBitMove_of_not_canonical`), and either feeds the query to `H.run` (polynomial-time by
-   `H.poly`), appending the answer and the new state, or stops with `A`'s output and the state.
-3. `GGMRed.stateLoopFun` runs at most `q(n) + 1` rounds; `stateLoopFun_poly` makes it
-   polynomial-time, given that the histories stay below a polynomial (all lengths are fixed).
-   The loop's result `(a, s)` is finalized by `H.out` on `⟨seedIn n z ω, ⟨s, a⟩⟩`
-   (polynomial-time by `H.out_poly`).
-4. `B := NUPPT.ofPolyTime` of the composite, with the coins split as `(ω, r)` by `exists_split`
-   (`Complexity/Randomized/Closure.lean`).
-5. The functional equation: by induction on the remaining budget, the loop's state after `t`
-   rounds is the simulation's state after `t` queries (`toCompOn_eq` and `buildComp`'s case
-   lemmas against `simulate_query`, `PolyHandler.impl_apply` and the `answer` lemmas);
-   `stateLoopFun_eval` reads off `(a, s)`, and `result_eq` the output. -/
+**Proof sketch** (the fill's; route note §"T1").
+1. `B`'s raw function is the activation loop `EffFill.hRaw` (`GGMRed.stateLoopFun` through
+   `EffFill.actLoop`) on the layout `⟨⟨⟨1^n, ⟨z, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩`. The initial state
+   `s₀ = H.init n` is part of the advice, beside `A`'s advice `α_A`, since `init` is an arbitrary
+   function of `n`; so `B` is non-uniform even when `A` is uniform. The loop state is
+   `⟨L, ⟨s, 1^t⟩⟩` (`A`'s encoded log, `H`'s state, the answered queries); the context
+   `seedIn n z ω` and `A`'s input are recomputed in every round.
+2. A round runs `A` on `⟨A's input, L⟩` (`NUPPT.polyTimeComputable_output`) and reads its move
+   through the canonical decoder `EffFill.canonWord`, which returns the canonical word of
+   `decodeBitMove`'s move on every word (`EffFill.canonWord_eq`, canonicity tested by re-encoding).
+   It stops with `H.out ⟨ctx, ⟨s, a⟩⟩` on an output `a`, and with `H.out ⟨ctx, ⟨s, 0^{dα(n)}⟩⟩` on a
+   query when `t = q(n)`. Otherwise it feeds the query to `H.run`, decodes the answer and the new
+   state componentwise (`EffFill.fixLen`, `EffFill.ofFn_getD_decodeFin` and the `answer` lemmas),
+   and appends the entry to `L` (`EffFill.encodeLog_append_single`).
+3. At most `q(n) + 1` rounds, with states of polynomial length (all lengths are fixed), so the raw
+   function is polynomial-time (`EffFill.hRaw_poly`, from `GGMRed.stateLoopFun_poly`).
+4. The functional equation (`EffFill.hRaw_spec`): by induction on the remaining budget, the loop's
+   state after `t` rounds encodes the simulation after `t` queries (`toCompOn_eq`, `buildComp`'s
+   case lemmas, `simulate_query`, `PolyHandler.impl_apply`); `GGMRed.stateLoopFun_eval` reads off
+   the output (`EffFill.runsTo_stop`), and `result_eq` and `seedIn_eq` identify it.
+5. `B` is `NUPPT.ofPolyTime` of the raw function followed by `NUPPT.exists_split` with
+   `p = H.seedLen` (`EffFill.exists_splitMachine`); `φ` appends the seed and the coins. -/
 theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → PolyExpr)
     (dα : PolyExpr) (H : PolyHandler k din dout) :
     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
@@ -307,7 +328,51 @@ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → P
                 (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
                 n (q.eval n) (H.advInput n z ω) r) (H.init n) = .pure (a, s) ∧
             B.runAt n z (φ (ω, r)) = H.result n z ω s a := by
-  sorry
+  -- The machine: the handler loop of `EffFill.hRaw`, with `⟨A.advice n, s₀⟩` as advice and the
+  -- seed passed as data.
+  obtain ⟨B, hB⟩ := EffFill.exists_splitMachine A
+    (EffFill.hRaw_poly A q dα din dout H.stateLen H.poly H.advIn_poly H.out_poly)
+    (.add (.add (.mul (.const 2) A.adv) (.const 2)) H.stateLen)
+    (fun n => pairEncode (A.advice n) (List.ofFn (H.init n))) (fun n => by
+      rw [length_pairEncode, List.length_ofFn]
+      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+      have := A.advice_length n
+      omega) H.seedLen
+  refine ⟨B, fun n => ?_⟩
+  obtain ⟨φ, hφ⟩ := hB n
+  refine ⟨φ, fun z ω r => ?_⟩
+  -- The handler's answers are `run`'s output decoded componentwise.
+  have hans : ∀ (i : Fin k) (x : Fin ((din i).eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool),
+      List.ofFn (H.answer n z ω s i x).1 = EffFill.fixLen ((dout i).eval n) (pairFstD (H.run
+        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) ∧
+      List.ofFn (H.answer n z ω s i x).2 = EffFill.fixLen (H.stateLen.eval n) (pairSndD (H.run
+        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) := by
+    intro i x s
+    rw [← PolyHandler.input_eq]
+    cases h : pairDecode (H.run (PolyHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)))
+      with
+    | none =>
+      rw [PolyHandler.answer_of_pairDecode_eq_none H h, pairFstD_of_pairDecode_eq_none h,
+        pairSndD_of_pairDecode_eq_none h, EffFill.fixLen_nil, EffFill.fixLen_nil, ofFn_zeroBits,
+        ofFn_zeroBits]
+      exact ⟨rfl, rfl⟩
+    | some p =>
+      obtain ⟨yw, sw⟩ := p
+      rw [PolyHandler.answer_of_pairDecode_eq_some H h, eq_pairEncode_of_pairDecode _ _ _ h,
+        pairFstD_pairEncode, pairSndD_pairEncode, EffFill.ofFn_getD_decodeFin,
+        EffFill.ofFn_getD_decodeFin]
+      exact ⟨rfl, rfl⟩
+  obtain ⟨a, s, hsim, hraw⟩ := EffFill.hRaw_spec A q dα din dout H.stateLen H.run H.advIn H.out
+    (spec' := unifSpec) n z (List.ofFn ω) r (H.init n) (fun i x s => H.answer n z ω s i x) hans
+  refine ⟨a, s, ?_, ?_⟩
+  · have himpl : H.impl n z ω = fun i x s => OracleComp.pure (H.answer n z ω s i x) := by
+      funext i x s
+      exact H.impl_apply n z ω i x s
+    rw [himpl, PolyHandler.advInput_eq, seedIn_eq]
+    exact hsim
+  · rw [hφ, hraw, PolyHandler.result_eq, seedIn_eq]
 
 /-! ### Interactive handlers (T2) -/
 
@@ -490,23 +555,29 @@ with coins `φ (ω, r)` is, as an oracle computation, exactly the reduction: `A`
 `H.advInput n z ω`, its queries answered by `H` (input `z`, seed `ω`) from `H`'s initial state,
 followed by `H`'s finalization on the final state and `A`'s output.
 
-**Proof sketch** (the fill's; route note §"The route", with the log replay).
-1. `B`'s next-move function, on `⟨z, outer log⟩` with coins `(ω, r)`, first computes `A`'s input
-   `H.advIn (seedIn n z ω)` (`H.advIn_poly`). It then replays: it splits the outer log into the
-   calls of `H` and the finalization. Within each call it reruns `H.run` round by round, and
-   between calls it reruns `A`'s next-move function on `⟨A's input, inner log⟩`, the inner log
-   rebuilt from the calls' answers. Once `A` returns `a` (or meets its own budget), it reruns
-   `H.finRun` on `⟨seedIn n z ω, ⟨s, ⟨a, L⟩⟩⟩` with the rest `L` of the log. It stops at the first
-   pending outer query (and asks it) or at the finalization's output (and returns its canonical
-   word, `encodeBitMove`). Every length is fixed, so each replay is polynomial
-   (`stateLoopFun_poly`, as in T1).
-2. `B`'s budget suffices: each of `A`'s at most `q(n)` queries costs at most `perCall(n)` outer
-   queries and the finalization at most `finCall(n)` (`buildComp_costBoundedBy`,
-   `simulate_costBoundedBy`, `CostBoundedBy.bind`), so `B` never meets its own timeout before
-   the reduction ends, and it mirrors every default of `A`, of a call and of the finalization.
-3. The functional equation: by induction on the outer log, the two computation trees agree node
-   by node (`simulate_query`, `impl_apply`, `call_eq`, `finish_eq`, `toCompOn_eq`, `buildComp`'s
-   case lemmas, `decodeBitMove_encodeBitMove`). Coins split as `(ω, r)` by `exists_split`. -/
+**Proof sketch** (the fill's; route note §"T2", with the log replay).
+1. `B`'s next-move function, on `⟨z, O⟩` (`O` its encoded outer log) with the seed `ω`, `A`'s coins
+   `r` and the advice `⟨α_A, s₀⟩` (`s₀ = H.init n`, as in T1), is the activation loop
+   `EffFill.iRaw`, which **replays** the whole reduction, one activation per round: a round of `A`
+   opens a call (a query within budget) or the finalization (an output, or a query at budget `0`
+   with the all-`false` output); a round of a call reruns `H.run` on
+   `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, its answer (or the joint default at budget `0`) appending
+   the entry to `A`'s log; a round of the finalization reruns `H.finRun`. An outer query within
+   budget is answered by the next entry of `O`; when `O` is exhausted it is `B`'s next move, its
+   canonical word (`EffFill.canonWord_eq`), and so is the finalization's output.
+2. At most `2 + finCall(n) + q(n)(perCall(n) + 2)` rounds, with states of polynomial length
+   (the unreplayed part of `O` is bounded by the input), so the raw function is polynomial-time
+   (`EffFill.iRaw_poly`, from `GGMRed.stateLoopFun_poly`).
+3. The reduction tree makes at most `q(n) · perCall(n) + finCall(n)` queries
+   (`toCompOn_costBoundedBy`, `buildComp_costBoundedBy`, `EffFill.costBoundedBy_mul`,
+   `simulate_costBoundedBy`, `CostBoundedBy.bind`), so `B`'s budget never cuts the replay short.
+4. The functional equation (`EffFill.iRaw_spec`): `B`'s next-move function replays the reduction
+   tree from the empty log (`EffFill.ReplaysFrom`), by induction along the phases
+   (`EffFill.adv_phase`, `call_phase`, `fin_phase`) on every branch, since the outer answers are
+   arbitrary; then `EffFill.buildComp_of_replaysFrom` gives the equality of trees. The handler's
+   calls and finalization are read through `impl_apply`, `call_eq`, `input_eq`, `finish_eq` and
+   `finInput_eq`.
+5. Coins and advice as in T1 (`EffFill.exists_splitMachine`). -/
 theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
     (din dout : Fin k → PolyExpr) (din' dout' : Fin k' → PolyExpr) (dα : PolyExpr)
     (H : InteractiveHandler k din dout k' din' dout') :
@@ -519,7 +590,41 @@ theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
           B.toCompOn
             (bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (H.outLen.eval n))
             n (q.eval n * H.perCall.eval n + H.finCall.eval n) z (φ (ω, r)) := by
-  sorry
+  -- The machine: the replay loop of `EffFill.iRaw`, with `⟨A.advice n, s₀⟩` as advice and the
+  -- seed passed as data.
+  obtain ⟨B, hB⟩ := EffFill.exists_splitMachine A
+    (EffFill.iRaw_poly A q dα din dout din' H.stateLen H.perCall H.outLen H.finCall dout' H.poly
+      H.advIn_poly H.finRun_poly)
+    (.add (.add (.mul (.const 2) A.adv) (.const 2)) H.stateLen)
+    (fun n => pairEncode (A.advice n) (List.ofFn (H.init n))) (fun n => by
+      rw [length_pairEncode, List.length_ofFn]
+      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+      have := A.advice_length n
+      omega) H.seedLen
+  refine ⟨B, fun n => ?_⟩
+  obtain ⟨φ, hφ⟩ := hB n
+  refine ⟨φ, fun z ω r => ?_⟩
+  -- The handler's calls and finalization are the raw ones of `EffFill`.
+  have himpl : H.impl n z ω =
+      EffFill.iImpl din dout din' dout' H.stateLen H.perCall H.run n z (List.ofFn ω) := by
+    funext i x s
+    rw [InteractiveHandler.impl_apply, EffFill.iImpl_apply, InteractiveHandler.call_eq,
+      EffFill.iCall_eq]
+    simp only [InteractiveHandler.input_eq]
+  have hfin : ∀ (s : Fin (H.stateLen.eval n) → Bool) (a : Fin (dα.eval n) → Bool),
+      H.finish n z ω s a =
+        EffFill.iFinish din' dout' H.stateLen H.outLen H.finCall H.finRun n z (List.ofFn ω) s a :=
+            by
+    intro s a
+    rw [InteractiveHandler.finish_eq, EffFill.iFinish_eq]
+    simp only [InteractiveHandler.finInput_eq, seedIn_eq]
+  rw [himpl, InteractiveHandler.advInput_eq, seedIn_eq]
+  simp only [hfin]
+  rw [← EffFill.iRaw_spec A q dα din dout din' dout' H.stateLen H.perCall H.outLen H.finCall H.run
+    H.advIn H.finRun n z (List.ofFn ω) r (H.init n), NUPPT.toCompOn_eq, bitCodec_timeout]
+  congr 1
+  funext O
+  rw [bitCodec_decodeMove, hφ, EffFill.iX_eq]
 
 /-! ### Companions: adversaries without input, and the bridge to pseudorandom functions (T4) -/
 
@@ -530,17 +635,25 @@ stated for adversaries with input, cover adversaries without one.
 
 **Proof sketch.** `A'` is `NUPPT.exists_comp` of `A` with `pre = pairSndD` and `post = id`, so
 `A'.coins = A.coins` and `A'.runAtL n ⟨x, L⟩ r = A.runAtL n L r` (`pairSndD_pairEncode`). The
-bijection `φ` transports the coins along `A.coinLen n = A'.coinLen n` (`finCongr`), so
-`List.ofFn (φ r) = List.ofFn r` (`List.ofFn_congr`); with `runAt_eq` the next-move functions of
+bijection `φ` is `NUPPT.coinsCongr`, which transports the coins along the equal coin polynomials
+and keeps the coin string (`NUPPT.runAt_coinsCongr`); with `runAt_eq` the next-move functions of
 `A'.toCompOn codec n q x (φ r)` and `A.toComp codec n q r` agree on every log, and
-`toCompOn_eq`, `toComp_eq` conclude. The length equation needs an equation of `NUPPT.coinLen`,
-published beside its definition. -/
+`toCompOn_eq`, `toComp_eq` conclude. -/
 theorem exists_toCompOn_of_toComp (A : NUPPT) :
     ∃ A' : NUPPT, A'.coins = A.coins ∧ ∀ n : ℕ, ∃ φ : A.Coins n ≃ A'.Coins n,
       ∀ {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α) (q : ℕ)
         (x : List Bool) (r : A.Coins n),
         A'.toCompOn codec n q x (φ r) = A.toComp codec n q r := by
-  sorry
+  obtain ⟨A', hc, -, -, hA'⟩ :=
+    NUPPT.exists_comp A polyTimeComputable_pairSndD polyTimeComputable_id
+  refine ⟨A', hc, fun n => ⟨NUPPT.coinsCongr hc.symm n, ?_⟩⟩
+  intro ι α spec codec q x r
+  have hnext : (fun hist => codec.decodeMove
+      (A'.runAt n (pairEncode x (codec.encodeLog hist)) (NUPPT.coinsCongr hc.symm n r))) =
+      fun hist => codec.decodeMove (A.runAt n (codec.encodeLog hist) r) := by
+    funext hist
+    rw [NUPPT.runAt_coinsCongr, hA', pairSndD_pairEncode, id_eq, ← NUPPT.runAt_eq]
+  rw [NUPPT.toCompOn_eq, NUPPT.toComp_eq, hnext]
 
 /-- **T4 (the efficiency fill's target; the bridge to pseudorandom functions).** An oracle
 machine `B` against one `bitCodec` oracle (`ℓ₁(n)`-bit queries, `ℓ₂(n)`-bit answers) with a
@@ -551,27 +664,43 @@ machine `B'` with the same coins whose oracle adversary `B'.toOracleAdversary`, 
 oracle and a one-bit output (through `oracleDist_apply` and `Bridge.eval_eq_evalFn`).
 
 **Proof sketch.**
-1. `B'` translates between the two formats around `B` (`NUPPT.exists_comp` with polynomial-time
-   pre- and post-processing, or `NUPPT.ofPolyTime` of the composite to read `1^{ℓ₁(n)}`):
-   - its input, the history `⟨⟨x₁, y₁⟩, ⟨…, []⟩⟩` (`encodeHist`), becomes `⟨[], ⟨⟨[], ⟨x₁, y₁⟩⟩,
-     ⟨…, []⟩⟩⟩`, `B`'s empty input and its log (`encodeHist_cons`, `encodeLog_cons`,
-     `bitCodec_encodeEntry` with `1^0 = []`), polynomial-time by iterating over the pairs;
-   - `B`'s output, a move decoded by `decodeBitMove` (`decodeBitMove_eq_query_iff`,
-     `decodeBitMove_of_not_canonical`, `decodeIdx_eq_some_iff` at `k = 1`), becomes the query
-     `⟨[false], x⟩` for a query `x`, and the verdict `[true, b]` for an output `[b]` and for the
-     default.
+1. `B'` is `NUPPT.exists_comp` of `B` with two polynomial-time translators, so `B'.coins = B.coins`:
+   - `EffFill.bridgePre` maps the history `⟨⟨x₁, y₁⟩, ⟨…, []⟩⟩` (`encodeHist`) to
+     `⟨[], ⟨⟨[], ⟨x₁, y₁⟩⟩, ⟨…, []⟩⟩⟩`, `B`'s empty input and its log (`bitCodec_encodeEntry` with
+     `1^0 = []`), by emitting one piece per suffix (`Complexity.polyTimeComputable_iterateEmit` with
+     the step `pairSndD`; `EffFill.bridgePre_encodeHist`);
+   - `EffFill.bridgePost` maps a canonical query word `⟨[false], ⟨[], x⟩⟩` (tested by re-encoding)
+     to `⟨[false], x⟩`, the word `⟨[true], [true]⟩` to the verdict `[true, true]`, and every other
+     word to `[true, false]`; then `decodeOracleMove` and `decodeBitMove` read corresponding moves
+     (`EffFill.bridgePost_spec`, from `decodeBitMove_query`, `decodeBitMove_ret`,
+     `decodeBitMove_of_not_canonical` and the case lemmas of `decodeOracleMove`), a payload of the
+     wrong length included.
 2. Both trees branch on corresponding moves, so by induction on the budget
-   (`toOracleAdversary_eq` and `buildTree`'s case lemmas against `toCompOn_eq` and `buildComp`'s)
-   their evaluations against `f` and `fun _ => f` agree (`QueryTree.eval_query`,
+   (`EffFill.eval_buildTree_bridge`: `buildTree`'s and `buildComp`'s case lemmas) their
+   evaluations against `f` and `fun _ => f` agree (`QueryTree.eval_query`,
    `OracleComp.evalFn_query`); at the timeout the verdict `false` is bit `0` of `zeroBits 1`
-   (`zeroBits_apply`).
-3. `φ` transports the coins along `B.coins = B'.coins`, as in `exists_toCompOn_of_toComp`. -/
+   (`zeroBits_apply`). `toOracleAdversary_eq` and `toCompOn_eq` unfold the two sides.
+3. `φ` is `NUPPT.coinsCongr`, as in `exists_toCompOn_of_toComp`. -/
 theorem exists_toOracleAdversary_of_bitCodec (B : NUPPT) (ℓ₁ ℓ₂ : PolyExpr) :
     ∃ B' : NUPPT, B'.coins = B.coins ∧ ∀ n : ℕ, ∃ φ : B.Coins n ≃ B'.Coins n,
       ∀ (q : ℕ) (r : B.Coins n) (f : (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)),
         (B'.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) q (φ r)).eval f =
           (B.toCompOn (bitCodec (fun _ : Fin 1 => ℓ₁.eval n) (fun _ => ℓ₂.eval n) 1) n q []
               r).evalFn (fun _ => f) 0 := by
-  sorry
+  obtain ⟨B', hc, -, -, hB'⟩ :=
+    NUPPT.exists_comp B EffFill.bridgePre_poly EffFill.bridgePost_poly
+  refine ⟨B', hc, fun n => ⟨NUPPT.coinsCongr hc.symm n, fun q r f => ?_⟩⟩
+  have hnext : (fun hist : List ((Fin (ℓ₁.eval n) → Bool) × (Fin (ℓ₂.eval n) → Bool)) =>
+      decodeOracleMove (ℓ₁.eval n)
+      (B'.runAt n (encodeHist hist) (NUPPT.coinsCongr hc.symm n r))) =
+      fun hist => decodeOracleMove (ℓ₁.eval n)
+        (EffFill.bridgePost (B.runAt n (EffFill.bridgePre (encodeHist hist)) r)) := by
+    funext hist
+    rw [NUPPT.runAt_coinsCongr, hB', ← NUPPT.runAt_eq]
+  have h := EffFill.eval_buildTree_bridge (ℓ₁.eval n) (ℓ₂.eval n) (fun y => B.runAt n y r) f q []
+  rw [EffFill.logHist_eq, List.map_nil] at h
+  rw [NUPPT.toOracleAdversary_eq, hnext, NUPPT.toCompOn_eq]
+  simp only [bitCodec_decodeMove, bitCodec_timeout]
+  exact h
 
 end TCSlib.Cryptography.Games
