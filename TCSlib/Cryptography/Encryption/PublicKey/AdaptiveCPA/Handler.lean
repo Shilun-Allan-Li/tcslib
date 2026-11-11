@@ -6,6 +6,8 @@ import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Games.Efficiency
 import TCSlib.Cryptography.Asymptotic.OneWayLemmas
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
+import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Run
 import TCSlib.Complexity.ClassNP.PolyTimePrefix
 
@@ -152,32 +154,10 @@ theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool
 
 /-! ### Strings -/
 
-/-- Reading a padding: `⟦padFin k a⟧ = a ++ 0^{k - |a|}` when `|a| ≤ k`. -/
-theorem ofFn_padFin_of_le {k : ℕ} {a : List Bool} (h : a.length ≤ k) :
-    List.ofFn (padFin k a) = a ++ List.replicate (k - a.length) false := by
-  have hl : (List.ofFn (padFin k a)).length =
-      (a ++ List.replicate (k - a.length) false).length := by
-    simp only [List.length_ofFn, List.length_append, List.length_replicate]
-    omega
-  refine List.ext_getElem hl fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, padFin_apply, List.getElem_append]
-  split_ifs with hi
-  · exact List.getD_eq_getElem _ _ hi
-  · rw [List.getD_eq_default _ _ (Nat.le_of_not_lt hi), List.getElem_replicate]
-
-/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k`. -/
-theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
+/-- `⟦padFin k a⟧ = padL k a`, the first `k` bits of `a ++ 0^k` (`ofFn_padFin_eq_take`). -/
+private theorem ofFn_padFin_eq_padL (k : ℕ) (a : List Bool) :
     List.ofFn (padFin k a) = EnsembleLemmas.padL k a := by
-  rw [EnsembleLemmas.padL_eq]
-  have hl : (List.ofFn (padFin k a)).length =
-      ((a ++ List.replicate k false).take k).length := by
-    simp only [List.length_ofFn, List.length_take, List.length_append, List.length_replicate]
-    omega
-  refine List.ext_getElem hl fun i h₁ h₂ => ?_
-  rw [List.getElem_ofFn, padFin_apply, List.getElem_take, List.getElem_append]
-  split_ifs with hi
-  · exact List.getD_eq_getElem _ _ hi
-  · rw [List.getD_eq_default _ _ (Nat.le_of_not_lt hi), List.getElem_replicate]
+  rw [EnsembleLemmas.padL_eq, ofFn_padFin_eq_take]
 
 /-- Appending to a pair appends to its second component. -/
 private theorem pairEncode_append (u v t : List Bool) :
@@ -197,7 +177,7 @@ private theorem fields_acState (n j : ℕ) (c : Fin (S.ctLen.eval n) → Bool) (
     simp only [length_pairEncode, List.length_replicate, List.length_ofFn, acStLen_eq,
       PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
-  rw [acState_eq, ofFn_padFin_of_le hlen, pairEncode_append, pairEncode_append]
+  rw [acState_eq, Collection.ofFn_padFin_of_le hlen, pairEncode_append, pairEncode_append]
   refine ⟨by rw [pairFstD_pairEncode], by rw [pairSndD_pairEncode, pairFstD_pairEncode], ?_⟩
   rw [pairSndD_pairEncode, pairSndD_pairEncode]
   exact List.take_left' List.length_ofFn
