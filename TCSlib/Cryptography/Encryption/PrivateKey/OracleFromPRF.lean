@@ -29,8 +29,8 @@ elsewhere.
 
 * `Composability.prfFixedScheme_cpa`, `Composability.prfFixedScheme_cca1` (Thm 168.2, stated;
   `sorry`s under the source's sketch).
-* `Composability.prfFixedScheme_not_cca2` (Claim 169.a, stated; a `sorry` under its sketch): an
-  explicit adversary with advantage `1`.
+* `Composability.prfFixedScheme_not_cca2` (Claim 169.a, proved): an explicit adversary with
+  advantage `1`.
 * `Composability.not_prfFixedScheme_cca2`: hence the scheme is not CCA2-secure (proved from the
   claim).
 
@@ -202,24 +202,6 @@ private theorem cca2FlipBits_unmask {n : ℕ} (m p : Fin n → Bool) :
     if i.val + 1 = n then !m i else m i
   split <;> cases m i <;> cases p i <;> rfl
 
-/-- Decrypting the flipped masked word gives precisely the flipped message. -/
-private theorem cca2Unmask {n : ℕ} (hn : 0 < n) (m p : Fin n → Bool) :
-    List.zipWith xor (cca2FlipLast (List.zipWith xor (List.ofFn m) (List.ofFn p)))
-      (List.ofFn p) = List.ofFn (cca2FlipBits m) := by
-  rw [zipWith_xor_ofFn_add, cca2FlipLast_ofFn hn, zipWith_xor_ofFn_add,
-    cca2FlipBits_unmask]
-
-/-- Reading a word at its exact length and writing the resulting vector loses no bits. -/
-private theorem cca2OfFn_padFin (d : ℕ) (w : List Bool) (hw : w.length = d) :
-    List.ofFn (padFin d w) = w := by
-  subst d
-  calc
-    List.ofFn (padFin w.length w) = List.ofFn (fun i : Fin w.length => w[i.val]) := by
-      apply congrArg List.ofFn
-      funext i
-      rw [padFin_apply, List.getD_eq_getElem w false i.isLt]
-    _ = w := List.ofFn_getElem w
-
 /-- The attack's next activation asks the challenge, asks decryption of the modified
 challenge, or negates the last bit of the second answer, according to the log. -/
 private def cca2Next (z : List Bool) : List Bool :=
@@ -324,7 +306,7 @@ private theorem cca2Encrypt (n : ℕ) (k m : Fin n → Bool)
     NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r
   refine ⟨x, hx.symm, ?_⟩
   rw [runAt_prfEnc hE, ← hx, hFE, zipWith_xor_ofFn_add]
-  apply cca2OfFn_padFin
+  apply GGMRed.ofFn_padFin_of_length
   simp only [length_pairEncode, List.length_ofFn, PolyExpr.eval_add,
     PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   omega
@@ -361,7 +343,7 @@ private def cca2Alter {d : ℕ} (c : Fin d → Bool) : Fin d → Bool :=
 /-- At positive width the modified ciphertext has exactly the flipped word. -/
 private theorem cca2Alter_ofFn {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
     List.ofFn (cca2Alter c) = cca2FlipLast (List.ofFn c) := by
-  apply cca2OfFn_padFin
+  apply GGMRed.ofFn_padFin_of_length
   rw [cca2FlipLast_length]
   · exact List.length_ofFn
   · intro he

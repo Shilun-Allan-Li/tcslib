@@ -62,8 +62,8 @@ the PRF scheme [PS10, Theorems 97.3 and 99.2].
 * `Encryption.PrivateKey.OracleSecurity` gives the fixed-length interface and adaptive oracle games.
 * `Encryption.PrivateKey.OracleFromPRF` gives the fixed-length PRF scheme and its oracle claims.
   The CPA and CCA1 proofs `prfFixedScheme_cpa` and `prfFixedScheme_cca1` are pending
-  [PS10, Theorem 168.2]. The CCA2 counterexample `prfFixedScheme_not_cca2` is also
-  pending, and `not_prfFixedScheme_cca2` depends on it.
+  [PS10, Theorem 168.2]. The CCA2 counterexample `prfFixedScheme_not_cca2` is proved
+  [PS10, §7.1.3, Claim 169.a], and so is `not_prfFixedScheme_cca2`.
 * `Encryption.PrivateKey.EncryptThenTag` gives the encrypt-then-tag scheme, which tags the
   whole ciphertext under an independent key [PS10, Algorithm 169.3].
   The CCA2 proof `ccaScheme_cca2` is pending [PS10, Theorem 170.4].
