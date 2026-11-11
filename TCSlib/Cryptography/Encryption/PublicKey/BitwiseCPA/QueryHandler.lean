@@ -54,10 +54,10 @@ def qDin (Lc Lq : PolyExpr) : Fin 2 → PolyExpr
   | 0 => Lc
   | 1 => Lq
 
-/-- Decryption queries have `Lc(n)` bits. -/
+/-- Decryption queries have `Lc(n)` bits: `qDin Lc Lq 0 = Lc`. -/
 theorem qDin_zero (Lc Lq : PolyExpr) : qDin Lc Lq 0 = Lc := rfl
 
-/-- Challenge queries have `Lq(n)` bits. -/
+/-- Challenge queries have `Lq(n)` bits: `qDin Lc Lq 1 = Lq`. -/
 theorem qDin_one (Lc Lq : PolyExpr) : qDin Lc Lq 1 = Lq := rfl
 
 /-- The answer lengths: `Ld(n)`-bit decryption answers and `Lc(n)`-bit challenge ciphertexts. -/
@@ -65,10 +65,10 @@ def qDout (Ld Lc : PolyExpr) : Fin 2 → PolyExpr
   | 0 => Ld
   | 1 => Lc
 
-/-- Decryption answers have `Ld(n)` bits. -/
+/-- Decryption answers have `Ld(n)` bits: `qDout Ld Lc 0 = Ld`. -/
 theorem qDout_zero (Ld Lc : PolyExpr) : qDout Ld Lc 0 = Ld := rfl
 
-/-- Challenge answers have `Lc(n)` bits. -/
+/-- Challenge answers have `Lc(n)` bits: `qDout Ld Lc 1 = Lc`. -/
 theorem qDout_one (Ld Lc : PolyExpr) : qDout Ld Lc 1 = Lc := rfl
 
 /-! ### The step function -/
@@ -105,7 +105,8 @@ theorem qRun_eq (ans : List Bool → List Bool) (w : List Bool) :
               (true :: pairSndD (pairSndD (pairSndD w))))
       else pairEncode [] (pairFstD (pairSndD w)) := rfl
 
-/-- A decryption query is answered with the empty string and keeps the state. -/
+/-- A decryption query is answered with the empty string and keeps the state:
+`qRun ans ⟨ctx, ⟨s, ⟨[], x⟩⟩⟩ = ⟨[], s⟩`. -/
 theorem qRun_dec (ans : List Bool → List Bool) (ctx s x : List Bool) :
     qRun ans (pairEncode ctx (pairEncode s (pairEncode [] x))) = pairEncode [] s := by
   simp only [qRun_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_nil,
@@ -144,7 +145,8 @@ theorem polyTimeComputable_qRun {ans : List Bool → List Bool} (hans : PolyTime
     polyTimeComputable_headD.comp (hF.comp (hS.comp hS))
   have hflag : PolyTimeComputable fun w => [(pairSndD (pairFstD (pairSndD w))).headD false] :=
     polyTimeComputable_headD.comp ht
-  have hrec := (hans.comp (hF.pairEncode (haux.pairEncode (polyTimeComputable_tail.comp ht)))).pairEncode hs
+  have hrec := (hans.comp (hF.pairEncode
+    (haux.pairEncode (polyTimeComputable_tail.comp ht)))).pairEncode hs
   have hnew := (hans.comp (hF.pairEncode (haux.pairEncode hx))).pairEncode
     (haux.pairEncode ((polyTimeComputable_const [true]).append hx))
   exact polyTimeComputable_ite hi (polyTimeComputable_ite hflag hrec hnew)
@@ -180,7 +182,8 @@ attribute [simps (config := { isSimp := false }) stateLen seedLen init run advIn
 
 /-! ### The handler's simulation -/
 
-/-- An empty answer decodes to all-`false` at every length. -/
+/-- An empty answer decodes to all-`false` at every length:
+`(decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ`. -/
 theorem decodeFin_nil_getD (ℓ : ℕ) : (decodeFin ℓ []).getD (zeroBits ℓ) = zeroBits ℓ := by
   rw [decodeFin_eq]
   split
@@ -198,8 +201,10 @@ variable {α : Type} (Lc Lq Ld Laux Lseed : PolyExpr) (aux : ℕ → List Bool)
   (n : ℕ) (z : List Bool)
   (ω : Fin ((qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).seedLen.eval n) → Bool)
 
-/-- A decryption query is answered all-`false` and keeps the state. -/
-theorem qHandler_answer_dec (s : Fin ((qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).stateLen.eval n) → Bool)
+/-- A decryption query is answered all-`false` and keeps the state:
+`(qHandler …).answer n z ω s 0 x = (zeroBits _, s)`. -/
+theorem qHandler_answer_dec
+    (s : Fin ((qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).stateLen.eval n) → Bool)
     (x : Fin ((qDin Lc Lq 0).eval n) → Bool) :
     (qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).answer n z ω s 0 x = (zeroBits _, s) := by
   have h : pairDecode ((qHandler Lc Lq Ld Laux Lseed aux ans hans fin hfin).run

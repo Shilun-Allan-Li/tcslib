@@ -28,12 +28,17 @@ depend on the public key. The proof below therefore goes back to single-bit secu
 ## Main results
 
 * `BitPublicKeyScheme.SingleBitSecure.bitwise_padded_cpa`: the padded bitwise scheme is
-  CPA-secure. Its helpers are `BitwiseCPA.QueryHandler` (the query-recording handler and its
-  machine by T1), `BitwiseCPA.Planted` (the planted challenge answer and the final bit) and
-  `BitwiseCPA.Eager` (eager challenge coins and readers).
+  CPA-secure.
 * `BitPublicKeyScheme.SingleBitSecure.bitwise_padded_adaptive_cpa`: and adaptively CPA-secure.
 * `BitPublicKeyScheme.SingleBitSecure.exists_adaptive_cpa`: a fixed-length scheme with `n`-bit
   messages and the same key generator is adaptively CPA-secure.
+
+## Contents
+
+* `BitwiseCPA/Eager`: eager challenge coins under CPA, resampling one coordinate of a uniform
+  tuple, and readers of the padded encryptor.
+* `BitwiseCPA/Planted`: the planted bitwise challenge answer and the reduction's final bit.
+* `BitwiseCPA/QueryHandler`: the query-recording handler with advice and its machine by T1.
 
 ## References
 
@@ -166,7 +171,7 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
       none).1 0)) (· = true)) (funext fun mm => ?_)
   rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
-    ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
+    AdaptiveCPA.ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
     bitwise_runAt_blocks]
   unfold hybCt
   refine congrArg (fun l => padCt (L.eval n) (PrivateKeyScheme.encodeList (List.ofFn l)))
@@ -369,7 +374,7 @@ private theorem hyb_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
         [(firstQ (comp rg r)).elim false fun l =>
           (l.getD (js n) false != l.getD (n + js n) false) &&
             (F rg r (W β rg v re l) != l.getD (js n) false)] := by
-      rw [hφ _ _ hins houts _ _ _ (hw β rg re v), hz, ← indCodec_eq_bitCodec, ha]
+      rw [hφ _ _ hins houts _ _ _ (hw β rg re v), hz, ← AdaptiveCPA.indCodec_eq_bitCodec, ha]
       cases hq : firstQ (comp rg r) with
       | none => simp only [Option.elim_none, plantOut_init]
       | some l =>

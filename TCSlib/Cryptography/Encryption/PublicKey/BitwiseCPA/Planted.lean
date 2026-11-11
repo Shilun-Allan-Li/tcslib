@@ -66,7 +66,8 @@ theorem flatten_ofFn_singleton {p : ℕ} (hp : p = 1) :
       ofFn_const_of_eq_one hp]
     rfl
 
-/-- The first `j` bits of `List.ofFn m`, as a flattening of singletons. -/
+/-- The first `j` bits of `List.ofFn m`, as a flattening of singletons (`p = 1`):
+`(ofFn m).take j = (ofFn fun i : Fin j => ofFn fun _ : Fin p => m i).flatten`. -/
 theorem take_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j ≤ n) :
     (List.ofFn m).take j =
       (List.ofFn fun i : Fin j => List.ofFn fun _ : Fin p => m (Fin.castLE hj i)).flatten := by
@@ -78,7 +79,9 @@ theorem take_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : 
     simp only [List.getElem_take, List.getElem_ofFn]
     rfl
 
-/-- The bits of `List.ofFn m` after the first `j + 1`, as a flattening of singletons. -/
+/-- The bits of `List.ofFn m` after the first `j + 1`, as a flattening of singletons (`p = 1`):
+`(ofFn m).drop (j + 1) =
+(ofFn fun i : Fin (n - j - 1) => ofFn fun _ : Fin p => m (j + 1 + i)).flatten`. -/
 theorem drop_ofFn_flatten {p n j : ℕ} (hp : p = 1) (m : Fin n → Bool) (hj : j < n) :
     (List.ofFn m).drop (j + 1) =
       (List.ofFn fun i : Fin (n - j - 1) => List.ofFn fun _ : Fin p =>
@@ -159,8 +162,7 @@ theorem polyTimeComputable_plantTuple (Enc : NUPPT) : PolyTimeComputable (plantT
   have hT₁ := hE.comp (hu.pairEncode (hpk.pairEncode (hM₁.pairEncode hω)))
   have hT₂ := hE.comp (hu.pairEncode (hpk.pairEncode (hM₂.pairEncode hω₂)))
   have h := hT₁.append (hc.pairEncode hT₂)
-  convert h using 1
-  funext w
+  refine h.congr fun w => ?_
   simp only [plantTuple_eq, blockState_eq, Function.comp_apply, pairFstD_pairEncode,
     pairSndD_pairEncode, PolyExpr.eval_var, List.cons_append, List.nil_append, List.length_cons]
 
@@ -231,8 +233,7 @@ theorem polyTimeComputable_plantAns (Enc : NUPPT) (L : PolyExpr) :
     ((ht.pairEncode (polyTimeComputable_const [])).pairEncode
       ((polyTimeComputable_unaryPoly L).comp
         (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD))))
-  convert h using 1
-  funext w
+  refine h.congr fun w => ?_
   simp [plantAns_eq, padCt_eq, Function.comp_apply, length_pairEncode]
 
 /-! ### The final bit -/
@@ -271,7 +272,8 @@ theorem plantOut_eq (w : List Bool) :
           else [false]
       else [false] := rfl
 
-/-- Without a recorded challenge the final bit is `[0]`. -/
+/-- Without a recorded challenge the final bit is `[0]`:
+`plantOut ⟨ctx, ⟨⟨aux, 0 :: y⟩, a⟩⟩ = [false]`. -/
 theorem plantOut_init (ctx aux y a : List Bool) :
     plantOut (pairEncode ctx (pairEncode (pairEncode aux (false :: y)) a)) = [false] := by
   simp only [plantOut_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.headD_cons,
@@ -308,8 +310,7 @@ theorem polyTimeComputable_plantOut : PolyTimeComputable plantOut := by
       (polyTimeComputable_ite hb₁ (polyTimeComputable_const [false]) (polyTimeComputable_not ha))
       (polyTimeComputable_ite hb₁ ha (polyTimeComputable_const [false])))
     (polyTimeComputable_const [false])
-  convert h using 1
-  funext w
+  refine h.congr fun w => ?_
   simp only [plantOut_eq, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
     PolyExpr.eval_var]
 

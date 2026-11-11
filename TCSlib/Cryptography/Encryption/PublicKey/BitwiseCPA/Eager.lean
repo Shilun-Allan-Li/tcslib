@@ -13,18 +13,19 @@ set_option autoImplicit false
 
 Generic facts used by the hybrid argument for the bitwise scheme under chosen-plaintext attack
 [PS10, p. 103, in the game of Definition 171.5]: under CPA the encryption coins of the challenge
-may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equations `indImpl_*_onSpec`); resampling one coordinate of a
-uniform tuple leaves it uniform (`expect_sample_update`); the CPA game's codec is the bit codec
-of the scheme's lengths (`indCodec_eq_bitCodec`); and the padded encryptor of a padded public-key
-scheme pads the original encryptor's output (`padded_enc_runAt`). All are read from the
-published lemmas of `OracleSecurity`, `ChallengeSim` and `BitCodec`.
+may be sampled in advance (`expect_simulate_indImpl_cpa`, through the oracle equations
+`indImpl_*_onSpec`); resampling one coordinate of a uniform tuple leaves it uniform
+(`expect_sample_update`); and the padded encryptor of a padded public-key scheme pads the
+original encryptor's output (`padded_enc_runAt`). All are read from the published lemmas of
+`OracleSecurity` and `ChallengeSim`. The CPA game's codec is the bit codec of the scheme's
+lengths by `AdaptiveCPA.indCodec_eq_bitCodec`, and casts are read by `AdaptiveCPA.ofFn_cast`.
 
 ## Main results
 
 * `BitwiseSim.expect_simulate_eager`, `expect_simulate_indImpl_cpa`: eager challenge coins under
   CPA, generically and for `indImpl`.
 * `BitwiseSim.expect_sample_update`: resampling a coordinate.
-* `BitwiseSim.indCodec_eq_bitCodec`, `BitwiseSim.padded_enc_runAt`: readers.
+* `BitwiseSim.padded_enc_runAt`, `BitwiseSim.padded_enc_coins`: readers of the padded scheme.
 
 ## References
 
@@ -116,13 +117,6 @@ theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : �
     (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
     (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c none
 
-/-- `List.ofFn` does not see a cast between equal lengths:
-`List.ofFn (cast h f) = List.ofFn f` for `h : (Fin a → Bool) = (Fin b → Bool)` and `a = b`. -/
-theorem ofFn_cast {a b : ℕ} (hab : a = b) (h : (Fin a → Bool) = (Fin b → Bool))
-    (f : Fin a → Bool) : List.ofFn (cast h f) = List.ofFn f := by
-  subst hab
-  rfl
-
 /-- **Resampling one coordinate of a uniform tuple leaves it uniform**:
 `𝔼_{v} 𝔼_{b} f (update v j b) = 𝔼_{v} f v`.
 
@@ -145,26 +139,6 @@ theorem expect_sample_update {ι β : Type} [Fintype ι] [DecidableEq ι] [Finty
   rw [expect_sample_prod]
   exact congrArg _ (funext fun v => expect_const (sample β) (f v))
 
-/-- **The CPA game's codec is the bit codec of the scheme's lengths**:
-`S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1`.
-
-**Proof sketch.** Both are structures with the same three fields
-(`indCodec_decodeMove`, `indCodec_encodeEntry`, `indCodec_timeout` and the `bitCodec` readers). -/
-theorem indCodec_eq_bitCodec (S : FixedLengthPKScheme) (n : ℕ) :
-    S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1 := by
-  have hd : (S.indCodec n).decodeMove = (bitCodec (S.inLens n) (S.outLens n) 1).decodeMove :=
-    funext fun w => (S.indCodec_decodeMove n w).trans (bitCodec_decodeMove _ _ _ w).symm
-  have he : (S.indCodec n).encodeEntry = (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry :=
-    funext fun e => (S.indCodec_encodeEntry n e).trans (bitCodec_encodeEntry _ _ _ e).symm
-  have ht : (S.indCodec n).timeout = (bitCodec (S.inLens n) (S.outLens n) 1).timeout :=
-    (S.indCodec_timeout n).trans (bitCodec_timeout _ _ _).symm
-  calc S.indCodec n = ⟨(S.indCodec n).decodeMove, (S.indCodec n).encodeEntry,
-        (S.indCodec n).timeout⟩ := rfl
-    _ = ⟨(bitCodec (S.inLens n) (S.outLens n) 1).decodeMove,
-        (bitCodec (S.inLens n) (S.outLens n) 1).encodeEntry,
-        (bitCodec (S.inLens n) (S.outLens n) 1).timeout⟩ := by rw [hd, he, ht]
-    _ = bitCodec (S.inLens n) (S.outLens n) 1 := rfl
-
 /-- **The padded encryptor pads the original encryptor's output**: for a padded public-key
 scheme, `Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; r))`, with the coin string read as a list
 (`PublicKeyScheme.padded_enc`, `runAt_padEnc`, `NUPPT.coinsCongr_ofFn`). -/
@@ -181,7 +155,8 @@ theorem padded_enc_runAt (S : PublicKeyScheme) (L : PolyExpr)
     rw [runAt_padEnc S.enc_uniform L n y r, NUPPT.runAt_eq, NUPPT.coinsCongr_ofFn]
   exact key _ (PublicKeyScheme.padded_enc S L hL hmsg) r
 
-/-- The padded scheme's encryptor has the coin polynomial of the original encryptor. -/
+/-- The padded scheme's encryptor has the coin polynomial of the original encryptor:
+`S.enc.coins = (S.padded L hL hmsg).enc.coins`. -/
 theorem padded_enc_coins (S : PublicKeyScheme) (L : PolyExpr)
     (hL : ∀ n (rg : S.gen.Coins n) (m : Fin n → Bool) (re : S.enc.Coins n),
       2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length
