@@ -7,6 +7,7 @@ import TCSlib.Cryptography.Games.Probability
 import TCSlib.Cryptography.Games.Bridges.Machines
 import TCSlib.Cryptography.Games.Efficiency.Strings
 import TCSlib.Cryptography.Games.Efficiency.Handler
+import TCSlib.Cryptography.Games.Efficiency.OracleBridge
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -609,27 +610,43 @@ machine `B'` with the same coins whose oracle adversary `B'.toOracleAdversary`, 
 oracle and a one-bit output (through `oracleDist_apply` and `Bridge.eval_eq_evalFn`).
 
 **Proof sketch.**
-1. `B'` translates between the two formats around `B` (`NUPPT.exists_comp` with polynomial-time
-   pre- and post-processing, or `NUPPT.ofPolyTime` of the composite to read `1^{ℓ₁(n)}`):
-   - its input, the history `⟨⟨x₁, y₁⟩, ⟨…, []⟩⟩` (`encodeHist`), becomes `⟨[], ⟨⟨[], ⟨x₁, y₁⟩⟩,
-     ⟨…, []⟩⟩⟩`, `B`'s empty input and its log (`encodeHist_cons`, `encodeLog_cons`,
-     `bitCodec_encodeEntry` with `1^0 = []`), polynomial-time by iterating over the pairs;
-   - `B`'s output, a move decoded by `decodeBitMove` (`decodeBitMove_eq_query_iff`,
-     `decodeBitMove_of_not_canonical`, `decodeIdx_eq_some_iff` at `k = 1`), becomes the query
-     `⟨[false], x⟩` for a query `x`, and the verdict `[true, b]` for an output `[b]` and for the
-     default.
+1. `B'` is `NUPPT.exists_comp` of `B` with two polynomial-time translators, so `B'.coins = B.coins`:
+   - `EffFill.bridgePre` maps the history `⟨⟨x₁, y₁⟩, ⟨…, []⟩⟩` (`encodeHist`) to
+     `⟨[], ⟨⟨[], ⟨x₁, y₁⟩⟩, ⟨…, []⟩⟩⟩`, `B`'s empty input and its log (`bitCodec_encodeEntry` with
+     `1^0 = []`), by emitting one piece per suffix (`Complexity.polyTimeComputable_iterateEmit` with
+     the step `pairSndD`; `EffFill.bridgePre_encodeHist`);
+   - `EffFill.bridgePost` maps a canonical query word `⟨[false], ⟨[], x⟩⟩` (tested by re-encoding)
+     to `⟨[false], x⟩`, the word `⟨[true], [true]⟩` to the verdict `[true, true]`, and every other
+     word to `[true, false]`; then `decodeOracleMove` and `decodeBitMove` read corresponding moves
+     (`EffFill.bridgePost_spec`, from `decodeBitMove_query`, `decodeBitMove_ret`,
+     `decodeBitMove_of_not_canonical` and the case lemmas of `decodeOracleMove`), a payload of the
+     wrong length included.
 2. Both trees branch on corresponding moves, so by induction on the budget
-   (`toOracleAdversary_eq` and `buildTree`'s case lemmas against `toCompOn_eq` and `buildComp`'s)
-   their evaluations against `f` and `fun _ => f` agree (`QueryTree.eval_query`,
+   (`EffFill.eval_buildTree_bridge`: `buildTree`'s and `buildComp`'s case lemmas) their
+   evaluations against `f` and `fun _ => f` agree (`QueryTree.eval_query`,
    `OracleComp.evalFn_query`); at the timeout the verdict `false` is bit `0` of `zeroBits 1`
-   (`zeroBits_apply`).
-3. `φ` transports the coins along `B.coins = B'.coins`, as in `exists_toCompOn_of_toComp`. -/
+   (`zeroBits_apply`). `toOracleAdversary_eq` and `toCompOn_eq` unfold the two sides.
+3. `φ` is `NUPPT.coinsCongr`, as in `exists_toCompOn_of_toComp`. -/
 theorem exists_toOracleAdversary_of_bitCodec (B : NUPPT) (ℓ₁ ℓ₂ : PolyExpr) :
     ∃ B' : NUPPT, B'.coins = B.coins ∧ ∀ n : ℕ, ∃ φ : B.Coins n ≃ B'.Coins n,
       ∀ (q : ℕ) (r : B.Coins n) (f : (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)),
         (B'.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) q (φ r)).eval f =
           (B.toCompOn (bitCodec (fun _ : Fin 1 => ℓ₁.eval n) (fun _ => ℓ₂.eval n) 1) n q []
               r).evalFn (fun _ => f) 0 := by
-  sorry
+  obtain ⟨B', hc, -, -, hB'⟩ :=
+    NUPPT.exists_comp B EffFill.bridgePre_poly EffFill.bridgePost_poly
+  refine ⟨B', hc, fun n => ⟨NUPPT.coinsCongr hc.symm n, fun q r f => ?_⟩⟩
+  have hnext : (fun hist : List ((Fin (ℓ₁.eval n) → Bool) × (Fin (ℓ₂.eval n) → Bool)) =>
+      decodeOracleMove (ℓ₁.eval n)
+      (B'.runAt n (encodeHist hist) (NUPPT.coinsCongr hc.symm n r))) =
+      fun hist => decodeOracleMove (ℓ₁.eval n)
+        (EffFill.bridgePost (B.runAt n (EffFill.bridgePre (encodeHist hist)) r)) := by
+    funext hist
+    rw [NUPPT.runAt_coinsCongr, hB', ← NUPPT.runAt_eq]
+  have h := EffFill.eval_buildTree_bridge (ℓ₁.eval n) (ℓ₂.eval n) (fun y => B.runAt n y r) f q []
+  rw [EffFill.logHist_eq, List.map_nil] at h
+  rw [NUPPT.toOracleAdversary_eq, hnext, NUPPT.toCompOn_eq]
+  simp only [bitCodec_decodeMove, bitCodec_timeout]
+  exact h
 
 end TCSlib.Cryptography.Games
