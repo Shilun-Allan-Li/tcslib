@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.BitCodec
 import TCSlib.Cryptography.Games.Probability
 import TCSlib.Cryptography.Games.Bridges.Machines
+import TCSlib.Cryptography.Games.Efficiency.Strings
+import TCSlib.Cryptography.Games.Efficiency.Handler
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -279,24 +281,28 @@ seed, `A`'s coins) to `B`'s coins, with the following property. Run `A` on the i
 let `a` be `A`'s output and `s` the final state. Then `B`'s output on input `z` with coins
 `φ (ω, r)` is exactly the reduction's output `H.result n z ω s a`.
 
-**Proof sketch** (the fill's; route note §"The route", steps 1–4 without the log replay):
-1. `B`'s first step computes `A`'s input `H.advIn (seedIn n z ω)` (polynomial-time by
-   `H.advIn_poly`; so its length is polynomial in `n + |z|`), and keeps it in the loop state.
-2. `B`'s round function, on `⟨1^n, z, ω, r, A's input, history, state⟩`, runs `A`'s next-move
-   function on `⟨A's input, encoded history⟩` (`NUPPT.polyTimeComputable_output`), decodes the
-   move (`decodeBitMove`, read through `decodeBitMove_eq_query_iff` and
-   `decodeBitMove_of_not_canonical`), and either feeds the query to `H.run` (polynomial-time by
-   `H.poly`), appending the answer and the new state, or stops with `A`'s output and the state.
-3. `GGMRed.stateLoopFun` runs at most `q(n) + 1` rounds; `stateLoopFun_poly` makes it
-   polynomial-time, given that the histories stay below a polynomial (all lengths are fixed).
-   The loop's result `(a, s)` is finalized by `H.out` on `⟨seedIn n z ω, ⟨s, a⟩⟩`
-   (polynomial-time by `H.out_poly`).
-4. `B := NUPPT.ofPolyTime` of the composite, with the coins split as `(ω, r)` by `exists_split`
-   (`Complexity/Randomized/Closure.lean`).
-5. The functional equation: by induction on the remaining budget, the loop's state after `t`
-   rounds is the simulation's state after `t` queries (`toCompOn_eq` and `buildComp`'s case
-   lemmas against `simulate_query`, `PolyHandler.impl_apply` and the `answer` lemmas);
-   `stateLoopFun_eval` reads off `(a, s)`, and `result_eq` the output. -/
+**Proof sketch** (the fill's; route note §"T1").
+1. `B`'s raw function is the activation loop `EffFill.hRaw` (`GGMRed.stateLoopFun` through
+   `EffFill.actLoop`) on the layout `⟨⟨⟨1^n, ⟨z, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩`. The initial state
+   `s₀ = H.init n` is part of the advice, beside `A`'s advice `α_A`, since `init` is an arbitrary
+   function of `n`; so `B` is non-uniform even when `A` is uniform. The loop state is
+   `⟨L, ⟨s, 1^t⟩⟩` (`A`'s encoded log, `H`'s state, the answered queries); the context
+   `seedIn n z ω` and `A`'s input are recomputed in every round.
+2. A round runs `A` on `⟨A's input, L⟩` (`NUPPT.polyTimeComputable_output`) and reads its move
+   through the canonical decoder `EffFill.canonWord`, which returns the canonical word of
+   `decodeBitMove`'s move on every word (`EffFill.canonWord_eq`, canonicity tested by re-encoding).
+   It stops with `H.out ⟨ctx, ⟨s, a⟩⟩` on an output `a`, and with `H.out ⟨ctx, ⟨s, 0^{dα(n)}⟩⟩` on a
+   query when `t = q(n)`. Otherwise it feeds the query to `H.run`, decodes the answer and the new
+   state componentwise (`EffFill.fixLen`, `EffFill.ofFn_getD_decodeFin` and the `answer` lemmas),
+   and appends the entry to `L` (`EffFill.encodeLog_append_single`).
+3. At most `q(n) + 1` rounds, with states of polynomial length (all lengths are fixed), so the raw
+   function is polynomial-time (`EffFill.hRaw_poly`, from `GGMRed.stateLoopFun_poly`).
+4. The functional equation (`EffFill.hRaw_spec`): by induction on the remaining budget, the loop's
+   state after `t` rounds encodes the simulation after `t` queries (`toCompOn_eq`, `buildComp`'s
+   case lemmas, `simulate_query`, `PolyHandler.impl_apply`); `GGMRed.stateLoopFun_eval` reads off
+   the output (`EffFill.runsTo_stop`), and `result_eq` and `seedIn_eq` identify it.
+5. `B` is `NUPPT.ofPolyTime` of the raw function followed by `NUPPT.exists_split` with
+   `p = H.seedLen` (`EffFill.exists_splitMachine`); `φ` appends the seed and the coins. -/
 theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → PolyExpr)
     (dα : PolyExpr) (H : PolyHandler k din dout) :
     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
@@ -307,7 +313,51 @@ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → P
                 (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
                 n (q.eval n) (H.advInput n z ω) r) (H.init n) = .pure (a, s) ∧
             B.runAt n z (φ (ω, r)) = H.result n z ω s a := by
-  sorry
+  -- The machine: the handler loop of `EffFill.hRaw`, with `⟨A.advice n, s₀⟩` as advice and the
+  -- seed passed as data.
+  obtain ⟨B, hB⟩ := EffFill.exists_splitMachine A
+    (EffFill.hRaw_poly A q dα din dout H.stateLen H.poly H.advIn_poly H.out_poly)
+    (.add (.add (.mul (.const 2) A.adv) (.const 2)) H.stateLen)
+    (fun n => pairEncode (A.advice n) (List.ofFn (H.init n))) (fun n => by
+      rw [length_pairEncode, List.length_ofFn]
+      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+      have := A.advice_length n
+      omega) H.seedLen
+  refine ⟨B, fun n => ?_⟩
+  obtain ⟨φ, hφ⟩ := hB n
+  refine ⟨φ, fun z ω r => ?_⟩
+  -- The handler's answers are `run`'s output decoded componentwise.
+  have hans : ∀ (i : Fin k) (x : Fin ((din i).eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool),
+      List.ofFn (H.answer n z ω s i x).1 = EffFill.fixLen ((dout i).eval n) (pairFstD (H.run
+        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) ∧
+      List.ofFn (H.answer n z ω s i x).2 = EffFill.fixLen (H.stateLen.eval n) (pairSndD (H.run
+        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
+          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) := by
+    intro i x s
+    rw [← PolyHandler.input_eq]
+    cases h : pairDecode (H.run (PolyHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)))
+      with
+    | none =>
+      rw [PolyHandler.answer_of_pairDecode_eq_none H h, pairFstD_of_pairDecode_eq_none h,
+        pairSndD_of_pairDecode_eq_none h, EffFill.fixLen_nil, EffFill.fixLen_nil, ofFn_zeroBits,
+        ofFn_zeroBits]
+      exact ⟨rfl, rfl⟩
+    | some p =>
+      obtain ⟨yw, sw⟩ := p
+      rw [PolyHandler.answer_of_pairDecode_eq_some H h, eq_pairEncode_of_pairDecode _ _ _ h,
+        pairFstD_pairEncode, pairSndD_pairEncode, EffFill.ofFn_getD_decodeFin,
+        EffFill.ofFn_getD_decodeFin]
+      exact ⟨rfl, rfl⟩
+  obtain ⟨a, s, hsim, hraw⟩ := EffFill.hRaw_spec A q dα din dout H.stateLen H.run H.advIn H.out
+    (spec' := unifSpec) n z (List.ofFn ω) r (H.init n) (fun i x s => H.answer n z ω s i x) hans
+  refine ⟨a, s, ?_, ?_⟩
+  · have himpl : H.impl n z ω = fun i x s => OracleComp.pure (H.answer n z ω s i x) := by
+      funext i x s
+      exact H.impl_apply n z ω i x s
+    rw [himpl, PolyHandler.advInput_eq, seedIn_eq]
+    exact hsim
+  · rw [hφ, hraw, PolyHandler.result_eq, seedIn_eq]
 
 /-! ### Interactive handlers (T2) -/
 

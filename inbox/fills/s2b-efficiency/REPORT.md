@@ -1,4 +1,4 @@
-# Fill s2b-efficiency — checkpoint 1 (the companion)
+# Fill s2b-efficiency — checkpoint 2 (T1)
 
 **Worker** Claude. **Issue base** `b50f0a416cbf0a9f05acf14a254ba53cd97a7701` on
 `cryptography/pass-shelat-ch2-4`. **Package** read at exchange commit
@@ -10,20 +10,37 @@
 
 | Target | Status at this checkpoint |
 |---|---|
-| Companion `exists_toCompOn_of_toComp` | **proved** (no `sorry`) |
-| T1 `exists_handlerMachine` | admitted (unchanged) |
+| Companion `exists_toCompOn_of_toComp` | **proved** (checkpoint 1) |
+| T1 `exists_handlerMachine` | **proved** (no `sorry`) |
 | T2 `exists_interactiveHandlerMachine` | admitted (unchanged) |
 | T4 `exists_toOracleAdversary_of_bitCodec` | admitted (unchanged) |
 
-Proof: `NUPPT.exists_comp A polyTimeComputable_pairSndD polyTimeComputable_id`; `φ` is
-`NUPPT.coinsCongr`, and `runAt_coinsCongr`, `pairSndD_pairEncode`, `runAt_eq`, `toCompOn_eq`,
-`toComp_eq` conclude. The sketch now names `coinsCongr`/`runAt_coinsCongr` and drops the
-remark that `coinLen_eq` was still to be published (it is). Statement and statement prose are
-unchanged.
+Companion (checkpoint 1): `NUPPT.exists_comp A polyTimeComputable_pairSndD
+polyTimeComputable_id`; `φ` is `NUPPT.coinsCongr`.
+
+T1: `B` is `EffFill.exists_splitMachine` (`NUPPT.ofPolyTime`, then `NUPPT.exists_split` with
+`p = H.seedLen`) of the raw function `EffFill.hRaw`, with the advice `⟨A.advice n, H.init n⟩`
+(the initial state is an arbitrary function of `n`, so it is advice; `B` is non-uniform). `hRaw`
+is an activation loop over `GGMRed.stateLoopFun` (`EffFill.actLoop`) on the state
+`⟨L, ⟨s, 1^t⟩⟩`; a round reads `A`'s move through the canonical decoder `EffFill.canonWord`
+(`canonWord_eq`: the canonical word of `decodeBitMove`'s move on every word, tested by
+re-encoding), and decodes `run`'s answer componentwise (`fixLen`, `ofFn_getD_decodeFin`).
+`hRaw_poly` gives polynomial time; `hRaw_spec` (induction on the remaining budget,
+`stateLoopFun_eval` through `runsTo_stop`) the functional equation. The sketch of T1 now
+describes this proof (advice for `init`, helper names).
 
 ## Changed files
 
-`TCSlib/Cryptography/Games/Efficiency.lean` only (`patches/0001-…`, `src/`).
+- `TCSlib/Cryptography/Games/Efficiency.lean` (two proof bodies, two sketches, two imports).
+- New: `TCSlib/Cryptography/Games/Efficiency/Strings.lean`, `…/Efficiency/Handler.lean`
+  (EF-1; namespace `TCSlib.Cryptography.Games.EffFill`; `Strings` imports
+  `Pseudorandom.Functions.Asymptotic.GGM.Reduction` directly).
+
+## Checks at this checkpoint
+
+`Strings`, `Handler`, `Efficiency`: exit 0; two `sorry` warnings (T2, T4)
+(`evidence/logs/checks-cp2.log`). `campaign_style_lint.py TCSlib/Cryptography/Games --check8b`:
+0 FAIL, 0 WARN.
 
 ## Environment (addendum v1)
 
@@ -40,7 +57,5 @@ unchanged.
 - Bootstrap: modules 1–130 of `order.txt` (everything before `Games/Efficiency`), 130/130 exit 0
   (`bootstrap.log`). The detached background sweep was terminated by the session twice (no OOM
   event); the rest ran in the foreground in chunks, as recorded in the log.
-- Check of `Games/Efficiency` at this checkpoint: exit 0, three `sorry` warnings (the three
-  remaining targets) (`evidence/logs/checks-cp1.log`).
 
-**Checkpoint 1 delivered — continuing with T1**
+**Checkpoint 2 delivered — continuing with T4**

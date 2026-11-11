@@ -1,0 +1,1216 @@
+From d7d3623de034756d2dbfab09cf3ab233ad7dd82c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:00:48 +0000
+Subject: [PATCH 2/2] fill s2b-efficiency: prove exists_handlerMachine (T1)
+
+New helper modules under Games/Efficiency/ (namespace EffFill):
+- Strings: log append, fixed-length decoding (fixLen), the k-way length
+  selection (selLen, sumPoly), the canonical decoder (canonWord, canonFun),
+  the activation loop over GGMRed.stateLoopFun (actLoop, RunsTo) and the
+  machine glue (exists_splitMachine). First consumer of the GGM reduction
+  module, imported directly.
+- Handler: the raw function hRaw of a non-interactive handler, its
+  polynomial time (hRaw_poly) and functional equation (hRaw_spec).
+The initial state is carried in the advice beside A's advice. T1's sketch is
+updated to the delivered proof.
+---
+ TCSlib/Cryptography/Games/Efficiency.lean     |  88 ++-
+ .../Games/Efficiency/Handler.lean             | 516 ++++++++++++++++
+ .../Games/Efficiency/Strings.lean             | 549 ++++++++++++++++++
+ 3 files changed, 1134 insertions(+), 19 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Games/Efficiency/Handler.lean
+ create mode 100644 TCSlib/Cryptography/Games/Efficiency/Strings.lean
+
+diff --git a/TCSlib/Cryptography/Games/Efficiency.lean b/TCSlib/Cryptography/Games/Efficiency.lean
+index 518628178..93c9f8839 100644
+--- a/TCSlib/Cryptography/Games/Efficiency.lean
++++ b/TCSlib/Cryptography/Games/Efficiency.lean
+@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ import TCSlib.Cryptography.Games.BitCodec
+ import TCSlib.Cryptography.Games.Probability
+ import TCSlib.Cryptography.Games.Bridges.Machines
++import TCSlib.Cryptography.Games.Efficiency.Strings
++import TCSlib.Cryptography.Games.Efficiency.Handler
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -279,24 +281,28 @@ seed, `A`'s coins) to `B`'s coins, with the following property. Run `A` on the i
+ let `a` be `A`'s output and `s` the final state. Then `B`'s output on input `z` with coins
+ `φ (ω, r)` is exactly the reduction's output `H.result n z ω s a`.
+ 
+-**Proof sketch** (the fill's; route note §"The route", steps 1–4 without the log replay):
+-1. `B`'s first step computes `A`'s input `H.advIn (seedIn n z ω)` (polynomial-time by
+-   `H.advIn_poly`; so its length is polynomial in `n + |z|`), and keeps it in the loop state.
+-2. `B`'s round function, on `⟨1^n, z, ω, r, A's input, history, state⟩`, runs `A`'s next-move
+-   function on `⟨A's input, encoded history⟩` (`NUPPT.polyTimeComputable_output`), decodes the
+-   move (`decodeBitMove`, read through `decodeBitMove_eq_query_iff` and
+-   `decodeBitMove_of_not_canonical`), and either feeds the query to `H.run` (polynomial-time by
+-   `H.poly`), appending the answer and the new state, or stops with `A`'s output and the state.
+-3. `GGMRed.stateLoopFun` runs at most `q(n) + 1` rounds; `stateLoopFun_poly` makes it
+-   polynomial-time, given that the histories stay below a polynomial (all lengths are fixed).
+-   The loop's result `(a, s)` is finalized by `H.out` on `⟨seedIn n z ω, ⟨s, a⟩⟩`
+-   (polynomial-time by `H.out_poly`).
+-4. `B := NUPPT.ofPolyTime` of the composite, with the coins split as `(ω, r)` by `exists_split`
+-   (`Complexity/Randomized/Closure.lean`).
+-5. The functional equation: by induction on the remaining budget, the loop's state after `t`
+-   rounds is the simulation's state after `t` queries (`toCompOn_eq` and `buildComp`'s case
+-   lemmas against `simulate_query`, `PolyHandler.impl_apply` and the `answer` lemmas);
+-   `stateLoopFun_eval` reads off `(a, s)`, and `result_eq` the output. -/
++**Proof sketch** (the fill's; route note §"T1").
++1. `B`'s raw function is the activation loop `EffFill.hRaw` (`GGMRed.stateLoopFun` through
++   `EffFill.actLoop`) on the layout `⟨⟨⟨1^n, ⟨z, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩`. The initial state
++   `s₀ = H.init n` is part of the advice, beside `A`'s advice `α_A`, since `init` is an arbitrary
++   function of `n`; so `B` is non-uniform even when `A` is uniform. The loop state is
++   `⟨L, ⟨s, 1^t⟩⟩` (`A`'s encoded log, `H`'s state, the answered queries); the context
++   `seedIn n z ω` and `A`'s input are recomputed in every round.
++2. A round runs `A` on `⟨A's input, L⟩` (`NUPPT.polyTimeComputable_output`) and reads its move
++   through the canonical decoder `EffFill.canonWord`, which returns the canonical word of
++   `decodeBitMove`'s move on every word (`EffFill.canonWord_eq`, canonicity tested by re-encoding).
++   It stops with `H.out ⟨ctx, ⟨s, a⟩⟩` on an output `a`, and with `H.out ⟨ctx, ⟨s, 0^{dα(n)}⟩⟩` on a
++   query when `t = q(n)`. Otherwise it feeds the query to `H.run`, decodes the answer and the new
++   state componentwise (`EffFill.fixLen`, `EffFill.ofFn_getD_decodeFin` and the `answer` lemmas),
++   and appends the entry to `L` (`EffFill.encodeLog_append_single`).
++3. At most `q(n) + 1` rounds, with states of polynomial length (all lengths are fixed), so the raw
++   function is polynomial-time (`EffFill.hRaw_poly`, from `GGMRed.stateLoopFun_poly`).
++4. The functional equation (`EffFill.hRaw_spec`): by induction on the remaining budget, the loop's
++   state after `t` rounds encodes the simulation after `t` queries (`toCompOn_eq`, `buildComp`'s
++   case lemmas, `simulate_query`, `PolyHandler.impl_apply`); `GGMRed.stateLoopFun_eval` reads off
++   the output (`EffFill.runsTo_stop`), and `result_eq` and `seedIn_eq` identify it.
++5. `B` is `NUPPT.ofPolyTime` of the raw function followed by `NUPPT.exists_split` with
++   `p = H.seedLen` (`EffFill.exists_splitMachine`); `φ` appends the seed and the coins. -/
+ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → PolyExpr)
+     (dα : PolyExpr) (H : PolyHandler k din dout) :
+     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
+@@ -307,7 +313,51 @@ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → P
+                 (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
+                 n (q.eval n) (H.advInput n z ω) r) (H.init n) = .pure (a, s) ∧
+             B.runAt n z (φ (ω, r)) = H.result n z ω s a := by
+-  sorry
++  -- The machine: the handler loop of `EffFill.hRaw`, with `⟨A.advice n, s₀⟩` as advice and the
++  -- seed passed as data.
++  obtain ⟨B, hB⟩ := EffFill.exists_splitMachine A
++    (EffFill.hRaw_poly A q dα din dout H.stateLen H.poly H.advIn_poly H.out_poly)
++    (.add (.add (.mul (.const 2) A.adv) (.const 2)) H.stateLen)
++    (fun n => pairEncode (A.advice n) (List.ofFn (H.init n))) (fun n => by
++      rw [length_pairEncode, List.length_ofFn]
++      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++      have := A.advice_length n
++      omega) H.seedLen
++  refine ⟨B, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  refine ⟨φ, fun z ω r => ?_⟩
++  -- The handler's answers are `run`'s output decoded componentwise.
++  have hans : ∀ (i : Fin k) (x : Fin ((din i).eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool),
++      List.ofFn (H.answer n z ω s i x).1 = EffFill.fixLen ((dout i).eval n) (pairFstD (H.run
++        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
++          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) ∧
++      List.ofFn (H.answer n z ω s i x).2 = EffFill.fixLen (H.stateLen.eval n) (pairSndD (H.run
++        (pairEncode (pairEncode (List.replicate n true) (pairEncode z (List.ofFn ω)))
++          (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) := by
++    intro i x s
++    rw [← PolyHandler.input_eq]
++    cases h : pairDecode (H.run (PolyHandler.input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)))
++      with
++    | none =>
++      rw [PolyHandler.answer_of_pairDecode_eq_none H h, pairFstD_of_pairDecode_eq_none h,
++        pairSndD_of_pairDecode_eq_none h, EffFill.fixLen_nil, EffFill.fixLen_nil, ofFn_zeroBits,
++        ofFn_zeroBits]
++      exact ⟨rfl, rfl⟩
++    | some p =>
++      obtain ⟨yw, sw⟩ := p
++      rw [PolyHandler.answer_of_pairDecode_eq_some H h, eq_pairEncode_of_pairDecode _ _ _ h,
++        pairFstD_pairEncode, pairSndD_pairEncode, EffFill.ofFn_getD_decodeFin,
++        EffFill.ofFn_getD_decodeFin]
++      exact ⟨rfl, rfl⟩
++  obtain ⟨a, s, hsim, hraw⟩ := EffFill.hRaw_spec A q dα din dout H.stateLen H.run H.advIn H.out
++    (spec' := unifSpec) n z (List.ofFn ω) r (H.init n) (fun i x s => H.answer n z ω s i x) hans
++  refine ⟨a, s, ?_, ?_⟩
++  · have himpl : H.impl n z ω = fun i x s => OracleComp.pure (H.answer n z ω s i x) := by
++      funext i x s
++      exact H.impl_apply n z ω i x s
++    rw [himpl, PolyHandler.advInput_eq, seedIn_eq]
++    exact hsim
++  · rw [hφ, hraw, PolyHandler.result_eq, seedIn_eq]
+ 
+ /-! ### Interactive handlers (T2) -/
+ 
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Handler.lean b/TCSlib/Cryptography/Games/Efficiency/Handler.lean
+new file mode 100644
+index 000000000..6723623da
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Efficiency/Handler.lean
+@@ -0,0 +1,516 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.Efficiency.Strings
++import TCSlib.Cryptography.Games.Simulate
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The machine of a non-interactive handler (efficiency fill, T1)
++
++The raw function behind `Games.exists_handlerMachine` (route note
++`briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`, §"T1"), stated over the raw ingredients of a
++handler (its lengths and its three string functions) so that it does not depend on the handler
++structure of `TCSlib.Cryptography.Games.Efficiency`.
++
++On the raw layout `X = ⟨⟨⟨1^n, ⟨z, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩` (`α_A` the adversary's advice, `s₀` the
++initial state) the function is an activation loop (`EffFill.actLoop`) on the state
++`⟨L, ⟨s, 1^t⟩⟩`: the adversary's encoded log, the handler's state and the number of answered
++queries. One round runs the adversary on `⟨advIn ⟨1^n, ⟨z, ω⟩⟩, L⟩`, reads its move through the
++canonical decoder, and either stops (an output, or a query when the budget `q(n)` is spent) with
++`out ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, a⟩⟩`, or answers the query with `run`, decoded componentwise with the
++all-`false` default (`fixLen`), and appends the entry to the log.
++
++## Main definitions
++
++* `EffFill.hAct`, `EffFill.hStart`, `EffFill.hRaw`: the round, the initial state and the raw
++  function; `EffFill.hRounds`, `EffFill.hBound`: the round and state bounds; `EffFill.hState`: the
++  state.
++* `EffFill.advNext`: the next-move function of a machine adversary on an input.
++
++## Main results
++
++* `EffFill.hRaw_poly`: the raw function is polynomial-time.
++* `EffFill.hRaw_spec`: on the layout, it returns the finalized output of the simulation.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (closure of p.p.t. machines under efficient operations; for example the reductions of the
++  proofs of Theorems 135.4 and 168.2).
++-/
++
++namespace TCSlib.Cryptography.Games.EffFill
++
++open Complexity Turing
++
++variable {k : ℕ}
++
++/-- The next-move function of the machine `A` on the input `x` with coins `r`: `A`'s output on
++`⟨x, encoded log⟩`, decoded by the codec. -/
++def advNext {ι α : Type} {spec : OracleSpec ι} (A : NUPPT) (codec : MachineCodec spec α) (n : ℕ)
++    (x : List Bool) (r : A.Coins n) (hist : QueryLog spec) : Move spec α :=
++  codec.decodeMove (A.runAt n (pairEncode x (codec.encodeLog hist)) r)
++
++/-- `advNext A codec n x r hist = codec.decodeMove (A.runAt n ⟨x, codec.encodeLog hist⟩ r)`. -/
++theorem advNext_eq {ι α : Type} {spec : OracleSpec ι} (A : NUPPT) (codec : MachineCodec spec α)
++    (n : ℕ) (x : List Bool) (r : A.Coins n) (hist : QueryLog spec) :
++    advNext A codec n x r hist = codec.decodeMove (A.runAt n (pairEncode x (codec.encodeLog hist))
++        r) :=
++  rfl
++
++/-- `A`'s computation on the input `x` is `buildComp` of `advNext` (`NUPPT.toCompOn_eq`). -/
++theorem toCompOn_eq_advNext {ι α : Type} {spec : OracleSpec ι} (A : NUPPT)
++    (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : A.Coins n) :
++    A.toCompOn codec n q x r = buildComp (advNext A codec n x r) codec.timeout q [] := by
++  rw [NUPPT.toCompOn_eq]
++  rfl
++
++section Raw
++
++variable (A : NUPPT) (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (stateLen : PolyExpr)
++  (run advIn out : List Bool → List Bool)
++
++/-- The context `⟨1^n, ⟨z, ω⟩⟩` read off the raw layout `X` (its parameter and argument). -/
++def hCtx (X : List Bool) : List Bool := pairEncode (NUPPT.inParam X) (NUPPT.inArg X)
++
++/-- `hCtx X = ⟨inParam X, inArg X⟩`. -/
++theorem hCtx_eq (X : List Bool) : hCtx X = pairEncode (NUPPT.inParam X) (NUPPT.inArg X) := rfl
++
++/-- The adversary's canonical move word in the round on `w = ⟨X, ⟨L, ⟨s, c⟩⟩⟩`. -/
++def hMove (w : List Bool) : List Bool :=
++  canonFun din (pairEncode (NUPPT.inParam (pairFstD w))
++    (pairEncode (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) true)
++      (A.output (NUPPT.layout (NUPPT.inParam (pairFstD w))
++        (pairEncode (advIn (hCtx (pairFstD w))) (pairFstD (pairSndD w)))
++        (pairFstD (NUPPT.inAdvice (pairFstD w))) (NUPPT.inCoins (pairFstD w))))))
++
++/-- The defining equation of `hMove` (the canonical decoder of `A`'s output on
++`⟨advIn ctx, L⟩`). -/
++theorem hMove_eq (w : List Bool) :
++    hMove A dα din advIn w =
++      canonFun din (pairEncode (NUPPT.inParam (pairFstD w))
++        (pairEncode (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) true)
++          (A.output (NUPPT.layout (NUPPT.inParam (pairFstD w))
++            (pairEncode (advIn (hCtx (pairFstD w))) (pairFstD (pairSndD w)))
++            (pairFstD (NUPPT.inAdvice (pairFstD w))) (NUPPT.inCoins (pairFstD w)))))) :=
++  rfl
++
++/-- The handler's output `run ⟨ctx, ⟨s, ⟨1^i, x⟩⟩⟩` on the pending query of the round. -/
++def hRes (w : List Bool) : List Bool :=
++  run (pairEncode (hCtx (pairFstD w))
++    (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w))))
++
++/-- The defining equation of `hRes`. -/
++theorem hRes_eq (w : List Bool) :
++    hRes A dα din run advIn w =
++      run (pairEncode (hCtx (pairFstD w))
++        (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))) :=
++  rfl
++
++/-- The new state of a continuing round: the log with the answered entry appended, the new state
++and the incremented counter. -/
++def hNext (w : List Bool) : List Bool :=
++  pairEncode
++    (pairFstD (pairSndD w) ++ pairEncode (pairEncode (pairFstD (pairSndD (hMove A dα din advIn w)))
++      (pairEncode (pairSndD (pairSndD (hMove A dα din advIn w)))
++        (fixLen (selLen dout (NUPPT.inParam (pairFstD w)).length
++          (pairFstD (pairSndD (hMove A dα din advIn w))).length)
++          (pairFstD (hRes A dα din run advIn w))))) [])
++    (pairEncode (fixLen (stateLen.eval (NUPPT.inParam (pairFstD w)).length)
++      (pairSndD (hRes A dα din run advIn w))) (true :: pairSndD (pairSndD (pairSndD w))))
++
++/-- The defining equation of `hNext`. -/
++theorem hNext_eq (w : List Bool) :
++    hNext A dα din dout stateLen run advIn w =
++      pairEncode
++        (pairFstD (pairSndD w) ++ pairEncode (pairEncode (pairFstD (pairSndD (hMove A dα din advIn
++            w)))
++          (pairEncode (pairSndD (pairSndD (hMove A dα din advIn w)))
++            (fixLen (selLen dout (NUPPT.inParam (pairFstD w)).length
++              (pairFstD (pairSndD (hMove A dα din advIn w))).length)
++              (pairFstD (hRes A dα din run advIn w))))) [])
++        (pairEncode (fixLen (stateLen.eval (NUPPT.inParam (pairFstD w)).length)
++          (pairSndD (hRes A dα din run advIn w))) (true :: pairSndD (pairSndD (pairSndD w)))) :=
++  rfl
++
++/-- **One round of the handler machine** on `w = ⟨X, ⟨L, ⟨s, c⟩⟩⟩`: stop with
++`out ⟨ctx, ⟨s, a⟩⟩` on an output `a`; stop with `out ⟨ctx, ⟨s, 0^{dα(n)}⟩⟩` on a query when
++`q(n) ≤ |c|`; otherwise continue with `hNext`. -/
++def hAct (w : List Bool) : List Bool :=
++  if pairFstD (hMove A dα din advIn w) = [true] then
++    pairEncode [true] (out (pairEncode (hCtx (pairFstD w))
++      (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))))
++  else if q.eval (NUPPT.inParam (pairFstD w)).length ≤ (pairSndD (pairSndD (pairSndD w))).length
++      then
++    pairEncode [true] (out (pairEncode (hCtx (pairFstD w))
++      (pairEncode (pairFstD (pairSndD (pairSndD w)))
++        (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false))))
++  else pairEncode [false] (hNext A dα din dout stateLen run advIn w)
++
++/-- The defining equation of `hAct`. -/
++theorem hAct_eq (w : List Bool) :
++    hAct A q dα din dout stateLen run advIn out w =
++      if pairFstD (hMove A dα din advIn w) = [true] then
++        pairEncode [true] (out (pairEncode (hCtx (pairFstD w))
++          (pairEncode (pairFstD (pairSndD (pairSndD w))) (pairSndD (hMove A dα din advIn w)))))
++      else if q.eval (NUPPT.inParam (pairFstD w)).length ≤
++          (pairSndD (pairSndD (pairSndD w))).length then
++        pairEncode [true] (out (pairEncode (hCtx (pairFstD w))
++          (pairEncode (pairFstD (pairSndD (pairSndD w)))
++            (List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false))))
++      else pairEncode [false] (hNext A dα din dout stateLen run advIn w) :=
++  rfl
++
++/-- The initial state `⟨[], ⟨s₀, []⟩⟩`, with the initial state `s₀` read off the advice. -/
++def hStart (X : List Bool) : List Bool :=
++  pairEncode [] (pairEncode (pairSndD (NUPPT.inAdvice X)) [])
++
++/-- `hStart X = ⟨[], ⟨snd (inAdvice X), []⟩⟩`. -/
++theorem hStart_eq (X : List Bool) :
++    hStart X = pairEncode [] (pairEncode (pairSndD (NUPPT.inAdvice X)) []) := rfl
++
++/-- The round bound `q + 1`: at most `q(n)` answered queries and one stopping round. -/
++def hRounds : PolyExpr := .add q (.const 1)
++
++/-- `hRounds q = q + 1`. -/
++theorem hRounds_eq : hRounds q = .add q (.const 1) := rfl
++
++/-- The state bound `2 q E + 2 stateLen + q + 4` (`E` the entry bound `entryPoly`). -/
++def hBound : PolyExpr :=
++  .add (.mul (.const 2) (.mul q (entryPoly din dout))) (.add (.mul (.const 2) stateLen) (.add q
++      (.const 4)))
++
++/-- The defining equation of `hBound`. -/
++theorem hBound_eq : hBound q din dout stateLen =
++    .add (.mul (.const 2) (.mul q (entryPoly din dout))) (.add (.mul (.const 2) stateLen) (.add q
++        (.const 4))) :=
++  rfl
++
++/-- **The raw function of the handler machine:** the activation loop of `hAct` from `hStart`, with
++`q + 1` rounds and the state bound `hBound`. -/
++def hRaw : List Bool → List Bool :=
++  actLoop hStart (hAct A q dα din dout stateLen run advIn out) (hRounds q) (hBound q din dout
++      stateLen)
++
++/-- `hRaw = actLoop hStart hAct (q + 1) hBound`. -/
++theorem hRaw_eq : hRaw A q dα din dout stateLen run advIn out =
++    actLoop hStart (hAct A q dα din dout stateLen run advIn out) (hRounds q)
++      (hBound q din dout stateLen) :=
++  rfl
++
++/-! ### Polynomial time -/
++
++variable {run advIn out}
++
++/-- The context is polynomial-time. -/
++theorem hCtx_poly : PolyTimeComputable hCtx :=
++  NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inArg
++
++/-- The round's move is polynomial-time. -/
++theorem hMove_poly (hadvIn : PolyTimeComputable advIn) : PolyTimeComputable (hMove A dα din advIn)
++    := by
++  have hX := polyTimeComputable_pairFstD
++  have hu := NUPPT.polyTimeComputable_inParam.comp' hX
++  have hout := A.polyTimeComputable_output.comp' (NUPPT.polyTimeComputable_layout hu
++    ((hadvIn.comp' (hCtx_poly.comp' hX)).pairEncode
++      (polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD))
++    (polyTimeComputable_pairFstD.comp' (NUPPT.polyTimeComputable_inAdvice.comp' hX))
++    (NUPPT.polyTimeComputable_inCoins.comp' hX))
++  exact (canonFun_poly din).comp' (hu.pairEncode ((StateLoop.unaryPoly_comp dα hu).pairEncode hout))
++
++/-- The handler's output on the pending query is polynomial-time. -/
++theorem hRes_poly (hrun : PolyTimeComputable run) (hadvIn : PolyTimeComputable advIn) :
++    PolyTimeComputable (hRes A dα din run advIn) :=
++  hrun.comp' ((hCtx_poly.comp' polyTimeComputable_pairFstD).pairEncode
++    ((polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp'
++      polyTimeComputable_pairSndD)).pairEncode
++      (polyTimeComputable_pairSndD.comp' (hMove_poly A dα din hadvIn))))
++
++/-- The continuing state is polynomial-time. -/
++theorem hNext_poly (hrun : PolyTimeComputable run) (hadvIn : PolyTimeComputable advIn) :
++    PolyTimeComputable (hNext A dα din dout stateLen run advIn) := by
++  have hX := polyTimeComputable_pairFstD
++  have hu := NUPPT.polyTimeComputable_inParam.comp' hX
++  have hm := hMove_poly A dα din hadvIn
++  have hq := polyTimeComputable_pairSndD.comp' hm
++  have hres := hRes_poly A dα din hrun hadvIn
++  have hy := fixLen_poly ((selLen_poly dout).comp' (hu.pairEncode (polyTimeComputable_pairFstD.comp'
++      hq)))
++    (polyTimeComputable_pairFstD.comp' hres)
++  have hs := fixLen_poly (StateLoop.unaryPoly_comp stateLen hu) (polyTimeComputable_pairSndD.comp'
++      hres)
++  have h := ((polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD).append
++    (((polyTimeComputable_pairFstD.comp' hq).pairEncode
++      ((polyTimeComputable_pairSndD.comp' hq).pairEncode hy)).pairEncode
++        (polyTimeComputable_const []))).pairEncode
++    (hs.pairEncode ((StateLoop.cons_poly true).comp' (polyTimeComputable_pairSndD.comp'
++      (polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD))))
++  refine h.congr fun w => ?_
++  rw [hNext_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++
++/-- **One round of the handler machine is polynomial-time.** -/
++theorem hAct_poly (hrun : PolyTimeComputable run) (hadvIn : PolyTimeComputable advIn)
++    (hout : PolyTimeComputable out) : PolyTimeComputable (hAct A q dα din dout stateLen run advIn
++        out) := by
++  have hX := polyTimeComputable_pairFstD
++  have hu := NUPPT.polyTimeComputable_inParam.comp' hX
++  have hm := hMove_poly A dα din hadvIn
++  have hctx := hCtx_poly.comp' hX
++  have hst := polyTimeComputable_pairFstD.comp' (polyTimeComputable_pairSndD.comp'
++    polyTimeComputable_pairSndD)
++  have hc := polyTimeComputable_pairSndD.comp' (polyTimeComputable_pairSndD.comp'
++    polyTimeComputable_pairSndD)
++  have h1 := eq_poly (polyTimeComputable_pairFstD.comp' hm) (polyTimeComputable_const [true])
++  have h2 := StateLoop.lenLe_comp hc (StateLoop.unaryPoly_comp q hu)
++  have hz : PolyTimeComputable fun w =>
++      List.replicate (dα.eval (NUPPT.inParam (pairFstD w)).length) false :=
++    (zeros_poly (StateLoop.unaryPoly_comp dα hu)).congr fun w => by rw [List.length_replicate]
++  have h := polyTimeComputable_ite h1
++    ((polyTimeComputable_const [true]).pairEncode (hout.comp' (hctx.pairEncode
++      (hst.pairEncode (polyTimeComputable_pairSndD.comp' hm)))))
++    (polyTimeComputable_ite h2
++      ((polyTimeComputable_const [true]).pairEncode (hout.comp' (hctx.pairEncode (hst.pairEncode
++          hz))))
++      ((polyTimeComputable_const [false]).pairEncode (hNext_poly A dα din dout stateLen hrun
++          hadvIn)))
++  refine h.congr fun w => ?_
++  rw [hAct_eq]
++  simp only [List.length_replicate, decide_eq_true_eq]
++
++/-- **The raw function of the handler machine is polynomial-time** (`actLoop_poly`). -/
++theorem hRaw_poly (hrun : PolyTimeComputable run) (hadvIn : PolyTimeComputable advIn)
++    (hout : PolyTimeComputable out) : PolyTimeComputable (hRaw A q dα din dout stateLen run advIn
++        out) :=
++  actLoop_poly ((polyTimeComputable_const []).pairEncode
++      ((polyTimeComputable_pairSndD.comp' NUPPT.polyTimeComputable_inAdvice).pairEncode
++        (polyTimeComputable_const [])))
++    (hAct_poly A q dα din dout stateLen hrun hadvIn hout) _ _
++
++end Raw
++
++/-! ### The functional equation -/
++
++section Spec
++
++variable (A : NUPPT) (q dα : PolyExpr) (din dout : Fin k → PolyExpr) (stateLen : PolyExpr)
++  (run advIn out : List Bool → List Bool)
++
++/-- The state `⟨L, ⟨s, 1^t⟩⟩` of the handler machine: the encoded log, the handler's state and
++the number `t` of answered queries. -/
++def hState (L s : List Bool) (t : ℕ) : List Bool :=
++  pairEncode L (pairEncode s (List.replicate t true))
++
++/-- `hState L s t = ⟨L, ⟨s, 1^t⟩⟩`. -/
++theorem hState_eq (L s : List Bool) (t : ℕ) :
++    hState L s t = pairEncode L (pairEncode s (List.replicate t true)) :=
++  rfl
++
++/-- The move word of a round on the state `⟨L, ⟨s, 1^t⟩⟩` at parameter `n`: the canonical decoder
++of `A`'s output on `⟨advIn ctx, L⟩` with the advice and coins of the layout. -/
++theorem hMove_state {X : List Bool} {n : ℕ} (hXu : NUPPT.inParam X = List.replicate n true)
++    (L s : List Bool) (t : ℕ) :
++    hMove A dα din advIn (pairEncode X (hState L s t)) =
++      canonWord din n (dα.eval n) (A.output (NUPPT.layout (List.replicate n true)
++        (pairEncode (advIn (hCtx X)) L) (pairFstD (NUPPT.inAdvice X)) (NUPPT.inCoins X))) := by
++  rw [hMove_eq, hState_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, hXu, List.length_replicate]
++  exact canonFun_eq din n (dα.eval n) _
++
++/-- **A round on an output stops:** if the move word is `⟨[true], a⟩`, the round stops with
++`out ⟨ctx, ⟨s, a⟩⟩`. -/
++theorem hAct_of_ret {X : List Bool} {L s a : List Bool} {t : ℕ}
++    (hm : hMove A dα din advIn (pairEncode X (hState L s t)) = pairEncode [true] a) :
++    hAct A q dα din dout stateLen run advIn out (pairEncode X (hState L s t)) =
++      pairEncode [true] (out (pairEncode (hCtx X) (pairEncode s a))) := by
++  rw [hAct_eq, hm, if_pos (pairFstD_pairEncode _ _)]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, hState_eq]
++
++/-- **A query with the budget spent stops:** if the move word is a query `⟨[false], m⟩` and
++`q(n) ≤ t`, the round stops with `out ⟨ctx, ⟨s, 0^{dα(n)}⟩⟩`. -/
++theorem hAct_of_timeout {X : List Bool} {n : ℕ} (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s m : List Bool} {t : ℕ}
++    (hm : hMove A dα din advIn (pairEncode X (hState L s t)) = pairEncode [false] m)
++    (ht : q.eval n ≤ t) :
++    hAct A q dα din dout stateLen run advIn out (pairEncode X (hState L s t)) =
++      pairEncode [true] (out (pairEncode (hCtx X) (pairEncode s
++        (List.replicate (dα.eval n) false)))) := by
++  have hne : pairFstD (pairEncode [false] m) ≠ [true] := by
++    rw [pairFstD_pairEncode]
++    decide
++  rw [hAct_eq, hm, if_neg hne]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, hState_eq, hXu, List.length_replicate]
++  rw [if_pos ht]
++
++/-- **A query within budget continues:** if the move word is the query `⟨[false], ⟨iw, xw⟩⟩` and
++`t < q(n)`, the round continues with the entry `⟨iw, ⟨xw, y⟩⟩` appended to the log, the new state
++`s'` and `t + 1`, where `y` and `s'` are `run ⟨ctx, ⟨s, ⟨iw, xw⟩⟩⟩` decoded componentwise. -/
++theorem hAct_of_query {X : List Bool} {n : ℕ} (hXu : NUPPT.inParam X = List.replicate n true)
++    {L s iw xw : List Bool} {t : ℕ}
++    (hm : hMove A dα din advIn (pairEncode X (hState L s t)) =
++      pairEncode [false] (pairEncode iw xw))
++    (ht : t < q.eval n) :
++    hAct A q dα din dout stateLen run advIn out (pairEncode X (hState L s t)) =
++      pairEncode [false] (hState
++        (L ++ pairEncode (pairEncode iw (pairEncode xw (fixLen (selLen dout n iw.length)
++          (pairFstD (run (pairEncode (hCtx X) (pairEncode s (pairEncode iw xw)))))))) [])
++        (fixLen (stateLen.eval n) (pairSndD (run (pairEncode (hCtx X) (pairEncode s
++          (pairEncode iw xw)))))) (t + 1)) := by
++  have hne : pairFstD (pairEncode [false] (pairEncode iw xw)) ≠ [true] := by
++    rw [pairFstD_pairEncode]
++    decide
++  rw [hAct_eq, hm, if_neg hne, hNext_eq, hRes_eq, hm]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, hState_eq, hXu, List.length_replicate]
++  rw [if_neg (Nat.not_le.2 ht), List.replicate_succ]
++
++/-- **The functional equation of the handler machine.** At parameter `n`, on the layout
++`X = ⟨⟨⟨1^n, ⟨z, ω⟩⟩, ⟨α_A, s₀⟩⟩, r⟩` with `α_A = A.advice n`, for any answer function `ans`
++that agrees with `run` decoded componentwise (`fixLen`), the simulation of `A` on
++`advIn ⟨1^n, ⟨z, ω⟩⟩` with the stateless answers `ans` from `s₀` returns some `(a, s)`, and the
++raw function returns `out ⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, a⟩⟩`.
++
++**Proof sketch.** By induction on the remaining budget `b`, from the round `t = q(n) − b` whose
++state is `⟨encodeLog hist, ⟨s, 1^t⟩⟩` (`RunsTo`). The round's move word is the canonical word of
++`A`'s next move (`hMove_state`, `canonWord_eq`, `NUPPT.runAtL_eq_output_layout`). On an output `a`
++the round stops with `out ⟨ctx, ⟨s, a⟩⟩` (`hAct_of_ret`) and `buildComp` returns `a`
++(`buildComp_zero_of_ret`, `buildComp_succ_of_ret`, `simulate_pure`). On a query with `b = 0` it
++stops with the all-`false` output (`hAct_of_timeout`), as `buildComp_zero_of_query` does. On a
++query with `b > 0` the round continues (`hAct_of_query`) with the answered entry appended
++(`encodeLog_append_single`, `bitCodec_encodeEntry`) and the new state, which is the state of
++`simulate` after `buildComp_succ_of_query`, `simulate_query` and `pure_bind`. The states stay
++within `hBound` (`length_encodeLog_le`, `entry_le_entryPoly`, `PolyExpr.eval_mono`), and the
++stopping
++round is at most `q(n) ≤ (q + 1)(|X|)`; `runsTo_stop` evaluates the loop. -/
++theorem hRaw_spec {ι' : Type} {spec' : OracleSpec ι'} (n : ℕ) (z ω : List Bool) (r : A.Coins n)
++    (init : Fin (stateLen.eval n) → Bool)
++    (ans : ∀ i : Fin k, (Fin ((din i).eval n) → Bool) → (Fin (stateLen.eval n) → Bool) →
++      (Fin ((dout i).eval n) → Bool) × (Fin (stateLen.eval n) → Bool))
++    (hans : ∀ i x s,
++      List.ofFn (ans i x s).1 = fixLen ((dout i).eval n) (pairFstD (run (pairEncode
++        (pairEncode (List.replicate n true) (pairEncode z ω))
++        (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x)))))) ∧
++      List.ofFn (ans i x s).2 = fixLen (stateLen.eval n) (pairSndD (run (pairEncode
++        (pairEncode (List.replicate n true) (pairEncode z ω))
++        (pairEncode (List.ofFn s) (pairEncode (List.replicate i true) (List.ofFn x))))))) :
++    ∃ (a : Fin (dα.eval n) → Bool) (s : Fin (stateLen.eval n) → Bool),
++      simulate (spec' := spec') (fun i x s => OracleComp.pure (ans i x s))
++          (A.toCompOn (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
++            n (q.eval n) (advIn (pairEncode (List.replicate n true) (pairEncode z ω))) r) init =
++        .pure (a, s) ∧
++      hRaw A q dα din dout stateLen run advIn out
++          (NUPPT.layout (List.replicate n true) (pairEncode z ω)
++            (pairEncode (A.advice n) (List.ofFn init)) (List.ofFn r)) =
++        out (pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++          (pairEncode (List.ofFn s) (List.ofFn a))) := by
++  -- The fixed data of the run.
++  set X := NUPPT.layout (List.replicate n true) (pairEncode z ω)
++    (pairEncode (A.advice n) (List.ofFn init)) (List.ofFn r) with hX
++  set ctx := pairEncode (List.replicate n true) (pairEncode z ω) with hctx
++  set codec := bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)
++    with hcodec
++  have hnX : n ≤ X.length := le_length_layout n _ _ _
++  have hXu : NUPPT.inParam X = List.replicate n true := NUPPT.inParam_layout _ _ _ _
++  have hXctx : hCtx X = ctx := by rw [hCtx_eq, hXu, hX, NUPPT.inArg_layout]
++  -- The move word of a round is the canonical word of `A`'s next move.
++  have hmove : ∀ (hist : QueryLog (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)))
++      (s : Fin (stateLen.eval n) → Bool) (t : ℕ), hMove A dα din advIn
++      (pairEncode X (hState (codec.encodeLog hist) (List.ofFn s) t)) =
++      encodeBitMove (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n)
++        (advNext A codec n (advIn ctx) r hist) := by
++    intro hist s t
++    rw [hMove_state A dα din advIn hXu, hXctx, hX, NUPPT.inAdvice_layout, NUPPT.inCoins_layout,
++      pairFstD_pairEncode, ← NUPPT.runAtL_eq_output_layout, ← NUPPT.runAt_eq,
++      canonWord_eq din (fun i => (dout i).eval n), advNext_eq, hcodec, bitCodec_decodeMove]
++  -- The state bound.
++  have hbound : ∀ (hist : QueryLog (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)))
++      (s : Fin (stateLen.eval n) → Bool) (t : ℕ), hist.length = t → t ≤ q.eval n →
++      (hState (codec.encodeLog hist) (List.ofFn s) t).length ≤
++        (hBound q din dout stateLen).eval X.length := by
++    intro hist s t hlen ht
++    have hlog := length_encodeLog_le codec ((entryPoly din dout).eval n) hist
++      (fun e _ => entry_le_entryPoly din dout n e (dα.eval n))
++    refine le_trans ?_ ((hBound q din dout stateLen).eval_mono hnX)
++    rw [hState_eq, length_pairEncode, length_pairEncode, List.length_ofFn, List.length_replicate,
++      hBound_eq]
++    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++    rw [hlen] at hlog
++    have : t * (entryPoly din dout).eval n ≤ q.eval n * (entryPoly din dout).eval n :=
++      Nat.mul_le_mul_right _ ht
++    omega
++  have hR : ∀ t, t ≤ q.eval n → t ≤ (hRounds q).eval X.length := by
++    intro t ht
++    rw [hRounds_eq, PolyExpr.eval_add, PolyExpr.eval_const]
++    have := q.eval_mono hnX
++    omega
++  -- The induction on the remaining budget.
++  have key : ∀ b hist (s : Fin (stateLen.eval n) → Bool) t, t + b = q.eval n →
++      hist.length = t →
++      RunsTo hStart (hAct A q dα din dout stateLen run advIn out) (hBound q din dout stateLen) X t
++        (hState (codec.encodeLog hist) (List.ofFn s) t) →
++      ∃ (a : Fin (dα.eval n) → Bool) (s' : Fin (stateLen.eval n) → Bool),
++        simulate (spec' := spec') (fun i x s => OracleComp.pure (ans i x s))
++            (buildComp (advNext A codec n (advIn ctx) r) codec.timeout b hist) s = .pure (a, s') ∧
++        hRaw A q dα din dout stateLen run advIn out X =
++          out (pairEncode ctx (pairEncode (List.ofFn s') (List.ofFn a))) := by
++    intro b
++    induction b with
++    | zero =>
++      intro hist s t ht hlen hrun
++      cases hm : advNext A codec n (advIn ctx) r hist with
++      | ret a =>
++        refine ⟨a, s, by rw [buildComp_zero_of_ret hm, simulate_pure], ?_⟩
++        refine runsTo_stop hrun ?_ (hR t (by omega))
++        rw [hAct_of_ret A q dα din dout stateLen run advIn out
++          (by rw [hmove, hm, encodeBitMove_ret]), hXctx]
++      | query i x =>
++        refine ⟨zeroBits _, s, ?_, ?_⟩
++        · rw [buildComp_zero_of_query hm, simulate_pure, hcodec, bitCodec_timeout]
++        · refine runsTo_stop hrun ?_ (hR t (by omega))
++          rw [hAct_of_timeout A q dα din dout stateLen run advIn out hXu
++            (by rw [hmove, hm, encodeBitMove_query]) (by omega), hXctx, ofFn_zeroBits]
++    | succ b ih =>
++      intro hist s t ht hlen hrun
++      cases hm : advNext A codec n (advIn ctx) r hist with
++      | ret a =>
++        refine ⟨a, s, by rw [buildComp_succ_of_ret hm, simulate_pure], ?_⟩
++        refine runsTo_stop hrun ?_ (hR t (by omega))
++        rw [hAct_of_ret A q dα din dout stateLen run advIn out
++          (by rw [hmove, hm, encodeBitMove_ret]), hXctx]
++      | query i x =>
++        have hlen' : (hist ++ [(⟨i, x, (ans i x s).1⟩ : Σ i, (bitSpec (fun i => (din i).eval n)
++            (fun i => (dout i).eval n)).dom i × (bitSpec (fun i => (din i).eval n)
++            (fun i => (dout i).eval n)).rng i)]).length = t + 1 := by
++          rw [List.length_append, hlen, List.length_singleton]
++        have hnext : hAct A q dα din dout stateLen run advIn out
++            (pairEncode X (hState (codec.encodeLog hist) (List.ofFn s) t)) =
++            pairEncode [false] (hState (codec.encodeLog (hist ++ [⟨i, x, (ans i x s).1⟩]))
++              (List.ofFn (ans i x s).2) (t + 1)) := by
++          rw [hAct_of_query A q dα din dout stateLen run advIn out hXu
++            (by rw [hmove, hm, encodeBitMove_query]) (by omega), hXctx, List.length_replicate,
++            selLen_eq, ← (hans i x s).1, ← (hans i x s).2, encodeLog_append_single, hcodec,
++            bitCodec_encodeEntry]
++        obtain ⟨a, s', hsim, hraw⟩ := ih (hist ++ [⟨i, x, (ans i x s).1⟩]) (ans i x s).2 (t + 1)
++          (by omega) hlen' (runsTo_succ hrun hnext (hbound _ _ _ hlen' (by omega)))
++        refine ⟨a, s', ?_, hraw⟩
++        rw [buildComp_succ_of_query hm, simulate_query, OracleComp.pure_bind]
++        exact hsim
++  have hstart : hStart X = hState (codec.encodeLog []) (List.ofFn init) 0 := by
++    rw [hStart_eq, hX, NUPPT.inAdvice_layout, pairSndD_pairEncode, hState_eq,
++      MachineCodec.encodeLog_nil, List.replicate_zero]
++  have h0 : RunsTo hStart (hAct A q dα din dout stateLen run advIn out) (hBound q din dout stateLen)
++      X 0 (hState (codec.encodeLog []) (List.ofFn init) 0) := by
++    rw [← hstart]
++    exact runsTo_zero (by rw [hstart]; exact hbound [] init 0 rfl (Nat.zero_le _))
++  obtain ⟨a, s, hsim, hraw⟩ := key (q.eval n) [] init 0 (Nat.zero_add _) rfl h0
++  refine ⟨a, s, ?_, hraw⟩
++  rw [toCompOn_eq_advNext]
++  exact hsim
++
++end Spec
++
++end TCSlib.Cryptography.Games.EffFill
+diff --git a/TCSlib/Cryptography/Games/Efficiency/Strings.lean b/TCSlib/Cryptography/Games/Efficiency/Strings.lean
+new file mode 100644
+index 000000000..fe5d6c068
+--- /dev/null
++++ b/TCSlib/Cryptography/Games/Efficiency/Strings.lean
+@@ -0,0 +1,549 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Games.BitCodec
++import TCSlib.Complexity.Randomized.Closure
++import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
++import TCSlib.Cryptography.Pseudorandom.Functions.Asymptotic.GGM.Reduction
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The string layer of the efficiency fill
++
++The machines of the efficiency targets (`TCSlib.Cryptography.Games.Efficiency`) replay a reduction
++on strings. This file collects the string-level pieces they share (route note
++`briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`, §"Shared pieces", S1 and S2):
++- appending one entry to an encoded log is a concatenation (`encodeLog_append_single`);
++- fixed-length decoding with the all-`false` default, as a string function (`fixLen`);
++- a `k`-way selection of a polynomial length by an index written in unary (`selLen`), and finite
++  sums of polynomials (`sumPoly`);
++- the **canonical decoder** `canonWord`: on every word it returns the canonical word of the move
++  that `decodeBitMove` reads off it, and it is polynomial-time (`canonFun_poly`); canonicity is
++  tested by re-encoding and comparing;
++- an **activation loop** (`actLoop`): `GGMRed.stateLoopFun` with one activation per round, the
++  activation returning `⟨[false], new state⟩` to continue or `⟨[true], output⟩` to stop, with its
++  run invariant `RunsTo`;
++- the machine glue (`exists_splitMachine`): a polynomial-time function of the raw layout becomes a
++  machine whose first `p(n)` coins are a seed passed as data.
++
++## Main definitions
++
++* `EffFill.fixLen`, `EffFill.selLen`, `EffFill.sumPoly`, `EffFill.canonWord`, `EffFill.canonFun`.
++* `EffFill.actLoop`, `EffFill.RunsTo`.
++
++## Main results
++
++* `EffFill.encodeLog_append_single`, `EffFill.ofFn_getD_decodeFin`.
++* `EffFill.canonWord_eq`: the canonical decoder is `encodeBitMove ∘ decodeBitMove`.
++* `EffFill.canonFun_poly`, `EffFill.fixLen_poly`, `EffFill.selLen_poly`, `EffFill.actLoop_poly`.
++* `EffFill.runsTo_stop`: a run that stops evaluates the loop.
++* `EffFill.exists_splitMachine`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §2.1 (closure of p.p.t. machines under efficient operations) and §3.8.1 (oracle machines).
++-/
++
++namespace TCSlib.Cryptography.Games.EffFill
++
++open Complexity Turing
++
++variable {k : ℕ}
++
++/-! ### Logs -/
++
++/-- **Appending one entry to a log appends one pair:** `codec.encodeLog (h ++ [e]) =
++codec.encodeLog h ++ pairEncode (codec.encodeEntry e) []` (the nested encoding is flat). -/
++theorem encodeLog_append_single {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α)
++    (h : QueryLog spec) (e : Σ i, spec.dom i × spec.rng i) :
++    codec.encodeLog (h ++ [e]) = codec.encodeLog h ++ pairEncode (codec.encodeEntry e) [] := by
++  induction h with
++  | nil =>
++    rw [List.nil_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_nil, List.nil_append]
++  | cons e' h ih =>
++    rw [List.cons_append, MachineCodec.encodeLog_cons, MachineCodec.encodeLog_cons, ih,
++      GGMRed.pairEncode_append_right]
++
++/-- An encoded log is at most `E` bits per entry when each entry, as a pair `⟨e, rest⟩`, adds at
++most `E` bits: `|codec.encodeLog h| ≤ |h| · E`. -/
++theorem length_encodeLog_le {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α)
++    (E : ℕ) : ∀ (h : QueryLog spec), (∀ e ∈ h, 2 * (codec.encodeEntry e).length + 2 ≤ E) →
++      (codec.encodeLog h).length ≤ h.length * E
++  | [], _ => by rw [MachineCodec.encodeLog_nil]; exact Nat.zero_le _
++  | e :: h, hE => by
++    rw [MachineCodec.encodeLog_cons, length_pairEncode, List.length_cons, Nat.add_mul, Nat.one_mul]
++    have h1 := hE e List.mem_cons_self
++    have h2 := length_encodeLog_le codec E h fun e' he' => hE e' (List.mem_cons_of_mem e he')
++    omega
++
++/-- The encoding of a log ends with the encoding of each of its suffixes, so it is at least as
++long: `|codec.encodeLog O| ≤ |codec.encodeLog (P ++ O)|`. -/
++theorem length_encodeLog_le_append {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α)
++    (O : QueryLog spec) : ∀ P : QueryLog spec,
++      (codec.encodeLog O).length ≤ (codec.encodeLog (P ++ O)).length
++  | [] => by rw [List.nil_append]
++  | e :: P => by
++    rw [List.cons_append, MachineCodec.encodeLog_cons, length_pairEncode]
++    have := length_encodeLog_le_append codec O P
++    omega
++
++/-! ### Fixed-length decoding with a default -/
++
++/-- The word `w` if it has `d` bits, and the all-`false` word of `d` bits otherwise. -/
++def fixLen (d : ℕ) (w : List Bool) : List Bool :=
++  if w.length = d then w else List.replicate d false
++
++/-- `fixLen d w = if |w| = d then w else 0^d`. -/
++theorem fixLen_eq (d : ℕ) (w : List Bool) :
++    fixLen d w = if w.length = d then w else List.replicate d false :=
++  rfl
++
++/-- A word of the right length is kept: `fixLen d w = w` when `|w| = d`. -/
++theorem fixLen_of_length_eq {d : ℕ} {w : List Bool} (h : w.length = d) : fixLen d w = w := by
++  rw [fixLen_eq, if_pos h]
++
++/-- A word of the wrong length becomes all-`false`: `fixLen d w = 0^d` when `|w| ≠ d`. -/
++theorem fixLen_of_length_ne {d : ℕ} {w : List Bool} (h : w.length ≠ d) :
++    fixLen d w = List.replicate d false := by
++  rw [fixLen_eq, if_neg h]
++
++/-- `fixLen d w` has `d` bits. -/
++theorem length_fixLen (d : ℕ) (w : List Bool) : (fixLen d w).length = d := by
++  by_cases h : w.length = d
++  · rw [fixLen_of_length_eq h, h]
++  · rw [fixLen_of_length_ne h, List.length_replicate]
++
++/-- The empty word becomes all-`false`: `fixLen d [] = 0^d` (for `d = 0` both are empty). -/
++theorem fixLen_nil (d : ℕ) : fixLen d [] = List.replicate d false := by
++  by_cases h : ([] : List Bool).length = d
++  · rw [fixLen_of_length_eq h, ← h, List.length_nil, List.replicate_zero]
++  · rw [fixLen_of_length_ne h]
++
++/-- Every word of `d` bits is the string of some `d`-bit vector. -/
++theorem exists_ofFn_eq {d : ℕ} {w : List Bool} (h : w.length = d) :
++    ∃ x : Fin d → Bool, List.ofFn x = w := by
++  cases hd : decodeFin d w with
++  | none =>
++    rw [decodeFin_eq, dif_pos h] at hd
++    exact absurd hd (Option.some_ne_none _)
++  | some x => exact ⟨x, ((decodeFin_eq_some_iff d w x).1 hd).symm⟩
++
++/-- **Fixed-length decoding with the all-`false` default is `fixLen`:**
++`List.ofFn ((decodeFin d w).getD (zeroBits d)) = fixLen d w`. -/
++theorem ofFn_getD_decodeFin (d : ℕ) (w : List Bool) :
++    List.ofFn ((decodeFin d w).getD (zeroBits d)) = fixLen d w := by
++  cases hd : decodeFin d w with
++  | none =>
++    have hne : w.length ≠ d := fun h => by
++      rw [decodeFin_eq, dif_pos h] at hd
++      exact absurd hd (Option.some_ne_none _)
++    rw [Option.getD_none, ofFn_zeroBits, fixLen_of_length_ne hne]
++  | some x =>
++    rw [Option.getD_some, (decodeFin_eq_some_iff d w x).1 hd,
++      fixLen_of_length_eq (List.length_ofFn)]
++
++/-- The all-`false` word of a polynomial-time length is polynomial-time:
++`z ↦ 0^{|f z|}`. -/
++theorem zeros_poly {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
++    PolyTimeComputable fun z => List.replicate (f z).length false :=
++  (EnsembleLemmas.polyTimeComputable_zeros .var hf).congr fun z => by rw [PolyExpr.eval_var]
++
++/-- Equality of two polynomial-time words is a polynomial-time test
++(`Complexity.polyTimeComputable_pairEq` on the pair). -/
++theorem eq_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
++    (hg : PolyTimeComputable g) : PolyTimeComputable fun z => [decide (f z = g z)] :=
++  (polyTimeComputable_pairEq.comp' (hf.pairEncode hg)).congr fun z => by
++    rw [pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- Equality of the lengths of two polynomial-time words is a polynomial-time test
++(`Complexity.polyTimeComputable_lenEq` on the pair). -/
++theorem lenEq_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
++    (hg : PolyTimeComputable g) : PolyTimeComputable fun z => [decide ((f z).length = (g z).length)]
++        :=
++  (polyTimeComputable_lenEq.comp' (hf.pairEncode hg)).congr fun z => by
++    rw [pairFstD_pairEncode, pairSndD_pairEncode]
++
++/-- `fixLen` with the length given in unary, `z = ⟨1^d, w⟩ ↦ fixLen d w`, is polynomial-time. -/
++theorem fixLen_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
++    (hg : PolyTimeComputable g) : PolyTimeComputable fun z => fixLen (f z).length (g z) :=
++  (polyTimeComputable_ite (lenEq_poly hg hf) hg (zeros_poly hf)).congr fun z => by
++    by_cases h : (g z).length = (f z).length
++    · rw [fixLen_of_length_eq h, decide_eq_true h, if_pos rfl]
++    · rw [fixLen_of_length_ne h, decide_eq_false h]
++      rfl
++
++/-! ### Polynomial lengths selected by an index -/
++
++/-- The length `d i (n)` selected by the index `m = i` (and `0` for `m ≥ k`). -/
++def selLen : {k : ℕ} → (Fin k → PolyExpr) → ℕ → ℕ → ℕ
++  | 0, _, _, _ => 0
++  | _ + 1, d, n, 0 => (d 0).eval n
++  | _ + 1, d, n, m + 1 => selLen (fun i => d i.succ) n m
++
++/-- The selected length of an index is its polynomial evaluated:
++`selLen d n i = (d i).eval n`. -/
++theorem selLen_eq : ∀ {k : ℕ} (d : Fin k → PolyExpr) (n : ℕ) (i : Fin k),
++    selLen d n i = (d i).eval n
++  | 0, _, _, i => i.elim0
++  | _ + 1, d, n, i => by
++    refine Fin.cases ?_ (fun j => ?_) i
++    · rfl
++    · rw [Fin.val_succ]
++      exact selLen_eq (fun i => d i.succ) n j
++
++/-- The selected length in unary, `⟨u, iw⟩ ↦ 1^{selLen d |u| |iw|}`, is polynomial-time (a `k`-way
++case split, by induction on `k`). -/
++theorem selLen_poly : ∀ {k : ℕ} (d : Fin k → PolyExpr),
++    PolyTimeComputable fun z =>
++      List.replicate (selLen d (pairFstD z).length (pairSndD z).length) true
++  | 0, _ => (polyTimeComputable_const []).congr fun _ => rfl
++  | _ + 1, d => by
++    have hrest := (selLen_poly (fun i => d i.succ)).comp'
++      (polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_tail.comp
++          polyTimeComputable_pairSndD))
++    have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)
++      (StateLoop.unaryPoly_comp (d 0) polyTimeComputable_pairFstD) hrest
++    refine h.congr fun z => ?_
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++    cases hz : pairSndD z with
++    | nil => rfl
++    | cons b w =>
++      simp only [List.length_cons, List.drop_one, List.tail_cons]
++      rfl
++
++/-- A finite sum of polynomials: `sumPoly d = d 0 + d 1 + ⋯ + d (k - 1)`. -/
++def sumPoly : {k : ℕ} → (Fin k → PolyExpr) → PolyExpr
++  | 0, _ => .const 0
++  | _ + 1, d => .add (d 0) (sumPoly fun i => d i.succ)
++
++/-- `sumPoly` of no polynomials is `0`, and of `k + 1` it is the first plus the rest:
++`sumPoly d = .add (d 0) (sumPoly (d ∘ Fin.succ))`. -/
++theorem sumPoly_succ {k : ℕ} (d : Fin (k + 1) → PolyExpr) :
++    sumPoly d = .add (d 0) (sumPoly fun i => d i.succ) :=
++  rfl
++
++/-- Each summand is below the sum: `(d i).eval n ≤ (sumPoly d).eval n`. -/
++theorem eval_le_sumPoly : ∀ {k : ℕ} (d : Fin k → PolyExpr) (i : Fin k) (n : ℕ),
++    (d i).eval n ≤ (sumPoly d).eval n
++  | 0, _, i, _ => i.elim0
++  | _ + 1, d, i, n => by
++    rw [sumPoly_succ, PolyExpr.eval_add]
++    refine Fin.cases ?_ (fun j => ?_) i
++    · exact Nat.le_add_right _ _
++    · exact (eval_le_sumPoly (fun i => d i.succ) j n).trans (Nat.le_add_left _ _)
++
++/-- Every selected length is below the sum: `selLen d n m ≤ (sumPoly d).eval n`. -/
++theorem selLen_le_sumPoly : ∀ {k : ℕ} (d : Fin k → PolyExpr) (n m : ℕ),
++    selLen d n m ≤ (sumPoly d).eval n
++  | 0, _, _, _ => Nat.zero_le _
++  | _ + 1, d, n, 0 => by
++    rw [sumPoly_succ, PolyExpr.eval_add]
++    exact Nat.le_add_right _ _
++  | _ + 1, d, n, m + 1 => by
++    rw [sumPoly_succ, PolyExpr.eval_add]
++    exact (selLen_le_sumPoly (fun i => d i.succ) n m).trans (Nat.le_add_left _ _)
++
++/-- The bits that one entry `⟨1^i, ⟨x, y⟩⟩` adds to an encoded log, at most
++`4k + 10 + 4 Σ din + 2 Σ dout`. -/
++def entryPoly (din dout : Fin k → PolyExpr) : PolyExpr :=
++  .add (.const (4 * k + 10)) (.add (.mul (.const 4) (sumPoly din)) (.mul (.const 2) (sumPoly dout)))
++
++/-- The defining equation of `entryPoly`. -/
++theorem entryPoly_eq (din dout : Fin k → PolyExpr) : entryPoly din dout =
++    .add (.const (4 * k + 10)) (.add (.mul (.const 4) (sumPoly din)) (.mul (.const 2) (sumPoly
++        dout))) :=
++  rfl
++
++/-- **The entry bound:** a log entry of the bit-string oracles adds at most `entryPoly` bits to an
++encoded log, `2 |encodeEntry e| + 2 ≤ entryPoly(n)`. -/
++theorem entry_le_entryPoly (din dout : Fin k → PolyExpr) (n : ℕ)
++    (e : Σ i, (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)).dom i ×
++      (bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)).rng i) (dα : ℕ) :
++    2 * ((bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) dα).encodeEntry e).length
++      + 2 ≤ (entryPoly din dout).eval n := by
++  rw [bitCodec_encodeEntry, length_pairEncode, length_pairEncode, List.length_replicate,
++    List.length_ofFn, List.length_ofFn, entryPoly_eq]
++  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  have h1 := e.1.isLt
++  have h2 := eval_le_sumPoly din e.1 n
++  have h3 := eval_le_sumPoly dout e.1 n
++  omega
++
++/-- The parameter is at most the length of the raw layout `⟨⟨⟨1^n, y⟩, α⟩, r⟩`. -/
++theorem le_length_layout (n : ℕ) (y α r : List Bool) :
++    n ≤ (NUPPT.layout (List.replicate n true) y α r).length := by
++  rw [NUPPT.layout_eq, length_pairEncode, length_pairEncode, length_pairEncode,
++    List.length_replicate]
++  omega
++
++/-! ### The canonical decoder -/
++
++/-- The query test of the canonical decoder: `w = ⟨[false], ⟨iw, xw⟩⟩` with `iw = 1^i`, `i < k`
++and `|xw| = din i (n)`, tested by re-encoding and comparing. -/
++def canonQ (din : Fin k → PolyExpr) (n : ℕ) (w : List Bool) : Bool :=
++  decide (w = pairEncode [false] (pairEncode (pairFstD (pairSndD w)) (pairSndD (pairSndD w)))) &&
++    decide (pairFstD (pairSndD w) = List.replicate (pairFstD (pairSndD w)).length true) &&
++    decide ((pairFstD (pairSndD w)).length < k) &&
++    decide ((pairSndD (pairSndD w)).length = selLen din n (pairFstD (pairSndD w)).length)
++
++/-- `canonQ din n w` is the conjunction of the four tests (its defining equation). -/
++theorem canonQ_eq (din : Fin k → PolyExpr) (n : ℕ) (w : List Bool) :
++    canonQ din n w =
++      (decide (w = pairEncode [false] (pairEncode (pairFstD (pairSndD w)) (pairSndD (pairSndD w))))
++        && decide (pairFstD (pairSndD w) = List.replicate (pairFstD (pairSndD w)).length true)
++        && decide ((pairFstD (pairSndD w)).length < k)
++        && decide ((pairSndD (pairSndD w)).length = selLen din n (pairFstD (pairSndD w)).length)) :=
++  rfl
++
++/-- The output test of the canonical decoder: `w = ⟨[true], a⟩` with `|a| = dα`. -/
++def canonR (dα : ℕ) (w : List Bool) : Bool :=
++  decide (w = pairEncode [true] (pairSndD w)) && decide ((pairSndD w).length = dα)
++
++/-- `canonR dα w` is the conjunction of the two tests (its defining equation). -/
++theorem canonR_eq (dα : ℕ) (w : List Bool) :
++    canonR dα w = (decide (w = pairEncode [true] (pairSndD w)) && decide ((pairSndD w).length = dα))
++        :=
++  rfl
++
++/-- **The canonical decoder** at parameter `n` with `dα`-bit outputs: a canonical query or output
++word is kept, every other word becomes the canonical word `⟨[true], 0^dα⟩` of the default. -/
++def canonWord (din : Fin k → PolyExpr) (n dα : ℕ) (w : List Bool) : List Bool :=
++  if canonQ din n w || canonR dα w then w else pairEncode [true] (List.replicate dα false)
++
++/-- `canonWord din n dα w = if canonQ din n w || canonR dα w then w else ⟨[true], 0^dα⟩`. -/
++theorem canonWord_eq_ite (din : Fin k → PolyExpr) (n dα : ℕ) (w : List Bool) :
++    canonWord din n dα w =
++      if canonQ din n w || canonR dα w then w else pairEncode [true] (List.replicate dα false) :=
++  rfl
++
++/-- **The canonical decoder is the canonical word of the decoded move:** for every word `w` (and
++any answer lengths `dout`), `canonWord din n dα w = encodeBitMove (decodeBitMove w)` at the
++evaluated lengths.
++
++**Proof sketch.** Three cases. A canonical query word `⟨[false], ⟨1^i, x⟩⟩` passes the query test
++(the index is below `k` and `|x| = din i (n)` by `selLen_eq`) and decodes to its query, whose
++canonical word it is (`decodeBitMove_query`). A canonical output word passes the output test and
++decodes to its output (`decodeBitMove_ret`). Any other word fails both tests: a word passing the
++query test is, after re-encoding, the canonical word of the query at index `|iw|` with payload
++`xw` (`exists_ofFn_eq`), and one passing the output test is a canonical output word. So it becomes
++`⟨[true], 0^dα⟩`, the canonical word of the default (`decodeBitMove_of_not_canonical`,
++`ofFn_zeroBits`). -/
++theorem canonWord_eq (din : Fin k → PolyExpr) (dout : Fin k → ℕ) (n dα : ℕ) (w : List Bool) :
++    canonWord din n dα w =
++      encodeBitMove (fun i => (din i).eval n) dout dα
++        (decodeBitMove (fun i => (din i).eval n) dout dα w) := by
++  by_cases hq : ∃ (i : Fin k) (x : Fin ((din i).eval n) → Bool),
++      w = pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x))
++  · obtain ⟨i, x, rfl⟩ := hq
++    rw [decodeBitMove_query, encodeBitMove_query, canonWord_eq_ite, if_pos]
++    rw [canonQ_eq]
++    simp only [pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate, List.length_ofFn,
++      selLen_eq, i.isLt, decide_true, Bool.and_true, Bool.true_or]
++  by_cases hr : ∃ a : Fin dα → Bool, w = pairEncode [true] (List.ofFn a)
++  · obtain ⟨a, rfl⟩ := hr
++    rw [decodeBitMove_ret, encodeBitMove_ret, canonWord_eq_ite, if_pos]
++    rw [canonR_eq]
++    simp only [pairSndD_pairEncode, List.length_ofFn, decide_true, Bool.and_true, Bool.or_true]
++  have hq' : ∀ (i : Fin k) (x : Fin ((din i).eval n) → Bool),
++      w ≠ pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x)) :=
++    fun i x h => hq ⟨i, x, h⟩
++  have hr' : ∀ a : Fin dα → Bool, w ≠ pairEncode [true] (List.ofFn a) := fun a h => hr ⟨a, h⟩
++  rw [decodeBitMove_of_not_canonical hq' hr', encodeBitMove_ret, ofFn_zeroBits, canonWord_eq_ite,
++    if_neg]
++  rw [Bool.or_eq_true, not_or]
++  constructor
++  · intro h
++    rw [canonQ_eq] at h
++    simp only [Bool.and_eq_true, decide_eq_true_eq] at h
++    obtain ⟨⟨⟨hw, hiw⟩, hlt⟩, hx⟩ := h
++    let i : Fin k := ⟨(pairFstD (pairSndD w)).length, hlt⟩
++    have hx' : (pairSndD (pairSndD w)).length = (din i).eval n := by
++      rw [hx, ← selLen_eq]
++    obtain ⟨x, hxe⟩ := exists_ofFn_eq hx'
++    refine hq' i x ?_
++    rw [hxe]
++    exact hw.trans (by rw [← hiw])
++  · intro h
++    rw [canonR_eq] at h
++    simp only [Bool.and_eq_true, decide_eq_true_eq] at h
++    obtain ⟨hw, hlen⟩ := h
++    obtain ⟨a, ha⟩ := exists_ofFn_eq hlen
++    exact hr' a (by rw [ha]; exact hw)
++
++/-- The canonical decoder as a function of `⟨1^n, ⟨1^dα, w⟩⟩`. -/
++def canonFun (din : Fin k → PolyExpr) (z : List Bool) : List Bool :=
++  canonWord din (pairFstD z).length (pairFstD (pairSndD z)).length (pairSndD (pairSndD z))
++
++/-- The canonical decoder reads `n` and `dα` in unary:
++`canonFun din ⟨1^n, ⟨1^dα, w⟩⟩ = canonWord din n dα w`. -/
++theorem canonFun_eq (din : Fin k → PolyExpr) (n dα : ℕ) (w : List Bool) :
++    canonFun din (pairEncode (List.replicate n true) (pairEncode (List.replicate dα true) w)) =
++      canonWord din n dα w := by
++  rw [canonFun, pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate, List.length_replicate]
++
++/-- **The canonical decoder is polynomial-time:** each test is a comparison of polynomial-time
++words (`eq_poly`, `lenEq_poly`, `Complexity.StateLoop.lenLe_comp`, `selLen_poly`), and the
++output a branch (`Complexity.polyTimeComputable_ite`). -/
++theorem canonFun_poly (din : Fin k → PolyExpr) : PolyTimeComputable (canonFun din) := by
++  have hu := polyTimeComputable_pairFstD
++  have hrl := polyTimeComputable_pairFstD.comp' polyTimeComputable_pairSndD
++  have hw := polyTimeComputable_pairSndD.comp' polyTimeComputable_pairSndD
++  have hrest := polyTimeComputable_pairSndD.comp' hw
++  have hiw := polyTimeComputable_pairFstD.comp' hrest
++  have hxw := polyTimeComputable_pairSndD.comp' hrest
++  have h1 := eq_poly hw ((polyTimeComputable_const [false]).pairEncode (hiw.pairEncode hxw))
++  have h2 := eq_poly hiw (polyTimeComputable_unary.comp' hiw)
++  have h3 : PolyTimeComputable fun z =>
++      [decide ((true :: pairFstD (pairSndD (pairSndD (pairSndD z)))).length ≤
++        (List.replicate k true).length)] :=
++    StateLoop.lenLe_comp (polyTimeComputable_const _) ((StateLoop.cons_poly true).comp' hiw)
++  have h4 := lenEq_poly hxw ((selLen_poly din).comp' (hu.pairEncode hiw))
++  have hQ := polyTimeComputable_and (polyTimeComputable_and (polyTimeComputable_and h1 h2) h3) h4
++  have h5 := eq_poly hw ((polyTimeComputable_const [true]).pairEncode hrest)
++  have h6 := lenEq_poly hrest hrl
++  have hR := polyTimeComputable_and h5 h6
++  have h := polyTimeComputable_ite (polyTimeComputable_or hQ hR) hw
++    ((polyTimeComputable_const [true]).pairEncode (zeros_poly hrl))
++  refine h.congr fun z => ?_
++  rw [canonFun, canonWord_eq_ite, canonQ_eq, canonR_eq]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, List.length_cons,
++    Nat.succ_le_iff]
++
++/-! ### Activation loops -/
++
++/-- The step of an activation loop: the second component of the activation's result. -/
++def actStep (act : List Bool → List Bool) (w : List Bool) : List Bool :=
++  pairSndD (act w)
++
++/-- `actStep act w = pairSndD (act w)`. -/
++theorem actStep_eq (act : List Bool → List Bool) (w : List Bool) :
++    actStep act w = pairSndD (act w) :=
++  rfl
++
++/-- The stopping test of an activation loop: the activation's result is tagged `[true]`. -/
++def actAcc (act : List Bool → List Bool) (w : List Bool) : Bool :=
++  decide (pairFstD (act w) = [true])
++
++/-- `actAcc act w = decide (pairFstD (act w) = [true])`. -/
++theorem actAcc_eq (act : List Bool → List Bool) (w : List Bool) :
++    actAcc act w = decide (pairFstD (act w) = [true]) :=
++  rfl
++
++/-- **The activation loop:** `GGMRed.stateLoopFun` whose round is one activation `act` on the
++state word `⟨x, s⟩`, returning `⟨[false], s'⟩` to continue with the state `s'` or `⟨[true], o⟩` to
++stop with the output `o`; at most `R|x|` rounds, states bounded by `B|x|`. -/
++def actLoop (start act : List Bool → List Bool) (R B : PolyExpr) : List Bool → List Bool :=
++  GGMRed.stateLoopFun start (actStep act) (actAcc act) (actStep act) R B
++
++/-- `actLoop start act R B = GGMRed.stateLoopFun start (actStep act) (actAcc act) (actStep act) R
++B`.
++-/
++theorem actLoop_eq (start act : List Bool → List Bool) (R B : PolyExpr) :
++    actLoop start act R B =
++      GGMRed.stateLoopFun start (actStep act) (actAcc act) (actStep act) R B :=
++  rfl
++
++/-- An activation loop with polynomial-time start and activation is polynomial-time
++(`GGMRed.stateLoopFun_poly`). -/
++theorem actLoop_poly {start act : List Bool → List Bool} (hstart : PolyTimeComputable start)
++    (hact : PolyTimeComputable act) (R B : PolyExpr) : PolyTimeComputable (actLoop start act R B) :=
++  GGMRed.stateLoopFun_poly hstart (polyTimeComputable_pairSndD.comp' hact)
++    (eq_poly (polyTimeComputable_pairFstD.comp' hact) (polyTimeComputable_const [true]))
++    (polyTimeComputable_pairSndD.comp' hact) R B
++
++/-- **The run invariant of an activation loop:** on input `x`, the state after `t` rounds is `S`,
++no earlier round stopped, and the states so far are bounded by `B|x|`. -/
++def RunsTo (start act : List Bool → List Bool) (B : PolyExpr) (x : List Bool) (t : ℕ)
++    (S : List Bool) : Prop :=
++  (∀ i < t, actAcc act (pairEncode x (StateLoop.orbit start (actStep act) x i)) = false) ∧
++    (∀ i ≤ t, (StateLoop.orbit start (actStep act) x i).length ≤ B.eval x.length) ∧
++    StateLoop.orbit start (actStep act) x t = S
++
++/-- `RunsTo` is the conjunction of its three clauses (its defining equation). -/
++theorem runsTo_iff (start act : List Bool → List Bool) (B : PolyExpr) (x : List Bool) (t : ℕ)
++    (S : List Bool) :
++    RunsTo start act B x t S ↔
++      (∀ i < t, actAcc act (pairEncode x (StateLoop.orbit start (actStep act) x i)) = false) ∧
++        (∀ i ≤ t, (StateLoop.orbit start (actStep act) x i).length ≤ B.eval x.length) ∧
++        StateLoop.orbit start (actStep act) x t = S :=
++  Iff.rfl
++
++/-- The run starts at `start x`, if that state is within the bound. -/
++theorem runsTo_zero {start act : List Bool → List Bool} {B : PolyExpr} {x : List Bool}
++    (h : (start x).length ≤ B.eval x.length) : RunsTo start act B x 0 (start x) := by
++  refine ⟨fun i hi => absurd hi (Nat.not_lt_zero _), fun i hi => ?_, StateLoop.orbit_zero _ _ _⟩
++  rw [Nat.le_zero.1 hi, StateLoop.orbit_zero]
++  exact h
++
++/-- **A continuing round:** if the activation on `⟨x, S⟩` continues with `S'` within the bound,
++the run reaches `S'` one round later. -/
++theorem runsTo_succ {start act : List Bool → List Bool} {B : PolyExpr} {x : List Bool} {t : ℕ}
++    {S S' : List Bool} (h : RunsTo start act B x t S) (hact : act (pairEncode x S) = pairEncode
++        [false] S')
++    (hS' : S'.length ≤ B.eval x.length) : RunsTo start act B x (t + 1) S' := by
++  obtain ⟨hf, hb, hS⟩ := h
++  have horb : StateLoop.orbit start (actStep act) x (t + 1) = S' := by
++    rw [StateLoop.orbit_succ, hS, actStep_eq, hact, pairSndD_pairEncode]
++  refine ⟨fun i hi => ?_, fun i hi => ?_, horb⟩
++  · rcases Nat.lt_succ_iff_lt_or_eq.1 hi with hi | rfl
++    · exact hf i hi
++    · rw [hS, actAcc_eq, hact, pairFstD_pairEncode]
++      rfl
++  · rcases Nat.lt_or_eq_of_le hi with hi | rfl
++    · exact hb i (Nat.lt_succ_iff.1 hi)
++    · rw [horb]
++      exact hS'
++
++/-- **A stopping round:** if the activation on `⟨x, S⟩` stops with the output `o` at a round
++`t ≤ R|x|`, the loop returns `o` (`GGMRed.stateLoopFun_eval`). -/
++theorem runsTo_stop {start act : List Bool → List Bool} {R B : PolyExpr} {x : List Bool} {t : ℕ}
++    {S o : List Bool} (h : RunsTo start act B x t S) (hact : act (pairEncode x S) = pairEncode
++        [true] o)
++    (ht : t ≤ R.eval x.length) : actLoop start act R B x = o := by
++  obtain ⟨hf, hb, hS⟩ := h
++  rw [actLoop_eq, GGMRed.stateLoopFun_eval _ _ _ _ R B x t ht hb hf, hS, actStep_eq, hact,
++    pairSndD_pairEncode]
++  rw [hS, actAcc_eq, hact, pairFstD_pairEncode]
++  rfl
++
++/-! ### Machine glue -/
++
++/-- **A raw function with a seed as data is a machine.** For a polynomial-time `F`, an advice
++family of polynomial length and a seed length `p`, there is a machine `B` and, at every
++parameter, a bijection `φ` from (seed, `A`'s coins) to `B`'s coins such that `B` on the argument
++`y` with coins `φ (ω, r)` returns `F` of the raw layout `⟨⟨⟨1^n, ⟨y, ω⟩⟩, advice n⟩, r⟩`.
++
++**Proof sketch.** `B` is `NUPPT.exists_split` with `p` of `NUPPT.ofPolyTime hF A.coins adv advice`,
++so its coin polynomial is `p + A.coins` (`coins_ofPolyTime`, `coinLen_eq`, `PolyExpr.eval_add`).
++`φ` appends the seed and the coins (`Fin.appendEquiv`) and transports along that length
++equation; its string is `ω ++ r` (`List.ofFn_fin_append`, `List.ofFn_congr`), which the split
++cuts back into `ω` and `r` (`runAtL_ofPolyTime`). -/
++theorem exists_splitMachine (A : NUPPT) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
++    (adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
++    (p : PolyExpr) :
++    ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (p.eval n) → Bool) × A.Coins n ≃ B.Coins n,
++      ∀ (y : List Bool) (ω : Fin (p.eval n) → Bool) (r : A.Coins n),
++        B.runAt n y (φ (ω, r)) =
++          F (NUPPT.layout (List.replicate n true) (pairEncode y (List.ofFn ω)) (advice n)
++            (List.ofFn r)) := by
++  obtain ⟨B, hBc, -, hB⟩ := NUPPT.exists_split (NUPPT.ofPolyTime hF A.coins adv advice hα) p
++  refine ⟨B, fun n => ?_⟩
++  have hlen : p.eval n + A.coinLen n = B.coinLen n := by
++    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, hBc, PolyExpr.eval_add, NUPPT.coins_ofPolyTime]
++  refine ⟨(Fin.appendEquiv (p.eval n) (A.coinLen n)).trans
++    (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)), fun y ω r => ?_⟩
++  have hofFn : List.ofFn (((Fin.appendEquiv (p.eval n) (A.coinLen n)).trans
++      (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool))) (ω, r)) =
++      List.ofFn ω ++ List.ofFn r := by
++    rw [← List.ofFn_fin_append, List.ofFn_congr hlen (Fin.append ω r)]
++    rfl
++  rw [NUPPT.runAt_eq, hofFn, hB, List.take_left' (List.length_ofFn), List.drop_left'
++    (List.length_ofFn), NUPPT.runAtL_ofPolyTime, NUPPT.layout_eq, NUPPT.advInput_eq]
++
++end TCSlib.Cryptography.Games.EffFill
+-- 
+2.43.0
+
