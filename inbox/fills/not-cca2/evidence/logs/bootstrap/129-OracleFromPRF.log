@@ -1,0 +1,103 @@
+2026-11-11T08:46:21Z
+MODULE TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF
+START 2026-11-11T08:46:21.503036+00:00
+MODULE TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:113:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:124:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:141:43: error: unsolved goals
+w : List Bool
+b : Bool
+⊢ (List.drop 1 ([].reverse ++ [b] ++ w.reverse)).reverse ++ [!([].reverse ++ [b] ++ w.reverse).headD false] = w ++ [!b]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:142:48: warning: This simp argument is unused:
+  List.reverse_singleton
+
+Hint: Omit it from the simp argument list.
+  simp only [cca2FlipLast, List.reverse_append, L̵i̵s̵t̵.̵r̵e̵v̵e̵r̵s̵e̵_̵s̵i̵n̵g̵l̵e̵t̵o̵n̵,̵List.singleton_append, List.headD_cons,
+  ̲  ̲ ̲ ̲List.drop_succ_cons, List.drop_zero, List.reverse_cons, List.reverse_reverse]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:143:27: warning: This simp argument is unused:
+  List.headD_cons
+
+Hint: Omit it from the simp argument list.
+  simp only [cca2FlipLast, List.reverse_append, List.reverse_singleton, List.singleton_append,
+  ̲  ̲ ̲ ̲L̵i̵s̵t̵.̵h̵e̵a̵d̵D̵_̵c̵o̵n̵s̵,̵ ̵List.drop_succ_cons, List.drop_zero, List.reverse_cons, List.reverse_reverse]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:143:44: warning: This simp argument is unused:
+  List.drop_succ_cons
+
+Hint: Omit it from the simp argument list.
+  simp only [cca2FlipLast, List.reverse_append, List.reverse_singleton,
+  ̵  ̵ ̵ ̵List.singleton_append,
+  ̲  ̲ ̲ ̲List.headD_cons, List.drop_s̵u̵c̵c̵_̵c̵o̵n̵s̵,̵ ̵L̵i̵s̵t̵.̵d̵r̵o̵p̵_̵zero,
+  ̵  ̵ ̵ ̵List.reverse_cons, List.reverse_reverse]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:143:65: warning: This simp argument is unused:
+  List.drop_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [cca2FlipLast, List.reverse_append, List.reverse_singleton,
+  ̵  ̵ ̵ ̵List.singleton_append,
+  ̲  ̲ ̲ ̲List.headD_cons, List.drop_succ_cons, List.d̵ro̵p̵_̵z̵er̵o̵,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵r̵e̵verse_cons, List.reverse_reverse]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:144:23: warning: This simp argument is unused:
+  List.reverse_reverse
+
+Hint: Omit it from the simp argument list.
+  simp only [cca2FlipLast, List.reverse_append, List.reverse_singleton, List.singleton_append,
+  ̲  ̲ ̲ ̲List.headD_cons, List.drop_succ_cons, List.drop_zero, L̵i̵s̵t̵.̵r̵e̵v̵e̵r̵s̵e̵_̵c̵o̵n̵s̵,̵ ̵L̵i̵s̵t̵.̵r̵e̵v̵e̵r̵s̵e̵_̵r̵e̵v̵e̵r̵s̵e̵]̵L̲i̲s̲t̲.̲r̲e̲v̲e̲r̲s̲e̲_̲c̲o̲n̲s̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:220:45: error: Application type mismatch: The argument
+  i.isLt
+has type
+  ↑i < w.length
+of sort `Prop` but is expected to have type
+  List ?m.72
+of sort `Type ?u.9929` in the application
+  List.getD_eq_getElem i.isLt
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:217:84: error: unsolved goals
+case h
+w : List Bool
+i : Fin w.length
+⊢ w.getD (↑i) false = w[↑i]
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:249:2: error: Type mismatch
+  polyTimeComputable_ite (PolyTimeComputable.comp polyTimeComputable_isNil ha)
+    (PolyTimeComputable.pairEncode (polyTimeComputable_const [false])
+      (PolyTimeComputable.pairEncode (polyTimeComputable_const [true, true]) (PolyTimeComputable.append hz hp)))
+    (polyTimeComputable_ite (PolyTimeComputable.comp polyTimeComputable_isNil ht)
+      (PolyTimeComputable.pairEncode (polyTimeComputable_const [false])
+        (PolyTimeComputable.pairEncode (polyTimeComputable_const [true])
+          (PolyTimeComputable.comp cca2FlipLast_poly (PolyTimeComputable.comp hans ha))))
+      (PolyTimeComputable.pairEncode (polyTimeComputable_const [true])
+        (polyTimeComputable_not
+          (PolyTimeComputable.comp BinArith.polyTimeComputable_lastBit (PolyTimeComputable.comp hans ht)))))
+has type
+  PolyTimeComputable fun x =>
+    if decide (NUPPT.inArg x = []) = true then
+      pairEncode [false]
+        (pairEncode [true, true] (List.zipWith xor (NUPPT.inParam x) (NUPPT.inParam x) ++ NUPPT.inParam x))
+    else
+      if decide ((pairSndD ∘ NUPPT.inArg) x = []) = true then
+        pairEncode [false]
+          (pairEncode [true] ((cca2FlipLast ∘ (fun z => pairSndD (pairSndD (pairFstD z))) ∘ NUPPT.inArg) x))
+      else
+        pairEncode [true] [!(((fun z => pairSndD (pairSndD (pairFstD z))) ∘ pairSndD ∘ NUPPT.inArg) x).getLastD false]
+but is expected to have type
+  PolyTimeComputable cca2Next
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:275:6: error: Failed to rewrite using equation theorems for `cca2Adversary`
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:324:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): no fresh .olean produced
+END 2026-11-11T08:46:25.082913+00:00
+Elapsed seconds: 3.5799971819999428
+Maximum child RSS (KiB): 2738908
+User seconds: 3.825442 System seconds: 0.8172149999999999
+EXIT 1
+2026-11-11T08:46:25Z
+EXIT 1

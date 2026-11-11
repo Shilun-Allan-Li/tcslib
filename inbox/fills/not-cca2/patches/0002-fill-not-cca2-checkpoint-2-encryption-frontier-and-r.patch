@@ -1,0 +1,136 @@
+From 9f057f65bbb1b1795dd30a179c47b5b670a01452 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Wed, 11 Nov 2026 01:21:48 -0800
+Subject: [PATCH 2/2] fill not-cca2: checkpoint 2 encryption frontier and
+ reader escalation
+
+---
+ .../Encryption/PrivateKey/OracleFromPRF.lean  | 112 ++++++++++++++++++
+ 1 file changed, 112 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index d88168ee..e5f55533 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -308,6 +308,118 @@ private theorem cca2Adversary_two (n : ℕ) (i x c j y d : List Bool)
+     omega
+   simp only [hn, ite_false, pairFstD_pairEncode, pairSndD_pairEncode]
+ 
++/-- For every encryption tape there is an `n`-bit nonce `x`; the ciphertext is exactly
++the pair of that nonce and the message masked by `F n k x`. -/
++private theorem cca2Encrypt (n : ℕ) (k m : Fin n → Bool)
++    (r : (prfFixedScheme F E hE hFE).enc.Coins n) :
++    ∃ x : Fin n → Bool, List.ofFn r = List.ofFn x ∧
++      List.ofFn ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r) =
++        pairEncode (List.ofFn x) (List.ofFn (m + F n k x)) := by
++  revert r
++  simp only [FixedLengthScheme.encryptAt_eq, prfFixedScheme_ctLen]
++  rw [prfFixedScheme_enc, prfScheme_enc]
++  intro r
++  let x := NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n r
++  have hx : List.ofFn x = List.ofFn r :=
++    NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r
++  refine ⟨x, hx.symm, ?_⟩
++  rw [runAt_prfEnc hE, ← hx, hFE, zipWith_xor_ofFn_add]
++  apply cca2OfFn_padFin
++  simp only [length_pairEncode, List.length_ofFn, PolyExpr.eval_add,
++    PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++  omega
++
++/-- The challenge query concatenates the all-false and all-true messages. -/
++private def cca2Messages (n : ℕ) : Fin (n + n) → Bool :=
++  Fin.append (fun _ => false) (fun _ => true)
++
++/-- The challenge query's word is `0^n ++ 1^n`. -/
++private theorem cca2Messages_ofFn (n : ℕ) :
++    List.ofFn (cca2Messages n) = List.replicate n false ++ List.replicate n true := by
++  rw [cca2Messages, List.ofFn_fin_append, List.ofFn_const, List.ofFn_const]
++
++/-- Selecting challenge half `b` selects the constant message `b`. -/
++private theorem cca2Messages_choice (n : ℕ) (b : Bool) :
++    (if b then (FixedLengthScheme.splitHalf (cca2Messages n)).2
++      else (FixedLengthScheme.splitHalf (cca2Messages n)).1) = fun _ => b := by
++  cases b with
++  | false =>
++    change (FixedLengthScheme.splitHalf (cca2Messages n)).1 = fun _ => false
++    rw [FixedLengthScheme.splitHalf_fst]
++    funext i
++    exact Fin.append_left _ _ i
++  | true =>
++    change (FixedLengthScheme.splitHalf (cca2Messages n)).2 = fun _ => true
++    rw [FixedLengthScheme.splitHalf_snd]
++    funext i
++    exact Fin.append_right _ _ i
++
++/-- The modified fixed-width ciphertext reads the word with its last bit flipped. -/
++private def cca2Alter {d : ℕ} (c : Fin d → Bool) : Fin d → Bool :=
++  padFin d (cca2FlipLast (List.ofFn c))
++
++/-- At positive width the modified ciphertext has exactly the flipped word. -/
++private theorem cca2Alter_ofFn {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
++    List.ofFn (cca2Alter c) = cca2FlipLast (List.ofFn c) := by
++  apply cca2OfFn_padFin
++  rw [cca2FlipLast_length]
++  · exact List.length_ofFn
++  · intro he
++    have hh := congrArg List.length he
++    simp only [List.length_ofFn, List.length_nil] at hh
++    omega
++
++/-- At positive width the modified ciphertext differs from the recorded challenge. -/
++private theorem cca2Alter_ne {d : ℕ} (hd : 0 < d) (c : Fin d → Bool) :
++    cca2Alter c ≠ c := by
++  intro he
++  have hh := congrArg List.ofFn he
++  rw [cca2Alter_ofFn hd] at hh
++  apply cca2FlipLast_ne (List.ofFn c) ?_ hh
++  intro hc
++  have hl := congrArg List.length hc
++  simp only [List.length_ofFn, List.length_nil] at hl
++  omega
++
++/-- The ciphertext width evaluates to `3 * n + 2`. -/
++private theorem cca2CtLen (n : ℕ) :
++    (prfFixedScheme F E hE hFE).ctLen.eval n = 3 * n + 2 := by
++  rw [prfFixedScheme_ctLen, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_const, PolyExpr.eval_const, PolyExpr.eval_var]
++
++/-- Every generated key is an `n`-bit word. -/
++private theorem cca2Gen (n : ℕ) (rg : (prfFixedScheme F E hE hFE).gen.Coins n) :
++    ∃ k : Fin n → Bool, (prfFixedScheme F E hE hFE).gen.runAt n [] rg = List.ofFn k := by
++  revert rg
++  rw [prfFixedScheme_gen, prfScheme_gen]
++  intro rg
++  rw [runAt_coinKey]
++  exact ⟨NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n rg,
++    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n rg).symm⟩
++
++/-- The actual encrypted word is well formed, and its last-bit modification is a
++distinct, well-formed pair with the same nonce and the flipped masked payload. -/
++private theorem cca2Cipher (n : ℕ) (hn : 0 < n) (k m : Fin n → Bool)
++    (r : (prfFixedScheme F E hE hFE).enc.Coins n) :
++    ∃ x : Fin n → Bool,
++      List.ofFn ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r) =
++        pairEncode (List.ofFn x) (List.ofFn (m + F n k x)) ∧
++      List.ofFn (cca2Alter ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r)) =
++        pairEncode (List.ofFn x) (List.ofFn (cca2FlipBits (m + F n k x))) ∧
++      cca2Alter ((prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r) ≠
++        (prfFixedScheme F E hE hFE).encryptAt n (List.ofFn k) m r := by
++  obtain ⟨x, -, hc⟩ := cca2Encrypt F E hE hFE n k m r
++  have hd : 0 < (prfFixedScheme F E hE hFE).ctLen.eval n := by
++    rw [cca2CtLen]
++    omega
++  have hp : List.ofFn (m + F n k x) ≠ [] := by
++    intro he
++    have hh := congrArg List.length he
++    simp only [List.length_ofFn, List.length_nil] at hh
++    omega
++  refine ⟨x, hc, ?_, cca2Alter_ne hd _⟩
++  rw [cca2Alter_ofFn hd, hc, cca2FlipLast_pair _ _ hp, cca2FlipLast_ofFn hn]
++
+ /-- **Claim 169.a: the §3.9 scheme is not CCA2-secure** [PS10, §7.1.3, p. 169], whatever the
+ family `F`. Some adversary, with a constant query budget, has advantage `1` at every `n > 0`.
+ 
+-- 
+2.52.0
+

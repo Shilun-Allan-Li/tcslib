@@ -1,0 +1,228 @@
+From 055d4fdbfc04fd146eec4f5138a91f9005d4716d Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Wed, 11 Nov 2026 00:52:34 -0800
+Subject: [PATCH 1/2] fill not-cca2: checkpoint 1 adversary and bit identities
+
+---
+ .../Encryption/PrivateKey/FromPRF.lean        |   9 +
+ .../Encryption/PrivateKey/OracleFromPRF.lean  | 184 ++++++++++++++++++
+ 2 files changed, 193 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
+index 636ac198..7432497a 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/FromPRF.lean
+@@ -223,6 +223,15 @@ theorem prfScheme_enc (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin
+     (prfScheme F E hE hFE).enc =
+       NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var := rfl
+ 
++/-- The decryption machine of `prfScheme F E hE hFE` is
++`NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) (.const 0)`. -/
++theorem prfScheme_dec (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
++    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
++    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
++      List.ofFn (F n s x)) :
++    (prfScheme F E hE hFE).dec =
++      NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) (.const 0) := rfl
++
+ /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
+ distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
+ def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) : List Bool :=
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+index f716202b..d88168ee 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean
+@@ -124,6 +124,190 @@ adds the case that a pre-challenge decryption query used the challenge's `r*`, a
+ theorem prfFixedScheme_cca1 (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cca1 := by
+   sorry
+ 
++/-- Reverse the word, negate its first bit, and reverse back: on a nonempty word this
++flips exactly its last bit. -/
++private def cca2FlipLast (w : List Bool) : List Bool :=
++  ([!w.reverse.headD false] ++ w.reverse.drop 1).reverse
++
++/-- Flipping the last bit is polynomial-time by reversal, head, tail and negation. -/
++private theorem cca2FlipLast_poly : PolyTimeComputable cca2FlipLast := by
++  exact (BinArith.polyTimeComputable_reverse.comp
++    ((polyTimeComputable_not (polyTimeComputable_headD.comp
++      BinArith.polyTimeComputable_reverse)).append
++        (polyTimeComputable_tail.comp BinArith.polyTimeComputable_reverse)))
++
++/-- On a word ending in `b`, the flip replaces that bit by `!b`. -/
++private theorem cca2FlipLast_snoc (w : List Bool) (b : Bool) :
++    cca2FlipLast (w ++ [b]) = w ++ [!b] := by
++  simp only [cca2FlipLast, List.reverse_append, List.reverse_nil, List.nil_append,
++    List.singleton_append, List.headD_cons, List.drop_succ_cons, List.drop_zero,
++    List.reverse_cons, List.reverse_reverse]
++
++/-- A nonempty suffix contains the last bit, so a prefix is unchanged by the flip. -/
++private theorem cca2FlipLast_append (u v : List Bool) (hv : v ≠ []) :
++    cca2FlipLast (u ++ v) = u ++ cca2FlipLast v := by
++  rcases List.eq_nil_or_concat' v with h | ⟨v, b, rfl⟩
++  · exact (hv h).elim
++  · simp only [← List.append_assoc, cca2FlipLast_snoc]
++
++/-- Flipping a nonempty ciphertext payload preserves the nonce and pairing delimiter. -/
++private theorem cca2FlipLast_pair (u v : List Bool) (hv : v ≠ []) :
++    cca2FlipLast (pairEncode u v) = pairEncode u (cca2FlipLast v) := by
++  rw [pairEncode_eq, pairEncode_eq, cca2FlipLast_append _ v hv]
++
++/-- The modified word has its original length whenever that word is nonempty. -/
++private theorem cca2FlipLast_length (w : List Bool) (hw : w ≠ []) :
++    (cca2FlipLast w).length = w.length := by
++  rcases List.eq_nil_or_concat' w with h | ⟨w, b, rfl⟩
++  · exact (hw h).elim
++  · simp only [cca2FlipLast_snoc, List.length_append, List.length_singleton]
++
++/-- The flipped word differs from the original at its last bit. -/
++private theorem cca2FlipLast_ne (w : List Bool) (hw : w ≠ []) :
++    cca2FlipLast w ≠ w := by
++  rcases List.eq_nil_or_concat' w with h | ⟨w, b, rfl⟩
++  · exact (hw h).elim
++  · rw [cca2FlipLast_snoc]
++    intro he
++    have hb := congrArg (fun v : List Bool => v.getLastD false) he
++    simp only [List.getLastD_concat] at hb
++    cases b <;> cases hb
++
++/-- Negate precisely the bit whose index is one less than the vector length. -/
++private def cca2FlipBits {n : ℕ} (m : Fin n → Bool) : Fin n → Bool :=
++  fun i => if i.val + 1 = n then !m i else m i
++
++/-- The list and vector versions of the last-bit flip agree at positive lengths. -/
++private theorem cca2FlipLast_ofFn {n : ℕ} (hn : 0 < n) (m : Fin n → Bool) :
++    cca2FlipLast (List.ofFn m) = List.ofFn (cca2FlipBits m) := by
++  cases n with
++  | zero => omega
++  | succ n =>
++    rw [List.ofFn_succ_last, cca2FlipLast_snoc, List.ofFn_succ_last]
++    congr 1
++    · apply congrArg List.ofFn
++      funext i
++      have hi : i.val + 1 ≠ n + 1 := by omega
++      change m i.castSucc = if i.val + 1 = n + 1 then !m i.castSucc else m i.castSucc
++      rw [if_neg hi]
++    · change [!m (Fin.last n)] =
++        [if n + 1 = n + 1 then !m (Fin.last n) else m (Fin.last n)]
++      rw [if_pos rfl]
++
++/-- Flipping one bit commutes with removing an exclusive-or pad. -/
++private theorem cca2FlipBits_unmask {n : ℕ} (m p : Fin n → Bool) :
++    cca2FlipBits (m + p) + p = cca2FlipBits m := by
++  funext i
++  change xor (if i.val + 1 = n then !(xor (m i) (p i)) else xor (m i) (p i)) (p i) =
++    if i.val + 1 = n then !m i else m i
++  split <;> cases m i <;> cases p i <;> rfl
++
++/-- Decrypting the flipped masked word gives precisely the flipped message. -/
++private theorem cca2Unmask {n : ℕ} (hn : 0 < n) (m p : Fin n → Bool) :
++    List.zipWith xor (cca2FlipLast (List.zipWith xor (List.ofFn m) (List.ofFn p)))
++      (List.ofFn p) = List.ofFn (cca2FlipBits m) := by
++  rw [zipWith_xor_ofFn_add, cca2FlipLast_ofFn hn, zipWith_xor_ofFn_add,
++    cca2FlipBits_unmask]
++
++/-- Reading a word at its exact length and writing the resulting vector loses no bits. -/
++private theorem cca2OfFn_padFin (d : ℕ) (w : List Bool) (hw : w.length = d) :
++    List.ofFn (padFin d w) = w := by
++  subst d
++  calc
++    List.ofFn (padFin w.length w) = List.ofFn (fun i : Fin w.length => w[i.val]) := by
++      apply congrArg List.ofFn
++      funext i
++      rw [padFin_apply, List.getD_eq_getElem w false i.isLt]
++    _ = w := List.ofFn_getElem w
++
++/-- The attack's next activation asks the challenge, asks decryption of the modified
++challenge, or negates the last bit of the second answer, according to the log. -/
++private def cca2Next (z : List Bool) : List Bool :=
++  let h := NUPPT.inArg z
++  if h = [] then
++    pairEncode [false] (pairEncode [true, true]
++      (List.zipWith xor (NUPPT.inParam z) (NUPPT.inParam z) ++ NUPPT.inParam z))
++  else if pairSndD h = [] then
++    pairEncode [false] (pairEncode [true]
++      (cca2FlipLast (pairSndD (pairSndD (pairFstD h)))))
++  else pairEncode [true]
++    [!(pairSndD (pairSndD (pairFstD (pairSndD h)))).getLastD false]
++
++/-- The three activations are polynomial-time: projections, emptiness tests, pairing,
++exclusive-or, the last-bit flip, and a last-bit test followed by negation. -/
++private theorem cca2Next_poly : PolyTimeComputable cca2Next := by
++  have ha := NUPPT.polyTimeComputable_inArg
++  have hp := NUPPT.polyTimeComputable_inParam
++  have ht := polyTimeComputable_pairSndD.comp ha
++  have hz : PolyTimeComputable (fun z =>
++      List.zipWith xor (NUPPT.inParam z) (NUPPT.inParam z)) :=
++    (polyTimeComputable_pairXor.comp (hp.pairEncode hp)).congr fun z => by
++      simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hans : PolyTimeComputable (fun z => pairSndD (pairSndD (pairFstD z))) :=
++    polyTimeComputable_pairSndD.comp
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
++  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp ha)
++    ((polyTimeComputable_const [false]).pairEncode
++      ((polyTimeComputable_const [true, true]).pairEncode
++        (hz.append hp)))
++    (polyTimeComputable_ite (polyTimeComputable_isNil.comp ht)
++      ((polyTimeComputable_const [false]).pairEncode
++        ((polyTimeComputable_const [true]).pairEncode
++          (cca2FlipLast_poly.comp (hans.comp ha))))
++      ((polyTimeComputable_const [true]).pairEncode
++        (polyTimeComputable_not (BinArith.polyTimeComputable_lastBit.comp (hans.comp ht)))))
++  exact h.congr fun z => by
++    simp only [cca2Next, Function.comp_apply, decide_eq_true_eq]
++
++/-- The uniform deterministic machine implementing the three activations. -/
++private noncomputable def cca2Adversary : NUPPT :=
++  NUPPT.ofPolyTimeUniform cca2Next_poly (.const 0)
++
++/-- An activation reads only its argument and the unary parameter; its coins are ignored. -/
++private theorem cca2Adversary_run (n : ℕ) (h : List Bool) (r : cca2Adversary.Coins n) :
++    cca2Adversary.runAt n h r =
++      if h = [] then
++        pairEncode [false] (pairEncode [true, true]
++          (List.replicate n false ++ List.replicate n true))
++      else if pairSndD h = [] then
++        pairEncode [false] (pairEncode [true]
++          (cca2FlipLast (pairSndD (pairSndD (pairFstD h)))))
++      else pairEncode [true]
++        [!(pairSndD (pairSndD (pairFstD (pairSndD h)))).getLastD false] := by
++  unfold cca2Adversary
++  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, cca2Next]
++  simp only [NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.zipWith_replicate,
++    Nat.min_self, Bool.xor_self]
++
++/-- A one-entry log makes the second activation query the flipped challenge answer. -/
++private theorem cca2Adversary_one (n : ℕ) (i x c : List Bool)
++    (r : cca2Adversary.Coins n) :
++    cca2Adversary.runAt n (pairEncode (pairEncode i (pairEncode x c)) []) r =
++      pairEncode [false] (pairEncode [true] (cca2FlipLast c)) := by
++  rw [cca2Adversary_run]
++  have hn : pairEncode (pairEncode i (pairEncode x c)) [] ≠ [] := by
++    intro he
++    have hh := congrArg List.length he
++    simp only [length_pairEncode, List.length_nil] at hh
++    omega
++  simp only [hn, ite_false, pairFstD_pairEncode, pairSndD_pairEncode, ite_true]
++
++/-- A two-entry log makes the final activation negate the last bit of its second answer. -/
++private theorem cca2Adversary_two (n : ℕ) (i x c j y d : List Bool)
++    (r : cca2Adversary.Coins n) :
++    cca2Adversary.runAt n
++      (pairEncode (pairEncode i (pairEncode x c))
++        (pairEncode (pairEncode j (pairEncode y d)) [])) r =
++      pairEncode [true] [!d.getLastD false] := by
++  rw [cca2Adversary_run]
++  have hn : ∀ a b : List Bool, pairEncode a b ≠ [] := by
++    intro a b he
++    have hh := congrArg List.length he
++    simp only [length_pairEncode, List.length_nil] at hh
++    omega
++  simp only [hn, ite_false, pairFstD_pairEncode, pairSndD_pairEncode]
++
+ /-- **Claim 169.a: the §3.9 scheme is not CCA2-secure** [PS10, §7.1.3, p. 169], whatever the
+ family `F`. Some adversary, with a constant query budget, has advantage `1` at every `n > 0`.
+ 
+-- 
+2.52.0
+

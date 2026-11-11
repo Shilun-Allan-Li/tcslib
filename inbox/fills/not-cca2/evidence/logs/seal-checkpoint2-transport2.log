@@ -1,0 +1,50 @@
+START 2026-11-11T09:09:25.016666+00:00
+MODULE .lake/probes/Seal
+SEALED|Complexity.NUPPT.advInput|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.coinLen|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.inArg|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.inParam|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.ofPolyTimeUniform|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAt|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAtL|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.PolyTimeComputable|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairFstD|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairSndD|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.INDSecure|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.encryptAt|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.inLens|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.indGame|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.indImpl|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.outLens|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.splitHalf|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.OracleComp.bind|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.ProbComp.sample|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.advantage|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Negligible|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.padFin|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.prfEncFun|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.prfScheme|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+.lake/probes/Seal.lean:159:8: warning: declaration uses 'sorry'
+.lake/probes/Seal.lean:170:8: warning: declaration uses 'sorry'
+.lake/probes/Seal.lean:480:24: error: Application type mismatch: The argument
+  hh
+has type
+  (prfFixedScheme F E hE hFE).indImpl Attack.cca2 b n k 2 (cca2Messages n) none =
+    OracleComp.bind (ProbComp.sample ((prfFixedScheme F E hE hFE).enc.Coins n)) fun r =>
+      have c := (prfFixedScheme F E hE hFE).encryptAt n k (fun x => b) r;
+      OracleComp.pure (c, some c)
+but is expected to have type
+  ?m.56 = ?m.57
+in the application
+  heq_of_eq hh
+.lake/probes/Seal.lean:499:8: warning: declaration uses 'sorry'
+FAIL(.lake/probes/Seal): lean exited with status 1
+FAIL(.lake/probes/Seal): error diagnostics reported
+FAIL(.lake/probes/Seal): no fresh .olean produced
+END 2026-11-11T09:09:32.276915+00:00
+Elapsed seconds: 7.260273279000103
+Maximum child RSS (KiB): 2757852
+User seconds: 7.52236 System seconds: 1.923754
+EXIT 1

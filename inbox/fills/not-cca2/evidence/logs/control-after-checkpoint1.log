@@ -1,0 +1,33 @@
+START 2026-11-11T08:50:50.016273+00:00
+MODULE .lake/probes/ControlAfter
+SEALED|Complexity.NUPPT.advInput|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.coinLen|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.inArg|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.inParam|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.ofPolyTimeUniform|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAt|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.NUPPT.runAtL|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.PolyTimeComputable|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairFstD|Lean.ReducibilityStatus.irreducible
+SEALED|Complexity.pairSndD|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.INDSecure|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Composability.FixedLengthScheme.indGame|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Games.advantage|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.Negligible|Lean.ReducibilityStatus.irreducible
+SEALED|TCSlib.Cryptography.padFin|Lean.ReducibilityStatus.irreducible
+SEALED|Turing.pairEncode|Lean.ReducibilityStatus.irreducible
+.lake/probes/ControlAfter.lean:35:2: error: Tactic `rfl` failed: The left-hand side
+  Complexity.NUPPT.inArg z
+is not definitionally equal to the right-hand side
+  Complexity.pairSndD (Complexity.pairFstD (Complexity.pairFstD z))
+
+z : List Bool
+⊢ Complexity.NUPPT.inArg z = Complexity.pairSndD (Complexity.pairFstD (Complexity.pairFstD z))
+FAIL(.lake/probes/ControlAfter): lean exited with status 1
+FAIL(.lake/probes/ControlAfter): error diagnostics reported
+FAIL(.lake/probes/ControlAfter): no fresh .olean produced
+END 2026-11-11T08:50:53.017165+00:00
+Elapsed seconds: 3.000920167000004
+Maximum child RSS (KiB): 2700936
+User seconds: 2.331741 System seconds: 0.6822119999999999
+EXIT 1

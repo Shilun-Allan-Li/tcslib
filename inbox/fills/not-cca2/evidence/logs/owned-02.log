@@ -1,0 +1,34 @@
+START 2026-11-11T08:54:49.867961+00:00
+MODULE TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:113:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:124:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:326:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (NUPPT.ofPolyTimeUniform ⋯ ?coins).runAt ?n (pairEncode ?k ?w) ?r
+in the target expression
+  List.ofFn
+      (padFin ((((PolyExpr.const 3).mul PolyExpr.var).add (PolyExpr.const 2)).eval n)
+        ((prfFixedScheme F E hE hFE).enc.runAt n (pairEncode (List.ofFn k) (List.ofFn m)) r)) =
+    pairEncode (List.ofFn x) (List.ofFn (m + F n k x))
+
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+n : ℕ
+k m : Fin n → Bool
+r : (prfFixedScheme F E hE hFE).enc.Coins n
+x : Fin (PolyExpr.var.eval n) → Bool := (NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ PolyExpr.var n) r
+hx : List.ofFn x = List.ofFn r
+⊢ List.ofFn
+      (padFin ((((PolyExpr.const 3).mul PolyExpr.var).add (PolyExpr.const 2)).eval n)
+        ((prfFixedScheme F E hE hFE).enc.runAt n (pairEncode (List.ofFn k) (List.ofFn m)) r)) =
+    pairEncode (List.ofFn x) (List.ofFn (m + F n k x))
+TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean:348:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): lean exited with status 1
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): error diagnostics reported
+FAIL(TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF): no fresh .olean produced
+END 2026-11-11T08:54:54.026123+00:00
+Elapsed seconds: 4.158143745999951
+Maximum child RSS (KiB): 2739224
+User seconds: 4.436962 System seconds: 1.394164
+EXIT 1
