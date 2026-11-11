@@ -167,8 +167,12 @@ noncomputable def qHandler (Lc Lq Ld Laux Lseed : PolyExpr) (aux : ℕ → List 
   run := qRun ans
   poly := polyTimeComputable_qRun hans
   advIn := recAdvIn
-  advIn_poly := polyTimeComputable_pairFstD.comp
-    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+  advIn_poly := by
+    have h : PolyTimeComputable fun ctx => pairFstD (pairFstD (pairSndD ctx)) :=
+      polyTimeComputable_pairFstD.comp
+        (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+    rw [show recAdvIn = fun ctx => pairFstD (pairFstD (pairSndD ctx)) from funext recAdvIn_eq]
+    exact h
   out := fin
   out_poly := hfin
 
