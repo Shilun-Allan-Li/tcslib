@@ -22,8 +22,8 @@ The declaration dependency trace reaches 1884 local declarations.
 Its intersection with the #248 cleanup ledger contains 52 historical
 diagnostics across 35 declarations. The matching IDs and paths are in
 `LevinDependencyScreen.json`. The earlier reuse ruling was for the
-Claude efficiency fill. The Levin candidate needs a decision on using these
-providers while the inherited seal repairs are deferred.
+Claude efficiency fill. Seyoon has now approved reuse of these provider proofs while the inherited
+seal repairs stay deferred. See the [reuse ruling](provider-ruling.md).
 
 Seyoon selected Codex for the Levin audit, with the findings returned in chat.
 Resume by integrating the checked formula at the frozen `exists_linearTime_gStr`
