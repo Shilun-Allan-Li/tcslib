@@ -1,0 +1,115 @@
+# preflight 2026-11-10T22:50:31Z
+## nproc
+4
+cgroup.clone_children
+cgroup.event_control
+cgroup.procs
+cgroup.sane_behavior
+memory.failcnt
+memory.force_empty
+memory.kmem.failcnt
+memory.kmem.limit_in_bytes
+memory.kmem.max_usage_in_bytes
+memory.kmem.slabinfo
+memory.kmem.tcp.failcnt
+memory.kmem.tcp.limit_in_bytes
+memory.kmem.tcp.max_usage_in_bytes
+memory.kmem.tcp.usage_in_bytes
+memory.kmem.usage_in_bytes
+memory.limit_in_bytes
+memory.max_usage_in_bytes
+memory.memsw.failcnt
+memory.memsw.limit_in_bytes
+memory.memsw.max_usage_in_bytes
+memory.memsw.usage_in_bytes
+memory.move_charge_at_immigrate
+memory.numa_stat
+memory.oom_control
+memory.pressure_level
+memory.soft_limit_in_bytes
+memory.stat
+memory.swappiness
+memory.usage_in_bytes
+memory.use_hierarchy
+notify_on_release
+process_api
+release_agent
+sbx-telemetry
+tasks
+## cgroup v1 memory.limit_in_bytes
+9223372036854771712
+## cgroup v1 memory.usage_in_bytes
+5119692800
+## cgroup v1 memory.stat
+cache 52760576
+rss 12861440
+rss_huge 0
+shmem 16769024
+mapped_file 34844672
+dirty 102400
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 19898
+pgpgout 3923
+pgfault 8274
+pgmajfault 35
+inactive_anon 15474688
+active_anon 4096
+inactive_file 30019584
+active_file 5976064
+unevictable 14147584
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 5099913216
+total_rss 19877888
+total_rss_huge 0
+total_shmem 16769024
+total_mapped_file 38514688
+total_dirty 692641792
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 2925550
+total_pgpgout 2065375
+total_pgfault 2016852
+total_pgmajfault 369
+total_inactive_anon 21688320
+total_active_anon 28672
+total_inactive_file 4382130176
+total_active_file 701018112
+total_unevictable 14811136
+## /proc/meminfo
+MemTotal:       16472400 kB
+MemFree:        11048780 kB
+MemAvailable:   15921796 kB
+Buffers:           37432 kB
+Cached:          4942824 kB
+SwapCached:            0 kB
+Active:           684568 kB
+Inactive:        4300364 kB
+Active(anon):         12 kB
+Inactive(anon):    21036 kB
+## df -B1
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 16669929472 27202338816  38% /
+/dev/vda       270553174016 16669929472 27202338816  38% /
+/dev/vda       270553174016 16669929472 27202338816  38% /
+## df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 16279228  26564784  38% /
+/dev/vda       ext4 264212084 16279228  26564784  38% /
+/dev/vda       ext4 264212084 16279228  26564784  38% /
+## computation
+cgroup v1, memory.limit_in_bytes = 9223372036854771712 (no limit) -> headroom = MemAvailable = 15921796 kB = 15.18 GiB (>= 4 GiB: pass)
+memory in use (v1) = usage_in_bytes - total_cache + total_shmem = 5119692800 - 5099913216 + 16769024 = 36548608 B (34.9 MiB)
+disk free on clone fs (/dev/vda ext4, /workspace) = 27202338816 B = 25.33 GiB (>= 12 GiB: pass)
+scratch: TMPDIR unset (/tmp on the same ext4 /dev/vda); no tmpfs/dev/shm used
+toolchain: not installed at preflight (no elan); installed afterwards; re-check before cache per item 1
+# disk re-check before cache (8 GiB floor) 2026-11-10T22:52:04Z
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 19918364672 23953903616  46% /
