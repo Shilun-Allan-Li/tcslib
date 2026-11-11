@@ -1,0 +1,1968 @@
+diff --git a/TCSlib/Complexity/ClassP/BinaryArith.lean b/TCSlib/Complexity/ClassP/BinaryArith.lean
+index be4c8ba36..f196fa7fa 100644
+--- a/TCSlib/Complexity/ClassP/BinaryArith.lean
++++ b/TCSlib/Complexity/ClassP/BinaryArith.lean
+@@ -12,6 +12,7 @@ import TCSlib.Complexity.ClassP.BinaryArith.ModPow
+ import TCSlib.Complexity.ClassP.BinaryArith.Jacobi
+ import TCSlib.Complexity.ClassP.BinaryArith.Words
+ import TCSlib.Complexity.ClassP.BinaryArith.Loops
++import TCSlib.Complexity.ClassP.BinaryArith.Unary
+ import TCSlib.Complexity.ClassP.BinaryArith.PrimeFind
+ import TCSlib.Complexity.ClassP.BinaryArith.DetModMath
+ import TCSlib.Complexity.ClassP.BinaryArith.DetMod
+@@ -34,6 +35,7 @@ functions: infrastructure for [AB09 §7.2], plus [AB09, Exercise 7.3] and [AB09,
+ * `Words` — lists of words: map, zip and count loops.
+ * `Loops` — the counted loop, unary numbers, list lookup, word equality, unary multiplication
+   and cutting into blocks.
++* `Unary` — canonical binary width bounds and a finite binary-to-unary converter.
+ * `PrimeFind` — the least prime above `2^{⌈log₂ 2n⌉}`, for unary `n`.
+ * `DetModMath` — the elimination, rotation and zero-column identities over `ZMod p`.
+ * `DetMod` — the determinant over `ZMod p` by Gaussian elimination.
+diff --git a/TCSlib/Complexity/ClassP/BinaryArith/Unary.lean b/TCSlib/Complexity/ClassP/BinaryArith/Unary.lean
+new file mode 100644
+index 000000000..2b6091551
+--- /dev/null
++++ b/TCSlib/Complexity/ClassP/BinaryArith/Unary.lean
+@@ -0,0 +1,189 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.ClassP.BinaryArith.Loops
++import TCSlib.Complexity.TuringMachine.Build.EmitIterBody
++import Mathlib.Analysis.SpecificLimits.Normed
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Binary width bounds and conversion to unary
++
++The width of a canonical binary word bounds powers of two and fixed polynomials in that width by linear functions of its value. A finite emitting loop converts an arbitrary binary word to unary with a bound polynomial in the raw width times two to that width.
++
++## Main definitions
++
++The private countdown step takes a normalized binary predecessor, and its emission is one token at a positive state.
++
++## Main results
++
++* `polyTimeComputable_powerOfTwo` computes two to the input width in binary.
++* `two_pow_width_le` and `exists_pow_width_bound` bound canonical widths.
++* `exists_binaryToUnary` gives the finite conversion machine and its running time.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.2, multitape machines, and §7.2, efficient arithmetic.)
++-/
++
++open Complexity Complexity.BinArith Complexity.LogProg Turing Turing.FinTM Filter
++
++attribute [local irreducible] PolyTimeComputable FinTM.ComputesInTime FinTM.ComputesFunInTime
++attribute [local irreducible] pairEncode BinArith.sub transduce
++
++namespace Complexity.BinArith
++
++/-- The binary word for the power of two indexed by a word's length. -/
++theorem polyTimeComputable_powerOfTwo :
++    PolyTimeComputable (fun z : List Bool => Nat.bits (2 ^ z.length)) := by
++  let δ := fun (_ : Unit) (_ : Bool) => ()
++  let emit := fun (_ : Unit) (_ : Bool) => some false
++  have hzero (z : List Bool) : transduce δ emit () z = List.replicate z.length false := by
++    induction z with
++    | nil => rw [transduce_nil]; rfl
++    | cons b z ih => rw [transduce_cons, show δ () b = () from rfl, ih]; rfl
++  simpa only [hzero, bits_two_pow_eq_replicate] using
++    (polyTimeComputable_transduce δ emit ()).append (polyTimeComputable_const [true])
++
++
++/-- The binary width is small enough that its power-of-two bound is at most
++twice the represented number plus two. -/
++theorem two_pow_width_le (m : ℕ) : 2 ^ m.bits.length ≤ 2 * (m + 1) := by
++  rw [Nat.size_eq_bits_len]
++  cases he : m.size with
++  | zero => simp only [pow_zero]; omega
++  | succ k =>
++      have h : 2 ^ k ≤ m := Nat.lt_size.mp (by omega)
++      rw [pow_succ]
++      omega
++
++/-- Every fixed polynomial in the binary width is bounded by a linear
++function of the represented number.
++
++**Proof sketch.** A polynomial in the width is eventually at most two
++to that width. Absorb the finitely many smaller widths into the constant
++and apply the binary width bound. -/
++theorem exists_pow_width_bound (e : ℕ) :
++    ∃ A : ℕ, ∀ m : ℕ, (m.bits.length + 1) ^ e ≤ A * (m + 1) := by
++  have hlim := isLittleO_pow_const_const_pow_of_one_lt (R := ℝ) e
++    (by norm_num : 1 < (2 : ℝ))
++  obtain ⟨N, hN⟩ := eventually_atTop.mp
++    (Asymptotics.isLittleO_iff.mp hlim (by norm_num : (0 : ℝ) < 1))
++  refine ⟨N ^ e + 4, fun m => ?_⟩
++  by_cases hm : N ≤ m.bits.length + 1
++  · have h := hN _ hm
++    have hnonneg : 0 ≤ ((m.bits.length + 1 : ℕ) : ℝ) ^ e :=
++      pow_nonneg (Nat.cast_nonneg _) _
++    have htwo : 0 ≤ (2 : ℝ) ^ (m.bits.length + 1) := by positivity
++    simp only [Real.norm_of_nonneg hnonneg, Real.norm_of_nonneg htwo, one_mul] at h
++    have hpow : (m.bits.length + 1) ^ e ≤ 2 ^ (m.bits.length + 1) := by exact_mod_cast h
++    have hwidth := two_pow_width_le m
++    rw [pow_succ] at hpow
++    rw [Nat.add_mul]
++    omega
++  · have h := Nat.pow_le_pow_left (by omega : m.bits.length + 1 ≤ N) e
++    have hmul := Nat.mul_le_mul_left (N ^ e) (by omega : 1 ≤ m + 1)
++    rw [Nat.mul_one] at hmul
++    rw [Nat.add_mul]
++    omega
++
++/-- The next state of the unary emission loop is the normalized predecessor. -/
++private def predWord (z : List Bool) : List Bool := Nat.bits (bitsVal z - 1)
++
++/-- The predecessor is binary subtraction by one after normalization. -/
++private theorem polyTimeComputable_predWord : PolyTimeComputable predWord := by
++  convert polyTimeComputable_sub.comp
++    (polyTimeComputable_normBits.pairEncode (polyTimeComputable_const (Nat.bits 1))) using 1
++  funext z
++  simp only [predWord, Function.comp_apply, sub_pairEncode]
++
++/-- The loop emits one token exactly when its binary state is positive. -/
++private def emitToken (z : List Bool) : List Bool := if z.any id then [true] else []
++
++/-- A scan for a set bit decides whether to emit the single token. -/
++private theorem polyTimeComputable_emitToken : PolyTimeComputable emitToken := by
++  simpa only [emitToken] using polyTimeComputable_ite polyTimeComputable_any
++    (polyTimeComputable_const [true]) (polyTimeComputable_const [])
++
++/-- The orbit's value is the initial value minus the number of decrements. -/
++private theorem predWord_iterate_value (z : List Bool) (i : ℕ) :
++    bitsVal (predWord^[i] z) = bitsVal z - i := by
++  induction i with
++  | zero => simp only [Function.iterate_zero_apply, Nat.sub_zero]
++  | succ i ih =>
++      rw [Function.iterate_succ_apply', predWord, bitsVal_bits, ih]
++      omega
++
++/-- Each orbit state has at most the original word's binary width. -/
++private theorem predWord_iterate_length (z : List Bool) (i : ℕ) :
++    (predWord^[i] z).length ≤ z.length := by
++  cases i with
++  | zero => simp only [Function.iterate_zero_apply, le_refl]
++  | succ i =>
++      rw [Function.iterate_succ_apply', predWord, predWord_iterate_value]
++      exact length_bits_le_of_le z (by omega) le_rfl
++
++/-- On the orbit a token is emitted during exactly the positive countdown
++rounds. -/
++private theorem emitToken_iterate (z : List Bool) (i : ℕ) :
++    emitToken (predWord^[i] z) = if i < bitsVal z then [true] else [] := by
++  by_cases hi : i < bitsVal z
++  · have hzero : (predWord^[i] z).any id ≠ false := by
++      intro h
++      have hv := (bitsVal_eq_zero_iff _).mpr h
++      rw [predWord_iterate_value] at hv
++      omega
++    simp only [emitToken, if_pos hi, Bool.eq_true_of_not_eq_false hzero, ↓reduceIte]
++  · have hzero := (bitsVal_eq_zero_iff (predWord^[i] z)).mp (by
++      rw [predWord_iterate_value]
++      omega)
++    simp only [emitToken, if_neg hi, hzero, Bool.false_eq_true, ↓reduceIte]
++
++/-- The first R rounds of an initial countdown of v emit exactly
++the smaller of R and v tokens. -/
++private theorem unary_chunks (R v : ℕ) :
++    (List.range R).flatMap (fun i => if i < v then [true] else []) =
++      List.replicate (min R v) true := by
++  induction R with
++  | zero => simp
++  | succ R ih =>
++      rw [List.range_succ, List.flatMap_append, ih, List.flatMap_singleton]
++      by_cases h : R < v
++      · rw [if_pos h, Nat.min_eq_left h.le, Nat.min_eq_left (Nat.succ_le_of_lt h)]
++        change List.replicate R true ++ List.replicate 1 true = _
++        rw [← List.replicate_add]
++      · rw [if_neg h, List.append_nil, Nat.min_eq_right (by omega : v ≤ R),
++          Nat.min_eq_right (by omega : v ≤ R + 1)]
++
++/-- A finite emitter converts binary to unary. Its time is polynomial in the
++binary width times two to that width.
++
++**Proof sketch.** The fuel machine emits the binary representation of two to
++the input width. Instantiate the existing emit-iteration body with binary
++predecessor and a token on each positive orbit state. The width remains
++bounded throughout the orbit, and the binary fuel covers every possible
++input value. -/
++theorem exists_binaryToUnary : ∃ (M : FinTM Bool) (C c : ℕ),
++    M.ComputesFunInTime (fun w => List.replicate (bitsVal w) true)
++      (fun n => C * (n + 1) ^ c * (2 ^ n + 2)) := by
++  have hfuel := polyTimeComputable_powerOfTwo
++  obtain ⟨G, A, a, hG⟩ := (polyTimeComputable_iff _).1 polyTimeComputable_predWord
++  obtain ⟨E, B, b, hE⟩ := (polyTimeComputable_iff _).1 polyTimeComputable_emitToken
++  obtain ⟨F, K, k, hF⟩ := (polyTimeComputable_iff _).1 hfuel
++  obtain ⟨M, C, c, hM⟩ := exists_emitIterTM_withFuel G E F predWord emitToken A a B b K k
++    (fun n => 2 ^ n) hG hE hF 1 1 (fun w i => by
++      simpa only [one_mul, pow_one] using (predWord_iterate_length w i).trans (Nat.le_succ _))
++  refine ⟨M, C, c, (computesFunInTime_iff _ _ _).2 fun w => ?_⟩
++  have h := (computesFunInTime_iff _ _ _).1 hM w
++  rw [List.flatMap_congr (fun i _ => emitToken_iterate w i), unary_chunks,
++    Nat.min_eq_right (by have := bitsVal_lt_two_pow w; omega)] at h
++  exact h
++
++
++end Complexity.BinArith
+diff --git a/TCSlib/Complexity/Randomized.lean b/TCSlib/Complexity/Randomized.lean
+index 8e016837e..a3553c643 100644
+--- a/TCSlib/Complexity/Randomized.lean
++++ b/TCSlib/Complexity/Randomized.lean
+@@ -72,6 +72,7 @@ import TCSlib.Complexity.Randomized.PolyExpr
+ import TCSlib.Complexity.Randomized.PPT
+ import TCSlib.Complexity.Randomized.NonUniform
+ import TCSlib.Complexity.Randomized.Primitives
++import TCSlib.Complexity.Randomized.UnaryPolynomial
+ import TCSlib.Complexity.Randomized.Closure
+ import TCSlib.Complexity.Randomized.Repetition
+ 
+@@ -189,6 +190,8 @@ closure calculus, and the repetition lemma.
+   the bridge from `Turing.FinTM.DecidesWithAdviceInTime`.
+ - `Randomized.Primitives`: coin splitting, unary multiplication, the unary evaluator and the
+   typed coin cuts.
++- `Randomized.UnaryPolynomial` — unary polynomial evaluation in time proportional
++  to the input and output lengths.
+ - `Randomized.Closure`: the closure calculus of non-uniform PPTs.
+ - `Randomized.Repetition`: the repetition lemma `polyTimeComputable_iterateFind` and its
+   iteration variants.
+diff --git a/TCSlib/Complexity/Randomized/Build/PairSplit.lean b/TCSlib/Complexity/Randomized/Build/PairSplit.lean
+index 1fc7066fe..29ab9ad9d 100644
+--- a/TCSlib/Complexity/Randomized/Build/PairSplit.lean
++++ b/TCSlib/Complexity/Randomized/Build/PairSplit.lean
+@@ -53,15 +53,17 @@ the parser at its states (namespace `Turing.PairParse`): the unary-multiplicatio
+ 
+ ## Main definitions
+ 
++* `Turing.pairSplitAt` — the split function `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (`[]` off pairs),
++  read through `Turing.pairSplitAt_pairEncode`, `Turing.pairSplitAt_of_pairDecode_eq_some` and
++  `Turing.pairSplitAt_of_pairDecode_eq_none`.
+ * `Turing.PairParse.cfg` — the one-buffer configurations of a one-tape machine (field equations
+   by `simps`). The machine itself is private; its result is an existence statement over
+   `Turing.FinTM Bool`.
+ 
+ ## Main results
+ 
+-* `Turing.FinTM.exists_pairSplitTM` — a finite machine computes
+-  `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (and `[]` on malformed words) within `5 (n + 1)`
+-  steps.
++* `Turing.FinTM.exists_pairSplitTM` — a finite machine computes `Turing.pairSplitAt`,
++  `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (and `[]` on malformed words), within `5 (n + 1)` steps.
+ * `Turing.PairParse.parse_first`, `parse_block`, `rewind_run` — the buffered aligned parser:
+   one half block, one aligned block, and the rewind of the buffer, for every one-tape machine
+   whose table agrees with the parser; `Turing.PairParse.cfg_inputSymbol`,
+@@ -250,6 +252,33 @@ theorem rewind_run {S : Type} (tm : MultiTapeTM 1 Bool S) (r n : S)
+ 
+ end Turing.PairParse
+ 
++namespace Turing
++
++/-- **The unary split** computed by the machine of `Turing.FinTM.exists_pairSplitTM`:
++`pairSplitAt ⟨u, b⟩ = ⟨b.take |u|, b.drop |u|⟩`, and `pairSplitAt z = []` when
++`pairDecode z = none`. -/
++def pairSplitAt (z : List Bool) : List Bool :=
++  match pairDecode z with
++  | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
++  | none => []
++
++/-- `pairDecode z = some (u, b) → pairSplitAt z = pairEncode (b.take |u|) (b.drop |u|)`. -/
++theorem pairSplitAt_of_pairDecode_eq_some {z u b : List Bool} (h : pairDecode z = some (u, b)) :
++    pairSplitAt z = pairEncode (b.take u.length) (b.drop u.length) := by
++  simp only [pairSplitAt, h]
++
++/-- `pairDecode z = none → pairSplitAt z = []`. -/
++theorem pairSplitAt_of_pairDecode_eq_none {z : List Bool} (h : pairDecode z = none) :
++    pairSplitAt z = [] := by
++  simp only [pairSplitAt, h]
++
++/-- `pairSplitAt ⟨u, b⟩ = ⟨b.take |u|, b.drop |u|⟩`. -/
++theorem pairSplitAt_pairEncode (u b : List Bool) :
++    pairSplitAt (pairEncode u b) = pairEncode (b.take u.length) (b.drop u.length) :=
++  pairSplitAt_of_pairDecode_eq_some (pairDecode_pairEncode u b)
++
++end Turing
++
+ namespace Turing.FinTM
+ 
+ /-- Finite control of the coin-splitting machine: `parse none` expects the first bit of an
+@@ -638,11 +667,7 @@ ledger `split_run`: `3 |x| + 5 ≤ 5 (|x| + 1)` steps from the initial configura
+ (`Turing.pairEncode_eq_dbl`). -/
+ theorem exists_pairSplitTM :
+     ∃ M : FinTM Bool,
+-      M.ComputesFunInTime
+-        (fun z => match pairDecode z with
+-          | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
+-          | none => [])
+-        fun n => 5 * (n + 1) :=
+-  ⟨pairSplitTM, fun x => split_computes x⟩
++      M.ComputesFunInTime pairSplitAt fun n => 5 * (n + 1) :=
++  ⟨pairSplitTM, (computesFunInTime_iff _ _ _).2 fun x => split_computes x⟩
+ 
+ end Turing.FinTM
+diff --git a/TCSlib/Complexity/Randomized/Primitives.lean b/TCSlib/Complexity/Randomized/Primitives.lean
+index 82c0b934f..a40cd75d2 100644
+--- a/TCSlib/Complexity/Randomized/Primitives.lean
++++ b/TCSlib/Complexity/Randomized/Primitives.lean
+@@ -53,7 +53,8 @@ because its `mul` case needs `unaryMul`, while the cuts below need both the eval
+ 
+ ## Main definitions
+ 
+-None (the primitives are existence statements over `Turing.FinTM Bool`).
++None (the primitives are existence statements over `Turing.FinTM Bool`). The split function
++`Turing.pairSplitAt` and its readers live in `TCSlib.Complexity.Randomized.Build.PairSplit`.
+ 
+ ## References
+ 
+@@ -85,11 +86,7 @@ steps; the output is `pairEncode (b.take |u|) (b.drop |u|)` by `Turing.pairEncod
+ (`Turing.FinTM.exists_pairSplitTM`, with `c = 5`). -/
+ theorem computesFunInTime_pairSplitAt :
+     ∃ (M : FinTM Bool) (c : ℕ),
+-      M.ComputesFunInTime
+-        (fun z => match pairDecode z with
+-          | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
+-          | none => [])
+-        fun n => c * (n + 1) := by
++      M.ComputesFunInTime pairSplitAt fun n => c * (n + 1) := by
+   obtain ⟨M, hM⟩ := exists_pairSplitTM
+   exact ⟨M, 5, hM⟩
+ 
+@@ -171,10 +168,7 @@ theorem polyTimeComputable_unaryPoly (p : PolyExpr) :
+ 
+ /-- The FP form of the coin-splitting machine: `z ↦ ⟨(snd z).take |fst z|, (snd z).drop |fst z|⟩`
+ on pairs, `[]` on malformed words. -/
+-private theorem polyTimeComputable_pairSplitAt :
+-    PolyTimeComputable fun z => match pairDecode z with
+-      | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
+-      | none => [] := by
++private theorem polyTimeComputable_pairSplitAt : PolyTimeComputable pairSplitAt := by
+   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_pairSplitAt
+   exact polyTimeComputable_of_linear ⟨M, c, hM⟩
+ 
+@@ -195,14 +189,14 @@ polynomial-time computable (`z ↦ (snd z).take (p(|fst z|))`, with the total pr
+ `polyTimeComputable_unaryPoly p` on `pairFstD` paired with `pairSndD`
+ (`PolyTimeComputable.pairEncode`), the split is `Turing.FinTM.computesFunInTime_pairSplitAt`
+ via `polyTimeComputable_of_linear`, and the composite equals the claimed function by
+-`Turing.pairDecode_pairEncode`, `Complexity.pairFstD_pairEncode` and `List.length_replicate`
++`Turing.pairSplitAt_pairEncode`, `Complexity.pairFstD_pairEncode` and `List.length_replicate`
+ (`PolyTimeComputable.comp`, `funext`). -/
+ theorem polyTimeComputable_pairTakePoly (p : PolyExpr) :
+     PolyTimeComputable fun z => (pairSndD z).take (p.eval (pairFstD z).length) := by
+   convert polyTimeComputable_pairFstD.comp
+     (polyTimeComputable_pairSplitAt.comp (polyTimeComputable_pairUnaryFst p)) using 1
+   funext z
+-  simp [pairDecode_pairEncode]
++  simp [pairSplitAt_pairEncode]
+ 
+ /-- **Typed coin cut, tail:** on `z = ⟨u, b⟩`, the bits of `b` after the first `p(|u|)` are
+ polynomial-time computable (`z ↦ (snd z).drop (p(|fst z|))`): the remaining coins of a
+@@ -215,6 +209,6 @@ theorem polyTimeComputable_pairDropPoly (p : PolyExpr) :
+   convert polyTimeComputable_pairSndD.comp
+     (polyTimeComputable_pairSplitAt.comp (polyTimeComputable_pairUnaryFst p)) using 1
+   funext z
+-  simp [pairDecode_pairEncode]
++  simp [pairSplitAt_pairEncode]
+ 
+ end Complexity
+diff --git a/TCSlib/Complexity/Randomized/UnaryPolynomial.lean b/TCSlib/Complexity/Randomized/UnaryPolynomial.lean
+new file mode 100644
+index 000000000..e7d4d9524
+--- /dev/null
++++ b/TCSlib/Complexity/Randomized/UnaryPolynomial.lean
+@@ -0,0 +1,125 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.TuringMachine.Build.WordTiming
++import TCSlib.Complexity.Randomized.PolyExpr
++import Mathlib.Algebra.Polynomial.Eval.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Unary polynomial evaluation with an output-length time bound
++
++For each fixed syntactic polynomial, a multitape machine emits its value at one plus the input length. Its time is proportional to the input and output lengths. Expanding into nonzero monomials allows the sharp monomial machines to be combined without an extra power of the input length.
++
++## Main definitions
++
++The private polynomial translation connects syntactic expressions to polynomials over the natural numbers.
++
++## Main results
++
++* `Complexity.exists_unaryPoly_succ_computesFunInTime` computes the unary value within the combined input and output length.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010. (§2.13, Lemma 64.3.)
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.2, multitape machines, and §7.2, efficient arithmetic.)
++-/
++
++open Turing
++open scoped BigOperators
++
++attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
++
++namespace Complexity
++
++open Turing.FinTM
++
++/-- The ordinary polynomial denoted by the syntactic arithmetic expression. -/
++private noncomputable def toNatPolynomial : PolyExpr → Polynomial ℕ
++  | .const a => Polynomial.C a
++  | .var => Polynomial.X
++  | .add p q => toNatPolynomial p + toNatPolynomial q
++  | .mul p q => toNatPolynomial p * toNatPolynomial q
++  | .pow p e => toNatPolynomial p ^ e
++
++/-- The polynomial agrees with the syntactic evaluator.
++
++**Proof sketch.** Induct over the expression using the polynomial evaluation laws. -/
++private theorem toNatPolynomial_eval (p : PolyExpr) (n : ℕ) :
++    (toNatPolynomial p).eval n = p.eval n := by
++  induction p <;> simp_all only [toNatPolynomial, Polynomial.eval_C, Polynomial.eval_X,
++    Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow, PolyExpr.eval_const,
++    PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow]
++
++/-- Nonzero monomials can be evaluated and concatenated at a cost proportional
++to their total output length plus the input length.
++
++**Proof sketch.** Induct over the finite set of exponents. The sharp monomial
++emitter charges a constant multiple of the monomial, since its coefficient is
++positive. Use the bounded concatenation theorem for that emitter and the tail. -/
++private theorem exists_unaryMonomialSum (coeff : ℕ → ℕ) (s : Finset ℕ)
++    (hs : ∀ e ∈ s, 0 < coeff e) :
++    ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime
++      (fun x => List.replicate (∑ e ∈ s, coeff e * (x.length + 1) ^ e) true)
++      (fun n => c * ((∑ e ∈ s, coeff e * (n + 1) ^ e) + n + 1)) := by
++  classical
++  induction s using Finset.induction_on with
++  | empty =>
++    refine ⟨constTM [], 1, (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++    simp only [Finset.sum_empty, List.replicate_zero, Nat.zero_add, Nat.one_mul]
++    exact (constTM_computes [] x).mono (by simp)
++  | @insert e s he ih =>
++    have hpos := hs e (Finset.mem_insert_self _ _)
++    obtain ⟨G, b, hG⟩ := ih (fun i hi => hs i (Finset.mem_insert_of_mem hi))
++    let a := coeff e + 5 * e + 4
++    obtain ⟨M, c, hM⟩ := exists_append_computesFunInTime (polyUnaryTM_computes (coeff e) e) hG
++    refine ⟨M, c * (a + b + 1), (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++    rw [Finset.sum_insert he, List.replicate_add]
++    let n := x.length
++    let term := coeff e * (n + 1) ^ e
++    let rest := ∑ i ∈ s, coeff i * (n + 1) ^ i
++    let total := term + rest + n + 1
++    have hpow : (n + 1) ^ e ≤ term := by
++      simpa only [Nat.one_mul] using
++        Nat.mul_le_mul_right ((n + 1) ^ e) hpos
++    have hterm : (n + 1) ^ e ≤ total := hpow.trans (by dsimp only [total]; omega)
++    have hrest : rest + n + 1 ≤ total := by dsimp only [total]; omega
++    have hn : n + 1 ≤ total := by dsimp only [total]; omega
++    refine ((computesFunInTime_iff _ _ _).1 hM x).mono ?_
++    change c * (a * (n + 1) ^ e + b * (rest + n + 1) + n + 1) ≤
++      c * (a + b + 1) * total
++    calc
++      _ ≤ c * (a * total + b * total + total) := by
++        apply Nat.mul_le_mul_left
++        simpa only [Nat.add_assoc] using
++          Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_left _ hterm)
++            (Nat.mul_le_mul_left _ hrest)) hn
++      _ = _ := by ring
++
++/-- The unary value of a syntactic polynomial at one plus the input length is
++computable in time proportional to the sum of the input and output lengths.
++
++**Proof sketch.** Expand the polynomial into its nonzero monomials. For each
++degree use the sharp monomial emitter, and concatenate their unary outputs. -/
++theorem exists_unaryPoly_succ_computesFunInTime (p : PolyExpr) :
++    ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime
++      (fun x => List.replicate (p.eval (x.length + 1)) true)
++      (fun n => c * (p.eval (n + 1) + n + 1)) := by
++  let P := toNatPolynomial p
++  have heval (n : ℕ) : p.eval n = ∑ e ∈ P.support, P.coeff e * n ^ e := by
++    rw [← toNatPolynomial_eval, ← show P = toNatPolynomial p from rfl,
++      Polynomial.eval_eq_sum, Polynomial.sum_def]
++  obtain ⟨M, c, hM⟩ := exists_unaryMonomialSum P.coeff P.support fun e he =>
++    Nat.pos_of_ne_zero (Polynomial.mem_support_iff.1 he)
++  refine ⟨M, c, (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++  rw [heval]
++  exact (computesFunInTime_iff _ _ _).1 hM x
++
++end Complexity
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 6178ed6dd..25bb3bd33 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -26,6 +26,7 @@ import TCSlib.Complexity.TuringMachine.Build.Convention
+ import TCSlib.Complexity.TuringMachine.Build.Wrappers
+ import TCSlib.Complexity.TuringMachine.Build.Loop
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.WordTiming
+ import TCSlib.Complexity.TuringMachine.Build.WordTests
+ import TCSlib.Complexity.TuringMachine.Build.Embed
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+@@ -253,6 +254,7 @@ for the local modifications.
+   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
+   the bounded-loop combinator, and the primitive catalog of timed string functions.
+   Proved, and audited at the shared-infrastructure gates.
++* `Build/WordTiming` — concatenation of computed words with an additive time bound.
+ * `Build/WordTests` — two linear-time one-bit word tests, equality with a fixed word and the
+   all-`true` word, in the form the timed conditional takes as its test. Proved.
+ * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
+diff --git a/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean b/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean
+index 22e08d06f..2f5906220 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean
+@@ -36,6 +36,7 @@ private to this file.
+ 
+ ## Main results
+ 
++* `Turing.FinTM.exists_emitIterTM_withFuel` — emitting iteration with a supplied fuel machine and a separate round-count bound.
+ * `Turing.FinTM.exists_emitIterTM` — the finite machine computing the
+   concatenated chunks of a polynomially clocked iteration, within a
+   polynomial budget in the `C·(n+1)^c` normal form.
+@@ -708,60 +709,54 @@ private theorem body_start (hek : 0 < Em.k) :
+ 
+ end Body
+ 
+-/-- **The emit-iteration machine** ([AB09] §7.3–§7.4 folklore: simulate a
+-machine on polynomially many rounds and concatenate the outcomes).  Given
+-machines computing the step `g` and the chunk `e` within polynomial budgets,
+-and a polynomial length envelope for the orbit of `g`, one finite machine
+-computes the concatenation of the chunks `e (g^[i] w)` for
+-`i = 0, …, a'·(|w|+1)^k'`, within a polynomial budget in the `C·(n+1)^c`
+-normal form.
+-
+-**Proof sketch.** Instantiate `Turing.FinTM.exists_emitLoopTM` at the body
+-machine `emitIterBody` built from the two clean-call modules
+-(`exists_emitCallTM` for `e`, `exists_installCallTM` for `g`), the
+-polynomial-bits fuel machine (`computesFunInTime_polyBits`), the orbit
+-invariant `∃ i, s = g^[i] w`, and the budget `T` summing the fuel, startup,
+-and round envelopes; `body_start` and `body_round` discharge the startup and
+-round obligations, with the call budgets bounded through the orbit envelope
+-and the one-symbol-per-step output bound.  The loop host's
+-`c·(T+1)·(R+2)` budget is then absorbed into the polynomial normal form. -/
+-theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Bool)
+-    (CG cG CE cE : ℕ)
++/-- Emit and concatenate the chunks of a bounded word iteration. The caller
++supplies a machine computing the binary iteration bound `R n` in polynomial
++time. The startup and per-round costs are polynomial in the input length, and
++the total time includes a separate factor `R n + 2`.
++
++**Proof sketch.** Use the existing emitting loop with clean calls to the step
++and chunk machines. The orbit envelope bounds the length of each call's input
++and hence the call time, including scratch cleanup. The startup and fuel
++costs and both round calls are bounded by a polynomial, which leaves the
++number of rounds as a separate factor. -/
++theorem FinTM.exists_emitIterTM_withFuel (G E F : FinTM Bool) (g e : List Bool → List Bool)
++    (CG cG CE cE CF cF : ℕ) (R : ℕ → ℕ)
+     (hG : G.ComputesFunInTime g (fun n => CG * (n + 1) ^ cG))
+     (hE : E.ComputesFunInTime e (fun n => CE * (n + 1) ^ cE))
+-    (a' k' b l : ℕ)
++    (hF : F.ComputesFunInTime (fun w => Nat.bits (R w.length)) (fun n => CF * (n + 1) ^ cF))
++    (b l : ℕ)
+     (horbit : ∀ (w : List Bool) (i : ℕ), (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
+     ∃ (M : FinTM Bool) (C c : ℕ),
+       M.ComputesFunInTime
+-        (fun w => (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap
+-          (fun i => e (g^[i] w)))
+-        (fun n => C * (n + 1) ^ c) := by
++        (fun w => (List.range (R w.length + 1)).flatMap (fun i => e (g^[i] w)))
++        (fun n => C * (n + 1) ^ c * (R n + 2)) := by
+   classical
+   obtain ⟨Ce, eentry, eexit, cEcall, hke, hEcall⟩ :=
+     FinTM.exists_emitCallTM E e _ hE
+   obtain ⟨Cg, gentry, gexit, cGcall, hkg, hGcall⟩ :=
+     FinTM.exists_installCallTM G g _ hG
+-  obtain ⟨F, cF, hF⟩ := FinTM.computesFunInTime_polyBits a' k'
+   -- output-length bounds from the one-symbol-per-step discipline
+   have hElen : ∀ s : List Bool, (e s).length ≤ CE * (s.length + 1) ^ cE := by
+     intro s
+-    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hE s)).2
++    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp
++      ((FinTM.computesFunInTime_iff _ _ _).1 hE s)).2
+     simpa only [hout] using E.tm.output_length_le s (CE * (s.length + 1) ^ cE)
+   have hGlen : ∀ s : List Bool, (g s).length ≤ CG * (s.length + 1) ^ cG := by
+     intro s
+-    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hG s)).2
++    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp
++      ((FinTM.computesFunInTime_iff _ _ _).1 hG s)).2
+     simpa only [hout] using G.tm.output_length_le s (CG * (s.length + 1) ^ cG)
+   -- the budget
+   set L : ℕ → ℕ := fun n => b * (n + 1) ^ l with hL
+   set TEb : ℕ → ℕ := fun n => CE * (L n + 1) ^ cE with hTEb
+   set TGb : ℕ → ℕ := fun n => CG * (L n + 1) ^ cG with hTGb
+-  set T : ℕ → ℕ := fun n => cF * (n + 1) ^ (k' + 1) + (3 * n + 4) +
++  set T : ℕ → ℕ := fun n => CF * (n + 1) ^ cF + (3 * n + 4) +
+     (cEcall * (2 * TEb n + L n + 1) + cGcall * (2 * TGb n + L n + 1) + 2) with hT
+   set body := emitIterBody Ce Cg hke eentry eexit gentry gexit with hbody
+   have hF' : F.ComputesFunInTime
+-      (fun x => Nat.bits (a' * (x.length + 1) ^ k')) T := by
+-    intro x
+-    refine (hF x).mono ?_
++      (fun x => Nat.bits (R x.length)) T := by
++    refine (FinTM.computesFunInTime_iff _ _ _).2 fun x => ?_
++    refine ((FinTM.computesFunInTime_iff _ _ _).1 hF x).mono ?_
+     simp only [hT]
+     omega
+   have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+@@ -770,7 +765,7 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
+       body.tm.runFrom (body.tm.initCfg x) t =
+         Cfg.ofWords .anchor (stateWord body.k x) := by
+     intro x
+-    obtain ⟨hrun, hsafe⟩ := body_start Ce Cg eentry eexit gentry gexit hke (x := x)
++    obtain ⟨hrun, hsafe⟩ := safeRun_iff.1 <| body_start Ce Cg eentry eexit gentry gexit hke (x := x)
+     exact ⟨3 * x.length + 4, by simp only [hT]; omega, hsafe, hrun⟩
+   have hround : ∀ (x s : List Bool), (∃ i, s = g^[i] x) →
+       ∃ t, 0 < t ∧ t ≤ T x.length ∧
+@@ -804,17 +799,17 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
+     omega
+   obtain ⟨M, c, hM⟩ := FinTM.exists_emitLoopTM body F .anchor
+     (fun w s => ∃ i, s = g^[i] w) (fun _ s => g s) (fun _ s => e s)
+-    (fun w => w) (fun n => a' * (n + 1) ^ k') T hF'
++    (fun w => w) R T hF'
+     (fun w => ⟨0, rfl⟩)
+     (fun w s hs => by
+       obtain ⟨i, rfl⟩ := hs
+       exact ⟨i + 1, (Function.iterate_succ_apply' g i w).symm⟩)
+     hstart hround
+   -- polynomial normal form
+-  set D : ℕ := k' + 1 + l * cE + l * cG + l + 1 with hD
++  set D : ℕ := cF + l * cE + l * cG + l + 1 with hD
+   have honeD : ∀ n : ℕ, 1 ≤ (n + 1) ^ D := fun n => Nat.one_le_pow _ _ (by omega)
+   have hTle : ∀ n, T n ≤
+-      (cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
++      (CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+         cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2) * (n + 1) ^ D := by
+     intro n
+     have hone : 1 ≤ (n + 1) ^ l := Nat.one_le_pow _ _ (by omega)
+@@ -838,8 +833,8 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
+         _ = CG * (b + 1) ^ cG * (n + 1) ^ (l * cG) := by
+             rw [mul_pow, ← pow_mul]
+             ring
+-    have h1 : cF * (n + 1) ^ (k' + 1) ≤ cF * (n + 1) ^ D :=
+-      Nat.mul_le_mul_left cF (hpowD _ (by omega))
++    have h1 : CF * (n + 1) ^ cF ≤ CF * (n + 1) ^ D :=
++      Nat.mul_le_mul_left CF (hpowD _ (by omega))
+     have h2 : 3 * n + 4 ≤ 4 * (n + 1) ^ D := by
+       have : n + 1 ≤ (n + 1) ^ D := le_trans (by omega)
+         (Nat.le_self_pow (by omega) (n + 1))
+@@ -874,20 +869,20 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
+       have := honeD n
+       omega
+     simp only [hT]
+-    calc cF * (n + 1) ^ (k' + 1) + (3 * n + 4) +
++    calc CF * (n + 1) ^ cF + (3 * n + 4) +
+           (cEcall * (2 * TEb n + L n + 1) + cGcall * (2 * TGb n + L n + 1) + 2) ≤
+-        cF * (n + 1) ^ D + 4 * (n + 1) ^ D +
++        CF * (n + 1) ^ D + 4 * (n + 1) ^ D +
+           (cEcall * (2 * CE * (b + 1) ^ cE + b + 2) * (n + 1) ^ D +
+             cGcall * (2 * CG * (b + 1) ^ cG + b + 2) * (n + 1) ^ D +
+             2 * (n + 1) ^ D) :=
+           Nat.add_le_add (Nat.add_le_add h1 h2)
+             (Nat.add_le_add (Nat.add_le_add hE3 hG3) h6)
+-      _ = (cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
++      _ = (CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+             cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2) * (n + 1) ^ D := by ring
+-  set K₀ : ℕ := cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
++  set K₀ : ℕ := CF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+     cGcall * (2 * CG * (b + 1) ^ cG + b + 2) + 2 with hK₀
+-  refine ⟨M, c * (K₀ + 1) * (a' + 2), D + k', fun w => ?_⟩
+-  have hMw := hM w
++  refine ⟨M, c * (K₀ + 1), D, (FinTM.computesFunInTime_iff _ _ _).2 fun w => ?_⟩
++  have hMw := (FinTM.computesFunInTime_iff _ _ _).1 hM w
+   refine hMw.mono ?_
+   set n := w.length
+   have hT1 : T n + 1 ≤ (K₀ + 1) * (n + 1) ^ D := by
+@@ -895,15 +890,45 @@ theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Boo
+     have h1 := honeD n
+     calc T n + 1 ≤ K₀ * (n + 1) ^ D + (n + 1) ^ D := by omega
+       _ = (K₀ + 1) * (n + 1) ^ D := by ring
+-  have hR2 : a' * (n + 1) ^ k' + 2 ≤ (a' + 2) * (n + 1) ^ k' := by
+-    have h1 : 1 ≤ (n + 1) ^ k' := Nat.one_le_pow _ _ (by omega)
+-    calc a' * (n + 1) ^ k' + 2 ≤ a' * (n + 1) ^ k' + 2 * (n + 1) ^ k' := by omega
+-      _ = (a' + 2) * (n + 1) ^ k' := by ring
+-  calc c * (T n + 1) * (a' * (n + 1) ^ k' + 2) ≤
+-        c * ((K₀ + 1) * (n + 1) ^ D) * ((a' + 2) * (n + 1) ^ k') :=
+-      Nat.mul_le_mul (Nat.mul_le_mul_left c hT1) hR2
+-    _ = c * (K₀ + 1) * (a' + 2) * (n + 1) ^ (D + k') := by
+-      rw [pow_add]
+-      ring
++  calc c * (T n + 1) * (R n + 2) ≤ c * ((K₀ + 1) * (n + 1) ^ D) * (R n + 2) :=
++      Nat.mul_le_mul_right _ (Nat.mul_le_mul_left c hT1)
++    _ = c * (K₀ + 1) * (n + 1) ^ D * (R n + 2) := by ring
++
++/-- **The emit-iteration machine** ([AB09] §7.3–§7.4 folklore: simulate a
++machine on polynomially many rounds and concatenate the outcomes).  Given
++machines computing the step `g` and the chunk `e` within polynomial budgets,
++and a polynomial length envelope for the orbit of `g`, one finite machine
++computes the concatenation of the chunks `e (g^[i] w)` for
++`i = 0, …, a'·(|w|+1)^k'`, within a polynomial budget in the `C·(n+1)^c`
++normal form.
++
++**Proof sketch.** Apply the fuel-machine version to the polynomial-bits
++machine, then bound the product of the per-round polynomial and the number
++of rounds by one normal-form polynomial. -/
++theorem FinTM.exists_emitIterTM (G E : FinTM Bool) (g e : List Bool → List Bool)
++    (CG cG CE cE : ℕ)
++    (hG : G.ComputesFunInTime g (fun n => CG * (n + 1) ^ cG))
++    (hE : E.ComputesFunInTime e (fun n => CE * (n + 1) ^ cE))
++    (a' k' b l : ℕ)
++    (horbit : ∀ (w : List Bool) (i : ℕ), (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
++    ∃ (M : FinTM Bool) (C c : ℕ),
++      M.ComputesFunInTime
++        (fun w => (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap
++          (fun i => e (g^[i] w)))
++        (fun n => C * (n + 1) ^ c) := by
++  obtain ⟨F, cF, hF⟩ := FinTM.computesFunInTime_polyBits a' k'
++  obtain ⟨M, C, D, hM⟩ :=
++    FinTM.exists_emitIterTM_withFuel G E F g e CG cG CE cE cF (k' + 1)
++      (fun n => a' * (n + 1) ^ k') hG hE hF b l horbit
++  refine ⟨M, C * (a' + 2), D + k', (FinTM.computesFunInTime_iff _ _ _).2 fun w => ?_⟩
++  refine ((FinTM.computesFunInTime_iff _ _ _).1 hM w).mono ?_
++  let n := w.length
++  have hR : a' * (n + 1) ^ k' + 2 ≤ (a' + 2) * (n + 1) ^ k' := by
++    have hpos : 1 ≤ (n + 1) ^ k' := Nat.one_le_pow _ _ (by omega)
++    rw [Nat.add_mul]
++    omega
++  calc C * (n + 1) ^ D * (a' * (n + 1) ^ k' + 2)
++      ≤ C * (n + 1) ^ D * ((a' + 2) * (n + 1) ^ k') := Nat.mul_le_mul_left _ hR
++    _ = C * (a' + 2) * (n + 1) ^ (D + k') := by rw [pow_add]; ring
+ 
+ end Turing
+diff --git a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+index 3ac162843..5fc2a0994 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+@@ -35,7 +35,7 @@ Generic machine-construction infrastructure shared by loop-body assemblies
+ 
+ ## Main definitions
+ 
+-* `Turing.SafeRun`, `Turing.padAction`, `Turing.embedCfg`.
++* `Turing.SafeRun` (read through `Turing.safeRun_iff`), `Turing.padAction`, `Turing.embedCfg`.
+ 
+ ## Main results
+ 
+@@ -68,6 +68,14 @@ def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
+     (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
+   H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
+ 
++/-- `SafeRun H avoid c t c' ↔ H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid`:
++the published reading of `Turing.SafeRun`. -/
++theorem safeRun_iff {H : MultiTapeTM k Bool B} {avoid : B} {c : Cfg k Bool B x} {t : ℕ}
++    {c' : Cfg k Bool B x} :
++    SafeRun H avoid c t c' ↔
++      H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid :=
++  Iff.rfl
++
+ /-- The empty run is safe. -/
+ theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
+     {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+index e78a4cd93..8f81681a4 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -2942,24 +2942,23 @@ source's captured result, rejecting malformed inputs without any emission.
+ encoded-prefix replay, and captured-payload replay. Source output length is
+ at most its running time. The two replay lengths and all input scans therefore
+ fit `4 (T(n) + n + 3)`; no running time is evaluated at a padded input length. -/
+-private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
+-    {T : ℕ → ℕ} (hM : M.ComputesFunInTime f T) :
+-    (pairMapTM M).ComputesFunInTime
+-      (fun x => match pairDecode x with
+-        | some (a, _) => pairEncode a (f x)
+-        | none => []) (fun n => 4 * (T n + n + 3)) := by
+-  intro x
+-  have hlen : (f x).length ≤ T x.length := by
+-    have hout := ((computesInTime_iff _ _ _ _).mp (hM x)).2
+-    simpa only [hout] using M.tm.output_length_le x (T x.length)
+-  obtain ⟨t, ht, c, ho, hstart⟩ := mapStart M x (f x) (T x.length) (hM x)
++private lemma pairMap_computes_at {M : FinTM Bool} {x y : List Bool} {time : ℕ}
++    (hM : M.ComputesInTime x y time) :
++    (pairMapTM M).ComputesInTime x
++      (match pairDecode x with
++        | some (a, _) => pairEncode a y
++        | none => []) (4 * (time + x.length + 3)) := by
++  have hlen : y.length ≤ time := by
++    have hout := ((computesInTime_iff _ _ _ _).mp hM).2
++    simpa only [hout] using M.tm.output_length_le x (time)
++  obtain ⟨t, ht, c, ho, hstart⟩ := mapStart M x y (time) hM
+   obtain ⟨u, hu, hval⟩ := mapValidate M c x [] (by simp)
+   simp only [List.length_nil, Nat.zero_add] at hval
+   have hpos : (⟨1, by omega⟩ : Fin (x.length + 2)) = 1 := by
+     apply Fin.ext
+     simp
+   rw [hpos] at hval
+-  have hclen : c.output.length = (f x).length := congrArg List.length ho
++  have hclen : c.output.length = y.length := congrArg List.length ho
+   cases hd : pairDecode x with
+   | none =>
+     simp only [hd, Option.isSome_none, Bool.false_eq_true, ↓reduceIte] at hval ⊢
+@@ -2989,13 +2988,13 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
+       rw [MultiTapeTM.runFrom_add _ _ (2 * a.length + 2),
+         MultiTapeTM.runFrom_add _ _ r, MultiTapeTM.runFrom_add _ t u,
+         hstart, hp, hr', hp']
+-    have hc : (pairMapTM M).ComputesInTime x (pairEncode a (f x))
++    have hc : (pairMapTM M).ComputesInTime x (pairEncode a y)
+         (((t + u + r) + (2 * a.length + 2)) + (c.output.length + 1)) := by
+       apply (computesInTime_iff _ _ _ _).mpr
+       rw [MultiTapeTM.runFrom_add _ _ (c.output.length + 1), hprefix]
+       obtain ⟨hs, hout⟩ := mapPayload_finish M c p' (pairEncode a [])
+       refine ⟨hs, ?_⟩
+-      simpa [ho, pairEncode, List.append_assoc] using hout
++      simpa only [ho, pairEncode_eq, List.append_assoc] using hout
+     apply hc.mono
+     have hpbound := p.isLt
+     change r ≤ p.val + 2 at hrle
+@@ -3003,6 +3002,38 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
+       rw [Turing.eq_pairEncode_of_pairDecode x a b hd, Turing.length_pairEncode]
+     omega
+ 
++/-- The threaded map's total contract from a bound on each source activation. -/
++private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
++    {T : ℕ → ℕ} (hM : M.ComputesFunInTime f T) :
++    (pairMapTM M).ComputesFunInTime
++      (fun x => match pairDecode x with
++        | some (a, _) => pairEncode a (f x)
++        | none => []) (fun n => 4 * (T n + n + 3)) :=
++  (computesFunInTime_iff _ _ _).2 fun x =>
++    pairMap_computes_at ((computesFunInTime_iff _ _ _).1 hM x)
++
++/-- On a pair, a threaded map can charge the actual time of the payload machine.
++For each computation sending `b` to `y` in `time` steps, the same wrapper
++sends `⟨a,b⟩` to `⟨a,y⟩` in at most `40 (time + |⟨a,b⟩| + 1)` steps.
++
++**Proof sketch.** The pair reader extracts the payload. Buffered composition
++runs the supplied computation on that payload. The existing threaded map
++retains the prefix and emits the captured result. Both encoding passes and
++the rewind are linear in the pair and captured output lengths. -/
++theorem exists_pairMapSnd_computesInTime (G : FinTM Bool) :
++    ∃ M : FinTM Bool, ∀ (a b y : List Bool) (time : ℕ), G.ComputesInTime b y time →
++      M.ComputesInTime (pairEncode a b) (pairEncode a y)
++        (40 * (time + (pairEncode a b).length + 1)) := by
++  refine ⟨pairMapTM (bufferedCompTM (pairExtractTM false true) G), fun a b y time hg => ?_⟩
++  have hb : (pairExtractTM false true).ComputesInTime (pairEncode a b) b
++      (5 * ((pairEncode a b).length + 1)) := by
++    simpa only [pairDecode_pairEncode, Bool.false_eq_true, ↓reduceIte, List.nil_append] using
++      pairExtractTM_computes false true (pairEncode a b)
++  have hcall := bufferedCompTM_computesInTime (pairExtractTM false true) G hb hg
++  have hmap := pairMap_computes_at hcall
++  rw [pairDecode_pairEncode] at hmap
++  exact hmap.mono (by rw [length_pairEncode]; omega)
++
+ /-- **C1, the threaded map combinator** (round-2
+ addition per round-1 finding 3 — the data-retaining assembly the
+ extractors deliberately do not provide: sequential composition yields
+diff --git a/TCSlib/Complexity/TuringMachine/Build/WordTiming.lean b/TCSlib/Complexity/TuringMachine/Build/WordTiming.lean
+new file mode 100644
+index 000000000..03e453b67
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/Build/WordTiming.lean
+@@ -0,0 +1,131 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Time bounds for concatenating computed words
++
++The outputs of two computations on the same input can be concatenated with a bound proportional to their separate running times and the input length. The construction uses paired storage and the timed payload-map contract.
++
++## Main definitions
++
++None.
++
++## Main results
++
++* `Turing.FinTM.exists_append_computesFunInTime` gives the additive running-time bound.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.2, multitape machines, and §7.2, efficient arithmetic.)
++-/
++
++namespace Turing.FinTM
++
++attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
++attribute [local irreducible] pairEncode pairDecode bufferedCompTM
++
++/-- Two computations on the same input can have their outputs concatenated with
++linear overhead in their separate time bounds and the input length.
++
++**Proof sketch.** Duplicate the input and map the first computation over the payload.
++Duplicate the resulting pair, then compute the second result from its original-input
++projection. Concatenate and remove the retained input. Each call is charged at its
++actual input, and the two computed words have length at most their run times. -/
++theorem exists_append_computesFunInTime {F G : FinTM Bool}
++    {f g : List Bool → List Bool} {A B : ℕ → ℕ}
++    (hf : F.ComputesFunInTime f A) (hg : G.ComputesFunInTime g B) :
++    ∃ (M : FinTM Bool) (c : ℕ),
++      M.ComputesFunInTime (fun x => f x ++ g x)
++        (fun n => c * (A n + B n + n + 1)) := by
++  obtain ⟨D, a, hD⟩ := computesFunInTime_pairDup
++  obtain ⟨P, hP⟩ := exists_pairMapSnd_computesInTime F
++  let G' := bufferedCompTM (pairExtractTM true false) G
++  obtain ⟨Q, hQ⟩ := exists_pairMapSnd_computesInTime G'
++  let C := pairExtractTM true true
++  let S := pairExtractTM false true
++  let M := bufferedCompTM
++    (bufferedCompTM (bufferedCompTM (bufferedCompTM (bufferedCompTM D P) D) Q) C) S
++  refine ⟨M, 4 * a + 1500, (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++  let n := x.length
++  let budget := A n + B n + n + 1
++  let p := pairEncode x x
++  let s := pairEncode x (f x)
++  let q := pairEncode s s
++  let r := pairEncode s (g x)
++  have hf' := (computesFunInTime_iff _ _ _).1 hf x
++  have hg' := (computesFunInTime_iff _ _ _).1 hg x
++  have hlf : (f x).length ≤ A n := by
++    rw [← ((computesInTime_iff _ _ _ _).1 hf').2]
++    exact F.tm.output_length_le x _
++  have hlg : (g x).length ≤ B n := by
++    rw [← ((computesInTime_iff _ _ _ _).1 hg').2]
++    exact G.tm.output_length_le x _
++  have h₁ := (computesFunInTime_iff _ _ _).1 hD x
++  have h₂ := hP x x (f x) (A n) hf'
++  have h₃ := (computesFunInTime_iff _ _ _).1 hD s
++  have hproj : (pairExtractTM true false).ComputesInTime s x (5 * (s.length + 1)) := by
++    simpa only [s, pairDecode_pairEncode, Bool.false_eq_true, ↓reduceIte, List.append_nil] using
++      pairExtractTM_computes true false s
++  have hrun : G'.ComputesInTime s (g x) (5 * (s.length + 1) + n + 2 + B n) :=
++    bufferedCompTM_computesInTime (pairExtractTM true false) G hproj hg'
++  have h₄ := hQ s s (g x) _ hrun
++  have h₅ : C.ComputesInTime r (s ++ g x) (5 * (r.length + 1)) := by
++    simpa only [C, r, pairDecode_pairEncode, ↓reduceIte] using
++      pairExtractTM_computes true true r
++  have hword : s ++ g x = pairEncode x (f x ++ g x) := by
++    simp only [s, pairEncode_eq, List.append_assoc]
++  have h₆ : S.ComputesInTime (s ++ g x) (f x ++ g x) (5 * ((s ++ g x).length + 1)) := by
++    rw [hword]
++    simpa only [S, pairDecode_pairEncode, ↓reduceIte, List.nil_append] using
++      pairExtractTM_computes false true (pairEncode x (f x ++ g x))
++  have h := bufferedCompTM_computesInTime D P h₁ h₂
++  have h := bufferedCompTM_computesInTime _ D h h₃
++  have h := bufferedCompTM_computesInTime _ Q h h₄
++  have h := bufferedCompTM_computesInTime _ C h h₅
++  have h := bufferedCompTM_computesInTime _ S h h₆
++  have hn : n + 1 ≤ budget := by dsimp only [budget]; omega
++  have hs : s.length ≤ 2 * budget := by
++    rw [show s = pairEncode x (f x) from rfl, length_pairEncode]
++    dsimp only [budget, n] at hlf ⊢
++    omega
++  have hsmall : 1 ≤ budget := by omega
++  have hp : p.length ≤ 3 * budget := by
++    rw [show p = pairEncode x x from rfl, length_pairEncode]
++    dsimp only [n] at hn
++    omega
++  have hq : q.length ≤ 8 * budget := by
++    rw [show q = pairEncode s s from rfl, length_pairEncode]
++    omega
++  have hr : r.length ≤ 7 * budget := by
++    rw [show r = pairEncode s (g x) from rfl, length_pairEncode]
++    have : B n ≤ budget := by dsimp only [budget]; omega
++    omega
++  have hd₁ : a * (n + 1) ≤ a * budget := Nat.mul_le_mul_left _ hn
++  have hd₂ : a * (s.length + 1) ≤ a * (3 * budget) :=
++    Nat.mul_le_mul_left _ (by omega)
++  have hA : A n ≤ budget := by dsimp only [budget]; omega
++  have hB : B n ≤ budget := by dsimp only [budget]; omega
++  refine h.mono ?_
++  have hbound : (4 * a + 1500) * budget = a * budget + a * (3 * budget) + 1500 * budget := by
++    ring
++  change _ ≤ (4 * a + 1500) * budget
++  rw [hbound]
++  rw [List.length_append]
++  change a * (n + 1) + p.length + 2 + 40 * (A n + p.length + 1) +
++    s.length + 2 + a * (s.length + 1) +
++    q.length + 2 + 40 * (5 * (s.length + 1) + n + 2 + B n + q.length + 1) +
++    r.length + 2 + 5 * (r.length + 1) +
++    (s.length + (g x).length) + 2 + 5 * (s.length + (g x).length + 1) ≤ _
++  omega
++
++
++end Turing.FinTM
+diff --git a/TCSlib/Cryptography/Asymptotic/Universal.lean b/TCSlib/Cryptography/Asymptotic/Universal.lean
+index c47460863..416f8cab3 100644
+--- a/TCSlib/Cryptography/Asymptotic/Universal.lean
++++ b/TCSlib/Cryptography/Asymptotic/Universal.lean
+@@ -79,15 +79,14 @@ computable by a coded machine on the bare input (`FunFamily.QuadraticCode`).
+   `TCSlib.Cryptography.Asymptotic.UniversalLemmas`).
+ * `TCSlib.Cryptography.lemma_64_3` — a strong one-way function computable in quadratic time
+   [PS10, Lemma 64.3] (from `PadQuad.exists_family` of
+-  `TCSlib.Cryptography.Asymptotic.UniversalPadding`; one machine admission remains, see the
+-  fill note).
++  `TCSlib.Cryptography.Asymptotic.UniversalPadding`, with its linear-time evaluator).
+ * `TCSlib.Cryptography.claim_65_1`, `claim_65_2`, `claim_65_2_cond` — `PickG` and the union
+   bound [PS10, p. 65].
+ * `TCSlib.Cryptography.fUniversal_hard`, `TCSlib.Cryptography.fUniversal_weakOneWay`,
+   `TCSlib.Cryptography.theorem_63_1` — `f_universal` is weakly one-way with `q(n) = n³`, hence
+   (after amplification) strongly one-way [PS10, Theorem 63.1] (`fUniversal_hard` and
+   `fUniversal_weakOneWay` are proved from the hypothesis of `lemma_64_3`; `theorem_63_1`
+-  depends on `lemma_64_3`, which is sorried, see its fill note).
++  uses the quadratic-time strong one-way family supplied by `lemma_64_3`).
+ 
+ ## References
+ 
+@@ -466,9 +465,9 @@ length (`inLen = var`) computable by a coded machine in time `c₀ (n + 1)²` on
+ 
+ **Deviation:** the text defines `g'(⟨a, b⟩) = ⟨a, g(b)⟩` on lengths `m = n^c` only and
+ leaves the recovery of `n` from `m` implicit; the formal `g'` is defined at every length `m`
+-with the parameter `ν(m) := max {n : P(n) ≤ m}` recovered from the input length, and the
+-output `a ++ g_{ν m}(b)` is padded with `false` to the syntactic length `2·var` (which it never
+-exceeds from `P(0)` on; truncated at the finitely many smaller `m`).
++with `ν(m) := max {n ≤ m : n^d ≤ m}` recovered from the input length for a fixed
++dominating degree d. The output `a ++ g_{ν m}(b)` is padded with `false` to the syntactic
++length `2·var` and is truncated on smaller parameters before domination applies.
+ 
+ Repair (run-3 audit P3-3): the sketch's family is `𝓖 := ⟨var, mul (const 2) var, g'⟩`, not
+ `⟨var, add var outLen, g'⟩` — padding to `m + outLen(m)` bits is not computable within the
+@@ -476,49 +475,26 @@ quadratic one-tape budget when `deg outLen ≥ 2`; the raw output has at most `2
+ "non-constant input length" sub-lemma is unnecessary (`P` is strictly increasing because of its
+ summand `n`). Statement unchanged.
+ 
+-**Proof sketch.** Let `𝓕` be strong one-way with input length `ℓ := 𝓕.inLen`, evaluator `F`
+-(`h.easy`) within `C(k + 1)^c`, and `T_F(n) := C(2n + 3 + ℓ(n))^c` its time on `⟨1^n, x⟩`.
+-*Padding:* `P(n) := ℓ(n) + T_F(n) + n`, strictly increasing (its summand `n`), so
+-`ν(m) := max {n : P(n) ≤ m}` (`0` below `P(0)`) is well defined, `P(ν m) ≤ m < P(ν m + 1)` for
+-`m ≥ P(0)`, and `ν` is unbounded; `g'_m(y) := y.take (m - ℓ(ν m)) ++ F ⟨1^{ν m}, y.drop (m - ℓ(ν m))⟩`
+-padded with `false` to `2m` bits (`𝓖 := ⟨var, mul (const 2) var, g'⟩`): for `m ≥ P(0)` the raw
+-output has `(m − ℓ(ν m)) + |F ⟨1^{ν m}, b⟩| ≤ m + T_F(ν m) ≤ m + P(ν m) ≤ 2m` bits, an
+-evaluator's output being no longer than its running time (`PolyTimeComputable.output_length_le`,
+-as in `Collection.exists_outLenBound`), so the padding is lossless (`ofFn_padFin_of_le`).
+-*Hardness:* an inverter `A'` of `𝓖` with `1/m^d ≤ invProbAt A' m` infinitely often
+-(`not_negligible_iff`) gives an inverter of `𝓕` at `n := ν(m)` by `OneWay.invProb_pad_le`
+-[Gar26, Lemma 2.3] (`OneWay.pad`, `OneWay.padInverter`): sample the padding `a` from the
+-coins (`NUPPT.exists_split`), call `A'` at the length `m < P(n + 1)` hard-wired as advice
+-(`NUPPT.exists_reparam_advice` with the majorant `P.subst (add var (const 1))`), project the
+-`b`-part (`NUPPT.exists_comp`). Two inputs `a ++ b`, `a' ++ b'` of length `m` with equal padded
+-outputs have equal raw outputs (both raw outputs have length `(m − ℓ(n)) + outLen(n)`, so the
+-zero-padding to `2m` bits is injective on them, `List.append` of equal-length prefixes), hence
+-`a' = a` and `f_n(b') = f_n(b)`; `1/m^d ≥ 1/P(n+1)^d` and `not_negligible_iff` contradict
+-`h.hard`. *Quadratic time:* a multi-tape machine computing `g'` in linear time `O(m)` — the
+-parameter `1^{ν m}` by incremental unary counting (the powers `(n+1)^j`, `j ≤ deg P`, kept on
+-`deg P` tapes and updated by the binomial identity, total cost
+-`∑_{n ≤ ν m} O((n+1)^{deg P - 1}) = O(m)`), then `1^{ℓ(ν m)}`
+-(`Turing.FinTM.computesFunInTime_polyUnary`, cost `O(P(ν m)) = O(m)`), the split and the copy
+-(`pairSplitAt`, `pairConcat`), the call of `F` (cost `T_F(ν m) ≤ m`), the padding to `2m` bits
+-(`O(m)` steps); then `Turing.FinTM.one_work_tape_binary` gives a one-work-tape binary machine
+-within `c (O(m) + 1)² = O(m²)` and `Turing.exists_codeTM` a `CodeTM` with the same runs.
+-Sub-obligations: the identification of `g'` with `OneWay.pad`, and the linear-time
+-parameter-recovery machine (the only new machine; `Turing.FinTM.computesFunInTime_splitSolve`
+-solves the same length equation in time `(m+1)^{e+2}`, too slow for a quadratic one-tape
+-bound).
+-
+-**Fill note (run 4).** Proved in `TCSlib.Cryptography.Asymptotic.UniversalPadding`
+-(`PadQuad.exists_family`: the padded family `PadQuad.family` with `ν m = max {n : n^d ≤ m}`,
+-its one-wayness `PadQuad.strongOneWay` and `PadQuad.quadraticCode_of_linear`) **modulo one
+-machine admission**, `PadQuad.exists_linearTime_gStr`: a *linear-time multitape* evaluator of
+-the padded function (`one_work_tape_binary` squares the time, so quadratic one-tape time needs
+-linear multitape time). No assembly of the timed catalogue is output-linear for the parameter
+-recovery `1^m ↦ 1^{ν m}`: `computesFunInTime_polyUnary C e` costs `(n+1)^{e+1}` for an output of
+-length `C(n+1)^e`, `computesFunInTime_comp` evaluates the second bound at the *time* of the
+-first stage (only `exists_comp_on_image` avoids this), `pairMapSnd` charges the whole pair, and
+-the loop combinators charge rounds × maximal round cost; the missing primitive is a bespoke
+-linear-time unary root (or an output-linear binary-to-unary converter), see the construction
+-sketch of `PadQuad.exists_linearTime_gStr`. -/
++**Proof sketch.** Extract an evaluator F of the strong one-way family and
++its polynomial running time. Choose a fixed degree d that eventually dominates
++the input length, output length and the cost of F on an encoded parameter
++and input. The family PadQuad.family uses the recovered parameter
++ν(m) = max {n ≤ m : n^d ≤ m}. Its output is the retained suffix followed by
++F on the encoded parameter and data prefix, padded and truncated to twice m.
++
++The padding inverter samples the retained suffix and uses the supplied
++padded-family inverter at a length selected as advice. Equality of padded
++outputs gives equality of the retained suffix and equality of the original
++family's outputs once the dominating bound holds. This proves the padded
++family's strong one-wayness.
++
++For time, the binary parameter search followed by unary emission computes
++the shifted root in linear multitape time. The sharp unary polynomial
++evaluator and the source call are charged at their actual short arguments.
++The pairing, splitting and padding stages have linear overhead. The existing
++one-work-tape binary conversion squares that linear bound, and the code
++representation transports the runs. This is PadQuad.exists_family.
++-/
+ theorem lemma_64_3 (h : ∃ 𝓕 : FunFamily, 𝓕.StrongOneWay) :
+     ∃ 𝓖 : FunFamily, 𝓖.inLen = .var ∧ 𝓖.StrongOneWay ∧ 𝓖.QuadraticCode :=
+   PadQuad.exists_family h
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+index 4c4a47654..fcc6cc720 100644
+--- a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+@@ -6,7 +6,9 @@ Authors: TCSlib contributors
+ import TCSlib.Complexity.TuringMachine.Encoding
+ import TCSlib.Cryptography.Asymptotic.Collections
+ import TCSlib.Cryptography.Asymptotic.UniversalLemmas
+-import Mathlib.Data.Nat.Find
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.Parameter
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.BinaryRoot
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.Machine
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -26,14 +28,19 @@ length. For `d` dominating `ℓ`, `𝓕.outLen` and the running time of `F` (`ex
+ the data block and the `F`-call fit in the input (`ℓ(ν m) + L(ν m) ≤ (ν m)^d ≤ m`), so the
+ padding is lossless and `g'` inherits one-wayness (`PadQuad.strongOneWay`, the reduction
+ `B(1^n, f(b)) = A'(1^m, ⟨a, f(b)⟩ padded).take ℓ(n)` with the padding sampled from the coins,
+-[Gar26, Lemma 2.3]); a linear-time multitape evaluator (`PadQuad.exists_linearTime_gStr`, the
+-only new machine, **admitted**) gives a quadratic-time one-work-tape binary machine through
++[Gar26, Lemma 2.3]); a linear-time multitape evaluator (`PadQuad.exists_linearTime_gStr`) gives a quadratic-time one-work-tape binary machine through
+ `Turing.FinTM.one_work_tape_binary` and `Turing.exists_codeTM` (`PadQuad.quadraticCode_of_linear`).
+ 
+ **Deviation:** the text defines `g'` on lengths `m = n^c` only; here every length `m` is
+ handled through `ν` (data first, padding after, zero-filled to `2m` bits), see the docstring of
+ `TCSlib.Cryptography.lemma_64_3`.
+ 
++## Contents
++
++* `UniversalPadding.Parameter` — the recovered parameter and its bounds.
++* `UniversalPadding.BinaryRoot` — the binary computation of the shifted parameter.
++* `UniversalPadding.Machine` — the linear-time word evaluator.
++
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.PadQuad.nu` — the parameter recovered from the input length;
+@@ -44,7 +51,7 @@ handled through `ν` (data first, padding after, zero-filled to `2m` bits), see
+ * `TCSlib.Cryptography.PadQuad.exists_pow_dominates` — `p(n) ≤ n^d` eventually.
+ * `TCSlib.Cryptography.PadQuad.easy_of_linear`, `PadQuad.quadraticCode_of_linear` — the two
+   computability clauses from the linear-time evaluator.
+-* `TCSlib.Cryptography.PadQuad.exists_linearTime_gStr` — the linear-time evaluator (admitted).
++* `TCSlib.Cryptography.PadQuad.exists_linearTime_gStr` — the linear-time evaluator.
+ * `TCSlib.Cryptography.PadQuad.strongOneWay`, `TCSlib.Cryptography.PadQuad.exists_family` —
+   one-wayness of the padded family and the statement of [PS10, Lemma 64.3] with
+   `QuadraticCode` unfolded.
+@@ -61,7 +68,7 @@ namespace TCSlib.Cryptography.PadQuad
+ 
+ open Complexity Turing TCSlib.Cryptography
+ 
+-/-! ## Polynomial domination and the parameter recovery -/
++/-! ## Polynomial domination -/
+ 
+ /-- Every syntactic polynomial is eventually dominated by a power: `p(n) ≤ n^d` for
+ `n ≥ n₁`, with `d ≥ 1` (`d := c + 1` and `n₁ := C 2^c + 1` for the majorant `C (n + 1)^c`). -/
+@@ -74,32 +81,6 @@ theorem exists_pow_dominates (p : PolyExpr) : ∃ d n₁ : ℕ, 1 ≤ d ∧ ∀
+     _ ≤ n * n ^ c := Nat.mul_le_mul_right _ (by omega)
+     _ = n ^ (c + 1) := by ring
+ 
+-/-- The parameter recovered from the input length `m`: the largest `n ≤ m` with `n^d ≤ m`
+-(`ν m = ⌊m^{1/d}⌋`). -/
+-def nu (d m : ℕ) : ℕ := Nat.findGreatest (fun n => n ^ d ≤ m) m
+-
+-/-- `ν(m)^d ≤ m`. -/
+-theorem nu_pow_le {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : nu d m ^ d ≤ m :=
+-  Nat.findGreatest_spec (P := fun n => n ^ d ≤ m) (Nat.zero_le m)
+-    (by show 0 ^ d ≤ m; rw [Nat.zero_pow hd]; exact Nat.zero_le m)
+-
+-/-- `ν(m) ≤ m`. -/
+-theorem nu_le (d m : ℕ) : nu d m ≤ m := Nat.findGreatest_le m
+-
+-/-- `m < (ν(m) + 1)^d`: the recovered parameter is maximal. -/
+-theorem lt_succ_nu_pow {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : m < (nu d m + 1) ^ d := by
+-  by_cases h : nu d m < m
+-  · have := Nat.findGreatest_is_greatest (P := fun n => n ^ d ≤ m) (n := m) (k := nu d m + 1)
+-      (Nat.lt_succ_self _) (by omega)
+-    exact not_le.mp this
+-  · have hm : nu d m = m := le_antisymm (nu_le d m) (not_lt.mp h)
+-    rw [hm]
+-    exact lt_of_lt_of_le (Nat.lt_succ_self m) (Nat.le_self_pow (by omega) _)
+-
+-/-- `n ≤ ν(m)` whenever `n^d ≤ m`. -/
+-theorem le_nu {d : ℕ} (hd : 1 ≤ d) {n m : ℕ} (h : n ^ d ≤ m) : n ≤ nu d m :=
+-  Nat.le_findGreatest ((Nat.le_self_pow (by omega) n).trans h) h
+-
+ /-! ## The padded function -/
+ 
+ /-- The raw output of `g'` on `z` (`|z| = m`, `n = ν m`): the padding block `z.drop ℓ(n)`
+@@ -141,31 +122,26 @@ theorem ofFn_family_f (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (
+ 
+ /-! ## The computability clauses -/
+ 
+-/-- **The linear-time evaluator of the padded family** [PS10, Lemma 64.3, "`g'` is computable
+-in time `O(n²)`"; the only new machine of the lemma] — **admitted**. Given a machine `M` for
+-`F` within `C (k + 1)^c` and `d` dominating the data length and the running time of `F` on
+-`⟨1^n, b⟩` (`hdom`), some multitape machine computes `gStr F ℓ d` in linear time.
+-
+-**Proof sketch (construction).** On input `z` of length `m`: (1) the parameter `1^{ν m}` by
+-incremental unary counting — maintain `1^n` and the powers `1^{(n+1)^j}`, `j ≤ d`, on `d + 1`
+-tapes, advancing `n` while `1^{(n+1)^d}` fits in the input (the powers are updated by the
+-binomial identity, total cost `∑_{n ≤ ν m} O((n+1)^{d-1}) = O(m)`), or equivalently `d`-th root
+-extraction by consuming the input in chunks of sizes `(n+1)^d − n^d`; (2) `1^{ℓ(ν m)}` by
+-`Turing.FinTM.computesFunInTime_polyUnary` on the short string `1^{ν m}`, of cost
+-`O((ν m + 1)^{deg ℓ + 1}) ≤ O(m)` by `hdom` (through `Turing.FinTM.exists_comp_on_image`, which
+-charges the second stage at the original input length); (3) the split
+-`Turing.FinTM.computesFunInTime_pairSplitAt` on `⟨1^{ℓ(ν m)}, z⟩`; (4) the call of `M` on
+-`⟨1^{ν m}, z.take ℓ(ν m)⟩`, of cost `C (2 ν m + 3 + ℓ(ν m))^c ≤ (ν m)^d ≤ m` for `ν m ≥ n₁`
+-(finitely many smaller `m` are absorbed in the linear constant), again on the image; (5) the
+-concatenation `Turing.FinTM.computesFunInTime_pairConcat`, the zero filling (a one-state scan
+-of the input emitting two `false` per cell) and the cut to `2m` bits
+-(`pairSplitAt` on `⟨z ++ z, ·⟩`, `computesFunInTime_pairDup`/`pairConcat`). All stages are
+-linear or charged on short images, so the total is `c' (m + 1)`. -/
++/-- The padded family has a linear-time multitape evaluator.
++[PS10, Lemma 64.3, the quadratic-time computation of the padded function]
++Given a machine for F within C (k + 1)^c and a fixed degree dominating the
++data length and the call cost, the evaluator computes gStr in linear time.
++
++**Proof sketch.** Compute the input length in binary and recover the shifted
++root by interval halving. At degree one, a single transducer suffices.
++At larger degrees, the emitting loop converts the canonical binary root
++to unary within a quadratic bound in the root, which fits the input length.
++Evaluate the syntactic length polynomial on the shifted unary word using
++the sharp monomial emitter. Restore the root's token and split the data.
++The timed payload map retains the suffix while applying F to its actual
++encoded argument. Concatenate the suffix, result and zeros, and cut to
++twice the input length. The image bounds cover every length, including
++the empty word and parameters below the domination threshold. -/
+ theorem exists_linearTime_gStr {F : List Bool → List Bool} {M : FinTM Bool} {C c : ℕ}
+     (hM : M.ComputesFunInTime F fun k => C * (k + 1) ^ c) (ℓ : PolyExpr) {d n₁ : ℕ}
+     (hd : 1 ≤ d) (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d) :
+     ∃ (M' : FinTM Bool) (c' : ℕ), M'.ComputesFunInTime (gStr F ℓ d) fun m => c' * (m + 1) := by
+-  sorry
++  simpa only [gStr, raw] using exists_linearTime_padded hM ℓ hd hdom
+ 
+ /-- **`g'` is easy to compute** from a linear-time evaluator: the evaluator on `⟨1^m, y⟩`
+ applies `gStr` to the second component (`ofFn_family_f`). -/
+@@ -511,8 +487,8 @@ end Hardness
+ /-- **[PS10, Lemma 64.3] with `QuadraticCode` unfolded**: from a strong one-way family, a
+ strong one-way family with `inLen = var` computable by a coded machine in time `c₀ (m + 1)²`
+ on the bare input — the padded family at the degree `d` of `exists_pow_dominates` applied to
+-`ℓ + L + (running time of the evaluator)`, given its linear-time evaluator
+-(`exists_linearTime_gStr`, admitted).
++`ℓ + L + (running time of the evaluator)`, using its linear-time evaluator
++(`exists_linearTime_gStr`).
+ 
+ **Proof sketch.** `h.easy` gives `F` with machine `M` within `C (k + 1)^c`; dominate
+ `ℓ + L + C (2n + 3 + ℓ(n))^c` by `n^d` from `n₁` on (`exists_pow_dominates` on the syntactic
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean
+new file mode 100644
+index 000000000..4825aa6c7
+--- /dev/null
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding/BinaryRoot.lean
+@@ -0,0 +1,208 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Complexity.ClassP.BinaryArith.Unary
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.Parameter
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The binary floor-root computation for Levin padding
++
++A guarded word iteration bisects an interval containing the recovered parameter. Its state has linear binary width, and every round uses the shared binary arithmetic interface.
++
++## Main definitions
++
++The private search state retains the normalized argument, a word whose length counts the remaining rounds, and the lower endpoint.
++
++## Main results
++
++* `TCSlib.Cryptography.PadQuad.polyTimeComputable_shifted_root` computes the canonical binary word of the recovered parameter minus one.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010. (§2.13, Lemma 64.3.)
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.2, multitape machines, and §7.2, efficient arithmetic.)
++-/
++
++open Turing Complexity Complexity.BinArith TCSlib.Cryptography Complexity.LogProg
++
++attribute [local irreducible] PadQuad.nu pairEncode pairFstD pairSndD
++attribute [local irreducible] BinArith.add BinArith.sub BinArith.mul BinArith.le
++attribute [local irreducible] transduce PolyTimeComputable
++
++namespace TCSlib.Cryptography.PadQuad
++
++/-- Any fixed power of a binary input is computable in polynomial time by repeated
++binary multiplication, with both factors normalized at every call. -/
++private theorem polyTimeComputable_fixedPower (d : ℕ) :
++    PolyTimeComputable (fun z => Nat.bits (bitsVal z ^ d)) := by
++  induction d with
++  | zero => simpa only [pow_zero] using polyTimeComputable_const (Nat.bits 1)
++  | succ d ih =>
++      convert polyTimeComputable_mul.comp (ih.pairEncode polyTimeComputable_normBits) using 1
++      funext z
++      simp only [Function.comp_apply, mul_pairEncode, pow_succ]
++
++/-- The initialization retains the normalized input, its original length as
++remaining rounds, and the lower endpoint zero. -/
++private def init (z : List Bool) : List Bool :=
++  pairEncode (Nat.bits (bitsVal z)) (pairEncode z (Nat.bits 0))
++
++/-- On a state with unread tokens, the midpoint of the search interval
++adds the power of two indexed by the remaining length after this round. -/
++private def midpoint (s : List Bool) : List Bool :=
++  BinArith.add (pairEncode (pairSndD (pairSndD s))
++    (Nat.bits (2 ^ ((pairFstD (pairSndD s)).drop 1).length)))
++
++/-- Compare the midpoint's fixed power with the input. The accepted lower
++endpoint is retained as a binary word, and the remaining width decreases by one. -/
++private def round (d : ℕ) (s : List Bool) : List Bool :=
++  if pairFstD (pairSndD s) = [] then s
++  else
++    let cand := midpoint s
++    let test := BinArith.le
++      (pairEncode (Nat.bits (bitsVal cand ^ d)) (pairFstD s))
++    pairEncode (pairFstD s)
++      (pairEncode ((pairFstD (pairSndD s)).drop 1)
++        (if test then cand else pairSndD (pairSndD s)))
++
++/-- Each search round is polynomial-time by the word projections and the
++binary addition, multiplication and comparison interfaces. -/
++private theorem polyTimeComputable_round (d : ℕ) : PolyTimeComputable (round d) := by
++  have htail : PolyTimeComputable (fun s => (pairFstD (pairSndD s)).drop 1) :=
++    polyTimeComputable_drop 1 |>.comp polyTimeComputable_slot2
++  have hmid : PolyTimeComputable midpoint :=
++    polyTimeComputable_add.comp
++      (polyTimeComputable_slot3.pairEncode (polyTimeComputable_powerOfTwo.comp htail))
++  have htest := polyTimeComputable_le.comp
++    (((polyTimeComputable_fixedPower d).comp hmid).pairEncode polyTimeComputable_pairFstD)
++  have hupdate := polyTimeComputable_ite htest hmid polyTimeComputable_slot3
++  have hbranch := polyTimeComputable_ite
++    (polyTimeComputable_isNil.comp polyTimeComputable_slot2) polyTimeComputable_id
++    (polyTimeComputable_pairFstD.pairEncode (htail.pairEncode hupdate))
++  simpa only [Function.comp_apply, round, decide_eq_true_eq] using hbranch
++
++/-- The true root lies in the half-open interval of width two to the number
++of remaining rounds, with the original normalized argument retained. -/
++private def Invariant (d : ℕ) (z s : List Bool) : Prop :=
++  ∃ (u : List Bool) (r : ℕ),
++    s = pairEncode (Nat.bits (bitsVal z)) (pairEncode u (Nat.bits r)) ∧
++      u.length ≤ z.length ∧ r ≤ PadQuad.nu d (bitsVal z) ∧
++      PadQuad.nu d (bitsVal z) < r + 2 ^ u.length
++
++/-- The full binary width covers every possible root of the input. -/
++private theorem invariant_init (d : ℕ) (z : List Bool) : Invariant d z (init z) := by
++  refine ⟨z, 0, rfl, le_rfl, Nat.zero_le _, ?_⟩
++  rw [Nat.zero_add]
++  exact (PadQuad.nu_le _ _).trans_lt (bitsVal_lt_two_pow z)
++
++/-- A nonempty round splits the invariant interval into equal halves. The
++midpoint's power is within the original value exactly when the midpoint is at
++most the root. The remaining word loses one letter. An empty round is fixed. -/
++private theorem invariant_round {d : ℕ} (hd : 1 ≤ d) {z s : List Bool}
++    (hs : Invariant d z s) : Invariant d z (round d s) ∧
++      (0 < (pairFstD (pairSndD s)).length →
++        (pairFstD (pairSndD (round d s))).length < (pairFstD (pairSndD s)).length) ∧
++      ((pairFstD (pairSndD s)).length = 0 → round d s = s) := by
++  obtain ⟨u, r, rfl, hlu, hlow, hhigh⟩ := hs
++  cases u with
++  | nil =>
++      simp only [round, pairFstD_pairEncode, pairSndD_pairEncode, ↓reduceIte,
++        List.length_nil, Nat.lt_irrefl, false_implies, true_implies, and_true]
++      exact ⟨[], r, rfl, hlu, hlow, hhigh⟩
++  | cons b u =>
++      let v := PadQuad.nu d (bitsVal z)
++      let k := 2 ^ u.length
++      have htest : (r + k) ^ d ≤ bitsVal z ↔ r + k ≤ v :=
++        ⟨PadQuad.le_nu hd, fun h => (Nat.pow_le_pow_left h _).trans (PadQuad.nu_pow_le hd _)⟩
++      have hwidth : 2 ^ (b :: u).length = k + k := by
++        simp only [List.length_cons, pow_succ, k, Nat.mul_two]
++      rw [hwidth] at hhigh
++      have hr :
++          round d (pairEncode (Nat.bits (bitsVal z)) (pairEncode (b :: u) (Nat.bits r))) =
++            pairEncode (Nat.bits (bitsVal z))
++              (pairEncode u (Nat.bits (if r + k ≤ v then r + k else r))) := by
++        simp only [round, pairFstD_pairEncode, pairSndD_pairEncode, List.cons_ne_nil,
++          ↓reduceIte, midpoint, List.drop_succ_cons, List.drop_zero, add_pairEncode,
++          bitsVal_bits, le_pairEncode, decide_eq_true_eq]
++        change pairEncode (Nat.bits (bitsVal z))
++          (pairEncode u (if (r + k) ^ d ≤ bitsVal z then Nat.bits (r + k) else Nat.bits r)) = _
++        by_cases h : r + k ≤ v
++        · rw [if_pos (htest.mpr h), if_pos h]
++        · rw [if_neg (fun h' => h (htest.mp h')), if_neg h]
++      rw [hr]
++      refine ⟨?_, ?_, ?_⟩
++      · have hu : u.length ≤ z.length := by simp only [List.length_cons] at hlu; omega
++        by_cases h : r + k ≤ v
++        · refine ⟨u, r + k, by rw [if_pos h], hu, h, ?_⟩
++          change v < r + k + k
++          omega
++        · exact ⟨u, r, by rw [if_neg h], hu, hlow, by exact Nat.lt_of_not_ge h⟩
++      · simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_cons]
++        omega
++      · simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_cons]
++        omega
++
++/-- The interval representation is linear in the original binary width.
++The lower endpoint fits because it is at most the root of the input. -/
++private theorem length_le_of_invariant {d : ℕ} {z s : List Bool} (h : Invariant d z s) :
++    s.length ≤ 5 * (z.length + 1) := by
++  obtain ⟨u, r, rfl, hu, hr, -⟩ := h
++  have hn := length_bits_bitsVal_le z
++  have hl := length_bits_le_of_le z (hr.trans (PadQuad.nu_le _ _)) le_rfl
++  simp only [length_pairEncode]
++  omega
++
++/-- The binary root can be computed in time polynomial in the binary input
++width. The truncated subtraction produces the shifted root used by the
++sharp unary polynomial evaluator.
++
++**Proof sketch.** Reuse the guarded word loop with the interval round. The
++lower endpoint is never above the root, and the interval halves at every
++round until the remaining word is empty. The final interval has width one.
++Project the lower endpoint and subtract one. -/
++theorem polyTimeComputable_shifted_root (d : ℕ) (hd : 1 ≤ d) :
++    PolyTimeComputable (fun z => Nat.bits (PadQuad.nu d (bitsVal z) - 1)) := by
++  let loops (z : List Bool) := (round d)^[z.length + 1] (init z)
++  have hinit : PolyTimeComputable init :=
++    polyTimeComputable_normBits.pairEncode
++      (polyTimeComputable_id.pairEncode (polyTimeComputable_const _))
++  have hpreserve : ∀ (z s : List Bool), Invariant d z s → Invariant d z (round d s) :=
++    fun _ _ h => (invariant_round hd h).1
++  have hloops : PolyTimeComputable loops := by
++    simpa only [pow_one, one_mul] using
++      BinArith.polyTimeComputable_iterate (polyTimeComputable_round d) hinit 1 1 5 1
++        (fun z i _ => by simpa only [pow_one] using
++          length_le_of_invariant (iterate_invariant (Invariant d z) (hpreserve z) i
++            (invariant_init d z)))
++  have hresult (z : List Bool) :
++      pairSndD (pairSndD (loops z)) = Nat.bits (PadQuad.nu d (bitsVal z)) := by
++    have hzero := iterate_measure_eq_zero (g := round d) (Invariant d z)
++      (fun s => (pairFstD (pairSndD s)).length) (hpreserve z)
++      (fun _ h => (invariant_round hd h).2.1)
++      (fun _ h => (invariant_round hd h).2.2) (z.length + 1) (init z)
++      (invariant_init d z) (by simp only [init, pairFstD_pairEncode, pairSndD_pairEncode]; omega)
++    change (pairFstD (pairSndD (loops z))).length = 0 at hzero
++    obtain ⟨u, r, hword, -, hlow, hhigh⟩ :=
++      iterate_invariant (Invariant d z) (hpreserve z) (z.length + 1) (invariant_init d z)
++    change loops z = _ at hword
++    rw [hword] at hzero ⊢
++    simp only [pairFstD_pairEncode, pairSndD_pairEncode] at hzero ⊢
++    rw [hzero, pow_zero] at hhigh
++    congr 1
++    omega
++  have hsub := polyTimeComputable_sub.comp
++    ((polyTimeComputable_slot3.comp hloops).pairEncode (polyTimeComputable_const (Nat.bits 1)))
++  convert hsub using 1
++  funext z
++  simp only [Function.comp_apply, hresult, sub_pairEncode]
++
++
++end TCSlib.Cryptography.PadQuad
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean
+new file mode 100644
+index 000000000..168b3e014
+--- /dev/null
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding/Machine.lean
+@@ -0,0 +1,421 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Asymptotic.UniversalPadding.BinaryRoot
++import TCSlib.Complexity.Randomized.UnaryPolynomial
++import TCSlib.Complexity.Randomized.PPT
++import TCSlib.Complexity.ClassNP.Transducer
++import TCSlib.Complexity.Randomized.Primitives
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The linear-time multitape evaluator of Levin padding
++
++The evaluator computes the shifted unary root, the unary data length, the source call and the padded result. Both polynomial computations are charged at their actual short arguments. Finite small inputs are absorbed into the running-time constant.
++
++## Main definitions
++
++The private linear-time predicate packages a multitape evaluator and its bound. Its closures use the existing timed machine combinators.
++
++## Main results
++
++* `TCSlib.Cryptography.PadQuad.exists_linearTime_padded` computes the padded word formula in linear time.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010. (§2.13, Lemma 64.3.)
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.2, multitape machines, and §7.2, efficient arithmetic.)
++-/
++
++open Complexity Turing Turing.FinTM TCSlib.Cryptography Complexity.LogProg Complexity.BinArith
++
++attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
++attribute [local irreducible] PolyTimeComputable PadQuad.nu NUPPT.advInput
++attribute [local irreducible] pairEncode pairDecode pairFstD pairSndD transduce
++
++namespace TCSlib.Cryptography.PadQuad
++
++/-- At the recovered parameter, the unary data length and the time of the call
++to the original machine fit a linear budget in the padded input length. -/
++private theorem levinTimeOnImage (ℓ : PolyExpr) (C c d n₁ : ℕ) (hd : 1 ≤ d)
++    (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d) :
++    ∃ B : ℕ, ∀ z : List Bool,
++      let n := PadQuad.nu d z.length
++      ℓ.eval n + C * ((NUPPT.advInput n (z.take (ℓ.eval n))).length + 1) ^ c ≤
++        B * (z.length + 1) := by
++  let B := ℓ.eval n₁ + C * (2 * n₁ + 3 + ℓ.eval n₁) ^ c + 1
++  refine ⟨B, fun z => ?_⟩
++  let n := PadQuad.nu d z.length
++  change ℓ.eval n + C * ((NUPPT.advInput n (z.take (ℓ.eval n))).length + 1) ^ c ≤
++    B * (z.length + 1)
++  have hinput : (NUPPT.advInput n (z.take (ℓ.eval n))).length + 1 ≤
++      2 * n + 3 + ℓ.eval n := by
++    rw [NUPPT.length_advInput, List.length_take]
++    omega
++  have htime := Nat.mul_le_mul_left C (Nat.pow_le_pow_left hinput c)
++  by_cases hn : n₁ ≤ n
++  · have hB : 1 ≤ B := by omega
++    calc
++      _ ≤ ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c := Nat.add_le_add_left htime _
++      _ ≤ n ^ d := hdom n hn
++      _ ≤ z.length := PadQuad.nu_pow_le hd _
++      _ ≤ 1 * (z.length + 1) := by omega
++      _ ≤ _ := Nat.mul_le_mul_right _ hB
++  · have hn' : n ≤ n₁ := by omega
++    have hℓ := ℓ.eval_mono hn'
++    have harg : 2 * n + 3 + ℓ.eval n ≤ 2 * n₁ + 3 + ℓ.eval n₁ := by omega
++    have hcost := Nat.mul_le_mul_left C (Nat.pow_le_pow_left harg c)
++    calc
++      _ ≤ ℓ.eval n₁ + C * (2 * n₁ + 3 + ℓ.eval n₁) ^ c :=
++        Nat.add_le_add hℓ (htime.trans hcost)
++      _ ≤ B := by omega
++      _ ≤ _ := by simpa only [Nat.mul_one] using
++        Nat.mul_le_mul_left B (Nat.succ_le_succ (Nat.zero_le z.length))
++
++
++/-- A word function has a deterministic multitape evaluator with a linear bound. -/
++private def Linear (f : List Bool → List Bool) : Prop :=
++  ∃ (M : FinTM Bool) (a : ℕ), M.ComputesFunInTime f (fun n => a * (n + 1))
++
++/-- A machine for pointwise equal output computes the same function. -/
++private theorem Linear.congr {f g : List Bool → List Bool} (hf : Linear f)
++    (h : ∀ z, f z = g z) : Linear g := by
++  rwa [← funext h]
++
++/-- The output word fits the time bound because a step emits at most one bit. -/
++private theorem length_le_time {M : FinTM Bool} {x y : List Bool} {t : ℕ}
++    (h : M.ComputesInTime x y t) : y.length ≤ t := by
++  rw [← ((computesInTime_iff _ _ _ _).1 h).2]
++  exact M.tm.output_length_le x t
++
++/-- Two-stage computation with both stages charged against the original input. -/
++private theorem Linear.onImage {f g : List Bool → List Bool} (hf : Linear f)
++    (U : FinTM Bool) (b : ℕ)
++    (hU : ∀ x, U.ComputesInTime (f x) (g x) (b * (x.length + 1))) : Linear g := by
++  obtain ⟨M, a, hM⟩ := hf
++  obtain ⟨V, hV⟩ := exists_comp_on_image M U f g _ (fun n => b * (n + 1)) hM hU
++  refine ⟨V, 2 * a + b + 2, (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++  refine ((computesFunInTime_iff _ _ _).1 hV x).mono ?_
++  rw [Nat.add_mul, Nat.add_mul, Nat.mul_assoc]
++  have hpos : 1 ≤ x.length + 1 := by omega
++  have htwo := Nat.mul_le_mul_left 2 hpos
++  omega
++
++/-- Linear-time functions compose since the first output also has linear length. -/
++private theorem Linear.comp {f g : List Bool → List Bool}
++    (hg : Linear g) (hf : Linear f) : Linear (fun x => g (f x)) := by
++  obtain ⟨M, a, hM⟩ := hf
++  obtain ⟨U, b, hU⟩ := hg
++  refine Linear.onImage ⟨M, a, hM⟩ U (b * (a + 1)) fun x => ?_
++  refine ((computesFunInTime_iff _ _ _).1 hU (f x)).mono ?_
++  rw [Nat.mul_assoc]
++  apply Nat.mul_le_mul_left
++  rw [Nat.add_mul, Nat.one_mul]
++  have hl := length_le_time ((computesFunInTime_iff _ _ _).1 hM x)
++  omega
++
++/-- Concatenation of two linear-time outputs is linear in the same input. -/
++private theorem Linear.append {f g : List Bool → List Bool}
++    (hf : Linear f) (hg : Linear g) : Linear (fun x => f x ++ g x) := by
++  obtain ⟨M, a, hM⟩ := hf
++  obtain ⟨U, b, hU⟩ := hg
++  obtain ⟨V, c, hV⟩ := exists_append_computesFunInTime hM hU
++  refine ⟨V, c * (a + b + 1), (computesFunInTime_iff _ _ _).2 fun x => ?_⟩
++  apply ((computesFunInTime_iff _ _ _).1 hV x).mono
++  rw [Nat.mul_assoc]
++  apply Nat.mul_le_mul_left
++  rw [Nat.add_mul, Nat.add_mul, Nat.one_mul]
++  omega
++
++/-- Emit the doubled first component and separator, then the second component.
++The prefix uses the timed payload map with the constant empty machine. -/
++private theorem Linear.pair {f g : List Bool → List Bool} (hf : Linear f) (hg : Linear g) :
++    Linear (fun x => pairEncode (f x) (g x)) := by
++  have hdup : Linear (fun x => pairEncode x x) := computesFunInTime_pairDup
++  obtain ⟨M, a, hM⟩ := hdup.comp hf
++  obtain ⟨P, hP⟩ := exists_pairMapSnd_computesInTime (constTM [])
++  have hprefix : Linear (fun x => pairEncode (f x) []) := by
++    refine Linear.onImage ⟨M, a, hM⟩ P (40 * (a + 2)) fun x => ?_
++    have h := hP (f x) (f x) [] 1 (constTM_computes [] (f x))
++    refine h.mono ?_
++    rw [Nat.mul_assoc]
++    apply Nat.mul_le_mul_left
++    rw [Nat.add_mul]
++    have hl := length_le_time ((computesFunInTime_iff _ _ _).1 hM x)
++    omega
++  apply (hprefix.append hg).congr
++  intro x
++  simp only [pairEncode_eq, List.append_nil, List.append_assoc]
++
++/-- The one-state copying transducer uses one input scan. -/
++private theorem linear_id : Linear (fun x => x) := by
++  let δ := fun (_ : Unit) (_ : Bool) => ()
++  let o := fun (_ : Unit) (b : Bool) => some b
++  have h : Linear (transduce δ o ()) :=
++    ⟨transducerTM δ o (), 1, by
++      simpa only [Nat.one_mul] using transducerTM_computes δ o ()⟩
++  exact h.congr (transduce_of_copy δ o () (fun _ => rfl) (fun _ => rfl))
++
++/-- The first projection is the published linear pair parser. -/
++private theorem linear_fst : Linear pairFstD := by
++  obtain ⟨M, a, hM⟩ := computesFunInTime_pairFst
++  exact (show Linear _ from ⟨M, a, hM⟩).congr fun x => (pairFstD_eq x).symm
++
++/-- The second projection is the published linear pair parser. -/
++private theorem linear_snd : Linear pairSndD := by
++  obtain ⟨M, a, hM⟩ := computesFunInTime_pairSnd
++  exact (show Linear _ from ⟨M, a, hM⟩).congr fun x => (pairSndD_eq x).symm
++
++/-- The unary split `Turing.pairSplitAt` is the existing randomized-computation primitive. -/
++private theorem linear_split : Linear pairSplitAt := computesFunInTime_pairSplitAt
++
++/-- A one-state transducer emits one zero per input cell. -/
++private theorem linear_zeros : Linear (fun x => List.replicate x.length false) := by
++  have h : Linear (transduce (fun (_ : Unit) _ => ()) (fun _ _ => some false) ()) :=
++    ⟨transducerTM _ _ (), 1, by
++      simpa only [Nat.one_mul] using transducerTM_computes
++        (fun (_ : Unit) _ => ()) (fun _ _ => some false) ()⟩
++  apply h.congr
++  intro x
++  induction x with
++  | nil => rw [transduce_nil]; rfl
++  | cons b x ih => rw [transduce_cons, ih]; rfl
++
++/-- Two copies of the zero scan give exactly twice the input length. -/
++private theorem linear_double_zeros : Linear (fun x => List.replicate (2 * x.length) false) :=
++  (linear_zeros.append linear_zeros).congr fun x => by
++    rw [Nat.two_mul, List.replicate_add]
++
++/-- Prepending a true token costs one step beyond the copy scan. -/
++private theorem linear_prepend_true : Linear (fun x => true :: x) :=
++  ⟨prependTM [true], 2, (computesFunInTime_iff _ _ _).2 fun x => by
++    refine ((computesFunInTime_iff _ _ _).1 (prependTM_computes [true]) x).mono ?_
++    simp only [List.length_cons, List.length_nil]
++    omega⟩
++
++/-- A nonempty word has parameter at least one, so shifting and restoring the
++unary root recovers the original parameter. -/
++private theorem restored_root {d m : ℕ} (hd : 1 ≤ d) (hm : 1 ≤ m) :
++    PadQuad.nu d m - 1 + 1 = PadQuad.nu d m := by
++  have h := PadQuad.le_nu hd (n := 1) (by simpa only [one_pow] using hm)
++  omega
++
++/-- The charged unary length and call cost stay linear after the shift. The only
++new case is the empty word, where the shifted parameter is one. -/
++private theorem shifted_image_bound (ℓ : PolyExpr) {C c d n₁ : ℕ} (hd : 1 ≤ d)
++    (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d) :
++    ∃ B : ℕ, ∀ z : List Bool,
++      let n := PadQuad.nu d z.length - 1 + 1
++      ℓ.eval n + C * ((NUPPT.advInput n (z.take (ℓ.eval n))).length + 1) ^ c ≤
++        B * (z.length + 1) := by
++  obtain ⟨A, hA⟩ := levinTimeOnImage ℓ C c d n₁ hd hdom
++  refine ⟨A + (ℓ.eval 1 + C * 5 ^ c), fun z => ?_⟩
++  cases z with
++  | nil =>
++      have hn : PadQuad.nu d 0 = 0 := Nat.eq_zero_of_le_zero (PadQuad.nu_le _ _)
++      simp only [List.length_nil, hn, Nat.zero_sub, Nat.zero_add, List.take_nil,
++        NUPPT.length_advInput, Nat.mul_one, Nat.reduceAdd]
++      omega
++  | cons b z =>
++      simp only [restored_root hd (by simp : 1 ≤ (b :: z).length)]
++      exact (hA (b :: z)).trans (Nat.mul_le_mul_right _ (by omega))
++
++/-- A linear-time evaluator for the shifted unary root suffices for the padded
++function of [PS10, Lemma 64.3], with the original polynomial runtime bound on
++the evaluator of the source function.
++
++**Proof sketch.** Evaluate the length polynomial on the shifted root and
++prepend a token to obtain the restored parameter. Split the input at the
++unary length. Keep the suffix and a word of zeros while applying the source
++evaluator to the encoded parameter and prefix. Concatenate the results and
++cut at the length of the zero word. The sharper unary polynomial and payload
++bounds charge both potentially superlinear calls against the original
++input. At the empty input the final cut yields the empty word. -/
++private theorem exists_linearTime_padded_of_shifted_root {F : List Bool → List Bool}
++    {M : FinTM Bool} {C c : ℕ}
++    (hM : M.ComputesFunInTime F (fun k => C * (k + 1) ^ c)) (ℓ : PolyExpr) {d n₁ : ℕ}
++    (hd : 1 ≤ d) (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d)
++    (hroot : ∃ (R : FinTM Bool) (a : ℕ), R.ComputesFunInTime
++      (fun z => List.replicate (PadQuad.nu d z.length - 1) true) (fun m => a * (m + 1))) :
++    ∃ (M' : FinTM Bool) (a : ℕ), M'.ComputesFunInTime
++      (fun z =>
++        ((z.drop (ℓ.eval (PadQuad.nu d z.length)) ++
++          F (NUPPT.advInput (PadQuad.nu d z.length) (z.take (ℓ.eval (PadQuad.nu d z.length))))) ++
++          List.replicate (2 * z.length) false).take (2 * z.length))
++      (fun m => a * (m + 1)) := by
++  let n (z : List Bool) := PadQuad.nu d z.length - 1 + 1
++  let root (z : List Bool) := List.replicate (PadQuad.nu d z.length - 1) true
++  let width (z : List Bool) := List.replicate (ℓ.eval (n z)) true
++  let data (z : List Bool) := z.take (ℓ.eval (n z))
++  let suffix (z : List Bool) := z.drop (ℓ.eval (n z))
++  let zeros (z : List Bool) := List.replicate (2 * z.length) false
++  let keep (z : List Bool) := pairEncode (zeros z) (suffix z)
++  let arg (z : List Bool) := NUPPT.advInput (n z) (data z)
++  obtain ⟨B, hB⟩ := shifted_image_bound ℓ hd hdom
++  have hB' (z : List Bool) :
++      ℓ.eval (n z) + C * ((arg z).length + 1) ^ c ≤ B * (z.length + 1) := hB z
++  have hr : Linear root := hroot
++  obtain ⟨P, p, hP⟩ := exists_unaryPoly_succ_computesFunInTime ℓ
++  have hw : Linear width := by
++    refine hr.onImage P (p * (B + 1)) fun z => ?_
++    have h := (computesFunInTime_iff _ _ _).1 hP (root z)
++    simp only [root, List.length_replicate] at h
++    change P.ComputesInTime (root z) (width z) _
++    refine h.mono ?_
++    rw [Nat.mul_assoc, Nat.add_mul, Nat.one_mul]
++    apply Nat.mul_le_mul_left
++    have hcost := hB' z
++    have hrootBound := PadQuad.nu_le d z.length
++    change ℓ.eval (n z) + (PadQuad.nu d z.length - 1) + 1 ≤ _
++    omega
++  have hparam : Linear (fun z => List.replicate (n z) true) := by
++    apply (linear_prepend_true.comp hr).congr
++    intro z
++    rw [show n z = (PadQuad.nu d z.length - 1) + 1 from rfl, List.replicate_succ]
++  have hsplit : Linear (fun z => pairEncode (data z) (suffix z)) := by
++    apply (linear_split.comp (hw.pair linear_id)).congr
++    intro z
++    rw [pairSplitAt_pairEncode, show (width z).length = ℓ.eval (n z) from List.length_replicate]
++  have hprefix : Linear data :=
++    (linear_fst.comp hsplit).congr fun z => pairFstD_pairEncode _ _
++  have hsuffix : Linear suffix :=
++    (linear_snd.comp hsplit).congr fun z => pairSndD_pairEncode _ _
++  have hkeep : Linear keep := linear_double_zeros.pair hsuffix
++  have harg : Linear arg := (hparam.pair hprefix).congr fun z => (NUPPT.advInput_eq _ _).symm
++  let stage (z : List Bool) := pairEncode (keep z) (arg z)
++  let result (z : List Bool) := pairEncode (keep z) (F (arg z))
++  obtain ⟨V, a, hV⟩ := hkeep.pair harg
++  obtain ⟨Q, hQ⟩ := exists_pairMapSnd_computesInTime M
++  have hresult : Linear result := by
++    refine Linear.onImage (f := stage) ⟨V, a, hV⟩ Q (40 * (B + a + 1)) fun z => ?_
++    have hF := (computesFunInTime_iff _ _ _).1 hM (arg z)
++    refine (hQ (keep z) (arg z) _ _ hF).mono ?_
++    rw [Nat.mul_assoc, Nat.add_mul, Nat.add_mul, Nat.one_mul]
++    apply Nat.mul_le_mul_left
++    have hlen : (stage z).length ≤ a * (z.length + 1) :=
++      length_le_time ((computesFunInTime_iff _ _ _).1 hV z)
++    have hcost := hB' z
++    change C * ((arg z).length + 1) ^ c + (stage z).length + 1 ≤ _
++    omega
++  have hzero := (linear_fst.comp linear_fst).comp hresult
++  have htail := (linear_snd.comp linear_fst).comp hresult
++  have hvalue := linear_snd.comp hresult
++  have hjoined := (htail.append hvalue).append hzero
++  have hfinal := linear_fst.comp (linear_split.comp (hzero.pair hjoined))
++  apply hfinal.congr
++  intro z
++  simp only [result, keep, pairFstD_pairEncode, pairSndD_pairEncode, pairSplitAt_pairEncode,
++    zeros, List.length_replicate]
++  cases z with
++  | nil => simp only [List.length_nil, Nat.mul_zero, List.take_zero]
++  | cons b z =>
++      simp only [data, suffix, arg, n,
++        restored_root hd (by simp : 1 ≤ (b :: z).length)]
++
++
++/-- In degree one the shifted root is the input length minus one. Emit one
++true token for every bit following the first input bit. -/
++private theorem linear_shifted_root_one :
++    Linear (fun z => List.replicate (PadQuad.nu 1 z.length - 1) true) := by
++  let δ := fun (_ : Bool) (_ : Bool) => true
++  let emit := fun (seen : Bool) (_ : Bool) => if seen then some true else none
++  have h : Linear (transduce δ emit false) :=
++    ⟨transducerTM δ emit false, 1, by
++      simpa only [Nat.one_mul] using transducerTM_computes δ emit false⟩
++  have htrue (z : List Bool) : transduce δ emit true z = List.replicate z.length true := by
++    induction z with
++    | nil => rw [transduce_nil]; rfl
++    | cons b z ih => rw [transduce_cons, show δ true b = true from rfl, ih]; rfl
++  have hnu (m : ℕ) : PadQuad.nu 1 m = m :=
++    le_antisymm (PadQuad.nu_le _ _) (PadQuad.le_nu le_rfl (by simp only [pow_one, le_refl]))
++  apply h.congr
++  intro z
++  rw [hnu]
++  cases z with
++  | nil => rw [transduce_nil]; rfl
++  | cons b z => rw [transduce_cons, show δ false b = true from rfl, htrue]; rfl
++
++/-- In degree at least two the shifted root is small enough for a
++quadratic budget in its numerical value. -/
++private theorem shifted_root_sq_le {d : ℕ} (hd : 2 ≤ d) (m : ℕ) :
++    (PadQuad.nu d m - 1 + 1) ^ 2 ≤ m + 1 := by
++  by_cases hm : 1 ≤ m
++  · rw [restored_root (by omega : 1 ≤ d) hm]
++    have hpos : 0 < PadQuad.nu d m :=
++      PadQuad.le_nu (by omega : 1 ≤ d) (n := 1) (by simpa only [one_pow] using hm)
++    exact (Nat.pow_le_pow_right hpos hd).trans
++      ((PadQuad.nu_pow_le (by omega : 1 ≤ d) m).trans (Nat.le_succ _))
++  · have hm0 : m = 0 := by omega
++    have hnu : PadQuad.nu d m = 0 := Nat.eq_zero_of_le_zero ((PadQuad.nu_le _ _).trans hm0.le)
++    rw [hnu, hm0] <;> decide
++
++/-- A multitape machine computes the shifted unary floor root in linear time.
++
++**Proof sketch.** Degree one uses the single scan. For higher degrees,
++compute the input length in binary and use the binary search on that word.
++Its polynomial in the binary width is linear in the original length.
++Convert the resulting canonical binary root to unary with the emitting
++loop. On a canonical word the iteration count is linear in the represented
++value and the polynomial in its width is also linear in that value.
++The square of the shifted root, after restoring one, is bounded by the
++original length plus one. -/
++private theorem exists_linearTime_shifted_root (d : ℕ) (hd : 1 ≤ d) :
++    ∃ (M : FinTM Bool) (a : ℕ),
++      M.ComputesFunInTime (fun z => List.replicate (PadQuad.nu d z.length - 1) true)
++        (fun m => a * (m + 1)) := by
++  rcases eq_or_lt_of_le hd with he | hh
++  · subst d
++    exact linear_shifted_root_one
++  · let v (z : List Bool) := PadQuad.nu d z.length - 1
++    let enc (z : List Bool) := Nat.bits (v z)
++    obtain ⟨L, a, hL⟩ := computesFunInTime_lengthBits
++    obtain ⟨B, C, c, hB⟩ := (polyTimeComputable_iff _).1
++      (polyTimeComputable_shifted_root d hd)
++    obtain ⟨A, hA⟩ := exists_pow_width_bound c
++    have henc : Linear enc := by
++      refine Linear.onImage ⟨L, a, hL⟩ B (C * A) fun z => ?_
++      have h := (computesFunInTime_iff _ _ _).1 hB (Nat.bits z.length)
++      rw [bitsVal_bits] at h
++      refine h.mono ?_
++      rw [Nat.mul_assoc]
++      exact Nat.mul_le_mul_left C (hA z.length)
++    obtain ⟨U, K, k, hU⟩ := exists_binaryToUnary
++    obtain ⟨H, hH⟩ := exists_pow_width_bound k
++    refine henc.onImage U (K * H * 4) fun z => ?_
++    have h := (computesFunInTime_iff _ _ _).1 hU (Nat.bits (v z))
++    rw [bitsVal_bits] at h
++    refine h.mono ?_
++    have hcost := Nat.mul_le_mul_left K (hH (v z))
++    have hwidth := two_pow_width_le (v z)
++    have hR : 2 ^ (Nat.bits (v z)).length + 2 ≤ 4 * (v z + 1) := by omega
++    calc K * ((Nat.bits (v z)).length + 1) ^ k * (2 ^ (Nat.bits (v z)).length + 2)
++        ≤ K * (H * (v z + 1)) * (4 * (v z + 1)) := Nat.mul_le_mul hcost hR
++      _ = K * H * 4 * (v z + 1) ^ 2 := by ring
++      _ ≤ K * H * 4 * (z.length + 1) :=
++        Nat.mul_le_mul_left _ (shifted_root_sq_le (by omega) z.length)
++
++/-- The word formula of the Levin padded family has a linear-time evaluator.
++
++**Proof sketch.** Combine the unary root construction with the padding
++assembly, charging polynomial evaluation and the source call against the
++original input length. [PS10, Lemma 64.3] -/
++theorem exists_linearTime_padded {F : List Bool → List Bool} {M : FinTM Bool} {C c : ℕ}
++    (hM : M.ComputesFunInTime F (fun k => C * (k + 1) ^ c)) (ℓ : PolyExpr) {d n₁ : ℕ}
++    (hd : 1 ≤ d) (hdom : ∀ n ≥ n₁, ℓ.eval n + C * (2 * n + 3 + ℓ.eval n) ^ c ≤ n ^ d) :
++    ∃ (M' : FinTM Bool) (a : ℕ), M'.ComputesFunInTime
++      (fun z =>
++        ((z.drop (ℓ.eval (PadQuad.nu d z.length)) ++
++          F (NUPPT.advInput (PadQuad.nu d z.length) (z.take (ℓ.eval (PadQuad.nu d z.length))))) ++
++          List.replicate (2 * z.length) false).take (2 * z.length))
++      (fun m => a * (m + 1)) :=
++  exists_linearTime_padded_of_shifted_root hM ℓ hd hdom (exists_linearTime_shifted_root d hd)
++
++
++end TCSlib.Cryptography.PadQuad
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding/Parameter.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding/Parameter.lean
+new file mode 100644
+index 000000000..10e5ca256
+--- /dev/null
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding/Parameter.lean
+@@ -0,0 +1,64 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import Mathlib.Data.Nat.Find
++import Mathlib.Algebra.Order.Ring.Nat
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The parameter recovered by Levin padding
++
++The padded family recovers a parameter from every input length by taking the largest natural number whose fixed power fits within that length. The public equations and bounds are the interface for the machine proof.
++
++## Main definitions
++
++* `TCSlib.Cryptography.PadQuad.nu` is the recovered parameter.
++
++## Main results
++
++* `nu_pow_le`, `nu_le`, `lt_succ_nu_pow` and `le_nu` characterize its bounds.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed.,
++  January 2010. (§2.13, Lemma 64.3.)
++-/
++
++namespace TCSlib.Cryptography.PadQuad
++
++/-- The parameter recovered from the input length `m`: the largest `n ≤ m` with `n^d ≤ m`
++(`ν m = ⌊m^{1/d}⌋`). -/
++def nu (d m : ℕ) : ℕ := Nat.findGreatest (fun n => n ^ d ≤ m) m
++
++/-- The recovered parameter is the greatest bounded natural number whose
++degree-d power fits within the input length. -/
++theorem nu_eq (d m : ℕ) : nu d m = Nat.findGreatest (fun n => n ^ d ≤ m) m := rfl
++
++/-- `ν(m)^d ≤ m`. -/
++theorem nu_pow_le {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : nu d m ^ d ≤ m :=
++  Nat.findGreatest_spec (P := fun n => n ^ d ≤ m) (Nat.zero_le m)
++    (by show 0 ^ d ≤ m; rw [Nat.zero_pow hd]; exact Nat.zero_le m)
++
++/-- `ν(m) ≤ m`. -/
++theorem nu_le (d m : ℕ) : nu d m ≤ m := Nat.findGreatest_le m
++
++/-- `m < (ν(m) + 1)^d`: the recovered parameter is maximal. -/
++theorem lt_succ_nu_pow {d : ℕ} (hd : 1 ≤ d) (m : ℕ) : m < (nu d m + 1) ^ d := by
++  by_cases h : nu d m < m
++  · have := Nat.findGreatest_is_greatest (P := fun n => n ^ d ≤ m) (n := m) (k := nu d m + 1)
++      (Nat.lt_succ_self _) (by omega)
++    exact not_le.mp this
++  · have hm : nu d m = m := le_antisymm (nu_le d m) (not_lt.mp h)
++    rw [hm]
++    exact lt_of_lt_of_le (Nat.lt_succ_self m) (Nat.le_self_pow (by omega) _)
++
++/-- `n ≤ ν(m)` whenever `n^d ≤ m`. -/
++theorem le_nu {d : ℕ} (hd : 1 ≤ d) {n m : ℕ} (h : n ^ d ≤ m) : n ≤ nu d m :=
++  Nat.le_findGreatest ((Nat.le_self_pow (by omega) n).trans h) h
++
++end TCSlib.Cryptography.PadQuad

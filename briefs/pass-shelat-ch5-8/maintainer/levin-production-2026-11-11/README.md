@@ -1,6 +1,6 @@
 # Levin padding (#286): production verification, 2026-11-11
 
-**Status: three touched-declaration reads (F1–F3) open; the Codex audit (Gate 11) waits on them.**
+**Status: all touched-declaration reads repaired (head `a1293a6970b4039a9cf19fd475b9f8cf304a44b3`); Gate 11 (Codex) staged.**
 
 ## Pins
 - PR head `9ada398e06c00656f96207f5254a826c74130c15`, PR base `5bcf11aaf08963ab33ce608ea7509e7403e4351a`.
@@ -42,3 +42,29 @@
 ## Deviations
 Primitives sealed in 3 segments (100-error cap); the two facade seals chunked at 1,000 names (stack); PFR copied
 because symlinked sources are rejected. Failed attempts retained in the evidence.
+
+## Repairs and re-verification (r2–r4)
+
+Rulings (Seyoon, 2026-11-11): F1/F2 fixed inside #286 with `computesFunInTime_pairSplitAt`
+restated; F3 counts as untouched. One maintainer commit `a1293a69` on
+`codex/pass-shelat-levin-padding` holds the final repair (patch `fix-r4.patch`, SHA-256
+`ef659c92688d8f437784544f195c74211d5d70be2f10edc0008a3938b6774edb`).
+
+- **r2** (F1/F2 patch): replay 242/242 (a first attempt stopped at a wrong `body_round` edit,
+  kept). F1, F2 cleared. New **F4**: the restated `computesFunInTime_pairSplitAt` still read
+  PairSplit's private matcher through `exists_pairSplitTM` (as at base).
+- **r3** (`pairSplitAt` moved into `Randomized/Build/PairSplit`): replay 244/244. F4 cleared. New
+  **F5** (`exists_pairSplitTM` applied `ComputesFunInTime` as a function, as at base), **F6**
+  (private `polyTimeComputable_pairSplitAt` newly read the moved definition), **F7**
+  (`simp [MultiTapeTM.initCfg, Cfg.init]` in `split_computes`, touched by the restatement).
+- **r4**: `exists_pairSplitTM` through `computesFunInTime_iff` (F5); the private lemma restated
+  as `PolyTimeComputable pairSplitAt`, its users through `pairSplitAt_pairEncode` (F6);
+  `split_computes` back at its base text, so F7 is an inherited untouched line. Replay 244/244.
+  Seals: 0 touched failures in all changed files; untouched failures identical at base.
+  Attribution clears F5/F6. Controls pass. Scan: no foreign-definition item in a touched
+  declaration. Statements: CHANGED `exists_pairSplitTM`, `computesFunInTime_pairSplitAt`;
+  ADDED 21; REMOVED the 5 moved `nu` declarations. 182 selected declarations, standard axioms.
+
+Evidence r1–r4: `gates/11-levin/verification.zip`, SHA-256
+`622fbc0bef25aad83e54c99fcd6b3f372456c3d8bd2841c8747c5e732b62367f` (r2 `8e89a4f0…`, r3
+`1a67be51…` zips are subsets and stay local).
