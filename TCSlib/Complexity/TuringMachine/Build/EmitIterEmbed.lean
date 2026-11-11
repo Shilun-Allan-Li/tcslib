@@ -35,7 +35,7 @@ Generic machine-construction infrastructure shared by loop-body assemblies
 
 ## Main definitions
 
-* `Turing.SafeRun`, `Turing.padAction`, `Turing.embedCfg`.
+* `Turing.SafeRun` (read through `Turing.safeRun_iff`), `Turing.padAction`, `Turing.embedCfg`.
 
 ## Main results
 
@@ -67,6 +67,14 @@ single-step prepending and concatenation. -/
 def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
     (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
   H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
+
+/-- `SafeRun H avoid c t c' ↔ H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid`:
+the published reading of `Turing.SafeRun`. -/
+theorem safeRun_iff {H : MultiTapeTM k Bool B} {avoid : B} {c : Cfg k Bool B x} {t : ℕ}
+    {c' : Cfg k Bool B x} :
+    SafeRun H avoid c t c' ↔
+      H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid :=
+  Iff.rfl
 
 /-- The empty run is safe. -/
 theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}

@@ -765,7 +765,7 @@ theorem FinTM.exists_emitIterTM_withFuel (G E F : FinTM Bool) (g e : List Bool �
       body.tm.runFrom (body.tm.initCfg x) t =
         Cfg.ofWords .anchor (stateWord body.k x) := by
     intro x
-    obtain ⟨hrun, hsafe⟩ := body_start Ce Cg eentry eexit gentry gexit hke (x := x)
+    obtain ⟨hrun, hsafe⟩ := safeRun_iff.1 <| body_start Ce Cg eentry eexit gentry gexit hke (x := x)
     exact ⟨3 * x.length + 4, by simp only [hT]; omega, hsafe, hrun⟩
   have hround : ∀ (x s : List Bool), (∃ i, s = g^[i] x) →
       ∃ t, 0 < t ∧ t ≤ T x.length ∧

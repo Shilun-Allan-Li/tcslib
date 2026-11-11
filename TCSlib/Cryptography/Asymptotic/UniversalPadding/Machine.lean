@@ -173,19 +173,8 @@ private theorem linear_snd : Linear pairSndD := by
   obtain ⟨M, a, hM⟩ := computesFunInTime_pairSnd
   exact (show Linear _ from ⟨M, a, hM⟩).congr fun x => (pairSndD_eq x).symm
 
-/-- Interpret the first component's length as the position in the second. -/
-private def split (z : List Bool) : List Bool :=
-  match pairDecode z with
-  | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
-  | none => []
-
-/-- The unary split is the existing randomized-computation primitive. -/
-private theorem linear_split : Linear split := computesFunInTime_pairSplitAt
-
-/-- On a well-formed pair the split returns the prefix and the suffix. -/
-private theorem split_pair (u b : List Bool) :
-    split (pairEncode u b) = pairEncode (b.take u.length) (b.drop u.length) := by
-  simp only [split, pairDecode_pairEncode]
+/-- The unary split `Turing.pairSplitAt` is the existing randomized-computation primitive. -/
+private theorem linear_split : Linear pairSplitAt := computesFunInTime_pairSplitAt
 
 /-- A one-state transducer emits one zero per input cell. -/
 private theorem linear_zeros : Linear (fun x => List.replicate x.length false) := by
@@ -293,7 +282,7 @@ private theorem exists_linearTime_padded_of_shifted_root {F : List Bool → List
   have hsplit : Linear (fun z => pairEncode (data z) (suffix z)) := by
     apply (linear_split.comp (hw.pair linear_id)).congr
     intro z
-    rw [split_pair, show (width z).length = ℓ.eval (n z) from List.length_replicate]
+    rw [pairSplitAt_pairEncode, show (width z).length = ℓ.eval (n z) from List.length_replicate]
   have hprefix : Linear data :=
     (linear_fst.comp hsplit).congr fun z => pairFstD_pairEncode _ _
   have hsuffix : Linear suffix :=
@@ -322,7 +311,7 @@ private theorem exists_linearTime_padded_of_shifted_root {F : List Bool → List
   have hfinal := linear_fst.comp (linear_split.comp (hzero.pair hjoined))
   apply hfinal.congr
   intro z
-  simp only [result, keep, pairFstD_pairEncode, pairSndD_pairEncode, split_pair,
+  simp only [result, keep, pairFstD_pairEncode, pairSndD_pairEncode, pairSplitAt_pairEncode,
     zeros, List.length_replicate]
   cases z with
   | nil => simp only [List.length_nil, Nat.mul_zero, List.take_zero]

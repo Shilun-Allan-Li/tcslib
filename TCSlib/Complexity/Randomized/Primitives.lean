@@ -53,7 +53,8 @@ because its `mul` case needs `unaryMul`, while the cuts below need both the eval
 
 ## Main definitions
 
-None (the primitives are existence statements over `Turing.FinTM Bool`).
+None (the primitives are existence statements over `Turing.FinTM Bool`). The split function
+`Turing.pairSplitAt` and its readers live in `TCSlib.Complexity.Randomized.Build.PairSplit`.
 
 ## References
 
@@ -85,11 +86,7 @@ steps; the output is `pairEncode (b.take |u|) (b.drop |u|)` by `Turing.pairEncod
 (`Turing.FinTM.exists_pairSplitTM`, with `c = 5`). -/
 theorem computesFunInTime_pairSplitAt :
     ∃ (M : FinTM Bool) (c : ℕ),
-      M.ComputesFunInTime
-        (fun z => match pairDecode z with
-          | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
-          | none => [])
-        fun n => c * (n + 1) := by
+      M.ComputesFunInTime pairSplitAt fun n => c * (n + 1) := by
   obtain ⟨M, hM⟩ := exists_pairSplitTM
   exact ⟨M, 5, hM⟩
 
@@ -171,10 +168,7 @@ theorem polyTimeComputable_unaryPoly (p : PolyExpr) :
 
 /-- The FP form of the coin-splitting machine: `z ↦ ⟨(snd z).take |fst z|, (snd z).drop |fst z|⟩`
 on pairs, `[]` on malformed words. -/
-private theorem polyTimeComputable_pairSplitAt :
-    PolyTimeComputable fun z => match pairDecode z with
-      | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)
-      | none => [] := by
+private theorem polyTimeComputable_pairSplitAt : PolyTimeComputable pairSplitAt := by
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_pairSplitAt
   exact polyTimeComputable_of_linear ⟨M, c, hM⟩
 
@@ -195,14 +189,14 @@ polynomial-time computable (`z ↦ (snd z).take (p(|fst z|))`, with the total pr
 `polyTimeComputable_unaryPoly p` on `pairFstD` paired with `pairSndD`
 (`PolyTimeComputable.pairEncode`), the split is `Turing.FinTM.computesFunInTime_pairSplitAt`
 via `polyTimeComputable_of_linear`, and the composite equals the claimed function by
-`Turing.pairDecode_pairEncode`, `Complexity.pairFstD_pairEncode` and `List.length_replicate`
+`Turing.pairSplitAt_pairEncode`, `Complexity.pairFstD_pairEncode` and `List.length_replicate`
 (`PolyTimeComputable.comp`, `funext`). -/
 theorem polyTimeComputable_pairTakePoly (p : PolyExpr) :
     PolyTimeComputable fun z => (pairSndD z).take (p.eval (pairFstD z).length) := by
   convert polyTimeComputable_pairFstD.comp
     (polyTimeComputable_pairSplitAt.comp (polyTimeComputable_pairUnaryFst p)) using 1
   funext z
-  simp [pairDecode_pairEncode]
+  simp [pairSplitAt_pairEncode]
 
 /-- **Typed coin cut, tail:** on `z = ⟨u, b⟩`, the bits of `b` after the first `p(|u|)` are
 polynomial-time computable (`z ↦ (snd z).drop (p(|fst z|))`): the remaining coins of a
@@ -215,6 +209,6 @@ theorem polyTimeComputable_pairDropPoly (p : PolyExpr) :
   convert polyTimeComputable_pairSndD.comp
     (polyTimeComputable_pairSplitAt.comp (polyTimeComputable_pairUnaryFst p)) using 1
   funext z
-  simp [pairDecode_pairEncode]
+  simp [pairSplitAt_pairEncode]
 
 end Complexity
