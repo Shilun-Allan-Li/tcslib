@@ -295,6 +295,17 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
       rw [NUPPT.runAt_eq (A := S.enc), hre'] at this
       exact this
 
+/-- The bitwise scheme keeps the key generator: `S.bitwise.gen = S.gen`. -/
+theorem bitwise_gen (S : BitPublicKeyScheme) : S.bitwise.gen = S.gen := rfl
+
+/-- The bitwise encryptor is the uniform machine of `bitwiseEncFun` with `n · B(n)` coins:
+`S.bitwise.enc = NUPPT.ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins)`. -/
+theorem bitwise_enc (S : BitPublicKeyScheme) :
+    S.bitwise.enc = NUPPT.ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins) := rfl
+
+/-- The bitwise decryptor decrypts block by block: `S.bitwise.dec = decListFun S.dec`. -/
+theorem bitwise_dec (S : BitPublicKeyScheme) : S.bitwise.dec = decListFun S.dec := rfl
+
 /-- The coin count of the bitwise encryptor: `n · B(n)`. -/
 theorem bitwise_enc_coinLen (S : BitPublicKeyScheme) (n : ℕ) :
     n * S.enc.coinLen n = (PolyExpr.mul .var S.enc.coins).eval n := by

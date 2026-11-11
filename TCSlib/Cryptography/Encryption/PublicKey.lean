@@ -11,6 +11,8 @@ import TCSlib.Cryptography.Encryption.PublicKey.TrapdoorPredictor
 import TCSlib.Cryptography.Encryption.PublicKey.Trapdoor
 import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
 import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
+import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
+import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA
 import TCSlib.Cryptography.Candidates.RSA
 import TCSlib.Cryptography.Candidates.Rabin
 import TCSlib.Cryptography.Candidates.DDH
@@ -55,6 +57,9 @@ multi-message security.
 * `OracleSecurity` gives the fixed-length scheme, codecs and oracle games [PS10, §7.1.4].
   The proof of `TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa` is pending.
 * `AdaptiveSecurity` gives the multi-challenge game and its cap-one correspondence.
+* `AdaptiveCPA` lifts single-challenge CPA security to the adaptive game (stated).
+* `BitwiseCPA` gives CPA and adaptive CPA security of the padded bitwise scheme (the first
+  stated; the adaptive form and an existence form with `n`-bit messages follow).
 * `TrapdoorCPA` specializes the oracle CPA bridge to trapdoor bit encryption.
 * `NonMalleability.Indistinguishability` gives the indistinguishability-based game.
 * `NonMalleability.Simulation` gives the simulation-based game and its relations.
