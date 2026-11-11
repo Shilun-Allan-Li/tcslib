@@ -1,5 +1,7 @@
 # Independent Levin proof prerequisites
 
+The integrated proof is saved in the [production checkpoint](production-checkpoint.md).
+
 Base `37e161131e68ff347ed59b59b9ebcd66ffa9ea43`. The arithmetic probe was
 also checked in the separate Gate 09 source tree. The Levin source
 is unchanged there.
