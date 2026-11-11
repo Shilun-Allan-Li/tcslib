@@ -126,7 +126,8 @@ theorem polyTimeComputable_recRun {ans : List Bool → List Bool} (hans : PolyTi
     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
   have hq : PolyTimeComputable fun w => [(pairFstD (pairSndD (pairSndD w))).headD false] :=
     polyTimeComputable_headD.comp
-      (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+      (polyTimeComputable_pairFstD.comp
+        (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
   have hh : PolyTimeComputable fun w => [(pairFstD (pairSndD w)).headD false] :=
     polyTimeComputable_headD.comp hs
   have hx : PolyTimeComputable fun w => true :: pairSndD (pairSndD (pairSndD w)) :=
@@ -248,13 +249,14 @@ theorem simulate_recHandler_recorded
       .pure ((chRun (fun _ => ans (seedIn n z (List.ofFn ω))) c
         (some (padFin _ (ans (seedIn n z (List.ofFn ω)))))).1, s) := by
   induction c with
-  | pure a => rfl
+  | pure a => rw [simulate_pure, chRun_pure]
   | query i x k ih =>
     match i, x, k, ih with
     | 0, x, k, ih =>
       have hans0 : (recHandler Lc ans hans).answer n z ω s 0 x = (zeroBits _, s) := by
         refine PolyHandler.answer_of_run_eq _ ?_
         rw [recHandler_run, PolyHandler.input_eq, ofFn_zeroBits]
+        simp only [recDout_zero, PolyExpr.eval_const]
         exact recRun_dec ans _ _ _
       rw [simulate_query, PolyHandler.impl_apply, hans0, OracleComp.pure_bind, chRun_query_zero]
       exact ih _
@@ -263,7 +265,7 @@ theorem simulate_recHandler_recorded
           (padFin _ (ans (seedIn n z (List.ofFn ω))), s) := by
         refine PolyHandler.answer_of_run_eq _ ?_
         rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
-          rw [hw, recDout_one])]
+          rw [hw, recDout_one]), seedIn_eq]
         exact recRun_recorded ans _ _ _ hs
       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
         chRun_query_one_some]
@@ -285,11 +287,12 @@ theorem simulate_recHandler_init
           .pure ((chRun (fun _ => ans (seedIn n z (List.ofFn ω))) c none).1, s) ∧
         List.ofFn s = (firstQ c).elim [false, false, false] (true :: ·) := by
   have hinit : List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false] := by
-    rw [show (recHandler Lc ans hans).init n = zeroBits _ from funext (recHandler_init Lc ans hans n),
+    rw [show (recHandler Lc ans hans).init n = zeroBits _ from
+        funext (recHandler_init Lc ans hans n),
       ofFn_zeroBits, recHandler_stateLen, PolyExpr.eval_const]
     rfl
   induction c with
-  | pure a => exact ⟨_, rfl, hinit⟩
+  | pure a => exact ⟨_, by rw [simulate_pure, chRun_pure], by rw [firstQ_pure]; exact hinit⟩
   | query i x k ih =>
     match i, x, k, ih with
     | 0, x, k, ih =>
@@ -297,6 +300,7 @@ theorem simulate_recHandler_init
           (zeroBits _, (recHandler Lc ans hans).init n) := by
         refine PolyHandler.answer_of_run_eq _ ?_
         rw [recHandler_run, PolyHandler.input_eq, ofFn_zeroBits]
+        simp only [recDout_zero, PolyExpr.eval_const]
         exact recRun_dec ans _ _ _
       obtain ⟨s, hsim, hs⟩ := ih (zeroBits _)
       refine ⟨s, ?_, ?_⟩
@@ -306,13 +310,13 @@ theorem simulate_recHandler_init
         exact hs
     | 1, x, k, _ =>
       have hlen : (true :: List.ofFn x).length = (recHandler Lc ans hans).stateLen.eval n := by
-        show (recDin Lc 1).eval n + 1 = _
-        rw [recHandler_stateLen, recDin_one, PolyExpr.eval_const, PolyExpr.eval_const]
+        rw [List.length_cons, List.length_ofFn, recHandler_stateLen]
+        simp only [recDin_one, PolyExpr.eval_const]
       have hans1 : (recHandler Lc ans hans).answer n z ω ((recHandler Lc ans hans).init n) 1 x =
           (padFin _ (ans (seedIn n z (List.ofFn ω))), padFin _ (true :: List.ofFn x)) := by
         refine PolyHandler.answer_of_run_eq _ ?_
         rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
-          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen]
+          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen, seedIn_eq]
         refine recRun_fresh ans _ _ _ ?_
         rw [hinit]
         rfl

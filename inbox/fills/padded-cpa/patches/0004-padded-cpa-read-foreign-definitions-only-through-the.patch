@@ -1,0 +1,265 @@
+From 24747c9d8887a642582a059515b847d3b9923e59 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 08:53:04 +0000
+Subject: [PATCH 4/4] padded-cpa: read foreign definitions only through their
+ published lemmas
+
+Replace definitional steps through PolyExpr.eval, seedIn, simulate and
+chRun by their equation lemmas (found by the seal), read padCt through
+padCt_eq, and wrap long lines.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTkdwQWfa1fQdC2H7H5
+---
+ .../Encryption/PublicKey/OracleSecurity.lean  | 41 ++++++++++---------
+ .../OracleSecurity/ChallengeSim.lean          | 10 ++---
+ .../OracleSecurity/RecordHandler.lean         | 20 +++++----
+ 3 files changed, 39 insertions(+), 32 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+index 087c21a70..6f2d706f9 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+@@ -697,7 +697,7 @@ private theorem polyTimeComputable_cpaAns (L : PolyExpr) : PolyTimeComputable (c
+       ((polyTimeComputable_unaryPoly L).comp polyTimeComputable_pairFstD)))
+   convert h using 1
+   funext ctx
+-  simp [cpaAns, padCt, Function.comp_apply, length_pairEncode]
++  simp [cpaAns, padCt_eq, Function.comp_apply, length_pairEncode]
+ 
+ /-- On the context `⟨1^n, ⟨z, ω⟩⟩` the challenge answer is `padCt L(n) (pairSndD z)`. -/
+ private theorem cpaAns_seedIn (L : PolyExpr) (n : ℕ) (z ω : List Bool) :
+@@ -741,11 +741,13 @@ private theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool)
+     match i, x, k, ih with
+     | 0, x, k, ih =>
+       rw [simulate_query, S.indImpl_dec_cpa, OracleComp.pure_bind]
++      simp only [chRun_query_zero]
+       exact ih _ s
+     | 1, x, k, ih =>
+       cases s with
+       | some C =>
+         rw [simulate_query, S.indImpl_challenge_repeat, OracleComp.pure_bind]
++        simp only [chRun_query_one_some]
+         exact ih _ _
+       | none =>
+         rw [simulate_query, S.indImpl_challenge_none, OracleComp.bind_assoc, expect_bind]
+@@ -805,14 +807,14 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+     match i with
+     | 0 => rw [recDin_zero, FixedLengthPKScheme.inLens_zero, BitPublicKeyScheme.padded_ctLen]
+     | 1 =>
+-      rw [recDin_one, FixedLengthPKScheme.inLens_one, BitPublicKeyScheme.padded_msgLen]
+-      rfl
++      rw [recDin_one, FixedLengthPKScheme.inLens_one, BitPublicKeyScheme.padded_msgLen,
++        PolyExpr.eval_const, PolyExpr.eval_const]
+   have houts : (fun i => (recDout L i).eval n) = S'.outLens n := by
+     funext i
+     match i with
+     | 0 =>
+-      rw [recDout_zero, FixedLengthPKScheme.outLens_zero, BitPublicKeyScheme.padded_msgLen]
+-      rfl
++      rw [recDout_zero, FixedLengthPKScheme.outLens_zero, BitPublicKeyScheme.padded_msgLen,
++        PolyExpr.eval_const, PolyExpr.eval_const]
+     | 1 => rw [recDout_one, FixedLengthPKScheme.outLens_one, BitPublicKeyScheme.padded_ctLen]
+   -- Step 4, game side: eager coins, first-challenge congruence, and the coin transport.
+   have hG : ∀ b : Bool, accept (S'.indGame .cpa A (q.eval n) b n) =
+@@ -837,7 +839,7 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+       (chRun_congr _ _ _ fun mm hmm => ?_)
+     rw [hmm, Option.elim_some]
+     exact (runAt_padEnc S.enc_uniform L n _ re').trans (by
+-      rw [ofFn_splitHalf_bit (by rw [BitPublicKeyScheme.padded_msgLen]; rfl)]
++      rw [ofFn_splitHalf_bit (by rw [BitPublicKeyScheme.padded_msgLen, PolyExpr.eval_const])]
+       rfl)
+   -- Step 4, distinguisher side: T1, the handler's simulation, and the codec transport.
+   have hpt : ∀ (β : Bool) (rg : S.gen.Coins n) (r : A.Coins n) (re : S.enc.Coins n)
+@@ -847,7 +849,9 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+           (l.getD 0 false != l.getD 1 false) && (F rg r (W β rg re) != l.getD 0 false) := by
+     intro β rg r re ω
+     obtain ⟨a, s, hsim, hrun⟩ := hφ (S.pkEncDist n β (rg, re)) ω r
+-    have hadv : (recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n (S.pkEncDist n β (rg, re)) ω =
++    have hadv :
++        (recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n
++          (S.pkEncDist n β (rg, re)) ω =
+         pairFstD (S.gen.runAt n [] rg) := by
+       rw [PolyHandler.advInput_eq, recHandler_advIn, recAdvIn_eq, seedIn_eq,
+         BitPublicKeyScheme.pkEncDist_eq, pairSndD_pairEncode, pairFstD_pairEncode,
+@@ -862,35 +866,34 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+       (S.pkEncDist n β (rg, re)) ω hw _
+     rw [hsim, OracleComp.pure.injEq, Prod.mk.injEq] at hsim'
+     obtain ⟨rfl, rfl⟩ := hsim'
+-    obtain ⟨h₁, h₂⟩ := chRun_toCompOn_transport hins houts (rfl : (PolyExpr.const 1).eval n = 1)
+-      A n (q.eval n) ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n (S.pkEncDist n β (rg, re)) ω) r (W β rg re)
++    obtain ⟨h₁, h₂⟩ := chRun_toCompOn_transport hins houts (PolyExpr.eval_const 1 n)
++      A n (q.eval n) ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n
++        (S.pkEncDist n β (rg, re)) ω) r (W β rg re)
+     rw [hadv] at h₁ h₂ hs'
+     rw [h₂] at hs'
+     rw [NUPPT.distinguisherL_eq, hrun, PolyHandler.result_eq, recHandler_out]
+     have ha : List.ofFn (chRun (fun _ => cpaAns L (seedIn n (S.pkEncDist n β (rg, re))
+         (List.ofFn ω))) (A.toCompOn (bitCodec (fun i => (recDin L i).eval n)
+           (fun i => (recDout L i).eval n) ((PolyExpr.const 1).eval n)) n (q.eval n)
+-            ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n (S.pkEncDist n β (rg, re)) ω) r) none).1 =
++            ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).advInput n
++              (S.pkEncDist n β (rg, re)) ω) r) none).1 =
+         [F rg r (W β rg re)] := by
+       rw [hans, hadv, h₁, List.ofFn_succ, List.ofFn_zero]
+       rfl
+     rw [ha]
+     cases hq : firstQ (comp rg r) with
+     | none =>
+-      have hq' : firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n))
+-          n (q.eval n)
++      have hq' : firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n)
+           (pairFstD (S.gen.runAt n [] rg)) r) = none := hq
+       rw [hq', Option.elim_none] at hs'
+       rw [hs', recOut_init, Option.elim_none]
+       decide
+     | some l =>
+-      have hq' : firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) ((PolyExpr.const 1).eval n))
+-          n (q.eval n)
++      have hq' : firstQ (A.toCompOn (bitCodec (S'.inLens n) (S'.outLens n) 1) n (q.eval n)
+           (pairFstD (S.gen.runAt n [] rg)) r) = some l := hq
+       have hl : l.length = 2 := by
+         rw [length_of_firstQ_eq_some _ hq', FixedLengthPKScheme.inLens_one,
+-          BitPublicKeyScheme.padded_msgLen]
+-        rfl
++          BitPublicKeyScheme.padded_msgLen, PolyExpr.eval_const]
+       obtain ⟨m₀, m₁, rfl⟩ := List.length_eq_two.1 hl
+       rw [hq', Option.elim_some] at hs'
+       rw [hs', recOut_recorded, Option.elim_some]
+@@ -907,7 +910,8 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+     rw [Bridge.acceptProb_eq, accept_eq, Bridge.acceptGame_eq, prob_bind, expect_sample_prod]
+     refine congrArg _ (funext fun rg => ?_)
+     simp only [prob_bind, prob_pure]
+-    haveI : Unique (Fin ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).seedLen.eval n) → Bool) := by
++    haveI : Unique (Fin ((recHandler L (cpaAns L) (polyTimeComputable_cpaAns L)).seedLen.eval n) →
++        Bool) := by
+       rw [recHandler_seedLen, PolyExpr.eval_const]
+       infer_instance
+     rw [expect_sample_comm, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_unique]
+@@ -928,8 +932,7 @@ private theorem padded_cpa_advantage_eq {S : BitPublicKeyScheme} (L : PolyExpr)
+   | some l =>
+     have hl : l.length = 2 := by
+       rw [length_of_firstQ_eq_some _ hq, FixedLengthPKScheme.inLens_one,
+-        BitPublicKeyScheme.padded_msgLen]
+-      rfl
++        BitPublicKeyScheme.padded_msgLen, PolyExpr.eval_const]
+     obtain ⟨m₀, m₁, rfl⟩ := List.length_eq_two.1 hl
+     simp only [Option.elim_some, List.getD_cons_zero, List.getD_cons_succ, Bool.false_eq_true,
+       if_false, if_true]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
+index 6c36effe5..c0b3e9235 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean
+@@ -239,9 +239,9 @@ theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
+   simp only [neg_one_mul, ← sub_eq_add_neg] at h
+   exact h
+ 
+-/-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the difference of the
+-acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of the acceptance
+-rates of the post-processed bit `(m₀ ≠ m₁) ∧ (a ≠ m₀)` against `Enc(0)` and `Enc(1)`.
++/-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the
++difference of the acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of
++the acceptance rates of the post-processed bit `(m₀ ≠ m₁) ∧ (a ≠ m₀)` against `Enc(0)` and `Enc(1)`.
+ 
+ **Proof sketch.** Four cases. Equal messages give `0 = 0`; `(0, 1)` gives the same difference;
+ `(1, 0)` gives `(1 − p₀) − (1 − p₁) = p₁ − p₀` for the negated bit. -/
+@@ -253,7 +253,7 @@ theorem expect_indicator_sub {ρ : Type} [Fintype ρ] [Nonempty ρ] (f : Bool 
+           (fun re => if ((m₀ != m₁) && (f false re != m₀)) = true then (1 : ℝ) else 0) -
+         expect (sample ρ)
+           (fun re => if ((m₀ != m₁) && (f true re != m₀)) = true then (1 : ℝ) else 0) := by
+-  have hnot : ∀ x : Bool, (if (!x) = true then (1 : ℝ) else 0) = 1 - if x = true then 1 else 0 := by
++  have hneg : ∀ x : Bool, (if (!x) = true then (1 : ℝ) else 0) = 1 - if x = true then 1 else 0 := by
+     intro x
+     cases x <;> norm_num
+   have hf : ∀ x : Bool, (x != false) = x := fun x => by cases x <;> rfl
+@@ -262,7 +262,7 @@ theorem expect_indicator_sub {ρ : Type} [Fintype ρ] [Nonempty ρ] (f : Bool 
+   · simp only [bne_self_eq_false, Bool.false_and, Bool.false_eq_true, if_false, expect_const,
+       sub_self]
+   · simp only [show (false != true) = true from rfl, Bool.true_and, hf]
+-  · simp only [show (true != false) = true from rfl, Bool.true_and, ht, hnot, expect_sub,
++  · simp only [show (true != false) = true from rfl, Bool.true_and, ht, hneg, expect_sub,
+       expect_const]
+     ring
+   · simp only [bne_self_eq_false, Bool.false_and, Bool.false_eq_true, if_false, expect_const,
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
+index 2b97d2c34..8e670d56a 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean
+@@ -126,7 +126,8 @@ theorem polyTimeComputable_recRun {ans : List Bool → List Bool} (hans : PolyTi
+     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+   have hq : PolyTimeComputable fun w => [(pairFstD (pairSndD (pairSndD w))).headD false] :=
+     polyTimeComputable_headD.comp
+-      (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
++      (polyTimeComputable_pairFstD.comp
++        (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+   have hh : PolyTimeComputable fun w => [(pairFstD (pairSndD w)).headD false] :=
+     polyTimeComputable_headD.comp hs
+   have hx : PolyTimeComputable fun w => true :: pairSndD (pairSndD (pairSndD w)) :=
+@@ -248,13 +249,14 @@ theorem simulate_recHandler_recorded
+       .pure ((chRun (fun _ => ans (seedIn n z (List.ofFn ω))) c
+         (some (padFin _ (ans (seedIn n z (List.ofFn ω)))))).1, s) := by
+   induction c with
+-  | pure a => rfl
++  | pure a => rw [simulate_pure, chRun_pure]
+   | query i x k ih =>
+     match i, x, k, ih with
+     | 0, x, k, ih =>
+       have hans0 : (recHandler Lc ans hans).answer n z ω s 0 x = (zeroBits _, s) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+         rw [recHandler_run, PolyHandler.input_eq, ofFn_zeroBits]
++        simp only [recDout_zero, PolyExpr.eval_const]
+         exact recRun_dec ans _ _ _
+       rw [simulate_query, PolyHandler.impl_apply, hans0, OracleComp.pure_bind, chRun_query_zero]
+       exact ih _
+@@ -263,7 +265,7 @@ theorem simulate_recHandler_recorded
+           (padFin _ (ans (seedIn n z (List.ofFn ω))), s) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+         rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+-          rw [hw, recDout_one])]
++          rw [hw, recDout_one]), seedIn_eq]
+         exact recRun_recorded ans _ _ _ hs
+       rw [simulate_query, PolyHandler.impl_apply, hans1, OracleComp.pure_bind,
+         chRun_query_one_some]
+@@ -285,11 +287,12 @@ theorem simulate_recHandler_init
+           .pure ((chRun (fun _ => ans (seedIn n z (List.ofFn ω))) c none).1, s) ∧
+         List.ofFn s = (firstQ c).elim [false, false, false] (true :: ·) := by
+   have hinit : List.ofFn ((recHandler Lc ans hans).init n) = [false, false, false] := by
+-    rw [show (recHandler Lc ans hans).init n = zeroBits _ from funext (recHandler_init Lc ans hans n),
++    rw [show (recHandler Lc ans hans).init n = zeroBits _ from
++        funext (recHandler_init Lc ans hans n),
+       ofFn_zeroBits, recHandler_stateLen, PolyExpr.eval_const]
+     rfl
+   induction c with
+-  | pure a => exact ⟨_, rfl, hinit⟩
++  | pure a => exact ⟨_, by rw [simulate_pure, chRun_pure], by rw [firstQ_pure]; exact hinit⟩
+   | query i x k ih =>
+     match i, x, k, ih with
+     | 0, x, k, ih =>
+@@ -297,6 +300,7 @@ theorem simulate_recHandler_init
+           (zeroBits _, (recHandler Lc ans hans).init n) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+         rw [recHandler_run, PolyHandler.input_eq, ofFn_zeroBits]
++        simp only [recDout_zero, PolyExpr.eval_const]
+         exact recRun_dec ans _ _ _
+       obtain ⟨s, hsim, hs⟩ := ih (zeroBits _)
+       refine ⟨s, ?_, ?_⟩
+@@ -306,13 +310,13 @@ theorem simulate_recHandler_init
+         exact hs
+     | 1, x, k, _ =>
+       have hlen : (true :: List.ofFn x).length = (recHandler Lc ans hans).stateLen.eval n := by
+-        show (recDin Lc 1).eval n + 1 = _
+-        rw [recHandler_stateLen, recDin_one, PolyExpr.eval_const, PolyExpr.eval_const]
++        rw [List.length_cons, List.length_ofFn, recHandler_stateLen]
++        simp only [recDin_one, PolyExpr.eval_const]
+       have hans1 : (recHandler Lc ans hans).answer n z ω ((recHandler Lc ans hans).init n) 1 x =
+           (padFin _ (ans (seedIn n z (List.ofFn ω))), padFin _ (true :: List.ofFn x)) := by
+         refine PolyHandler.answer_of_run_eq _ ?_
+         rw [recHandler_run, PolyHandler.input_eq, GGMRed.ofFn_padFin_of_length (by
+-          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen]
++          rw [hw, recDout_one]), GGMRed.ofFn_padFin_of_length hlen, seedIn_eq]
+         refine recRun_fresh ans _ _ _ ?_
+         rw [hinit]
+         rfl
+-- 
+2.43.0
+
