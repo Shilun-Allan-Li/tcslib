@@ -105,6 +105,21 @@ theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' :
   subst hi ho hd
   rw [castImpl_self]
 
+/-- **Transport of a machine's run, in expectation:** for every function `G` of the output (read
+as a list) and the final state, `simulate_castImpl_toCompOn` in the form
+`𝔼[G (⟦p.1⟧, p.2)]` over the two simulations. -/
+theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
+    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
+    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
+    (r : M.Coins n) (s : σ) (G : List Bool × σ → ℝ) :
+    expect (simulate (castImpl (ins := ins) (outs := outs) O)
+        (M.toCompOn (bitCodec ins outs d) n q x r) s) (fun p => G (List.ofFn p.1, p.2)) =
+      expect (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s)
+        (fun p => G (List.ofFn p.1, p.2)) := by
+  have h := congrArg (fun c => expect c G) (simulate_castImpl_toCompOn hi ho hd O M n q x r s)
+  simp only [expect_bind, expect_pure] at h
+  exact h
+
 end Transport
 
 /-! ### Simulation through a state abstraction -/
@@ -163,7 +178,8 @@ theorem hybImpl_zero (x : Fin (ins 0) → Bool) (h : List (Fin L → Bool)) :
 theorem hybImpl_fresh (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : h.length < κ) :
     hybImpl (outs := outs) κ E sel 1 mm h =
       (ProbComp.sample C).bind fun r =>
-        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)), E (sel h.length) mm r :: h) := by
+        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)),
+          E (sel h.length) mm r :: h) := by
   rw [hybImpl, if_pos hh]
 
 /-- At the cap a challenge repeats the latest ciphertext:
@@ -217,7 +233,8 @@ theorem tapeImpl_lazy (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (h
     (hk : h.length = kst) :
     tapeImpl (outs := outs) κ E sel T kst 1 mm h =
       (ProbComp.sample C).bind fun r =>
-        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)), E (sel h.length) mm r :: h) := by
+        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)),
+          E (sel h.length) mm r :: h) := by
   rw [tapeImpl, if_pos hh, if_pos hk]
 
 /-- Another fresh challenge uses its coins in advance:

@@ -175,8 +175,10 @@ theorem acHyb_congr (A : NUPPT) (q κ n : ℕ) {sel sel' : ℕ → Bool}
   funext r
   rw [hybImpl_congr κ _ sel hsel]
 
-/-- The message selected from a challenge query by the game's oracle is `msgOf`. -/
-private theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool) :
+/-- The message selected from a challenge query by the game's oracle is `msgOf`: for the query
+`x` of T2's codec, the half `b` of `splitHalf (cast (padFin ⟦x⟧))` has the string
+`msgOf m b ⟦x⟧`. -/
+theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool) :
     List.ofFn (if b then (FixedLengthScheme.splitHalf
         (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x)))).2
       else (FixedLengthScheme.splitHalf
@@ -233,7 +235,8 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ : 
         subst hκ
         rw [castImpl_eq, S.adaptiveIndImpl_challenge_zero, OracleComp.pure_bind,
           hybImpl_full (ins := fun i => (acDin S i).eval n)
-          (outs := fun i => (acDout S i).eval n) 0 _ _ x [] le_rfl, List.headD_nil, padFin_ofFn_zeroBits,
+          (outs := fun i => (acDout S i).eval n) 0 _ _ x [] le_rfl, List.headD_nil,
+          padFin_ofFn_zeroBits,
           padFin_ofFn_zeroBits]
       | cons c t =>
         rw [castImpl_eq, S.adaptiveIndImpl_challenge_full .cpa b n pk sk κ _ (c :: t)

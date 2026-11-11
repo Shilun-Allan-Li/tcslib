@@ -1,0 +1,563 @@
+From dde15fbe83834b3e8e8ba6328590d988ea31be28 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 20:21:12 +0000
+Subject: [PATCH 2/2] fill adaptive-cpa: reduction game identity and the target
+ (checkpoint 2)
+
+Add AdaptiveCPA/Reduction.lean (B's game is the hybrid H_{i*+b}) and prove
+INDSecure.adaptive_cpa; wrap long lines in the helper modules.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTm8SAfk12DMX1esC2g
+---
+ .../Encryption/PublicKey/AdaptiveCPA.lean     |  93 +++++-
+ .../PublicKey/AdaptiveCPA/Games.lean          |   9 +-
+ .../PublicKey/AdaptiveCPA/Handler.lean        |  25 +-
+ .../PublicKey/AdaptiveCPA/Hybrid.lean         |  21 +-
+ .../PublicKey/AdaptiveCPA/Reduction.lean      | 273 ++++++++++++++++++
+ 5 files changed, 391 insertions(+), 30 deletions(-)
+ create mode 100644 TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+index 4642d1744..b457b8d9a 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA.lean
+@@ -4,6 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveSecurity
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Reduction
++import TCSlib.Cryptography.Games.Advantage
++import TCSlib.Cryptography.Games.Efficiency
++import TCSlib.Cryptography.Asymptotic.ReductionSupport
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -43,28 +47,85 @@ single-to-many hybrid argument of p. 103, extended to adaptive challenges].
+ 
+ **Proof sketch.**
+ 1. Fix `A`, `q` and `cap`. For `i ≤ cap(n)` let `H_i` be the adaptive CPA experiment in which the
+-   first `i` fresh challenges encrypt the right message and the later ones the left message. Then
+-   `H_0` is the experiment with `b = false` and `H_{cap(n)}` the one with `b = true`: a challenge
+-   past the cap only repeats the latest ciphertext (`adaptiveIndImpl_challenge_full`), and under CPA
+-   `Dec` answers `⊥` whatever the history (`indImpl_dec_cpa`, `adaptiveIndImpl_dec_issued`).
++   first `i` fresh challenges encrypt the right message and the later ones the left message
++   (`AdaptiveCPA.acHyb` with the selector `j ↦ [j < i]`, run on T2's codec). Then `H_0` is the
++   experiment with `b = false` and `H_{cap(n)}` the one with `b = true`
++   (`AdaptiveCPA.acHyb_lt_zero`, `AdaptiveCPA.acHyb_lt_cap`): the adaptive oracles are the
++   hybrid with a constant selector (`AdaptiveCPA.castImpl_adaptiveIndImpl`, from
++   `adaptiveIndImpl_challenge_encrypt`, `_full`, `_zero`, `_dec_issued`, `_dec_other` and
++   `indImpl_dec_onSpec`), and the selector matters only below the cap
++   (`AdaptiveCPA.acHyb_congr`).
+ 2. By `Games.exists_advantage_hybrid_gap`, at each `n` with `cap(n) > 0` some `i⋆(n) < cap(n)`
+    has `advantage(H_{i⋆}, H_{i⋆+1}) ≥ advantage(H_0, H_{cap(n)}) / cap(n)`; the case `cap(n) = 0`
+-   has advantage `0`.
+-3. The single-challenge adversary `B` takes `i⋆(n)` as advice. On `pk` it runs `A`, answers `Dec`
+-   with `⊥`, answers the first `i⋆` fresh challenges with encryptions of the right message and
+-   the fresh challenges after the `(i⋆+1)`-st with encryptions of the left message, computed with
+-   `Enc` on `pk` and its own coins, forwards the `(i⋆+1)`-st to its own `Challenge` oracle, repeats
+-   the latest ciphertext past the cap, and outputs `A`'s bit. Then `B`'s game with bit `b` is
+-   `H_{i⋆+b}`. `B` is a non-uniform PPT playing the outer game by
+-   `Games.exists_interactiveHandlerMachine` (T2): the handler's state holds the challenge count,
+-   the latest ciphertext and `i⋆(n)` (its initial state, an arbitrary function of `n`), its seed
+-   is `cap(n)` encryption tapes, its one outer call is the `(i⋆+1)`-st challenge, and its run is
+-   polynomial-time because `Enc` is uniform and polynomial-time.
++   has advantage `0`, and there `i⋆(n) = 0`.
++3. The single-challenge adversary `B` is T2's machine (`Games.exists_interactiveHandlerMachine`)
++   for the handler `AdaptiveCPA.acHandler S cap i⋆`: its state holds the challenge count, the
++   latest ciphertext and `i⋆(n)` (its initial state), its seed is `cap(n)` encryption tapes, it
++   answers `Dec` with `⊥`, the `j`-th fresh challenge with its own encryption of `m_{[j < i⋆]}`
++   for `j ≠ i⋆`, forwards the `i⋆`-th to its one outer `Challenge` call (`perCall = 1`), repeats
++   the latest ciphertext past the cap, and outputs `A`'s bit (`finCall = 0`). Its round function
++   is polynomial-time because `Enc` is uniform and polynomial-time. `B`'s game with bit `b`
++   accepts with the probability of `H_{i⋆+b}` (`AdaptiveCPA.accept_indGame_acHyb`): the
++   handler composed with the outer oracles is, through an abstraction of its states, the hybrid
++   with the handler's tapes as coins in advance, and uniform tapes give the lazy hybrid
++   (`AdaptiveCPA.expect_tapeImpl`).
+ 4. `B` makes at most `q(n)·perCall + finCall` outer queries, a polynomial, so `h` bounds its
+    advantage by a negligible `ε`. Hence `A`'s advantage is at most `cap(n) · ε(n)`, negligible
+    by `Negligible.polyExpr_mul` (`Asymptotic/ReductionSupport`) with the polynomial `cap`. -/
+ theorem INDSecure.adaptive_cpa {S : FixedLengthPKScheme} (h : S.INDSecure .cpa) :
+     S.AdaptiveINDSecure .cpa := by
+-  sorry
++  rw [S.adaptiveINDSecure_iff]
++  rw [S.INDSecure_iff] at h
++  intro A q cap
++  -- Step 2: at each `n` the hybrid lemma advises an index `i⋆(n) ≤ cap(n)`.
++  have hgap : ∀ n, ∃ i, i ≤ cap.eval n ∧
++      advantage (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < 0))
++          (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < cap.eval n)) ≤
++        (cap.eval n : ℝ) *
++          advantage (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < i))
++            (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < i + 1)) := by
++    intro n
++    rcases Nat.eq_zero_or_pos (cap.eval n) with h0 | hpos
++    · refine ⟨0, Nat.zero_le _, ?_⟩
++      rw [h0, advantage_self, Nat.cast_zero, zero_mul]
++    · obtain ⟨i, hi, hle⟩ := exists_advantage_hybrid_gap
++        (fun i => AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < i)) hpos
++      refine ⟨i, hi.le, ?_⟩
++      rw [div_le_iff₀ (Nat.cast_pos.2 hpos)] at hle
++      rw [mul_comm]
++      exact hle
++  choose ist hist hgap using hgap
++  -- Step 3: the reduction is T2's machine for the handler with the advised index.
++  obtain ⟨B, hB⟩ := exists_interactiveHandlerMachine A q (AdaptiveCPA.acDin S)
++    (AdaptiveCPA.acDout S) (AdaptiveCPA.acDin S) (AdaptiveCPA.acDout S) (.const 1)
++    (AdaptiveCPA.acHandler S cap ist)
++  -- Step 4: single-challenge security bounds `B`'s advantage at the polynomial outer budget.
++  obtain ⟨ε, hε, hεB⟩ := h B ((q.mul (AdaptiveCPA.acHandler S cap ist).perCall).add
++    (AdaptiveCPA.acHandler S cap ist).finCall)
++  refine ⟨fun n => (cap.eval n : ℝ) * ε n, hε.polyExpr_mul cap, fun n => ?_⟩
++  obtain ⟨φ, hφ⟩ := hB n
++  have hred : ∀ b : Bool, accept (S.indGame .cpa B
++      (((q.mul (AdaptiveCPA.acHandler S cap ist).perCall).add
++        (AdaptiveCPA.acHandler S cap ist).finCall).eval n) b n) =
++      accept (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n
++        fun j => decide (j < ist n + b.toNat)) := by
++    intro b
++    rw [PolyExpr.eval_add, PolyExpr.eval_mul]
++    exact AdaptiveCPA.accept_indGame_acHyb S cap ist A q n B φ (hist n) hφ b
++  have hB' : advantage
++      (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < ist n))
++      (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < ist n + 1)) ≤ ε n := by
++    have hb := hεB n
++    rw [advantage_eq, hred false, hred true, Bool.toNat_false, Bool.toNat_true,
++      Nat.add_zero] at hb
++    rw [advantage_eq]
++    exact hb
++  calc advantage (S.adaptiveIndGame .cpa A (q.eval n) (cap.eval n) false n)
++        (S.adaptiveIndGame .cpa A (q.eval n) (cap.eval n) true n) =
++      advantage (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < 0))
++        (AdaptiveCPA.acHyb S A (q.eval n) (cap.eval n) n fun j => decide (j < cap.eval n)) := by
++        rw [AdaptiveCPA.acHyb_lt_zero, AdaptiveCPA.acHyb_lt_cap]
++    _ ≤ _ := hgap n
++    _ ≤ (cap.eval n : ℝ) * ε n := mul_le_mul_of_nonneg_left hB' (Nat.cast_nonneg _)
+ 
+ end TCSlib.Cryptography.Composability.FixedLengthPKScheme
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+index b421a98e6..fad1f74a7 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean
+@@ -175,8 +175,10 @@ theorem acHyb_congr (A : NUPPT) (q κ n : ℕ) {sel sel' : ℕ → Bool}
+   funext r
+   rw [hybImpl_congr κ _ sel hsel]
+ 
+-/-- The message selected from a challenge query by the game's oracle is `msgOf`. -/
+-private theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool) :
++/-- The message selected from a challenge query by the game's oracle is `msgOf`: for the query
++`x` of T2's codec, the half `b` of `splitHalf (cast (padFin ⟦x⟧))` has the string
++`msgOf m b ⟦x⟧`. -/
++theorem ofFn_select (n : ℕ) (x : Fin ((acDin S 1).eval n) → Bool) (b : Bool) :
+     List.ofFn (if b then (FixedLengthScheme.splitHalf
+         (cast (S.indSpec_challengeDom n) (padFin (S.inLens n 1) (List.ofFn x)))).2
+       else (FixedLengthScheme.splitHalf
+@@ -233,7 +235,8 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ :
+         subst hκ
+         rw [castImpl_eq, S.adaptiveIndImpl_challenge_zero, OracleComp.pure_bind,
+           hybImpl_full (ins := fun i => (acDin S i).eval n)
+-          (outs := fun i => (acDout S i).eval n) 0 _ _ x [] le_rfl, List.headD_nil, padFin_ofFn_zeroBits,
++          (outs := fun i => (acDout S i).eval n) 0 _ _ x [] le_rfl, List.headD_nil,
++          padFin_ofFn_zeroBits,
+           padFin_ofFn_zeroBits]
+       | cons c t =>
+         rw [castImpl_eq, S.adaptiveIndImpl_challenge_full .cpa b n pk sk κ _ (c :: t)
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+index 41b9624cf..c7b88a317 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean
+@@ -119,7 +119,8 @@ def acTapes (n : ℕ) :
+ **Proof sketch.** The coin equivalence keeps the string (`coinsEquivPoly_symm_ofFn`); position `k`
+ of block `j` is position `k + ρ·j` of `ω` (`FunFamily.blocks_apply`), which is position `k` of the
+ dropped and truncated list. -/
+-theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool) (j : Fin (cap.eval n)) :
++theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool)
++    (j : Fin (cap.eval n)) :
+     List.ofFn (acTapes S cap n ω j) =
+       ((List.ofFn ω).drop (j * S.enc.coins.eval n)).take (S.enc.coins.eval n) := by
+   rw [acTapes, Equiv.trans_apply, Equiv.arrowCongr_apply, Function.comp_apply, Function.comp_apply,
+@@ -147,7 +148,8 @@ theorem ofFn_acTapes (n : ℕ) (ω : Fin ((cap.mul S.enc.coins).eval n) → Bool
+ /-- Reading a padding: `⟦padFin k a⟧ = a ++ 0^{k - |a|}` when `|a| ≤ k`. -/
+ theorem ofFn_padFin_of_le {k : ℕ} {a : List Bool} (h : a.length ≤ k) :
+     List.ofFn (padFin k a) = a ++ List.replicate (k - a.length) false := by
+-  have hl : (List.ofFn (padFin k a)).length = (a ++ List.replicate (k - a.length) false).length := by
++  have hl : (List.ofFn (padFin k a)).length =
++      (a ++ List.replicate (k - a.length) false).length := by
+     simp only [List.length_ofFn, List.length_append, List.length_replicate]
+     omega
+   refine List.ext_getElem hl fun i h₁ h₂ => ?_
+@@ -324,19 +326,21 @@ private theorem polyTimeComputable_acRun : PolyTimeComputable (acRun S cap) := b
+     (polyTimeComputable_ite cFull (hRet (hLat.append hS))
+       (polyTimeComputable_ite cEq
+         (polyTimeComputable_ite cNil
+-          ((polyTimeComputable_const [false]).pairEncode ((polyTimeComputable_const [true]).pairEncode
+-            hX))
++          ((polyTimeComputable_const [false]).pairEncode
++            ((polyTimeComputable_const [true]).pairEncode hX))
+           (hRet (hFwd.append (hNew hFwd))))
+         (hRet (hEnc.append (hNew hEnc)))))
+     (hRet (hZeros.append hS))
+ 
+ /-- The finalization's round: output `A`'s bit, `⟨[true], a⟩` on `⟨ctx, ⟨s, ⟨a, L⟩⟩⟩`. -/
+-private def acFin (w : List Bool) : List Bool := pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
++private def acFin (w : List Bool) : List Bool :=
++  pairEncode [true] (pairFstD (pairSndD (pairSndD w)))
+ 
+ /-- The finalization's round is polynomial-time. -/
+ private theorem polyTimeComputable_acFin : PolyTimeComputable acFin :=
+   (polyTimeComputable_const [true]).pairEncode
+-    (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
++    (polyTimeComputable_pairFstD.comp
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+ 
+ /-! ### The handler -/
+ 
+@@ -459,14 +463,17 @@ theorem acHandler_impl_dec (x : Fin ((acDin S 0).eval n) → Bool)
+     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool) :
+     (acHandler S cap ist).impl n z ω 0 x s = .pure (zeroBits _, s) := by
+   refine impl_of_ret S cap ist n z ω x s _ _ ?_
+-  have hI : rI (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
++  have hI : rI (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
++      []) =
+       [] := by
+     simp only [InteractiveHandler.input_eq, rI, pairFstD_pairEncode, pairSndD_pairEncode]
+     rfl
+-  have hU : rU (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
++  have hU : rU (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
++      []) =
+       List.replicate n true := by
+     simp only [InteractiveHandler.input_eq, rU, pairFstD_pairEncode]
+-  have hS : rS (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x) []) =
++  have hS : rS (InteractiveHandler.input n z (List.ofFn ω) (List.ofFn s) (0 : Fin 2) (List.ofFn x)
++      []) =
+       List.ofFn s := by
+     simp only [InteractiveHandler.input_eq, rS, pairFstD_pairEncode, pairSndD_pairEncode]
+   rw [acRun, hI, List.headD_nil, if_neg Bool.false_ne_true, hU, hS, List.length_replicate,
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+index 1f3224edb..6535a6891 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean
+@@ -105,6 +105,21 @@ theorem simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' :
+   subst hi ho hd
+   rw [castImpl_self]
+ 
++/-- **Transport of a machine's run, in expectation:** for every function `G` of the output (read
++as a list) and the final state, `simulate_castImpl_toCompOn` in the form
++`𝔼[G (⟦p.1⟧, p.2)]` over the two simulations. -/
++theorem expect_simulate_castImpl_toCompOn {ins ins' outs outs' : Fin k → ℕ} {d d' : ℕ}
++    (hi : ins = ins') (ho : outs = outs') (hd : d = d')
++    (O : QueryImpl (bitSpec ins' outs') σ unifSpec) (M : NUPPT) (n q : ℕ) (x : List Bool)
++    (r : M.Coins n) (s : σ) (G : List Bool × σ → ℝ) :
++    expect (simulate (castImpl (ins := ins) (outs := outs) O)
++        (M.toCompOn (bitCodec ins outs d) n q x r) s) (fun p => G (List.ofFn p.1, p.2)) =
++      expect (simulate O (M.toCompOn (bitCodec ins' outs' d') n q x r) s)
++        (fun p => G (List.ofFn p.1, p.2)) := by
++  have h := congrArg (fun c => expect c G) (simulate_castImpl_toCompOn hi ho hd O M n q x r s)
++  simp only [expect_bind, expect_pure] at h
++  exact h
++
+ end Transport
+ 
+ /-! ### Simulation through a state abstraction -/
+@@ -163,7 +178,8 @@ theorem hybImpl_zero (x : Fin (ins 0) → Bool) (h : List (Fin L → Bool)) :
+ theorem hybImpl_fresh (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (hh : h.length < κ) :
+     hybImpl (outs := outs) κ E sel 1 mm h =
+       (ProbComp.sample C).bind fun r =>
+-        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)), E (sel h.length) mm r :: h) := by
++        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)),
++          E (sel h.length) mm r :: h) := by
+   rw [hybImpl, if_pos hh]
+ 
+ /-- At the cap a challenge repeats the latest ciphertext:
+@@ -217,7 +233,8 @@ theorem tapeImpl_lazy (mm : Fin (ins 1) → Bool) (h : List (Fin L → Bool)) (h
+     (hk : h.length = kst) :
+     tapeImpl (outs := outs) κ E sel T kst 1 mm h =
+       (ProbComp.sample C).bind fun r =>
+-        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)), E (sel h.length) mm r :: h) := by
++        .pure (padFin (outs 1) (List.ofFn (E (sel h.length) mm r)),
++          E (sel h.length) mm r :: h) := by
+   rw [tapeImpl, if_pos hh, if_pos hk]
+ 
+ /-- Another fresh challenge uses its coins in advance:
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+new file mode 100644
+index 000000000..a56d185c2
+--- /dev/null
++++ b/TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean
+@@ -0,0 +1,273 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++-/
++import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA.Games
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The reduction's game is a hybrid
++
++Let `B` be the machine that T2 (`Games.exists_interactiveHandlerMachine`) builds from the
++adversary `A` and the handler `acHandler S cap ist`. This file proves that `B`'s single-challenge
++CPA game with bit `b` has the acceptance probability of the hybrid `H_{i⋆(n)+b}`
++(`accept_indGame_acHyb`): the first `i⋆` fresh challenges encrypt the right message (the
++handler's own encryptions), the `i⋆`-th encrypts `m_b` (the forwarded outer challenge), and the
++later ones encrypt the left message.
++
++The proof composes the handler with the outer oracles (`QueryImpl.comp`) and relates the composite,
++state by state, to the hybrid with coins given in advance (`tapeImpl`): the handler's state and
++the outer challenge state are functions of the hybrid's history (`acAbs`; the outer state is the
++`i⋆`-th issued ciphertext once it exists). The handler's tapes, drawn uniformly, then give the lazy
++hybrid (`expect_tapeImpl`). Both ends of the run are transported between the game's codec and T2's
++(`expect_simulate_castImpl_toCompOn`).
++
++## Main results
++
++* `AdaptiveCPA.castImpl_indImpl_challenge`: the outer challenge oracle on T2's codec.
++* `AdaptiveCPA.accept_indGame_acHyb`: `B`'s game with bit `b` is the hybrid `H_{i⋆+b}`.
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  Definition 171.5 and the single-to-many hybrid argument (book p. 103).
++-/
++
++namespace TCSlib.Cryptography.Composability.AdaptiveCPA
++
++open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
++
++variable (S : FixedLengthPKScheme)
++
++/-- **The outer challenge oracle on T2's codec:** the first challenge `x` samples coins `r`,
++answers `c = acEnc S n pk b x r` (read at T2's width) and records it. -/
++theorem castImpl_indImpl_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
++    (x : Fin ((acDin S 1).eval n) → Bool) :
++    castImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
++        (S.indImpl .cpa b n pk sk) 1 x none =
++      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
++        .pure (padFin ((acDout S 1).eval n) (List.ofFn (acEnc S n pk b x r)),
++          some (acEnc S n pk b x r)) := by
++  rw [castImpl_eq, S.indImpl_challenge_none_onSpec, OracleComp.bind_assoc]
++  congr 1
++  funext r
++  dsimp only
++  rw [OracleComp.pure_bind, ofFn_cast (S.outLens_one n), acEnc_eq, ofFn_select]
++
++/-- The `i`-th issued ciphertext after one more: `(c :: h).reverse[i]?` is `c` at `i = |h|` and
++`h.reverse[i]?` otherwise. -/
++private theorem getElem?_reverse_cons {α : Type} (c : α) (h : List α) (i : ℕ) :
++    (c :: h).reverse[i]? = if i = h.length then some c else h.reverse[i]? := by
++  rw [List.reverse_cons]
++  by_cases hi : i < h.length
++  · rw [List.getElem?_append_left (by rw [List.length_reverse]; exact hi), if_neg (by omega)]
++  · rw [List.getElem?_append_right (by rw [List.length_reverse]; omega), List.length_reverse]
++    by_cases he : i = h.length
++    · rw [if_pos he, he, Nat.sub_self]
++      rfl
++    · rw [if_neg he, List.getElem?_eq_none (by rw [List.length_singleton]; omega),
++        List.getElem?_eq_none (by rw [List.length_reverse]; omega)]
++
++variable (cap : PolyExpr) (ist : ℕ → ℕ)
++
++/-- **The state abstraction:** after the history `h` of issued ciphertexts, the handler's state
++records `min |h| κ` fresh challenges and the latest ciphertext `h.headD 0`, and the outer
++challenge state is the `i⋆`-th issued ciphertext, if any. -/
++private def acAbs (n : ℕ) (h : List (Fin (S.ctLen.eval n) → Bool)) :
++    (Fin ((acHandler S cap ist).stateLen.eval n) → Bool) × Option (Fin (S.ctLen.eval n) → Bool) :=
++  (acHState S cap ist n (min h.length (cap.eval n)) (h.headD (zeroBits _)), h.reverse[ist n]?)
++
++/-- The selector of `H_{i⋆+b}` at the advised index is `b`. -/
++private theorem sel_ist (b : Bool) (m : ℕ) : decide (m < m + b.toNat) = b := by
++  cases b
++  · rw [Bool.toNat_false, Nat.add_zero, decide_eq_false (Nat.lt_irrefl m)]
++  · rw [Bool.toNat_true, decide_eq_true (Nat.lt_succ_self m)]
++
++/-- Away from the advised index the selector of `H_{i⋆+b}` is `[j < i⋆]`. -/
++private theorem sel_ne (b : Bool) {j m : ℕ} (h : j ≠ m) :
++    decide (j < m + b.toNat) = decide (j < m) := by
++  cases b
++  · rw [Bool.toNat_false, Nat.add_zero]
++  · rw [Bool.toNat_true]
++    exact decide_eq_decide.2 ⟨fun h' => by omega, fun h' => by omega⟩
++
++/-- **One call of the composite is one call of the hybrid with coins in advance**, abstracted:
++the handler composed with the outer oracles of bit `b`, from `acAbs h`, is the hybrid
++`H_{i⋆+b}` with the handler's tapes and the lazy slot `i⋆`, from `h`, with its new history
++abstracted.
++
++**Proof sketch.** Decryption: both refuse and keep the state. At the cap: both repeat the
++latest ciphertext. Below the cap, away from `i⋆`: the handler encrypts with its tape, which is
++the hybrid's coin in advance, and the outer state is unchanged. At `i⋆`: the handler forwards the
++challenge, the outer oracle samples coins and encrypts `m_b`, which is the hybrid's lazy slot, and
++the outer state becomes the new ciphertext. -/
++private theorem comp_acAbs (b : Bool) (n : ℕ) (hist : ist n ≤ cap.eval n) (pk sk : List Bool)
++    (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool) (i : Fin 2)
++    (x : (bitSpecAt (acDin S) (acDout S) n).dom i) (h : List (Fin (S.ctLen.eval n) → Bool)) :
++    (castImpl (S.indImpl .cpa b n pk sk)).comp ((acHandler S cap ist).impl n pk ω) i x
++        (acAbs S cap ist n h) =
++      (tapeImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
++          (cap.eval n) (acEnc S n pk) (fun j => decide (j < ist n + b.toNat))
++          (extTape (acSeedTapes S cap ist n ω)) (ist n) i x h).bind
++        fun p => .pure (p.1, acAbs S cap ist n p.2) := by
++  match i, x with
++  | 0, x =>
++    rw [QueryImpl.comp_apply, tapeImpl_zero, OracleComp.pure_bind, acAbs]
++    dsimp only
++    rw [acHandler_impl_dec, simulate_pure, OracleComp.pure_bind]
++  | 1, x =>
++    rw [QueryImpl.comp_apply]
++    by_cases hh : h.length < cap.eval n
++    · have hmin : min h.length (cap.eval n) = h.length := Nat.min_eq_left hh.le
++      by_cases hk : h.length = ist n
++      · -- the advised challenge: forwarded to the outer oracle, the hybrid's lazy slot
++        have h2 : h.reverse[ist n]? = none :=
++          List.getElem?_eq_none (by rw [List.length_reverse]; omega)
++        have hsel : decide (h.length < ist n + b.toNat) = b := by
++          rw [hk]
++          exact sel_ist b (ist n)
++        rw [tapeImpl_lazy (ins := fun i => (acDin S i).eval n)
++          (outs := fun i => (acDout S i).eval n) _ _ _ _ _ x h hh hk,
++          hsel, acAbs]
++        dsimp only
++        rw [hmin, h2, acHandler_impl_forward S cap ist n pk ω x h.length _ hh hk, simulate_query,
++          castImpl_indImpl_challenge, OracleComp.bind_assoc, OracleComp.bind_assoc,
++          OracleComp.bind_assoc]
++        congr 1
++        funext r
++        simp only [OracleComp.pure_bind, simulate_pure]
++        have he : padFin (S.ctLen.eval n) (List.ofFn (padFin ((acDout S 1).eval n)
++            (List.ofFn (acEnc S n pk b x r)))) = acEnc S n pk b x r := by
++          rw [GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acDout_one]), padFin_ofFn]
++        rw [he, acAbs, List.length_cons, Nat.min_eq_left (by omega), List.headD_cons,
++          getElem?_reverse_cons, if_pos hk.symm]
++      · -- another fresh challenge: the handler's own encryption with its tape
++        rw [tapeImpl_eager (ins := fun i => (acDin S i).eval n)
++          (outs := fun i => (acDout S i).eval n) _ _ _ _ _ x h hh hk,
++          OracleComp.pure_bind, acAbs]
++        dsimp only
++        rw [hmin, acHandler_impl_eager S cap ist n pk ω x h.length _ hh hk hist, simulate_pure,
++          OracleComp.pure_bind, sel_ne b hk, extTape_of_lt _ hh, acAbs, List.length_cons,
++          Nat.min_eq_left (by omega), List.headD_cons, getElem?_reverse_cons,
++          if_neg (fun e => hk e.symm), acEnc_eq]
++    · -- at the cap: the latest ciphertext is repeated
++      have hmin : min h.length (cap.eval n) = cap.eval n := Nat.min_eq_right (Nat.le_of_not_lt hh)
++      rw [tapeImpl_full (ins := fun i => (acDin S i).eval n)
++        (outs := fun i => (acDout S i).eval n) _ _ _ _ _ x h
++        (Nat.le_of_not_lt hh), OracleComp.pure_bind, acAbs]
++      dsimp only
++      rw [hmin, acHandler_impl_full S cap ist n pk ω x _ hist, simulate_pure, OracleComp.pure_bind]
++
++/-- The handler starts from the abstraction of the empty history. -/
++private theorem init_acAbs (n : ℕ) :
++    ((acHandler S cap ist).init n, (none : Option (Fin (S.ctLen.eval n) → Bool))) =
++      acAbs S cap ist n [] := by
++  rw [acAbs, acHandler_init_eq, List.length_nil, Nat.zero_min, List.headD_nil, List.reverse_nil,
++    List.getElem?_nil]
++
++section Game
++
++variable (A : NUPPT) (q : PolyExpr) (n : ℕ) (B : NUPPT)
++  (φ : (Fin ((acHandler S cap ist).seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n)
++
++/-- **One run of `B`'s game is a run of the hybrid with coins in advance:** with the keys, the
++adversary's coins `r` and the handler's seed `ω` fixed, the probability that `B`'s CPA run against
++the oracles of bit `b` outputs `1` is the expectation of `A`'s bit against `H_{i⋆+b}` with the
++handler's tapes in advance and the lazy slot `i⋆`.
++
++**Proof sketch.** Transport `B`'s run to T2's codec (`indCodec_eq_bitCodec`,
++`expect_simulate_castImpl_toCompOn`), replace it by the reduction (T2's equation `hφ`, with
++`acHandler_advInput` and `acHandler_finish`), compose the two simulations (`simulate_bind`,
++`simulate_comp`) and pass to the hybrid through the state abstraction (`init_acAbs`,
++`simulate_eq_of_abs`, `comp_acAbs`). -/
++private theorem prob_red_tape (hist : ist n ≤ cap.eval n)
++    (hφ : ∀ (z : List Bool) (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
++      (r : A.Coins n),
++      (simulate ((acHandler S cap ist).impl n z ω)
++          (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++            ((PolyExpr.const 1).eval n)) n (q.eval n) ((acHandler S cap ist).advInput n z ω) r)
++          ((acHandler S cap ist).init n)).bind
++          (fun res => (acHandler S cap ist).finish n z ω res.2 res.1) =
++        B.toCompOn (bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n)
++          ((acHandler S cap ist).outLen.eval n)) n
++          (q.eval n * (acHandler S cap ist).perCall.eval n + (acHandler S cap ist).finCall.eval n)
++          z (φ (ω, r)))
++    (b : Bool) (pk sk : List Bool) (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
++    (r : A.Coins n) :
++    ProbComp.prob ((simulate (S.indImpl .cpa b n pk sk) (B.toCompOn (S.indCodec n) n
++        (q.eval n * (acHandler S cap ist).perCall.eval n + (acHandler S cap ist).finCall.eval n)
++        pk (φ (ω, r))) none).bind fun res => .pure (res.1 0)) (· = true) =
++      expect (simulate (tapeImpl (ins := fun i => (acDin S i).eval n)
++          (outs := fun i => (acDout S i).eval n) (cap.eval n) (acEnc S n pk)
++          (fun j => decide (j < ist n + b.toNat)) (extTape (acSeedTapes S cap ist n ω)) (ist n))
++          (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++            ((PolyExpr.const 1).eval n)) n (q.eval n) pk r) [])
++        (fun p => if (List.ofFn p.1).headD false = true then 1 else 0) := by
++  have hd : (acHandler S cap ist).outLen.eval n = 1 := by
++    rw [acHandler_outLen, PolyExpr.eval_const]
++  have h1 : (fun res : (Fin 1 → Bool) × Option (Fin (S.ctLen.eval n) → Bool) =>
++      ProbComp.prob (.pure (res.1 0)) (· = true)) =
++      fun res => if (List.ofFn res.1).headD false = true then (1 : ℝ) else 0 := by
++    funext res
++    rw [prob_pure, headD_ofFn_one]
++  rw [prob_bind, indCodec_eq_bitCodec, h1]
++  refine (expect_simulate_castImpl_toCompOn (acDin_eval S n) (acDout_eval S n) hd
++    (S.indImpl .cpa b n pk sk) B n _ pk (φ (ω, r)) none
++    (fun p => if p.1.headD false = true then (1 : ℝ) else 0)).symm.trans ?_
++  rw [← hφ pk ω r, acHandler_advInput]
++  simp only [acHandler_finish]
++  rw [simulate_bind, simulate_comp, OracleComp.bind_assoc, expect_bind]
++  simp only [OracleComp.pure_bind, simulate_pure, expect_pure]
++  rw [init_acAbs,
++    simulate_eq_of_abs _ _ (acAbs S cap ist n) (comp_acAbs S cap ist b n hist pk sk ω),
++    expect_bind]
++  simp only [expect_pure]
++
++/-- **`B`'s game is the hybrid `H_{i⋆+b}`:** if `B` is the machine of T2 for the handler
++`acHandler S cap ist` (with the coin bijection `φ` at `n`) and `i⋆(n) ≤ cap(n)`, then `B`'s
++single-challenge CPA game with bit `b` and `A`'s hybrid game with the selector `j ↦ [j < i⋆ + b]`
++accept with the same probability.
++
++**Proof sketch.** Fix the key-generation coins. `B`'s coins are the handler's seed `ω` and `A`'s
++coins `r` (`expect_sample_equiv φ`, `expect_sample_prod`). For fixed `ω` and `r` the run is the
++hybrid with the handler's tapes in advance (`prob_red_tape`). The tapes are uniform
++(`expect_sample_equiv (acSeedTapes …)`), so averaging over them gives the lazy hybrid
++(`expect_tapeImpl`). -/
++theorem accept_indGame_acHyb (hist : ist n ≤ cap.eval n)
++    (hφ : ∀ (z : List Bool) (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
++      (r : A.Coins n),
++      (simulate ((acHandler S cap ist).impl n z ω)
++          (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++            ((PolyExpr.const 1).eval n)) n (q.eval n) ((acHandler S cap ist).advInput n z ω) r)
++          ((acHandler S cap ist).init n)).bind
++          (fun res => (acHandler S cap ist).finish n z ω res.2 res.1) =
++        B.toCompOn (bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n)
++          ((acHandler S cap ist).outLen.eval n)) n
++          (q.eval n * (acHandler S cap ist).perCall.eval n + (acHandler S cap ist).finCall.eval n)
++          z (φ (ω, r)))
++    (b : Bool) :
++    accept (S.indGame .cpa B
++        (q.eval n * (acHandler S cap ist).perCall.eval n + (acHandler S cap ist).finCall.eval n)
++        b n) =
++      accept (acHyb S A (q.eval n) (cap.eval n) n (fun j => decide (j < ist n + b.toNat))) := by
++  rw [accept_eq, accept_eq, S.indGame_eq, acHyb_eq, prob_bind, prob_bind]
++  refine congrArg _ (funext fun rg => ?_)
++  rw [prob_bind, prob_bind, ← expect_sample_equiv φ, expect_sample_prod, expect_sample_comm]
++  refine congrArg _ (funext fun r => ?_)
++  simp only [prob_red_tape S cap ist A q n B φ hist hφ b]
++  refine (expect_sample_equiv (acSeedTapes S cap ist n) (fun T => expect (simulate
++    (tapeImpl (ins := fun i => (acDin S i).eval n) (outs := fun i => (acDout S i).eval n)
++      (cap.eval n) (acEnc S n (pairFstD (S.gen.runAt n [] rg)))
++      (fun j => decide (j < ist n + b.toNat)) (extTape T) (ist n))
++    (A.toCompOn (bitCodec (fun i => (acDin S i).eval n) (fun i => (acDout S i).eval n)
++      ((PolyExpr.const 1).eval n)) n (q.eval n) (pairFstD (S.gen.runAt n [] rg)) r) [])
++    (fun p => if (List.ofFn p.1).headD false = true then 1 else 0))).trans ?_
++  rw [expect_tapeImpl, prob_bind]
++  simp only [prob_pure]
++
++end Game
++
++end TCSlib.Cryptography.Composability.AdaptiveCPA
+-- 
+2.43.0
+
