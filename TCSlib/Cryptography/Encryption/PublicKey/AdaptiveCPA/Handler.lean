@@ -392,18 +392,23 @@ theorem acHandler_advInput (n : ℕ) (z : List Bool)
     pairFstD_pairEncode]
 
 /-- The finalization outputs the adversary's bit and asks nothing:
-`(acHandler S cap ist).finish n z ω s a = pure a`. -/
+`(acHandler S cap ist).finish n z ω s a = pure (padFin _ ⟦a⟧)`, the bit `a` read at the output
+width. -/
 theorem acHandler_finish (n : ℕ) (z : List Bool)
     (ω : Fin ((acHandler S cap ist).seedLen.eval n) → Bool)
     (s : Fin ((acHandler S cap ist).stateLen.eval n) → Bool)
     (a : Fin ((PolyExpr.const 1).eval n) → Bool) :
-    (acHandler S cap ist).finish n z ω s a = .pure a := by
+    (acHandler S cap ist).finish n z ω s a =
+      .pure (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) := by
   rw [InteractiveHandler.finish_eq]
   refine buildComp_zero_of_ret ?_
   show decodeBitMove _ _ _ (acFin _) = _
   rw [acFin, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairSndD_pairEncode,
     pairFstD_pairEncode]
-  exact decodeBitMove_ret _ _ _ a
+  have hw : List.ofFn (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a)) = List.ofFn a :=
+    GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, acHandler_outLen])
+  exact (congrArg (fun w => decodeBitMove _ _ _ (pairEncode [true] w)) hw).symm.trans
+    (decodeBitMove_ret _ _ _ _)
 
 /-! ### Answers of the handler -/
 

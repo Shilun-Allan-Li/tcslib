@@ -262,7 +262,7 @@ theorem simulate_tapeImpl_congr {α : Type} (T' : ℕ → C) (c : OracleComp (bi
     (h : List (Fin L → Bool)) (hT : ∀ m, h.length ≤ m → T m = T' m) :
     simulate (tapeImpl κ E sel T kst) c h = simulate (tapeImpl κ E sel T' kst) c h := by
   induction c generalizing h with
-  | pure a => rfl
+  | pure a => rw [simulate_pure, simulate_pure]
   | query i x k ih =>
     match i, x, k, ih with
     | 0, x, k, ih =>

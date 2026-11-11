@@ -226,7 +226,7 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ : 
       congr 1
       funext r
       dsimp only
-      rw [OracleComp.pure_bind, acEnc_eq, ofFn_select, ofFn_cast (S.outLens_one n)]
+      rw [OracleComp.pure_bind, acEnc_eq, ofFn_select, ofFn_cast (S.outLens_one n).symm]
     · cases h with
       | nil =>
         have hκ : κ = 0 := by
@@ -243,7 +243,7 @@ theorem castImpl_adaptiveIndImpl (b : Bool) (n : ℕ) (pk sk : List Bool) (κ : 
             (Nat.le_of_not_lt hh) c rfl, S.indImpl_challenge_repeat_onSpec, OracleComp.pure_bind,
           OracleComp.pure_bind, hybImpl_full (ins := fun i => (acDin S i).eval n)
           (outs := fun i => (acDout S i).eval n) κ _ _ x (c :: t) (Nat.le_of_not_lt hh),
-          List.headD_cons, ofFn_cast (S.outLens_one n)]
+          List.headD_cons, ofFn_cast (S.outLens_one n).symm]
 
 /-- **The adaptive game is the hybrid game with a constant selector:**
 `S.adaptiveIndGame .cpa A q κ b n = acHyb S A q κ n (fun _ => b)`.
