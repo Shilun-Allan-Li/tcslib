@@ -46,7 +46,7 @@ single-to-many hybrid argument of p. 103, extended to adaptive challenges].
    `H_0` is the experiment with `b = false` and `H_{cap(n)}` the one with `b = true`: a challenge
    past the cap only repeats the latest ciphertext (`adaptiveIndImpl_challenge_full`), and under CPA
    `Dec` answers `⊥` whatever the history (`indImpl_dec_cpa`, `adaptiveIndImpl_dec_issued`).
-2. By `Games.exists_advantage_hybrid_gap`, at each `n > 0` with `cap(n) > 0` some `i⋆(n) < cap(n)`
+2. By `Games.exists_advantage_hybrid_gap`, at each `n` with `cap(n) > 0` some `i⋆(n) < cap(n)`
    has `advantage(H_{i⋆}, H_{i⋆+1}) ≥ advantage(H_0, H_{cap(n)}) / cap(n)`; the case `cap(n) = 0`
    has advantage `0`.
 3. The single-challenge adversary `B` takes `i⋆(n)` as advice. On `pk` it runs `A`, answers `Dec`
