@@ -1,0 +1,79 @@
+UTC 2026-11-11T19:42:24Z
+nproc: 4
+== /sys/fs/cgroup/memory.max: absent
+== /sys/fs/cgroup/memory.current: absent
+== /sys/fs/cgroup/memory.events: absent
+== /sys/fs/cgroup/memory.stat: absent
+== /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+== /sys/fs/cgroup/memory/memory.usage_in_bytes
+580378624
+== /proc/meminfo
+MemTotal:       16472084 kB
+MemFree:        15731716 kB
+MemAvailable:   15949192 kB
+Buffers:           46816 kB
+Cached:           338508 kB
+headroom (no cgroup limit => MemAvailable) = 16331972608 B; floor 4 GiB = 4294967296 B: PASS
+== /home/user/fill
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21797974016 19485560832  53% /
+/dev/vda       ext4 264212084 21287084  19028868  53% /
+== /home/user/acpa
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21797974016 19485560832  53% /
+/dev/vda       ext4 264212084 21287084  19028868  53% /
+== /home/user/toolchain
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21797974016 19485560832  53% /
+/dev/vda       ext4 264212084 21287084  19028868  53% /
+== /tmp
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21797974016 19485560832  53% /
+/dev/vda       ext4 264212084 21287084  19028868  53% /
+clone free = 19485560832 B; floor 12 GiB = 12884901888 B: PASS
+== /sys/fs/cgroup/memory/memory.stat
+cache 18522112
+rss 540672
+rss_huge 0
+shmem 17121280
+mapped_file 9314304
+dirty 20480
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 7758
+pgpgout 3104
+pgfault 2140
+pgmajfault 0
+inactive_anon 3272704
+active_anon 0
+inactive_file 20480
+active_file 1380352
+unevictable 14389248
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 395157504
+total_rss 201093120
+total_rss_huge 0
+total_shmem 17121280
+total_mapped_file 145747968
+total_dirty 323584
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 321653
+total_pgpgout 197808
+total_pgfault 285022
+total_pgmajfault 1957
+total_inactive_anon 202895360
+total_active_anon 40960
+total_inactive_file 287961088
+total_active_file 90075136
+total_unevictable 15056896
+cgroup v1: limit 9223372036854771712 (no effective limit: page-counter maximum); in use = usage - total_cache + total_shmem = 596135936 - 395157504 + 17121280 = 218099712 B
+headroom taken as MemAvailable (no effective cgroup limit): PASS as above
