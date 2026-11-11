@@ -1,0 +1,37 @@
+From 4cc388aba3958a0d576ca28e82bf09db1268d1f2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 21:21:07 +0000
+Subject: [PATCH 3/3] QueryHandler: read recAdvIn through recAdvIn_eq
+
+The seal found that the polynomial-time proof of the handler's adversary
+input read the body of RecordHandler's recAdvIn; route it through the
+published equation instead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTkdwQWfa1fQdC2H7H5
+---
+ .../Encryption/PublicKey/BitwiseCPA/QueryHandler.lean     | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
+index 61b73b192..14b1f0823 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean
+@@ -167,8 +167,12 @@ noncomputable def qHandler (Lc Lq Ld Laux Lseed : PolyExpr) (aux : ℕ → List
+   run := qRun ans
+   poly := polyTimeComputable_qRun hans
+   advIn := recAdvIn
+-  advIn_poly := polyTimeComputable_pairFstD.comp
+-    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++  advIn_poly := by
++    have h : PolyTimeComputable fun ctx => pairFstD (pairFstD (pairSndD ctx)) :=
++      polyTimeComputable_pairFstD.comp
++        (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++    rw [show recAdvIn = fun ctx => pairFstD (pairFstD (pairSndD ctx)) from funext recAdvIn_eq]
++    exact h
+   out := fin
+   out_poly := hfin
+ 
+-- 
+2.43.0
+

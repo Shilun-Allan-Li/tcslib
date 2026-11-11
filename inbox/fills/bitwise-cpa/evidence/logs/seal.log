@@ -1,0 +1,69 @@
+== evidence/seal/SealEager start 2026-11-11T21:40:39Z
+elapsed 2.3s; max RSS of children 2542 MiB
+== evidence/seal/SealEager end 2026-11-11T21:40:42Z status 0
+== evidence/seal/SealQueryHandler start 2026-11-11T21:40:42Z
+elapsed 2.8s; max RSS of children 2557 MiB
+== evidence/seal/SealQueryHandler end 2026-11-11T21:40:45Z status 0
+== evidence/seal/SealPlanted start 2026-11-11T21:40:45Z
+elapsed 2.6s; max RSS of children 2551 MiB
+== evidence/seal/SealPlanted end 2026-11-11T21:40:47Z status 0
+== evidence/seal/SealBitwiseCPA start 2026-11-11T21:40:47Z
+elapsed 6.5s; max RSS of children 2619 MiB
+== evidence/seal/SealBitwiseCPA end 2026-11-11T21:40:54Z status 0
+== evidence/seal/SealControlsUnsealed start 2026-11-11T21:40:54Z
+elapsed 2.2s; max RSS of children 2523 MiB
+== evidence/seal/SealControlsUnsealed end 2026-11-11T21:40:56Z status 0
+== evidence/seal/SealControlsSealed start 2026-11-11T21:40:56Z
+evidence/seal/SealControlsSealed.lean:14:56: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  S.inLens n 1 = S.msgLen.eval n + S.msgLen.eval n
+evidence/seal/SealControlsSealed.lean:16:78: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  S.outLens n 1 = S.ctLen.eval n
+evidence/seal/SealControlsSealed.lean:18:51: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+evidence/seal/SealControlsSealed.lean:21:79: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  padCt L c = pairEncode c (List.replicate (L - (2 * c.length + 2)) true)
+evidence/seal/SealControlsSealed.lean:24:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)
+evidence/seal/SealControlsSealed.lean:27:73: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  chRun g (OracleComp.pure a) s = (a, s)
+evidence/seal/SealControlsSealed.lean:29:50: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  qDin Lc Lq 1 = Lq
+evidence/seal/SealControlsSealed.lean:32:91: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  plantAns Enc L w = padCt (L.eval (pairFstD (pairFstD w)).length) (plantTuple Enc w)
+FAIL(evidence/seal/SealControlsSealed): lean exited with status 1
+FAIL(evidence/seal/SealControlsSealed): error diagnostics reported
+FAIL(evidence/seal/SealControlsSealed): no fresh .olean produced
+elapsed 2.2s; max RSS of children 2515 MiB
+== evidence/seal/SealControlsSealed end 2026-11-11T21:40:58Z status 1
