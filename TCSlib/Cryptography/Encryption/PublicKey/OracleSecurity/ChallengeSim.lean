@@ -239,9 +239,9 @@ theorem expect_sub (c : ProbComp α) (f g : α → ℝ) :
   simp only [neg_one_mul, ← sub_eq_add_neg] at h
   exact h
 
-/-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the difference of the
-acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of the acceptance
-rates of the post-processed bit `(m₀ ≠ m₁) ∧ (a ≠ m₀)` against `Enc(0)` and `Enc(1)`.
+/-- **The pointwise case split of the CPA reduction:** for the first challenge `(m₀, m₁)`, the
+difference of the acceptance rates of `A` against `Enc(m₀)` and `Enc(m₁)` equals the difference of
+the acceptance rates of the post-processed bit `(m₀ ≠ m₁) ∧ (a ≠ m₀)` against `Enc(0)` and `Enc(1)`.
 
 **Proof sketch.** Four cases. Equal messages give `0 = 0`; `(0, 1)` gives the same difference;
 `(1, 0)` gives `(1 − p₀) − (1 − p₁) = p₁ − p₀` for the negated bit. -/
@@ -253,7 +253,7 @@ theorem expect_indicator_sub {ρ : Type} [Fintype ρ] [Nonempty ρ] (f : Bool �
           (fun re => if ((m₀ != m₁) && (f false re != m₀)) = true then (1 : ℝ) else 0) -
         expect (sample ρ)
           (fun re => if ((m₀ != m₁) && (f true re != m₀)) = true then (1 : ℝ) else 0) := by
-  have hnot : ∀ x : Bool, (if (!x) = true then (1 : ℝ) else 0) = 1 - if x = true then 1 else 0 := by
+  have hneg : ∀ x : Bool, (if (!x) = true then (1 : ℝ) else 0) = 1 - if x = true then 1 else 0 := by
     intro x
     cases x <;> norm_num
   have hf : ∀ x : Bool, (x != false) = x := fun x => by cases x <;> rfl
@@ -262,7 +262,7 @@ theorem expect_indicator_sub {ρ : Type} [Fintype ρ] [Nonempty ρ] (f : Bool �
   · simp only [bne_self_eq_false, Bool.false_and, Bool.false_eq_true, if_false, expect_const,
       sub_self]
   · simp only [show (false != true) = true from rfl, Bool.true_and, hf]
-  · simp only [show (true != false) = true from rfl, Bool.true_and, ht, hnot, expect_sub,
+  · simp only [show (true != false) = true from rfl, Bool.true_and, ht, hneg, expect_sub,
       expect_const]
     ring
   · simp only [bne_self_eq_false, Bool.false_and, Bool.false_eq_true, if_false, expect_const,
