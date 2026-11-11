@@ -1,0 +1,34 @@
+Levin production verification (PR #286), cloud, 2026-11-11 UTC. Evidence index and dispositions.
+Pins: provenance.json. Route: coordinator-directed trial merge of #286 into campaign 4a09f399 (local
+scratch commit 562ad0ca, never pushed); later campaign commit a3dcb21c changes records only (0 Lean files).
+
+1 Environment: logs/preflight.log, packages.log, cache-store.log, missing-roots.txt (23 of 375 roots),
+  cache-get.log (narrowed fetch, rc 0), cache-postcheck.log, cache-probe.log (375 roots + Std + Batteries),
+  manifest-check.log (levin-full / levin-owner manifests match PR-head sources: 0 mismatches).
+  PFR: 31 package sources copied into the worktree (blob-verified, logs/pfr-source-copy.log) because
+  Lean rejects inputs outside the root; bootstrap-attempt01-symlink/ is the failed symlink attempt.
+2 Bootstrap: bootstrap/results.jsonl + mods/*.log; tables/bootstrap.tsv. Order logs/bootstrap-order.txt
+  (31 PFR + 1164 merged closure; generator tools/ordergen.py reproduces levin-full-order.txt exactly at the
+  PR head). Owner-closure tree objects (87) byte-identical to the full bootstrap.
+  REUSE DISPOSITION (hand-off item 5): resolved by fresh bootstrap; no compiled object was reused.
+  The failed Mac probe is kept in superseded/mac-retained-reference-probe/ (superseded by fresh bootstrap).
+3 Comparison: comparison/decls2.tsv (public statements vs 5bcf11aa: 16 ADDED, 5 REMOVED = verbatim move of
+  nu block to Parameter.lean, 0 CHANGED); comparison/touched.json (touched set); owner-probes LevinCoreCensusFresh
+  (fresh base-replay vs merged objects, 39 modules); archived-comparison/ (Mac r2 census); owner-probes
+  LevinAxioms (archived 174-selection probe, verbatim) and LevinAxiomsAll (all 1,760 stored constants).
+4 Seals: seals/ (whole-file + Primitives segments), seals-facades/ (chunked), base-seals/ (base controls),
+  seal-runs/, base-seal-runs/, full-probes/ logs; seal-table.json, tables/seals.tsv, seal-failures.tsv.
+  Primitives hits Lean's 100-error cap (maxErrors cannot be raised in-file; checker passes no -D):
+  covered by base-scope segment probes (tools/mkseg.py, segloop.py); superseded/segment-attempt1 is the
+  in-namespace attempt rejected by the harness. Facades with 2,921/5,459 rows overflowed Lean's stack in
+  one command: superseded/facade-seal-attempt1; rerun with SEAL_CHUNK=1000.
+  SELF_SEAL_REDUNDANT = the new modules' own `attribute [local irreducible]` lines re-sealing names the
+  harness already sealed (no read; EOF verifier confirms all requests irreducible).
+5 Controls: controls/ and controls-facades/ (sources, plans), controls/controls-result.json, tables/controls.tsv.
+6 Scan: scan/items-phase1.json (archived lexer), owner-probes LevinExplicitKindsOwners + full-probes
+  LevinExplicitKinds (identical resolutions), scan/explicit-classification.json, tables/explicit-items.tsv.
+superseded/: every failed or replaced attempt, with DISPOSITION.txt.
+7 Attribution: attribution/ + attribution-runs/: the same whole-file seal minus one request. Removing
+  Turing.SafeRun clears exists_emitIterTM_withFuel; removing Turing.FinTM.computesFunInTime_pairSplitAt.match_1
+  clears linear_split; removing TCSlib.Cryptography.FunFamily.ofString clears exists_family (removing
+  Complexity.PolyExpr.eval.match_1 does not). Touched failures needing a fix or ruling: these three.
