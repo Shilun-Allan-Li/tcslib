@@ -242,6 +242,52 @@ theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (k : List B
     (mm : Fin (n + n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
     S.indImpl atk b n k 2 mm (some c) = .pure (c, some c) := rfl
 
+/-- The decryption oracle accepts a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_one]
+
+/-- The decryption oracle answers a validity bit followed by an `n`-bit message:
+`(S.indSpec n).rng 1 = (Fin (n + 1) → Bool)`. -/
+theorem indSpec_decRng (n : ℕ) : (S.indSpec n).rng 1 = (Fin (n + 1) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_one]
+
+/-- A challenge query contains two `n`-bit messages:
+`(S.indSpec n).dom 2 = (Fin (n + n) → Bool)`. -/
+theorem indSpec_challengeDom (n : ℕ) : (S.indSpec n).dom 2 = (Fin (n + n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_dom, S.inLens_two]
+
+/-- The challenge oracle answers a ciphertext at the fixed ciphertext width:
+`(S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool)`. -/
+theorem indSpec_challengeRng (n : ℕ) : (S.indSpec n).rng 2 = (Fin (S.ctLen.eval n) → Bool) := by
+  rw [S.indSpec_eq, bitSpec_rng, S.outLens_two]
+
+/-- The decryption equation on the query specification's type: with `c' = cast _ c` the
+ciphertext read at width `ct(n)`, `S.indImpl atk b n k 1 c st` is
+`if decOpen atk st.isSome && !decide (st = some c')` then a fresh `r ← Dec.Coins n` and the answer
+`cast _ (decAnswer (decodeFin n (Dec.runAt n ⟨k, c'⟩ r)))` with state `st`, else `⊥` with `st`. -/
+theorem indImpl_dec_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+    (c : (S.indSpec n).dom 1) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n k 1 c st =
+      if decOpen atk st.isSome && !decide (st = some (cast (S.indSpec_decDom n) c)) then
+        (ProbComp.sample (S.dec.Coins n)).bind fun r =>
+          .pure (cast (S.indSpec_decRng n).symm (decAnswer (decodeFin n
+            (S.dec.runAt n (pairEncode k (List.ofFn (cast (S.indSpec_decDom n) c))) r))), st)
+      else .pure (zeroBits _, st) := by
+  simpa only [cast_eq] using S.indImpl_dec atk b n k c st
+
+/-- The fresh challenge equation on the query specification's type: with
+`⟨m₀, m₁⟩ = splitHalf (cast _ mm)`, `S.indImpl atk b n k 2 mm none` draws `r ← Enc.Coins n`,
+sets `c = S.encryptAt n k m_b r`, and returns `cast _ c` with the state `some c`. -/
+theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
+    (mm : (S.indSpec n).dom 2) :
+    S.indImpl atk b n k 2 mm none =
+      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
+        let halves := splitHalf (cast (S.indSpec_challengeDom n) mm)
+        let c := S.encryptAt n k (if b then halves.2 else halves.1) r
+        .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
+  simpa only [cast_eq] using S.indImpl_challenge_none atk b n k mm
+
 /-- The codec of the adversary: the three oracles, and a one-bit final output. -/
 def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=
   bitCodec (S.inLens n) (S.outLens n) 1
