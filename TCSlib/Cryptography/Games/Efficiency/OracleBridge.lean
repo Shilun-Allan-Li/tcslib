@@ -206,7 +206,7 @@ theorem bridgePost_poly : PolyTimeComputable bridgePost := by
     (polyTimeComputable_ite h2 (polyTimeComputable_const [true, true])
       (polyTimeComputable_const [true, false]))).congr fun w => ?_
   rw [bridgePost_eq]
-  simp only [id, decide_eq_true_eq]
+  simp only [id_eq, decide_eq_true_eq]
 
 /-- **The translated move is the decoded move.** For every word `w`, either `decodeBitMove`
 reads the query `x` (to the only oracle) and `decodeOracleMove` reads the query `x` off
