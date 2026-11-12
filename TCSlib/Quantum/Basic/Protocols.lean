@@ -87,6 +87,7 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (�
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
   rintro ⟨U, c₁, c₂, hc₁, hc₂, hψ, hφ⟩
   set t := ∑ x, star (ψ.vec x) * φ.vec x with ht
+  -- The inner product of the inputs is `t`, and that of the outputs is `conj c₁ · c₂ · t²`.
   have hin : star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec = t := by
     simp only [dotProduct, Pi.star_apply, Ket.prod_vec, Ket.basis_vec, Fintype.sum_prod_type,
       mul_ite, mul_one, mul_zero]
@@ -99,6 +100,7 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (�
     rw [Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     ring
+  -- `U` preserves inner products, so the two agree.
   have heq : t = star c₁ * c₂ * t ^ 2 :=
     calc t = star (ψ ⊗ᵠ Ket.basis e).vec ⬝ᵥ (φ ⊗ᵠ Ket.basis e).vec := hin.symm
       _ = star ((U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec) ⬝ᵥ
@@ -106,6 +108,7 @@ theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (�
             (inner_mulVec_of_mem_unitaryGroup U.2 _ _).symm
       _ = star (c₁ • (ψ ⊗ᵠ ψ).vec) ⬝ᵥ (c₂ • (φ ⊗ᵠ φ).vec) := by rw [hψ, hφ]
       _ = star c₁ * c₂ * t ^ 2 := hout
+  -- Taking moduli, `‖t‖ = ‖t‖²`, impossible for `0 < ‖t‖ < 1`.
   have hn : ‖t‖ = ‖t‖ ^ 2 := by
     conv_lhs => rw [heq]
     rw [norm_mul, norm_mul, norm_star, hc₁, hc₂, norm_pow]; ring
@@ -235,8 +238,8 @@ private theorem cnot_extend_wires01 (z : Reg 3) :
     Function.extend wires01 (cnotMap (z ∘ wires01)) z = Function.update z 1 (z 1 + z 0) := by
   funext j
   fin_cases j
-  · exact (wires01.injective.extend_apply _ z 0).trans (by simp [cnotMap, wires01_apply])
-  · exact (wires01.injective.extend_apply _ z 1).trans (by simp [cnotMap, wires01_apply])
+  · exact (wires01.injective.extend_apply _ z 0).trans (by simp [cnotMap_eq, wires01_apply])
+  · exact (wires01.injective.extend_apply _ z 1).trans (by simp [cnotMap_eq, wires01_apply])
   · rw [Function.extend_apply' _ _ _ (by decide)]; simp
 
 /-- The teleportation state after Alice's gates, as a two-term sum over the value `a` of wire `0`
@@ -262,7 +265,7 @@ private theorem permMat_mulVec_apply {n : ℕ} (σ : Equiv.Perm (Reg n)) (w : Re
 
 /-- On one wire, `flipAt 0` adds `1` to the wire's value. -/
 private theorem flipAt_const (c : Qubit) : flipAt 0 (fun _ : Fin 1 => c) = fun _ => c + 1 := by
-  funext j; fin_cases j; simp [flipAt]
+  funext j; fin_cases j; simp [flipAt_eq]
 
 /-- `X` flips the argument of a one-qubit amplitude vector. -/
 private theorem X_mulVec_apply (w : Reg 1 → ℂ) (c : Qubit) :
@@ -297,7 +300,7 @@ theorem teleportState_vec (ψ : Ket (Reg 1)) (y : Reg 3) :
   generalize y 1 = c1
   generalize y 2 = c2
   fin_cases c0 <;> fin_cases c1 <;> fin_cases c2 <;>
-    simp [hadamardMat, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
+    simp [hadamardMat_apply, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
     ring_nf <;> rw [inv_sqrt_two_sq] <;> ring
 
 /-- Each of Alice's four measurement outcomes `(m₀, m₁)` occurs with probability `1/4`,
@@ -312,9 +315,12 @@ theorem teleport_outcome_prob (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
   set M : Matrix (Reg 1) (Reg 1) ℂ := ((Gate.X ^ m₁.val * Gate.Z ^ m₀.val : Gate 1) :
     Matrix (Reg 1) (Reg 1) ℂ) with hM
   have hU : M ∈ 𝐔[Reg 1] := (Gate.X ^ m₁.val * Gate.Z ^ m₀.val).2
+  -- Reindex the outcome's strings `(m₀, m₁, c)` by Bob's bit `c`; by `teleportState_vec`, the
+  -- summand is `‖½ (M ψ)(c)‖²`.
   rw [Finset.sum_nbij' (fun y => y 2) (fun c => ![m₀, m₁, c])
     (t := Finset.univ) (g := fun c => ‖(1 / 2 : ℂ) * (M *ᵥ ψ.vec) (fun _ => c)‖ ^ 2)]
-  · simp only [norm_mul, mul_pow, ← Finset.mul_sum]
+  · -- `M` is unitary, so `∑_c ‖(M ψ)(c)‖² = ‖ψ‖² = 1`, and the outcome has probability `1/4`.
+    simp only [norm_mul, mul_pow, ← Finset.mul_sum]
     rw [← (Equiv.funUnique (Fin 1) Qubit).sum_comp]
     have h1 : ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) (fun _ => (Equiv.funUnique (Fin 1) Qubit) x)‖ ^ 2 =
         ∑ x : Reg 1, ‖(M *ᵥ ψ.vec) x‖ ^ 2 := by
@@ -322,13 +328,15 @@ theorem teleport_outcome_prob (ψ : Ket (Reg 1)) (m₀ m₁ : Qubit) :
       congr 3; funext j; fin_cases j; rfl
     rw [h1, sum_norm_sq_mulVec_of_mem_unitaryGroup hU, ψ.normalized']
     norm_num
-  · intros; exact Finset.mem_univ _
+  · -- The reindexing is a bijection between the filtered strings and `Qubit`.
+    intros; exact Finset.mem_univ _
   · intro c _; simp
   · intro y hy
     obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
     funext j; fin_cases j <;> simp [h0, h1]
   · intros; rfl
-  · intro y hy
+  · -- The summands agree (`teleportState_vec`).
+    intro y hy
     obtain ⟨h0, h1⟩ := (Finset.mem_filter.1 hy).2
     rw [Ket.prob_eq, teleportState_vec, h0, h1]
 
@@ -423,7 +431,7 @@ private theorem superdenseState_vec_aux (b₀ b₁ : Qubit) :
   generalize y 0 = c0
   generalize y 1 = c1
   fin_cases b₀ <;> fin_cases b₁ <;> fin_cases c0 <;> fin_cases c1 <;>
-    simp [Gate.H_coe, hadamardMat, cnotMap, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
+    simp [Gate.H_coe, hadamardMat_apply, cnotMap_eq, bellVec, X_mulVec_apply, Z_mulVec_apply] <;>
     ring_nf <;> first | rfl | (rw [inv_sqrt_two_sq]; ring)
 
 /-- **Superdense coding.** Measuring Bob's two qubits gives Alice's bits `(b₀, b₁)` with

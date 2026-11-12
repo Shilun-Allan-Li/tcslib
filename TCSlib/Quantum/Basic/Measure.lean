@@ -103,10 +103,6 @@ theorem probQubit_zero_add_one (ψ : Ket (Reg n)) (i : Fin n) :
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   generalize x i = a
   revert a; decide
-example (x : Reg n) (i : Fin n) (b : Qubit) :
-    (basis x).probQubit i b = if x i = b then 1 else 0 := by
-  rw [probQubit_eq]
-  simp [prob_eq, basis_vec, apply_ite, Finset.sum_ite_eq]
 
 /-- Measuring wire `i` of the basis state `|x⟩` gives `x i` with certainty.
 

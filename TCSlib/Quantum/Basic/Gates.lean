@@ -38,6 +38,8 @@ Hadamard gate `H` is neither.
   phase gates are unitary.
 * `Quantum.permMat_mulVec_basis` — a classical gate maps `|x⟩` to `|σ x⟩`.
 * `Quantum.inv_sqrt_two_mul_self` — `(1/√2)² = 1/2`, the square of the Hadamard entries.
+* `Quantum.hadamardMat_conjTranspose`, `Quantum.hadamardMat_mul_self` — the Hadamard matrix is
+  self-adjoint and squares to the identity.
 * `Quantum.Gate.H_mul_H`, `Quantum.Gate.S_mul_S`, `Quantum.Gate.H_mul_Z_mul_H` — gate
   identities.
 * `Quantum.Gate.X_eq_H_mul_S_mul_S_mul_H` — the NOT gate from Hadamard and phase gates
@@ -216,16 +218,34 @@ theorem inv_sqrt_two_mul_self :
   rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]
   norm_num
 
-/-- The Hadamard matrix is unitary.
+/-- The Hadamard matrix is self-adjoint: its entries are real, and entry `(y, x)` depends on
+`x·y = y·x` only.
 
-**Proof sketch.** It is real and symmetric, so its adjoint is itself; its square is the identity
-by direct computation of the four entries (`(1 + 1)/2 = 1`, `(1 - 1)/2 = 0`). -/
-theorem hadamardMat_mem_unitaryGroup : hadamardMat ∈ 𝐔[Reg 1] := by
-  rw [mem_unitaryGroup_iff']
+**Proof sketch.** Entrywise: the conjugate of the real number `(-1)^(x·y) / √2` is itself, and
+`x 0 * y 0 = y 0 * x 0`. -/
+theorem hadamardMat_conjTranspose : hadamardMatᴴ = hadamardMat := by
+  ext y x
+  simp [Matrix.conjTranspose_apply, hadamardMat_apply, mul_comm (y 0)]
+
+/-- The Hadamard matrix squares to the identity. [dW26, §1.4]
+
+**Proof sketch.** Compare the four entries. Each is a two-term sum over the middle basis state
+(`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `(1 + 1)/2 = 1` if `x = y` and
+`(1 - 1)/2 = 0` otherwise (`inv_sqrt_two_mul_self`). -/
+theorem hadamardMat_mul_self : hadamardMat * hadamardMat = 1 := by
   ext y x
   rcases reg1_cases y with rfl | rfl <;> rcases reg1_cases x with rfl | rfl <;>
-    simp [Matrix.mul_apply, sum_reg1, hadamardMat, Matrix.one_apply, inv_sqrt_two_mul_self] <;>
+    simp [Matrix.mul_apply, sum_reg1, hadamardMat_apply, Matrix.one_apply,
+      inv_sqrt_two_mul_self] <;>
     first | decide | norm_num
+
+/-- The Hadamard matrix is unitary.
+
+**Proof sketch.** Its adjoint is itself (`hadamardMat_conjTranspose`) and its square is the
+identity (`hadamardMat_mul_self`). -/
+theorem hadamardMat_mem_unitaryGroup : hadamardMat ∈ 𝐔[Reg 1] := by
+  rw [mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose, hadamardMat_conjTranspose,
+    hadamardMat_mul_self]
 
 /-- The phase of `Z`: `(-1)^a` on `|a⟩`. -/
 def zPhase (x : Reg 1) : ℂ := (-1) ^ ((x 0 : Qubit) : ℕ)
@@ -310,15 +330,10 @@ private theorem gate1_ext {A B : Gate 1}
 
 /-- The Hadamard gate is its own inverse: `H H = 1`. [dW26, §1.4]
 
-**Proof sketch.** Compare the four entries (`gate1_ext`). Each is a two-term sum over the middle
-basis state (`sum_reg1`), `(1/2) ∑_z (-1)^{z(x + y)}`, which is `1` if `x = y` and `0` otherwise
-(`inv_sqrt_two_mul_self`). -/
-theorem H_mul_H : H * H = 1 := by
-  refine gate1_ext fun a b => ?_
-  fin_cases a <;> fin_cases b <;>
-    simp [Matrix.mul_apply, sum_reg1, H_coe, hadamardMat, Matrix.one_apply,
-      inv_sqrt_two_mul_self] <;>
-    first | decide | norm_num
+**Proof sketch.** The matrix of `H` is `hadamardMat`, which squares to the identity
+(`hadamardMat_mul_self`). -/
+theorem H_mul_H : H * H = 1 :=
+  Subtype.ext hadamardMat_mul_self
 
 /-- The NOT gate is its own inverse: `X X = 1` (round-1 audit, sanity statement 3).
 

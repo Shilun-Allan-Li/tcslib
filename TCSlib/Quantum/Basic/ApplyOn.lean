@@ -143,7 +143,9 @@ theorem applyOn_one (w : Fin k ↪ Fin n) : applyOn w (1 : Matrix (Reg k) (Reg k
   · rw [if_neg h, if_neg (fun hyx => h (by subst hyx; exact fun _ _ => rfl))]
 
 /-- A placed gate acts on a vector `v` by summing over the gate's own basis: the amplitude at `y`
-is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. [dW26, §2.1.2]
+is `∑ᵤ U (y ∘ w) u · v (y with u written on the wires w)`. This is a coordinate formula for an
+arbitrary matrix `U` and vector `v`; it extends the placement of unitary gates in
+[dW26, §2.1.2], which the formula does not need.
 
 **Proof sketch.** Only registers `z` agreeing with `y` off `w` contribute to
 `∑_z applyOn w U y z · v z`, and they correspond to `u : Reg k` through `z ↦ z ∘ w`, with inverse
@@ -249,6 +251,7 @@ private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w�
     (applyOn w₁ U₁ * applyOn w₂ U₂) y x =
       if (∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i) then
         U₁ (y ∘ w₁) (x ∘ w₁) * U₂ (y ∘ w₂) (x ∘ w₂) else 0 := by
+  -- The candidate intermediate register `z*` of the sketch, and its four properties.
   set zs : Reg n := fun i => if ∃ j, w₂ j = i then y i else x i with hzs
   have hz1 : zs ∘ w₁ = x ∘ w₁ := by
     funext j; simp only [Function.comp, hzs]
@@ -266,13 +269,16 @@ private theorem applyOn_mul_applyOn_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w�
       by_cases hi : ∃ j, w₂ j = i
       · rw [if_pos hi]
       · rw [if_neg hi]; exact h i h1 (fun j hj => hi ⟨j, hj⟩)
+  -- The sum over intermediate registers has only the term at `zs`.
   rw [Matrix.mul_apply, Finset.sum_eq_single zs]
-  · simp only [applyOn_apply]
+  · -- The term at `zs` is the stated expression.
+    simp only [applyOn_apply]
     rw [if_pos hA2, hz1, hz2]
     by_cases hc : ∀ i, (∀ j, w₁ j ≠ i) → (∀ j, w₂ j ≠ i) → y i = x i
     · rw [if_pos (hA1.2 hc), if_pos hc]
     · rw [if_neg (fun h => hc (hA1.1 h)), if_neg hc, zero_mul]
-  · intro z _ hz
+  · -- Any other `z` with a nonzero term would equal `zs` wire by wire.
+    intro z _ hz
     simp only [applyOn_apply]
     by_cases h1 : AgreeOff w₁ y z
     · by_cases h2 : AgreeOff w₂ z x
@@ -398,8 +404,10 @@ theorem wire_apply (i : Fin n) (j : Fin 1) : wire i j = i := rfl
 
 /-! ### Action on arbitrary vectors -/
 
-/-- A one-wire gate placed on wire `i` acts on a vector by a two-term sum over the new value `a`
-of wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`. [dW26, §1.4]
+/-- A one-wire operator placed on wire `i` acts on a vector by a two-term sum over the input bit
+`a` on wire `i`: the amplitude at `y` is `∑ₐ U (y i) a · v (y with wire i set to a)`, where `y i`
+is the output bit. A coordinate formula for an arbitrary matrix `U` and vector `v`, extending the
+one-qubit gates of [dW26, §1.4].
 
 **Proof sketch.** `applyOn_mulVec_apply`, with `Reg 1 ≃ Qubit` and the fact that writing `u` on
 the single wire `i` is `Function.update y i (u 0)`. -/
@@ -424,7 +432,7 @@ theorem applyOn_wire_mulVec_apply (i : Fin n) (U : Matrix (Reg 1) (Reg 1) ℂ) (
 amplitude at the register holding `σ⁻¹ (y ∘ w)` on the wires `w` and agreeing with `y` elsewhere.
 
 **Proof sketch.** In `applyOn_mulVec_apply`, `permMat σ (y ∘ w) u` is `1` exactly when
-`u = σ⁻¹ (y ∘ w)` and `0` otherwise (`Finset.sum_ite_eq`). -/
+`u = σ⁻¹ (y ∘ w)` and `0` otherwise, so only that term survives (`Finset.sum_eq_single`). -/
 theorem applyOn_permMat_mulVec_apply (w : Fin k ↪ Fin n) (σ : Equiv.Perm (Reg k)) (v : Reg n → ℂ)
     (y : Reg n) :
     (applyOn w (permMat σ) *ᵥ v) y = v (Function.extend w (σ.symm (y ∘ w)) y) := by
@@ -451,9 +459,9 @@ theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
   by_cases hj : j = i
   · subst hj
     refine ((wire j).injective.extend_apply _ x 0).trans ?_
-    simp [flipAt, wire_apply]
+    simp [flipAt_eq, wire_apply]
   · rw [Function.extend_apply' _ _ _ (fun ⟨a, ha⟩ => hj (by rw [← ha, wire_apply]))]
-    simp [flipAt, hj]
+    simp [flipAt_eq, hj]
 
 /-- The embedding `Fin 2 ↪ Fin 3` sending gate wire `0` to register wire `2` and gate wire `1`
 to register wire `0`: a reversed, non-contiguous placement, used as a sanity check. -/
@@ -478,10 +486,10 @@ theorem applyOn_wires20_CNOT_mulVec_basis (x : Reg 3) :
   funext j
   fin_cases j
   · rw [show ((⟨0, by decide⟩ : Fin 3)) = wires20 1 from rfl, wires20.injective.extend_apply]
-    simp [cnotMap, wires20_apply]
+    simp [cnotMap_eq, wires20_apply]
   · rw [Function.extend_apply' _ _ _ (by decide)]
     simp
   · rw [show ((⟨2, by decide⟩ : Fin 3)) = wires20 0 from rfl, wires20.injective.extend_apply]
-    simp [cnotMap, wires20_apply]
+    simp [cnotMap_eq, wires20_apply]
 
 end Quantum
