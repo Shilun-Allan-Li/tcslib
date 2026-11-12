@@ -42,17 +42,6 @@ variable (S : FixedLengthPKScheme)
 
 /-! ### Linear algebra of expectations -/
 
-/-- Changing a machine's output length along `d = d'` keeps the law of its output as a list. -/
-private theorem expect_toCompOn_outLen {k : ℕ} {ins outs : Fin k → ℕ} {σ : Type}
-    (O : QueryImpl (bitSpec ins outs) σ unifSpec) (A : NUPPT) (n q : ℕ) (x : List Bool)
-    (r : A.Coins n) (s : σ) {d d' : ℕ} (hd : d = d') (G : List Bool × σ → ℝ) :
-    expect (simulate O (A.toCompOn (bitCodec ins outs d) n q x r) s)
-        (fun p => G (List.ofFn p.1, p.2)) =
-      expect (simulate O (A.toCompOn (bitCodec ins outs d') n q x r) s)
-        (fun p => G (List.ofFn p.1, p.2)) := by
-  subst hd
-  rfl
-
 /-- The pointwise identity `2·((A₀ + A₁)/2) − (B₀ + B₁)/2 = C₁ − C₀` passes to expectations. -/
 private theorem lin_expect {α : Type} (c : ProbComp α) (A₀ A₁ B₀ B₁ C₀ C₁ : α → ℝ)
     (h : ∀ x, 2 * ((A₀ x + A₁ x) / 2) - (B₀ x + B₁ x) / 2 = C₁ x - C₀ x) :
