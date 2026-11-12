@@ -28,3 +28,11 @@ The 395-module merged-tree replay passed with all 65 inherited admissions
 in byte-identical source files. All 125 whole-proof checks and 78 paired
 controls passed. The copy review reports 197 current span
 dispositions and records the round 4 comparison separately.
+
+## Round 5 result (2026-11-12)
+
+Codex returned **CLEAR (0 blockers, 0 majors, 0 minors, 11 notes)**,
+recorded verbatim as `findings-r5.md` (SHA-256 `92085b2842295179dc936bf6dd7468d3419047901505321d75bc154688906248`).
+Notes 1–4 confirm the four round 4 repairs. Notes 5–8 confirm the retained
+reader repairs and approvals. Notes 9–11 reconcile the bundle, the fresh
+cloud replay and the copy accounting. None needs action. **Gate 129 is closed.**

@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Not yet clear to merge.** Round 5 at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`. The 395-module merged-tree replay passed with 65 inherited admissions and all 125 whole-proof checks passed. Pack and full evidence committed. Codex round 5 **Ready to dispatch**. See `campaign/gates/129-input-readers/prompt-r5.md`. |
+| #251 / 129 | **Clear to merge.** Gate 129 closed: round 5 CLEAR (0/0/0, 11 notes) at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`. Fresh 395-module replay passed on campaign Lean `ef98f168`; merges cleanly. Draft: mark ready, then merge. Then #241 and #242 refresh against it. |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the final gate 129 round 3 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
