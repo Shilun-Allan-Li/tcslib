@@ -121,7 +121,8 @@ theorem expect_sample_mem_le {T : Type} [Fintype T] [Nonempty T] [DecidableEq T]
   refine congrArg _ (funext fun t => ?_)
   rw [prob_pure]
 
-/-- A key with a value in an association list is one of its keys. -/
+/-- A key with a value in an association list is one of its keys:
+`(T.lookup x).isSome → x ∈ T.map Prod.fst`. -/
 theorem mem_keys_of_lookup_isSome {α β : Type} [DecidableEq α] (T : List (α × β)) (x : α)
     (h : (T.lookup x).isSome = true) : x ∈ T.map Prod.fst := by
   induction T with
@@ -142,7 +143,7 @@ section Records
 
 variable {n d : ℕ}
 
-/-- Adding a point grows the table by at most one. -/
+/-- Adding a point grows the table by at most one: `|(addPt b st x y hit).1| ≤ |st.1| + 1`. -/
 theorem length_addPt_le (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) :
     (addPt b st x y hit).1.length ≤ st.1.length + 1 := by
   rw [addPt_eq]
@@ -153,7 +154,8 @@ theorem flag_addPt (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bo
     (addPt b st x y hit).2.2 = (st.2.2 || hit) := by
   rw [addPt_eq]
 
-/-- Away from the challenge's nonce the recorded values do not depend on `b`. -/
+/-- Away from the challenge's nonce the recorded values do not depend on `b`:
+`hitStar st x = false → look b st x = look b' st x`. -/
 theorem look_eq_of_hitStar (b b' : Bool) (st : LState n d) (x : Fin n → Bool)
     (h : hitStar st x = false) : look b st x = look b' st x := by
   obtain ⟨T, ch, bd⟩ := st
@@ -164,7 +166,8 @@ theorem look_eq_of_hitStar (b b' : Bool) (st : LState n d) (x : Fin n → Bool)
     rw [hitStar_some, decide_eq_false_iff_not] at h
     rw [look_some, look_some, if_neg h, if_neg h]
 
-/-- Which points have a recorded value does not depend on `b`. -/
+/-- Which points have a recorded value does not depend on `b`:
+`(look b st x).isSome = (look b' st x).isSome`. -/
 theorem isSome_look_eq (b b' : Bool) (st : LState n d) (x : Fin n → Bool) :
     (look b st x).isSome = (look b' st x).isSome := by
   obtain ⟨T, ch, bd⟩ := st
@@ -177,7 +180,7 @@ theorem isSome_look_eq (b b' : Bool) (st : LState n d) (x : Fin n → Bool) :
     · rw [if_pos h, if_pos h]; rfl
     · rw [if_neg h, if_neg h]
 
-/-- Adding a point does not depend on `b`. -/
+/-- Adding a point does not depend on `b`: `addPt b st x y hit = addPt b' st x y hit`. -/
 theorem addPt_eq_of (b b' : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool) :
     addPt b st x y hit = addPt b' st x y hit := by
   rw [addPt_eq, addPt_eq, isSome_look_eq b b']
@@ -191,7 +194,10 @@ def xorPerm (v : Fin n → Bool) : Equiv.Perm (Fin n → Bool) :=
 theorem xorPerm_apply (v y : Fin n → Bool) : xorPerm v y = fun i => xor (y i) (v i) := rfl
 
 /-- **The change of variables at the challenge:** with `|m₀| = |m₁| = n`,
-`⟨r, m₀ ⊕ y⟩ = ⟨r, m₁ ⊕ (y ⊕ m₀ ⊕ m₁)⟩`. -/
+`⟨r, m₀ ⊕ y⟩ = ⟨r, m₁ ⊕ (y ⊕ m₀ ⊕ m₁)⟩`.
+
+**Proof sketch.** Both are `pairEncode ⟦r⟧ _`; compare the second components position by
+position: `m₀ᵢ ⊕ yᵢ = m₁ᵢ ⊕ (yᵢ ⊕ m₀ᵢ ⊕ m₁ᵢ)` by cases on the three bits. -/
 theorem ctOf_xorPerm (r : Fin n → Bool) {m₀ m₁ : List Bool} (h₀ : m₀.length = n)
     (h₁ : m₁.length = n) (y : Fin n → Bool) :
     ctOf r m₀ y = ctOf r m₁ (xorPerm (padFin n (List.zipWith xor m₀ m₁)) y) := by
@@ -232,7 +238,8 @@ variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (atk : Attack)
 
 /-- **The two bits agree until bad:** for CPA and CCA1 (decryption refused after the challenge)
 and `2n`-bit challenge queries, from a good state the lazy experiments for `b` and `b'` give the
-same law to good successors.
+same law to good successors: for every `g`,
+`𝔼[ys.2.2.2 ? 0 : g ys] (lazyImpl … b i x s) = 𝔼[ys.2.2.2 ? 0 : g ys] (lazyImpl … b' i x s)`.
 
 **Proof sketch.** An encryption reads `b` only at the challenge's nonce, where it raises the flag
 (`look_eq_of_hitStar`, `addPt_eq_of`). A decryption is refused after the challenge and before it
@@ -294,7 +301,11 @@ theorem lazyImpl_agree (hatk : FixedLengthScheme.decOpen atk true = false) (hi2 
         refine congrArg _ (funext fun y => ?_)
         rw [ctOf_xorPerm r (hm b) (hm b') y]
 
-/-- **The flag stays raised.** -/
+/-- **The flag stays raised:** if `s.2.2 = true`, every outcome `ys` of
+`lazyImpl … b i x s` has `ys.2.2.2 = true`.
+
+**Proof sketch.** By the oracle: every branch keeps the flag or ors it with a new bit
+(`addPt_eq`, `lazyImpl_*`). -/
 theorem lazyImpl_stick (b : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : LState n d)
     (hs : s.2.2 = true) :
     (lazyImpl ins outs d n atk b i x s).AllOutputs fun ys => ys.2.2.2 = true := by
@@ -326,7 +337,11 @@ theorem lazyImpl_stick (b : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s 
         OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun y _ =>
           OracleComp.allOutputs_pure.2 rfl
 
-/-- **Each query grows the table by at most one point.** -/
+/-- **Each query grows the table by at most one point:** every outcome `ys` of
+`lazyImpl … b i x s` has `|ys.2.1| ≤ |s.1| + 1`.
+
+**Proof sketch.** By the oracle: encryptions and open decryptions add at most one point
+(`length_addPt_le`); challenges, closed decryptions and repeats keep the table. -/
 theorem lazyImpl_grow (b : Bool) (i : Fin 3) (x : (bitSpec ins outs).dom i) (s : LState n d) :
     (lazyImpl ins outs d n atk b i x s).AllOutputs fun ys => ys.2.1.length ≤ s.1.length + 1 := by
   match i, x with
@@ -445,7 +460,8 @@ theorem abs_prob_lazyImpl_sub_le (hatk : FixedLengthScheme.decOpen atk true = fa
   simp only [List.length_nil, Nat.cast_zero, zero_add]
   ring
 
-/-- Expectations of functions `ε`-close at every point are `ε`-close. -/
+/-- Expectations of functions `ε`-close at every point are `ε`-close:
+`(∀ x, |f x - g x| ≤ ε) → |𝔼_c f - 𝔼_c g| ≤ ε`. -/
 theorem abs_expect_sub_le {ρ : Type} (c : ProbComp ρ) {f g : ρ → ℝ} {ε : ℝ}
     (h : ∀ x, |f x - g x| ≤ ε) : |expect c f - expect c g| ≤ ε := by
   have h1 : expect c f ≤ expect c g + ε :=

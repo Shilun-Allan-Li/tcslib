@@ -182,7 +182,8 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       have hx0 : padFin n (List.ofFn (padFin ((pkOut 0).eval n) (pairFstD (List.ofFn x)))) =
           padFin n (pairFstD (List.ofFn x)) := by
         rw [GGMRed.ofFn_padFin_of_length (by rw [hwf'.1, hn])]
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
+        pkHandler_impl_dec_open q atkBit b n z ω x j o hj.le hop,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
         hx0, GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn]; exact hn.symm),
         decOpen_atkOf, decAns_eq]
@@ -192,8 +193,8 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
         (ctP.eval n) n (atkOf atkBit) b f
           (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j o, Nat.le_succ _, ?_⟩
       rw [Bool.not_eq_true] at hop
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le
-          hop,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
+        pkHandler_impl_dec_closed q atkBit b n z ω x j o hj.le hop,
         simulate_pure, OracleComp.pure_bind, decOpen_atkOf, decAns_eq,
         if_neg (by rw [hop]; exact Bool.false_ne_true)]
       have hz : padFin ((pkDout 1).eval n) [] = zeroBits _ := by
@@ -213,7 +214,8 @@ theorem comp_pkAbs (i : Fin 3) (x : (bitSpecAt pkDin pkDout n).dom i)
       refine ⟨_, _, eImpl_challenge_none (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n)
           (ctP.eval n) n (atkOf atkBit) b f
         (AdaptiveCPA.extTape (pkSeedTapes q atkBit b n ω)) x j, le_rfl, ?_⟩
-      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq, pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
+      rw [QueryImpl.comp_apply, pkAbs_eq, pkHState_eq,
+        pkHandler_impl_challenge_none q atkBit b n z ω x j hj,
         simulate_query, fOuter_apply, OracleComp.pure_bind, simulate_pure, OracleComp.pure_bind,
         pkAbs_eq, pkHState_eq, hT, fOuter_tape]
 
@@ -265,13 +267,6 @@ theorem eval_toOracleAdversary_width (D : NUPPT) (n q : ℕ) (c : D.Coins n) {m 
 
 /-! ### The reduction -/
 
-/-- The cost bound of a machine's computation: at most `q` queries. -/
-theorem toComp_costBoundedBy {ι α : Type} {spec : OracleSpec ι} (A : NUPPT)
-    (codec : MachineCodec spec α) (n q : ℕ) (r : A.Coins n) :
-    (A.toComp codec n q r).CostBoundedBy (fun _ => 1) q := by
-  rw [NUPPT.toComp_eq]
-  exact buildComp_costBoundedBy _ _ q []
-
 /-- **The PRF reduction** [PS10, Theorem 168.2, step 1]: for a machine adversary `A` with budget
 `q`, an attack bit (`atkOf`) and a challenge bit `b`, there is a next-query machine `D` such that,
 at every `n` and for every function `f : {0,1}^n → {0,1}^n`, `D` with budget `qRed q` accepts
@@ -285,7 +280,7 @@ companion `A'` of `A`. Its coins are, through the bijections of T4, T2 and the c
 fixed `ω` and `r`, T4 and T2 turn `D`'s run against `f` into the evaluation, with `f`, of the
 reduction; evaluation is simulation with `fOuter f` (`simulate_ofComp_pure`), which composes with
 the handler (`simulate_bind`, `simulate_comp`, `pkHandler_finish`); along `A`'s run (at most
-`q(n)` queries, `toComp_costBoundedBy`) the composite is `eImpl` with the tapes of `ω`
+`q(n)` queries, `NUPPT.toComp_costBoundedBy`) the composite is `eImpl` with the tapes of `ω`
 (`simulate_eq_of_abs_bounded`, `comp_pkAbs`). Drawing `ω` uniformly gives fresh nonces
 (`expect_eImpl`). Widths are transported by `ofFn_evalFn_toCompOn`, `expect_fImpl_width` and
 `eval_toOracleAdversary_width`. -/
@@ -352,7 +347,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
         pkAbs q atkBit b n (0, none) from (pkAbs_eq q atkBit b n (0, none)).symm,
       simulate_eq_of_abs_bounded _ _ (pkAbs q atkBit b n) (fun s => s.1) (q.eval n)
         (fun i x s hs => comp_pkAbs q atkBit b n f [] ω i x s hs) _ (q.eval n)
-        (toComp_costBoundedBy A _ n (q.eval n) r) (0, none) (Nat.zero_add _).le,
+        (A.toComp_costBoundedBy _ n (q.eval n) r) (0, none) (Nat.zero_add _).le,
       expect_bind]
     simp only [expect_pure]
     refine congrArg _ (funext fun p => ?_)
@@ -366,7 +361,7 @@ theorem exists_prfReduction (A : NUPPT) (q : PolyExpr) (atkBit b : Bool) :
       (fun p => if (List.ofFn p.1).headD false = true then (1 : ℝ) else 0)),
     expect_eImpl _ _ _ _ _ _ _ (q.eval n)
       (fun a => if (List.ofFn a).headD false = true then (1 : ℝ) else 0) _ (q.eval n)
-      (toComp_costBoundedBy A _ n (q.eval n) r) 0 (by omega) none]
+      (A.toComp_costBoundedBy _ n (q.eval n) r) 0 (by omega) none]
   exact expect_fImpl_width (PolyExpr.eval_const 1 n) _ n _ b f A _ r
 
 end TCSlib.Cryptography.Composability.PRFGame

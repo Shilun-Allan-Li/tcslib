@@ -555,7 +555,12 @@ private theorem log_ne_nil (x' y : List Bool) :
 
 /-- **Encryption with the next tape:** from `pkState j o` with `j < q(n)`, the query `m` asks the
 outer oracle at the tape `r = T_j`, and its answer `y` gives the ciphertext `⟨r, m ⊕ y⟩` and the
-state `pkState (j + 1) o`. -/
+state `pkState (j + 1) o`.
+
+**Proof sketch.** Read the round input field by field (`fields_input`); the first round, with an
+empty log, asks the outer oracle at the tape `T_j` (`rNonce_fields`); the second, with the answer
+`y` in the log (`rY_one`), returns `⟨T_j, m ⊕ y⟩` and the state with count `j + 1`
+(`rNew_fields`); `impl_of_query` assembles the two rounds. -/
 theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j < q.eval n) :
     (pkHandler q atkBit b).impl n z ω 0 x (pkState q n j o) =
@@ -593,7 +598,11 @@ theorem pkHandler_impl_enc (x : Fin ((pkDin 0).eval n) → Bool) (j : ℕ)
 
 /-- **Open decryption:** if the oracle is open (`atkBit`, no record) and `w = ⟦x⟧ = ⟨x₀, v⟩` is
 well formed, the query asks the outer oracle at `x₀`, and its answer `y` gives `⟨1, v ⊕ y⟩`; the
-state is kept. -/
+state is kept.
+
+**Proof sketch.** As for `pkHandler_impl_enc`: the open test reads `atkBit`, the flag and the
+well-formedness of `⟦x⟧` (`fields_input`); the first round asks the outer oracle at `x₀`, the second
+returns `⟨1, v ⊕ y⟩` with the state unchanged (`impl_of_query`). -/
 theorem pkHandler_impl_dec_open (x : Fin ((pkDin 1).eval n) → Bool) (j : ℕ)
     (o : Option (Fin (ctP.eval n) → Bool)) (hj : j ≤ q.eval n)
     (hop : (atkBit && !o.isSome && decWF n (List.ofFn x)) = true) :
@@ -673,7 +682,10 @@ theorem pkHandler_impl_challenge_some (x : Fin ((pkDin 2).eval n) → Bool) (j :
 
 /-- **The first challenge with the next tape:** from `pkState j none` with `j < q(n)`, the
 challenge `⟨m₀, m₁⟩` asks the outer oracle at the tape `r = T_j`, and its answer `y` gives the
-ciphertext `c = ⟨r, m_b ⊕ y⟩`, recorded in the state `pkState (j + 1) (some c)`. -/
+ciphertext `c = ⟨r, m_b ⊕ y⟩`, recorded in the state `pkState (j + 1) (some c)`.
+
+**Proof sketch.** As for `pkHandler_impl_enc`, with the selected half `m_b` (`rMsg`, `msgOf_eq`)
+and the new record `recBits (some c)` written into the state (`rNew_fields`). -/
 theorem pkHandler_impl_challenge_none (x : Fin ((pkDin 2).eval n) → Bool) (j : ℕ)
     (hj : j < q.eval n) :
     (pkHandler q atkBit b).impl n z ω 2 x (pkState q n j none) =

@@ -322,7 +322,7 @@ there are PRF distinguishers `D₀`, `D₁` (one per bit) with
 inequality through the experiments with a uniform random function: each game is within
 `prfAdv(F_n, D_b)` of its random-function experiment (`prfAdv_prfReduction`), and the two
 random-function experiments are within `q(n)² / 2ⁿ` (`PRFGame.abs_expect_fImpl_sub_le`; the
-adversary makes at most `q(n)` queries, `toComp_costBoundedBy`). For `n = 0`, `adv ≤ 1`. -/
+adversary makes at most `q(n)` queries, `NUPPT.toComp_costBoundedBy`). For `n = 0`, `adv ≤ 1`. -/
 private theorem prf_advantage_le (atkBit : Bool) (A : NUPPT) (q : PolyExpr) :
     ∃ D₀ D₁ : NUPPT, ∀ n,
       advantage ((prfFixedScheme F E hE hFE).indGame (atkOf atkBit) A (q.eval n) false n)
@@ -365,7 +365,7 @@ private theorem prf_advantage_le (atkBit : Bool) (A : NUPPT) (q : PolyExpr) :
       (by show (pkDin 2).eval n = n + n; rw [pkDin_two, PolyExpr.eval_add, PolyExpr.eval_var])
       (fun r => A.toComp (bitCodec (fun i => (pkDin i).eval n) (fun i => (pkDout i).eval n) 1) n
         (q.eval n) r) (fun a => (List.ofFn a).headD false = true) (q.eval n)
-      (fun r => toComp_costBoundedBy A _ n _ r)
+      (fun r => A.toComp_costBoundedBy _ n _ r)
 
 /-- **Theorem 168.2 for CPA (`atkBit = false`) and CCA1 (`atkBit = true`).**
 

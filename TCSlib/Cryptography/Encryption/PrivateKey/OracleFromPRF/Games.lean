@@ -130,7 +130,9 @@ variable (ins outs : Fin 3 → ℕ) (d n : ℕ) (atk : Attack) (b : Bool)
 /-- **The oracles of `IND_b` with pad function `f`** and fresh nonces: `Enc` on `m` samples `r` and
 answers `⟨r, m ⊕ f(r)⟩`; `Dec` answers `decAns` when `decOpen atk` lets it; `Challenge` on
 `⟨m₀, m₁⟩` the first time samples `r`, answers `c = ⟨r, m_b ⊕ f(r)⟩` and records it, and later
-repeats `c`. Lengths are adjusted with `padFin`; the state is the recorded challenge. -/
+repeats `c`. Lengths are adjusted with `padFin`; the state is the recorded challenge. These are the
+oracles of `IND_b` under CPA and CCA1 (`expect_indImpl_fImpl`); under CCA2 `Dec` here does not
+refuse the challenge ciphertext. -/
 noncomputable def fImpl : QueryImpl (bitSpec ins outs) (Option (Fin d → Bool)) unifSpec
   | 0, m, s => (ProbComp.sample (Fin n → Bool)).bind fun r =>
       .pure (padFin _ (ctOf r (List.ofFn m) (f r)), s)

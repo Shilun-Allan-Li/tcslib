@@ -80,11 +80,13 @@ def look (b : Bool) (st : LState n d) (x : Fin n → Bool) : Option (Fin n → B
   | some (ml, c) => if x = rStar c then some (padAt b ml c) else st.1.lookup x
   | none => st.1.lookup x
 
-/-- Without a challenge record, the recorded values are the table's. -/
+/-- Without a challenge record, the recorded values are the table's:
+`look b (T, none, bd) x = T.lookup x`. -/
 theorem look_none (b : Bool) (T : List ((Fin n → Bool) × (Fin n → Bool))) (bd : Bool)
     (x : Fin n → Bool) : look b ((T, none, bd) : LState n d) x = T.lookup x := rfl
 
-/-- With the challenge record `⟨ml, c⟩`, the value at `r*` is the pad, elsewhere the table's. -/
+/-- With the challenge record `⟨ml, c⟩`, the value at `r*` is the pad, elsewhere the table's:
+`look b (T, some (ml, c), bd) x = if x = rStar c then some (padAt b ml c) else T.lookup x`. -/
 theorem look_some (b : Bool) (T : List ((Fin n → Bool) × (Fin n → Bool))) (ml : List Bool)
     (c : Fin d → Bool) (bd : Bool) (x : Fin n → Bool) :
     look b ((T, some (ml, c), bd) : LState n d) x =
@@ -239,14 +241,14 @@ theorem padAt_ctOf (hd : d = 3 * n + 2) (b : Bool) (r : Fin n → Bool) (ml : Li
   rw [padAt_eq, GGMRed.ofFn_padFin_of_length (by rw [length_ctOf r hm, hd]), ctOf_eq,
     pairSndD_pairEncode, zipWith_xor_cancel_left (by rw [hm, List.length_ofFn]), padFin_ofFn]
 
-/-- The flag does not change the recorded values. -/
+/-- The flag does not change the recorded values: `look b (st.1, st.2.1, bd) = look b st`. -/
 theorem look_flag (b : Bool) (st : LState n d) (bd : Bool) :
     look b ((st.1, st.2.1, bd) : LState n d) = look b st := by
   obtain ⟨T, ch, bd'⟩ := st
   cases ch <;> rfl
 
 /-- **A point with a value is not recorded again:** if `look b st x` is some value, adding `x`
-changes no recorded value, so `ovr` is unchanged. -/
+changes no recorded value, so `ovr` is unchanged: `ovr b (addPt b st x y hit) R = ovr b st R`. -/
 theorem ovr_addPt_of_isSome (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool)
     (hx : (look b st x).isSome = true) (R : (Fin n → Bool) → (Fin n → Bool)) :
     ovr b (addPt b st x y hit) R = ovr b st R := by
@@ -256,7 +258,11 @@ theorem ovr_addPt_of_isSome (b : Bool) (st : LState n d) (x y : Fin n → Bool) 
 
 /-- **A new point is a resampled value:** if `x` has no value, adding `(x, y)` gives the recorded
 values of `st` with `R` resampled to `y` at `x`:
-`ovr b (addPt b st x y hit) R = ovr b st (Function.update R x y)`. -/
+`ovr b (addPt b st x y hit) R = ovr b st (Function.update R x y)`.
+
+**Proof sketch.** At `z = x` both sides read `y` (the new table entry, resp. the update); at
+`z ≠ x` the new entry is skipped by `lookup` and the update is not read (`look_none`, `look_some`,
+`List.lookup_cons`, `Function.update_of_ne`). -/
 theorem ovr_addPt_of_none (b : Bool) (st : LState n d) (x y : Fin n → Bool) (hit : Bool)
     (hx : look b st x = none) (R : (Fin n → Bool) → (Fin n → Bool)) :
     ovr b (addPt b st x y hit) R = ovr b st (Function.update R x y) := by

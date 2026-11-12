@@ -22,7 +22,7 @@ equal lengths (`expect_fImpl_transport`).
 
 * `PRFGame.expect_indImpl_fImpl`: one call of `IND_b` has the law of `fImpl`.
 * `PRFGame.indCodec_eq_bitCodec`, `PRFGame.expect_fImpl_transport`.
-* `PRFGame.padFin_nil`, `padFin_replicate_false`, `eq_of_ofFn_eq`, `ofFn_arrowCongr_finCongr`:
+* `PRFGame.padFin_nil`, `padFin_replicate_false`, `ofFn_arrowCongr_finCongr`:
   vector readings.
 
 ## References
@@ -35,24 +35,21 @@ namespace TCSlib.Cryptography.Composability.PRFGame
 
 open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ProbComp ChallengeSim
 
-/-- Reading a vector at an equal width keeps its word. -/
+/-- Reading a vector at an equal width keeps its word:
+`⟦(arrowCongr (finCongr h) (refl Bool)) v⟧ = ⟦v⟧`. -/
 theorem ofFn_arrowCongr_finCongr {a b : ℕ} (h : a = b) (v : Fin a → Bool) :
     List.ofFn ((Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)) v) = List.ofFn v := by
   subst h
   rfl
 
 
-/-- An all-`false` list reads as the all-`false` vector at every width. -/
+/-- An all-`false` list reads as the all-`false` vector at every width:
+`padFin d (List.replicate m false) = zeroBits d`. -/
 theorem padFin_replicate_false (d m : ℕ) : padFin d (List.replicate m false) = zeroBits d := by
   rw [← ofFn_zeroBits, AdaptiveCPA.padFin_ofFn_zeroBits]
 
 /-- The empty list reads as the all-`false` vector: `padFin d [] = zeroBits d`. -/
 theorem padFin_nil (d : ℕ) : padFin d [] = zeroBits d := padFin_replicate_false d 0
-
-/-- Vectors with the same word are equal. -/
-theorem eq_of_ofFn_eq {d : ℕ} {a c : Fin d → Bool} (h : List.ofFn a = List.ofFn c) :
-    a = c :=
-  List.ofFn_injective h
 
 
 /-- **One call of `IND_b` with the key `key` has the law of `fImpl` with the pad function `fk`**
@@ -93,10 +90,10 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
     have hm : List.ofFn (cast (S.indSpec_encDom n) m) = List.ofFn m :=
       AdaptiveCPA.ofFn_cast (S.inLens_zero n) _ m
     have hm' : cast (S.indSpec_encDom n) m = padFin n (List.ofFn m) :=
-      eq_of_ofFn_eq (by rw [hm, GGMRed.ofFn_padFin_of_length (by
+      List.ofFn_injective (by rw [hm, GGMRed.ofFn_padFin_of_length (by
         rw [List.length_ofFn, S.inLens_zero])])
     congr 2
-    refine eq_of_ofFn_eq ?_
+    refine List.ofFn_injective ?_
     rw [AdaptiveCPA.ofFn_cast (S.outLens_zero n).symm _ _, hm', henc,
       GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.inLens_zero]),
       GGMRed.ofFn_padFin_of_length (by
@@ -115,7 +112,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
       refine (congrArg _ (funext fun rd => ?_)).trans (expect_const _ _)
       rw [expect_pure, expect_pure]
       congr 2
-      refine eq_of_ofFn_eq ?_
+      refine List.ofFn_injective ?_
       rw [AdaptiveCPA.ofFn_cast (S.outLens_one n).symm _ _, hc, hdec, decAns_eq, hop, Bool.true_and]
       by_cases hw : decWF n (List.ofFn c) = true
       · rw [if_pos hw, if_pos hw]
@@ -138,7 +135,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
         (cast (S.indSpec_challengeDom n) mm)).2 else (FixedLengthScheme.splitHalf
         (cast (S.indSpec_challengeDom n) mm)).1) =
         padFin n (AdaptiveCPA.msgOf n b (List.ofFn mm)) := by
-      refine eq_of_ofFn_eq ?_
+      refine List.ofFn_injective ?_
       rw [GGMRed.ofFn_padFin_of_length hmsg, AdaptiveCPA.msgOf_eq, ← hmm]
       cases b
       · exact AdaptiveCPA.ofFn_splitHalf_fst _
@@ -147,7 +144,7 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
     | some c =>
       rw [S.indImpl_challenge_repeat_onSpec, fImpl_challenge_some, expect_pure, expect_pure]
       congr 2
-      refine eq_of_ofFn_eq ?_
+      refine List.ofFn_injective ?_
       rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _,
         GGMRed.ofFn_padFin_of_length (by rw [List.length_ofFn, S.outLens_two])]
     | none =>
@@ -161,11 +158,11 @@ theorem expect_indImpl_fImpl (S : FixedLengthScheme) (atkBit b : Bool) (n : ℕ)
           ctOf (ν re) (AdaptiveCPA.msgOf n b (List.ofFn mm)) (fk (ν re)) := by
         rw [hsel, henc, GGMRed.ofFn_padFin_of_length hmsg]
       congr 2
-      · refine eq_of_ofFn_eq ?_
+      · refine List.ofFn_injective ?_
         rw [AdaptiveCPA.ofFn_cast (S.outLens_two n).symm _ _, henc',
           GGMRed.ofFn_padFin_of_length (by rw [hlenCt _ hmsg, S.outLens_two])]
       · congr 1
-        refine eq_of_ofFn_eq ?_
+        refine List.ofFn_injective ?_
         rw [henc', GGMRed.ofFn_padFin_of_length (hlenCt _ hmsg _)]
 
 
