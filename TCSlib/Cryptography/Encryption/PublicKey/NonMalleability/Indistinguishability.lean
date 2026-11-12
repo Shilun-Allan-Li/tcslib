@@ -426,11 +426,12 @@ theorem nmSecure_cca2_of_indSecure_cca2 (h : S.INDSecure .cca2) : S.NMSecure .cc
 
 /-! ### (⇐) The non-malleability adversary built from a CCA2 adversary -/
 
-/-- A two-block concatenation: for `k = 2`, `(List.ofFn f).flatten = f 0 ++ f 1`. -/
+/-- A two-block concatenation at a width only propositionally equal to `2`: for `k = 2`,
+`(List.ofFn f).flatten = f 0 ++ f 1` (`OneWay.flatten_ofFn_two` after substituting `k`). -/
 private theorem flatten_ofFn_two {k : ℕ} (hk : k = 2) (f : Fin k → List Bool) :
     (List.ofFn f).flatten = f ⟨0, by omega⟩ ++ f ⟨1, by omega⟩ := by
   subst hk
-  simp [List.ofFn_succ]
+  exact OneWay.flatten_ofFn_two f
 
 /-- **The distinguisher recovers the guess.** Let the reduction output the ciphertexts
 `c₁ = encCt … g true` (an encryption of `g^m`) and `c₂ = encCt … g false` (of `(¬g)^m`) under a
