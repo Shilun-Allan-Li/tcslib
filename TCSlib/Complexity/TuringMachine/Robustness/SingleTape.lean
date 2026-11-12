@@ -918,40 +918,38 @@ theorem one_work_tape {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     ∃ (Γ' : Type) (_ : Fintype Γ') (_ : DecidableEq Γ') (e : Γ ↪ Γ')
       (M' : FinTM Γ') (c : ℕ),
       M'.k = 1 ∧ M'.ComputesFunInTimeVia e f fun n => c * (T n + 1) ^ 2 := by
+  have hFun := (computesFunInTime_iff M f T).mp hM
   by_cases hk : M.k = 0
   · refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
       unusedTapeTM M hk, 1, rfl, ?_⟩
+    apply (computesFunInTimeVia_iff _ _ _ _).mpr
     intro x
     simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
-      ((unusedTape_computes M hk f T hM) x).mono
+      (((computesFunInTime_iff _ _ _).mp
+        (unusedTape_computes M hk f T hM)) x).mono
         (show T x.length ≤ (T x.length + 1) ^ 2 from
           (Nat.le_succ _).trans (by
             rw [pow_two]
             exact Nat.le_mul_of_pos_right _ (Nat.succ_pos _)))
   · refine ⟨SweepAlphabet Γ M.k, inferInstance, inferInstance, sweepEmbed Γ M.k,
       sweepTM M, 9 * M.k + 6, rfl, ?_⟩
+    apply (computesFunInTimeVia_iff _ _ _ _).mpr
     intro x
-    obtain ⟨hhalt, hout⟩ := (computesInTime_iff M x (f x) (T x.length)).mp (hM x)
-    have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T x.length, hhalt⟩
-    let τ := Nat.find hex
-    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none := Nat.find_spec hex
-    have ht : τ ≤ T x.length := Nat.find_min' hex hhalt
-    have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg x) t).state ≠ none :=
-      fun _ h => Nat.find_min hex h
+    obtain ⟨hhalt, hout⟩ := (computesInTime_iff M x (f x) (T x.length)).mp (hFun x)
+    obtain ⟨τ, ht, hlive, hfirst⟩ :=
+      MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hhalt
+    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none :=
+      (congrArg Cfg.state hfirst).trans hhalt
     have hrun := sweep_run_to_halt M (Nat.pos_of_ne_zero hk) x τ hlive τ (le_refl _)
-    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x := by
-      have h := M.tm.runFrom_output_eq_of_halt (M.tm.initCfg x) ht hτ
-      exact h.symm.trans hout
+    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x :=
+      (congrArg Cfg.output hfirst).trans hout
     have hc : (sweepTM M).ComputesInTime (x.map (sweepEmbed Γ M.k))
         ((f x).map (sweepEmbed Γ M.k)) (sweepTime M.k τ) := by
       apply (computesInTime_iff _ _ _ _).mpr
       rw [hrun]
       constructor
-      · change (M.tm.runFrom (M.tm.initCfg x) τ).state.map (fun q => SweepState.growLeft q 0) = none
-        rw [hτ]
-        rfl
-      · change (M.tm.runFrom (M.tm.initCfg x) τ).output.map (sweepEmbed Γ M.k) = _
-        rw [houtτ]
+      · simp only [sweepStart, sweepRevCfg_state, hτ, Option.map_none]
+      · rw [sweepStart, sweepRevCfg_output, houtτ]
     exact hc.mono ((sweepTime_le M.k τ).trans
       (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (Nat.add_le_add_right ht 1) 2)))
 
@@ -2124,29 +2122,25 @@ private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
       ((9 * M.k + 6) * (T x.length + 1) ^ 2) ∧
     ∀ t, (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) t ≤
       (9 * M.k + 6) * (S x.length + 1) := by
+  have hFun := (computesFunInTime_iff M f T).mp hM
   let y := x.map (dgRetract a₀)
-  obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hM y)
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg y) t).state = none := ⟨T y.length, hhalt⟩
-  let τ := Nat.find hex
-  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none := Nat.find_spec hex
-  have htime : τ ≤ T y.length := Nat.find_min' hex hhalt
-  have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg y) t).state ≠ none :=
-    fun _ h => Nat.find_min hex h
+  obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hFun y)
+  obtain ⟨τ, htime, hlive, hfirst⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg y) hhalt
+  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none :=
+    (congrArg Cfg.state hfirst).trans hhalt
   obtain ⟨a, n, u, window, hu, span⟩ := dg_simulate M hk a₀ x τ hlive τ (le_refl _)
   have houtτ : (M.tm.runFrom (M.tm.initCfg y) τ).output = f y :=
-    (M.tm.runFrom_output_eq_of_halt (M.tm.initCfg y) htime hτ).symm.trans hout
+    (congrArg Cfg.output hfirst).trans hout
   let final := dgStart M a₀ (M.tm.runFrom (M.tm.initCfg y) τ) a n (a * M.k - 1)
   have hf : final.state = none := by
-    change (M.tm.runFrom (M.tm.initCfg y) τ).state.map _ = none
-    rw [hτ]
-    rfl
+    simp only [final, dgStart, sweepRevCfg_state, hτ, Option.map_none]
   have compute : (dgTM M a₀).ComputesInTime x ((f y).map (sweepEmbed Γ M.k)) u := by
     apply (computesInTime_iff _ _ _ _).mpr
     rw [span.1]
     constructor
     · exact hf
-    · change (M.tm.runFrom (M.tm.initCfg y) τ).output.map (sweepEmbed Γ M.k) = _
-      rw [houtτ]
+    · rw [dgStart, sweepRevCfg_output, houtτ]
   have hpositions (v : ℕ) :
       a * M.k - 1 ≤ ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ∧
       ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ≤ (a + n) * M.k := by
@@ -2169,7 +2163,9 @@ private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     have hsub : (dgTM M a₀).tm.visitedByTapeHead ((dgTM M a₀).tm.initCfg x) v (0 : Fin 1) ⊆
         Finset.Icc (a * M.k - 1) ((a + n) * M.k) := by
       intro j hj
-      obtain ⟨s, _, rfl⟩ := Finset.mem_image.mp hj
+      obtain ⟨s, _, rfl⟩ :=
+        (MultiTapeTM.mem_visitedByTapeHead_iff (tm := (dgTM M a₀).tm)
+          ((dgTM M a₀).tm.initCfg x) v (0 : Fin 1) j).mp hj
       exact Finset.mem_Icc.mpr (hpositions s)
     have hcard : (Finset.Icc (a * M.k - 1) ((a + n) * M.k)).card = n * M.k + 2 := by
       rw [Int.card_Icc]
@@ -2178,10 +2174,12 @@ private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
         ring
       rw [he, Int.toNat_natCast]
     have hphysical : (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) v ≤ n * M.k + 2 := by
-      change (∑ i : Fin 1, ((dgTM M a₀).tm.visitedByTapeHead ((dgTM M a₀).tm.initCfg x) v i).card) ≤ _
+      rw [MultiTapeTM.spaceUsed_eq_sum]
       have hz (i : Fin 1) : i = 0 := Subsingleton.elim _ _
-      simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.nsmul_eq_mul, one_mul]
-      rw [← hcard]
+      have hk_one : (dgTM M a₀).k = 1 := rfl
+      simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, hk_one,
+        Nat.nsmul_eq_mul, one_mul]
+      rw [MultiTapeTM.spaceUsedByTape_eq_card, ← hcard]
       exact Finset.card_le_card hsub
     have hn : n ≤ S x.length := by
       have h := (dgWindow_space M y τ a n window).trans (hS y τ)

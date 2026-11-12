@@ -123,6 +123,14 @@ def maskedClock {A : Type} (W : FinTM A) (zero : A) : FinTM A where
   State := W.State
   tm := { q₀ := W.tm.q₀, tr := fun q inp ws => W.tm.tr q (inp.map (fun _ => zero)) ws }
 
+/-- Input masking uses the witness's work tapes. -/
+lemma maskedClock_k {A : Type} (W : FinTM A) (zero : A) :
+    (maskedClock W zero).k = W.k := rfl
+
+/-- Input masking uses the witness's state type. -/
+lemma maskedClock_State {A : Type} (W : FinTM A) (zero : A) :
+    (maskedClock W zero).State = W.State := rfl
+
 /-- One masked transition equals one witness transition on the constant input,
 including the absorbing halted case. -/
 private lemma maskedClock_step {A : Type} (W : FinTM A) (zero : A) {x : List A}
@@ -666,6 +674,14 @@ def obliviousSchedule (W : FinTM Bool) (a : ℕ) : FinTM OblSymbol where
         | .returnCenter =>
           if guide = some .origin then act .macroCheck 0 stay (move .pos) stay
           else act .returnCenter 0 stay stay (move .pos) }
+
+/-- The length-only schedule adds three administrative work tapes. -/
+lemma obliviousSchedule_k (W : FinTM Bool) (a : ℕ) :
+    (obliviousSchedule W a).k = W.k + 3 := rfl
+
+/-- The length-only schedule records the witness state in its clock phase. -/
+lemma obliviousSchedule_State (W : FinTM Bool) (a : ℕ) :
+    (obliviousSchedule W a).State = OblPhase W.State a := rfl
 
 /-- The length-only schedule emits no symbols; a decoration supplies the final
 answer at the schedule's final halting transition. -/

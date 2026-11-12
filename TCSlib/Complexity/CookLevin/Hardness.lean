@@ -6118,25 +6118,22 @@ module host below is locally harvested from `ClassNP/SAT.lean`, with five
 phases: native copy, complete producer, cursor initialization, emission,
 and cursor update. All inherited A/A2/A3/A4 declarations remain frozen. -/
 
-/-- A padded halting run can be cut at its first halt without changing any
-endpoint field. This is the local instance of the engine's minimal-halt
-argument: use `Nat.find` and the absorbing-halt law. -/
+/-- A padded halting run can be cut at its first positive halt without changing
+any endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live
+initial state excludes time zero. -/
 private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
     (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
     ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
       tm.runFrom cfg u = tm.runFrom cfg t := by
-  classical
-  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
-  have hu := Nat.find_spec h
-  have hle := Nat.find_min' h hhalt
-  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
-  · by_contra hn
-    have hz : Nat.find h = 0 := by omega
-    rw [hz, MultiTapeTM.runFrom_zero] at hu
-    exact hstart hu
-  · symm
-    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
+  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
+  have hp : 0 < u := by
+    by_contra hn
+    have hz : u = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
+    exact hstart hs
+  exact ⟨u, hp, hu, hg, he⟩
 
 /-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/
 private def clA5PadAction {k K : ℕ} {S : Type} (a : Action k Bool S) : Action K Bool S :=

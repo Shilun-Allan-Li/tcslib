@@ -814,13 +814,7 @@ private lemma enumCont_first_halt {k : ℕ} {S : Type} {x : List Bool}
     (hh : (tm.runFrom c₀ T).state = none) :
     ∃ t ≤ T, (∀ j < t, ¬(tm.runFrom c₀ j).Halted) ∧
       tm.runFrom c₀ t = tm.runFrom c₀ T := by
-  classical
-  have hex : ∃ t, (tm.runFrom c₀ t).state = none := ⟨T, hh⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex hh
-  refine ⟨t, ht, fun j hj => Nat.find_min hex hj, ?_⟩
-  obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
-  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+  exact MultiTapeTM.exists_first_halt tm c₀ hh
 
 /-- Administrative actions preserve the source bank and only move the native
 input and the final capture tape. -/

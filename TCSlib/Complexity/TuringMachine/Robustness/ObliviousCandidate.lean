@@ -844,22 +844,25 @@ lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
     ∃ τ ≤ b * (T x.length + 1), ∃ c : Cfg W.k Bool W.State x,
       c.state = none ∧ c.output = (T x.length).bits ∧
       (obliviousSchedule W a).tm.runFrom
-        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) = clockStageCfg W a c := by
+        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) =
+          (show Cfg (obliviousSchedule W a).k OblSymbol (obliviousSchedule W a).State
+            (x.map oblEmbed) from by
+              simpa only [obliviousSchedule_k, obliviousSchedule_State] using clockStageCfg W a c) := by
   classical
-  have hm := maskedClock_computes W T b hW x
-  have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp hm).1
-  have hex : ∃ t, ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t).state = none :=
-    ⟨_, hhalt⟩
-  let τ := Nat.find hex
-  have hs : ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ).state = none :=
-    Nat.find_spec hex
-  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
-  have hlive : ∀ t < τ, ((maskedClock W false).tm.runFrom
-      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
-  let c := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
-  have hc : (maskedClock W false).ComputesInTime x c.output τ :=
-    (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-  exact ⟨τ, ht, c, hs, hc.output_unique hm, clockStageCfg_run W a x τ hlive τ (le_refl _)⟩
+  have hspec := (FinTM.computesInTime_iff _ _ _ _).mp (maskedClock_computes W T b hW x)
+  obtain ⟨τ, hτ, hlive, hend⟩ := MultiTapeTM.exists_first_halt
+    (maskedClock W false).tm ((maskedClock W false).tm.initCfg x) hspec.1
+  let run := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
+  let c : Cfg W.k Bool W.State x := by
+    simpa only [maskedClock_k, maskedClock_State] using run
+  have hstate : run.state = none := (congrArg Cfg.state hend).trans hspec.1
+  have hout : run.output = (T x.length).bits := (congrArg Cfg.output hend).trans hspec.2
+  refine ⟨τ, hτ, c, ?_, ?_, ?_⟩
+  · simpa only [c, maskedClock_k, maskedClock_State] using hstate
+  · simpa only [c, maskedClock_k, maskedClock_State] using hout
+  · simpa only [c, run, maskedClock_k, maskedClock_State,
+      obliviousSchedule_k, obliviousSchedule_State] using
+      clockStageCfg_run W a x τ hlive τ (le_refl _)
 
 /-- The fixed sweep guide has one marked origin and two structural boundaries. -/
 def guideTape (R : ℕ) (z : ℤ) : Option OblSymbol :=

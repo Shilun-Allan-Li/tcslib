@@ -1731,10 +1731,7 @@ The same absorption argument also excludes earlier native halts. -/
 private lemma timedCut_live_before {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
     {s t : ℕ} (hst : s ≤ t) (ht : (timedCutInterpreter.runFrom cfg t).state ≠ none) :
     (timedCutInterpreter.runFrom cfg s).state ≠ none := by
-  intro hs
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
-  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
-  exact ht hs
+  exact MultiTapeTM.runFrom_state_ne_none_of_le timedCutInterpreter cfg t ht s hst
 
 /-- Every transition strictly before a live endpoint avoids record application. -/
 private lemma timedCut_no_record {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
@@ -2230,11 +2227,9 @@ private lemma timedPrefix_penultimate (bs α x : List Bool) :
 private lemma timedPrefix_live (bs α x : List Bool) (s : ℕ)
     (hs : s < 4 * bs.length + 2 * α.length + 6) :
     (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x)) s).state ≠ none := by
-  intro h
-  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show s ≤ 4 * bs.length + 2 * α.length + 5 by omega)
-  have hp := timedPrefix_penultimate bs α x
-  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h] at hp
-  exact hp h
+  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm
+    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x))
+    (4 * bs.length + 2 * α.length + 5) (timedPrefix_penultimate bs α x) s (by omega)
 
 /-- Only the extracted code is supplied to the scheme's canonizer. -/
 private def timedCanonTM (c : EffectiveMachineCode) : FinTM Bool :=
@@ -2516,16 +2511,13 @@ private lemma timedCapture_start (M : FinTM Bool) (clock : Fin M.k) (x : List Bo
       (timedCaptureTM M clock).tm.runFrom ((timedCaptureTM M clock).tm.initCfg x) t =
         timedCapturedCfg M clock (M.tm.runFrom (M.tm.initCfg x) T) := by
   classical
-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, h⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh h
-  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
-  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := by
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
-    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    (congrArg Cfg.state hcut).trans h
+  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := hcut.symm
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', timedCapture_init,
-    timedCapture_run M clock _ t (fun s hs => Nat.find_min hh hs),
+    timedCapture_run M clock _ t hlive,
     timedCapture_transfer M clock _ hs, he]
 
 
