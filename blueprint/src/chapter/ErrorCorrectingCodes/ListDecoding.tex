@@ -1,6 +1,6 @@
-\chapter{List Decoding}
+\section{List Decoding}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{List Decoding: Introduction}
 
 This chapter defines list-decodable codes and proves the
 \textbf{list-decoding capacity theorem}: for any $0<\rho\le 1-1/q$ and $L\ge 1$,
@@ -11,7 +11,7 @@ r \;=\; 1 - H_q(\rho) - \tfrac{1}{L}
 that are $(\rho,L)$-list-decodable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{List-decodable codes}
+\subsection{List-decodable codes}
 
 \begin{definition}[List-decodable code]
 \lean{ErrorCorrectingCodes.Codeword.list_decodable}
@@ -29,7 +29,7 @@ $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Counting lemmas}
+\subsection{Counting lemmas}
 
 \begin{lemma}[Existence of list-decodable codes]
 \lean{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
@@ -93,7 +93,7 @@ q^n \cdot \binom{V}{L+1} \cdot \binom{q^n - (L+1)}{\,M - (L+1)\,}
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{List-decoding capacity}
+\subsection{List-decoding capacity}
 
 \begin{theorem}[List-decoding over a q-ary alphabet]
 \lean{ErrorCorrectingCodes.Codeword.list_decoding_capacity}

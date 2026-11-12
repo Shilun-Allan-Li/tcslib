@@ -1,15 +1,15 @@
-\chapter{Error-Correcting Codes — Core Definitions}
+\section{Foundations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Foundations: Introduction}
 
 This file documents the foundational definitions for $q$-ary block codes over a finite field
 alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 \texttt{[Fintype α]}, \texttt{[Field α]}, \texttt{[DecidableEq α]}, and \texttt{[Nonempty α]}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Basic objects: codewords and codes}
+\subsection{Basic objects: codewords and codes}
 
-\subsection{Codewords}
+\subsubsection{Codewords}
 
 \begin{definition}[Codeword]
 \lean{ErrorCorrectingCodes.Codeword}
@@ -45,7 +45,7 @@ A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\
 Pointwise addition, subtraction, and the all-zero codeword.
 \end{definition}
 
-\subsection{Codes and linear codes}
+\subsubsection{Codes and linear codes}
 
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
@@ -117,7 +117,7 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Distance, weight, and rate}
+\subsection{Distance, weight, and rate}
 
 \begin{definition}[$q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
@@ -240,7 +240,7 @@ implemented as a \texttt{Finset}.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Basic lemma: distance vs.\ block length}
+\subsection{Basic lemma: distance vs.\ block length}
 
 \begin{lemma}[Minimum distance is at most the block length]
 \lean{ErrorCorrectingCodes.Codeword.dist_le_length}
@@ -256,7 +256,7 @@ distance at least $d$. Then $d \le n$.
 \end{lemma}
 
 %%% added by the blueprint pipeline
-\section{Additional declarations}
+\subsection*{Foundations: Further results}
 
 \begin{lemma}[Positivity of a natural number at least two]
 \lean{ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le}

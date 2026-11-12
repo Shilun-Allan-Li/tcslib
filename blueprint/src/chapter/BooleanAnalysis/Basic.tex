@@ -1,6 +1,6 @@
-\chapter{Boolean Analysis — Core Definitions}
+\section{Foundations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Foundations: Introduction}
 
 This chapter develops the Fourier--Walsh theory of Boolean functions
 $f : \{0,1\}^n \to \bbr$.  The uniform probability measure on $\{0,1\}^n$
@@ -23,7 +23,7 @@ The main results are:
 Cambridge University Press, 2014.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The Boolean hypercube and functions}
+\subsection{The Boolean hypercube and functions}
 
 \begin{definition}[Boolean hypercube]
 \lean{BooleanAnalysis.BoolCube}
@@ -52,7 +52,7 @@ A \emph{Boolean function} of arity $n$ is a function $f : \{0,1\}^n \to \bbr$.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Uniform measure and expectation}
+\subsection{Uniform measure and expectation}
 
 \begin{definition}[Uniform weight]
 \lean{BooleanAnalysis.uniformWeight}
@@ -151,7 +151,7 @@ where $f + g$ denotes the pointwise sum.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Walsh--Fourier characters}
+\subsection{Walsh--Fourier characters}
 
 \begin{definition}[Sign encoding]
 \lean{BooleanAnalysis.boolToSign}
@@ -2207,7 +2207,7 @@ matching the dimension of $L^2(\{0,1\}^n)$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Fourier coefficients}
+\subsection{Fourier coefficients}
 
 \begin{definition}[Fourier coefficient]
 \lean{BooleanAnalysis.fourierCoeff}
@@ -2592,7 +2592,7 @@ at the empty frequency equals its expectation under the uniform measure:
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Walsh expansion}
+\subsection{Walsh expansion}
 
 \begin{theorem}[Walsh–Fourier expansion of a Boolean function]
 \lean{BooleanAnalysis.walsh_expansion}
@@ -2961,7 +2961,7 @@ $S$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Orthonormality and Parseval's identity}
+\subsection{Orthonormality and Parseval's identity}
 
 \begin{theorem}[Orthonormality of Walsh characters]
 \lean{BooleanAnalysis.fourier_coeff_chi}
@@ -3805,7 +3805,7 @@ sum of the squares of its Fourier--Walsh coefficients over all subsets $S \subse
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Coordinate influence}
+\subsection{Coordinate influence}
 
 \begin{definition}[Bit flip]
 \lean{BooleanAnalysis.flipBit}
@@ -4485,7 +4485,7 @@ where $I[f]=\sum_{j=1}^{n}\mathrm{Inf}_j[f]$ is the total influence.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Noise operator}
+\subsection{Noise operator}
 
 \begin{definition}[Noise operator]
 \lean{BooleanAnalysis.noiseOp}
@@ -5135,7 +5135,7 @@ operator, and $\hat f(S)$ denotes the Fourier--Walsh coefficient of $f$ at $S$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Notable Boolean functions}
+\subsection{Notable Boolean functions}
 
 \begin{definition}[Dictator]
 \lean{BooleanAnalysis.dictator}
@@ -5552,7 +5552,7 @@ the inputs are $\texttt{false}$, and $-1$ otherwise.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Sensitivity}
+\subsection{Sensitivity}
 
 \begin{definition}[Sensitivity at a point]
 \lean{BooleanAnalysis.sensitivity}
@@ -5577,7 +5577,7 @@ The maximum sensitivity of $f$ over all inputs.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Properties for Arrow's theorem}
+\subsection{Properties for Arrow's theorem}
 
 \begin{definition}[Odd function]
 \lean{BooleanAnalysis.isOddFunc}
@@ -6354,7 +6354,7 @@ The \emph{Fourier weight at level $k$} is
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% added by the blueprint pipeline
-\section{Additional declarations}
+\subsection*{Foundations: Further results}
 
 \begin{lemma}[Moments under the uniform measure]
 \lean{BooleanAnalysis.moment_eq_expect}

@@ -1,6 +1,6 @@
-\chapter{Gilbert--Varshamov Bound}
+\section{Gilbert Varshamov}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Gilbert Varshamov: Introduction}
 
 This chapter proves the \textbf{Gilbert--Varshamov (GV) existence bound}:
 for any block-length $n$, dimension $k$, and distance $d$, if
@@ -13,7 +13,7 @@ minimum distance at least $d$.
 The proof is a probabilistic (union-bound) counting argument over random generator matrices.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Probabilistic bound on low-weight outputs}
+\subsection{Probabilistic bound on low-weight outputs}
 
 \begin{theorem}[Weight distribution of a random linear image is dominated by a Hamming ball]
 \lean{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
@@ -100,7 +100,7 @@ about the all-zero codeword:
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Union bound over bad matrices}
+\subsection{Union bound over bad matrices}
 
 \begin{theorem}[Existence bound via union bound]
 \lean{ErrorCorrectingCodes.Codeword.existence_bound}
@@ -192,7 +192,7 @@ of radius $d-1$ about the all-zero codeword of length $n$.
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Gilbert--Varshamov bound}
+\subsection{Gilbert--Varshamov bound}
 
 \begin{theorem}[Gilbert–Varshamov bound for linear codes]
 \lean{ErrorCorrectingCodes.Codeword.gv_bound}

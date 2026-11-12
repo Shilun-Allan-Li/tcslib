@@ -1,0 +1,1532 @@
+{
+  "schema_version": 1,
+  "parts": [
+    {
+      "id": "programs",
+      "title": "Programs and computational infrastructure",
+      "chapters": [
+        {
+          "id": "program-semantics",
+          "title": "Programs, regions, and operational semantics",
+          "modules": [
+            "Programs/Compat.tex",
+            "Programs/Light/Assigns.tex",
+            "Programs/Light/Calls.tex",
+            "Programs/Light/Frames.tex",
+            "Programs/Light/Logic.tex",
+            "Programs/Light/Regions.tex",
+            "Programs/Light/Rules.tex",
+            "Programs/Light/RunsStayInLimits.tex",
+            "Programs/Light/Syntax.tex"
+          ]
+        },
+        {
+          "id": "compiler-representation",
+          "title": "Compiler representations and expressions",
+          "modules": [
+            "Programs/Light/Compiler/Cells.tex",
+            "Programs/Light/Compiler/Conditions.tex",
+            "Programs/Light/Compiler/Expressions.tex",
+            "Programs/Light/Compiler/ProgramCode.tex",
+            "Programs/Light/Compiler/StatementCode.tex"
+          ]
+        },
+        {
+          "id": "compiler-correctness",
+          "title": "Compilation and simulation",
+          "modules": [
+            "Programs/Light/Compiler/CallFrames.tex",
+            "Programs/Light/Compiler/Dispatcher.tex",
+            "Programs/Light/Compiler/Simulation.tex",
+            "Programs/Light/Compiler/StartUp.tex",
+            "Programs/Light/Compiler/WholeProgram.tex"
+          ]
+        },
+        {
+          "id": "program-libraries",
+          "title": "Arithmetic and array routines",
+          "modules": [
+            "Programs/Light/Lib/ArrayAt.tex",
+            "Programs/Light/Lib/Copy.tex",
+            "Programs/Light/Lib/Emod.tex",
+            "Programs/Light/Lib/Logs.tex",
+            "Programs/Light/Lib/NextPair.tex",
+            "Programs/Light/Lib/Odometer.tex",
+            "Programs/Light/Lib/PowTable.tex",
+            "Programs/Light/Lib/Seg.tex",
+            "Programs/Light/Lib/Sqrt.tex"
+          ]
+        },
+        {
+          "id": "sorting",
+          "title": "Sorting and finite data utilities",
+          "modules": [
+            "Programs/Light/Lib/CountSort.tex",
+            "Programs/Light/Lib/Merge.tex",
+            "Programs/Light/Lib/MergeSort.tex",
+            "Programs/Light/Lib/Pass.tex",
+            "Programs/Light/Lib/RadixPass.tex",
+            "Programs/Util/CountingSort.tex",
+            "Programs/Util/Index.tex",
+            "Programs/Util/List.tex",
+            "Programs/Util/Odometer.tex",
+            "Programs/Util/StablePass.tex"
+          ]
+        },
+        {
+          "id": "word-ram",
+          "title": "The word RAM and machine simulation",
+          "modules": [
+            "Programs/WordRAM/Basic.tex",
+            "Complexity/RAMSimulation/Classes.tex",
+            "Complexity/RAMSimulation/Simulation.tex",
+            "Complexity/RAMSimulation/WordSize.tex",
+            "Programs/WordRAM/Extended.tex",
+            "Programs/WordRAM/Steps.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "computability",
+      "title": "Machines and computability",
+      "chapters": [
+        {
+          "id": "machine-models",
+          "title": "Configurations and deterministic machines",
+          "modules": [
+            "Complexity/TuringMachine/Configuration.tex",
+            "Complexity/TuringMachine/Deterministic.tex",
+            "Complexity/TuringMachine/Encoding.tex",
+            "Complexity/TuringMachine/Finite.tex",
+            "Complexity/TuringMachine/MathlibBridge.tex",
+            "Complexity/TuringMachine/StateRenaming.tex",
+            "Complexity/TuringMachine/Sweep.tex",
+            "Complexity/TuringMachine/SymbolLift.tex",
+            "Complexity/TuringMachine/UnaryTape.tex"
+          ]
+        },
+        {
+          "id": "machine-composition",
+          "title": "Machine composition and contracts",
+          "modules": [
+            "Complexity/TuringMachine/Build/Contract/Basic.tex",
+            "Complexity/TuringMachine/Build/Catalog.tex",
+            "Complexity/TuringMachine/Build/Contract/Catalog.tex",
+            "Complexity/TuringMachine/Build/Contract/Embed.tex",
+            "Complexity/TuringMachine/Build/Contract/Lift.tex",
+            "Complexity/TuringMachine/Build/Contract/Seam.tex",
+            "Complexity/TuringMachine/Build/Convention.tex",
+            "Complexity/TuringMachine/Build/Embed.tex",
+            "Complexity/TuringMachine/Build/Seam.tex",
+            "Complexity/TuringMachine/Build/Wrappers.tex",
+            "Complexity/TuringMachine/Build/Zone.tex",
+            "Complexity/TuringMachine/Composition.tex"
+          ]
+        },
+        {
+          "id": "machine-routines",
+          "title": "Primitive routines, records, and input devices",
+          "modules": [
+            "Complexity/TuringMachine/Build/CertShell.tex",
+            "Complexity/TuringMachine/Build/CfgRecord.tex",
+            "Complexity/TuringMachine/Build/InputCall.tex",
+            "Complexity/TuringMachine/Build/InputDevice.tex",
+            "Complexity/TuringMachine/Build/InputLength.tex",
+            "Complexity/TuringMachine/Build/InputWindow.tex",
+            "Complexity/TuringMachine/Build/Primitives.tex",
+            "Complexity/TuringMachine/Build/RecordTable.tex",
+            "Complexity/TuringMachine/Build/Scan.tex",
+            "Complexity/TuringMachine/Build/VirtualInput.tex"
+          ]
+        },
+        {
+          "id": "machine-hosts",
+          "title": "Iteration, step blocks, and clocked hosts",
+          "modules": [
+            "Complexity/TuringMachine/Build/CounterLoop.tex",
+            "Complexity/TuringMachine/Build/EmitIterBody.tex",
+            "Complexity/TuringMachine/Build/EmitIterEmbed.tex",
+            "Complexity/TuringMachine/Build/Loop.tex",
+            "Complexity/TuringMachine/Build/NDClockHost.tex",
+            "Complexity/TuringMachine/Build/NDClockHostRun.tex",
+            "Complexity/TuringMachine/Build/NDCombinators.tex",
+            "Complexity/TuringMachine/Build/NDHost.tex",
+            "Complexity/TuringMachine/Build/OracleCall.tex",
+            "Complexity/TuringMachine/Build/OracleSim.tex",
+            "Complexity/TuringMachine/Build/StepBlock.tex",
+            "Complexity/TuringMachine/Build/StepBlockForward.tex",
+            "Complexity/TuringMachine/Build/StepBlockLoop.tex",
+            "Complexity/TuringMachine/Build/StepClock.tex",
+            "Complexity/TuringMachine/Build/WindowRun.tex"
+          ]
+        },
+        {
+          "id": "counter-programs",
+          "title": "Counter programs and execution",
+          "modules": [
+            "Complexity/TuringMachine/CounterProg.tex",
+            "Complexity/TuringMachine/CounterProgInput.tex",
+            "Complexity/TuringMachine/CounterProgRun.tex"
+          ]
+        },
+        {
+          "id": "nondeterministic-machines",
+          "title": "Nondeterministic machines and replay",
+          "modules": [
+            "Complexity/TuringMachine/ChoiceReplay.tex",
+            "Complexity/TuringMachine/ChoiceWords.tex",
+            "Complexity/TuringMachine/NDCodeSimulator.tex",
+            "Complexity/TuringMachine/NDCodes.tex",
+            "Complexity/TuringMachine/Nondeterministic.tex",
+            "Complexity/TuringMachine/NondeterministicSpace.tex"
+          ]
+        },
+        {
+          "id": "oracle-machines",
+          "title": "Oracle computation",
+          "modules": [
+            "Complexity/TuringMachine/Oracle.tex",
+            "Complexity/TuringMachine/OracleAgreement.tex",
+            "Complexity/TuringMachine/OracleFinite.tex",
+            "Complexity/TuringMachine/OracleNondeterministic.tex"
+          ]
+        },
+        {
+          "id": "universal-machines",
+          "title": "Machine codes and universal simulation",
+          "modules": [
+            "Complexity/TuringMachine/CodeFormat.tex",
+            "Complexity/TuringMachine/CodeParser.tex",
+            "Complexity/TuringMachine/CodeSimulator.tex",
+            "Complexity/TuringMachine/Codes2Tape.tex",
+            "Complexity/TuringMachine/SelfUniversal.tex",
+            "Complexity/TuringMachine/Simulation.tex",
+            "Complexity/TuringMachine/Universal.tex",
+            "Complexity/TuringMachine/UniversalBlock.tex",
+            "Complexity/TuringMachine/UniversalInterpreter.tex",
+            "Complexity/TuringMachine/UniversalK.tex",
+            "Complexity/TuringMachine/UniversalStartup.tex"
+          ]
+        },
+        {
+          "id": "model-robustness",
+          "title": "Robustness of machine models",
+          "modules": [
+            "Complexity/TuringMachine/Robustness/AlphabetReduction.tex",
+            "Complexity/TuringMachine/Robustness/Bidirectional.tex",
+            "Complexity/TuringMachine/Robustness/Oblivious.tex",
+            "Complexity/TuringMachine/Robustness/ObliviousCandidate.tex",
+            "Complexity/TuringMachine/Robustness/ObliviousLedger.tex",
+            "Complexity/TuringMachine/Robustness/ObliviousSchedule.tex",
+            "Complexity/TuringMachine/Robustness/ObliviousSetup.tex",
+            "Complexity/TuringMachine/Robustness/SingleTape.tex"
+          ]
+        },
+        {
+          "id": "uncomputability",
+          "title": "Computability and the halting problem",
+          "modules": [
+            "Complexity/Uncomputability/Computable.tex",
+            "Complexity/Uncomputability/Diagonalization.tex",
+            "Complexity/Uncomputability/Halting.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "title": "Time complexity",
+      "chapters": [
+        {
+          "id": "time-classes",
+          "title": "Deterministic time and polynomial time",
+          "modules": [
+            "Complexity/ClassP/DTIME.tex",
+            "Complexity/ClassP/Examples.tex",
+            "Complexity/ClassP/ModelInvariance.tex",
+            "Complexity/ClassP/P.tex",
+            "Complexity/ClassP/TimeConstructible.tex"
+          ]
+        },
+        {
+          "id": "binary-arithmetic",
+          "title": "Binary arithmetic algorithms",
+          "modules": [
+            "Complexity/ClassP/BinaryArith/Basic.tex",
+            "Complexity/ClassP/BinaryArith/AddSub.tex",
+            "Complexity/ClassP/BinaryArith/Div.tex",
+            "Complexity/ClassP/BinaryArith/Iterate.tex",
+            "Complexity/ClassP/BinaryArith/Loops.tex",
+            "Complexity/ClassP/BinaryArith/Mul.tex",
+            "Complexity/ClassP/BinaryArith/Words.tex"
+          ]
+        },
+        {
+          "id": "number-theoretic-algorithms",
+          "title": "Modular arithmetic and number theoretic algorithms",
+          "modules": [
+            "Complexity/ClassP/BinaryArith/DetMod.tex",
+            "Complexity/ClassP/BinaryArith/DetModMath.tex",
+            "Complexity/ClassP/BinaryArith/Jacobi.tex",
+            "Complexity/ClassP/BinaryArith/ModPow.tex",
+            "Complexity/ClassP/BinaryArith/PrimeFind.tex"
+          ]
+        },
+        {
+          "id": "polynomial-time-programs",
+          "title": "Polynomial time programs and closure",
+          "modules": [
+            "Complexity/ClassNP/CounterProgPolyTime.tex",
+            "Complexity/ClassNP/ExhaustiveReplay.tex",
+            "Complexity/ClassNP/ExpPoly.tex",
+            "Complexity/ClassNP/PClosure.tex",
+            "Complexity/ClassNP/PolyTime.tex",
+            "Complexity/ClassNP/PolyTimeBlockLoop.tex",
+            "Complexity/ClassNP/PolyTimeBlockMajority.tex",
+            "Complexity/ClassNP/PolyTimeBlockTests.tex",
+            "Complexity/ClassNP/PolyTimePairing.tex",
+            "Complexity/ClassNP/PolyTimePrefix.tex",
+            "Complexity/ClassNP/Transducer.tex"
+          ]
+        },
+        {
+          "id": "time-hierarchy",
+          "title": "Time hierarchies and diagonalization",
+          "modules": [
+            "Complexity/ClassNP/EXP.tex",
+            "Complexity/Diagonalization/EXPCOM.tex",
+            "Complexity/Diagonalization/NTimeHierarchy.tex",
+            "Complexity/Diagonalization/NotTimeConstructible.tex",
+            "Complexity/Diagonalization/Relativization.tex",
+            "Complexity/TimeHierarchy/ClockLoop.tex",
+            "Complexity/TimeHierarchy/ClockMachine.tex",
+            "Complexity/TimeHierarchy/CodePrefix.tex",
+            "Complexity/TimeHierarchy/Diagonal.tex",
+            "Complexity/TimeHierarchy/Separation.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "np",
+      "title": "Nondeterminism, completeness, and the polynomial hierarchy",
+      "chapters": [
+        {
+          "id": "np-classes",
+          "title": "NP, coNP, and nondeterministic time",
+          "modules": [
+            "Complexity/ClassNP/CoNP.tex",
+            "Complexity/ClassNP/NP.tex",
+            "Complexity/ClassNP/NTIME.tex",
+            "Complexity/ClassNP/Nondeterminism.tex",
+            "Complexity/ClassNP/Reductions.tex"
+          ]
+        },
+        {
+          "id": "formulas",
+          "title": "Boolean formulas and encodings",
+          "modules": [
+            "Complexity/FormulaKit/Emit.tex",
+            "Complexity/FormulaKit/Gate.tex",
+            "Complexity/Formulas/CNF.tex",
+            "Complexity/Formulas/CNFEncoding.tex",
+            "Complexity/Formulas/DNF.tex",
+            "Complexity/Formulas/QBF.tex",
+            "Complexity/Formulas/QBFEncoding.tex"
+          ]
+        },
+        {
+          "id": "satisfiability",
+          "title": "Satisfiability and tautology",
+          "modules": [
+            "Complexity/ClassNP/SAT.tex",
+            "Complexity/ClassNP/TMSAT.tex",
+            "Complexity/ClassNP/Tautology.tex"
+          ]
+        },
+        {
+          "id": "cook-levin",
+          "title": "The Cook--Levin theorem",
+          "modules": [
+            "Complexity/CookLevin/Hardness.tex",
+            "Complexity/CookLevin/Snapshot.tex"
+          ]
+        },
+        {
+          "id": "np-reductions",
+          "title": "NP completeness reductions",
+          "modules": [
+            "Complexity/NPReductions/NAESATToColoring.tex",
+            "Complexity/NPReductions/SATTo3SAT.tex",
+            "Complexity/NPReductions/SubsetSumToPartition.tex",
+            "Complexity/NPReductions/ThreeSATToClique.tex",
+            "Complexity/NPReductions/ThreeSATToColoring.tex"
+          ]
+        },
+        {
+          "id": "polynomial-hierarchy",
+          "title": "Oracle classes and the polynomial hierarchy",
+          "modules": [
+            "Complexity/ClassOracle/Classes.tex",
+            "Complexity/ClassOracle/SATOracle.tex",
+            "Complexity/PolyHierarchy/Collapse.tex",
+            "Complexity/PolyHierarchy/Defs.tex",
+            "Complexity/PolyHierarchy/Levels.tex",
+            "Complexity/PolyHierarchy/Normalize.tex",
+            "Complexity/PolyHierarchy/Padding.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "space",
+      "title": "Space complexity",
+      "chapters": [
+        {
+          "id": "space-classes",
+          "title": "Space bounds and complexity classes",
+          "modules": [
+            "Complexity/SpaceComplexity/Basic.tex",
+            "Complexity/SpaceComplexity/Constructible.tex",
+            "Complexity/SpaceComplexity/Examples.tex",
+            "Complexity/SpaceComplexity/ImplicitPoly.tex",
+            "Complexity/SpaceComplexity/Inclusions.tex",
+            "Complexity/SpaceComplexity/NSPACE.tex",
+            "Complexity/SpaceComplexity/SpaceClasses.tex",
+            "Complexity/SpaceComplexity/UnaryLogspace.tex",
+            "Complexity/SpaceComplexity/WindowClock.tex",
+            "Complexity/SpaceComplexity/ZeroSpace.tex"
+          ]
+        },
+        {
+          "id": "space-machine-library",
+          "title": "Space bounded machine routines",
+          "modules": [
+            "Complexity/SpaceComplexity/Machines/Bank.tex",
+            "Complexity/SpaceComplexity/Machines/Bin.tex",
+            "Complexity/SpaceComplexity/Machines/Call.tex",
+            "Complexity/SpaceComplexity/Machines/CallReturn.tex",
+            "Complexity/SpaceComplexity/Machines/Clean.tex",
+            "Complexity/SpaceComplexity/Machines/CleanSweep.tex",
+            "Complexity/SpaceComplexity/Machines/DblLang.tex",
+            "Complexity/SpaceComplexity/Machines/Frag.tex",
+            "Complexity/SpaceComplexity/Machines/FragDec.tex",
+            "Complexity/SpaceComplexity/Machines/Layout.tex",
+            "Complexity/SpaceComplexity/Machines/Lib.tex",
+            "Complexity/SpaceComplexity/Machines/Parse.tex",
+            "Complexity/SpaceComplexity/Machines/Parse2.tex",
+            "Complexity/SpaceComplexity/Machines/ParseCmp.tex",
+            "Complexity/SpaceComplexity/Machines/ParsePlain.tex",
+            "Complexity/SpaceComplexity/Machines/Program.tex",
+            "Complexity/SpaceComplexity/Machines/Sim.tex",
+            "Complexity/SpaceComplexity/Machines/VWord.tex"
+          ]
+        },
+        {
+          "id": "register-machines",
+          "title": "Addressed register machines and compilation",
+          "modules": [
+            "Complexity/SpaceComplexity/Machines/ARM.tex",
+            "Complexity/SpaceComplexity/Machines/ARMKit.tex",
+            "Complexity/SpaceComplexity/Machines/ARMLoops.tex",
+            "Complexity/SpaceComplexity/Machines/ARMProof.tex",
+            "Complexity/SpaceComplexity/Machines/ARMReach.tex",
+            "Complexity/SpaceComplexity/Machines/ARMRun.tex",
+            "Complexity/SpaceComplexity/Machines/ARMSim.tex",
+            "Complexity/SpaceComplexity/Machines/ARMWidth.tex",
+            "Complexity/SpaceComplexity/Machines/ARMWidthExample.tex",
+            "Complexity/SpaceComplexity/Machines/Compile.tex",
+            "Complexity/SpaceComplexity/Machines/MARM.tex",
+            "Complexity/SpaceComplexity/Machines/MARMCompile.tex",
+            "Complexity/SpaceComplexity/Machines/MARMTime.tex",
+            "Complexity/SpaceComplexity/Machines/NARM.tex",
+            "Complexity/SpaceComplexity/Machines/NARMCompile.tex",
+            "Complexity/SpaceComplexity/Machines/NARMExample.tex",
+            "Complexity/SpaceComplexity/Machines/NARMKit.tex",
+            "Complexity/SpaceComplexity/Machines/NARMLogspace.tex",
+            "Complexity/SpaceComplexity/Machines/NARMPSem.tex",
+            "Complexity/SpaceComplexity/Machines/NARMProb.tex",
+            "Complexity/SpaceComplexity/Machines/NARMProof.tex",
+            "Complexity/SpaceComplexity/Machines/NARMRun.tex"
+          ]
+        },
+        {
+          "id": "configuration-encoding",
+          "title": "Encoding configurations and machine descriptions",
+          "modules": [
+            "Complexity/SpaceComplexity/Codec/Bridge.tex",
+            "Complexity/SpaceComplexity/Codec/Checks.tex",
+            "Complexity/SpaceComplexity/Codec/Deciders.tex",
+            "Complexity/SpaceComplexity/Codec/Engine.tex",
+            "Complexity/SpaceComplexity/Codec/Langs.tex",
+            "Complexity/SpaceComplexity/Codec/Layout.tex",
+            "Complexity/SpaceComplexity/Codec/Layout2.tex",
+            "Complexity/SpaceComplexity/Codec/Machine.tex",
+            "Complexity/SpaceComplexity/Codec/Parse.tex",
+            "Complexity/SpaceComplexity/Codec/Regs.tex",
+            "Complexity/SpaceComplexity/Codec/Run.tex",
+            "Complexity/SpaceComplexity/Codec/Scan.tex",
+            "Complexity/SpaceComplexity/Codec/Step.tex",
+            "Complexity/SpaceComplexity/Codec/StepDecider.tex",
+            "Complexity/SpaceComplexity/Codec/Valid.tex",
+            "Complexity/SpaceComplexity/Codec/Word.tex"
+          ]
+        },
+        {
+          "id": "configuration-reachability",
+          "title": "Configuration graphs and exponential search",
+          "modules": [
+            "Complexity/SpaceComplexity/ConfigCount.tex",
+            "Complexity/SpaceComplexity/ConfigGraph.tex",
+            "Complexity/SpaceComplexity/CounterProgSim.tex",
+            "Complexity/SpaceComplexity/CounterProgSimRun.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Machine.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Main.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Radius.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Relax.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Run.tex",
+            "Complexity/SpaceComplexity/ExpBFS/Search.tex",
+            "Complexity/SpaceComplexity/ExpTime.tex",
+            "Complexity/SpaceComplexity/Hierarchy.tex"
+          ]
+        },
+        {
+          "id": "savitch",
+          "title": "Savitch’s theorem",
+          "modules": [
+            "Complexity/SpaceComplexity/Savitch.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Correct.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Machine.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Reach.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Recursion.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Run.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Search.tex",
+            "Complexity/SpaceComplexity/SavitchARM/Setup.tex"
+          ]
+        },
+        {
+          "id": "logspace-reductions",
+          "title": "Logspace reductions and directed reachability",
+          "modules": [
+            "Complexity/SpaceComplexity/Logspace/InputAccess.tex",
+            "Complexity/SpaceComplexity/Logspace/Mult.tex",
+            "Complexity/SpaceComplexity/Logspace/Path.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHard.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHardDecide.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHardMachine.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHardRegs.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHardRun.tex",
+            "Complexity/SpaceComplexity/Logspace/PathHardWalk.tex",
+            "Complexity/SpaceComplexity/Logspace/PathWalk.tex",
+            "Complexity/SpaceComplexity/Logspace/PathWalkMachine.tex",
+            "Complexity/SpaceComplexity/Logspace/PathWalkProof.tex",
+            "Complexity/SpaceComplexity/Logspace/PreimageHost.tex",
+            "Complexity/SpaceComplexity/Logspace/QueryReshape.tex",
+            "Complexity/SpaceComplexity/Logspace/Reductions.tex"
+          ]
+        },
+        {
+          "id": "inductive-counting",
+          "title": "Inductive counting and space complementation",
+          "modules": [
+            "Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountGenLoop.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountGenMachine.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountGenRadius.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountGenStage.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountGenWalk.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountMath.tex",
+            "Complexity/SpaceComplexity/Logspace/ISCountRegs.tex",
+            "Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.tex"
+          ]
+        },
+        {
+          "id": "pspace-completeness",
+          "title": "Quantified formulas, games, and PSPACE completeness",
+          "modules": [
+            "Complexity/ClassPSPACE/Games.tex",
+            "Complexity/ClassPSPACE/TQBF.tex",
+            "Complexity/ClassPSPACE/TQBFARM/Correct.tex",
+            "Complexity/ClassPSPACE/TQBFARM/Leaf.tex",
+            "Complexity/ClassPSPACE/TQBFARM/Machine.tex",
+            "Complexity/ClassPSPACE/TQBFARM/Semantics.tex",
+            "Complexity/ClassPSPACE/TQBFARM/Walk.tex",
+            "Complexity/ClassPSPACE/TQBFHard.tex",
+            "Complexity/ClassPSPACE/TQBFHardBridge.tex",
+            "Complexity/ClassPSPACE/TQBFHardMachine.tex",
+            "Complexity/ClassPSPACE/TQBFHardParams.tex",
+            "Complexity/ClassPSPACE/TQBFHardSemantics.tex",
+            "Complexity/ClassPSPACE/TQBFHardTseitin.tex",
+            "Complexity/ClassPSPACE/TQBFHardVerifier.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "circuits",
+      "title": "Circuit complexity",
+      "chapters": [
+        {
+          "id": "circuit-models",
+          "title": "Circuit models, formulas, and wiring",
+          "modules": [
+            "Complexity/CircuitComplexity/Basic.tex",
+            "Complexity/CircuitComplexity/BookModelBasics.tex",
+            "Complexity/CircuitComplexity/DAGCircuit.tex",
+            "Complexity/CircuitComplexity/DAGFanin.tex",
+            "Complexity/CircuitComplexity/DAGTransform.tex",
+            "Complexity/CircuitComplexity/Encoding.tex",
+            "Complexity/CircuitComplexity/FanOut.tex",
+            "Complexity/CircuitComplexity/FeedForward.tex",
+            "Complexity/CircuitComplexity/FormulaFanOut.tex",
+            "Complexity/CircuitComplexity/Formulas.tex",
+            "Complexity/CircuitComplexity/HardWire.tex",
+            "Complexity/CircuitComplexity/LayeredDAG.tex",
+            "Complexity/CircuitComplexity/PairEncode.tex",
+            "Complexity/CircuitComplexity/SequentialCircuit.tex",
+            "Complexity/CircuitComplexity/StraightLine.tex",
+            "Complexity/CircuitComplexity/StraightLineDualRail.tex",
+            "Complexity/CircuitComplexity/StraightLineSmall.tex",
+            "Complexity/CircuitComplexity/StrictCircuit.tex",
+            "Complexity/CircuitComplexity/StrictFanOut.tex",
+            "Complexity/CircuitComplexity/StrictSize.tex",
+            "Complexity/CircuitComplexity/TreeDAG.tex",
+            "Complexity/CircuitComplexity/UnaryCode.tex",
+            "Complexity/CircuitComplexity/UnaryLanguages.tex"
+          ]
+        },
+        {
+          "id": "circuit-evaluation",
+          "title": "Circuit evaluation and its machine implementation",
+          "modules": [
+            "Complexity/CircuitComplexity/CircuitEval.tex",
+            "Complexity/CircuitComplexity/CircuitEvalCorrect.tex",
+            "Complexity/CircuitComplexity/CircuitEvalMachine.tex",
+            "Complexity/CircuitComplexity/CircuitEvalNP.tex",
+            "Complexity/CircuitComplexity/CircuitEvalRun.tex",
+            "Complexity/CircuitComplexity/CircuitEvalSpec.tex"
+          ]
+        },
+        {
+          "id": "circuit-satisfiability",
+          "title": "Circuit satisfiability and reductions",
+          "modules": [
+            "Complexity/CircuitComplexity/CircuitSat.tex",
+            "Complexity/CircuitComplexity/CircuitSatNPHard.tex",
+            "Complexity/CircuitComplexity/CircuitSatReduction.tex",
+            "Complexity/CircuitComplexity/CircuitSatReductionMachine.tex",
+            "Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.tex",
+            "Complexity/CircuitComplexity/CircuitSatReductionSpec.tex",
+            "Complexity/CircuitComplexity/CircuitSatReductionValid.tex",
+            "Complexity/CircuitComplexity/DAGCircuitSat.tex",
+            "Complexity/CircuitComplexity/DAGCircuitSatLang.tex"
+          ]
+        },
+        {
+          "id": "circuit-size",
+          "title": "Circuit size, counting, and hard functions",
+          "modules": [
+            "Complexity/CircuitComplexity/DAGHardFunctions.tex",
+            "Complexity/CircuitComplexity/HardFunctions.tex",
+            "Complexity/CircuitComplexity/Hierarchy.tex",
+            "Complexity/CircuitComplexity/Lupanov.tex",
+            "Complexity/CircuitComplexity/LupanovGates.tex",
+            "Complexity/CircuitComplexity/ShannonProbabilistic.tex",
+            "Complexity/CircuitComplexity/SizeClasses.tex",
+            "Complexity/CircuitComplexity/Universal.tex"
+          ]
+        },
+        {
+          "id": "nonuniform-computation",
+          "title": "Advice and nonuniform computation",
+          "modules": [
+            "Complexity/CircuitComplexity/Advice.tex",
+            "Complexity/CircuitComplexity/KarpLipton.tex",
+            "Complexity/CircuitComplexity/KarpLiptonPrefix.tex",
+            "Complexity/CircuitComplexity/KarpLiptonSearch.tex",
+            "Complexity/CircuitComplexity/KarpLiptonSearchFamily.tex",
+            "Complexity/CircuitComplexity/PAdviceSubsetPPoly.tex",
+            "Complexity/CircuitComplexity/PPoly.tex",
+            "Complexity/CircuitComplexity/PPolyAdvice.tex"
+          ]
+        },
+        {
+          "id": "uniform-circuits",
+          "title": "Uniform circuits and polynomial time simulation",
+          "modules": [
+            "Complexity/CircuitComplexity/Adder.tex",
+            "Complexity/CircuitComplexity/AdderLanguage.tex",
+            "Complexity/CircuitComplexity/LayeredPPoly.tex",
+            "Complexity/CircuitComplexity/PSubsetPPoly.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyConfig.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyConfigStep.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyGadget.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyProgram.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyTableau.tex",
+            "Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect.tex",
+            "Complexity/CircuitComplexity/PUniformP.tex",
+            "Complexity/CircuitComplexity/Uniform.tex",
+            "Complexity/CircuitComplexity/UniformTableau.tex",
+            "Complexity/CircuitComplexity/UniformTableauCircuit.tex",
+            "Complexity/CircuitComplexity/UniformTableauEmitter.tex",
+            "Complexity/CircuitComplexity/UniformTableauEmitterInstr.tex",
+            "Complexity/CircuitComplexity/UniformTableauEmitterLayer.tex",
+            "Complexity/CircuitComplexity/UniformTableauEmitterMain.tex",
+            "Complexity/CircuitComplexity/UniformTableauEmitterSteps.tex",
+            "Complexity/CircuitComplexity/UniformTableauSpec.tex"
+          ]
+        },
+        {
+          "id": "logspace-uniformity",
+          "title": "Logspace uniformity and parallel classes",
+          "modules": [
+            "Complexity/CircuitComplexity/LogspaceTableau.tex",
+            "Complexity/CircuitComplexity/LogspaceTableauFront.tex",
+            "Complexity/CircuitComplexity/LogspaceUniform.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformAdj.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformAdjBasic.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformCanon.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformExample.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformScan.tex",
+            "Complexity/CircuitComplexity/LogspaceUniformWalk.tex",
+            "Complexity/CircuitComplexity/NCAC.tex",
+            "Complexity/CircuitComplexity/TreeNCAC.tex"
+          ]
+        },
+        {
+          "id": "meyer",
+          "title": "Succinct circuits and Meyer’s theorem",
+          "modules": [
+            "Complexity/CircuitComplexity/Meyer.tex",
+            "Complexity/CircuitComplexity/MeyerComplete.tex",
+            "Complexity/CircuitComplexity/MeyerMachine.tex",
+            "Complexity/CircuitComplexity/MeyerMachineParse.tex",
+            "Complexity/CircuitComplexity/MeyerMachineRun.tex",
+            "Complexity/CircuitComplexity/MeyerMachineSetup.tex",
+            "Complexity/CircuitComplexity/MeyerMachineWalk.tex",
+            "Complexity/CircuitComplexity/MeyerSigma.tex",
+            "Complexity/CircuitComplexity/MeyerSigmaEXP.tex",
+            "Complexity/CircuitComplexity/MeyerSound.tex",
+            "Complexity/CircuitComplexity/MeyerSoundInput.tex",
+            "Complexity/CircuitComplexity/MeyerTab.tex",
+            "Complexity/CircuitComplexity/MeyerTableau.tex",
+            "Complexity/CircuitComplexity/MeyerVerifier.tex",
+            "Complexity/CircuitComplexity/MeyerVerifierGlue.tex",
+            "Complexity/CircuitComplexity/UHalt.tex",
+            "Complexity/CircuitComplexity/UHaltMachine.tex"
+          ]
+        },
+        {
+          "id": "switching-lemmas",
+          "title": "Restrictions, decision trees, and switching lemmas",
+          "modules": [
+            "BooleanAnalysis/Switching.tex",
+            "BooleanAnalysis/Switching/BernoulliRestriction.tex",
+            "BooleanAnalysis/Switching/CanonicalDTree.tex",
+            "BooleanAnalysis/Switching/Circuit.tex",
+            "BooleanAnalysis/Switching/Encoding.tex",
+            "BooleanAnalysis/Switching/EncodingProperties.tex",
+            "BooleanAnalysis/Switching/Restriction.tex",
+            "BooleanAnalysis/Switching/RoundTrip.tex",
+            "BooleanAnalysis/SwitchingLemma.tex"
+          ]
+        },
+        {
+          "id": "circuit-lower-bounds",
+          "title": "Parity and algebraic circuit lower bounds",
+          "modules": [
+            "BooleanAnalysis/RazborovSmolensky.tex",
+            "BooleanAnalysis/RazborovSmolensky/ACpGates.tex",
+            "BooleanAnalysis/RazborovSmolensky/CircuitDegree.tex",
+            "BooleanAnalysis/RazborovSmolensky/CircuitSize.tex",
+            "BooleanAnalysis/RazborovSmolensky/LowDegreeObstruction.tex",
+            "BooleanAnalysis/RazborovSmolensky/SmolenskyAlgebra.tex",
+            "Complexity/CircuitComplexity/Parity.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "randomized",
+      "title": "Randomized computation",
+      "chapters": [
+        {
+          "id": "probabilistic-machines",
+          "title": "Probabilistic machines and random bits",
+          "modules": [
+            "Complexity/Randomized/BiasedCoin.tex",
+            "Complexity/Randomized/BiasedCoinHalting.tex",
+            "Complexity/Randomized/Coins.tex",
+            "Complexity/Randomized/PTM.tex",
+            "Complexity/Randomized/PTMEquiv.tex",
+            "Complexity/Randomized/PolyTimeModel.tex",
+            "Complexity/Randomized/RandomBits.tex",
+            "Complexity/Randomized/UniformSample.tex"
+          ]
+        },
+        {
+          "id": "randomized-classes",
+          "title": "Randomized classes and expected time",
+          "modules": [
+            "Complexity/Randomized/Classes.tex",
+            "Complexity/Randomized/ExpectedTime.tex",
+            "Complexity/Randomized/Inclusions.tex",
+            "Complexity/Randomized/RPExpected.tex",
+            "Complexity/Randomized/ZPPEquiv.tex",
+            "Complexity/Randomized/ZPPHosts.tex",
+            "Complexity/Randomized/ZPPHostsClasses.tex"
+          ]
+        },
+        {
+          "id": "amplification",
+          "title": "Error reduction and amplification",
+          "modules": [
+            "Complexity/Randomized/BPPAmplify.tex",
+            "Complexity/Randomized/BPTIMEThreshold.tex",
+            "Complexity/Randomized/ErrorReduction.tex",
+            "Complexity/Randomized/Median.tex"
+          ]
+        },
+        {
+          "id": "randomized-algorithms",
+          "title": "Fingerprinting, primality, and polynomial identity testing",
+          "modules": [
+            "Complexity/Randomized/Fingerprint.tex",
+            "Complexity/Randomized/Matching.tex",
+            "Complexity/Randomized/MatchingMath.tex",
+            "Complexity/Randomized/Primality.tex",
+            "Complexity/Randomized/PrimalityMath.tex",
+            "Complexity/Randomized/SchwartzZippel.tex",
+            "Complexity/Randomized/ZeroP.tex",
+            "Complexity/Randomized/ZeroPEval.tex",
+            "Complexity/Randomized/ZeroPPIT.tex",
+            "Complexity/Randomized/ZeroPReduce.tex",
+            "Complexity/Randomized/ZeroPRun.tex"
+          ]
+        },
+        {
+          "id": "randomized-hierarchy",
+          "title": "Randomness, advice, and the polynomial hierarchy",
+          "modules": [
+            "Complexity/Randomized/Adleman.tex",
+            "Complexity/Randomized/AlgCircuit.tex",
+            "Complexity/Randomized/AlgCircuitExample.tex",
+            "Complexity/Randomized/BPOperator.tex",
+            "Complexity/Randomized/BPPEqP.tex",
+            "Complexity/Randomized/BPPHard.tex",
+            "Complexity/Randomized/NPPoly.tex",
+            "Complexity/Randomized/QuasiPolyHierarchy.tex",
+            "Complexity/Randomized/Reductions.tex",
+            "Complexity/Randomized/SipserGacs.tex",
+            "Complexity/Randomized/Yap.tex"
+          ]
+        },
+        {
+          "id": "random-walks",
+          "title": "Random walks and hitting times",
+          "modules": [
+            "Complexity/Randomized/DirectedWalk.tex",
+            "Complexity/Randomized/RandomWalk.tex",
+            "Complexity/Randomized/RandomWalkCover.tex",
+            "Complexity/Randomized/RandomWalkHitting.tex",
+            "Complexity/Randomized/RandomWalkMixing.tex",
+            "Complexity/Randomized/RandomWalkMixingPad.tex",
+            "Complexity/Randomized/RandomWalkPad.tex"
+          ]
+        },
+        {
+          "id": "randomized-space",
+          "title": "Randomized space and universal paths",
+          "modules": [
+            "Complexity/Randomized/BPLInP.tex",
+            "Complexity/Randomized/BPLInPCount.tex",
+            "Complexity/Randomized/BPLInPWords.tex",
+            "Complexity/Randomized/Space.tex",
+            "Complexity/Randomized/SpaceAmplify.tex",
+            "Complexity/Randomized/SpaceAmplifyPoly.tex",
+            "Complexity/Randomized/SpaceAmplifyPolyCode.tex",
+            "Complexity/Randomized/SpaceAmplifyPolyMachine.tex",
+            "Complexity/Randomized/SpaceAmplifyPolyRun.tex",
+            "Complexity/Randomized/SpaceAmplifyRun.tex",
+            "Complexity/Randomized/UPath.tex",
+            "Complexity/Randomized/UPathLoops.tex",
+            "Complexity/Randomized/UPathMachine.tex",
+            "Complexity/Randomized/UPathParse.tex",
+            "Complexity/Randomized/UPathRL.tex",
+            "Complexity/Randomized/UPathSearch.tex",
+            "Complexity/Randomized/UPathWalk.tex"
+          ]
+        },
+        {
+          "id": "expanders",
+          "title": "Expanders and pseudorandom walks",
+          "modules": [
+            "Complexity/Expanders/Basic.tex",
+            "Complexity/Expanders/Chernoff.tex",
+            "Complexity/Expanders/Mixing.tex",
+            "Complexity/Expanders/Walks.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boolean-foundations",
+      "title": "Boolean analysis and discrete applications",
+      "chapters": [
+        {
+          "id": "boolean-fourier",
+          "title": "Boolean functions and Fourier analysis",
+          "modules": [
+            "BooleanAnalysis/Basic.tex"
+          ]
+        },
+        {
+          "id": "linearity-testing",
+          "title": "Linearity testing and finite group Fourier analysis",
+          "modules": [
+            "BooleanAnalysis/BLR/BoolBLR.tex",
+            "BooleanAnalysis/BLR/BoolFourier.tex",
+            "BooleanAnalysis/BLR/LowDegree.tex",
+            "BooleanAnalysis/BLR/ZkBLR.tex",
+            "BooleanAnalysis/BLR/ZkFourier.tex"
+          ]
+        },
+        {
+          "id": "fourier-circuits",
+          "title": "Fourier concentration and circuit compression",
+          "modules": [
+            "BooleanAnalysis/LMN.tex",
+            "BooleanAnalysis/LMN/BernoulliCost.tex",
+            "BooleanAnalysis/LMN/CircuitCompression.tex",
+            "BooleanAnalysis/LMN/CircuitHelpers.tex",
+            "BooleanAnalysis/LMN/CircuitLayerReduction.tex",
+            "BooleanAnalysis/LMN/CircuitReindex.tex",
+            "BooleanAnalysis/LMN/CircuitTreeManip.tex",
+            "BooleanAnalysis/LMN/CompressionStep.tex",
+            "BooleanAnalysis/LMN/DecisionTreeFourier.tex",
+            "BooleanAnalysis/LMN/Depth3Switching.tex",
+            "BooleanAnalysis/LMN/FourierConcentration.tex",
+            "BooleanAnalysis/LMN/GateMerge.tex",
+            "BooleanAnalysis/LMN/GateSwitching.tex",
+            "BooleanAnalysis/LMN/IterativeReduction.tex",
+            "BooleanAnalysis/LMN/LMNConcentration.tex",
+            "BooleanAnalysis/LMN/NormalFormConversion.tex",
+            "BooleanAnalysis/LMN/RecursiveReduction.tex",
+            "BooleanAnalysis/LMN/RestrictionCardTail.tex",
+            "BooleanAnalysis/LMN/RestrictionCompose.tex",
+            "BooleanAnalysis/LMN/RestrictionFourier.tex",
+            "BooleanAnalysis/LMN/RestrictionMonotonicity.tex",
+            "BooleanAnalysis/LMN/SwitchingBernoulli.tex"
+          ]
+        },
+        {
+          "id": "social-choice",
+          "title": "Social choice and limited independence",
+          "modules": [
+            "BooleanAnalysis/ArrowTheorem.tex",
+            "BooleanAnalysis/polylogIndep.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hypercontractivity",
+      "title": "Hypercontractivity",
+      "chapters": [
+        {
+          "id": "cube-hypercontractivity",
+          "title": "Cube hypercontractivity",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/Cube/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Bonami.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Decomposition.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Definitions.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/FourthMoment.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/General/Bounds.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/General/Duality.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/General/Kernel.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/General/Tensorization.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/General/TwoPoint.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/OneBit.tex"
+          ]
+        },
+        {
+          "id": "reverse-hypercontractivity",
+          "title": "Reverse hypercontractivity",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/Extension.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/Holder.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/Tensorization.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoFunction.tex",
+            "BooleanAnalysis/Hypercontractivity/Cube/Reverse/TwoPoint.tex"
+          ]
+        },
+        {
+          "id": "product-hypercontractivity",
+          "title": "Product spaces and randomization",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/Products/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/Applications.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/Applications/LowDegree.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/Comparison.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/General.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/NoiseKernel.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/Norms.tex",
+            "BooleanAnalysis/Hypercontractivity/Products/Tensorization.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/Centered.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/Contraction.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/Definitions.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/General.tex",
+            "BooleanAnalysis/Hypercontractivity/Randomization/ProjectionBounds.tex"
+          ]
+        },
+        {
+          "id": "random-variable-inequalities",
+          "title": "Random-variable inequalities",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/MomentBounds.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Discrete.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/FiniteLaw.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/General.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Moments.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Norms.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Polynomial.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Symmetric.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Tensorization.tex"
+          ]
+        },
+        {
+          "id": "sharp-hypercontractivity",
+          "title": "Sharp constants and two-point inequalities",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/Parameters.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteLaw.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseContraction.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseDuality.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteNoiseOptimization.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/Parameters.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointCalculus.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointContraction.tex",
+            "BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/TwoPointLaw.tex"
+          ]
+        },
+        {
+          "id": "hypercontractive-applications",
+          "title": "Concentration, influence, KKL, and sharp-threshold applications",
+          "modules": [
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/Influence.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Concentration.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/DNF.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Elementary.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Junta.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Rounding.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/LowDegree.tex",
+            "BooleanAnalysis/Hypercontractivity/Applications/SmallSetExpansion.tex",
+            "BooleanAnalysis/Hypercontractivity/Concentration.tex",
+            "BooleanAnalysis/Hypercontractivity/SharpThresholds/Definitions.tex",
+            "BooleanAnalysis/Hypercontractivity/SharpThresholds/General.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gaussian",
+      "title": "Threshold functions and Gaussian analysis",
+      "chapters": [
+        {
+          "id": "threshold-functions",
+          "title": "Threshold functions and majority",
+          "modules": [
+            "BooleanAnalysis/ThresholdFunctions/Basic.tex",
+            "BooleanAnalysis/ThresholdFunctions/AffineKhintchine.tex",
+            "BooleanAnalysis/ThresholdFunctions/BitFlipSets.tex",
+            "BooleanAnalysis/ThresholdFunctions/DegreeOne.tex",
+            "BooleanAnalysis/ThresholdFunctions/Fourier.tex",
+            "BooleanAnalysis/ThresholdFunctions/Gaussian.tex",
+            "BooleanAnalysis/ThresholdFunctions/GaussianPolar.tex",
+            "BooleanAnalysis/ThresholdFunctions/GaussianTail.tex",
+            "BooleanAnalysis/ThresholdFunctions/LinearThresholdInfluence.tex",
+            "BooleanAnalysis/ThresholdFunctions/LowDegreeNorm.tex",
+            "BooleanAnalysis/ThresholdFunctions/Majority.tex",
+            "BooleanAnalysis/ThresholdFunctions/NoiseStability.tex",
+            "BooleanAnalysis/ThresholdFunctions/Polynomial.tex",
+            "BooleanAnalysis/ThresholdFunctions/SparseSampling.tex"
+          ]
+        },
+        {
+          "id": "gaussian-foundations",
+          "title": "Gaussian measures, Hermite expansions, and rotations",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Hermite/Basic.tex",
+            "BooleanAnalysis/GaussianSpace/Anticoncentration.tex",
+            "BooleanAnalysis/GaussianSpace/BooleanBlocks.tex",
+            "BooleanAnalysis/GaussianSpace/Definitions.tex",
+            "BooleanAnalysis/GaussianSpace/GaussianDensity.tex",
+            "BooleanAnalysis/GaussianSpace/Halfspace.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Basis.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Degree.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/GeneratingFunction.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Generator.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Noise.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Orthogonality.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Span.tex",
+            "BooleanAnalysis/GaussianSpace/Hermite/Truncation.tex",
+            "BooleanAnalysis/GaussianSpace/HermiteDefinitions.tex",
+            "BooleanAnalysis/GaussianSpace/InputMoments.tex",
+            "BooleanAnalysis/GaussianSpace/Inputs.tex",
+            "BooleanAnalysis/GaussianSpace/NormalizedBlocks.tex",
+            "BooleanAnalysis/GaussianSpace/NormalizedSums.tex",
+            "BooleanAnalysis/GaussianSpace/Rotation.tex",
+            "BooleanAnalysis/GaussianSpace/SumInvariance.tex"
+          ]
+        },
+        {
+          "id": "gaussian-noise",
+          "title": "Gaussian noise and the Ornstein--Uhlenbeck operator",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Noise.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/BlockCharacteristic.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/BooleanBounds.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/BooleanCharacteristic.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Continuity.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/ContinuousBounds.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Density.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Duality.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Exponential.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Exponents.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/FatouBound.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Fourier.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/HypercontractivePairing.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Kernel.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Linear.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/LpBounds.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/MeanBound.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Polynomial.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/PolynomialApproximation.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/Torus.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/TorusApproximation.tex",
+            "BooleanAnalysis/GaussianSpace/Noise/UniformTransfer.tex",
+            "BooleanAnalysis/GaussianSpace/NoiseDefinitions.tex",
+            "BooleanAnalysis/GaussianSpace/OrnsteinUhlenbeck.tex"
+          ]
+        },
+        {
+          "id": "invariance",
+          "title": "The invariance principle",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Invariance.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Coordinates.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Cutoff.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Moments.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Perturbation.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Replacement.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Sequence.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Smoothing.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/Taylor.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/ThirdMoments.tex",
+            "BooleanAnalysis/GaussianSpace/Invariance/ThirdOrder.tex",
+            "BooleanAnalysis/GaussianSpace/InvarianceDistribution.tex",
+            "BooleanAnalysis/GaussianSpace/InvarianceExtensions.tex",
+            "BooleanAnalysis/GaussianSpace/InvarianceTruncation.tex"
+          ]
+        },
+        {
+          "id": "gaussian-calculus",
+          "title": "Gaussian profiles and product calculus",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/IndicatorRegularity.tex",
+            "BooleanAnalysis/GaussianSpace/IndicatorSmoothing.tex",
+            "BooleanAnalysis/GaussianSpace/ProductBounds.tex",
+            "BooleanAnalysis/GaussianSpace/ProductDensity.tex",
+            "BooleanAnalysis/GaussianSpace/ProductDifferentiation.tex",
+            "BooleanAnalysis/GaussianSpace/ProductHessian.tex",
+            "BooleanAnalysis/GaussianSpace/Profile.tex",
+            "BooleanAnalysis/GaussianSpace/ProfileApproximation.tex",
+            "BooleanAnalysis/GaussianSpace/SmoothVariation.tex"
+          ]
+        },
+        {
+          "id": "bobkov",
+          "title": "Bobkov inequalities and tensorization",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Bobkov.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/Cube.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/DiscreteApproximation.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/Interpolation.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/Noise.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/Tensorization.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/TwoPoint.tex",
+            "BooleanAnalysis/GaussianSpace/Bobkov/Walk.tex",
+            "BooleanAnalysis/GaussianSpace/GaussianBobkov.tex"
+          ]
+        },
+        {
+          "id": "borell",
+          "title": "Borell inequalities and Gaussian surface area",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Borell.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Affine.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Bivariate.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Definitions.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Halfspace.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Indicator.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Integration.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/Interpolation.tex",
+            "BooleanAnalysis/GaussianSpace/Borell/ProfileCalculus.tex",
+            "BooleanAnalysis/GaussianSpace/SurfaceArea.tex",
+            "BooleanAnalysis/GaussianSpace/SurfaceExamples.tex",
+            "BooleanAnalysis/GaussianSpace/SurfaceRelaxation.tex"
+          ]
+        },
+        {
+          "id": "gaussian-applications",
+          "title": "Noise stability, social choice, and approximation",
+          "modules": [
+            "BooleanAnalysis/GaussianSpace/Condorcet.tex",
+            "BooleanAnalysis/GaussianSpace/MajorityIsStablest.tex",
+            "BooleanAnalysis/GaussianSpace/MaxCut.tex",
+            "BooleanAnalysis/GaussianSpace/MaxCutAlgorithm.tex",
+            "BooleanAnalysis/GaussianSpace/MaxCutDefinitions.tex",
+            "BooleanAnalysis/GaussianSpace/UniqueGames.tex",
+            "BooleanAnalysis/GaussianSpace/UniqueGamesDefinitions.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "communication",
+      "title": "Communication complexity",
+      "chapters": [
+        {
+          "id": "communication-models",
+          "title": "Deterministic protocols and communication",
+          "modules": [
+            "CommunicationComplexity/DeterministicCC/BalancedSimulation.tex",
+            "CommunicationComplexity/DeterministicCC/BitString.tex",
+            "CommunicationComplexity/DeterministicCC/DetBasic.tex",
+            "CommunicationComplexity/DeterministicCC/DetComplexity.tex",
+            "CommunicationComplexity/DeterministicCC/DetComposition.tex",
+            "CommunicationComplexity/DeterministicCC/FiniteMessage.tex",
+            "CommunicationComplexity/DeterministicCC/Helper.tex",
+            "CommunicationComplexity/DeterministicCC/Subprotocol.tex",
+            "CommunicationComplexity/DeterministicCC/Transcript.tex",
+            "CommunicationComplexity/DeterministicCC/Trees.tex",
+            "CommunicationComplexity/DeterministicCC/UpperBounds.tex"
+          ]
+        },
+        {
+          "id": "communication-lower-bounds",
+          "title": "Rectangles, rank, and deterministic lower bounds",
+          "modules": [
+            "CommunicationComplexity/DeterministicCC/FuncIndexing/Basic.tex",
+            "CommunicationComplexity/DeterministicCC/DetRectangle.tex",
+            "CommunicationComplexity/DeterministicCC/FuncDisjointness.tex",
+            "CommunicationComplexity/DeterministicCC/FuncEquality.tex",
+            "CommunicationComplexity/DeterministicCC/FuncIndexing/LowerBound.tex",
+            "CommunicationComplexity/DeterministicCC/Hamming.tex",
+            "CommunicationComplexity/DeterministicCC/OneWay.tex",
+            "CommunicationComplexity/DeterministicCC/Rank.tex",
+            "CommunicationComplexity/DeterministicCC/Rectangle.tex"
+          ]
+        },
+        {
+          "id": "randomized-protocols",
+          "title": "Private and public coin protocols",
+          "modules": [
+            "CommunicationComplexity/NewmanTheorem/CoinTape.tex",
+            "CommunicationComplexity/NewmanTheorem/PrivateCoinBasic.tex",
+            "CommunicationComplexity/NewmanTheorem/PrivateCoinComplexity.tex",
+            "CommunicationComplexity/NewmanTheorem/PrivateCoinComposition.tex",
+            "CommunicationComplexity/NewmanTheorem/PrivateCoinFiniteMessage.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinBasic.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinComplexity.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinComposition.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinFiniteMessage.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinOneWay.tex"
+          ]
+        },
+        {
+          "id": "communication-information",
+          "title": "Information inequalities for communication",
+          "modules": [
+            "CommunicationComplexity/NewmanTheorem/Entropy.tex",
+            "CommunicationComplexity/NewmanTheorem/FiniteProbabilitySpace.tex",
+            "CommunicationComplexity/NewmanTheorem/KLDivergence.tex",
+            "CommunicationComplexity/NewmanTheorem/Pinsker.tex",
+            "CommunicationComplexity/NewmanTheorem/TVDistance.tex"
+          ]
+        },
+        {
+          "id": "newman",
+          "title": "Newman’s theorem and minimax methods",
+          "modules": [
+            "CommunicationComplexity/NewmanTheorem.tex",
+            "CommunicationComplexity/NewmanTheorem/Comparison.tex",
+            "CommunicationComplexity/NewmanTheorem/Derandomization.tex",
+            "CommunicationComplexity/NewmanTheorem/Minimax.tex",
+            "CommunicationComplexity/NewmanTheorem/OneWayMinimax.tex",
+            "CommunicationComplexity/NewmanTheorem/PrivateCoinApproximation.tex",
+            "CommunicationComplexity/NewmanTheorem/PublicCoinApproximation.tex"
+          ]
+        },
+        {
+          "id": "randomized-communication-bounds",
+          "title": "Discrepancy, disjointness, and randomized lower bounds",
+          "modules": [
+            "CommunicationComplexity/NewmanTheorem/Discrepancy.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/DualHardSample.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/HardSample.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/InformationTerms.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncHash.tex",
+            "CommunicationComplexity/NewmanTheorem/FuncInnerProduct.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "title": "Information theory and hashing",
+      "chapters": [
+        {
+          "id": "finite-information",
+          "title": "Finite distributions and statistical distance",
+          "modules": [
+            "InformationTheory/FinDist.tex",
+            "InformationTheory/StatisticalDistance.tex"
+          ]
+        },
+        {
+          "id": "hashing",
+          "title": "Universal hashing and the leftover hash lemma",
+          "modules": [
+            "InformationTheory/LeftoverHash.tex",
+            "InformationTheory/UniversalHashing.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "codes",
+      "title": "Error-correcting codes",
+      "chapters": [
+        {
+          "id": "code-bounds",
+          "title": "Codes and classical bounds",
+          "modules": [
+            "ErrorCorrectingCodes/Basic.tex",
+            "ErrorCorrectingCodes/HammingBound.tex",
+            "ErrorCorrectingCodes/MRRW.tex",
+            "ErrorCorrectingCodes/SingletonBound.tex"
+          ]
+        },
+        {
+          "id": "linear-codes",
+          "title": "Entropy, linear codes, and Gilbert--Varshamov bounds",
+          "modules": [
+            "ErrorCorrectingCodes/Entropy.tex",
+            "ErrorCorrectingCodes/GilbertVarshamov.tex",
+            "ErrorCorrectingCodes/LinearCodes.tex"
+          ]
+        },
+        {
+          "id": "list-decoding",
+          "title": "List decoding and the Johnson bound",
+          "modules": [
+            "ErrorCorrectingCodes/JohnsonBound.tex",
+            "ErrorCorrectingCodes/ListDecoding.tex"
+          ]
+        },
+        {
+          "id": "quantum-codes",
+          "title": "Quantum codes and bounds",
+          "modules": [
+            "ErrorCorrectingCodes/CSS.tex",
+            "ErrorCorrectingCodes/QuantumHamming.tex",
+            "ErrorCorrectingCodes/QuantumSingleton.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cryptography",
+      "title": "Cryptography",
+      "chapters": [
+        {
+          "id": "public-key-cryptography",
+          "title": "RSA and identification protocols",
+          "modules": [
+            "Cryptography/RSA.tex",
+            "Cryptography/SchnorrProtocol.tex"
+          ]
+        },
+        {
+          "id": "secret-sharing",
+          "title": "Polynomial secret sharing",
+          "modules": [
+            "Cryptography/SecretSharing/Defs.tex",
+            "Cryptography/SecretSharing/Interpolation.tex",
+            "Cryptography/SecretSharing/Shamir.tex",
+            "Cryptography/SecretSharing/Sharing.tex",
+            "Cryptography/SecretSharing/Vector.tex"
+          ]
+        },
+        {
+          "id": "multiparty-computation",
+          "title": "Secure multiparty computation",
+          "modules": [
+            "Cryptography/MPC/ArithmeticCircuit.tex",
+            "Cryptography/MPC/BGW/Privacy.tex",
+            "Cryptography/MPC/BGW/Protocol.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "graphs",
+      "title": "Graph theory",
+      "chapters": [
+        {
+          "id": "graph-foundations",
+          "title": "Graphs, subgraphs, and connectivity",
+          "modules": [
+            "GraphTheory/Core/Connectivity.tex",
+            "GraphTheory/Core/DirectedGraphs.tex",
+            "GraphTheory/Core/GraphsAndSubgraphs.tex"
+          ]
+        },
+        {
+          "id": "trees-spanning",
+          "title": "Trees and minimum spanning trees",
+          "modules": [
+            "GraphTheory/Kruskal/Basic.tex",
+            "GraphTheory/Core/Trees.tex",
+            "GraphTheory/Kruskal/Exchange.tex",
+            "GraphTheory/Kruskal/Optimality.tex",
+            "GraphTheory/Kruskal/Reach.tex",
+            "GraphTheory/Kruskal/UnionFind.tex"
+          ]
+        },
+        {
+          "id": "cuts-networks",
+          "title": "Cuts, networks, and randomized contraction",
+          "modules": [
+            "GraphTheory/Core/Networks.tex",
+            "GraphTheory/KargerMinCut.tex",
+            "GraphTheory/KargerMinCutTrace.tex"
+          ]
+        },
+        {
+          "id": "matchings",
+          "title": "Matchings and independent sets",
+          "modules": [
+            "GraphTheory/Core/IndependentSetsCliques.tex",
+            "GraphTheory/Core/Matchings.tex"
+          ]
+        },
+        {
+          "id": "colourings",
+          "title": "Vertex and edge colourings",
+          "modules": [
+            "GraphTheory/Core/EdgeColourings.tex",
+            "GraphTheory/Core/VertexColourings.tex"
+          ]
+        },
+        {
+          "id": "cycles",
+          "title": "Cycles, bonds, and Euler--Hamilton theory",
+          "modules": [
+            "GraphTheory/Core/CycleSpaceBondSpace.tex",
+            "GraphTheory/Core/EulerHamilton.tex"
+          ]
+        },
+        {
+          "id": "planarity",
+          "title": "Planar graphs",
+          "modules": [
+            "GraphTheory/Core/PlanarGraphs.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "learning",
+      "title": "Learning theory and geometric tools",
+      "chapters": [
+        {
+          "id": "online-learning",
+          "title": "Halving and weighted majority",
+          "modules": [
+            "LearningTheory/Halving.tex",
+            "LearningTheory/WeightedMajority.tex"
+          ]
+        },
+        {
+          "id": "hedge",
+          "title": "Hedge and regret bounds",
+          "modules": [
+            "LearningTheory/Hedge.tex",
+            "LearningTheory/Hedge/ConvexPrediction.tex",
+            "LearningTheory/Hedge/Episode.tex",
+            "LearningTheory/Hedge/Hoeffding.tex",
+            "LearningTheory/Hedge/Regret.tex"
+          ]
+        },
+        {
+          "id": "minimax-learning",
+          "title": "Minimax and learning in games",
+          "modules": [
+            "LearningTheory/Minimax.tex",
+            "LearningTheory/Minimax/CCE.tex",
+            "LearningTheory/Minimax/ConvexMinimaxCore.tex",
+            "LearningTheory/Minimax/ConvexMinimaxNoRegret.tex",
+            "LearningTheory/Minimax/ConvexMinimaxSeparation.tex",
+            "LearningTheory/Minimax/FiniteMinimax.tex",
+            "LearningTheory/Minimax/HedgeInteraction.tex"
+          ]
+        },
+        {
+          "id": "dimension-reduction",
+          "title": "Concentration and Johnson--Lindenstrauss dimension reduction",
+          "modules": [
+            "LearningTheory/JohnsonLindenstrauss/Bernstein.tex",
+            "LearningTheory/JohnsonLindenstrauss/ConcentrationBound.tex",
+            "LearningTheory/JohnsonLindenstrauss/Main.tex",
+            "LearningTheory/JohnsonLindenstrauss/Rademacher.tex",
+            "LearningTheory/JohnsonLindenstrauss/SubGaussian.tex",
+            "LearningTheory/JohnsonLindenstrauss/UnionBound.tex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ldc",
+      "title": "Locally decodable codes",
+      "chapters": [
+        {
+          "id": "locally-decodable-codes",
+          "title": "Locally decodable codes and Kikuchi methods",
+          "modules": [
+            "KikuchiLDC/LDC/BackgroundFacts.tex",
+            "KikuchiLDC/LDC/Decomposition.tex",
+            "KikuchiLDC/LDC/Defs.tex",
+            "KikuchiLDC/LDC/HighValue.tex",
+            "KikuchiLDC/LDC/MainTheorem.tex",
+            "KikuchiLDC/LDC/ThreeXOR.tex",
+            "KikuchiLDC/LDC/TwoXOR.tex"
+          ]
+        }
+      ]
+    }
+  ]
+}

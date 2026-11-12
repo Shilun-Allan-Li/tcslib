@@ -1,6 +1,6 @@
-\chapter{Arrow's Impossibility Theorem}
+\section{Arrow Theorem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Overview}
+\subsection*{Arrow Theorem: Introduction}
 
 This chapter proves \textbf{Arrow's Impossibility Theorem} via Kalai's
 Fourier-analytic approach.  For 3 alternatives $\{a,b,c\}$ and $n$ voters,
@@ -28,7 +28,7 @@ The proof proceeds in three steps:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Social choice definitions}
+\subsection{Social choice definitions}
 
 \begin{definition}[Unanimity]
 \lean{ArrowTheorem.unanimity}
@@ -55,7 +55,7 @@ $f = \mathrm{dict}_i$, i.e.\ society's preference always equals voter $i$'s.
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Voter ordering model}
+\subsection{Voter ordering model}
 
 Each voter holds one of the 6 strict transitive orderings of $\{a,b,c\}$.
 For each ordering we record three pairwise preferences using the sign
@@ -130,7 +130,7 @@ $f(\mathrm{abVotes}(p)) = f(\mathrm{bcVotes}(p)) = f(\mathrm{caVotes}(p)) = 1$
 \end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Key correlation lemmas}
+\subsection{Key correlation lemmas}
 
 The following lemma encodes the core computation: for a single voter drawn
 uniformly from the 6 orderings, the expected product of any two distinct
@@ -181,7 +181,7 @@ orderings of the products of the encoded signs is
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Fourier formula for the cycle correlation}
+\subsection{Fourier formula for the cycle correlation}
 
 \begin{definition}[Correlation function]
 \lean{ArrowTheorem.corrFunc}
@@ -651,7 +651,7 @@ Fourier--Walsh weight of $f$ is carried by the singleton frequencies.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Acyclicity implies degree-1 structure}
+\subsection{Acyclicity implies degree-1 structure}
 
 \begin{lemma}[Acyclicity forces correlation $-1/3$]
 \lean{ArrowTheorem.acyclic_implies_corrFunc}
@@ -675,7 +675,7 @@ Then its Fourier correlation function satisfies
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Degree-1 implies dictatorship}
+\subsection{Degree-1 implies dictatorship}
 
 \begin{lemma}[Degree-one unanimous voting rules are dictatorships]
 \lean{ArrowTheorem.degree_one_implies_dictator}
@@ -692,7 +692,7 @@ Then $f$ is a dictatorship: there is a coordinate $i$ with $f=\mathrm{dict}_i$.
 \end{lemma}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Arrow's Impossibility Theorem}
+\subsection{Arrow's Impossibility Theorem}
 
 \begin{theorem}[Arrow's impossibility theorem]
 \lean{ArrowTheorem.arrow_theorem}
@@ -1266,7 +1266,7 @@ $f$ is a dictatorship: there is a voter $i$ such that $f(x) = (-1)^{x_i}$ for al
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% added by the blueprint pipeline
-\section{Additional declarations}
+\subsection*{Arrow Theorem: Further results}
 
 \begin{lemma}[Balance of the a-vs-b preference signs]
 \lean{ArrowTheorem.sum_abPref_sign}
