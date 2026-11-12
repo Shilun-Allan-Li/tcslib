@@ -1,0 +1,35 @@
+TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:539:4: error: Tactic `rfl` failed: The left-hand side
+  { state := some (ClockState.dec W.tm.q₀ OutReg.empty), inputPos := 1, workTapes := start.workTapes,
+    workTapePos := start.workTapePos, output := start.output }
+is not definitionally equal to the right-hand side
+  ctrCfg K W (some (ClockState.dec W.tm.q₀ OutReg.empty)) (MultiTapeTM.initCfg x) (bufferTape c.output) 0 c.workTapes
+    c.workTapePos []
+
+case refine_2
+K W : FinTM Bool
+x s : List Bool
+tK : ℕ
+hK : K.ComputesInTime x s tK
+t : ℕ
+ht : t ≤ tK
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+hcut : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tK
+c : Cfg K.k Bool K.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+hc : K.ComputesInTime x c.output t
+ho : c.output = s
+start : Cfg (clockTM K W).k Bool (clockTM K W).State x :=
+  ctrCfg K W (some ClockState.iStart)
+    { state := none, inputPos := c.inputPos, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+    (bufferTape c.output) 0 c.workTapes c.workTapePos []
+r : ℕ
+hr : r ≤ ↑start.inputPos + 2
+hrun :
+  MultiTapeTM.runFrom start r =
+    { state := some (ClockState.dec W.tm.q₀ OutReg.empty), inputPos := 1, workTapes := start.workTapes,
+      workTapePos := start.workTapePos, output := start.output }
+⊢ { state := some (ClockState.dec W.tm.q₀ OutReg.empty), inputPos := 1, workTapes := start.workTapes,
+      workTapePos := start.workTapePos, output := start.output } =
+    ctrCfg K W (some (ClockState.dec W.tm.q₀ OutReg.empty)) (MultiTapeTM.initCfg x) (bufferTape c.output) 0 c.workTapes
+      c.workTapePos []
+GUARD_OK|54|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.ComputesInTime"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.tapeBlocks"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.controlAction"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.FinTM.bufferTape"}]

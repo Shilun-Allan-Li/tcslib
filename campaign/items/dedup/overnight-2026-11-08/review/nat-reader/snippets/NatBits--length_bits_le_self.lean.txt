@@ -1,0 +1,9 @@
+lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+  rw [Nat.size_eq_bits_len]
+  exact Nat.size_le.mpr Nat.lt_two_pow_self
+
+end Turing
+
+namespace Complexity.LogProg
+
+/-- The binary word of `n` has at most `m` letters when `n < 2^m`. -/

@@ -1,0 +1,62 @@
+/-- **R8.7, the initial record** (design §12.8a §3, §12.8b). For a start state
+`q₀` and an initial tag `τ₀`, there is a module over the record alphabet with
+an entry and an exit state and `K + 2` tapes with the following contract.
+Start it at its entry with the native input `x` as digits and its head at `1`;
+on tape `1` a delimited `Bool` word `ws` as digits, of value `s`; tape `0` blank
+on a record's slot and one cell either side; and the other tapes blank. It
+reaches its exit within `C` times the record length plus `|ws| + s + |x| + 1`,
+and not earlier, with the record of `Cfg.init q₀ x` at radius `s` with tag `τ₀`
+written at the head of tape `0` and nothing else changed. Up to the exit every
+work head stays within `C` times the record length plus `|ws| + s + 1` of its
+entry position, independently of `|x|`. The radius enters the space bound
+because at `k = 0` the record has no window field.
+
+**Proof sketch.** Run `Turing.exists_recordTemplateTM` onto a scratch tape. Then
+write the record field by field by R2 seams (`Turing.cfgRecord_init`):
+`Turing.writeConstTM` writes `[st (some q₀)]`; the position field is the
+template's bound field copied (`Turing.copyTM_run_ofCfg`), mapped to
+`digit false` (`Turing.scanTM`), with `digit true` written on its first cell, the
+digits of `1`; the `k` tape fields are copies of the template's window field;
+`Turing.writeConstTM` writes `[tag τ₀]`; `Turing.skipTM` crosses each written
+field. Clear the template (`Turing.clearTM_run_ofCfg` per field) and return the
+heads by `Turing.skipBackTM`.
+
+**Fill appendix (continuation 3, partial).** Row 17 is still open after its
+bound-field prefix. The dependent initial-record machine is not implemented;
+this public row retains its original admission and the field-by-field route
+above.
+
+**Fill appendix (continuation 4, partial).** Row 17 is now proved without
+admissions and supplies the scratch template required by this route. The
+field-by-field initial-record constructor remains unimplemented, so this
+row retains its original admission. Next compose the state field, the copied
+and zeroed position field with its leading `true`, the `k` copied window
+fields, and the tag; then clear the template and rewind. The `k = 0` case
+must retain the separate radius term in the issued space bound. -/
+theorem exists_recordInitTM (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] (q₀ : Q) (τ₀ : T) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                    (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  sorry

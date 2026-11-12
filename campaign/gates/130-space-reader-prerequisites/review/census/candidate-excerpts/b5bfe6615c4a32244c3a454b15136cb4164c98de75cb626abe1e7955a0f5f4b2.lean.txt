@@ -1,0 +1,31 @@
+/-- **R8.5d, the input fold, framed** (design §12.8a). From any configuration
+in the forward phase at `a₀` with the input head at position `1`, the fold
+reaches `done (x.foldl δ a₀)` at exactly `2|x| + 2`, where `x` is the native
+input, and no `done` anchor earlier. Nothing else changes: the finish is the
+start configuration with only the control state replaced, so the input head is
+back at `1`. Up to the exit no work head moves.
+
+**Proof sketch.** Induct on the input cells: after `j ≤ |x|` forward steps the
+state is the fold of the first `j` symbols and the input head is at `j + 1`.
+The right end marker turns the head, `|x|` steps return it, and the left end
+marker supplies the entry step. -/
+theorem inputFoldTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
+    (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x)
+    (hstate : d.state = some (.fwd a₀)) (hin : d.inputPos = 1) :
+    (inputFoldTM k δ a₀).runFrom d (2 * x.length + 2) =
+        { d with state := some (.done (x.foldl δ a₀)) } ∧
+      (∀ t < 2 * x.length + 2, ∀ a,
+        ((inputFoldTM k δ a₀).runFrom d t).state ≠ some (.done a)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * x.length + 2 →
+        ((inputFoldTM k δ a₀).runFrom d t).workTapePos j = d.workTapePos j) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [scan_fold_trace δ a₀ d hstate hin]
+    simp [catalogTrace, show ¬2 * x.length + 2 ≤ x.length by omega]
+  · intro t ht a
+    rw [scan_fold_trace δ a₀ d hstate hin]
+    simp only [catalogTrace]
+    split_ifs <;> simp [scanFoldF, scanFoldR] <;> omega
+  · intro j t _
+    rw [scan_fold_trace δ a₀ d hstate hin]
+    simp only [catalogTrace]
+    split_ifs <;> simp [scanFoldF, scanFoldR]

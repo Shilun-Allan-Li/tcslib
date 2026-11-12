@@ -1,0 +1,41 @@
+/-- One native bank-cleaning segment, including its dispatch to the next
+bank, costs at most six source deadlines plus eight. Dispatch occurs at the
+cleaner's observed first return, not at that analysis bound.
+**Proof sketch.** Relocate the guarded first-return cleaner to the selected
+triple. Its full blank endpoint is the next cleaned-prefix frame; a single
+silent transition advances the finite bank index. -/
+private lemma emCall_bank_step (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) :
+    ∃ t ≤ 6 * T + 8,
+      (emCallTM M emit).tm.runFrom
+        (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))) t =
+        emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.succ, 0))) := by
+  obtain ⟨t, _, ht, hfirst, hr⟩ := emCall_clear_first M arg x 1 T i
+  let c := emCallClearCfg x 1 0 ((M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
+    (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])
+    ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
+  let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+  have hrun := emCall_state_run (embedEmitTM (emCallTripleEmbedding M i) emCallClearTM.tm)
+    (emCallTM M emit).tm
+    ⟨fun q => .inr (.inl (i.castSucc, q)), by
+      intro a b h
+      exact congrArg Prod.snd (Sum.inl.inj (Sum.inr.inj h))⟩ (fun q : Fin 4 => q ≠ 3)
+    (by intro q hq inp work; simp [emCallTM, i.isLt, hq]; rfl)
+    (embedEmitCfg (emCallTripleEmbedding M i) frame.workTapes frame.workTapePos [] c) t
+    (by
+      intro j hj q hs hq
+      rw [embedEmitTM_runFrom] at hs
+      subst q
+      exact hfirst j hj hs)
+  rw [embedEmitTM_runFrom] at hrun
+  dsimp only [c, frame] at hrun
+  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallTripleEmbedding M i)
+    (fun q => .inr (.inl (i.castSucc, q))) _ _ _) t =
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q))) _ _ _ at hrun
+  erw [emCall_bank_initial M emit x arg cap T i, hr, emCall_bank_final M emit x arg cap T i] at hrun
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', hrun]
+  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM,
+    Fin.coe_castSucc, i.isLt, ↓reduceDIte, ↓reduceIte]
+  rw [controlAction_apply, moveInputPos_zero]
+  rfl

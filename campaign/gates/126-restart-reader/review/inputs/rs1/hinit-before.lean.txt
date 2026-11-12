@@ -1,0 +1,15 @@
+  have hinit : R.initCfg (pairEncode α w) = d₀.mapState Sum.inl := by
+    apply Cfg.ext
+    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_state, Cfg.mapState_state,
+        d₀, Option.map_some]
+      rfl
+    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_inputPos, Cfg.mapState_inputPos,
+        d₀]
+    · funext j q
+      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes, Cfg.mapState_workTapes,
+        d₀]
+    · funext j
+      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos,
+        Cfg.mapState_workTapePos, d₀]
+    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_output, Cfg.mapState_output,
+        d₀]

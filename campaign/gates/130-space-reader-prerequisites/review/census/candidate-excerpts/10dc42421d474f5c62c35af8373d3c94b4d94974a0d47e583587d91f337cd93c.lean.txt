@@ -1,0 +1,43 @@
+/-- One step from agreeing configurations on `x` and on `x.take m`, with the input head at most
+at `m`, gives agreeing configurations, and moves the input head at most one cell right.
+
+**Proof sketch.** Halted configurations are fixed. At a live state both configurations read
+the same input symbol (by the read lemma) and the same work symbols, so the same action applies;
+its fields agree, the input move by the move lemma. -/
+private lemma stepWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} (b : Bool)
+    (c : Cfg k Γ S x) (c' : Cfg k Γ S (x.take m))
+    (hs : c'.state = c.state) (hp : c'.inputPos.val = c.inputPos.val)
+    (hw : c'.workTapes = c.workTapes) (hq : c'.workTapePos = c.workTapePos)
+    (ho : c'.output = c.output) (hm : c.inputPos.val ≤ m) :
+    (tm.stepWith b c').state = (tm.stepWith b c).state ∧
+      (tm.stepWith b c').inputPos.val = (tm.stepWith b c).inputPos.val ∧
+      (tm.stepWith b c').workTapes = (tm.stepWith b c).workTapes ∧
+      (tm.stepWith b c').workTapePos = (tm.stepWith b c).workTapePos ∧
+      (tm.stepWith b c').output = (tm.stepWith b c).output ∧
+      (tm.stepWith b c).inputPos.val ≤ c.inputPos.val + 1 := by
+  have hsym := inputSymbol_take_eq c c' hp hm
+  have hws : c'.workTapeSymbols = c.workTapeSymbols := by
+    funext i
+    simp only [Cfg.workTapeSymbols, hw, hq]
+  have hmv := moveInputPos_val_take c.inputPos c'.inputPos hp (by simp)
+    (by rw [List.length_take]; omega)
+  cases hst : c.state with
+  | none =>
+    have hst' : c'.state = none := by rw [hs, hst]
+    rw [stepWith_of_halt hst, stepWith_of_halt hst']
+    exact ⟨hs, hp, hw, hq, ho, by omega⟩
+  | some q =>
+    have hst' : c'.state = some q := by rw [hs, hst]
+    have e₁ : tm.stepWith b c = (tm.tr b q c.inputSymbol c.workTapeSymbols).apply c := by
+      unfold stepWith
+      rw [hst]
+    have e₂ : tm.stepWith b c' = (tm.tr b q c.inputSymbol c.workTapeSymbols).apply c' := by
+      unfold stepWith
+      rw [hst', hsym, hws]
+    rw [e₁, e₂]
+    refine ⟨rfl, (hmv _).1, ?_, ?_, ?_, (hmv _).2⟩
+    · funext i
+      simp only [Action.apply, hw, hq]
+    · funext i
+      simp only [Action.apply, hq]
+    · simp only [Action.apply, ho]

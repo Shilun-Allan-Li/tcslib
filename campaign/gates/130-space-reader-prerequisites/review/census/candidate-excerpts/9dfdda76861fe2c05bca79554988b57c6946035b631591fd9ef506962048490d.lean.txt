@@ -1,0 +1,55 @@
+/-- Preparation reaches its first return with the exact counted-source bank.
+Every configuration of the embedded preparation is outside the anchor phase.
+**Proof sketch.** Cut the absorbing source at its first return, map its full
+configuration into the preparation phase, then take the explicit dispatch.
+Check the source-bank seam field by field, including the native head and flag. -/
+private lemma f2_splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List Bool) :
+    ∃ t ≤ 2 * (s.length + 1),
+      (f2_splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+          f2_splitCountCfg f2_SplitBodyState.count f2_SplitBodyState.check w s
+            (f2_splitBank M s (some start) []) ∧
+      f2_splitSafe (f2_splitBodyTM M start).tm .anchor
+        (Cfg.ofWords (input := w) (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) := by
+  obtain ⟨t, ht, he, hsafe⟩ := f2_splitEmbed_cut (f2_splitPrepareTM M.k).tm
+    (f2_splitBodyTM M start).tm f2_SplitBodyState.prepare .anchor (fun q => q.1 = 2)
+    (by intro q; simp)
+    (by
+      rintro z ⟨⟨q, over⟩, hz, hq⟩
+      change q = 2 at hq
+      subst q
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (2, over))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [f2_splitBodyTM, hq])
+    (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s))
+    (f2_splitPrepareReady M.k w s 2 0) (2 * (s.length + 1))
+    ⟨_, rfl, rfl⟩ (f2_splitPrepare_run M.k w s)
+  have hstep : (f2_splitBodyTM M start).tm.step
+      ((f2_splitPrepareReady M.k w s 2 0).mapState f2_SplitBodyState.prepare) =
+      f2_splitCountCfg f2_SplitBodyState.count f2_SplitBodyState.check w s
+        (f2_splitBank M s (some start) []) := by
+    simp only [MultiTapeTM.step, Cfg.mapState, f2_splitPrepareReady, Option.map_some,
+      f2_splitBodyTM, ↓reduceIte]
+    refine Cfg.ext ?_ ?_ rfl ?_ rfl
+    · simp [Action.apply, controlAction, f2_splitCountCfg, f2_splitBank]
+    · simp [Action.apply, controlAction, f2_splitCountCfg, f2_splitBank]
+    · funext i
+      refine Fin.cases ?_ (fun j => ?_) i <;>
+        simp [Action.apply, controlAction, f2_splitCountCfg, f2_splitBank]
+  have hinit : (Cfg.ofWords (input := w) (0, false) (stateWord (M.k + 1) s)).mapState
+      (f2_SplitBodyState.prepare (S := M.State)) = Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s) := rfl
+  rw [hinit] at he hsafe
+  have hend : (f2_splitBodyTM M start).tm.runFrom
+      (Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)) (t + 1) =
+      f2_splitCountCfg f2_SplitBodyState.count f2_SplitBodyState.check w s
+        (f2_splitBank M s (some start) []) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', he, hstep]
+  refine ⟨t, ht, hend, ?_⟩
+  intro j hj
+  by_cases hjt : j ≤ t
+  · exact hsafe j hjt
+  · have hj' : j = t + 1 := by omega
+    rw [hj', hend]
+    simp [f2_splitCountCfg, f2_splitBank]

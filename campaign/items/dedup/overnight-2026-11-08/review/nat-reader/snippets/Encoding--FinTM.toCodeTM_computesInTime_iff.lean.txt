@@ -1,0 +1,22 @@
+theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
+    (x output : List Bool) (t : ℕ) :
+    (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  exact FinTM.computesInTime_relabelState ⟨1, Q, tm⟩ _ x output t
+
+/-- Every one-work-tape binary machine is equivalent, input by input and step for
+step, to a coded machine.
+
+**Proof sketch.** `State` carries `Fintype`/`DecidableEq` instances and is inhabited
+by `q₀`, so `Fintype.equivFin` gives `e : State ≃ Fin n` with `n = numStates + 1` for
+some `numStates`. Transport the transition function along `e` (renaming states with
+`Turing.Action.mapState` and reading them back through `e.symm`); the induced map on
+configurations is a bijection commuting with `step` (the tapes and heads are
+untouched), so runs, halting, and outputs correspond at every step. The tape-count
+cast uses `hk : M.k = 1`.
+
+The implementation is the time clause of `Turing.exists_codeTM_spaceUsed`, whose witness
+is this relabelling (`Turing.MultiTapeTM.relabelState`, from the shared state-renaming module
+`TCSlib.Complexity.TuringMachine.StateRenaming`), so that the relabelling is built once. -/

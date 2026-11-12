@@ -1,0 +1,15 @@
+/-- The parity scanner uses no work tapes and two live states: `true` means
+that the consumed prefix has even parity. It toggles on `true`, keeps its
+state on `false`, and emits its state and halts at the right blank.
+[AB09, Example 4.7]
+
+The missing catalog row is a finite-state scanner with a final verdict:
+`transducer_run` halts silently, so its contract cannot emit this bit. -/
+def evenScanTM : FinTM Bool where
+  k := 0
+  State := Bool
+  tm :=
+    { q₀ := true
+      tr := fun q inp _ => match inp with
+        | some b => FinTM.controlAction .pos (some (if b then !q else q))
+        | none => ⟨0, fun i => i.elim0, some q, none⟩ }

@@ -1,0 +1,38 @@
+--- BASE-facade
++++ HEAD-facade
+@@ -5,6 +5,7 @@
+ -/
+ import TCSlib.Complexity.TuringMachine.OracleAgreement
+ import TCSlib.Complexity.Diagonalization.EXPCOM
++import TCSlib.Complexity.Diagonalization.Ladner
+ import TCSlib.Complexity.Diagonalization.Relativization
+ import TCSlib.Complexity.Diagonalization.NotTimeConstructible
+ import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+@@ -23,6 +24,9 @@
+ `Complexity.ntime_hierarchy` at book strength ([AB09, Theorem 3.2],
+ [Coo72], decision CH34-Q8).
+ 
++The delayed diagonalization construction also states Ladner's intermediate-language
++theorem and its explicit padded SAT witness [AB09, §3.3].
++
+ ## Contents
+ 
+ - `TuringMachine.OracleAgreement` (the locality layer, housed with the oracle
+@@ -31,6 +35,8 @@
+   and nondeterministic, length-locality and query-set forms)
+ - `Diagonalization.EXPCOM`: the `EXPCOM` oracle and the chain
+   `EXP ⊆ P^EXPCOM ⊆ NP^EXPCOM ⊆ EXP` with its three identities
++- `Diagonalization.Ladner`: the delayed padding exponent, its defining equations,
++  and the intermediate-language statement of [AB09, Theorem 3.3]
+ - `Diagonalization.Relativization`: the unary witness language `U_B`,
+   `U_B ∈ NP^B`, the extrinsically clocked enumeration of deterministic
+   finite oracle machines, the stage construction, and Theorem 3.7
+@@ -47,7 +53,7 @@
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+-  Cambridge University Press, 2009. (§3.4.)
++  Cambridge University Press, 2009. (§§3.3–3.4.)
+ * [BGS75] T. Baker, J. Gill, R. Solovay, *Relativizations of the P =? NP
+   question*, SIAM Journal on Computing 4(4), 1975.
+ -/

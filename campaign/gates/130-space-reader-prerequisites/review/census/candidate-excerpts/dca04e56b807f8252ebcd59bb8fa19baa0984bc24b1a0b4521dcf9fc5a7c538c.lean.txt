@@ -1,0 +1,128 @@
+/-- One input symbol drives one framed increment, including width extension.
+
+**Proof sketch.** The forward configurations replace successive low bits by
+zeros; the first non-true cell is replaced by one on the turn. The return
+configurations keep this prefix and move over its zeros to the left delimiter.
+The two direct inductions concern this cyclic table, whose return state starts
+the next round. At every intermediate time the head is between minus one and
+`p`, relative to the entry head. -/
+private theorem inputLength_round {x : List Bool}
+    (d : Cfg 1 Bool InputLengthPhase x) (n p : ℕ) (v : List Bool)
+    (hs : d.state = some .count) (hip : d.inputPos.val = n + 1) (hn : n < x.length)
+    (old : n.bits = List.replicate p true ++ false :: v ∨
+      n.bits = List.replicate p true ∧ v = [])
+    (next : (n + 1).bits = List.replicate p false ++ true :: v)
+    (htape : ∀ a : ℤ, -1 ≤ a → a ≤ (n.bits.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + a) = FinTM.bufferTape n.bits a) :
+    inputLengthMachine.runFrom d (2 * p + 3) =
+        inputLengthCfg d (n + 1).bits (p + 1) .count
+          (moveInputPos d.inputPos .pos) 0 ∧
+      ∀ u ≤ 2 * p + 3,
+        d.workTapePos 0 - 1 ≤ (inputLengthMachine.runFrom d u).workTapePos 0 ∧
+        (inputLengthMachine.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + (p : ℤ) := by
+  let w := (n + 1).bits
+  let ip := moveInputPos d.inputPos .pos
+  let F := fun r : ℕ => inputLengthCfg d w r .carry ip r
+  let R := fun r : ℕ => inputLengthCfg d w (p + 1) .back ip ((r : ℤ) - 1)
+  let D := inputLengthCfg d w (p + 1) .count ip 0
+  have plen : p < w.length := (inputLength_charge n p v old next).2
+  have oldlen : p ≤ n.bits.length := by
+    rcases old with h | ⟨h, _⟩ <;> simp [h]
+  have fzero : inputLengthMachine.step d = F 0 := by
+    have hi : d.inputSymbol = some x[n] := inputSymbolInner n (by omega) hn
+    rw [step_of_inputMoveAction _ _ .pos hs (q' := .carry) (by
+      simp [inputLengthMachine, hi])]
+    exact (inputLengthCfg_zero d w .carry ip).symm
+  have forward (r : ℕ) (hr : r < p) : inputLengthMachine.step (F r) = F (r + 1) := by
+    have read : (F r).workTapeSymbols 0 = some true := by
+      have cell := htape r (by omega) (by omega)
+      have bit : n.bits[r]? = some true := by
+        rcases old with h | ⟨h, _⟩ <;>
+          simp [h, List.getElem?_append, hr]
+      simpa [F, inputLengthCfg, Cfg.workTapeSymbols, FinTM.bufferTape_nat] using
+        cell.trans (by simpa using bit)
+    have digit : w[r] = false := by
+      simp [w, next, hr]
+    simpa only [F, Nat.cast_add, Nat.cast_one, SignType.cast] using
+      inputLength_write d w r (by omega) .carry .carry ip .pos (by
+        simp only [F] at read
+        simp [inputLengthMachine, read, digit])
+  have turn : inputLengthMachine.step (F p) = R p := by
+    have read : (F p).workTapeSymbols 0 ≠ some true := by
+      have cell := htape p (by omega) (by omega)
+      have bit : n.bits[p]? ≠ some true := by
+        rcases old with h | ⟨h, _⟩ <;> simp [h]
+      simpa [F, inputLengthCfg, Cfg.workTapeSymbols, cell] using bit
+    have digit : w[p] = true := by simp [w, next]
+    simpa only [F, R, SignType.cast, sub_eq_add_neg] using
+      inputLength_write d w p plen .carry .back ip .neg (by
+        simp only [F] at read
+        simp [inputLengthMachine, read, digit])
+  have backward (r : ℕ) (hr : r < p) : inputLengthMachine.step (R (r + 1)) = R r := by
+    have read : (R (r + 1)).workTapeSymbols 0 = some false := by
+      have digit : w[r]? = some false := by
+        simp [w, next, List.getElem?_append, hr]
+      simp [R, inputLengthCfg, Cfg.workTapeSymbols, show (r : ℤ) < p + 1 by omega,
+        FinTM.bufferTape_nat, digit]
+    rw [step_of_tapeAction_move _ _ 0 0 .neg rfl (q' := .back) (by
+      simp [inputLengthMachine, read])]
+    apply Cfg.ext <;> simp only [R, inputLengthCfg, moveInputPos_zero]
+    funext j
+    have : j = 0 := Subsingleton.elim _ _
+    subst j
+    simp only [Function.update_self, SignType.cast]
+    omega
+  have entry : inputLengthMachine.step (R 0) = D := by
+    have read : (R 0).workTapeSymbols 0 = none := by
+      have cell := htape (-1) (by omega) (by omega)
+      simpa [R, inputLengthCfg, Cfg.workTapeSymbols, FinTM.bufferTape_left] using cell
+    rw [step_of_tapeAction_move _ _ 0 0 .pos rfl (q' := .count) (by
+      simp [inputLengthMachine, read])]
+    apply Cfg.ext <;> simp only [R, D, inputLengthCfg, moveInputPos_zero]
+    funext j
+    have : j = 0 := Subsingleton.elim _ _
+    subst j
+    simp [SignType.cast]
+  have step_run (a : Cfg 1 Bool InputLengthPhase x) (u : ℕ) :
+      inputLengthMachine.runFrom a (u + 1) =
+        inputLengthMachine.step (inputLengthMachine.runFrom a u) :=
+    MultiTapeTM.runFrom_succ_eq_step'
+  have reachesF : ∀ r ≤ p, inputLengthMachine.runFrom d (r + 1) = F r := by
+    intro r
+    induction r with
+    | zero => intro _; exact fzero
+    | succ r ih =>
+      intro hr
+      rw [step_run, ih (by omega), forward r (by omega)]
+  have reachesR : ∀ r ≤ p, inputLengthMachine.runFrom d (p + 2 + r) = R (p - r) := by
+    intro r
+    induction r with
+    | zero =>
+      intro _
+      simpa only [Nat.add_zero, Nat.sub_zero] using
+        (show inputLengthMachine.runFrom d (p + 2) = R p by
+          rw [show p + 2 = (p + 1) + 1 by omega, step_run,
+            reachesF p le_rfl, turn])
+    | succ r ih =>
+      intro hr
+      rw [show p + 2 + (r + 1) = (p + 2 + r) + 1 by omega,
+        step_run, ih (by omega)]
+      rw [show p - r = (p - (r + 1)) + 1 by omega, backward _ (by omega)]
+  have finish : inputLengthMachine.runFrom d (2 * p + 3) = D := by
+    rw [show 2 * p + 3 = (p + 2 + p) + 1 by omega,
+      step_run, reachesR p le_rfl, Nat.sub_self, entry]
+  refine ⟨finish, ?_⟩
+  intro u hu
+  by_cases hz : u = 0
+  · subst u; simp
+  by_cases hf : u ≤ p + 1
+  · rw [show u = (u - 1) + 1 by omega, reachesF _ (by omega)]
+    simp only [F, inputLengthCfg]
+    constructor <;> omega
+  by_cases hb : u ≤ 2 * p + 2
+  · rw [show u = p + 2 + (u - (p + 2)) by omega, reachesR _ (by omega)]
+    simp only [R, inputLengthCfg]
+    constructor <;> omega
+  · rw [show u = 2 * p + 3 by omega, finish]
+    simp only [D, inputLengthCfg, add_zero]
+    constructor <;> omega

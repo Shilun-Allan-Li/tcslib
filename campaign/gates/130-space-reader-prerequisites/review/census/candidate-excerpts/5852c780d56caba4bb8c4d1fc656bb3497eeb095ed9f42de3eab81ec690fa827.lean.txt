@@ -1,0 +1,9 @@
+/-- The one-cell copy body returns to `false` after copying a symbol and escapes to `true`
+at a blank. No catalog row provides this cyclic native-input copy with an end-marker escape. -/
+private def iw_body : MultiTapeTM 1 Bool Bool where
+  q₀ := false
+  tr := fun q inp _ =>
+    if q then FinTM.controlAction 0 (some true)
+    else match inp with
+      | none => FinTM.controlAction 0 (some true)
+      | some b => ⟨1, fun _ => (some (some b), 1), none, some false⟩

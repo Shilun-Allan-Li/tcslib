@@ -1,0 +1,127 @@
+/-- Initialize the simulated machine's record from the radius word, then run the complete
+clocked suffix. Scratch banks are disjoint from the radius and witness tapes.
+
+**Proof sketch.** Invoke the framed initializer, install its record using the shared boundary
+calculation, and pass its untouched runner bank to the suffix. The published seam composes the
+runs; the initializer restores every head, so both envelopes have the same centre. -/
+private lemma sph_record_suffix (M : FinTM Bool) (m : ℕ) :
+    ∃ (KI KR : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (D : MultiTapeTM (KI + KR + m + 2) (RecSym M.State (Fin 3)) P)
+      (entry : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (KI + KR + m + 2) (RecSym M.State (Fin 3)) P
+          (x.map (RecSym.digitEmb M.State (Fin 3))),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ j : Fin (KI + KR + m + 2), j.val < KI + KR + 2 → j ≠ 1 →
+          ∀ p, d.workTapes j p = none) →
+        ∃ t b,
+          (D.runFrom d t).state = none ∧
+          (D.runFrom d t).output = d.output ++ [RecSym.digit b] ∧
+          (∀ u ≤ t, ∀ j, |(D.runFrom d u).workTapePos j - d.workTapePos j| ≤
+            ((C * (recordLength M.k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          (∀ w : List Bool,
+            M.ComputesInTime x w (M.configBound x.length s) →
+            M.tm.spaceUsed (M.tm.initCfg x) (M.configBound x.length s) ≤ s →
+            b = !(decide (w = [true]))) := by
+  classical
+  obtain ⟨KR, PS, hFS, hDS, S, sen, CS, hS⟩ := sph_suffix M
+  letI := hFS
+  letI := hDS
+  obtain ⟨KI, PI, hFI, hDI, I, ien, iex, CI, hI⟩ := sph_initial_record M KR m
+  letI := hFI
+  letI := hDI
+  let D := seamCompTM I iex (S KI m) sen
+  refine ⟨KI, KR, PI ⊕ PS, inferInstance, inferInstance, D, Sum.inl ien, CI + CS, ?_⟩
+  intro x s ws hws d hd hin hrad hblank
+  let a := d.mapState (fun _ => ien)
+  have ha : a.state = some ien := by rw [Cfg.mapState_state, hd]; rfl
+  have hstart : a.mapState Sum.inl = d := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.mapState_state, hd]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output]
+  let L := recordLength M.k x.length s
+  have hblank' (j : Fin (KI + KR + m + 2)) (hj : j.val < KI + KR + 2) (hj1 : j ≠ 1)
+      (p : ℤ) : a.workTapes j p = none := by
+    rw [Cfg.mapState_workTapes]
+    exact hblank j hj hj1 p
+  obtain ⟨t, _, hc, hh, hr⟩ := hI s ws hws a ha
+    (by rw [Cfg.mapState_inputPos]; exact hin)
+    (by
+      intro p hp hp'
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+      exact hrad p hp hp')
+    (by
+      intro p _ _
+      exact hblank' 0 (by rw [Fin.val_zero]; omega) (by
+        intro h; have hh := congrArg Fin.val h
+        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+    (by
+      intro j hj hj' p
+      exact hblank' j (by omega) (by
+        intro h; subst j; rw [Fin.val_one] at hj; omega) p)
+  let a' := I.runFrom a t
+  have he : a'.state = some iex := by dsimp only [a']; rw [hr]
+  have hah (j) : a'.workTapePos j = d.workTapePos j := by
+    dsimp only [a']; rw [hr, Cfg.mapState_workTapePos]
+  have hao : a'.output = d.output := by dsimp only [a']; rw [hr, Cfg.mapState_output]
+  have har : RecordAt a' 0 (cfgRecord s (M.tm.initCfg x) 0) := by
+    have hwritten := sph_written_record a (some iex) (cfgRecord s (M.tm.initCfg x) 0) L
+      (joinFields_cfgRecord_length _ _ _)
+      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
+        intro h; have hh := congrArg Fin.val h
+        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
+        intro h; have hh := congrArg Fin.val h
+        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+    dsimp only [a']
+    rw [recordAt_iff] at hwritten ⊢
+    intro p hp hp'
+    rw [hr]
+    exact hwritten p hp hp'
+  let z := a'.mapState (fun _ => sen)
+  have hz : z.state = some sen := by rw [Cfg.mapState_state, he]; rfl
+  have hzr : RecordAt z 0 (cfgRecord s (M.tm.initCfg x) 0) := by
+    rw [recordAt_iff] at har ⊢
+    intro p hp hp'
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+    exact har p hp hp'
+  have hzb (j : Fin (KI + KR + m + 2)) (hj : KI + 2 ≤ j.val)
+      (hj' : j.val < KI + KR + 2) (p : ℤ) : z.workTapes j p = none := by
+    rw [Cfg.mapState_workTapes]
+    dsimp only [a']
+    rw [hr]
+    have hj0 : j ≠ 0 := by intro h; subst j; rw [Fin.val_zero] at hj; omega
+    simpa only [hj0, false_and, ↓reduceIte] using
+      hblank' j hj' (by intro h; subst j; rw [Fin.val_one] at hj; omega) p
+  obtain ⟨v, b, hvs, hvo, hvh, hpred⟩ := hS KI m s z hz hzr hzb
+  have hrun := seamCompTM_run_ofCfg I iex (S KI m) sen (rfl : I.runFrom a t = a')
+    he hc (rfl : (S KI m).runFrom z v = (S KI m).runFrom z v)
+  rw [hstart] at hrun
+  let B := (CI + CS) * (L + ws.length + s + 1)
+  have hIB : CI * (L + ws.length + s + 1) ≤ B :=
+    Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+  have hSB : CS * (L + 1) ≤ B :=
+    (Nat.mul_le_mul_left _ (by omega)).trans
+      (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
+  refine ⟨t + 1 + v, b, ?_, ?_, ?_, hpred⟩
+  · rw [hrun, Cfg.mapState_state, hvs, Option.map_none]
+  · rw [hrun, Cfg.mapState_output, hvo, Cfg.mapState_output, hao]
+  · have hen := sph_seam_heads I iex (S KI m) sen (rfl : I.runFrom a t = a') he hc
+      d.workTapePos B
+      (by
+        intro u hu j
+        have h := hh u hu j
+        rw [Cfg.mapState_workTapePos] at h
+        exact h.trans (by exact_mod_cast hIB))
+      (by
+        intro u hu j
+        have h := hvh u hu j
+        rw [Cfg.mapState_workTapePos, hah] at h
+        exact h.trans (by exact_mod_cast hSB))
+    rw [hstart] at hen
+    exact hen

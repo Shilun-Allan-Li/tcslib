@@ -1,0 +1,5 @@
+/-- The reverse-sweep configuration has the supplied output word. -/
+theorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :
+    (sweepRevCfg q p z l r out).output = out := by
+  rfl

@@ -1,0 +1,108 @@
+from pathlib import Path
+import hashlib,json,os,re,runpy,subprocess
+
+r=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+w=Path('/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4')
+e=Path('/private/tmp/ab34-clock242-approved')
+p=r/'campaign/items/dedup/clock-capture-transport-proposal/2026-11-09'
+gate=r/'campaign/gates/124-safe-run/replay-after243'
+stage=json.loads((e/'STAGE.json').read_bytes())
+adopted=json.loads(Path('/private/tmp/ab34-g129r3-approved/ADOPTED-244.json').read_bytes())
+prior=json.loads((p/'CHECKS.json').read_bytes())
+assert stage['base']==adopted['actual_merge_244']
+i=Path(adopted['whole_adopted_snapshot'])
+o=e/'oleans'
+sha=lambda b:hashlib.sha256(b).hexdigest()
+dump=lambda x:(json.dumps(x,ensure_ascii=False,indent=2)+'\n').encode()
+def git(*a):return subprocess.check_output(['git','-C',str(w),*a])
+def om(root):return {f.relative_to(root).as_posix():sha(f.read_bytes()) for f in root.rglob('*.olean')}
+assert git('rev-parse','HEAD').decode().strip()==stage['head'] and not git('status','--porcelain')
+assert om(i)==json.loads((gate/'output.json').read_bytes())
+for f,h in adopted['toolchain_and_manifest'].items():
+ assert sha((w/f).read_bytes())==h
+before=json.loads((gate/'lean-blobs.json').read_bytes())
+prefix='TCSlib/Complexity/TuringMachine/Robustness/'
+sources={}
+for row in git('ls-tree','-rz',stage['head']).split(b'\0'):
+ if row:
+  meta,path=row.decode().split('\t',1)
+  if path.startswith('TCSlib/') and path.endswith('.lean'):
+   sources[path]=meta.split()[2]
+imports_of=runpy.run_path(str(w/'devtools/seyoon/graph.py'))['imports_of']
+def closure(file):
+ reached=set()
+ todo=[file]
+ while todo:
+  f=todo.pop()
+  if f not in reached:
+   reached.add(f)
+   todo.extend(a for mod in imports_of(w/f) if (a:=mod.replace('.','/')+'.lean') in sources)
+ return reached
+targets=[prefix+n+'.lean' for n in ('ObliviousSchedule','ObliviousCandidate','ObliviousSetup',
+                                     'ObliviousLedger','Oblivious')]
+deps={f:closure(f) for f in targets}
+inputs=set().union(*deps.values())
+changed={f for f in inputs if sources[f]!=before[f]}
+single_tape=prefix+'SingleTape.lean'
+assert changed==set(stage['changed_owners'])|{single_tape},changed
+assert (w/single_tape).read_bytes()==git('show',stage['previous_remote_head']+':'+single_tape)
+needed={f for f in inputs if changed&closure(f)}
+assert set(targets)<=needed
+direct={f:{x.replace('.','/')+'.lean' for x in imports_of(w/f)}&needed for f in needed}
+ordered=[]
+while needed-set(ordered):
+ ready=sorted(f for f in needed-set(ordered) if direct[f]<=set(ordered))
+ assert ready
+ ordered.extend(ready)
+for index,f in enumerate(ordered):
+ assert direct[f]<=set(ordered[:index])
+ if f in targets:
+  assert sha((w/f).read_bytes())==prior['object_and_source_hashes'][Path(f).stem]['candidate_sha256']
+source_sha={f:sha((w/f).read_bytes()) for f in sorted(inputs)}
+(e/'INPUTS.json').write_bytes(dump({'provider':stage['base'],'head':stage['head'],'ordered_targets':ordered,
+      'exact_import_source_sha256':source_sha,'changed_import_sources':sorted(changed),
+      'input_object_map_sha256':adopted['object_map_sha256']}))
+subprocess.run(['cp','-cR',str(i),str(o)],check=True)
+assert om(o)==om(i)
+logs=e/'logs'
+logs.mkdir()
+rows=[]
+def run(label,cmd,expect=0,errors=0):
+ p=subprocess.run(cmd,capture_output=True)
+ raw=p.stdout+p.stderr
+ (logs/(label+'.log')).write_bytes(raw)
+ item={'label':label,'argv':cmd,'exit':p.returncode,'errors':raw.count(b'error:'),
+       'admission_warnings':raw.count(b"declaration uses 'sorry'"),'log_sha256':sha(raw)}
+ item['pass']=item['exit']==expect and item['errors']==errors and item['admission_warnings']==0
+ rows.append(item)
+ print(label,'PASS' if item['pass'] else 'FAIL',flush=True)
+ assert item['pass'],item
+ return item,raw
+for f in ordered:
+ mod=f[:-5]
+ for ext in ('olean','ilean','c','trace'):
+  (o/(mod+'.'+ext)).unlink(missing_ok=True)
+ item,_=run(Path(f).stem,['bash',str(w/'devtools/seyoon/leanelab-o.sh'),str(w),str(o),f,str(o)])
+ item['source_sha256']=source_sha[f]
+ item['output_sha256']=sha((o/(mod+'.olean')).read_bytes())
+scratch=e/'guards'
+(scratch/'.lake').mkdir(parents=True)
+(scratch/'.lake/packages').symlink_to((w/'.lake/packages').resolve(),target_is_directory=True)
+(scratch/'lean-toolchain').write_bytes((w/'lean-toolchain').read_bytes())
+for label in ('CandidateGuard','CandidateLiteralEq','ControlNative','ControlSealed'):
+ f=label+'.lean'
+ content=(p/(f+'.txt')).read_bytes()
+ (scratch/f).write_bytes(content)
+ neg=label=='ControlSealed'
+ item,raw=run(label,['bash',str(w/'devtools/seyoon/leanelab.sh'),str(scratch),str(o),f],
+              expect=1 if neg else 0,errors=14 if neg else 0)
+ item['source_sha256']=sha(content)
+ if label=='CandidateGuard':
+  assert {x.decode() for x in re.findall(rb'CLOCK_GUARD_ACTIVE\|([^\r\n]+)',raw)}==set(prior['complete_guard_heads'])
+  assert b'depends on axioms: [propext, Classical.choice, Quot.sound]' in raw
+ if neg:assert raw.count(b'error: Tactic `rfl` failed:')==14
+end=om(o)
+assert om(i)==json.loads((gate/'output.json').read_bytes()) and len(end)==896
+assert all(sha((w/f).read_bytes())==h for f,h in source_sha.items())
+(e/'RESULT.json').write_bytes(dump(stage|{'pass':True,'native_chain':len(ordered),'guard_heads':7,
+    'paired_controls':14,'literal_statement_rfl':True,'validated_imports':len(source_sha),'runs':rows}))

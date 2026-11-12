@@ -1,0 +1,29 @@
+theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre : List Symbol) (c : Cfg m Symbol S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t =
+        (embedEmitCfg ι tapes heads pre (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedEmitRetTM ι M).runFrom
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) T =
+      { embedEmitCfg ι tapes heads pre (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t).state ≠
+        some (Sum.inr ()) := by
+  exact embedThroughHalt M (embedEmitRetTM ι M)
+    (embedEmitCfg ι tapes heads pre) (fun _ => rfl)
+    (embedEmitRet_step ι M tapes heads pre) c T hc hlive hhalt
+
+/-- Direct host comparison preserves every visited-head set, from any
+initial configuration and for every finite horizon.
+**Proof sketch.** Initially halted configurations stay halted on both
+sides. From a live start, iterate the direct step comparison under the
+return encoding, whose head positions are unchanged. Equality of the
+head trajectories gives equality of their finite images. This uses no
+termination hypothesis, source simulation, or capture-tape separation. -/

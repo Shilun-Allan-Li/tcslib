@@ -1,0 +1,13 @@
+theorem dtDepth_restrictFn_le' (f : (Fin n → Bool) → Bool) (ρ : Restriction n) :
+    dtDepth (restrictFn f ρ) ≤ dtDepth f := by
+  obtain ⟨T, hTd, hTe⟩ := Nat.find_spec
+    (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+    ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+     DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+     fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+  set T' := dtRestrict T ρ
+  have hT'd : T'.depth ≤ dtDepth f := le_trans (dtRestrict_depth_le T ρ) hTd
+  have hT'e : ∀ x, T'.eval x = restrictFn f ρ x := by
+    intro x; rw [show T' = dtRestrict T ρ from rfl, dtRestrict_eval]
+    simp [restrictFn]; exact hTe _
+  exact Nat.find_min' _ ⟨T', hT'd, hT'e⟩

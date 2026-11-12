@@ -1,0 +1,34 @@
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Fintype.Option
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.Sigma.Basic
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Sweep
+import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+variable {k : ℕ} {Symbol State : Type} {input : List Symbol}
+variable (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) (n : ℕ)
+theorem FH1_9_SingleTape_run_point : tm.runFrom cfg n = tm.step^[n] cfg := by rfl
+#check FH1_9_SingleTape_run_point
+theorem FH1_9_SingleTape_run_abstract :
+    (tm.runFrom : Cfg k Symbol State input → ℕ → Cfg k Symbol State input) =
+      fun cfg n => tm.step^[n] cfg := by rfl
+#check FH1_9_SingleTape_run_abstract
+theorem FH1_9_SingleTape_step_point : tm.step cfg =
+    (match cfg.state with
+      | none => cfg
+      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg) := by rfl
+#check FH1_9_SingleTape_step_point
+theorem FH1_9_SingleTape_step_abstract :
+    (tm.step : Cfg k Symbol State input → Cfg k Symbol State input) =
+      fun cfg => match cfg.state with
+        | none => cfg
+        | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by rfl
+#check FH1_9_SingleTape_step_abstract

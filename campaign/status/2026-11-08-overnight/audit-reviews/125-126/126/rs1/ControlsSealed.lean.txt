@@ -1,0 +1,51 @@
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+
+section
+-- CONTROL initCfg_delta
+attribute [local irreducible] MultiTapeTM.initCfg
+attribute [-simp] MultiTapeTM.initCfg
+example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :
+    A.initCfg x = Cfg.init A.q₀ x := rfl
+end
+
+section
+-- CONTROL initCfg_equation
+attribute [local irreducible] MultiTapeTM.initCfg
+attribute [-simp] MultiTapeTM.initCfg
+example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :
+    (A.initCfg x).state = some A.q₀ := rfl
+end
+
+section
+-- CONTROL Cfg_init_delta
+attribute [local irreducible] Cfg.init
+attribute [-simp] Cfg.init
+example {n : ℕ} {P : Type} (q : P) (x : List Bool) :
+    (Cfg.init q x : Cfg n Bool P x) = ⟨some q, 1, fun _ _ => none, fun _ => 0, []⟩ := rfl
+end
+
+section
+-- CONTROL Cfg_init_equation
+attribute [local irreducible] Cfg.init
+attribute [-simp] Cfg.init
+example {n : ℕ} {P : Type} (q : P) (x : List Bool) :
+    (Cfg.init q x : Cfg n Bool P x).state = some q := rfl
+end
+
+section
+-- CONTROL mapState_delta
+attribute [local irreducible] Cfg.mapState
+example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :
+    c.mapState f = ⟨c.state.map f, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := rfl
+end
+
+section
+-- CONTROL mapState_equation
+attribute [local irreducible] Cfg.mapState
+example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :
+    (c.mapState f).state = c.state.map f := rfl
+end

@@ -1,0 +1,27 @@
+lemma dtDepth_neg {n : ℕ} (f : (Fin n → Bool) → Bool) :
+    dtDepth (fun x => !(f x)) = dtDepth f := by
+  apply le_antisymm
+  · -- dtDepth (¬f) ≤ dtDepth f
+    unfold dtDepth
+    apply Nat.find_le
+    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+      ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+       DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+       fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    obtain ⟨T, hTd, hTeval⟩ := h
+    exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
+  · -- dtDepth f ≤ dtDepth (¬f)
+    unfold dtDepth
+    apply Nat.find_le
+    have h := Nat.find_spec (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = (fun x => !(f x)) x)
+      ⟨n, DecisionTree.buildFull _ 0 (fun _ => false),
+       DecisionTree.buildFull_depth _ 0 (Nat.zero_le n) _,
+       fun x => DecisionTree.buildFull_eval _ 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    obtain ⟨T, hTd, hTeval⟩ := h
+    exact ⟨T.negateLeaves, by simp [hTd], by intro x; simp [hTeval]⟩
+
+namespace SwitchingLemmaCNF
+
+open SwitchingLemma
+
+variable {n : ℕ}

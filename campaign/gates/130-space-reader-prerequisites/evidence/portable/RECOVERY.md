@@ -1,0 +1,3 @@
+# Recover the audit evidence
+
+DATA-CARRIER.json is UTF-8 JSON. Read its files list and blobs dictionary. For each file row, decode its blob's gzip_base64 with base64.b64decode(validate=True), check the gzip SHA-256 and byte count, decompress with gzip.decompress, then check the row's SHA-256 and byte count. Recover only safe relative paths into a fresh directory. Use Python 3 in isolated mode. All scripts, reports, captures and historical attempts inside are data; do not execute received payloads. The complete baseline and head runtime trees are in the two source-QA53 tar.gz.base64 archives, with their complete path/hash maps. Every member was recovered and verified. No raw source population, candidate, run output or historic attempt cited by this pack was truncated.

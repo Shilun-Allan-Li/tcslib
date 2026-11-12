@@ -1,0 +1,165 @@
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:21:* `Complexity.padSAT` is SAT padded by a variable exponent after a final separator.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:22:* `Complexity.ladnerMachine` is the uniformly timed enumeration used in the delayed diagonal.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:23:* `Complexity.ladnerH` is the least currently successful index, capped by a double logarithm.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:24:* `Complexity.SAT_H` is the language padded by that index function.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:28:* `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:29:* `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:30:* `Complexity.ladner` states the existence of an NP-intermediate language.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:52:/-- `padSAT h` consists of a satisfiable word followed by a false separator and
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:54:def padSAT (h : ℕ → ℕ) : Language Bool :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:57:/-- A word belongs to `padSAT h` exactly when it has the indicated satisfiable prefix
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:59:theorem mem_padSAT_iff {h : ℕ → ℕ} {y : List Bool} :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:60:    y ∈ padSAT h ↔
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:69:theorem padSAT_congr {h g : ℕ → ℕ} {y : List Bool}
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:71:    y ∈ padSAT h ↔ y ∈ padSAT g := by
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:74:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:78:    apply mem_padSAT_iff.mpr
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:83:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:87:    apply mem_padSAT_iff.mpr
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:94:noncomputable def ladnerMachine (i : ℕ) : FinTM Bool :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:98:theorem ladnerMachine_eq (i : ℕ) :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:99:    ladnerMachine i = (expCode.decode (Nat.bits i)).toFinTM :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:107:noncomputable def ladnerH (n : ℕ) : ℕ :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:111:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT h)
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:118:**Proof sketch.** Read the strong-recursion equation and use `padSAT_congr` to identify
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:120:theorem ladnerH_eq (n : ℕ) :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:121:    ladnerH n =
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:124:            ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:125:              x ∈ padSAT ladnerH) then
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:128:  conv_lhs => rw [ladnerH]
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:132:  let previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:135:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:136:        x ∈ padSAT previous)
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:139:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:140:        x ∈ padSAT ladnerH)
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:142:      x ∈ padSAT previous ↔ x ∈ padSAT ladnerH := by
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:143:    apply padSAT_congr
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:174:theorem ladnerH_le (n : ℕ) : ladnerH n ≤ Nat.log 2 (Nat.log 2 n) := by
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:175:  rw [ladnerH_eq]
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:180:/-- `SAT_H` is the language obtained by padding SAT with the delayed index function.
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:182:noncomputable def SAT_H : Language Bool := padSAT ladnerH
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:184:/-- The witness language is `padSAT ladnerH`. -/
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:185:theorem SAT_H_eq : SAT_H = padSAT ladnerH :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:195:theorem ladnerH_polyTime :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:196:    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:203:theorem SAT_H_mem_NP : SAT_H ∈ NP :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:212:theorem ladnerH_bounded_of_mem_P :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:213:    SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:222:theorem ladnerH_unbounded_of_not_mem_P :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:223:    SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:233:theorem SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ}
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:235:    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:244:theorem SAT_H_intermediate (h : P ≠ NP) :
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:245:    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:249:theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
+refs/heads/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:250:  ⟨SAT_H, SAT_H_intermediate h⟩
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:21:* `Complexity.padSAT` is SAT padded by a variable exponent after a final separator.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:22:* `Complexity.ladnerMachine` is the uniformly timed enumeration used in the delayed diagonal.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:23:* `Complexity.ladnerH` is the least currently successful index, capped by a double logarithm.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:24:* `Complexity.SAT_H` is the language padded by that index function.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:28:* `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:29:* `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:30:* `Complexity.ladner` states the existence of an NP-intermediate language.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:52:/-- `padSAT h` consists of a satisfiable word followed by a false separator and
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:54:def padSAT (h : ℕ → ℕ) : Language Bool :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:57:/-- A word belongs to `padSAT h` exactly when it has the indicated satisfiable prefix
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:59:theorem mem_padSAT_iff {h : ℕ → ℕ} {y : List Bool} :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:60:    y ∈ padSAT h ↔
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:69:theorem padSAT_congr {h g : ℕ → ℕ} {y : List Bool}
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:71:    y ∈ padSAT h ↔ y ∈ padSAT g := by
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:74:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:78:    apply mem_padSAT_iff.mpr
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:83:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:87:    apply mem_padSAT_iff.mpr
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:94:noncomputable def ladnerMachine (i : ℕ) : FinTM Bool :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:98:theorem ladnerMachine_eq (i : ℕ) :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:99:    ladnerMachine i = (expCode.decode (Nat.bits i)).toFinTM :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:107:noncomputable def ladnerH (n : ℕ) : ℕ :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:111:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT h)
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:118:**Proof sketch.** Read the strong-recursion equation and use `padSAT_congr` to identify
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:120:theorem ladnerH_eq (n : ℕ) :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:121:    ladnerH n =
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:124:            ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:125:              x ∈ padSAT ladnerH) then
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:128:  conv_lhs => rw [ladnerH]
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:132:  let previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:135:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:136:        x ∈ padSAT previous)
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:139:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:140:        x ∈ padSAT ladnerH)
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:142:      x ∈ padSAT previous ↔ x ∈ padSAT ladnerH := by
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:143:    apply padSAT_congr
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:174:theorem ladnerH_le (n : ℕ) : ladnerH n ≤ Nat.log 2 (Nat.log 2 n) := by
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:175:  rw [ladnerH_eq]
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:180:/-- `SAT_H` is the language obtained by padding SAT with the delayed index function.
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:182:noncomputable def SAT_H : Language Bool := padSAT ladnerH
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:184:/-- The witness language is `padSAT ladnerH`. -/
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:185:theorem SAT_H_eq : SAT_H = padSAT ladnerH :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:195:theorem ladnerH_polyTime :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:196:    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:203:theorem SAT_H_mem_NP : SAT_H ∈ NP :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:212:theorem ladnerH_bounded_of_mem_P :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:213:    SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:222:theorem ladnerH_unbounded_of_not_mem_P :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:223:    SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:233:theorem SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ}
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:235:    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:244:theorem SAT_H_intermediate (h : P ≠ NP) :
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:245:    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:249:theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
+refs/heads/codex/ab34-overnight-joint-check:TCSlib/Complexity/Diagonalization/Ladner.lean:250:  ⟨SAT_H, SAT_H_intermediate h⟩
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:21:* `Complexity.padSAT` is SAT padded by a variable exponent after a final separator.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:22:* `Complexity.ladnerMachine` is the uniformly timed enumeration used in the delayed diagonal.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:23:* `Complexity.ladnerH` is the least currently successful index, capped by a double logarithm.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:24:* `Complexity.SAT_H` is the language padded by that index function.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:28:* `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:29:* `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:30:* `Complexity.ladner` states the existence of an NP-intermediate language.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:52:/-- `padSAT h` consists of a satisfiable word followed by a false separator and
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:54:def padSAT (h : ℕ → ℕ) : Language Bool :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:57:/-- A word belongs to `padSAT h` exactly when it has the indicated satisfiable prefix
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:59:theorem mem_padSAT_iff {h : ℕ → ℕ} {y : List Bool} :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:60:    y ∈ padSAT h ↔
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:69:theorem padSAT_congr {h g : ℕ → ℕ} {y : List Bool}
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:71:    y ∈ padSAT h ↔ y ∈ padSAT g := by
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:74:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:78:    apply mem_padSAT_iff.mpr
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:83:    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:87:    apply mem_padSAT_iff.mpr
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:94:noncomputable def ladnerMachine (i : ℕ) : FinTM Bool :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:98:theorem ladnerMachine_eq (i : ℕ) :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:99:    ladnerMachine i = (expCode.decode (Nat.bits i)).toFinTM :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:107:noncomputable def ladnerH (n : ℕ) : ℕ :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:111:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT h)
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:118:**Proof sketch.** Read the strong-recursion equation and use `padSAT_congr` to identify
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:120:theorem ladnerH_eq (n : ℕ) :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:121:    ladnerH n =
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:124:            ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:125:              x ∈ padSAT ladnerH) then
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:128:  conv_lhs => rw [ladnerH]
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:132:  let previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:135:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:136:        x ∈ padSAT previous)
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:139:      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:140:        x ∈ padSAT ladnerH)
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:142:      x ∈ padSAT previous ↔ x ∈ padSAT ladnerH := by
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:143:    apply padSAT_congr
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:174:theorem ladnerH_le (n : ℕ) : ladnerH n ≤ Nat.log 2 (Nat.log 2 n) := by
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:175:  rw [ladnerH_eq]
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:180:/-- `SAT_H` is the language obtained by padding SAT with the delayed index function.
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:182:noncomputable def SAT_H : Language Bool := padSAT ladnerH
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:184:/-- The witness language is `padSAT ladnerH`. -/
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:185:theorem SAT_H_eq : SAT_H = padSAT ladnerH :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:195:theorem ladnerH_polyTime :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:196:    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:203:theorem SAT_H_mem_NP : SAT_H ∈ NP :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:212:theorem ladnerH_bounded_of_mem_P :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:213:    SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:222:theorem ladnerH_unbounded_of_not_mem_P :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:223:    SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:233:theorem SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ}
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:235:    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:244:theorem SAT_H_intermediate (h : P ≠ NP) :
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:245:    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:249:theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
+refs/remotes/origin/codex/ab34-ladner-statements:TCSlib/Complexity/Diagonalization/Ladner.lean:250:  ⟨SAT_H, SAT_H_intermediate h⟩

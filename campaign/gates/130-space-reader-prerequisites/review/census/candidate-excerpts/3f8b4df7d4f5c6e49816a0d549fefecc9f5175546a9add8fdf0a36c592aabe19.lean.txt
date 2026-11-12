@@ -1,0 +1,10 @@
+/-- The one-step copy body on one work tape. In state `false`, on an input symbol it writes the
+symbol, moves the tape head and the input head right and stays in `false`; at the input's right
+end it moves to `true` without writing or moving. -/
+private def iw_body : MultiTapeTM 1 Bool Bool where
+  q₀ := false
+  tr := fun q inp _ =>
+    if q then FinTM.controlAction 0 (some true)
+    else match inp with
+      | none => FinTM.controlAction 0 (some true)
+      | some b => ⟨1, fun _ => (some (some b), 1), none, some false⟩

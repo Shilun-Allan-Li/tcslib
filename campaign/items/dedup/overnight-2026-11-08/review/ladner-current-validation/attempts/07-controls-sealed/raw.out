@@ -1,0 +1,143 @@
+CONTROL|Complexity.NP|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NP|point|Tactic `rfl` failed: equality lhs
+  Complexity.NP
+is not definitionally equal to rhs
+  {L | ∃ C c, ∃ V ∈ Complexity.P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+⊢ Complexity.NP =
+    {L | ∃ C c, ∃ V ∈ Complexity.P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+CONTROL|Complexity.NP|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NP|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.NP
+is not definitionally equal to rhs
+  {L | ∃ C c, ∃ V ∈ Complexity.P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+⊢ Complexity.NP =
+    {L | ∃ C c, ∃ V ∈ Complexity.P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+CONTROL|Complexity.NPComplete|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NPComplete|point|Tactic `rfl` failed: equality lhs
+  Complexity.NPComplete L
+is not definitionally equal to rhs
+  L ∈ Complexity.NP ∧ Complexity.NPHard L
+
+L : Language Bool
+⊢ Complexity.NPComplete L = (L ∈ Complexity.NP ∧ Complexity.NPHard L)
+CONTROL|Complexity.NPComplete|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NPComplete|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.NPComplete
+is not definitionally equal to rhs
+  fun L => L ∈ Complexity.NP ∧ Complexity.NPHard L
+
+⊢ Complexity.NPComplete = fun L => L ∈ Complexity.NP ∧ Complexity.NPHard L
+CONTROL|Complexity.NPHard|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NPHard|point|Tactic `rfl` failed: equality lhs
+  Complexity.NPHard L
+is not definitionally equal to rhs
+  ∀ L' ∈ Complexity.NP, Complexity.PolyTimeReducible L' L
+
+L : Language Bool
+⊢ Complexity.NPHard L = ∀ L' ∈ Complexity.NP, Complexity.PolyTimeReducible L' L
+CONTROL|Complexity.NPHard|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.NPHard|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.NPHard
+is not definitionally equal to rhs
+  fun L => ∀ L' ∈ Complexity.NP, Complexity.PolyTimeReducible L' L
+
+⊢ Complexity.NPHard = fun L => ∀ L' ∈ Complexity.NP, Complexity.PolyTimeReducible L' L
+CONTROL|Complexity.P|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.P|point|Tactic `rfl` failed: equality lhs
+  Complexity.P
+is not definitionally equal to rhs
+  ⋃ c, Complexity.DTIME fun n => n ^ c + 1
+
+⊢ Complexity.P = ⋃ c, Complexity.DTIME fun n => n ^ c + 1
+CONTROL|Complexity.P|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.P|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.P
+is not definitionally equal to rhs
+  ⋃ c, Complexity.DTIME fun n => n ^ c + 1
+
+⊢ Complexity.P = ⋃ c, Complexity.DTIME fun n => n ^ c + 1
+CONTROL|Complexity.PolyTimeComputable|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.PolyTimeComputable|point|Tactic `rfl` failed: equality lhs
+  Complexity.PolyTimeComputable f
+is not definitionally equal to rhs
+  ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+f : List Bool → List Bool
+⊢ Complexity.PolyTimeComputable f = ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+CONTROL|Complexity.PolyTimeComputable|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.PolyTimeComputable|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.PolyTimeComputable
+is not definitionally equal to rhs
+  fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+⊢ Complexity.PolyTimeComputable = fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+CONTROL|Complexity.SAT|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.SAT|point|Tactic `rfl` failed: equality lhs
+  Complexity.SAT
+is not definitionally equal to rhs
+  {x | (Std.Sat.CNF.decode x).Satisfiable}
+
+⊢ Complexity.SAT = {x | (Std.Sat.CNF.decode x).Satisfiable}
+CONTROL|Complexity.SAT|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.SAT|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.SAT
+is not definitionally equal to rhs
+  {x | (Std.Sat.CNF.decode x).Satisfiable}
+
+⊢ Complexity.SAT = {x | (Std.Sat.CNF.decode x).Satisfiable}
+CONTROL|Complexity.expCode|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.expCode|point|Tactic `rfl` failed: equality lhs
+  Complexity.expCode
+is not definitionally equal to rhs
+  Classical.choice Turing.exists_uniformMachineCode
+
+⊢ Complexity.expCode = Classical.choice Turing.exists_uniformMachineCode
+CONTROL|Complexity.expCode|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Complexity.expCode|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.expCode
+is not definitionally equal to rhs
+  Classical.choice Turing.exists_uniformMachineCode
+
+⊢ Complexity.expCode = Classical.choice Turing.exists_uniformMachineCode
+CONTROL|Turing.CodeTM.toFinTM|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Turing.CodeTM.toFinTM|point|Tactic `rfl` failed: equality lhs
+  M.toFinTM.1
+is not definitionally equal to rhs
+  { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }.1
+
+M : Turing.CodeTM
+⊢ M.toFinTM.1 =
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+        decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }.1
+CONTROL|Turing.CodeTM.toFinTM|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Turing.CodeTM.toFinTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.CodeTM.toFinTM
+is not definitionally equal to rhs
+  fun M =>
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+
+⊢ Turing.CodeTM.toFinTM = fun M =>
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+CONTROL|Turing.FinTM.ComputesInTime|point|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Turing.FinTM.ComputesInTime|point|Tactic `rfl` failed: equality lhs
+  M.ComputesInTime input output t
+is not definitionally equal to rhs
+  ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+
+Symbol : Type
+M : Turing.FinTM Symbol
+input output : List Symbol
+t : ℕ
+⊢ M.ComputesInTime input output t = ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+CONTROL|Turing.FinTM.ComputesInTime|abstract|FAIL
+ControlsSealed.lean:22:0: error: RFL_CONTROL|Turing.FinTM.ComputesInTime|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.ComputesInTime
+is not definitionally equal to rhs
+  fun {Symbol} M input output t => ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+
+⊢ @Turing.FinTM.ComputesInTime = fun {Symbol} M input output t => ∃ s, M.tm.ComputesInTimeAndSpace input output t s

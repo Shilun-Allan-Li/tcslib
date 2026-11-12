@@ -1,0 +1,14 @@
+/-- Native preparation followed by the unchanged inclusive recorder.
+The completed recorder remains live, so later search/packing can be added. -/
+private def clRecordTM (M : FinTM Bool) : FinTM Bool where
+  k := ((clRecTM M).k + 4) + 1
+  State := (clPrepareTM ((clRecTM M).k + 4)).State ⊕ (clRecTM M).State
+  tm := {
+    q₀ := .inl (clPrepareTM ((clRecTM M).k + 4)).tm.q₀
+    tr := fun q inp work => match q with
+      | .inl r =>
+        if r = .inr (Fin.last ((clRecTM M).k + 4), .inl 0) then
+          FinTM.controlAction 0 (some (.inr (clRecTM M).tm.q₀))
+        else ((clPrepareTM ((clRecTM M).k + 4)).tm.tr r inp work).mapState Sum.inl
+      | .inr r => clSlotAction (clRecordSelect M) Sum.inr
+          ((clRecTM M).tm.tr r inp (fun i => work (clRecordIndex M i))) }

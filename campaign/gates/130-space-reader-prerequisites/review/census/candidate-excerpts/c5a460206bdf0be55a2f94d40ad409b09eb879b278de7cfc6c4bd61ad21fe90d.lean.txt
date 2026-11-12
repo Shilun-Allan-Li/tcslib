@@ -1,0 +1,15 @@
+theorem rightCfg_consumer {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (hs : (FinTM.rightCfg f c tapes heads).state = c.state.map f)
+    (hi : (FinTM.rightCfg f c tapes heads).inputPos = c.inputPos)
+    (ht : ∀ i a, (FinTM.rightCfg f c tapes heads).workTapes i a =
+      Fin.addCases tapes c.workTapes i a)
+    (hp : ∀ i, (FinTM.rightCfg f c tapes heads).workTapePos i =
+      Fin.addCases heads c.workTapePos i)
+    (ho : (FinTM.rightCfg f c tapes heads).output = c.output) :
+    FinTM.rightCfg f c tapes heads =
+      ⟨c.state.map f, c.inputPos, Fin.addCases tapes c.workTapes, Fin.addCases heads c.workTapePos, c.output⟩ := by
+  refine Cfg.ext hs hi ?_ ?_ ho
+  · funext i a; exact ht i a
+  · funext i; exact hp i

@@ -1,0 +1,88 @@
+from pathlib import Path
+import datetime, hashlib, json, re, subprocess
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4'); Q=Path('/private/tmp/ab34-reader-final-qa2e2f')
+P=Path('/private/tmp/ab34-gate129-assembly'); O=P/'CURRENT';O.mkdir()
+G=lambda *a:subprocess.check_output(['git','-C',str(R),*a]);H=lambda b:hashlib.sha256(b).hexdigest()
+def j(p):return json.loads(Path(p).read_text())
+def save(p,o):Path(p).write_text(json.dumps(o,ensure_ascii=False,indent=2)+'\n')
+def rev(n):
+ h=G('rev-parse',n+'^{commit}').decode().strip();G('cat-file','-e',h+'^{commit}');return h
+base=rev('9b5dcf464'); head=rev('origin/codex/ab34-input-scan-readers');records=rev('origin/complexity/arora-barak-ch3-4')
+assert records==rev('HEAD') and not G('diff','--name-only',base,records,'--','*.lean')
+c=j('/private/tmp/ab34-owner-compat4-client/RESULT.json');d=j('/private/tmp/ab34-owner-compat4/OWNER-DIFF.json')
+assert c['pass'] and c['final_head']==head and c['preserved_replay_modules']==390 and not c['outside_hits']
+old=rev(c['old_full394']);assert d['material_rows_exact'] and d['default_simp_rows_exact']
+owners=G('diff','--name-only',base,head,'--','*.lean').decode().splitlines();assert len(owners)==4
+m=subprocess.run(['git','-C',str(R),'merge-tree','--write-tree',records,head],capture_output=True,check=True);tree=m.stdout.decode().splitlines()[0]
+G('cat-file','-e',tree+'^{tree}');assert not G('diff','--name-only',head,tree,'--','*.lean')
+assert len(j('/private/tmp/ab34-nread6-provider-refresh/source-before.json'))==1003
+save(O/'CURRENT-VALIDITY.json',{'head':head,'baseline_Lean':base,'previous_passed394':old,'campaign':records,'clean_prospective_tree':tree,'merged_Lean_equals_actual_current_provider_source':True,'current_source_paths':1003,'current_physical_whole895_map_verified':True,'no_current_full394_execution':True,'reuse_390_proof_only_clients':True})
+(O/'MERGE-OUTPUT.txt').write_bytes(m.stdout+m.stderr)
+(O/'SOURCE.patch').write_bytes(G('diff','--full-index',base,head,'--','*.lean'))
+(O/'APPROVED-NAME-TO-FINAL.patch').write_bytes(G('diff','--full-index',old,head,'--','*.lean'))
+oldax={};newax={}
+for dd,tag in [(oldax,'nread4'),(newax,'nread6')]:
+ for l in (Path('/private/tmp/ab34-final129-selected-axioms')/(tag+'.out.txt')).read_text().splitlines():
+  if 'SELECTED_AX|' in l:
+   x=json.loads(l.split('SELECTED_AX|',1)[1]);dd[x['name']]=set(x['axioms'])
+assert oldax.keys()==newax.keys() and len(oldax)==10 and all(x in [set(),{'propext','Classical.choice','Quot.sound'}] for x in newax.values())
+axdiff={k:sorted(newax[k]-oldax[k]) for k in newax if oldax[k]!=newax[k]};assert len(axdiff)==4 and all(x==['Classical.choice'] for x in axdiff.values());save(O/'SELECTED-AX-DELTA.json',axdiff)
+pat=re.compile(r'^\s+(.*?)  reproduces  (.*?): (\d+)/(\d+) = (\d+)%$')
+def scores(p):return {(a,b):(int(x),int(y),int(z)) for a,b,x,y,z in [pat.match(l).groups() for l in p.read_text().splitlines()[1:]]}
+a=scores(Q/'BASE-screen.txt');b=scores(Q/'current-screen/screen.txt')
+new=sorted(b.keys()-a.keys());gone=sorted(a.keys()-b.keys());changed=sorted(k for k in a.keys()&b if a[k]!=b[k]);assert (len(a),len(b),len(new),len(gone),len(changed))==(2338,2335,2,5,2)
+assert all(x[0].endswith('::walkTM_run_ofCfg') and ('::step_of_tapeAction_' in x[1]) for x in new)
+reason='The walk transition can move an arbitrary head set. The one-tape donors require a single selected moved head and a specific write/no-write action row. Neither premise covers the general walk; the supplied literal case probes establish the gap. Shared field-equation calls are not an additional copy of either one-tape theorem.'
+save(O/'FINAL-PAIR-DISPOSITIONS.json',{'BASE_pairs':len(a),'HEAD_pairs':len(b),'new':[{'edge':k,'score':b[k],'disposition':reason} for k in new],'gone':[{'edge':k,'prior_score':a[k],'disposition':'No longer reported in exact current score coverage; no claim about broader debt.'} for k in gone],'changed_scores':[{'edge':k,'prior_score':a[k],'score':b[k],'disposition':'Both existing edges. The same field-equation calls are used in distinct write and non-writing transition premises; the writer requires a selected write and does not cover the no-write row. No new copied theorem or retained-debt approval.'} for k in changed]})
+def style(p):
+ return sorted(re.sub(r':\d+:',':LINE:',re.sub(r': \d+ lines \(>',': LENGTH lines (>',l)) for l in p.read_text().splitlines() if l.strip())
+st=style(Q/'BASE-style.stdout.txt');assert st==style(Q/'HEAD-style.stdout.txt')
+save(O/'FINAL-QA-SUMMARY.json',{'style_inherited_identities':len(st),'all_same':True,'campaign_lint':'0 FAIL / 73 WARN, 94 files','screen':j(Q/'current-screen/RESULT.json')})
+(O/'driver.py.txt').write_bytes(Path(__file__).read_bytes())
+# Reuse the verified lossless bundler, adding current final source, certificate, and raw outputs.
+s=(P/'build_data.py').read_text()
+a0="O=Path('/private/tmp/ab34-gate129-assembly/DATA')";assert s.count(a0)==1;s=s.replace(a0,"O=Path('/private/tmp/ab34-gate129-assembly/DATA-FINAL')")
+a0="assert Path('/private/tmp/ab34-reader-final-qa-rerun/COMPLETE.json').exists(),'Final actual screen not complete; no carrier yet'"
+assert s.count(a0)==1;s=s.replace(a0,"assert Path('/private/tmp/ab34-reader-final-qa2e2f/COMPLETE.json').exists(),'Final exact screen coverage not complete'")
+a0=" ('/private/tmp/ab34-reader-current-merge-check/251','root/current-merge',())]:capture(directory,label,exclude)"
+assert s.count(a0)==1
+s=s.replace(a0,""" ('/private/tmp/ab34-reader-current-merge-check/251','root/historical-0f-merge',()),
+ ('/private/tmp/ab34-gate129-assembly/CURRENT','root/current-merge',()),
+ ('/private/tmp/ab34-reader-final-qa2e2f','root/current-QA',('runtime-HEAD',)),
+ ('/private/tmp/ab34-nread6-provider-refresh','root/final-provider2',()),
+ ('/private/tmp/ab34-owner-compat4','root/final-owner-compatibility',()),
+ ('/private/tmp/ab34-owner-compat4-client','root/final-client-compatibility',()),
+ ('/private/tmp/ab34-final129-selected-axioms','root/final-selected-axioms',())]:capture(directory,label,exclude)
+for path in ['/private/tmp/ab34-owner-compat4.py','/private/tmp/ab34-owner-compat4-client.py','/private/tmp/ab34-gate129-screen-repair-c1kdvluh/CHECKPOINT.md','/private/tmp/ab34-gate129-screen-repair-c1kdvluh/ALL-PAIR-DISPOSITIONS.json']:
+ p=Path(path);put('root/extra/'+p.name,p.read_bytes(),p)
+p=R/'campaign/status/2026-11-08-relocation-2154/screen-pair-repairs-checkpoint.zip.base64';put('root/final-two-repair-evidence.zip.base64',p.read_bytes(),p)
+p=R/'campaign/gates/130-space-reader-prerequisites/evidence/portable/CURRENT-REF-BOUND.json';put('root/current-18-open-refs.json',p.read_bytes(),p)""")
+a0="(Path('/private/tmp/ab34-reader-final-qa-rerun'),'HEAD')]:check_archive(q,label)"
+assert s.count(a0)==1;s=s.replace(a0,"(Path('/private/tmp/ab34-reader-final-qa-rerun'),'HEAD'),(Path('/private/tmp/ab34-reader-final-qa2e2f'),'HEAD')]:check_archive(q,label)")
+(P/'build_data_final.py').write_text(s)
+p=(P/'pack-DRAFT.md').read_text()
+start=p.index('## Actual elaborations and replay validity');end=p.index('## Opacity, controls and explicit arguments'); assert start<end
+p=p[:start]+f"""## Actual elaborations and replay validity
+
+The actual full 394-module execution at {old} starts from a whole MAC8 clone: 394 PASS, zero failures or static mismatches, 59 inherited direct admissions, all 895 objects. At the later 0f926 source an actual three-provider refresh (Simulation/Catalog/Scan) passes. At this final source an actual two-provider refresh (Primitives/Catalog) passes, static0/0; it whole-clones that prior complete tree and writes only those two objects. Across the chain, 4 distinct provider objects change and 891 other objects are byte-identical to the actual394 output. No snapshot splice and **no fresh full394 run at final source**. The earlier stopped old-name run is invalid and preserved as history.
+
+Final four-owner compiled census: 2,464→2,463 declarations, all 509 computational/structural rows identical in full types, values and observed flags, and all 82 default simp rows exact. Eight compiler-generated theorem names disappear, seven appear, eleven common generated theorem types change, and the generated controlAction.eq_1 owner changes with its type/flags otherwise exact. All twenty sensitive old names are searched in every full type, theorem and definition value, and recursor RHS across the actual old394 client population: 57,644 constants, 55,103 values, 2,075 recursor rules. Five dependent constants occur only in the four rebuilt owners; none in the 390 preserved replay modules. Default-simp table evidence is included. The sole proof-valued generated definition has a proposition as its type, not a computational value of type Prop: its type/flags are compared and its proof RHS is omitted under proof irrelevance. No proof-value equality is claimed. Separate earlier narrower certificates are historical. The exact source-only proof-body changes, actual object maps and client results support START-HERE §4 reuse.
+
+CURRENT-VALIDITY.json verifies the current clean prospective merge has the exact final checked Lean tree. All 1,003 source paths are pinned, with old→final source patches and a rehashed whole895 map. The umbrella is a screen input, not a replay module. Later changes to imports, statements, definitions or simp sets require a new validity check.
+
+"""+p[end:]
+p=p.replace('three owner readers and six mechanical proof repairs','three owner readers and seven mechanical proof repairs').replace('0f926779de590194f5222277dc038d2ad097ff91',head)
+p=p.replace('Only Simulation, Build/Catalog and Build/Scan change','Only Simulation, Build/Catalog, Build/Scan and Build/Primitives change')
+p=p.replace('Six pre-existing proof bodies are mechanically repaired under WORKFLOW§3, and one proof sketch is synchronized.','Seven pre-existing proof bodies are mechanically repaired under WORKFLOW§3, with matching proof sketches.')
+p=p.replace('Six old headers are literal-exact','Seven old headers are literal-exact').replace('private `Turing.scan_fold_trace`.','private `Turing.scan_fold_trace`; and `Turing.FinTM.pairExtractTM_fst_run`.')
+p=p.replace('the other two retain the standard triple','the other three retain the standard triple')
+p=p.replace('The six old proof repairs have','The intermediate six old proof repairs have')
+p=p.replace('The private six-proof generation differs from the final source only in the one Catalog proof-sketch comment; the final3 actual compiler and raw owner/attribute identity close that transport.', 'The six-proof intermediate and its guard evidence are retained at their actual pins. Five proof bodies are identical in the final source and their encountered ordinary definitions, types and active simp rows are unchanged. The two final mechanical proofs (inputMoveAction and extractor halt) have separate full-owner and complete-target executions on their exact final body text: 5 and 12 heads, union12 and 24 effective paired controls. The new positive-tape case cites the one-tape move rule at zero work movement; k=0 uses Cfg.ext_zero_tapes. The extractor closes via controlAction_def/controlAction_apply. Final selected AX observations show the three new equations axiom-free, all seven old closures standard-only, with exactly four additions of existing Classical.choice since the approved-name baseline.')
+p=p.replace('the16 fetched open-PR snapshot and own new prerequisite source','the earlier16 fetched open-PR snapshot, own new prerequisite source and the refreshed18-head supplement')
+p=p.replace("a possible exact owner-home move is a separate, unapproved proposal","the approved exact owner-home move is separate in #253 and is not assumed merged here")
+p=p.replace("Actual final source QA has style exit1 on both sides, the same7 inherited finding identities",f"Actual final source QA has style exit1 on both sides, the same {len(st)} inherited finding identities")
+p=p.replace('and6 authorized existing body changes','and7 authorized existing body changes').replace('and6 mechanical old proof repairs','and7 mechanical old proof repairs').replace('old394 plus final3 validity argument','old394 plus actual three- and two-provider refresh validity argument')
+p=p.replace('FINAL-SCREEN-DISPOSITION-PENDING',"""Current complete 50-file score coverage: actual BASE 2,338 pairs; actual old 0f HEAD 2,341 (6 new, 3 gone, 4 score changes); final HEAD 2,335 (2 new, 5 gone, 2 score changes versus BASE). The final run checks identical kind/body/grams for all 2,804 reused rows and considers all 11,218 pairs incident to the two changed rows using the unmodified parser/tiler, including 1,232 fresh tilings. This is exact reuse plus fresh affected-pair scoring. No fresh quadratic run at final source is claimed. Four of the six old new pairs disappear after the two proof repairs. The two remaining new pairs are walk versus one-tape move/write: arbitrary walked head sets do not meet the one-selected-head donor premises. The two changed scores are the existing move/write edges, whose literal no-write/write premises differ. Complete pair dispositions, literal gap probes and historical all-pair results are included.""")
+assert 'FINAL-SCREEN-DISPOSITION-PENDING' not in p
+(O/'pack.md').write_text(p)
+save(O/'stage-request.json',{'gate':129,'pr':251,'slug':'input-readers','branch':'origin/codex/ab34-input-scan-readers','findings':'gate129-input-readers-findings.md','output_dir':'/private/tmp/ab34-publish129-final'})

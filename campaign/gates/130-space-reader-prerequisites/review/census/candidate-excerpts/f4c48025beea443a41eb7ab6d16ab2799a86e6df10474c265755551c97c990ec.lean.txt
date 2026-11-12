@@ -1,0 +1,19 @@
+/-- The native fixed-field leaf remembers the first cell of a pair and its finite pair
+index. It rejects a blank immediately and validates each pair before proceeding.
+The catalog's input folds require a whole-input traversal from position one; this local
+fixed-width validator is the missing leaf. -/
+private def canonPairsTM (m : ℕ) (vs : List (Bool → Bool → Bool)) :
+    MultiTapeTM m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) where
+  q₀ := Sum.inr (0, none)
+  tr := fun q inp _ => match q with
+    | Sum.inl b => inputMoveAction 0 (Sum.inl b)
+    | Sum.inr (j, a) =>
+      if h : j.val < vs.length then
+        match a, inp with
+        | none, some b => inputMoveAction 1 (Sum.inr (j, some b))
+        | some a, some b =>
+          if vs[j.val] a b then
+            inputMoveAction 1 (Sum.inr (⟨j.val + 1, by omega⟩, none))
+          else inputMoveAction 0 (Sum.inl false)
+        | _, none => inputMoveAction 0 (Sum.inl false)
+      else inputMoveAction 0 (Sum.inl true)

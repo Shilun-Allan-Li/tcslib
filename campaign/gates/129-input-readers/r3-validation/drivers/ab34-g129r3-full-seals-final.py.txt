@@ -1,0 +1,116 @@
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import hashlib,json,os,re,subprocess,sys
+W=Path('/Users/seyoonr/.codex/worktrees/ab34-input-readers/tcslib-arora-barak-ch3-4')
+S=Path(os.environ['TCSLIB_SCRATCH']);O=Path(sys.argv[1]);O.mkdir();P=O/'scratch'
+P.mkdir();(P/'.lake').mkdir();(P/'.lake/packages').symlink_to((W/'.lake/packages').resolve(),target_is_directory=True)
+(P/'lean-toolchain').write_bytes((W/'lean-toolchain').read_bytes())
+m=json.loads(Path(sys.argv[2]).read_bytes());over=Path(sys.argv[3]);srcroot=Path(sys.argv[4])
+bind=json.loads(Path('/private/tmp/ab34-g129r3-bound-final/RESULT.json').read_bytes())
+assert bind['all_predecessors_pass'] and bind['whole_output_snapshot']==str(over)
+assert len(bind['rebuilt_predecessors'])==15
+for checked in bind['rebuilt_predecessors']:
+ assert hashlib.sha256((over/(checked['module']+'.olean')).read_bytes()).hexdigest()==checked['output_sha256']
+D=Path('/private/tmp/ab34-reader-context-repairs')
+F=(W/'devtools/seyoon/declfreeze.py').read_text();cut='a = chunks(open(sys.argv[1]).read())';assert F.count(cut)==1
+ns={};exec(compile(F.split(cut)[0],'declfreeze.py','exec'),ns)
+C=(D/'prepare_boundaries.py').read_text();loc='def clean(s):';end='for idx,m in enumerate(M,1):';assert C.count(loc)==C.count(end)==1
+exec(compile(C[C.index(loc):C.index(end)],'prepare_boundaries.py','exec'),ns)
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def save(n,x):(O/n).write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+families=['Turing.FinTM.'+n for n in ('emit_run','emit_halts','inputSymbol_at','rewind_scan_heads','bufferedSecondCfg_step','incFixedTM_computes','catalogPrefixTM_halt','scanCfg_read','extractCfg_read','emitterP2_control')]+['Turing.scan_copy_trace','Turing.inputFoldTM_tr_bwd']
+families += ['Turing.'+n for n in ('catalog_apply_record','catalog_clear_trace','copyMapTM_step_eq',
+  'catalog_transferMap_trace','catalog_compare_trace','catalog_increment_trace')]
+families += ['Turing.FinTM.'+n for n in ('catalogPrefixTM_emit','catalogPrefixTM_copy','catalogPoly_rewind',
+  'catalogPoly_copy','emitterP2_erase_scan','pairExtractTM_computes','bufferedScanCfg_run','bufferedFirstCfg_rewind')]
+families += ['Turing.FinTM.controlAction_def','Turing.inputMoveAction_eq']
+assert len(families)==len(set(families))==28
+forced = {
+ 'Turing.Action.apply':('TCSlib.Complexity.TuringMachine.Configuration',True),
+ 'Turing.MultiTapeTM.step':('TCSlib.Complexity.TuringMachine.Deterministic',False),
+ 'Turing.MultiTapeTM.runFrom':('TCSlib.Complexity.TuringMachine.Deterministic',False),
+ 'Turing.MultiTapeTM.initCfg':('TCSlib.Complexity.TuringMachine.Deterministic',True),
+ 'Turing.Cfg.init':('TCSlib.Complexity.TuringMachine.Configuration',True),
+ 'Turing.Cfg.workTapeSymbols':('TCSlib.Complexity.TuringMachine.Configuration',False),
+ 'Turing.FinTM.bufferTape':('TCSlib.Complexity.TuringMachine.Simulation',False),
+}
+
+guard_source=r'''open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := HEAD_NAMES
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "SIMP_STILL_ACTIVE|{n}"
+    logInfo m!"GUARD_ACTIVE|{n}"
+'''
+def nlist(names):return '['+', '.join(chr(96)+n for n in names)+']'
+rows=[];heads_all={}
+for i,name in enumerate(families,1):
+ b=m['BOUNDARY'][name];rel=b['owner'].replace('.','/')+'.lean'
+ whole=(srcroot/rel).read_text()
+ r=[x for x in ns['chunks'](whole) if x[0]==name];assert len(r)==1
+ n,priv,chunk=r[0];assert whole.count(chunk)==1
+ pos=whole.index(chunk);start=pos
+ while True:
+  q=re.search(r'(?m)^open [^\n]+ in\s*\n\s*\Z',whole[:start])
+  if not q:break
+  start=q.start()
+ e=pos+len(chunk);stack=[]
+ for line in ns['clean'](whole[:e]).splitlines():
+  z=re.fullmatch(r'\s*(namespace|section|noncomputable section)(?:\s+([^\s]+))?\s*',line)
+  if z:stack.append(z.group(2) or '');continue
+  if re.fullmatch(r'\s*end(?:\s+([^\s]+))?\s*',line):assert stack;stack.pop()
+ defs=[x for x in b['foreign_definitions'] if x['ordinary']]
+ actual=sorted(d['name'] for d in defs);assert actual==sorted(b['ordinary_foreign_heads'])
+ for n,(home,unfold) in forced.items():
+  if home!=b['owner'] and n not in actual:
+   defs.append({'name':n,'owner':home,'simp':False,'unfold':unfold,'ordinary':True})
+ heads=sorted(d['name'] for d in defs);assert heads
+ heads_all.update({d['name']:d for d in defs})
+ simp=sorted(d['name'] for d in defs if d['simp'] or d['unfold'])
+ attr='section Boundary129\nattribute [local irreducible] '+' '.join(heads)+'\n'
+ if simp:attr+='attribute [-simp] '+' '.join(simp)+'\n'
+ code=whole[:start]+attr+'\n'+whole[start:e]+'\n'+guard_source.replace('HEAD_NAMES',nlist(heads))+'end Boundary129\n'
+ code+=''.join('end'+(' '+n if n else '')+'\n' for n in reversed(stack))
+ f=f'Guard{i:02d}.lean';(P/f).write_text(code);(O/(f+'.txt')).write_text(code)
+ rows.append({'id':i,'root':name,'owner':rel,'owner_sha256':sha(whole.encode()),'source':f,'probe_sha256':sha(code.encode()),'heads':heads,'compiled_ordinary_foreign_heads':actual,'simp_removed':simp})
+control=(D/'controls/Native.lean.txt').read_text()
+control=re.sub(r'^import TCSlib.*\n','',control,flags=re.M)
+control=control.replace('import Lean\n','import Lean\nimport TCSlib.Complexity.TuringMachine.Build.Scan\n')
+control=re.sub(r'^attribute \[-simp\].*\n','',control,flags=re.M)
+control=re.sub(r'  let targets : List Name := .*\n',lambda _: '  let targets : List Name := '+nlist(sorted(heads_all))+'\n',control)
+needle='open Lean Elab Command Meta in\n';assert control.count(needle)==1
+simp=sorted(n for n,d in heads_all.items() if d['simp'] or d['unfold'])
+if simp:control=control.replace(needle,'attribute [-simp] '+' '.join(simp)+'\n'+needle)
+for sealed in (False,True):
+ f=('Sealed' if sealed else 'Native')+'.lean'
+ code=control if not sealed else control.replace(needle,'attribute [local irreducible] '+' '.join(sorted(heads_all))+'\n'+needle)
+ (P/f).write_text(code);(O/(f+'.txt')).write_text(code)
+ rows.append({'source':f,'control':True,'expected_exit':1 if sealed else 0,'probe_sha256':sha(code.encode()),'heads':sorted(heads_all)})
+save('REQUEST.json',{'input_object_tree':str(over),'source_tree':str(srcroot),'rows':rows,
+ 'complete_selected_definition_footprint_by_root':True,'other_proof_values_and_foreign_RHS_stopped':True,
+ 'not_a_whole_owner_seal':True})
+def run(row):
+ f=row['source'];cmd=['bash',str(W/'devtools/seyoon/leanelab.sh'),str(P),str(over),f]
+ a=subprocess.run(cmd,capture_output=True);raw=a.stdout+a.stderr;(O/(f+'.log')).write_bytes(raw)
+ t=raw.decode();errors=len(re.findall(r'^.+:\d+:\d+: error:',t,re.M))
+ if row.get('control'):
+  expected=row['expected_exit'];m=len(row['heads'])*2
+  statuses=re.findall(r'CONTROL\|(\d+)\|([^|\n]+)\|(point|abstract)\|(PASS|FAIL)',t)
+  ok=a.returncode==expected and len(statuses)==m and len({(b,c) for _,b,c,_ in statuses})==m and all(x[-1]==('FAIL' if expected else 'PASS') for x in statuses)
+  ok=ok and errors==(m if expected else 0) and t.count('CONTROL_RFL|')==(m if expected else 0)
+  checks={'control_goal_count':len(statuses),'identities':statuses}
+ else:
+  active=re.findall(r'GUARD_ACTIVE\|([^\n]+)',t)
+  ok=a.returncode==0 and errors==0 and sorted(active)==row['heads']
+  checks={'verified_active_irreducible_without_simp':active}
+ print(row.get('root',f), 'PASS' if ok else 'FAIL', 'errors',errors,flush=True)
+ return row|{'actual_exit':a.returncode,'errors':errors,'pass':ok,'argv':cmd,'log_sha256':sha(raw)}|checks
+with ThreadPoolExecutor(max_workers=1) as pool:done=list(pool.map(run,rows))
+save('RESULT.json',{'actual_runs':done,'full_guard_pass':all(x['pass'] for x in done if not x.get('control')),
+ 'controls_pass':all(x['pass'] for x in done if x.get('control')),'selected_roots':len(families),'ordinary_union':len(heads_all),'paired_identities':2*len(heads_all)})

@@ -1,0 +1,28 @@
+/-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
+canonical binary header `bits` (head at the origin), every other tape blank, the native head
+at the remainder's first cell and the output empty, it decides the fixed grammar on the
+remainder with two distinct live exits, silently, within a polynomial bound that does not
+depend on the header's numerical value. (Recommended shape; you may restate it.)
+
+**Proof sketch.** Copy the header to scratch counters as needed (framed copy rows; its value
+`n` serves as the binary bound of every unary range check). Check the unary initial state
+below `n + 1`; run one public counter loop over the `n + 1` states, each of `3^(k+1)`
+records, with the generic record validator as its body; check the all-`true` suffix to the
+right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
+on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`. -/
+private lemma exists_canonGrammarStage (F : MachineFormat) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
+      ∀ (x bits rest : List Bool), pairDecode x = some (bits, rest) →
+        bits = (codeBitsNat bits).bits →
+        canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length →
+        ∀ d : Cfg m Bool S x, d.state = some entry → d.output = [] →
+          d.inputPos.val = 2 * bits.length + 3 →
+          d.workTapes header = FinTM.bufferTape bits → d.workTapePos header = 0 →
+          (∀ j, j ≠ header → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+          ∃ t ≤ a * (x.length + 1) ^ a,
+            (G.runFrom d t).state =
+              some (exit (canonGrammar F.k (codeBitsNat bits) rest).isSome) ∧
+            (G.runFrom d t).output = [] ∧
+            ∀ u < t, ∀ v, (G.runFrom d u).state ≠ some (exit v) := by
+  sorry

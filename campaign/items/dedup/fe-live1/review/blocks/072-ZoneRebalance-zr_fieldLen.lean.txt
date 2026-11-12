@@ -1,0 +1,2 @@
+private noncomputable def zr_fieldLen (p : ℤ) : ℕ :=
+  if h : ∃ i, (zoneStart (i + 1) : ℤ) = p then zoneCapacity (Nat.find h) else 1

@@ -1,0 +1,462 @@
+[
+  {
+    "id": 9,
+    "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+    "name": "enumCont_first_halt",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.enumCont_first_halt",
+      "private": true,
+      "source_line_doc_start": 810,
+      "complete_chunk": "source-review13/chunks/9/BASE.lean.txt",
+      "complete_chunk_sha256": "528871bde1ef75742c523527d31f31a3246bfff735938cbc0b4488cea55a22ec",
+      "full_source_sha256": "9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17"
+    },
+    "HEAD": {
+      "name": "Complexity.enumCont_first_halt",
+      "private": true,
+      "source_line_doc_start": 810,
+      "complete_chunk": "source-review13/chunks/9/HEAD.lean.txt",
+      "complete_chunk_sha256": "48030653532bd5778784d254694ab481586afc50cf4c8ff17cfabe75e46bdf37",
+      "full_source_sha256": "ef46e0786a3a13685559624a72fdfd06fca6fe12a38c3d3f0f67ddb88efb111e"
+    },
+    "literal_complete_header": "private lemma enumCont_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c₀ : Cfg k Bool S x) (T : ℕ)\n    (hh : (tm.runFrom c₀ T).state = none) :\n    ∃ t ≤ T, (∀ j < t, ¬(tm.runFrom c₀ j).Halted) ∧\n      tm.runFrom c₀ t = tm.runFrom c₀ T ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.runFrom"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 16,
+    "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "name": "b2_unary_first",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.b2_unary_first",
+      "private": true,
+      "source_line_doc_start": 1422,
+      "complete_chunk": "source-review13/chunks/16/BASE.lean.txt",
+      "complete_chunk_sha256": "2c3ae56889daec05d773e020b443d85ad1a7104e20e7aaa28dc6587c966b8a27",
+      "full_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274"
+    },
+    "HEAD": {
+      "name": "Complexity.b2_unary_first",
+      "private": true,
+      "source_line_doc_start": 1422,
+      "complete_chunk": "source-review13/chunks/16/HEAD.lean.txt",
+      "complete_chunk_sha256": "d5db5cffe4691d2d41febfaf6a47e0ad3c0081f7c12f49ab0ed22781e9c2ce92",
+      "full_source_sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727"
+    },
+    "literal_complete_header": "private lemma b2_unary_first (M : FinTM Bool) (f : ℕ → List Bool) (T : ℕ → ℕ)\n    (hM : ∀ n, M.ComputesInTime (List.replicate n true) (f n) (T n)) :\n    ∃ τ : ℕ → ℕ, ∀ x : List Bool,\n      τ x.length ≤ T x.length ∧\n      (b2UnaryTM M).ComputesInTime x (f x.length) (τ x.length) ∧\n      ∀ s < τ x.length, ((b2UnaryTM M).tm.runFrom\n        ((b2UnaryTM M).tm.initCfg x) s).state ≠ none ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.FinTM.ComputesInTime",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 17,
+    "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "name": "b2_verify_timed",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.b2_verify_timed",
+      "private": true,
+      "source_line_doc_start": 2070,
+      "complete_chunk": "source-review13/chunks/17/BASE.lean.txt",
+      "complete_chunk_sha256": "d5343e6fb51db5fb3a06c71005260d42ccd8c117e3cf1228aa71e90ee350c511",
+      "full_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274"
+    },
+    "HEAD": {
+      "name": "Complexity.b2_verify_timed",
+      "private": true,
+      "source_line_doc_start": 2070,
+      "complete_chunk": "source-review13/chunks/17/HEAD.lean.txt",
+      "complete_chunk_sha256": "5e4d003e8511fab016a874953846d7ed4bb24adc569cf0d77d1d69c2c14b3797",
+      "full_source_sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727"
+    },
+    "literal_complete_header": "private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}\n    (y : List Bool) (b : Bool) (T : ℕ) (hV : V.ComputesInTime y [b] T)\n    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)\n    (heads : Fin S.k → ℤ) (w : List Bool) (hw : w.length = T + 1) :\n    let out := (b2Host S V).tm.runWith w\n      (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)\n    out.state = none ∧ out.output = [b] ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk. Existing-reader repairs also remove inherited foreign definition reads inside this same complete proof; see the exact prior explicit-review rows and controls.",
+    "guard_heads": [
+      "Turing.Cfg.init",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.VirtualTag",
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.leftAction",
+      "Turing.FinTM.virtualMove",
+      "Turing.FinTM.virtualNextTag",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.NDTM.runWith",
+      "Turing.NDTM.stepWith",
+      "Turing.captureAction"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 18,
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_first_halt",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.sat_first_halt",
+      "private": true,
+      "source_line_doc_start": 684,
+      "complete_chunk": "source-review13/chunks/18/BASE.lean.txt",
+      "complete_chunk_sha256": "e99b8241cbab0e145344a0ffc668705f8e46bee60756690af88167119714fdfe",
+      "full_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158"
+    },
+    "HEAD": {
+      "name": "Complexity.sat_first_halt",
+      "private": true,
+      "source_line_doc_start": 684,
+      "complete_chunk": "source-review13/chunks/18/HEAD.lean.txt",
+      "complete_chunk_sha256": "d257b82e839413ea915abbf0d2bd9e7729dc2e124c8ca2f38feb2f8dd38ba096",
+      "full_source_sha256": "6f49dc6bfa51cb2e48a33aa44348fd353017fba59db2128685815628c6663b23"
+    },
+    "literal_complete_header": "private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)\n    (h : M.ComputesInTime x y T) :\n    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).output = y ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.FinTM.ComputesInTime",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 19,
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_call_first_halt",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.sat_call_first_halt",
+      "private": true,
+      "source_line_doc_start": 3749,
+      "complete_chunk": "source-review13/chunks/19/BASE.lean.txt",
+      "complete_chunk_sha256": "29eae55e653c992c23af7deb0cf82362ae6bd4d2f2e71fef75820a2e67ba6f2a",
+      "full_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158"
+    },
+    "HEAD": {
+      "name": "Complexity.sat_call_first_halt",
+      "private": true,
+      "source_line_doc_start": 3745,
+      "complete_chunk": "source-review13/chunks/19/HEAD.lean.txt",
+      "complete_chunk_sha256": "f89c4f8bf15a6e9a93dce8c67ee681821aeff6a68103c796c84a1701479966e0",
+      "full_source_sha256": "6f49dc6bfa51cb2e48a33aa44348fd353017fba59db2128685815628c6663b23"
+    },
+    "literal_complete_header": "private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.runFrom"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 33,
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_call_first_halt",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.clA5_call_first_halt",
+      "private": true,
+      "source_line_doc_start": 6114,
+      "complete_chunk": "source-review13/chunks/33/BASE.lean.txt",
+      "complete_chunk_sha256": "f2c8f38d714ef3fd52fe439419e0883f840c27e1763cef3a46a8d478e826487d",
+      "full_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0"
+    },
+    "HEAD": {
+      "name": "Complexity.clA5_call_first_halt",
+      "private": true,
+      "source_line_doc_start": 6114,
+      "complete_chunk": "source-review13/chunks/33/HEAD.lean.txt",
+      "complete_chunk_sha256": "2ea2f0e970063fbc8e168b0eb41617f8630a6fb4564fa855d0a6e747843367f0",
+      "full_source_sha256": "ec60986b807df5c079a105158cbbd80c26ced0df13f01c736a97330e6ba8c466"
+    },
+    "literal_complete_header": "private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.runFrom"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 47,
+    "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+    "name": "ComputesInTime.of_spaceUsed_le",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      "private": false,
+      "source_line_doc_start": 352,
+      "complete_chunk": "source-review13/chunks/47/BASE.lean.txt",
+      "complete_chunk_sha256": "30d24186c1e8bdd468c8e4baecf7436d4679b1609267ee530cdde10c4621d2b7",
+      "full_source_sha256": "b852e62030fd8cf4b6c607a908da378370590d1d526632788c7824530eac04ed"
+    },
+    "HEAD": {
+      "name": "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      "private": false,
+      "source_line_doc_start": 352,
+      "complete_chunk": "source-review13/chunks/47/HEAD.lean.txt",
+      "complete_chunk_sha256": "50b42e46e44db8e45b6b9028646060cf1fa372645bbf538214122cbd5df8b238",
+      "full_source_sha256": "a83dce1294535be5d79d1fcd5ff31cd8b4f9490995febb20384350b7827a956d"
+    },
+    "literal_complete_header": "theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : ℕ}\n    (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :\n    M.ComputesInTime x w (M.configBound x.length s) ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk. Existing-reader repairs also remove inherited foreign definition reads inside this same complete proof; see the exact prior explicit-review rows and controls.",
+    "guard_heads": [
+      "Turing.FinTM.ComputesInTime",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.MultiTapeTM.spaceUsedByTape"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 54,
+    "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+    "name": "clockTM_setup",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Complexity.TimeHierarchy.clockTM_setup",
+      "private": false,
+      "source_line_doc_start": 499,
+      "complete_chunk": "source-review13/chunks/54/BASE.lean.txt",
+      "complete_chunk_sha256": "49b19d45864309043a885f52b0fe2b0be72a6649c0d49bf641868013faec896a",
+      "full_source_sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2"
+    },
+    "HEAD": {
+      "name": "Complexity.TimeHierarchy.clockTM_setup",
+      "private": false,
+      "source_line_doc_start": 499,
+      "complete_chunk": "source-review13/chunks/54/HEAD.lean.txt",
+      "complete_chunk_sha256": "37ddca2987f31652c4db0bdd2c0a18cc86f7c479b3f5c0a9035eff22252aeab7",
+      "full_source_sha256": "037a1815badd92da00c3b67266e0bce3968506ce763bfd0e501b338e7d9cb37c"
+    },
+    "literal_complete_header": "lemma clockTM_setup (x s : List Bool) (tK : ℕ) (hK : K.ComputesInTime x s tK) :\n    ∃ (a : ℕ) (kt : Fin K.k → ℤ → Option Bool) (kh : Fin K.k → ℤ),\n      a ≤ tK + s.length + x.length + 5 ∧\n      (clockTM K W).tm.runFrom ((clockTM K W).tm.initCfg x) a =\n        ctrCfg K W (some (.dec W.tm.q₀ .empty)) (W.tm.initCfg x) (bufferTape s) 0 kt kh [] ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk. Existing-reader repairs also remove inherited foreign definition reads inside this same complete proof; see the exact prior explicit-review rows and controls.",
+    "guard_heads": [
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.tapeBlocks",
+      "Turing.FinTM.controlAction",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.FinTM.bufferTape",
+      "Turing.Cfg.init"
+    ],
+    "metadata_execution": "actual e0b owner query, reused under byte-exact complete owner source; only imported proof bodies change",
+    "boundary_execution": "prior full-head guard under its retained historical pin; complete owner source and target prefix unchanged",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 85,
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "name": "timedCapture_start",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Turing.timedCapture_start",
+      "private": true,
+      "source_line_doc_start": 2505,
+      "complete_chunk": "source-review13/chunks/85/BASE.lean.txt",
+      "complete_chunk_sha256": "91a5c514789e5a28bfc9bf2df9224134be02fe0dea5346c47e30bde4a87ac7cc",
+      "full_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871"
+    },
+    "HEAD": {
+      "name": "Turing.timedCapture_start",
+      "private": true,
+      "source_line_doc_start": 2500,
+      "complete_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+      "complete_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+      "full_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e"
+    },
+    "literal_complete_header": "private lemma timedCapture_start (M : FinTM Bool) (clock : Fin M.k) (x : List Bool) (T : ℕ)\n    (h : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :\n    ∃ t, t ≤ T + 1 ∧\n      (timedCaptureTM M clock).tm.runFrom ((timedCaptureTM M clock).tm.initCfg x) t =\n        timedCapturedCfg M clock (M.tm.runFrom (M.tm.initCfg x) T) ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.tapeBlocks",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.step",
+      "Turing.instDecidableEqUniversalControl",
+      "Turing.instFintypeUniversalControl",
+      "Turing.universalInterpreter"
+    ],
+    "metadata_execution": "fresh actual BASE MAC8 and whole private candidate13 queries",
+    "boundary_execution": "fresh actual complete-prefix guard on whole private candidate13",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": 86,
+    "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+    "name": "universalCapture_start",
+    "family": "FIRST_HALT_READER_TRANCHE",
+    "canonical_reader": "Turing.MultiTapeTM.exists_first_halt",
+    "BASE": {
+      "name": "Turing.universalCapture_start",
+      "private": false,
+      "source_line_doc_start": 583,
+      "complete_chunk": "source-review13/chunks/86/BASE.lean.txt",
+      "complete_chunk_sha256": "8e1a88c0e261636463b9b1c791823cd337ed0c9cd6ed18b6eb35a555aa4f6b3d",
+      "full_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491"
+    },
+    "HEAD": {
+      "name": "Turing.universalCapture_start",
+      "private": false,
+      "source_line_doc_start": 580,
+      "complete_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+      "complete_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+      "full_source_sha256": "59a9f0adda2a1984485c47c740d78143e8f5d81b39d27c63f584820769ed4e81"
+    },
+    "literal_complete_header": "lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]\n    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) (x : List Bool) (T : ℕ)\n    (h : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :\n    ∃ t, t ≤ T + 1 ∧\n      (universalCaptureTM M D).tm.runFrom ((universalCaptureTM M D).tm.initCfg x) t =\n        universalCapturedCfg M D (M.tm.runFrom (M.tm.initCfg x) T) ",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing earliest-halt reader supplies prefix non-halting and full endpoint equality; all caller-specific packaging is retained. Complete proof boundary and explicit argument evidence are supplied, not only this first-halt hunk.",
+    "guard_heads": [
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.rightAction",
+      "Turing.FinTM.tapeBlocks",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.step"
+    ],
+    "metadata_execution": "fresh actual BASE MAC8 and whole private candidate13 queries",
+    "boundary_execution": "fresh actual complete-prefix guard on whole private candidate13",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": "BLIVE1",
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "name": "timedCut_live_before",
+    "family": "MANDATORY_BACKWARDS_LIVE_COMPANION",
+    "canonical_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "BASE": {
+      "name": "Turing.timedCut_live_before",
+      "private": true,
+      "source_line_doc_start": 1729,
+      "complete_chunk": "source-review13/chunks/BLIVE1/BASE.lean.txt",
+      "complete_chunk_sha256": "4f35257cafb1c7bf7d8f5413eb0c53daeb3636780fb13680b87d79c9cb265a4f",
+      "full_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871"
+    },
+    "HEAD": {
+      "name": "Turing.timedCut_live_before",
+      "private": true,
+      "source_line_doc_start": 1729,
+      "complete_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+      "complete_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+      "full_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e"
+    },
+    "literal_complete_header": "private lemma timedCut_live_before {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)\n    {s t : ℕ} (hst : s ≤ t) (ht : (timedCutInterpreter.runFrom cfg t).state ≠ none) :\n    (timedCutInterpreter.runFrom cfg s).state ≠ none := by",
+    "literal_header_privacy_name_exact": true,
+    "review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.universalInterpreter"
+    ],
+    "metadata_execution": "fresh actual BASE MAC8 and whole private candidate13 queries",
+    "boundary_execution": "fresh actual complete-prefix guard on whole private candidate13",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": "BLIVE2",
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "name": "timedPrefix_live",
+    "family": "MANDATORY_BACKWARDS_LIVE_COMPANION",
+    "canonical_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "BASE": {
+      "name": "Turing.timedPrefix_live",
+      "private": true,
+      "source_line_doc_start": 2229,
+      "complete_chunk": "source-review13/chunks/BLIVE2/BASE.lean.txt",
+      "complete_chunk_sha256": "1c6dbe3dba02f9e4556cf82495bb97a2a59fb4954b0a51fbbce5cd528f423c1b",
+      "full_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871"
+    },
+    "HEAD": {
+      "name": "Turing.timedPrefix_live",
+      "private": true,
+      "source_line_doc_start": 2226,
+      "complete_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+      "complete_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+      "full_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e"
+    },
+    "literal_complete_header": "private lemma timedPrefix_live (bs α x : List Bool) (s : ℕ)\n    (hs : s < 4 * bs.length + 2 * α.length + 6) :\n    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x)) s).state ≠ none := by",
+    "literal_header_privacy_name_exact": true,
+    "review": "Existing timedPrefix_penultimate supplies the later live point; the original strict bound yields s <= penultimate by omega; exact canonical reader application.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.pairEncode"
+    ],
+    "metadata_execution": "fresh actual BASE MAC8 and whole private candidate13 queries",
+    "boundary_execution": "fresh actual complete-prefix guard on whole private candidate13",
+    "no_global_debt_or_absence_inference": true
+  },
+  {
+    "id": "BLIVE3",
+    "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+    "name": "universal_live_before",
+    "family": "MANDATORY_BACKWARDS_LIVE_COMPANION",
+    "canonical_reader": "Turing.MultiTapeTM.runFrom_state_ne_none_of_le",
+    "BASE": {
+      "name": "Turing.universal_live_before",
+      "private": true,
+      "source_line_doc_start": 230,
+      "complete_chunk": "source-review13/chunks/BLIVE3/BASE.lean.txt",
+      "complete_chunk_sha256": "6bffcaba5d57d4b99355747a6dd2af52cd71a4aa19076bba043fcf7df34e5344",
+      "full_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491"
+    },
+    "HEAD": {
+      "name": "Turing.universal_live_before",
+      "private": true,
+      "source_line_doc_start": 230,
+      "complete_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+      "complete_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+      "full_source_sha256": "59a9f0adda2a1984485c47c740d78143e8f5d81b39d27c63f584820769ed4e81"
+    },
+    "literal_complete_header": "private lemma universal_live_before {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : ℕ}\n    (hst : s ≤ t) (ht : (tm.runFrom cfg t).state ≠ none) :\n    (tm.runFrom cfg s).state ≠ none := by",
+    "literal_header_privacy_name_exact": true,
+    "review": "Direct application of the existing generic backwards-live reader with the unchanged original machine/configuration/time premises.",
+    "guard_heads": [
+      "Turing.MultiTapeTM.runFrom"
+    ],
+    "metadata_execution": "fresh actual BASE MAC8 and whole private candidate13 queries",
+    "boundary_execution": "fresh actual complete-prefix guard on whole private candidate13",
+    "no_global_debt_or_absence_inference": true
+  }
+]

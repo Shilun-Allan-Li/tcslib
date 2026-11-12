@@ -1,0 +1,23 @@
+/-- **A step's vertex depends only on the vertex** (proved — phase
+P4.2; the nondeterministic, summary-carrying analogue of
+`Turing.MultiTapeTM.ConfigCount.core_step`): configurations with equal
+`coreSum` have equal `coreSum` after one `stepWith` under the same choice bit.
+
+**Proof sketch.** The action is selected from the state and the scanned
+symbols, all read off the core (as in `core_step`: `Cfg.inputSymbol` and
+`Cfg.workTapeSymbols` are core-determined), so the two steps apply the same
+action to cores that agree; the new output is the old output appended by the
+action's emission, and `Turing.outSummary` of an append is a function of the
+old summary and the emission (case analysis on the three summary values and
+the optional emitted bit — the compatibility fact of the summary quotient). -/
+theorem coreSum_stepWith (tm : NDTM k Bool S) (b : Bool) {c d : Cfg k Bool S x}
+    (h : coreSum c = coreSum d) :
+    coreSum (tm.stepWith b c) = coreSum (tm.stepWith b d) := by
+  change (MultiTapeTM.ConfigCount.core _, outSummary _) =
+    (MultiTapeTM.ConfigCount.core _, outSummary _)
+  have hc := congrArg Prod.fst h
+  have ho := congrArg Prod.snd h
+  rw [stepWith_eq_fixChoice_step, stepWith_eq_fixChoice_step]
+  apply Prod.ext (MultiTapeTM.ConfigCount.core_step _ hc)
+  rw [MultiTapeTM.step_output, MultiTapeTM.step_output, outputSymbol_congr _ hc]
+  exact outSummary_append_congr ho _

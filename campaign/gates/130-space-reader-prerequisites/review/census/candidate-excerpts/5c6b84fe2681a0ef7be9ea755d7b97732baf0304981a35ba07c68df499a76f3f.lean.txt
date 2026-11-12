@@ -1,0 +1,56 @@
+/-- Two silent transitions move the capture head left and read the completed
+singleton verdict, without touching the input or either work bank.
+**Proof sketch.** The final capture head is one past the singleton, hence at
+one. Moving it left exposes exactly its bit at zero; the next transition
+records that bit in the rewind state. -/
+private lemma f2_timed_read (D M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg D.k Bool D.State x) (b : Bool) (hs : c.state = none) (ho : c.output = [b]) :
+    (f2_timedCondTM D M₁ M₂).tm.runFrom (f2_timedControlCfg D M₁ M₂ c) 2 =
+      f2_timedReadyCfg D M₁ M₂ c b := by
+  let ready := f2_timedReadyCfg D M₁ M₂ c b
+  have hback : (f2_timedCondTM D M₁ M₂).tm.step (f2_timedControlCfg D M₁ M₂ c) =
+      {ready with state := some (.inr (.inl true))} := by
+    have hstate : (f2_timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by
+      simp [f2_timedControlCfg, captureCfg, leftCfg, hs]
+    simp only [MultiTapeTM.step, hstate]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j
+        simp [f2_timedCondTM, Action.apply, f2_timedControlCfg, captureCfg, leftCfg,
+          f2_timedReadyCfg, f2_timedBranchCfg, rightCfg, ready, j.isLt]
+        refine Fin.addCases ?_ ?_ j <;> intro z <;> simp
+      · intro j
+        simp [f2_timedCondTM, Action.apply, f2_timedControlCfg, captureCfg, leftCfg,
+          f2_timedReadyCfg, f2_timedBranchCfg, rightCfg, ready, ho]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j
+        simp [f2_timedCondTM, Action.apply, f2_timedControlCfg, captureCfg, leftCfg,
+          f2_timedReadyCfg, f2_timedBranchCfg, rightCfg, ready, j.isLt]
+        refine Fin.addCases ?_ ?_ j <;> intro z <;> simp
+      · intro j
+        simp [f2_timedCondTM, Action.apply, f2_timedControlCfg, captureCfg, leftCfg,
+          f2_timedReadyCfg, f2_timedBranchCfg, rightCfg, ready, ho]
+  have hread : (f2_timedCondTM D M₁ M₂).tm.step
+      {ready with state := some (.inr (.inl true))} = ready := by
+    have hsym : ({ready with state := some (.inr (.inl true))} :
+        Cfg (f2_timedCondTM D M₁ M₂).k Bool (f2_timedCondTM D M₁ M₂).State x).workTapeSymbols
+        (Fin.last _) = some b := by
+      change (f2_timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x)
+        c.workTapes c.workTapePos b).workTapeSymbols
+          (Fin.natAdd (D.k + (M₁.k + M₂.k)) (0 : Fin 1)) = some b
+      simp [f2_timedBranchCfg, leftCfg, rightCfg, Cfg.workTapeSymbols, bufferTape]
+    unfold MultiTapeTM.step
+    dsimp only
+    change ((controlAction 0 (some (.inr (.inr (.inl
+      ((({ready with state := some (.inr (.inl true))} :
+        Cfg (f2_timedCondTM D M₁ M₂).k Bool (f2_timedCondTM D M₁ M₂).State x).workTapeSymbols
+        (Fin.last _)).getD false, false)))))) :
+          Action (f2_timedCondTM D M₁ M₂).k Bool (f2_timedCondTM D M₁ M₂).State).apply _ = _
+    rw [hsym, controlAction_apply]
+    simp only [Option.getD_some, moveInputPos_zero]
+    rfl
+  change (f2_timedCondTM D M₁ M₂).tm.step
+    ((f2_timedCondTM D M₁ M₂).tm.step (f2_timedControlCfg D M₁ M₂ c)) = _
+  rw [hback, hread]

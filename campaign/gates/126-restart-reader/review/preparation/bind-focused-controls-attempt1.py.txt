@@ -1,0 +1,20 @@
+from pathlib import Path
+import json,re,hashlib
+O=Path('/private/tmp/ab34-small-gate-drafts');h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+for gate,folder,prefix,count in [(126,'rs1','Controls',6),(127,'nat-reader','BitControls',2)]:
+ D=O/str(gate);E=D/'inputs'/folder;ns=E/(prefix+'Unsealed.lean.txt');ss=E/(prefix+'Sealed.lean.txt');nt=ns.read_text();st=ss.read_text();strip=lambda s:'\n'.join(l for l in s.splitlines() if not l.startswith('attribute '));assert strip(nt)==strip(st)
+ nr=json.loads((E/(prefix+'Unsealed-run.json')).read_text());sr=json.loads((E/(prefix+'Sealed-run.json')).read_text());assert nr['exit']==0 and sr['exit']==1 and nr['source_sha256']==h(ns) and sr['source_sha256']==h(ss) and nr['source_unchanged'] and sr['source_unchanged'];assert (E/(prefix+'Unsealed.out')).read_text()==''
+ errors=[int(n) for n in re.findall(r'\.lean:(\d+):\d+: error: Type mismatch',(E/(prefix+'Sealed.out')).read_text())];assert len(errors)==count
+ if gate==126:identities=json.loads((E/'control-identities.json').read_text())
+ else:
+  identities=[]
+  for label,decl in [('bit_delta','example (b : Bool) (n : ℕ) : Nat.bit b n = cond b (2 * n + 1) (2 * n) := rfl'),('bit_true_equation','example (n : ℕ) : Nat.bit true n = 2 * n + 1 := rfl')]:identities.append({'id':label,'guard':'Nat.bit','exact_identity':decl+'\n'})
+ assert len(identities)==count;rows=[]
+ for r in identities:
+  exact=r['exact_identity'];assert nt.count(exact)==st.count(exact)==1;endline=st[:st.index(exact)].count('\n')+len(exact.splitlines());assert endline in errors;rows.append(dict(r,positive_example_passed=True,negative_same_identity_failed_at_line=endline,full_example_sha256=hashlib.sha256(exact.encode()).hexdigest()))
+ if gate==126:
+  scope=E/'HinitSealed.lean.txt';run=json.loads((E/'HinitSealed-run.json').read_text());assert run['exit']==0 and run['source_sha256']==h(scope) and (E/'HinitSealed.out').read_text()=='';assert 'attribute [local irreducible] MultiTapeTM.initCfg Cfg.init Cfg.mapState' in scope.read_text();assert 'attribute [-simp] MultiTapeTM.initCfg Cfg.init' in scope.read_text();guards=['Turing.MultiTapeTM.initCfg','Turing.Cfg.init','Turing.Cfg.mapState'];boundary='Exact supplied abstract local-hinit consumer with local q0 update and d0 alias; not a seal of the full public startup/universal construction.'
+ else:
+  scope=E/'BitEquationSealed.lean.txt';run=json.loads((E/'BitEquationSealed-run.json').read_text());assert run['exit']==0 and run['source_sha256']==h(scope) and (E/'BitEquationSealed.out').read_text()=='';assert 'attribute [local irreducible] Nat.bit' in scope.read_text();guards=['Nat.bit'];boundary='Focused existing Mathlib Nat.bit_val equation consumer only; not a full-canonOffset_spec or legacy-canonizer seal.'
+ (D/'control-evidence-binding.json').write_text(json.dumps({'scope_input':str(scope.relative_to(D)),'scope_source_sha256':h(scope),'native_sealed_controls_identical_after_only_guard_attribute_line_removal':True,'ordinary_or_focused_guards':guards,'positive_examples_pass':count,'negative_same_identity_failures':count,'negative_actual_Type_mismatch_error_lines':errors,'all_pairs':rows,'scope_limit':boundary,'no_new_tests_executed_for_this_binding':True,'actual_original_run_sources_hash_bound':True,'raw_output_paths':[str((E/(prefix+q+'.out')).relative_to(D)) for q in ['Unsealed','Sealed']]},indent=2,ensure_ascii=False)+'\n')
+ print(gate,'source-exact focused scope and',count,'positive/negative identities bound; original failures at',errors)

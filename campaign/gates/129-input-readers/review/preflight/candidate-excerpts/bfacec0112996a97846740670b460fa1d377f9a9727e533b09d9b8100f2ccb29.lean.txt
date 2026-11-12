@@ -1,0 +1,56 @@
+/-- **The step-block contract** (host H2; `h1Round_effect`, statement copied). Let `c` be a
+live configuration (state `q`) of a `k`-work-tape binary machine with transition table `tr` and
+`n + 1` states, on the same input `x`, and let `a` be the action `tr` takes at `c`. If the step
+block is at `entry` in a configuration `d` that represents `c`, then for some time `T` with
+`0 < T ≤ 50·(|tableBitsK tr| + 1)`, writing `e` for the configuration reached at `T`:
+* `e` is at `exit k a.state.isSome` (back at `entry` when `a` has a successor, at `halt`
+  otherwise) and represents `a.apply c`, the source's next configuration; its summary cell is
+  `summaryEmit` of `d`'s and `a`'s emission;
+* strictly between `0` and `T` the block is live and visits neither `entry` nor `halt`;
+* the physical output is `d`'s at every time up to `T` (the block is silent);
+* at every time up to `T`, the input head is at its start or its end position and has moved
+  at most one cell; each mirrored head is at its start or its end position; mirrored heads
+  move at most one cell and auxiliary heads at most `50·(|tableBitsK tr| + 1)` cells;
+* both auxiliary heads are at `0` at the start and at `T`.
+The bound depends on the table only, through its serialized length `|tableBitsK tr|` (and so
+indirectly on `k`, `n` and the table's actions); only the coefficient `50` is uniform. It does
+not depend on the input `x`, the tape contents or the simulated time.
+[AB09, §1.4.1, proof of Theorem 1.9, Figure 1.6: one step of the universal machine]
+
+Not stated: the exact value of `T` (it is the unique first time after `0` at `entry` or
+`halt`, by the cut: `roundTM_firstExit_unique`), though the endpoint itself is determined
+(`Rep` fixes every tape and head, the exit the control, silence the output); a space bound
+(derived from the envelope, `roundTM_visited`); an input device other than the native one
+(the simulated input is the block's own input `x`).
+
+**Proof sketch.** Unpack the representation into the canonical round frame and invoke the
+complete canonical round: the selector skips `q` whole state groups and the read-rank suffix
+(the serializer cut pays for it), the old state word is cleared, the fixed fields execute,
+the successor is installed, and the catalog scans return both auxiliary heads. Output-prefix
+monotonicity gives silence throughout. The phase window and the action head bound give the
+mirrored envelope; summing the unit step bound gives the auxiliary envelope; the input clamp
+handles both boundary blanks. -/
+theorem roundTM_effect {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      let e := (roundTM k).runFrom d T
+      e.state = some (exit k a.state.isSome) ∧ Rep tr (a.apply c) e ∧
+      e.workTapeSymbols (summaryTape k) =
+        summaryEmit (d.workTapeSymbols (summaryTape k)) a.output ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom d u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output) ∧
+      (∀ u ≤ T,
+        let f := (roundTM k).runFrom d u
+        (f.inputPos = d.inputPos ∨ f.inputPos = e.inputPos) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) = d.workTapePos (Fin.castAdd 2 i) ∨
+          f.workTapePos (Fin.castAdd 2 i) = e.workTapePos (Fin.castAdd 2 i)) ∧
+        ∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (50 * ((tableBitsK tr).length + 1) : ℕ)) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → d.workTapePos j = 0 ∧ e.workTapePos j = 0 := by
+  sorry

@@ -1,0 +1,94 @@
+{
+  "utc": "2026-11-08T12:15:07.460294+00:00",
+  "HEAD": "70abd9b3b2d559afded28a413be4676a2dd047d4",
+  "parent": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+  "MAC8_source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "tracked_clean": true,
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "all14_owner_bytes_exact_frozen_previous_final": true,
+  "prewrite_readonly_check_passed": true,
+  "roots": [
+    {
+      "original_inspection": {
+        "id": 17,
+        "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "name": "b2_verify_timed",
+        "kind": "lemma",
+        "private": true,
+        "line": 2077,
+        "end_line": 2112,
+        "hits": [
+          {
+            "kind": "Nat.find",
+            "line": 2087,
+            "text": "let t := Nat.find hex"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 2089,
+            "text": "have ht : t \u2264 T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 2090,
+            "text": "have hc : c.state = none := Nat.find_spec hex"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 2097,
+            "text": "(fun s hs => Nat.find_min hex (show s < t from hp \u25b8 hs))"
+          }
+        ],
+        "chunk_sha256": "0e981078b85a2f0989a85d65dc0c8804a00e8386a48cdf14574df9e40bcac4ac",
+        "block": "blocks/017-Nondeterminism-b2_verify_timed.lean.txt",
+        "canonical_replacement": null,
+        "needs_statement_name_import_API_home_or_design_change": false,
+        "new_debt_acknowledgment_required": false,
+        "no_global_absence_claim": true,
+        "disposition": "outside FE-LIVE-1: first None halt",
+        "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+        "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+        "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+        "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+        "route": "Apply to V.tm, V.tm.initCfg y, and deadline T from hV. Retain choice-word splitting, b2_verify_run/finish, and output_unique packaging; use canonical prefix exclusion and endpoint state at the selected t.",
+        "existing_import_chain_to_Finite": [
+          "TCSlib.Complexity.ClassNP.Nondeterminism",
+          "TCSlib.Complexity.TuringMachine.Simulation",
+          "TCSlib.Complexity.TuringMachine.Finite"
+        ],
+        "new_import_needed": false,
+        "new_statement_name_API_home_or_design_needed_for_selector": false,
+        "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+        "complete_chunk_literal_unchanged_in_current_F1": true,
+        "current_line": 2077,
+        "current_owner_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+        "chunk_bytes": 1803,
+        "new_Lean_probe_or_patch": false
+      },
+      "id": 17,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_verify_timed",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route": "Apply to V.tm, V.tm.initCfg y, and deadline T from hV. Retain choice-word splitting, b2_verify_run/finish, and output_unique packaging; use canonical prefix exclusion and endpoint state at the selected t.",
+      "old_complete_chunk": "source-census/blocks/017-Nondeterminism-b2_verify_timed.lean.txt",
+      "status": "new13 re-point; actual per-step owner pass",
+      "native_run": "attempts/002-17/native-run.json",
+      "final_complete_chunk": "/private/tmp/ab34-first-halt-full-boundary/hypotheses/reader17/new-chunk.lean.txt",
+      "final_chunk_sha256": "b40b26bde8e8192ee7db58b8347784f5850fc577f695a96c79346962c596a041",
+      "final_owner_sha256": "de9a1daf818b52aac14316510e6b5b9f3cc9325e4096986d44ae5e30e6c8fd6c",
+      "final_line": 2077,
+      "literal_old_new_header_exact": true,
+      "complete_literal_header": "private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}\n    (y : List Bool) (b : Bool) (T : \u2115) (hV : V.ComputesInTime y [b] T)\n    (p : Fin (x.length + 2)) (tapes : Fin S.k \u2192 \u2124 \u2192 Option Bool)\n    (heads : Fin S.k \u2192 \u2124) (w : List Bool) (hw : w.length = T + 1) :\n    let out := (b2Host S V).tm.runWith w\n      (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)\n    out.state = none \u2227 out.output = [b] ",
+      "final_source_is_uncommitted_delta_over": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+      "new_import_or_API_or_statement_or_home_or_debt_permission": false
+    }
+  ],
+  "source_files": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "source_sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727"
+    }
+  ],
+  "scope": "Private hypotheses/probes only; full ordinary foreign head footprints with imported theorem types, not their proof values; local ordinary definition values followed. No actual source/Git/canonical writes.",
+  "private_hypothesis": true
+}

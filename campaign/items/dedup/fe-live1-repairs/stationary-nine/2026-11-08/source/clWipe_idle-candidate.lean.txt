@@ -1,0 +1,7 @@
+private lemma clWipe_idle {x : List Bool} (c : Cfg 2 Bool (Fin 3) x)
+    (hc : c.state = some 2) : clWipeTM.tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  change (FinTM.controlAction 0 (some (2 : Fin 3))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

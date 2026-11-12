@@ -1,0 +1,61 @@
+/-- Two consecutive header scans from a blank ruler tape write the ruler `true^(ℓ₁ + ℓ₂)`, with
+the input head just past both headers. -/
+theorem two_scans {k : ℕ} {z : List Bool} (i : Fin k) (d : Cfg k Bool (Fin 4) z) (p : ℕ)
+    (hp : d.inputPos.val = 1 + p) (hd : d.state = some 0)
+    (hblank : ∀ a, d.workTapes i a = none) (u₁ u₂ v : List Bool)
+    (hz : z.drop p = pairEncode u₁ (pairEncode u₂ v)) :
+    ((headerScanTM i).runFrom d (2 * u₁.length + 2)).state = some 3 ∧
+      ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).state = some 3 ∧
+      ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).inputPos.val =
+        1 + p + (2 * u₁.length + 2) + (2 * u₂.length + 2) ∧
+      ∀ a : ℤ, ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).workTapes i (d.workTapePos i + a) =
+        FinTM.bufferTape (List.replicate ((2 * u₁.length + 2) + (2 * u₂.length + 2)) true) a := by
+  obtain ⟨h1, -, -⟩ := headerScanTM_run i d p hp hd u₁ (pairEncode u₂ v) hz
+  rw [h1]
+  set ℓ₁ := 2 * u₁.length + 2 with hℓ₁
+  have hlen₁ : d.inputPos.val + ℓ₁ < z.length + 2 := by
+    have h := congrArg List.length hz
+    rw [List.length_drop, length_pairEncode] at h
+    omega
+  -- the second scan's start
+  set d₂ := (headerScanCfg i d 3 ℓ₁ hlen₁).mapState (fun _ => (0 : Fin 4)) with hd₂
+  have hp₂ : d₂.inputPos.val = 1 + (p + ℓ₁) := by
+    rw [hd₂, Cfg.mapState_inputPos, headerScanCfg_inputPos, Fin.val_mk, hp]
+    omega
+  have hs₂ : d₂.state = some 0 := by
+    rw [hd₂, Cfg.mapState_state, headerScanCfg_state, Option.map_some]
+  have hz₂ : z.drop (p + ℓ₁) = pairEncode u₂ v := by
+    rw [← List.drop_drop, hz, hℓ₁, pairEncode_drop]
+  have hlen₂ : d₂.inputPos.val + (2 * u₂.length + 2) < z.length + 2 := by
+    have h := congrArg List.length hz₂
+    rw [List.length_drop, length_pairEncode] at h
+    omega
+  have hpos₂ : d₂.workTapePos i = d.workTapePos i + ℓ₁ := by
+    rw [hd₂, Cfg.mapState_workTapePos, headerScanCfg_workTapePos, Function.update_self]
+  -- the first scan's ruler (`m = 0`), as the second scan's prefix (`m = ℓ₁`)
+  have hfirst : ∀ a : ℤ, (headerScanCfg i d 3 ℓ₁ hlen₁).workTapes i (d.workTapePos i + a) =
+      FinTM.bufferTape (List.replicate ℓ₁ true) a := by
+    intro a
+    have h := headerScanCfg_ruler i d 3 ℓ₁ hlen₁ 0 (fun b => by
+      rw [hblank, List.replicate_zero, FinTM.bufferTape_eq, List.getElem?_nil, ite_self]) a
+    simpa only [Nat.cast_zero, sub_zero, Nat.zero_add] using h
+  have hpre₂ : ∀ a : ℤ, d₂.workTapes i (d₂.workTapePos i - (ℓ₁ : ℤ) + a) =
+      FinTM.bufferTape (List.replicate ℓ₁ true) a := by
+    intro a
+    rw [hpos₂, show d.workTapePos i + (ℓ₁ : ℤ) - ℓ₁ + a = d.workTapePos i + a by ring, hd₂,
+      Cfg.mapState_workTapes]
+    exact hfirst a
+  obtain ⟨h2, -, -⟩ := headerScanTM_run i d₂ (p + ℓ₁) hp₂ hs₂ u₂ v hz₂
+  rw [h2]
+  refine ⟨by rw [headerScanCfg_state], by rw [headerScanCfg_state], ?_, ?_⟩
+  · rw [headerScanCfg_inputPos, Fin.val_mk, hp₂]
+    omega
+  · intro a
+    have h := headerScanCfg_ruler i d₂ 3 (2 * u₂.length + 2) hlen₂ ℓ₁ hpre₂ a
+    rwa [hpos₂, show d.workTapePos i + (ℓ₁ : ℤ) - ℓ₁ + a = d.workTapePos i + a by ring] at h

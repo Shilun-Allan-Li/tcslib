@@ -1,0 +1,15 @@
+/-- A native nondeterministic guessing phase driven by a deterministic
+scheduler. At every scheduler emission, capture the current physical choice
+bit on the extra tape; all other transitions ignore it. Source reads never
+consult that extra tape. A completed scheduler stays at the live return
+state `none`; a surrounding controller must perform the later dispatch. -/
+private def contGuessTM (M : FinTM Bool) : FinNDTM Bool where
+  k := M.k + 1
+  State := Option M.State
+  tm :=
+    { q₀ := some M.tm.q₀
+      tr := fun bit q inp work => match q with
+        | none => controlAction 0 (some none)
+        | some q =>
+          let a := M.tm.tr q inp (fun i => work i.castSucc)
+          captureAction some none {a with output := a.output.map (fun _ => bit)} }

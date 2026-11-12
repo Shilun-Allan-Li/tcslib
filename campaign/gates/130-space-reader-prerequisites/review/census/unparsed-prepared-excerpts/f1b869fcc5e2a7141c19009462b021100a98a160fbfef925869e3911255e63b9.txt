@@ -1,0 +1,52 @@
+From 1148924f8de13768dde2d5586db59a36c962a724 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 23 Oct 2026 07:23:12 -0400
+Subject: [PATCH] Build/InputRewind: the overview's start hypothesis, and the
+ run sketch's first step
+
+The overview states that the run starts in the start state. The sketch
+treats the first left step as unconditional and restricts the symbol-reading
+argument to the later steps, where the head is on an input cell. Docstrings
+only; the code is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/InputRewind.lean          | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputRewind.lean b/TCSlib/Complexity/TuringMachine/Build/InputRewind.lean
+index 041aeb01..669ff6b7 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputRewind.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputRewind.lean
+@@ -14,10 +14,10 @@ set_option autoImplicit false
+ 
+ A small machine that returns the native input head to the first input cell: one step left, then
+ left while the head reads an input symbol, then one step right at the left blank, into a
+-stationary live state. From any configuration whose input head is at position `p ≥ 1`, it reaches
+-its last state at exactly time `p + 1`, not earlier, with the input head at `1`, and leaves every
+-work tape, every work head and the output unchanged at every time. A machine that rewinds its
+-input in one phase of a composite uses it as that phase.
++stationary live state. From any configuration in its start state whose input head is at position
++`p ≥ 1`, it reaches its last state at exactly time `p + 1`, not earlier, with the input head at
++`1`, and leaves every work tape, every work head and the output unchanged at every time. A
++machine that rewinds its input in one phase of a composite uses it as that phase.
+ 
+ Also, the composition of two state relabelings of a configuration is one relabeling.
+ 
+@@ -88,9 +88,10 @@ def inputRewindTM (k : ℕ) : MultiTapeTM k Bool InputRewindPhase where
+ are the start's.
+ 
+ **Proof sketch.** At time `r ≤ p` the configuration is the start's with the input head at
+-`p - r` (in `scan` for `r ≥ 1`): each step reads an input symbol, since the head is at a positive
+-position, and moves left (`Turing.FinTM.controlAction_apply`). At time `p` the head is on the left
+-blank, and one step right enters `done` at position `1`. -/
++`p - r` (in `scan` for `r ≥ 1`): the first step moves left unconditionally, and each later step,
++at `1 ≤ r < p`, reads an input symbol, since then `1 ≤ p - r ≤ |x|`, and moves left
++(`Turing.FinTM.controlAction_apply`). At time `p` the head is on the left blank, and one step
++right enters `done` at position `1`. -/
+ theorem inputRewindTM_run {k : ℕ} {x : List Bool} (d : Cfg k Bool InputRewindPhase x)
+     (hstate : d.state = some .start) (hp : 1 ≤ d.inputPos.val) :
+     (inputRewindTM k).runFrom d (d.inputPos.val + 1) =
+-- 
+2.50.1 (Apple Git-155)
+

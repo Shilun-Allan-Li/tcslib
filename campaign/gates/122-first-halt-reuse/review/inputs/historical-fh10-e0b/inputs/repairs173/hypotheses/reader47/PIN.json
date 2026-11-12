@@ -1,0 +1,95 @@
+{
+  "utc": "2026-11-08T12:15:07.460294+00:00",
+  "HEAD": "70abd9b3b2d559afded28a413be4676a2dd047d4",
+  "parent": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+  "MAC8_source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "tracked_clean": true,
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "all14_owner_bytes_exact_frozen_previous_final": true,
+  "prewrite_readonly_check_passed": true,
+  "roots": [
+    {
+      "original_inspection": {
+        "id": 47,
+        "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "name": "ComputesInTime.of_spaceUsed_le",
+        "kind": "theorem",
+        "private": false,
+        "line": 362,
+        "end_line": 411,
+        "hits": [
+          {
+            "kind": "Nat.find",
+            "line": 369,
+            "text": "set T := Nat.find hex with hTdef"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 370,
+            "text": "have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none := Nat.find_spec hex"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 371,
+            "text": "have hTt : T \u2264 t := Nat.find_min' hex hhalt"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 373,
+            "text": "fun t' ht' => Nat.find_min hex ht'"
+          }
+        ],
+        "chunk_sha256": "7a6d309ba15321c8017a599407a686632e34ae567141eb6efdf27946b6747ff5",
+        "block": "blocks/047-ConfigCount-ComputesInTime_of_spaceUsed_le.lean.txt",
+        "canonical_replacement": null,
+        "needs_statement_name_import_API_home_or_design_change": false,
+        "new_debt_acknowledgment_required": false,
+        "no_global_absence_claim": true,
+        "disposition": "outside FE-LIVE-1: first None halt",
+        "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+        "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+        "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+        "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+        "route": "Replace only the local T := Nat.find halt cut with canonical T\u2264t, prefix exclusion, and complete endpoint equality. Preserve the configuration-count injection/cardinality/space proof and stationary extension to configBound.",
+        "existing_import_chain_to_Finite": [
+          "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+          "TCSlib.Complexity.SpaceComplexity.Basic",
+          "TCSlib.Complexity.ClassP.DTIME",
+          "TCSlib.Complexity.TuringMachine.Finite"
+        ],
+        "new_import_needed": false,
+        "new_statement_name_API_home_or_design_needed_for_selector": false,
+        "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+        "complete_chunk_literal_unchanged_in_current_F1": true,
+        "current_line": 362,
+        "current_owner_source_sha256": "b852e62030fd8cf4b6c607a908da378370590d1d526632788c7824530eac04ed",
+        "chunk_bytes": 2908,
+        "new_Lean_probe_or_patch": false
+      },
+      "id": 47,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "ComputesInTime.of_spaceUsed_le",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route": "Replace only the local T := Nat.find halt cut with canonical T\u2264t, prefix exclusion, and complete endpoint equality. Preserve the configuration-count injection/cardinality/space proof and stationary extension to configBound.",
+      "old_complete_chunk": "source-census/blocks/047-ConfigCount-ComputesInTime_of_spaceUsed_le.lean.txt",
+      "status": "new13 re-point; actual per-step owner pass",
+      "native_run": "attempts/003-47/native-run.json",
+      "final_complete_chunk": "/private/tmp/ab34-first-halt-full-boundary/hypotheses/reader47/new-chunk.lean.txt",
+      "final_chunk_sha256": "845a686fe32cb9cda2836c7048371048c391b6b7f57a0d5811520dec5baf1fd2",
+      "final_owner_sha256": "9586a7969ffece96fbcbf92d41b26fc086cd10a0e2900e94575bd4dbe48afe4e",
+      "final_line": 362,
+      "literal_old_new_header_exact": true,
+      "complete_literal_header": "theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : \u2115}\n    (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t \u2264 s) :\n    M.ComputesInTime x w (M.configBound x.length s) ",
+      "final_source_is_uncommitted_delta_over": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+      "new_import_or_API_or_statement_or_home_or_debt_permission": false
+    }
+  ],
+  "source_files": [
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "source_sha256": "a83dce1294535be5d79d1fcd5ff31cd8b4f9490995febb20384350b7827a956d"
+    }
+  ],
+  "scope": "Private hypotheses/probes only; full ordinary foreign head footprints with imported theorem types, not their proof values; local ordinary definition values followed. No actual source/Git/canonical writes.",
+  "private_hypothesis": true
+}

@@ -1,0 +1,32 @@
+/-- A one-tape configuration over input `x`, input head at `1`. -/
+def ci {S : Type} (x : List (Fin 3)) (q : S) (t : ℤ → Option (Fin 3)) (h : ℤ) :
+    Cfg 1 (Fin 3) S x :=
+  ⟨some q, 1, fun _ => t, fun _ => h, []⟩
+
+-- inputCopy of [1,2] at displaced head 7 over nonblank cells, frame at 6 and 9
+example :
+    let d := ci [1, 2] SweepPhase.sweep (tp [(7, 0), (8, 0)] [6, 9]) 7
+    let M := inputCopyTM (Symbol := Fin 3) 1 0
+    (M.runFrom d 6).state = some .done ∧ (M.runFrom d 5).state ≠ some .done ∧
+    (M.runFrom d 6).workTapes 0 7 = some 1 ∧ (M.runFrom d 6).workTapes 0 8 = some 2 ∧
+    (M.runFrom d 6).workTapes 0 6 = some 2 ∧ (M.runFrom d 6).workTapes 0 9 = some 2 ∧
+    (M.runFrom d 6).workTapePos 0 = 7 ∧ ((M.runFrom d 6).inputPos : ℕ) = 1 := by decide
+-- inputCopy, x = []: two steps
+example :
+    let d := ci [] SweepPhase.sweep (tp [] [6]) 7
+    ((inputCopyTM (Symbol := Fin 3) 1 0).runFrom d 2).state = some .done ∧
+    ((inputCopyTM (Symbol := Fin 3) 1 0).runFrom d 1).state ≠ some .done ∧
+    (((inputCopyTM (Symbol := Fin 3) 1 0).runFrom d 2).inputPos : ℕ) = 1 := by decide
+-- inputFold: validator "no symbol is 2" over [1,0,2] and over [1,0]
+example :
+    let δ : Bool → Fin 3 → Bool := fun ok γ => ok && decide (γ ≠ 2)
+    ((inputFoldTM 1 δ true).runFrom (ci [1, 0, 2] (ScanPhase.fwd true) (tp [] [0]) 3) 8).state =
+      some (.done false) ∧
+    ((inputFoldTM 1 δ true).runFrom (ci [1, 0, 2] (ScanPhase.fwd true) (tp [] [0]) 3) 7).state ≠
+      some (.done false) ∧
+    ((inputFoldTM 1 δ true).runFrom (ci [1, 0] (ScanPhase.fwd true) (tp [] [0]) 3) 6).state =
+      some (.done true) ∧
+    (((inputFoldTM 1 δ true).runFrom (ci [1, 0] (ScanPhase.fwd true) (tp [] [0]) 3) 6).inputPos : ℕ)
+      = 1 ∧
+    ((inputFoldTM 1 δ true).runFrom (ci [] (ScanPhase.fwd true) (tp [] [0]) 3) 2).state =
+      some (.done true) := by decide

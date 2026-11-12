@@ -1,0 +1,137 @@
+{
+  "root": "Turing.MachineFormat.canonOffset_spec",
+  "ordinary_imported_TCS_heads": [
+    "Turing.codeBitsNat",
+    "Turing.incFixed"
+  ],
+  "focused_Mathlib_head": "Nat.bit",
+  "guard_union": [
+    "Nat.bit",
+    "Turing.codeBitsNat",
+    "Turing.incFixed"
+  ],
+  "default_simp_definitions_removed": [],
+  "all_definition_records": [
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": false,
+      "foreign_TCS": false,
+      "kernel_abbrev": false,
+      "name": "_private.OwnerInventory.0.Turing.MachineFormat.canonOffset",
+      "ordinary_guard": false,
+      "own": true,
+      "owner": "current CodeSimulator owner",
+      "projection": false
+    },
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": true,
+      "foreign_TCS": false,
+      "kernel_abbrev": false,
+      "name": "Nat.bit",
+      "ordinary_guard": true,
+      "own": false,
+      "owner": "Mathlib.Data.Nat.BinaryRec",
+      "projection": false
+    },
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": false,
+      "foreign_TCS": false,
+      "kernel_abbrev": false,
+      "name": "_private.OwnerInventory.0.Turing.MachineFormat.canonCount",
+      "ordinary_guard": false,
+      "own": true,
+      "owner": "current CodeSimulator owner",
+      "projection": false
+    },
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": false,
+      "foreign_TCS": true,
+      "kernel_abbrev": false,
+      "name": "Turing.incFixed",
+      "ordinary_guard": true,
+      "own": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "projection": false
+    },
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": false,
+      "foreign_TCS": true,
+      "kernel_abbrev": false,
+      "name": "Turing.codeBitsNat",
+      "ordinary_guard": true,
+      "own": false,
+      "owner": "TCSlib.Complexity.TuringMachine.CodeParser",
+      "projection": false
+    },
+    {
+      "default_simp_definition": false,
+      "focused_Mathlib": false,
+      "foreign_TCS": true,
+      "kernel_abbrev": true,
+      "name": "Turing.incFixed.match_1",
+      "ordinary_guard": false,
+      "own": false,
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "projection": false
+    }
+  ],
+  "all_theorem_boundaries": [
+    {
+      "name": "Turing.foldr_bit_eq_ofDigits",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "proof_value_traversed": false
+    },
+    {
+      "name": "_private.OwnerInventory.0.Turing.MachineFormat.canonCount_spec",
+      "owner": "current CodeSimulator owner",
+      "proof_value_traversed": true
+    },
+    {
+      "name": "Turing.codeBitsNat_eq",
+      "owner": "TCSlib.Complexity.TuringMachine.CodeParser",
+      "proof_value_traversed": false
+    },
+    {
+      "name": "Turing.codeBitsNat_bits",
+      "owner": "TCSlib.Complexity.TuringMachine.CodeParser",
+      "proof_value_traversed": false
+    },
+    {
+      "name": "_private.OwnerInventory.0.Turing.MachineFormat.canonOffset_spec._proof_1_1",
+      "owner": "current CodeSimulator owner",
+      "proof_value_traversed": true
+    },
+    {
+      "name": "Turing.length_bits_le_self",
+      "owner": "TCSlib.Complexity.TuringMachine.NatBits",
+      "proof_value_traversed": false
+    },
+    {
+      "name": "_private.OwnerInventory.0.Turing.MachineFormat.canonOffset_spec._proof_1_3",
+      "owner": "current CodeSimulator owner",
+      "proof_value_traversed": true
+    }
+  ],
+  "same_owner_theorem_and_definition_types_values_traversed": true,
+  "imported_theorem_proof_values_not_traversed": true,
+  "projection_and_kernel_abbrev_exclusions_explicit_in_records": true,
+  "root_compiled_metadata_synthetic_owner": {
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "full_type_Expr_repr": "Lean.Expr.forallE\n  `w\n  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n  (Lean.Expr.app\n    (Lean.Expr.app\n      (Lean.Expr.const `And [])\n      (Lean.Expr.app\n        (Lean.Expr.app\n          (Lean.Expr.app (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)]) (Lean.Expr.const `Nat []))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app (Lean.Expr.const `Nat.ofDigits [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                (Lean.Expr.const `Nat.instSemiring []))\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                  (Lean.Expr.lit (Lean.Literal.natVal 2)))\n                (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `List.map [Lean.Level.zero, Lean.Level.zero])\n                    (Lean.Expr.const `Bool []))\n                  (Lean.Expr.const `Nat []))\n                (Lean.Expr.const `Bool.toNat []))\n              (Lean.Expr.app\n                (Lean.Expr.const\n                  (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `_private.OwnerInventory 0) \"Turing\") \"MachineFormat\") \"canonOffset\")\n                  [])\n                (Lean.Expr.bvar 0)))))\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                    (Lean.Expr.const `Nat []))\n                  (Lean.Expr.const `Nat []))\n                (Lean.Expr.const `Nat []))\n              (Lean.Expr.app\n                (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                (Lean.Expr.const `instAddNat [])))\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.const `HMul.hMul [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                        (Lean.Expr.const `Nat []))\n                      (Lean.Expr.const `Nat []))\n                    (Lean.Expr.const `Nat []))\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `instHMul [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                    (Lean.Expr.const `instMulNat [])))\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                    (Lean.Expr.lit (Lean.Literal.natVal 2)))\n                  (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))\n              (Lean.Expr.app\n                (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n                (Lean.Expr.bvar 0))))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n              (Lean.Expr.lit (Lean.Literal.natVal 3)))\n            (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 3)))))))\n    (Lean.Expr.app\n      (Lean.Expr.app\n        (Lean.Expr.app\n          (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n          (Lean.Expr.const `instLENat []))\n        (Lean.Expr.app\n          (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n          (Lean.Expr.app\n            (Lean.Expr.const\n              (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `_private.OwnerInventory 0) \"Turing\") \"MachineFormat\") \"canonOffset\")\n              [])\n            (Lean.Expr.bvar 0))))\n      (Lean.Expr.app\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                  (Lean.Expr.const `Nat []))\n                (Lean.Expr.const `Nat []))\n              (Lean.Expr.const `Nat []))\n            (Lean.Expr.app\n              (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n              (Lean.Expr.const `instAddNat [])))\n          (Lean.Expr.app\n            (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n            (Lean.Expr.bvar 0)))\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n            (Lean.Expr.lit (Lean.Literal.natVal 2)))\n          (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))))\n  (Lean.BinderInfo.default)",
+    "kernel": "_private.OwnerInventory.0.Turing.MachineFormat.canonOffset_spec",
+    "private": true,
+    "root": "Turing.MachineFormat.canonOffset_spec",
+    "simp_lemma": false,
+    "simp_unfold": false,
+    "universes": []
+  },
+  "earlier_same_owner_helper_proof_bodies_not_claimed_sealed": true
+}

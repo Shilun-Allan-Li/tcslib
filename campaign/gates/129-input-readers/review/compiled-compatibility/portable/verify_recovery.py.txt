@@ -1,0 +1,51 @@
+from pathlib import Path, PurePosixPath
+import sys,json,base64,gzip,hashlib,datetime
+root=Path(__file__).parent
+carrier_path=root/'RECOVERY-CARRIER.json';map_path=root/'RECOVERY-MAP.json'
+def sha(b):return hashlib.sha256(b).hexdigest()
+carrier_data=carrier_path.read_bytes();c=json.loads(carrier_data);m=json.loads(map_path.read_bytes())
+assert c['format']==m['format']=='ab34-lossless-gzip-base64-v1'
+assert sha(carrier_data)==m['carrier_sha256'] and len(carrier_data)==m['carrier_bytes']
+assert c['files']==m['files'] and c['logical_file_count']==m['logical_file_count']==len(c['files'])
+assert c['logical_bytes']==m['logical_bytes']==sum(r['bytes'] for r in c['files'])
+assert len(c['blobs'])==c['unique_blob_count']
+assert len({r['path'] for r in c['files']})==len(c['files'])
+assert {r['blob'] for r in c['files']}==set(c['blobs'])
+decoded={}
+for key,b in c['blobs'].items():
+ compressed=base64.b64decode(b['gzip_base64'],validate=True)
+ assert len(compressed)==b['gzip_bytes'] and sha(compressed)==b['gzip_sha256']
+ data=gzip.decompress(compressed)
+ assert len(data)==b['uncompressed_bytes'] and sha(data)==b['uncompressed_sha256']==key
+ data.decode('utf-8')
+ decoded[key]=data
+virtual={}
+for r in c['files']:
+ path=PurePosixPath(r['path'])
+ assert not path.is_absolute() and '..' not in path.parts and path.as_posix()==r['path']
+ assert not r['path'].endswith('.lean')
+ data=decoded[r['blob']]
+ assert len(data)==r['bytes'] and sha(data)==r['sha256']
+ virtual[r['path']]=data
+manifest=json.loads(virtual['MANIFEST.json']);assert sha(virtual['MANIFEST.json'])==c['canonical_export_manifest_sha256']==m['canonical_export_manifest_sha256']
+assert manifest['self_and_SHA256SUMS_excluded']
+assert len(manifest['files'])==manifest['payload_count']
+assert sum(r['bytes'] for r in manifest['files'])==manifest['payload_bytes']
+assert {r['path'] for r in manifest['files']}==set(virtual)-{'MANIFEST.json','SHA256SUMS'}
+for r in manifest['files']:
+ assert len(virtual[r['path']])==r['bytes'] and sha(virtual[r['path']])==r['sha256']
+sums={}
+for line in virtual['SHA256SUMS'].decode().splitlines():
+ digest,name=line.split('  ',1);assert name not in sums;sums[name]=digest
+assert set(sums)==set(virtual)-{'SHA256SUMS'}
+assert all(sha(virtual[name])==digest for name,digest in sums.items())
+recovered=None
+if len(sys.argv)>1:
+ assert len(sys.argv)==3 and sys.argv[1]=='--recover'
+ target=Path(sys.argv[2]);assert not target.exists();target.mkdir(parents=True)
+ for name,data in virtual.items():
+  dest=target/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data)
+ assert len([f for f in target.rglob('*') if f.is_file()])==len(virtual)
+ assert all((target/name).read_bytes()==data for name,data in virtual.items())
+ recovered=str(target.resolve())
+print(json.dumps({'verified_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'format':c['format'],'all_gzip_base64_blobs_exact':True,'all_logical_file_bytes_and_SHA256_exact':True,'total_recovery_map_verified':True,'all_canonical_manifest_payloads_and_checksums_verified':True,'logical_files':len(virtual),'logical_bytes':sum(len(b) for b in virtual.values()),'unique_blobs':len(decoded),'canonical_payloads':manifest['payload_count'],'canonical_payload_bytes':manifest['payload_bytes'],'canonical_manifest_sha256':sha(virtual['MANIFEST.json']),'carrier_sha256':sha(carrier_data),'carrier_bytes':len(carrier_data),'no_payload_execution':True,'plain_dot_lean_evidence_files':0,'optional_recovery_directory':recovered},indent=2))

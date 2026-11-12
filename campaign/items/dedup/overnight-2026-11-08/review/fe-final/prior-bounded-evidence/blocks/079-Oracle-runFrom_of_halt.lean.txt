@@ -1,0 +1,4 @@
+theorem runFrom_of_halt (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (h : cfg.state = none) {n : ℕ} :
+    M.runFrom O cfg n = cfg :=
+  Function.iterate_fixed (step_of_halt M O h) n

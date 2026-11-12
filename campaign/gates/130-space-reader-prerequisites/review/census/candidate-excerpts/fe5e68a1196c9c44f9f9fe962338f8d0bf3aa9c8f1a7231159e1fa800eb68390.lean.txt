@@ -1,0 +1,28 @@
+/-- A completed bank controller is absorbing on the entire configuration.
+**Proof sketch.** Every component's returned state produces a stationary,
+silent action. Project the three disjoint tape banks to see that no tape or
+head changes, and retain the completed vector of control states. -/
+private lemma emitterBank_fixed {k : ℕ} {w : List Bool}
+    (z : Cfg (emitterBankTM k).k Bool (emitterBankTM k).State w)
+    (hz : z.state = some (fun _ => some (3 : Fin 4))) :
+    (emitterBankTM k).tm.step z = z := by
+  unfold MultiTapeTM.step
+  rw [hz]
+  refine Cfg.ext hz.symm (moveInputPos_zero _) ?_ ?_ ?_
+  · funext j
+    refine Fin.addCases ?_ ?_ j
+    · intro i; simp [emitterBankTM, emitterBankPart, emitterClearTM, emitterSlots,
+        Action.apply, controlAction, -Fin.natAdd_eq_addNat]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro i <;>
+        simp [emitterBankTM, emitterBankPart, emitterClearTM, emitterSlots,
+          Action.apply, controlAction, -Fin.natAdd_eq_addNat]
+  · funext j
+    refine Fin.addCases ?_ ?_ j
+    · intro i; simp [emitterBankTM, emitterBankPart, emitterClearTM, emitterSlots,
+        Action.apply, controlAction, -Fin.natAdd_eq_addNat]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro i <;>
+        simp [emitterBankTM, emitterBankPart, emitterClearTM, emitterSlots,
+          Action.apply, controlAction, -Fin.natAdd_eq_addNat]
+  · simp [emitterBankTM, Action.apply]

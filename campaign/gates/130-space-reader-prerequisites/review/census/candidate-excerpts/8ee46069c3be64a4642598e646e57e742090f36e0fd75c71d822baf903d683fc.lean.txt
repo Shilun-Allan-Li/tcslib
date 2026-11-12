@@ -1,0 +1,19 @@
+/-- **Work-tape origin finding by virtual input** (revision 2, the setup's key step).
+Host the halting rewind on a buffer tape holding a word `w` with its head anywhere in
+`[-1, |w|]` (the capture leaves it at `|w|`): the buffer head returns to `0` and the buffer
+is unchanged. Only public rows: `vhostEmitTM_runFrom` and the rewind instance. -/
+theorem vhost_rewind {x y : List Bool} (c : Cfg 0 Bool RwPh y) (hs : c.state = some .start)
+    (b : Bool) (hb : FinTM.VirtualTag c.inputPos b) (p : Fin (x.length + 2)) (pre : List Bool) :
+    ∃ u ≤ c.inputPos.val + 2, ∃ b',
+      (vhostEmitTM (rewindTM 0 true)).runFrom (vhostCfg c b p pre) u =
+        vhostCfg ({ c with state := none, inputPos := 1 } : Cfg 0 Bool RwPh y) b' p pre ∧
+      ((vhostEmitTM (rewindTM 0 true)).runFrom (vhostCfg c b p pre) u).workTapePos
+        (vhostBuffer 0) = 0 ∧
+      ((vhostEmitTM (rewindTM 0 true)).runFrom (vhostCfg c b p pre) u).workTapes
+        (vhostBuffer 0) = FinTM.bufferTape y := by
+  obtain ⟨u, hu, hrun⟩ := rewindTM_run true c hs
+  obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom (rewindTM 0 true) c b hb p pre u
+  rw [hrun] at he
+  refine ⟨u, hu, b', he, ?_, ?_⟩
+  · rw [he]; simp only [vhostCfg, vhostBuffer, Fin.addCases_left]; simp
+  · rw [he]; simp only [vhostCfg, vhostBuffer, Fin.addCases_left]

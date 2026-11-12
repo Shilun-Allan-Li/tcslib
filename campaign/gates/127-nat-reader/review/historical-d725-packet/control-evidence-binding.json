@@ -1,0 +1,39 @@
+{
+  "scope_input": "inputs/nat-reader/BitEquationSealed.lean.txt",
+  "scope_source_sha256": "9d8971b42bd3146d10dcb87f5cdf8a86f832593a7541f52de4cfcf6586cbeaf9",
+  "native_sealed_controls_identical_after_only_guard_attribute_and_empty_anonymous_section_wrapper_removal": true,
+  "ordinary_or_focused_guards": [
+    "Nat.bit"
+  ],
+  "positive_examples_pass": 2,
+  "negative_same_identity_failures": 2,
+  "negative_actual_Type_mismatch_error_lines": [
+    4,
+    6
+  ],
+  "all_pairs": [
+    {
+      "id": "bit_delta",
+      "guard": "Nat.bit",
+      "exact_identity": "example (b : Bool) (n : ℕ) : Nat.bit b n = cond b (2 * n + 1) (2 * n) := rfl\n",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 4,
+      "full_example_sha256": "2c8a5da22f3e9b63ee376572d0e16fcd54f77b1815dc4ae8004a6f1f2dfe74dc"
+    },
+    {
+      "id": "bit_true_equation",
+      "guard": "Nat.bit",
+      "exact_identity": "example (n : ℕ) : Nat.bit true n = 2 * n + 1 := rfl\n",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 6,
+      "full_example_sha256": "d73f9e88d181b5b91c499c3cc786d1b33266ae7bd981bac5b251f19919b105d1"
+    }
+  ],
+  "scope_limit": "Focused existing Mathlib Nat.bit_val equation consumer only; not a full-canonOffset_spec or legacy-canonizer seal.",
+  "no_new_tests_executed_for_this_binding": true,
+  "actual_original_run_sources_hash_bound": true,
+  "raw_output_paths": [
+    "inputs/nat-reader/BitControlsUnsealed.out",
+    "inputs/nat-reader/BitControlsSealed.out"
+  ]
+}

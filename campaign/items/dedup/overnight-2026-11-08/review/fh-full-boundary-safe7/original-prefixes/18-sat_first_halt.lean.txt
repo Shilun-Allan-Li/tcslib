@@ -1,0 +1,695 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.ClassNP.Reductions
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.List.MinMax
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# SAT and 3SAT
+
+[AB09, §2.3.1]: `SAT` is the language of (strings representing) satisfiable CNF
+formulas, `3SAT` its restriction to 3CNF formulas (at most three literals per
+clause). This module defines both over the audited serialization layer, states
+their membership in `NP`, and states [AB09, Lemma 2.14] (`SAT ≤ₚ 3SAT`) — the
+(b) half of the Cook-Levin proof plan, whose (a) half (Lemma 2.11, `SAT` is
+`NP`-hard) is phase-4 material.
+
+## Design and deviations from [AB09]
+
+* **Strings, not formulas, are the language elements**: membership goes through
+  the total `Std.Sat.CNF.decode` ([AB09, footnote 3]). With the fallback being
+  the empty formula — satisfiable, and vacuously 3CNF — **every non-well-formed
+  string lies in `SAT` and in `3SAT`**. [AB09] declares the fallback choice
+  immaterial, and every stated result survives any fixed fallback — but not
+  "uniformly": each language's malformed-input branch follows **its own
+  predicate** on the fallback (a satisfiable fallback of width four would put
+  the non-well-formed strings in `SAT` and out of `3SAT` — round-1 audit,
+  finding 5), and the Lemma-2.14 reduction maps a non-well-formed input to the
+  serialization of the **transformed** fallback, which keeps the reduction
+  equivalence whatever the fixed choice.
+* **`TAUTOLOGY` and [AB09, Example 2.21] are deferred to phase 4** (plan
+  decision log): [AB09]'s `TAUTOLOGY` ranges over general Boolean formulas, and
+  its coNP-hardness reduction negates the Cook-Levin CNF into a **DNF** — while
+  the CNF-restricted tautology language is polynomial-time decidable (a CNF is
+  a tautology iff every clause contains a complementary literal pair), i.e. it
+  is **not** [AB09]'s language. The faithful carrier (the DNF dual layer) and
+  the hardness half's prerequisite (Lemma 2.11) both belong to phase 4, so the
+  whole package moves there rather than stating a wrong-language definition
+  here.
+
+## Main definitions
+
+* `Complexity.SAT` — satisfiable CNF strings. [AB09, §2.3.1]
+* `Complexity.SAT3` — satisfiable 3CNF strings. [AB09, §2.3.1]
+
+## Main results
+
+* `Complexity.SAT_mem_NP`, `Complexity.SAT3_mem_NP` — the assignment is the
+  certificate. [AB09, Theorem 2.10, membership part]
+* `Complexity.SAT_reducible_SAT3` — clause splitting with fresh variables.
+  [AB09, Lemma 2.14]
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.3.1, pp. 44-45; Theorem 2.10, p. 45;
+  Lemma 2.14, p. 48 with §2.3.5, pp. 50-51.)
+-/
+
+namespace Complexity
+
+open Std.Sat (CNF)
+open Turing
+
+/-! Local names for the shared polynomial-time toolkit (`ClassNP/PolyTimePairing.lean`,
+`TuringMachine/Composition.lean`), kept so this file's proofs can keep using its
+historical `sat_*` names. -/
+
+/-- A function computed in linear time is polynomial-time computable
+(`polyTimeComputable_of_linear`). -/
+private lemma sat_pt_linear (f : List Bool → List Bool)
+    (h : ∃ (M : FinTM Bool) (C : ℕ),
+      M.ComputesFunInTime f (fun n => C * (n + 1))) : PolyTimeComputable f :=
+  polyTimeComputable_of_linear h
+
+/-- A fixed word is polynomial-time computable (`polyTimeComputable_const`). -/
+private lemma sat_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) :=
+  polyTimeComputable_const w
+
+/-- Polynomial-time branching on a polynomial-time bit (`polyTimeComputable_ite`). -/
+private lemma sat_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => if p x then f x else g x) :=
+  polyTimeComputable_ite hp hf hg
+
+/-- The conjunction of two polynomial-time bits is polynomial-time
+(`polyTimeComputable_and`). -/
+private lemma sat_pt_and {p q : List Bool → Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hq : PolyTimeComputable (fun x => [q x])) :
+    PolyTimeComputable (fun x => [p x && q x]) :=
+  polyTimeComputable_and hp hq
+
+/-- Composition of a function machine with a machine correct on its image
+(`FinTM.exists_comp_on_image`). -/
+private lemma sat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=
+  FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+
+/-- **The language `SAT`** [AB09, §2.3.1]: binary strings whose decoded CNF
+formula is satisfiable. Decoding is total ([AB09, footnote 3]), with the empty —
+satisfiable — formula as fallback, so every non-well-formed string is in `SAT`
+(see the deviations list). -/
+def SAT : Language Bool :=
+  {x | (CNF.decode x).Satisfiable}
+
+/-- **The language `3SAT`** [AB09, §2.3.1]: binary strings whose decoded formula
+is a satisfiable 3CNF — every clause with at most three literals. The fallback
+formula has no clauses, so non-well-formed strings are in `3SAT` as well. -/
+def SAT3 : Language Bool :=
+  {x | (CNF.decode x).WidthAtMost 3 ∧ (CNF.decode x).Satisfiable}
+
+/-! **Epoch-3 fill note.** The private verifier layer below uses the audited
+`(1,1)` split. Syntax validation is a separate complete pass; neither width
+nor evaluation is allowed to reject an incompletely parsed prefix. -/
+
+/-- The finite assignment carried by a certificate, with the agreed default. -/
+private def satAssignment (u : List Bool) : ℕ → Bool := fun v => u.getD v false
+
+/-- Restricting a total assignment to the prescribed certificate length keeps
+every variable used by the decoded formula. [AB09, Theorem 2.10, membership]
+
+**Proof sketch.** Tabulate the first `|x|+1` bits. The decoded variable bound
+puts each relevant index inside the tabulation; evaluation congruence applies. -/
+private lemma sat_certificate (x : List Bool) :
+    (CNF.decode x).Satisfiable ↔ ∃ u : List Bool,
+      u.length = x.length + 1 ∧ (CNF.decode x).eval (satAssignment u) = true := by
+  constructor
+  · rintro ⟨a, ha⟩
+    let u := List.ofFn (fun i : Fin (x.length + 1) => a i.val)
+    refine ⟨u, List.length_ofFn, ?_⟩
+    rw [← ha]
+    apply eval_congr_of_lt_numVars
+    intro v hv
+    have hlt : v < x.length + 1 := Nat.lt_of_lt_of_le hv
+      (Nat.le_trans (CNF.numVars_decode_le x) (Nat.le_succ _))
+    simp only [satAssignment, u, List.getD_eq_getElem?_getD, List.getElem?_ofFn,
+      dif_pos hlt, Option.getD_some]
+  · rintro ⟨u, _, hu⟩
+    exact ⟨satAssignment u, hu⟩
+
+/-- A successful catalog split has the exact odd-length equation. -/
+private lemma sat_split_some (N i : ℕ) (h : solveSplit 1 1 N = some i) :
+    i + (i + 1) = N := by
+  have he := List.find?_some h
+  simpa [Nat.pow_one] using he
+
+/-- The unique solution is found, including `N=1`, `i=0`. -/
+private lemma sat_split_exists (N i : ℕ) (h : i + (i + 1) = N) :
+    solveSplit 1 1 N = some i := by
+  cases hs : solveSplit 1 1 N with
+  | none =>
+    have hn := List.find?_eq_none.mp hs i (by simp <;> omega)
+    simp [h] at hn
+  | some j =>
+    have hj := sat_split_some N j hs
+    congr 1
+    omega
+
+/-- Boolean width test; repeated literals count as distinct occurrences. -/
+private def satWidth (φ : CNF ℕ) : Bool := φ.all fun C => decide (C.length ≤ 3)
+
+/-- The Boolean width scan is precisely the frozen formula predicate. -/
+private lemma satWidth_spec (φ : CNF ℕ) :
+    satWidth φ = true ↔ φ.WidthAtMost 3 := by
+  simp [satWidth, CNF.WidthAtMost]
+
+/-- The total mathematical verifier, with explicit rejection on split failure.
+`decode` completes the syntax check before either semantic test is applied. -/
+private def satVerdict (three : Bool) (z : List Bool) : Bool :=
+  match solveSplit 1 1 z.length with
+  | none => false
+  | some i =>
+      let φ := CNF.decode (z.take i)
+      (!three || satWidth φ) && φ.eval (satAssignment (z.drop i))
+
+/-- Verifier languages for the two prescribed `(1,1)` witnesses. -/
+private def satVerifier (three : Bool) : Language Bool := {z | satVerdict three z = true}
+
+/-- A correctly sized concatenation is recovered literally by the verifier. -/
+private lemma satVerdict_append (three : Bool) (x u : List Bool)
+    (hu : u.length = x.length + 1) :
+    satVerdict three (x ++ u) =
+      ((!three || satWidth (CNF.decode x)) && (CNF.decode x).eval (satAssignment u)) := by
+  unfold satVerdict
+  rw [sat_split_exists (x ++ u).length x.length (by simp [hu])]
+  simp
+
+/-- The SAT certificate equivalence, with exactly the audited `n+1` bits. -/
+private lemma sat_verifier_equiv (x : List Bool) :
+    x ∈ SAT ↔ ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ satVerifier false := by
+  rw [show x ∈ SAT ↔ (CNF.decode x).Satisfiable from Iff.rfl, sat_certificate]
+  apply exists_congr
+  intro u
+  apply and_congr_right
+  intro hu
+  change _ ↔ satVerdict false (x ++ u) = true
+  simp [satVerdict_append false x u hu]
+
+/-- Width depends only on the instance, so the same certificate suffices for 3SAT. -/
+private lemma sat3_verifier_equiv (x : List Bool) :
+    x ∈ SAT3 ↔ ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ satVerifier true := by
+  change (CNF.decode x).WidthAtMost 3 ∧ (CNF.decode x).Satisfiable ↔ _
+  rw [sat_certificate]
+  constructor
+  · rintro ⟨hw, u, hu, he⟩
+    refine ⟨u, hu, ?_⟩
+    change satVerdict true (x ++ u) = true
+    simp [satVerdict_append true x u hu, (satWidth_spec _).mpr hw, he]
+  · rintro ⟨u, hu, hv⟩
+    change satVerdict true (x ++ u) = true at hv
+    have hh : satWidth (CNF.decode x) = true ∧
+        (CNF.decode x).eval (satAssignment u) = true := by
+      simpa [satVerdict_append true x u hu] using hv
+    exact ⟨(satWidth_spec _).mp hh.1, u, hu, hh.2⟩
+
+/-- One-way finite-state scanners use no work tapes and emit only the final
+verdict, after inspecting the right boundary. -/
+private def satScanTM {S : Type} [Fintype S] [DecidableEq S]
+    (step : S → Bool → S) (start : S) (accept : S → Bool) : FinTM Bool where
+  k := 0
+  State := S
+  tm := {
+    q₀ := start
+    tr := fun q inp _ => match inp with
+      | some b => ⟨.pos, Fin.elim0, none, some (step q b)⟩
+      | none => ⟨0, Fin.elim0, some (accept q), none⟩ }
+
+/-- Scanner configuration just before input symbol `i`, with empty output. -/
+private def satScanCfg {S : Type} (x : List Bool) (q : S) (i : ℕ)
+    (hi : i ≤ x.length) : Cfg 0 Bool S x :=
+  ⟨some q, ⟨i + 1, by omega⟩, Fin.elim0, Fin.elim0, []⟩
+
+/-- One real scanner step consumes one input symbol silently. -/
+private lemma satScan_step {S : Type} [Fintype S] [DecidableEq S]
+    (step : S → Bool → S) (start : S) (accept : S → Bool)
+    (x : List Bool) (q : S) (i : ℕ) (hi : i < x.length) :
+    (satScanTM step start accept).tm.step (satScanCfg x q i (by omega)) =
+      satScanCfg x (step q x[i]) (i + 1) (by omega) := by
+  have hin := inputSymbolInner (cfg := satScanCfg x q i (by omega)) i
+    (by simp [satScanCfg, Nat.add_comm]) hi
+  unfold MultiTapeTM.step
+  change (((satScanTM step start accept).tm.tr q _ _).apply _) = _
+  rw [hin]
+  apply Cfg.ext_zero_tapes
+  · rfl
+  · exact moveInputPos_pos_of_ne_right _ (by simp [satScanCfg] <;> omega)
+  · rfl
+
+/-- A suffix scan consumes every remaining bit and then emits one verdict.
+
+**Proof sketch.** Induct on the suffix. The empty case reads the right blank;
+the nonempty case is one silent step followed by the induction hypothesis.
+The initial output is empty and no earlier step emits. -/
+private lemma satScan_run {S : Type} [Fintype S] [DecidableEq S]
+    (step : S → Bool → S) (start : S) (accept : S → Bool)
+    (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest) (q : S),
+      ((satScanTM step start accept).tm.runFrom
+        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).state = none ∧
+      ((satScanTM step start accept).tm.runFrom
+        (satScanCfg x q pre.length (by simp [hx])) (rest.length + 1)).output =
+          [accept (rest.foldl step q)] := by
+  induction rest with
+  | nil =>
+    intro pre hx q
+    subst x
+    simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, satScanTM,
+      satScanCfg, Cfg.inputSymbol, Action.apply]
+  | cons b rest ih =>
+    intro pre hx q
+    have hi : pre.length < x.length := by simp [hx]
+    have hget : x[pre.length] = b := by simp [hx]
+    have hs := satScan_step step start accept x q pre.length hi
+    rw [hget] at hs
+    simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]
+    rw [hs]
+    simpa only [List.length_append, List.length_singleton, List.foldl_cons] using
+      ih (pre ++ [b]) (by simpa [List.append_assoc] using hx) (step q b)
+
+/-- Every such scanner has the exact `n+1` bound. -/
+private lemma satScan_computes {S : Type} [Fintype S] [DecidableEq S]
+    (step : S → Bool → S) (start : S) (accept : S → Bool) :
+    (satScanTM step start accept).ComputesFunInTime
+      (fun x => [accept (x.foldl step start)]) (fun n => n + 1) := by
+  intro x
+  apply (FinTM.computesInTime_iff _ _ _ _).mpr
+  have hinit : (satScanTM step start accept).tm.initCfg x =
+      satScanCfg x start 0 (Nat.zero_le _) := Cfg.ext_zero_tapes rfl rfl rfl
+  rw [hinit]
+  exact satScan_run step start accept x x [] rfl start
+
+/-- The complete CNF syntax pass is realized by an actual finite machine.
+The result concerns every input, not merely serialized formulas. -/
+private lemma satSyntax_poly : PolyTimeComputable (fun x => [CNF.syntaxOK x]) := by
+  refine ⟨satScanTM CNF.syntaxStep 0 (fun q => decide (q = 4)), 1, 1, ?_⟩
+  simpa only [Nat.pow_one, Nat.one_mul, CNF.syntaxOK] using
+    satScan_computes CNF.syntaxStep 0 (fun q => decide (q = 4))
+
+/-- Administrative states, or a streaming phase (formula, clause, index,
+polarity, rewind) with formula/clause truth bits and a doubled-bit skip flag. -/
+private abbrev SatEvalControl := Fin 4 ⊕ (Fin 5 × Bool × Bool × Bool)
+
+/-- A semantic phase, with the input poised at a doubled bit unless skipping. -/
+private def satEvalQ (q : Fin 5) (a c skip : Bool) : SatEvalControl :=
+  .inr (q, a, c, skip)
+
+/-- Administrative evaluation actions preserve all tape contents and move only
+the input head and the captured-certificate head. -/
+private def satEvalAction (M : FinTM Bool) (m d : SignType) (b : Option Bool)
+    (q : Option SatEvalControl) : Action (M.k + 1) Bool (M.State ⊕ SatEvalControl) :=
+  ⟨m, fun i => (none, if i.val < M.k then 0 else d), b, q.map Sum.inr⟩
+
+/-- Capture the certificate extractor, rewind, and evaluate a previously
+validated doubled formula. No physical output occurs before the verdict.
+Unary index walks and their rewinds take linear time in the literal encoding.
+[AB09, Theorem 2.10, membership] -/
+private def satEvalTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ SatEvalControl
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun s inp work => match s with
+    | .inl q => captureAction Sum.inl (.inr (.inl 0))
+        (M.tm.tr q inp fun i => work i.castSucc)
+    | .inr (.inl q) => match q.val with
+      | 0 => FinTM.controlAction .neg (some (.inr (.inl 1)))
+      | 1 => match inp with
+        | some _ => FinTM.controlAction .neg (some (.inr (.inl 1)))
+        | none => FinTM.controlAction .pos (some (.inr (.inl 2)))
+      | 2 => satEvalAction M 0 .neg none (some (.inl 3))
+      | _ => match work (Fin.last M.k) with
+        | some _ => satEvalAction M 0 .neg none (some (.inl 3))
+        | none => satEvalAction M 0 .pos none (some (satEvalQ 0 true false false))
+    | .inr (.inr (q, a, c, skip)) =>
+      if skip then satEvalAction M .pos 0 none (some (satEvalQ q a c false))
+      else if q = 4 then
+        match work (Fin.last M.k) with
+        | some _ => satEvalAction M 0 .neg none (some (satEvalQ 4 a c false))
+        | none => satEvalAction M 0 .pos none (some (satEvalQ 1 a c false))
+      else match inp with
+        | none => satEvalAction M 0 0 (some false) none
+        | some b => match q.val with
+          | 0 => if b then satEvalAction M .pos 0 none (some (satEvalQ 1 a false true))
+            else satEvalAction M 0 0 (some a) none
+          | 1 => if b then satEvalAction M .pos 0 none (some (satEvalQ 2 a c true))
+            else satEvalAction M .pos 0 none (some (satEvalQ 0 (a && c) false true))
+          | 2 => if b then satEvalAction M .pos .pos none (some (satEvalQ 2 a c true))
+            else satEvalAction M .pos 0 none (some (satEvalQ 3 a c true))
+          | _ => satEvalAction M .pos 0 none
+              (some (satEvalQ 4 a (c || decide (work (Fin.last M.k) = some b)) true)) }
+
+/-- The saved extractor bank and the certificate buffer during evaluation. -/
+private def satEvalCfg (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q : SatEvalControl)
+    (i : ℕ) (hi : i ≤ w.length) (j : ℤ) : Cfg (M.k + 1) Bool (satEvalTM M).State w :=
+  ⟨some (.inr q), ⟨i + 1, by omega⟩,
+    fun t => if h : t.val < M.k then saved.workTapes ⟨t, h⟩ else FinTM.bufferTape u,
+    fun t => if h : t.val < M.k then saved.workTapePos ⟨t, h⟩ else j, []⟩
+
+/-- The input read does not depend on the saved extractor bank. -/
+private lemma satEvalCfg_input (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q : SatEvalControl)
+    (i : ℕ) (hi : i ≤ w.length) (j : ℤ) :
+    (satEvalCfg M saved u q i hi j).inputSymbol = w[i]? :=
+  FinTM.inputSymbol_at _ i hi rfl
+
+/-- The last work head reads exactly the immutable certificate buffer. -/
+private lemma satEvalCfg_work (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q : SatEvalControl)
+    (i : ℕ) (hi : i ≤ w.length) (j : ℤ) :
+    (satEvalCfg M saved u q i hi j).workTapeSymbols (Fin.last M.k) =
+      FinTM.bufferTape u j := by
+  simp [satEvalCfg, Cfg.workTapeSymbols]
+
+/-- A live administrative action preserves both the saved bank and output. -/
+private lemma satEvalAction_apply (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q q' : SatEvalControl)
+    (i i' : ℕ) (hi : i ≤ w.length) (hi' : i' ≤ w.length) (j j' : ℤ)
+    (m d : SignType)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (w.length + 2)) m = ⟨i' + 1, by omega⟩)
+    (hd : j + d.cast = j') :
+    (satEvalAction M m d none (some q')).apply (satEvalCfg M saved u q i hi j) =
+      satEvalCfg M saved u q' i' hi' j' := by
+  refine Cfg.ext rfl hm rfl ?_ rfl
+  funext t
+  by_cases ht : t.val < M.k
+  · simp [satEvalAction, satEvalCfg, Action.apply, ht]
+  · simpa [satEvalAction, satEvalCfg, Action.apply, ht] using hd
+
+/-- The second bit of a doubled input symbol is skipped silently. -/
+private lemma satEval_skip (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q : Fin 5) (a c : Bool)
+    (i : ℕ) (hi : i < w.length) (j : ℤ) :
+    (satEvalTM M).tm.step (satEvalCfg M saved u (satEvalQ q a c true) i (by omega) j) =
+      satEvalCfg M saved u (satEvalQ q a c false) (i + 1) (by omega) j := by
+  unfold MultiTapeTM.step
+  change (satEvalAction M .pos 0 none (some (satEvalQ q a c false))).apply _ = _
+  exact satEvalAction_apply M saved u _ _ i (i + 1) (by omega) (by omega)
+    j j .pos 0 (moveInputPos_pos_of_ne_right _ (by simp <;> omega)) (by simp)
+
+/-- A local semantic transition followed by its skip consumes a doubled bit.
+The last work head moves only on the first of the two physical transitions.
+
+**Proof sketch.** Apply the semantic transition with the stated input and work-head move, then apply the
+silent skip. The two native positions remain inside the doubled input. -/
+private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool)
+    (q q' : Fin 5) (a c a' c' b : Bool) (i : ℕ) (hi : i + 2 ≤ w.length)
+    (j j' : ℤ) (d : SignType) (hd : j + d.cast = j')
+    (hin : w[i]? = some b)
+    (htr : (satEvalTM M).tm.tr (.inr (satEvalQ q a c false)) (some b)
+      (satEvalCfg M saved u (satEvalQ q a c false) i (by omega) j).workTapeSymbols =
+        satEvalAction M .pos d none (some (satEvalQ q' a' c' true))) :
+    (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ q a c false) i (by omega) j) 2 =
+        satEvalCfg M saved u (satEvalQ q' a' c' false) (i + 2) hi j' := by
+  have hs : (satEvalTM M).tm.step
+      (satEvalCfg M saved u (satEvalQ q a c false) i (by omega) j) =
+        satEvalCfg M saved u (satEvalQ q' a' c' true) (i + 1) (by omega) j' := by
+    unfold MultiTapeTM.step
+    change ((satEvalTM M).tm.tr (.inr (satEvalQ q a c false)) _ _).apply _ = _
+    rw [satEvalCfg_input, hin, htr]
+    exact satEvalAction_apply M saved u _ _ i (i + 1) (by omega) (by omega)
+      j j' .pos d (moveInputPos_pos_of_ne_right _ (by simp <;> omega)) hd
+  change (satEvalTM M).tm.step ((satEvalTM M).tm.step _) = _
+  rw [hs, satEval_skip M saved u q' a' c' (i + 1) (by omega) j']
+
+/-- Any left-moving certificate rewind takes exactly `n+1` steps from head
+`n-1`, returns to zero, and preserves all native input and output fields.
+
+**Proof sketch.** Induct on `n`. At `-1` the buffer is blank; otherwise its
+cell is a certificate bit, so one silent left move exposes the shorter case. -/
+private lemma satEval_rewind (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q dest : SatEvalControl)
+    (htr : ∀ inp work, (satEvalTM M).tm.tr (.inr q) inp work =
+      match work (Fin.last M.k) with
+      | some _ => satEvalAction M 0 .neg none (some q)
+      | none => satEvalAction M 0 .pos none (some dest))
+    (i : ℕ) (hi : i ≤ w.length) (n : ℕ) (hn : n ≤ u.length) :
+    (satEvalTM M).tm.runFrom (satEvalCfg M saved u q i hi ((n : ℤ) - 1)) (n + 1) =
+      satEvalCfg M saved u dest i hi 0 := by
+  induction n with
+  | zero =>
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change ((satEvalTM M).tm.tr (.inr q) _ _).apply _ = _
+    rw [htr, satEvalCfg_work]
+    simp only [Int.natCast_zero, zero_sub, FinTM.bufferTape_left]
+    exact satEvalAction_apply M saved u q dest i i hi hi (-1) 0 0 .pos
+      (moveInputPos_zero _) (by simp)
+  | succ n ih =>
+    have hw : FinTM.bufferTape u (((n + 1 : ℕ) : ℤ) - 1) = some u[n] := by
+      simp [FinTM.bufferTape, List.getElem?_eq_getElem (by omega : n < u.length)]
+    have hs : (satEvalTM M).tm.step
+        (satEvalCfg M saved u q i hi (((n + 1 : ℕ) : ℤ) - 1)) =
+          satEvalCfg M saved u q i hi ((n : ℤ) - 1) := by
+      unfold MultiTapeTM.step
+      change ((satEvalTM M).tm.tr (.inr q) _ _).apply _ = _
+      rw [htr, satEvalCfg_work, hw]
+      exact satEvalAction_apply M saved u q q i i hi hi _ _ 0 .neg
+        (moveInputPos_zero _) (by simp [SignType.cast] <;> omega)
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs, ih (by omega)]
+
+/-- The native pairing prefix doubles every formula bit. -/
+private def satBits (x : List Bool) : List Bool := x.flatMap fun b => [b, b]
+
+/-- Doubled data has exactly twice the native length. -/
+private lemma satBits_length (x : List Bool) : (satBits x).length = 2 * x.length := by
+  induction x with
+  | nil => rfl
+  | cons b x ih => simp [satBits, List.flatMap_cons] at * <;> omega
+
+/-- A unary index scan advances the certificate head once per remaining one.
+The first one of a literal is consumed by the clause state, so this scan's
+count is the variable index, not its successor. -/
+private lemma satEval_index (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (a c : Bool)
+    (n : ℕ) : ∀ pre rest (hw : w = pre ++ satBits (List.replicate n true) ++ rest) (j : ℤ),
+    (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 2 a c false) pre.length (by simp [hw]) j) (2 * n) =
+        satEvalCfg M saved u (satEvalQ 2 a c false) (pre.length + 2 * n)
+          (by simp only [hw, List.length_append, satBits_length, List.length_replicate] <;> omega)
+          (j + n) := by
+  induction n with
+  | zero => intros; simp [MultiTapeTM.runFrom_zero]
+  | succ n ih =>
+    intro pre rest hw j
+    have hw' : w = (pre ++ [true, true]) ++ satBits (List.replicate n true) ++ rest := by
+      simpa [satBits, List.replicate_succ, List.append_assoc] using hw
+    have hi : pre.length + 2 ≤ w.length := by simp [hw']
+    have hs := satEval_double M saved u 2 2 a c a c true pre.length hi j (j + 1)
+      .pos (by simp) (by simp [hw', List.append_assoc]) (by rfl)
+    conv_lhs => rw [show 2 * (n + 1) = 2 + 2 * n by omega, MultiTapeTM.runFrom_add, hs]
+    have hr := ih (pre ++ [true, true]) rest hw' (j + 1)
+    simpa [Nat.mul_add, add_assoc, add_comm, add_left_comm] using hr
+
+/-- A literal walk and its rewind take exactly `3v+8` transitions, return the
+certificate head to zero, and update only the clause truth bit.
+
+**Proof sketch.** Consume the first doubled one, walk the remaining `v`
+ones, read the terminator and polarity, and rewind `v+1` occupied cells.
+The certificate-length hypothesis guarantees the compared cell is present. -/
+private lemma satEval_literal (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (a c b : Bool) (v : ℕ)
+    (hv : v < u.length) (pre rest : List Bool)
+    (hw : w = pre ++ satBits (CNF.serializeLit (v, b)) ++ rest) :
+    (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 1 a c false) pre.length (by simp [hw]) 0) (3 * v + 8) =
+      satEvalCfg M saved u (satEvalQ 1 a (c || (satAssignment u v == b)) false)
+        (pre.length + 2 * (v + 3))
+        (by simp [hw, satBits_length, CNF.serializeLit] <;> omega) 0 := by
+  let p₁ := pre ++ [true, true]
+  let p₂ := p₁ ++ satBits (List.replicate v true)
+  let p₃ := p₂ ++ [false, false]
+  let p₄ := p₃ ++ [b, b]
+  have hw₁ : w = p₁ ++ satBits (List.replicate v true) ++ [false, false, b, b] ++ rest := by
+    simpa [p₁, satBits, CNF.serializeLit, List.replicate_succ, List.append_assoc] using hw
+  have hw₂ : w = p₂ ++ [false, false, b, b] ++ rest := hw₁
+  have hw₃ : w = p₃ ++ [b, b] ++ rest := by simpa [p₃, List.append_assoc] using hw₂
+  have hw₄ : w = p₄ ++ rest := by simpa [p₄, List.append_assoc] using hw₃
+  have h₁ := satEval_double M saved u 1 2 a c a c true pre.length
+    (by simp [hw₁, p₁] <;> omega) 0 0 0 (by simp)
+    (by simp [hw₁, p₁, List.append_assoc]) (by rfl)
+  have h₂ := satEval_index M saved u a c v p₁ ([false, false, b, b] ++ rest)
+    (by simpa [List.append_assoc] using hw₁) 0
+  have h₃ := satEval_double M saved u 2 3 a c a c false p₂.length
+    (by simp [hw₂]) (v : ℤ) v 0 (by simp)
+    (by simp [hw₂, List.append_assoc]) (by rfl)
+  have hread : FinTM.bufferTape u (v : ℤ) = some (satAssignment u v) := by
+    simp only [FinTM.bufferTape_nat, satAssignment, List.getD_eq_getElem?_getD,
+      List.getElem?_eq_getElem hv, Option.getD_some]
+  have h₄ := satEval_double M saved u 3 4 a c a (c || (satAssignment u v == b)) b p₃.length
+    (by simp [hw₃]) (v : ℤ) v 0 (by simp) (by simp [hw₃, List.append_assoc]) (by
+      simp only [satEvalTM, satEvalQ, Bool.false_eq_true, ↓reduceIte]
+      rw [satEvalCfg_work, hread]
+      cases h : satAssignment u v <;> cases b <;> rfl)
+  have h₅ := satEval_rewind M saved u (satEvalQ 4 a (c || (satAssignment u v == b)) false)
+    (satEvalQ 1 a (c || (satAssignment u v == b)) false) (by intros; rfl)
+    p₄.length (by simp [hw₄]) (v + 1) (by omega)
+  have hl₂ : p₂.length = pre.length + 2 + 2 * v := by simp [p₂, p₁, satBits_length] <;> omega
+  have hl₃ : p₃.length = pre.length + 2 + 2 * v + 2 := by simp [p₃, hl₂]
+  have hl₄ : p₄.length = pre.length + 2 + 2 * v + 2 + 2 := by simp [p₄, hl₃]
+  have hh₂ : (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 2 a c false) (pre.length + 2) (by simp [hw₁, p₁] <;> omega) 0)
+        (2 * v) = satEvalCfg M saved u (satEvalQ 2 a c false) p₂.length (by simp [hw₂]) v := by
+    simpa [p₁, hl₂] using h₂
+  have hh₃ : (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 2 a c false) p₂.length (by simp [hw₂]) v) 2 =
+        satEvalCfg M saved u (satEvalQ 3 a c false) p₃.length (by simp [hw₃]) v := by
+    simpa [p₃] using h₃
+  have hh₄ : (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 3 a c false) p₃.length (by simp [hw₃]) v) 2 =
+        satEvalCfg M saved u (satEvalQ 4 a (c || (satAssignment u v == b)) false)
+          p₄.length (by simp [hw₄]) v := by
+    simpa [p₄] using h₄
+  have hh₅ : (satEvalTM M).tm.runFrom
+      (satEvalCfg M saved u (satEvalQ 4 a (c || (satAssignment u v == b)) false)
+        p₄.length (by simp [hw₄]) v) (v + 2) =
+        satEvalCfg M saved u (satEvalQ 1 a (c || (satAssignment u v == b)) false)
+          p₄.length (by simp [hw₄]) 0 := by simpa using h₅
+  conv_lhs => rw [show 3 * v + 8 = 2 + (2 * v + (2 + (2 + (v + 2)))) by omega,
+    MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
+    MultiTapeTM.runFrom_add, hh₃, MultiTapeTM.runFrom_add, hh₄, hh₅]
+  congr 1
+  omega
+
+/-- A clause pass returns to formula control with its accumulated truth bit.
+No verdict is emitted by this pass, even for an empty or false clause.
+
+**Proof sketch.** Induct on literals, composing the exact literal walk with
+the tail pass. The closing zero takes two physical transitions. Sum the
+literal bounds against three times their unary serialization lengths. -/
+private lemma satEval_clause (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (C : CNF.Clause ℕ)
+    (hvars : ∀ ℓ ∈ C, ℓ.1 < u.length) :
+    ∀ pre rest (hw : w = pre ++ satBits (CNF.serializeClause C) ++ rest) (a c : Bool),
+    ∃ t ≤ 3 * (CNF.serializeClause C).length,
+      (satEvalTM M).tm.runFrom
+        (satEvalCfg M saved u (satEvalQ 1 a c false) pre.length (by simp [hw]) 0) t =
+      satEvalCfg M saved u
+        (satEvalQ 0 (a && (c || CNF.Clause.eval (satAssignment u) C)) false false)
+        (pre.length + 2 * (CNF.serializeClause C).length)
+        (by simp only [hw, List.length_append, satBits_length] <;> omega) 0 := by
+  induction C with
+  | nil =>
+    intro pre rest hw a c
+    refine ⟨2, by simp [CNF.serializeClause], ?_⟩
+    have h := satEval_double M saved u 1 0 a c (a && c) false false pre.length
+      (by simp [hw, CNF.serializeClause, satBits]) 0 0 0 (by simp)
+      (by simp [hw, CNF.serializeClause, satBits]) (by rfl)
+    simpa [CNF.serializeClause, CNF.Clause.eval_nil] using h
+  | cons ℓ C ih =>
+    intro pre rest hw a c
+    have hv := hvars ℓ List.mem_cons_self
+    have htvars : ∀ d ∈ C, d.1 < u.length := fun d hd => hvars d (List.mem_cons_of_mem ℓ hd)
+    let pre' := pre ++ satBits (CNF.serializeLit ℓ)
+    have hw' : w = pre' ++ satBits (CNF.serializeClause C) ++ rest := by
+      simpa [pre', satBits, CNF.serializeClause, List.append_assoc] using hw
+    have hl : pre'.length = pre.length + 2 * (ℓ.1 + 3) := by
+      simp [pre', satBits_length, CNF.serializeLit] <;> omega
+    have hs := satEval_literal M saved u a c ℓ.2 ℓ.1 hv pre
+      (satBits (CNF.serializeClause C) ++ rest)
+      (by simpa [pre', List.append_assoc] using hw')
+    obtain ⟨t, ht, hr⟩ := ih htvars pre' rest hw' a (c || (satAssignment u ℓ.1 == ℓ.2))
+    have hlen : (CNF.serializeClause (ℓ :: C)).length =
+        ℓ.1 + 3 + (CNF.serializeClause C).length := by
+      simp [CNF.serializeClause, CNF.serializeLit] <;> omega
+    refine ⟨3 * ℓ.1 + 8 + t, by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_add, hs]
+    simpa only [hl, hlen, Nat.mul_add, Nat.add_assoc, CNF.Clause.eval_cons, Bool.or_assoc] using hr
+
+/-- The streaming evaluation pass computes the conjunction of all clauses.
+
+**Proof sketch.** Induct on clauses. Each clause starts with its marker and
+runs the silent clause pass; conjunction is accumulated in finite control.
+Only the final formula terminator emits. The native formula length pays for
+all unary walks and rewinds, including empty formulas and empty clauses. -/
+private lemma satEval_formula (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (φ : CNF ℕ)
+    (hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < u.length) :
+    ∀ pre rest (hw : w = pre ++ satBits (CNF.serialize φ) ++ rest) (a : Bool),
+    ∃ t ≤ 3 * (CNF.serialize φ).length,
+      ((satEvalTM M).tm.runFrom
+        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).state = none ∧
+      ((satEvalTM M).tm.runFrom
+        (satEvalCfg M saved u (satEvalQ 0 a false false) pre.length (by simp [hw]) 0) t).output =
+          [a && φ.eval (satAssignment u)] := by
+  induction φ with
+  | nil =>
+    intro pre rest hw a
+    refine ⟨1, by simp [CNF.serialize], ?_⟩
+    have hin : (satEvalCfg M saved u (satEvalQ 0 a false false)
+        pre.length (by simp [hw]) 0).inputSymbol = some false := by
+      rw [satEvalCfg_input]
+      simp [hw, CNF.serialize, satBits]
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step, satEvalCfg, satEvalQ] at hin ⊢
+    rw [hin]
+    simp [satEvalTM, satEvalAction, satEvalQ, CNF.eval_nil]
+  | cons C φ ih =>
+    intro pre rest hw a
+    have hcvars : ∀ ℓ ∈ C, ℓ.1 < u.length := hvars C List.mem_cons_self
+    have htvars : ∀ D ∈ φ, ∀ ℓ ∈ D, ℓ.1 < u.length :=
+      fun D hD => hvars D (List.mem_cons_of_mem C hD)
+    let pre₁ := pre ++ [true, true]
+    let pre₂ := pre₁ ++ satBits (CNF.serializeClause C)
+    have hw₁ : w = pre₁ ++ satBits (CNF.serializeClause C) ++ satBits (CNF.serialize φ) ++ rest := by
+      simpa [pre₁, satBits, CNF.serialize, List.append_assoc] using hw
+    have hw₂ : w = pre₂ ++ satBits (CNF.serialize φ) ++ rest := hw₁
+    have h₁ := satEval_double M saved u 0 1 a false a false true pre.length
+      (by simp [hw₁, pre₁]) 0 0 0 (by simp)
+      (by simp [hw₁, pre₁, List.append_assoc]) (by rfl)
+    obtain ⟨s, hs, hc⟩ := satEval_clause M saved u C hcvars pre₁
+      (satBits (CNF.serialize φ) ++ rest) (by simpa [List.append_assoc] using hw₁) a false
+    have hp₁ : pre₁.length = pre.length + 2 := by simp [pre₁]
+    have hp₂ : pre₂.length = pre.length + 2 + 2 * (CNF.serializeClause C).length := by
+      change (pre₁ ++ satBits (CNF.serializeClause C)).length = _
+      rw [List.length_append, hp₁, satBits_length]
+    have hc' : (satEvalTM M).tm.runFrom
+        (satEvalCfg M saved u (satEvalQ 1 a false false) (pre.length + 2)
+          (by simp [hw₁, pre₁]) 0) s =
+        satEvalCfg M saved u (satEvalQ 0 (a && CNF.Clause.eval (satAssignment u) C) false false)
+          pre₂.length (by simp [hw₂]) 0 := by
+      simpa only [hp₁, hp₂, Bool.false_or] using hc
+    obtain ⟨t, ht, hr⟩ := ih htvars pre₂ rest hw₂ (a && CNF.Clause.eval (satAssignment u) C)
+    have hlen : (CNF.serialize (C :: φ)).length =
+        1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
+      simp [CNF.serialize, CNF.serializeClause] <;> omega
+    refine ⟨2 + (s + t), by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hc']
+    simpa only [CNF.eval_cons, Bool.and_assoc] using hr
+
+/-- Select the actual first halting transition, retaining its final emission. -/
+private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)
+    (h : M.ComputesInTime x y T) :
+    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by
+  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h
+  obtain ⟨t, ht, hg, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hh.1
+  refine ⟨t, ht, hg, ?_, ?_⟩
+  · rw [he]; exact hh.1
+  · rw [he]; exact hh.2
+end Complexity

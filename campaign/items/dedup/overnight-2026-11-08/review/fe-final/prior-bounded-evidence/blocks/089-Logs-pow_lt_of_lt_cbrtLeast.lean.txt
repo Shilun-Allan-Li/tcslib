@@ -1,0 +1,2 @@
+theorem pow_lt_of_lt_cbrtLeast {n s : ℕ} (h : s < cbrtLeast n) : s ^ 3 < n :=
+  not_le.1 (Nat.find_min (exists_le_cube n) h)

@@ -1,0 +1,74 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6LayoutPreship
+open Turing
+
+/-- Pure layout reconstruction for the last-ruler route. The three H2-F tapes
+occupy the first three of K+3 bank tapes; H5 adds the ruler last. No run/cut
+premise for the unfinished header/startup prefix is supplied by this equation. -/
+theorem last_ruler_layout (K n ℓ : ℕ) {P Q V : Type}
+    (finish : P) (entry : Q) (inj : Q → Bool → V)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x z : List Bool)
+    (hz : z.length = ℓ + x.length) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let ec := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    let bank : Cfg (K + 3) Bool P x :=
+      ⟨some finish, 1,
+        fun j => if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩
+    let physical : Cfg ((K + 3) + 1) Bool P z :=
+      ⟨some finish, ⟨ℓ + 1, by omega⟩,
+        Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes,
+        fun _ => 0, []⟩
+    physical.mapState (fun _ => inj entry false) =
+      rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+        (FinTM.bufferTape (List.replicate ℓ true)) 0 := by
+  intro σ ec bank physical
+  dsimp only [physical]
+  have h1 (j : Fin (K + 3)) : (j = 1) ↔ j.val = 1 := by
+    rw [Fin.ext_iff]
+    change j.val = 1 % (K + 3) ↔ j.val = 1
+    rw [Nat.mod_eq_of_lt (by omega : 1 < K + 3)]
+  have h2 (j : Fin (K + 3)) : (j = 2) ↔ j.val = 2 := by
+    rw [Fin.ext_iff]
+    change j.val = 2 % (K + 3) ↔ j.val = 2
+    rw [Nat.mod_eq_of_lt (by omega : 2 < K + 3)]
+  have hbank : ec = bank.mapState (fun _ => entry) := by
+    have h := embedEmitCfg_forwardLoop_init (k := 1) (K := K) finish entry M x
+    simpa only [ec, bank, σ, h1, h2] using h
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, rulerHostCfg_state, hbank, Cfg.mapState_state]
+    all_goals rfl
+  · apply Fin.ext
+    rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ ec _ 0).1,
+      hbank, Cfg.mapState_inputPos]
+    simp only [bank, Fin.val_one, Fin.val_mk]
+  · funext i p
+    rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes, hbank]
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · rw [Fin.lastCases_last] <;> rfl
+    · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapes] <;> rfl
+  · funext i
+    rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos, hbank]
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · rw [Fin.lastCases_last] <;> rfl
+    · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos] <;> rfl
+  · rw [Cfg.mapState_output, rulerHostCfg_output, hbank, Cfg.mapState_output]
+
+/-- At positive K the physical last ruler has value K+3, not value 3. -/
+theorem last_ruler_not_three (K : ℕ) (hK : 0 < K) :
+    (Fin.last (K + 3)).val ≠ 3 := by
+  change K + 3 ≠ 3
+  omega
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.last_ruler_layout
+#print axioms F6LayoutPreship.last_ruler_not_three

@@ -1,0 +1,14 @@
+/-- Setup mode freezes every field once it reaches a payload state. -/
+private lemma fwdMapSetup_stationary (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x)
+    (h : fwdMapEntered M c) (t : ℕ) : (fwdMapTM M false).tm.runFrom c t = c := by
+  obtain ⟨q, tag, hs⟩ := h
+  have he : (fwdMapTM M false).tm.step c = c := by
+    rw [MultiTapeTM.step_of_some hs]
+    simp only [fwdMapTM, Bool.false_eq_true, ↓reduceIte,
+      controlAction_apply, moveInputPos_zero]
+    cases c
+    simp_all
+  induction t with
+  | zero => rw [MultiTapeTM.runFrom_zero]
+  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]

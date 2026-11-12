@@ -1,0 +1,42 @@
+InputLengthSealed.lean:524:34: error: Type mismatch
+  funext (Action.mapState_workTapes ?m.505 ?m.506)
+has type
+  (Action.mapState ?m.505 ?m.506).workTapes = Action.workTapes ?m.506
+but is expected to have type
+  (inputMoveAction 1 (ScanPhase.done ())).inputTape =
+    (FinTM.controlAction SignType.pos (some InputLengthPhase.done)).inputTape
+InputLengthSealed.lean:524:47: error: Application type mismatch: The argument
+  Action.mapState_workTapes ?m.505 ?m.506
+has type
+  ∀ (a : Fin ?m.501), (Action.mapState ?m.505 ?m.506).workTapes a = Action.workTapes ?m.506 a
+but is expected to have type
+  ∀ (x : Fin 1),
+    (Action.mapState
+            (fun q =>
+              match q with
+              | ScanPhase.done a => InputLengthPhase.done
+              | x => InputLengthPhase.returnScan)
+            (inputMoveAction 1 (ScanPhase.done ()))).workTapes
+        x =
+      (FinTM.controlAction SignType.pos (some InputLengthPhase.done)).workTapes x
+in the application
+  funext (Action.mapState_workTapes ?m.505 ?m.506)
+InputLengthSealed.lean:524:34: error: Type mismatch
+  funext (Action.mapState_workTapes ?m.505 ?m.506)
+has type
+  (Action.mapState ?m.505 ?m.506).workTapes = Action.workTapes ?m.506
+but is expected to have type
+  (inputMoveAction 1 (ScanPhase.done ())).output =
+    (FinTM.controlAction SignType.pos (some InputLengthPhase.done)).output
+InputLengthSealed.lean:524:34: error: Type mismatch
+  funext (Action.mapState_workTapes ?m.505 ?m.506)
+has type
+  (Action.mapState ?m.505 ?m.506).workTapes = Action.workTapes ?m.506
+but is expected to have type
+  Option.map
+      (fun q =>
+        match q with
+        | ScanPhase.done a => InputLengthPhase.done
+        | x => InputLengthPhase.returnScan)
+      (inputMoveAction 1 (ScanPhase.done ())).state =
+    (FinTM.controlAction SignType.pos (some InputLengthPhase.done)).state

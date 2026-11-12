@@ -1,0 +1,106 @@
+/-- The bounded unary reader uses two tapes: the preserved bound and one restored scratch
+counter. It consumes the field on acceptance and preserves every work tape and head.
+
+**Proof sketch.** Copy the bound by the framed catalog row, then dispatch through the
+public seam to the unary core. That core tests its stopping cell and clears its residual
+counter. The untouched bound and blank scratch give exact restoration, and the
+copy, seam, and core ledgers fit one linear bound. -/
+private lemma exists_canonUnaryTM :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (U : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (bound : Fin m) (a : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1),
+          (U.runFrom d t).state =
+            some (exit (codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (U.runFrom d t).output = d.output ∧
+          (∀ u < t, ∀ v, (U.runFrom d u).state ≠ some (exit v)) ∧
+          (U.runFrom d t).workTapes = d.workTapes ∧
+          (U.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+            (U.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  letI : ∀ p, Fintype (canonUnaryPhase p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  letI : ∀ p, DecidableEq (canonUnaryPhase p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  let C := copyTM (Symbol := Bool) 2 0 1
+  let U := seamCompTM C .done canonUnaryCore ⟨none, .dec .run⟩
+  let exit (b : Bool) : SweepPhase ⊕ Sigma canonUnaryPhase := Sum.inr ⟨some (some b), .done⟩
+  refine ⟨2, _, inferInstance, inferInstance, U, Sum.inl .sweep, exit, 0, 16, ?_, ?_⟩
+  · intro a b eq
+    have tagged := congrArg Sigma.fst (Sum.inr.inj eq)
+    exact Option.some.inj (Option.some.inj tagged)
+  · intro x w d state positive bound home blank
+    let cp : Cfg 2 Bool SweepPhase x :=
+      ⟨some .sweep, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+    have start : cp.mapState Sum.inl = d := by
+      exact Cfg.ext state.symm rfl rfl rfl rfl
+    have scratch := blank 1 (by decide)
+    have copied := copyTM_run_ofCfg (0 : Fin 2) 1 (by decide) w cp rfl
+      (by intro z _ _; change d.workTapes 0 (d.workTapePos 0 + z) = _; rw [bound, home]; simp)
+    let e := C.runFrom cp (2 * w.length + 2)
+    have copyEq : e = _ := copied.1
+    have atExit : e.state = some .done := by rw [copyEq]
+    let next := e.mapState (fun _ => (⟨none, .dec .run⟩ : Sigma canonUnaryPhase))
+    have counter : next.workTapes 1 = FinTM.bufferTape w := by
+      change e.workTapes 1 = _
+      rw [copyEq]
+      funext z
+      change (if (1 : Fin 2) = 1 ∧ d.workTapePos 1 ≤ z ∧
+        z < d.workTapePos 1 + (w.length : ℤ) then FinTM.bufferTape w (z - d.workTapePos 1)
+        else d.workTapes 1 z) = FinTM.bufferTape w z
+      rw [scratch.1, scratch.2]
+      simp only [true_and, zero_add, sub_zero, FinTM.bufferTape_nil]
+      split_ifs with inside
+      · rfl
+      · by_cases nonneg : 0 ≤ z
+        · simp [FinTM.bufferTape, nonneg,
+            List.getElem?_eq_none (show w.length ≤ z.toNat by omega)]
+        · simp [FinTM.bufferTape, nonneg]
+    have nextPos : next.inputPos = d.inputPos := by change e.inputPos = _; rw [copyEq]
+    have nextHeads : next.workTapePos = d.workTapePos := by
+      change e.workTapePos = _
+      rw [copyEq]
+    have nextOutput : next.output = d.output := by change e.output = _; rw [copyEq]
+    obtain ⟨t, budget, finish, silent, cuts, tapes, heads, suffix⟩ :=
+      canonUnaryCore_run w next (by simp [next, Cfg.mapState, atExit])
+        (by rw [nextPos]; exact positive) counter (by rw [nextHeads]; exact scratch.2)
+    have whole := seamCompTM_run_ofCfg C .done canonUnaryCore ⟨none, .dec .run⟩
+      (rfl : C.runFrom cp (2 * w.length + 2) = e) atExit copied.2.1
+      (rfl : canonUnaryCore.runFrom next t = _)
+    rw [start] at whole
+    refine ⟨2 * w.length + 2 + 1 + t, by omega, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · rw [whole]
+      change Option.map Sum.inr (canonUnaryCore.runFrom next t).state = _
+      rw [finish, nextPos]
+      rfl
+    · rw [whole]
+      exact silent.trans nextOutput
+    · intro u hu b
+      change ((seamCompTM C .done canonUnaryCore ⟨none, .dec .run⟩).runFrom d u).state ≠ _
+      rw [← start]
+      apply canonSeam_avoids C .done canonUnaryCore ⟨none, .dec .run⟩ (exit b)
+        (rfl : C.runFrom cp (2 * w.length + 2) = e) atExit copied.2.1 (v := t)
+        (by intro z _; simp [exit, Cfg.mapState])
+        (by intro z hz; simpa [exit, Cfg.mapState] using cuts z hz b) u hu
+    · rw [whole]
+      change (canonUnaryCore.runFrom next t).workTapes = _
+      rw [tapes]
+      funext j z
+      fin_cases j
+      · change next.workTapes 0 z = _
+        change e.workTapes 0 z = _
+        rw [copyEq]
+        rfl
+      · simpa only [Function.update_self] using congrFun scratch.1.symm z
+    · rw [whole]
+      exact heads.trans nextHeads
+    · intro ys skipped
+      rw [whole]
+      exact suffix ys (by simpa only [nextPos] using skipped)

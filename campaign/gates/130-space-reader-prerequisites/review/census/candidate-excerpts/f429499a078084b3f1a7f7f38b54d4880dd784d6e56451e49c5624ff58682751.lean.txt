@@ -1,0 +1,11 @@
+theorem right_fields {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    (rightCfg f c tapes heads).state = c.state.map f ∧
+    (rightCfg f c tapes heads).inputPos = c.inputPos ∧
+    (∀ i a, (rightCfg f c tapes heads).workTapes i a =
+      (Fin.addCases tapes c.workTapes) i a) ∧
+    (∀ i, (rightCfg f c tapes heads).workTapePos i =
+      (Fin.addCases heads c.workTapePos) i) ∧
+    (rightCfg f c tapes heads).output = c.output := by
+  exact ⟨rightCfg_state _ _ _ _, rightCfg_inputPos _ _ _ _,
+    rightCfg_workTapes _ _ _ _, rightCfg_workTapePos _ _ _ _, rightCfg_output _ _ _ _⟩

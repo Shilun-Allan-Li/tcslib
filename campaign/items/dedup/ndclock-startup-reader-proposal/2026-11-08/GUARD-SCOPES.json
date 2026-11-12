@@ -1,0 +1,92 @@
+{
+  "complete_scopes": [
+    {
+      "root": "Turing.ClockHost.bootCfg_of_halt",
+      "scope_bytes": 447,
+      "scope_sha256": "8f4e092666c77d571426b427fbf7628b97d9b47acb8fc6ecd7a2ff36544a6b15",
+      "ordinary_heads": [
+        "Turing.FinTM.bufferTape"
+      ],
+      "removed_actual_definition_simp_rows": []
+    },
+    {
+      "root": "Turing.ClockHost.runCfg_initCfg",
+      "scope_bytes": 791,
+      "scope_sha256": "ea168e1b19c95637a4e18bf85104c5773bb52ac470de40122d562260cf5f547d",
+      "ordinary_heads": [
+        "Turing.FinTM.bufferTape",
+        "Turing.NDTM.initCfg",
+        "Turing.Cfg.init"
+      ],
+      "removed_actual_definition_simp_rows": [
+        "Turing.NDTM.initCfg",
+        "Turing.Cfg.init"
+      ]
+    },
+    {
+      "root": "Turing.ClockHost.startup",
+      "scope_bytes": 1863,
+      "scope_sha256": "4adfb841bc31e45d208d725ed4eb0c8218a27b53a94185bb25a0283b0be7e254",
+      "ordinary_heads": [
+        "Turing.FinTM.ComputesInTime",
+        "Turing.NDTM.runWith",
+        "Turing.ClockHost.hostTM",
+        "Turing.NDTM.initCfg",
+        "Turing.ClockHost.runCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.ClockHost.bootCfg",
+        "Turing.ClockHost.hostCfg",
+        "Turing.FinTM.bufferTape",
+        "Turing.moveInputPos",
+        "Turing.ClockHost.inLeft"
+      ],
+      "removed_actual_definition_simp_rows": [
+        "Turing.NDTM.initCfg",
+        "Turing.MultiTapeTM.initCfg"
+      ],
+      "prefix_bytes": 14269,
+      "prefix_sha256": "5086d69cd22d60b3a813dfed7ca4a09ed6328cb2dbcaaac7a12b4846fb80090e",
+      "prefix_exact_candidate": true,
+      "preceding_source_unsealed_context": true
+    }
+  ],
+  "ordinary_union": [
+    "Turing.FinTM.bufferTape",
+    "Turing.NDTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.NDTM.runWith",
+    "Turing.ClockHost.hostTM",
+    "Turing.ClockHost.runCfg",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.ClockHost.bootCfg",
+    "Turing.ClockHost.hostCfg",
+    "Turing.moveInputPos",
+    "Turing.ClockHost.inLeft"
+  ],
+  "ordinary_union_count": 13,
+  "positive_negative_pairs_expected": 26,
+  "removed_union_definition_simp_rows": [
+    "Turing.NDTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "scope_boundary": "Whole selected reader/consumer declaration types and values, all reached constant types, recursive own definition-helper values. Other theorem proof-values and foreign definition values stop. New reader scopes are inserted in the complete original owner; earlier/later declarations remain unsealed context. Consumer is literal full target with unchanged preceding source as unsealed context. No unrestricted theorem-value closure.",
+  "scope_options_match_control_probes": {
+    "maxHeartbeats": 0,
+    "maxRecDepth": 4096,
+    "smartUnfolding": false,
+    "autoImplicit": false,
+    "relaxedAutoImplicit": false
+  },
+  "final_guard_labels": [
+    "proposed-readers-sealed2",
+    "startup-full-target-sealed2"
+  ],
+  "final_guard_sources": {
+    "NDReadersSealed.lean.txt": "e61b8d8e63f078485b65d9b13271c26bc3ddb05ee7b1c2c075d7488c53966317",
+    "StartupSealed.lean.txt": "ff6d794757273ebda960c987aa115ac11fb047a4ede505d753d2dfde91effc16"
+  }
+}

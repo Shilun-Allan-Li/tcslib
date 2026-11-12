@@ -1,0 +1,21 @@
+/-- **F2's fix: the input head goes home from anywhere.** The published input seek
+(`Turing.exists_inputSeekTM`, `Build/InputCall`, already imported) at `p = 1`, with the word
+`[true]` on its tape `0` and its tape `1` blank, returns the input head to position `1` from
+any position, within `C · (|[true]| + pos + 2)` steps, restoring the output (and every work tape
+and head). -/
+theorem rv_seek_home :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
+      (C : ℕ), ∀ {x : List Bool} (d : Cfg 2 Bool S x), d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (([true] : List Bool).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape [true] q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * ([true].length + d.inputPos.val + 1 + 1),
+          (R.runFrom d t).state = some exit ∧ (R.runFrom d t).inputPos = 1 ∧
+            (R.runFrom d t).output = d.output := by
+  obtain ⟨S, hS, hdS, R, entry, exit, C, h⟩ := exists_inputSeekTM
+  refine ⟨S, hS, hdS, R, entry, exit, C, fun {x} d hd hw hblank => ?_⟩
+  have hp : Nat.ofDigits 2 (([true] : List Bool).map Bool.toNat) = 1 := by
+    rw [List.map_cons, List.map_nil, Bool.toNat_true, Nat.ofDigits_singleton]
+  obtain ⟨t, ht, -, -, hexit, hpos, -, -, hout⟩ :=
+    h (x := x) 1 [true] hp (by omega) d hd hw hblank
+  exact ⟨t, ht, hexit, Fin.ext (by rw [hpos]; rfl), hout⟩

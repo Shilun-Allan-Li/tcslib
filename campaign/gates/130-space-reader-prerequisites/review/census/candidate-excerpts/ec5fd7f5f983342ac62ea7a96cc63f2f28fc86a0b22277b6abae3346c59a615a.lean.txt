@@ -1,0 +1,6 @@
+/-- Fixed two-cell routing between the summary cell and its state word.
+No parser or variable scan is involved. -/
+private def h1TwoMoveTM {m : ℕ} (i : Fin m) (move : SignType) : MultiTapeTM m Bool (Fin 3) where
+  q₀ := 0
+  tr := fun q _ _ => if h : q.val < 2 then
+    tapeAction i 0 none move ⟨q.val + 1, by omega⟩ else inputMoveAction 0 q

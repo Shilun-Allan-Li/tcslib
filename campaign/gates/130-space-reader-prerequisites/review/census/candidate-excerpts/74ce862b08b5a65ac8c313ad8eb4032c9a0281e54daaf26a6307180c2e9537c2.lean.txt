@@ -1,0 +1,31 @@
+/-- One field is stored by actual native writes and the controller then
+advances to the next field. The entire counter bank and input head are
+restored; the physical output remains empty.
+**Proof sketch.** Relocate the two-tape copier into the selected counter and record slots until its first completion. Its full return theorem preserves every unselected tape; one silent dispatch advances the finite field index. -/
+private lemma clRow_field {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+    (i : Fin l) (w : Fin l → List Bool) (record : List Bool) :
+    ∃ t ≤ 3 * (w i).length + 4, 0 < t ∧
+      (clRowTM l).tm.runFrom (clRowCfg x p i.castSucc 0 w record) t =
+        clRowCfg x p i.succ 0 w (record ++ pairEncode (w i) []) := by
+  obtain ⟨t, ht, hp, hf, he⟩ := clCopy_first x p (w i) record
+  let tapes : Fin (l + 1) → ℤ → Option Bool := Fin.addCases (fun j => FinTM.bufferTape (w j))
+    (fun _ : Fin 1 => (fun _ : ℤ => none))
+  have lift := clPlaced_run clCopyTM.tm (clRowTM l).tm (clRowSelect i) (fun s => (i.castSucc, s)) (by intro a b h; cases h; rfl) (fun s => s ≠ (4 : Fin 5))
+    (by intro q hq inp work; simp [clRowTM, i.isLt, hq]; rfl) tapes (fun _ => 0)
+    (clCopyCfg x 0 p 0 (w i) record) t
+    (by intro j hj q hq; intro heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have lift' : (clRowTM l).tm.runFrom (clRowCfg x p i.castSucc 0 w record) t =
+      clRowCfg x p i.castSucc 4 w (record ++ pairEncode (w i) []) :=
+    (congrArg (fun z => (clRowTM l).tm.runFrom z t)
+      (clRow_frame x p i 0 w record)).symm.trans
+      (lift.trans (clRow_frame x p i 4 w (record ++ pairEncode (w i) [])))
+  refine ⟨t + 1, by omega, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', lift']
+  change ((clRowTM l).tm.tr (i.castSucc, (4 : Fin 5)) _ _).apply _ = _
+  dsimp only [clRowTM]
+  split
+  · rw [if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero]
+    rfl
+  · rename_i hi
+    exact False.elim (hi i.isLt)

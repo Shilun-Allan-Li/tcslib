@@ -1,0 +1,9 @@
+/-- Convert a first-positive-exit module into a halting source for `emit_run`.
+The Boolean release flag ensures even an entry equal to exit executes once. -/
+private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
+  k := C.k
+  State := Bool × C.State
+  tm := { q₀ := (false, entry)
+          tr := fun q inp work =>
+            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
+            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, ·)} }

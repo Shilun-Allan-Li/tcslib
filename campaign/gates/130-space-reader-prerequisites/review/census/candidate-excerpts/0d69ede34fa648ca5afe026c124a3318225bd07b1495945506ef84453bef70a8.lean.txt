@@ -1,0 +1,59 @@
+/-- **Canonical decoding** (design §12.8a §2). On windowed configurations of
+one input, records agree exactly when the configurations agree on state, input
+position, work tapes and work heads, and the tags agree. The output is not
+compared, so this is injectivity on the configuration core, the vertex
+quotient of the configuration graph.
+
+**Proof sketch.** Compare the fields. The state field gives the state. The
+position field is `Turing.binDigits` at a width with `2 ^ posWidth |x| >
+|x| + 1`, which is injective on values `≤ |x| + 1`, the range of input
+positions. For tape `i`, the content track gives the cells in `[-s, s]`, and
+outside it both configurations are blank by the window hypothesis. The mark
+track has exactly one mark, at the head, which lies in `[-s, s]`. The tag field
+gives the tag. -/
+theorem cfgRecord_inj {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) {c d : Cfg k Bool Q x}
+    {τ τ' : T} (hc : c.InWindow s) (hd : d.InWindow s) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ' := by
+  classical
+  constructor
+  · intro h
+    simp only [cfgRecord, List.cons.injEq, bind_pure_comp, Functor.map, List.map_map, Function.comp_def] at h
+    obtain ⟨hstate, hpos, hrest⟩ := h
+    have hs : c.state = d.state := by simpa using hstate
+    have hb : binDigits (posWidth x.length) c.inputPos.val =
+        binDigits (posWidth x.length) d.inputPos.val :=
+      (List.map_inj_right (fun _ _ h => RecSym.digit.inj h)).mp hpos
+    have hp : c.inputPos = d.inputPos := Fin.ext
+      (record_digits_inj _ _ _
+        (lt_of_le_of_lt (by have := c.inputPos.isLt; omega) (record_pos_lt x.length))
+        (lt_of_le_of_lt (by have := d.inputPos.isLt; omega) (record_pos_lt x.length)) hb)
+    obtain ⟨hfields, htag⟩ := List.append_inj' hrest (by rfl)
+    have ht : τ = τ' := by simpa using htag
+    have hcell (i : Fin k) (j : ℕ) (hj : j < 2 * s + 1) :
+        RecSym.cell (Q := Q) (T := T) (c.workTapes i ((j : ℤ) - s))
+            (decide (c.workTapePos i = (j : ℤ) - s)) =
+          RecSym.cell (d.workTapes i ((j : ℤ) - s))
+            (decide (d.workTapePos i = (j : ℤ) - s)) := by
+      have hi := List.map_inj_left.mp hfields i (by simp)
+      exact List.map_inj_left.mp hi j (List.mem_range.mpr hj)
+    have hw : c.workTapes = d.workTapes := by
+      funext i z
+      by_cases hz : |z| ≤ (s : ℤ)
+      · have hz' := abs_le.mp hz
+        have hnat : (((z + s).toNat : ℕ) : ℤ) = z + s := Int.toNat_of_nonneg (by omega)
+        have h := (RecSym.cell.inj (hcell i (z + s).toNat (by omega))).1
+        simpa only [hnat, add_sub_cancel_right] using h
+      · rw [hc.2 i z (by omega), hd.2 i z (by omega)]
+    have hh : c.workTapePos = d.workTapePos := by
+      funext i
+      have hi := abs_le.mp (hc.1 i)
+      have hnat : (((c.workTapePos i + s).toNat : ℕ) : ℤ) = c.workTapePos i + s :=
+        Int.toNat_of_nonneg (by omega)
+      have h := (RecSym.cell.inj (hcell i (c.workTapePos i + s).toNat (by omega))).2
+      simp only [hnat, add_sub_cancel_right, decide_true] at h
+      exact (of_decide_eq_true h.symm).symm
+    exact ⟨⟨hs, hp, hw, hh⟩, ht⟩
+  · rintro ⟨⟨hs, hp, hw, hh⟩, ht⟩
+    simp only [cfgRecord, hs, hp, hw, hh, ht]

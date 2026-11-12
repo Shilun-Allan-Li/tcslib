@@ -1,0 +1,8 @@
+/-- Equal cores stay equal along runs. -/
+lemma core_runFrom (tm : MultiTapeTM k Bool S) {c d : Cfg k Bool S x} (h : core c = core d)
+    (t : ℕ) : core (tm.runFrom c t) = core (tm.runFrom d t) := by
+  induction t with
+  | zero => simpa using h
+  | succ t ih =>
+    rw [runFrom_succ_eq_step', runFrom_succ_eq_step']
+    exact core_step tm ih

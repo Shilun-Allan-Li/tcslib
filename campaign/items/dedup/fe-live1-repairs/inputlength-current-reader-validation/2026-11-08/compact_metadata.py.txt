@@ -1,0 +1,40 @@
+from pathlib import Path
+import json,re,hashlib
+O=Path(__file__).parent
+pattern=b'"proof_value_Expr":';close=re.compile(rb'(?<!\\)(?:\\\\)*"');marker=b'CONSUMER_METADATA|'
+def sha_file(path):
+ h=hashlib.sha256()
+ with path.open('rb') as f:
+  for b in iter(lambda:f.read(4*1024*1024),b''):h.update(b)
+ return h.hexdigest()
+rows=[]
+for label in ['metadata-BASE','metadata-CANDIDATE-first','metadata-CANDIDATE-second']:
+ p=O/'probes'/label/'attempt-01/raw.out';result=json.loads(p.with_name('result.json').read_text());assert p.stat().st_size==result['raw_bytes'] and sha_file(p)==result['raw_sha256']
+ with p.open('rb') as f:
+  prefix=b''
+  while pattern not in prefix:
+   block=f.read(1024*1024);assert block;prefix+=block;assert len(prefix)<100*1024*1024
+  start=prefix.index(marker)+len(marker);at=prefix.index(pattern,start);head=prefix[start:at];tail=prefix[at+len(pattern):];assert tail.startswith(b'"');tail=tail[1:]
+  removed_hash=hashlib.sha256();removed_hash.update(b'"');removed_bytes=1;odd=False
+  while True:
+   synthetic=b'\\' if odd else b'';scan=synthetic+tail;m=close.search(scan)
+   if m:
+    end=m.end()-len(synthetic);assert end>=1
+    removed_hash.update(tail[:end]);removed_bytes+=end;suffix=tail[end:]
+    if not suffix:suffix=f.read(1024*1024)
+    assert suffix.startswith(b',');rest=suffix[1:]+f.read();break
+   removed_hash.update(tail);removed_bytes+=len(tail)
+   n=len(scan)-len(scan.rstrip(b'\\'));odd=bool(n%2);tail=f.read(1024*1024);assert tail
+  data=head+rest.split(b'\n',1)[0];obj=json.loads(data)
+ assert obj['name']=='Turing.exists_inputLengthTM' and 'proof_value_Expr' not in obj
+ q=O/(label+'-compact.json');q.write_text(json.dumps(obj,indent=2)+'\n')
+ rows.append({'label':label,'raw_path':str(p.relative_to(O)),'raw_bytes':result['raw_bytes'],'raw_sha256':result['raw_sha256'],'compact_path':q.name,'compact_bytes':q.stat().st_size,'compact_sha256':sha_file(q),'exactly_one_field_removed_from_derived_index':'proof_value_Expr','removed_JSON_encoded_string_bytes':removed_bytes,'removed_JSON_encoded_string_SHA256':removed_hash.hexdigest(),'raw_original_preserved_without_truncation':True,'complete_type_Expr_universes_AXIOMS_footprint_and_identity_rows_retained':True})
+ print('COMPACT_INDEX',label,q.stat().st_size,'heads',len([d for d in obj['foreign_definitions'] if d['ordinary']]),flush=True)
+(O/'COMPACT-METADATA-RECOVERY.json').write_text(json.dumps(rows,indent=2)+'\n')
+# Observe fresh candidate raw byte identity with bounded memory.
+a=O/'probes/metadata-CANDIDATE-first/attempt-01/raw.out';b=O/'probes/metadata-CANDIDATE-second/attempt-01/raw.out'
+with a.open('rb') as x,b.open('rb') as y:
+ while True:
+  u=x.read(4*1024*1024);v=y.read(4*1024*1024);assert u==v
+  if not u:break
+print('FRESH_CANDIDATE_RAW_BYTE_IDENTITY_OBSERVED',flush=True)

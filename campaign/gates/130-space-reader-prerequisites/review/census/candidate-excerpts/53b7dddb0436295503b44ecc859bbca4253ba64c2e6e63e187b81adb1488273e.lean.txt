@@ -1,0 +1,39 @@
+/-- The scanner's blank transition enters the emission chain; the final
+halting transition is charged explicitly. The total is `|x|+|w|+2`.
+**Proof sketch.** Use the scanner invariant at the right boundary. The blank
+transition enters the fixed emission chain with the accumulated zero bits;
+the library emission theorem supplies the remaining word and halting step. -/
+private lemma a3_shift_computes (w x : List Bool) :
+    (a3ShiftTM w).ComputesInTime x (List.replicate x.length false ++ w)
+      (x.length + w.length + 2) := by
+  obtain ⟨hs, hp, ho⟩ := a3_shift_scan w x x.length (le_refl _)
+  let cfg := (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) x.length
+  have hp' : (cfg.inputPos : ℕ) = x.length + 1 := hp
+  have hzero : cfg.inputPos ≠ 0 := by
+    intro h
+    rw [h] at hp'
+    simp at hp'
+  have hinp : cfg.inputSymbol = none := by
+    unfold Cfg.inputSymbol
+    rw [dif_neg hzero, dif_pos (by omega)]
+  have henter : (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (x.length + 1) =
+      (controlAction 0 (some (.inr (0 : Fin (w.length + 1))))).apply cfg := by
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    change (a3ShiftTM w).tm.step cfg = _
+    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, a3ShiftTM, hinp]
+  let next := (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (x.length + 1)
+  have hnext : next.state = some (.inr (0 : Fin (w.length + 1))) := by
+    dsimp only [next]
+    rw [henter]
+    rfl
+  have houtput : next.output = List.replicate x.length false := by
+    dsimp only [next]
+    rw [henter]
+    simp only [controlAction, Action.apply, Option.toList_none, List.append_nil]
+    exact ho
+  obtain ⟨hh, hout⟩ := emit_halts (a3ShiftTM w).tm w Sum.inr
+    (fun _ _ _ => rfl) next hnext
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [show x.length + w.length + 2 = (x.length + 1) + (w.length + 1) by omega,
+    MultiTapeTM.runFrom_add]
+  exact ⟨hh, by simpa only [houtput] using hout⟩

@@ -1,0 +1,56 @@
+/-- Entering the read phase does not allocate a left block. The complete
+forward run and all its prefixes stay between the current boundary cells.
+**Proof sketch.** Turn right without changing the zone, then apply the received
+read transduction and the generic prefix-position theorem. -/
+private lemma dg_collect {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))
+    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)
+    (hp : ∀ i, a ≤ c.workTapePos i) :
+    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)
+      (sweepCfg (some (.inl (.read q (readState c (a + n)))))
+        (dgPos a₀ c.inputPos) (z + 1 + n * M.k)
+        (((tapeZone (fun j => tapeRow c j true) a n).map
+          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (1 + n * M.k) z (z + 1 + n * M.k) := by
+  let F := tapeZone (fun j => tapeRow c j false) a n
+  let p := dgPos a₀ c.inputPos
+  let out := c.output.map (sweepEmbed Γ M.k)
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.read q (readState c a)))) p (z + 1) [some sweepBoundary]
+      (F.map (fun b => some (sweepSymbol b)) ++ [some sweepBoundary]) out
+  have hr : readState c a = fun _ => (none, false) := by
+    funext i
+    have h := hp i
+    simp [readState, headAt, show ¬c.workTapePos i < a by omega,
+      show c.workTapePos i ≠ a - 1 by omega]
+  have step : (dgTM M a₀).tm.step (dgStart M a₀ c a n z) = d := by
+    simp only [dgStart, MultiTapeTM.step, sweepRevCfg, hs, Option.map_some]
+    change (sweepAct (Sum.inl (SweepState.read q (fun _ => (none, false))))
+      (some sweepBoundary) .pos).apply
+        (sweepRevCfg (some (.inl (.growLeft q 0))) p z
+          (F.map (fun b => some (sweepSymbol b)) ++ [some sweepBoundary])
+          [some sweepBoundary] out) = d
+    rw [sweep_turn_right]
+    simp only [d, hr, List.tail_cons]
+  have hnk : 0 ≤ (n : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (n * M.k))
+  have first : DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z) d 1 z (z + 1 + n * M.k) :=
+    dgSpan_one step (by dsimp [dgStart, sweepRevCfg]; constructor <;> omega)
+      (by dsimp [d, sweepCfg]; constructor <;> omega)
+  have scan : DGSpan (dgTM M a₀).tm d
+      (sweepCfg (some (.inl (.read q (readState c (a + n))))) p (z + 1 + n * M.k)
+        (((tapeZone (fun j => tapeRow c j true) a n).map
+          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])
+        [some sweepBoundary] out) (n * M.k) z (z + 1 + n * M.k) := by
+    refine ⟨dg_read M a₀ c q a (z + 1) n p out _ _, ?_⟩
+    intro u hu
+    have h := dg_sweep_prefix (dgTM M a₀).tm
+      (fun s => Sum.inl (SweepState.read q s)) sweepSymbol readVisit
+      (by intro s b inp; rfl) p out F (readState c a) (z + 1)
+      [some sweepBoundary] [some sweepBoundary] u (by simpa [F, tapeZone_length] using hu)
+    change ((dgTM M a₀).tm.runFrom d u).workTapePos (0 : Fin 1) = z + 1 + u at h
+    rw [h]
+    have hu' : (u : ℤ) ≤ (n : ℤ) * M.k := by exact_mod_cast hu
+    constructor <;> omega
+  exact dgSpan_add first scan

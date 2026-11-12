@@ -1,0 +1,5 @@
+/-- One native tag test records blank, false, or true and advances exactly for a present
+cell. It supplies the local successor tag check, absent from the whole-input catalog. -/
+private def canonTagTM (m : ℕ) : MultiTapeTM m Bool (Option (Option Bool)) where
+  q₀ := none
+  tr := fun _ inp _ => inputMoveAction (if inp.isSome then 1 else 0) (some inp)

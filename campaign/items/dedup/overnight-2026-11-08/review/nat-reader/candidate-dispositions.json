@@ -1,0 +1,68 @@
+{
+  "source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "scope_limit": "43 selected declarations, not a global semantic or duplication absence claim",
+  "dispositions": [
+    {
+      "candidate": "canonOffset_spec binary-size bound",
+      "state": "ALREADY CANONICAL",
+      "evidence": "Current1462 directly cites length_bits_le_self _. Private lemma remains for the address-value and combined width conclusions; no deletion proposed."
+    },
+    {
+      "candidate": "canonOffset_spec Nat.bit value clause",
+      "state": "EXACT ONE-LINE CANDIDATE VALIDATED",
+      "evidence": "Replace simp [Nat.bit] by simp only [Nat.bit_val, Bool.toNat_true]; retain omega. Header, imports and all outside bytes exact."
+    },
+    {
+      "candidate": "Zone zoneShiftIn/zoneShiftOut",
+      "state": "PAUSE NONEXACT",
+      "evidence": "Different inward/outward word updates and capacity obligations, not a direct instance of the inspected sibling contract."
+    },
+    {
+      "candidate": "Zone cascade/rebalance left/right",
+      "state": "ALREADY SHARED IN INSPECTED CHUNKS",
+      "evidence": "zoneSide_cascadeLeft and zoneCascadeLeft_lengths directly use right lemmas on z.swap; zoneSide_rebalance_left uses zoneRebalance_false and the right lemma."
+    },
+    {
+      "candidate": "ZoneTape zonedTape_left/right and separators",
+      "state": "PAUSE NONEXACT BRIDGE",
+      "evidence": "Existing common owner rows are used. No direct physical zonedTape sign/swap contract identified in selected APIs; zoneTrackTape_swap is a different represented tape. No bridge proof/API invented."
+    },
+    {
+      "candidate": "ZoneTape zoneOwner_sep/beyond",
+      "state": "PAUSE NONEXACT HYPOTHESES",
+      "evidence": "Separator covers every index; beyond requires threshold. Both already use zoneOwner_of_not_mem."
+    },
+    {
+      "candidate": "Simulation left/right configuration apply/step",
+      "state": "PAUSE NONEXACT TRANSPORT",
+      "evidence": "Different Fin partitions and table hypotheses; no exact same-current-import sibling transport identified. No new permutation API/host."
+    },
+    {
+      "candidate": "Simulation timed_rewind/rewind_heads",
+      "state": "SHARED CORE ALREADY USED; NO PATCH",
+      "evidence": "Both use rewind_first_step and rewind_scan; heads uses rewind_scan_heads. The stronger head row occurs after timed_rewind, so using it backwards would require unapproved declaration reordering."
+    },
+    {
+      "candidate": "Embed silent/emit ordinary runs",
+      "state": "ALREADY SHARED",
+      "evidence": "Both use MultiTapeTM.runFrom_comm_of_step with their existing step rows."
+    },
+    {
+      "candidate": "Embed returning runs and visited sets",
+      "state": "ALREADY SHARED",
+      "evidence": "Both returning run rows use existing same-home embedThroughHalt; both visited-set rows use embedReturn_visited."
+    },
+    {
+      "candidate": "Encoding pairDiag_double/copy",
+      "state": "PAUSE NONEXACT",
+      "evidence": "Different control phases, starting configurations, output maps and time2t versus t. No new parameterized driver/bridge."
+    },
+    {
+      "candidate": "Encoding exists_codeTM_spaceUsed and toCodeTM rows",
+      "state": "EXISTING RELABEL CONTRACTS; NO PATCH",
+      "evidence": "Space-faithful witness already uses computesInTime_relabelState and relabelState_spaceUsed; exists_codeTM projects that witness. A forward reference to later toCodeTM would require ordering/API changes."
+    }
+  ],
+  "no_new_private_public_machine_host_API_import_name_header_route_home": true,
+  "avoided_other_agents_FE_SG_source_chunks": true
+}

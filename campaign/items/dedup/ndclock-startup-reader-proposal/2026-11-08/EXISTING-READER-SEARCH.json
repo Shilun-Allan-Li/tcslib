@@ -1,0 +1,86 @@
+{
+  "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+  "source_population": 1003,
+  "all_raw_candidate_hits": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 311,
+      "text": "def bootCfg (c : Cfg S.k Bool S.State x) :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 322,
+      "text": "    (hostTM S A loop).stepWith b (bootCfg (A := A) c) = bootCfg (S.tm.step c) := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 323,
+      "text": "  have hst : (bootCfg (A := A) c).state = some (.boot q) := by simp [bootCfg, hostCfg, hq]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 325,
+      "text": "  have hsym : \u2200 i, (bootCfg (A := A) c).workTapeSymbols (sI i) = c.workTapeSymbols i :="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 326,
+      "text": "    fun i => by simp [bootCfg, hostCfg, Cfg.workTapeSymbols]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 327,
+      "text": "  have hin : (bootCfg (A := A) c).inputSymbol = c.inputSymbol := rfl"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 332,
+      "text": "  unfold bootCfg"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 347,
+      "text": "    (hostTM S A loop).runWith w (bootCfg (A := A) c) = bootCfg (S.tm.runFrom c w.length) := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 361,
+      "text": "theorem initCfg_eq_bootCfg :"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 362,
+      "text": "    (hostTM S A loop).initCfg x = bootCfg (A := A) (S.tm.initCfg x) := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 366,
+      "text": "    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "line": 369,
+      "text": "    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "line": 324,
+      "text": "  rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "line": 325,
+      "text": "  have hb : bootCfg (A := A) cS = hostCfg (some .rew) cS.inputPos cS.workTapes cS.workTapePos"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "line": 327,
+      "text": "    simp [bootCfg, hcS, hout]"
+    }
+  ],
+  "bounded_disposition": "Existing initCfg_eq_bootCfg/boot_run/rewind_run expose the phase contracts, but no named halted-boot constructor equation or initialized-run configuration equation was located. yard is an allowed reducible abbrev; no yard reader needed. Existing NDTM.initCfg_eq and Cfg.init field equations cover the imported initialization reads in the proposed owner lemma. This is candidate enumeration plus source inspection, not a semantic absence claim.",
+  "additional_available_ref_search": "git/ND-READERS-ALL-AVAILABLE-REFS.json",
+  "additional_uncapped_raw_hits": "git/ND-READERS-ALL-AVAILABLE-REFS.raw.txt",
+  "all52_unique_source_rows_inspected": true,
+  "additional_disposition": "All5408 raw hits across428 captured available refs/298 distinct commit heads reduce to52 path/line/source rows. They contain the definitions, existing boot_step/boot_run/initCfg_eq_bootCfg, existing attempt contracts and consumer calls/explicit definition reads. No separate halted-boot assembly or initialized-run assembly reader appears. No remote fetch or semantic uniqueness/completeness claim."
+}

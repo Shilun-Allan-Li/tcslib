@@ -1,0 +1,5 @@
+private noncomputable def loopRoundTime {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) : ℕ := by
+  classical
+  exact if h : ∃ t, 0 < t ∧ ∃ b, ((roundTM k).runFrom d t).state =
+      some (exit k b) then Nat.find h else 0

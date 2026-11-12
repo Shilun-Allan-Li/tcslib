@@ -1,0 +1,778 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -159,6 +159,67 @@
+ theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
+     (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by
+   exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
++
++/-- A tape with no requested write keeps its contents. Read the
++published optional-write equation, then update the cell with its old value. -/
++private lemma apply_workTape_of_no_write {k : ℕ} {Symbol State : Type*} {x : List Symbol}
++    (a : Action k Symbol State) (d : Cfg k Symbol State x) (i : Fin k)
++    (hw : (a.workTapes i).1 = none) : (a.apply d).workTapes i = d.workTapes i := by
++  rw [Action.apply_workTapes, hw, Option.getD_none, Cfg.workTapeSymbols_eq,
++    Function.update_eq_self]
++
++/-- A zero-work-tape configuration indexed by the number of input bits passed. -/
++private def scanCfg {S : Type} (x : List Bool) (q : Option S)
++    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
++  ⟨q, ⟨i + 1, by omega⟩, fun j => j.elim0, fun j => j.elim0, out⟩
++
++/-- Reading at the indexed input position returns the optional list entry. -/
++private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
++    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
++    (scanCfg x q i hi out).inputSymbol = x[i]? :=
++  inputSymbol_at _ i hi rfl
++
++/-- Copy the first `j` input symbols while staying in the same live state.
++Only the transition on a symbol is needed because each step in the prefix
++starts before the right boundary.
++
++**Proof sketch.** Induct on the prefix length. The input reader supplies
++the next symbol and the action fields preserve the state while moving the
++head right and appending that symbol. -/
++private lemma scanCopy_run_of_symbol {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
++    (htr : ∀ b work, tm.tr q (some b) work =
++      ⟨.pos, fun j => j.elim0, some b, some q⟩)
++    (x out : List Bool) : ∀ j (hj : j ≤ x.length),
++    tm.runFrom (scanCfg x (some q) 0 (by omega) out) j =
++      scanCfg x (some q) j hj (out ++ x.take j) := by
++  intro j
++  induction j with
++  | zero => intro hj; simp [scanCfg]
++  | succ j ih =>
++    intro hj
++    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
++    rw [MultiTapeTM.step_of_some (by rfl)]
++    change (tm.tr q (scanCfg x (some q) j (by omega) (out ++ x.take j)).inputSymbol
++      _).apply _ = _
++    rw [scanCfg_read, List.getElem?_eq_getElem (by omega), htr]
++    apply Cfg.ext_zero_tapes
++    · exact Action.apply_state _ _
++    · rw [Action.apply_inputPos]
++      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
++    · simp only [Action.apply_output, scanCfg, Option.toList_some, List.take_succ,
++        List.getElem?_eq_getElem (by omega : j < x.length), List.append_assoc]
++
++/-- A copy state emits the next `j` input bits after an arbitrary output prefix.
++Restrict the transition hypothesis to live symbols and apply
++`scanCopy_run_of_symbol`. -/
++private lemma scanCopy_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
++    (htr : ∀ inp work, tm.tr q inp work = match inp with
++      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩
++      | none => ⟨0, fun j => j.elim0, none, none⟩)
++    (x out : List Bool) : ∀ j (hj : j ≤ x.length),
++    tm.runFrom (scanCfg x (some q) 0 (by omega) out) j =
++      scanCfg x (some q) j hj (out ++ x.take j) :=
++  scanCopy_run_of_symbol tm q (fun b work => htr (some b) work) x out
+ 
+ /-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
+ private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
+@@ -194,29 +255,20 @@
+       exact moveInputPos_zero _
+     · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem hlt]
+ 
+-/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
++/-- The copy phase emits one input bit per step and preserves the fixed prefix.
++Use `scanCopy_run_of_symbol` on the prefixing machine's live copy row. -/
+ private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
+     (prependTM w).tm.runFrom
+       (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
+       catalogPrefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
+         (w ++ x.take i) := by
+-  intro i
+-  induction i with
+-  | zero => intro hi; simp [catalogPrefixCfg]
+-  | succ i ih =>
+-    intro hi
+-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+-    have hsym : (catalogPrefixCfg w x (some ⟨w.length, by omega⟩)
+-        ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
+-      inputSymbolInner i (by simp only [catalogPrefixCfg]; omega) (by omega)
+-    rw [MultiTapeTM.step_of_some (by rfl), hsym]
+-    simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte, catalogPrefixCfg]
+-    apply Cfg.ext_zero_tapes
+-    · exact Action.apply_state _ _
+-    · rw [Action.apply_inputPos]
+-      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
+-    · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem (by omega),
+-        List.append_assoc]
++  let q : Fin (w.length + 1) := ⟨w.length, by omega⟩
++  have htr (b : Bool) (work : Fin 0 → Option Bool) :
++      (prependTM w).tm.tr q (some b) work =
++        ⟨.pos, fun j => j.elim0, some b, some q⟩ := by
++    simp [prependTM, q]
++  simpa only [catalogPrefixCfg, scanCfg, q] using
++    scanCopy_run_of_symbol (prependTM w).tm q htr x w
+ 
+ /-- A blank in the final copy state halts without moving or emitting. -/
+ private lemma catalogPrefixTM_halt (w x : List Bool) (p : Fin (x.length + 2))
+@@ -253,45 +305,6 @@
+   rw [List.take_length, catalogPrefixTM_halt _ _ _ rfl]
+   exact ⟨rfl, rfl⟩
+ 
+-
+-/-- A zero-work-tape configuration indexed by the number of input bits passed. -/
+-private def scanCfg {S : Type} (x : List Bool) (q : Option S)
+-    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
+-  ⟨q, ⟨i + 1, by omega⟩, fun j => j.elim0, fun j => j.elim0, out⟩
+-
+-/-- Reading at the indexed input position returns the optional list entry. -/
+-private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
+-    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+-    (scanCfg x q i hi out).inputSymbol = x[i]? :=
+-  inputSymbol_at _ i hi rfl
+-
+-/-- A copy state emits the next `j` input bits after an arbitrary output prefix.
+-**Proof sketch.** Induct on the number of copied cells; each transition appends
+-the scanned bit and moves right. The indexed configuration keeps the boundary
+-case separate from the actual bit-reading steps. -/
+-private lemma scanCopy_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+-    (htr : ∀ inp work, tm.tr q inp work = match inp with
+-      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩
+-      | none => ⟨0, fun j => j.elim0, none, none⟩)
+-    (x out : List Bool) : ∀ j (hj : j ≤ x.length),
+-    tm.runFrom (scanCfg x (some q) 0 (by omega) out) j =
+-      scanCfg x (some q) j hj (out ++ x.take j) := by
+-  intro j
+-  induction j with
+-  | zero => intro hj; simp [scanCfg]
+-  | succ j ih =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+-    rw [MultiTapeTM.step_of_some (by rfl)]
+-    change (tm.tr q (scanCfg x (some q) j (by omega) (out ++ x.take j)).inputSymbol
+-      _).apply _ = _
+-    rw [htr, scanCfg_read, List.getElem?_eq_getElem (by omega)]
+-    apply Cfg.ext_zero_tapes
+-    · exact Action.apply_state _ _
+-    · rw [Action.apply_inputPos]
+-      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+-    · simp only [Action.apply_output, scanCfg, Option.toList_some, List.take_succ,
+-        List.getElem?_eq_getElem (by omega : j < x.length), List.append_assoc]
+ 
+ /-- After copying the entire input, the right-blank transition halts silently. -/
+ private lemma scanCopy_finish {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+@@ -690,8 +703,7 @@
+   refine Cfg.ext (Action.apply_state _ _) ?_
+     (by
+       funext i
+-      rw [Action.apply_workTapes]
+-      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++      exact apply_workTape_of_no_write _ _ i rfl)
+     ?_ (Action.apply_output _ _)
+   · rw [Action.apply_inputPos]
+     exact moveInputPos_pos_of_ne_right _ (by simp [extractCfg, hx])
+@@ -724,61 +736,87 @@
+     · rw [Action.apply_inputPos]
+       exact hm
+     · funext i
+-      rw [Action.apply_workTapes]
+       first
+-      | erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl
+-      | exact (bufferTape_append a _).symm
++      | exact apply_workTape_of_no_write _ _ i rfl
++      | rw [Action.apply_workTapes]
++        exact (bufferTape_append a _).symm
+     · funext i
+       simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg, sub_eq_add_neg]
+ 
++/-- A configuration in a synchronized, read-only buffer pass. -/
++private def alignedRewindCfg {k : ℕ} {S : Type} {x : List Bool}
++    (p : Fin (x.length + 2)) (tapes : Fin k → ℤ → Option Bool) (out : List Bool)
++    (q : S) (z : ℤ) : Cfg k Bool S x :=
++  ⟨some q, p, tapes, fun _ => z, out⟩
++
++/-- Synchronized work heads starting at cell `j-1` return to zero in `j+1` steps
++if the live row moves left at every interior cell and exits to the right at
++the left blank. The input, tapes and output are preserved.
++
++**Proof sketch.** The two rows move every work head by the specified offset
++and preserve the other fields. For a positive distance, take one left step
++and shorten the distance by one. From the left blank take the exit row. -/
++private lemma alignedRewind_run {k : ℕ} {S : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool S) (q exit : S) (p : Fin (x.length + 2))
++    (tapes : Fin k → ℤ → Option Bool) (out : List Bool) (n : ℕ)
++    (hleft : ∀ j : ℕ, j < n →
++      tm.tr q (alignedRewindCfg p tapes out q j).inputSymbol
++          (alignedRewindCfg p tapes out q j).workTapeSymbols =
++        ⟨0, fun _ => (none, .neg), none, some q⟩)
++    (hexit : tm.tr q (alignedRewindCfg p tapes out q (-1)).inputSymbol
++          (alignedRewindCfg p tapes out q (-1)).workTapeSymbols =
++        ⟨0, fun _ => (none, .pos), none, some exit⟩) :
++    ∀ j : ℕ, j ≤ n →
++      tm.runFrom (alignedRewindCfg p tapes out q ((j : ℤ) - 1)) (j + 1) =
++        alignedRewindCfg p tapes out exit 0 := by
++  have hstep (z : ℤ) (d : SignType) (q' : S)
++      (htr : tm.tr q (alignedRewindCfg p tapes out q z).inputSymbol
++          (alignedRewindCfg p tapes out q z).workTapeSymbols =
++        ⟨0, fun _ => (none, d), none, some q'⟩) :
++      tm.step (alignedRewindCfg p tapes out q z) =
++        alignedRewindCfg p tapes out q' (z + d) := by
++    rw [MultiTapeTM.step_of_some (show (alignedRewindCfg p tapes out q z).state = some q from rfl),
++      htr]
++    apply Cfg.ext
++    · rw [Action.apply_state]
++      rfl
++    · rw [Action.apply_inputPos]
++      exact moveInputPos_zero p
++    · funext i
++      exact apply_workTape_of_no_write _ _ i rfl
++    · funext i
++      rw [Action.apply_workTapePos]
++      rfl
++    · rw [Action.apply_output]
++      exact List.append_nil out
++  intro j
++  induction j with
++  | zero =>
++    intro _
++    rw [Nat.cast_zero, zero_sub, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++      hstep (-1) .pos exit hexit]
++    rfl
++  | succ j ih =>
++    intro hj
++    have hz : ((j.succ : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
++    rw [hz, MultiTapeTM.runFrom_succ_eq_step, hstep j .neg q (hleft j (by omega))]
++    exact ih (by omega)
++
+ /-- Rewinding the validated buffer from cell `j-1` takes `j+1` transitions.
+-**Proof sketch.** At the left blank, move right and enter replay. Otherwise
+-read a buffer cell, move left, and invoke the induction hypothesis. -/
++Apply `alignedRewind_run` using the extractor's two buffer rows. -/
+ private lemma extract_rewind (first second : Bool) (x a : List Bool)
+     (i : ℕ) (hi : i ≤ x.length) : ∀ j, j ≤ a.length →
+     (pairExtractTM first second).tm.runFrom
+       (extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) []) (j + 1) =
+       extractCfg x (some (.inr 1)) i hi a 0 [] := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some (by rfl)]
+-    simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols_eq, Nat.cast_zero,
+-      zero_sub, bufferTape_left]
+-    refine Cfg.ext (Action.apply_state _ _)
++  simpa only [extractCfg, alignedRewindCfg] using
++    alignedRewind_run (pairExtractTM first second).tm (.inr 0) (.inr 1)
++      (⟨i + 1, by omega⟩ : Fin (x.length + 2)) (fun _ => bufferTape a) [] a.length
+       (by
+-        rw [Action.apply_inputPos]
+-        exact moveInputPos_zero _)
+-      (by
+-        funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-      ?_ (Action.apply_output _ _)
+-    funext k; simp [-Action.apply, Action.apply_workTapePos]
+-  | succ j ih =>
+-    intro hj
+-    have hs : (pairExtractTM first second).tm.step
+-        (extractCfg x (some (.inr 0)) i hi a (((j + 1 : ℕ) : ℤ) - 1) []) =
+-        extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) [] := by
+-      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+-      rw [hz]
+-      rw [MultiTapeTM.step_of_some (by rfl)]
+-      simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols_eq, bufferTape_nat,
+-        List.getElem?_eq_getElem (by omega : j < a.length)]
+-      refine Cfg.ext (Action.apply_state _ _)
+-        (by
+-          rw [Action.apply_inputPos]
+-          exact moveInputPos_zero _)
+-        (by
+-          funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-        ?_ (Action.apply_output _ _)
+-      funext k; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++        intro j hj
++        simp only [alignedRewindCfg, pairExtractTM, Cfg.workTapeSymbols_eq, bufferTape_nat,
++          List.getElem?_eq_getElem hj])
++      (by simp only [alignedRewindCfg, pairExtractTM, Cfg.workTapeSymbols_eq, bufferTape_left])
+ 
+ /-- Replay a one-tape buffer from a fixed native input position, optionally emitting its bits.
+ 
+@@ -859,8 +897,7 @@
+     exact moveInputPos_zero _)
+     (by
+       funext i
+-      rw [Action.apply_workTapes]
+-      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++      exact apply_workTape_of_no_write _ _ i rfl)
+     ?_ ?_
+   · funext k; simp [-Action.apply, Action.apply_workTapePos]
+   · simp [-Action.apply, Action.apply_output]
+@@ -887,8 +924,7 @@
+     refine Cfg.ext (Action.apply_state _ _) ?_
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ ?_
+     · simp [pairExtractTM, -Action.apply, Action.apply_inputPos, extractCfg, hx]
+     · funext k; simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg]
+@@ -907,8 +943,7 @@
+       refine Cfg.ext (Action.apply_state _ _) ?_
+         (by
+           funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++          exact apply_workTape_of_no_write _ _ i rfl)
+         ?_ (Action.apply_output _ _)
+       · rw [Action.apply_inputPos]
+         simpa [pairExtractTM, extractCfg] using moveInputPos_pos_of_ne_right
+@@ -2143,53 +2178,20 @@
+     · funext k; simp [rawStripTM, stripCfg, -Action.apply, Action.apply_workTapePos]
+ 
+ /-- Rewinding the validated buffer from cell `j-1` takes `j+1` transitions.
+-**Proof sketch.** At the left blank, move right and enter replay. Otherwise
+-read a buffer cell, move left, and invoke the induction hypothesis. -/
++Apply `alignedRewind_run` using the stripper's two buffer rows. -/
+ private lemma rawStrip_rewind (x a : List Bool)
+     (i : ℕ) (hi : i ≤ x.length) : ∀ j, j ≤ a.length →
+     rawStripTM.tm.runFrom
+       (stripCfg x (some 2) i hi a ((j : ℤ) - 1) []) (j + 1) =
+       stripCfg x (some 3) i hi a 0 [] := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some (by rfl)]
+-    simp only [rawStripTM, stripCfg, Cfg.workTapeSymbols_eq, Nat.cast_zero,
+-      zero_sub, bufferTape_left]
+-    refine Cfg.ext (Action.apply_state _ _)
++  simpa only [stripCfg, alignedRewindCfg] using
++    alignedRewind_run rawStripTM.tm (2 : Fin 4) (3 : Fin 4)
++      (⟨i + 1, by omega⟩ : Fin (x.length + 2)) (fun _ => bufferTape a) [] a.length
+       (by
+-        rw [Action.apply_inputPos]
+-        exact moveInputPos_zero _)
+-      (by
+-        funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-      ?_ (Action.apply_output _ _)
+-    funext k; simp [-Action.apply, Action.apply_workTapePos]
+-  | succ j ih =>
+-    intro hj
+-    have hs : rawStripTM.tm.step
+-        (stripCfg x (some 2) i hi a (((j + 1 : ℕ) : ℤ) - 1) []) =
+-        stripCfg x (some 2) i hi a ((j : ℤ) - 1) [] := by
+-      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+-      rw [hz]
+-      rw [MultiTapeTM.step_of_some (by rfl)]
+-      simp only [rawStripTM, stripCfg, Cfg.workTapeSymbols_eq, bufferTape_nat,
+-        List.getElem?_eq_getElem (by omega : j < a.length)]
+-      refine Cfg.ext (Action.apply_state _ _)
+-        (by
+-          rw [Action.apply_inputPos]
+-          exact moveInputPos_zero _)
+-        (by
+-          funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-        ?_ (Action.apply_output _ _)
+-      funext k; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++        intro j hj
++        simp only [alignedRewindCfg, rawStripTM, Cfg.workTapeSymbols_eq, bufferTape_nat,
++          List.getElem?_eq_getElem hj])
++      (by simp only [alignedRewindCfg, rawStripTM, Cfg.workTapeSymbols_eq, bufferTape_left])
+ 
+ /-- Replay appends exactly the visited buffer prefix and preserves its tape.
+ **Proof sketch.** Instantiate `bufferReplay_run` with physical emission enabled
+@@ -4443,9 +4445,7 @@
+       · simp [hjn, show w.length < j + 1 by omega]
+     · funext i
+       refine Fin.cases ?_ (fun i => ?_) i
+-      · rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+-        rfl
++      · exact apply_workTape_of_no_write _ _ _ rfl
+       · rw [Action.apply_workTapes]
+         exact splitScratch_erase _ _
+     · funext i
+@@ -4518,54 +4518,23 @@
+ /-- Candidate-guided rewind restores every head, including heads on tapes
+ that have already been cleared. No candidate bit is altered.
+ 
+-**Proof sketch.** Induct on the remaining candidate prefix, distinguishing a
+-readable cell from the blank. The rows preserve every tape and rewind the
+-heads together until the blank requests the return step. -/
++Apply `alignedRewind_run` using the cleanup row on the preserved
++candidate tape. -/
+ private lemma splitRestore_rewind (k : ℕ) (w s : List Bool) (p : Fin (w.length + 2)) :
+     ∀ j, j ≤ s.length →
+       (splitRestoreTM k).tm.runFrom
+         (splitRestoreClean k w s (1, false) p ((j : ℤ) - 1)) (j + 1) =
+         splitRestoreClean k w s (2, false) p 0 := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-    simp only [splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols_eq,
+-      Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
+-    refine Cfg.ext (Action.apply_state _ _)
++  simpa only [splitRestoreClean, alignedRewindCfg] using
++    alignedRewind_run (splitRestoreTM k).tm (1, false) (2, false) p
++      (Fin.cases (bufferTape s) (fun _ => fun _ => none)) [] s.length
+       (by
+-        rw [Action.apply_inputPos]
+-        exact moveInputPos_zero _)
++        intro j hj
++        simp only [alignedRewindCfg, splitRestoreTM, Cfg.workTapeSymbols_eq, Fin.cases_zero,
++          bufferTape_nat, List.getElem?_eq_getElem hj])
+       (by
+-        funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-      ?_ (Action.apply_output _ _)
+-    funext i; simp [-Action.apply, Action.apply_workTapePos]
+-  | succ j ih =>
+-    intro hj
+-    have hs : (splitRestoreTM k).tm.step
+-        (splitRestoreClean k w s (1, false) p (((j + 1 : ℕ) : ℤ) - 1)) =
+-        splitRestoreClean k w s (1, false) p ((j : ℤ) - 1) := by
+-      have he : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+-      rw [he]
+-      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-      simp only [splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols_eq,
+-        Fin.cases_zero, bufferTape_nat, List.getElem?_eq_getElem (by omega : j < s.length)]
+-      refine Cfg.ext (Action.apply_state _ _)
+-        (by
+-          rw [Action.apply_inputPos]
+-          exact moveInputPos_zero _)
+-        (by
+-          funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-        ?_ (Action.apply_output _ _)
+-      funext i; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++        simp only [alignedRewindCfg, splitRestoreTM, Cfg.workTapeSymbols_eq, Fin.cases_zero,
++          bufferTape_left])
+ 
+ /-- Complete rejection cleanup restores exactly the audited state-word seam.
+ It works for arbitrary candidate bits, and its one-past-end stall is silent.
+@@ -4729,8 +4698,7 @@
+   refine Cfg.ext (Action.apply_state _ _) ?_
+     (by
+       funext i
+-      rw [Action.apply_workTapes]
+-      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++      exact apply_workTape_of_no_write _ _ i rfl)
+     ?_ ?_
+   · rw [Action.apply_inputPos]
+     exact moveInputPos_zero _
+@@ -4855,9 +4823,7 @@
+         (splitCount_over w (splitPrepareScan k w s j) j rfl)
+     · funext i
+       refine Fin.cases ?_ (fun i => ?_) i
+-      · rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+-        rfl
++      · exact apply_workTape_of_no_write _ _ _ rfl
+       · rw [Action.apply_workTapes]
+         exact catalogPolyTape_write j
+     · funext i
+@@ -4890,9 +4856,7 @@
+     ?_ ?_ (Action.apply_output _ _)
+   · funext i
+     refine Fin.cases ?_ (fun i => ?_) i
+-    · rw [Action.apply_workTapes]
+-      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+-      rfl
++    · exact apply_workTape_of_no_write _ _ _ rfl
+     · rw [Action.apply_workTapes]
+       exact catalogPolyTape_write s.length
+   · funext i
+@@ -4903,51 +4867,22 @@
+ /-- Rewind the synchronized bank along the preserved candidate; each scratch
+ tape retains its extra cell even though the rewind uses the candidate length.
+ 
+-**Proof sketch.** At positive prefix length the candidate cell determines the
+-rewind row. It moves the synchronized heads left without writing, so the
+-induction hypothesis applies with one fewer cell. -/
++Apply `alignedRewind_run` using the preparation row on the preserved
++candidate tape. -/
+ private lemma splitPrepare_rewind (k : ℕ) (w s : List Bool) : ∀ j, j ≤ s.length →
+     (splitPrepareTM k).tm.runFrom (splitPrepareReady k w s 1 ((j : ℤ) - 1)) (j + 1) =
+       splitPrepareReady k w s 2 0 := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-    simp only [splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols_eq,
+-      Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
+-    refine Cfg.ext (Action.apply_state _ _)
++  let b := decide (w.length < s.length)
++  simpa only [splitPrepareReady, alignedRewindCfg, b] using
++    alignedRewind_run (splitPrepareTM k).tm (1, b) (2, b) (splitPos w s.length)
++      (Fin.cases (bufferTape s) (fun _ => catalogPolyTape (s.length + 1))) [] s.length
+       (by
+-        rw [Action.apply_inputPos]
+-        exact moveInputPos_zero _)
++        intro j hj
++        simp only [alignedRewindCfg, splitPrepareTM, Cfg.workTapeSymbols_eq, Fin.cases_zero,
++          bufferTape_nat, List.getElem?_eq_getElem hj])
+       (by
+-        funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-      ?_ (Action.apply_output _ _)
+-    funext i; simp [-Action.apply, Action.apply_workTapePos]
+-  | succ j ih =>
+-    intro hj
+-    have hs : (splitPrepareTM k).tm.step (splitPrepareReady k w s 1 (((j + 1 : ℕ) : ℤ) - 1)) =
+-        splitPrepareReady k w s 1 ((j : ℤ) - 1) := by
+-      have he : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+-      rw [he]
+-      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-      simp only [splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols_eq,
+-        Fin.cases_zero, bufferTape_nat, List.getElem?_eq_getElem (by omega : j < s.length)]
+-      refine Cfg.ext (Action.apply_state _ _)
+-        (by
+-          rw [Action.apply_inputPos]
+-          exact moveInputPos_zero _)
+-        (by
+-          funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-        ?_ (Action.apply_output _ _)
+-      funext i; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++        simp only [alignedRewindCfg, splitPrepareTM, Cfg.workTapeSymbols_eq, Fin.cases_zero,
++          bufferTape_left])
+ 
+ /-- From the audited state-word seam, preparation takes exactly `2(|s|+1)`
+ silent steps and initializes every loop head at zero. -/
+@@ -5345,8 +5280,7 @@
+           exact moveInputPos_zero _)
+         (by
+           funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++          exact apply_workTape_of_no_write _ _ i rfl)
+         ?_ (Action.apply_output _ _)
+       funext i; simp [-Action.apply, Action.apply_workTapePos, splitEmitCfg]
+     rw [hfirst]
+@@ -5359,8 +5293,7 @@
+       exact splitPos_succ w j) ?_ ?_ ?_
+     · funext i
+       refine Fin.cases ?_ (fun l => ?_) i <;>
+-        rw [Action.apply_workTapes] <;>
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl
++        exact apply_workTape_of_no_write _ _ _ rfl
+     · funext i
+       refine Fin.cases ?_ (fun l => ?_) i <;> simp [-Action.apply, Action.apply_workTapePos,
+         splitEmitCfg]
+@@ -5393,8 +5326,7 @@
+         exact moveInputPos_zero _)
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ (Action.apply_output _ _)
+     funext i; simp [-Action.apply, Action.apply_workTapePos, splitEmitCfg]
+   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step,
+@@ -5406,8 +5338,7 @@
+     exact moveInputPos_zero _)
+     (by
+       funext i
+-      rw [Action.apply_workTapes]
+-      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++      exact apply_workTape_of_no_write _ _ i rfl)
+     ?_ ?_
+   · funext i; simp [splitEmitTM, -Action.apply, Action.apply_workTapePos, splitEmitCfg]
+   · simp [splitEmitTM, -Action.apply, Action.apply_output, splitEmitCfg, List.append_assoc]
+@@ -5450,8 +5381,7 @@
+       refine Cfg.ext (Action.apply_state _ _) ?_
+         (by
+           funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++          exact apply_workTape_of_no_write _ _ i rfl)
+         ?_ (Action.apply_output _ _)
+       · rw [Action.apply_inputPos]
+         simpa only [List.length_append, List.length_singleton] using splitPos_succ w pre.length
+@@ -6189,8 +6119,7 @@
+       exact moveInputPos_zero _)
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ (Action.apply_output _ _)
+     · rw [Action.apply_state]
+       exact congrArg (fun b => some (0, b)) heq
+@@ -6198,53 +6127,23 @@
+ 
+ /-- The common rewind passes all remaining aligned word cells and their left
+ blank, preserving the comparison register and restoring both heads exactly.
+-**Proof sketch.** Induct on the aligned distance to the left blank. At least one word
+-still occupies each interior position; the final positive move restores zero. -/
++Apply `alignedRewind_run` using the nonblank interior condition
++and the common left blank. -/
+ private lemma emitter_compare_rewind (w u v : List Bool) (p : Fin (w.length + 2))
+     (b : Bool) : ∀ j, j ≤ max u.length v.length →
+       emitterCompareTM.tm.runFrom (emitterCompareCfg w u v p 1 b ((j : ℤ) - 1)) (j + 1) =
+         emitterCompareCfg w u v p 2 b 0 := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-    simp only [Nat.cast_zero, zero_sub, emitterCompareCfg, emitterCompareTM, Cfg.workTapeSymbols_eq,
+-      Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_left, and_self, ↓reduceIte]
+-    refine Cfg.ext (Action.apply_state _ _)
++  simpa only [emitterCompareCfg, alignedRewindCfg] using
++    alignedRewind_run emitterCompareTM.tm (1, b) (2, b) p
++      (fun i => if i.val = 0 then bufferTape u else bufferTape v) [] (max u.length v.length)
+       (by
+-        rw [Action.apply_inputPos]
+-        exact moveInputPos_zero _)
++        intro j hj
++        have hread := emitter_compare_nonblank u v j hj
++        simp only [alignedRewindCfg, emitterCompareTM, Cfg.workTapeSymbols_eq, Fin.val_zero,
++          Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_nat, if_neg hread])
+       (by
+-        funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-      ?_ (Action.apply_output _ _)
+-    funext i; simp [-Action.apply, Action.apply_workTapePos]
+-  | succ j ih =>
+-    intro hj
+-    have hread := emitter_compare_nonblank u v j (by omega : j < max u.length v.length)
+-    have hs : emitterCompareTM.tm.step
+-        (emitterCompareCfg w u v p 1 b (((j + 1 : ℕ) : ℤ) - 1)) =
+-          emitterCompareCfg w u v p 1 b ((j : ℤ) - 1) := by
+-      have hpos : (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) := by omega
+-      rw [hpos]
+-      rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+-      simp only [emitterCompareCfg, emitterCompareTM, Cfg.workTapeSymbols_eq, Fin.val_zero,
+-        Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_nat, if_neg hread]
+-      refine Cfg.ext (Action.apply_state _ _)
+-        (by
+-          rw [Action.apply_inputPos]
+-          exact moveInputPos_zero _)
+-        (by
+-          funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+-        ?_ (Action.apply_output _ _)
+-      funext i; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++        simp only [alignedRewindCfg, emitterCompareTM, Cfg.workTapeSymbols_eq, Fin.val_zero,
++          Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_left, and_self, ↓reduceIte])
+ 
+ /-- Whole-word comparison returns silently in exactly twice the longer word's
+ length plus two steps, with both tapes and the physical input head unchanged.
+@@ -6272,8 +6171,7 @@
+         exact moveInputPos_zero _)
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ (Action.apply_output _ _)
+     funext i; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+   have hfirst : emitterCompareTM.tm.runFrom (emitterCompareCfg w u v p 0 true 0) (l + 1) =
+@@ -6433,8 +6331,7 @@
+         exact moveInputPos_zero _)
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ (Action.apply_output _ _)
+     funext i; simp [-Action.apply, Action.apply_workTapePos]
+   | append_singleton u b ih =>
+@@ -6481,8 +6378,7 @@
+         exact moveInputPos_zero _)
+       (by
+         funext i
+-        rw [Action.apply_workTapes]
+-        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++        exact apply_workTape_of_no_write _ _ i rfl)
+       ?_ (Action.apply_output _ _)
+     funext i; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+   have ha : emitterP2EraseTM.tm.runFrom (emitterP2EraseCfg w u 0 0) (u.length + 1) =
+@@ -6799,8 +6695,7 @@
+           exact moveInputPos_zero _)
+         (by
+           funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++          exact apply_workTape_of_no_write _ _ i rfl)
+         ?_ (Action.apply_output _ _)
+       funext i; fin_cases i <;> simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+@@ -6817,8 +6712,7 @@
+           exact moveInputPos_zero _)
+         (by
+           funext i
+-          rw [Action.apply_workTapes]
+-          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
++          exact apply_workTape_of_no_write _ _ i rfl)
+         ?_ (Action.apply_output _ _)
+       funext i; fin_cases i <;> simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+@@ -8326,32 +8220,22 @@
+         | none => ⟨0, fun j => j.elim0, some b, none⟩ }
+ 
+ /-- Before the right blank, exactly the scanned prefix has been emitted.
+-**Proof sketch.** Induct over the input positions. Every nonblank transition
+-copies its bit and advances once; the emitting halt is still ahead. -/
++After reading the initial configuration fields, apply
++`scanCopy_run_of_symbol` to the symbol row. The emitting halt is still ahead. -/
+ private lemma emitterAppend_run (b : Bool) (x : List Bool) :
+     ∀ j (hj : j ≤ x.length),
+       (appendBitTM b).tm.runFrom ((appendBitTM b).tm.initCfg x) j =
+         scanCfg x (some ()) j hj (x.take j) := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
++  have hinit : (appendBitTM b).tm.initCfg x = scanCfg x (some ()) 0 (by omega) [] := by
++    rw [MultiTapeTM.initCfg_eq]
+     apply Cfg.ext_zero_tapes <;>
+       simp [-Cfg.init, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, scanCfg, appendBitTM]
+-  | succ j ih =>
+-    intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+-    rw [MultiTapeTM.step_of_some (by rfl)]
+-    change ((appendBitTM b).tm.tr ()
+-      (scanCfg x (some ()) j (by omega) (x.take j)).inputSymbol _).apply _ = _
+-    rw [scanCfg_read, List.getElem?_eq_getElem (by omega)]
+-    apply Cfg.ext_zero_tapes
+-    · exact Action.apply_state _ _
+-    · rw [Action.apply_inputPos]
+-      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+-    · simp only [appendBitTM, Action.apply_output, scanCfg, Option.toList_some,
+-        List.take_succ, List.getElem?_eq_getElem (by omega : j < x.length)]
++  have htr (a : Bool) (work : Fin 0 → Option Bool) :
++      (appendBitTM b).tm.tr () (some a) work =
++        ⟨.pos, fun j => j.elim0, some a, some ()⟩ := rfl
++  rw [hinit]
++  simpa only [List.nil_append] using
++    scanCopy_run_of_symbol (appendBitTM b).tm () htr x []
+ 
+ /-- **The bit appender's time**. On every input `x` the appender halts within `|x| + 1` steps with
+ output `x ++ [b]`.

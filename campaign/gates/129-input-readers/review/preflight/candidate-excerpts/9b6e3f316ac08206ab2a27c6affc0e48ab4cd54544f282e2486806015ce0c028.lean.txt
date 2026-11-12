@@ -1,0 +1,24 @@
+/-- The first visit to a stopped anchor transfers to the active machine with
+the same full endpoint and no earlier anchor visit. Absorption identifies
+the first endpoint with the supplied bounded endpoint. -/
+private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
+    (tm stop : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
+    (hs : ∀ inp work, stop.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = some qa) :
+    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some qa) ∧
+      tm.runFrom c t = stop.runFrom c T := by
+  classical
+  have hex : ∃ t, (stop.runFrom c t).state = some qa := ⟨T, hT⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hT
+  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
+  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
+  have he : stop.runFrom c T = stop.runFrom c t := by
+    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+    rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hend]
+  refine ⟨t, ht, ?_, ?_⟩
+  · intro j hj
+    rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
+    exact hn j hj
+  · rw [enumCont_agree_run tm stop qa ha c t hn, he]

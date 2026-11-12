@@ -1,0 +1,2 @@
+theorem two_pow_lt_lovaszPrime (n : ℕ) : 2 ^ Nat.clog 2 (2 * n) < lovaszPrime n :=
+  (Nat.find_spec (Nat.exists_infinite_primes (2 ^ Nat.clog 2 (2 * n) + 1))).1

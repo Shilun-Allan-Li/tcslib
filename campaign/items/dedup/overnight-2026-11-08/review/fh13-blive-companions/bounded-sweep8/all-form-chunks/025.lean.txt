@@ -1,0 +1,9 @@
+/-- Every transition strictly before a live endpoint avoids record application. -/
+private lemma timedCut_no_record {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
+    {s t : ℕ} (hst : s < t) (ht : (timedCutInterpreter.runFrom cfg t).state ≠ none) :
+    ∀ bits halt, (timedCutInterpreter.runFrom cfg s).state ≠ some (.applyRecord bits halt) := by
+  intro bits halt hs
+  have hl := timedCut_live_before cfg (show s + 1 ≤ t by omega) ht
+  apply hl
+  rw [MultiTapeTM.runFrom_succ_eq_step']
+  simp only [MultiTapeTM.step, hs, timedCutInterpreter, Action.apply]

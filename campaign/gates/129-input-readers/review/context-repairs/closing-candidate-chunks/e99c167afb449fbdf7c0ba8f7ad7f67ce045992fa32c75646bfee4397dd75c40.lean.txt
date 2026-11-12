@@ -1,0 +1,19 @@
+/-- A one-pass routine is the public two-pass trace with a stationary return family.
+Proof sketch: specialize the trace, then read its forward segment and fixed tail. -/
+private theorem catalog_pass_contract {k : ℕ} {Symbol : Type*} {x : List Symbol} {S : Type*}
+    (M : MultiTapeTM k Symbol S) (F : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ)
+    (hF : ∀ r < L, M.step (F r) = F (r + 1)) (hexit : M.step (F L) = D) (hD : M.step D = D)
+    (P Q : Cfg k Symbol S x → Prop) (hP : ∀ r ≤ L, P (F r)) (hQ : ∀ r ≤ L, Q (F r))
+    (hQD : Q D) :
+    M.runFrom (F 0) (L + 1) = D ∧ (∀ t < L + 1, P (M.runFrom (F 0) t)) ∧
+      ∀ t ≤ L + 1, Q (M.runFrom (F 0) t) := by
+  have h : ∀ t, M.runFrom (F 0) t = if t ≤ L then F t else D := fun t => by
+    simpa [catalogTrace] using
+      catalog_trace_run M F (fun _ => D) D L hF hexit (fun _ _ => hD) hD hD t
+  refine ⟨by rw [h]; simp, fun t ht => ?_, fun t ht => ?_⟩
+  · rw [h, if_pos (by omega)]
+    exact hP t (by omega)
+  · rw [h]
+    split_ifs with h1
+    · exact hQ t h1
+    · exact hQD

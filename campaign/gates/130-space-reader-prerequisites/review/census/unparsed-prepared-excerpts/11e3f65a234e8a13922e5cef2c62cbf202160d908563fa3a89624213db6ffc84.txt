@@ -1,0 +1,229 @@
+/-
+Seal controls for H's route probe (`HRouteProbe.lean`), with the generic control commands of E-Q
+cont1's review: for each of the 5 sealed definitions a delta goal (`#ctl_rfl`), and for the four
+erased `@[simp]` definitions a pointwise unfolding goal by `intros; simp` (`#ctl_simp`). Each logs
+`CONTROL_PASS` or `CONTROL_FAIL`. Expected: unsealed, every control passes; sealed, every control
+fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_card " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let ty := ci.type.getAppArgs[0]!
+        let c := mkConst n
+        let lhs := mkApp2 (mkConst ``Fintype.card [Level.zero]) ty c
+        let goal ← mkEq lhs (mkNatLit 3)
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} card {n}"
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Complexity.SpaceConstructible
+  Complexity.SPACE
+  Complexity.logSpace
+  Complexity.LOGSPACE
+  Complexity.PSPACE
+
+attribute [local irreducible]
+  Complexity.NP
+  Complexity.PolyTimeComputable
+  Complexity.TimeHierarchy.code
+  Complexity.pairFstD
+  Turing.Action.apply
+  Turing.Cfg.InWindow
+  Turing.Cfg.init
+  Turing.Cfg.inputSymbol
+  Turing.Cfg.liftSymbols
+  Turing.Cfg.mapState
+  Turing.Cfg.select
+  Turing.Cfg.workTapeSymbols
+  Turing.CodeTM.toFinTM
+  Turing.Contract.branch
+  Turing.FinNDTM.AcceptsWithin
+  Turing.FinTM.ComputesFunInTime
+  Turing.FinTM.ComputesInSpace
+  Turing.FinTM.ComputesInTime
+  Turing.FinTM.DecidesInSpace
+  Turing.FinTM.bufferTape
+  Turing.FinTM.configBound
+  Turing.FinTM.toFinNDTM
+  Turing.MultiTapeTM.indicator
+  Turing.MultiTapeTM.initCfg
+  Turing.MultiTapeTM.liftSymbols
+  Turing.MultiTapeTM.runFrom
+  Turing.MultiTapeTM.spaceUsed
+  Turing.MultiTapeTM.spaceUsedByTape
+  Turing.MultiTapeTM.step
+  Turing.MultiTapeTM.toNDTM
+  Turing.MultiTapeTM.visitedByTapeHead
+  Turing.NDTM.HaltsWithin
+  Turing.NDTM.initCfg
+  Turing.NDTM.runWith
+  Turing.RecSym.digitEmb
+  Turing.RecordAt
+  Turing.cfgRecord
+  Turing.counterValue
+  Turing.embedEmitCfg
+  Turing.embedEmitTM
+  Turing.embedSilentCfg
+  Turing.embedSilentRetTM
+  Turing.embedSilentTM
+  Turing.fieldsTape
+  Turing.inputFoldTM
+  Turing.inputRewindTM
+  Turing.instDecidableEqInputRewindPhase
+  Turing.instDecidableEqRecSym
+  Turing.instDecidableEqRewindPhase
+  Turing.instDecidableEqScanPhase
+  Turing.instFintypeInputRewindPhase
+  Turing.instFintypeRewindPhase
+  Turing.instFintypeScanPhase
+  Turing.joinFields
+  Turing.moveInputPos
+  Turing.outSummary
+  Turing.outSummaryCode
+  Turing.pairEncode
+  Turing.posWidth
+  Turing.recSymFintype
+  Turing.recordLength
+  Turing.rewindTM
+  Turing.seamCompTM
+  Turing.seamCompTM₂
+  Turing.summaryTag
+  Turing.windowRun
+
+#ctl_rfl Complexity.SpaceConstructible
+#ctl_rfl Complexity.SPACE
+#ctl_rfl Complexity.logSpace
+#ctl_rfl Complexity.LOGSPACE
+#ctl_rfl Complexity.PSPACE
+#ctl_simp Turing.Action.apply
+#ctl_simp Turing.Cfg.init
+#ctl_simp Turing.MultiTapeTM.initCfg
+#ctl_simp Turing.NDTM.initCfg
+
+#ctl_rfl Complexity.NP
+#ctl_rfl Complexity.PolyTimeComputable
+#ctl_rfl Complexity.TimeHierarchy.code
+#ctl_rfl Complexity.pairFstD
+#ctl_rfl Turing.Action.apply
+#ctl_rfl Turing.Cfg.InWindow
+#ctl_rfl Turing.Cfg.init
+#ctl_rfl Turing.Cfg.inputSymbol
+#ctl_rfl Turing.Cfg.liftSymbols
+#ctl_rfl Turing.Cfg.mapState
+#ctl_rfl Turing.Cfg.select
+#ctl_rfl Turing.Cfg.workTapeSymbols
+#ctl_rfl Turing.CodeTM.toFinTM
+#ctl_rfl Turing.Contract.branch
+#ctl_rfl Turing.FinNDTM.AcceptsWithin
+#ctl_rfl Turing.FinTM.ComputesFunInTime
+#ctl_rfl Turing.FinTM.ComputesInSpace
+#ctl_rfl Turing.FinTM.ComputesInTime
+#ctl_rfl Turing.FinTM.DecidesInSpace
+#ctl_rfl Turing.FinTM.bufferTape
+#ctl_rfl Turing.FinTM.configBound
+#ctl_rfl Turing.FinTM.toFinNDTM
+#ctl_rfl Turing.MultiTapeTM.indicator
+#ctl_rfl Turing.MultiTapeTM.initCfg
+#ctl_rfl Turing.MultiTapeTM.liftSymbols
+#ctl_rfl Turing.MultiTapeTM.runFrom
+#ctl_rfl Turing.MultiTapeTM.spaceUsed
+#ctl_rfl Turing.MultiTapeTM.spaceUsedByTape
+#ctl_rfl Turing.MultiTapeTM.step
+#ctl_rfl Turing.MultiTapeTM.toNDTM
+#ctl_rfl Turing.MultiTapeTM.visitedByTapeHead
+#ctl_rfl Turing.NDTM.HaltsWithin
+#ctl_rfl Turing.NDTM.initCfg
+#ctl_rfl Turing.RecSym.digitEmb
+#ctl_rfl Turing.RecordAt
+#ctl_rfl Turing.cfgRecord
+#ctl_rfl Turing.counterValue
+#ctl_rfl Turing.embedEmitCfg
+#ctl_rfl Turing.embedEmitTM
+#ctl_rfl Turing.embedSilentCfg
+#ctl_rfl Turing.embedSilentRetTM
+#ctl_rfl Turing.embedSilentTM
+#ctl_rfl Turing.fieldsTape
+#ctl_rfl Turing.inputFoldTM
+#ctl_rfl Turing.inputRewindTM
+#ctl_rfl Turing.instDecidableEqInputRewindPhase
+#ctl_rfl Turing.instDecidableEqRecSym
+#ctl_rfl Turing.instDecidableEqRewindPhase
+#ctl_rfl Turing.instDecidableEqScanPhase
+#ctl_rfl Turing.instFintypeScanPhase
+#ctl_rfl Turing.joinFields
+#ctl_rfl Turing.moveInputPos
+#ctl_rfl Turing.outSummary
+#ctl_rfl Turing.outSummaryCode
+#ctl_rfl Turing.pairEncode
+#ctl_rfl Turing.posWidth
+#ctl_rfl Turing.recSymFintype
+#ctl_rfl Turing.recordLength
+#ctl_rfl Turing.rewindTM
+#ctl_rfl Turing.seamCompTM
+#ctl_rfl Turing.seamCompTM₂
+#ctl_rfl Turing.summaryTag
+#ctl_card Turing.instFintypeInputRewindPhase
+#ctl_card Turing.instFintypeRewindPhase
+#ctl_eqn Turing.windowRun
+#ctl_eqn Turing.NDTM.runWith
+
+end Controls

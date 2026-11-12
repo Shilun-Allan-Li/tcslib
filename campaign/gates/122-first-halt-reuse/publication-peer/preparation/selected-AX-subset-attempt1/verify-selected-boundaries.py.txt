@@ -1,0 +1,109 @@
+from pathlib import Path
+import json,hashlib,re
+P=Path('/private/tmp/ab34-gate122-fh13-frozen'); B=P/'inputs/blive305'; O=Path(__file__).parent
+J=lambda p:json.loads(p.read_text())
+H=lambda b:hashlib.sha256(b).hexdigest()
+manifest=J(P/'MANIFEST.json')['files']; byhash={}
+for x in manifest:byhash.setdefault(x['sha256'],[]).append(P/x['path'])
+def digest_file(h):
+ assert h in byhash,h
+ return byhash[h][0]
+def rawrows(path,prefix):
+ return [json.loads(s.split(prefix,1)[1]) for s in path.read_text().splitlines() if prefix in s]
+def save(n,a):(O/n).write_text(json.dumps(a,ensure_ascii=False,indent=2)+'\n')
+std={'propext','Classical.choice','Quot.sound'}
+selected=J(B/'SELECTED13-TYPES-AX-BOUNDS.json'); assert len(selected)==13
+freshids={'BLIVE1','BLIVE2','BLIVE3',85,86}
+base5={r['root']:r for r in J(B/'BASE-FOOTPRINTS5.json')};cand5={r['root']:r for r in J(B/'CANDIDATE-FOOTPRINTS5.json')}
+base10={r['root']:r for r in J(B/'prior-evidence/BASE-SELECTED10.json')};cand10={r['root']:r for r in J(B/'prior-evidence/HEAD-FOOTPRINTS10.json')}
+for side,rows in [('BASE',base5),('CANDIDATE',cand5)]:
+ out=B/(side+'-metadata.out');raw=rawrows(out,'BOUNDARY|');assert {x['root']:x for x in raw}==rows
+ assert 'COMPLETE|5' in out.read_text() and 'IDENTITY_COMPLETE|23' in out.read_text()
+for r in J(B/'METADATA-RUNS.json'):
+ assert r['exit']==r['errors']==0 and r['actual_execution'] and r['root_rows']==5 and r['definition_rows']==23
+ assert H((B/'FH13Metadata.lean.txt').read_bytes())==r['source_input_sha256']
+ out=B/(r['side']+'-metadata.out');assert H(out.read_bytes())==r['output_sha256'] and len(out.read_bytes())==r['output_bytes']
+selectedchecks=[]
+for s in selected:
+ assert s['BASE_type_Expr']==s['candidate_type_Expr'];assert s['BASE_universe_params']==s['candidate_universe_params'];assert set(s['BASE_axioms'])==set(s['candidate_axioms'])==std
+ d=B/'selected-types13'/str(s['id'])
+ assert (d/'BASE.Expr.txt').read_text()==s['BASE_type_Expr']+'\n'
+ assert (d/'CANDIDATE.Expr.txt').read_text()==s['candidate_type_Expr']+'\n'
+ if s['id'] in freshids:
+  a=base5[s['root']];c=cand5[s['root']]
+  assert a['root_type_Expr']==s['BASE_type_Expr'] and c['root_type_Expr']==s['candidate_type_Expr']
+  assert a['root_levelParams']==s['BASE_universe_params'] and c['root_levelParams']==s['candidate_universe_params']
+  assert a['root_axioms']==s['BASE_axioms'] and c['root_axioms']==s['candidate_axioms']
+ else:
+  a=base10[s['root']];c=cand10[s['root']]
+  assert a['type_Expr']==s['BASE_type_Expr'] and c['root_type_Expr']==s['candidate_type_Expr']
+  assert a['universe_params']==s['BASE_universe_params'] and c['root_levelParams']==s['candidate_universe_params']
+  assert a['axioms']==s['BASE_axioms'] and c['root_axioms']==s['candidate_axioms']
+ assert not c['footprint_foreign_definition_values_traversed'] and not c['footprint_imported_theorem_values_traversed']
+ selectedchecks.append({'id':s['id'],'root':s['root'],'type_Expr_sha256':H(s['BASE_type_Expr'].encode()),'universes':s['BASE_universe_params'],'axioms':s['BASE_axioms'],'actual_execution_binding':s['metadata_execution'],'boundary_execution':s['boundary_execution']})
+# Historical BASE raw query is bound to the ten parsed rows.
+br=J(B/'prior-evidence/BASE-SELECTED-RUN.json');assert br['actual_execution'] and br['exit']==br['errors']==0
+raw=digest_file(br['output_sha256']).read_text(); rr=[json.loads(t.split('SELECTED|',1)[1]) for t in raw.splitlines() if 'SELECTED|' in t]
+assert {r['root']:r for r in rr}==base10
+# Every guard copies complete actual preceding source and target, with only its local seal inserted.
+old=J(B/'prior-evidence/boundary/CURRENT-GUARD-RECEIPTS10.json');new=J(B/'guards/GUARD-RESULTS.json')
+guards=[];union=set()
+for s in selected:
+ r=next(r for r in (new if s['id'] in freshids else old) if r['id']==s['id'])
+ assert r['actual_execution'] and r['exit']==r['errors']==r['declaration_sorry_warnings']==0 and r['guard_status_witness'] and r['PASS_compilation']
+ inp=digest_file(r['input_sha256']).read_text();out=digest_file(r['output_sha256']).read_text()
+ src=(P/'source/HEAD'/(r['path']+'.txt')).read_text()
+ start=r['exact_complete_target_doc_header_body_start'];end=r['prefix_through_complete_target_end']
+ section='section FHFullBoundary_'+str(r['id'])+'\n'
+ pos=inp.index(section); assert pos==start and inp[:pos]==src[:start]
+ rest=inp[pos+len(section):];attrs=[]
+ while rest.startswith('attribute '):
+  line,rest=rest.split('\n',1);attrs.append(line)
+ assert rest.startswith(src[start:end])
+ assert attrs[0]=='attribute [local irreducible] '+' '.join(r['ordinary_heads'])
+ if r['definition_simp_rows_removed']:assert attrs[1]=='attribute [-simp] '+' '.join(r['definition_simp_rows_removed'])
+ assert {x['name'] for x in r['guard_states']}==set(r['ordinary_heads'])==set(s['guard_heads'])
+ assert all(x['irreducible'] and not x['definition_simp_unfold'] for x in r['guard_states'])
+ markers=[x.split('GUARD_OK|',1)[1] for x in out.splitlines() if 'GUARD_OK|' in x];assert len(markers)==1
+ tag,states=markers[0].split('|',1);assert tag==str(r['id']) and json.loads(states)==r['guard_states']
+ assert not re.search(r'error(?:\([^\n]*\))?:',out)
+ union.update(r['ordinary_heads']);guards.append({'id':r['id'],'heads':r['ordinary_heads'],'input_sha256':r['input_sha256'],'output_sha256':r['output_sha256'],'preceding_source_and_complete_target_exact':True,'execution_source_pin':r['source_HEAD'],'fresh_candidate_context':s['id'] in freshids})
+assert len(union)==23
+# Native complete owner receipts bind current source bytes and archived raw logs.
+native=[]
+for r in J(B/'NATIVE-RESULTS.json'):
+ assert r['actual_execution'] and r['exit']==r['errors']==r['sorry_warnings']==0 and r['fresh_output']
+ assert H((P/'source/HEAD'/(r['path']+'.txt')).read_bytes())==r['candidate_sha256']
+ assert H((B/r['output_file']).read_bytes())==r['output_sha256']
+ native.append({'path':r['path'],'candidate_sha256':r['candidate_sha256'],'output_sha256':r['output_sha256'],'exit':0,'sorry_warnings':0,'actual_execution':True})
+# Full identity data—not an Expr hash—bind reused controls to exact foreign definitions.
+a=J(B/'BASE-DEFINITION-IDENTITIES.json');c=J(B/'CANDIDATE-DEFINITION-IDENTITIES.json'); assert a==c and len(a)==23
+for side,rr in [('BASE',a),('CANDIDATE',c)]:assert rawrows(B/(side+'-metadata.out'),'DEFINITION_IDENTITY|')==rr
+maps=[J(B/n) for n in ['INPUT895-before.json','INPUT895-after.json','OUTPUT895.json']]
+assert maps[0]==maps[1] and len(maps[0])==len(maps[2])==895
+reuse=J(B/'CONTROL-REUSE-IDENTITIES23.json');ir={r['name']:r for r in reuse['body_identity_rows']}
+for r in a:
+ path=r['owner'].replace('.','/')+'.olean';assert maps[0][path]==maps[2][path]==ir[r['name']]['whole_owner_olean_hash_equal_BASE_candidate']
+ assert r['name'] in union and not r['projection']
+# Control outputs and fixtures are inspected independently, preserving historical execution pins.
+controls=[]
+for rel,n in [('prior-evidence/controls44',44),('controls-pairEncode',2)]:
+ d=B/rel;runs=J(d/'CONTROL-RUNS.json');assert len(runs)==2
+ for r in runs:
+  src=d/(r.get('input_evidence') or r.get('evidence_source'))
+  assert H(src.read_bytes())==r['input_sha256'];out=(d/r['output_file']).read_text();assert H(out.encode())==r['output_sha256']
+  assert r['actual_execution']
+  marks=[x.split('|') for x in out.splitlines() if x.startswith('CONTROL|')]
+  assert len(marks)==n and 'CONTROL_COMPLETE|'+str(n) in out
+  if r['side']=='native':
+   assert r['exit']==r['errors']==0 and all(x[4]=='PASS' and x[5].startswith('kernelChecked=') for x in marks)
+  else:
+   assert r['exit']!=0 and r['errors']==n and all(x[4]=='FAIL' for x in marks)
+   errors=[x for x in out.splitlines() if ': error:' in x];assert len(errors)==n and all('CONTROL_RFL|' in x and 'rfl did not close reflected identity' in x for x in errors)
+  assert 'set_option smartUnfolding false' in src.read_text()
+  assert 'allowUnsafeReducibility' not in src.read_text()
+  controls.append({'family':rel,'side':r['side'],'pairs':n,'input_sha256':r['input_sha256'],'output_sha256':r['output_sha256'],'exit':r['exit'],'expected_errors':r['errors'],'execution_start':r['start_utc']})
+heads={x['name'] for x in a};assert heads==union
+save('selected13-type-AX-checks.json',{'pass':True,'scope':'13 exact raw selected type Expr/universe/AX only; five fresh BASE/candidate queries and eight source-exact historical queries; no global ABI/proof-value claim','selected':selectedchecks,'native_complete_owners':native})
+save('full13-boundaries-and46-controls-checks.json',{'pass':True,'guard_roots':guards,'ordinary_union23':sorted(union),'identity23_full_type_value_universes_exact':True,'whole_owner_olean_identity23':True,'controls':controls,'paired_control_total':46,'fresh_pairs':2,'source_exact_reused_pairs':44,'footprint_limit':'root proof/type, all reached types and own ordinary helpers; stop foreign RHS and other theorem proof values; explicit source arguments reviewed separately'})
+print('PASS selected13 raw type/universe/AX; five fresh + eight historical guard contexts; 23 identity-bound heads / 46 effective control pairs')

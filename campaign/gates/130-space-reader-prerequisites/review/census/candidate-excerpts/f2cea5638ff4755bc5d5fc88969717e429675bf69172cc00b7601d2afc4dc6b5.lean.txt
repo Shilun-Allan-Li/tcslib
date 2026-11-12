@@ -1,0 +1,8 @@
+/-- Read position `i + 1` as the optional `i`-th input symbol, including the
+right boundary. -/
+
+
+
+def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    Action k Symbol State :=
+  ⟨inp, fun _ => (none, 0), none, some q⟩

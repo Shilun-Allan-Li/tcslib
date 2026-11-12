@@ -1,0 +1,11 @@
+# Portable paths and authority
+
+All payload paths in the draft inventory are relative to this directory. Original receipt paths and argv remain literal historical execution facts; use `bindings/COMPONENT-RELOCATION.json` to locate the unchanged copies here. A `.lean.txt` payload is exact source text, not a new Lean module. Original132 relocation uses its original `ADOPTION.json` map; its manifest keys retain original names. Source-QA119 relocation preserves `current/` versus `historical63eb/`.
+
+`source/HEAD/` is root screen phase `LADNER`; BASE48 excludes the genuinely absent owner. Source origins are separated: TCSlib at BASE/1096 and Mathlib at package029db. Foreign-definition source captures do not mean their RHS was traversed during sealing. Source import closure115 is different from 49-file screen context and from the1004 tracked-source identity map.
+
+No binary olean objects, runtime project, absolute package symlink, private book PDF, rendered page or credential-bearing environment is bundled. Full object-map hashes bind adopted complete snapshots; those binary inputs are not a downloadable snapshot. Actual executed helper/replay sources and the public environment example plus sanitized resource configuration are included. Reproduction would require the pinned packages/toolchain, adopted whole input snapshot and approved helper/lock workflow. Merely copying scripts does not execute them.
+
+Final publication records/exchange pins, downloadable bundle paths, section count and SHA are root-owned and intentionally unresolved in this private draft. Root must rebase every draft path reference into the adopted canonical gate folder and regenerate the complete bundle list, manifest and prompt together. No file in an earlier frozen packet is edited. The broader prospective joint8 replay is separate evidence and does not change the standalone1096 audit source.
+
+The shared root runner also executed an unrelated NAT phase. `screen/SHARED-RUN-NAT-INPUTS.json` locates all50 full NAT inputs through exact aliases to already supplied BASE/helpers plus one distinct CodeSimulator source capture, and its actual raw output is preserved. This completes the three-phase driver’s input archive. Gate128 claims still concern only source1096 and actual BASE48/LADNER49; NAT metadata/replay/API claims are not imported.

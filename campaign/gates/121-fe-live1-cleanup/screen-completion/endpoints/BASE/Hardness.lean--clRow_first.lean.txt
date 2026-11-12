@@ -1,0 +1,37 @@
+private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+    (w : Fin l → List Bool) (record : List Bool) (W : ℕ)
+    (hW : ∀ i, (w i).length ≤ W) :
+    ∃ t ≤ l * (3 * W + 4), 0 < t ∧
+      (∀ j, j < t → ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state ≠
+        some (Fin.last l, (0 : Fin 5))) ∧
+      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =
+        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by
+  obtain ⟨B, hB, he⟩ := clRow_stored x p w record W hW
+  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
+      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩
+  let t := Nat.find hex
+  have ht := Nat.find_spec hex
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hs := ht.2
+    change ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
+      some (Fin.last l, (0 : Fin 5)) at hs
+    rw [hz, MultiTapeTM.runFrom_zero] at hs
+    have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs
+    simp [clRowCfg] at hh
+    omega
+  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩
+  · intro j hj hs
+    have := Nat.find_min' hex (show j ≤ B ∧
+      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state =
+        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)
+    omega
+  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)
+    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)
+      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+    exact hstay.symm.trans he
+
+/-- A row's stored field lengths have their exact doubled-bit-plus-separator
+ledger, independently of the native copying runtime. -/

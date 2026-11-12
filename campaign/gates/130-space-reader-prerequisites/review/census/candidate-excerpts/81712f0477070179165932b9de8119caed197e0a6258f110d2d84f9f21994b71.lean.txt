@@ -1,0 +1,23 @@
+/-- Detect a nonoverflowing word silently, rewind, then perform the carry
+while emitting. This is the enumerator's carry discipline adapted to native
+input and append-only output; unlike the in-place harvest, it validates first. -/
+private def f2_incFixedTM : FinTM Bool where
+  k := 0
+  State := Fin 4
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ => match q.val with
+        | 0 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, none, some 0⟩
+          | some false => controlAction .neg (some 1)
+          | none => controlAction 0 none
+        | 1 => match inp with
+          | some _ => controlAction .neg (some 1)
+          | none => controlAction .pos (some 2)
+        | 2 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, some false, some 2⟩
+          | some false => ⟨.pos, fun j => j.elim0, some true, some 3⟩
+          | none => controlAction 0 none
+        | _ => match inp with
+          | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
+          | none => ⟨0, fun j => j.elim0, none, none⟩ }

@@ -1,0 +1,89 @@
+{
+  "scope_input": "inputs/rs1/HinitSealed.lean.txt",
+  "scope_source_sha256": "c291d41c3eb94f5b026f613dadd6e4120635fc6efe145f0b3fcbe027c56de875",
+  "native_sealed_controls_identical_after_only_guard_attribute_and_empty_anonymous_section_wrapper_removal": true,
+  "ordinary_or_focused_guards": [
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Cfg.mapState"
+  ],
+  "positive_examples_pass": 6,
+  "negative_same_identity_failures": 6,
+  "negative_actual_Type_mismatch_error_lines": [
+    12,
+    20,
+    28,
+    36,
+    43,
+    50
+  ],
+  "all_pairs": [
+    {
+      "id": "initCfg_delta",
+      "guard": "MultiTapeTM.initCfg",
+      "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    A.initCfg x = Cfg.init A.q₀ x := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 12,
+      "full_example_sha256": "0b751be977285482ce4d122e4563d014c44dea8de347d3323e923fc067505936"
+    },
+    {
+      "id": "initCfg_equation",
+      "guard": "MultiTapeTM.initCfg",
+      "exact_identity": "example {n : ℕ} {P : Type} (A : MultiTapeTM n Bool P) (x : List Bool) :\n    (A.initCfg x).state = some A.q₀ := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 20,
+      "full_example_sha256": "85fd74ba1e017b7305c4bd5af5a76dfe573c8b399006b13be4ad5d9592e5fa34"
+    },
+    {
+      "id": "Cfg_init_delta",
+      "guard": "Cfg.init",
+      "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x) = ⟨some q, 1, fun _ _ => none, fun _ => 0, []⟩ := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 28,
+      "full_example_sha256": "e08e1fb815fb1520dc2673625cd058b2c48fa53d22bdc2ecc934a4d4434a6c0f"
+    },
+    {
+      "id": "Cfg_init_equation",
+      "guard": "Cfg.init",
+      "exact_identity": "example {n : ℕ} {P : Type} (q : P) (x : List Bool) :\n    (Cfg.init q x : Cfg n Bool P x).state = some q := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 36,
+      "full_example_sha256": "26b0c9b755ce2323dd5bc79d5be6cccef710868740c575131c31254d5ff2c2e4"
+    },
+    {
+      "id": "mapState_delta",
+      "guard": "Cfg.mapState",
+      "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    c.mapState f = ⟨c.state.map f, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 43,
+      "full_example_sha256": "ec776824e73236fc426d254f2897de2d4c2c347feacfb3ebae811325c9074b22"
+    },
+    {
+      "id": "mapState_equation",
+      "guard": "Cfg.mapState",
+      "exact_identity": "example {n : ℕ} {P Q : Type} {x : List Bool} (c : Cfg n Bool P x) (f : P → Q) :\n    (c.mapState f).state = c.state.map f := rfl\n",
+      "unsealed_expected": "PASS",
+      "sealed_expected": "rfl type mismatch",
+      "positive_example_passed": true,
+      "negative_same_identity_failed_at_line": 50,
+      "full_example_sha256": "9d5fd6394468906e1cc1bfca930a76a16b0468e3f14b5ae584ffc7cbc9d1daf2"
+    }
+  ],
+  "scope_limit": "Exact supplied abstract local-hinit consumer with local q0 update and d0 alias; not a seal of the full public startup/universal construction.",
+  "no_new_tests_executed_for_this_binding": true,
+  "actual_original_run_sources_hash_bound": true,
+  "raw_output_paths": [
+    "inputs/rs1/ControlsUnsealed.out",
+    "inputs/rs1/ControlsSealed.out"
+  ]
+}

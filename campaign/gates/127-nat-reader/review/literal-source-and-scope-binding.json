@@ -1,0 +1,15 @@
+{
+  "source_base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "source_head": "e16049ad20823b3e6abba171e328489746062080",
+  "owner": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+  "BASE_sha256": "57e7dc52dedf3d146499ad5694270d1c6fee7255cad74338d4174c5cce3e1a73",
+  "HEAD_sha256": "8f1b19cf6893b7129e6d98ced5572633f6ed04a1b2fcd5767d04e136e7cef9c8",
+  "changed_private_root": "Turing.MachineFormat.canonOffset_spec",
+  "exactly_two_reader_line_changes": true,
+  "all_existing_headers_docstrings_definitions_names_imports_attributes_and_other_bytes_exact": true,
+  "reverse_two_target_lines_recovers_entire_BASE_owner_byte_exact": true,
+  "new_public_API_import_header_name_definition_math_fill": false,
+  "exact_current_owner_equals_frozen53_preflight": true,
+  "BASE_complete_target_header_body": "private lemma canonOffset_spec (w : List Bool) :\n    Nat.ofDigits 2 ((canonOffset w).map Bool.toNat) = 2 * w.length + 3 ∧\n      (canonOffset w).length ≤ w.length + 2 := by\n  constructor\n  · rw [← foldr_bit_eq_ofDigits]\n    change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _\n    rw [(canonCount_spec w.length.bits).2.2]\n    change Nat.bit true (codeBitsNat w.length.bits + 1) = _\n    rw [codeBitsNat_bits]\n    simp [Nat.bit]\n    omega\n  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _\n    simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]\n    omega\n",
+  "HEAD_complete_target_header_body": "private lemma canonOffset_spec (w : List Bool) :\n    Nat.ofDigits 2 ((canonOffset w).map Bool.toNat) = 2 * w.length + 3 ∧\n      (canonOffset w).length ≤ w.length + 2 := by\n  constructor\n  · rw [← foldr_bit_eq_ofDigits]\n    change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _\n    rw [(canonCount_spec w.length.bits).2.2]\n    rw [← codeBitsNat_eq]\n    rw [codeBitsNat_bits]\n    simp only [Nat.bit_val, Bool.toNat_true]\n    omega\n  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _\n    simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]\n    omega\n"
+}

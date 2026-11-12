@@ -1,0 +1,15 @@
+/-- **The step block's representation, unfolded** (the ND inventory API, 2026-10-17): `Rep tr c d`
+holds iff `d` has `c`'s input head and its `k` work tapes and heads, the table `tableBitsK tr` on
+the table tape, the summary cells of `c` on the summary tape, and both auxiliary heads at `0`. -/
+theorem Rep_iff {k n : ℕ} {x : List Bool}
+    {tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))}
+    {c : Cfg k Bool (Fin (n + 1)) x} {d : Cfg (k + 2) Bool (Σ key, Ph k key) x} :
+    Rep tr c d ↔
+      d.inputPos = c.inputPos ∧
+      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+      d.workTapes (summaryTape k) =
+        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0 :=
+  Iff.rfl

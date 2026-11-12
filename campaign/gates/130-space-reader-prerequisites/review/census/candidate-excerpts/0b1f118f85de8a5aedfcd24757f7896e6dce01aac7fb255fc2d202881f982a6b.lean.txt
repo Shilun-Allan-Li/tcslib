@@ -1,0 +1,69 @@
+/-- Row 17 on an R1-selected bank of a larger rich host. The
+template's destination is `ι 0`, its radius `ι 1`, and its other tapes `ι j`, `2 ≤ j`,
+blank; the unselected host tapes, the host's prior output and every head are kept.
+
+**Proof sketch.** Select the bank (`Turing.Cfg.select`: output `[]`, the host's output as
+the R1 prefix); the host is the embedding of its selection (`Turing.embedEmitCfg_select`).
+Run `exists_recordTemplateTM` on the selection, transport its run, cut and envelope by
+`embedEmitTM_runFrom` and `rt_embed_radius`, and identify the endpoint by the public R1
+reconstruction lemma `Turing.embedEmitCfg_eq`. -/
+private theorem rt_exists_scratchTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q]
+    [Fintype T] [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {k : ℕ} (ι : Fin (K + 2) ↪ Fin k) {x : List Bool} (s : ℕ) (ws : List Bool),
+        Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg k (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes (ι 1) (d.workTapePos (ι 1) + p) =
+            FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes (ι 0) (d.workTapePos (ι 0) + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes (ι j) p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, ((embedEmitTM ι R).runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin k,
+            |((embedEmitTM ι R).runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          (embedEmitTM ι R).runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = ι 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  obtain ⟨K, P, fin, eq, R, en, ex, C, bound⟩ := exists_recordTemplateTM Q T
+  refine ⟨K, P, fin, eq, R, en, ex, C, ?_⟩
+  intro k ι x s ws value d state input radius slot blank
+  let a := d.select ι
+  have initial : embedEmitCfg ι d.workTapes d.workTapePos d.output a = d :=
+    embedEmitCfg_select ι d
+  obtain ⟨t, cost, first, heads, run⟩ := bound s ws value a state input radius slot blank
+  have transport (u : ℕ) :
+      (embedEmitTM ι R).runFrom d u =
+        embedEmitCfg ι d.workTapes d.workTapePos d.output (R.runFrom a u) := by
+    rw [← embedEmitTM_runFrom ι R d.workTapes d.workTapePos d.output a u, initial]
+  refine ⟨t, cost, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [transport u]
+    exact first u hu
+  · intro u hu j
+    have h := rt_embed_radius ι R d.workTapes d.workTapePos d.output a t _ (by positivity)
+      heads u hu j
+    rwa [initial] at h
+  · rw [transport t, run]
+    apply embedEmitCfg_eq ι
+    · rfl
+    · rfl
+    · simp [a, Cfg.select]
+    · intro i
+      refine ⟨?_, rfl⟩
+      funext q
+      simp only [a, Cfg.select, EmbeddingLike.apply_eq_iff_eq]
+    · intro j off
+      have ne : j ≠ ι 0 := fun h => off ⟨0, h.symm⟩
+      exact ⟨by funext q; simp only [ne, false_and, if_false], rfl⟩

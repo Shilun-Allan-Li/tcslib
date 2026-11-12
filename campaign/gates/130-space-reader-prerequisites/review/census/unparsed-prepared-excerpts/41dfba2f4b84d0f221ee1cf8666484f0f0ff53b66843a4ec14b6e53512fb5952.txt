@@ -1,0 +1,2756 @@
+--- a/TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean
++++ b/TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean
+@@ -224,7 +224,7 @@
+   induction h₀ with
+   | zero =>
+     intro _ hleft
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     rw [step_cf exact q p vt mt _ out 0 ⟨none, none, .pos, none, some dest⟩
+       (by rw [htr]; simp [hleft])]
+     simp [wr, moveInputPos_zero]
+@@ -263,7 +263,7 @@
+     intro h mt hh
+     simp only [Nat.add_zero] at hh
+     subst hh
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     rw [step_cf exact (.app v) p _ mt _ out 0
+       ⟨some (some v), some none, .neg, none, some (.rewV (some .g))⟩
+       (by simp [tr, tp, FinTM.bufferTape_nat])]
+--- a/TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean
++++ b/TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean
+@@ -220,7 +220,7 @@
+       LA.toAct im .rej) :
+     ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).state = none ∧
+     ((evalTM exact).tm.runFrom (cf z (some q) p vt mt j []) 1).output = [false] := by
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++  rw [MultiTapeTM.runFrom_one,
+     step_cf exact q p vt mt j [] im .rej h]
+   simp [cf, LA.rej]
+ 
+@@ -465,7 +465,7 @@
+               (cfC z (2 * code.length + 2) n n x (by omega)) 1 =
+               cf z (some (.rewV none)) (ip z (2 * code.length + 2 + n) (by omega))
+                 (FinTM.bufferTape (x.take n)) (onesFrom n n) ((n : ℤ) - 1) [] := by
+-            rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep]
++            rw [MultiTapeTM.runFrom_one, hstep]
+           have hC : (evalTM exact).tm.runFrom (cfS z .n0 0 0 (Nat.zero_le _))
+               (2 * code.length + 2 + (n + 1) + n + 1 + (n + 1) + r) =
+               cfA z ⟨.skipN, x.take n, [], 0⟩ 0 (by simp) := by
+--- a/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean
++++ b/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean
+@@ -129,8 +129,7 @@
+       obtain ⟨T, hT, pe, hpe, hrun⟩ := ih (pc + 1) (by omega) (out ++ [b]) hr'
+       refine ⟨1 + T, ?_, pe, hpe, ?_⟩
+       · simp only [List.length_cons]; nlinarith
+-      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step,
+-          MultiTapeTM.runFrom_zero, step_some]
++      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one, step_some]
+         simp only [tr, hget]
+         rw [apply_ctl, moveInputPos_zero, hsucc]
+         simp only [Option.toList_some]
+@@ -145,7 +144,7 @@
+       · have h1 : emTM.tm.runFrom (⟨some (.em k c ⟨pc, hpc⟩), p, tapesOf v, headsOf v, out⟩ :
+             Cfg 3 Bool St w) 1 = ⟨some (.prW k c ⟨pc, hpc⟩ t), p, tapesOf v,
+               Function.update (headsOf v) t (((v t : ℕ) : ℤ) - 1), out⟩ := by
+-          rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++          rw [MultiTapeTM.runFrom_one, step_some]
+           simp only [tr, hget]
+           rw [apply_act, moveInputPos_zero]
+           simp only [wrT, Function.update_eq_self, Option.toList_none, List.append_nil]
+@@ -174,7 +173,7 @@
+     emTM.tm.runFrom (cfgS w s i hi out) 1 =
+       (tr (.rd s.φ) w[i]? (fun j => tapesOf s.vec j (headsOf s.vec j))).apply
+         (cfgS w s i hi out) := by
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_one]
+   unfold cfgS
+   rw [step_some, FinTM.inputSymbol_at _ i hi rfl]
+ 
+@@ -201,7 +200,7 @@
+       ⟨some (.clW 1), ip w i hi, Function.update (tapesOf v) (1 : Fin 3) (ones (v 1)),
+         Function.update (headsOf v) (1 : Fin 3) (((v 1 : ℕ) : ℤ) - 1),
+         out ++ emitBits k c v⟩ := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     simp only [tr, hpe]
+     rw [apply_act, moveInputPos_zero]
+     simp only [wrT, Option.toList_none, List.append_nil, emitBits]
+@@ -220,7 +219,7 @@
+       ⟨some (.clW 2), ip w i hi, Function.update (tapesOf v₁) (2 : Fin 3) (ones (v 2)),
+         Function.update (headsOf v₁) (2 : Fin 3) (((v 2 : ℕ) : ℤ) - 1),
+         out ++ emitBits k c v⟩ := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     simp only [tr]
+     rw [apply_act, moveInputPos_zero]
+     simp only [wrT, Option.toList_none, List.append_nil]
+@@ -238,7 +237,7 @@
+   have h₆ : emTM.tm.runFrom (⟨some .inc, ip w i hi, tapesOf v₂, headsOf v₂,
+       out ++ emitBits k c v⟩ : Cfg 3 Bool St w) 1 =
+       cfgS w ⟨.g, s.z + 1, 0, 0⟩ i hi (out ++ emitBits k c v) := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     simp only [tr]
+     rw [apply_act, moveInputPos_zero]
+     unfold cfgS
+--- a/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean
++++ b/TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean
+@@ -161,7 +161,7 @@
+   induction j with
+   | zero =>
+     intro out _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     have hb : tp t (Function.update hd t ((0 : ℕ) - 1 : ℤ) t) = none := by
+       simp [htp, ones_neg]
+     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
+@@ -199,7 +199,7 @@
+   induction d with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     have hb : tp t (Function.update hd t (((m - 0 : ℕ) : ℤ)) t) = none := by
+       simp [htp, ones_ge]
+     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
+@@ -234,7 +234,7 @@
+   intro j
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     have hb : Function.update tp t (ones 0) t (Function.update hd t ((0 : ℕ) - 1 : ℤ) t) =
+         none := by
+       simp [ones_neg]
+--- a/TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean
++++ b/TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean
+@@ -262,7 +262,7 @@
+   intro j
+   induction j generalizing L with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       ret_none M bits P c _ τO _ zO q r b (by simp)]
+     simp
+   | succ j ih =>
+--- a/TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean
++++ b/TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean
+@@ -90,9 +90,9 @@
+     have r1 : y[p + 1 - 1]? = some false := by
+       have := getElem?_of_drop hd 1; rw [show p - 1 + 1 = p + 1 - 1 by omega] at this; simpa using this
+     rw [show 2 * ([] : List Bool).length + 2 = 0 + 1 + 1 by rfl,
+-      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
++      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one,
+       pcfg_fA M f bits p h1 (by omega) e r0,
+-      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1, MultiTapeTM.runFrom_zero]
++      pcfg_fB_false M f e bits (p + 1) (by omega) (by omega) r1]
+     cases f <;> simp
+   | [], _, _, _, _, _, _, _, hr => by simp [readField] at hr
+   | [_], _, _, _, _, _, _, _, hr => by simp [readField] at hr
+@@ -136,7 +136,7 @@
+   | [], p, wC, wO, h1, hlen, hd, _ => by
+     have r0 : y[p - 1]? = none := by simpa using getElem?_of_drop hd 0
+     refine ⟨0 + 1, by simp, ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     exact pcfg_reject M _ (fun _ => rfl) p h1 (by simp at hlen; omega) r0 _ _ _
+   | [b], p, wC, wO, h1, hlen, hd, _ => by
+     have r0 : y[p - 1]? = some b := by simpa using getElem?_of_drop hd 0
+@@ -144,8 +144,7 @@
+       have := getElem?_of_drop hd 1; rw [show p - 1 + 1 = p + 1 - 1 by omega] at this; simpa using this
+     simp only [List.length_cons, List.length_nil] at hlen
+     refine ⟨0 + 1 + 1, by simp, ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero, pcfg_fA M f bits p h1 (by omega) b r0]
++    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one, pcfg_fA M f bits p h1 (by omega) b r0]
+     exact pcfg_reject M _ (fun _ => rfl) (p + 1) (by omega) (by omega) r1 _ _ _
+ 
+ /-- **Copying the input suffix** onto the copy tape, then stepping its head back onto the
+@@ -162,7 +161,7 @@
+   | [], p, wX, wC, wO, h1, hlen, hd => by
+     have r0 : y[p - 1]? = none := by simpa using getElem?_of_drop hd 0
+     simp only [List.length_nil] at hlen
+-    rw [MultiTapeTM.runFrom_succ_eq_step, List.length_nil, MultiTapeTM.runFrom_zero,
++    rw [List.length_nil, MultiTapeTM.runFrom_one,
+       pcfg_step M _ p h1 (by omega), r0]
+     simp only [tabTr]
+     rw [pcfg, tact_idle_apply]
+@@ -224,7 +223,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
++    rw [MultiTapeTM.runFrom_one, acfg_step]
+     simp only [tabTr, aux_read0, Nat.cast_zero, zero_sub, bufferTape_left]
+     rw [tact_idle_apply]
+     simp [SignType.neg_eq_neg_one, sub_eq_add_neg]
+@@ -251,7 +250,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
++    rw [MultiTapeTM.runFrom_one, acfg_step]
+     simp only [tabTr, aux_read1, Nat.cast_zero, zero_sub, bufferTape_left]
+     rw [tact_idle_apply]
+     simp [SignType.neg_eq_neg_one, sub_eq_add_neg]
+@@ -279,7 +278,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
++    rw [MultiTapeTM.runFrom_one, acfg_step]
+     simp only [tabTr, aux_read2, Nat.cast_zero, zero_sub, bufferTape_left]
+     rw [tact_idle_apply]
+     simp
+--- a/TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean
++++ b/TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean
+@@ -194,7 +194,7 @@
+   intro j
+   induction j generalizing L with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       wret_none M bits P c τC _ zC _ oq r b (by simp)]
+     simp
+   | succ j ih =>
+--- a/TCSlib/Complexity/ClassNP/EXP.lean
++++ b/TCSlib/Complexity/ClassNP/EXP.lean
+@@ -780,7 +780,7 @@
+   induction t with
+   | zero =>
+     simpa only [Nat.mul_zero, Nat.zero_add, MultiTapeTM.runFrom_zero,
+-      enumCont_history, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++      enumCont_history, MultiTapeTM.runFrom_one]
+       using enumCont_undo_empty c₀ p
+   | succ t ih =>
+     have hs : (M.tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
+@@ -802,8 +802,7 @@
+           (enumCont_undoCfg (a.apply c)
+             (enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p) 2 =
+           enumCont_undoCfg c (enumCont_history M.tm c₀ t) p := by
+-        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-          MultiTapeTM.runFrom_zero, enumCont_undo_back, enumCont_undo_write]
++        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, enumCont_undo_back, enumCont_undo_write]
+       rw [hsrun, hhist, he, MultiTapeTM.runFrom_add, htwo]
+       exact ih (fun j hj => hlive j (by omega))
+ 
+@@ -1008,7 +1007,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _
+     have hr : (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((0 : ℤ) - 1)).workTapeSymbols
+@@ -1128,7 +1127,7 @@
+     have hp : x = pre := by simpa using hx
+     subst pre
+     simp only [List.length_nil]
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have hr : (enumCont_concatCfg x s (some false) ⟨x.length + 1, by omega⟩ 0 x).inputSymbol =
+         none := by simp [enumCont_concatCfg, Cfg.inputSymbol]
+     unfold MultiTapeTM.step
+@@ -1172,7 +1171,7 @@
+     have hp : s = pre := by simpa using hs
+     subst pre
+     simp only [List.length_nil]
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (enumCont_concatTM.tm.tr true _ _).apply _ = _
+     simp only [enumCont_concatTM, ↓reduceIte, enumCont_concatCfg, Cfg.workTapeSymbols,
+@@ -1598,7 +1597,7 @@
+     rw [hv]
+     simp only [List.length_nil, Nat.zero_add, List.map_nil, List.drop_zero, List.append_nil,
+       Int.natCast_zero, add_zero]
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change (tm.tr qc _ _).apply _ = _
+     rw [htr]
+     have hr : (enumCont_pairCfg (L := L) (x := x) (some qc) (bufferTape (pre ++ old))
+@@ -1639,7 +1638,7 @@
+       (j + 1) = enumCont_pairCfg (some qa) (bufferTape w) (fun _ => none) 0 := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change (tm.tr qr _ _).apply _ = _
+     rw [htr]
+     have hr : (enumCont_pairCfg (L := L) (x := x) (some qr) (bufferTape w)
+@@ -2749,7 +2748,7 @@
+       Cfg.ofWords (.inl (2 : Fin 3)) (stateWord C.k x) := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,
+       show (1 : Fin 3) ≠ 0 by decide, ↓reduceIte, bufferTape_left]
+@@ -2954,7 +2953,7 @@
+ private lemma a3_nonempty_nil (M : FinTM Bool) :
+     (a3NonemptyTM M).ComputesInTime [] [false] 1 := by
+   apply (computesInTime_iff _ _ _ _).mpr
+-  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,
++  simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,
+     Cfg.inputSymbol, a3NonemptyTM, Action.apply]
+ 
+ /-- Successful split payloads enter the source machine, charging the guard. -/
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -255,16 +255,10 @@
+   | zero => exact MultiTapeTM.runFrom_zero
+   | succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]
+ 
+-open MultiTapeTM in
+-/-- One step of a run. -/
+-private theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+-    (d : Cfg k Bool S x) : tm.runFrom d 1 = tm.step d := by
+-  rw [runFrom_succ_eq_step', runFrom_zero]
+-
+ /-- Two steps of a run. -/
+ private theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+     (d : Cfg k Bool S x) : tm.runFrom d 2 = tm.step (tm.step d) := by
+-  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]
++  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one]
+ 
+ /-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`
+ and `a` is stationary, the first time the state is `a` is at most `T`, reaches `c'` too, and no
+@@ -433,7 +427,7 @@
+     have hread : d.workTapeSymbols r = none := by
+       rw [Cfg.workTapeSymbols_eq, hpos]
+       simpa using hleft
+-    rw [show (0 : ℕ) + 1 = 1 from rfl, xr_runFrom_one, MultiTapeTM.step_of_some hd,
++    rw [show (0 : ℕ) + 1 = 1 from rfl, MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd,
+       hnone b _ _ hread, xr_mv1_apply_none]
+     congr 1
+     · symm
+@@ -1064,7 +1058,7 @@
+           dsimp only
+           rw [Function.update_self, Function.update_self, FinTM.bufferTape_nil]
+         rw [show (([] : List Bool) ++ [true]).length + 2 = 2 + 1 from rfl,
+-          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
++          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, MultiTapeTM.runFrom_one,
+           hstart, hstep2, MultiTapeTM.step_of_some rfl,
+           show (xr_testTM K r).tr .aux _ _ =
+             xr_act (xr_mv1 r none SignType.pos) (some (.done true)) by
+@@ -1119,7 +1113,7 @@
+         rw [show (L' ++ [b'] ++ [true]).length + 2 = 2 + 1 + (L'.length + 1) by
+             simp only [List.length_append, List.length_singleton]; try omega,
+           MultiTapeTM.runFrom_add (tm := xr_testTM K r) d (2 + 1) (L'.length + 1),
+-          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
++          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, MultiTapeTM.runFrom_one,
+           hstart, hstep2, hstep3,
+           xr_test_tail r L' _ rfl (by dsimp only; rw [Function.update_self])
+             (by dsimp only; rw [Function.update_self]), hdec]
+@@ -1148,7 +1142,7 @@
+ private theorem xr_answerTM_run {K : ℕ} {x : List Bool} (b : Bool) (d : Cfg K Bool xr_St x)
+     (q : xr_St) (hd : d.state = some q) :
+     (xr_answerTM K b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} := by
+-  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd]
++  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd]
+   apply Cfg.ext
+   · exact Action.apply_state _ _
+   · exact (Action.apply_inputPos _ _).trans (moveInputPos_zero _)
+@@ -2957,7 +2951,7 @@
+       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z) _ 0 MultiTapeTM.runFrom_zero
+     xr_St.start rfl ⟨(.halt, a, l), xr_St.start⟩ rfl
+     (fun u hu => absurd hu (Nat.not_lt_zero u))).2
+-  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] at hhost
++  rw [MultiTapeTM.runFrom_one] at hhost
+   have hd' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
+       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState (Sigma.mk (.halt, a, l)) =
+         d :=
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -1763,7 +1763,7 @@
+         (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome))
+       workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) } with he₁
+   have h1 : (nf_leaf N (some t)).runFrom e 1 = e₁ := by
+-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_one,
+       step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1 0
+         (some n.isSome) 1 hst rfl, SignType.coe_one, Cfg.workTapeSymbols_eq]
+   have hsym1 : e₁.workTapeSymbols 1 = e.workTapes 1 (b + 1) := by
+--- a/TCSlib/Complexity/ClassNP/Nondeterminism.lean
++++ b/TCSlib/Complexity/ClassNP/Nondeterminism.lean
+@@ -516,7 +516,7 @@
+       Cfg.mapState Sum.inr (choiceCoreCfg N (N.tm.initCfg x) true u 0 p) := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero]
+     have hw : (contLoadCfg (y := y) N 5 x u p 0 ((0 : ℤ) - 1)).workTapeSymbols
+         (Fin.natAdd N.k 1) = none := by
+@@ -570,7 +570,7 @@
+         contLoadCfg (y := y) N 5 x u p 0 ((u.length : ℤ) - 1) := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero]
+     have hw : (contLoadCfg (y := y) N 4 x u p ((0 : ℤ) - 1) u.length).workTapeSymbols
+         (Fin.natAdd N.k 0) = none := by
+@@ -704,7 +704,7 @@
+       (contLoadCfg (y := y) N 3 x u ⟨y.length + 1, by omega⟩ x.length u.length) 1 =
+         contLoadCfg (y := y) N 4 x u ⟨y.length + 1, by omega⟩
+           ((x.length : ℤ) - 1) u.length := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((contPairTM N).tm.tr (.inl 3) _ _).apply _ = _
+     rw [cont_load_read N 3 x u y.length (le_refl _)]
+@@ -771,7 +771,7 @@
+       cases b <;> rfl)
+   simp only [Option.toList_none, Option.toList_some, List.append_nil,
+     List.length_nil, Nat.cast_zero] at h1 h2
+-  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+   rw [h1]
+   exact h2
+ 
+@@ -798,7 +798,7 @@
+       rw [hr]
+       simp [contPairTM, hz])
+   simp only [Option.toList_none, List.append_nil, List.length_nil, Nat.cast_zero] at h1 h2
+-  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+   rw [h1]
+   exact h2
+ 
+@@ -3079,7 +3079,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero, zero_sub]
+     unfold MultiTapeTM.step
+     simp only [a2DebitTM, a2DebitCfg, Cfg.workTapeSymbols, bufferTape_left]
+@@ -3143,7 +3143,7 @@
+       rw [hn]
+       refine ⟨(2 * a2BorrowPos u + 2) + 1, by omega, ?_⟩
+       rw [MultiTapeTM.runFrom_add, hr]
+-      simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
++      simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
+         hs, controlAction, Action.apply]
+     | true =>
+       simp only [hs, ↓reduceIte] at hd
+@@ -3153,7 +3153,7 @@
+           (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =
+           a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by
+         refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+-        funext i; simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg,
++        funext i; simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, a2DebitCfg,
+           a2DebitTM, Action.apply]
+       refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩
+       · rw [a2Debit_length] at ht
+@@ -3213,7 +3213,7 @@
+       a2DebitCfg [] x p (.inl none) 0 u := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero, zero_sub]
+     unfold MultiTapeTM.step
+     simp only [a2DebitTM, a2LoadCfg, Cfg.workTapeSymbols, bufferTape_left]
+@@ -3736,7 +3736,7 @@
+       rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
+     · funext i; simp [Action.apply, a3nEqCfg]
+   rw [MultiTapeTM.runFrom_succ_eq_step, hs,
+-    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    MultiTapeTM.runFrom_one]
+   unfold MultiTapeTM.step
+   change (a3nEqTM.tm.tr (if b then 2 else 1, true) _ _).apply _ = _
+   rw [h1]
+@@ -3776,7 +3776,7 @@
+       rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
+     · funext i; simp [Action.apply, a3nEqCfg]
+   rw [MultiTapeTM.runFrom_succ_eq_step, hs,
+-    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    MultiTapeTM.runFrom_one]
+   unfold MultiTapeTM.step
+   change (a3nEqTM.tm.tr (1, true) _ _).apply _ = _
+   simp only [a3nEqTM, h1]
+@@ -3822,7 +3822,7 @@
+       a3nEqCfg y 4 true p u 0 := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero, zero_sub]
+     unfold MultiTapeTM.step
+     simp only [a3nEqTM, a3nEqCfg, Cfg.workTapeSymbols, bufferTape_left]
+--- a/TCSlib/Complexity/ClassNP/SAT.lean
++++ b/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -452,7 +452,7 @@
+       satEvalCfg M saved u dest i hi 0 := by
+   induction n with
+   | zero =>
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((satEvalTM M).tm.tr (.inr q) _ _).apply _ = _
+     rw [htr, satEvalCfg_work]
+@@ -644,7 +644,7 @@
+         pre.length (by simp [hw]) 0).inputSymbol = some false := by
+       rw [satEvalCfg_input]
+       simp [hw, CNF.serialize, satBits]
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    simp only [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step, satEvalCfg, satEvalQ] at hin ⊢
+     rw [hin]
+     simp [satEvalTM, satEvalAction, satEvalQ, CNF.eval_nil]
+@@ -1576,11 +1576,6 @@
+   exact satRedAction_apply x (some q) (some q') i i' hi hi' n n buf buf a b a' b' out out
+     m none none d₀ d₁ none hm rfl rfl ha hb (by simp)
+ 
+-/-- A single machine transition is the one-step run. -/
+-private lemma satRed_one {x : List Bool} (cfg : Cfg 2 Bool (Fin 35) x) :
+-    satRedTM.tm.runFrom cfg 1 = satRedTM.tm.step cfg := by
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-
+ /-- Counter rewinds take exactly `r+1` silent transitions, including the
+ left blank, and apply to each of the three return phases.
+ 
+@@ -1597,7 +1592,7 @@
+       satRedCfg x (some dest) i hi n buf 0 b out := by
+   induction r with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply satRed_move x q dest i i hi hi n buf (-1) b 0 b out 0 .pos 0
+       (moveInputPos_zero _) (by simp) (by simp)
+     rw [htr]
+@@ -1717,9 +1712,9 @@
+         simpa only [hp, Nat.add_assoc] using hm)
+       (by simp) (by simp)
+     rfl
+-  rw [← satRed_one] at h₁
+-  rw [← satRed_one] at h₃
+-  rw [← satRed_one] at h₅
++  rw [← MultiTapeTM.runFrom_one] at h₁
++  rw [← MultiTapeTM.runFrom_one] at h₃
++  rw [← MultiTapeTM.runFrom_one] at h₅
+   conv_lhs => rw [show 2 * v + 5 = 1 + (v + (1 + ((v + 2) + 1))) by omega,
+     MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
+     MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, hh₄, h₅]
+@@ -1757,7 +1752,7 @@
+   | nil =>
+     intro pre rest hx n buf b out
+     refine ⟨1, by simp [CNF.serializeClause], ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [CNF.serializeClause, List.flatMap_nil, List.nil_append, List.length_singleton,
+       satClauseVars, List.map_nil, List.foldr_nil, Nat.max_zero]
+     apply satRed_move x 3 2 _ _ _ _ _ buf _ b _ b out .pos 0 0
+@@ -1800,7 +1795,7 @@
+   | nil =>
+     intro pre rest hx n buf b out
+     refine ⟨1, by simp [CNF.serialize], ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [CNF.serialize, List.flatMap_nil, List.nil_append, List.length_singleton,
+       Nat.add_sub_cancel, CNF.numVars, List.foldr_nil, Nat.max_zero]
+     apply satRed_move x 2 7 _ _ _ _ _ buf _ b _ b out 0 0 0
+@@ -1830,7 +1825,7 @@
+         1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
+       simp [CNF.serialize, CNF.serializeClause] <;> omega
+     refine ⟨1 + (s + t), by omega, ?_⟩
+-    rw [← satRed_one] at hs
++    rw [← MultiTapeTM.runFrom_one] at hs
+     rw [MultiTapeTM.runFrom_add, hs, MultiTapeTM.runFrom_add, hsrun]
+     have hn : max (max n (satClauseVars C)) (CNF.numVars φ) =
+         max n (CNF.numVars (C :: φ)) := by rw [sat_numVars_cons, max_assoc]
+@@ -1876,7 +1871,7 @@
+     exact satRedAction_apply x (some 1) (some 2) 0 0 _ _ 0 0 (fun _ => none)
+       (satRedBuffer [] 0) 0 (-1) 0 0 [] [] 0 none (some (some false)) 0 .pos none
+       (moveInputPos_zero _) rfl satRedBuffer_empty.symm (by simp) (by simp) (by simp)
+-  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, satRed_one, h₂]
++  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, MultiTapeTM.runFrom_one, h₂]
+ 
+ /-- The maximum pass and native rewind establish the streaming seam with
+ exactly `numVars` in unary, empty output, and both work heads at zero.
+@@ -2519,7 +2514,7 @@
+         satPairCfg M saved u (some 4) 0 (Nat.zero_le _) 0 [] := by
+   induction n with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((satPairTM M).tm.tr (.inr 3) _ _).apply _ = _
+     simp only [satPairTM]
+@@ -2659,8 +2654,7 @@
+   | nil =>
+     intro pre out hx
+     have hl : x.length = pre.length := by simp [hx]
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((satPairTM M).tm.tr (.inr 7) _ _).apply _ = _
+     simp only [satPairTM]
+@@ -3207,7 +3201,7 @@
+   induction r with
+   | zero =>
+     intro _
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (satDropTM.tm.tr (3 : Fin 6) _ _).apply _ = _
+     have hw : (satDropCfg x (some 3) p n ((0 : ℤ) - 1) []).workTapeSymbols 0 = none := by
+@@ -3268,8 +3262,7 @@
+     have he : x = pre := by simpa using hx
+     clear hx
+     subst x
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (satDropTM.tm.tr (5 : Fin 6) _ _).apply _ = _
+     have hin : (satDropCfg pre (some 5) pre.length n n out).inputSymbol = none := by
+@@ -3645,8 +3638,7 @@
+     intro pre hw
+     have he : w = pre := by simpa using hw
+     subst w
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (satAppendTM.tm.tr (0 : Fin 5) _ _).apply _ = _
+     simp [satAppendTM, satAppendCfg, Cfg.workTapeSymbols, Action.apply]
+@@ -3679,8 +3671,7 @@
+     have he : x = pre := by simpa using hx
+     clear hx
+     subst x
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     have hr := satStreamPos_read pre (satAppendCfg pre (some 1)
+       (satStreamPos pre pre.length) (w ++ pre) (w ++ pre).length) pre.length rfl
+     unfold MultiTapeTM.step
+@@ -3723,7 +3714,7 @@
+   induction r with
+   | zero =>
+     intro _
+-    simp only [Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (satAppendTM.tm.tr (2 : Fin 5) _ _).apply _ = _
+     have hr : (satAppendCfg x (some 2) i w ((0 : ℤ) - 1)).workTapeSymbols 0 = none := by
+--- a/TCSlib/Complexity/ClassNP/TMSAT.lean
++++ b/TCSlib/Complexity/ClassNP/TMSAT.lean
+@@ -202,7 +202,7 @@
+   induction j with
+   | zero =>
+     intro hj o
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;> simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Action.apply]
+   | succ j ih =>
+     intro hj o
+@@ -225,7 +225,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change ((if _ then _ else _) : Action (c + 1) Bool (PolyControl c C)).apply _ = _
+     simp only [Cfg.workTapeSymbols, polyCfg, Function.update_self,
+       Nat.cast_zero, zero_sub, polyTape, show ¬(0 ≤ (-1 : ℤ) ∧ (-1 : ℤ) < q) by omega,
+@@ -307,7 +307,7 @@
+           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop 0) h' o) 1 =
+             polyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,
+           poly_emit x q h' C (le_refl C),
+-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++          MultiTapeTM.runFrom_one]
+         simpa [h'] using poly_advance (C := C) x q h'
+           (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))
+       · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by
+@@ -342,7 +342,7 @@
+           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+           show (polyUnaryTM c C).tm.runFrom (polyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =
+             polyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,
+-          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++          hinner', MultiTapeTM.runFrom_one]
+         simpa [h'] using poly_advance (C := C) x q h'
+           (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))
+     induction r generalizing o with
+@@ -455,7 +455,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, polyUnaryTM, polyCfg, Cfg.workTapeSymbols, polyTape, Action.apply]
+   | succ j ih =>
+@@ -932,8 +932,7 @@
+     · rfl
+     · funext j; simp [Action.apply, tmsatTakeCfg]
+     · rfl
+-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
+   change (tmsatTakeTM.tm.tr (if b then (2 : Fin 4) else (1 : Fin 4)) _ _).apply _ = _
+   rw [tmsat_take_read, h₁]
+   cases b <;>
+@@ -963,8 +962,7 @@
+     · rfl
+     · funext j; simp [Action.apply, tmsatTakeCfg]
+     · rfl
+-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
+   change (tmsatTakeTM.tm.tr (1 : Fin 4) _ _).apply _ = _
+   rw [tmsat_take_read, h₁]
+   change (⟨1, fun _ => (none, -1), none, some 3⟩ : Action 1 Bool (Fin 4)).apply _ = _
+--- a/TCSlib/Complexity/ClassNP/Tautology.lean
++++ b/TCSlib/Complexity/ClassNP/Tautology.lean
+@@ -472,8 +472,7 @@
+     change (tautTM.tm.tr (.syntaxFirst s) _ _).apply _ = _
+     rw [taut_read, h₀]
+     exact taut_move_right x _ _ i (by omega) [] 0 [] 0
+-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
+   change (tautTM.tm.tr (.syntaxSecond s b) _ _).apply _ = _
+   rw [taut_read, h₁]
+   simp only [tautTM]
+@@ -491,8 +490,7 @@
+     change (tautTM.tm.tr (.syntaxFirst s) _ _).apply _ = _
+     rw [taut_read, h₀]
+     exact taut_move_right x _ _ i (by omega) [] 0 [] 0
+-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
+   change (tautTM.tm.tr (.syntaxSecond s false) _ _).apply _ = _
+   rw [taut_read, h₁]
+   exact taut_move_right x _ _ (i+1) hi [] 0 [] 0
+@@ -615,7 +613,7 @@
+   induction n with
+   | zero =>
+     intro _hn
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change (tautTM.tm.tr q _ _).apply _ = _
+     rw [htr]
+     have hw : (tautCfg x (some q) i hi u ((0 : ℕ)-1 : ℤ)).workTapeSymbols 0 = none := by
+@@ -716,8 +714,7 @@
+     rw [taut_read, hr]
+     simpa only [SignType.coe_zero, add_zero] using
+       taut_move_right x _ _ i (by omega) u h [] 0
+-  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, hs, MultiTapeTM.runFrom_one]
+   change (tautEvalAction q b (FinTM.bufferTape u h)).apply _ = _
+   rw [ha]
+   exact taut_move_right x _ _ (i+1) hi u h [] e
+--- a/TCSlib/Complexity/ClassNP/Transducer.lean
++++ b/TCSlib/Complexity/ClassNP/Transducer.lean
+@@ -125,8 +125,7 @@
+       omega
+     have hsym : cfg.inputSymbol = none := by
+       rw [FinTM.inputSymbol_at cfg i hi hp]; simp [hix]
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     rw [hq]
+     simp only
+--- a/TCSlib/Complexity/ClassP/Examples.lean
++++ b/TCSlib/Complexity/ClassP/Examples.lean
+@@ -272,7 +272,7 @@
+     have hs : (palCfg x 2 ⟨x.length + 1, by omega⟩
+         ((x.length : ℤ) - 1 - x.length) x.length).inputSymbol = none := by
+       simp [Cfg.inputSymbol, palCfg]
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((palTM.tm.tr (2 : Fin 3) _ _).apply _).state = none ∧ _
+     rw [hs]
+--- a/TCSlib/Complexity/ClassP/TimeConstructible.lean
++++ b/TCSlib/Complexity/ClassP/TimeConstructible.lean
+@@ -239,15 +239,15 @@
+   induction bs with
+   | nil =>
+     intro pre
+-    simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero, counter_carry_step]
++    simp only [counterCarry]
++    rw [MultiTapeTM.runFrom_one, counter_carry_step]
+     simp [counterInc]
+   | cons b bs ih =>
+     intro pre
+     cases b with
+     | false =>
+-      simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step,
+-        MultiTapeTM.runFrom_zero, counter_carry_step]
++      simp only [counterCarry]
++      rw [MultiTapeTM.runFrom_one, counter_carry_step]
+       simp [counterInc]
+     | true =>
+       simp only [counterCarry, MultiTapeTM.runFrom_succ_eq_step, counter_carry_step,
+@@ -269,7 +269,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, FinTM.lengthBitsTM, counterCfg, Cfg.workTapeSymbols,
+         counterTape, Action.apply]
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -686,7 +686,7 @@
+   | zero =>
+     have he : i = x.length := by omega
+     subst i
+-    simp [MultiTapeTM.runFrom, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
++    simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, clFillTM, Cfg.inputSymbol]
+     constructor <;> funext j <;> exact Fin.elim0 j
+   | succ r ih =>
+     have hil : i < x.length := by omega
+@@ -1001,15 +1001,13 @@
+   induction bs with
+   | nil =>
+     intro pre
+-    simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero, clCount_carry_step]
++    simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
+     simp [clCountInc]
+   | cons b bs ih =>
+     intro pre
+     cases b with
+     | false =>
+-      simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step,
+-        MultiTapeTM.runFrom_zero, clCount_carry_step]
++      simp only [clCountCarry, Nat.zero_add, MultiTapeTM.runFrom_one, clCount_carry_step]
+       simp [clCountInc]
+     | true =>
+       simp only [clCountCarry, MultiTapeTM.runFrom_succ_eq_step, clCount_carry_step,
+@@ -1031,7 +1029,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clCountTM, clCountCfg, Cfg.workTapeSymbols,
+         clCountTape, Action.apply]
+@@ -1606,7 +1604,7 @@
+       clTwo, Fin.cases_zero, hr]
+     simpa [clCopyCfg] using clCopy_write x 0 1 p pre.length (pre ++ b :: rest) record b 0
+   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
++    MultiTapeTM.runFrom_one, h0]
+   change (clCopyTM.tm.tr (1 : Fin 5) _ _).apply _ = _
+   simp only [clCopyTM, show (1 : Fin 5) ≠ 0 by decide, ↓reduceIte,
+     clCopyCfg, Cfg.workTapeSymbols, clTwo, Fin.cases_zero, hr, Option.getD_some]
+@@ -1646,7 +1644,7 @@
+       clTwo, Fin.cases_zero, hr]
+     simpa [clCopyCfg, sub_eq_add_neg] using clCopy_write x 0 2 p w.length w record false .neg
+   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
++    MultiTapeTM.runFrom_one, h0]
+   change (clCopyTM.tm.tr (2 : Fin 5) _ _).apply _ = _
+   simp only [clCopyTM, show (2 : Fin 5) ≠ 0 by decide,
+     show (2 : Fin 5) ≠ 1 by decide, ↓reduceIte]
+@@ -1665,7 +1663,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clCopyTM, clCopyCfg,
+         Cfg.workTapeSymbols, clTwo, Action.apply]
+@@ -2939,7 +2937,7 @@
+     have hb : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (-1)).workTapeSymbols i = none := by
+       intro i
+       simp [clCmpCfg, Cfg.workTapeSymbols]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change (clCmpTM.tm.tr (.inr (.inl b)) _ _).apply _ = _
+     simp only [clCmpTM]
+     have hb' : ∀ i, (clCmpCfg x p (.inr (.inl b)) w (((0 : ℕ) : ℤ) - 1)).workTapeSymbols i = none := hb
+@@ -3136,7 +3134,7 @@
+     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
+     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
+   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
++    MultiTapeTM.runFrom_one, first]
+   change (clReadTM.tm.tr (.inl (some b)) _ _).apply _ = _
+   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
+   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+@@ -3194,7 +3192,7 @@
+     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
+     · funext i; fin_cases i <;> simp [MultiTapeTM.step, clReadTM, clReadCfg, clTwo, Action.apply]
+   rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
++    MultiTapeTM.runFrom_one, first]
+   change (clReadTM.tm.tr (.inl (some false)) _ _).apply _ = _
+   simp only [clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo, ↓reduceIte, r1]
+   simp only [Bool.true_eq_false, Option.some.injEq, if_false]
+@@ -3213,7 +3211,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clReadTM, clReadCfg, Cfg.workTapeSymbols, clTwo,
+         Action.apply, funext_iff]
+@@ -3353,7 +3351,7 @@
+   | zero =>
+     have he : j = word.length := by omega
+     subst j
+-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [zero_add, MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo,
+         Action.apply, funext_iff, sub_eq_add_neg]
+@@ -3384,7 +3382,7 @@
+   induction word using List.reverseRecOn with
+   | nil =>
+     rw [show ([] : List Bool).length + 1 = 1 by rfl,
+-      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      MultiTapeTM.runFrom_one]
+     refine Cfg.ext ?_ (moveInputPos_zero _) ?_ ?_ rfl
+     · simp [MultiTapeTM.step, clWipeTM, clWipeCfg, Cfg.workTapeSymbols, clTwo]
+     · funext i; fin_cases i <;>
+@@ -3775,7 +3773,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clInputTM, clInputCfg, Cfg.inputSymbol, Action.apply,
+         moveInputPos, funext_iff]
+@@ -4678,7 +4676,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
+   | succ j ih =>
+@@ -4709,7 +4707,7 @@
+     intro out
+     have hj' : j = w.length := by omega
+     subst j
+-    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [zero_add, MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, clReplayTM, clReplayCfg, Cfg.workTapeSymbols, Action.apply, funext_iff]
+   | succ r ih =>
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -1253,11 +1253,6 @@
+     rfl
+   · rw [Function.update_of_ne h, if_neg h, SignType.coe_zero, add_zero]
+ 
+-/-- One step of a run. -/
+-private theorem qy_run_one {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)
+-    (c : Cfg K Bool S x) : M.runFrom c 1 = M.step c := by
+-  rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+-
+ /-- Two steps of a run. -/
+ private theorem qy_run_two {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)
+     (c : Cfg K Bool S x) : M.runFrom c 2 = M.step (M.runFrom c 1) := by
+@@ -1344,7 +1339,7 @@
+         omega
+       subst hkw
+       refine ⟨1, by omega, ?_, ?_⟩
+-      · rw [qy_run_one, qy_step M _ (.suf 0) ip T _ _ (fun _ => 0) none (by
++      · rw [MultiTapeTM.runFrom_one, qy_step M _ (.suf 0) ip T _ _ (fun _ => 0) none (by
+             have hn : T i (Function.update P i (w.length : ℤ) i) = none := by
+               rw [Function.update_self, hT, FinTM.bufferTape_nat, List.getElem?_eq_none le_rfl]
+             simp only [hM, qyEmitTM, hn]),
+@@ -1366,7 +1361,7 @@
+         rfl
+       have hstep1 : M.runFrom (qyC .rd ip T (Function.update P i k) o') 1 =
+           qyC (.got b) ip T (Function.update P i ((k : ℤ) + 1)) o' := by
+-        rw [qy_run_one, qy_step M _ (.got b) ip T _ _
++        rw [MultiTapeTM.runFrom_one, qy_step M _ (.got b) ip T _ _
+             (fun j => if j = i then .pos else 0) none (by
+             have hn : T i (Function.update P i (k : ℤ) i) = some b := by
+               rw [Function.update_self, hT, hkb]
+@@ -2090,7 +2085,7 @@
+     (o : List Bool) :
+     ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).state = none ∧
+       ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).output = o := by
+-  rw [qy_run_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)
++  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)
+     (QyEm.done : QyEm pre.length suf.length rr) ip T P o).state = some .done)]
+   constructor
+   · rw [Action.apply_state]
+@@ -5352,7 +5347,7 @@
+       ⟨0, fun j => if j = i then (some none, .pos) else (none, 0), none,
+         some (some (T i (P i)))⟩ := by
+     simp only [dzTakeTM]
+-  rw [qy_run_one, MultiTapeTM.step_of_some hs, hw, htr]
++  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hs, hw, htr]
+   apply Cfg.ext
+   · rw [Action.apply_state]
+     rfl
+--- a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+@@ -154,7 +154,7 @@
+     MultiTapeTM.runFrom_with_q₀ _ _ _ _
+   have hleaf {y : List Bool} (d : Cfg (K + 3) Bool Unit y) (hs : d.state = some ()) :
+       leaf.runFrom d 1 = {d with state := none} := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some hs]
+     change (FinTM.controlAction 0 none).apply d = _
+     rw [FinTM.controlAction_apply, moveInputPos_zero]
+@@ -1237,7 +1237,7 @@
+       ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos := by
+   have hstep : (sphRightTM k Γ).runFrom d 1 =
+       {d with state := some true, inputPos := moveInputPos d.inputPos .pos} := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some hd]
+     apply Cfg.ext
+     · rw [Action.apply_state]; rfl
+@@ -1284,7 +1284,7 @@
+       ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos := by
+   have hstep : (sphEmitTM k b).runFrom d 1 =
+       {d with state := none, output := d.output ++ [b]} := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some hd]
+     apply Cfg.ext
+     · rw [Action.apply_state]; rfl
+--- a/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
+@@ -213,7 +213,7 @@
+       { d with
+         state := some .read
+         workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } := by
+-    simpa [MultiTapeTM.runFrom, moveInputPos_zero, sub_eq_add_neg] using
++    simpa [MultiTapeTM.runFrom_one, moveInputPos_zero, sub_eq_add_neg] using
+       step_of_tapeAction_move (b2b_verdictTM k i) d i 0 .neg hs rfl
+   have h2 := step_of_tapeAction_write (q' := .done b) (b2b_verdictTM k i)
+     ({ d with
+@@ -2325,7 +2325,7 @@
+     rw [hp]
+     change (M.runFrom c r).workTapePos = c.workTapePos
+     have h1 : M.runFrom c 1 = { c with state := some 1, output := c.output ++ [b] } := by
+-      simp [M, b2b_answerTM, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hc,
++      simp [M, b2b_answerTM, MultiTapeTM.runFrom_one, MultiTapeTM.step, hc,
+         FinTM.emitAction, Action.apply]
+     interval_cases r
+     · rfl
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Call.lean
+@@ -303,13 +303,13 @@
+       · subst h
+         refine ⟨by simpa [seam] using hregBoxSeam, fun i => by simp [seam]⟩
+       · obtain rfl : t = 1 := by omega
+-        rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from rfl]
++        rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = ((compileTM P l₀ D q0).step (seam c0)) from MultiTapeTM.runFrom_one _ _]
+         obtain ⟨_, _, _, _, _, _, _, R0⟩ := hsim0
+         refine ⟨?_, fun i => ?_⟩
+         · intro r; simp only [R0.regPos]; exact regPos_box hnd _ _ R0.valid R0.hs r
+         · rw [R0.dPos]; simp [dc0, Cfg.init]
+     rw [show (compileTM P l₀ D q0).runFrom (seam c0) 1 = (compileTM P l₀ D q0).step (seam c0)
+-      from rfl]
++      from MultiTapeTM.runFrom_one _ _]
+     apply runFrom_forall_append (Q := Q)
+     · intro t ht
+       have hTR : ∃ s par dir tp, TrackRel c0 cs W ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) t)
+@@ -331,10 +331,10 @@
+         exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
+       · obtain rfl : t = 1 := by omega
+         rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
+-          (compileTM P l₀ D q0).step gH from rfl, hret1]
++          (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
+         exact ⟨fun r => by simpa [mkCfg] using hbox0 r, fun i => by simp [mkCfg]⟩
+     rw [show (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) T0) 1 =
+-      (compileTM P l₀ D q0).step gH from rfl, hret1]
++      (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1]
+     apply runFrom_forall_append (Q := Q)
+     · intro t ht
+       dsimp only [Q]
+@@ -351,7 +351,7 @@
+   · rw [MultiTapeTM.runFrom_add]
+     change (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).step (seam c0)) _ = _
+     rw [MultiTapeTM.runFrom_add, ← hgH, MultiTapeTM.runFrom_add]
+-    rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from rfl, hret1,
++    rw [show (compileTM P l₀ D q0).runFrom gH 1 = (compileTM P l₀ D q0).step gH from MultiTapeTM.runFrom_one _ _, hret1,
+       MultiTapeTM.runFrom_add, hr2, hr3, hfinal]
+ 
+ 
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean
+@@ -139,7 +139,7 @@
+     · obtain rfl : t = 0 := by omega
+       rfl
+     · obtain rfl : t = 1 := by omega
+-      simp only [MultiTapeTM.runFrom, Function.iterate_one] at hstep ⊢
++      simp only [MultiTapeTM.runFrom_one] at hstep ⊢
+       rw [hstep]; rfl
+   | succ j ih =>
+     intro ip hip hj
+@@ -216,7 +216,7 @@
+       · obtain rfl : t = 0 := by omega
+         exact ⟨Or.inl (by simp [mkCfg]), by funext i; simp [mkCfg]⟩
+       · obtain rfl : t = 1 := by omega
+-        simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
++        simp only [MultiTapeTM.runFrom_one, hstep]
+         refine ⟨?_, by funext i; simp [mkCfg]⟩
+         by_cases hr : r = rr
+         · subst hr; right; simp [mkCfg, hpos]
+@@ -324,7 +324,7 @@
+     · obtain rfl : t = 0 := by omega
+       exact ⟨Or.inl (by simp [mkCfg]), by funext i; simp [mkCfg]⟩
+     · obtain rfl : t = 1 := by omega
+-      simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
++      simp only [MultiTapeTM.runFrom_one, hstep]
+       refine ⟨?_, by funext i; simp [mkCfg]⟩
+       by_cases hr : r = rr
+       · subst hr; right; simp [mkCfg, hm1]
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean
+@@ -351,8 +351,9 @@
+       intro ht
+       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), sim_step_clean M q₁ q V t
+         (hlive t (by omega))]
+-  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 :=
+-    init_step M q₁ q V
++  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 := by
++    rw [MultiTapeTM.runFrom_one]
++    exact init_step M q₁ q V
+   -- the interval data of every tape at the halt
+   set c := M.runFrom (Cfg.init q V) T0 with hc
+   have htape : ∀ j : Fin k, ∃ a b : ℤ, a ≤ 0 ∧ 0 ≤ b ∧ -(s : ℤ) ≤ a - 1 ∧ b + 1 ≤ s ∧
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean
+@@ -243,7 +243,7 @@
+     · obtain rfl : t = 0 := by omega
+       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
+     · obtain rfl : t = 1 := by omega
+-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
++      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
+       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB hbB')
+         (abs_update_le _ _ _ _ hB hbB')
+   | succ n ih =>
+@@ -318,7 +318,7 @@
+     · obtain rfl : t = 0 := by omega
+       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
+     · obtain rfl : t = 1 := by omega
+-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
++      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
+       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB haB')
+         (abs_update_le _ _ _ _ hB haB')
+   | succ n ih =>
+@@ -407,7 +407,7 @@
+     · obtain rfl : t = 0 := by omega
+       exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
+     · obtain rfl : t = 1 := by omega
+-      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
++      rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
+       have h0 : |(0 : ℤ)| ≤ B := by have := hB i; rw [hp] at this; exact this
+       exact PB_ccfg _ _ _ _ _ _ _ _ (abs_update_le _ _ _ _ hB h0) (abs_update_le _ _ _ _ hB h0)
+   | succ n ih =>
+@@ -490,16 +490,16 @@
+       · obtain rfl : t = 0 := by omega
+         exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
+       · obtain rfl : t = 1 := by omega
+-        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
++        rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
+         exact PB_ccfg _ _ _ _ _ _ _ _ hB hB
+-    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep]
++    rw [show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep]
+     apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb1
+     rw [hr1]
+     apply Complexity.LogProg.runFrom_forall_append (Q := PB B) hb2
+     rw [hr2]
+     exact hb3
+   · rw [MultiTapeTM.runFrom_add,
+-      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from rfl, hstep,
++      show (cleanTM M q₀).runFrom _ 1 = (cleanTM M q₀).step _ from MultiTapeTM.runFrom_one _ _, hstep,
+       MultiTapeTM.runFrom_add, hr1, MultiTapeTM.runFrom_add, hr2, hr3]
+     simp [hDpa, hDpb, hMt1]
+ 
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean
+@@ -169,7 +169,7 @@
+             exact ⟨fun r => by simpa [seam] using hbN r, fun i => by simp [seam]⟩
+           · obtain rfl : t = 1 := by omega
+             rw [show (compileTM P l₀ D q0).runFrom (seam c) 1 =
+-              (compileTM P l₀ D q0).step (seam c) from rfl, hst, ← hr]
++              (compileTM P l₀ D q0).step (seam c) from MultiTapeTM.runFrom_one _ _, hst, ← hr]
+             exact ⟨fun r => by simpa [seam] using hbN1 r, fun i => by simp [seam]⟩
+         | some cs =>
+           obtain ⟨hnd, hin, hargs, hclean⟩ := hcalls N (by omega) l cs hs hcl
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean
+@@ -128,13 +128,13 @@
+       obtain ⟨l', M', p', hm, hstep⟩ := mmem_step A l₀ oracle D q0 (x := x) (l := l)
+         (by simp [hA, MIns.isMem]) v M p out
+       rw [hm] at h1 h2
+-      refine compose 1 _ (by rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++      refine compose 1 _ (by rw [MultiTapeTM.runFrom_one,
+         hstep]) (fun t ht => ?_) (ih l' v M' p' out b h1 h2 (hg' _ hm))
+       rcases Nat.lt_or_ge t 1 with h | h
+       · obtain rfl : t = 0 := by omega
+         exact mbox_mseam W B P l v M p out hP
+       · obtain rfl : t = 1 := by omega
+-        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hstep]
++        rw [MultiTapeTM.runFrom_one, hstep]
+         cases N with
+         | zero => simp [mrun] at h1
+         | succ N =>
+--- a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
++++ b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+@@ -272,7 +272,7 @@
+                workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧
+       (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by
+   constructor
+-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++  · rw [MultiTapeTM.runFrom_one]
+     have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
+     simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
+   · intro u hu
+--- a/TCSlib/Complexity/TimeHierarchy/ClockLoop.lean
++++ b/TCSlib/Complexity/TimeHierarchy/ClockLoop.lean
+@@ -134,7 +134,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       clockTM_step_some K W _ (.ret q r) rfl]
+     simp only [clockTr, ctrCfg_ctr, Nat.cast_zero, zero_sub, hneg, if_true]
+     rw [ctrAction_apply]
+--- a/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
++++ b/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
+@@ -452,7 +452,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       clockTM_step_some K W _ .cScan rfl]
+     simp only [clockTr, cScanCfg, ctrCfg_ctr, Nat.cast_zero, zero_sub, bufferTape_left,
+       if_true]
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -556,18 +556,12 @@
+     (Cfg.mapState f ⟨st, ip, wt, wp, o⟩ : Cfg K Γ S' x) = ⟨st.map f, ip, wt, wp, o⟩ :=
+   Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
+ 
+-/-- A one-step run is one machine step, by the published run equations. -/
+-private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
+-    (M : MultiTapeTM K Γ S) (d : Cfg K Γ S x) : M.runFrom d 1 = M.step d := by
+-  have h := MultiTapeTM.runFrom_succ_eq_step' (tm := M) (cfg := d) (t := 0)
+-  rwa [MultiTapeTM.runFrom_zero] at h
+-
+ /-- One round of unit length is one machine step, by the published orbit equation. -/
+ private theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}
+     (M : MultiTapeTM K Γ S) (c : Cfg K Γ S x) (r : ℕ) :
+     roundOrbit M (fun _ => 1) c (r + 1) = M.step (roundOrbit M (fun _ => 1) c r) := by
+   rw [roundOrbit_succ]
+-  exact recordStep_runFrom_one M _
++  exact MultiTapeTM.runFrom_one M _
+ 
+ /-- **Offset congruence**: the `j`-th field offset reads only the lengths of the first `j`
+ fields, so two field lists whose first `j` fields have equal lengths share it. Assembled
+@@ -845,7 +839,7 @@
+         {d with state := some (some (d.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T))))} ∧
+       (∀ u < 1, ∀ b, (recordStepRead.runFrom d u).state ≠ some (some b)) := by
+   constructor
+-  · rw [recordStep_runFrom_one]
++  · rw [MultiTapeTM.runFrom_one]
+     rw [step_of_inputMoveAction recordStepRead d 0 hd rfl, moveInputPos_zero]
+   · intro u hu b
+     have : u = 0 := by omega
+@@ -956,14 +950,14 @@
+     · have h2 : recordStepProbe.runFrom d 2 =
+           recordStepProbe.step (recordStepProbe.step d) := by
+         have h := MultiTapeTM.runFrom_succ_eq_step' (tm := recordStepProbe) (cfg := d) (t := 1)
+-        rwa [recordStep_runFrom_one] at h
++        rwa [MultiTapeTM.runFrom_one] at h
+       rw [h2, step1, step2]
+     · intro u hu v
+       have hu' : u = 0 ∨ u = 1 := by omega
+       rcases hu' with rfl | rfl
+       · rw [MultiTapeTM.runFrom_zero]
+         simp [hd]
+-      · rw [recordStep_runFrom_one, step1]
++      · rw [MultiTapeTM.runFrom_one, step1]
+         simp [a]
+     · rcases (recordStep_input_blank d).mp hblank with h0 | hR
+       · have hpos : a.inputPos.val = 1 := by
+@@ -998,7 +992,7 @@
+     have hR : d.inputPos.val ≠ x.length + 1 := fun h => hbound (Or.inr h)
+     have his : d.inputSymbol.isSome = true := by cases h : d.inputSymbol <;> simp_all
+     refine ⟨1, by omega, false, d.inputPos, ?_, ?_, by simp [hR], rfl, fun u _ => fixed u⟩
+-    · rw [recordStep_runFrom_one]
++    · rw [MultiTapeTM.runFrom_one]
+       rw [step_of_inputMoveAction recordStepProbe d (q' := .done false) 0 hd
+         (by simp [recordStepProbe, his]), moveInputPos_zero]
+     · intro u hu v
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean
+@@ -252,13 +252,13 @@
+     intro j hj
+     exact state_isSome_of_runFrom Em.tm (by rw [hErun]; rfl) hj
+   have hone : Em.tm.runFrom subc₀ 1 = Em.tm.step subc₀ := by
+-    simp [MultiTapeTM.runFrom]
++    exact MultiTapeTM.runFrom_one _ _
+   have hEchain : ∀ u ≤ tE - 1,
+       H.runFrom c₀ (1 + u) =
+         embedCfg (Nat.le_max_left Em.k Gm.k) (BodyState.callE (SG := Gm.State))
+           (Em.tm.runFrom subc₀ (1 + u)) := by
+     intro u hu
+-    rw [runFrom_add, runFrom_one, hstep₁]
++    rw [runFrom_add, MultiTapeTM.runFrom_one, hstep₁]
+     rw [embed_run (Nat.le_max_left Em.k Gm.k) Em.tm H
+       (BodyState.callE (SG := Gm.State)) ex htrE (Em.tm.step subc₀) u ?hstates]
+     · rw [runFrom_add, hone]
+@@ -285,7 +285,7 @@
+   have hB : H.runFrom c₀ (tE + 1) =
+       { Cfg.ofWords BodyState.gStart (stateWord (max Em.k Gm.k) s)
+           with output := es } := by
+-    rw [runFrom_add, hA, runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
++    rw [runFrom_add, hA, MultiTapeTM.runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
+     · rfl
+     · intro inp work
+       simp [hH, emitIterBody]
+@@ -310,13 +310,13 @@
+     intro j hj
+     exact state_isSome_of_runFrom Gm.tm (by rw [hGrun]; rfl) hj
+   have honeG : Gm.tm.runFrom subg₀ 1 = Gm.tm.step subg₀ := by
+-    simp [MultiTapeTM.runFrom]
++    exact MultiTapeTM.runFrom_one _ _
+   have hGchain : ∀ u ≤ tG - 1,
+       H.runFrom (Cfg.ofWords (BodyState.gStart (SE := Em.State) (SG := Gm.State)) (stateWord (max Em.k Gm.k) s)) (1 + u) =
+         embedCfg (Nat.le_max_right Em.k Gm.k) (BodyState.callG (SE := Em.State))
+           (Gm.tm.runFrom subg₀ (1 + u)) := by
+     intro u hu
+-    rw [runFrom_add, runFrom_one, hstep₂]
++    rw [runFrom_add, MultiTapeTM.runFrom_one, hstep₂]
+     rw [embed_run (Nat.le_max_right Em.k Gm.k) Gm.tm H
+       (BodyState.callG (SE := Em.State)) gx htrG (Gm.tm.step subg₀) u ?hstatesG]
+     · rw [runFrom_add, honeG]
+@@ -362,7 +362,7 @@
+     rw [hGout tG le_rfl (by omega), hGrun, embed_ofWords_right Em Gm gx hgk]
+   constructor
+   · rw [show tE + 1 + tG + 1 = (tE + 1 + tG) + 1 from rfl, runFrom_add, hC,
+-      runFrom_one, control_step (q := BodyState.callG gx) ?_ rfl]
++      MultiTapeTM.runFrom_one, control_step (q := BodyState.callG gx) ?_ rfl]
+     · rfl
+     · intro inp work
+       simp [hH, emitIterBody]
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+@@ -79,7 +79,7 @@
+     (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
+     SafeRun H avoid c (t + 1) c' := by
+   have hone : H.runFrom c 1 = c₁ := by
+-    simp [runFrom, hstep]
++    rw [MultiTapeTM.runFrom_one, hstep]
+   refine ⟨?_, ?_⟩
+   · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]
+     exact h.1
+@@ -256,11 +256,6 @@
+     (c : Cfg m Bool SS x) (o : List Bool) :
+     embedCfg hmk inject { c with output := o } =
+       { embedCfg hmk inject c with output := o } := rfl
+-
+-/-- A one-step run is a step. -/
+-theorem runFrom_one (H : MultiTapeTM k Bool B) (c : Cfg k Bool B x) :
+-    H.runFrom c 1 = H.step c := by
+-  simp [MultiTapeTM.runFrom]
+ 
+ /-- One host step at a state behaving like the module's state `q` tracks one
+ module step.
+--- a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+@@ -552,7 +552,7 @@
+     · funext j; simp only [Cfg.mapState_workTapePos, e]
+     · simp only [Cfg.mapState_output, e]
+   have hleaf : (rd_family i).runFrom c 1 = f := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     exact step_of_inputMoveAction (rd_callLeaf op b) c (rd_leafMove op b) hc rfl
+   have leaf := phaseHostTM_run rd_family ⟨.inl none, .inl ()⟩ rd_redirect i c f 1
+     hleaf (.inr a) rfl ⟨.inr (.inr ()), .inr a⟩ rfl (by
+--- a/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
+@@ -50,9 +50,7 @@
+ private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)
+     (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :
+     M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+-  calc
+-    _ = M.step (M.runFrom c 0) := MultiTapeTM.runFrom_succ_eq_step'
+-    _ = _ := by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hc]
++  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hc]
+ 
+ /-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/
+ private theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -1017,7 +1017,7 @@
+   induction rest with
+   | nil =>
+     intro pre
+-    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [List.length_nil, MultiTapeTM.runFrom_one]
+     change (match (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
+         (loopCopyTape pre []) pre.length pre.length out).workTapeSymbols
+           (Fin.last (body.k + 1 + (1 + F.k))) with
+@@ -3481,7 +3481,7 @@
+ private lemma emCall_track_initial (M : FinTM Bool) (x : List Bool) :
+     (emCallTrackTM M).tm.runFrom ((emCallTrackTM M).tm.initCfg x) 1 =
+       emCallTrackCfg M (M.tm.initCfg x) (fun _ => 0) (fun _ => 0) := by
+-  change (emCallTrackTM M).tm.step ((emCallTrackTM M).tm.initCfg x) = _
++  rw [MultiTapeTM.runFrom_one]
+   simp only [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, emCallTrackTM]
+   refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+   · funext i
+@@ -3733,7 +3733,7 @@
+     intro j hj he
+     have hje : j = x.length := by omega
+     subst j
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have hin : (emCallRightScan M c (some true) x.length (le_refl _)).inputSymbol = none := by
+       simp [emCallRightScan, Cfg.inputSymbol]
+     simp only [MultiTapeTM.step, emCallRightScan, Option.map_some]
+@@ -3785,7 +3785,8 @@
+     change p.val = j + 1
+     dsimp [j]; omega
+   refine ⟨1 + (x.length - j + 1), by omega, ?_⟩
+-  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs]
++  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from
++    (MultiTapeTM.runFrom_one _ _).trans hs]
+   exact emCall_right_scan M c (x.length - j) j hj (by omega)
+ 
+ /-- Right-boundary normalization preserves the entire completed source
+@@ -3963,7 +3964,7 @@
+     have hblank : bufferTape (if emit then arg else []) (-1) = none := by
+       simp [bufferTape]
+     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+@@ -4010,7 +4011,7 @@
+     intro suf hcap
+     have hblank : bufferTape cap (-1) = none := by simp [bufferTape]
+     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+@@ -4053,7 +4054,7 @@
+     subst cap
+     simp only [List.append_nil, List.length_nil]
+     have hblank : bufferTape pre pre.length = none := by simp [bufferTape_nat]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte, hblank]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ (by simp [Action.apply])
+@@ -4097,7 +4098,7 @@
+   induction pre using List.reverseRecOn with
+   | nil =>
+     simp only [List.length_nil, Nat.cast_zero, zero_sub, zero_add, bufferTape_nil]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+       Fin.isValue, show (1 : Fin 2) ≠ 0 by decide, ↓reduceIte]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ (by simp [Action.apply])
+@@ -4155,7 +4156,7 @@
+         arg.length cap.length []) 1 =
+       emCallFinishCfg emit x p 1 (bufferTape arg) (bufferTape cap)
+         ((arg.length : ℤ) - 1) cap.length [] := by
+-    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
++    simpa only [MultiTapeTM.runFrom_one] using hs
+   have h1 := (emCallFinishTM emit).tm.runFrom_add
+     (emCallFinishCfg emit x p 0 (bufferTape arg) (bufferTape cap)
+       arg.length cap.length []) 1 (arg.length + 1)
+@@ -4840,6 +4841,7 @@
+       · exact ((embedEmitTM_frame (emCallPairEmbedding M) (emCallFinishTM emit).tm
+           z.workTapes z.workTapePos [] c 0).1 j hj).2
+   have hs : (emCallFinishTM emit).tm.runFrom c 1 = c := by
++    rw [MultiTapeTM.runFrom_one]
+     change (controlAction 0 (some (5 : Fin 6))).apply c = c
+     rw [controlAction_apply, moveInputPos_zero]
+   have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+--- a/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
+@@ -1874,7 +1874,7 @@
+     · intro i
+       rfl
+   have boot : oracleDispatchTM.runFrom localInit 1 = localDone := by
+-    change oracleDispatchTM.step localInit = _
++    rw [MultiTapeTM.runFrom_one]
+     simp [localInit, localDone, MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction,
+       Cfg.ofWords, Cfg.mapState, oracleOrigin, Cfg.ext_iff, funext_iff, Fin.forall_fin_succ,
+       Function.update_apply]
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -302,7 +302,7 @@
+   | nil =>
+     intro pre out hx
+     subst x
+-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (tm.tr q _ _).apply _ = _
+     rw [htr, scanCfg_read]
+@@ -548,7 +548,7 @@
+   | nil =>
+     intro pre hx
+     refine ⟨1, by simp, ?_⟩
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((pairValidTM.tm.tr none _ _).apply _).state = none ∧ _
+     rw [scanCfg_read]
+@@ -693,7 +693,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols, Nat.cast_zero,
+       zero_sub, bufferTape_left]
+@@ -805,7 +805,7 @@
+   induction rest with
+   | nil =>
+     intro pre out hx
+-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
+     rw [extractCfg_read]
+@@ -884,7 +884,7 @@
+   | nil =>
+     intro pre a hx
+     refine ⟨1, by omega, ?_⟩
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (((pairExtractTM first second).tm.tr (.inl none) _ _).apply _).state = none ∧ _
+     rw [extractCfg_read]
+@@ -1236,7 +1236,7 @@
+   induction j with
+   | zero =>
+     intro hj o
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;> simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Action.apply]
+   | succ j ih =>
+     intro hj o
+@@ -1259,7 +1259,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change ((if _ then _ else _) : Action (c + 1) Bool (CatalogPolyControl c C)).apply _ = _
+     simp only [Cfg.workTapeSymbols, catalogPolyCfg, Function.update_self,
+       Nat.cast_zero, zero_sub, catalogPolyTape, show ¬(0 ≤ (-1 : ℤ) ∧ (-1 : ℤ) < q) by omega,
+@@ -1341,7 +1341,7 @@
+           show (catalogPolyUnaryTM c C).tm.runFrom (catalogPolyCfg x q (.loop 0) h' o) 1 =
+             catalogPolyCfg x q (.emit ⟨C, by omega⟩) h' o by simpa using hs,
+           catalogPoly_emit x q h' C (le_refl C),
+-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++          MultiTapeTM.runFrom_one]
+         simpa [h'] using catalogPoly_advance (C := C) x q h'
+           (o ++ List.replicate C true) (⟨0, hi⟩ : Fin (c + 1))
+       · have hlow : ∀ k : Fin (c + 1), k.val ≤ i - 1 → h' k = 0 := by
+@@ -1376,7 +1376,7 @@
+           MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+           show (catalogPolyUnaryTM c C).tm.runFrom (catalogPolyCfg x q (.loop ⟨i, hi⟩) h' o) 1 =
+             catalogPolyCfg x q (.loop ⟨i - 1, by omega⟩) h' o by simpa using hs,
+-          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++          hinner', MultiTapeTM.runFrom_one]
+         simpa [h'] using catalogPoly_advance (C := C) x q h'
+           (o ++ List.replicate (C * q ^ i) true) (⟨i, hi⟩ : Fin (c + 1))
+     induction r generalizing o with
+@@ -1489,7 +1489,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     apply Cfg.ext <;>
+       simp [MultiTapeTM.step, catalogPolyUnaryTM, catalogPolyCfg, Cfg.workTapeSymbols, catalogPolyTape, Action.apply]
+   | succ j ih =>
+@@ -1671,7 +1671,7 @@
+   | nil =>
+     intro pre hx r hr
+     refine ⟨1, by simp, ?_⟩
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
+     rw [lenCfg_read]
+@@ -1681,7 +1681,7 @@
+     cases r with
+     | zero =>
+       refine ⟨1, by simp, ?_⟩
+-      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      simp only [MultiTapeTM.runFrom_one]
+       unfold MultiTapeTM.step
+       change (((pairCountTM M).tm.tr (.inr (.inl 3)) _ _).apply _).state = none ∧ _
+       rw [lenCfg_read]
+@@ -1708,7 +1708,7 @@
+         r (by omega)
+       refine ⟨1 + t, by simp only [List.length_cons]; omega, ?_⟩
+       rw [MultiTapeTM.runFrom_add]
+-      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      simp only [MultiTapeTM.runFrom_one]
+       rw [hs]
+       simpa using And.intro hh ho
+ 
+@@ -1779,7 +1779,7 @@
+   | nil =>
+     intro pre hx r hr
+     refine ⟨1, by simp, ?_⟩
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change (((pairCountTM M).tm.tr (.inr (.inr none)) _ _).apply _).state = none ∧ _
+     rw [lenCfg_read]
+@@ -1901,7 +1901,7 @@
+     have := c.inputPos.isLt
+     omega
+   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     rw [hback, hr]
+     rfl
+ 
+@@ -2000,7 +2000,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     simp only [rawStripTM, stripCfg, Cfg.workTapeSymbols, Nat.cast_zero,
+       zero_sub, bufferTape_left]
+@@ -2141,7 +2141,7 @@
+   | nil =>
+     intro pre hx
+     refine ⟨1, by simp, ?_⟩
+-    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [MultiTapeTM.runFrom_one]
+     unfold MultiTapeTM.step
+     change ((anyTrueTM.tm.tr () _ _).apply _).state = none ∧ _
+     rw [scanCfg_read]
+@@ -2151,7 +2151,7 @@
+     cases b with
+     | true =>
+       refine ⟨1, by simp, ?_⟩
+-      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      simp only [MultiTapeTM.runFrom_one]
+       unfold MultiTapeTM.step
+       change ((anyTrueTM.tm.tr () _ _).apply _).state = none ∧ _
+       rw [scanCfg_read]
+@@ -2865,7 +2865,7 @@
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
+       else fwdMapCfg M x (some .copyB)
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
+-  simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+   rw [fwdMap_first M x pre (c :: rest) a b hx]
+   rw [MultiTapeTM.step_of_some rfl]
+   rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+@@ -2908,7 +2908,7 @@
+   induction rest with
+   | nil =>
+     intro pre b hx
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     rw [MultiTapeTM.step_of_some rfl]
+     change ((fwdMapTM M false).tm.tr .copyB _ _).apply _ = _
+     rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+@@ -2969,7 +2969,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some rfl]
+     cases second <;>
+       simp only [↓reduceIte, Bool.false_eq_true, fwdMapTM, fwdMapCfg,
+@@ -3062,8 +3062,8 @@
+         (fwdMapCfg M x (some .emitA) p pre b pre.length 0 out) = _
+       rw [fwdMap_move]
+       simp [fwdMapCfg]
+-    simp only [List.length_nil, Nat.mul_zero, zero_add,
+-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    simp only [List.length_nil, Nat.mul_zero, zero_add]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+     rw [hs, MultiTapeTM.step_of_some rfl]
+     change (fwdMapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
+     rw [fwdMap_move]
+@@ -3074,8 +3074,7 @@
+     have hs : (fwdMapTM M false).tm.runFrom
+         (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
+         fwdMapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
+-      simp only [List.length_nil, Nat.mul_zero, zero_add,
+-        MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+       have hfirst : (fwdMapTM M false).tm.step
+           (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) =
+           fwdMapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
+@@ -3196,13 +3195,13 @@
+       rcases htail with he | ⟨bit, he⟩ | ⟨r, he⟩
+       · subst tail
+         refine ⟨1, by simp only [List.length_nil, mul_zero, zero_add]; omega, ?_⟩
+-        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++        simp only [MultiTapeTM.runFrom_one]
+         rw [MultiTapeTM.step_of_some rfl]
+         rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+         simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, Action.apply_output, fwdMapCfg]
+       · subst tail
+         refine ⟨2, by simp only [List.length_cons, List.length_nil]; omega, ?_⟩
+-        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
+         rw [fwdMap_first M x pre [] a bit hx]
+         rw [MultiTapeTM.step_of_some rfl]
+         rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+@@ -3485,7 +3484,7 @@
+     rintro z ⟨r, hr, q, tag, hq⟩
+     have hentered : fwdMapEntered M z := ⟨q, tag, by rw [hr, hq]⟩
+     have hs := fwdMapSetup_stationary M z hentered 1
+-    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
++    simpa only [MultiTapeTM.runFrom_one] using hs
+   have hdstop : ∃ r,
+       (fwdMapVirtual M (x := x) (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+         (pairEncode a [])).state = some r ∧ stop r := by
+@@ -4311,7 +4310,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, splitRestoreClean, splitRestoreTM, Cfg.workTapeSymbols,
+       Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+@@ -4643,7 +4642,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, splitPrepareReady, splitPrepareTM, Cfg.workTapeSymbols,
+       Fin.cases_zero, Nat.cast_zero, zero_sub, bufferTape_left]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+@@ -5079,8 +5078,7 @@
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+     funext i; simp [Action.apply, splitEmitCfg]
+   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step,
+-    show (splitEmitTM k).tm.step _ = _ from hf, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++    show (splitEmitTM k).tm.step _ = _ from hf, MultiTapeTM.runFrom_one]
+   refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+   · funext i; simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg]
+   · simp [MultiTapeTM.step, splitEmitTM, Action.apply, splitEmitCfg, List.append_assoc]
+@@ -5100,8 +5098,7 @@
+     have he : w = pre := by simpa using hw
+     clear hw
+     subst w
+-    simp only [List.append_nil, List.length_nil, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero]
++    simp only [List.append_nil, List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
+     have hr := splitPos_read pre (splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
+     simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
+     unfold MultiTapeTM.step
+@@ -5152,12 +5149,12 @@
+     (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S w)
+     (he : tm.step c = d) (hc : c.state ≠ some anchor) (hd : d.state ≠ some anchor) :
+     tm.runFrom c 1 = d ∧ splitSafe tm anchor c 1 := by
+-  refine ⟨he, ?_⟩
++  refine ⟨(MultiTapeTM.runFrom_one tm c).trans he, ?_⟩
+   intro j hj
+   rcases (show j = 0 ∨ j = 1 by omega) with rfl | rfl
+   · exact hc
+-  · change (tm.step c).state ≠ _
+-    rw [he]; exact hd
++  · rw [MultiTapeTM.runFrom_one, he]
++    exact hd
+ 
+ /-- Concatenate two safe exact phase runs. -/
+ private lemma splitSafe_join {k : ℕ} {S : Type} {w : List Bool}
+@@ -5207,6 +5204,7 @@
+     ({c with state := some (2 : Fin 3), inputPos := 1} : Cfg (M.k + 1) Bool (Fin 3) w).mapState
+     (SplitBodyState.rewind (S := M.State) ok)
+   have hdepart : tm.runFrom z 1 = p := by
++    rw [MultiTapeTM.runFrom_one]
+     change (controlAction 0 (some (.prepare (0, false)))).apply z = p
+     rw [controlAction_apply, moveInputPos_zero]
+     rfl
+@@ -5864,7 +5862,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [Nat.cast_zero, zero_sub, MultiTapeTM.step,
+       emitterCompareCfg, emitterCompareTM, Cfg.workTapeSymbols,
+       Fin.val_zero, Fin.val_one, Nat.one_ne_zero, ↓reduceIte, bufferTape_left, and_self, ↓reduceIte]
+@@ -6059,7 +6057,7 @@
+   induction u using List.reverseRecOn with
+   | nil =>
+     simp only [List.length_nil, Nat.cast_zero]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, emitterP2EraseCfg, emitterP2EraseTM,
+       Cfg.workTapeSymbols, bufferTape_nil]
+     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+@@ -6258,7 +6256,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some rfl]
+     cases candidate <;>
+       simp only [↓reduceIte, Bool.false_eq_true, Nat.cast_zero, zero_sub,
+@@ -6502,8 +6500,9 @@
+     let ec := embedEmitCfg index tapes heads [] c
+     let z := {ec.mapState emb with state := some enter}
+     have first : host.runFrom z 1 = (embedEmitCfg index tapes heads [] (src.runFrom c 1)).mapState emb := by
+-      change host.step z = (embedEmitCfg index tapes heads [] (src.step c)).mapState emb
++      rw [MultiTapeTM.runFrom_one, MultiTapeTM.runFrom_one]
+       have r1 := congrArg (Cfg.mapState emb) (embedEmitTM_runFrom index src tapes heads [] c 1)
++      simp only [MultiTapeTM.runFrom_one] at r1
+       change ((embedEmitTM index src).step ec).mapState emb =
+         (embedEmitCfg index tapes heads [] (src.step c)).mapState emb at r1
+       rw [← r1]
+@@ -7383,7 +7382,7 @@
+   let p := Cfg.ofWords (input := w) (EmitterP2State.prepare (S := C.State) (T := D.State) (0, false))
+     (emitterP2Words C.k D.k s [] [])
+   have hdepart : tm.runFrom z 1 = p := by
+-    change tm.step z = p
++    rw [MultiTapeTM.runFrom_one]
+     simpa only [z, p, emitterP2_words_clean] using emitterP2_control tm .anchor (.prepare (0, false))
+       (fun _ _ => rfl) w (emitterP2Words C.k D.k s [] [])
+   obtain ⟨c, hc, hp, hps⟩ := emitterP2_body_prepare C D hk hl ce cx de dx w s
+@@ -7713,7 +7712,7 @@
+     rw [scanCfg_read, hread]
+     apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, Action.apply, scanCfg]
+   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst]
++    MultiTapeTM.runFrom_one, hfirst]
+   cases b <;>
+     apply Cfg.ext_zero_tapes
+   all_goals first
+@@ -7729,7 +7728,7 @@
+     unaryTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =
+       scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true]) := by
+   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    MultiTapeTM.runFrom_one]
+   apply Cfg.ext_zero_tapes <;>
+     simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+ 
+@@ -7767,7 +7766,7 @@
+         simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
+     rw [show 3 = (0 + 1) + 1 + 1 by omega,
+       MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst, hsecond]
++      MultiTapeTM.runFrom_one, hfirst, hsecond]
+     unfold MultiTapeTM.step
+     change (unaryTokenTM.tm.tr (5 : Fin 6) _ _).apply _ = _
+     rw [scanCfg_read, hread]
+--- a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+@@ -1355,7 +1355,7 @@
+   let b := (d.workTapes 0 (d.workTapePos 0)).isSome
+   let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }
+   have hz : (rt_findParts (m := m) δ a₀ .read).runFrom d 1 = z := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     rw [step_of_inputMoveAction _ d 0 hd (by rfl)]
+     simp only [z, moveInputPos_zero]
+     rfl
+@@ -2317,7 +2317,7 @@
+     workTapes := Function.update d.workTapes i
+       (Function.update (d.workTapes i) (d.workTapePos i - 1) (some b))}
+   have one : (rt_boundaryTM k i b).runFrom d 1 = a := by
+-    change (rt_boundaryTM k i b).step d = a
++    rw [MultiTapeTM.runFrom_one]
+     rw [step_of_tapeAction_move (rt_boundaryTM k i b) d (q' := 1) i 0 .neg hs
+       (by simp [rt_boundaryTM])]
+     simp [a, SignType.cast, sub_eq_add_neg]
+--- a/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
+@@ -183,8 +183,7 @@
+       { d with
+         state := some (.after b₀)
+         workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by
+-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, hs1]
++    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_one, hs1]
+   refine ⟨hrun1, ?_⟩
+   have hr1 : ({ d with
+       state := some (sl_PairPhase.after b₀)
+@@ -457,8 +456,7 @@
+     have hs := sl_split_step_exit src sm hne hstate
+       (by rw [Cfg.workTapeSymbols_eq]; exact h0)
+     have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 = (sl_unarySplitTM k src sm).step d := by
+-      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-        MultiTapeTM.runFrom_zero]
++      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_one]
+     refine ⟨?_, ?_, ?_⟩
+     · rw [show ((0 : ℕ) : ℤ) = 0 from by norm_num, hrun1, hs]
+       apply Cfg.ext <;> dsimp only <;> try rfl
+@@ -617,8 +615,7 @@
+       { d with
+         state := some .mv2
+         workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } := by
+-    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, hs1]
++    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_one, hs1]
+   have hrun2 : (sl_unarySplitTM k src sm).runFrom d 2 =
+       { d with
+         state := some .copy
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+@@ -1497,7 +1497,9 @@
+   · subst records
+     have hz : rank.val = 0 := hlen.symm
+     simp only [hz, ↓reduceDIte] at step
+-    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := step
++    have he : (seekTM k).runFrom (seekCfg d (.state rank)) 1 = seekCfg d .done := by
++      rw [MultiTapeTM.runFrom_one]
++      exact step
+     simp only [seekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero,
+       Nat.cast_zero, add_zero, Function.update_eq_self]
+     refine ⟨he, ?_, ?_⟩
+@@ -1740,20 +1742,18 @@
+       · simp [hj, ht]
+   have run : (seekTM k).runFrom (seekCfg d .observe) 2 =
+       seekCfg (seekShift d 0 2) (.state rank) := by
+-    change (seekTM k).step ((seekTM k).step _) = _
+-    rw [first, second]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, first, second]
+   refine ⟨run, ?_, ?_⟩
+   · intro u hu
+     rcases (show u = 0 ∨ u = 1 by omega) with rfl | rfl
+     · simp [seekCfg, Cfg.mapState, hq]
+-    · change ((seekTM k).step _).state ≠ _
+-      rw [first]
++    · rw [MultiTapeTM.runFrom_one, first]
+       simp [seekCfg, Cfg.mapState, next, hq]
+   · intro u hu
+     rcases (show u = 0 ∨ u = 1 ∨ u = 2 by omega) with rfl | rfl | rfl
+     · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
+     · rw [show (seekTM k).runFrom (seekCfg d .observe) 1 = seekCfg next (.advance rank)
+-      from first]
++      from (MultiTapeTM.runFrom_one _ _).trans first]
+       exact ⟨rfl, rfl, rfl, fun j hj => by simp [seekCfg, Cfg.mapState, next, hj]⟩
+     · rw [run]
+       refine ⟨rfl, rfl, rfl, ?_⟩
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean
+@@ -136,8 +136,9 @@
+ /-- A full leaf run takes one step. -/
+ private lemma fl_leaf_run {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Option Bool) x)
+     (live : Bool) (hd : d.state = some (some live)) :
+-    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d :=
+-  fl_leaf_step d live hd
++    (fl_leafTM k).runFrom d 1 = fl_flush (if live then some none else none) d := by
++  rw [MultiTapeTM.runFrom_one]
++  exact fl_leaf_step d live hd
+ 
+ /-- Relabelling the forwarding configuration changes only its designated live control. -/
+ private lemma fl_encode_map {k n : ℕ} {Q R : Type} {x : List Bool} (entry : Q)
+--- a/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+@@ -598,7 +598,7 @@
+         (M.step c) ct cp := by
+   have hE := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c 1
+   rw [sc_layout, sc_layout, hs] at hE
+-  simp only [MultiTapeTM.runFrom, Function.iterate_one] at hE
++  simp only [MultiTapeTM.runFrom_one] at hE
+   rw [show (embedEmitTM Fin.castSuccEmb M).step (clockCfg (some s) c ct cp) =
+       ((embedEmitTM Fin.castSuccEmb M).tr s (clockCfg (some s) c ct cp).inputSymbol
+         (clockCfg (some s) c ct cp).workTapeSymbols).apply (clockCfg (some s) c ct cp)
+--- a/TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean
+@@ -609,7 +609,7 @@
+       ↓reduceIte, and_self, and_false, false_and, true_and] using step
+   have one (e : Cfg k Bool (Fin 4) z) :
+       (headerScanTM i).runFrom e 1 = (headerScanTM i).step e := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+   constructor
+   · calc
+       _ = (headerScanTM i).runFrom
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -918,7 +918,7 @@
+     have hstate : (timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by
+       simp only [timedControlCfg, captureCfg_state, leftCfg_state, hs,
+         Option.map_none, Option.getD_none]
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       MultiTapeTM.step_of_some hstate]
+     funext i
+     rw [Action.apply_workTapePos, timed_control_heads]
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -445,7 +445,7 @@
+   lo _ d j := min (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
+   hi _ d j := max (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
+   run _ d hd _ := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       zr_cell_step i choose wr dir d hd]
+   exit_mem _ d _ _ := ⟨choose (d.workTapeSymbols i), rfl⟩
+   cut _ d hd _ u hu := by
+@@ -459,7 +459,7 @@
+     rcases he with rfl | rfl
+     · rw [MultiTapeTM.runFrom_zero]
+       exact Finset.mem_Icc.mpr ⟨min_le_left _ _, le_max_left _ _⟩
+-    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    · rw [MultiTapeTM.runFrom_one,
+         zr_cell_step i choose wr dir d hd]
+       exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩
+ 
+@@ -14868,7 +14868,7 @@
+     (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :
+     Lockstep (x := x) (x' := x) M (zr_mirTM M) zr_mir (fun _ => 1) X X :=
+   ⟨fun c _ => by
+-      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step],
++      rw [MultiTapeTM.runFrom_one, zr_mir_step],
+     fun _ h => h, fun c h v hv => by
+       obtain rfl : v = 0 := by omega
+       rw [MultiTapeTM.runFrom_zero]
+@@ -14900,7 +14900,7 @@
+     rcases (by omega : v = 0 ∨ v = 1) with rfl | rfl
+     · rw [MultiTapeTM.runFrom_zero]
+       exact ⟨min_le_left _ _, le_max_left _ _⟩
+-    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step]
++    · rw [MultiTapeTM.runFrom_one, zr_mir_step]
+       exact ⟨min_le_right _ _, le_max_right _ _⟩
+ 
+ /-- The data with every track's two sides exchanged. -/
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1894,7 +1894,7 @@
+   have singleton : FinTM.bufferTape [b] =
+       Function.update (fun _ : ℤ => (none : Option Bool)) 0 (some b) := by
+     simpa using FinTM.bufferTape_append ([] : List Bool) b
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_one]
+   refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+   all_goals
+     simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+@@ -3324,7 +3324,7 @@
+     exact Fin.ext hp
+   | succ r ih =>
+     rw [roundOrbit_succ, ih (by omega) (fun i hi => hprefix i (by omega))]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       canonCell_step true _ (some true) rfl]
+     have read :
+         ({ d with
+@@ -3414,8 +3414,7 @@
+       change roundOrbit M (fun _ => 1) d (r + 1) = _
+       rw [roundOrbit_succ]
+       change M.runFrom (counterLoopOrbit M (fun _ => 1) d r) 1 = _
+-      rw [orbit r le_rfl, MultiTapeTM.runFrom_succ_eq_step,
+-        MultiTapeTM.runFrom_zero, canonCell_step true _ (some true) rfl]
++      rw [orbit r le_rfl, MultiTapeTM.runFrom_one, canonCell_step true _ (some true) rfl]
+       have read := FinTM.inputSymbol_at
+         ({ d with state := some (some true), inputPos := ⟨p + r + 1, by omega⟩ })
+         (p + r) hr rfl
+@@ -3949,6 +3948,7 @@
+         have step := step_of_inputMoveAction M d (q' := Sum.inl false) 0 state
+           (by simp [M, canonPairsTM, more, read])
+         have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by
++          rw [MultiTapeTM.runFrom_one]
+           simpa only [moveInputPos_zero] using step
+         have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+           rw [parse, suffix]
+@@ -3998,7 +3998,7 @@
+                 (M.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+           have step := step_of_inputMoveAction M d1 _ d1state tr
+           have run2 : M.runFrom d 2 = { d1 with state := some (Sum.inl false) } := by
+-            rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
++            rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1, MultiTapeTM.runFrom_one]
+             simpa only [moveInputPos_zero] using step
+           have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+             rw [parse, invalid]
+@@ -4069,6 +4069,7 @@
+       have step := step_of_inputMoveAction M d (q' := Sum.inl true) 0 state
+         (by simp [M, canonPairsTM, more])
+       have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by
++        rw [MultiTapeTM.runFrom_one]
+         simpa only [moveInputPos_zero] using step
+       refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+       · rw [run, done]; rfl
+@@ -4126,8 +4127,9 @@
+     (canonTagTM m).runFrom d 1 =
+       { d with
+         state := some (some d.inputSymbol)
+-        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } :=
+-  step_of_inputMoveAction _ _ _ hs rfl
++        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } := by
++  rw [MultiTapeTM.runFrom_one]
++  exact step_of_inputMoveAction _ _ _ hs rfl
+ 
+ /-- The record's native finite pair list. -/
+ private abbrev canonRecordPairs (k : ℕ) : List (Bool → Bool → Bool) :=
+@@ -4518,8 +4520,9 @@
+       | true =>
+         let e : Cfg m Bool (Option Bool) x :=
+           { d with state := some none, inputPos := moveInputPos d.inputPos 1 }
+-        have step : (canonSuffixTM m).runFrom d 1 = e :=
+-          step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])
++        have step : (canonSuffixTM m).runFrom d 1 = e := by
++          rw [MultiTapeTM.runFrom_one]
++          exact step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])
+         obtain ⟨moved, rest⟩ := advance true ys tail
+         have newPos : e.inputPos.val = p + 2 := moved
+         have newTail : x.drop (e.inputPos.val - 1) = ys := by
+@@ -4556,7 +4559,7 @@
+     (bit : Bool) (hs : d.state = some bit) :
+     ((canonHaltTM k).runFrom d 1).state = none ∧
+       ((canonHaltTM k).runFrom d 1).output = d.output ++ [bit] := by
+-  simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,
++  simp [MultiTapeTM.runFrom_one, MultiTapeTM.step, hs,
+     canonHaltTM, Action.apply]
+ 
+ /-- A three-port silent computation becomes a one-bit halting computation. The absent
+--- a/TCSlib/Complexity/TuringMachine/CounterProg.lean
++++ b/TCSlib/Complexity/TuringMachine/CounterProg.lean
+@@ -302,7 +302,7 @@
+   induction j with
+   | zero =>
+     intro out _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     have hb : tp r (Function.update hd r ((0 : ℕ) - 1 : ℤ) r) = none := by
+       simp [htp, ones_neg]
+     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
+@@ -338,7 +338,7 @@
+   induction d with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
++    rw [MultiTapeTM.runFrom_one, step_some]
+     have hb : tp r (Function.update hd r (((m - 0 : ℕ) : ℤ)) r) = none := by
+       simp [htp, ones_ge]
+     simp only [tr, hb, Option.isSome_none, Bool.false_eq_true, if_false]
+@@ -413,7 +413,7 @@
+       (⟨some (.main l), ip, fun r => ones (ρ r), fun r => (ρ r : ℤ), out⟩ :
+         Cfg R Bool (TSt R Λ) x) := rfl
+   have hone : ∀ c : Cfg R Bool (TSt R Λ) x, (toTM P l₀).tm.runFrom c 1 = (toTM P l₀).tm.step c :=
+-    fun c => rfl
++    MultiTapeTM.runFrom_one _
+   rw [henc] at hsym ⊢
+   cases hP : P l with
+   | halt =>
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -219,6 +219,11 @@
+     tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) := by
+   simp [runFrom, Function.iterate_succ_apply']
+ 
++/-- A one-step run from any configuration is exactly one machine step. -/
++theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
++    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
++  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++
+ /-- Running `a + b` steps equals running `b` steps from the configuration reached after `a`. -/
+ lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
+     tm.runFrom cfg (a + b) = tm.runFrom (tm.runFrom cfg a) b := by
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -416,7 +416,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++    rw [MultiTapeTM.runFrom_one,
+       pairDiag_step _ _ _ _ none (by simp [pairDiagCfg, Cfg.inputSymbol])]
+     simp only [pairDiagTM, Option.toList_none, List.append_nil]
+     rw [moveInputPos_pos_of_ne_right _ (by simp)]
+@@ -467,7 +467,7 @@
+       pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true]) := by
+   rw [show 3 = (0 + 1) + 1 + 1 from rfl,
+     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    MultiTapeTM.runFrom_one]
+   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 0) out)]
+   simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
+   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 2) _)]
+--- a/TCSlib/Complexity/TuringMachine/MathlibBridge.lean
++++ b/TCSlib/Complexity/TuringMachine/MathlibBridge.lean
+@@ -629,8 +629,7 @@
+       p (Function.update st k (f v :: st k)) out) ?_ (ih v _ ht)
+     refine ⟨2, ?_⟩
+     rw [bridgeExec_mem c _ v hq, show 2 = 1 + 1 from rfl,
+-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM]
+     change (bridgeTM c).tm.step
+       ((bridgeOne (bridgeIndex k) none .neg (some (.push ⟨some (.push k f tail), hq⟩ v))).apply
+@@ -644,8 +643,7 @@
+     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v (st k).head?))
+       p st out) ?_ (ih _ _ ht)
+     refine ⟨1, ?_⟩
+-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM]
+     rw [bridgeCfg_read]
+     have hh : ((st k).head?.map (Sum.inr (α := Bool))).bind Sum.getRight? = (st k).head? := by
+@@ -658,8 +656,7 @@
+     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v (st k).head?))
+       p (Function.update st k (st k).tail) out) ?_ (ih _ _ ht)
+     refine ⟨1, ?_⟩
+-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM]
+     rw [bridgeCfg_read]
+     have hh : ((st k).head?.map (Sum.inr (α := Bool))).bind Sum.getRight? = (st k).head? := by
+@@ -673,8 +670,7 @@
+     apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some tail) (f v)) p st out)
+       ?_ (ih _ _ ht)
+     refine ⟨1, ?_⟩
+-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM]
+     exact bridgeCfg_idle c _ _ p st out
+   | branch f yes no ihy ihn =>
+@@ -685,8 +681,7 @@
+       apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some no) v) p st out)
+         ?_ (by simpa [TM2.stepAux, hv] using ihn v st ht)
+       refine ⟨1, ?_⟩
+-      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-        MultiTapeTM.runFrom_zero, bridge_step]
++      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+       simp only [bridgeTM, hv, Bool.false_eq_true, ↓reduceIte]
+       exact bridgeCfg_idle c _ _ p st out
+     | true =>
+@@ -694,22 +689,19 @@
+       apply bridgeReach_trans _ (b := bridgeCfg c (bridgeExec c (some yes) v) p st out)
+         ?_ (by simpa [TM2.stepAux, hv] using ihy v st ht)
+       refine ⟨1, ?_⟩
+-      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-        MultiTapeTM.runFrom_zero, bridge_step]
++      rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+       simp only [bridgeTM, hv, ↓reduceIte]
+       exact bridgeCfg_idle c _ _ p st out
+   | goto f =>
+     intro v st hq
+     refine ⟨1, ?_⟩
+-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM, TM2.stepAux, Option.map_some]
+     exact bridgeCfg_idle c _ _ p st out
+   | halt =>
+     intro v st hq
+     refine ⟨1, ?_⟩
+-    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_step]
++    rw [bridgeExec_mem c _ v hq, MultiTapeTM.runFrom_one, bridge_step]
+     simp only [bridgeTM, TM2.stepAux, Option.map_none]
+     exact bridgeCfg_idle c _ _ p st out
+ 
+@@ -820,7 +812,7 @@
+   | zero =>
+     intro _
+     refine ⟨1, ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
++    rw [MultiTapeTM.runFrom_one, bridge_step]
+     have hi : (bridgeCfg (x := x.map Sum.inl) c (some .back) ⟨0, by simp⟩
+       (bridgeStore (bridgeWord (x.drop 0))) []).inputSymbol = none := by
+       simp [bridgeCfg, Cfg.inputSymbol]
+@@ -834,7 +826,7 @@
+       ⟨j, by simp; omega⟩ (bridgeStore (bridgeWord (x.drop j))) []) ?_ (ih (by omega))
+     refine ⟨2, ?_⟩
+     rw [MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
++      MultiTapeTM.runFrom_one, bridge_step]
+     have hi : (bridgeCfg (x := x.map Sum.inl) c (some .back) ⟨j + 1, by simp; omega⟩
+       (bridgeStore (bridgeWord (x.drop (j + 1)))) []).inputSymbol = some (Sum.inl x[j]) := by
+       exact (inputSymbolInner (cfg := bridgeCfg (x := x.map Sum.inl) c (some .back)
+@@ -913,7 +905,7 @@
+       (bridgeCfg (x := x.map Sum.inl) c (some .scan) ⟨x.length + 1, by simp⟩ (bridgeStore []) []) 3 =
+       bridgeCfg c (some .back) ⟨x.length, by simp⟩ (bridgeStore [.bit1, .cons]) [] := by
+   rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
++    MultiTapeTM.runFrom_one, bridge_step]
+   have hi : (bridgeCfg (x := x.map Sum.inl) c (some .scan) ⟨x.length + 1, by simp⟩
+     (bridgeStore []) []).inputSymbol = none := by
+     simp [bridgeCfg, Cfg.inputSymbol, Fin.ext_iff]
+@@ -997,8 +989,7 @@
+   | nil =>
+     intro st out carry hs
+     refine ⟨2, ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, bridge_emit_step c p st out carry true [.cons] hs, bridge_step]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, bridge_emit_step c p st out carry true [.cons] hs, bridge_step]
+     have hr := bridgeCfg_read c (some (.emit (some true))) p (Function.update st .main [.cons])
+       (out ++ carry.toList.map Sum.inl) .main
+     simp only [Function.update_self, List.head?_cons, Option.map_some] at hr
+@@ -1011,7 +1002,7 @@
+     have hs' : st .main = bridgeBit b :: bridgeWord xs := hs
+     apply bridgeReach_trans _ (b := bridgeCfg c (some (.emit (some b))) p
+       (Function.update st .main (bridgeWord xs)) (out ++ carry.toList.map Sum.inl))
+-    · exact ⟨1, by simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
++    · exact ⟨1, by simpa only [MultiTapeTM.runFrom_one] using
+         bridge_emit_step c p st out carry b (bridgeWord xs) hs'⟩
+     · have h := ih (Function.update st .main (bridgeWord xs))
+         (out ++ carry.toList.map Sum.inl) (some b) (Function.update_self _ _ _)
+@@ -1044,7 +1035,7 @@
+         (bridgeStore (bridgeWord (f x))) [])
+       (bridgeCfg c (some (.emit none)) 0 (bridgeStore (bridgeWord (f x))) []) := by
+     refine ⟨1, ?_⟩
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
++    rw [MultiTapeTM.runFrom_one, bridge_step]
+     exact bridgeCfg_idle c _ _ _ _ _
+   have hf := bridge_emit c (x := x.map Sum.inl) 0 (f x)
+     (bridgeStore (bridgeWord (f x))) [] none rfl
+--- a/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean
+@@ -629,8 +629,7 @@
+       ∀ u < 1, ∀ verdict : Bool,
+         ((ic_verdictTM K summary).runFrom d u).state ≠ some (Sum.inr verdict) := by
+   constructor
+-  · rw [show 1 = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd, Action.apply_state]
++  · rw [show 1 = 0 + 1 from rfl, MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hd, Action.apply_state]
+     simp only [ic_verdictTM, hsummary]
+     congr 2
+     cases halted <;> simp only [Bool.false_and, Bool.true_and, Bool.false_eq_true,
+--- a/TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean
+@@ -298,7 +298,7 @@
+     (foldTM M).tm.runFrom ((foldTM M).tm.initCfg (x.map foldEmbedding)) (t + 1) =
+       foldCfg (M.tm.runFrom (M.tm.initCfg x) t) := by
+   induction t with
+-  | zero => simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using foldCfg_init M x
++  | zero => simpa only [MultiTapeTM.runFrom_one] using foldCfg_init M x
+   | succ t ih =>
+     rw [MultiTapeTM.runFrom_succ_eq_step', ih, foldCfg_step,
+       MultiTapeTM.runFrom_succ_eq_step']
+--- a/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
+@@ -1056,6 +1056,7 @@
+       macroCfg W a base (some .macroCheck) (u + 1) 0 := by
+   have hcheck : (obliviousSchedule W a).tm.runFrom
+       (macroCfg W a base (some .macroCheck) u 0) 1 = macroCfg W a base (some .seekLeft) u 0 := by
++    rw [MultiTapeTM.runFrom_one]
+     simpa only [hu, ↓reduceIte] using macroCfg_check W a base u 0
+   have hseek : (obliviousSchedule W a).tm.runFrom
+       (macroCfg W a base (some .seekLeft) u 0) (R + 2) =
+--- a/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean
+@@ -157,7 +157,7 @@
+   have hs1 : (obliviousSchedule W a).tm.runFrom
+       (setupCfg W a base (some .resetStart) p b u g bt ut gt) 1 =
+       setupCfg W a base (some .resetScan) ⟨p.val - 1, by have := p.isLt; omega⟩ b u g bt ut gt := by
+-    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
++    simpa only [MultiTapeTM.runFrom_one] using hs
+   rw [show p.val - 1 + 2 = 1 + (p.val - 1) + 1 by omega,
+     MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,
+     setupCfg_reset_scan W a base b u g bt ut gt _ (by have := p.isLt; omega)]
+@@ -207,8 +207,7 @@
+     funext z
+     simp only [Function.update_apply, copyGuide, Int.natCast_zero]
+     split_ifs <;> first | rfl | omega
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
+-    MultiTapeTM.runFrom_zero]
++  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_one]
+   change (obliviousSchedule W a).tm.step
+       (((obliviousSchedule W a).tm.tr .copyLeft _ _).apply _) = _
+   simp only [obliviousSchedule]
+@@ -289,7 +288,7 @@
+       setupCfg W a base (some .budgetStart) p b u 0 bt ut (copyGuide (n + 1)) := by
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     change ((obliviousSchedule W a).tm.tr .copyReturn _ _).apply _ = _
+     have hr : (setupCfg W a base (some .copyReturn) p b u 0 bt ut (copyGuide (n + 1))).workTapeSymbols
+         (Fin.natAdd W.k (2 : Fin 3)) = copyGuide (n + 1) 0 := by
+@@ -359,7 +358,7 @@
+     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
++    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
+   | succ j ih =>
+     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
+     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
+@@ -641,7 +640,7 @@
+       split <;> rw [setupCfg_apply] <;> simp_all [setupWrite, sub_eq_add_neg]
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
++    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
+   | succ j ih =>
+     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
+     simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using ih
+@@ -966,7 +965,7 @@
+     split <;> rw [setupCfg_apply] <;> simp_all [setupWrite]
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
++    rw [MultiTapeTM.runFrom_one, step, if_pos rfl]
+   | succ j ih =>
+     rw [MultiTapeTM.runFrom_succ_eq_step, step, if_neg (by omega)]
+     rw [show -((j + 1 : ℕ) : ℤ) + 1 = -(j : ℤ) by omega]
+--- a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+@@ -790,7 +790,7 @@
+       output := c₀.output ++ (a.output.map Sum.inl).toList } at hstep
+   have h₀ : (tt_Mf M F none).runFrom c₀ 0 = c₀ := MultiTapeTM.runFrom_zero
+   have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ :=
+-    MultiTapeTM.runFrom_succ_eq_step.trans MultiTapeTM.runFrom_zero
++    MultiTapeTM.runFrom_one _ _
+   have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →
+       tt_red M F hk none s = none := by
+     intro u hu s hs
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -1122,7 +1122,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+       tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
+     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+--- a/TCSlib/Complexity/TuringMachine/Universal.lean
++++ b/TCSlib/Complexity/TuringMachine/Universal.lean
+@@ -271,7 +271,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.rewindTable initial index) (.countFirst initial index)
+       table (-1) state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, universalFour])
+     simpa using he
+@@ -320,8 +320,7 @@
+       table (l.length + 1) state sp .pos 0 none
+       (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr1])
+     change timedCutInterpreter.runFrom _ (0 + 1 + 1) = _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, he0]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, he0]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
+     rw [he1]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero,
+@@ -394,7 +393,7 @@
+   intro j
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base q q' table tp state 0 0 .pos none
+       (hstop _ _ (by simpa [universalFour] using hzero))
+     simpa using he
+@@ -421,7 +420,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using timedCut_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.initialSkip index) (.group index)
+       table l.length state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr])
+     simpa using he
+@@ -464,7 +463,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using timedCut_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base q q' table l.length (universalStateTape j) (j + 1)
+       doneMove 0 none (hfalse _ _ (by simp [universalFour, hr]))
+     simpa using he
+@@ -602,7 +601,7 @@
+   induction n with
+   | zero =>
+     intro field tp hf
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.skipFixed dest rem field) (.skipUnary dest rem)
+       table tp state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, show field.val = 7 by omega])
+     simpa using he
+@@ -638,7 +637,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using timedCut_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.skipUnary dest rem)
+       (if h : rem.val = 0 then universalSkipDone dest
+         else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)
+@@ -755,7 +754,7 @@
+   induction groups generalizing l j with
+   | nil =>
+     simp only [List.length_nil, List.flatMap_nil, Nat.add_zero, Nat.zero_add,
+-      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.group index) (.rewindState (some index))
+       table l.length (universalStateWindow j 0) (j + 1) 0 0 none
+       (by simp [timedCutInterpreter, universalInterpreter, universalFour, universalStateWindow_end])
+@@ -781,7 +780,7 @@
+       (gs.length + (gs.flatMap (fun g => g.flatMap universalRecordBits)).length + 1),
+       MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
+     simp only [List.length_cons]
+-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
++    rw [MultiTapeTM.runFrom_one, he]
+     simp only [SignType.coe_zero, add_zero, SignType.pos_eq_one, SignType.coe_one,
+       universalStateWindow_erase]
+     rw [show (j : ℤ) + 1 + 1 = j + 2 by omega, hskip]
+@@ -823,7 +822,7 @@
+         apply hknown
+         have hn : i.val ≠ field.val := fun h => hi (Fin.ext h)
+         omega
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := timedCut_Eval_step base (.readAction field old) (.nextState bits)
+       table (l.length + field.val) state sp .pos 0 none
+       (by
+@@ -886,8 +885,7 @@
+     have he := timedCut_Eval_step base (.nextState bits) (.applyRecord bits true)
+       table l.length (universalStateTape 0) 1 0 0 none
+       (by simp [timedCutInterpreter, universalInterpreter, universalFour, hr])
+-    simpa [timedCut_NextCost, universalNextOnes, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero] using he
++    simpa [timedCut_NextCost, universalNextOnes, MultiTapeTM.runFrom_one] using he
+   | some q =>
+     have hr : bufferTape table (l.length : ℤ) = some true := by
+       rw [ht]; simpa [universalNextOnes, List.replicate_succ, List.append_assoc] using
+@@ -914,7 +912,7 @@
+     rw [show 2 * q.val + 4 = 1 + (q.val + 1) + (q.val + 2) by omega,
+       MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
+       MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
+-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
++    rw [MultiTapeTM.runFrom_one, he]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
+     rw [hc]
+     simpa only [universalNextOnes, Option.isNone_some, Option.map_some, Option.getD_some,
+@@ -1222,7 +1220,7 @@
+     have hmain : timedCutInterpreter.runFrom base 1 =
+         universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)
+           (universalStateTape q.val) 1 := by
+-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
++      rw [MultiTapeTM.runFrom_one]
+       conv_lhs => rw [hcfg]
+       have he := timedCut_Eval_step base .main (.rewindTable false index)
+         M.serialize p (universalStateTape q.val) 1 .neg 0 none (by
+@@ -1981,7 +1979,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have h := timedClock_step base (.clockBack bits halt) (.borrow bits halt true) bs (-1) .pos
+       (by intro inp ws hw; simp [timedInterpreter, hw])
+     simpa using h
+@@ -2037,6 +2035,7 @@
+       (timedBorrow true bs).2 bs.length := by
+   have h0 : timedInterpreter.runFrom (timedLift cfg bs) 1 =
+       timedClockCfg (timedLift cfg bs) (.clockBack bits halt) bs (bs.length - 1) := by
++    rw [MultiTapeTM.runFrom_one]
+     exact timed_clock_start cfg bs bits halt hs
+   have h1 := timed_clock_back (timedLift cfg bs) bits halt bs bs.length (le_refl _)
+   have h2 := timed_clock_borrow (timedLift cfg bs) bits halt true bs
+@@ -2143,7 +2142,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have h := timed_output_step cfg bs .emitBack (some .flush) (-1) out .pos (some true)
+       (by intro inp ws hw; simp [timedInterpreter, hw])
+     simpa using h
+@@ -2204,7 +2203,7 @@
+   have h2 := timed_output_forward cfg bs cfg.output [] [true] (by simp)
+   have hstart : timedInterpreter.runFrom (timedLift cfg bs) 1 =
+       timedOutputCfg cfg bs (some .emitBack) (cfg.output.length - 1) [] := by
+-    rw [hcfg]
++    rw [MultiTapeTM.runFrom_one, hcfg]
+     simpa using h0
+   have h := timedCut_run_join timedInterpreter (timedCut_run_join timedInterpreter hstart h1) h2
+   have ht : 1 + (cfg.output.length + 1) + (cfg.output.length + 1) = 2 * cfg.output.length + 3 := by omega
+--- a/TCSlib/Complexity/TuringMachine/UniversalBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/UniversalBlock.lean
+@@ -66,7 +66,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using universal_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.skipUnary dest rem)
+       (if h : rem.val = 0 then universalSkipDone dest
+         else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)
+@@ -183,7 +183,7 @@
+   induction groups generalizing l j with
+   | nil =>
+     simp only [List.length_nil, List.flatMap_nil, Nat.add_zero, Nat.zero_add,
+-      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.group index) (.rewindState (some index))
+       table l.length (universalStateWindow j 0) (j + 1) 0 0 none
+       (by simp [universalInterpreter, universalFour, universalStateWindow_end])
+@@ -209,7 +209,7 @@
+       (gs.length + (gs.flatMap (fun g => g.flatMap universalRecordBits)).length + 1),
+       MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
+     simp only [List.length_cons]
+-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
++    rw [MultiTapeTM.runFrom_one, he]
+     simp only [SignType.coe_zero, add_zero, SignType.pos_eq_one, SignType.coe_one,
+       universalStateWindow_erase]
+     rw [show (j : ℤ) + 1 + 1 = j + 2 by omega, hskip]
+@@ -251,7 +251,7 @@
+         apply hknown
+         have hn : i.val ≠ field.val := fun h => hi (Fin.ext h)
+         omega
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.readAction field old) (.nextState bits)
+       table (l.length + field.val) state sp .pos 0 none
+       (by
+@@ -314,8 +314,7 @@
+     have he := universalEval_step base (.nextState bits) (.applyRecord bits true)
+       table l.length (universalStateTape 0) 1 0 0 none
+       (by simp [universalInterpreter, universalFour, hr])
+-    simpa [universalNextCost, universalNextOnes, MultiTapeTM.runFrom_succ_eq_step,
+-      MultiTapeTM.runFrom_zero] using he
++    simpa [universalNextCost, universalNextOnes, MultiTapeTM.runFrom_one] using he
+   | some q =>
+     have hr : bufferTape table (l.length : ℤ) = some true := by
+       rw [ht]; simpa [universalNextOnes, List.replicate_succ, List.append_assoc] using
+@@ -342,7 +341,7 @@
+     rw [show 2 * q.val + 4 = 1 + (q.val + 1) + (q.val + 2) by omega,
+       MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
+       MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
+-    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
++    rw [MultiTapeTM.runFrom_one, he]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
+     rw [hc]
+     simpa only [universalNextOnes, Option.isNone_some, Option.map_some, Option.getD_some,
+@@ -641,7 +640,7 @@
+     have hmain : universalInterpreter.runFrom base 1 =
+         universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)
+           (universalStateTape q.val) 1 := by
+-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
++      rw [MultiTapeTM.runFrom_one]
+       conv_lhs => rw [hcfg]
+       have he := universalEval_step base .main (.rewindTable false index)
+         M.serialize p (universalStateTape q.val) 1 .neg 0 none (by
+@@ -704,7 +703,7 @@
+         (universalEvalCfg base (.applyRecord bits a.state.isNone) M.serialize p'
+           (universalStateTape ((a.state.map Fin.val).getD 0)) 1) 1 =
+       universalSimulationCfg M α (a.apply src) p' := by
+-      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
++      rw [MultiTapeTM.runFrom_one]
+       exact universal_apply_record M α src p p' a
+     have hrun := universal_run_join universalInterpreter
+       (universal_run_join universalInterpreter
+--- a/TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean
++++ b/TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean
+@@ -291,7 +291,7 @@
+   induction j with
+   | zero =>
+     intro hj
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.rewindTable initial index) (.countFirst initial index)
+       table (-1) state sp .pos 0 none (by simp [universalInterpreter, universalFour])
+     simpa using he
+@@ -340,8 +340,7 @@
+       table (l.length + 1) state sp .pos 0 none
+       (by simp [universalInterpreter, universalFour, hr1])
+     change universalInterpreter.runFrom _ (0 + 1 + 1) = _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+-      MultiTapeTM.runFrom_zero, he0]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one, he0]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero]
+     rw [he1]
+     simp only [SignType.pos_eq_one, SignType.coe_one, SignType.coe_zero, add_zero,
+@@ -477,7 +476,7 @@
+   intro j
+   induction j with
+   | zero =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base q q' table tp state 0 0 .pos none
+       (hstop _ _ (by simpa [universalFour] using hzero))
+     simpa using he
+@@ -501,7 +500,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using universal_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.initialSkip index) (.group index)
+       table l.length state sp .pos 0 none (by simp [universalInterpreter, universalFour, hr])
+     simpa using he
+@@ -544,7 +543,7 @@
+   | zero =>
+     have hr : bufferTape table (l.length : ℤ) = some false := by
+       rw [ht]; simpa using universal_table_read l r false
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base q q' table l.length (universalStateTape j) (j + 1)
+       doneMove 0 none (hfalse _ _ (by simp [universalFour, hr]))
+     simpa using he
+@@ -1005,7 +1004,7 @@
+   induction n with
+   | zero =>
+     intro field tp hf
+-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     have he := universalEval_step base (.skipFixed dest rem field) (.skipUnary dest rem)
+       table tp state sp .pos 0 none (by simp [universalInterpreter, show field.val = 7 by omega])
+     simpa using he
+--- a/TCSlib/Complexity/TuringMachine/UniversalK.lean
++++ b/TCSlib/Complexity/TuringMachine/UniversalK.lean
+@@ -630,7 +630,7 @@
+           (d.workTapePos i + if d.workTapeSymbols i = none then (emptyMove : ℤ) else 0) } ∧
+       ∀ u < 1, ((ss_bufferLeaf n i emptyMove).runFrom d u).state ≠ some true := by
+   constructor
+-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++  · rw [MultiTapeTM.runFrom_one]
+     have h := step_of_tapeAction_move (ss_bufferLeaf n i emptyMove) d i 0
+       (if d.workTapeSymbols i = none then emptyMove else 0) hstate rfl
+     simpa only [moveInputPos_zero, apply_ite, SignType.coe_zero] using h
+@@ -1261,8 +1261,7 @@
+   have hstop : M.runFrom d (d.inputPos.val + 1) =
+       { d with state := some .stop, inputPos := 1 } := by
+     rw [← ht, MultiTapeTM.runFrom_add,
+-      MultiTapeTM.runFrom_succ_eq_step' (cfg := d) (t := 0),
+-      MultiTapeTM.runFrom_zero, hstep, hscan]
++      MultiTapeTM.runFrom_one, hstep, hscan]
+   have hlast : ∀ (a : Cfg n Bool ss_RewindState z), a.state = some .stop →
+       M.step a = { a with state := some .done } := by
+     intro a ha

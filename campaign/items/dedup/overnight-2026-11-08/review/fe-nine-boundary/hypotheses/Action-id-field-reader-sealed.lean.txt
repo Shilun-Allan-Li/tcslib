@@ -1,0 +1,15 @@
+import TCSlib.Complexity.TuringMachine.StateRenaming
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+attribute [local irreducible] Turing.Action.mapState
+example {k : ℕ} {State : Type*} (act : Action k Bool State) :
+    act.mapState id = act := by
+  change Action.mk (act.mapState id).inputTape (act.mapState id).workTapes
+    (act.mapState id).output (act.mapState id).state = act
+  have hw : (act.mapState id).workTapes = act.workTapes := by
+    funext i
+    exact Action.mapState_workTapes id act i
+  rw [Action.mapState_inputTape, hw, Action.mapState_output,
+    Action.mapState_state, Option.map_id]
+  rfl

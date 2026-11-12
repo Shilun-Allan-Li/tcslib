@@ -1,0 +1,48 @@
+private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
+    (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :
+    ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,
+      (b = true ↔ clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) ∧
+      (∀ j, j < t → ∀ d, (clCmpTM.tm.runFrom
+        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state ≠ some (.inr (.inr d))) ∧
+      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =
+        clCmpCfg x p (.inr (.inr b)) w 0 := by
+  let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
+  have finish := clCmp_run x p w
+  have hex : ∃ t, t ≤ 2 * clCmpSize w + 2 ∧
+      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
+        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩
+  let t := Nat.find hex
+  have ht := Nat.find_spec hex
+  have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hh := ht.2
+    change (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
+      some (.inr (.inr b)) at hh
+    rw [hz, MultiTapeTM.runFrom_zero] at hh
+    cases hh
+  refine ⟨t, by omega, hp, b, clCmpVerdict_spec w, ?_, ?_⟩
+  · intro j hj d hd
+    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)
+    change clCmpTM.tm.runFrom
+      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j)
+      (2 * clCmpSize w + 2 - j) =
+        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay
+    have hh := congrArg Cfg.state (finish.symm.trans hstay)
+    rw [hd] at hh
+    have hbd : b = d := Sum.inr.inj (Sum.inr.inj (Option.some.inj hh))
+    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
+        some (.inr (.inr b)) := by rw [hbd]; exact hd
+    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
+      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
+        some (.inr (.inr b)) from ⟨by omega, hs⟩)
+    omega
+  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)
+    change clCmpTM.tm.runFrom
+      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t)
+      (2 * clCmpSize w + 2 - t) =
+        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+    exact hstay.symm.trans finish

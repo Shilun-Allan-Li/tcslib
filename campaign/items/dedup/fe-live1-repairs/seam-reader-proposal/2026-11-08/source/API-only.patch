@@ -1,0 +1,24 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+@@ -144,6 +144,21 @@
+     | Sum.inr s =>
+       let a := M₂.tr s inp w
+       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
++
++/-- At a right state, the seam composite uses the second machine's action with its
++successor state injected into the right summand. -/
++theorem seamCompTM_tr_inr {Symbol : Type*} [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Symbol S₂) (entry q : S₂)
++    (inp : Option Symbol) (work : Fin k → Option Symbol) :
++    (seamCompTM M₁ exit M₂ entry).tr (Sum.inr q) inp work =
++      (M₂.tr q inp work).mapState Sum.inr := by
++  change Action.mk (M₂.tr q inp work).inputTape (M₂.tr q inp work).workTapes
++    (M₂.tr q inp work).output ((M₂.tr q inp work).state.map Sum.inr) = _
++  rw [← Action.mapState_inputTape Sum.inr (M₂.tr q inp work),
++    ← funext (Action.mapState_workTapes Sum.inr (M₂.tr q inp work)),
++    ← Action.mapState_output Sum.inr (M₂.tr q inp work),
++    ← Action.mapState_state Sum.inr (M₂.tr q inp work)]
+ 
+ /-- Away from the exit, one left step is exactly the state-mapped source step,
+ including the absorbing halted case. -/

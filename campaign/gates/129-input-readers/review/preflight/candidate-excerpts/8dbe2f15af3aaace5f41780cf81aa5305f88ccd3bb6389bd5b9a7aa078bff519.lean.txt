@@ -1,0 +1,29 @@
+/-- The framed counter's only hand-built table: there is no public input-driven
+counter. Carry and work-head rewind implement the counting phase of Catalog's
+`f2_counterTM`; the native-input return uses the public input-fold transition
+and rewind contract.
+
+**Fill appendix.** The input-advance step is separate from the carry, costing
+one extra step per round. A round with `p` cleared digits therefore costs
+`2*p + 3`; its cost plus twice the change in the true-bit count is five.
+The exit is stationary so the least exit time has the same exact finish. -/
+private def inputLengthMachine : MultiTapeTM 1 Bool InputLengthPhase where
+  q₀ := .count
+  tr := fun phase inp work =>
+    match phase with
+    | .count =>
+      match inp with
+      | some _ => inputMoveAction .pos .carry
+      | none => inputMoveAction 0 .returnStart
+    | .carry =>
+      if work 0 = some true then tapeAction 0 0 (some (some false)) .pos .carry
+      else tapeAction 0 0 (some (some true)) .neg .back
+    | .back =>
+      match work 0 with
+      | some _ => tapeAction 0 0 none .neg .back
+      | none => tapeAction 0 0 none .pos .count
+    | .returnStart => FinTM.controlAction .neg (some .returnScan)
+    | .returnScan =>
+      ((inputFoldTM 1 (fun (_ : Unit) (_ : Bool) => ()) ()).tr (.bwd ()) inp work).mapState
+        (fun q => match q with | .done _ => .done | _ => .returnScan)
+    | .done => inputMoveAction 0 .done

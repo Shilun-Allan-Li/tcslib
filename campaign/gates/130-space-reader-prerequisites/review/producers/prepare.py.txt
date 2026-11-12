@@ -1,0 +1,43 @@
+from pathlib import Path
+import os,json,hashlib,subprocess,datetime,shutil
+O=Path(__file__).parent;W=Path('/Users/seyoonr/.codex/worktrees/ab34-space-readers/tcslib-arora-barak-ch3-4');R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');ROOT=Path('/private/tmp/ab34-nspace5-replay')
+def sha(b):return hashlib.sha256(b).hexdigest()
+def git(*a):return subprocess.check_output(['git','-C',str(W),*a])
+def write(n,v):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(v,indent=2,ensure_ascii=False)+'\n')
+def capture(src,dest):dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(src.read_bytes())
+request=json.loads((ROOT/'request.json').read_text());head=git('rev-parse','HEAD').decode().strip();base=git('rev-parse',request['snapshot_lean_commit']+'^{commit}').decode().strip();assert head==request['head']
+for h in [head,base]:git('cat-file','-e',h+'^{commit}')
+assert not git('status','--porcelain','--untracked-files=no').strip()
+changed=request['changed_files'];assert sorted(git('diff','--name-only',base,head,'--','*.lean').decode().splitlines())==sorted(changed)
+order=[m+'.lean' for m in (ROOT/'down.txt').read_text().splitlines() if m+'.lean' in changed];assert len(order)==3
+source={}
+for row in git('ls-tree','-rz','--full-tree',head).split(b'\0'):
+ if not row:continue
+ meta,name=row.split(b'\t',1);name=name.decode();mode,kind,blob=meta.decode().split()
+ if not name.endswith('.lean'):continue
+ b=(W/name).read_bytes();assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==blob
+ source[name]={'mode':mode,'git_blob':blob,'sha256':sha(b),'bytes':len(b)}
+assert len(source)==1003
+project=O/'runtime/native';(project/'.lake').mkdir(parents=True);(project/'.lake/packages').symlink_to(W/'.lake/packages',target_is_directory=True)
+for name in ['lean-toolchain','lake-manifest.json']:
+ b=(W/name).read_bytes();assert b==git('show',head+':'+name)==git('show',base+':'+name)
+ (project/name).write_bytes(b);capture(W/name,O/'helpers'/name)
+for name in ['leanelab.sh','leanelab-o.sh','declfreeze.py']:
+ capture(W/'devtools/seyoon'/name,O/'helpers'/str(name+'.txt'))
+for name in changed:
+ for label,ref in [('BASE',base),('HEAD',head)]:
+  f=O/'source'/label/str(name+'.txt');f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes(git('show',ref+':'+name))
+ f=project/name;f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes((W/name).read_bytes())
+(O/'API-only-source.diff.txt').write_bytes(git('diff',base,head,'--','*.lean'))
+original=Path(request['snapshot']);snapshot=O/'runtime/oleans-HEAD';assert not snapshot.exists()
+def objects(p):return {str(f.relative_to(p)):sha(f.read_bytes()) for f in sorted(p.rglob('*.olean'))}
+expected=json.loads((ROOT/'input-before.json').read_text());before=objects(original);assert len(before)==895 and before==expected
+write('INPUT895-MAC8-before.json',before)
+subprocess.run(['cp','-cR',str(original),str(snapshot)],check=True);assert objects(snapshot)==before
+write('INPUT895-whole-clone-before.json',before)
+write('SOURCE1003-HEAD-before.json',source)
+write('PIN.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source_worktree':str(W),'source_head':head,'base_MAC8_source':base,'native_project':str(project),'whole_input_snapshot':str(original),'whole_output_snapshot':str(snapshot),'whole_clone_argv':['cp','-cR',str(original),str(snapshot)],'owner_compile_order':order,'localcap':int(os.environ.get('TCSLIB_LEAN_SLOTS','3')),'machinecap':5,'one_own_Lean_at_a_time':True,'helpers_nice10_j4':True,'root335_replay_in_progress':True,'no_prospective335_claim':True,'root_source_1003_Git_bound':True,'consumer_patches_not_adopted':True})
+standards=['campaign/maintainer/START-HERE.md','campaign/maintainer/WORKFLOW.md','campaign/maintainer/HANDOFF.md','policy.md','workflow.md','campaign/standards/TEMPLATE.md']
+for name in standards:capture(R/name,O/'standards'/str(name+'.txt'))
+write('standards/RECEIPT.json',{'records_head_observed':subprocess.check_output(['git','-C',str(R),'rev-parse','HEAD']).decode().strip(),'files':{n:{'sha256':sha((R/n).read_bytes()),'bytes':(R/n).stat().st_size} for n in standards}})
+print('Prepared actual HEAD producer3 complete private whole895 clone; owner order',order,flush=True)

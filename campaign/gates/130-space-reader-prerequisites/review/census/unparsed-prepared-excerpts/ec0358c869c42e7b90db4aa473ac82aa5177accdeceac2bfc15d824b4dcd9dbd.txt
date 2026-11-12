@@ -1,0 +1,82 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.ClassNP.PClosure
+
+open Lean Elab Command in
+elab "#modof " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let env ← getEnv
+  match env.getModuleIdxFor? n with
+  | some i => logInfo m!"MODOF {n} @ {env.header.moduleNames[i.toNat]!}"
+  | none => logInfo m!"MODOF {n} @ (current)"
+
+#modof Complexity.space_hierarchy
+#modof Complexity.LOGSPACE_ssubset_PSPACE
+#modof Complexity.SPACE_linear_ne_NP
+#modof Complexity.SPACE
+#modof Complexity.mem_SPACE_iff
+#modof Complexity.SPACE.mono
+#modof Complexity.SPACE.mono_const
+#modof Turing.FinTM.DecidesInSpace
+#modof Turing.FinTM.decidesInSpace_iff
+#modof Turing.FinTM.ComputesInSpace
+#modof Turing.FinTM.computesInSpace_iff
+#modof Complexity.SpaceConstructible
+#modof Complexity.spaceConstructible_iff
+#modof Complexity.spaceConstructible_logSpace
+#modof Complexity.spaceConstructible_linear
+#modof Complexity.logSpace
+#modof Complexity.logSpace_eq
+#modof Complexity.LOGSPACE
+#modof Complexity.LOGSPACE_eq
+#modof Complexity.PSPACE
+#modof Complexity.space_poly_subset_PSPACE
+#modof Turing.exists_selfUniversal
+#modof Complexity.TimeHierarchy.code
+#modof Turing.exists_configWindowRunnerTM
+#modof Turing.exists_windowRunnerTM
+#modof Turing.windowRun
+#modof Turing.WindowExit
+#modof Turing.cfgRecord
+#modof Turing.RecordAt
+#modof Turing.recordLength
+#modof Turing.posWidth
+#modof Turing.RecSym
+#modof Turing.RecSym.digitEmb
+#modof Turing.fieldsTape
+#modof Turing.Cfg.InWindow
+#modof Turing.FinTM.inWindow_of_spaceUsed_le
+#modof Turing.windowRun_summary_of_halts
+#modof Turing.FinTM.configBound_le_two_pow
+#modof Turing.exists_recordInitTM
+#modof Turing.outSummary
+#modof Turing.outSummary_append_congr
+#modof Turing.outSummary_eq_accept_iff
+#modof Turing.FinTM.alphabet_reduction_spaceUsed
+#modof Turing.FinTM.decidesInSpace_of_alphabetReduction
+#modof Turing.inputFoldTM
+#modof Turing.inputFoldTM_run_ofCfg
+#modof Turing.MultiTapeTM.liftSymbols
+#modof Turing.MultiTapeTM.liftSymbols_runFrom
+#modof Turing.MultiTapeTM.liftSymbols_initCfg
+#modof Turing.capture_run
+#modof Turing.capture_visitedByTapeHead
+#modof Turing.seamCompTM_spaceUsed_le_add
+#modof Turing.seamCompTM_spaceUsedByTape_le_max
+#modof Turing.seamCompTM_spaceUsedByTape_le_add
+#modof Turing.FinTM.ComputesInTime.of_spaceUsed_le
+#modof Turing.MultiTapeTM.spaceUsed_mono
+#modof Turing.FinTM.one_work_tape_binary_spaceUsed
+#modof Turing.exists_codeTM
+#modof Turing.MultiTapeTM.relabelState_runFrom_init
+#modof Turing.MultiTapeTM.abs_pos_lt_card_visited
+#modof Turing.MultiTapeTM.mem_visited_of_ne_none
+#modof Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le
+#modof Turing.counterValue
+#modof Turing.counterValue_eq
+#modof Turing.counterValue_bits
+#modof Complexity.spaceConstructible_poly
+#modof Complexity.preimage_mem_NP
+#modof Complexity.preimage_mem_P

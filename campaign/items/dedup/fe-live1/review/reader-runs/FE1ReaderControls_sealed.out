@@ -1,0 +1,90 @@
+READER_CONTROL|Turing.Action.apply|point|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.Action.apply|point|Tactic `rfl` failed: equality lhs
+  action.apply cfg
+is not definitionally equal to rhs
+  { state := action.state, inputPos := moveInputPos cfg.inputPos action.inputTape,
+    workTapes := fun i =>
+      match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+      | none => cfg.workTapes i
+      | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+    workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2, output := cfg.output ++ action.output.toList }
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+action : Action k Symbol State
+cfg : Cfg k Symbol State input
+⊢ action.apply cfg =
+    { state := action.state, inputPos := moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+READER_CONTROL|Turing.Action.apply|abstract|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.Action.apply|abstract|Tactic `rfl` failed: equality lhs
+  @Action.apply
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+
+⊢ @Action.apply = fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+READER_CONTROL|Turing.Cfg.workTapeSymbols|point|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.Cfg.workTapeSymbols|point|Tactic `rfl` failed: equality lhs
+  cfg.workTapeSymbols i
+is not definitionally equal to rhs
+  cfg.workTapes i (cfg.workTapePos i)
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+cfg : Cfg k Symbol State input
+i : Fin k
+⊢ cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)
+READER_CONTROL|Turing.Cfg.workTapeSymbols|abstract|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.Cfg.workTapeSymbols|abstract|Tactic `rfl` failed: equality lhs
+  @Cfg.workTapeSymbols
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} cfg i => cfg.workTapes i (cfg.workTapePos i)
+
+⊢ @Cfg.workTapeSymbols = fun {k} {State} {Symbol} {input} cfg i => cfg.workTapes i (cfg.workTapePos i)
+READER_CONTROL|Turing.moveInputPos|point|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.moveInputPos|point|Tactic `rfl` failed: equality lhs
+  moveInputPos pos m
+is not definitionally equal to rhs
+  have p := (↑↑pos + ↑m).toNat;
+  if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+n : ℕ
+pos : Fin (n + 2)
+m : SignType
+⊢ moveInputPos pos m =
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+READER_CONTROL|Turing.moveInputPos|abstract|FAIL
+/private/tmp/ab34-overnight-fe1/project/FE1ReaderControls_sealed.lean:9:0: error: READER_RFL|Turing.moveInputPos|abstract|Tactic `rfl` failed: equality lhs
+  @moveInputPos
+is not definitionally equal to rhs
+  fun {n} pos m =>
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+⊢ @moveInputPos = fun {n} pos m =>
+    have p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩

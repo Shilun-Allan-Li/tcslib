@@ -1,0 +1,38 @@
+/-- One actual row-field load includes target reset, native parsing,
+target rewind, and one finite-control dispatch to the next field.
+**Proof sketch.** Relocate the unrestricted loader using its first-return
+guard. The inactive fields are framed throughout. Its completed state
+contains the exact new target; a control-only step advances the field index. -/
+private lemma clLoad_field {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+    (i : Fin l) (old : Fin l → List Bool) (pre word tail : List Bool) :
+    ∃ t ≤ 2 * (old i).length + 3 * word.length + 7, 0 < t ∧
+      (clLoadTM l).tm.runFrom
+        (clLoadCfg x p i.castSucc (.inl 0) old (pre ++ pairEncode word tail) pre.length) t =
+      clLoadCfg x p i.succ (.inl 0) (Function.update old i word)
+        (pre ++ pairEncode word tail) (pre.length + 2 * word.length + 2) := by
+  obtain ⟨t, ht, hp, hf, he⟩ := clFresh_first x p pre word tail (old i)
+  let tapes := (clLoadCfg x p i.castSucc (.inl 0) old (pre ++ pairEncode word tail)
+    pre.length).workTapes
+  have lift := clPlaced_run clFreshTM.tm (clLoadTM l).tm (clLoadSelect i) (fun r => (i.castSucc, r)) (by intro a b h; cases h; rfl) (fun r => r ≠ .inr (.inr true))
+    (by intro r hr inp work; simp only [clLoadTM, Fin.coe_castSucc, dif_pos i.isLt, if_neg hr]; rfl) tapes (fun _ => 0)
+    ((clWipeCfg x p 0 (pre ++ pairEncode word tail) (old i) pre.length 0).mapState Sum.inl) t
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have start := clLoad_frame x p i (.inl 0) old (pre ++ pairEncode word tail) (old i) pre.length
+  simp only [Function.update_eq_self] at start
+  have finish := clLoad_frame x p i (.inr (.inr true)) old (pre ++ pairEncode word tail)
+    word (pre.length + 2 * word.length + 2)
+  have run : (clLoadTM l).tm.runFrom
+      (clLoadCfg x p i.castSucc (.inl 0) old (pre ++ pairEncode word tail) pre.length) t =
+      clLoadCfg x p i.castSucc (.inr (.inr true)) (Function.update old i word)
+        (pre ++ pairEncode word tail) (pre.length + 2 * word.length + 2) :=
+    (congrArg (fun z => (clLoadTM l).tm.runFrom z t) start).symm.trans (lift.trans finish)
+  refine ⟨t + 1, by omega, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', run]
+  change ((clLoadTM l).tm.tr (i.castSucc, .inr (.inr true)) _ _).apply _ = _
+  dsimp only [clLoadTM]
+  split
+  · rw [if_pos rfl, FinTM.controlAction_apply, moveInputPos_zero]
+    rfl
+  · rename_i hn
+    exact False.elim (hn i.isLt)

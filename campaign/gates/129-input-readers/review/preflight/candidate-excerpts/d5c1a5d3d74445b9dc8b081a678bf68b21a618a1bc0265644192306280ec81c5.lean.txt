@@ -1,0 +1,23 @@
+/-- The rich-input validation phase, on all of the diagonalizer's work tapes. Its successful
+exit supplies a binary input for every subsequent phase; it moves no work head.
+[AB09, Theorem 4.8, alphabet reduction]
+
+**Proof sketch.** Use the published framed input fold and identify its final flag with
+`sph_fold_valid`. The framed endpoint also restores the input head to its initial position. -/
+private lemma sph_validation_run {k : ℕ} {Q : Type}
+    {ys : List (RecSym Q (Fin 3))} (d : Cfg k (RecSym Q (Fin 3)) (ScanPhase Bool) ys)
+    (hd : d.state = some (.fwd true)) (hin : d.inputPos = 1) :
+    ∃ b : Bool,
+      (inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d (2 * ys.length + 2) =
+        {d with state := some (.done b)} ∧
+      (b = true ↔ ∃ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3))) ∧
+      (∀ u < 2 * ys.length + 2, ∀ a,
+        ((inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d u).state ≠
+          some (.done a)) ∧
+      ∀ j u, u ≤ 2 * ys.length + 2 →
+        ((inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d u).workTapePos j =
+          d.workTapePos j := by
+  obtain ⟨hr, hc, hh⟩ := inputFoldTM_run_ofCfg (fun a c => a && sphDigit c) true d hd hin
+  refine ⟨ys.foldl (fun a c => a && sphDigit c) true, hr, ?_, hc, hh⟩
+  exact ⟨fun h => ((sph_fold_valid ys true).mp h).2,
+    fun h => (sph_fold_valid ys true).mpr ⟨rfl, h⟩⟩

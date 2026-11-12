@@ -1,0 +1,11 @@
+/-- Canonical records identify exactly S1a's vertices on the coding window.
+This is the decoding part of the note-6 bridge, a Savitch promotion candidate.
+
+**Proof sketch.** The received `cfgRecord_inj` recovers all four core fields
+and the tag. S1a's injective `sumCode` recovers the output summary. -/
+private theorem s1b_record_eq_iff {s : ℕ} {c d : Cfg k Bool S x}
+    (hc : c.InWindow s) (hd : d.InWindow s) :
+    s1b_record s c = s1b_record s d ↔ NDTM.coreSum c = NDTM.coreSum d := by
+  rw [s1b_record, s1b_record, cfgRecord_inj s hc hd]
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq,
+    sumCode_injective.eq_iff]

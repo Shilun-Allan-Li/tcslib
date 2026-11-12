@@ -1,0 +1,16 @@
+/-- **The header scan**: a finite-state machine on `k` work tapes that reads a doubled header
+`pairEncode u v` (the bits of `u`, each written twice, then the separator `false, true`) in
+aligned pairs from its input head, writing `true` on tape `i` and moving that head and the input
+head right at every step, and stops at its control `3` just past the separator. States `0`, `1`
+and `2` read a pair (`1` and `2` remember its first bit); `3` is the exit, where the machine idles.
+So it writes one ruler cell per header cell. It is hand-built: no catalog row writes a ruler of a
+doubled header's length. Read through `Turing.headerScanTM_run`. [AB09, §1.4.1, the proof of
+Theorem 1.9: the universal machine reads the code at the start of its input; the pair encoding
+of [AB09, §1.4]] -/
+def headerScanTM {k : ℕ} (i : Fin k) : MultiTapeTM k Bool (Fin 4) where
+  q₀ := 0
+  tr := fun q b _ =>
+    if q = 3 then inputMoveAction 0 3
+    else tapeAction i .pos (some (some true)) .pos
+      (if q = 0 then if b = some false then 1 else 2
+       else if q = 1 ∧ b = some true then 3 else 0)

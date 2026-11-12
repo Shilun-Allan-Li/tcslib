@@ -1,0 +1,123 @@
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -158,6 +158,13 @@
+ /-- An action that only moves the input head and changes the state. -/
+ def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+     Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
++
++/-- A control action has the requested input movement and successor state,
++with no work-tape writes or head movement and no output symbol. -/
++theorem controlAction_eq {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
++    controlAction (k := k) m q =
++      (⟨m, fun _ => (none, 0), none, q⟩ : Action k Bool S) := by
++  rfl
+ 
+ /-- Read position `i + 1` as the optional `i`-th input symbol, including the
+ right boundary. -/
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -2565,6 +2565,13 @@
+ def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+     Action k Symbol State :=
+   ⟨inp, fun _ => (none, 0), none, some q⟩
++
++/-- An input-only action has the requested input movement and live successor,
++with no work-tape writes or head movement and no output symbol. -/
++theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
++    inputMoveAction (k := k) (Symbol := Symbol) inp q =
++      (⟨inp, fun _ => (none, 0), none, some q⟩ : Action k Symbol State) := by
++  rfl
+ 
+ /-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
+ gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
+--- a/TCSlib/Complexity/TuringMachine/Build/Scan.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Scan.lean
+@@ -547,6 +547,17 @@
+       | none => inputMoveAction 1 (.done a)
+     | .done a => inputMoveAction 0 (.done a)
+ 
++/-- In the backward phase the native fold moves left across an input symbol;
++at the left blank it moves right and enters the completed phase, preserving
++the accumulator. The work-tape reads do not affect this transition. -/
++theorem inputFoldTM_tr_bwd {Γ : Type*} {A : Type} (k : ℕ)
++    (δ : A → Γ → A) (a₀ a : A) (inp : Option Γ) (work : Fin k → Option Γ) :
++    (inputFoldTM k δ a₀).tr (.bwd a) inp work =
++      (match inp with
++       | some _ => inputMoveAction (-1) (.bwd a)
++       | none => inputMoveAction 1 (.done a)) := by
++  rfl
++
+ /-- The native fold's forward accumulator and input position after `r` reads. -/
+ private def scanFoldF {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
+     (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) (r : ℕ) :
+--- a/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+@@ -498,7 +498,8 @@
+     (⟨x.length + 1, by omega⟩ : Fin (x.length + 2)) 0
+   let back : Cfg 1 Bool InputLengthPhase x := {c with state := some .returnStart}
+   have endSymbol : c.inputSymbol = none := by
+-    simp [c, inputLengthCfg, Cfg.inputSymbol]
++    apply Cfg.inputSymbol_of_end
++    rfl
+   have turn : inputLengthMachine.step c = back := by
+     rw [step_of_inputMoveAction _ _ 0 rfl (q' := .returnStart) (by
+       simp [inputLengthMachine, endSymbol])]
+@@ -506,7 +507,17 @@
+     rfl
+   obtain ⟨r, hr, returned, returnHeads⟩ := FinTM.rewind_heads inputLengthMachine
+     .returnStart .returnScan (some .done) (by intros; rfl)
+-    (by intro inp work; cases inp <;> rfl) back rfl
++    (by
++      intro inp work
++      change (((inputFoldTM 1 (fun (_ : Unit) (_ : Bool) => ()) ()).tr
++        (.bwd ()) inp work).mapState
++        (fun q => match q with | .done _ => InputLengthPhase.done | _ => .returnScan)) = _
++      rw [inputFoldTM_tr_bwd]
++      cases inp <;> rw [inputMoveAction_eq, FinTM.controlAction_eq]
++      all_goals
++        apply Action.ext <;>
++          simp only [Action.mapState_inputTape, Action.mapState_workTapes,
++            Action.mapState_output, Action.mapState_state, Option.map_some]) back rfl
+   have reachedBack : inputLengthMachine.runFrom d (t + 1) = back := by
+     rw [MultiTapeTM.runFrom_succ_eq_step', counted]
+     exact turn
+@@ -527,26 +538,21 @@
+         MultiTapeTM.runFrom_add, reachedBack, returnHeads _ hu']
+       simp only [back, c, inputLengthCfg, add_zero]
+       constructor <;> omega
+-  -- Select the first exit, and use stationarity to keep the exact finish.
+-  have exits : ∃ u, (inputLengthMachine.runFrom d u).state = some .done :=
+-    ⟨t + 1 + r, congrArg Cfg.state finish⟩
+-  let first := Nat.find exits
+-  have firstState : (inputLengthMachine.runFrom d first).state = some .done :=
+-    Nat.find_spec exits
+-  have firstLe : first ≤ t + 1 + r := Nat.find_min' exits (congrArg Cfg.state finish)
+-  have fixed : inputLengthMachine.step (inputLengthMachine.runFrom d first) =
+-      inputLengthMachine.runFrom d first := by
+-    rw [step_of_inputMoveAction _ _ 0 firstState (q' := .done) rfl]
+-    simp only [moveInputPos_zero]
+-    apply Cfg.ext <;> simp [firstState]
++  -- The public fixed-stop entry contract keeps the exact completed configuration.
++  obtain ⟨first, firstLe, firstCut, firstEnd⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    inputLengthMachine (fun q => q = .done) d
++    {back with state := some .done, inputPos := 1} (t + 1 + r)
++    (by
++      rintro z ⟨q, hq, rfl⟩
++      rw [step_of_inputMoveAction _ _ 0 hq (q' := .done) rfl]
++      simp only [moveInputPos_zero]
++      apply Cfg.ext <;> simp [hq])
++    ⟨.done, rfl, rfl⟩ finish
+   have same : inputLengthMachine.runFrom d (t + 1 + r) =
+-      inputLengthMachine.runFrom d first := by
+-    rw [show t + 1 + r = first + (t + 1 + r - first) by omega,
+-      MultiTapeTM.runFrom_add]
+-    exact Function.iterate_fixed fixed _
++      inputLengthMachine.runFrom d first := finish.trans firstEnd.symm
+   refine ⟨first, firstLe.trans deadline, ?_, ?_, ?_⟩
+-  · intro u hu
+-    exact Nat.find_min exits hu
++  · intro u hu hs
++    exact firstCut u hu ⟨.done, hs, rfl⟩
+   · intro u hu j
+     have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
+     subst j

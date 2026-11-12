@@ -1,0 +1,47 @@
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -10,6 +10,7 @@
+ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+ import TCSlib.Complexity.CookLevin.Snapshot
+ import TCSlib.Complexity.TuringMachine.Build.Seam
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -3880,13 +3881,13 @@
+ private lemma clPrepare_idle {l : ℕ} {x : List Bool}
+     (c : Cfg (clPrepareTM l).k Bool (clPrepareTM l).State x)
+     (hc : c.state = some (.inr (Fin.last l, .inl 0))) : (clPrepareTM l).tm.step c = c := by
+-  unfold MultiTapeTM.step
+-  rw [hc]
++  rw [MultiTapeTM.step_of_some hc]
+   simp only [clPrepareTM, clLoadTM, Fin.val_last, Nat.lt_irrefl, dite_false]
+-  change (FinTM.controlAction 0 (some (Sum.inr (Fin.last l, .inl 0)))).apply c = c
+-  rw [FinTM.controlAction_apply, moveInputPos_zero]
+-  cases c
+-  simp_all
++  let d : Cfg (clLoadTM l).k Bool (clLoadTM l).State x :=
++    {c with state := some (Fin.last l, .inl 0)}
++  have hd : d.mapState Sum.inr = c :=
++    Cfg.mapState_eq_of_fields d Sum.inr c hc.symm rfl rfl rfl rfl
++  rw [← hd, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]
+ 
+ /-- The genuine preparatory seam is reached at a positive first return,
+ including zero fields. Native input copying and dispatch ensure positivity. -/
+@@ -7255,15 +7256,7 @@
+           | inr v => exact False.elim (hq v rfl))
+     (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
+   have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
+-    apply Cfg.ext
+-    · rw [Cfg.mapState_state, Option.map_id]
+-      rfl
+-    · exact Cfg.mapState_inputPos id cfg
+-    · funext i z
+-      rw [Cfg.mapState_workTapes]
+-    · funext i
+-      rw [Cfg.mapState_workTapePos]
+-    · exact Cfg.mapState_output id cfg
++    exact Cfg.mapState_eq_of_fields cfg id cfg (Option.map_id _) rfl rfl rfl rfl
+   change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t =
+     (A.tm.runFrom (A.tm.initCfg arg) t).mapState id at run
+   rw [mapid, hr, mapid] at run

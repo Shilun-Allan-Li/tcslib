@@ -1,0 +1,166 @@
+/-- The full normalized emitter is polynomial-time computable.
+**Proof sketch.** Build four clean modules for startup, request packing, chunk
+emission, and next-state installation. The marker-free appender supplies the
+native input at startup and in every round. Their finite tagged host has one
+anchor, a validated startup seam, and positive first-return rounds with only
+the canonical state word left on tape zero. Request sizes are linear in the
+original input, so one common polynomial bounds all calls and cleanup. Invoke
+`exists_emitLoopTM` with `R n = n`, then use the exact chunk-table identity. -/
+private lemma satReduction_poly : PolyTimeComputable satReduction := by
+  obtain ⟨S, aS, dS, hS⟩ := satClean_install satStreamStart_poly
+  obtain ⟨P, aP, dP, hP⟩ := satClean_install
+    (sat_pt_pair polyTimeComputable_id (sat_pt_const []))
+  obtain ⟨E, aE, dE, hE⟩ := satClean_emit satReqEmit_poly
+  obtain ⟨I, aI, dI, hI⟩ := satClean_install satReqStep_poly
+  obtain ⟨F, aF, hF⟩ := FinTM.computesFunInTime_lengthBits
+  let M : Fin 6 → FinTM Bool := fun i => match i.val with
+    | 0 => satAppendTM | 1 => S | 2 => P | 3 => satAppendTM | 4 => E | _ => I
+  let K := 1 + S.k + P.k + E.k + I.k
+  have hk : ∀ i, (M i).k ≤ K := by
+    intro i; fin_cases i <;> simp [M, K, satAppendTM] <;> omega
+  let H := satHostTM M K hk
+  let anchor : H.State := .inl ()
+  let D := dS + dP + dE + dI + 1
+  let A := aS + aP + aE + aI + aF + 200
+  let pow (n : ℕ) := (32 * (n + 1)) ^ D
+  let T (n : ℕ) := A * pow n
+  have hpow (n : ℕ) : n + 1 ≤ pow n := by
+    have h := Nat.pow_le_pow_right (show 0 < 32 * (n + 1) by omega) (show 1 ≤ D by dsimp [D]; omega)
+    simp only [Nat.pow_one] at h
+    exact (by omega : n + 1 ≤ 32 * (n + 1)).trans h
+  have hret0 : satHostRet M 0 = satHostEntry M 1 := rfl
+  have hret1 : satHostRet M 1 = anchor := rfl
+  have hret2 : satHostRet M 2 = satHostEntry M 3 := rfl
+  have hret3 : satHostRet M 3 = satHostEntry M 4 := rfl
+  have hret4 : satHostRet M 4 = satHostEntry M 5 := rfl
+  have hret5 : satHostRet M 5 = anchor := rfl
+  have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ v < t, (H.tm.runFrom (H.tm.initCfg x) v).state ≠ some anchor) ∧
+      H.tm.runFrom (H.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord H.k (satStreamWord (satStreamStart x))) := by
+    intro x
+    obtain ⟨ta, hapos, hat, hag, hae⟩ := satAppend_clean x []
+    have hac := satHost_call M K hk 0 (by simp [M, satAppendTM]) x [] x [] []
+      (0 : Fin 5) ta hag (by simpa using hae)
+    obtain ⟨haGuard, haEnd⟩ := hac
+    have hi : H.tm.initCfg x = Cfg.ofWords (satHostEntry M 0) (stateWord K []) := by
+      refine Cfg.ext rfl rfl ?_ rfl rfl
+      funext i z; simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
+    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 0) (stateWord K [])) ta =
+      Cfg.ofWords (satHostRet M 0) (stateWord K x) at haEnd
+    rw [hret0] at haEnd
+    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := satHost_clean M K hk 1
+      (fun x => satStreamWord (satStreamStart x)) (fun _ => [])
+      (fun n => aS * (n + 1) ^ dS) (by simpa [M] using hS) x x []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 1) (stateWord K x)) ts =
+      Cfg.ofWords (satHostRet M 1) (stateWord K (satStreamWord (satStreamStart x))) at hsEnd
+    rw [hret1] at hsEnd
+    have hsB := sat_request_budget aS dS D x.length x.length (by dsimp [D]; omega) (by omega)
+    have hp := hpow x.length
+    refine ⟨ta + ts, ?_, ?_, ?_⟩
+    · dsimp only [T, A, pow]
+      simp only [List.length_nil] at hat
+      simp only [Nat.add_mul, Nat.mul_one]
+      dsimp only [pow] at hp
+      omega
+    · rw [hi]
+      exact sat_guard_add H.tm anchor _ _ ta ts haGuard haEnd hsGuard
+    · rw [hi, MultiTapeTM.runFrom_add, haEnd, hsEnd]
+      rfl
+  have hround : ∀ x w : List Bool, satStreamInv x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
+      (∀ v, 0 < v → v < t → (H.tm.runFrom
+        (Cfg.ofWords (input := x) anchor (stateWord H.k w)) v).state ≠ some anchor) ∧
+      H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t =
+        {Cfg.ofWords anchor (stateWord H.k (satStreamStep x w)) with output := satStreamEmit x w} := by
+    intro x w hw
+    obtain ⟨s, rfl, hb⟩ := hw
+    let w := satStreamWord s
+    let packed := pairEncode w []
+    let req := pairEncode w x
+    have hwlen : w.length ≤ 6 * x.length + 8 := (satStreamBound_size x s hb).2
+    have hplen : packed.length = 2 * w.length + 2 := by simp [packed, satPair_length]
+    have hrlen : req.length = 2 * w.length + x.length + 2 := satPair_length w x
+    have hpa : packed ++ x = req := by simp [packed, req, pairEncode, List.append_assoc]
+    have hstep : satReqStep req = satStreamStep x w := by
+      simpa [req, w, satStreamStep, satStreamRead_word] using (satReq_round x s).1
+    have hemit : satReqEmit req = satStreamEmit x w := by
+      simpa [req, w, satStreamEmit, satStreamRead_word] using (satReq_round x s).2
+    have hdispatch : H.tm.step (Cfg.ofWords (input := x) anchor (stateWord K w)) =
+        Cfg.ofWords (satHostEntry M 2) (stateWord K w) := by
+      change (FinTM.controlAction 0 (some (satHostEntry M 2))).apply _ = _
+      simp [FinTM.controlAction, Action.apply, Cfg.ofWords]
+      exact ⟨rfl, rfl⟩
+    obtain ⟨tp, hppos, hpt, hpGuard, hpEnd⟩ := satHost_clean M K hk 2
+      (fun w => pairEncode w []) (fun _ => []) (fun n => aP * (n + 1) ^ dP)
+      (by simpa [M, id_eq] using hP) x w []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w)) tp =
+      Cfg.ofWords (satHostRet M 2) (stateWord K packed) at hpEnd
+    rw [hret2] at hpEnd
+    obtain ⟨ta, hapos, hat, hag, hae⟩ := satAppend_clean x packed
+    obtain ⟨haGuard, haEnd⟩ := satHost_call M K hk 3 (by simp [M, satAppendTM])
+      x packed req [] [] (0 : Fin 5) ta hag (by simpa [hpa] using hae)
+    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 3) (stateWord K packed)) ta =
+      Cfg.ofWords (satHostRet M 3) (stateWord K req) at haEnd
+    rw [hret3] at haEnd
+    obtain ⟨te, hepos, het, heGuard, heEnd⟩ := satHost_clean M K hk 4 id satReqEmit
+      (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x req []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 4) (stateWord K req)) te =
+      {Cfg.ofWords (satHostRet M 4) (stateWord K req) with output := satReqEmit req} at heEnd
+    rw [hret4] at heEnd
+    obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := satHost_clean M K hk 5 satReqStep (fun _ => [])
+      (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x req (satReqEmit req)
+    change H.tm.runFrom
+      {Cfg.ofWords (input := x) (satHostEntry M 5) (stateWord K req) with output := satReqEmit req} ti =
+      {Cfg.ofWords (satHostRet M 5) (stateWord K (satReqStep req)) with output := satReqEmit req ++ []} at hiEnd
+    rw [List.append_nil, hret5] at hiEnd
+    have hpB := sat_request_budget aP dP D x.length w.length (by dsimp [D]; omega) (by omega)
+    have heB := sat_request_budget aE dE D x.length req.length (by dsimp [D]; omega) (by omega)
+    have hiB := sat_request_budget aI dI D x.length req.length (by dsimp [D]; omega) (by omega)
+    have hpow' := hpow x.length
+    have hpAE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))
+        (tp + ta) = Cfg.ofWords (satHostEntry M 4) (stateWord K req) := by
+      rw [MultiTapeTM.runFrom_add, hpEnd, haEnd]
+    have hpAguard := sat_guard_add H.tm anchor _ _ tp ta hpGuard hpEnd haGuard
+    have hpAEguard := sat_guard_add H.tm anchor _ _ (tp + ta) te hpAguard hpAE heGuard
+    have hpAEE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))
+        (tp + ta + te) = {Cfg.ofWords (satHostEntry M 5) (stateWord K req) with output := satReqEmit req} := by
+      rw [MultiTapeTM.runFrom_add, hpAE, heEnd]
+    have hguard := sat_guard_add H.tm anchor _ _ (tp + ta + te) ti hpAEguard hpAEE hiGuard
+    refine ⟨(tp + ta + te + ti) + 1, by omega, ?_, ?_, ?_⟩
+    · dsimp only [T, A, pow]
+      simp only [Nat.add_mul]
+      dsimp only [pow] at hpow'
+      omega
+    · intro v hv hvt
+      have hvform : v = (v - 1) + 1 := by omega
+      change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord K w)) v).state ≠ some anchor
+      rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdispatch]
+      exact hguard (v - 1) (by omega)
+    · change H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord K w))
+        ((tp + ta + te + ti) + 1) = _
+      rw [MultiTapeTM.runFrom_succ_eq_step, hdispatch, MultiTapeTM.runFrom_add, hpAEE, hiEnd]
+      rw [hstep, hemit]
+      rfl
+  have hFuel : F.ComputesFunInTime (fun x => Nat.bits x.length) T := by
+    intro x
+    apply (hF x).mono
+    have hp := Nat.mul_le_mul_left aF (hpow x.length)
+    dsimp only [T, A]
+    simp only [Nat.add_mul]
+    omega
+  obtain ⟨L, c, hL⟩ := FinTM.exists_emitLoopTM H F anchor satStreamInv satStreamStep satStreamEmit
+    (fun x => satStreamWord (satStreamStart x)) id T hFuel satStreamInv_start satStreamInv_step hstart hround
+  refine ⟨L, 2 * c * (A * 32 ^ D + 1), D + 1, fun x => ?_⟩
+  have hcalc : c * (T x.length + 1) * (x.length + 2) ≤
+      (2 * c * (A * 32 ^ D + 1)) * (x.length + 1) ^ (D + 1) := by
+    have h1 : 1 ≤ (x.length + 1) ^ D := Nat.one_le_pow _ _ (by omega)
+    have hb : T x.length + 1 ≤ (A * 32 ^ D + 1) * (x.length + 1) ^ D := by
+      dsimp only [T, pow]
+      simp only [Nat.mul_pow, Nat.add_mul, Nat.one_mul, ← Nat.mul_assoc]
+      omega
+    calc
+      _ ≤ (c * ((A * 32 ^ D + 1) * (x.length + 1) ^ D)) * (2 * (x.length + 1)) :=
+        Nat.mul_le_mul (Nat.mul_le_mul_left c hb) (by omega)
+      _ = _ := by rw [Nat.pow_succ]; ring
+  have hout := (hL x).mono hcalc
+  simpa only [id_eq, satStream_output_identity] using hout

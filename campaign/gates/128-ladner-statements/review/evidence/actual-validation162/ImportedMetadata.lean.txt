@@ -1,0 +1,24 @@
+import TCSlib.Complexity.Diagonalization.Ladner
+import Lean
+set_option maxHeartbeats 0
+
+open Lean Elab Command Meta
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let sourceNames : List String := ["Complexity.padSAT", "Complexity.mem_padSAT_iff", "Complexity.padSAT_congr", "Complexity.ladnerMachine", "Complexity.ladnerMachine_eq", "Complexity.ladnerH", "Complexity.ladnerH_eq", "Complexity.ladnerH_le", "Complexity.SAT_H", "Complexity.SAT_H_eq", "Complexity.ladnerH_polyTime", "Complexity.SAT_H_mem_NP", "Complexity.ladnerH_bounded_of_mem_P", "Complexity.ladnerH_unbounded_of_not_mem_P", "Complexity.SAT_mem_P_of_padSAT_NPHard", "Complexity.SAT_H_intermediate", "Complexity.ladner"]
+  let mut guards : Array Name := #[]
+  let mut simpDefs : Array Name := #[]
+  let mut rowCount := 0
+  for sourceName in sourceNames do
+    let hits := env.constants.toList.filter fun (n, _) => n.toString == sourceName
+    unless hits.length == 1 do throwError "root mismatch {sourceName}: {hits.length}"
+    let (root, ci) := hits.head!
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+      | .axiomInfo _ => "axiom" | .opaqueInfo _ => "opaque" | _ => "other"
+    let owner := (env.getModuleIdxFor? root).map fun i => env.header.moduleNames[i.toNat]!.toString
+    logInfo m!"ABI|{(Json.mkObj [("source_name", toJson sourceName), ("kernel_name", toJson root.toString), ("expected_source_owner", toJson "TCSlib.Complexity.Diagonalization.Ladner"), ("import_module_owner", toJson owner), ("private", toJson (isPrivateName root)), ("kind", toJson kind), ("universe_parameters", toJson (ci.levelParams.map Name.toString)), ("full_type_Expr_repr", toJson (reprStr ci.type)), ("type_Expr_without_mdata_repr", toJson (reprStr ci.type.consumeMData)), ("type_constants", toJson ((ci.type.getUsedConstants.qsort Name.lt).toList.map Name.toString)), ("simp_lemma", toJson (simp.isLemma (.decl root))), ("simp_unfold", toJson (simp.toUnfold.contains root)), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+
+  logInfo m!"COMPLETE-METADATA|{sourceNames.length}"

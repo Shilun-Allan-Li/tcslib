@@ -1,0 +1,54 @@
+/-- **The run contract of the simulator** (phase P4.4b; spec, fill pending). Let `M` halt
+by time `t` on the virtual input `v`. Let the oracle answer every length query
+`⟨x, bits i⟩` with `i ≤ |v|`, and every bit query with `i < |v|`, truthfully. Then the
+program, started on the host input `x`:
+
+* halts with `M`'s output on `v`;
+* keeps the work registers in `[-S, S]`, with `S` the space `M` uses up to `t`;
+* keeps the index register in `[-1, |bits (|v| + 1)|]`;
+* at every call has the input head on position `1` and the index register holding some
+  `bits i`, `i ≤ |v|`, with its head on cell `0` — so the call's virtual input is
+  `⟨x, bits i⟩` (`Complexity.LogProg.vword_whole₁`).
+
+**Proof sketch.** Encode `M`'s configuration `c` on `v` as the program configuration with:
+
+* the work tapes and heads of `c` on registers `castSucc i`;
+* `bits (p − 1)` on `q`, with its head on `0` (`p` the input position of `c`; `bits 0` at
+  `p = 0`);
+* the host input head on `1`, and `c`'s output;
+* state `(s, ask)`, or `(s, work none true)` at `p = 0`.
+
+By induction on `n ≤ t`, the run reaches the encoding of `M.tm.runFrom (M.tm.initCfg v) n`
+until `M` halts. One step goes as follows.
+
+1. At most two calls fix the symbol `inSym v p`: by the oracle laws, the length call says
+   `p − 1 < |v|`.
+2. `work` applies `M.tm.tr` to the `castSucc` block (`liftAct`), so the work registers move
+   exactly as `M`'s tapes.
+3. The clamped move of `p` is realized by `nextPh`:
+   * `inc_run` only when `p − 1 < |v|`;
+   * the zero test and `dec_run` only when `p − 1 ≥ 1`;
+   * a phase change at the left blank.
+
+Intermediate configurations are those of the received fragments on `q`. The work heads are
+`M`'s, so they lie in `[-S, S]` by `Turing.MultiTapeTM.abs_pos_lt_card_visited`. Template:
+`ImplicitEnum.{round, rounds, run}`. -/
+theorem run (x v : List Bool) (o : Fin 2 → List Bool → Bool)
+    (ho0 : ∀ i ≤ v.length, o 0 (pairEncode x (Nat.bits i)) = decide (i < v.length))
+    (ho1 : ∀ i < v.length, o 1 (pairEncode x (Nat.bits i)) = v.getD i false)
+    (t : ℕ) (ht : (M.tm.runFrom (M.tm.initCfg v) t).state = none) :
+    ∃ N, (rrun (prog M) o (Cfg.init (start M) x) N).state = none ∧
+      (rrun (prog M) o (Cfg.init (start M) x) N).output =
+        (M.tm.runFrom (M.tm.initCfg v) t).output ∧
+      (∀ n ≤ N, ∀ r,
+        lo M (M.tm.spaceUsed (M.tm.initCfg v) t) r ≤
+            (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos r ≤
+            hi M (M.tm.spaceUsed (M.tm.initCfg v) t) (Nat.bits (v.length + 1)).length r) ∧
+      ∀ n < N, ∀ l cs, (rrun (prog M) o (Cfg.init (start M) x) n).state = some l →
+        (prog M).call l = some cs →
+          (rrun (prog M) o (Cfg.init (start M) x) n).inputPos.val = 1 ∧
+          (rrun (prog M) o (Cfg.init (start M) x) n).workTapePos (q M) = 0 ∧
+          ∃ i ≤ v.length, (rrun (prog M) o (Cfg.init (start M) x) n).workTapes (q M) =
+            FinTM.bufferTape (Nat.bits i) := by
+  sorry

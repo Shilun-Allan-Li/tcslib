@@ -1,0 +1,8 @@
+∀ (K W : Turing.FinTM Bool) (x s : List Bool) (tK : ℕ),
+  K.ComputesInTime x s tK →
+    ∃ a kt kh,
+      a ≤ tK + s.length + x.length + 5 ∧
+        Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) a =
+          Complexity.TimeHierarchy.ctrCfg K W
+            (some (Complexity.TimeHierarchy.ClockState.dec W.tm.q₀ Complexity.TimeHierarchy.OutReg.empty))
+            (Turing.MultiTapeTM.initCfg x) (Turing.FinTM.bufferTape s) 0 kt kh []

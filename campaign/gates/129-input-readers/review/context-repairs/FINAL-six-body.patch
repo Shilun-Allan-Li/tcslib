@@ -1,0 +1,175 @@
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -498,10 +498,15 @@
+     (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
+     (controlAction m q).apply cfg =
+       {cfg with state := q, inputPos := moveInputPos cfg.inputPos m} := by
+-  refine Cfg.ext rfl rfl rfl ?_ ?_
++  apply Cfg.ext
++  · rw [Action.apply_state, controlAction_def]
++  · rw [Action.apply_inputPos, controlAction_def]
+   · funext i
+-    simp [controlAction, Action.apply]
+-  · simp [controlAction, Action.apply]
++    rw [Action.apply_workTapes, controlAction_def, Option.getD_none,
++      Cfg.workTapeSymbols_eq, Function.update_eq_self]
++  · funext i
++    simp only [Action.apply_workTapePos, controlAction_def, SignType.coe_zero, add_zero]
++  · simp only [Action.apply_output, controlAction_def, Option.toList_none, List.append_nil]
+ 
+ /-- The clamped left move always subtracts one from the natural input position. -/
+ lemma moveInputPos_neg_val {n : ℕ} (pos : Fin (n + 2)) :
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -2588,16 +2588,23 @@
+         state := some q'
+         inputPos := moveInputPos c.inputPos inp
+         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+-  simp only [MultiTapeTM.step, hq, htr]
+-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
++  rw [MultiTapeTM.step_of_some hq, htr]
++  apply Cfg.ext
++  · simp only [Action.apply_state, tapeAction]
++  · simp only [Action.apply_inputPos, tapeAction]
++  · funext j
++    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
++    by_cases hj : j = i
++    · subst j
++      simp only [tapeAction, ↓reduceIte, Option.getD_none, Function.update_eq_self]
++    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self]
+   · funext j
+     by_cases hj : j = i
+-    · subst hj; simp
+-    · simp [hj]
+-  · funext j
+-    by_cases hj : j = i
+-    · subst hj; simp
+-    · simp [hj]
++    · subst j
++      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
++    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
++        add_zero, Function.update_of_ne hj]
++  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
+ 
+ /-- **One step of a writing one-tape action** (design §12.8a). If the machine's table
+ gives `Turing.tapeAction i inp (some s) m q'` at the current state and reads, one step
+@@ -2616,16 +2623,24 @@
+         workTapes := Function.update c.workTapes i
+           (Function.update (c.workTapes i) (c.workTapePos i) s)
+         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+-  simp only [MultiTapeTM.step, hq, htr]
+-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
++  rw [MultiTapeTM.step_of_some hq, htr]
++  apply Cfg.ext
++  · simp only [Action.apply_state, tapeAction]
++  · simp only [Action.apply_inputPos, tapeAction]
++  · funext j
++    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
++    by_cases hj : j = i
++    · subst j
++      simp only [tapeAction, ↓reduceIte, Option.getD_some, Function.update_self]
++    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self,
++        Function.update_of_ne hj]
+   · funext j
+     by_cases hj : j = i
+-    · subst hj; simp
+-    · simp [hj]
+-  · funext j
+-    by_cases hj : j = i
+-    · subst hj; simp
+-    · simp [hj]
++    · subst j
++      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
++    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
++        add_zero, Function.update_of_ne hj]
++  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
+ 
+ /-- **One step of an input-only action** (design §12.8a). If the machine's table gives
+ `Turing.inputMoveAction inp q'` at the current state and reads, one step moves the input
+@@ -2638,8 +2653,16 @@
+     (inp : SignType) (hq : c.state = some q)
+     (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
+     M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
+-  simp only [MultiTapeTM.step, hq, htr]
+-  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]
++  rw [MultiTapeTM.step_of_some hq, htr]
++  apply Cfg.ext
++  · simp only [Action.apply_state, inputMoveAction_eq]
++  · simp only [Action.apply_inputPos, inputMoveAction_eq]
++  · funext j
++    rw [Action.apply_workTapes, inputMoveAction_eq, Option.getD_none,
++      Cfg.workTapeSymbols_eq, Function.update_eq_self]
++  · funext j
++    simp only [Action.apply_workTapePos, inputMoveAction_eq, SignType.coe_zero, add_zero]
++  · simp only [Action.apply_output, inputMoveAction_eq, Option.toList_none, List.append_nil]
+ 
+ /-! ### The field layout -/
+ 
+@@ -3062,32 +3085,35 @@
+         ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some q⟩) :
+       M.step (F r) = { F (r + 1) with state := some q } := by
+     have hst : (F r).state = some .run := hstate
+-    simp only [MultiTapeTM.step, hst, htr]
++    rw [MultiTapeTM.step_of_some hst, htr]
+     apply Cfg.ext
+-    · rfl
+-    · simp [Action.apply, F, moveInputPos_zero]
++    · simp only [Action.apply_state]
++    · simp only [Action.apply_inputPos, F, moveInputPos_zero]
+     · funext j
+-      by_cases hj : moved j <;> simp [Action.apply, F, hj]
++      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
++      by_cases hj : moved j
++      · simp only [F, hj, if_true, Option.getD_none, Function.update_eq_self]
++      · simp only [F, hj, if_false, Option.getD_none, Function.update_eq_self]
+     · funext j
+       by_cases hj : moved j
+-      · simp only [Action.apply, F, hj, if_true]
++      · simp only [Action.apply_workTapePos, F, hj, if_true]
+         push_cast
+         ring
+-      · simp [Action.apply, F, hj]
+-    · simp [Action.apply, F]
++      · simp only [Action.apply_workTapePos, F, hj, if_false, SignType.coe_zero, add_zero]
++    · simp only [Action.apply_output, F, Option.toList_none, List.append_nil]
+   have hsym (r : ℕ) : (F r).workTapeSymbols src = d.workTapes src
+       (d.workTapePos src + (dir : ℤ) * (r : ℤ)) := by
+-    simp [F, Cfg.workTapeSymbols, hsrc]
++    simp [F, Cfg.workTapeSymbols_eq, hsrc]
+   have hF (r : ℕ) (hr : r < w.length) : M.step (F r) = F (r + 1) := by
+     have hs : (F r).workTapeSymbols src = some w[r] := by
+       rw [hsym, hw r (by omega)]
+-      simp [FinTM.bufferTape, List.getElem?_eq_getElem hr]
++      simp [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
+     rw [hstep r .run (by simp only [M, walkTM, hs])]
+     apply Cfg.ext <;> simp [F, hstate]
+   have hexit : M.step (F w.length) = D := by
+     have hs : (F w.length).workTapeSymbols src = none := by
+       rw [hsym, hw w.length le_rfl]
+-      simp [FinTM.bufferTape]
++      simp [FinTM.bufferTape_nat]
+     exact (hstep w.length .done (by simp only [M, walkTM, hs])).trans rfl
+   have hD : M.step D = D := by
+     rw [step_of_inputMoveAction M D 0 rfl rfl, moveInputPos_zero]
+--- a/TCSlib/Complexity/TuringMachine/Build/Scan.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Scan.lean
+@@ -605,7 +605,8 @@
+       omega
+     all_goals simp [scanFoldF]
+   · have hs : (scanFoldF δ a₀ d x.length).inputSymbol = none := by
+-      simp [Cfg.inputSymbol, scanFoldF]
++      apply Cfg.inputSymbol_of_end
++      simp [scanFoldF]
+     rw [step_of_inputMoveAction _ _ (-1) rfl
+       (q' := .bwd ((x.take x.length).foldl δ a₀)) (by simp only [inputFoldTM, hs])]
+     apply Cfg.ext
+@@ -629,7 +630,8 @@
+       omega
+     all_goals simp [scanFoldR]
+   · have hs : (scanFoldR δ a₀ d 0).inputSymbol = none := by
+-      simp [Cfg.inputSymbol, scanFoldR]
++      apply Cfg.inputSymbol_of_zero
++      simp [scanFoldR]
+     rw [step_of_inputMoveAction _ _ 1 rfl
+       (q' := .done (x.foldl δ a₀)) (by simp only [inputFoldTM, hs])]
+     apply Cfg.ext

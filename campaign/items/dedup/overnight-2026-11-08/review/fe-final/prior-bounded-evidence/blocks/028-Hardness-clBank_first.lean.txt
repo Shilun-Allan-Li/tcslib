@@ -1,0 +1,28 @@
+private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+    (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)
+    (hW : ∀ i, (n i).bits.length ≤ W) :
+    ∃ t ≤ 2 * W + 2,
+      (∀ j, j < t → ((clBankTM l).tm.runFrom
+        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state ≠
+          some (fun _ => some (0 : Fin 4))) ∧
+      (clBankTM l).tm.runFrom
+        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =
+        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by
+  let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])
+  have finish := clBank_finish x p a n W hW
+  have hex : ∃ t, t ≤ 2 * W + 2 ∧
+      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :=
+    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩
+  let t := Nat.find hex
+  have ht := Nat.find_spec hex
+  refine ⟨t, ht.1, ?_, ?_⟩
+  · intro j hj hs
+    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
+      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from
+        ⟨by omega, hs⟩)
+    omega
+  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)
+    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)
+      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+    exact hstay.symm.trans finish

@@ -1,0 +1,40 @@
+/-- Reuse the predecessor's native coverage at the actual first scheduler
+halt, and transfer its full-word extraction/coverage into the host. The
+assembly buffer has original prefix `x` and exactly the extracted suffix.
+**Proof sketch.** Standalone coverage supplies the guessed word. Equality of
+its capture tape identifies that word with physical-mask selection; the
+guarded host run then gives the same selection after the preserved prefix. -/
+private lemma b2_guess_coverage (S V : FinTM Bool) (x v : List Bool) (T : ℕ)
+    (hS : (b2UnaryTM S).ComputesInTime x v T)
+    (hlive : ∀ s < T, ((b2UnaryTM S).tm.runFrom
+      ((b2UnaryTM S).tm.initCfg x) s).state ≠ none) :
+    (∀ w : List Bool, w.length = T → ∃ u : List Bool, u.length = v.length ∧
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) ∧
+    (∀ u : List Bool, u.length = v.length → ∃ w : List Bool, w.length = T ∧
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) := by
+  have hcov := cont_guess_coverage (b2UnaryTM S) x v T hS
+  have htransfer (w u : List Bool) (hw : w.length = T)
+      (hr : (contGuessTM (b2UnaryTM S)).tm.runWith w
+        ((contGuessTM (b2UnaryTM S)).tm.initCfg x) =
+          contGuessCfg (b2UnaryTM S) ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) :
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u := by
+    rw [cont_guess_initial, cont_guess_run, hw, List.nil_append] at hr
+    have hu := b2_guess_word_injective _ _ hr
+    rw [b2_guess_run S V _ [] w (by simpa [hw] using hlive), hw, List.nil_append, hu]
+  constructor
+  · intro w hw
+    obtain ⟨u, hu, hr⟩ := hcov.1 w hw
+    exact ⟨u, hu, htransfer w u hw hr⟩
+  · intro u hu
+    obtain ⟨w, hw, hr⟩ := hcov.2 u hu
+    exact ⟨w, hw, htransfer w u hw hr⟩

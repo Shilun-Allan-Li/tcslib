@@ -1,0 +1,46 @@
+[
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_first_halt",
+    "old_chunk": "/-- Select the actual first halting transition, retaining its final emission. -/\nprivate lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)\n    (h : M.ComputesInTime x y T) :\n    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by\n  classical\n  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h\n  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hh.1⟩\n  let t := Nat.find hex\n  have ht : t ≤ T := Nat.find_min' hex hh.1\n  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex\n  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)\n  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he\n  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩",
+    "new_chunk": "/-- Select the actual first halting transition, retaining its final emission. -/\nprivate lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)\n    (h : M.ComputesInTime x y T) :\n    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by\n  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h\n  obtain ⟨t, ht, hg, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hh.1\n  refine ⟨t, ht, hg, ?_, ?_⟩\n  · rw [he]; exact hh.1\n  · rw [he]; exact hh.2",
+    "old_sha256": "766fb27272c383b30f8cfdd1df2c08cca368b67b18ad9e56839ed2ef11c35bc8",
+    "new_sha256": "18aace11fe3d87cee2d58d9c4788a7a1590106a62fdd0e8a3e76bd7b7ac05493",
+    "header_sha256": "a83a59f98bc4084cb911468b89053748c12211aaa11601bca9a32ec522bf74d3",
+    "header_exact": true,
+    "status": "PROPOSAL ONLY: actual full-owner native/AX and complete-declaration native/sealed/control checks PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_call_first_halt",
+    "old_chunk": "/-- A padded halting run can be cut at its first halt without changing any\nendpoint field. This is the local instance of the engine's minimal-halt\nargument: use `Nat.find` and the absorbing-halt law. -/\nprivate lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t := by\n  classical\n  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩\n  have hu := Nat.find_spec h\n  have hle := Nat.find_min' h hhalt\n  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩\n  · by_contra hn\n    have hz : Nat.find h = 0 := by omega\n    rw [hz, MultiTapeTM.runFrom_zero] at hu\n    exact hstart hu\n  · symm\n    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]",
+    "new_chunk": "/-- A padded halting run can be cut at its first positive halt without changing\nany endpoint field. Apply `Turing.MultiTapeTM.exists_first_halt`; the live\ninitial state excludes time zero. -/\nprivate lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t := by\n  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt\n  have hp : 0 < u := by\n    by_contra hn\n    have hz : u = 0 := by omega\n    have hs := congrArg Cfg.state he\n    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs\n    exact hstart hs\n  exact ⟨u, hp, hu, hg, he⟩",
+    "old_sha256": "1abd39c98d9c09fd730f558ef9e4c9b43894ac6954c2a1e568c4852d60bd10d7",
+    "new_sha256": "88515b5193f27405fc4270a4954fb419c8e7eb74df7ff228e152d7e47c30c6f7",
+    "header_sha256": "9f6fe638f8c9056509a8165a1b4e27bf1ed51a1efa94ac641e6ba86a26e39086",
+    "header_exact": true,
+    "status": "PROPOSAL ONLY: actual full-owner native/AX and complete-declaration native/sealed/control checks PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_tail",
+    "old_chunk": "/-- Removing the first bit is a two-state finite transduction. -/\nprivate lemma sat_pt_tail : PolyTimeComputable List.tail := by\n  let emit (q b : Bool) : Option Bool := if q then some b else none\n  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [satMapWord, emit, ih]\n  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by\n    cases x <;> simp [satMapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Removing the first bit is polynomial-time by the public tail closure. -/\nprivate lemma sat_pt_tail : PolyTimeComputable List.tail := by\n  convert polyTimeComputable_tail using 1\n  funext x\n  cases x <;> rfl",
+    "old_sha256": "50d35fb55e4f89cbcd6f8d1ce3fec09e9fc6b916c9725a84aee98905a3962b92",
+    "new_sha256": "1f71571afd2fd7a75c6d270d5ae7ae6d16ea1fd6d11110d1d50682e8f177fdf9",
+    "header_sha256": "70c8a04a1c7845ba1605eec54320367d49f1d827d1fd2158a3c049cb56807b36",
+    "header_exact": true,
+    "status": "PROPOSAL ONLY: actual full-owner native/AX and complete-declaration native/sealed/control checks PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_head",
+    "old_chunk": "/-- Extracting at most the first bit is also a two-state finite transduction. -/\nprivate lemma sat_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  let emit (q b : Bool) : Option Bool := if q then none else some b\n  have h := satMap_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [satMapWord, emit, ih]\n  have he (x : List Bool) : satMapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by\n    cases x <;> simp [satMapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/\nprivate lemma sat_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  exact polyTimeComputable_take1",
+    "old_sha256": "604afb02894ac18a75ab611f68e77553f5f589befadcdccba1ad9b370acd5e14",
+    "new_sha256": "58f7df62736758d22c282f91dcfca384986e626a1f0a0f55cfb59e35f3ee8e31",
+    "header_sha256": "1d7c22c327995789fd1edccee791d4afb43de78762176de73e83bbe15ee6f14f",
+    "header_exact": true,
+    "status": "PROPOSAL ONLY: actual full-owner native/AX and complete-declaration native/sealed/control checks PASS"
+  }
+]

@@ -1,0 +1,9 @@
+private def emCallEvalTM (M : FinTM Bool) : FinTM Bool where
+  k := (bufferedCompTM emCallIdleTM M).k + 1
+  State := (bufferedCompTM emCallIdleTM M).State ⊕ Unit
+  tm := {
+    q₀ := .inl (bufferedCompTM emCallIdleTM M).tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q => captureAction Sum.inl (.inr ())
+          ((bufferedCompTM emCallIdleTM M).tm.tr q inp (fun i => work i.castSucc))
+      | .inr () => controlAction 0 (some (.inr ())) }

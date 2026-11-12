@@ -1,0 +1,11 @@
+/-- Select the actual first halting transition, retaining its final emission. -/
+private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)
+    (h : M.ComputesInTime x y T) :
+    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by
+  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h
+  obtain ⟨t, ht, hg, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hh.1
+  refine ⟨t, ht, hg, ?_, ?_⟩
+  · rw [he]; exact hh.1
+  · rw [he]; exact hh.2

@@ -1,0 +1,108 @@
+{
+  "status": "PRIVATE_REFINEMENT_PREFLIGHT_PASS_ROOT_ADOPTION_PENDING",
+  "source_binding": {
+    "actual_old_head": "535c0043310bb3ad6efd9359aef62518699b7de8",
+    "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+    "owner": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "old_sha256": "9a43c783e498d26c2621f7f4b9b715142112f45c745bd4a6c41b6ebda8dbd767",
+    "proposed_sha256": "e64bb55b65e76d234a316e01e9704df876592f3c3bf36857dc0df030a6dcadad",
+    "new_private_helper": "Turing.safeRun_iff_segment",
+    "new_public_API": false,
+    "source_worktree_Git_canonical_or_snapshot_mutation": false,
+    "root_adoption_pending": true
+  },
+  "checks": [
+    {
+      "check": "OwnerNative",
+      "receipt": "OwnerNative-attempt2.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 6,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "Inventory",
+      "receipt": "Inventory-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ScopeGuardNative",
+      "receipt": "ScopeGuardNative-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ScopeSealed",
+      "receipt": "ScopeSealed-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ControlsNative",
+      "receipt": "ControlsNative-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ControlsSealed",
+      "receipt": "ControlsSealed-attempt1.json",
+      "exit": 1,
+      "errors": 14,
+      "warnings": 0,
+      "sorry_warnings": 0
+    }
+  ],
+  "all_four_complete_scopes_native_and_sealed": true,
+  "fresh_positive_kernel_checked_controls": 14,
+  "fresh_negative_same_identity_controls": 14,
+  "guard_count": 7,
+  "public_three_selected_ABI_all_fields_exact": true,
+  "four_root_AXIOM_sets": [
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "_private.Inventory.0.Turing.safeRun_iff_segment",
+      "root": "Turing.safeRun_iff_segment"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.zero",
+      "root": "Turing.SafeRun.zero"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.cons",
+      "root": "Turing.SafeRun.cons"
+    },
+    {
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "kernel": "Turing.SafeRun.trans",
+      "root": "Turing.SafeRun.trans"
+    }
+  ],
+  "no_new_downstream_replay_or_33_file_screen": true,
+  "old_head_80_replay_and_33_screen_are_old_head_only": true,
+  "no_source_Git_snapshot_canonical_or_external_mutation": true,
+  "no_fullscreen_started": true,
+  "all_native_jobs_closed": true
+}

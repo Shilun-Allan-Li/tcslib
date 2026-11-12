@@ -1,0 +1,28 @@
+/-- **The action-record validator** (C2, generic, for `k` work tapes). As
+`exists_canonUnaryTM`, deciding one record `codeSkipActionK k (counterValue w)` of the native
+suffix: the `4k + 4` fixed bits by one native leaf that fails fast on a blank, then the
+successor field (a `false` tag ends the record; a `true` tag is followed by the bounded unary
+reader). (Recommended shape; you may restate it.)
+
+**Proof sketch.** `canonSkipAction_eq` splits the record into `canonSkipFields k` and
+`codeSkipState (n + 1)`; `canonSkipFields_cells` fixes the native advance of the leaf at
+`4k + 4`. Validate the pairs in order (each `a || !b`, except the `k` writes, which accept any
+pair), read the tag, then run `exists_canonUnaryTM` embedded on the bound and its scratch tape
+by public seams. -/
+private lemma exists_canonRecordTM (k : ℕ) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (bound : Fin m) (a : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1),
+          (R.runFrom d t).state =
+            some (exit (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (R.runFrom d t).output = d.output ∧
+          (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (exit v)) ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧
+          (R.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (R.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  sorry

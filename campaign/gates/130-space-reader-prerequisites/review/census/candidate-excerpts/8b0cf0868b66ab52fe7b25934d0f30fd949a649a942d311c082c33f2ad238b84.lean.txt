@@ -1,0 +1,12 @@
+/-- After all counters have returned, exactly one silent dispatch restores
+the tracking anchor without changing source time or any tape. -/
+private lemma clTrack_dispatch (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool)
+    (n : Fin ((1 + M.k) + (1 + M.k)) → ℕ) :
+    (clTrackTM M).tm.step
+      (clRefCfg M (fun s b => (s, b, some (fun _ => some (0 : Fin 4)))) c b
+        (1 : Fin (x.length + 2)) (fun i => FinTM.bufferTape (n i).bits) (fun _ => 0) []) =
+      clTrackCfg M (x := x) c b n := by
+  simp only [MultiTapeTM.step, clRefCfg, clTrackTM, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  rfl

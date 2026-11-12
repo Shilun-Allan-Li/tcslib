@@ -1,0 +1,6 @@
+noncomputable def dtDepth {n : ℕ} (f : (Fin n → Bool) → Bool) : ℕ := by
+  classical
+  exact Nat.find (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
+    ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+     DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+     fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩

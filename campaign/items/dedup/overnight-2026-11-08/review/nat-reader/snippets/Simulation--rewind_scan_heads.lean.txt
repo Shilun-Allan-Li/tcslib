@@ -1,0 +1,39 @@
+theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
+    (htr : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest) :
+    ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
+      cfg.inputPos.val = j → j ≤ x.length →
+      ∀ u ≤ j + 1, (tm.runFrom cfg u).workTapePos = cfg.workTapePos := by
+  intro j
+  induction j with
+  | zero =>
+    intro cfg hs hj hp u hu
+    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
+    · rfl
+    · have hz : cfg.inputPos = 0 := Fin.ext hj
+      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]
+      change (tm.step cfg).workTapePos = _
+      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+  | succ j ih =>
+    intro cfg hs hj hp u hu
+    cases u with
+    | zero => rfl
+    | succ u =>
+      have hi : cfg.inputSymbol = some (x[j]'(by omega)) :=
+        inputSymbolInner j (by omega) (by omega)
+      have he : tm.step cfg =
+          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+      rw [MultiTapeTM.runFrom_succ_eq_step, he]
+      apply ih _ rfl _ (by omega) u (by omega)
+      simp only [moveInputPos_neg_val]
+      omega
+
+/-- **The bounded rewind with its work heads fixed** (public since the §12.8 fill): it
+reaches its destination with the input head at `1` within `pos + 2` steps, and every work head
+stays put throughout.
+
+**Proof sketch.** One start step, then `Turing.FinTM.rewind_scan` for the run and
+`Turing.FinTM.rewind_scan_heads` for the heads. -/

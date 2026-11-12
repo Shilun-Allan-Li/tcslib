@@ -1,0 +1,58 @@
+/-- At the end of the header passes the shared copier produces exactly the bounded suffix
+window on an initially blank tape. Tapes other than the window and counter are framed, as are
+their heads, and the cost has no dependence on the uncopied suffix.
+
+**Proof sketch.** Identify the suffix by dropping the encoded header, and read the binary
+counter through its published value equation. Project the copier's two tape updates; the
+blank destination outside the copied interval agrees with the window buffer's blank cells. -/
+private theorem ic_window_call (K : ℕ) (j dst : Fin K) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ (α x : List Bool) (t : ℕ)
+        (d : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)),
+        d.state = some entry →
+        d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape (Nat.bits t) q) →
+        d.workTapes dst = (fun _ => none) → d.workTapePos dst = 0 →
+        ∃ T ≤ C * (min t x.length + 1) + 2 * (Nat.bits t).length,
+          (W.runFrom d T).state = some done ∧
+          (W.runFrom d T).inputPos.val =
+            4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length ∧
+          (W.runFrom d T).workTapes dst = FinTM.bufferTape (x.take t) ∧
+          (W.runFrom d T).workTapePos dst = ((x.take t).length : ℤ) ∧
+          (W.runFrom d T).workTapePos j = d.workTapePos j ∧
+          (∀ i : Fin K, i ≠ j → i ≠ dst →
+            (W.runFrom d T).workTapes i = d.workTapes i ∧
+            (W.runFrom d T).workTapePos i = d.workTapePos i) ∧
+          (W.runFrom d T).output = d.output ∧
+          ∀ u < T, (W.runFrom d u).state ≠ some done := by
+  obtain ⟨Q, hQ, hQ', W, entry, done, C, copy⟩ := exists_inputWindowCopyTM K j dst hjd
+  refine ⟨Q, hQ, hQ', W, entry, done, C, ?_⟩
+  intro α x t d hd hp hw hblank hzero
+  have position : d.inputPos.val = 2 * (pairEncode (Nat.bits t) α).length + 2 + 1 := by
+    rw [hp, length_pairEncode]
+    omega
+  have value : Nat.ofDigits 2 ((Nat.bits t).map Bool.toNat) = t :=
+    (counterValue_eq _).symm.trans (counterValue_bits t)
+  obtain ⟨T, bound, w', _, hstate, hin, htapes, hheads, hout, hcut⟩ :=
+    copy d (2 * (pairEncode (Nat.bits t) α).length + 2) (Nat.bits t) hd position hw
+  simp only [ic_input_suffix, value] at bound hin htapes hheads
+  refine ⟨T, by simpa only [List.length_take] using bound, hstate, ?_, ?_, ?_, ?_, ?_, hout,
+    hcut⟩
+  · rw [length_pairEncode] at hin
+    omega
+  · rw [htapes, Function.update_of_ne hjd.symm, Function.update_self]
+    funext q
+    simp only [hzero, hblank, zero_add, sub_zero]
+    by_cases inside : 0 ≤ q ∧ q < ((x.take t).length : ℤ)
+    · rw [if_pos inside]
+    · rw [if_neg inside, FinTM.bufferTape_eq]
+      by_cases nonneg : 0 ≤ q
+      · rw [if_pos nonneg, List.getElem?_eq_none (by omega)]
+      · rw [if_neg nonneg]
+  · rw [hheads, Function.update_self, hzero, zero_add]
+  · rw [hheads, Function.update_of_ne hjd]
+  · intro i hij hid
+    exact ⟨by rw [htapes, Function.update_of_ne hij, Function.update_of_ne hid],
+      by rw [hheads, Function.update_of_ne hid]⟩

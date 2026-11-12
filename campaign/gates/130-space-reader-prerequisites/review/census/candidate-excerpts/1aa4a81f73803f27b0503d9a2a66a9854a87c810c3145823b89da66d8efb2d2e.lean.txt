@@ -1,0 +1,34 @@
+/-- A negative right-boundary crossing test turns in one step and allocates
+no cell. All prefixes stay at the boundary or the cell immediately to its left. -/
+private lemma dg_turn_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = false)
+    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
+      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
+        [some sweepBoundary] l
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
+      1 (z - 1) z := by
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
+      [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k))
+  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
+    funext i
+    exact sweepTape_read z l _
+  have he := dg_read_boundary M a₀ q s d.inputSymbol
+  rw [dgInput_read a₀ c d rfl, hs, hc] at he
+  simp only [Bool.false_eq_true, ↓reduceIte] at he
+  have ht := dg_turn M a₀ c q s hs z l [some sweepBoundary]
+  change ((dgTM M a₀).tm.tr (.inl (.growRight q s ⟨M.k, by omega⟩))
+    d.inputSymbol d.workTapeSymbols).apply _ = _ at ht
+  rw [hw] at ht
+  apply dgSpan_one ?_ (by dsimp [sweepCfg]; constructor <;> omega)
+    (by dsimp [sweepRevCfg]; constructor <;> omega)
+  change ((dgTM M a₀).tm.tr (.inl (.read q s)) d.inputSymbol d.workTapeSymbols).apply d = _
+  rw [hw]
+  exact (congrArg (fun act => act.apply d) he).trans ht

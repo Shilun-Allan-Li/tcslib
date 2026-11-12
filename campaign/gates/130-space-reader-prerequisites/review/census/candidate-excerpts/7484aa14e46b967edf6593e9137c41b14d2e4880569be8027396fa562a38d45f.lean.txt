@@ -1,0 +1,23 @@
+/-- Native clean-call controller. Evaluation is captured at its actual
+return; each tracked triple is cleared to its observed return; the last
+phase installs or emits the capture and erases administrative storage.
+No deadline or source running time is part of this transition table. -/
+private def emCallTM (M : FinTM Bool) (emit : Bool) : FinTM Bool where
+  k := (emCallSource M).k
+  State := emCallState M
+  tm := {
+    q₀ := .inl (.inl (.inr (.inr ((emCallRightTM (emCallTrackTM M)).tm.q₀, true))))
+    tr := fun q inp work => match q with
+      | .inl q =>
+        if q = .inr () then controlAction 0 (some (.inr (.inl (0, 0))))
+        else emCallAction (fun i => some i) Sum.inl ((emCallSource M).tm.tr q inp work)
+      | .inr (.inl (i, q)) =>
+        if hi : i.val < M.k then
+          if q = 3 then controlAction 0 (some (.inr (.inl (⟨i.val + 1, by omega⟩, 0))))
+          else emCallAction (emCallTripleSelect M ⟨i.val, hi⟩)
+            (fun s => .inr (.inl (i, s)))
+            (emCallClearTM.tm.tr q inp (fun r => work (emCallTripleIndex M ⟨i.val, hi⟩ r)))
+        else controlAction 0 (some (.inr (.inr 0)))
+      | .inr (.inr q) => emCallAction (emCallPairSelect M)
+          (fun s => .inr (.inr s))
+          ((emCallFinishTM emit).tm.tr q inp (fun r => work (emCallPairIndex M r))) }

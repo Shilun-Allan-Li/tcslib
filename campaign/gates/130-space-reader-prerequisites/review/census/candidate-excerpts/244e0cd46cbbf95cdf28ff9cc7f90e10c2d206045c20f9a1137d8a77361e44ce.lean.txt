@@ -1,0 +1,16 @@
+theorem c1rc_widen_record {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+    actionBitsK (⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩ :
+        Action 3 Bool (Fin (n + 1))) =
+      (actionBitsK a).take 10 ++ [false, false, true, false] ++ (actionBitsK a).drop 10 := by
+  have head : (signBits a.inputTape ++ (List.finRange 2).flatMap fun i =>
+      optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2).length = 10 := by
+    simp only [List.finRange_succ, List.finRange_zero, List.map_cons, List.map_nil,
+      List.flatMap_cons, List.flatMap_nil, List.length_append, c1rc_signBits_length,
+      c1rc_optOptBoolBits_length, List.length_nil]
+  rw [actionBitsK_eq, actionBitsK_eq, List.finRange_succ_last, List.flatMap_append,
+    List.flatMap_map]
+  simp only [Fin.lastCases_castSucc, Fin.lastCases_last, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil]
+  rw [List.append_assoc (signBits a.inputTape ++ _), List.append_assoc (signBits a.inputTape ++ _),
+    List.take_left' head, List.drop_left' head, ← c1rc_choiceField]
+  simp only [List.append_assoc]

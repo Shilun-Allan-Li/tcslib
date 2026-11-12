@@ -1,0 +1,25 @@
+/-- A clean subroutine logs and captures a source, undoes all source work,
+rewinds the native input and captured word, and halts silently. Its retained
+output word lives on the last work tape; it emits no physical output. -/
+private def enumCont_cleanTM (M : FinTM Bool) : FinTM Bool where
+  k := (enumCont_logTM M).k + 1
+  State := M.State ⊕ (Fin 6 ⊕ (enumCont_undoTM M.k).State)
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q => captureAction Sum.inl (.inr (.inl 0))
+          ((enumCont_logTM M).tm.tr q inp (fun i => work i.castSucc))
+      | .inr (.inr q) => captureAction (fun q => .inr (.inr q)) (.inr (.inl 1))
+          ((enumCont_undoTM M.k).tm.tr q inp (fun i => work i.castSucc))
+      | .inr (.inl q) => match q.val with
+        | 0 => captureAction (fun q => .inr (.inr q)) (.inr (.inl 1))
+            (enumCont_undoEntry M.k)
+        | 1 => controlAction .neg (some (.inr (.inl 2)))
+        | 2 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 2)))
+          | none => controlAction .pos (some (.inr (.inl 3)))
+        | 3 => enumCont_bufferAction 0 .neg (some (.inr (.inl 4)))
+        | 4 => match work (Fin.last (enumCont_logTM M).k) with
+          | some _ => enumCont_bufferAction 0 .neg (some (.inr (.inl 4)))
+          | none => enumCont_bufferAction 0 .pos (some (.inr (.inl 5)))
+        | _ => controlAction 0 none }

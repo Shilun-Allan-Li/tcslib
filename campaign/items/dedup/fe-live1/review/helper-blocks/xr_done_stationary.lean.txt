@@ -1,0 +1,5 @@
+private theorem xr_done_stationary {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St)
+    (htr : ∀ b inp w, tm.tr (.done b) inp w = xr_stay (.done b)) (d : Cfg K Bool xr_St x)
+    (a : xr_St) (hd : d.state = some a) (ha : ∃ b, a = .done b) : tm.step d = d := by
+  obtain ⟨b, rfl⟩ := ha
+  exact xr_stay_step tm (.done b) (htr b) d hd

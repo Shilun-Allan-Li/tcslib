@@ -1,0 +1,56 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import Lean
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+namespace Turing
+open MultiTapeTM
+variable {k m : ℕ} {B SS : Type} {x : List Bool}
+section Boundary
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+/-- One step commutes with an output prefix. -/
+theorem step_output_prefix (H : MultiTapeTM k Bool B)
+    (c : Cfg k Bool B x) (pre : List Bool) :
+    H.step { c with output := pre ++ c.output } =
+      { H.step c with output := pre ++ (H.step c).output } := by
+  exact MultiTapeTM.step_output_prepend H c pre
+
+/-- A run commutes with an output prefix. -/
+theorem runFrom_output_prefix (H : MultiTapeTM k Bool B)
+    (c : Cfg k Bool B x) (pre : List Bool) (t : ℕ) :
+    H.runFrom { c with output := pre ++ c.output } t =
+      { H.runFrom c t with output := pre ++ (H.runFrom c t).output } := by
+  exact MultiTapeTM.runFrom_output_prepend H c pre t
+
+/-- The output tape is append-only along a run. -/
+theorem runFrom_output_extends (H : MultiTapeTM k Bool B)
+    (c : Cfg k Bool B x) (t : ℕ) :
+    ∃ o, (H.runFrom c t).output = c.output ++ o := by
+  obtain ⟨o, ho⟩ := MultiTapeTM.output_prefix H c (Nat.zero_le t)
+  exact ⟨o, by simpa only [MultiTapeTM.runFrom_zero] using ho.symm⟩
+
+/-- A halted configuration never changes. -/
+theorem runFrom_of_halted (H : MultiTapeTM k Bool B)
+    {c : Cfg k Bool B x} (h : c.state = none) (t : ℕ) : H.runFrom c t = c := by
+  exact MultiTapeTM.runFrom_of_halt (tm := H) c h
+
+/-- Every configuration strictly before a live endpoint is live. -/
+theorem state_isSome_of_runFrom (H : MultiTapeTM k Bool B)
+    {c : Cfg k Bool B x} {t : ℕ} {qf : B}
+    (hf : (H.runFrom c t).state = some qf) {j : ℕ} (hj : j ≤ t) :
+    ∃ q, (H.runFrom c j).state = some q := by
+  have hl := MultiTapeTM.runFrom_state_ne_none_of_le H c t
+    (by rw [hf]; exact Option.some_ne_none _) j hj
+  cases hq : (H.runFrom c j).state with
+  | some q => exact ⟨q, rfl⟩
+  | none => exact False.elim (hl hq)
+#print axioms Turing.step_output_prefix
+#print axioms Turing.runFrom_output_prefix
+#print axioms Turing.runFrom_output_extends
+#print axioms Turing.runFrom_of_halted
+#print axioms Turing.state_isSome_of_runFrom
+end Boundary
+
+end Turing

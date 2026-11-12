@@ -1,0 +1,52 @@
+import Lean
+import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  let roots : List Name := [(Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "ClassNP") "EXP") 0) "Complexity") "enumCont_first_anchor"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "ClassNP") "ExhaustiveReplay") 0) "Turing") "xr_firstArrival"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "ClassNP") "ExhaustiveReplay") 0) "Turing") "xr_firstArrival'"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clBank_first"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clCopy_first"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clRow_first"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clCmp_first"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clFirst"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "CookLevin") "Hardness") 0) "Complexity") "clA5Compare_compute"), (Name.str (Name.str (Name.num (Name.str (Name.str (Name.str (Name.str (Name.str (Name.str Name.anonymous "_private") "TCSlib") "Complexity") "TuringMachine") "Build") "InputCall") 0) "Turing") "inputSeekRewind_run"), (Name.str (Name.str Name.anonymous "Turing") "exists_inputLengthTM")]
+  for root in roots do
+    let some ci := env.find? root | throwError "missing target {root}"
+    let owner := homeOf root
+    let mut todo := ci.type.getUsedConstants.toList ++
+      (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+    let mut seen : List Name := [root]
+    let mut localDefs : List Name := []
+    let mut foreign : List Json := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      todo := info.type.getUsedConstants.toList ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        if home == owner then
+          localDefs := n :: localDefs
+          todo := di.value.getUsedConstants.toList ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          let hints := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          foreign := Json.mkObj [
+            ("name",toJson n.toString),("owner",toJson home.toString),
+            ("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),
+            ("simp",toJson (simp.isLemma (.decl n))),
+            ("unfold",toJson (simp.toUnfold.contains n))] :: foreign
+      | _ => pure ()
+    let row := Json.mkObj [
+      ("root",toJson root.toString),("owner",toJson owner.toString),
+      ("local_definition_helpers",toJson ((localDefs.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("foreign_definition_mentions",Json.arr foreign.reverse.toArray),
+      ("visited_constants",toJson seen.length)]
+    logInfo m!"BOUNDARY|{row.compress}"
+  logInfo "COMPLETE|11"

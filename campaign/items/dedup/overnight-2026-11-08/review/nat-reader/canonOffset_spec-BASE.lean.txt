@@ -1,0 +1,14 @@
+private lemma canonOffset_spec (w : List Bool) :
+    Nat.ofDigits 2 ((canonOffset w).map Bool.toNat) = 2 * w.length + 3 ∧
+      (canonOffset w).length ≤ w.length + 2 := by
+  constructor
+  · rw [← foldr_bit_eq_ofDigits]
+    change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _
+    rw [(canonCount_spec w.length.bits).2.2]
+    change Nat.bit true (codeBitsNat w.length.bits + 1) = _
+    rw [codeBitsNat_bits]
+    simp [Nat.bit]
+    omega
+  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+    simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
+    omega

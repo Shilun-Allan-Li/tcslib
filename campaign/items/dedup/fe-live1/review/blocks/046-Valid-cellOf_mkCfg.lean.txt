@@ -1,0 +1,44 @@
+theorem cellOf_mkCfg (x : List Bool) (s : ℕ) (f : ℕ → CellV N) (pos : Fin (x.length + 2))
+    (hslot : ∀ j < 2 * s + 1, ((f j).1.isSome ↔ j = 0))
+    (huniq : ∀ i, ∀ j₁ < 2 * s + 1, ∀ j₂ < 2 * s + 1,
+      ((f j₁).2 i).2 = true → ((f j₂).2 i).2 = true → j₁ = j₂)
+    (hex : ∀ i, ∃ j < 2 * s + 1, ((f j).2 i).2 = true) :
+    Cfg.InWindow s (mkCfg x s f pos) ∧ ∀ j < 2 * s + 1, cellOf s (mkCfg x s f pos) j = f j := by
+  classical
+  have hpos : ∀ i, ∃ j < 2 * s + 1, ((f j).2 i).2 = true ∧
+      (mkCfg x s f pos).workTapePos i = (j : ℤ) - s := by
+    intro i
+    have h : ∃ j, j < 2 * s + 1 ∧ ((f j).2 i).2 = true := by
+      obtain ⟨j, hj, hh⟩ := hex i; exact ⟨j, hj, hh⟩
+    refine ⟨Nat.find h, (Nat.find_spec h).1, (Nat.find_spec h).2, ?_⟩
+    simp only [mkCfg, dif_pos h]
+  refine ⟨⟨fun i => ?_, fun i z hz => ?_⟩, fun j hj => ?_⟩
+  · obtain ⟨j, hj, -, e⟩ := hpos i
+    rw [e, abs_le]; constructor <;> omega
+  · simp only [mkCfg]
+    exact if_neg (not_le.mpr hz)
+  · have h0 : (f 0).1.isSome := (hslot 0 (by omega)).mpr rfl
+    obtain ⟨hd, hhd⟩ := Option.isSome_iff_exists.mp h0
+    simp only [cellOf]
+    refine Prod.ext ?_ (funext fun i => Prod.ext ?_ ?_)
+    · by_cases hj0 : j = 0
+      · subst hj0
+        simp [mkCfg, hhd]
+      · rw [if_neg hj0]
+        have := (hslot j hj).not.mpr hj0
+        simp only [Bool.not_eq_true, Option.isSome_eq_false_iff, Option.isNone_iff_eq_none] at this
+        exact this.symm
+    · simp only [mkCfg]
+      rw [if_pos (by rw [abs_le]; constructor <;> omega)]
+      have e : ((j : ℤ) - s + s).toNat = j := by omega
+      rw [e]
+    · obtain ⟨j₀, hj₀, hh₀, e⟩ := hpos i
+      simp only [e]
+      by_cases hjj : j = j₀
+      · subst hjj; simp [hh₀]
+      · have : ((f j).2 i).2 = false := by
+          by_contra hne
+          exact hjj (huniq i j hj j₀ hj₀ (by simpa using hne) hh₀)
+        rw [this]
+        simp only [decide_eq_false_iff_not]
+        omega

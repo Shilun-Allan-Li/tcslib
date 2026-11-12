@@ -1,0 +1,21 @@
+/-- A silent transition with no writes changes only control and head positions. -/
+private lemma satRed_move (x : List Bool) (q q' : Fin 35)
+    (i i' : ℕ) (hi : i ≤ x.length) (hi' : i' ≤ x.length) (n : ℕ)
+    (buf : ℤ → Option Bool) (a b a' b' : ℤ) (out : List Bool)
+    (m d₀ d₁ : SignType)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) m = ⟨i' + 1, by omega⟩)
+    (ha : a + d₀.cast = a') (hb : b + d₁.cast = b')
+    (ht : satRedTM.tm.tr q (x[i]?) (fun t : Fin 2 => if t = 0 then satRedCounter n a else buf b) =
+      satRedAction m none none d₀ d₁ none (some q')) :
+    satRedTM.tm.step (satRedCfg x (some q) i hi n buf a b out) =
+      satRedCfg x (some q') i' hi' n buf a' b' out := by
+  unfold MultiTapeTM.step
+  change (satRedTM.tm.tr q _ _).apply _ = _
+  rw [satRedCfg_input]
+  have hw : (satRedCfg x (some q) i hi n buf a b out).workTapeSymbols =
+      (fun t => if t = 0 then satRedCounter n a else buf b) := by
+    funext t
+    fin_cases t <;> rfl
+  rw [hw, ht]
+  exact satRedAction_apply x (some q) (some q') i i' hi hi' n n buf buf a b a' b' out out
+    m none none d₀ d₁ none hm rfl rfl ha hb (by simp)

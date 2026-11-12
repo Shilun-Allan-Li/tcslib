@@ -1,0 +1,12 @@
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1662:(`Complexity.mem_NTIME_iff`, `Turing.FinNDTM.decidesInTime_iff`). -/
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1667:  refine ⟨a * F, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1669:  simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1758:  exact ((FinNDTM.decidesInTime_iff.mp hN x).2).mpr
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1759:    (nh_accepts_of_halts (FinNDTM.decidesInTime_iff.mp hN x).1 ht)
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:1823:    have h := ((FinNDTM.decidesInTime_iff.mp hN (List.replicate m true)).2).mp hm
+TCSlib/Complexity/ClassNP/NTIME.lean:77:* `Turing.FinNDTM.acceptsWithin_iff`, `Turing.FinNDTM.decidesInTime_iff`,
+TCSlib/Complexity/ClassNP/NTIME.lean:138:theorem decidesInTime_iff {N : FinNDTM Bool} {L : Language Bool} {T : ℕ → ℕ} :
+TCSlib/Complexity/ClassNP/NTIME.lean:139:    N.DecidesInTime L T ↔ ∀ x : List Bool,
+TCSlib/Complexity/Randomized/BiasedCoin.lean:237:      N.BiasedBPDecidesInTime (1 / 2) L T ↔ N.BPDecidesInTime L T := fun N L T => by
+TCSlib/Complexity/Randomized/PTMEquiv.lean:190:    N.BPDecidesInTime L T ↔ N.BPDecidesInTimeWith L T fun _ => 2/3 := Iff.rfl
+TCSlib/Complexity/Randomized/PTMEquiv.lean:390:    N.RDecidesInTime L T ↔ N.RDecidesInTimeWith L T fun _ => 2/3 := Iff.rfl

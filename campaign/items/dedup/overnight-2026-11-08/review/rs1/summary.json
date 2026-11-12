@@ -1,0 +1,130 @@
+{
+  "utc": "2026-11-08T10:03:12.784886+00:00",
+  "result": "PASS bounded source/native/selectedAX/consumer-seal/control validation of one exact body-only RS1 candidate",
+  "source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "source_path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+  "base_git_blob": "4c94bbe6651470bfd241f16f77c90d9171c5ecd3",
+  "candidate_source_sha256": "5f1f0757335087b8bfd08da9fc6b7445bccb6033024e36746a33d3d82b09b032",
+  "replacement": "MultiTapeTM.initCfg_eq_mapState A R Sum.inl rfl (pairEncode α w)",
+  "changed_local_chunk": {
+    "owner": "Turing.exists_selfStartupTMK",
+    "name": "hinit",
+    "old_lines": 15,
+    "new_lines": 2,
+    "all_outside_bytes_exact": true
+  },
+  "public_headers_imports_definitions_names_privacy_order_docstrings_unchanged": true,
+  "actual_full_module_exit": 0,
+  "actual_full_module_sorry_warnings": 0,
+  "selected_public_AXIOMS": {
+    "BaseAxioms": {
+      "Turing.exists_selfStartupTMK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "Turing.exists_selfUniversalK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "Turing.universalK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    },
+    "UniversalKHead": {
+      "Turing.exists_selfStartupTMK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "Turing.exists_selfUniversalK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "Turing.universalK": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ]
+    }
+  },
+  "sealed_new_consumer_statement_and_body_exit": 0,
+  "ordinary_guards": [
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Cfg.mapState"
+  ],
+  "guarded_simp_defs_removed": [
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init"
+  ],
+  "paired_controls": [
+    {
+      "id": "initCfg_delta",
+      "guard": "MultiTapeTM.initCfg",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 12,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    },
+    {
+      "id": "initCfg_equation",
+      "guard": "MultiTapeTM.initCfg",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 20,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    },
+    {
+      "id": "Cfg_init_delta",
+      "guard": "Cfg.init",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 28,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    },
+    {
+      "id": "Cfg_init_equation",
+      "guard": "Cfg.init",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 36,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    },
+    {
+      "id": "mapState_delta",
+      "guard": "Cfg.mapState",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 43,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    },
+    {
+      "id": "mapState_equation",
+      "guard": "Cfg.mapState",
+      "unsealed_pass": true,
+      "sealed_expected_type_mismatch_line": 50,
+      "source_line_contains_exact_rfl_identity": true,
+      "sealed_failed_as_expected": true
+    }
+  ],
+  "actual_old_new_proof_values_compared": false,
+  "complete_legacy_module_seal_claim": false,
+  "full_public_metadata_or_simp_freeze_claim": false,
+  "downstream_candidate_count": 18,
+  "actual_new_olean_output": false,
+  "source_branch_or_worktree_or_cache_mutation": false,
+  "clear_to_merge_or_gate_closed_claim": false,
+  "other_RS1_leaves": "No source changes; direct imports unavailable, awaiting authorization/route check.",
+  "limits": [
+    "The positive seal checks the exact abstract hinit let-R/let-d0 statement and existing-row proof, not the entire legacy public theorem body.",
+    "Six rfl identities discriminate all three ordinary guards, two per guard; this is not a whole-module opacity certificate.",
+    "Axiom equality covers the three selected public results, not all constants, all downstream modules or theorem proof values.",
+    "Candidate checked against MAC8 at fixed source; root must integrate exact chunk and validate the combined F1 source with its replay/gate.",
+    "No new import, home, public API, statement or mathematical fill is authorized or performed."
+  ]
+}

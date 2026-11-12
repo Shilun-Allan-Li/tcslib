@@ -1,0 +1,236 @@
+{
+  "START_HERE": [
+    {
+      "line": 94,
+      "text": "- `mk-next` merges the campaign into the branch and **pushes** it."
+    },
+    {
+      "line": 95,
+      "text": "- After a container restart, reset each worktree to `origin/<branch>` before re-running."
+    },
+    {
+      "line": 96,
+      "text": ""
+    },
+    {
+      "line": 97,
+      "text": "**A new campaign snapshot after merges.** On `wt-camp`, detached at the merge commit:"
+    },
+    {
+      "line": 98,
+      "text": "1. run `mkdownmulti.py` on the changed modules, then `mkreplay.py`;"
+    },
+    {
+      "line": 99,
+      "text": "2. make the precheck accept the merge commit. Patch it **by its text** (\"is not at the pushed PR"
+    },
+    {
+      "line": 100,
+      "text": "   head\"), never by line number;"
+    },
+    {
+      "line": 101,
+      "text": "3. run it under `slotrun.sh`."
+    },
+    {
+      "line": 102,
+      "text": ""
+    },
+    {
+      "line": 103,
+      "text": "`scratch-api/replay-queue.example.sh` is a worked queue. If the merged campaign's Lean equals a PR"
+    },
+    {
+      "line": 104,
+      "text": "replay's head (`git diff <head> <merge> -- '*.lean'` is empty), that replay's snapshot simply"
+    },
+    {
+      "line": 105,
+      "text": "becomes the campaign snapshot (rename it)."
+    },
+    {
+      "line": 106,
+      "text": ""
+    },
+    {
+      "line": 107,
+      "text": "**When is an older replay still valid after other merges?** Only if none of the PR's changed files"
+    },
+    {
+      "line": 108,
+      "text": "imports a module those merges changed in a way that can matter: statements, definitions, imports,"
+    },
+    {
+      "line": 109,
+      "text": "or simp sets (new imports change simp sets downstream). Proof-body-only changes upstream are"
+    },
+    {
+      "line": 110,
+      "text": "harmless. When in doubt, re-run on the new snapshot."
+    },
+    {
+      "line": 134,
+      "text": "**Findings.** Copy them into the gate folder verbatim, as `findings.md` or `findings-rN.md`. Record"
+    },
+    {
+      "line": 135,
+      "text": "their SHA-256 in `resolutions.md` with a disposition per finding: fixed (with commit), accepted, or"
+    },
+    {
+      "line": 136,
+      "text": "acknowledged by the user (a ledger family). The gate closes at 0 blockers and 0 majors. A major"
+    },
+    {
+      "line": 137,
+      "text": "needs a fix or the user's explicit acknowledgment."
+    },
+    {
+      "line": 138,
+      "text": ""
+    },
+    {
+      "line": 139,
+      "text": "**Clear to merge** needs all of: the gate closed, the minors dispositioned, the PR merging cleanly"
+    },
+    {
+      "line": 140,
+      "text": "with the campaign, and a replay on the current campaign snapshot (or the validity argument above,"
+    },
+    {
+      "line": 141,
+      "text": "stated)."
+    }
+  ],
+  "WORKFLOW": [
+    {
+      "line": 49,
+      "text": "  the maintainer currently uses `TCSLIB_LEAN_SLOTS=3`, reserving two for the other campaign;"
+    },
+    {
+      "line": 50,
+      "text": "  slot locks under"
+    },
+    {
+      "line": 51,
+      "text": "  `$TCSLIB_SCRATCH/locks/`), each `lean -j4` under `nice -n 10`. Replays use"
+    },
+    {
+      "line": 52,
+      "text": "  `scripts/lean_check_tree.sh` through the generated replay scripts."
+    },
+    {
+      "line": 53,
+      "text": "- **Screens one at a time**, machine-wide: `scripts/copy-text-screen-v3.py` under `nice -n 10`,"
+    },
+    {
+      "line": 54,
+      "text": "  holding `$TCSLIB_SCRATCH/locks/screen` (`mkdir` to take it, `rmdir` to release; a lock with no"
+    },
+    {
+      "line": 55,
+      "text": "  running screen process is stale)."
+    },
+    {
+      "line": 56,
+      "text": "- **Every new worktree needs the Mathlib link:** `mkdir -p <wt>/.lake && ln -s"
+    },
+    {
+      "line": 57,
+      "text": "  <main checkout>/.lake/packages <wt>/.lake/packages`. Replay scripts precheck it. A failed"
+    },
+    {
+      "line": 58,
+      "text": "  replay has deleted oleans from its snapshot copy, so the copy must be discarded."
+    },
+    {
+      "line": 59,
+      "text": "- **Snapshots and replays:**"
+    },
+    {
+      "line": 60,
+      "text": "  - A snapshot is a compiled olean tree of a known Lean tree, recorded with the commit it matches."
+    },
+    {
+      "line": 61,
+      "text": "  - To compile a change before its replay, make a copy-on-write clone of the snapshot and compile"
+    },
+    {
+      "line": 62,
+      "text": "    into it. Partial `LEAN_PATH` overlays fail."
+    },
+    {
+      "line": 63,
+      "text": "  - **Merged-tree replay:** when several PRs have merged since the last common snapshot, replay"
+    },
+    {
+      "line": 64,
+      "text": "    the downstream closure of *every* `.lean` file changed since that snapshot's tree, on the"
+    },
+    {
+      "line": 65,
+      "text": "    merged tree, chained from that snapshot. Never compose snapshots."
+    },
+    {
+      "line": 66,
+      "text": "  - Replay lists never contain the root `TCSlib`: snapshots cover only `Complexity`,"
+    },
+    {
+      "line": 67,
+      "text": "    `BooleanAnalysis`, `Programs` and `ComputationalModels`."
+    },
+    {
+      "line": 68,
+      "text": "  - `devtools/seyoon/mk-next.sh` merges the campaign into a PR branch and writes the chained"
+    },
+    {
+      "line": 69,
+      "text": "    replay (`mkdownmulti.py`, `mkreplay.py`), with its precheck. Evidence copies of `.lean` files"
+    },
+    {
+      "line": 70,
+      "text": "    are named `.lean.txt`, so that the scripts' Lean-tree checks ignore them."
+    },
+    {
+      "line": 71,
+      "text": "- **Rule 10 binds the maintainer's own API proofs:** read other files' TCSlib definitions only"
+    },
+    {
+      "line": 72,
+      "text": "  through their published equations. Core and Mathlib definitions may reduce by `rfl`, `decide`"
+    },
+    {
+      "line": 73,
+      "text": "  or `show`, but are never passed to `simp`, `rw` or `unfold`."
+    },
+    {
+      "line": 74,
+      "text": "  - **Check:** a sealed copy (`attribute [local irreducible]` on every other-file TCSlib"
+    },
+    {
+      "line": 75,
+      "text": "    definition reached; `attribute [-simp]` on the `@[simp]` ones that exist in the closure),"
+    },
+    {
+      "line": 76,
+      "text": "    each new section moved into its own `section` in a scratch copy."
+    },
+    {
+      "line": 77,
+      "text": "  - **Controls:** an `rfl` delta goal and an equation goal per sealed definition. They pass"
+    },
+    {
+      "line": 78,
+      "text": "    unsealed and fail sealed."
+    },
+    {
+      "line": 79,
+      "text": "  - Also inspect every `rw`/`simp`/`unfold` argument, since `simp [Def]` unfolds even a sealed"
+    },
+    {
+      "line": 80,
+      "text": "    definition."
+    }
+  ],
+  "source_pin": "6fd9cd541adb15af0d4f18fb35c4eb77ac02f7fd",
+  "interpretation_not_new_policy": true
+}

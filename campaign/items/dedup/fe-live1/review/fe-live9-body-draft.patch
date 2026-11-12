@@ -1,0 +1,339 @@
+--- a/TCSlib/Complexity/ClassNP/EXP.lean
++++ b/TCSlib/Complexity/ClassNP/EXP.lean
+@@ -2034,20 +2034,21 @@
+     (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = some qa) :
+     ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some qa) ∧
+       tm.runFrom c t = stop.runFrom c T := by
+-  classical
+-  have hex : ∃ t, (stop.runFrom c t).state = some qa := ⟨T, hT⟩
+-  let t := Nat.find hex
+-  have ht : t ≤ T := Nat.find_min' hex hT
+-  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
+-  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
+-  have he : stop.runFrom c T = stop.runFrom c t := by
+-    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+-    rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hend]
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    stop (fun q => q = qa) c (stop.runFrom c T) T
++    (by
++      rintro d ⟨q, hq, rfl⟩
++      simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
++        enumCont_absorb stop qa hs d hq 1)
++    ⟨qa, hT, rfl⟩ rfl
++  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa :=
++    fun j hj hs => hcut j hj ⟨qa, hs, rfl⟩
+   refine ⟨t, ht, ?_, ?_⟩
+   · intro j hj
+     rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
+     exact hn j hj
+-  · rw [enumCont_agree_run tm stop qa ha c t hn, he]
++  · rw [enumCont_agree_run tm stop qa ha c t hn]
++    exact he
+ 
+ /-- A halted stopped run never visited the live absorbing anchor. Its entire
+ bounded run therefore transfers unchanged to the active machine. -/
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -273,14 +273,13 @@
+     (a : S) (hstat : ∀ d : Cfg k Bool S x, d.state = some a → tm.step d = d)
+     {c c' : Cfg k Bool S x} {T : ℕ} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :
+     ∃ T' ≤ T, tm.runFrom c T' = c' ∧ ∀ u < T', (tm.runFrom c u).state ≠ some a := by
+-  classical
+-  have hT' : (tm.runFrom c T).state = some a := by rw [h]; exact hc'
+-  have hex : ∃ u, (tm.runFrom c u).state = some a := ⟨T, hT'⟩
+-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
+-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+-  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
+-  exact hsplit.symm.trans h
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    tm (fun q => q = a) c c' T
++    (by
++      rintro d ⟨q, hq, rfl⟩
++      exact hstat d hq)
++    ⟨a, hc', rfl⟩ h
++  exact ⟨t, ht, he, fun u hu hs => hcut u hu ⟨a, hs, rfl⟩⟩
+ /-! #### The leaf rows
+ 
+ This file's own rows, on `Bool` tapes, each exiting at a stationary anchor `done b`: the
+@@ -1594,16 +1593,13 @@
+     (ha : A a) :
+     ∃ T' ≤ T, tm.runFrom c T' = c' ∧
+       ∀ u < T', ∀ a', (tm.runFrom c u).state = some a' → ¬ A a' := by
+-  classical
+-  have hT' : ∃ a', (tm.runFrom c T).state = some a' ∧ A a' := ⟨a, by rw [h]; exact hc', ha⟩
+-  have hex : ∃ u, ∃ a', (tm.runFrom c u).state = some a' ∧ A a' := ⟨T, hT'⟩
+-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
+-    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+-  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
+-  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+-  rw [xr_runFrom_fixed tm _ (hstat _ a'' ha'' hA'')] at hsplit
+-  exact hsplit.symm.trans h
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    tm A c c' T
++    (by
++      rintro d ⟨q, hq, hA⟩
++      exact hstat d q hq hA)
++    ⟨a, hc', ha⟩ h
++  exact ⟨t, ht, he, fun u hu a' ha' hA => hcut u hu ⟨a', ha', hA⟩⟩
+ 
+ /-- Every `done` anchor of a leaf row whose table is stationary there is stationary. -/
+ private theorem xr_done_stationary {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St)
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -1254,23 +1254,17 @@
+         (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =
+         clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by
+   let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])
+-  have finish := clBank_finish x p a n W hW
+-  have hex : ∃ t, t ≤ 2 * W + 2 ∧
+-      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :=
+-    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩
+-  let t := Nat.find hex
+-  have ht := Nat.find_spec hex
+-  refine ⟨t, ht.1, ?_, ?_⟩
+-  · intro j hj hs
+-    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
+-      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from
+-        ⟨by omega, hs⟩)
+-    omega
+-  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)
+-    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)
+-      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+-    exact hstay.symm.trans finish
++  let finishCfg := clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits [])
++  have finish : (clBankTM l).tm.runFrom start (2 * W + 2) = finishCfg :=
++    clBank_finish x p a n W hW
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    (clBankTM l).tm (fun q => q = (fun _ : Fin l => some (0 : Fin 4)))
++    start finishCfg (2 * W + 2)
++    (by
++      rintro c ⟨q, hq, rfl⟩
++      exact clBank_idle c hq)
++    ⟨(fun _ => some (0 : Fin 4)), rfl, rfl⟩ finish
++  exact ⟨t, ht, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
+ 
+ /-- Actual source-head displacements. The input component is the clamped
+ virtual displacement, not the source's requested (possibly blocked) move.
+@@ -1724,29 +1718,22 @@
+       clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =
+         clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by
+   have finish := clCopy_run x p w record
+-  have hex : ∃ t, t ≤ 3 * w.length + 3 ∧
+-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :=
+-    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩
+-  let t := Nat.find hex
+-  have ht := Nat.find_spec hex
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    clCopyTM.tm (fun q => q = (4 : Fin 5))
++    (clCopyCfg x 0 p 0 w record) (clCopyCfg x 4 p 0 w (record ++ pairEncode w []))
++    (3 * w.length + 3)
++    (by
++      rintro c ⟨q, hq, rfl⟩
++      exact clCopy_idle c hq)
++    ⟨4, rfl, rfl⟩ finish
+   have hp : 0 < t := by
+-    by_contra h
++    by_contra hn
+     have hz : t = 0 := by omega
+-    have hs := ht.2
+-    change (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) at hs
++    have hs := congrArg Cfg.state he
+     rw [hz, MultiTapeTM.runFrom_zero] at hs
+     have hh := congrArg (fun z => z.map Fin.val) hs
+     norm_num [clCopyCfg] at hh
+-  refine ⟨t, ht.1, hp, ?_, ?_⟩
+-  · intro j hj hs
+-    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
+-      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)
+-    omega
+-  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)
+-    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)
+-      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+-    exact hstay.symm.trans finish
++  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨4, hs, rfl⟩, he⟩
+ 
+ /-- A concrete physical layout, with an exact selector and no aliased slot. -/
+ private structure clPlacement (k l : ℕ) where
+@@ -2151,32 +2138,24 @@
+         some (Fin.last l, (0 : Fin 5))) ∧
+       (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =
+         clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by
+-  obtain ⟨B, hB, he⟩ := clRow_stored x p w record W hW
+-  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
+-      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩
+-  let t := Nat.find hex
+-  have ht := Nat.find_spec hex
++  obtain ⟨B, hB, finish⟩ := clRow_stored x p w record W hW
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    (clRowTM l).tm (fun q => q = (Fin.last l, (0 : Fin 5)))
++    (clRowCfg x p 0 0 w record)
++    (clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l)) B
++    (by
++      rintro c ⟨q, hq, rfl⟩
++      exact clRow_idle c hq)
++    ⟨(Fin.last l, 0), rfl, rfl⟩ finish
+   have hp : 0 < t := by
+     by_contra hn
+     have hz : t = 0 := by omega
+-    have hs := ht.2
+-    change ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =
+-      some (Fin.last l, (0 : Fin 5)) at hs
++    have hs := congrArg Cfg.state he
+     rw [hz, MultiTapeTM.runFrom_zero] at hs
+     have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs
+     simp [clRowCfg] at hh
+     omega
+-  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩
+-  · intro j hj hs
+-    have := Nat.find_min' hex (show j ≤ B ∧
+-      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state =
+-        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)
+-    omega
+-  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)
+-    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)
+-      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+-    exact hstay.symm.trans he
++  exact ⟨t, ht.trans hB, hp, fun j hj hs => hcut j hj ⟨_, hs, rfl⟩, he⟩
+ 
+ /-- A row's stored field lengths have their exact doubled-bit-plus-separator
+ ledger, independently of the native copying runtime. -/
+@@ -2999,44 +2978,23 @@
+         clCmpCfg x p (.inr (.inr b)) w 0 := by
+   let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))
+   have finish := clCmp_run x p w
+-  have hex : ∃ t, t ≤ 2 * clCmpSize w + 2 ∧
+-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
+-        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩
+-  let t := Nat.find hex
+-  have ht := Nat.find_spec hex
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    clCmpTM.tm (fun q => ∃ d : Bool, q = .inr (.inr d))
++    (clCmpCfg x p (.inl (false, false, true)) w 0)
++    (clCmpCfg x p (.inr (.inr b)) w 0) (2 * clCmpSize w + 2)
++    (by
++      rintro c ⟨q, hq, d, rfl⟩
++      exact clCmp_idle c d hq)
++    ⟨.inr (.inr b), rfl, b, rfl⟩ finish
+   have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)
+   have hp : 0 < t := by
+     by_contra hn
+     have hz : t = 0 := by omega
+-    have hh := ht.2
+-    change (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =
+-      some (.inr (.inr b)) at hh
++    have hh := congrArg Cfg.state he
+     rw [hz, MultiTapeTM.runFrom_zero] at hh
+     cases hh
+-  refine ⟨t, by omega, hp, b, clCmpVerdict_spec w, ?_, ?_⟩
+-  · intro j hj d hd
+-    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)
+-    change clCmpTM.tm.runFrom
+-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j)
+-      (2 * clCmpSize w + 2 - j) =
+-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay
+-    have hh := congrArg Cfg.state (finish.symm.trans hstay)
+-    rw [hd] at hh
+-    have hbd : b = d := Sum.inr.inj (Sum.inr.inj (Option.some.inj hh))
+-    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
+-        some (.inr (.inr b)) := by rw [hbd]; exact hd
+-    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
+-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =
+-        some (.inr (.inr b)) from ⟨by omega, hs⟩)
+-    omega
+-  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)
+-    change clCmpTM.tm.runFrom
+-      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t)
+-      (2 * clCmpSize w + 2 - t) =
+-        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+-    exact hstay.symm.trans finish
++  exact ⟨t, by omega, hp, b, clCmpVerdict_spec w,
++    fun j hj d hd => hcut j hj ⟨.inr (.inr d), hd, d, rfl⟩, he⟩
+ 
+ /-- Specializing stored positions to the public all-false schedule recovers
+ the exact input and work coordinates, including the shifted input origin. -/
+@@ -3287,26 +3245,19 @@
+     (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :
+     ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧
+       tm.runFrom start t = finish := by
+-  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :=
+-    ⟨B, le_rfl, by rw [hrun]; exact hret⟩
+-  let t := Nat.find hex
+-  have ht := Nat.find_spec hex
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    tm (fun q => q = ret) start finish B
++    (by
++      rintro c ⟨q, hq, rfl⟩
++      exact hidle c hq)
++    ⟨ret, hret, rfl⟩ hrun
+   have hp : 0 < t := by
+     by_contra hn
+     have hz : t = 0 := by omega
+-    have hh := ht.2
+-    change (tm.runFrom start t).state = some ret at hh
+-    rw [hz, MultiTapeTM.runFrom_zero] at hh
+-    exact hstart hh
+-  refine ⟨t, ht.1, hp, ?_, ?_⟩
+-  · intro j hj hs
+-    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
+-      from ⟨by omega, hs⟩)
+-    omega
+-  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)
+-    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay
+-    exact stay.symm
++    have hs := congrArg Cfg.state he
++    rw [hz, MultiTapeTM.runFrom_zero, hret] at hs
++    exact hstart hs
++  exact ⟨t, ht, hp, fun j hj hs => hcut j hj ⟨ret, hs, rfl⟩, he⟩
+ 
+ /-- Clearing the last occupied cell leaves exactly the shorter buffer.
+ Locally harvested from the audited bridge's `emCall_erase_last` proof. -/
+--- a/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+@@ -527,26 +527,22 @@
+         MultiTapeTM.runFrom_add, reachedBack, returnHeads _ hu']
+       simp only [back, c, inputLengthCfg, add_zero]
+       constructor <;> omega
+-  -- Select the first exit, and use stationarity to keep the exact finish.
+-  have exits : ∃ u, (inputLengthMachine.runFrom d u).state = some .done :=
+-    ⟨t + 1 + r, congrArg Cfg.state finish⟩
+-  let first := Nat.find exits
+-  have firstState : (inputLengthMachine.runFrom d first).state = some .done :=
+-    Nat.find_spec exits
+-  have firstLe : first ≤ t + 1 + r := Nat.find_min' exits (congrArg Cfg.state finish)
+-  have fixed : inputLengthMachine.step (inputLengthMachine.runFrom d first) =
+-      inputLengthMachine.runFrom d first := by
+-    rw [step_of_inputMoveAction _ _ 0 firstState (q' := .done) rfl]
+-    simp only [moveInputPos_zero]
+-    apply Cfg.ext <;> simp [firstState]
++  -- The public fixed-stop entry contract keeps the exact completed configuration.
++  obtain ⟨first, firstLe, firstCut, firstEnd⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    inputLengthMachine (fun q => q = .done) d
++    {back with state := some .done, inputPos := 1} (t + 1 + r)
++    (by
++      rintro z ⟨q, hq, rfl⟩
++      rw [step_of_inputMoveAction _ _ 0 hq (q' := .done) rfl]
++      simp only [moveInputPos_zero]
++      apply Cfg.ext <;> simp [hq])
++    ⟨.done, rfl, rfl⟩ finish
+   have same : inputLengthMachine.runFrom d (t + 1 + r) =
+-      inputLengthMachine.runFrom d first := by
+-    rw [show t + 1 + r = first + (t + 1 + r - first) by omega,
+-      MultiTapeTM.runFrom_add]
+-    exact Function.iterate_fixed fixed _
++      inputLengthMachine.runFrom d first := finish.trans firstEnd.symm
+   refine ⟨first, firstLe.trans deadline, ?_, ?_, ?_⟩
+   · intro u hu
+-    exact Nat.find_min exits hu
++    intro hs
++    exact firstCut u hu ⟨.done, hs, rfl⟩
+   · intro u hu j
+     have hj : j = 0 := Fin.ext (by have h := j.isLt; omega)
+     subst j

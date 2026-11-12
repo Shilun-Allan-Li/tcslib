@@ -1,0 +1,28 @@
+/-- **R8.5a, the input copier, framed** (design §12.8a). From any configuration
+in the copy phase with the input head at position `1`, the copier reaches
+`done` at exactly `2|x| + 2` and not earlier, where `x` is the native input. At
+that point the interval `[pos, pos + |x|)` of tape `i` holds `x`, whatever it
+held before, and every other cell, every head, the input position and the
+output are unchanged. Up to the exit the head of tape `i` stays within
+`[pos - 1, pos + |x|]`, and every other head is fixed.
+
+**Proof sketch.** Induct on the input cells: `|x|` lockstep steps copy `x`,
+and the input's right end marker turns both heads left. The return takes `|x|`
+lockstep steps over the input, and the left end marker supplies the entry step,
+which puts the input head back at `1` and the work head back at `pos`. -/
+theorem inputCopyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep) (hin : d.inputPos = 1) :
+    (inputCopyTM k i).runFrom d (2 * x.length + 2) =
+        { d with
+          state := some .done
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (x.length : ℤ)
+              then FinTM.bufferTape x (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * x.length + 2, ((inputCopyTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * x.length + 2 →
+        if j = i then
+          ((inputCopyTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (x.length : ℤ))
+        else ((inputCopyTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry

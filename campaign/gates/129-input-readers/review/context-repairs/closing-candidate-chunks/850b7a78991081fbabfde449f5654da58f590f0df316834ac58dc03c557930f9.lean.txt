@@ -1,0 +1,14 @@
+/-- Read position `i + 1` as the optional `i`-th input symbol, including the
+right boundary. -/
+lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}
+    (cfg : Cfg k Bool S x) (i : ℕ) (hi : i ≤ x.length)
+    (hp : cfg.inputPos.val = i + 1) : cfg.inputSymbol = x[i]? := by
+  by_cases h : i < x.length
+  · rw [inputSymbolInner i (by omega) h, List.getElem?_eq_getElem h]
+  · have he : i = x.length := by omega
+    have hz : cfg.inputPos ≠ 0 := by
+      intro hz
+      rw [hz] at hp
+      simp at hp
+    simp only [Cfg.inputSymbol, dif_neg hz, dif_pos (show cfg.inputPos.val = x.length + 1 by omega)]
+    simp [he]

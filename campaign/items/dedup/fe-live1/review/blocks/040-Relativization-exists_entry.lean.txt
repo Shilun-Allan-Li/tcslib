@@ -1,0 +1,14 @@
+private theorem exists_entry (N : ℕ → FinOracleTM Bool) {z : List Bool}
+    (hz : z ∈ bgsOracle N) :
+    ∃ s, z ∈ (stage N (s + 1)).pos ∧ z ∉ (stage N s).pos := by
+  classical
+  have hex : ∃ j, z ∈ (stage N j).pos := hz
+  have hpos : 0 < Nat.find hex := by
+    rcases Nat.eq_zero_or_pos (Nat.find hex) with h | h
+    · have := Nat.find_spec hex
+      rw [h] at this
+      exact absurd this (Finset.notMem_empty z)
+    · exact h
+  refine ⟨Nat.find hex - 1, ?_, Nat.find_min hex (by omega)⟩
+  rw [Nat.sub_add_cancel hpos]
+  exact Nat.find_spec hex

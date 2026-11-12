@@ -1,0 +1,6 @@
+{
+  "executed": false,
+  "source_changed": false,
+  "reason": "Repeated regex removal of multiple trailing namespace end lines collapsed blank-line boundaries, so literal-prefix guard caught a nonexistent chunk before evaluation.",
+  "correction": "Take an exact source prefix by dropping trailing blank/end lines without concatenating any removed tail; roundtrip remains byte exact."
+}

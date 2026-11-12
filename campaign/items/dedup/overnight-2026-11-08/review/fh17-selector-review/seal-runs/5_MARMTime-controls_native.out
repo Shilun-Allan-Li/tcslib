@@ -1,0 +1,15 @@
+FH1_5_MARMTime_run_point {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+  (cfg : Cfg k Symbol State input) (n : ℕ) : MultiTapeTM.runFrom cfg n = MultiTapeTM.step^[n] cfg
+FH1_5_MARMTime_run_abstract {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State) :
+  MultiTapeTM.runFrom = fun cfg n => MultiTapeTM.step^[n] cfg
+FH1_5_MARMTime_step_point {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+  (cfg : Cfg k Symbol State input) :
+  MultiTapeTM.step cfg =
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+FH1_5_MARMTime_step_abstract {k : ℕ} {Symbol State : Type} {input : List Symbol} (tm : MultiTapeTM k Symbol State) :
+  MultiTapeTM.step = fun cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg

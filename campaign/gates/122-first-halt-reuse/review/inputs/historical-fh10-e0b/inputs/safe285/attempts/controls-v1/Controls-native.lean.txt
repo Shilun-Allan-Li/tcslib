@@ -1,0 +1,53 @@
+import Lean
+import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.ClassNP.Nondeterminism
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+attribute [-simp] Turing.MultiTapeTM.initCfg
+open Lean Elab Command Meta in
+run_cmd do
+  let targets : List Name := [`Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.rightAction, `Turing.FinTM.tapeBlocks, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.step, `Turing.instDecidableEqUniversalControl, `Turing.instFintypeUniversalControl, `Turing.universalInterpreter]
+  let mut i := 0
+  for name in targets do
+    let some (.defnInfo info) := (← getEnv).find? name | throwError "not ordinary definition {name}"
+    for mode in ["point", "abstract"] do
+      i := i + 1
+      let result ← liftTermElabM do
+        let levels := info.levelParams.map Level.param
+        let head := mkConst name levels
+        let solve := fun (lhs rhs : Expr) => do
+          let ty ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar ty
+          try
+            goal.mvarId!.refl
+            pure (some (ty, ← instantiateMVars goal))
+          catch ex =>
+            logInfo m!"CONTROL|{i}|{name}|{mode}|FAIL"
+            logError m!"CONTROL_RFL|{i}|{name}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then solve head info.value
+        else forallTelescopeReducing info.type fun xs _ => do
+          if xs.isEmpty then
+            let unitTy := mkConst ``Unit
+            solve (Expr.lam `_u unitTy head .default)
+              (Expr.lam `_u unitTy info.value .default)
+          else
+            let result ← solve (mkAppN head xs) ((mkAppN info.value xs).headBeta)
+            match result with
+            | none => pure none
+            | some (ty, value) => pure (some (← mkForallFVars xs ty, ← mkLambdaFVars xs value))
+      if let some (ty, value) := result then
+        let ty ← liftTermElabM <| instantiateMVars ty
+        let value ← liftTermElabM <| instantiateMVars value
+        if ty.hasFVar || ty.hasMVar || value.hasFVar || value.hasMVar then
+          throwError "unclosed control {i}"
+        let kernelName := Name.mkSimple ("FHFullControl_" ++ toString i)
+        liftCoreM <| addDecl (.thmDecl { name := kernelName, levelParams := info.levelParams,
+          type := ty, value := value })
+        logInfo m!"CONTROL|{i}|{name}|{mode}|PASS|kernelChecked={kernelName}"
+  logInfo m!"CONTROL_COMPLETE|{i}"

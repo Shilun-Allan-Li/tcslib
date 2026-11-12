@@ -1,0 +1,11 @@
+/-- The runs of the mapped copy are those of the mapped transfer with the identity residue
+(`copyMapTM_step_eq`, iterated). -/
+private lemma copyMapTM_runFrom_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol}
+    (src dst : Fin k) (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol)
+    (d : Cfg k Symbol SweepPhase x) (t : ℕ) :
+    (copyMapTM k src dst extract merge).runFrom d t =
+      (transferMapTM k src dst extract merge some).runFrom d t := by
+  unfold MultiTapeTM.runFrom
+  rw [show (copyMapTM k src dst extract merge).step (input := x) =
+      (transferMapTM k src dst extract merge some).step from
+    funext (copyMapTM_step_eq src dst extract merge)]

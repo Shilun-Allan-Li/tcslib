@@ -1,0 +1,24 @@
+theorem verdictTM_run {k : ℕ} {x : List Bool} (i : Fin k) (d : Cfg k Bool VrPh x) (b : Bool)
+    (hs : d.state = some .left) (hb : d.workTapes i (d.workTapePos i - 1) = some b) :
+    ((verdictTM k i).runFrom d 2).state = some (.done b) ∧
+      ((verdictTM k i).runFrom d 2).workTapePos i = d.workTapePos i - 1 ∧
+      ((verdictTM k i).runFrom d 2).workTapes i (d.workTapePos i - 1) = none ∧
+      (∀ j, j ≠ i → ((verdictTM k i).runFrom d 2).workTapes j = d.workTapes j ∧
+        ((verdictTM k i).runFrom d 2).workTapePos j = d.workTapePos j) ∧
+      ((verdictTM k i).runFrom d 2).inputPos = d.inputPos ∧
+      ((verdictTM k i).runFrom d 2).output = d.output := by
+  have h1 : (verdictTM k i).runFrom d 1 =
+      { d with state := some .read,
+               workTapePos := fun j => if j = i then d.workTapePos j - 1 else d.workTapePos j } := by
+    apply Cfg.ext <;>
+      simp [MultiTapeTM.runFrom, MultiTapeTM.step, hs, verdictTM, tapeAction, Action.apply,
+        moveInputPos_zero]
+    · funext j; by_cases hj : j = i <;> simp [hj]
+    · funext j; by_cases hj : j = i <;> simp [hj, sub_eq_add_neg]
+  have hr : (verdictTM k i).runFrom d 2 = (verdictTM k i).step ((verdictTM k i).runFrom d 1) :=
+    MultiTapeTM.runFrom_succ_eq_step'
+  rw [hr, h1]
+  simp [MultiTapeTM.step, verdictTM, Cfg.workTapeSymbols, hb, tapeAction, Action.apply,
+    moveInputPos_zero]
+  refine ⟨by rw [if_pos rfl]; exact Function.update_self _ _ _, fun j hj => ?_⟩
+  simp [hj]

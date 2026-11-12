@@ -1,0 +1,1 @@
+theorem ReaderControl7 {k : ℕ} {S : Type} (i : Fin k) (m s : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i m w s q : Action k Bool S) = Action.mk m (fun j => if j = i then (w, s) else (none, 0)) none (some q) := by rfl

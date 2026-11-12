@@ -1,0 +1,11 @@
+/-- Turn an absorbing live completion into a physical replay of one buffer.
+The source computation and its startup remain unchanged before that return. -/
+private def clOutputTM (A : FinTM Bool) (ret : A.State) (i : Fin A.k) : FinTM Bool where
+  k := A.k
+  State := A.State ⊕ Fin 3
+  tm := {
+    q₀ := .inl A.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q => if q = ret then FinTM.controlAction 0 (some (.inr 0))
+          else (A.tm.tr q inp work).mapState Sum.inl
+      | .inr q => clPlacedAction (clOneSelect i) Sum.inr q (clReplayTM.tm.tr q inp (fun _ => work i)) }

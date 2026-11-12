@@ -1,0 +1,32 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Codex
+-/
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PClosure
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import Mathlib.Data.Nat.Log
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 0
+open Turing Complexity
+open scoped Classical
+
+-- Hypothetical named owner-reader consumed through the existing sharp search host.
+example : ∃ (a d b : ℕ) (E : FinTM Bool), E.DecidesInTime SAT
+    (fun n => b * 2 ^ (n + 1) *
+      (a * (n + (n + 1) + 1) ^ d + (n + (n + 1) + 1) ^ 2)) := by
+  obtain ⟨V, hV, hcert⟩ := SAT_exists_linear_verifier
+  obtain ⟨a, d, MV, hMV⟩ := mem_P_iff.mp hV
+  obtain ⟨b, E, hE⟩ := exists_proj_decider 1 1 V _ MV hMV
+  simp only [Nat.pow_one, Nat.one_mul] at hE
+  have hLang : {x : List Bool | ∃ u : List Bool,
+      u.length = x.length + 1 ∧ x ++ u ∈ V} = SAT :=
+    Set.ext fun x => (hcert x).symm
+  rw [hLang] at hE
+  exact ⟨a, d, b, E, hE⟩
+
+#print axioms Complexity.SAT_exists_linear_verifier

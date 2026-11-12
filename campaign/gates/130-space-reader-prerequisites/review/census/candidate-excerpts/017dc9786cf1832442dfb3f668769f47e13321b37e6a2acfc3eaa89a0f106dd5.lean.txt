@@ -1,0 +1,35 @@
+/-- Stop a clean call one silent step after its certified first positive exit.
+
+**Proof sketch.** Induct on prefixes, keeping the release flag false only at time zero; the
+guard prevents an early stop; the final silent halt keeps every seam field and every emitted
+bit. -/
+private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
+    (x arg result out : List Bool) (t : ℕ) (ht : 0 < t)
+    (hg : ∀ v, 0 < v → v < t → (C.tm.runFrom
+      (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit)
+    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+      {Cfg.ofWords exit (stateWord C.k result) with output := out}) :
+    (stopTM C entry exit).tm.runFrom
+      (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) =
+      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
+  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
+  have hl := live_prefix C.tm c t
+    (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
+  have hp : ∀ v, v ≤ t → (stopTM C entry exit).tm.runFrom (stopCfg false c) v =
+      stopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
+    intro v
+    induction v with
+    | zero => intro _; rfl
+    | succ v ih =>
+      intro hv
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+        stop_step C entry exit _ _ (hl v (by omega)) (by
+          intro hn
+          exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
+        MultiTapeTM.runFrom_succ_eq_step']
+      rfl
+  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = stopCfg false c := rfl
+  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
+  have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
+  rw [hflag, show C.tm.runFrom c t = _ from he]
+  simp [MultiTapeTM.step, stopTM, stopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]

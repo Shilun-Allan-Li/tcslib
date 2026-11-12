@@ -1,0 +1,9 @@
+/-- The public movement step, specialized to the shared seek frame. -/
+private theorem catalog_seek_step {Symbol : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol SeekPhase) (i : Fin k) (d : Cfg k Symbol SeekPhase x)
+    (q q' : SeekPhase) (z : ℤ) (m : SignType)
+    (htr : M.tr q (catalogSeekCfg i d q z).inputSymbol
+      (catalogSeekCfg i d q z).workTapeSymbols = tapeAction i 0 none m q') :
+    M.step (catalogSeekCfg i d q z) = catalogSeekCfg i d q' (z + m) := by
+  rw [step_of_tapeAction_move M _ i 0 m rfl htr]
+  apply Cfg.ext <;> simp [catalogSeekCfg, Function.update_idem, add_assoc]

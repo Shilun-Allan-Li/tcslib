@@ -1,0 +1,2191 @@
+{
+  "source_head": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+  "source_branch": "codex/ab34-first-halt-reuse",
+  "baseline": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "start_utc": "2026-11-08T11:11:49.774198+00:00",
+  "authority": "Parent expressly authorized13 existing-API mechanical selector re-points, including colleague FYI cases; no Git/full replay/canonical writes. One block then native check.",
+  "todo": [
+    {
+      "id": 16,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_unary_first",
+      "kind": "lemma",
+      "private": true,
+      "line": 1428,
+      "end_line": 1451,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 1439,
+          "text": "refine \u27e8fun n => Nat.find (hex n), fun x => ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1440,
+          "text": "have hh := Nat.find_spec (hex x.length)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1441,
+          "text": "have ht := Nat.find_min' (hex x.length)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1446,
+          "text": "(Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1451,
+          "text": "exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')"
+        }
+      ],
+      "chunk_sha256": "e113ae071c127f64516a45219baca71be813e9035ce68f48d82a8995e0fc9884",
+      "block": "blocks/016-Nondeterminism-b2_unary_first.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply the canonical theorem to M.tm at each unary input and deadline T n; choose the resulting witnesses as the function \u03c4. Retain b2_unary_run and output packaging. Full endpoint equality supplies state/output at \u03c4; prefix exclusion transfers through the existing unary relation.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.Nondeterminism",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 1428,
+      "current_owner_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "chunk_bytes": 1351,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 17,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_verify_timed",
+      "kind": "lemma",
+      "private": true,
+      "line": 2077,
+      "end_line": 2112,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2087,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2089,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2090,
+          "text": "have hc : c.state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2097,
+          "text": "(fun s hs => Nat.find_min hex (show s < t from hp \u25b8 hs))"
+        }
+      ],
+      "chunk_sha256": "0e981078b85a2f0989a85d65dc0c8804a00e8386a48cdf14574df9e40bcac4ac",
+      "block": "blocks/017-Nondeterminism-b2_verify_timed.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to V.tm, V.tm.initCfg y, and deadline T from hV. Retain choice-word splitting, b2_verify_run/finish, and output_unique packaging; use canonical prefix exclusion and endpoint state at the selected t.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.Nondeterminism",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2077,
+      "current_owner_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "chunk_bytes": 1803,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 47,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "ComputesInTime.of_spaceUsed_le",
+      "kind": "theorem",
+      "private": false,
+      "line": 362,
+      "end_line": 411,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 369,
+          "text": "set T := Nat.find hex with hTdef"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 370,
+          "text": "have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 371,
+          "text": "have hTt : T \u2264 t := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 373,
+          "text": "fun t' ht' => Nat.find_min hex ht'"
+        }
+      ],
+      "chunk_sha256": "7a6d309ba15321c8017a599407a686632e34ae567141eb6efdf27946b6747ff5",
+      "block": "blocks/047-ConfigCount-ComputesInTime_of_spaceUsed_le.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Replace only the local T := Nat.find halt cut with canonical T\u2264t, prefix exclusion, and complete endpoint equality. Preserve the configuration-count injection/cardinality/space proof and stationary extension to configBound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+        "TCSlib.Complexity.SpaceComplexity.Basic",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 362,
+      "current_owner_source_sha256": "b852e62030fd8cf4b6c607a908da378370590d1d526632788c7824530eac04ed",
+      "chunk_bytes": 2908,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 50,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "name": "call_run",
+      "kind": "theorem",
+      "private": false,
+      "line": 150,
+      "end_line": 360,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 178,
+          "text": "set T0 := Nat.find hex with hT0def"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 179,
+          "text": "have hT0 : (D.runFrom dc0 T0).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 180,
+          "text": "have hT0le : T0 \u2264 T := Nat.find_min' hex hTh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 181,
+          "text": "have hlive : \u2200 t < T0, (D.runFrom dc0 t).state \u2260 none := fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "bf249721f8ffdbff74327b72e06d3f7d90ef9c826b021e5b7013e8f9c550432b",
+      "block": "blocks/050-Call-call_run.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to D and dc0 at deadline T using hTh. Keep the existing proof that dc0 starts live to establish T0>0, and retain all simulation, head/framing, and output packaging.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Call",
+        "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 150,
+      "current_owner_source_sha256": "44e479783baac69c6a10633b666f8abf90b3a9ba19ef76ed073fee98ee09b405",
+      "chunk_bytes": 10520,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 51,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "name": "cleanTM_run",
+      "kind": "theorem",
+      "private": false,
+      "line": 314,
+      "end_line": 429,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 329,
+          "text": "set T0 := Nat.find hex with hT0def"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 330,
+          "text": "have hT0 : (M.runFrom (Cfg.init q V) T0).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 331,
+          "text": "have hT0le : T0 \u2264 T := Nat.find_min' hex hT"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 333,
+          "text": "fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "5e18cfde662d65d3a364ac8533a93693741cd2d50c5797501a85e80cede8f3e7",
+      "block": "blocks/051-Clean-cleanTM_run.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M at Cfg.init q V and deadline T using hT. The theorem accepts an arbitrary configuration, so the local retagged M' is irrelevant to the selector; retain it where later visited-head bounds use it. Keep the cleaning/framing proof.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Clean",
+        "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+        "TCSlib.Complexity.SpaceComplexity.Basic",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 314,
+      "current_owner_source_sha256": "89f3f21ee2fc567ec184ec43cac35f2e4637c6262c6868f4ab7339d40d588de0",
+      "chunk_bytes": 6282,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 52,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "name": "runFrom_count_eq",
+      "kind": "theorem",
+      "private": false,
+      "line": 214,
+      "end_line": 332,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 225,
+          "text": "set T\u2080 := Nat.find hex with hT\u2080"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 226,
+          "text": "have hT0 : (run T\u2080).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 227,
+          "text": "have hT0T : T\u2080 \u2264 T := Nat.find_min' hex hT"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 228,
+          "text": "have hmin : \u2200 t < T\u2080, (run t).state \u2260 none := fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "28e3c2d828f099599352a96dbaa83247186a5e64516744e142384ec92b6fa875",
+      "block": "blocks/052-MARMTime-runFrom_count_eq.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to tm at tm.initCfg x and deadline T. Re-express the result using local run notation. Keep the cell/counting bound and stationary tail proof; no generalized API is needed for the selector.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.MARMTime",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 214,
+      "current_owner_source_sha256": "1f064e29fa79ec52faf876e7d72fbed93d106a2f08b060643039c52753729b7b",
+      "chunk_bytes": 6448,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 54,
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "clockTM_setup",
+      "kind": "lemma",
+      "private": false,
+      "line": 509,
+      "end_line": 539,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 517,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 519,
+          "text": "have hs : c.state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 520,
+          "text": "have ht : t \u2264 tK := Nat.find_min' hh ((computesInTime_iff K x s tK).mp hK).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 536,
+          "text": "kCfg_run K W _ t (fun s hs => Nat.find_min hh hs), kCfg_rewind K W c hs, hrun, \u2190 ho]"
+        }
+      ],
+      "chunk_sha256": "facd3f2d07332b9ba743d3bea6bc71cf3e1b05580350709934a1998b2c2873dc",
+      "block": "blocks/054-ClockMachine-clockTM_setup.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to K.tm at K.tm.initCfg x and deadline tK from hK. Keep buffer/rewind setup and output_unique. Mechanical edit authority for colleague-owned ClockMachine remains a separate ownership check, not an API issue.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TimeHierarchy.ClockMachine",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 509,
+      "current_owner_source_sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2",
+      "chunk_bytes": 1625,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 58,
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "name": "startup",
+      "kind": "theorem",
+      "private": false,
+      "line": 304,
+      "end_line": 330,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 313,
+          "text": "have htS : Nat.find hex \u2264 T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 313,
+          "text": "have htS : Nat.find hex \u2264 T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 314,
+          "text": "obtain \u27e8cS, hcSdef\u27e9 : \u2203 c, c = S.tm.runFrom (S.tm.initCfg x) (Nat.find hex) := \u27e8_, rfl\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 315,
+          "text": "have hcS : cS.state = none := hcSdef \u25b8 Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 318,
+          "text": "exact ((FinTM.computesInTime_iff _ _ _ _).mpr \u27e8Nat.find_spec hex, rfl\u27e9).output_unique hS"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 319,
+          "text": "refine \u27e8Nat.find hex + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 320,
+          "text": "have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 320,
+          "text": "have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 321,
+          "text": "have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take (Nat.find hex))"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 322,
+          "text": "(fun t h => Nat.find_min hex (by omega))"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 324,
+          "text": "rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 328,
+          "text": "rw [hb, rewind_run m _ _ _ _ _ (w.drop (Nat.find hex)) (by simp; omega),"
+        }
+      ],
+      "chunk_sha256": "7d681bc2d9267f85886c182aeaca8a9f99f5fd65e51470cd443aed7877705704",
+      "block": "blocks/058-NDClockHostRun-startup.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to the deterministic boot machine S.tm at deadline T from hS. Retain the NDTM host choice-word boot/rewind packaging; the minimized run itself is deterministic, so this belongs in the deterministic selector list.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Build.NDClockHostRun",
+        "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 304,
+      "current_owner_source_sha256": "7d17ca0505e769c98173f78ab0a9ff5727a4626008cf53b352ab7dd191f2cfbc",
+      "chunk_bytes": 1719,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 82,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "name": "clockStageCfg_captures",
+      "kind": "lemma",
+      "private": false,
+      "line": 842,
+      "end_line": 862,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 853,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 855,
+          "text": "Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 856,
+          "text": "have ht : \u03c4 \u2264 b * (T x.length + 1) := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 858,
+          "text": "((maskedClock W false).tm.initCfg x) t).state \u2260 none := fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "b6b27003d8715407675b14eedede067e07977cd694b77855529da5d43cbd2a0e",
+      "block": "blocks/082-ObliviousCandidate-clockStageCfg_captures.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to (maskedClock W false).tm at deadline b*(T x.length+1), using existing hm/hhalt. Retain clockStageCfg_run and output_unique. The complete endpoint equality supplies halted state/output at \u03c4.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 842,
+      "current_owner_source_sha256": "f0e69ed8fa9fbd5c73068694a5e8a162e77cffd671742b5e156e764cd4a6f771",
+      "chunk_bytes": 1363,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 83,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "one_work_tape",
+      "kind": "theorem",
+      "private": false,
+      "line": 915,
+      "end_line": 956,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 936,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 937,
+          "text": "have h\u03c4 : (M.tm.runFrom (M.tm.initCfg x) \u03c4).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 938,
+          "text": "have ht : \u03c4 \u2264 T x.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 940,
+          "text": "fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "cc43899ebd0911971cc3e8aa8f49309723e57ff5a0a6022bba8543cffa2cf977",
+      "block": "blocks/083-SingleTape-one_work_tape.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply in the positive-k branch to M.tm at deadline T x.length. Keep the sweep simulation and quadratic-time arithmetic; canonical equality transfers output at \u03c4.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 915,
+      "current_owner_source_sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "chunk_bytes": 2258,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 84,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "dg_all_inputs",
+      "kind": "lemma",
+      "private": true,
+      "line": 2118,
+      "end_line": 2195,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2130,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2131,
+          "text": "have h\u03c4 : (M.tm.runFrom (M.tm.initCfg y) \u03c4).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2132,
+          "text": "have htime : \u03c4 \u2264 T y.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2134,
+          "text": "fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "69717a524de1674efc6e1cf2e219327758581b83e4a699ca4531d6a64c5cfe58",
+      "block": "blocks/084-SingleTape-dg_all_inputs.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at input y=x.map(dgRetract a0), deadline T y.length. Keep dg_simulate, window/span, and space proof; use canonical prefix exclusion and endpoint equality for the local cut.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2118,
+      "current_owner_source_sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "chunk_bytes": 4149,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 85,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedCapture_start",
+      "kind": "lemma",
+      "private": true,
+      "line": 2513,
+      "end_line": 2529,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2520,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2521,
+          "text": "have ht : t \u2264 T := Nat.find_min' hh h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2522,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2528,
+          "text": "timedCapture_run M clock _ t (fun s hs => Nat.find_min hh hs),"
+        }
+      ],
+      "chunk_sha256": "fffdb78fae2a6dff6c87626d7258840b7d21b86608f7680144565fa652f6979e",
+      "block": "blocks/085-Universal-timedCapture_start.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at the known halted deadline T. Use canonical equality (in the required orientation) for timedCapturedCfg and prefix exclusion for timedCapture_run; preserve the t+1 bound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Universal",
+        "TCSlib.Complexity.TuringMachine.UniversalBlock",
+        "TCSlib.Complexity.TuringMachine.UniversalInterpreter",
+        "TCSlib.Complexity.TuringMachine.UniversalStartup",
+        "TCSlib.Complexity.TuringMachine.Encoding",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2513,
+      "current_owner_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "chunk_bytes": 989,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 86,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "universalCapture_start",
+      "kind": "lemma",
+      "private": false,
+      "line": 591,
+      "end_line": 608,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 599,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 600,
+          "text": "have ht : t \u2264 T := Nat.find_min' hh h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 601,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 607,
+          "text": "universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),"
+        }
+      ],
+      "chunk_sha256": "91e3a192ec45ed2efcfa73b2028b4af371d1460063dd1a9ff5ca25ddc6c274b5",
+      "block": "blocks/086-UniversalStartup-universalCapture_start.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at the known halted deadline T. Use canonical equality for universalCapturedCfg and prefix exclusion for universalCapture_run; preserve the t+1 bound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.UniversalStartup",
+        "TCSlib.Complexity.TuringMachine.Encoding",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 591,
+      "current_owner_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "chunk_bytes": 1041,
+      "new_Lean_probe_or_patch": false
+    }
+  ],
+  "original4_consumers": [
+    {
+      "id": 9,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "enumCont_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 812,
+      "end_line": 823,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 819,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 820,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 821,
+          "text": "refine \u27e8t, ht, fun j hj => Nat.find_min hex hj, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 823,
+          "text": "rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]"
+        }
+      ],
+      "chunk_sha256": "b1b00270d98a93e53270bcf57357643d3febe519d27d7cb4926c958057bf8b86",
+      "block": "blocks/009-EXP-enumCont_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Exact existing helper contract: apply exists_first_halt tm cfg h. Its full-configuration equality is already the required endpoint.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.EXP",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 812,
+      "current_owner_source_sha256": "cff67a2cae4a1c33de29cee6583c957f2a45be4a5029c2ba4937cfc570c172d5",
+      "chunk_bytes": 639,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 18,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 685,
+      "end_line": 698,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 693,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 694,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex hh.1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 695,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 698,
+          "text": "exact \u27e8t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [\u2190 he]; exact hh.2\u27e9"
+        }
+      ],
+      "chunk_sha256": "3bdad3b899acadd44c814674308f126dae928f5be8633a32aad57e297650d0ee",
+      "block": "blocks/018-SAT-sat_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm.initCfg at the existing ComputesInTime deadline. Preserve state and output through the canonical complete endpoint equality; the caller statement remains unchanged.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 685,
+      "current_owner_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "chunk_bytes": 815,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 19,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_call_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 3752,
+      "end_line": 3767,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 3759,
+          "text": "have hu := Nat.find_spec h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3760,
+          "text": "have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3761,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3761,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3763,
+          "text": "have hz : Nat.find h = 0 := by omega"
+        }
+      ],
+      "chunk_sha256": "89c0e90126b77fd91d142b1013ada9017b950feb0405ba30f823e623b251ef46",
+      "block": "blocks/019-SAT-sat_call_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to its arbitrary decider configuration and known halt deadline. Retain the existing initial nonhalt premise to prove selected time positive; use complete endpoint equality for its required final result.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 3752,
+      "current_owner_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "chunk_bytes": 781,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 33,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_call_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 6117,
+      "end_line": 6132,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 6124,
+          "text": "have hu := Nat.find_spec h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6125,
+          "text": "have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6126,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6126,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6128,
+          "text": "have hz : Nat.find h = 0 := by omega"
+        }
+      ],
+      "chunk_sha256": "b4b2e12ad3f30b921e69a7037af767afbf88ed542746353678af727e0e0adeab",
+      "block": "blocks/033-Hardness-clA5_call_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Same positive-time arbitrary-configuration route as sat_call_first_halt, with existing initial exclusion retained. No new first-live premise.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.CookLevin.Hardness",
+        "TCSlib.Complexity.CookLevin.Snapshot",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 6074,
+      "current_owner_source_sha256": "6727053330e0804eb4501b0ed20a3153d1c8b67cc2e39cafd2b407499443637a",
+      "chunk_bytes": 782,
+      "new_Lean_probe_or_patch": false
+    }
+  ],
+  "canonical": {
+    "id": 76,
+    "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "name": "exists_first_halt",
+    "kind": "theorem",
+    "private": false,
+    "line": 218,
+    "end_line": 227,
+    "hits": [
+      {
+        "kind": "Nat.find",
+        "line": 224,
+        "text": "have hle : Nat.find hex \u2264 t := Nat.find_min' hex h"
+      },
+      {
+        "kind": "Nat.find",
+        "line": 224,
+        "text": "have hle : Nat.find hex \u2264 t := Nat.find_min' hex h"
+      },
+      {
+        "kind": "Nat.find",
+        "line": 225,
+        "text": "refine \u27e8Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_\u27e9"
+      },
+      {
+        "kind": "Nat.find",
+        "line": 225,
+        "text": "refine \u27e8Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_\u27e9"
+      },
+      {
+        "kind": "Nat.find",
+        "line": 227,
+        "text": "MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]"
+      }
+    ],
+    "chunk_sha256": "c115a0eed96e1c975622bc4d36a1dedadd39321450c9546907f2ea61f6fe61e8",
+    "block": "blocks/076-Finite-exists_first_halt.lean.txt",
+    "canonical_replacement": null,
+    "needs_statement_name_import_API_home_or_design_change": false,
+    "new_debt_acknowledgment_required": false,
+    "no_global_absence_claim": true,
+    "disposition": "outside FE-LIVE-1: first None halt",
+    "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+    "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+    "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+    "route_status": "canonical home; no replacement",
+    "route": "Canonical home, not a consumer copy. Retain Nat.find inside the public theorem itself.",
+    "existing_import_chain_to_Finite": [
+      "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    "new_import_needed": false,
+    "new_statement_name_API_home_or_design_needed_for_selector": false,
+    "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+    "complete_chunk_literal_unchanged_in_current_F1": true,
+    "current_line": 218,
+    "current_owner_source_sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+    "chunk_bytes": 573,
+    "new_Lean_probe_or_patch": false
+  },
+  "all17_plus_canonical_dispositions": [
+    {
+      "id": 9,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "enumCont_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 812,
+      "end_line": 823,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 819,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 820,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 821,
+          "text": "refine \u27e8t, ht, fun j hj => Nat.find_min hex hj, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 823,
+          "text": "rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]"
+        }
+      ],
+      "chunk_sha256": "b1b00270d98a93e53270bcf57357643d3febe519d27d7cb4926c958057bf8b86",
+      "block": "blocks/009-EXP-enumCont_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Exact existing helper contract: apply exists_first_halt tm cfg h. Its full-configuration equality is already the required endpoint.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.EXP",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 812,
+      "current_owner_source_sha256": "cff67a2cae4a1c33de29cee6583c957f2a45be4a5029c2ba4937cfc570c172d5",
+      "chunk_bytes": 639,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 16,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_unary_first",
+      "kind": "lemma",
+      "private": true,
+      "line": 1428,
+      "end_line": 1451,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 1439,
+          "text": "refine \u27e8fun n => Nat.find (hex n), fun x => ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1440,
+          "text": "have hh := Nat.find_spec (hex x.length)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1441,
+          "text": "have ht := Nat.find_min' (hex x.length)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1446,
+          "text": "(Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 1451,
+          "text": "exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')"
+        }
+      ],
+      "chunk_sha256": "e113ae071c127f64516a45219baca71be813e9035ce68f48d82a8995e0fc9884",
+      "block": "blocks/016-Nondeterminism-b2_unary_first.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply the canonical theorem to M.tm at each unary input and deadline T n; choose the resulting witnesses as the function \u03c4. Retain b2_unary_run and output packaging. Full endpoint equality supplies state/output at \u03c4; prefix exclusion transfers through the existing unary relation.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.Nondeterminism",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 1428,
+      "current_owner_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "chunk_bytes": 1351,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 17,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_verify_timed",
+      "kind": "lemma",
+      "private": true,
+      "line": 2077,
+      "end_line": 2112,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2087,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2089,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2090,
+          "text": "have hc : c.state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2097,
+          "text": "(fun s hs => Nat.find_min hex (show s < t from hp \u25b8 hs))"
+        }
+      ],
+      "chunk_sha256": "0e981078b85a2f0989a85d65dc0c8804a00e8386a48cdf14574df9e40bcac4ac",
+      "block": "blocks/017-Nondeterminism-b2_verify_timed.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to V.tm, V.tm.initCfg y, and deadline T from hV. Retain choice-word splitting, b2_verify_run/finish, and output_unique packaging; use canonical prefix exclusion and endpoint state at the selected t.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.Nondeterminism",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2077,
+      "current_owner_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "chunk_bytes": 1803,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 18,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 685,
+      "end_line": 698,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 693,
+          "text": "let t := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 694,
+          "text": "have ht : t \u2264 T := Nat.find_min' hex hh.1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 695,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 698,
+          "text": "exact \u27e8t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [\u2190 he]; exact hh.2\u27e9"
+        }
+      ],
+      "chunk_sha256": "3bdad3b899acadd44c814674308f126dae928f5be8633a32aad57e297650d0ee",
+      "block": "blocks/018-SAT-sat_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm.initCfg at the existing ComputesInTime deadline. Preserve state and output through the canonical complete endpoint equality; the caller statement remains unchanged.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 685,
+      "current_owner_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "chunk_bytes": 815,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 19,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_call_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 3752,
+      "end_line": 3767,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 3759,
+          "text": "have hu := Nat.find_spec h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3760,
+          "text": "have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3761,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3761,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 3763,
+          "text": "have hz : Nat.find h = 0 := by omega"
+        }
+      ],
+      "chunk_sha256": "89c0e90126b77fd91d142b1013ada9017b950feb0405ba30f823e623b251ef46",
+      "block": "blocks/019-SAT-sat_call_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to its arbitrary decider configuration and known halt deadline. Retain the existing initial nonhalt premise to prove selected time positive; use complete endpoint equality for its required final result.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.ClassNP.SAT",
+        "TCSlib.Complexity.ClassNP.NP",
+        "TCSlib.Complexity.ClassP.P",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 3752,
+      "current_owner_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "chunk_bytes": 781,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 33,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_call_first_halt",
+      "kind": "lemma",
+      "private": true,
+      "line": 6117,
+      "end_line": 6132,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 6124,
+          "text": "have hu := Nat.find_spec h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6125,
+          "text": "have hle := Nat.find_min' h hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6126,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6126,
+          "text": "refine \u27e8Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 6128,
+          "text": "have hz : Nat.find h = 0 := by omega"
+        }
+      ],
+      "chunk_sha256": "b4b2e12ad3f30b921e69a7037af767afbf88ed542746353678af727e0e0adeab",
+      "block": "blocks/033-Hardness-clA5_call_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Same positive-time arbitrary-configuration route as sat_call_first_halt, with existing initial exclusion retained. No new first-live premise.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.CookLevin.Hardness",
+        "TCSlib.Complexity.CookLevin.Snapshot",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 6074,
+      "current_owner_source_sha256": "6727053330e0804eb4501b0ed20a3153d1c8b67cc2e39cafd2b407499443637a",
+      "chunk_bytes": 782,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 47,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "ComputesInTime.of_spaceUsed_le",
+      "kind": "theorem",
+      "private": false,
+      "line": 362,
+      "end_line": 411,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 369,
+          "text": "set T := Nat.find hex with hTdef"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 370,
+          "text": "have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 371,
+          "text": "have hTt : T \u2264 t := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 373,
+          "text": "fun t' ht' => Nat.find_min hex ht'"
+        }
+      ],
+      "chunk_sha256": "7a6d309ba15321c8017a599407a686632e34ae567141eb6efdf27946b6747ff5",
+      "block": "blocks/047-ConfigCount-ComputesInTime_of_spaceUsed_le.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Replace only the local T := Nat.find halt cut with canonical T\u2264t, prefix exclusion, and complete endpoint equality. Preserve the configuration-count injection/cardinality/space proof and stationary extension to configBound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+        "TCSlib.Complexity.SpaceComplexity.Basic",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 362,
+      "current_owner_source_sha256": "b852e62030fd8cf4b6c607a908da378370590d1d526632788c7824530eac04ed",
+      "chunk_bytes": 2908,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 50,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "name": "call_run",
+      "kind": "theorem",
+      "private": false,
+      "line": 150,
+      "end_line": 360,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 178,
+          "text": "set T0 := Nat.find hex with hT0def"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 179,
+          "text": "have hT0 : (D.runFrom dc0 T0).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 180,
+          "text": "have hT0le : T0 \u2264 T := Nat.find_min' hex hTh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 181,
+          "text": "have hlive : \u2200 t < T0, (D.runFrom dc0 t).state \u2260 none := fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "bf249721f8ffdbff74327b72e06d3f7d90ef9c826b021e5b7013e8f9c550432b",
+      "block": "blocks/050-Call-call_run.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to D and dc0 at deadline T using hTh. Keep the existing proof that dc0 starts live to establish T0>0, and retain all simulation, head/framing, and output packaging.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Call",
+        "TCSlib.Complexity.SpaceComplexity.Machines.CallReturn",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Sim",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Program",
+        "TCSlib.Complexity.SpaceComplexity.Machines.Layout",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 150,
+      "current_owner_source_sha256": "44e479783baac69c6a10633b666f8abf90b3a9ba19ef76ed073fee98ee09b405",
+      "chunk_bytes": 10520,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 51,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "name": "cleanTM_run",
+      "kind": "theorem",
+      "private": false,
+      "line": 314,
+      "end_line": 429,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 329,
+          "text": "set T0 := Nat.find hex with hT0def"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 330,
+          "text": "have hT0 : (M.runFrom (Cfg.init q V) T0).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 331,
+          "text": "have hT0le : T0 \u2264 T := Nat.find_min' hex hT"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 333,
+          "text": "fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "5e18cfde662d65d3a364ac8533a93693741cd2d50c5797501a85e80cede8f3e7",
+      "block": "blocks/051-Clean-cleanTM_run.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M at Cfg.init q V and deadline T using hT. The theorem accepts an arbitrary configuration, so the local retagged M' is irrelevant to the selector; retain it where later visited-head bounds use it. Keep the cleaning/framing proof.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.Clean",
+        "TCSlib.Complexity.SpaceComplexity.Machines.CleanSweep",
+        "TCSlib.Complexity.SpaceComplexity.ConfigCount",
+        "TCSlib.Complexity.SpaceComplexity.Basic",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 314,
+      "current_owner_source_sha256": "89f3f21ee2fc567ec184ec43cac35f2e4637c6262c6868f4ab7339d40d588de0",
+      "chunk_bytes": 6282,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 52,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "name": "runFrom_count_eq",
+      "kind": "theorem",
+      "private": false,
+      "line": 214,
+      "end_line": 332,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 225,
+          "text": "set T\u2080 := Nat.find hex with hT\u2080"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 226,
+          "text": "have hT0 : (run T\u2080).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 227,
+          "text": "have hT0T : T\u2080 \u2264 T := Nat.find_min' hex hT"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 228,
+          "text": "have hmin : \u2200 t < T\u2080, (run t).state \u2260 none := fun t ht => Nat.find_min hex ht"
+        }
+      ],
+      "chunk_sha256": "28e3c2d828f099599352a96dbaa83247186a5e64516744e142384ec92b6fa875",
+      "block": "blocks/052-MARMTime-runFrom_count_eq.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to tm at tm.initCfg x and deadline T. Re-express the result using local run notation. Keep the cell/counting bound and stationary tail proof; no generalized API is needed for the selector.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.SpaceComplexity.Machines.MARMTime",
+        "TCSlib.Complexity.ClassP.DTIME",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 214,
+      "current_owner_source_sha256": "1f064e29fa79ec52faf876e7d72fbed93d106a2f08b060643039c52753729b7b",
+      "chunk_bytes": 6448,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 54,
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "clockTM_setup",
+      "kind": "lemma",
+      "private": false,
+      "line": 509,
+      "end_line": 539,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 517,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 519,
+          "text": "have hs : c.state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 520,
+          "text": "have ht : t \u2264 tK := Nat.find_min' hh ((computesInTime_iff K x s tK).mp hK).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 536,
+          "text": "kCfg_run K W _ t (fun s hs => Nat.find_min hh hs), kCfg_rewind K W c hs, hrun, \u2190 ho]"
+        }
+      ],
+      "chunk_sha256": "facd3f2d07332b9ba743d3bea6bc71cf3e1b05580350709934a1998b2c2873dc",
+      "block": "blocks/054-ClockMachine-clockTM_setup.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to K.tm at K.tm.initCfg x and deadline tK from hK. Keep buffer/rewind setup and output_unique. Mechanical edit authority for colleague-owned ClockMachine remains a separate ownership check, not an API issue.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TimeHierarchy.ClockMachine",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 509,
+      "current_owner_source_sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2",
+      "chunk_bytes": 1625,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 58,
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "name": "startup",
+      "kind": "theorem",
+      "private": false,
+      "line": 304,
+      "end_line": 330,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 313,
+          "text": "have htS : Nat.find hex \u2264 T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 313,
+          "text": "have htS : Nat.find hex \u2264 T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 314,
+          "text": "obtain \u27e8cS, hcSdef\u27e9 : \u2203 c, c = S.tm.runFrom (S.tm.initCfg x) (Nat.find hex) := \u27e8_, rfl\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 315,
+          "text": "have hcS : cS.state = none := hcSdef \u25b8 Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 318,
+          "text": "exact ((FinTM.computesInTime_iff _ _ _ _).mpr \u27e8Nat.find_spec hex, rfl\u27e9).output_unique hS"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 319,
+          "text": "refine \u27e8Nat.find hex + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 320,
+          "text": "have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 320,
+          "text": "have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 321,
+          "text": "have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take (Nat.find hex))"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 322,
+          "text": "(fun t h => Nat.find_min hex (by omega))"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 324,
+          "text": "rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 328,
+          "text": "rw [hb, rewind_run m _ _ _ _ _ (w.drop (Nat.find hex)) (by simp; omega),"
+        }
+      ],
+      "chunk_sha256": "7d681bc2d9267f85886c182aeaca8a9f99f5fd65e51470cd443aed7877705704",
+      "block": "blocks/058-NDClockHostRun-startup.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to the deterministic boot machine S.tm at deadline T from hS. Retain the NDTM host choice-word boot/rewind packaging; the minimized run itself is deterministic, so this belongs in the deterministic selector list.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Build.NDClockHostRun",
+        "TCSlib.Complexity.TuringMachine.Build.NDClockHost",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 304,
+      "current_owner_source_sha256": "7d17ca0505e769c98173f78ab0a9ff5727a4626008cf53b352ab7dd191f2cfbc",
+      "chunk_bytes": 1719,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 76,
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "name": "exists_first_halt",
+      "kind": "theorem",
+      "private": false,
+      "line": 218,
+      "end_line": 227,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 224,
+          "text": "have hle : Nat.find hex \u2264 t := Nat.find_min' hex h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 224,
+          "text": "have hle : Nat.find hex \u2264 t := Nat.find_min' hex h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 225,
+          "text": "refine \u27e8Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 225,
+          "text": "refine \u27e8Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_\u27e9"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 227,
+          "text": "MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]"
+        }
+      ],
+      "chunk_sha256": "c115a0eed96e1c975622bc4d36a1dedadd39321450c9546907f2ea61f6fe61e8",
+      "block": "blocks/076-Finite-exists_first_halt.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "canonical home; no replacement",
+      "route": "Canonical home, not a consumer copy. Retain Nat.find inside the public theorem itself.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 218,
+      "current_owner_source_sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+      "chunk_bytes": 573,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 82,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "name": "clockStageCfg_captures",
+      "kind": "lemma",
+      "private": false,
+      "line": 842,
+      "end_line": 862,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 853,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 855,
+          "text": "Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 856,
+          "text": "have ht : \u03c4 \u2264 b * (T x.length + 1) := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 858,
+          "text": "((maskedClock W false).tm.initCfg x) t).state \u2260 none := fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "b6b27003d8715407675b14eedede067e07977cd694b77855529da5d43cbd2a0e",
+      "block": "blocks/082-ObliviousCandidate-clockStageCfg_captures.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to (maskedClock W false).tm at deadline b*(T x.length+1), using existing hm/hhalt. Retain clockStageCfg_run and output_unique. The complete endpoint equality supplies halted state/output at \u03c4.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 842,
+      "current_owner_source_sha256": "f0e69ed8fa9fbd5c73068694a5e8a162e77cffd671742b5e156e764cd4a6f771",
+      "chunk_bytes": 1363,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 83,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "one_work_tape",
+      "kind": "theorem",
+      "private": false,
+      "line": 915,
+      "end_line": 956,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 936,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 937,
+          "text": "have h\u03c4 : (M.tm.runFrom (M.tm.initCfg x) \u03c4).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 938,
+          "text": "have ht : \u03c4 \u2264 T x.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 940,
+          "text": "fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "cc43899ebd0911971cc3e8aa8f49309723e57ff5a0a6022bba8543cffa2cf977",
+      "block": "blocks/083-SingleTape-one_work_tape.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply in the positive-k branch to M.tm at deadline T x.length. Keep the sweep simulation and quadratic-time arithmetic; canonical equality transfers output at \u03c4.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 915,
+      "current_owner_source_sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "chunk_bytes": 2258,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 84,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "dg_all_inputs",
+      "kind": "lemma",
+      "private": true,
+      "line": 2118,
+      "end_line": 2195,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2130,
+          "text": "let \u03c4 := Nat.find hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2131,
+          "text": "have h\u03c4 : (M.tm.runFrom (M.tm.initCfg y) \u03c4).state = none := Nat.find_spec hex"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2132,
+          "text": "have htime : \u03c4 \u2264 T y.length := Nat.find_min' hex hhalt"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2134,
+          "text": "fun _ h => Nat.find_min hex h"
+        }
+      ],
+      "chunk_sha256": "69717a524de1674efc6e1cf2e219327758581b83e4a699ca4531d6a64c5cfe58",
+      "block": "blocks/084-SingleTape-dg_all_inputs.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at input y=x.map(dgRetract a0), deadline T y.length. Keep dg_simulate, window/span, and space proof; use canonical prefix exclusion and endpoint equality for the local cut.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+        "TCSlib.Complexity.TuringMachine.Sweep",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2118,
+      "current_owner_source_sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+      "chunk_bytes": 4149,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 85,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedCapture_start",
+      "kind": "lemma",
+      "private": true,
+      "line": 2513,
+      "end_line": 2529,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 2520,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2521,
+          "text": "have ht : t \u2264 T := Nat.find_min' hh h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2522,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 2528,
+          "text": "timedCapture_run M clock _ t (fun s hs => Nat.find_min hh hs),"
+        }
+      ],
+      "chunk_sha256": "fffdb78fae2a6dff6c87626d7258840b7d21b86608f7680144565fa652f6979e",
+      "block": "blocks/085-Universal-timedCapture_start.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at the known halted deadline T. Use canonical equality (in the required orientation) for timedCapturedCfg and prefix exclusion for timedCapture_run; preserve the t+1 bound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.Universal",
+        "TCSlib.Complexity.TuringMachine.UniversalBlock",
+        "TCSlib.Complexity.TuringMachine.UniversalInterpreter",
+        "TCSlib.Complexity.TuringMachine.UniversalStartup",
+        "TCSlib.Complexity.TuringMachine.Encoding",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 2513,
+      "current_owner_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "chunk_bytes": 989,
+      "new_Lean_probe_or_patch": false
+    },
+    {
+      "id": 86,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "universalCapture_start",
+      "kind": "lemma",
+      "private": false,
+      "line": 591,
+      "end_line": 608,
+      "hits": [
+        {
+          "kind": "Nat.find",
+          "line": 599,
+          "text": "let t := Nat.find hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 600,
+          "text": "have ht : t \u2264 T := Nat.find_min' hh h"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 601,
+          "text": "have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh"
+        },
+        {
+          "kind": "Nat.find",
+          "line": 607,
+          "text": "universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),"
+        }
+      ],
+      "chunk_sha256": "91e3a192ec45ed2efcfa73b2028b4af371d1460063dd1a9ff5ca25ddc6c274b5",
+      "block": "blocks/086-UniversalStartup-universalCapture_start.lean.txt",
+      "canonical_replacement": null,
+      "needs_statement_name_import_API_home_or_design_change": false,
+      "new_debt_acknowledgment_required": false,
+      "no_global_absence_claim": true,
+      "disposition": "outside FE-LIVE-1: first None halt",
+      "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+      "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+      "route": "Apply to M.tm at the known halted deadline T. Use canonical equality for universalCapturedCfg and prefix exclusion for universalCapture_run; preserve the t+1 bound.",
+      "existing_import_chain_to_Finite": [
+        "TCSlib.Complexity.TuringMachine.UniversalStartup",
+        "TCSlib.Complexity.TuringMachine.Encoding",
+        "TCSlib.Complexity.TuringMachine.StateRenaming",
+        "TCSlib.Complexity.TuringMachine.Simulation",
+        "TCSlib.Complexity.TuringMachine.Finite"
+      ],
+      "new_import_needed": false,
+      "new_statement_name_API_home_or_design_needed_for_selector": false,
+      "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "complete_chunk_literal_unchanged_in_current_F1": true,
+      "current_line": 591,
+      "current_owner_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "chunk_bytes": 1041,
+      "new_Lean_probe_or_patch": false
+    }
+  ],
+  "new_API_import_statement_home_debt_permission": false
+}

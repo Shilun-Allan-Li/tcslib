@@ -1,0 +1,67 @@
+/-- **The clocked runner is an abort-form decider** [AB09, §7.4.2 and Exercise 7.6(a)]: let `S`
+compute `1^{m(n)}` in time `T_S(n)` with `n ≤ m(n)`, let every one-bit answer of `A` within
+`m` coins be `L(x)`, and let `A` answer `L(x)` with probability at least `1/2`. Then the
+one-shot host halts within `T_S(n) + m(n) + 2 + (m(n) + 1)` steps on every branch, never
+outputs `[¬L(x)]`, and outputs `[L(x)]` with probability at least `1/2`.
+
+**Proof sketch.** After the startup (`startup`), `m + 1` more steps halt the host (`oneShot`),
+with output `[v]` exactly when `A` answered `v` on the first `m` coins after the startup. Since
+the startup ignores its coins, the output distribution is `A`'s (`randProb_split`,
+`randProb_take`). -/
+theorem clockHost_abortDecides (S : FinTM Bool) (A : FinNDTM Bool) (L : Language Bool)
+    (m TS : ℕ → ℕ)
+    (hS : S.ComputesFunInTime (fun x => List.replicate (m x.length) true) TS)
+    (hm : ∀ n, n ≤ m n)
+    (hcorr : ∀ x u v, u.length = m x.length → attemptBit A x u = some v →
+      v = MultiTapeTM.indicator (L : Set (List Bool)) x)
+    (hprob : ∀ x : List Bool, 1 / 2 ≤ randProb (m x.length)
+      (fun u => attemptBit A x u = some (MultiTapeTM.indicator (L : Set (List Bool)) x))) :
+    (FinNDTM.clockHost S A false).AbortDecidesInTime L
+      fun n => TS n + m n + 2 + (m n + 1) := by
+  classical
+  intro x
+  set mm := m x.length with hmm
+  set ℓ := MultiTapeTM.indicator (L : Set (List Bool)) x
+  obtain ⟨s₀, hs₀, sT, sP, hstart⟩ :=
+    startup (A := A) (loop := false) mm (hS x) (hm _)
+  have hrun : ∀ w : List Bool, w.length = s₀ + (mm + 1) →
+      (hostTM S A false).runWith w ((hostTM S A false).initCfg x) =
+        (hostTM S A false).runWith (w.drop s₀) (runCfg mm (A.tm.initCfg x) 0 sT sP) := by
+    intro w hw
+    rw [← List.take_append_drop s₀ w, NDTM.runWith_append,
+      hstart (w.take s₀) (List.length_take_of_le (by omega)), List.take_append_drop]
+  have hdrop : ∀ w : List Bool, w.length = s₀ + (mm + 1) → (w.drop s₀).length = mm + 1 :=
+    fun w hw => by rw [List.length_drop, hw]; omega
+  have hhalt : (FinNDTM.clockHost S A false).tm.HaltsWithin x (s₀ + (mm + 1)) := fun w hw => by
+    show ((hostTM S A false).runWith w ((hostTM S A false).initCfg x)).state = none
+    rw [hrun w hw]
+    exact (oneShot mm sT sP _ (hdrop w hw)).1
+  have hout : ∀ w : List Bool, w.length = s₀ + (mm + 1) → ∀ v,
+      (FinNDTM.clockHost S A false).outputWith x w = [v] ↔
+        attemptBit A x ((w.drop s₀).take mm) = some v := by
+    intro w hw v
+    show ((hostTM S A false).runWith w ((hostTM S A false).initCfg x)).output = [v] ↔ _
+    rw [hrun w hw, (oneShot mm sT sP _ (hdrop w hw)).2, attemptBit_eq_some]
+  have hT' : s₀ + (mm + 1) ≤ TS x.length + mm + 2 + (mm + 1) := by omega
+  refine ⟨hhalt.mono hT', fun w hw => ?_, ?_⟩
+  · have hle : s₀ + (mm + 1) ≤ w.length := by rw [hw]; exact hT'
+    intro heq
+    have h1 : (FinNDTM.clockHost S A false).outputWith x (w.take (s₀ + (mm + 1))) = [!ℓ] := by
+      unfold FinNDTM.outputWith
+      rw [← FinNDTM.runWith_eq_runWith_take hhalt hle]
+      exact heq
+    rw [hout _ (List.length_take_of_le hle)] at h1
+    have hl1 : mm ≤ (List.drop s₀ (List.take (s₀ + (mm + 1)) w)).length := by
+      rw [List.length_drop, List.length_take_of_le hle]
+      omega
+    have hbad : (!ℓ) = ℓ := hcorr x _ _ (List.length_take_of_le hl1) h1
+    revert hbad
+    generalize ℓ = b
+    cases b <;> decide
+  · rw [FinNDTM.outputProb_eq_of_haltsWithin hhalt hT']
+    unfold FinNDTM.outputProb
+    rw [randProb_congr (B := fun r => True ∧ attemptBit A x ((r.drop s₀).take mm) = some ℓ)
+        fun r => by rw [hout _ List.length_ofFn]; simp,
+      randProb_split s₀ (mm + 1) (fun _ => True) (fun u => attemptBit A x (u.take mm) = some ℓ),
+      randProb_true, one_mul, randProb_take (by omega) (fun u => attemptBit A x u = some ℓ)]
+    exact hprob x

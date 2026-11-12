@@ -1,0 +1,276 @@
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1257:private theorem qy_run_one {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1259:  rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1347:      · rw [qy_run_one, qy_step M _ (.suf 0) ip T _ _ (fun _ => 0) none (by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1369:        rw [qy_run_one, qy_step M _ (.got b) ip T _ _
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2093:  rw [qy_run_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5355:  rw [qy_run_one, MultiTapeTM.step_of_some hs, hw, htr]
+TCSlib/Complexity/ClassNP/SAT.lean:455:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:647:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/ClassNP/SAT.lean:1582:  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:1600:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:1760:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:1803:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:2522:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:3210:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/SAT.lean:3726:    simp only [Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:519:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:573:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:707:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:774:  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:801:  simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3082:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3216:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3739:    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3779:    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3825:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/Tautology.lean:618:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1766:    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:260:private theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:262:  rw [runFrom_succ_eq_step', runFrom_zero]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:267:  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:436:    rw [show (0 : ℕ) + 1 = 1 from rfl, xr_runFrom_one, MultiTapeTM.step_of_some hd,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1067:          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1122:          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1151:  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2960:  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] at hhost
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1897:  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3327:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8462:      MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_succ_eq_step, *]
+TCSlib/Complexity/ClassNP/EXP.lean:783:      enumCont_history, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:1011:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:1131:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:1175:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:1601:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:1642:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/EXP.lean:2752:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassP/Examples.lean:275:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/TMSAT.lean:205:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/TMSAT.lean:228:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/TMSAT.lean:310:          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/TMSAT.lean:345:          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassNP/TMSAT.lean:458:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:1034:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:1609:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+TCSlib/Complexity/CookLevin/Hardness.lean:1649:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h0]
+TCSlib/Complexity/CookLevin/Hardness.lean:1668:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:2942:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:3139:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+TCSlib/Complexity/CookLevin/Hardness.lean:3197:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+TCSlib/Complexity/CookLevin/Hardness.lean:3216:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:3356:    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:3387:      MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:3778:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:4681:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CookLevin/Hardness.lean:4712:    rw [zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Encoding.lean:419:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Encoding.lean:470:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Simulation.lean:1125:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/CounterProg.lean:305:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/TuringMachine/CounterProg.lean:341:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean:164:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean:202:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean:237:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:555:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:160:    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:292:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:362:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:644:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:969:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:793:    MultiTapeTM.runFrom_succ_eq_step.trans MultiTapeTM.runFrom_zero
+TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean:301:  | zero => simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using foldCfg_init M x
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:69:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:186:      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:212:    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:254:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:345:    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:644:      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:707:      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:139:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:165:    rw [MultiTapeTM.runFrom_succ_eq_step, List.length_nil, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:227:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:254:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:282:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, acfg_step]
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:150:    rw [rrun_one, rstep_ask, ho0]
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:154:    rw [rrun_one, rstep_bit, ho1]
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:158:    rw [rrun_one, rstep_noncall prog o _ (if b then .emitT else .emitF) rfl (by cases b <;> rfl)]
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:235:    rw [rrun_one, rstep_ask, ho0]; simp
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:239:    rw [rrun_one, rstep_noncall prog o _ .done rfl rfl]
+TCSlib/Complexity/TuringMachine/Universal.lean:274:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:397:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:424:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:467:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:605:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:641:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:758:      Nat.cast_zero, add_zero, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:784:    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+TCSlib/Complexity/TuringMachine/Universal.lean:826:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:917:    rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero, he]
+TCSlib/Complexity/TuringMachine/Universal.lean:1225:      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:1984:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Universal.lean:2146:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:261:theorem runFrom_one (H : MultiTapeTM k Bool B) (c : Cfg k Bool B x) :
+TCSlib/Complexity/TuringMachine/CfgFacts.lean:26:* `Turing.MultiTapeTM.runFrom_one` — a one-step run equals one machine step.
+TCSlib/Complexity/TuringMachine/CfgFacts.lean:46:theorem MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+TCSlib/Complexity/TuringMachine/CfgFacts.lean:48:  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:294:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:480:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:504:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:547:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1008:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalK.lean:633:  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/UniversalK.lean:1264:      MultiTapeTM.runFrom_succ_eq_step' (cfg := d) (t := 0),
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:823:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:837:      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:916:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:1014:    · exact ⟨1, by simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:1047:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, bridge_step]
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:448:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:462:    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:14871:      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step],
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:14903:    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:261:    rw [runFrom_add, runFrom_one, hstep₁]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:288:    rw [runFrom_add, hA, runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:319:    rw [runFrom_add, runFrom_one, hstep₂]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:365:      runFrom_one, control_step (q := BodyState.callG gx) ?_ rfl]
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:560:private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:562:  have h := MultiTapeTM.runFrom_succ_eq_step' (tm := M) (cfg := d) (t := 0)
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:570:  exact recordStep_runFrom_one M _
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:848:  · rw [recordStep_runFrom_one]
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:959:        rwa [recordStep_runFrom_one] at h
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:966:      · rw [recordStep_runFrom_one, step1]
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:1001:    · rw [recordStep_runFrom_one]
+TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:455:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:921:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean:197:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean:612:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:223:  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:468:            rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:305:    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:551:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:696:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:808:    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:887:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1239:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1262:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1344:          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1379:          hinner', MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1492:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1674:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1684:      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1711:      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1782:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1904:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2003:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2144:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2154:      simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2868:  simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2911:    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2972:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3066:      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3078:        MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3199:        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3205:        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3488:    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4314:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4646:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5867:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6062:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6261:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7716:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7732:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7770:      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst, hsecond]
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:137:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1358:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/ClassP/TimeConstructible.lean:272:    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:149:lemma rrun_one_reg (c : Cfg m Bool Λ x) (s : Λ) (f : ℤ → Option Bool) (p : ℤ)
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:154:  rw [rrun_one, rstep_noncall P oracle _ s rfl hs]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:178:    · rw [rrun_one_reg P oracle r c dD _ _ hDc, hD, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:195:        rw [rrun_one_reg P oracle r c dD _ _ hDc, hD, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:218:        rw [rrun_one_reg P oracle r c dD _ _ hDc, hD, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:232:          rw [rrun_one_reg P oracle r c dL _ _ hLc, hL, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:241:          rw [rrun_one_reg P oracle r c dE _ _ hEc, hE]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:263:          rw [rrun_one_reg P oracle r c dL _ _ hLc, hL, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:347:    rw [rrun_one_reg P oracle r c cR _ _ hRc, hR, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:359:      rw [rrun_one_reg P oracle r c cR _ _ hRc, hR, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:415:    rw [rrun_one_reg P oracle r c cE _ _ hEc, hE, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:430:      rw [rrun_one_reg P oracle r c cE _ _ hEc, hE, regCfg_read]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:227:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:266:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1020:    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3736:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3966:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4013:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4056:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4100:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4158:    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using hs
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:601:  simp only [MultiTapeTM.runFrom, Function.iterate_one] at hE
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:265:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:112:lemma rrun_one_x (c : Cfg m Bool Λ x) (s : Λ) (ip : Fin (x.length + 2)) (r : Fin m) (p : ℤ)
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:116:  rw [rrun_one, rstep_noncall P oracle _ s rfl hs, ← xCfg_inSym c s ip r p]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:144:    rw [rrun_succ, ih (by omega), ← rrun_one, rrun_one_x P oracle c _ _ r p (hc j (by omega))]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:176:      rw [rrun_one_x P oracle c rw₂ ip' r p h₂c, h₂]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:190:        rw [rrun_one_x P oracle c rw₂ ip' r p h₂c, h₂, hsym]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:203:    rw [rrun_one_x P oracle c rw₁ ip r p h₁c, h₁, apply_xAct]; simp
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:307:**Proof sketch.** Rewrite the one-step run with `rrun_one_x` and the transition with `htr`;
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:310:lemma rrun_one_rej (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) (c : Cfg m Bool Λ x)
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:316:  rw [rrun_one_x P oracle c s ip r p hs, htr]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:393:    obtain ⟨e1, e2, e3⟩ := rrun_one_rej P oracle c s ip r p hs htr
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:431:    rw [rrun_one_x P oracle c _ _ r p (hst t)]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:467:    rw [rrun_one_x P oracle c _ _ r p cS, hS, hsym2, hxt1]
+TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean:545:      rw [rrun_one_x P oracle c _ _ r p (hst'c _), hendSym]
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Smoothing.lean:219:    simp only [zero_add, Function.iterate_one, Nat.cast_one, pow_zero, mul_one, one_mul]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:148:          rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:177:  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:204:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:223:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:241:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, step_some]
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:51:lemma rrun_one (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) (c : Cfg m Bool Λ x) :
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:175:    · rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:196:      · rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:216:        rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:259:    rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:275:      rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:247:  · rw [rrun_one, rstep_noncall _ oracle _ (l, .start) rfl hc]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:331:  rw [rrun_one]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:351:    rw [rrun_one, rstep_noncall _ oracle _ (l, .start) rfl hc]
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:173:      rw [rrun_one_x P oracle c _ _ r _ cD2F, hD2F, xCfg_read, hcr]
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:223:        rw [rrun_one_x P oracle c _ _ r _ cb, htr2, xCfg_read, hcr]
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:252:        rw [rrun_one_x P oracle c _ _ r _ cb, htr2, xCfg_read, hcr]
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:131:      refine compose 1 _ (by rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:137:        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hstep]
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:142:      simp only [MultiTapeTM.runFrom, Function.iterate_one] at hstep ⊢
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:219:        simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:327:      simp only [MultiTapeTM.runFrom, Function.iterate_one, hstep]
+TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean:130:  rw [← xCfg_K s s ip ip v q q, rrun_one_x prog o _ s ip 0 q rfl]
+TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean:269:  rw [rrun_one, rstep_noncall prog o _ _ rfl rfl]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:105:    rw [rrun_one_reg P oracle r c _ _ _ (hc _), htr, regCfg_read]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:124:      rw [rrun_one_reg P oracle r c _ _ _ (hc _), htr, regCfg_read, hsplit]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:259:lemma rrun_one_eq (c : Cfg m Bool Λ x) (s : Λ) (k : ℤ) (hs : P.call s = none) :
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:263:  rw [rrun_one, rstep_noncall P oracle _ s rfl hs]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:288:    · rw [rrun_one_eq P oracle r₁ r₂ c eC _ hCc, hC, eqCfg_read₁ r₁ r₂ hne, eqCfg_read₂, h₁, h₂]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:314:      · rw [rrun_one_eq P oracle r₁ r₂ c eC _ hCc, hC, eqCfg_read₁ r₁ r₂ hne, eqCfg_read₂, h₁, h₂,
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:333:          rw [rrun_one_eq P oracle r₁ r₂ c eC _ hCc, hC, eqCfg_read₁ r₁ r₂ hne, eqCfg_read₂, h₁,
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:348:        · rw [rrun_one_eq P oracle r₁ r₂ c eC _ hCc, hC, eqCfg_read₁ r₁ r₂ hne, eqCfg_read₂, h₁,
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:380:    rw [rrun_one_eq P oracle r₁ r₂ c eB _ hBc, hBt, eqCfg_read₁ r₁ r₂ hne, h₁]
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:391:      rw [rrun_one_eq P oracle r₁ r₂ c eB _ hBc, hBt, eqCfg_read₁ r₁ r₂ hne, h₁]
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:157:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1240:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1287:    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean:173:  obtain ⟨e1, e2, e3⟩ := rrun_one_rej P oracle c s ip r p hs htr
+TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean:186:  rw [rrun_one_x P oracle c s _ r p hs]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean:266:        rw [rrun_one_x P oracle c _ _ r p (hcall last)]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:88:    rw [rrun_one_x P oracle c s₀ ip r q hc, htr, xCfg_read, hw]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:99:      rw [rrun_one_x P oracle c s₀ ip r q hc, htr, xCfg_read, hw]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:210:      · rw [rrun_one_x P oracle c jC ip r _ cC, hC, xCfg_read, hc, ha]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:221:      · rw [rrun_one_x P oracle c jC ip r _ cC, hC, xCfg_read, hc, ha]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:236:      · rw [rrun_one_x P oracle c jC ip r _ cC, hC, xCfg_read, hc, ha]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:252:          rw [rrun_one_x P oracle c jC ip r _ cC, hC, xCfg_read, hc, ha]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:269:        · rw [rrun_one_x P oracle c jC ip r _ cC, hC, xCfg_read, hc, ha]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:322:    rw [rrun_one_x P oracle c jK _ r 0 cK, hK]
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:331:    rw [rrun_one_x P oracle c jK2 _ r 0 cK2, hK2, apply_xAct]
+TCSlib/Complexity/SpaceComplexity/WindowClock.lean:275:  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:190:  simp [rrun_one, rstep, prog, call, imageCfg, hs, vword_whole₁, regWords,
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:199:  simp only [rrun_one, rstep, imageCfg, hs, Option.map_some, prog, call]
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:216:  rw [rrun_one, rstep_noncall (prog M) o _ (s, .work c.inputSymbol lb)
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:310:  simp only [rrun_one, rstep, imageCfg, hs, Option.map_some, prog, call,
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:227:  rw [rrun_one, rstep_noncall (readModel r s) (fun j => j.elim0) _ (.inl ph) rfl rfl]

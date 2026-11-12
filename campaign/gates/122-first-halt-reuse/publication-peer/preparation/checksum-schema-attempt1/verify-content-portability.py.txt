@@ -1,0 +1,36 @@
+from pathlib import Path
+import json,hashlib,collections,subprocess,os,shutil
+P=Path('/private/tmp/ab34-gate122-fh13-frozen');O=Path('/private/tmp/ab34-gate122-publication-peer');R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');J=lambda p:json.loads(p.read_text());h=lambda b:hashlib.sha256(b).hexdigest();expected='65a81956dd86a90abe4246ac58335f8e67ff2a4a3c6b4dffb635d1596e72a5f5';assert h((P/'MANIFEST.json').read_bytes())==expected;m=J(P/'MANIFEST.json');assert len(m['files'])==m['payload_count']==2437 and m['payload_bytes']==136347045;data={};checks=[]
+for r in m['files']:
+ rel=r['path'];assert not Path(rel).is_absolute() and '..'not in Path(rel).parts;p=P/rel;b=p.read_bytes();assert not p.is_symlink() and len(b)==r['bytes'] and h(b)==r['sha256'];b.decode('utf8');data[rel]=b;checks.append(dict(r,exact=True))
+actual={p.relative_to(P).as_posix() for p in P.rglob('*') if p.is_file()};assert actual==set(data)|{'MANIFEST.json','SHA256SUMS'} and len(actual)==2439;assert not any(p.is_symlink() for p in P.rglob('*'))
+for name in ['MANIFEST.json','SHA256SUMS']:data[name]=(P/name).read_bytes()
+sumrows=[]
+for line in data['SHA256SUMS'].decode().splitlines():
+ sha,rel=line.split('  ',1);assert h(data[rel])==sha;sumrows.append(rel)
+assert len(sumrows)==len(set(sumrows)) and set(sumrows)==actual-{'SHA256SUMS'}
+components=[]
+for name,n,sha in [('historical-fh10-e0b',1529,'1a897379688f5fb669e71d83dd9f84363bcf09fceff25b2e2922cd0f6cad64ca'),('blive305',305,'9d24f74d8661b209a6334b08f90c4d5356827919c25db3f25e860dcd6081431c'),('current77',77,None)]:
+ D=P/'inputs'/name;c=J(D/'MANIFEST.json');assert len(c['files'])==n
+ if sha:assert h((D/'MANIFEST.json').read_bytes())==sha
+ for r in c['files']:
+  b=(D/r['path']).read_bytes();assert len(b)==r['bytes'] and h(b)==r['sha256']
+ components.append({'name':name,'payloads':n,'manifest_SHA256':h((D/'MANIFEST.json').read_bytes()),'all_payloads_exact':True})
+(O/'all2437-payload-checks.json').write_text(json.dumps({'input_MANIFEST_SHA256':expected,'payload_count':2437,'payload_bytes':136347045,'all2439_physical_paths_exact_no_extra_missing_symlinks':True,'all_UTF8':True,'checksum_rows':len(sumrows),'nested_frozen_components':components,'files':checks},indent=2)+'\n')
+u=J(P/'BUNDLE-UNIVERSE.json');om=J(P/'BUNDLE-OMISSION-RECOVERY.json');selected=(P/'BUNDLE-FILES.portable.txt').read_text().splitlines();chosen=set(selected);ur={r['path']:r for r in u['files']};orows=om['omissions'];alias={r['omitted_path']:r for r in orows};assert len(ur)==u['core_file_count']==2430 and len(alias)==len(orows)==1016;assert len(selected)==len(chosen)==1423;assert set(ur)|set(u['retained_metadata_files'])|set(u['retained_final_integrity_files'])==actual
+recovery=[]
+for path,r in ur.items():
+ assert h(data[path])==r['sha256'] and len(data[path])==r['bytes']
+ if path in alias:
+  a=alias[path];target=a['recover_from_retained_path'];assert path.startswith('inputs/historical-fh10-e0b/') and target in chosen and target not in alias and target in ur;assert ur[target]['disposition']=='RETAINED';assert data[path]==data[target] and r['bytes']==a['bytes']==ur[target]['bytes'] and r['sha256']==a['sha256']==ur[target]['sha256'];recovery.append(dict(a,full_bytes_independently_equal=True))
+ else:assert path in chosen and r['disposition']=='RETAINED'
+assert set(alias)=={p for p,r in ur.items() if r['disposition']=='EXACT_HISTORICAL_DUPLICATE'};assert chosen=={p for p,r in ur.items() if r['disposition']=='RETAINED'}|set(u['retained_metadata_files'])|set(u['retained_final_integrity_files']);assert all(p in chosen for p in ur if not p.startswith('inputs/historical-fh10-e0b/'));assert {data[p] for p in ur}=={data[p] for p in ur if p in chosen};size=sum(len(data[p]) for p in chosen);assert size==79562994
+# Independent virtual recovery uses only transported bytes, never original omitted bytes as a source.
+virtual={p:data[p] for p in chosen}
+for r in recovery:virtual[r['omitted_path']]=virtual[r['recover_from_retained_path']]
+assert set(virtual)==actual and all(virtual[p]==data[p] for p in actual)
+(O/'lossless-portable-recovery-checks.json').write_text(json.dumps({'full_core_logical_files':2430,'selected_total_including_metadata_integrity':1423,'selected_bytes':size,'aliases_only_historical_exact_complete_files':1016,'every_current13_payload_retained':True,'every_distinct_core_byte_payload_retained':True,'all_aliases_one_hop_to_retained_unaliased_paths':True,'virtual_full_recovery2439_files_byte_exact_from_selected_only':True,'no_new_physical_reconstruction_or_native_test':True,'original_full_record_physical_files_unchanged':True,'provided_verifier_source_review':'Path traversal/absolute/symlink escape guard; refuses mismatching existing files, writes only with --reconstruct into extraction root. Original script not executed by peer.','publication_bound':'79,562,994 bytes is selected payload total before root-added files and bundle framing; final actual published size/count/hash must be checked by root.','recovery_rows':recovery},indent=2)+'\n')
+# Final synthetic canonical-path ignore check is read-only and does not refresh or stage the index.
+prefix='campaign/gates/122-first-halt-reuse/review/';env=dict(os.environ);env['GIT_OPTIONAL_LOCKS']='0';proc=subprocess.run(['git','-C',str(R),'check-ignore','--no-index','-v','-z','--stdin'],input=('\0'.join(prefix+p for p in sorted(actual))+'\0').encode(),capture_output=True,env=env);assert proc.returncode in [0,1];parts=proc.stdout.decode().split('\0');parts=parts[:-1] if parts[-1]=='' else parts;assert len(parts)%4==0;ignored=[dict(zip(['source','line','pattern','record_path'],parts[i:i+4])) for i in range(0,len(parts),4)];special=[p for p in actual if any(s in {'.lake','.claude'} for s in Path(p).parts)];assert not special
+(O/'ignore-risk-final.json').write_text(json.dumps({'input_MANIFEST_SHA256':expected,'checked_full_packet_paths':len(actual),'physical_lake_or_claude_path_segments':special,'projected_canonical_prefix':prefix,'ignore_matched_paths':ignored,'no_Git_index_or_tracking_mutation':True,'root_actual_tracking_still_requires_manifest_tree_verification':True},indent=2)+'\n')
+print(json.dumps({'payloads':2437,'bytes':136347045,'all_UTF8_hashes_exact':True,'portable_selected_files':1423,'portable_selected_bytes':size,'exact_one_hop_aliases':len(alias),'virtual_recovered_files':len(virtual),'ignore_matches':len(ignored),'lake_claude_paths':len(special)}))

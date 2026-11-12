@@ -1,0 +1,25 @@
+/-- Every physical choice word simulates the same verifier until its first
+halt, with exact output capture and a valid boundary tag. Induction applies
+the choice-independent one-step invariant and shifts the liveness guard. -/
+private lemma b2_verify_run (S V : FinTM Bool) {x y : List Bool}
+    (c : Cfg V.k Bool V.State y) (tag : Bool) (htag : VirtualTag c.inputPos tag)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (w : List Bool)
+    (hlive : ∀ s < w.length, (V.tm.runFrom c s).state ≠ none) :
+    ∃ tag', VirtualTag (V.tm.runFrom c w.length).inputPos tag' ∧
+      (b2Host S V).tm.runWith w (b2VerifyCfg S V c tag p tapes heads) =
+        b2VerifyCfg S V (V.tm.runFrom c w.length) tag' p tapes heads := by
+  induction w generalizing c tag with
+  | nil => exact ⟨tag, htag, rfl⟩
+  | cons bit w ih =>
+    obtain ⟨tag', htag', hs⟩ := b2_verify_step S V c (hlive 0 (by simp))
+      tag htag p tapes heads bit
+    have ht : ∀ s < w.length, (V.tm.runFrom (V.tm.step c) s).state ≠ none := by
+      intro s hs
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (s + 1) (by simpa using hs)
+    obtain ⟨tag'', htag'', hr⟩ := ih (V.tm.step c) tag' htag' ht
+    refine ⟨tag'', ?_, ?_⟩
+    · simpa only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step] using htag''
+    · rw [NDTM.runWith_cons, hs, hr]
+      simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]

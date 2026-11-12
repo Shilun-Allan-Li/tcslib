@@ -1,0 +1,130 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.StateRenaming
+import Lean
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Elementary facts about configurations
+
+Elementary facts that machine constructions over several phases use repeatedly: the input read
+depends on the input head only; a live configuration redirected to a state of phase `i` is the
+tagged configuration of phase `i`; a configuration tagged by one phase is never at a state of
+another; and a list of equal-length chunks has the expected length.
+
+## Main definitions
+
+No new definitions.
+
+## Main results
+
+* `Turing.MultiTapeTM.runFrom_one` — a one-step run equals one machine step.
+* `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
+  symbol, across machines.
+* `Turing.Cfg.mapState_eq_of_fields` — a renamed configuration is any configuration with its four
+  data fields and the renamed state.
+* `Turing.Cfg.mapState_const_eq_mapState_sigma` — redirecting a live configuration to `⟨i, q⟩`
+  gives phase `i`'s tagged configuration at `q`.
+* `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
+  another phase.
+* `Turing.length_flatMap_uniform` — a list of equal-length chunks has length count × chunk length.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2, Turing machines and their configurations.)
+-/
+
+namespace Turing
+
+section RO1Opacity
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+/-- A one-step run from any configuration is exactly one machine step. -/
+theorem MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+end RO1Opacity
+
+/-- **The input read depends on the input head only.** Two configurations on the same input,
+of machines with any numbers of work tapes and any states, read the same input symbol when their
+input heads are at the same position.
+
+**Proof sketch.** At position `0` and at `|input| + 1` both read blank
+(`Turing.Cfg.inputSymbol_of_zero`, `Turing.Cfg.inputSymbol_of_end`); at an inner position `1 + p`
+both read `input[p]` (`Turing.inputSymbolInner`). -/
+theorem Cfg.inputSymbol_congr {Symbol : Type*} {k k' : ℕ} {S S' : Type*} {input : List Symbol}
+    (c : Cfg k Symbol S input) (c' : Cfg k' Symbol S' input)
+    (h : c.inputPos.val = c'.inputPos.val) : c.inputSymbol = c'.inputSymbol := by
+  by_cases h0 : c.inputPos.val = 0
+  · have h0' : c'.inputPos = 0 := Fin.ext (by rw [← h]; exact h0)
+    rw [Cfg.inputSymbol_of_zero (Fin.ext h0), Cfg.inputSymbol_of_zero h0']
+  · by_cases he : c.inputPos.val = input.length + 1
+    · rw [Cfg.inputSymbol_of_end he, Cfg.inputSymbol_of_end (by omega)]
+    · have hlt := c.inputPos.isLt
+      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
+        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
+
+/-- **A renamed configuration, field by field.** Renaming the states of `c` by `f` gives any
+configuration `d` that has `c`'s input head, tapes, work heads and output and whose state is `c`'s
+state renamed.
+
+**Proof sketch.** Compare the five fields through the state-renaming equations
+(`Turing.Cfg.mapState_state` and the others). -/
+theorem Cfg.mapState_eq_of_fields {k : ℕ} {Γ S S' : Type*} {x : List Γ} (c : Cfg k Γ S x)
+    (f : S → S') (d : Cfg k Γ S' x) (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+    (ho : c.output = d.output) : c.mapState f = d := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs]
+  · rw [Cfg.mapState_inputPos, hi]
+  · funext j p; rw [Cfg.mapState_workTapes, hw]
+  · funext j; rw [Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, ho]
+
+/-- **Redirecting a live configuration to a phase's state.** If `c` is live and `c₂` is a
+configuration of phase `i` at state `q` with `c`'s tapes, heads and output, then sending every
+state of `c` to `⟨i, q⟩` gives `c₂` tagged by `i`.
+
+**Proof sketch.** Both sides are renamings; by `Turing.Cfg.mapState_eq_of_fields` it suffices to
+compare the left side's fields with the right side's: the states are both `some ⟨i, q⟩` since `c`
+is live, and the remaining fields are the hypotheses. -/
+theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
+    {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
+    (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
+    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+    (ho : c.output = c₂.output) :
+    c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i) := by
+  obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+  refine Cfg.mapState_eq_of_fields c _ _ ?_ (by rw [Cfg.mapState_inputPos, hin])
+    (by funext j p; rw [Cfg.mapState_workTapes, hw])
+    (by funext j; rw [Cfg.mapState_workTapePos, hp]) (by rw [Cfg.mapState_output, ho])
+  rw [Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
+
+/-- **A tagged configuration is at no other phase's state.** A configuration tagged by phase `i`
+(its states sent into the sum by `Sigma.mk i`) is never at a state `v` of a phase `v.1 ≠ i`. -/
+theorem Cfg.mapState_sigma_state_ne {k : ℕ} {Γ I : Type*} {Ph : I → Type*} {x : List Γ}
+    (i : I) (v : Σ j, Ph j) (hi : i ≠ v.1) (c : Cfg k Γ (Ph i) x) :
+    (c.mapState (Sigma.mk i)).state ≠ some v := by
+  rw [Cfg.mapState_state]
+  cases hs : c.state with
+  | none => exact Option.noConfusion
+  | some s =>
+    intro h
+    exact hi (congrArg Sigma.fst (Option.some.inj h))
+
+/-- **Equal-length chunks.** If every chunk `f a` has length `c`, the concatenation of the chunks
+of a list `l` has length `|l| · c`. -/
+theorem length_flatMap_uniform {α β : Type*} (l : List α) (f : α → List β) {c : ℕ}
+    (hf : ∀ a, (f a).length = c) : (l.flatMap f).length = l.length * c := by
+  rw [List.length_flatMap, List.map_congr_left (fun a _ => hf a), List.map_const',
+    List.sum_replicate]
+  rfl
+
+end Turing

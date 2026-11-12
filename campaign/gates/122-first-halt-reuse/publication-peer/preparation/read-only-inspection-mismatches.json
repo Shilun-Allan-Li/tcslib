@@ -1,0 +1,23 @@
+{
+  "status": "ALL_CORRECTED_REVIEWER_ONLY",
+  "failed_read_assumptions": [
+    {
+      "assumption": "Frozen final has pack.md",
+      "actual": "It has pack-draft.md; first read stopped with FileNotFoundError."
+    },
+    {
+      "assumption": "Screen helper directly at screen/helpers/copy-text-screen-v3.py",
+      "actual": "It is under helpers/BASE/scripts and helpers/HEAD/scripts; corrected after directory inventory."
+    },
+    {
+      "assumption": "Every pair disposition pair has target directly",
+      "actual": "Persistent rows pair nests BASE and HEAD; display stopped at row20 with KeyError; final independent parser handles both."
+    },
+    {
+      "assumption": "FINAL-REVIEW.json exists (earlier bounded inspection)",
+      "actual": "Final prose is FINAL-REVIEW.md; correct file used in full manifest verification."
+    }
+  ],
+  "native_or_screen_test_failures": false,
+  "source_mutations": false
+}

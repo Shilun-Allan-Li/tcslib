@@ -1,0 +1,78 @@
+{
+  "scope": "Only3 existing public roots compared byte-for-byte in all selected fields. New private helper has no BASE counterpart and is recorded separately. No proof-value/full-owner/global metadata equality.",
+  "rows": [
+    {
+      "root": "Turing.SafeRun.zero",
+      "all_selected_fields_exact": true,
+      "differing_fields": [],
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "HEAD_axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    },
+    {
+      "root": "Turing.SafeRun.cons",
+      "all_selected_fields_exact": true,
+      "differing_fields": [],
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "HEAD_axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    },
+    {
+      "root": "Turing.SafeRun.trans",
+      "all_selected_fields_exact": true,
+      "differing_fields": [],
+      "BASE_axioms": [
+        "propext",
+        "Quot.sound"
+      ],
+      "HEAD_axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    }
+  ],
+  "new_private_helper": {
+    "axioms": [
+      "propext",
+      "Quot.sound"
+    ],
+    "full_type_Expr_repr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `B\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.zero)))\n    (Lean.Expr.forallE\n      `x\n      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n      (Lean.Expr.forallE\n        `H\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 2))\n            (Lean.Expr.const `Bool []))\n          (Lean.Expr.bvar 1))\n        (Lean.Expr.forallE\n          `avoid\n          (Lean.Expr.bvar 2)\n          (Lean.Expr.forallE\n            `c\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 4))\n                  (Lean.Expr.const `Bool []))\n                (Lean.Expr.bvar 3))\n              (Lean.Expr.bvar 2))\n            (Lean.Expr.forallE\n              `c'\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 5))\n                    (Lean.Expr.const `Bool []))\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.bvar 3))\n              (Lean.Expr.forallE\n                `t\n                (Lean.Expr.const `Nat [])\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `Iff [])\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app (Lean.Expr.const `Turing.SafeRun []) (Lean.Expr.bvar 7))\n                                  (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 5))\n                              (Lean.Expr.bvar 4))\n                            (Lean.Expr.bvar 3))\n                          (Lean.Expr.bvar 2))\n                        (Lean.Expr.bvar 0))\n                      (Lean.Expr.bvar 1)))\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app (Lean.Expr.const `Turing.Segment []) (Lean.Expr.bvar 7))\n                                    (Lean.Expr.const `Bool []))\n                                  (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 5))\n                              (Lean.Expr.bvar 4))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Singleton.singleton [Lean.Level.zero, Lean.Level.zero])\n                                    (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6)))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Set [Lean.Level.zero])\n                                    (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6))))\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `Set.instSingletonSet [Lean.Level.zero])\n                                  (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6))))\n                              (Lean.Expr.app\n                                (Lean.Expr.app (Lean.Expr.const `Option.some [Lean.Level.zero]) (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 3))))\n                          (Lean.Expr.lam\n                            (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed 202220814) \"_hygCtx\") \"_hyg\") 50)\n                            (Lean.Expr.forallE\n                              (Lean.Name.mkNum `a._@._internal._hyg 0)\n                              (Lean.Expr.app (Lean.Expr.const `Fin []) (Lean.Expr.bvar 7))\n                              (Lean.Expr.const `Int [])\n                              (Lean.BinderInfo.default))\n                            (Lean.Expr.const `True [])\n                            (Lean.BinderInfo.default)))\n                        (Lean.Expr.bvar 2))\n                      (Lean.Expr.bvar 1))\n                    (Lean.Expr.bvar 0)))\n                (Lean.BinderInfo.implicit))\n              (Lean.BinderInfo.implicit))\n            (Lean.BinderInfo.implicit))\n          (Lean.BinderInfo.implicit))\n        (Lean.BinderInfo.implicit))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "kernel_name": "_private.TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed.0.Turing.safeRun_iff_segment",
+    "kind": "theorem",
+    "owner": "TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed",
+    "private": true,
+    "simp_lemma": false,
+    "simp_unfold": false,
+    "source_name": "Turing.safeRun_iff_segment",
+    "type_Expr_without_mdata_repr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `B\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.zero)))\n    (Lean.Expr.forallE\n      `x\n      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))\n      (Lean.Expr.forallE\n        `H\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 2))\n            (Lean.Expr.const `Bool []))\n          (Lean.Expr.bvar 1))\n        (Lean.Expr.forallE\n          `avoid\n          (Lean.Expr.bvar 2)\n          (Lean.Expr.forallE\n            `c\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 4))\n                  (Lean.Expr.const `Bool []))\n                (Lean.Expr.bvar 3))\n              (Lean.Expr.bvar 2))\n            (Lean.Expr.forallE\n              `c'\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 5))\n                    (Lean.Expr.const `Bool []))\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.bvar 3))\n              (Lean.Expr.forallE\n                `t\n                (Lean.Expr.const `Nat [])\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `Iff [])\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app (Lean.Expr.const `Turing.SafeRun []) (Lean.Expr.bvar 7))\n                                  (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 5))\n                              (Lean.Expr.bvar 4))\n                            (Lean.Expr.bvar 3))\n                          (Lean.Expr.bvar 2))\n                        (Lean.Expr.bvar 0))\n                      (Lean.Expr.bvar 1)))\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app (Lean.Expr.const `Turing.Segment []) (Lean.Expr.bvar 7))\n                                    (Lean.Expr.const `Bool []))\n                                  (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 5))\n                              (Lean.Expr.bvar 4))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Singleton.singleton [Lean.Level.zero, Lean.Level.zero])\n                                    (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6)))\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `Set [Lean.Level.zero])\n                                    (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6))))\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `Set.instSingletonSet [Lean.Level.zero])\n                                  (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6))))\n                              (Lean.Expr.app\n                                (Lean.Expr.app (Lean.Expr.const `Option.some [Lean.Level.zero]) (Lean.Expr.bvar 6))\n                                (Lean.Expr.bvar 3))))\n                          (Lean.Expr.lam\n                            (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed 202220814) \"_hygCtx\") \"_hyg\") 50)\n                            (Lean.Expr.forallE\n                              (Lean.Name.mkNum `a._@._internal._hyg 0)\n                              (Lean.Expr.app (Lean.Expr.const `Fin []) (Lean.Expr.bvar 7))\n                              (Lean.Expr.const `Int [])\n                              (Lean.BinderInfo.default))\n                            (Lean.Expr.const `True [])\n                            (Lean.BinderInfo.default)))\n                        (Lean.Expr.bvar 2))\n                      (Lean.Expr.bvar 1))\n                    (Lean.Expr.bvar 0)))\n                (Lean.BinderInfo.implicit))\n              (Lean.BinderInfo.implicit))\n            (Lean.BinderInfo.implicit))\n          (Lean.BinderInfo.implicit))\n        (Lean.BinderInfo.implicit))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "type_constants": [
+      "Bool",
+      "Fin",
+      "Iff",
+      "Int",
+      "List",
+      "Nat",
+      "Option",
+      "Set",
+      "True",
+      "Option.some",
+      "Set.instSingletonSet",
+      "Singleton.singleton",
+      "Turing.Cfg",
+      "Turing.MultiTapeTM",
+      "Turing.SafeRun",
+      "Turing.Segment"
+    ],
+    "universe_parameters": []
+  }
+}

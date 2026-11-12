@@ -1,0 +1,12 @@
+/-- A stopped lookup with a live endpoint can be replayed unchanged. No countdown
+or output phase is visited in its interior. -/
+private lemma timed_replay {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
+    (clock : List Bool) (t : ℕ) (ht : (timedCutInterpreter.runFrom cfg t).state ≠ none) :
+    timedInterpreter.runFrom (timedLift cfg clock) t =
+      timedLift (timedCutInterpreter.runFrom cfg t) clock := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (timedCut_live_before cfg (by omega) ht),
+      timed_regular_step _ clock (timedCut_live_before cfg (by omega) ht)
+        (timedCut_no_record cfg (by omega) ht), MultiTapeTM.runFrom_succ_eq_step']

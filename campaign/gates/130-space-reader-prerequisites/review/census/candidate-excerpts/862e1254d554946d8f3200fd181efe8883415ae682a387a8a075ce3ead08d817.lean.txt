@@ -1,0 +1,7 @@
+/-- One component of simultaneous cleanup; a stopped component is stationary.
+The native input is ignored by the interval cleaner. -/
+private def emitterBankPart {k : ℕ} (q : Fin k → Option (Fin 4))
+    (work : Fin (k + (k + k)) → Option Bool) (i : Fin k) : Action 3 Bool (Fin 4) :=
+  match q i with
+  | none => controlAction 0 none
+  | some s => emitterClearTM.tm.tr s none (emitterBankSymbols work i)

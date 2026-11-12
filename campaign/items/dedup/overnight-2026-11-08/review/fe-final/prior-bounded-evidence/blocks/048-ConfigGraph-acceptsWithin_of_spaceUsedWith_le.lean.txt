@@ -1,0 +1,51 @@
+theorem acceptsWithin_of_spaceUsedWith_le (N : FinNDTM Bool) {x : List Bool}
+    {T s : ℕ} (hacc : N.AcceptsWithin x T)
+    (hs : ∀ w : List Bool, w.length = T →
+      N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s) :
+    N.AcceptsWithin x (N.configBound x.length s) := by
+  classical
+  by_cases short : T ≤ N.configBound x.length s
+  · exact hacc.mono short
+  obtain ⟨w, hw, halted, output⟩ := hacc
+  -- Minimize among accepting words whose actual prefixes fit the coding window.
+  let good (t : ℕ) : Prop := ∃ v : List Bool, v.length = t ∧
+    (N.tm.runWith v (N.tm.initCfg x)).state = none ∧
+    (N.tm.runWith v (N.tm.initCfg x)).output = [true] ∧
+    ∀ j ≤ t, Cfg.InWindow s (N.tm.runWith (v.take j) (N.tm.initCfg x))
+  have exists_good : ∃ t, good t := ⟨T, w, hw, halted, output,
+    fun j _ => NDTM.runWith_take_inWindow N.tm w (hs w hw) j⟩
+  obtain ⟨v, hv, hvhalt, hvout, window⟩ := Nat.find_spec exists_good
+  -- A repeated summary vertex produces a strictly shorter accepting word.
+  have no_repeat (a b : ℕ) (ab : a < b) (bv : b ≤ v.length) :
+      NDTM.coreSum (N.tm.runWith (v.take a) (N.tm.initCfg x)) ≠
+        NDTM.coreSum (N.tm.runWith (v.take b) (N.tm.initCfg x)) := by
+    intro same
+    let u := v.take a ++ v.drop b
+    obtain ⟨final, prefixes⟩ := NDTM.splice_vertices N.tm (N.tm.initCfg x) v ab.le bv same
+    have shorter : u.length < Nat.find exists_good := by
+      dsimp [u]
+      rw [List.length_append, List.length_take_of_le (ab.le.trans bv), List.length_drop]
+      omega
+    have u_good : good u.length := by
+      refine ⟨u, rfl, ?_, ?_, ?_⟩
+      · exact (congrArg (fun vertex => vertex.1.1) final).trans hvhalt
+      · apply (outSummary_eq_accept_iff _).mp
+        exact (congrArg Prod.snd final).trans ((outSummary_eq_accept_iff _).mpr hvout)
+      · intro j hj
+        obtain ⟨l, hl, vertex⟩ := prefixes j hj
+        exact NDTM.inWindow_of_coreSum_eq vertex (window l (hl.trans_eq hv))
+    exact (Nat.not_le_of_lt shorter) (Nat.find_min' exists_good u_good)
+  have distinct : Set.InjOn
+      (fun j => NDTM.coreSum (N.tm.runWith (v.take j) (N.tm.initCfg x)))
+      (Finset.range (Nat.find exists_good + 1)) := by
+    intro a ha b hb same
+    have a_bound := Nat.le_of_lt_succ (Finset.mem_range.mp ha)
+    have b_bound := Nat.le_of_lt_succ (Finset.mem_range.mp hb)
+    by_contra ne
+    rcases Nat.lt_or_gt_of_ne ne with ab | ba
+    · exact no_repeat a b ab (by omega) same
+    · exact no_repeat b a ba (by omega) same.symm
+  have count := count_windowed_vertices N x s (Nat.find exists_good)
+    (fun j => N.tm.runWith (v.take j) (N.tm.initCfg x)) window distinct
+  exact (show N.AcceptsWithin x (Nat.find exists_good) from ⟨v, hv, hvhalt, hvout⟩).mono
+    (by omega)

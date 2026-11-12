@@ -1,0 +1,74 @@
+{
+  "Turing.MultiTapeTM.step": [
+    "-- CONTROL|Turing.MultiTapeTM.step|point\nexample {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step {c with state := none} = {c with state := none} := by rfl\n\n",
+    "-- CONTROL|Turing.MultiTapeTM.step|equation\nexample {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.step c = match c.state with\n      | none => c\n      | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl\n\n"
+  ],
+  "Turing.FinTM.controlAction": [
+    "-- CONTROL|Turing.FinTM.controlAction|point\nexample {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S).state = q := by rfl\n\n",
+    "-- CONTROL|Turing.FinTM.controlAction|equation\nexample {k : \u2115} {S : Type} (m : SignType) (q : Option S) :\n    (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl\n\n"
+  ],
+  "Turing.Action.apply": [
+    "-- CONTROL|Turing.Action.apply|point\nexample {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).state = a.state := by rfl\n\n",
+    "-- CONTROL|Turing.Action.apply|equation\nexample {k : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :\n    (a.apply c).inputPos = moveInputPos c.inputPos a.inputTape := by rfl\n\n"
+  ],
+  "Turing.Cfg.inputSymbol": [
+    "-- CONTROL|Turing.Cfg.inputSymbol|point\nexample : blankCfg.inputSymbol = none := by rfl\n\n",
+    "-- CONTROL|Turing.Cfg.inputSymbol|equation\nexample : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl\n\n"
+  ],
+  "Turing.Cfg.workTapeSymbols": [
+    "-- CONTROL|Turing.Cfg.workTapeSymbols|point\nexample {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :\n    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl\n\n",
+    "-- CONTROL|Turing.Cfg.workTapeSymbols|equation\nexample {k : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :\n    c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl\n\n"
+  ],
+  "Turing.moveInputPos": [
+    "-- CONTROL|Turing.moveInputPos|point\nexample : moveInputPos (0 : Fin 2) 0 = 0 := by rfl\n\n",
+    "-- CONTROL|Turing.moveInputPos|equation\nexample : moveInputPos (1 : Fin 2) 0 = 1 := by rfl\n\n"
+  ],
+  "Turing.Action.mapState": [
+    "-- CONTROL|Turing.Action.mapState|point\nexample {k : \u2115} {S T : Type} (f : S \u2192 T) (a : Action k Bool S) :\n    (a.mapState f).state = a.state.map f := by rfl\n\n",
+    "-- CONTROL|Turing.Action.mapState|equation\nexample {k : \u2115} {S T : Type} (f : S \u2192 T) (a : Action k Bool S) :\n    a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl\n\n"
+  ],
+  "Turing.Cfg.mapState": [
+    "-- CONTROL|Turing.Cfg.mapState|point\nexample {k : \u2115} {S T : Type} {x : List Bool} (f : S \u2192 T) (c : Cfg k Bool S x) :\n    (c.mapState f).state = c.state.map f := by rfl\n\n",
+    "-- CONTROL|Turing.Cfg.mapState|equation\nexample {k : \u2115} {S T : Type} {x : List Bool} (f : S \u2192 T) (c : Cfg k Bool S x) :\n    c.mapState f = {c with state := c.state.map f} := by rfl\n\n"
+  ],
+  "Turing.embedEmitTM": [
+    "-- CONTROL|Turing.embedEmitTM|point\nexample {m k : \u2115} {S : Type} (i : Fin m \u21aa Fin k) (M : MultiTapeTM m Bool S) :\n    (embedEmitTM i M).q\u2080 = M.q\u2080 := by rfl\n\n",
+    "-- CONTROL|Turing.embedEmitTM|equation\nexample {m k : \u2115} {S : Type} (i : Fin m \u21aa Fin k) (M : MultiTapeTM m Bool S)\n    (q : S) (inp : Option Bool) (work : Fin k \u2192 Option Bool) :\n    ((embedEmitTM i M).tr q inp work).state = (M.tr q inp (fun j => work (i j))).state := by rfl\n\n"
+  ],
+  "Turing.embedEmitCfg": [
+    "-- CONTROL|Turing.embedEmitCfg|point\nexample {m k : \u2115} {S : Type} {x : List Bool} (i : Fin m \u21aa Fin k)\n    (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (pre : List Bool) (c : Cfg m Bool S x) :\n    (embedEmitCfg i tapes heads pre c).state = c.state := by rfl\n\n",
+    "-- CONTROL|Turing.embedEmitCfg|equation\nexample {m k : \u2115} {S : Type} {x : List Bool} (i : Fin m \u21aa Fin k)\n    (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (pre : List Bool) (c : Cfg m Bool S x) :\n    (embedEmitCfg i tapes heads pre c).output = pre ++ c.output := by rfl\n\n"
+  ],
+  "Turing.seamCompTM": [
+    "-- CONTROL|Turing.seamCompTM|point\nexample {k : \u2115} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)\n    (N : MultiTapeTM k Bool T) (entry : T) :\n    (seamCompTM M exit N entry).q\u2080 = .inl M.q\u2080 := by rfl\n\n",
+    "-- CONTROL|Turing.seamCompTM|equation\nexample {k : \u2115} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)\n    (N : MultiTapeTM k Bool T) (entry q : T) (inp : Option Bool) (work : Fin k \u2192 Option Bool) :\n    ((seamCompTM M exit N entry).tr (.inr q) inp work).state = (N.tr q inp work).state.map Sum.inr := by rfl\n\n"
+  ],
+  "Turing.MultiTapeTM.runFrom": [
+    "-- CONTROL|Turing.MultiTapeTM.runFrom|point\nexample {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 0 = c := by rfl\n\n",
+    "-- CONTROL|Turing.MultiTapeTM.runFrom|equation\nexample {k : \u2115} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :\n    M.runFrom c 1 = M.step c := by rfl\n\n"
+  ],
+  "Turing.pairEncode": [
+    "-- CONTROL|Turing.pairEncode|point\nexample : pairEncode [] [] = [false, true] := by rfl\n\n",
+    "-- CONTROL|Turing.pairEncode|equation\nexample : pairEncode [false] [] = [false, false, false, true] := by rfl\n\n"
+  ],
+  "Turing.FinTM.bufferTape": [
+    "-- CONTROL|Turing.FinTM.bufferTape|point\nexample : bufferTape ([] : List Bool) 0 = none := by rfl\n\n",
+    "-- CONTROL|Turing.FinTM.bufferTape|equation\nexample : bufferTape [true] 0 = some true := by rfl\n\n"
+  ],
+  "Turing.MultiTapeTM.initCfg": [
+    "-- CONTROL|Turing.MultiTapeTM.initCfg|point\nexample {k : \u2115} {S : Type} (M : MultiTapeTM k Bool S) :\n    M.initCfg [] = Cfg.init M.q\u2080 [] := by rfl\n\n",
+    "-- CONTROL|Turing.MultiTapeTM.initCfg|equation\nexample {k : \u2115} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :\n    M.initCfg x = Cfg.init M.q\u2080 x := by rfl\n\n"
+  ],
+  "Turing.Cfg.init": [
+    "-- CONTROL|Turing.Cfg.init|point\nexample {k : \u2115} {S : Type} (q : S) :\n    (Cfg.init (k := k) q ([] : List Bool)).state = some q := by rfl\n\n",
+    "-- CONTROL|Turing.Cfg.init|equation\nexample {k : \u2115} {S : Type} (q : S) (x : List Bool) :\n    (Cfg.init (k := k) q x).output = [] := by rfl\n\n"
+  ],
+  "Turing.Cfg.ofWords": [
+    "-- CONTROL|Turing.Cfg.ofWords|point\nexample {k : \u2115} {S : Type} {x : List Bool} (q : S) (w : Fin k \u2192 List Bool) :\n    (Cfg.ofWords (input := x) q w).state = some q := by rfl\n\n",
+    "-- CONTROL|Turing.Cfg.ofWords|equation\nexample {k : \u2115} {S : Type} {x : List Bool} (q : S) (w : Fin k \u2192 List Bool) :\n    (Cfg.ofWords (input := x) q w).output = [] := by rfl\n\n"
+  ],
+  "Turing.FinTM.ComputesInTime": [
+    "-- CONTROL|Turing.FinTM.ComputesInTime|point\nexample (M : FinTM Bool) (x y : List Bool) :\n    M.ComputesInTime x y 0 \u2194 \u2203 s, M.tm.ComputesInTimeAndSpace x y 0 s := by rfl\n\n",
+    "-- CONTROL|Turing.FinTM.ComputesInTime|equation\nexample (M : FinTM Bool) (x y : List Bool) (t : \u2115) :\n    M.ComputesInTime x y t = (\u2203 s, M.tm.ComputesInTimeAndSpace x y t s) := by rfl\n"
+  ]
+}

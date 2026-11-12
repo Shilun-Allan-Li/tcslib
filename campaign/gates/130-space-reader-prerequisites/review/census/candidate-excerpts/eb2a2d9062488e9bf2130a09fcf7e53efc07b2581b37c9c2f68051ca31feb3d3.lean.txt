@@ -1,0 +1,14 @@
+/-- **R8.3b, the lockstep walk** (design §13d, G4). While tape `src` reads a nonblank cell, move
+every head in `moved` one cell in direction `dir`; at the first blank move them once more and stop
+in `done`. Nothing is written and the input head stays. Phases `run` and `done`; the others are
+stationary and unused. -/
+def walkTM {Symbol : Type*} (k : ℕ) (src : Fin k) (moved : Fin k → Prop) [DecidablePred moved]
+    (dir : SignType) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w src with
+      | some _ => ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some .run⟩
+      | none => ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some .done⟩
+    | q => inputMoveAction 0 q

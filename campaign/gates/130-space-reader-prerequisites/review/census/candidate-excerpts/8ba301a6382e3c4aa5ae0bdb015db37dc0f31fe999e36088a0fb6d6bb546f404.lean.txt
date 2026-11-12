@@ -1,0 +1,85 @@
+theorem probe_ic_trace (i : Fin k) (d : Cfg k Symbol SweepPhase x)
+    (hstate : d.state = some .sweep) (hin : d.inputPos = 1) (t : ℕ) :
+    (inputCopyTM k i).runFrom d t =
+      catalogTrace (probeIcF i d) (probeIcR i d) (probeIcD i d) x.length t := by
+  have h0 : probeIcF i d 0 = d := by
+    apply Cfg.ext
+    case inputPos => rw [hin]; apply Fin.ext; simp [probeIcF, probeWriteCfg]
+    case workTapes =>
+      funext j z
+      simp [probeIcF, probeWriteCfg]
+    all_goals simp [probeIcF, probeWriteCfg, hstate]
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · -- forward: one lockstep write step
+    intro r hr
+    have hs : (probeIcF i d r).inputSymbol = some x[r] :=
+      inputSymbolInner r (by simp [probeIcF, probeWriteCfg]; omega) hr
+    change ((inputCopyTM k i).tr .sweep _ _).apply _ = _
+    simp only [inputCopyTM, hs]
+    rw [probeIcF, probe_write_step i x d _ _ _ _ r hr]
+    congr 1
+    rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp; omega)]
+    simp
+    omega
+  · -- turn at the right end marker: both heads left
+    have hs : (probeIcF i d x.length).inputSymbol = none := by
+      simp [Cfg.inputSymbol, probeIcF, probeWriteCfg]
+    change ((inputCopyTM k i).tr .sweep _ _).apply _ = _
+    simp only [inputCopyTM, hs]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [Action.apply, tapeAction, probeIcF, probeIcR, probeWriteCfg]
+      apply Fin.ext
+      rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+      simp
+    case workTapes =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeIcF, probeIcR, probeWriteCfg, hj]
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;>
+        simp [Action.apply, tapeAction, probeIcF, probeIcR, probeWriteCfg, hj] <;> omega
+    all_goals simp [Action.apply, tapeAction, probeIcF, probeIcR, probeWriteCfg]
+  · -- return: both heads left
+    intro r hr
+    have hs : (probeIcR i d (r + 1)).inputSymbol = some x[r] :=
+      inputSymbolInner r (by simp [probeIcR, probeWriteCfg]; omega) hr
+    change ((inputCopyTM k i).tr .rewind _ _).apply _ = _
+    simp only [inputCopyTM, hs]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [Action.apply, tapeAction, probeIcR, probeWriteCfg]
+      apply Fin.ext
+      rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+      simp
+      omega
+    case workTapes =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeIcR, probeWriteCfg, hj]
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeIcR, probeWriteCfg, hj] <;>
+        omega
+    all_goals simp [Action.apply, tapeAction, probeIcR, probeWriteCfg]
+  · -- entry at the left end marker: both heads right, into `done`
+    have hs : (probeIcR i d 0).inputSymbol = none := by
+      simp [Cfg.inputSymbol, probeIcR, probeWriteCfg]
+    change ((inputCopyTM k i).tr .rewind _ _).apply _ = _
+    simp only [inputCopyTM, hs]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [Action.apply, tapeAction, probeIcR, probeIcD, probeWriteCfg, hin]
+      rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp)]
+      apply Fin.ext
+      simp
+    case workTapes =>
+      funext j
+      by_cases hj : j = i <;>
+        simp [Action.apply, tapeAction, probeIcR, probeIcD, probeIcF, probeWriteCfg, hj]
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;> simp [Action.apply, tapeAction, probeIcR, probeIcD, probeWriteCfg, hj]
+    all_goals simp [Action.apply, tapeAction, probeIcR, probeIcD, probeIcF, probeWriteCfg]
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, inputCopyTM, Action.apply, inputMoveAction,
+      probeIcD]

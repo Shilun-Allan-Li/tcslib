@@ -1,0 +1,66 @@
+/-- The record validator, wrapped as a positive round with one fresh returning anchor.
+It restores the whole work bank, preserves output, and retains C2's accepted suffix.
+Its linear coefficient is C2's coefficient plus two, for the two phase dispatches.
+
+**Proof sketch.** Instantiate the generic return adapter with C2. Relabel an arbitrary
+anchor configuration to C2's entry, invoke C2's published private contract, and relabel
+its endpoint back to the selected fresh port. The adapter supplies the entire interior
+cut, including times at which C2 revisits its own entry. -/
+private lemma exists_canonRecordRound (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+      (anchor escape : H) (bound : Fin m) (a : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool H x), d.state = some anchor →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1), 0 < t ∧
+          (N.runFrom d t).state = some
+            (if (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          (N.runFrom d t).output = d.output ∧
+          (∀ u, 0 < u → u < t →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d t).workTapes = d.workTapes ∧
+          (N.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (N.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  obtain ⟨m, S, finiteS, eqS, R, entry, exit, bound, a, separate, record⟩ :=
+    exists_canonRecordTM k
+  letI : Fintype S := finiteS
+  letI : DecidableEq S := eqS
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter R entry exit separate
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a + 2, different, ?_⟩
+  intro x w d state positive word home blank
+  let c := d.mapState (fun _ => entry)
+  have live : c.state = some entry := by
+    rw [Cfg.mapState_state, state, Option.map_some]
+  obtain ⟨t, cost, verdict, output, cut, tapes, heads, suffix⟩ := record x w c live
+    (by simpa only [c, Cfg.mapState_inputPos] using positive)
+    (by funext z; simpa only [c, Cfg.mapState_workTapes] using congrFun word z)
+    (by simpa only [c, Cfg.mapState_workTapePos] using home)
+    (fun j hj => by
+      refine ⟨?_, by simpa only [c, Cfg.mapState_workTapePos] using (blank j hj).2⟩
+      funext z
+      simpa only [c, Cfg.mapState_workTapes] using congrFun (blank j hj).1 z)
+  obtain ⟨elapsed, run, interior⟩ := adapt x c live t _ verdict cut
+  have restored : c.mapState (fun _ => anchor) = d := by
+    apply Cfg.ext
+    · simp only [c, Cfg.mapState_state, state, Option.map_some]
+    · simp only [c, Cfg.mapState_inputPos]
+    · funext j z; simp only [c, Cfg.mapState_workTapes]
+    · funext j; simp only [c, Cfg.mapState_workTapePos]
+    · simp only [c, Cfg.mapState_output]
+  rw [restored] at run interior
+  refine ⟨t + 2, by nlinarith, elapsed, ?_, ?_, interior, ?_, ?_, ?_⟩
+  · rw [run, Cfg.mapState_state, verdict, Option.map_some, Cfg.mapState_inputPos]
+  · rw [run, Cfg.mapState_output, output, Cfg.mapState_output]
+  · rw [run]
+    funext j z
+    simp only [Cfg.mapState_workTapes, tapes, c]
+  · rw [run]
+    funext j
+    simp only [Cfg.mapState_workTapePos, heads, c]
+  · intro ys hy
+    rw [run, Cfg.mapState_inputPos]
+    exact suffix ys (by simpa only [c, Cfg.mapState_inputPos] using hy)

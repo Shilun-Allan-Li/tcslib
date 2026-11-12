@@ -1,0 +1,23 @@
+/-- The native tracking round executes the source action once, then
+runs the selected counter bank without advancing the source again.
+The outer `none` phase is a live anchor, distinct from source halting. -/
+private def clTrackTM (M : FinTM Bool) : FinTM Bool where
+  k := ((1 + M.k) + (1 + M.k)) + (1 + M.k)
+  State := Option M.State × Bool × Option (Fin ((1 + M.k) + (1 + M.k)) → Option (Fin 4))
+  tm := {
+    q₀ := (some M.tm.q₀, true, none)
+    tr := fun q inp work =>
+      match q.2.2 with
+      | none =>
+        let d := clMoves M q.1 q.2.1
+          (work (Fin.natAdd ((1 + M.k) + (1 + M.k)) (Fin.castAdd M.k (0 : Fin 1))))
+          (fun i => work (Fin.natAdd ((1 + M.k) + (1 + M.k)) (Fin.natAdd 1 i)))
+        clRefAction M (fun s b => (s, b, some (fun i => some (clBankStart (clSelect d i)))))
+          q.1 q.2.1 work (fun _ => (none, 0))
+      | some qs =>
+        if qs = fun _ => some (0 : Fin 4) then
+          FinTM.controlAction 0 (some (q.1, q.2.1, none))
+        else
+          FinTM.leftAction (1 + M.k) (fun s => (q.1, q.2.1, some s))
+            ((clBankTM ((1 + M.k) + (1 + M.k))).tm.tr qs inp
+              (fun i => work (Fin.castAdd (1 + M.k) i))) }

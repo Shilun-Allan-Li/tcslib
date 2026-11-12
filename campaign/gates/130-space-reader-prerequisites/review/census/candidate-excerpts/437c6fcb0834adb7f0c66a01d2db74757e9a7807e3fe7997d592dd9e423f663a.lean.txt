@@ -1,0 +1,21 @@
+/-- **R8.2, the two-pass transducer scan** (design §12.8a; the G2 core of the
+§13d revision). Rewrite the delimited word under the head of tape `i` cell by
+cell, left to right by `δf` and then back by `δb`, carrying a finite state
+from `a₀`. The right delimiter turns the head, and the left delimiter steps
+right into `done a` with the final state `a` as the verdict. Fold, in-place
+map, head-mark shifts and carry odometers are instances
+(`Turing.scanResult_fold` and its siblings). -/
+def scanTM {Γ : Type*} {A : Type} (k : ℕ) (i : Fin k) (δf δb : A → Γ → A × Γ) (a₀ : A) :
+    MultiTapeTM k Γ (ScanPhase A) where
+  q₀ := .fwd a₀
+  tr := fun q _ w =>
+    match q with
+    | .fwd a =>
+      match w i with
+      | some γ => tapeAction i 0 (some (some (δf a γ).2)) .pos (.fwd (δf a γ).1)
+      | none => tapeAction i 0 none .neg (.bwd a)
+    | .bwd a =>
+      match w i with
+      | some γ => tapeAction i 0 (some (some (δb a γ).2)) .neg (.bwd (δb a γ).1)
+      | none => tapeAction i 0 none .pos (.done a)
+    | .done a => inputMoveAction 0 (.done a)

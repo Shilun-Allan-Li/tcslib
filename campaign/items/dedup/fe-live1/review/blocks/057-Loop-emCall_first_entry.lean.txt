@@ -1,0 +1,8 @@
+private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
+    (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+    (c d : Cfg k Bool S w) (T : ℕ)
+    (hfix : ∀ z : Cfg k Bool S w, (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
+    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+      tm.runFrom c t = d := by
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT

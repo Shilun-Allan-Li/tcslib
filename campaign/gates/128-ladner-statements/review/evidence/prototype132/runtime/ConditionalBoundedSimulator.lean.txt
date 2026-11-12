@@ -1,0 +1,50 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Codex
+-/
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PClosure
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import Mathlib.Data.Nat.Log
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 0
+open Turing Complexity
+open scoped Classical
+
+-- Conditional consumer probe only. No preparation function, Ladner clock inequality,
+-- or memo-table algorithm is supplied here. This introduces no proposed public API.
+example (c : UniformMachineCode)
+    (code input : List Bool → List Bool) (deadline : List Bool → ℕ)
+    (M : FinTM Bool) (C d A e B k : ℕ)
+    (hM : M.ComputesFunInTime
+      (fun z => pairEncode (pairEncode (Nat.bits (deadline z)) (code z)) (input z))
+      (fun n => C * (n + 1) ^ d))
+    (hbudget : ∀ z, c.simDegree *
+      ((code z).length + (input z).length + deadline z + 1) ^ c.simDegree ≤
+      A * (z.length + 1) ^ e)
+    (hclock : ∀ n, 2 * (C * (n + 1) ^ d) + A * (n + 1) ^ e + 2 ≤
+      B * (n + 1) ^ k) :
+    ∃ D : FinTM Bool, D.ComputesFunInTime
+      (fun z => [decide ((c.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z))])
+      (fun n => B * (n + 1) ^ k) := by
+  have hU (z : List Bool) : c.simulator.ComputesInTime
+      (pairEncode (pairEncode (Nat.bits (deadline z)) (code z)) (input z))
+      [decide ((c.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z))]
+      (A * (z.length + 1) ^ e) := by
+    by_cases hacc : (c.decode (code z)).toFinTM.ComputesInTime
+        (input z) [true] (deadline z)
+    · simpa only [hacc, decide_true] using
+        (c.simulator_accepts (code z) (input z) (deadline z) hacc).mono (hbudget z)
+    · simpa only [hacc, decide_false] using
+        (c.simulator_rejects (code z) (input z) (deadline z) hacc).mono (hbudget z)
+  obtain ⟨D, hD⟩ := FinTM.exists_comp_on_image M c.simulator _ _
+    (fun n => C * (n + 1) ^ d) (fun n => A * (n + 1) ^ e) hM hU
+  refine ⟨D, (FinTM.computesFunInTime_iff D _ _).mpr ?_⟩
+  intro z
+  exact (((FinTM.computesFunInTime_iff D _ _).mp hD) z).mono (hclock z.length)

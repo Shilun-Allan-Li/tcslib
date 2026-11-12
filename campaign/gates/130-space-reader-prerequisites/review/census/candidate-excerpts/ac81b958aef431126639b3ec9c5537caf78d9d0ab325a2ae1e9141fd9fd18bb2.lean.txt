@@ -1,0 +1,34 @@
+/-- The transition table. `rd1`/`rd2` read an aligned pair and apply `lact`; `rewM` and
+`rewV` rewind a work tape to its left blank; `copy` copies the first `n` input bits to
+the value tape while erasing the unary `n` from the mark tape; `rewI0`/`rewI` rewind the
+input head; `app` walks to the end of the value list erasing marks and appends a gate
+value. -/
+def tr (exact : Bool) : St → Option Bool → (Fin 2 → Option Bool) → Action 2 Bool St
+  | .rd1 φ, some b, _ => LA.toAct .pos (.go (.rd2 φ b))
+  | .rd1 _, none, _ => LA.toAct 0 .rej
+  | .rd2 φ b, some b', w => match pairSym b b' with
+    | some s => LA.toAct .pos (lact φ s (w 0) (w 1))
+    | none => LA.toAct 0 .rej
+  | .rd2 _ _, none, _ => LA.toAct 0 .rej
+  | .rewM, _, w =>
+    if (w 1).isSome then LA.toAct 0 ⟨none, none, .neg, none, some .rewM⟩
+    else LA.toAct 0 ⟨none, none, .pos, none, some .copy⟩
+  | .copy, inp, w =>
+    if (w 1).isSome then
+      match inp with
+      | some b => LA.toAct .pos ⟨some (some b), some none, .pos, none, some .copy⟩
+      | none => LA.toAct 0 .rej
+    else if exact && inp.isSome then LA.toAct 0 .rej
+    else LA.toAct 0 ⟨none, none, .neg, none, some (.rewV none)⟩
+  | .rewV d, _, w =>
+    if (w 0).isSome then LA.toAct 0 ⟨none, none, .neg, none, some (.rewV d)⟩
+    else LA.toAct 0 ⟨none, none, .pos, none, some (match d with
+      | none => .rewI0
+      | some φ => .rd1 φ)⟩
+  | .rewI0, _, _ => FinTM.controlAction .neg (some .rewI)
+  | .rewI, inp, _ => match inp with
+    | some _ => FinTM.controlAction .neg (some .rewI)
+    | none => FinTM.controlAction .pos (some (.rd1 .skipN))
+  | .app v, _, w =>
+    if (w 0).isSome then LA.toAct 0 ⟨none, some none, .pos, none, some (.app v)⟩
+    else LA.toAct 0 ⟨some (some v), some none, .neg, none, some (.rewV (some .g))⟩

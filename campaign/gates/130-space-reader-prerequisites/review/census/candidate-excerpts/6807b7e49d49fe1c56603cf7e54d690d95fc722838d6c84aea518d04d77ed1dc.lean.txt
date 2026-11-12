@@ -1,0 +1,24 @@
+/-- **The fixed-width incrementer**. A machine with no work tapes that first scans its input for a
+`false` without emitting (an all-`true` word is the overflow, which halts with empty output),
+rewinds, and then emits the little-endian fixed-width successor `Turing.incFixed x`: `false` over
+the carry prefix, `true` at the first `false`, then the rest verbatim. -/
+def incFixedTM : FinTM Bool where
+  k := 0
+  State := Fin 4
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ => match q.val with
+        | 0 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, none, some 0⟩
+          | some false => controlAction .neg (some 1)
+          | none => controlAction 0 none
+        | 1 => match inp with
+          | some _ => controlAction .neg (some 1)
+          | none => controlAction .pos (some 2)
+        | 2 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, some false, some 2⟩
+          | some false => ⟨.pos, fun j => j.elim0, some true, some 3⟩
+          | none => controlAction 0 none
+        | _ => match inp with
+          | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
+          | none => ⟨0, fun j => j.elim0, none, none⟩ }

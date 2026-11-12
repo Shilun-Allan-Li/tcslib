@@ -1,0 +1,15 @@
+/-- A prepared source call may use the initial tape block of the shared
+source machine; padding preserves its halt and exact emitted word. -/
+private lemma enumCont_lift_call (M B : FinTM Bool) (hM : 0 < M.k) (hk : M.k ≤ B.k)
+    (emb : M.State → B.State)
+    (htr : ∀ q inp work, B.tm.tr (emb q) inp work =
+      enumCont_padAction emb (M.tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (q : M.State) (x s y : List Bool) (T : ℕ)
+    (hh : (M.tm.runFrom (Cfg.ofWords (input := x) q (stateWord M.k s)) T).state = none)
+    (ho : (M.tm.runFrom (Cfg.ofWords (input := x) q (stateWord M.k s)) T).output = y) :
+    (B.tm.runFrom (Cfg.ofWords (input := x) (emb q) (stateWord B.k s)) T).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) (emb q) (stateWord B.k s)) T).output = y := by
+  rw [← enumCont_pad_words hM hk emb q x s,
+    enumCont_pad_run hk M.tm B.tm emb htr]
+  exact ⟨by simp [enumCont_padCfg, hh], ho⟩

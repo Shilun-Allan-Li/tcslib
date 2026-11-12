@@ -1,0 +1,113 @@
+/-- Both call rows are two applications of the public phase lemma. -/
+private theorem rd_call_run {z : List Bool} (op : Option SignType) (ℓ : ℕ)
+    (d : Cfg 1 Bool rd_CallState z) (hd : d.state = some ⟨.inl op, .inl ()⟩)
+    (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) :
+    let b := decide (d.inputPos.val = ℓ)
+    let a := rd_leafAnswer op b d.inputSymbol
+    rd_callTM.runFrom d (2 * ℓ + 5) =
+      { d with
+        state := some ⟨.inr (.inr ()), .inr a⟩
+        inputPos := moveInputPos d.inputPos (rd_leafMove op b) } ∧
+    (∀ u < 2 * ℓ + 5, ∀ q, (rd_callTM.runFrom d u).state ≠
+      some ⟨.inr (.inr ()), q⟩) ∧
+    (∀ u ≤ 2 * ℓ + 5,
+      |(rd_callTM.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) := by
+  let c : Cfg 1 Bool rd_State z :=
+    ⟨some (.inl ()), d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+  let b := rd_verdict c ℓ
+  let a := rd_leafAnswer op b c.inputSymbol
+  let i : rd_Phase := .inr (.inl (op, b))
+  let e : Cfg 1 Bool rd_State z := { c with state := some (.inr (b, true)) }
+  let f : Cfg 1 Bool rd_State z := { c with
+    state := some (.inr a)
+    inputPos := moveInputPos c.inputPos (rd_leafMove op b) }
+  have hc : c.state = some (.inl ()) := rfl
+  have hstart : c.mapState (Sigma.mk (.inl op)) = d := by
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, hc, Option.map_some, hd]
+    · exact Cfg.mapState_inputPos _ _
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · exact Cfg.mapState_output _ _
+  have test := phaseHostTM_run rd_family ⟨.inl none, .inl ()⟩ rd_redirect
+    (.inl op) c e (2 * ℓ + 2) (rd_test_return ℓ c hc hℓ hp hr)
+    (.inr (b, true)) rfl ⟨i, .inl ()⟩ rfl (by
+      intro u hu q hq
+      have hcut := (rd_test_window ℓ c hc hℓ hp hr u (by omega)).2.2.2.2.2 hu
+      cases q with
+      | inl q => rfl
+      | inr q =>
+        rcases q with ⟨v, flag⟩
+        cases flag
+        · rfl
+        · exact False.elim (hcut v hq))
+  have hdispatch : e.mapState (fun _ => (⟨i, .inl ()⟩ : rd_CallState)) =
+      c.mapState (Sigma.mk i) := by
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, e, hc, Option.map_some]
+    · simp only [Cfg.mapState_inputPos, e]
+    · funext j p; simp only [Cfg.mapState_workTapes, e]
+    · funext j; simp only [Cfg.mapState_workTapePos, e]
+    · simp only [Cfg.mapState_output, e]
+  have hleaf : (rd_family i).runFrom c 1 = f := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    exact step_of_inputMoveAction (rd_callLeaf op b) c (rd_leafMove op b) hc rfl
+  have leaf := phaseHostTM_run rd_family ⟨.inl none, .inl ()⟩ rd_redirect i c f 1
+    hleaf (.inr a) rfl ⟨.inr (.inr ()), .inr a⟩ rfl (by
+      intro u hu q hq
+      have hu0 : u = 0 := by omega
+      rw [hu0, MultiTapeTM.runFrom_zero, hc] at hq
+      have hq' := Option.some.inj hq
+      subst q
+      rfl)
+  have hjoin : rd_callTM.runFrom d (2 * ℓ + 3) = c.mapState (Sigma.mk i) := by
+    rw [← hstart]
+    exact test.2.trans hdispatch
+  have hlast : rd_callTM.runFrom d (2 * ℓ + 5) =
+      f.mapState (fun _ => (⟨.inr (.inr ()), .inr a⟩ : rd_CallState)) := by
+    rw [show 2 * ℓ + 5 = (2 * ℓ + 3) + 2 by omega, MultiTapeTM.runFrom_add, hjoin]
+    exact leaf.2
+  have hinp : c.inputSymbol = d.inputSymbol := by
+    rw [Cfg.inputSymbol_eq_inputCell, Cfg.inputSymbol_eq_inputCell]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hlast]
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, f, Option.map_some, a, hinp, b, rd_verdict, c]
+    · exact Cfg.mapState_inputPos _ _
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · exact Cfg.mapState_output _ _
+  · intro u hu q hq
+    by_cases ht : u ≤ 2 * ℓ + 2
+    · rw [← hstart, test.1 u ht, Cfg.mapState_state] at hq
+      obtain ⟨s, _, hs⟩ := Option.map_eq_some_iff.mp hq
+      have := congrArg Sigma.fst hs
+      cases this
+    · have hv : u = (2 * ℓ + 3) + (u - (2 * ℓ + 3)) := by omega
+      rw [hv, MultiTapeTM.runFrom_add, hjoin,
+        leaf.1 (u - (2 * ℓ + 3)) (by omega), Cfg.mapState_state] at hq
+      obtain ⟨s, _, hs⟩ := Option.map_eq_some_iff.mp hq
+      have := congrArg Sigma.fst hs
+      cases this
+  · intro u hu
+    by_cases ht : u ≤ 2 * ℓ + 2
+    · rw [← hstart, test.1 u ht, Cfg.mapState_workTapePos,
+        Cfg.mapState_workTapePos]
+      have hw := rd_test_window ℓ c hc hℓ hp hr u ht
+      rw [abs_le]
+      constructor <;> have := hw.2.2 <;> push_cast <;> omega
+    · by_cases he : u = 2 * ℓ + 5
+      · rw [he, hlast, Cfg.mapState_workTapePos]
+        simp only [f, c, sub_self, abs_zero]
+        positivity
+      · have hv : u = (2 * ℓ + 3) + (u - (2 * ℓ + 3)) := by omega
+        rw [hv, MultiTapeTM.runFrom_add, hjoin,
+          leaf.1 (u - (2 * ℓ + 3)) (by omega), Cfg.mapState_workTapePos]
+        have hv' : u - (2 * ℓ + 3) = 0 ∨ u - (2 * ℓ + 3) = 1 := by omega
+        rcases hv' with hv' | hv'
+        · rw [hv', MultiTapeTM.runFrom_zero]
+          simp only [c, sub_self, abs_zero]; positivity
+        · rw [hv', hleaf]
+          simp only [f, c, sub_self, abs_zero]; positivity

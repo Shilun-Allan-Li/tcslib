@@ -1,0 +1,88 @@
+/-- Initialization on every native input stays in the origin block and its
+two boundary cells. It uses the generic writer and reverse-sweep APIs.
+**Proof sketch.** Generate the marked origin row, turn at its right boundary,
+scan that fixed row backward, and install its left boundary. Each of these
+four runs carries all-prefix containment before they are concatenated. -/
+private lemma dg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k)) :
+    DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)
+      (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1))
+      (2 * M.k + 2) (-1) M.k := by
+  let B := blankRow (Γ := Γ) M.k true
+  let w := B.map sweepSymbol
+  let L := w.map some
+  have hw : w.length = M.k := by simp [w, B, blankRow]
+  have hb : B.length = M.k := by simp [B, blankRow]
+  let st : Fin (w.length + 1) → DGState Γ M.State M.k :=
+    fun i => .inl (.init ⟨i.val, by simpa only [hw] using i.isLt⟩)
+  have gen := dgSpan_generate_right (dgTM M a₀).tm w st
+    (fun i hi inp work => by
+      have hik : i < M.k := by omega
+      have he : w[i] = sweepSymbol (⟨i, hik⟩, none, true, false) := by
+        simp [w, B, blankRow]
+      simp only [st, dgTM, sweepTM, dif_pos hik, Action.mapState, sweepAct, Option.map_some]
+      rw [he]) (1 : Fin (x.length + 2)) [] 0 [] [] M.k (by omega)
+  have htake : w.take M.k = w := List.take_of_length_le (le_of_eq hw)
+  have hgen : DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)
+      (sweepCfg (some (.inl (.init ⟨M.k, by omega⟩))) 1 M.k L.reverse [] [])
+      M.k (-1) M.k := by
+    have hinit : (dgTM M a₀).tm.initCfg x =
+        sweepCfg (some (st 0)) 1 0 [] [] [] := by
+      apply Cfg.ext <;> try rfl
+      funext i z
+      simp [sweepCfg, sweepTape]
+    rw [hinit]
+    simpa [htake, st, L] using dgSpan_mono (lo' := -1) (hi' := M.k) gen (by omega) (by omega)
+  let c₁ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.init ⟨M.k, by omega⟩))) 1 M.k L.reverse [] []
+  let c₂ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl .back)) 1 ((M.k : ℤ) - 1) [some sweepBoundary] L.reverse []
+  have turn : (dgTM M a₀).tm.step c₁ = c₂ := by
+    change ((dgTM M a₀).tm.tr (.inl (.init ⟨M.k, by omega⟩)) _ _).apply _ = _
+    simp only [dgTM, sweepTM, lt_self_iff_false, ↓reduceDIte, Action.mapState,
+      sweepAct, Option.map_some]
+    simpa only [c₁, c₂, SignType.zero_eq_zero, moveInputPos_zero, List.tail_nil, Option.toList_none,
+      List.append_nil] using
+      sweep_turn_left (some (Sum.inl (SweepState.init ⟨M.k, by omega⟩)))
+        (some (Sum.inl (SweepState.back (Γ := Γ) (S := M.State) (k := M.k))))
+        (1 : Fin (x.length + 2)) (M.k : ℤ) L.reverse [] [] (some sweepBoundary) none .zero
+  have hturn : DGSpan (dgTM M a₀).tm c₁ c₂ 1 (-1) M.k :=
+    dgSpan_one turn (by dsimp [c₁, sweepCfg]; omega) (by dsimp [c₂, sweepRevCfg]; omega)
+  let c₃ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl .back)) 1 (-1) (L ++ [some sweepBoundary]) [] []
+  have hback : DGSpan (dgTM M a₀).tm c₂ c₃ M.k (-1) M.k := by
+    constructor
+    · have h := sweep_run_reverse (dgTM M a₀).tm
+        (fun _ : Unit => Sum.inl SweepState.back) sweepSymbol (fun s b => (s, b))
+        (by intro s b inp; rfl) (1 : Fin (x.length + 2)) [] B.reverse ()
+        ((M.k : ℤ) - 1) [some sweepBoundary] []
+      simpa [c₂, c₃, L, w, List.map_map, List.map_reverse, sweepFold_id, hb] using h
+    · intro u hu
+      have h := dg_sweep_reverse_prefix (dgTM M a₀).tm
+        (fun _ : Unit => Sum.inl SweepState.back) sweepSymbol (fun s b => (s, b))
+        (by intro s b inp; rfl) (1 : Fin (x.length + 2)) [] B.reverse ()
+        ((M.k : ℤ) - 1) [some sweepBoundary] [] u (by simpa [hb] using hu)
+      have hp : ((dgTM M a₀).tm.runFrom c₂ u).workTapePos (0 : Fin 1) = (M.k : ℤ) - 1 - u := by
+        simpa [c₂, L, w, List.map_map, List.map_reverse] using h
+      rw [hp]
+      constructor <;> omega
+  have last : (dgTM M a₀).tm.step c₃ =
+      dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1) := by
+    have hw₃ : c₃.workTapeSymbols = fun _ => none := by
+      funext i
+      simp [c₃, Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
+    change ((dgTM M a₀).tm.tr (.inl .back) _ _).apply _ = _
+    rw [hw₃]
+    change (sweepAct (Sum.inl (SweepState.growLeft M.tm.q₀ 0))
+      (some sweepBoundary) .zero).apply c₃ = _
+    rw [show c₃ = sweepRevCfg (some (.inl .back)) 1 (-1)
+      (L ++ [some sweepBoundary]) [] [] from rfl, sweepRevCfg_write]
+    congr 1
+    simp [tapeZone, tapeRow, headAt, L, w, B, blankRow, List.map_map]
+  have hlast := dgSpan_one last (by dsimp [c₃, sweepRevCfg]; omega)
+    (show (-1 : ℤ) ≤ (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ∧
+      (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ≤ M.k by
+        dsimp [dgStart, sweepRevCfg]; omega)
+  rw [dgSpan_iff_segment] at hgen hturn hback hlast
+  have h := (dgSpan_iff_segment ..).2 (((hgen.trans hturn).trans hback).trans hlast)
+  simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h

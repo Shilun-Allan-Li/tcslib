@@ -1,0 +1,21 @@
+from pathlib import Path
+import json,hashlib,subprocess,os,re
+O=Path('/private/tmp/ab34-gate127-reader-repair-draft');h=lambda b:hashlib.sha256(b).hexdigest();req=json.loads((O/'screen/REQUEST.json').read_text());repo='/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4';mathlib='/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/.lake/packages/mathlib';env=dict(os.environ);env['GIT_OPTIONAL_LOCKS']='0';rows=[]
+for phase,key in [('BASE','BASE'),('HEAD','NAT')]:
+ exp=req['exports'][key];names=[p for p in exp['sha256'] if not p.startswith('Mathlib/')];out=subprocess.check_output(['git','-C',repo,'ls-tree','-r',exp['source'],'--']+names,env=env,text=True);git={line.split('\t',1)[1]:line.split()[2] for line in out.splitlines()};assert set(git)==set(names)
+ for rel,sha in exp['sha256'].items():
+  p=O/'source'/phase/(rel+'.txt') if rel in req['population_common48'] else O/'screen/request-inputs'/phase/rel
+  b=p.read_bytes();assert h(b)==sha;blob=hashlib.sha1(('blob '+str(len(b))+'\0').encode()+b).hexdigest()
+  if rel.startswith('Mathlib/'):
+   package=req['Mathlib_files'][rel];assert blob==package['git_blob'];actual=subprocess.check_output(['git','-C',mathlib,'rev-parse',package['package_commit']+':'+rel],env=env,text=True).strip();assert actual==blob;pin=package['package_commit']
+  else:assert blob==git[rel];pin=exp['source']
+  rows.append({'phase':phase,'logical_path':rel,'capture':p.relative_to(O).as_posix(),'source_population_member':rel in req['population_common48'],'source_or_package_commit':pin,'actual_git_blob':blob,'bytes':len(b),'sha256':sha})
+assert len(rows)==100 and sum(r['source_population_member'] for r in rows)==96
+(O/'screen/all100-request-input-bindings.json').write_text(json.dumps({'source_files_each_side':48,'helper_files_each_side':2,'request_SHA256':h((O/'screen/REQUEST.json').read_bytes()),'actual_read_only_Git_tree_object_bindings':True,'files':rows},indent=2)+'\n')
+raw={p:(O/'screen'/(p+'.txt')).read_bytes() for p in ['BASE','HEAD']};assert raw['BASE']==raw['HEAD'];line=raw['BASE'].decode().splitlines()[0];m=re.fullmatch(r'declarations screened: (\d+); copy pairs \(target reproduces >= half of source\): (\d+); reproduced text: ([\d,]+) chars',line);assert m and int(m[2])==2275
+receipt={'source':req['Nat_source'],'source_files_each_side':48,'source_plus_helper_files_each_side':50,'all100_actual_Git_blob_and_SHA_bindings_exact':True,'Mathlib_package':req['Mathlib_package'],'both_foreign_TCS_homes_CodeParser_and_Convention_in_population':True,'root_facade_in_population':True,'Ladner_absent_from_actual_BASE_NAT_and_tool_args':True,'BASE_HEAD_stdout_byte_exact':True,'filtered_declarations_each_side':int(m[1]),'directed_pairs_each_side':int(m[2]),'sum_recorded_matched_chars_each_side':int(m[3].replace(',','')),'new':0,'gone':0,'persistent_score_changes':0,'persistent_unchanged':2275,'no_new_pair_scoring_or_Lean_or_screen':True,'failed_private_collection_preparation_preserved':'preparation/collector-attempt1-non-source-input-map/'}
+(O/'screen/source-format-binding-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt))
+# Update only this mutable draft's state, keeping superseded pending states in preparation.
+for name in ['STATUS.json','availability.json']:
+ p=O/name;r=json.loads(p.read_text());r['status']='PREPARING_PUBLICATION_ROOT_TO_BIND_CURRENT48_EVIDENCE_COMPLETE';r['current48_screen']='BASE/NAT actual PASS exit0/source unchanged; identical stdout;0new/0gone/0changed scores';r['new_full_context_screen']=r['current48_screen'];r['new_metadata_or_screen_PASS_claim']=True;r['new_screen_pass_is_actual_not_helper_execution']=True;r['full48_screen']=r['current48_screen'];p.write_text(json.dumps(r,indent=2)+'\n')
+p=O/'freeze-ready-packet.py';s=p.read_text();needle="(D/'availability.json').write_text(json.dumps(status,indent=2)+'\\n');(D/'screen-status.json')";replacement="(D/'availability.json').write_text(json.dumps(status,indent=2)+'\\n');(D/'STATUS.json').write_text(json.dumps(status,indent=2)+'\\n');(D/'screen-status.json')";assert needle in s;s=s.replace(needle,replacement);p.write_text(s)

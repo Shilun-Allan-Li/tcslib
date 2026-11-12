@@ -1,0 +1,12 @@
+private lemma arWriteCfg_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (a : Action M.k Γ M.State) :
+    ∀ j (hj : j ≤ N), (arTM E e M).tm.runFrom (arWriteCfg E e c a ⟨j, by omega⟩)
+      (j + 1) = arMoveCfg E e c a ⟨N + 1, by omega⟩ := by
+  intro j
+  induction j with
+  | zero => intro hj; exact arWriteCfg_finish E e M c a
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, arWriteCfg_step E e M c a ⟨j + 1, by omega⟩ (by simp)]
+    exact ih (by omega)

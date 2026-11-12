@@ -1,0 +1,37 @@
+/-- Before the first halting time, no core repeats.
+
+**Proof sketch.** If the cores at times `t₁ < t₂` agree, then the cores at `t₁ + j` and
+`t₂ + j` agree for every `j`, so the core at `t₁ + r` equals the core at `t₁ + (r mod p)`
+with `p = t₂ - t₁`. At the first halting time `T = t₁ + r` the state is `none`, but
+`t₁ + (r mod p) < t₂ < T` is an earlier, non-halted time. -/
+lemma core_injOn (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (T : ℕ)
+    (hT : (tm.runFrom c T).state = none)
+    (hmin : ∀ t < T, (tm.runFrom c t).state ≠ none) {t₁ t₂ : ℕ} (h₁₂ : t₁ < t₂)
+    (h₂ : t₂ < T) : core (tm.runFrom c t₁) ≠ core (tm.runFrom c t₂) := by
+  intro heq
+  set p := t₂ - t₁ with hp
+  have hpos : 0 < p := by omega
+  -- the core at `t₁ + r` equals the one at `t₁ + (r - p)` once `r ≥ p`
+  have hback : ∀ r, p ≤ r →
+      core (tm.runFrom c (t₁ + r)) = core (tm.runFrom c (t₁ + (r - p))) := by
+    intro r hr
+    have e1 : t₁ + r = t₂ + (r - p) := by omega
+    rw [e1, runFrom_add, runFrom_add c t₁]
+    exact core_runFrom tm heq.symm _
+  have hmod : ∀ r, core (tm.runFrom c (t₁ + r)) = core (tm.runFrom c (t₁ + r % p)) := by
+    intro r
+    induction r using Nat.strong_induction_on with
+    | _ r ih =>
+      by_cases hr : r < p
+      · rw [Nat.mod_eq_of_lt hr]
+      · rw [hback r (by omega), ih (r - p) (by omega), ← Nat.mod_eq_sub_mod (by omega)]
+  have hTgt : t₂ < T := h₂
+  have hr := hmod (T - t₁)
+  rw [show t₁ + (T - t₁) = T by omega] at hr
+  have hlt : t₁ + (T - t₁) % p < T := by
+    have := Nat.mod_lt (T - t₁) hpos
+    omega
+  apply hmin _ hlt
+  have := congrArg Prod.fst hr
+  simp only [core] at this
+  rw [← this, hT]

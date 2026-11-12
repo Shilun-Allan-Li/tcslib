@@ -1,0 +1,81 @@
+/-- **The timeout clause** of `Turing.exists_stepClockTMVia` for the fused
+clock, word for word with `H := sc_clockTM e M stopAt`, `inj s := dec s .run` and
+`timeout := sc_State.timeout`.
+
+**Proof sketch.** The `d` rounds of `sc_finish`'s proof, then at round `d` the counter word has
+value `0` (`Turing.counterWord_value`), so it underflows (`Turing.counter_dec_zero`) and
+`sc_debit` reaches `timeout (some _)`, with the counter all `true`. Time:
+`counterOverhead w (d + 1) + d ≤ 5d + 2|w| + 2` (`Turing.counterOverhead_succ`,
+`Turing.counterOverhead_le`). -/
+private theorem sc_timeout {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x) (q : S)
+    (hq : c.state = some q) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    (∀ u ≤ Nat.ofDigits 2 (w.map Bool.toNat), ¬(M.runFrom c u).Stopped stopAt) →
+      ∃ T ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2,
+        ∃ w' : List Bool, w'.length = w.length ∧
+        (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) T =
+          clockCfg (some (.timeout (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))).state))
+            (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat)))
+            (wordPatch ct cp (w'.map e)) cp ∧
+        (∀ u < T, ∀ r,
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+              some (.finish r) ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+              some (.timeout r)) ∧
+        ∀ u ≤ T, ∃ v ≤ Nat.ofDigits 2 (w.map Bool.toNat),
+          (∀ j : Fin k,
+            ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapes
+                j.castSucc = (M.runFrom c v).workTapes j ∧
+            ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+                j.castSucc = (M.runFrom c v).workTapePos j) ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).inputPos =
+            (M.runFrom c v).inputPos ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).output =
+            (M.runFrom c v).output ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+              (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
+  intro notStopped
+  let d := Nat.ofDigits 2 (w.map Bool.toNat)
+  obtain ⟨reached, segment, trajectory⟩ := sc_rounds e M stopAt c q hq w ct cp hw d le_rfl
+    (fun u hu => notStopped u hu.le)
+  obtain ⟨s, state, flag⟩ := sc_live stopAt (M.runFrom c d) (notStopped d le_rfl)
+  simp only [state, sc_resume] at reached segment
+  have exhausted : decFixed (counterWord w d) = none := by
+    apply (counter_dec_zero _).mpr
+    have value := counterWord_value w d le_rfl
+    simpa only [d, Nat.sub_self] using value
+  have delimited := sc_wordPatch_frame ct cp (w.map e) ((counterWord w d).map e)
+    (by simp only [List.length_map, counterWord_length]) (by simpa using hw)
+  obtain ⟨debit, debitSegment, debitTrace⟩ := sc_clockDebit e M stopAt (M.runFrom c d) s flag
+    (counterWord w d) (wordPatch ct cp ((counterWord w d).map e)) cp (by simpa using delimited)
+  simp only [exhausted, Option.isSome_none, Option.getD_none, sc_decExit,
+    counterWord_length] at debit debitSegment debitTrace
+  have overwrite := sc_wordPatch_twice ct cp ((counterWord w d).map e)
+    ((List.replicate w.length true).map e)
+    (by simp only [List.length_map, List.length_replicate, counterWord_length])
+  rw [overwrite] at debit debitSegment
+  have joined := segment.trans debitSegment
+  let T := counterOverhead w d + d + (2 * ((counterWord w d).takeWhile not).length + 2)
+  have bound : T ≤ 5 * d + 2 * w.length + 2 := by
+    have amortized := counterOverhead_le w
+    rw [counterOverhead_succ] at amortized
+    dsimp only [T, d]
+    omega
+  apply sc_deliver e M stopAt c q w ct cp d (5 * d + 2 * w.length + 2)
+    sc_State.timeout (List.replicate w.length true) T (by simp) bound
+    ⟨_, Or.inr rfl⟩
+  · change (sc_clockTM e M stopAt).runFrom _
+      (counterOverhead w d + d + (2 * ((counterWord w d).takeWhile not).length + 2)) = _
+    rw [MultiTapeTM.runFrom_add, reached, debit, state]
+  · simpa only [state] using joined
+  · intro u hu
+    by_cases old : u ≤ counterOverhead w d + d
+    · exact trajectory u old
+    · have splitTime : u = counterOverhead w d + d + (u - (counterOverhead w d + d)) := by
+        omega
+      rw [splitTime, MultiTapeTM.runFrom_add, reached]
+      obtain ⟨seen, envelope⟩ := debitTrace (u - (counterOverhead w d + d)) (by
+        dsimp only [T] at hu
+        omega)
+      exact ⟨d, le_rfl, _, _, _, seen, envelope⟩

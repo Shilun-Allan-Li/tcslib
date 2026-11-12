@@ -1,0 +1,40 @@
+/-- From any interior position, the native scan reaches the right blank and
+halts silently. The scan does not confuse a blank work cell with an input end.
+**Proof sketch.** Induct on the number of remaining native input cells. A live
+cell costs one right move; the right blank costs the final silent halt. -/
+private lemma emitter_right_scan (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) :
+    ∀ r j (hj : j ≤ x.length), j + r = x.length →
+      (emitterRightTM M).tm.runFrom (emitterRightScan M c (some true) j hj) (r + 1) =
+        emitterRightScan M c none x.length (le_refl _) := by
+  intro r
+  induction r with
+  | zero =>
+    intro j hj he
+    have hje : j = x.length := by omega
+    subst j
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    have hin : (emitterRightScan M c (some true) x.length (le_refl _)).inputSymbol = none := by
+      simp [emitterRightScan, Cfg.inputSymbol]
+    simp only [MultiTapeTM.step, emitterRightScan, Option.map_some]
+    change (match (emitterRightScan M c (some true) x.length (le_refl _)).inputSymbol with
+      | some _ => controlAction .pos (some (Sum.inr true))
+      | none => controlAction 0 none).apply _ = _
+    rw [hin, controlAction_apply, moveInputPos_zero]
+    rfl
+  | succ r ih =>
+    intro j hj he
+    have hjlt : j < x.length := by omega
+    have hin : (emitterRightScan M c (some true) j hj).inputSymbol = some (x[j]'hjlt) :=
+      inputSymbolInner j (by simp [emitterRightScan, Nat.add_comm]) hjlt
+    have hs : (emitterRightTM M).tm.step (emitterRightScan M c (some true) j hj) =
+        emitterRightScan M c (some true) (j + 1) (by omega) := by
+      simp only [MultiTapeTM.step, emitterRightScan, Option.map_some]
+      change (match (emitterRightScan M c (some true) j hj).inputSymbol with
+        | some _ => controlAction .pos (some (Sum.inr true))
+        | none => controlAction 0 none).apply _ = _
+      rw [hin, controlAction_apply]
+      refine Cfg.ext rfl ?_ rfl rfl rfl
+      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (j + 1) (by omega) (by omega)

@@ -1,0 +1,13 @@
+/-- The received stationary write identity also permits a halted successor.
+Only its state field changes; every other field is cited from that identity. -/
+private lemma dgRev_write_optional {A Q : Type} {x : List A}
+    (dummy : Q) (q q' : Option Q) (p : Fin (x.length + 2)) (z : ℤ)
+    (l r : List (Option A)) (out : List A) (b : Option A) :
+    (⟨0, fun _ => (some b, .zero), none, q'⟩ : Action 1 A Q).apply
+      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out := by
+  have h := sweepRevCfg_write q dummy p z l r out b
+  have hp := congrArg (fun (c : Cfg 1 A Q x) => c.inputPos) h
+  have hw := congrArg (fun (c : Cfg 1 A Q x) => c.workTapes) h
+  have hz := congrArg (fun (c : Cfg 1 A Q x) => c.workTapePos) h
+  have ho := congrArg (fun (c : Cfg 1 A Q x) => c.output) h
+  exact Cfg.ext rfl hp hw hz ho

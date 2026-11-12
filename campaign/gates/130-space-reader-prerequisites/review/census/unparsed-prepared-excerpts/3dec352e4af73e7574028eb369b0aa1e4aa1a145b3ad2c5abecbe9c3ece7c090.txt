@@ -1,0 +1,56 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+open Turing Turing.FinTM
+attribute [local irreducible] Turing.pairDiagTM Turing.FinTM.incFixedTM
+attribute [local irreducible] Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+example : pairDiagTM.k = 0 := by rfl
+example : pairDiagTM = {
+  k := 0
+  State := Fin 6
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        match q with
+        | 0 => match inp with
+          | some b => ⟨.zero, fun i => i.elim0, some b, some 1⟩
+          | none => ⟨.zero, fun i => i.elim0, some false, some 2⟩
+        | 1 => ⟨.pos, fun i => i.elim0, inp, some 0⟩
+        | 2 => ⟨.zero, fun i => i.elim0, some true, some 3⟩
+        | 3 => ⟨.neg, fun i => i.elim0, none, some 4⟩
+        | 4 => match inp with
+          | some _ => ⟨.neg, fun i => i.elim0, none, some 4⟩
+          | none => ⟨.pos, fun i => i.elim0, none, some 5⟩
+        | _ => match inp with
+          | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
+          | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
+} := by rfl
+example : incFixedTM.k = 0 := by rfl
+example : incFixedTM = {
+  k := 0
+  State := Fin 4
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ => match q.val with
+        | 0 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, none, some 0⟩
+          | some false => controlAction .neg (some 1)
+          | none => controlAction 0 none
+        | 1 => match inp with
+          | some _ => controlAction .neg (some 1)
+          | none => controlAction .pos (some 2)
+        | 2 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, some false, some 2⟩
+          | some false => ⟨.pos, fun j => j.elim0, some true, some 3⟩
+          | none => controlAction 0 none
+        | _ => match inp with
+          | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
+          | none => ⟨0, fun j => j.elim0, none, none⟩ }
+} := by rfl
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) :
+    tm.spaceUsed c t = ∑ i, tm.spaceUsedByTape c t i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) =>
+    tm.spaceUsed c t) = fun tm c t => ∑ i, tm.spaceUsedByTape c t i := by rfl
+example (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) => tm.initCfg x) =
+    fun tm x => Cfg.init tm.q₀ x := by rfl

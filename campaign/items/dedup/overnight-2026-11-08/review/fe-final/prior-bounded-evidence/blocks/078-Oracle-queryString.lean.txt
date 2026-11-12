@@ -1,0 +1,6 @@
+noncomputable def queryString (cfg : Cfg (k + 1) Symbol State input) : List Symbol :=
+  if h : ∃ n : ℕ, cfg.workTapes (queryTapeIdx k) (n : ℤ) = none then
+    (List.range (Nat.find h)).filterMap fun n => cfg.workTapes (queryTapeIdx k) (n : ℤ)
+  else []
+
+open Classical in

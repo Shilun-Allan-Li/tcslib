@@ -1,0 +1,6 @@
+∀ {S : Type} [inst : Fintype S] [inst_1 : DecidableEq S] (M : Turing.FinTM Bool) (D : Turing.MultiTapeTM 4 Bool S)
+  (x : List Bool) (T : ℕ),
+  (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) T).state = none →
+    ∃ t ≤ T + 1,
+      Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t =
+        Turing.universalCapturedCfg M D (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) T)

@@ -1,0 +1,206 @@
+{
+  "PASS": true,
+  "owners": 5,
+  "target_declarations": 11,
+  "rows": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "final_sha256": "cff67a2cae4a1c33de29cee6583c957f2a45be4a5029c2ba4937cfc570c172d5",
+      "prior_executed_body_sha256": "caf8b725dd693d2f3094e6b56b4637359661dcaa1ad9f80730a5bb0c2de4261e",
+      "exact_final_candidate_bytes": true,
+      "comment_stripped_code_tokens_equal_to_prior_native_and_sealed": true,
+      "code_tokens_sha256": "a842d1d068f694cff6a8007fa5ab0dc4f334a547f0acae5ab3cba1148faae258",
+      "old_sealed_input_sha256": "8af4561b2b8a388d727e1f215b979fb84b0f947d32c3fba7f7a462e6d408a2f7",
+      "prior_seal_envelope_recovery_literal_body_exact": true,
+      "bounded_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "bounded_guard_applications": 2,
+      "targets": [
+        {
+          "name": "enumCont_first_anchor",
+          "full_old_new_header_exact": true,
+          "header": "private lemma enumCont_first_anchor {k : \u2115} {S : Type} {x : List Bool}\n    (tm stop : MultiTapeTM k Bool S) (qa : S)\n    (ha : \u2200 q, q \u2260 qa \u2192 \u2200 inp work, tm.tr q inp work = stop.tr q inp work)\n    (hs : \u2200 inp work, stop.tr qa inp work = controlAction 0 (some qa))\n    (c : Cfg k Bool S x) (T : \u2115) (hT : (stop.runFrom c T).state = some qa) :\n    \u2203 t \u2264 T, (\u2200 j < t, (tm.runFrom c j).state \u2260 some qa) \u2227\n      tm.runFrom c t = stop.runFrom c T ",
+          "header_sha256": "34b0505e6dc4e957a5ac9df7acb3cee21d36e3053608bdd8ea31f3994e4e66f3",
+          "old_chunk_file": "blocks/010-EXP-enumCont_first_anchor.lean.txt",
+          "new_chunk_file": "draft-chunks/010-enumCont_first_anchor.lean.txt",
+          "old_chunk_sha256": "16680024a649baf703538b9632ab289ce9858a18a5b9a00e27956a391d413cb9",
+          "new_chunk_sha256": "5739d54f401e6284d73e92543df512235b080ff3001f7edb99c2fb9c6f4d5e41"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "final_sha256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+      "prior_executed_body_sha256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+      "exact_final_candidate_bytes": true,
+      "comment_stripped_code_tokens_equal_to_prior_native_and_sealed": true,
+      "code_tokens_sha256": "015c52ddbb0f41e5657519cf7b7085874c9886f969008f47fa6c0c2bd4bd758f",
+      "old_sealed_input_sha256": "3c14ba4e61b443d32783a5aed555e3a1ad09978548d4c0fa3c283418063c79b1",
+      "prior_seal_envelope_recovery_literal_body_exact": true,
+      "bounded_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "bounded_guard_applications": 4,
+      "targets": [
+        {
+          "name": "xr_firstArrival",
+          "full_old_new_header_exact": true,
+          "header": "private theorem xr_firstArrival {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (a : S) (hstat : \u2200 d : Cfg k Bool S x, d.state = some a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227 \u2200 u < T', (tm.runFrom c u).state \u2260 some a ",
+          "header_sha256": "461550aafa24de871336727412f7bbf338aa65595f4a4cdac18387d9e50d2874",
+          "old_chunk_file": "blocks/012-ExhaustiveReplay-xr_firstArrival.lean.txt",
+          "new_chunk_file": "draft-chunks/012-xr_firstArrival.lean.txt",
+          "old_chunk_sha256": "be2413bafb2e6b58b3e30961d65db5313ab6956294f7457ec2e406608007fe57",
+          "new_chunk_sha256": "8024f5a148816bfc9a30a58ee2f3a84ba1c6053796b1d82cc323aff65d31da2c"
+        },
+        {
+          "name": "xr_firstArrival'",
+          "full_old_new_header_exact": true,
+          "header": "private theorem xr_firstArrival' {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (A : S \u2192 Prop)\n    (hstat : \u2200 d : Cfg k Bool S x, \u2200 a, d.state = some a \u2192 A a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') {a : S} (hc' : c'.state = some a)\n    (ha : A a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227\n      \u2200 u < T', \u2200 a', (tm.runFrom c u).state = some a' \u2192 \u00ac A a' ",
+          "header_sha256": "ffe4dfe1a373660f4459160bac610df3bfe2805b030c1676c2c2ba54c0b894a1",
+          "old_chunk_file": "blocks/013-ExhaustiveReplay-xr_firstArrival_.lean.txt",
+          "new_chunk_file": "draft-chunks/013-xr_firstArrival'.lean.txt",
+          "old_chunk_sha256": "ab49adc45e72ad19f09a8fc065a66db7ff1b3402eeae5ba78a52f745966b4159",
+          "new_chunk_sha256": "deeab56413ec4ec2bf2823ecf18e11b4af4737e412625ae3717250d993be7742"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "final_sha256": "6727053330e0804eb4501b0ed20a3153d1c8b67cc2e39cafd2b407499443637a",
+      "prior_executed_body_sha256": "0b959f9550d20c274e894532b745d5c114d47a089aae181b150fe5037fd9ae27",
+      "exact_final_candidate_bytes": true,
+      "comment_stripped_code_tokens_equal_to_prior_native_and_sealed": true,
+      "code_tokens_sha256": "5059dd543c916b0c9830ecc34fe924f38fba7e25319f991deb47c5fb9d43a622",
+      "old_sealed_input_sha256": "15522b3447df726fd0fb2f9c2c4f405dac5e69de9f5fc5599fc4055f55667238",
+      "prior_seal_envelope_recovery_literal_body_exact": true,
+      "bounded_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "bounded_guard_applications": 12,
+      "targets": [
+        {
+          "name": "clBank_first",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clBank_first {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (a : Fin l \u2192 Bool) (n : Fin l \u2192 \u2115) (W : \u2115)\n    (hW : \u2200 i, (n i).bits.length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2,\n      (\u2200 j, j < t \u2192 ((clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state \u2260\n          some (fun _ => some (0 : Fin 4))) \u2227\n      (clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =\n        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) ",
+          "header_sha256": "0d8e5cc94109d30e761af940338b34c7c773c26ff8db93d6bc624e5447cbd135",
+          "old_chunk_file": "blocks/028-Hardness-clBank_first.lean.txt",
+          "new_chunk_file": "draft-chunks/028-clBank_first.lean.txt",
+          "old_chunk_sha256": "18437fb354aff2a6e6c59e5ce0e77743b3a24e70f871c82c8c03db0ab0fd29ba",
+          "new_chunk_sha256": "6adf1dabfe971101f276fca736ebf8a41ee82d1fdcea738b95a2dc6d99b4facd"
+        },
+        {
+          "name": "clCopy_first",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) :\n    \u2203 t \u2264 3 * w.length + 3, 0 < t \u2227\n      (\u2200 j, j < t \u2192 (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state \u2260 some (4 : Fin 5)) \u2227\n      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =\n        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) ",
+          "header_sha256": "cf1066e147dbcb2086e89e0593616b52499808294327923683ba3b238681a5d9",
+          "old_chunk_file": "blocks/029-Hardness-clCopy_first.lean.txt",
+          "new_chunk_file": "draft-chunks/029-clCopy_first.lean.txt",
+          "old_chunk_sha256": "bdbe116af6ba5d335e8da1d5a1075f20cf72c969fd3e31f121c42d6176b4cd29",
+          "new_chunk_sha256": "f75f96aed8787d388007bc121f2f5260b5683c7e84b2f917a036481c1b384213"
+        },
+        {
+          "name": "clRow_first",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clRow_first {l : \u2115} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin l \u2192 List Bool) (record : List Bool) (W : \u2115)\n    (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 l * (3 * W + 4), 0 < t \u2227\n      (\u2200 j, j < t \u2192 ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state \u2260\n        some (Fin.last l, (0 : Fin 5))) \u2227\n      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =\n        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) ",
+          "header_sha256": "2c5cf6eec0edef6d3bb63f1d1c2a3b24404c5ab8cfad65d437a5d2b7c89c0a75",
+          "old_chunk_file": "blocks/030-Hardness-clRow_first.lean.txt",
+          "new_chunk_file": "draft-chunks/030-clRow_first.lean.txt",
+          "old_chunk_sha256": "c5c2083dbc9a1199f4751232248d8427a2fc6f365282f252603d7216e569fe43",
+          "new_chunk_sha256": "210787a2edb4b122fc0f58c728ed838ec38dddaf6f77bc70b016f25f35563240"
+        },
+        {
+          "name": "clCmp_first",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin 4 \u2192 List Bool) (W : \u2115) (hW : \u2200 i, (w i).length \u2264 W) :\n    \u2203 t \u2264 2 * W + 2, 0 < t \u2227 \u2203 b,\n      (b = true \u2194 clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) \u2227\n      (\u2200 j, j < t \u2192 \u2200 d, (clCmpTM.tm.runFrom\n        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state \u2260 some (.inr (.inr d))) \u2227\n      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =\n        clCmpCfg x p (.inr (.inr b)) w 0 ",
+          "header_sha256": "387d4c13b65fb8aad85abe1496519fc611dcb8a7197abc3a19b37d9ee3240b18",
+          "old_chunk_file": "blocks/031-Hardness-clCmp_first.lean.txt",
+          "new_chunk_file": "draft-chunks/031-clCmp_first.lean.txt",
+          "old_chunk_sha256": "31d7e88352caa9aa0a92a1c55e8b9dce1e4759de36a903a84f9392c514f5d368",
+          "new_chunk_sha256": "b7c55f3c67caca2565efd50cd47d4b812b7aa37576f3decba213cf88b8447b47"
+        },
+        {
+          "name": "clFirst",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clFirst {k : \u2115} {S : Type} [DecidableEq S] {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : \u2115)\n    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)\n    (hstart : start.state \u2260 some ret)\n    (hidle : \u2200 c : Cfg k Bool S x, c.state = some ret \u2192 tm.step c = c) :\n    \u2203 t \u2264 B, 0 < t \u2227 (\u2200 j < t, (tm.runFrom start j).state \u2260 some ret) \u2227\n      tm.runFrom start t = finish ",
+          "header_sha256": "2d7558fd4406f9fefecaa5ac5c9a2ec1de347b65e531787eaba6a49222f2e581",
+          "old_chunk_file": "blocks/032-Hardness-clFirst.lean.txt",
+          "new_chunk_file": "draft-chunks/032-clFirst.lean.txt",
+          "old_chunk_sha256": "1b2ac5be6c2083b5ea0e39d5949257039209af2618b5179a73249dc2537b5bc2",
+          "new_chunk_sha256": "99dbceed6b558e3ccd62da4d2a35130a9bdcca8912906394d979902112f54da0"
+        },
+        {
+          "name": "clA5Compare_compute",
+          "full_old_new_header_exact": true,
+          "header": "private lemma clA5Compare_compute (w : Fin 4 \u2192 List Bool) :\n    let arg ",
+          "header_sha256": "5e5d7e6c1ca5edcf5e2ad9613ef213d99e76d3c6d5c5158399f1e7de67e885ba",
+          "old_chunk_file": "blocks/034-Hardness-clA5Compare_compute.lean.txt",
+          "new_chunk_file": "draft-chunks/034-clA5Compare_compute.lean.txt",
+          "old_chunk_sha256": "fd6d9568b4dbe69e4e9c59781b12aba526deaa7a50b50d646c79554b3e3ab739",
+          "new_chunk_sha256": "83220986c4715aed3ae9f79906aa2bdf91bf7c563e628dc3a9552fdb4dd1ab9c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "final_sha256": "d385cdfa1e568ffeb81ae76174ebd84f597d4879a63cedc9d5c74044017aac0b",
+      "prior_executed_body_sha256": "22655feacbae1e0d19f94651d51b31d5d437ba55ff6f40635aaa80d137f139e3",
+      "exact_final_candidate_bytes": true,
+      "comment_stripped_code_tokens_equal_to_prior_native_and_sealed": true,
+      "code_tokens_sha256": "87dac53ce3c7f0e6cef77b2f499736c3dccc3999fda174fc0108465728089b43",
+      "old_sealed_input_sha256": "13128adb615017e0dc4bdfd3684c195e0fddfc291f5cf53667ecaa7e512b2cf3",
+      "prior_seal_envelope_recovery_literal_body_exact": true,
+      "bounded_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "bounded_guard_applications": 2,
+      "targets": [
+        {
+          "name": "inputSeekRewind_run",
+          "full_old_new_header_exact": true,
+          "header": "private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw x)\n    (hd : d.state = some .start) :\n    \u2203 r \u2264 d.inputPos.val + 3,\n      inputSeekRewind.runFrom d r = { d with state ",
+          "header_sha256": "0b5d966a3103df7f4b51c96cff0e0efb78b0fffb6a33af27d9110e4474d4e08f",
+          "old_chunk_file": "blocks/055-InputCall-inputSeekRewind_run.lean.txt",
+          "new_chunk_file": "draft-chunks/055-inputSeekRewind_run.lean.txt",
+          "old_chunk_sha256": "88ee912dc4258512211fde59fae518b896a9023dee1a0294e9295e4d0351898e",
+          "new_chunk_sha256": "bcbd6d29d18f60bcc1467da78eca4d822c88e0a0d82723ff5ef19ba8e42c4d1c"
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "final_sha256": "03b420467f3b8a0404c978b09d1a20b3713c7981e47a08b62d59ae8810315915",
+      "prior_executed_body_sha256": "9aee9a9ba52196786bf60bcb77a4067fadeb16eeacd1efd31d96f1880aa6bfea",
+      "exact_final_candidate_bytes": true,
+      "comment_stripped_code_tokens_equal_to_prior_native_and_sealed": true,
+      "code_tokens_sha256": "8c7dbac14cb1cc63a2657fabb4541c6a46f646ede873f64e5bc9e7195571e0a6",
+      "old_sealed_input_sha256": "cfc99f1959d77683cdf1a2d8efe7c49a3750c3a03eeb9656a770d45c0e5a41b9",
+      "prior_seal_envelope_recovery_literal_body_exact": true,
+      "bounded_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "bounded_guard_applications": 2,
+      "targets": [
+        {
+          "name": "exists_inputLengthTM",
+          "full_old_new_header_exact": true,
+          "header": "theorem exists_inputLengthTM :\n    \u2203 (K : \u2115) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM (K + 1) Bool S)\n      (entry exit : S) (C : \u2115),\n      \u2200 {x : List Bool} (d : Cfg (K + 1) Bool S x), d.state = some entry \u2192 d.inputPos = 1 \u2192\n        (\u2200 p : \u2124, -1 \u2264 p \u2192 p \u2264 ((Nat.bits x.length).length : \u2124) \u2192\n          d.workTapes 0 (d.workTapePos 0 + p) = none) \u2192\n        (\u2200 j : Fin (K + 1), j \u2260 0 \u2192 \u2200 p, d.workTapes j p = none) \u2192\n        \u2203 t \u2264 C * (x.length + 1),\n          (\u2200 u < t, (R.runFrom d u).state \u2260 some exit) \u2227\n          (\u2200 u \u2264 t, \u2200 j : Fin (K + 1),\n            |(R.runFrom d u).workTapePos j - d.workTapePos j| \u2264\n              ((C * ((Nat.bits x.length).length + 1) : \u2115) : \u2124)) \u2227\n          R.runFrom d t =\n            { d with\n              state ",
+          "header_sha256": "4a564dbc1b5b19f5a2f351c81b4ebc3497dd56d4a443d5be55b0e28c7669805f",
+          "old_chunk_file": "blocks/056-InputLength-exists_inputLengthTM.lean.txt",
+          "new_chunk_file": "draft-chunks/056-exists_inputLengthTM.lean.txt",
+          "old_chunk_sha256": "e41361e6152de7232fd78cdebc08aa5123cbec2ae0409953cd67782c9e6ca101",
+          "new_chunk_sha256": "d25e7b5bd249326d39fee987b3b75a6c2e329c631d8b1f6dd4919b35eef2142b"
+        }
+      ]
+    }
+  ],
+  "new_seal_execution": false,
+  "literal_prior_seal_recovery": true,
+  "paired_controls": 26,
+  "scope_limit": "Prior actual complete-declaration runFrom/step guards cover11 target chunks (22 applications) only; three-definition terminal-action reader is separate. This does not seal the full foreign-definition closure of inherited operational portions or certify global opacity. Final sketch bytes receive their own actual complete replay compilation."
+}

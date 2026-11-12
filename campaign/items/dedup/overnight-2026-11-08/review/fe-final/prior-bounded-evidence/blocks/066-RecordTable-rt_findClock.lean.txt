@@ -1,0 +1,8 @@
+private noncomputable def rt_findClock {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) x) : ℕ := by
+  classical
+  exact if h : ∃ t, 0 < t ∧
+      (((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.read, none⟩ ∨
+        ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.exit, ()⟩)
+  then Nat.find h else 1

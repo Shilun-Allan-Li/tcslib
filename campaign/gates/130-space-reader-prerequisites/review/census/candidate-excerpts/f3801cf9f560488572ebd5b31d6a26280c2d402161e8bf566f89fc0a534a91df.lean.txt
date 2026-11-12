@@ -1,0 +1,18 @@
+/-- Selector routing. The unary state begins at cell two of the summary
+auxiliary tape: cell zero is the summary and cell one its blank separator.
+Observation and one additional move enter that state word; each true skips
+one whole state block, and its false terminator selects the read rank. -/
+private def h1SeekRouter (k : ℕ) : MultiTapeTM (k + 2) Bool (h1SeekCtrl k) where
+  q₀ := .observe
+  tr := fun q inp w => match q with
+    | .observe => tapeAction (h1SummaryTape k) 0 none .pos
+        (.advance (h1ReadRank inp (fun i => w (Fin.castAdd 2 i))))
+    | .advance rank => tapeAction (h1SummaryTape k) 0 none .pos (.state rank)
+    | .state rank =>
+        if w (h1SummaryTape k) = some true then
+          tapeAction (h1SummaryTape k) 0 none .pos
+            (.request rank ⟨3 ^ (k + 1) - 1, by have hp : 0 < 3 ^ (k + 1) := Nat.pow_pos (by omega); omega⟩ false)
+        else inputMoveAction 0 (if hr : rank.val = 0 then .done
+          else .request rank ⟨rank.val - 1, by have := rank.isLt; omega⟩ true)
+    | .request rank rest last => inputMoveAction 0 (.request rank rest last)
+    | .done => inputMoveAction 0 .done

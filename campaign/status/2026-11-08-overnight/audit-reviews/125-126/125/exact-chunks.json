@@ -1,0 +1,28 @@
+[
+  {
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_tail",
+    "original_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+    "old_chunk": "/-- Removing the first bit is a two-state finite transduction. -/\nprivate lemma clA5_pt_tail : PolyTimeComputable List.tail := by\n  let emit (q b : Bool) : Option Bool := if q then some b else none\n  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [clA5MapWord, emit, ih]\n  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by\n    cases x <;> simp [clA5MapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Removing the first bit is polynomial-time by the public tail closure. -/\nprivate lemma clA5_pt_tail : PolyTimeComputable List.tail := by\n  convert polyTimeComputable_tail using 1\n  funext x\n  cases x <;> rfl",
+    "old_chunk_sha256": "d5719b2e482d69fd2cb725e738b8fd124b0b1f7fdeeb4bc68d84cafcf331bbb6",
+    "new_chunk_sha256": "ddd5edcdecf8aa511afaf5c2e127bf7cc4228389a256694527a885231495ec97",
+    "full_header_sha256": "4a927e74761375c01ad2dfcea7d03d3c1192b8526194015454b07978383ee3fe",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_head",
+    "original_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+    "old_chunk": "/-- Extracting at most the first bit is also a two-state finite transduction. -/\nprivate lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  let emit (q b : Bool) : Option Bool := if q then none else some b\n  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [clA5MapWord, emit, ih]\n  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by\n    cases x <;> simp [clA5MapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/\nprivate lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  exact polyTimeComputable_take1",
+    "old_chunk_sha256": "88e5fbc72bcbed64d5fe03ea00b925d079262f1bf87d3c7519420a2010051a99",
+    "new_chunk_sha256": "92523ad26eab8fa1b492d13169116e13efcb683b7974282ba3f0003f92185bc8",
+    "full_header_sha256": "5a0588ac6d8569e5057fe91f25488b4f80a272019b4ef7b1c0127875064b3803",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  }
+]

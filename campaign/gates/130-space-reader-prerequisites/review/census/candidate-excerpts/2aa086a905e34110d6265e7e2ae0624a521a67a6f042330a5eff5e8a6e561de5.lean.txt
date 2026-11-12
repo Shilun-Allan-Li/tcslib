@@ -1,0 +1,3 @@
+/-- An action that only moves the input head and changes the state. -/
+def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩

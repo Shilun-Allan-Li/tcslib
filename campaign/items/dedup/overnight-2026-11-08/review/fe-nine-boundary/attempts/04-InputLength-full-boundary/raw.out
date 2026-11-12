@@ -1,0 +1,71 @@
+/private/tmp/ab34-fe241-rule10-peer/runtime/InputLengthFullBoundary.lean:514:38: error: Tactic `rfl` failed: The left-hand side
+  inputLengthMachine.tr InputLengthPhase.returnScan none work
+is not definitionally equal to the right-hand side
+  match none with
+  | some val => FinTM.controlAction SignType.neg (some InputLengthPhase.returnScan)
+  | none => FinTM.controlAction SignType.pos (some InputLengthPhase.done)
+
+case none
+x : List Bool
+d : Cfg (0 + 1) Bool InputLengthPhase x
+hs : d.state = some InputLengthPhase.count
+hip : d.inputPos = 1
+blank : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑x.length.bits.length → d.workTapes 0 (d.workTapePos 0 + p) = none
+a✝ : ∀ (j : Fin (0 + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none
+t : ℕ
+charge : t + 2 * List.count true x.length.bits = 5 * x.length
+counted :
+  MultiTapeTM.runFrom d t =
+    inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+countHeads :
+  ∀ u ≤ t,
+    d.workTapePos 0 - 1 ≤ (MultiTapeTM.runFrom d u).workTapePos 0 ∧
+      (MultiTapeTM.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + ↑x.length.bits.length
+c : Cfg 1 Bool InputLengthPhase x :=
+  inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+back : Cfg 1 Bool InputLengthPhase x :=
+  { state := some InputLengthPhase.returnStart, inputPos := c.inputPos, workTapes := c.workTapes,
+    workTapePos := c.workTapePos, output := c.output }
+endSymbol : c.inputSymbol = none
+turn : MultiTapeTM.step c = back
+work : Fin 1 → Option Bool
+⊢ inputLengthMachine.tr InputLengthPhase.returnScan none work =
+    match none with
+    | some val => FinTM.controlAction SignType.neg (some InputLengthPhase.returnScan)
+    | none => FinTM.controlAction SignType.pos (some InputLengthPhase.done)
+/private/tmp/ab34-fe241-rule10-peer/runtime/InputLengthFullBoundary.lean:514:38: error: Tactic `rfl` failed: The left-hand side
+  inputLengthMachine.tr InputLengthPhase.returnScan (some val✝) work
+is not definitionally equal to the right-hand side
+  match some val✝ with
+  | some val => FinTM.controlAction SignType.neg (some InputLengthPhase.returnScan)
+  | none => FinTM.controlAction SignType.pos (some InputLengthPhase.done)
+
+case some
+x : List Bool
+d : Cfg (0 + 1) Bool InputLengthPhase x
+hs : d.state = some InputLengthPhase.count
+hip : d.inputPos = 1
+blank : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑x.length.bits.length → d.workTapes 0 (d.workTapePos 0 + p) = none
+a✝ : ∀ (j : Fin (0 + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none
+t : ℕ
+charge : t + 2 * List.count true x.length.bits = 5 * x.length
+counted :
+  MultiTapeTM.runFrom d t =
+    inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+countHeads :
+  ∀ u ≤ t,
+    d.workTapePos 0 - 1 ≤ (MultiTapeTM.runFrom d u).workTapePos 0 ∧
+      (MultiTapeTM.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + ↑x.length.bits.length
+c : Cfg 1 Bool InputLengthPhase x :=
+  inputLengthCfg d x.length.bits x.length.bits.length InputLengthPhase.count ⟨x.length + 1, ⋯⟩ 0
+back : Cfg 1 Bool InputLengthPhase x :=
+  { state := some InputLengthPhase.returnStart, inputPos := c.inputPos, workTapes := c.workTapes,
+    workTapePos := c.workTapePos, output := c.output }
+endSymbol : c.inputSymbol = none
+turn : MultiTapeTM.step c = back
+work : Fin 1 → Option Bool
+val✝ : Bool
+⊢ inputLengthMachine.tr InputLengthPhase.returnScan (some val✝) work =
+    match some val✝ with
+    | some val => FinTM.controlAction SignType.neg (some InputLengthPhase.returnScan)
+    | none => FinTM.controlAction SignType.pos (some InputLengthPhase.done)

@@ -1,0 +1,2 @@
+theorem control_029 (m : SignType) (q : Option Unit) :
+    (FinTM.controlAction m q : Action 1 Bool Unit) = ⟨m, fun _ => (none, 0), none, q⟩ := by rfl

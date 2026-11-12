@@ -1,0 +1,43 @@
+53:agree; the first all-halting depth exists; the ledger's shape. Then two generic tools for the
+55:the branch from `initCfg`, translated), and the first arrival at a stationary anchor (the
+141:/-- The first all-halting depth exists below any all-halting bound, is positive, and answers
+149:  refine ⟨Nat.find hex, ?_, Nat.find_min' hex hT, Nat.find_spec hex,
+150:    fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
+151:      (Nat.find_min' hex hT)⟩
+152:  rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+153:  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
+249:/-! #### The first arrival at a stationary anchor -/
+269:/-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`
+270:and `a` is stationary, the first time the state is `a` is at most `T`, reaches `c'` too, and no
+279:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
+280:  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+281:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+282:  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
+814:**Proof sketch.** `xr_pass_fwd` gives the first `|u|` steps: head `j` moves `|u|` cells along
+995:  · -- a non-empty output `L ++ [b]`: the first read sees `b`
+1248:/-- The clocked replay's bank, as the first `k + 2` tapes. -/
+1483:/-- **One replay, the `finish` exit.** If the branch along `s` first halts at `τ ≤ |s|`, and the
+1585:the first depth at which every branch has halted. -/
+1587:/-- **The first arrival at a stationary anchor, over a family of anchors.** If every state in `A`
+1588:is stationary and a run reaches `c'` in a state of `A` at time `T`, the first time the state is in
+1600:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
+1601:    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+1602:  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
+1603:  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+1604:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+1941:/-- The direction of pass `n`: the first two passes move left, the last four right. -/
+1964:/-- The first phase of the window clear (the increment when `N` has no work tape). -/
+2117:  all_goals first
+2118:    | (obtain ⟨a, l, rfl⟩ := h; cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs)
+2119:    | (obtain ⟨j, n, a, l, rfl⟩ := h; cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs)
+2170:  · -- the branch halts: the `finish` exit at the first halting time
+2173:    set τ := Nat.find hex with hτdef
+2174:    have hτ : τ ≤ s.length := Nat.find_min' hex (by rw [List.take_length]; exact hb)
+2175:    have hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none := Nat.find_spec hex
+2177:      fun u hu => Nat.find_min hex hu
+2898:the depth tape holds `w'` and the host dispatches to the next depth's first cycle. -/
+2928:the next depth's first cycle. -/
+2973:/-- **The depths on the host.** With `L*` the first all-halting depth, from the first cycle at a
+3080:/-- **The exhaustive replay's machine `E`**: the seam, started at the host's first cycle. -/
+3085:/-- `E`'s initial configuration on `z` is the host's first cycle at depth `0`, in the seam's
+3151:or down (`Turing.seamCompTM₂` onto two one-step answer rows). So `E` stops at the first

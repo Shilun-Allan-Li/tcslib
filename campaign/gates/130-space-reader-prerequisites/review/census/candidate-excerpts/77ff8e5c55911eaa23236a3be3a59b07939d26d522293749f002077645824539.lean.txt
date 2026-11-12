@@ -1,0 +1,15 @@
+/-- Walk an already canonized successor field. When `copy` is true, copy
+its unary state word to `dst`; when false, only advance the table head.
+No catalog leaf walks a bit-terminated, non-blank-delimited word. This
+leaf supplies that missing operation; it does not validate the grammar. -/
+private def h1SuccTM {m : ℕ} (src dst : Fin m) (copy : Bool) :
+    MultiTapeTM m Bool h1SuccPhase where
+  q₀ := .tag
+  tr := fun q _ w => match q with
+    | .tag => tapeAction src 0 none .pos
+        (if w src = some true then .unary else .done false)
+    | .unary =>
+        ⟨0, fun j => if j = src then (none, .pos)
+          else if copy = true ∧ j = dst then (some (w src), .pos) else (none, 0),
+          none, some (if w src = some true then .unary else .done true)⟩
+    | .done b => inputMoveAction 0 (.done b)

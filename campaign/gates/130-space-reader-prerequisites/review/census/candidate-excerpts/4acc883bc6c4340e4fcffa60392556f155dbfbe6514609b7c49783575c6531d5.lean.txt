@@ -1,0 +1,32 @@
+/-- The silent comparator reaches its exact endpoint on its first visit to
+either Boolean return state, after a positive number of steps.
+**Proof sketch.** Use the exact bounded comparator run and cut it at the first visit to
+either absorbing return state. Absorption identifies the full endpoint;
+the initial scan state excludes time zero. -/
+private lemma emitter_compare_first (w u v : List Bool) (p : Fin (w.length + 2)) :
+    ∃ t, 0 < t ∧ t ≤ 2 * (max u.length v.length + 1) ∧
+      (∀ j < t, ∀ b, (emitterCompareTM.tm.runFrom
+        (emitterCompareCfg w u v p 0 true 0) j).state ≠ some (2, b)) ∧
+      emitterCompareTM.tm.runFrom (emitterCompareCfg w u v p 0 true 0) t =
+        emitterCompareCfg w u v p 2 (decide (u = v)) 0 := by
+  obtain ⟨t, ht, hfirst, hr⟩ := emitter_first_entry emitterCompareTM.tm
+    (fun q : Fin 3 × Bool => q.1 = 2)
+    (emitterCompareCfg w u v p 0 true 0) (emitterCompareCfg w u v p 2 (decide (u = v)) 0)
+    (2 * (max u.length v.length + 1)) (by
+      rintro z ⟨⟨q, b⟩, hz, hq⟩
+      change q = 2 at hq
+      subst q
+      unfold MultiTapeTM.step
+      rw [hz]
+      change (controlAction 0 (some (2, b))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    ⟨(2, decide (u = v)), rfl, rfl⟩ (emitter_compare_run w u v p)
+  have hpos : 0 < t := by
+    by_contra h
+    have hz : t = 0 := by omega
+    have hh := congrArg Cfg.state hr
+    simp [hz, emitterCompareCfg] at hh
+    have hv := congrArg (fun q : Fin 3 × Bool => q.1.val) hh
+    norm_num at hv
+  exact ⟨t, hpos, ht, fun j hj b hb => hfirst j hj ⟨(2, b), hb, rfl⟩, hr⟩

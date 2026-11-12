@@ -1,0 +1,4 @@
+/-- The stationary loop-anchor phase; the phase host immediately redirects it. -/
+private def b2b_anchorTM (k : ℕ) : MultiTapeTM k Bool Unit where
+  q₀ := ()
+  tr := fun _ _ _ => inputMoveAction 0 ()

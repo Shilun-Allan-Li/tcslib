@@ -1,0 +1,14 @@
+private lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)
+    (h : M.ComputesInTime x y T) :
+    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by
+  classical
+  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h
+  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hh.1⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hh.1
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex
+  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)
+  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he
+  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩

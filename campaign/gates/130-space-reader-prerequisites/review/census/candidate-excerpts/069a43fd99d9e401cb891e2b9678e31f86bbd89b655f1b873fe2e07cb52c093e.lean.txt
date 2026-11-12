@@ -1,0 +1,111 @@
+/-- **The restoring suffix-boundary test** (the ruler device's core; the RD-3 gate's suggested
+sanity obligation). There is a one-tape binary module with an entry and two distinct verdicts
+as follows. Start it at its entry with the delimited ruler `true^ℓ`, `ℓ > 0`, at its head and
+the physical input head at a position `p ≥ ℓ`. It reaches `yes` if `p = ℓ` and `no`
+otherwise, within `C · (ℓ + 1)` steps and no verdict earlier, with nothing else changed: the
+input head is back at `p` and the ruler head at its start, having stayed within `ℓ + 1` cells.
+The input itself is arbitrary, so an empty payload is included. [AB09, §1.2]
+
+**Proof sketch.** Move the input head left and the ruler head right in lockstep until the ruler
+head reads the blank after the ruler: `ℓ` moves, none clamped since `p ≥ ℓ`. Read the input cell
+at `p - ℓ`: it is blank exactly when `p - ℓ = 0`, since `p - ℓ ≤ |z| + 1 - ℓ ≤ |z|`
+(`Turing.inputCell_sub_eq_none_iff`). Move both heads back `ℓ` cells (the ruler head stops at
+the blank before the ruler, then steps right). A finite control carries the verdict.
+
+**Implementation.** The test is a hand-built controller that moves the input head and the
+ruler head in the same step (a `Turing.tapeAction`); no catalog row does that. One
+forward-and-return trajectory, identified by a single induction, takes exactly `2ℓ + 2` steps, so
+`C = 2`. The turn reads the boundary through `Turing.inputCell_sub_eq_none_iff`; the return leg
+changes no tape and no output and restores both heads. -/
+theorem exists_rulerTestTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z), d.state = some entry → 0 < ℓ →
+        ℓ ≤ d.inputPos.val →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+        ∃ t ≤ C * (ℓ + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+          R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) } := by
+  refine ⟨rd_State, inferInstance, inferInstance, rd_test, .inl (), .inr (true, true),
+    .inr (false, true), 2, by decide, ?_⟩
+  intro z ℓ d hd hℓ hp hr
+  refine ⟨2 * ℓ + 2, by omega, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [rd_run ℓ d hd hℓ hp hr u (by omega)]
+    by_cases hf : u ≤ ℓ
+    · simp only [rd_trace, if_pos hf, rd_cfg]
+      constructor <;> intro h <;> cases h
+    · have hu' : u ≤ 2 * ℓ + 1 := by omega
+      simp only [rd_trace, if_neg hf, if_pos hu', rd_cfg]
+      constructor <;> intro h
+      all_goals exact Bool.false_ne_true (congrArg Prod.snd (Sum.inr.inj (Option.some.inj h)))
+  · intro u hu
+    rw [rd_run ℓ d hd hℓ hp hr u hu]
+    by_cases hf : u ≤ ℓ
+    · simp only [rd_trace, if_pos hf, rd_cfg, add_sub_cancel_left, abs_le]
+      constructor <;> omega
+    · by_cases hb : u ≤ 2 * ℓ + 1
+      · simp only [rd_trace, if_neg hf, if_pos hb, rd_cfg, add_sub_cancel_left, abs_le]
+        constructor <;> omega
+      · simp only [rd_trace, if_neg hf, if_neg hb, rd_cfg, add_zero, sub_self, abs_zero]
+        omega
+  · rw [rd_run ℓ d hd hℓ hp hr (2 * ℓ + 2) (le_refl _)]
+    simp only [rd_trace, if_neg (show ¬2 * ℓ + 2 ≤ ℓ by omega),
+      if_neg (show ¬2 * ℓ + 2 ≤ 2 * ℓ + 1 by omega), rd_cfg, Nat.sub_zero, add_zero]
+    refine Cfg.ext ?_ rfl rfl rfl rfl
+    by_cases h : d.inputPos.val = ℓ
+    · simp only [rd_verdict, h, decide_true, if_true]
+    · simp only [rd_verdict, h, decide_false, if_false]
+
+-- G51 controls (inside the seal): `rfl` must fail; the published lemma closes.
+example {z : List Bool} (d : Cfg 1 Bool rd_State z) :
+    rd_test.runFrom d 0 = d := by
+  fail_if_success exact rfl
+  exact MultiTapeTM.runFrom_zero
+
+example {z : List Bool} (d : Cfg 1 Bool rd_State z) :
+    rd_test.step { d with state := none } = { d with state := none } := by
+  fail_if_success exact rfl
+  exact MultiTapeTM.step_of_halt rfl
+
+example {z : List Bool} (d : Cfg 1 Bool rd_State z) :
+    (Action.apply (⟨0, fun _ => (none, 0), none, some (Sum.inl ())⟩ : Action 1 Bool rd_State) d).state = some (Sum.inl ()) := by
+  fail_if_success exact rfl
+  rw [Action.apply_state]
+
+example  :
+    moveInputPos (0 : Fin 3) 0 = 0 := by
+  fail_if_success exact rfl
+  exact moveInputPos_zero _
+
+example  :
+    FinTM.bufferTape ([true] : List Bool) (-1) = none := by
+  fail_if_success exact rfl
+  exact FinTM.bufferTape_left _
+
+example (d : Cfg 1 Bool rd_State ([] : List Bool)) :
+    ({ d with inputPos := 0 } : Cfg 1 Bool rd_State ([] : List Bool)).inputSymbol = none := by
+  fail_if_success exact rfl
+  exact Cfg.inputSymbol_of_zero rfl
+
+example {z : List Bool} (d : Cfg 1 Bool rd_State z) :
+    d.workTapeSymbols 0 = d.workTapes 0 (d.workTapePos 0) := by
+  fail_if_success exact rfl
+  exact Cfg.workTapeSymbols_eq d 0
+
+example {z : List Bool} (d : Cfg 1 Bool rd_State z) :
+    rd_test.outputSymbol { d with state := none } = none := by
+  fail_if_success exact rfl
+  exact MultiTapeTM.outputSymbol_of_halt rfl
+
+example {z : List Bool} :
+    (Cfg.init (Sum.inl ()) z : Cfg 1 Bool rd_State z).state = some (Sum.inl ()) := by
+  fail_if_success exact rfl
+  exact Cfg.init_state _ _
+
+example  :
+    (tapeAction (0 : Fin 1) 0 none 0 (Sum.inl ()) : Action 1 Bool rd_State).state = some (Sum.inl ()) := by
+  fail_if_success exact rfl
+  simp only [tapeAction]

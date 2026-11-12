@@ -1,0 +1,19 @@
+/-- **The forward step equation** (`hF`, at every `r < |x|`; the required check). -/
+theorem probe_fold_hF (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x)
+    (r : ℕ) (hr : r < x.length) :
+    (inputFoldTM k δ a₀).step (probeFoldF δ a₀ d r) = probeFoldF δ a₀ d (r + 1) := by
+  have hs : (probeFoldF δ a₀ d r).inputSymbol = some x[r] :=
+    inputSymbolInner r (by simp [probeFoldF]; omega) hr
+  change ((inputFoldTM k δ a₀).tr (.fwd _) _ _).apply _ = _
+  simp only [inputFoldTM, hs]
+  apply Cfg.ext
+  case state =>
+    simp only [Action.apply, inputMoveAction, probeFoldF]
+    rw [List.take_succ, List.getElem?_eq_getElem hr, List.foldl_append]
+    rfl
+  case inputPos =>
+    simp only [Action.apply, inputMoveAction, probeFoldF]
+    rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp; omega)]
+    simp
+    omega
+  all_goals simp [Action.apply, inputMoveAction, probeFoldF]

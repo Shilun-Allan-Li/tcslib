@@ -1,0 +1,145 @@
+/-- A live lookup reaches the pending action whose application realizes one source transition.
+
+**Proof sketch.** Read the virtual input and mirrored work symbol, rewind the
+table, skip its count and initial-state fields, and select the source record.
+Read its eight fixed bits and prepare its successor, stopping immediately before
+the source action. Concatenate the exact runs; identify the pending native action
+separately. The old cursor, count prefix, and all skipped records are each
+bounded by the serialization length; every source state index is below the
+number of states. The resulting bound is `3L + 5N + 20`. -/
+private lemma timedCut_live_block (M : CodeTM) (α : List Bool) {x : List Bool}
+    (src : Cfg 1 Bool (Fin (M.numStates + 1)) x) (p : ℕ)
+    (hp : p ≤ M.serialize.length) (hs : src.state ≠ none) :
+    ∃ (d p' : ℕ) (ready : Cfg 4 Bool UniversalControl (pairEncode α x)),
+      d ≤ 3 * M.serialize.length + 5 * (M.numStates + 1) + 20 ∧
+      p' ≤ M.serialize.length ∧
+      (∃ bits halt, ready.state = some (.applyRecord bits halt)) ∧
+      timedCutInterpreter.runFrom (universalSimulationCfg M α src p) d = ready ∧
+      universalInterpreter.step ready = universalSimulationCfg M α (M.tm.step src) p'  := by
+  cases hq : src.state with
+  | none => exact False.elim (hs hq)
+  | some q =>
+    let base := universalSimulationCfg M α src p
+    let index := universalRecordIndex src.inputSymbol (src.workTapeSymbols 0)
+    let a := M.tm.tr q src.inputSymbol (fun _ => src.workTapeSymbols 0)
+    obtain ⟨groups, before, after, hglen, hg, hblen, hparts⟩ :=
+      timedCut_lookup_parts M q src.inputSymbol (src.workTapeSymbols 0)
+    let pg := groups.flatMap (fun g => g.flatMap universalRecordBits)
+    let pb := before.flatMap universalRecordBits
+    let count := pairEncode (Nat.bits M.numStates) []
+    let k := 2 * (Nat.bits M.numStates).length + 2
+    let pre := timedCut_Header M ++ pg ++ pb
+    let bits := universalActionBits a
+    let p' := pre.length + 8 + universalNextOnes a.state
+    let selectTime := 2 * q.val + pg.length + pb.length + 3
+    let d := 1 + (p + 1) + k + (M.tm.q₀.val + 1) + selectTime + 8 +
+      timedCut_NextCost a.state
+    have hclen : count.length = k := by
+      simpa [count, k] using universal_pair_length (Nat.bits M.numStates) []
+    have hhlen : (timedCut_Header M).length = k + M.tm.q₀.val + 1 := by
+      change (count ++ List.replicate M.tm.q₀.val true ++ [false]).length = _
+      simp only [List.length_append, List.length_replicate, List.length_cons,
+        List.length_nil, hclen]
+    have hplen : pre.length = (timedCut_Header M).length + pg.length + pb.length := by
+      simp only [pre, List.length_append]
+    have ht : M.serialize = pre ++ universalRecordBits a ++ after := by
+      simpa only [pre, pg, pb, a, List.append_assoc] using hparts
+    have hcfg : base = universalEvalCfg base .main M.serialize p (universalStateTape q.val) 1 := by
+      simp only [base, universalSimulationCfg, universalEvalCfg, hq,
+        Option.map_some, Option.getD_some]
+      rfl
+    have hi : (if base.workTapeSymbols 3 = some true then none else base.inputSymbol) =
+        src.inputSymbol := universalInput_read α src
+    have hmain : timedCutInterpreter.runFrom base 1 =
+        universalEvalCfg base (.rewindTable false index) M.serialize (p - 1)
+          (universalStateTape q.val) 1 := by
+      rw [MultiTapeTM.runFrom_succ_eq_step' (t := 0), MultiTapeTM.runFrom_zero]
+      conv_lhs => rw [hcfg]
+      have he := timedCut_Eval_step base .main (.rewindTable false index)
+        M.serialize p (universalStateTape q.val) 1 .neg 0 none (by
+          change universalAdmin (.rewindTable false (universalRecordIndex
+            (if base.workTapeSymbols 3 = some true then none else base.inputSymbol)
+            (base.workTapeSymbols 2))) .neg = _
+          rw [hi]
+          rfl)
+      simpa only [SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.coe_zero,
+        add_zero, sub_eq_add_neg] using he
+    have hrew := timedCut_table_rewind base false index M.serialize
+      (universalStateTape q.val) 1 p hp
+    have hcount := timedCut_count_run base false index M.serialize
+      (universalStateTape q.val) 1 (Nat.bits M.numStates) []
+      (List.replicate M.tm.q₀.val true ++ false :: (pg ++ pb ++ universalRecordBits a ++ after))
+      (by simpa [timedCut_Header, pairEncode, pg, pb, a, List.append_assoc] using hparts)
+    have hc : timedCutInterpreter.runFrom
+        (universalEvalCfg base (.countFirst false index) M.serialize 0 (universalStateTape q.val) 1) k =
+      universalEvalCfg base (.initialSkip index) M.serialize k (universalStateTape q.val) 1 := by
+      simpa only [Bool.false_eq_true, ↓reduceIte, List.length_nil, Nat.cast_zero,
+        zero_add, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat] using hcount
+    have hinit := timedCut_initial_skip base index M.serialize (universalStateTape q.val) 1
+      M.tm.q₀.val count (pg ++ pb ++ universalRecordBits a ++ after)
+      (by simpa [count, timedCut_Header, pg, pb, a, List.append_assoc] using hparts)
+    have hinit' : timedCutInterpreter.runFrom
+        (universalEvalCfg base (.initialSkip index) M.serialize k (universalStateTape q.val) 1)
+        (M.tm.q₀.val + 1) =
+      universalEvalCfg base (.group index) M.serialize (timedCut_Header M).length
+        (universalStateTape q.val) 1 := by
+      simpa only [hclen, hhlen, Nat.cast_add, Nat.cast_one] using hinit
+    have hselect := timedCut_select base index M.serialize groups hg before hblen
+      (timedCut_Header M) (universalRecordBits a ++ after)
+      (by simpa only [a, List.append_assoc] using hparts)
+    have hsel : timedCutInterpreter.runFrom
+        (universalEvalCfg base (.group index) M.serialize (timedCut_Header M).length
+          (universalStateTape q.val) 1) selectTime =
+      universalEvalCfg base (.readAction 0 (fun _ => false)) M.serialize pre.length
+        (universalStateTape 0) 1 := by
+      simpa only [hglen, hplen, Nat.cast_add] using hselect
+    have hread := timedCut_read_fixed base M.serialize (universalStateTape 0) 1 bits pre
+      (List.replicate (universalNextOnes a.state) true ++ false :: after)
+      (by simpa [universal_record_shape, bits, List.append_assoc] using ht)
+      7 0 (fun _ => false) rfl (by intro i hi; exact False.elim (Nat.not_lt_zero _ hi))
+    have hrd : timedCutInterpreter.runFrom
+        (universalEvalCfg base (.readAction 0 (fun _ => false)) M.serialize pre.length
+          (universalStateTape 0) 1) 8 =
+      universalEvalCfg base (.nextState bits) M.serialize (pre.length + 8)
+        (universalStateTape 0) 1 := by
+      simpa only [Fin.val_zero, Nat.cast_zero, add_zero] using hread
+    have hnext := timedCut_prepare_next base M.serialize bits a.state
+      (pre ++ List.ofFn bits) after
+      (by simpa [universal_record_shape, bits, List.append_assoc] using ht)
+    have hn : timedCutInterpreter.runFrom
+        (universalEvalCfg base (.nextState bits) M.serialize (pre.length + 8)
+          (universalStateTape 0) 1) (timedCut_NextCost a.state) =
+      universalEvalCfg base (.applyRecord bits a.state.isNone) M.serialize p'
+        (universalStateTape ((a.state.map Fin.val).getD 0)) 1 := by
+      simpa only [p', List.length_append, List.length_ofFn, Nat.cast_add, Nat.cast_ofNat] using hnext
+    have hrun := timedCut_run_join timedCutInterpreter
+      (timedCut_run_join timedCutInterpreter
+        (timedCut_run_join timedCutInterpreter
+          (timedCut_run_join timedCutInterpreter
+            (timedCut_run_join timedCutInterpreter
+              (timedCut_run_join timedCutInterpreter hmain hrew) hc) hinit') hsel) hrd) hn
+    have hstep : M.tm.step src = a.apply src := by
+      have hw : src.workTapeSymbols = fun _ : Fin 1 => src.workTapeSymbols 0 := by
+        funext i
+        rw [Fin.eq_zero i]
+      simp only [MultiTapeTM.step, hq]
+      rw [hw]
+    have hlength : M.serialize.length = pre.length + 8 +
+        universalNextOnes a.state + 1 + after.length := by
+      rw [ht, universal_record_shape]
+      simp only [List.length_append, List.length_ofFn, List.length_replicate,
+        List.length_cons, List.length_nil]
+      omega
+    have hnextBound : timedCut_NextCost a.state ≤ 2 * (M.numStates + 1) + 4 := by
+      cases hnxt : a.state with
+      | none => simp [timedCut_NextCost]
+      | some q' => have hq' := q'.isLt; simp only [timedCut_NextCost]; omega
+    have hqb := q.isLt
+    have hq₀b := M.tm.q₀.isLt
+    refine ⟨d, p', _, ?_, ?_, ⟨bits, a.state.isNone, rfl⟩, hrun, ?_⟩
+    · dsimp only [d, selectTime]
+      rw [hplen, hhlen] at hlength
+      omega
+    · dsimp only [p']; omega
+    · rw [hstep]
+      exact timed_apply_record M α src p p' a

@@ -1,0 +1,239 @@
+{
+  "PASS": true,
+  "patch_sha256": "8f4c70c9878aeec3fad7184b0c6aa7b36e8e57aea7030ff52fe98764ecbc0625",
+  "changed_command_lines": [
+    {
+      "line": "    rw [MultiTapeTM.step_of_some (q := .prog l)",
+      "disposition": "Complete command retained for manual context; uses local facts or existing published equations, without a new definition argument."
+    },
+    {
+      "line": "      (by simp only [mkCfg_state, hl, Option.map_some])]",
+      "disposition": "Published mkCfg state projection and Core Option.map_some equations plus local hl."
+    },
+    {
+      "line": "      exact \u27e8fun _ => by simpa only [MultiTapeTM.runFrom_zero] using hsim0,",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "    rw [MultiTapeTM.step_of_some (q := .ret1 l s dir b)",
+      "disposition": "Complete command retained for manual context; uses local facts or existing published equations, without a new definition argument."
+    },
+    {
+      "line": "      (by simp only [mkCfg_state])]",
+      "disposition": "Published mkCfg state projection and Core Option.map_some equations plus local hl."
+    },
+    {
+      "line": "        rw [show (compileTM P l\u2080 D q0).runFrom (seam c0) 1 = ((compileTM P l\u2080 D q0).step (seam c0))",
+      "disposition": "Complete command retained for manual context; uses local facts or existing published equations, without a new definition argument."
+    },
+    {
+      "line": "          from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "      from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "          from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero], hret1]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "          from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero], hret1]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "    rw [show (compileTM P l\u2080 D q0).runFrom gH 1 = (compileTM P l\u2080 D q0).step gH",
+      "disposition": "Complete command retained for manual context; uses local facts or existing published equations, without a new definition argument."
+    },
+    {
+      "line": "      from by rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero], hret1,",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "    simp only [MultiTapeTM.mem_visitedByTapeHead_iff, hinit, hrun]",
+      "disposition": "Published visited-head membership equation, local initialization equality and local run equality; no definition argument."
+    },
+    {
+      "line": "      (by rw [hvisit T0 j]; exact hz)",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "    rw [hvisit T0 j] at h1",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "    | zero => intro _; simp only [MultiTapeTM.runFrom_zero]",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using",
+      "disposition": "Published zero/successor run equations. Existing RO1 one-step chains remain explicitly scheduled, with exact overlap retained."
+    },
+    {
+      "line": "        (by rw [hinit, hrun]; exact hz)",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "      rw [hvisit T0 j] at hmem",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "    rw [hcSdef, hcut]",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "    rw [hcSdef, hcut]",
+      "disposition": "Local proven equalities used as rewrite rules; no ordinary runtime definition argument."
+    },
+    {
+      "line": "  rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop t w, NDTM.runWith_append, hboot]",
+      "disposition": "Same-home initialization equation, Core List.take_append_drop equation, NDTM runWith_append equation and local hboot."
+    },
+    {
+      "line": "  rw [hb, rewind_run m _ _ _ _ _ (w.drop t) (by simp; omega),",
+      "disposition": "Same-home rewind_run theorem and local hb; simp has no explicit definition argument; only selected-time variable changed."
+    }
+  ],
+  "new_forbidden_foreign_Core_Mathlib_definition_arguments": 0,
+  "full_target_named_guard_argument_checks": [
+    {
+      "id": 16,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_unary_first",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 17,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "b2_verify_timed",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 47,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "ComputesInTime.of_spaceUsed_le",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 50,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "name": "call_run",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 51,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "name": "cleanTM_run",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.MultiTapeTM.initCfg"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 52,
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "name": "runFrom_count_eq",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 54,
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "clockTM_setup",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 58,
+      "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "name": "startup",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 82,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "name": "clockStageCfg_captures",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 83,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "one_work_tape",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 84,
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "name": "dg_all_inputs",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 85,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "timedCapture_start",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    },
+    {
+      "id": 86,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "universalCapture_start",
+      "active_guard_names": [
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step"
+      ],
+      "forced_named_guard_definition_arguments": 0
+    }
+  ],
+  "all13_full_scopes_no_forced_named_guard_unfold": true,
+  "scope_limit": "This review covers all added explicit argument lines and all named guarded definitions inside the13 complete declarations. Other inherited foreign definitions are outside the selected guard closure; no global Rule10/opacity approval is inferred.",
+  "RO1": "Call seven regions and Clean zero/one readers remain in the existing acknowledged one-step kind pending generic API/home. No generic unlanded API, new public interface, import, statement or waiver."
+}

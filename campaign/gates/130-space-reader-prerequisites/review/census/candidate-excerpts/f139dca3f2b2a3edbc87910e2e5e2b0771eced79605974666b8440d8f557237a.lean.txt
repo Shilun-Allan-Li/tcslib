@@ -1,0 +1,18 @@
+/-- **R8.5** Seek the native input head to the binary position held on a dedicated
+counter tape (`Bool`; lifted to rich hosts by R8.0). A copy to scratch, a rewind, and a
+`counterLoopTM` round "input right" per unit. The counter is consumed and the scratch
+restored. -/
+theorem exists_inputSeekTM :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
+      (C : ℕ),
+      ∀ {x : List Bool} (p : ℕ) (w : List Bool), Nat.ofDigits 2 (w.map Bool.toNat) = p →
+        p ≤ x.length + 1 → ∀ d : Cfg 2 Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (R.runFrom d t).state = some exit ∧ ((R.runFrom d t).inputPos : ℕ) = p ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧ (R.runFrom d t).workTapePos = d.workTapePos ∧
+          (R.runFrom d t).output = d.output := by
+  sorry

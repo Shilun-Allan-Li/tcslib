@@ -1,0 +1,73 @@
+[
+  {
+    "id": 1,
+    "name": "Turing.MultiTapeTM.ConfigCount.core_eq",
+    "owner": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+    "full_literal_doc_header": "/-- The core records exactly the state, input position, work tapes and work-head\npositions of a configuration, in that order; it omits the output tape. -/\ntheorem core_eq (c : Cfg k Bool S x) :\n    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) ",
+    "full_literal_body": "\n  rfl\n\n",
+    "full_literal_chunk": "/-- The core records exactly the state, input position, work tapes and work-head\npositions of a configuration, in that order; it omits the output tape. -/\ntheorem core_eq (c : Cfg k Bool S x) :\n    core c = (c.state, c.inputPos, c.workTapes, c.workTapePos) := by\n  rfl\n\n",
+    "literal_chunk_sha256": "e15bc972601ff5bedffce3a9241bbb951342ab5f48d9777d5c2a505713e86c53",
+    "start": 3734,
+    "end": 4004,
+    "ordinary_foreign_heads": [],
+    "native_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59"
+  },
+  {
+    "id": 2,
+    "name": "Turing.ClockHost.bootCfg_of_halt",
+    "owner": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+    "full_literal_doc_header": "/-- A halted yardstick configuration is the rewind configuration with its output on the\nextra tape and with the attempt bank blank. -/\ntheorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :\n    bootCfg (A := A) c =\n      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)\n        (fun _ => 0) (bufferTape c.output) c.output.length [] ",
+    "full_literal_body": "\n  simp only [bootCfg, hc, Option.map_none, Option.getD_none]\n\n",
+    "full_literal_chunk": "/-- A halted yardstick configuration is the rewind configuration with its output on the\nextra tape and with the attempt bank blank. -/\ntheorem bootCfg_of_halt (c : Cfg S.k Bool S.State x) (hc : c.state = none) :\n    bootCfg (A := A) c =\n      hostCfg (some .rew) c.inputPos c.workTapes c.workTapePos (fun _ _ => none)\n        (fun _ => 0) (bufferTape c.output) c.output.length [] := by\n  simp only [bootCfg, hc, Option.map_none, Option.getD_none]\n\n",
+    "literal_chunk_sha256": "d0bdeb967e7855d214f094fa23d5b7469966dce746b4df1bd7db84b1ce464c59",
+    "start": 14545,
+    "end": 14993,
+    "ordinary_foreign_heads": [
+      "Turing.FinTM.bufferTape"
+    ],
+    "native_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59"
+  },
+  {
+    "id": 3,
+    "name": "Turing.ClockHost.runCfg_initCfg",
+    "owner": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+    "full_literal_doc_header": "/-- The attempt configuration of the initial machine has the initial control and input\nposition, a blank attempt bank, and no captured output, at the given yardstick position. -/\ntheorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :\n    runCfg m (A.tm.initCfg x) j sT sP =\n      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)\n        (fun _ => 0) (yard m) j [] ",
+    "full_literal_body": "\n  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by\n    funext i z\n    rw [NDTM.initCfg_eq, Cfg.init_workTapes]\n  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by\n    funext i\n    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]\n  rw [runCfg, hw, hp]\n  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]\n\n",
+    "full_literal_chunk": "/-- The attempt configuration of the initial machine has the initial control and input\nposition, a blank attempt bank, and no captured output, at the given yardstick position. -/\ntheorem runCfg_initCfg (j : ℤ) (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :\n    runCfg m (A.tm.initCfg x) j sT sP =\n      hostCfg (some (.run (some A.tm.q₀) none)) 1 sT sP (fun _ _ => none)\n        (fun _ => 0) (yard m) j [] := by\n  have hw : (A.tm.initCfg x).workTapes = (fun _ _ => none) := by\n    funext i z\n    rw [NDTM.initCfg_eq, Cfg.init_workTapes]\n  have hp : (A.tm.initCfg x).workTapePos = (fun _ => 0) := by\n    funext i\n    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]\n  rw [runCfg, hw, hp]\n  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]\n\n",
+    "literal_chunk_sha256": "f3c361cd024b3acd85816a3f92f0c41c412d441f4d6f496c152774b7490fa14c",
+    "start": 22646,
+    "end": 23424,
+    "ordinary_foreign_heads": [
+      "Turing.FinTM.bufferTape",
+      "Turing.NDTM.initCfg",
+      "Turing.Cfg.init"
+    ],
+    "native_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59"
+  },
+  {
+    "id": 4,
+    "name": "Turing.FinTM.sweepRevCfg_state",
+    "owner": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+    "full_literal_doc_header": "/-- The reverse-sweep configuration has the supplied control state. -/\ntheorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).state = q ",
+    "full_literal_body": "\n  rfl\n\n",
+    "full_literal_chunk": "/-- The reverse-sweep configuration has the supplied control state. -/\ntheorem sweepRevCfg_state {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).state = q := by\n  rfl\n\n",
+    "literal_chunk_sha256": "f8da4a656717e7d2ce438bf52a875f9548cec35fa4f7f0956172e404ee409ac9",
+    "start": 7261,
+    "end": 7532,
+    "ordinary_foreign_heads": [],
+    "native_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59"
+  },
+  {
+    "id": 5,
+    "name": "Turing.FinTM.sweepRevCfg_output",
+    "owner": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+    "full_literal_doc_header": "/-- The reverse-sweep configuration has the supplied output word. -/\ntheorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).output = out ",
+    "full_literal_body": "\n  rfl\n\n",
+    "full_literal_chunk": "/-- The reverse-sweep configuration has the supplied output word. -/\ntheorem sweepRevCfg_output {A S : Type} {x : List A} (q : Option S)\n    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A) :\n    (sweepRevCfg q p z l r out).output = out := by\n  rfl\n\n",
+    "literal_chunk_sha256": "238800c43d04592a1d787796b44e7cad4de66f0588e13aa65f9ee7a91bf8a046",
+    "start": 7532,
+    "end": 7805,
+    "ordinary_foreign_heads": [],
+    "native_source_head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59"
+  }
+]

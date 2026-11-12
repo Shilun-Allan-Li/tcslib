@@ -1,0 +1,19 @@
+theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
+    ∃ M' : CodeTM,
+      (∀ (x output : List Bool) (t : ℕ),
+        M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
+          M.tm.spaceUsed (M.tm.initCfg x) t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  let M₀ : FinTM Bool := ⟨1, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin,
+    fun x t => MultiTapeTM.relabelState_spaceUsed tm M₀.stateEquivFin x t⟩
+
+/-- **The code normal form of a one-work-tape machine**. For a binary machine `M` with one work
+tape, the coded machine with `|Q| - 1` as its state index bound, whose transition function is `M`'s
+transported along the canonical bijection `Q ≃ Fin |Q|` (`Turing.FinTM.stateEquivFin`; `Q` is
+inhabited by the start state). [AB09, §1.4] Noncomputable, through `Fintype.equivFinOfCardEq`. -/

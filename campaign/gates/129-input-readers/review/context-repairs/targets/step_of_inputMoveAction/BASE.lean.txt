@@ -1,0 +1,13 @@
+/-- **One step of an input-only action** (design §12.8a). If the machine's table gives
+`Turing.inputMoveAction inp q'` at the current state and reads, one step moves the input
+head by `inp`, enters `q'`, and changes nothing else. At `inp = 0` (with
+`moveInputPos_zero`) this is every live anchor's stationarity.
+
+**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`. -/
+theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State}
+    (inp : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
+    M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
+  simp only [MultiTapeTM.step, hq, htr]
+  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]

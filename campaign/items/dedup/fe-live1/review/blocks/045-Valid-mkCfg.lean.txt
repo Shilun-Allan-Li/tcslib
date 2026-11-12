@@ -1,0 +1,7 @@
+noncomputable def mkCfg (x : List Bool) (s : ℕ) (f : ℕ → CellV N) (pos : Fin (x.length + 2)) :
+    Cfg N.k Bool N.State x := by
+  classical exact
+  ⟨((f 0).1.map Prod.fst).getD none, pos,
+    fun i z => if |z| ≤ s then ((f (z + s).toNat).2 i).1 else none,
+    fun i => if h : ∃ j, j < 2 * s + 1 ∧ ((f j).2 i).2 = true then (Nat.find h : ℤ) - s else 0,
+    outOf (((f 0).1.map Prod.snd).getD 0)⟩

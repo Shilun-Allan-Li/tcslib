@@ -1,0 +1,9 @@
+/-- Completed comparisons are absorbing on the entire configuration. -/
+private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
+    (b : Bool) (hc : c.state = some (.inr (.inr b))) : clCmpTM.tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  change (FinTM.controlAction 0 (some (.inr (.inr b)))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

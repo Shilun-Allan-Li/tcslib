@@ -1,0 +1,38 @@
+/-- A returned singleton verdict restores the complete stable source frame
+and enters its selected answer state. The cost includes the final redirect.
+
+**Proof sketch.** Relocate the inherited full restoration and its internal
+control cut through `oracleHost_dispatch`. Its returned four-tape view is
+the stable source view by `oracleSource_localView`; only the source control
+changes, and the side may be normalized at zero. -/
+private theorem oracleHost_restore (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side verdict : Bool)
+    (hs : c.state ≠ none)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side) :
+    ∃ side', oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side' ∧
+      (oracleHost M C hc en ex).tm.runFrom
+        ((oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [verdict] .read
+            c.inputPos c.output)).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch))
+        ((c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs + 4) =
+          oracleStableCfg M C
+            ({c with state := some (if verdict then M.tm.qYes else M.tm.qNo)}) side' := by
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  obtain ⟨side', hside, hrestore⟩ := oracleRestore f p side verdict hb c.inputPos c.output
+  have admin := oracleHost_dispatch M C hc en ex
+    (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+    (oracleReadyCfg f p side [verdict] .read c.inputPos c.output)
+    (oracleLocalCfg f p (.answer verdict side') c.inputPos c.output)
+    (p.natAbs + 3) hrestore (.answer verdict side') rfl
+    ⟨.source, (if verdict then M.tm.qYes else M.tm.qNo, side')⟩ rfl
+    (oracleRestore_cut f p side verdict hb c.inputPos c.output)
+  refine ⟨side', hside, admin.trans ?_⟩
+  change ((embedEmitCfg _ (oracleSourceCfg M C c side').workTapes
+    (oracleSourceCfg M C c side').workTapePos []
+    (oracleLocalCfg f p (.answer verdict side') c.inputPos c.output)).mapState _) = _
+  rw [oracleSource_localView M C hc c side' (.answer verdict side') hs]
+  cases hstate : c.state <;>
+    simp_all [oracleStableCfg, oracleSourceCfg, oracleShadowCfg, embedEmitCfg, Cfg.mapState]

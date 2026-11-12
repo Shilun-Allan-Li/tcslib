@@ -1,0 +1,13 @@
+/-- Exact observations depend only on the public configuration-graph vertex. -/
+private theorem codecObserve_congr (M : FinTM Bool) (n s : ℕ) (x : List Bool)
+    (hx : x.length = n) (c d : Cfg M.k Bool M.State x)
+    (h : NDTM.coreSum c = NDTM.coreSum d) :
+    codecObserve M n s x hx c = codecObserve M n s x hx d := by
+  have hcore := congrArg Prod.fst h
+  have hout := congrArg Prod.snd h
+  change outSummary c.output = outSummary d.output at hout
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at hcore
+  rcases hcore with ⟨hst, hip, hwt, hwp⟩
+  funext b
+  cases b <;> simp only [codecObserve, codecRowBits, codecRowOf,
+    MultiTapeTM.ConfigCount.coreCode, hst, hip, hwt, hwp, hout]

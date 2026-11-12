@@ -1,0 +1,40 @@
+/-- Canonical ambient words agree with a silent transport whose selected tapes
+have those words and whose capture is empty. Only the control is relabeled.
+**Proof sketch.** Selected tapes and heads use the public projections, the capture
+uses `cert_capture_fields`, and the remainder uses R1's frame contract at time zero. -/
+private theorem cert_silent_words {m k : ℕ} {S U : Type} {y : List Bool}
+    (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (w : Fin k → List Bool) (d : Cfg m Bool S y)
+    (q : S) (finish : U) (hs : d.state = some q) (hp : d.inputPos = 1)
+    (htape : ∀ i, d.workTapes i = FinTM.bufferTape (w (ι i)))
+    (hhead : ∀ i, d.workTapePos i = 0) (ho : d.output = []) (hc : w cap = []) :
+    (embedSilentCfg ι cap (fun i => FinTM.bufferTape (w i)) (fun _ => 0) [] [] d).mapState
+      (fun _ => finish) = Cfg.ofWords finish w := by
+  have frame := (embedSilentTM_frame ι cap hcap M (fun i => FinTM.bufferTape (w i))
+    (fun _ => 0) [] [] d 0).1
+  have capture := cert_capture_fields ι cap hcap (fun i => FinTM.bufferTape (w i))
+    (fun _ => 0) [] [] d
+  apply Cfg.ext
+  · simp only [Cfg.mapState, embedSilentCfg, hs, Option.map_some, Cfg.ofWords]
+  · exact hp
+  · funext i
+    change (embedSilentCfg ι cap (fun i => FinTM.bufferTape (w i)) (fun _ => 0) [] [] d).workTapes i = FinTM.bufferTape (w i)
+    by_cases hi : i ∈ Set.range ι
+    · obtain ⟨r, rfl⟩ := hi
+      rw [embedSilentCfg_selected_tape]
+      exact htape r
+    · by_cases he : i = cap
+      · subst i
+        simpa only [ho, hc, List.nil_append] using capture.1
+      · exact (frame i hi he).1
+  · funext i
+    change (embedSilentCfg ι cap (fun i => FinTM.bufferTape (w i)) (fun _ => 0) [] [] d).workTapePos i = 0
+    by_cases hi : i ∈ Set.range ι
+    · obtain ⟨r, rfl⟩ := hi
+      rw [embedSilentCfg_selected_pos]
+      exact hhead r
+    · by_cases he : i = cap
+      · subst i
+        simpa only [ho, List.nil_append, List.length_nil, Nat.cast_zero] using capture.2
+      · exact (frame i hi he).2
+  · rfl

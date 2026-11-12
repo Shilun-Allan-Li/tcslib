@@ -1,0 +1,12 @@
+/-- Write a boundary and turn from a forward scan into a backward scan. -/
+private lemma sweep_turn_left {A S : Type} {x : List A} (q q' : Option S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b emit : Option A) (di : SignType) :
+    (⟨di, fun _ => (some b, .neg), emit, q'⟩ : Action 1 A S).apply
+      (sweepCfg q p z l r out) =
+    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList) := by
+  refine Cfg.ext rfl rfl ?_ rfl rfl
+  funext i w
+  change Function.update (sweepTape z l r) z b w = _
+  rw [sweepTape_write, sweepTape_turn]
+  rfl

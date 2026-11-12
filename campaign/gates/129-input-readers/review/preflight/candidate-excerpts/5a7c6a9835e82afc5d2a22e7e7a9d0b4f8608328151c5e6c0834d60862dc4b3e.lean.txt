@@ -1,0 +1,14 @@
+/-- A live administrative action preserves both the saved bank and output. -/
+private lemma satEvalAction_apply (M : FinTM Bool) {w : List Bool}
+    (saved : Cfg M.k Bool M.State w) (u : List Bool) (q q' : SatEvalControl)
+    (i i' : ℕ) (hi : i ≤ w.length) (hi' : i' ≤ w.length) (j j' : ℤ)
+    (m d : SignType)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (w.length + 2)) m = ⟨i' + 1, by omega⟩)
+    (hd : j + d.cast = j') :
+    (satEvalAction M m d none (some q')).apply (satEvalCfg M saved u q i hi j) =
+      satEvalCfg M saved u q' i' hi' j' := by
+  refine Cfg.ext rfl hm rfl ?_ rfl
+  funext t
+  by_cases ht : t.val < M.k
+  · simp [satEvalAction, satEvalCfg, Action.apply, ht]
+  · simpa [satEvalAction, satEvalCfg, Action.apply, ht] using hd

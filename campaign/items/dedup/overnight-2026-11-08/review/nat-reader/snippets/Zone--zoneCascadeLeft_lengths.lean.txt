@@ -1,0 +1,13 @@
+theorem zoneCascadeLeft_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : ZoneContents ℓ)
+    (hl : ∀ k (hk : k < j), z.left ⟨k, by omega⟩ = [])
+    (hr : ∀ k (hk : k < j), (z.right ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : 2 ^ j ≤ (z.left ⟨j, hj⟩).length)
+    (hroom : (z.right ⟨j, hj⟩).length + 2 ^ j ≤ zoneCapacity j) :
+    (∀ k (hk : k < j),
+      ((zoneCascadeLeft j z).left ⟨k, by omega⟩).length = 2 ^ k ∧
+      ((zoneCascadeLeft j z).right ⟨k, by omega⟩).length = 2 ^ k) ∧
+    ((zoneCascadeLeft j z).left ⟨j, hj⟩).length = (z.left ⟨j, hj⟩).length - 2 ^ j ∧
+    ((zoneCascadeLeft j z).right ⟨j, hj⟩).length = (z.right ⟨j, hj⟩).length + 2 ^ j :=
+  zoneCascadeRight_lengths j hj z.swap hl hr hdonor hroom
+
+/-- The cascade in direction `dir` (`true` is a right head move). -/

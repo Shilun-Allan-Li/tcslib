@@ -1,0 +1,24 @@
+/-- An R1 configuration is determined by its selected bank and its ambient
+frame. Proof sketch: use the public selected-tape projections on the bank and
+the public frame contract at time zero elsewhere. This seam glue does not
+unfold or repeat R1's partial-inverse construction. -/
+private theorem oracleBankCfg_eq {m k : ℕ} {S : Type} {x : List Bool}
+    (A : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (c : Cfg m Bool S x) (d : Cfg k Bool S x)
+    (hs : c.state = d.state) (hin : c.inputPos = d.inputPos) (hout : c.output = d.output)
+    (htape : ∀ i, c.workTapes i = d.workTapes (ι i))
+    (hhead : ∀ i, c.workTapePos i = d.workTapePos (ι i)) :
+    embedEmitCfg ι d.workTapes d.workTapePos [] c = d := by
+  refine Cfg.ext hs hin ?_ ?_ (by simpa [embedEmitCfg] using hout)
+  · funext j
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_tape]
+      exact htape i
+    · exact ((embedEmitTM_frame ι A d.workTapes d.workTapePos [] c 0).1 j hj).1
+  · funext j
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_pos]
+      exact hhead i
+    · exact ((embedEmitTM_frame ι A d.workTapes d.workTapePos [] c 0).1 j hj).2

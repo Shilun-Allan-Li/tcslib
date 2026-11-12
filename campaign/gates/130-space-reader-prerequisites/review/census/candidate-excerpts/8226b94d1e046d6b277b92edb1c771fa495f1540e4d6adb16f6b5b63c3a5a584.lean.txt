@@ -1,0 +1,33 @@
+/-- The input rewind reaches the left boundary and enters the anchor seam.
+**Proof sketch.** At position zero the input read is blank, so the final
+branch fires: the head steps right to the canonical position one and control
+enters the anchor; the resulting configuration is literally the
+`Cfg.ofWords` seam carrying the copied input on tape zero. -/
+private theorem rwInput_zero (hek : 0 < Em.k) (x : List Bool) :
+    (emitIterBody Em Gm hek ee ex ge gx).tm.step
+        (fullCfg Em Gm x .rwInput 0 (by omega) 0) =
+      Cfg.ofWords .anchor (stateWord (max Em.k Gm.k) x) := by
+  have hinp : (fullCfg Em Gm x .rwInput 0 (by omega) 0).inputSymbol = none := by
+    simp only [fullCfg, Cfg.inputSymbol]
+    rw [dif_pos (by apply Fin.ext; simp)]
+  have h1 : (emitIterBody Em Gm hek ee ex ge gx).tm.step
+      (fullCfg Em Gm x .rwInput 0 (by omega) 0) =
+      ((emitIterBody Em Gm hek ee ex ge gx).tm.tr .rwInput
+        (fullCfg Em Gm x .rwInput 0 (by omega) 0).inputSymbol
+        (fullCfg Em Gm x .rwInput 0 (by omega) 0).workTapeSymbols).apply
+        (fullCfg Em Gm x .rwInput 0 (by omega) 0) := rfl
+  rw [h1, hinp]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · show moveInputPos (⟨0, by omega⟩ : Fin (x.length + 2)) .pos = _
+    rw [moveInputPos_pos_of_ne_right _ (by simp)]
+    apply Fin.ext
+    simp [Cfg.ofWords]
+  · funext i
+    by_cases hi : (i : ℕ) = 0
+    · simp [emitIterBody, FinTM.controlAction, Action.apply, fullCfg, Cfg.ofWords,
+        stateWord, hi]
+    · simp [emitIterBody, FinTM.controlAction, Action.apply, fullCfg, Cfg.ofWords,
+        stateWord, hi]
+  · funext i
+    by_cases hi : (i : ℕ) = 0 <;>
+      simp [emitIterBody, FinTM.controlAction, Action.apply, fullCfg, Cfg.ofWords, hi]

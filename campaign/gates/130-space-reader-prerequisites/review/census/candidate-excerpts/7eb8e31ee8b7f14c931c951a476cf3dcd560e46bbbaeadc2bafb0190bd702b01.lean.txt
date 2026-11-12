@@ -1,0 +1,17 @@
+private def emitterCompareTM : FinTM Bool where
+  k := 2
+  State := Fin 3 × Bool
+  tm := {
+    q₀ := (0, true)
+    tr := fun q _ work => match q.1.val with
+      | 0 =>
+        if work 0 = none ∧ work 1 = none then
+          ⟨0, fun _ => (none, .neg), none, some (1, q.2)⟩
+        else
+          ⟨0, fun _ => (none, .pos), none,
+            some (0, q.2 && decide (work 0 = work 1))⟩
+      | 1 =>
+        if work 0 = none ∧ work 1 = none then
+          ⟨0, fun _ => (none, .pos), none, some (2, q.2)⟩
+        else ⟨0, fun _ => (none, .neg), none, some (1, q.2)⟩
+      | _ => controlAction 0 (some (2, q.2)) }

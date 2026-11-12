@@ -1,0 +1,172 @@
+/-- Add the published input validator to a binary-input machine. Foreign symbols are rejected
+before its work tapes are used, so the resulting finite machine is space bounded on all inputs.
+
+**Proof sketch.** The validation contract branches to a first-halt contract of the supplied
+machine or the false emitter. Both use the same absolute head interval. Read the branch's
+public endpoint and envelope equations, then sum the interval bound over the physical tapes. -/
+private lemma sph_validated_machine {k : ℕ} {Q P : Type} [Fintype Q] [DecidableEq Q]
+    [Fintype P] [DecidableEq P]
+    (V : MultiTapeTM k (RecSym Q (Fin 3)) P) (entry : P) (S : ℕ → ℕ)
+    (pred : List Bool → Bool → Prop)
+    (hV : ∀ x : List Bool, ∃ t b,
+      (V.runFrom (Cfg.init entry (x.map (RecSym.digitEmb Q (Fin 3)))) t).state = none ∧
+      (V.runFrom (Cfg.init entry (x.map (RecSym.digitEmb Q (Fin 3)))) t).output =
+        [RecSym.digit b] ∧
+      (∀ u ≤ t, ∀ j,
+        |(V.runFrom (Cfg.init entry (x.map (RecSym.digitEmb Q (Fin 3)))) u).workTapePos j| ≤
+          (S x.length : ℤ)) ∧ pred x b) :
+    ∃ D : FinTM (RecSym Q (Fin 3)),
+      ∀ ys : List (RecSym Q (Fin 3)), ∃ t b,
+        D.ComputesInTime ys [RecSym.digit b] t ∧
+        D.tm.spaceUsed (D.tm.initCfg ys) t ≤ k * (2 * S ys.length + 1) ∧
+        ∀ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3)) → pred x b := by
+  classical
+  let F : MultiTapeTM k (RecSym Q (Fin 3)) (ScanPhase Bool) :=
+    inputFoldTM k (fun a c => a && sphDigit c) true
+  let E := sphEmitTM k (RecSym.digit false : RecSym Q (Fin 3))
+  let R := seamCompTM₂ F (.done true) (.done false) V entry E ()
+  let en : (ScanPhase Bool ⊕ P) ⊕ Unit := .inl (.inl (.fwd true))
+  let D : FinTM (RecSym Q (Fin 3)) :=
+    { k := k
+      State := (ScanPhase Bool ⊕ P) ⊕ Unit
+      fintypeState := inferInstance
+      decEqState := inferInstance
+      tm := {R with q₀ := en} }
+  refine ⟨D, ?_⟩
+  intro ys
+  let a : Cfg k (RecSym Q (Fin 3)) (ScanPhase Bool) ys := Cfg.init (.fwd true) ys
+  obtain ⟨b, hr, hvalid, hcut, hheads⟩ := sph_validation_run a
+    (Cfg.init_state _ _) (Cfg.init_inputPos _ _)
+  let a' := {a with state := some (ScanPhase.done b)}
+  let radius := S ys.length
+  have hrad : (0 : ℤ) ≤ radius := by omega
+  let C₀ : Contract F (.fwd true) {some (.done true), some (.done false)} Unit ys :=
+    { pre := fun _ d => d = a
+      time := fun _ _ => 2 * ys.length + 2
+      post := fun _ _ => a'
+      lo := fun _ _ _ => -(radius : ℤ)
+      hi := fun _ _ _ => (radius : ℤ)
+      run := by intro _ d _ hd; subst d; exact hr
+      exit_mem := by
+        intro _ d _ _
+        cases b <;> simp only [Set.mem_insert_iff, Set.mem_singleton_iff, a', or_true, true_or]
+      cut := by
+        intro _ d _ hd u hu hm
+        subst d
+        rcases hm with hm | hm
+        · exact hcut u hu true hm
+        · exact hcut u hu false hm
+      env := by
+        intro _ d _ hd u hu j
+        subst d
+        rw [hheads j u hu, Cfg.init_workTapePos, Finset.mem_Icc]
+        exact ⟨by omega, hrad⟩ }
+  have hstart₁ : a'.mapState (fun _ => entry) = Cfg.init entry ys := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.init_state]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+  have hC₁ : ∃ C₁ : Contract V entry {none} Unit ys,
+      (b = true → C₁.pre () (Cfg.init entry ys)) ∧
+      (∀ d j, C₁.lo () d j = -(radius : ℤ) ∧ C₁.hi () d j = (radius : ℤ)) ∧
+      (b = true → ∃ ans,
+        (C₁.post () (Cfg.init entry ys)).state = none ∧
+        (C₁.post () (Cfg.init entry ys)).output = [RecSym.digit ans] ∧
+        ∀ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3)) → pred x ans) := by
+    by_cases hb : b = true
+    · obtain ⟨x, rfl⟩ := hvalid.mp hb
+      obtain ⟨v, ans, hvs, hvo, hvh, hp⟩ := hV x
+      obtain ⟨C₁, hpre, hpost, henv⟩ := sph_halt_contract V entry
+        (Cfg.init entry (x.map (RecSym.digitEmb Q (Fin 3)))) v radius hvs
+        (by simpa only [radius, List.length_map] using hvh)
+      refine ⟨C₁, fun _ => (hpre _).mpr rfl, henv, ?_⟩
+      intro _
+      refine ⟨ans, ?_, ?_, ?_⟩
+      · rw [hpost]; exact hvs
+      · rw [hpost]; exact hvo
+      · intro x' hx
+        have heq : x = x' := List.map_injective_iff.mpr (RecSym.digitEmb Q (Fin 3)).injective hx
+        subst x'
+        exact hp
+    · let C₁ : Contract V entry {none} Unit ys :=
+        { pre := fun _ _ => False
+          time := fun _ _ => 0
+          post := fun _ d => d
+          lo := fun _ _ _ => -(radius : ℤ)
+          hi := fun _ _ _ => (radius : ℤ)
+          run := by intro _ _ _ h; exact False.elim h
+          exit_mem := by intro _ _ _ h; exact False.elim h
+          cut := by intro _ _ _ h; exact False.elim h
+          env := by intro _ _ _ h; exact False.elim h }
+      exact ⟨C₁, fun h => False.elim (hb h), fun _ _ => ⟨rfl, rfl⟩,
+        fun h => False.elim (hb h)⟩
+  obtain ⟨C₁, hpre₁, henv₁, hpost₁⟩ := hC₁
+  have hne : (ScanPhase.done true : ScanPhase Bool) ≠ .done false := by
+    intro h; cases h
+  let C := Contract.branch hne C₀ C₁ (sphEmitContract (RecSym.digit false) ys)
+    (fun _ => ()) (fun _ => ())
+    (by
+      intro _ d _ hd he
+      have hb : b = true := ScanPhase.done.inj (Option.some.inj he)
+      change C₁.pre () (a'.mapState fun _ => entry)
+      rw [hstart₁]
+      exact hpre₁ hb)
+    (fun _ _ _ _ _ => True.intro)
+  let d₀ : Cfg k (RecSym Q (Fin 3)) ((ScanPhase Bool ⊕ P) ⊕ Unit) ys := Cfg.init en ys
+  have hd₀ : d₀.state = some (Sum.inl (Sum.inl (.fwd true))) := Cfg.init_state _ _
+  have hpre : C.pre () d₀ := by
+    rw [Contract.branch_pre]
+    change (d₀.mapState fun _ => ScanPhase.fwd true) = a
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+  have hh (u : ℕ) (hu : u ≤ C.time () d₀) (j) :
+      |(R.runFrom d₀ u).workTapePos j| ≤ (radius : ℤ) := by
+    have h := C.env () d₀ hd₀ hpre u hu j
+    rw [Contract.branch_lo, Contract.branch_hi] at h
+    dsimp only [C₀, sphEmitContract] at h
+    rw [(henv₁ _ j).1, (henv₁ _ j).2] at h
+    simp only [a', a, Cfg.mapState_workTapePos, Cfg.init_workTapePos] at h
+    split_ifs at h
+    · simpa only [min_self, max_self, Finset.mem_Icc, ← abs_le] using h
+    · rw [min_eq_left (by omega), max_eq_left hrad, Finset.mem_Icc] at h
+      exact abs_le.mpr h
+  have hend : ∃ ans,
+      (R.runFrom d₀ (C.time () d₀)).state = none ∧
+      (R.runFrom d₀ (C.time () d₀)).output = [RecSym.digit ans] ∧
+      ∀ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3)) → pred x ans := by
+    have hr' := C.run () d₀ hd₀ hpre
+    rw [Contract.branch_post] at hr'
+    dsimp only [C₀] at hr'
+    by_cases hb : b = true
+    · obtain ⟨ans, hs, ho, hp⟩ := hpost₁ hb
+      rw [if_pos (by change some (ScanPhase.done b) = some (.done true); rw [hb]),
+        hstart₁] at hr'
+      refine ⟨ans, ?_, ?_, hp⟩
+      · rw [hr', Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_none, Option.map_none]
+      · rw [hr', Cfg.mapState_output, Cfg.mapState_output, ho]
+    · rw [if_neg (by intro h; exact hb (ScanPhase.done.inj (Option.some.inj h)))] at hr'
+      refine ⟨false, ?_, ?_, ?_⟩
+      · rw [hr', Cfg.mapState_state]
+        rfl
+      · rw [hr', Cfg.mapState_output]
+        dsimp only [sphEmitContract]
+        rw [Cfg.mapState_output, Cfg.init_output, List.nil_append]
+      · intro x hx
+        exact False.elim (hb (hvalid.mpr ⟨x, hx⟩))
+  obtain ⟨ans, hstate, hout, hp⟩ := hend
+  have hrun (u : ℕ) : D.tm.runFrom (D.tm.initCfg ys) u = R.runFrom d₀ u := by
+    rw [MultiTapeTM.initCfg_with_q₀, MultiTapeTM.runFrom_with_q₀]
+  refine ⟨C.time () d₀, ans, ?_, ?_, hp⟩
+  · apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    rw [hrun]
+    exact ⟨hstate, hout⟩
+  · apply MultiTapeTM.spaceUsed_le_of_abs_le
+    intro u hu j
+    rw [hrun, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos, sub_zero]
+    exact hh u hu j

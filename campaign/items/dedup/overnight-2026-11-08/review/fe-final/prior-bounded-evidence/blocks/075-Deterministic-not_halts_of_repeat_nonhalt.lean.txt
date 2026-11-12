@@ -1,0 +1,25 @@
+lemma not_halts_of_repeat_nonhalt
+    (cfg : Cfg k Symbol State input)
+    (h_not_halt : cfg.state ≠ none)
+    (t : ℕ)
+    (heq : tm.runFrom cfg (t + 1) = cfg) :
+    ∀ t', (tm.runFrom cfg t').state ≠ none := by
+  intro t'
+  -- The configuration will repeat every `t + 1` steps.
+  have hloop : ∀ n, tm.runFrom cfg (n * (t + 1)) = cfg := by
+    intro n
+    unfold runFrom
+    rw [Nat.mul_comm, Function.iterate_mul]
+    exact Function.iterate_fixed heq n
+  by_contra hnh
+  -- Assuming the machine halts at step `t'`, it is also halted at step `t' * (t + 1)`
+  have h₁ : (tm.runFrom cfg (t' * (t + 1))).state = none := by
+    have hle : t' ≤ t' * (t + 1) := by grind
+    obtain ⟨tΔ , htΔ⟩ := Nat.exists_eq_add_of_le hle
+    rw [htΔ, tm.runFrom_add]
+    simp [hnh]
+  simp [hloop t', h_not_halt] at h₁
+
+end MultiTapeTM
+
+end Turing

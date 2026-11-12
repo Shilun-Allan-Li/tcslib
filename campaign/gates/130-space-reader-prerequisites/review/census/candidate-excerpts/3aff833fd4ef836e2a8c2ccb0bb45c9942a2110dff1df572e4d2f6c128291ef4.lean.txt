@@ -1,0 +1,23 @@
+/-- The increment-result check preserves all fields and chooses the anchor
+on overflow or the copy phase on a nonempty result. -/
+private lemma enumCont_body_check (B : FinTM Bool) (qv qi : B.State) (stop : Bool)
+    (x s v : List Bool) :
+    (enumCont_bodyTM B qv qi stop).tm.step
+      (enumCont_pairCfg (x := x) (some (.inr 4)) (bufferTape s) (bufferTape v) 0) =
+      enumCont_pairCfg (some (.inr (if v = [] then 0 else 5)))
+        (bufferTape s) (bufferTape v) 0 := by
+  have hL : (enumCont_logTM B).k ≠ 0 := by dsimp [enumCont_logTM]; omega
+  have hv : bufferTape v 0 = none ↔ v = [] := by cases v <;> simp [bufferTape]
+  change ((enumCont_bodyTM B qv qi stop).tm.tr (.inr 4) _ _).apply _ = _
+  simp only [enumCont_bodyTM]
+  have hr : (enumCont_pairCfg (L := (enumCont_logTM B).k) (x := x)
+      (some (.inr (4 : Fin 7)) : Option (enumCont_bodyTM B qv qi stop).State)
+      (bufferTape s) (bufferTape v) 0).workTapeSymbols (Fin.last (enumCont_logTM B).k) =
+      bufferTape v 0 := by simp [enumCont_pairCfg, Cfg.workTapeSymbols, hL]
+  rw [hr]
+  simp only [hv]
+  by_cases he : v = [] <;> simp only [he, ↓reduceIte, controlAction_apply]
+  all_goals
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+    funext i
+    simp [enumCont_pairCfg]

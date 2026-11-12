@@ -1,0 +1,87 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import Lean
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace Turing
+open MultiTapeTM
+variable {k m : ℕ} {B SS : Type} {x : List Bool}
+/-- A run from `c` to `c'` in exactly `t` steps that never visits the state
+`avoid` strictly before `t`. -/
+def SafeRun (H : MultiTapeTM k Bool B) (avoid : B)
+    (c : Cfg k Bool B x) (t : ℕ) (c' : Cfg k Bool B x) : Prop :=
+  H.runFrom c t = c' ∧ ∀ t' < t, (H.runFrom c t').state ≠ some avoid
+
+/-- Safe runs are segments with one forbidden control state and a trivial head invariant. -/
+private theorem safeRun_iff_segment {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c' : Cfg k Bool B x} {t : ℕ} :
+    SafeRun H avoid c t c' ↔ Segment H {some avoid} (fun _ => True) c c' t := by
+  simp only [SafeRun, segment_iff, Set.mem_singleton_iff, implies_true, forall_const, and_true]
+
+/-- The empty run is safe. -/
+theorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}
+    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by
+  exact safeRun_iff_segment.mpr (Segment.zero True.intro)
+
+/-- Prepend one non-avoided step to a safe run. -/
+theorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)
+    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :
+    SafeRun H avoid c (t + 1) c' := by
+  apply safeRun_iff_segment.mpr
+  simpa only [Nat.add_comm 1 t] using
+    (Segment.cons hstep (by simpa only [Set.mem_singleton_iff] using hc)
+      True.intro (safeRun_iff_segment.mp h))
+
+/-- Concatenate safe runs. -/
+theorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}
+    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)
+    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by
+  exact safeRun_iff_segment.mpr
+    (Segment.trans (safeRun_iff_segment.mp h₁) (safeRun_iff_segment.mp h₂))
+end Turing
+
+open Lean Elab Command Meta
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let sourceNames : List String := ["Turing.safeRun_iff_segment", "Turing.SafeRun.zero", "Turing.SafeRun.cons", "Turing.SafeRun.trans"]
+  let mut guards : Array Name := #[]
+  let mut simpDefs : Array Name := #[]
+  for sourceName in sourceNames do
+    let hits := env.constants.toList.filter fun (n, _) =>
+      n.toString == sourceName || (isPrivateName n && n.toString.endsWith ("." ++ sourceName))
+    unless hits.length == 1 do throwError "root mismatch {sourceName}: {hits.length}"
+    let (root, ci) := hits.head!
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    logInfo m!"AX|{(Json.mkObj [("root", toJson sourceName), ("kernel", toJson root.toString), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+    let mut pending := ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[])
+    let mut visited : Array Name := #[]
+    let mut index := 0
+    while index < pending.size do
+      let n := pending[index]!
+      index := index + 1
+      if visited.contains n then continue
+      visited := visited.push n
+      let home := (env.getModuleIdxFor? n).map fun i => env.header.moduleNames[i.toNat]!
+      let foreign := home.any fun h => (`TCSlib).isPrefixOf h
+      unless foreign || home.isNone do continue
+      let some info := env.find? n | continue
+      match info with
+      | .defnInfo d =>
+        let projection := (env.getProjectionFnInfo? n).isSome
+        let abbrevDecl := match d.hints with | .abbrev => true | _ => false
+        let ordinary := foreign && !projection && !abbrevDecl
+        let isSimp := simp.isLemma (.decl n) || simp.toUnfold.contains n
+        if ordinary && !guards.contains n then guards := guards.push n
+        if foreign && isSimp && !simpDefs.contains n then simpDefs := simpDefs.push n
+        logInfo m!"DEF|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("owner", toJson ((home.map Name.toString).getD "current scratch owner")), ("foreign", toJson foreign), ("projection", toJson projection), ("kernel_abbrev", toJson abbrevDecl), ("ordinary_guard", toJson ordinary), ("default_simp_definition", toJson isSimp), ("reducibility", toJson (reprStr (getReducibilityStatusCore env n)))]).compress}"
+        pending := pending ++ d.type.getUsedConstants ++ d.value.getUsedConstants
+      | .thmInfo _ =>
+        logInfo m!"THEOREM_BOUNDARY|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("proof_value_traversed", toJson false)]).compress}"
+        pending := pending ++ info.type.getUsedConstants
+      | _ => pure ()
+  logInfo m!"GUARDS|{(toJson ((guards.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"SIMPDEFS|{(toJson ((simpDefs.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"COMPLETE|{sourceNames.length}"

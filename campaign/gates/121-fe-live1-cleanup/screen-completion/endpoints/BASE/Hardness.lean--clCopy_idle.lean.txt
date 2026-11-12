@@ -1,0 +1,13 @@
+private lemma clCopy_idle {x : List Bool} (c : Cfg 2 Bool (Fin 5) x)
+    (hc : c.state = some (4 : Fin 5)) : clCopyTM.tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  change (FinTM.controlAction 0 (some (4 : Fin 5))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all
+
+/-- The exact recorded field is available at the copier's observed first
+positive return, with both the untouched source and the new record head
+specified. This permits a host to dispatch without knowing field length.
+**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/

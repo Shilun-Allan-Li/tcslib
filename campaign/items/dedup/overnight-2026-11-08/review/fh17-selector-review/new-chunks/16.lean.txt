@@ -1,0 +1,24 @@
+private lemma b2_unary_first (M : FinTM Bool) (f : ℕ → List Bool) (T : ℕ → ℕ)
+    (hM : ∀ n, M.ComputesInTime (List.replicate n true) (f n) (T n)) :
+    ∃ τ : ℕ → ℕ, ∀ x : List Bool,
+      τ x.length ≤ T x.length ∧
+      (b2UnaryTM M).ComputesInTime x (f x.length) (τ x.length) ∧
+      ∀ s < τ x.length, ((b2UnaryTM M).tm.runFrom
+        ((b2UnaryTM M).tm.initCfg x) s).state ≠ none := by
+  classical
+  choose τ hτle hτlive hτeq using fun n : ℕ =>
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg (List.replicate n true))
+      (((computesInTime_iff _ _ _ _).mp (hM n)).1)
+  refine ⟨τ, fun x => ?_⟩
+  have hh : (M.tm.runFrom (M.tm.initCfg (List.replicate x.length true))
+      (τ x.length)).state = none :=
+    (congrArg Cfg.state (hτeq x.length)).trans
+      ((computesInTime_iff _ _ _ _).mp (hM x.length)).1
+  have ho := congrArg Cfg.output (hτeq x.length)
+  have hc : M.ComputesInTime (List.replicate x.length true) (f x.length)
+      (τ x.length) := (computesInTime_iff _ _ _ _).mpr
+    ⟨hh, ho.trans ((computesInTime_iff _ _ _ _).mp (hM x.length)).2⟩
+  refine ⟨hτle x.length, b2_unary_computes M x _ _ hc, fun s hs hh' => ?_⟩
+  have hr := congrArg Cfg.state (b2_unary_run M ((b2UnaryTM M).tm.initCfg x) s)
+  rw [b2_unary_initial] at hr
+  exact hτlive x.length s hs (hr.symm.trans hh')

@@ -1,0 +1,9 @@
+/-- One simultaneous counter action. A stopped component is stationary.
+The product construction is locally adapted from the audited
+`emitterBank*` construction in `Build/Primitives.lean`; the component here
+is the inherited binary increment, with one tape rather than a triple. -/
+private def clBankPart {l : ℕ} (q : Fin l → Option (Fin 4))
+    (work : Fin l → Option Bool) (i : Fin l) : Action 1 Bool (Fin 4) :=
+  match q i with
+  | none => FinTM.controlAction 0 none
+  | some s => clCountTM.tm.tr s none (fun _ => work i)

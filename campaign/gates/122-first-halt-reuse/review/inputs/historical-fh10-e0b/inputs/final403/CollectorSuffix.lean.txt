@@ -1,0 +1,80 @@
+
+/- Private appended metadata; preceding source is literal committed source. -/
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => env.mainModule
+  let wanted : List String := __TARGET_SUFFIXES__
+  for suffix in wanted do
+    let candidates := env.constants.toList.filter fun (n, _) =>
+      !env.isImportedConst n && n.toString.endsWith ("." ++ suffix)
+    unless candidates.length == 1 do
+      throwError "target suffix {suffix} has {candidates.length} local matches"
+    let (root, ci) := candidates.head!
+    let owner := homeOf root
+    let directType := ci.type.getUsedConstants.toList
+    let directBody := (ci.value?.map Expr.getUsedConstants |>.getD #[]).toList
+    let mut todo := directType ++ directBody
+    let mut seen : List Name := [root]
+    let mut localDefs : List Json := []
+    let mut foreign : List Json := []
+    let mut importedTheoremTypes : List Name := []
+    let mut otherLocalTheoremTypes : List Name := []
+    while !todo.isEmpty do
+      let n := todo.head!
+      todo := todo.tail!
+      if seen.contains n then continue
+      seen := n :: seen
+      let some info := env.find? n | continue
+      let typeRefs := info.type.getUsedConstants.toList
+      todo := typeRefs ++ todo
+      let home := homeOf n
+      match info with
+      | .defnInfo di =>
+        let hints := match di.hints with
+          | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+        if home == owner then
+          let bodyRefs := di.value.getUsedConstants.toList
+          localDefs := Json.mkObj [
+            ("name",toJson n.toString),("owner",toJson home.toString),
+            ("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),
+            ("type_mentions",toJson (typeRefs.map Name.toString)),
+            ("value_mentions",toJson (bodyRefs.map Name.toString))] :: localDefs
+          todo := bodyRefs ++ todo
+        else if home.toString.startsWith "TCSlib." then
+          let guarded := hints != "abbrev" && !env.isProjectionFn n
+          foreign := Json.mkObj [
+            ("name",toJson n.toString),("owner",toJson home.toString),
+            ("hints",toJson hints),("projection",toJson (env.isProjectionFn n)),
+            ("ordinary_guard_target",toJson guarded),
+            ("simp",toJson (simp.isLemma (.decl n))),
+            ("unfold",toJson (simp.toUnfold.contains n)),
+            ("type_mentions",toJson (typeRefs.map Name.toString))] :: foreign
+      | .thmInfo _ =>
+        if env.isImportedConst n then importedTheoremTypes := n :: importedTheoremTypes
+        else otherLocalTheoremTypes := n :: otherLocalTheoremTypes
+      | _ => pure ()
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    let ty ← liftTermElabM <| Meta.ppExpr ci.type
+    let row := Json.mkObj [
+      ("root",toJson root.toString),("source_owner",toJson owner.toString),
+      ("actual_main_module",toJson env.mainModule.toString),
+      ("suffix",toJson suffix), ("root_type_Expr",toJson (reprStr ci.type)),
+      ("root_type_pretty",toJson ty.pretty),
+      ("root_levelParams",toJson (ci.levelParams.map Name.toString)),
+      ("root_axioms",toJson ((axs.qsort Name.lt).toList.map Name.toString)),
+      ("direct_type_mentions",toJson (directType.map Name.toString)),
+      ("direct_body_mentions",toJson (directBody.map Name.toString)),
+      ("local_definition_helpers",Json.arr localDefs.reverse.toArray),
+      ("foreign_definition_mentions",Json.arr foreign.reverse.toArray),
+      ("imported_theorems_types_only",toJson ((importedTheoremTypes.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("other_local_theorems_types_only",toJson ((otherLocalTheoremTypes.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("visited_constants",toJson ((seen.toArray.qsort Name.lt).toList.map Name.toString)),
+      ("footprint_imported_theorem_values_traversed",toJson false),
+      ("footprint_foreign_definition_values_traversed",toJson false)]
+    logInfo m!"BOUNDARY|{row.compress}"
+  logInfo m!"COMPLETE|{wanted.length}"

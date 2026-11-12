@@ -1,0 +1,73 @@
+--- a/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean
+@@ -122,6 +122,14 @@
+   k := W.k
+   State := W.State
+   tm := { q₀ := W.tm.q₀, tr := fun q inp ws => W.tm.tr q (inp.map (fun _ => zero)) ws }
++
++/-- Input masking uses the witness's work tapes. -/
++lemma maskedClock_k {A : Type} (W : FinTM A) (zero : A) :
++    (maskedClock W zero).k = W.k := rfl
++
++/-- Input masking uses the witness's state type. -/
++lemma maskedClock_State {A : Type} (W : FinTM A) (zero : A) :
++    (maskedClock W zero).State = W.State := rfl
+ 
+ /-- One masked transition equals one witness transition on the constant input,
+ including the absorbing halted case. -/
+@@ -667,6 +675,14 @@
+           if guide = some .origin then act .macroCheck 0 stay (move .pos) stay
+           else act .returnCenter 0 stay stay (move .pos) }
+ 
++/-- The length-only schedule adds three administrative work tapes. -/
++lemma obliviousSchedule_k (W : FinTM Bool) (a : ℕ) :
++    (obliviousSchedule W a).k = W.k + 3 := rfl
++
++/-- The length-only schedule records the witness state in its clock phase. -/
++lemma obliviousSchedule_State (W : FinTM Bool) (a : ℕ) :
++    (obliviousSchedule W a).State = OblPhase W.State a := rfl
++
+ /-- The length-only schedule emits no symbols; a decoration supplies the final
+ answer at the schedule's final halting transition. -/
+ lemma obliviousSchedule_output (W : FinTM Bool) (a : ℕ)
+--- a/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
+@@ -844,22 +844,23 @@
+     ∃ τ ≤ b * (T x.length + 1), ∃ c : Cfg W.k Bool W.State x,
+       c.state = none ∧ c.output = (T x.length).bits ∧
+       (obliviousSchedule W a).tm.runFrom
+-        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) = clockStageCfg W a c := by
++        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) =
++          cast (by rw [obliviousSchedule_k, obliviousSchedule_State]) (clockStageCfg W a c) := by
+   classical
+-  have hm := maskedClock_computes W T b hW x
+-  have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp hm).1
+-  have hex : ∃ t, ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t).state = none :=
+-    ⟨_, hhalt⟩
+-  let τ := Nat.find hex
+-  have hs : ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ).state = none :=
+-    Nat.find_spec hex
+-  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
+-  have hlive : ∀ t < τ, ((maskedClock W false).tm.runFrom
+-      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
+-  let c := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
+-  have hc : (maskedClock W false).ComputesInTime x c.output τ :=
+-    (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+-  exact ⟨τ, ht, c, hs, hc.output_unique hm, clockStageCfg_run W a x τ hlive τ (le_refl _)⟩
++  have hspec := (FinTM.computesInTime_iff _ _ _ _).mp (maskedClock_computes W T b hW x)
++  obtain ⟨τ, hτ, hlive, hend⟩ := MultiTapeTM.exists_first_halt
++    (maskedClock W false).tm ((maskedClock W false).tm.initCfg x) hspec.1
++  let run := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
++  let c : Cfg W.k Bool W.State x := by
++    simpa only [maskedClock_k, maskedClock_State] using run
++  have hstate : run.state = none := (congrArg Cfg.state hend).trans hspec.1
++  have hout : run.output = (T x.length).bits := (congrArg Cfg.output hend).trans hspec.2
++  refine ⟨τ, hτ, c, ?_, ?_, ?_⟩
++  · simpa only [c, maskedClock_k, maskedClock_State] using hstate
++  · simpa only [c, maskedClock_k, maskedClock_State] using hout
++  · simpa only [c, run, maskedClock_k, maskedClock_State,
++      obliviousSchedule_k, obliviousSchedule_State] using
++      clockStageCfg_run W a x τ hlive τ (le_refl _)
+ 
+ /-- The fixed sweep guide has one marked origin and two structural boundaries. -/
+ def guideTape (R : ℕ) (z : ℤ) : Option OblSymbol :=

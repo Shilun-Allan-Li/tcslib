@@ -1,0 +1,33 @@
+{
+  "source_commit": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
+  "owner_sha256": "b9014e1a466ec3a57207f01decce39f75d41dec30f522cc0ca3c4ba53c3f3cbd",
+  "roots": [
+    "Turing.step_output_prefix",
+    "Turing.runFrom_output_prefix",
+    "Turing.runFrom_output_extends",
+    "Turing.runFrom_of_halted",
+    "Turing.state_isSome_of_runFrom"
+  ],
+  "complete_literal_chunks": {
+    "Turing.step_output_prefix": "/-- One step commutes with an output prefix. -/\ntheorem step_output_prefix (H : MultiTapeTM k Bool B)\n    (c : Cfg k Bool B x) (pre : List Bool) :\n    H.step { c with output := pre ++ c.output } =\n      { H.step c with output := pre ++ (H.step c).output } := by\n  exact MultiTapeTM.step_output_prepend H c pre",
+    "Turing.runFrom_output_prefix": "/-- A run commutes with an output prefix. -/\ntheorem runFrom_output_prefix (H : MultiTapeTM k Bool B)\n    (c : Cfg k Bool B x) (pre : List Bool) (t : \u2115) :\n    H.runFrom { c with output := pre ++ c.output } t =\n      { H.runFrom c t with output := pre ++ (H.runFrom c t).output } := by\n  exact MultiTapeTM.runFrom_output_prepend H c pre t",
+    "Turing.runFrom_output_extends": "/-- The output tape is append-only along a run. -/\ntheorem runFrom_output_extends (H : MultiTapeTM k Bool B)\n    (c : Cfg k Bool B x) (t : \u2115) :\n    \u2203 o, (H.runFrom c t).output = c.output ++ o := by\n  obtain \u27e8o, ho\u27e9 := MultiTapeTM.output_prefix H c (Nat.zero_le t)\n  exact \u27e8o, by simpa only [MultiTapeTM.runFrom_zero] using ho.symm\u27e9",
+    "Turing.runFrom_of_halted": "/-- A halted configuration never changes. -/\ntheorem runFrom_of_halted (H : MultiTapeTM k Bool B)\n    {c : Cfg k Bool B x} (h : c.state = none) (t : \u2115) : H.runFrom c t = c := by\n  exact MultiTapeTM.runFrom_of_halt (tm := H) c h",
+    "Turing.state_isSome_of_runFrom": "/-- Every configuration strictly before a live endpoint is live. -/\ntheorem state_isSome_of_runFrom (H : MultiTapeTM k Bool B)\n    {c : Cfg k Bool B x} {t : \u2115} {qf : B}\n    (hf : (H.runFrom c t).state = some qf) {j : \u2115} (hj : j \u2264 t) :\n    \u2203 q, (H.runFrom c j).state = some q := by\n  have hl := MultiTapeTM.runFrom_state_ne_none_of_le H c t\n    (by rw [hf]; exact Option.some_ne_none _) j hj\n  cases hq : (H.runFrom c j).state with\n  | some q => exact \u27e8q, rfl\u27e9\n  | none => exact False.elim (hl hq)"
+  },
+  "guards": [
+    "Turing.moveInputPos",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.step"
+  ],
+  "default_simp_removed": [
+    "Turing.Action.apply"
+  ],
+  "positive": 12,
+  "negative": 12,
+  "foreign_theorem_proof_values_traversed": false,
+  "scope": "five complete literal declaration headers and bodies in original import context"
+}

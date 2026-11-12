@@ -1,0 +1,8 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "kind": "normalize original length expression before canonical inner one-step",
+    "before": "    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]\n    rw [hs, MultiTapeTM.step_of_some rfl]",
+    "after": "    simp only [List.length_nil, Nat.mul_zero, zero_add]\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]\n    rw [hs, MultiTapeTM.step_of_some rfl]"
+  }
+]

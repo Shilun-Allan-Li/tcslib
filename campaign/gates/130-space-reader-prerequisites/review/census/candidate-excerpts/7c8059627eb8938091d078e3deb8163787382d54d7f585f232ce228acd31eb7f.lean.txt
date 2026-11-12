@@ -1,0 +1,20 @@
+/-- A marker-free administrative pass appends the native input to tape zero,
+then rewinds both heads. It is used to form a round request and at startup.
+The only occupied tape is the data tape; no origin marker is introduced. -/
+private def satAppendTM : FinTM Bool where
+  k := 1
+  State := Fin 5
+  tm := {
+    q₀ := 0
+    tr := fun q inp work => match q.val with
+      | 0 => if (work 0).isSome then ⟨0, fun _ => (none, .pos), none, some 0⟩
+        else ⟨0, fun _ => (none, 0), none, some 1⟩
+      | 1 => match inp with
+        | some b => ⟨.pos, fun _ => (some (some b), .pos), none, some 1⟩
+        | none => ⟨0, fun _ => (none, .neg), none, some 2⟩
+      | 2 => if (work 0).isSome then ⟨0, fun _ => (none, .neg), none, some 2⟩
+        else ⟨0, fun _ => (none, .pos), none, some 3⟩
+      | 3 => FinTM.controlAction .neg (some 4)
+      | _ => match inp with
+        | some _ => FinTM.controlAction .neg (some 4)
+        | none => FinTM.controlAction .pos none }

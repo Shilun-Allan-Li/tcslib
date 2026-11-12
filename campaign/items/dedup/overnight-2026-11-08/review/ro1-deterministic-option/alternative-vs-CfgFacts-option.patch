@@ -1,0 +1,136 @@
+--- CfgFacts-option/TCSlib/Complexity/ClassP/Examples.lean
++++ Deterministic-option/TCSlib/Complexity/ClassP/Examples.lean
+@@ -4,7 +4,6 @@
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.ClassP.P
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
++++ Deterministic-option/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
+@@ -7,7 +7,6 @@
+ import Mathlib.Tactic.DeriveFintype
+ import Mathlib.Tactic.Ring
+ import TCSlib.Complexity.TuringMachine.Simulation
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -5,7 +5,6 @@
+ -/
+ import TCSlib.Complexity.TuringMachine.Build.Convention
+ import TCSlib.Complexity.TuringMachine.Composition
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/CfgFacts.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/CfgFacts.lean
+@@ -12,7 +12,7 @@
+ /-!
+ # Elementary facts about configurations
+ 
+-Elementary facts that machine constructions over several phases use repeatedly: the input read
++Four small facts that machine constructions over several phases use repeatedly: the input read
+ depends on the input head only; a live configuration redirected to a state of phase `i` is the
+ tagged configuration of phase `i`; a configuration tagged by one phase is never at a state of
+ another; and a list of equal-length chunks has the expected length.
+@@ -23,7 +23,6 @@
+ 
+ ## Main results
+ 
+-* `Turing.MultiTapeTM.runFrom_one` — a one-step run equals one machine step.
+ * `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
+   symbol, across machines.
+ * `Turing.Cfg.mapState_eq_of_fields` — a renamed configuration is any configuration with its four
+@@ -41,11 +40,6 @@
+ -/
+ 
+ namespace Turing
+-
+-/-- A one-step run from any configuration is exactly one machine step. -/
+-theorem MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
+-    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
+-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+ 
+ /-- **The input read depends on the input head only.** Two configurations on the same input,
+ of machines with any numbers of work tapes and any states, read the same input symbol when their
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/CounterProg.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/CounterProg.lean
+@@ -6,7 +6,6 @@
+ import Mathlib.Tactic.DeriveFintype
+ import TCSlib.Complexity.TuringMachine.Simulation
+ import TCSlib.Complexity.TuringMachine.UnaryTape
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -219,6 +219,11 @@
+     tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) := by
+   simp [runFrom, Function.iterate_succ_apply']
+ 
++/-- A one-step run from any configuration is exactly one machine step. -/
++theorem _root_.Turing.MultiTapeTM.runFrom_one {k : ℕ} {Γ S : Type*} {x : List Γ}
++    (tm : MultiTapeTM k Γ S) (c : Cfg k Γ S x) : tm.runFrom c 1 = tm.step c := by
++  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++
+ /-- Running `a + b` steps equals running `b` steps from the configuration reached after `a`. -/
+ lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
+     tm.runFrom cfg (a + b) = tm.runFrom (tm.runFrom cfg a) b := by
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -9,7 +9,6 @@
+ import TCSlib.Complexity.TuringMachine.NatBits
+ import TCSlib.Complexity.TuringMachine.StateRenaming
+ import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Robustness/Bidirectional.lean
+@@ -7,7 +7,6 @@
+ import Mathlib.Data.Fintype.Pi
+ import Mathlib.Data.Fintype.Option
+ import Mathlib.Data.Fintype.Prod
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean
+@@ -6,7 +6,6 @@
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
+ import TCSlib.Complexity.TuringMachine.Sweep
+ import TCSlib.Complexity.ClassP.DTIME
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean
+@@ -4,7 +4,6 @@
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+-import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+--- CfgFacts-option/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ Deterministic-option/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -1122,7 +1122,7 @@
+   induction j with
+   | zero =>
+     intro _
+-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [MultiTapeTM.runFrom_one]
+     simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+       tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
+     refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl

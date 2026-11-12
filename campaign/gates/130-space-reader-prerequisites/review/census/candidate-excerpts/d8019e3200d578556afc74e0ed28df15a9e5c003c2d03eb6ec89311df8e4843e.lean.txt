@@ -1,0 +1,42 @@
+/-- **On window-bounded configurations the code determines the vertex**: equal code words
+give equal `coreSum`.
+
+**Proof sketch.** The two words have the same length, so their chunk prefixes, position
+fields and final letters align. Equal chunks give equal cell values (`chunksWord_inj`):
+the leftmost cell yields the state and the summary (`sumIdx` is injective, and summaries
+determine the vertex component), every cell yields the tape symbols and head flags at its
+position, and outside `[-s, s]` both tapes are blank and no head lies there (window
+hypotheses). Equal position fields have equal values (`bitsVal_padBits`). -/
+theorem coreSum_eq_of_cfgWord_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (hC : Cfg.InWindow s C) (hD : Cfg.InWindow s D) (h : cfgWord s C = cfgWord s D) :
+    NDTM.coreSum C = NDTM.coreSum D := by
+  have hlen : (chunksWord N (cellOf s C) (2 * s + 1)).length =
+      (chunksWord N (cellOf s D) (2 * s + 1)).length := by simp [length_chunksWord]
+  simp only [cfgWord, List.append_assoc] at h
+  obtain ⟨hc, hrest⟩ := List.append_inj h hlen
+  have hpos := congrArg bitsVal (List.append_inj_left' hrest rfl)
+  simp only [bitsVal_padBits] at hpos
+  have cell := chunksWord_inj N hc
+  have c0 := cell 0 (by omega)
+  simp only [cellOf, ↓reduceIte, Prod.mk.injEq, Option.some.injEq] at c0
+  obtain ⟨⟨hst, hsum⟩, -⟩ := c0
+  have hsum' := sumIdx_injective hsum
+  have tape : ∀ i (z : ℤ), |z| ≤ s → C.workTapes i z = D.workTapes i z ∧
+      (C.workTapePos i = z ↔ D.workTapePos i = z) := by
+    intro i z hz
+    have := cell (z + s).toNat (by rw [abs_le] at hz; omega)
+    simp only [cellOf, Prod.mk.injEq] at this
+    have e := congrFun this.2 i
+    simp only [Prod.mk.injEq, decide_eq_decide] at e
+    have hz' : (((z + s).toNat : ℕ) : ℤ) - s = z := by rw [abs_le] at hz; omega
+    rwa [hz'] at e
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq]
+  refine ⟨⟨hst, Fin.ext hpos, ?_, ?_⟩, hsum'⟩
+  · funext i z
+    by_cases hz : |z| ≤ s
+    · exact (tape i z hz).1
+    · have h1 : C.workTapes i z = none := hC.2 i z (not_le.mp hz)
+      have h2 : D.workTapes i z = none := hD.2 i z (not_le.mp hz)
+      rw [h1, h2]
+  · funext i
+    exact ((tape i _ (hC.1 i)).2.mp rfl).symm

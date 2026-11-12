@@ -1,0 +1,9 @@
+/-- Budget-phase lockstep up to and including `K`'s first halting transition. -/
+lemma kCfg_run {x : List Bool} (c : Cfg K.k Bool K.State x) (t : ℕ)
+    (h : ∀ s, s < t → (K.tm.runFrom c s).state ≠ none) :
+    (clockTM K W).tm.runFrom (kCfg K W c) t = kCfg K W (K.tm.runFrom c t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
+      kCfg_step K W _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']

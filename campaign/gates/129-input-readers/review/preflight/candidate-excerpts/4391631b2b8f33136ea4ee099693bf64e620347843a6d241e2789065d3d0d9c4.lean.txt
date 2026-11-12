@@ -1,0 +1,20 @@
+/-- **The skipper's endpoint** (`h1Skip_run`, statement copied): started from the reader's
+initial state on a record of `a`, the skipper reaches the live exit `done a.state.isSome` after
+exactly the record's length plus one dispatch step, with only the table head changed, advanced
+by the record's length.
+
+**Proof sketch.** Use the reader's prefix read and the public phase dispatch, then the
+successor-field endpoint. The two head advances add to the full record length, including its
+variable unary tail. -/
+theorem recordSkipTM_run {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) ((actionBitsK a).length + 1) =
+      { d.mapState (fun _ => (⟨true, SuccPhase.done a.state.isSome⟩ : Σ b, SkipPh k b)) with
+        workTapePos := Function.update d.workTapePos (tableTape k)
+          (d.workTapePos (tableTape k) + (actionBitsK a).length) } := by
+  sorry

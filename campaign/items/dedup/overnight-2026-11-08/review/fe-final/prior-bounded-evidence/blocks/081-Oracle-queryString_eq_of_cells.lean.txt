@@ -1,0 +1,31 @@
+theorem queryString_eq_of_cells (cfg : Cfg (k + 1) Symbol State input) (w : List Symbol)
+    (hw : ∀ i (hi : i < w.length), cfg.workTapes (queryTapeIdx k) (i : ℤ) = some w[i])
+    (hb : cfg.workTapes (queryTapeIdx k) (w.length : ℤ) = none) :
+    queryString cfg = w := by
+  classical
+  have hex : ∃ n : ℕ, cfg.workTapes (queryTapeIdx k) (n : ℤ) = none := ⟨w.length, hb⟩
+  have hfind : Nat.find hex = w.length := by
+    apply le_antisymm (Nat.find_min' hex hb)
+    by_contra hlt
+    push_neg at hlt
+    have := Nat.find_spec hex
+    rw [hw _ hlt] at this
+    exact Option.some_ne_none _ this
+  rw [queryString, dif_pos hex, hfind]
+  have key : ∀ m ≤ w.length, (List.range m).filterMap
+      (fun n : ℕ => cfg.workTapes (queryTapeIdx k) (n : ℤ)) = w.take m := by
+    intro m
+    induction m with
+    | zero => intro _; simp
+    | succ m ih =>
+      intro hm
+      rw [List.range_succ, List.filterMap_append, ih (by omega), List.take_succ,
+        List.getElem?_eq_getElem (by omega)]
+      simp [hw m (by omega)]
+  have hmap : ∀ l : List ℕ,
+      (do let a ← l; pure (a : ℤ) : List ℤ) = l.map (fun a : ℕ => (a : ℤ)) := by
+    intro l; induction l with
+    | nil => rfl
+    | cons a l ih => simp only [List.map_cons] at ih ⊢; rw [← ih]; rfl
+  rw [hmap, List.filterMap_map]
+  exact (key w.length le_rfl).trans List.take_length

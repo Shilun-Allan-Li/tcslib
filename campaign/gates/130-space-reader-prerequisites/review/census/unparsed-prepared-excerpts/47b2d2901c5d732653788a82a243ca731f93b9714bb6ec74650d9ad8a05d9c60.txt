@@ -1,0 +1,44 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean
+@@ -308,26 +308,22 @@
+         (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+           runCfg m (A.tm.initCfg x) 0 sT sP := by
+   classical
+-  have hex : ∃ t, (S.tm.runFrom (S.tm.initCfg x) t).state = none :=
+-    ⟨T, ((FinTM.computesInTime_iff _ _ _ _).mp hS).1⟩
+-  have htS : Nat.find hex ≤ T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1
+-  obtain ⟨cS, hcSdef⟩ : ∃ c, c = S.tm.runFrom (S.tm.initCfg x) (Nat.find hex) := ⟨_, rfl⟩
+-  have hcS : cS.state = none := hcSdef ▸ Nat.find_spec hex
+-  have hout : cS.output = List.replicate m true := by
+-    rw [hcSdef]
+-    exact ((FinTM.computesInTime_iff _ _ _ _).mpr ⟨Nat.find_spec hex, rfl⟩).output_unique hS
+-  refine ⟨Nat.find hex + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
+-  have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)
+-  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take (Nat.find hex))
+-    (fun t h => Nat.find_min hex (by omega))
+-  rw [ht, ← hcSdef] at hboot
+-  rw [initCfg_eq_bootCfg, ← List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]
+-  have hb : bootCfg (A := A) cS = hostCfg (some .rew) cS.inputPos cS.workTapes cS.workTapePos
+-      (fun _ _ => none) (fun _ => 0) (yard m) m [] := by
+-    simp [bootCfg, hcS, hout]
+-  rw [hb, rewind_run m _ _ _ _ _ (w.drop (Nat.find hex)) (by simp; omega),
++  obtain ⟨hhalt, houtT⟩ := (FinTM.computesInTime_iff _ _ _ _).mp hS
++  obtain ⟨tS, htS, hlive, hfirst⟩ :=
++    MultiTapeTM.exists_first_halt S.tm (S.tm.initCfg x) hhalt
++  let cS := S.tm.runFrom (S.tm.initCfg x) tS
++  have hcS : cS.state = none := (congrArg Cfg.state hfirst).trans hhalt
++  have hout : cS.output = List.replicate m true := (congrArg Cfg.output hfirst).trans houtT
++  refine ⟨tS + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
++  have ht : (w.take tS).length = tS := List.length_take_of_le (by omega)
++  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take tS)
++    (fun t h => hlive t (by omega))
++  rw [ht] at hboot
++  rw [initCfg_eq_bootCfg, ← List.take_append_drop tS w, NDTM.runWith_append, hboot,
++    bootCfg_of_halt _ hcS, hout, List.length_replicate,
++    rewind_run m _ _ _ _ _ (w.drop tS) (by simp only [List.length_drop, hw]; omega),
+     moveInputPos_inLeft cS.inputPos (by have := cS.inputPos.isLt; omega)]
+-  rfl
++  exact (runCfg_initCfg (S := S) (A := A) m 0 cS.workTapes cS.workTapePos).symm
+ 
+ /-- **One-shot run** (`loop = false`), the clocked runner of [AB09, §7.4.2]: `m + 1` steps
+ from the first attempt, the host has halted, and its output is `[v]` exactly when `A`, run from

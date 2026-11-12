@@ -1,0 +1,20 @@
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1992:103: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2003:99: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2181:6: error: Type mismatch
+  Finset.card_le_card hsub
+has type
+  (MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) v 0).card ≤ (Finset.Icc (a * ↑M.k - 1) ((a + ↑n) * ↑M.k)).card
+but is expected to have type
+  (M.dgTM a₀).k * (MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) v 0).card ≤
+    (Finset.Icc (a * ↑M.k - 1) ((a + ↑n) * ↑M.k)).card
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2179:93: warning: This simp argument is unused:
+  one_mul
+
+Hint: Omit it from the simp argument list.
+  simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.nsmul_eq_mul,̵ ̵o̵n̵e̵_̵m̵u̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

@@ -1,0 +1,12 @@
+private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
+    (hT : N.tm.HaltsWithin z T) :
+    ∃ L, 0 < L ∧ L ≤ T ∧ N.tm.HaltsWithin z L ∧ (∀ L' < L, ¬ N.tm.HaltsWithin z L') ∧
+      (N.AcceptsWithin z L ↔ N.AcceptsWithin z T) := by
+  classical
+  have hex : ∃ L, N.tm.HaltsWithin z L := ⟨T, hT⟩
+  refine ⟨Nat.find hex, ?_, Nat.find_min' hex hT, Nat.find_spec hex,
+    fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
+      (Nat.find_min' hex hT)⟩
+  rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
+  · exact h0

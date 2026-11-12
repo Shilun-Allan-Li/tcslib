@@ -1,0 +1,8 @@
+private lemma timedPrefix_live (bs α x : List Bool) (s : ℕ)
+    (hs : s < 4 * bs.length + 2 * α.length + 6) :
+    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x)) s).state ≠ none := by
+  intro h
+  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show s ≤ 4 * bs.length + 2 * α.length + 5 by omega)
+  have hp := timedPrefix_penultimate bs α x
+  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h] at hp
+  exact hp h

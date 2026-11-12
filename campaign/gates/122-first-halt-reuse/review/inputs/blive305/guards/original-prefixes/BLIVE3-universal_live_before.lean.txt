@@ -1,0 +1,237 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Encoding
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Universal machine: startup infrastructure
+
+Prefix-local startup layer of the universal machine: parsing the doubled-bit
+code region of `pairEncode α x`, running the scheme's canonizer on the
+extracted code, embedding the virtual input head into the paired input's
+verbatim `x` region, and capturing the canonical table on a dedicated work
+tape before control transfers to the table interpreter. This file was split
+out mechanically from `Universal.lean` at the epoch-3→4 merge; its contents
+are the epoch-3 fill, batches B (WIP) and B2 (completion), unchanged.
+
+## Main definitions / Main results
+
+* `Turing.universalPrefixTM` — the prefix parser of the doubled code region.
+* `Turing.prefixCanonTM` — prefix extraction composed with any canonizer, by buffered
+  composition (`Turing.prefixCanon_start`, `Turing.prefixCanon_run`,
+  `Turing.prefixCanon_complete`); promoted, generic in the canonizer, for the `k`-generic
+  startup `Turing.exists_selfStartupTMK` (user, 2026-10-15).
+* `Turing.universalCanonTM` — prefix extraction composed with the scheme's canonizer.
+* `Turing.universalCaptureTM` — output capture onto a table tape, then transfer
+  to a four-tape interpreter.
+* `Turing.universalCanon_complete` — the canonical serialization is produced at
+  a suffix-independent time.
+* `Turing.universalCapture_start` — every completed source computation reaches
+  the interpreter with the table captured.
+* `Turing.universalInput_read` / `Turing.universalInput_move` — virtual
+  input-head emulation over the verbatim `x` region.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.4.1, Theorem 1.9, pp. 20-21.)
+-/
+
+namespace Turing
+
+/-! ### Private prefix-local startup infrastructure
+
+Implementation notes (epoch 3B). The extraction machine stops immediately after
+reading the aligned separator. Buffered composition then serves the canonizer's
+input from the extracted word and keeps the physical suffix head stationary.
+
+**Incomplete implementation (epoch 3B).** The startup, virtual-boundary lemmas,
+and conditional block-simulation assembly below are proved. The live-source
+serialized-table block obligation in `universal` remains admitted. The concrete
+interpreter is a candidate, not a completed proof of the headline theorem.
+
+**Completion (epoch 3B2).** The preceding paragraph records the delivered WIP.
+The live serialized-table block is now proved below, including exact phase costs,
+record selection, action application, and the original code-only block bound.
+The controller and all startup and assembly constructions are unchanged.
+-/
+
+open FinTM
+
+/-- Doubling the code and appending its delimiter has suffix-independent length. -/
+lemma universal_pair_length (α x : List Bool) :
+    (pairEncode α x).length = 2 * α.length + 2 + x.length := by
+  induction α with
+  | nil => simp [pairEncode]; omega
+  | cons b α ih =>
+    simp only [pairEncode, List.flatMap_cons, List.cons_append, List.nil_append,
+      List.length_cons] at *
+    omega
+
+/-- Both cells of a doubled code bit are read before the separator. -/
+private lemma universal_pair_get (α x : List Bool) (j : ℕ) (hj : j < α.length) :
+    (pairEncode α x)[2 * j]? = some α[j] ∧
+      (pairEncode α x)[2 * j + 1]? = some α[j] := by
+  induction α generalizing j with
+  | nil => simp at hj
+  | cons b α ih =>
+    cases j with
+    | zero => simp [pairEncode]
+    | succ j =>
+      have h := ih j (by simpa using hj)
+      simpa only [pairEncode, List.flatMap_cons, List.cons_append,
+        List.nil_append, Nat.mul_add, Nat.mul_one, Nat.add_assoc,
+        List.getElem?_cons_succ, List.getElem_cons_succ] using h
+
+/-- The delimiter begins immediately after the doubled code. -/
+private lemma universal_pair_separator (α x : List Bool) :
+    (pairEncode α x)[2 * α.length]? = some false ∧
+      (pairEncode α x)[2 * α.length + 1]? = some true := by
+  induction α with
+  | nil => simp [pairEncode]
+  | cons b α ih =>
+    simpa only [pairEncode, List.flatMap_cons, List.cons_append,
+      List.nil_append, List.length_cons, Nat.mul_add, Nat.mul_one, Nat.add_assoc,
+      List.getElem?_cons_succ] using ih
+
+/-- **The prefix parser** of the doubled code region of `pairEncode α x` (public, since the
+prefix canonizer's run lemmas `Turing.prefixCanon_start` and `Turing.prefixCanon_run` name it;
+user 2026-10-15). A two-state register: the outer optional
+state of a configuration is halting; `none` inside the finite control means that the first
+half of a pair is next. On a valid pair, the second half emits its undoubled bit; on the
+separator it moves to the suffix and halts without emitting. [AB09, §1.4.1, proof of
+Theorem 1.9: the universal machine reads the code of `M` first] -/
+def universalPrefixTM : FinTM Bool where
+  k := 0
+  State := Option Bool
+  tm :=
+    { q₀ := none
+      tr := fun q inp _ => match q with
+        | none => ⟨.pos, fun i => i.elim0, none, inp.map some⟩
+        | some b =>
+          if inp = some b then
+            ⟨.pos, fun i => i.elim0, some b, some none⟩
+          else
+            ⟨.pos, fun i => i.elim0, none, none⟩ }
+
+/-! The prefix parser's tape count (`0`) and state type (`Option Bool`), as equations (the
+specification API, the briefs' pre-ship inventories, 2026-10-16), generated by `simps` without the
+`simp` attribute. -/
+attribute [simps (config := { isSimp := false }) k State] universalPrefixTM
+
+/-- The prefix parser carries no work tapes. -/
+private def universalPrefixCfg (α x : List Bool) (q : Option (Option Bool))
+    (p : Fin ((pairEncode α x).length + 2)) (out : List Bool) :
+    Cfg 0 Bool (Option Bool) (pairEncode α x) :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- A single parser transition, with its input read supplied explicitly. -/
+private lemma universalPrefix_step (α x : List Bool) (q : Option Bool)
+    (p : Fin ((pairEncode α x).length + 2)) (out : List Bool) (b : Option Bool)
+    (hb : (universalPrefixCfg α x (some q) p out).inputSymbol = b) :
+    universalPrefixTM.tm.step (universalPrefixCfg α x (some q) p out) =
+      let a := universalPrefixTM.tm.tr q b (fun i => i.elim0)
+      universalPrefixCfg α x a.state (moveInputPos p a.inputTape)
+        (out ++ a.output.toList) := by
+  change (universalPrefixTM.tm.tr q
+    (universalPrefixCfg α x (some q) p out).inputSymbol
+    (universalPrefixCfg α x (some q) p out).workTapeSymbols).apply _ = _
+  rw [hb]
+  exact Cfg.ext_zero_tapes rfl rfl rfl
+
+/-- After `2j` steps exactly `j` code bits have been consumed and emitted.
+
+**Proof sketch.** The aligned cells at offsets `2j` and `2j+1` contain the same
+code bit. The first transition remembers it, and the second emits it. Neither
+transition can reach the suffix, and the work-tape fields are vacuous. -/
+private lemma universalPrefix_bits (α x : List Bool) : ∀ j, (hj : j ≤ α.length) →
+    universalPrefixTM.tm.runFrom (universalPrefixTM.tm.initCfg (pairEncode α x))
+      (2 * j) =
+    universalPrefixCfg α x (some none)
+      ⟨2 * j + 1, by rw [universal_pair_length]; omega⟩ (α.take j) := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    apply Cfg.ext_zero_tapes <;> rfl
+  | succ j ih =>
+    intro hj
+    have hl := universal_pair_length α x
+    have hg := universal_pair_get α x j (by omega)
+    conv_lhs => rw [show 2 * (j + 1) = 2 * j + 1 + 1 by omega]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+      ih (by omega)]
+    rw [universalPrefix_step _ _ _ _ _ (some α[j]) (by
+      rw [inputSymbol_at _ (2 * j) (by omega) (by rfl)]; exact hg.1)]
+    simp only [universalPrefixTM, Option.map_some, Option.toList_none, List.append_nil]
+    rw [moveInputPos_pos_of_ne_right _ (by simp only [Fin.val_mk]; omega)]
+    rw [universalPrefix_step _ _ _ _ _ (some α[j]) (by
+      rw [inputSymbol_at _ (2 * j + 1) (by omega) (by rfl)]; exact hg.2)]
+    simp only [universalPrefixTM, ↓reduceIte, Option.toList_some]
+    rw [moveInputPos_pos_of_ne_right _ (by simp only [Fin.val_mk]; omega)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · apply Fin.ext; simp only [universalPrefixCfg, Fin.val_mk]; omega
+    · rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+      rfl
+
+/-- Prefix-only extraction takes exactly `2|α|+2` steps, emits `α`, and parks
+at `2|α|+3`. This includes empty code and empty suffix; no suffix cell is read.
+
+**Proof sketch.** Apply the doubled-prefix induction to the whole code, then
+execute the two separator transitions. The last transition moves onto, but does
+not read, the suffix's first cell (the right blank when the suffix is empty). -/
+private lemma universalPrefix_start (α x : List Bool) :
+    universalPrefixTM.tm.runFrom (universalPrefixTM.tm.initCfg (pairEncode α x))
+      (2 * α.length + 2) =
+    universalPrefixCfg α x none
+      ⟨2 * α.length + 3, by rw [universal_pair_length]; omega⟩ α := by
+  have hl := universal_pair_length α x
+  have hg := universal_pair_separator α x
+  conv_lhs => rw [show 2 * α.length + 2 = 2 * α.length + 1 + 1 by omega]
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+    universalPrefix_bits α x α.length (le_refl _), List.take_length]
+  rw [universalPrefix_step _ _ _ _ _ (some false) (by
+    rw [inputSymbol_at _ (2 * α.length) (by omega) (by rfl)]; exact hg.1)]
+  simp only [universalPrefixTM, Option.map_some, Option.toList_none, List.append_nil]
+  rw [moveInputPos_pos_of_ne_right _ (by simp only [Fin.val_mk]; omega)]
+  rw [universalPrefix_step _ _ _ _ _ (some true) (by
+    rw [inputSymbol_at _ (2 * α.length + 1) (by omega) (by rfl)]; exact hg.2)]
+  simp only [universalPrefixTM, Bool.true_eq_false, Option.some.injEq, ↓reduceIte,
+    Option.toList_none, List.append_nil]
+  apply Cfg.ext_zero_tapes
+  · rfl
+  · rw [moveInputPos_pos_of_ne_right _ (by simp only [Fin.val_mk]; omega)]
+  · rfl
+
+
+
+/-- One transition remains after the doubled code and the delimiter's first bit. -/
+private lemma universalPrefix_penultimate (α x : List Bool) :
+    universalPrefixTM.tm.runFrom (universalPrefixTM.tm.initCfg (pairEncode α x))
+      (2 * α.length + 1) =
+    universalPrefixCfg α x (some (some false))
+      ⟨2 * α.length + 2, by rw [universal_pair_length]; omega⟩ α := by
+  have hl := universal_pair_length α x
+  rw [MultiTapeTM.runFrom_succ_eq_step',
+    universalPrefix_bits α x α.length (le_refl _), List.take_length]
+  rw [universalPrefix_step _ _ _ _ _ (some false) (by
+    rw [inputSymbol_at _ (2 * α.length) (by omega) (by rfl)]
+    exact (universal_pair_separator α x).1)]
+  simp only [universalPrefixTM, Option.map_some, Option.toList_none, List.append_nil]
+  rw [moveInputPos_pos_of_ne_right _ (by simp only [Fin.val_mk]; omega)]
+
+/-- A live later configuration excludes all earlier halts, since halting is
+absorbing. This is used for administrative phases, independently of outputs. -/
+private lemma universal_live_before {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : ℕ}
+    (hst : s ≤ t) (ht : (tm.runFrom cfg t).state ≠ none) :
+    (tm.runFrom cfg s).state ≠ none := by
+  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst
+end Turing

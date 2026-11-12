@@ -1,0 +1,12 @@
+from pathlib import Path
+import subprocess,hashlib,json,sys,os,time,datetime,re
+O=Path(__file__).parent;E=O/'evidence';W=O/'runtime/project';OV=Path(os.environ['TCSLIB_SCRATCH'])/'oleans-mac8';label=sys.argv[1];mode=sys.argv[2];assert mode=='plain';rel=sys.argv[3];f=W/rel;raw=f.read_bytes();h=hashlib.sha256(raw).hexdigest();d=E/'runs'/label;d.mkdir(parents=True,exist_ok=False);(d/'source.lean.txt').write_bytes(raw)
+helper=E/'helpers'/('leanelab-o.sh' if mode=='compile' else 'leanelab.sh');argv=['bash',str(helper),str(W),str(OV),rel]+([str(OV)] if mode=='compile' else []);removed=[]
+if mode=='compile':
+ for suffix in ['.olean','.ilean','.c','.trace']:
+  p=OV/str(Path(rel).with_suffix(suffix))
+  if p.exists():removed.append({'path':str(p.relative_to(OV)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()});p.unlink()
+req={'argv':argv,'input_sha256':h,'source_capture':'source.lean.txt','helper_sha256':hashlib.sha256(helper.read_bytes()).hexdigest(),'input_snapshot':'original wholeMAC8 read-only BASE metadata probe; no output','removed_own_output_files':removed,'local_slot_cap':3,'machine_slot_cap':5,'own_jobs_max':1,'nice10_j4_by_wrapper':True,'public_API_is_unapproved_hypothesis':True};(d/'request.json').write_text(json.dumps(req,indent=2)+'\n');tm=time.monotonic();utc=datetime.datetime.now(datetime.timezone.utc).isoformat();p=subprocess.run(argv,cwd=W,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,env=os.environ|{'TCSLIB_LEAN_SLOTS':'3'});out=p.stdout;(d/'raw.out').write_bytes(out);s=out.decode();errors=[x for x in s.splitlines() if re.search(r': error(?:\([^\n]*\))?:',x)];warns=s.count('warning:');record=req|{'actual_execution':True,'utc_start':utc,'seconds':time.monotonic()-tm,'exit':p.returncode,'errors':len(errors),'error_lines':errors,'warnings':warns,'sorry_warnings':s.count("declaration uses 'sorry'"),'output_sha256':hashlib.sha256(out).hexdigest(),'output_bytes':len(out),'source_unchanged':f.read_bytes()==raw}
+if mode=='compile':
+ obj=OV/str(Path(rel).with_suffix('.olean'));record|={'fresh_olean_exists':obj.exists(),'fresh_olean_sha256':hashlib.sha256(obj.read_bytes()).hexdigest() if obj.exists() else None}
+(d/'run.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n');print(json.dumps({k:record[k] for k in ['exit','errors','warnings','sorry_warnings','seconds','output_bytes']}));print('\n'.join(errors));print(s[-2600:] if errors else '')

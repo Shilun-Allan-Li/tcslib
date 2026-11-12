@@ -1,0 +1,91 @@
+[
+  {
+    "module": "TCSlib.Complexity.TuringMachine.UniversalK",
+    "target_local_declaration": "  have hinit : R.initCfg (pairEncode α w)",
+    "source_line": 1595,
+    "existing_direct_imports": [
+      "TCSlib.Complexity.TuringMachine.Codes2Tape",
+      "TCSlib.Complexity.TuringMachine.UniversalStartup",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlockForward",
+      "TCSlib.Complexity.TuringMachine.Build.InputDevice",
+      "TCSlib.Complexity.SpaceComplexity.Machines.Clean",
+      "TCSlib.Complexity.TuringMachine.Build.SeamLayout",
+      "TCSlib.Complexity.TuringMachine.Build.Rewind",
+      "TCSlib.Complexity.TuringMachine.Build.UniversalParts"
+    ],
+    "shortest_existing_import_path_to_published_row_home": [
+      "TCSlib.Complexity.TuringMachine.UniversalK",
+      "TCSlib.Complexity.TuringMachine.Build.UniversalParts"
+    ],
+    "new_import_needed_for_direct_use": false,
+    "reverse_path_for_cycle_check": null,
+    "status": "checked exact body-only migration; existing import unchanged",
+    "bounded_existing_chunk_excerpt": "  have hinit : R.initCfg (pairEncode α w) = d₀.mapState Sum.inl := by\n    apply Cfg.ext\n    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_state, Cfg.mapState_state,\n        d₀, Option.map_some]\n      rfl\n    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_inputPos, Cfg.mapState_inputPos,\n        d₀]\n    · funext j q\n      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes, Cfg.mapState_workTapes,\n        d₀]\n    · funext j\n      simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos,\n        Cfg.mapState_workTapePos, d₀]\n    · simp only [R, MultiTapeTM.initCfg_with_q₀, Cfg.init_output, Cfg.mapState_output,\n        d₀]\n  have htfinal : Function.update d₃.workTapes code (fun _ => none) =\n      fun j => if j.val = k then FinTM.bufferTape (tableBitsK (E.machine α).tr)\n        else if j.val = k + 1 then\n          fun q => FinTM.bufferTape (unaryFin (E.machine α).q₀) (q - 2)\n        else fun _ => none := by\n    funext j q\n    rw [ht₃]\n    have hdtapes : d₂.workTapes = d₁.workTapes := by\n      funext j q\n      exact Cfg.mapState_workTapes _ _ _ _"
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.CodeSimulator",
+    "target_local_declaration": "private theorem us_start",
+    "source_line": 8998,
+    "existing_direct_imports": [
+      "TCSlib.Complexity.TuringMachine.CodeFormat",
+      "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "TCSlib.Complexity.TuringMachine.Build.Seam",
+      "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlockLoop",
+      "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "TCSlib.Complexity.TuringMachine.Build.InputCall",
+      "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+      "TCSlib.Complexity.TuringMachine.Nondeterministic",
+      "TCSlib.Complexity.TuringMachine.Build.InterpreterStartup"
+    ],
+    "shortest_existing_import_path_to_published_row_home": null,
+    "new_import_needed_for_direct_use": true,
+    "reverse_path_for_cycle_check": null,
+    "status": "PAUSED: requires an exact consumer derivation and new frozen-file import authorization; no patch",
+    "bounded_existing_chunk_excerpt": "private theorem us_start {K : ℕ} {Q R : Type} (W : MultiTapeTM K Bool (Q ⊕ R)) (entry : Q)\n    (z : List Bool) :\n    ({ W with q₀ := Sum.inl entry } : MultiTapeTM K Bool (Q ⊕ R)).initCfg z =\n      (⟨some entry, 1, fun _ _ => none, fun _ => 0, []⟩ : Cfg K Bool Q z).mapState Sum.inl := by\n  rw [MultiTapeTM.initCfg_with_q₀]\n  apply Cfg.ext\n  · rw [Cfg.init_state, Cfg.mapState_state]\n    rfl\n  · rw [Cfg.init_inputPos, Cfg.mapState_inputPos]\n  · funext j q\n    rw [Cfg.init_workTapes, Cfg.mapState_workTapes]\n  · funext j\n    rw [Cfg.init_workTapePos, Cfg.mapState_workTapePos]\n  · rw [Cfg.init_output, Cfg.mapState_output]\n\n/-- **The simulator's run.** For a machine `U` that, from the blank start at `entry` on\n`⟨⟨bits t, α⟩, x⟩`, first reaches `done` at a configuration with the startup's threshold fields,\nthe binary machine `S` (the seam of `U` into the hosted verdict embedded along the tape map,\nrestarted at `entry`) halts from its initial configuration within `T₁ + 1 + T₂` steps with\noutput `[answer]`, deciding bounded acceptance on `x`. This is the shape `us_verdict` takes.\n\n**Proof sketch.** `us_start` turns `S`'s initial configuration into the relabelled blank start,\nand the restart changes no run (`runFrom_with_q₀`); then `us_tail`. -/\nprivate theorem us_run {K : ℕ} {Q : Type} [Fintype Q] [DecidableEq Q] (α x : List Bool)\n    (t : ℕ) (U : MultiTapeTM K Bool Q) (entry done : Q) (g : Fin (1 + (F.k + 2 + 1)) ↪ Fin K)"
+  },
+  {
+    "module": "TCSlib.Complexity.ClassNP.ExhaustiveReplay",
+    "target_local_declaration": "private theorem xr_E_initCfg",
+    "source_line": 3087,
+    "existing_direct_imports": [
+      "TCSlib.Complexity.ClassNP.NTIME",
+      "TCSlib.Complexity.TuringMachine.NDCodes",
+      "TCSlib.Complexity.TuringMachine.ChoiceReplay",
+      "TCSlib.Complexity.TuringMachine.Build.StepClock",
+      "TCSlib.Complexity.TuringMachine.Build.Seam",
+      "TCSlib.Complexity.TuringMachine.CfgFacts"
+    ],
+    "shortest_existing_import_path_to_published_row_home": null,
+    "new_import_needed_for_direct_use": true,
+    "reverse_path_for_cycle_check": null,
+    "status": "PAUSED: missing current UniversalParts import; overlaps FE agent in a different chunk, root coordinates; no patch",
+    "bounded_existing_chunk_excerpt": "private theorem xr_E_initCfg {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) :\n    (xr_E C).tm.initCfg z =\n      ((xr_cycle C z false false [] [] [] (fun _ => 0)).mapState Sum.inl).mapState Sum.inl := by\n  refine (MultiTapeTM.initCfg_with_q₀ (xr_seam C)\n    (Sum.inl (Sum.inl ⟨(.copy, false, false), SweepPhase.sweep⟩)) z).trans ?_\n  apply Cfg.ext\n  · rw [Cfg.init_state, Cfg.mapState_state, Cfg.mapState_state]; rfl\n  · rw [Cfg.init_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]; rfl\n  · funext j p\n    simp only [Cfg.init_workTapes, Cfg.mapState_workTapes]\n    show none = xr_tapes (fun _ _ => none) (FinTM.bufferTape []) (FinTM.bufferTape [])\n      (FinTM.bufferTape []) (FinTM.bufferTape []) j p\n    rw [FinTM.bufferTape_nil, xr_tapes_blank]\n  · funext j\n    simp only [Cfg.init_workTapePos, Cfg.mapState_workTapePos]\n    show (0 : ℤ) = xr_heads (fun _ => 0) 0 0 0 0 j\n    rw [xr_heads_zero]\n  · rw [Cfg.init_output, Cfg.mapState_output, Cfg.mapState_output]; rfl\n\n/-- **The answer's tail.** From a live configuration with empty output, one step of the answer\nrow halts with the output `[b]`, read in any renaming of the states. -/\nprivate theorem xr_answer_tail {K : ℕ} {x : List Bool} {S S' : Type} (b : Bool)\n    (d : Cfg K Bool S x) (q : S) (hd : d.state = some q) (hout : d.output = [])\n    (f : xr_St → S') :\n    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).state = none ∧"
+  },
+  {
+    "module": "TCSlib.Complexity.Diagonalization.NTimeHierarchy",
+    "target_local_declaration": "  have hstart : P.initCfg z",
+    "source_line": 1415,
+    "existing_direct_imports": [
+      "TCSlib.Complexity.TuringMachine.NDCodes",
+      "TCSlib.Complexity.ClassNP.NTIME",
+      "TCSlib.Complexity.ClassP.TimeConstructible",
+      "TCSlib.Complexity.ClassNP.NDNormalForm",
+      "TCSlib.Complexity.TuringMachine.Build.NDHost",
+      "TCSlib.Complexity.TuringMachine.NDCodeSimulator",
+      "TCSlib.Complexity.TuringMachine.UniversalStartup",
+      "TCSlib.Complexity.ClassNP.ExhaustiveReplay",
+      "TCSlib.Complexity.ClassNP.TMSAT",
+      "TCSlib.Complexity.TuringMachine.Build.Rewind",
+      "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+      "TCSlib.Complexity.Diagonalization.NTimeDiagonalizer",
+      "TCSlib.Complexity.TuringMachine.ChoiceWords"
+    ],
+    "shortest_existing_import_path_to_published_row_home": null,
+    "new_import_needed_for_direct_use": true,
+    "reverse_path_for_cycle_check": null,
+    "status": "PAUSED: missing current UniversalParts import and nested embedded-start bridge to verify; no patch",
+    "bounded_existing_chunk_excerpt": "  have hstart : P.initCfg z =\n      ((((((c0.mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState\n        Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl := by\n    rw [MultiTapeTM.initCfg_with_q₀]\n    refine Cfg.ext ?_ ?_ ?_ ?_ ?_\n    · rw [Cfg.init_state, Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state,\n        Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state,\n        Cfg.mapState_state, embedSilentCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state]\n      rfl\n    · rw [Cfg.init_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,\n        Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,\n        Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,\n        embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]\n    · funext i q\n      rw [Cfg.init_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes,\n        Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes,\n        Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]\n      by_cases hsel : ∃ j, ιC j = i\n      · obtain ⟨j, rfl⟩ := hsel\n        rw [embedSilentCfg_selected_tape, MultiTapeTM.initCfg_eq, Cfg.init_workTapes]\n      · by_cases hic : i = cap\n        · rw [hic,\n            (embedSilentCfg_cap ιC cap hcaprC (fun _ _ => none) (fun _ => 0) [] []\n              (MC.tm.initCfg z)).1,\n            MultiTapeTM.initCfg_eq, Cfg.init_output]"
+  }
+]

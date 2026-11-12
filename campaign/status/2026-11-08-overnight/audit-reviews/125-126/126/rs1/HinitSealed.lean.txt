@@ -1,0 +1,15 @@
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+section
+attribute [local irreducible] MultiTapeTM.initCfg Cfg.init Cfg.mapState
+attribute [-simp] MultiTapeTM.initCfg Cfg.init
+example {n : ℕ} {P Q : Type} (A : MultiTapeTM n Bool P)
+    (W : MultiTapeTM n Bool (P ⊕ Q)) (x : List Bool) :
+    let R := { W with q₀ := Sum.inl A.q₀ }
+    let d₀ := A.initCfg x
+    R.initCfg x = d₀.mapState Sum.inl :=
+  MultiTapeTM.initCfg_eq_mapState A _ Sum.inl rfl x
+end

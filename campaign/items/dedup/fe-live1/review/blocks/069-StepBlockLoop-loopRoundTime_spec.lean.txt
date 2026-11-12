@@ -1,0 +1,54 @@
+private lemma loopRoundTime_spec {k n : ℕ} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (c : Cfg k Bool (Fin (n + 1)) x)
+    (live : c.state ≠ none) (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some (exit k true)) (rel : Rep M.tr c d) :
+    0 < loopRoundTime d ∧ loopRoundTime d ≤ 50 * ((tableBitsK M.tr).length + 1) ∧
+      let e := (roundTM k).runFrom d (loopRoundTime d)
+      e.state = some (exit k (M.step c).state.isSome) ∧
+      Rep M.tr (M.step c) e ∧ e.output = d.output ∧
+      (∀ u, 0 < u → u < loopRoundTime d → ∃ s,
+        ((roundTM k).runFrom d u).state = some s ∧
+          s ≠ exit k true ∧ s ≠ exit k false) := by
+  classical
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp live
+  obtain ⟨T, positive, bound, state, related, _, cut, silent, _⟩ :=
+    roundTM_effect M.tr c q hq d entry rel
+  have step : M.step c = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+    simp only [MultiTapeTM.step, hq]
+  have existsExit : ∃ t, 0 < t ∧ ∃ b,
+      ((roundTM k).runFrom d t).state = some (exit k b) :=
+    ⟨T, positive, _, state⟩
+  have exits (u : ℕ) : (∃ b, ((roundTM k).runFrom d u).state = some (exit k b)) ↔
+      (((roundTM k).runFrom d u).state = some ⟨.entry, ()⟩ ∨
+        ((roundTM k).runFrom d u).state = some ⟨.halt, ()⟩) := by
+    constructor
+    · rintro ⟨b, hb⟩
+      cases b
+      · exact Or.inr hb
+      · exact Or.inl hb
+    · rintro (h | h)
+      · exact ⟨true, h⟩
+      · exact ⟨false, h⟩
+  obtain ⟨T', -, unique⟩ := roundTM_firstExit_unique M.tr c q hq d entry rel
+  have first (V : ℕ) (hV : 0 < V ∧ ∃ b, ((roundTM k).runFrom d V).state = some (exit k b))
+      (before : ∀ u, 0 < u → u < V →
+        ¬∃ b, ((roundTM k).runFrom d u).state = some (exit k b)) : V = T' :=
+    unique V ⟨hV.1, (exits V).mp hV.2, fun u hu huV => by
+      have h := before u hu huV
+      rw [exits u] at h
+      exact ⟨fun e => h (Or.inl e), fun e => h (Or.inr e)⟩⟩
+  have least : Nat.find existsExit = T := by
+    rw [first (Nat.find existsExit) (Nat.find_spec existsExit)
+      (fun u hu hlt h => Nat.find_min existsExit hlt ⟨hu, h⟩)]
+    refine (first T ⟨positive, _, state⟩ (fun u hu huT => ?_)).symm
+    obtain ⟨s, hs, he, hh⟩ := cut u hu huT
+    rintro ⟨b, hb⟩
+    have equal : s = exit k b := Option.some.inj (hs.symm.trans hb)
+    cases b
+    · exact hh equal
+    · exact he equal
+  have duration : loopRoundTime d = T := by
+    simp only [loopRoundTime, dif_pos existsExit, least]
+  rw [duration]
+  exact ⟨positive, bound, by simpa only [step] using state,
+    by simpa only [step] using related, silent T le_rfl, cut⟩

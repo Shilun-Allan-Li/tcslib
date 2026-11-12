@@ -1,0 +1,523 @@
+/-- The successful apply phases rewrite every fixed-width field and return to yes.
+**Proof sketch.** Maintain a prefix already equal to the final record, with the untouched
+suffix still equal to the original record. Public field offsets and framed contracts
+advance this prefix through state, clamped position, work-tape fields and tag. All field
+widths agree. Finally the proved inverse skips restore the record head and return yes. -/
+private theorem recordStep_apply_run {k : ℕ} {Q T S : Type}
+    [DecidableEq Q] [DecidableEq T] [DecidableEq S]
+    (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
+    (seek : MultiTapeTM 2 Bool S) (start finish : S) {x : List Bool}
+    (s : ℕ) (c : Cfg k Bool Q x) (τ : T) (hc : c.InWindow s)
+    (data : RecordStepData k Q T) (hinput : data.input = c.inputSymbol)
+    (hzero : data.posZero = decide (c.inputPos.val = 0)) (htag : data.tag = some τ)
+    (d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map (RecSym.digitEmb Q T)))
+    (hrec : RecordAt d 0 (cfgRecord s c τ))
+    (blank : ∀ j : Fin 4, j ≠ 0 → ∀ z, d.workTapes j z = none) :
+    ∃ t ≤ 40 * (k + 3) * ((joinFields (cfgRecord s c τ)).length + 1),
+      RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+        ((joinFields (cfgRecord s c τ)).length + 1)
+        (recordStepSnapshot d (⟨⟨.writeState, data⟩, .fwd ()⟩ : RecordStepControl k Q T S) 0
+          ((binDigits (posWidth x.length) c.inputPos.val).map (RecSym.digitEmb Q T)) [])
+        {d with
+          state := some (recordStepVerdict true)
+          workTapes := fun j z =>
+            if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ((joinFields (cfgRecord s c τ)).length : ℤ)
+              then fieldsTape (cfgRecord s ((recordStepAction M data).apply c)
+                (upd τ (recordStepAction M data).output)) (z - d.workTapePos j)
+              else d.workTapes j z} t := by
+  let a := recordStepAction M data
+  let fs := cfgRecord s c τ
+  let gs := cfgRecord s (a.apply c) (upd τ a.output)
+  let L := (joinFields fs).length
+  let w := (binDigits (posWidth x.length) c.inputPos.val).map (RecSym.digitEmb Q T)
+  let cfg {A : Type} (q : A) (head cut : ℕ) (b : List (RecSym Q T)) :=
+    recordStepSnapshot {d with
+      workTapes := fun j z =>
+        if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + (cut : ℤ)
+          then fieldsTape gs (z - d.workTapePos j) else d.workTapes j z} q (head : ℤ) b []
+  have snap {A B : Type} (q : A) (q' : B) (head cut p : ℕ) (b : List (RecSym Q T)) :
+      recordStepSnapshot (cfg q head cut []) q' (p : ℤ) b [] = cfg q' (head + p) cut b := by
+    apply Cfg.ext <;> try rfl
+    · funext j z
+      fin_cases j <;> simp [cfg, recordStepSnapshot]
+    · funext j
+      fin_cases j <;> simp [cfg, recordStepSnapshot, Nat.cast_add, add_assoc]
+  have snap0 {A B : Type} (q : A) (q' : B) (head cut : ℕ) (b : List (RecSym Q T)) :
+      recordStepSnapshot (cfg q head cut []) q' 0 b [] = cfg q' head cut b := by
+    simpa only [Nat.cast_zero, Nat.add_zero] using snap q q' head cut 0 b
+  have flen : fs.length = k + 3 := cfgRecord_length s c τ
+  have glen : gs.length = k + 3 := cfgRecord_length s (a.apply c) (upd τ a.output)
+  have lengths : fs.map List.length = gs.map List.length := by
+    simp [fs, gs, cfgRecord, binDigits, List.map_map, Function.comp_def]
+  have sizes : fs.map (fun u => u.length + 1) = gs.map (fun u => u.length + 1) := by
+    simpa only [List.map_map, Function.comp_def] using congrArg (List.map (fun n => n + 1)) lengths
+  have offsets (j : ℕ) : fieldOffset fs j = fieldOffset gs j :=
+    recordStep_fieldOffset_congr fs gs j (by rw [List.map_take, List.map_take, lengths])
+  have sameLength : (joinFields gs).length = L := by
+    have hf := length_joinFields_add_one fs (by intro h; simp [h] at flen)
+    have hg := length_joinFields_add_one gs (by intro h; simp [h] at glen)
+    rw [flen] at hf
+    rw [glen, ← offsets] at hg
+    dsimp [L]
+    omega
+  have len (j : ℕ) (hj : j < k + 3) : (gs[j]'(by omega)).length = (fs[j]'(by omega)).length := by
+    have h := congrArg (fun ns : List ℕ => ns[j]?) lengths
+    simpa [List.getElem?_eq_getElem (by omega : j < fs.length),
+      List.getElem?_eq_getElem (by omega : j < gs.length)] using h.symm
+  have oldField (j : ℕ) (hj : j < k + 3) (z : ℤ) (hz : -1 ≤ z) (hu : z ≤ (fs[j]'(by omega)).length) :
+      d.workTapes 0 (d.workTapePos 0 + fieldOffset fs j + z) = FinTM.bufferTape fs[j] z := by
+    have span := fieldOffset_add_length_le fs j (by omega)
+    rw [add_assoc, hrec _ (by omega) (by dsimp [fs] at *; omega)]
+    exact fieldsTape_field fs j (by omega) z hz hu
+  have newField (j : ℕ) (hj : j < k + 3) (z : ℤ) (hz : -1 ≤ z) (hu : z ≤ (fs[j]'(by omega)).length) :
+      fieldsTape gs ((fieldOffset fs j : ℤ) + z) = FinTM.bufferTape (gs[j]'(by omega)) z := by
+    rw [offsets]
+    exact fieldsTape_field gs j (by omega) z hz (by simpa only [len j hj] using hu)
+  have field {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T))
+      (z : ℤ) (hz : -1 ≤ z) (hu : z ≤ (fs[j]'(by omega)).length) :
+      (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes 0
+        ((cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos 0 + z) = FinTM.bufferTape fs[j] z := by
+    change (if 0 = (0 : Fin 4) ∧ d.workTapePos 0 ≤ d.workTapePos 0 + (fieldOffset fs j : ℤ) + z ∧
+        d.workTapePos 0 + (fieldOffset fs j : ℤ) + z < d.workTapePos 0 + (fieldOffset fs j : ℤ)
+      then fieldsTape gs (d.workTapePos 0 + (fieldOffset fs j : ℤ) + z - d.workTapePos 0)
+      else d.workTapes 0 (d.workTapePos 0 + (fieldOffset fs j : ℤ) + z)) = _
+    split_ifs with h
+    · have hz' : z = -1 := by omega
+      have arg : d.workTapePos 0 + (fieldOffset fs j : ℤ) + z - d.workTapePos 0 =
+          (fieldOffset fs j : ℤ) + z := by omega
+      rw [arg, newField j hj z hz hu, hz']
+      simp
+    · exact oldField j hj z hz hu
+  have extend {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) :
+      {cfg q (fieldOffset fs j) (fieldOffset fs j) b with
+        workTapes := fun i z =>
+          if i = 0 ∧ (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i ≤ z ∧
+              z < (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i + (fs[j].length : ℤ)
+            then FinTM.bufferTape (gs[j]'(by omega))
+              (z - (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i)
+            else (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes i z} =
+        cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b := by
+    apply Cfg.ext <;> try rfl
+    funext i z
+    by_cases hi : i = 0
+    · subst i
+      have off := fieldOffset_succ fs j (by omega)
+      have new (hz : (fieldOffset fs j : ℤ) ≤ z - d.workTapePos 0)
+          (hu : z - d.workTapePos 0 ≤ (fieldOffset fs j : ℤ) + fs[j].length) :
+          fieldsTape gs (z - d.workTapePos 0) =
+            FinTM.bufferTape (gs[j]'(by omega)) (z - (d.workTapePos 0 + (fieldOffset fs j : ℤ))) := by
+        have arg : z - d.workTapePos 0 = (fieldOffset fs j : ℤ) +
+            (z - (d.workTapePos 0 + (fieldOffset fs j : ℤ))) := by omega
+        conv_lhs => rw [arg]
+        exact newField j hj _ (by omega) (by omega)
+      dsimp only [cfg, recordStepSnapshot]
+      simp only [show (0 : Fin 4) ≠ 1 by decide, show (0 : Fin 4) ≠ 3 by decide,
+        ↓reduceIte, true_and]
+      split_ifs with hwrite hold hnew hnew
+      · exact (new (by omega) (by omega)).symm
+      · omega
+      · rfl
+      · omega
+      · have hz : z = d.workTapePos 0 + (fieldOffset fs j : ℤ) + fs[j].length := by omega
+        have hf := oldField j hj (fs[j].length : ℤ) (by omega) le_rfl
+        rw [← hz] at hf
+        rw [new (by omega) (by omega)]
+        have arg : z - (d.workTapePos 0 + (fieldOffset fs j : ℤ)) = fs[j].length := by omega
+        rw [arg, ← len j hj]
+        simpa [FinTM.bufferTape_eq] using hf
+      · rfl
+    · simp [cfg, recordStepSnapshot, hi]
+  have processed {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T))
+      (z : ℤ) (hz : -1 ≤ z) (hu : z ≤ (fs[j]'(by omega)).length) :
+      (cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapes 0
+        ((cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapePos 0 + z) =
+          FinTM.bufferTape (gs[j]'(by omega)) z := by
+    have off := fieldOffset_succ fs j (by omega)
+    change (if 0 = (0 : Fin 4) ∧ d.workTapePos 0 ≤ d.workTapePos 0 + (fieldOffset fs j : ℤ) + z ∧
+        d.workTapePos 0 + (fieldOffset fs j : ℤ) + z < d.workTapePos 0 + (fieldOffset fs (j + 1) : ℤ)
+      then fieldsTape gs (d.workTapePos 0 + (fieldOffset fs j : ℤ) + z - d.workTapePos 0)
+      else d.workTapes 0 (d.workTapePos 0 + (fieldOffset fs j : ℤ) + z)) = _
+    have arg : d.workTapePos 0 + (fieldOffset fs j : ℤ) + z - d.workTapePos 0 =
+        (fieldOffset fs j : ℤ) + z := by omega
+    split_ifs with h
+    · rw [arg]
+      exact newField j hj z hz hu
+    · have hz' : z = -1 := by rw [off] at h; omega
+      rw [oldField j hj z hz hu, hz']
+      simp
+  have shift {A : Type} (q : A) (head cut : ℕ) (b : List (RecSym Q T))
+      {u v : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map (RecSym.digitEmb Q T))}
+      {t r : ℕ} (h : RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false)
+        (cfg q head cut b).workTapePos r u v t) (bound : head + r ≤ L + 1) :
+      RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1) u v t := by
+    apply Segment.mono h (fun _ hx => hx)
+    intro p hp
+    rw [record_headBox_iff] at hp ⊢
+    intro i
+    have h' := hp i
+    have delta : |(cfg q head cut b).workTapePos i - d.workTapePos i| ≤ (head : ℤ) := by
+      simp only [cfg, recordStepSnapshot, add_sub_cancel_left]
+      split_ifs <;> simp
+    rw [abs_le] at h' delta ⊢
+    constructor <;> omega
+  have mapRaw (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T))
+      (f : RecSym Q T → RecSym Q T) (word : (fs[j]'(by omega)).map f = gs[j]'(by omega)) :
+      let raw := cfg (ScanPhase.fwd ()) (fieldOffset fs j) (fieldOffset fs j) b
+      let row := scanTM 4 0 (scanMap f) scanKeep ()
+      row.runFrom raw (2 * fs[j].length + 2) = cfg (ScanPhase.done ()) (fieldOffset fs j) (fieldOffset fs (j + 1)) b ∧
+      (∀ u < 2 * fs[j].length + 2, ∀ v, (row.runFrom raw u).state ≠ some (.done v)) ∧
+      (∀ u ≤ 2 * fs[j].length + 2, ∀ i, |(row.runFrom raw u).workTapePos i - d.workTapePos i| ≤ ((L + 1 : ℕ) : ℤ)) := by
+    dsimp only
+    obtain ⟨run, cut, heads⟩ := recordStep_contract_clauses_range
+      (scanTM_contract (0 : Fin 4) (scanMap f) scanKeep () _) fs[j]
+      (cfg (ScanPhase.fwd ()) (fieldOffset fs j) (fieldOffset fs j) b) rfl
+      (by rw [scanTM_contract_pre]; exact field _ j hj b)
+    rw [scanTM_contract_time, scanTM_contract_post] at run
+    simp only [scanTM_contract_time, scanTM_contract_lo, scanTM_contract_hi] at cut heads
+    rw [scanResult_map, word] at run
+    refine ⟨run.trans (extend (ScanPhase.done ()) j hj b), cut, ?_⟩
+    intro u hu i
+    have h := heads i u hu
+    by_cases hi : i = 0
+    · subst i
+      simp only [↓reduceIte, Finset.mem_Icc] at h
+      have span := fieldOffset_add_length_le fs j (by omega)
+      dsimp [cfg, recordStepSnapshot] at h ⊢
+      rw [abs_le]
+      dsimp [L] at *
+      constructor <;> omega
+    · rw [if_neg hi, if_neg hi] at h
+      rw [Finset.mem_Icc] at h
+      rw [le_antisymm h.2 h.1]
+      simp [cfg, recordStepSnapshot, hi]
+      omega
+  have skipRaw (j : ℕ) (hj : j < k + 2) (b : List (RecSym Q T)) :
+      let raw := cfg SeekPhase.run (fieldOffset fs j) (fieldOffset fs (j + 1)) b
+      (skipTM 4 0).runFrom raw (fs[j]'(by omega)).length.succ =
+        cfg SeekPhase.done (fieldOffset fs (j + 1)) (fieldOffset fs (j + 1)) b ∧
+      (∀ u < fs[j].length + 1, ((skipTM 4 0).runFrom raw u).state ≠ some .done) ∧
+      (∀ u ≤ fs[j].length + 1, ∀ i, |((skipTM 4 0).runFrom raw u).workTapePos i - d.workTapePos i| ≤ ((L + 1 : ℕ) : ℤ)) := by
+    dsimp only
+    obtain ⟨run, cut, heads⟩ := recordStep_contract_clauses (skipTM_contract (0 : Fin 4) _)
+      (gs[j]'(by omega))
+      (cfg SeekPhase.run (fieldOffset fs j) (fieldOffset fs (j + 1)) b) rfl
+      (by
+        rw [skipTM_contract_pre]
+        intro z hz hu
+        exact processed _ j (by omega) b z (by omega) (by simpa only [len j (by omega)] using hu))
+    rw [skipTM_contract_time, skipTM_contract_post, recordStep_seekPost_eq] at run
+    simp only [skipTM_contract_time, skipTM_contract_lo, skipTM_contract_hi] at cut heads
+    rw [len j (by omega)] at run cut heads
+    refine ⟨run.trans ?_, cut, ?_⟩
+    · apply Cfg.ext <;> try rfl
+      funext i
+      by_cases hi : i = 0
+      · subst i
+        simp [cfg, recordStepSnapshot, fieldOffset_succ fs j (by omega)]
+        omega
+      · simp [cfg, recordStepSnapshot, hi, Function.update_of_ne]
+    · intro u hu i
+      have h := heads i u hu
+      by_cases hi : i = 0
+      · subst i
+        simp only [↓reduceIte, Finset.mem_Icc] at h
+        have span := fieldOffset_add_length_le fs j (by omega)
+        dsimp [cfg, recordStepSnapshot] at h ⊢
+        rw [abs_le]
+        dsimp [L] at *
+        constructor <;> omega
+      · rw [if_neg hi] at h
+        rw [Finset.mem_Icc] at h
+        rw [le_antisymm h.2 h.1]
+        simp [cfg, recordStepSnapshot, hi]
+        omega
+  let posEntry : RecordStepControl k Q T S := match a.inputTape with
+    | .zero => ⟨⟨.clearB, data⟩, .sweep⟩
+    | .neg => if data.posZero then ⟨⟨.clearB, data⟩, .sweep⟩ else ⟨⟨.decB, data⟩, .run⟩
+    | .pos => if data.input.isNone && !data.posZero then ⟨⟨.clearB, data⟩, .sweep⟩ else ⟨⟨.incB, data⟩, .run⟩
+  have stateRun : RecordSeg (recordStepMachine M upd seek start finish)
+      (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+      (cfg (⟨⟨.writeState, data⟩, .fwd ()⟩ : RecordStepControl k Q T S) 0 0 w)
+      (cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) w) 8 := by
+    have first : fs[0]'(by omega) = [RecSym.st c.state] := by rfl
+    have last : gs[0]'(by omega) = [RecSym.st a.state] := by
+      show [RecSym.st (Q := Q) (T := T) (a.apply c).state] = _
+      rw [Action.apply_state]
+    obtain ⟨run, cut, heads⟩ := mapRaw 0 (by omega) w (fun _ => .st a.state) (by rw [first, last]; rfl)
+    simp only [first, fieldOffset_zero, List.length_cons, List.length_nil] at run cut heads
+    have pm := recordStep_phase_run M upd seek start finish ⟨.writeState, data⟩
+      (by intro b h; cases h) (cfg (.fwd ()) 0 0 w) (cfg (.done ()) 0 (fieldOffset fs 1) w)
+      4 run (.done ()) rfl (⟨⟨.skipNewState, data⟩, .run⟩ : RecordStepControl k Q T S) rfl
+      (by intro u hu q hq; cases q with
+          | done v => exact (cut u hu v hq).elim
+          | fwd v => rfl
+          | bwd v => rfl)
+      d.workTapePos (L + 1) heads
+    obtain ⟨run, cut, heads⟩ := skipRaw 0 (by omega) w
+    simp only [first, fieldOffset_zero, List.length_cons, List.length_nil] at run cut heads
+    have ps := recordStep_phase_run M upd seek start finish ⟨.skipNewState, data⟩
+      (by intro b h; cases h) (cfg .run 0 (fieldOffset fs 1) w)
+      (cfg .done (fieldOffset fs 1) (fieldOffset fs 1) w) 2 run .done rfl posEntry (by
+        cases h : (recordStepAction M data).inputTape <;> simp [recordStepNext, posEntry, a, h] <;> split_ifs <;> rfl)
+      (by intro u hu q hq; cases q with
+          | done => exact (cut u hu hq).elim
+          | run => rfl
+          | gap => rfl
+          | back => rfl)
+      d.workTapePos (L + 1) heads
+    simp only [cfg, recordStep_mapState_snapshot]
+      at pm ps
+    exact Segment.trans pm ps
+  let tapeState (r : ℕ) : RecordStepControl k Q T S := if h : r < k then
+    ⟨⟨.writeTape ⟨r, h⟩, data⟩, .fwd ()⟩ else ⟨⟨.writeTag, data⟩, .fwd ()⟩
+  have positionRun : ∃ t ≤ 8 * (L + 1),
+      RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+        (cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) w)
+        (cfg (tapeState 0) (fieldOffset fs 2) (fieldOffset fs 2) []) t := by
+    let base := cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) []
+    have word : fs[1]'(by omega) = w := by rfl
+    have wide : w.length = posWidth x.length := by simp [w, binDigits]
+    have last : gs[1]'(by omega) =
+        (binDigits (posWidth x.length) (a.apply c).inputPos.val).map (RecSym.digitEmb Q T) := by rfl
+    obtain ⟨t, ht, hrun⟩ := recordStep_position_run M upd seek start finish c data hinput hzero base
+      (by
+        intro z hz hu
+        change base.workTapes 0 (base.workTapePos 0 + z) = FinTM.bufferTape w z
+        simpa only [base, word] using field posEntry 1 (by omega) [] z hz (by simpa only [word, wide] using hu))
+    have endeq : (recordStepSnapshot {base with
+        workTapes := fun j z =>
+          if j = 0 ∧ base.workTapePos j ≤ z ∧ z < base.workTapePos j + (posWidth x.length : ℤ)
+            then FinTM.bufferTape (gs[1]'(by omega)) (z - base.workTapePos j) else base.workTapes j z}
+        (⟨⟨.skipNewPos, data⟩, .run⟩ : RecordStepControl k Q T S) 0 [] []) =
+          cfg (⟨⟨.skipNewPos, data⟩, .run⟩ : RecordStepControl k Q T S) (fieldOffset fs 1) (fieldOffset fs 2) [] := by
+      have h := congrArg (fun base => recordStepSnapshot base
+        (⟨⟨.skipNewPos, data⟩, .run⟩ : RecordStepControl k Q T S) 0 [] []) (extend posEntry 1 (by omega) [])
+      simpa only [word, wide, snap0, Nat.add_zero] using h
+    have segment : RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) base.workTapePos (posWidth x.length + 1)
+        (cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) w)
+        (cfg (⟨⟨.skipNewPos, data⟩, .run⟩ : RecordStepControl k Q T S) (fieldOffset fs 1) (fieldOffset fs 2) []) t := by
+      change RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) base.workTapePos (posWidth x.length + 1)
+        (recordStepSnapshot base posEntry 0 w [])
+        (recordStepSnapshot {base with
+          workTapes := fun j z =>
+            if j = 0 ∧ base.workTapePos j ≤ z ∧ z < base.workTapePos j + (posWidth x.length : ℤ)
+              then FinTM.bufferTape (gs[1]'(by omega)) (z - base.workTapePos j) else base.workTapes j z}
+          (⟨⟨.skipNewPos, data⟩, .run⟩ : RecordStepControl k Q T S) 0 [] []) t at hrun
+      rw [endeq] at hrun
+      simpa only [base, snap0, Nat.add_zero] using hrun
+    have span := fieldOffset_add_length_le fs 1 (by omega)
+    have hwide : fieldOffset fs 1 + (posWidth x.length + 1) ≤ L + 1 := by
+      rw [word, wide] at span
+      dsimp [L]
+      omega
+    have pm := shift posEntry (fieldOffset fs 1) (fieldOffset fs 1) [] segment hwide
+    obtain ⟨run, cut, heads⟩ := skipRaw 1 (by omega) []
+    have ps := recordStep_phase_run M upd seek start finish ⟨.skipNewPos, data⟩
+      (by intro b h; cases h) (cfg .run (fieldOffset fs 1) (fieldOffset fs 2) [])
+      (cfg .done (fieldOffset fs 2) (fieldOffset fs 2) []) (fs[1].length + 1) run .done rfl
+      (tapeState 0) (by simp [recordStepNext, recordStepFirstTape, tapeState])
+      (by intro u hu q hq; cases q with
+          | done => exact (cut u hu hq).elim
+          | run => rfl
+          | gap => rfl
+          | back => rfl)
+      d.workTapePos (L + 1) heads
+    simp only [cfg, recordStep_mapState_snapshot] at ps
+    refine ⟨t + (fs[1].length + 2), ?_, Segment.trans pm ps⟩
+    have off1 : fieldOffset fs 1 = 2 := by
+      rw [fieldOffset_succ _ 0 (by omega), fieldOffset_zero]
+      rfl
+    rw [word, wide, off1] at span
+    rw [word, wide]
+    dsimp [L] at *
+    omega
+  have round (r : ℕ) (hr : r < k) :
+      RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+        (cfg (tapeState r) (fieldOffset fs (r + 2)) (fieldOffset fs (r + 2)) [])
+        (cfg (tapeState (r + 1)) (fieldOffset fs (r + 3)) (fieldOffset fs (r + 3)) [])
+        (5 * (2 * s + 1) + 8) := by
+    let i : Fin k := ⟨r, hr⟩
+    have word : fs[r + 2]'(by omega) = (List.range (2 * s + 1)).map fun (z : ℕ) =>
+        RecSym.cell (c.workTapes i ((z : ℤ) - s)) (decide (c.workTapePos i = (z : ℤ) - s)) := by
+      simp only [fs, cfgRecord, List.getElem_cons_succ, bind_pure_comp, Functor.map,
+        List.map_map, Function.comp_def]
+      rw [List.getElem_append_left (by simpa using hr)]
+      simp [i]
+    have cellWord : ∀ (c' : Cfg k Bool Q x) (τ' : T),
+        (cfgRecord s c' τ')[r + 2]'(by rw [cfgRecord_length]; omega) =
+          (List.range (2 * s + 1)).map fun (z : ℕ) =>
+            RecSym.cell (c'.workTapes i ((z : ℤ) - s))
+              (decide (c'.workTapePos i = (z : ℤ) - s)) := by
+      intro c' τ'
+      simp only [cfgRecord, List.getElem_cons_succ, bind_pure_comp, Functor.map,
+        List.map_map, Function.comp_def]
+      rw [List.getElem_append_left (by simpa using hr)]
+      simp [i]
+    have last : gs[r + 2]'(by omega) = (List.range (2 * s + 1)).map fun (z : ℕ) =>
+        RecSym.cell ((a.apply c).workTapes i ((z : ℤ) - s))
+          (decide ((a.apply c).workTapePos i = (z : ℤ) - s)) :=
+      cellWord (a.apply c) (upd τ a.output)
+    have wide : (fs[r + 2]'(by omega)).length = 2 * s + 1 := by simp [word]
+    let base := cfg (tapeState r) (fieldOffset fs (r + 2)) (fieldOffset fs (r + 2)) []
+    have tape := recordStep_tape_run M upd seek start finish s c hc data i base
+      (by
+        intro z hz hu
+        have hf := field (tapeState r) (r + 2) (by omega) [] z hz (by simpa only [wide] using hu)
+        simpa only [base, word] using hf)
+    have patched := extend (⟨⟨.skipNewTape i, data⟩, .run⟩ : RecordStepControl k Q T S) (r + 2) (by omega) []
+    have segment : RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) base.workTapePos (2 * s + 2)
+        (cfg (tapeState r) (fieldOffset fs (r + 2)) (fieldOffset fs (r + 2)) [])
+        (cfg (⟨⟨.skipNewTape i, data⟩, .run⟩ : RecordStepControl k Q T S)
+          (fieldOffset fs (r + 2)) (fieldOffset fs (r + 3)) []) (4 * (2 * s + 1) + 6) := by
+      rw [← patched]
+      simpa [base, tapeState, hr, i, cfg, recordStepSnapshot, wide, last, a] using tape
+    have span := fieldOffset_add_length_le fs (r + 2) (by omega)
+    have pm := shift (tapeState r) (fieldOffset fs (r + 2)) (fieldOffset fs (r + 2)) [] segment
+      (by rw [wide] at span; dsimp [L]; omega)
+    obtain ⟨run, cut, heads⟩ := skipRaw (r + 2) (by omega) []
+    have ps := recordStep_phase_run M upd seek start finish ⟨.skipNewTape i, data⟩
+      (by intro b h; cases h) (cfg .run (fieldOffset fs (r + 2)) (fieldOffset fs (r + 3)) [])
+      (cfg .done (fieldOffset fs (r + 3)) (fieldOffset fs (r + 3)) []) (fs[r + 2].length + 1) run .done rfl
+      (tapeState (r + 1)) (by dsimp [recordStepNext, tapeState, i]; split_ifs <;> rfl)
+      (by intro u hu q hq; cases q with
+          | done => exact (cut u hu hq).elim
+          | run => rfl
+          | gap => rfl
+          | back => rfl)
+      d.workTapePos (L + 1) heads
+    simp only [cfg, recordStep_mapState_snapshot] at ps
+    have joined := Segment.trans pm ps
+    convert joined using 1
+    omega
+  have tapes : ∀ r ≤ k, ∃ t ≤ 8 * r * (L + 1),
+      RecordSeg (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+        (cfg (tapeState 0) (fieldOffset fs 2) (fieldOffset fs 2) [])
+        (cfg (tapeState r) (fieldOffset fs (r + 2)) (fieldOffset fs (r + 2)) []) t := by
+    intro r hr
+    induction r with
+    | zero =>
+      refine ⟨0, by omega, Segment.zero ((record_headBox_iff _ _ _).mpr ?_)⟩
+      intro j
+      have span := fieldOffset_add_length_le fs 2 (by omega)
+      simp only [cfg, recordStepSnapshot]
+      split_ifs <;> rw [abs_le] <;> dsimp [L] at * <;> constructor <;> omega
+    | succ r ih =>
+      obtain ⟨t, ht, hrun⟩ := ih (by omega)
+      have span := fieldOffset_add_length_le fs (r + 2) (by omega)
+      have size : (fs[r + 2]'(by omega)).length = 2 * s + 1 := by
+        simp [fs, cfgRecord, List.getElem_append_left, show r < k by omega]
+      have cost : 5 * (2 * s + 1) + 8 ≤ 8 * (L + 1) := by rw [size] at span; dsimp [L]; omega
+      refine ⟨t + (5 * (2 * s + 1) + 8), ?_, Segment.trans hrun (round r (by omega))⟩
+      calc
+        _ ≤ 8 * r * (L + 1) + 8 * (L + 1) := Nat.add_le_add ht cost
+        _ = _ := by ring
+  have tag : RecordSeg (recordStepMachine M upd seek start finish)
+      (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+      (cfg (tapeState k) (fieldOffset fs (k + 2)) (fieldOffset fs (k + 2)) [])
+      (cfg (⟨⟨.writeBack ⟨k + 1, by omega⟩, data⟩, .run⟩ : RecordStepControl k Q T S)
+        (fieldOffset fs (k + 2)) (fieldOffset fs (k + 3)) []) 5 := by
+    have first : fs[k + 2]'(by omega) = [RecSym.tag τ] := by simp [fs, cfgRecord]
+    have last : gs[k + 2]'(by omega) = [RecSym.tag (upd τ a.output)] := by simp [gs, cfgRecord]
+    let f : RecSym Q T → RecSym Q T := fun γ => match data.tag with
+      | some v => RecSym.tag (upd v a.output) | none => γ
+    obtain ⟨run, cut, heads⟩ := mapRaw (k + 2) (by omega) [] f (by simp [first, last, f, htag])
+    simp only [first, List.length_cons, List.length_nil] at run cut heads
+    have phase := recordStep_phase_run M upd seek start finish ⟨.writeTag, data⟩
+      (by intro b h; cases h) (cfg (.fwd ()) (fieldOffset fs (k + 2)) (fieldOffset fs (k + 2)) [])
+      (cfg (.done ()) (fieldOffset fs (k + 2)) (fieldOffset fs (k + 3)) []) 4 run (.done ()) rfl
+      (⟨⟨.writeBack ⟨k + 1, by omega⟩, data⟩, .run⟩ : RecordStepControl k Q T S) rfl
+      (by intro u hu q hq; cases q with
+          | done v => exact (cut u hu v hq).elim
+          | fwd v => rfl
+          | bwd v => rfl)
+      d.workTapePos (L + 1) heads
+    simp only [cfg, recordStep_mapState_snapshot]
+      at phase
+    simpa only [tapeState, lt_self_iff_false, ↓reduceDIte] using phase
+  let final := cfg (recordStepVerdict true : RecordStepControl k Q T S) 0 (fieldOffset fs (k + 3)) []
+  have fullcut : fieldOffset fs (k + 3) = L + 1 := by
+    have h := length_joinFields_add_one fs (by intro h; simp [h] at flen)
+    simpa only [flen, L] using h.symm
+  have record : RecordAt final 0 gs := by
+    intro z hz hu
+    have head : final.workTapePos 0 = d.workTapePos 0 := by simp [final, cfg, recordStepSnapshot]
+    rw [head]
+    change (if 0 = (0 : Fin 4) ∧ d.workTapePos 0 ≤ d.workTapePos 0 + z ∧
+        d.workTapePos 0 + z < d.workTapePos 0 + (fieldOffset fs (k + 3) : ℤ)
+      then fieldsTape gs (d.workTapePos 0 + z - d.workTapePos 0)
+      else d.workTapes 0 (d.workTapePos 0 + z)) = _
+    rw [add_sub_cancel_left, fullcut]
+    split_ifs with h
+    · rfl
+    · have hz' : z = -1 := by rw [sameLength] at hu; omega
+      subst z
+      have f := oldField 0 (by omega) (-1) le_rfl (by omega)
+      have g := newField 0 (by omega) (-1) le_rfl (by omega)
+      rw [FinTM.bufferTape_left] at f g
+      simpa only [fieldOffset_zero, Nat.cast_zero, zero_add, add_zero] using f.trans g.symm
+  obtain ⟨tw, htw, back⟩ := recordStep_write_back M upd seek start finish final gs glen record data
+  have back' : RecordSeg (recordStepMachine M upd seek start finish)
+      (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
+      (cfg (⟨⟨.writeBack ⟨k + 1, by omega⟩, data⟩, .run⟩ : RecordStepControl k Q T S)
+        (fieldOffset fs (k + 2)) (fieldOffset fs (k + 3)) []) final tw := by
+    have head : final.workTapePos = d.workTapePos := by
+      funext j
+      simp [final, cfg, recordStepSnapshot]
+    rw [head] at back
+    simpa only [final, snap0, snap, Nat.zero_add, ← offsets, sameLength] using back
+  obtain ⟨tp, htp, pos⟩ := positionRun
+  obtain ⟨tt, htt, tape⟩ := tapes k le_rfl
+  have total := Segment.trans
+    (Segment.trans (Segment.trans (Segment.trans stateRun pos) tape) tag) back'
+  refine ⟨8 + tp + tt + 5 + tw, ?_, ?_⟩
+  · rw [sameLength] at htw
+    change _ ≤ 40 * (k + 3) * (L + 1)
+    nlinarith
+  · have initial : cfg (⟨⟨.writeState, data⟩, .fwd ()⟩ : RecordStepControl k Q T S) 0 0 w =
+        recordStepSnapshot d (⟨⟨.writeState, data⟩, .fwd ()⟩ : RecordStepControl k Q T S) 0 w [] := by
+      apply Cfg.ext <;> try rfl
+      funext j z
+      have no : ¬(j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j) := by omega
+      simp [cfg, recordStepSnapshot, no]
+    have endpoint : final = {d with
+        state := some (recordStepVerdict true)
+        workTapes := fun j z =>
+          if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + (L : ℤ)
+            then fieldsTape gs (z - d.workTapePos j) else d.workTapes j z} := by
+      apply Cfg.ext <;> try rfl
+      · funext j z
+        by_cases hj : j = 0
+        · subst j
+          simp only [final, cfg, recordStepSnapshot, fullcut, show (0 : Fin 4) ≠ 1 by decide,
+            show (0 : Fin 4) ≠ 3 by decide, ↓reduceIte, true_and]
+          split_ifs with h h' h'
+          · rfl
+          · have hz : z = d.workTapePos 0 + (L : ℤ) := by omega
+            subst z
+            rw [add_sub_cancel_left]
+            have old := hrec (L : ℤ) (by omega) (by rfl)
+            change d.workTapes 0 (d.workTapePos 0 + (L : ℤ)) = fieldsTape fs (L : ℤ) at old
+            calc
+              fieldsTape gs (L : ℤ) = none := by
+                rw [← sameLength]
+                exact fieldsTape_of_length_le gs le_rfl
+              _ = d.workTapes 0 (d.workTapePos 0 + (L : ℤ)) := by
+                have hnone : fieldsTape fs (L : ℤ) = none := fieldsTape_of_length_le fs le_rfl
+                rw [hnone] at old
+                exact old.symm
+          · omega
+          · rfl
+        · simp [final, cfg, recordStepSnapshot, hj, blank j hj]
+      · funext j
+        simp [final, cfg, recordStepSnapshot]
+    rw [initial, endpoint] at total
+    exact total

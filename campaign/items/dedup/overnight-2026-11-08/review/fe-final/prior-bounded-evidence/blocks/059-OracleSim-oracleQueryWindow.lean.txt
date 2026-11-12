@@ -1,0 +1,35 @@
+private theorem oracleQueryWindow {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg (k + 1) Bool S x) (r : ℕ)
+    (hblank : c.workTapes (OracleTM.queryTapeIdx k) (r : ℤ) = none) :
+    ∀ p : ℤ, -1 ≤ p → p ≤ (OracleTM.queryString c).length →
+      Function.update (c.workTapes (OracleTM.queryTapeIdx k)) (-1) none p =
+        FinTM.bufferTape (OracleTM.queryString c) p := by
+  classical
+  have hex : ∃ n : ℕ, c.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none := ⟨r, hblank⟩
+  let n := Nat.find hex
+  let z := List.ofFn fun i : Fin n =>
+    (c.workTapes (OracleTM.queryTapeIdx k) (i.val : ℤ)).getD false
+  have hzlen : z.length = n := List.length_ofFn
+  have hcells : ∀ i (hi : i < z.length),
+      c.workTapes (OracleTM.queryTapeIdx k) (i : ℤ) = some z[i] := by
+    intro i hi
+    have hn : i < n := hzlen ▸ hi
+    cases hc : c.workTapes (OracleTM.queryTapeIdx k) (i : ℤ) with
+    | none => exact False.elim (Nat.find_min hex hn hc)
+    | some b => simp [z, hc]
+  have hright : c.workTapes (OracleTM.queryTapeIdx k) (z.length : ℤ) = none := by
+    rw [hzlen]
+    exact Nat.find_spec hex
+  rw [OracleTM.queryString_eq_of_cells c z hcells hright]
+  intro p hp hplen
+  by_cases hleft : p = -1
+  · subst p
+    simp
+  · rw [Function.update_of_ne hleft]
+    have hpnonneg : 0 ≤ p := by omega
+    have hpcast : (p.toNat : ℤ) = p := Int.toNat_of_nonneg hpnonneg
+    rw [← hpcast, FinTM.bufferTape_nat]
+    by_cases hi : p.toNat < z.length
+    · exact (hcells p.toNat hi).trans (List.getElem?_eq_getElem hi).symm
+    · have hi' : p.toNat = z.length := by omega
+      rw [hi', hright, List.getElem?_eq_none le_rfl]

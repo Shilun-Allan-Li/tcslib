@@ -1,0 +1,24 @@
+/-- Direct comparison of a closed host step with a returning host step.
+**Proof sketch.** At a live left state, both hosts execute the same action
+and only the successor encoding differs. At a closed halt, the returning
+anchor's idle action preserves every non-control field, just as absorption
+does on the closed side. No property of a source embedding is needed. -/
+private lemma embedReturn_step (N : MultiTapeTM k Symbol S)
+    (R : MultiTapeTM k Symbol (S ⊕ Unit))
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+    (c : Cfg k Symbol S x) :
+    R.step (embedReturnCfg c) = embedReturnCfg (N.step c) := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [embedReturnCfg, hs, hidle, Action.apply]
+  | some q =>
+    rw [show (embedReturnCfg c).state = some (Sum.inl q) by
+      simp [embedReturnCfg, hs]]
+    dsimp only
+    have hin : (embedReturnCfg c).inputSymbol = c.inputSymbol := rfl
+    have hw : (embedReturnCfg c).workTapeSymbols = c.workTapeSymbols := rfl
+    rw [hin, hw, hleft]
+    rfl

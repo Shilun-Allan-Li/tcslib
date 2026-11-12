@@ -1,0 +1,12 @@
+/-- Halting rewind glue, instantiated only through the public `rewind_heads` row.
+The unused stationary state keeps the brief's three-state interface. -/
+private def b2b_rewindTM (k : ℕ) : MultiTapeTM k Bool B2bRewindState where
+  q₀ := .start
+  tr := fun q inp _ =>
+    match q with
+    | .start => FinTM.controlAction .neg (some .scan)
+    | .scan =>
+      match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos none
+    | .done => FinTM.controlAction 0 (some .done)

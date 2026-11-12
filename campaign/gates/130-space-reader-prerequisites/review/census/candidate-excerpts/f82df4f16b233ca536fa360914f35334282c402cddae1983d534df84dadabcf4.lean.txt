@@ -1,0 +1,12 @@
+/-- *Fit:* `OracleSim`'s `oracleBankCfg_eq` (`Build/OracleSim.lean:532`, private there), verbatim,
+is `Turing.embedEmitCfg_eq` at the host's own frame. Its machine argument `A` only served the
+time-zero frame workaround and becomes unnecessary. -/
+theorem oracleBankCfg_eq {m k : ℕ} {S : Type} {x : List Bool}
+    (_A : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (c : Cfg m Bool S x) (d : Cfg k Bool S x)
+    (hs : c.state = d.state) (hin : c.inputPos = d.inputPos) (hout : c.output = d.output)
+    (htape : ∀ i, c.workTapes i = d.workTapes (ι i))
+    (hhead : ∀ i, c.workTapePos i = d.workTapePos (ι i)) :
+    embedEmitCfg ι d.workTapes d.workTapePos [] c = d :=
+  embedEmitCfg_eq ι _ _ [] c d hs hin hout (fun i => ⟨htape i, hhead i⟩)
+    (fun _ _ => ⟨rfl, rfl⟩)

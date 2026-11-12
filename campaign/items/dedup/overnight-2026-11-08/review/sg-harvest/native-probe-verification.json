@@ -1,0 +1,77 @@
+{
+  "result": "PASS eight selected roots, actual3 full-owner checks",
+  "jobs": {
+    "EmitIterEmbed": {
+      "receipt": "native-EmitIterEmbed-attempt2.json",
+      "axioms": {
+        "Turing.step_output_prefix": [
+          "Quot.sound",
+          "propext"
+        ],
+        "Turing.runFrom_output_prefix": [
+          "Quot.sound",
+          "propext"
+        ],
+        "Turing.runFrom_output_extends": [
+          "Quot.sound",
+          "propext"
+        ],
+        "Turing.runFrom_of_halted": [
+          "Quot.sound",
+          "propext"
+        ],
+        "Turing.state_isSome_of_runFrom": [
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "exit": 0,
+      "errors": 0,
+      "sorry_warnings": 0,
+      "warnings": 6
+    },
+    "SAT": {
+      "receipt": "native-SAT-attempt1.json",
+      "axioms": {
+        "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_first_halt": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_call_first_halt": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "exit": 0,
+      "errors": 0,
+      "sorry_warnings": 0,
+      "warnings": 83
+    },
+    "Hardness": {
+      "receipt": "native-Hardness-attempt1.json",
+      "axioms": {
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5_call_first_halt": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ]
+      },
+      "exit": 0,
+      "errors": 0,
+      "sorry_warnings": 0,
+      "warnings": 66
+    }
+  },
+  "all8_original_complete_headers_and_imports_exact": true,
+  "foreign_explicit_rewrite_arguments": [
+    "MultiTapeTM.runFrom_zero (published equation)"
+  ],
+  "other_rewrite_arguments": "local hf/he/hz/hhalt equalities",
+  "foreign_definitions_explicitly_unfolded": [],
+  "whole_body_seals_and_freshcontrols_run": false,
+  "scope": "Each full hypothetical owner against MAC8; no combined compiled tree/replay inferred",
+  "one_own_job_at_a_time": true,
+  "no_own_job_remaining": true
+}

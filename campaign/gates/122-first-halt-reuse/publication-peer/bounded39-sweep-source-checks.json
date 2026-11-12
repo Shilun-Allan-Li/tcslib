@@ -1,0 +1,428 @@
+{
+  "pass": true,
+  "source_pin": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+  "complete39_source_slices": [
+    {
+      "id": 1,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_undo_run",
+      "source_line": 768,
+      "sha256": "b47ae9f4e88066f97d1a9e0805cc05947ea8c31236767172897b1c0e7d218625",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Undo simulation induction consumes the supplied complete live-prefix guard; it does not infer earlier liveness from a later live endpoint.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 2,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_clean_capture",
+      "source_line": 870,
+      "sha256": "32436a688d3872cb6bc9cb03f0b39eeb287d36e7d2a441ef348cd1e3d9c9346c",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Capture simulation consumes the supplied complete live-prefix guard through capture_run.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 3,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_clean_restore",
+      "source_line": 925,
+      "sha256": "7538ab440b46a14bff8bd9f1cdb39969e7457a9033473a4f909e8930989cfa01",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "First-halt/capture restoration uses enumCont_first_halt; this is not generic backwards propagation of liveness.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 4,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_return_run",
+      "source_line": 1292,
+      "sha256": "af398d7e3790cf2d6d44c8f62f533647ec09ee1182a4a9852699a7404371c3b6",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Return simulation induction consumes a supplied complete live-prefix guard.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 5,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.cont_guess_step",
+      "source_line": 1147,
+      "sha256": "68df38a6bf7026889320b1d0297aa35b61930424138393bc6340ae6efdb90716",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "One-step nondeterministic/deterministic capture correspondence, with a halted-state case split; no two-time liveness inference.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 6,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.b2_unary_first",
+      "source_line": 1422,
+      "sha256": "3ff9dec86bb4da1bb2040b0dad55a8b698db589587c3a11828d62f974f8d40c9",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Uses canonical first-halt existence and transfer; deterministic first-None selection, not backwards-live reproof.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 7,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.b2_guess_run",
+      "source_line": 1574,
+      "sha256": "331c76bd4ffad8501b59e2e76e3f9e81acab90a462b39901ccb060ba2d874c88",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Nondeterministic host simulation shifts a supplied live-prefix guard with runFrom_succ.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 8,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.b2_guess_coverage",
+      "source_line": 1797,
+      "sha256": "f480c1b43b670a471067bec37ec8bee8cae922dfd182f8e86ee18f820ca462fb",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Coverage proof consumes its supplied full live-prefix guard and previously proved coverage facts.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 9,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.b2_verify_run",
+      "source_line": 1917,
+      "sha256": "8d2cfd4d5fc65e5abb5557bda5dc340956a3f76261437ce4ae3fcd963beda34c",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Verifier host simulation shifts a supplied live-prefix guard with runFrom_succ.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 10,
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "name": "Complexity.b2_host_contract",
+      "source_line": 2134,
+      "sha256": "e5d6b2a8c099523931ee87665f975263c81987f117f3496245648c7637f5cbb5",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Host composition consumes provided live-prefix and coverage facts; no generic earlier-live derivation.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 11,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_first_halt",
+      "source_line": 684,
+      "sha256": "18aace11fe3d87cee2d58d9c4788a7a1590106a62fdd0e8a3e76bd7b7ac05493",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Canonical first-halt/output packaging.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 12,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_call_first_halt",
+      "source_line": 3745,
+      "sha256": "88515b5193f27405fc4270a4954fb419c8e7eb74df7ff228e152d7e47c30c6f7",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Canonical first-halt reader plus positive-time packaging from initial liveness.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 13,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_live_prefix",
+      "source_line": 3896,
+      "sha256": "b5e6e744202e3ceaada43d687301b6e344465d817287c9278d2e1cc6905df931",
+      "disposition": "ALREADY_READER",
+      "reason": "Already directly cites MultiTapeTM.runFrom_state_ne_none_of_le.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 14,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRef_apply",
+      "source_line": 799,
+      "sha256": "c846fda6cfc7730818dcd908e75ac1a6c52002a9100f6f663e1bbb41cf9734bd",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "One-source-step/frame correspondence with source-state case split; no time-prefix liveness conclusion.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 15,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clMoves_correct",
+      "source_line": 1293,
+      "sha256": "984a4c72ccca366952fae13bfdecfa53a7e86aae8627eb3ee3287f08a46751f8",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "One-step position correspondence with halted-state stationarity.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 16,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clA5_call_first_halt",
+      "source_line": 6114,
+      "sha256": "7b53bc112eb405221fc2f69dbb09cff8a093df744e3f6118190e420f3729bff0",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Canonical first-halt reader plus positive-time packaging from initial liveness.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 17,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clA5_live_prefix",
+      "source_line": 6225,
+      "sha256": "60be8d25f6abc7821578cf1919ad56e46b687b310197b37230c2393912aaa1b5",
+      "disposition": "ALREADY_READER",
+      "reason": "Already directly cites MultiTapeTM.runFrom_state_ne_none_of_le.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 18,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "Turing.MultiTapeTM.ConfigCount.core_injOn",
+      "source_line": 110,
+      "sha256": "29b90c68ea02caab85f52b646955d6cf7a8527a2197593cd446eabad836231d0",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "First-halt minimality and periodic-core injection argument; the supplied later endpoint is halted, not live.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 19,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      "source_line": 352,
+      "sha256": "dc71d315515e2deacf6b08cf6cc6a496d153ec83076b973d692b77256ba9ca39",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Canonical first-halt minimum and resource count, with forward post-halt stability; different contract.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 20,
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "name": "Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt",
+      "source_line": 504,
+      "sha256": "eb0b56dc685d25c98f67d0bff8e1a1f0ab504720675fa05181df40cdc66ef056",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "All-times space bound from a halted endpoint using forward tail absorption, not a backwards-live conclusion.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 21,
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "Complexity.TimeHierarchy.kCfg_run",
+      "source_line": 360,
+      "sha256": "979c6ab06b6d941b3202988957d689fe1845eb9ee6af8e634a246939c2dcde38",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Lockstep induction from a provided complete live-prefix guard.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 22,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.universal",
+      "source_line": 84,
+      "sha256": "1931ea8dfa1f59614e13c6e22d90104fe76c48fd43150309bbce5795c2f64fea",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Machine-specific simulation blocks and halted-state stuttering, not generic earlier-live inference.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 23,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_live_block",
+      "source_line": 1170,
+      "sha256": "2e8c67b5cc952f1d6ef3878da8e97a120ca48a2f1125664f73555eb131fab319",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Constructs a ready state and lookup block by machine-specific simulation; no generic two-time live inference.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 24,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_live_before",
+      "source_line": 1729,
+      "sha256": "c5c7a9d8f6e8f6bf31ba53fd47398beaae4ebad3f1f06c0e7e31d8166ab0feb4",
+      "disposition": "MECHANICAL_REPAIR",
+      "reason": "MATCH BLIVE1: decomposes s <= t, uses runFrom_add/runFrom_of_halt contradiction; exact public reader specialization passes.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 25,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCut_no_record",
+      "source_line": 1739,
+      "sha256": "fd735e66967a06f1444682a0d44477d78523af55a3cfecb137924fbc62f598c2",
+      "disposition": "ALREADY_READER",
+      "reason": "Consumes local timedCut_live_before, then reasons about the machine-specific applyRecord stop state; wrapper is repointed by BLIVE1.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 26,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_replay",
+      "source_line": 1794,
+      "sha256": "e095f57c9c95fc9368dc9b17a603530d70d2f224519f9dcefef21de8d3ddbcff",
+      "disposition": "ALREADY_READER",
+      "reason": "Consumes timedCut_live_before and no_record to prove lockstep replay; wrapper is repointed by BLIVE1.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 27,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedPrefix_penultimate",
+      "source_line": 2215,
+      "sha256": "87a55a0fee2de6299a415b155351d76d054160d5ea1088edae6394de5855930f",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Constructs the exact later live endpoint from parser runs; that witness is the premise used by BLIVE2.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 28,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedPrefix_live",
+      "source_line": 2229,
+      "sha256": "a37395dcd819c3054cf7f26607e69f95073fc25706e1a7a0cf9bdee748706f44",
+      "disposition": "MECHANICAL_REPAIR",
+      "reason": "MATCH BLIVE2: predecessor endpoint plus add/post-halt contradiction; exact public reader and timedPrefix_penultimate specialization passes.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 29,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_interpret_finishes",
+      "source_line": 2304,
+      "sha256": "f2c31301f48240f5902764951d83d42475f26b6bb2061c1cad5a0aa4832e9794",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Countdown/simulation composition and forward post-halt simplification; consumes timed_replay, not a generic earlier-live reproof.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 30,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedCapture_run",
+      "source_line": 2474,
+      "sha256": "f26b2102366e4755c33d354ec55ab22f33c92a468342816c9475ca9aad36c7dc",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Capture induction consumes a supplied complete source live-prefix guard.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 31,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timedFrame_step",
+      "source_line": 2582,
+      "sha256": "31ffbbac72226e4bf8995d0560ffd51ee5bb9e074a77a3d7300408328766ae09",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "One-step frame correspondence with a halted-state stuttering case.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 32,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_universal",
+      "source_line": 2774,
+      "sha256": "baaf28f156cb4f607890ef739c2e933f7144755d531fe63eb4a5c264c194e423",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Non-computation of every output implies live at the same deadline; no earlier-time conclusion.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 33,
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "name": "Turing.timed_universal_concrete",
+      "source_line": 2814,
+      "sha256": "3c91bab4e2ccf99664549be308763a3fba0babef7571adb868c13ecfb4227489",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Same-deadline non-computation-to-live reasoning; no earlier-time conclusion.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 34,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "Turing.universal_live_before",
+      "source_line": 230,
+      "sha256": "0f14d51bb0fa74b76e1e0791d5c6bdcd2864d0106a4960b1775de5b3f05d9aeb",
+      "disposition": "MECHANICAL_REPAIR",
+      "reason": "MATCH BLIVE3: decomposes s <= t, uses runFrom_add/runFrom_of_halt contradiction; exact public reader specialization passes.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 35,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "Turing.universalPrefix_live",
+      "source_line": 241,
+      "sha256": "171eadde056c34d1cf71774a0e2dac36184bb296b2fec9be8da69bb8f66c5c70",
+      "disposition": "ALREADY_READER",
+      "reason": "Already consumes universal_live_before with universalPrefix_penultimate; wrapper is repointed by BLIVE3.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 36,
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "name": "Turing.universalCapture_run",
+      "source_line": 549,
+      "sha256": "be8053c2c06ab6bf8d534281cf31d597423ba7d9c98248316910292b48196bd0",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "Capture induction consumes a supplied complete source live-prefix guard.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 37,
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "name": "Complexity.enumCont_first_halt",
+      "source_line": 810,
+      "sha256": "4f5108c7ee7fbb39c9ead3f123f209eb92ceceb98f3dba8e5177eb17370c7e44",
+      "disposition": "ALREADY_READER",
+      "reason": "Already exact canonical exists_first_halt reader, not backwards-live reproof.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 38,
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.SatClean",
+      "source_line": 4051,
+      "sha256": "809d866b8d0487e5df5e0a90a1264ecd457837a708ad28df62bb2a6ab83b8d79",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "A definition specifying a clean/first-halt contract, with no proof.",
+      "complete_source_slice_exact": true
+    },
+    {
+      "id": 39,
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.CLA5Clean",
+      "source_line": 6379,
+      "sha256": "16c4b772f3afbb044dfe3fd1f29b88f38a8d779d0b6bf5c355cfb53734445f95",
+      "disposition": "DIFFERENT_CONTRACT_OR_NO_REPROOF",
+      "reason": "A definition specifying a clean/first-halt contract, with no proof.",
+      "complete_source_slice_exact": true
+    }
+  ],
+  "raw380_lines_exact": true,
+  "mixed_stop2_source_slices_exact": true,
+  "enumeration_limit": {
+    "scope": "eight actual FH touched owners at e0b; no unchanged43-context-owner expansion",
+    "original_narrow_candidates": 22,
+    "expanded_complete_candidates_inspected": 39,
+    "additional_mixed_stop_chunks_inspected": 2,
+    "uncapped_original_raw_closing_form_hits": 380,
+    "matched_repair_members": [
+      "BLIVE1",
+      "BLIVE2",
+      "BLIVE3"
+    ],
+    "all_closing_forms_reviewed": [
+      "Nat.exists_eq_add_of_le",
+      "runFrom_add",
+      "runFrom_of_halt",
+      "step_of_halt",
+      "state none/ne none/isSome/Halted predicates",
+      "inline have/intro/contradiction",
+      "change/show/simp/simpa/simp_all/rw/rwa/unfold/delta/dsimp",
+      "induction/contraposition/by_contra",
+      "exact-only readers"
+    ],
+    "reconstruction_note": "The initial inline enumeration scripts were not retained. This saved script independently verifies every saved complete chunk and every raw hit against actual pinned source, preserves the complete declaration inventory, and records the inspected dispositions. It does not invent original command provenance.",
+    "limits": [
+      "Candidate enumeration plus source inspection only; no proof of exhaustive absence.",
+      "Mixed-stop and nondeterministic contracts remain outside this generic deterministic backwards-live family.",
+      "No additional Lean jobs or copy-text screen were run for this sweep."
+    ]
+  },
+  "no_new_search_or_global_absence_claim": true
+}

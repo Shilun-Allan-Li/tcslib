@@ -1,0 +1,41 @@
+/-- **H5, the ruler device's call rows** ("read the virtual input cell", "move the virtual input
+head"). There is a one-tape binary module with a read entry, three read verdicts
+`readExit v`, a move entry per direction and a move exit, as follows, for every presentation
+`Turing.RulerAt ℓ 0 d i` of a virtual input `y` at `i`.
+* **Read**: from the read entry it reaches `readExit (inputCell y i)` within `C · (ℓ + 1)`
+  steps, no read verdict earlier, with nothing else changed.
+* **Move** by `m`: from `moveEntry m` it reaches the move exit within `C · (ℓ + 1)` steps, not
+  earlier, with the physical head at `ℓ + (moveInputPos i m)` and every tape, every head and
+  the output unchanged; so the result presents `y` at the clamped position `moveInputPos i m`.
+
+In both, the ruler head stays within `ℓ + 1` cells of its start, so the device's work space is
+`ℓ + 2` cells. [AB09, §1.2]
+
+**Proof sketch.** Both rows begin with the boundary test of `Turing.exists_rulerTestTM`. Read:
+on `yes` answer blank; on `no` answer the native symbol under the head, which is
+`y[i - 1]` or the right blank. Move: a right move is the native clamped move (at `i = |y| + 1`
+the physical head is at `|z| + 1` and clamps exactly as `moveInputPos` does); a stationary move
+does nothing; a left move is suppressed on `yes` and is the native left move on `no`. Rows are
+joined by R2 seams; the dispatch steps add a constant. -/
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output) := by
+  sorry

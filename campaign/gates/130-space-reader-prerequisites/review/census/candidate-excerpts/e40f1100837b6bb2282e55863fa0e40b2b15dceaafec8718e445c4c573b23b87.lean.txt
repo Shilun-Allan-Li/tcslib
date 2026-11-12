@@ -1,0 +1,9 @@
+/-- No public native-input-head primitive probes which blank boundary is under the head.
+The permitted Probe table has no work-tape action or emission. -/
+private def recordStepProbe {Γ : Type} : MultiTapeTM 4 Γ RecordStepProbe where
+  q₀ := .start
+  tr q inp _ := match q with
+    | .start => if inp.isSome then inputMoveAction 0 (.done false)
+        else inputMoveAction 1 .peek
+    | .peek => inputMoveAction (-1) (.done inp.isNone)
+    | .done b => inputMoveAction 0 (.done b)

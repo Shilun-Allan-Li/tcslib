@@ -1,0 +1,23 @@
+/-- The recorder's observed completed state is absorbing with its full
+retained input/header frame unchanged.
+**Proof sketch.** Unfold only the completed recorder transition and its relocation. Its action preserves every cell and head and selects the same return control. -/
+private lemma clRecord_idle (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (clRecordTM M).k Bool (clRecordTM M).State x)
+    (hc : c.state = some (.inr (.inr (.inr (.inr (.inr ())))))) :
+    (clRecordTM M).tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  simp only [clRecordTM, clRecTM]
+  have ha : clPlacedAction (clRecordSelect M) (Sum.inr : (clRecTM M).State → (clRecordTM M).State) (.inr (.inr (.inr (.inr ())))) (FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr ())))))) =
+      FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr (.inr ())))))) := by
+    rw [clPlacedAction_eq]
+    unfold FinTM.controlAction
+    congr 1
+    funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro i
+      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [clRecordSelect]
+    · intro i; simp [clRecordSelect]
+  rw [ha, FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all

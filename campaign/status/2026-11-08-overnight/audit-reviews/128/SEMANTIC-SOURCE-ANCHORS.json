@@ -1,0 +1,20 @@
+[
+  {
+    "claim": "Redundant enumeration",
+    "source": "source/TCSlib/Complexity/TuringMachine/Encoding.lean.txt",
+    "lines": "651–658",
+    "fact": "MachineCode.decode_encode_pad is an existing public field for every machine and every true-padding length; Nat.bits canonicality/unbounded padded indices is a mathematical reading, not an executed new lemma."
+  },
+  {
+    "claim": "Short-SAT exponential search",
+    "source": "source/TCSlib/Complexity/Formulas/CNFEncoding.lean.txt",
+    "lines": "96–100,458–471",
+    "fact": "Literal variables use unary indices and public numVars_decode_le bounds them by word length. This supports at most2^(m+1) assignments; public exact verifier access is still separately pending."
+  },
+  {
+    "claim": "SAT totalization",
+    "source": "source/TCSlib/Complexity/ClassNP/SAT.lean.txt",
+    "lines": "26–38,111–116,124–135",
+    "fact": "Malformed words use satisfiable empty CNF fallback; source verifier discussion explicitly records audited(1,1) split. Private implementation is not new API permission."
+  }
+]

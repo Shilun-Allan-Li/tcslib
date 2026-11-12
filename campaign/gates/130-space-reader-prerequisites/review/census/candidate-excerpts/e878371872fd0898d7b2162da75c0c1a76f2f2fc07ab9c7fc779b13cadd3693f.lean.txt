@@ -1,0 +1,139 @@
+/-- Save's proved Bool countdown transported onto D, with every rich frame cell preserved.
+It returns the native head to zero, replaces D by the residual fuel, restores its head,
+and retains both first-exit cuts and the width-only work-head radius.
+**Proof sketch.** The public counter layout identifies the decoded singleton bank with
+Save's input. Apply the inherited save contract and transport every prefix through the
+existing R1 wrapper. Both residual and entry fuel are blank outside their common width;
+selected-tape and unselected-frame APIs identify the rich endpoint. -/
+private theorem recordStep_save_transport {Q T : Type} [DecidableEq Q] [DecidableEq T]
+    {x : List Bool} (d : Cfg 4 (RecSym Q T) (CounterLoopState Bool) (x.map (RecSym.digitEmb Q T)))
+    (hd : d.state = some (.dec .run)) (hp : d.inputPos.val ≤ x.length) (w : List Bool)
+    (hwval : Nat.ofDigits 2 (w.map Bool.toNat) = 2 ^ w.length - 1)
+    (hfuel : d.inputPos.val < Nat.ofDigits 2 (w.map Bool.toNat))
+    (hword : ∀ z, d.workTapes 3 z = FinTM.bufferTape (w.map (RecSym.digitEmb Q T)) (z - d.workTapePos 3)) :
+    ∃ t ≤ 5 * (d.inputPos.val + 1) + 2 * w.length,
+      let R := embedEmitTM (recordStepDigitBank 2)
+        ((counterLoopTM recordStepSave false (some true)).liftSymbols (RecSym.digitEmb Q T))
+      R.runFrom d t =
+        {d with
+          state := some .escape
+          inputPos := 0
+          workTapes := fun j z => if j = 3 then
+            FinTM.bufferTape ((counterWord w (d.inputPos.val + 1)).map (RecSym.digitEmb Q T))
+              (z - d.workTapePos 3) else d.workTapes j z} ∧
+      (∀ u < t, (R.runFrom d u).state ≠ some .done ∧ (R.runFrom d u).state ≠ some .escape) ∧
+      (∀ u ≤ t, ∀ j, |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((w.length + 1 : ℕ) : ℤ)) ∧
+      Nat.ofDigits 2 (((counterWord w (d.inputPos.val + 1)).map not).map Bool.toNat) = d.inputPos.val + 1 := by
+  let e := RecSym.digitEmb Q T
+  let ι := recordStepDigitBank 2
+  let B := counterLoopTM recordStepSave false (some true)
+  let c : Cfg 0 Bool Bool x := ⟨some false, Fin.cast (by simp) d.inputPos, Fin.elim0, Fin.elim0, []⟩
+  let ct := fun z => FinTM.bufferTape w (z - d.workTapePos 3)
+  let raw : Cfg 1 Bool (CounterLoopState Bool) x :=
+    ⟨d.state, Fin.cast (by simp) d.inputPos,
+      (fun i z => (d.workTapes (ι i) z).bind (decodeBool e)), (fun i => d.workTapePos (ι i)), []⟩
+  have decoded : raw = counterLoopCfg (some (.dec .run)) c ct (d.workTapePos 3) := by
+    rw [counter_cfg_eq]
+    apply Cfg.ext
+    · exact hd
+    · rfl
+    · funext i z
+      have hi : i = 0 := Fin.ext (by have := i.isLt; omega)
+      subst i
+      change (d.workTapes 3 z).bind (decodeBool e) = FinTM.bufferTape w (z - d.workTapePos 3)
+      rw [hword]
+      exact FinTM.bufferTape_map_decode e w _
+    · funext i
+      have hi : i = 0 := Fin.ext (by have := i.isLt; omega)
+      subst i
+      rfl
+    · rfl
+  have digits : ∀ i z γ, d.workTapes (ι i) z = some γ → ∃ b, γ = e b := by
+    intro i z γ h
+    change d.workTapes 3 z = some γ at h
+    rw [hword, FinTM.bufferTape_map] at h
+    cases hb : FinTM.bufferTape w (z - d.workTapePos 3) with
+    | none => simp [hb] at h
+    | some b => exact ⟨b, by simpa [hb] using h.symm⟩
+  obtain ⟨t, ht, he, hc, hh, hv⟩ := recordStep_save_run c rfl hp w hwval hfuel ct (d.workTapePos 3)
+    (by intro z _ _; simp [ct])
+  have row : B.runFrom raw t =
+      (⟨some .escape, 0, (fun _ z => FinTM.bufferTape (counterWord w (d.inputPos.val + 1))
+        (z - d.workTapePos 3)), (fun _ => d.workTapePos 3), []⟩ : Cfg 1 Bool (CounterLoopState Bool) x) := by
+    rw [decoded, he, counter_cfg_eq]
+    apply Cfg.ext <;> try rfl
+    · funext i z
+      have hi : i = 0 := Fin.ext (by have := i.isLt; omega)
+      subst i
+      change (if d.workTapePos 3 ≤ z ∧ z < d.workTapePos 3 + (w.length : ℤ) then
+        FinTM.bufferTape (counterWord w (d.inputPos.val + 1)) (z - d.workTapePos 3)
+        else FinTM.bufferTape w (z - d.workTapePos 3)) = _
+      split_ifs with hz
+      · rfl
+      · by_cases hn : 0 ≤ z - d.workTapePos 3
+        · have hl : w.length ≤ (z - d.workTapePos 3).toNat := by omega
+          simp only [FinTM.bufferTape, if_pos hn, List.getElem?_eq_none hl,
+            List.getElem?_eq_none (by simpa only [counterWord_length] using hl :
+              (counterWord w (d.inputPos.val + 1)).length ≤ (z - d.workTapePos 3).toNat)]
+        · simp only [FinTM.bufferTape, if_neg hn]
+    · funext i
+      have hi : i = 0 := Fin.ext (by have := i.isLt; omega)
+      subst i
+      rfl
+  have tr (u : ℕ) := recordStep_transport B e ι d digits u
+  have frame (u : ℕ) (j : Fin 4) (hj : j ≠ 3) :=
+    (embedEmitTM_frame ι (B.liftSymbols e) d.workTapes d.workTapePos d.output
+      ((B.runFrom raw u).liftSymbols e) 0).1 j
+      (by rintro ⟨i, hi⟩; exact hj hi.symm)
+  refine ⟨t, ht, ?_, ?_, ?_, hv⟩
+  · rw [tr t]
+    change embedEmitCfg ι d.workTapes d.workTapePos d.output ((B.runFrom raw t).liftSymbols e) = _
+    apply Cfg.ext
+    · simp [row, embedEmitCfg, Cfg.liftSymbols]
+    · apply Fin.ext
+      simp [row, embedEmitCfg, Cfg.liftSymbols]
+    · funext j z
+      by_cases hj : j = 3
+      · subst j
+        change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+          ((B.runFrom raw t).liftSymbols e)).workTapes (ι 0) z = _
+        rw [embedEmitCfg_selected_tape, row]
+        simpa [Cfg.liftSymbols] using (FinTM.bufferTape_map e (counterWord w (d.inputPos.val + 1))
+          (z - d.workTapePos 3)).symm
+      · have h := (frame t j hj).1
+        change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+          ((B.runFrom raw t).liftSymbols e)).workTapes j = d.workTapes j at h
+        simpa [hj] using congrFun h z
+    · funext j
+      by_cases hj : j = 3
+      · subst j
+        change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+          ((B.runFrom raw t).liftSymbols e)).workTapePos (ι 0) = _
+        rw [embedEmitCfg_selected_pos, row]
+        rfl
+      · exact (frame t j hj).2
+    · simp [row, embedEmitCfg, Cfg.liftSymbols]
+  · intro u hu
+    rw [tr u]
+    change (B.runFrom raw u).state ≠ some .done ∧ (B.runFrom raw u).state ≠ some .escape
+    rw [decoded]
+    exact hc u hu
+  · intro u hu j
+    rw [tr u]
+    by_cases hj : j = 3
+    · subst j
+      change |(embedEmitCfg ι d.workTapes d.workTapePos d.output
+        ((B.runFrom raw u).liftSymbols e)).workTapePos (ι 0) - d.workTapePos 3| ≤ _
+      rw [embedEmitCfg_selected_pos]
+      have h := hh u hu
+      change (B.runFrom (counterLoopCfg (some (.dec .run)) c ct (d.workTapePos 3)) u).workTapePos 0 ∈ _ at h
+      rw [← decoded] at h
+      simp only [Finset.mem_Icc] at h
+      change |(B.runFrom raw u).workTapePos 0 - d.workTapePos 3| ≤ _
+      rw [abs_le]; constructor <;> omega
+    · have h := (frame u j hj).2
+      change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+        ((B.runFrom raw u).liftSymbols e)).workTapePos j = d.workTapePos j at h
+      rw [h]
+      simp
+      omega

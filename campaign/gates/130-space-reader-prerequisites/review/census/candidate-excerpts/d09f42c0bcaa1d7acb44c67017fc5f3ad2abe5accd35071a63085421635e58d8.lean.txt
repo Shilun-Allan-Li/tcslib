@@ -1,0 +1,13 @@
+/-- A moving control transition replaces the state and moves the input head. -/
+private theorem control_step' {H : MultiTapeTM k Bool B} {q r : B} {mv : SignType}
+    (h : ∀ inp work, H.tr q inp work = FinTM.controlAction mv (some r))
+    {c : Cfg k Bool B x} (hc : c.state = some q) :
+    H.step c = { c with
+      state := some r
+      inputPos := moveInputPos c.inputPos mv } := by
+  have hs : H.step c = (H.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+    unfold MultiTapeTM.step
+    rw [hc]
+  rw [hs, h]
+  refine Cfg.ext rfl rfl ?_ ?_ ?_ <;>
+    simp [FinTM.controlAction, Action.apply]

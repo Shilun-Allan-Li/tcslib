@@ -1,0 +1,16 @@
+/-- A configuration whose state is redirected to `⟨i, q⟩` is the tagged configuration of phase
+`i` at `q`. -/
+private theorem nfc_retag {N : FinNDTM Bool} {SL : Type} {i₀ : NfcPh N.k} {x : List Bool}
+    (c : Cfg 2 Bool (NfcSt N SL i₀) x) (i : NfcPh N.k) (q : NfcSt N SL i) (hc : c.state.isSome) :
+    c.mapState (fun _ => (⟨i, q⟩ : Σ i, NfcSt N SL i)) =
+      ({ state := some q, inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output } : Cfg 2 Bool (NfcSt N SL i) x).mapState
+        (Sigma.mk i) := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+    rw [hs]; rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]

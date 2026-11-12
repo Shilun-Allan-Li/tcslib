@@ -1,0 +1,129 @@
+import TCSlib.Complexity.CookLevin.Hardness
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+attribute [-simp] Turing.Action.apply
+private def blankCfg : Cfg 0 Bool Unit [] :=
+  {state := some (), inputPos := 0, workTapes := fun i => Fin.elim0 i,
+   workTapePos := fun i => Fin.elim0 i, output := []}
+
+-- CONTROL|Turing.MultiTapeTM.step|point
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.step {c with state := none} = {c with state := none} := by rfl
+
+-- CONTROL|Turing.MultiTapeTM.step|equation
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.step c = match c.state with
+      | none => c
+      | some q => (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by rfl
+
+-- CONTROL|Turing.FinTM.controlAction|point
+example {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    (controlAction (k := k) m q : Action k Bool S).state = q := by rfl
+
+-- CONTROL|Turing.FinTM.controlAction|equation
+example {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    (controlAction (k := k) m q : Action k Bool S) = Action.mk m (fun _ => (none, 0)) none q := by rfl
+
+-- CONTROL|Turing.Action.apply|point
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).state = a.state := by rfl
+
+-- CONTROL|Turing.Action.apply|equation
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).inputPos = moveInputPos c.inputPos a.inputTape := by rfl
+
+-- CONTROL|Turing.Cfg.inputSymbol|point
+example : blankCfg.inputSymbol = none := by rfl
+
+-- CONTROL|Turing.Cfg.inputSymbol|equation
+example : ({blankCfg with inputPos := 1} : Cfg 0 Bool Unit []).inputSymbol = none := by rfl
+
+-- CONTROL|Turing.Cfg.workTapeSymbols|point
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+
+-- CONTROL|Turing.Cfg.workTapeSymbols|equation
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    c.workTapeSymbols = (fun i => c.workTapes i (c.workTapePos i)) := by rfl
+
+-- CONTROL|Turing.moveInputPos|point
+example : moveInputPos (0 : Fin 2) 0 = 0 := by rfl
+
+-- CONTROL|Turing.moveInputPos|equation
+example : moveInputPos (1 : Fin 2) 0 = 1 := by rfl
+
+-- CONTROL|Turing.Action.mapState|point
+example {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) :
+    (a.mapState f).state = a.state.map f := by rfl
+
+-- CONTROL|Turing.Action.mapState|equation
+example {k : ℕ} {S T : Type} (f : S → T) (a : Action k Bool S) :
+    a.mapState f = Action.mk a.inputTape a.workTapes a.output (a.state.map f) := by rfl
+
+-- CONTROL|Turing.Cfg.mapState|point
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).state = c.state.map f := by rfl
+
+-- CONTROL|Turing.Cfg.mapState|equation
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    c.mapState f = {c with state := c.state.map f} := by rfl
+
+-- CONTROL|Turing.embedEmitTM|point
+example {m k : ℕ} {S : Type} (i : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+    (embedEmitTM i M).q₀ = M.q₀ := by rfl
+
+-- CONTROL|Turing.embedEmitTM|equation
+example {m k : ℕ} {S : Type} (i : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (q : S) (inp : Option Bool) (work : Fin k → Option Bool) :
+    ((embedEmitTM i M).tr q inp work).state = (M.tr q inp (fun j => work (i j))).state := by rfl
+
+-- CONTROL|Turing.embedEmitCfg|point
+example {m k : ℕ} {S : Type} {x : List Bool} (i : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (pre : List Bool) (c : Cfg m Bool S x) :
+    (embedEmitCfg i tapes heads pre c).state = c.state := by rfl
+
+-- CONTROL|Turing.embedEmitCfg|equation
+example {m k : ℕ} {S : Type} {x : List Bool} (i : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (pre : List Bool) (c : Cfg m Bool S x) :
+    (embedEmitCfg i tapes heads pre c).output = pre ++ c.output := by rfl
+
+-- CONTROL|Turing.FinTM.virtualMove|point
+example : virtualMove false (some true) .pos = .pos := by rfl
+
+-- CONTROL|Turing.FinTM.virtualMove|equation
+example (b : Bool) (inp : Option Bool) (m : SignType) : virtualMove b inp m =
+    (if inp = none ∧ ((b = false ∧ m = .neg) ∨ (b = true ∧ m = .pos)) then 0 else m) := by rfl
+
+-- CONTROL|Turing.FinTM.virtualNextTag|point
+example : virtualNextTag false .pos = true := by rfl
+
+-- CONTROL|Turing.FinTM.virtualNextTag|equation
+example (b : Bool) (m : SignType) : virtualNextTag b m =
+    (match m with | .neg => false | .zero => b | .pos => true) := by rfl
+
+-- CONTROL|Turing.FinTM.tapeBlocks|point
+example : tapeBlocks (fun _ : Fin 0 => (1 : ℕ)) 2 (fun _ : Fin 0 => 3) (0 : Fin 1) = 2 := by rfl
+
+-- CONTROL|Turing.FinTM.tapeBlocks|equation
+example {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α) (right : Fin l → α) :
+    tapeBlocks left buffer right = Fin.addCases left (Fin.addCases (fun _ => buffer) right) := by rfl
+
+-- CONTROL|Turing.FinTM.leftAction|point
+example {k : ℕ} {S T : Type} (l : ℕ) (f : S → T) (a : Action k Bool S) :
+    (leftAction l f a).state = a.state.map f := by rfl
+
+-- CONTROL|Turing.FinTM.leftAction|equation
+example {k : ℕ} {S T : Type} (l : ℕ) (f : S → T) (a : Action k Bool S) :
+    leftAction l f a = Action.mk a.inputTape (Fin.addCases a.workTapes (fun _ => (none, 0)))
+      a.output (a.state.map f) := by rfl
+
+-- CONTROL|Turing.seamCompTM|point
+example {k : ℕ} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)
+    (N : MultiTapeTM k Bool T) (entry : T) :
+    (seamCompTM M exit N entry).q₀ = .inl M.q₀ := by rfl
+
+-- CONTROL|Turing.seamCompTM|equation
+example {k : ℕ} {S T : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (exit : S)
+    (N : MultiTapeTM k Bool T) (entry q : T) (inp : Option Bool) (work : Fin k → Option Bool) :
+    ((seamCompTM M exit N entry).tr (.inr q) inp work).state = (N.tr q inp work).state.map Sum.inr := by rfl

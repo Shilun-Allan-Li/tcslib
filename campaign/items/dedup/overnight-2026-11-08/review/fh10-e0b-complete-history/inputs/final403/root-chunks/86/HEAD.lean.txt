@@ -1,0 +1,15 @@
+lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]
+    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) (x : List Bool) (T : ℕ)
+    (h : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+    ∃ t, t ≤ T + 1 ∧
+      (universalCaptureTM M D).tm.runFrom ((universalCaptureTM M D).tm.initCfg x) t =
+        universalCapturedCfg M D (M.tm.runFrom (M.tm.initCfg x) T) := by
+  classical
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    (congrArg Cfg.state hcut).trans h
+  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := hcut.symm
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', universalCapture_init,
+    universalCapture_run M D _ t hlive,
+    universalCapture_transfer M D _ hs, he]

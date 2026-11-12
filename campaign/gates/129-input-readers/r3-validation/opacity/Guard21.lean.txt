@@ -1,0 +1,1403 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import Mathlib.Data.List.Induction
+import Mathlib.Data.Nat.Bits
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: the primitive catalog
+
+The instruction set of the machine-construction library
+(`machine-library-design.md` §4, P1–P12): the timed string functions every
+Chapter-2 fill batch privately rebuilt, stated once as machine contracts.
+`Turing.FinTM.computesFunInTime_id` and
+`Turing.FinTM.computesFunInTime_const` (in
+`TCSlib.Complexity.TuringMachine.Composition`) are catalog entries P1–P2
+and already proved; this module states the rest.
+
+**Status: proved.** Every theorem below is proved; roughly half were
+harvests — their fills adapted already-proved private constructions from
+the Chapter-2 epoch-2 batches (named per entry) — and the rest are new
+small machines. Following the house idiom of
+`TCSlib.Complexity.TuringMachine.Composition`, the convenience rows package
+public named witnesses with their run specifications. Private helpers establish
+the local invariants used by those specifications. Multi-argument interfaces
+go through `Turing.pairEncode`, whose self-delimiting grammar lets a
+pipeline stage **thread the original input through its output** — the
+`pairLenCheck` and `stripLast` contracts below are deliberately stated in
+that threaded form, which is exactly how the Chapter-2 verifier
+constructions consume them. New Chapter-1 surface, flagged for the shared
+infrastructure audit round.
+
+**Catalog refinements at spec time** (recorded against the frozen design
+§4): P6 is realized as the fixed-first-component encoder plus the threaded
+extractors/validity test; P7 (replicate) is subsumed by the unary clause of
+P5, whose instances are what the emission customers actually consume; P8
+is realized in threaded form (`pairLenCheck`); P12 (`clearTM`) has no
+standalone string-function contract — clearing is intra-machine and lives
+in the loop fill's toolkit. **Round-2 additions** (per round-1 finding 3:
+the extractors discard the other component by design, and sequential
+composition alone never yields simultaneous access to two results): P13
+`pairConcat` (the D-WRAP shape), P14 `pairDup` (the entry stage of
+data-retaining pipelines), and the threaded-map combinator `pairMapSnd`;
+P10's narrowing is recorded, and result-bearing search is now
+`Turing.FinTM.exists_loopFindTM` (`machine-library-design.md` §9b).
+
+## Named witnesses and their specs
+
+The rows' witnesses are public, each with its spec theorem:
+* `Turing.FinTM.prependTM` (`prependTM_computes`), `incFixedTM` (`incFixedTM_computes`),
+  `pairValidTM` (`pairValidTM_computes`), `pairExtractTM` (`pairExtractTM_computes`,
+  `pairExtractTM_fst`, `pairExtractTM_snd`, `pairExtractTM_concat`; the first component's complete
+  run, `pairExtractTM_fst_run` and `pairExtractTM_fst_run_budget`);
+* `polyUnaryTM` (`polyUnaryTM_computes`, `polyUnaryTM_spaceUsed`), `polyBitsTM`
+  (`polyBitsTM_computes`), `pairLenCheckTM` (`pairLenCheckTM_computes`), `stripLastTM`
+  (`stripLastTM_computes`);
+* `splitSolveTM` (`splitSolveTM_computes`, `splitSolveTM_spaceUsed`), `splitSolveWithTM`
+  (`splitSolveWithTM_computes`);
+* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`);
+* `pairMapSndTM` (`pairMapSndTM_computes`, `pairMapSndTM_spaceUsed`), the forwarding
+  mapper with time coefficient `22` and coefficient one on the payload's space.
+
+Every named specification is proved. The polynomial-bit, stripping and split-search
+results consume the corresponding named time and space specifications.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2–§1.4: all entries are the
+  folklore tape subroutines of the textbook's simulation arguments.)
+
+**Implementation note (batch P).** The first eleven targets in the batch
+brief's fill order and the four continuation targets `pairLenCheck`,
+`stripLast`, `pairMapSnd`, and `splitSolve` are proved. The original spec-phase
+prose above and on the contracts is retained as the audit record. The length
+counter is obtained from the public `Complexity.timeConstructible_id`, whose
+proved machine implements precisely the sketched amortized counter. The three
+extractors share one private buffered parser, so suffix-only extraction also
+buffers and replays silently before copying the suffix; its linear envelope
+is unchanged. The fixed-width incrementer adapts the enumerator's carry
+semantics to two native-input scans, validating before physical emission.
+
+
+**Implementation note (batch P2).** The threaded length checker, marker stripper,
+threaded map, and split search are proved. The length checker composes the existing
+buffered first extractor with the unary generator, captures the result with
+`capture_run`, then reparses and counts down on the native payload. Malformed
+inputs emit only `[false]`. The marker stripper first guards on a valid
+extracted suffix containing a true bit; the successful branch buffers the
+whole original encoding, erases its final marker/false-run, and replays the
+retained encoding. The guard is complete before any physical output. Both
+routes reuse the in-file parser/scan invariant patterns and proved public
+wrappers.
+
+**The threaded map.** `Turing.FinTM.pairMapSndTM` is the forwarding controller: it validates
+and buffers the pair silently, emits the encoded first component and the separator, then runs
+the payload machine on the buffered second component through clamped virtual input, forwarding
+its emissions (`pairMapSndTM_computes`, coefficient `22`; `pairMapSndTM_spaceUsed`, coefficient
+one on the payload's space). It replaces an earlier captured-output controller, whose capture tape
+could not carry a linear space bound. Pair duplication uses `Turing.pairDiagTM`.
+
+The split-search theorem is proved. Its private components include the unary
+orbit/search bridges and
+`splitSolve_of_body`, which closes the public result only when supplied the
+actual startup and round contracts; a candidate-preserving unary-bank
+preparer; a counted source-simulation correspondence; the generator's exact
+loop endpoint; and a scratch-restoration controller with a positive first
+return and no earlier visit to its return state. The combined `splitBodyTM`
+and `splitBody_round` assemble these components and prove `hround`.
+-/
+
+/-! Batch P4 closure note: the split-search body is now constructed and proved.
+`splitBodyTM` separates preparation, counted source evaluation, checked rewind,
+rejection restoration, and native-bit emission into disjoint finite phases.
+`splitBody_round` composes their exact seams and proves positive duration and
+strict-interior anchor exclusion, including the arbitrary-bit past-end stall.
+`splitEmit_run` supplies the native-slice payload; `splitBody_envelope` accounts
+for every phase within the common polynomial bound. Both exponent cases
+instantiate this body through the proved `splitSolve_of_body` loop closure.
+All fifteen primitive contracts are now proved without admissions. Earlier
+spec/checkpoint status notes above are retained as historical documentation. -/
+
+namespace Turing.FinTM
+
+/-! Implementation note (batch P): the private prefix construction below is
+adapted in-file from `ClassNP/Reductions.lean`; no private declaration from
+that module is used. Completed contracts retain their audited spec docstrings. -/
+
+/-- **The prepending machine**. A machine with no work tapes that writes the fixed word `w` and then
+copies its input, so that it computes `x ↦ w ++ x`; its last state is the copy state. [AB09, §1.2]
+-/
+def prependTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Fin (w.length + 1)
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        if h : q.val < w.length then
+          ⟨0, fun i => i.elim0, some w[q.val], some ⟨q.val + 1, by omega⟩⟩
+        else match inp with
+          | some b => ⟨1, fun i => i.elim0, some b, some q⟩
+          | none => ⟨0, fun i => i.elim0, none, none⟩ }
+
+/-- A fixed-word prepending machine visits no work-tape cells, on every input and at every time. -/
+theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+/-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
+private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin (w.length + 1)) x :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
+and the input head has not moved.
+
+**Proof sketch.** Read the initial configuration fields at time zero. At each
+live prefix state, the transition emits the next fixed bit and leaves the input
+head in place. The action fields identify the next prefix configuration. -/
+private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
+    (prependTM w).tm.runFrom ((prependTM w).tm.initCfg x) i =
+      catalogPrefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
+  intro i
+  induction i with
+  | zero =>
+    intro hi
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext_zero_tapes <;>
+      simp [-Cfg.init, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output,
+        catalogPrefixCfg, prependTM]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hlt : i < w.length := by omega
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp only [catalogPrefixCfg, prependTM, dif_pos hlt]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_zero _
+    · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem hlt]
+
+/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
+    (prependTM w).tm.runFrom
+      (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
+      catalogPrefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
+        (w ++ x.take i) := by
+  intro i
+  induction i with
+  | zero => intro hi; simp [catalogPrefixCfg]
+  | succ i ih =>
+    intro hi
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hsym : (catalogPrefixCfg w x (some ⟨w.length, by omega⟩)
+        ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
+      inputSymbolInner i (by simp only [catalogPrefixCfg]; omega) (by omega)
+    rw [MultiTapeTM.step_of_some (by rfl), hsym]
+    simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte, catalogPrefixCfg]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_pos_of_ne_right _ (by simp; omega)
+    · rw [Action.apply_output, List.take_succ, List.getElem?_eq_getElem (by omega),
+        List.append_assoc]
+
+/-- A blank in the final copy state halts without moving or emitting. -/
+private lemma catalogPrefixTM_halt (w x : List Bool) (p : Fin (x.length + 2))
+    (hp : p.val = x.length + 1) (out : List Bool) :
+    (prependTM w).tm.step (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out) =
+      catalogPrefixCfg w x none p out := by
+  let c := catalogPrefixCfg w x (some ⟨w.length, by omega⟩) p out
+  have hblank : c.inputSymbol = none := Cfg.inputSymbol_of_end hp
+  change (prependTM w).tm.step c = _
+  rw [MultiTapeTM.step_of_some (by rfl), hblank]
+  simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte]
+  apply Cfg.ext_zero_tapes
+  · exact Action.apply_state _ _
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · rw [Action.apply_output]
+    exact List.append_nil _
+
+/-- **The prepending machine's time**. The prepending machine computes `x ↦ w ++ x` within
+`|w| + n + 1` steps.
+
+**Proof sketch.** Today's proof: the emission chain writes `w` in `|w|` steps
+(`catalogPrefixTM_emit`), the copy state copies the input in `|x|` more (`catalogPrefixTM_copy`),
+and the blank after the input halts. -/
+theorem prependTM_computes (w : List Bool) :
+    (prependTM w).ComputesFunInTime (fun x => w ++ x) (fun n => w.length + n + 1) := by
+  intro x
+  apply (FinTM.computesInTime_iff _ _ _ _).mpr
+  dsimp only
+  rw [show w.length + x.length + 1 = w.length + (x.length + 1) by omega,
+    MultiTapeTM.runFrom_add, catalogPrefixTM_emit w x w.length (Nat.le_refl _)]
+  simp only [List.take_length]
+  rw [MultiTapeTM.runFrom_succ_eq_step', catalogPrefixTM_copy w x x.length (Nat.le_refl _)]
+  rw [List.take_length, catalogPrefixTM_halt _ _ _ rfl]
+  exact ⟨rfl, rfl⟩
+
+
+/-- A zero-work-tape configuration indexed by the number of input bits passed. -/
+private def scanCfg {S : Type} (x : List Bool) (q : Option S)
+    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
+  ⟨q, ⟨i + 1, by omega⟩, fun j => j.elim0, fun j => j.elim0, out⟩
+
+/-- Reading at the indexed input position returns the optional list entry. -/
+private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
+    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+    (scanCfg x q i hi out).inputSymbol = x[i]? :=
+  inputSymbol_at _ i hi rfl
+
+/-- A copy state emits the next `j` input bits after an arbitrary output prefix.
+**Proof sketch.** Induct on the number of copied cells; each transition appends
+the scanned bit and moves right. The indexed configuration keeps the boundary
+case separate from the actual bit-reading steps. -/
+private lemma scanCopy_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+    (htr : ∀ inp work, tm.tr q inp work = match inp with
+      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩
+      | none => ⟨0, fun j => j.elim0, none, none⟩)
+    (x out : List Bool) : ∀ j (hj : j ≤ x.length),
+    tm.runFrom (scanCfg x (some q) 0 (by omega) out) j =
+      scanCfg x (some q) j hj (out ++ x.take j) := by
+  intro j
+  induction j with
+  | zero => intro hj; simp [scanCfg]
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change (tm.tr q (scanCfg x (some q) j (by omega) (out ++ x.take j)).inputSymbol
+      _).apply _ = _
+    rw [htr, scanCfg_read, List.getElem?_eq_getElem (by omega)]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+    · simp only [Action.apply_output, scanCfg, Option.toList_some, List.take_succ,
+        List.getElem?_eq_getElem (by omega : j < x.length), List.append_assoc]
+
+/-- After copying the entire input, the right-blank transition halts silently. -/
+private lemma scanCopy_finish {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+    (htr : ∀ inp work, tm.tr q inp work = match inp with
+      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩
+      | none => ⟨0, fun j => j.elim0, none, none⟩)
+    (x out : List Bool) :
+    tm.runFrom (scanCfg x (some q) 0 (by omega) out) (x.length + 1) =
+      scanCfg x none x.length (by omega) (out ++ x) := by
+  rw [MultiTapeTM.runFrom_succ_eq_step', scanCopy_run tm q htr x out _ (by omega)]
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  change (tm.tr q (scanCfg x (some q) x.length (by omega)
+    (out ++ x.take x.length)).inputSymbol _).apply _ = _
+  rw [htr, scanCfg_read]
+  apply Cfg.ext_zero_tapes <;> simp [-Action.apply, Action.apply_state, Action.apply_inputPos,
+    Action.apply_output, scanCfg]
+
+/-- Copy a suffix from an already-positioned input head, preserving prior output.
+**Proof sketch.** Induct on the suffix. A nonempty suffix emits its first bit
+and shifts the prefix/suffix boundary by one. The empty suffix reads the right
+blank and halts without another emission. -/
+private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+    (htr : ∀ inp work, tm.tr q inp work = match inp with
+      | some b => ⟨.pos, fun j => j.elim0, some b, some q⟩
+      | none => ⟨0, fun j => j.elim0, none, none⟩)
+    (x rest : List Bool) : ∀ pre out (hx : x = pre ++ rest),
+    tm.runFrom (scanCfg x (some q) pre.length (by simp [hx]) out) (rest.length + 1) =
+      scanCfg x none x.length (by omega) (out ++ rest) := by
+  induction rest with
+  | nil =>
+    intro pre out hx
+    subst x
+    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change (tm.tr q _ _).apply _ = _
+    rw [htr, scanCfg_read]
+    apply Cfg.ext_zero_tapes <;> simp [-Action.apply, Action.apply_state, Action.apply_inputPos,
+      Action.apply_output, scanCfg]
+  | cons b rest ih =>
+    intro pre out hx
+    have hlen : pre.length < x.length := by simp [hx]
+    have hread : x[pre.length]? = some b := by simp [hx]
+    have hs : tm.step (scanCfg x (some q) pre.length (by omega) out) =
+        scanCfg x (some q) (pre ++ [b]).length (by simp [hx]) (out ++ [b]) := by
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      change (tm.tr q _ _).apply _ = _
+      rw [htr, scanCfg_read, hread]
+      apply Cfg.ext_zero_tapes
+      · exact Action.apply_state _ _
+      · rw [Action.apply_inputPos]
+        simpa [scanCfg] using moveInputPos_pos_of_ne_right
+          (⟨pre.length + 1, by omega⟩ : Fin (x.length + 2)) (by simp; omega)
+      · exact Action.apply_output _ _
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    simpa only [List.append_assoc, List.singleton_append] using
+      ih (pre ++ [b]) (out ++ [b]) (by simpa [List.append_assoc] using hx)
+
+/-- A true-prefix scan either remains silent or emits one false per true.
+**Proof sketch.** Induct on the prefix length. Taking a shorter prefix gives
+the induction hypothesis, and the last entry of the longer prefix identifies
+the symbol read by the next transition. -/
+private lemma scanTrues_run {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
+    (emit : Bool)
+    (htr : ∀ work, tm.tr q (some true) work =
+      ⟨.pos, fun j => j.elim0, if emit then some false else none, some q⟩)
+    (x : List Bool) : ∀ j (hj : j ≤ x.length),
+    x.take j = List.replicate j true →
+    tm.runFrom (scanCfg x (some q) 0 (by omega) []) j =
+      scanCfg x (some q) j hj (if emit then List.replicate j false else []) := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj hp
+    rw [MultiTapeTM.runFrom_zero]
+    cases emit <;> rfl
+  | succ j ih =>
+    intro hj hp
+    have hshort : x.take j = List.replicate j true := by
+      have h := congrArg (List.take j) hp
+      simpa only [List.take_take, List.take_replicate, Nat.min_eq_left (by omega : j ≤ j + 1)] using h
+    have hb : x[j]? = some true := by
+      have h := congrArg (fun w : List Bool => w[j]?) hp
+      simpa [List.getElem?_take, Nat.lt_succ_self] using h
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega) hshort]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change (tm.tr q _ _).apply _ = _
+    rw [scanCfg_read, hb, htr]
+    apply Cfg.ext_zero_tapes
+    · exact Action.apply_state _ _
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+    · cases emit <;> simp [-Action.apply, Action.apply_output, scanCfg, List.replicate_succ']
+
+/-- Either every input bit is true (overflow), or its first false splits off
+the carry prefix and determines the exact incremented word. -/
+private lemma incFixed_cases (x : List Bool) :
+    (x = List.replicate x.length true ∧ incFixed x = none) ∨
+      ∃ j rest, x = List.replicate j true ++ false :: rest ∧
+        incFixed x = some (List.replicate j false ++ true :: rest) := by
+  induction x with
+  | nil => exact Or.inl ⟨rfl, rfl⟩
+  | cons b x ih =>
+    cases b with
+    | false => exact Or.inr ⟨0, x, rfl, rfl⟩
+    | true =>
+      rcases ih with ⟨hx, hinc⟩ | ⟨j, rest, hx, hinc⟩
+      · exact Or.inl ⟨by simpa only [List.length_cons, List.replicate_succ, List.cons.injEq, true_and] using hx, by simp [incFixed, hinc]⟩
+      · exact Or.inr ⟨j + 1, rest, by simp [hx, List.replicate_succ],
+          by simp [incFixed, hinc, List.replicate_succ]⟩
+
+/-- **The fixed-width incrementer**. A machine with no work tapes that first scans its input for a
+`false` without emitting (an all-`true` word is the overflow, which halts with empty output),
+rewinds, and then emits the little-endian fixed-width successor `Turing.incFixed x`: `false` over
+the carry prefix, `true` at the first `false`, then the rest verbatim. -/
+def incFixedTM : FinTM Bool where
+  k := 0
+  State := Fin 4
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ => match q.val with
+        | 0 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, none, some 0⟩
+          | some false => controlAction .neg (some 1)
+          | none => controlAction 0 none
+        | 1 => match inp with
+          | some _ => controlAction .neg (some 1)
+          | none => controlAction .pos (some 2)
+        | 2 => match inp with
+          | some true => ⟨.pos, fun j => j.elim0, some false, some 2⟩
+          | some false => ⟨.pos, fun j => j.elim0, some true, some 3⟩
+          | none => controlAction 0 none
+        | _ => match inp with
+          | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
+          | none => ⟨0, fun j => j.elim0, none, none⟩ }
+
+/-- The fixed-width incrementer uses zero work space on every input at every time,
+because it has no work tapes. -/
+theorem incFixedTM_spaceUsed (x : List Bool) (t : ℕ) :
+    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+/-- **The incrementer's time**. On every input the incrementer halts within `3·(|x| + 1)` steps with
+output `(incFixed x).getD []`.
+
+**Proof sketch.** Today's proof: the overflow scan, the rewind and the emitting pass each cost
+at most `|x| + 1` steps, by the case split `incFixed_cases`. -/
+theorem incFixedTM_computes (x : List Bool) :
+    incFixedTM.ComputesInTime x ((incFixed x).getD []) (3 * (x.length + 1)) := by
+  rcases incFixed_cases x with ⟨hx, hinc⟩ | ⟨j, rest, hx, hinc⟩
+  · have hr := scanTrues_run incFixedTM.tm (0 : Fin 4) false (fun _ => rfl)
+      x x.length (by omega) (by simpa using hx)
+    have hh : incFixedTM.ComputesInTime x [] (x.length + 1) := by
+      apply (computesInTime_iff _ _ _ _).mpr
+      rw [MultiTapeTM.runFrom_succ_eq_step', show incFixedTM.tm.initCfg x =
+        scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+          by
+            rw [MultiTapeTM.initCfg_eq]
+            apply Cfg.ext_zero_tapes <;>
+              simp [Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, incFixedTM, scanCfg], hr]
+      have hblank : x[x.length]? = none := by simp
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hblank]
+      change ((controlAction 0 (none : Option (Fin 4))).apply _).state = none ∧
+        ((controlAction 0 (none : Option (Fin 4))).apply _).output = []
+      rw [controlAction_apply]
+      exact ⟨rfl, rfl⟩
+    simpa only [hinc, Option.getD_none] using hh.mono (by omega)
+  · have hj : j < x.length := by simp [hx]
+    have hpre : x.take j = List.replicate j true := by simp [hx]
+    have hread : x[j]? = some false := by simp [hx]
+    let c : Cfg 0 Bool (Fin 4) x :=
+      ⟨some 1, ⟨j, by omega⟩, fun i => i.elim0, fun i => i.elim0, []⟩
+    have hdet : incFixedTM.tm.runFrom (incFixedTM.tm.initCfg x) (j + 1) = c := by
+      rw [MultiTapeTM.runFrom_succ_eq_step', show incFixedTM.tm.initCfg x =
+        scanCfg x (some (0 : Fin 4)) 0 (by omega) [] from
+          by
+            rw [MultiTapeTM.initCfg_eq]
+            apply Cfg.ext_zero_tapes <;>
+              simp [Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, incFixedTM, scanCfg],
+        scanTrues_run incFixedTM.tm (0 : Fin 4) false (fun _ => rfl) x j (by omega) hpre]
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
+      change (controlAction .neg (some (1 : Fin 4))).apply _ = c
+      rw [controlAction_apply]
+      apply Cfg.ext_zero_tapes
+      · rfl
+      · exact moveInputPos_neg_of_ne_left (⟨j + 1, by omega⟩ : Fin (x.length + 2))
+          (by simp [Fin.ext_iff])
+      · rfl
+    have hrew : incFixedTM.tm.runFrom (incFixedTM.tm.initCfg x) (j + 1 + (j + 1)) =
+        scanCfg x (some (2 : Fin 4)) 0 (by omega) [] := by
+      rw [MultiTapeTM.runFrom_add, hdet]
+      exact rewind_scan incFixedTM.tm (1 : Fin 4) (some (2 : Fin 4))
+        (fun _ _ => rfl) c rfl (by simp [c]; omega)
+    have hemit : incFixedTM.tm.runFrom (scanCfg x (some (2 : Fin 4)) 0 (by omega) [])
+        (j + 1) = scanCfg x (some (3 : Fin 4)) (j + 1) (by omega)
+          (List.replicate j false ++ [true]) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step',
+        scanTrues_run incFixedTM.tm (2 : Fin 4) true (fun _ => rfl) x j (by omega) hpre]
+      rw [MultiTapeTM.step_of_some (by rfl), scanCfg_read, hread]
+      change (Action.mk .pos (fun j => j.elim0) (some true) (some (3 : Fin 4))).apply _ = _
+      apply Cfg.ext_zero_tapes
+      · exact Action.apply_state _ _
+      · rw [Action.apply_inputPos]
+        exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+      · exact Action.apply_output _ _
+    have hcopy := scanCopy_suffix incFixedTM.tm (3 : Fin 4) (fun _ _ => rfl)
+      x rest (List.replicate j true ++ [false]) (List.replicate j false ++ [true])
+      (by simpa [List.append_assoc] using hx)
+    have hh : incFixedTM.ComputesInTime x (List.replicate j false ++ true :: rest)
+        ((j + 1 + (j + 1)) + ((j + 1) + (rest.length + 1))) := by
+      apply (computesInTime_iff _ _ _ _).mpr
+      rw [MultiTapeTM.runFrom_add, hrew, MultiTapeTM.runFrom_add, hemit]
+      simp only [List.length_append, List.length_replicate, List.length_singleton] at hcopy
+      rw [hcopy]
+      exact ⟨rfl, by simp [scanCfg, List.append_assoc]⟩
+    have hlen : x.length = j + 1 + rest.length := by simp [hx]; omega
+    simpa only [hinc, Option.getD_some] using hh.mono (by omega)
+
+/-- A right-moving zero-tape transition advances the indexed configuration
+and appends exactly its optional emission. -/
+private lemma scanStep_right {S : Type} (tm : MultiTapeTM 0 Bool S)
+    (x : List Bool) (q : S) (q' : Option S) (i : ℕ) (hi : i < x.length)
+    (out : List Bool) (emit : Option Bool)
+    (htr : ∀ work, tm.tr q x[i]? work = ⟨.pos, fun j => j.elim0, emit, q'⟩) :
+    tm.step (scanCfg x (some q) i (by omega) out) =
+      scanCfg x q' (i + 1) (by omega) (out ++ emit.toList) := by
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  change (tm.tr q _ _).apply _ = _
+  rw [scanCfg_read, htr]
+  apply Cfg.ext_zero_tapes
+  · rfl
+  · exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
+  · rfl
+
+/-- **The pair-grammar validator**. A machine with no work tapes that scans aligned pairs of input
+bits, remembering the first bit of the current pair, and emits the single verdict
+`(pairDecode x).isSome` at the separator `false, true` or at the first malformed pair. -/
+def pairValidTM : FinTM Bool where
+  k := 0
+  State := Option Bool
+  tm :=
+    { q₀ := none
+      tr := fun q inp _ => match q, inp with
+        | none, some b => ⟨.pos, fun j => j.elim0, none, some (some b)⟩
+        | some b, some c =>
+          if b = c then ⟨.pos, fun j => j.elim0, none, some none⟩
+          else ⟨.pos, fun j => j.elim0, some (!b && c), none⟩
+        | _, none => ⟨0, fun j => j.elim0, some false, none⟩ }
+
+/-- The pairing validator visits no work-tape cells, on every input and at every time. -/
+theorem pairValidTM_spaceUsed (x : List Bool) (t : ℕ) :
+    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+/-- One aligned block either continues silently or halts with its verdict. -/
+private lemma pairValid_block (x pre rest : List Bool) (b c : Bool)
+    (hx : x = pre ++ b :: c :: rest) :
+    pairValidTM.tm.runFrom (scanCfg x (some none) pre.length (by simp [hx]) []) 2 =
+      if b = c then scanCfg x (some none) (pre.length + 2) (by simp [hx]) []
+      else scanCfg x none (pre.length + 2) (by simp [hx]) [!b && c] := by
+  have h1 := scanStep_right pairValidTM.tm x none (some (some b)) pre.length
+    (by simp [hx]) [] none (by intro work; simp [hx, pairValidTM])
+  have h2 := scanStep_right pairValidTM.tm x (some b)
+    (if b = c then some none else none) (pre.length + 1) (by simp [hx])
+    [] (if b = c then none else some (!b && c)) (by
+      intro work
+      have hr : x[pre.length + 1]? = some c := by simp [hx]
+      rw [hr]
+      by_cases h : b = c <;> simp [pairValidTM, h])
+  change pairValidTM.tm.step (pairValidTM.tm.step _) = _
+  rw [h1]
+  simp only [Option.toList_none, List.append_nil]
+  rw [h2]
+  by_cases h : b = c <;> simp [h]
+
+/-- The validity scanner halts within one more than the unprocessed length.
+**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+cases fail on a boundary blank. Equal-bit blocks invoke the induction
+hypothesis silently; `01` succeeds and `10` fails immediately, independently
+of the suffix. Thus no verdict is emitted before validity is decided. -/
+private lemma pairValid_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest),
+    ∃ t ≤ rest.length + 1,
+      (pairValidTM.tm.runFrom
+        (scanCfg x (some none) pre.length (by simp [hx]) []) t).state = none ∧
+      (pairValidTM.tm.runFrom
+        (scanCfg x (some none) pre.length (by simp [hx]) []) t).output =
+          [(pairDecode rest).isSome] := by
+  induction rest using List.twoStepInduction with
+  | nil =>
+    intro pre hx
+    refine ⟨1, by simp, ?_⟩
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change ((pairValidTM.tm.tr none _ _).apply _).state = none ∧ _
+    rw [scanCfg_read]
+    simp [hx, pairValidTM, -Action.apply, Action.apply_state, Action.apply_output, scanCfg,
+      pairDecode]
+  | singleton b =>
+    intro pre hx
+    have h1 := scanStep_right pairValidTM.tm x none (some (some b)) pre.length
+      (by simp [hx]) [] none (by intro work; simp [hx, pairValidTM])
+    refine ⟨2, by simp, ?_⟩
+    simp only [show (2 : ℕ) = (0 + 1) + 1 by rfl,
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [h1]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change ((pairValidTM.tm.tr (some b) _ _).apply _).state = none ∧ _
+    rw [scanCfg_read]
+    cases b <;> simp [hx, pairValidTM, -Action.apply, Action.apply_state, Action.apply_output,
+      scanCfg, pairDecode]
+  | cons_cons b c rest ih _ =>
+    intro pre hx
+    by_cases h : b = c
+    · subst c
+      obtain ⟨t, ht, hs, ho⟩ := ih (pre ++ [b, b]) (by simpa [List.append_assoc] using hx)
+      refine ⟨2 + t, by simp only [List.length_cons] at *; omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, pairValid_block x pre rest b b hx, if_pos rfl]
+      simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
+      refine ⟨hs, ?_⟩
+      cases b <;> simpa [pairDecode] using ho
+    · refine ⟨2, by simp, ?_⟩
+      rw [pairValid_block x pre rest b c hx, if_neg h]
+      cases b <;> cases c <;> simp_all [scanCfg, pairDecode]
+
+/-- **The validator's time**. On every input the validator halts within `|x| + 1` steps with output
+`[(pairDecode x).isSome]`.
+
+**Proof sketch.** Today's proof: one step per input symbol (`pairValid_run`), and the verdict
+is emitted on the halting transition. -/
+theorem pairValidTM_computes (x : List Bool) :
+    pairValidTM.ComputesInTime x [(pairDecode x).isSome] (x.length + 1) := by
+  obtain ⟨t, ht, hs, ho⟩ := pairValid_run x x [] rfl
+  have hinit : pairValidTM.tm.initCfg x = scanCfg x (some none) 0 (by omega) [] := by
+    apply Cfg.ext_zero_tapes <;> simp [pairValidTM, scanCfg]
+  have h : pairValidTM.ComputesInTime x [(pairDecode x).isSome] t := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [hinit]
+    exact ⟨hs, ho⟩
+  exact h.mono ht
+
+/-- **The pair extractor**. On `pairEncode a b` it validates the doubled prefix while buffering `a`
+on its single work tape, then emits `a` if `first` and the suffix `b` if `second`; on a malformed
+input it halts with empty output. One machine serves the first-component, second-component and
+concatenation rows. -/
+def pairExtractTM (first second : Bool) : FinTM Bool where
+  k := 1
+  State := Option Bool ⊕ Fin 3
+  tm :=
+    { q₀ := .inl none
+      tr := fun q inp work => match q with
+        | .inl none => match inp with
+          | some b => ⟨.pos, fun _ => (none, 0), none, some (.inl (some b))⟩
+          | none => ⟨0, fun _ => (none, 0), none, none⟩
+        | .inl (some b) => match inp with
+          | none => ⟨0, fun _ => (none, 0), none, none⟩
+          | some c =>
+            if b = c then
+              ⟨.pos, fun _ => (some (some b), .pos), none, some (.inl none)⟩
+            else if b then ⟨.pos, fun _ => (none, 0), none, none⟩
+            else ⟨.pos, fun _ => (none, .neg), none, some (.inr 0)⟩
+        | .inr q => match q.val with
+          | 0 => match work 0 with
+            | some _ => ⟨0, fun _ => (none, .neg), none, some (.inr 0)⟩
+            | none => ⟨0, fun _ => (none, .pos), none, some (.inr 1)⟩
+          | 1 => match work 0 with
+            | some b => ⟨0, fun _ => (none, .pos), if first then some b else none, some (.inr 1)⟩
+            | none => ⟨0, fun _ => (none, 0), none, some (.inr 2)⟩
+          | _ => if second then match inp with
+              | some b => ⟨.pos, fun _ => (none, 0), some b, some (.inr 2)⟩
+              | none => ⟨0, fun _ => (none, 0), none, none⟩
+            else ⟨0, fun _ => (none, 0), none, none⟩ }
+
+/-- The shared extractor's one-buffer configurations. -/
+private def extractCfg (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+    (i : ℕ) (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
+    Cfg 1 Bool (Option Bool ⊕ Fin 3) x :=
+  ⟨q, ⟨i + 1, by omega⟩, fun _ => bufferTape a, fun _ => z, out⟩
+
+/-- The extractor reads the indexed input entry independently of its buffer. -/
+private lemma extractCfg_read (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+    (i : ℕ) (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
+    (extractCfg x q i hi a z out).inputSymbol = x[i]? :=
+  inputSymbol_at _ i hi rfl
+
+/-- Reading the first half of an aligned block preserves the buffer silently. -/
+private lemma extract_first (first second : Bool) (x pre rest a : List Bool) (b : Bool)
+    (hx : x = pre ++ b :: rest) :
+    (pairExtractTM first second).tm.step
+      (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) =
+      extractCfg x (some (.inl (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  change ((pairExtractTM first second).tm.tr (.inl none) _ _).apply _ = _
+  rw [extractCfg_read]
+  have hr : x[pre.length]? = some b := by simp [hx]
+  rw [hr]
+  refine Cfg.ext (Action.apply_state _ _) ?_
+    (by
+      funext i
+      rw [Action.apply_workTapes]
+      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+    ?_ (Action.apply_output _ _)
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_pos_of_ne_right _ (by simp [extractCfg, hx])
+  · funext i; simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg]
+
+/-- Equal-bit blocks append one decoded bit; `01` begins replay and `10`
+halts silently. In particular, neither transition emits physical output. -/
+private lemma extract_block (first second : Bool) (x pre rest a : List Bool) (b c : Bool)
+    (hx : x = pre ++ b :: c :: rest) :
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) 2 =
+      if b = c then extractCfg x (some (.inl none)) (pre.length + 2) (by simp [hx])
+          (a ++ [b]) (a ++ [b]).length []
+      else if b then extractCfg x none (pre.length + 2) (by simp [hx]) a a.length []
+      else extractCfg x (some (.inr 0)) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
+  simp only [show (2 : ℕ) = (0 + 1) + 1 by rfl,
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  rw [extract_first first second x pre (c :: rest) a b hx]
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  change ((pairExtractTM first second).tm.tr (.inl (some b)) _ _).apply _ = _
+  rw [extractCfg_read]
+  have hr : x[pre.length + 1]? = some c := by simp [hx]
+  rw [hr]
+  have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
+      ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ := by
+    exact moveInputPos_pos_of_ne_right _ (by simp [hx])
+  cases b <;> cases c <;> simp only [Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+  all_goals
+    refine Cfg.ext (Action.apply_state _ _) ?_ ?_ ?_ (Action.apply_output _ _)
+    · rw [Action.apply_inputPos]
+      exact hm
+    · funext i
+      rw [Action.apply_workTapes]
+      first
+      | erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl
+      | exact (bufferTape_append a _).symm
+    · funext i
+      simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg, sub_eq_add_neg]
+
+/-- Rewinding the validated buffer from cell `j-1` takes `j+1` transitions.
+**Proof sketch.** At the left blank, move right and enter replay. Otherwise
+read a buffer cell, move left, and invoke the induction hypothesis. -/
+private lemma extract_rewind (first second : Bool) (x a : List Bool)
+    (i : ℕ) (hi : i ≤ x.length) : ∀ j, j ≤ a.length →
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) []) (j + 1) =
+      extractCfg x (some (.inr 1)) i hi a 0 [] := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols_eq, Nat.cast_zero,
+      zero_sub, bufferTape_left]
+    refine Cfg.ext (Action.apply_state _ _)
+      (by
+        rw [Action.apply_inputPos]
+        exact moveInputPos_zero _)
+      (by
+        funext i
+        rw [Action.apply_workTapes]
+        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+      ?_ (Action.apply_output _ _)
+    funext k; simp [-Action.apply, Action.apply_workTapePos]
+  | succ j ih =>
+    intro hj
+    have hs : (pairExtractTM first second).tm.step
+        (extractCfg x (some (.inr 0)) i hi a (((j + 1 : ℕ) : ℤ) - 1) []) =
+        extractCfg x (some (.inr 0)) i hi a ((j : ℤ) - 1) [] := by
+      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+      rw [hz]
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols_eq, bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < a.length)]
+      refine Cfg.ext (Action.apply_state _ _)
+        (by
+          rw [Action.apply_inputPos]
+          exact moveInputPos_zero _)
+        (by
+          funext i
+          rw [Action.apply_workTapes]
+          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+        ?_ (Action.apply_output _ _)
+      funext k; simp [-Action.apply, Action.apply_workTapePos, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+/-- Replay a one-tape buffer from a fixed native input position, optionally emitting its bits.
+
+**Proof sketch.** Induct on the consumed prefix. The published buffer-read equation supplies
+its next symbol, the transition premise selects a stationary-input/no-write right move,
+and the public action-field equations preserve the buffer while extending the emitted prefix.
+[AB09, §1.2] -/
+private lemma bufferReplay_run {S : Type} {x : List Bool}
+    (tm : MultiTapeTM 1 Bool S) (q : S) (emit : Bool)
+    (htr : ∀ (inp : Option Bool) (bit : Bool), tm.tr q inp (fun _ => some bit) =
+      ⟨0, fun _ => (none, .pos), if emit then some bit else none, some q⟩)
+    (p : Fin (x.length + 2)) (a : List Bool) : ∀ j (_hj : j ≤ a.length),
+    tm.runFrom (⟨some q, p, fun _ => bufferTape a, fun _ => 0, []⟩ : Cfg 1 Bool S x) j =
+      (⟨some q, p, fun _ => bufferTape a, fun _ => (j : ℤ),
+        if emit then a.take j else []⟩ : Cfg 1 Bool S x) := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_zero]
+    cases emit <;> rfl
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    let c : Cfg 1 Bool S x :=
+      ⟨some q, p, fun _ => bufferTape a, fun _ => (j : ℤ), if emit then a.take j else []⟩
+    change tm.step c = _
+    have hr : c.workTapeSymbols = fun _ => some (a[j]'(by omega)) := by
+      funext i
+      rw [Cfg.workTapeSymbols_eq]
+      change bufferTape a (j : ℤ) = _
+      rw [bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    rw [MultiTapeTM.step_of_some (cfg := c) rfl, hr, htr]
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · simp only [Action.apply_state]
+    · simp only [Action.apply_inputPos, moveInputPos_zero, c]
+    · funext i
+      simp only [Action.apply_workTapes, Option.getD_none,
+        Cfg.workTapeSymbols_eq, Function.update_eq_self, c]
+    · funext i
+      simp only [Action.apply_workTapePos, c, SignType.pos_eq_one, SignType.coe_one,
+        Nat.cast_add, Nat.cast_one]
+    · rw [Action.apply_output]
+      change (if emit then a.take j else []) ++
+        (if emit then some (a[j]'(by omega)) else none).toList =
+          if emit then a.take (j + 1) else []
+      cases emit with
+      | false => rfl
+      | true =>
+        simp only [↓reduceIte, List.take_succ,
+          List.getElem?_eq_getElem (by omega : j < a.length), Option.toList_some]
+
+/-- Replay reads the buffered word once; the first-component flag decides
+whether those reads emit. At the right blank the controller starts the suffix.
+**Proof sketch.** Apply `bufferReplay_run` to the extractor's replay transition;
+its selector chooses whether each unchanged buffer cell is emitted. -/
+private lemma extract_replay (first second : Bool) (x a : List Bool)
+    (i : ℕ) (hi : i ≤ x.length) : ∀ j (_hj : j ≤ a.length),
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inr 1)) i hi a 0 []) j =
+      extractCfg x (some (.inr 1)) i hi a j (if first then a.take j else []) := by
+  simpa only [extractCfg] using
+    bufferReplay_run (x := x) (pairExtractTM first second).tm (.inr (1 : Fin 3)) first
+      (by intro inp bit; rfl) ⟨i + 1, by omega⟩ a
+
+/-- Replay's right-blank test dispatches to the suffix state silently. -/
+private lemma extract_replay_finish (first second : Bool) (x a : List Bool)
+    (i : ℕ) (hi : i ≤ x.length) :
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inr 1)) i hi a 0 []) (a.length + 1) =
+      extractCfg x (some (.inr 2)) i hi a a.length (if first then a else []) := by
+  rw [MultiTapeTM.runFrom_succ_eq_step', extract_replay first second x a i hi _ (by omega)]
+  rw [MultiTapeTM.step_of_some (by rfl)]
+  simp only [pairExtractTM, extractCfg, Cfg.workTapeSymbols_eq, bufferTape_nat,
+    List.getElem?_length, List.take_length]
+  refine Cfg.ext (Action.apply_state _ _) (by
+    rw [Action.apply_inputPos]
+    exact moveInputPos_zero _)
+    (by
+      funext i
+      rw [Action.apply_workTapes]
+      erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+    ?_ ?_
+  · funext k; simp [-Action.apply, Action.apply_workTapePos]
+  · simp [-Action.apply, Action.apply_output]
+
+/-- With suffix copying enabled, the final phase emits the remaining input.
+**Proof sketch.** The input prefix grows by one at each emitting transition;
+the buffer and its head remain fixed. A right-blank test supplies the final
+halting step. This is the one-buffer version of the private suffix-copy lemma. -/
+private lemma extract_suffix (first : Bool) (x rest a : List Bool) :
+    ∀ pre out (hx : x = pre ++ rest),
+    (pairExtractTM first true).tm.runFrom
+      (extractCfg x (some (.inr 2)) pre.length (by simp [hx]) a a.length out)
+        (rest.length + 1) =
+      extractCfg x none x.length (by omega) a a.length (out ++ rest) := by
+  induction rest with
+  | nil =>
+    intro pre out hx
+    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
+    rw [extractCfg_read]
+    have hr : x[pre.length]? = none := by simp [hx]
+    rw [hr]
+    refine Cfg.ext (Action.apply_state _ _) ?_
+      (by
+        funext i
+        rw [Action.apply_workTapes]
+        erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+      ?_ ?_
+    · simp [pairExtractTM, -Action.apply, Action.apply_inputPos, extractCfg, hx]
+    · funext k; simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg]
+    · simp [pairExtractTM, -Action.apply, Action.apply_output, extractCfg]
+  | cons b rest ih =>
+    intro pre out hx
+    have hs : (pairExtractTM first true).tm.step
+        (extractCfg x (some (.inr 2)) pre.length (by simp [hx]) a a.length out) =
+        extractCfg x (some (.inr 2)) (pre ++ [b]).length (by simp [hx])
+          a a.length (out ++ [b]) := by
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
+      rw [extractCfg_read]
+      have hr : x[pre.length]? = some b := by simp [hx]
+      rw [hr]
+      refine Cfg.ext (Action.apply_state _ _) ?_
+        (by
+          funext i
+          rw [Action.apply_workTapes]
+          erw [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] <;> rfl)
+        ?_ (Action.apply_output _ _)
+      · rw [Action.apply_inputPos]
+        simpa [pairExtractTM, extractCfg] using moveInputPos_pos_of_ne_right
+          (⟨pre.length + 1, by simp [hx]; omega⟩ : Fin (x.length + 2)) (by simp [hx])
+      · funext k; simp [pairExtractTM, -Action.apply, Action.apply_workTapePos, extractCfg]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    simpa only [List.append_assoc, List.singleton_append] using
+      ih (pre ++ [b]) (out ++ [b]) (by simpa [List.append_assoc] using hx)
+
+/-- Once validation succeeds, rewind, replay, and optional suffix copying
+cost at most `2|a|+|rest|+3` steps.
+**Proof sketch.** The rewind costs `|a|+1`, and replay plus dispatch costs
+`|a|+1`. Disabled suffix copying halts in one step; enabled copying uses
+`|rest|+1`. Only these postvalidation phases emit output. -/
+private lemma extract_finish (first second : Bool) (x pre rest a : List Bool)
+    (hx : x = pre ++ rest) :
+    ∃ t ≤ 2 * a.length + rest.length + 3,
+      ((pairExtractTM first second).tm.runFrom
+        (extractCfg x (some (.inr 0)) pre.length (by simp [hx]) a (a.length - 1) []) t).state = none ∧
+      ((pairExtractTM first second).tm.runFrom
+        (extractCfg x (some (.inr 0)) pre.length (by simp [hx]) a (a.length - 1) []) t).output =
+          (if first then a else []) ++ (if second then rest else []) := by
+  have hp : (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inr 0)) pre.length (by simp [hx]) a (a.length - 1) [])
+        ((a.length + 1) + (a.length + 1)) =
+      extractCfg x (some (.inr 2)) pre.length (by simp [hx]) a a.length (if first then a else []) := by
+    rw [MultiTapeTM.runFrom_add, extract_rewind first second x a _ _ _ (by omega),
+      extract_replay_finish]
+  cases second with
+  | false =>
+    refine ⟨(a.length + 1) + (a.length + 1) + 1, by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_succ_eq_step', hp]
+    rw [MultiTapeTM.step_of_some (by first | assumption | rfl)]
+    simp [pairExtractTM, extractCfg, -Action.apply, Action.apply_state, Action.apply_output]
+  | true =>
+    refine ⟨((a.length + 1) + (a.length + 1)) + (rest.length + 1), by omega, ?_⟩
+    rw [MultiTapeTM.runFrom_add, hp, extract_suffix first x rest a pre _ hx]
+    exact ⟨rfl, rfl⟩
+
+/-- The silent aligned parser either rejects or validates and invokes replay.
+**Proof sketch.** Induct over aligned two-bit blocks while carrying the
+already-decoded buffer. A doubled bit costs two steps and enlarges the buffer
+by one; the linear potential `3|rest|+2|a|+5` pays for both effects. Missing
+and forbidden separators halt silently. At `01`, apply the validated finish
+ledger. The result includes the previously buffered prefix only on success. -/
+private lemma extract_run (first second : Bool) (x rest : List Bool) :
+    ∀ pre a (hx : x = pre ++ rest),
+    ∃ t ≤ 3 * rest.length + 2 * a.length + 5,
+      ((pairExtractTM first second).tm.runFrom
+        (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) t).state = none ∧
+      ((pairExtractTM first second).tm.runFrom
+        (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) t).output =
+          match pairDecode rest with
+          | some (b, c) => (if first then a ++ b else []) ++ (if second then c else [])
+          | none => [] := by
+  induction rest using List.twoStepInduction with
+  | nil =>
+    intro pre a hx
+    refine ⟨1, by omega, ?_⟩
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change (((pairExtractTM first second).tm.tr (.inl none) _ _).apply _).state = none ∧ _
+    rw [extractCfg_read]
+    simp [hx, pairExtractTM, -Action.apply, Action.apply_state, Action.apply_output, extractCfg,
+      pairDecode]
+  | singleton b =>
+    intro pre a hx
+    refine ⟨2, by simp, ?_⟩
+    simp only [show (2 : ℕ) = (0 + 1) + 1 by rfl,
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [extract_first first second x pre [] a b hx]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    change (((pairExtractTM first second).tm.tr (.inl (some b)) _ _).apply _).state = none ∧ _
+    rw [extractCfg_read]
+    cases b <;> simp [hx, pairExtractTM, -Action.apply, Action.apply_state, Action.apply_output,
+      extractCfg, pairDecode]
+  | cons_cons b c rest ih _ =>
+    intro pre a hx
+    by_cases h : b = c
+    · subst c
+      obtain ⟨t, ht, hs, ho⟩ := ih (pre ++ [b, b]) (a ++ [b]) (by simpa [List.append_assoc] using hx)
+      refine ⟨2 + t, by simp only [List.length_append, List.length_cons, List.length_nil] at *; omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, extract_block first second x pre rest a b b hx, if_pos rfl]
+      simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
+      refine ⟨?_, ?_⟩
+      · simpa only [List.length_append, List.length_cons, List.length_nil] using hs
+      · cases b <;> cases hd : pairDecode rest with
+        | none => simpa [pairDecode, hd] using ho
+        | some p => cases p; simpa [pairDecode, hd, List.append_assoc] using ho
+    · cases b <;> cases c
+      · exact False.elim (h rfl)
+      · obtain ⟨t, ht, hs, ho⟩ := extract_finish first second x (pre ++ [false, true]) rest a
+          (by simpa [List.append_assoc] using hx)
+        refine ⟨2 + t, by simp only [List.length_cons]; omega, ?_⟩
+        rw [MultiTapeTM.runFrom_add, extract_block first second x pre rest a false true hx]
+        simp only [Bool.false_eq_true, ↓reduceIte]
+        simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
+        exact ⟨hs, by simpa [pairDecode] using ho⟩
+      · refine ⟨2, by simp, ?_⟩
+        rw [extract_block first second x pre rest a true false hx]
+        simp [extractCfg, pairDecode]
+      · exact False.elim (h rfl)
+
+/-- **The extractor's time**. On every input the extractor halts within `5·(|x| + 1)` steps; its
+output is the selected components of the decoded pair, and empty when the input is not a pair
+encoding.
+
+**Proof sketch.** Today's proof: the aligned scan reads the doubled prefix two cells at a time
+while buffering, the separator turns it into a rewind of the buffer, the replay emits `a`, and
+the suffix copy emits `b`; each phase is linear in `|x|` (`extract_run`). -/
+theorem pairExtractTM_computes (first second : Bool) (x : List Bool) :
+    (pairExtractTM first second).ComputesInTime x
+      (match pairDecode x with
+        | some (a, b) => (if first then a else []) ++ (if second then b else [])
+        | none => []) (5 * (x.length + 1)) := by
+  obtain ⟨t, ht, hs, ho⟩ := extract_run first second x x [] [] rfl
+  have hinit : (pairExtractTM first second).tm.initCfg x =
+      extractCfg x (some (.inl none)) 0 (by omega) [] 0 [] := by
+    rw [MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · simp [-Cfg.init, Cfg.init_state, pairExtractTM, extractCfg]
+    · simp [-Cfg.init, Cfg.init_inputPos, extractCfg]
+    · funext i z
+      simp only [Cfg.init_workTapes, extractCfg, bufferTape_nil]
+    · funext i
+      rw [Cfg.init_workTapePos]
+      rfl
+    · simp [-Cfg.init, Cfg.init_output, extractCfg]
+  have hh : (pairExtractTM first second).ComputesInTime x
+      (match pairDecode x with
+        | some (a, b) => (if first then a else []) ++ (if second then b else [])
+        | none => []) t := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [hinit]
+    exact ⟨hs, by simpa using ho⟩
+  exact hh.mono (by simp only [List.length_nil] at ht; omega)
+
+/-- **First component**. The extractor at `(true, false)` computes the first component of a decoded
+pair, and `[]` on a malformed input, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_fst :
+    (pairExtractTM true false).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.fst).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes true false x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Second component**. The extractor at `(false, true)` computes the second component of a
+decoded pair, and `[]` on a malformed input, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_snd :
+    (pairExtractTM false true).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.snd).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes false true x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Concatenation of the components**. The extractor at `(true, true)` maps `pairEncode a b` to
+`a ++ b`, and a malformed input to `[]`, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_concat :
+    (pairExtractTM true true).ComputesFunInTime
+      (fun z => match pairDecode z with
+        | some (a, b) => a ++ b
+        | none => []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes true true x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-! ### The first-component extractor's complete run -/
+
+/-- Re-indexing an extractor configuration along equal indices. -/
+private lemma extractCfg_congr (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+    {i j : ℕ} (hi : i ≤ x.length) (hj : j ≤ x.length) (hij : i = j) {a a' : List Bool}
+    (ha : a = a') {z z' : ℤ} (hz : z = z') (out : List Bool) :
+    extractCfg x q i hi a z out = extractCfg x q j hj a' z' out := by
+  subst hij ha hz; rfl
+
+/-- The aligned scan buffers a doubled word silently, two steps per bit. -/
+private lemma extract_scan (first second : Bool) (x rest : List Bool) :
+    ∀ (w pre a : List Bool) (hx : x = pre ++ dbl w ++ rest),
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) (2 * w.length) =
+      extractCfg x (some (.inl none)) (pre.length + 2 * w.length)
+        (by simp [hx]) (a ++ w) (a ++ w).length [] := by
+  intro w
+  induction w with
+  | nil =>
+    intro pre a hx
+    simp only [List.length_nil, Nat.mul_zero, MultiTapeTM.runFrom_zero]
+    exact extractCfg_congr _ _ _ _ (by omega) (by simp) (by simp) _
+  | cons b w ih =>
+    intro pre a hx
+    have hx' : x = pre ++ b :: b :: (dbl w ++ rest) := by simp [hx]
+    have h1 := extract_block first second x pre (dbl w ++ rest) a b b hx'
+    rw [if_pos rfl] at h1
+    have h2 := ih (pre ++ [b, b]) (a ++ [b]) (by simp [hx])
+    have e : 2 * (b :: w).length = 2 + 2 * w.length := by simp; ring
+    simp only [e]
+    rw [MultiTapeTM.runFrom_add, h1]
+    rw [extractCfg_congr x (some (.inl none)) _ (by simp [hx])
+      (by simp : pre.length + 2 = (pre ++ [b, b]).length) rfl rfl []]
+    rw [h2]
+    exact extractCfg_congr _ _ _ _ (by simp; omega) (by simp) (by simp) _
+
+/-- **The first-component extractor's complete run.** On
+`pairEncode a b` the extractor `pairExtractTM true false` first halts after exactly
+`4·|a| + 5` steps, with output `a`, its input head on cell `2·|a| + 3` (just past the
+separator), and its single work tape holding `a` as a buffer with the head one past it.
+
+**Proof sketch.** The aligned scan buffers `a` in `2·|a|` steps; the separator block `01`
+starts the rewind (two steps); rewinding and replaying cost `(|a| + 1) + (|a| + 1)` steps;
+the suffix flag is off, so one silent stationary step halts. Liveness before the halt is
+`runFrom_state_ne_none_of_le` at the replay's last configuration. -/
+theorem pairExtractTM_fst_run (a b : List Bool) :
+    (pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg (pairEncode a b)) (4 * a.length + 5) =
+      ⟨none, ⟨2 * a.length + 3, by simp [length_pairEncode]; omega⟩,
+        fun _ => bufferTape a, fun _ => (a.length : ℤ), a⟩ ∧
+    ∀ u < 4 * a.length + 5, ((pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg (pairEncode a b)) u).state ≠ none := by
+  set x := pairEncode a b with hxdef
+  have hx0 : x = [] ++ dbl a ++ (false :: true :: b) := by simp [hxdef, pairEncode_eq_dbl]
+  have hlen : (dbl a).length + 2 ≤ x.length := by simp [hxdef, length_pairEncode]
+  have hinit : (pairExtractTM true false).tm.initCfg x =
+      extractCfg x (some (.inl none)) ([] : List Bool).length (by simp)
+        ([] : List Bool) ([] : List Bool).length [] := by
+    rw [MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [Cfg.init_state]; rfl
+    · rw [Cfg.init_inputPos]; exact Fin.ext (by simp [extractCfg])
+    · funext j p; rw [Cfg.init_workTapes]; simp [extractCfg]
+    · funext j; rw [Cfg.init_workTapePos]; rfl
+    · rw [Cfg.init_output]; rfl
+  have hscan := extract_scan true false x (false :: true :: b) a [] [] hx0
+  have hsep := extract_block true false x (dbl a) b a false true
+    (by simp [hxdef, pairEncode_eq_dbl])
+  simp only [Bool.false_eq_true, ↓reduceIte] at hsep
+  have hp : (pairExtractTM true false).tm.runFrom
+      (extractCfg x (some (.inr 0)) ((dbl a).length + 2) (by omega)
+        a ((a.length : ℤ) - 1) []) ((a.length + 1) + (a.length + 1)) =
+      extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a := by
+    rw [MultiTapeTM.runFrom_add, extract_rewind true false x a _ _ _ (by omega),
+      extract_replay_finish]
+    rfl
+  have hlast : (pairExtractTM true false).tm.step
+      (extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a) =
+      extractCfg x none ((dbl a).length + 2) (by omega) a a.length a := by
+    rw [MultiTapeTM.step_of_some rfl]
+    simp only [pairExtractTM, ↓reduceIte, Bool.false_eq_true]
+    rw [← controlAction_def (k := 1) (S := Option Bool ⊕ Fin 3) 0 none,
+      controlAction_apply, moveInputPos_zero]
+    rfl
+  have hmid : (pairExtractTM true false).tm.runFrom
+      ((pairExtractTM true false).tm.initCfg x)
+        (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) =
+      extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a := by
+    have hA : (pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg x) (2 * a.length) =
+        extractCfg x (some (.inl none)) (dbl a).length (by omega)
+          a a.length [] := by
+      rw [hinit, hscan]
+      exact extractCfg_congr _ _ _ _ (by simp) (by simp) (by simp) _
+    rw [MultiTapeTM.runFrom_add _ (2 * a.length + 2), MultiTapeTM.runFrom_add _ (2 * a.length) 2,
+      hA, hsep]
+    exact hp
+  have htot : 4 * a.length + 5 = (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) + 1 := by
+    ring
+  refine ⟨?_, ?_⟩
+  · rw [htot, MultiTapeTM.runFrom_succ_eq_step', hmid, hlast]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    simp [extractCfg]
+  · intro u hu
+    refine MultiTapeTM.runFrom_state_ne_none_of_le _ _
+      (2 * a.length + 2 + ((a.length + 1) + (a.length + 1)))
+      ?_ u (by omega)
+    rw [hmid]
+    simp [extractCfg]
+
+/-- **The extractor's run at its published budget**, as a corollary of the exact form: at the
+extractor's published time budget `5·(|z| + 1)` the run has halted in the
+complete configuration. -/
+theorem pairExtractTM_fst_run_budget (a b : List Bool) :
+    let M := pairExtractTM true false
+    let d := M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (5 * ((pairEncode a b).length + 1))
+    d.state = none ∧ d.output = a ∧ d.inputPos.val = 2 * a.length + 3 ∧
+      ∀ j : Fin M.k, d.workTapes j = bufferTape a ∧ d.workTapePos j = (a.length : ℤ) := by
+  intro M d
+  obtain ⟨h, -⟩ := pairExtractTM_fst_run a b
+  have hle : 4 * a.length + 5 ≤ 5 * ((pairEncode a b).length + 1) := by
+    rw [length_pairEncode]; omega
+  have hd : d = M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (4 * a.length + 5) := by
+    change M.tm.runFrom _ _ = _
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, h, MultiTapeTM.runFrom_of_halt _ rfl]
+  rw [hd, h]
+  exact ⟨rfl, rfl, rfl, fun _ => ⟨rfl, rfl⟩⟩
+
+/-! The unary polynomial generator below is adapted privately from
+`ClassNP/TMSAT.lean`, including its exact loop-depth ledger. -/
+
+/-- Control for copying the side length, nested unary loops, and constant emission. -/
+private inductive CatalogPolyControl (c C : ℕ) where
+  | copy | setup
+  | loop (i : Fin (c + 1))
+  | rewind (i : Fin (c + 1))
+  | advance (i : Fin (c + 2))
+  | emit (j : Fin (C + 1))
+
+/-- Enumerate the control through a finite sum representation, privately. -/
+private instance catalogPolyControlFintype (c C : ℕ) : Fintype (CatalogPolyControl c C) :=
+  derive_fintype% _
+
+/-- Compare control states through the same finite sum representation, privately. -/
+private instance catalogPolyControlDecidableEq (c C : ℕ) : DecidableEq (CatalogPolyControl c C) :=
+  (proxy_equiv% (CatalogPolyControl c C)).symm.decidableEq
+
+/-- A unary word of length `q`, surrounded by blanks. -/
+private def catalogPolyTape (q : ℕ) (z : ℤ) : Option Bool :=
+  if 0 ≤ z ∧ z < q then some true else none
+
+/-- Move just the selected work head, preserving every tape. -/
+private def catalogPolyMove {c C : ℕ} (i : Fin (c + 1)) (d : SignType)
+    (s : CatalogPolyControl c C) : Action (c + 1) Bool (CatalogPolyControl c C) :=
+  ⟨0, fun j => (none, if j = i then d else 0), none, some s⟩
+
+/-- Finite machine emitting `C` symbols at each point of a `(c+1)`-dimensional
+box. The unary loop tapes are copied in parallel; rewinding a completed inner
+loop costs its side length, charged to the iterations that just completed. -/
+private def catalogPolyUnaryTM (c C : ℕ) : FinTM Bool where
+  k := c + 1
+  State := CatalogPolyControl c C
+  tm := {
+    q₀ := .copy
+    tr := fun s inp w => match s with
+      | .copy => match inp with
+        | some _ => ⟨.pos, fun _ => (some (some true), .pos), none, some .copy⟩
+        | none => ⟨0, fun _ => (some (some true), .neg), none, some .setup⟩
+      | .setup =>
+        if w 0 = none then
+          ⟨0, fun _ => (none, .pos), none, some (.loop (Fin.last c))⟩
+        else ⟨0, fun _ => (none, .neg), none, some .setup⟩
+      | .loop i =>
+        if w i = none then catalogPolyMove i .neg (.rewind i)
+        else ⟨0, fun _ => (none, 0), none,
+          some (if h : i.val = 0 then .emit ⟨C, Nat.lt_succ_self C⟩
+            else .loop ⟨i.val - 1, by omega⟩)⟩
+      | .rewind i =>
+        if w i = none then catalogPolyMove i .pos (.advance ⟨i.val + 1, by omega⟩)
+        else catalogPolyMove i .neg (.rewind i)
+      | .advance i =>
+        if h : i.val < c + 1 then catalogPolyMove ⟨i.val, h⟩ .pos (.loop ⟨i.val, h⟩)
+        else ⟨0, fun _ => (none, 0), none, none⟩
+      | .emit j =>
+        if h : j.val = 0 then ⟨0, fun _ => (none, 0), none, some (.advance 0)⟩
+        else ⟨0, fun _ => (none, 0), some true,
+          some (.emit ⟨j.val - 1, by omega⟩)⟩ }
+
+/-- **The unary polynomial generator**. The machine that writes `C·(|x| + 1)^e` ones: for `e = 0`
+the constant machine of `List.replicate C true`, and for `e = d + 1` the private engine with `d + 1`
+nested unary loop tapes of side `|x| + 1`, installed by one input scan, which emits `C` ones at each
+point of the box. -/
+def polyUnaryTM (C : ℕ) : ℕ → FinTM Bool
+  | 0 => constTM (List.replicate C true)
+  | d + 1 => catalogPolyUnaryTM d C
+
+/-- **The binary polynomial evaluator**. The machine computing `x ↦ Nat.bits (C·(|x| + 1)^e)`: the
+constant machine of the answer when `C = 0` or `e = 0`, and otherwise the unary generator buffered
+into the binary length counter. The split avoids the generator's linear banks where the answer is a
+constant (round-1 finding 5 of the space rows). -/
+def polyBitsTM (C e : ℕ) : FinTM Bool :=
+  if C = 0 then constTM (Nat.bits 0) else
+    match e with
+    | 0 => constTM (Nat.bits C)
+    | d + 1 => bufferedCompTM (polyUnaryTM C (d + 1)) lengthBitsTM
+
+/-- A loop configuration, with all unary tapes installed and arbitrary head positions. -/
+private def catalogPolyCfg {c C : ℕ} (x : List Bool) (q : ℕ)
+    (s : CatalogPolyControl c C) (h : Fin (c + 1) → ℤ) (o : List Bool) :
+    Cfg (c + 1) Bool (CatalogPolyControl c C) x :=
+  ⟨some s, ⟨x.length + 1, by omega⟩, fun _ => catalogPolyTape q, h, o⟩
+
+/-- Applying a head-only action updates exactly the selected head. -/
+private lemma catalogPolyMove_apply {c C : ℕ} (x : List Bool) (q : ℕ)
+    (s s' : CatalogPolyControl c C) (h : Fin (c + 1) → ℤ) (o : List Bool)
+    (i : Fin (c + 1)) (d : SignType) :
+    (catalogPolyMove i d s').apply (catalogPolyCfg x q s h o) =
+      catalogPolyCfg x q s' (Function.update h i (h i + d.cast)) o := by
+  apply Cfg.ext
+  · rfl
+  · exact moveInputPos_zero _
+  · rfl
+  · funext j
+    by_cases hj : j = i <;> simp [catalogPolyMove, catalogPolyCfg, Action.apply, hj]
+  · simp [catalogPolyMove, catalogPolyCfg, Action.apply]
+
+/-- The finite emission chain appends exactly its remaining number of true bits.
+
+**Proof sketch.** Induct on the remaining emission count. At zero the machine
+enters the advance state without emission. A positive count appends one true
+bit and decreases the count, leaving the loop tapes and heads unchanged. -/
+private lemma catalogPoly_emit {c C : ℕ} (x : List Bool) (q : ℕ)
+    (h : Fin (c + 1) → ℤ) : ∀ j (hj : j ≤ C) (o : List Bool),
+    (catalogPolyUnaryTM c C).tm.runFrom
+      (catalogPolyCfg x q (.emit ⟨j, by omega⟩) h o) (j + 1) =
+      catalogPolyCfg x q (.advance 0) h (o ++ List.replicate j true) := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj o
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    apply Cfg.ext <;> simp [catalogPolyUnaryTM, catalogPolyCfg, -Action.apply, Action.apply_state,
+      Action.apply_inputPos, Action.apply_workTapes, Action.apply_workTapePos, funext_iff,
+      Action.apply_output, Cfg.workTapeSymbols_eq]
+  | succ j ih =>
+    intro hj o
+    have hs : (catalogPolyUnaryTM c C).tm.step
+        (catalogPolyCfg x q (.emit ⟨j + 1, by omega⟩) h o) =
+        catalogPolyCfg x q (.emit ⟨j, by omega⟩) h (o ++ [true]) := by
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      apply Cfg.ext <;> simp [catalogPolyUnaryTM, catalogPolyCfg, -Action.apply, Action.apply_state,
+        Action.apply_inputPos, Action.apply_workTapes, Action.apply_workTapePos, funext_iff,
+        Action.apply_output, Cfg.workTapeSymbols_eq]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs, ih (by omega)]
+    simp [List.replicate_succ, List.append_assoc]
+
+section Boundary129
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.bufferTape Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step Turing.moveInputPos
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+/-- Rewinding crosses a unary prefix and its left boundary, restoring head zero.
+The other loop heads and the accumulated output remain unchanged. -/
+private lemma catalogPoly_rewind {c C : ℕ} (x : List Bool) (q : ℕ)
+    (h : Fin (c + 1) → ℤ) (o : List Bool) (i : Fin (c + 1)) :
+    ∀ j (_hj : j ≤ q),
+    (catalogPolyUnaryTM c C).tm.runFrom
+      (catalogPolyCfg x q (.rewind i) (Function.update h i ((j : ℤ) - 1)) o) (j + 1) =
+      catalogPolyCfg x q (.advance ⟨i.val + 1, by omega⟩) (Function.update h i 0) o := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [MultiTapeTM.step_of_some (by rfl)]
+    simp only [catalogPolyUnaryTM]
+    simp only [Cfg.workTapeSymbols_eq, catalogPolyCfg, Function.update_self,
+      Nat.cast_zero, zero_sub, catalogPolyTape, show ¬(0 ≤ (-1 : ℤ) ∧ (-1 : ℤ) < q) by omega,
+      ↓reduceIte]
+    simpa [catalogPolyCfg] using catalogPolyMove_apply x q (.rewind i)
+      (.advance ⟨i.val + 1, by omega⟩) (Function.update h i (-1)) o i .pos
+  | succ j ih =>
+    intro hj
+    have hs : (catalogPolyUnaryTM c C).tm.step
+        (catalogPolyCfg x q (.rewind i) (Function.update h i ((j + 1 : ℕ) - 1 : ℤ)) o) =
+        catalogPolyCfg x q (.rewind i) (Function.update h i ((j : ℤ) - 1)) o := by
+      rw [MultiTapeTM.step_of_some (by rfl)]
+      simp only [catalogPolyUnaryTM]
+      simp only [Cfg.workTapeSymbols_eq, catalogPolyCfg, Function.update_self,
+        Nat.cast_add, Nat.cast_one, add_sub_cancel_right, catalogPolyTape,
+        if_pos (show 0 ≤ (j : ℤ) ∧ (j : ℤ) < q by omega),
+        reduceCtorEq, ↓reduceIte]
+      simpa [catalogPolyCfg, sub_eq_add_neg] using catalogPolyMove_apply x q (.rewind i)
+        (.rewind i) (Function.update h i (j : ℤ)) o i .neg
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  let names : List Name := [`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.bufferTape, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.step, `Turing.moveInputPos]
+  for n in names do
+    match getReducibilityStatusCore env n with
+    | .irreducible => pure ()
+    | _ => throwError "NOT_IRREDUCIBLE|{n}"
+    if st.toUnfold.contains n || st.isLemma (.decl n) then
+      throwError "SIMP_STILL_ACTIVE|{n}"
+    logInfo m!"GUARD_ACTIVE|{n}"
+end Boundary129
+end Turing.FinTM

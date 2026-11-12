@@ -1,0 +1,13 @@
+/-- Setup mode freezes every field once it reaches a payload state. -/
+private lemma a2_mapSetup_stationary (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x)
+    (h : a2_mapEntered M c) (t : ℕ) : (a2_mapTM M false).tm.runFrom c t = c := by
+  obtain ⟨q, tag, hs⟩ := h
+  have he : (a2_mapTM M false).tm.step c = c := by
+    simp only [MultiTapeTM.step, hs, a2_mapTM, Bool.false_eq_true, ↓reduceIte,
+      controlAction_apply, moveInputPos_zero]
+    cases c
+    simp_all
+  induction t with
+  | zero => rfl
+  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]

@@ -1,0 +1,96 @@
+{
+  "scope": "Complete public target doc/header/body; all raw tactic-containing lines uncapped, with continuation lines retained by full source capture. New reader body is rfl on its own core.",
+  "source_sha256": "c22e2d40733faa7d7e832edd5fb3ce004d0f0b5ad5783454037a3abf0e880f63",
+  "rows": [
+    {
+      "target_line": 50,
+      "literal_line": "    rw [Int.card_Icc]; omega"
+    },
+    {
+      "target_line": 61,
+      "literal_line": "    simp only [code, Prod.mk.injEq, Fin.mk.injEq] at h"
+    },
+    {
+      "target_line": 63,
+      "literal_line": "    simp only [core_eq, Prod.mk.injEq]"
+    },
+    {
+      "target_line": 70,
+      "literal_line": "          simp only [cnt, Finset.mem_filter] at hz \u22a2"
+    },
+    {
+      "target_line": 75,
+      "literal_line": "            rw [Finset.mem_Icc]; rw [abs_le] at hz; exact hz"
+    },
+    {
+      "target_line": 79,
+      "literal_line": "            simpa [cnt, hzI] using this"
+    },
+    {
+      "target_line": 81,
+      "literal_line": "          \u00b7 rw [ha, hb']"
+    },
+    {
+      "target_line": 82,
+      "literal_line": "          \u00b7 exact absurd (hiff.mpr hb') (by rw [ha]; simp)"
+    },
+    {
+      "target_line": 83,
+      "literal_line": "          \u00b7 exact absurd (hiff.mp ha) (by rw [hb']; simp)"
+    },
+    {
+      "target_line": 84,
+      "literal_line": "          \u00b7 rw [ha, hb']"
+    },
+    {
+      "target_line": 89,
+      "literal_line": "          rw [h1, h2]"
+    },
+    {
+      "target_line": 91,
+      "literal_line": "        \u00b7 have := congrFun (congrFun hw j) \u27e8(z + B).toNat, by rw [abs_le] at hz; omega\u27e9"
+    },
+    {
+      "target_line": 92,
+      "literal_line": "          simp only at this"
+    },
+    {
+      "target_line": 93,
+      "literal_line": "          rwa [show (((z + B).toNat : \u2115) : \u2124) - B = z by rw [abs_le] at hz; omega] at this"
+    },
+    {
+      "target_line": 98,
+      "literal_line": "          rw [h1, h2]"
+    },
+    {
+      "target_line": 105,
+      "literal_line": "    simp only [Finset.coe_range, Set.mem_Iio] at ha hb"
+    },
+    {
+      "target_line": 113,
+      "literal_line": "    simp only [Finset.card_range, Finset.card_univ, Fintype.card_prod, Fintype.card_option,"
+    },
+    {
+      "target_line": 116,
+      "literal_line": "    rw [\u2190 pow_mul, Nat.mul_comm (2 * B + 1) K]"
+    },
+    {
+      "target_line": 121,
+      "literal_line": "      rw [show (Fintype.card St + 1) * (x.length + 2) * 3 ^ (K * (2 * B + 1)) *"
+    }
+  ],
+  "local_let_definitions_passed_to_simp": [
+    "code",
+    "cnt"
+  ],
+  "local_hypothesis_arguments": [
+    "hzI",
+    "ha",
+    "hb'",
+    "h1",
+    "h2"
+  ],
+  "foreign_definition_arguments": [],
+  "Core_Mathlib_definition_arguments": [],
+  "no_target_unfold_dsimp_change_tactics": true
+}

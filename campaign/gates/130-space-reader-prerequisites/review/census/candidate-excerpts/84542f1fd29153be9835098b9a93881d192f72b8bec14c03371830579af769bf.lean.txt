@@ -1,0 +1,5 @@
+/-- The all-earlier matcher has a fresh absorbing live return. -/
+private lemma clMatch_return {l : ℕ} (pos neg : Fin l) (inp : Option Bool)
+    (work : Fin (l + 5) → Option Bool) :
+    (clMatchTM pos neg).tm.tr (.inr (.inr (.inr ()))) inp work =
+      FinTM.controlAction 0 (some (.inr (.inr (.inr ())))) := rfl

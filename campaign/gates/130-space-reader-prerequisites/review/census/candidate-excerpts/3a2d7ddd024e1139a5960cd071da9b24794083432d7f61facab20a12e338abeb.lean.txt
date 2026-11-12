@@ -1,0 +1,12 @@
+/-- The emitted symbol is determined by the core, independently of the output history.
+
+**Proof sketch.** Destructure the configurations and identify their four core fields;
+the transition reads precisely those fields. -/
+private theorem outputSymbol_congr (M : MultiTapeTM k Bool S) {c d : Cfg k Bool S x}
+    (h : MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d) :
+    M.outputSymbol c = M.outputSymbol d := by
+  cases c
+  cases d
+  simp only [MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+  rcases h with ⟨rfl, rfl, rfl, rfl⟩
+  rfl

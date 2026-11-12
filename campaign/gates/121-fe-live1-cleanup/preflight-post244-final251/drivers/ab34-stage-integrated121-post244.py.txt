@@ -1,0 +1,95 @@
+from pathlib import Path
+import hashlib
+import json
+import os
+import runpy
+import subprocess
+import tarfile
+
+queue=Path('/private/tmp/ab34-g129r3-approved/replay')
+q=json.loads((queue/'request.json').read_bytes())
+completed=json.loads((queue/'RESULT.json').read_bytes())
+assert completed['pass'] and completed['head']==q['head'] and completed['prospective_tree']==q['clean_prospective_tree']
+R=Path(q['repository'])
+e=Path('/private/tmp/ab34-integrated121-post244')
+e.mkdir()
+W=e/'runtime'
+W.mkdir()
+objects=e/'objects'
+objects.mkdir()
+def raw(*args, env=None):
+    return subprocess.check_output(['git','-C',str(R),*args],env=env)
+common=raw('rev-parse','--path-format=absolute','--git-path','objects').decode().strip()
+env=os.environ | {'GIT_OBJECT_DIRECTORY':str(objects),'GIT_ALTERNATE_OBJECT_DIRECTORIES':common,
+    'GIT_AUTHOR_NAME':'Codex','GIT_AUTHOR_EMAIL':'codex@openai.com',
+    'GIT_COMMITTER_NAME':'Codex','GIT_COMMITTER_EMAIL':'codex@openai.com',
+    'GIT_AUTHOR_DATE':'2026-11-09T00:00:00Z','GIT_COMMITTER_DATE':'2026-11-09T00:00:00Z'}
+def git(*args):
+    return raw(*args,env=env)
+def sha(payload):
+    return hashlib.sha256(payload).hexdigest()
+def save(name,obj):
+    (e/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n')
+base=q['baseline']; reader=q['head']; joint=q['clean_prospective_tree']
+assert base==completed['baseline']
+h=git('rev-parse','origin/codex/ab34-fe-live1').decode().strip()
+assert h=='9936345ae64a4380bbec3ac6f3dad192f927420a'
+parent=git('commit-tree',joint,'-p',base,'-p',reader,'-m','Private prospective provider context').decode().strip()
+prospective=git('merge-tree','--write-tree',parent,h).decode().splitlines()[0]
+changes=git('diff','--name-only',joint,prospective,'--','*.lean').decode().splitlines()
+assert len(changes)==4
+source_proc=subprocess.Popen(['git','-C',str(R),'archive','--format=tar',prospective,
+    'TCSlib','TCSlib.lean','devtools/seyoon','lean-toolchain','lake-manifest.json'],
+    env=env,stdout=subprocess.PIPE)
+with tarfile.open(fileobj=source_proc.stdout,mode='r|') as archive:
+    archive.extractall(W,filter='data')
+assert source_proc.wait()==0
+(W/'.lake').mkdir()
+(W/'.lake/packages').symlink_to((Path(os.environ['TCSLIB_REPO'])/'.lake/packages').resolve(),target_is_directory=True)
+def sources():
+    return {f.relative_to(W).as_posix():sha(f.read_bytes()) for f in W.rglob('*.lean')}
+before=sources()
+area=R/'campaign/items/dedup/fe-live1-repairs'
+patches=(
+    area/'inputlength-current-reader-validation/2026-11-08/InputLength-reader-proof-only.patch.txt',
+    area/'seam-reader-proposal/2026-11-08/source/consumer-only.patch',
+)
+allowed={'TCSlib/Complexity/TuringMachine/Build/InputLength.lean','TCSlib/Complexity/CookLevin/Hardness.lean'}
+data=[]
+for patch in patches:
+    payload=patch.read_bytes()
+    assert all(p[6:].decode().split('	',1)[0] in allowed for p in payload.splitlines() if p.startswith((b'--- a/',b'+++ b/')))
+    subprocess.run(['git','apply','--check',str(patch)],cwd=W,check=True)
+    subprocess.run(['git','apply',str(patch)],cwd=W,check=True)
+    data.append({'path':patch.relative_to(R).as_posix(),'sha256':sha(payload)})
+after=sources()
+assert set(before)==set(after)
+changed={p for p in before if before[p]!=after[p]}
+assert changed==allowed,changed
+imports_of=runpy.run_path(str(W/'devtools/seyoon/graph.py'))['imports_of']
+def dependencies(module):
+    seen=set()
+    pending=[module]
+    while pending:
+        path=pending.pop()
+        if path in seen:
+            continue
+        seen.add(path)
+        f=W/path
+        if f.is_file():
+            pending.extend(n.replace('.','/')+'.lean' for n in imports_of(f))
+    return seen
+required={p:sorted(dependencies(p)&(set(changes)|changed)) for p in sorted(changed)}
+for path in sorted(allowed):
+    compiled=W/path
+    shutil_data=compiled.read_bytes()
+    (e/(compiled.name+'.txt')).write_bytes(shutil_data)
+    (e/('original-'+compiled.name+'.txt')).write_bytes(git('show',prospective+':'+path))
+save('REQUEST.json',{'head241':h,'campaign_Lean':base,'head251':reader,'head253_is_merged':True,
+    'prospective_provider_tree':joint,'temporary_combined_tree':prospective,
+    'pr241_changed_paths':changes,'applied_private_patches':data,
+    'changed_owner_source_sha256':{p:{'before':before[p],'after':after[p]} for p in sorted(changed)},
+    'required_rebuilt_dependencies_including_consumer':required,
+    'scope':'Private text integration only. No Lean execution, source PR update, or gate decision.'})
+print('Exact combined text fits both patches; required owner paths:')
+print(json.dumps(required,indent=2))

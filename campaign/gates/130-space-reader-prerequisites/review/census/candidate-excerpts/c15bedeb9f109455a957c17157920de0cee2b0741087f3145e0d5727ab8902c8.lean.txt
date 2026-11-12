@@ -1,0 +1,9 @@
+/-- Read at most `b + 1` actual input symbols, returning to the anchor after
+one whole block and taking a distinct live exit on a boundary blank. -/
+private def guardBlockTM (b : ℕ) : MultiTapeTM 0 Bool (Option (Fin (b + 1))) where
+  q₀ := guardPhase b 0
+  tr := fun q inp _ => match q with
+    | none => inputMoveAction 0 none
+    | some i => if inp.isSome then
+        inputMoveAction 1 (guardPhase b (i.val + 1))
+      else inputMoveAction 0 none

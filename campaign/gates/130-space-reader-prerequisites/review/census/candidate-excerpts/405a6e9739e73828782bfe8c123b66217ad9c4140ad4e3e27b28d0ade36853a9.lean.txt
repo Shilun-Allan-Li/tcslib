@@ -1,0 +1,37 @@
+/-- The candidate scan appends the exact tape word to the emitted native
+input and halts at its right blank. Empty candidates take the final step. -/
+private lemma enumCont_concat_candidate (x s pre rest : List Bool) (p : Fin (x.length + 2)) (out : List Bool)
+    (hs : s = pre ++ rest) :
+    enumCont_concatTM.tm.runFrom
+      (enumCont_concatCfg x s (some true) p pre.length (out ++ pre))
+      (rest.length + 1) =
+      enumCont_concatCfg x s none p s.length (out ++ s) := by
+  induction rest generalizing pre with
+  | nil =>
+    have hp : s = pre := by simpa using hs
+    subst pre
+    simp only [List.length_nil]
+    rw [MultiTapeTM.runFrom_one]
+    unfold MultiTapeTM.step
+    change (enumCont_concatTM.tm.tr true _ _).apply _ = _
+    simp only [enumCont_concatTM, ↓reduceIte, enumCont_concatCfg, Cfg.workTapeSymbols,
+      bufferTape_nat, List.getElem?_length]
+    rw [controlAction_apply]
+    simp [moveInputPos_zero]
+  | cons b rest ih =>
+    have hr : (enumCont_concatCfg x s (some true) p
+        pre.length (out ++ pre)).workTapeSymbols 0 = some b := by
+      simp [enumCont_concatCfg, Cfg.workTapeSymbols, hs]
+    have hstep : enumCont_concatTM.tm.step
+        (enumCont_concatCfg x s (some true) p pre.length (out ++ pre)) =
+        enumCont_concatCfg x s (some true) p
+          (pre ++ [b]).length (out ++ (pre ++ [b])) := by
+      unfold MultiTapeTM.step
+      change (enumCont_concatTM.tm.tr true _ _).apply _ = _
+      simp only [enumCont_concatTM, ↓reduceIte, hr]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+      · funext i; simp [enumCont_concatCfg, Action.apply]
+      · simp [enumCont_concatCfg, Action.apply, List.append_assoc]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact ih (pre ++ [b]) (by simpa only [List.append_assoc, List.singleton_append] using hs)

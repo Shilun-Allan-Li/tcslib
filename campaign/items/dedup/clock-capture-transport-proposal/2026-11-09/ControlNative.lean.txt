@@ -1,0 +1,44 @@
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
+
+open Complexity Turing
+
+set_option smartUnfolding false
+
+section
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+example (W : FinTM Bool) : (maskedClock W false).k = W.k := by rfl
+example (W : FinTM Bool) (b : Bool) : (maskedClock W b).State = W.State := by rfl
+
+example (W : FinTM Bool) (a : ℕ) : (obliviousSchedule W a).k = W.k + 3 := by rfl
+example (W : FinTM Bool) (a : ℕ) :
+    (obliviousSchedule W a).State = OblPhase W.State a := by rfl
+
+example : oblEmbed true = OblSymbol.bit true := by rfl
+example : (fun b => oblEmbed b) = OblSymbol.bit := by rfl
+
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t ↔ ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+example (M : FinTM Bool) :
+    M.ComputesInTime = fun x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+
+example (M : FinTM Bool) (x y : List Bool) (t s : ℕ) :
+    M.tm.ComputesInTimeAndSpace x y t s ↔
+      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = y ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t = s := by rfl
+example (M : FinTM Bool) : M.tm.ComputesInTimeAndSpace = fun x y t s =>
+    (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+    (M.tm.runFrom (M.tm.initCfg x) t).output = y ∧
+    M.tm.spaceUsed (M.tm.initCfg x) t = s := by rfl
+
+example (M : FinTM Bool) (x : List Bool) (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    M.tm.runFrom c t = (M.tm.step^[t]) c := by rfl
+example (M : FinTM Bool) (x : List Bool) :
+    (fun (c : Cfg M.k Bool M.State x) t => M.tm.runFrom c t) =
+      fun c t => (M.tm.step^[t]) c := by rfl
+
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := by rfl
+example (M : FinTM Bool) : M.tm.initCfg = fun x => Cfg.init M.tm.q₀ x := by rfl
+
+end

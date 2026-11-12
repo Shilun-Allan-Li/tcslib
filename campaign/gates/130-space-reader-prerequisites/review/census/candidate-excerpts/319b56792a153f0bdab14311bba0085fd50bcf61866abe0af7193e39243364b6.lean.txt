@@ -1,0 +1,16 @@
+/-- A reachable code is accepting iff its configuration is halted with output `[true]`. -/
+theorem acceptLang_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s)
+    (v : List Bool) :
+    pairEncode x (pairEncode (Nat.bits (cfgCode s (run v))) (Nat.bits s)) ∈ acceptLang N ↔
+      (run v).state = none ∧ (run v).output = [true] := by
+  rw [mem_acceptLang]
+  constructor
+  · rintro ⟨C, hC, hcC, hst, hout⟩
+    have hcore := coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
+    have h1 := congrArg (fun z => z.1.1) hcore
+    have h2 := congrArg Prod.snd hcore
+    simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core] at h1 h2
+    rw [hout] at h2
+    exact ⟨h1 ▸ hst, (outSummary_eq_accept_iff _).mp h2.symm⟩
+  · rintro ⟨hst, hout⟩
+    exact ⟨run v, inWin_run hN hs v, rfl, hst, hout⟩

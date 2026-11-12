@@ -1,0 +1,83 @@
+/-- The scanning phase: from input position `i + 1` with `drop i x = rest`, the
+machine reaches the rewind state within `|rest| + 1` steps, having appended
+`scanPre rest`.
+
+**Proof sketch.** Strong recursion on `rest`, two symbols at a time. If `rest` is
+empty, the head reads a blank and one step enters the rewind state, emitting nothing
+new. If `rest = [b]`, two steps read `b`, then a blank, and enter the rewind state
+having emitted what `scanPre [b]` prescribes. If `rest = b :: b' :: r`, two steps read
+the pair and emit `b, b'`; when `b = b'` the machine is back in the scanning state two
+cells further on, and the recursive call on `r` gives the rest of the run (with step
+count `2 + t ≤ |rest| + 1`); when `b ≠ b'` the pair is the terminator of the prefix and
+the machine is already in the rewind state after two steps. -/
+private theorem pre_scan (x : List Bool) : ∀ (rest : List Bool) (i : ℕ)
+    (c : Cfg 0 Bool PreState x), x.drop i = rest → i ≤ x.length →
+    c.state = some .scan0 → c.inputPos.val = i + 1 →
+    ∃ t ≤ rest.length + 1, (preTM.tm.runFrom c t).state = some .rwStart ∧
+      (preTM.tm.runFrom c t).output = c.output ++ scanPre rest
+  | [], i, c, hd, hi, hs, hp => by
+    have hin : c.inputSymbol = none := by
+      rw [inputSymbol_at c i hi hp, ← List.head?_drop, hd]; rfl
+    refine ⟨1, le_refl _, ?_, ?_⟩
+    · change (preTM.tm.step c).state = _
+      rw [preTM_step c _ hs, hin]; rfl
+    · change (preTM.tm.step c).output = _
+      rw [preTM_step c _ hs, hin]; simp [preTr, controlAction, scanPre]
+  | [b], i, c, hd, hi, hs, hp => by
+    have hlt : i < x.length := by
+      have := congrArg List.length hd; simp at this; omega
+    have hin : c.inputSymbol = some b := by
+      rw [inputSymbol_at c i hi hp, ← List.head?_drop, hd]; rfl
+    let c1 := preTM.tm.step c
+    have hc1 : c1 = (preTr .scan0 (some b) c.workTapeSymbols).apply c := by
+      simp only [c1]; rw [preTM_step c _ hs, hin]
+    have hp1 : c1.inputPos.val = (i + 1) + 1 := by
+      rw [hc1]; simp only [preTr, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp]
+    have hin1 : c1.inputSymbol = none := by
+      rw [inputSymbol_at c1 (i + 1) (by omega) hp1, ← List.head?_drop]
+      have : x.drop (i + 1) = [] := by rw [← List.drop_drop, hd]; rfl
+      rw [this]; rfl
+    have hs1 : c1.state = some (.scan1 b) := by rw [hc1]; rfl
+    refine ⟨2, le_refl _, ?_, ?_⟩
+    · change (preTM.tm.step c1).state = _
+      rw [preTM_step c1 _ hs1, hin1]; rfl
+    · change (preTM.tm.step c1).output = _
+      rw [preTM_step c1 _ hs1, hin1, hc1]
+      simp [preTr, controlAction, scanPre]
+  | b :: b' :: r, i, c, hd, hi, hs, hp => by
+    have hlt : i + 1 < x.length := by
+      have := congrArg List.length hd; simp at this; omega
+    have hin : c.inputSymbol = some b := by
+      rw [inputSymbol_at c i hi hp, ← List.head?_drop, hd]; rfl
+    let c1 := preTM.tm.step c
+    have hc1 : c1 = (preTr .scan0 (some b) c.workTapeSymbols).apply c := by
+      simp only [c1]; rw [preTM_step c _ hs, hin]
+    have hp1 : c1.inputPos.val = (i + 1) + 1 := by
+      rw [hc1]; simp only [preTr, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp]
+    have hd1 : x.drop (i + 1) = b' :: r := by rw [← List.drop_drop, hd]; rfl
+    have hin1 : c1.inputSymbol = some b' := by
+      rw [inputSymbol_at c1 (i + 1) (by omega) hp1, ← List.head?_drop, hd1]; rfl
+    have hs1 : c1.state = some (.scan1 b) := by rw [hc1]; rfl
+    let c2 := preTM.tm.step c1
+    have hc2 : c2 = (preTr (.scan1 b) (some b') c1.workTapeSymbols).apply c1 := by
+      simp only [c2]; rw [preTM_step c1 _ hs1, hin1]
+    have hp2 : c2.inputPos.val = (i + 2) + 1 := by
+      rw [hc2]; simp only [preTr, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]; simp [hp1]
+    have hout2 : c2.output = c.output ++ [b, b'] := by
+      rw [hc2, hc1]; simp [preTr]
+    have hrun2 : preTM.tm.runFrom c 2 = c2 := rfl
+    by_cases hbb : b = b'
+    · have hs2 : c2.state = some .scan0 := by rw [hc2]; simp [preTr, hbb]
+      have hd2 : x.drop (i + 2) = r := by rw [← List.drop_drop, hd]; rfl
+      obtain ⟨t, ht, h1, h2⟩ := pre_scan x r (i + 2) c2 hd2 (by omega) hs2 hp2
+      refine ⟨2 + t, by simp; omega, ?_, ?_⟩
+      · rw [MultiTapeTM.runFrom_add, hrun2]; exact h1
+      · rw [MultiTapeTM.runFrom_add, hrun2, h2, hout2]
+        simp [scanPre, hbb]
+    · have hs2 : c2.state = some .rwStart := by rw [hc2]; simp [preTr, hbb]
+      refine ⟨2, by simp, ?_, ?_⟩
+      · rw [hrun2]; exact hs2
+      · rw [hrun2, hout2]; simp [scanPre, hbb]

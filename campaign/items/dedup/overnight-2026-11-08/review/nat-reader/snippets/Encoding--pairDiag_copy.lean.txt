@@ -1,0 +1,25 @@
+private lemma pairDiag_copy (x out : List Bool) : ∀ t, (ht : t ≤ x.length) →
+    pairDiagTM.tm.runFrom (pairDiagCfg x (some 5) 1 out) t =
+      pairDiagCfg x (some 5) ⟨t + 1, by omega⟩ (out ++ x.take t) := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    apply Cfg.ext_zero_tapes <;> simp [pairDiagCfg]
+  | succ t ih =>
+    intro ht
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+      pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 5) _ t (by omega))]
+    simp only [pairDiagTM, Option.toList_some]
+    rw [moveInputPos_pos_of_ne_right _ (by change t + 1 ≠ x.length + 1; omega)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · rfl
+    · change (out ++ x.take t) ++ [x[t]] = out ++ x.take (t + 1)
+      rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp only [Option.toList_some, List.append_assoc]
+
+/-- Two stationary separator emissions followed by the unconditional first left move.
+
+**Proof sketch.** At the right blank, states 0 and 2 emit `false` and `true`.
+State 3 then moves from position `n + 1` to `n`, without emitting a bit. -/

@@ -1,0 +1,1 @@
+Original guard envelopes followed a declaration docstring and preceded its lemma, so Lean rejected section syntax before proof checking. Corrected to envelope the entire preceding docstring, complete theorem header and body. Literal full-source recovery remains required. Native body drafts and control inputs are unchanged.

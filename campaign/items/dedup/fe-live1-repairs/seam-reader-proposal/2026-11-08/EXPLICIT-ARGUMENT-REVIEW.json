@@ -1,0 +1,67 @@
+{
+  "inspected": [
+    {
+      "source": "API-statement.lean.txt",
+      "line": 11,
+      "text": "rw [\u2190 Action.mapState_inputTape Sum.inr (M\u2082.tr q inp work),"
+    },
+    {
+      "source": "clFresh_idle-HYP.lean.txt",
+      "line": 6,
+      "text": "rw [MultiTapeTM.step_of_some hc]"
+    },
+    {
+      "source": "clFresh_idle-HYP.lean.txt",
+      "line": 9,
+      "text": "rw [seamCompTM_tr_inr]"
+    },
+    {
+      "source": "clFresh_idle-HYP.lean.txt",
+      "line": 11,
+      "text": "rw [\u2190 hm, Cfg.mapState_apply, FinTM.controlAction_apply, moveInputPos_zero]"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 10,
+      "text": "have he : e.state = some ret := by rw [embedEmitCfg_state]"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 13,
+      "text": "Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 17,
+      "text": "rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq,"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 20,
+      "text": "rw [MultiTapeTM.step_of_some (show d.state = some ret from rfl), htr,"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 28,
+      "text": "rw [MultiTapeTM.step_of_some hc]"
+    },
+    {
+      "source": "clPrepared_idle-HYP.lean.txt",
+      "line": 32,
+      "text": "rw [seamCompTM_tr_inr, \u2190 hm, hi, hw, Cfg.mapState_apply,"
+    }
+  ],
+  "foreign_definitions_passed_to_unfold_rw_simp": [],
+  "local_definitions_passed_to_simp": [
+    "d"
+  ],
+  "published_readers_named_in_changes": [
+    "Turing.seamCompTM_tr_inr",
+    "Turing.MultiTapeTM.step_of_some",
+    "Turing.Cfg.mapState_apply",
+    "Turing.FinTM.controlAction_apply",
+    "Turing.embedEmitTM_runFrom",
+    "Turing.embedEmitCfg_mapState_eq"
+  ],
+  "human_review": "All rw/simp entries in the three proposed proof blocks are published equation/contract theorems, local equalities, core/Mathlib equation lemmas, or the local witness d. Each change exposes same-owner machine definitions only; executed seals separately enforce this."
+}

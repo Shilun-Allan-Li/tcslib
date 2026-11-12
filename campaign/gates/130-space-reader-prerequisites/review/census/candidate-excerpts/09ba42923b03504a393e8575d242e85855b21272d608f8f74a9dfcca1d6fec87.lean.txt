@@ -1,0 +1,15 @@
+/-- **Boot run**: while `S` is live, the host simulates it step for step. -/
+theorem boot_run (c : Cfg S.k Bool S.State x) (w : List Bool)
+    (hlive : ∀ t < w.length, (S.tm.runFrom c t).state ≠ none) :
+    (hostTM S A loop).runWith w (bootCfg (A := A) c) = bootCfg (S.tm.runFrom c w.length) := by
+  induction w generalizing c with
+  | nil => rfl
+  | cons b w ih =>
+    have h0 := hlive 0 (by simp)
+    rw [MultiTapeTM.runFrom_zero] at h0
+    obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp h0
+    rw [NDTM.runWith_cons, boot_step b c hq, ih, List.length_cons,
+      MultiTapeTM.runFrom_succ_eq_step]
+    intro t ht
+    rw [← MultiTapeTM.runFrom_succ_eq_step]
+    exact hlive (t + 1) (by simp; omega)

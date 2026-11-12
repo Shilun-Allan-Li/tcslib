@@ -1,0 +1,6 @@
+∀ (M : Turing.FinTM Bool) (x y : List Bool) (T : ℕ),
+  M.ComputesInTime x y T →
+    ∃ t ≤ T,
+      (∀ r < t, (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) r).state ≠ none) ∧
+        (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).state = none ∧
+          (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).output = y

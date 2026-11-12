@@ -1,0 +1,151 @@
+/-- Restore the table and successor-state heads after payload execution.
+The table scan reaches its right blank and the catalog reverse scan returns
+it to zero. The copied state word is then rewound to two, and the final fixed
+move returns the summary head to zero. The live/halt distinction is retained.
+
+**Proof sketch.** Compose the four landed framed seek contracts and the
+fixed two-cell move through the public phase host. All five segments preserve
+the source action's final simulated heads and exclude both round anchors until
+the last dispatch. The exact cost counts every delimiter and dispatch. -/
+private lemma roundTM_restore {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (table before tail word pre : List Bool) (live : Bool) (ht : table = before ++ tail) :
+    RoundSpan c a
+      (atKey (roundData (a.apply c) table (outputSummary (a.apply c).output) word
+        before.length (2 + word.length) pre) (.tableTail live) .run)
+      ((roundData (a.apply c) table (outputSummary (a.apply c).output) word 0 0 pre).mapState
+        (fun _ => exit k live))
+      (tail.length + table.length + word.length + 15) := by
+  let data := fun tp sp => roundData (a.apply c) table (outputSummary (a.apply c).output) word tp sp pre
+  let d0 := data before.length (2 + word.length)
+  let d1 := data (table.length + 1) (2 + word.length)
+  let d2 := data 0 (2 + word.length)
+  let d3 := data 0 (word.length + 3)
+  let d4 := data 0 2
+  let d5 := data 0 0
+  let s0 := d0.mapState (fun _ => SeekPhase.run)
+  let s1 := d1.mapState (fun _ => SeekPhase.run)
+  let s2 := d2.mapState (fun _ => SeekPhase.run)
+  let s3 := d3.mapState (fun _ => SeekPhase.run)
+  let s4 := d4.mapState (fun _ => (0 : Fin 3))
+  have tableLength : table.length = before.length + tail.length := by rw [ht, List.length_append]
+  have tableSkip := skipTM_run_ofCfg (tableTape k) tail s0 rfl (by
+    intro z hz _
+    simpa [s0, d0, data, roundData, Cfg.mapState, tableTape, ht] using bufferTape_suffix before tail z hz)
+  have tableSkipEnd : (skipTM (k + 2) (tableTape k)).runFrom s0 (tail.length + 1) =
+      d1.mapState (fun _ => SeekPhase.done) := by
+    rw [tableSkip.1]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s0, d0, d1, data, roundData, Cfg.mapState, mirror_ne_table k i]
+    · fin_cases i <;> simp [s0, d0, d1, data, roundData, Cfg.mapState, tableTape, tableLength, Nat.cast_add, add_assoc]
+  have p0 := roundTM_phase c a (.tableTail live) (by intro h; cases h) (by intro h; cases h) s0
+    (d1.mapState (fun _ => SeekPhase.done)) _ tableSkipEnd .done rfl ⟨.tableHome live, .run⟩
+    (by simp [red]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (tableSkip.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [red, ne]) (by
+      intro u hu
+      apply roundWindow_frame c a (roundData_window c a table _ word before.length (2 + word.length) pre true)
+      · exact MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero (skipTM (k + 2) (tableTape k))
+          (by intro r inp work; cases r <;> cases h : work (tableTape k) <;> simp [skipTM, h, tapeAction, inputMoveAction]) s0 u
+      · intro i
+        simpa only [mirror_ne_table k i, ↓reduceIte, s0, Cfg.mapState] using tableSkip.2.2 (Fin.castAdd 2 i) u hu)
+  have tableBack := skipBackTM_run_ofCfg (tableTape k) table s1 rfl (by
+    intro z _ _
+    simp [s1, d1, data, roundData, Cfg.mapState, tableTape])
+  have tableBackEnd : (skipBackTM (k + 2) (tableTape k)).runFrom s1 (table.length + 3) =
+      d2.mapState (fun _ => SeekPhase.done) := by
+    rw [tableBack.1]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s1, d1, d2, data, roundData, Cfg.mapState, mirror_ne_table k i]
+    · fin_cases i <;> simp [s1, d1, d2, data, roundData, Cfg.mapState, tableTape]
+  have p1 := roundTM_phase c a (.tableHome live) (by intro h; cases h) (by intro h; cases h) s1
+    (d2.mapState (fun _ => SeekPhase.done)) _ tableBackEnd .done rfl ⟨.stateGap live, .run⟩
+    (by simp [red]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (tableBack.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [red, ne]) (by
+      intro u hu
+      apply roundWindow_frame c a (roundData_window c a table _ word (table.length + 1) (2 + word.length) pre true)
+      · exact MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero (skipBackTM (k + 2) (tableTape k))
+          (by intro r inp work; cases r <;> cases h : work (tableTape k) <;> simp [skipBackTM, h, tapeAction, inputMoveAction]) s1 u
+      · intro i
+        simpa only [mirror_ne_table k i, ↓reduceIte, s1, Cfg.mapState] using tableBack.2.2 (Fin.castAdd 2 i) u hu)
+  have stateGap := skipTM_run_ofCfg (summaryTape k) [] s2 rfl (by
+    intro z hz hz'
+    have hz0 : z = 0 := by simp only [List.length_nil, Nat.cast_zero] at hz'; omega
+    subst z
+    have cell := roundData_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0 (2 + word.length) pre
+      word.length (by omega)
+    simpa [s2, d2, data, roundData, Cfg.mapState, summaryTape, FinTM.bufferTape_nat] using cell)
+  have stateGapEnd : (skipTM (k + 2) (summaryTape k)).runFrom s2 (([] : List Bool).length + 1) =
+      d3.mapState (fun _ => SeekPhase.done) := by
+    rw [stateGap.1]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s2, d2, d3, data, roundData, Cfg.mapState, mirror_ne_summary k i]
+    · fin_cases i <;> simp [s2, d2, d3, data, roundData, Cfg.mapState, summaryTape] <;> omega
+  have p2 := roundTM_phase c a (.stateGap live) (by intro h; cases h) (by intro h; cases h) s2
+    (d3.mapState (fun _ => SeekPhase.done)) _ stateGapEnd .done rfl ⟨.stateRestore live, .run⟩
+    (by simp [red]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (stateGap.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [red, ne]) (by
+      intro u hu
+      apply roundWindow_frame c a (roundData_window c a table _ word 0 (2 + word.length) pre true)
+      · exact MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero (skipTM (k + 2) (summaryTape k))
+          (by intro r inp work; cases r <;> cases h : work (summaryTape k) <;> simp [skipTM, h, tapeAction, inputMoveAction]) s2 u
+      · intro i
+        simpa only [mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using stateGap.2.2 (Fin.castAdd 2 i) u hu)
+  have stateBack := skipBackTM_run_ofCfg (summaryTape k) word s3 rfl (by
+    intro z hz _
+    have cell := roundData_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0 (word.length + 3) pre z hz
+    convert cell using 1 <;> simp [s3, d3, data, Cfg.mapState, roundData, summaryTape] <;> congr 1 <;> omega)
+  have stateBackEnd : (skipBackTM (k + 2) (summaryTape k)).runFrom s3 (word.length + 3) =
+      d4.mapState (fun _ => SeekPhase.done) := by
+    rw [stateBack.1]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s3, d3, d4, data, roundData, Cfg.mapState, mirror_ne_summary k i]
+    · fin_cases i <;> simp [s3, d3, d4, data, roundData, Cfg.mapState, summaryTape] <;> omega
+  have p3 := roundTM_phase c a (.stateRestore live) (by intro h; cases h) (by intro h; cases h) s3
+    (d4.mapState (fun _ => SeekPhase.done)) _ stateBackEnd .done rfl ⟨.finish live, (0 : Fin 3)⟩
+    (by simp [red]) (by
+      intro u hu r hr
+      have ne : r ≠ .done := fun eq => (stateBack.2.1 u hu) (hr.trans (congrArg some eq))
+      simp [red, ne]) (by
+      intro u hu
+      apply roundWindow_frame c a (roundData_window c a table _ word 0 (word.length + 3) pre true)
+      · exact MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero (skipBackTM (k + 2) (summaryTape k))
+          (by intro r inp work; cases r <;> cases h : work (summaryTape k) <;> simp [skipBackTM, h, tapeAction, inputMoveAction]) s3 u
+      · intro i
+        simpa only [mirror_ne_summary k i, ↓reduceIte, s3, Cfg.mapState] using stateBack.2.2 (Fin.castAdd 2 i) u hu)
+  have moveEnd : (twoMoveTM (summaryTape k) .neg).runFrom s4 2 = d5.mapState (fun _ => (2 : Fin 3)) := by
+    rw [twoMoveTM_run _ _ s4 rfl 2 le_rfl]
+    apply Cfg.ext <;> try rfl
+    funext j
+    refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · simp [s4, d4, d5, data, roundData, Cfg.mapState, mirror_ne_summary k i]
+    · fin_cases i <;> simp [s4, d4, d5, data, roundData, Cfg.mapState, summaryTape]
+  have p4 := roundTM_phase c a (.finish live) (by intro h; cases h) (by intro h; cases h) s4
+    (d5.mapState (fun _ => (2 : Fin 3))) 2 moveEnd 2 rfl (exit k live)
+    (by simp [red]) (by
+      intro u hu r hr
+      rw [twoMoveTM_run _ _ s4 rfl u (by omega)] at hr
+      have vr : r.val = u := congrArg Fin.val (Option.some.inj hr).symm
+      have ne : r ≠ 2 := by intro bad; subst r; simp only [Fin.reduceFinMk] at vr; omega
+      simp [red, ne]) (by
+      intro u hu
+      rw [twoMoveTM_run _ _ s4 rfl u hu]
+      refine ⟨Or.inr rfl, fun i => Or.inr ?_⟩
+      simp [s4, d4, data, roundData, Cfg.mapState, mirror_ne_summary k i])
+  have combined := RoundSpan.add c a (RoundSpan.add c a (RoundSpan.add c a (RoundSpan.add c a p0 p1) p2) p3) p4
+  have cost : (((tail.length + 1 + 1) + (table.length + 3 + 1) + (([] : List Bool).length + 1 + 1)) +
+      (word.length + 3 + 1)) + (2 + 1) = tail.length + table.length + word.length + 15 := by simp; omega
+  simpa only [atKey, s0, d0, s1, s2, s3, s4, d1, d2, d3, d4, d5, data, Cfg.mapState, roundData, cost] using combined

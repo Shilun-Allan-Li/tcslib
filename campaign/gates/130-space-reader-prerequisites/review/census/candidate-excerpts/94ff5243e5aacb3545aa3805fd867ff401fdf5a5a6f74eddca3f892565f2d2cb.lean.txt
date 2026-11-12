@@ -1,0 +1,22 @@
+theorem exists_windowCall (K : ℕ) (j dst : Fin K) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ (α x : List Bool) (t : ℕ)
+        (d : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)),
+        d.state = some entry →
+        d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape (Nat.bits t) q) →
+        d.workTapes dst = (fun _ => none) → d.workTapePos dst = 0 →
+        ∃ T ≤ C * (min t x.length + 1) + 2 * (Nat.bits t).length,
+          (W.runFrom d T).state = some done ∧
+          (W.runFrom d T).inputPos.val =
+            4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length ∧
+          (W.runFrom d T).workTapes dst = FinTM.bufferTape (x.take t) ∧
+          (W.runFrom d T).workTapePos dst = ((x.take t).length : ℤ) ∧
+          (W.runFrom d T).workTapePos j = d.workTapePos j ∧
+          (∀ i : Fin K, i ≠ j → i ≠ dst →
+            (W.runFrom d T).workTapes i = d.workTapes i ∧
+            (W.runFrom d T).workTapePos i = d.workTapePos i) ∧
+          (W.runFrom d T).output = d.output ∧
+          ∀ u < T, (W.runFrom d u).state ≠ some done := …

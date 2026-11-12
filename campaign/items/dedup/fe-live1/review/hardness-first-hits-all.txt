@@ -1,0 +1,137 @@
+479:specified by `prevVisit`, or the blank table on a first visit. -/
+945:/-- Replace the first suffix bit, or extend the word if the suffix is empty.
+1077:an arbitrary upper bound to be cut to the actual first return. -/
+1240:/-- Cut the simultaneous bank at its observed first all-returned state.
+1244:proved deadline. Absorption implies that its first occurrence already has
+1246:private lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))
+1261:  let t := Nat.find hex
+1262:  have ht := Nat.find_spec hex
+1265:    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧
+1269:  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)
+1314:/-- Select the positive-move counter in the first bank and the
+1416:first observed exit. The guard need not agree after that exit.
+1489:/-- A full native source-and-counter round has a strictly positive first
+1493:the selected counter bank until its actual first all-returned state, then
+1511:  obtain ⟨t, ht, hf, he⟩ := clBank_first x 1 (clSelect d) n W hW
+1522:  have hfirst : (clTrackTM M).tm.step (clTrackCfg M (x := x) c b n) =
+1530:    rw [MultiTapeTM.runFrom_succ_eq_step, hfirst]
+1619:copy its first bit; include that bit in the preserved prefix and apply
+1716:/-- The exact recorded field is available at the copier's observed first
+1719:**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/
+1720:private lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))
+1730:  let t := Nat.find hex
+1731:  have ht := Nat.find_spec hex
+1742:    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧
+1745:  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)
+2053:**Proof sketch.** Relocate the two-tape copier into the selected counter and record slots until its first completion. Its full return theorem preserves every unselected tape; one silent dispatch advances the finite field index. -/
+2059:  obtain ⟨t, ht, hp, hf, he⟩ := clCopy_first x p (w i) record
+2093:the previous native first-return copier and one dispatch, costing at most
+2141:/-- A row is completely stored at the actual first end-of-row return.
+2145:first occurrence has the exact word and all the restored counter heads. -/
+2146:private lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+2157:  let t := Nat.find hex
+2158:  have ht := Nat.find_spec hex
+2171:    have := Nat.find_min' hex (show j ≤ B ∧
+2175:  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)
+2399:**Proof sketch.** Relocate the row controller into the counter and record bank, framing the unary clock and the entire represented source. Its first completion contains the extended record; one control-only transition enters the clock test. -/
+2408:  obtain ⟨s, hs, _, hf, he⟩ := clRow_first (by dsimp [clRecFields]; omega) x 1
+2541:/-- Release executes the actual first source action before any exit test.
+2929:one word has a bit, so all heads move left. The first jointly blank position
+2987:/-- The native comparator returns at its first observed completion, within
+2989:**Proof sketch.** Cut the exact completed run at its first completed-state
+2992:private lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))
+3005:  let t := Nat.find hex
+3006:  have ht := Nat.find_spec hex
+3018:    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)
+3029:    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧
+3033:  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)
+3064:/-- Appending a tail preserves the boundary of the first encoded field. -/
+3116:**Proof sketch.** The first transition reads the first stream bit into finite control and advances only the stream. The matching second bit triggers one target overwrite and advances both heads. The inherited tape-update identity proves the exact overwritten suffix. -/
+3129:  have first : clReadTM.tm.step
+3139:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+3188:  have first : clReadTM.tm.step
+3197:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, first]
+3280:/-- Cut a proved bounded run to its first visit to a fresh absorbing return.
+3292:  let t := Nat.find hex
+3293:  have ht := Nat.find_spec hex
+3303:    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
+3306:  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)
+3375:/-- The backward pass erases all occupied cells, including the first one,
+3432:/-- Positive first completion of an actual scratch reset. -/
+3433:private lemma clWipe_first (x : List Bool) (p : Fin (x.length + 2))
+3451:**Proof sketch.** Stop the reset at its first return, dispatch once to the
+3461:  obtain ⟨a, ha, _, hf, he⟩ := clWipe_first x p (pre ++ pairEncode w tail) old pre.length
+3478:private lemma clFresh_first (x : List Bool) (p : Fin (x.length + 2))
+3501:/-- Load a fixed row in increasing field order. Every field first clears
+3545:**Proof sketch.** Relocate the unrestricted loader using its first-return
+3555:  obtain ⟨t, ht, hp, hf, he⟩ := clFresh_first x p pre word tail (old i)
+3582:/-- Intermediate row bank after exactly the first `j` fields have been loaded. -/
+3691:/-- A nonempty fixed row has a positive first return with the whole restored
+3694:private lemma clLoad_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))
+3741:**Proof sketch.** At index `j`, the buffer is exactly the first `j` bits.
+3822:/-- Native-copy return is absorbing, so it can be used at its first visit. -/
+3832:/-- Strictly positive first arrival at the genuine retained-input seam. -/
+3833:private lemma clInput_first (x : List Bool) :
+3862:leaving all field targets blank. At its first completed return both heads
+3868:  obtain ⟨t, ht, _, hf, he⟩ := clInput_first x
+3934:/-- The genuine preparatory seam is reached at a positive first return,
+3936:private lemma clPrepare_first {l : ℕ} (w : Fin l → List Bool)
+4114:**Proof sketch.** Invoke native field preparation at its first completed
+4130:  have prep := clPrepare_first (Fin.addCases (clRecWords M y T) keep) [] W hW
+4297:**Proof sketch.** Relocate the loader at its positive first return. The
+4313:  obtain ⟨t, ht, _, hf, he⟩ := clLoad_first hl x 1 old row pre tail W W hOld hRow
+4380:**Proof sketch.** Use the banked comparator's first completion of either
+4396:      first | exact hRow _ | exact hTarget _
+4397:  obtain ⟨t, ht, _, b, hb, hf, he⟩ := clCmp_first x 1 (clMatchWords pos neg row target) W widths
+4529:/-- Complete bounded search over exactly the first `N` rows. The next row
+4672:**Proof sketch.** Induct on the occupied prefix length. Each present bit moves left without writing; the left blank moves right exactly once to the first output cell. -/
+4769:**Proof sketch.** Cut the source's absorbing completion to its first visit,
+4837:**Proof sketch.** Run the native loader to its first complete return and
+4850:  obtain ⟨a, ha, _, hf, he⟩ := clPrepare_first w tail W hW
+5052:output. This preserves effects-first reference recording and its silence. -/
+5094:**Proof sketch.** Use the completed native retained recorder, cut its first
+5153:on the actual image of the first. Its native startup still uses the public
+5155:**Proof sketch.** Bound the produced word by the first runtime. Substitute
+5180:  have hfirst := Nat.mul_le_mul_left (2 * a) hd
+5190:        (by simpa only [Nat.mul_assoc] using hfirst)
+5443:packing. The prefix scanner consumes exactly the first `T` rows of the
+5569:  obtain ⟨t, ht, hp, hfirst, hr⟩ := hcall x arg
+5570:  refine ⟨t, ht.trans ?_, hp, hfirst, hr⟩
+5637:call, with a positive first return and all scratch restored. It does not
+5649:phase executes its first transition before testing the positive return. -/
+5693:exit: the fresh begin phase executes the mandatory positive first step.
+5694:**Proof sketch.** Execute that first source action directly, then relocate
+5719:  have first : (clRepeatTM C entry exit).tm.step (clRepeatCfg C entry exit x (.inl 1) s N j) =
+5741:  rw [show t = (t - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]
+5778:actual clean-call contract supplies a positive first return; the native round
+6114:/-- A padded halting run can be cut at its first halt without changing any
+6116:argument: use `Nat.find` and the absorbing-halt law. -/
+6124:  have hu := Nat.find_spec h
+6125:  have hle := Nat.find_min' h hhalt
+6126:  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
+6128:    have hz : Nat.find h = 0 := by omega
+6198:/-- Convert a first-positive-exit module into a halting source for `emit_run`.
+6236:/-- Stop a clean call one silent step after its certified first positive exit.
+6363:/-- Joining two guarded segments preserves the first-return guard when the
+6382:/-- Uniform clean-module contract: a first halt with a prescribed replacement
+6390:/-- Turn a clean-call bridge contract into the uniform first-halting form.
+6431:/-- Every polynomial word computation has a clean first-halting install
+6485:/-- The inherited native input copier becomes a first-halting startup
+6487:**Proof sketch.** Consume the banked positive first return, add the proved
+6488:release wrapper, then cut the absorbing endpoint at its first halt. -/
+6497:  obtain ⟨t, ht, hp, hf, he⟩ := clInput_first x
+6542:/-- Concrete body module bank. Its first three modules establish the final
+6559:ends at its first anchor with every administrative tape blank and head zero.
+6564:prefix install. Forward all three first-halting runs in separate state tags;
+6718:/-- Removing the first bit is a two-state finite transduction. -/
+6732:/-- Extracting at most the first bit is also a two-state finite transduction. -/
+6818:**Proof sketch.** Pair the length word first and the payload second, apply the public
+6855:pair-tail projection, followed by the native pair-first projection. -/
+7036:/-- Two native clean modules form a positive first-return round. Emission
+7040:first-halting emit call, then forward the complete install call. All earlier
+7130:Startup, cursor updates, all clean first returns, saturated silence, exact
+7224:at the first completed verdict. Absorption of either completed source verdict
+7259:    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
+8111:and head on each positive first return, and has a positive silent saturated
+8321:/-- Read exactly the first `m` assignment bits as the verifier's input. -/
+8549:`y_0, …, y_{m-1}` — the first `n` pinned to `x`'s bits, the last `Q n` free

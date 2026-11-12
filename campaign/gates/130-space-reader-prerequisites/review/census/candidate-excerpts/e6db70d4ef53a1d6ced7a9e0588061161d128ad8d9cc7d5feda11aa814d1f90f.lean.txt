@@ -1,0 +1,25 @@
+/-- Native inclusive trajectory recorder. It stores the current row before
+testing the clock, so the initial and final rows are both present. Every
+counter/copy transition is outside source time. -/
+private def clRecTM (M : FinTM Bool) : FinTM Bool where
+  k := clRecFields M + (1 + (1 + (1 + M.k)))
+  State := clRecState M
+  tm := {
+    q₀ := .inl (some M.tm.q₀, true, (0, 0))
+    tr := fun q inp work => match q with
+      | .inl (s, b, r) =>
+        if r = (Fin.last (clRecFields M), 0) then
+          FinTM.controlAction 0 (some (.inr (.inl (s, b))))
+        else clPlacedAction (clRecRowSelect M) (fun r => .inl (s, b, r)) r ((clRowTM (clRecFields M)).tm.tr r inp (fun j => work ((clRecRowSelect M).index j)))
+      | .inr (.inl (s, b)) =>
+        if work (clRecClockIndex M) = none then
+          FinTM.controlAction 0 (some (.inr (.inr (.inr (.inr ())))))
+        else ⟨0, fun i => (none, if i = clRecClockIndex M then .pos else 0),
+          none, some (.inr (.inr (.inl (s, b))))⟩
+      | .inr (.inr (.inl (s, b))) =>
+        clPlacedAction (clRecTrackSelect M) (fun r => .inr (.inr (.inr (.inl r)))) (s, b, none) ((clTrackTM M).tm.tr (s, b, none) inp (fun j => work ((clRecTrackSelect M).index j)))
+      | .inr (.inr (.inr (.inl r))) =>
+        if r.2.2 = none then
+          FinTM.controlAction 0 (some (.inl (r.1, r.2.1, (0, 0))))
+        else clPlacedAction (clRecTrackSelect M) (fun r => .inr (.inr (.inr (.inl r)))) r ((clTrackTM M).tm.tr r inp (fun j => work ((clRecTrackSelect M).index j)))
+      | .inr (.inr (.inr (.inr _))) => FinTM.controlAction 0 (some q) }

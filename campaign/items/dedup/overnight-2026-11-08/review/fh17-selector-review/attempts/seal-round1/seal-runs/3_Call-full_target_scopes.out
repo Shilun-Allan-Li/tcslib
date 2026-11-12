@@ -1,0 +1,25 @@
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Sealed_3_Call.lean:218:39: error: Type mismatch
+  hsim0
+has type
+  SimRel c0 l cs W (MultiTapeTM.step (seam c0)) dc0
+but is expected to have type
+  SimRel c0 l cs W (MultiTapeTM.runFrom (MultiTapeTM.step (seam c0)) 0) (MultiTapeTM.runFrom dc0 0)
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Sealed_3_Call.lean:303:105: error: Type mismatch
+  rfl
+has type
+  ?m.1854 = ?m.1854
+but is expected to have type
+  MultiTapeTM.runFrom (seam c0) 1 = MultiTapeTM.step (seam c0)
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Sealed_3_Call.lean:309:11: error: Type mismatch
+  rfl
+has type
+  ?m.1889 = ?m.1889
+but is expected to have type
+  MultiTapeTM.runFrom (seam c0) 1 = MultiTapeTM.step (seam c0)
+/private/tmp/ab34-first-halt-reuse-remaining/live/project/FH1Sealed_3_Call.lean:349:4: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (MultiTapeTM.step (seam c0)) ?m.1923 = ?m.1925
+is not definitionally equal to target
+  MultiTapeTM.runFrom (MultiTapeTM.runFrom (seam c0) 1) (T0 + (1 + (↑(moveInputPos gH.inputPos (-1)) + 1 + T₃))) =
+    seam
+      { state := some (if b = true then cs.yes else cs.no), inputPos := 1, workTapes := c0.workTapes,
+        workTapePos := c0.workTapePos, output := c0.output }

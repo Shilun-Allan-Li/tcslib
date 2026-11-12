@@ -1,0 +1,12 @@
+from pathlib import Path
+import json,subprocess,hashlib,re
+O=Path(__file__).parent;pin=json.loads((O/'inputs/final403/PIN.json').read_text());W=Path(pin['source_worktree']);g=lambda *a:subprocess.check_output(['git','-C',str(W),*a]);source=json.loads((O/'replay/source-before.json').read_text());known=json.loads((O/'inputs/final403/HEAD-ALL-LEAN-BLOBS.json').read_text());assert set(known)==set(source) and len(source)==1003
+for p,r in source.items():assert known[p]==r['git_blob'] and hashlib.sha256((W/p).read_bytes()).hexdigest()==r['sha256']
+rows=json.loads((O/'replay/module-results.json').read_text());changed=set(json.loads((O/'replay/request.json').read_text())['changed_files']);warning_rows=[];modules=[]
+for r in rows:
+ if not r['sorry']:continue
+ path=r['module']+'.lean';a=g('rev-parse',pin['BASE']+':'+path).decode().strip();b=g('rev-parse',pin['HEAD']+':'+path).decode().strip();assert a==b and path not in changed;text=(O/'replay/logs'/(r['module']+'.log')).read_text();lines=(O/'replay/compiled-source'/(path+'.txt')).read_text().splitlines();warnings=[]
+ for m in re.finditer(r'(?m)^([^\n]+\.lean):(\d+):(\d+): warning: declaration uses \'sorry\'',text):
+  n=int(m.group(2));assert 1<=n<=len(lines);w={'module':r['module'],'source_path':path,'reported_path':m.group(1),'line':n,'column':int(m.group(3)),'source_line':lines[n-1],'context_lines':[{'line':i+1,'text':lines[i]} for i in range(max(0,n-2),min(len(lines),n+3))],'unchanged_BASE_HEAD_blob':a};warnings.append(w);warning_rows.append(w)
+ assert len(warnings)==r['sorry'];modules.append({'module':r['module'],'direct_runtime_sorry_warnings':r['sorry'],'source_path':path,'BASE_HEAD_blob_exact':a,'all_existing_source_bytes_unchanged':True,'warning_locations':warnings})
+assert len(warning_rows)==31 and all(r['sorry']==0 for r in rows if r['module']+'.lean' in changed);data={'HEAD':pin['HEAD'],'BASE':pin['BASE'],'all1003_replay_source_map_entries_match_exact_HEAD_blobs_and_current_bytes':True,'direct_runtime_admission_warnings':31,'static_source_total':31,'static_mismatches':0,'all_admission_modules_whole_source_exact_BASE_HEAD':True,'all8_changed_owner_runtime_admission_counts_zero':True,'selected10_standard_AXIOM_scope_is_separate':True,'module_rows':modules,'full_warning_locations':warning_rows};(O/'replay/ADMISSIONS31-BASE-HEAD.json').write_text(json.dumps(data,indent=2)+'\n');print('Verified31 inherited warnings in',len(modules),'unmodified source modules; all8 changed owners zero. Whole1003 source-map bytes exact.')

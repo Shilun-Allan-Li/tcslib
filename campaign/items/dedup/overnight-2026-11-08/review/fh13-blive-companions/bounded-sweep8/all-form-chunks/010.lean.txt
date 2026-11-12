@@ -1,0 +1,62 @@
+/-- The integrated host has both branch extraction and witness coverage at
+one common budget. Guess positions are offset by the exact startup length;
+administrative choices may all be false. Every branch, accepted or rejected,
+halts with the verifier's single bit for an exact-length certificate.
+**Proof sketch.** Split each full choice word into startup, the actual
+scheduler interval, and a completion suffix. Native coverage gives the
+unique scheduled certificate length. Startup, guessing, and completion run
+contracts compose at their actual configurations. Conversely, choose any
+covered guessing word and surround it by arbitrary administrative choices. -/
+private lemma b2_host_contract (S M : FinTM Bool) (V : Language Bool)
+    (x v : List Bool) (T A d : ℕ)
+    (hS : (b2UnaryTM S).ComputesInTime x v T)
+    (hlive : ∀ s < T, ((b2UnaryTM S).tm.runFrom
+      ((b2UnaryTM S).tm.initCfg x) s).state ≠ none)
+    (hM : M.DecidesInTime V (fun n => A * (n + 1) ^ d)) :
+    let H := 2 * x.length + 2 + T +
+      (x.length + v.length + 2 + (A * (x.length + v.length + 1) ^ d + 1))
+    (∀ w : List Bool, w.length = H → ∃ u : List Bool, u.length = v.length ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)]) ∧
+    (∀ u : List Bool, u.length = v.length → ∃ w : List Bool, w.length = H ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)]) := by
+  let c := (b2UnaryTM S).tm.runFrom ((b2UnaryTM S).tm.initCfg x) T
+  have hc : c.state = none := ((computesInTime_iff _ _ _ _).mp hS).1
+  let B := x.length + v.length + 2 + (A * (x.length + v.length + 1) ^ d + 1)
+  have hcov := b2_guess_coverage S M x v T hS hlive
+  have hpieces (a g z u : List Bool) (ha : a.length = 2 * x.length + 2)
+      (hu : u.length = v.length) (hz : z.length = B)
+      (hg : (b2Host S M).tm.runWith g
+        (b2GuessCfg S M ((b2UnaryTM S).tm.initCfg x) []) = b2GuessCfg S M c u) :
+      ((b2Host S M).tm.runWith (a ++ g ++ z) ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith (a ++ g ++ z) ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)] := by
+    rw [NDTM.runWith_append, NDTM.runWith_append, b2_start S M x a ha, hg]
+    exact b2_finish S M c hc u (MultiTapeTM.indicator V (x ++ u))
+      (A * ((x ++ u).length + 1) ^ d) (hM (x ++ u)) z
+      (by simpa only [List.length_append, hu] using hz)
+  dsimp only
+  constructor
+  · intro w hw
+    let a := w.take (2 * x.length + 2)
+    let rest := w.drop (2 * x.length + 2)
+    let g := rest.take T
+    let z := rest.drop T
+    have ha : a.length = 2 * x.length + 2 := List.length_take_of_le (by omega)
+    have hr : rest.length = T + B := by dsimp [rest, B]; rw [List.length_drop, hw]; omega
+    have hglen : g.length = T := List.length_take_of_le (by omega)
+    have hz : z.length = B := by dsimp [z]; rw [List.length_drop, hr]; omega
+    have he : a ++ g ++ z = w := by
+      dsimp [a, g, z, rest]
+      rw [List.append_assoc, List.take_append_drop, List.take_append_drop]
+    obtain ⟨u, hu, hg⟩ := hcov.1 g hglen
+    exact ⟨u, hu, he ▸ hpieces a g z u ha hu hz hg⟩
+  · intro u hu
+    obtain ⟨g, hglen, hg⟩ := hcov.2 u hu
+    let a := List.replicate (2 * x.length + 2) false
+    let z := List.replicate B false
+    refine ⟨a ++ g ++ z, ?_, hpieces a g z u (by simp [a]) hu (by simp [z]) hg⟩
+    simp only [List.length_append, List.length_replicate, a, z, hglen, B]

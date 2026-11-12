@@ -1,0 +1,89 @@
+/-- **R8.3b, the lockstep walk, framed** (design §13d, G4). Let `src` be among the moved tapes,
+and let tape `src` hold the word `w` read along `dir` from its head: the cell `p` steps along holds
+`w`'s letter `p` for `p < |w|`, and the cell `|w|` steps along is blank. Then the walk reaches
+`done` at exactly `|w| + 1` and not earlier, with every moved head `|w| + 1` cells along `dir` and
+nothing else changed. The cells under the other moved heads are never read, so they are
+arbitrary: the walk carries those heads by the ruler `w`. At every time `t` up to the exit each
+moved head is exactly `t` cells along, and every other head is fixed. At `dir = 0` the hypothesis
+forces `w = []`. At `moved := (· = i)` and `dir := .pos` this is `Turing.skipTM_run_ofCfg`.
+
+**Proof sketch.** The forward configurations are `d` in `run` with every moved head `r` cells
+along, for `r ≤ |w|`: one step per nonblank cell of `w`, and at the blank one more step into
+`done`, which is stationary. `Turing.catalog_trace_run` with the stationary return family
+`fun _ => D` gives the run, and the three clauses are read off it. -/
+theorem walkTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src : Fin k)
+    (moved : Fin k → Prop) [DecidablePred moved] (hsrc : moved src) (dir : SignType)
+    (w : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℕ, p ≤ w.length →
+      d.workTapes src (d.workTapePos src + (dir : ℤ) * p) = FinTM.bufferTape w p) :
+    (walkTM k src moved dir).runFrom d (w.length + 1) =
+        { d with
+          state := some .done
+          workTapePos := fun j =>
+            d.workTapePos j + if moved j then (dir : ℤ) * ((w.length + 1 : ℕ) : ℤ) else 0 } ∧
+      (∀ t < w.length + 1, ((walkTM k src moved dir).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ w.length + 1 →
+        ((walkTM k src moved dir).runFrom d t).workTapePos j =
+          d.workTapePos j + if moved j then (dir : ℤ) * (t : ℤ) else 0) := by
+  let M := walkTM (Symbol := Symbol) k src moved dir
+  let F := fun r : ℕ => ({ d with
+    workTapePos := fun j => d.workTapePos j + if moved j then (dir : ℤ) * (r : ℤ) else 0 } :
+      Cfg k Symbol SeekPhase x)
+  let D : Cfg k Symbol SeekPhase x := { d with
+    state := some .done
+    workTapePos := fun j =>
+      d.workTapePos j + if moved j then (dir : ℤ) * ((w.length + 1 : ℕ) : ℤ) else 0 }
+  have h0 : F 0 = d := by
+    apply Cfg.ext <;> simp [F]
+  -- one step of a `run` configuration whose table entry moves the moved heads into `q`
+  have hstep (r : ℕ) (q : SeekPhase)
+      (htr : M.tr .run (F r).inputSymbol (F r).workTapeSymbols =
+        ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some q⟩) :
+      M.step (F r) = { F (r + 1) with state := some q } := by
+    have hst : (F r).state = some .run := hstate
+    rw [MultiTapeTM.step_of_some hst, htr]
+    apply Cfg.ext
+    · simp only [Action.apply_state]
+    · simp only [Action.apply_inputPos, F, moveInputPos_zero]
+    · funext j
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : moved j
+      · simp only [F, hj, if_true, Option.getD_none, Function.update_eq_self]
+      · simp only [F, hj, if_false, Option.getD_none, Function.update_eq_self]
+    · funext j
+      by_cases hj : moved j
+      · simp only [Action.apply_workTapePos, F, hj, if_true]
+        push_cast
+        ring
+      · simp only [Action.apply_workTapePos, F, hj, if_false, SignType.coe_zero, add_zero]
+    · simp only [Action.apply_output, F, Option.toList_none, List.append_nil]
+  have hsym (r : ℕ) : (F r).workTapeSymbols src = d.workTapes src
+      (d.workTapePos src + (dir : ℤ) * (r : ℤ)) := by
+    simp [F, Cfg.workTapeSymbols_eq, hsrc]
+  have hF (r : ℕ) (hr : r < w.length) : M.step (F r) = F (r + 1) := by
+    have hs : (F r).workTapeSymbols src = some w[r] := by
+      rw [hsym, hw r (by omega)]
+      simp [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
+    rw [hstep r .run (by simp only [M, walkTM, hs])]
+    apply Cfg.ext <;> simp [F, hstate]
+  have hexit : M.step (F w.length) = D := by
+    have hs : (F w.length).workTapeSymbols src = none := by
+      rw [hsym, hw w.length le_rfl]
+      simp [FinTM.bufferTape_nat]
+    exact (hstep w.length .done (by simp only [M, walkTM, hs])).trans rfl
+  have hD : M.step D = D := by
+    rw [step_of_inputMoveAction M D 0 rfl rfl, moveInputPos_zero]
+  have h (t : ℕ) : M.runFrom d t = if t ≤ w.length then F t else D := by
+    rw [← h0]
+    simpa [catalogTrace] using
+      catalog_trace_run M F (fun _ => D) D w.length hF hexit (fun _ _ => hD) hD hD t
+  refine ⟨?_, fun t ht => ?_, fun j t ht => ?_⟩
+  · rw [h, if_neg (by omega)]
+  · rw [h, if_pos (by omega)]
+    simp [F, hstate]
+  · rw [h]
+    by_cases ht' : t ≤ w.length
+    · simp only [if_pos ht', F]
+    · have : t = w.length + 1 := by omega
+      subst this
+      simp only [if_neg ht', D]

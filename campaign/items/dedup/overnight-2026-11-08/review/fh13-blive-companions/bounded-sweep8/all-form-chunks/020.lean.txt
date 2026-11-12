@@ -1,0 +1,29 @@
+/-- **The halt-time space bound holds at every time.** If `M` has halted on `x` with output
+`w` by time `t`, having visited at most `s` cells by then, it has visited at most `s` cells
+by **every** time `t'`: before `t` by monotonicity, after `t` because the halted
+configuration is frozen. This is the all-times bridge named by `Complexity.space_hierarchy`'s
+sketch (`Turing.FinTM.DecidesInSpace` bounds the space at the halt; the normal form needs every
+time). [AB09, §4.1, Definition 4.1]
+
+**Proof sketch.** Every head position visited by time `t'` was visited by time `t`: a time
+`u ≤ t` is in range, and at a time `u > t` the configuration is the one at `t`
+(`Turing.MultiTapeTM.runFrom_of_halt`). So each visited set at `t'` is contained in the one at
+`t`. -/
+theorem ComputesInTime.spaceUsed_le_of_halt {Symbol : Type} {M : FinTM Symbol}
+    {x w : List Symbol} {t s : ℕ} (h : M.ComputesInTime x w t)
+    (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    ∀ t', M.tm.spaceUsed (M.tm.initCfg x) t' ≤ s := by
+  have hhalt := ((computesInTime_iff M x w t).mp h).1
+  have key : ∀ t' i, M.tm.visitedByTapeHead (M.tm.initCfg x) t' i ⊆
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i := by
+    intro t' i z hz
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hz ⊢
+    obtain ⟨u, hu, rfl⟩ := hz
+    by_cases hut : u ≤ t
+    · exact ⟨u, by omega, rfl⟩
+    · refine ⟨t, by omega, ?_⟩
+      rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hhalt]
+  intro t'
+  refine le_trans ?_ hs
+  exact Finset.sum_le_sum fun i _ => Finset.card_le_card (key t' i)

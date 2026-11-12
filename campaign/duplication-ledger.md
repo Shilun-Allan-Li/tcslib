@@ -1197,6 +1197,13 @@ The ledger's census undercounts accordingly. **Questions for the user:** whether
 lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
 the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
 authorization).
+**Ruled (the user, 2026-11-06, second round):** the general lemma replaces `Turing.runFrom_one`, and
+every site is re-pointed, colleague-owned files included. **Home revised (the user, 2026-11-12):**
+`TuringMachine/Deterministic`, beside `runFrom_zero` and `runFrom_succ_eq_step`, recorded among the
+vendored file's local modifications. It needs no import changes and also covers `Simulation`'s
+`bufferedScanCfg_run`, which the `CfgFacts` home could not reach (cycle through `StateRenaming`).
+The proposal is `campaign/items/dedup/overnight-2026-11-08/review/ro1-deterministic-option/`. It
+is rebuilt after #251, #241 and #242 merge.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1795,3 +1802,165 @@ only after Seyoon's actual merge. Earlier running-status passages are historical
 ## Overnight next12.2c checkpoint
 
 #233 is actually merged at `9b5dcf46408db681bcbc721930ef2203fa6bc47d`; MAC8 is current. The enumerated MIG leaves/frames/rewinds and five LIVE/seven None first-entry conversions are now on campaign. Remaining existing FE-LIVE-1 instances and the seven SG1 retention kinds keep their exact cleanup scope and owner. Mechanical existing-API work begins as small separate family PRs, each gated/replayed; no future-copy, public-interface or new-import permission is inferred. New decisions pause only their fronts. All morning auditors are Codex per Seyoon's latest batch instruction.
+
+
+## Overnight source PR candidates: scoped implementation changes, not retirements
+
+Current merged Lean stays `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/MAC8. None of these PRs is merged or
+externally gated yet. Counts below name inspected implementation changes, not deleted
+public declarations, new unique family members, directed copy-screen edges or global absence.
+The current pins and actual replay/source/AX/control limits are in HANDOFF§0 and
+status/2026-11-08-overnight/queue.json.
+
+| Kind / inspected scope | Candidate source | Canonical reuse / bounded disposition |
+|---|---|---|
+| FE-LIVE-1:9 private helpers in4 owners | #241/gate121 | existing exists_first_entry_of_fixed; comparator/InputLength candidates held and baseline-restored; no whole-family retirement |
+| FH-1:10 current consumers in8 owners | #242/gate122 | existing exists_first_halt;7 other implementations restored and held; ordinary halt selection remains distinct from fixed-live entry |
+| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242/gate122 | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; adopted in currentf3c8; final153 replay/44comparison PASS; external selected13 PASS, root governance closure pending |
+| Five Bool-facing public run-law implementations | #243/gate123 | public generic output-prefix/extension, halt-absorption and backward-live contracts; names/headers retained; runFrom_one belongs to the paused RO1 front |
+| SafeRun zero/cons/trans implementations | #244/gate124 | public Segment operations through1 new private, non-simp own-definition conversion;3 public headers retained; no added public API |
+| Two private Hardness head/tail implementations | #245/gate125 | existing polyTimeComputable_tail/take1; SAT counterparts wait for the separate pending import decision |
+| RS-1:one local startup hinit reconstruction | #246/gate126 | existing initCfg_eq_mapState from an already imported owner;3 public AX consumers are not3 copies; siblings needing imports remain held |
+| One private binary-address proof:definition-reader discipline | #247/gate127 | existing Nat.bit_val/Bool.toNat_true/codeBitsNat_eq; complete target has2 foreign TCS heads plus Nat.bit and6 paired controls; no copy-count subtraction |
+
+All implementation retirements remain contingent on the actual gate closure and Seyoon's
+merge. Current screen extraction counts are parser/filter measures, not interface censuses.
+The three BLIVE finds do not reopen the already merged two named #215 implementations; they
+extend bounded enumeration into these newly touched owners. Further mechanical same-kind
+members found there are reviewed under the standing rule before final source settlement.
+
+Seven retained SG1 structural kinds and the wider FE-LIVE-1 acknowledgment keep their exact
+owner/window: maintainer, next12.2c after active MIG-1 and before further SAT/Hardness fills.
+The present partial cleanups do not acknowledge future copies, retire those whole kinds,
+change a public statement/import/home or close another watch. Ladner's approved17-declaration
+statement skeleton/#249, with6 mathematical holes, is not a duplication retirement.
+
+
+### Returned overnight audits (2026-11-08; not source retirement)
+
+Gates123/124/125/126/127/128 are CLOSED after scoped per-finding disposition and
+current clean-merge/replay validity. Source PRs remain unmerged, so implementation
+retirement is not yet recorded. Ladner is a statement skeleton with six direct holes.
+Gate121 remains HOLD for exposed foreign-definition reads; gate122 selected13 PASS
+does not dispose of exposed held fronts by BASE restoration. No blanket Rule10
+acknowledgment, generic host permission or existing family scope extension is inferred.
+
+
+## Approved reader prerequisites and six staged operational repairs (2026-11-08)
+
+PR#251/gate129 adds the three explicitly approved non-simp readers (including the exact shared controlAction_def name) and repairs six exposed old proof bodies through existing equations: controlAction_apply, step_of_tapeAction_move/write, step_of_inputMoveAction, walkTM_run_ofCfg and private scan_fold_trace. They consume live-step, action-field and input-symbol equations instead of re-deriving those readings. All old headers/imports/definitions remain exact. Four selected closures add existing standard Classical.choice dependencies, with no new axiom/admission. Current source/certificate and closing-form candidates are retained in gate129. This is a scoped staged implementation change; only actual merge retires these six inspected implementations, not every operational proof anywhere in TCSlib.
+
+The wider complete closing-form census retains 39 source candidate chunks/69 raw lines. Unselected operational proofs and the foreign owner proof of published Action.apply_workTapes are not certified or acknowledged by the selected6 guard. Its possible exact owner-home move is being assessed separately and needs a human home ruling. Other candidates needing public readers, imports or statement decisions remain held. No legacy Rule10 exemption, future-copy permission or all-owner/global absence follows. Existing debt kinds/owner/window stay exact.
+
+PR#252/gate130 contains only the five explicitly approved core/NDClockHost/Sweep readers. Hypothetical MARMTime/Startup/SingleTape consumer repairs are independent feasibility evidence, not landed implementations or family retirements. No consumer source was adopted, mathematical hole filled or source gate closed.
+
+### Gate 129's current operational proof scope
+
+#251 now has seven exact-header old proof repairs: the former six plus the
+terminal branch of FinTM.pairExtractTM_fst_run. Input-only action application
+and extractor halt now cite existing one-tape / zero-tape and action equations.
+Only on actual merge do these seven inspected proof implementations retire.
+The current 50-file comparison has two new directed text matches (walk versus
+one-tape move/write). Their arbitrary-head versus one-selected-head and
+write/no-write premises do not identify a replaceable same-contract theorem.
+Five old pair reports disappear. These are pair counts, not new debt or a
+claim of whole-kind retirement. The approved separate Configuration move in
+#253 is not assumed available or merged in #251. Existing retention kinds and
+cleanup windows are unchanged.
+
+### Gate 131 seam and work-tape prerequisite
+
+#253's one new public right-transition reader is used by the existing private
+right-step proof. The repaired exact-header implementation's inline table
+reading retires only on merge. The existing optional-write normalization
+moves to its Configuration home with identical statement and proof; it is
+one theorem, with one new home, not a retained copy. The 56-file copy score
+comparison has no new pair and twelve disappear, all incident to the revised
+right-step proof. These are directed text scores, not family counts. No
+whole-kind retirement or debt acceptance is made.
+
+
+**Gate 129, round 2: endpoint and live action proof reuse.**
+The current #251 candidate (06abd00adf61c257fcd25ee9181a37ddec0a4c87) cites the published endpoint blank equations
+and the indexed Boolean inputSymbol_at reader for the matching local read
+proofs. It also replaces the matched raw step reading with step_of_some and
+uses the published control-action, initialization and field equations at the
+named action sites. The scoped family sweep and full selected seals are in
+gate129 round 2. These inspected copies retire on merge. The scopes do not
+authorize retained or future foreign reads elsewhere.
+The short rewrite of runFrom at one in the rewind head base case and the
+final strip case is RO-1 accounting under the existing schedule. The general
+home decision stays parked; no new public reader is added for this law.
+
+## Actual gates 123 and 124 merges (2026-11-09)
+
+Seyoon merged #243 at `e4b1664011a40256a0ea52fb63079f28233b98dd` and
+#244 at `ef98f1685ddfb8da40d8e97890c0fff6d145523b`. Their exact combined replay passed
+82 modules and supplies the adopted campaign snapshot.
+
+The five inspected Bool-facing run-law implementations now cite the
+generic public contracts. The three inspected SafeRun zero, cons and
+trans implementations cite the public Segment operations through their
+private conversion. These scoped retirements preserve the existing
+declaration headers. The RO1 home ruling remains separate.
+
+## Gate 129 round 3 proof reuse on #251 (2026-11-09)
+
+The exact source ead826bc6b1900c4209717aafc14244745106d7d shares three live-copy
+and five aligned rewind implementations in Primitives, and centralizes
+thirty no-write field subproofs. The former forward eraser proof now
+uses the existing buffer replay. The six private Reductions fixed-prefix
+declarations are replaced by the public pairing computation and its
+linear-to-polynomial lift. The recorded implementation retirements
+take effect on merge.
+
+The expanded 52-file comparison also identifies the existing
+Nondeterminism conditional and threaded-map closure proofs against
+PolyTimePairing, alongside the PL-1 linear lift. These occur on both
+sides of the #251 comparison. A later Nondeterminism cleanup requires
+its own import ruling. The bounded evidence and remaining candidate
+kinds are in campaign/gates/129-input-readers/r3-evidence/COPY-REVIEW.md.
+
+
+## Gate 129 reader and scan re-points
+
+The following exact instances are retired on merge of #251 at
+`39dfa843b02ae7fdd0acaeacfadf5bba17a60feb`. See the 53-file copy review and source pins
+in `campaign/gates/129-input-readers/r4-evidence/`.
+
+- The complete native-input copy is a whole-word instance of the suffix copy.
+  The obsolete private prefix wrapper is removed. The indexed right-moving
+  zero-tape row is shared by the prefix, suffix, true-prefix, increment and
+  token proofs.
+- A work tape with an outer `none` write keeps its entire word. The exact
+  Primitives instances now cite the same private field lemma, including the
+  replay, rewind, polynomial and length-checker cases.
+- The optional-state map of a canonical word seam is the same seam with the
+  mapped anchor. Convention now owns the equation. It replaces the private
+  Seam proof, the CodeSimulator inline proof, and the two checked Primitives
+  instances.
+
+
+## Gate 129 round 5 action and suffix-copy re-points
+
+These exact proof instances retire on merge of #251 at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`.
+The closing-form inventory and the 53-file comparison are in the gate 129
+round 5 evidence.
+
+- With an outer `none` write, the selected work tape retains its word. The
+  audited overflow, blank, polynomial and inactive preparation fields use
+  `apply_workTape_of_no_write`. The same premise covers the inspected
+  forwarding and countdown frames. A true erase still uses outer
+  `some none`.
+- The complete action record follows `Action.apply.eq_1`. The 21 Catalog
+  references now use the owner equation directly. The Boolean input/control
+  specialization in Simulation cites that equation with `controlAction_def`.
+  Historical pair 155 disappeared under round 4's scorer cutoff. The
+  Simulation proof changed in round 5.
+- A zero-tape suffix copier emits the unread suffix and halts at the right
+  blank. The token's empty suffix uses the same trace. The prepend and
+  empty-input constant-source cases share the complete prefix-plus-copy run.
+- The two split dispatch branches share their live-state witness.
+
+The reviewed instances and the historical cutoff correction have
+source and matched-span receipts in `campaign/gates/129-input-readers/r5-evidence/`.

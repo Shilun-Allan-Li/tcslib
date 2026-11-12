@@ -1,0 +1,47 @@
+/-- **The per-round space ledger** (additive): under the contract's hypotheses, with `a` the
+action of `tr` at `c` and `B = 50·(|tableBitsK tr| + 1)`, some time `T` with `0 < T ≤ B` ends
+the round at `exit k a.state.isSome` in a configuration representing `a.apply c`, with the
+contract's cut and silence, and during the round each mirrored head visits only the source
+head's cells before and after the step, and each auxiliary head only cells in `[-B, B]`. In
+particular a round visits at most `2` cells of a mirrored tape and `2B + 1` of an auxiliary
+one.
+
+**Proof sketch.** Take the contract's `T`. The envelope puts each mirrored head at its start
+or end position, which the two representations identify with the source's head before and
+after the step; each auxiliary head starts at `0` and stays within `B` of it. -/
+theorem roundTM_visited {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      ((roundTM k).runFrom d T).state = some (exit k a.state.isSome) ∧
+      Rep tr (a.apply c) ((roundTM k).runFrom d T) ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom d u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output) ∧
+      (∀ i : Fin k, (roundTM k).visitedByTapeHead d T (Fin.castAdd 2 i) ⊆
+        {c.workTapePos i, (a.apply c).workTapePos i}) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → (roundTM k).visitedByTapeHead d T j ⊆
+        Finset.Icc (-((50 * ((tableBitsK tr).length + 1) : ℕ) : ℤ))
+          ((50 * ((tableBitsK tr).length + 1) : ℕ) : ℤ) := by
+  intro a
+  obtain ⟨T, hpos, hT, hexit, hrel, -, hcut, hsil, henv, hhome⟩ :=
+    roundTM_effect tr c q hq d entry rel
+  refine ⟨T, hpos, hT, hexit, hrel, hcut, hsil, ?_, ?_⟩
+  · intro i p hp
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp
+    obtain ⟨u, hu, rfl⟩ := hp
+    have h := (henv u (by omega)).2.2.1 i
+    rw [(rel.2.1 i).2, (hrel.2.1 i).2] at h
+    rcases h with h | h <;> rw [h]
+    · exact Finset.mem_insert_self _ _
+    · exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+  · intro j hj p hp
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp
+    obtain ⟨u, hu, rfl⟩ := hp
+    have h := (henv u (by omega)).2.2.2 j
+    rw [if_neg (by omega), (hhome j hj).1, sub_zero] at h
+    rw [Finset.mem_Icc]
+    exact abs_le.mp h

@@ -1,0 +1,384 @@
+{
+  "utc": "2026-11-09T04:41:57.394149+00:00",
+  "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "records_checkpoint": "94f6e87de950472928eb9d0c5eb970e70e824638",
+  "auditors": "Codex, selected by Seyoon for morning batch",
+  "mathematical_fills": "Leave holes; not dispatched by maintainer",
+  "next_free_gate": 132,
+  "gates": [
+    {
+      "gate": 121,
+      "pr": 241,
+      "slug": "fe-live1-cleanup",
+      "branch": "codex/ab34-fe-live1",
+      "head": "9936345ae64a4380bbec3ac6f3dad192f927420a",
+      "status": "Original gate HOLD;21 root changes now pushed including approvedCfgFacts import; seam/InputLength/final integrated replay/followup pending; not yet clear to merge"
+    },
+    {
+      "gate": 122,
+      "pr": 242,
+      "slug": "first-halt-reuse",
+      "branch": "codex/ab34-first-halt-reuse",
+      "head": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "status": "External selected13 PASS; root governance disposition of exposed held fronts and overlapping step reads pending; not yet clear to merge",
+      "note": "Seven held candidates restored to baseline in6whole files; old3/4/17 source evidence retained separately. ClockMachine mechanical FYI is Seyoon-owned."
+    },
+    {
+      "slug": "ch7-run",
+      "wt": "ab34-natbits",
+      "branch": "codex/ab34-ch7-run-reuse",
+      "title": "Reuse public deterministic run laws in emit-loop embedding",
+      "detail": "The five acknowledged ch7 run-infrastructure proofs now consume the public output-prefix, output-extension, halt-absorption and live-prefix equations. All existing statements, definitions and imports are preserved. Loop’s older companion copies were already removed by the merged SG-1 cleanup.",
+      "gate": 123,
+      "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
+      "pr": 243,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/243",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    },
+    {
+      "slug": "safe-run",
+      "wt": "ab34-safe-run",
+      "branch": "codex/ab34-safe-run-segments",
+      "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+      "include": [
+        "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean"
+      ],
+      "title": "Reuse Segment contracts for safe-run closure",
+      "detail": "The three existing SafeRun zero/cons/trans proofs now specialize Segment with the singleton avoided control and a trivial invariant. The public SafeRun definition and all headers remain exact; no import or bridge API is added.",
+      "gate": 124,
+      "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
+      "pr": 244,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/244",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    },
+    {
+      "slug": "word-leaves",
+      "wt": "ab34-word-leaves",
+      "branch": "codex/ab34-word-leaves",
+      "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+      "include": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean"
+      ],
+      "title": "Reuse public polynomial-time head and tail closures",
+      "detail": "The two existing private clA5 head/tail proofs cite the public take1/tail closures already in the import context. List.tail agrees with drop1 by Core reduction. No machine, literal statement, import or public declaration changes.",
+      "gate": 125,
+      "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
+      "pr": 245,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/245",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    },
+    {
+      "slug": "restart-reader",
+      "wt": "ab34-campaign",
+      "branch": "codex/ab34-restart-reader",
+      "title": "Read universal startup configuration through its shared equation",
+      "detail": "The local five-field hinit proof now cites MultiTapeTM.initCfg_eq_mapState from the existing UniversalParts import. All literal headers, the initial machine and the exact mapped configuration are preserved. This retires only this inspected RS-1 implementation; import-dependent sibling cases remain held.",
+      "gate": 126,
+      "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
+      "pr": 246,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/246",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    },
+    {
+      "slug": "nat-reader",
+      "wt": "ab34-nat-reader",
+      "branch": "codex/ab34-canonoffset-bit-reader",
+      "patch": "/private/tmp/ab34-mig24-existing-api/canonOffset-bit-equation.patch",
+      "include": [
+        "TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+      ],
+      "title": "Read Nat.bit through its published value equation",
+      "detail": "The existing canonOffset_spec value argument uses Nat.bit_val and Bool.toNat_true instead of explicitly unfolding Nat.bit. Its statement, imports, machine definitions and the already-shared NatBits length bound remain exact.",
+      "gate": 127,
+      "head": "e16049ad20823b3e6abba171e328489746062080",
+      "pr": 247,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/247",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    },
+    {
+      "gate": 128,
+      "pr": 249,
+      "slug": "ladner-statements",
+      "branch": "codex/ab34-ladner-statements",
+      "head": "1096e50b4e105392737ec52939b1db0cdbd9316d",
+      "status": "Gate CLOSED; all findings dispositioned; current clean merge and replay validity confirmed; clear to merge; Seyoon merge pending"
+    }
+  ],
+  "held_decisions": [
+    "SAT BlockLoop import: exact proposal pushed, user ruling pending, unapplied",
+    "RO1 home revision to Deterministic: two complete proposals pushed, user ruling pending, unapplied",
+    "SAT_exists_linear_verifier public owner-reader: exact proposed owner and consumers pass, user ruling pending, unapplied"
+  ],
+  "replays": {
+    "FE121": "Current d64 full157 PASS/static0/35; original11-root a93 full163/static49 historical",
+    "FH122": "Historical e0b full222PASS/static0/31/whole895; currentf3c8 tail153PASS/static0/31 from that entire snapshot",
+    "ch7_123": "Exact7c4 full80 PASS/static0/31",
+    "safe_124": "Exactcfa full80 PASS/static0/31",
+    "word_125": "Exactb8b full26 PASS/static0/0",
+    "restart_126": "Exact48d full18 PASS/static0/0",
+    "nat_127": "Currente160 full23PASS/static0/0/whole895; oldd725 historical only",
+    "joint7": "HistoricalNJ1 full257PASS/static0/45 beforefinalNatreaderrepair and FH13companions",
+    "Ladner128": "Current1096 fresh2PASS/static0/6/895→896; old63eb2PASS historicalonewordfacadedocfix",
+    "joint_current7": "EntireNJ1→NJ2(23/static0)→NJ4(153/static31), finalseven currentheads pass/895",
+    "joint_all8": "EntireNJ1→NJ2→NJ3(2/static6)→NJ5(154/static37), finaleight currentheads pass/896;6mathholes remain",
+    "FH122_current": "Currentf3c8 actual153PASS/static0/31,whole895,allinputhashesunchanged; only2ownerobjectschange",
+    "joint_after_FH13": "Both final whole-overlay tails PASS; NJ4 branches fromNJ2, NJ5 fromNJ3, allsource/objectmaps checked"
+  },
+  "QA": "All current FE33/FH44/Nat48/Ladner49 computations and source-based dispositions complete; current full44=0new19gone4scores, all23 reviewed.",
+  "ready_gates": [
+    130
+  ],
+  "live_note": "Gates 129/130 dispatched and awaiting findings. Gate 131 published and prompt issued; no user dispatch or source merge.",
+  "passed_replay_receipt": "joint-chain/RECEIPT.json",
+  "worktree_aliases": {
+    "wt-camp": "/Users/seyoonr/.codex/worktrees/ab34-campaign-current/tcslib-arora-barak-ch3-4",
+    "wt-restart-reader": "/Users/seyoonr/.codex/worktrees/ab34-campaign/tcslib-arora-barak-ch3-4",
+    "wt-night-joint": "/Users/seyoonr/.codex/worktrees/ab34-overnight-joint/tcslib-arora-barak-ch3-4",
+    "wt-night-all8": "/Users/seyoonr/.codex/worktrees/ab34-overnight-all8/tcslib-arora-barak-ch3-4"
+  },
+  "live_sessions": {
+    "Lean_jobs": "nseam2/403; final129 pack preparation",
+    "copy_screen_jobs": "129 and130 completed;131 pending"
+  },
+  "issued_prompts": [
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    130
+  ],
+  "external_dispatch_confirmed": [
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130
+  ],
+  "gate123_note": "Final replacement373/SHA057363 published at563eb; original359 promptVOID; priorunissued607f superseded.",
+  "pending_current_prompt_issue": [],
+  "current_prompts_issued": [
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131
+  ],
+  "historical_void_prompt": {
+    "gate": 123,
+    "sections": 359,
+    "sha256": "7fae374f79e2b93f7581cd2df8f2ff7d92a4a6033aa5b82645acfd2d492f673c",
+    "record": "campaign/gates/123-ch7-run/publication-v1-VOID.json"
+  },
+  "current_joint_chain": "joint-chain/RECEIPT.json",
+  "historical_void_prompt_121": {
+    "gate": 121,
+    "sections": 816,
+    "sha256": "cb9b9f37ac69c3b723954bfee63b42112683ab9b04a978085adb0dcf3b3dcb6c",
+    "record": "campaign/gates/121-fe-live1-cleanup/publication-v1-VOID.json"
+  },
+  "published_gates": [
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    130
+  ],
+  "statement_gate": {
+    "gate": 128,
+    "name": "Ladner statement skeleton",
+    "PR": 249,
+    "six_math_holes": true,
+    "SAT_reader_decision_dependency": "fill route, not statement source",
+    "auditor": "Codex",
+    "source": "1096e50b4e105392737ec52939b1db0cdbd9316d",
+    "state": "Statement gate CLOSED/current clean merge+replay validity confirmed; six direct mathematical holes remain and fill route held"
+  },
+  "audit_returns_received": [
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130
+  ],
+  "audit_review_in_progress": [
+    121,
+    122
+  ],
+  "closed_gates": [
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    130
+  ],
+  "clear_to_merge_prs": [
+    243,
+    244,
+    245,
+    246,
+    247,
+    249,
+    252
+  ],
+  "approved_reader_prerequisite": {
+    "gate": 129,
+    "pr": 251,
+    "head": "2e2f415c9bbf654cd8a68bb02aa62ea291d91116",
+    "auditor": "Codex",
+    "source_only_three_readers": false,
+    "replay": "Actual394 + actual3 and actual2 provider refreshes; current exact compiled compatibility and client check",
+    "clear_to_merge": false,
+    "canonical_action_reader": "controlAction_def",
+    "proof_scopes": "Three approved readers plus seven old proof repairs",
+    "current_HEAD50_screen": "Complete, 2335 vs 2338 reported pairs; all 11218 affected ordered pairs considered",
+    "ready_to_dispatch": false,
+    "publication": "campaign/gates/129-input-readers/publication.json",
+    "user_dispatch_confirmed": true,
+    "gate_closed": false,
+    "verdict": "HOLD: 3 majors, 2 minors, 8 notes",
+    "followup_auditor": "Codex"
+  },
+  "gate122_governance_major": "M1: exposed shared121 step reads plus seven held operational/type-boundary fronts remain unacknowledged; selected13 technicalPASS preserved",
+  "gate121_comparator_repair": {
+    "utc": "2026-11-08T19:11:14.102866+00:00",
+    "pr": 241,
+    "gate": 121,
+    "before": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
+    "head": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+    "repair": "clA5Compare_compute body only",
+    "patch_SHA256": "2caebf7e52cd3d3377ffd559ea9910999a078398336ed94fab39bcc547584ebf",
+    "candidate_owner_SHA256": "8e82beef8217e3817fac301e0c8f7c0326ba7098ac7b790507b7dd265d893710",
+    "all91_payloads_verified": true,
+    "new_API_import_header_def_attribute": false,
+    "native_owner_and_full18head_target_seal36pairs_actual": true,
+    "checks_at_dispatched_source_plus_exact_patch_transported_to_identical_pushed_source": true,
+    "new_Lean_run_by_root": false,
+    "full_downstream_replay_or_screen": false,
+    "gate_closed": false,
+    "source_merged": false
+  },
+  "reader_name_alignment": {
+    "utc": "2026-11-08T19:15:45.933944+00:00",
+    "before": "1d35e812ce12059b87066d8680748e46553a9137",
+    "head": "0201e3c420f5bdef94a67b80cee08a1673f2c3fb",
+    "user_ruling": "Reuse controlAction_def (Recommended)",
+    "only_approved_name_alignment": true,
+    "exact_declaration_shared_with_PS10": true,
+    "other_two_reader_sources_unchanged": true,
+    "old_nread3_partial_invalid_never_reused": true,
+    "new_complete_replay": "nread4",
+    "source_merged": false
+  },
+  "gate129_context_repairs": "Six old proof repairs pushed; full guards/types/standard AX and strict compiled compatibility certificate accepted; current50 screen rerunning; no blanketlegacy permission",
+  "gate121_stationary_repairs": {
+    "utc": "2026-11-08T20:06:05.119088+00:00",
+    "before": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+    "head": "46edaeef3f2215347412cadb5e7af6a1a4b0b545",
+    "pr": 241,
+    "gate": 121,
+    "nine_stationary_and_one_EXP_body_repairs": true,
+    "only_two_sketch_updates_and_body_comment_move": true,
+    "comparator_repair_preserved": true,
+    "no_API_import_header_def_attribute_change": true,
+    "nine_guard_heads": 15,
+    "nine_effective_paired_identities": 30,
+    "EXP_guard_heads": 7,
+    "EXP_effective_paired_identities": 14,
+    "exact_literal_executions_are_frozen_private_candidates": true,
+    "later_sketch_only_difference_disclosed": true,
+    "no_current_downstream_replay_or_screen_or_gate_closure_claim": true
+  },
+  "approved_core_reader": {
+    "gate": 130,
+    "API": "Turing.MultiTapeTM.ConfigCount.core_eq",
+    "auditor": "Codex",
+    "source_adopted": true,
+    "pr": 252,
+    "source_merged": false
+  },
+  "approved_grouped_readers": {
+    "gate": 130,
+    "pr": 252,
+    "head": "04b0b07d4ea836f52cb645f480b67cdc9e99ea59",
+    "auditor": "Codex",
+    "approved_API_count": 5,
+    "consumer_patches_adopted": false,
+    "replay": "Actual335PASS/static0/59 inherited/whole895",
+    "clear_to_merge": true,
+    "producers": "Actual3 native/5metadata twice/6pairedcontrols PASS",
+    "census": "Fresh587refs/391heads/1035chunks dispositioned",
+    "QA": "Complete 53-file coverage, all 2424 reported pair scores unchanged; actual baseline and exact current reuse/affected tilings",
+    "ready_to_dispatch": false,
+    "publication": "campaign/gates/130-space-reader-prerequisites/publication.json",
+    "user_dispatch_confirmed": true,
+    "gate_closed": true,
+    "verdict": "PASS; one minor corrected in local helper and strict335 verification"
+  },
+  "gate121_CfgFacts_import": {
+    "utc": "2026-11-08T20:42:36.309979+00:00",
+    "before": "46edaeef3f2215347412cadb5e7af6a1a4b0b545",
+    "head": "9936345ae64a4380bbec3ac6f3dad192f927420a",
+    "pr": 241,
+    "gate": 121,
+    "user_approved_single_frozen_import": true,
+    "only_Hardness_changed": true,
+    "formal_headers_definitions_exact": true,
+    "source_patch_applied_to_prior_stationary_comparator_repairs": true,
+    "private_hypothesis_actual_checks_preserved": true,
+    "no_final_integrated_replay_claim": true,
+    "Fresh_Prepared_seam_fronts_open": true,
+    "source_merged": false
+  },
+  "approved_seam_reader": {
+    "gate": 131,
+    "API": "Turing.seamCompTM_tr_inr",
+    "auditor": "Codex",
+    "source_PR_pending": false,
+    "source_merged": false,
+    "pr": 253,
+    "head": "1d88037a8b2a0cd1858245a979ced7dea4a7172c",
+    "home_move_approved": true,
+    "CfgFacts_approved_and_adopted": true,
+    "replay": "Actual403 pass plus actual final comment-only Seam refresh; whole895, clean current merge",
+    "QA": "56 files 0 new / 12 gone / 0 changed scores; final doc normalized rows exact",
+    "ready_to_dispatch": true,
+    "user_dispatch_confirmed": false,
+    "publication": "campaign/gates/131-seam-worktape-readers/publication.json"
+  },
+  "relocation_checkpoint": "campaign/status/2026-11-08-relocation-2154/RESUME.md",
+  "roadmap_status": "campaign/status/2026-11-08-roadmap-readiness/STATUS.md",
+  "roadmap_held_RD2": {
+    "direct_ConfigCodec_admissions": 21,
+    "already_held_since": "2026-10-14",
+    "not_dependencies_of_TQBF_complete": true,
+    "evidence": "campaign/status/2026-11-08-roadmap-readiness/RESULT.json",
+    "direct_FormulaKit_admissions": 20,
+    "checked_total_held_route": 41
+  }
+}

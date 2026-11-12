@@ -1,0 +1,11 @@
+/-- The control table of the repetition machine's host over its three control states, each step
+stationary and silent: the loop anchor `0` dispatches into the verdict module (`2`); the branch
+state `1` reads the first cell of tape 0 and dispatches into the payload module (`4`) if it holds
+`true`, into the step module (`3`) otherwise; the halt state `2` halts. -/
+def hostCtrl (M : Fin 5 → FinTM Bool) (K : ℕ) (c : Fin 3) (_inp : Option Bool)
+    (work : Fin (K + 1) → Option Bool) : Action (K + 1) Bool (ModuleHost.State (Fin 3) M) :=
+  if c = 0 then FinTM.controlAction 0 (some (ModuleHost.entry M 2))
+  else if c = 1 then
+    FinTM.controlAction 0
+      (some (if work 0 = some true then ModuleHost.entry M 4 else ModuleHost.entry M 3))
+  else FinTM.controlAction 0 none

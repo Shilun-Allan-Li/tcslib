@@ -1,0 +1,13 @@
+theorem chunkW_pairEncode (c w : List Bool) (N : ℕ) (h : w.length = N * c.length)
+    (hc : 0 < c.length ∨ N = 0) :
+    chunkW (pairEncode c w) = encWords (chunkList c.length w N) := by
+  have hN : N ≤ w.length := by
+    rcases hc with hc | rfl
+    · rw [h]; exact Nat.le_mul_of_pos_right _ hc
+    · exact Nat.zero_le _
+  have he := iterate_chunkStep c N w [] h hc
+  simp only [encWords, List.flatMap_nil, List.nil_append] at he
+  simp only [chunkW, pairFstD_pairEncode, pairSndD_pairEncode, forLoop_pairEncode]
+  rw [show w.length = (w.length - N) + N by omega, Function.iterate_add_apply, he,
+    Function.iterate_fixed (by rw [chunkStep_pairEncode, if_pos rfl])]
+  simp [encWords]
