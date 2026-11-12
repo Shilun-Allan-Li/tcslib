@@ -1,0 +1,66 @@
+From 23b0cf3d096e359d47974528e490132dff2598a2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 00:16:48 +0000
+Subject: [PATCH 1/4] PrivateKey OracleSecurity: specification-typed encryption
+ readers
+
+Add indSpec_encDom, indSpec_encRng, indImpl_enc_onSpec and
+indImpl_challenge_repeat_onSpec beside the existing _onSpec readers
+(authorized by the pk-cpa-cca1 brief).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTkdwQWfa1fQdC2H7H5
+---
+ .../Encryption/PrivateKey/OracleSecurity.lean | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+index 42e6dac1e..db45c238d 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean
+@@ -242,6 +242,16 @@ theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (k : List B
+     (mm : Fin (n + n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
+     S.indImpl atk b n k 2 mm (some c) = .pure (c, some c) := rfl
+ 
++/-- The encryption oracle accepts an `n`-bit message:
++`(S.indSpec n).dom 0 = (Fin n → Bool)`. -/
++theorem indSpec_encDom (n : ℕ) : (S.indSpec n).dom 0 = (Fin n → Bool) := by
++  rw [S.indSpec_eq, bitSpec_dom, S.inLens_zero]
++
++/-- The encryption oracle answers a ciphertext at the fixed ciphertext width:
++`(S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool)`. -/
++theorem indSpec_encRng (n : ℕ) : (S.indSpec n).rng 0 = (Fin (S.ctLen.eval n) → Bool) := by
++  rw [S.indSpec_eq, bitSpec_rng, S.outLens_zero]
++
+ /-- The decryption oracle accepts a ciphertext at the fixed ciphertext width:
+ `(S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool)`. -/
+ theorem indSpec_decDom (n : ℕ) : (S.indSpec n).dom 1 = (Fin (S.ctLen.eval n) → Bool) := by
+@@ -288,6 +298,25 @@ theorem indImpl_challenge_none_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : L
+         .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
+   simpa only [cast_eq] using S.indImpl_challenge_none atk b n k mm
+ 
++/-- The encryption equation on the query specification's type: with `m' = cast _ m` the message
++read at width `n`, `S.indImpl atk b n k 0 m st` draws `r ← Enc.Coins n` and answers
++`cast _ (S.encryptAt n k m' r)`, keeping the state `st`. -/
++theorem indImpl_enc_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
++    (m : (S.indSpec n).dom 0) (st : Option (Fin (S.ctLen.eval n) → Bool)) :
++    S.indImpl atk b n k 0 m st =
++      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
++        .pure (cast (S.indSpec_encRng n).symm (S.encryptAt n k (cast (S.indSpec_encDom n) m) r),
++          st) := by
++  simpa only [cast_eq] using S.indImpl_enc atk b n k m st
++
++/-- The repeated challenge equation on the query specification's type:
++`S.indImpl atk b n k 2 mm (some c) = pure (cast _ c, some c)`, the recorded ciphertext `c` read at
++the challenge oracle's answer type. -/
++theorem indImpl_challenge_repeat_onSpec (atk : Attack) (b : Bool) (n : ℕ) (k : List Bool)
++    (mm : (S.indSpec n).dom 2) (c : Fin (S.ctLen.eval n) → Bool) :
++    S.indImpl atk b n k 2 mm (some c) = .pure (cast (S.indSpec_challengeRng n).symm c, some c) := by
++  simpa only [cast_eq] using S.indImpl_challenge_repeat atk b n k mm c
++
+ /-- The codec of the adversary: the three oracles, and a one-bit final output. -/
+ def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=
+   bitCodec (S.inLens n) (S.outLens n) 1
+-- 
+2.43.0
+

@@ -1,0 +1,63 @@
+# preflight 2026-11-11T23:37:34Z
+nproc: 4
+cgroup v1 memory.limit_in_bytes: 9223372036854771712
+memory.usage_in_bytes: 546938880
+-- memory.stat
+cache 18546688
+rss 540672
+rss_huge 0
+shmem 17121280
+mapped_file 9474048
+dirty 12288
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 7707
+pgpgout 3047
+pgfault 2091
+pgmajfault 0
+inactive_anon 3272704
+active_anon 0
+inactive_file 32768
+active_file 1392640
+unevictable 14389248
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 371425280
+total_rss 175714304
+total_rss_huge 0
+total_shmem 17121280
+total_mapped_file 142106624
+total_dirty 30064640
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 257443
+total_pgpgout 138332
+total_pgfault 201468
+total_pgmajfault 1978
+total_inactive_anon 177618944
+total_active_anon 40960
+total_inactive_file 249344000
+total_active_file 104964096
+total_unevictable 15056896
+-- /proc/meminfo
+MemTotal:       16472084 kB
+MemFree:        15761408 kB
+MemAvailable:   15956644 kB
+Buffers:           47364 kB
+Cached:           315040 kB
+-- df
+/home/user/fill: /dev/vda       ext4 270553174016 21105393664 20178141184  52% /
+/home/user/fill/.lake: /dev/vda       ext4 270553174016 21105393664 20178141184  52% /
+/tmp/claude-0: /dev/vda       ext4 270553174016 21105393664 20178141184  52% /
+v1 in use = usage 547332096 - total_cache 371650560 + total_shmem 17121280 = 192802816; limit 9223372036854771712 is the unlimited sentinel
+headroom = MemAvailable = 15956636 kB = 15.22 GiB (floor 4 GiB): PASS
+free on clone fs = 20178141184 B = 18.79 GiB (floor 12 GiB): PASS
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
