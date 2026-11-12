@@ -1,0 +1,653 @@
+{
+  "head": "e0b98ac2a2396324bc9ddf76f27dceb3eba5ffe3",
+  "campaign_base": "3a10a32e8975b79621873626198356fdea61e988",
+  "proofs": 24,
+  "seals_passed": 22,
+  "seal_failures_out_of_scope": [
+    "Complexity.obliviousSchedule_halts",
+    "Complexity.obliviousSchedule_ready"
+  ],
+  "narrowed": {
+    "Oblivious.lean": true,
+    "ObliviousLedger.lean": false
+  },
+  "sealed_definitions": 52,
+  "paired_identities": 104,
+  "controls_run_in_halves": true,
+  "replay": {
+    "modules": 354,
+    "failed": 0,
+    "input_objects": 876,
+    "prospective_tree": "f022343841bf297e4f5b40658bd28b8f286d3ca4"
+  },
+  "inherited": {
+    "admissions": 65,
+    "modules_with_admissions": [
+      "TCSlib/BooleanAnalysis/GaussianSpace/MaxCutAlgorithm",
+      "TCSlib/BooleanAnalysis/GaussianSpace/UniqueGames",
+      "TCSlib/Complexity/ClassPSPACE/TQBF",
+      "TCSlib/Complexity/Diagonalization/Ladner",
+      "TCSlib/Complexity/FormulaKit/Emit",
+      "TCSlib/Complexity/RAMSimulation/Classes",
+      "TCSlib/Complexity/RAMSimulation/Simulation",
+      "TCSlib/Complexity/RAMSimulation/WordSize",
+      "TCSlib/Complexity/TuringMachine/Build/RecordTable"
+    ],
+    "changed_owner_admissions": 0,
+    "all_admission_sources_byte_identical_to_campaign_replay": true
+  },
+  "lint_new": 0,
+  "lint_removed": [],
+  "argument_sweep": {
+    "candidates": 1,
+    "disposition": "`simp [setupCfg]` in obliviousSchedule_ready: a pre-existing read, ruled an open front (out of scope)"
+  },
+  "population_binding": {
+    "BASE": {
+      "commit": "3a10a32e8975b79621873626198356fdea61e988",
+      "files": [
+        {
+          "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+          "git_blob": "0cb54054008cee16c31fd52dbd6b13c458915678",
+          "sha256": "7a2e794b336932958994d53ed51f2d058a10953cc398dfd11f2b39f0ff08a941",
+          "bytes": 167204
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+          "git_blob": "82df1342d444db11bfebb278df4f2d67b15040a0",
+          "sha256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+          "bytes": 177259
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+          "git_blob": "47c74c05feb2e90ad68ae2c77905f5361d9b570a",
+          "sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+          "bytes": 233346
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+          "git_blob": "a97834f9872607e59aaaeee9c7ec023b5bddea3d",
+          "sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+          "bytes": 39696
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+          "git_blob": "73d6b8adebeb72fd105fe0bb4a54e95b31159c2c",
+          "sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+          "bytes": 17598
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+          "git_blob": "a1e156389744052d8c639ac6e456c50014b00245",
+          "sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+          "bytes": 235539
+        },
+        {
+          "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "git_blob": "e62679c4243a6f26bd3fe9550034ad5e826c5268",
+          "sha256": "c61dbf6be271b0000a5d3d89214c40cc812c4fc62c5567fcf437c9730086fe3e",
+          "bytes": 466228
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "git_blob": "5e11be9f5b43a2bd031a82e5dbb9a52f57e969e1",
+          "sha256": "94c24d262727604d29936a2ace81bda68c287973c8be2b0d08851c5e81dc1133",
+          "bytes": 29247
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+          "git_blob": "12c3c189a7c64b7c337f68f168e06513a5ab4438",
+          "sha256": "44e479783baac69c6a10633b666f8abf90b3a9ba19ef76ed073fee98ee09b405",
+          "bytes": 17296
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+          "git_blob": "60ed080716e5dee1f4fc4beda64a6e447256bfeb",
+          "sha256": "d858432b2c4b2420c81577f19cd6634a2f8736fe9fb701af15c45401cf9ea8ac",
+          "bytes": 23872
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+          "git_blob": "7eb32e40048044339907dfd0c847e377b56cd861",
+          "sha256": "89f3f21ee2fc567ec184ec43cac35f2e4637c6262c6868f4ab7339d40d588de0",
+          "bytes": 22896
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+          "git_blob": "833d5d29b082b66b4d70c262a8e35297c9937275",
+          "sha256": "2c680a5a335f7195c467d09b8a1d8c46c6ecc646128d708eaecd15015ec6d730",
+          "bytes": 24668
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+          "git_blob": "caceeabc5347ed57e0b88fb9608312ec425341b3",
+          "sha256": "a521df6947264245e851a7a32de94b93c4c3ffda77b39bd2ff4ced766b90fb5e",
+          "bytes": 18506
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+          "git_blob": "5eb8c3d5464e555fdf0ccc1cb39d683ee8def344",
+          "sha256": "1f064e29fa79ec52faf876e7d72fbed93d106a2f08b060643039c52753729b7b",
+          "bytes": 28907
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+          "git_blob": "617bae27a7b301e33390169163e86d08b85b8810",
+          "sha256": "ad408e23dd8cd6f0dde31ec83f9c1c15e393eebdeb952903655afa5ac8e1fb17",
+          "bytes": 16912
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+          "git_blob": "88f9502962d40924833b6db33f8f94063c04d58c",
+          "sha256": "6ed290d656d91aab07c96b8c04b5cfe8f49d8e84276b62548c870e1bc09bf5e3",
+          "bytes": 26030
+        },
+        {
+          "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+          "git_blob": "dd1d5b4207be77afe78892f3f999997a49738ca7",
+          "sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2",
+          "bytes": 24176
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+          "git_blob": "43fce3e259817816fb7a3e3132980d69b994341e",
+          "sha256": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+          "bytes": 83047
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+          "git_blob": "7fc7546b8ab90f2892f9fe1f00d687db7ea9d9f4",
+          "sha256": "886cd48d87ddaad724f9edce1aef013a8fb88211674b57be28a7cf961c04de19",
+          "bytes": 12391
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+          "git_blob": "f68fdcd1e9111f4d4b1cb233259b9c83ad157033",
+          "sha256": "1fd40b2ad35994b02acd9ea8e9e697f448c2069d3c8835a2cc2da0705fc2a89d",
+          "bytes": 26486
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+          "git_blob": "29cf21b9323223f696e143afd86ccb793f387ae3",
+          "sha256": "abf197470b9de512d2060c893d26e10be530619e3c27c57b08dec09997f1b48e",
+          "bytes": 28019
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+          "git_blob": "01074b43fa0eceefcc6f416de9fc5b1312a0c31f",
+          "sha256": "670cc38698ec9af5c6d58f5287d5dc5100db283115f899740b151c3f97f414f6",
+          "bytes": 288910
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+          "git_blob": "a8a03ce6fac5d3abf1fcc5ad1e74fdbbcc45e6ea",
+          "sha256": "dde06db286d597d13602db2602c142782da536821c55529d73723eac0e348762",
+          "bytes": 29566
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+          "git_blob": "ffedb41e20341e995422632e29389164c1ab427a",
+          "sha256": "7d17ca0505e769c98173f78ab0a9ff5727a4626008cf53b352ab7dd191f2cfbc",
+          "bytes": 20042
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+          "git_blob": "64ea8b386d3f1c3b645aa3b53c1f24f45b207700",
+          "sha256": "4b06a1d2f6a7853ceeb1b64112a413ed35b46ddc4c7e24681bcd61cce6d60bb3",
+          "bytes": 437196
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+          "git_blob": "dcd5d51988449537f5dfa22bfe9b346d209df669",
+          "sha256": "fb5d36fb13b6c3663a35f91ca337510335835234efb8b27e8361da5487518332",
+          "bytes": 55594
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+          "git_blob": "1c5b891e3010779d763f831a40622c2a33929151",
+          "sha256": "37240800688d2729319a76e6e4cd081004cafb49d0a6100c13d9663e68d90d3b",
+          "bytes": 60841
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+          "git_blob": "07987dafc3aa39ca54758278c48cc98cf7465748",
+          "sha256": "454fffec78cca075e7956a1d2536d7c3543b531d69f5358ee0b240c55333177c",
+          "bytes": 474797
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+          "git_blob": "a42d5a7c7355acd51582fbc0b41144c17b235a53",
+          "sha256": "7dcc34991f8d4ce946ee206c6eb41f7751adc25f2d722b4ad577fc0171d05bf2",
+          "bytes": 13821
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "git_blob": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150",
+          "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+          "bytes": 25824
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+          "git_blob": "e3870facaec7ff216f762b3f815023b06eeea8b9",
+          "sha256": "a2248f15e7fa00d70a2acb599afbde8fcb71447b1aaa5fadb2ae3d483d255bf5",
+          "bytes": 41440
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "git_blob": "405f6d71fc719cb85be376b0949715fae6c1c485",
+          "sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+          "bytes": 26720
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/NatBits.lean",
+          "git_blob": "0bfe1d6c07f81087b970d88f48d63a33bf377cd3",
+          "sha256": "987f6197f653a4969987d8999e7aa0a8aeff1748d8b41835aaea7033ec2079c1",
+          "bytes": 6422
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+          "git_blob": "7fdd1de1a4329b3a902fd05305a016fb67d5ff4f",
+          "sha256": "37181134c960c117e92e169f88174034df1bdcdac54046faac6686231774fb25",
+          "bytes": 36763
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+          "git_blob": "b999917856b3d44108a2eb4b7a3d451d7f2373f9",
+          "sha256": "f0e69ed8fa9fbd5c73068694a5e8a162e77cffd671742b5e156e764cd4a6f771",
+          "bytes": 56167
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+          "git_blob": "cd0cf1417178df843e4171d792ad9811e1c025b8",
+          "sha256": "357c9d98f62a574b487abb6833cb33f2602e6f75a3b1d95a11fec5212b79fd67",
+          "bytes": 33082
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+          "git_blob": "560e6cb050ee97872beafd80c417a98eb296f600",
+          "sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328",
+          "bytes": 124325
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+          "git_blob": "ebab5b7d845116b907c3584b6bbc1a97d70f65ca",
+          "sha256": "ed1927cfbcccbc8ab2b96b4f9a7c185915f9c9a307d6a50205edac16c8924b57",
+          "bytes": 69601
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+          "git_blob": "3c6e7ee072e43ade4bdc3db5f98bc4cef7a85add",
+          "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+          "bytes": 11199
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+          "git_blob": "f31f8be75bfff3cbcef440900819c7d6a5d32105",
+          "sha256": "384162e88efa6f8ef00d9893c4fa9ce59e1ca4cb4e8823989ca736f88ff9c476",
+          "bytes": 18616
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "git_blob": "b3f23b0546a29171ad401f0a8956bff4cb0840f8",
+          "sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+          "bytes": 159045
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+          "git_blob": "94ea51ff9c7f9705332c9de08140641823ed5dba",
+          "sha256": "5c510df8f730907665319e6bc9b82e5c8b0423a37008e97cae02c1d02368b19f",
+          "bytes": 52389
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+          "git_blob": "f259e781e3abe3d7768c564f3614267ca891389c",
+          "sha256": "5f1f0757335087b8bfd08da9fc6b7445bccb6033024e36746a33d3d82b09b032",
+          "bytes": 108716
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "git_blob": "1f9d8cc4fe2319ec2652d8cff7528658f64fbc43",
+          "sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+          "bytes": 32170
+        }
+      ]
+    },
+    "HEAD": {
+      "commit": "e0b98ac2a2396324bc9ddf76f27dceb3eba5ffe3",
+      "files": [
+        {
+          "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+          "git_blob": "11c6d694652f9f6f27deaa1a4a9f0ff57c820596",
+          "sha256": "e601c8106b30aa6cea573f967ac33935dae298e11428051c56ff4a1527f31b0c",
+          "bytes": 166910
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+          "git_blob": "82df1342d444db11bfebb278df4f2d67b15040a0",
+          "sha256": "537de61ca658dae94459db063374379e7fceecbde43ee578f1ed04d2f8848812",
+          "bytes": 177259
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+          "git_blob": "b8ef339132077aa83bd544d5980d8e17255a1d3e",
+          "sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727",
+          "bytes": 233320
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+          "git_blob": "a97834f9872607e59aaaeee9c7ec023b5bddea3d",
+          "sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+          "bytes": 39696
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+          "git_blob": "73d6b8adebeb72fd105fe0bb4a54e95b31159c2c",
+          "sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+          "bytes": 17598
+        },
+        {
+          "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+          "git_blob": "031493cc238cbef474e8bd1df81409dac00fa2bc",
+          "sha256": "6f49dc6bfa51cb2e48a33aa44348fd353017fba59db2128685815628c6663b23",
+          "bytes": 235091
+        },
+        {
+          "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+          "git_blob": "3cc9793ada6006f6b84dcadc9f568ff79e8d6ec6",
+          "sha256": "56f93da28d9e7a0c6c3489d525da964e8ac245d2c3f2bd9bb22fb4d082637539",
+          "bytes": 466064
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+          "git_blob": "e11faa06bf5f2ea99c96f0709af42f42b1447562",
+          "sha256": "92245af1bfd7b284022e6b183b5e644615a5ce3975d7a538325b0d059d96c9cf",
+          "bytes": 29059
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+          "git_blob": "12c3c189a7c64b7c337f68f168e06513a5ab4438",
+          "sha256": "44e479783baac69c6a10633b666f8abf90b3a9ba19ef76ed073fee98ee09b405",
+          "bytes": 17296
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+          "git_blob": "60ed080716e5dee1f4fc4beda64a6e447256bfeb",
+          "sha256": "d858432b2c4b2420c81577f19cd6634a2f8736fe9fb701af15c45401cf9ea8ac",
+          "bytes": 23872
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+          "git_blob": "7eb32e40048044339907dfd0c847e377b56cd861",
+          "sha256": "89f3f21ee2fc567ec184ec43cac35f2e4637c6262c6868f4ab7339d40d588de0",
+          "bytes": 22896
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+          "git_blob": "833d5d29b082b66b4d70c262a8e35297c9937275",
+          "sha256": "2c680a5a335f7195c467d09b8a1d8c46c6ecc646128d708eaecd15015ec6d730",
+          "bytes": 24668
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+          "git_blob": "caceeabc5347ed57e0b88fb9608312ec425341b3",
+          "sha256": "a521df6947264245e851a7a32de94b93c4c3ffda77b39bd2ff4ced766b90fb5e",
+          "bytes": 18506
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+          "git_blob": "e75dc865ecf01596357455e4dc9fd2d085d2dd0c",
+          "sha256": "21a9d100868bfddd90c595bef78085e09a9af809dbcede702f67d1965517a647",
+          "bytes": 28892
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+          "git_blob": "617bae27a7b301e33390169163e86d08b85b8810",
+          "sha256": "ad408e23dd8cd6f0dde31ec83f9c1c15e393eebdeb952903655afa5ac8e1fb17",
+          "bytes": 16912
+        },
+        {
+          "path": "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+          "git_blob": "88f9502962d40924833b6db33f8f94063c04d58c",
+          "sha256": "6ed290d656d91aab07c96b8c04b5cfe8f49d8e84276b62548c870e1bc09bf5e3",
+          "bytes": 26030
+        },
+        {
+          "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+          "git_blob": "e9292df6c137a58cbf5df1e5a8c86a2f4804152c",
+          "sha256": "037a1815badd92da00c3b67266e0bce3968506ce763bfd0e501b338e7d9cb37c",
+          "bytes": 24544
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+          "git_blob": "43fce3e259817816fb7a3e3132980d69b994341e",
+          "sha256": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+          "bytes": 83047
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+          "git_blob": "7fc7546b8ab90f2892f9fe1f00d687db7ea9d9f4",
+          "sha256": "886cd48d87ddaad724f9edce1aef013a8fb88211674b57be28a7cf961c04de19",
+          "bytes": 12391
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+          "git_blob": "f68fdcd1e9111f4d4b1cb233259b9c83ad157033",
+          "sha256": "1fd40b2ad35994b02acd9ea8e9e697f448c2069d3c8835a2cc2da0705fc2a89d",
+          "bytes": 26486
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+          "git_blob": "29cf21b9323223f696e143afd86ccb793f387ae3",
+          "sha256": "abf197470b9de512d2060c893d26e10be530619e3c27c57b08dec09997f1b48e",
+          "bytes": 28019
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+          "git_blob": "01074b43fa0eceefcc6f416de9fc5b1312a0c31f",
+          "sha256": "670cc38698ec9af5c6d58f5287d5dc5100db283115f899740b151c3f97f414f6",
+          "bytes": 288910
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+          "git_blob": "a8a03ce6fac5d3abf1fcc5ad1e74fdbbcc45e6ea",
+          "sha256": "dde06db286d597d13602db2602c142782da536821c55529d73723eac0e348762",
+          "bytes": 29566
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+          "git_blob": "ab990b7e164ba987cb36870755deb0480e437db7",
+          "sha256": "c73fb4abdd261e140f066c05584a951c9fe161472766ae16f534fa84995e22cd",
+          "bytes": 19754
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+          "git_blob": "64ea8b386d3f1c3b645aa3b53c1f24f45b207700",
+          "sha256": "4b06a1d2f6a7853ceeb1b64112a413ed35b46ddc4c7e24681bcd61cce6d60bb3",
+          "bytes": 437196
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+          "git_blob": "dcd5d51988449537f5dfa22bfe9b346d209df669",
+          "sha256": "fb5d36fb13b6c3663a35f91ca337510335835234efb8b27e8361da5487518332",
+          "bytes": 55594
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+          "git_blob": "1c5b891e3010779d763f831a40622c2a33929151",
+          "sha256": "37240800688d2729319a76e6e4cd081004cafb49d0a6100c13d9663e68d90d3b",
+          "bytes": 60841
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+          "git_blob": "07987dafc3aa39ca54758278c48cc98cf7465748",
+          "sha256": "454fffec78cca075e7956a1d2536d7c3543b531d69f5358ee0b240c55333177c",
+          "bytes": 474797
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+          "git_blob": "a42d5a7c7355acd51582fbc0b41144c17b235a53",
+          "sha256": "7dcc34991f8d4ce946ee206c6eb41f7751adc25f2d722b4ad577fc0171d05bf2",
+          "bytes": 13821
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+          "git_blob": "13d5c294f8dbe8c3132ac00f85de03c39e0d0150",
+          "sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+          "bytes": 25824
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+          "git_blob": "e3870facaec7ff216f762b3f815023b06eeea8b9",
+          "sha256": "a2248f15e7fa00d70a2acb599afbde8fcb71447b1aaa5fadb2ae3d483d255bf5",
+          "bytes": 41440
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+          "git_blob": "405f6d71fc719cb85be376b0949715fae6c1c485",
+          "sha256": "e870a56d345d53969a7fa1cd2741476f9f076c517812ce20cea0c0f81b1b59be",
+          "bytes": 26720
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/NatBits.lean",
+          "git_blob": "0bfe1d6c07f81087b970d88f48d63a33bf377cd3",
+          "sha256": "987f6197f653a4969987d8999e7aa0a8aeff1748d8b41835aaea7033ec2079c1",
+          "bytes": 6422
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+          "git_blob": "7fdd1de1a4329b3a902fd05305a016fb67d5ff4f",
+          "sha256": "37181134c960c117e92e169f88174034df1bdcdac54046faac6686231774fb25",
+          "bytes": 36763
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+          "git_blob": "7edba60c93fbae3c0a0c2c54301965802eb223c2",
+          "sha256": "42a4093c90895a3c28fe8f275c1e4a7c6d4104afd19857779902d19014826c6e",
+          "bytes": 56379
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+          "git_blob": "5286529efd65041449f514cfc8c2ae80640d7cc3",
+          "sha256": "f98cf54bf8fa719c91aef9a770f55a3e088d3316eaace8c9a7be754accbc33ed",
+          "bytes": 33769
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+          "git_blob": "bac38c7c3a61e267dee4f272c79dae03305f28ba",
+          "sha256": "efcbc019105d944b6bab51479a590a8123d10d80a3f0b64f59fd4293d7894d87",
+          "bytes": 124112
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+          "git_blob": "ebab5b7d845116b907c3584b6bbc1a97d70f65ca",
+          "sha256": "ed1927cfbcccbc8ab2b96b4f9a7c185915f9c9a307d6a50205edac16c8924b57",
+          "bytes": 69601
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+          "git_blob": "3c6e7ee072e43ade4bdc3db5f98bc4cef7a85add",
+          "sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+          "bytes": 11199
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+          "git_blob": "f31f8be75bfff3cbcef440900819c7d6a5d32105",
+          "sha256": "384162e88efa6f8ef00d9893c4fa9ce59e1ca4cb4e8823989ca736f88ff9c476",
+          "bytes": 18616
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+          "git_blob": "df3d3ad4c1c50575fc0c32c1c49635eb5769fffe",
+          "sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e",
+          "bytes": 158773
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+          "git_blob": "94ea51ff9c7f9705332c9de08140641823ed5dba",
+          "sha256": "5c510df8f730907665319e6bc9b82e5c8b0423a37008e97cae02c1d02368b19f",
+          "bytes": 52389
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+          "git_blob": "f259e781e3abe3d7768c564f3614267ca891389c",
+          "sha256": "5f1f0757335087b8bfd08da9fc6b7445bccb6033024e36746a33d3d82b09b032",
+          "bytes": 108716
+        },
+        {
+          "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+          "git_blob": "b3dc216696071dfc8656430f2463057b8a44e593",
+          "sha256": "59a9f0adda2a1984485c47c740d78143e8f5d81b39d27c63f584820769ed4e81",
+          "bytes": 31910
+        }
+      ]
+    },
+    "scorer": {
+      "sha256": "f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181",
+      "bytes": 6493
+    }
+  },
+  "screen": {
+    "population": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean",
+      "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Call.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Program.lean",
+      "TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean",
+      "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+      "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "TCSlib/Complexity/TuringMachine/Build/InputCall.lean",
+      "TCSlib/Complexity/TuringMachine/Build/InputLength.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean",
+      "TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean",
+      "TCSlib/Complexity/TuringMachine/Nondeterministic.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "TCSlib/Complexity/TuringMachine/StateRenaming.lean",
+      "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean",
+      "TCSlib/Complexity/TuringMachine/UniversalK.lean",
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean"
+    ],
+    "tool_sha256": "f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181",
+    "BASE": {
+      "commit": "3a10a32e8975b79621873626198356fdea61e988",
+      "summary": "declarations screened: 2659; copy pairs (target reproduces >= half of source): 2510; reproduced text: 529,911 chars",
+      "sha256": "340f9a4ebeae14147221e2714e706004463e17629b9fae858cc6e9ceb6d145e4"
+    },
+    "HEAD": {
+      "commit": "e0b98ac2a2396324bc9ddf76f27dceb3eba5ffe3",
+      "summary": "declarations screened: 2657; copy pairs (target reproduces >= half of source): 2495; reproduced text: 528,196 chars",
+      "sha256": "a00c8f8a5571728425615ddf56dcccd115b1213d65a30fe05606dfb9a3daa2b6"
+    },
+    "new": 3,
+    "gone": 18
+  },
+  "all_selected_axioms_standard": true,
+  "auditor": "Codex",
+  "recovered_files": 1314
+}

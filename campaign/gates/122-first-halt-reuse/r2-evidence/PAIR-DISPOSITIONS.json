@@ -1,0 +1,191 @@
+[
+  {
+    "kind": "NEW",
+    "target": "ClockMachine.lean::clockTM_setup",
+    "source": "NDClockHost.lean::runCfg_initCfg",
+    "matched": 177,
+    "source_len": 289,
+    "percent": 61,
+    "disposition": "R: initial-configuration field reads (inputPos, workTapes, workTapePos) through the published MultiTapeTM.initCfg_eq and Cfg.init_* readers, replacing a definitional rfl; no published combined field lemma exists (the same glue appears in NDNormalForm)."
+  },
+  {
+    "kind": "NEW",
+    "target": "Hardness.lean::clFirst",
+    "source": "SAT.lean::sat_call_first_halt",
+    "matched": 126,
+    "source_len": 206,
+    "percent": 61,
+    "disposition": "F: first-halt result adaptation; the target and source both open with the published MultiTapeTM.exists_first_halt/exists_first_entry_of_fixed and exclude time 0 (the kind gate 121 reviewed, round 1 N1–N3). clFirst is unchanged by #242."
+  },
+  {
+    "kind": "NEW",
+    "target": "Hardness.lean::clFirst",
+    "source": "Hardness.lean::clA5_call_first_halt",
+    "matched": 126,
+    "source_len": 206,
+    "percent": 61,
+    "disposition": "F: first-halt result adaptation; the target and source both open with the published MultiTapeTM.exists_first_halt/exists_first_entry_of_fixed and exclude time 0 (the kind gate 121 reviewed, round 1 N1–N3). clFirst is unchanged by #242."
+  },
+  {
+    "kind": "GONE",
+    "target": "UniversalStartup.lean::universal_live_before",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 121,
+    "source_len": 121,
+    "percent": 100,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedCut_live_before",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 121,
+    "source_len": 121,
+    "percent": 100,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+    "source": "Deterministic.lean::mem_visitedByTapeHead_iff",
+    "matched": 60,
+    "source_len": 79,
+    "percent": 76,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "UniversalStartup.lean::universalCapture_start",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 82,
+    "source_len": 121,
+    "percent": 68,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "UniversalStartup.lean::universalCapture_start",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 82,
+    "source_len": 121,
+    "percent": 68,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedCapture_start",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 82,
+    "source_len": 121,
+    "percent": 68,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedCapture_start",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 82,
+    "source_len": 121,
+    "percent": 68,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedPrefix_live",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 79,
+    "source_len": 121,
+    "percent": 65,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedPrefix_live",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 79,
+    "source_len": 121,
+    "percent": 65,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "EXP.lean::enumCont_first_halt",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 79,
+    "source_len": 121,
+    "percent": 65,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "EXP.lean::enumCont_first_halt",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 79,
+    "source_len": 121,
+    "percent": 65,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "SAT.lean::sat_call_first_halt",
+    "source": "Finite.lean::exists_first_halt",
+    "matched": 140,
+    "source_len": 244,
+    "percent": 57,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Hardness.lean::clA5_call_first_halt",
+    "source": "Finite.lean::exists_first_halt",
+    "matched": 140,
+    "source_len": 244,
+    "percent": 57,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Finite.lean::output_prefix",
+    "source": "UniversalStartup.lean::universal_live_before",
+    "matched": 65,
+    "source_len": 121,
+    "percent": 54,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Finite.lean::output_prefix",
+    "source": "Universal.lean::timedCut_live_before",
+    "matched": 65,
+    "source_len": 121,
+    "percent": 54,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+    "source": "ConfigCount.lean::visitedByTapeHead_mono",
+    "matched": 61,
+    "source_len": 114,
+    "percent": 54,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "UniversalStartup.lean::universalCapture_start",
+    "source": "Universal.lean::timedPrefix_live",
+    "matched": 96,
+    "source_len": 191,
+    "percent": 50,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  },
+  {
+    "kind": "GONE",
+    "target": "Universal.lean::timedCapture_start",
+    "source": "Universal.lean::timedPrefix_live",
+    "matched": 96,
+    "source_len": 191,
+    "percent": 50,
+    "disposition": "removed: the old Nat.find/first-halt or liveness implementations now cite the published contracts"
+  }
+]

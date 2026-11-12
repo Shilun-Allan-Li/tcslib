@@ -20,7 +20,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 |---|---|
 | #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
-| #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
+| #242 / 122 | **Not yet clear to merge.** Round 2 at `e0b98ac2a2396324bc9ddf76f27dceb3eba5ffe3` (campaign after #241 merged in). 354-module replay, 22/24 seals (2 ruled open fronts), 104 controls passed. Codex round 2 pack committed; publication pending. |
 | #241 / 121 | **Merged** at `3a10a32e8975b79621873626198356fdea61e988` (2026-11-12). Gate closed. Its replay output is the campaign snapshot `oleans-c3a10` (campaign/status/2026-11-12-merge-241/). |
 | #252 / 130 | **Merged.** Gate closed and actual335 snapshot adopted before the Ladner merge. |
 | #249 / 128 | **Merged** as Ladner statement scaffold. Gate closed and current actual2 replay passed. |

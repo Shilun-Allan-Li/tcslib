@@ -1,7 +1,6 @@
-**Not yet clear to merge: #242.** The approved clock-capture repair
-is pushed at 6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249. The eight-module import
-chain, complete seven-definition proof seal, fourteen controls and
-literal-header equality passed. See clock-capture-post244.
-The prior four #252 consumer repairs and external selected13 PASS
-are retained. Shared gate121 reads and Call.call_run and
-Clean.cleanTM_run remain open for integrated replay and follow-up.
+**Not yet clear to merge: #242** at `e0b98ac2a2396324bc9ddf76f27dceb3eba5ffe3`.
+Round 2: the campaign after #241 is merged in. The 354-module merged-tree replay passed
+(65 inherited admissions, none in the owners). 22 of 24 whole-proof seals pass; the two failures
+are the Oblivious consumers' pre-existing reads, ruled open fronts (Seyoon, 2026-11-12), as are
+Call and Clean. All 104 paired controls passed, with no new lint. The round 2 Codex pack is
+checked and awaits publication. See pack-r2.md and resolutions-r2.md.
