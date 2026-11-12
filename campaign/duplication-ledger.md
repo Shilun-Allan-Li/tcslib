@@ -1981,3 +1981,16 @@ That PR's public API goes to Seyoon first. The analysis is in
 `campaign/status/2026-11-08-overnight/audit-reviews/122/SITE-DISPOSITIONS.md` (rows 50 and 51).
 This ruling resolves gate 122's maintainer finding M1 for #242's scope; the five shared
 gate 121 step donors were repaired by #241.
+
+**Added (Seyoon, 2026-11-12), same ruling:** the two Oblivious consumers that #242 touches by
+one line each (`simp only [id_eq] at hclock`, adapting to the approved
+`clockStageCfg_captures` header) are also open rule-10 fronts for the same scheduled reader PR,
+not debt:
+- `obliviousSchedule_ready` (`Robustness/Oblivious.lean`): its unchanged statement elaborates
+  only by unfolding `obliviousSchedule`'s `k` and `State`, and its proof runs `simp [setupCfg]`;
+- `obliviousSchedule_halts` (`Robustness/ObliviousLedger.lean`): its proof reads
+  `clockStageCfg`'s fields by `change` and `rw`.
+
+The reader PR needs public field readers for `clockStageCfg` and `setupCfg`
+(`Robustness/ObliviousCandidate`) and a statement rewrite of `obliviousSchedule_ready` through
+`obliviousSchedule_k`/`_State`; its API and the statement change go to Seyoon first.
