@@ -19,8 +19,8 @@ and opens round 2, a full re-audit.
 
 | # | Severity | Finding | Disposition | Where |
 |---|---|---|---|---|
-| 1 | major (debt) | An anonymous `example` restated `probQubit_basis` with the identical two-line proof; the copy screen misattributed it to `probQubit_zero_add_one` | **Repaired** (the auditor's direct repair): the `example` is deleted. **Human acknowledgment: pending** (see below) | `Measure.lean` |
-| 2 | major (debt) | `hadamardMat_mem_unitaryGroup` and `Gate.H_mul_H` each computed the four entries of the Hadamard square | **Repaired** (the auditor's construction): two public matrix-level lemmas before `Gate.H`, `hadamardMat_conjTranspose` (`Hᴴ = H`) and `hadamardMat_mul_self` (`H H = 1`). Unitarity is now `star H * H = H * H = 1` by rewriting with both; `H_mul_H` is `Subtype.ext hadamardMat_mul_self`. The square is computed once. While repairing, the copy screen showed `hadamardMat_mul_self` sharing the four-entry case split with the private `gate1_ext`; that split is now the private matrix-level `mat1_ext`, and `gate1_ext` is `Subtype.ext (mat1_ext h)`. **Human acknowledgment: pending** | `Gates.lean` |
+| 1 | major (debt) | An anonymous `example` restated `probQubit_basis` with the identical two-line proof; the copy screen misattributed it to `probQubit_zero_add_one` | **Repaired** (the auditor's direct repair): the `example` is deleted. **Acknowledged by the owner** (2026-11-12, below) | `Measure.lean` |
+| 2 | major (debt) | `hadamardMat_mem_unitaryGroup` and `Gate.H_mul_H` each computed the four entries of the Hadamard square | **Repaired** (the auditor's construction): two public matrix-level lemmas before `Gate.H`, `hadamardMat_conjTranspose` (`Hᴴ = H`) and `hadamardMat_mul_self` (`H H = 1`). Unitarity is now `star H * H = H * H = 1` by rewriting with both; `H_mul_H` is `Subtype.ext hadamardMat_mul_self`. The square is computed once. While repairing, the copy screen showed `hadamardMat_mul_self` sharing the four-entry case split with the private `gate1_ext`; that split is now the private matrix-level `mat1_ext`, and `gate1_ext` is `Subtype.ext (mat1_ext h)`. **Acknowledged by the owner** (2026-11-12, below) | `Gates.lean` |
 | 3 | minor | Two sketches described a step differently from the code | **Repaired.** `applyOn_permMat_mulVec_apply` now names `Finset.sum_eq_single`, the lemma the proof uses. The Hadamard unitarity sketch now describes the two-lemma route of the repair | `ApplyOn.lean`, `Gates.lean` |
 | 4 | minor | `applyOn_mulVec_apply` and `applyOn_wire_mulVec_apply` hold for arbitrary matrices and vectors, not only the textbook's unitary gates; "new value `a`" misnamed the input bit | **Repaired.** Both docstrings call themselves coordinate formulas for an arbitrary matrix and vector that extend [dW26, §2.1.2] and [dW26, §1.4]. The one-wire docstring says `a` is the input bit and `y i` the output bit, and says "operator" rather than "gate" | `ApplyOn.lean` |
 | 5 | minor | Three long proofs lacked inline step markers (policy §3) | **Repaired.** Comments mark the sketch's steps in `applyOn_mul_applyOn_of_disjoint` (the candidate `z*` and its properties; the single surviving term; the term at `z*`; uniqueness), `no_cloning_of_overlap` (the two inner products; preservation by `U`; the moduli) and `teleport_outcome_prob` (the reindexing by Bob's bit; unitarity; the bijection; the summands) | `ApplyOn.lean`, `Protocols.lean` |
@@ -41,13 +41,13 @@ and opens round 2, a full re-audit.
 - **Answer 6, process.** The single-owner fill and the in-place promotions depart from
   `workflow.md` §4's parallel batches and shared-file window. The auditor accepts
   `superdenseState_vec_aux` as the way to keep audited order, and asks that the maintainer's
-  acceptance of the departures be recorded here. **Owner acceptance: pending** (see below).
+  acceptance of the departures be recorded here. **Accepted by the owner** (2026-11-12, below).
 - **Pack errata.** The pack said the 7 `Quantum` modules report "no diagnostic at all"; the sweep
   counts warning and error lines only (finding 8). The pack's "212 → 246 declarations" counted
   the anonymous instance as a declaration and the anonymous `example` not at all (finding 7). The
   pack is not edited (`workflow.md` §3).
 
-### Human acknowledgments required before the gate can close
+### Human acknowledgments
 
 `workflow.md` §4: "a debt major closes only by explicit human acknowledgment recorded in the
 resolutions file". Both majors are repaired by removing the duplication, so what the owner
@@ -55,9 +55,9 @@ acknowledges is that disposition.
 
 | Item | Owner decision |
 |---|---|
-| Major 1: the duplicate `example` removed | *pending* |
-| Major 2: the Hadamard square factored into `hadamardMat_mul_self` (with `hadamardMat_conjTranspose` and `mat1_ext`) | *pending* |
-| Answer 6: the single-owner fill and in-place promotions accepted as disclosed departures from `workflow.md` §4 | *pending* |
+| Major 1: the duplicate `example` removed | **Acknowledged**, a-gupte, 2026-11-12 |
+| Major 2: the Hadamard square factored into `hadamardMat_mul_self` (with `hadamardMat_conjTranspose` and `mat1_ext`) | **Acknowledged**, a-gupte, 2026-11-12 |
+| Answer 6: the single-owner fill and in-place promotions accepted as disclosed departures from `workflow.md` §4 | **Accepted**, a-gupte, 2026-11-12 |
 
 ### Round-2 baseline
 
