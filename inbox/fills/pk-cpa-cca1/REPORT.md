@@ -1,13 +1,13 @@
-# Fill report · `pk-cpa-cca1` · checkpoint 1
+# Fill report · `pk-cpa-cca1` · checkpoint 2
 
 **Worker** Claude (external fill, exchange push route). **Issue base**
 `8c3afbff69ad1273446750f47c05d424ab13ebe2` on `cryptography/pass-shelat-ch2-4`. **Proof branch**
-local `fill/pk-cpa-cca1` (4 commits over the base; never pushed). **Pack** read at exchange
+local `fill/pk-cpa-cca1` (6 commits over the base; never pushed). **Pack** read at exchange
 `db04fd415`; `sha256sum -c SHA256SUMS` in `outbox/fills/pk-cpa-cca1/`: all 7 OK
 (`evidence/logs/pack-sha256.log`). Source hashes: `sha256sum -c SOURCE-SHA256SUMS` at the base,
 242/242 OK (`evidence/logs/source-sha256.log`).
 
-## Status: step 1 done; targets still admitted
+## Status: steps 1 and 2 done; targets still admitted
 
 **Step 1 (PRF → random function) is proved.** For an adversary `A`, a budget `q`, the attack
 (`atkOf true = CCA1`, `atkOf false = CPA`) and a bit `b`:
@@ -30,7 +30,27 @@ outer oracle `f`, is the experiment with the tapes in advance (`eImpl`) while fe
 tapes are used, which the budget guarantees (`simulate_eq_of_abs_bounded`); uniform tapes give
 fresh nonces (`expect_eImpl`). At `n = 0` the final bound will use `advantage ≤ 1`.
 
-Next: step 2 (lazy random function, identical until bad, the collision bound) and step 3.
+**Step 2 (the random-function game) is proved.**
+
+- `PRFGame.expect_lazyImpl` (`OracleFromPRF/Lazy.lean`): the experiment with a uniform random
+  function sampled in advance (`fImpl … R`, averaged over `R`) is the experiment with a lazily
+  sampled one (`lazyImpl`). The lazy state is a table of asked points, the challenge record
+  `⟨m₀ ‖ m₁, c⟩` and a bad flag; the challenge's nonce `r*` is not entered in the table and its
+  value is read back as `c ⊕ m_b` (`look`), so the state itself does not depend on `b`.
+- The bad event (`lazyImpl`'s flag): the challenge's `r*` is already a point of the table (an
+  earlier encryption's nonce or, for CCA1, a pre-challenge decryption's), or a later encryption
+  uses `r*`. Decryption is refused after the challenge for CPA and CCA1, so it never reads `b`.
+- `PRFGame.lazyImpl_agree` + `identical_until_bad`: from a good state, the experiments for
+  `b = 0` and `b = 1` give good successors the same law. At the first challenge the pad is
+  re-parametrized by `y ↦ y ⊕ m₀ ⊕ m₁` (`xorPerm`, `expect_sample_equiv`), which maps `b = 0`'s
+  ciphertext to `b = 1`'s with the same record.
+- `PRFGame.lazyImpl_step`: a query from a good state raises the flag with probability at most
+  `(|T| + 1) / 2ⁿ` (the first challenge via `prob_mem_le` on the table's keys; an encryption via
+  `prob_mem_le` on `[r*]`); `lazyImpl_grow`: a query adds at most one point.
+- `PRFGame.prob_bad_le` (generic potential bound): hence `Pr[bad] ≤ q · q / 2ⁿ`, and
+  `PRFGame.abs_prob_lazyImpl_sub_le`: `|Pr₀[A → 1] − Pr₁[A → 1]| ≤ q² / 2ⁿ` in the lazy experiments.
+
+Next: step 3 (combine with step 1 per bit, the negligible bound, and the two targets).
 
 ## Files so far
 
@@ -38,7 +58,8 @@ Next: step 2 (lazy random function, identical until bad, the collision bound) an
   `indSpec_encRng`, `indImpl_enc_onSpec`, `indImpl_challenge_repeat_onSpec` (public, not simp,
   formula docstrings), nothing else changed.
 - New helpers under `PrivateKey/OracleFromPRF/`: `Games.lean` (327 lines), `Handler.lean` (711),
-  `Reduction.lean` (361), `Transfer.lean` (≈190).
+  `Reduction.lean` (361), `Transfer.lean` (≈190), `Lazy.lean` (466), `Collision.lean` (≈440,
+  imports `Games/Hopping`).
 - Owned `PrivateKey/OracleFromPRF.lean`: 579 → 784 lines (step-1 section before the targets).
 
 ## Environment
@@ -57,4 +78,4 @@ Next: step 2 (lazy random function, identical until bad, the collision bound) an
   import, in dependency order (`bootstrap-extra*.log`). `Games/Hopping` is not in the issued order
   list; it will be inserted (its imports and roots are already covered).
 
-**Checkpoint 1 — step 1 proved; steps 2 and 3 in progress**
+**Checkpoint 2 — steps 1 and 2 proved; step 3 in progress**
