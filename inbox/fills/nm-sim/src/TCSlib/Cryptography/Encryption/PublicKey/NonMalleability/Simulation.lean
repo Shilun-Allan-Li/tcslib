@@ -715,6 +715,7 @@ private theorem abs_le_of_gap {a b R₁ I₁ R₂ I₂ e₁ e₂ : ℝ} (hr : 2 
 5. Hence `NM`'s advantage is at most `2·adv(D') + adv(D'')`, negligible (`accept_snmReal_eq`,
    `accept_snmIdeal_eq` read both experiments on T2's lengths). -/
 theorem nmSecure_of_simNMSecure (atk : Attack) (h : S.SimNMSecure atk) : S.NMSecure atk := by
+  rw [S.NMSecure_iff]
   intro A q ℓ D
   obtain ⟨A', hA'⟩ := exists_interactiveHandlerMachine A q (NMSim.snmDin S (S.msgLen.add S.msgLen))
     (NMSim.snmDout S (.const 0)) (NMSim.snmDin S (S.msgLen.add S.msgLen))
@@ -768,7 +769,8 @@ theorem simNMSecure_of_nmSecure_cpa (h : S.NMSecure .cpa) : S.SimNMSecure .cpa :
   obtain ⟨B, qB, hB⟩ := NMSim.exists_nmAdversary S M.samp M.paramLen M.histLen M.hist
     M.hist_poly r sl A q
   refine ⟨Sim, fun D => ?_⟩
-  obtain ⟨ε, hε, hεn⟩ := h B qB (NMSim.nmLen S M.paramLen r sl) (NMSim.recDist S M.paramLen r D)
+  obtain ⟨ε, hε, hεn⟩ := (S.NMSecure_iff .cpa).1 h B qB (NMSim.nmLen S M.paramLen r sl)
+    (NMSim.recDist S M.paramLen r D)
   refine ⟨ε, hε, fun n => ?_⟩
   have h₀ := hεn n
   rw [advantage_eq] at h₀

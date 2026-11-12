@@ -113,6 +113,10 @@ theorem finSt_finInput (n : ℕ) (z ω s a L : List Bool) :
     finSt (InteractiveHandler.finInput n z ω s a L) = s := by
   rw [finSt, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairFstD_pairEncode]
 
+/-- The state reader is polynomial-time. -/
+theorem polyTimeComputable_finSt : PolyTimeComputable finSt :=
+  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+
 /-- **The flagged entry** of a ciphertext `c`, on the context `⟨1^n, s⟩` with the state
 `s = [flag] ‖ ỹ ‖ …`: `[flag ∧ c = ỹ]` followed by `c`. -/
 def flagF (ctx c : List Bool) : List Bool :=
@@ -181,7 +185,7 @@ theorem simFin_eq (r : PolyExpr) (w : List Bool) :
 /-- The finalization round is polynomial-time. -/
 theorem polyTimeComputable_simFin (r : PolyExpr) : PolyTimeComputable (simFin S r) := by
   obtain ⟨hU, -, -, hA, -⟩ := polyTimeComputable_finFields
-  have hS : PolyTimeComputable finSt := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hS := polyTimeComputable_finSt
   have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (finU w).length) :=
     ((polyTimeComputable_pairTakePoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]

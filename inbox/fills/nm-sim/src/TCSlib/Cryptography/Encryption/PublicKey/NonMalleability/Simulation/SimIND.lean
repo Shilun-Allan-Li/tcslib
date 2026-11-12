@@ -511,7 +511,8 @@ noncomputable def tailDist : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_tailFun S D) D.coins D.adv D.advice D.advice_length
 
 /-- `D'` has `D`'s coins. -/
-theorem tailDist_coins : (tailDist S D).coins = D.coins := rfl
+theorem tailDist_coins : (tailDist S D).coins = D.coins := by
+  rw [tailDist, NUPPT.coins_ofPolyTime]
 
 /-- **`D'`'s verdict** on a view `y`, with `D`'s coins `rD` carried over: with `L = msgLen(n)`,
 `0` if `y`'s first two `L`-bit blocks are equal, and otherwise `[D(entryTails (y.drop 3L)) =
@@ -708,7 +709,9 @@ private theorem expect_runB_good (G : (Fin (ℓ * S.ctLen.eval n) → Bool) ×
     | 0 =>
       rw [rImpl_dec]
       split <;> exact OracleComp.allOutputs_pure.2 rfl
-    | 1 => exact OracleComp.allOutputs_pure.2 rfl
+    | 1 =>
+      rw [rImpl_some]
+      exact OracleComp.allOutputs_pure.2 rfl
   have hstick : ∀ (β : Bool) i x s, badHalves S n s →
       (rImpl S atk false (halfSamp S) (S.msgLen.add S.msgLen) (.const 0) hist n pk sk
         ((halfCoins S n).symm β) ρ' none i x s).AllOutputs fun ys => badHalves S n ys.2 := by

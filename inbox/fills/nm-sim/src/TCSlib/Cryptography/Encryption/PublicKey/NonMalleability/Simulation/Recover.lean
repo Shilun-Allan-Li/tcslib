@@ -223,7 +223,8 @@ noncomputable def recDist : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_recFun S pl r D) D.coins D.adv D.advice D.advice_length
 
 /-- The NM distinguisher has `D`'s coins. -/
-theorem recDist_coins : (recDist S pl r D).coins = D.coins := rfl
+theorem recDist_coins : (recDist S pl r D).coins = D.coins := by
+  rw [recDist, NUPPT.coins_ofPolyTime]
 
 /-- **The NM distinguisher's verdict** on the decryptions `u`, with `D`'s coins `rD` carried over,
 is `D`'s verdict on the view read back: `recDist.distinguisherL n u rD = D.distinguisherL n
@@ -376,14 +377,12 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
   have hW : nmOutL S samp r n ctx a aP mP = cs.flatten := by
     rw [nmOutL_eq, hcs, List.flatten_append, List.flatten_flatten, List.flatten_flatten,
       List.map_map, List.map_map]
-    congr 1
-    · congr 1
-      refine List.map_congr_left fun i _ => ?_
+    refine congrArg₂ (· ++ ·) (congrArg List.flatten ?_) (congrArg List.flatten ?_)
+    · refine List.map_congr_left fun i _ => ?_
       rw [Function.comp_apply, encF_eq, encPair_eq, ctxSt_eq, hctx]
       simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, List.flatten_cons,
         List.flatten_nil, List.append_nil, hfdef]
-    · congr 1
-      refine List.map_congr_left fun x _ => ?_
+    · refine List.map_congr_left fun x _ => ?_
       rw [Function.comp_apply, encPair_eq]
       simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
   have hcs_len : cs.length = (nmLen S pl r sl).eval n := by
@@ -430,13 +429,11 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
     rw [hcs, List.map_append, List.flatten_append, List.map_flatten, List.map_flatten,
       List.flatten_flatten, List.flatten_flatten, List.map_map, List.map_map, List.map_map,
       List.map_map]
-    congr 1
-    · congr 1
-      refine List.map_congr_left fun i _ => ?_
+    refine congrArg₂ (· ++ ·) (congrArg List.flatten ?_) (congrArg List.flatten ?_)
+    · refine List.map_congr_left fun i _ => ?_
       simp only [Function.comp_apply, List.map_cons, List.map_nil, List.flatten_cons,
         List.flatten_nil, List.append_nil]
-    · congr 1
-      refine List.map_congr_left fun x _ => ?_
+    · refine List.map_congr_left fun x _ => ?_
       simp only [Function.comp_apply, List.map_cons, List.map_nil, List.flatten_cons,
         List.flatten_nil, List.append_nil]
   have h3 : ((PolyExpr.const 3).mul (S.msgLen.add (.const 1))).eval n =

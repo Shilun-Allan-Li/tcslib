@@ -1,0 +1,85 @@
+scratch/seal/ControlsSealedB.lean:10:51: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (PolyExpr.const 3).eval n = 3
+scratch/seal/ControlsSealedB.lean:14:72: error: Function expected at
+  h
+but this term has type
+  S.NMSecure atk
+
+Note: Expected a function because this term is being applied to the argument
+  A
+scratch/seal/ControlsSealedB.lean:17:11: error: Type mismatch
+  h
+has type
+  OracleComp.AllOutputs P (OracleComp.pure a)
+but is expected to have type
+  P a
+scratch/seal/ControlsSealedB.lean:21:48: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (NUPPT.ofPolyTime hf c a α hα).coins = c
+scratch/seal/ControlsSealedB.lean:23:79: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  snmDin S pl 0 = S.ctLen
+scratch/seal/ControlsSealedB.lean:26:81: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  entryL S n sk true c = true :: List.replicate (S.msgLen.eval n + 1) false
+scratch/seal/ControlsSealedB.lean:28:69: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (halfSamp S).coins = PolyExpr.const 1
+scratch/seal/ControlsSealedB.lean:32:42: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  simHandler S ℓ = copyHandler S (S.msgLen.add S.msgLen) (PolyExpr.const 0) ((ℓ.mul S.ctLen).add (PolyExpr.const 0))
+scratch/seal/ControlsSealedB.lean:34:63: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  rdState w = pairFstD (pairSndD w)
+scratch/seal/ControlsSealedB.lean:37:59: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (chalHandler P).perCall = PolyExpr.const 1
+scratch/seal/ControlsSealedB.lean:39:61: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  finSt w = pairFstD (pairSndD w)
+scratch/seal/ControlsSealedB.lean:42:90: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  nmLen S pl r sl = ((PolyExpr.const 3).mul r).add ((PolyExpr.const 2).mul ((pl.add S.msgLen).add sl))
+scratch/seal/ControlsSealedB.lean:44:69: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  bitG ctx ch = [NMCCA2.guessBit ch]
+scratch/seal/ControlsSealedB.lean:48:2: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  S.snmCodec M n r sl = bitCodec (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl)

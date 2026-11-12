@@ -1,0 +1,234 @@
+From a0ea340a1795be9a8e3776cfbedd6b653390223a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 22:25:52 +0000
+Subject: [PATCH 3/3] nm-sim: read foreign definitions only through their
+ published lemmas
+
+Seal findings: AllOutputs/CostBoundedBy are read through allOutputs_pure,
+allOutputs_query and costBoundedBy_query; NMSecure through NMSecure_iff;
+ofPolyTime's coins through coins_ofPolyTime; rImpl through rImpl_some; finSt's
+polynomial-time bound is published by Simulator. Recover drops two slow
+congr steps.
+---
+ .../PublicKey/NonMalleability/Simulation.lean |  4 +++-
+ .../NonMalleability/Simulation/Challenge.lean | 13 +++++++++----
+ .../NonMalleability/Simulation/Generic.lean   |  4 +++-
+ .../NonMalleability/Simulation/Recover.lean   | 19 ++++++++-----------
+ .../NonMalleability/Simulation/Reduction.lean |  2 +-
+ .../NonMalleability/Simulation/Rounds.lean    | 12 ++++++++----
+ .../NonMalleability/Simulation/SimIND.lean    |  7 +++++--
+ .../NonMalleability/Simulation/Simulator.lean |  6 +++++-
+ 8 files changed, 42 insertions(+), 25 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+index b3cd08559..d888b25e2 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation.lean
+@@ -715,6 +715,7 @@ private theorem abs_le_of_gap {a b R₁ I₁ R₂ I₂ e₁ e₂ : ℝ} (hr : 2
+ 5. Hence `NM`'s advantage is at most `2·adv(D') + adv(D'')`, negligible (`accept_snmReal_eq`,
+    `accept_snmIdeal_eq` read both experiments on T2's lengths). -/
+ theorem nmSecure_of_simNMSecure (atk : Attack) (h : S.SimNMSecure atk) : S.NMSecure atk := by
++  rw [S.NMSecure_iff]
+   intro A q ℓ D
+   obtain ⟨A', hA'⟩ := exists_interactiveHandlerMachine A q (NMSim.snmDin S (S.msgLen.add S.msgLen))
+     (NMSim.snmDout S (.const 0)) (NMSim.snmDin S (S.msgLen.add S.msgLen))
+@@ -768,7 +769,8 @@ theorem simNMSecure_of_nmSecure_cpa (h : S.NMSecure .cpa) : S.SimNMSecure .cpa :
+   obtain ⟨B, qB, hB⟩ := NMSim.exists_nmAdversary S M.samp M.paramLen M.histLen M.hist
+     M.hist_poly r sl A q
+   refine ⟨Sim, fun D => ?_⟩
+-  obtain ⟨ε, hε, hεn⟩ := h B qB (NMSim.nmLen S M.paramLen r sl) (NMSim.recDist S M.paramLen r D)
++  obtain ⟨ε, hε, hεn⟩ := (S.NMSecure_iff .cpa).1 h B qB (NMSim.nmLen S M.paramLen r sl)
++    (NMSim.recDist S M.paramLen r D)
+   refine ⟨ε, hε, fun n => ?_⟩
+   have h₀ := hεn n
+   rw [advantage_eq] at h₀
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+index a219f55f1..0f6ea8e98 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Challenge.lean
+@@ -380,10 +380,12 @@ theorem chalHandler_costBoundedBy {α : Type}
+     match i, x with
+     | 0, x =>
+       rw [chalHandler_impl_dec]
+-      exact ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩
++      exact ⟨OracleComp.costBoundedBy_pure _ _ _,
++        OracleComp.allOutputs_pure.2 ⟨⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩⟩
+     | 1, x =>
+       rw [chalHandler_impl_some]
+-      exact ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩
++      exact ⟨OracleComp.costBoundedBy_pure _ _ _,
++        OracleComp.allOutputs_pure.2 ⟨⟨some (y, h, a), rfl⟩, ⟨y, h, a, rfl⟩⟩⟩
+   · obtain ⟨o, rfl⟩ := hg
+     cases o with
+     | some yha => exact absurd ⟨yha.1, yha.2.1, yha.2.2, rfl⟩ hu
+@@ -391,11 +393,14 @@ theorem chalHandler_costBoundedBy {α : Type}
+       match i, x with
+       | 0, x =>
+         rw [chalHandler_impl_dec]
+-        exact Or.inl ⟨OracleComp.costBoundedBy_pure _ _ _, ⟨none, rfl⟩, hu⟩
++        exact Or.inl ⟨OracleComp.costBoundedBy_pure _ _ _,
++          OracleComp.allOutputs_pure.2 ⟨⟨none, rfl⟩, hu⟩⟩
+       | 1, x =>
+         rw [chalHandler_impl_none]
+         exact Or.inr ⟨(OracleComp.costBoundedBy_query _ _ _ _ _).2 ⟨le_rfl, fun _ =>
+-          OracleComp.costBoundedBy_pure _ _ _⟩, fun _ => ⟨⟨some (_, _, padFin _ (List.ofFn x)), rfl⟩, ⟨_, _, padFin _ (List.ofFn x), rfl⟩⟩⟩
++          OracleComp.costBoundedBy_pure _ _ _⟩, OracleComp.allOutputs_query.2 fun _ =>
++            OracleComp.allOutputs_pure.2 ⟨⟨some (_, _, padFin _ (List.ofFn x)), rfl⟩,
++              ⟨_, _, padFin _ (List.ofFn x), rfl⟩⟩⟩
+ 
+ end Calls
+ 
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+index 0d028c80b..0be537a8a 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Generic.lean
+@@ -133,7 +133,9 @@ theorem bind_congr_of_allOutputs {ι : Type} {spec : OracleSpec ι} {c : OracleC
+     {P : α → Prop} (hc : c.AllOutputs P) {f g : α → OracleComp spec β}
+     (h : ∀ a, P a → f a = g a) : c.bind f = c.bind g := by
+   induction c with
+-  | pure a => exact h a hc
++  | pure a =>
++    rw [OracleComp.pure_bind, OracleComp.pure_bind]
++    exact h a (OracleComp.allOutputs_pure.1 hc)
+   | query i x k ih =>
+     rw [OracleComp.query_bind, OracleComp.query_bind]
+     congr 1
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+index 528f63ec7..42b0f44b6 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Recover.lean
+@@ -223,7 +223,8 @@ noncomputable def recDist : NUPPT :=
+   NUPPT.ofPolyTime (polyTimeComputable_recFun S pl r D) D.coins D.adv D.advice D.advice_length
+ 
+ /-- The NM distinguisher has `D`'s coins. -/
+-theorem recDist_coins : (recDist S pl r D).coins = D.coins := rfl
++theorem recDist_coins : (recDist S pl r D).coins = D.coins := by
++  rw [recDist, NUPPT.coins_ofPolyTime]
+ 
+ /-- **The NM distinguisher's verdict** on the decryptions `u`, with `D`'s coins `rD` carried over,
+ is `D`'s verdict on the view read back: `recDist.distinguisherL n u rD = D.distinguisherL n
+@@ -376,14 +377,12 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+   have hW : nmOutL S samp r n ctx a aP mP = cs.flatten := by
+     rw [nmOutL_eq, hcs, List.flatten_append, List.flatten_flatten, List.flatten_flatten,
+       List.map_map, List.map_map]
+-    congr 1
+-    · congr 1
+-      refine List.map_congr_left fun i _ => ?_
++    refine congrArg₂ (· ++ ·) (congrArg List.flatten ?_) (congrArg List.flatten ?_)
++    · refine List.map_congr_left fun i _ => ?_
+       rw [Function.comp_apply, encF_eq, encPair_eq, ctxSt_eq, hctx]
+       simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, List.flatten_cons,
+         List.flatten_nil, List.append_nil, hfdef]
+-    · congr 1
+-      refine List.map_congr_left fun x _ => ?_
++    · refine List.map_congr_left fun x _ => ?_
+       rw [Function.comp_apply, encPair_eq]
+       simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
+   have hcs_len : cs.length = (nmLen S pl r sl).eval n := by
+@@ -430,13 +429,11 @@ theorem recView_nmOutL (n : ℕ) (rg : S.gen.Coins n) (hL : 0 < S.msgLen.eval n)
+     rw [hcs, List.map_append, List.flatten_append, List.map_flatten, List.map_flatten,
+       List.flatten_flatten, List.flatten_flatten, List.map_map, List.map_map, List.map_map,
+       List.map_map]
+-    congr 1
+-    · congr 1
+-      refine List.map_congr_left fun i _ => ?_
++    refine congrArg₂ (· ++ ·) (congrArg List.flatten ?_) (congrArg List.flatten ?_)
++    · refine List.map_congr_left fun i _ => ?_
+       simp only [Function.comp_apply, List.map_cons, List.map_nil, List.flatten_cons,
+         List.flatten_nil, List.append_nil]
+-    · congr 1
+-      refine List.map_congr_left fun x _ => ?_
++    · refine List.map_congr_left fun x _ => ?_
+       simp only [Function.comp_apply, List.map_cons, List.map_nil, List.flatten_cons,
+         List.flatten_nil, List.append_nil]
+   have h3 : ((PolyExpr.const 3).mul (S.msgLen.add (.const 1))).eval n =
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+index 8722d6178..cc392b84e 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Reduction.lean
+@@ -250,7 +250,7 @@ theorem nmFin_eq (r : PolyExpr) (w : List Bool) :
+ /-- The finalization round is polynomial-time. -/
+ theorem polyTimeComputable_nmFin (r : PolyExpr) : PolyTimeComputable (nmFin S samp hl r) := by
+   obtain ⟨hU, hZ, hW, hA, -⟩ := polyTimeComputable_finFields
+-  have hS : PolyTimeComputable finSt := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hS := polyTimeComputable_finSt
+   have hctx : PolyTimeComputable fun w =>
+       pairEncode (finU w) (pairEncode (finZ w) (pairEncode (finW w) (finSt w))) :=
+     hU.pairEncode (hZ.pairEncode (hW.pairEncode hS))
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+index 27999cc69..ab0056971 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Rounds.lean
+@@ -291,12 +291,16 @@ theorem costBoundedBy_bind_of_allOutputs {cost : ι → ℕ} {c : OracleComp spe
+     (hP : c.AllOutputs P) (hf : ∀ a, P a → (f a).CostBoundedBy cost q₂) :
+     (c.bind f).CostBoundedBy cost (q₁ + q₂) := by
+   induction c generalizing q₁ with
+-  | pure a => exact (hf a hP).mono (Nat.le_add_left _ _)
++  | pure a =>
++    rw [OracleComp.pure_bind]
++    exact (hf a (OracleComp.allOutputs_pure.1 hP)).mono (Nat.le_add_left _ _)
+   | query i x k ih =>
+-    obtain ⟨hi, hk⟩ := hc
+-    refine ⟨Nat.le_trans hi (Nat.le_add_right _ _), fun y => ?_⟩
++    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
++    rw [OracleComp.query_bind]
++    refine (OracleComp.costBoundedBy_query _ _ _ _ _).2
++      ⟨Nat.le_trans hi (Nat.le_add_right _ _), fun y => ?_⟩
+     rw [Nat.sub_add_comm hi]
+-    exact ih y (hk y) (hP y)
++    exact ih y (hk y) (OracleComp.allOutputs_query.1 hP y)
+ 
+ /-- **A one-shot oracle costs at most one query in total.** Let `good` be an invariant of the
+ states and `used` mark the states after the costly call. If from a good used state every call is
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+index c090df290..308535ce8 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/SimIND.lean
+@@ -511,7 +511,8 @@ noncomputable def tailDist : NUPPT :=
+   NUPPT.ofPolyTime (polyTimeComputable_tailFun S D) D.coins D.adv D.advice D.advice_length
+ 
+ /-- `D'` has `D`'s coins. -/
+-theorem tailDist_coins : (tailDist S D).coins = D.coins := rfl
++theorem tailDist_coins : (tailDist S D).coins = D.coins := by
++  rw [tailDist, NUPPT.coins_ofPolyTime]
+ 
+ /-- **`D'`'s verdict** on a view `y`, with `D`'s coins `rD` carried over: with `L = msgLen(n)`,
+ `0` if `y`'s first two `L`-bit blocks are equal, and otherwise `[D(entryTails (y.drop 3L)) =
+@@ -708,7 +709,9 @@ private theorem expect_runB_good (G : (Fin (ℓ * S.ctLen.eval n) → Bool) ×
+     | 0 =>
+       rw [rImpl_dec]
+       split <;> exact OracleComp.allOutputs_pure.2 rfl
+-    | 1 => exact OracleComp.allOutputs_pure.2 rfl
++    | 1 =>
++      rw [rImpl_some]
++      exact OracleComp.allOutputs_pure.2 rfl
+   have hstick : ∀ (β : Bool) i x s, badHalves S n s →
+       (rImpl S atk false (halfSamp S) (S.msgLen.add S.msgLen) (.const 0) hist n pk sk
+         ((halfCoins S n).symm β) ρ' none i x s).AllOutputs fun ys => badHalves S n ys.2 := by
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+index 7a0a243f5..8a52f9218 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/NonMalleability/Simulation/Simulator.lean
+@@ -113,6 +113,10 @@ theorem finSt_finInput (n : ℕ) (z ω s a L : List Bool) :
+     finSt (InteractiveHandler.finInput n z ω s a L) = s := by
+   rw [finSt, InteractiveHandler.finInput_eq, pairSndD_pairEncode, pairFstD_pairEncode]
+ 
++/-- The state reader is polynomial-time. -/
++theorem polyTimeComputable_finSt : PolyTimeComputable finSt :=
++  polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++
+ /-- **The flagged entry** of a ciphertext `c`, on the context `⟨1^n, s⟩` with the state
+ `s = [flag] ‖ ỹ ‖ …`: `[flag ∧ c = ỹ]` followed by `c`. -/
+ def flagF (ctx c : List Bool) : List Bool :=
+@@ -181,7 +185,7 @@ theorem simFin_eq (r : PolyExpr) (w : List Bool) :
+ /-- The finalization round is polynomial-time. -/
+ theorem polyTimeComputable_simFin (r : PolyExpr) : PolyTimeComputable (simFin S r) := by
+   obtain ⟨hU, -, -, hA, -⟩ := polyTimeComputable_finFields
+-  have hS : PolyTimeComputable finSt := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hS := polyTimeComputable_finSt
+   have htake : PolyTimeComputable fun w => (finA w).take ((r.mul S.ctLen).eval (finU w).length) :=
+     ((polyTimeComputable_pairTakePoly (r.mul S.ctLen)).comp (hU.pairEncode hA)).congr fun w => by
+       simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+-- 
+2.43.0
+

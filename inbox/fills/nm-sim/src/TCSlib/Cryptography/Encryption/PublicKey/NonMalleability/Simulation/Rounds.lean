@@ -291,12 +291,16 @@ theorem costBoundedBy_bind_of_allOutputs {cost : ι → ℕ} {c : OracleComp spe
     (hP : c.AllOutputs P) (hf : ∀ a, P a → (f a).CostBoundedBy cost q₂) :
     (c.bind f).CostBoundedBy cost (q₁ + q₂) := by
   induction c generalizing q₁ with
-  | pure a => exact (hf a hP).mono (Nat.le_add_left _ _)
+  | pure a =>
+    rw [OracleComp.pure_bind]
+    exact (hf a (OracleComp.allOutputs_pure.1 hP)).mono (Nat.le_add_left _ _)
   | query i x k ih =>
-    obtain ⟨hi, hk⟩ := hc
-    refine ⟨Nat.le_trans hi (Nat.le_add_right _ _), fun y => ?_⟩
+    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query _ _ _ _ _).1 hc
+    rw [OracleComp.query_bind]
+    refine (OracleComp.costBoundedBy_query _ _ _ _ _).2
+      ⟨Nat.le_trans hi (Nat.le_add_right _ _), fun y => ?_⟩
     rw [Nat.sub_add_comm hi]
-    exact ih y (hk y) (hP y)
+    exact ih y (hk y) (OracleComp.allOutputs_query.1 hP y)
 
 /-- **A one-shot oracle costs at most one query in total.** Let `good` be an invariant of the
 states and `used` mark the states after the costly call. If from a good used state every call is

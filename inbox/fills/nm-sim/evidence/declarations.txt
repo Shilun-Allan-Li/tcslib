@@ -1,0 +1,314 @@
+== Simulation/Challenge.lean
+structure ChalParams
+def chalRun
+theorem chalRun_eq
+theorem polyTimeComputable_chalRun
+def chalHandler
+theorem chalHandler_stateLen_eval
+def chalState
+theorem chalState_none
+theorem chalState_some
+theorem chalHandler_init
+theorem ofFn_chalState_some
+theorem ofFn_chalState_none
+theorem headD_ofFn_chalState
+private theorem padFin_replicate_false
+theorem chalHandler_impl_dec
+theorem chalHandler_impl_some
+theorem chalHandler_impl_none
+theorem chalHandler_costBoundedBy
+== Simulation/Generic.lean
+theorem buildComp_budget_eq
+theorem toCompOn_budget_eq
+theorem expect_congr_of_allOutputs
+theorem expect_expect_sample
+theorem bind_congr_of_allOutputs
+theorem expect_toCompOn_outLen
+private theorem simulate_eq_of_used
+theorem expect_simulate_eager
+theorem expect_eq_until_bad
+def chunkStep
+theorem chunkStep_eq
+def chunkEmit
+theorem chunkEmit_eq
+def chunkMap
+theorem chunkMap_eq
+private theorem length_chunkStep_le
+private theorem length_iterate_chunkStep_le
+theorem polyTimeComputable_chunkMap
+private theorem flatMap_range_drop
+theorem chunkMap_flatten
+== Simulation/Hybrid.lean
+def snmDin
+theorem snmDin_zero
+theorem snmDin_one
+def snmDout
+theorem snmDout_zero
+theorem snmDout_one
+theorem snmDin_eval_inLens
+theorem snmDout_eval_outLens
+def drawWith
+theorem drawWith_eq
+def histWith
+theorem histWith_eq
+def encWith
+theorem encWith_eq
+def rImpl
+theorem rImpl_dec
+theorem rImpl_dec_cpa
+theorem rImpl_some
+theorem rImpl_none_eager
+theorem rImpl_none_lazy
+theorem rImpl_dec_ce
+theorem rImpl_some_ce
+theorem rImpl_allOutputs_isSome
+theorem expect_simulate_rImpl_eager
+theorem rImpl_eq_of_msgLen_eq_zero
+theorem rImpl_false_coins
+def histImpl
+theorem histImpl_eq
+theorem histImpl_coins
+def chunkAt
+theorem chunkAt_eq
+theorem length_chunkAt
+theorem take_eq_flatten_chunkAt
+theorem length_flatten_map_range
+theorem length_flatten_map_const
+theorem chunkAt_flatten_append
+theorem drop_flatten_append
+theorem map_chunkAt_flatten
+theorem ofFn_block
+theorem ofFn_natAdd_eq_drop
+theorem ofFn_eq_map_range
+theorem decide_map_ofFn
+def entryL
+theorem entryL_eq
+theorem length_entryL
+def realView
+theorem realView_eq
+def idealView
+theorem idealView_eq
+def realAcc
+theorem realAcc_eq
+def idealAcc
+theorem idealAcc_eq
+def hybAcc
+theorem hybAcc_eq
+theorem realAcc_eq_hybAcc
+theorem hybAcc_true_eq_false
+== Simulation/IndSim.lean
+theorem stParam_nmAbs
+theorem flag_nmAbs
+theorem recView_nmOut
+theorem nmRun_eq
+theorem exists_nmAdversary
+== Simulation/Recover.lean
+theorem polyTimeComputable_guessBit
+def entF
+theorem entF_eq
+def bitG
+theorem bitG_eq
+theorem polyTimeComputable_entF
+theorem polyTimeComputable_bitG
+def recView
+theorem recView_eq
+theorem polyTimeComputable_recView
+private def recFun
+private theorem polyTimeComputable_recFun
+def recDist
+theorem recDist_coins
+theorem recDist_distinguisherL
+theorem nmOutput_flatten
+theorem ctLen_pos
+theorem guessBit_encPair
+theorem recView_nmOutL
+== Simulation/Reduction.lean
+def altMsg
+theorem altMsg_eq
+theorem polyTimeComputable_altMsg
+def encBit
+theorem encBit_eq
+def encPair
+theorem encPair_eq
+def ctxSt
+theorem ctxSt_eq
+def encF
+theorem encF_eq
+def bitF
+theorem bitF_eq
+theorem polyTimeComputable_encBit
+theorem polyTimeComputable_encPair
+theorem polyTimeComputable_encF
+theorem polyTimeComputable_bitF
+def nmOutL
+theorem nmOutL_eq
+def stParam
+theorem stParam_eq
+def finMsg
+theorem finMsg_eq
+def nmFin
+theorem nmFin_eq
+theorem polyTimeComputable_nmFin
+theorem nmFin_finInput
+def nmLen
+theorem nmLen_eval
+def nmParams
+theorem nmParams_seedLen_handler
+theorem nmParams_outLen_eval
+theorem nmParams_advInput
+theorem length_encBit
+theorem length_nmOutL
+theorem nmFinish
+def nmSeed
+theorem nmSeed_eq
+theorem nmSeed_ofFn
+theorem nmMsgs_input
+def nmPair
+theorem nmPair_eq
+def nmAbs
+theorem nmAbs_none
+theorem nmAbs_some
+theorem nmAbs_snd_fst
+theorem nmComp_abs
+== Simulation/Rounds.lean
+def rdU
+theorem rdU_eq
+def rdZ
+theorem rdZ_eq
+def rdW
+theorem rdW_eq
+def rdState
+theorem rdState_eq
+def rdIdx
+theorem rdIdx_eq
+def rdQuery
+theorem rdQuery_eq
+def rdLog
+theorem rdLog_eq
+def rdAns
+theorem rdAns_eq
+theorem fields_input
+theorem rdAns_input
+theorem polyTimeComputable_rd
+theorem buildComp_of_ret
+theorem padFin_append_split
+theorem impl_of_ret
+theorem impl_of_query
+theorem finish_of_ret
+def seedEquiv
+theorem seedEquiv_ofFn
+def seedEquivPoly
+theorem seedEquivPoly_ofFn
+theorem length_ofFn_coins
+theorem ofFn_padFin_eq_padL
+theorem costBoundedBy_bind_of_allOutputs
+theorem simulate_costBoundedBy_once
+== Simulation/SimIND.lean
+private def halfFun
+private theorem polyTimeComputable_halfFun
+def halfSamp
+theorem halfSamp_runAt
+private theorem eq_const_headD
+def halfCoins
+theorem halfCoins_apply
+theorem headD_ofFn_halfCoins_symm
+theorem ofFn_drawWith_half
+theorem expect_sample_halfCoins
+theorem castImpl_indImpl_abs
+theorem accept_nmGame_eq_rImpl
+private def copyFin
+private theorem polyTimeComputable_copyFin
+private theorem polyTimeComputable_copyAdvIn
+def copyHandler
+theorem copyHandler_advInput
+theorem copyHandler_outLen
+theorem simulate_copyHandler_impl
+theorem copyHandler_finish
+theorem simulate_copyHandler_machine
+private theorem polyTimeComputable_takeMsg
+private theorem polyTimeComputable_dropMsg
+private def halfFunD
+private theorem polyTimeComputable_halfFunD
+def halfDist
+theorem halfDist_distinguisherL
+def entryTails
+theorem entryTails_eq
+theorem polyTimeComputable_entryTails
+private def tailFun
+private theorem polyTimeComputable_tailFun
+def tailDist
+theorem tailDist_coins
+theorem tailDist_distinguisherL
+private theorem blocks_append
+theorem tailDist_blocks
+theorem halfDist_blocks
+theorem entryL_drop_one
+theorem entryTails_entries
+theorem nmOutput_eq_entryTails
+private theorem tail_indicator
+private theorem half_indicator
+abbrev runB
+theorem runB_eq
+private def badHalves
+private instance :
+private theorem expect_runB_good
+theorem real_identity
+private theorem ideal_key
+theorem ideal_identity
+== Simulation/SimINDGap.lean
+private theorem lin_expect
+private theorem lin_expect'
+private theorem lin_sample
+theorem realAcc_copyHandler
+def simHandler
+theorem simHandler_eq
+private theorem realAcc_half
+theorem real_gap
+private theorem halfDist_idealView_coin
+theorem ideal_gap
+== Simulation/Simulator.lean
+def simMsg
+theorem simMsg_eq
+def simCt
+theorem simCt_eq
+theorem polyTimeComputable_simMsg
+theorem polyTimeComputable_simCt
+def finSt
+theorem finSt_eq
+theorem finSt_finInput
+theorem polyTimeComputable_finSt
+def flagF
+theorem flagF_eq
+theorem polyTimeComputable_flagF
+def simOutL
+theorem simOutL_eq
+def simFin
+theorem simFin_eq
+theorem polyTimeComputable_simFin
+theorem length_flagF
+theorem simFin_finInput
+def simParams
+theorem simParams_seedLen_handler
+theorem simParams_outLen_eval
+theorem simParams_advInput
+theorem simFinish
+def simAbs
+theorem simAbs_none
+theorem simAbs_some
+theorem simAbs_snd
+theorem simCt_input
+theorem simComp_abs
+theorem idealView_simOut
+theorem simRun_eq
+theorem exists_simulator
+== Simulation.lean (owned; added)
+theorem castImpl_snmImpl
+theorem ofFn_snmEntry
+theorem snmView_realView
+theorem snmView_idealView
+theorem simImpl_eq_histImpl
+private theorem snmDin_eval
+private theorem snmDout_eval
+theorem accept_snmReal_eq
+theorem accept_snmIdeal_eq
+private theorem abs_le_of_gap
