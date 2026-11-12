@@ -18,7 +18,7 @@ snapshot. See campaign/status/2026-11-09-merge-243-244/.
 
 | PR / gate | Current state |
 |---|---|
-| #251 / 129 | **Clear to merge.** Gate 129 closed: round 5 CLEAR (0/0/0, 11 notes) at `c2fbacf42718b16c03fc0e61b571a9cf2f8c6ecb`. Fresh 395-module replay passed on campaign Lean `ef98f168`; merges cleanly. Draft: mark ready, then merge. Then #241 and #242 refresh against it. |
+| #251 / 129 | **Merged** at `4fff1ea826606070b86d0057052c20f3504b19e6` (2026-11-12). Gate closed (round 5 CLEAR). Its replay output is the campaign snapshot `oleans-c4fff` (876 objects; campaign/status/2026-11-12-merge-251/). |
 | #253 / 131 | **Merged.** Gate closed. Exact 404-module replay adopted at `e9478d452d5830adbe70ab77542224f326296a3e`. |
 | #242 / 122 | **Not yet clear to merge.** The checked clock repair is pushed at `6fe6b56cc514ce3c3d6ee0fa9daa9783396ff249`. Shared gate121 reads and Call/Clean remain held. |
 | #241 / 121 | **Not yet clear to merge.** Gate 131 provider merged. Eight-module integrated native preflight passed on the final gate 129 round 3 snapshot. Await the #251 merge, exact seals, copy review, replay and follow-up. |
