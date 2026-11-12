@@ -28,3 +28,10 @@ open rule-10 fronts for the same scheduled reader PR, not debt. The narrowed che
 
 Notes 1–7 of round 1 are accepted within their stated scopes; this round's evidence replaces
 their source, replay, seal, lint and screen inputs.
+
+## Round 2 result (2026-11-12)
+
+Codex returned **CLEAR (0 blockers, 0 majors, 0 minors, 7 notes)**, recorded verbatim as
+`findings-r2.md` (SHA-256 `267fe6837489a1550912ed4ba1b9741631573d37140fb448b541fb1380b47ce2`). Note 2 confirms M1 resolved within the recorded scope; notes 2
+and 4 keep the Call/Clean and Oblivious-consumer reader work scheduled (ledger). The other notes
+need no action. **Gate 122 is closed.**
