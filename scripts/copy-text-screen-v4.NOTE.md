@@ -67,7 +67,7 @@ Each run compared v3 and v4 on the same files. `python3 -I`, root = a tree of th
 | Quantum E1, 7 files, at `quantum/e1-fill` tip (example removed) | 132 decls, 22 pairs | same | byte-identical |
 | 12.2c T1 item 7 set: `PolyTimeBlock{Loop,Tests,Majority}`, `PClosure`, `EmitIter{Body,Embed}` at `main` | 94 decls, 41 pairs | same | byte-identical |
 | 12.2c T1 CodeFormat set: `CodeParser`, `CodeFormat`, `Codes2Tape`, `NDCodes`, `MathlibBridge`, `Encoding` at `main` | 169 decls, 75 pairs | same | byte-identical |
-| Every `TCSlib/**/*.lean` at `main`, one file per run (926 runs) | — | — | 920 byte-identical; 2 still running when this was written (`CodeSimulator`, `Build/ZoneRebalance`, neither has an `example` or anonymous instance). In 4 `CircuitComplexity` files (`CircuitSat`, `DAGCircuitSatLang`, `Encoding`, `HardFunctions`) only the header count moves (13→12, 15→18, 17→21, 9→10), with no row changes. |
+| Every `TCSlib/**/*.lean` at `main`, one file per run (926 runs) | — | — | 921 byte-identical. In 4 `CircuitComplexity` files (`CircuitSat`, `DAGCircuitSatLang`, `Encoding`, `HardFunctions`) only the header count moves (13→12, 15→18, 17→21, 9→10), with no row changes. In `Build/CfgRecord.lean` only labels change: the 66/66 pair between two anonymous `instance {k …}` is relabelled from `Turing.{k#1`/`Turing.{k#2` to `<instance #2>`/`<instance #3>`, with the same figures. |
 
 The fixtures and their exact expected outputs are in `tests/fixtures/copy_text_screen/` and
 `tests/test_copy_text_screen.py`. Run them with `python3 -m pytest tests/test_copy_text_screen.py`.
