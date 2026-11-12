@@ -1,0 +1,63 @@
+=== lean_proof/dlc/SealControlsSealedEvalOpen
+start 2026-11-12T10:56:07Z
+DLC-SEAL SealControlsSealedEvalOpen: sealed=1473 (already irreducible 20) abbrev-excluded=1423 excluded=1
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:58:79: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  padFin ℓ w i = w.getD (↑i) false
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:59:54: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  zeroBits d j = false
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:61:63: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (FunFamily.blocks q ℓ) x i j = x (finProdFinEquiv (i, j))
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:62:86: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  EnsembleLemmas.padL k a = List.ofFn (padFin k a)
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:63:73: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (xorPerm v) y = fun i => y i ^^ v i
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:64:77: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  InteractiveHandler.rU w = pairFstD (pairFstD w)
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:66:60: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:68:60: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  S.indCodec n = bitCodec (S.inLens n) (S.outLens n) 1
+lean_proof/dlc/SealControlsSealedEvalOpen.lean:70:72: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (FixedLengthScheme.splitHalf y).1 = fun i => y (Fin.castAdd m i)
+FAIL(lean_proof/dlc/SealControlsSealedEvalOpen): lean exited with status 1
+FAIL(lean_proof/dlc/SealControlsSealedEvalOpen): error diagnostics reported
+FAIL(lean_proof/dlc/SealControlsSealedEvalOpen): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=36.60 s, maxrss=2637912 KiB, exit=1
+end 2026-11-12T10:56:44Z status=1

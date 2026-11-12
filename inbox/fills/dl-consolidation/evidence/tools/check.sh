@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# One module check through scripts/lean_check_tree.sh in /workspace/dlc, with start/end time and max RSS.
+# One module check through scripts/lean_check_tree.sh in $WT (default /workspace/dlc), with start/end time and max RSS.
 # Usage: check.sh <module path without .lean> <log file>
 set -u
 mod="$1"; log="$2"
 source "$HOME/.elan/env"
-cd /workspace/dlc
+cd "${WT:-/workspace/dlc}"
 {
   echo "=== $mod"
   echo "start $(date -u +%FT%TZ)"

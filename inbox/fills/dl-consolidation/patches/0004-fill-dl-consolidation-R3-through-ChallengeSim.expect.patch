@@ -1,0 +1,245 @@
+From 6917e5716066b858a4dbdc33cf7f8653f9a40aa5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 08:37:42 +0000
+Subject: [PATCH 4/4] fill dl-consolidation: R3 through
+ ChallengeSim.expect_simulate_eager, R4 beside the padded readers, remove the
+ emptied Eager module
+
+---
+ .../PrivateKey/OracleFromPRF/Lazy.lean        |  2 +-
+ .../Encryption/PublicKey/BitwiseCPA.lean      | 13 ++--
+ .../PublicKey/BitwiseCPA/Eager.lean           | 59 -----------------
+ .../Encryption/PublicKey/OracleSecurity.lean  | 66 +++++++++----------
+ 4 files changed, 38 insertions(+), 102 deletions(-)
+ delete mode 100644 TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+
+diff --git a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+index 9dcc1fbfe..bc5867840 100644
+--- a/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
++++ b/TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean
+@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PrivateKey.OracleFromPRF.Games
+-import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
++import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+ import TCSlib.Cryptography.Foundations.BitLists
+ 
+ set_option maxHeartbeats 0
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+index 7b2213342..0691bcd93 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean
+@@ -3,7 +3,6 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Encryption.PublicKey.AdaptiveCPA
+-import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Eager
+ import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.Planted
+ import TCSlib.Cryptography.Encryption.PublicKey.BitwiseCPA.QueryHandler
+ 
+@@ -35,8 +34,6 @@ depend on the public key. The proof below therefore goes back to single-bit secu
+ 
+ ## Contents
+ 
+-* `BitwiseCPA/Eager`: eager challenge coins under CPA, resampling one coordinate of a uniform
+-  tuple, and readers of the padded encryptor.
+ * `BitwiseCPA/Planted`: the planted bitwise challenge answer and the reduction's final bit.
+ * `BitwiseCPA/QueryHandler`: the query-recording handler with advice and its machine by T1.
+ 
+@@ -133,9 +130,9 @@ private theorem ofFn_getD_split {n : ℕ} (l : List Bool) (hl : l.length = n + n
+ `Pr[Ind_b = 1] = Pr[H_{j_b} = 1]` with `j_0 = 0`, `j_1 = n`.
+ 
+ **Proof sketch.** Eager coins (`expect_simulate_indImpl_cpa`); the padded bitwise encryptor pads
+-the tuple of single-bit encryptions (`padded_enc_runAt`, `bitwise_runAt_blocks`) on the coin
+-blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the selected
+-half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
++the tuple of single-bit encryptions (`PublicKeyScheme.padded_enc_runAt`, `bitwise_runAt_blocks`) on
++the coin blocks `v` (the bijection `bitwiseEncCoins`, then `coinsCongr`), and bit `i` of the
++selected half is `l_{n+i}` for `b = 1` and `l_i` for `b = 0` (`ofFn_half`). -/
+ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
+     (hL : ∀ n (rg : S.bitwise.gen.Coins n) (m : Fin n → Bool) (re : S.bitwise.enc.Coins n),
+       2 * (S.bitwise.enc.runAt n (pairEncode (pairFstD (S.bitwise.gen.runAt n [] rg))
+@@ -157,12 +154,12 @@ private theorem accept_indGame_eq (S : BitPublicKeyScheme) (L : PolyExpr)
+   refine (expect_simulate_indImpl_cpa _ b n _ _
+     (fun a : Fin 1 → Bool => ProbComp.prob (.pure (a 0)) (· = true)) _ none).trans ?_
+   rw [← expect_sample_equiv ((S.bitwiseEncCoins n).trans
+-    (NUPPT.coinsCongr (padded_enc_coins S.bitwise L hL hmsg) n))]
++    (NUPPT.coinsCongr (PublicKeyScheme.padded_enc_coins S.bitwise L hL hmsg) n))]
+   refine congrArg _ (funext fun v => ?_)
+   refine congrArg (fun g => ProbComp.prob (.pure ((chRun g
+     (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
+       none).1 0)) (· = true)) (funext fun mm => ?_)
+-  rw [padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
++  rw [PublicKeyScheme.padded_enc_runAt, Equiv.trans_apply, NUPPT.coinsCongr_ofFn,
+     ofFn_half hk b (cast ((S.bitwise.padded L hL hmsg).indSpec_challengeDom n) mm),
+     ofFn_cast ((S.bitwise.padded L hL hmsg).inLens_one n), ← NUPPT.runAt_eq,
+     bitwise_runAt_blocks]
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean b/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
+deleted file mode 100644
+index 1da67e962..000000000
+--- a/TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean
++++ /dev/null
+@@ -1,59 +0,0 @@
+-/-
+-Copyright (c) 2026 TCSlib contributors. All rights reserved.
+-Released under Apache 2.0 license as described in the file LICENSE.
+--/
+-import TCSlib.Cryptography.Encryption.PublicKey.OracleSecurity
+-
+-set_option maxHeartbeats 0
+-set_option relaxedAutoImplicit false
+-set_option autoImplicit false
+-
+-/-!
+-# Readers of the padded encryptor for the CPA game
+-
+-Facts used by the hybrid argument for the bitwise scheme under chosen-plaintext attack
+-[PS10, p. 103, in the game of Definition 171.5]: the padded encryptor of a padded public-key
+-scheme pads the original encryptor's output (`padded_enc_runAt`) and has its coins
+-(`padded_enc_coins`). Both are read from the published lemmas of `OracleSecurity`. Eager challenge
+-coins under CPA are `expect_simulate_indImpl_cpa` (`OracleSecurity`).
+-
+-## Main results
+-
+-* `BitwiseSim.padded_enc_runAt`, `BitwiseSim.padded_enc_coins`: readers of the padded scheme.
+-
+-## References
+-
+-* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+-  p. 103 and §7.1.4, Definition 171.5 (book p. 171).
+--/
+-
+-namespace TCSlib.Cryptography.Composability.BitwiseSim
+-
+-open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games ChallengeSim ProbComp
+-
+-/-- **The padded encryptor pads the original encryptor's output**: for a padded public-key
+-scheme, `Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; r))`, with the coin string read as a list
+-(`PublicKeyScheme.padded_enc`, `runAt_padEnc`, `NUPPT.coinsCongr_ofFn`). -/
+-theorem padded_enc_runAt (S : PublicKeyScheme) (L : PolyExpr)
+-    (hL : ∀ n (rg : S.gen.Coins n) (m : Fin n → Bool) (re : S.enc.Coins n),
+-      2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length
+-        + 2 ≤ L.eval n)
+-    (hmsg : ∀ n, n ≤ L.eval n) (n : ℕ) (y : List Bool)
+-    (r : (S.padded L hL hmsg).enc.Coins n) :
+-    (S.padded L hL hmsg).enc.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
+-  have key : ∀ E : NUPPT, E = padEnc S.enc L → ∀ r : E.Coins n,
+-      E.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
+-    rintro E rfl r
+-    rw [runAt_padEnc S.enc_uniform L n y r, NUPPT.runAt_eq, NUPPT.coinsCongr_ofFn]
+-  exact key _ (PublicKeyScheme.padded_enc S L hL hmsg) r
+-
+-/-- The padded scheme's encryptor has the coin polynomial of the original encryptor:
+-`S.enc.coins = (S.padded L hL hmsg).enc.coins`. -/
+-theorem padded_enc_coins (S : PublicKeyScheme) (L : PolyExpr)
+-    (hL : ∀ n (rg : S.gen.Coins n) (m : Fin n → Bool) (re : S.enc.Coins n),
+-      2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length
+-        + 2 ≤ L.eval n)
+-    (hmsg : ∀ n, n ≤ L.eval n) : S.enc.coins = (S.padded L hL hmsg).enc.coins := by
+-  rw [PublicKeyScheme.padded_enc, padEnc_coins]
+-
+-end TCSlib.Cryptography.Composability.BitwiseSim
+diff --git a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+index 1a78a1ea6..08a3b6233 100644
+--- a/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
++++ b/TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean
+@@ -57,7 +57,8 @@ Security is stated for each admissible `L`; a larger `L` admits longer `Dec` que
+   canonical strings.
+ * `PublicKeyScheme.exists_padBound`, `BitPublicKeyScheme.exists_padBound`: padding bounds exist.
+ * `FixedLengthPKScheme.indCodec_eq_bitCodec`: the adversary codec is a bit codec;
+-  `expect_simulate_indImpl_cpa`: eager challenge coins under CPA.
++  `expect_simulate_indImpl_cpa`: eager challenge coins under CPA;
++  `PublicKeyScheme.padded_enc_runAt`, `padded_enc_coins`: the padded encryptor.
+ * `BitPublicKeyScheme.SingleBitSecure.padded_cpa`: single-bit security gives CPA security.
+   Its helpers are `OracleSecurity.ChallengeSim` (the deterministic CPA run and first-challenge
+   congruence) and `OracleSecurity.RecordHandler` (the recording handler for T1).
+@@ -360,6 +361,22 @@ theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc :
+ theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_dec :
+     (S.padded L hL hmsg).dec = padDecFun S.dec := rfl
+ 
++/-- **The padded encryptor pads the original encryptor's output**, the coins read as a list:
++`Enc'(1^n, y; r) = padCt L(n) (Enc(1^n, y; ⟦r⟧))` (`runAt_padEnc`, `coinsCongr_ofFn`). -/
++theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc_runAt (n : ℕ) (y : List Bool)
++    (r : (S.padded L hL hmsg).enc.Coins n) :
++    (S.padded L hL hmsg).enc.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
++  have key : ∀ E : NUPPT, E = padEnc S.enc L → ∀ r : E.Coins n,
++      E.runAt n y r = padCt (L.eval n) (S.enc.runAtL n y (List.ofFn r)) := by
++    rintro E rfl r
++    rw [runAt_padEnc S.enc_uniform L n y r, NUPPT.runAt_eq, NUPPT.coinsCongr_ofFn]
++  exact key _ (PublicKeyScheme.padded_enc S L hL hmsg) r
++
++/-- The padded encryptor keeps the coins: `S.enc.coins = (S.padded L hL hmsg).enc.coins`. -/
++theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc_coins :
++    S.enc.coins = (S.padded L hL hmsg).enc.coins := by
++  rw [PublicKeyScheme.padded_enc, padEnc_coins]
++
+ end PublicKeyPaddedReaders
+ 
+ /-- **A ch. 2–4 single-bit public-key scheme, padded** to `L(n)`-bit ciphertexts: one-bit
+@@ -724,16 +741,15 @@ private theorem ofFn_splitHalf_bit {k : ℕ} (hk : k = 1) (b : Bool) (mm : Fin (
+ 
+ /-- **Eager challenge coins under CPA.** Simulating the oracles of `Ind_b` from the state `s` has,
+ for every `G`, the expectation of first sampling the encryption coins `re` and then running the
+-deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`, the halves read
+-through `indSpec_challengeDom`:
++deterministic oracles whose challenge `mm` is answered with `Enc(⟨pk, m_b⟩; re)`, the halves and the
++recorded ciphertext read through `indSpec_challengeDom` and `indSpec_challengeRng`:
+ `𝔼[G ∘ fst] (simulate (indImpl .cpa b n pk sk) c s) = 𝔼_{re} G (chRun g_re c s).1`.
+ 
+-**Proof sketch.** Induction on the computation. Decryption queries are answered all-`false`
+-in both (`indImpl_dec_cpa`); a repeated challenge repeats the recorded ciphertext in both. At the
+-first challenge the lazy side samples `re` and continues from the recorded ciphertext; by the
+-induction hypothesis the continuation is again an average over coins `re'`, and from a recorded
+-state the deterministic run does not depend on `re'` (`chRun_some_congr`), so `re'`
+-marginalizes out (`expect_const`). -/
++**Proof sketch.** `ChallengeSim.expect_simulate_eager` with `d = ctLen(n)` (`outLens_one`), the
++cast `indSpec_challengeRng`, and the oracle equations `indImpl_dec_onSpec` (with `decOpen_cpa`),
++`indImpl_challenge_repeat_onSpec` and `indImpl_challenge_none_onSpec`: decryption queries are
++answered all-`false`, a repeated challenge repeats the record, and the first challenge samples the
++coins and records the encryption. -/
+ theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : ℕ)
+     (pk sk : List Bool) {α : Type} (G : α → ℝ) (c : OracleComp (S.indSpec n) α)
+     (s : Option (Fin (S.ctLen.eval n) → Bool)) :
+@@ -742,31 +758,13 @@ theorem expect_simulate_indImpl_cpa (S : FixedLengthPKScheme) (b : Bool) (n : 
+         G (chRun (fun mm => S.enc.runAt n (pairEncode pk (List.ofFn
+           (if b then (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).2
+             else (FixedLengthScheme.splitHalf (cast (S.indSpec_challengeDom n) mm)).1))) re)
+-          c s).1 := by
+-  induction c generalizing s with
+-  | pure a =>
+-    rw [simulate_pure, expect_pure]
+-    simp only [chRun_pure]
+-    exact (expect_const _ _).symm
+-  | query i x k ih =>
+-    match i, x, k, ih with
+-    | 0, x, k, ih =>
+-      rw [simulate_query, S.indImpl_dec_cpa, OracleComp.pure_bind]
+-      simp only [chRun_query_zero]
+-      exact ih _ s
+-    | 1, x, k, ih =>
+-      cases s with
+-      | some C =>
+-        rw [simulate_query, S.indImpl_challenge_repeat, OracleComp.pure_bind]
+-        simp only [chRun_query_one_some]
+-        exact ih _ _
+-      | none =>
+-        rw [simulate_query, S.indImpl_challenge_none, OracleComp.bind_assoc, expect_bind]
+-        refine congrArg _ (funext fun re => ?_)
+-        rw [OracleComp.pure_bind, ih, chRun_query_one_none]
+-        exact (congrArg _ (funext fun re' =>
+-          congrArg (fun p : α × Option (Fin (S.ctLen.eval n) → Bool) => G p.1)
+-            (chRun_some_congr _ _ _ _))).trans (expect_const _ _)
++          c (s.map (cast (S.indSpec_challengeRng n).symm))).1 :=
++  expect_simulate_eager (S.outLens_one n) (S.indSpec_challengeRng n).symm _ _
++    (fun x s => by
++      rw [S.indImpl_dec_onSpec]
++      simp only [FixedLengthScheme.decOpen_cpa, Bool.false_and, Bool.false_eq_true, if_false])
++    (fun mm C => S.indImpl_challenge_repeat_onSpec .cpa b n pk sk mm C)
++    (fun mm => S.indImpl_challenge_none_onSpec .cpa b n pk sk mm) G c s
+ 
+ /-- **The exact identity of step 4.** Let `B` be the machine of T1 for the recording handler
+ with challenge answer `cpaAns L` (with its coin bijection `φ`). At every `n`, `A`'s CPA advantage
+-- 
+2.43.0
+

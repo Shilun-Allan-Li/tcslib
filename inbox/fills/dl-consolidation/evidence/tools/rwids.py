@@ -57,6 +57,21 @@ ids.discard('')
 # namespace and opens
 ns = re.search(r'^namespace\s+(\S+)', text, re.M)
 opens = re.findall(r'^\s*open\s+([^\n]+)', code, re.M)
+# every namespace of the file, with its full name (namespace/section/end stack)
+stack, nested = [], []
+for line in code.split('\n'):
+    m1 = re.match(r'^\s*namespace\s+(\S+)', line)
+    m2 = re.match(r'^\s*section\b', line)
+    m3 = re.match(r'^\s*end\b\s*(\S*)', line)
+    if m1:
+        stack.append(('ns', m1.group(1)))
+        full = '.'.join(x for k, x in stack if k == 'ns')
+        nested.append(full)
+    elif m2:
+        stack.append(('sec', ''))
+    elif m3 and stack:
+        stack.pop()
+nested = [x for x in dict.fromkeys(nested) if not ns or x != ns.group(1)]
 modname = src[:-5].replace('/', '.')
 lines = [f'import {modname}', 'open Lean Elab Command', '']
 if ns:
@@ -65,6 +80,8 @@ for o in opens:
     o = re.sub(r'\bin\b.*', '', o).strip()
     if o:
         lines.append(f'open {o}')
+for x in nested:
+    lines.append(f'open {x}')
 lines.append('')
 lines.append('def idsToCheck : List String := [' + ','.join('"%s"' % s.replace('"', '') for s in sorted(ids)) + ']')
 lines.append(f'def scannedModule : Name := `{modname}')

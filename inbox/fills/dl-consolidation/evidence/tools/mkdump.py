@@ -1,6 +1,9 @@
 import sys
-cands=[l.strip() for l in open('/workspace/dlc-work/candidates.txt') if l.strip()]
 args=sys.argv[1:]
+candp='/workspace/dlc-work/candidates.txt'
+if args and args[0].startswith('--cands='):
+    candp=args[0][8:]; args=args[1:]
+cands=[l.strip() for l in open(candp) if l.strip()]
 outp='/workspace/dlc/lean_proof/dlc/DeclDump.lean'
 if args and args[0].startswith('--out='):
     outp=args[0][6:]; args=args[1:]

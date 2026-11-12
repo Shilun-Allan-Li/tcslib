@@ -1,0 +1,1127 @@
+===== TCSlib/Cryptography/Asymptotic/Adversary.lean [eval-sealed]
+DLC-SEAL Asymptotic_Adversary: sealed=363 (already irreducible 0) abbrev-excluded=426 excluded=0
+time: elapsed=30.86 s, maxrss=2551756 KiB, exit=0
+
+===== TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean [eval-sealed]
+DLC-SEAL Asymptotic_EnsemblesLemmas: sealed=525 (already irreducible 0) abbrev-excluded=670 excluded=0
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:123:2: error: Type mismatch
+  uprob_eq_of_equiv ((Equiv.refl σ).prodCongr e) fun x => Iff.rfl
+has type
+  (uprob fun x => (fun w => D (X w.1) w.2 = true) (((Equiv.refl σ).prodCongr e) x)) =
+    uprob fun w => D (X w.1) w.2 = true
+but is expected to have type
+  (acceptProb X fun z c => D z (e c)) = acceptProb X D
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:130:2: error: Type mismatch
+  Eq.trans (uprob_eq_of_equiv (Equiv.prodAssoc σ ρ κ).symm fun x => Iff.rfl) (uprob_fst fun w => D (X w.1) w.2 = true)
+has type
+  (uprob fun x => (fun w => D (X w.1.1) w.1.2 = true) ((Equiv.prodAssoc σ ρ κ).symm x)) =
+    uprob fun w => D (X w.1) w.2 = true
+but is expected to have type
+  (acceptProb X fun z c => D z c.1) = acceptProb X D
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:159:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+τ : Type u_2
+γ : Type u_3
+inst✝⁴ : Fintype σ
+inst✝³ : Fintype τ
+inst✝² : Subsingleton γ
+inst✝¹ : Nonempty σ
+inst✝ : Nonempty τ
+X : σ → γ
+Y : τ → γ
+⊢ StatClose X Y 0
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:169:78: error: Application type mismatch: The argument
+  abs_nonneg ?m.36
+has type
+  0 ≤ |?m.36|
+but is expected to have type
+  0 ≤ distAdv X Y D
+in the application
+  le_antisymm (distAdv_le_of_statClose X Y (statClose_of_subsingleton X Y) D) (abs_nonneg ?m.36)
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:286:88: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+p : PolyExpr
+hBc : B.coins = D.coins.subst p
+hB : ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = D.runAtL (p.eval n) y r
+n m : ℕ
+X : σ → Fin m → Bool
+hlen : D.coinLen (p.eval n) = B.coinLen n
+e : D.Coins (p.eval n) ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : Fin m → Bool
+c : D.Coins (p.eval n)
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL (p.eval n) (List.ofFn z) (List.ofFn c) = [true]) =
+    decide (D.runAtL (p.eval n) (List.ofFn z) (List.ofFn c) = [true])
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:303:83: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+A D : NUPPT
+φ : ℕ → ℕ
+p : PolyExpr
+hAc : A.coins = D.coins.subst p
+hA : ∀ (n : ℕ) (y r : List Bool), A.runAtL n y r = D.runAtL (φ n) y (List.take (D.coinLen (φ n)) r)
+m : ℕ
+hle : D.coinLen (φ m) ≤ D.coinLen (p.eval m)
+k : ℕ
+X : σ → Fin k → Bool
+hlen : A.coinLen m = D.coinLen (φ m) + (D.coinLen (p.eval m) - D.coinLen (φ m))
+z : Fin k → Bool
+c : (Fin (D.coinLen (φ m)) → Bool) × (Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
+⊢ decide (D.runAtL (φ m) (List.ofFn z) (List.ofFn c.1) = [true]) =
+    decide (D.runAtL (φ m) (List.ofFn z) (List.ofFn c.1) = [true])
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:353:67: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.91 = ?m.91
+but is expected to have type
+  (NUPPT.ofPolyTime hF (M.coins.add D.coins) ((((PolyExpr.const 2).mul M.adv).add (PolyExpr.const 2)).add D.adv)
+        (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv).coins =
+    M.coins.add D.coins
+in the application
+  And.intro rfl
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:369:43: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+M D B : NUPPT
+ℓ' : PolyExpr
+hBc : B.coins = M.coins.add D.coins
+hB :
+  ∀ (n : ℕ) (y r : List Bool),
+    B.runAtL n y r =
+      D.runAtL n (padL (ℓ'.eval n) (M.runAtL n y (List.take (M.coinLen n) r))) (List.drop (M.coinLen n) r)
+n m : ℕ
+X : σ → Fin m → Bool
+hlen : B.coinLen n = M.coinLen n + D.coinLen n
+z : Fin m → Bool
+c : (Fin (M.coinLen n) → Bool) × (Fin (D.coinLen n) → Bool)
+⊢ decide
+      (D.runAtL n (List.ofFn (padFin (ℓ'.eval n) (M.runAtL n (List.ofFn z) (List.ofFn c.1)))) (List.ofFn c.2) =
+        [true]) =
+    decide
+      (D.runAtL n (List.ofFn (padFin (ℓ'.eval n) (M.runAtL n (List.ofFn z) (List.ofFn c.1)))) (List.ofFn c.2) = [true])
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:545:8: error: Type mismatch
+  uprob_eq_of_equiv (swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) fun x => Iff.rfl
+has type
+  (uprob fun x => ?m.173 ((swapAux ζ ((Fin t → κX) × (Fin t → κY)) ρ) x)) = uprob ?m.173
+but is expected to have type
+  acceptProb Z (multicopyRed X' Y' t k D) =
+    uprob fun v =>
+      D (fun i => if ↑i < k then copies t Y' v.1.2 i else if ↑i = k then Z v.2.1 else copies t X' v.1.1 i) v.2.2 = true
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:550:8: error: Type mismatch
+  Eq.symm (uprob_eq_of_equiv (swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) fun x => Iff.rfl)
+has type
+  uprob ?m.230 = uprob fun x => ?m.230 ((swapAux ζ ((Fin t → σ) × (Fin t → τ)) ρ) x)
+but is expected to have type
+  (uprob fun v =>
+      D (fun i => if ↑i < k then copies t Y v.1.2 i else if ↑i = k then Z v.2.1 else copies t X v.1.1 i) v.2.2 = true) =
+    acceptProb Z (multicopyRed X Y t k D)
+lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas.lean:850:37: error: Tactic `rfl` failed: The left-hand side
+  (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D.coins
+is not definitionally equal to the right-hand side
+  ((t.mul sX).add (t.mul sY)).add D.coins
+
+D : NUPPT
+SX SY : List Bool → List Bool
+hSX : PolyTimeComputable SX
+hSY : PolyTimeComputable SY
+sX sY ℓ t : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), k n ≤ t.eval n
+D₂ : NUPPT
+hD₂c : D₂.coins = D.coins
+hD₂ : ∀ (n : ℕ) (y r : List Bool), D₂.runAtL n y r = id (D.runAtL n (pairSndD y) r)
+C : NUPPT
+hCc : C.coins = (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D₂.coins
+hC :
+  ∀ (n : ℕ) (y r : List Bool),
+    C.runAtL n y r =
+      D₂.runAtL n
+        (pairEncode y
+          ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).runAtL n y
+            (List.take ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coinLen n) r)))
+        (List.drop ((NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coinLen n) r)
+B : NUPPT
+hBc : B.coins = C.coins
+hB : ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = C.runAtL n (pairEncode y (List.replicate (k n) true)) r
+⊢ (NUPPT.ofPolyTimeUniform ⋯ ((t.mul sX).add (t.mul sY))).coins.add D.coins = ((t.mul sX).add (t.mul sY)).add D.coins
+FAIL(lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Asymptotic_EnsemblesLemmas): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=32.31 s, maxrss=2627032 KiB, exit=1
+
+===== TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean [eval-sealed]
+DLC-SEAL Asymptotic_HardCoreGLColl: sealed=1039 (already irreducible 19) abbrev-excluded=1098 excluded=0
+lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl.lean:247:29: error: Application type mismatch: The argument
+  fun x => false
+has type
+  Fin 0 → Bool
+but is expected to have type
+  Fin ((PolyExpr.const 0).eval n) → Bool
+in the application
+  NUPPT.runAt_wrap (glMachine (A.precomp collPre_poly) mP K k hk) glCollPre_poly glCollPost_poly ?m.23 ?m.24 ?m.25
+    (PolyExpr.const 0) n ?m.28 rfl fun x => false
+lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl.lean:244:99: error: unsolved goals
+A : NUPPT
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+n : ℕ
+i y rs : List Bool
+c : (glMachine (A.precomp collPre_poly) mP K k hk).Coins n
+r' : (glCollMachine A mP K k hk).Coins n
+hr' : List.ofFn r' = List.ofFn c
+⊢ ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+          glCollMachine._proof_1 (PolyExpr.const 0)).runAt
+      n (pairEncode i (pairEncode y rs)) r' =
+    pairEncode ((glMachine (A.precomp collPre_poly) mP K k hk).runAt n (pairEncode i y) c) rs
+lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl.lean:288:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (NUPPT.wrap ?A ?hpre ?hpost ?β ?b ?hβ ?p).coins
+in the target expression
+  ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+            glCollMachine._proof_1 (PolyExpr.const 0)).coins.eval
+      n =
+    (glCoins mP K (A.precomp collPre_poly)).eval n
+
+F : Collection
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+A : NUPPT
+n : ℕ
+i : List Bool
+L : ℕ
+hL : L = mP.eval n
+hM : 0 < 2 ^ k n - 1 ∨ mP.eval n = 0
+henc : ∀ (x : F.D i), (F.encD i x).length = mP.eval n
+hrec :
+  ∀ (y : List Bool) (g : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n)),
+    HardcoreBit.guessRecover (fun p c => A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) (k n) y
+        ((HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n)) g) =
+      HardcoreBit.guessRecover (glPredictorOf (A.precomp collPre_poly) n (mP.eval n) fun y => pairEncode i y) (k n) y g
+⊢ ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+            glCollMachine._proof_1 (PolyExpr.const 0)).coins.eval
+      n =
+    (glCoins mP K (A.precomp collPre_poly)).eval n
+FAIL(lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Asymptotic_HardCoreGLColl): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=36.50 s, maxrss=2652208 KiB, exit=1
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF: sealed=1566 (already irreducible 20) abbrev-excluded=1472 excluded=0
+time: elapsed=37.16 s, maxrss=2708904 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Collision.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Collision: sealed=1507 (already irreducible 20) abbrev-excluded=1440 excluded=0
+time: elapsed=36.31 s, maxrss=2682544 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Games.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Games: sealed=1495 (already irreducible 20) abbrev-excluded=1430 excluded=0
+time: elapsed=34.60 s, maxrss=2640788 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Handler.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Handler: sealed=1500 (already irreducible 20) abbrev-excluded=1435 excluded=0
+time: elapsed=34.52 s, maxrss=2670020 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Lazy.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Lazy: sealed=1500 (already irreducible 20) abbrev-excluded=1435 excluded=0
+time: elapsed=32.68 s, maxrss=2662272 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Reduction.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Reduction: sealed=1525 (already irreducible 20) abbrev-excluded=1444 excluded=0
+time: elapsed=32.99 s, maxrss=2670012 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleFromPRF/Transfer.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleFromPRF_Transfer: sealed=1529 (already irreducible 20) abbrev-excluded=1445 excluded=0
+time: elapsed=32.16 s, maxrss=2650540 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PrivateKey/OracleSecurity.lean [eval-sealed]
+DLC-SEAL Encryption_PrivateKey_OracleSecurity: sealed=423 (already irreducible 0) abbrev-excluded=520 excluded=0
+time: elapsed=30.36 s, maxrss=2556412 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Games.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_AdaptiveCPA_Games: sealed=1498 (already irreducible 20) abbrev-excluded=1433 excluded=0
+time: elapsed=31.05 s, maxrss=2641640 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Handler.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_AdaptiveCPA_Handler: sealed=1474 (already irreducible 20) abbrev-excluded=1424 excluded=0
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:155:2: error: Type mismatch
+  (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)).trans
+    ((Equiv.refl (Fin (cap.eval n))).arrowCongr (NUPPT.coinsEquivPoly ⋯ n).symm)
+has type
+  (Fin (cap.eval n * S.enc.coins.eval n) → Bool) ≃ (Fin (cap.eval n) → S.enc.Coins n)
+but is expected to have type
+  (Fin ((cap.mul S.enc.coins).eval n) → Bool) ≃ (Fin (cap.eval n) → S.enc.Coins n)
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:162:92: error: Application type mismatch: The argument
+  ω
+has type
+  Fin ((cap.mul S.enc.coins).eval n) → Bool
+but is expected to have type
+  Fin (cap.eval n * S.enc.coins.eval n) → Bool
+in the application
+  (FunFamily.blocks (cap.eval n) (S.enc.coins.eval n)) ω
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:174:6: warning: declaration uses 'sorry'
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:170:8: warning: declaration uses 'sorry'
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:176:2: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:176:2: warning: 'exact FunFamily.ofFn_blocks (cap.eval n) (S.enc.coins.eval n) ω j' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler.lean:401:2: error: Type mismatch
+  buildComp_zero_of_ret ?m.58
+has type
+  buildComp ?m.54 ?m.55 0 ?m.56 = OracleComp.pure ?m.57
+but is expected to have type
+  buildComp
+      (fun L =>
+        decodeBitMove (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) ((acHandler S cap ist).outLen.eval n)
+          ((acHandler S cap ist).finRun
+            (InteractiveHandler.finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
+              ((bitCodec (fun j => (acDin S j).eval n) (fun j => (acDout S j).eval n) 0).encodeLog L))))
+      (zeroBits ((acHandler S cap ist).outLen.eval n)) ((acHandler S cap ist).finCall.eval n) [] =
+    OracleComp.pure (padFin ((acHandler S cap ist).outLen.eval n) (List.ofFn a))
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_AdaptiveCPA_Handler): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=34.92 s, maxrss=2657176 KiB, exit=1
+
+===== TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Hybrid.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_AdaptiveCPA_Hybrid: sealed=428 (already irreducible 0) abbrev-excluded=514 excluded=0
+time: elapsed=32.38 s, maxrss=2556756 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/AdaptiveCPA/Reduction.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_AdaptiveCPA_Reduction: sealed=1500 (already irreducible 20) abbrev-excluded=1436 excluded=0
+time: elapsed=32.76 s, maxrss=2639112 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_BitwiseCPA: sealed=1508 (already irreducible 20) abbrev-excluded=1440 excluded=0
+lean_proof/dlc/seal/final/Encryption_PublicKey_BitwiseCPA.lean:201:2: error: Type mismatch
+  congrArg
+    (fun g =>
+      prob
+        (OracleComp.pure
+          ((chRun g (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
+                none).1
+            0))
+        fun x => x = true)
+    (funext fun mm => ?m.200)
+has type
+  (prob
+      (OracleComp.pure
+        ((chRun ?m.197 (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
+              (@none (Fin ((S.bitwise.padded L hL hmsg).outLens n 1) → Bool))).1
+          0))
+      fun x => x = true) =
+    prob
+      (OracleComp.pure
+        ((chRun ?m.198 (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
+              none).1
+          0))
+      fun x => x = true
+but is expected to have type
+  (prob
+      (OracleComp.pure
+        ((chRun
+              (fun mm =>
+                (S.bitwise.padded L hL hmsg).enc.runAt n
+                  (pairEncode (pairFstD (S.gen.runAt n [] rg))
+                    (List.ofFn
+                      (if b = true then (FixedLengthScheme.splitHalf (cast ⋯ mm)).2
+                      else (FixedLengthScheme.splitHalf (cast ⋯ mm)).1)))
+                  (((S.bitwiseEncCoins n).trans (NUPPT.coinsCongr ⋯ n)) v))
+              (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r)
+              (@none (Fin ((S.bitwise.padded L hL hmsg).ctLen.eval n) → Bool))).1
+          0))
+      fun x => x = true) =
+    prob
+      (OracleComp.pure
+        ((chRun
+              (fun mm =>
+                padCt (L.eval n)
+                  (hybCt S n (if b = true then n else 0) (pairFstD (S.gen.runAt n [] rg)) v (List.ofFn mm)))
+              (A.toCompOn ((S.bitwise.padded L hL hmsg).indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r) none).1
+          0))
+      fun x => x = true
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_BitwiseCPA): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_BitwiseCPA): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_BitwiseCPA): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=35.20 s, maxrss=2719612 KiB, exit=1
+
+===== TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Eager.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_BitwiseCPA_Eager: sealed=1474 (already irreducible 20) abbrev-excluded=1424 excluded=0
+time: elapsed=30.65 s, maxrss=2639920 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/Planted.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_BitwiseCPA_Planted: sealed=1474 (already irreducible 20) abbrev-excluded=1424 excluded=0
+time: elapsed=30.05 s, maxrss=2652172 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/BitwiseCPA/QueryHandler.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_BitwiseCPA_QueryHandler: sealed=1409 (already irreducible 20) abbrev-excluded=1325 excluded=0
+time: elapsed=30.08 s, maxrss=2644912 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/ElGamal.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_ElGamal: sealed=1000 (already irreducible 19) abbrev-excluded=1102 excluded=0
+time: elapsed=38.98 s, maxrss=2930900 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/HybridMachine.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_HybridMachine: sealed=775 (already irreducible 18) abbrev-excluded=993 excluded=0
+lean_proof/dlc/seal/final/Encryption_PublicKey_HybridMachine.lean:181:15: warning: This simp argument is unused:
+  blockList_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵z̵e̵r̵o̵,̵ ̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵s̵u̵c̵c̵,̵[̲b̲l̲o̲c̲k̲L̲i̲s̲t̲_̲s̲u̲c̲c̲,̲ hne, if_false, List.cons.injEq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/final/Encryption_PublicKey_HybridMachine.lean:220:2: error: Tactic `rfl` failed: The left-hand side
+  Enc.output
+    (NUPPT.layout (List.replicate n true) (pairEncode pk (List.ofFn (msg i))) [] (coinBlock (Enc.coins.eval n) (↑i) r))
+is not definitionally equal to the right-hand side
+  Enc.output
+    (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk (List.ofFn (msg i)))) [])
+      (coinBlock (Enc.coinLen n) (↑i) r))
+
+Enc : NUPPT
+hEnc : Enc.Uniform
+L : PolyExpr
+n : ℕ
+hL : 0 < L.eval n
+pk : List Bool
+k : ℕ
+msg : Fin k → Fin (L.eval n) → Bool
+r : List Bool
+hk : k ≤ (blockState (List.replicate n true) pk (List.ofFn fun i => List.ofFn (msg i)).flatten r).length
+i : Fin k
+⊢ Enc.output
+      (NUPPT.layout (List.replicate n true) (pairEncode pk (List.ofFn (msg i))) []
+        (coinBlock (Enc.coins.eval n) (↑i) r)) =
+    Enc.output
+      (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk (List.ofFn (msg i)))) [])
+        (coinBlock (Enc.coinLen n) (↑i) r))
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_HybridMachine): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_HybridMachine): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_HybridMachine): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=29.72 s, maxrss=2609776 KiB, exit=1
+
+===== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_OracleSecurity: sealed=1460 (already irreducible 20) abbrev-excluded=1401 excluded=0
+lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity.lean:372:34: error: Application type mismatch: The argument
+  m
+has type
+  Fin (PolyExpr.var.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  S.correct n m
+lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity.lean:413:4: error: Application type mismatch: The argument
+  fun n m rg re => ?m.32
+has type
+  ∀ (n : ℕ) (m : Fin 1 → Bool) (rg : S.gen.Coins n) (re : S.enc.Coins n),
+    decodeFin ((PolyExpr.const 1).eval n)
+        (S.dec
+          (pairEncode (pairSndD (S.gen.runAt n [] rg))
+            (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+      some m
+but is expected to have type
+  ∀ (n : ℕ) (m : Fin ((PolyExpr.const 1).eval n) → Bool) (rg : S.gen.Coins n) (re : S.enc.Coins n),
+    decodeFin ((PolyExpr.const 1).eval n)
+        (S.dec
+          (pairEncode (pairSndD (S.gen.runAt n [] rg))
+            (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+      some m
+in the application
+  FixedLengthPKScheme.ofPadded (PolyExpr.const 1) S.gen S.enc S.dec ⋯ ⋯ ⋯ ⋯
+lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity.lean:415:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn m
+in the target expression
+  decodeFin ((PolyExpr.const 1).eval n)
+      (S.dec
+        (pairEncode (pairSndD (S.gen.runAt n [] rg))
+          (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+    some m
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+n : ℕ
+m : Fin 1 → Bool
+rg : S.gen.Coins n
+re : S.enc.Coins n
+hm : List.ofFn m = [m 0]
+⊢ decodeFin ((PolyExpr.const 1).eval n)
+      (S.dec
+        (pairEncode (pairSndD (S.gen.runAt n [] rg))
+          (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re))) =
+    some m
+lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity.lean:419:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.ofFn m
+in the target expression
+  2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length + 2 ≤ L.eval n
+
+S : BitPublicKeyScheme
+L : PolyExpr
+hL :
+  ∀ (n : ℕ) (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+    2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2 ≤ L.eval n
+hmsg : ∀ (n : ℕ), 1 ≤ L.eval n
+n : ℕ
+rg : S.gen.Coins n
+m : Fin 1 → Bool
+re : S.enc.Coins n
+hm : List.ofFn m = [m 0]
+⊢ 2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length + 2 ≤ L.eval n
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Encryption_PublicKey_OracleSecurity): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=31.65 s, maxrss=2680244 KiB, exit=1
+
+===== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/ChallengeSim.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_OracleSecurity_ChallengeSim: sealed=422 (already irreducible 0) abbrev-excluded=508 excluded=0
+time: elapsed=29.08 s, maxrss=2574172 KiB, exit=0
+
+===== TCSlib/Cryptography/Encryption/PublicKey/OracleSecurity/RecordHandler.lean [eval-sealed]
+DLC-SEAL Encryption_PublicKey_OracleSecurity_RecordHandler: sealed=1403 (already irreducible 20) abbrev-excluded=1322 excluded=0
+time: elapsed=27.97 s, maxrss=2659640 KiB, exit=0
+
+===== TCSlib/Cryptography/Foundations.lean [eval-sealed]
+DLC-SEAL Foundations: sealed=17 (already irreducible 0) abbrev-excluded=10 excluded=0
+time: elapsed=27.32 s, maxrss=2509040 KiB, exit=0
+
+===== TCSlib/Cryptography/Foundations/BitLists.lean [eval-sealed]
+DLC-SEAL Foundations_BitLists: sealed=0 (already irreducible 0) abbrev-excluded=0 excluded=0
+time: elapsed=6.92 s, maxrss=1561256 KiB, exit=0
+
+===== TCSlib/Cryptography/Games/BitCodec.lean [eval-sealed]
+DLC-SEAL Games_BitCodec: sealed=411 (already irreducible 0) abbrev-excluded=496 excluded=0
+time: elapsed=31.22 s, maxrss=2574464 KiB, exit=0
+
+===== TCSlib/Cryptography/Games/Efficiency.lean [eval-sealed]
+DLC-SEAL Games_Efficiency: sealed=1372 (already irreducible 20) abbrev-excluded=1281 excluded=0
+time: elapsed=30.10 s, maxrss=2647864 KiB, exit=0
+
+===== TCSlib/Cryptography/Games/Hopping.lean [eval-sealed]
+DLC-SEAL Games_Hopping: sealed=44 (already irreducible 0) abbrev-excluded=50 excluded=0
+time: elapsed=26.74 s, maxrss=2412280 KiB, exit=0
+
+===== TCSlib/Cryptography/Games/Probability.lean [eval-sealed]
+DLC-SEAL Games_Probability: sealed=24 (already irreducible 0) abbrev-excluded=43 excluded=0
+time: elapsed=28.25 s, maxrss=2410096 KiB, exit=0
+
+===== TCSlib/Cryptography/Games/Simulate.lean [eval-sealed]
+DLC-SEAL Games_Simulate: sealed=17 (already irreducible 0) abbrev-excluded=33 excluded=0
+time: elapsed=5.51 s, maxrss=1285264 KiB, exit=0
+
+===== TCSlib/Cryptography/Pseudorandom/Functions/Asymptotic/GGM/Run.lean [eval-sealed]
+DLC-SEAL Pseudorandom_Functions_Asymptotic_GGM_Run: sealed=720 (already irreducible 2) abbrev-excluded=730 excluded=0
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:140:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val => false
+    | none => verdictOf (next s.1)
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:140:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some val✝ with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some val✝ with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+val✝ : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some val✝ with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some val✝ with
+    | some val => false
+    | none => verdictOf (next s.1)
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:151:12: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match none with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match none with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match none with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match none with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:152:14: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some x with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some x with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match some x with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match some x with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+x : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some x with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some x with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match some x with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match some x with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:311:71: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  start (rawInput d) = encState d ([], []) 0
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:401:2: error: Tactic `rfl` failed: The left-hand side
+  D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r))
+is not definitionally equal to the right-hand side
+  nextQ d s.1
+
+D : NUPPT
+q : PolyExpr
+n : ℕ
+d : Data D q n
+s : PureState n (Fin d.i → Bool)
+t : ℕ
+⊢ D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r)) = nextQ d s.1
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:563:2: error: Type mismatch
+  start_rawInput d
+has type
+  start (rawInput d) = encState d ([], []) 0
+but is expected to have type
+  StateLoop.orbit start (step E D q) (rawInput d) 0 = encState d (pureAt d hi 0) 0
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:714:2: error: Tactic `rfl` failed: The left-hand side
+  ((q.mul PolyExpr.var).add ((q.mul ((PolyExpr.const 2).mul PolyExpr.var)).add D.coins)).eval n
+is not definitionally equal to the right-hand side
+  q.eval n * n + (q.eval n * (2 * n) + D.coins.eval n)
+
+D : NUPPT
+q : PolyExpr
+n : ℕ
+⊢ ((q.mul PolyExpr.var).add ((q.mul ((PolyExpr.const 2).mul PolyExpr.var)).add D.coins)).eval n =
+    q.eval n * n + (q.eval n * (2 * n) + D.coins.eval n)
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:775:2: error: Tactic `rfl` failed: The left-hand side
+  rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c))
+is not definitionally equal to the right-hand side
+  rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+D : NUPPT
+q : PolyExpr
+i j : ℕ → ℕ
+n : ℕ
+y : List Bool
+c : (ggmRedMachine hE D q i j).Coins n
+⊢ rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c)) =
+    rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run.lean:808:87: error: Type mismatch
+  rfl
+has type
+  ?m.214 = ?m.214
+but is expected to have type
+  ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r) (q.eval n) []) (q.eval n) ⟨i n, hi⟩
+      ⟨j n, hj⟩ z (W, r) =
+    concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])
+FAIL(lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/Pseudorandom_Functions_Asymptotic_GGM_Run): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=30.97 s, maxrss=2624460 KiB, exit=1
+
+===== TCSlib/Cryptography/Pseudorandom/NextBit.lean [eval-sealed]
+DLC-SEAL Pseudorandom_NextBit: sealed=759 (already irreducible 18) abbrev-excluded=976 excluded=0
+lean_proof/dlc/seal/final/Pseudorandom_NextBit.lean:347:44: warning: This simp argument is unused:
+  cast_cast
+
+Hint: Omit it from the simp argument list.
+  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply, id_eq,
+        Ensemble.uniform_X, Equiv.cast_apply, cast_c̵a̵s̵t̵,̵ ̵c̵a̵s̵t̵_̵eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/final/Pseudorandom_NextBit.lean:347:55: warning: This simp argument is unused:
+  cast_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply, id_eq,
+        Ensemble.uniform_X, Equiv.cast_apply, cast_cast,̵ ̵c̵a̵s̵t̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/final/Pseudorandom_NextBit.lean:416:34: warning: This simp argument is unused:
+  NUPPT.layout_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.advInput_eq, N̵U̵P̵P̵T̵.̵l̵a̵y̵o̵u̵t̵_̵e̵q̵,̵ ̵NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+  ̲  ̲ ̲ ̲NUPPT.inCoins_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/final/Pseudorandom_NextBit.lean:416:51: warning: This simp argument is unused:
+  NUPPT.inParam_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.advInput_eq, NUPPT.layout_eq, N̵U̵P̵P̵T̵.̵i̵n̵P̵a̵r̵a̵m̵_̵e̵q̵,̵ ̵NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+  ̲  ̲ ̲ ̲NUPPT.inCoins_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+lean_proof/dlc/seal/final/Pseudorandom_NextBit.lean:417:25: warning: This simp argument is unused:
+  NUPPT.inCoins_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+       ̵ ̵NUPPT.inAdvice_eq, N̵U̵P̵P̵T̵.̵i̵n̵C̵o̵i̵n̵s̵_̵e̵q̵,̵ ̵pairFstD_pairEncode, pairSndD_pairEncode,
+  ̵  ̵ ̵ ̵ ̵ ̵List.length_replicate]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+time: elapsed=32.11 s, maxrss=2634108 KiB, exit=0
+
+===== TCSlib/Cryptography/SecureComputation/Yao.lean [eval-sealed]
+DLC-SEAL SecureComputation_Yao: sealed=1313 (already irreducible 20) abbrev-excluded=1323 excluded=0
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:319:82: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (yaoCoins Y).eval n = 10 * Y.sizeBound.eval n * n + 2 * Y.sizeBound.eval n
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:627:83: error: Application type mismatch: The argument
+  j
+has type
+  Fin ((Y.inB.mul PolyExpr.var).eval n)
+but is expected to have type
+  Fin (Y.inB.eval n * n)
+in the application
+  yaoCall Y n j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:628:40: error: Application type mismatch: The argument
+  j
+has type
+  Fin ((Y.inB.mul PolyExpr.var).eval n)
+but is expected to have type
+  Fin (Y.inB.eval n * n)
+in the application
+  yaoCall Y n j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:629:41: error: Application type mismatch: The argument
+  j
+has type
+  Fin ((Y.inB.mul PolyExpr.var).eval n)
+but is expected to have type
+  Fin (Y.inB.eval n * n)
+in the application
+  yaoCall Y n j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:635:37: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callA n xs r j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:643:37: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callB n ys r j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:754:69: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callA n xs rA j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:755:41: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callB n ys rB j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:761:71: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callA n xs rA j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:762:41: error: Application type mismatch: The argument
+  j
+has type
+  Fin (Y.inB.eval n * n)
+but is expected to have type
+  Fin ((yaoHybrid Y E₁ E₂).calls.eval n)
+in the application
+  (yaoHybrid Y E₁ E₂).callB n ys rB j
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:853:56: error: Application type mismatch: The argument
+  G₁
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+in the application
+  PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:880:8: warning: declaration uses 'sorry'
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:947:35: error: Application type mismatch: The argument
+  G₁
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+in the application
+  PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:949:20: error: Type mismatch
+  Fin.append (G₁ n s x) (G₂ n s x)
+has type
+  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool
+but is expected to have type
+  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:971:35: error: Application type mismatch: The argument
+  G₁
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin (n + n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin ((PolyExpr.var.add PolyExpr.var).eval n) → Bool
+in the application
+  PRFOut (PolyExpr.var.add PolyExpr.var) G₁
+lean_proof/dlc/seal/final/SecureComputation_Yao.lean:973:20: error: Type mismatch
+  Fin.append (G₁ n s x) (G₂ n s x)
+has type
+  Fin (n + n + (PolyExpr.var.add innerLen).eval n) → Bool
+but is expected to have type
+  Fin (((PolyExpr.var.add PolyExpr.var).add (PolyExpr.var.add innerLen)).eval n) → Bool
+FAIL(lean_proof/dlc/seal/final/SecureComputation_Yao): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/SecureComputation_Yao): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/SecureComputation_Yao): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=33.38 s, maxrss=2649636 KiB, exit=1
+
+===== TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean [eval-sealed]
+DLC-SEAL ZeroKnowledge_CommitmentLemmas: sealed=1110 (already irreducible 19) abbrev-excluded=1147 excluded=0
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:138:2: error: Tactic `rfl` failed: The left-hand side
+  uexp fun a =>
+    uprob fun b =>
+      D (X (Prod.fst.{u_1, max u_3 u_4} ((EnsembleLemmas.swapAux κ σ ρ) (a, b))))
+          ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).2 =
+        true
+is not definitionally equal to the right-hand side
+  uexp fun c₀ => uprob fun z => D (X (Prod.fst.{u_1, u_4} z)) (c₀, z.2) = true
+
+σ : Type u_1
+γ : Type u_2
+κ : Type u_3
+ρ : Type u_4
+inst✝² : Fintype σ
+inst✝¹ : Fintype κ
+inst✝ : Fintype ρ
+X : σ → γ
+D : γ → κ × ρ → Bool
+⊢ (uexp fun a =>
+      uprob fun b => D (X ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).1) ((EnsembleLemmas.swapAux κ σ ρ) (a, b)).2 = true) =
+    uexp fun c₀ => uprob fun z => D (X z.1) (c₀, z.2) = true
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:163:2: error: Type mismatch
+  abs_sub_comm ?m.19 ?m.20
+has type
+  |?m.19 - ?m.20| = |?m.20 - ?m.19|
+but is expected to have type
+  distAdv X Y D = distAdv Y X D
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:174:72: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+hc : B.coins = D.coins
+n m : ℕ
+X : σ → Fin m → Bool
+g : List Bool → List Bool
+hrun : ∀ (y r : List Bool), B.runAtL n y r = D.runAtL n (g y) r
+hlen : D.coinLen n = B.coinLen n
+e : D.Coins n ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : Fin m → Bool
+c : D.Coins n
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL n (g (List.ofFn z)) (List.ofFn c) = [true]) =
+    decide (D.runAtL n (g (List.ofFn z)) (List.ofFn c) = [true])
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:187:94: error: unsolved goals
+case e_D.h.h
+σ : Type u_1
+inst✝ : Fintype σ
+B D : NUPPT
+hc : B.coins = D.coins
+n : ℕ
+X : σ → List Bool
+g : List Bool → List Bool
+hrun : ∀ (y r : List Bool), B.runAtL n y r = D.runAtL n (g y) r
+hlen : D.coinLen n = B.coinLen n
+e : D.Coins n ≃ B.Coins n := (finCongr hlen).arrowCongr (Equiv.refl Bool)
+z : List Bool
+c : D.Coins n
+hofn : List.ofFn (e c) = List.ofFn c
+⊢ decide (D.runAtL n (g z) (List.ofFn c) = [true]) = decide (D.runAtL n (g z) (List.ofFn c) = [true])
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:275:11: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs ([] ++ M)
+is not definitionally equal to the right-hand side
+  Strategy.encodeMsgs [] ++ Strategy.encodeMsgs M
+
+case nil
+M : List (List Bool)
+⊢ Strategy.encodeMsgs ([] ++ M) = Strategy.encodeMsgs [] ++ Strategy.encodeMsgs M
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:493:2: error: Type mismatch
+  polyTimeComputable_iterateEmit step_poly (emit_poly F H hF hH) PolyExpr.var ((PolyExpr.const 5).mul PolyExpr.var)
+    fun x i hi => ?m.10
+has type
+  PolyTimeComputable fun x =>
+    List.flatMap (fun i => emit F H (step^[i] x)) (List.range (PolyExpr.var.eval x.length + 1))
+but is expected to have type
+  PolyTimeComputable fun x => List.flatMap (fun i => emit F H (step^[i] x)) (List.range (x.length + 1))
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:508:47: error: unsolved goals
+case h.e'_1
+⊢ init = fun z =>
+    st (((fun x => List.replicate x.length true) ∘ pairFstD) z) (pairFstD z)
+      (EnsembleLemmas.padL ((PolyExpr.var.mul PolyExpr.var).eval (pairFstD z).length) (pairSndD z))
+lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas.lean:536:4: error: Type mismatch
+  EnsembleLemmas.take_drop_ofFn_blocks (padFin (v.length * v.length) r) i hi
+has type
+  List.take v.length (List.drop (i * v.length) (List.ofFn (padFin (v.length * v.length) r))) =
+    List.ofFn ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)
+but is expected to have type
+  List.take v.length (List.drop (i * v.length) (EnsembleLemmas.padL (v.length * v.length) r)) =
+    List.ofFn ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_CommitmentLemmas): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=31.21 s, maxrss=2641940 KiB, exit=1
+
+===== TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean [eval-sealed]
+DLC-SEAL ZeroKnowledge_GraphIsomorphism_EfficiencyRep: sealed=718 (already irreducible 1) abbrev-excluded=760 excluded=0
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:115:4: error: Tactic `rfl` failed: The left-hand side
+  (pairSndD []).length
+is not definitionally equal to the right-hand side
+  [].length
+
+case inl
+⊢ (pairSndD []).length ≤ [].length
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:129:50: error: Type mismatch
+  iterate_pairSndD_nil k
+has type
+  pairSndD^[k] [] = []
+but is expected to have type
+  pairSndD^[k] (pairSndD []) = []
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:135:11: error: Tactic `rfl` failed: The left-hand side
+  pairSndD (Strategy.encodeMsgs [])
+is not definitionally equal to the right-hand side
+  Strategy.encodeMsgs (List.drop 1 [])
+
+case nil
+⊢ pairSndD (Strategy.encodeMsgs []) = Strategy.encodeMsgs (List.drop 1 [])
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:249:14: error: Type mismatch
+  (peelSteps_spec f stop hdec w).right.right
+has type
+  peelSteps f stop w ≤ w.length
+but is expected to have type
+  peelSteps f stop w ≤ PolyExpr.var.eval w.length
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:355:63: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  pairSndD [] = []
+in the application
+  Eq.mp decide_eq_false_iff_not._simp_1 hw rfl
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep.lean:462:15: error: Type mismatch
+  length_pairFstD_le x₀
+has type
+  (pairFstD x₀).length ≤ x₀.length
+but is expected to have type
+  (fun x₀ => (pairFstD x₀).length) x₀ ≤ PolyExpr.var.eval x₀.length
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRep): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=30.54 s, maxrss=2616404 KiB, exit=1
+
+===== TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean [eval-sealed]
+DLC-SEAL ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI: sealed=727 (already irreducible 1) abbrev-excluded=767 excluded=0
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI.lean:345:27: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.126 ↔ ?m.126
+but is expected to have type
+  encGraph
+        (permGraph (if false = true then instanceG₁ x else instanceG₀ x)
+          (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) [] ↔
+    encGraph
+        (permGraph (decGraphAt (pairFstD x).length.sqrt (if false = true then pairSndD x else pairFstD x))
+          (decPerm (pairFstD x).length.sqrt (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) []
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI.lean:345:27: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.126 ↔ ?m.126
+but is expected to have type
+  encGraph
+        (permGraph (if true = true then instanceG₁ x else instanceG₀ x)
+          (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) [] ↔
+    encGraph
+        (permGraph (decGraphAt (pairFstD x).length.sqrt (if true = true then pairSndD x else pairFstD x))
+          (decPerm (pairFstD x).length.sqrt (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) []
+lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI.lean:361:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 1 then ?m.47 else if hist.length < 2 * x.length then ?m.61 else ?m.62) = ?m.64
+is not definitionally equal to target
+  giVerifierRep.next x z r hist =
+    if
+        (decide
+            ¬(fun v => pairSndD (pairSndD v))^[halfCount (argM (ilayout x z hist r))] (argM (ilayout x z hist r)) =
+                []) =
+          true then
+      [(List.drop (halfCount (argM (ilayout x z hist r))) (NUPPT.inCoins (ilayout x z hist r))).headD false]
+    else
+      if
+          decide
+              (msgCount (argM (ilayout x z hist r)) <
+                ((PolyExpr.const 2).mul PolyExpr.var).eval (NUPPT.inParam (ilayout x z hist r)).length) =
+            true then
+        []
+      else
+        [wellFormedInstance (argX (ilayout x z hist r)) &&
+            decide
+              (∀ j < (NUPPT.inParam (ilayout x z hist r)).length,
+                relabelAt (List.replicate (vcount (ilayout x z hist r)) true)
+                    (if (List.drop j (NUPPT.inCoins (ilayout x z hist r))).headD false = true then
+                      pairSndD (argX (ilayout x z hist r))
+                    else pairFstD (argX (ilayout x z hist r)))
+                    (pairFstD (pairSndD ((fun v => pairSndD (pairSndD v))^[j] (argM (ilayout x z hist r))))) =
+                  pairFstD ((fun v => pairSndD (pairSndD v))^[j] (argM (ilayout x z hist r))))]
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI): lean exited with status 1
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI): error diagnostics reported
+FAIL(lean_proof/dlc/seal/final/ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI): no fresh .olean produced
+Command exited with non-zero status 1
+time: elapsed=30.29 s, maxrss=2598200 KiB, exit=1
+
